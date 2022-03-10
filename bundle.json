@@ -1,0 +1,59 @@
+{
+    "name": "@ohos/web",
+    "description": "library for webview",
+    "version": "3.1",
+    "license": "Apache License 2.0",
+    "publishAs": "code-segment",
+    "segment": {
+        "destPath": "base/web/webview"
+    },
+    "dirs": {},
+    "scripts": {},
+    "component": {
+        "name": "webview",
+        "subsystem": "web",
+        "syscap": [],
+        "features": [],
+        "adapted_system_type": [
+            "standard"
+        ],
+        "rom": "~85MB",
+        "ram": "~150MB",
+        "deps": {
+            "components": [
+                "libvsync_client",
+                "libsurface",
+                "librender_service_client",
+                "libwm"
+            ],
+            "third_party": []
+        },
+        "build": {
+            "sub_component": [
+                "//base/web/webview/ohos_nweb:libnweb",
+                "//base/web/webview/ohos_nweb:nweb_hap"
+            ],
+            "inner_kits": [
+                {
+                    "header": {
+                        "header_files": [
+                            "nweb_export.h",
+                            "nweb_url_resource_response.h",
+                            "nweb_handler.h",
+                            "nweb_javascript_result_callback.h",
+                            "nweb_url_resource_error.h",
+                            "nweb_preference.h",
+                            "nweb.h",
+                            "nweb_value.h",
+                            "nweb_url_resource_request.h",
+                            "nweb_adapter_helper.h",
+                            "nweb_helper.h"
+                        ],
+                        "header_base": "//base/web/webview/interfaces/innerkits/ohos_nweb"
+                    },
+                    "name": "//base/web/webview/ohos_nweb:libnweb"
+                }
+            ]
+        }
+    }
+}
