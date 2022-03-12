@@ -1,6 +1,17 @@
-// Copyright (c) 2022 Huawei Device Co., Ltd. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+/*
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
 #include "nweb_helper.h"
 
@@ -24,6 +35,32 @@ NWebHelper &NWebHelper::Instance()
     return helper;
 }
 
+#ifdef NWEB_USE_MUSL
+bool NWebHelper::LoadLib()
+{
+    if (libHandleNWebAdapter_ != nullptr && libHandleWebEngine_ != nullptr) {
+        return true;
+    }
+    Dl_namespace dlns;
+    dlns_init(&dlns, "nweb_ns");
+    dlns_create(&dlns, "/data/storage/el1/bundle/nweb/libs/arm");
+    const std::string LIB_PATH_NWEB_ADAPTER = "libnweb_adapter.so";
+    const std::string LIB_PATH_WEB_ENGINE = "libweb_engine.so";
+    void *libHandleWebEngine = dlopen_ns(&dlns, LIB_PATH_WEB_ENGINE.c_str(), RTLD_NOW);
+    if (libHandleWebEngine == nullptr) {
+        WVLOG_E("fail to dlopen %{public}s, errmsg=%{public}s", LIB_PATH_WEB_ENGINE.c_str(), dlerror());
+        return false;
+    }
+    libHandleWebEngine_ = libHandleWebEngine;
+    void *libHandleNWebAdapter = dlopen_ns(&dlns, LIB_PATH_NWEB_ADAPTER.c_str(), RTLD_NOW);
+    if (libHandleNWebAdapter == nullptr) {
+        WVLOG_E("fail to dlopen %{public}s, errmsg=%{public}s", LIB_PATH_NWEB_ADAPTER.c_str(), dlerror());
+        return false;
+    }
+    libHandleNWebAdapter_ = libHandleNWebAdapter;
+    return true;
+}
+#else
 bool NWebHelper::LoadLib()
 {
     if (libHandleNWebAdapter_ != nullptr && libHandleWebEngine_ != nullptr) {
@@ -46,6 +83,7 @@ bool NWebHelper::LoadLib()
     libHandleNWebAdapter_ = libHandleNWebAdapter;
     return true;
 }
+#endif
 
 void NWebHelper::UnloadLib()
 {
