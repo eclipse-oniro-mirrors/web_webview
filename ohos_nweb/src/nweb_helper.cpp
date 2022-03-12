@@ -35,6 +35,32 @@ NWebHelper &NWebHelper::Instance()
     return helper;
 }
 
+#ifdef NWEB_USE_MUSL
+bool NWebHelper::LoadLib()
+{
+    if (libHandleNWebAdapter_ != nullptr && libHandleWebEngine_ != nullptr) {
+        return true;
+    }
+    Dl_namespace dlns;
+    dlns_init(&dlns, "nweb_ns");
+    dlns_create(&dlns, "/data/storage/el1/bundle/nweb/libs/arm");
+    const std::string LIB_PATH_NWEB_ADAPTER = "libnweb_adapter.so";
+    const std::string LIB_PATH_WEB_ENGINE = "libweb_engine.so";
+    void *libHandleWebEngine = dlopen_ns(&dlns, LIB_PATH_WEB_ENGINE.c_str(), RTLD_NOW);
+    if (libHandleWebEngine == nullptr) {
+        WVLOG_E("fail to dlopen %{public}s, errmsg=%{public}s", LIB_PATH_WEB_ENGINE.c_str(), dlerror());
+        return false;
+    }
+    libHandleWebEngine_ = libHandleWebEngine;
+    void *libHandleNWebAdapter = dlopen_ns(&dlns, LIB_PATH_NWEB_ADAPTER.c_str(), RTLD_NOW);
+    if (libHandleNWebAdapter == nullptr) {
+        WVLOG_E("fail to dlopen %{public}s, errmsg=%{public}s", LIB_PATH_NWEB_ADAPTER.c_str(), dlerror());
+        return false;
+    }
+    libHandleNWebAdapter_ = libHandleNWebAdapter;
+    return true;
+}
+#else
 bool NWebHelper::LoadLib()
 {
     if (libHandleNWebAdapter_ != nullptr && libHandleWebEngine_ != nullptr) {
@@ -57,6 +83,7 @@ bool NWebHelper::LoadLib()
     libHandleNWebAdapter_ = libHandleNWebAdapter;
     return true;
 }
+#endif
 
 void NWebHelper::UnloadLib()
 {
