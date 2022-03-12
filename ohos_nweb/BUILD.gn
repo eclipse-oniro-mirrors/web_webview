@@ -14,54 +14,51 @@
 import("//build/ohos.gni")
 
 config("nweb_config") {
-    include_dirs = [
-        "include",
-        "//base/web/webview/interfaces/innerkits/ohos_nweb",
-        "//utils/native/base/include",
-        "//foundation/windowmanager/interfaces/innerkits/wm",
-        "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
-        "//foundation/graphic/standard/frameworks/surface/include",
-        "//foundation/graphic/standard/interfaces/innerkits/surface",
-    ]
+  include_dirs = [
+    "include",
+    "//base/web/webview/interfaces/innerkits/ohos_nweb",
+    "//utils/native/base/include",
+    "//foundation/windowmanager/interfaces/innerkits/wm",
+    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
+    "//foundation/graphic/standard/frameworks/surface/include",
+    "//foundation/graphic/standard/interfaces/innerkits/surface",
+  ]
 
-    cflags = [
-        "-Wall",
-        "-Werror",
-        "-g3",
-    ]
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+  ]
 }
 
 ohos_shared_library("libnweb") {
-    configs = [ ":nweb_config" ]
+  configs = [ ":nweb_config" ]
 
-    sources = [
-        "src/nweb_window_adapter.cpp",
-        "src/nweb_surface_adapter.cpp",
-        "src/nweb_input_event_consumer.cpp",
-        "src/nweb_helper.cpp",
-    ]
+  sources = [
+    "src/nweb_helper.cpp",
+    "src/nweb_input_event_consumer.cpp",
+    "src/nweb_surface_adapter.cpp",
+    "src/nweb_window_adapter.cpp",
+  ]
 
-    public_deps = [
-        "//foundation/graphic/standard:libvsync_client",
-        "//foundation/graphic/standard:libsurface",
-        "//foundation/graphic/standard/rosen/modules/render_service_client:librender_service_client",
-        "//foundation/windowmanager/wm:libwm",
-    ]
+  if (use_musl) {
+    defines = [ "NWEB_USE_MUSL" ]
+  }
 
-    external_deps = [
-        "multimodalinput_base:libmmi-client",
-        "hiviewdfx_hilog_native:libhilog",
-        "ipc:ipc_core",
-        "samgr_standard:samgr_proxy",
-    ]
+  public_deps = [
+    "//foundation/graphic/standard:libsurface",
+    "//foundation/graphic/standard:libvsync_client",
+    "//foundation/graphic/standard/rosen/modules/render_service_client:librender_service_client",
+    "//foundation/windowmanager/wm:libwm",
+  ]
 
-    part_name = "webview"
-    subsystem_name = "web"
-}
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "multimodalinput_base:libmmi-client",
+    "samgr_standard:samgr_proxy",
+  ]
 
-ohos_prebuilt_etc("nweb_hap") {
-  source = "prebuilts/arm/NWeb.hap"
-  module_install_dir = "app"
   part_name = "webview"
   subsystem_name = "web"
 }
