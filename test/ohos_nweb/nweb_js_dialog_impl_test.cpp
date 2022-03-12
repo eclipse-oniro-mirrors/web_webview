@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 #include "nweb_js_dialog_impl_test.h"
 #include "nweb_test_log.h"
 
