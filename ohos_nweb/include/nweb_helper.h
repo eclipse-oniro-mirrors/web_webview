@@ -17,7 +17,7 @@
 #define NWEB_HELPER_H
 
 #include <memory>
-#include <atomic>
+
 #include "nweb.h"
 
 namespace  OHOS::NWeb {

@@ -31,16 +31,12 @@ config("nweb_config") {
 }
 
 config("nweb_public_interface") {
-  include_dirs = [
-    "//base/web/webview/ohos_nweb/include"
-  ]
+  include_dirs = [ "//base/web/webview/ohos_nweb/include" ]
 }
 
 ohos_shared_library("libnweb") {
   configs = [ ":nweb_config" ]
-  public_configs = [
-    ":nweb_public_interface",
-  ]
+  public_configs = [ ":nweb_public_interface" ]
   sources = [
     "src/nweb_helper.cpp",
     "src/nweb_input_event_consumer.cpp",
