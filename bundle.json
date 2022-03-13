@@ -26,11 +26,15 @@
                 "librender_service_client",
                 "libwm"
             ],
-            "third_party": []
+            "third_party": [
+                "chromium",
+                "cef"
+            ]
         },
         "build": {
             "sub_component": [
-                "//base/web/webview/ohos_nweb:libnweb"
+                "//base/web/webview/ohos_nweb:libnweb",
+                "//base/web/webview/ohos_nweb:nweb_hap"
             ],
             "inner_kits": [
                 {
@@ -48,7 +52,7 @@
                             "nweb_adapter_helper.h",
                             "nweb_helper.h"
                         ],
-                        "header_base": "//base/web/webview/interfaces/innerkits/ohos_nweb"
+                        "header_base": "//base/web/webview/ohos_nweb/include"
                     },
                     "name": "//base/web/webview/ohos_nweb:libnweb"
                 }

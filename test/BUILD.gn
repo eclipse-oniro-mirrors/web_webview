@@ -14,51 +14,49 @@
 import("//build/ohos.gni")
 
 config("nweb_test_config") {
-    include_dirs = [
-        "ohos_nweb",
-        "//base/web/webview/interfaces/innerkits/ohos_nweb",
-        "//foundation/windowmanager/interfaces/innerkits/wm",
-        "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
-    ]
+  include_dirs = [
+    "ohos_nweb",
+    "//base/web/webview/interfaces/innerkits/ohos_nweb",
+    "//foundation/windowmanager/interfaces/innerkits/wm",
+    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
+  ]
 
-    cflags = [
-        "-Wall",
-        "-Werror",
-        "-g3",
-    ]
+  cflags = [
+    "-Wall",
+    "-Werror",
+    "-g3",
+  ]
 }
 
 ohos_executable("nweb_test") {
-    install_enable = false
+  install_enable = false
 
-    sources = [
-        "ohos_nweb/ohos_nweb_test.cpp",
-        "ohos_nweb/nweb_client_impl_test.cpp",
-        "ohos_nweb/nweb_downloadlistener_impl_test.cpp",
-        "ohos_nweb/nweb_input_event_consumer_test.cpp",
-        "ohos_nweb/nweb_javascript_result_callback_test.cpp",
-        "ohos_nweb/nweb_client_impl_test_for_intercept.cpp",
-        "ohos_nweb/nweb_js_dialog_impl_test.cpp"
-    ]
+  sources = [
+    "ohos_nweb/nweb_client_impl_test.cpp",
+    "ohos_nweb/nweb_client_impl_test_for_intercept.cpp",
+    "ohos_nweb/nweb_downloadlistener_impl_test.cpp",
+    "ohos_nweb/nweb_input_event_consumer_test.cpp",
+    "ohos_nweb/nweb_javascript_result_callback_test.cpp",
+    "ohos_nweb/nweb_js_dialog_impl_test.cpp",
+    "ohos_nweb/ohos_nweb_test.cpp",
+  ]
 
-    configs = [
-        ":nweb_test_config",
-    ]
+  configs = [ ":nweb_test_config" ]
 
-    deps = [
-        "//base/web/webview/ohos_nweb:libnweb",
-        "//third_party/zlib:libz",
-        "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
-        "//foundation/windowmanager/wm:libwm",
-    ]
+  deps = [
+    "//base/web/webview/ohos_nweb:libnweb",
+    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
+    "//foundation/windowmanager/wm:libwm",
+    "//third_party/zlib:libz",
+  ]
 
-    external_deps = [
-        "ipc:ipc_core",
-        "hiviewdfx_hilog_native:libhilog",
-        "samgr_standard:samgr_proxy",
-        "multimodalinput_base:libmmi-client",
-    ]
+  external_deps = [
+    "hiviewdfx_hilog_native:libhilog",
+    "ipc:ipc_core",
+    "multimodalinput_base:libmmi-client",
+    "samgr_standard:samgr_proxy",
+  ]
 
-    part_name = "webview"
-    subsystem_name = "web"
+  part_name = "webview"
+  subsystem_name = "web"
 }
