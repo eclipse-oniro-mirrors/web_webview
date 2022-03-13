@@ -16,7 +16,6 @@ import("//build/ohos.gni")
 config("nweb_config") {
   include_dirs = [
     "include",
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
     "//utils/native/base/include",
     "//foundation/windowmanager/interfaces/innerkits/wm",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
@@ -31,9 +30,17 @@ config("nweb_config") {
   ]
 }
 
+config("nweb_public_interface") {
+  include_dirs = [
+    "//base/web/webview/ohos_nweb/include"
+  ]
+}
+
 ohos_shared_library("libnweb") {
   configs = [ ":nweb_config" ]
-
+  public_configs = [
+    ":nweb_public_interface",
+  ]
   sources = [
     "src/nweb_helper.cpp",
     "src/nweb_input_event_consumer.cpp",
@@ -55,6 +62,13 @@ ohos_shared_library("libnweb") {
     "samgr_standard:samgr_proxy",
   ]
 
+  part_name = "webview"
+  subsystem_name = "web"
+}
+
+ohos_prebuilt_etc("nweb_hap") {
+  source = "prebuilts/arm/NWeb.hap"
+  module_install_dir = "app"
   part_name = "webview"
   subsystem_name = "web"
 }
