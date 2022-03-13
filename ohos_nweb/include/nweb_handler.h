@@ -17,7 +17,6 @@
 #define NWEB_HANDLER_H
 
 #include <memory>
-#include <mutex>
 #include <string>
 #include <vector>
 
