@@ -35,7 +35,7 @@ NWebHelper &NWebHelper::Instance()
     return helper;
 }
 
-#ifdef NWEB_USE_MUSL
+#ifdef __MUSL__
 bool NWebHelper::LoadLib()
 {
     if (libHandleNWebAdapter_ != nullptr && libHandleWebEngine_ != nullptr) {
@@ -66,7 +66,7 @@ bool NWebHelper::LoadLib()
     if (libHandleNWebAdapter_ != nullptr && libHandleWebEngine_ != nullptr) {
         return true;
     }
-    const std::string LOAD_LIB_DIR = "/data/storage/el1/bundle/nweb/entry/libs/armeabi";
+    const std::string LOAD_LIB_DIR = "/data/storage/el1/bundle/nweb/libs/arm";
     const std::string LIB_PATH_NWEB_ADAPTER = LOAD_LIB_DIR + "/libnweb_adapter.so";
     const std::string LIB_PATH_WEB_ENGINE = LOAD_LIB_DIR + "/libweb_engine.so";
     void *libHandleWebEngine = ::dlopen(LIB_PATH_WEB_ENGINE.c_str(), RTLD_NOW);

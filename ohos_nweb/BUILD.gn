@@ -41,10 +41,6 @@ ohos_shared_library("libnweb") {
     "src/nweb_window_adapter.cpp",
   ]
 
-  if (use_musl) {
-    defines = [ "NWEB_USE_MUSL" ]
-  }
-
   public_deps = [
     "//foundation/graphic/standard:libsurface",
     "//foundation/graphic/standard:libvsync_client",
