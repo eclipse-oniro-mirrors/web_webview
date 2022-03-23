@@ -25,9 +25,10 @@ class OHOS_NWEB_EXPORT NWebHelper {
 public:
     static NWebHelper &Instance();
     ~NWebHelper();
-    bool Init();
+    bool Init(bool from_ark = true);
 
     std::shared_ptr<NWeb> CreateNWeb(const NWebCreateInfo &create_info);
+    void SetBundlePath(const std::string& path);
 
 private:
     NWebHelper() = default;
@@ -37,6 +38,8 @@ private:
 private:
     void *libHandleNWebAdapter_ = nullptr;
     void *libHandleWebEngine_ = nullptr;
+    std::string loadLibPath_;
+    std::string bundlePath_;
 };
 } // namespace OHOS::NWeb
 
