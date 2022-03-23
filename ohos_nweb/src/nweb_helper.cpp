@@ -114,6 +114,11 @@ bool NWebHelper::Init(bool from_ark)
     return LoadLib();
 }
 
+void NWebHelper::SetBundlePath(const std::string& path)
+{
+    bundlePath_ = path;
+}
+
 NWebHelper::~NWebHelper()
 {
     UnloadLib();
