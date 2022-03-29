@@ -60,6 +60,8 @@ const std::string ARG_FRAME_INFO = "--frame-info";
 const std::string ARG_ADD_WEB_ENGINE_ARG = "--add-args";
 const std::string ARG_DELETE_WEB_ENGINE_ARG = "--delete-args";
 const std::string ARG_MULTI_RENDER_PROCESS = "--multi-renderer-process";
+const std::string ARG_NWEB_TEST_MOCK_BUNDLEPATH = "--bundle-installation-dir";
+const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
 const int DEFAULT_FONT_SIZE = 13;
 const int DEFAULT_FONT_SIZE_TWO = 16;
 const int DEFAULT_FONT_SIZE_MAX = 72;
@@ -139,6 +141,7 @@ std::list<std::string> GetWebEngineArgs(const std::string &arg)
         }
     }
     webEngineArgList.emplace_back(webEngineArgValue.substr(start, pos - start));
+    webEngineArgList.emplace_back(ARG_NWEB_TEST_MOCK_BUNDLEPATH + "=" + MOCK_INSTALLATION_DIR);
     return webEngineArgList;
 }
 
@@ -179,6 +182,7 @@ void RegistEventCb(sptr<Rosen::Window> window, std::shared_ptr<OHOS::NWeb::NWeb>
 void TestPrepare()
 {
     TESTLOG_I("TestPrepare");
+    OHOS::NWeb::NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     if (!OHOS::NWeb::NWebAdapterHelper::Instance().Init(false)) {
         TESTLOG_E("fail to init NWebAdapterHelper, test end");
         return;
@@ -215,6 +219,7 @@ void TestPrepare()
 void TestPrepareWithClient(std::shared_ptr<OHOS::NWeb::NWebHandler> client)
 {
     TESTLOG_I("TestPrepare");
+    OHOS::NWeb::NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     if (!OHOS::NWeb::NWebAdapterHelper::Instance().Init(false)) {
         TESTLOG_E("fail to init NWebAdapterHelper, test end");
         return;
@@ -1463,6 +1468,7 @@ void Test102()
 void Test103()
 {
     TESTLOG_I("start103");
+    OHOS::NWeb::NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     if (!OHOS::NWeb::NWebAdapterHelper::Instance().Init(false)) {
         TESTLOG_E("fail to init NWebAdapterHelper, test end");
         return;

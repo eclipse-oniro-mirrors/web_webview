@@ -60,3 +60,16 @@ ohos_executable("nweb_test") {
   part_name = "webview"
   subsystem_name = "web"
 }
+
+ohos_executable("web_render") {
+  install_enable = false
+
+  sources = [ "ohos_nweb/nweb_web_render.cpp" ]
+
+  configs = [ ":nweb_test_config" ]
+
+  external_deps = [ "hiviewdfx_hilog_native:libhilog" ]
+
+  part_name = "webview"
+  subsystem_name = "web"
+}
