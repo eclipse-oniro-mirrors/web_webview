@@ -56,6 +56,10 @@
                     },
                     "name": "//base/web/webview/ohos_nweb:libnweb"
                 }
+            ],
+            "test": [
+                "//base/web/webview/test:nweb_test",
+                "//base/web/webview/test:web_render"
             ]
         }
     }
