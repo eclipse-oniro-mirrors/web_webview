@@ -13,7 +13,7 @@
 
 import("//build/ohos.gni")
 
-webview_root_path = "//base/web_webview"
+webview_root_path = "//base/web/webview"
 native_source_path = rebase_path("$webview_root_path")
 web_dir = "nweb_hap"
 position = exec_script(
