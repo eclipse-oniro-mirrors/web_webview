@@ -17,9 +17,9 @@ webview_root_path = "//base/web/webview"
 native_source_path = rebase_path("$webview_root_path")
 web_dir = "nweb_hap"
 position = exec_script(
-  "//foundation/communication/dsoftbus/run_shell_cmd.py",
-  [ "cd $native_source_path; if [ -d $web_dir ]; then echo true; else echo false; fi" ],
-  "value")
+        "$webview_root_path/run_shell_cmd.py",
+        [ "cd $native_source_path; if [ -d $web_dir ]; then echo true; else echo false; fi" ],
+        "value")
 if (!position) {
   web_source = "prebuilts/arm/NWeb.hap"
 } else {
