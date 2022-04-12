@@ -198,12 +198,10 @@ void NWebHandlerImplTest::OnPageIcon(const void* data,
     TESTLOG_I("OnPageIcon, width=%{public}d, height=%{public}d", width, height);
     size_t len = width * height * BITS_PER_PIXEL;
     char* data_temp = new char[len];
-    if (memcpy_s(data_temp, len, data, len) != 0) {
-        delete []data_temp;
-        return;
+    if (memcpy_s(data_temp, len, data, len) == 0) {
+        DumpToBmp("/system/etc/webview/icon.bmp", data_temp, width, height);
     }
-    DumpToBmp("/system/etc/webview/icon.bmp", data_temp, width, height);
-    delete []data_temp;
+    delete[] data_temp;
     data_temp = nullptr;
 }
 
