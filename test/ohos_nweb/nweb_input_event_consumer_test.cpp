@@ -73,7 +73,7 @@ void NWebInputEventConsumerTest::DispatchPointerEvent(std::shared_ptr<MMI::Point
             break;
         }
         default: {
-            TESTLOG_W("unsupport PointerEvent action[%{public}d] received", action);
+            TESTLOG_W("unsupported PointerEvent action[%{public}d] received", action);
             break;
         }
     }
@@ -95,7 +95,7 @@ void NWebInputEventConsumerTest::DispatchKeyEvent(std::shared_ptr<MMI::KeyEvent>
         TESTLOG_I("nweb receive key back event");
         nweb->OnNavigateBack();
     } else {
-        TESTLOG_W("unsupport KeyEvent code[%{public}d] received", keyCode);
+        TESTLOG_W("unsupported KeyEvent code[%{public}d] received", keyCode);
     }
 }
 } // namespace OHOS::NWeb
