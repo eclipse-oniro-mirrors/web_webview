@@ -160,6 +160,10 @@ OHOS::NWeb::NWebInitArgs GetInitArgs()
 sptr<Rosen::Window> CreateWindow()
 {
     sptr<Rosen::WindowOption> option = new Rosen::WindowOption();
+    if (option == nullptr) {
+        TESTLOG_E("fail to new option.");
+        return nullptr;
+    }
     int width = HasArg(ARG_WIDTH) ? GetNumFromArgs(ARG_WIDTH) : DEFAULT_WIDTH;
     int height = HasArg(ARG_HEIGHT) ? GetNumFromArgs(ARG_HEIGHT) : DEFAULT_HEIGHT;
     option->SetWindowRect({0, 0, width, height});
@@ -187,7 +191,6 @@ void TestPrepare()
         TESTLOG_E("fail to init NWebAdapterHelper, test end");
         return;
     }
-
     g_window = CreateWindow();
     if (g_window == nullptr) {
         return;
@@ -1174,7 +1177,8 @@ void Test225()
     TestWebSettingsForNormalWeb();
 
     if (g_webSettings != nullptr) {
-        int mixed_content_mode = g_webSettings->AccessModeForSecureOriginLoadFromInsecure();
+        OHOS::NWeb::NWebPreference::AccessMode mixed_content_mode =
+            g_webSettings->AccessModeForSecureOriginLoadFromInsecure();
         if (mixed_content_mode != OHOS::NWeb::NWebPreference::AccessMode::NEVER_ALLOW) {
             TESTLOG_E("Error! mixed_content_mode default value:%{public}d != %{public}d.", mixed_content_mode,
                 OHOS::NWeb::NWebPreference::AccessMode::NEVER_ALLOW);
@@ -1208,7 +1212,8 @@ void Test226()
     TestWebSettingsForNormalWeb();
 
     if (g_webSettings != nullptr) {
-        int mixed_content_mode = g_webSettings->AccessModeForSecureOriginLoadFromInsecure();
+        OHOS::NWeb::NWebPreference::AccessMode mixed_content_mode =
+            g_webSettings->AccessModeForSecureOriginLoadFromInsecure();
         if (mixed_content_mode != OHOS::NWeb::NWebPreference::AccessMode::NEVER_ALLOW) {
             TESTLOG_E("Error! mixed_content_mode default value:%{public}d != %{public}d.", mixed_content_mode,
                 OHOS::NWeb::NWebPreference::AccessMode::NEVER_ALLOW);
@@ -1263,6 +1268,37 @@ void Test227()
     g_window->Show();
 
     TESTLOG_I("Test227 end");
+}
+
+void Test232()
+{
+    TESTLOG_I("Test232 start");
+
+    TestPrepare();
+    TestWebSettingsForNormalWeb();
+
+    if (g_webSettings != nullptr) {
+        bool is_network_blocked = g_webSettings->IsNetworkBlocked();
+        if (is_network_blocked) {
+            TESTLOG_E("Error! is_network_blocked default value:%{public}d != false.", is_network_blocked);
+        } else {
+            TESTLOG_I("is_network_blocked default value: %{public}d", is_network_blocked);
+        }
+
+        TESTLOG_I("Set is_network_blocked to true.");
+        g_webSettings->PutBlockNetwork(true);
+        is_network_blocked = g_webSettings->IsNetworkBlocked();
+        if (!is_network_blocked) {
+            TESTLOG_E("Error! is_network_blocked :%{public}d != false.", is_network_blocked);
+        } else {
+            TESTLOG_I("is_network_blocked=%{public}d", is_network_blocked);
+        }
+    }
+
+    g_nweb->Load(g_url);
+    g_window->Show();
+
+    TESTLOG_I("Test232 end");
 }
 
 void Test90()
@@ -1745,6 +1781,7 @@ void InitTest(std::vector<struct OhosNWebTest> &tests)
         "IsCreateWindowsByJavaScriptAllowed");
     ADD_TEST(tests, 230, "Test websettings api:PutJavaScriptEnabled and IsJavaScriptAllowed");
     ADD_TEST(tests, 231, "Test websettings api:PutDefaultTextEncodingFormat and DefaultTextEncodingFormat");
+    ADD_TEST(tests, 232, "Test websettings api:PutBlockNetwork and IsNetworkBlocked");
 }
 
 void Usage(const char *argv0, const std::vector<struct OhosNWebTest> &tests)
@@ -1779,6 +1816,10 @@ int32_t main(int32_t argc, const char * const argv[])
 
     auto runner = AppExecFwk::EventRunner::Create(false);
     g_handler = std::make_shared<AppExecFwk::EventHandler>(runner);
+    if (g_handler == nullptr) {
+        TESTLOG_E("fail to new g_handler.");
+        return 0;
+    }
     auto condition = [testcase] (auto &item) { return item.id == testcase; };
     auto test = std::find_if(tests.begin(), tests.end(), condition);
     if (test != tests.end()) {

@@ -104,7 +104,7 @@ public:
                                  const std::string& failingUrl) {}
 
     /**
-     * @brief Give the SDK a chance to decide wheather to continue loading the
+     * @brief Give the SDK a chance to decide whether to continue loading the
      * url.
      *
      * @param url The url to be loaded.
@@ -155,10 +155,9 @@ public:
      * @brief Notify the host application of a resource request and allow the
      * application to return the data.
      *
-     * @param request the resource response's MIME type, for example {
-     * "text/html"}.
+     * @param request request information
      *
-     * @retval if NWebUrlResourceResponse is null ,No interception.
+     * @retval std::shared_ptr<NWebUrlResourceResponse> response information
      */
     virtual std::shared_ptr<NWebUrlResourceResponse> OnHandleInterceptRequest(
         std::shared_ptr<NWebUrlResourceRequest> request) {
@@ -201,7 +200,7 @@ public:
                             ImageAlphaType alpha_type) {}
 
     /**
-     * @brief Notify the SDK of the url for an touch icon.
+     * @brief Notify the SDK of the url for a touch icon.
      *
      * @param icon_url The icon url.
      * @param precomposed The touch icon type.
@@ -299,16 +298,18 @@ public:
     virtual void OnGeolocationHide() {}
 
     /**
-     * @brief
+     * @brief Ask for the permission.
      *
-     * @param request  String:
+     * @param request std::shared_ptr<NWebAccessRequest>: A request to ask for the
+     * permission.
      */
     virtual void OnPermissionRequest(std::shared_ptr<NWebAccessRequest> request) {}
 
     /**
-     * @brief
+     * @brief Cancel the request to ask for the permission.
      *
-     * @param request  String:
+     * @param request std::shared_ptr<NWebAccessRequest>: A request to ask for the
+     * permission.
      */
     virtual void OnPermissionRequestCanceled(std::shared_ptr<NWebAccessRequest> request) {}
 };

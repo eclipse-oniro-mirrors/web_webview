@@ -22,16 +22,17 @@
 #include "nweb_value.h"
 
 namespace OHOS::NWeb {
-    class OHOS_NWEB_EXPORT NWebJavaScriptResultCallBack {
-    public:
-        NWebJavaScriptResultCallBack() = default;
+class OHOS_NWEB_EXPORT NWebJavaScriptResultCallBack {
+public:
+    NWebJavaScriptResultCallBack() = default;
 
-        virtual ~NWebJavaScriptResultCallBack() = default;
+    virtual ~NWebJavaScriptResultCallBack() = default;
 
-        virtual std::shared_ptr<NWebValue> GetJavaScriptResult(
-                std::vector<std::shared_ptr<NWebValue>> args,
-                const std::string &method,
-                const std::string &object_name) = 0;
-    };
-}
-#endif
+    virtual std::shared_ptr<NWebValue> GetJavaScriptResult(
+        std::vector<std::shared_ptr<NWebValue>> args,
+        const std::string &method,
+        const std::string &object_name) = 0;
+};
+} // namespace OHOS::NWeb
+
+#endif // NWEB_JAVASCRIPT_RESULT_CALLBACK_H
