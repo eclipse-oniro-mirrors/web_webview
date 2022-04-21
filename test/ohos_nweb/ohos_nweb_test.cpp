@@ -203,7 +203,7 @@ void TestPrepare()
         TESTLOG_E("fail to get nweb instance, test end");
         return;
     }
-    g_nweb->Resize(g_window->GetRect().width_, g_window->GetRect().height_);
+    g_nweb->Resize(g_window->GetRequestRect().width_, g_window->GetRequestRect().height_);
     RegistEventCb(g_window, g_nweb);
 
     TESTLOG_I("CreateNWeb SUCCESS");
@@ -240,7 +240,7 @@ void TestPrepareWithClient(std::shared_ptr<OHOS::NWeb::NWebHandler> client)
         TESTLOG_E("fail to get nweb instance, test end");
         return;
     }
-    g_nweb->Resize(g_window->GetRect().width_, g_window->GetRect().height_);
+    g_nweb->Resize(g_window->GetRequestRect().width_, g_window->GetRequestRect().height_);
     RegistEventCb(g_window, g_nweb);
 
     TESTLOG_I("CreateNWeb SUCCESS");
