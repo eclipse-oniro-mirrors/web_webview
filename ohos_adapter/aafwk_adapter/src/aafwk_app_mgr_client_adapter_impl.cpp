@@ -67,13 +67,11 @@ int AafwkAppMgrClientAdapterImpl::GetRenderProcessTerminationStatus(pid_t render
         return -1;
     }
 
-    /*
     int ret = appMgrClient_->GetRenderProcessTerminationStatus(renderPid, status);
     if (ret != 0) {
         WVLOG_E("app mgr client get render process termination status failed, ret = %{public}d.", ret);
         return -1;
     }
-    */
 
     return 0;
 }
