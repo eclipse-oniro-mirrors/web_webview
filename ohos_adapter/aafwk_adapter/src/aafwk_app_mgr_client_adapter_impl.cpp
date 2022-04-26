@@ -18,6 +18,10 @@
 #include "aafwk_render_scheduler_impl.h"
 #include "nweb_log.h"
 
+namespace {
+constexpr int GET_TERMINATION_STATUS_MAX_CNT = 5;
+}
+
 namespace OHOS::NWeb {
 AafwkAppMgrClientAdapterImpl::AafwkAppMgrClientAdapterImpl() :
     appMgrClient_(std::make_unique<AppExecFwk::AppMgrClient>()) {}
@@ -67,9 +71,17 @@ int AafwkAppMgrClientAdapterImpl::GetRenderProcessTerminationStatus(pid_t render
         return -1;
     }
 
-    int ret = appMgrClient_->GetRenderProcessTerminationStatus(renderPid, status);
-    if (ret != 0) {
-        WVLOG_E("app mgr client get render process termination status failed, ret = %{public}d.", ret);
+    int retryCnt = 0;
+    do {
+        int ret = appMgrClient_->GetRenderProcessTerminationStatus(renderPid, status);
+        if (ret != 0) {
+            WVLOG_E("app mgr client get render process termination status failed, ret = %{public}d.", ret);
+            return -1;
+        }
+    } while (status < 0 && ++retryCnt < GET_TERMINATION_STATUS_MAX_CNT);
+
+    if (status < 0) {
+        WVLOG_E("render process termination status invalid, status = %{public}d.", status);
         return -1;
     }
 
