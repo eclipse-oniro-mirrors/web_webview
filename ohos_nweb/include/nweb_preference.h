@@ -244,6 +244,11 @@ public:
      */
     virtual void PutCacheMode(CacheModeFlag flag) = 0;
 
+    /**
+     * Put whether the NWeb allows to remote debugging, default value is false.
+     */
+    virtual void PutWebDebuggingAccess(bool flag) = 0;
+
     /* get methods */
     /**
      * Get if content URL(content from a content provider installed
@@ -470,6 +475,13 @@ public:
      * @see PutCacheMode
      */
     virtual CacheModeFlag CacheMode() = 0;
+
+    /**
+     * Get if the NWeb allow to remote debugging.
+     *
+     * @see PutWebDebuggingAccess
+     */
+    virtual bool IsWebDebuggingAccess() = 0;
 };
 }  // namespace OHOS::NWeb
 #endif  // NWEB_PREFERENCE_H
