@@ -195,7 +195,7 @@ void NWebHandlerImplTest::OnPageIcon(const void* data,
                                      ImageColorType colorType,
                                      ImageAlphaType alphaType)
 {
-    TESTLOG_I("OnPageIcon, width=%{public}d, height=%{public}d", width, height);
+    TESTLOG_I("OnPageIcon, width=%{public}zu, height=%{public}zu", width, height);
     size_t len = width * height * BITS_PER_PIXEL;
     char* data_temp = new char[len];
     if (memcpy_s(data_temp, len, data, len) == 0) {
