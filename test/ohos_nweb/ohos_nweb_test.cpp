@@ -1301,6 +1301,37 @@ void Test232()
     TESTLOG_I("Test232 end");
 }
 
+void Test233()
+{
+    TESTLOG_I("Test233 start");
+
+    TestPrepare();
+    TestWebSettingsForNormalWeb();
+
+    if (g_webSettings != nullptr) {
+        bool isWebDebugging = g_webSettings->IsWebDebuggingAccess();
+        if (isWebDebugging) {
+            TESTLOG_E("Error! isWebDebugging default value:%{public}d != false.", isWebDebugging);
+        } else {
+            TESTLOG_I("isWebDebugging default value: %{public}d", isWebDebugging);
+        }
+
+        TESTLOG_I("Set isWebDebugging to true.");
+        g_webSettings->PutWebDebuggingAccess(true);
+        isWebDebugging = g_webSettings->IsWebDebuggingAccess();
+        if (!isWebDebugging) {
+            TESTLOG_E("Error! isWebDebugging :%{public}d != true.", isWebDebugging);
+        } else {
+            TESTLOG_I("isWebDebugging=%{public}d", isWebDebugging);
+        }
+    }
+
+    g_nweb->Load(g_url);
+    g_window->Show();
+
+    TESTLOG_I("Test233 end");
+}
+
 void Test90()
 {
     TESTLOG_I("start90");
@@ -1782,6 +1813,7 @@ void InitTest(std::vector<struct OhosNWebTest> &tests)
     ADD_TEST(tests, 230, "Test websettings api:PutJavaScriptEnabled and IsJavaScriptAllowed");
     ADD_TEST(tests, 231, "Test websettings api:PutDefaultTextEncodingFormat and DefaultTextEncodingFormat");
     ADD_TEST(tests, 232, "Test websettings api:PutBlockNetwork and IsNetworkBlocked");
+    ADD_TEST(tests, 233, "Test websettings api:PutWebDebuggingAccess and IsWebDebuggingAccess");
 }
 
 void Usage(const char *argv0, const std::vector<struct OhosNWebTest> &tests)
