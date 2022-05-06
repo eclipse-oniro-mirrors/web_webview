@@ -66,6 +66,14 @@ public:
      */
     virtual void ReturnCookie(const std::string &url,
                               std::shared_ptr<NWebValueCallback<std::string>> callback) = 0;
+    
+    /**
+     * @brief Get all the cookies for the given URL.
+     *
+     * @param url the URL for which the cookies are requested.
+     * @return the cookie value for given URL.
+     */
+    virtual std::string ReturnCookie(const std::string &url) = 0;
 
     /**
      * @brief Set a single cookie (key-value pair) for the given URL.
