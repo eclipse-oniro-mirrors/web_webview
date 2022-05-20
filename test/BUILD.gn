@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/web/webview/web_aafwk.gni")
 import("//build/ohos.gni")
 
 config("nweb_test_config") {
@@ -44,8 +45,8 @@ ohos_executable("nweb_test") {
   configs = [ ":nweb_test_config" ]
 
   deps = [
+    "${aafwk_kits_path}/appkit:appkit_native",
     "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/aafwk/standard/frameworks/kits/appkit:appkit_native",
     "//foundation/windowmanager/wm:libwm",
     "//third_party/zlib:libz",
   ]
