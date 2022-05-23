@@ -16,6 +16,7 @@
 #include "ohos_adapter_helper.h"
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
+#include "power_mgr_client_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
@@ -28,5 +29,10 @@ OhosAdapterHelper &OhosAdapterHelper::GetInstance()
 std::unique_ptr<AafwkAppMgrClientAdapter> OhosAdapterHelper::CreateAafwkAdapter()
 {
     return std::make_unique<AafwkAppMgrClientAdapterImpl>();
+}
+
+std::unique_ptr<PowerMgrClientAdapter> OhosAdapterHelper::CreatePowerMgrClientAdapter()
+{
+    return std::make_unique<PowerMgrClientAdapterImpl>();
 }
 }  // namespace OHOS::NWeb
