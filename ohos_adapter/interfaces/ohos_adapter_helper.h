@@ -18,6 +18,7 @@
 
 #include <memory>
 #include "aafwk_app_mgr_client_adapter.h"
+#include "power_mgr_client_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosAdapterHelper {
@@ -27,6 +28,8 @@ public:
     virtual ~OhosAdapterHelper() = default;
 
     std::unique_ptr<AafwkAppMgrClientAdapter> CreateAafwkAdapter();
+
+    std::unique_ptr<PowerMgrClientAdapter> CreatePowerMgrClientAdapter();
 
 private:
     OhosAdapterHelper() = default;
