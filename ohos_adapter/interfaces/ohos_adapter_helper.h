@@ -18,6 +18,7 @@
 
 #include <memory>
 #include "aafwk_app_mgr_client_adapter.h"
+#include "display_manager_adapter.h"
 #include "power_mgr_client_adapter.h"
 
 namespace OHOS::NWeb {
@@ -30,6 +31,8 @@ public:
     std::unique_ptr<AafwkAppMgrClientAdapter> CreateAafwkAdapter();
 
     std::unique_ptr<PowerMgrClientAdapter> CreatePowerMgrClientAdapter();
+
+    std::unique_ptr<DisplayManagerAdapter> CreateDisplayMgrAdapter();
 
 private:
     OhosAdapterHelper() = default;
