@@ -358,6 +358,8 @@ public:
                                     std::shared_ptr<NWebFileSelectorParams> params) {
         return false;
     }
+
+    virtual void OnScaleChanged(float oldScaleFactor, float newScaleFactor) {}
 };
 }  // namespace OHOS::NWeb
 

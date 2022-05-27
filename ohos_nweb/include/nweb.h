@@ -65,6 +65,10 @@ public:
     virtual void OnContinue() const = 0;
     virtual void OnDestroy() = 0;
 
+    /* focus event */
+    virtual void OnFocus() const = 0;
+    virtual void OnBlur() const = 0;
+
     /* event interface */
     virtual void OnTouchPress(int32_t id, double x, double y) = 0;
     virtual void OnTouchRelease(int32_t id, double x = 0, double y = 0) = 0;
@@ -119,7 +123,7 @@ public:
      */
     virtual void NavigateForward() const = 0;
 
-    /** 
+    /**
      * Delete back and forward history list.
      */
     virtual void DeleteNavigateHistory() = 0;
