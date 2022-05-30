@@ -65,6 +65,10 @@ public:
     virtual void OnContinue() const = 0;
     virtual void OnDestroy() = 0;
 
+    /* focus event */
+    virtual void OnFocus() const = 0;
+    virtual void OnBlur() const = 0;
+
     /* event interface */
     virtual void OnTouchPress(int32_t id, double x, double y) = 0;
     virtual void OnTouchRelease(int32_t id, double x = 0, double y = 0) = 0;
@@ -119,7 +123,13 @@ public:
      */
     virtual void NavigateForward() const = 0;
 
-    /** 
+    /**
+     * Goes to the history item that is the number of steps away from the current item.
+     *
+     */
+    virtual void NavigateBackOrForward(int step) const = 0;
+
+    /**
      * Delete back and forward history list.
      */
     virtual void DeleteNavigateHistory() = 0;
@@ -139,6 +149,18 @@ public:
      *
      */
     virtual void Zoom(float zoomFactor) const = 0;
+
+    /**
+     * Performs a zooming in operation in this NWeb.
+     *
+     */
+    virtual void ZoomIn() const = 0;
+
+    /**
+     * Performs a zooming out operation in this NWeb.
+     *
+     */
+    virtual void ZoomOut() const = 0;
 
     /**
      * Stop the current load.
@@ -175,6 +197,13 @@ public:
     virtual const std::shared_ptr<NWebPreference> GetPreference() const = 0;
 
     /**
+     * Gets the web id.
+     *
+     * @return the web id
+     */
+    virtual unsigned int GetWebId() const = 0;
+
+    /**
      * Get the last hit test result.
      *
      * @return the last HitTestResult
@@ -188,6 +217,14 @@ public:
      *
      */
     virtual void PutBackgroundColor(int color) const = 0;
+
+    /**
+     * Sets the initla scale for the page.
+     *
+     * @param scale float: the initla scale of the page.
+     *
+     */
+    virtual void InitialScale(float scale) const = 0;
 
     /**
      * Set the NWebDownloadCallback that will receive download event.
