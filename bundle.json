@@ -60,7 +60,23 @@
             ],
             "test": [
                 "//base/web/webview/test:nweb_test",
-                "//base/web/webview/test:web_render"
+                "//base/web/webview/test:web_render",
+                "//base/web/webview/test/fuzztest/load_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/cannavigatebackorforward_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/executejavascript_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/executejavascriptcode_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/loadwithdata_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/loadwithdataandbaseurl_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/loadurl_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ontouchmove_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ontouchpress_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ontouchrelease_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/resize_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/registerarkjsfunction_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/zoom_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/putbackgroundcolor_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/unregisterarkjsfunction_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/sendkeyevent_fuzzer:fuzztest"
             ]
         }
     }
