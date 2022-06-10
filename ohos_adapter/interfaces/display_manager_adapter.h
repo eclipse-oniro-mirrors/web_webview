@@ -66,6 +66,8 @@ public:
 
     virtual int32_t GetHeight() = 0;
 
+    virtual float GetVirtualPixelRatio() = 0;
+
     virtual RotationType GetRotation() = 0;
 
     virtual OrientationType GetOrientation() = 0;

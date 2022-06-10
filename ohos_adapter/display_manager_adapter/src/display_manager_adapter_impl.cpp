@@ -110,6 +110,14 @@ int32_t DisplayAdapterImpl::GetHeight()
     return -1;
 }
 
+float DisplayAdapterImpl::GetVirtualPixelRatio()
+{
+    if (display_ != nullptr) {
+        return display_->GetVirtualPixelRatio();
+    }
+    return -1;
+}
+
 RotationType DisplayAdapterImpl::GetRotation()
 {
     if (display_ != nullptr) {
