@@ -45,6 +45,7 @@ public:
     DisplayId GetId();
     int32_t GetWidth();
     int32_t GetHeight();
+    float GetVirtualPixelRatio();
     RotationType GetRotation();
     OrientationType GetOrientation();
 private:
