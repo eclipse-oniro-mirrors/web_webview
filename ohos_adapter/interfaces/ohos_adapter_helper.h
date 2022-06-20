@@ -20,6 +20,7 @@
 #include "aafwk_app_mgr_client_adapter.h"
 #include "display_manager_adapter.h"
 #include "power_mgr_client_adapter.h"
+#include "battery_mgr_client_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosAdapterHelper {
@@ -33,6 +34,8 @@ public:
     std::unique_ptr<PowerMgrClientAdapter> CreatePowerMgrClientAdapter();
 
     std::unique_ptr<DisplayManagerAdapter> CreateDisplayMgrAdapter();
+
+    std::unique_ptr<BatteryMgrClientAdapter> CreateBatteryClientAdapter();
 
 private:
     OhosAdapterHelper() = default;
