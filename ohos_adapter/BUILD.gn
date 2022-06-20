@@ -24,6 +24,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "display_manager_adapter/src/display_manager_adapter_impl.cpp",
     "interfaces/ohos_adapter_helper.cpp",
     "power_mgr_adapter/src/power_mgr_client_adapter_impl.cpp",
+    "battery_mgr_adapter/src/battery_mgr_client_adapter_impl.cpp",
   ]
 
   cflags = [
@@ -36,6 +37,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "aafwk_adapter/include",
     "display_manager_adapter/include",
     "power_mgr_adapter/include",
+    "battery_mgr_adapter/include",
     "//base/web/webview/ohos_nweb/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
@@ -54,6 +56,9 @@ ohos_shared_library("nweb_ohos_adapter") {
     "power_manager_native:powermgr_client",
     "utils_base:utils",
     "window_manager:libdm",
+    "battery_manager_native:batterysrv_client",
+    "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
   ]
 
   part_name = "webview"
