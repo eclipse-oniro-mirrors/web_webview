@@ -25,6 +25,26 @@
 #include "common_event_subscriber.h"
 
 namespace OHOS::NWeb {
+class WebBatteryInfoImpl final : public WebBatteryInfo {
+public:
+    WebBatteryInfoImpl(double level, bool isCharging, int disChargingTime, int chargingTime)
+        : level_(level), isCharging_(isCharging), disChargingTime_(disChargingTime), chargingTime_(chargingTime) {}
+
+    virtual ~WebBatteryInfoImpl() = default;
+
+    double GetLevel() override;
+
+    bool IsCharging() override;
+
+    int DisChargingTime() override;
+
+    int ChargingTime() override;
+private:
+    double level_;
+    bool isCharging_;
+    int disChargingTime_;
+    int chargingTime_;
+};
 
 class NWebBatteryEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
