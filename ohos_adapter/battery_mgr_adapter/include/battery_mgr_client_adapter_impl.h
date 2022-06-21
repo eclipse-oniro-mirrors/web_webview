@@ -28,7 +28,8 @@ namespace OHOS::NWeb {
 
 class NWebBatteryEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
-    NWebBatteryEventSubscriber(const EventFwk::CommonEventSubscribeInfo &subscribeInfo, BatteryEventCallback& eventCallback);
+    NWebBatteryEventSubscriber(const EventFwk::CommonEventSubscribeInfo &subscribeInfo,
+                                BatteryEventCallback& eventCallback);
     ~NWebBatteryEventSubscriber() override = default;
     void OnReceiveEvent(const EventFwk::CommonEventData &data) override;
 private:
