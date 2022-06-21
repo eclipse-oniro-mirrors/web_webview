@@ -19,13 +19,11 @@
 
 using namespace OHOS::NWeb;
 using namespace OHOS::PowerMgr;
-
 namespace OHOS::NWeb {
-
 class WebBatteryInfoImpl final : public WebBatteryInfo {
 public:
-    WebBatteryInfoImpl(double level, bool isCharging, int disChargingTime, int chargingTime) :
-        level_(level), isCharging_(isCharging), disChargingTime_(disChargingTime), chargingTime_(chargingTime) {}
+    WebBatteryInfoImpl(double level, bool isCharging, int disChargingTime, int chargingTime)
+        : level_(level), isCharging_(isCharging), disChargingTime_(disChargingTime), chargingTime_(chargingTime) {}
 
     virtual ~WebBatteryInfoImpl() = default;
 
@@ -64,8 +62,8 @@ int WebBatteryInfoImpl::ChargingTime()
 }
 
 NWebBatteryEventSubscriber::NWebBatteryEventSubscriber(
-        const EventFwk::CommonEventSubscribeInfo &subscribeInfo,BatteryEventCallback& eventCallback)
-        : EventFwk::CommonEventSubscriber(subscribeInfo), eventCallback_(eventCallback) {}
+        const EventFwk::CommonEventSubscribeInfo &subscribeInfo, BatteryEventCallback& eventCallback)
+                : EventFwk::CommonEventSubscriber(subscribeInfo), eventCallback_(eventCallback) {}
 
 void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData &data)
 {

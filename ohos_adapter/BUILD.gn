@@ -21,10 +21,10 @@ ohos_shared_library("nweb_ohos_adapter") {
   sources = [
     "aafwk_adapter/src/aafwk_app_mgr_client_adapter_impl.cpp",
     "aafwk_adapter/src/aafwk_render_scheduler_impl.cpp",
+    "battery_mgr_adapter/src/battery_mgr_client_adapter_impl.cpp",
     "display_manager_adapter/src/display_manager_adapter_impl.cpp",
     "interfaces/ohos_adapter_helper.cpp",
     "power_mgr_adapter/src/power_mgr_client_adapter_impl.cpp",
-    "battery_mgr_adapter/src/battery_mgr_client_adapter_impl.cpp",
   ]
 
   cflags = [
@@ -50,15 +50,15 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:app_manager",
+    "battery_manager_native:batterysrv_client",
+    "common_event_service:cesfwk_innerkits",
+    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "ipc:ipc_core",
     "multimedia_image_standard:image_native",
     "power_manager_native:powermgr_client",
     "utils_base:utils",
     "window_manager:libdm",
-    "battery_manager_native:batterysrv_client",
-    "common_event_service:cesfwk_innerkits",
-    "eventhandler:libeventhandler",
   ]
 
   part_name = "webview"

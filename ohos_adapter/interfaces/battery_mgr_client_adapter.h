@@ -16,11 +16,9 @@
 #ifndef BATTERY_MGR_CLIENT_ADAPTER_H
 #define BATTERY_MGR_CLIENT_ADAPTER_H
 
-#include <memory>
 #include <functional>
 
 namespace OHOS::NWeb {
-
 class WebBatteryInfo {
 public:
   virtual ~WebBatteryInfo() = default;
