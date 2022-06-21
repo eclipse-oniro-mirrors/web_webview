@@ -40,7 +40,7 @@ void NWebInputEventConsumerTest::DispatchPointerEvent(std::shared_ptr<MMI::Point
     }
     auto nweb = nwebweak_.lock();
     if (pointerEvent == nullptr) {
-        TESTLOG_E("pointerEvent is invaild.");
+        TESTLOG_E("pointerEvent is invalid.");
         return;
     }
     int32_t pointerID = pointerEvent->GetPointerId();
@@ -87,7 +87,7 @@ void NWebInputEventConsumerTest::DispatchKeyEvent(std::shared_ptr<MMI::KeyEvent>
     }
     auto nweb = nwebweak_.lock();
     if (keyEvent == nullptr) {
-        TESTLOG_E("keyEvent is invaild.");
+        TESTLOG_E("keyEvent is invalid.");
         return;
     }
     int32_t keyCode = keyEvent->GetKeyCode();
