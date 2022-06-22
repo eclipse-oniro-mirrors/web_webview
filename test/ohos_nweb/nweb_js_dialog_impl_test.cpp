@@ -40,13 +40,13 @@ bool NWebJSDialogImplTest::OnBeforeUnloadByJS(const std::string &url,
     return true;
 }
 
-bool NWebJSDialogImplTest::OnPromptDialogByJs(const std::string &url,
+bool NWebJSDialogImplTest::OnPromptDialogByJS(const std::string &url,
                                               const std::string &message,
                                               const std::string &defaultValue,
                                               std::shared_ptr<NWebJSDialogResult> result)
 {
-    TESTLOG_I("OnPromptDialogByJs message:%{public}s", message.c_str());
-    TESTLOG_I("OnPromptDialogByJs defaultValue:%{public}s", defaultValue.c_str());
+    TESTLOG_I("OnPromptDialogByJS message:%{public}s", message.c_str());
+    TESTLOG_I("OnPromptDialogByJS defaultValue:%{public}s", defaultValue.c_str());
     type_ == Type::CONFIRM ? result->Confirm("my input") : result->Cancel();
     return true;
 }
