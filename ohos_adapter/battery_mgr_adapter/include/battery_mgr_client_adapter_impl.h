@@ -48,8 +48,7 @@ private:
 
 class NWebBatteryEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
-    NWebBatteryEventSubscriber(const EventFwk::CommonEventSubscribeInfo &subscribeInfo,
-                                BatteryEventCallback& eventCallback);
+    NWebBatteryEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, BatteryEventCallback& cb);
     ~NWebBatteryEventSubscriber() override = default;
     void OnReceiveEvent(const EventFwk::CommonEventData &data) override;
 private:

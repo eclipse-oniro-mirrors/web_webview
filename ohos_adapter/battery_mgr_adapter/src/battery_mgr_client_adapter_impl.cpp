@@ -40,9 +40,8 @@ int WebBatteryInfoImpl::ChargingTime()
     return chargingTime_;
 }
 
-NWebBatteryEventSubscriber::NWebBatteryEventSubscriber(const EventFwk::CommonEventSubscribeInfo &subscribeInfo,
-                                                        BatteryEventCallback& eventCallback)
-    : EventFwk::CommonEventSubscriber(subscribeInfo), eventCallback_(eventCallback) {}
+NWebBatteryEventSubscriber::NWebBatteryEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, BatteryEventCallback& cb)
+    : EventFwk::CommonEventSubscriber(in), eventCallback_(cb) {}
 
 void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData &data)
 {
@@ -105,7 +104,7 @@ void BatteryMgrClientAdapterImpl::StopListen()
 
 std::unique_ptr<WebBatteryInfo> BatteryMgrClientAdapterImpl::RequestBatteryInfo()
 {
-    WVLOG_E("request batteryInfo");
+    WVLOG_I("request batteryInfo");
     BatterySrvClient& battClient = BatterySrvClient::GetInstance();
     auto capacity = battClient.GetCapacity();
     auto isChangingType = battClient.GetPluggedType();
