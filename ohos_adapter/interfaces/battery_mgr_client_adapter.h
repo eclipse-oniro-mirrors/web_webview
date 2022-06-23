@@ -21,15 +21,15 @@
 namespace OHOS::NWeb {
 class WebBatteryInfo {
 public:
-  virtual ~WebBatteryInfo() = default;
+    virtual ~WebBatteryInfo() = default;
 
-  virtual double GetLevel();
+    virtual double GetLevel() = 0;
 
-  virtual bool IsCharging();
+    virtual bool IsCharging() = 0;
 
-  virtual int DisChargingTime();
+    virtual int DisChargingTime() = 0;
 
-  virtual int ChargingTime();
+    virtual int ChargingTime() = 0;
 };
 
 using BatteryEventCallback = std::function<void(WebBatteryInfo&)>;
@@ -40,13 +40,13 @@ public:
 
     virtual ~BatteryMgrClientAdapter() = default;
     
-    virtual void RegBatteryEvent(const BatteryEventCallback&& eventCallback);
+    virtual void RegBatteryEvent(const BatteryEventCallback&& eventCallback) = 0;
   
-    virtual bool StartListen();
+    virtual bool StartListen() = 0;
 
-    virtual void StopListen();
+    virtual void StopListen() = 0;
 
-    virtual std::unique_ptr<WebBatteryInfo> RequestBatteryInfo();
+    virtual std::unique_ptr<WebBatteryInfo> RequestBatteryInfo() = 0;
 };
 }  // namespace OHOS::NWeb
 
