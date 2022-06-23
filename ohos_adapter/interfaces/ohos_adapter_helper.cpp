@@ -18,6 +18,7 @@
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
+#include "battery_mgr_client_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
@@ -40,5 +41,10 @@ std::unique_ptr<PowerMgrClientAdapter> OhosAdapterHelper::CreatePowerMgrClientAd
 std::unique_ptr<DisplayManagerAdapter> OhosAdapterHelper::CreateDisplayMgrAdapter()
 {
     return std::make_unique<DisplayManagerAdapterImpl>();
+}
+
+std::unique_ptr<BatteryMgrClientAdapter> OhosAdapterHelper::CreateBatteryClientAdapter()
+{
+    return std::make_unique<BatteryMgrClientAdapterImpl>();
 }
 }  // namespace OHOS::NWeb
