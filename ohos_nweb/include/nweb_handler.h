@@ -289,7 +289,7 @@ public:
      * confirm that the user closed the window.
      * @return To show a custom dialog, the app should return true.
      */
-    virtual bool OnPromptDialogByJs(const std::string& url,
+    virtual bool OnPromptDialogByJS(const std::string& url,
                                     const std::string& message,
                                     const std::string& defaultValue,
                                     std::shared_ptr<NWebJSDialogResult> result) {
