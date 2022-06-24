@@ -45,7 +45,7 @@ ohos_executable("nweb_test") {
   configs = [ ":nweb_test_config" ]
 
   deps = [
-    "${aafwk_kits_path}/appkit:appkit_native",
+    "${aafwk_path}/frameworks/native/appkit:appkit_native",
     "//base/web/webview/ohos_nweb:libnweb",
     "//foundation/windowmanager/wm:libwm",
     "//third_party/zlib:libz",
