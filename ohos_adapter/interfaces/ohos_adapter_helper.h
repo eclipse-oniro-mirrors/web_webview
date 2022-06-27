@@ -19,6 +19,7 @@
 #include <memory>
 #include "aafwk_app_mgr_client_adapter.h"
 #include "display_manager_adapter.h"
+#include "net_connect_adapter.h"
 #include "power_mgr_client_adapter.h"
 #include "battery_mgr_client_adapter.h"
 
@@ -37,8 +38,14 @@ public:
 
     std::unique_ptr<BatteryMgrClientAdapter> CreateBatteryClientAdapter();
 
+    std::unique_ptr<NetConnectAdapter> CreateNetConnectAdapter();
+
 private:
     OhosAdapterHelper() = default;
+
+    OhosAdapterHelper(const OhosAdapterHelper&) = delete;
+
+    OhosAdapterHelper& operator=(const OhosAdapterHelper&) = delete;
 };
 }  // namespace OHOS::NWeb
 
