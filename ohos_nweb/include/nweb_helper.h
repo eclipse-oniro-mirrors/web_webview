@@ -19,6 +19,7 @@
 #include <memory>
 #include "nweb.h"
 #include "nweb_cookie_manager.h"
+#include "nweb_data_base.h"
 
 namespace  OHOS::NWeb {
 class OHOS_NWEB_EXPORT NWebHelper {
@@ -29,6 +30,7 @@ public:
 
     std::shared_ptr<NWeb> CreateNWeb(const NWebCreateInfo &create_info);
     NWebCookieManager *GetCookieManager();
+    NWebDataBase *GetDataBase();
     void SetBundlePath(const std::string& path);
 
 private:

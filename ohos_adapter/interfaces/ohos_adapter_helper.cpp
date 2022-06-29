@@ -16,10 +16,11 @@
 #include "ohos_adapter_helper.h"
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
+#include "battery_mgr_client_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
-#include "battery_mgr_client_adapter_impl.h"
+#include "ohos_web_data_base_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
@@ -47,6 +48,11 @@ std::unique_ptr<DisplayManagerAdapter> OhosAdapterHelper::CreateDisplayMgrAdapte
 std::unique_ptr<BatteryMgrClientAdapter> OhosAdapterHelper::CreateBatteryClientAdapter()
 {
     return std::make_unique<BatteryMgrClientAdapterImpl>();
+}
+
+OhosWebDataBaseAdapter &OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
+{
+    return OhosWebDataBaseAdapterImpl::GetInstance();
 }
 
 std::unique_ptr<NetConnectAdapter> OhosAdapterHelper::CreateNetConnectAdapter()

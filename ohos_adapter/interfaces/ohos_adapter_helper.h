@@ -18,10 +18,11 @@
 
 #include <memory>
 #include "aafwk_app_mgr_client_adapter.h"
+#include "battery_mgr_client_adapter.h"
 #include "display_manager_adapter.h"
 #include "net_connect_adapter.h"
+#include "ohos_web_data_base_adapter.h"
 #include "power_mgr_client_adapter.h"
-#include "battery_mgr_client_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosAdapterHelper {
@@ -40,6 +41,7 @@ public:
 
     std::unique_ptr<NetConnectAdapter> CreateNetConnectAdapter();
 
+    OhosWebDataBaseAdapter& GetOhosWebDataBaseAdapterInstance();
 private:
     OhosAdapterHelper() = default;
 
