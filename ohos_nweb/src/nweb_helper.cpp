@@ -172,6 +172,23 @@ NWebCookieManager *NWebHelper::GetCookieManager()
     return cookieFunc();
 }
 
+using GetDataBaseFunc = NWebDataBase *(*)();
+NWebDataBase *NWebHelper::GetDataBase()
+{
+    if (libHandleNWebAdapter_ == nullptr) {
+        return nullptr;
+    }
+
+    const std::string DATA_BASE_FUNC_NAME = "GetDataBase";
+    GetDataBaseFunc dataBaseFunc =
+        reinterpret_cast<GetDataBaseFunc>(dlsym(libHandleNWebAdapter_, DATA_BASE_FUNC_NAME.c_str()));
+    if (dataBaseFunc == nullptr) {
+        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", DATA_BASE_FUNC_NAME.c_str());
+        return nullptr;
+    }
+    return dataBaseFunc();
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;
