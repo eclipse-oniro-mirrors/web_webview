@@ -14,10 +14,8 @@
  */
 
 #include "ohos_web_data_base_adapter_impl.h"
-#include "nweb_log.h"
-
-#include "foundation/ability/ability_runtime/interfaces/kits/native/ability/ability_runtime/ability_context.h"
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
+#include "nweb_log.h"
 
 using namespace OHOS::NativeRdb;
 using namespace OHOS::NWeb;
@@ -65,7 +63,7 @@ OhosWebDataBaseAdapterImpl::OhosWebDataBaseAdapterImpl()
 {
     WVLOG_I("webdatabase create rdb store");
     std::shared_ptr<AbilityRuntime::ApplicationContext> context =
-        AbilityRuntime::AbilityContext::GetApplicationContext();
+        OHOS::AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (context == nullptr) {
         WVLOG_E("webdatabase get context failed");
         return;
