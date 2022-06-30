@@ -16,24 +16,24 @@
 #include "ohos_web_data_base_adapter_impl.h"
 #include "nweb_log.h"
 
-#include "foundation/ability/ability_runtime/frameworks/kits/ability/ability_runtime/include/ability_context.h"
-#include "foundation/ability/ability_runtime/frameworks/kits/appkit/native/ability_runtime/context/application_context.h"
+#include "foundation/ability/ability_runtime/interfaces/kits/native/ability/ability_runtime/ability_context.h"
+#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 
 using namespace OHOS::NativeRdb;
 using namespace OHOS::NWeb;
 
-const int32_t RDB_VERSION = 1;
-const std::string HTTP_AUTH_DATABASE_FILE = "http_auth.db";
-const std::string ENCRYPTION_LEVEL = "el2";
+static const int32_t RDB_VERSION = 1;
+static const std::string HTTP_AUTH_DATABASE_FILE = "http_auth.db";
+static const std::string ENCRYPTION_LEVEL = "el2";
 
-const std::string ID_COL = "_id";
-const std::string HTTPAUTH_TABLE_NAME = "httpauth";
-const std::string HTTPAUTH_HOST_COL = "host";
-const std::string HTTPAUTH_REALM_COL = "realm";
-const std::string HTTPAUTH_USERNAME_COL = "username";
-const std::string HTTPAUTH_PASSWORD_COL = "password";
+static const std::string ID_COL = "_id";
+static const std::string HTTPAUTH_TABLE_NAME = "httpauth";
+static const std::string HTTPAUTH_HOST_COL = "host";
+static const std::string HTTPAUTH_REALM_COL = "realm";
+static const std::string HTTPAUTH_USERNAME_COL = "username";
+static const std::string HTTPAUTH_PASSWORD_COL = "password";
 
-const std::string CREATE_TABLE = "CREATE TABLE " + HTTPAUTH_TABLE_NAME
+static const std::string CREATE_TABLE = "CREATE TABLE " + HTTPAUTH_TABLE_NAME
     + " (" + ID_COL + " INTEGER PRIMARY KEY, "
     + HTTPAUTH_HOST_COL + " TEXT, " + HTTPAUTH_REALM_COL
     + " TEXT, " + HTTPAUTH_USERNAME_COL + " TEXT, "
