@@ -20,7 +20,6 @@
 #include <vector>
 
 namespace OHOS::NWeb {
-
 class OhosWebDataBaseAdapter {
 public:
     OhosWebDataBaseAdapter() = default;
@@ -37,7 +36,5 @@ public:
     virtual void GetHttpAuthUsernamePassword(const std::string& host, const std::string& realm,
         std::vector<std::string>& usernamePassword) const = 0;
 };
-
 } // namespace OHOS::NWeb
-
 #endif // OHOS_WEB_DATA_BASE_ADAPTER_H
