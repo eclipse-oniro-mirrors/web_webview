@@ -28,7 +28,6 @@
 #include "rdb_types.h"
 
 namespace OHOS::NWeb {
-
 class DataBaseRdbOpenCallBack : public OHOS::NativeRdb::RdbOpenCallback {
 public:
     int32_t OnCreate(OHOS::NativeRdb::RdbStore& rdbStore) override;
@@ -61,6 +60,5 @@ private:
 
     std::shared_ptr<OHOS::NativeRdb::RdbStore> rdbStore_;
 };
-
 } // namespace
 #endif // OHOS_WEB_DATA_BASE_ADAPTER_IMPL_H

@@ -47,7 +47,8 @@ int32_t DataBaseRdbOpenCallBack::OnCreate(OHOS::NativeRdb::RdbStore& store)
     return store.ExecuteSql(CREATE_TABLE);
 }
 
-int DataBaseRdbOpenCallBack::OnUpgrade(OHOS::NativeRdb::RdbStore& rdbStore, int32_t currentVersion, int32_t targetVersion)
+int32_t DataBaseRdbOpenCallBack::OnUpgrade(OHOS::NativeRdb::RdbStore& rdbStore,
+    int32_t currentVersion, int32_t targetVersion)
 {
     WVLOG_I("webdatabase rdb upgrade");
     return OHOS::NativeRdb::E_OK;
@@ -125,7 +126,7 @@ void OhosWebDataBaseAdapterImpl::GetHttpAuthUsernamePassword(const std::string& 
         return;
     }
     if (rdbStore_ == nullptr) {
-       return;
+        return;
     }
 
     std::unique_ptr<AbsSharedResultSet> resultSet = nullptr;
