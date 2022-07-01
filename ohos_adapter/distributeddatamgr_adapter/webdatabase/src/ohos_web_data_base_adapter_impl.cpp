@@ -14,6 +14,7 @@
  */
 
 #include "ohos_web_data_base_adapter_impl.h"
+#include <cinttypes>
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb_log.h"
 
@@ -162,7 +163,7 @@ bool OhosWebDataBaseAdapterImpl::ExistHttpAuthUsernamePassword() const
     if (rdbStore_->Count(outValue, dirAbsPred) != NativeRdb::E_OK) {
         return false;
     }
-    WVLOG_I("webdatabase exist http auth info num = %{public}ld", outValue);
+    WVLOG_I("webdatabase exist http auth info num = %{public}" PRId64, outValue);
     if (outValue <= 0) {
         return false;
     }
