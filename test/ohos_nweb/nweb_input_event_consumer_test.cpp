@@ -54,7 +54,7 @@ void NWebInputEventConsumerTest::DispatchPointerEvent(std::shared_ptr<MMI::Point
     switch (action) {
         case MMI::PointerEvent::POINTER_ACTION_DOWN: {
             TESTLOG_I("nweb receive pointer touch down event");
-            nweb->OnTouchPress(pointerID, item.GetLocalX(), item.GetLocalY());
+            nweb->OnTouchPress(pointerID, item.GetWindowX(), item.GetWindowY());
             break;
         }
         case MMI::PointerEvent::POINTER_ACTION_UP: {
@@ -64,7 +64,7 @@ void NWebInputEventConsumerTest::DispatchPointerEvent(std::shared_ptr<MMI::Point
         }
         case MMI::PointerEvent::POINTER_ACTION_MOVE: {
             TESTLOG_I("nweb receive pointer touch move event");
-            nweb->OnTouchMove(pointerID, item.GetLocalX(), item.GetLocalY());
+            nweb->OnTouchMove(pointerID, item.GetWindowX(), item.GetWindowY());
             break;
         }
         case MMI::PointerEvent::POINTER_ACTION_CANCEL: {
