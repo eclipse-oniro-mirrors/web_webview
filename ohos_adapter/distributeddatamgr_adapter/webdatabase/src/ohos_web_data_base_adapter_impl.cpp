@@ -162,7 +162,7 @@ bool OhosWebDataBaseAdapterImpl::ExistHttpAuthUsernamePassword() const
     if (rdbStore_->Count(outValue, dirAbsPred) != NativeRdb::E_OK) {
         return false;
     }
-    WVLOG_I("webdatabase exist http auth info num = %{public}ld", outValue);
+    WVLOG_I("webdatabase exist http auth info num = %{public}lld", outValue);
     if (outValue <= 0) {
         return false;
     }
