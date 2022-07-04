@@ -23,9 +23,11 @@
 #include "nweb_access_request.h"
 #include "nweb.h"
 #include "nweb_console_log.h"
-#include "nweb_geolocation_callback_interface.h"
+#include "nweb_context_menu_params.h"
 #include "nweb_file_selector_params.h"
+#include "nweb_geolocation_callback_interface.h"
 #include "nweb_js_dialog_result.h"
+#include "nweb_js_http_auth_result.h"
 #include "nweb_url_resource_error.h"
 #include "nweb_url_resource_request.h"
 #include "nweb_url_resource_response.h"
@@ -360,6 +362,24 @@ public:
     }
 
     virtual void OnScaleChanged(float oldScaleFactor, float newScaleFactor) {}
+
+    virtual bool RunContextMenu(std::shared_ptr<NWebContextMenuParams> params,
+                                std::shared_ptr<NWebContextMenuCallback> callback) {
+        return false;
+    }
+
+    virtual void OnContextMenuDismissed() {}
+
+    virtual bool RunQuickMenu(std::shared_ptr<NWebQuickMenuParams> params,
+                                std::shared_ptr<NWebQuickMenuCallback> callback) {
+        return false;
+    }
+
+    virtual void OnQuickMenuDismissed() {}
+
+    virtual bool OnHttpAuthRequestByJS(std::shared_ptr<NWebJSHttpAuthResult> result) {
+        return false;
+    }
 };
 }  // namespace OHOS::NWeb
 
