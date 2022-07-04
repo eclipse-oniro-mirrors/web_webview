@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+
 SUBSYSTEM_DIR = "//base/web/webview"
 
 config("web_public_config") {
@@ -19,6 +20,7 @@ config("web_public_config") {
   include_dirs = [
     "$SUBSYSTEM_DIR/interfaces/kits/napi/common",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase",
+    "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage",
   ]
 }
 
@@ -32,6 +34,7 @@ ohos_shared_library("webnapi") {
   sources = [
     "$SUBSYSTEM_DIR/interfaces/kits/napi/common/napi_webview_native_module.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase/napi_web_data_base.cpp",
+    "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage/napi_web_storage.cpp",
   ]
 
   deps = [

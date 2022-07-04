@@ -18,12 +18,14 @@
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "napi_web_data_base.h"
+#include "napi_web_storage.h"
 
 namespace OHOS {
 EXTERN_C_START
 static napi_value WebViewExport(napi_env env, napi_value exports)
 {
     NapiWebDataBase::Init(env, exports);
+    NapiWebStorage::Init(env, exports);
     return exports;
 }
 EXTERN_C_END
@@ -31,5 +33,5 @@ EXTERN_C_END
 /*
  * Module register function
  */
-NAPI_MODULE(webnapi, WebViewExport)
+NAPI_MODULE(web, WebViewExport)
 } // namesapce OHOS
