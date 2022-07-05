@@ -189,6 +189,22 @@ NWebDataBase *NWebHelper::GetDataBase()
     return dataBaseFunc();
 }
 
+using GetWebStorageFunc = NWebWebStorage *(*)();
+NWebWebStorage *NWebHelper::GetWebStorage()
+{
+    if (libHandleNWebAdapter_ == nullptr) {
+        return nullptr;
+    }
+    const std::string STORAGE_FUNC_NAME = "GetWebStorage";
+    GetWebStorageFunc storageFunc =
+        reinterpret_cast<GetWebStorageFunc>(dlsym(libHandleNWebAdapter_, STORAGE_FUNC_NAME.c_str()));
+    if (storageFunc == nullptr) {
+        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", STORAGE_FUNC_NAME.c_str());
+        return nullptr;
+    }
+    return storageFunc();
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;
