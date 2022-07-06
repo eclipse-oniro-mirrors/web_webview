@@ -19,6 +19,7 @@
 #include "battery_mgr_client_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
+#include "pasteboard_client_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
 
@@ -58,5 +59,10 @@ OhosWebDataBaseAdapter &OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
 std::unique_ptr<NetConnectAdapter> OhosAdapterHelper::CreateNetConnectAdapter()
 {
     return std::make_unique<NetConnectAdapterImpl>();
+}
+
+PasteBoardClientAdapter& OhosAdapterHelper::GetPasteBoard()
+{
+    return PasteBoardClientAdapterImpl::GetInstance();
 }
 }  // namespace OHOS::NWeb
