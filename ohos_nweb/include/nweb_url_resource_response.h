@@ -180,7 +180,7 @@ private:
     int status_code_ = 200;
     std::string reason_phrase_;
     std::map<std::string, std::string> response_headers_;
-    std::string& input_stream_;
+    std::string input_stream_;
 };
 } // namespace OHOS::NWeb
 
