@@ -28,6 +28,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "net_connect_adapter/src/net_connect_adapter_impl.cpp",
     "net_connect_adapter/src/net_connect_callback_impl.cpp",
     "net_connect_adapter/src/net_connect_utils.cpp",
+    "pasteboard_adapter/src/pasteboard_client_adapter_impl.cpp",
     "power_mgr_adapter/src/power_mgr_client_adapter_impl.cpp",
   ]
 
@@ -44,6 +45,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "power_mgr_adapter/include",
     "battery_mgr_adapter/include",
     "distributeddatamgr_adapter/webdatabase/include",
+    "pasteboard_adapter/include",
     "//base/web/webview/ohos_nweb/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
@@ -67,6 +69,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ipc:ipc_core",
     "multimedia_image_standard:image_native",
     "netmanager_base:net_conn_manager_if",
+    "pasteboard_native:pasteboard_client",
     "power_manager_native:powermgr_client",
     "relational_store:native_rdb",
     "utils_base:utils",

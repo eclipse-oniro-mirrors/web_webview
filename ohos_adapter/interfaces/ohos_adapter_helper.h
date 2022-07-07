@@ -22,6 +22,7 @@
 #include "display_manager_adapter.h"
 #include "net_connect_adapter.h"
 #include "ohos_web_data_base_adapter.h"
+#include "pasteboard_client_adapter.h"
 #include "power_mgr_client_adapter.h"
 
 namespace OHOS::NWeb {
@@ -42,6 +43,8 @@ public:
     std::unique_ptr<NetConnectAdapter> CreateNetConnectAdapter();
 
     OhosWebDataBaseAdapter& GetOhosWebDataBaseAdapterInstance();
+
+    PasteBoardClientAdapter& GetPasteBoard();
 private:
     OhosAdapterHelper() = default;
 
