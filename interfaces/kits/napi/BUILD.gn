@@ -24,7 +24,7 @@ config("web_public_config") {
   ]
 }
 
-ohos_shared_library("webnapi") {
+ohos_shared_library("web_napi") {
   include_dirs = [
     "//foundation/arkui/napi/interfaces/kits",
     "//utils/system/safwk/native/include",
