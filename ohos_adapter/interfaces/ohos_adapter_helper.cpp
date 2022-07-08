@@ -52,7 +52,7 @@ std::unique_ptr<BatteryMgrClientAdapter> OhosAdapterHelper::CreateBatteryClientA
     return std::make_unique<BatteryMgrClientAdapterImpl>();
 }
 
-OhosWebDataBaseAdapter &OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
+OhosWebDataBaseAdapter &OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance() const
 {
     return OhosWebDataBaseAdapterImpl::GetInstance();
 }
@@ -62,7 +62,7 @@ std::unique_ptr<NetConnectAdapter> OhosAdapterHelper::CreateNetConnectAdapter()
     return std::make_unique<NetConnectAdapterImpl>();
 }
 
-PasteBoardClientAdapter& OhosAdapterHelper::GetPasteBoard()
+PasteBoardClientAdapter& OhosAdapterHelper::GetPasteBoard() const
 {
     return PasteBoardClientAdapterImpl::GetInstance();
 }
