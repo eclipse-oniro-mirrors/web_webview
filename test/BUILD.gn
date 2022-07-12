@@ -18,7 +18,7 @@ config("nweb_test_config") {
   include_dirs = [
     "ohos_nweb",
     "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/windowmanager/interfaces/innerkits/wm",
+    "//foundation/window/window_manager/interfaces/innerkits/wm",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
   ]
 
@@ -47,7 +47,7 @@ ohos_executable("nweb_test") {
   deps = [
     "${aafwk_path}/frameworks/native/appkit:appkit_native",
     "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/windowmanager/wm:libwm",
+    "//foundation/window/window_manager/wm:libwm",
     "//third_party/zlib:libz",
   ]
 

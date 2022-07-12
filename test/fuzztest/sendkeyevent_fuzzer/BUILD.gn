@@ -22,7 +22,7 @@ ohos_fuzztest("SendKeyEventFuzzTest") {
   include_dirs = [
     "//base/web/webview/test/ohos_nweb",
     "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/windowmanager/interfaces/innerkits/wm",
+    "//foundation/window/window_manager/interfaces/innerkits/wm",
     "//base/web/webview/test/fuzztest",
   ]
 
