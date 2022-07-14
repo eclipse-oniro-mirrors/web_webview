@@ -20,16 +20,24 @@ namespace OHOS::NWeb {
 NWebInputEventConsumer::NWebInputEventConsumer(std::shared_ptr<NWeb> nweb)
     : nwebweak_(nweb) {}
 
-void NWebInputEventConsumer::OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const
+bool NWebInputEventConsumer::OnInputEvent(const std::shared_ptr<MMI::PointerEvent>& pointerEvent) const
 {
     DispatchPointerEvent(pointerEvent);
     pointerEvent->MarkProcessed();
+    return true;
 }
 
-void NWebInputEventConsumer::OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const
+bool NWebInputEventConsumer::OnInputEvent(const std::shared_ptr<MMI::KeyEvent>& keyEvent) const
 {
     DispatchKeyEvent(keyEvent);
     keyEvent->MarkProcessed();
+    return true;
+}
+
+bool NWebInputEventConsumer::OnInputEvent(const std::shared_ptr<MMI::AxisEvent>& axisEvent) const
+{
+    // do nothing
+    return false;
 }
 
 void NWebInputEventConsumer::DispatchPointerEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const
