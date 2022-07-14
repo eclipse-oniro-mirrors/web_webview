@@ -17,16 +17,21 @@
 #define NWEB_INPUT_EVENT_CONSUMER_H
 
 #include <memory>
-#include "i_input_event_consumer.h"
+
+#include "axis_event.h"
+#include "key_event.h"
 #include "nweb.h"
+#include "pointer_event.h"
+#include "window.h"
 
 namespace OHOS::NWeb {
-class NWebInputEventConsumer : public MMI::IInputEventConsumer {
+class NWebInputEventConsumer : public Rosen::IInputEventConsumer {
 public:
     explicit NWebInputEventConsumer(std::shared_ptr<NWeb> nweb);
-    void OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const override;
-    void OnInputEvent(std::shared_ptr<MMI::KeyEvent> keyEvent) const override;
-    void OnInputEvent(std::shared_ptr<MMI::AxisEvent> axisEvent) const override {}
+    ~NWebInputEventConsumer() override = default;
+    bool OnInputEvent(const std::shared_ptr<MMI::KeyEvent>& keyEvent) const override;
+    bool OnInputEvent(const std::shared_ptr<MMI::PointerEvent>& pointerEvent) const override;
+    bool OnInputEvent(const std::shared_ptr<MMI::AxisEvent>& axisEvent) const override;
 
 private:
     void DispatchPointerEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const;

@@ -189,9 +189,9 @@ void NWebWindowAdapter::RegistEventCb(Rosen::Window *window, std::shared_ptr<NWe
         return;
     }
 
-    std::shared_ptr<MMI::IInputEventConsumer> inputEventListener =
+    std::shared_ptr<Rosen::IInputEventConsumer> inputEventListener =
         std::make_shared<NWebInputEventConsumer>(nweb);
 
-    window->AddInputEventListener(inputEventListener);
+    window->SetInputEventConsumer(inputEventListener);
 }
 } // namespace OHOS::NWeb

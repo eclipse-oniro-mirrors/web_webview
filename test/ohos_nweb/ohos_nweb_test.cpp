@@ -177,10 +177,10 @@ void RegistEventCb(sptr<Rosen::Window> window, std::shared_ptr<OHOS::NWeb::NWeb>
         return;
     }
 
-    std::shared_ptr<MMI::IInputEventConsumer> inputEventListener =
+    std::shared_ptr<Rosen::IInputEventConsumer> inputEventListener =
         std::make_shared<NWeb::NWebInputEventConsumerTest>(nweb);
 
-    window->AddInputEventListener(inputEventListener);
+    window->SetInputEventConsumer(inputEventListener);
 }
 
 void TestPrepare()
