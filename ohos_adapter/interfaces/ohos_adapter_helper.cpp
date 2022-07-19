@@ -22,6 +22,7 @@
 #include "pasteboard_client_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
+#include "audio_renderer_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
@@ -64,5 +65,10 @@ std::unique_ptr<NetConnectAdapter> OhosAdapterHelper::CreateNetConnectAdapter()
 PasteBoardClientAdapter& OhosAdapterHelper::GetPasteBoard()
 {
     return PasteBoardClientAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<AudioRendererAdapter> OhosAdapterHelper::CreateAudioRendererAdapter()
+{
+    return std::make_unique<AudioRendererAdapterImpl>();
 }
 }  // namespace OHOS::NWeb
