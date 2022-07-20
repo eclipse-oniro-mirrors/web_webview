@@ -58,7 +58,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:app_manager",
-    "battery_manager_native:batterysrv_client",
+    "battery_manager:batterysrv_client",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "cellular_data:tel_cellular_data_api",
