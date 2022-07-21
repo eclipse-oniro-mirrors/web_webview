@@ -78,7 +78,7 @@ ohos_shared_library("libnweb") {
     "hiviewdfx_hilog_native:libhilog",
     "input:libmmi-client",
     "ipc:ipc_core",
-    "samgr_standard:samgr_proxy",
+    "samgr:samgr_proxy",
   ]
 
   part_name = "webview"
