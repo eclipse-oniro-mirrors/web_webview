@@ -69,20 +69,20 @@ OhosWebDataBaseAdapterImpl::OhosWebDataBaseAdapterImpl()
         WVLOG_E("webdatabase get context failed");
         return;
     }
-	std::string moduleName;
-	auto hapInfo = context->GetHapModuleInfo();
+    std::string moduleName;
+    auto hapInfo = context->GetHapModuleInfo();
     if (hapInfo != nullptr) {
         moduleName = hapInfo->moduleName;
     }
     std::string bundleName = context->GetBundleName();
     std::string databaseDir = context->GetDatabaseDir();
-	std::string name = HTTP_AUTH_DATABASE_FILE;
-    int errorCode = E_OK;
+    std::string name = HTTP_AUTH_DATABASE_FILE;
+    int32_t errorCode = E_OK;
     std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
     RdbStoreConfig config("");
-	config.SetPath(std::move(realPath));
+    config.SetPath(std::move(realPath));
     config.SetBundleName(bundleName);
-	config.SetModuleName(moduleName);
+    config.SetModuleName(moduleName);
     config.SetName(std::move(name));
     config.SetArea(context->GetArea());
     WVLOG_I("webdatabase databaseDir=%{public}s", databaseDir.c_str());
