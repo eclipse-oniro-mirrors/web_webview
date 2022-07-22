@@ -45,7 +45,7 @@ public:
 
     OhosWebDataBaseAdapter& GetOhosWebDataBaseAdapterInstance();
 
-    PasteBoardClientAdapter& GetPasteBoard();
+    PasteBoardClientAdapter& GetPasteBoard() const;
 
     std::unique_ptr<AudioRendererAdapter> CreateAudioRendererAdapter();
 private:
