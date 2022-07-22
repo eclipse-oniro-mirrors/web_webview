@@ -43,9 +43,9 @@ public:
 
     std::unique_ptr<NetConnectAdapter> CreateNetConnectAdapter();
 
-    OhosWebDataBaseAdapter& GetOhosWebDataBaseAdapterInstance() const;
+    OhosWebDataBaseAdapter& GetOhosWebDataBaseAdapterInstance();
 
-    PasteBoardClientAdapter& GetPasteBoard() const; 
+    PasteBoardClientAdapter& GetPasteBoard() const;
 
     std::unique_ptr<AudioRendererAdapter> CreateAudioRendererAdapter();
 private:

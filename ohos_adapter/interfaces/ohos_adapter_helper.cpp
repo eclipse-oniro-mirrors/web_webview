@@ -52,7 +52,7 @@ std::unique_ptr<BatteryMgrClientAdapter> OhosAdapterHelper::CreateBatteryClientA
     return std::make_unique<BatteryMgrClientAdapterImpl>();
 }
 
-OhosWebDataBaseAdapter &OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance() const
+OhosWebDataBaseAdapter &OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
 {
     return OhosWebDataBaseAdapterImpl::GetInstance();
 }
