@@ -62,6 +62,12 @@ public:
 
     virtual int32_t GetContextMenuTypeFlags() = 0;
 
+    virtual std::string GetLinkUrl() = 0;
+
+    virtual std::string GetUnfilteredLinkUrl() = 0;
+
+    virtual std::string GetSourceUrl() = 0;
+
     virtual bool HasImageContents() = 0;
 
     virtual std::string GetTitleText() = 0;
