@@ -23,6 +23,7 @@
 #include "nweb_export.h"
 
 #include "nweb_download_callback.h"
+#include "nweb_find_callback.h"
 #include "nweb_javascript_result_callback.h"
 #include "nweb_preference.h"
 #include "nweb_value_callback.h"
@@ -360,6 +361,36 @@ public:
      */
     virtual void SetNWebJavaScriptResultCallBack(
         std::shared_ptr<NWebJavaScriptResultCallBack> callback) = 0;
+
+    /**
+     * Set the NWebFindCallback that will receive find event.
+     * This will replace the current handler.
+     *
+     * @param findListener NWebFindCallback : find callback
+     */
+    virtual void PutFindCallback(
+        std::shared_ptr<NWebFindCallback> findListener) = 0;
+
+    /**
+     * Finds all instances of find on the page and highlights them,
+     * asynchronously.
+     *
+     * @param searchStr String: target string to find.
+     */
+    virtual void FindAllAsync(const std::string &searchStr) const = 0;
+
+    /**
+     * Clears the highlighting surrounding text matches created by findAllAsync
+     */
+    virtual void ClearMatches() const = 0;
+
+    /**
+     * Highlights and scrolls to the next match found by findAllAsync(String),
+     * wrapping around page boundaries as necessary.
+     *
+     * @param forward bool: find back or forward.
+     */
+    virtual void FindNext(const bool forward) const = 0;
 };
 }  // namespace OHOS::NWeb
 
