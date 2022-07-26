@@ -21,10 +21,29 @@
         "ram": "~150MB",
         "deps": {
             "components": [
-                "libvsync_client",
-                "libsurface",
-                "librender_service_client",
-                "libwm"
+                "netmanager_base",
+                "cellular_data",
+                "hiviewdfx_hilog_native",
+                "ability_base",
+                "ability_runtime",
+                "pasteboard",
+                "napi",
+                "battery_manager",
+                "libuv",
+                "window_manager",
+                "multimedia_audio_framework",
+                "core_service",
+                "ipc",
+                "relational_store",
+                "multimedia_image_standard",
+                "input",
+                "utils_base",
+                "eventhandler",
+                "zlib",
+                "common_event_service",
+                "bundle_framework",
+                "power_manager",
+                "samgr_standard"
             ],
             "third_party": [
                 "chromium",
