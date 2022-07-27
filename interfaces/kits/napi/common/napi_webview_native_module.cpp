@@ -31,7 +31,23 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
 EXTERN_C_END
 
 /*
- * Module register function
+ * module define
  */
-NAPI_MODULE(web, WebViewExport)
+static napi_module _module = {
+    .nm_version = 1,
+    .nm_flags = 0,
+    .nm_filename = nullptr,
+    .nm_register_func = WebViewExport,
+    .nm_modname = "web.webview",
+    .nm_priv = ((void *)0),
+    .reserved = {0}
+};
+
+/*
+ * module register
+ */
+extern "C" __attribute__((constructor)) void Register()
+{
+    napi_module_register(&_module);
+}
 } // namesapce OHOS
