@@ -69,11 +69,12 @@ OhosWebDataBaseAdapterImpl::OhosWebDataBaseAdapterImpl()
         WVLOG_E("webdatabase get context failed");
         return;
     }
-    std::string moduleName;
     auto hapInfo = context->GetHapModuleInfo();
-    if (hapInfo != nullptr) {
-        moduleName = hapInfo->moduleName;
+    if (hapInfo == nullptr) {
+        WVLOG_E("webdatabase get hapInfo failed");
+        return;
     }
+    std::string moduleName = hapInfo->moduleName;
     std::string bundleName = context->GetBundleName();
     std::string databaseDir = context->GetDatabaseDir();
     std::string name = HTTP_AUTH_DATABASE_FILE;
