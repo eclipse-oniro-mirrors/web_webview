@@ -17,13 +17,13 @@
 #include <cinttypes>
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb_log.h"
+#include "sqlite_database_utils.h"
 
 using namespace OHOS::NativeRdb;
 using namespace OHOS::NWeb;
 
 static const int32_t RDB_VERSION = 1;
 static const std::string HTTP_AUTH_DATABASE_FILE = "http_auth.db";
-static const std::string ENCRYPTION_LEVEL = "el2";
 
 static const std::string ID_COL = "_id";
 static const std::string HTTPAUTH_TABLE_NAME = "httpauth";
@@ -69,15 +69,23 @@ OhosWebDataBaseAdapterImpl::OhosWebDataBaseAdapterImpl()
         WVLOG_E("webdatabase get context failed");
         return;
     }
+    auto hapInfo = context->GetHapModuleInfo();
+    if (hapInfo == nullptr) {
+        WVLOG_E("webdatabase get hapInfo failed");
+        return;
+    }
+    std::string moduleName = hapInfo->moduleName;
     std::string bundleName = context->GetBundleName();
     std::string databaseDir = context->GetDatabaseDir();
-    std::string relativePath = HTTP_AUTH_DATABASE_FILE;
-
-    RdbStoreConfig config(databaseDir + "/" + relativePath);
+    std::string name = HTTP_AUTH_DATABASE_FILE;
+    int32_t errorCode = E_OK;
+    std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
+    RdbStoreConfig config("");
+    config.SetPath(std::move(realPath));
     config.SetBundleName(bundleName);
-    config.SetName(HTTP_AUTH_DATABASE_FILE);
-    config.SetRelativePath(relativePath);
-    config.SetEncryptLevel(ENCRYPTION_LEVEL);
+    config.SetModuleName(moduleName);
+    config.SetName(std::move(name));
+    config.SetArea(context->GetArea());
     WVLOG_I("webdatabase databaseDir=%{public}s", databaseDir.c_str());
     WVLOG_I("webdatabase bundleName=%{public}s", bundleName.c_str());
 
