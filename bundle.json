@@ -37,7 +37,7 @@
                 "relational_store",
                 "multimedia_image_standard",
                 "input",
-                "utils_base",
+                "c_utils",
                 "eventhandler",
                 "zlib",
                 "common_event_service",
