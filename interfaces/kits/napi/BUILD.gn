@@ -40,10 +40,10 @@ ohos_shared_library("web_napi") {
   deps = [
     "//foundation/arkui/napi:ace_napi",
     "//third_party/libuv:uv",
-    "//utils/native/base:utils",
   ]
 
   external_deps = [
+    "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "webview:libnweb",
   ]
