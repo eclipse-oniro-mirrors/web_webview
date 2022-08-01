@@ -24,7 +24,7 @@ config("web_public_config") {
   ]
 }
 
-ohos_shared_library("web_napi") {
+ohos_shared_library("webview_napi") {
   include_dirs = [
     "//foundation/arkui/napi/interfaces/kits",
     "//utils/system/safwk/native/include",
@@ -48,7 +48,7 @@ ohos_shared_library("web_napi") {
     "webview:libnweb",
   ]
 
-  relative_install_dir = "module"
+  relative_install_dir = "module/web"
 
   part_name = "webview"
   subsystem_name = "web"
