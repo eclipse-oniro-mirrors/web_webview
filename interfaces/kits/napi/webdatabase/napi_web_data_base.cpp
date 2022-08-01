@@ -14,9 +14,11 @@
  */
 
 #include "napi_web_data_base.h"
-#include <unistd.h>
+
+#include <cstdint>
 #include <vector>
 
+#include "napi/native_common.h"
 #include "nweb_data_base.h"
 #include "nweb_helper.h"
 #include "securec.h"

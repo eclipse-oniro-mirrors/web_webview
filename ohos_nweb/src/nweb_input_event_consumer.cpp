@@ -14,6 +14,10 @@
  */
 
 #include "nweb_input_event_consumer.h"
+
+#include <cstdint>
+#include <memory>
+
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {

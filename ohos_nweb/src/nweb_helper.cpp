@@ -15,13 +15,18 @@
 
 #include "nweb_helper.h"
 
-#include <iostream>
-#include <thread>
 #include <dlfcn.h>
-#include "nweb_log.h"
+#include <refbase.h>
+#include <surface.h>
+
+#include <cstdint>
+#include <memory>
+
 #include "nweb_adapter_helper.h"
-#include "nweb_window_adapter.h"
+#include "nweb_log.h"
 #include "nweb_surface_adapter.h"
+#include "nweb_window_adapter.h"
+#include "window.h"
 
 namespace {
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;

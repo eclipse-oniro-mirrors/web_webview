@@ -15,14 +15,21 @@
 
 #include "executejavascript_fuzzer.h"
 
-#include <cstring>
-#include <securec.h>
+#include <refbase.h>
 #include <ui/rs_surface_node.h>
+
+#include <cstdint>
+#include <cstring>
+#include <iosfwd>
+#include <list>
+#include <memory>
+#include <new>
+#include <unordered_map>
 
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
-#include "nweb_handler_impl_test.h"
 #include "window.h"
+#include "window_option.h"
 
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;

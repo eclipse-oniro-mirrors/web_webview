@@ -16,11 +16,14 @@
 #ifndef NWEB_NAPI_WEB_STORAGE_H
 #define NWEB_NAPI_WEB_STORAGE_H
 
+#include <cstdint>
+#include <iosfwd>
+#include <string>
+#include <vector>
+
 #include "napi/native_api.h"
-#include "napi/native_common.h"
 #include "napi/native_node_api.h"
-#include "nweb_helper.h"
-#include "nweb_web_storage.h"
+#include "node_api_types.h"
 
 namespace OHOS {
 const std::string WEB_STORAGE_CLASS_NAME = "WebStorage";

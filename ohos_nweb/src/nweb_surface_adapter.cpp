@@ -15,11 +15,15 @@
 
 #include "nweb_surface_adapter.h"
 
-#include <securec.h>
 #include <display_type.h>
-#include <ui/rs_surface_node.h>
+#include <securec.h>
 #include <sync_fence.h>
+
+#include "graphic_common.h"
+#include "graphic_common_c.h"
+#include "include/core/SkTypes.h"
 #include "nweb_log.h"
+#include "surface_type.h"
 
 namespace {
 constexpr int BITS_PER_PIXEL = 4;
