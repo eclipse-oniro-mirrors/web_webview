@@ -28,6 +28,7 @@
 #include "nweb_geolocation_callback_interface.h"
 #include "nweb_js_dialog_result.h"
 #include "nweb_js_http_auth_result.h"
+#include "nweb_touch_handle_state.h"
 #include "nweb_url_resource_error.h"
 #include "nweb_url_resource_request.h"
 #include "nweb_url_resource_response.h"
@@ -371,15 +372,20 @@ public:
     virtual void OnContextMenuDismissed() {}
 
     virtual bool RunQuickMenu(std::shared_ptr<NWebQuickMenuParams> params,
-                                std::shared_ptr<NWebQuickMenuCallback> callback) {
+                              std::shared_ptr<NWebQuickMenuCallback> callback) {
         return false;
     }
 
     virtual void OnQuickMenuDismissed() {}
 
+    virtual void OnTouchSelectionChanged(
+        std::shared_ptr<NWebTouchHandleState> insertHandle,
+        std::shared_ptr<NWebTouchHandleState> startSelectionHandle,
+        std::shared_ptr<NWebTouchHandleState> endSelectionHandle) {}
+
     virtual bool OnHttpAuthRequestByJS(std::shared_ptr<NWebJSHttpAuthResult> result,
-                                       const std::string &host,
-                                       const std::string &realm) {
+                                       const std::string& host,
+                                       const std::string& realm) {
         return false;
     }
 };

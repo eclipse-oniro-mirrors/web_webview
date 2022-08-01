@@ -16,9 +16,11 @@
 #ifndef NWEB_CONTEXT_MENU_PARAMS_H
 #define NWEB_CONTEXT_MENU_PARAMS_H
 
+#include <memory>
 #include <string>
 
 #include "nweb_export.h"
+#include "nweb_touch_handle_state.h"
 
 namespace OHOS::NWeb {
 class OHOS_NWEB_EXPORT NWebContextMenuParams {
@@ -89,6 +91,7 @@ public:
         QM_EF_CAN_CUT = 1 << 1,
         QM_EF_CAN_COPY = 1 << 2,
         QM_EF_CAN_PASTE = 1 << 3,
+        QM_EF_CAN_SELECT_ALL = 1 << 4,
     };
 
     virtual ~NWebQuickMenuParams() = default;
@@ -99,9 +102,12 @@ public:
 
     virtual int32_t GetWidth() = 0;
 
-    virtual int32_t GetHeigth() = 0;
+    virtual int32_t GetHeight() = 0;
 
     virtual int32_t GetEditStateFlags() = 0;
+
+    virtual std::shared_ptr<NWebTouchHandleState> GetTouchHandleState(
+        NWebTouchHandleState::TouchHandleType type) = 0;
 };
 
 enum MenuEventFlags {
