@@ -15,8 +15,13 @@
 
 #include <unistd.h>
 #include <dlfcn.h>
-#include <string>
+
+#include <iosfwd>
+#include <ostream>
 #include <sstream>
+#include <string>
+
+#include "hilog/log_cpp.h"
 #include "nweb_test_log.h"
 
 using namespace OHOS;

@@ -15,13 +15,20 @@
 
 #include "nweb_window_adapter.h"
 
+#include <display_type.h>
+#include <refbase.h>
 #include <securec.h>
 #include <surface.h>
-#include <vsync_helper.h>
-#include <display_type.h>
 #include <ui/rs_surface_node.h>
-#include "nweb_log.h"
+#include <vsync_helper.h>
+
+#include "graphic_common.h"
+#include "graphic_common_c.h"
 #include "nweb_input_event_consumer.h"
+#include "nweb_log.h"
+#include "surface_buffer.h"
+#include "surface_type.h"
+#include "wm_common.h"
 
 namespace OHOS::NWeb {
 // static

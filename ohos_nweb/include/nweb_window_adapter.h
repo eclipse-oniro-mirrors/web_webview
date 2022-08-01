@@ -16,9 +16,13 @@
 #ifndef NWEB_WINDOW_ADAPTER_H
 #define NWEB_WINDOW_ADAPTER_H
 
+#include <window.h>
+
+#include <memory>
 #include <unordered_map>
+
+#include "nweb.h"
 #include "nweb_adapter_common.h"
-#include "window.h"
 
 namespace OHOS::NWeb {
 class NWebWindowAdapter {

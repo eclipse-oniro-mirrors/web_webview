@@ -14,9 +14,7 @@
  */
 #include <unistd.h>
 
-#include "hilog/log.h"
 #include "napi/native_api.h"
-#include "napi/native_node_api.h"
 #include "napi_web_data_base.h"
 #include "napi_web_storage.h"
 
