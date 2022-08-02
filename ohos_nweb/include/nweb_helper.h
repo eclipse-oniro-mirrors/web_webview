@@ -16,10 +16,13 @@
 #ifndef NWEB_HELPER_H
 #define NWEB_HELPER_H
 
+#include <iosfwd>
 #include <memory>
+#include <string>
 #include "nweb.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_data_base.h"
+#include "nweb_export.h"
 #include "nweb_web_storage.h"
 
 namespace  OHOS::NWeb {
