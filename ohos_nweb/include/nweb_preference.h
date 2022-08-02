@@ -249,6 +249,12 @@ public:
      */
     virtual void PutWebDebuggingAccess(bool flag) = 0;
 
+
+    /**
+     * Put whether media playback needs to be triggered by user gestures, default value is false.
+     */
+    virtual void PutMediaPlayGestureAccess(bool flag) = 0;
+
     /* get methods */
     /**
      * Get if content URL(content from a content provider installed
@@ -482,6 +488,11 @@ public:
      * @see PutWebDebuggingAccess
      */
     virtual bool IsWebDebuggingAccess() = 0;
+
+    /**
+     * Get whether media playback needs to be triggered by user gestures.
+     */
+    virtual bool GetMediaPlayGestureAccess() = 0;
 };
 }  // namespace OHOS::NWeb
 #endif  // NWEB_PREFERENCE_H
