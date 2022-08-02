@@ -17,6 +17,9 @@
         "adapted_system_type": [
             "standard"
         ],
+        "hisysevent_config": [
+            "//base/web/webview/hisysevent.yaml"
+        ],
         "rom": "~85MB",
         "ram": "~150MB",
         "deps": {
