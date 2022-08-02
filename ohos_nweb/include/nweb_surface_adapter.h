@@ -16,8 +16,12 @@
 #ifndef NWEB_SURFACE_ADAPTER_H
 #define NWEB_SURFACE_ADAPTER_H
 
-#include <unordered_map>
-#include "nweb_adapter_common.h"
+#include <refbase.h>
+#include <stdint.h>
+#include <surface.h>
+
+#include "nweb.h"
+#include "surface_buffer.h"
 
 namespace OHOS {
 class Surface;

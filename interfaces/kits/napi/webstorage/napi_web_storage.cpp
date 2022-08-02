@@ -14,9 +14,13 @@
  */
 
 #include "napi_web_storage.h"
-#include <unistd.h>
-#include "hilog/log.h"
-#include "securec.h"
+
+#include <cstddef>
+#include <new>
+
+#include "napi/native_common.h"
+#include "nweb_helper.h"
+#include "nweb_web_storage.h"
 
 namespace OHOS {
 napi_value NapiWebStorage::Init(napi_env env, napi_value exports)
