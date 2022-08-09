@@ -393,6 +393,17 @@ public:
     virtual void FindNext(const bool forward) const = 0;
 
     /**
+     * Saves the current view as a web archive.
+     *
+     * @param baseName the filename where the archive should be placed This value cannot be null.
+     * @param autoName if false, takes basename to be a file. If true, basename is assumed to be
+     * a directory in which a filename will be chosen according to the URL of the
+     * current page.
+     */
+    virtual void StoreWebArchive(const std::string &baseName, bool autoName,
+        std::shared_ptr<NWebValueCallback<std::string>> callback) const = 0;
+
+    /**
      * create two web message ports.
      * @param ports the web message ports.
      */
