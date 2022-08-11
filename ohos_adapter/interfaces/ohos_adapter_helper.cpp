@@ -16,14 +16,15 @@
 #include "ohos_adapter_helper.h"
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
+#include "audio_renderer_adapter_impl.h"
+#include "audio_system_manager_adapter_impl.h"
 #include "battery_mgr_client_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
+#include "ohos_web_data_base_adapter_impl.h"
+#include "ohos_web_permission_data_base_adapter_impl.h"
 #include "pasteboard_client_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
-#include "ohos_web_data_base_adapter_impl.h"
-#include "audio_renderer_adapter_impl.h"
-#include "audio_system_manager_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
@@ -76,5 +77,10 @@ std::unique_ptr<AudioRendererAdapter> OhosAdapterHelper::CreateAudioRendererAdap
 AudioSystemManagerAdapter& OhosAdapterHelper::GetAudioSystemManager() const
 {
     return AudioSystemManagerAdapterImpl::GetInstance();
+}
+
+OhosWebPermissionDataBaseAdapter& OhosAdapterHelper::GetWebPermissionDataBaseInstance()
+{
+    return OhosWebPermissionDataBaseAdapterImpl::GetInstance();
 }
 }  // namespace OHOS::NWeb
