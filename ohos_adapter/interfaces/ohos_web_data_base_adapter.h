@@ -36,5 +36,30 @@ public:
     virtual void GetHttpAuthCredentials(const std::string& host, const std::string& realm,
         std::vector<std::string>& usernamePassword) const = 0;
 };
+
+enum class WebPermissionType: int32_t {
+    NONE_TYPE,
+    GEOLOCATION
+};
+
+class OhosWebPermissionDataBaseAdapter {
+public:
+    OhosWebPermissionDataBaseAdapter() = default;
+
+    virtual ~OhosWebPermissionDataBaseAdapter() = default;
+
+    virtual bool ExitPermissionByOrigin(const std::string &origin, const WebPermissionType &key) const = 0;
+
+    virtual bool GetPermissionResultByOrigin(const std::string &origin, const WebPermissionType &key,
+        bool &result) const = 0;
+
+    virtual void SetPermissionByOrigin(const std::string &origin, const WebPermissionType &key, bool result) = 0;
+
+    virtual void ClearPermissionByOrigin(const std::string &origin, const WebPermissionType &key) = 0;
+
+    virtual void ClearAllPermission(const WebPermissionType &key) = 0;
+
+    virtual void GetOriginsByPermission(const WebPermissionType &key, std::vector<std::string> &origins) const = 0;
+};
 } // namespace OHOS::NWeb
 #endif // OHOS_WEB_DATA_BASE_ADAPTER_H
