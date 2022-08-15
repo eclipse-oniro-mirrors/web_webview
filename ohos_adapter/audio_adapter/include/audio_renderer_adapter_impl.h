@@ -27,7 +27,7 @@ class AudioRendererAdapterImpl : public AudioRendererAdapter {
 public:
     AudioRendererAdapterImpl() = default;
 
-    virtual ~AudioRendererAdapterImpl() = default;
+    ~AudioRendererAdapterImpl() = default;
 
     int32_t Create(const AudioAdapterRendererOptions &rendererOptions) override;
 
@@ -45,13 +45,19 @@ public:
 
     float GetVolume() const override;
 
-private:
     static AudioSamplingRate GetAudioSamplingRate(AudioAdapterSamplingRate samplingRate);
+
     static AudioEncodingType GetAudioEncodingType(AudioAdapterEncodingType encodingType);
+
     static AudioSampleFormat GetAudioSampleFormat(AudioAdapterSampleFormat sampleFormat);
+
     static AudioChannel GetAudioChannel(AudioAdapterChannel channel);
+
     static ContentType GetAudioContentType(AudioAdapterContentType contentType);
+
     static StreamUsage GetAudioStreamUsage(AudioAdapterStreamUsage streamUsage);
+
+private:
     std::unique_ptr<AudioRenderer> audio_renderer_;
 };
 }  // namespace OHOS::NWeb
