@@ -68,12 +68,6 @@ std::shared_ptr<OHOS::NativeRdb::RdbStore> OhosWebPermissionDataBaseAdapterImpl:
         WVLOG_E("web permission database get context failed");
         return rdbStore;
     }
-    auto hapInfo = context->GetHapModuleInfo();
-    if (hapInfo == nullptr) {
-        WVLOG_E("web permission database get hapInfo failed");
-        return rdbStore;
-    }
-    std::string moduleName = hapInfo->moduleName;
     std::string bundleName = context->GetBundleName();
     std::string databaseDir = context->GetDatabaseDir();
     std::string name = dataBeseName;
@@ -82,7 +76,6 @@ std::shared_ptr<OHOS::NativeRdb::RdbStore> OhosWebPermissionDataBaseAdapterImpl:
     RdbStoreConfig config("");
     config.SetPath(std::move(realPath));
     config.SetBundleName(bundleName);
-    config.SetModuleName(moduleName);
     config.SetName(std::move(name));
     config.SetArea(context->GetArea());
     WVLOG_I("web permission database databaseDir=%{public}s", databaseDir.c_str());
