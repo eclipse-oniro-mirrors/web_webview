@@ -21,6 +21,7 @@ config("module_private_config") {
   include_dirs = [
     "//base/web/webview/interfaces/innerkits/ohos_nweb",
     "//foundation/window/window_manager/interfaces/innerkits/wm",
+    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
   ]
 }
 
@@ -30,6 +31,8 @@ ohos_unittest("nweb_helper_test") {
   sources = [
     "nweb_helper_test.cpp",
     "nweb_input_event_test.cpp",
+    "nweb_creat_window.cpp",
+
   ]
 
   configs = [ ":module_private_config" ]
