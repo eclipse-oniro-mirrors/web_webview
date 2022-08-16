@@ -15,15 +15,12 @@
 
 #include "nweb_creat_window.h"
 #include <cstring>
-#include <gtest/gtest.h>
 #include <securec.h>
 #include <ui/rs_surface_node.h>
 #include <unordered_map>
 
 #include "nweb_adapter_helper.h"
 
-using namespace testing;
-using namespace testing::ext;
 using namespace OHOS;
 
 namespace OHOS::NWeb {
@@ -46,12 +43,12 @@ const std::string ARG_HEIGHT = "--height";
 
 std::unordered_map<std::string, std::string> g_argsMap;
 
-bool HasArg(const std::string& arg)
+static bool HasArg(const std::string& arg)
 {
     return (!g_argsMap.empty()) && (g_argsMap.find(arg) != g_argsMap.end());
 }
 
-std::string GetArgValue(const std::string& arg)
+static std::string GetArgValue(const std::string& arg)
 {
     if (!HasArg(arg)) {
         return "";
@@ -59,7 +56,7 @@ std::string GetArgValue(const std::string& arg)
     return g_argsMap.at(arg);
 }
 
-uint32_t GetNumFromArgs(const std::string& arg)
+static uint32_t GetNumFromArgs(const std::string& arg)
 {
     if (!HasArg(arg)) {
         return 0;
@@ -67,7 +64,7 @@ uint32_t GetNumFromArgs(const std::string& arg)
     return std::stoi(GetArgValue(arg));
 }
 
-std::list<std::string> GetWebEngineArgs(const std::string& arg)
+static std::list<std::string> GetWebEngineArgs(const std::string& arg)
 {
     std::string webEngineArgValue = GetArgValue(arg);
     std::list<std::string> webEngineArgList;
