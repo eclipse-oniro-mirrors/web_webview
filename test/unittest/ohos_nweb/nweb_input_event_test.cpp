@@ -32,8 +32,12 @@ using namespace OHOS;
 
 namespace OHOS::NWeb {
 namespace {
+const bool RESULT_OK = true;
+const bool RESULT_FAIL = false;
+const int32_t POINTER_EVENT = 11;
 std::shared_ptr<NWeb> nweb_;
 std::shared_ptr<NWebInputEventConsumer> input_;
+const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
 } // namespace
 
 class NWebInputEventTest : public testing::Test {
@@ -94,7 +98,7 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_002, TestSize.Level1)
     result = input_->OnInputEvent(event);
     EXPECT_EQ(RESULT_OK, result);
 
-    std::shared_ptr<MMI::KeyEvent> tmp = std::make_shared<MMI::KeyEvent>(keyEvent);
+    std::shared_ptr<MMI::KeyEvent> tmp = MMI::KeyEvent::Create();
     result = input_->OnInputEvent(tmp);
     EXPECT_EQ(RESULT_OK, result);
 
@@ -115,7 +119,7 @@ HWTEST_F(NWebInputEventTest,NWebInputEvent_DispatchPointerEvent_003, TestSize.Le
     std::shared_ptr<MMI::PointerEvent> event = MMI::PointerEvent::Create();
     result = input_->OnInputEvent(event);
     EXPECT_EQ(RESULT_OK, result);
-    for (int32_t i = 0, i <= POINTER_EVENT, i++) {
+    for (int32_t i = 0; i <= POINTER_EVENT; i++) {
         event->SetPointerAction(i);
         input_->DispatchPointerEvent(event);
     }
