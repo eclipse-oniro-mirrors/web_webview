@@ -25,6 +25,7 @@
 #include "pasteboard_client_adapter.h"
 #include "power_mgr_client_adapter.h"
 #include "audio_renderer_adapter.h"
+#include "audio_system_manager_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosAdapterHelper {
@@ -48,6 +49,8 @@ public:
     PasteBoardClientAdapter& GetPasteBoard() const;
 
     std::unique_ptr<AudioRendererAdapter> CreateAudioRendererAdapter();
+
+    AudioSystemManagerAdapter& GetAudioSystemManager() const;
 private:
     OhosAdapterHelper() = default;
 

@@ -15,6 +15,9 @@
 
 #include "audio_renderer_adapter_impl.h"
 
+#include <unordered_map>
+
+#include "audio_errors.h"
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb_log.h"
 
