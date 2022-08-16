@@ -20,6 +20,7 @@
 #include <unordered_map>
 
 #include "key_event.h"
+#include "nweb_creat_window.h"
 #include "nweb_input_event_consumer.h"
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
@@ -31,10 +32,8 @@ using namespace OHOS;
 
 namespace OHOS::NWeb {
 namespace {
-const bool RESULT_OK = true;
-const bool RESULT_FAIL = false;
-const int32_t POINTER_EVENT = 11;
-const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
+std::shared_ptr<NWeb> nweb_;
+std::shared_ptr<NWebInputEventConsumer> input_;
 } // namespace
 
 class NWebInputEventTest : public testing::Test {
@@ -43,9 +42,6 @@ public:
     static void TearDownTestCase(void);
     void SetUp();
     void TearDown();
-private:
-    std::shared_ptr<NWeb> nweb_;
-    std::shared_ptr<NWebInputEventConsumer> input_;
 };
 
 void NWebInputEventTest::SetUpTestCase(void)
@@ -64,7 +60,7 @@ void NWebInputEventTest::SetUp(void)
     bool result = false;
 
     nweb_ = NWebAdapterHelper::Instance().CreateNWeb(g_window.GetRefPtr(), GetInitArgs());
-    if (g_nweb != nullptr) {
+    if (nweb_ != nullptr) {
         result = true;
     }
     EXPECT_EQ(RESULT_FAIL, result);
@@ -123,4 +119,5 @@ HWTEST_F(NWebInputEventTest,NWebInputEvent_DispatchPointerEvent_003, TestSize.Le
         event->SetPointerAction(i);
         input_->DispatchPointerEvent(event);
     }
+}
 }
