@@ -103,6 +103,8 @@ sptr<OHOS::Rosen::Window> CreateWindow(void)
     int height = HasArg(ARG_HEIGHT) ? GetNumFromArgs(ARG_HEIGHT) : DEFAULT_HEIGHT;
     OHOS::Rosen::Rect windowRect = { 0, 0, width, height };
     option->SetWindowRect(windowRect);
+    option->SetWindowType(Rosen::WindowType::WINDOW_TYPE_APP_LAUNCHING);
+    option->SetWindowMode(Rosen::WindowMode::WINDOW_MODE_FLOATING);
     auto window = OHOS::Rosen::Window::Create("nweb_test_window", option);
     return window;
 }
