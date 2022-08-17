@@ -36,9 +36,8 @@ const std::string ARG_NWEB_TEST_MOCK_BUNDLEPATH = "--bundle-installation-dir";
 const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
 const std::string ARG_WIDTH = "--width";
 const std::string ARG_HEIGHT = "--height";
-} // namespace
-
 std::unordered_map<std::string, std::string> g_argsMap;
+} // namespace
 
 static bool HasArg(const std::string& arg)
 {

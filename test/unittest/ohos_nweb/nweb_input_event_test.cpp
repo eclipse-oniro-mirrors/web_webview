@@ -87,7 +87,7 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_NWebInputEventConsumer_001, TestSize
     if (g_input != nullptr) {
         result = true;
     }
-   EXPECT_EQ(RESULT_OK, result);
+    EXPECT_EQ(RESULT_OK, result);
 }
 
 /**
