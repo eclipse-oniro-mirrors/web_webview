@@ -23,14 +23,6 @@ config("web_public_config") {
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage",
   ]
-
-  cflags = [
-    "--coverage",
-  ]
-
-  ldflags = [
-    "--coverage",
-  ]
 }
 
 ohos_shared_library("webview_napi") {
