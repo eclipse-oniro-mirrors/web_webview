@@ -22,7 +22,7 @@
 #include "nweb_adapter_helper.h"
 
 using namespace OHOS;
-using namespace OHOS::NWeb;
+namespace OHOS::NWeb {
 namespace {
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
@@ -106,4 +106,5 @@ sptr<OHOS::Rosen::Window> CreateWindow(void)
     option->SetWindowMode(Rosen::WindowMode::WINDOW_MODE_FLOATING);
     auto window = OHOS::Rosen::Window::Create("nweb_test_window", option);
     return window;
+}
 }
