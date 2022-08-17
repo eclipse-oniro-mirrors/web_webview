@@ -19,34 +19,25 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
-    "//base/web/webview/test/unittest/common"
+    "//base/web/webview/ohos_adapter/aafwk_adapter/include"
   ]
 }
 
-ohos_unittest("nweb_input_test") {
+ohos_unittest("nweb_aafwk_test") {
   module_out_path = module_output_path
 
-  sources = [
-    "nweb_input_event_test.cpp",
-    "//base/web/webview/test/unittest/common/nweb_creat_window.cpp",
-
-  ]
+  sources = [ "nweb_aafwk_adapter_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/window/window_manager/wm:libwm",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",
+    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
   ]
-  external_deps = [ "input:libmmi-client" ]
 }
 
 group("unittest") {
   testonly = true
-  deps = [ ":nweb_input_test" ]
+  deps = [ ":nweb_aafwk_test" ]
 }

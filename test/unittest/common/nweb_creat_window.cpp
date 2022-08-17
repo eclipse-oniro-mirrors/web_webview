@@ -22,11 +22,8 @@
 #include "nweb_adapter_helper.h"
 
 using namespace OHOS;
-
-namespace OHOS::NWeb {
+using namespace OHOS::NWeb;
 namespace {
-const bool RESULT_OK = true;
-const bool RESULT_FAIL = false;
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 const std::string ARG_URL = "--url";
@@ -108,5 +105,4 @@ sptr<OHOS::Rosen::Window> CreateWindow(void)
     option->SetWindowRect(windowRect);
     auto window = OHOS::Rosen::Window::Create("nweb_test_window", option);
     return window;
-}
 }

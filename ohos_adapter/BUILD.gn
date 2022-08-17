@@ -37,6 +37,11 @@ ohos_shared_library("nweb_ohos_adapter") {
     "-Wall",
     "-Werror",
     "-g3",
+    "--coverage",
+  ]
+
+  ldflags = [
+    "--coverage",
   ]
 
   include_dirs = [

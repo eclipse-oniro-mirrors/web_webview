@@ -50,6 +50,11 @@ config("nweb_config") {
     "-Wall",
     "-Werror",
     "-g3",
+    "--coverage",
+  ]
+
+  ldflags = [
+    "--coverage",
   ]
 }
 
