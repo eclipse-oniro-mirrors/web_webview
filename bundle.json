@@ -101,8 +101,7 @@
                 "//base/web/webview/test/fuzztest/unregisterarkjsfunction_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/sendkeyevent_fuzzer:fuzztest",
                 "//base/web/webview/test/unittest/nweb_helper_test:unittest",
-                "//base/web/webview/test/unittest/ohos_nweb:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/aafwk_adapter:unittest"
+                "//base/web/webview/test/unittest/ohos_nweb:unittest"
             ]
         }
     }

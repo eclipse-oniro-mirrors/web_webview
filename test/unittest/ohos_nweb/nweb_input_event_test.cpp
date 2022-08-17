@@ -56,15 +56,14 @@ void NWebInputEventTest::SetUpTestCase(void)
         return;
     }
     sptr<OHOS::Rosen::Window> window = CreateWindow();
-    if (g_window == nullptr) {
+    if (window == nullptr) {
         return;
     }
-
     g_nweb = NWebAdapterHelper::Instance().CreateNWeb(window.GetRefPtr(), GetInitArgs());
     if (g_nweb != nullptr) {
         result = true;
     }
-    EXPECT_EQ(RESULT_OK, result);
+    EXPECT_EQ(RESULT_FAIL, result);
 }
 
 void NWebInputEventTest::TearDownTestCase(void)
