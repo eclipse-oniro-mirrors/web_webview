@@ -30,7 +30,7 @@ ohos_unittest("nweb_input_test") {
   module_out_path = module_output_path
 
   sources = [
-    "//base/web/webview/test/unittest/common/nweb_creat_window.cpp",
+    "//base/web/webview/test/unittest/common/nweb_create_window.cpp",
     "nweb_input_event_test.cpp",
   ]
 
