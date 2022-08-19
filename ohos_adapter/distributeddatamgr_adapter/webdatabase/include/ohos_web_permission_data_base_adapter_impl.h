@@ -41,18 +41,18 @@ public:
 
     virtual ~OhosWebPermissionDataBaseAdapterImpl() = default;
 
-    bool ExitPermissionByOrigin(const std::string &origin, const WebPermissionType &key) const override;
+    bool ExistPermissionByOrigin(const std::string& origin, const WebPermissionType& key) const override;
 
-    bool GetPermissionResultByOrigin(const std::string &origin, const WebPermissionType &key,
+    bool GetPermissionResultByOrigin(const std::string& origin, const WebPermissionType& key,
         bool &result) const override;
 
-    void SetPermissionByOrigin(const std::string &origin, const WebPermissionType &key, bool result) override;
+    void SetPermissionByOrigin(const std::string& origin, const WebPermissionType& key, bool result) override;
 
-    void ClearPermissionByOrigin(const std::string &origin, const WebPermissionType &key) override;
+    void ClearPermissionByOrigin(const std::string& origin, const WebPermissionType& key) override;
 
-    void ClearAllPermission(const WebPermissionType &key) override;
+    void ClearAllPermission(const WebPermissionType& key) override;
 
-    void GetOriginsByPermission(const WebPermissionType &key, std::vector<std::string> &origins) const override;
+    void GetOriginsByPermission(const WebPermissionType& key, std::vector<std::string>& origins) const override;
 
 private:
     OhosWebPermissionDataBaseAdapterImpl();
@@ -61,10 +61,10 @@ private:
 
     OhosWebPermissionDataBaseAdapterImpl& operator=(const OhosWebPermissionDataBaseAdapterImpl&) = delete;
 
-    std::shared_ptr<OHOS::NativeRdb::RdbStore> CreateDataBase(const std::string &dataBeseName,
-        OHOS::NativeRdb::RdbOpenCallback &callBack);
+    std::shared_ptr<OHOS::NativeRdb::RdbStore> CreateDataBase(const std::string& dataBeseName,
+        OHOS::NativeRdb::RdbOpenCallback& callBack);
 
-    std::string KeyToTableName(const WebPermissionType &key) const;
+    std::string KeyToTableName(const WebPermissionType& key) const;
 
     std::shared_ptr<OHOS::NativeRdb::RdbStore> rdbStore_;
 };

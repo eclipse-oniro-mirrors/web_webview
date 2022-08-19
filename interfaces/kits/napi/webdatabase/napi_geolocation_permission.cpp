@@ -31,6 +31,8 @@ constexpr int32_t MAX_STRING_LENGTH = 40960;
 constexpr int32_t RESULT_COUNT = 2;
 constexpr int32_t INTERFACE_OK = 0;
 constexpr int32_t INTERFACE_ERROR = -1;
+constexpr int32_t ALLOW_PERMISSION_OPERATION = 1;
+constexpr int32_t DELETE_PERMISSION_OPERATION = 2;
 
 struct GetPermissionOriginsParam {
     std::vector<std::string> origins;
@@ -99,7 +101,7 @@ bool NapiGeolocationPermission::GetStringPara(napi_env env, napi_value argv, std
     return true;
 }
 
-napi_value NapiGeolocationPermission::GetErrorCodeValue(napi_env env, int errCode)
+napi_value NapiGeolocationPermission::GetErrorCodeValue(napi_env env, int32_t errCode)
 {
     napi_value jsObject = nullptr;
     napi_value jsValue = nullptr;
@@ -109,51 +111,45 @@ napi_value NapiGeolocationPermission::GetErrorCodeValue(napi_env env, int errCod
     return jsObject;
 }
 
-napi_value NapiGeolocationPermission::JsAllowGeolocation(napi_env env, napi_callback_info info)
+napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_callback_info info,
+    int32_t operationType)
 {
     napi_value retValue = nullptr;
     size_t argc = PARAMONE;
-    napi_value argv[1] = { 0 };
+    napi_value argv[PARAMONE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     NAPI_ASSERT(env, argc == PARAMONE, "requires 1 parameter");
-
     std::string origin;
     bool ret = GetStringPara(env, argv[PARAMZERO], origin);
     NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
-    if (dataBase != nullptr) {
-        dataBase->SetPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE, true);
-    }
 
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
+    OHOS::NWeb::NWebDataBase *dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    if (!dataBase) {
+        return result;
+    }
+    if (operationType == ALLOW_PERMISSION_OPERATION) {
+        dataBase->SetPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE, true);
+    } else if (operationType == DELETE_PERMISSION_OPERATION) {
+        dataBase->ClearPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE);
+    }
     return result;
+}
+
+napi_value NapiGeolocationPermission::JsAllowGeolocation(napi_env env, napi_callback_info info)
+{
+    return ProcessActionByType(env, info, ALLOW_PERMISSION_OPERATION);
 }
 
 napi_value NapiGeolocationPermission::JsDeleteGeolocation(napi_env env, napi_callback_info info)
 {
-    napi_value retValue = nullptr;
-    size_t argc = PARAMONE;
-    napi_value argv[1] = { 0 };
-    napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == PARAMONE, "requires 1 parameter");
-
-    std::string origin;
-    bool ret = GetStringPara(env, argv[PARAMZERO], origin);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
-    if (dataBase != nullptr) {
-        dataBase->ClearPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE);
-    }
-
-    napi_value result = nullptr;
-    napi_get_undefined(env, &result);
-    return result;
+    return ProcessActionByType(env, info, DELETE_PERMISSION_OPERATION);
 }
 
 napi_value NapiGeolocationPermission::JsDeleteAllGeolocation(napi_env env, napi_callback_info info)
 {
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    OHOS::NWeb::NWebDataBase *dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (dataBase != nullptr) {
         dataBase->ClearAllPermission(OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE);
     }
@@ -165,7 +161,7 @@ napi_value NapiGeolocationPermission::JsDeleteAllGeolocation(napi_env env, napi_
 
 void NapiGeolocationPermission::GetPermissionStateComplete(napi_env env, napi_status status, void *data)
 {
-    GetOriginPermissionStateParam* param = static_cast<GetOriginPermissionStateParam *>(data);
+    GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
         setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
@@ -183,11 +179,12 @@ void NapiGeolocationPermission::GetPermissionStateComplete(napi_env env, napi_st
     napi_delete_reference(env, param->callbackRef);
     napi_delete_async_work(env, param->asyncWork);
     delete param;
+    param = nullptr;
 }
 
 void NapiGeolocationPermission::GetPermissionStatePromiseComplete(napi_env env, napi_status status, void *data)
 {
-    GetOriginPermissionStateParam* param = static_cast<GetOriginPermissionStateParam *>(data);
+    GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
     napi_get_boolean(env, param->retValue, &setResult[PARAMONE]);
@@ -200,6 +197,7 @@ void NapiGeolocationPermission::GetPermissionStatePromiseComplete(napi_env env, 
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_async_work(env, param->asyncWork);
     delete param;
+    param = nullptr;
 }
 
 void NapiGeolocationPermission::ExecuteGetPermissionState(napi_env env, void *data)
@@ -274,19 +272,18 @@ napi_value NapiGeolocationPermission::GetPermissionStatePromise(napi_env env, na
 napi_value NapiGeolocationPermission::JsGetAccessibleGeolocation(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = PARAMONE;
+    size_t argc = PARAMTWO;
     size_t argcPromise = PARAMONE;
     size_t argcCallback = PARAMTWO;
     napi_value argv[PARAMTWO] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 0 or 1 parameter");
+    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 1 or 2 parameter");
     std::string origin;
     bool ret = GetStringPara(env, argv[PARAMZERO], origin);
     NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
 
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_undefined;
-        napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
         napi_typeof(env, argv[PARAMONE], &valueType);
         if (valueType == napi_function) {
             return GetPermissionStateAsync(env, argv, origin);
@@ -300,7 +297,7 @@ napi_value NapiGeolocationPermission::JsGetAccessibleGeolocation(napi_env env, n
 
 void NapiGeolocationPermission::GetOriginComplete(napi_env env, napi_status status, void *data)
 {
-    GetPermissionOriginsParam* param = static_cast<GetPermissionOriginsParam *>(data);
+    GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
         setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
@@ -323,11 +320,12 @@ void NapiGeolocationPermission::GetOriginComplete(napi_env env, napi_status stat
     napi_delete_reference(env, param->callbackRef);
     napi_delete_async_work(env, param->asyncWork);
     delete param;
+    param = nullptr;
 }
 
 void NapiGeolocationPermission::GetOriginsPromiseComplete(napi_env env, napi_status status, void *data)
 {
-    GetPermissionOriginsParam* param = static_cast<GetPermissionOriginsParam *>(data);
+    GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
     napi_create_array(env, &setResult[PARAMONE]);
@@ -345,12 +343,13 @@ void NapiGeolocationPermission::GetOriginsPromiseComplete(napi_env env, napi_sta
     }
     napi_delete_async_work(env, param->asyncWork);
     delete param;
+    param = nullptr;
 }
 
 void NapiGeolocationPermission::ExecuteGetOrigins(napi_env env, void *data)
 {
     GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    OHOS::NWeb::NWebDataBase *dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (!dataBase) {
         param->errCode = INTERFACE_ERROR;
         param->status = napi_generic_failure;
@@ -404,15 +403,14 @@ napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env)
 napi_value NapiGeolocationPermission::JsGetStoredGeolocation(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = 0;
-    size_t argcPromise = 0;
-    size_t argcCallback = 1;
+    size_t argc = PARAMONE;
+    size_t argcPromise = PARAMZERO;
+    size_t argcCallback = PARAMONE;
     napi_value argv = nullptr;
     napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
     NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 0 or 1 parameter");
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_undefined;
-        napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
         napi_typeof(env, argv, &valueType);
         if (valueType == napi_function) {
             return GetOriginsAsync(env, &argv);
@@ -427,8 +425,8 @@ napi_value NapiGeolocationPermission::JsGetStoredGeolocation(napi_env env, napi_
 napi_value NapiGeolocationPermission::JsConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
-    size_t argc = 2;
-    napi_value argv[2] = { 0 };
+    size_t argc = PARAMTWO;
+    napi_value argv[PARAMTWO] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     return thisVar;
 }

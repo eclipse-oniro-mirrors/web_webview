@@ -72,7 +72,7 @@ public:
      * @param type specifies permission type.
      * @return true if instances saved origin specifies permission.
      */
-    virtual bool ExitPermissionByOrigin(const std::string& origin, int type) = 0;
+    virtual bool ExistPermissionByOrigin(const std::string& origin, int type) = 0;
 
     /**
      * @brief get specifies permission type result by origin.
