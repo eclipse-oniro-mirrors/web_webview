@@ -33,6 +33,8 @@ public:
     static napi_value Init(napi_env env, napi_value exports);
 
 private:
+    static napi_value ProcessActionByType(napi_env env, napi_callback_info info, int32_t operationType);
+
     static napi_value JsAllowGeolocation(napi_env env, napi_callback_info info);
 
     static napi_value JsDeleteGeolocation(napi_env env, napi_callback_info info);
@@ -67,7 +69,7 @@ private:
 
     static bool GetStringPara(napi_env env, napi_value argv, std::string& outValue);
 
-    static napi_value GetErrorCodeValue(napi_env env, int errCode);
+    static napi_value GetErrorCodeValue(napi_env env, int32_t errCode);
 };
 } // namespace OHOS
 
