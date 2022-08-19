@@ -12,7 +12,9 @@
     "component": {
         "name": "webview",
         "subsystem": "web",
-        "syscap": [],
+        "syscap": [
+            "SystemCapability.Web.Webview.Core"
+        ],
         "features": [],
         "adapted_system_type": [
             "standard"
