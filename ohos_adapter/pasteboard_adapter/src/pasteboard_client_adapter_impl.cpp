@@ -15,12 +15,24 @@
 
 #include "pasteboard_client_adapter_impl.h"
 
+#include <securec.h>
+#include "nweb_log.h"
+
 using namespace OHOS::MiscServices;
 
 namespace OHOS::NWeb {
 PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
     std::shared_ptr<PasteDataRecord> record)
     : record_(record) {}
+
+PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
+    const std::string& mimeType)
+{
+    builder_ = std::make_shared<PasteDataRecord::Builder>(mimeType);
+    if (builder_) {
+        record_ = builder_->Build();
+    }
+}
 
 PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
     const std::string& mimeType,
@@ -35,6 +47,12 @@ PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
 }
 
 std::shared_ptr<PasteDataRecordAdapter> PasteDataRecordAdapter::NewRecord(
+    const std::string& mimeType)
+{
+    return std::make_shared<PasteDataRecordAdapterImpl>(mimeType);
+}
+
+std::shared_ptr<PasteDataRecordAdapter> PasteDataRecordAdapter::NewRecord(
     const std::string& mimeType,
     std::shared_ptr<std::string> htmlText,
     std::shared_ptr<std::string> plainText)
@@ -43,7 +61,111 @@ std::shared_ptr<PasteDataRecordAdapter> PasteDataRecordAdapter::NewRecord(
                                                         htmlText,
                                                         plainText);
 }
-    
+
+bool PasteDataRecordAdapterImpl::SetHtmlText(std::shared_ptr<std::string> htmlText)
+{
+    if (builder_) {
+        record_ = builder_->SetHtmlText(htmlText).Build();
+        return true;
+    } else {
+        WVLOG_E("record_ is null");
+    }
+    return false;
+}
+
+bool PasteDataRecordAdapterImpl::SetPlainText(std::shared_ptr<std::string> plainText)
+{
+    if (builder_) {
+        record_ = builder_->SetPlainText(plainText).Build();
+        return true;
+    } else {
+        WVLOG_E("record_ is null");
+    }
+    return false;
+}
+
+ClipBoardImageAlphaType PasteDataRecordAdapterImpl::ImageToClipboardAlphaType
+    (const Media::ImageInfo &imgInfo)
+{
+    switch (imgInfo.alphaType) {
+        case Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN :
+            return ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
+        case Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE :
+            return ClipBoardImageAlphaType::ALPHA_TYPE_OPAQUE;
+        case Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL :
+            return ClipBoardImageAlphaType::ALPHA_TYPE_PREMULTIPLIED;
+        default :
+            return ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
+    }
+}
+
+ClipBoardImageColorType PasteDataRecordAdapterImpl::ImageToClipboardColorType
+    (const Media::ImageInfo &imgInfo)
+{
+    switch (imgInfo.pixelFormat) {
+        case Media::PixelFormat::RGBA_8888 :
+            return ClipBoardImageColorType::COLOR_TYPE_RGBA_8888;
+        case Media::PixelFormat::BGRA_8888 :
+            return ClipBoardImageColorType::COLOR_TYPE_BGRA_8888;
+        default :
+            return ClipBoardImageColorType::COLOR_TYPE_UNKNOWN;
+    }
+}
+
+Media::AlphaType PasteDataRecordAdapterImpl::ClipboardToImageAlphaType
+    (ClipBoardImageAlphaType alphaType)
+{
+    switch (alphaType) {
+        case ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN :
+            return Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
+        case ClipBoardImageAlphaType::ALPHA_TYPE_OPAQUE :
+            return Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
+        case ClipBoardImageAlphaType::ALPHA_TYPE_PREMULTIPLIED :
+            return Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
+        default :
+            return Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
+    }
+}
+
+Media::PixelFormat PasteDataRecordAdapterImpl::ClipboardToImageColorType
+    (ClipBoardImageColorType colorType)
+{
+    switch (colorType) {
+        case ClipBoardImageColorType::COLOR_TYPE_RGBA_8888 :
+            return Media::PixelFormat::RGBA_8888;
+        case ClipBoardImageColorType::COLOR_TYPE_BGRA_8888 :
+            return Media::PixelFormat::BGRA_8888;
+        default :
+            return Media::PixelFormat::UNKNOWN;
+    }
+}
+
+bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageData> imageData)
+{
+    Media::InitializationOptions opts;
+    opts.size.width = imageData->width;
+    opts.size.height = imageData->height;
+    opts.pixelFormat = ClipboardToImageColorType(imageData->colorType);
+    opts.alphaType = ClipboardToImageAlphaType(imageData->alphaType);
+
+    std::unique_ptr<Media::PixelMap> pixelMap =
+        Media::PixelMap::Create(imageData->data, (uint32_t)imageData->dataSize, opts);
+    if (pixelMap == nullptr) {
+        WVLOG_E("create pixel map failed");
+        return false;
+    }
+
+    std::shared_ptr<Media::PixelMap> pixelMapIn = move(pixelMap);
+
+    if (builder_) {
+        record_ = builder_->SetPixelMap(pixelMapIn).Build();
+    } else {
+        WVLOG_E("record_ is null");
+        return false;
+    }
+    return true;
+}
+
 std::string PasteDataRecordAdapterImpl::GetMimeType()
 {
     return (record_ != nullptr) ? record_->GetMimeType() : "";
@@ -57,6 +179,63 @@ std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetHtmlText()
 std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetPlainText()
 {
     return (record_ != nullptr) ? record_->GetPlainText() : nullptr;
+}
+
+bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
+{
+    std::shared_ptr<Media::PixelMap> pixelMap = record_->GetPixelMap();
+    if (pixelMap == nullptr) {
+        WVLOG_E("pixelMap is null");
+        return false;
+    }
+
+    Media::ImageInfo imgInfo;
+    ClearImgBuffer();
+    bufferSize_ = pixelMap->GetCapacity();
+    if ((bufferSize_ == 0) || (pixelMap->GetPixels() == nullptr)) {
+        WVLOG_E("data in pixel map is empty");
+        return false;
+    }
+
+    imgBuffer_ = (uint8_t *)calloc((size_t)bufferSize_, sizeof(uint8_t));
+    if (imgBuffer_ == nullptr) {
+        WVLOG_E("calloc imgbuffer failed");
+        return false;
+    }
+
+    if (memcpy_s(imgBuffer_, bufferSize_, pixelMap->GetPixels(), bufferSize_)) {
+        WVLOG_E("memcpy imgbuffer failed");
+        ClearImgBuffer();
+        return false;
+    }
+
+    int32_t width = pixelMap->GetWidth();
+    int32_t height = pixelMap->GetHeight();
+    pixelMap->GetImageInfo(imgInfo);
+    int32_t rowBytes = pixelMap->GetRowBytes();
+
+    imageData.colorType = ImageToClipboardColorType(imgInfo);
+    imageData.alphaType = ImageToClipboardAlphaType(imgInfo);
+    imageData.data = (uint32_t *)imgBuffer_;
+    imageData.dataSize = (size_t)bufferSize_;
+    imageData.width = width;
+    imageData.height = height;
+    imageData.rowBytes = (size_t)rowBytes;
+    return true;
+}
+
+void PasteDataRecordAdapterImpl::ClearImgBuffer()
+{
+    if (imgBuffer_) {
+        free(imgBuffer_);
+        imgBuffer_ = nullptr;
+        bufferSize_ = 0;
+    }
+}
+
+void PasteDataRecordAdapterImpl::Clear()
+{
+    ClearImgBuffer();
 }
 
 std::shared_ptr<PasteDataRecord> PasteDataRecordAdapterImpl::GetRecord()
@@ -172,6 +351,20 @@ bool PasteBoardClientAdapterImpl::HasPasteData()
 
 void PasteBoardClientAdapterImpl::Clear()
 {
+    PasteRecordList recordList;
+    if (!GetPasteData(recordList)) {
+        WVLOG_E("get paste data failed while clear");
+        PasteboardClient::GetInstance()->Clear();
+        return;
+    }
+    for (auto& record: recordList) {
+        PasteDataRecordAdapterImpl* rawRecord =
+            reinterpret_cast<PasteDataRecordAdapterImpl*>(record.get());
+        if (rawRecord == nullptr) {
+            continue;
+        }
+        rawRecord->Clear();
+    }
     PasteboardClient::GetInstance()->Clear();
 }
 }
