@@ -224,7 +224,7 @@ bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
 
     imageData.colorType = ImageToClipboardColorType(imgInfo);
     imageData.alphaType = ImageToClipboardAlphaType(imgInfo);
-    imageData.data = static_cast<uint32_t *>(imgBuffer_);
+    imageData.data = (uint32_t *)(imgBuffer_);
     imageData.dataSize = static_cast<size_t>(bufferSize_);
     imageData.width = width;
     imageData.height = height;
