@@ -153,7 +153,7 @@ bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageData> 
     opts.alphaType = ClipboardToImageAlphaType(imageData->alphaType);
 
     std::unique_ptr<Media::PixelMap> pixelMap =
-        Media::PixelMap::Create(imageData->data, static_cast<uint32_t>imageData->dataSize, opts);
+        Media::PixelMap::Create(imageData->data, static_cast<uint32_t>(imageData->dataSize), opts);
     if (pixelMap == nullptr) {
         WVLOG_E("create pixel map failed");
         return false;
@@ -224,11 +224,11 @@ bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
 
     imageData.colorType = ImageToClipboardColorType(imgInfo);
     imageData.alphaType = ImageToClipboardAlphaType(imgInfo);
-    imageData.data = static_cast<uint32_t *>imgBuffer_;
-    imageData.dataSize = static_cast<size_t>bufferSize_;
+    imageData.data = static_cast<uint32_t *>(imgBuffer_);
+    imageData.dataSize = static_cast<size_t>(bufferSize_);
     imageData.width = width;
     imageData.height = height;
-    imageData.rowBytes = static_cast<size_t>rowBytes;
+    imageData.rowBytes = static_cast<size_t>(rowBytes);
     return true;
 }
 
