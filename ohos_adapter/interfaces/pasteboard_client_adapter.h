@@ -41,7 +41,7 @@ typedef struct ClipBoardImageDataTag {
     size_t rowBytes;
     int32_t width;
     int32_t height;
-}ClipBoardImageData;
+} ClipBoardImageData;
 
 class PasteDataRecordAdapter;
 class PasteDataAdapter;

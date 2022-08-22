@@ -142,6 +142,10 @@ Media::PixelFormat PasteDataRecordAdapterImpl::ClipboardToImageColorType
 
 bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageData> imageData)
 {
+    if (imageData == nullptr) {
+        WVLOG_E("imageData is null");
+        return false;
+    }
     Media::InitializationOptions opts;
     opts.size.width = imageData->width;
     opts.size.height = imageData->height;
@@ -149,7 +153,7 @@ bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageData> 
     opts.alphaType = ClipboardToImageAlphaType(imageData->alphaType);
 
     std::unique_ptr<Media::PixelMap> pixelMap =
-        Media::PixelMap::Create(imageData->data, (uint32_t)imageData->dataSize, opts);
+        Media::PixelMap::Create(imageData->data, static_cast<uint32_t>imageData->dataSize, opts);
     if (pixelMap == nullptr) {
         WVLOG_E("create pixel map failed");
         return false;
@@ -183,6 +187,10 @@ std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetPlainText()
 
 bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
 {
+    if (record_ == nullptr) {
+        WVLOG_E("record_ is null");
+        return false;
+    }
     std::shared_ptr<Media::PixelMap> pixelMap = record_->GetPixelMap();
     if (pixelMap == nullptr) {
         WVLOG_E("pixelMap is null");
@@ -216,11 +224,11 @@ bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
 
     imageData.colorType = ImageToClipboardColorType(imgInfo);
     imageData.alphaType = ImageToClipboardAlphaType(imgInfo);
-    imageData.data = (uint32_t *)imgBuffer_;
-    imageData.dataSize = (size_t)bufferSize_;
+    imageData.data = static_cast<uint32_t *>imgBuffer_;
+    imageData.dataSize = static_cast<size_t>bufferSize_;
     imageData.width = width;
     imageData.height = height;
-    imageData.rowBytes = (size_t)rowBytes;
+    imageData.rowBytes = static_cast<size_t>rowBytes;
     return true;
 }
 
