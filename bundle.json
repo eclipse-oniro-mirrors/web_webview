@@ -105,7 +105,8 @@
                 "//base/web/webview/test/unittest/nweb_value_test:unittest",
                 "//base/web/webview/test/unittest/nweb_url_resource_response_test:unittest",
                 "//base/web/webview/test/unittest/nweb_helper_test:unittest",
-                "//base/web/webview/test/unittest/ohos_nweb:unittest"
+                "//base/web/webview/test/unittest/ohos_nweb:unittest",
+                "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest"
             ]
         }
     }
