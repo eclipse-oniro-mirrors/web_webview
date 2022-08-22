@@ -121,6 +121,10 @@ enum MenuEventFlags {
     EF_RIGHT_MOUSE_BUTTON = 1 << 6,
 };
 
+enum MenuCommandId{
+    CI_IMAGE_COPY = 0,
+};
+
 class OHOS_NWEB_EXPORT NWebContextMenuCallback {
 public:
     virtual ~NWebContextMenuCallback() = default;
