@@ -20,6 +20,29 @@
 #include <vector>
 
 namespace OHOS::NWeb {
+enum class ClipBoardImageColorType {
+    COLOR_TYPE_RGBA_8888,
+    COLOR_TYPE_BGRA_8888,
+    COLOR_TYPE_UNKNOWN
+};
+
+enum class ClipBoardImageAlphaType {
+    ALPHA_TYPE_OPAQUE,
+    ALPHA_TYPE_PREMULTIPLIED,
+    ALPHA_TYPE_POSTMULTIPLIED,
+    ALPHA_TYPE_UNKNOWN
+};
+
+typedef struct ClipBoardImageDataTag {
+    ClipBoardImageColorType colorType;
+    ClipBoardImageAlphaType alphaType;
+    uint32_t *data;
+    size_t dataSize;
+    size_t rowBytes;
+    int32_t width;
+    int32_t height;
+} ClipBoardImageData;
+
 class PasteDataRecordAdapter;
 class PasteDataAdapter;
 using PasteRecordList = std::vector<std::shared_ptr<PasteDataRecordAdapter>>;
@@ -45,15 +68,26 @@ public:
     virtual ~PasteDataRecordAdapter() = default;
 
     static std::shared_ptr<PasteDataRecordAdapter> NewRecord(
+        const std::string& mimeType);
+
+    static std::shared_ptr<PasteDataRecordAdapter> NewRecord(
         const std::string& mimeType,
         std::shared_ptr<std::string> htmlText,
         std::shared_ptr<std::string> plainText);
 
-    virtual std::string GetMimeType()= 0;
+    virtual bool SetHtmlText(std::shared_ptr<std::string> htmlText) = 0;
+
+    virtual bool SetPlainText(std::shared_ptr<std::string> plainText) = 0;
+
+    virtual bool SetImgData(std::shared_ptr<ClipBoardImageData> imageData) = 0;
+
+    virtual std::string GetMimeType() = 0;
 
     virtual std::shared_ptr<std::string> GetHtmlText() = 0;
 
     virtual std::shared_ptr<std::string> GetPlainText() = 0;
+
+    virtual bool GetImgData(ClipBoardImageData &imageData) = 0;
 };
 
 class PasteDataAdapter {
