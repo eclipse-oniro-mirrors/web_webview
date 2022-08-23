@@ -67,9 +67,8 @@ bool PasteDataRecordAdapterImpl::SetHtmlText(std::shared_ptr<std::string> htmlTe
     if (builder_) {
         record_ = builder_->SetHtmlText(htmlText).Build();
         return true;
-    } else {
-        WVLOG_E("record_ is null");
     }
+    WVLOG_E("record_ is null");
     return false;
 }
 
@@ -78,9 +77,8 @@ bool PasteDataRecordAdapterImpl::SetPlainText(std::shared_ptr<std::string> plain
     if (builder_) {
         record_ = builder_->SetPlainText(plainText).Build();
         return true;
-    } else {
-        WVLOG_E("record_ is null");
     }
+    WVLOG_E("record_ is null");
     return false;
 }
 
@@ -161,12 +159,11 @@ bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageData> 
 
     std::shared_ptr<Media::PixelMap> pixelMapIn = move(pixelMap);
 
-    if (builder_) {
-        record_ = builder_->SetPixelMap(pixelMapIn).Build();
-    } else {
+    if (!builder_) {
         WVLOG_E("record_ is null");
         return false;
     }
+    record_ = builder_->SetPixelMap(pixelMapIn).Build();
     return true;
 }
 
