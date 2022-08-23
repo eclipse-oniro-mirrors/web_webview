@@ -29,12 +29,26 @@ public:
     PasteDataRecordAdapterImpl(const std::string& mimeType,
                                std::shared_ptr<std::string> htmlText,
                                std::shared_ptr<std::string> plainText);
+    PasteDataRecordAdapterImpl(const std::string& mimeType);
+    bool SetHtmlText(std::shared_ptr<std::string> htmlText) override;
+    bool SetPlainText(std::shared_ptr<std::string> plainText) override;
+    bool SetImgData(std::shared_ptr<ClipBoardImageData> imageData) override;
     std::string GetMimeType() override;
     std::shared_ptr<std::string> GetHtmlText() override;
     std::shared_ptr<std::string> GetPlainText() override;
     std::shared_ptr<MiscServices::PasteDataRecord> GetRecord();
+    bool GetImgData(ClipBoardImageData &imageData) override;
+    void Clear();
 private:
     std::shared_ptr<MiscServices::PasteDataRecord> record_;
+    std::shared_ptr<MiscServices::PasteDataRecord::Builder> builder_;
+    uint8_t *imgBuffer_;
+    uint32_t bufferSize_;
+    ClipBoardImageAlphaType ImageToClipboardAlphaType(const Media::ImageInfo &imgInfo);
+    ClipBoardImageColorType ImageToClipboardColorType(const Media::ImageInfo &imgInfo);
+    Media::AlphaType ClipboardToImageAlphaType(ClipBoardImageAlphaType alphaType);
+    Media::PixelFormat ClipboardToImageColorType(ClipBoardImageColorType colorType);
+    void ClearImgBuffer();
 };
 
 class PasteDataAdapterImpl : public PasteDataAdapter {
