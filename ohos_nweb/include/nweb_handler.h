@@ -388,6 +388,8 @@ public:
                                        const std::string& realm) {
         return false;
     }
+
+    virtual void OnScroll(double xOffset, double yOffset) {}
 };
 }  // namespace OHOS::NWeb
 
