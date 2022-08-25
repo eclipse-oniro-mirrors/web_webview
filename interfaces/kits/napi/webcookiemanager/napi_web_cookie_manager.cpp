@@ -31,8 +31,10 @@ napi_value NapiWebCookieManager::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("setCookie", NapiWebCookieManager::JsSetCookie),
         DECLARE_NAPI_STATIC_FUNCTION("isCookieAllowed", NapiWebCookieManager::JsIsCookieAllowed),
         DECLARE_NAPI_STATIC_FUNCTION("putAcceptCookieEnabled", NapiWebCookieManager::JsPutAcceptCookieEnabled),
-        DECLARE_NAPI_STATIC_FUNCTION("isThirdPartyCookieAllowed", NapiWebCookieManager::JsIsThirdPartyCookieAllowed),
-        DECLARE_NAPI_STATIC_FUNCTION("putAcceptThirdPartyCookieEnabled", NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled),
+        DECLARE_NAPI_STATIC_FUNCTION("isThirdPartyCookieAllowed",
+                                     NapiWebCookieManager::JsIsThirdPartyCookieAllowed),
+        DECLARE_NAPI_STATIC_FUNCTION("putAcceptThirdPartyCookieEnabled",
+                                     NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled),
         DECLARE_NAPI_STATIC_FUNCTION("existCookie", NapiWebCookieManager::JsExistCookie),
         DECLARE_NAPI_STATIC_FUNCTION("deleteEntireCookie", NapiWebCookieManager::JsDeleteEntireCookie),
     };
@@ -118,16 +120,15 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
     napi_create_string_utf8(env, cookieContent.c_str(), cookieContent.length(), &result);
     return result;
 }
-
-constexpr int SETCOOKIE_PARA_NUMBER = 2;
+constexpr int SETCOOKIE_PARA_NUM = 2;
 napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = SETCOOKIE_PARA_NUMBER;
+    size_t argc = SETCOOKIE_PARA_NUM;
     napi_value argv[2] = { 0, 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == SETCOOKIE_PARA_NUMBER, "requires 2 parameter");
+    NAPI_ASSERT(env, argc == SETCOOKIE_PARA_NUM, "requires 2 parameter");
 
     bool ret1;
     bool ret2;
