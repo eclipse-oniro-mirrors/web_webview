@@ -45,17 +45,17 @@ public:
     virtual void PutAcceptCookieEnabled(bool accept) = 0;
 
     /**
-     * @brief Gets whether the instance allows the setting of third-party cookies.
-     *
-     * @return true if the instance allows the setting of third-party cookies.
-     */
+     * @brief Gets whether the instance allows the setting of third-party cookies.
+     *
+     * @return true if the instance allows the setting of third-party cookies.
+     */
     virtual bool IsThirdPartyCookieAllowed() const = 0;
 
     /**
-     * @brief Set whether the instance allows the use of third-party cookies.
-     *
-     * @param allow whether the instance to use third-party cookies.
-     */
+     * @brief Set whether the instance allows the use of third-party cookies.
+     *
+     * @param allow whether the instance to use third-party cookies.
+     */
     virtual void PutAcceptThirdPartyCookieEnabled(bool accept) = 0;
 
     /**
