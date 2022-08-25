@@ -45,6 +45,20 @@ public:
     virtual void PutAcceptCookieEnabled(bool accept) = 0;
 
     /**
+     * @brief Gets whether the instance allows the setting of third-party cookies.
+     *
+     * @return true if the instance allows the setting of third-party cookies.
+     */
+    virtual bool IsThirdPartyCookieAllowed() const = 0;
+
+    /**
+     * @brief Set whether the instance allows the use of third-party cookies.
+     *
+     * @param allow whether the instance to use third-party cookies.
+     */
+    virtual void PutAcceptThirdPartyCookieEnabled(bool accept) = 0;
+
+    /**
      * @brief Get whether instances can send and accept cookies for file scheme URLs.
      *
      * @return true if instances send and accept cookies for file scheme URLs.
@@ -102,6 +116,13 @@ public:
      * @param callback a callback to be executed when the cookie has checked.
      */
     virtual void ExistCookies(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
+
+    /**
+     * @brief Get whether there are stored cookies.
+     *
+     * @return true if there are stored cookies else false.
+     */
+    virtual bool ExistCookies() = 0;
 
     /**
      * @brief Ensure all cookies currently accessible through the ReturnCookie API are written to
