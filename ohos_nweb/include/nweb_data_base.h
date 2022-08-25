@@ -24,6 +24,9 @@
 namespace OHOS::NWeb {
 class OHOS_NWEB_EXPORT NWebDataBase {
 public:
+    enum WebPermissionType {
+        GEOLOCATION_TYPE
+    };
     NWebDataBase() = default;
 
     virtual ~NWebDataBase() = default;
@@ -61,6 +64,57 @@ public:
      */
     virtual std::vector<std::string> GetHttpAuthCredentials(const std::string& host,
         const std::string& realm) const = 0;
+
+    /**
+     * @brief gets whether the instance holds the specifies permission for the specified source.
+     *
+     * @param origin url source.
+     * @param type specifies permission type.
+     * @return true if instances saved origin specifies permission.
+     */
+    virtual bool ExistPermissionByOrigin(const std::string& origin, int type) = 0;
+
+    /**
+     * @brief get specifies permission type result by origin.
+     *
+     * @param origin url source.
+     * @param type specifies permission type.
+     * @param result saved result.
+     * @return return whether there is a saved result.
+     */
+    virtual bool GetPermissionResultByOrigin(const std::string& origin, int type, bool& result) = 0;
+
+    /**
+     * @brief set specifies permission type result by origin.
+     *
+     * @param origin url source.
+     * @param type specifies permission type.
+     * @param result set result.
+     */
+    virtual void SetPermissionByOrigin(const std::string& origin, int type, bool result) = 0;
+
+    /**
+     * @brief delete specifies permission type by origin.
+     *
+     * @param origin url source.
+     * @param type specifies permission type.
+     */
+    virtual void ClearPermissionByOrigin(const std::string& origin, int type) = 0;
+
+    /**
+     * @brief delete all specifies permission type.
+     *
+     * @param type specifies permission type.
+     */
+    virtual void ClearAllPermission(int type) = 0;
+
+    /**
+     * @brief obtains all origins of a specified permission type.
+     *
+     * @param type specifies permission type.
+     * @return return all origin.
+     */
+    virtual std::vector<std::string> GetOriginsByPermission(int type) = 0;
 };
 } // namespace OHOS::NWeb
 

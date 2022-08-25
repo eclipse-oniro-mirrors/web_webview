@@ -51,6 +51,8 @@ public:
     std::unique_ptr<AudioRendererAdapter> CreateAudioRendererAdapter();
 
     AudioSystemManagerAdapter& GetAudioSystemManager() const;
+
+    OhosWebPermissionDataBaseAdapter& GetWebPermissionDataBaseInstance();
 private:
     OhosAdapterHelper() = default;
 
