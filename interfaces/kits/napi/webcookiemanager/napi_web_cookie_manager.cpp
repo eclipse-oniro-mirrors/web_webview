@@ -119,14 +119,15 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
     return result;
 }
 
+constexpr int SETCOOKIE_PARA_NUMBER = 2;
 napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = 2;
+    size_t argc = SETCOOKIE_PARA_NUMBER;
     napi_value argv[2] = { 0, 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == 2, "requires 2 parameter");
+    NAPI_ASSERT(env, argc == SETCOOKIE_PARA_NUMBER, "requires 2 parameter");
 
     bool ret1;
     bool ret2;
