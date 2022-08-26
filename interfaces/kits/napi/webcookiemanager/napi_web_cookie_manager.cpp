@@ -51,6 +51,7 @@ napi_value NapiWebCookieManager::Init(napi_env env, napi_value exports)
 napi_value NapiWebCookieManager::JsConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
+    
     size_t argc = 2;
     napi_value argv[2] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
@@ -120,6 +121,7 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
     napi_create_string_utf8(env, cookieContent.c_str(), cookieContent.length(), &result);
     return result;
 }
+
 constexpr int SETCOOKIE_PARA_NUM = 2;
 napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info info)
 {
@@ -130,14 +132,13 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     NAPI_ASSERT(env, argc == SETCOOKIE_PARA_NUM, "requires 2 parameter");
 
-    bool ret1;
-    bool ret2;
+    bool ret;
     std::string url;
     std::string value;
-    ret1 = GetStringPara(env, argv[0], url);
-    NAPI_ASSERT_BASE(env, ret1, "get para0 failed", retValue);
-    ret2 = GetStringPara(env, argv[1], value);
-    NAPI_ASSERT_BASE(env, ret2, "get para1 failed", retValue);
+    ret = GetStringPara(env, argv[0], url);
+    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+    ret = GetStringPara(env, argv[1], value);
+    NAPI_ASSERT_BASE(env, ret, "get para1 failed", retValue);
 
     napi_value result = nullptr;
     bool isSet = false;
@@ -178,13 +179,12 @@ napi_value NapiWebCookieManager::JsPutAcceptCookieEnabled(napi_env env, napi_cal
     NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
 
     napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_boolean(env, false, &result));
 
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         cookieManager->PutAcceptCookieEnabled(accept);
-        NAPI_CALL(env, napi_get_boolean(env, true, &result));
     }
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 
@@ -216,13 +216,12 @@ napi_value NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled(napi_env env
     NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
 
     napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_boolean(env, false, &result));
 
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         cookieManager->PutAcceptThirdPartyCookieEnabled(accept);
-        NAPI_CALL(env, napi_get_boolean(env, true, &result));
     }
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 
@@ -242,14 +241,12 @@ napi_value NapiWebCookieManager::JsExistCookie(napi_env env, napi_callback_info 
 napi_value NapiWebCookieManager::JsDeleteEntireCookie(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_boolean(env, false, &result));
 
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         cookieManager->DeleteCookieEntirely(nullptr);
-        NAPI_CALL(env, napi_get_boolean(env, true, &result));
     }
-
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace OHOS
