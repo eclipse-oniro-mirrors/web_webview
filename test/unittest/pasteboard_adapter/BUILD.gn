@@ -34,16 +34,17 @@ ohos_unittest("nweb_pasteboard_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
   ]
 
   external_deps = [
+    "ability_base:base",
     "ability_base:want",
     "c_utils:utils",
-    "pasteboard:pasteboard_client",
     "multimedia_image_standard:image_native",
+    "pasteboard:pasteboard_client",
   ]
 }
 
