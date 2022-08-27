@@ -69,7 +69,8 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_001, TestS
  */
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_002, TestSize.Level1)
 {
-    std::unique_ptr<DisplayListenerAdapterImpl> displayListenerAdapterImpl = std::make_unique<DisplayListenerAdapterImpl>(nullptr);
+    std::unique_ptr<DisplayListenerAdapterImpl> displayListenerAdapterImpl =
+        std::make_unique<DisplayListenerAdapterImpl>(nullptr);
     displayListenerAdapterImpl->OnCreate(static_cast<DisplayId>(1));
     displayListenerAdapterImpl->OnDestroy(static_cast<DisplayId>(1));
     displayListenerAdapterImpl->OnChange(static_cast<DisplayId>(1));
