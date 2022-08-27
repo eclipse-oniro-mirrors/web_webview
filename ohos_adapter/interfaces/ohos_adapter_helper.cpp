@@ -20,6 +20,7 @@
 #include "audio_system_manager_adapter_impl.h"
 #include "battery_mgr_client_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
+#include "mmi_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
 #include "ohos_web_permission_data_base_adapter_impl.h"
@@ -82,5 +83,10 @@ AudioSystemManagerAdapter& OhosAdapterHelper::GetAudioSystemManager() const
 OhosWebPermissionDataBaseAdapter& OhosAdapterHelper::GetWebPermissionDataBaseInstance()
 {
     return OhosWebPermissionDataBaseAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<MMIAdapter> OhosAdapterHelper::CreateMMIAdapter()
+{
+    return std::make_unique<MMIAdapterImpl>();
 }
 }  // namespace OHOS::NWeb
