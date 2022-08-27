@@ -31,22 +31,23 @@ config("module_private_config") {
 ohos_unittest("power_mgr_client_adapter_impl_test") {
   module_out_path = module_output_path
 
-  sources = [
-    "power_mgr_client_adapter_impl_test.cpp",
-  ]
+  sources = [ "power_mgr_client_adapter_impl_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_nweb:libnweb",
     "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//foundation/window/window_manager/wm:libwm",
-    "//third_party/zlib:libz",
+    "//base/web/webview/ohos_nweb:libnweb",
     "//foundation/ability/ability_runtime/interfaces/inner_api/app_manager:app_manager",
+    "//foundation/window/window_manager/wm:libwm",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
+    "//third_party/zlib:libz",
   ]
-  external_deps = [ "input:libmmi-client", "power_manager:powermgr_client", ]
+  external_deps = [
+    "input:libmmi-client",
+    "power_manager:powermgr_client",
+  ]
 }
 
 group("unittest") {
