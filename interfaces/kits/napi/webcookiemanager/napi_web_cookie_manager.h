@@ -37,7 +37,25 @@ public:
 private:
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
 
+    static bool GetStringPara(napi_env env, napi_value argv, std::string& outValue);
+
+    static bool GetBooleanPara(napi_env env, napi_value argv, bool& outValue);
+
     static napi_value JsGetCookie(napi_env env, napi_callback_info info);
+
+    static napi_value JsSetCookie(napi_env env, napi_callback_info info);
+
+    static napi_value JsIsCookieAllowed(napi_env env, napi_callback_info info);
+
+    static napi_value JsPutAcceptCookieEnabled(napi_env env, napi_callback_info info);
+
+    static napi_value JsIsThirdPartyCookieAllowed(napi_env env, napi_callback_info info);
+
+    static napi_value JsPutAcceptThirdPartyCookieEnabled(napi_env env, napi_callback_info info);
+
+    static napi_value JsExistCookie(napi_env env, napi_callback_info info);
+
+    static napi_value JsDeleteEntireCookie(napi_env env, napi_callback_info info);
 };
 } // namespace OHOS
 
