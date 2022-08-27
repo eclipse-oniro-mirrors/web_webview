@@ -82,6 +82,13 @@ enum class RenderExitReason {
     PROCESS_EXIT_UNKNOWN,
 };
 
+struct ImageOptions {
+    ImageColorType colorType;
+    ImageAlphaType alphaType;
+    size_t width;
+    size_t height;
+};
+
 using FileSelectorCallback = NWebValueCallback<std::vector<std::string>&>;
 
 class OHOS_NWEB_EXPORT NWebHandler {
@@ -390,6 +397,10 @@ public:
     }
 
     virtual void OnScroll(double xOffset, double yOffset) {}
+
+    virtual bool OnDragAndDropData(const void* data, size_t len, const ImageOptions& opt) {
+        return false;
+    }
 };
 }  // namespace OHOS::NWeb
 

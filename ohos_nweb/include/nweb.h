@@ -54,6 +54,22 @@ struct OHOS_NWEB_EXPORT NWebCreateInfo {
     void* producer_surface = nullptr;
 };
 
+enum class OHOS_NWEB_EXPORT DragAction {
+    DRAG_START = 0,
+    DRAG_ENTER,
+    DRAG_LEAVE,
+    DRAG_OVER,
+    DRAG_DROP,
+    DRAG_END,
+    DRAG_CANCEL,
+};
+
+struct OHOS_NWEB_EXPORT DragEvent {
+    double x;
+    double y;
+    DragAction action;
+};
+
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -437,6 +453,12 @@ public:
      */
     virtual void SetPortMessageCallback(std::string& handle,
         std::shared_ptr<NWebValueCallback<std::string>> callback) = 0;
+
+    /**
+     * send drag event to nweb.
+     * @param dragEvent the drag event information.
+     */
+    virtual void SendDragEvent(const DragEvent& dragEvent) const = 0;
 };
 }  // namespace OHOS::NWeb
 
