@@ -42,7 +42,7 @@ public:
 private:
     std::shared_ptr<MiscServices::PasteDataRecord> record_;
     std::shared_ptr<MiscServices::PasteDataRecord::Builder> builder_;
-    uint8_t *imgBuffer_;
+    uint8_t *imgBuffer_ = nullptr;
     uint32_t bufferSize_;
     ClipBoardImageAlphaType ImageToClipboardAlphaType(const Media::ImageInfo &imgInfo);
     ClipBoardImageColorType ImageToClipboardColorType(const Media::ImageInfo &imgInfo);
