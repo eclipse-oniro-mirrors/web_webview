@@ -50,6 +50,8 @@ public:
     OrientationType GetOrientation();
 private:
     sptr<OHOS::Rosen::Display> display_;
+    OHOS::NWeb::RotationType ConvertRotationType(OHOS::Rosen::Rotation type);
+    OHOS::NWeb::OrientationType ConvertOrientationType(OHOS::Rosen::Orientation type);
 };
 
 using ListenerMap =

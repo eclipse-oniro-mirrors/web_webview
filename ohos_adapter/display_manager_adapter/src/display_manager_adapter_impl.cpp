@@ -18,48 +18,6 @@
 using namespace OHOS::Rosen;
 using namespace OHOS::NWeb;
 
-namespace {
-OHOS::NWeb::RotationType ConvertRotationType(OHOS::Rosen::Rotation type)
-{
-    switch (type) {
-        case OHOS::Rosen::Rotation::ROTATION_0:
-            return OHOS::NWeb::RotationType::ROTATION_0;
-        case OHOS::Rosen::Rotation::ROTATION_90:
-            return OHOS::NWeb::RotationType::ROTATION_90;
-        case OHOS::Rosen::Rotation::ROTATION_180:
-            return OHOS::NWeb::RotationType::ROTATION_180;
-        case OHOS::Rosen::Rotation::ROTATION_270:
-            return OHOS::NWeb::RotationType::ROTATION_270;
-        default:
-            return OHOS::NWeb::RotationType::ROTATION_BUTT;
-    }
-}
-
-OHOS::NWeb::OrientationType ConvertOrientationType(OHOS::Rosen::Orientation type)
-{
-    switch (type) {
-        case OHOS::Rosen::Orientation::UNSPECIFIED:
-            return OHOS::NWeb::OrientationType::UNSPECIFIED;
-        case OHOS::Rosen::Orientation::VERTICAL:
-            return OHOS::NWeb::OrientationType::VERTICAL;
-        case OHOS::Rosen::Orientation::HORIZONTAL:
-            return OHOS::NWeb::OrientationType::HORIZONTAL;
-        case OHOS::Rosen::Orientation::REVERSE_VERTICAL:
-            return OHOS::NWeb::OrientationType::REVERSE_VERTICAL;
-        case OHOS::Rosen::Orientation::REVERSE_HORIZONTAL:
-            return OHOS::NWeb::OrientationType::REVERSE_HORIZONTAL;
-        case OHOS::Rosen::Orientation::SENSOR:
-            return OHOS::NWeb::OrientationType::SENSOR;
-        case OHOS::Rosen::Orientation::SENSOR_VERTICAL:
-            return OHOS::NWeb::OrientationType::SENSOR_VERTICAL;
-        case OHOS::Rosen::Orientation::SENSOR_HORIZONTAL:
-            return OHOS::NWeb::OrientationType::SENSOR_HORIZONTAL;
-        default:
-            return OHOS::NWeb::OrientationType::BUTT;
-    }
-}
-}
-
 namespace OHOS::NWeb {
 DisplayListenerAdapterImpl::DisplayListenerAdapterImpl(
     std::shared_ptr<DisplayListenerAdapter> listener) : listener_(listener) {}
@@ -85,6 +43,46 @@ void DisplayListenerAdapterImpl::OnChange(DisplayId id)
 
 DisplayAdapterImpl::DisplayAdapterImpl(sptr<OHOS::Rosen::Display> display)
     : display_(display) {}
+
+OHOS::NWeb::RotationType DisplayAdapterImpl::ConvertRotationType(OHOS::Rosen::Rotation type)
+{
+    switch (type) {
+        case OHOS::Rosen::Rotation::ROTATION_0:
+            return OHOS::NWeb::RotationType::ROTATION_0;
+        case OHOS::Rosen::Rotation::ROTATION_90:
+            return OHOS::NWeb::RotationType::ROTATION_90;
+        case OHOS::Rosen::Rotation::ROTATION_180:
+            return OHOS::NWeb::RotationType::ROTATION_180;
+        case OHOS::Rosen::Rotation::ROTATION_270:
+            return OHOS::NWeb::RotationType::ROTATION_270;
+        default:
+            return OHOS::NWeb::RotationType::ROTATION_BUTT;
+    }
+}
+
+OHOS::NWeb::OrientationType DisplayAdapterImpl::ConvertOrientationType(OHOS::Rosen::Orientation type)
+{
+    switch (type) {
+        case OHOS::Rosen::Orientation::UNSPECIFIED:
+            return OHOS::NWeb::OrientationType::UNSPECIFIED;
+        case OHOS::Rosen::Orientation::VERTICAL:
+            return OHOS::NWeb::OrientationType::VERTICAL;
+        case OHOS::Rosen::Orientation::HORIZONTAL:
+            return OHOS::NWeb::OrientationType::HORIZONTAL;
+        case OHOS::Rosen::Orientation::REVERSE_VERTICAL:
+            return OHOS::NWeb::OrientationType::REVERSE_VERTICAL;
+        case OHOS::Rosen::Orientation::REVERSE_HORIZONTAL:
+            return OHOS::NWeb::OrientationType::REVERSE_HORIZONTAL;
+        case OHOS::Rosen::Orientation::SENSOR:
+            return OHOS::NWeb::OrientationType::SENSOR;
+        case OHOS::Rosen::Orientation::SENSOR_VERTICAL:
+            return OHOS::NWeb::OrientationType::SENSOR_VERTICAL;
+        case OHOS::Rosen::Orientation::SENSOR_HORIZONTAL:
+            return OHOS::NWeb::OrientationType::SENSOR_HORIZONTAL;
+        default:
+            return OHOS::NWeb::OrientationType::BUTT;
+    }
+}
 
 DisplayId DisplayAdapterImpl::GetId()
 {
