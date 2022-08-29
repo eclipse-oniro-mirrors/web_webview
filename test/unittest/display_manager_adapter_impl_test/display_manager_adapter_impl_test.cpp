@@ -75,6 +75,7 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_002, TestS
     displayListenerAdapterImpl->OnCreate(static_cast<DisplayId>(1));
     displayListenerAdapterImpl->OnDestroy(static_cast<DisplayId>(1));
     displayListenerAdapterImpl->OnChange(static_cast<DisplayId>(1));
+    EXPECT_NE(displayListenerAdapterImpl, nullptr);
 }
 
 /**
@@ -91,19 +92,19 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_003, TestS
     OHOS::Rosen::Rotation type = OHOS::Rosen::Rotation::ROTATION_0;
     OHOS::NWeb::RotationType retType;
     retType = displayAdapterImpl->ConvertRotationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::RotationType::ROTATION_0);
+    EXPECT_EQ(retType, OHOS::NWeb::RotationType::ROTATION_0);
 
     type = OHOS::Rosen::Rotation::ROTATION_90;
     retType = displayAdapterImpl->ConvertRotationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::RotationType::ROTATION_90);
+    EXPECT_EQ(retType, OHOS::NWeb::RotationType::ROTATION_90);
 
     type = OHOS::Rosen::Rotation::ROTATION_180;
     retType = displayAdapterImpl->ConvertRotationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::RotationType::ROTATION_180);
+    EXPECT_EQ(retType, OHOS::NWeb::RotationType::ROTATION_180);
 
     type = OHOS::Rosen::Rotation::ROTATION_270;
     retType = displayAdapterImpl->ConvertRotationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::RotationType::ROTATION_270);
+    EXPECT_EQ(retType, OHOS::NWeb::RotationType::ROTATION_270);
 }
 
 /**
@@ -120,30 +121,34 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_004, TestS
     OHOS::Rosen::Orientation type = OHOS::Rosen::Orientation::UNSPECIFIED;
     OHOS::NWeb::OrientationType retType;
     retType = displayAdapterImpl->ConvertOrientationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::OrientationType::UNSPECIFIED);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::UNSPECIFIED);
 
     type = OHOS::Rosen::Orientation::VERTICAL;
     retType = displayAdapterImpl->ConvertOrientationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::OrientationType::VERTICAL);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::VERTICAL);
 
     type = OHOS::Rosen::Orientation::HORIZONTAL;
     retType = displayAdapterImpl->ConvertOrientationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::OrientationType::HORIZONTAL);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::HORIZONTAL);
 
     type = OHOS::Rosen::Orientation::REVERSE_VERTICAL;
     retType = displayAdapterImpl->ConvertOrientationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::OrientationType::REVERSE_VERTICAL);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::REVERSE_VERTICAL);
+
+    type = OHOS::Rosen::Orientation::REVERSE_HORIZONTAL;
+    retType = displayAdapterImpl->ConvertOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::REVERSE_HORIZONTAL);
 
     type = OHOS::Rosen::Orientation::SENSOR;
     retType = displayAdapterImpl->ConvertOrientationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::OrientationType::SENSOR);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::SENSOR);
 
     type = OHOS::Rosen::Orientation::SENSOR_VERTICAL;
     retType = displayAdapterImpl->ConvertOrientationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::OrientationType::SENSOR_VERTICAL);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::SENSOR_VERTICAL);
 
     type = OHOS::Rosen::Orientation::SENSOR_HORIZONTAL;
     retType = displayAdapterImpl->ConvertOrientationType(type);
-    EXPECT_NE(retType, OHOS::NWeb::OrientationType::SENSOR_HORIZONTAL);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::SENSOR_HORIZONTAL);
 }
 }

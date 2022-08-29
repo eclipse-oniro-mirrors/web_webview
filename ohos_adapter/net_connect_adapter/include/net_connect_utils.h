@@ -33,6 +33,8 @@ public:
     static NetConnectSubtype ConvertToConnectsubtype(const RadioTech &subtype);
     static NetConnectType ConvertToConnectType(const NetBearType &netBearType, const RadioTech &subtype);
     static std::string ConnectTypeToString(const NetConnectType &type);
+private:
+    static NetConnectType ConvertToConnectTypeInner(const RadioTech &subtype);
 };
 }  // namespace OHOS::NWeb
 
