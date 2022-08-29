@@ -14,7 +14,11 @@
 import("//build/ohos.gni")
 
 config("ohos_adapter_public_interface") {
-  include_dirs = [ "//base/web/webview/ohos_adapter/interfaces" ]
+  include_dirs = [
+    "//base/web/webview/ohos_adapter/interfaces",
+    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_core/include/bundlemgr",
+    "//base/global/resource_management/interfaces/inner_api/include"
+  ]
 }
 
 ohos_shared_library("nweb_ohos_adapter") {
@@ -60,18 +64,13 @@ ohos_shared_library("nweb_ohos_adapter") {
   public_configs = [ ":ohos_adapter_public_interface" ]
 
   external_deps = [
-    "ability_base:base",
     "ability_base:want",
-    "ability_base:zuri",
     "ability_runtime:app_manager",
     "battery_manager:batterysrv_client",
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "cellular_data:tel_cellular_data_api",
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
-    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
     "input:libmmi-client",
     "ipc:ipc_core",
