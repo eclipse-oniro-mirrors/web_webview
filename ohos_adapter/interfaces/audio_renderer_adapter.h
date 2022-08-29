@@ -17,6 +17,7 @@
 #define AUDIO_RENDERER_ADAPTER_H
 
 #include <memory>
+#include <string>
 
 namespace OHOS::NWeb {
 enum class AudioAdapterSampleFormat {
@@ -97,7 +98,8 @@ public:
 
     virtual ~AudioRendererAdapter() = default;
 
-    virtual int32_t Create(const AudioAdapterRendererOptions &rendererOptions) = 0;
+    virtual int32_t Create(const AudioAdapterRendererOptions &rendererOptions,
+        std::string cachePath = std::string()) = 0;
 
     virtual bool Start() = 0;
 

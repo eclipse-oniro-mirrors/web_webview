@@ -77,18 +77,22 @@ const std::unordered_map<AudioAdapterStreamUsage, StreamUsage> STREAM_USAGE_MAP 
     {AudioAdapterStreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE, StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE},
 };
 
-int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rendererOptions)
+int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rendererOptions,
+    std::string cachePath)
 {
-    std::shared_ptr<OHOS::AbilityRuntime::ApplicationContext> context =
-        OHOS::AbilityRuntime::ApplicationContext::GetApplicationContext();
-    if (!context) {
-        WVLOG_E("application context get failed");
-        return AUDIO_ERROR;
-    }
-    std::string cachePath = context->GetCacheDir();
-    if (cachePath.empty()) {
-        WVLOG_E("application cache path get failed");
-        return AUDIO_ERROR;
+    std::string audioCachePath = cachePath;
+    if (audioCachePath.empty()) {
+        std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+            AbilityRuntime::ApplicationContext::GetApplicationContext();
+        if (!context) {
+            WVLOG_E("application context get failed");
+            return AUDIO_ERROR;
+        }
+        audioCachePath = context->GetCacheDir();
+        if (audioCachePath.empty()) {
+            WVLOG_E("application cache path get failed");
+            return AUDIO_ERROR;
+        }
     }
 
     AudioRendererOptions audioOptions;
@@ -100,7 +104,7 @@ int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rend
     audioOptions.rendererInfo.streamUsage = GetAudioStreamUsage(rendererOptions.streamUsage);
     audioOptions.rendererInfo.rendererFlags = rendererOptions.rendererFlags;
 
-    audio_renderer_ = AudioRenderer::Create(cachePath, audioOptions);
+    audio_renderer_ = AudioRenderer::Create(audioCachePath, audioOptions);
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer create failed");
         return AUDIO_NULL_ERROR;
