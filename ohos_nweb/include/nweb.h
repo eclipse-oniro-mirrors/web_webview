@@ -138,6 +138,12 @@ public:
     virtual void DeleteNavigateHistory() = 0;
 
     /**
+     * Clear ssl cache.
+     *
+     */
+    virtual void ClearSslCache() = 0;
+
+    /**
      * Reload the current URL.
      *
      */
