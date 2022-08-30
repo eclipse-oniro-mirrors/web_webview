@@ -20,27 +20,29 @@
 namespace OHOS::NWeb {
 using namespace MMI;
 
-class MMIListenerAdapterImpl : public IInputDeviceListener {
-public:
-    MMIListenerAdapterImpl(std::shared_ptr<MMIListenerAdapter> listener) : listener_(listener) {};
+MMIListenerAdapterImpl::MMIListenerAdapterImpl(std::shared_ptr<MMIListenerAdapter> listener) : listener_(listener) {};
 
-    ~MMIListenerAdapterImpl() {listener_ = nullptr;};
-
-    void OnDeviceAdded(int32_t deviceId, const std::string &type) override {
-        if (listener_)
-            listener_->OnDeviceAdded(deviceId, type);
-    };
-
-    void OnDeviceRemoved(int32_t deviceId, const std::string &type) override {
-        if (listener_)
-            listener_->OnDeviceRemoved(deviceId, type);
-    };
-
-private:
-    std::shared_ptr<MMIListenerAdapter> listener_ = nullptr;
+MMIListenerAdapterImpl::~MMIListenerAdapterImpl()
+{
+    listener_ = nullptr;
 };
 
-int32_t MMIAdapterImpl::RegisterDevListener(std::string type, std::shared_ptr<MMIListenerAdapter> listener) {
+void MMIListenerAdapterImpl::OnDeviceAdded(int32_t deviceId, const std::string &type)
+{
+    if (listener_) {
+        listener_->OnDeviceAdded(deviceId, type);
+    }
+};
+
+void MMIListenerAdapterImpl::OnDeviceRemoved(int32_t deviceId, const std::string &type)
+{
+    if (listener_) {
+        listener_->OnDeviceRemoved(deviceId, type);
+    }
+};
+
+int32_t MMIAdapterImpl::RegisterDevListener(std::string type, std::shared_ptr<MMIListenerAdapter> listener)
+{
     if (!listener) {
         WVLOG_E("register device listener is nullptr");
         return -1;
@@ -50,15 +52,18 @@ int32_t MMIAdapterImpl::RegisterDevListener(std::string type, std::shared_ptr<MM
     return InputManager::GetInstance()->RegisterDevListener(type, devListener_);
 }
 
-int32_t MMIAdapterImpl::UnregisterDevListener(std::string type) {
+int32_t MMIAdapterImpl::UnregisterDevListener(std::string type)
+{
     return InputManager::GetInstance()->UnregisterDevListener(type, devListener_);
 }
 
-int32_t MMIAdapterImpl::GetKeyboardType(int32_t deviceId, std::function<void(int32_t)> callback) {
+int32_t MMIAdapterImpl::GetKeyboardType(int32_t deviceId, std::function<void(int32_t)> callback)
+{
     return InputManager::GetInstance()->GetKeyboardType(deviceId, callback);
 }
 
-int32_t MMIAdapterImpl::GetDeviceIds(std::function<void(std::vector<int32_t>&)> callback) {
+int32_t MMIAdapterImpl::GetDeviceIds(std::function<void(std::vector<int32_t>&)> callback)
+{
     return InputManager::GetInstance()->GetDeviceIds(callback);
 }
 }  // namespace OHOS::NWeb

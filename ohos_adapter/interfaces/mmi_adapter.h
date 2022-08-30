@@ -16,9 +16,7 @@
 #ifndef MMI_ADAPTER_H
 #define MMI_ADAPTER_H
 
-#include <cstdint>
 #include <functional>
-#include <memory>
 
 
 namespace OHOS::NWeb {

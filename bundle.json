@@ -110,7 +110,8 @@
                 "//base/web/webview/test/unittest/nweb_helper_test:unittest",
                 "//base/web/webview/test/unittest/ohos_nweb:unittest",
                 "//base/web/webview/test/unittest/pasteboard_adapter:unittest",
-                "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest"
+                "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest",
+                "//base/web/webview/test/unittest/mmi_adapter:unittest"
             ]
         }
     }
