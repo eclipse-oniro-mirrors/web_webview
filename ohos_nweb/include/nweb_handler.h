@@ -83,6 +83,20 @@ enum class RenderExitReason {
     PROCESS_EXIT_UNKNOWN,
 };
 
+enum class SslError {
+    // General error
+    INVALID,
+
+    // Hostname mismatch
+    HOSTMISMATCH,
+
+    // The certificate date is invalid
+    DATEINVALID,
+
+    // The certificate authority is not trusted
+    UNTRUSTED,
+};
+
 using FileSelectorCallback = NWebValueCallback<std::vector<std::string>&>;
 
 class OHOS_NWEB_EXPORT NWebHandler {
@@ -387,6 +401,11 @@ public:
     virtual bool OnHttpAuthRequestByJS(std::shared_ptr<NWebJSHttpAuthResult> result,
                                        const std::string& host,
                                        const std::string& realm) {
+        return false;
+    }
+
+    virtual bool OnSslErrorRequestByJS(std::shared_ptr<NWebJSSslErrorResult> result,
+                                       SslError error) {
         return false;
     }
 
