@@ -21,6 +21,20 @@
 #include "input_manager.h"
 
 namespace OHOS::NWeb {
+class MMIListenerAdapterImpl : public MMI::IInputDeviceListener {
+public:
+    MMIListenerAdapterImpl(std::shared_ptr<MMIListenerAdapter> listener);
+
+    ~MMIListenerAdapterImpl();
+
+    void OnDeviceAdded(int32_t deviceId, const std::string &type) override;
+
+    void OnDeviceRemoved(int32_t deviceId, const std::string &type) override;
+
+private:
+    std::shared_ptr<MMIListenerAdapter> listener_ = nullptr;
+};
+
 class MMIAdapterImpl : public MMIAdapter {
 public:
     MMIAdapterImpl() = default;
