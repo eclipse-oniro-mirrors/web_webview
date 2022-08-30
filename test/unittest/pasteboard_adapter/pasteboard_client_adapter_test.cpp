@@ -84,6 +84,7 @@ void NWebPasteboardAdapterTest::SetUpTestCase(void)
     }
     EXPECT_EQ(RESULT_OK, result);
     g_datarecordnull->builder_ = nullptr;
+    g_datarecordnull->record_ = nullptr;
 
     result = 0;
     g_datarecord = std::make_shared<PasteDataRecordAdapterImpl>(mimeType);
@@ -307,6 +308,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddHtmlRecord_010, Tes
 {
     std::string htmlName = "test";
     g_dataAdapter->AddHtmlRecord(htmlName);
+    g_dataAdapterNull->AddHtmlRecord(htmlName);
 }
 
 /**
@@ -319,6 +321,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddTextRecord_011, Tes
 {
     std::string htmlName = "test";
     g_dataAdapter->AddTextRecord(htmlName);
+    g_dataAdapterNull->AddTextRecord(htmlName);
 }
 
 /**
@@ -372,11 +375,24 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryHtml_013, Te
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryText_014, TestSize.Level1)
 {
     int result = 0;
+    std::size_t index = 0;
     std::shared_ptr<std::string> primaryText = g_dataAdapter->GetPrimaryText();
     if (primaryText == nullptr) {
         result = -1;
     }
     EXPECT_EQ(RESULT_OK, result);
+    std::shared_ptr<PasteDataRecordAdapter> record = g_dataAdapter->GetRecordAt(index);
+    if (record == nullptr) {
+        result = -1;
+    }
+    EXPECT_NE(RESULT_OK, result);
+    result = 0;
+    PasteRecordList recordList = g_dataAdapter->AllRecords();
+    if (recordList.empty()) {
+        result = -1;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+    result = 0;
     std::shared_ptr<std::string> primary = g_dataAdapterNull->GetPrimaryText();
     if (primary == nullptr) {
         result = -1;
@@ -420,32 +436,6 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordAt_016, TestS
         result = -1;
     }
     EXPECT_NE(RESULT_OK, result);
-    result = 0;
-    std::shared_ptr<PasteDataRecord> data = std::make_shared<PasteDataRecord>();
-    if (data == nullptr) {
-        result = -1;
-    }
-    EXPECT_EQ(RESULT_OK, result);
-    MockPasteData *mock = new MockPasteData();
-    g_dataAdapter->data_.reset((PasteData *)mock);
-    EXPECT_CALL(*mock, GetRecordCount())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(0));
-    EXPECT_CALL(*mock, GetRecordAt(::testing::_))
-        .Times(1)
-        .WillRepeatedly(::testing::Return(data));
-    std::shared_ptr<PasteDataRecordAdapter> str = g_dataAdapter->GetRecordAt(index);
-    if (str == nullptr) {
-        result = -1;
-    }
-    EXPECT_EQ(RESULT_OK, result);
-
-    index = 0;
-    std::shared_ptr<PasteDataRecordAdapter> recordAt = g_dataAdapter->GetRecordAt(index);
-    if (recordAt == nullptr) {
-        result = -1;
-    }
-    EXPECT_NE(RESULT_OK, result);
 }
 
 /**
@@ -460,9 +450,6 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordAt_017, TestS
     std::size_t index = 0;
     MockPasteData *mock1 = new MockPasteData();
     g_dataAdapterNull->data_.reset((PasteData *)mock1);
-    EXPECT_CALL(*mock1, GetRecordCount())
-        .Times(0)
-        .WillRepeatedly(::testing::Return(0));
     std::shared_ptr<PasteDataRecordAdapter> str = g_dataAdapterNull->GetRecordAt(index);
     if (str == nullptr) {
         result = -1;
@@ -488,9 +475,6 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordCount_018, Te
     result = 0;
     MockPasteData *mock2 = new MockPasteData();
     g_dataAdapterNull->data_.reset((PasteData *)mock2);
-    EXPECT_CALL(*mock2, GetRecordCount())
-        .Times(0)
-        .WillRepeatedly(::testing::Return(0));
     std::size_t count = g_dataAdapterNull->GetRecordCount();
     EXPECT_EQ(RESULT_OK, count);
     g_dataAdapterNull->data_ = nullptr;
@@ -772,6 +756,9 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_032, TestSi
     EXPECT_EQ(TRUE_OK, reset);
     reset = g_datarecordnull->SetImgData(imageData);
     EXPECT_NE(TRUE_OK, reset);
+    imageData->dataSize = 1;
+    reset = g_datarecordnull->SetImgData(imageData);
+    EXPECT_NE(TRUE_OK, reset);
     imageData = nullptr;
     reset = g_datarecordnull->SetImgData(imageData);
     EXPECT_NE(TRUE_OK, reset);
@@ -801,39 +788,23 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_033, TestSi
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_034, TestSize.Level1)
 {
     ClipBoardImageData image;
-    MockPasteDataRecord *mock = new MockPasteDataRecord();
-    g_paster->record_.reset((PasteDataRecord *)mock);
-    EXPECT_CALL(*mock, GetPixelMap())
-        .Times(0)
-        .WillRepeatedly(::testing::Return(nullptr));
-    bool reset = g_paster->GetImgData(image);
-    EXPECT_NE(TRUE_OK, reset);
-    g_paster->record_ = nullptr;
+    bool reset = g_datarecord->GetImgData(image);
+    EXPECT_EQ(TRUE_OK, reset);
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_GetImgData_035.
- * @tc.desc: Test the GetImgData.
+ * @tc.name: NWebPasteboardAdapter_Clear_035.
+ * @tc.desc: Test the Clear.
  * @tc.type: FUNC.
  * @tc.require:issueI5O4AZ
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_035, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_035, TestSize.Level1)
 {
-    ClipBoardImageData image;
-    std::shared_ptr<PixelMap> pixe = std::make_shared<PixelMap>();
-    pixe->pixelsSize_ = 0;
-    MockPasteDataRecord *mock = new MockPasteDataRecord();
-    g_paster->record_.reset((PasteDataRecord *)mock);
-    EXPECT_CALL(*mock, GetPixelMap())
-        .Times(2)
-        .WillRepeatedly(::testing::Return(pixe));
-    bool reset = g_paster->GetImgData(image);
-    EXPECT_NE(TRUE_OK, reset);
-
-    pixe->pixelsSize_ = 1;
-    pixe->data_ = nullptr;
-    reset = g_paster->GetImgData(image);
-    EXPECT_NE(TRUE_OK, reset);
+    uint32_t bufferSize = 20;
+    if (g_datarecord->imgBuffer_ == nullptr) {
+        g_datarecord->imgBuffer_ = (uint8_t *)calloc((size_t)bufferSize, sizeof(uint8_t));
+    }
+    g_datarecord->Clear();
 }
 
 /**
@@ -844,17 +815,10 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_035, TestSi
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_036, TestSize.Level1)
 {
-    g_datarecord->Clear();
-}
-
-/**
- * @tc.name: NWebPasteboardAdapter_Clear_037.
- * @tc.desc: Test the Clear.
- * @tc.type: FUNC.
- * @tc.require:issueI5O4AZ
- */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_037, TestSize.Level1)
-{
+    PasteRecordList data;
+    data.clear();
+    PasteBoardClientAdapterImpl::GetInstance().Clear();
+    PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
     PasteBoardClientAdapterImpl::GetInstance().Clear();
 }
 }
