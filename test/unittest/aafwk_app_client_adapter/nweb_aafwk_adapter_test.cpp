@@ -237,6 +237,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_008, TestSize
     pid_t renderPid = 0;
     int result = g_adapter->StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
     EXPECT_NE(RESULT_OK, result);
+    result = 0;
     std::shared_ptr<RenderScheduler> render = std::make_shared<RenderScheduler>();
     if (render == nullptr) {
         result = -1;
