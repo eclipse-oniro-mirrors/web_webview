@@ -43,7 +43,7 @@ ohos_shared_library("webview_napi") {
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage/napi_web_storage.cpp",
   ]
 
-  deps = [ "//foundation/arkui/napi:ace_napi", ]
+  deps = [ "//foundation/arkui/napi:ace_napi" ]
 
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
