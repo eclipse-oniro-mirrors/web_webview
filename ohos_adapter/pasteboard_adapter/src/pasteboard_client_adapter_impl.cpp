@@ -292,7 +292,7 @@ std::shared_ptr<std::string> PasteDataAdapterImpl::GetPrimaryMimeType()
 std::shared_ptr<PasteDataRecordAdapter> PasteDataAdapterImpl::GetRecordAt(
     std::size_t index)
 {
-    if (data_ == nullptr || data_->GetRecordCount() >= index) {
+    if (data_ == nullptr || data_->GetRecordCount() <= index) {
         return nullptr;
     }
     return std::make_shared<PasteDataRecordAdapterImpl>(data_->GetRecordAt(index));
