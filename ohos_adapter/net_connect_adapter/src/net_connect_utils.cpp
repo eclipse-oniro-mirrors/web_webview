@@ -16,8 +16,7 @@
 #include "net_connect_utils.h"
 
 namespace OHOS::NWeb {
-namespace {
-NetConnectType ConvertToConnectTypeInner(const RadioTech &subtype)
+NetConnectType NetConnectUtils::ConvertToConnectTypeInner(const RadioTech &subtype)
 {
     switch (subtype) {
         case RadioTech::RADIO_TECHNOLOGY_UNKNOWN:
@@ -41,7 +40,6 @@ NetConnectType ConvertToConnectTypeInner(const RadioTech &subtype)
         default:
             return NetConnectType::CONNECTION_UNKNOWN;
     }
-}
 }
 
 NetConnectSubtype NetConnectUtils::ConvertToConnectsubtype(const RadioTech &subtype)
