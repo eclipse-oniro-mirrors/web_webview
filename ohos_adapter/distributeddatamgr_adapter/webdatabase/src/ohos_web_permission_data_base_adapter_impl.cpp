@@ -83,10 +83,7 @@ std::shared_ptr<OHOS::NativeRdb::RdbStore> OhosWebPermissionDataBaseAdapterImpl:
 
     int32_t errCode = NativeRdb::E_OK;
     rdbStore = RdbHelper::GetRdbStore(config, RDB_VERSION, callBack, errCode);
-    if (rdbStore == nullptr) {
-        WVLOG_E("web permission database get rdb store failed, errCode=%{public}d", errCode);
-    }
-    WVLOG_I("web permission database create rdb store end");
+    WVLOG_I("web permission database create rdb store end, errCode=%{public}d", errCode);
     return rdbStore;
 }
 
@@ -175,11 +172,7 @@ void OhosWebPermissionDataBaseAdapterImpl::SetPermissionByOrigin(const std::stri
     valuesBucket.PutString(PERMISSION_ORIGIN_COL, origin);
     valuesBucket.PutInt(PERMISSION_RESULT_COL, (int)result);
     errCode = rdbStore_->Insert(outRowId, tableName, valuesBucket);
-    if (errCode != NativeRdb::E_OK) {
-        WVLOG_E("web permission database rdb store insert failed, errCode=%{public}d", errCode);
-        return;
-    }
-    WVLOG_I("web permission database set info end");
+    WVLOG_I("web permission database set info end, errCode=%{public}d", errCode);
 }
 
 void OhosWebPermissionDataBaseAdapterImpl::ClearPermissionByOrigin(const std::string& origin,
@@ -220,6 +213,9 @@ void OhosWebPermissionDataBaseAdapterImpl::ClearAllPermission(const WebPermissio
 void OhosWebPermissionDataBaseAdapterImpl::GetOriginsByPermission(const WebPermissionType& key,
     std::vector<std::string>& origins) const
 {
+    if (rdbStore_ == nullptr) {
+        return;
+    }
     std::string tableName = KeyToTableName(key);
     if (tableName.empty()) {
         return;
@@ -238,6 +234,5 @@ void OhosWebPermissionDataBaseAdapterImpl::GetOriginsByPermission(const WebPermi
         std::string origin;
         resultSet->GetString(columnIndex, origin);
         origins.push_back(origin);
-        WVLOG_I("web permission database get origin:%{public}s", origin.c_str());
     } while (resultSet->GoToNextRow() == NativeRdb::E_OK);
 }
