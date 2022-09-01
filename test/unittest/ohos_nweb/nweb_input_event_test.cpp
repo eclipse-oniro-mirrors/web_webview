@@ -113,4 +113,18 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_002, TestSize.Level1)
     result = g_input->OnInputEvent(axisevent);
     EXPECT_EQ(RESULT_FAIL, result);
 }
+
+/**
+ * @tc.name: NWebInputEvent_OnInputEvent_003.
+ * @tc.desc: OnInputEvent.
+ * @tc.type: FUNC.
+ * @tc.require: I5P8YA
+ */
+HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_003, TestSize.Level1)
+{
+    bool result;
+    std::shared_ptr<MMI::AxisEvent> axisevent = MMI::AxisEvent::Create();
+    result = g_input->OnInputEvent(axisevent);
+    EXPECT_EQ(RESULT_FAIL, result);
+}
 }
