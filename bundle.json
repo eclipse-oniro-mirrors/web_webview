@@ -111,7 +111,8 @@
                 "//base/web/webview/test/unittest/ohos_adapter/permission_data_base_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_nweb:unittest",
                 "//base/web/webview/test/unittest/pasteboard_adapter:unittest",
-                "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest"
+                "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest",
+                "//base/web/webview/test/unittest/mmi_adapter:unittest"
             ]
         }
     }
