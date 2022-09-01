@@ -118,7 +118,7 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_002, TestSize.Level1)
  * @tc.name: NWebInputEvent_OnInputEvent_003.
  * @tc.desc: OnInputEvent.
  * @tc.type: FUNC.
- * @tc.require: I5P8YA
+ * @tc.require: I5P97S
  */
 HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_003, TestSize.Level1)
 {
