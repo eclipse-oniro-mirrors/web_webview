@@ -20,7 +20,7 @@
 #include <hilog/log.h>
 
 namespace OHOS {
-constexpr HiviewDFX::HiLogLabel LOG_LABEL = { LOG_CORE, 0, "NWEB" };
+constexpr HiviewDFX::HiLogLabel LOG_LABEL = { LOG_CORE, 0xD004500, "NWEB" };
 
 #define FUNC_LINE_FMT " %{public}s<%{public}d>: "
 
