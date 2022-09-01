@@ -19,6 +19,7 @@
 
 #define private public
 #include "aafwk_app_mgr_client_adapter_impl.h"
+#include "aafwk_render_scheduler_impl.h"
 #undef private
 
 #include "app_mgr_client.h"
@@ -248,5 +249,32 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_008, TestSize
     pid_t red = 1;
     result = g_adapter->GetRenderProcessTerminationStatus(red, statused);
     EXPECT_NE(RESULT_OK, result);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_NotifyBrowserFd_009.
+ * @tc.desc: Test the NotifyBrowserFd.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Level1)
+{
+    int result = 0;
+    std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter = std::make_shared<RenderScheduler>();
+    if (adapter == nullptr) {
+        result = -1;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+    result = 0;
+    std::shared_ptr<AafwkRenderSchedulerImpl> render = std::make_shared<AafwkRenderSchedulerImpl>(adapter);
+    if (render == nullptr) {
+        result = -1;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+    int32_t ipcFd = 1;
+    int32_t sharedFd = 2;
+    render->NotifyBrowserFd(ipcFd, sharedFd);
+    render->renderSchedulerHostAdapter_ = nullptr;
+    render->NotifyBrowserFd(ipcFd, sharedFd);
 }
 }
