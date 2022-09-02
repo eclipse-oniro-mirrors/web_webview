@@ -115,7 +115,8 @@
                 "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest",
                 "//base/web/webview/test/unittest/mmi_adapter:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter_helper:unittest",
-                "//base/web/webview/test/unittest/napi_web_cookie_manager_test:unittest"
+                "//base/web/webview/test/unittest/napi_web_cookie_manager_test:unittest",
+                "//base/web/webview/test/unittest/audio_adapter_impl_test:unittest"
             ]
         }
     }
