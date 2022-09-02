@@ -20,6 +20,7 @@ config("nweb_test_config") {
     "//base/web/webview/interfaces/innerkits/ohos_nweb",
     "//foundation/window/window_manager/interfaces/innerkits/wm",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
+    "//foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include",
   ]
 
   cflags = [
@@ -45,8 +46,9 @@ ohos_executable("nweb_test") {
   configs = [ ":nweb_test_config" ]
 
   deps = [
-    "${aafwk_path}/frameworks/native/appkit:appkit_native",
     "//base/web/webview/ohos_nweb:libnweb",
+    "//foundation/graphic/graphic_2d:libvsync_client",
+    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
     "//foundation/window/window_manager/wm:libwm",
     "//third_party/zlib:libz",
   ]
@@ -54,8 +56,6 @@ ohos_executable("nweb_test") {
   external_deps = [
     "hiviewdfx_hilog_native:libhilog",
     "input:libmmi-client",
-    "ipc:ipc_core",
-    "samgr:samgr_proxy",
   ]
 
   part_name = "webview"

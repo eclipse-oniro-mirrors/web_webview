@@ -53,7 +53,7 @@ void NapiWebCookieManagerTest::TearDown(void)
  * @tc.name: NapiWebCookieManagerTest_001
  * @tc.desc: GetCookieManager.
  * @tc.type: FUNC
- * @tc.require: #I5P91V
+ * @tc.require: I5P91V
  */
 HWTEST_F(NapiWebCookieManagerTest, NapiWebCookieManagerTest_001, TestSize.Level1)
 {
