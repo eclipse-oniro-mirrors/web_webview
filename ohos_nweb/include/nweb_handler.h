@@ -404,12 +404,12 @@ public:
         return false;
     }
 
+    virtual void OnScroll(double xOffset, double yOffset) {}
+
     virtual bool OnSslErrorRequestByJS(std::shared_ptr<NWebJSSslErrorResult> result,
                                        SslError error) {
         return false;
     }
-
-    virtual void OnScroll(double xOffset, double yOffset) {}
 };
 }  // namespace OHOS::NWeb
 

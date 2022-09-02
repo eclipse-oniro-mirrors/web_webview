@@ -138,12 +138,6 @@ public:
     virtual void DeleteNavigateHistory() = 0;
 
     /**
-     * Clear ssl cache.
-     *
-     */
-    virtual void ClearSslCache() = 0;
-
-    /**
      * Reload the current URL.
      *
      */
@@ -443,6 +437,12 @@ public:
      */
     virtual void SetPortMessageCallback(std::string& handle,
         std::shared_ptr<NWebValueCallback<std::string>> callback) = 0;
+
+    /**
+     * Clear ssl cache.
+     *
+     */
+    virtual void ClearSslCache() = 0;
 };
 }  // namespace OHOS::NWeb
 
