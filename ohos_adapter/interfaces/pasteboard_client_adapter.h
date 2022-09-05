@@ -81,6 +81,8 @@ public:
 
     virtual bool SetImgData(std::shared_ptr<ClipBoardImageData> imageData) = 0;
 
+    virtual bool SetUri(const std::string& uriString) = 0;
+
     virtual std::string GetMimeType() = 0;
 
     virtual std::shared_ptr<std::string> GetHtmlText() = 0;
@@ -88,6 +90,8 @@ public:
     virtual std::shared_ptr<std::string> GetPlainText() = 0;
 
     virtual bool GetImgData(ClipBoardImageData &imageData) = 0;
+
+    virtual std::shared_ptr<std::string> GetUri() = 0;
 };
 
 class PasteDataAdapter {
