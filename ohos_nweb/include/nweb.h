@@ -468,7 +468,7 @@ public:
 
     /**
      * get web page url.
-     * 
+     *
      * @return web page url.
      */
     virtual std::string GetUrl() const = 0;
