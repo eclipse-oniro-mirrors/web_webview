@@ -190,7 +190,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebStorage_003, TestSize.Level1)
  * @tc.name: NWebHelper_GetDataBase_004
  * @tc.desc: GetDataBase.
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require:issueI5OESN
  */
 HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_004, TestSize.Level1)
 {

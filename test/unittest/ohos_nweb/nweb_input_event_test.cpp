@@ -79,6 +79,7 @@ void NWebInputEventTest::TearDown(void)
  * @tc.name: NWebInputEvent_NWebInputEventConsumer_001.
  * @tc.desc: NWebInputEventConsumer.
  * @tc.type: FUNC.
+ * @tc.require:issueI5NXG9
  */
 HWTEST_F(NWebInputEventTest, NWebInputEvent_NWebInputEventConsumer_001, TestSize.Level1)
 {
@@ -94,6 +95,7 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_NWebInputEventConsumer_001, TestSize
  * @tc.name: NWebInputEvent_OnInputEvent_002.
  * @tc.desc: OnInputEvent.
  * @tc.type: FUNC.
+ * @tc.require:issueI5OURV
  */
 HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_002, TestSize.Level1)
 {
