@@ -34,12 +34,14 @@ public:
     bool SetPlainText(std::shared_ptr<std::string> plainText) override;
     bool SetImgData(std::shared_ptr<ClipBoardImageData> imageData) override;
     bool SetUri(const std::string& uriString) override;
+    bool SetCustomData(PasteCustomData& data) override;
     std::string GetMimeType() override;
     std::shared_ptr<std::string> GetHtmlText() override;
     std::shared_ptr<std::string> GetPlainText() override;
     std::shared_ptr<MiscServices::PasteDataRecord> GetRecord();
     bool GetImgData(ClipBoardImageData &imageData) override;
     std::shared_ptr<std::string> GetUri() override;
+    std::shared_ptr<PasteCustomData> GetCustomData() override;
     void Clear();
 private:
     std::shared_ptr<MiscServices::PasteDataRecord> record_;

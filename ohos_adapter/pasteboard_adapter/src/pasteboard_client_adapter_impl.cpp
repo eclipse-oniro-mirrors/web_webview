@@ -93,6 +93,21 @@ bool PasteDataRecordAdapterImpl::SetUri(const std::string& uriString)
     return true;
 }
 
+bool PasteDataRecordAdapterImpl::SetCustomData(PasteCustomData& data)
+{
+    if (data.empty() || !builder_) {
+        WVLOG_E("custom data is empty or builder_ is null");
+        return false;
+    }
+    std::shared_ptr<MineCustomData> customData =
+        std::make_shared<MineCustomData>();
+    for (PasteCustomData::iterator iter = data.begin(); iter != data.end(); ++iter) {
+        customData->AddItemData(iter->first, iter->second);
+    }
+    record_ = builder_->SetCustomData(customData).Build();
+    return true;
+}
+
 ClipBoardImageAlphaType PasteDataRecordAdapterImpl::ImageToClipboardAlphaType
     (const Media::ImageInfo &imgInfo)
 {
@@ -250,6 +265,18 @@ std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetUri()
         return nullptr;
     }
     return std::make_shared<std::string>(uri->ToString());
+}
+
+std::shared_ptr<PasteCustomData> PasteDataRecordAdapterImpl::GetCustomData()
+{
+    if (record_ == nullptr) {
+        return nullptr;
+    }
+    auto customData = record_->GetCustomData();
+    if (customData == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<PasteCustomData>(customData->GetItemData());
 }
 
 void PasteDataRecordAdapterImpl::ClearImgBuffer()
