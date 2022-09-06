@@ -33,11 +33,13 @@ public:
     bool SetHtmlText(std::shared_ptr<std::string> htmlText) override;
     bool SetPlainText(std::shared_ptr<std::string> plainText) override;
     bool SetImgData(std::shared_ptr<ClipBoardImageData> imageData) override;
+    bool SetUri(const std::string& uriString) override;
     std::string GetMimeType() override;
     std::shared_ptr<std::string> GetHtmlText() override;
     std::shared_ptr<std::string> GetPlainText() override;
     std::shared_ptr<MiscServices::PasteDataRecord> GetRecord();
     bool GetImgData(ClipBoardImageData &imageData) override;
+    std::shared_ptr<std::string> GetUri() override;
     void Clear();
 private:
     std::shared_ptr<MiscServices::PasteDataRecord> record_;
