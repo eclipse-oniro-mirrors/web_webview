@@ -111,7 +111,14 @@
                 "//base/web/webview/test/unittest/ohos_adapter/permission_data_base_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_nweb:unittest",
                 "//base/web/webview/test/unittest/pasteboard_adapter:unittest",
-                "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest"
+                "//base/web/webview/test/unittest/battery_mgr_adapter_impl:unittest",
+                "//base/web/webview/test/unittest/aafwk_app_client_adapter:unittest",
+                "//base/web/webview/test/unittest/mmi_adapter:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter_helper:unittest",
+                "//base/web/webview/test/unittest/napi_web_cookie_manager_test:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter/web_data_base_adapter_impl_test:unittest",
+                "//base/web/webview/test/unittest/audio_adapter_impl_test:unittest",
+                "//base/web/webview/test/unittest/net_connect_callback_impl_test:unittest"
             ]
         }
     }

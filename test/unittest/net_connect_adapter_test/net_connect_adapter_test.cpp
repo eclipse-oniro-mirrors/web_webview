@@ -47,7 +47,7 @@ void NetConnectAdapterTest::TearDown(void)
 /**
  * @tc.name: NetConnectAdapterTest_001.
  * @tc.desc: test lock type.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_001, TestSize.Level1)
@@ -73,13 +73,14 @@ HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_001, TestSize.Level1)
         NetConnectType actualType = OHOS::NWeb::NetConnectUtils::ConvertToConnectTypeInner(type);
         EXPECT_EQ(exceptType, actualType);
     }
-    EXPECT_EQ(NetConnectType::CONNECTION_UNKNOWN, OHOS::NWeb::NetConnectUtils::ConvertToConnectTypeInner(static_cast<RadioTech>(-1)));
+    EXPECT_EQ(NetConnectType::CONNECTION_UNKNOWN, 
+        OHOS::NWeb::NetConnectUtils::ConvertToConnectTypeInner(static_cast<RadioTech>(-1)));
 }
 
 /**
  * @tc.name: NetConnectAdapterTest_002.
  * @tc.desc: test lock type.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_002, TestSize.Level1)
@@ -104,13 +105,14 @@ HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_002, TestSize.Level1)
         NetConnectSubtype actualType = OHOS::NWeb::NetConnectUtils::ConvertToConnectsubtype(type);
         EXPECT_EQ(exceptType, actualType);
     }
-    EXPECT_EQ(NetConnectSubtype::SUBTYPE_UNKNOWN, OHOS::NWeb::NetConnectUtils::ConvertToConnectsubtype(static_cast<RadioTech>(-1)));
+    EXPECT_EQ(NetConnectSubtype::SUBTYPE_UNKNOWN, OHOS::NWeb::NetConnectUtils::ConvertToConnectsubtype(
+        static_cast<RadioTech>(-1)));
 }
 
 /**
  * @tc.name: NetConnectAdapterTest_002.
  * @tc.desc: test lock type.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_003, TestSize.Level1)
@@ -130,12 +132,15 @@ HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_003, TestSize.Level1)
             netBearType, RadioTech::RADIO_TECHNOLOGY_UNKNOWN);
         EXPECT_EQ(exceptType, actualType);
     }
+    const uint32_t BEARER_ELSE = 7;
+    EXPECT_EQ(NetConnectType::CONNECTION_UNKNOWN, OHOS::NWeb::NetConnectUtils::ConvertToConnectType(
+        static_cast<NetBearType>(BEARER_ELSE), RadioTech::RADIO_TECHNOLOGY_UNKNOWN));
 }
 
 /**
  * @tc.name: NetConnectAdapterTest_002.
  * @tc.desc: test lock type.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_004, TestSize.Level1)
