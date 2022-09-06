@@ -150,16 +150,9 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_004, TestS
     type = OHOS::Rosen::Orientation::SENSOR_HORIZONTAL;
     retType = displayAdapterImpl->ConvertOrientationType(type);
     EXPECT_EQ(retType, OHOS::NWeb::OrientationType::SENSOR_HORIZONTAL);
-}
 
-/**
- * @tc.name: DisplayManagerAdapterImplTest_005.
- * @tc.desc: test ConvertRotationType.
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_005, TestSize.Level1)
-{
-
+    type = static_cast<OHOS::Rosen::Orientation>(8);
+    retType = displayAdapterImpl->ConvertOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::BUTT);
 }
 }
