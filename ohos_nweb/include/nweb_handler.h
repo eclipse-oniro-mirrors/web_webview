@@ -28,6 +28,7 @@
 #include "nweb_geolocation_callback_interface.h"
 #include "nweb_js_dialog_result.h"
 #include "nweb_js_http_auth_result.h"
+#include "nweb_js_ssl_error_result.h"
 #include "nweb_touch_handle_state.h"
 #include "nweb_url_resource_error.h"
 #include "nweb_url_resource_request.h"
@@ -80,6 +81,20 @@ enum class RenderExitReason {
 
     // Unknown reason
     PROCESS_EXIT_UNKNOWN,
+};
+
+enum class SslError {
+    // General error
+    INVALID,
+
+    // Hostname mismatch
+    HOSTMISMATCH,
+
+    // The certificate date is invalid
+    DATEINVALID,
+
+    // The certificate authority is not trusted
+    UNTRUSTED,
 };
 
 struct ImageOptions {
@@ -399,6 +414,11 @@ public:
     virtual void OnScroll(double xOffset, double yOffset) {}
 
     virtual bool OnDragAndDropData(const void* data, size_t len, const ImageOptions& opt) {
+        return false;
+    }
+
+    virtual bool OnSslErrorRequestByJS(std::shared_ptr<NWebJSSslErrorResult> result,
+                                       SslError error) {
         return false;
     }
 };
