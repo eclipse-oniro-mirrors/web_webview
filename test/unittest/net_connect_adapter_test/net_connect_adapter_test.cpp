@@ -73,6 +73,7 @@ HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_001, TestSize.Level1)
         NetConnectType actualType = OHOS::NWeb::NetConnectUtils::ConvertToConnectTypeInner(type);
         EXPECT_EQ(exceptType, actualType);
     }
+    EXPECT_EQ(NetConnectType::CONNECTION_UNKNOWN, OHOS::NWeb::NetConnectUtils::ConvertToConnectTypeInner(static_cast<RadioTech>(-1)));
 }
 
 /**
@@ -103,6 +104,7 @@ HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_002, TestSize.Level1)
         NetConnectSubtype actualType = OHOS::NWeb::NetConnectUtils::ConvertToConnectsubtype(type);
         EXPECT_EQ(exceptType, actualType);
     }
+    EXPECT_EQ(NetConnectSubtype::SUBTYPE_UNKNOWN, OHOS::NWeb::NetConnectUtils::ConvertToConnectsubtype(static_cast<RadioTech>(-1)));
 }
 
 /**
