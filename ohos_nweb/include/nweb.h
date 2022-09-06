@@ -459,6 +459,12 @@ public:
      * @param dragEvent the drag event information.
      */
     virtual void SendDragEvent(const DragEvent& dragEvent) const = 0;
+
+    /**
+     * Clear ssl cache.
+     *
+     */
+    virtual void ClearSslCache() = 0;
 };
 }  // namespace OHOS::NWeb
 
