@@ -82,6 +82,17 @@ bool PasteDataRecordAdapterImpl::SetPlainText(std::shared_ptr<std::string> plain
     return false;
 }
 
+bool PasteDataRecordAdapterImpl::SetUri(const std::string& uriString)
+{
+    if (uriString.empty() || !builder_) {
+        WVLOG_E("record_ or uriString is null");
+        return false;
+    }
+    std::shared_ptr<OHOS::Uri> uri = std::make_shared<OHOS::Uri>(uriString);
+    record_ = builder_->SetUri(uri).Build();
+    return true;
+}
+
 ClipBoardImageAlphaType PasteDataRecordAdapterImpl::ImageToClipboardAlphaType
     (const Media::ImageInfo &imgInfo)
 {
@@ -227,6 +238,18 @@ bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
     imageData.height = height;
     imageData.rowBytes = static_cast<size_t>(rowBytes);
     return true;
+}
+
+std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetUri()
+{
+    if (record_ == nullptr) {
+        return nullptr;
+    }
+    auto uri = record_->GetUri();
+    if (uri == nullptr) {
+        return nullptr;
+    }
+    return std::make_shared<std::string>(uri->ToString());
 }
 
 void PasteDataRecordAdapterImpl::ClearImgBuffer()
