@@ -465,6 +465,13 @@ public:
      *
      */
     virtual void ClearSslCache() = 0;
+
+    /**
+     * get web page url.
+     *
+     * @return web page url.
+     */
+    virtual std::string GetUrl() const = 0;
 };
 }  // namespace OHOS::NWeb
 
