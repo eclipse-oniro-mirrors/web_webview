@@ -45,7 +45,7 @@ void OhosAdapterHelperTest::TearDown(void)
 /**
  * @tc.name: OhosAdapterHelper_GetInstance_001.
  * @tc.desc: Test the GetInstance.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_001, TestSize.Level1)
