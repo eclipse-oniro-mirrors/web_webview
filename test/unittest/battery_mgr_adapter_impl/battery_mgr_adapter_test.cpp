@@ -207,7 +207,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_WebBatteryInfoImpl_006, TestSize.
     want.SetAction(CommonEventSupport::COMMON_EVENT_BATTERY_LOW);
     CommonEventData data(want);
     g_batter->OnReceiveEvent(data);
-    g_batter->commonEventSubscriber_ = nullptr;
+    g_batterImpl->commonEventSubscriber_ = nullptr;
     g_batterImpl->StopListen();
 }
 }
