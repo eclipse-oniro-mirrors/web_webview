@@ -46,7 +46,7 @@ void PowerMgrClientAdapterImplTest::TearDown(void)
 /**
  * @tc.name: PowerMgrClientAdapterImplTest_001.
  * @tc.desc: test lock type.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(PowerMgrClientAdapterImplTest, PowerMgrClientAdapterImplTest_001, TestSize.Level1)
@@ -71,7 +71,7 @@ HWTEST_F(PowerMgrClientAdapterImplTest, PowerMgrClientAdapterImplTest_001, TestS
 /**
  * @tc.name: PowerMgrClientAdapterImplTest_002.
  * @tc.desc: test running lock, exception cases.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(PowerMgrClientAdapterImplTest, PowerMgrClientAdapterImplTest_002, TestSize.Level1)

@@ -77,7 +77,7 @@ void RenderScheduler::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd)
 /**
  * @tc.name: NWebInputEvent_AafwkAppMgrClientAdapterImpl_001.
  * @tc.desc: Test the AafwkAppMgrClientAdapterImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebInputEvent_AafwkAppMgrClientAdapterImpl_001, TestSize.Level1)
@@ -93,7 +93,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebInputEvent_AafwkAppMgrClientAdapterImpl_001, 
 /**
  * @tc.name: NWebAafwkAdapter_StartRenderProcess_002.
  * @tc.desc: Test the StartRenderProcess.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_002, TestSize.Level1)
@@ -114,7 +114,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_002, TestSize
 /**
  * @tc.name: NWebAafwkAdapter_StartRenderProcess_003.
  * @tc.desc: Test the StartRenderProcess Exception scenarios.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_003, TestSize.Level1)
@@ -135,7 +135,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_003, TestSize
 /**
  * @tc.name: NWebAafwkAdapter_AttachRenderProcess_004.
  * @tc.desc: Test the AttachRenderProcess.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_AttachRenderProcess_004, TestSize.Level1)
@@ -154,7 +154,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_AttachRenderProcess_004, TestSiz
 /**
  * @tc.name: NWebAafwkAdapter_GetRenderProcessTerminationStatus_005.
  * @tc.desc: Test the GetRenderProcessTerminationStatus.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatus_005, TestSize.Level1)
@@ -178,7 +178,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatu
 /**
  * @tc.name: NWebAafwkAdapter_GetRenderProcessTerminationStatus_006.
  * @tc.desc: Test the GetRenderProcessTerminationStatus Exception scenarios.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatus_006, TestSize.Level1)
@@ -202,7 +202,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatu
 /**
  * @tc.name: NWebAafwkAdapter_GetRenderProcessTerminationStatus_007.
  * @tc.desc: Test the GetRenderProcessTerminationStatus Exception scenarios.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatus_007, TestSize.Level1)
@@ -226,7 +226,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatu
 /**
  * @tc.name: NWebAafwkAdapter_StartRenderProcess_008.
  * @tc.desc: In this scence StartRenderProcess will be fail.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_008, TestSize.Level1)
@@ -254,7 +254,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_008, TestSize
 /**
  * @tc.name: NWebAafwkAdapter_NotifyBrowserFd_009.
  * @tc.desc: Test the NotifyBrowserFd.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Level1)

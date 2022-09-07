@@ -121,7 +121,7 @@ public:
 /**
  * @tc.name: NWebPasteboardAdapter_PasteDataRecordAdapterImpl_001.
  * @tc.desc: Test the PasteDataRecordAdapterImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapterImpl_001, TestSize.Level1)
@@ -142,7 +142,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapter
 /**
  * @tc.name: NWebPasteboardAdapter_PasteDataRecordAdapterImpl_002.
  * @tc.desc: Test the PasteDataRecordAdapterImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapterImpl_002, TestSize.Level1)
@@ -168,7 +168,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapter
 /**
  * @tc.name: NWebPasteboardAdapter_NewRecord_003.
  * @tc.desc: Test the NewRecord.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_NewRecord_003, TestSize.Level1)
@@ -185,7 +185,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_NewRecord_003, TestSiz
 /**
  * @tc.name: NWebPasteboardAdapter_GetMimeType_004.
  * @tc.desc: Test the GetMimeType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetMimeType_004, TestSize.Level1)
@@ -206,7 +206,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetMimeType_004, TestS
 /**
  * @tc.name: NWebPasteboardAdapter_GetHtmlText_005.
  * @tc.desc: Test the GetHtmlText.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetHtmlText_005, TestSize.Level1)
@@ -227,7 +227,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetHtmlText_005, TestS
 /**
  * @tc.name: NWebPasteboardAdapter_GetPlainText_006.
  * @tc.desc: Test the GetPlainText.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPlainText_006, TestSize.Level1)
@@ -248,7 +248,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPlainText_006, Test
 /**
  * @tc.name: NWebPasteboardAdapter_GetRecord_007.
  * @tc.desc: Test the GetRecord.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecord_007, TestSize.Level1)
@@ -264,7 +264,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecord_007, TestSiz
 /**
  * @tc.name: NWebPasteboardAdapter_PasteDataAdapterImpl_008.
  * @tc.desc: Test the PasteDataAdapterImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataAdapterImpl_008, TestSize.Level1)
@@ -280,7 +280,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataAdapterImpl_0
 /**
  * @tc.name: NWebPasteboardAdapter_PasteDataAdapterImpl_009.
  * @tc.desc: Test the PasteDataAdapterImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataAdapterImpl_009, TestSize.Level1)
@@ -301,7 +301,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataAdapterImpl_0
 /**
  * @tc.name: NWebPasteboardAdapter_AddHtmlRecord_010.
  * @tc.desc: Test the AddHtmlRecord.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddHtmlRecord_010, TestSize.Level1)
@@ -314,7 +314,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddHtmlRecord_010, Tes
 /**
  * @tc.name: NWebPasteboardAdapter_AddTextRecord_011.
  * @tc.desc: Test the AddTextRecord.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddTextRecord_011, TestSize.Level1)
@@ -327,7 +327,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddTextRecord_011, Tes
 /**
  * @tc.name: NWebPasteboardAdapter_GetMimeTypes_012.
  * @tc.desc: Test the GetMimeTypes.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetMimeTypes_012, TestSize.Level1)
@@ -348,7 +348,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetMimeTypes_012, Test
 /**
  * @tc.name: NWebPasteboardAdapter_GetPrimaryHtml_013.
  * @tc.desc: Test the GetPrimaryHtml.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryHtml_013, TestSize.Level1)
@@ -369,7 +369,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryHtml_013, Te
 /**
  * @tc.name: NWebPasteboardAdapter_GetPrimaryText_014.
  * @tc.desc: Test the GetPrimaryText.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryText_014, TestSize.Level1)
@@ -381,11 +381,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryText_014, Te
         result = -1;
     }
     EXPECT_EQ(RESULT_OK, result);
+    result = 0;
     std::shared_ptr<PasteDataRecordAdapter> record = g_dataAdapter->GetRecordAt(index);
     if (record == nullptr) {
         result = -1;
     }
-    EXPECT_NE(RESULT_OK, result);
+    EXPECT_EQ(RESULT_OK, result);
     result = 0;
     PasteRecordList recordList = g_dataAdapter->AllRecords();
     if (recordList.empty()) {
@@ -403,7 +404,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryText_014, Te
 /**
  * @tc.name: NWebPasteboardAdapter_GetPrimaryMimeType_015.
  * @tc.desc: Test the GetPrimaryMimeType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryMimeType_015, TestSize.Level1)
@@ -424,7 +425,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryMimeType_015
 /**
  * @tc.name: NWebPasteboardAdapter_GetRecordAt_016.
  * @tc.desc: Test the GetRecordAt.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4BB
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordAt_016, TestSize.Level1)
@@ -441,7 +442,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordAt_016, TestS
 /**
  * @tc.name: NWebPasteboardAdapter_GetRecordAt_017.
  * @tc.desc: Test the GetRecordAt.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordAt_017, TestSize.Level1)
@@ -461,7 +462,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordAt_017, TestS
 /**
  * @tc.name: NWebPasteboardAdapter_GetRecordCount_018.
  * @tc.desc: Test the GetRecordCount.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordCount_018, TestSize.Level1)
@@ -483,7 +484,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordCount_018, Te
 /**
  * @tc.name: NWebPasteboardAdapter_AllRecords_019.
  * @tc.desc: Test the AllRecords.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AllRecords_019, TestSize.Level1)
@@ -507,7 +508,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AllRecords_019, TestSi
 /**
  * @tc.name: NWebPasteboardAdapter_GetInstance_020.
  * @tc.desc: Test the GetInstance.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetInstance_020, TestSize.Level1)
@@ -518,7 +519,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetInstance_020, TestS
 /**
  * @tc.name: NWebPasteboardAdapter_SetPasteData_021.
  * @tc.desc: Test the SetPasteData.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_021, TestSize.Level1)
@@ -538,7 +539,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_021, Test
 /**
  * @tc.name: NWebPasteboardAdapter_GetPasteData_022.
  * @tc.desc: Test the GetPasteData.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_022, TestSize.Level1)
@@ -551,7 +552,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_022, Test
 /**
  * @tc.name: NWebPasteboardAdapter_HasPasteData_023.
  * @tc.desc: Test the HasPasteData.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_HasPasteData_023, TestSize.Level1)
@@ -563,7 +564,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_HasPasteData_023, Test
 /**
  * @tc.name: NWebPasteboardAdapter_PasteDataRecordAdapterImpl_024.
  * @tc.desc: Test the PasteDataRecordAdapterImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapterImpl_024, TestSize.Level1)
@@ -580,7 +581,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapter
 /**
  * @tc.name: NWebPasteboardAdapter_NewRecord_025.
  * @tc.desc: Test the NewRecord.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_NewRecord_025, TestSize.Level1)
@@ -597,7 +598,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_NewRecord_025, TestSiz
 /**
  * @tc.name: NWebPasteboardAdapter_SetHtmlText_026.
  * @tc.desc: Test the SetHtmlText.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetHtmlText_026, TestSize.Level1)
@@ -617,7 +618,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetHtmlText_026, TestS
 /**
  * @tc.name: NWebPasteboardAdapter_SetPlainText_027.
  * @tc.desc: Test the SetPlainText.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPlainText_027, TestSize.Level1)
@@ -637,7 +638,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPlainText_027, Test
 /**
  * @tc.name: NWebPasteboardAdapter_ImageToClipboardAlphaType_028.
  * @tc.desc: Test the ImageToClipboardAlphaType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardAlphaType_028, TestSize.Level1)
@@ -663,7 +664,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardAlphaT
 /**
  * @tc.name: NWebPasteboardAdapter_ImageToClipboardColorType_029.
  * @tc.desc: Test the ImageToClipboardColorType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardColorType_029, TestSize.Level1)
@@ -685,7 +686,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardColorT
 /**
  * @tc.name: NWebPasteboardAdapter_ClipboardToImageAlphaType_030.
  * @tc.desc: Test the ClipboardToImageAlphaType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageAlphaType_030, TestSize.Level1)
@@ -710,7 +711,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageAlphaT
 /**
  * @tc.name: NWebPasteboardAdapter_ClipboardToImageColorType_031.
  * @tc.desc: Test the ClipboardToImageColorType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageColorType_031, TestSize.Level1)
@@ -731,7 +732,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageColorT
 /**
  * @tc.name: NWebPasteboardAdapter_SetImgData_032.
  * @tc.desc: Test the SetImgData.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_032, TestSize.Level1)
@@ -767,7 +768,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_032, TestSi
 /**
  * @tc.name: NWebPasteboardAdapter_GetImgData_033.
  * @tc.desc: Test the GetImgData.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_033, TestSize.Level1)
@@ -782,7 +783,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_033, TestSi
 /**
  * @tc.name: NWebPasteboardAdapter_GetImgData_034.
  * @tc.desc: Test the GetImgData.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_034, TestSize.Level1)
@@ -795,7 +796,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_034, TestSi
 /**
  * @tc.name: NWebPasteboardAdapter_Clear_035.
  * @tc.desc: Test the Clear.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_035, TestSize.Level1)
@@ -810,7 +811,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_035, TestSize.Le
 /**
  * @tc.name: NWebPasteboardAdapter_Clear_036.
  * @tc.desc: Test the Clear.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_036, TestSize.Level1)
