@@ -822,4 +822,94 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_036, TestSize.Le
     PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
     PasteBoardClientAdapterImpl::GetInstance().Clear();
 }
+
+/**
+ * @tc.name: NWebPasteboardAdapter_SetUri_037.
+ * @tc.desc: Test the SetUri.
+ * @tc.type: FUNC
+ * @tc.require:issueI5QA3D
+ */
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetUri_037, TestSize.Level1)
+{
+    int result = 0;
+    std::string emptyTestUri = "";
+    std::string testUri = "/data/test/path";
+    EXPECT_EQ(RESULT_OK, result);
+    bool reset = g_datarecordnull->SetUri(testUri);
+    EXPECT_NE(TRUE_OK, reset);
+    reset = g_datarecord->SetUri(emptyTestUri);
+    EXPECT_NE(TRUE_OK, reset);
+    reset = g_datarecord->SetUri(testUri);
+    EXPECT_EQ(TRUE_OK, reset);
+}
+
+/**
+ * @tc.name: NWebPasteboardAdapter_SetCustomData_038.
+ * @tc.desc: Test the SetCustomData.
+ * @tc.type: FUNC
+ * @tc.require:issueI5QA3D
+ */
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetCustomData_038, TestSize.Level1)
+{
+    int result = 0;
+    PasteCustomData emptyTestData;
+    std::string format = "format";
+    vector<uint8_t> data = {0, 1, 2};
+    PasteCustomData testData;
+    testData.insert(std::make_pair(format, data));
+    EXPECT_EQ(RESULT_OK, result);
+    bool reset = g_datarecordnull->SetCustomData(testData);
+    EXPECT_NE(TRUE_OK, reset);
+    reset = g_datarecord->SetCustomData(emptyTestData);
+    EXPECT_NE(TRUE_OK, reset);
+    reset = g_datarecord->SetCustomData(testData);
+    EXPECT_EQ(TRUE_OK, reset);
+}
+
+/**
+ * @tc.name: NWebPasteboardAdapter_GetUri_039.
+ * @tc.desc: Test the GetUri.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4BN
+ */
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetUri_039, TestSize.Level1)
+{
+    int result = 0;
+    g_datarecord->SetUri("/data/test/path");
+    std::shared_ptr<std::string> uri = g_datarecord->GetUri();
+    if (uri == nullptr) {
+        result = -1;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+    uri = g_pasternull->GetUri();
+    if (uri == nullptr) {
+        result = -1;
+    }
+    EXPECT_NE(RESULT_OK, result);
+}
+
+/**
+ * @tc.name: NWebPasteboardAdapter_GetCustomData_040.
+ * @tc.desc: Test the GetCustomData.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4BN
+ */
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetCustomData_040, TestSize.Level1)
+{
+    int result = 0;
+    std::string format = "format";
+    vector<uint8_t> data = {0, 1, 2};
+    PasteCustomData testData;
+    g_datarecord->SetCustomData(testData);
+    std::shared_ptr<PasteCustomData> customData = g_datarecord->GetCustomData();
+    if (customData == nullptr) {
+        result = -1;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+    customData = g_pasternull->GetCustomData();
+    if (customData == nullptr) {
+        result = -1;
+    }
+    EXPECT_NE(RESULT_OK, result);
+}
 }
