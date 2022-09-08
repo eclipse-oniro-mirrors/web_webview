@@ -16,7 +16,10 @@
 #include <cstring>
 #include <gtest/gtest.h>
 
+#define private public
 #include "battery_mgr_client_adapter_impl.h"
+#undef private
+
 #include "battery_srv_client.h"
 
 using namespace testing;
@@ -94,7 +97,7 @@ void BatteryMgrAdapterTest::TearDown(void)
 /**
  * @tc.name: BatteryAdapter_OnReceiveEvent_001.
  * @tc.desc: Test the OnReceiveEvent.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_OnReceiveEvent_001, TestSize.Level1)
@@ -109,14 +112,12 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_OnReceiveEvent_001, TestSize.Leve
     g_batter->OnReceiveEvent(data);
     want.SetParam(key, static_cast<int>(BatteryPluggedType::PLUGGED_TYPE_BUTT));
     g_batter->OnReceiveEvent(data);
-    want.SetAction(CommonEventSupport::COMMON_EVENT_BATTERY_LOW);
-    g_batter->OnReceiveEvent(data);
 }
 
 /**
  * @tc.name: BatteryAdapter_RegBatteryEvent_002.
  * @tc.desc: Test the RegBatteryEvent.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_RegBatteryEvent_002, TestSize.Level1)
@@ -129,7 +130,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_RegBatteryEvent_002, TestSize.Lev
 /**
  * @tc.name: BatteryAdapter_StartListen_003.
  * @tc.desc: Test the StartListen.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_StartListen_003, TestSize.Level1)
@@ -145,7 +146,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_StartListen_003, TestSize.Level1)
 /**
  * @tc.name: BatteryAdapter_StopListen_004.
  * @tc.desc: Test the StopListen.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_StopListen_004, TestSize.Level1)
@@ -159,7 +160,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_StopListen_004, TestSize.Level1)
 /**
  * @tc.name: BatteryAdapter_RequestBatteryInfo_005.
  * @tc.desc: Test the RequestBatteryInfo.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_RequestBatteryInfo_005, TestSize.Level1)
@@ -188,7 +189,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_RequestBatteryInfo_005, TestSize.
 /**
  * @tc.name: BatteryAdapter_WebBatteryInfoImpl_006.
  * @tc.desc: Test the WebBatteryInfoImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_WebBatteryInfoImpl_006, TestSize.Level1)
@@ -202,6 +203,12 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_WebBatteryInfoImpl_006, TestSize.
     EXPECT_TRUE(info.IsCharging());
     EXPECT_EQ(info.DisChargingTime(), disChargingTime);
     EXPECT_EQ(info.ChargingTime(), chargingTime);
+    Want want;
+    want.SetAction(CommonEventSupport::COMMON_EVENT_BATTERY_LOW);
+    CommonEventData data(want);
+    g_batter->OnReceiveEvent(data);
+    g_batterImpl->commonEventSubscriber_ = nullptr;
+    g_batterImpl->StopListen();
 }
 }
 }
