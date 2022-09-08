@@ -20,6 +20,14 @@
 #include <string>
 
 namespace OHOS::NWeb {
+
+class NWebResourceReadyCallback {
+public:
+    virtual ~NWebResourceReadyCallback() {};
+    virtual void Continue() = 0;
+    virtual void Cancel() = 0;
+};
+
 class NWebUrlResourceResponse {
 public:
     /**
@@ -79,6 +87,8 @@ public:
     void PutResponseData(std::string& input_stream)
     {
         input_stream_ = input_stream;
+        fd_ = 0;
+        isFileFd_ = false;
     }
 
     /**
@@ -174,6 +184,42 @@ public:
         return reason_phrase_;
     }
 
+    void PutResponseDataStatus(bool isDataReady)
+    {
+        isDataReady_ = isDataReady;
+        if (isDataReady_ == true && readyCallback_ != nullptr) {
+            readyCallback_->Continue();
+            readyCallback_ = nullptr;
+        }
+    }
+
+    bool ResponseDataStatus() const
+    {
+        return isDataReady_;
+    }
+
+    bool ResponseIsFileHandle() const
+    {
+        return isFileFd_;
+    }
+
+    void PutResponseFileHandle(int fd)
+    {
+        fd_ = fd;
+        isFileFd_ = true;
+        input_stream_.clear();
+    }
+
+    int ResponseFileHandle() const
+    {
+        return fd_;
+    }
+
+    void PutResponseReadyCallback(std::shared_ptr<NWebResourceReadyCallback> readyCallback)
+    {
+        readyCallback_ = readyCallback;
+    }
+
 private:
     std::string mime_type_;
     std::string encoding_;
@@ -181,6 +227,10 @@ private:
     std::string reason_phrase_;
     std::map<std::string, std::string> response_headers_;
     std::string input_stream_;
+    int fd_;
+    bool isFileFd_ = false;
+    bool isDataReady_ = true;
+    std::shared_ptr<NWebResourceReadyCallback> readyCallback_;
 };
 } // namespace OHOS::NWeb
 
