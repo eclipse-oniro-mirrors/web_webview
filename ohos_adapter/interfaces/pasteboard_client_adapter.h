@@ -16,6 +16,7 @@
 #ifndef PASTEBOARD_CLIENT_ADAPTER_H
 #define PASTEBOARD_CLIENT_ADAPTER_H
 
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -46,6 +47,7 @@ typedef struct ClipBoardImageDataTag {
 class PasteDataRecordAdapter;
 class PasteDataAdapter;
 using PasteRecordList = std::vector<std::shared_ptr<PasteDataRecordAdapter>>;
+using PasteCustomData = std::map<std::string, std::vector<uint8_t>>;
 class PasteBoardClientAdapter {
 public:
     PasteBoardClientAdapter() = default;
@@ -88,6 +90,14 @@ public:
     virtual std::shared_ptr<std::string> GetPlainText() = 0;
 
     virtual bool GetImgData(ClipBoardImageData &imageData) = 0;
+
+    virtual bool SetUri(const std::string& uriString) = 0;
+
+    virtual bool SetCustomData(PasteCustomData& data) = 0;
+
+    virtual std::shared_ptr<std::string> GetUri() = 0;
+
+    virtual std::shared_ptr<PasteCustomData> GetCustomData() = 0;
 };
 
 class PasteDataAdapter {

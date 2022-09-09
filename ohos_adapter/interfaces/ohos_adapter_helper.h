@@ -21,6 +21,7 @@
 #include "battery_mgr_client_adapter.h"
 #include "display_manager_adapter.h"
 #include "net_connect_adapter.h"
+#include "mmi_adapter.h"
 #include "ohos_web_data_base_adapter.h"
 #include "pasteboard_client_adapter.h"
 #include "power_mgr_client_adapter.h"
@@ -53,6 +54,8 @@ public:
     AudioSystemManagerAdapter& GetAudioSystemManager() const;
 
     OhosWebPermissionDataBaseAdapter& GetWebPermissionDataBaseInstance();
+
+    std::unique_ptr<MMIAdapter> CreateMMIAdapter();
 private:
     OhosAdapterHelper() = default;
 

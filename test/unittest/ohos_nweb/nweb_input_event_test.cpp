@@ -78,7 +78,8 @@ void NWebInputEventTest::TearDown(void)
 /**
  * @tc.name: NWebInputEvent_NWebInputEventConsumer_001.
  * @tc.desc: NWebInputEventConsumer.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
+ * @tc.require:issueI5NXG9
  */
 HWTEST_F(NWebInputEventTest, NWebInputEvent_NWebInputEventConsumer_001, TestSize.Level1)
 {
@@ -93,7 +94,8 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_NWebInputEventConsumer_001, TestSize
 /**
  * @tc.name: NWebInputEvent_OnInputEvent_002.
  * @tc.desc: OnInputEvent.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
+ * @tc.require:issueI5OURV
  */
 HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_002, TestSize.Level1)
 {
@@ -109,6 +111,20 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_002, TestSize.Level1)
         EXPECT_EQ(RESULT_OK, result);
     }
 
+    std::shared_ptr<MMI::AxisEvent> axisevent = MMI::AxisEvent::Create();
+    result = g_input->OnInputEvent(axisevent);
+    EXPECT_EQ(RESULT_FAIL, result);
+}
+
+/**
+ * @tc.name: NWebInputEvent_OnInputEvent_003.
+ * @tc.desc: OnInputEvent.
+ * @tc.type: FUNC
+ * @tc.require: I5P97S
+ */
+HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_003, TestSize.Level1)
+{
+    bool result;
     std::shared_ptr<MMI::AxisEvent> axisevent = MMI::AxisEvent::Create();
     result = g_input->OnInputEvent(axisevent);
     EXPECT_EQ(RESULT_FAIL, result);

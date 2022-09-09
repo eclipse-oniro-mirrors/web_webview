@@ -14,7 +14,11 @@
 import("//build/ohos.gni")
 
 config("ohos_adapter_public_interface") {
-  include_dirs = [ "//base/web/webview/ohos_adapter/interfaces" ]
+  include_dirs = [
+    "//base/web/webview/ohos_adapter/interfaces",
+    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_core/include/bundlemgr",
+    "//base/global/resource_management/interfaces/inner_api/include",
+  ]
 }
 
 ohos_shared_library("nweb_ohos_adapter") {
@@ -28,6 +32,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "distributeddatamgr_adapter/webdatabase/src/ohos_web_data_base_adapter_impl.cpp",
     "distributeddatamgr_adapter/webdatabase/src/ohos_web_permission_data_base_adapter_impl.cpp",
     "interfaces/ohos_adapter_helper.cpp",
+    "multimodalinput_adapter/src/mmi_adapter_impl.cpp",
     "net_connect_adapter/src/net_connect_adapter_impl.cpp",
     "net_connect_adapter/src/net_connect_callback_impl.cpp",
     "net_connect_adapter/src/net_connect_utils.cpp",
@@ -50,6 +55,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "distributeddatamgr_adapter/webdatabase/include",
     "pasteboard_adapter/include",
     "audio_adapter/include",
+    "multimodalinput_adapter/include",
     "//base/web/webview/ohos_nweb/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
@@ -58,19 +64,16 @@ ohos_shared_library("nweb_ohos_adapter") {
   public_configs = [ ":ohos_adapter_public_interface" ]
 
   external_deps = [
-    "ability_base:base",
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:app_manager",
     "battery_manager:batterysrv_client",
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "cellular_data:tel_cellular_data_api",
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
-    "eventhandler:libeventhandler",
     "hiviewdfx_hilog_native:libhilog",
+    "input:libmmi-client",
     "ipc:ipc_core",
     "multimedia_audio_framework:audio_client",
     "multimedia_audio_framework:audio_renderer",
