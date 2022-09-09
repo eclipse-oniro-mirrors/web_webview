@@ -21,6 +21,7 @@
 #include "napi/native_common.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_helper.h"
+#include "nweb_save_cookie_callback.h"
 #include "securec.h"
 
 namespace OHOS {
@@ -37,6 +38,9 @@ napi_value NapiWebCookieManager::Init(napi_env env, napi_value exports)
                                      NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled),
         DECLARE_NAPI_STATIC_FUNCTION("existCookie", NapiWebCookieManager::JsExistCookie),
         DECLARE_NAPI_STATIC_FUNCTION("deleteEntireCookie", NapiWebCookieManager::JsDeleteEntireCookie),
+        DECLARE_NAPI_STATIC_FUNCTION("deleteSessionCookie", NapiWebCookieManager::JsDeleteSessionCookie),
+        DECLARE_NAPI_STATIC_FUNCTION("saveCookieAsync", NapiWebCookieManager::JsSaveCookieAsync),
+        DECLARE_NAPI_STATIC_FUNCTION("saveCookieSync", NapiWebCookieManager::JsSaveCookieSync),
     };
     napi_value constructor = nullptr;
 
@@ -247,6 +251,123 @@ napi_value NapiWebCookieManager::JsDeleteEntireCookie(napi_env env, napi_callbac
         cookieManager->DeleteCookieEntirely(nullptr);
     }
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebCookieManager::JsDeleteSessionCookie(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+
+    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager != nullptr) {
+        cookieManager->DeleteSessionCookies(nullptr);
+    }
+    napi_get_undefined(env, &result);
+    return result;
+}
+
+void SaveCookieAsyncCallback(napi_env env, napi_ref jsCallback)
+{
+    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager == nullptr) {
+        napi_value callback = nullptr;
+        napi_value jsResult = nullptr;
+        napi_value callbackResult = nullptr;
+
+        napi_get_reference_value(env, jsCallback, &callback);
+        napi_get_boolean(env, false, &jsResult);
+        napi_call_function(env, nullptr, callback, 1, &jsResult, &callbackResult);
+        napi_delete_reference(env, jsCallback);
+    } else {
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallback>();
+        if (callbackImpl) {
+            callbackImpl->SetCallBack([env, jCallback = std::move(jsCallback)](bool result) {
+                if (!env) {
+                    return;
+                }
+                napi_value callback = nullptr;
+                napi_get_reference_value(env, jCallback, &callback);
+
+                napi_value jsResult = nullptr;
+                napi_value callbackResult = nullptr;
+                napi_get_boolean(env, result, &jsResult);
+                napi_call_function(env, nullptr, callback, 1, &jsResult, &callbackResult);
+                napi_delete_reference(env, jCallback);
+            });
+        }
+        cookieManager->Store(callbackImpl);
+    }
+}
+
+void SaveCookieAsyncPromise(napi_env env, napi_deferred deferred)
+{
+    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager == nullptr) {
+        napi_value jsResult = nullptr;
+        napi_get_boolean(env, false, &jsResult);
+        napi_reject_deferred(env, deferred, jsResult);
+    } else {
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallback>();
+        if (callbackImpl) {
+            callbackImpl->SetCallBack([env, deferred](bool result) {
+                if (!env) {
+                    return;
+                }
+                napi_value jsResult = nullptr;
+                napi_get_boolean(env, result, &jsResult);
+                napi_resolve_deferred(env, deferred, jsResult);
+            });
+        }
+        cookieManager->Store(callbackImpl);
+    }
+}
+
+napi_value NapiWebCookieManager::JsSaveCookieAsync(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+
+    size_t argc = 1;
+    size_t argcPromise = 0;
+    size_t argcCallback = 1;
+    napi_value argv[1] = {0};
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 0 or 1 parameter");
+
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+
+    if (argc == argcCallback) {
+        napi_valuetype valueType = napi_null;
+        napi_typeof(env, argv[argcCallback - 1], &valueType);
+        NAPI_ASSERT(env, valueType == napi_function, "type mismatch for parameter 1");
+        napi_ref jsCallback = nullptr;
+        napi_create_reference(env, argv[argcCallback - 1], 1, &jsCallback);
+
+        if (jsCallback) {
+            SaveCookieAsyncCallback(env, jsCallback);
+        }
+        return result;
+    }
+
+    napi_deferred deferred = nullptr;
+    napi_value promise = nullptr;
+    napi_create_promise(env, &deferred, &promise);
+    if (promise && deferred) {
+        SaveCookieAsyncPromise(env, deferred);
+    }
+    return promise;
+}
+
+napi_value NapiWebCookieManager::JsSaveCookieSync(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    bool ret = false;
+    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager != nullptr) {
+        ret = cookieManager->Store();
+    }
+    NAPI_CALL(env, napi_get_boolean(env, ret, &result));
     return result;
 }
 } // namespace OHOS

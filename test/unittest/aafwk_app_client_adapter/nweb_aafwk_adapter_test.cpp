@@ -19,6 +19,7 @@
 
 #define private public
 #include "aafwk_app_mgr_client_adapter_impl.h"
+#include "aafwk_render_scheduler_impl.h"
 #undef private
 
 #include "app_mgr_client.h"
@@ -76,7 +77,7 @@ void RenderScheduler::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd)
 /**
  * @tc.name: NWebInputEvent_AafwkAppMgrClientAdapterImpl_001.
  * @tc.desc: Test the AafwkAppMgrClientAdapterImpl.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebInputEvent_AafwkAppMgrClientAdapterImpl_001, TestSize.Level1)
@@ -92,7 +93,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebInputEvent_AafwkAppMgrClientAdapterImpl_001, 
 /**
  * @tc.name: NWebAafwkAdapter_StartRenderProcess_002.
  * @tc.desc: Test the StartRenderProcess.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_002, TestSize.Level1)
@@ -113,7 +114,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_002, TestSize
 /**
  * @tc.name: NWebAafwkAdapter_StartRenderProcess_003.
  * @tc.desc: Test the StartRenderProcess Exception scenarios.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_003, TestSize.Level1)
@@ -134,7 +135,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_003, TestSize
 /**
  * @tc.name: NWebAafwkAdapter_AttachRenderProcess_004.
  * @tc.desc: Test the AttachRenderProcess.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_AttachRenderProcess_004, TestSize.Level1)
@@ -153,7 +154,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_AttachRenderProcess_004, TestSiz
 /**
  * @tc.name: NWebAafwkAdapter_GetRenderProcessTerminationStatus_005.
  * @tc.desc: Test the GetRenderProcessTerminationStatus.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatus_005, TestSize.Level1)
@@ -177,7 +178,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatu
 /**
  * @tc.name: NWebAafwkAdapter_GetRenderProcessTerminationStatus_006.
  * @tc.desc: Test the GetRenderProcessTerminationStatus Exception scenarios.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatus_006, TestSize.Level1)
@@ -201,7 +202,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatu
 /**
  * @tc.name: NWebAafwkAdapter_GetRenderProcessTerminationStatus_007.
  * @tc.desc: Test the GetRenderProcessTerminationStatus Exception scenarios.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatus_007, TestSize.Level1)
@@ -225,7 +226,7 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_GetRenderProcessTerminationStatu
 /**
  * @tc.name: NWebAafwkAdapter_StartRenderProcess_008.
  * @tc.desc: In this scence StartRenderProcess will be fail.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_008, TestSize.Level1)
@@ -248,5 +249,32 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_008, TestSize
     pid_t red = 1;
     result = g_adapter->GetRenderProcessTerminationStatus(red, statused);
     EXPECT_NE(RESULT_OK, result);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_NotifyBrowserFd_009.
+ * @tc.desc: Test the NotifyBrowserFd.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Level1)
+{
+    int result = 0;
+    std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter = std::make_shared<RenderScheduler>();
+    if (adapter == nullptr) {
+        result = -1;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+    result = 0;
+    std::shared_ptr<AafwkRenderSchedulerImpl> render = std::make_shared<AafwkRenderSchedulerImpl>(adapter);
+    if (render == nullptr) {
+        result = -1;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+    int32_t ipcFd = 1;
+    int32_t sharedFd = 2;
+    render->NotifyBrowserFd(ipcFd, sharedFd);
+    render->renderSchedulerHostAdapter_ = nullptr;
+    render->NotifyBrowserFd(ipcFd, sharedFd);
 }
 }

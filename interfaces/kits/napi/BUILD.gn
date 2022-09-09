@@ -30,6 +30,7 @@ ohos_shared_library("webview_napi") {
   include_dirs = [
     "//foundation/arkui/napi/interfaces/kits",
     "//utils/system/safwk/native/include",
+    "//commonlibrary/c_utils/base/include",
   ]
   public_configs = [ ":web_public_config" ]
 
@@ -42,13 +43,9 @@ ohos_shared_library("webview_napi") {
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage/napi_web_storage.cpp",
   ]
 
-  deps = [
-    "//foundation/arkui/napi:ace_napi",
-    "//third_party/libuv:uv",
-  ]
+  deps = [ "//foundation/arkui/napi:ace_napi" ]
 
   external_deps = [
-    "c_utils:utils",
     "hiviewdfx_hilog_native:libhilog",
     "webview:libnweb",
   ]
