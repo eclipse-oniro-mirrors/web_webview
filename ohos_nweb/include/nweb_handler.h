@@ -29,6 +29,7 @@
 #include "nweb_js_dialog_result.h"
 #include "nweb_js_http_auth_result.h"
 #include "nweb_js_ssl_error_result.h"
+#include "nweb_js_ssl_select_cert_result.h"
 #include "nweb_touch_handle_state.h"
 #include "nweb_url_resource_error.h"
 #include "nweb_url_resource_request.h"
@@ -419,6 +420,15 @@ public:
 
     virtual bool OnSslErrorRequestByJS(std::shared_ptr<NWebJSSslErrorResult> result,
                                        SslError error) {
+        return false;
+    }
+
+    virtual bool OnSslSelectCertRequestByJS(
+        std::shared_ptr<NWebJSSslSelectCertResult> result,
+        const std::string& host,
+        int port,
+        const std::vector<std::string>& keyTypes,
+        const std::vector<std::string>& issuers) {
         return false;
     }
 };
