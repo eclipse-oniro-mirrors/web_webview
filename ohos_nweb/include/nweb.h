@@ -477,7 +477,7 @@ public:
      * Clears the client authentication certificate cache in the Web.
      * @since 9
      */
-    ClearClientAuthenticationCache(): void;
+    virtual void ClearClientAuthenticationCache() = 0;
 };
 }  // namespace OHOS::NWeb
 
