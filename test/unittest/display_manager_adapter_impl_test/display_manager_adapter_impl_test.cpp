@@ -47,7 +47,7 @@ void DisplayManagerAdapterImplTest::TearDown(void)
 /**
  * @tc.name: DisplayManagerAdapterImplTest_001.
  * @tc.desc: test lock type.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_001, TestSize.Level1)
@@ -65,7 +65,7 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_001, TestS
 /**
  * @tc.name: DisplayManagerAdapterImplTest_002.
  * @tc.desc: test lock type.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_002, TestSize.Level1)
@@ -81,7 +81,7 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_002, TestS
 /**
  * @tc.name: DisplayManagerAdapterImplTest_003.
  * @tc.desc: test ConvertRotationType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_003, TestSize.Level1)
@@ -105,12 +105,17 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_003, TestS
     type = OHOS::Rosen::Rotation::ROTATION_270;
     retType = displayAdapterImpl->ConvertRotationType(type);
     EXPECT_EQ(retType, OHOS::NWeb::RotationType::ROTATION_270);
+
+    const uint32_t ROTATION_butt = 4;
+    type = static_cast<OHOS::Rosen::Rotation>(ROTATION_butt);
+    retType = displayAdapterImpl->ConvertRotationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::RotationType::ROTATION_BUTT);
 }
 
 /**
  * @tc.name: DisplayManagerAdapterImplTest_004.
  * @tc.desc: test ConvertRotationType.
- * @tc.type: FUNC.
+ * @tc.type: FUNC
  * @tc.require:
  */
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_004, TestSize.Level1)
@@ -150,5 +155,9 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_004, TestS
     type = OHOS::Rosen::Orientation::SENSOR_HORIZONTAL;
     retType = displayAdapterImpl->ConvertOrientationType(type);
     EXPECT_EQ(retType, OHOS::NWeb::OrientationType::SENSOR_HORIZONTAL);
+
+    type = OHOS::Rosen::Orientation::AUTO_ROTATION_RESTRICTED;
+    retType = displayAdapterImpl->ConvertOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::OrientationType::BUTT);
 }
 }
