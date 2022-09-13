@@ -472,6 +472,12 @@ public:
      * @return web page url.
      */
     virtual std::string GetUrl() const = 0;
+
+    /**
+     * Clears the client authentication certificate cache in the Web.
+     * @since 9
+     */
+    virtual void ClearClientAuthenticationCache() = 0;
 };
 }  // namespace OHOS::NWeb
 
