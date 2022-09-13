@@ -912,4 +912,20 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetCustomData_040, Tes
     }
     EXPECT_NE(RESULT_OK, result);
 }
+
+/**
+ * @tc.name: NWebPasteboardAdapter_OpenRemoteUri_041.
+ * @tc.desc: Test the OpenRemoteUri.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4BN
+ */
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_OpenRemoteUri_041, TestSize.Level1)
+{
+    std::string testUri = "datashare:////#fdFromBinder=155";
+    int32_t fd = PasteBoardClientAdapterImpl::GetInstance().OpenRemoteUri(testUri);
+    EXPECT_EQ(155, fd);
+    std::string testInvalidUri = "www.example.com";
+    fd = PasteBoardClientAdapterImpl::GetInstance().OpenRemoteUri(testInvalidUri);
+    EXPECT_EQ(-1, fd);
+}
 }
