@@ -26,6 +26,10 @@ NWebInputEventConsumer::NWebInputEventConsumer(std::shared_ptr<NWeb> nweb)
 
 bool NWebInputEventConsumer::OnInputEvent(const std::shared_ptr<MMI::PointerEvent>& pointerEvent) const
 {
+    if (pointerEvent == nullptr) {
+        WVLOG_E("pointerEvent is invalid.");
+        return false;
+    }
     DispatchPointerEvent(pointerEvent);
     pointerEvent->MarkProcessed();
     return true;
@@ -33,6 +37,10 @@ bool NWebInputEventConsumer::OnInputEvent(const std::shared_ptr<MMI::PointerEven
 
 bool NWebInputEventConsumer::OnInputEvent(const std::shared_ptr<MMI::KeyEvent>& keyEvent) const
 {
+    if (keyEvent == nullptr) {
+        WVLOG_E("keyEvent is invalid.");
+        return false;
+    }
     DispatchKeyEvent(keyEvent);
     keyEvent->MarkProcessed();
     return true;
