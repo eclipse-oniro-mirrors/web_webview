@@ -107,6 +107,7 @@ public:
     void SendDragEvent(const DragEvent& dragEvent) const override {}
     void ClearSslCache() override {}
     std::string GetUrl() const override {return "/data";}
+    void ClearClientAuthenticationCache() override {}
 };
 }
 #endif
