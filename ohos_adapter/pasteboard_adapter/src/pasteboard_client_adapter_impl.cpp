@@ -17,8 +17,10 @@
 
 #include <securec.h>
 #include "nweb_log.h"
+#include "remote_uri.h"
 
 using namespace OHOS::MiscServices;
+using namespace OHOS::DistributedFS::ModuleRemoteUri;
 
 namespace OHOS::NWeb {
 PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
@@ -421,5 +423,10 @@ void PasteBoardClientAdapterImpl::Clear()
         rawRecord->Clear();
     }
     PasteboardClient::GetInstance()->Clear();
+}
+
+int32_t PasteBoardClientAdapterImpl::OpenRemoteUri(const std::string& path)
+{
+    return RemoteUri::OpenRemoteUri(path);
 }
 }

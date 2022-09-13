@@ -72,6 +72,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "cellular_data:tel_cellular_data_api",
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
+    "distributedfilejs:remote_uri_native",
     "hiviewdfx_hilog_native:libhilog",
     "input:libmmi-client",
     "ipc:ipc_core",
