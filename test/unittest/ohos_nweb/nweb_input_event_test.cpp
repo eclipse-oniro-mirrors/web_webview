@@ -21,20 +21,23 @@
 
 #include "key_event.h"
 #include "nweb_create_window.h"
+
+#define private public
 #include "nweb_input_event_consumer.h"
+#undef private
+
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
+#include "pointer_event.h"
 #include "window.h"
 
 using namespace testing;
 using namespace testing::ext;
 using namespace OHOS;
+using namespace OHOS::MMI;
 
 namespace OHOS::NWeb {
 namespace {
-const bool RESULT_OK = true;
-const bool RESULT_FAIL = false;
-const int32_t POINTER_EVENT = 11;
 std::shared_ptr<NWeb> g_nweb;
 std::shared_ptr<NWebInputEventConsumer> g_input;
 const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
@@ -50,20 +53,13 @@ public:
 
 void NWebInputEventTest::SetUpTestCase(void)
 {
-    bool result = false;
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
-    if (!NWebAdapterHelper::Instance().Init(false)) {
-        return;
-    }
+    bool result = NWebAdapterHelper::Instance().Init(false);
+    EXPECT_TRUE(result);
     sptr<OHOS::Rosen::Window> window = CreateWindow();
-    if (window == nullptr) {
-        return;
-    }
+    EXPECT_NE(window, nullptr);
     g_nweb = NWebAdapterHelper::Instance().CreateNWeb(window.GetRefPtr(), GetInitArgs());
-    if (g_nweb != nullptr) {
-        result = true;
-    }
-    EXPECT_EQ(RESULT_FAIL, result);
+    EXPECT_EQ(g_nweb, nullptr);
 }
 
 void NWebInputEventTest::TearDownTestCase(void)
@@ -77,56 +73,69 @@ void NWebInputEventTest::TearDown(void)
 
 /**
  * @tc.name: NWebInputEvent_NWebInputEventConsumer_001.
- * @tc.desc: NWebInputEventConsumer.
+ * @tc.desc: Test the NWebInputEventConsumer.
  * @tc.type: FUNC
  * @tc.require:issueI5NXG9
  */
 HWTEST_F(NWebInputEventTest, NWebInputEvent_NWebInputEventConsumer_001, TestSize.Level1)
 {
-    bool result = false;
     g_input = std::make_shared<NWebInputEventConsumer>(g_nweb);
-    if (g_input != nullptr) {
-        result = true;
-    }
-    EXPECT_EQ(RESULT_OK, result);
+    EXPECT_NE(g_input, nullptr);
 }
 
 /**
  * @tc.name: NWebInputEvent_OnInputEvent_002.
- * @tc.desc: OnInputEvent.
+ * @tc.desc: Test the OnInputEvent.
  * @tc.type: FUNC
  * @tc.require:issueI5OURV
  */
 HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_002, TestSize.Level1)
 {
+    const int32_t POINTER_EVENT = 11;
+    const int32_t POINTERID = 1;
     bool result;
+    PointerEvent::PointerItem pointerItem;
+    int32_t keyCode = MMI::KeyEvent::KEYCODE_BACK;
+    std::shared_ptr<MMI::KeyEvent> keyEvent = MMI::KeyEvent::Create();
+    EXPECT_NE(keyEvent, nullptr);
     std::shared_ptr<MMI::PointerEvent> event = MMI::PointerEvent::Create();
+    EXPECT_NE(event, nullptr);
     result = g_input->OnInputEvent(event);
-    EXPECT_EQ(RESULT_OK, result);
+    EXPECT_TRUE(result);
+    result = g_input->OnInputEvent(keyEvent);
+    EXPECT_TRUE(result);
 
-    std::shared_ptr<MMI::KeyEvent> tmp = MMI::KeyEvent::Create();
+    std::shared_ptr<NWeb> mock = std::make_shared<NWebMock>();
+    EXPECT_NE(mock, nullptr);
+    std::shared_ptr<NWebInputEventConsumer> input = std::make_shared<NWebInputEventConsumer>(mock);
+    EXPECT_NE(input, nullptr);
+    result = input->OnInputEvent(event);
+    EXPECT_TRUE(result);
+    pointerItem.SetPointerId(POINTERID);
+    event->SetPointerId(POINTERID);
+    event->AddPointerItem(pointerItem);
     for (int32_t i = 0; i <= POINTER_EVENT; i++) {
         event->SetPointerAction(i);
-        result = g_input->OnInputEvent(tmp);
-        EXPECT_EQ(RESULT_OK, result);
+        result = g_input->OnInputEvent(event);
+        EXPECT_TRUE(result);
     }
 
+    result = input->OnInputEvent(keyEvent);
+    EXPECT_TRUE(result);
     std::shared_ptr<MMI::AxisEvent> axisevent = MMI::AxisEvent::Create();
     result = g_input->OnInputEvent(axisevent);
-    EXPECT_EQ(RESULT_FAIL, result);
-}
+    EXPECT_FALSE(result);
+    keyEvent->SetKeyCode(keyCode);
+    result = input->OnInputEvent(keyEvent);
+    EXPECT_TRUE(result);
 
-/**
- * @tc.name: NWebInputEvent_OnInputEvent_003.
- * @tc.desc: OnInputEvent.
- * @tc.type: FUNC
- * @tc.require: I5P97S
- */
-HWTEST_F(NWebInputEventTest, NWebInputEvent_OnInputEvent_003, TestSize.Level1)
-{
-    bool result;
-    std::shared_ptr<MMI::AxisEvent> axisevent = MMI::AxisEvent::Create();
-    result = g_input->OnInputEvent(axisevent);
-    EXPECT_EQ(RESULT_FAIL, result);
+    keyEvent = nullptr;
+    event = nullptr;
+    input->DispatchKeyEvent(keyEvent);
+    input->DispatchPointerEvent(event);
+    result = input->OnInputEvent(event);
+    EXPECT_FALSE(result);
+    result = input->OnInputEvent(keyEvent);
+    EXPECT_FALSE(result);
 }
 }
