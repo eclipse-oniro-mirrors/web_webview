@@ -61,6 +61,8 @@ public:
     virtual bool HasPasteData() = 0;
 
     virtual void Clear() = 0;
+
+    virtual int32_t OpenRemoteUri(const std::string& path) = 0;
 };
 
 class PasteDataRecordAdapter {
