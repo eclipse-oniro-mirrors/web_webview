@@ -18,10 +18,12 @@
 #include <cstdint>
 #include <vector>
 
+#include "business_error.h"
 #include "napi/native_common.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_helper.h"
 #include "nweb_save_cookie_callback.h"
+#include "web_errors.h"
 #include "securec.h"
 
 namespace OHOS {
@@ -108,12 +110,17 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
     napi_value argv[1] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == 1, "requires 1 parameter");
+    if (argc != 1) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        return nullptr;
+    }
 
-    bool ret;
     std::string url;
-    ret = GetStringPara(env, argv[0], url);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+    if (!GetStringPara(env, argv[0], url)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The parameter is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     napi_value result = nullptr;
     std::string cookieContent = "";
@@ -175,12 +182,16 @@ napi_value NapiWebCookieManager::JsPutAcceptCookieEnabled(napi_env env, napi_cal
     napi_value argv[1] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == 1, "requires 1 parameter");
+    if (argc != 1) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        return nullptr;
+    }
 
-    bool ret;
     bool accept;
-    ret = GetBooleanPara(env, argv[0], accept);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+    if (!GetBooleanPara(env, argv[0], accept)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Parameter is not of boolean type");
+        return nullptr;
+    }
 
     napi_value result = nullptr;
 
@@ -212,12 +223,16 @@ napi_value NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled(napi_env env
     napi_value argv[1] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == 1, "requires 1 parameter");
+    if (argc != 1) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        return nullptr;
+    }
 
-    bool ret;
     bool accept;
-    ret = GetBooleanPara(env, argv[0], accept);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+    if (!GetBooleanPara(env, argv[0], accept)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Parameter is not of boolean type");
+        return nullptr;
+    }
 
     napi_value result = nullptr;
 
@@ -294,6 +309,8 @@ void SaveCookieAsyncCallback(napi_env env, napi_ref jsCallback)
                 napi_call_function(env, nullptr, callback, 1, &jsResult, &callbackResult);
                 napi_delete_reference(env, jCallback);
             });
+        } else {
+            NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 callback parameter");
         }
         cookieManager->Store(callbackImpl);
     }
