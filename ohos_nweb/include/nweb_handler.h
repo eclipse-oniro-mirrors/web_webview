@@ -25,6 +25,7 @@
 #include "nweb_console_log.h"
 #include "nweb_context_menu_params.h"
 #include "nweb_file_selector_params.h"
+#include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
 #include "nweb_js_dialog_result.h"
 #include "nweb_js_http_auth_result.h"
@@ -431,6 +432,17 @@ public:
         const std::vector<std::string>& issuers) {
         return false;
     }
+
+    /**
+     * @brief called when the page enter the full-screen mode.
+     * @param handler to exit the full-screen mode.
+     */
+    virtual void OnFullScreenEnter(std::shared_ptr<NWebFullScreenExitHandler> handler) {}
+
+    /**
+     * @brief called when the page exit the full-screen mode.
+     */
+    virtual void OnFullScreenExit() {}
 };
 }  // namespace OHOS::NWeb
 
