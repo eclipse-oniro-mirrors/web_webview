@@ -48,7 +48,7 @@ void NetConnectAdapterTest::TearDown(void)
  * @tc.name: NetConnectAdapterTest_001.
  * @tc.desc: test lock type.
  * @tc.type: FUNC
- * @tc.require:
+ * @tc.require:issueI5ORNO
  */
 HWTEST_F(NetConnectAdapterTest, NetConnectAdapterTest_001, TestSize.Level1)
 {
