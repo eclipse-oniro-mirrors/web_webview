@@ -141,15 +141,23 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
     napi_value argv[2] = { 0, 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == SETCOOKIE_PARA_NUM, "requires 2 parameter");
+    if (argc != SETCOOKIE_PARA_NUM) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 2 parameter");
+        return nullptr;
+    }
 
-    bool ret;
     std::string url;
     std::string value;
-    ret = GetStringPara(env, argv[0], url);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
-    ret = GetStringPara(env, argv[1], value);
-    NAPI_ASSERT_BASE(env, ret, "get para1 failed", retValue);
+    if (!GetStringPara(env, argv[0], url)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para0 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
+    if (!GetStringPara(env, argv[1], value)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para1 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     napi_value result = nullptr;
     bool isSet = false;

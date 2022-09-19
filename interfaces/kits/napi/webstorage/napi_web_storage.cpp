@@ -18,9 +18,11 @@
 #include <cstddef>
 #include <new>
 
+#include "business_error.h"
 #include "napi/native_common.h"
 #include "nweb_helper.h"
 #include "nweb_web_storage.h"
+#include "web_errors.h"
 
 namespace {
 constexpr int32_t MAX_WEB_STRING_LENGTH = 40960;
@@ -68,17 +70,29 @@ napi_value NapiWebStorage::JsDeleteOrigin(napi_env env, napi_callback_info info)
     napi_value argv = nullptr;
     napi_value result = nullptr;
     napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == 1, "requires 1 parameter");
+    if (argc != 1) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        return nullptr;
+    }
     size_t bufferSize = 0;
     napi_valuetype valueType = napi_null;
     napi_typeof(env, argv, &valueType);
-    NAPI_ASSERT(env, valueType == napi_string, "type mismatch for parameter 1");
+    if (valueType != napi_string) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "type mismatch for parameter 1");
+        return nullptr;
+    }
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
-    NAPI_ASSERT_BASE(env, bufferSize < MAX_WEB_STRING_LENGTH, "string length too large", retValue);
+    if (bufferSize >= MAX_WEB_STRING_LENGTH) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length too large");
+        return nullptr;
+    }
     char stringValue[bufferSize + 1];
     size_t jsStringLength = 0;
     napi_get_value_string_utf8(env, argv, stringValue, bufferSize + 1, &jsStringLength);
-    NAPI_ASSERT_BASE(env, jsStringLength == bufferSize, "string length wrong", retValue);
+    if (jsStringLength != bufferSize) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length wrong");
+        return nullptr;
+    }
     std::string origin(stringValue);
     OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (web_storage) {
@@ -233,7 +247,10 @@ napi_value NapiWebStorage::JsGetOrigins(napi_env env, napi_callback_info info)
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 0 or 1 parameter");
+    if (argc != argcPromise && argc != argcCallback) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 0 or 1 parameter");
+        return nullptr;
+    }
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_undefined;
         napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
@@ -366,17 +383,29 @@ napi_value NapiWebStorage::JsGetOriginUsageOrQuota(napi_env env, napi_callback_i
     size_t argcCallback = 2;
     napi_value argv[2] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 1 or 2 parameter");
+    if (argc != argcPromise && argc != argcCallback) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 or 2 parameter");
+        return nullptr;
+    }
     napi_valuetype valueType = napi_null;
     napi_typeof(env, argv[0], &valueType);
-    NAPI_ASSERT(env, valueType == napi_string, "type mismatch for parameter 1");
+    if (valueType != napi_string) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "type mismatch for parameter 1");
+        return nullptr;
+    }
     size_t bufferSize = 0;
     napi_get_value_string_utf8(env, argv[0], nullptr, 0, &bufferSize);
-    NAPI_ASSERT_BASE(env, bufferSize < MAX_WEB_STRING_LENGTH, "string length too large", retValue);
+    if (bufferSize >= MAX_WEB_STRING_LENGTH) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length too large");
+        return nullptr;
+    }
     char stringValue[bufferSize + 1];
     size_t jsStringLength = 0;
     napi_get_value_string_utf8(env, argv[0], stringValue, bufferSize + 1, &jsStringLength);
-    NAPI_ASSERT_BASE(env, jsStringLength == bufferSize, "string length wrong", retValue);
+    if (jsStringLength != bufferSize) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length wrong");
+        return nullptr;
+    }
     std::string origin(stringValue);
     if (argc == argcCallback) {
         valueType = napi_undefined;
