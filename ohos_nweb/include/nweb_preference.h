@@ -249,7 +249,6 @@ public:
      */
     virtual void PutWebDebuggingAccess(bool flag) = 0;
 
-
     /**
      * Put whether media playback needs to be triggered by user gestures, default value is false.
      */
@@ -259,6 +258,11 @@ public:
      * Put whether smooth mode is supported.
      */
     virtual void PutPinchSmoothMode(bool flag) = 0;
+
+    /**
+     * Whether multiple windows are supported, the default value is false.
+     */
+    virtual void PutMultiWindowAccess(bool flag) = 0;
 
     /* get methods */
     /**
@@ -503,6 +507,13 @@ public:
      * Get whether smooth mode is supported.
      */
     virtual bool GetPinchSmoothMode() = 0;
+
+    /**
+     * Get if the NWeb supported to multiple windows.
+     *
+     * @see PutMultiWindowAccess
+     */
+    virtual bool IsMultiWindowAccess() = 0;
 };
 }  // namespace OHOS::NWeb
 #endif  // NWEB_PREFERENCE_H
