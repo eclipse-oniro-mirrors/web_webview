@@ -24,6 +24,7 @@
 #include "nweb.h"
 #include "nweb_console_log.h"
 #include "nweb_context_menu_params.h"
+#include "nweb_controller_handler.h"
 #include "nweb_file_selector_params.h"
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
@@ -443,6 +444,24 @@ public:
      * @brief called when the page exit the full-screen mode.
      */
     virtual void OnFullScreenExit() {}
+
+    /**
+     * @brief Notification window creation request.
+     * @param targetUrl target url.
+     * @param isAlert Whether it is a dialog box.
+     * @param isUserTrigger Whether it was triggered by the user.
+     * @param handler set the new web object.
+     */
+    virtual void OnWindowNewByJS(
+        const std::string& targetUrl,
+        bool isAlert,
+        bool isUserTrigger,
+        std::shared_ptr<NWebControllerHandler> handler) {}
+
+    /**
+     * @brief Notification window close request.
+     */
+    virtual void OnWindowExitByJS() {}
 };
 }  // namespace OHOS::NWeb
 
