@@ -21,7 +21,7 @@
 
 namespace OHOS {
 namespace NWebError {
-constexpr ErrCode PARAM_CHECK_ERROR = 401; 
+constexpr ErrCode PARAM_CHECK_ERROR = 401;
 }
 }
 #endif
