@@ -23,6 +23,12 @@ config("module_private_config") {
     "//foundation/window/window_manager/interfaces/innerkits/wm",
     "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
     "//base/web/webview/test/unittest/common",
+    "//foundation/window/window_manager/wm/include",
+    "//foundation/ability/ability_runtime/interfaces/kits/native/ability/ability_runtime",
+    "//foundation/ability/ability_base/interfaces/kits/native/configuration/include",
+    "//foundation/ability/ability_runtime/interfaces/inner_api/ability_manager/include",
+    "//foundation/window/window_manager/interfaces/innerkits/dm",
+    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client/core/ui",
   ]
 }
 
@@ -41,11 +47,34 @@ ohos_unittest("nweb_input_test") {
     "//foundation/graphic/graphic_2d:libsurface",
     "//foundation/graphic/graphic_2d:libvsync_client",
     "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
+    "//foundation/window/window_manager/utils:libwmutil",
     "//foundation/window/window_manager/wm:libwm",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",
   ]
-  external_deps = [ "input:libmmi-client" ]
+  external_deps = [
+    "ability_base:want",
+    "ability_runtime:ability_context_native",
+    "ability_runtime:ability_manager",
+    "ace_engine:ace_uicontent",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "graphic_standard:surface",
+    "graphic_standard:window_animation",
+    "hicollie_native:libhicollie",
+    "hilog_native:libhilog",
+    "hisysevent_native:libhisysevent",
+    "imf:inputmethod_client",
+    "input:libmmi-client",
+    "ipc:ipc_core",
+    "multimedia_image_standard:image",
+    "multimedia_image_standard:image_native",
+    "napi:ace_napi",
+    "resource_management:global_resmgr",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
+  ]
 }
 
 group("unittest") {
