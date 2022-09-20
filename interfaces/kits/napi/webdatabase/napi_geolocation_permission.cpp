@@ -18,9 +18,11 @@
 #include <cstdint>
 #include <vector>
 
+#include "business_error.h"
 #include "napi/native_common.h"
 #include "nweb_data_base.h"
 #include "nweb_helper.h"
+#include "web_errors.h"
 #include "securec.h"
 
 namespace {
@@ -118,10 +120,17 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
     size_t argc = PARAMONE;
     napi_value argv[PARAMONE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == PARAMONE, "requires 1 parameter");
+    if (argc != PARAMONE) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        return nullptr;
+    }
+
     std::string origin;
-    bool ret = GetStringPara(env, argv[PARAMZERO], origin);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+    if (!GetStringPara(env, argv[PARAMZERO], origin)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para0 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
@@ -277,10 +286,17 @@ napi_value NapiGeolocationPermission::JsGetAccessibleGeolocation(napi_env env, n
     size_t argcCallback = PARAMTWO;
     napi_value argv[PARAMTWO] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 1 or 2 parameter");
+    if (argc != argcPromise && argc != argcCallback) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 or 2 parameter");
+        return nullptr;
+    }
     std::string origin;
-    bool ret = GetStringPara(env, argv[PARAMZERO], origin);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+
+    if (!GetStringPara(env, argv[PARAMZERO], origin)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para0 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_undefined;
@@ -408,7 +424,10 @@ napi_value NapiGeolocationPermission::JsGetStoredGeolocation(napi_env env, napi_
     size_t argcCallback = PARAMONE;
     napi_value argv = nullptr;
     napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 0 or 1 parameter");
+    if (argc != argcPromise && argc != argcCallback) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 0 or 1 parameter");
+        return nullptr;
+    }
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_undefined;
         napi_typeof(env, argv, &valueType);

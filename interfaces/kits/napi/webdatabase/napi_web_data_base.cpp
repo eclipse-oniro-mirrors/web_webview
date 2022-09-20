@@ -18,9 +18,11 @@
 #include <cstdint>
 #include <vector>
 
+#include "business_error.h"
 #include "napi/native_common.h"
 #include "nweb_data_base.h"
 #include "nweb_helper.h"
+#include "web_errors.h"
 #include "securec.h"
 
 namespace {
@@ -136,28 +138,44 @@ napi_value NapiWebDataBase::JsSaveHttpAuthCredentials(napi_env env, napi_callbac
     napi_value argv[4] = { 0 };
     
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == PARAMFOUR, "requires 4 parameter");
+    if (argc != PARAMFOUR) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 4 parameter");
+        return nullptr;
+    }
 
-    bool ret;
     std::string host;
-    ret = GetStringPara(env, argv[PARAMZERO], host);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+    if (!GetStringPara(env, argv[PARAMZERO], host)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para0 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     std::string realm;
-    ret = GetStringPara(env, argv[PARAMONE], realm);
-    NAPI_ASSERT_BASE(env, ret, "get para1 failed", retValue);
+    if (!GetStringPara(env, argv[PARAMONE], realm)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para1 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     std::string username;
-    ret = GetStringPara(env, argv[PARAMTWO], username);
-    NAPI_ASSERT_BASE(env, ret, "get para2 failed", retValue);
+    if (!GetStringPara(env, argv[PARAMTWO], username)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para2 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     size_t bufferSize = 0;
-    ret = GetSize(env, argv[PARAMTHREE], bufferSize);
-    NAPI_ASSERT_BASE(env, ret, "get para3 failed", retValue);
+    if (!GetSize(env, argv[PARAMTHREE], bufferSize)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para3 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
     if (bufferSize > 0) {
         char password[bufferSize + 1];
-        ret = GetCharPara(env, argv[PARAMTHREE], password, bufferSize);
-        NAPI_ASSERT_BASE(env, ret, "get para3 failed", retValue);
+        if (!GetCharPara(env, argv[PARAMTHREE], password, bufferSize)) {
+            NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "get para3 failed");
+            return nullptr;
+        }
 
         OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
         if (dataBase != nullptr) {
@@ -178,16 +196,24 @@ napi_value NapiWebDataBase::JsGetHttpAuthCredentials(napi_env env, napi_callback
     napi_value argv[2] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    NAPI_ASSERT(env, argc == PARAMTWO, "requires 2 parameter");
+    if (argc != PARAMTWO) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 2 parameter");
+        return nullptr;
+    }
 
-    bool ret;
     std::string host;
-    ret = GetStringPara(env, argv[PARAMZERO], host);
-    NAPI_ASSERT_BASE(env, ret, "get para0 failed", retValue);
+    if (!GetStringPara(env, argv[PARAMZERO], host)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para0 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     std::string realm;
-    ret = GetStringPara(env, argv[PARAMONE], realm);
-    NAPI_ASSERT_BASE(env, ret, "get para1 failed", retValue);
+    if (!GetStringPara(env, argv[PARAMONE], realm)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "The para1 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
 
     std::vector<std::string> usernamePassword;
     napi_value result = nullptr;
