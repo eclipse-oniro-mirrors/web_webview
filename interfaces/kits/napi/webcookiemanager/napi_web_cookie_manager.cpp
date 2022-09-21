@@ -129,6 +129,12 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
     if (cookieManager != nullptr) {
         cookieContent = cookieManager->ReturnCookie(url);
     }
+
+    if (cookieContent == "") {
+        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_URL,
+            "invalid url or the url has no corresponding cookie");
+        return nullptr;
+    }
     napi_create_string_utf8(env, cookieContent.c_str(), cookieContent.length(), &result);
     return result;
 }
@@ -160,13 +166,20 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
     }
 
     napi_value result = nullptr;
-    bool isSet = false;
+    int isSet = -1;
 
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         isSet = cookieManager->SetCookie(url, value);
     }
-    NAPI_CALL(env, napi_get_boolean(env, isSet, &result));
+    if (isSet == NWebError::INVALID_URL) {
+        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_URL, "invalid url");
+        return nullptr;
+    } else if (isSet == NWebError::INVALID_COOKIE_VALUE) {
+        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_COOKIE_VALUE, "invalid cookie value");
+        return nullptr;
+    }
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 
