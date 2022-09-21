@@ -90,16 +90,18 @@ public:
      * @param origin url source.
      * @param type specifies permission type.
      * @param result set result.
+     * @return 0 if successfully set specifies permission type result by origin other return error id.
      */
-    virtual void SetPermissionByOrigin(const std::string& origin, int type, bool result) = 0;
+    virtual int SetPermissionByOrigin(const std::string& origin, int type, bool result) = 0;
 
     /**
      * @brief delete specifies permission type by origin.
      *
      * @param origin url source.
      * @param type specifies permission type.
+     * @return 0 if successfully delete specifies permission type result by origin other return error id.
      */
-    virtual void ClearPermissionByOrigin(const std::string& origin, int type) = 0;
+    virtual int ClearPermissionByOrigin(const std::string& origin, int type) = 0;
 
     /**
      * @brief delete all specifies permission type.
