@@ -950,15 +950,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_OpenRemoteUri_041, Tes
  */
 HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_GetTokenId_042, TestSize.Level1)
 {
-    PasteRecordList data;
     PasteBoardClientAdapterImpl::GetInstance().Clear();
-    EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().GetTokenId());
-
-    std::shared_ptr<PasteDataRecordAdapter> record = PasteDataRecordAdapter::NewRecord("text/html");
-    std::shared_ptr<std::string> pasteData = std::make_shared<std::string>("test");
-    record->SetHtmlText(pasteData);
-    data.push_back(record);
-    PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
     EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().GetTokenId());
 }
 
@@ -970,15 +962,7 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_GetTokenId_042, 
  */
 HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_IsLocalPaste_043, TestSize.Level1)
 {
-    PasteRecordList data;
     PasteBoardClientAdapterImpl::GetInstance().Clear();
     EXPECT_EQ(false, PasteBoardClientAdapterImpl::GetInstance().IsLocalPaste());
-
-    std::shared_ptr<PasteDataRecordAdapter> record = PasteDataRecordAdapter::NewRecord("text/html");
-    std::shared_ptr<std::string> pasteData = std::make_shared<std::string>("test");
-    record->SetHtmlText(pasteData);
-    data.push_back(record);
-    PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
-    (void)PasteBoardClientAdapterImpl::GetInstance().IsLocalPaste();
 }
 }

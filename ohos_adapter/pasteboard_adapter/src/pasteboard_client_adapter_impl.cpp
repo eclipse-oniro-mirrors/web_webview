@@ -378,11 +378,15 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
     PasteData pData;
     if (!PasteboardClient::GetInstance()->HasPasteData() ||
         !PasteboardClient::GetInstance()->GetPasteData(pData)) {
+        isLocalPaste_ = false;
+        tokenId_ = 0;
         return false;
     }
     for (auto& record: pData.AllRecords()) {
         data.push_back(std::make_shared<PasteDataRecordAdapterImpl>(record));
     }
+    tokenId_ = pData.GetTokenId();
+    isLocalPaste_ = pData.IsLocalPaste();
     return true;
 }
 
@@ -432,19 +436,11 @@ int32_t PasteBoardClientAdapterImpl::OpenRemoteUri(const std::string& path)
 
 bool PasteBoardClientAdapterImpl::IsLocalPaste() const
 {
-    PasteData pData;
-    if (!PasteboardClient::GetInstance()->GetPasteData(pData)) {
-        return false;
-    }
-    return pData.IsLocalPaste();
+    return isLocalPaste_;
 }
 
-uint32_t PasteBoardClientAdapterImpl::GetTokenId()
+uint32_t PasteBoardClientAdapterImpl::GetTokenId() const
 {
-    PasteData pData;
-    if (!PasteboardClient::GetInstance()->GetPasteData(pData)) {
-        return 0;
-    }
-    return pData.GetTokenId();
+    return tokenId_;
 }
 }
