@@ -16,17 +16,17 @@
 #ifndef NWEB_NAPI_WEBVIEW_CONTROLLER_H
 #define NWEB_NAPI_WEBVIEW_CONTROLLER_H
 
-#include "hilog/log.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
+#include "webview_controller.h"
 
 namespace OHOS {
 const std::string WEBVIEW_CONTROLLER_CLASS_NAME = "WebviewController";
 
 class NapiWebviewController {
 public:
-    NapiWebviewController(napi_env env, napi_value thisVar, int32_t webId);
+    NapiWebviewController() {}
     ~NapiWebviewController() = default;
 
     static napi_value Init(napi_env env, napi_value exports);
@@ -34,25 +34,19 @@ public:
 private:
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
 
-    static napi_value JsSetWebId(napi_env env, napi_callback_info info);
-
     static bool GetStringPara(napi_env env, napi_value argv, std::string& outValue);
 
     static bool GetIntPara(napi_env env, napi_value argv, int32_t& outValue);
 
+    static napi_value JsSetWebId(napi_env env, napi_callback_info info);
+
     static napi_value JsAccessForward(napi_env env, napi_callback_info info);
-    bool JsAccessForwardInternal(napi_env env, napi_callback_info info);
 
     static napi_value JsAccessBackward(napi_env env, napi_callback_info info);
-    bool JsAccessBackwardInternal(napi_env env, napi_callback_info info);
 
     static napi_value JsForward(napi_env env, napi_callback_info info);
-    void JsForwardInternal(napi_env env, napi_callback_info info);
 
     static napi_value JsBackward(napi_env env, napi_callback_info info);
-    void JsBackwardInternal(napi_env env, napi_callback_info info);
-    
-    int32_t nwebId { -1 };
 };
 } // namespace OHOS
 

@@ -14,14 +14,12 @@
  */
 
 #include "napi_webview_controller.h"
+
 #include "nweb.h"
 #include "nweb_helper.h"
-#include "nweb_store_web_archive_callback.h"
 #include "nweb_log.h"
 
 namespace OHOS {
-NapiWebviewController::NapiWebviewController(napi_env env, napi_value thisVar, int32_t webId) : nwebId(webId) {}
-
 napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
@@ -43,8 +41,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
-    size_t argc = 2;
-    napi_value argv[2] = { 0 };
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
 
     return thisVar;
@@ -62,11 +60,11 @@ napi_value NapiWebviewController::JsSetWebId(napi_env env, napi_callback_info in
     if (!GetIntPara(env, argv[0], webId)) {
         return nullptr;
     }
-    NapiWebviewController *webviewController = new NapiWebviewController(env, thisVar, webId);
+    WebviewController *webviewController = new WebviewController(webId);
     napi_status status = napi_wrap(
         env, thisVar, webviewController,
         [](napi_env env, void *data, void *hint) {
-            NapiWebviewController *webviewController = static_cast<NapiWebviewController *>(data);
+            WebviewController *webviewController = static_cast<WebviewController *>(data);
             delete webviewController;
         },
         nullptr, nullptr);
@@ -121,30 +119,18 @@ napi_value NapiWebviewController::JsAccessForward(napi_env env, napi_callback_in
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
-    NapiWebviewController *webviewController = nullptr;
+    
+    WebviewController *webviewController = nullptr;
     napi_unwrap(env, thisVar, (void **)&webviewController);
 
     if (!webviewController) {
         return result;
     }
-    bool access = webviewController->JsAccessForwardInternal(env, info);
+    bool access = webviewController->AccessForward();
 
     NAPI_CALL(env, napi_get_boolean(env, access, &result));
     return result;
-}
-
-bool NapiWebviewController::JsAccessForwardInternal(napi_env env, napi_callback_info info)
-{
-    bool access = true;
-    OHOS::NWeb::NWeb* nweb = OHOS::NWeb::NWebHelper::Instance().GetNWeb(nwebId);
-
-    if (nweb != nullptr) {
-        access = nweb->IsNavigateForwardAllowed();
-    }
-
-    return access;
 }
 
 napi_value NapiWebviewController::JsAccessBackward(napi_env env, napi_callback_info info)
@@ -153,82 +139,50 @@ napi_value NapiWebviewController::JsAccessBackward(napi_env env, napi_callback_i
     napi_value result = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
 
-    NapiWebviewController *webviewController = nullptr;
+    WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
-    
-
     if ((!webviewController) || (status != napi_ok)) {
         return nullptr;
     }
 
-    bool access = webviewController->JsAccessForwardInternal(env, info);
+    bool access = webviewController->AccessForward();
     NAPI_CALL(env, napi_get_boolean(env, access, &result));
     return result;
-}
-
-bool NapiWebviewController::JsAccessBackwardInternal(napi_env env, napi_callback_info info)
-{
-    bool access = true;
-    OHOS::NWeb::NWeb* nweb = OHOS::NWeb::NWebHelper::Instance().GetNWeb(nwebId);
-
-    if (nweb != nullptr) {
-        access = nweb->IsNavigatebackwardAllowed();
-    }
-
-    return access;
 }
 
 napi_value NapiWebviewController::JsForward(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
-    NapiWebviewController *webviewController = nullptr;
+
+    WebviewController *webviewController = nullptr;
     napi_unwrap(env, thisVar, (void **)&webviewController);
 
     if (!webviewController) {
         return result;
     }
-    webviewController->JsForwardInternal(env, info);
+    webviewController->Forward();
     NAPI_CALL(env, napi_get_undefined(env, &result));
 
     return result;
-}
-
-void NapiWebviewController::JsForwardInternal(napi_env env, napi_callback_info info)
-{
-    OHOS::NWeb::NWeb* nweb = OHOS::NWeb::NWebHelper::Instance().GetNWeb(nwebId);
-
-    if (nweb != nullptr) {
-        nweb->NavigateForward();
-    }
 }
 
 napi_value NapiWebviewController::JsBackward(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
-    NapiWebviewController *webviewController = nullptr;
+
+    WebviewController *webviewController = nullptr;
     napi_unwrap(env, thisVar, (void **)&webviewController);
 
     if (!webviewController) {
         return result;
     }
-    webviewController->JsBackwardInternal(env, info);
+    webviewController->Backward();
     NAPI_CALL(env, napi_get_undefined(env, &result));
     
     return result;
-}
-
-void NapiWebviewController::JsBackwardInternal(napi_env env, napi_callback_info info)
-{
-    OHOS::NWeb::NWeb* nweb = OHOS::NWeb::NWebHelper::Instance().GetNWeb(nwebId);
-
-    if (nweb != nullptr) {
-        nweb->NavigateBack();
-    }
 }
 } // namespace OHOS
