@@ -20,6 +20,7 @@ config("web_public_config") {
   include_dirs = [
     "$SUBSYSTEM_DIR/interfaces/kits/napi/common",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webasynccontroller",
+    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webcookiemanager",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage",
@@ -38,6 +39,7 @@ ohos_shared_library("webview_napi") {
     "$SUBSYSTEM_DIR/interfaces/kits/napi/common/business_error.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/common/napi_webview_native_module.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webasynccontroller/napi_web_async_controller.cpp",
+    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller/napi_webview_controller.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webcookiemanager/napi_web_cookie_manager.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase/napi_geolocation_permission.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase/napi_web_data_base.cpp",
