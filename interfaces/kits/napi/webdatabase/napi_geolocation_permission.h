@@ -68,8 +68,6 @@ private:
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
 
     static bool GetStringPara(napi_env env, napi_value argv, std::string& outValue);
-
-    static napi_value GetErrorCodeValue(napi_env env, int32_t errCode);
 };
 } // namespace OHOS
 
