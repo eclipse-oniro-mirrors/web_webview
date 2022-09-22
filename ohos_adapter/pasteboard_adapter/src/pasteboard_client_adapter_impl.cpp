@@ -429,4 +429,22 @@ int32_t PasteBoardClientAdapterImpl::OpenRemoteUri(const std::string& path)
 {
     return RemoteUri::OpenRemoteUri(path);
 }
+
+bool PasteBoardClientAdapterImpl::IsLocalPaste() const
+{
+    PasteData pData;
+    if (!PasteboardClient::GetInstance()->GetPasteData(pData)) {
+        return false;
+    }
+    return pData.IsLocalPaste();
+}
+
+uint32_t PasteBoardClientAdapterImpl::GetTokenId()
+{
+    PasteData pData;
+    if (!PasteboardClient::GetInstance()->GetPasteData(pData)) {
+        return 0;
+    }
+    return pData.GetTokenId();
+}
 }
