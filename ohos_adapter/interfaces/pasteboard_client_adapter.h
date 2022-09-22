@@ -66,7 +66,7 @@ public:
 
     virtual bool IsLocalPaste() const = 0;
 
-    virtual uint32_t GetTokenId() = 0;
+    virtual uint32_t GetTokenId() const = 0;
 };
 
 class PasteDataRecordAdapter {

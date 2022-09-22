@@ -82,7 +82,10 @@ public:
     void Clear() override;
     int32_t OpenRemoteUri(const std::string& path) override;
     bool IsLocalPaste() const override;
-    uint32_t GetTokenId() override;
+    uint32_t GetTokenId() const override;
+private:
+    uint32_t tokenId_ = 0;
+    bool isLocalPaste_ = false;
 };
 }
 
