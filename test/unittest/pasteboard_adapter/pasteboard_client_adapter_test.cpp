@@ -544,9 +544,10 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_021, Test
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_022, TestSize.Level1)
 {
+    PasteBoardClientAdapterImpl::GetInstance().Clear();
     PasteRecordList data;
-    bool count = PasteBoardClientAdapterImpl::GetInstance().GetPasteData(data);
-    EXPECT_EQ(TRUE_OK, count);
+    bool result = PasteBoardClientAdapterImpl::GetInstance().GetPasteData(data);
+    EXPECT_EQ(false, result);
 }
 
 /**
@@ -557,8 +558,8 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_022, Test
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_HasPasteData_023, TestSize.Level1)
 {
-    bool count = PasteBoardClientAdapterImpl::GetInstance().HasPasteData();
-    EXPECT_EQ(TRUE_OK, count);
+    bool result = PasteBoardClientAdapterImpl::GetInstance().HasPasteData();
+    EXPECT_EQ(false, result);
 }
 
 /**
@@ -881,6 +882,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetUri_039, TestSize.L
         result = -1;
     }
     EXPECT_EQ(RESULT_OK, result);
+    g_datarecord->record_ = g_datarecord->builder_->SetUri(nullptr).Build();
+    uri = g_datarecord->GetUri();
+    if (uri == nullptr) {
+        result = -1;
+    }
+    EXPECT_NE(RESULT_OK, result);
     uri = g_pasternull->GetUri();
     if (uri == nullptr) {
         result = -1;
@@ -906,6 +913,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetCustomData_040, Tes
         result = -1;
     }
     EXPECT_EQ(RESULT_OK, result);
+    g_datarecord->record_ = g_datarecord->builder_->SetCustomData(nullptr).Build();
+    customData = g_datarecord->GetCustomData();
+    if (customData == nullptr) {
+        result = -1;
+    }
+    EXPECT_NE(RESULT_OK, result);
     customData = g_pasternull->GetCustomData();
     if (customData == nullptr) {
         result = -1;
@@ -927,5 +940,45 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_OpenRemoteUri_041, Tes
     std::string testInvalidUri = "www.example.com";
     fd = PasteBoardClientAdapterImpl::GetInstance().OpenRemoteUri(testInvalidUri);
     EXPECT_EQ(-1, fd);
+}
+
+/**
+ * @tc.name: PasteBoardClientAdapterImpl_GetTokenId_042.
+ * @tc.desc: Test the GetTokenId.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4BN
+ */
+HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_GetTokenId_042, TestSize.Level1)
+{
+    PasteRecordList data;
+    PasteBoardClientAdapterImpl::GetInstance().Clear();
+    EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().GetTokenId());
+
+    std::shared_ptr<PasteDataRecordAdapter> record = PasteDataRecordAdapter::NewRecord("text/html");
+    std::shared_ptr<std::string> pasteData = std::make_shared<std::string>("test");
+    record->SetHtmlText(pasteData);
+    data.push_back(record);
+    PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
+    EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().GetTokenId());
+}
+
+/**
+ * @tc.name: PasteBoardClientAdapterImpl_IsLocalPaste_043.
+ * @tc.desc: Test the IsLocalPaste.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4BN
+ */
+HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_IsLocalPaste_043, TestSize.Level1)
+{
+    PasteRecordList data;
+    PasteBoardClientAdapterImpl::GetInstance().Clear();
+    EXPECT_EQ(false, PasteBoardClientAdapterImpl::GetInstance().IsLocalPaste());
+
+    std::shared_ptr<PasteDataRecordAdapter> record = PasteDataRecordAdapter::NewRecord("text/html");
+    std::shared_ptr<std::string> pasteData = std::make_shared<std::string>("test");
+    record->SetHtmlText(pasteData);
+    data.push_back(record);
+    PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
+    (void)PasteBoardClientAdapterImpl::GetInstance().IsLocalPaste();
 }
 }

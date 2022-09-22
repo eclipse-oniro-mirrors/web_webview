@@ -16,6 +16,8 @@
 #include <gtest/gtest.h>
 #define private public
 #include "display_manager_adapter_impl.h"
+#undef private
+
 
 using namespace testing;
 using namespace testing::ext;
@@ -23,7 +25,30 @@ using namespace OHOS;
 using namespace OHOS::Rosen;
 using namespace OHOS::NWeb;
 
-namespace OHOS::NWeb {
+namespace OHOS {
+namespace {
+    bool g_unregister = false;
+}
+
+namespace Rosen {
+bool DisplayManager::UnregisterDisplayListener(sptr<IDisplayListener> listener)
+{
+    return g_unregister;
+}
+}
+
+namespace NWeb {
+class DisplayListenerAdapterTest: public DisplayListenerAdapter {
+public:
+    DisplayListenerAdapterTest() = default;
+
+    virtual ~DisplayListenerAdapterTest() = default;
+
+    void OnCreate(DisplayId) override {}
+    void OnDestroy(DisplayId) override {}
+    void OnChange(DisplayId) override {}
+};
+
 class DisplayManagerAdapterImplTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -70,12 +95,18 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_001, TestS
  */
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_002, TestSize.Level1)
 {
+    std::shared_ptr<DisplayListenerAdapter> listener(new DisplayListenerAdapterTest);
     std::unique_ptr<DisplayListenerAdapterImpl> displayListenerAdapterImpl =
-        std::make_unique<DisplayListenerAdapterImpl>(nullptr);
+        std::make_unique<DisplayListenerAdapterImpl>(listener);
     displayListenerAdapterImpl->OnCreate(static_cast<DisplayId>(1));
     displayListenerAdapterImpl->OnDestroy(static_cast<DisplayId>(1));
     displayListenerAdapterImpl->OnChange(static_cast<DisplayId>(1));
     EXPECT_NE(displayListenerAdapterImpl, nullptr);
+    std::unique_ptr<DisplayListenerAdapterImpl> displayListenerAdapterImpl1 =
+        std::make_unique<DisplayListenerAdapterImpl>(nullptr);
+    displayListenerAdapterImpl1->OnCreate(static_cast<DisplayId>(1));
+    displayListenerAdapterImpl1->OnDestroy(static_cast<DisplayId>(1));
+    displayListenerAdapterImpl1->OnChange(static_cast<DisplayId>(1));
 }
 
 /**
@@ -159,5 +190,23 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_004, TestS
     type = OHOS::Rosen::Orientation::AUTO_ROTATION_RESTRICTED;
     retType = displayAdapterImpl->ConvertOrientationType(type);
     EXPECT_EQ(retType, OHOS::NWeb::OrientationType::BUTT);
+}
+
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_005.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_005, TestSize.Level1)
+{
+    std::unique_ptr<DisplayManagerAdapterImpl> displayManagerAdapterImpl(new DisplayManagerAdapterImpl);
+    std::shared_ptr<DisplayListenerAdapter> listener(new DisplayListenerAdapterTest);
+    EXPECT_NE(displayManagerAdapterImpl, nullptr);
+    EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(listener));
+    std::shared_ptr<DisplayListenerAdapter> listener1(new DisplayListenerAdapterTest);
+    EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(listener1));
+    g_unregister = true;
+}
 }
 }
