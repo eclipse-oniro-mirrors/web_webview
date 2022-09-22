@@ -105,9 +105,9 @@ public:
      *
      * @param url the URL for which the cookie is to be set.
      * @param value the cookie as a string, using the format of the 'Set-Cookie' HTTP response header.
-     * @return true if success else false.
+     * @return 0 if success else return error id.
      */
-    virtual bool SetCookie(const std::string &url,
+    virtual int SetCookie(const std::string &url,
                            const std::string &value) = 0;
 
     /**

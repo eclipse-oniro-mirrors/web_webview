@@ -103,16 +103,6 @@ bool NapiGeolocationPermission::GetStringPara(napi_env env, napi_value argv, std
     return true;
 }
 
-napi_value NapiGeolocationPermission::GetErrorCodeValue(napi_env env, int32_t errCode)
-{
-    napi_value jsObject = nullptr;
-    napi_value jsValue = nullptr;
-    NAPI_CALL(env, napi_create_int32(env, errCode, &jsValue));
-    NAPI_CALL(env, napi_create_object(env, &jsObject));
-    NAPI_CALL(env, napi_set_named_property(env, jsObject, "code", jsValue));
-    return jsObject;
-}
-
 napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_callback_info info,
     int32_t operationType)
 {
@@ -139,9 +129,17 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
         return result;
     }
     if (operationType == ALLOW_PERMISSION_OPERATION) {
-        dataBase->SetPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE, true);
+        if (dataBase->SetPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
+            true) == NWebError::INVALID_ORIGIN) {
+            NWebError::BusinessError::ThrowError(env, NWebError::INVALID_ORIGIN, "The origin is empty or illegal");
+            return result;
+        }
     } else if (operationType == DELETE_PERMISSION_OPERATION) {
-        dataBase->ClearPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE);
+        if (dataBase->ClearPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE)
+            == NWebError::INVALID_ORIGIN) {
+            NWebError::BusinessError::ThrowError(env, NWebError::INVALID_ORIGIN, "The origin is empty or illegal");
+            return result;
+        }
     }
     return result;
 }
@@ -173,7 +171,8 @@ void NapiGeolocationPermission::GetPermissionStateComplete(napi_env env, napi_st
     GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
-        setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode,
+            "The origin is empty or illegal");
         napi_get_undefined(env, &setResult[PARAMONE]);
     } else {
         napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -195,7 +194,8 @@ void NapiGeolocationPermission::GetPermissionStatePromiseComplete(napi_env env, 
 {
     GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode,
+        "The origin is empty or illegal");
     napi_get_boolean(env, param->retValue, &setResult[PARAMONE]);
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
     if (param->status == napi_ok) {
@@ -223,7 +223,7 @@ void NapiGeolocationPermission::ExecuteGetPermissionState(napi_env env, void *da
         param->errCode = INTERFACE_OK;
         param->status = napi_ok;
     } else {
-        param->errCode = INTERFACE_ERROR;
+        param->errCode = NWebError::INVALID_ORIGIN;
         param->status = napi_generic_failure;
     }
 }
@@ -316,7 +316,7 @@ void NapiGeolocationPermission::GetOriginComplete(napi_env env, napi_status stat
     GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
-        setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+        napi_get_undefined(env, &setResult[PARAMZERO]);
         napi_get_undefined(env, &setResult[PARAMONE]);
     } else {
         napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -343,7 +343,7 @@ void NapiGeolocationPermission::GetOriginsPromiseComplete(napi_env env, napi_sta
 {
     GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+    napi_get_undefined(env, &setResult[PARAMZERO]);
     napi_create_array(env, &setResult[PARAMONE]);
     for (uint32_t i = 0; i < param->origins.size(); i++) {
         std::string str = param->origins[i];
