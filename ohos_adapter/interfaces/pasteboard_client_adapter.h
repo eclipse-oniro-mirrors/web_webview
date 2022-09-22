@@ -63,6 +63,10 @@ public:
     virtual void Clear() = 0;
 
     virtual int32_t OpenRemoteUri(const std::string& path) = 0;
+
+    virtual bool IsLocalPaste() const = 0;
+
+    virtual uint32_t GetTokenId() = 0;
 };
 
 class PasteDataRecordAdapter {
