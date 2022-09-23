@@ -239,6 +239,8 @@ public:
     }
     void ClearClientAuthenticationCache() override
     {}
+    void UpdateLocale(const std::string& language, const std::string& region) override
+    {}
 };
 }
 #endif
