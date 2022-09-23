@@ -96,7 +96,10 @@ napi_value NapiWebStorage::JsDeleteOrigin(napi_env env, napi_callback_info info)
     std::string origin(stringValue);
     OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (web_storage) {
-        web_storage->DeleteOrigin(origin);
+        if (web_storage->DeleteOrigin(origin) == NWebError::INVALID_ORIGIN) {
+            NWebError::BusinessError::ThrowError(env, NWebError::INVALID_ORIGIN, "The origin is empty or illegal");
+            return nullptr;
+        }
     }
     napi_get_undefined(env, &result);
     return result;
@@ -129,7 +132,7 @@ void NapiWebStorage::ExecuteGetOrigins(napi_env env, void *data)
         napiOrigin.usage = origin.GetUsage();
         param->origins.push_back(napiOrigin);
     }
-    param->errCode = param->origins.empty() ? INTERFACE_ERROR : INTERFACE_OK;
+    param->errCode = param->origins.empty() ? NWebError::NO_WEBSTORAGE_ORIGIN : INTERFACE_OK;
     param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
 }
 
@@ -163,7 +166,8 @@ void NapiWebStorage::GetOriginComplete(napi_env env, napi_status status, void *d
     GetOriginsParam* param = static_cast<GetOriginsParam*>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
-        setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN,
+            "No webstorage origin source availavle");
         napi_get_undefined(env, &setResult[PARAMONE]);
     } else {
         napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -184,7 +188,8 @@ void NapiWebStorage::GetOriginsPromiseComplete(napi_env env, napi_status status,
 {
     GetOriginsParam* param = static_cast<GetOriginsParam*>(data);
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN,
+        "No webstorage origin source availavle");
     napi_create_array(env, &setResult[PARAMONE]);
     GetNapiWebStorageOriginForResult(env, param->origins, setResult[PARAMONE]);
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
@@ -274,12 +279,12 @@ void NapiWebStorage::ExecuteGetOriginUsageOrQuota(napi_env env, void *data)
     }
     if (param->isQuato) {
         param->retValue = web_storage->GetOriginQuota(param->origin);
-        param->errCode = param->retValue == -1 ? INTERFACE_ERROR : INTERFACE_OK;
+        param->errCode = param->retValue;
         param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
         return;
     }
     param->retValue = web_storage->GetOriginUsage(param->origin);
-    param->errCode = param->retValue == -1 ? INTERFACE_ERROR : INTERFACE_OK;
+    param->errCode = param->retValue;
     param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
 }
 
@@ -288,7 +293,12 @@ void NapiWebStorage::GetOriginUsageOrQuotaComplete(napi_env env, napi_status sta
     GetOriginUsageOrQuotaParam* param = static_cast<GetOriginUsageOrQuotaParam*>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
-        setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+        if (param->errCode == NWebError::INVALID_ORIGIN) {
+            setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN,
+            "The origin is empty or illegal");
+        } else {
+            napi_get_undefined(env, &setResult[PARAMZERO]);
+        }
         napi_get_undefined(env, &setResult[PARAMONE]);
     } else {
         napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -310,13 +320,14 @@ void NapiWebStorage::GetOriginUsageOrQuotaPromiseComplete(napi_env env, napi_sta
 {
     GetOriginUsageOrQuotaParam* param = static_cast<GetOriginUsageOrQuotaParam*>(data);
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = GetErrorCodeValue(env, param->errCode);
+    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN,
+        "The origin is empty or illegal");
     napi_create_uint32(env, static_cast<uint32_t>(param->retValue), &setResult[PARAMONE]);
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
-    if (param->status == napi_ok) {
-        napi_resolve_deferred(env, param->deferred, args[1]);
-    } else {
+    if (param->status != napi_ok && param->errCode == NWebError::INVALID_ORIGIN) {
         napi_reject_deferred(env, param->deferred, args[0]);
+    } else {
+        napi_resolve_deferred(env, param->deferred, args[1]);
     }
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_async_work(env, param->asyncWork);
