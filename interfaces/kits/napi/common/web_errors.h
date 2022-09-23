@@ -25,6 +25,7 @@ constexpr ErrCode PARAM_CHECK_ERROR = 401;
 constexpr ErrCode INVALID_URL = 17100001;
 constexpr ErrCode INVALID_COOKIE_VALUE = 17100009;
 constexpr ErrCode INVALID_ORIGIN = 17100017;
+constexpr ErrCode NO_WEBSTORAGE_ORIGIN = 17100022;
 }
 }
 #endif
