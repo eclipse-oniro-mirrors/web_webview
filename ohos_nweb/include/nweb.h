@@ -478,6 +478,13 @@ public:
      * @since 9
      */
     virtual void ClearClientAuthenticationCache() = 0;
+
+    /**
+     * set the locale name of current system setting.
+     *
+     * @param locale the locale name of current system setting.
+     */
+    virtual void UpdateLocale(const std::string& language, const std::string& region) = 0;
 };
 }  // namespace OHOS::NWeb
 
