@@ -24,6 +24,7 @@
 #include "napi/native_node_api.h"
 
 namespace OHOS {
+namespace NWeb {
 const std::string WEB_COOKIE_MANAGER_CLASS_NAME = "WebCookieManager";
 
 class NapiWebCookieManager {
@@ -63,6 +64,7 @@ private:
 
     static napi_value JsSaveCookieSync(napi_env env, napi_callback_info info);
 };
+} // namespace NWeb
 } // namespace OHOS
 
 #endif // NWEB_NAPI_WEB_COOKIE_MANAGER_H

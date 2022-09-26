@@ -27,6 +27,7 @@ constexpr size_t MAX_WEB_STRING_LENGTH = 40960;
 } // namespace
 
 namespace OHOS {
+namespace NWeb {
 napi_value NapiWebAsyncController::Init(napi_env env, napi_value exports)
 {
     const std::string WEB_ASYNC_CLIENT_CLASS_NAME = "WebAsyncController";
@@ -263,4 +264,5 @@ void NapiWebAsyncController::StoreWebArchivePromise(const std::string &baseName,
     nweb->StoreWebArchive(baseName, autoName, callbackImpl);
     return;
 }
+} // namespace NWeb
 } // namespace OHOS

@@ -59,6 +59,7 @@ struct GetOriginPermissionStateParam {
 }
 
 namespace OHOS {
+namespace NWeb {
 napi_value NapiGeolocationPermission::Init(napi_env env, napi_value exports)
 {
     const std::string GEOLOCATION_PERMISSION_CLASS_NAME = "GeolocationPermissions";
@@ -449,4 +450,5 @@ napi_value NapiGeolocationPermission::JsConstructor(napi_env env, napi_callback_
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     return thisVar;
 }
+} // namespace NWeb
 } // namespace OHOS
