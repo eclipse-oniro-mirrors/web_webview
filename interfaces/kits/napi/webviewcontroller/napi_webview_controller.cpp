@@ -15,9 +15,11 @@
 
 #include "napi_webview_controller.h"
 
+#include "business_error.h"
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
+#include "web_errors.h"
 
 namespace OHOS {
 napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
@@ -26,8 +28,13 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setWebId", NapiWebviewController::JsSetWebId),
         DECLARE_NAPI_FUNCTION("accessForward", NapiWebviewController::JsAccessForward),
         DECLARE_NAPI_FUNCTION("accessBackward", NapiWebviewController::JsAccessBackward),
+        DECLARE_NAPI_FUNCTION("accessStep", NapiWebviewController::JsAccessStep),
+        DECLARE_NAPI_FUNCTION("clearHistory", NapiWebviewController::JsClearHistory),
         DECLARE_NAPI_FUNCTION("forward", NapiWebviewController::JsForward),
         DECLARE_NAPI_FUNCTION("backward", NapiWebviewController::JsBackward),
+        DECLARE_NAPI_FUNCTION("onActive", NapiWebviewController::JsOnActive),
+        DECLARE_NAPI_FUNCTION("onInactive", NapiWebviewController::JsOnInactive),
+        DECLARE_NAPI_FUNCTION("refresh", NapiWebviewController::JsRefresh),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -87,7 +94,6 @@ bool NapiWebviewController::GetIntPara(napi_env env, napi_value argv, int32_t& o
     int32_t number = 0;
     napi_get_value_int32(env, argv, &number);
     outValue = number;
-
     return true;
 }
 
@@ -122,13 +128,12 @@ napi_value NapiWebviewController::JsAccessForward(napi_env env, napi_callback_in
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
     
     WebviewController *webviewController = nullptr;
-    napi_unwrap(env, thisVar, (void **)&webviewController);
-
-    if (!webviewController) {
-        return result;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
     }
-    bool access = webviewController->AccessForward();
 
+    bool access = webviewController->AccessForward();
     NAPI_CALL(env, napi_get_boolean(env, access, &result));
     return result;
 }
@@ -145,7 +150,7 @@ napi_value NapiWebviewController::JsAccessBackward(napi_env env, napi_callback_i
         return nullptr;
     }
 
-    bool access = webviewController->AccessForward();
+    bool access = webviewController->AccessBackward();
     NAPI_CALL(env, napi_get_boolean(env, access, &result));
     return result;
 }
@@ -157,14 +162,20 @@ napi_value NapiWebviewController::JsForward(napi_env env, napi_callback_info inf
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
 
     WebviewController *webviewController = nullptr;
-    napi_unwrap(env, thisVar, (void **)&webviewController);
-
-    if (!webviewController) {
-        return result;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
     }
+
+    bool access =  webviewController->AccessForward();
+    if (!access) {
+        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_BACK_OR_FORWARD_OPERATION,
+            "No history corresponding to forward or backward.");
+        return nullptr;
+    }
+
     webviewController->Forward();
     NAPI_CALL(env, napi_get_undefined(env, &result));
-
     return result;
 }
 
@@ -175,14 +186,128 @@ napi_value NapiWebviewController::JsBackward(napi_env env, napi_callback_info in
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
 
     WebviewController *webviewController = nullptr;
-    napi_unwrap(env, thisVar, (void **)&webviewController);
-
-    if (!webviewController) {
-        return result;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
     }
+
+    bool access =  webviewController->AccessBackward();
+    if (!access) {
+        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_BACK_OR_FORWARD_OPERATION,
+            "No history corresponding to forward or backward.");
+        return nullptr;
+    }
+
     webviewController->Backward();
     NAPI_CALL(env, napi_get_undefined(env, &result));
-    
+    return result;
+}
+
+napi_value NapiWebviewController::JsAccessStep(napi_env env, napi_callback_info info)
+{
+    constexpr int32_t ACCESS_STEP_PARA_NUM = 1;
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != ACCESS_STEP_PARA_NUM) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 1 parameter.");
+        return nullptr;
+    }
+
+    int32_t step = 0;
+    if (!GetIntPara(env, argv[0], step)) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+            "Parameter is not integer number type.");
+        return nullptr;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
+    }
+
+    bool access = webviewController->AccessStep(step);
+    NAPI_CALL(env, napi_get_boolean(env, access, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::JsClearHistory(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
+    }
+
+    webviewController->ClearHistory();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::JsOnActive(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
+    }
+
+    webviewController->OnActive();
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::JsOnInactive(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
+    }
+
+    webviewController->OnInactive();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::JsRefresh(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
+    }
+
+    webviewController->Refresh();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace OHOS

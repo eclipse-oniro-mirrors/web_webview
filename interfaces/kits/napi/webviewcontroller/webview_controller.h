@@ -30,9 +30,19 @@ public:
 
     bool AccessBackward();
 
+    bool AccessStep(int32_t step);
+
+    void ClearHistory();
+
     void Forward();
 
     void Backward();
+
+    void OnActive();
+
+    void OnInactive();
+
+    void Refresh();
 
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;

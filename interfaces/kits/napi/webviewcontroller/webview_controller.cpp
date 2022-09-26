@@ -25,7 +25,6 @@ WebviewController::WebviewController(int32_t webId)
 bool WebviewController::AccessForward()
 {
     bool access = true;
-
     if (nweb_ != nullptr) {
         access = nweb_->IsNavigateForwardAllowed();
     }
@@ -41,6 +40,22 @@ bool WebviewController::AccessBackward()
     return access;
 }
 
+bool WebviewController::AccessStep(int32_t step)
+{
+    bool access = true;
+    if (nweb_ != nullptr) {
+        access = nweb_->CanNavigateBackOrForward(step);
+    }
+    return access;
+}
+
+void WebviewController::ClearHistory()
+{
+    if (nweb_ != nullptr) {
+        nweb_->DeleteNavigateHistory();
+    }
+}
+
 void WebviewController::Forward()
 {
     if (nweb_ != nullptr) {
@@ -52,6 +67,27 @@ void WebviewController::Backward()
 {
     if (nweb_ != nullptr) {
         nweb_->NavigateBack();
+    }
+}
+
+void WebviewController::OnActive()
+{
+    if (nweb_ != nullptr) {
+        nweb_->OnContinue();
+    }
+}
+
+void WebviewController::OnInactive()
+{
+    if (nweb_ != nullptr) {
+        nweb_->OnPause();
+    }
+}
+
+void WebviewController::Refresh()
+{
+    if (nweb_ != nullptr) {
+        nweb_->Reload();
     }
 }
 } // namespace OHOS
