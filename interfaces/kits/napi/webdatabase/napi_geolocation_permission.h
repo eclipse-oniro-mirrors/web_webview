@@ -24,6 +24,7 @@
 #include "napi/native_node_api.h"
 
 namespace OHOS {
+namespace NWeb {
 class NapiGeolocationPermission {
 public:
     NapiGeolocationPermission() {}
@@ -69,6 +70,7 @@ private:
 
     static bool GetStringPara(napi_env env, napi_value argv, std::string& outValue);
 };
+} // namespace NWeb
 } // namespace OHOS
 
 #endif // NWEB_NAPI_GEOLOCATION_PERMISSION_H

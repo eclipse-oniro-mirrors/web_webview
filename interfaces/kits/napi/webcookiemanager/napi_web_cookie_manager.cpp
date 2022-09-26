@@ -27,6 +27,7 @@
 #include "securec.h"
 
 namespace OHOS {
+namespace NWeb {
 napi_value NapiWebCookieManager::Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
@@ -57,7 +58,7 @@ napi_value NapiWebCookieManager::Init(napi_env env, napi_value exports)
 napi_value NapiWebCookieManager::JsConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
-    
+
     size_t argc = 2;
     napi_value argv[2] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
@@ -408,4 +409,5 @@ napi_value NapiWebCookieManager::JsSaveCookieSync(napi_env env, napi_callback_in
     NAPI_CALL(env, napi_get_boolean(env, ret, &result));
     return result;
 }
+} // namespace NWeb
 } // namespace OHOS

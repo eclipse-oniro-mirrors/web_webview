@@ -22,7 +22,9 @@
 #include "webview_controller.h"
 
 namespace OHOS {
+namespace NWeb {
 const std::string WEBVIEW_CONTROLLER_CLASS_NAME = "WebviewController";
+const std::string WEB_MESSAGE_PORT_CLASS_NAME = "WebMessagePort";
 
 class NapiWebviewController {
 public:
@@ -34,51 +36,81 @@ public:
 private:
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
 
-    static bool GetStringPara(napi_env env, napi_value argv, std::string& outValue);
+    static napi_value SetWebId(napi_env env, napi_callback_info info);
 
-    static bool GetIntPara(napi_env env, napi_value argv, int32_t& outValue);
+    static napi_value AccessForward(napi_env env, napi_callback_info info);
 
-    static bool GetBooleanPara(napi_env env, napi_value argv, bool& outValue);
+    static napi_value AccessBackward(napi_env env, napi_callback_info info);
 
-    static napi_value JsSetWebId(napi_env env, napi_callback_info info);
+    static napi_value Forward(napi_env env, napi_callback_info info);
 
-    static napi_value JsAccessForward(napi_env env, napi_callback_info info);
+    static napi_value Backward(napi_env env, napi_callback_info info);
 
-    static napi_value JsAccessBackward(napi_env env, napi_callback_info info);
+    static napi_value AccessStep(napi_env env, napi_callback_info info);
 
-    static napi_value JsAccessStep(napi_env env, napi_callback_info info);
+    static napi_value ClearHistory(napi_env env, napi_callback_info info);
 
-    static napi_value JsClearHistory(napi_env env, napi_callback_info info);
+    static napi_value OnActive(napi_env env, napi_callback_info info);
 
-    static napi_value JsForward(napi_env env, napi_callback_info info);
+    static napi_value OnInactive(napi_env env, napi_callback_info info);
 
-    static napi_value JsBackward(napi_env env, napi_callback_info info);
+    static napi_value Refresh(napi_env env, napi_callback_info info);
 
-    static napi_value JsOnActive(napi_env env, napi_callback_info info);
+    static napi_value ZoomIn(napi_env env, napi_callback_info info);
 
-    static napi_value JsOnInactive(napi_env env, napi_callback_info info);
+    static napi_value ZoomOut(napi_env env, napi_callback_info info);
 
-    static napi_value JsRefresh(napi_env env, napi_callback_info info);
+    static napi_value GetWebId(napi_env env, napi_callback_info info);
 
-    static napi_value JsZoomIn(napi_env env, napi_callback_info info);
+    static napi_value GetDefaultUserAgent(napi_env env, napi_callback_info info);
 
-    static napi_value JsZoomOut(napi_env env, napi_callback_info info);
+    static napi_value GetTitle(napi_env env, napi_callback_info info);
 
-    static napi_value JsGetWebId(napi_env env, napi_callback_info info);
+    static napi_value GetPageHeight(napi_env env, napi_callback_info info);
 
-    static napi_value JsGetDefaultUserAgent(napi_env env, napi_callback_info info);
+    static napi_value BackOrForward(napi_env env, napi_callback_info info);
 
-    static napi_value JsGetTitle(napi_env env, napi_callback_info info);
-
-    static napi_value JsGetPageHeight(napi_env env, napi_callback_info info);
-
-    static napi_value JsBackOrForward(napi_env env, napi_callback_info info);
-
-    static napi_value JsStoreWebArchive(napi_env env, napi_callback_info info);
+    static napi_value StoreWebArchive(napi_env env, napi_callback_info info);
 
     static napi_value StoreWebArchiveInternal(napi_env env, napi_callback_info info,
         const std::string &baseName, bool autoName);
+
+    static napi_value CreateWebMessagePorts(napi_env env, napi_callback_info info);
+
+    static napi_value PostMessage(napi_env env, napi_callback_info info);
 };
+
+class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {
+public:
+    NWebValueCallbackImpl(napi_env env, napi_ref callback) : env_(env), callback_(callback) {}
+    ~NWebValueCallbackImpl();
+    void OnReceiveValue(std::string result) override;
+
+private:
+    napi_env env_;
+    napi_ref callback_;
+};
+
+class NapiWebMessagePort {
+public:
+    NapiWebMessagePort() = default;
+    ~NapiWebMessagePort() = default;
+
+    struct WebMsgPortParam {
+        napi_env env_;
+        napi_ref callback_;
+        std::string msg_;
+    };
+
+    static napi_value JsConstructor(napi_env env, napi_callback_info info);
+
+    static napi_value Close(napi_env env, napi_callback_info info);
+
+    static napi_value PostMessageEvent(napi_env env, napi_callback_info info);
+
+    static napi_value OnMessageEvent(napi_env env, napi_callback_info info);
+};
+} // namespace NWeb
 } // namespace OHOS
 
 #endif // NWEB_NAPI_WEBVIEW_CONTROLLER_H

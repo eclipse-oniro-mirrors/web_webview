@@ -23,9 +23,10 @@
 #include "napi/native_node_api.h"
 #include "nweb.h"
 #include "nweb_helper.h"
+#include "web_errors.h"
 
 namespace OHOS {
-
+namespace NWeb {
 class WebviewController {
 public:
     explicit WebviewController(int32_t nwebId);
@@ -53,7 +54,7 @@ public:
 
     bool ZoomOut();
 
-    int32_t GetWebId();
+    int32_t GetWebId() const;
 
     std::string GetDefaultUserAgent();
 
@@ -66,9 +67,34 @@ public:
     void StoreWebArchiveCallback(const std::string &baseName, bool autoName, napi_env env, napi_ref jsCallback);
 
     void StoreWebArchivePromise(const std::string &baseName, bool autoName, napi_env env, napi_deferred deferred);
+
+    ErrCode CreateWebMessagePorts(std::vector<std::string>& ports);
+
+    ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
+
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
 };
+
+class WebMessagePort {
+public:
+    WebMessagePort(int32_t nwebId, std::string& port);
+
+    ~WebMessagePort() = default;
+
+    ErrCode ClosePort();
+
+    ErrCode PostPortMessage(std::string& data);
+
+    ErrCode SetPortMessageCallback(std::shared_ptr<NWebValueCallback<std::string>> callback);
+
+    std::string GetPortHandle() const;
+
+private:
+    OHOS::NWeb::NWeb* nweb_ = nullptr;
+    std::string portHandle_;
+};
+} // namespace NWeb
 } // namespace OHOS
 
 #endif // NWEB_WEBVIEW_CONTROLLER_H

@@ -35,6 +35,7 @@ constexpr int32_t PARAMFOUR = 4;
 }
 
 namespace OHOS {
+namespace NWeb {
 napi_value NapiWebDataBase::Init(napi_env env, napi_value exports)
 {
     const std::string WEB_DATA_BASE_CLASS_NAME = "WebDataBase";
@@ -136,7 +137,7 @@ napi_value NapiWebDataBase::JsSaveHttpAuthCredentials(napi_env env, napi_callbac
     napi_value retValue = nullptr;
     size_t argc = 4;
     napi_value argv[4] = { 0 };
-    
+
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != PARAMFOUR) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 4 parameter");
@@ -240,4 +241,5 @@ napi_value NapiWebDataBase::JsConstructor(napi_env env, napi_callback_info info)
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     return thisVar;
 }
+} // namespace NWeb
 } // namespace OHOS

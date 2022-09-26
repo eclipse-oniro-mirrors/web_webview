@@ -34,6 +34,7 @@ constexpr int32_t PARAMONE = 1;
 }
 
 namespace OHOS {
+namespace NWeb {
 napi_value NapiWebStorage::Init(napi_env env, napi_value exports)
 {
     const std::string WEB_STORAGE_CLASS_NAME = "WebStorage";
@@ -447,4 +448,5 @@ napi_value NapiWebStorage::JsConstructor(napi_env env, napi_callback_info info)
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     return thisVar;
 }
+} // namespace NWeb
 } // namespace OHOS

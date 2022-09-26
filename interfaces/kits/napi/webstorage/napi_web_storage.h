@@ -26,6 +26,7 @@
 #include "node_api_types.h"
 
 namespace OHOS {
+namespace NWeb {
 struct GetOriginUsageOrQuotaParam {
     int retValue;
     bool isQuato;
@@ -85,6 +86,7 @@ private:
     static napi_value JsGetOriginUsage(napi_env env, napi_callback_info info);
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
 };
+} // namespace NWeb
 } // namespace OHOS
 
 #endif // NWEB_NAPI_WEB_STORAGE_H

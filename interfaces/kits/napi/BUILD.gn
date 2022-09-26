@@ -37,7 +37,9 @@ ohos_shared_library("webview_napi") {
 
   sources = [
     "$SUBSYSTEM_DIR/interfaces/kits/napi/common/business_error.cpp",
+    "$SUBSYSTEM_DIR/interfaces/kits/napi/common/napi_parse_utils.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/common/napi_webview_native_module.cpp",
+    "$SUBSYSTEM_DIR/interfaces/kits/napi/common/web_errors.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webasynccontroller/napi_web_async_controller.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webcookiemanager/napi_web_cookie_manager.cpp",
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase/napi_geolocation_permission.cpp",
