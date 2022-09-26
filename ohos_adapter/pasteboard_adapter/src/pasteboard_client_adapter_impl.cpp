@@ -23,6 +23,17 @@ using namespace OHOS::MiscServices;
 using namespace OHOS::DistributedFS::ModuleRemoteUri;
 
 namespace OHOS::NWeb {
+PasteboardObserverAdapterImpl::PasteboardObserverAdapterImpl(
+    std::shared_ptr<PasteboardObserverAdapter> observer)
+    : observer_(observer) {}
+
+void PasteboardObserverAdapterImpl::OnPasteboardChanged()
+{
+    if (observer_) {
+        observer_->OnPasteboardChanged();
+    }
+}
+
 PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
     std::shared_ptr<PasteDataRecord> record)
     : record_(record) {}
@@ -442,5 +453,37 @@ bool PasteBoardClientAdapterImpl::IsLocalPaste() const
 uint32_t PasteBoardClientAdapterImpl::GetTokenId() const
 {
     return tokenId_;
+}
+
+void PasteBoardClientAdapterImpl::AddPasteboardChangedObserver(
+    std::shared_ptr<PasteboardObserverAdapter> callback)
+{
+    if (callback) {
+        sptr<PasteboardObserver> observer =
+            new PasteboardObserverAdapterImpl(callback);
+        if (!observer) {
+            return;
+        }
+        reg_.emplace(std::make_pair(callback.get(), observer));
+        PasteboardClient::GetInstance()->AddPasteboardChangedObserver(observer);
+    }
+}
+
+void PasteBoardClientAdapterImpl::RemovePasteboardChangedObserver(
+    std::shared_ptr<PasteboardObserverAdapter> callback)
+{
+    if (callback) {
+        sptr<PasteboardObserver> observer =
+            new PasteboardObserverAdapterImpl(callback);
+        if (!observer) {
+            return;
+        }
+        ObserverMap::iterator iter = reg_.find(callback.get());
+        if (iter == reg_.end()) {
+            return;
+        }
+        PasteboardClient::GetInstance()->RemovePasteboardChangedObserver(observer);
+        reg_.erase(iter);
+    }
 }
 }
