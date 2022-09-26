@@ -20,8 +20,18 @@
 #include "paste_data.h"
 #include "paste_data_record.h"
 #include "pasteboard_client.h"
+#include "pasteboard_observer.h"
 
 namespace OHOS::NWeb {
+class PasteboardObserverAdapterImpl : public MiscServices::PasteboardObserver {
+public:
+    explicit PasteboardObserverAdapterImpl(
+        std::shared_ptr<PasteboardObserverAdapter> observer);
+    void OnPasteboardChanged() override;
+private:
+    std::shared_ptr<PasteboardObserverAdapter> observer_;
+};
+
 class PasteDataRecordAdapterImpl : public PasteDataRecordAdapter {
 public:
     explicit PasteDataRecordAdapterImpl(
@@ -72,6 +82,8 @@ private:
     std::shared_ptr<MiscServices::PasteData> data_;
 };
 
+using ObserverMap =
+    std::map<PasteboardObserverAdapter*, sptr<MiscServices::PasteboardObserver>>;
 class PasteBoardClientAdapterImpl : public PasteBoardClientAdapter {
 public:
     PasteBoardClientAdapterImpl() = default;
@@ -83,9 +95,12 @@ public:
     int32_t OpenRemoteUri(const std::string& path) override;
     bool IsLocalPaste() const override;
     uint32_t GetTokenId() const override;
+    void AddPasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) override;
+    void RemovePasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) override;
 private:
     uint32_t tokenId_ = 0;
     bool isLocalPaste_ = false;
+    ObserverMap reg_;
 };
 }
 

@@ -118,6 +118,12 @@ public:
     MOCK_METHOD1(Decode, bool(const std::vector<uint8_t> &));
 };
 
+class MockPasteboardObserver : public PasteboardObserverAdapter {
+public:
+    MockPasteboardObserver() = default;
+    void OnPasteboardChanged() override {}
+};
+
 /**
  * @tc.name: NWebPasteboardAdapter_PasteDataRecordAdapterImpl_001.
  * @tc.desc: Test the PasteDataRecordAdapterImpl.
@@ -964,5 +970,44 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_IsLocalPaste_043
 {
     PasteBoardClientAdapterImpl::GetInstance().Clear();
     EXPECT_EQ(false, PasteBoardClientAdapterImpl::GetInstance().IsLocalPaste());
+}
+
+/**
+ * @tc.name: PasteboardObserverAdapter_OnPasteboardChanged_044.
+ * @tc.desc: Test the CreatePasteboardObserver.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4BN
+ */
+HWTEST_F(NWebPasteboardAdapterTest, PasteboardObserverAdapter_OnPasteboardChanged_044, TestSize.Level1)
+{
+    std::shared_ptr<PasteboardObserverAdapter> observer =
+        std::make_shared<MockPasteboardObserver>();
+    PasteboardObserverAdapterImpl observerImpl(observer);
+    observerImpl.OnPasteboardChanged();
+    observerImpl.observer_ = nullptr;
+    observerImpl.OnPasteboardChanged();
+}
+
+/**
+ * @tc.name: PasteBoardClientAdapterImpl_AddPasteboardChangedObserver_045.
+ * @tc.desc: Test the AddPasteboardChangedObserver.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4BN
+ */
+HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_AddPasteboardChangedObserver_045, TestSize.Level1)
+{
+    std::shared_ptr<PasteboardObserverAdapter> observer =
+        std::make_shared<MockPasteboardObserver>();
+    std::shared_ptr<PasteboardObserverAdapter> observerInvalid =
+        std::make_shared<MockPasteboardObserver>();
+    PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(observer);
+    PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(nullptr);
+    EXPECT_EQ(1, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
+    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(observer);
+    EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
+    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(observerInvalid);
+    EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
+    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(nullptr);
+    EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
 }
 }
