@@ -111,14 +111,14 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != 1) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 1 parameter.");
         return nullptr;
     }
 
     std::string url;
     if (!GetStringPara(env, argv[0], url)) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The parameter is not of string type or the parameter length is too long");
+            "The parameter is not of string type or the parameter length is too long.");
         return nullptr;
     }
 
@@ -132,7 +132,7 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
 
     if (cookieContent == "") {
         NWebError::BusinessError::ThrowError(env, NWebError::INVALID_URL,
-            "invalid url or the url has no corresponding cookie");
+            "Invalid url or the url has no corresponding cookie.");
         return nullptr;
     }
     napi_create_string_utf8(env, cookieContent.c_str(), cookieContent.length(), &result);
@@ -148,7 +148,7 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != SETCOOKIE_PARA_NUM) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 2 parameter");
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 2 parameter.");
         return nullptr;
     }
 
@@ -156,12 +156,12 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
     std::string value;
     if (!GetStringPara(env, argv[0], url)) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para0 is not of string type or the parameter length is too long");
+            "The para[1] is not of string type or the parameter length is too long.");
         return nullptr;
     }
     if (!GetStringPara(env, argv[1], value)) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para1 is not of string type or the parameter length is too long");
+            "The para[2] is not of string type or the parameter length is too long.");
         return nullptr;
     }
 
@@ -173,10 +173,10 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
         isSet = cookieManager->SetCookie(url, value);
     }
     if (isSet == NWebError::INVALID_URL) {
-        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_URL, "invalid url");
+        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_URL, "Invalid url.");
         return nullptr;
     } else if (isSet == NWebError::INVALID_COOKIE_VALUE) {
-        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_COOKIE_VALUE, "invalid cookie value");
+        NWebError::BusinessError::ThrowError(env, NWebError::INVALID_COOKIE_VALUE, "invalid cookie value.");
         return nullptr;
     }
     NAPI_CALL(env, napi_get_undefined(env, &result));
@@ -204,13 +204,13 @@ napi_value NapiWebCookieManager::JsPutAcceptCookieEnabled(napi_env env, napi_cal
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != 1) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 1 parameter.");
         return nullptr;
     }
 
     bool accept;
     if (!GetBooleanPara(env, argv[0], accept)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Parameter is not of boolean type");
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Parameter is not of boolean type.");
         return nullptr;
     }
 
@@ -245,13 +245,13 @@ napi_value NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled(napi_env env
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != 1) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 1 parameter.");
         return nullptr;
     }
 
     bool accept;
     if (!GetBooleanPara(env, argv[0], accept)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Parameter is not of boolean type");
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Parameter is not boolean type.");
         return nullptr;
     }
 
@@ -331,7 +331,7 @@ void SaveCookieAsyncCallback(napi_env env, napi_ref jsCallback)
                 napi_delete_reference(env, jCallback);
             });
         } else {
-            NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 callback parameter");
+            NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 1 callback parameter.");
         }
         cookieManager->Store(callbackImpl);
     }
@@ -370,7 +370,7 @@ napi_value NapiWebCookieManager::JsSaveCookieAsync(napi_env env, napi_callback_i
     napi_value argv[1] = {0};
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "requires 0 or 1 parameter");
+    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "Requires 0 or 1 parameter.");
 
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
@@ -378,7 +378,7 @@ napi_value NapiWebCookieManager::JsSaveCookieAsync(napi_env env, napi_callback_i
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_null;
         napi_typeof(env, argv[argcCallback - 1], &valueType);
-        NAPI_ASSERT(env, valueType == napi_function, "type mismatch for parameter 1");
+        NAPI_ASSERT(env, valueType == napi_function, "Type mismatch for parameter 1.");
         napi_ref jsCallback = nullptr;
         napi_create_reference(env, argv[argcCallback - 1], 1, &jsCallback);
 

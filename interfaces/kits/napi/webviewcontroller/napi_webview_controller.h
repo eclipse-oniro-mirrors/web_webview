@@ -44,9 +44,19 @@ private:
 
     static napi_value JsAccessBackward(napi_env env, napi_callback_info info);
 
+    static napi_value JsAccessStep(napi_env env, napi_callback_info info);
+
+    static napi_value JsClearHistory(napi_env env, napi_callback_info info);
+
     static napi_value JsForward(napi_env env, napi_callback_info info);
 
     static napi_value JsBackward(napi_env env, napi_callback_info info);
+
+    static napi_value JsOnActive(napi_env env, napi_callback_info info);
+
+    static napi_value JsOnInactive(napi_env env, napi_callback_info info);
+
+    static napi_value JsRefresh(napi_env env, napi_callback_info info);
 };
 } // namespace OHOS
 
