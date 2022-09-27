@@ -147,10 +147,11 @@ void NWebWindowAdapter::RequestVsync(Rosen::Window *window, std::shared_ptr<NWeb
             this->VsyncCb(window, nwebWeak.lock());
         },
     };
-
-    VsyncError ret = VsyncHelper::Current()->RequestFrameCallback(frameCb);
-    if (ret != VSYNC_ERROR_OK) {
-        WVLOG_E("FAIL to request frame callback for nweb render, ret=%{public}d", ret);
+    if (VsyncHelper::Current() != nullptr) {
+        VsyncError ret = VsyncHelper::Current()->RequestFrameCallback(frameCb);
+        if (ret != VSYNC_ERROR_OK) {
+            WVLOG_E("FAIL to request frame callback for nweb render, ret=%{public}d", ret);
+        }
     }
 }
 
