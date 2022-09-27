@@ -48,6 +48,16 @@ class PasteDataRecordAdapter;
 class PasteDataAdapter;
 using PasteRecordList = std::vector<std::shared_ptr<PasteDataRecordAdapter>>;
 using PasteCustomData = std::map<std::string, std::vector<uint8_t>>;
+
+class PasteboardObserverAdapter {
+public:
+    PasteboardObserverAdapter() = default;
+
+    virtual ~PasteboardObserverAdapter() = default;
+
+    virtual void OnPasteboardChanged() = 0;
+};
+
 class PasteBoardClientAdapter {
 public:
     PasteBoardClientAdapter() = default;
@@ -67,6 +77,10 @@ public:
     virtual bool IsLocalPaste() const = 0;
 
     virtual uint32_t GetTokenId() const = 0;
+
+    virtual void AddPasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) = 0;
+
+    virtual void RemovePasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) = 0;
 };
 
 class PasteDataRecordAdapter {
