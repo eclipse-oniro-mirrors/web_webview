@@ -38,6 +38,8 @@ private:
 
     static bool GetIntPara(napi_env env, napi_value argv, int32_t& outValue);
 
+    static bool GetBooleanPara(napi_env env, napi_value argv, bool& outValue);
+
     static napi_value JsSetWebId(napi_env env, napi_callback_info info);
 
     static napi_value JsAccessForward(napi_env env, napi_callback_info info);
@@ -57,6 +59,25 @@ private:
     static napi_value JsOnInactive(napi_env env, napi_callback_info info);
 
     static napi_value JsRefresh(napi_env env, napi_callback_info info);
+
+    static napi_value JsZoomIn(napi_env env, napi_callback_info info);
+
+    static napi_value JsZoomOut(napi_env env, napi_callback_info info);
+
+    static napi_value JsGetWebId(napi_env env, napi_callback_info info);
+
+    static napi_value JsGetDefaultUserAgent(napi_env env, napi_callback_info info);
+
+    static napi_value JsGetTitle(napi_env env, napi_callback_info info);
+
+    static napi_value JsGetPageHeight(napi_env env, napi_callback_info info);
+
+    static napi_value JsBackOrForward(napi_env env, napi_callback_info info);
+
+    static napi_value JsStoreWebArchive(napi_env env, napi_callback_info info);
+
+    static napi_value StoreWebArchiveInternal(napi_env env, napi_callback_info info,
+        const std::string &baseName, bool autoName);
 };
 } // namespace OHOS
 
