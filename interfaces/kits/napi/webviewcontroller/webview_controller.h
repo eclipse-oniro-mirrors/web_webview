@@ -16,6 +16,11 @@
 #ifndef NWEB_WEBVIEW_CONTROLLER_H
 #define NWEB_WEBVIEW_CONTROLLER_H
 
+#include <string>
+
+#include "napi/native_api.h"
+#include "napi/native_common.h"
+#include "napi/native_node_api.h"
 #include "nweb.h"
 #include "nweb_helper.h"
 
@@ -44,6 +49,23 @@ public:
 
     void Refresh();
 
+    bool ZoomIn();
+
+    bool ZoomOut();
+
+    int32_t GetWebId();
+
+    std::string GetDefaultUserAgent();
+
+    std::string GetTitle();
+
+    int32_t GetPageHeight();
+
+    void BackOrForward(int32_t step);
+
+    void StoreWebArchiveCallback(const std::string &baseName, bool autoName, napi_env env, napi_ref jsCallback);
+
+    void StoreWebArchivePromise(const std::string &baseName, bool autoName, napi_env env, napi_deferred deferred);
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
 };
