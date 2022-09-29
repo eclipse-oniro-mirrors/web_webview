@@ -40,7 +40,7 @@
                 "core_service",
                 "ipc",
                 "relational_store",
-                "multimedia_image_standard",
+                "multimedia_image_framework",
                 "input",
                 "c_utils",
                 "eventhandler",
