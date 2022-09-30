@@ -26,7 +26,8 @@ namespace {
 }
 
 namespace OHOS {
-
+namespace NWeb {
+using namespace NWebError;
 WebviewController::WebviewController(int32_t webId)
 {
     nweb_ = OHOS::NWeb::NWebHelper::Instance().GetNWeb(webId);
@@ -119,7 +120,7 @@ bool WebviewController::ZoomOut()
     return result;
 }
 
-int32_t WebviewController::GetWebId()
+int32_t WebviewController::GetWebId() const
 {
     int32_t webId = -1;
     if (nweb_) {
@@ -247,4 +248,66 @@ void WebviewController::StoreWebArchivePromise(const std::string &baseName, bool
     nweb_->StoreWebArchive(baseName, autoName, callbackImpl);
     return;
 }
+
+ErrCode WebviewController::CreateWebMessagePorts(std::vector<std::string>& ports)
+{
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
+    }
+
+    nweb_->CreateWebMessagePorts(ports);
+    return NO_ERROR;
+}
+
+ErrCode WebviewController::PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl)
+{
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
+    }
+
+    nweb_->PostWebMessage(message, ports, targetUrl);
+    return NO_ERROR;
+}
+
+WebMessagePort::WebMessagePort(int32_t nwebId, std::string& port)
+{
+    nweb_ = OHOS::NWeb::NWebHelper::Instance().GetNWeb(nwebId);
+    portHandle_ = port;
+}
+
+ErrCode WebMessagePort::ClosePort()
+{
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
+    }
+
+    nweb_->ClosePort(portHandle_);
+    return NO_ERROR;
+}
+
+ErrCode WebMessagePort::PostPortMessage(std::string& data)
+{
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
+    }
+
+    nweb_->PostPortMessage(portHandle_, data);
+    return NO_ERROR;
+}
+
+ErrCode WebMessagePort::SetPortMessageCallback(std::shared_ptr<NWebValueCallback<std::string>> callback)
+{
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
+    }
+
+    nweb_->SetPortMessageCallback(portHandle_, callback);
+    return NO_ERROR;
+}
+
+std::string WebMessagePort::GetPortHandle() const
+{
+    return portHandle_;
+}
+} // namespace NWeb
 } // namespace OHOS

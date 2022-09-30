@@ -15,12 +15,14 @@
 
 #ifndef WEB_ERRORS_H
 #define WEB_ERRORS_H
- 
- 
+
 #include "errors.h"
+
+#include <string>
 
 namespace OHOS {
 namespace NWebError {
+constexpr ErrCode NO_ERROR = 0;
 constexpr ErrCode PARAM_CHECK_ERROR = 401;
 constexpr ErrCode INIT_ERROR = 17100001;
 constexpr ErrCode INVALID_URL = 17100001;
@@ -29,6 +31,10 @@ constexpr ErrCode INVALID_COOKIE_VALUE = 17100009;
 constexpr ErrCode INVALID_ORIGIN = 17100017;
 constexpr ErrCode NO_WEBSTORAGE_ORIGIN = 17100022;
 constexpr ErrCode INVALID_BACK_OR_FORWARD_OPERATION = 17100023;
+constexpr ErrCode CREATE_MSG_PORT_FAIL = 17100028;
+constexpr ErrCode NO_WEB_INSTANCE_BIND = 17100029;
+
+std::string GetErrMsgByErrCode(ErrCode code);
 }
 }
 #endif

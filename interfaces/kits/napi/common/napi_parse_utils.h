@@ -12,26 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#ifndef BUSINESS_ERROR_H
-#define BUSINESS_ERROR_H
+
+#ifndef NAPI_PARSE_UTILS_H
+#define NAPI_PARSE_UTILS_H
 
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 
 namespace OHOS {
-namespace NWebError {
-class BusinessError {
+namespace NWeb {
+constexpr int INTEGER_ZERO = 0;
+constexpr int INTEGER_ONE = 1;
+constexpr int INTEGER_TWO = 2;
+constexpr int INTEGER_THREE = 3;
+
+class NapiParseUtils {
 public:
-static inline void ThrowError(napi_env env, int32_t err, const std::string& msg)
-{
-    napi_throw_error(env, std::to_string(err).c_str(), msg.c_str());
-}
-
-static napi_value CreateError(napi_env env, int32_t err, const std::string& msg);
-
-static void ThrowErrorByErrcode(napi_env env, int32_t errCode);
+    static bool ParseInt32(napi_env env, napi_value argv, int32_t& outValue);
+    static bool ParseString(napi_env env, napi_value argv, std::string& outValue);
+    static bool ParseBoolean(napi_env env, napi_value argv, bool& outValue);
 };
-}
-}
+} // namespace NWeb
+} // namespace OHOS
 #endif
