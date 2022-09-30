@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
- #include "napi_parse_utils.h"
+#include "napi_parse_utils.h"
 
 namespace {
 constexpr int MAX_STRING_LENGTH = 40960;
