@@ -24,6 +24,7 @@
 #include "napi/native_node_api.h"
 
 namespace OHOS {
+namespace NWeb {
 class NapiWebDataBase {
 public:
     NapiWebDataBase() {}
@@ -49,6 +50,7 @@ private:
 
     static bool GetCharPara(napi_env env, napi_value argv, char* buffer, size_t bufferSize);
 };
+} // namespace NWeb
 } // namespace OHOS
 
 #endif // NWEB_NAPI_WEB_DATA_BASE_H

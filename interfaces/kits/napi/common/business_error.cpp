@@ -15,6 +15,8 @@
 
 #include "business_error.h"
 
+#include "web_errors.h"
+
 namespace OHOS {
 namespace NWebError {
 napi_value BusinessError::CreateError(napi_env env, int32_t err, const std::string& msg)
@@ -28,6 +30,11 @@ napi_value BusinessError::CreateError(napi_env env, int32_t err, const std::stri
     NAPI_CALL(env, napi_set_named_property(env, businessError, "code", errorCode));
     NAPI_CALL(env, napi_set_named_property(env, businessError, "message", errorMessage));
     return businessError;
+}
+
+void BusinessError::ThrowErrorByErrcode(napi_env env, int32_t errCode)
+{
+    napi_throw_error(env, std::to_string(errCode).c_str(), GetErrMsgByErrCode(errCode).c_str());
 }
 }
 }

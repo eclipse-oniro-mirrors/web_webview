@@ -24,6 +24,7 @@
 #include "napi_web_storage.h"
 
 namespace OHOS {
+namespace NWeb {
 EXTERN_C_START
 static napi_value WebViewExport(napi_env env, napi_value exports)
 {
@@ -57,4 +58,5 @@ extern "C" __attribute__((constructor)) void Register()
 {
     napi_module_register(&_module);
 }
+} // namespace NWeb
 } // namesapce OHOS

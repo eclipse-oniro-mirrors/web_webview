@@ -22,6 +22,7 @@
 #include "napi/native_node_api.h"
 
 namespace OHOS {
+namespace NWeb {
 // The asynchronous interface of NWeb is implemented through this interface.
 class NapiWebAsyncController {
 public:
@@ -44,6 +45,7 @@ private:
 
     int32_t nwebId_ { -1 };
 };
+} // namespace NWeb
 } // namespace OHOS
 
 #endif // NWEB_NAPI_WEB_ASYNC_CONTROLLER_H
