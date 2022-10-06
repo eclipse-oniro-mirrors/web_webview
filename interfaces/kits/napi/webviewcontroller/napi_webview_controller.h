@@ -62,7 +62,7 @@ private:
 
     static napi_value GetWebId(napi_env env, napi_callback_info info);
 
-    static napi_value GetDefaultUserAgent(napi_env env, napi_callback_info info);
+    static napi_value GetUserAgent(napi_env env, napi_callback_info info);
 
     static napi_value GetTitle(napi_env env, napi_callback_info info);
 
@@ -78,6 +78,10 @@ private:
     static napi_value CreateWebMessagePorts(napi_env env, napi_callback_info info);
 
     static napi_value PostMessage(napi_env env, napi_callback_info info);
+
+    static napi_value GetHitTestValue(napi_env env, napi_callback_info info);
+
+    static napi_value RequestFocus(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {

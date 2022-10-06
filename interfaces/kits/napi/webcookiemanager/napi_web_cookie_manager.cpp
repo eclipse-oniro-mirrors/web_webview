@@ -371,7 +371,10 @@ napi_value NapiWebCookieManager::JsSaveCookieAsync(napi_env env, napi_callback_i
     napi_value argv[1] = {0};
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    NAPI_ASSERT(env, argc == argcPromise || argc == argcCallback, "Requires 0 or 1 parameter.");
+    if (argc != argcPromise && argc != argcCallback) {
+        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 0 or 1 parameter.");
+        return nullptr;
+    }
 
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
@@ -379,7 +382,11 @@ napi_value NapiWebCookieManager::JsSaveCookieAsync(napi_env env, napi_callback_i
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_null;
         napi_typeof(env, argv[argcCallback - 1], &valueType);
-        NAPI_ASSERT(env, valueType == napi_function, "Type mismatch for parameter 1.");
+        if (valueType != napi_function) {
+            NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
+                "Type mismatch for parameter 1.");
+            return nullptr;
+        }
         napi_ref jsCallback = nullptr;
         napi_create_reference(env, argv[argcCallback - 1], 1, &jsCallback);
 

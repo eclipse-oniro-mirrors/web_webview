@@ -102,21 +102,25 @@ void WebviewController::Refresh()
     }
 }
 
-bool WebviewController::ZoomIn()
+ErrCode WebviewController::ZoomIn()
 {
-    bool result = false;
-    if (nweb_) {
-        result = nweb_->ZoomIn();
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
     }
+    ErrCode result = NO_ERROR;
+    result = nweb_->ZoomIn();
+
     return result;
 }
 
-bool WebviewController::ZoomOut()
+ErrCode WebviewController::ZoomOut()
 {
-    bool result = false;
-    if (nweb_) {
-        result = nweb_->ZoomOut();
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
     }
+    ErrCode result = NO_ERROR;
+    result = nweb_->ZoomOut();
+
     return result;
 }
 
@@ -129,7 +133,7 @@ int32_t WebviewController::GetWebId() const
     return webId;
 }
 
-std::string WebviewController::GetDefaultUserAgent()
+std::string WebviewController::GetUserAgent()
 {
     if (!nweb_) {
         return "";
@@ -159,11 +163,16 @@ int32_t WebviewController::GetPageHeight()
     return pageHeight;
 }
 
-void WebviewController::BackOrForward(int32_t step)
+ErrCode WebviewController::BackOrForward(int32_t step)
 {
-    if (nweb_) {
-        nweb_->NavigateBackOrForward(step);
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
     }
+    if (!nweb_->CanNavigateBackOrForward(step)) {
+        return INVALID_BACK_OR_FORWARD_OPERATION;
+    }
+    nweb_->NavigateBackOrForward(step);
+    return NO_ERROR;
 }
 
 void WebviewController::StoreWebArchiveCallback(const std::string &baseName, bool autoName, napi_env env,
@@ -171,7 +180,7 @@ void WebviewController::StoreWebArchiveCallback(const std::string &baseName, boo
 {
     if (!nweb_) {
         napi_value setResult[RESULT_COUNT] = {0};
-        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR,
+        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR,
             "The WebviewController must be associated with a Web component");
         napi_get_null(env, &setResult[PARAMONE]);
 
@@ -195,8 +204,8 @@ void WebviewController::StoreWebArchiveCallback(const std::string &baseName, boo
         }
         napi_value setResult[RESULT_COUNT] = {0};
         if (result.empty()) {
-            setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
-            "Wrong resource path or type");
+            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
+                "Wrong resource path or type");
             napi_get_null(env, &setResult[PARAMONE]);
         } else {
             napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -308,6 +317,22 @@ ErrCode WebMessagePort::SetPortMessageCallback(std::shared_ptr<NWebValueCallback
 std::string WebMessagePort::GetPortHandle() const
 {
     return portHandle_;
+}
+
+HitTestResult WebviewController::GetHitTestValue()
+{
+    OHOS::NWeb::HitTestResult nwebResult;
+    if (nweb_) {
+        nwebResult = nweb_->GetHitTestResult();
+    }
+    return nwebResult;
+}
+
+void WebviewController::RequestFocus()
+{
+    if (nweb_) {
+        nweb_->OnFocus();
+    }
 }
 } // namespace NWeb
 } // namespace OHOS
