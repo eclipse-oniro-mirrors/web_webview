@@ -43,13 +43,15 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("zoomIn", NapiWebviewController::ZoomIn),
         DECLARE_NAPI_FUNCTION("zoomOut", NapiWebviewController::ZoomOut),
         DECLARE_NAPI_FUNCTION("getWebId", NapiWebviewController::GetWebId),
-        DECLARE_NAPI_FUNCTION("getDefaultUserAgent", NapiWebviewController::GetDefaultUserAgent),
+        DECLARE_NAPI_FUNCTION("getUserAgent", NapiWebviewController::GetUserAgent),
         DECLARE_NAPI_FUNCTION("getTitle", NapiWebviewController::GetTitle),
         DECLARE_NAPI_FUNCTION("getPageHeight", NapiWebviewController::GetPageHeight),
         DECLARE_NAPI_FUNCTION("backOrForward", NapiWebviewController::BackOrForward),
         DECLARE_NAPI_FUNCTION("storeWebArchive", NapiWebviewController::StoreWebArchive),
         DECLARE_NAPI_FUNCTION("createWebMessagePorts", NapiWebviewController::CreateWebMessagePorts),
         DECLARE_NAPI_FUNCTION("postMessage", NapiWebviewController::PostMessage),
+        DECLARE_NAPI_FUNCTION("getHitTestValue", NapiWebviewController::GetHitTestValue),
+        DECLARE_NAPI_FUNCTION("requestFocus", NapiWebviewController::RequestFocus),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -647,8 +649,16 @@ napi_value NapiWebviewController::ZoomIn(napi_env env, napi_callback_info info)
     if ((!webviewController) || (status != napi_ok)) {
         return nullptr;
     }
-
-    webviewController->ZoomIn();
+    int ret = -1;
+    ret = webviewController->ZoomIn();
+    if (ret == NWebError::FUNCTION_NOT_ENABLE) {
+        BusinessError::ThrowErrorByErrcode(env, FUNCTION_NOT_ENABLE);
+        return nullptr;
+    }
+    if (ret == NWebError::CANNOT_ZOOM_IN_OR_ZOOM_OUT) {
+        BusinessError::ThrowErrorByErrcode(env, CANNOT_ZOOM_IN_OR_ZOOM_OUT);
+        return nullptr;
+    }
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
@@ -664,8 +674,16 @@ napi_value NapiWebviewController::ZoomOut(napi_env env, napi_callback_info info)
     if ((!webviewController) || (status != napi_ok)) {
         return nullptr;
     }
-
-    webviewController->ZoomOut();
+    int ret = -1;
+    ret = webviewController->ZoomOut();
+    if (ret == NWebError::FUNCTION_NOT_ENABLE) {
+        BusinessError::ThrowErrorByErrcode(env, FUNCTION_NOT_ENABLE);
+        return nullptr;
+    }
+    if (ret == NWebError::CANNOT_ZOOM_IN_OR_ZOOM_OUT) {
+        BusinessError::ThrowErrorByErrcode(env, CANNOT_ZOOM_IN_OR_ZOOM_OUT);
+        return nullptr;
+    }
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
@@ -688,7 +706,7 @@ napi_value NapiWebviewController::GetWebId(napi_env env, napi_callback_info info
     return result;
 }
 
-napi_value NapiWebviewController::GetDefaultUserAgent(napi_env env, napi_callback_info info)
+napi_value NapiWebviewController::GetUserAgent(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -701,7 +719,7 @@ napi_value NapiWebviewController::GetDefaultUserAgent(napi_env env, napi_callbac
         return result;
     }
     std::string userAgent = "";
-    userAgent = webviewController->GetDefaultUserAgent();
+    userAgent = webviewController->GetUserAgent();
     napi_create_string_utf8(env, userAgent.c_str(), userAgent.length(), &result);
 
     return result;
@@ -749,16 +767,20 @@ napi_value NapiWebviewController::BackOrForward(napi_env env, napi_callback_info
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_value argv[INTEGER_ONE] = {0};
     void* data = nullptr;
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
     if (argc != INTEGER_ONE) {
+        WVLOG_E("Requires 1 parameters.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     int32_t step = -1;
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], step)) {
+        WVLOG_E("Parameter is not integer number type.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
 
@@ -768,7 +790,10 @@ napi_value NapiWebviewController::BackOrForward(napi_env env, napi_callback_info
     if (!webviewController) {
         return result;
     }
-    webviewController->BackOrForward(step);
+    if (webviewController->BackOrForward(step) == INVALID_BACK_OR_FORWARD_OPERATION) {
+        BusinessError::ThrowErrorByErrcode(env, INVALID_BACK_OR_FORWARD_OPERATION);
+        return nullptr;
+    }
     NAPI_CALL(env, napi_get_undefined(env, &result));
 
     return result;
@@ -862,6 +887,50 @@ napi_value NapiWebviewController::StoreWebArchiveInternal(napi_env env, napi_cal
         }
         return promise;
     }
+    return result;
+}
+
+napi_value NapiWebviewController::GetHitTestValue(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+    WebviewController *webviewController = nullptr;
+    napi_unwrap(env, thisVar, (void **)&webviewController);
+
+    if (!webviewController) {
+        return result;
+    }
+    HitTestResult nwebResult = webviewController->GetHitTestValue();
+
+    napi_create_object(env, &result);
+
+    napi_value type;
+    napi_create_uint32(env, nwebResult.GetType(), &type);
+    napi_set_named_property(env, result, "type", type);
+
+    napi_value extraData;
+    napi_create_string_utf8(env, nwebResult.GetExtra().c_str(), NAPI_AUTO_LENGTH, &extraData);
+    napi_set_named_property(env, result, "extraData", extraData);
+
+    return result;
+}
+
+napi_value NapiWebviewController::RequestFocus(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        return nullptr;
+    }
+
+    webviewController->RequestFocus();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace NWeb

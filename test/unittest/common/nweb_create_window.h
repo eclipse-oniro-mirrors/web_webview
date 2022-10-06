@@ -123,13 +123,13 @@ public:
     {}
     void Zoom(float zoomFactor) const override
     {}
-    bool ZoomIn() const override
+    int ZoomIn() const override
     {
-        return true;
+        return 0;
     }
-    bool ZoomOut() const override
+    int ZoomOut() const override
     {
-        return true;
+        return 0;
     }
     void Stop() const override
     {}
