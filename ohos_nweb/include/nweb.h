@@ -173,13 +173,13 @@ public:
      * Performs a zooming in operation in this NWeb.
      *
      */
-    virtual bool ZoomIn() const = 0;
+    virtual int ZoomIn() const = 0;
 
     /**
      * Performs a zooming out operation in this NWeb.
      *
      */
-    virtual bool ZoomOut() const = 0;
+    virtual int ZoomOut() const = 0;
 
     /**
      * Stop the current load.
