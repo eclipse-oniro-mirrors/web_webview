@@ -49,7 +49,7 @@ public:
     {}
     ColorGamut GetColorSpace() const override
     {
-        return ColorGamut::COLOR_GAMUT_SATNDARD_BT601;
+        return ColorGamut::COLOR_GAMUT_STANDARD_BT601;
     }
     void SetColorSpace(ColorGamut colorSpace) override
     {}
