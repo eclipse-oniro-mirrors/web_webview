@@ -22,6 +22,8 @@
 
 namespace OHOS {
 namespace NWebError {
+constexpr ErrCode NWEB_ERROR = -1;
+
 constexpr ErrCode NO_ERROR = 0;
 constexpr ErrCode PARAM_CHECK_ERROR = 401;
 constexpr ErrCode INIT_ERROR = 17100001;
