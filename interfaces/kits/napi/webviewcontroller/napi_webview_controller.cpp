@@ -307,6 +307,11 @@ napi_value NapiWebviewController::CreateWebMessagePorts(napi_env env, napi_callb
 
     WebviewController *webviewController = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
+    if (webviewController == nullptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("create message port failed, napi unwrap webviewController failed");
+        return nullptr;
+    }
     int32_t nwebId = webviewController->GetWebId();
     std::vector<std::string> ports;
     webviewController->CreateWebMessagePorts(ports);
@@ -394,6 +399,11 @@ napi_value NapiWebviewController::PostMessage(napi_env env, napi_callback_info i
 
     WebviewController *webviewController = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
+    if (webviewController == nullptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("post port to html failed, napi unwrap webviewController failed");
+        return nullptr;
+    }
     std::vector<std::string> portsArray;
     webviewController->PostWebMessage(portName, sendPorts, urlStr);
     NAPI_CALL(env, napi_get_undefined(env, &result));
@@ -443,6 +453,10 @@ napi_value NapiWebMessagePort::Close(napi_env env, napi_callback_info info)
 
     WebMessagePort *msgPort = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&msgPort));
+    if (msgPort == nullptr) {
+        WVLOG_E("close message port failed, napi unwrap msg port failed");
+        return nullptr;
+    }
     ErrCode ret = msgPort->ClosePort();
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
@@ -480,6 +494,10 @@ napi_value NapiWebMessagePort::PostMessageEvent(napi_env env, napi_callback_info
 
     WebMessagePort *msgPort = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&msgPort));
+    if (msgPort == nullptr) {
+        WVLOG_E("post message failed, napi unwrap msg port failed");
+        return nullptr;
+    }
     ErrCode ret = msgPort->PostPortMessage(message);
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
@@ -552,6 +570,7 @@ void NWebValueCallbackImpl::OnReceiveValue(std::string result)
 
 NWebValueCallbackImpl::~NWebValueCallbackImpl()
 {
+    WVLOG_D("~NWebValueCallbackImpl");
     uv_loop_s *loop = nullptr;
     uv_work_t *work = nullptr;
     napi_get_uv_event_loop(env_, &loop);
@@ -630,6 +649,10 @@ napi_value NapiWebMessagePort::OnMessageEvent(napi_env env, napi_callback_info i
 
     WebMessagePort *msgPort = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&msgPort));
+    if (msgPort == nullptr) {
+        WVLOG_E("set message event callback failed, napi unwrap msg port failed");
+        return nullptr;
+    }
     ErrCode ret = msgPort->SetPortMessageCallback(callbackImpl);
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
