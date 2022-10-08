@@ -50,19 +50,19 @@ public:
 
     void Refresh();
 
-    bool ZoomIn();
+    ErrCode ZoomIn();
 
-    bool ZoomOut();
+    ErrCode ZoomOut();
 
     int32_t GetWebId() const;
 
-    std::string GetDefaultUserAgent();
+    std::string GetUserAgent();
 
     std::string GetTitle();
 
     int32_t GetPageHeight();
 
-    void BackOrForward(int32_t step);
+    ErrCode BackOrForward(int32_t step);
 
     void StoreWebArchiveCallback(const std::string &baseName, bool autoName, napi_env env, napi_ref jsCallback);
 
@@ -72,6 +72,9 @@ public:
 
     ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
 
+    HitTestResult GetHitTestValue();
+
+    void RequestFocus();
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
 };
