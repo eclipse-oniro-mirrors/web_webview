@@ -26,6 +26,8 @@ constexpr int INTEGER_ZERO = 0;
 constexpr int INTEGER_ONE = 1;
 constexpr int INTEGER_TWO = 2;
 constexpr int INTEGER_THREE = 3;
+constexpr int INTEGER_FOUR = 4;
+constexpr int INTEGER_FIVE = 5;
 
 class NapiParseUtils {
 public:
