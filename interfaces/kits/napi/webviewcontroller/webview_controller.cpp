@@ -16,6 +16,7 @@
 #include "webview_controller.h"
 
 #include "business_error.h"
+#include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
 #include "web_errors.h"
 
@@ -105,7 +106,7 @@ void WebviewController::Refresh()
 ErrCode WebviewController::ZoomIn()
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
     ErrCode result = NO_ERROR;
     result = nweb_->ZoomIn();
@@ -116,7 +117,7 @@ ErrCode WebviewController::ZoomIn()
 ErrCode WebviewController::ZoomOut()
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
     ErrCode result = NO_ERROR;
     result = nweb_->ZoomOut();
@@ -166,7 +167,7 @@ int32_t WebviewController::GetPageHeight()
 ErrCode WebviewController::BackOrForward(int32_t step)
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
     if (!nweb_->CanNavigateBackOrForward(step)) {
         return INVALID_BACK_OR_FORWARD_OPERATION;
@@ -261,7 +262,7 @@ void WebviewController::StoreWebArchivePromise(const std::string &baseName, bool
 ErrCode WebviewController::CreateWebMessagePorts(std::vector<std::string>& ports)
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
 
     nweb_->CreateWebMessagePorts(ports);
@@ -271,7 +272,7 @@ ErrCode WebviewController::CreateWebMessagePorts(std::vector<std::string>& ports
 ErrCode WebviewController::PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl)
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
 
     nweb_->PostWebMessage(message, ports, targetUrl);
@@ -287,19 +288,24 @@ WebMessagePort::WebMessagePort(int32_t nwebId, std::string& port)
 ErrCode WebMessagePort::ClosePort()
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
 
     nweb_->ClosePort(portHandle_);
+    portHandle_.clear();
     return NO_ERROR;
 }
 
 ErrCode WebMessagePort::PostPortMessage(std::string& data)
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
 
+    if (portHandle_.empty()) {
+        WVLOG_E("can't post message, message port already closed");
+        return CAN_NOT_POST_MESSAGE;
+    }
     nweb_->PostPortMessage(portHandle_, data);
     return NO_ERROR;
 }
@@ -307,9 +313,13 @@ ErrCode WebMessagePort::PostPortMessage(std::string& data)
 ErrCode WebMessagePort::SetPortMessageCallback(std::shared_ptr<NWebValueCallback<std::string>> callback)
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
 
+    if (portHandle_.empty()) {
+        WVLOG_E("can't register message port callback event, message port already closed");
+        return CAN_NOT_REGISTER_MESSAGE_EVENT;
+    }
     nweb_->SetPortMessageCallback(portHandle_, callback);
     return NO_ERROR;
 }
