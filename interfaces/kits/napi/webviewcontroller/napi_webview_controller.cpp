@@ -23,6 +23,7 @@
 #include "nweb_helper.h"
 #include "nweb_log.h"
 #include "web_errors.h"
+#include "webview_javascript_execute_callback.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -56,6 +57,16 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("loadUrl", NapiWebviewController::LoadUrl),
         DECLARE_NAPI_FUNCTION("loadData", NapiWebviewController::LoadData),
         DECLARE_NAPI_FUNCTION("getHitTest", NapiWebviewController::GetHitTest),
+        DECLARE_NAPI_FUNCTION("clearMatches", NapiWebviewController::ClearMatches),
+        DECLARE_NAPI_FUNCTION("searchNext", NapiWebviewController::SearchNext),
+        DECLARE_NAPI_FUNCTION("searchAllAsync", NapiWebviewController::SearchAllAsync),
+        DECLARE_NAPI_FUNCTION("clearSslCache", NapiWebviewController::ClearSslCache),
+        DECLARE_NAPI_FUNCTION("clearClientAuthenticationCache", NapiWebviewController::ClearClientAuthenticationCache),
+        DECLARE_NAPI_FUNCTION("stop", NapiWebviewController::Stop),
+        DECLARE_NAPI_FUNCTION("zoom", NapiWebviewController::Zoom),
+        DECLARE_NAPI_FUNCTION("registerJavaScriptProxy", NapiWebviewController::RegisterJavaScriptProxy),
+        DECLARE_NAPI_FUNCTION("deleteJavaScriptRegister", NapiWebviewController::DeleteJavaScriptRegister),
+        DECLARE_NAPI_FUNCTION("runJavaScript", NapiWebviewController::RunJavaScript),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -1132,6 +1143,303 @@ napi_value NapiWebviewController::GetHitTest(napi_env env, napi_callback_info in
 
     int32_t type = webviewController->GetHitTest();
     napi_create_int32(env, type, &result);
+    return result;
+}
+
+napi_value NapiWebviewController::ClearMatches(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    controller->ClearMatches();
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SearchNext(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_value result = nullptr;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != 1) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    bool forward;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], forward)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    controller->SearchNext(forward);
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SearchAllAsync(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != 1) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    std::string searchString;
+    if (!NapiParseUtils::ParseString(env, argv[0], searchString)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    controller->SearchAllAsync(searchString);
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ClearSslCache(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    controller->ClearSslCache();
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ClearClientAuthenticationCache(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    controller->ClearClientAuthenticationCache();
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::Stop(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    controller->Stop();
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+// 17100401
+// 17100015
+// 17100004
+napi_value NapiWebviewController::Zoom(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = 1;
+    napi_value argv[1] = { 0 };
+    napi_value result = nullptr;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != 1) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    float factor = 0.0;
+    if (!NapiParseUtils::ParseFloat(env, argv[0], factor)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    ErrCode ret = controller->Zoom(factor);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+// 17100401
+napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_value result = nullptr;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    napi_value napiValue = nullptr;
+
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType != napi_object) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    // name: string
+    napi_get_named_property(env, argv[INTEGER_ZERO], "name", &napiValue);
+    std::string objName;
+    if (!NapiParseUtils::ParseString(env, napiValue, objName)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    // methodList: Array<string>
+    napi_get_named_property(env, argv[INTEGER_ZERO], "methodList", &napiValue);
+    std::vector<std::string> methodList;
+    if (!NapiParseUtils::ParseStringArray(env, napiValue, methodList)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    // object: object
+    napi_get_named_property(env, argv[INTEGER_ZERO], "object", &napiValue);
+    napi_typeof(env, napiValue, &valueType);
+    if (valueType != napi_object) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    controller->SetNWebJavaScriptResultCallBack(env);
+    controller->RegisterJavaScriptProxy(env, napiValue, objName, methodList);
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+// 17100401 17100014
+napi_value NapiWebviewController::DeleteJavaScriptRegister(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_value result = nullptr;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    std::string objName;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], objName)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    ErrCode ret = controller->DeleteJavaScriptRegister(objName, {});
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::RunJavaScript(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO];
+
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
+    if (argc != INTEGER_TWO) {
+        return result;
+    }
+
+    std::string script;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], script)) {
+        return result;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ONE], &valueType);
+    if (valueType != napi_function) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    napi_ref callbackRef = nullptr;
+    NAPI_CALL(env, napi_create_reference(env, argv[INTEGER_ZERO], INTEGER_ONE, &callbackRef));
+
+    auto callback = std::make_shared<WebviewJavaScriptExecuteCallback>(env, callbackRef);
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller) {
+        return result;
+    }
+    ErrCode ret = controller->RunJavaScript(script, callback);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace NWeb

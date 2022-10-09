@@ -16,6 +16,8 @@
 #ifndef NAPI_PARSE_UTILS_H
 #define NAPI_PARSE_UTILS_H
 
+#include <vector>
+
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -34,6 +36,8 @@ public:
     static bool ParseInt32(napi_env env, napi_value argv, int32_t& outValue);
     static bool ParseString(napi_env env, napi_value argv, std::string& outValue);
     static bool ParseBoolean(napi_env env, napi_value argv, bool& outValue);
+    static bool ParseStringArray(napi_env env, napi_value argv, std::vector<std::string>& outValue);
+    static bool ParseFloat(napi_env env, napi_value argv, float& outValue);
 };
 } // namespace NWeb
 } // namespace OHOS
