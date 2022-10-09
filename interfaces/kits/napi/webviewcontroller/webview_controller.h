@@ -113,7 +113,7 @@ public:
 
     int GetHitTest();
 
-    void ClearMatches();
+ void ClearMatches();
 
     void SearchNext(bool forward);
 
@@ -125,38 +125,34 @@ public:
 
     void Stop();
 
-    ErrCode Zoom(float factor);
+    void Zoom(float factor);
 
-    void SetNWebJavaScriptResultCallBack(napi_env env);
+    void SetNWebJavaScriptResultCallBack();
 
-    void RegisterJavaScriptProxy(
-        napi_env env,
-        napi_value obj,
-        const std::string& name,
-        const std::vector<std::string>& methodList
-    );
+    void RegisterJavaScriptProxy(napi_env env, napi_value obj,
+        const std::string& name, const std::vector<std::string>& methodList);
 
-    ErrCode DeleteJavaScriptRegister(
-        const std::string& objectName,
-        const std::vector<std::string>& methodList
-    );
+    ErrCode DeleteJavaScriptRegister(const std::string& objectName,
+        const std::vector<std::string>& methodList);
 
-    ErrCode RunJavaScript(
-        const std::string& script,
-        std::shared_ptr<NWebValueCallback<std::string>> callback
-    );
+    ErrCode RunJavaScript(const std::string& script,
+        std::shared_ptr<NWebValueCallback<std::string>> callback);
 
     std::shared_ptr<NWebValue> GetJavaScriptResult(
         const std::vector<std::shared_ptr<NWebValue>>& args,
         const std::string& objectName,
-        const std::string& objectMethod
-    );
+        const std::string& objectMethod);
+
+    void RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback);
+
+    void RunJavaScriptPromise(const std::string &script, napi_env env, napi_deferred deferred);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
-    std::unordered_map<std::string, JavaScriptObject> objectMap_;
+    std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
 
     void ParseNwebValue2NapiValue(napi_env env, std::shared_ptr<OHOS::NWeb::NWebValue> value,
         std::vector<napi_value>& argv);
