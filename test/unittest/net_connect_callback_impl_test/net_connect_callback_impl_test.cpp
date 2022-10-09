@@ -14,6 +14,10 @@
  */
 
 #include <gtest/gtest.h>
+
+#include "core_service_client.h"
+#include "cellular_data_client.h"
+
 #define private public
 #include "net_connect_callback_impl.h"
 
@@ -21,8 +25,25 @@ using namespace testing;
 using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::NWeb;
+using namespace OHOS::Telephony;
 
-namespace OHOS::NWeb {
+namespace OHOS {
+namespace Telephony {
+namespace {
+sptr<NetworkState> g_networkState = nullptr;
+int32_t g_slotId = 0;
+}
+const sptr<NetworkState> CoreServiceClient::GetNetworkState(int32_t slotId)
+{
+    return g_networkState;
+}
+
+int32_t CellularDataClient::GetDefaultCellularDataSlotId()
+{
+    return g_slotId;
+}
+}
+namespace NWeb {
 using namespace OHOS::NetManagerStandard;
 class NetConnectCallbackImplTest : public testing::Test {
 public:
@@ -86,10 +107,19 @@ HWTEST_F(NetConnectCallbackImplTest, NetConnectCallbackImplTest_001, TestSize.Le
     EXPECT_EQ(netConnectCallbackImpl->NetAvailable(netHandleNull), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetConnectionPropertiesChange(netHandle, info), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetConnectionPropertiesChange(netHandleNull, infoNull), 0);
+    EXPECT_EQ(netConnectCallbackImpl->NetConnectionPropertiesChange(netHandle, infoNull), 0);
+    EXPECT_EQ(netConnectCallbackImpl->NetConnectionPropertiesChange(netHandleNull, info), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetLost(netHandle), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetUnavailable(), 0);
 
     sptr<NetAllCapabilities> netAllCap(new NetAllCapabilities);
+    netAllCap->bearerTypes_.insert(NetBearType::BEARER_WIFI);
+    netAllCap->bearerTypes_.insert(NetBearType::BEARER_BLUETOOTH);
+    netAllCap->bearerTypes_.insert(NetBearType::BEARER_ETHERNET);
+    netAllCap->bearerTypes_.insert(NetBearType::BEARER_CELLULAR);
+    EXPECT_EQ(netConnectCallbackImpl->NetCapabilitiesChange(netHandle, netAllCap), 0);
+    g_networkState = new NetworkState();
+    g_slotId = -1;
     EXPECT_EQ(netConnectCallbackImpl->NetCapabilitiesChange(netHandle, netAllCap), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetCapabilitiesChange(netHandle, nullptr), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetCapabilitiesChange(netHandleNull, netAllCap), 0);
@@ -112,5 +142,9 @@ HWTEST_F(NetConnectCallbackImplTest, NetConnectCallbackImplTest_002, TestSize.Le
     EXPECT_EQ(netConnectCallbackImpl->NetLost(netHandle), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetUnavailable(), 0);
     EXPECT_EQ(netConnectCallbackImpl->NetBlockStatusChange(netHandle, false), 0);
+    sptr<NetAllCapabilities> netAllCap(new NetAllCapabilities);
+    netAllCap->bearerTypes_.insert(NetBearType::BEARER_WIFI);
+    EXPECT_EQ(netConnectCallbackImpl->NetCapabilitiesChange(netHandle, netAllCap), 0);
+}
 }
 }
