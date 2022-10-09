@@ -29,9 +29,10 @@ config("web_public_config") {
 
 ohos_shared_library("webview_napi") {
   include_dirs = [
-    "//foundation/arkui/napi/interfaces/kits",
     "//utils/system/safwk/native/include",
     "//commonlibrary/c_utils/base/include",
+    "//foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime",
+    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_core/include/bundlemgr",
   ]
   public_configs = [ ":web_public_config" ]
 
@@ -49,10 +50,10 @@ ohos_shared_library("webview_napi") {
     "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller/webview_controller.cpp",
   ]
 
-  deps = [ "//foundation/arkui/napi:ace_napi" ]
-
   external_deps = [
+    "ability_runtime:app_context",
     "hiviewdfx_hilog_native:libhilog",
+    "napi:ace_napi",
     "webview:libnweb",
   ]
 

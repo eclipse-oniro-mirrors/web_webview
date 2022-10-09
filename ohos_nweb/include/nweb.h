@@ -104,7 +104,7 @@ public:
      *
      * @return title string for the current page.
      */
-    virtual void Load(const std::string& url) const = 0;
+    virtual int Load(const std::string& url) const = 0;
 
     /**
      * Get whether this NWeb has a back history item.
@@ -310,7 +310,7 @@ public:
      *
      * @param additionalHttpHeaders additionalHttpHeaders
      */
-    virtual void Load(
+    virtual int Load(
         std::string& url,
         std::map<std::string, std::string> additionalHttpHeaders) = 0;
 
@@ -331,7 +331,7 @@ public:
      * defaults to 'about:blank'. If non-null, this must be a valid URL. This
      * value may be null.
      */
-    virtual void LoadWithDataAndBaseUrl(const std::string& baseUrl,
+    virtual int LoadWithDataAndBaseUrl(const std::string& baseUrl,
                                         const std::string& data,
                                         const std::string& mimeType,
                                         const std::string& encoding,
@@ -346,7 +346,7 @@ public:
      * value may be null.
      * @param encoding String: the encoding of the data This value may be null.
      */
-    virtual void LoadWithData(const std::string& data,
+    virtual int LoadWithData(const std::string& data,
                               const std::string& mimeType,
                               const std::string& encoding) = 0;
 

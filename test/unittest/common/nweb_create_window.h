@@ -97,8 +97,10 @@ public:
     {}
     void SendMouseEvent(int x, int y, int button, int action, int count) override
     {}
-    void Load(const std::string& url) const override
-    {}
+    int Load(const std::string& url) const override
+    {
+        return 0;
+    }
     bool IsNavigatebackwardAllowed() const override
     {
         return true;
@@ -181,20 +183,26 @@ public:
     {
         return 0;
     }
-    void Load(
+    int Load(
         std::string& url,
         std::map<std::string, std::string> additionalHttpHeaders) override
-    {}
-    void LoadWithDataAndBaseUrl(const std::string& baseUrl,
+    {
+        return 0;
+    }
+    int LoadWithDataAndBaseUrl(const std::string& baseUrl,
                                         const std::string& data,
                                         const std::string& mimeType,
                                         const std::string& encoding,
                                         const std::string& historyUrl) override
-    {}
-    void LoadWithData(const std::string& data,
+    {
+        return 0;
+    }
+    int LoadWithData(const std::string& data,
                               const std::string& mimeType,
                               const std::string& encoding) override
-    {}
+    {
+        return 0;
+    }
     void RegisterArkJSfunction(
         const std::string& object_name,
         const std::vector<std::string>& method_list) override
