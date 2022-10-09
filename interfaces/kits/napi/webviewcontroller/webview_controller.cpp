@@ -20,6 +20,7 @@
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
+#include "webview_javascript_result_callback.h"
 #include "web_errors.h"
 
 namespace {
@@ -474,6 +475,223 @@ int WebviewController::GetHitTest()
         return ConverToWebHitTestType(nweb_->GetHitTestResult().GetType());
     }
     return static_cast<int>(WebHitTestType::UNKNOWN);
+}
+
+void WebviewController::ClearMatches()
+{
+    if (nweb_ != nullptr) {
+        nweb_->ClearMatches();
+    }
+}
+
+void WebviewController::SearchNext(bool forward)
+{
+    if (nweb_ != nullptr) {
+        nweb_->FindNext(forward);
+    }
+}
+
+void WebviewController::SearchAllAsync(const std::string& searchString)
+{
+    if (nweb_ != nullptr) {
+        nweb_->FindAllAsync(searchString);
+    }
+}
+
+void WebviewController::ClearSslCache()
+{
+    if (nweb_ != nullptr) {
+        nweb_->ClearSslCache();
+    }
+}
+
+void WebviewController::ClearClientAuthenticationCache()
+{
+    if (nweb_ != nullptr) {
+        nweb_->ClearClientAuthenticationCache();
+    }
+}
+
+void WebviewController::Stop()
+{
+    if (nweb_ != nullptr) {
+        nweb_->Stop();
+    }
+}
+
+ErrCode WebviewController::Zoom(float factor)
+{
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
+    }
+    nweb_->Zoom(factor);
+    return NO_ERROR;
+}
+
+ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
+    const std::vector<std::string>& methodList)
+{
+    if (objectMap_.find(objName) == objectMap_.end()) {
+        return INVALID_ENCODING;
+    }
+    objectMap_.erase(objName);
+
+    if (nweb_ != nullptr) {
+        nweb_->UnregisterArkJSfunction(objName, methodList);
+    }
+    return NO_ERROR;
+}
+
+void WebviewController::SetNWebJavaScriptResultCallBack(napi_env env)
+{
+    if (nweb_ != nullptr) {
+        auto callbackImpl = std::make_shared<WebviewJavaScriptResultCallBack>(env);
+        nweb_->SetNWebJavaScriptResultCallBack(callbackImpl);
+    }
+}
+
+void WebviewController::RegisterJavaScriptProxy(napi_env env, napi_value obj,
+    const std::string& objName, const std::vector<std::string>& methodList)
+{
+    if (nweb_ == nullptr) {
+        return;
+    }
+
+    if (objectMap_.find(objName) == objectMap_.end()) {
+        JavaScriptObject jsObj;
+        jsObj.env = env;
+
+        for (uint32_t i = 0; i < methodList.size(); i++) {
+            std::string methodName = methodList[i];
+            bool hasFunc = false;
+            napi_value result = nullptr;
+            napi_valuetype valueType = napi_undefined;
+
+            napi_has_named_property(env, obj, methodName.c_str(), &hasFunc);
+            if (!hasFunc) {
+                continue;
+            }
+            napi_get_named_property(env, obj, methodName.c_str(), &result);
+            napi_typeof(env, result, &valueType);
+            if (valueType != napi_function) {
+                continue;;
+            }
+
+            napi_ref callback = nullptr;
+            napi_create_reference(env, result, 1, &callback);
+            jsObj.methodMap[methodName] = callback;
+        }
+
+        objectMap_[objName] = jsObj;
+    }
+
+    nweb_->RegisterArkJSfunction(objName, methodList);
+}
+
+std::shared_ptr<NWebValue> WebviewController::GetJavaScriptResult(
+    const std::vector<std::shared_ptr<NWebValue>>& args,
+    const std::string& objName,
+    const std::string& objMethod)
+{
+    std::vector<napi_value> argv = {};
+    std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
+
+    if (objectMap_.find(objName) == objectMap_.end()) {
+        return ret;
+    }
+    JavaScriptObject jsObj = objectMap_[objName];
+    if (jsObj.methodMap.find(objName) == jsObj.methodMap.end()) {
+        return ret;
+    }
+
+    for (std::shared_ptr<NWebValue> input: args) {
+        ParseNwebValue2NapiValue(jsObj.env, input, argv);
+    }
+
+    napi_value callback = nullptr;
+    napi_value callResult = nullptr;
+
+    napi_get_reference_value(jsObj.env, jsObj.methodMap[objMethod], &callback);
+    napi_call_function(jsObj.env, nullptr, callback, argv.size(), &argv[0], &callResult);
+    napi_delete_reference(jsObj.env, jsObj.methodMap[objMethod]);
+
+    ParseNapiValue2NwebValue(jsObj.env, callResult, ret);
+    return ret;
+}
+
+ErrCode WebviewController::RunJavaScript(const std::string& script,
+    std::shared_ptr<NWebValueCallback<std::string>> callback)
+{
+    if (!nweb_) {
+        return NO_WEB_INSTANCE_BIND;
+    }
+
+    nweb_->ExecuteJavaScript(script, callback);
+    return NO_ERROR;;
+}
+
+void WebviewController::ParseNwebValue2NapiValue(napi_env env,
+    std::shared_ptr<OHOS::NWeb::NWebValue> value,
+    std::vector<napi_value>& argv)
+{
+    napi_value napiValue = nullptr;
+    switch (value->GetType()) {
+        case OHOS::NWeb::NWebValue::Type::INTEGER:
+            napi_create_int32(env, value->GetInt(), &napiValue);
+            argv.push_back(napiValue);
+            break;
+        case OHOS::NWeb::NWebValue::Type::DOUBLE:
+            napi_create_double(env, value->GetDouble(), &napiValue);
+            argv.push_back(napiValue);
+            break;
+        case OHOS::NWeb::NWebValue::Type::BOOLEAN:
+            napi_get_boolean(env, value->GetBoolean(), &napiValue);
+            argv.push_back(napiValue);
+            break;
+        case OHOS::NWeb::NWebValue::Type::STRING:
+            napi_create_string_utf8(env, value->GetString().c_str(), NAPI_AUTO_LENGTH, &napiValue);
+            argv.push_back(napiValue);
+            break;
+        case OHOS::NWeb::NWebValue::Type::NONE:
+        default:
+            break;
+    }
+}
+
+void WebviewController::ParseNapiValue2NwebValue(napi_env env, napi_value value,
+    std::shared_ptr<NWebValue> nwebValue)
+{
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, value, &valueType);
+
+    switch (valueType) {
+        case napi_number: {
+            double douVal = 0.0;
+            napi_get_value_double(env, value, &douVal);
+            nwebValue->SetType(NWebValue::Type::DOUBLE);
+            nwebValue->SetDouble(douVal);
+            break;
+        }
+        case napi_boolean: {
+            bool boolVal;
+            napi_get_value_bool(env, value, &boolVal);
+            nwebValue->SetType(NWebValue::Type::BOOLEAN);
+            nwebValue->SetBoolean(boolVal);
+            break;
+        }
+        case napi_string: {
+            std::string strVal;
+            if (!NapiParseUtils::ParseString(env, value, strVal)) {
+                return;
+            }
+            nwebValue->SetType(NWebValue::Type::STRING);
+            nwebValue->SetString(strVal);
+            break;
+        }
+        default: {
+            break;
+        }
+    }
 }
 } // namespace NWeb
 } // namespace OHOS
