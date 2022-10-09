@@ -320,7 +320,7 @@ napi_value NapiWebviewController::CreateWebMessagePorts(napi_env env, napi_callb
     std::vector<std::string> ports;
     webviewController->CreateWebMessagePorts(ports);
     if (ports.size() != INTEGER_TWO) {
-        BusinessError::ThrowErrorByErrcode(env, CREATE_MSG_PORT_FAIL);
+        WVLOG_E("create web message port failed, ports.size = %{public}d", ports.size());
         return result;
     }
     napi_value msgPortcons = nullptr;
@@ -343,45 +343,37 @@ napi_value NapiWebviewController::PostMessage(napi_env env, napi_callback_info i
     WVLOG_D("post message port");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE];
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE];
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
-    }
-    napi_valuetype valueType = napi_undefined;
-    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
-    if (valueType != napi_object) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
-    }
-    napi_value name = nullptr;
-    napi_get_named_property(env, argv[INTEGER_ZERO], "name", &name);
-    std::string portName;
-    if (!NapiParseUtils::ParseString(env, name, portName)) {
+    if (argc != INTEGER_THREE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
 
-    napi_value ports = nullptr;
-    napi_get_named_property(env, argv[INTEGER_ZERO], "ports", &ports);
+    std::string portName;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], portName)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
     bool isArray = false;
-    NAPI_CALL(env, napi_is_array(env, ports, &isArray));
+    NAPI_CALL(env, napi_is_array(env, argv[INTEGER_ONE], &isArray));
     if (!isArray) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
     uint32_t arrayLen = 0;
-    NAPI_CALL(env, napi_get_array_length(env, ports, &arrayLen));
+    NAPI_CALL(env, napi_get_array_length(env, argv[INTEGER_ONE], &arrayLen));
     if (arrayLen <= 0) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
     std::vector<std::string> sendPorts;
+    napi_valuetype valueType = napi_undefined;
     for (uint32_t i = 0; i < arrayLen; i++) {
         napi_value portItem = nullptr;
-        napi_get_element(env, ports, i, &portItem);
+        napi_get_element(env, argv[INTEGER_ONE], i, &portItem);
         NAPI_CALL(env, napi_typeof(env, portItem, &valueType));
         if (valueType != napi_object) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
@@ -389,14 +381,16 @@ napi_value NapiWebviewController::PostMessage(napi_env env, napi_callback_info i
         }
         WebMessagePort *msgPort = nullptr;
         NAPI_CALL(env, napi_unwrap(env, portItem, (void **)&msgPort));
+        if (!msgPort) {
+            WVLOG_E("post port to html failed, napi unwrap msg port fail");
+            return nullptr;
+        }
         std::string portHandle = msgPort->GetPortHandle();
         sendPorts.emplace_back(portHandle);
     }
 
-    napi_value url = nullptr;
-    napi_get_named_property(env, argv[INTEGER_ZERO], "url", &url);
     std::string urlStr;
-    if (!NapiParseUtils::ParseString(env, url, urlStr)) {
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_TWO], urlStr)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -768,7 +762,7 @@ napi_value NapiWebviewController::GetTitle(napi_env env, napi_callback_info info
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    
+
     std::string title = "";
     title = webviewController->GetTitle();
     napi_create_string_utf8(env, title.c_str(), title.length(), &result);
