@@ -1043,11 +1043,9 @@ napi_value NapiWebviewController::LoadUrlWithHttpHeaders(napi_env env, napi_call
             napi_value valueObj = nullptr;
             napi_get_element(env, array, i, &obj);
             if (napi_get_named_property(env, obj, "headerKey", &keyObj) != napi_ok) {
-                WVLOG_E("can't find key at index %{public}zu of additionalHttpHeaders, so skip it.", i);
                 continue;
             }
             if (napi_get_named_property(env, obj, "headerValue", &valueObj) != napi_ok) {
-                WVLOG_E("can't find value at index %{public}zu of additionalHttpHeaders, so skip it.", i);
                 continue;
             }
             NapiParseUtils::ParseString(env, keyObj, key);
