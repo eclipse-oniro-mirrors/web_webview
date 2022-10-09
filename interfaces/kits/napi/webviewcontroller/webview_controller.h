@@ -25,6 +25,7 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "web_errors.h"
+#include "webview_javascript_result_callback.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -113,7 +114,7 @@ public:
 
     int GetHitTest();
 
- void ClearMatches();
+    void ClearMatches();
 
     void SearchNext(bool forward);
 
@@ -153,12 +154,6 @@ private:
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
-
-    void ParseNwebValue2NapiValue(napi_env env, std::shared_ptr<OHOS::NWeb::NWebValue> value,
-        std::vector<napi_value>& argv);
-
-    void ParseNapiValue2NwebValue(napi_env env, napi_value argv,
-        std::shared_ptr<NWebValue> webViewValue);
 };
 
 class WebMessagePort {
