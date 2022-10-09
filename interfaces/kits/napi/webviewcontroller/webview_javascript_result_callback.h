@@ -17,6 +17,7 @@
 #define NWEB_WEBVIEW_JAVASCRIPT_RESULT_CALLBACK_IMPL_H
 
 #include <string>
+#include <unordered_map>
 #include <vector>
 
 #include "napi/native_api.h"
@@ -26,19 +27,32 @@
 #include "nweb_value.h"
 
 namespace OHOS::NWeb {
-class WebviewJavaScriptResultCallBack : public NWebJavaScriptResultCallBack {
-public:
-    WebviewJavaScriptResultCallBack(napi_env env) : env_(env) {}
-    ~WebviewJavaScriptResultCallBack() = default;
-
-    std::shared_ptr<NWebValue> GetJavaScriptResult(
-        std::vector<std::shared_ptr<NWebValue>> args,
-        const std::string& method,
-        const std::string& objName) override;
-private:
-    napi_env env_;
-    //map<string, map<string, napi_ref>> callback_;
+struct JavaScriptObj {
+    napi_env env = nullptr;
+    std::unordered_map<std::string, napi_ref> methodMap;
 };
 
+class WebviewJavaScriptResultCallBack : public NWebJavaScriptResultCallBack {
+public:
+    WebviewJavaScriptResultCallBack() {}
+
+    ~WebviewJavaScriptResultCallBack();
+
+    std::shared_ptr<NWebValue> GetJavaScriptResult(std::vector<std::shared_ptr<NWebValue>> args,
+        const std::string& method, const std::string& objName) override;
+
+    void RegisterJavaScriptProxy(napi_env env, napi_value obj, const std::string& objName,
+        const std::vector<std::string>& methodList);
+
+    void DeleteJavaScriptRegister(const std::string& objName);
+private:
+    std::unordered_map<std::string, JavaScriptObj> objectMap_;
+
+    void ParseNwebValue2NapiValue(napi_env env, std::shared_ptr<OHOS::NWeb::NWebValue> value,
+        std::vector<napi_value>& argv);
+
+    void ParseNapiValue2NwebValue(napi_env env, napi_value value, std::shared_ptr<NWebValue> nwebValue);
+};
+ 
 }
 #endif 
