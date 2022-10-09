@@ -30,7 +30,6 @@ const std::string CANNOT_ZOOM_IN_OR_ZOOM_OUT_MSG = "Cannot zoom in or zoom out";
 const std::string INVALID_ORIGIN_MSG = "Invaild permission origin";
 const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invaild web storage origin";
 const std::string INVALID_BACK_OR_FORWARD_OPERATION_MSG = "Invalid back or forward operation";
-const std::string CREATE_MSG_PORT_FAIL_MSG = "Create message port failed";
 const std::string CAN_NOT_POST_MESSAGE_MSG = "Can not post message using this port";
 const std::string CAN_NOT_REGISTER_MESSAGE_EVENT_MSG = "Can not register message event using this port";
 }
@@ -48,7 +47,6 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {INVALID_ORIGIN, INVALID_ORIGIN_MSG},
     {NO_WEBSTORAGE_ORIGIN, NO_WEBSTORAGE_ORIGIN_MSG},
     {INVALID_BACK_OR_FORWARD_OPERATION, INVALID_BACK_OR_FORWARD_OPERATION_MSG},
-    {CREATE_MSG_PORT_FAIL, CREATE_MSG_PORT_FAIL_MSG},
     {CAN_NOT_POST_MESSAGE, CAN_NOT_POST_MESSAGE_MSG},
     {CAN_NOT_REGISTER_MESSAGE_EVENT, CAN_NOT_REGISTER_MESSAGE_EVENT_MSG}
 };
