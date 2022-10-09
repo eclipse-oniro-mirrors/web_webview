@@ -12,36 +12,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef NWEB_WEBVIEW_JAVA_SCRIPT_EXECUTE_CALLBACK_H
 #define NWEB_WEBVIEW_JAVA_SCRIPT_EXECUTE_CALLBACK_H
 
 #include <string>
 
-#include "napi/native_api.h"
-#include "napi/native_common.h"
-#include "napi/native_node_api.h"
 #include "nweb_value_callback.h"
 
 namespace OHOS::NWeb {
-struct JavaScriptExecuteParam {
-    napi_env env_;
-    napi_ref callback_;
-    std::string msg_;
-};
-
 class WebviewJavaScriptExecuteCallback : public OHOS::NWeb::NWebValueCallback<std::string> {
 public:
-    WebviewJavaScriptExecuteCallback() = delete;
+    WebviewJavaScriptExecuteCallback() = default;
+    ~WebviewJavaScriptExecuteCallback() = default;
 
-    explicit WebviewJavaScriptExecuteCallback(napi_env env, napi_ref callback) : env_(env), callback_(callback) {}
+    void OnReceiveValue(std::string result) override
+    {
+        if (callback_) {
+            callback_(result);
+        }
+    }
 
-    ~WebviewJavaScriptExecuteCallback();
+    void SetCallBack(const std::function<void(std::string)> &&callback)
+    {
+        callback_ = callback;
+    }
 
-    void OnReceiveValue(std::string result) override;
 private:
-    napi_env env_;
-    napi_ref callback_;
+    std::function<void(std::string)> callback_;
 };
 
 }
