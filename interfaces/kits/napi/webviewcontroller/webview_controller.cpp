@@ -15,7 +15,9 @@
 
 #include "webview_controller.h"
 
+#include "context/application_context.h"
 #include "business_error.h"
+#include "napi_parse_utils.h"
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
 #include "web_errors.h"
@@ -36,8 +38,8 @@ WebviewController::WebviewController(int32_t webId)
 
 bool WebviewController::AccessForward()
 {
-    bool access = true;
-    if (nweb_ != nullptr) {
+    bool access = false;
+    if (nweb_) {
         access = nweb_->IsNavigateForwardAllowed();
     }
     return access;
@@ -45,8 +47,8 @@ bool WebviewController::AccessForward()
 
 bool WebviewController::AccessBackward()
 {
-    bool access = true;
-    if (nweb_ != nullptr) {
+    bool access = false;
+    if (nweb_) {
         access = nweb_->IsNavigatebackwardAllowed();
     }
     return access;
@@ -54,8 +56,8 @@ bool WebviewController::AccessBackward()
 
 bool WebviewController::AccessStep(int32_t step)
 {
-    bool access = true;
-    if (nweb_ != nullptr) {
+    bool access = false;
+    if (nweb_) {
         access = nweb_->CanNavigateBackOrForward(step);
     }
     return access;
@@ -63,42 +65,42 @@ bool WebviewController::AccessStep(int32_t step)
 
 void WebviewController::ClearHistory()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->DeleteNavigateHistory();
     }
 }
 
 void WebviewController::Forward()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->NavigateForward();
     }
 }
 
 void WebviewController::Backward()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->NavigateBack();
     }
 }
 
 void WebviewController::OnActive()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->OnContinue();
     }
 }
 
 void WebviewController::OnInactive()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->OnPause();
     }
 }
 
 void WebviewController::Refresh()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->Reload();
     }
 }
@@ -108,7 +110,7 @@ ErrCode WebviewController::ZoomIn()
     if (!nweb_) {
         return INIT_ERROR;
     }
-    ErrCode result = NO_ERROR;
+    ErrCode result = NWebError::NO_ERROR;
     result = nweb_->ZoomIn();
 
     return result;
@@ -119,7 +121,7 @@ ErrCode WebviewController::ZoomOut()
     if (!nweb_) {
         return INIT_ERROR;
     }
-    ErrCode result = NO_ERROR;
+    ErrCode result = NWebError::NO_ERROR;
     result = nweb_->ZoomOut();
 
     return result;
@@ -173,7 +175,7 @@ ErrCode WebviewController::BackOrForward(int32_t step)
         return INVALID_BACK_OR_FORWARD_OPERATION;
     }
     nweb_->NavigateBackOrForward(step);
-    return NO_ERROR;
+    return NWebError::NO_ERROR;
 }
 
 void WebviewController::StoreWebArchiveCallback(const std::string &baseName, bool autoName, napi_env env,
@@ -266,7 +268,7 @@ ErrCode WebviewController::CreateWebMessagePorts(std::vector<std::string>& ports
     }
 
     nweb_->CreateWebMessagePorts(ports);
-    return NO_ERROR;
+    return NWebError::NO_ERROR;
 }
 
 ErrCode WebviewController::PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl)
@@ -276,7 +278,7 @@ ErrCode WebviewController::PostWebMessage(std::string& message, std::vector<std:
     }
 
     nweb_->PostWebMessage(message, ports, targetUrl);
-    return NO_ERROR;
+    return NWebError::NO_ERROR;
 }
 
 WebMessagePort::WebMessagePort(int32_t nwebId, std::string& port)
@@ -293,7 +295,7 @@ ErrCode WebMessagePort::ClosePort()
 
     nweb_->ClosePort(portHandle_);
     portHandle_.clear();
-    return NO_ERROR;
+    return NWebError::NO_ERROR;
 }
 
 ErrCode WebMessagePort::PostPortMessage(std::string& data)
@@ -307,7 +309,7 @@ ErrCode WebMessagePort::PostPortMessage(std::string& data)
         return CAN_NOT_POST_MESSAGE;
     }
     nweb_->PostPortMessage(portHandle_, data);
-    return NO_ERROR;
+    return NWebError::NO_ERROR;
 }
 
 ErrCode WebMessagePort::SetPortMessageCallback(std::shared_ptr<NWebValueCallback<std::string>> callback)
@@ -321,7 +323,7 @@ ErrCode WebMessagePort::SetPortMessageCallback(std::shared_ptr<NWebValueCallback
         return CAN_NOT_REGISTER_MESSAGE_EVENT;
     }
     nweb_->SetPortMessageCallback(portHandle_, callback);
-    return NO_ERROR;
+    return NWebError::NO_ERROR;
 }
 
 std::string WebMessagePort::GetPortHandle() const
@@ -343,6 +345,135 @@ void WebviewController::RequestFocus()
     if (nweb_) {
         nweb_->OnFocus();
     }
+}
+
+bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& result)
+{
+    napi_valuetype valueType = napi_null;
+    napi_typeof(env, urlObj, &valueType);
+    if ((valueType != napi_object) && (valueType != napi_string)) {
+        WVLOG_E("Unable to parse url object.");
+        return false;
+    }
+    if (valueType == napi_string) {
+        NapiParseUtils::ParseString(env, urlObj, result);
+        WVLOG_D("The parsed url is: %{public}s", result.c_str());
+        return true;
+    }
+    napi_value type = nullptr;
+    napi_valuetype typeVlueType = napi_null;
+    napi_get_named_property(env, urlObj, "type", &type);
+    napi_typeof(env, type, &typeVlueType);
+    if (typeVlueType == napi_number) {
+        int32_t typeInteger;
+        NapiParseUtils::ParseInt32(env, type, typeInteger);
+        if (typeInteger == static_cast<int>(ResourceType::RAWFILE)) {
+            napi_value paraArray = nullptr;
+            napi_get_named_property(env, urlObj, "params", &paraArray);
+            bool isArray = false;
+            napi_is_array(env, paraArray, &isArray);
+            if (!isArray) {
+                WVLOG_E("Unable to parse parameter array from url object.");
+                return false;
+            }
+            napi_value fileNameObj;
+            std::string fileName;
+            napi_get_element(env, paraArray, 0, &fileNameObj);
+            NapiParseUtils::ParseString(env, fileNameObj, fileName);
+            std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+                AbilityRuntime::ApplicationContext::GetApplicationContext();
+            std::string packagePath = "file:///" + context->GetBundleCodeDir() + "/";
+            std::string bundleName = context->GetBundleName() + "/";
+            std::shared_ptr<AppExecFwk::ApplicationInfo> appInfo = context->GetApplicationInfo();
+            std::string entryDir = appInfo->entryDir;
+            bool isStage = entryDir.find("entry") == std::string::npos ? false : true;
+            result = isStage ? packagePath + "entry/resources/rawfile/" + fileName :
+                packagePath + bundleName + "assets/entry/resources/rawfile/" + fileName;
+            WVLOG_D("The parsed url is: %{public}s", result.c_str());
+            return true;
+        }
+        WVLOG_E("The type parsed from url object is not RAWFILE.");
+        return false;
+    }
+    WVLOG_E("Unable to parse type from url object.");
+    return false;
+}
+
+ErrCode WebviewController::LoadUrl(std::string url)
+{
+    if (!nweb_) {
+        return INIT_ERROR;
+    }
+    return nweb_->Load(url);
+}
+
+ErrCode WebviewController::LoadUrl(std::string url, std::map<std::string, std::string> httpHeaders)
+{
+    if (!nweb_) {
+        return INIT_ERROR;
+    }
+    return nweb_->Load(url, httpHeaders);
+}
+
+ErrCode WebviewController::LoadData(std::string data, std::string mimeType, std::string encoding,
+    std::string baseUrl, std::string historyUrl)
+{
+    if (!nweb_) {
+        return INIT_ERROR;
+    }
+    if (baseUrl.empty() && historyUrl.empty()) {
+        return nweb_->LoadWithData(data, mimeType, encoding);
+    }
+    return nweb_->LoadWithDataAndBaseUrl(data, mimeType, encoding, baseUrl, historyUrl);
+}
+
+int WebviewController::ConverToWebHitTestType(int hitType)
+{
+    WebHitTestType webHitType;
+    switch (hitType) {
+        case HitTestResult::UNKNOWN_TYPE:
+            webHitType = WebHitTestType::UNKNOWN;
+            break;
+        case HitTestResult::ANCHOR_TYPE:
+            webHitType = WebHitTestType::HTTP;
+            break;
+        case HitTestResult::PHONE_TYPE:
+            webHitType = WebHitTestType::PHONE;
+            break;
+        case HitTestResult::GEO_TYPE:
+            webHitType = WebHitTestType::MAP;
+            break;
+        case HitTestResult::EMAIL_TYPE:
+            webHitType = WebHitTestType::EMAIL;
+            break;
+        case HitTestResult::IMAGE_TYPE:
+            webHitType = WebHitTestType::IMG;
+            break;
+        case HitTestResult::IMAGE_ANCHOR_TYPE:
+            webHitType = WebHitTestType::HTTP_IMG;
+            break;
+        case HitTestResult::SRC_ANCHOR_TYPE:
+            webHitType = WebHitTestType::HTTP;
+            break;
+        case HitTestResult::SRC_IMAGE_ANCHOR_TYPE:
+            webHitType = WebHitTestType::HTTP_IMG;
+            break;
+        case HitTestResult::EDIT_TEXT_TYPE:
+            webHitType = WebHitTestType::EDIT;
+            break;
+        default:
+            webHitType = WebHitTestType::UNKNOWN;
+            break;
+    }
+    return static_cast<int>(webHitType);
+}
+
+int WebviewController::GetHitTest()
+{
+    if (nweb_) {
+        return ConverToWebHitTestType(nweb_->GetHitTestResult().GetType());
+    }
+    return static_cast<int>(WebHitTestType::UNKNOWN);
 }
 } // namespace NWeb
 } // namespace OHOS

@@ -27,6 +27,31 @@
 
 namespace OHOS {
 namespace NWeb {
+enum class WebHitTestType : int {
+    EDIT = 0,
+    EMAIL,
+    HTTP,
+    HTTP_IMG,
+    IMG,
+    MAP,
+    PHONE,
+    UNKNOWN
+};
+
+enum class ResourceType : uint32_t {
+    COLOR = 10001,
+    FLOAT,
+    STRING,
+    PLURAL,
+    BOOLEAN,
+    INTARRAY,
+    INTEGER,
+    PATTERN,
+    STRARRAY,
+    MEDIA = 20000,
+    RAWFILE = 30000
+};
+
 class WebviewController {
 public:
     explicit WebviewController(int32_t nwebId);
@@ -75,6 +100,21 @@ public:
     HitTestResult GetHitTestValue();
 
     void RequestFocus();
+
+    bool ParseUrl(napi_env env, napi_value urlObj, std::string& result);
+
+    ErrCode LoadUrl(std::string url);
+
+    ErrCode LoadUrl(std::string url, std::map<std::string, std::string> httpHeaders);
+
+    ErrCode LoadData(std::string data, std::string mimeType, std::string encoding,
+        std::string baseUrl, std::string historyUrl);
+
+    int GetHitTest();
+
+private:
+    int ConverToWebHitTestType(int hitType);
+
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
 };

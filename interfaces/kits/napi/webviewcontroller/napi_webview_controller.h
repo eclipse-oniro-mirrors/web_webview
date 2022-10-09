@@ -82,6 +82,15 @@ private:
     static napi_value GetHitTestValue(napi_env env, napi_callback_info info);
 
     static napi_value RequestFocus(napi_env env, napi_callback_info info);
+
+    static napi_value LoadUrl(napi_env env, napi_callback_info info);
+
+    static napi_value LoadUrlWithHttpHeaders(napi_env env, napi_callback_info info, const std::string& url,
+        napi_value* argv, WebviewController* webviewController);
+
+    static napi_value LoadData(napi_env env, napi_callback_info info);
+
+    static napi_value GetHitTest(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {
