@@ -165,6 +165,11 @@ napi_value NapiWebDataBase::JsSaveHttpAuthCredentials(napi_env env, napi_callbac
         return nullptr;
     }
 
+    if (host.empty() || realm.empty() || username.empty()) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
     size_t bufferSize = 0;
     if (!GetSize(env, argv[PARAMTHREE], bufferSize)) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
@@ -213,6 +218,11 @@ napi_value NapiWebDataBase::JsGetHttpAuthCredentials(napi_env env, napi_callback
     if (!GetStringPara(env, argv[PARAMONE], realm)) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
             "The para1 is not of string type or the parameter length is too long");
+        return nullptr;
+    }
+
+    if (host.empty() || realm.empty()) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
