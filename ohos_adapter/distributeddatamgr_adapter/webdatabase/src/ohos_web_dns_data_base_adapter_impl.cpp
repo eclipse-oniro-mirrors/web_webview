@@ -192,6 +192,6 @@ int64_t OhosWebDnsDataBaseAdapterImpl::CountHostname() const
     if (rdbStore_->Count(outValue, dirAbsPred) != NativeRdb::E_OK) {
         return outValue;
     }
-    WVLOG_I("web dns database count hostname info num = %{public}lld", outValue);
+    WVLOG_I("web dns database count hostname info num = %{public}" PRId64, outValue);
     return outValue;
 }
