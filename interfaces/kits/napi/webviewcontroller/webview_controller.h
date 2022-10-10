@@ -17,6 +17,7 @@
 #define NWEB_WEBVIEW_CONTROLLER_H
 
 #include <string>
+#include <unordered_map>
 
 #include "napi/native_api.h"
 #include "napi/native_common.h"
@@ -24,6 +25,7 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "web_errors.h"
+#include "webview_javascript_result_callback.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -112,11 +114,38 @@ public:
 
     int GetHitTest();
 
+    void ClearMatches();
+
+    void SearchNext(bool forward);
+
+    void SearchAllAsync(const std::string& searchString);
+
+    void ClearSslCache();
+
+    void ClearClientAuthenticationCache();
+
+    void Stop();
+
+    void Zoom(float factor);
+
+    void SetNWebJavaScriptResultCallBack();
+
+    void RegisterJavaScriptProxy(napi_env env, napi_value obj,
+        const std::string& name, const std::vector<std::string>& methodList);
+
+    ErrCode DeleteJavaScriptRegister(const std::string& objectName,
+        const std::vector<std::string>& methodList);
+
+    void RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback);
+
+    void RunJavaScriptPromise(const std::string &script, napi_env env, napi_deferred deferred);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
+    std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
 };
 
 class WebMessagePort {

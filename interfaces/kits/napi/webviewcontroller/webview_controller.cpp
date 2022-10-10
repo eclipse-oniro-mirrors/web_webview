@@ -20,6 +20,8 @@
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
+#include "webview_javascript_execute_callback.h"
+#include "webview_javascript_result_callback.h"
 #include "web_errors.h"
 
 namespace {
@@ -475,5 +477,175 @@ int WebviewController::GetHitTest()
     }
     return static_cast<int>(WebHitTestType::UNKNOWN);
 }
+
+
+void WebviewController::ClearMatches()
+{
+    if (nweb_) {
+        nweb_->ClearMatches();
+    }
+}
+
+void WebviewController::SearchNext(bool forward)
+{
+    if (nweb_) {
+        nweb_->FindNext(forward);
+    }
+}
+
+void WebviewController::SearchAllAsync(const std::string& searchString)
+{
+    if (nweb_) {
+        nweb_->FindAllAsync(searchString);
+    }
+}
+
+void WebviewController::ClearSslCache()
+{
+    if (nweb_) {
+        nweb_->ClearSslCache();
+    }
+}
+
+void WebviewController::ClearClientAuthenticationCache()
+{
+    if (nweb_) {
+        nweb_->ClearClientAuthenticationCache();
+    }
+}
+
+void WebviewController::Stop()
+{
+    if (nweb_) {
+        nweb_->Stop();
+    }
+}
+
+void WebviewController::Zoom(float factor)
+{
+    if (nweb_) {
+        nweb_->Zoom(factor);
+    }
+}
+
+ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
+    const std::vector<std::string>& methodList)
+{
+    if (nweb_) {
+        nweb_->UnregisterArkJSfunction(objName, methodList);
+    }
+
+    if (javaScriptResultCb_) {
+        bool ret = javaScriptResultCb_->DeleteJavaScriptRegister(objName);
+        if (!ret) {
+            return CANNOT_DEL_JAVA_SCRIPT_PROXY;
+        }
+    }
+
+    return NWebError::NO_ERROR;
+}
+
+void WebviewController::SetNWebJavaScriptResultCallBack()
+{
+    if (!nweb_ || javaScriptResultCb_) {
+        return;
+    }
+
+    javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>();
+    nweb_->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
+}
+
+void WebviewController::RegisterJavaScriptProxy(napi_env env, napi_value obj,
+    const std::string& objName, const std::vector<std::string>& methodList)
+{
+    if (!nweb_) {
+        return;
+    }
+    if (javaScriptResultCb_) {
+        javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, methodList);
+    }
+    nweb_->RegisterArkJSfunction(objName, methodList);
+}
+
+void WebviewController::RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback)
+{
+    if (!nweb_) {
+        napi_value setResult[RESULT_COUNT] = {0};
+        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR,
+            "The WebviewController must be associated with a Web component");
+        napi_get_null(env, &setResult[PARAMONE]);
+
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+        napi_value callback = nullptr;
+        napi_get_reference_value(env, jsCallback, &callback);
+        napi_value callbackResult = nullptr;
+        napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
+        napi_delete_reference(env, jsCallback);
+        return;
+    }
+
+    if (jsCallback == nullptr) {
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>();
+    callbackImpl->SetCallBack([env, jCallback = std::move(jsCallback)](std::string result) {
+        if (!env) {
+            return;
+        }
+        napi_value setResult[RESULT_COUNT] = {0};
+        if (result.empty()) {
+            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
+                "Wrong resource path or type");
+            napi_get_null(env, &setResult[PARAMONE]);
+        } else {
+            napi_get_undefined(env, &setResult[PARAMZERO]);
+            napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[PARAMONE]);
+        }
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+        napi_value callback = nullptr;
+        napi_get_reference_value(env, jCallback, &callback);
+        napi_value callbackResult = nullptr;
+        napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
+
+        napi_delete_reference(env, jCallback);
+    });
+    nweb_->ExecuteJavaScript(script, callbackImpl);
+}
+
+void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env env,
+    napi_deferred deferred)
+{
+    if (!nweb_) {
+        napi_value jsResult = nullptr;
+        jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR,
+            "The WebviewController must be associated with a Web component");
+        napi_reject_deferred(env, deferred, jsResult);
+        return;
+    }
+
+    if (deferred == nullptr) {
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>();
+    callbackImpl->SetCallBack([env, deferred](std::string result) {
+        if (!env) {
+            return;
+        }
+        napi_value setResult[RESULT_COUNT] = {0};
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
+            "Wrong resource path or type");
+        napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[PARAMONE]);
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+        if (!result.empty()) {
+            napi_resolve_deferred(env, deferred, args[PARAMONE]);
+        } else {
+            napi_reject_deferred(env, deferred, args[PARAMZERO]);
+        }
+    });
+    nweb_->ExecuteJavaScript(script, callbackImpl);
+}
+
 } // namespace NWeb
 } // namespace OHOS

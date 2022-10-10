@@ -74,5 +74,42 @@ bool NapiParseUtils::ParseBoolean(napi_env env, napi_value argv, bool& outValue)
     outValue = boolValue;
     return true;
 }
+
+bool NapiParseUtils::ParseStringArray(napi_env env, napi_value argv, std::vector<std::string>& outValue)
+{
+    bool isArray = false;
+    napi_is_array(env, argv, &isArray);
+    if (!isArray) {
+        return false;
+    }
+    
+    uint32_t arrLen = 0;
+    napi_get_array_length(env, argv, &arrLen);
+    for (uint32_t i = 0; i < arrLen; ++i) {
+        napi_value item = nullptr;
+        napi_get_element(env, argv, i, &item);
+
+        std::string str;
+        if (ParseString(env, item, str)) {
+             outValue.push_back(str);
+        }
+    }
+
+    return true;
+}
+
+bool NapiParseUtils::ParseFloat(napi_env env, napi_value argv, float& outValue)
+{
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv, &valueType);
+    if (valueType != napi_number) {
+        return false;
+    }
+
+    double value;
+    napi_get_value_double(env, argv, &value);
+    outValue = (float)value;
+    return true;
+}
 } // namespace NWeb
 } // namespace OHOS
