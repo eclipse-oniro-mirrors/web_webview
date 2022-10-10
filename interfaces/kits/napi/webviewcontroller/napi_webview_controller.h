@@ -91,6 +91,29 @@ private:
     static napi_value LoadData(napi_env env, napi_callback_info info);
 
     static napi_value GetHitTest(napi_env env, napi_callback_info info);
+
+    static napi_value ClearMatches(napi_env env, napi_callback_info info);
+
+    static napi_value SearchNext(napi_env env, napi_callback_info info);
+
+    static napi_value SearchAllAsync(napi_env env, napi_callback_info info);
+
+    static napi_value ClearSslCache(napi_env env, napi_callback_info info);
+
+    static napi_value ClearClientAuthenticationCache(napi_env env, napi_callback_info info);
+
+    static napi_value Stop(napi_env env, napi_callback_info info);
+
+    static napi_value Zoom(napi_env env, napi_callback_info info);
+
+    static napi_value RegisterJavaScriptProxy(napi_env env, napi_callback_info info);
+
+    static napi_value DeleteJavaScriptRegister(napi_env env, napi_callback_info info);
+
+    static napi_value RunJavaScript(napi_env env, napi_callback_info info);
+
+    static napi_value RunJavaScriptInternal(napi_env env, napi_callback_info info,
+        const std::string &script);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {
