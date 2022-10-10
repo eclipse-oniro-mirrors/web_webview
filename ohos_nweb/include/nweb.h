@@ -167,7 +167,7 @@ public:
      * to 100.0 inclusive.
      *
      */
-    virtual void Zoom(float zoomFactor) const = 0;
+    virtual int Zoom(float zoomFactor) const = 0;
 
     /**
      * Performs a zooming in operation in this NWeb.

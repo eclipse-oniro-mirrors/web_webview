@@ -1296,7 +1296,15 @@ napi_value NapiWebviewController::Zoom(napi_env env, napi_callback_info info)
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-    controller->Zoom(factor);
+
+    ErrCode ret = controller->Zoom(factor);
+    if (ret != NO_ERROR) {
+        if (ret == NWEB_ERROR) {
+            WVLOG_E("Zoom failed.");
+            return result;
+        }
+        BusinessError::ThrowErrorByErrcode(env, ret);
+    }
 
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;

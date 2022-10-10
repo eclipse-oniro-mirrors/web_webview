@@ -126,7 +126,7 @@ public:
 
     void Stop();
 
-    void Zoom(float factor);
+    ErrCode Zoom(float factor);
 
     void SetNWebJavaScriptResultCallBack();
 
