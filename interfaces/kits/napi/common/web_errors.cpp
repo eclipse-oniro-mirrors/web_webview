@@ -26,9 +26,9 @@ const std::string INVALID_URL_MSG = "Invaild url";
 const std::string INVALID_RESOURCE_MSG = "Invaild resource path or file type";
 const std::string FUNCTION_NOT_ENABLE_MSG = "Function not enable";
 const std::string INVALID_COOKIE_VALUE_MSG = "Invaild cookie value";
+const std::string CANNOT_DEL_JAVA_SCRIPT_PROXY_MSG = "Cannot delete JavaScriptProxy.";
 const std::string CANNOT_ZOOM_IN_OR_ZOOM_OUT_MSG = "Cannot zoom in or zoom out";
 const std::string INVALID_ORIGIN_MSG = "Invaild permission origin";
-const std::string INVALID_ENCODING_MSG = "Invaild encoding";
 const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invaild web storage origin";
 const std::string INVALID_BACK_OR_FORWARD_OPERATION_MSG = "Invalid back or forward operation";
 const std::string CREATE_MSG_PORT_FAIL_MSG = "Create message port failed";
@@ -45,9 +45,9 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {INVALID_RESOURCE, INVALID_RESOURCE_MSG},
     {FUNCTION_NOT_ENABLE, FUNCTION_NOT_ENABLE_MSG},
     {INVALID_COOKIE_VALUE, INVALID_COOKIE_VALUE_MSG},
+    {CANNOT_DEL_JAVA_SCRIPT_PROXY, CANNOT_DEL_JAVA_SCRIPT_PROXY_MSG},
     {CANNOT_ZOOM_IN_OR_ZOOM_OUT, CANNOT_ZOOM_IN_OR_ZOOM_OUT_MSG},
     {INVALID_ORIGIN, INVALID_ORIGIN_MSG},
-    {INVALID_ENCODING, INVALID_ENCODING_MSG},
     {NO_WEBSTORAGE_ORIGIN, NO_WEBSTORAGE_ORIGIN_MSG},
     {INVALID_BACK_OR_FORWARD_OPERATION, INVALID_BACK_OR_FORWARD_OPERATION_MSG},
     {CREATE_MSG_PORT_FAIL, CREATE_MSG_PORT_FAIL_MSG},

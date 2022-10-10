@@ -531,12 +531,17 @@ void WebviewController::Zoom(float factor)
 ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
     const std::vector<std::string>& methodList)
 {
-    if (javaScriptResultCb_) {
-        javaScriptResultCb_->DeleteJavaScriptRegister(objName);
-    }
     if (nweb_ != nullptr) {
         nweb_->UnregisterArkJSfunction(objName, methodList);
     }
+
+    if (javaScriptResultCb_) {
+        bool ret = javaScriptResultCb_->DeleteJavaScriptRegister(objName);
+        if (!ret) {
+            return CANNOT_DEL_JAVA_SCRIPT_PROXY;
+        }
+    }
+
     return NO_ERROR;
 }
 
