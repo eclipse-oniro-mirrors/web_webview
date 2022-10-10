@@ -414,7 +414,7 @@ napi_value NapiWebviewController::PostMessage(napi_env env, napi_callback_info i
         WVLOG_E("post port to html failed, napi unwrap webviewController failed");
         return nullptr;
     }
-    std::vector<std::string> portsArray;
+
     webviewController->PostWebMessage(portName, sendPorts, urlStr);
     NAPI_CALL(env, napi_get_undefined(env, &result));
 
