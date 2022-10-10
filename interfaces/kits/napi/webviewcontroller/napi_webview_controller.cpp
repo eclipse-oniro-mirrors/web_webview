@@ -332,7 +332,7 @@ napi_value NapiWebviewController::CreateWebMessagePorts(napi_env env, napi_callb
     std::vector<std::string> ports;
     webviewController->CreateWebMessagePorts(ports);
     if (ports.size() != INTEGER_TWO) {
-        WVLOG_E("create web message port failed, ports.size = %{public}d", ports.size());
+        WVLOG_E("create web message port failed");
         return result;
     }
     napi_value msgPortcons = nullptr;
@@ -1041,7 +1041,7 @@ napi_value NapiWebviewController::LoadUrlWithHttpHeaders(napi_env env, napi_call
     if (isArray) {
         uint32_t arrayLength = INTEGER_ZERO;
         napi_get_array_length(env, array, &arrayLength);
-        for (int32_t i = 0; i < arrayLength; ++i) {
+        for (uint32_t i = 0; i < arrayLength; ++i) {
             std::string key;
             std::string value;
             napi_value obj = nullptr;
