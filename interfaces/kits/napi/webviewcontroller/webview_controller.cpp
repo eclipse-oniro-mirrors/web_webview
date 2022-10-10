@@ -481,14 +481,14 @@ int WebviewController::GetHitTest()
 
 void WebviewController::ClearMatches()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->ClearMatches();
     }
 }
 
 void WebviewController::SearchNext(bool forward)
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->FindNext(forward);
     }
 }

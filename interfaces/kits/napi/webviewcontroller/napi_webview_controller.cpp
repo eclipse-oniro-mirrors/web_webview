@@ -1157,6 +1157,7 @@ napi_value NapiWebviewController::ClearMatches(napi_env env, napi_callback_info 
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->ClearMatches();
@@ -1167,12 +1168,12 @@ napi_value NapiWebviewController::SearchNext(napi_env env, napi_callback_info in
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = 1;
-    napi_value argv[1] = { 0 };
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
 
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != 1) {
+    if (argc != INTEGER_ONE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -1185,6 +1186,7 @@ napi_value NapiWebviewController::SearchNext(napi_env env, napi_callback_info in
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->SearchNext(forward);
@@ -1195,12 +1197,12 @@ napi_value NapiWebviewController::SearchAllAsync(napi_env env, napi_callback_inf
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = 1;
-    napi_value argv[1] = { 0 };
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
 
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != 1) {
+    if (argc != INTEGER_ONE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -1213,6 +1215,7 @@ napi_value NapiWebviewController::SearchAllAsync(napi_env env, napi_callback_inf
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->SearchAllAsync(searchString);
@@ -1230,6 +1233,7 @@ napi_value NapiWebviewController::ClearSslCache(napi_env env, napi_callback_info
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->ClearSslCache();
@@ -1247,6 +1251,7 @@ napi_value NapiWebviewController::ClearClientAuthenticationCache(napi_env env, n
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->ClearClientAuthenticationCache();
@@ -1263,6 +1268,7 @@ napi_value NapiWebviewController::Stop(napi_env env, napi_callback_info info)
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->Stop();
@@ -1275,11 +1281,11 @@ napi_value NapiWebviewController::Zoom(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = 1;
-    napi_value argv[1] = { 0 };
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != 1) {
+    if (argc != INTEGER_ONE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -1292,6 +1298,7 @@ napi_value NapiWebviewController::Zoom(napi_env env, napi_callback_info info)
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->Zoom(factor);
@@ -1337,6 +1344,7 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->SetNWebJavaScriptResultCallBack();
