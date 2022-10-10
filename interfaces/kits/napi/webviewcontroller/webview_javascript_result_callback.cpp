@@ -63,6 +63,7 @@ void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(napi_env env, napi
     const std::string& objName, const std::vector<std::string>& methodList)
 {
     if (objectMap_.find(objName) != objectMap_.end()) {
+        WVLOG_I("object already exists, objName = %{public}s", objName.c_str());
         return;
     }
 
