@@ -542,7 +542,7 @@ ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
         }
     }
 
-    return NO_ERROR;
+    return NWebError::NO_ERROR;
 }
 
 void WebviewController::SetNWebJavaScriptResultCallBack()
