@@ -1271,9 +1271,6 @@ napi_value NapiWebviewController::Stop(napi_env env, napi_callback_info info)
     return result;
 }
 
-// 17100401
-// 17100004
-// 17100015
 napi_value NapiWebviewController::Zoom(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
@@ -1305,7 +1302,7 @@ napi_value NapiWebviewController::Zoom(napi_env env, napi_callback_info info)
 
 napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_callback_info info)
 {
-    WVLOG_E("NapiWebviewController::RegisterJavaScriptProxy");
+    WVLOG_D("NapiWebviewController::RegisterJavaScriptProxy");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     size_t argc = INTEGER_THREE;
@@ -1330,16 +1327,11 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    WVLOG_E("NapiWebviewController::RunJavaScript objName = %{public}s", objName.c_str());
 
     std::vector<std::string> methodList;
     if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_TWO], methodList)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
-    }
-    for (auto it = methodList.begin(); it != methodList.end(); ++it) {
-        std::string str = *it;
-        WVLOG_E("NapiWebviewController::RunJavaScript methodName = %{public}s", str.c_str());
     }
 
     WebviewController *controller = nullptr;
@@ -1348,22 +1340,17 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
         return result;
     }
     controller->SetNWebJavaScriptResultCallBack();
-    WVLOG_E("NapiWebviewController::RegisterJavaScriptProxy controller->RegisterJavaScriptProxy");
     controller->RegisterJavaScriptProxy(env, argv[INTEGER_ZERO], objName, methodList);
-
-    WVLOG_E("NapiWebviewController::RegisterJavaScriptProxy end");
     return result;
 }
 
-// 17100401 17100014
 napi_value NapiWebviewController::DeleteJavaScriptRegister(napi_env env, napi_callback_info info)
 {
-    WVLOG_E("NapiWebviewController::DeleteJavaScriptRegister");
+    WVLOG_D("NapiWebviewController::DeleteJavaScriptRegister");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
-    
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
@@ -1376,7 +1363,6 @@ napi_value NapiWebviewController::DeleteJavaScriptRegister(napi_env env, napi_ca
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    WVLOG_E("NapiWebviewController::RunJavaScript objName = %{public}s", objName.c_str());
 
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
@@ -1395,7 +1381,6 @@ napi_value NapiWebviewController::DeleteJavaScriptRegister(napi_env env, napi_ca
 
 napi_value NapiWebviewController::RunJavaScript(napi_env env, napi_callback_info info)
 {
-    WVLOG_E("NapiWebviewController::RunJavaScript");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     size_t argc = INTEGER_ONE;
