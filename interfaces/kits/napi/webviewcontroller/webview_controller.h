@@ -140,6 +140,8 @@ public:
 
     void RunJavaScriptPromise(const std::string &script, napi_env env, napi_deferred deferred);
 
+    std::string GetUrl();
+
 private:
     int ConverToWebHitTestType(int hitType);
 
