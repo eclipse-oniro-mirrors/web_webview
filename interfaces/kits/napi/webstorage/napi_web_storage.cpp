@@ -280,12 +280,20 @@ void NapiWebStorage::ExecuteGetOriginUsageOrQuota(napi_env env, void *data)
     }
     if (param->isQuato) {
         param->retValue = web_storage->GetOriginQuota(param->origin);
-        param->errCode = param->retValue;
+        if (param->retValue != INTERFACE_ERROR && param->retValue != NWebError::INVALID_ORIGIN) {
+            param->errCode = INTERFACE_OK;
+        } else {
+            param->errCode = param->retValue;
+        }
         param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
         return;
     }
     param->retValue = web_storage->GetOriginUsage(param->origin);
-    param->errCode = param->retValue;
+    if (param->retValue != INTERFACE_ERROR && param->retValue != NWebError::INVALID_ORIGIN) {
+        param->errCode = INTERFACE_OK;
+    } else {
+        param->errCode = param->retValue;
+    }
     param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
 }
 
@@ -296,7 +304,7 @@ void NapiWebStorage::GetOriginUsageOrQuotaComplete(napi_env env, napi_status sta
     if (param->status) {
         if (param->errCode == NWebError::INVALID_ORIGIN) {
             setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN,
-            "The origin is empty or illegal");
+                "The origin is empty or illegal");
         } else {
             napi_get_undefined(env, &setResult[PARAMZERO]);
         }
@@ -310,7 +318,7 @@ void NapiWebStorage::GetOriginUsageOrQuotaComplete(napi_env env, napi_status sta
     napi_value callback = nullptr;
     napi_get_reference_value(env, param->callbackRef, &callback);
     napi_value returnVal = nullptr;
-    napi_call_function(env, nullptr, callback, RESULT_COUNT, &args[0], &returnVal);
+    napi_call_function(env, nullptr, callback, RESULT_COUNT, &args[PARAMZERO], &returnVal);
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_reference(env, param->callbackRef);
     napi_delete_async_work(env, param->asyncWork);
@@ -326,9 +334,9 @@ void NapiWebStorage::GetOriginUsageOrQuotaPromiseComplete(napi_env env, napi_sta
     napi_create_uint32(env, static_cast<uint32_t>(param->retValue), &setResult[PARAMONE]);
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
     if (param->status != napi_ok && param->errCode == NWebError::INVALID_ORIGIN) {
-        napi_reject_deferred(env, param->deferred, args[0]);
+        napi_reject_deferred(env, param->deferred, args[PARAMZERO]);
     } else {
-        napi_resolve_deferred(env, param->deferred, args[1]);
+        napi_resolve_deferred(env, param->deferred, args[PARAMONE]);
     }
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_async_work(env, param->asyncWork);
@@ -351,8 +359,8 @@ napi_value NapiWebStorage::GetOriginUsageOrQuotaAsync(napi_env env,
         .callbackRef = nullptr,
         .env = env,
     };
-    napi_create_reference(env, argv[0], 1, &param->jsStringRef);
-    napi_create_reference(env, argv[1], 1, &param->callbackRef);
+    napi_create_reference(env, argv[PARAMZERO], 1, &param->jsStringRef);
+    napi_create_reference(env, argv[PARAMONE], 1, &param->callbackRef);
     NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOriginUsageOrQuota,
         GetOriginUsageOrQuotaComplete, (void *)param, &param->asyncWork));
@@ -378,7 +386,7 @@ napi_value NapiWebStorage::GetOriginUsageOrQuotaPromise(napi_env env,
         .callbackRef = nullptr,
         .env = env,
     };
-    napi_create_reference(env, argv[0], 1, &param->jsStringRef);
+    napi_create_reference(env, argv[PARAMZERO], 1, &param->jsStringRef);
     napi_value resourceName = nullptr;
     NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOriginUsageOrQuota,
@@ -393,27 +401,27 @@ napi_value NapiWebStorage::JsGetOriginUsageOrQuota(napi_env env, napi_callback_i
     size_t argc = 1;
     size_t argcPromise = 1;
     size_t argcCallback = 2;
-    napi_value argv[2] = { 0 };
+    napi_value argv[RESULT_COUNT] = {0};
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != argcPromise && argc != argcCallback) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 or 2 parameter");
         return nullptr;
     }
     napi_valuetype valueType = napi_null;
-    napi_typeof(env, argv[0], &valueType);
+    napi_typeof(env, argv[PARAMZERO], &valueType);
     if (valueType != napi_string) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "type mismatch for parameter 1");
         return nullptr;
     }
     size_t bufferSize = 0;
-    napi_get_value_string_utf8(env, argv[0], nullptr, 0, &bufferSize);
+    napi_get_value_string_utf8(env, argv[PARAMZERO], nullptr, 0, &bufferSize);
     if (bufferSize >= MAX_WEB_STRING_LENGTH) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length too large");
         return nullptr;
     }
     char stringValue[bufferSize + 1];
     size_t jsStringLength = 0;
-    napi_get_value_string_utf8(env, argv[0], stringValue, bufferSize + 1, &jsStringLength);
+    napi_get_value_string_utf8(env, argv[PARAMZERO], stringValue, bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
         NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length wrong");
         return nullptr;
@@ -444,7 +452,7 @@ napi_value NapiWebStorage::JsConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     size_t argc = 2;
-    napi_value argv[2] = { 0 };
+    napi_value argv[RESULT_COUNT] = {0};
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     return thisVar;
 }
