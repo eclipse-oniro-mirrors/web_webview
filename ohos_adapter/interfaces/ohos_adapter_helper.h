@@ -59,6 +59,8 @@ public:
     std::unique_ptr<MMIAdapter> CreateMMIAdapter();
 
     std::unique_ptr<SocPerfClientAdapter> CreateSocPerfClientAdapter();
+
+    OhosWebDnsDataBaseAdapter& GetWebDnsDataBaseInstance();
 private:
     OhosAdapterHelper() = default;
 
