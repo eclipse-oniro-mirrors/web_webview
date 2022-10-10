@@ -420,7 +420,7 @@ napi_value NapiWebviewController::PostMessage(napi_env env, napi_callback_info i
         WVLOG_E("post port to html failed, napi unwrap webviewController failed");
         return nullptr;
     }
-    std::vector<std::string> portsArray;
+
     webviewController->PostWebMessage(portName, sendPorts, urlStr);
     NAPI_CALL(env, napi_get_undefined(env, &result));
 
@@ -780,7 +780,7 @@ napi_value NapiWebviewController::GetTitle(napi_env env, napi_callback_info info
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    
+
     std::string title = "";
     title = webviewController->GetTitle();
     napi_create_string_utf8(env, title.c_str(), title.length(), &result);
