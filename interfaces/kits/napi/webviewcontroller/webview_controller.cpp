@@ -495,35 +495,35 @@ void WebviewController::SearchNext(bool forward)
 
 void WebviewController::SearchAllAsync(const std::string& searchString)
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->FindAllAsync(searchString);
     }
 }
 
 void WebviewController::ClearSslCache()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->ClearSslCache();
     }
 }
 
 void WebviewController::ClearClientAuthenticationCache()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->ClearClientAuthenticationCache();
     }
 }
 
 void WebviewController::Stop()
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->Stop();
     }
 }
 
 void WebviewController::Zoom(float factor)
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->Zoom(factor);
     }
 }
@@ -531,7 +531,7 @@ void WebviewController::Zoom(float factor)
 ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
     const std::vector<std::string>& methodList)
 {
-    if (nweb_ != nullptr) {
+    if (nweb_) {
         nweb_->UnregisterArkJSfunction(objName, methodList);
     }
 
@@ -565,17 +565,6 @@ void WebviewController::RegisterJavaScriptProxy(napi_env env, napi_value obj,
         javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, methodList);
     }
     nweb_->RegisterArkJSfunction(objName, methodList);
-}
-
-ErrCode WebviewController::RunJavaScript(const std::string& script,
-    std::shared_ptr<NWebValueCallback<std::string>> callback)
-{
-    if (!nweb_) {
-        return INIT_ERROR;
-    }
-
-    nweb_->ExecuteJavaScript(script, callback);
-    return NO_ERROR;;
 }
 
 void WebviewController::RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback)
@@ -622,7 +611,6 @@ void WebviewController::RunJavaScriptCallback(const std::string &script, napi_en
         napi_delete_reference(env, jCallback);
     });
     nweb_->ExecuteJavaScript(script, callbackImpl);
-    return;
 }
 
 void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env env,
@@ -657,7 +645,6 @@ void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env
         }
     });
     nweb_->ExecuteJavaScript(script, callbackImpl);
-    return;
 }
 
 } // namespace NWeb
