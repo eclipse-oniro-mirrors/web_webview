@@ -34,7 +34,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     const std::string& method,
     const std::string& objName)
 {
-    WVLOG_E("WebviewJavaScriptResultCallBack::GetJavaScriptResult method = %{public}s, objName = %{public}s",
+    WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResult method = %{public}s, objName = %{public}s",
         method.c_str(), objName.c_str());
     std::vector<napi_value> argv = {};
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
@@ -62,7 +62,6 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
 void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(napi_env env, napi_value obj,
     const std::string& objName, const std::vector<std::string>& methodList)
 {
-    WVLOG_E("WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy");
     if (objectMap_.find(objName) != objectMap_.end()) {
         return;
     }
@@ -94,7 +93,6 @@ void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(napi_env env, napi
 
 void WebviewJavaScriptResultCallBack::DeleteJavaScriptRegister(const std::string& objName)
 {
-    WVLOG_E("WebviewJavaScriptResultCallBack::DeleteJavaScriptRegister objName = %{public}s", objName.c_str());
     if (objectMap_.find(objName) == objectMap_.end()) {
         return;
     }
@@ -110,7 +108,6 @@ void WebviewJavaScriptResultCallBack::ParseNwebValue2NapiValue(
     std::shared_ptr<NWebValue> value,
     std::vector<napi_value>& argv)
 {
-    WVLOG_E("ParseNwebValue2NapiValue");
     napi_value napiValue = nullptr;
 
     switch (value->GetType()) {

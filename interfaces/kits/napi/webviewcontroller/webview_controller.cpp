@@ -20,6 +20,7 @@
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
+#include "webview_javascript_execute_callback.h"
 #include "webview_javascript_result_callback.h"
 #include "web_errors.h"
 
@@ -541,7 +542,6 @@ ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
 
 void WebviewController::SetNWebJavaScriptResultCallBack()
 {
-    WVLOG_E("WebviewController::SetNWebJavaScriptResultCallBack");
     if (!nweb_ || javaScriptResultCb_) {
         return;
     }
@@ -553,7 +553,6 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
 void WebviewController::RegisterJavaScriptProxy(napi_env env, napi_value obj,
     const std::string& objName, const std::vector<std::string>& methodList)
 {
-    WVLOG_E("WebviewController::RegisterJavaScriptProxy");
     if (!nweb_) {
         return;
     }
@@ -567,7 +566,7 @@ ErrCode WebviewController::RunJavaScript(const std::string& script,
     std::shared_ptr<NWebValueCallback<std::string>> callback)
 {
     if (!nweb_) {
-        return NO_WEB_INSTANCE_BIND;
+        return INIT_ERROR;
     }
 
     nweb_->ExecuteJavaScript(script, callback);
