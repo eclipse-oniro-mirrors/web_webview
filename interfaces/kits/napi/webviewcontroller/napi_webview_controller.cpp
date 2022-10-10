@@ -89,9 +89,10 @@ napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info
 napi_value NapiWebviewController::SetWebId(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
-    napi_value argv[1] = { 0 };
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
     void* data = nullptr;
-    napi_get_cb_info(env, info, nullptr, argv, &thisVar, &data);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
     int32_t webId = -1;
     if (!NapiParseUtils::ParseInt32(env, argv[0], webId)) {
