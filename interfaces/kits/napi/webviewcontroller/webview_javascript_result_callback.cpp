@@ -91,16 +91,17 @@ void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(napi_env env, napi
     objectMap_[objName] = jsObj;
 }
 
-void WebviewJavaScriptResultCallBack::DeleteJavaScriptRegister(const std::string& objName)
+bool WebviewJavaScriptResultCallBack::DeleteJavaScriptRegister(const std::string& objName)
 {
     if (objectMap_.find(objName) == objectMap_.end()) {
-        return;
+        return false;
     }
 
     for (auto it = objectMap_[objName].methodMap.begin(); it != objectMap_[objName].methodMap.end(); ++it) {
         napi_delete_reference(objectMap_[objName].env, it->second);
     }
     objectMap_.erase(objName);
+    return true;
 }
 
 void WebviewJavaScriptResultCallBack::ParseNwebValue2NapiValue(

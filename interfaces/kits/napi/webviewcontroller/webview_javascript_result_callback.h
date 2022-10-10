@@ -44,7 +44,7 @@ public:
     void RegisterJavaScriptProxy(napi_env env, napi_value obj, const std::string& objName,
         const std::vector<std::string>& methodList);
 
-    void DeleteJavaScriptRegister(const std::string& objName);
+    bool DeleteJavaScriptRegister(const std::string& objName);
 private:
     std::unordered_map<std::string, JavaScriptObj> objectMap_;
 
