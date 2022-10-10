@@ -37,8 +37,7 @@ constexpr ErrCode CAN_NOT_POST_MESSAGE = 17100010;
 constexpr ErrCode INVALID_ORIGIN = 17100011;
 constexpr ErrCode NO_WEBSTORAGE_ORIGIN = 17100015;
 constexpr ErrCode INVALID_BACK_OR_FORWARD_OPERATION = 17100016;
-constexpr ErrCode CREATE_MSG_PORT_FAIL = 17100021;
-constexpr ErrCode CAN_NOT_REGISTER_MESSAGE_EVENT = 17100022;
+constexpr ErrCode CAN_NOT_REGISTER_MESSAGE_EVENT = 17100021;
 
 std::string GetErrMsgByErrCode(ErrCode code);
 }
