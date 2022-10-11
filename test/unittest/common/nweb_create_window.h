@@ -123,8 +123,10 @@ public:
     {}
     void Reload() const override
     {}
-    void Zoom(float zoomFactor) const override
-    {}
+    int Zoom(float zoomFactor) const override
+    {
+        return 0;
+    }
     int ZoomIn() const override
     {
         return 0;

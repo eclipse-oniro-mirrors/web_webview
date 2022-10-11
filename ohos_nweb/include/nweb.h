@@ -166,8 +166,10 @@ public:
      * clamped to the NWeb's zoom limits. This value must be in the range 0.01
      * to 100.0 inclusive.
      *
+     * @return the error id.
+     * 
      */
-    virtual void Zoom(float zoomFactor) const = 0;
+    virtual int Zoom(float zoomFactor) const = 0;
 
     /**
      * Performs a zooming in operation in this NWeb.
