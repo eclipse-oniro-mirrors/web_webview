@@ -176,12 +176,6 @@ napi_value NapiWebviewController::Forward(napi_env env, napi_callback_info info)
         return nullptr;
     }
 
-    bool access =  webviewController->AccessForward();
-    if (!access) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_BACK_OR_FORWARD_OPERATION);
-        return nullptr;
-    }
-
     webviewController->Forward();
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
@@ -197,12 +191,6 @@ napi_value NapiWebviewController::Backward(napi_env env, napi_callback_info info
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok)) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
-        return nullptr;
-    }
-
-    bool access =  webviewController->AccessBackward();
-    if (!access) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_BACK_OR_FORWARD_OPERATION);
         return nullptr;
     }
 

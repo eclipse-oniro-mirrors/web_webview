@@ -173,9 +173,7 @@ ErrCode WebviewController::BackOrForward(int32_t step)
     if (!nweb_) {
         return INIT_ERROR;
     }
-    if (!nweb_->CanNavigateBackOrForward(step)) {
-        return INVALID_BACK_OR_FORWARD_OPERATION;
-    }
+
     nweb_->NavigateBackOrForward(step);
     return NWebError::NO_ERROR;
 }
