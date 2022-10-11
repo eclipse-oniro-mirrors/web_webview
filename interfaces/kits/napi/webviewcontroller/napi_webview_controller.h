@@ -114,6 +114,8 @@ private:
 
     static napi_value RunJavaScriptInternal(napi_env env, napi_callback_info info,
         const std::string &script);
+
+    static napi_value GetUrl(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {

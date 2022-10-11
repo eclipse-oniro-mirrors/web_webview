@@ -647,5 +647,14 @@ void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env
     nweb_->ExecuteJavaScript(script, callbackImpl);
 }
 
+std::string WebviewController::GetUrl()
+{
+    std::string url = "";
+    if (nweb_) {
+        url = nweb_->GetUrl();
+    }
+    return url;
+}
+
 } // namespace NWeb
 } // namespace OHOS
