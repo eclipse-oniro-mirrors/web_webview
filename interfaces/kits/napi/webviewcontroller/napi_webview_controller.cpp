@@ -857,27 +857,24 @@ napi_value NapiWebviewController::StoreWebArchive(napi_env env, napi_callback_in
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
 
     if (argc != argcPromise && argc != argcCallback) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "Requires 2 or 3 parameters.");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return result;
     }
     std::string baseName;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], baseName)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The parameter is not of string type or the parameter length is too long.");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return result;
     }
 
     if (baseName.empty()) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "BaseName cannot be empty.");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return result;
     }
 
     bool autoName = false;
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ONE], autoName)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "Parameter is not of boolean type.");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return result;
     }
 
@@ -886,8 +883,7 @@ napi_value NapiWebviewController::StoreWebArchive(napi_env env, napi_callback_in
         napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
         napi_typeof(env, argv[argcCallback - 1], &valueType);
         if (valueType != napi_function) {
-            NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-                "Parameter is not of function type.");
+            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
             return result;
         }
     }
