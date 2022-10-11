@@ -821,10 +821,6 @@ napi_value NapiWebviewController::BackOrForward(napi_env env, napi_callback_info
 
     ErrCode ret = webviewController->BackOrForward(step);
     if (ret != NO_ERROR) {
-        if (ret == NWEB_ERROR) {
-            WVLOG_E("BackOrForward failed.");
-            return nullptr;
-        }
         BusinessError::ThrowErrorByErrcode(env, ret);
     }
 
