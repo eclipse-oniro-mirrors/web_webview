@@ -19,6 +19,8 @@
 
 #include "ohos_adapter_helper.h"
 #include "mmi_adapter.h"
+
+#define private public
 #include "mmi_adapter_impl.h"
 
 using namespace testing;
@@ -138,5 +140,10 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_006, TestSize.Lev
 {
     auto mmi_adapter = OhosAdapterHelper::GetInstance().CreateMMIAdapter();
     EXPECT_NE(mmi_adapter, nullptr);
+    auto listener = std::make_shared<MMIListenerTest>();
+    auto listenerTest = std::make_shared<MMIListenerAdapterImpl>(listener);
+    listenerTest->listener_ = nullptr;
+    listenerTest->OnDeviceAdded(1, "add");
+    listenerTest->OnDeviceRemoved(1, "remove");
 }
 }  // namespace OHOS::NWeb
