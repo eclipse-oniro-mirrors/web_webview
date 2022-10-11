@@ -992,14 +992,18 @@ napi_value NapiWebviewController::LoadUrl(napi_env env, napi_callback_info info)
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
-
     WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok)) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-
+    napi_valuetype webSrcType;
+    napi_typeof(env, argv[INTEGER_ZERO], &webSrcType);
+    if (webSrcType != napi_string && webSrcType != napi_object) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
     std::string webSrc;
     if (!webviewController->ParseUrl(env, argv[INTEGER_ZERO], webSrc)) {
         BusinessError::ThrowErrorByErrcode(env, INVALID_URL);
@@ -1011,7 +1015,6 @@ napi_value NapiWebviewController::LoadUrl(napi_env env, napi_callback_info info)
         filePath.erase(INTEGER_ZERO, fileProtocol.size());
         int isFileExist = access(filePath.c_str(), F_OK);
         if (isFileExist == -1) {
-            WVLOG_E("File is not exist in file path.");
             BusinessError::ThrowErrorByErrcode(env, INVALID_RESOURCE);
         }
     }
@@ -1019,7 +1022,6 @@ napi_value NapiWebviewController::LoadUrl(napi_env env, napi_callback_info info)
         ErrCode ret = webviewController->LoadUrl(webSrc);
         if (ret != NO_ERROR) {
             if (ret == NWEB_ERROR) {
-                WVLOG_E("LoadUrl failed.");
                 return nullptr;
             }
             BusinessError::ThrowErrorByErrcode(env, ret);
@@ -1059,7 +1061,11 @@ napi_value NapiWebviewController::LoadUrlWithHttpHeaders(napi_env env, napi_call
             NapiParseUtils::ParseString(env, keyObj, value);
             httpHeaders[key] = value;
         }
+    } else {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
     }
+
     ErrCode ret = webviewController->LoadUrl(url, httpHeaders);
     if (ret != NO_ERROR) {
         if (ret == NWEB_ERROR) {
