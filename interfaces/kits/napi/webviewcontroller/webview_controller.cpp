@@ -517,11 +517,15 @@ void WebviewController::Stop()
     }
 }
 
-void WebviewController::Zoom(float factor)
+ErrCode WebviewController::Zoom(float factor)
 {
-    if (nweb_) {
-        nweb_->Zoom(factor);
+    if (!nweb_) {
+        return INIT_ERROR;
     }
+    ErrCode result = NWebError::NO_ERROR;
+    result = nweb_->Zoom(factor);
+
+    return result;
 }
 
 ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
