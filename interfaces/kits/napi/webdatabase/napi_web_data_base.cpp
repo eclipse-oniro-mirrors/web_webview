@@ -140,28 +140,25 @@ napi_value NapiWebDataBase::JsSaveHttpAuthCredentials(napi_env env, napi_callbac
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != PARAMFOUR) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 4 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::string host;
     if (!GetStringPara(env, argv[PARAMZERO], host)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para0 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::string realm;
     if (!GetStringPara(env, argv[PARAMONE], realm)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para1 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::string username;
     if (!GetStringPara(env, argv[PARAMTWO], username)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para2 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
@@ -172,14 +169,13 @@ napi_value NapiWebDataBase::JsSaveHttpAuthCredentials(napi_env env, napi_callbac
 
     size_t bufferSize = 0;
     if (!GetSize(env, argv[PARAMTHREE], bufferSize)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para3 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     if (bufferSize > 0) {
         char password[bufferSize + 1];
         if (!GetCharPara(env, argv[PARAMTHREE], password, bufferSize)) {
-            NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "get para3 failed");
+            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
             return nullptr;
         }
 
@@ -203,21 +199,19 @@ napi_value NapiWebDataBase::JsGetHttpAuthCredentials(napi_env env, napi_callback
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != PARAMTWO) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 2 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::string host;
     if (!GetStringPara(env, argv[PARAMZERO], host)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para0 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::string realm;
     if (!GetStringPara(env, argv[PARAMONE], realm)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para1 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 

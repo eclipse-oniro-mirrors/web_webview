@@ -112,14 +112,13 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
     napi_value argv[PARAMONE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != PARAMONE) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::string origin;
     if (!GetStringPara(env, argv[PARAMZERO], origin)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para0 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
@@ -132,13 +131,13 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
     if (operationType == ALLOW_PERMISSION_OPERATION) {
         if (dataBase->SetPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
             true) == NWebError::INVALID_ORIGIN) {
-            NWebError::BusinessError::ThrowError(env, NWebError::INVALID_ORIGIN, "The origin is empty or illegal");
+            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
             return result;
         }
     } else if (operationType == DELETE_PERMISSION_OPERATION) {
         if (dataBase->ClearPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE)
             == NWebError::INVALID_ORIGIN) {
-            NWebError::BusinessError::ThrowError(env, NWebError::INVALID_ORIGIN, "The origin is empty or illegal");
+            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
             return result;
         }
     }
@@ -172,8 +171,7 @@ void NapiGeolocationPermission::GetPermissionStateComplete(napi_env env, napi_st
     GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
-        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode,
-            "The origin is empty or illegal");
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode);
         napi_get_undefined(env, &setResult[PARAMONE]);
     } else {
         napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -195,8 +193,7 @@ void NapiGeolocationPermission::GetPermissionStatePromiseComplete(napi_env env, 
 {
     GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode,
-        "The origin is empty or illegal");
+    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode);
     napi_get_boolean(env, param->retValue, &setResult[PARAMONE]);
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
     if (param->status == napi_ok) {
@@ -288,14 +285,13 @@ napi_value NapiGeolocationPermission::JsGetAccessibleGeolocation(napi_env env, n
     napi_value argv[PARAMTWO] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != argcPromise && argc != argcCallback) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 or 2 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     std::string origin;
 
     if (!GetStringPara(env, argv[PARAMZERO], origin)) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR,
-            "The para0 is not of string type or the parameter length is too long");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
@@ -426,7 +422,7 @@ napi_value NapiGeolocationPermission::JsGetStoredGeolocation(napi_env env, napi_
     napi_value argv = nullptr;
     napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
     if (argc != argcPromise && argc != argcCallback) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 0 or 1 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     if (argc == argcCallback) {
