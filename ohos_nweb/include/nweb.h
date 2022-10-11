@@ -172,11 +172,15 @@ public:
     /**
      * Performs a zooming in operation in this NWeb.
      *
+     * @return the error id.
+     *
      */
     virtual int ZoomIn() const = 0;
 
     /**
      * Performs a zooming out operation in this NWeb.
+     *
+     * @return the error id.
      *
      */
     virtual int ZoomOut() const = 0;
