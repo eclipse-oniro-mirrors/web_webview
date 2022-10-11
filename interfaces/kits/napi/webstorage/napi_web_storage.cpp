@@ -72,33 +72,33 @@ napi_value NapiWebStorage::JsDeleteOrigin(napi_env env, napi_callback_info info)
     napi_value result = nullptr;
     napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
     if (argc != 1) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     size_t bufferSize = 0;
     napi_valuetype valueType = napi_null;
     napi_typeof(env, argv, &valueType);
     if (valueType != napi_string) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "type mismatch for parameter 1");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
     if (bufferSize >= MAX_WEB_STRING_LENGTH) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length too large");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     char stringValue[bufferSize + 1];
     size_t jsStringLength = 0;
     napi_get_value_string_utf8(env, argv, stringValue, bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length wrong");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     std::string origin(stringValue);
     OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (web_storage) {
         if (web_storage->DeleteOrigin(origin) == NWebError::INVALID_ORIGIN) {
-            NWebError::BusinessError::ThrowError(env, NWebError::INVALID_ORIGIN, "The origin is empty or illegal");
+            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
             return nullptr;
         }
     }
@@ -167,8 +167,7 @@ void NapiWebStorage::GetOriginComplete(napi_env env, napi_status status, void *d
     GetOriginsParam* param = static_cast<GetOriginsParam*>(data);
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
-        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN,
-            "No webstorage origin source availavle");
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN);
         napi_get_undefined(env, &setResult[PARAMONE]);
     } else {
         napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -189,8 +188,7 @@ void NapiWebStorage::GetOriginsPromiseComplete(napi_env env, napi_status status,
 {
     GetOriginsParam* param = static_cast<GetOriginsParam*>(data);
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN,
-        "No webstorage origin source availavle");
+    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN);
     napi_create_array(env, &setResult[PARAMONE]);
     GetNapiWebStorageOriginForResult(env, param->origins, setResult[PARAMONE]);
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
@@ -254,7 +252,7 @@ napi_value NapiWebStorage::JsGetOrigins(napi_env env, napi_callback_info info)
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
     if (argc != argcPromise && argc != argcCallback) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 0 or 1 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     if (argc == argcCallback) {
@@ -303,8 +301,7 @@ void NapiWebStorage::GetOriginUsageOrQuotaComplete(napi_env env, napi_status sta
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
         if (param->errCode == NWebError::INVALID_ORIGIN) {
-            setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN,
-                "The origin is empty or illegal");
+            setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN);
         } else {
             napi_get_undefined(env, &setResult[PARAMZERO]);
         }
@@ -329,8 +326,7 @@ void NapiWebStorage::GetOriginUsageOrQuotaPromiseComplete(napi_env env, napi_sta
 {
     GetOriginUsageOrQuotaParam* param = static_cast<GetOriginUsageOrQuotaParam*>(data);
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN,
-        "The origin is empty or illegal");
+    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN);
     napi_create_uint32(env, static_cast<uint32_t>(param->retValue), &setResult[PARAMONE]);
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
     if (param->status != napi_ok && param->errCode == NWebError::INVALID_ORIGIN) {
@@ -404,26 +400,26 @@ napi_value NapiWebStorage::JsGetOriginUsageOrQuota(napi_env env, napi_callback_i
     napi_value argv[RESULT_COUNT] = {0};
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != argcPromise && argc != argcCallback) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "requires 1 or 2 parameter");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     napi_valuetype valueType = napi_null;
     napi_typeof(env, argv[PARAMZERO], &valueType);
     if (valueType != napi_string) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "type mismatch for parameter 1");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     size_t bufferSize = 0;
     napi_get_value_string_utf8(env, argv[PARAMZERO], nullptr, 0, &bufferSize);
     if (bufferSize >= MAX_WEB_STRING_LENGTH) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length too large");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     char stringValue[bufferSize + 1];
     size_t jsStringLength = 0;
     napi_get_value_string_utf8(env, argv[PARAMZERO], stringValue, bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
-        NWebError::BusinessError::ThrowError(env, NWebError::PARAM_CHECK_ERROR, "string length wrong");
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
     std::string origin(stringValue);
