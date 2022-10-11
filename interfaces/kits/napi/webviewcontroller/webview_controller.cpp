@@ -185,8 +185,7 @@ void WebviewController::StoreWebArchiveCallback(const std::string &baseName, boo
 {
     if (!nweb_) {
         napi_value setResult[RESULT_COUNT] = {0};
-        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR,
-            "The WebviewController must be associated with a Web component");
+        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR);
         napi_get_null(env, &setResult[PARAMONE]);
 
         napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
@@ -209,8 +208,7 @@ void WebviewController::StoreWebArchiveCallback(const std::string &baseName, boo
         }
         napi_value setResult[RESULT_COUNT] = {0};
         if (result.empty()) {
-            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
-                "Wrong resource path or type");
+            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
             napi_get_null(env, &setResult[PARAMONE]);
         } else {
             napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -233,8 +231,7 @@ void WebviewController::StoreWebArchivePromise(const std::string &baseName, bool
 {
     if (!nweb_) {
         napi_value jsResult = nullptr;
-        jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR,
-            "The WebviewController must be associated with a Web component");
+        jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
         napi_reject_deferred(env, deferred, jsResult);
         return;
     }
@@ -249,8 +246,7 @@ void WebviewController::StoreWebArchivePromise(const std::string &baseName, bool
             return;
         }
         napi_value setResult[RESULT_COUNT] = {0};
-        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
-            "Wrong resource path or type");
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
         napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[PARAMONE]);
         napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
         if (!result.empty()) {
@@ -571,8 +567,7 @@ void WebviewController::RunJavaScriptCallback(const std::string &script, napi_en
 {
     if (!nweb_) {
         napi_value setResult[RESULT_COUNT] = {0};
-        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR,
-            "The WebviewController must be associated with a Web component");
+        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR);
         napi_get_null(env, &setResult[PARAMONE]);
 
         napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
@@ -595,8 +590,7 @@ void WebviewController::RunJavaScriptCallback(const std::string &script, napi_en
         }
         napi_value setResult[RESULT_COUNT] = {0};
         if (result.empty()) {
-            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
-                "Wrong resource path or type");
+            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
             napi_get_null(env, &setResult[PARAMONE]);
         } else {
             napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -618,8 +612,7 @@ void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env
 {
     if (!nweb_) {
         napi_value jsResult = nullptr;
-        jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR,
-            "The WebviewController must be associated with a Web component");
+        jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
         napi_reject_deferred(env, deferred, jsResult);
         return;
     }
@@ -634,8 +627,7 @@ void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env
             return;
         }
         napi_value setResult[RESULT_COUNT] = {0};
-        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE,
-            "Wrong resource path or type");
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
         napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[PARAMONE]);
         napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
         if (!result.empty()) {
