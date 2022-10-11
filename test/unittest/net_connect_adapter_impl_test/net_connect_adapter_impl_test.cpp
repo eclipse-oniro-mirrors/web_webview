@@ -14,6 +14,10 @@
  */
 
 #include <gtest/gtest.h>
+
+#include "core_service_client.h"
+#include "cellular_data_client.h"
+
 #define private public
 #include "net_connect_adapter_impl.h"
 #include "net_connect_utils.h"
@@ -25,6 +29,7 @@ using namespace testing;
 using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::NWeb;
+using namespace OHOS::Telephony;
 
 namespace OHOS {
 namespace {
@@ -32,6 +37,8 @@ namespace {
     int32_t g_unregNetConnCallback = 0;
     int32_t g_getDefaultNet = 0;
     int32_t g_getNetCap = 0;
+    sptr<NetworkState> g_networkState = nullptr;
+    int32_t g_slotId = 0;
 }
 
 namespace NetManagerStandard {
@@ -49,7 +56,21 @@ int32_t NetConnClient::GetDefaultNet(NetHandle &nethamdle)
 }
 int32_t NetConnClient::GetNetCapabilities(const NetHandle &nethamdle, NetAllCapabilities &netAllCap)
 {
+    netAllCap.bearerTypes_.insert(NetBearType::BEARER_WIFI);
+    netAllCap.bearerTypes_.insert(NetBearType::BEARER_CELLULAR);
     return g_getNetCap;
+}
+}
+
+namespace Telephony {
+const sptr<NetworkState> CoreServiceClient::GetNetworkState(int32_t slotId)
+{
+    return g_networkState;
+}
+
+int32_t CellularDataClient::GetDefaultCellularDataSlotId()
+{
+    return g_slotId;
 }
 }
 
@@ -110,16 +131,17 @@ HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_001, TestSize.Leve
     std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl(new NetConnectAdapterImpl);
     EXPECT_NE(netConnectAdapterImpl, nullptr);
     EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(cb), 0);
-    EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(nullptr), -1);
     g_regNetConnCallback = -1;
     EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(cb), -1);
+    EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(nullptr), -1);
     EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(cb), 0);
-    EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(nullptr), -1);
+    EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(cb), -1);
+
+    g_regNetConnCallback = 0;
+    EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(cb), 0);
     g_unregNetConnCallback = -1;
     EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(cb), -1);
-    std::shared_ptr<NetConnCallbackTest> cb1(new NetConnCallbackTest);
-    EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(cb1), -1);
-
+    EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(nullptr), -1);
 }
 
 /**
@@ -134,8 +156,12 @@ HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_002, TestSize.Leve
     NetConnectType type = NetConnectType::CONNECTION_UNKNOWN;
     NetConnectSubtype subtype = NetConnectSubtype::SUBTYPE_UNKNOWN;
     EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), 0);
+    g_networkState = new NetworkState();
+    g_slotId = -1;
+    EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), 0);
     g_getDefaultNet = -1;
     EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), -1);
+    g_getDefaultNet = 0;
     g_getNetCap = -1; 
     EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), -1);
 }
