@@ -176,12 +176,6 @@ napi_value NapiWebviewController::Forward(napi_env env, napi_callback_info info)
         return nullptr;
     }
 
-    bool access =  webviewController->AccessForward();
-    if (!access) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_BACK_OR_FORWARD_OPERATION);
-        return nullptr;
-    }
-
     webviewController->Forward();
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
@@ -197,12 +191,6 @@ napi_value NapiWebviewController::Backward(napi_env env, napi_callback_info info
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok)) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
-        return nullptr;
-    }
-
-    bool access =  webviewController->AccessBackward();
-    if (!access) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_BACK_OR_FORWARD_OPERATION);
         return nullptr;
     }
 
@@ -833,10 +821,6 @@ napi_value NapiWebviewController::BackOrForward(napi_env env, napi_callback_info
 
     ErrCode ret = webviewController->BackOrForward(step);
     if (ret != NO_ERROR) {
-        if (ret == NWEB_ERROR) {
-            WVLOG_E("BackOrForward failed.");
-            return nullptr;
-        }
         BusinessError::ThrowErrorByErrcode(env, ret);
     }
 
@@ -907,6 +891,7 @@ napi_value NapiWebviewController::StoreWebArchiveInternal(napi_env env, napi_cal
     napi_unwrap(env, thisVar, (void **)&webviewController);
 
     if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -952,9 +937,9 @@ napi_value NapiWebviewController::GetHitTestValue(napi_env env, napi_callback_in
     napi_create_uint32(env, nwebResult.GetType(), &type);
     napi_set_named_property(env, result, "type", type);
 
-    napi_value extraData;
-    napi_create_string_utf8(env, nwebResult.GetExtra().c_str(), NAPI_AUTO_LENGTH, &extraData);
-    napi_set_named_property(env, result, "extraData", extraData);
+    napi_value extra;
+    napi_create_string_utf8(env, nwebResult.GetExtra().c_str(), NAPI_AUTO_LENGTH, &extra);
+    napi_set_named_property(env, result, "extra", extra);
 
     return result;
 }
@@ -1360,7 +1345,6 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
 
 napi_value NapiWebviewController::DeleteJavaScriptRegister(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiWebviewController::DeleteJavaScriptRegister");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     size_t argc = INTEGER_ONE;
@@ -1381,6 +1365,7 @@ napi_value NapiWebviewController::DeleteJavaScriptRegister(napi_env env, napi_ca
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     ErrCode ret = controller->DeleteJavaScriptRegister(objName, {});
@@ -1444,6 +1429,7 @@ napi_value NapiWebviewController::RunJavaScriptInternal(napi_env env, napi_callb
     napi_unwrap(env, thisVar, (void **)&webviewController);
 
     if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
