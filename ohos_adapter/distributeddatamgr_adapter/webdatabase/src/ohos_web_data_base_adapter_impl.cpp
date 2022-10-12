@@ -15,6 +15,7 @@
 
 #include "ohos_web_data_base_adapter_impl.h"
 #include <cinttypes>
+#include <unistd.h>
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb_log.h"
 #include "sqlite_database_utils.h"
@@ -39,6 +40,8 @@ static const std::string CREATE_TABLE = "CREATE TABLE " + HTTPAUTH_TABLE_NAME
     + HTTPAUTH_PASSWORD_COL + " TEXT," + " UNIQUE ("
     + HTTPAUTH_HOST_COL + ", " + HTTPAUTH_REALM_COL
     + ") ON CONFLICT REPLACE);";
+
+const std::string WEB_PATH = "/web";
 
 int32_t DataBaseRdbOpenCallBack::OnCreate(OHOS::NativeRdb::RdbStore& store)
 {
@@ -69,8 +72,14 @@ OhosWebDataBaseAdapterImpl::OhosWebDataBaseAdapterImpl()
         WVLOG_E("webdatabase get context failed");
         return;
     }
+
+    std::string databaseDir = context->GetCacheDir() + WEB_PATH;
+    if (access(databaseDir.c_str(), F_OK) != 0) {
+        WVLOG_I("webdatabase fail to access cache web dir:%{public}s", databaseDir.c_str());
+        return;
+    }
+
     std::string bundleName = context->GetBundleName();
-    std::string databaseDir = context->GetDatabaseDir();
     std::string name = HTTP_AUTH_DATABASE_FILE;
     int32_t errorCode = E_OK;
     std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);

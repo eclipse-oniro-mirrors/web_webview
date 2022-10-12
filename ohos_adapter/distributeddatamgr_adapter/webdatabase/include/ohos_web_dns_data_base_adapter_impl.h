@@ -47,6 +47,8 @@ namespace OHOS::NWeb {
 
         void GetHostnames(std::vector<std::string>& hostnames) const override;
 
+        void ClearAllHostname() override;
+
     private:
         OhosWebDnsDataBaseAdapterImpl();
 
@@ -56,10 +58,6 @@ namespace OHOS::NWeb {
 
         std::shared_ptr<OHOS::NativeRdb::RdbStore> CreateDataBase(const std::string& dataBeseName,
                                                                   OHOS::NativeRdb::RdbOpenCallback& callBack);
-        
-        void DeleteOldestHostname();
-
-        int64_t CountHostname() const;
 
         std::shared_ptr<OHOS::NativeRdb::RdbStore> rdbStore_;
     };
