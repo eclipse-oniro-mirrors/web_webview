@@ -15,6 +15,7 @@
 
 #include "ohos_web_permission_data_base_adapter_impl.h"
 #include <cinttypes>
+#include <unistd.h>
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb_log.h"
 #include "sqlite_database_utils.h"
@@ -35,6 +36,8 @@ const std::string CREATE_TABLE = "CREATE TABLE " + GEOLOCATION_TABLE_NAME
     + " (" + ID_COL + " INTEGER PRIMARY KEY, "
     + PERMISSION_ORIGIN_COL + " TEXT, " + PERMISSION_RESULT_COL + " INTEGER, "
     + " UNIQUE (" + PERMISSION_ORIGIN_COL + ") ON CONFLICT REPLACE);";
+
+const std::string WEB_PATH = "/web";
 }
 
 int32_t PermissionDataBaseRdbOpenCallBack::OnCreate(OHOS::NativeRdb::RdbStore& store)
@@ -68,8 +71,14 @@ std::shared_ptr<OHOS::NativeRdb::RdbStore> OhosWebPermissionDataBaseAdapterImpl:
         WVLOG_E("web permission database get context failed");
         return rdbStore;
     }
+
+    std::string databaseDir = context->GetCacheDir() + WEB_PATH;
+    if (access(databaseDir.c_str(), F_OK) != 0) {
+        WVLOG_I("web permission database fail to access cache web dir:%{public}s", databaseDir.c_str());
+        return rdbStore;
+    }
+
     std::string bundleName = context->GetBundleName();
-    std::string databaseDir = context->GetDatabaseDir();
     std::string name = dataBeseName;
     int32_t errorCode = E_OK;
     std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
