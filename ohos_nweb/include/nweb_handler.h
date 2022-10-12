@@ -25,6 +25,7 @@
 #include "nweb_console_log.h"
 #include "nweb_context_menu_params.h"
 #include "nweb_controller_handler.h"
+#include "nweb_data_resubmission_callback.h"
 #include "nweb_file_selector_params.h"
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
@@ -462,6 +463,18 @@ public:
      * @brief Notification window close request.
      */
     virtual void OnWindowExitByJS() {}
+
+    /**
+     * @brief called when the page beging loaded is about to be made visible.
+     * @param url url.
+     */
+    virtual void OnPageVisible(const std::string& url) {}
+
+    /**
+     * @brief shows the repost from confirmation dialog box.
+     * @param handler sets whether to resend data.
+     */
+    virtual void OnDataResubmission(std::shared_ptr<NWebDataResubmissionCallback> handler) {}
 };
 }  // namespace OHOS::NWeb
 
