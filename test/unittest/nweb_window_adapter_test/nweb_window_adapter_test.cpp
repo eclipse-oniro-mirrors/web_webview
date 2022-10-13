@@ -149,12 +149,12 @@ HWTEST_F(NWebWindowAdapterTest, NWebWindowAdapter_OnInputEvent_002, TestSize.Lev
 }
 
 /**
- * @tc.name: NWebInputEvent_RequestVsync_002.
+ * @tc.name: NWebInputEvent_RequestVsync_003.
  * @tc.desc: Test the RequestVsync.
  * @tc.type: FUNC
  * @tc.require:issueI5R6E0
  */
-HWTEST_F(NWebWindowAdapterTest, NWebWindowAdapter_RequestVsync_002, TestSize.Level1)
+HWTEST_F(NWebWindowAdapterTest, NWebWindowAdapter_RequestVsync_003, TestSize.Level1)
 {
     auto windowAdapter = NWebWindowAdapter::Instance();
     sptr<OHOS::Rosen::Window> window = nullptr;
