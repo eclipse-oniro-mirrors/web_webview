@@ -16,6 +16,7 @@
 #include "ohos_web_dns_data_base_adapter_impl.h"
 
 #include <cinttypes>
+#include <unistd.h>
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb_log.h"
 #include "sqlite_database_utils.h"
@@ -33,8 +34,8 @@ namespace {
 
     const std::string CREATE_TABLE = "CREATE TABLE " + DNS_TABLE_NAME + " (" + ID_COL + " INTEGER PRIMARY KEY, " +
                                      HOSTNAME_COL + " TEXT, " + " UNIQUE (" + HOSTNAME_COL + ") ON CONFLICT REPLACE);";
-                                     
-    #define MAX_HOSTNAME_NUM 20
+
+    const std::string WEB_PATH = "/web";
 }
 
 int32_t DnsDataBaseRdbOpenCallBack::OnCreate(OHOS::NativeRdb::RdbStore& rdbStore)
@@ -52,7 +53,6 @@ int32_t DnsDataBaseRdbOpenCallBack::OnUpgrade(OHOS::NativeRdb::RdbStore& rdbStor
 
 OhosWebDnsDataBaseAdapterImpl& OhosWebDnsDataBaseAdapterImpl::GetInstance()
 {
-    WVLOG_I("webdatabase get dns data base instance");
     static OhosWebDnsDataBaseAdapterImpl instance;
     if (instance.rdbStore_ == nullptr) {
         WVLOG_I("webdatabase CreateDataBase");
@@ -73,8 +73,14 @@ std::shared_ptr<OHOS::NativeRdb::RdbStore> OhosWebDnsDataBaseAdapterImpl::Create
         WVLOG_E("web dns database get context failed");
         return rdbStore;
     }
+
+    std::string databaseDir = context->GetCacheDir() + WEB_PATH;
+    if (access(databaseDir.c_str(), F_OK) != 0) {
+        WVLOG_I("web dns database fail to access cache web dir:%{public}s", databaseDir.c_str());
+        return rdbStore;
+    }
+
     std::string bundleName = context->GetBundleName();
-    std::string databaseDir = context->GetDatabaseDir();
     std::string name = dataBeseName;
     int32_t errorCode = E_OK;
     std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
@@ -96,7 +102,6 @@ OhosWebDnsDataBaseAdapterImpl::OhosWebDnsDataBaseAdapterImpl() {}
 
 bool OhosWebDnsDataBaseAdapterImpl::ExistHostname(const std::string& hostname) const
 {
-    WVLOG_I("web dns database check exist hostname=%{public}s info", hostname.c_str());
     if (rdbStore_ == nullptr || hostname.empty()) {
         return false;
     }
@@ -110,7 +115,6 @@ bool OhosWebDnsDataBaseAdapterImpl::ExistHostname(const std::string& hostname) c
 
     std::vector<std::string>::iterator it = find(hostInfo.begin(), hostInfo.end(), hostname);
     if (it != hostInfo.end()) {
-        WVLOG_I("web dns database hostname does not exist.");
         return true;
     }
     return false;
@@ -121,10 +125,6 @@ void OhosWebDnsDataBaseAdapterImpl::InsertHostname(const std::string& hostname)
     WVLOG_I("web dns database set info hostname:%{public}s", hostname.c_str());
     if (rdbStore_ == nullptr || hostname.empty()) {
         return;
-    }
-
-    if (CountHostname() >= MAX_HOSTNAME_NUM) {
-        DeleteOldestHostname();
     }
 
     int32_t errCode;
@@ -158,40 +158,14 @@ void OhosWebDnsDataBaseAdapterImpl::GetHostnames(std::vector<std::string>& hostn
     } while (resultSet->GoToNextRow() == NativeRdb::E_OK);
 }
 
-void OhosWebDnsDataBaseAdapterImpl::DeleteOldestHostname()
+void OhosWebDnsDataBaseAdapterImpl::ClearAllHostname()
 {
-    WVLOG_I("web dns database clear oldest hostname");
     if (rdbStore_ == nullptr) {
         return;
     }
 
-    std::vector<std::string> hostInfo;
-    GetHostnames(hostInfo);
-    if (hostInfo.empty()) {
-        WVLOG_I("web dns database no hostinfo.");
-        return;
-    }
-    // delete the oldest cached hostname:hostInfo[0]
     int32_t deletedRows = 0;
     NativeRdb::AbsRdbPredicates dirAbsPred(DNS_TABLE_NAME);
-    dirAbsPred.EqualTo(HOSTNAME_COL, hostInfo[0]);
     int32_t ret = rdbStore_->Delete(deletedRows, dirAbsPred);
-    WVLOG_I("web dns database clear info: hostname=%{public}s, ret=%{public}d, deletedRows=%{public}d",
-            hostInfo[1].c_str(), ret, deletedRows);
-}
-
-int64_t OhosWebDnsDataBaseAdapterImpl::CountHostname() const
-{
-    WVLOG_I("web dns database count hostname info");
-    int64_t outValue = 0;
-    if (rdbStore_ == nullptr) {
-        return outValue;
-    }
-
-    NativeRdb::AbsRdbPredicates dirAbsPred(DNS_TABLE_NAME);
-    if (rdbStore_->Count(outValue, dirAbsPred) != NativeRdb::E_OK) {
-        return outValue;
-    }
-    WVLOG_I("web dns database count hostname info num = %{public}" PRId64, outValue);
-    return outValue;
+    WVLOG_I("web dns database clear all hostname: ret=%{public}d, deletedRows=%{public}d", ret, deletedRows);
 }
