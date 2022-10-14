@@ -73,6 +73,8 @@ public:
     virtual void InsertHostname(const std::string& hostname) = 0;
 
     virtual void GetHostnames(std::vector<std::string>& hostnames) const = 0;
+
+    virtual void ClearAllHostname() = 0;
 };
 } // namespace OHOS::NWeb
 #endif // OHOS_WEB_DATA_BASE_ADAPTER_H

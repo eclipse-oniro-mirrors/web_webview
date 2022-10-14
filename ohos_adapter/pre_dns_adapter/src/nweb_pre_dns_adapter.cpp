@@ -36,6 +36,7 @@ namespace OHOS::NWeb {
         OHOS::NWeb::OhosWebDnsDataBaseAdapter &dnsDatabaseAdapter =
             OHOS::NWeb::OhosAdapterHelper::GetInstance().GetWebDnsDataBaseInstance();
         dnsDatabaseAdapter.GetHostnames(hostInfo);
+        dnsDatabaseAdapter.ClearAllHostname();
         if (hostInfo.empty()) {
             WVLOG_I("PreDns no hostinfo.");
             return;
