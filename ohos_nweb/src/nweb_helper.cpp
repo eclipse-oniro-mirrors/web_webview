@@ -145,6 +145,7 @@ using CreateNWebFuncType = NWeb *(*)(const NWebCreateInfo &);
 std::shared_ptr<NWeb> NWebHelper::CreateNWeb(const NWebCreateInfo &create_info)
 {
     if (libHandleNWebAdapter_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
         return nullptr;
     }
 
@@ -169,6 +170,7 @@ using GetCookieManagerFunc = NWebCookieManager *(*)();
 NWebCookieManager *NWebHelper::GetCookieManager()
 {
     if (libHandleNWebAdapter_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
         return nullptr;
     }
 
@@ -186,6 +188,7 @@ using GetNWebFunc = NWeb *(*)(int32_t);
 NWeb *NWebHelper::GetNWeb(int32_t nweb_id)
 {
     if (libHandleNWebAdapter_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
         return nullptr;
     }
 
@@ -202,6 +205,7 @@ using GetDataBaseFunc = NWebDataBase *(*)();
 NWebDataBase *NWebHelper::GetDataBase()
 {
     if (libHandleNWebAdapter_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
         return nullptr;
     }
 
@@ -219,6 +223,7 @@ using GetWebStorageFunc = NWebWebStorage *(*)();
 NWebWebStorage *NWebHelper::GetWebStorage()
 {
     if (libHandleNWebAdapter_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
         return nullptr;
     }
     const std::string STORAGE_FUNC_NAME = "GetWebStorage";

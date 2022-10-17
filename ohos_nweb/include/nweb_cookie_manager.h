@@ -38,7 +38,7 @@ public:
 
     /**
      * @brief Set whether the instance should send and accept cookies.
-     * By default this is set to true and the nweb accepts cookies.
+     * By default this is set to be true and the nweb accepts cookies.
      *
      * @param accept whether the instance should send and accept cookies.
      */
@@ -53,8 +53,9 @@ public:
 
     /**
      * @brief Set whether the instance allows the use of third-party cookies.
+     * By default, this value is set to be false. Nweb does not allow the setting of third-party cookies.
      *
-     * @param allow whether the instance to use third-party cookies.
+     * @param allow whether the instance allows the setting of third-party cookies.
      */
     virtual void PutAcceptThirdPartyCookieEnabled(bool accept) = 0;
 
