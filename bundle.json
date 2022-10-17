@@ -122,7 +122,9 @@
                 "//base/web/webview/test/unittest/nweb_window_adapter_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/nweb_surface_adapter_test:unittest",
-                "//base/web/webview/test/unittest/soc_perf_adapter_test:unittest"
+                "//base/web/webview/test/unittest/soc_perf_adapter_test:unittest",
+                "//base/web/webview/test/unittest/pre_dns_adapter_test:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter/dns_data_base_adapter_test:unittest"
             ]
         }
     }
