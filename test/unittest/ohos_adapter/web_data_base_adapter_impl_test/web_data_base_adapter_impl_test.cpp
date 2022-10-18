@@ -37,6 +37,7 @@ namespace {
 const std::string TEST_HOST = "test_host";
 const std::string TEST_REALME = "test_realme";
 const char* TEST = "test";
+const std::string WEB_PATH = "/web";
 std::shared_ptr<NWeb::OhosWebDataBaseAdapter> g_dataBaseNull = nullptr;
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
@@ -62,7 +63,7 @@ public:
 class ApplicationContextMock : public ApplicationContext {
 public:
     MOCK_CONST_METHOD0(GetBundleName, std::string());
-    MOCK_METHOD0(GetDatabaseDir, std::string());
+    MOCK_METHOD0(GetCacheDir, std::string());
 };
 
 void WebDataBaseAdapterImplTest::InitPermissionDataBase(void)
@@ -80,11 +81,17 @@ void WebDataBaseAdapterImplTest::SetUpTestCase(void)
     EXPECT_CALL(*contextMock, GetBundleName())
         .Times(1)
         .WillRepeatedly(::testing::Return("com.example.testapplication"));
-    EXPECT_CALL(*contextMock, GetDatabaseDir())
-        .Times(1)
+    EXPECT_CALL(*contextMock, GetCacheDir())
+        .Times(3)
         .WillRepeatedly(::testing::Return("/data"));
 
     g_applicationContext.reset(contextMock);
+    g_dataBaseNull.reset(new OhosWebDataBaseAdapterImpl());
+    std::string databaseDir = g_applicationContext->GetCacheDir() + WEB_PATH;
+    if (access(databaseDir.c_str(), F_OK) != 0) {
+        result = mkdir(databaseDir.c_str(), 0700) == 0;
+        EXPECT_TRUE(result);
+    }
     InitPermissionDataBase();
     g_applicationContext.reset();
     g_dataBaseNull.reset(new OhosWebDataBaseAdapterImpl());
@@ -95,7 +102,9 @@ void WebDataBaseAdapterImplTest::SetUpTestCase(void)
 }
 
 void WebDataBaseAdapterImplTest::TearDownTestCase(void)
-{}
+{
+    system( "rm -rf /data/web");
+}
 
 void WebDataBaseAdapterImplTest::SetUp(void)
 {}
