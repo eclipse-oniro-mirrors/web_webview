@@ -482,7 +482,7 @@ public:
      * @param event The key event.
      * @return True if the host application wants to handle the key event itself, otherwise return false.
      */
-    virtual bool OnPerKeyEvent(std::shared_ptr<NWebKeyEvent> event) {
+    virtual bool OnPreKeyEvent(std::shared_ptr<NWebKeyEvent> event) {
         return false;
     }
 
