@@ -487,7 +487,7 @@ public:
     }
 
     /**
-     * @brief shows the repost from confirmation dialog box.
+     * @brief Notify the host application that a key was not handled by the WebView.
      * @param event The key event.
      * @return True if the host application wants to handle the key event itself, otherwise return false.
      */
