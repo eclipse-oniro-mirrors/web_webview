@@ -32,6 +32,37 @@
 namespace OHOS::NWeb {
 class NWebHandler;
 
+/**
+ * @brief Describes how pixel bits encoder color data.
+ */
+enum class ImageColorType {
+    // Unknown color type.
+    COLOR_TYPE_UNKNOWN = -1,
+
+    // RGBA with 8 bits per pixel (32bits total).
+    COLOR_TYPE_RGBA_8888 = 0,
+
+    // BGRA with 8 bits per pixel (32bits total).
+    COLOR_TYPE_BGRA_8888 = 1,
+};
+
+/**
+ * @brief Describes how to interpret the alpha value of a pixel.
+ */
+enum class ImageAlphaType {
+    // Unknown alpha type.
+    ALPHA_TYPE_UNKNOWN = -1,
+
+    // No transparency. The alpha component is ignored.
+    ALPHA_TYPE_OPAQUE = 0,
+
+    // Transparency with pre-multiplied alpha component.
+    ALPHA_TYPE_PREMULTIPLIED = 1,
+
+    // Transparency with post-multiplied alpha component.
+    ALPHA_TYPE_POSTMULTIPLIED = 2,
+};
+
 struct OHOS_NWEB_EXPORT NWebInitArgs {
     std::string dump_path = "";
     bool frame_info_dump = false;
@@ -491,6 +522,33 @@ public:
      * @param locale the locale name of current system setting.
      */
     virtual void UpdateLocale(const std::string& language, const std::string& region) = 0;
+
+    /**
+     * Get the original url of the current web page.
+     *
+     * @return original url
+     */
+    virtual const std::string GetOriginalUrl() const = 0;
+
+    /**
+     * get the favicon of the request web page.
+     *
+     * @param data the raw data of the favicon.
+     * @param width the width of the favicon.
+     * @param height the height of the favicon.
+     * @param colorType the color type of the favicon.
+     * @param alphaType the alpha type of the favicon.
+     * @return true if get the favicon successfully, otherwise return false.
+     */
+    virtual bool GetFavicon(const void** data, size_t& width, size_t& height,
+        ImageColorType& colorType, ImageAlphaType& alphaType) = 0;
+
+    /**
+     * Set the network status, just notify the webview to change the property of navigator.online.
+     *
+     * @param available the status of the network.
+     */
+    virtual void PutNetworkAvailable(bool available) = 0;
 };
 }  // namespace OHOS::NWeb
 
