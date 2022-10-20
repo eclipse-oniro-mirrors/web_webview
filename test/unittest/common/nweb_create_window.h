@@ -251,6 +251,18 @@ public:
     {}
     void UpdateLocale(const std::string& language, const std::string& region) override
     {}
+
+    const std::string GetOriginalUrl() const override
+    {
+        return "";
+    }
+    bool GetFavicon(const void** data, size_t& width, size_t& height,
+        ImageColorType& colorType, ImageAlphaType& alphaType) override
+    {
+        return false;
+    }
+    void PutNetworkAvailable(bool available) override
+    {}
 };
 }
 #endif
