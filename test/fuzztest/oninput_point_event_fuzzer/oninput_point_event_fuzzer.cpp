@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "oninputpointevent_fuzzer.h"
+#include "oninput_point_event_fuzzer.h"
 
 #include <cstring>
 #include <securec.h>
