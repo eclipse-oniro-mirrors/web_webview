@@ -553,7 +553,7 @@ public:
     /**
      * web has image or not
      *
-     * @return web has image or not
+     * @param web has image or not
      */
     virtual void HasImages(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
 };
