@@ -28,6 +28,8 @@
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 
+using namespace OHOS::NWeb;
+
 namespace OHOS {
     std::unordered_map<std::string, std::string> g_argsMap;
     const std::string ARG_URL = "--url";
@@ -119,7 +121,7 @@ namespace OHOS {
         if (window == nullptr) {
             return false;
         }
-        auto nweb =  = NWeb::NWebAdapterHelper::Instance().CreateNWeb(
+        auto nweb = NWeb::NWebAdapterHelper::Instance().CreateNWeb(
             window->GetSurfaceNode()->GetSurface(), GetInitArgs());
         if (nweb == nullptr) {
             return false;
@@ -130,6 +132,7 @@ namespace OHOS {
             return false;
         }
         inputEvent.OnInputEvent(pointerEvent);
+        return true;
     }
 }
 
