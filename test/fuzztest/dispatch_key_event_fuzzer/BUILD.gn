@@ -16,9 +16,10 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("OnInputPointEventFuzzTest") {
+ohos_fuzztest("Dispatch_Key_Event_FuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "//base/web/webview/test/fuzztest/oninputpointevent_fuzzer"
+  fuzz_config_file =
+      "//base/web/webview/test/fuzztest/dispatch_key_event_fuzzer"
 
   include_dirs = [
     "//base/web/webview/test/ohos_nweb",
@@ -34,7 +35,7 @@ ohos_fuzztest("OnInputPointEventFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "oninputpointevent_fuzzer.cpp" ]
+  sources = [ "dispatch_key_event_fuzzer.cpp" ]
   deps = [
     "//base/web/webview/ohos_nweb:libnweb",
     "//foundation/graphic/graphic_2d:libsurface",
@@ -52,7 +53,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":OnInputPointEventFuzzTest",
+    ":Dispatch_Key_Event_FuzzTest",
   ]
 }
 ###############################################################################
