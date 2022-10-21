@@ -26,6 +26,7 @@ ohos_fuzztest("OnInputPointEventFuzzTest") {
     "//base/web/webview/ohos_nweb",
     "//foundation/window/window_manager/interfaces/innerkits/wm",
     "//base/web/webview/test/fuzztest",
+    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
   ]
   cflags = [
     "-g",
@@ -41,6 +42,8 @@ ohos_fuzztest("OnInputPointEventFuzzTest") {
     "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
     "//foundation/window/window_manager/wm:libwm",
   ]
+
+  external_deps = [ "input:libmmi-client" ]
 }
 
 ###############################################################################
