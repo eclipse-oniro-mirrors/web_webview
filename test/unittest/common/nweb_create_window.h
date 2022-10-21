@@ -263,6 +263,9 @@ public:
     }
     void PutNetworkAvailable(bool available) override
     {}
+
+    void HasImages(std::shared_ptr<NWebValueCallback<bool>> callback) override
+    {}
 };
 }
 #endif
