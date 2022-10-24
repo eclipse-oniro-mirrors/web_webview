@@ -33,6 +33,7 @@
 #include "nweb_js_http_auth_result.h"
 #include "nweb_js_ssl_error_result.h"
 #include "nweb_js_ssl_select_cert_result.h"
+#include "nweb_key_event.h"
 #include "nweb_touch_handle_state.h"
 #include "nweb_url_resource_error.h"
 #include "nweb_url_resource_request.h"
@@ -444,6 +445,24 @@ public:
      * @param handler sets whether to resend data.
      */
     virtual void OnDataResubmission(std::shared_ptr<NWebDataResubmissionCallback> handler) {}
+
+    /**
+     * @brief Give the host application a chance to handle the key event synchronousl.
+     * @param event The key event.
+     * @return True if the host application wants to handle the key event itself, otherwise return false.
+     */
+    virtual bool OnPreKeyEvent(std::shared_ptr<NWebKeyEvent> event) {
+        return false;
+    }
+
+    /**
+     * @brief Notify the host application that a key was not handled by the WebView.
+     * @param event The key event.
+     * @return True if the host application wants to handle the key event itself, otherwise return false.
+     */
+    virtual bool OnUnProcessedKeyEvent(std::shared_ptr<NWebKeyEvent> event) {
+        return false;
+    }
 };
 }  // namespace OHOS::NWeb
 
