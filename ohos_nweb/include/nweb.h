@@ -549,6 +549,13 @@ public:
      * @param available the status of the network.
      */
     virtual void PutNetworkAvailable(bool available) = 0;
+
+    /**
+     * web has image or not
+     *
+     * @param web has image or not
+     */
+    virtual void HasImages(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
 };
 }  // namespace OHOS::NWeb
 
