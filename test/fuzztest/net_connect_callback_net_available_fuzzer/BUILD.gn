@@ -11,11 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
 
-##############################fuzztest##########################################
 ohos_fuzztest("NetConnectCallbackNetAvailableFuzzTest") {
   module_out_path = "web/webview"
   fuzz_config_file = "//base/web/webview/test/fuzztest/net_connect_callback_net_available_fuzzer"
@@ -61,7 +59,6 @@ ohos_fuzztest("NetConnectCallbackNetAvailableFuzzTest") {
   ]
 }
 
-###############################################################################
 group("fuzztest") {
   testonly = true
   deps = []
@@ -70,4 +67,3 @@ group("fuzztest") {
     ":NetConnectCallbackNetAvailableFuzzTest",
   ]
 }
-###############################################################################

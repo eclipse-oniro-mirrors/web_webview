@@ -11,11 +11,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-#####################hydra-fuzz###################
 import("//build/config/features.gni")
 import("//build/test.gni")
 
-##############################fuzztest##########################################
 ohos_fuzztest("NWebPowerMgrRunLockFuzzTest") {
   module_out_path = "web/webview"
   fuzz_config_file =
@@ -67,7 +65,6 @@ ohos_fuzztest("NWebPowerMgrRunLockFuzzTest") {
   ]
 }
 
-###############################################################################
 group("fuzztest") {
   testonly = true
   deps = []
@@ -76,4 +73,3 @@ group("fuzztest") {
     ":NWebPowerMgrRunLockFuzzTest",
   ]
 }
-###############################################################################
