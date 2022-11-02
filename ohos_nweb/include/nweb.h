@@ -553,9 +553,16 @@ public:
     /**
      * web has image or not
      *
-     * @param web has image or not
+     * @param callback has image or not
      */
     virtual void HasImages(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
+
+    /**
+     * web remove cache
+     *
+     * @param include_disk_files bool:if false, only tje RAM cache is removed
+     */
+    virtual void RemoveCache(bool include_disk_files) = 0;
 };
 }  // namespace OHOS::NWeb
 
