@@ -142,6 +142,9 @@ public:
 
     std::string GetUrl();
 
+    std::string GetOriginalUrl();
+
+    void PutNetworkAvailable(bool available);
 private:
     int ConverToWebHitTestType(int hitType);
 

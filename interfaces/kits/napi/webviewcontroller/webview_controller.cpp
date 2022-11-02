@@ -650,5 +650,20 @@ std::string WebviewController::GetUrl()
     return url;
 }
 
+std::string WebviewController::GetOriginalUrl()
+{
+    std::string url = "";
+    if (nweb_) {
+        url = nweb_->GetOriginalUrl();
+    }
+    return url;
+}
+
+void WebviewController::PutNetworkAvailable(bool available)
+{
+    if (nweb_) {
+        nweb_->PutNetworkAvailable(available);
+    }
+}
 } // namespace NWeb
 } // namespace OHOS

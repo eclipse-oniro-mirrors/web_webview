@@ -119,6 +119,10 @@ private:
         const std::string &script);
 
     static napi_value GetUrl(napi_env env, napi_callback_info info);
+     
+    static napi_value GetOriginalUrl(napi_env env, napi_callback_info info);
+
+    static napi_value PutNetworkAvailable(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {
