@@ -26,8 +26,8 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::shared_ptr<MMIAdapterImpl> AdapterImpl=std::make_shared<MMIAdapterImpl>();
-        std::string type((const char*) data,size);
+        std::shared_ptr<MMIAdapterImpl> AdapterImpl = std::make_shared<MMIAdapterImpl>();
+        std::string type((const char*) data, size);
         AdapterImpl->UnregisterDevListener(type);
         return true;
     }

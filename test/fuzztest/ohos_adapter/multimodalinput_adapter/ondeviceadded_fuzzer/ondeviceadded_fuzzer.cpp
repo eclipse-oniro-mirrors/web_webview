@@ -33,14 +33,14 @@ public:
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::shared_ptr<MMIListenerAdapter> listener=std::make_shared<MMIListenerTest>();
-        auto listenerAdapterImpl=std::make_shared<MMIListenerAdapterImpl>(listener);
+        std::shared_ptr<MMIListenerAdapter> listener = std::make_shared<MMIListenerTest>();
+        auto listenerAdapterImpl = std::make_shared<MMIListenerAdapterImpl>(listener);
         int32_t deviceId;
         if (memcpy_s(&deviceId, size, data, size) != 0) {
             return false;
         }
-        std::string type((const char*) data,size);
-        listenerAdapterImpl->OnDeviceAdded(deviceId,type);
+        std::string type((const char*) data, size);
+        listenerAdapterImpl->OnDeviceAdded(deviceId, type);
         return true;
     }
 }

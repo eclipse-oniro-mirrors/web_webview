@@ -18,8 +18,7 @@ import("//build/test.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("ClipboardToImageAlphaTypeFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file =
-      "//base/web/webview/test/fuzztest/ohos_adapter/pasteboard_adapter/clipboardtoimagealphatype_fuzzer"
+  fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_adapter/pasteboard_adapter/clipboardtoimagealphatype_fuzzer"
   include_dirs = [
     "//base/web/webview/ohos_adapter/pasteboard_adapter/include",
     "//foundation/distributeddatamgr/pasteboard/framework/innerkits/include",
@@ -33,9 +32,7 @@ ohos_fuzztest("ClipboardToImageAlphaTypeFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "clipboardtoimagealphatype_fuzzer.cpp" ]
-  deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "//base/web/webview/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "ability_base:base",

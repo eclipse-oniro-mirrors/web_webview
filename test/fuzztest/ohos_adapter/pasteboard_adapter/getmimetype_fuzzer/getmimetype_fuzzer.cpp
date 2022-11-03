@@ -27,7 +27,8 @@ namespace OHOS {
         std::string text((const char*) data, size);
         std::shared_ptr<std::string> plainText = std::make_shared<std::string>(text);
         std::shared_ptr<std::string> htmlText = std::make_shared<std::string>(text);
-        std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl=std::make_shared<PasteDataRecordAdapterImpl>(text, htmlText, plainText);
+        std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
+        std::make_shared<PasteDataRecordAdapterImpl>(text, htmlText, plainText);
         dataRecordAdapterImpl->GetMimeType();
         dataRecordAdapterImpl->GetHtmlText();
         dataRecordAdapterImpl->GetPlainText();
