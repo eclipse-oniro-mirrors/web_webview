@@ -266,6 +266,9 @@ public:
 
     void HasImages(std::shared_ptr<NWebValueCallback<bool>> callback) override
     {}
+
+    void RemoveCache(bool include_disk_files) override
+    {}
 };
 }
 #endif
