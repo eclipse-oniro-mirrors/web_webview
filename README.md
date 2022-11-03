@@ -1,23 +1,11 @@
 # web_webview
 ## Introduction
-nwebview is the native engine of the OpenHarmony web component and is built based on Chromium and the Chromium Embedded Framework (CEF).
+nweb is the native engine of the OpenHarmony webview component and is built based on Chromium and the Chromium Embedded Framework (CEF).
 ## Software Architecture
 Below is the software architecture.
-```
-    ------------------------------
-    |       Web component         |
-    ------------------------------
-    |      nwebview               |
-    ------------------------------
-    |        CEF                  |
-    ------------------------------
-    |      Chromium               |
-    ------------------------------
-    |  OpenHarmony base library   |
-    ------------------------------
-```
-* Web component: UI component in OpenHarmony.
-* nwebview: native engine of the OpenHarmony web component, which is built based on the Chromium Embedded Framework (CEF).
+![](figures/Web-architecture.png "web-architecture")
+* Webview component: UI component in OpenHarmony.
+* nweb: native engine of the OpenHarmony web component, which is built based on the Chromium Embedded Framework (CEF).
 * CEF: stands for Chromium Embedded Framework. It is an open-source project based on Google Chromium.
 * Chromium: an open-source web browser principally developed by Google and released under the BSD license and other permissive open-source licenses.
  ## Directory Structure
