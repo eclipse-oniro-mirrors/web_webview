@@ -24,8 +24,8 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string html((const char*) data,size);
-        std::shared_ptr<PasteDataAdapterImpl> dataAdapterImpl= std::make_shared<PasteDataAdapterImpl>();
+        std::string html((const char*) data, size);
+        std::shared_ptr<PasteDataAdapterImpl> dataAdapterImpl = std::make_shared<PasteDataAdapterImpl>();
         dataAdapterImpl->AddHtmlRecord(html);
         dataAdapterImpl->AddTextRecord(html);
         dataAdapterImpl->GetMimeTypes();

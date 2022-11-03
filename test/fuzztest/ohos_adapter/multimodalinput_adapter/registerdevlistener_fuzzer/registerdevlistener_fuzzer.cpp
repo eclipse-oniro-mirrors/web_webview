@@ -31,10 +31,10 @@ public:
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::shared_ptr<MMIListenerAdapter> listener=std::make_shared<MMIListenerTest>();
-        std::shared_ptr<MMIAdapterImpl> AdapterImpl=std::make_shared<MMIAdapterImpl>();
-        std::string type((const char*) data,size);
-        AdapterImpl->RegisterDevListener(type,listener);
+        std::shared_ptr<MMIListenerAdapter> listener = std::make_shared<MMIListenerTest>();
+        std::shared_ptr<MMIAdapterImpl> AdapterImpl = std::make_shared<MMIAdapterImpl>();
+        std::string type((const char*) data, size);
+        AdapterImpl->RegisterDevListener(type, listener);
         return true;
     }
 }

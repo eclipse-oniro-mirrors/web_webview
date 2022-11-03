@@ -26,7 +26,8 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =std::make_shared<PasteDataRecordAdapterImpl>("pixelMap");
+        std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
+        std::make_shared<PasteDataRecordAdapterImpl>("pixelMap");
         ClipBoardImageColorType colorType = ClipBoardImageColorType::COLOR_TYPE_RGBA_8888;
         dataRecordAdapterImpl->ClipboardToImageColorType(colorType);
         return true;

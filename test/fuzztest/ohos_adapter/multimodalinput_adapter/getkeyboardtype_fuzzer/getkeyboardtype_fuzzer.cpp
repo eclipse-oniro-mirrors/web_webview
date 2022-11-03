@@ -26,13 +26,13 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::shared_ptr<MMIAdapterImpl> AdapterImpl=std::make_shared<MMIAdapterImpl>();
+        std::shared_ptr<MMIAdapterImpl> AdapterImpl = std::make_shared<MMIAdapterImpl>();
         int32_t deviceId;
         if (memcpy_s(&deviceId, size, data, size) != 0) {
             return false;
         }
         auto callback = [](int32_t type) {};
-        AdapterImpl->GetKeyboardType(deviceId,callback);
+        AdapterImpl->GetKeyboardType(deviceId, callback);
         return true;
     }
 }

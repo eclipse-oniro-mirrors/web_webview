@@ -26,9 +26,10 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string text((const char*) data,size);
+        std::string text((const char*) data, size);
         ClipBoardImageData image;
-        std::shared_ptr<PasteDataRecordAdapterImpl>  dataRecordAdapterImpl =std::make_shared<PasteDataRecordAdapterImpl>(text);
+        std::shared_ptr<PasteDataRecordAdapterImpl>  dataRecordAdapterImpl =
+        std::make_shared<PasteDataRecordAdapterImpl>(text);
         dataRecordAdapterImpl->GetImgData(image);
         dataRecordAdapterImpl->GetUri();
         dataRecordAdapterImpl->GetCustomData();

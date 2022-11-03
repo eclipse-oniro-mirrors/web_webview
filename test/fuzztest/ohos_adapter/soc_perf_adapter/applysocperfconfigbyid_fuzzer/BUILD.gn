@@ -18,8 +18,7 @@ import("//build/test.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("ApplySocPerfConfigByIdFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file =
-      "//base/web/webview/test/fuzztest/ohos_adapter/soc_perf_adapter/applysocperfconfigbyid_fuzzer"
+  fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_adapter/soc_perf_adapter/applysocperfconfigbyid_fuzzer"
   include_dirs = [
     "//base/web/webview/interfaces/innerkits/ohos_nweb",
     "//base/web/webview/ohos_adapter/interfaces",
@@ -36,8 +35,8 @@ ohos_fuzztest("ApplySocPerfConfigByIdFuzzTest") {
   deps = [
     "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
     "//base/web/webview/ohos_nweb:libnweb",
-    "//third_party/zlib:libz",
     "//foundation/graphic/graphic_2d:libsurface",
+    "//third_party/zlib:libz",
   ]
 
   external_deps = [ "soc_perf:socperf_client" ]
