@@ -22,6 +22,7 @@
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
+#include "nweb_value_callback.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -32,6 +33,13 @@ public:
     NapiWebCookieManager() {}
 
     ~NapiWebCookieManager() = default;
+
+    struct WebCookieManagerParam {
+        napi_env env_;
+        napi_ref callback_;
+        napi_deferred deferred_;
+        bool result_;
+    };
 
     static napi_value Init(napi_env env, napi_value exports);
 
@@ -61,6 +69,19 @@ private:
     static napi_value JsDeleteSessionCookie(napi_env env, napi_callback_info info);
 
     static napi_value JsSaveCookieAsync(napi_env env, napi_callback_info info);
+};
+
+class NWebSaveCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<bool> {
+public:
+    NWebSaveCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
+        : env_(env), callback_(callback), deferred_(deferred) {}
+    ~NWebSaveCookieCallbackImpl() = default;
+
+    void OnReceiveValue(bool result) override;
+private:
+    napi_env env_;
+    napi_ref callback_;
+    napi_deferred deferred_;
 };
 } // namespace NWeb
 } // namespace OHOS
