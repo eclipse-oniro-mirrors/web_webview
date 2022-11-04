@@ -19,6 +19,7 @@
 #include <cstddef>
 #include <iosfwd>
 #include <string>
+#include <uv.h>
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
@@ -38,7 +39,6 @@ public:
         napi_env env_;
         napi_ref callback_;
         napi_deferred deferred_;
-        bool result_;
     };
 
     static napi_value Init(napi_env env, napi_value exports);
@@ -78,6 +78,8 @@ public:
     ~NWebSaveCookieCallbackImpl() = default;
 
     void OnReceiveValue(bool result) override;
+
+    static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
 private:
     napi_env env_;
     napi_ref callback_;
