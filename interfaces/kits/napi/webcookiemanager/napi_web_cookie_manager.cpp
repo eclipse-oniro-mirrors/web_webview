@@ -372,6 +372,42 @@ napi_value NapiWebCookieManager::JsSaveCookieAsync(napi_env env, napi_callback_i
     return promise;
 }
 
+void NWebSaveCookieCallbackImpl::UvJsCallbackThreadWoker(uv_work_t *work, int status)
+{
+    if (work == nullptr) {
+        WVLOG_E("uv work is null");
+        return;
+    }
+    NapiWebCookieManager::WebCookieManagerParam *data =
+        reinterpret_cast<NapiWebCookieManager::WebCookieManagerParam*>(work->data);
+    if (data == nullptr) {
+        WVLOG_E("WebCookieManagerParam is null");
+        delete work;
+        work = nullptr;
+        return;
+    }
+    if (data->callback_) {
+        napi_value result[INTEGER_ONE] = {0};
+        napi_get_null(data->env_, &result[INTEGER_ZERO]);
+
+        napi_value onSaveCookieFunc = nullptr;
+        napi_get_reference_value(data->env_, data->callback_, &onSaveCookieFunc);
+        napi_value callbackResult = nullptr;
+        napi_call_function(data->env_, nullptr, onSaveCookieFunc,
+            INTEGER_ONE, &result[INTEGER_ZERO], &callbackResult);
+        napi_delete_reference(data->env_, data->callback_);
+    } else if (data->deferred_) {
+        napi_value jsResult = nullptr;
+        napi_get_undefined(data->env_, &jsResult);
+        napi_resolve_deferred(data->env_, data->deferred_, jsResult);
+    }
+
+    delete data;
+    data = nullptr;
+    delete work;
+    work = nullptr;
+}
+
 void NWebSaveCookieCallbackImpl::OnReceiveValue(bool result)
 {
     WVLOG_D("save cookie received result, result = %{public}d", result);
@@ -397,41 +433,9 @@ void NWebSaveCookieCallbackImpl::OnReceiveValue(bool result)
     param->env_ = env_;
     param->callback_ = callback_;
     param->deferred_ = deferred_;
-    param->result_ = result;
+
     work->data = reinterpret_cast<void*>(param);
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
-        if (work == nullptr) {
-            WVLOG_E("uv work is null");
-            return;
-        }
-        NapiWebCookieManager::WebCookieManagerParam *data =
-            reinterpret_cast<NapiWebCookieManager::WebCookieManagerParam*>(work->data);
-        if (data == nullptr) {
-            WVLOG_E("WebCookieManagerParam is null");
-            delete work;
-            work = nullptr;
-            return;
-        }
-        if (data->callback_) {
-            napi_value result[INTEGER_ONE] = {0};
-            napi_get_null(data->env_, &result[INTEGER_ZERO]);
-
-            napi_value onSaveCookieFunc = nullptr;
-            napi_get_reference_value(data->env_, data->callback_, &onSaveCookieFunc);
-            napi_value callbackResult = nullptr;
-            napi_call_function(data->env_, nullptr, onSaveCookieFunc, INTEGER_ONE, &result[INTEGER_ZERO], &callbackResult);
-            napi_delete_reference(data->env_, data->callback_);
-        } else {
-            napi_value jsResult = nullptr;
-            napi_get_undefined(data->env_, &jsResult);
-            napi_resolve_deferred(data->env_, data->deferred_, jsResult);
-        }
-
-        delete data;
-        data = nullptr;
-        delete work;
-        work = nullptr;
-    });
+    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvJsCallbackThreadWoker);
     if (ret != 0) {
         if (param != nullptr) {
             delete param;
