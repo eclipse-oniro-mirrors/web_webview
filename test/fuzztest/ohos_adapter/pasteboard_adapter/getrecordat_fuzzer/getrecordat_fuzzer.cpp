@@ -21,11 +21,11 @@ using namespace OHOS::MiscServices;
 namespace OHOS {
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
-        if ((data == nullptr) || (size == 0)) {
+        if ((data == nullptr) || (size < sizeof(size_t))) {
             return false;
         }
-        std::size_t index;
-        if (memcpy_s(&index, size, data, size) != 0) {
+        std::size_t index = 0;
+        if (memcpy_s(&index, sizeof(size_t), data, sizeof(size_t)) != 0) {
             return false;
         }
         std::shared_ptr<PasteData> dataName = std::make_shared<PasteData>();
