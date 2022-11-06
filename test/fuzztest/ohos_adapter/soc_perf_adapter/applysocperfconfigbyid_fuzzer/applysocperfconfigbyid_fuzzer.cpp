@@ -23,11 +23,11 @@ using namespace OHOS::NWeb;
 namespace OHOS {
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
-        if ((data == nullptr) || (size == 0)) {
+        if ((data == nullptr) || (size < sizeof(int32_t))) {
             return false;
         }
         int32_t id;
-        if (memcpy_s(&id, size, data, size) != 0) {
+        if (memcpy_s(&id, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
             return false;
         }
         SocPerfClientAdapterImpl perfClientAdapterImpl;

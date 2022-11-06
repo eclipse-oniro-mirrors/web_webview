@@ -31,13 +31,13 @@ public:
 };
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
-        if ((data == nullptr) || (size == 0)) {
+        if ((data == nullptr) || (size < sizeof(int32_t))) {
             return false;
         }
         std::shared_ptr<MMIListenerAdapter> listener = std::make_shared<MMIListenerTest>();
         auto listenerAdapterImpl = std::make_shared<MMIListenerAdapterImpl>(listener);
         int32_t deviceId;
-        if (memcpy_s(&deviceId, size, data, size) != 0) {
+        if (memcpy_s(&deviceId, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
             return false;
         }
         std::string type((const char*) data, size);
