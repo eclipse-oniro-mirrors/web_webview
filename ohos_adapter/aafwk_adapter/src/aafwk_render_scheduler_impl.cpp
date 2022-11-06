@@ -23,7 +23,7 @@ AafwkRenderSchedulerImpl::AafwkRenderSchedulerImpl(std::shared_ptr<AafwkRenderSc
 
 void AafwkRenderSchedulerImpl::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd)
 {
-    WVLOG_E("received browser fd.");
+    WVLOG_D("received browser fd.");
     if (renderSchedulerHostAdapter_ == nullptr) {
         WVLOG_E("renderSchedulerHostAdapter_ is nullptr.");
         return;

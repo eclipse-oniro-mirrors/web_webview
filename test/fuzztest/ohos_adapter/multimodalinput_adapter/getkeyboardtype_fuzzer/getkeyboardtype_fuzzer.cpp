@@ -23,12 +23,12 @@ using namespace OHOS::NWeb;
 namespace OHOS {
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
-        if ((data == nullptr) || (size == 0)) {
+        if ((data == nullptr) || (size < sizeof(int32_t))) {
             return false;
         }
         std::shared_ptr<MMIAdapterImpl> AdapterImpl = std::make_shared<MMIAdapterImpl>();
         int32_t deviceId;
-        if (memcpy_s(&deviceId, size, data, size) != 0) {
+        if (memcpy_s(&deviceId, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
             return false;
         }
         auto callback = [](int32_t type) {};
