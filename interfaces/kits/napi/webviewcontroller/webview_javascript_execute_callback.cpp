@@ -29,63 +29,6 @@ constexpr int32_t RESULT_COUNT = 2;
 namespace OHOS::NWeb {
 using namespace NWebError;
 
-WebviewJavaScriptExecuteCallback::~WebviewJavaScriptExecuteCallback()
-{
-    WVLOG_D("WebviewJavaScriptExecuteCallback::~WebviewJavaScriptExecuteCallback");
-    if (callbackRef_ == nullptr) {
-        //napi_delete_reference(env_, callbackRef_);
-        return;
-    }
-
-    uv_loop_s *loop = nullptr;
-    uv_work_t *work = nullptr;
-    napi_get_uv_event_loop(env_, &loop);
-    if (loop == nullptr) {
-        return;
-    }
-    work = new (std::nothrow) uv_work_t;
-    if (work == nullptr) {
-        return;
-    }
-    JavaScriptExecuteParam *param = new (std::nothrow) JavaScriptExecuteParam();
-    if (param == nullptr) {
-        delete work;
-        return;
-    }
-    param->env_ = env_;
-    param->callbackRef_ = callbackRef_;
-    work->data = reinterpret_cast<void*>(param);
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
-        WVLOG_D("WebviewJavaScriptExecuteCallback::~WebviewJavaScriptExecuteCallback uv_queue_work");
-
-        if (work == nullptr) {
-            return;
-        }
-        JavaScriptExecuteParam *data = reinterpret_cast<JavaScriptExecuteParam*>(work->data);
-        if (data == nullptr) {
-            delete work;
-            work = nullptr;
-            return;
-        }
-
-        napi_delete_reference(data->env_, data->callbackRef_);
-        delete data;
-        data = nullptr;
-        delete work;
-        work = nullptr;
-    });
-    if (ret != 0) {
-        if (param != nullptr) {
-            delete param;
-            param = nullptr;
-        }
-        if (work != nullptr) {
-            delete work;
-            work = nullptr;
-        }
-    }
-}
-
 void WebviewJavaScriptExecuteCallback::OnReceiveValue(std::string result)
 {
     WVLOG_D("WebviewJavaScriptExecuteCallback::OnReceiveValue, result = %{public}s", result.c_str());
