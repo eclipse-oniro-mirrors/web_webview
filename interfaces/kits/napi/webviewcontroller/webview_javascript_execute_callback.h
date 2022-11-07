@@ -27,7 +27,7 @@ class WebviewJavaScriptExecuteCallback : public OHOS::NWeb::NWebValueCallback<st
 public:
     explicit WebviewJavaScriptExecuteCallback(napi_env env, napi_ref callbackRef, napi_deferred deferred)
         : env_(env), callbackRef_(callbackRef), deferred_(deferred) {}
-    ~WebviewJavaScriptExecuteCallback();
+    ~WebviewJavaScriptExecuteCallback() = default;
     void OnReceiveValue(std::string result) override;
 
 private:
