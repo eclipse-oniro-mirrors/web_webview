@@ -20,12 +20,6 @@
 #include "nweb_log.h"
 #include "web_errors.h"
 
-namespace {
-constexpr int32_t PARAMZERO = 0;
-constexpr int32_t PARAMONE = 1;
-constexpr int32_t RESULT_COUNT = 2;
-}
-
 namespace OHOS::NWeb {
 using namespace NWebError;
 
@@ -99,36 +93,37 @@ void WebviewJavaScriptExecuteCallback::UvAfterWorkCbAsync(napi_env env, napi_ref
     const std::string& result)
 {
     WVLOG_D("WebviewJavaScriptExecuteCallback::UvAfterWorkCbAsync");
-    napi_value setResult[RESULT_COUNT] = {0};
+    napi_value setResult[INTEGER_TWO] = {0};
     if (result.empty()) {
-        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
-        napi_get_null(env, &setResult[PARAMONE]);
+        setResult[INTEGER_ZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
+        napi_get_null(env, &setResult[INTEGER_ONE]);
     } else {
-        napi_get_undefined(env, &setResult[PARAMZERO]);
-        napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[PARAMONE]);
+        napi_get_undefined(env, &setResult[INTEGER_ZERO]);
+        napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[INTEGER_ONE]);
     }
     
-    napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+    napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
     napi_value callback = nullptr;
     napi_value callbackResult = nullptr;
 
     napi_get_reference_value(env, callbackRef, &callback);
-    napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
+    napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
+    napi_delete_reference(env, callbackRef);
 }
 
 void WebviewJavaScriptExecuteCallback::UvAfterWorkCbPromise(napi_env env, napi_deferred deferred,
     const std::string& result)
 {
     WVLOG_D("WebviewJavaScriptExecuteCallback::UvAfterWorkCbPromise");
-    napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
-    napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[PARAMONE]);
+    napi_value setResult[INTEGER_TWO] = {0};
+    setResult[INTEGER_ZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
+    napi_create_string_utf8(env, result.c_str(), NAPI_AUTO_LENGTH, &setResult[INTEGER_ONE]);
 
-    napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+    napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
     if (!result.empty()) {
-        napi_resolve_deferred(env, deferred, args[PARAMONE]);
+        napi_resolve_deferred(env, deferred, args[INTEGER_ONE]);
     } else {
-        napi_reject_deferred(env, deferred, args[PARAMZERO]);
+        napi_reject_deferred(env, deferred, args[INTEGER_ZERO]);
     }
 }
 
