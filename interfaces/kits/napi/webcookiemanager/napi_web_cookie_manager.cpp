@@ -16,14 +16,15 @@
 #include "napi_web_cookie_manager.h"
 
 #include <cstdint>
+#include <uv.h>
 #include <vector>
 
 #include "business_error.h"
 #include "napi/native_common.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_helper.h"
+#include "nweb_log.h"
 #include "napi_parse_utils.h"
-#include "nweb_save_cookie_callback.h"
 #include "web_errors.h"
 #include "securec.h"
 
@@ -310,23 +311,7 @@ void SaveCookieAsyncCallback(napi_env env, napi_ref jsCallback)
         napi_call_function(env, nullptr, callback, INTEGER_ONE, &jsResult, &callbackResult);
         napi_delete_reference(env, jsCallback);
     } else {
-        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallback>();
-        if (callbackImpl) {
-            callbackImpl->SetCallBack([env, jCallback = std::move(jsCallback)](bool result) {
-                if (!env) {
-                    return;
-                }
-                napi_value jsResult = nullptr;
-                napi_get_null(env, &jsResult);
-                napi_value callback = nullptr;
-                napi_get_reference_value(env, jCallback, &callback);
-                napi_value callbackResult = nullptr;
-                napi_call_function(env, nullptr, callback, INTEGER_ONE, &jsResult, &callbackResult);
-                napi_delete_reference(env, jCallback);
-            });
-        } else {
-            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        }
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(env, jsCallback, nullptr);
         cookieManager->Store(callbackImpl);
     }
 }
@@ -339,17 +324,7 @@ void SaveCookieAsyncPromise(napi_env env, napi_deferred deferred)
         napi_get_undefined(env, &jsResult);
         napi_reject_deferred(env, deferred, jsResult);
     } else {
-        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallback>();
-        if (callbackImpl) {
-            callbackImpl->SetCallBack([env, deferred](bool result) {
-                if (!env) {
-                    return;
-                }
-                napi_value jsResult = nullptr;
-                napi_get_undefined(env, &jsResult);
-                napi_resolve_deferred(env, deferred, jsResult);
-            });
-        }
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(env, nullptr, deferred);
         cookieManager->Store(callbackImpl);
     }
 }
@@ -395,6 +370,82 @@ napi_value NapiWebCookieManager::JsSaveCookieAsync(napi_env env, napi_callback_i
         SaveCookieAsyncPromise(env, deferred);
     }
     return promise;
+}
+
+void NWebSaveCookieCallbackImpl::UvJsCallbackThreadWoker(uv_work_t *work, int status)
+{
+    if (work == nullptr) {
+        WVLOG_E("uv work is null");
+        return;
+    }
+    NapiWebCookieManager::WebCookieManagerParam *data =
+        reinterpret_cast<NapiWebCookieManager::WebCookieManagerParam*>(work->data);
+    if (data == nullptr) {
+        WVLOG_E("WebCookieManagerParam is null");
+        delete work;
+        work = nullptr;
+        return;
+    }
+    if (data->callback_) {
+        napi_value result[INTEGER_ONE] = {0};
+        napi_get_null(data->env_, &result[INTEGER_ZERO]);
+
+        napi_value onSaveCookieFunc = nullptr;
+        napi_get_reference_value(data->env_, data->callback_, &onSaveCookieFunc);
+        napi_value callbackResult = nullptr;
+        napi_call_function(data->env_, nullptr, onSaveCookieFunc,
+            INTEGER_ONE, &result[INTEGER_ZERO], &callbackResult);
+        napi_delete_reference(data->env_, data->callback_);
+    } else if (data->deferred_) {
+        napi_value jsResult = nullptr;
+        napi_get_undefined(data->env_, &jsResult);
+        napi_resolve_deferred(data->env_, data->deferred_, jsResult);
+    }
+
+    delete data;
+    data = nullptr;
+    delete work;
+    work = nullptr;
+}
+
+void NWebSaveCookieCallbackImpl::OnReceiveValue(bool result)
+{
+    WVLOG_D("save cookie received result, result = %{public}d", result);
+    uv_loop_s *loop = nullptr;
+    uv_work_t *work = nullptr;
+    napi_get_uv_event_loop(env_, &loop);
+    if (loop == nullptr) {
+        WVLOG_E("get uv event loop failed");
+        return;
+    }
+    work = new (std::nothrow) uv_work_t;
+    if (work == nullptr) {
+        WVLOG_E("new uv work failed");
+        return;
+    }
+    NapiWebCookieManager::WebCookieManagerParam *param =
+        new (std::nothrow) NapiWebCookieManager::WebCookieManagerParam();
+    if (param == nullptr) {
+        WVLOG_E("new WebCookieManagerParam failed");
+        delete work;
+        return;
+    }
+    param->env_ = env_;
+    param->callback_ = callback_;
+    param->deferred_ = deferred_;
+
+    work->data = reinterpret_cast<void*>(param);
+    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvJsCallbackThreadWoker);
+    if (ret != 0) {
+        if (param != nullptr) {
+            delete param;
+            param = nullptr;
+        }
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+    }
 }
 } // namespace NWeb
 } // namespace OHOS
