@@ -269,6 +269,10 @@ public:
 
     void RemoveCache(bool include_disk_files) override
     {}
+    std::shared_ptr<NWebHistoryList> GetHistoryList() override
+    {
+        return nullptr;
+    }
 };
 }
 #endif
