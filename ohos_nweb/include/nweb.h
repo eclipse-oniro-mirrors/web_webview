@@ -24,6 +24,7 @@
 
 #include "nweb_download_callback.h"
 #include "nweb_find_callback.h"
+#include "nweb_history_list.h"
 #include "nweb_javascript_result_callback.h"
 #include "nweb_preference.h"
 #include "nweb_value_callback.h"
@@ -563,6 +564,13 @@ public:
      * @param include_disk_files bool:if false, only tje RAM cache is removed
      */
     virtual void RemoveCache(bool include_disk_files) = 0;
+
+    /**
+     * Get navigation history list
+     * 
+     * @return navigation history list
+    */
+    virtual std::shared_ptr<NWebHistoryList> GetHistoryList() = 0;
 };
 }  // namespace OHOS::NWeb
 
