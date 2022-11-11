@@ -21,12 +21,27 @@ using namespace OHOS::NWeb;
 namespace OHOS {
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
+        constexpr int ROE_BYTES = 5;
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
         std::shared_ptr<PasteDataRecordAdapterImpl>  dataRecordAdapterImpl =
         std::make_shared<PasteDataRecordAdapterImpl>("pixelMap");
+        uint32_t storage[][ROE_BYTES] = {
+            {0xCA, 0xDA, 0xCA, 0xC9, 0xA3},
+            {0xAC, 0xA8, 0x89, 0x47, 0x87},
+            {0x4B, 0x25, 0x25, 0x25, 0x46},
+            {0x90, 0x1, 0x25, 0x41, 0x33},
+            {0x75, 0x55, 0x44, 0x20, 0x00},
+        };
         ClipBoardImageData *image = new ClipBoardImageData;
+        image->colorType = ClipBoardImageColorType::COLOR_TYPE_BGRA_8888;
+        image->alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
+        image->data = storage[0];
+        image->dataSize = sizeof(storage);
+        image->rowBytes = ROE_BYTES;
+        image->width = ROE_BYTES;
+        image->height = ROE_BYTES;
         std::shared_ptr<ClipBoardImageData> imageData(image);
         dataRecordAdapterImpl->SetImgData(imageData);
         return true;

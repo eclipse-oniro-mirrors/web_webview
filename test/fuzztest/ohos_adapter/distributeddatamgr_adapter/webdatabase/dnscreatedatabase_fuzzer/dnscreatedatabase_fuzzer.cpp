@@ -29,7 +29,7 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string dataBeseName = (char *)data;
+        std::string dataBeseName((const char *)data, size);
         DnsDataBaseRdbOpenCallBack callBack;
         OhosWebDnsDataBaseAdapterImpl dataBase;
         dataBase.CreateDataBase(dataBeseName, callBack);

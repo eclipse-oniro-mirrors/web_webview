@@ -19,8 +19,10 @@
 #include <securec.h>
 
 #include "ohos_web_dns_data_base_adapter_impl.h"
+#include "sqlite_database_utils.h"
 
 using namespace OHOS::NWeb;
+using namespace OHOS::NativeRdb;
 
 namespace OHOS {
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
@@ -28,8 +30,17 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        NativeRdb::RdbStoreConfig config("");
-        int32_t errorCode = NativeRdb::E_OK;
+        std::string name = "web_test.db";
+        std::string bundleName = "com.example";
+        std::string databaseDir = "/data";
+        int32_t errorCode = E_OK;
+        std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
+        RdbStoreConfig config("");
+        config.SetPath(std::move(realPath));
+        config.SetBundleName(bundleName);
+        config.SetName(std::move(name));
+        config.SetArea(1);
+        errorCode = NativeRdb::E_OK;
         DnsDataBaseRdbOpenCallBack callBack;
         auto rdbStore = NativeRdb::RdbHelper::GetRdbStore(config, 1, callBack, errorCode);
         callBack.OnCreate(*(rdbStore.get()));

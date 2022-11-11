@@ -30,8 +30,8 @@ namespace OHOS {
         }
         WebPermissionType key = WebPermissionType::GEOLOCATION;
         std::vector<std::string> origins;
-        std::string origin1 = (char *)data;
-        std::string origin2 = (char *)data;
+        std::string origin1((const char *)data, size);
+        std::string origin2((const char *)data, size);
         origins.push_back(origin1);
         origins.push_back(origin2);
         OhosWebPermissionDataBaseAdapterImpl::GetInstance().GetOriginsByPermission(key, origins);

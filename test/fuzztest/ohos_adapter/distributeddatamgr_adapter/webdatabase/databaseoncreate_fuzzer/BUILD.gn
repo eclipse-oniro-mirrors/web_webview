@@ -22,6 +22,7 @@ ohos_fuzztest("DatabaseOnCreateFuzzTest") {
     "//base/web/webview/test/ohos_nweb",
     "//base\web/webview/ohos_adapter/distributeddatamgr_adapter/webdatabase/include",
     "//base/web/webview/test/fuzztest",
+    "//third_party/sqlite/include",
   ]
   cflags = [
     "-g",
