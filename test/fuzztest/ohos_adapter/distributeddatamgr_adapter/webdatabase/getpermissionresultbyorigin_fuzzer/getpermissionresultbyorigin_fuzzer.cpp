@@ -28,7 +28,7 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string origin = (char *)data;
+        std::string origin((const char *)data, size);
         WebPermissionType key = WebPermissionType::GEOLOCATION;
         bool result = true;
         OhosWebPermissionDataBaseAdapterImpl::GetInstance().GetPermissionResultByOrigin(origin, key, result);

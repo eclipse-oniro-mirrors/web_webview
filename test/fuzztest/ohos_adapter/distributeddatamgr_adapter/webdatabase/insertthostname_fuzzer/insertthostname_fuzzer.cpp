@@ -28,7 +28,7 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string hostname = (char *)data;
+        std::string hostname((const char *)data, size);
         OhosWebDnsDataBaseAdapterImpl::GetInstance().InsertHostname(hostname);
         return true;
     }
