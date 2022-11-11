@@ -29,8 +29,8 @@ namespace OHOS {
             return false;
         }
         std::vector<std::string> hostnames;
-        std::string hostname1 = (char *)data;
-        std::string hostname2 = (char *)data;
+        std::string hostname1((const char *)data, size);
+        std::string hostname2((const char *)data, size);
         hostnames.push_back(hostname1);
         hostnames.push_back(hostname2);
         OhosWebDnsDataBaseAdapterImpl::GetInstance().GetHostnames(hostnames);

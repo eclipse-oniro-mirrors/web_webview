@@ -28,7 +28,7 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string name = (char *)data;
+        std::string name((const char *)data, size);
         PowerMgrClientAdapterImpl powerMgrClientAdapter;
         powerMgrClientAdapter.CreateRunningLock(name, RunningLockAdapterType::SCREEN);
         return true;

@@ -28,10 +28,10 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string host = (char *)data;
-        std::string realm = (char *)data;
-        std::string name = (char *)data;
-        std::string str = (char *)data;
+        std::string host((const char *)data, size);
+        std::string realm((const char *)data, size);
+        std::string name((const char *)data, size);
+        std::string str((const char *)data, size);
         std::vector<std::string> user;
         user.push_back(name);
         user.push_back(str);
