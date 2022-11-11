@@ -48,23 +48,6 @@ namespace OHOS {
     }
 }
 
-using namespace OHOS::NWeb;
-
-namespace OHOS {
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        NativeRdb::RdbStoreConfig config("");
-        int32_t errorCode = NativeRdb::E_OK;
-        PermissionDataBaseRdbOpenCallBack callBack;
-        auto rdbStore = NativeRdb::RdbHelper::GetRdbStore(config, 1, callBack, errorCode);
-        callBack.OnCreate(*(rdbStore.get()));
-        return true;
-    }
-}
-
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
