@@ -28,9 +28,9 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::string host = (char *)data;
-        std::string realm = (char *)data;
-        std::string name = (char *)data;
+        std::string host((const char *)data, size);
+        std::string realm((const char *)data, size);
+        std::string name((const char *)data, size);
         const char* str = (char *)data;
         OhosWebDataBaseAdapterImpl::GetInstance().SaveHttpAuthCredentials(host, realm, name, str);
         return true;

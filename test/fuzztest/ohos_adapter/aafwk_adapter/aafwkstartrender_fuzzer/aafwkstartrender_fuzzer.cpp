@@ -32,7 +32,7 @@ namespace OHOS {
         AafwkAppMgrClientAdapterImpl render;
         int32_t ipcFd;
         int32_t sharedFd = 0;
-        std::string renderParam = (char *)data;
+        std::string renderParam((const char *)data, size);
         pid_t renderPid = 0;
         if (memcpy_s(&ipcFd, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
             return false;
