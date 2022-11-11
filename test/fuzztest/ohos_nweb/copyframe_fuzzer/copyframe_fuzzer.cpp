@@ -151,7 +151,13 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
         return false;
     }
     auto surfaceAdapter = NWebSurfaceAdapter::Instance();
-    char *src = new char[width * width * BITS_PER_PIXEL] {0};
+    if (width == 0 || height == 0) {
+        return false;
+    }
+    char *src = new char[width * height * BITS_PER_PIXEL] {0};
+    if (src == nullptr) {
+        return false;
+    }
     surfaceAdapter.CopyFrame(surfaceBuffer, src, width, height);
     delete[] src;
     return true;

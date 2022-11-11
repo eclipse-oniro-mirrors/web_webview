@@ -18,7 +18,8 @@ import("//build/test.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("GetWebStorageFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_nweb/getwebstorage_fuzzer"
+  fuzz_config_file =
+      "//base/web/webview/test/fuzztest/ohos_nweb/getwebstorage_fuzzer"
 
   include_dirs = [
     "//base/web/webview/test/ohos_nweb",
