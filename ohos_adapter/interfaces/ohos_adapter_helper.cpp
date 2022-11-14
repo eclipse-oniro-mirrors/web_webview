@@ -22,12 +22,14 @@
 #include "display_manager_adapter_impl.h"
 #include "mmi_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
+#include "ohos_resource_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
 #include "ohos_web_dns_data_base_adapter_impl.h"
 #include "ohos_web_permission_data_base_adapter_impl.h"
 #include "pasteboard_client_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
 #include "soc_perf_client_adapter_impl.h"
+#include "system_properties_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
@@ -100,5 +102,15 @@ std::unique_ptr<SocPerfClientAdapter> OhosAdapterHelper::CreateSocPerfClientAdap
 OhosWebDnsDataBaseAdapter &OhosAdapterHelper::GetWebDnsDataBaseInstance()
 {
     return OhosWebDnsDataBaseAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<OhosResourceAdapter> OhosAdapterHelper::GetResourceAdapter(const std::string& hapPath) const
+{
+    return std::make_unique<OhosResourceAdapterImpl>(hapPath);
+}
+
+SystemPropertiesAdapter& OhosAdapterHelper::GetSystemPropertiesInstance() const
+{
+    return SystemPropertiesAdapterImpl::GetInstance();
 }
 }  // namespace OHOS::NWeb
