@@ -225,16 +225,16 @@ public:
         return GSError::GSERROR_OK;
     }
 
-    GSError SetTransform(TransformType transform) override
+    GSError SetTransform(GraphicTransformType transform) override
     {
         return GSError::GSERROR_OK;
     }
-    TransformType GetTransform() const override
+    GraphicTransformType GetTransform() const override
     {
-        return TransformType::ROTATE_NONE;
+        return GraphicTransformType::GRAPHIC_ROTATE_NONE;
     }
 
-    GSError IsSupportedAlloc(const std::vector<VerifyAllocInfo> &infos,
+    GSError IsSupportedAlloc(const std::vector<BufferVerifyAllocInfo> &infos,
                              std::vector<bool> &supporteds) override
     {
         return GSError::GSERROR_OK;
@@ -251,11 +251,11 @@ public:
     {
         return GSError::GSERROR_OK;
     }
-    GSError SetMetaData(uint32_t sequence, const std::vector<HDRMetaData> &metaData) override
+    GSError SetMetaData(uint32_t sequence, const std::vector<GraphicHDRMetaData> &metaData) override
     {
         return GSError::GSERROR_OK;
     }
-    GSError SetMetaDataSet(uint32_t sequence, HDRMetadataKey key,
+    GSError SetMetaDataSet(uint32_t sequence, GraphicHDRMetadataKey key,
                            const std::vector<uint8_t> &metaData) override
     {
         return GSError::GSERROR_OK;
@@ -264,11 +264,11 @@ public:
     {
         return GSError::GSERROR_OK;
     }
-    GSError GetMetaData(uint32_t sequence, std::vector<HDRMetaData> &metaData) const override
+    GSError GetMetaData(uint32_t sequence, std::vector<GraphicHDRMetaData> &metaData) const override
     {
         return GSError::GSERROR_OK;
     }
-    GSError GetMetaDataSet(uint32_t sequence, HDRMetadataKey &key,
+    GSError GetMetaDataSet(uint32_t sequence, GraphicHDRMetadataKey &key,
                            std::vector<uint8_t> &metaData) const override
     {
         return GSError::GSERROR_OK;
@@ -281,11 +281,11 @@ public:
     {
         return nullptr;
     }
-    GSError SetPresentTimestamp(uint32_t sequence, const PresentTimestamp &timestamp) override
+    GSError SetPresentTimestamp(uint32_t sequence, const GraphicPresentTimestamp &timestamp) override
     {
         return GSError::GSERROR_OK;
     }
-    GSError GetPresentTimestamp(uint32_t sequence, PresentTimestampType type,
+    GSError GetPresentTimestamp(uint32_t sequence, GraphicPresentTimestampType type,
                                 int64_t &time) const override
     {
         return GSError::GSERROR_OK;
