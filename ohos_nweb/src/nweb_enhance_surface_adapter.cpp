@@ -33,9 +33,9 @@ NWebEnhanceSurfaceAdapter &NWebEnhanceSurfaceAdapter::Instance()
 }
 
 NWebCreateInfo NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo,
-                                                 const NWebInitArgs &initArgs,
-                                                 uint32_t width,
-                                                 uint32_t height)
+                                                        const NWebInitArgs &initArgs,
+                                                        uint32_t width,
+                                                        uint32_t height)
 {
     NWebCreateInfo createInfo = {
         .init_args = initArgs,

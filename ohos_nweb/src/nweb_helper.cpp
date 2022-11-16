@@ -284,8 +284,10 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const
     return nweb;
 }
 
-std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo, const NWebInitArgs &initArgs, uint32_t width,
-    uint32_t height)
+std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
+                                                    const NWebInitArgs &initArgs,
+                                                    uint32_t width,
+                                                    uint32_t height)
 {
     if (enhanceSurfaceInfo == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
