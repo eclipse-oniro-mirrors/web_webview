@@ -41,9 +41,6 @@ NWebCreateInfo NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo
         .init_args = initArgs,
         .enhance_surface_info = enhanceSurfaceInfo,
     };
-    if (enhanceSurfaceInfo == nullptr) {
-        return createInfo;
-    }
     return createInfo;
 }
 } // namespace OHOS::NWeb
