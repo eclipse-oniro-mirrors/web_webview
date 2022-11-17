@@ -297,15 +297,6 @@ public:
         std::shared_ptr<NWebDownloadCallback> downloadListener) = 0;
 
     /**
-     * Set the NWebReleaseSurfaceCallback that will receive release surface event.
-     * This will replace the current handler.
-     *
-     * @param releaseSurfaceListener NWebReleaseSurfaceCallback.
-     */
-    virtual void PutReleaseSurfaceCallback(
-        std::shared_ptr<NWebReleaseSurfaceCallback> releaseSurfaceListener) = 0;
-
-    /**
      * Set the NWebHandler that will receive various notifications and
      * requests. This will replace the current handler.
      *
@@ -584,6 +575,15 @@ public:
      * @return navigation history list
     */
     virtual std::shared_ptr<NWebHistoryList> GetHistoryList() = 0;
+
+    /**
+     * Set the NWebReleaseSurfaceCallback that will receive release surface event.
+     * This will replace the current handler.
+     *
+     * @param releaseSurfaceListener NWebReleaseSurfaceCallback.
+     */
+    virtual void PutReleaseSurfaceCallback(
+        std::shared_ptr<NWebReleaseSurfaceCallback> releaseSurfaceListener) = 0;
 };
 }  // namespace OHOS::NWeb
 
