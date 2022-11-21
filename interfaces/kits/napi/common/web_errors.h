@@ -36,6 +36,7 @@ constexpr ErrCode CANNOT_DEL_JAVA_SCRIPT_PROXY = 17100008;
 constexpr ErrCode CAN_NOT_POST_MESSAGE = 17100010;
 constexpr ErrCode INVALID_ORIGIN = 17100011;
 constexpr ErrCode NO_WEBSTORAGE_ORIGIN = 17100012;
+constexpr ErrCode NEW_OOM = 17100013;
 
 std::string GetErrMsgByErrCode(ErrCode code);
 }
