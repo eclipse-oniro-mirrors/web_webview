@@ -71,7 +71,7 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::shared_ptr<OHOS::Ability
     len = str.size();
     dest = std::make_unique<uint8_t[]>(len);
     if (!dest) {
-        WVLOG_E("GetFileBuffer make_unique failed, len: %{public}u", len);
+        WVLOG_E("GetFileBuffer make_unique failed");
         return false;
     }
     if (memcpy_s((char *)dest.get(), len, str.c_str(), len) != EOK) {
