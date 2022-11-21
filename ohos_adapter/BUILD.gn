@@ -38,10 +38,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     "net_connect_adapter/src/net_connect_adapter_impl.cpp",
     "net_connect_adapter/src/net_connect_callback_impl.cpp",
     "net_connect_adapter/src/net_connect_utils.cpp",
+    "ohos_resource_adapter/src/ohos_resource_adapter_impl.cpp",
     "pasteboard_adapter/src/pasteboard_client_adapter_impl.cpp",
     "power_mgr_adapter/src/power_mgr_client_adapter_impl.cpp",
     "pre_dns_adapter/src/nweb_pre_dns_adapter.cpp",
     "soc_perf_adapter/src/soc_perf_client_adapter_impl.cpp",
+    "system_properties_adapter/src/system_properties_adapter_impl.cpp",
   ]
 
   cflags = [
@@ -54,6 +56,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "aafwk_adapter/include",
     "display_manager_adapter/include",
     "net_connect_adapter/include",
+    "ohos_resource_adapter/include",
     "power_mgr_adapter/include",
     "battery_mgr_adapter/include",
     "distributeddatamgr_adapter/webdatabase/include",
@@ -61,6 +64,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "audio_adapter/include",
     "multimodalinput_adapter/include",
     "soc_perf_adapter/include",
+    "system_properties_adapter/include",
     "//base/web/webview/ohos_nweb/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
@@ -100,6 +104,7 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   deps = [
     "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
+    "//foundation/ability/ability_runtime/frameworks/native/runtime:runtime_extractor",
   ]
 
   part_name = "webview"
