@@ -27,6 +27,7 @@
 #include "nweb_history_list.h"
 #include "nweb_javascript_result_callback.h"
 #include "nweb_preference.h"
+#include "nweb_release_surface_callback.h"
 #include "nweb_value_callback.h"
 #include "nweb_hit_testresult.h"
 
@@ -70,6 +71,7 @@ struct OHOS_NWEB_EXPORT NWebInitArgs {
     std::list<std::string> web_engine_args_to_add;
     std::list<std::string> web_engine_args_to_delete;
     bool multi_renderer_process = false;
+    bool is_enhance_surface = false;
 };
 
 struct OHOS_NWEB_EXPORT NWebCreateInfo {
@@ -84,6 +86,8 @@ struct OHOS_NWEB_EXPORT NWebCreateInfo {
     NWebInitArgs init_args;
 
     void* producer_surface = nullptr;
+
+    void* enhance_surface_info = nullptr;
 };
 
 enum class OHOS_NWEB_EXPORT DragAction {
@@ -571,6 +575,15 @@ public:
      * @return navigation history list
     */
     virtual std::shared_ptr<NWebHistoryList> GetHistoryList() = 0;
+
+    /**
+     * Set the NWebReleaseSurfaceCallback that will receive release surface event.
+     * This will replace the current handler.
+     *
+     * @param releaseSurfaceListener NWebReleaseSurfaceCallback.
+     */
+    virtual void PutReleaseSurfaceCallback(
+        std::shared_ptr<NWebReleaseSurfaceCallback> releaseSurfaceListener) = 0;
 };
 }  // namespace OHOS::NWeb
 
