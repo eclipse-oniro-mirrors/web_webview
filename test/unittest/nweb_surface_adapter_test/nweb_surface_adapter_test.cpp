@@ -273,7 +273,7 @@ public:
     {
         return GSError::GSERROR_OK;
     }
-    GSError SetTunnelHandle(const ExtDataHandle *handle) override
+    GSError SetTunnelHandle(const OHExtDataHandle *handle) override
     {
         return GSError::GSERROR_OK;
     }
