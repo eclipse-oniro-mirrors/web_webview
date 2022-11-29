@@ -123,6 +123,8 @@ private:
     static napi_value GetOriginalUrl(napi_env env, napi_callback_info info);
 
     static napi_value PutNetworkAvailable(napi_env env, napi_callback_info info);
+
+    static napi_value InnerGetWebId(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {
