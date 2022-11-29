@@ -71,6 +71,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getUrl", NapiWebviewController::GetUrl),
         DECLARE_NAPI_FUNCTION("getOriginalUrl", NapiWebviewController::GetOriginalUrl),
         DECLARE_NAPI_FUNCTION("putNetworkAvailable", NapiWebviewController::PutNetworkAvailable),
+        DECLARE_NAPI_FUNCTION("innerGetWebId", NapiWebviewController::InnerGetWebId),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -1599,6 +1600,27 @@ napi_value NapiWebviewController::PutNetworkAvailable(napi_env env, napi_callbac
         return nullptr;
     }
     webviewController->PutNetworkAvailable(available);
+    return result;
+}
+
+napi_value NapiWebviewController::InnerGetWebId(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    int32_t webId = -1;
+    if ((!webviewController) || (status != napi_ok)) {
+        WVLOG_E("Init error. The WebviewController must be associated with a Web component.");
+        napi_create_int32(env, webId, &result);
+        return result;
+    }
+
+    webId = webviewController->GetWebId();
+    napi_create_int32(env, webId, &result);
+
     return result;
 }
 } // namespace NWeb
