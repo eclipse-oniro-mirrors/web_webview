@@ -276,6 +276,18 @@ public:
     {
         return nullptr;
     }
+    WebState SerializeWebState() override
+    {
+        return nullptr;
+    }
+    bool RestoreWebState(WebState state) override
+    {
+        return false;
+    }
+    void PageUp(bool top) override
+    {}
+    void PageDown(bool bottom) override
+    {}
 };
 }
 #endif
