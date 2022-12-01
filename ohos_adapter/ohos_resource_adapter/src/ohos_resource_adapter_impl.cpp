@@ -20,7 +20,7 @@
 
 #include "nweb_log.h"
 
-using namespace OHOS::AbilityRuntime;
+using namespace OHOS::AbilityBase;
 
 namespace {
 const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
@@ -34,14 +34,14 @@ OhosResourceAdapterImpl::OhosResourceAdapterImpl(const std::string& hapPath)
 
 void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 {
-    sysExtractor_ = RuntimeExtractor::Create(NWEB_HAP_PATH);
+    sysExtractor_ = Extractor::Create(NWEB_HAP_PATH);
     if (!sysExtractor_) {
         WVLOG_E("RuntimeExtractor create failed for %{public}s", NWEB_HAP_PATH.c_str());
     }
     if (hapPath.empty()) {
         return;
     }
-    extractor_ = RuntimeExtractor::Create(hapPath);
+    extractor_ = Extractor::Create(hapPath);
     if (!extractor_) {
         WVLOG_E("RuntimeExtractor create failed for %{public}s", hapPath.c_str());
     }
@@ -54,7 +54,7 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t&
 }
 
 // static
-bool OhosResourceAdapterImpl::GetRawFileData(const std::shared_ptr<OHOS::AbilityRuntime::RuntimeExtractor>& manager,
+bool OhosResourceAdapterImpl::GetRawFileData(const std::shared_ptr<Extractor>& manager,
     const std::string& rawFile, size_t& len, std::unique_ptr<uint8_t[]>& dest)
 {
     if (!manager) {
