@@ -73,6 +73,7 @@ ohos_shared_library("nweb_ohos_adapter") {
   public_configs = [ ":ohos_adapter_public_interface" ]
 
   external_deps = [
+    "ability_base:extractortool",
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:app_manager",
@@ -104,7 +105,6 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   deps = [
     "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
-    "//foundation/ability/ability_runtime/frameworks/native/runtime:runtime_extractor",
   ]
 
   part_name = "webview"
