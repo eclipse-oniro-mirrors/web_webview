@@ -17,7 +17,7 @@
 #define OHOS_RESOURCE_ADAPTER_IMPL_H
 
 #include "ohos_resource_adapter.h"
-#include "runtime_extractor.h"
+#include "extractor.h"
 
 namespace OHOS::NWeb {
 class OhosResourceAdapterImpl : public OhosResourceAdapter {
@@ -32,11 +32,11 @@ public:
 private:
     void Init(const std::string& hapPath);
     
-    static bool GetRawFileData(const std::shared_ptr<OHOS::AbilityRuntime::RuntimeExtractor>& manager,
+    static bool GetRawFileData(const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
         const std::string& rawFile, size_t& len, std::unique_ptr<uint8_t[]>& dest);
 
-    std::shared_ptr<OHOS::AbilityRuntime::RuntimeExtractor> sysExtractor_;
-    std::shared_ptr<OHOS::AbilityRuntime::RuntimeExtractor> extractor_;
+    std::shared_ptr<OHOS::AbilityBase::Extractor> sysExtractor_;
+    std::shared_ptr<OHOS::AbilityBase::Extractor> extractor_;
 };
 }  // namespace OHOS::NWeb
 
