@@ -55,8 +55,6 @@ ohos_shared_library("webview_napi") {
   external_deps = [
     "ability_runtime:app_context",
     "hiviewdfx_hilog_native:libhilog",
-    "multimedia_image_framework:image",
-    "multimedia_image_framework:image_native",
     "napi:ace_napi",
     "webview:libnweb",
   ]

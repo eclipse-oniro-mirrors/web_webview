@@ -22,8 +22,6 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
-#include "pixel_map.h"
-#include "pixel_map_napi.h"
 #include "web_errors.h"
 #include "webview_javascript_execute_callback.h"
 
@@ -31,7 +29,6 @@ namespace OHOS {
 namespace NWeb {
 using namespace NWebError;
 thread_local napi_ref g_classWebMsgPort;
-thread_local napi_ref g_historyListRef;
 napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
@@ -77,8 +74,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("innerGetWebId", NapiWebviewController::InnerGetWebId),
         DECLARE_NAPI_FUNCTION("hasImage", NapiWebviewController::HasImage),
         DECLARE_NAPI_FUNCTION("removeCache", NapiWebviewController::RemoveCache),
-        DECLARE_NAPI_FUNCTION("getFavicon", NapiWebviewController::GetFavicon),
-        DECLARE_NAPI_FUNCTION("getBackForwardEntries", NapiWebviewController::getBackForwardEntries),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -123,16 +118,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(hitTestTypeProperties) /
         sizeof(hitTestTypeProperties[0]), hitTestTypeProperties, &hitTestTypeEnum);
     napi_set_named_property(env, exports, WEB_HITTESTTYPE_V9_ENUM_NAME.c_str(), hitTestTypeEnum);
-
-    napi_value historyList = nullptr;
-    napi_property_descriptor historyListProperties[] = {
-        DECLARE_NAPI_FUNCTION("getItemAtIndex", NapiWebHistoryList::GetItem)
-    };
-    napi_define_class(env, WEB_HISTORY_LIST_CLASS_NAME.c_str(), WEB_HISTORY_LIST_CLASS_NAME.length(),
-        NapiWebHistoryList::JsConstructor, nullptr, sizeof(historyListProperties) / sizeof(historyListProperties[0]),
-        historyListProperties, &historyList);
-    napi_create_reference(env, historyList, 1, &g_historyListRef);
-    napi_set_named_property(env, exports, WEB_HISTORY_LIST_CLASS_NAME.c_str(), historyList);
     
     return exports;
 }
@@ -1738,250 +1723,5 @@ napi_value NapiWebviewController::RemoveCache(napi_env env, napi_callback_info i
     webviewController->RemoveCache(include_disk_files);
     return result;
 }
-
-napi_value NapiWebHistoryList::JsConstructor(napi_env env, napi_callback_info info)
-{
-    napi_value thisVar = nullptr;
-    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
-    return thisVar;
-}
-
-napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHistoryItem> item)
-{
-    napi_value result = nullptr;
-    void *data = nullptr;
-    int32_t width = 0;
-    int32_t height = 0;
-    ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
-    ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
-    bool isGetFavicon = item->GetFavicon(&data, width, height, colorType, alphaType);
-
-    if (!isGetFavicon) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_RESOURCE);
-        return result;
-    }
-
-    Media::InitializationOptions opt;
-    opt.size.width = width;
-    opt.size.height = height;
-    switch (colorType) {
-        case ImageColorType::COLOR_TYPE_UNKNOWN:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-        case ImageColorType::COLOR_TYPE_RGBA_8888:
-            opt.pixelFormat = Media::PixelFormat::RGBA_8888;
-            break;
-        case ImageColorType::COLOR_TYPE_BGRA_8888:
-            opt.pixelFormat = Media::PixelFormat::BGRA_8888;
-            break;
-        default:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-    }
-    switch (alphaType) {
-        case ImageAlphaType::ALPHA_TYPE_UNKNOWN:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_OPAQUE:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_PREMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_POSTMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
-            break;
-        default:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-    }
-
-    const uint32_t *colors = static_cast<const uint32_t *>(data);
-    uint32_t colorLength = static_cast<uint32_t>(width * height);
-
-    auto pixelMap = Media::PixelMap::Create(colors, colorLength, opt);
-    if (pixelMap == nullptr) {
-        return result;
-    }
-    std::shared_ptr<Media::PixelMap> pixelMapToJs(pixelMap.release());
-    napi_value jsPixelMap = OHOS::Media::PixelMapNapi::CreatePixelMap(env, pixelMapToJs);
-    return jsPixelMap;
-}
-
-napi_value NapiWebHistoryList::GetItem(napi_env env, napi_callback_info info)
-{
-    napi_value thisVar = nullptr;
-    napi_value result = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE] = { 0 };
-    int32_t index;
-
-    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
-    }
-    
-    if (!NapiParseUtils::ParseInt32(env, argv[0], index)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
-    }
-
-    WebHistoryList *historyList = nullptr;
-    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&historyList));
-    if (historyList == nullptr) {
-        return result;
-    }
-    std::shared_ptr<NWebHistoryItem> item = historyList->GetItem(index);
-    if (!item) {
-        return result;
-    }
-
-    napi_create_object(env, &result);
-    std::string historyUrl = item->GetHistoryUrl();
-    std::string historyRawUrl = item->GetHistoryRawUrl();
-    std::string title = item->GetHistoryTitle();
-
-    napi_value js_historyUrl;
-    napi_create_string_utf8(env, historyUrl.c_str(), historyUrl.length(), &js_historyUrl);
-    napi_set_named_property(env, result, "historyUrl", js_historyUrl);
-
-    napi_value js_historyRawUrl;
-    napi_create_string_utf8(env, historyRawUrl.c_str(), historyRawUrl.length(), &js_historyRawUrl);
-    napi_set_named_property(env, result, "historyRawUrl", js_historyRawUrl);
-
-    napi_value js_title;
-    napi_create_string_utf8(env, title.c_str(), title.length(), &js_title);
-    napi_set_named_property(env, result, "title", js_title);
-
-    napi_value js_icon;
-    js_icon = GetFavicon(env, item);
-    napi_set_named_property(env, result, "icon", js_icon);
-    return result;
-}
-
-napi_value NapiWebviewController::getBackForwardEntries(napi_env env, napi_callback_info info)
-{
-    napi_value thisVar = nullptr;
-    napi_value result = nullptr;
-    WebviewController *webviewController = nullptr;
-
-    NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr));
-    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
-    if (webviewController == nullptr) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
-        return nullptr;
-    }
-
-    std::shared_ptr<NWebHistoryList> list = webviewController->GetHistoryList();
-    if (!list) {
-        return result;
-    }
-
-    WebHistoryList *webHistoryList = new WebHistoryList(list);
-    if (webHistoryList == nullptr) {
-        return result;
-    }
-
-    int32_t currentIndex = list->GetCurrentIndex();
-    int32_t size = list->GetListSize();
-
-    napi_value historyList = nullptr;
-    NAPI_CALL(env, napi_get_reference_value(env, g_historyListRef, &historyList));
-    NAPI_CALL(env, napi_new_instance(env, historyList, 0, NULL, &result));
-
-
-    napi_value js_currentIndex;
-    napi_create_int32(env, currentIndex, &js_currentIndex);
-    napi_set_named_property(env, result, "currentIndex", js_currentIndex);
-
-    napi_value js_size;
-    napi_create_int32(env, size, &js_size);
-    napi_set_named_property(env, result, "size", js_size);
-    NAPI_CALL(env, napi_wrap(env, result, webHistoryList,
-        [](napi_env env, void *data, void *hint) {
-            WebHistoryList *webHistoryList = static_cast<WebHistoryList *>(data);
-            delete webHistoryList;
-        },
-        nullptr, nullptr));
-
-    return result;
-}
-
-napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info info)
-{
-    napi_value thisVar = nullptr;
-    napi_value result = nullptr;
-    napi_get_undefined(env, &result);
-    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
-
-    WebviewController *webviewController = nullptr;
-    napi_unwrap(env, thisVar, (void **)&webviewController);
-
-    if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
-        return result;
-    }
-
-    const void *data = nullptr;
-    size_t width = 0;
-    size_t height = 0;
-    ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
-    ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
-    bool isGetFavicon = webviewController->GetFavicon(&data, width, height, colorType, alphaType);
-
-    if (!isGetFavicon) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_RESOURCE);
-        return result;
-    }
-
-    // create pixelmap
-    Media::InitializationOptions opt;
-    opt.size.width = static_cast<int32_t>(width);
-    opt.size.height = static_cast<int32_t>(height);
-    switch (colorType) {
-        case ImageColorType::COLOR_TYPE_UNKNOWN:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-        case ImageColorType::COLOR_TYPE_RGBA_8888:
-            opt.pixelFormat = Media::PixelFormat::RGBA_8888;
-            break;
-        case ImageColorType::COLOR_TYPE_BGRA_8888:
-            opt.pixelFormat = Media::PixelFormat::BGRA_8888;
-            break;
-        default:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-    }
-    switch (alphaType) {
-        case ImageAlphaType::ALPHA_TYPE_UNKNOWN:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_OPAQUE:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_PREMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_POSTMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
-            break;
-        default:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-    }
-
-    const uint32_t *colors = static_cast<const uint32_t *>(data);
-    uint32_t colorLength = static_cast<uint32_t>(width * height);
-
-    auto pixelMap = Media::PixelMap::Create(colors, colorLength, opt);
-    if (pixelMap == nullptr) {
-        return result;
-    }
-    std::shared_ptr<Media::PixelMap> pixelMapToJs(pixelMap.release());
-    napi_value jsPixelMap = OHOS::Media::PixelMapNapi::CreatePixelMap(env, pixelMapToJs);
-    return jsPixelMap;
-}
-
 } // namespace NWeb
 } // namespace OHOS

@@ -153,11 +153,6 @@ public:
     void HasImagePromise(napi_env env, napi_deferred deferred);
 
     void RemoveCache(bool include_disk_files);
-
-    std::shared_ptr<NWebHistoryList> GetHistoryList();
-
-    bool GetFavicon(
-        const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType);
 private:
     int ConverToWebHitTestType(int hitType);
 
@@ -203,21 +198,6 @@ public:
 
 private:
     std::function<void(bool)> callback_;
-};
-
-class WebHistoryList {
-public:
-    WebHistoryList(std::shared_ptr<NWebHistoryList> sptrHistoryList) : sptrHistoryList_(sptrHistoryList) {};
-    ~WebHistoryList() = default;
-
-    int32_t GetCurrentIndex();
-
-    std::shared_ptr<NWebHistoryItem> GetItem(int32_t index);
-
-    int32_t GetListSize();
-private:
-    OHOS::NWeb::NWeb* nweb_ = nullptr;
-    std::shared_ptr<NWebHistoryList> sptrHistoryList_ = nullptr;
 };
 } // namespace NWeb
 } // namespace OHOS
