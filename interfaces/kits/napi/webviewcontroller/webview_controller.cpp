@@ -626,11 +626,121 @@ std::string WebviewController::GetOriginalUrl()
     return url;
 }
 
-void WebviewController::PutNetworkAvailable(bool available)
+void WebviewController::PutNetworkAvailable(bool enable)
 {
     if (nweb_) {
-        nweb_->PutNetworkAvailable(available);
+        nweb_->PutNetworkAvailable(enable);
     }
 }
+
+void WebviewController::HasImageCallback(napi_env env, napi_ref jsCallback)
+{
+    if (!nweb_) {
+        napi_value setResult[RESULT_COUNT] = {0};
+        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR);
+        napi_get_null(env, &setResult[PARAMONE]);
+
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+        napi_value callback = nullptr;
+        napi_get_reference_value(env, jsCallback, &callback);
+        napi_value callbackResult = nullptr;
+        napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
+        napi_delete_reference(env, jsCallback);
+        return;
+    }
+
+    if (jsCallback == nullptr) {
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<OHOS::NWeb::NWebHasImageCallback>();
+    callbackImpl->SetCallBack([env, jCallback = std::move(jsCallback)](bool result) {
+        if (!env) {
+            return;
+        }
+        napi_value setResult[RESULT_COUNT] = { 0 };
+        napi_get_undefined(env, &setResult[PARAMZERO]);
+        napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[PARAMONE]);
+        if (getBooleanResult != napi_ok) {
+            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
+            napi_get_null(env, &setResult[PARAMONE]);
+        }
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+        napi_value callback = nullptr;
+        napi_get_reference_value(env, jCallback, &callback);
+        napi_value callbackResult = nullptr;
+        napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
+
+        napi_delete_reference(env, jCallback);
+    });
+    nweb_->HasImages(callbackImpl);
+    return;
+}
+
+void WebviewController::HasImagePromise(napi_env env, napi_deferred deferred)
+{
+    if (!nweb_) {
+        napi_value jsResult = nullptr;
+        jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
+        napi_reject_deferred(env, deferred, jsResult);
+        return;
+    }
+
+    if (deferred == nullptr) {
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<OHOS::NWeb::NWebHasImageCallback>();
+    callbackImpl->SetCallBack([env, deferred](bool result) {
+        if (!env) {
+            return;
+        }
+        napi_value setResult[RESULT_COUNT] = {0};
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
+        napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[PARAMONE]);
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+        if (getBooleanResult == napi_ok) {
+            napi_resolve_deferred(env, deferred, args[PARAMONE]);
+        } else {
+            napi_reject_deferred(env, deferred, args[PARAMZERO]);
+        }
+    });
+    nweb_->HasImages(callbackImpl);
+    return;
+}
+
+void WebviewController::RemoveCache(bool include_disk_files)
+{
+    if (nweb_) {
+        nweb_->RemoveCache(include_disk_files);
+    }
+}
+
+std::shared_ptr<NWebHistoryList> WebviewController::GetHistoryList()
+{
+    if (!nweb_) {
+        return nullptr;
+    }
+    return nweb_->GetHistoryList();
+}
+
+std::shared_ptr<NWebHistoryItem> WebHistoryList::GetItem(int32_t index)
+{
+    if (!sptrHistoryList_) {
+        return nullptr;
+    }
+    return sptrHistoryList_->GetItem(index);
+}
+
+bool WebviewController::GetFavicon(
+    const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType)
+{
+    bool isGetFavicon = false;
+    if (nweb_) {
+        isGetFavicon = nweb_->GetFavicon(data, width, height, colorType, alphaType);
+    }
+    return isGetFavicon;
+}
+
 } // namespace NWeb
 } // namespace OHOS
