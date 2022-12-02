@@ -715,32 +715,5 @@ void WebviewController::RemoveCache(bool include_disk_files)
         nweb_->RemoveCache(include_disk_files);
     }
 }
-
-std::shared_ptr<NWebHistoryList> WebviewController::GetHistoryList()
-{
-    if (!nweb_) {
-        return nullptr;
-    }
-    return nweb_->GetHistoryList();
-}
-
-std::shared_ptr<NWebHistoryItem> WebHistoryList::GetItem(int32_t index)
-{
-    if (!sptrHistoryList_) {
-        return nullptr;
-    }
-    return sptrHistoryList_->GetItem(index);
-}
-
-bool WebviewController::GetFavicon(
-    const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType)
-{
-    bool isGetFavicon = false;
-    if (nweb_) {
-        isGetFavicon = nweb_->GetFavicon(data, width, height, colorType, alphaType);
-    }
-    return isGetFavicon;
-}
-
 } // namespace NWeb
 } // namespace OHOS
