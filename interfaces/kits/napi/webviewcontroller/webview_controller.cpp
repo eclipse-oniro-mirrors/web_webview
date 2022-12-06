@@ -22,6 +22,7 @@
 #include "nweb_store_web_archive_callback.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_javascript_result_callback.h"
+#include "webview_hasimage_callback.h"
 #include "web_errors.h"
 
 namespace {
@@ -633,7 +634,7 @@ void WebviewController::PutNetworkAvailable(bool enable)
     }
 }
 
-void WebviewController::HasImageCallback(napi_env env, napi_ref jsCallback)
+ErrCode WebviewController::HasImagesCallback(napi_env env, napi_ref jsCallback)
 {
     if (!nweb_) {
         napi_value setResult[RESULT_COUNT] = {0};
@@ -646,67 +647,34 @@ void WebviewController::HasImageCallback(napi_env env, napi_ref jsCallback)
         napi_value callbackResult = nullptr;
         napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
         napi_delete_reference(env, jsCallback);
-        return;
+        return NWebError::INIT_ERROR;
     }
 
     if (jsCallback == nullptr) {
-        return;
+        return NWebError::PARAM_CHECK_ERROR;
     }
 
-    auto callbackImpl = std::make_shared<OHOS::NWeb::NWebHasImageCallback>();
-    callbackImpl->SetCallBack([env, jCallback = std::move(jsCallback)](bool result) {
-        if (!env) {
-            return;
-        }
-        napi_value setResult[RESULT_COUNT] = { 0 };
-        napi_get_undefined(env, &setResult[PARAMZERO]);
-        napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[PARAMONE]);
-        if (getBooleanResult != napi_ok) {
-            setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
-            napi_get_null(env, &setResult[PARAMONE]);
-        }
-        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
-        napi_value callback = nullptr;
-        napi_get_reference_value(env, jCallback, &callback);
-        napi_value callbackResult = nullptr;
-        napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
-
-        napi_delete_reference(env, jCallback);
-    });
+    auto callbackImpl = std::make_shared<WebviewHasImageCallback>(env, jsCallback, nullptr);
     nweb_->HasImages(callbackImpl);
-    return;
+    return NWebError::NO_ERROR;
 }
 
-void WebviewController::HasImagePromise(napi_env env, napi_deferred deferred)
+ErrCode WebviewController::HasImagesPromise(napi_env env, napi_deferred deferred)
 {
     if (!nweb_) {
         napi_value jsResult = nullptr;
         jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
         napi_reject_deferred(env, deferred, jsResult);
-        return;
+        return NWebError::INIT_ERROR;
     }
 
     if (deferred == nullptr) {
-        return;
+        return NWebError::PARAM_CHECK_ERROR;
     }
 
-    auto callbackImpl = std::make_shared<OHOS::NWeb::NWebHasImageCallback>();
-    callbackImpl->SetCallBack([env, deferred](bool result) {
-        if (!env) {
-            return;
-        }
-        napi_value setResult[RESULT_COUNT] = {0};
-        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
-        napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[PARAMONE]);
-        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
-        if (getBooleanResult == napi_ok) {
-            napi_resolve_deferred(env, deferred, args[PARAMONE]);
-        } else {
-            napi_reject_deferred(env, deferred, args[PARAMZERO]);
-        }
-    });
+    auto callbackImpl = std::make_shared<WebviewHasImageCallback>(env, nullptr, deferred);
     nweb_->HasImages(callbackImpl);
-    return;
+    return NWebError::NO_ERROR;
 }
 
 void WebviewController::RemoveCache(bool include_disk_files)
@@ -715,5 +683,32 @@ void WebviewController::RemoveCache(bool include_disk_files)
         nweb_->RemoveCache(include_disk_files);
     }
 }
+
+std::shared_ptr<NWebHistoryList> WebviewController::GetHistoryList()
+{
+    if (!nweb_) {
+        return nullptr;
+    }
+    return nweb_->GetHistoryList();
+}
+
+std::shared_ptr<NWebHistoryItem> WebHistoryList::GetItem(int32_t index)
+{
+    if (!sptrHistoryList_) {
+        return nullptr;
+    }
+    return sptrHistoryList_->GetItem(index);
+}
+
+bool WebviewController::GetFavicon(
+    const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType)
+{
+    bool isGetFavicon = false;
+    if (nweb_) {
+        isGetFavicon = nweb_->GetFavicon(data, width, height, colorType, alphaType);
+    }
+    return isGetFavicon;
+}
+
 } // namespace NWeb
 } // namespace OHOS
