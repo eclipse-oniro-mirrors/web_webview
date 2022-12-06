@@ -148,11 +148,16 @@ public:
 
     bool HasImage(std::shared_ptr<NWebValueCallback<bool>> callback);
 
-    void HasImageCallback(napi_env env, napi_ref jsCallback);
+    ErrCode HasImagesCallback(napi_env env, napi_ref jsCallback);
 
-    void HasImagePromise(napi_env env, napi_deferred deferred);
+    ErrCode HasImagesPromise(napi_env env, napi_deferred deferred);
 
     void RemoveCache(bool include_disk_files);
+
+    std::shared_ptr<NWebHistoryList> GetHistoryList();
+
+    bool GetFavicon(
+        const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType);
 private:
     int ConverToWebHitTestType(int hitType);
 
@@ -180,24 +185,19 @@ private:
     std::string portHandle_;
 };
 
-class NWebHasImageCallback : public OHOS::NWeb::NWebValueCallback<bool> {
+class WebHistoryList {
 public:
-    NWebHasImageCallback() = default;
-    ~NWebHasImageCallback() = default;
+    WebHistoryList(std::shared_ptr<NWebHistoryList> sptrHistoryList) : sptrHistoryList_(sptrHistoryList) {};
+    ~WebHistoryList() = default;
 
-    void OnReceiveValue(bool result) override
-    {
-        if (callback_) {
-            callback_(result);
-        }
-    }
-    void SetCallBack(const std::function<void(bool)> &&callback)
-    {
-        callback_ = callback;
-    }
+    int32_t GetCurrentIndex();
 
+    std::shared_ptr<NWebHistoryItem> GetItem(int32_t index);
+
+    int32_t GetListSize();
 private:
-    std::function<void(bool)> callback_;
+    OHOS::NWeb::NWeb* nweb_ = nullptr;
+    std::shared_ptr<NWebHistoryList> sptrHistoryList_ = nullptr;
 };
 } // namespace NWeb
 } // namespace OHOS
