@@ -97,7 +97,11 @@ ohos_shared_library("nweb_ohos_adapter") {
     "window_manager:libdm",
   ]
 
-  external_deps += [ "soc_perf:socperf_client" ]
+  defines = []
+  if ("${product_name}" == "rk3568" || "${product_name}" == "m40") {
+    external_deps += [ "soc_perf:socperf_client" ]
+    defines += [ "NWEB_SOC_PERF" ]
+  }
 
   deps = [
     "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
