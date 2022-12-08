@@ -106,6 +106,8 @@ struct OHOS_NWEB_EXPORT DragEvent {
     DragAction action;
 };
 
+using WebState = std::shared_ptr<std::vector<uint8_t>>;
+
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -584,6 +586,34 @@ public:
      */
     virtual void PutReleaseSurfaceCallback(
         std::shared_ptr<NWebReleaseSurfaceCallback> releaseSurfaceListener) = 0;
+
+    /**
+     * Get Web back forward state.
+     * 
+     * @return web back forward state.
+    */
+    virtual WebState SerializeWebState() = 0;
+
+    /**
+     * Restore Web back forward state.
+     * 
+     * @param web back forward state.
+    */
+    virtual bool RestoreWebState(WebState state) = 0;
+
+    /**
+     * Move page up.
+     * 
+     * @param top whether move to the top.
+    */
+    virtual void PageUp(bool top) = 0;
+
+    /**
+     * Move page down.
+     * 
+     * @param bottom whether move to the bottom.
+    */
+    virtual void PageDown(bool bottom) = 0;
 };
 }  // namespace OHOS::NWeb
 

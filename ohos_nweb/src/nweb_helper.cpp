@@ -142,7 +142,7 @@ NWebHelper::~NWebHelper()
     UnloadLib();
 }
 
-using CreateNWebFuncType = NWeb *(*)(const NWebCreateInfo &);
+using CreateNWebFuncType = void(*)(const NWebCreateInfo &, std::shared_ptr<NWeb> &);
 std::shared_ptr<NWeb> NWebHelper::CreateNWeb(const NWebCreateInfo &create_info)
 {
     if (libHandleNWebAdapter_ == nullptr) {
@@ -157,8 +157,8 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(const NWebCreateInfo &create_info)
         WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", CREATE_NWEB_FUNC_NAME.c_str());
         return nullptr;
     }
-
-    std::shared_ptr<NWeb> nweb(funcCreateNWeb(create_info));
+    std::shared_ptr<NWeb> nweb;
+    funcCreateNWeb(create_info, nweb);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb");
         return nullptr;
@@ -185,21 +185,24 @@ NWebCookieManager *NWebHelper::GetCookieManager()
     return cookieFunc();
 }
 
-using GetNWebFunc = NWeb *(*)(int32_t);
-NWeb *NWebHelper::GetNWeb(int32_t nweb_id)
+using GetNWebFunc = void(*)(int32_t, std::weak_ptr<NWeb> &);
+std::weak_ptr<NWeb> NWebHelper::GetNWeb(int32_t nweb_id)
 {
+    std::weak_ptr<OHOS::NWeb::NWeb> nweb;
     if (libHandleNWebAdapter_ == nullptr) {
         WVLOG_E("libHandleNWebAdapter_ is nullptr");
-        return nullptr;
+        return nweb;
     }
 
     const std::string GET_NWEB_FUNC_NAME = "GetNWeb";
     GetNWebFunc getNWebFunc = reinterpret_cast<GetNWebFunc>(dlsym(libHandleNWebAdapter_, GET_NWEB_FUNC_NAME.c_str()));
     if (getNWebFunc == nullptr) {
         WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", GET_NWEB_FUNC_NAME.c_str());
-        return nullptr;
+        return nweb;
     }
-    return getNWebFunc(nweb_id);
+
+    getNWebFunc(nweb_id, nweb);
+    return nweb;
 }
 
 using GetDataBaseFunc = NWebDataBase *(*)();
