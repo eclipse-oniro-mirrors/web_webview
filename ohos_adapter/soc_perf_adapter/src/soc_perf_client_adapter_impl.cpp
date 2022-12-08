@@ -14,14 +14,17 @@
  */
 
 #include "soc_perf_client_adapter_impl.h"
+#if defined(NWEB_SOC_PERF)
 #include "client/socperf_client.h"
-
+#endif
 namespace OHOS::NWeb {
 SocPerfClientAdapterImpl::SocPerfClientAdapterImpl() {}
 
 void SocPerfClientAdapterImpl::ApplySocPerfConfigById(int32_t id)
 {
+#if defined(NWEB_SOC_PERF)
     OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequest(id, "");
+#endif
 }
 
 }  // namespace OHOS::NWeb
