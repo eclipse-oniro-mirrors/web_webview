@@ -1760,6 +1760,49 @@ napi_value NapiWebHistoryList::JsConstructor(napi_env env, napi_callback_info in
     return thisVar;
 }
 
+Media::PixelFormat getColorType(ImageColorType colorType)
+{
+    Media::PixelFormat pixelFormat_;
+    switch (colorType) {
+        case ImageColorType::COLOR_TYPE_UNKNOWN:
+            pixelFormat_ = Media::PixelFormat::UNKNOWN;
+            break;
+        case ImageColorType::COLOR_TYPE_RGBA_8888:
+            pixelFormat_ = Media::PixelFormat::RGBA_8888;
+            break;
+        case ImageColorType::COLOR_TYPE_BGRA_8888:
+            pixelFormat_ = Media::PixelFormat::BGRA_8888;
+            break;
+        default:
+            pixelFormat_ = Media::PixelFormat::UNKNOWN;
+            break;
+    }
+    return pixelFormat_;
+}
+
+Media::AlphaType getAlphaType(ImageAlphaType alphaType)
+{
+    Media::AlphaType alphaType_;
+     switch (alphaType) {
+        case ImageAlphaType::ALPHA_TYPE_UNKNOWN:
+            alphaType_ = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
+            break;
+        case ImageAlphaType::ALPHA_TYPE_OPAQUE:
+            alphaType_ = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
+            break;
+        case ImageAlphaType::ALPHA_TYPE_PREMULTIPLIED:
+            alphaType_ = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
+            break;
+        case ImageAlphaType::ALPHA_TYPE_POSTMULTIPLIED:
+            alphaType_ = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
+            break;
+        default:
+            alphaType_ = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
+            break;
+    }
+    return alphaType_;
+}
+
 napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHistoryItem> item)
 {
     napi_value result = nullptr;
@@ -1778,38 +1821,8 @@ napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHist
     Media::InitializationOptions opt;
     opt.size.width = width;
     opt.size.height = height;
-    switch (colorType) {
-        case ImageColorType::COLOR_TYPE_UNKNOWN:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-        case ImageColorType::COLOR_TYPE_RGBA_8888:
-            opt.pixelFormat = Media::PixelFormat::RGBA_8888;
-            break;
-        case ImageColorType::COLOR_TYPE_BGRA_8888:
-            opt.pixelFormat = Media::PixelFormat::BGRA_8888;
-            break;
-        default:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-    }
-    switch (alphaType) {
-        case ImageAlphaType::ALPHA_TYPE_UNKNOWN:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_OPAQUE:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_PREMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_POSTMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
-            break;
-        default:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-    }
-
+    opt.pixelFormat = getColorType(colorType);
+    opt.alphaType = getAlphaType(alphaType);
     opt.editable = true;
     auto pixelMap = Media::PixelMap::Create(opt);
     if (pixelMap == nullptr) {
@@ -1953,38 +1966,8 @@ napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info in
     Media::InitializationOptions opt;
     opt.size.width = static_cast<int32_t>(width);
     opt.size.height = static_cast<int32_t>(height);
-    switch (colorType) {
-        case ImageColorType::COLOR_TYPE_UNKNOWN:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-        case ImageColorType::COLOR_TYPE_RGBA_8888:
-            opt.pixelFormat = Media::PixelFormat::RGBA_8888;
-            break;
-        case ImageColorType::COLOR_TYPE_BGRA_8888:
-            opt.pixelFormat = Media::PixelFormat::BGRA_8888;
-            break;
-        default:
-            opt.pixelFormat = Media::PixelFormat::UNKNOWN;
-            break;
-    }
-    switch (alphaType) {
-        case ImageAlphaType::ALPHA_TYPE_UNKNOWN:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_OPAQUE:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_PREMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
-            break;
-        case ImageAlphaType::ALPHA_TYPE_POSTMULTIPLIED:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
-            break;
-        default:
-            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-            break;
-    }
-
+    opt.pixelFormat = getColorType(colorType);
+    opt.alphaType = getAlphaType(alphaType);
     opt.editable = true;
     auto pixelMap = Media::PixelMap::Create(opt);
     if (pixelMap == nullptr) {
