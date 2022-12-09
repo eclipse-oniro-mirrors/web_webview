@@ -90,12 +90,11 @@ void WebviewHasImageCallback::UvAfterWorkCb(uv_work_t* work, int status)
 void WebviewHasImageCallback::UvAfterWorkCbAsync(napi_env env, napi_ref callbackRef,
     bool result)
 {
-    napi_value setResult[INTEGER_TWO] = { 0 };
+    napi_value setResult[INTEGER_TWO] = {0};
     napi_get_undefined(env, &setResult[INTEGER_ZERO]);
     napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[INTEGER_ONE]);
     if (getBooleanResult != napi_ok) {
-        setResult[INTEGER_ZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
-        napi_get_null(env, &setResult[INTEGER_ONE]);
+        napi_get_boolean(env, false, &setResult[INTEGER_ONE]);
     }
     napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
     napi_value callback = nullptr;
@@ -109,15 +108,12 @@ void WebviewHasImageCallback::UvAfterWorkCbAsync(napi_env env, napi_ref callback
 void WebviewHasImageCallback::UvAfterWorkCbPromise(napi_env env, napi_deferred deferred,
     bool result)
 {
-    napi_value setResult[INTEGER_TWO] = {0};
-    setResult[INTEGER_ZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
-    napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[INTEGER_ONE]);
-    napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
-    if (getBooleanResult == napi_ok) {
-        napi_resolve_deferred(env, deferred, args[INTEGER_ONE]);
-    } else {
-        napi_reject_deferred(env, deferred, args[INTEGER_ZERO]);
+    napi_value setResult;
+    napi_status getBooleanResult = napi_get_boolean(env, result, &setResult);
+    if (getBooleanResult != napi_ok) {
+        napi_get_boolean(env, false, &setResult);
     }
+    napi_resolve_deferred(env, deferred, setResult);
 }
 
 } // namespace NWeb
