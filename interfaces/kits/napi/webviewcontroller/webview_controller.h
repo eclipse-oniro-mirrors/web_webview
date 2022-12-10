@@ -146,6 +146,19 @@ public:
     std::string GetOriginalUrl();
 
     void PutNetworkAvailable(bool available);
+
+    bool HasImage(std::shared_ptr<NWebValueCallback<bool>> callback);
+
+    ErrCode HasImagesCallback(napi_env env, napi_ref jsCallback);
+
+    ErrCode HasImagesPromise(napi_env env, napi_deferred deferred);
+
+    void RemoveCache(bool include_disk_files);
+
+    std::shared_ptr<NWebHistoryList> GetHistoryList();
+
+    bool GetFavicon(
+        const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType);
 private:
     int ConverToWebHitTestType(int hitType);
 
@@ -171,6 +184,21 @@ public:
 private:
     std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
     std::string portHandle_;
+};
+
+class WebHistoryList {
+public:
+    WebHistoryList(std::shared_ptr<NWebHistoryList> sptrHistoryList) : sptrHistoryList_(sptrHistoryList) {};
+    ~WebHistoryList() = default;
+
+    int32_t GetCurrentIndex();
+
+    std::shared_ptr<NWebHistoryItem> GetItem(int32_t index);
+
+    int32_t GetListSize();
+private:
+    OHOS::NWeb::NWeb* nweb_ = nullptr;
+    std::shared_ptr<NWebHistoryList> sptrHistoryList_ = nullptr;
 };
 } // namespace NWeb
 } // namespace OHOS
