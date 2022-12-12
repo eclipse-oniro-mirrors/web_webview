@@ -743,6 +743,17 @@ std::shared_ptr<NWebHistoryItem> WebHistoryList::GetItem(int32_t index)
     return sptrHistoryList_->GetItem(index);
 }
 
+int32_t WebHistoryList::GetListSize()
+{
+    int32_t listSize = 0;
+
+    if (!sptrHistoryList_) {
+        return listSize;
+    }
+    listSize = sptrHistoryList_->GetListSize();
+    return listSize;
+}
+
 bool WebviewController::GetFavicon(
     const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType)
 {
