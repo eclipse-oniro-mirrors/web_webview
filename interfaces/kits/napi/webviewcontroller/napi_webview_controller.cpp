@@ -1814,7 +1814,6 @@ napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHist
     bool isGetFavicon = item->GetFavicon(&data, width, height, colorType, alphaType);
 
     if (!isGetFavicon) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_RESOURCE);
         return result;
     }
 
@@ -1843,23 +1842,26 @@ napi_value NapiWebHistoryList::GetItem(napi_env env, napi_callback_info info)
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
     int32_t index;
+    WebHistoryList *historyList = nullptr;
 
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
-    if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
-    }
-    
-    if (!NapiParseUtils::ParseInt32(env, argv[0], index)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
-    }
-
-    WebHistoryList *historyList = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&historyList));
     if (historyList == nullptr) {
         return result;
     }
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    if (!NapiParseUtils::ParseInt32(env, argv[0], index)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    if (index >= historyList->GetListSize() || index < 0) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
     std::shared_ptr<NWebHistoryItem> item = historyList->GetItem(index);
     if (!item) {
         return result;
@@ -1959,7 +1961,6 @@ napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info in
     bool isGetFavicon = webviewController->GetFavicon(&data, width, height, colorType, alphaType);
 
     if (!isGetFavicon) {
-        BusinessError::ThrowErrorByErrcode(env, INVALID_RESOURCE);
         return result;
     }
 
