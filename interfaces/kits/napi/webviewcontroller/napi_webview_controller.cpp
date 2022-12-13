@@ -1812,6 +1812,7 @@ napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHist
     ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
     ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
     bool isGetFavicon = item->GetFavicon(&data, width, height, colorType, alphaType);
+    napi_get_undefined(env, &result);
 
     if (!isGetFavicon) {
         return result;
@@ -1847,6 +1848,7 @@ napi_value NapiWebHistoryList::GetItem(napi_env env, napi_callback_info info)
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&historyList));
     if (historyList == nullptr) {
+        WVLOG_E("unwrap historyList failed.");
         return result;
     }
     if (argc != INTEGER_ONE) {
