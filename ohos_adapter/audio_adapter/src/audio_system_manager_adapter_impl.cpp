@@ -92,7 +92,7 @@ int32_t AudioSystemManagerAdapterImpl::RequestAudioFocus(const AudioAdapterInter
     AudioInterrupt interruptParams;
     interruptParams.streamUsage = AudioRendererAdapterImpl::GetAudioStreamUsage(audioInterrupt.streamUsage);
     interruptParams.contentType = AudioRendererAdapterImpl::GetAudioContentType(audioInterrupt.contentType);
-    interruptParams.streamType = GetStreamType(audioInterrupt.streamType);
+    interruptParams.audioFocusType.streamType = GetStreamType(audioInterrupt.streamType);
 
     int32_t ret = AudioSystemManager::GetInstance()->RequestAudioFocus(interruptParams);
     if (ret != AudioStandard::SUCCESS) {
@@ -107,7 +107,7 @@ int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const AudioAdapterInter
     AudioInterrupt interruptParams;
     interruptParams.streamUsage = AudioRendererAdapterImpl::GetAudioStreamUsage(audioInterrupt.streamUsage);
     interruptParams.contentType = AudioRendererAdapterImpl::GetAudioContentType(audioInterrupt.contentType);
-    interruptParams.streamType = GetStreamType(audioInterrupt.streamType);
+    interruptParams.audioFocusType.streamType = GetStreamType(audioInterrupt.streamType);
 
     int32_t ret = AudioSystemManager::GetInstance()->AbandonAudioFocus(interruptParams);
     if (ret != AudioStandard::SUCCESS) {
