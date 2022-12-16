@@ -34,14 +34,16 @@ OhosResourceAdapterImpl::OhosResourceAdapterImpl(const std::string& hapPath)
 
 void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 {
-    sysExtractor_ = Extractor::Create(NWEB_HAP_PATH);
+    bool newCreate = false;
+    sysExtractor_ = ExtractorUtil::GetExtractor(NWEB_HAP_PATH, newCreate);
     if (!sysExtractor_) {
         WVLOG_E("RuntimeExtractor create failed for %{public}s", NWEB_HAP_PATH.c_str());
     }
     if (hapPath.empty()) {
         return;
     }
-    extractor_ = Extractor::Create(hapPath);
+    std::string loadPath = ExtractorUtil::GetLoadFilePath(hapPath);
+    extractor_ = ExtractorUtil::GetExtractor(loadPath, newCreate);
     if (!extractor_) {
         WVLOG_E("RuntimeExtractor create failed for %{public}s", hapPath.c_str());
     }
