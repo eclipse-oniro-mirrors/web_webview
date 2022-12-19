@@ -1783,7 +1783,7 @@ Media::PixelFormat getColorType(ImageColorType colorType)
 Media::AlphaType getAlphaType(ImageAlphaType alphaType)
 {
     Media::AlphaType alphaType_;
-     switch (alphaType) {
+    switch (alphaType) {
         case ImageAlphaType::ALPHA_TYPE_UNKNOWN:
             alphaType_ = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
             break;
@@ -1828,8 +1828,8 @@ napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHist
     if (pixelMap == nullptr) {
         return result;
     }
-    uint64_t stride = width << 2;
-    uint64_t bufferSize = stride * height;
+    uint64_t stride = static_cast<uint64_t>(width) << 2;
+    uint64_t bufferSize = stride * static_cast<uint64_t>(height);
     pixelMap->WritePixels(static_cast<const uint8_t *>(data), bufferSize);
     std::shared_ptr<Media::PixelMap> pixelMapToJs(pixelMap.release());
     napi_value jsPixelMap = OHOS::Media::PixelMapNapi::CreatePixelMap(env, pixelMapToJs);
@@ -1886,8 +1886,7 @@ napi_value NapiWebHistoryList::GetItem(napi_env env, napi_callback_info info)
     napi_create_string_utf8(env, title.c_str(), title.length(), &js_title);
     napi_set_named_property(env, result, "title", js_title);
 
-    napi_value js_icon;
-    js_icon = GetFavicon(env, item);
+    napi_value js_icon = GetFavicon(env, item);
     napi_set_named_property(env, result, "icon", js_icon);
     return result;
 }
@@ -1921,7 +1920,6 @@ napi_value NapiWebviewController::getBackForwardEntries(napi_env env, napi_callb
     napi_value historyList = nullptr;
     NAPI_CALL(env, napi_get_reference_value(env, g_historyListRef, &historyList));
     NAPI_CALL(env, napi_new_instance(env, historyList, 0, NULL, &result));
-
 
     napi_value js_currentIndex;
     napi_create_int32(env, currentIndex, &js_currentIndex);
@@ -1961,7 +1959,6 @@ napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info in
     ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
     ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
     bool isGetFavicon = webviewController->GetFavicon(&data, width, height, colorType, alphaType);
-
     if (!isGetFavicon) {
         return result;
     }
@@ -1976,8 +1973,8 @@ napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info in
     if (pixelMap == nullptr) {
         return result;
     }
-    uint64_t stride = width << 2;
-    uint64_t bufferSize = stride * height;
+    uint64_t stride = static_cast<uint64_t>(width) << 2;
+    uint64_t bufferSize = stride * static_cast<uint64_t>(height);
     pixelMap->WritePixels(static_cast<const uint8_t *>(data), bufferSize);
     std::shared_ptr<Media::PixelMap> pixelMapToJs(pixelMap.release());
     napi_value jsPixelMap = OHOS::Media::PixelMapNapi::CreatePixelMap(env, pixelMapToJs);
