@@ -24,7 +24,7 @@ class SystemPropertiesAdapterImpl : public SystemPropertiesAdapter {
 public:
     static SystemPropertiesAdapterImpl& GetInstance();
 
-    virtual ~SystemPropertiesAdapterImpl() = default;
+    ~SystemPropertiesAdapterImpl() override = default;
 
     bool GetResourceUseHapPathEnable() const override;
 

@@ -188,7 +188,7 @@ private:
 
 class WebHistoryList {
 public:
-    WebHistoryList(std::shared_ptr<NWebHistoryList> sptrHistoryList) : sptrHistoryList_(sptrHistoryList) {};
+    explicit WebHistoryList(std::shared_ptr<NWebHistoryList> sptrHistoryList) : sptrHistoryList_(sptrHistoryList) {};
     ~WebHistoryList() = default;
 
     int32_t GetCurrentIndex();
