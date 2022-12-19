@@ -22,9 +22,9 @@
 namespace OHOS::NWeb {
 class OhosResourceAdapterImpl : public OhosResourceAdapter {
 public:
-    OhosResourceAdapterImpl(const std::string& hapPath);
+    explicit OhosResourceAdapterImpl(const std::string& hapPath);
 
-    virtual ~OhosResourceAdapterImpl() = default;
+    ~OhosResourceAdapterImpl() override = default;
 
     bool GetRawFileData(const std::string& rawFile, size_t& len,
         std::unique_ptr<uint8_t[]>& dest, bool isSys = false) override;
