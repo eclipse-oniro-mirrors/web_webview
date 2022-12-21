@@ -41,8 +41,8 @@ NWebCreateInfo NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo
         .init_args = initArgs,
         .enhance_surface_info = enhanceSurfaceInfo,
     };
-    GetSize(surface, createInfo, width, height);
-    GetRenderInterface(surface, createInfo);
+    GetSize(createInfo, width, height);
+    GetRenderInterface(createInfo);
     return createInfo;
 }
 
