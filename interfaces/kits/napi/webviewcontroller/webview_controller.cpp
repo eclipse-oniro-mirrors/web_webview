@@ -365,6 +365,29 @@ void WebviewController::RequestFocus()
     }
 }
 
+bool WebviewController::GetRawFileUrl(const std::string &fileName, std::string &result)
+{
+    if (fileName.empty()) {
+        WVLOG_E("File name is empty.");
+        return false;
+    }
+    if (hapPath_.empty()) {
+        std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+            AbilityRuntime::ApplicationContext::GetApplicationContext();
+        std::string packagePath = "file:///" + context->GetBundleCodeDir() + "/";
+        std::string bundleName = context->GetBundleName() + "/";
+        std::shared_ptr<AppExecFwk::ApplicationInfo> appInfo = context->GetApplicationInfo();
+        std::string entryDir = appInfo->entryDir;
+        bool isStage = entryDir.find("entry") == std::string::npos ? false : true;
+        result = isStage ? packagePath + "entry/resources/rawfile/" + fileName :
+            packagePath + bundleName + "assets/entry/resources/rawfile/" + fileName;
+    } else {
+        result = "resource://RAWFILE/" + fileName;
+    }
+    WVLOG_D("The parsed url is: %{public}s", result.c_str());
+    return true;
+}
+
 bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& result)
 {
     napi_valuetype valueType = napi_null;
@@ -398,17 +421,7 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
             std::string fileName;
             napi_get_element(env, paraArray, 0, &fileNameObj);
             NapiParseUtils::ParseString(env, fileNameObj, fileName);
-            std::shared_ptr<AbilityRuntime::ApplicationContext> context =
-                AbilityRuntime::ApplicationContext::GetApplicationContext();
-            std::string packagePath = "file:///" + context->GetBundleCodeDir() + "/";
-            std::string bundleName = context->GetBundleName() + "/";
-            std::shared_ptr<AppExecFwk::ApplicationInfo> appInfo = context->GetApplicationInfo();
-            std::string entryDir = appInfo->entryDir;
-            bool isStage = entryDir.find("entry") == std::string::npos ? false : true;
-            result = isStage ? packagePath + "entry/resources/rawfile/" + fileName :
-                packagePath + bundleName + "assets/entry/resources/rawfile/" + fileName;
-            WVLOG_D("The parsed url is: %{public}s", result.c_str());
-            return true;
+            return GetRawFileUrl(fileName, result);
         }
         WVLOG_E("The type parsed from url object is not RAWFILE.");
         return false;
@@ -763,6 +776,11 @@ bool WebviewController::GetFavicon(
         isGetFavicon = nweb_ptr->GetFavicon(data, width, height, colorType, alphaType);
     }
     return isGetFavicon;
+}
+
+void WebviewController::InnerSetHapPath(const std::string &hapPath)
+{
+    hapPath_ = hapPath;
 }
 
 } // namespace NWeb
