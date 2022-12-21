@@ -15,10 +15,12 @@
 
 #include "napi_webview_controller.h"
 
+#include <securec.h>
 #include <unistd.h>
 #include <uv.h>
-#include <securec.h>
+
 #include "business_error.h"
+#include "context/application_context.h"
 #include "napi_parse_utils.h"
 #include "nweb.h"
 #include "nweb_helper.h"
@@ -31,11 +33,13 @@
 namespace OHOS {
 namespace NWeb {
 using namespace NWebError;
+using NWebError::NO_ERROR;
 thread_local napi_ref g_classWebMsgPort;
 thread_local napi_ref g_historyListRef;
 napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_FUNCTION("initializeWebEngine", NapiWebviewController::InitializeWebEngine),
         DECLARE_NAPI_FUNCTION("setWebId", NapiWebviewController::SetWebId),
         DECLARE_NAPI_FUNCTION("jsProxy", NapiWebviewController::InnerJsProxy),
         DECLARE_NAPI_FUNCTION("accessForward", NapiWebviewController::AccessForward),
@@ -147,6 +151,32 @@ napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info
     napi_value thisVar = nullptr;
     NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr));
     return thisVar;
+}
+
+napi_value NapiWebviewController::InitializeWebEngine(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("InitializeWebEngine invoked.");
+
+    // obtain bundle path
+    std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+        AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (!ctx) {
+        WVLOG_E("Failed to init web engine due to nil application context.");
+        return nullptr;
+    }
+
+    // load so
+    const std::string& bundle_path = ctx->GetBundleCodeDir();
+    NWebHelper::Instance().SetBundlePath(bundle_path);
+    if (!NWebHelper::Instance().Init(true)) {
+        WVLOG_E("Failed to init web engine due to NWebHelper failure.");
+        return nullptr;
+    }
+
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    WVLOG_I("NWebHelper initialized, init web engine done, bundle_path: %{public}s", bundle_path.c_str());
+    return result;
 }
 
 napi_value NapiWebviewController::SetWebId(napi_env env, napi_callback_info info)
