@@ -41,6 +41,23 @@ NWebCreateInfo NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo
         .init_args = initArgs,
         .enhance_surface_info = enhanceSurfaceInfo,
     };
+    GetSize(surface, createInfo, width, height);
+    GetRenderInterface(surface, createInfo);
     return createInfo;
+}
+
+void NWebEnhanceSurfaceAdapter::GetSize(NWebCreateInfo &createInfo,
+                                 uint32_t width,
+                                 uint32_t height) const
+{
+    createInfo.width = width;
+    createInfo.height = height;
+}
+
+void NWebEnhanceSurfaceAdapter::GetRenderInterface(NWebCreateInfo &createInfo)
+{
+    createInfo.output_render_frame = [] (const char *buffer, uint32_t width, uint32_t height) -> bool {
+        return true;
+    };
 }
 } // namespace OHOS::NWeb
