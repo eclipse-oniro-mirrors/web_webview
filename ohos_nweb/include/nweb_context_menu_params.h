@@ -54,13 +54,13 @@ public:
         CM_IT_PASSWORD = 2,
         CM_IT_NUMBER = 3,
         CM_IT_TELEPHONE = 4,
-        CM_IT_OTHER = 4,
+        CM_IT_OTHER = 5,
     };
 
     enum ContextMenuSourceType {
         CM_ST_NONE = 0,
         CM_ST_MOUSE = 1,
-        CM_IT_LONG_PRESS = 2,
+        CM_ST_LONG_PRESS = 2,
     };
 
     virtual ~NWebContextMenuParams() = default;
@@ -91,7 +91,7 @@ public:
 
     virtual ContextMenuSourceType GetSourceType() = 0;
 
-    virtual ContextMenuInputFieldType GetInputFieldTyp() = 0;
+    virtual ContextMenuInputFieldType GetInputFieldType() = 0;
 
     virtual std::string GetSelectionText() = 0;
 };
