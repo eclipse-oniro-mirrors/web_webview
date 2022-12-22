@@ -31,6 +31,9 @@ public:
                                  const NWebInitArgs &initArgs,
                                  uint32_t width,
                                  uint32_t height);
+private:
+    void GetSize(NWebCreateInfo &createInfo, uint32_t width, uint32_t height) const;
+    void GetRenderInterface(NWebCreateInfo &createInfo);
 };
 } // namespace OHOS::NWeb
 
