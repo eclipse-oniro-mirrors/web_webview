@@ -162,6 +162,14 @@ public:
 
     void InnerSetHapPath(const std::string &hapPath);
 
+    WebState SerializeWebState();
+
+    bool RestoreWebState(WebState state);
+
+    void ScrollPageDown(bool bottom);
+
+    void ScrollPageUp(bool top);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
