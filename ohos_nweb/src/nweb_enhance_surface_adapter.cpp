@@ -47,8 +47,8 @@ NWebCreateInfo NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo
 }
 
 void NWebEnhanceSurfaceAdapter::GetSize(NWebCreateInfo &createInfo,
-                                 uint32_t width,
-                                 uint32_t height) const
+                                        uint32_t width,
+                                        uint32_t height) const
 {
     createInfo.width = width;
     createInfo.height = height;
