@@ -1840,7 +1840,7 @@ napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHist
     ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
     ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
     bool isGetFavicon = item->GetFavicon(&data, width, height, colorType, alphaType);
-    napi_get_undefined(env, &result);
+    napi_get_null(env, &result);
 
     if (!isGetFavicon) {
         return result;
@@ -1970,7 +1970,7 @@ napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info in
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    napi_get_undefined(env, &result);
+    napi_get_null(env, &result);
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
 
     WebviewController *webviewController = nullptr;
