@@ -20,26 +20,6 @@
 #include <sys/types.h>
 
 namespace OHOS::NWeb {
-class OhosFileMapper {
-public:
-    OhosFileMapper() = default;
-    virtual ~OhosFileMapper() = default;
-
-    virtual int32_t GetFd() const = 0;
-
-    virtual int32_t GetOffset() const = 0;
-
-    virtual std::string GetFileName() const = 0;
-
-    virtual bool IsCompressed() const = 0;
-
-    virtual void* GetDataPtr() const = 0;
-
-    virtual size_t GetDataLen() const = 0;
-
-    virtual bool UnzipData(std::unique_ptr<uint8_t[]>& dest, size_t& len) = 0;
-};
-
 class OhosResourceAdapter {
 public:
     OhosResourceAdapter() = default;
@@ -47,16 +27,6 @@ public:
 
     virtual bool GetRawFileData(const std::string& rawFile, size_t& len,
         std::unique_ptr<uint8_t[]>& dest, bool isSys = false) = 0;
-
-    virtual bool GetRawFileMapper(const std::string& rawFile, std::unique_ptr<OhosFileMapper>& dest,
-        bool isSys = false) = 0;
-
-    virtual bool IsRawFileExist(const std::string& rawFile, bool isSys = false) = 0;
-
-    virtual bool GetRawFileLastModTime(const std::string& rawFile,
-        uint16_t& date, uint16_t& time, bool isSys = false) = 0;
-
-    virtual bool GetRawFileLastModTime(const std::string& rawFile, time_t& time, bool isSys = false) = 0;
 };
 }  // namespace OHOS::NWeb
 
