@@ -2030,6 +2030,11 @@ napi_value NapiWebviewController::SerializeWebState(napi_env env, napi_callback_
     void *data = nullptr;
     napi_value buffer = nullptr;
     auto webState = webviewController->SerializeWebState();
+    if (!webState) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
     NAPI_CALL(env, napi_create_arraybuffer(env, webState->size(), &data, &buffer));
     int retCode = memcpy_s(data, webState->size(), webState->data(), webState->size());
     if (retCode != 0) {
