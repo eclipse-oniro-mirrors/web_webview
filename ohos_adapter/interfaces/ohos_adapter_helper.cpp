@@ -30,10 +30,11 @@
 #include "power_mgr_client_adapter_impl.h"
 #include "soc_perf_client_adapter_impl.h"
 #include "system_properties_adapter_impl.h"
+#include "vsync_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
-OhosAdapterHelper &OhosAdapterHelper::GetInstance()
+OhosAdapterHelper& OhosAdapterHelper::GetInstance()
 {
     static OhosAdapterHelper ohosAdapter;
     return ohosAdapter;
@@ -59,7 +60,7 @@ std::unique_ptr<BatteryMgrClientAdapter> OhosAdapterHelper::CreateBatteryClientA
     return std::make_unique<BatteryMgrClientAdapterImpl>();
 }
 
-OhosWebDataBaseAdapter &OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
+OhosWebDataBaseAdapter& OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
 {
     return OhosWebDataBaseAdapterImpl::GetInstance();
 }
@@ -99,7 +100,7 @@ std::unique_ptr<SocPerfClientAdapter> OhosAdapterHelper::CreateSocPerfClientAdap
     return std::make_unique<SocPerfClientAdapterImpl>();
 }
 
-OhosWebDnsDataBaseAdapter &OhosAdapterHelper::GetWebDnsDataBaseInstance()
+OhosWebDnsDataBaseAdapter& OhosAdapterHelper::GetWebDnsDataBaseInstance()
 {
     return OhosWebDnsDataBaseAdapterImpl::GetInstance();
 }
@@ -113,4 +114,9 @@ SystemPropertiesAdapter& OhosAdapterHelper::GetSystemPropertiesInstance() const
 {
     return SystemPropertiesAdapterImpl::GetInstance();
 }
-}  // namespace OHOS::NWeb
+
+std::unique_ptr<VSyncAdapter> OhosAdapterHelper::GetVSyncAdapter() const
+{
+    return std::make_unique<VSyncAdapterImpl>();
+}
+} // namespace OHOS::NWeb
