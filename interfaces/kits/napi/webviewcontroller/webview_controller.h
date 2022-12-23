@@ -160,8 +160,6 @@ public:
     bool GetFavicon(
         const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType);
 
-    void InnerSetHapPath(const std::string &hapPath);
-
     WebState SerializeWebState();
 
     bool RestoreWebState(WebState state);
@@ -173,12 +171,9 @@ public:
 private:
     int ConverToWebHitTestType(int hitType);
 
-    bool GetRawFileUrl(const std::string &fileName, std::string &result);
-
 private:
     std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
-    std::string hapPath_ = "";
 };
 
 class WebMessagePort {
