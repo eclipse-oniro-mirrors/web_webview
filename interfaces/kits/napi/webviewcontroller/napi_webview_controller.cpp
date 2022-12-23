@@ -1991,6 +1991,7 @@ napi_value NapiWebviewController::SerializeWebState(napi_env env, napi_callback_
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+    napi_get_null(env, &result);
 
     WebviewController *webviewController = nullptr;
     napi_unwrap(env, thisVar, (void **)&webviewController);
@@ -2003,14 +2004,12 @@ napi_value NapiWebviewController::SerializeWebState(napi_env env, napi_callback_
     napi_value buffer = nullptr;
     auto webState = webviewController->SerializeWebState();
     if (!webState) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
     NAPI_CALL(env, napi_create_arraybuffer(env, webState->size(), &data, &buffer));
     int retCode = memcpy_s(data, webState->size(), webState->data(), webState->size());
     if (retCode != 0) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     NAPI_CALL(env, napi_create_typedarray(env, napi_uint8_array, webState->size(), buffer, 0, &result));
@@ -2024,6 +2023,7 @@ napi_value NapiWebviewController::RestoreWebState(napi_env env, napi_callback_in
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+    napi_get_null(env, &result);
 
     WebviewController *webviewController = nullptr;
     napi_unwrap(env, thisVar, (void **)&webviewController);
@@ -2060,7 +2060,6 @@ napi_value NapiWebviewController::RestoreWebState(napi_env env, napi_callback_in
     std::vector<uint8_t> state(length);
     int retCode = memcpy_s(state.data(), state.size(), &data[offset], length);
     if (retCode != 0) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     webviewController->RestoreWebState(std::make_shared<std::vector<uint8_t>>(state));
