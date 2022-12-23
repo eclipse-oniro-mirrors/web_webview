@@ -80,7 +80,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("removeCache", NapiWebviewController::RemoveCache),
         DECLARE_NAPI_FUNCTION("getFavicon", NapiWebviewController::GetFavicon),
         DECLARE_NAPI_FUNCTION("getBackForwardEntries", NapiWebviewController::getBackForwardEntries),
-        DECLARE_NAPI_FUNCTION("innerSetHapPath", NapiWebviewController::InnerSetHapPath),
         DECLARE_NAPI_FUNCTION("serializeWebState", NapiWebviewController::SerializeWebState),
         DECLARE_NAPI_FUNCTION("restoreWebState", NapiWebviewController::RestoreWebState),
         DECLARE_NAPI_FUNCTION("pageDown", NapiWebviewController::ScrollPageDown),
@@ -177,33 +176,6 @@ napi_value NapiWebviewController::SetWebId(napi_env env, napi_callback_info info
     }
 
     return thisVar;
-}
-
-napi_value NapiWebviewController::InnerSetHapPath(napi_env env, napi_callback_info info)
-{
-    napi_value result = nullptr;
-    NAPI_CALL(env, napi_get_undefined(env, &result));
-    napi_value thisVar = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE];
-    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_ONE) {
-        WVLOG_E("Failed to run InnerSetHapPath beacuse of wrong Param number.");
-        return result;
-    }
-    std::string hapPath;
-    if (!NapiParseUtils::ParseString(env, argv[0], hapPath)) {
-        WVLOG_E("Parse hap path failed.");
-        return result;
-    }
-    WebviewController *webviewController = nullptr;
-    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
-    if ((!webviewController) || (status != napi_ok)) {
-        WVLOG_E("Wrap webviewController failed. WebviewController must be associated with a Web component.");
-        return result;
-    }
-    webviewController->InnerSetHapPath(hapPath);
-    return result;
 }
 
 napi_value NapiWebviewController::InnerJsProxy(napi_env env, napi_callback_info info)
@@ -1845,7 +1817,7 @@ napi_value NapiWebHistoryList::GetFavicon(napi_env env, std::shared_ptr<NWebHist
     ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
     ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
     bool isGetFavicon = item->GetFavicon(&data, width, height, colorType, alphaType);
-    napi_get_undefined(env, &result);
+    napi_get_null(env, &result);
 
     if (!isGetFavicon) {
         return result;
@@ -1975,7 +1947,7 @@ napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info in
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    napi_get_undefined(env, &result);
+    napi_get_null(env, &result);
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
 
     WebviewController *webviewController = nullptr;

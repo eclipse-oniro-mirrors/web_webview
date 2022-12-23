@@ -137,8 +137,6 @@ private:
 
     static napi_value GetFavicon(napi_env env, napi_callback_info info);
 
-    static napi_value InnerSetHapPath(napi_env env, napi_callback_info info);
-
     static napi_value SerializeWebState(napi_env env, napi_callback_info info);
 
     static napi_value RestoreWebState(napi_env env, napi_callback_info info);
