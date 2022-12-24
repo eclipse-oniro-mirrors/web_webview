@@ -17,24 +17,26 @@
 #define OHOS_ADAPTER_HELPER_H
 
 #include <memory>
+
 #include "aafwk_app_mgr_client_adapter.h"
+#include "audio_renderer_adapter.h"
+#include "audio_system_manager_adapter.h"
 #include "battery_mgr_client_adapter.h"
 #include "display_manager_adapter.h"
-#include "net_connect_adapter.h"
+#include "graphic_adapter.h"
 #include "mmi_adapter.h"
+#include "net_connect_adapter.h"
 #include "ohos_resource_adapter.h"
 #include "ohos_web_data_base_adapter.h"
 #include "pasteboard_client_adapter.h"
 #include "power_mgr_client_adapter.h"
-#include "audio_renderer_adapter.h"
-#include "audio_system_manager_adapter.h"
 #include "soc_perf_client_adapter.h"
 #include "system_properties_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosAdapterHelper {
 public:
-    static OhosAdapterHelper &GetInstance();
+    static OhosAdapterHelper& GetInstance();
 
     virtual ~OhosAdapterHelper() = default;
 
@@ -68,6 +70,8 @@ public:
 
     SystemPropertiesAdapter& GetSystemPropertiesInstance() const;
 
+    std::unique_ptr<VSyncAdapter> GetVSyncAdapter() const;
+
 private:
     OhosAdapterHelper() = default;
 
@@ -75,6 +79,6 @@ private:
 
     OhosAdapterHelper& operator=(const OhosAdapterHelper&) = delete;
 };
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
 
-#endif  // OHOS_ADAPTER_HELPER_H
+#endif // OHOS_ADAPTER_HELPER_H
