@@ -26,6 +26,7 @@
 #include "graphic_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
+#include "ohos_init_web_adapter.h"
 #include "ohos_resource_adapter.h"
 #include "ohos_web_data_base_adapter.h"
 #include "pasteboard_client_adapter.h"
@@ -71,6 +72,8 @@ public:
     SystemPropertiesAdapter& GetSystemPropertiesInstance() const;
 
     std::unique_ptr<VSyncAdapter> GetVSyncAdapter() const;
+
+    std::unique_ptr<OhosInitWebAdapter> GetInitWebAdapter() const;
 
 private:
     OhosAdapterHelper() = default;
