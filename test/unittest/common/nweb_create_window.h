@@ -288,6 +288,12 @@ public:
     {}
     void PageDown(bool bottom) override
     {}
+    void ScrollTo(float x, float y) override
+    {}
+    void ScrollBy(float deltaX, float deltaY) override
+    {}
+    void SlideScroll(float vx, float vy) override
+    {}
 };
 }
 #endif

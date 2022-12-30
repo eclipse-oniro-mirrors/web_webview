@@ -615,6 +615,30 @@ public:
      * @param bottom whether move to the bottom.
     */
     virtual void PageDown(bool bottom) = 0;
+
+    /**
+     * Scroll to the position.
+     * 
+     * @param x the x of the position.
+     * @param y the y of the position.
+    */
+    virtual void ScrollTo(float x, float y) = 0;
+
+    /**
+     * Scroll by the delta position.
+     * 
+     * @param deltaX the deltaX of the position.
+     * @param deltaY the deltaY of the position.
+    */
+    virtual void ScrollBy(float deltaX, float deltaY) = 0;
+
+    /**
+     * Slide by the speed.
+     * 
+     * @param vx the vx of the speed.
+     * @param vy the vy of the speed.
+    */
+    virtual void SlideScroll(float vx, float vy) = 0;
 };
 }  // namespace OHOS::NWeb
 

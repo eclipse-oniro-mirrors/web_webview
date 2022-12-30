@@ -818,6 +818,33 @@ void WebviewController::ScrollPageUp(bool top)
     return;
 }
 
+void WebviewController::ScrollTo(float x, float y)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        nweb_ptr->ScrollTo(x, y);
+    }
+    return;
+}
+
+void WebviewController::ScrollBy(float deltaX, float deltaY)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        nweb_ptr->ScrollBy(deltaX, deltaY);
+    }
+    return;
+}
+
+void WebviewController::SlideScroll(float vx, float vy)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        nweb_ptr->SlideScroll(vx, vy);
+    }
+    return;
+}
+
 void WebviewController::InnerSetHapPath(const std::string &hapPath)
 {
     hapPath_ = hapPath;
