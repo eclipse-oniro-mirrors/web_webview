@@ -128,7 +128,7 @@ private:
         const std::string &script);
 
     static napi_value GetUrl(napi_env env, napi_callback_info info);
-     
+
     static napi_value GetOriginalUrl(napi_env env, napi_callback_info info);
 
     static napi_value SetNetworkAvailable(napi_env env, napi_callback_info info);
@@ -154,6 +154,8 @@ private:
     static napi_value ScrollPageUp(napi_env env, napi_callback_info info);
 
     static napi_value CustomizeSchemes(napi_env env, napi_callback_info info);
+
+    static napi_value InnerSetHapPath(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
