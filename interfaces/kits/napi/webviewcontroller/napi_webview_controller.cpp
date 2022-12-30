@@ -90,6 +90,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("pageDown", NapiWebviewController::ScrollPageDown),
         DECLARE_NAPI_FUNCTION("pageUp", NapiWebviewController::ScrollPageUp),
         DECLARE_NAPI_STATIC_FUNCTION("customizeSchemes", NapiWebviewController::CustomizeSchemes),
+        DECLARE_NAPI_FUNCTION("innerSetHapPath", NapiWebviewController::InnerSetHapPath),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -144,7 +145,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         historyListProperties, &historyList);
     napi_create_reference(env, historyList, 1, &g_historyListRef);
     napi_set_named_property(env, exports, WEB_HISTORY_LIST_CLASS_NAME.c_str(), historyList);
-    
+
     return exports;
 }
 
@@ -208,6 +209,33 @@ napi_value NapiWebviewController::SetWebId(napi_env env, napi_callback_info info
     }
 
     return thisVar;
+}
+
+napi_value NapiWebviewController::InnerSetHapPath(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("Failed to run InnerSetHapPath beacuse of wrong Param number.");
+        return result;
+    }
+    std::string hapPath;
+    if (!NapiParseUtils::ParseString(env, argv[0], hapPath)) {
+        WVLOG_E("Parse hap path failed.");
+        return result;
+    }
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        WVLOG_E("Wrap webviewController failed. WebviewController must be associated with a Web component.");
+        return result;
+    }
+    webviewController->InnerSetHapPath(hapPath);
+    return result;
 }
 
 napi_value NapiWebviewController::InnerJsProxy(napi_env env, napi_callback_info info)
@@ -1684,7 +1712,7 @@ napi_value NapiWebviewController::SetNetworkAvailable(napi_env env, napi_callbac
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    
+
     if (!NapiParseUtils::ParseBoolean(env, argv[0], enable)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
@@ -1817,7 +1845,7 @@ napi_value NapiWebviewController::RemoveCache(napi_env env, napi_callback_info i
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    
+
     if (!NapiParseUtils::ParseBoolean(env, argv[0], include_disk_files)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;

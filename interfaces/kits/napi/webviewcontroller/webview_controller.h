@@ -169,8 +169,12 @@ public:
 
     void ScrollPageUp(bool top);
 
+    void InnerSetHapPath(const std::string &hapPath);
+
 private:
     int ConverToWebHitTestType(int hitType);
+
+    bool GetRawFileUrl(const std::string &fileName, std::string &result);
 
 public:
     static std::string customeSchemeCmdLine_;
@@ -179,6 +183,7 @@ public:
 private:
     std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
+    std::string hapPath_ = "";
 };
 
 class WebMessagePort {
