@@ -26,7 +26,7 @@ namespace OHOS::NWeb {
 class VSyncAdapterImpl : public VSyncAdapter {
 public:
     VSyncAdapterImpl() = default;
-    ~VSyncAdapterImpl() = default;
+    ~VSyncAdapterImpl() override = default;
     VSyncAdapterImpl(const VSyncAdapterImpl&) = delete;
     VSyncAdapterImpl& operator=(const VSyncAdapterImpl&) = delete;
 

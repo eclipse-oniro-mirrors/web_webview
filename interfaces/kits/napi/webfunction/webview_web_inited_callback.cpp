@@ -40,7 +40,7 @@ void WebRunInitedCallbackImpl::RunInitedCallback()
             WVLOG_E("uv work is null");
             return;
         }
-        WebInitedCallbackParam *data = reinterpret_cast<WebInitedCallbackParam*>(work->data); 
+        WebInitedCallbackParam *data = reinterpret_cast<WebInitedCallbackParam*>(work->data);
         if (data == nullptr) {
             delete work;
             work = nullptr;
