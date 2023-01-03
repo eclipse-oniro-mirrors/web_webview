@@ -26,7 +26,7 @@ public:
     OhosFileMapperImpl(std::unique_ptr<OHOS::AbilityBase::FileMapper> fileMap,
         const std::shared_ptr<OHOS::AbilityBase::Extractor>& extractor);
 
-    virtual ~OhosFileMapperImpl() = default;
+    ~OhosFileMapperImpl() override = default;
 
     int32_t GetFd() const override;
 
