@@ -26,10 +26,12 @@ void SocPerfClientAdapterImpl::ApplySocPerfConfigById(int32_t id)
     OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequest(id, "");
 #endif
 }
+
 void SocPerfClientAdapterImpl::ApplySocPerfConfigByIdEx(int32_t id, bool onOffTag)
 {
 #if defined(NWEB_SOC_PERF)
     OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(id, onOffTag, "");
 #endif
 }
+
 }  // namespace OHOS::NWeb
