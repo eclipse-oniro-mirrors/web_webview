@@ -155,7 +155,7 @@ bool DisplayManagerAdapterImpl::RegisterDisplayListener(
         return false;
     }
     reg_.emplace(std::make_pair(listener.get(), reg));
-    return DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK ? true : false;
+    return DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK;
 }
 
 bool DisplayManagerAdapterImpl::UnregisterDisplayListener(

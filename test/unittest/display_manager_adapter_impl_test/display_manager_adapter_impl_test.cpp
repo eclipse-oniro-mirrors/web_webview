@@ -28,12 +28,12 @@ using namespace OHOS::NWeb;
 
 namespace OHOS {
 namespace {
-    bool g_unregister = false;
+    DMError g_unregister = DMError::DM_ERROR_NULLPTR;
     constexpr uint64_t DISPLAY_ID_INVALID = -1ULL;
 }
 
 namespace Rosen {
-bool DisplayManager::UnregisterDisplayListener(sptr<IDisplayListener> listener)
+DMError DisplayManager::UnregisterDisplayListener(sptr<IDisplayListener> listener)
 {
     return g_unregister;
 }
@@ -220,7 +220,7 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_005, TestS
     EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(listener));
     std::shared_ptr<DisplayListenerAdapter> listener1 = std::make_shared<DisplayListenerAdapterTest>();
     EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(listener1));
-    g_unregister = true;
+    g_unregister = DMError::DM_OK;
 }
 
 /**
