@@ -134,52 +134,48 @@ void NWebHelper::UnloadLib()
 
 static void DoPreReadLib(const std::string &bundlePath)
 {
-    std::thread preReadThread([bundlePath]() {
-        WVLOG_I("NWebHelper PreReadLib");
-        std::string libPathWebEngine = bundlePath + "/" + RELATIVE_PATH_FOR_BUNDLE + "/" + LIB_NAME_WEB_ENGINE;
+    WVLOG_I("NWebHelper PreReadLib");
+    std::string libPathWebEngine = bundlePath + "/" + RELATIVE_PATH_FOR_BUNDLE + "/" + LIB_NAME_WEB_ENGINE;
 
-        char tempPath[PATH_MAX] = {0};
-        if (realpath(libPathWebEngine.c_str(), tempPath) == nullptr) {
-            WVLOG_E("path to realpath error");
-            return;
-        }
+    char tempPath[PATH_MAX] = {0};
+    if (realpath(libPathWebEngine.c_str(), tempPath) == nullptr) {
+        WVLOG_E("path to realpath error");
+        return;
+    }
 
-        struct stat stats;
-        int ret = stat(tempPath, &stats);
-        if (ret < 0) {
-            WVLOG_E("stat web engine library failed, ret = %{public}d", ret);
-            return;
-        }
+    struct stat stats;
+    int ret = stat(tempPath, &stats);
+    if (ret < 0) {
+        WVLOG_E("stat web engine library failed, ret = %{public}d", ret);
+        return;
+    }
 
-        static const int singleReadSize = 5 * 1024 * 1024;
-        char *buf = new (std::nothrow) char[singleReadSize];
-        if (buf == nullptr) {
-            WVLOG_E("malloc buf failed");
-            return;
-        }
+    static const int singleReadSize = 5 * 1024 * 1024;
+    char *buf = new (std::nothrow) char[singleReadSize];
+    if (buf == nullptr) {
+        WVLOG_E("malloc buf failed");
+        return;
+    }
 
-        int fd = open(tempPath, O_RDONLY);
-        if (fd <= 0) {
-            WVLOG_E("open web engine library failed");
-            delete [] buf;
-            return;
-        }
-
-        int readCnt = stats.st_size / singleReadSize;
-        if (readCnt * singleReadSize < stats.st_size) {
-            readCnt += 1;
-        }
-
-        for (int i = 0; i < readCnt; i++) {
-            (void)read(fd, buf, singleReadSize);
-        }
-
-        (void)close(fd);
+    int fd = open(tempPath, O_RDONLY);
+    if (fd <= 0) {
+        WVLOG_E("open web engine library failed");
         delete [] buf;
-        WVLOG_I("NWebHelper PreReadLib Finish");
-    });
+        return;
+    }
 
-    preReadThread.detach();
+    int readCnt = stats.st_size / singleReadSize;
+    if (readCnt * singleReadSize < stats.st_size) {
+        readCnt += 1;
+    }
+
+    for (int i = 0; i < readCnt; i++) {
+        (void)read(fd, buf, singleReadSize);
+    }
+
+    (void)close(fd);
+    delete [] buf;
+    WVLOG_I("NWebHelper PreReadLib Finish");
 }
 
 void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bundlePath)
@@ -196,7 +192,11 @@ void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bu
 static void TryPreReadLibForFirstlyAppStartUp(const std::string &bundlePath)
 {
     if (g_isFirstTimeStartUp) {
-        DoPreReadLib(bundlePath);
+        std::thread preReadThread([bundlePath]() {
+            DoPreReadLib(bundlePath);
+        });
+
+        preReadThread.detach();
     }
 }
 
