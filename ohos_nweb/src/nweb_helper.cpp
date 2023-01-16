@@ -45,6 +45,7 @@ const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm";
 #endif
 const std::string LIB_NAME_WEB_ENGINE = "libweb_engine.so";
 const std::string LIB_NAME_NWEB_ADAPTER = "libnweb_adapter.so";
+static bool g_isFirstTimeStartUp = false;
 }
 
 namespace OHOS::NWeb {
@@ -131,7 +132,7 @@ void NWebHelper::UnloadLib()
     }
 }
 
-static void PreReadLib(const std::string bundlePath)
+static void DoPreReadLib(const std::string &bundlePath)
 {
     std::thread preReadThread([bundlePath]() {
         WVLOG_I("NWebHelper PreReadLib");
@@ -181,9 +182,27 @@ static void PreReadLib(const std::string bundlePath)
     preReadThread.detach();
 }
 
+void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bundlePath)
+{
+    g_isFirstTimeStartUp = isFirstTimeStartUpWeb;
+    if (isFirstTimeStartUpWeb) {
+        WVLOG_I("first time startup, need to wait until the nweb init stage");
+        return;
+    }
+
+    DoPreReadLib(bundlePath);
+}
+
+static void TryPreReadLibForFirstlyAppStartUp(const std::string &bundlePath)
+{
+    if (g_isFirstTimeStartUp) {
+        DoPreReadLib(bundlePath);
+    }
+}
+
 bool NWebHelper::Init(bool from_ark)
 {
-    PreReadLib(bundlePath_);
+    TryPreReadLibForFirstlyAppStartUp(bundlePath_);
     return LoadLib(from_ark);
 }
 
