@@ -207,7 +207,7 @@ public:
     {
         return GSError::GSERROR_OK;
     }
-    GSError RegisterDeleteBufferListener(OnDeleteBufferFunc func) override
+    GSError RegisterDeleteBufferListener(OnDeleteBufferFunc func, bool isForUniRedraw = false) override
     {
         return GSError::GSERROR_OK;
     }
