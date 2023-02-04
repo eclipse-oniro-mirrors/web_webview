@@ -191,6 +191,7 @@ bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageData> 
     opt.editable = true;
     std::unique_ptr<Media::PixelMap> pixelMap = Media::PixelMap::Create(opt);
     if (pixelMap == nullptr) {
+        WVLOG_E("create pixel map failed");
         return false;
     }
     uint64_t stride = static_cast<uint64_t>(imageData->width) << 2;
