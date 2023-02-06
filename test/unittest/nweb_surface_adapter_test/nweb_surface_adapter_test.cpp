@@ -318,6 +318,11 @@ public:
     {
         return nullptr;
     }
+
+    bool QueryIfBufferAvailable()
+    {
+        return true;
+    }
 };
 
 class SurfaceBufferImplMock : public SurfaceBufferImpl {
