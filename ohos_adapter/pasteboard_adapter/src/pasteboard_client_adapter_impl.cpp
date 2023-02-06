@@ -18,6 +18,7 @@
 #include <securec.h>
 #include "nweb_log.h"
 #include "remote_uri.h"
+#include "media_errors.h"
 
 using namespace OHOS::MiscServices;
 using namespace OHOS::DistributedFS::ModuleRemoteUri;
