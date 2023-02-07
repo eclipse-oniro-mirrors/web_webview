@@ -17,6 +17,7 @@
 #define SYSTEM_PROPERTIES_ADAPTER_H
 
 #include <cstdint>
+#include <string>
 
 namespace OHOS::NWeb {
 
@@ -27,6 +28,12 @@ public:
     virtual ~SystemPropertiesAdapter() = default;
 
     virtual bool GetResourceUseHapPathEnable() const = 0;
+
+    virtual std::string GetDeviceInfoProductModel() const = 0;
+
+    virtual std::string GetDeviceInfoBrand() const = 0;
+
+    virtual int32_t GetDeviceInfoMajorVersion() const = 0;
 };
 
 }  // namespace OHOS::NWeb
