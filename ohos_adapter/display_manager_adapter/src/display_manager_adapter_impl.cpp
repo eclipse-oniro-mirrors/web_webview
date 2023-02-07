@@ -155,7 +155,7 @@ bool DisplayManagerAdapterImpl::RegisterDisplayListener(
         return false;
     }
     reg_.emplace(std::make_pair(listener.get(), reg));
-    return DisplayManager::GetInstance().RegisterDisplayListener(reg);
+    return DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK;
 }
 
 bool DisplayManagerAdapterImpl::UnregisterDisplayListener(
@@ -165,7 +165,7 @@ bool DisplayManagerAdapterImpl::UnregisterDisplayListener(
     if (iter == reg_.end()) {
         return false;
     }
-    if (DisplayManager::GetInstance().UnregisterDisplayListener(iter->second)) {
+    if (DisplayManager::GetInstance().UnregisterDisplayListener(iter->second) == DMError::DM_OK) {
         reg_.erase(iter);
         return true;
     }
