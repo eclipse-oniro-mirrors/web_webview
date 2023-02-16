@@ -27,7 +27,8 @@ public:
 
     virtual ~DatashareAdapter() = default;
 
-    virtual int OpenDataShareUriForRead(const std::string& filePath) const = 0;
+    virtual int OpenDataShareUriForRead(const std::string& uriStr) const = 0;
+    virtual std::string GetFileDisplayName(const std::string& uriStr) = 0;
 };
 
 }  // namespace OHOS::NWeb
