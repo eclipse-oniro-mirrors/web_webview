@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,29 +13,29 @@
  * limitations under the License.
  */
 
-#ifndef SYSTEM_PROPERTIES_ADAPTER_H
-#define SYSTEM_PROPERTIES_ADAPTER_H
+#ifndef DATASHARE_ADAPTER_IMPL_H
+#define DATASHARE_ADAPTER_IMPL_H
 
-#include <cstdint>
-#include <string>
+#include "datashare_adapter.h"
 
 namespace OHOS::NWeb {
 
-class SystemPropertiesAdapter {
+class DatashareAdapterImpl : public DatashareAdapter {
 public:
-    SystemPropertiesAdapter() = default;
+    static DatashareAdapterImpl& GetInstance();
 
-    virtual ~SystemPropertiesAdapter() = default;
+    ~DatashareAdapterImpl() override = default;
 
-    virtual bool GetResourceUseHapPathEnable() const = 0;
+    int OpenDataShareUriForRead(const std::string& filePath) const override;
 
-    virtual std::string GetDeviceInfoProductModel() const = 0;
+private:
+    DatashareAdapterImpl() = default;
 
-    virtual std::string GetDeviceInfoBrand() const = 0;
+    DatashareAdapterImpl(const DatashareAdapterImpl& other) = delete;
 
-    virtual int32_t GetDeviceInfoMajorVersion() const = 0;
+    DatashareAdapterImpl& operator=(const DatashareAdapterImpl&) = delete;
 };
 
 }  // namespace OHOS::NWeb
 
-#endif  // SYSTEM_PROPERTIES_ADAPTER_H
+#endif  // DATASHARE_ADAPTER_IMPL_H

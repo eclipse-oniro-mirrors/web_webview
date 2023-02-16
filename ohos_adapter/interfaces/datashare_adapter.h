@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,29 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef SYSTEM_PROPERTIES_ADAPTER_H
-#define SYSTEM_PROPERTIES_ADAPTER_H
+#ifndef DATASHARE_ADAPTER_H
+#define DATASHARE_ADAPTER_H
 
 #include <cstdint>
 #include <string>
 
 namespace OHOS::NWeb {
 
-class SystemPropertiesAdapter {
+class DatashareAdapter {
 public:
-    SystemPropertiesAdapter() = default;
+    DatashareAdapter() = default;
 
-    virtual ~SystemPropertiesAdapter() = default;
+    virtual ~DatashareAdapter() = default;
 
-    virtual bool GetResourceUseHapPathEnable() const = 0;
-
-    virtual std::string GetDeviceInfoProductModel() const = 0;
-
-    virtual std::string GetDeviceInfoBrand() const = 0;
-
-    virtual int32_t GetDeviceInfoMajorVersion() const = 0;
+    virtual int OpenDataShareUriForRead(const std::string& filePath) const = 0;
 };
 
 }  // namespace OHOS::NWeb
 
-#endif  // SYSTEM_PROPERTIES_ADAPTER_H
+#endif  // DATASHARE_ADAPTER_H
