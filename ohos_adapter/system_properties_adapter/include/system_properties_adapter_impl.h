@@ -28,6 +28,12 @@ public:
 
     bool GetResourceUseHapPathEnable() const override;
 
+    std::string GetDeviceInfoProductModel() const override;
+
+    std::string GetDeviceInfoBrand() const override;
+    
+    int32_t GetDeviceInfoMajorVersion() const override;
+
 private:
     SystemPropertiesAdapterImpl() = default;
 

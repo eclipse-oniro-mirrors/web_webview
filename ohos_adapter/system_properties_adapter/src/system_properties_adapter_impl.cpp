@@ -15,7 +15,9 @@
 
 #include "system_properties_adapter_impl.h"
 
+#include "parameter.h"
 #include "parameters.h"
+#include "sysversion.h"
 
 namespace OHOS::NWeb {
 
@@ -31,4 +33,19 @@ bool SystemPropertiesAdapterImpl::GetResourceUseHapPathEnable() const
     return OHOS::system::GetBoolParameter("compress", false);
 }
 
-}  // namespace OHOS::NWeb
+std::string SystemPropertiesAdapterImpl::GetDeviceInfoProductModel() const
+{
+    return GetProductModel();
+}
+
+std::string SystemPropertiesAdapterImpl::GetDeviceInfoBrand() const
+{
+    return GetBrand();
+}
+
+int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion() const
+{
+    return GetMajorVersion();
+}
+
+} // namespace OHOS::NWeb
