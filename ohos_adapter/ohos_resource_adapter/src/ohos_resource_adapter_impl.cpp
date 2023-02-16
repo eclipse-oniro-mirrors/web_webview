@@ -18,13 +18,21 @@
 #include <ctime>
 #include <securec.h>
 #include <sstream>
+#include <unistd.h>
 
+#include "bundle_mgr_proxy.h"
+#include "if_system_ability_manager.h"
+#include "iservice_registry.h"
 #include "nweb_log.h"
+#include "system_ability_definition.h"
 
 using namespace OHOS::AbilityBase;
 
 namespace {
 const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
+const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
+const std::string NWEB_BUNDLE_NAME = "com.ohos.nweb";
+const std::string NWEB_PACKAGE = "entry";
 constexpr uint32_t TM_YEAR_BITS = 9;
 constexpr uint32_t TM_MON_BITS = 5;
 constexpr uint32_t TM_MIN_BITS = 5;
@@ -33,6 +41,48 @@ constexpr uint32_t START_YEAR = 1900;
 } // namespace
 
 namespace OHOS::NWeb {
+namespace {
+sptr<OHOS::AppExecFwk::BundleMgrProxy> GetBundleMgrProxy()
+{
+    auto systemAbilityMgr = OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (!systemAbilityMgr) {
+        WVLOG_E("fail to get system ability mgr.");
+        return nullptr;
+    }
+    auto remoteObject = systemAbilityMgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (!remoteObject) {
+        WVLOG_E("fail to get bundle manager proxy.");
+        return nullptr;
+    }
+    WVLOG_D("get bundle manager proxy success.");
+    return iface_cast<OHOS::AppExecFwk::BundleMgrProxy>(remoteObject);
+}
+
+std::string GetNWebHapPath()
+{
+    auto iBundleMgr = GetBundleMgrProxy();
+    if (iBundleMgr) {
+        OHOS::AppExecFwk::AbilityInfo abilityInfo;
+        OHOS::AppExecFwk::HapModuleInfo hapModuleInfo;
+        abilityInfo.bundleName = NWEB_BUNDLE_NAME;
+        abilityInfo.package = NWEB_PACKAGE;
+        if (iBundleMgr->GetHapModuleInfo(abilityInfo, hapModuleInfo)) {
+            WVLOG_D("get hap module info success. %{public}s", hapModuleInfo.hapPath.c_str());
+            return hapModuleInfo.hapPath;
+        }
+    }
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        WVLOG_D("eixt NWEB_HAP_PATH");
+        return NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        WVLOG_D("eixt NWEB_HAP_PATH_1");
+        return NWEB_HAP_PATH_1;
+    }
+    WVLOG_E("get nweb hap path failed.");
+    return "";
+}
+} // namespace
 
 OhosFileMapperImpl::OhosFileMapperImpl(std::unique_ptr<OHOS::AbilityBase::FileMapper> fileMap,
     const std::shared_ptr<Extractor>& extractor): extractor_(extractor), fileMap_(std::move(fileMap))
@@ -85,9 +135,12 @@ OhosResourceAdapterImpl::OhosResourceAdapterImpl(const std::string& hapPath)
 void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 {
     bool newCreate = false;
-    sysExtractor_ = ExtractorUtil::GetExtractor(NWEB_HAP_PATH, newCreate);
-    if (!sysExtractor_) {
-        WVLOG_E("RuntimeExtractor create failed for %{public}s", NWEB_HAP_PATH.c_str());
+    std::string nwebHapPath = GetNWebHapPath();
+    if (!nwebHapPath.empty()) {
+        sysExtractor_ = ExtractorUtil::GetExtractor(nwebHapPath, newCreate);
+        if (!sysExtractor_) {
+            WVLOG_E("RuntimeExtractor create failed for %{public}s", nwebHapPath.c_str());
+        }
     }
     if (hapPath.empty()) {
         return;
