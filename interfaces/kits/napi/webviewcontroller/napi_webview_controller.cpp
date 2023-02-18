@@ -15,6 +15,7 @@
 
 #include "napi_webview_controller.h"
 
+#include <cstdint>
 #include <securec.h>
 #include <unistd.h>
 #include <uv.h>
@@ -97,6 +98,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("slideScroll", NapiWebviewController::SlideScroll),
         DECLARE_NAPI_STATIC_FUNCTION("customizeSchemes", NapiWebviewController::CustomizeSchemes),
         DECLARE_NAPI_FUNCTION("innerSetHapPath", NapiWebviewController::InnerSetHapPath),
+        DECLARE_NAPI_FUNCTION("innerGetCertificate", NapiWebviewController::InnerGetCertificate),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -2522,6 +2524,48 @@ napi_value NapiWebviewController::SlideScroll(napi_env env, napi_callback_info i
         return nullptr;
     }
     webviewController->SlideScroll(vx, vy);
+    return result;
+}
+
+napi_value NapiWebviewController::InnerGetCertificate(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+    napi_create_array(env, &result);
+
+    WebviewController *webviewController = nullptr;
+    napi_unwrap(env, thisVar, (void **)&webviewController);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    std::vector<std::string> certChainDerData;
+    bool ans = webviewController->GetCertChainDerData(certChainDerData);
+    if (!ans) {
+        WVLOG_E("get cert chain data failed");
+        return result;
+    }
+
+    for (uint8_t i = 0; i < certChainDerData.size(); i++) {
+        if (i == UINT8_MAX) {
+            WVLOG_E("error, cert chain data array reach max");
+            break;
+        }
+        void *data = nullptr;
+        napi_value buffer = nullptr;
+        napi_value item = nullptr;
+        NAPI_CALL(env, napi_create_arraybuffer(env, certChainDerData[i].size(), &data, &buffer));
+        int retCode = memcpy_s(data, certChainDerData[i].size(),
+                               certChainDerData[i].data(), certChainDerData[i].size());
+        if (retCode != 0) {
+            WVLOG_E("memcpy_s failed, index = %{public}u, copy size = %{public}u", i, certChainDerData[i].size());
+            continue;
+        }
+        NAPI_CALL(env, napi_create_typedarray(env, napi_uint8_array, certChainDerData[i].size(), buffer, 0, &item));
+        NAPI_CALL(env, napi_set_element(env, result, i, item));
+    }
     return result;
 }
 } // namespace NWeb

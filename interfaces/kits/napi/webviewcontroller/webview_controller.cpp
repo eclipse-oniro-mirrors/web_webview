@@ -865,5 +865,15 @@ void WebviewController::InnerSetHapPath(const std::string &hapPath)
     hapPath_ = hapPath;
 }
 
+bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainDerData)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        WVLOG_E("GetCertChainDerData failed, nweb ptr is null");
+        return false;
+    }
+
+    return nweb_ptr->GetCertChainDerData(certChainDerData, true);
+}
 } // namespace NWeb
 } // namespace OHOS
