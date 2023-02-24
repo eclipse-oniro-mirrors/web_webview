@@ -99,6 +99,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("customizeSchemes", NapiWebviewController::CustomizeSchemes),
         DECLARE_NAPI_FUNCTION("innerSetHapPath", NapiWebviewController::InnerSetHapPath),
         DECLARE_NAPI_FUNCTION("innerGetCertificate", NapiWebviewController::InnerGetCertificate),
+        DECLARE_NAPI_FUNCTION("setAudioMuted", NapiWebviewController::SetAudioMuted),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -2566,6 +2567,49 @@ napi_value NapiWebviewController::InnerGetCertificate(napi_env env, napi_callbac
         NAPI_CALL(env, napi_create_typedarray(env, napi_uint8_array, certChainDerData[i].size(), buffer, 0, &item));
         NAPI_CALL(env, napi_set_element(env, result, i, item));
     }
+    return result;
+}
+
+napi_value NapiWebviewController::SetAudioMuted(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("SetAudioMuted invoked");
+
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("SetAudioMuted failed due to wrong param quantity: %{public}d", argc);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool muted = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], muted)) {
+        WVLOG_E("SetAudioMuted failed due to invalid argument value");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController* webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void**)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        WVLOG_E("SetAudioMuted failed due to no associated Web component");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    ErrCode ret = webviewController->SetAudioMuted(muted);
+    if (ret != NO_ERROR) {
+        WVLOG_E("SetAudioMuted failed, error code: %{public}d", ret);
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+
+    WVLOG_I("SetAudioMuted: %{public}s", (muted ? "true" : "false"));
     return result;
 }
 } // namespace NWeb

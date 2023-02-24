@@ -875,5 +875,17 @@ bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainD
 
     return nweb_ptr->GetCertChainDerData(certChainDerData, true);
 }
+
+ErrCode WebviewController::SetAudioMuted(bool muted)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->SetAudioMuted(muted);
+    return NWebError::NO_ERROR;
+}
+
 } // namespace NWeb
 } // namespace OHOS
