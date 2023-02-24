@@ -42,6 +42,12 @@ enum class WebHitTestType : int {
     UNKNOWN
 };
 
+enum class SecureDnsModeType : int {
+    OFF = 0,
+    AUTO,
+    SECURE_ONLY
+};
+
 enum class ResourceType : uint32_t {
     COLOR = 10001,
     FLOAT,
