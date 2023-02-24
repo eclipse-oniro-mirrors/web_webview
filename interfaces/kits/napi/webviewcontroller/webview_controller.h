@@ -185,6 +185,8 @@ public:
 
     bool GetCertChainDerData(std::vector<std::string> &certChainDerData);
 
+    ErrCode SetAudioMuted(bool muted);
+
 private:
     int ConverToWebHitTestType(int hitType);
 

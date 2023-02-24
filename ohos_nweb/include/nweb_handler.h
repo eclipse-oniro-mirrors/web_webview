@@ -542,6 +542,12 @@ public:
 
     virtual void OnSelectPopupMenu(std::shared_ptr<NWebSelectPopupMenuParam> params,
                                    std::shared_ptr<NWebSelectPopupMenuCallback> callback) {}
+
+    /**
+     * @brief Called when the audio playing state on web page changed.
+     * @param playing Whether the audio is playing or not.
+     */
+    virtual void OnAudioStateChanged(bool playing) {}
 };
 }  // namespace OHOS::NWeb
 
