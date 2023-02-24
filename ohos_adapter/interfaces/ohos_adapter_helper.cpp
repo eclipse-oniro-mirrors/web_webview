@@ -19,7 +19,9 @@
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
 #include "battery_mgr_client_adapter_impl.h"
+#include "datashare_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
+#include "imf_adapter_impl.h"
 #include "mmi_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
 #include "ohos_init_web_adapter_impl.h"
@@ -31,7 +33,6 @@
 #include "power_mgr_client_adapter_impl.h"
 #include "soc_perf_client_adapter_impl.h"
 #include "system_properties_adapter_impl.h"
-#include "datashare_adapter_impl.h"
 #include "vsync_adapter_impl.h"
 
 namespace OHOS::NWeb {
@@ -130,5 +131,10 @@ std::unique_ptr<OhosInitWebAdapter> OhosAdapterHelper::GetInitWebAdapter() const
 DatashareAdapter& OhosAdapterHelper::GetDatashareInstance() const
 {
     return DatashareAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<IMFAdapter> OhosAdapterHelper::CreateIMFAdapter() const
+{
+    return std::make_unique<IMFAdapterImpl>();
 }
 } // namespace OHOS::NWeb
