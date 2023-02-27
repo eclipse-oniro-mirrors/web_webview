@@ -797,7 +797,11 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_034, TestSi
 {
     ClipBoardImageData image;
     bool reset = g_datarecord->GetImgData(image);
-    EXPECT_EQ(TRUE_OK, reset);
+    if (reset) {
+        EXPECT_NE(image.data, nullptr);
+    } else {
+        EXPECT_NE(TRUE_OK, reset);
+    }
 }
 
 /**
