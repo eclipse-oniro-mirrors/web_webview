@@ -114,6 +114,16 @@ enum class BlurReason : int32_t {
     FRAME_DESTROY = 2,
 };
 
+struct OHOS_NWEB_EXPORT NWebDOHConfig {
+  /*
+   * 0: OFF
+   * 1: AUTO
+   * 2: SECURE_ONLY
+   */
+  int doh_mode = -1;
+  std::string doh_config = "";
+};
+
 using WebState = std::shared_ptr<std::vector<uint8_t>>;
 
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {

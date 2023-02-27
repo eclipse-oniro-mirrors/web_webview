@@ -32,6 +32,7 @@ const std::string WEB_MESSAGE_PORT_CLASS_NAME = "WebMessagePort";
 const std::string WEB_HITTESTTYPE_V9_ENUM_NAME = "HitTestTypeV9";
 const std::string WEB_HITTESTTYPE_ENUM_NAME = "WebHitTestType";
 const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
+const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 
 class NapiWebviewController {
 public:
@@ -44,6 +45,8 @@ private:
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
 
     static napi_value InitializeWebEngine(napi_env env, napi_callback_info info);
+
+    static napi_value SetHttpDns(napi_env env, napi_callback_info info);
 
     static napi_value SetWebDebuggingAccess(napi_env env, napi_callback_info info);
 

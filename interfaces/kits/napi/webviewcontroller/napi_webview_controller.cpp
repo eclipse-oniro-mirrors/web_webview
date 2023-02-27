@@ -40,6 +40,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_STATIC_FUNCTION("initializeWebEngine", NapiWebviewController::InitializeWebEngine),
+        DECLARE_NAPI_STATIC_FUNCTION("setHttpDns", NapiWebviewController::SetHttpDns),
         DECLARE_NAPI_STATIC_FUNCTION("setWebDebuggingAccess", NapiWebviewController::SetWebDebuggingAccess),
         DECLARE_NAPI_FUNCTION("getWebDebuggingAccess", NapiWebviewController::InnerGetWebDebuggingAccess),
         DECLARE_NAPI_FUNCTION("setWebId", NapiWebviewController::SetWebId),
@@ -146,6 +147,20 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         sizeof(hitTestTypeProperties[0]), hitTestTypeProperties, &hitTestTypeEnum);
     napi_set_named_property(env, exports, WEB_HITTESTTYPE_ENUM_NAME.c_str(), hitTestTypeEnum);
 
+    napi_value secureDnsModeEnum = nullptr;
+    napi_property_descriptor secureDnsModeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("Off", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::OFF))),
+        DECLARE_NAPI_STATIC_PROPERTY("Auto", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::AUTO))),
+        DECLARE_NAPI_STATIC_PROPERTY("SecureOnly", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::SECURE_ONLY))),
+    };
+    napi_define_class(env, WEB_SECURE_DNS_MODE_ENUM_NAME.c_str(), WEB_SECURE_DNS_MODE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(secureDnsModeProperties) /
+        sizeof(secureDnsModeProperties[0]), secureDnsModeProperties, &secureDnsModeEnum);
+    napi_set_named_property(env, exports, WEB_SECURE_DNS_MODE_ENUM_NAME.c_str(), secureDnsModeEnum);
+
     napi_value historyList = nullptr;
     napi_property_descriptor historyListProperties[] = {
         DECLARE_NAPI_FUNCTION("getItemAtIndex", NapiWebHistoryList::GetItem)
@@ -189,6 +204,47 @@ napi_value NapiWebviewController::InitializeWebEngine(napi_env env, napi_callbac
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_undefined(env, &result));
     WVLOG_I("NWebHelper initialized, init web engine done, bundle_path: %{public}s", bundle_path.c_str());
+    return result;
+}
+
+napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+    int doh_mode;
+    std::string doh_config;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], doh_mode)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], doh_config)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (doh_config.rfind("https", 0) != 0 && doh_config.rfind("HTTPS", 0) != 0) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    NWebDOHConfig config;
+    config.doh_mode = doh_mode;
+    config.doh_config = doh_config;
+    WVLOG_I("set http dns mode:%{public}d doh_config:%{public}s", doh_mode, doh_config.c_str());
+
+    NWebHelper::Instance().SetHttpDns(config);
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 
