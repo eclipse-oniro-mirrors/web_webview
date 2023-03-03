@@ -29,6 +29,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "audio_adapter/src/audio_renderer_adapter_impl.cpp",
     "audio_adapter/src/audio_system_manager_adapter_impl.cpp",
     "battery_mgr_adapter/src/battery_mgr_client_adapter_impl.cpp",
+    "cert_mgr_adapter/src/cert_mgr_adapter_impl.cpp",
     "datashare_adapter/src/datashare_adapter_impl.cpp",
     "display_manager_adapter/src/display_manager_adapter_impl.cpp",
     "distributeddatamgr_adapter/webdatabase/src/ohos_web_data_base_adapter_impl.cpp",
@@ -76,6 +77,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "//base/web/webview/ohos_nweb/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
+    "cert_mgr_adapter/include",
   ]
 
   public_configs = [ ":ohos_adapter_public_interface" ]
@@ -91,6 +93,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "cellular_data:tel_cellular_data_api",
+    "certificate_manager:cert_manager_sdk",
     "common_event_service:cesfwk_innerkits",
     "core_service:tel_core_service_api",
     "data_share:datashare_common",
