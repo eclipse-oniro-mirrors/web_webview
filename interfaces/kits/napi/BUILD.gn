@@ -66,7 +66,10 @@ ohos_shared_library("webview_napi") {
     "webview:libnweb",
   ]
 
-  deps = [ "$SUBSYSTEM_DIR/ohos_adapter:nweb_ohos_adapter" ]
+  deps = [
+    "$SUBSYSTEM_DIR/interfaces/kits/napi/js:js_export",
+    "$SUBSYSTEM_DIR/ohos_adapter:nweb_ohos_adapter",
+  ]
 
   relative_install_dir = "module/web"
 

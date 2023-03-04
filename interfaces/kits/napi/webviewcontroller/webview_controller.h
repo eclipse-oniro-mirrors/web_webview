@@ -183,6 +183,8 @@ public:
 
     void InnerSetHapPath(const std::string &hapPath);
 
+    bool GetCertChainDerData(std::vector<std::string> &certChainDerData);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
