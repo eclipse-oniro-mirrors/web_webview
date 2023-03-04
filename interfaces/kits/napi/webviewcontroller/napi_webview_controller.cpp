@@ -2560,7 +2560,7 @@ napi_value NapiWebviewController::InnerGetCertificate(napi_env env, napi_callbac
         int retCode = memcpy_s(data, certChainDerData[i].size(),
                                certChainDerData[i].data(), certChainDerData[i].size());
         if (retCode != 0) {
-            WVLOG_E("memcpy_s failed, index = %{public}u, copy size = %{public}u", i, certChainDerData[i].size());
+            WVLOG_E("memcpy_s cert data failed, index = %{public}u,", i);
             continue;
         }
         NAPI_CALL(env, napi_create_typedarray(env, napi_uint8_array, certChainDerData[i].size(), buffer, 0, &item));
