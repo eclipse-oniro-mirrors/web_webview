@@ -2582,7 +2582,7 @@ napi_value NapiWebviewController::SetAudioMuted(napi_env env, napi_callback_info
     napi_value argv[INTEGER_ONE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("SetAudioMuted failed due to wrong param quantity: %{public}d", argc);
+        WVLOG_E("SetAudioMuted failed due to wrong param quantity: %{public}zu", argc);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
