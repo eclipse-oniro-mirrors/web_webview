@@ -674,6 +674,13 @@ public:
      * @param y the offset in y direction.
     */
     virtual void SetScreenOffSet(double x, double y) = 0;
+
+    /**
+     * Set audio muted.
+     *
+     * @param muted Aduio mute state.
+     */
+    virtual void SetAudioMuted(bool muted) = 0;
 };
 }  // namespace OHOS::NWeb
 
