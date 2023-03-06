@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("../web_aafwk.gni")
 
 config("ohos_adapter_public_interface") {
   include_dirs = [
@@ -38,6 +39,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "graphic_adapter/vsync_adapter_impl.cpp",
     "inputmethodframework_adapter/src/imf_adapter_impl.cpp",
     "interfaces/ohos_adapter_helper.cpp",
+    "location_adapter/src/location_callback_adapter_impl.cpp",
+    "location_adapter/src/location_proxy_adapter_impl.cpp",
     "multimodalinput_adapter/src/mmi_adapter_impl.cpp",
     "net_connect_adapter/src/net_connect_adapter_impl.cpp",
     "net_connect_adapter/src/net_connect_callback_impl.cpp",
@@ -73,8 +76,10 @@ ohos_shared_library("nweb_ohos_adapter") {
     "system_properties_adapter/include",
     "datashare_adapter/include",
     "graphic_adapter",
+    "location_adapter/include",
     "inputmethodframework_adapter/include",
     "//base/web/webview/ohos_nweb/include",
+    "$location_path/interfaces/inner_api/include",
     "//third_party/jsoncpp/include",
     "//third_party/json/include",
     "cert_mgr_adapter/include",
@@ -122,6 +127,7 @@ ohos_shared_library("nweb_ohos_adapter") {
   }
 
   deps = [
+    "$location_path/frameworks/location_common/common:lbsservice_common",
     "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
     "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
   ]
