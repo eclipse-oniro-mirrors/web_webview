@@ -13,3 +13,5 @@
 
 aafwk_kits_path = "//foundation/ability/ability_runtime/frameworks/kits"
 aafwk_path = "//foundation/ability/ability_runtime"
+
+location_path = "//base/location"
