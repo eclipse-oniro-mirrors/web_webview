@@ -865,5 +865,27 @@ void WebviewController::InnerSetHapPath(const std::string &hapPath)
     hapPath_ = hapPath;
 }
 
+bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainDerData)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        WVLOG_E("GetCertChainDerData failed, nweb ptr is null");
+        return false;
+    }
+
+    return nweb_ptr->GetCertChainDerData(certChainDerData, true);
+}
+
+ErrCode WebviewController::SetAudioMuted(bool muted)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->SetAudioMuted(muted);
+    return NWebError::NO_ERROR;
+}
+
 } // namespace NWeb
 } // namespace OHOS

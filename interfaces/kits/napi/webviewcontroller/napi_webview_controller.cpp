@@ -15,6 +15,7 @@
 
 #include "napi_webview_controller.h"
 
+#include <cstdint>
 #include <securec.h>
 #include <unistd.h>
 #include <uv.h>
@@ -40,6 +41,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_STATIC_FUNCTION("initializeWebEngine", NapiWebviewController::InitializeWebEngine),
+        DECLARE_NAPI_STATIC_FUNCTION("setHttpDns", NapiWebviewController::SetHttpDns),
         DECLARE_NAPI_STATIC_FUNCTION("setWebDebuggingAccess", NapiWebviewController::SetWebDebuggingAccess),
         DECLARE_NAPI_FUNCTION("getWebDebuggingAccess", NapiWebviewController::InnerGetWebDebuggingAccess),
         DECLARE_NAPI_FUNCTION("setWebId", NapiWebviewController::SetWebId),
@@ -96,6 +98,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("slideScroll", NapiWebviewController::SlideScroll),
         DECLARE_NAPI_STATIC_FUNCTION("customizeSchemes", NapiWebviewController::CustomizeSchemes),
         DECLARE_NAPI_FUNCTION("innerSetHapPath", NapiWebviewController::InnerSetHapPath),
+        DECLARE_NAPI_FUNCTION("innerGetCertificate", NapiWebviewController::InnerGetCertificate),
+        DECLARE_NAPI_FUNCTION("setAudioMuted", NapiWebviewController::SetAudioMuted),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -146,6 +150,20 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         sizeof(hitTestTypeProperties[0]), hitTestTypeProperties, &hitTestTypeEnum);
     napi_set_named_property(env, exports, WEB_HITTESTTYPE_ENUM_NAME.c_str(), hitTestTypeEnum);
 
+    napi_value secureDnsModeEnum = nullptr;
+    napi_property_descriptor secureDnsModeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("Off", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::OFF))),
+        DECLARE_NAPI_STATIC_PROPERTY("Auto", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::AUTO))),
+        DECLARE_NAPI_STATIC_PROPERTY("SecureOnly", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::SECURE_ONLY))),
+    };
+    napi_define_class(env, WEB_SECURE_DNS_MODE_ENUM_NAME.c_str(), WEB_SECURE_DNS_MODE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(secureDnsModeProperties) /
+        sizeof(secureDnsModeProperties[0]), secureDnsModeProperties, &secureDnsModeEnum);
+    napi_set_named_property(env, exports, WEB_SECURE_DNS_MODE_ENUM_NAME.c_str(), secureDnsModeEnum);
+
     napi_value historyList = nullptr;
     napi_property_descriptor historyListProperties[] = {
         DECLARE_NAPI_FUNCTION("getItemAtIndex", NapiWebHistoryList::GetItem)
@@ -189,6 +207,47 @@ napi_value NapiWebviewController::InitializeWebEngine(napi_env env, napi_callbac
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_undefined(env, &result));
     WVLOG_I("NWebHelper initialized, init web engine done, bundle_path: %{public}s", bundle_path.c_str());
+    return result;
+}
+
+napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+    int doh_mode;
+    std::string doh_config;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], doh_mode)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], doh_config)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (doh_config.rfind("https", 0) != 0 && doh_config.rfind("HTTPS", 0) != 0) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    NWebDOHConfig config;
+    config.doh_mode = doh_mode;
+    config.doh_config = doh_config;
+    WVLOG_I("set http dns mode:%{public}d doh_config:%{public}s", doh_mode, doh_config.c_str());
+
+    NWebHelper::Instance().SetHttpDns(config);
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 
@@ -2466,6 +2525,91 @@ napi_value NapiWebviewController::SlideScroll(napi_env env, napi_callback_info i
         return nullptr;
     }
     webviewController->SlideScroll(vx, vy);
+    return result;
+}
+
+napi_value NapiWebviewController::InnerGetCertificate(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+    napi_create_array(env, &result);
+
+    WebviewController *webviewController = nullptr;
+    napi_unwrap(env, thisVar, (void **)&webviewController);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    std::vector<std::string> certChainDerData;
+    bool ans = webviewController->GetCertChainDerData(certChainDerData);
+    if (!ans) {
+        WVLOG_E("get cert chain data failed");
+        return result;
+    }
+
+    for (uint8_t i = 0; i < certChainDerData.size(); i++) {
+        if (i == UINT8_MAX) {
+            WVLOG_E("error, cert chain data array reach max");
+            break;
+        }
+        void *data = nullptr;
+        napi_value buffer = nullptr;
+        napi_value item = nullptr;
+        NAPI_CALL(env, napi_create_arraybuffer(env, certChainDerData[i].size(), &data, &buffer));
+        int retCode = memcpy_s(data, certChainDerData[i].size(),
+                               certChainDerData[i].data(), certChainDerData[i].size());
+        if (retCode != 0) {
+            WVLOG_E("memcpy_s cert data failed, index = %{public}u,", i);
+            continue;
+        }
+        NAPI_CALL(env, napi_create_typedarray(env, napi_uint8_array, certChainDerData[i].size(), buffer, 0, &item));
+        NAPI_CALL(env, napi_set_element(env, result, i, item));
+    }
+    return result;
+}
+
+napi_value NapiWebviewController::SetAudioMuted(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("SetAudioMuted invoked");
+
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("SetAudioMuted failed due to wrong param quantity: %{public}d", argc);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool muted = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], muted)) {
+        WVLOG_E("SetAudioMuted failed due to invalid argument value");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController* webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void**)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        WVLOG_E("SetAudioMuted failed due to no associated Web component");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    ErrCode ret = webviewController->SetAudioMuted(muted);
+    if (ret != NO_ERROR) {
+        WVLOG_E("SetAudioMuted failed, error code: %{public}d", ret);
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+
+    WVLOG_I("SetAudioMuted: %{public}s", (muted ? "true" : "false"));
     return result;
 }
 } // namespace NWeb

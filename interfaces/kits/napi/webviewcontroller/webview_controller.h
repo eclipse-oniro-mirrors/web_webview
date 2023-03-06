@@ -42,6 +42,12 @@ enum class WebHitTestType : int {
     UNKNOWN
 };
 
+enum class SecureDnsModeType : int {
+    OFF = 0,
+    AUTO,
+    SECURE_ONLY
+};
+
 enum class ResourceType : uint32_t {
     COLOR = 10001,
     FLOAT,
@@ -176,6 +182,10 @@ public:
     void SlideScroll(float vx, float vy);
 
     void InnerSetHapPath(const std::string &hapPath);
+
+    bool GetCertChainDerData(std::vector<std::string> &certChainDerData);
+
+    ErrCode SetAudioMuted(bool muted);
 
 private:
     int ConverToWebHitTestType(int hitType);

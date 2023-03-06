@@ -264,6 +264,25 @@ std::weak_ptr<NWeb> NWebHelper::GetNWeb(int32_t nweb_id)
     return nweb;
 }
 
+using SetHttpDnsFunc = void (*)(const NWebDOHConfig &);
+void NWebHelper::SetHttpDns(const NWebDOHConfig &config)
+{
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_E("doh: libHandleNWebAdapter_ is nullptr");
+        return;
+    }
+
+    const std::string SET_HTTP_DNS_FUNC_NAME = "SetHttpDns";
+    SetHttpDnsFunc setHttpDnsFunc =
+        reinterpret_cast<SetHttpDnsFunc>(dlsym(libHandleWebEngine_, SET_HTTP_DNS_FUNC_NAME.c_str()));
+    if (setHttpDnsFunc == nullptr) {
+        WVLOG_E("doh: fail to dlsym %{public}s from libohoswebview.so", SET_HTTP_DNS_FUNC_NAME.c_str());
+        return;
+    }
+
+    setHttpDnsFunc(config);
+}
+
 using GetDataBaseFunc = NWebDataBase *(*)();
 NWebDataBase *NWebHelper::GetDataBase()
 {

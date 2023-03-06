@@ -294,6 +294,14 @@ public:
     {}
     void SlideScroll(float vx, float vy) override
     {}
+    bool GetCertChainDerData(std::vector<std::string>& certChainData, bool isSingleCert) override
+    {
+        return false;
+    }
+    void SetScreenOffSet(double x, double y) override
+    {}
+    void SetAudioMuted(bool muted) override
+    {}
 };
 }
 #endif
