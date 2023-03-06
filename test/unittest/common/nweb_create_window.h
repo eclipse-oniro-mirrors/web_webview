@@ -300,6 +300,8 @@ public:
     }
     void SetScreenOffSet(double x, double y) override
     {}
+    void SetAudioMuted(bool muted) override
+    {}
 };
 }
 #endif
