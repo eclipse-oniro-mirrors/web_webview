@@ -22,8 +22,11 @@
 #include "audio_renderer_adapter.h"
 #include "audio_system_manager_adapter.h"
 #include "battery_mgr_client_adapter.h"
+#include "cert_mgr_adapter.h"
+#include "datashare_adapter.h"
 #include "display_manager_adapter.h"
 #include "graphic_adapter.h"
+#include "imf_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
 #include "ohos_init_web_adapter.h"
@@ -33,7 +36,6 @@
 #include "power_mgr_client_adapter.h"
 #include "soc_perf_client_adapter.h"
 #include "system_properties_adapter.h"
-#include "datashare_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosAdapterHelper {
@@ -77,6 +79,10 @@ public:
     std::unique_ptr<OhosInitWebAdapter> GetInitWebAdapter() const;
 
     DatashareAdapter& GetDatashareInstance() const;
+
+    std::unique_ptr<IMFAdapter> CreateIMFAdapter() const;
+
+    std::unique_ptr<CertManagerAdapter> GetRootCertDataAdapter() const;
 
 private:
     OhosAdapterHelper() = default;
