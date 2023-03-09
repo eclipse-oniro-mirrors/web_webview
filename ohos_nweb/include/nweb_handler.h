@@ -548,6 +548,14 @@ public:
      * @param playing Whether the audio is playing or not.
      */
     virtual void OnAudioStateChanged(bool playing) {}
+
+    /**
+     * @brief Called when the first content rendering of web page.
+     * @param navigationStartTick Absolute navigation start time, as TimeTicks.
+     * @param firstContentfulPaintMs Time to first contentful paint from navigation start.
+     */
+    virtual void OnFirstContentfulPaint(long navigationStartTick,
+                                        long firstContentfulPaintMs) {}
 };
 }  // namespace OHOS::NWeb
 
