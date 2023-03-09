@@ -18,10 +18,12 @@
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
+#include "access_token_adapter_impl.h"
 #include "battery_mgr_client_adapter_impl.h"
 #include "cert_mgr_adapter_impl.h"
 #include "datashare_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
+#include "event_handler_adapter_impl.h"
 #include "imf_adapter_impl.h"
 #include "mmi_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
@@ -138,8 +140,19 @@ std::unique_ptr<IMFAdapter> OhosAdapterHelper::CreateIMFAdapter() const
 {
     return std::make_unique<IMFAdapterImpl>();
 }
+
 std::unique_ptr<CertManagerAdapter> OhosAdapterHelper::GetRootCertDataAdapter() const
 {
     return std::make_unique<CertManagerAdapterImpl>();
+}
+
+AccessTokenAdapter& OhosAdapterHelper::GetAccessTokenAdapterInstance() const
+{
+    return AccessTokenAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<EventHandlerAdapter> OhosAdapterHelper::GetEventHandlerAdapter() const
+{
+    return std::make_unique<EventHandlerAdapterImpl>();
 }
 } // namespace OHOS::NWeb
