@@ -152,9 +152,9 @@ void NWebHandlerImplTest::OnPageLoadError(int errorCode,
     TESTLOG_I("NWebHandlerImplTest::OnPageLoadError called, url=%{public}s", failingUrl.c_str());
 }
 
-bool NWebHandlerImplTest::OnHandleInterceptUrlLoading(const std::string& url)
+bool NWebHandlerImplTest::OnHandleInterceptUrlLoading(std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request)
 {
-    TESTLOG_I("NWebHandlerImplTest::OnHandleInterceptUrlLoading called, url=%{public}s", url.c_str());
+    TESTLOG_I("NWebHandlerImplTest::OnHandleInterceptUrlLoading called, url=%{public}s", request->Url().c_str());
     return false;
 }
 

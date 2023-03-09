@@ -33,7 +33,7 @@ public:
     void OnPageLoadError(int errorCode,
                          const std::string& description,
                          const std::string& failingUrl) override;
-    bool OnHandleInterceptUrlLoading(const std::string& url) override;
+    bool OnHandleInterceptUrlLoading(std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request) override;
     const std::vector<std::string> VisitedUrlHistory() override;
     void OnResourceLoadError(std::shared_ptr<NWebUrlResourceRequest> request,
                              std::shared_ptr<NWebUrlResourceError> error) override;
