@@ -195,7 +195,7 @@ public:
      * @param url The url to be loaded.
      * @return true to cancel the loading, false to continue the loading.
      */
-    virtual bool OnHandleInterceptUrlLoading(const std::string& url) {
+    virtual bool OnHandleInterceptUrlLoading(std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request) {
         return false;
     }
 
