@@ -21,10 +21,12 @@
 #include "aafwk_app_mgr_client_adapter.h"
 #include "audio_renderer_adapter.h"
 #include "audio_system_manager_adapter.h"
+#include "access_token_adapter.h"
 #include "battery_mgr_client_adapter.h"
 #include "cert_mgr_adapter.h"
 #include "datashare_adapter.h"
 #include "display_manager_adapter.h"
+#include "event_handler_adapter.h"
 #include "graphic_adapter.h"
 #include "imf_adapter.h"
 #include "mmi_adapter.h"
@@ -83,6 +85,10 @@ public:
     std::unique_ptr<IMFAdapter> CreateIMFAdapter() const;
 
     std::unique_ptr<CertManagerAdapter> GetRootCertDataAdapter() const;
+
+    AccessTokenAdapter& GetAccessTokenAdapterInstance() const;
+
+    std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() const;
 
 private:
     OhosAdapterHelper() = default;
