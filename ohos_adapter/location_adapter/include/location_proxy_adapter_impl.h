@@ -16,10 +16,13 @@
 #ifndef LOCATION_PROXY_ADAPTER_IMPL_H
 #define LOCATION_PROXY_ADAPTER_IMPL_H
 
-#include "location_adapter.h"
-#include "locator.h"
-#include "request_config.h"
+#include <map>
+
+#include "i_locator_callback.h"
 #include "location.h"
+#include "request_config.h"
+
+#include "location_adapter.h"
 
 namespace OHOS::NWeb {
 class LocationRequestConfigImpl : public LocationRequestConfig {
