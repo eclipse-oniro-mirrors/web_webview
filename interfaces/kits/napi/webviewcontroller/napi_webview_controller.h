@@ -174,6 +174,8 @@ private:
     static napi_value InnerGetCertificate(napi_env env, napi_callback_info info);
 
     static napi_value SetAudioMuted(napi_env env, napi_callback_info info);
+
+    static napi_value InnerGetThisVar(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {

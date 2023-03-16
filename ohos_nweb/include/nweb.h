@@ -688,6 +688,13 @@ public:
      * @param should whether wait render frame submission.
     */
     virtual void SetShouldFrameSubmissionBeforeDraw(bool should) = 0;
+
+    /**
+     * Notify whether the popup window is initialized successfully.
+     *
+     * @param result whether success.
+     */
+    virtual void NotifyPopupWindowResult(bool result) = 0;
 };
 }  // namespace OHOS::NWeb
 
