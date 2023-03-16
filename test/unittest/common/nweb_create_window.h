@@ -302,6 +302,8 @@ public:
     {}
     void SetAudioMuted(bool muted) override
     {}
+    void SetShouldFrameSubmissionBeforeDraw(bool should) override
+    {}
 };
 }
 #endif
