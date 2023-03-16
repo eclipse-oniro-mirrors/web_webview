@@ -548,6 +548,16 @@ public:
      * @param playing Whether the audio is playing or not.
      */
     virtual void OnAudioStateChanged(bool playing) {}
+     
+    /**
+     * @brief Called when swap buffer completed with new size.
+     */
+    virtual void OnCompleteSwapWithNewSize() {}
+ 
+    /**
+     * @brief Called when resize not work.
+     */
+    virtual void OnResizeNotWork() {}
 };
 }  // namespace OHOS::NWeb
 
