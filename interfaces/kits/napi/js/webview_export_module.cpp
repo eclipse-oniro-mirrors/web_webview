@@ -20,8 +20,7 @@ extern const char _binary_webview_export_js_end[];
 extern const char _binary_webview_export_abc_start[];
 extern const char _binary_webview_export_abc_end[];
 
-extern "C" __attribute__((constructor))
-void NAPI_web_webview_AutoRegister()
+extern "C" __attribute__((constructor)) void NAPI_web_webview_AutoRegister()
 {
     auto moduleManager = NativeModuleManager::GetInstance();
     NativeModule newModuleInfo = {
@@ -32,8 +31,7 @@ void NAPI_web_webview_AutoRegister()
     moduleManager->Register(&newModuleInfo);
 }
 
-extern "C" __attribute__((visibility("default")))
-void NAPI_web_webview_GetJSCode(const char **buf, int *bufLen)
+extern "C" __attribute__((visibility("default"))) void NAPI_web_webview_GetJSCode(const char** buf, int* bufLen)
 {
     if (buf != nullptr) {
         *buf = _binary_webview_export_js_start;
@@ -44,8 +42,7 @@ void NAPI_web_webview_GetJSCode(const char **buf, int *bufLen)
     }
 }
 
-extern "C" __attribute__((visibility("default")))
-void NAPI_web_webview_GetABCCode(const char **buf, int *buflen)
+extern "C" __attribute__((visibility("default"))) void NAPI_web_webview_GetABCCode(const char** buf, int* buflen)
 {
     if (buf != nullptr) {
         *buf = _binary_webview_export_abc_start;
