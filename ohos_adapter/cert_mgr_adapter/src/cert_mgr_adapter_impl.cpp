@@ -23,7 +23,7 @@ using namespace OHOS::NWeb;
 
 namespace OHOS::NWeb {
 
-int32_t InitCertList(struct CertList **cList)
+int32_t CertManagerAdapterImpl::InitCertList(struct CertList **cList)
 {
     *cList = static_cast<struct CertList *>(malloc(sizeof(struct CertList)));
     if (*cList == nullptr) {
@@ -43,7 +43,7 @@ int32_t InitCertList(struct CertList **cList)
     return CM_SUCCESS;
 }
 
-int32_t InitCertInfo(struct CertInfo *certInfo)
+int32_t CertManagerAdapterImpl::InitCertInfo(struct CertInfo *certInfo)
 {
     if (certInfo == nullptr) {
         return CMR_ERROR_MALLOC_FAIL;
@@ -58,7 +58,7 @@ int32_t InitCertInfo(struct CertInfo *certInfo)
     return CM_SUCCESS;
 }
 
-void FreeCMBlobData(struct CmBlob *blob)
+void CertManagerAdapterImpl::FreeCMBlobData(struct CmBlob *blob)
 {
     if (blob == nullptr) {
         return;
@@ -71,7 +71,7 @@ void FreeCMBlobData(struct CmBlob *blob)
     blob->size = 0;
 }
 
-void FreeCertList(CertList *certList)
+void CertManagerAdapterImpl::FreeCertList(CertList *certList)
 {
     if (certList == nullptr) {
         return;
