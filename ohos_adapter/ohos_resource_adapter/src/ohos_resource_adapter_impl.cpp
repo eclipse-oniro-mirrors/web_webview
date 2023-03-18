@@ -220,13 +220,67 @@ bool OhosResourceAdapterImpl::GetFileInfo(const std::shared_ptr<OHOS::AbilityBas
     return manager->GetFileInfo(rawFile, info);
 }
 
+std::string OhosResourceAdapterImpl::GetModuleName(const char *configStr, size_t len)
+{
+    if (configStr == nullptr) {
+        return std::string();
+    }
+    std::string config(configStr, len);
+    static const char *key = "\"moduleName\"";
+    auto idx = config.find(key);
+    if (idx == std::string::npos) {
+        return std::string();
+    }
+    auto start = config.find("\"", idx + strlen(key));
+    if (start == std::string::npos) {
+        return std::string();
+    }
+    auto end = config.find("\"", start + 1);
+    if (end == std::string::npos) {
+        return std::string();
+    }
+
+    std::string retStr = std::string(configStr + start + 1, end - start - 1);
+    return retStr;
+}
+
+std::string OhosResourceAdapterImpl::ParseModuleName(const std::shared_ptr<Extractor> &manager)
+{
+    if (manager == nullptr) {
+        return std::string();
+    }
+    std::unique_ptr<uint8_t[]> configBuf;
+    size_t len;
+    bool ret = manager->ExtractToBufByName("config.json", configBuf, len);
+    if (!ret) {
+        WVLOG_E("failed to get config data from ability");
+        return std::string();
+    }
+    // parse config.json
+    std::string mName = GetModuleName(reinterpret_cast<char *>(configBuf.get()), len);
+    if (mName.size() == 0) {
+        WVLOG_E("parse moduleName from config.json error");
+        return std::string();
+    }
+    return mName;
+}
+
 bool OhosResourceAdapterImpl::GetRawFileData(const std::shared_ptr<Extractor>& manager,
     const std::string& rawFile, size_t& len, std::unique_ptr<uint8_t[]>& dest)
 {
     if (!manager) {
         return false;
     }
-    return manager->ExtractToBufByName(rawFile, dest, len);
+    if (manager->IsStageModel()) {
+        return manager->ExtractToBufByName(rawFile, dest, len);
+    }
+    std::string moduleName = OhosResourceAdapterImpl::ParseModuleName(manager);
+    std::string rawFilePath("assets/");
+    rawFilePath.append(moduleName);
+    rawFilePath.append("/");
+    rawFilePath.append(rawFile);
+    WVLOG_E("fa filepath:%{public}s", rawFilePath.c_str());
+    return manager->ExtractToBufByName(rawFilePath, dest, len);
 }
 
 bool OhosResourceAdapterImpl::GetRawFileMapper(const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
