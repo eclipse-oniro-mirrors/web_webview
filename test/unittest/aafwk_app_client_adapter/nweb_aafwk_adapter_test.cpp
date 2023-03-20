@@ -59,19 +59,20 @@ void NWebAafwkAdapterTest::TearDown(void)
 
 class MockAppMgrClient : public AppMgrClient {
 public:
-    MOCK_METHOD4(StartRenderProcess, int(const std::string &, int32_t, int32_t, pid_t &));
+    MOCK_METHOD5(StartRenderProcess, int(const std::string&, int32_t, int32_t, int32_t, pid_t&));
     MOCK_METHOD2(GetRenderProcessTerminationStatus, int(pid_t, int &));
 };
 
 class RenderScheduler : public AafwkRenderSchedulerHostAdapter {
 public:
-    void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd);
+    void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd);
 };
 
-void RenderScheduler::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd)
+void RenderScheduler::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd)
 {
     (void)ipcFd;
     (void)sharedFd;
+    (void)crashFd;
 }
 
 /**
@@ -100,14 +101,15 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_002, TestSize
 {
     MockAppMgrClient *mock = new MockAppMgrClient();
     g_adapter->appMgrClient_.reset((AppMgrClient *)mock);
-    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_, ::testing::_))
+    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_, ::testing::_, ::testing::_))
         .Times(1)
         .WillRepeatedly(::testing::Return(0));
     std::string renderParam = "test";
     int32_t ipcFd = 0;
     int32_t sharedFd = 0;
+    int32_t crashFd = 0;
     pid_t renderPid = 0;
-    int result = g_adapter->StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
+    int result = g_adapter->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
     EXPECT_EQ(RESULT_OK, result);
 }
 
@@ -121,14 +123,15 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_003, TestSize
 {
     MockAppMgrClient *mock = new MockAppMgrClient();
     g_adapter->appMgrClient_.reset((AppMgrClient *)mock);
-    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_, ::testing::_))
+    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_, ::testing::_, ::testing::_))
         .Times(1)
         .WillRepeatedly(::testing::Return(1));
     std::string renderParam = "test";
     int32_t ipcFd = 0;
     int32_t sharedFd = 0;
     pid_t renderPid = 0;
-    int result = g_adapter->StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
+    int32_t crashFd = 0;
+    int result = g_adapter->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
     EXPECT_NE(RESULT_OK, result);
 }
 
@@ -236,7 +239,8 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_008, TestSize
     int32_t ipcFd = 0;
     int32_t sharedFd = 0;
     pid_t renderPid = 0;
-    int result = g_adapter->StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
+    int32_t crashFd = 0;
+    int result = g_adapter->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
     EXPECT_NE(RESULT_OK, result);
     result = 0;
     std::shared_ptr<RenderScheduler> render = std::make_shared<RenderScheduler>();
@@ -273,8 +277,9 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Le
     EXPECT_EQ(RESULT_OK, result);
     int32_t ipcFd = 1;
     int32_t sharedFd = 2;
-    render->NotifyBrowserFd(ipcFd, sharedFd);
+    int32_t crashFd = 3;
+    render->NotifyBrowserFd(ipcFd, sharedFd, crashFd);
     render->renderSchedulerHostAdapter_ = nullptr;
-    render->NotifyBrowserFd(ipcFd, sharedFd);
+    render->NotifyBrowserFd(ipcFd, sharedFd, crashFd);
 }
 }

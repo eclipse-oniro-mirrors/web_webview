@@ -25,7 +25,7 @@ public:
 
     virtual ~AafwkRenderSchedulerHostAdapter() = default;
 
-    virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd) = 0;
+    virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) = 0;
 };
 }  // namespace OHOS::NWeb
 
