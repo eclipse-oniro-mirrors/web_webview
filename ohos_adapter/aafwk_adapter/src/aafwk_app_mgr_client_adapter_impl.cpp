@@ -26,15 +26,15 @@ namespace OHOS::NWeb {
 AafwkAppMgrClientAdapterImpl::AafwkAppMgrClientAdapterImpl() :
     appMgrClient_(std::make_unique<AppExecFwk::AppMgrClient>()) {}
 
-int AafwkAppMgrClientAdapterImpl::StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
-    int32_t sharedFd, pid_t &renderPid)
+int AafwkAppMgrClientAdapterImpl::StartRenderProcess(
+    const std::string& renderParam, int32_t ipcFd, int32_t sharedFd, int32_t crashFd, pid_t& renderPid)
 {
     if (appMgrClient_ == nullptr) {
         WVLOG_E("app mgr client is nullptr.");
         return -1;
     }
 
-    int ret = appMgrClient_->StartRenderProcess(renderParam, ipcFd, sharedFd, renderPid);
+    int ret = appMgrClient_->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
     if (ret != 0) {
         WVLOG_E("app mgr client start render process failed, ret = %{public}d.", ret);
         return -1;
