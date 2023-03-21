@@ -41,6 +41,14 @@ public:
 
     int32_t Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
 		uint8_t* signData, uint32_t signDataLen) override;
+private:
+    int32_t InitCertList(struct CertList **cList);
+
+    int32_t InitCertInfo(struct CertInfo *certInfo);
+
+    void FreeCMBlobData(struct CmBlob *blob);
+
+    void FreeCertList(CertList *certList);
 };
 
 } // namespace OHOS::NWeb

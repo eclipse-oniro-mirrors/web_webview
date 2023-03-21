@@ -69,7 +69,11 @@ public:
 
 private:
     void Init(const std::string& hapPath);
-    
+
+    static std::string GetModuleName(const char *configStr, size_t len);
+
+    static std::string ParseModuleName(const std::shared_ptr<OHOS::AbilityBase::Extractor> &manager);
+
     static bool GetRawFileData(const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
         const std::string& rawFile, size_t& len, std::unique_ptr<uint8_t[]>& dest);
 

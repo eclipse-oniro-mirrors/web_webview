@@ -681,13 +681,20 @@ public:
      * @param muted Aduio mute state.
      */
     virtual void SetAudioMuted(bool muted) = 0;
-     
+
     /**
      * Set should frame submission before draw.
      *
      * @param should whether wait render frame submission.
     */
     virtual void SetShouldFrameSubmissionBeforeDraw(bool should) = 0;
+
+    /**
+     * Notify whether the popup window is initialized successfully.
+     *
+     * @param result whether success.
+     */
+    virtual void NotifyPopupWindowResult(bool result) = 0;
 };
 }  // namespace OHOS::NWeb
 

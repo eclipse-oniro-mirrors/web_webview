@@ -304,6 +304,8 @@ public:
     {}
     void SetShouldFrameSubmissionBeforeDraw(bool should) override
     {}
+    void NotifyPopupWindowResult(bool result) override
+    {}
 };
 }
 #endif
