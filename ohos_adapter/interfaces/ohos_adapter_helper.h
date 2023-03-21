@@ -29,6 +29,7 @@
 #include "event_handler_adapter.h"
 #include "graphic_adapter.h"
 #include "imf_adapter.h"
+#include "media_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
 #include "ohos_init_web_adapter.h"
@@ -92,6 +93,12 @@ public:
     std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() const;
 
     PrintManagerAdapter& GetPrintManagerInstance() const;
+
+    std::unique_ptr<IConsumerSurfaceAdapter> CreateConsumerSurfaceAdapter() const;
+
+    std::unique_ptr<PlayerAdapter> CreatePlayerAdapter() const;
+
+    WindowAdapter& GetWindowAdapterInstance() const;
 
 private:
     OhosAdapterHelper() = default;

@@ -19,7 +19,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/ohos_adapter/graphic_adapter",
+    "../../../../ohos_adapter/graphic_adapter/include",
     "//third_party/googletest/googlemock/include",
   ]
 }
