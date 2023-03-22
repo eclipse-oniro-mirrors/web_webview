@@ -28,8 +28,8 @@ public:
 
     virtual ~AafwkAppMgrClientAdapter() = default;
 
-    virtual int StartRenderProcess(const std::string &renderParam, int32_t ipcFd,
-        int32_t sharedFd, pid_t &renderPid) = 0;
+    virtual int StartRenderProcess(
+        const std::string& renderParam, int32_t ipcFd, int32_t sharedFd, int32_t crashFd, pid_t& renderPid) = 0;
 
     virtual void AttachRenderProcess(std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter) = 0;
 
