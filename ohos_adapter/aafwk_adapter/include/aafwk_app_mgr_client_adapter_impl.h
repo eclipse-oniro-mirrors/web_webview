@@ -30,7 +30,8 @@ public:
 
     ~AafwkAppMgrClientAdapterImpl() override = default;
 
-    int StartRenderProcess(const std::string &renderParam, int32_t ipcFd, int32_t sharedFd, pid_t &renderPid) override;
+    int StartRenderProcess(
+        const std::string& renderParam, int32_t ipcFd, int32_t sharedFd, int32_t crashFd, pid_t& renderPid) override;
 
     void AttachRenderProcess(std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter) override;
 

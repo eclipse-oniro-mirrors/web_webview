@@ -21,7 +21,7 @@ namespace OHOS::NWeb {
 AafwkRenderSchedulerImpl::AafwkRenderSchedulerImpl(std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter) :
     renderSchedulerHostAdapter_(adapter) {}
 
-void AafwkRenderSchedulerImpl::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd)
+void AafwkRenderSchedulerImpl::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd)
 {
     WVLOG_D("received browser fd.");
     if (renderSchedulerHostAdapter_ == nullptr) {
@@ -29,6 +29,6 @@ void AafwkRenderSchedulerImpl::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd)
         return;
     }
 
-    renderSchedulerHostAdapter_->NotifyBrowserFd(ipcFd, sharedFd);
+    renderSchedulerHostAdapter_->NotifyBrowserFd(ipcFd, sharedFd, crashFd);
 }
 }  // namespace OHOS::NWeb
