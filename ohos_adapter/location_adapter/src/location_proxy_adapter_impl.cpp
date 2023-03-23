@@ -23,9 +23,9 @@
 using namespace OHOS::Location;
 namespace {
 #ifdef __aarch64__
-const std::string NWEB_WRAPPER_SO_PATH = "/system/lib64/libnweb_ohos_wrapper.so"; 
+const std::string NWEB_WRAPPER_SO_PATH = "/system/lib64/libnweb_ohos_wrapper.z.so"; 
 #else
-const std::string NWEB_WRAPPER_SO_PATH = "/system/lib/libnweb_ohos_wrapper.so"; 
+const std::string NWEB_WRAPPER_SO_PATH = "/system/lib/libnweb_ohos_wrapper.z.so"; 
 #endif
 int32_t ConvertScenario(int32_t scenario)
 {

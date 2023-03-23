@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,23 @@
  * limitations under the License.
  */
 
-#include "aafwk_render_scheduler_impl.h"
+#include "access_token_adapter_impl.h"
 
+#include "accesstoken_kit.h"
+#include "ipc_skeleton.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
-AafwkRenderSchedulerImpl::AafwkRenderSchedulerImpl(std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter) :
-    renderSchedulerHostAdapter_(adapter) {}
-
-void AafwkRenderSchedulerImpl::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd)
+AccessTokenAdapterImpl& AccessTokenAdapterImpl::GetInstance()
 {
-    WVLOG_D("received browser fd.");
-    if (renderSchedulerHostAdapter_ == nullptr) {
-        WVLOG_E("renderSchedulerHostAdapter_ is nullptr.");
-        return;
-    }
-
-    renderSchedulerHostAdapter_->NotifyBrowserFd(ipcFd, sharedFd, crashFd);
+    static AccessTokenAdapterImpl instance;
+    return instance;
 }
-}  // namespace OHOS::NWeb
+
+bool AccessTokenAdapterImpl::VerifyAccessToken(const std::string& permissionName)
+{
+    uint32_t tokenID = IPCSkeleton::GetCallingTokenID();
+    return Security::AccessToken::AccessTokenKit::VerifyAccessToken(tokenID, permissionName) ==
+        Security::AccessToken::PERMISSION_GRANTED;
+}
+} // namespace OHOS::NWeb

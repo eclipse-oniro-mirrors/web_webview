@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,20 +13,21 @@
  * limitations under the License.
  */
 
-#ifndef AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_H
-#define AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_H
+#ifndef ACCESS_TOKEN_ADAPTER_H
+#define ACCESS_TOKEN_ADAPTER_H
 
-#include <cstdint>
+#include <string>
 
 namespace OHOS::NWeb {
-class AafwkRenderSchedulerHostAdapter {
+class AccessTokenAdapter {
 public:
-    AafwkRenderSchedulerHostAdapter() = default;
+    virtual bool VerifyAccessToken(const std::string& permissionName) = 0;
 
-    virtual ~AafwkRenderSchedulerHostAdapter() = default;
+protected:
+    AccessTokenAdapter() = default;
 
-    virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) = 0;
+    virtual ~AccessTokenAdapter() = default;
 };
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
 
-#endif  // AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_H
+#endif // ACCESS_TOKEN_ADAPTER_H

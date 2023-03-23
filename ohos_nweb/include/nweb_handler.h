@@ -195,7 +195,7 @@ public:
      * @param url The url to be loaded.
      * @return true to cancel the loading, false to continue the loading.
      */
-    virtual bool OnHandleInterceptUrlLoading(const std::string& url) {
+    virtual bool OnHandleInterceptUrlLoading(std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request) {
         return false;
     }
 
@@ -556,6 +556,16 @@ public:
      */
     virtual void OnFirstContentfulPaint(long navigationStartTick,
                                         long firstContentfulPaintMs) {}
+
+    /**
+     * @brief Called when swap buffer completed with new size.
+     */
+    virtual void OnCompleteSwapWithNewSize() {}
+
+    /**
+     * @brief Called when resize not work.
+     */
+    virtual void OnResizeNotWork() {}
 };
 }  // namespace OHOS::NWeb
 

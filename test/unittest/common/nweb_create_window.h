@@ -302,6 +302,10 @@ public:
     {}
     void SetAudioMuted(bool muted) override
     {}
+    void SetShouldFrameSubmissionBeforeDraw(bool should) override
+    {}
+    void NotifyPopupWindowResult(bool result) override
+    {}
 };
 }
 #endif
