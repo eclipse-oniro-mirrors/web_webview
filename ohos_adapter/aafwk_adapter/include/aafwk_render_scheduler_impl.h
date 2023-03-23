@@ -27,7 +27,7 @@ public:
 
     ~AafwkRenderSchedulerImpl() override = default;
 
-    void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd) override;
+    void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) override;
 
 private:
     std::shared_ptr<AafwkRenderSchedulerHostAdapter> renderSchedulerHostAdapter_;
