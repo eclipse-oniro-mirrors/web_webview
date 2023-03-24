@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../../web_aafwk.gni")
 
 module_output_path = "web/webview"
 
@@ -32,6 +33,7 @@ ohos_unittest("ohos_resource_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
+    "${graphicsurface_path}:libsurface",
     "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
     "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
     "//third_party/googletest:gmock_main",

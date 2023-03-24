@@ -14,6 +14,8 @@
  */
 
 #include <cstring>
+#include <cstdint>
+#include <securec.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
@@ -29,14 +31,8 @@ using namespace OHOS::AbilityBase;
 
 namespace OHOS {
 namespace {
-std::shared_ptr<Extractor> g_extractor = nullptr;
-} // namespace
-
-std::shared_ptr<Extractor> ExtractorUtil::GetExtractor(const std::string &hapPath, bool &newCreate)
-{
-    return g_extractor;
+constexpr uint32_t MODULE_NAME_SIZE = 32;
 }
-
 namespace NWeb {
 class OhosResourceAdapterTest : public testing::Test {
 public:
@@ -68,8 +64,6 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_Init_001, TestSize.Lev
 {
     std::string hapPath = "/system/app/com.ohos.nweb/NWeb.hap";
     OhosResourceAdapterImpl adapterImpl(hapPath);
-    g_extractor = std::make_shared<Extractor>(hapPath);
-    adapterImpl.Init(hapPath);
     hapPath.clear();
     adapterImpl.Init(hapPath);
 }
@@ -154,6 +148,50 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
     apperImpl.extractor_.reset();
     isCompressed = apperImpl.UnzipData(dest, dataLen);
     EXPECT_FALSE(isCompressed);
+}
+
+/**
+ * @tc.name: OhosResourceAdapterTest_ParseModuleName_004
+ * @tc.desc: Init.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, TestSize.Level1)
+{
+    std::string hapPath = "/system/app/com.ohos.nweb/NWeb.hap";
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    bool newCreate = false;
+    std::shared_ptr<Extractor> extractor = ExtractorUtil::GetExtractor(hapPath, newCreate);
+    EXPECT_NE(extractor, nullptr);
+    std::string result = adapterImpl.GetModuleName(nullptr, 0);
+    EXPECT_EQ(result, "");
+    char *configStr =(char*)malloc(MODULE_NAME_SIZE);
+    EXPECT_NE(configStr, nullptr);
+    (void)memset_s(configStr, MODULE_NAME_SIZE, 0, MODULE_NAME_SIZE);
+    result = adapterImpl.GetModuleName(configStr, MODULE_NAME_SIZE);
+    EXPECT_EQ(result, "");
+    if (memcpy_s(configStr, MODULE_NAME_SIZE, "\"moduleName\"", sizeof("\"moduleName\"")) != EOK) {
+        EXPECT_FALSE(true);
+    };
+    result = adapterImpl.GetModuleName(configStr, MODULE_NAME_SIZE);
+    EXPECT_EQ(result, "");
+    uint32_t len = strlen(configStr);
+    if (memcpy_s(configStr + len, MODULE_NAME_SIZE - len, "\"", sizeof("\"")) != EOK) {
+        EXPECT_FALSE(true);
+    };
+    result = adapterImpl.GetModuleName(configStr, MODULE_NAME_SIZE);
+    EXPECT_EQ(result, "");
+    (void)memset_s(configStr, MODULE_NAME_SIZE, 0, MODULE_NAME_SIZE);
+    printf("%d\n", len);
+    if (memcpy_s(configStr, MODULE_NAME_SIZE, "\"moduleName\"\"test\"", sizeof("\"moduleName\"\"test\"")) != EOK) {
+        EXPECT_FALSE(true);
+    };
+    result = adapterImpl.GetModuleName(configStr, MODULE_NAME_SIZE);
+    EXPECT_NE(result, "");
+    result = adapterImpl.ParseModuleName(extractor);
+    EXPECT_EQ(result, "");
+    free(configStr);
+    configStr = nullptr;
 }
 }
 } // namespace NWeb

@@ -18,6 +18,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#define private public
 #include "audio_renderer_adapter.h"
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
@@ -291,9 +292,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_009, TestSi
     AudioAdapterInterrupt interrupt;
     interrupt.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
     interrupt.contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-    interrupt.streamType = AudioAdapterStreamType::STREAM_MUSIC;
+    interrupt.streamType = AudioAdapterStreamType::STREAM_DEFAULT;
 
     int32_t ret = AudioSystemManagerAdapterImpl::GetInstance().RequestAudioFocus(interrupt);
+    EXPECT_NE(ret, RESULT_OK);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().AbandonAudioFocus(interrupt);
+    EXPECT_NE(ret, RESULT_OK);
+
+    interrupt.streamType = AudioAdapterStreamType::STREAM_MUSIC;
+    ret = AudioSystemManagerAdapterImpl::GetInstance().RequestAudioFocus(interrupt);
     EXPECT_EQ(ret, RESULT_OK);
 
     ret = AudioSystemManagerAdapterImpl::GetInstance().AbandonAudioFocus(interrupt);
@@ -309,8 +316,10 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_009, TestSi
 HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_010, TestSize.Level1)
 {
     auto callback = std::make_shared<AudioCallbackTest>();
+    int32_t ret = AudioSystemManagerAdapterImpl::GetInstance().SetAudioManagerInterruptCallback(nullptr);
+    EXPECT_NE(ret, RESULT_OK);
 
-    int32_t ret = AudioSystemManagerAdapterImpl::GetInstance().SetAudioManagerInterruptCallback(callback);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().SetAudioManagerInterruptCallback(callback);
     EXPECT_EQ(ret, RESULT_OK);
 
     ret = AudioSystemManagerAdapterImpl::GetInstance().UnsetAudioManagerInterruptCallback();
@@ -375,6 +384,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_012, TestSi
     callbackTest->OnInterrupt(interruptAction);
 
     interruptAction.interruptHint = static_cast<InterruptHint>(-1);
+    callbackTest->OnInterrupt(interruptAction);
+    callbackTest->cb_ = nullptr;
     callbackTest->OnInterrupt(interruptAction);
 }
 
