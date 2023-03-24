@@ -18,7 +18,7 @@
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
-IMFTextListenerAdapterImpl::IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter> &listener)
+IMFTextListenerAdapterImpl::IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener)
     : listener_(listener) {};
 
 IMFTextListenerAdapterImpl::~IMFTextListenerAdapterImpl()
@@ -26,7 +26,7 @@ IMFTextListenerAdapterImpl::~IMFTextListenerAdapterImpl()
     listener_ = nullptr;
 }
 
-void IMFTextListenerAdapterImpl::InsertText(const std::u16string &text)
+void IMFTextListenerAdapterImpl::InsertText(const std::u16string& text)
 {
     if (listener_) {
         listener_->InsertText(text);
@@ -47,7 +47,7 @@ void IMFTextListenerAdapterImpl::DeleteBackward(int32_t length)
     }
 }
 
-void IMFTextListenerAdapterImpl::SendKeyEventFromInputMethod(const MiscServices::KeyEvent &event)
+void IMFTextListenerAdapterImpl::SendKeyEventFromInputMethod(const MiscServices::KeyEvent& event)
 {
     (void)event;
     if (listener_) {
@@ -55,7 +55,7 @@ void IMFTextListenerAdapterImpl::SendKeyEventFromInputMethod(const MiscServices:
     }
 }
 
-void IMFTextListenerAdapterImpl::SendKeyboardInfo(const MiscServices::KeyboardInfo &info)
+void IMFTextListenerAdapterImpl::SendKeyboardInfo(const MiscServices::KeyboardInfo& info)
 {
     if (listener_) {
         IMFAdapterKeyboardInfo adapterInfo;
@@ -145,7 +145,7 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
     return true;
 }
 
-void IMFAdapterImpl::ShowCurrentInput(const IMFAdapterTextInputType &inputType)
+void IMFAdapterImpl::ShowCurrentInput(const IMFAdapterTextInputType& inputType)
 {
     MiscServices::Configuration config;
     if (inputType == IMFAdapterTextInputType::NUMBER) {
@@ -175,6 +175,8 @@ void IMFAdapterImpl::OnCursorUpdate(IMFAdapterCursorInfo cursorInfo)
         .width = cursorInfo.width,
         .height = cursorInfo.height
     };
+    WVLOG_D("CursorInfo left = %{public}f, top = %{public}f, width = %{public}f, height = %{public}f",
+        cursorInfo.left, cursorInfo.top, cursorInfo.width, cursorInfo.height);
     MiscServices::InputMethodController::GetInstance()->OnCursorUpdate(imfInfo);
 }
 
