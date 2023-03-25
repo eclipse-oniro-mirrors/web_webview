@@ -234,8 +234,8 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
     napi_value result = nullptr;
     size_t argc = INTEGER_TWO;
     napi_value argv[INTEGER_TWO] = { 0 };
-    int doh_mode;
-    std::string doh_config;
+    int dohMode;
+    std::string dohConfig;
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_TWO) {
@@ -243,25 +243,31 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
         return result;
     }
 
-    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], doh_mode)) {
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], dohMode)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
 
-    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], doh_config)) {
+    if (dohMode < static_cast<int>(SecureDnsModeType::OFF)
+        || dohMode > static_cast<int>(SecureDnsModeType::SECURE_ONLY)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
 
-    if (doh_config.rfind("https", 0) != 0 && doh_config.rfind("HTTPS", 0) != 0) {
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], dohConfig)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (dohConfig.rfind("https", 0) != 0 && dohConfig.rfind("HTTPS", 0) != 0) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
 
     NWebDOHConfig config;
-    config.doh_mode = doh_mode;
-    config.doh_config = doh_config;
-    WVLOG_I("set http dns mode:%{public}d doh_config:%{public}s", doh_mode, doh_config.c_str());
+    config.dohMode = dohMode;
+    config.dohConfig = dohConfig;
+    WVLOG_I("set http dns mode:%{public}d doh_config:%{public}s", dohMode, dohConfig.c_str());
 
     NWebHelper::Instance().SetHttpDns(config);
 
