@@ -120,8 +120,8 @@ struct OHOS_NWEB_EXPORT NWebDOHConfig {
    * 1: AUTO
    * 2: SECURE_ONLY
    */
-  int doh_mode = -1;
-  std::string doh_config = "";
+  int dohMode = -1;
+  std::string dohConfig = "";
 };
 
 using WebState = std::shared_ptr<std::vector<uint8_t>>;
