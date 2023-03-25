@@ -34,6 +34,7 @@ using namespace OHOS::Rosen;
 namespace OHOS::NWeb {
 namespace {
 const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
+const std::string PRINT_FILE_DIR = "/data/storage/el2/base/print.png";
 }
 class OhosAdapterHelperTest : public testing::Test {
 public:
@@ -106,6 +107,12 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     helper.GetWebPermissionDataBaseInstance();
     std::unique_ptr<MMIAdapter> mmiAdapter = helper.CreateMMIAdapter();
     EXPECT_NE(mmiAdapter, nullptr);
+    PrintManagerAdapter& printAdapter = helper.GetPrintManagerInstance();
+    std::vector<std::string> fileList = {PRINT_FILE_DIR};
+    std::vector<uint32_t> fdList = {1};
+    std::string taskId;
+    int32_t ret =  printAdapter.StartPrint(fileList, fdList, taskId);
+    EXPECT_EQ(ret, -1);
     sptr<Surface> surface = nullptr;
     NWebInitArgs initArgs;
     uint32_t width = 1;

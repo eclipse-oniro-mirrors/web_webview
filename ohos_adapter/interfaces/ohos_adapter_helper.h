@@ -19,9 +19,9 @@
 #include <memory>
 
 #include "aafwk_app_mgr_client_adapter.h"
+#include "access_token_adapter.h"
 #include "audio_renderer_adapter.h"
 #include "audio_system_manager_adapter.h"
-#include "access_token_adapter.h"
 #include "battery_mgr_client_adapter.h"
 #include "cert_mgr_adapter.h"
 #include "datashare_adapter.h"
@@ -36,6 +36,7 @@
 #include "ohos_web_data_base_adapter.h"
 #include "pasteboard_client_adapter.h"
 #include "power_mgr_client_adapter.h"
+#include "print_manager_adapter.h"
 #include "soc_perf_client_adapter.h"
 #include "system_properties_adapter.h"
 
@@ -89,6 +90,8 @@ public:
     AccessTokenAdapter& GetAccessTokenAdapterInstance() const;
 
     std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() const;
+
+    PrintManagerAdapter& GetPrintManagerInstance() const;
 
 private:
     OhosAdapterHelper() = default;
