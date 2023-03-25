@@ -115,13 +115,13 @@ enum class BlurReason : int32_t {
 };
 
 struct OHOS_NWEB_EXPORT NWebDOHConfig {
-  /*
-   * 0: OFF
-   * 1: AUTO
-   * 2: SECURE_ONLY
-   */
-  int dohMode = -1;
-  std::string dohConfig = "";
+    /*
+     * 0: OFF
+     * 1: AUTO
+     * 2: SECURE_ONLY
+     */
+    int dohMode = -1;
+    std::string dohConfig = "";
 };
 
 using WebState = std::shared_ptr<std::vector<uint8_t>>;

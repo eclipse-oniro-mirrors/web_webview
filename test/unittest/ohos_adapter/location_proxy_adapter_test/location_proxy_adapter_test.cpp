@@ -27,7 +27,8 @@ namespace OHOS::NWeb {
 namespace {
 static constexpr double MIN_LATITUDE = -90.0;
 static constexpr double MIN_LONGITUDE = -180.0;
-}
+} // namespace
+
 class LocationProxyAdapterTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -74,7 +75,7 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_LocationInstance_001
     std::unique_ptr<LocationProxyAdapter> proxyAdapter = LocationInstance::GetInstance().CreateLocationProxyAdapter();
     EXPECT_NE(proxyAdapter, nullptr);
     std::unique_ptr<LocationRequestConfig> requestConfig =
-                    LocationInstance::GetInstance().CreateLocationRequestConfig();
+        LocationInstance::GetInstance().CreateLocationRequestConfig();
     EXPECT_NE(requestConfig, nullptr);
 }
 
@@ -119,7 +120,6 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_SetScenario_002, Tes
     requestConfigImpl->SetPriority(priority);
     std::unique_ptr<OHOS::Location::RequestConfig>& requestConfig = requestConfigImpl->GetConfig();
     EXPECT_NE(requestConfig, nullptr);
-
 }
 
 /**
@@ -139,7 +139,6 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_SetScenario_003, Tes
     requestConfigImpl->SetDistanceInterval(0);
     requestConfigImpl->SetTimeInterval(0);
     requestConfigImpl->SetPriority(0);
-
 }
 
 /**
@@ -267,4 +266,4 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_007, T
     result = proxyAdapterImpl->StopLocating(callback);
     EXPECT_FALSE(result);
 }
-} // namespace OHOS
+} // namespace OHOS::NWeb
