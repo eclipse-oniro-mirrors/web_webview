@@ -60,7 +60,8 @@ int DatashareAdapterImpl::OpenDataShareUriForRead(const std::string& uriStr) con
     return dataShareHelper->OpenFile(uri, "r");
 }
 
-std::string DatashareAdapterImpl::GetFileDisplayName(const std::string& uriStr) {
+std::string DatashareAdapterImpl::GetFileDisplayName(const std::string& uriStr)
+{
     int fd = OpenDataShareUriForRead(uriStr);
     if (fd < 0) {
         WVLOG_E("fd is invaild ,return null");
@@ -94,4 +95,4 @@ std::string DatashareAdapterImpl::GetFileDisplayName(const std::string& uriStr) 
     fileName = fileName.substr(firstSlash + 1, fileName.size() - firstSlash);
     return fileName;
 }
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
