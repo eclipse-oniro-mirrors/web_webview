@@ -79,11 +79,11 @@ public:
     {}
     void OnBlur(const BlurReason& blurReason) const override
     {}
-    void OnTouchPress(int32_t id, double x, double y) override
+    void OnTouchPress(int32_t id, double x, double y, bool fromOverlay = false) override
     {}
-    void OnTouchRelease(int32_t id, double x = 0, double y = 0) override
+    void OnTouchRelease(int32_t id, double x = 0, double y = 0, bool fromOverlay = false) override
     {}
-    void OnTouchMove(int32_t id, double x, double y) override
+    void OnTouchMove(int32_t id, double x, double y, bool fromOverlay = false) override
     {}
     void OnTouchCancel() override
     {}
