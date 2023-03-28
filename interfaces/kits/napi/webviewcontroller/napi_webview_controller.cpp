@@ -248,8 +248,8 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
         return result;
     }
 
-    if (dohMode < static_cast<int>(SecureDnsModeType::OFF)
-        || dohMode > static_cast<int>(SecureDnsModeType::SECURE_ONLY)) {
+    if (dohMode < static_cast<int>(SecureDnsModeType::OFF) ||
+        dohMode > static_cast<int>(SecureDnsModeType::SECURE_ONLY)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }

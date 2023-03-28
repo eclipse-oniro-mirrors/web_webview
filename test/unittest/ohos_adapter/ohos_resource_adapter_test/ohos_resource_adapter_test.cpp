@@ -165,7 +165,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, T
     EXPECT_NE(extractor, nullptr);
     std::string result = adapterImpl.GetModuleName(nullptr, 0);
     EXPECT_EQ(result, "");
-    char *configStr =(char*)malloc(MODULE_NAME_SIZE);
+    char *configStr = static_cast<char*>(malloc(MODULE_NAME_SIZE));
     EXPECT_NE(configStr, nullptr);
     (void)memset_s(configStr, MODULE_NAME_SIZE, 0, MODULE_NAME_SIZE);
     result = adapterImpl.GetModuleName(configStr, MODULE_NAME_SIZE);
