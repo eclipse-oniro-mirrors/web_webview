@@ -40,6 +40,7 @@
 #include "nweb_javascript_result_callback_test.h"
 #include "nweb_js_dialog_impl_test.h"
 #include "nweb_cookie_test_callback.h"
+#include "nweb_web_message.h"
 #include "window.h"
 
 using namespace OHOS;
@@ -1605,10 +1606,12 @@ void Test104()
     TESTLOG_I("end104");
 }
 
-class JavaScriptResultCb : public OHOS::NWeb::NWebValueCallback<std::string> {
-    void OnReceiveValue(std::string result) override
+class JavaScriptResultCb : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<OHOS::NWeb::NWebMessage>> {
+    void OnReceiveValue(std::shared_ptr<OHOS::NWeb::NWebMessage> result) override
     {
-        TESTLOG_I("JavaScript execute result = %{public}s", result.c_str());
+        if (result && result->GetType() == OHOS::NWeb::NWebValue::Type::STRING) {
+            TESTLOG_I("JavaScript execute result = %{public}s", result->GetString().c_str());
+        }
     }
 };
 
@@ -1620,8 +1623,8 @@ void Test105()
     g_nweb->Load(g_url);
     g_window->Show();
     std::string ss = "(function() { console.log('ExecuteJavaScript'); return 'ExecuteJavaScript'; })()";
-    std::shared_ptr<OHOS::NWeb::NWebValueCallback<std::string>> callback = std::make_shared<JavaScriptResultCb>();
-    g_nweb->ExecuteJavaScript(ss, callback);
+    std::shared_ptr<OHOS::NWeb::NWebValueCallback<std::shared_ptr<OHOS::NWeb::NWebMessage>>> callback = std::make_shared<JavaScriptResultCb>();
+    g_nweb->ExecuteJavaScript(ss, callback, false);
     TESTLOG_I("end105");
 }
 

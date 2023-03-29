@@ -107,10 +107,12 @@ namespace {
 }
 
 namespace OHOS::NWeb {
-class JavaScriptResultCb : public NWebValueCallback<std::string> {
-    void OnReceiveValue(std::string result) override
+class JavaScriptResultCb : public NWebValueCallback<std::shared_ptr<NWebMessage>> {
+    void OnReceiveValue(std::shared_ptr<NWebMessage> result) override
     {
-        TESTLOG_I("JavaScript execute result = %{public}s", result.c_str());
+        if (result && result->GetType() == NWebValue::Type::STRING) {
+            TESTLOG_I("JavaScript execute result = %{public}s", result->GetString().c_str());
+        }
     }
 };
 void NWebHandlerImplTest::OnProxyDied()
@@ -135,8 +137,8 @@ void NWebHandlerImplTest::OnPageLoadEnd(int httpStatusCode, const std::string& u
     if (url.find(EXECUTE_JAVASCRIPT_CALLBACK_HTML) != std::string::npos) {
         // invoke js function which is defined in html, test case 106
         std::string ss = "javascript:ExecuteJavaScriptTest()";
-        std::shared_ptr<NWebValueCallback<std::string>> callback = std::make_shared<JavaScriptResultCb>();
-        nwebShared->ExecuteJavaScript(ss, callback);
+        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback = std::make_shared<JavaScriptResultCb>();
+        nwebShared->ExecuteJavaScript(ss, callback, false);
     }
 }
 

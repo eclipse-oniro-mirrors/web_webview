@@ -266,7 +266,8 @@ public:
      */
     virtual void ExecuteJavaScript(
         const std::string& code,
-        std::shared_ptr<NWebValueCallback<std::string>> callback) const = 0;
+        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback,
+        bool extention) const = 0;
 
     /**
      * Get the NWebPreference object used to control the settings for this
