@@ -21,6 +21,7 @@
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
+#include "nweb_web_message.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -38,10 +39,16 @@ public:
     static napi_value CreateEnumConstructor(napi_env env, napi_callback_info info);
     static napi_value ToInt32Value(napi_env env, int32_t number);
     static bool ParseInt32(napi_env env, napi_value argv, int32_t& outValue);
+    static bool ParseInt64(napi_env env, napi_value argv, int64_t& outValue);
+    static bool ParseDouble(napi_env env, napi_value argv, double& outValue);
     static bool ParseString(napi_env env, napi_value argv, std::string& outValue);
     static bool ParseBoolean(napi_env env, napi_value argv, bool& outValue);
     static bool ParseStringArray(napi_env env, napi_value argv, std::vector<std::string>& outValue);
+    static bool ParseBooleanArray(napi_env env, napi_value argv, std::vector<bool>& outValue);
+    static bool ParseDoubleArray(napi_env env, napi_value argv, std::vector<double>& outValue);
+    static bool ParseInt64Array(napi_env env, napi_value argv, std::vector<int64_t>& outValue);
     static bool ParseFloat(napi_env env, napi_value argv, float& outValue);
+    static bool ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst);
 };
 } // namespace NWeb
 } // namespace OHOS

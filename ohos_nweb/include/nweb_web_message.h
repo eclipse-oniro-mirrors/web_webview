@@ -35,8 +35,32 @@ public:
         binary_data_ = binary_data;
     }
 
+    std::string GetErrName() { return err_name_; }
+    std::string GetErrMsg() { return err_msg_; }
+    int64_t GetInt64() { return value_; }
+
+    void SetErrName(std::string name) { err_name_ = name; }
+    void SetErrMsg(std::string msg) { err_msg_ = msg; }
+    void SetInt64(int64_t value) { value_ = value; }
+
+    std::vector<std::string> GetStringArray() { return string_arr_; }
+    void SetStringArray(std::vector<std::string> string_arr) { string_arr_ = string_arr; }
+    std::vector<bool> GetBooleanArray() { return bool_arr_; }
+    void SetBooleanArray(std::vector<bool> bool_arr) { bool_arr_ = bool_arr; }
+    std::vector<double> GetDoubleArray() { return double_arr_; }
+    void SetDoubleArray(std::vector<double> double_arr) { double_arr_ = double_arr; }
+    std::vector<int64_t> GetInt64Array() { return int64_arr_; }
+    void SetInt64Array(std::vector<int64_t> int64_arr) { int64_arr_ = int64_arr; }
+
 private:
     std::vector<uint8_t> binary_data_;
+    std::string err_name_;
+    std::string err_msg_;
+    int64_t value_;
+    std::vector<std::string> string_arr_;
+    std::vector<bool> bool_arr_;
+    std::vector<double> double_arr_;
+    std::vector<int64_t> int64_arr_;
 };
 } // namespace OHOS::NWeb
 

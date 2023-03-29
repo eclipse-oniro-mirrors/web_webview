@@ -141,7 +141,8 @@ public:
     {}
     void ExecuteJavaScript(
         const std::string& code,
-        std::shared_ptr<NWebValueCallback<std::string>> callback) const override
+        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback,
+        bool extention) const override
     {}
     const std::shared_ptr<NWebPreference> GetPreference() const override
     {

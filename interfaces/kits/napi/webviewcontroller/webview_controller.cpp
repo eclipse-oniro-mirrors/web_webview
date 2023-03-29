@@ -322,8 +322,8 @@ ErrCode WebviewController::PostWebMessage(std::string& message, std::vector<std:
     return NWebError::NO_ERROR;
 }
 
-WebMessagePort::WebMessagePort(int32_t nwebId, std::string& port)
-    : nweb_(NWebHelper::Instance().GetNWeb(nwebId)), portHandle_(port)
+WebMessagePort::WebMessagePort(int32_t nwebId, std::string& port, bool isExtentionType)
+    : nweb_(NWebHelper::Instance().GetNWeb(nwebId)), portHandle_(port), isExtentionType_(isExtentionType)
 {}
 
 ErrCode WebMessagePort::ClosePort()
@@ -642,7 +642,7 @@ void WebviewController::RegisterJavaScriptProxy(napi_env env, napi_value obj,
     nweb_ptr->RegisterArkJSfunction(objName, methodList);
 }
 
-void WebviewController::RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback)
+void WebviewController::RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback, bool extention)
 {
     auto nweb_ptr = nweb_.lock();
     if (!nweb_ptr) {
@@ -663,12 +663,12 @@ void WebviewController::RunJavaScriptCallback(const std::string &script, napi_en
         return;
     }
 
-    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>(env, jsCallback, nullptr);
-    nweb_ptr->ExecuteJavaScript(script, callbackImpl);
+    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>(env, jsCallback, nullptr, extention);
+    nweb_ptr->ExecuteJavaScript(script, callbackImpl, extention);
 }
 
 void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env env,
-    napi_deferred deferred)
+    napi_deferred deferred, bool extention)
 {
     auto nweb_ptr = nweb_.lock();
     if (!nweb_ptr) {
@@ -682,8 +682,8 @@ void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env
         return;
     }
 
-    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>(env, nullptr, deferred);
-    nweb_ptr->ExecuteJavaScript(script, callbackImpl);
+    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>(env, nullptr, deferred, extention);
+    nweb_ptr->ExecuteJavaScript(script, callbackImpl, extention);
 }
 
 std::string WebviewController::GetUrl()
