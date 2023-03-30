@@ -144,6 +144,11 @@ struct NWebCursorInfo {
     std::unique_ptr<uint8_t[]> buff = nullptr;
 };
 
+struct TouchHandleHotZone {
+    double width = 0.0;
+    double height = 0.0;
+};
+
 using FileSelectorCallback = NWebValueCallback<std::vector<std::string>&>;
 
 class OHOS_NWEB_EXPORT NWebHandler {
@@ -566,6 +571,8 @@ public:
      * @brief Called when resize not work.
      */
     virtual void OnResizeNotWork() {}
+
+    virtual void OnGetTouchHandleHotZone(TouchHandleHotZone& hotZone) {}
 };
 }  // namespace OHOS::NWeb
 
