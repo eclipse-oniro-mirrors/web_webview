@@ -29,6 +29,8 @@ namespace OHOS {
 namespace NWeb {
 const std::string WEBVIEW_CONTROLLER_CLASS_NAME = "WebviewController";
 const std::string WEB_MESSAGE_PORT_CLASS_NAME = "WebMessagePort";
+const std::string WEB_PORT_MSG_ENUM_NAME = "WebMessageType";
+const std::string WEB_EXT_MSG_CLASS_NAME = "WebMessageExt";
 const std::string WEB_HITTESTTYPE_V9_ENUM_NAME = "HitTestTypeV9";
 const std::string WEB_HITTESTTYPE_ENUM_NAME = "WebHitTestType";
 const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
@@ -132,8 +134,13 @@ private:
 
     static napi_value RunJavaScript(napi_env env, napi_callback_info info);
 
+    static napi_value RunJavaScriptExt(napi_env env, napi_callback_info info);
+
+    static napi_value RunJS(napi_env env, napi_callback_info info,
+        bool extention);
+
     static napi_value RunJavaScriptInternal(napi_env env, napi_callback_info info,
-        const std::string &script);
+        const std::string &script, bool extention);
 
     static napi_value GetUrl(napi_env env, napi_callback_info info);
 
@@ -180,15 +187,39 @@ private:
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
 public:
-    NWebValueCallbackImpl(napi_env env, napi_ref callback) : env_(env), callback_(callback) {}
+    NWebValueCallbackImpl(napi_env env, napi_ref callback, bool extention) : env_(env), callback_(callback), extention_(extention) {}
     ~NWebValueCallbackImpl();
     void OnReceiveValue(std::shared_ptr<NWebMessage> result) override;
 
 private:
     napi_env env_;
     napi_ref callback_;
+    bool extention_;
     static void UvWebMessageOnReceiveValueCallback(uv_work_t *work, int status);
 };
+
+class NapiWebMessageExt {
+public:
+    NapiWebMessageExt() = default;
+    ~NapiWebMessageExt() = default;
+
+    static napi_value JsConstructor(napi_env env, napi_callback_info info);
+    static napi_value GetType(napi_env env, napi_callback_info info);
+    static napi_value GetString(napi_env env, napi_callback_info info);
+    static napi_value GetNumber(napi_env env, napi_callback_info info);
+    static napi_value GetBoolean(napi_env env, napi_callback_info info);
+    static napi_value GetArrayBuffer(napi_env env, napi_callback_info info);
+    static napi_value GetArray(napi_env env, napi_callback_info info);
+    static napi_value GetError(napi_env env, napi_callback_info info);
+    static napi_value SetType(napi_env env, napi_callback_info info);
+    static napi_value SetString(napi_env env, napi_callback_info info);
+    static napi_value SetNumber(napi_env env, napi_callback_info info);
+    static napi_value SetBoolean(napi_env env, napi_callback_info info);
+    static napi_value SetArrayBuffer(napi_env env, napi_callback_info info);
+    static napi_value SetArray(napi_env env, napi_callback_info info);
+    static napi_value SetError(napi_env env, napi_callback_info info);
+};
+
 
 class NapiWebMessagePort {
 public:
@@ -196,6 +227,7 @@ public:
     ~NapiWebMessagePort() = default;
 
     struct WebMsgPortParam {
+        bool extention_;
         napi_env env_;
         napi_ref callback_;
         std::shared_ptr<NWebMessage> msg_;
@@ -211,6 +243,10 @@ public:
     static napi_value PostMessageEvent(napi_env env, napi_callback_info info);
 
     static napi_value OnMessageEvent(napi_env env, napi_callback_info info);
+
+    static napi_value PostMessageEventExt(napi_env env, napi_callback_info info);
+
+    static napi_value OnMessageEventExt(napi_env env, napi_callback_info info);
 };
 
 class NapiWebHistoryList {

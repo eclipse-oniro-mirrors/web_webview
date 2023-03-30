@@ -29,6 +29,7 @@
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_value_callback.h"
+#include "nweb_web_message.h"
 #include "window.h"
 #include "window_option.h"
 
@@ -135,8 +136,8 @@ namespace OHOS {
             return true;
         }
         std::string code((const char *)data, size);
-        std::shared_ptr<NWeb::NWebValueCallback<std::string>> callback;
-        g_nweb->ExecuteJavaScript(code, callback);
+        std::shared_ptr<NWeb::NWebValueCallback<std::shared_ptr<NWeb::NWebMessage>>> callback;
+        g_nweb->ExecuteJavaScript(code, callback, false);
         return true;
     }
 }

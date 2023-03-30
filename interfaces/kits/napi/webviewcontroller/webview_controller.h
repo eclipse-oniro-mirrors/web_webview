@@ -62,6 +62,16 @@ enum class ResourceType : uint32_t {
     RAWFILE = 30000
 };
 
+enum class WebMessageType : int {
+    NOTSUPPORT = 0,
+    STRING,
+    NUMBER,
+    BOOLEAN,
+    ARRAYBUFFER,
+    ARRAY,
+    ERROR
+};
+
 class WebviewController {
 public:
     explicit WebviewController() = default;
@@ -149,9 +159,9 @@ public:
     ErrCode DeleteJavaScriptRegister(const std::string& objName,
         const std::vector<std::string>& methodList);
 
-    void RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback);
+    void RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback, bool extention);
 
-    void RunJavaScriptPromise(const std::string &script, napi_env env, napi_deferred deferred);
+    void RunJavaScriptPromise(const std::string &script, napi_env env, napi_deferred deferred, bool extention);
 
     std::string GetUrl();
 
@@ -210,7 +220,7 @@ private:
 
 class WebMessagePort {
 public:
-    WebMessagePort(int32_t nwebId, std::string& port);
+    WebMessagePort(int32_t nwebId, std::string& port, bool isExtentionType);
 
     ~WebMessagePort() = default;
 
@@ -222,9 +232,177 @@ public:
 
     std::string GetPortHandle() const;
 
+    bool IsExtentionType() {
+        return isExtentionType_;
+    }
+
 private:
     std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
     std::string portHandle_;
+    bool isExtentionType_;
+};
+
+class WebMessageExt {
+public:
+    explicit WebMessageExt(std::shared_ptr<NWebMessage> data) : data_(data) {};
+    ~WebMessageExt() = default;
+
+    void SetType(int type) {
+        type_ = type;
+        WebMessageType jsType = static_cast<WebMessageType>(type);
+        NWebValue::Type nwebType = NWebValue::Type::NONE;
+        switch (jsType) {
+            case WebMessageType::STRING: {
+                nwebType = NWebValue::Type::STRING;
+                break;
+            }
+            case WebMessageType::NUMBER: {
+                nwebType = NWebValue::Type::DOUBLE;
+                break;
+            }
+            case WebMessageType::BOOLEAN: {
+                nwebType = NWebValue::Type::BOOLEAN;
+                break;
+            }
+            case WebMessageType::ARRAYBUFFER: {
+                nwebType = NWebValue::Type::STRINGARRAY;
+                break;
+            }
+            case WebMessageType::ARRAY: {
+                nwebType = NWebValue::Type::STRINGARRAY;
+                break;
+            }
+            case WebMessageType::ERROR: {
+                nwebType = NWebValue::Type::ERROR;
+                break;
+            }
+            default: {
+                nwebType = NWebValue::Type::NONE;
+                break;
+            }
+        }
+        if (data_) {
+            data_->SetType(nwebType);
+        }
+    }
+
+    int ConvertNwebType2JsType(NWebValue::Type type) {
+        WebMessageType jsType = WebMessageType::NOTSUPPORT;
+        switch (type) {
+            case NWebValue::Type::STRING: {
+                jsType = WebMessageType::STRING;
+                break;
+            }
+            case NWebValue::Type::DOUBLE:
+            case NWebValue::Type::INTEGER: {
+                jsType = WebMessageType::NUMBER;
+                break;
+            }
+            case NWebValue::Type::BOOLEAN: {
+                jsType = WebMessageType::BOOLEAN;
+                break;
+            }
+            case NWebValue::Type::STRINGARRAY:
+            case NWebValue::Type::DOUBLEARRAY:
+            case NWebValue::Type::INT64ARRAY:
+            case NWebValue::Type::BOOLEANARRAY: {
+                jsType = WebMessageType::ARRAY;
+                break;
+            }
+            case NWebValue::Type::BINARY: {
+                jsType = WebMessageType::ARRAYBUFFER;
+                break;
+            }
+            case NWebValue::Type::ERROR: {
+                jsType = WebMessageType::ERROR;
+                break;
+            }
+            default: {
+                jsType = WebMessageType::NOTSUPPORT;
+                break;
+            }
+        }
+        return static_cast<int>(jsType);
+    }
+
+    int GetType() {
+        if (data_) {
+            return ConvertNwebType2JsType(data_->GetType());
+        }
+        return static_cast<int>(WebMessageType::NOTSUPPORT);
+    }
+
+    void SetString(std::string value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::STRING);
+            data_->SetString(value);
+        }
+    }
+
+    void SetNumber(double value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::DOUBLE);
+            data_->SetDouble(value);
+        }
+    }
+
+    void SetBoolean(bool value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::BOOLEAN);
+            data_->SetBoolean(value);
+        }
+    }
+
+    void SetArrayBuffer(std::vector<uint8_t>& value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::BINARY);
+            data_->SetBinary(value);
+        }
+    }
+
+    void SetStringArray(std::vector<std::string> value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::STRINGARRAY);
+            data_->SetStringArray(value);
+        }
+    }
+
+    void SetDoubleArray(std::vector<double> value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::DOUBLEARRAY);
+            data_->SetDoubleArray(value);
+        }
+    }
+
+    void SetInt64Array(std::vector<int64_t> value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::INT64ARRAY);
+            data_->SetInt64Array(value);
+        }
+    }
+
+    void SetBooleanArray(std::vector<bool> value) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::BOOLEANARRAY);
+            data_->SetBooleanArray(value);
+        }
+    }
+
+    void SetError(std::string name, std::string message) {
+        if (data_) {
+            data_->SetType(NWebValue::Type::ERROR);
+            data_->SetErrName(name);
+            data_->SetErrMsg(message);
+        }
+    }
+
+    std::shared_ptr<NWebMessage> GetData() {
+        return data_;
+    }
+
+private:
+    int type_ = 0;
+    std::shared_ptr<NWebMessage> data_;
 };
 
 class WebHistoryList {
