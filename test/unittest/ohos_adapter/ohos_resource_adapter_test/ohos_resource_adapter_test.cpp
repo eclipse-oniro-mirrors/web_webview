@@ -32,6 +32,8 @@ using namespace OHOS::AbilityBase;
 namespace OHOS {
 namespace {
 constexpr uint32_t MODULE_NAME_SIZE = 32;
+const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
+const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
 }
 namespace NWeb {
 class OhosResourceAdapterTest : public testing::Test {
@@ -158,7 +160,13 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
  */
 HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, TestSize.Level1)
 {
-    std::string hapPath = "/system/app/com.ohos.nweb/NWeb.hap";
+    std::string hapPath = "";
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_1;
+    }
     OhosResourceAdapterImpl adapterImpl(hapPath);
     bool newCreate = false;
     std::shared_ptr<Extractor> extractor = ExtractorUtil::GetExtractor(hapPath, newCreate);
@@ -182,7 +190,6 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, T
     result = adapterImpl.GetModuleName(configStr, MODULE_NAME_SIZE);
     EXPECT_EQ(result, "");
     (void)memset_s(configStr, MODULE_NAME_SIZE, 0, MODULE_NAME_SIZE);
-    printf("%d\n", len);
     if (memcpy_s(configStr, MODULE_NAME_SIZE, "\"moduleName\"\"test\"", sizeof("\"moduleName\"\"test\"")) != EOK) {
         EXPECT_FALSE(true);
     };
