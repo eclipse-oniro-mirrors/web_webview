@@ -16,6 +16,6 @@
 #ifndef TEST_FUZZTEST_INSERT_HOSTNAME_FUZZER_H
 #define TEST_FUZZTEST_INSERT_HOSTNAME_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "insertthostname_fuzzer"
+#define FUZZ_PROJECT_NAME "inserthostname_fuzzer"
 #endif /* TEST_FUZZTEST_INSERT_HOSTNAME_FUZZER_H */
 

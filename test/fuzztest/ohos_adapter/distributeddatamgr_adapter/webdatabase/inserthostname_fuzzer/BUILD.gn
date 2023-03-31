@@ -16,7 +16,7 @@ import("//build/test.gni")
 
 ohos_fuzztest("InsertHostnameFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/insertthostname_fuzzer"
+  fuzz_config_file = "../inserthostname_fuzzer"
 
   include_dirs = [
     "//base/web/webview/test/ohos_nweb",
@@ -29,7 +29,7 @@ ohos_fuzztest("InsertHostnameFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "insertthostname_fuzzer.cpp" ]
+  sources = [ "inserthostname_fuzzer.cpp" ]
   deps = [ "//base/web/webview/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [ "relational_store:native_rdb" ]

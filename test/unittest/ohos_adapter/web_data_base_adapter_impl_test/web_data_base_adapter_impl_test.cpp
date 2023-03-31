@@ -120,23 +120,12 @@ public:
 };
 
 /**
- * @tc.name: WebDataBaseAdapterImplTest_GetInstance_001
- * @tc.desc: Test the GetInstance.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_GetInstance_001, TestSize.Level1)
-{
-    OhosWebDataBaseAdapterImpl::GetInstance();
-}
-
-/**
- * @tc.name: WebDataBaseAdapterImplTest_ExistHttpAuthCredentials_002
+ * @tc.name: WebDataBaseAdapterImplTest_ExistHttpAuthCredentials_001
  * @tc.desc: Test the ExistHttpAuthCredentials.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_ExistHttpAuthCredentials_002, TestSize.Level1)
+HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_ExistHttpAuthCredentials_001, TestSize.Level1)
 {
     bool result = true;
     auto& dataBase = OhosWebDataBaseAdapterImpl::GetInstance();
@@ -155,14 +144,15 @@ HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_ExistHttpAuthCre
 }
 
 /**
- * @tc.name: WebDataBaseAdapterImplTest_SaveHttpAuthCredentials_003
+ * @tc.name: WebDataBaseAdapterImplTest_SaveHttpAuthCredentials_002
  * @tc.desc: Test the SaveHttpAuthCredentials.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_SaveHttpAuthCredentials_003, TestSize.Level1)
+HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_SaveHttpAuthCredentials_002, TestSize.Level1)
 {
     auto& dataBase = OhosWebDataBaseAdapterImpl::GetInstance();
+    EXPECT_NE(dataBase.rdbStore_, nullptr);
     dataBase.SaveHttpAuthCredentials("", TEST_REALME, TEST, TEST);
     dataBase.SaveHttpAuthCredentials(TEST_HOST, "", TEST, TEST);
     dataBase.SaveHttpAuthCredentials(TEST_HOST, TEST_REALME, "", TEST);
@@ -181,6 +171,7 @@ HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_GetHttpAuthCrede
     constexpr int32_t maxLength = 256;
     char password[maxLength + 1] = {0};
     auto& dataBase = OhosWebDataBaseAdapterImpl::GetInstance();
+    EXPECT_NE(dataBase.rdbStore_, nullptr);
     dataBase.GetHttpAuthCredentials("", TEST_REALME, username, password, maxLength + 1);
     dataBase.GetHttpAuthCredentials(TEST_HOST, "", username, password, maxLength + 1);
     dataBase.GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, nullptr, maxLength + 1);

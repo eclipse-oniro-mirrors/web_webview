@@ -177,7 +177,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/gethttpauthcredentials_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/getoriginbypermission_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/getpermissionresultbyorigin_fuzzer:fuzztest",
-                "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/insertthostname_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/inserthostname_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/keytotablename_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/pmscreatedatabase_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/pmsdatabaseoncreate_fuzzer:fuzztest",
