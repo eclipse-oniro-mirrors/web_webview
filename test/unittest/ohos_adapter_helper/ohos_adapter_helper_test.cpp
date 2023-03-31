@@ -130,6 +130,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_CreateNWeb_003, TestSize.Level1)
 {
     sptr<OHOS::Rosen::Window> window = nullptr;
+    EXPECT_EQ(window, nullptr);
     NWebAdapterHelper &helper = NWebAdapterHelper::Instance();
     helper.CreateNWeb(window.GetRefPtr(), GetInitArgs());
 }

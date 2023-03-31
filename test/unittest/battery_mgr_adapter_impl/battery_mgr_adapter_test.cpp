@@ -106,6 +106,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_OnReceiveEvent_001, TestSize.Leve
     want.SetAction(CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED);
     CommonEventData data(want);
     std::string key = PowerMgr::BatteryInfo::COMMON_EVENT_KEY_PLUGGED_TYPE;
+    EXPECT_NE(g_batter, nullptr);
     g_batter->OnReceiveEvent(data);
 
     want.SetParam(key, static_cast<int>(BatteryPluggedType::PLUGGED_TYPE_NONE));
@@ -123,6 +124,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_OnReceiveEvent_001, TestSize.Leve
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_RegBatteryEvent_002, TestSize.Level1)
 {
     auto cb = [] (WebBatteryInfo& info) {};
+    EXPECT_NE(g_batterImpl, nullptr);
     BatteryEventCallback eventCallback = cb;
     g_batterImpl->RegBatteryEvent(std::move(eventCallback));
 }
@@ -152,6 +154,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_StartListen_003, TestSize.Level1)
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_StopListen_004, TestSize.Level1)
 {
     g_unSubscribeCommonEventRet = false;
+    EXPECT_NE(g_batterImpl, nullptr);
     g_batterImpl->StopListen();
     g_unSubscribeCommonEventRet = true;
     g_batterImpl->StopListen();

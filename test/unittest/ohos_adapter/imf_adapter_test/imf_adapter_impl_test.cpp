@@ -178,6 +178,7 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_003, TestSize.Lev
 HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_004, TestSize.Level1)
 {
     IMFAdapterCursorInfo cursorInfo;
+    EXPECT_NE(g_imf, nullptr);
     g_imf->OnCursorUpdate(cursorInfo);
     std::u16string text;
     g_imf->OnSelectionChange(text, 0, 0);

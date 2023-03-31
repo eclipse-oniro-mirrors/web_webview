@@ -16,7 +16,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AafwkStartRenderFuzzeTest") {
+ohos_fuzztest("AafwkStartRenderFuzzTest") {
   module_out_path = "web/webview"
   fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkstartrender_fuzzer"
 
@@ -49,7 +49,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":AafwkStartRenderFuzzeTest",
+    ":AafwkStartRenderFuzzTest",
   ]
 }
 ###############################################################################

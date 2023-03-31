@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "insertthostname_fuzzer.h"
+#include "inserthostname_fuzzer.h"
 
 #include <cstring>
 #include <securec.h>
