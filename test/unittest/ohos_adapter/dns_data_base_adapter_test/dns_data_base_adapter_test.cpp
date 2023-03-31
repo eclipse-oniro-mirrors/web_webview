@@ -113,23 +113,12 @@ void DnsDataBaseAdapterTest::TearDown(void)
 {}
 
 /**
- * @tc.name: DnsDataBaseAdapterTest_GetInstance_001
- * @tc.desc: GetInstance.
- * @tc.type: FUNC
- * @tc.require: issueI5W74R
- */
-HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_GetInstance_001, TestSize.Level1)
-{
-    OhosWebDnsDataBaseAdapterImpl::GetInstance();
-}
-
-/**
- * @tc.name: DnsDataBaseAdapterTest_ExistHostname_002
+ * @tc.name: DnsDataBaseAdapterTest_ExistHostname_001
  * @tc.desc: ExistHostname.
  * @tc.type: FUNC
  * @tc.require: issueI5W74R
  */
-HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_ExistHostname_002, TestSize.Level1)
+HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_ExistHostname_001, TestSize.Level1)
 {
     bool result = true;
     auto& dataBase = OhosWebDnsDataBaseAdapterImpl::GetInstance();
@@ -152,12 +141,12 @@ HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_ExistHostname_002, TestS
 }
 
 /**
- * @tc.name: DnsDataBaseAdapterTest_InsertHostname_003
+ * @tc.name: DnsDataBaseAdapterTest_InsertHostname_002
  * @tc.desc: InsertHostname.
  * @tc.type: FUNC
  * @tc.require: issueI5W74R
  */
-HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_InsertHostname_003, TestSize.Level1)
+HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_InsertHostname_002, TestSize.Level1)
 {
     bool result = true;
     auto& dataBase = OhosWebDnsDataBaseAdapterImpl::GetInstance();
@@ -177,12 +166,12 @@ HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_InsertHostname_003, Test
 }
 
 /**
- * @tc.name: DnsDataBaseAdapterTest_GetHostnames_004
+ * @tc.name: DnsDataBaseAdapterTest_GetHostnames_003
  * @tc.desc: GetHostnames.
  * @tc.type: FUNC
  * @tc.require: issueI5W74R
  */
-HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_GetHostnames_004, TestSize.Level1)
+HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_GetHostnames_003, TestSize.Level1)
 {
     std::vector<std::string> hostInfo;
     auto& dataBase = OhosWebDnsDataBaseAdapterImpl::GetInstance();
@@ -203,12 +192,12 @@ HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_GetHostnames_004, TestSi
 }
 
 /**
- * @tc.name: DnsDataBaseAdapterTest_ClearAllHostname_005
+ * @tc.name: DnsDataBaseAdapterTest_ClearAllHostname_004
  * @tc.desc: ClearAllHostname.
  * @tc.type: FUNC
  * @tc.require: issueI5W74R
  */
-HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_ClearAllHostname_005, TestSize.Level1)
+HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_ClearAllHostname_004, TestSize.Level1)
 {
     std::vector<std::string> hostInfo;
     auto& dataBase = OhosWebDnsDataBaseAdapterImpl::GetInstance();
@@ -227,12 +216,12 @@ HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_ClearAllHostname_005, Te
 }
 
 /**
- * @tc.name: DnsDataBaseAdapterTest_CallBack_006
+ * @tc.name: DnsDataBaseAdapterTest_CallBack_005
  * @tc.desc: CallBack.
  * @tc.type: FUNC
  * @tc.require: issueI5W74R
  */
-HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_CallBack_006, TestSize.Level1)
+HWTEST_F(DnsDataBaseAdapterTest, DnsDataBaseAdapterTest_CallBack_005, TestSize.Level1)
 {
     bool result = true;
     std::string name = WEB_DNS_DATABASE_FILE;

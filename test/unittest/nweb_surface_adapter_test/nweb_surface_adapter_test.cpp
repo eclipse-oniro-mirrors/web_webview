@@ -120,6 +120,7 @@ HWTEST_F(NWebSurfaceAdapterTest, NWebSurfaceAdapterTest_GetRenderInterface_002, 
     auto surfaceAdapter = NWebSurfaceAdapter::Instance();
     surfaceAdapter.GetRenderInterface(g_window->GetSurfaceNode()->GetSurface(), g_info);
     char *src = new char[DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL] {0};
+    EXPECT_NE(src, nullptr);
     g_info.output_render_frame(src, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     sptr<Surface> surface = nullptr;
     surfaceAdapter.GetRenderInterface(surface, g_info);
@@ -129,6 +130,7 @@ HWTEST_F(NWebSurfaceAdapterTest, NWebSurfaceAdapterTest_GetRenderInterface_002, 
     (void)memset_s(src, DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL, 0,
         DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL);
     g_info.output_render_frame(src, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    delete[] src;
 }
 
 /**

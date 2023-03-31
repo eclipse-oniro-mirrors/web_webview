@@ -65,9 +65,10 @@ void OhosResourceAdapterTest::TearDown(void)
 HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_Init_001, TestSize.Level1)
 {
     std::string hapPath = "/system/app/com.ohos.nweb/NWeb.hap";
-    OhosResourceAdapterImpl adapterImpl(hapPath);
+    auto adapterImpl = std::make_shared<OhosResourceAdapterImpl>(hapPath);
+    EXPECT_NE(adapterImpl, nullptr);
     hapPath.clear();
-    adapterImpl.Init(hapPath);
+    adapterImpl->Init(hapPath);
 }
 
 /**
