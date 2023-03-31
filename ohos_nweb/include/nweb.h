@@ -696,6 +696,20 @@ public:
      * @param result whether success.
      */
     virtual void NotifyPopupWindowResult(bool result) = 0;
+
+    /**
+     * Set audio resume interval.
+     *
+     * @param resumeInterval Aduio resume interval.
+     */
+    virtual void SetAudioResumeInterval(int32_t resumeInterval) = 0;
+
+    /**
+     * Set audio exclusive state.
+     *
+     * @param audioExclusive Aduio exclusive state.
+     */
+    virtual void SetAudioExclusive(bool audioExclusive) = 0;
 };
 }  // namespace OHOS::NWeb
 
