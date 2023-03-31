@@ -313,6 +313,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataAdapterImpl_0
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddHtmlRecord_010, TestSize.Level1)
 {
     std::string htmlName = "test";
+    EXPECT_NE(g_dataAdapter, nullptr);
     g_dataAdapter->AddHtmlRecord(htmlName);
     g_dataAdapterNull->AddHtmlRecord(htmlName);
 }
@@ -326,6 +327,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddHtmlRecord_010, Tes
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AddTextRecord_011, TestSize.Level1)
 {
     std::string htmlName = "test";
+    EXPECT_NE(g_dataAdapter, nullptr);
     g_dataAdapter->AddTextRecord(htmlName);
     g_dataAdapterNull->AddTextRecord(htmlName);
 }
@@ -512,43 +514,30 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AllRecords_019, TestSi
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_GetInstance_020.
- * @tc.desc: Test the GetInstance.
- * @tc.type: FUNC
- * @tc.require:issueI5O4B5
- */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetInstance_020, TestSize.Level1)
-{
-    PasteBoardClientAdapterImpl::GetInstance();
-}
-
-/**
- * @tc.name: NWebPasteboardAdapter_SetPasteData_021.
+ * @tc.name: NWebPasteboardAdapter_SetPasteData_020.
  * @tc.desc: Test the SetPasteData.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_021, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_020, TestSize.Level1)
 {
-    int result = 0;
     PasteRecordList data;
     std::shared_ptr<PasteDataRecordAdapter> record = PasteDataRecordAdapter::NewRecord("text/html");
-    if (record == nullptr) {
-        result = -1;
-    }
+    EXPECT_NE(record, nullptr);
     std::shared_ptr<std::string> pasteData = std::make_shared<std::string>("test");
+    EXPECT_NE(pasteData, nullptr);
     record->SetHtmlText(pasteData);
     data.push_back(record);
     PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_GetPasteData_022.
+ * @tc.name: NWebPasteboardAdapter_GetPasteData_021.
  * @tc.desc: Test the GetPasteData.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_022, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_021, TestSize.Level1)
 {
     PasteBoardClientAdapterImpl::GetInstance().Clear();
     PasteRecordList data;
@@ -557,24 +546,24 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_022, Test
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_HasPasteData_023.
+ * @tc.name: NWebPasteboardAdapter_HasPasteData_022.
  * @tc.desc: Test the HasPasteData.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_HasPasteData_023, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_HasPasteData_022, TestSize.Level1)
 {
     bool result = PasteBoardClientAdapterImpl::GetInstance().HasPasteData();
     EXPECT_EQ(false, result);
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_PasteDataRecordAdapterImpl_024.
+ * @tc.name: NWebPasteboardAdapter_PasteDataRecordAdapterImpl_023.
  * @tc.desc: Test the PasteDataRecordAdapterImpl.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapterImpl_024, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapterImpl_023, TestSize.Level1)
 {
     int result = 0;
     std::string mimeType = "test";
@@ -586,12 +575,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapter
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_NewRecord_025.
+ * @tc.name: NWebPasteboardAdapter_NewRecord_024.
  * @tc.desc: Test the NewRecord.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_NewRecord_025, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_NewRecord_024, TestSize.Level1)
 {
     int result = 0;
     std::string mimeType = "test";
@@ -603,12 +592,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_NewRecord_025, TestSiz
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_SetHtmlText_026.
+ * @tc.name: NWebPasteboardAdapter_SetHtmlText_025.
  * @tc.desc: Test the SetHtmlText.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetHtmlText_026, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetHtmlText_025, TestSize.Level1)
 {
     int result = 0;
     std::shared_ptr<std::string> htmlText = std::make_shared<std::string>("test");
@@ -623,12 +612,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetHtmlText_026, TestS
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_SetPlainText_027.
+ * @tc.name: NWebPasteboardAdapter_SetPlainText_026.
  * @tc.desc: Test the SetPlainText.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPlainText_027, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPlainText_026, TestSize.Level1)
 {
     int result = 0;
     std::shared_ptr<std::string> plainText = std::make_shared<std::string>("test");
@@ -643,12 +632,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPlainText_027, Test
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_ImageToClipboardAlphaType_028.
+ * @tc.name: NWebPasteboardAdapter_ImageToClipboardAlphaType_027.
  * @tc.desc: Test the ImageToClipboardAlphaType.
  * @tc.type: FUNC
  * @tc.require:issueI5O4B5
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardAlphaType_028, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardAlphaType_027, TestSize.Level1)
 {
     Media::ImageInfo imgInfo;
     imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
@@ -669,12 +658,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardAlphaT
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_ImageToClipboardColorType_029.
+ * @tc.name: NWebPasteboardAdapter_ImageToClipboardColorType_028.
  * @tc.desc: Test the ImageToClipboardColorType.
  * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardColorType_029, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardColorType_028, TestSize.Level1)
 {
     Media::ImageInfo imgInfo;
     imgInfo.pixelFormat = Media::PixelFormat::RGBA_8888;
@@ -691,12 +680,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ImageToClipboardColorT
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_ClipboardToImageAlphaType_030.
+ * @tc.name: NWebPasteboardAdapter_ClipboardToImageAlphaType_029.
  * @tc.desc: Test the ClipboardToImageAlphaType.
  * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageAlphaType_030, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageAlphaType_029, TestSize.Level1)
 {
     ClipBoardImageAlphaType alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
     Media::AlphaType result = g_datarecord->ClipboardToImageAlphaType(alphaType);
@@ -716,12 +705,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageAlphaT
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_ClipboardToImageColorType_031.
+ * @tc.name: NWebPasteboardAdapter_ClipboardToImageColorType_030.
  * @tc.desc: Test the ClipboardToImageColorType.
  * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageColorType_031, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageColorType_030, TestSize.Level1)
 {
     ClipBoardImageColorType colorType = ClipBoardImageColorType::COLOR_TYPE_RGBA_8888;
     Media::PixelFormat result = g_datarecord->ClipboardToImageColorType(colorType);
@@ -737,12 +726,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageColorT
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_SetImgData_032.
+ * @tc.name: NWebPasteboardAdapter_SetImgData_031.
  * @tc.desc: Test the SetImgData.
  * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_032, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_031, TestSize.Level1)
 {
     uint32_t storage[][5] = {
         {0xCA, 0xDA, 0xCA, 0xC9, 0xA3},
@@ -773,12 +762,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_032, TestSi
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_GetImgData_033.
+ * @tc.name: NWebPasteboardAdapter_GetImgData_032.
  * @tc.desc: Test the GetImgData.
  * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_033, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_032, TestSize.Level1)
 {
     ClipBoardImageData image;
     bool reset = g_datarecordnull->GetImgData(image);
@@ -788,16 +777,32 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_033, TestSi
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_GetImgData_034.
+ * @tc.name: NWebPasteboardAdapter_GetImgData_033.
  * @tc.desc: Test the GetImgData.
  * @tc.type: FUNC
  * @tc.require:issueI5O4AZ
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_034, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_033, TestSize.Level1)
 {
     ClipBoardImageData image;
     bool reset = g_datarecord->GetImgData(image);
     EXPECT_EQ(TRUE_OK, reset);
+}
+
+/**
+ * @tc.name: NWebPasteboardAdapter_Clear_034.
+ * @tc.desc: Test the Clear.
+ * @tc.type: FUNC
+ * @tc.require:issueI5O4AZ
+ */
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_034, TestSize.Level1)
+{
+    uint32_t bufferSize = 20;
+    EXPECT_NE(g_datarecord, nullptr);
+    if (g_datarecord->imgBuffer_ == nullptr) {
+        g_datarecord->imgBuffer_ = static_cast<uint8_t *>(calloc(static_cast<size_t>(bufferSize), sizeof(uint8_t)));
+    }
+    g_datarecord->Clear();
 }
 
 /**
@@ -808,35 +813,21 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_034, TestSi
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_035, TestSize.Level1)
 {
-    uint32_t bufferSize = 20;
-    if (g_datarecord->imgBuffer_ == nullptr) {
-        g_datarecord->imgBuffer_ = static_cast<uint8_t *>(calloc(static_cast<size_t>(bufferSize), sizeof(uint8_t)));
-    }
-    g_datarecord->Clear();
-}
-
-/**
- * @tc.name: NWebPasteboardAdapter_Clear_036.
- * @tc.desc: Test the Clear.
- * @tc.type: FUNC
- * @tc.require:issueI5O4AZ
- */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_036, TestSize.Level1)
-{
     PasteRecordList data;
     data.clear();
+    EXPECT_NE(data.size(), 0);
     PasteBoardClientAdapterImpl::GetInstance().Clear();
     PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
     PasteBoardClientAdapterImpl::GetInstance().Clear();
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_SetUri_037.
+ * @tc.name: NWebPasteboardAdapter_SetUri_036.
  * @tc.desc: Test the SetUri.
  * @tc.type: FUNC
  * @tc.require:issueI5QA3D
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetUri_037, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetUri_036, TestSize.Level1)
 {
     int result = 0;
     std::string emptyTestUri = "";
@@ -851,12 +842,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetUri_037, TestSize.L
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_SetCustomData_038.
+ * @tc.name: NWebPasteboardAdapter_SetCustomData_037.
  * @tc.desc: Test the SetCustomData.
  * @tc.type: FUNC
  * @tc.require:issueI5QA3D
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetCustomData_038, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetCustomData_037, TestSize.Level1)
 {
     int result = 0;
     PasteCustomData emptyTestData;
@@ -874,12 +865,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetCustomData_038, Tes
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_GetUri_039.
+ * @tc.name: NWebPasteboardAdapter_GetUri_038.
  * @tc.desc: Test the GetUri.
  * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetUri_039, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetUri_038, TestSize.Level1)
 {
     int result = 0;
     g_datarecord->SetUri("/data/test/path");
@@ -902,12 +893,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetUri_039, TestSize.L
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_GetCustomData_040.
+ * @tc.name: NWebPasteboardAdapter_GetCustomData_039.
  * @tc.desc: Test the GetCustomData.
  * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetCustomData_040, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetCustomData_039, TestSize.Level1)
 {
     int result = 0;
     std::string format = "format";
@@ -933,12 +924,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetCustomData_040, Tes
 }
 
 /**
- * @tc.name: NWebPasteboardAdapter_OpenRemoteUri_041.
+ * @tc.name: NWebPasteboardAdapter_OpenRemoteUri_040.
  * @tc.desc: Test the OpenRemoteUri.
  * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
-HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_OpenRemoteUri_041, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_OpenRemoteUri_040, TestSize.Level1)
 {
     std::string testUri = "datashare:////#fdFromBinder=155";
     int32_t fd = PasteBoardClientAdapterImpl::GetInstance().OpenRemoteUri(testUri);
@@ -949,39 +940,40 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_OpenRemoteUri_041, Tes
 }
 
 /**
- * @tc.name: PasteBoardClientAdapterImpl_GetTokenId_042.
+ * @tc.name: PasteBoardClientAdapterImpl_GetTokenId_041.
  * @tc.desc: Test the GetTokenId.
  * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
-HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_GetTokenId_042, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_GetTokenId_041, TestSize.Level1)
 {
     PasteBoardClientAdapterImpl::GetInstance().Clear();
     EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().GetTokenId());
 }
 
 /**
- * @tc.name: PasteBoardClientAdapterImpl_IsLocalPaste_043.
+ * @tc.name: PasteBoardClientAdapterImpl_IsLocalPaste_042.
  * @tc.desc: Test the IsLocalPaste.
  * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
-HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_IsLocalPaste_043, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_IsLocalPaste_042, TestSize.Level1)
 {
     PasteBoardClientAdapterImpl::GetInstance().Clear();
     EXPECT_EQ(false, PasteBoardClientAdapterImpl::GetInstance().IsLocalPaste());
 }
 
 /**
- * @tc.name: PasteboardObserverAdapter_OnPasteboardChanged_044.
+ * @tc.name: PasteboardObserverAdapter_OnPasteboardChanged_043.
  * @tc.desc: Test the CreatePasteboardObserver.
  * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
-HWTEST_F(NWebPasteboardAdapterTest, PasteboardObserverAdapter_OnPasteboardChanged_044, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, PasteboardObserverAdapter_OnPasteboardChanged_043, TestSize.Level1)
 {
     std::shared_ptr<PasteboardObserverAdapter> observer =
         std::make_shared<MockPasteboardObserver>();
+    EXPECT_NE(observer, nullptr);
     PasteboardObserverAdapterImpl observerImpl(observer);
     observerImpl.OnPasteboardChanged();
     observerImpl.observer_ = nullptr;
@@ -989,12 +981,12 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteboardObserverAdapter_OnPasteboardChange
 }
 
 /**
- * @tc.name: PasteBoardClientAdapterImpl_AddPasteboardChangedObserver_045.
+ * @tc.name: PasteBoardClientAdapterImpl_AddPasteboardChangedObserver_044.
  * @tc.desc: Test the AddPasteboardChangedObserver.
  * @tc.type: FUNC
  * @tc.require:issueI5O4BN
  */
-HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_AddPasteboardChangedObserver_045, TestSize.Level1)
+HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_AddPasteboardChangedObserver_044, TestSize.Level1)
 {
     std::shared_ptr<PasteboardObserverAdapter> observer =
         std::make_shared<MockPasteboardObserver>();

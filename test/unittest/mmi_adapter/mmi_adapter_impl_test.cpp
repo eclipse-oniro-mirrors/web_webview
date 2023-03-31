@@ -113,7 +113,9 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_003, TestSize.Lev
 HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_004, TestSize.Level1)
 {
     auto listener = std::make_shared<MMIListenerTest>();
+    EXPECT_NE(listener, nullptr);
     auto listenerTest = std::make_shared<MMIListenerAdapterImpl>(listener);
+    EXPECT_NE(listenerTest, nullptr);
     listenerTest->OnDeviceAdded(1, "add");
     listenerTest->OnDeviceRemoved(1, "remove");
 }
@@ -168,6 +170,7 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIInputListenerAdapterImpl_007,
     InputEventCallback listener = [](int32_t, int32_t) {};
     MMIInputListenerAdapterImpl listenerAdapter(listener);
     std::shared_ptr<MMI::KeyEvent> keyEvent = MMI::KeyEvent::Create();
+    EXPECT_NE(keyEvent, nullptr);
     std::shared_ptr<MMI::PointerEvent> pointerEvent = nullptr;
     std::shared_ptr<MMI::AxisEvent> axisEvent = nullptr;
     keyEvent->SetKeyAction(MMI::KeyEvent::KEY_ACTION_DOWN);
