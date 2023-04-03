@@ -815,7 +815,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_035, TestSize.Le
 {
     PasteRecordList data;
     data.clear();
-    EXPECT_NE(data.size(), 0);
+    EXPECT_EQ(data.size(), 0);
     PasteBoardClientAdapterImpl::GetInstance().Clear();
     PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
     PasteBoardClientAdapterImpl::GetInstance().Clear();
