@@ -33,11 +33,14 @@
 #include "ohos_web_dns_data_base_adapter_impl.h"
 #include "ohos_web_permission_data_base_adapter_impl.h"
 #include "pasteboard_client_adapter_impl.h"
+#include "player_framework_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
 #include "print_manager_adapter_impl.h"
 #include "soc_perf_client_adapter_impl.h"
+#include "surface_adapter_impl.h"
 #include "system_properties_adapter_impl.h"
 #include "vsync_adapter_impl.h"
+#include "window_adapter_impl.h"
 
 namespace OHOS::NWeb {
 // static
@@ -160,5 +163,20 @@ std::unique_ptr<EventHandlerAdapter> OhosAdapterHelper::GetEventHandlerAdapter()
 PrintManagerAdapter& OhosAdapterHelper::GetPrintManagerInstance() const
 {
     return PrintManagerAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<IConsumerSurfaceAdapter> OhosAdapterHelper::CreateConsumerSurfaceAdapter() const
+{
+    return std::make_unique<ConsumerSurfaceAdapterImpl>();
+}
+
+std::unique_ptr<PlayerAdapter> OhosAdapterHelper::CreatePlayerAdapter() const
+{
+    return std::make_unique<PlayerAdapterImpl>();
+}
+
+WindowAdapter& OhosAdapterHelper::GetWindowAdapterInstance() const
+{
+    return WindowAdapterImpl::GetInstance();
 }
 } // namespace OHOS::NWeb

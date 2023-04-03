@@ -17,7 +17,6 @@
 #define DISPLAY_MANAGER_ADAPTER_H
 
 #include <memory>
-#include <refbase.h>
 
 namespace OHOS::NWeb {
 using DisplayId = uint64_t;
