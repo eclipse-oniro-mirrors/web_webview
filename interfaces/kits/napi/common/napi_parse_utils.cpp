@@ -243,7 +243,7 @@ bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMe
                 WVLOG_E("Create arraybuffer failed");
                 return false;
             }
-            for (int i = 0; i < msgArr.size(); ++i) {
+            for (size_t i = 0; i < msgArr.size(); ++i) {
                 *(uint8_t*)((uint8_t*)arrayData + i) = msgArr[i];
             }
             break;
