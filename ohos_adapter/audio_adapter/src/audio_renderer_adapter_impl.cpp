@@ -77,6 +77,31 @@ const std::unordered_map<AudioAdapterStreamUsage, StreamUsage> STREAM_USAGE_MAP 
     {AudioAdapterStreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE, StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE},
 };
 
+AudioRendererCallbackImpl::AudioRendererCallbackImpl(std::shared_ptr<AudioRendererCallbackAdapter> cb) : cb_(cb) {};
+
+void AudioRendererCallbackImpl::OnInterrupt(const InterruptEvent &interruptEvent)
+{
+    if (!cb_) {
+        return;
+    }
+    switch (interruptEvent.hintType) {
+        case InterruptHint::INTERRUPT_HINT_PAUSE:
+            cb_->OnSuspend();
+            break;
+        case InterruptHint::INTERRUPT_HINT_STOP:
+            cb_->OnSuspend();
+            break;
+        case InterruptHint::INTERRUPT_HINT_RESUME:
+            cb_->OnResume();
+            break;
+        default:
+            WVLOG_E("audio renderer interrupt hint not foud, code: %{public}d", interruptEvent.hintType);
+            break;
+    }
+}
+
+void AudioRendererCallbackImpl::OnStateChange(const RendererState state, const StateChangeCmdType cmdType) {}
+
 int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rendererOptions,
     std::string cachePath)
 {
@@ -173,6 +198,37 @@ float AudioRendererAdapterImpl::GetVolume() const
         return AUDIO_NULL_ERROR;
     }
     return audio_renderer_->GetVolume();
+}
+
+int32_t AudioRendererAdapterImpl::SetAudoiRendererCallback(
+    const std::shared_ptr<AudioRendererCallbackAdapter> &callback, bool audioExclusive)
+{
+    if (callback == nullptr) {
+        WVLOG_E("set audio manager interrupt callback is nullptr");
+        return AUDIO_NULL_ERROR;
+    }
+    callback_ = std::make_shared<AudioRendererCallbackImpl>(callback);
+
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return AUDIO_NULL_ERROR;
+    }
+    InterruptMode interruptMode = audioExclusive
+                                ? InterruptMode::INDEPENDENT_MODE
+                                : InterruptMode::SHARE_MODE;
+    WVLOG_D("AudioRendererAdapterImpl::SetAudoiRendererCallback audioExclusive: %{public}d", audioExclusive);
+    audio_renderer_->SetInterruptMode(interruptMode);
+    int32_t ret = audio_renderer_->SetRendererCallback(callback_);
+    if (ret != AudioStandard::SUCCESS) {
+        WVLOG_E("audio renderer set callback failed, code: %{public}d", ret);
+        return AUDIO_ERROR;
+    }
+    return AUDIO_OK;
+}
+
+bool AudioRendererAdapterImpl::IsRendererStateRunning()
+{
+    return audio_renderer_->GetStatus() == OHOS::AudioStandard::RendererState::RENDERER_RUNNING;
 }
 
 AudioSamplingRate AudioRendererAdapterImpl::GetAudioSamplingRate(AudioAdapterSamplingRate samplingRate)

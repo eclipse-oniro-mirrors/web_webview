@@ -307,6 +307,10 @@ public:
     {}
     void NotifyPopupWindowResult(bool result) override
     {}
+    void SetAudioResumeInterval(int32_t resumeInterval) override
+    {}
+    void SetAudioExclusive(bool audioExclusive) override
+    {}
 };
 }
 #endif
