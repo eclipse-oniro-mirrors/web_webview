@@ -51,8 +51,8 @@ void SystemPropertiesAdapterTest::TearDown(void)
  */
 HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoBrand_001, TestSize.Level1)
 {
-    bool hapPath = SystemPropertiesAdapterImpl::GetInstance().GetResourceUseHapPathEnable();
-    EXPECT_FALSE(hapPath);
+    std::string model = SystemPropertiesAdapterImpl::GetInstance().GetDeviceInfoProductModel();
+    EXPECT_NE(model, "");
     std::string deviceInfo = SystemPropertiesAdapterImpl::GetInstance().GetDeviceInfoBrand();
     EXPECT_NE(deviceInfo, "");
     int32_t result = SystemPropertiesAdapterImpl::GetInstance().GetDeviceInfoMajorVersion();
