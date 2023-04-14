@@ -169,7 +169,7 @@ void WebviewJavaScriptExecuteCallback::UvAfterWorkCbAsync(napi_env env, napi_ref
                 nullptr, nullptr);
             if (status != napi_status::napi_ok) {
                 WVLOG_E("napi_wrap failed");
-				return;
+                return;
             }
         }
     }
@@ -208,7 +208,7 @@ void WebviewJavaScriptExecuteCallback::UvAfterWorkCbPromise(napi_env env, napi_d
             return;
         }
 
-         status = napi_wrap(env, setResult[INTEGER_ONE], webJsMessageExt,
+        status = napi_wrap(env, setResult[INTEGER_ONE], webJsMessageExt,
             [](napi_env env, void *data, void *hint) {
                 WebJsMessageExt *webJsMessageExt = static_cast<WebJsMessageExt *>(data);
                 delete webJsMessageExt;
@@ -266,29 +266,32 @@ int32_t WebJsMessageExt::ConvertToJsType(NWebValue::Type type)
     return static_cast<int32_t>(jsMessageType);
 }
 
-int32_t WebJsMessageExt::GetType() {
+int32_t WebJsMessageExt::GetType()
+{
     if (value_) {
         return ConvertToJsType(value_->GetType());
     }
     return static_cast<int32_t>(JsMessageType::NOTSUPPORT);
 }
 
-std::string WebJsMessageExt::GetString() {
+std::string WebJsMessageExt::GetString()
+{
     if (value_) {
         return value_->GetString();
     }
     return "";
 }
 
-double WebJsMessageExt::GetNumber() {
+double WebJsMessageExt::GetNumber()
+{
     if (value_) {
         return value_->GetDouble();
     }
     return 0;
 }
 
-
-bool WebJsMessageExt::GetBoolean() {
+bool WebJsMessageExt::GetBoolean()
+{
     if (value_) {
         return value_->GetBoolean();
     }
@@ -450,4 +453,4 @@ napi_value NapiJsMessageExt::GetArray(napi_env env, napi_callback_info info)
     return result;
 }
 
-} // namespace NWeb
+} // namespace OHOS::NWeb

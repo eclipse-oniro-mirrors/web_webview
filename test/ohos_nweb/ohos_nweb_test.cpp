@@ -1623,7 +1623,8 @@ void Test105()
     g_nweb->Load(g_url);
     g_window->Show();
     std::string ss = "(function() { console.log('ExecuteJavaScript'); return 'ExecuteJavaScript'; })()";
-    std::shared_ptr<OHOS::NWeb::NWebValueCallback<std::shared_ptr<OHOS::NWeb::NWebMessage>>> callback = std::make_shared<JavaScriptResultCb>();
+    std::shared_ptr<OHOS::NWeb::NWebValueCallback<std::shared_ptr<OHOS::NWeb::NWebMessage>>> callback =
+        std::make_shared<JavaScriptResultCb>();
     g_nweb->ExecuteJavaScript(ss, callback, false);
     TESTLOG_I("end105");
 }

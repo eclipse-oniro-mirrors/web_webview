@@ -232,7 +232,8 @@ public:
 
     std::string GetPortHandle() const;
 
-    bool IsExtentionType() {
+    bool IsExtentionType()
+    {
         return isExtentionType_;
     }
 
@@ -247,7 +248,8 @@ public:
     explicit WebMessageExt(std::shared_ptr<NWebMessage> data) : data_(data) {};
     ~WebMessageExt() = default;
 
-    void SetType(int type) {
+    void SetType(int type)
+    {
         type_ = type;
         WebMessageType jsType = static_cast<WebMessageType>(type);
         NWebValue::Type nwebType = NWebValue::Type::NONE;
@@ -286,7 +288,8 @@ public:
         }
     }
 
-    int ConvertNwebType2JsType(NWebValue::Type type) {
+    int ConvertNwebType2JsType(NWebValue::Type type)
+    {
         WebMessageType jsType = WebMessageType::NOTSUPPORT;
         switch (type) {
             case NWebValue::Type::STRING: {
@@ -325,70 +328,80 @@ public:
         return static_cast<int>(jsType);
     }
 
-    int GetType() {
+    int GetType()
+    {
         if (data_) {
             return ConvertNwebType2JsType(data_->GetType());
         }
         return static_cast<int>(WebMessageType::NOTSUPPORT);
     }
 
-    void SetString(std::string value) {
+    void SetString(std::string value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::STRING);
             data_->SetString(value);
         }
     }
 
-    void SetNumber(double value) {
+    void SetNumber(double value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::DOUBLE);
             data_->SetDouble(value);
         }
     }
 
-    void SetBoolean(bool value) {
+    void SetBoolean(bool value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::BOOLEAN);
             data_->SetBoolean(value);
         }
     }
 
-    void SetArrayBuffer(std::vector<uint8_t>& value) {
+    void SetArrayBuffer(std::vector<uint8_t>& value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::BINARY);
             data_->SetBinary(value);
         }
     }
 
-    void SetStringArray(std::vector<std::string> value) {
+    void SetStringArray(std::vector<std::string> value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::STRINGARRAY);
             data_->SetStringArray(value);
         }
     }
 
-    void SetDoubleArray(std::vector<double> value) {
+    void SetDoubleArray(std::vector<double> value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::DOUBLEARRAY);
             data_->SetDoubleArray(value);
         }
     }
 
-    void SetInt64Array(std::vector<int64_t> value) {
+    void SetInt64Array(std::vector<int64_t> value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::INT64ARRAY);
             data_->SetInt64Array(value);
         }
     }
 
-    void SetBooleanArray(std::vector<bool> value) {
+    void SetBooleanArray(std::vector<bool> value)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::BOOLEANARRAY);
             data_->SetBooleanArray(value);
         }
     }
 
-    void SetError(std::string name, std::string message) {
+    void SetError(std::string name, std::string message)
+    {
         if (data_) {
             data_->SetType(NWebValue::Type::ERROR);
             data_->SetErrName(name);
@@ -396,7 +409,8 @@ public:
         }
     }
 
-    std::shared_ptr<NWebMessage> GetData() {
+    std::shared_ptr<NWebMessage> GetData()
+    {
         return data_;
     }
 
@@ -415,6 +429,7 @@ public:
     std::shared_ptr<NWebHistoryItem> GetItem(int32_t index);
 
     int32_t GetListSize();
+
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
     std::shared_ptr<NWebHistoryList> sptrHistoryList_ = nullptr;
