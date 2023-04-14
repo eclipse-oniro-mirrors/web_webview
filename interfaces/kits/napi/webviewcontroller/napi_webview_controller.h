@@ -22,8 +22,8 @@
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
-#include "webview_controller.h"
 #include "uv.h"
+#include "webview_controller.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -136,8 +136,7 @@ private:
 
     static napi_value RunJavaScriptExt(napi_env env, napi_callback_info info);
 
-    static napi_value RunJS(napi_env env, napi_callback_info info,
-        bool extention);
+    static napi_value RunJS(napi_env env, napi_callback_info info, bool extention);
 
     static napi_value RunJavaScriptInternal(napi_env env, napi_callback_info info,
         const std::string &script, bool extention);
@@ -187,7 +186,9 @@ private:
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
 public:
-    NWebValueCallbackImpl(napi_env env, napi_ref callback, bool extention) : env_(env), callback_(callback), extention_(extention) {}
+    NWebValueCallbackImpl(napi_env env, napi_ref callback, bool extention)
+        : env_(env), callback_(callback), extention_(extention)
+    {}
     ~NWebValueCallbackImpl();
     void OnReceiveValue(std::shared_ptr<NWebMessage> result) override;
 
@@ -219,7 +220,6 @@ public:
     static napi_value SetArray(napi_env env, napi_callback_info info);
     static napi_value SetError(napi_env env, napi_callback_info info);
 };
-
 
 class NapiWebMessagePort {
 public:

@@ -15,21 +15,21 @@
 
 #include "webview_controller.h"
 
-#include "context/application_context.h"
 #include "business_error.h"
+#include "context/application_context.h"
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
+#include "web_errors.h"
+#include "webview_hasimage_callback.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_javascript_result_callback.h"
-#include "webview_hasimage_callback.h"
-#include "web_errors.h"
 
 namespace {
-    constexpr int32_t PARAMZERO = 0;
-    constexpr int32_t PARAMONE = 1;
-    constexpr int32_t RESULT_COUNT = 2;
-}
+constexpr int32_t PARAMZERO = 0;
+constexpr int32_t PARAMONE = 1;
+constexpr int32_t RESULT_COUNT = 2;
+} // namespace
 
 namespace OHOS {
 namespace NWeb {
@@ -642,7 +642,8 @@ void WebviewController::RegisterJavaScriptProxy(napi_env env, napi_value obj,
     nweb_ptr->RegisterArkJSfunction(objName, methodList);
 }
 
-void WebviewController::RunJavaScriptCallback(const std::string &script, napi_env env, napi_ref jsCallback, bool extention)
+void WebviewController::RunJavaScriptCallback(
+    const std::string& script, napi_env env, napi_ref jsCallback, bool extention)
 {
     auto nweb_ptr = nweb_.lock();
     if (!nweb_ptr) {

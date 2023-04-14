@@ -118,11 +118,11 @@ HWTEST_F(PlayerAdapterImplTest, NormalTest, TestSize.Level1)
  */
 HWTEST_F(PlayerAdapterImplTest, ModeConvertTest, TestSize.Level1)
 {
-    const std::array<PlayerSeekMode, 4> seekModeArray = { PlayerSeekMode::SEEK_NEXT_SYNC,
-        PlayerSeekMode::SEEK_PREVIOUS_SYNC, PlayerSeekMode::SEEK_CLOSEST_SYNC, PlayerSeekMode::SEEK_CLOSEST };
-    const std::array<PlaybackRateMode, 5> rateModeArray = { PlaybackRateMode::SPEED_FORWARD_0_75_X,
-        PlaybackRateMode::SPEED_FORWARD_1_00_X, PlaybackRateMode::SPEED_FORWARD_1_25_X,
-        PlaybackRateMode::SPEED_FORWARD_1_75_X, PlaybackRateMode::SPEED_FORWARD_2_00_X };
+    const std::array seekModeArray = { PlayerSeekMode::SEEK_NEXT_SYNC, PlayerSeekMode::SEEK_PREVIOUS_SYNC,
+        PlayerSeekMode::SEEK_CLOSEST_SYNC, PlayerSeekMode::SEEK_CLOSEST };
+    const std::array rateModeArray = { PlaybackRateMode::SPEED_FORWARD_0_75_X, PlaybackRateMode::SPEED_FORWARD_1_00_X,
+        PlaybackRateMode::SPEED_FORWARD_1_25_X, PlaybackRateMode::SPEED_FORWARD_1_75_X,
+        PlaybackRateMode::SPEED_FORWARD_2_00_X };
 
     for (PlayerSeekMode mode : seekModeArray) {
         EXPECT_NE(playerAdapter_->Seek(0, mode), -1);
