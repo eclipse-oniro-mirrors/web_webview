@@ -20,8 +20,8 @@
 
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
-#include "nweb_value_callback.h"
 #include "napi_parse_utils.h"
+#include "nweb_value_callback.h"
 #include "nweb_web_message.h"
 
 namespace OHOS::NWeb {
@@ -59,17 +59,21 @@ public:
     std::string GetString();
     double GetNumber();
     bool GetBoolean();
-    std::shared_ptr<NWebMessage> GetJsMsgResult() {
+    std::shared_ptr<NWebMessage> GetJsMsgResult()
+    {
         return value_;
     }
+
 private:
     std::shared_ptr<NWebMessage> value_ = nullptr;
 };
 
 class WebviewJavaScriptExecuteCallback : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
 public:
-    explicit WebviewJavaScriptExecuteCallback(napi_env env, napi_ref callbackRef, napi_deferred deferred, bool extention)
-        : env_(env), callbackRef_(callbackRef), deferred_(deferred), extention_(extention) {}
+    explicit WebviewJavaScriptExecuteCallback(
+        napi_env env, napi_ref callbackRef, napi_deferred deferred, bool extention)
+        : env_(env), callbackRef_(callbackRef), deferred_(deferred), extention_(extention)
+    {}
     ~WebviewJavaScriptExecuteCallback() = default;
     void OnReceiveValue(std::shared_ptr<NWebMessage> result) override;
 
@@ -88,11 +92,14 @@ private:
     bool extention_ = false;
 
     static void UvAfterWorkCb(uv_work_t* work, int status);
-    static void UvAfterWorkCbAsync(napi_env env, napi_ref callbackRef, std::shared_ptr<NWebMessage> result, bool extention);
-    static void UvAfterWorkCbPromise(napi_env env, napi_deferred deferred, std::shared_ptr<NWebMessage> result, bool extention);
- public:
+    static void UvAfterWorkCbAsync(
+        napi_env env, napi_ref callbackRef, std::shared_ptr<NWebMessage> result, bool extention);
+    static void UvAfterWorkCbPromise(
+        napi_env env, napi_deferred deferred, std::shared_ptr<NWebMessage> result, bool extention);
+
+public:
     static void InitJSExcute(napi_env env, napi_value exports);
 };
 
-}
+} // namespace OHOS::NWeb
 #endif

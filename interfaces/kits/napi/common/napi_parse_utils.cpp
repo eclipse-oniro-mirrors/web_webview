@@ -14,6 +14,7 @@
  */
 
 #include "napi_parse_utils.h"
+
 #include "nweb_log.h"
 
 namespace {
@@ -227,7 +228,8 @@ bool NapiParseUtils::ParseDouble(napi_env env, napi_value argv, double& outValue
 }
 
 //static
-bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst) {
+bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
     NWebValue::Type type = src->GetType();
     switch (type) {
         case NWebValue::Type::STRING: {
@@ -322,8 +324,8 @@ bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMe
                 napi_create_double(env, value, &element);
                 napi_set_element(env, dst, index++, element);
             }
-                break;
-            }
+            break;
+        }
         case NWebValue::Type::INT64ARRAY: {
             std::vector<int64_t> values = src->GetInt64Array();
             napi_create_array(env, &dst);
@@ -339,8 +341,8 @@ bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMe
                 napi_create_int64(env, value, &element);
                 napi_set_element(env, dst, index++, element);
             }
-                break;
-            }
+            break;
+        }
         default: {
             WVLOG_E("This type not support");
             std::string msgStr = "This type not support";

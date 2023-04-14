@@ -137,7 +137,8 @@ void NWebHandlerImplTest::OnPageLoadEnd(int httpStatusCode, const std::string& u
     if (url.find(EXECUTE_JAVASCRIPT_CALLBACK_HTML) != std::string::npos) {
         // invoke js function which is defined in html, test case 106
         std::string ss = "javascript:ExecuteJavaScriptTest()";
-        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback = std::make_shared<JavaScriptResultCb>();
+        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback =
+            std::make_shared<JavaScriptResultCb>();
         nwebShared->ExecuteJavaScript(ss, callback, false);
     }
 }

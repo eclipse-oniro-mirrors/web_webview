@@ -56,7 +56,7 @@ private:
     std::vector<uint8_t> binary_data_;
     std::string err_name_;
     std::string err_msg_;
-    int64_t value_;
+    int64_t value_ = -1;
     std::vector<std::string> string_arr_;
     std::vector<bool> bool_arr_;
     std::vector<double> double_arr_;
