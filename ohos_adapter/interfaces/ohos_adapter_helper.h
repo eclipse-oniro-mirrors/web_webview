@@ -28,6 +28,8 @@
 #include "display_manager_adapter.h"
 #include "event_handler_adapter.h"
 #include "graphic_adapter.h"
+#include "hisysevent_adapter.h"
+#include "hitrace_adapter.h"
 #include "imf_adapter.h"
 #include "media_adapter.h"
 #include "mmi_adapter.h"
@@ -99,6 +101,10 @@ public:
     std::unique_ptr<PlayerAdapter> CreatePlayerAdapter() const;
 
     WindowAdapter& GetWindowAdapterInstance() const;
+
+    HiSysEventAdapter& GetHiSysEventAdapterInstance() const;
+
+    HiTraceAdapter& GetHiTraceAdapterInstance() const;
 
 private:
     OhosAdapterHelper() = default;
