@@ -210,6 +210,8 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/pasteboard_adapter/onpasteboardchanged_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/pasteboard_adapter/openremoteuri_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/pasteboard_adapter/removepasteboardchangedobserver_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/cert_mgr_adapter/getcertmaxsize_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/cert_mgr_adapter/getusercertdata_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/loadlib_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/getcookiemanager_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/getnweb_fuzzer:fuzztest",
