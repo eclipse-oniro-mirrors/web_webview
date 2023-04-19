@@ -257,6 +257,7 @@
                 "//base/web/webview/test/unittest/ohos_adapter/access_token_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/dns_data_base_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/event_handler_adapter_test:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter/hiviewdfx_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/imf_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/media_adapter_test:unittest"
             ]

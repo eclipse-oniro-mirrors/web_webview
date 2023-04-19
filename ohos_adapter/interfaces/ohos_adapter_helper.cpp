@@ -24,6 +24,8 @@
 #include "datashare_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
 #include "event_handler_adapter_impl.h"
+#include "hisysevent_adapter_impl.h"
+#include "hitrace_adapter_impl.h"
 #include "imf_adapter_impl.h"
 #include "mmi_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
@@ -178,5 +180,15 @@ std::unique_ptr<PlayerAdapter> OhosAdapterHelper::CreatePlayerAdapter() const
 WindowAdapter& OhosAdapterHelper::GetWindowAdapterInstance() const
 {
     return WindowAdapterImpl::GetInstance();
+}
+
+HiSysEventAdapter& OhosAdapterHelper::GetHiSysEventAdapterInstance() const
+{
+    return HiSysEventAdapterImpl::GetInstance();
+}
+
+HiTraceAdapter& OhosAdapterHelper::GetHiTraceAdapterInstance() const
+{
+    return HiTraceAdapterImpl::GetInstance();
 }
 } // namespace OHOS::NWeb
