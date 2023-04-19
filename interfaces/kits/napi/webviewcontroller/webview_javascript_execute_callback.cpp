@@ -195,12 +195,12 @@ void WebviewJavaScriptExecuteCallback::UvAfterWorkCbPromise(napi_env env, napi_d
         napi_status status = napi_get_reference_value(env, g_jsMsgExtClassRef, &jsMsgExt);
         if (status != napi_status::napi_ok) {
             WVLOG_E("napi_get_reference_value failed.");
-			return;
+            return;
         }
         status = napi_new_instance(env, jsMsgExt, 0, NULL, &setResult[INTEGER_ONE]);
         if (status != napi_status::napi_ok) {
             WVLOG_E("napi_new_instance failed.");
-			return;
+            return;
         }
         WebJsMessageExt *webJsMessageExt = new (std::nothrow) WebJsMessageExt(result);
         if (webJsMessageExt == nullptr) {
@@ -217,7 +217,7 @@ void WebviewJavaScriptExecuteCallback::UvAfterWorkCbPromise(napi_env env, napi_d
             nullptr, nullptr);
         if (status != napi_status::napi_ok) {
             WVLOG_E("napi_wrap failed.");
-			return;
+            return;
         }
     }
 

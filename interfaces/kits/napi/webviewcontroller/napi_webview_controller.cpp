@@ -1075,9 +1075,7 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
             bool isReadDouble = napi_get_value_double(env, obj, &elementDouble) == napi_ok;
             constexpr double MINIMAL_ERROR = 0.000001;
             if (isReadValue32 && isReadDouble) {
-                if (abs(elementDouble - elementInt32 * 1.0) > MINIMAL_ERROR) {
-                    isDouble = true;
-                }
+                isDouble = abs(elementDouble - elementInt32 * 1.0) > MINIMAL_ERROR;
             } else if (isReadValue32) {
             } else if (isReadDouble) {
                 isDouble = true;
