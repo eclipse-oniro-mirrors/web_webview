@@ -40,7 +40,7 @@ public:
     int32_t GetAppCert(uint8_t* uriData, uint8_t* certData, uint32_t* len) override;
 
     int32_t Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
-		uint8_t* signData, uint32_t signDataLen) override;
+        uint8_t* signData, uint32_t signDataLen) override;
 private:
     int32_t InitCertList(struct CertList **cList);
 

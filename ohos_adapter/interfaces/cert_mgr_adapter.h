@@ -40,7 +40,7 @@ public:
     virtual int32_t GetAppCert(uint8_t* uriData, uint8_t* certData, uint32_t* len) = 0;
 
     virtual int32_t Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
-		uint8_t* signData, uint32_t signDataLen) = 0;
+        uint8_t* signData, uint32_t signDataLen) = 0;
 };
 
 } // namespace OHOS::NWeb
