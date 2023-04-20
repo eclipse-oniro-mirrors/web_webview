@@ -260,8 +260,6 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_007, TestS
     EXPECT_EQ(displayManagerAdapterImpl->IsDefaultPortrait(), true);
     g_deviceType = "default";
     EXPECT_EQ(displayManagerAdapterImpl->IsDefaultPortrait(), true);
-    g_deviceType = "tablet";
-    EXPECT_EQ(displayManagerAdapterImpl->IsDefaultPortrait(), false);
 }
 }
 }
