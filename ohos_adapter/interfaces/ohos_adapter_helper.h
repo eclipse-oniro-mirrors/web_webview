@@ -34,6 +34,7 @@
 #include "media_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
+#include "net_proxy_adapter.h"
 #include "ohos_init_web_adapter.h"
 #include "ohos_resource_adapter.h"
 #include "ohos_web_data_base_adapter.h"
@@ -105,6 +106,8 @@ public:
     HiSysEventAdapter& GetHiSysEventAdapterInstance() const;
 
     HiTraceAdapter& GetHiTraceAdapterInstance() const;
+
+    NetProxyAdapter& GetNetProxyInstance() const;
 
 private:
     OhosAdapterHelper() = default;

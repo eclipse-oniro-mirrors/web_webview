@@ -29,6 +29,7 @@
 #include "imf_adapter_impl.h"
 #include "mmi_adapter_impl.h"
 #include "net_connect_adapter_impl.h"
+#include "net_proxy_adapter_impl.h"
 #include "ohos_init_web_adapter_impl.h"
 #include "ohos_resource_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
@@ -190,5 +191,10 @@ HiSysEventAdapter& OhosAdapterHelper::GetHiSysEventAdapterInstance() const
 HiTraceAdapter& OhosAdapterHelper::GetHiTraceAdapterInstance() const
 {
     return HiTraceAdapterImpl::GetInstance();
+}
+
+NetProxyAdapter& OhosAdapterHelper::GetNetProxyInstance() const
+{
+    return NetProxyAdapterImpl::GetInstance();
 }
 } // namespace OHOS::NWeb
