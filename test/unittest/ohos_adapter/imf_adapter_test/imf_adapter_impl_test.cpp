@@ -62,10 +62,15 @@ public:
         WVLOG_I("test SendKeyEventFromInputMethod");
         isSendKeyEventFromInputMethod_ = true;
     }
-    void SendKeyboardInfo(const IMFAdapterKeyboardInfo &info) override
+    void SendKeyboardStatus(const IMFAdapterKeyboardStatus& adapterKeyboardStatus) override
     {
-        WVLOG_I("test SendKeyboardInfo");
-        isSendKeyboardInfo_ = true;
+        WVLOG_I("test SendKeyboardStatus");
+        isSendKeyboardStatus_ = true;
+    }
+    void SendFunctionKey(const IMFAdapterFunctionKey& adapterFunctionKey) override
+    {
+        WVLOG_I("test SendFunctionKey");
+        isSendFunctionKey_ = true;
     }
     void SetKeyboardStatus(bool status) override
     {
@@ -95,8 +100,8 @@ public:
     bool VerifyAllSuccess()
     {
         return isInsertText_ && isDeleteForward_ && isDeleteBackward_ && isSendKeyEventFromInputMethod_ &&
-               isSendKeyboardInfo_ && isSetKeyboardStatus_ && isMoveCursor_ && isHandleSetSelection_ &&
-               isHandleExtendAction_ && isHandleSelect_;
+               isSendKeyboardStatus_ && isSendFunctionKey_ && isSetKeyboardStatus_ && isMoveCursor_ &&
+               isHandleSetSelection_ && isHandleExtendAction_ && isHandleSelect_;
     }
 
 private:
@@ -104,7 +109,8 @@ private:
     bool isDeleteForward_ = false;
     bool isDeleteBackward_ = false;
     bool isSendKeyEventFromInputMethod_ = false;
-    bool isSendKeyboardInfo_ = false;
+    bool isSendKeyboardStatus_ = false;
+    bool isSendFunctionKey_ = false;
     bool isSetKeyboardStatus_ = false;
     bool isMoveCursor_ = false;
     bool isHandleSetSelection_ = false;
@@ -199,17 +205,15 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_005, TestSize.Lev
     auto listenerTest = std::make_shared<IMFTextListenerAdapterImpl>(listener);
     std::u16string text;
     MiscServices::KeyEvent event;
-    MiscServices::KeyboardInfo info;
+    MiscServices::FunctionKey functionKey;
     listenerTest->InsertText(text);
     listenerTest->DeleteForward(0);
     listenerTest->DeleteBackward(0);
     listenerTest->SendKeyEventFromInputMethod(event);
-    listenerTest->SendKeyboardInfo(info);
-    info.SetKeyboardStatus(static_cast<int32_t>(MiscServices::KeyboardStatus::SHOW));
-    listenerTest->SendKeyboardInfo(info);
-    info.SetKeyboardStatus(static_cast<int32_t>(MiscServices::KeyboardStatus::HIDE));
-    info.SetFunctionKey(static_cast<int32_t>(MiscServices::FunctionKey::CONFIRM));
-    listenerTest->SendKeyboardInfo(info);
+    listenerTest->SendKeyboardStatus(MiscServices::KeyboardStatus::SHOW);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::UNSPECIFIED);
+    listenerTest->SendFunctionKey(functionKey);
     listenerTest->SetKeyboardStatus(true);
     listenerTest->MoveCursor(MiscServices::Direction::NONE);
     listenerTest->MoveCursor(MiscServices::Direction::UP);
@@ -234,12 +238,13 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
     EXPECT_NE(listenerTest, nullptr);
     std::u16string text;
     MiscServices::KeyEvent event;
-    MiscServices::KeyboardInfo info;
+    MiscServices::FunctionKey functionKey;
     listenerTest->InsertText(text);
     listenerTest->DeleteForward(0);
     listenerTest->DeleteBackward(0);
     listenerTest->SendKeyEventFromInputMethod(event);
-    listenerTest->SendKeyboardInfo(info);
+    listenerTest->SendKeyboardStatus(MiscServices::KeyboardStatus::SHOW);
+    listenerTest->SendFunctionKey(functionKey);
     listenerTest->SetKeyboardStatus(true);
     listenerTest->MoveCursor(MiscServices::Direction::NONE);
     listenerTest->HandleSetSelection(0, 0);

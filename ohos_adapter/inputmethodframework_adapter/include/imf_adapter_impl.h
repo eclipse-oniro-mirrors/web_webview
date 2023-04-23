@@ -34,7 +34,9 @@ public:
 
     void SendKeyEventFromInputMethod(const MiscServices::KeyEvent &event) override;
 
-    void SendKeyboardInfo(const MiscServices::KeyboardInfo &info) override;
+    void SendKeyboardStatus(const MiscServices::KeyboardStatus& keyboardStatus) override;
+
+    void SendFunctionKey(const MiscServices::FunctionKey& functionKey) override;
 
     void SetKeyboardStatus(bool status) override;
 

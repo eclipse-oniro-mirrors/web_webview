@@ -31,6 +31,8 @@ enum class IMFAdapterTextInputType {
     VISIBLE_PASSWORD,
 };
 
+enum class IMFAdapterEnterKeyType { UNSPECIFIED = 0, NONE, GO, SEARCH, SEND, NEXT, DONE, PREVIOUS };
+
 enum class IMFAdapterDirection {
     NONE = 0,
     UP = 1,
@@ -48,11 +50,20 @@ struct IMFAdapterCursorInfo {
 
 enum class IMFAdapterKeyboardStatus : int32_t { NONE = 0, HIDE, SHOW };
 
-enum class IMFAdapterFunctionKey : int32_t { NONE = 0, CONFIRM };
+class IMFAdapterFunctionKey {
+public:
+    IMFAdapterEnterKeyType GetEnterKeyType() const
+    {
+        return enterKeyType;
+    }
 
-struct IMFAdapterKeyboardInfo {
-    IMFAdapterKeyboardStatus keyboardStatus = IMFAdapterKeyboardStatus::NONE;
-    IMFAdapterFunctionKey functionKey = IMFAdapterFunctionKey::NONE;
+    void SetEnterKeyType(IMFAdapterEnterKeyType keyType)
+    {
+        enterKeyType = keyType;
+    }
+
+private:
+    IMFAdapterEnterKeyType enterKeyType = IMFAdapterEnterKeyType::UNSPECIFIED;
 };
 
 class IMFTextListenerAdapter {
@@ -69,7 +80,9 @@ public:
 
     virtual void SendKeyEventFromInputMethod() = 0;
 
-    virtual void SendKeyboardInfo(const IMFAdapterKeyboardInfo &info) = 0;
+    virtual void SendKeyboardStatus(const IMFAdapterKeyboardStatus& keyboardStatus) = 0;
+
+    virtual void SendFunctionKey(const IMFAdapterFunctionKey& functionKey) = 0;
 
     virtual void SetKeyboardStatus(bool status) = 0;
 
