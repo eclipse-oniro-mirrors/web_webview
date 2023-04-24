@@ -125,6 +125,7 @@ struct OHOS_NWEB_EXPORT NWebDOHConfig {
 };
 
 using WebState = std::shared_ptr<std::vector<uint8_t>>;
+using SetKeepScreenOn = std::function<void(bool)>;
 
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
@@ -710,6 +711,21 @@ public:
      * @param audioExclusive Aduio exclusive state.
      */
     virtual void SetAudioExclusive(bool audioExclusive) = 0;
+
+    /**
+     * Rigest the keep srceen on interface.
+     *
+     * @param windowId the window id.
+     * @param SetKeepScreenOn the screenon handle.
+     */
+    virtual void RegisterScreenLockFunction(int32_t windowId, const SetKeepScreenOn&& handle) = 0;
+
+    /**
+     * UnRigest the keep srceen on interface.
+     *
+     * @param windowId the window id.
+     */
+    virtual void UnRegisterScreenLockFunction(int32_t windowId) = 0;
 };
 }  // namespace OHOS::NWeb
 
