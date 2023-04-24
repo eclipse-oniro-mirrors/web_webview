@@ -39,8 +39,8 @@ ohos_fuzztest("AudioOutputDevicesFuzzTest") {
   ]
 
   external_deps = [
-    "multimedia_audio_framework:audio_client",
-    "multimedia_audio_framework:audio_renderer",
+    "audio_framework:audio_client",
+    "audio_framework:audio_renderer",
   ]
 }
 

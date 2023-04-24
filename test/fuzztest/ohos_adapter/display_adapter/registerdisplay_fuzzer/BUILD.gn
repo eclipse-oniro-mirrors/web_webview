@@ -38,8 +38,8 @@ ohos_fuzztest("RegisterDisplayFuzzTest") {
   ]
 
   external_deps = [
-    "multimedia_audio_framework:audio_client",
-    "multimedia_audio_framework:audio_renderer",
+    "audio_framework:audio_client",
+    "audio_framework:audio_renderer",
     "multimedia_image_framework:image_native",
     "window_manager:libdm",
   ]
