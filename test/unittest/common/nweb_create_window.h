@@ -311,6 +311,10 @@ public:
     {}
     void SetAudioExclusive(bool audioExclusive) override
     {}
+    void RegisterScreenLockFunction(int32_t windowId, const SetKeepScreenOn&& handle) override
+    {}
+    void UnRegisterScreenLockFunction(int32_t windowId) override
+    {}
 };
 }
 #endif
