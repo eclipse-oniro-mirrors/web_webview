@@ -55,19 +55,53 @@ void IMFTextListenerAdapterImpl::SendKeyEventFromInputMethod(const MiscServices:
     }
 }
 
-void IMFTextListenerAdapterImpl::SendKeyboardInfo(const MiscServices::KeyboardInfo& info)
+void IMFTextListenerAdapterImpl::SendKeyboardStatus(const MiscServices::KeyboardStatus& keyboardStatus)
 {
     if (listener_) {
-        IMFAdapterKeyboardInfo adapterInfo;
-        if (info.GetKeyboardStatus() == MiscServices::KeyboardStatus::SHOW) {
-            adapterInfo.keyboardStatus = IMFAdapterKeyboardStatus::SHOW;
-        } else if (info.GetKeyboardStatus() == MiscServices::KeyboardStatus::HIDE) {
-            adapterInfo.keyboardStatus = IMFAdapterKeyboardStatus::HIDE;
+        auto status = IMFAdapterKeyboardStatus::NONE;
+        if (keyboardStatus == MiscServices::KeyboardStatus::SHOW) {
+            status = IMFAdapterKeyboardStatus::SHOW;
+        } else if (keyboardStatus == MiscServices::KeyboardStatus::HIDE) {
+            status = IMFAdapterKeyboardStatus::HIDE;
         }
-        if (info.GetFunctionKey() == MiscServices::FunctionKey::CONFIRM) {
-            adapterInfo.functionKey = IMFAdapterFunctionKey::CONFIRM;
+        listener_->SendKeyboardStatus(status);
+    }
+}
+
+void IMFTextListenerAdapterImpl::SendFunctionKey(const MiscServices::FunctionKey& functionKey)
+{
+    if (listener_) {
+        IMFAdapterFunctionKey adapterFunction;
+        switch (functionKey.GetEnterKeyType()) {
+            case MiscServices::EnterKeyType::UNSPECIFIED:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::UNSPECIFIED);
+                break;
+            case MiscServices::EnterKeyType::NONE:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::NONE);
+                break;
+            case MiscServices::EnterKeyType::GO:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::GO);
+                break;
+            case MiscServices::EnterKeyType::SEARCH:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::SEARCH);
+                break;
+            case MiscServices::EnterKeyType::SEND:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::SEND);
+                break;
+            case MiscServices::EnterKeyType::NEXT:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::NEXT);
+                break;
+            case MiscServices::EnterKeyType::DONE:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::DONE);
+                break;
+            case MiscServices::EnterKeyType::PREVIOUS:
+                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::PREVIOUS);
+                break;
+            default:
+                WVLOG_E("unknown functionKey");
+                break;
         }
-        listener_->SendKeyboardInfo(adapterInfo);
+        listener_->SendFunctionKey(adapterFunction);
     }
 }
 
