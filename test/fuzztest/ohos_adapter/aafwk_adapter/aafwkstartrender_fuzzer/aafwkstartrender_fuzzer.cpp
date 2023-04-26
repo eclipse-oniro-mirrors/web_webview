@@ -26,7 +26,8 @@ using namespace OHOS::NWeb;
 namespace OHOS {
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
-        if ((data == nullptr) || (size < sizeof(int32_t))) {
+        constexpr int fdNum = 2;
+        if ((data == nullptr) || (size < fdNum * sizeof(int32_t))) {
             return false;
         }
         AafwkAppMgrClientAdapterImpl render;
@@ -38,7 +39,7 @@ namespace OHOS {
         if (memcpy_s(&ipcFd, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
             return false;
         }
-        if (memcpy_s(&crashFd, sizeof(int32_t), data + sizeof(int32_t) + sizeof(int32_t), sizeof(int32_t)) != 0) {
+        if (memcpy_s(&crashFd, sizeof(int32_t), data + sizeof(int32_t), sizeof(int32_t)) != 0) {
             return false;
         }
         render.StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
