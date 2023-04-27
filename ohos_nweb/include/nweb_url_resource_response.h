@@ -28,6 +28,12 @@ public:
     virtual void Cancel() = 0;
 };
 
+enum class NWebResponseDataType : int32_t {
+    NWEB_STRING_TYPE,
+    NWEB_FILE_TYPE,
+    NWEB_RESOURCE_URL_TYPE,
+};
+
 class NWebUrlResourceResponse {
 public:
     /**
@@ -89,6 +95,7 @@ public:
         input_stream_ = input_stream;
         fd_ = 0;
         isFileFd_ = false;
+        dataType_ = NWebResponseDataType::NWEB_STRING_TYPE;
     }
 
     /**
@@ -205,6 +212,7 @@ public:
 
     void PutResponseFileHandle(int fd)
     {
+        dataType_ = NWebResponseDataType::NWEB_FILE_TYPE;
         fd_ = fd;
         isFileFd_ = true;
         input_stream_.clear();
@@ -213,6 +221,22 @@ public:
     int ResponseFileHandle() const
     {
         return fd_;
+    }
+
+    void PutResponseResourceUrl(const std::string& url)
+    {
+        resource_url_ = url;
+        dataType_ = NWebResponseDataType::NWEB_RESOURCE_URL_TYPE;
+    }
+
+    std::string ResponseResourceUrl() const
+    {
+        return resource_url_;
+    }
+
+    NWebResponseDataType ResponseDataType() const
+    {
+        return dataType_;
     }
 
     void PutResponseReadyCallback(std::shared_ptr<NWebResourceReadyCallback> readyCallback)
@@ -228,6 +252,8 @@ private:
     std::map<std::string, std::string> response_headers_;
     std::string input_stream_;
     int fd_ = -1;
+    std::string resource_url_;
+    NWebResponseDataType dataType_ = NWebResponseDataType::NWEB_STRING_TYPE;
     bool isFileFd_ = false;
     bool isDataReady_ = true;
     std::shared_ptr<NWebResourceReadyCallback> readyCallback_;
