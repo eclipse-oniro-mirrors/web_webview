@@ -40,7 +40,7 @@ public:
 
     void StopListen() override;
 
-    void GetProperty(std::string& host, uint16_t& port, std::string& pac_url, std::string& exclusion) override;
+    void GetProperty(std::string& host, uint16_t& port, std::string& pacUrl, std::string& exclusion) override;
 
 private:
     NetProxyEventCallback cb_ = nullptr;

@@ -22,7 +22,7 @@
 namespace OHOS::NWeb {
 
 using NetProxyEventCallback = std::function<void(
-    std::string& host, uint16_t& port, const std::string& pac_url, const std::vector<std::string>& exclusionList)>;
+    std::string& host, uint16_t& port, const std::string& pacUrl, const std::vector<std::string>& exclusionList)>;
 class NetProxyAdapter {
 public:
     NetProxyAdapter() = default;
@@ -34,7 +34,7 @@ public:
 
     virtual void StopListen() = 0;
 
-    virtual void GetProperty(std::string& host, uint16_t& port, std::string& pac_url, std::string& exclusion) = 0;
+    virtual void GetProperty(std::string& host, uint16_t& port, std::string& pacUrl, std::string& exclusion) = 0;
 };
 
 } // namespace OHOS::NWeb
