@@ -213,33 +213,33 @@ bool NetProxyAdapterImpl::StartListen()
     EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
     skill.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_HTTP_PROXY_CHANGE);
     EventFwk::CommonEventSubscribeInfo info(skill);
-    info.SetPriority(1);
-    if (!(this->cb_)) {
+    info.SetPriority(1); //The higher the value, the higher the priority
+    if (!cb_) {
         WVLOG_E("start netproxy listen, callback is null");
         return false;
     }
-    this->commonEventSubscriber_ = std::make_shared<NetProxyEventSubscriber>(info, this->cb_);
-    if (!(this->commonEventSubscriber_)) {
+    commonEventSubscriber_ = std::make_shared<NetProxyEventSubscriber>(info, cb_);
+    if (!commonEventSubscriber_) {
         WVLOG_E("start netproxy listen, common event subscriber is null");
         return false;
     }
 
-    bool ret = EventFwk::CommonEventManager::SubscribeCommonEvent(this->commonEventSubscriber_);
+    bool ret = EventFwk::CommonEventManager::SubscribeCommonEvent(commonEventSubscriber_);
     if (ret == false) {
         WVLOG_E("start netproxy listen, subscribe common event failed");
         return false;
-    } else {
-        return true;
     }
+
+    return true;
 }
 
 void NetProxyAdapterImpl::StopListen()
 {
     WVLOG_I("stop netproxy listen");
-    if (this->commonEventSubscriber_ != nullptr) {
-        bool result = EventFwk::CommonEventManager::UnSubscribeCommonEvent(this->commonEventSubscriber_);
+    if (commonEventSubscriber_) {
+        bool result = EventFwk::CommonEventManager::UnSubscribeCommonEvent(commonEventSubscriber_);
         if (result) {
-            this->commonEventSubscriber_ = nullptr;
+            commonEventSubscriber_ = nullptr;
         } else {
             WVLOG_E("stop netproxy listen, unsubscribe common event failed");
         }
@@ -276,14 +276,14 @@ void NetProxyEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& da
     auto exclusion = httpProxy.GetExclusionList();
     exclusionList.assign(exclusion.begin(), exclusion.end());
 
-    if (eventCallback_) {
-        eventCallback_(host, port, "", exclusionList);
-    } else {
+    if (!eventCallback_) {
         WVLOG_E("netproxy config change, event callback is null");
     }
+
+    eventCallback_(host, port, "", exclusionList);
 }
 
-void NetProxyAdapterImpl::GetProperty(std::string& host, uint16_t& port, std::string& pac_url, std::string& exclusion)
+void NetProxyAdapterImpl::GetProperty(std::string& host, uint16_t& port, std::string& pacUrl, std::string& exclusion)
 {
     char httpProxyHost[SYSPARA_MAX_SIZE] = { 0 };
     char httpProxyPort[SYSPARA_MAX_SIZE] = { 0 };
