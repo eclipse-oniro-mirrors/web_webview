@@ -21,7 +21,6 @@ config("module_private_config") {
   include_dirs = [
     "../../../../ohos_adapter/graphic_adapter/include",
     "../../../../ohos_nweb/include",
-    "//third_party/googletest/googlemock/include",
   ]
 }
 
@@ -37,8 +36,7 @@ ohos_unittest("graphic_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
+    "../../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -47,7 +45,7 @@ ohos_unittest("graphic_adapter_test") {
     "ability_runtime:app_manager",
     "graphic_standard:libcomposer",
     "graphic_standard:surface",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog_native:libhilog",
     "relational_store:native_rdb",
   ]
 }

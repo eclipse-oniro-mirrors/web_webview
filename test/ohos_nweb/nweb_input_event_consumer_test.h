@@ -21,7 +21,7 @@
 #include "key_event.h"
 #include "nweb.h"
 #include "pointer_event.h"
-#include "window.h"
+#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
 
 namespace OHOS::NWeb {
 class NWebInputEventConsumerTest : public Rosen::IInputEventConsumer {

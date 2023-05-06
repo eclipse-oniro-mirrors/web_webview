@@ -16,7 +16,7 @@
 #ifndef NWEB_ADAPTER_HELPER_H
 #define NWEB_ADAPTER_HELPER_H
 
-#include "window.h"
+#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
 #include "nweb_helper.h"
 
 namespace OHOS {

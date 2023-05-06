@@ -14,10 +14,12 @@
  */
 
 #include "ohos_web_data_base_adapter_impl.h"
+
 #include <cinttypes>
 #include <securec.h>
 #include <unistd.h>
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
+
+#include "application_context.h"
 #include "nweb_log.h"
 #include "sqlite_database_utils.h"
 

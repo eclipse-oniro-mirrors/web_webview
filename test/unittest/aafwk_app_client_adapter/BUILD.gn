@@ -18,16 +18,7 @@ module_output_path = "web/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [
-    "//base/web/webview/ohos_adapter/aafwk_adapter/include",
-    "//third_party/googletest/googlemock/include",
-    "//foundation/ability/ability_runtime/interfaces/inner_api/app_manager/include/appmgr",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/ability/ability_base/interfaces/kits/native/want/include",
-    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_base/include",
-    "//foundation/ability/ability_base/interfaces/kits/native/configuration/include",
-  ]
+  include_dirs = [ "../../../ohos_adapter/aafwk_adapter/include" ]
 }
 
 ohos_unittest("nweb_aafwk_client_test") {
@@ -38,8 +29,7 @@ ohos_unittest("nweb_aafwk_client_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//foundation/ability/ability_runtime/interfaces/inner_api/app_manager:app_manager",
+    "../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",
@@ -47,8 +37,10 @@ ohos_unittest("nweb_aafwk_client_test") {
 
   external_deps = [
     "ability_base:want",
+    "ability_runtime:app_manager",
+    "bundle_framework:appexecfwk_base",
     "c_utils:utils",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog_native:libhilog",
   ]
 }
 
