@@ -17,10 +17,10 @@
 #define NWEB_CREAT_WINDOW_H
 
 #include "nweb.h"
-#include "window.h"
+#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
 
 #define private public
-#include "rs_surface_node.h"
+#include "ui/rs_surface_node.h"
 #undef private
 
 namespace OHOS::Rosen {

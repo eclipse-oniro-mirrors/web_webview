@@ -12,22 +12,21 @@
 # limitations under the License.
 
 #####################hydra-fuzz###################
+import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AafwkStartRenderFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkstartrender_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkstartrender_fuzzer"
 
   include_dirs = [
-    "//base/web/webview/test/ohos_nweb",
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//base\web/webview/ohos_adapter/aafwk_adapter/include",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//base/web/webview/test/fuzztest",
-    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
-    "//base/web/webview/ohos_adapter/interfaces",
+    "$webview_path/test/ohos_nweb",
+    "$webview_path/ohos_adapter/aafwk_adapter/include",
+    "$window_manager_path/interfaces/innerkits/wm",
+    "$webview_path/test/fuzztest",
+    "$webview_path/ohos_adapter/interfaces",
   ]
   cflags = [
     "-g",
@@ -37,10 +36,11 @@ ohos_fuzztest("AafwkStartRenderFuzzTest") {
   ]
   sources = [ "aafwkstartrender_fuzzer.cpp" ]
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//foundation/ability/ability_runtime/interfaces/inner_api/app_manager:app_manager",
-    "//foundation/graphic/graphic_2d:libsurface",
+    "$aafwk_path/interfaces/inner_api/app_manager:app_manager",
+    "$graphicsurface_path:libsurface",
+    "$webview_path/ohos_adapter:nweb_ohos_adapter",
   ]
+  external_deps = [ "input:libmmi-client" ]
 }
 
 ###############################################################################

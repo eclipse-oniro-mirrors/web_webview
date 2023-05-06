@@ -12,55 +12,50 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-
-SUBSYSTEM_DIR = "//base/web/webview"
+import("../../../web_aafwk.gni")
 
 config("web_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/common",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webasynccontroller",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webcookiemanager",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webfunction",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage",
+    "common",
+    "webasynccontroller",
+    "webcookiemanager",
+    "webdatabase",
+    "webfunction",
+    "webstorage",
+    "webviewcontroller",
   ]
 }
 
 ohos_shared_library("webview_napi") {
-  include_dirs = [
-    "//utils/system/safwk/native/include",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime",
-    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_core/include/bundlemgr",
-    "$SUBSYSTEM_DIR/ohos_adapter/interfaces",
-  ]
+  include_dirs = [ "$aafwk_path/interfaces/kits/native/appkit/ability_runtime" ]
   public_configs = [ ":web_public_config" ]
 
   sources = [
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/common/business_error.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/common/napi_parse_utils.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/common/napi_webview_native_module.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/common/web_errors.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webasynccontroller/napi_web_async_controller.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webcookiemanager/napi_web_cookie_manager.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase/napi_geolocation_permission.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webdatabase/napi_web_data_base.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webfunction/napi_webview_function.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webfunction/webview_web_inited_callback.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webstorage/napi_web_storage.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller/napi_webview_controller.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller/webview_controller.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller/webview_hasimage_callback.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller/webview_javascript_execute_callback.cpp",
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/webviewcontroller/webview_javascript_result_callback.cpp",
+    "common/business_error.cpp",
+    "common/napi_parse_utils.cpp",
+    "common/napi_webview_native_module.cpp",
+    "common/web_errors.cpp",
+    "webasynccontroller/napi_web_async_controller.cpp",
+    "webcookiemanager/napi_web_cookie_manager.cpp",
+    "webdatabase/napi_geolocation_permission.cpp",
+    "webdatabase/napi_web_data_base.cpp",
+    "webfunction/napi_webview_function.cpp",
+    "webfunction/webview_web_inited_callback.cpp",
+    "webstorage/napi_web_storage.cpp",
+    "webviewcontroller/napi_webview_controller.cpp",
+    "webviewcontroller/webview_controller.cpp",
+    "webviewcontroller/webview_hasimage_callback.cpp",
+    "webviewcontroller/webview_javascript_execute_callback.cpp",
+    "webviewcontroller/webview_javascript_result_callback.cpp",
   ]
 
   external_deps = [
     "ability_runtime:app_context",
+    "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
-    "hiviewdfx_hilog_native:libhilog",
+    "hilog_native:libhilog",
     "multimedia_image_framework:image",
     "multimedia_image_framework:image_native",
     "napi:ace_napi",
@@ -68,8 +63,8 @@ ohos_shared_library("webview_napi") {
   ]
 
   deps = [
-    "$SUBSYSTEM_DIR/interfaces/kits/napi/js:js_export",
-    "$SUBSYSTEM_DIR/ohos_adapter:nweb_ohos_adapter",
+    "../../../ohos_adapter:nweb_ohos_adapter",
+    "js:js_export",
   ]
 
   relative_install_dir = "module/web"

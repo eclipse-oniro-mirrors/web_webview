@@ -21,7 +21,6 @@ config("module_private_config") {
   include_dirs = [
     "../../../../ohos_adapter/event_handler_adapter/include",
     "../../../../ohos_nweb/include",
-    "//third_party/googletest/googlemock/include",
   ]
 }
 

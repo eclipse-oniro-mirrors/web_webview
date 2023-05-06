@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../web_aafwk.gni")
 
 module_output_path = "web/webview"
 
@@ -19,19 +20,8 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
-    "//base/web/webview/test/unittest/common",
-    "//foundation/window/window_manager/wm/include",
-    "//foundation/ability/ability_runtime/interfaces/kits/native/ability/ability_runtime",
-    "//foundation/ability/ability_base/interfaces/kits/native/configuration/include",
-    "//foundation/ability/ability_runtime/interfaces/inner_api/ability_manager/include",
-    "//foundation/window/window_manager/interfaces/innerkits/dm",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client/core/ui",
-    "//foundation/graphic/graphic_2d/frameworks/vsync/include",
-    "//third_party/googletest/googlemock/include",
-    "//foundation/graphic/graphic_2d/frameworks/surface/include",
+    "../common",
+    "$graphicsurface_path/frameworks/surface/include",
   ]
 }
 
@@ -39,18 +29,14 @@ ohos_unittest("nweb_surface_adapter_test") {
   module_out_path = module_output_path
 
   sources = [
-    "//base/web/webview/test/unittest/common/nweb_create_window.cpp",
+    "../common/nweb_create_window.cpp",
     "nweb_surface_adapter_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/graphic/graphic_2d:libsurface",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
-    "//foundation/window/window_manager/utils:libwmutil",
-    "//foundation/window/window_manager/wm:libwm",
+    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",
@@ -77,6 +63,8 @@ ohos_unittest("nweb_surface_adapter_test") {
     "resource_management:global_resmgr",
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
+    "webview:libnweb",
+    "window_manager:libwm",
   ]
 }
 

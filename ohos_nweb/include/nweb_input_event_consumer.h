@@ -19,10 +19,10 @@
 #include <memory>
 
 #include "axis_event.h"
+#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
 #include "key_event.h"
 #include "nweb.h"
 #include "pointer_event.h"
-#include "window.h"
 
 namespace OHOS::NWeb {
 class NWebInputEventConsumer : public Rosen::IInputEventConsumer {

@@ -17,8 +17,8 @@
 
 #include <unordered_map>
 
+#include "application_context.h"
 #include "audio_errors.h"
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
