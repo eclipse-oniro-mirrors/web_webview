@@ -19,7 +19,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/ohos_adapter/audio_adapter/include",
+    "../../../ohos_adapter/audio_adapter/include",
     "//third_party/googletest/googlemock/include",
     "//third_party/json/include",
   ]
@@ -33,16 +33,17 @@ ohos_unittest("nweb_audio_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
+    "../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
+    "ability_runtime:app_context",
     "ability_runtime:app_manager",
     "audio_framework:audio_client",
     "audio_framework:audio_renderer",
+    "bundle_framework:appexecfwk_core",
   ]
 }
 

@@ -19,9 +19,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/ohos_adapter/pasteboard_adapter/include",
-    "//foundation/distributeddatamgr/pasteboard/framework/innerkits/include",
-    "//foundation/distributeddatamgr/pasteboard/services/core/include",
+    "../../../ohos_adapter/pasteboard_adapter/include",
     "//third_party/googletest/googlemock/include",
   ]
 }
@@ -34,7 +32,7 @@ ohos_unittest("nweb_pasteboard_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
+    "../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

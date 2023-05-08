@@ -12,8 +12,9 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("../web_aafwk.gni")
 
-webview_root_path = "//base/web/webview"
+webview_root_path = webview_path
 native_source_path = rebase_path("$webview_root_path")
 web_dir = "nweb_hap"
 position = exec_script(
@@ -45,15 +46,7 @@ if (!position) {
 }
 
 config("nweb_config") {
-  include_dirs = [
-    "include",
-    "//commonlibrary/c_utils/base/include",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
-    "//foundation/graphic/graphic_2d/frameworks/surface/include",
-    "//foundation/graphic/graphic_2d/interfaces/innerkits/surface",
-    "//foundation/communication/ipc/interfaces/innerkits/ipc_core/include",
-  ]
+  include_dirs = [ "include" ]
 
   cflags = [
     "-Wall",
@@ -63,7 +56,7 @@ config("nweb_config") {
 }
 
 config("nweb_public_interface") {
-  include_dirs = [ "//base/web/webview/ohos_nweb/include" ]
+  include_dirs = [ "include" ]
 }
 
 ohos_shared_library("libnweb") {
@@ -77,14 +70,16 @@ ohos_shared_library("libnweb") {
     "src/nweb_window_adapter.cpp",
   ]
 
-  deps = [
-    "//foundation/graphic/graphic_2d/rosen/modules/composer:libcomposer",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
-  ]
+  deps = [ "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client" ]
 
   external_deps = [
-    "hiviewdfx_hilog_native:libhilog",
+    "c_utils:utils",
+    "graphic_standard:libcomposer",
+    "graphic_standard:surface",
+    "hilog_native:libhilog",
     "input:libmmi-client",
+    "ipc:ipc_core",
+    "window_manager:libwm",
   ]
 
   part_name = "webview"

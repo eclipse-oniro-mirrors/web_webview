@@ -12,18 +12,19 @@
 # limitations under the License.
 
 #####################hydra-fuzz###################
+import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ReceiveEventFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_adapter/battery_adapter/receiveevent_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/battery_adapter/receiveevent_fuzzer"
 
   include_dirs = [
-    "//base/web/webview/test/ohos_nweb",
-    "//base\web/webview/ohos_adapter/battery_mgr_adapter/include",
-    "//base/web/webview/test/fuzztest",
+    "$webview_path/test/ohos_nweb",
+    "$webview_path/ohos_adapter/battery_mgr_adapter/include",
+    "$webview_path/test/fuzztest",
   ]
   cflags = [
     "-g",
@@ -33,8 +34,8 @@ ohos_fuzztest("ReceiveEventFuzzTest") {
   ]
   sources = [ "receiveevent_fuzzer.cpp" ]
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//foundation/graphic/graphic_2d:libsurface",
+    "$graphicsurface_path:libsurface",
+    "$webview_path/ohos_adapter:nweb_ohos_adapter",
   ]
 
   external_deps = [

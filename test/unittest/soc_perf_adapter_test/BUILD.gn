@@ -19,10 +19,8 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//base/web/webview/ohos_adapter/interfaces",
-    "//base/web/webview/test/unittest/common",
-    "//base/web/webview/ohos_adapter/soc_perf_adapter/include",
+    "../common",
+    "../../../ohos_adapter/soc_perf_adapter/include",
   ]
 }
 
@@ -34,8 +32,7 @@ ohos_unittest("soc_perf_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//base/web/webview/ohos_nweb:libnweb",
+    "../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",

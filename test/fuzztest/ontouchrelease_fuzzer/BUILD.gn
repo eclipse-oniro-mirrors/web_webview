@@ -12,18 +12,18 @@
 # limitations under the License.
 
 #####################hydra-fuzz###################
+import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("OnTouchReleaseFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "//base/web/webview/test/fuzztest/ontouchrelease_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ontouchrelease_fuzzer"
   include_dirs = [
-    "//base/web/webview/test/ohos_nweb",
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//base/web/webview/test/fuzztest",
+    "$webview_path/test/ohos_nweb",
+    "$window_manager_path/interfaces/innerkits/wm",
+    "$webview_path/test/fuzztest",
   ]
   cflags = [
     "-g",
@@ -32,11 +32,10 @@ ohos_fuzztest("OnTouchReleaseFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "ontouchrelease_fuzzer.cpp" ]
-  deps = [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/graphic/graphic_2d:libsurface",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
-    "//foundation/window/window_manager/wm:libwm",
+  deps = [ "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client" ]
+  external_deps = [
+    "webview:libnweb",
+    "window_manager:libwm",
   ]
 }
 

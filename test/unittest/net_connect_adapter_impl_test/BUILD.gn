@@ -18,15 +18,7 @@ module_output_path = "web/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//base/web/webview/ohos_nweb/include",
-    "//base/web/webview/ohos_adapter/interfaces",
-    "//base/web/webview/ohos_adapter/net_connect_adapter/include/",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//foundation/multimodalinput/input/interfaces/native/innerkits/event/include",
-    "//base/web/webview/test/unittest/common",
-  ]
+  include_dirs = [ "../../../ohos_adapter/net_connect_adapter/include" ]
 }
 
 ohos_unittest("net_connect_adapter_impl_test") {
@@ -37,11 +29,7 @@ ohos_unittest("net_connect_adapter_impl_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
-    "//foundation/ability/ability_runtime/interfaces/inner_api/app_manager:app_manager",
-    "//foundation/window/window_manager/wm:libwm",
+    "../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",
@@ -50,6 +38,7 @@ ohos_unittest("net_connect_adapter_impl_test") {
     "ability_base:base",
     "ability_base:want",
     "ability_base:zuri",
+    "ability_runtime:app_context",
     "ability_runtime:app_manager",
     "battery_manager:batterysrv_client",
     "bundle_framework:appexecfwk_base",
@@ -60,6 +49,7 @@ ohos_unittest("net_connect_adapter_impl_test") {
     "core_service:tel_core_service_api",
     "ipc:ipc_core",
     "netmanager_base:net_conn_manager_if",
+    "webview:libnweb",
   ]
 }
 

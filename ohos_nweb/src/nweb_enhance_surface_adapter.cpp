@@ -21,7 +21,6 @@
 
 #include "graphic_common.h"
 #include "graphic_common_c.h"
-#include "include/core/SkTypes.h"
 #include "nweb_log.h"
 #include "surface_type.h"
 

@@ -15,12 +15,7 @@ import("//build/ohos.gni")
 import("../web_aafwk.gni")
 
 config("ohos_adapter_public_interface") {
-  include_dirs = [
-    "//base/web/webview/ohos_adapter/interfaces",
-    "//foundation/bundlemanager/bundle_framework/interfaces/inner_api/appexecfwk_core/include/bundlemgr",
-    "//base/global/resource_management/interfaces/inner_api/include",
-    "//foundation/systemabilitymgr/safwk/services/safwk/include",
-  ]
+  include_dirs = [ "interfaces" ]
 }
 
 ohos_shared_library("nweb_ohos_adapter") {
@@ -73,34 +68,31 @@ ohos_shared_library("nweb_ohos_adapter") {
   ]
 
   include_dirs = [
+    "../ohos_nweb/include",
     "aafwk_adapter/include",
+    "access_token_adapter/include",
+    "audio_adapter/include",
+    "battery_mgr_adapter/include",
+    "cert_mgr_adapter/include",
+    "datashare_adapter/include",
     "display_manager_adapter/include",
+    "distributeddatamgr_adapter/webdatabase/include",
+    "event_handler_adapter/include",
+    "graphic_adapter/include",
+    "hiviewdfx_adapter/include",
+    "inputmethodframework_adapter/include",
+    "location_adapter/include",
+    "media_adapter/include",
+    "multimodalinput_adapter/include",
     "net_connect_adapter/include",
+    "net_proxy_adapter/include",
     "ohos_init_web_adapter/include",
     "ohos_resource_adapter/include",
-    "power_mgr_adapter/include",
-    "battery_mgr_adapter/include",
-    "distributeddatamgr_adapter/webdatabase/include",
     "pasteboard_adapter/include",
-    "audio_adapter/include",
-    "multimodalinput_adapter/include",
+    "power_mgr_adapter/include",
+    "print_manager_adapter/include",
     "soc_perf_adapter/include",
     "system_properties_adapter/include",
-    "datashare_adapter/include",
-    "graphic_adapter/include",
-    "location_adapter/include",
-    "inputmethodframework_adapter/include",
-    "print_manager_adapter/include",
-    "//base/web/webview/ohos_nweb/include",
-    "$location_path/interfaces/inner_api/include",
-    "//third_party/jsoncpp/include",
-    "//third_party/json/include",
-    "cert_mgr_adapter/include",
-    "access_token_adapter/include",
-    "event_handler_adapter/include",
-    "media_adapter/include",
-    "hiviewdfx_adapter/include",
-    "net_proxy_adapter/include",
   ]
 
   public_configs = [ ":ohos_adapter_public_interface" ]
@@ -110,6 +102,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ability_base:want",
     "ability_base:zuri",
     "ability_runtime:abilitykit_native",
+    "ability_runtime:app_context",
     "ability_runtime:app_manager",
     "access_token:libaccesstoken_sdk",
     "audio_framework:audio_client",
@@ -135,6 +128,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_core",
+    "location:locator_sdk",
     "multimedia_image_framework:image_native",
     "multimedia_player_framework:media_client",
     "netmanager_base:net_conn_manager_if",
@@ -152,9 +146,8 @@ ohos_shared_library("nweb_ohos_adapter") {
   }
 
   deps = [
+    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
     "$location_path/frameworks/location_common/common:lbsservice_common",
-    "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
   ]
 
   part_name = "webview"

@@ -31,7 +31,6 @@
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
 #include "nweb_window_adapter.h"
-#include "window.h"
 
 namespace {
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;

@@ -12,6 +12,7 @@
 # limitations under the License.
 
 #####################hydra-fuzz###################
+import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
 
@@ -19,14 +20,13 @@ import("//build/test.gni")
 ohos_fuzztest("GetCookieManagerFuzzTest") {
   module_out_path = "web/webview"
   fuzz_config_file =
-      "//base/web/webview/test/fuzztest/ohos_nweb/getcookiemanager_fuzzer"
+      "$webview_path/test/fuzztest/ohos_nweb/getcookiemanager_fuzzer"
 
   include_dirs = [
-    "//base/web/webview/test/ohos_nweb",
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//base/web/webview/test/fuzztest",
-    "//base/web/webview/ohos_nweb/include",
+    "$webview_path/test/ohos_nweb",
+    "$window_manager_path/interfaces/innerkits/wm",
+    "$webview_path/test/fuzztest",
+    "$webview_path/ohos_nweb/include",
   ]
   cflags = [
     "-g",
@@ -35,11 +35,10 @@ ohos_fuzztest("GetCookieManagerFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "getcookiemanager_fuzzer.cpp" ]
-  deps = [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/graphic/graphic_2d:libsurface",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
-    "//foundation/window/window_manager/wm:libwm",
+  deps = [ "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client" ]
+  external_deps = [
+    "webview:libnweb",
+    "window_manager:libwm",
   ]
 }
 

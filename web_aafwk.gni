@@ -16,4 +16,5 @@ aafwk_path = "//foundation/ability/ability_runtime"
 
 location_path = "//base/location"
 graphicsurface_path = "//foundation/graphic/graphic_2d"
-webview_test_path = "//base/web/webview"
+webview_path = "//base/web/webview"
+window_manager_path = "//foundation/window/window_manager"

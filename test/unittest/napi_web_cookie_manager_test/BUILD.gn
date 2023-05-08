@@ -12,31 +12,23 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../web_aafwk.gni")
 
 module_output_path = "web/webview"
-
-config("module_private_config") {
-  visibility = [ ":*" ]
-
-  include_dirs = [
-    "//base/web/webview/ohos_nweb/include",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-  ]
-}
 
 ohos_unittest("napi_web_cookie_manager_test") {
   module_out_path = module_output_path
 
   sources = [ "napi_web_cookie_manager_test.cpp" ]
 
-  configs = [ ":module_private_config" ]
-
   deps = [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/graphic/graphic_2d:libsurface",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
-    "//foundation/window/window_manager/wm:libwm",
+    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
     "//third_party/googletest:gtest_main",
+  ]
+
+  external_deps = [
+    "webview:libnweb",
+    "window_manager:libwm",
   ]
 }
 

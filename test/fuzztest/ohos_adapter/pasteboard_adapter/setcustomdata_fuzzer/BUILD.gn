@@ -12,18 +12,17 @@
 # limitations under the License.
 
 #####################hydra-fuzz###################
+import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("SetCustomDataFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "//base/web/webview/test/fuzztest/ohos_adapter/pasteboard_adapter/setcustomdata_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/pasteboard_adapter/setcustomdata_fuzzer"
   include_dirs = [
-    "//base/web/webview/ohos_adapter/pasteboard_adapter/include",
-    "//foundation/distributeddatamgr/pasteboard/framework/innerkits/include",
-    "//foundation/distributeddatamgr/pasteboard/services/core/include",
-    "//base/web/webview/test/fuzztest",
+    "$webview_path/ohos_adapter/pasteboard_adapter/include",
+    "$webview_path/test/fuzztest",
   ]
   cflags = [
     "-g",
@@ -32,7 +31,7 @@ ohos_fuzztest("SetCustomDataFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "setcustomdata_fuzzer.cpp" ]
-  deps = [ "//base/web/webview/ohos_adapter:nweb_ohos_adapter" ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "ability_base:base",
