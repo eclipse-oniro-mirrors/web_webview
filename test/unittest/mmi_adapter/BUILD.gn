@@ -19,7 +19,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/ohos_adapter/multimodalinput_adapter/include",
+    "../../../ohos_adapter/multimodalinput_adapter/include",
     "//third_party/googletest/googlemock/include",
   ]
 }
@@ -32,7 +32,7 @@ ohos_unittest("nweb_mmi_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
+    "../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]

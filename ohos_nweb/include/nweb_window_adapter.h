@@ -16,14 +16,13 @@
 #ifndef NWEB_WINDOW_ADAPTER_H
 #define NWEB_WINDOW_ADAPTER_H
 
-#include <window.h>
-
 #include <memory>
 #include <unordered_map>
-#include <vsync_receiver.h>
 
+#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
 #include "nweb.h"
 #include "nweb_adapter_common.h"
+#include "vsync_receiver.h"
 
 namespace OHOS::NWeb {
 class NWebWindowAdapter {

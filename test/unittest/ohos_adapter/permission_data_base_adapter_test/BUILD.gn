@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../../web_aafwk.gni")
 
 module_output_path = "web/webview"
 
@@ -19,10 +20,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-    "//base/web/webview/ohos_adapter/distributeddatamgr_adapter/webdatabase/include",
-    "//third_party/googletest/googlemock/include",
+    "../../../../ohos_adapter/distributeddatamgr_adapter/webdatabase/include",
   ]
 }
 
@@ -34,12 +32,8 @@ ohos_unittest("permission_data_base_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/ability/ability_runtime/frameworks/native/appkit:app_context",
-    "//foundation/graphic/graphic_2d:libsurface",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
-    "//foundation/window/window_manager/wm:libwm",
+    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
+    "../../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",
@@ -49,10 +43,13 @@ ohos_unittest("permission_data_base_adapter_test") {
     "ability_base:base",
     "ability_base:want",
     "ability_base:zuri",
+    "ability_runtime:app_context",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "relational_store:native_rdb",
+    "webview:libnweb",
+    "window_manager:libwm",
   ]
 }
 

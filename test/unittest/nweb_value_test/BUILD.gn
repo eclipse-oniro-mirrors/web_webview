@@ -15,30 +15,14 @@ import("//build/test.gni")
 
 module_output_path = "web/webview"
 
-config("module_private_config") {
-  visibility = [ ":*" ]
-
-  include_dirs = [
-    "//base/web/webview/interfaces/innerkits/ohos_nweb",
-    "//foundation/window/window_manager/interfaces/innerkits/wm",
-  ]
-}
-
 ohos_unittest("nweb_value_test") {
   module_out_path = module_output_path
 
   sources = [ "nweb_value_test.cpp" ]
 
-  configs = [ ":module_private_config" ]
+  deps = [ "//third_party/googletest:gtest_main" ]
 
-  deps = [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//foundation/graphic/graphic_2d:libsurface",
-    "//foundation/graphic/graphic_2d/rosen/modules/render_service_client:librender_service_client",
-    "//foundation/window/window_manager/wm:libwm",
-    "//third_party/googletest:gtest_main",
-    "//third_party/zlib:libz",
-  ]
+  external_deps = [ "webview:libnweb" ]
 }
 
 group("unittest") {

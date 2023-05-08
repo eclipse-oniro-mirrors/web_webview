@@ -19,9 +19,8 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
-    "//base/web/webview/ohos_adapter/distributeddatamgr_adapter/webdatabase/include",
-    "//base/web/webview/ohos_adapter/interfaces",
-    "//base/web/webview/test/unittest/common",
+    "../../../ohos_adapter/distributeddatamgr_adapter/webdatabase/include",
+    "../common",
     "//third_party/googletest/googlemock/include",
   ]
 }
@@ -34,7 +33,7 @@ ohos_unittest("pre_dns_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
+    "../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",

@@ -19,10 +19,10 @@ import("//build/test.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("GetUserCertDataFuzzTest") {
   module_out_path = "web/webview"
-  fuzz_config_file = "$webview_test_path/test/fuzztest/ohos_adapter/cert_mgr_adapter/getusercertdata_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/cert_mgr_adapter/getusercertdata_fuzzer"
   include_dirs = [
-    "$webview_test_path/ohos_adapter/cert_mgr_adapter/include",
-    "$webview_test_path/test/fuzztest",
+    "$webview_path/ohos_adapter/cert_mgr_adapter/include",
+    "$webview_path/test/fuzztest",
   ]
   cflags = [
     "-g",
@@ -33,7 +33,7 @@ ohos_fuzztest("GetUserCertDataFuzzTest") {
   sources = [ "getusercertdata_fuzzer.cpp" ]
   deps = [
     "$graphicsurface_path:libsurface",
-    "$webview_test_path/ohos_adapter:nweb_ohos_adapter",
+    "$webview_path/ohos_adapter:nweb_ohos_adapter",
     "//third_party/zlib:libz",
   ]
 

@@ -12,10 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <dlfcn.h>
+
 #include "location_proxy_adapter_impl.h"
 
+#include <dlfcn.h>
+
 #include "common_utils.h"
+#include "constant_definition.h"
 #include "location_adapter.h"
 #include "location_callback_adapter_impl.h"
 #include "nweb_log.h"
