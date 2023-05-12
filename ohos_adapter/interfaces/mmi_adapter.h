@@ -17,6 +17,7 @@
 #define MMI_ADAPTER_H
 
 #include <functional>
+#include <string>
 
 namespace OHOS::NWeb {
 enum MMIAdapterKeyboardType : int32_t {
@@ -26,6 +27,19 @@ enum MMIAdapterKeyboardType : int32_t {
     DIGITAL_KEYBOARD = 3,
     HANDWRITING_PEN = 4,
     REMOTE_CONTROL = 5,
+};
+
+struct MMIDeviceInfoAdapter {
+public:
+    int32_t id = -1;
+    int32_t type = 0;
+    int32_t bus = 0;
+    int32_t version = 0;
+    int32_t product = 0;
+    int32_t vendor = 0;
+    std::string name;
+    std::string phys;
+    std::string uniq;
 };
 
 class MMIListenerAdapter {
@@ -57,6 +71,8 @@ public:
     virtual int32_t GetKeyboardType(int32_t deviceId, std::function<void(int32_t)> callback) = 0;
 
     virtual int32_t GetDeviceIds(std::function<void(std::vector<int32_t>&)> callback) = 0;
+
+    virtual int32_t GetDeviceInfo(int32_t deviceId, std::function<void(const MMIDeviceInfoAdapter&)> callback) = 0;
 };
 } // namespace OHOS::NWeb
 
