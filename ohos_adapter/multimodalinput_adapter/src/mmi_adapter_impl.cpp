@@ -118,4 +118,30 @@ int32_t MMIAdapterImpl::GetDeviceIds(std::function<void(std::vector<int32_t>&)> 
 {
     return InputManager::GetInstance()->GetDeviceIds(callback);
 };
+
+int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, std::function<void(const MMIDeviceInfoAdapter&)> callback)
+{
+    if (!callback) {
+        WVLOG_E("get device info callback is nullptr");
+        return -1;
+    }
+    int32_t ret = InputManager::GetInstance()->GetDevice(deviceId,
+        [&callback](std::shared_ptr<MMI::InputDevice> device) {
+            MMIDeviceInfoAdapter info;
+            info.id = device->GetId();
+            info.type = device->GetType();
+            info.bus = device->GetBus();
+            info.version = device->GetVersion();
+            info.product = device->GetProduct();
+            info.vendor = device->GetVendor();
+            info.name = device->GetName();
+            info.phys = device->GetPhys();
+            info.uniq = device->GetUniq();
+            callback(info);
+        });
+    if (ret != 0) {
+        WVLOG_E("InputManager GetDevice failed, ret: %{public}d", ret);
+    }
+    return ret;
+}
 }  // namespace OHOS::NWeb

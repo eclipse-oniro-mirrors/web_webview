@@ -72,6 +72,8 @@ public:
 
     int32_t GetDeviceIds(std::function<void(std::vector<int32_t>&)> callback) override;
 
+    int32_t GetDeviceInfo(int32_t deviceId, std::function<void(const MMIDeviceInfoAdapter&)> callback) override;
+
 private:
     std::shared_ptr<MMI::IInputDeviceListener> devListener_ = nullptr;
     std::shared_ptr<MMI::IInputEventConsumer> inputListener_ = nullptr;
