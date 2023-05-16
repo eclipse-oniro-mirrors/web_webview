@@ -20,6 +20,8 @@
 #include "screen_manager/rs_screen_mode_info.h"
 #undef private
 
+#include "syspara/parameters.h"
+
 using namespace testing;
 using namespace testing::ext;
 using namespace OHOS;
@@ -256,10 +258,13 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_007, TestS
     std::shared_ptr<DisplayManagerAdapterImpl> displayManagerAdapterImpl =
         std::make_shared<DisplayManagerAdapterImpl>();
     EXPECT_NE(displayManagerAdapterImpl, nullptr);
-    g_deviceType = "phone";
-    EXPECT_EQ(displayManagerAdapterImpl->IsDefaultPortrait(), true);
-    g_deviceType = "default";
-    EXPECT_EQ(displayManagerAdapterImpl->IsDefaultPortrait(), true);
+    bool result = displayManagerAdapterImpl->IsDefaultPortrait();
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        EXPECT_TRUE(result);
+    } else {
+        EXPECT_FALSE(result);
+    }
 }
 }
 }
