@@ -69,6 +69,17 @@ public:
     void OnResume() override {};
 };
 
+class AudioRendererCallbackMock : public AudioRendererCallbackAdapter {
+public:
+    AudioRendererCallbackMock() = default;
+
+    virtual ~AudioRendererCallbackMock() = default;
+
+    void OnSuspend() override {};
+
+    void OnResume() override {};
+};
+
 void NWebAudioAdapterTest::SetUpTestCase(void) {}
 
 void NWebAudioAdapterTest::TearDownTestCase(void) {}
@@ -116,6 +127,14 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
 
     float nowVolume = g_audioRender->GetVolume();
     EXPECT_EQ(nowVolume, volume);
+
+    retNum = g_audioRender->SetAudoiRendererCallback(nullptr, true);
+    EXPECT_NE(retNum, 0);
+    std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackMock>();
+    EXPECT_NE(callback, nullptr);
+    retNum = g_audioRender->SetAudoiRendererCallback(callback, true);
+    EXPECT_EQ(retNum, 0);
+    g_audioRender->IsRendererStateRunning();
 
     ret = g_audioRender->Stop();
     EXPECT_EQ(ret, TRUE_OK);
@@ -502,6 +521,48 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_015, TestSi
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
     EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_OnInterrupt_016.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC
+ * @tc.require:I5HRX9
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnInterrupt_016, TestSize.Level1)
+{
+    std::shared_ptr<AudioRendererCallbackAdapter> cb  = std::make_shared<AudioRendererCallbackMock>();
+    EXPECT_NE(cb, nullptr);
+    auto callBack = std::make_shared<AudioRendererCallbackImpl>(cb);
+    EXPECT_NE(callBack, nullptr);
+    InterruptEvent interruptEvent;
+    interruptEvent.hintType = OHOS::AudioStandard::InterruptHint::INTERRUPT_HINT_PAUSE;
+    callBack->OnInterrupt(interruptEvent);
+    interruptEvent.hintType = OHOS::AudioStandard::InterruptHint::INTERRUPT_HINT_STOP;
+    callBack->OnInterrupt(interruptEvent);
+    interruptEvent.hintType = OHOS::AudioStandard::InterruptHint::INTERRUPT_HINT_RESUME;
+    callBack->OnInterrupt(interruptEvent);
+    interruptEvent.hintType = OHOS::AudioStandard::InterruptHint::INTERRUPT_HINT_NONE;
+    callBack->OnInterrupt(interruptEvent);
+    callBack->OnStateChange(RendererState::RENDERER_PAUSED, StateChangeCmdType::CMD_FROM_SYSTEM);
+    callBack->cb_ = nullptr;
+    callBack->OnInterrupt(interruptEvent);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_SetAudoiRendererCallback_017.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC
+ * @tc.require:I5HRX9
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_SetAudoiRendererCallback_017, TestSize.Level1)
+{
+    auto audioRender = std::make_shared<AudioRendererAdapterImpl>();
+    ASSERT_NE(audioRender, nullptr);
+    std::shared_ptr<AudioRendererCallbackAdapter> callback  = std::make_shared<AudioRendererCallbackMock>();
+    ASSERT_NE(callback, nullptr);
+    int32_t retNum = audioRender->SetAudoiRendererCallback(callback, false);
+    EXPECT_NE(retNum, 0);
 }
 }  // namespace OHOS::NWeb
 }  // namespace OHOS
