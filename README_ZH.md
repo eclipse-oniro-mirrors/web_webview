@@ -45,7 +45,7 @@ nweb_test 1 --width=720 --height=1184 --add-args=--for-test
 
 ## 相关仓
 
-[ace_ace_engine](https://gitee.com/openharmony/ace_ace_engine)
+[ace_ace_engine](https://gitee.com/openharmony/arkui_ace_engine)
 
 [third_party_cef](https://gitee.com/openharmony/third_party_cef)
 
