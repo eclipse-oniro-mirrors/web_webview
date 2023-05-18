@@ -82,6 +82,7 @@ ohos_shared_library("libnweb") {
     "window_manager:libwm",
   ]
 
+  innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
   subsystem_name = "web"
 }
