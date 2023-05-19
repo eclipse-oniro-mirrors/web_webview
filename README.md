@@ -40,7 +40,7 @@ The preceding command loads the Baidu home page by default. To load another page
 
 ## Repositories Involved
 
-[ace_ace_engine](https://gitee.com/openharmony/ace_ace_engine)
+[ace_ace_engine](https://gitee.com/openharmony/arkui_ace_engine)
 
 [third_party_cef](https://gitee.com/openharmony/third_party_cef)
 
