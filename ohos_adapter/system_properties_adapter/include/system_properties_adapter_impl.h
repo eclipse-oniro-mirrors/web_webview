@@ -34,6 +34,8 @@ public:
     
     int32_t GetDeviceInfoMajorVersion() const override;
 
+    ProductDeviceType GetProductDeviceType() const override;
+
 private:
     SystemPropertiesAdapterImpl() = default;
 
