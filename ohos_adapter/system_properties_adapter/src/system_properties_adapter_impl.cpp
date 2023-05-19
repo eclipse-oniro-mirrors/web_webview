@@ -48,4 +48,17 @@ int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion() const
     return GetMajorVersion();
 }
 
+ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType() const
+{
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        return ProductDeviceType::DEVICE_TYPE_MOBILE;
+    } else if (deviceType == "tablet") {
+        return ProductDeviceType::DEVICE_TYPE_TABLET;
+    } else if (deviceType == "pc") {
+        return ProductDeviceType::DEVICE_TYPE_PC;
+    }
+
+    return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
+}
 } // namespace OHOS::NWeb
