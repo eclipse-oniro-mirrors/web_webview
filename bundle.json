@@ -261,6 +261,7 @@
                 "//base/web/webview/test/unittest/ohos_adapter/cert_mgr_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/location_callback_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/location_proxy_adapter_test:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter/net_proxy_adapter_test:unittest",
                 "//base/web/webview/test/unittest/audio_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_callback_impl_test:unittest",
                 "//base/web/webview/test/unittest/nweb_window_adapter_test:unittest",
