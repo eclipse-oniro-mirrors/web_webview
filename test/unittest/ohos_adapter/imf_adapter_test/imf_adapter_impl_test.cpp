@@ -215,6 +215,21 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_005, TestSize.Lev
     functionKey.SetEnterKeyType(MiscServices::EnterKeyType::UNSPECIFIED);
     listenerTest->SendFunctionKey(functionKey);
     listenerTest->SetKeyboardStatus(true);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::NONE);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::GO);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::SEARCH);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::SEND);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::NEXT);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::DONE);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::PREVIOUS);
+    listenerTest->SendFunctionKey(functionKey);
+
     listenerTest->MoveCursor(MiscServices::Direction::NONE);
     listenerTest->MoveCursor(MiscServices::Direction::UP);
     listenerTest->MoveCursor(MiscServices::Direction::DOWN);
