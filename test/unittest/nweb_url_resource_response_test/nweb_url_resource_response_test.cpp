@@ -130,5 +130,12 @@ HWTEST_F(NWebUrlResourceResponseTest, NWebUrlResourceResponse_Constructor_003, T
     EXPECT_EQ(status_code, actual_status_code);
     std::string actual_reason_status = webResonse->ResponseStatus();
     EXPECT_STREQ(reason_phrase.c_str(), actual_reason_status.c_str());
+
+    std::string url = "web_test";
+    webResonse->PutResponseResourceUrl(url);
+    std::string resourceUrl = webResonse->ResponseResourceUrl();
+    EXPECT_STREQ(resourceUrl.c_str(), url.c_str());
+    NWebResponseDataType type = webResonse->ResponseDataType();
+    EXPECT_EQ(type, NWebResponseDataType::NWEB_RESOURCE_URL_TYPE);
 }
 } // namespace OHOS::NWeb
