@@ -147,6 +147,10 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     bool result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_EQ(RESULT_OK, result);
+    auto cook = NWebHelper::Instance().GetCookieManager();
+    EXPECT_NE(cook, nullptr);
+    NWebDOHConfig config;
+    NWebHelper::Instance().SetHttpDns(config);
 }
 
 /**
