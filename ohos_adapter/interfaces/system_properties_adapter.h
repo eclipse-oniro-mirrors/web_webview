@@ -21,6 +21,12 @@
 
 namespace OHOS::NWeb {
 
+enum class ProductDeviceType{
+    DEVICE_TYPE_MOBILE,
+    DEVICE_TYPE_TABLET,
+    DEVICE_TYPE_PC,
+    DEVICE_TYPE_UNKNOWN
+};
 class SystemPropertiesAdapter {
 public:
     SystemPropertiesAdapter() = default;
@@ -34,6 +40,8 @@ public:
     virtual std::string GetDeviceInfoBrand() const = 0;
 
     virtual int32_t GetDeviceInfoMajorVersion() const = 0;
+
+    virtual ProductDeviceType GetProductDeviceType() const = 0;
 };
 
 }  // namespace OHOS::NWeb
