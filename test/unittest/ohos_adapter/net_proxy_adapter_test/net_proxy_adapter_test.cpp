@@ -16,14 +16,97 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#include "accesstoken_kit.h"
+
 #define private public
 #include "net_proxy_adapter_impl.h"
+
+#include "net_conn_client.h"
+#include "token_setproc.h"
 
 using namespace testing;
 using namespace testing::ext;
 using namespace OHOS::AAFwk;
+using namespace OHOS::NetManagerStandard;
+using namespace OHOS::Security::AccessToken;
 
 namespace OHOS::NWeb {
+namespace {
+using Security::AccessToken::AccessTokenID;
+using namespace Security::AccessToken;
+
+HapInfoParams testInfoParms = {
+    .userID = 1,
+    .bundleName = "web_conn_manager_test",
+    .instIndex = 0,
+    .appIDDesc = "test",
+    .isSystemApp = true,
+};
+
+PermissionDef testPermDef = {
+    .permissionName = "ohos.permission.GET_NETWORK_INFO",
+    .bundleName = "web_conn_manager_test",
+    .grantMode = 1,
+    .label = "label",
+    .labelId = 1,
+    .description = "Test web connect maneger",
+    .descriptionId = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+};
+
+PermissionDef testInternalPermDef = {
+    .permissionName = "ohos.permission.CONNECTIVITY_INTERNAL",
+    .bundleName = "web_conn_manager_test",
+    .grantMode = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+    .label = "label",
+    .labelId = 1,
+    .description = "Test web connect manager internal",
+    .descriptionId = 1,
+};
+
+PermissionDef testInternetPermDef = {
+    .permissionName = "ohos.permission.INTERNET",
+    .bundleName = "web_conn_manager_test",
+    .grantMode = 1,
+    .availableLevel = APL_SYSTEM_BASIC,
+    .label = "label",
+    .labelId = 1,
+    .description = "Test web connect manager internet",
+    .descriptionId = 1,
+};
+
+PermissionStateFull testState = {
+    .grantFlags = {2},
+    .grantStatus = {PermissionState::PERMISSION_GRANTED},
+    .isGeneral = true,
+    .permissionName = "ohos.permission.GET_NETWORK_INFO",
+    .resDeviceID = {"local"},
+};
+
+PermissionStateFull testInternalState = {
+    .permissionName = "ohos.permission.CONNECTIVITY_INTERNAL",
+    .isGeneral = true,
+    .resDeviceID = {"local"},
+    .grantStatus = {PermissionState::PERMISSION_GRANTED},
+    .grantFlags = {2},
+};
+
+PermissionStateFull testInternetState = {
+    .permissionName = "ohos.permission.INTERNET",
+    .isGeneral = true,
+    .resDeviceID = {"local"},
+    .grantStatus = {PermissionState::PERMISSION_GRANTED},
+    .grantFlags = {2},
+};
+
+HapPolicyParams testPolicyPrams = {
+    .apl = APL_SYSTEM_BASIC,
+    .domain = "test.domain",
+    .permList = {testPermDef, testInternalPermDef, testInternetPermDef},
+    .permStateList = {testState, testInternalState, testInternetState},
+};
+} // namespace
 
 class NetProxyAdapterTest : public testing::Test {
 public:
@@ -41,6 +124,25 @@ void NetProxyAdapterTest::SetUp(void) {}
 
 void NetProxyAdapterTest::TearDown(void) {}
 
+class AccessToken {
+public:
+    AccessToken() : currentID_(GetSelfTokenID())
+    {
+        AccessTokenIDEx tokenIdEx = AccessTokenKit::AllocHapToken(testInfoParms, testPolicyPrams);
+        accessID_ = tokenIdEx.tokenIdExStruct.tokenID;
+        SetSelfTokenID(tokenIdEx.tokenIDEx);
+    }
+    ~AccessToken()
+    {
+        AccessTokenKit::DeleteToken(accessID_);
+        SetSelfTokenID(currentID_);
+    }
+
+private:
+    AccessTokenID currentID_;
+    AccessTokenID accessID_ = 0;
+};
+
 /**
  * @tc.name: NetProxyAdapterTest_OnReceiveEvent_001.
  * @tc.desc: IMF adapter unittest.
@@ -57,11 +159,21 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_OnReceiveEvent_001, TestSize.L
     NetProxyEventSubscriber criber(info, eventCallback);
     EXPECT_NE(criber.eventCallback_, nullptr);
     EventFwk::CommonEventData data;
+
+    AccessToken token;
+    HttpProxy httpProxy = {"testWebHttpProxy", 0, {}};
+    int32_t ret = DelayedSingleton<NetConnClient>::GetInstance()->SetGlobalHttpProxy(httpProxy);
+    EXPECT_EQ(ret, 0);
     criber.OnReceiveEvent(data);
     Want want;
     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_HTTP_PROXY_CHANGE);
     data.SetWant(want);
     criber.OnReceiveEvent(data);
+    std::string host;
+    uint16_t port;
+    std::string pacUrl;
+    std::string exclusion;
+    NetProxyAdapterImpl::GetInstance().GetProperty(host, port, pacUrl, exclusion);
 }
 
 /**
