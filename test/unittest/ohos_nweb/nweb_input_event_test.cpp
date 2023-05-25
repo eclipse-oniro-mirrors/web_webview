@@ -149,5 +149,26 @@ HWTEST_F(NWebInputEventTest, NWebInputEvent_CreateNWeb_003, TestSize.Level1)
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
     g_nweb = NWebAdapterHelper::Instance().CreateNWeb(window.GetRefPtr(), GetInitArgs());
     EXPECT_EQ(g_nweb, nullptr);
+
+    PointerEvent::PointerItem pointerItem;
+    std::shared_ptr<NWeb> mock = std::make_shared<NWebMock>();
+    EXPECT_NE(mock, nullptr);
+    std::shared_ptr<MMI::PointerEvent> event = MMI::PointerEvent::Create();
+    EXPECT_NE(event, nullptr);
+    std::shared_ptr<NWebInputEventConsumer> input = std::make_shared<NWebInputEventConsumer>(mock);
+    EXPECT_NE(input, nullptr);
+    event->SetPointerId(1);
+    pointerItem.SetPointerId(1);
+    event->AddPointerItem(pointerItem);
+    event->SetPointerAction(0);
+    input->DispatchPointerEvent(event);
+    event->SetPointerAction(MMI::PointerEvent::POINTER_ACTION_DOWN);
+    input->DispatchPointerEvent(event);
+    event->SetPointerAction(MMI::PointerEvent::POINTER_ACTION_UP);
+    input->DispatchPointerEvent(event);
+    event->SetPointerAction(MMI::PointerEvent::POINTER_ACTION_MOVE);
+    input->DispatchPointerEvent(event);
+    event->SetPointerAction(MMI::PointerEvent::POINTER_ACTION_CANCEL);
+    input->DispatchPointerEvent(event);
 }
 }

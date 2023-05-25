@@ -198,6 +198,8 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, T
     EXPECT_NE(result, "");
     result = adapterImpl.ParseModuleName(extractor);
     EXPECT_EQ(result, "");
+    result = adapterImpl.ParseModuleName(nullptr);
+    EXPECT_EQ(result, "");
     free(configStr);
     configStr = nullptr;
 }
