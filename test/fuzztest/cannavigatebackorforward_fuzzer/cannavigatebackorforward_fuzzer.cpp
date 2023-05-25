@@ -109,6 +109,8 @@ namespace OHOS {
         int height = HasArg(ARG_HEIGHT) ? GetNumFromArgs(ARG_HEIGHT) : DEFAULT_HEIGHT;
         option->SetWindowRect({0, 0, width, height});
         auto window = Rosen::Window::Create("nweb_test_window", option);
+        delete option;
+        option = nullptr;
         return window;
     }
 
