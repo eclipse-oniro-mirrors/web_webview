@@ -102,6 +102,12 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_003, TestSize.Lev
     auto callback = [](std::vector<int32_t>& devList) {};
     int32_t ret = g_mmi->GetDeviceIds(callback);
     EXPECT_EQ(ret, RESULT_OK);
+
+    ret = g_mmi->GetDeviceInfo(0, nullptr);
+    EXPECT_NE(ret, RESULT_OK);
+    std::function<void(const MMIDeviceInfoAdapter&)> deviceInfoCallback = [](const MMIDeviceInfoAdapter&) {};
+    ret = g_mmi->GetDeviceInfo(0, deviceInfoCallback);
+    EXPECT_EQ(ret, RESULT_OK);
 }
 
 /**
