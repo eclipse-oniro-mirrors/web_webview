@@ -24,8 +24,6 @@
 using namespace OHOS;
 namespace OHOS::NWeb {
 namespace {
-const int DEFAULT_WIDTH = 2560;
-const int DEFAULT_HEIGHT = 1396;
 const std::string ARG_URL = "--url";
 const std::string ARG_DUMP = "--dump-path";
 const std::string ARG_FRAME_INFO = "--frame-info";
@@ -50,14 +48,6 @@ static std::string GetArgValue(const std::string& arg)
         return "";
     }
     return g_argsMap.at(arg);
-}
-
-static uint32_t GetNumFromArgs(const std::string& arg)
-{
-    if (!HasArg(arg)) {
-        return 0;
-    }
-    return std::stoi(GetArgValue(arg));
 }
 
 static std::list<std::string> GetWebEngineArgs(const std::string& arg)
@@ -93,18 +83,5 @@ NWebInitArgs GetInitArgs(void)
         .multi_renderer_process = HasArg(ARG_MULTI_RENDER_PROCESS) ? true : false,
     };
     return initArgs;
-}
-
-sptr<OHOS::Rosen::Window> CreateWindow(void)
-{
-    sptr<OHOS::Rosen::WindowOption> option = new OHOS::Rosen::WindowOption();
-    int width = HasArg(ARG_WIDTH) ? GetNumFromArgs(ARG_WIDTH) : DEFAULT_WIDTH;
-    int height = HasArg(ARG_HEIGHT) ? GetNumFromArgs(ARG_HEIGHT) : DEFAULT_HEIGHT;
-    OHOS::Rosen::Rect windowRect = { 0, 0, width, height };
-    option->SetWindowRect(windowRect);
-    option->SetWindowType(Rosen::WindowType::WINDOW_TYPE_APP_LAUNCHING);
-    option->SetWindowMode(Rosen::WindowMode::WINDOW_MODE_FLOATING);
-    auto window = OHOS::Rosen::Window::Create("nweb_test_window", option);
-    return window;
 }
 }

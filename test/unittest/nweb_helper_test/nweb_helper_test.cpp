@@ -23,7 +23,6 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_adapter_helper.h"
-#include "window.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -82,14 +81,6 @@ std::string GetArgValue(const std::string& arg)
     return g_argsMap.at(arg);
 }
 
-uint32_t GetNumFromArgs(const std::string& arg)
-{
-    if (!HasArg(arg)) {
-        return 0;
-    }
-    return std::stoi(GetArgValue(arg));
-}
-
 std::list<std::string> GetWebEngineArgs(const std::string& arg)
 {
     std::string webEngineArgValue = GetArgValue(arg);
@@ -125,17 +116,6 @@ NWebInitArgs GetInitArgs()
     return initArgs;
 }
 
-sptr<OHOS::Rosen::Window> CreateWindow()
-{
-    sptr<OHOS::Rosen::WindowOption> option = new OHOS::Rosen::WindowOption();
-    int width = HasArg(ARG_WIDTH) ? GetNumFromArgs(ARG_WIDTH) : DEFAULT_WIDTH;
-    int height = HasArg(ARG_HEIGHT) ? GetNumFromArgs(ARG_HEIGHT) : DEFAULT_HEIGHT;
-    OHOS::Rosen::Rect windowRect = { 0, 0, width, height };
-    option->SetWindowRect(windowRect);
-    auto window = OHOS::Rosen::Window::Create("nweb_test_window", option);
-    return window;
-}
-
 /**
  * @tc.name: NWebHelper_SetBundlePath_001
  * @tc.desc: SetBundlePath.
@@ -147,10 +127,9 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     bool result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_EQ(RESULT_OK, result);
-    auto cook = NWebHelper::Instance().GetCookieManager();
-    EXPECT_NE(cook, nullptr);
-    NWebDOHConfig config;
-    NWebHelper::Instance().SetHttpDns(config);
+    NWebCreateInfo create_info;
+    std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
+    EXPECT_NE(nweb, nullptr);
 }
 
 /**
@@ -184,16 +163,13 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
     }
     EXPECT_EQ(RESULT_OK, result);
 
-    sptr<OHOS::Rosen::Window> window = CreateWindow();
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
-    std::shared_ptr<NWeb> nweb =
-       NWebAdapterHelper::Instance().CreateNWeb(window.GetRefPtr(), GetInitArgs());
-    EXPECT_EQ(nweb, nullptr);
 
     void *enhanceSurfaceInfo = nullptr;
     int32_t temp = 1;
-    nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
-                                                    DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    std::shared_ptr<NWeb> nweb =
+        NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
+        DEFAULT_WIDTH, DEFAULT_HEIGHT);
     EXPECT_EQ(nweb, nullptr);
     enhanceSurfaceInfo = static_cast<void *>(&temp);
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),

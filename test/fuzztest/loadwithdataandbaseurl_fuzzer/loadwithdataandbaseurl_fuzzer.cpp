@@ -22,15 +22,12 @@
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_handler_impl_test.h"
-#include "window.h"
 
-const int DEFAULT_WIDTH = 2560;
-const int DEFAULT_HEIGHT = 1396;
+using namespace OHOS::Rosen;
 
 namespace OHOS {
-    sptr<Rosen::Window> g_window = nullptr;
     std::shared_ptr<OHOS::NWeb::NWeb> g_nweb = nullptr;
-
+    sptr<Surface> g_surface = nullptr;
     std::unordered_map<std::string, std::string> g_argsMap;
     const std::string ARG_URL = "--url";
     const std::string ARG_DUMP = "--dump-path";
@@ -54,14 +51,6 @@ namespace OHOS {
             return "";
         }
         return g_argsMap.at(arg);
-    }
-
-    uint32_t GetNumFromArgs(const std::string &arg)
-    {
-        if (!HasArg(arg)) {
-            return 0;
-        }
-        return std::stoi(GetArgValue(arg));
     }
 
     std::list<std::string> GetWebEngineArgs(const std::string &arg)
@@ -99,32 +88,25 @@ namespace OHOS {
         return initArgs;
     }
 
-    sptr<Rosen::Window> CreateWindow()
-    {
-        sptr<Rosen::WindowOption> option = new Rosen::WindowOption();
-        if (option == nullptr) {
-            return nullptr;
-        }
-        int width = HasArg(ARG_WIDTH) ? GetNumFromArgs(ARG_WIDTH) : DEFAULT_WIDTH;
-        int height = HasArg(ARG_HEIGHT) ? GetNumFromArgs(ARG_HEIGHT) : DEFAULT_HEIGHT;
-        option->SetWindowRect({0, 0, width, height});
-        auto window = Rosen::Window::Create("nweb_test_window", option);
-        delete option;
-        option = nullptr;
-        return window;
-    }
 
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return true;
         }
-        g_window = CreateWindow();
-        if (g_window == nullptr) {
-            return true;
+        if (!g_surface) {
+            RSSurfaceNodeConfig config;
+            config.SurfaceNodeName = "webTestSurfaceName";
+            auto surfaceNode = RSSurfaceNode::Create(config, false);
+            if (surfaceNode == nullptr) {
+                return false;
+            }
+            g_surface = surfaceNode->GetSurface();
+            if (g_surface== nullptr) {
+                return false;
+            }
         }
-        g_nweb = NWeb::NWebAdapterHelper::Instance().CreateNWeb(
-            g_window->GetSurfaceNode()->GetSurface(), GetInitArgs());
+        g_nweb = NWeb::NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs());
         if (g_nweb == nullptr) {
             return true;
         }
