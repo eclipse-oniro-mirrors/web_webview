@@ -17,7 +17,6 @@
 #define NWEB_CREAT_WINDOW_H
 
 #include "nweb.h"
-#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
 
 #define private public
 #include "ui/rs_surface_node.h"
@@ -63,7 +62,6 @@ public:
 }
 namespace OHOS::NWeb {
 NWebInitArgs GetInitArgs(void);
-OHOS::sptr<OHOS::Rosen::Window> CreateWindow(void);
 
 class NWebMock : public NWeb {
 public:

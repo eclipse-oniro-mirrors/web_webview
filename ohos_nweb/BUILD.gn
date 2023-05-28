@@ -65,9 +65,7 @@ ohos_shared_library("libnweb") {
   sources = [
     "src/nweb_enhance_surface_adapter.cpp",
     "src/nweb_helper.cpp",
-    "src/nweb_input_event_consumer.cpp",
     "src/nweb_surface_adapter.cpp",
-    "src/nweb_window_adapter.cpp",
   ]
 
   deps = [ "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client" ]

@@ -24,15 +24,14 @@
 #undef private
 
 #include "ohos_adapter_helper.h"
-#include "window.h"
 
 using namespace testing;
 using namespace testing::ext;
 using namespace OHOS;
-using namespace OHOS::MMI;
 using namespace OHOS::Rosen;
 namespace OHOS::NWeb {
 namespace {
+sptr<Surface> g_surface = nullptr;
 const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
 const std::string PRINT_FILE_DIR = "/data/storage/el2/base/print.png";
 }
@@ -45,7 +44,14 @@ public:
 };
 
 void OhosAdapterHelperTest::SetUpTestCase(void)
-{}
+{
+    RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "webTestSurfaceName";
+    auto surfaceNode = RSSurfaceNode::Create(config, false);
+    EXPECT_NE(surfaceNode, nullptr);
+    g_surface = surfaceNode->GetSurface();
+    EXPECT_NE(g_surface, nullptr);
+}
 
 void OhosAdapterHelperTest::TearDownTestCase(void)
 {}
@@ -122,26 +128,12 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
 }
 
 /**
- * @tc.name: OhosAdapterHelper_CreateNWeb_003.
- * @tc.desc: Test the CreateNWeb.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_CreateNWeb_003, TestSize.Level1)
-{
-    sptr<OHOS::Rosen::Window> window = nullptr;
-    EXPECT_EQ(window, nullptr);
-    NWebAdapterHelper &helper = NWebAdapterHelper::Instance();
-    helper.CreateNWeb(window.GetRefPtr(), GetInitArgs());
-}
-
-/**
- * @tc.name: OhosAdapterHelper_GetDataBase_004.
+ * @tc.name: OhosAdapterHelper_GetDataBase_003.
  * @tc.desc: Test the GetDataBase.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_004, TestSize.Level1)
+HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Level1)
 {
     int32_t nweb_id = 1;
     NWebHelper &helper = NWebHelper::Instance();

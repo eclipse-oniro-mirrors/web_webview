@@ -24,7 +24,6 @@
 #include "nweb.h"
 #include "ohos_adapter_helper.h"
 #include "sqlite_database_utils.h"
-#include "window.h"
 
 #define private public
 #include "ohos_web_permission_data_base_adapter_impl.h"
