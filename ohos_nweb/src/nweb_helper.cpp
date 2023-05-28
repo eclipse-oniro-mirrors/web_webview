@@ -30,7 +30,6 @@
 #include "nweb_enhance_surface_adapter.h"
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
-#include "nweb_window_adapter.h"
 
 namespace {
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
@@ -326,23 +325,6 @@ NWebAdapterHelper &NWebAdapterHelper::Instance()
 bool NWebAdapterHelper::Init(bool from_ark)
 {
     return NWebHelper::Instance().Init(from_ark);
-}
-
-std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(Rosen::Window *window, const NWebInitArgs &initArgs)
-{
-    if (window == nullptr) {
-        WVLOG_E("fail to create nweb, input window is nullptr");
-        return nullptr;
-    }
-    auto createInfo = NWebWindowAdapter::Instance().GetCreateInfo(window, initArgs);
-    auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
-    if (nweb == nullptr) {
-        WVLOG_E("fail to create nweb instance");
-        return nullptr;
-    }
-    NWebWindowAdapter::Instance().RegistEventCb(window, nweb);
-    NWebWindowAdapter::Instance().RequestVsync(window, nweb);
-    return nweb;
 }
 
 std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const NWebInitArgs &initArgs, uint32_t width,
