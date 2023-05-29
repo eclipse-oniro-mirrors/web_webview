@@ -49,7 +49,7 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     if (width == 0 || height == 0) {
         return false;
     }
-    char *src = new char[width * height * BITS_PER_PIXEL] {0};
+    char *src = new char[BITS_PER_PIXEL] {0};
     if (src == nullptr) {
         return false;
     }
