@@ -23,6 +23,7 @@
 #include "audio_renderer_adapter.h"
 #include "audio_system_manager_adapter.h"
 #include "battery_mgr_client_adapter.h"
+#include "camera_manager_adapter.h"
 #include "cert_mgr_adapter.h"
 #include "datashare_adapter.h"
 #include "display_manager_adapter.h"
@@ -108,6 +109,8 @@ public:
     HiTraceAdapter& GetHiTraceAdapterInstance() const;
 
     NetProxyAdapter& GetNetProxyInstance() const;
+
+    CameraManagerAdapter& GetCameraManagerAdapter() const;
 
 private:
     OhosAdapterHelper() = default;
