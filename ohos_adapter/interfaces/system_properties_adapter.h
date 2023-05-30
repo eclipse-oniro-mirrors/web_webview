@@ -21,7 +21,7 @@
 
 namespace OHOS::NWeb {
 
-enum class ProductDeviceType{
+enum class ProductDeviceType {
     DEVICE_TYPE_MOBILE,
     DEVICE_TYPE_TABLET,
     DEVICE_TYPE_PC,
