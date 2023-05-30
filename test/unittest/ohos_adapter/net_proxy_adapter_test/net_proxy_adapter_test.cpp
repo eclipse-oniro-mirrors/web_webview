@@ -161,7 +161,7 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_OnReceiveEvent_001, TestSize.L
     EventFwk::CommonEventData data;
 
     AccessToken token;
-    HttpProxy httpProxy = {"testWebHttpProxy", 0, {}};
+    HttpProxy httpProxy = {"tes.web.com", 0, {}};
     int32_t ret = DelayedSingleton<NetConnClient>::GetInstance()->SetGlobalHttpProxy(httpProxy);
     EXPECT_EQ(ret, 0);
     criber.OnReceiveEvent(data);
