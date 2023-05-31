@@ -20,6 +20,7 @@
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
 #include "battery_mgr_client_adapter_impl.h"
+#include "camera_manager_adapter_impl.h"
 #include "cert_mgr_adapter_impl.h"
 #include "datashare_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
@@ -196,5 +197,10 @@ HiTraceAdapter& OhosAdapterHelper::GetHiTraceAdapterInstance() const
 NetProxyAdapter& OhosAdapterHelper::GetNetProxyInstance() const
 {
     return NetProxyAdapterImpl::GetInstance();
+}
+
+CameraManagerAdapter& OhosAdapterHelper::GetCameraManagerAdapter() const
+{
+    return CameraManagerAdapterImpl::GetInstance();
 }
 } // namespace OHOS::NWeb
