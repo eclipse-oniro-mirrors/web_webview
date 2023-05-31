@@ -75,6 +75,7 @@ enum class FlashModeAdapter {
 enum class RangeIDAdapter {
     RANGE_ID_EXP_COMPENSATION,
 };
+
 typedef struct FormatAdapterTag {
     uint32_t width;
     uint32_t height;

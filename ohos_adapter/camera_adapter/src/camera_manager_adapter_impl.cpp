@@ -240,7 +240,7 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
     }
 
     if (cameraInput_ == nullptr) {
-        WVLOG_I("zrc camera input create");
+        WVLOG_I("camera input create");
         sptr<CameraDevice> cameraObj = cameraManager_->GetCameraDeviceFromId(deviceId);
         if (cameraObj == nullptr) {
             WVLOG_E("No cameras are available!!!");
@@ -355,8 +355,11 @@ int32_t CameraManagerAdapterImpl::GetExposureCompensation(VideoCaptureRangeAdapt
     }
     std::vector<float> exposureBiasRange = captureSession_->GetExposureBiasRange();
     int32_t exposureCompos = captureSession_->GetExposureValue();
-    rangeVal.min = exposureBiasRange.at(0);
-    rangeVal.max = exposureBiasRange.at(1);
+    if (exposureBiasRange.size() == RANGE_MAX_SIZE) {
+        rangeVal.min = exposureBiasRange.at(RANGE_MIN_INDEX);
+        rangeVal.max = exposureBiasRange.at(RANGE_MAX_INDEX);
+    }
+    
     rangeVal.current = exposureCompos;
     return CAMERA_OK;
 }
@@ -594,7 +597,7 @@ uint32_t CameraSurfaceBufferAdapterImpl::GetSize() const
     return buffer_->GetSize();
 }
 
-sptr<SurfaceBuffer>& CameraSurfaceBufferAdapterImpl::GetBuffer()
+const sptr<SurfaceBuffer>& CameraSurfaceBufferAdapterImpl::GetBuffer()
 {
     return buffer_;
 }
