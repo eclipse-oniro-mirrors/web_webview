@@ -59,7 +59,7 @@ public:
 
     uint8_t* GetBufferAddr() override;
 
-    sptr<SurfaceBuffer>& GetBuffer();
+    const sptr<SurfaceBuffer>& GetBuffer();
 
 private:
     sptr<SurfaceBuffer> buffer_ = nullptr;
@@ -119,7 +119,7 @@ private:
     FocusMode GetOriFocusMode(FocusModeAdapter focusMode);
     FocusModeAdapter GetAdapterFocusMode(FocusMode focusMode);
     FlashMode GetOriFlashMode(FlashModeAdapter flashMode);
-    sptr<CameraManager> cameraManager_ = nullptr;
+    sptr<CameraManager> cameraManager_;
     sptr<CaptureSession> captureSession_;
     sptr<CaptureInput> cameraInput_;
     sptr<IConsumerSurface> previewSurface_;
@@ -129,6 +129,9 @@ private:
     VideoCaptureParamsAdapter captureParams_;
     std::shared_ptr<CameraBufferListenerAdapter> listener_;
     const int32_t DEFAULT_FRAME_RATE = 30;
+    const int32_t RANGE_MAX_SIZE = 2;
+    const int32_t RANGE_MIN_INDEX = 0;
+    const int32_t RANGE_MAX_INDEX = 1;
 };
 
 class CameraSurfaceListener : public IBufferConsumerListener {
