@@ -208,6 +208,12 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             static_cast<int32_t>(SecureDnsModeType::AUTO))),
         DECLARE_NAPI_STATIC_PROPERTY("SecureOnly", NapiParseUtils::ToInt32Value(env,
             static_cast<int32_t>(SecureDnsModeType::SECURE_ONLY))),
+        DECLARE_NAPI_STATIC_PROPERTY("OFF", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::OFF))),
+        DECLARE_NAPI_STATIC_PROPERTY("AUTO", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::AUTO))),
+        DECLARE_NAPI_STATIC_PROPERTY("SECURE_ONLY", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecureDnsModeType::SECURE_ONLY))),
     };
     napi_define_class(env, WEB_SECURE_DNS_MODE_ENUM_NAME.c_str(), WEB_SECURE_DNS_MODE_ENUM_NAME.length(),
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(secureDnsModeProperties) /
