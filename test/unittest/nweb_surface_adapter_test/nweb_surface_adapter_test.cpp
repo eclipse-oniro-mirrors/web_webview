@@ -101,11 +101,13 @@ HWTEST_F(NWebSurfaceAdapterTest, NWebSurfaceAdapterTest_GetCreateInfo_001, TestS
 {
     auto surfaceAdapter = NWebSurfaceAdapter::Instance();
     g_info = surfaceAdapter.GetCreateInfo(g_surface, GetInitArgs(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    EXPECT_NE(g_info.width, 0);
     sptr<Surface> surface = nullptr;
     surfaceAdapter.GetCreateInfo(surface, GetInitArgs(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
 
     NWebCreateInfo createInfo;
     surfaceAdapter.GetSize(g_surface, createInfo, DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    EXPECT_NE(createInfo.width, 0);
 }
 
 /**
