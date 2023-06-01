@@ -124,12 +124,17 @@ NWebInitArgs GetInitArgs()
  */
 HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
 {
+    int32_t nweb_id = 1;
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     bool result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_EQ(RESULT_OK, result);
     NWebCreateInfo create_info;
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
     EXPECT_NE(nweb, nullptr);
+    NWebDOHConfig config;
+    NWebHelper::Instance().SetHttpDns(config);
+    auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
+    EXPECT_EQ(nwebHelper.lock(), nullptr);
 }
 
 /**
