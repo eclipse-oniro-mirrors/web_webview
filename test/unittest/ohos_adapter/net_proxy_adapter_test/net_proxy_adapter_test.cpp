@@ -215,4 +215,22 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_GetProperty_003, TestSize.Leve
     NetProxyAdapterImpl::GetInstance().commonEventSubscriber_ = nullptr;
     NetProxyAdapterImpl::GetInstance().StopListen();
 }
+
+/**
+ * @tc.name: NetProxyAdapterTest_Encode_004.
+ * @tc.desc: IMF adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_Encode_004, TestSize.Level1)
+{
+    std::string source = "";
+    std::string  result = Base64::Encode(source);
+    EXPECT_TRUE(result.empty());
+    result = Base64::Decode(source);
+    EXPECT_TRUE(result.empty());
+    source = "webtest";
+    result = Base64::Encode(source);
+    EXPECT_FALSE(result.empty());
+}
 } // namespace OHOS::NWeb
