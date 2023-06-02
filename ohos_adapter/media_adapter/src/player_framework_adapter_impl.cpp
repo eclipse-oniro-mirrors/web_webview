@@ -78,6 +78,9 @@ NWeb::PlayerOnInfoType ConvertInfoType(Media::PlayerOnInfoType infoType)
         case Media::INFO_TYPE_MESSAGE:
             ret = NWeb::PlayerOnInfoType::INFO_TYPE_MESSAGE;
             break;
+        case Media::INFO_TYPE_INTERRUPT_EVENT:
+            ret = NWeb::PlayerOnInfoType::INFO_TYPE_INTERRUPT_EVENT;
+            break;
         default:
             break;
     }
@@ -138,9 +141,12 @@ PlayerCallbackImpl::PlayerCallbackImpl(std::unique_ptr<PlayerCallbackAdapter> ca
 
 void PlayerCallbackImpl::OnInfo(Media::PlayerOnInfoType type, int32_t extra, const Media::Format& infoBody)
 {
-    (void)infoBody;
+    int32_t hintValue = -1;
+    if (type == Media::INFO_TYPE_INTERRUPT_EVENT) {
+        infoBody.GetIntValue(OHOS::Media::PlayerKeys::AUDIO_INTERRUPT_HINT, hintValue);
+    }
     if (callbackAdapter_) {
-        callbackAdapter_->OnInfo(ConvertInfoType(type), extra);
+        callbackAdapter_->OnInfo(ConvertInfoType(type), extra, hintValue);
     }
 }
 
