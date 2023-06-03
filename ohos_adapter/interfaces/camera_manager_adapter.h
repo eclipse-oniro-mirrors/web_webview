@@ -168,10 +168,6 @@ public:
 
     virtual int32_t CreateAndStartSession() = 0;
 
-    virtual int32_t ReleaseSession() = 0;
-
-    virtual int32_t ReleaseSessionResource(const std::string &deviceId) = 0;
-
     virtual int32_t ReleaseCameraManger() = 0;
 
     virtual int32_t GetExposureModes(std::vector<ExposureModeAdapter>& exposureModesAdapter) = 0;
