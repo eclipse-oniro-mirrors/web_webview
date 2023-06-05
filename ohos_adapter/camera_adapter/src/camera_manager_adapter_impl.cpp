@@ -203,6 +203,7 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
     std::vector<sptr<CameraDevice>> cameraObjList = cameraManager_->GetSupportedCameras();
     if (cameraObjList.size() <= 0) {
         WVLOG_E("No cameras are available!!!");
+        return;
     }
     for (auto cameraObj : cameraObjList) {
         sptr<CameraOutputCapability> outputcapability =
@@ -240,7 +241,7 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
     }
 
     if (cameraInput_ == nullptr) {
-        WVLOG_I("camera input create");
+        WVLOG_I("camera input create %{public}s", deviceId.c_str());
         sptr<CameraDevice> cameraObj = cameraManager_->GetCameraDeviceFromId(deviceId);
         if (cameraObj == nullptr) {
             WVLOG_E("No cameras are available!!!");
@@ -424,6 +425,10 @@ bool CameraManagerAdapterImpl::IsFlashModeSupported(FlashModeAdapter focusMode)
 int32_t CameraManagerAdapterImpl::CreateAndStartSession()
 {
     int32_t result = CAMERA_ERROR;
+    if (status_ == CameraStatus::OPENED) {
+        WVLOG_E("camera is already opened");
+        return result;
+    }
 
     WVLOG_I("CreateCaptureSession");
     captureSession_ = cameraManager_->CreateCaptureSession();
@@ -460,12 +465,18 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
         return result;
     }
     result = CAMERA_OK;
+    status_ = CameraStatus::OPENED;
     return result;
 }
 
 int32_t CameraManagerAdapterImpl::RestartSession()
 {
-    WVLOG_I("RestartSession");
+    WVLOG_I("RestartSession %{public}s", deviceId_.c_str());
+    if (status_ == CameraStatus::OPENED) {
+        WVLOG_E("camera is already opened");
+        return CAMERA_OK;
+    }
+
     if (cameraManager_ == nullptr) {
         WVLOG_E("cameraManager_ is null when start session");
         return CAMERA_ERROR;
@@ -484,15 +495,20 @@ int32_t CameraManagerAdapterImpl::RestartSession()
         WVLOG_E("init camera preview output failed");
         return CAMERA_ERROR;
     }
-
+    status_ = CameraStatus::OPENED;
     return CAMERA_OK;
 }
 
 int32_t CameraManagerAdapterImpl::StopSession()
 {
     WVLOG_I("StopSession");
+    if (status_ == CameraStatus::CLOSED) {
+        WVLOG_E("camera is already closed when stop session");
+        return CAMERA_OK;
+    }
     ReleaseSessionResource(deviceId_);
     ReleaseSession();
+    status_ = CameraStatus::CLOSED;
     return CAMERA_OK;
 }
 
@@ -538,6 +554,7 @@ int32_t CameraManagerAdapterImpl::ReleaseCameraManger()
     ReleaseSessionResource(deviceId_);
     ReleaseSession();
     cameraManager_ = nullptr;
+    status_ = CameraStatus::CLOSED;
     return CAMERA_OK;
 }
 
