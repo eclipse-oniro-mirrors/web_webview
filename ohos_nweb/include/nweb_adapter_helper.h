@@ -17,6 +17,8 @@
 #define NWEB_ADAPTER_HELPER_H
 
 #include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
+#include "libxml/parser.h"
+#include "libxml/tree.h"
 #include "nweb_helper.h"
 
 namespace OHOS {
@@ -39,6 +41,9 @@ public:
                                      uint32_t height = 0);
 private:
     NWebAdapterHelper() = default;
+    std::string GetConfigPath(const std::string& configFileName);
+    void ParseConfig(NWebCreateInfo& createInfo);
+    void ReadConfig(const xmlNodePtr& rootPtr, NWebCreateInfo& createInfo);
 };
 } // namespace OHOS
 

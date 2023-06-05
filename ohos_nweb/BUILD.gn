@@ -68,10 +68,15 @@ ohos_shared_library("libnweb") {
     "src/nweb_surface_adapter.cpp",
   ]
 
-  deps = [ "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client" ]
+  deps = [
+    ":web_config",
+    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
+    "//third_party/libxml2:libxml2",
+  ]
 
   external_deps = [
     "c_utils:utils",
+    "config_policy:configpolicy_util",
     "graphic_standard:libcomposer",
     "graphic_standard:surface",
     "hilog_native:libhilog",
@@ -89,4 +94,11 @@ ohos_prebuilt_etc("nweb_hap") {
   module_install_dir = "app/com.ohos.nweb"
   part_name = "webview"
   subsystem_name = "web"
+}
+
+ohos_prebuilt_etc("web_config") {
+  source = "${webview_root_path}/ohos_nweb/etc/web_config.xml"
+  subsystem_name = "web"
+  part_name = "webview"
+  module_install_dir = "etc/web"
 }
