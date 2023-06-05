@@ -159,13 +159,13 @@ HWTEST_F(PlayerCallbackImplTest, InvalidScene, TestSize.Level1)
 {
     ASSERT_NE(playerCallback_, nullptr);
     auto callbackImpl = static_cast<PlayerCallbackTest*>(playerCallback_->callbackAdapter_.get());
-    playerCallback_->OnInfo(Media::INFO_TYPE_SEEKDONE, 0, infoBody_, -1);
+    playerCallback_->OnInfo(Media::INFO_TYPE_SEEKDONE, 0, infoBody_);
     EXPECT_EQ(callbackImpl->infoType_, PlayerOnInfoType::INFO_TYPE_UNSET);
     playerCallback_->OnError(Media::MSERR_EXT_OK, errorMsg_);
     EXPECT_EQ(callbackImpl->errorType_, PlayerAdapterErrorType::INVALID_CODE);
 
     playerCallback_->callbackAdapter_ = nullptr;
-    playerCallback_->OnInfo(Media::INFO_TYPE_EOS, 0, infoBody_, -1);
+    playerCallback_->OnInfo(Media::INFO_TYPE_EOS, 0, infoBody_);
     playerCallback_->OnError(Media::MSERR_EXT_OK, errorMsg_);
 }
 
@@ -218,7 +218,7 @@ HWTEST_P(PlayerCallbackOnInfoParamTest, NormalTest, TestSize.Level1)
 {
     ASSERT_NE(playerCallback_, nullptr);
     Media::PlayerOnInfoType infoType = GetParam();
-    playerCallback_->OnInfo(infoType, 0, infoBody_, -1);
+    playerCallback_->OnInfo(infoType, 0, infoBody_);
     EXPECT_NE(static_cast<PlayerCallbackTest*>(playerCallback_->callbackAdapter_.get())->infoType_,
         PlayerOnInfoType::INFO_TYPE_UNSET);
 }
