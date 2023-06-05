@@ -37,6 +37,11 @@ enum class SurfaceType {
     VIDEO
 };
 
+enum class CameraStatus {
+    OPENED = 0,
+    CLOSED
+};
+
 class CameraSurfaceListener;
 
 class CameraSurfaceBufferAdapterImpl : public CameraSurfaceBufferAdapter {
@@ -83,10 +88,6 @@ public:
 
     int32_t CreateAndStartSession() override;
 
-    int32_t ReleaseSession() override;
-
-    int32_t ReleaseSessionResource(const std::string &deviceId) override;
-
     int32_t ReleaseCameraManger() override;
 
     int32_t GetExposureModes(std::vector<ExposureModeAdapter>& exposureModesAdapter) override;
@@ -119,6 +120,8 @@ private:
     FocusMode GetOriFocusMode(FocusModeAdapter focusMode);
     FocusModeAdapter GetAdapterFocusMode(FocusMode focusMode);
     FlashMode GetOriFlashMode(FlashModeAdapter flashMode);
+    int32_t ReleaseSession();
+    int32_t ReleaseSessionResource(const std::string &deviceId);
     sptr<CameraManager> cameraManager_;
     sptr<CaptureSession> captureSession_;
     sptr<CaptureInput> cameraInput_;
@@ -132,6 +135,7 @@ private:
     const int32_t RANGE_MAX_SIZE = 2;
     const int32_t RANGE_MIN_INDEX = 0;
     const int32_t RANGE_MAX_INDEX = 1;
+    CameraStatus status_ = CameraStatus::CLOSED;
 };
 
 class CameraSurfaceListener : public IBufferConsumerListener {

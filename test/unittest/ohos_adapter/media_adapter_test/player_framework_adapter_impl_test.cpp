@@ -27,7 +27,7 @@ class PlayerCallbackTest : public PlayerCallbackAdapter {
 public:
     PlayerCallbackTest() = default;
     ~PlayerCallbackTest() override = default;
-    void OnInfo(PlayerOnInfoType type, int32_t extra) override
+    void OnInfo(PlayerOnInfoType type, int32_t extra, int32_t value) override
     {
         infoType_ = type;
     }

@@ -33,6 +33,7 @@ enum class PlayerOnInfoType : int32_t {
     INFO_TYPE_STATE_CHANGE,
     INFO_TYPE_POSITION_UPDATE,
     INFO_TYPE_MESSAGE,
+    INFO_TYPE_INTERRUPT_EVENT,
 };
 
 enum class PlayerSeekMode : int32_t {
@@ -54,7 +55,7 @@ class PlayerCallbackAdapter {
 public:
     virtual ~PlayerCallbackAdapter() = default;
 
-    virtual void OnInfo(PlayerOnInfoType type, int32_t extra) = 0;
+    virtual void OnInfo(PlayerOnInfoType type, int32_t extra, int32_t value) = 0;
 
     virtual void OnError(PlayerAdapterErrorType errorType) = 0;
 };
