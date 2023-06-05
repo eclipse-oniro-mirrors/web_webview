@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WEB>
+  <renderConfig>
+      <renderProcessCount>1</renderProcessCount>
+  </renderConfig>
+  <mediaConfig>
+      <backgroundMediaShouldSuspend>true</backgroundMediaShouldSuspend>
+  </mediaConfig>
+</WEB>
