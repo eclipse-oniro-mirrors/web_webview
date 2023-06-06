@@ -19,7 +19,7 @@
 #include <securec.h>
 
 #include "ohos_web_permission_data_base_adapter_impl.h"
-#include "sqlite_database_utils.h"
+#include "rdb_sql_utils.h"
 
 using namespace OHOS::NWeb;
 using namespace OHOS::NativeRdb;
@@ -34,7 +34,7 @@ namespace OHOS {
         std::string bundleName = "com.example";
         std::string databaseDir = "/data";
         int32_t errorCode = E_OK;
-        std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
+        std::string realPath = RdbSqlUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
         RdbStoreConfig config("");
         config.SetPath(std::move(realPath));
         config.SetBundleName(bundleName);
