@@ -132,9 +132,9 @@ private:
     VideoCaptureParamsAdapter captureParams_;
     std::shared_ptr<CameraBufferListenerAdapter> listener_;
     const int32_t DEFAULT_FRAME_RATE = 30;
-    const int32_t RANGE_MAX_SIZE = 2;
-    const int32_t RANGE_MIN_INDEX = 0;
-    const int32_t RANGE_MAX_INDEX = 1;
+    const uint32_t RANGE_MAX_SIZE = 2;
+    const uint32_t RANGE_MIN_INDEX = 0;
+    const uint32_t RANGE_MAX_INDEX = 1;
     CameraStatus status_ = CameraStatus::CLOSED;
 };
 
