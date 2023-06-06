@@ -20,7 +20,7 @@
 
 #include "application_context.h"
 #include "nweb_log.h"
-#include "sqlite_database_utils.h"
+#include "rdb_sql_utils.h"
 
 using namespace OHOS::NativeRdb;
 using namespace OHOS::NWeb;
@@ -83,7 +83,7 @@ std::shared_ptr<OHOS::NativeRdb::RdbStore> OhosWebPermissionDataBaseAdapterImpl:
     std::string bundleName = context->GetBundleName();
     std::string name = dataBeseName;
     int32_t errorCode = E_OK;
-    std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
+    std::string realPath = RdbSqlUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
     RdbStoreConfig config("");
     config.SetPath(std::move(realPath));
     config.SetBundleName(bundleName);

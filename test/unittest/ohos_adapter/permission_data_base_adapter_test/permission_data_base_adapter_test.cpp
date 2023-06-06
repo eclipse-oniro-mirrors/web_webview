@@ -23,7 +23,7 @@
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb.h"
 #include "ohos_adapter_helper.h"
-#include "sqlite_database_utils.h"
+#include "rdb_sql_utils.h"
 
 #define private public
 #include "ohos_web_permission_data_base_adapter_impl.h"
@@ -276,7 +276,7 @@ HWTEST_F(PermissionDataBaseAdapterTest, PermissionDataBaseAdapterTest_CallBack_0
     std::string bundleName = "com.example.testapplication1";
     std::string databaseDir = "/data";
     int32_t errorCode = E_OK;
-    std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
+    std::string realPath = RdbSqlUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
     RdbStoreConfig config("");
     config.SetPath(std::move(realPath));
     config.SetBundleName(bundleName);
