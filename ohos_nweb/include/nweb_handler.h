@@ -26,6 +26,7 @@
 #include "nweb_context_menu_params.h"
 #include "nweb_controller_handler.h"
 #include "nweb_data_resubmission_callback.h"
+#include "nweb_date_time_chooser.h"
 #include "nweb_file_selector_params.h"
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
@@ -573,6 +574,13 @@ public:
     virtual void OnResizeNotWork() {}
 
     virtual void OnGetTouchHandleHotZone(TouchHandleHotZone& hotZone) {}
+
+    virtual void OnDateTimeChooserPopup(
+        const DateTimeChooser& chooser,
+        const std::vector<DateTimeSuggestion>& suggestions,
+        std::shared_ptr<NWebDateTimeChooserCallback> callback) {}
+
+    virtual void OnDateTimeChooserClose() {};
 };
 }  // namespace OHOS::NWeb
 
