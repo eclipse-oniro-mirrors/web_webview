@@ -367,11 +367,11 @@ int32_t CameraManagerAdapterImpl::GetExposureCompensation(VideoCaptureRangeAdapt
 
 int32_t CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId, VideoCaptureRangeAdapter& rangeVal)
 {
-    int32_t result = CAMERA_ERROR;
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get %{public}d range info", rangeId);
         return CAMERA_ERROR;
     }
+    int32_t result = CAMERA_OK;
     switch (rangeId) {
         case RangeIDAdapter::RANGE_ID_EXP_COMPENSATION:
             if (GetExposureCompensation(rangeVal) != CAMERA_OK) {
@@ -383,7 +383,6 @@ int32_t CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId, Vi
             result = CAMERA_ERROR;
             break;
     }
-    result = CAMERA_OK;
     return result;
 }
 
@@ -700,7 +699,7 @@ void CameraSurfaceListener::OnBufferAvailable()
     }
     surface_->AcquireBuffer(buffer, flushFence, timestamp, damage);
     if (buffer != nullptr) {
-        int32_t size = buffer->GetSize();
+        uint32_t size = buffer->GetSize();
 
         CameraRotationInfo rotationInfo = GetRotationInfo(surface_->GetTransform());
         WVLOG_D("OnBufferAvailable, surfaceType_: %{public}d, size: %{public}d, width: %{public}d,\
