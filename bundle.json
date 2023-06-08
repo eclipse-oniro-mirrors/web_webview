@@ -69,6 +69,7 @@
         },
         "build": {
             "sub_component": [
+                "//base/web/webview/interfaces/inner_api:web_inner_kit",
                 "//base/web/webview/interfaces/kits/napi:webview_napi",
                 "//base/web/webview/ohos_nweb:libnweb",
                 "//base/web/webview/ohos_nweb:nweb_hap",
@@ -262,7 +263,8 @@
                 "//base/web/webview/test/unittest/ohos_adapter/event_handler_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/hiviewdfx_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/imf_adapter_test:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/media_adapter_test:unittest"
+                "//base/web/webview/test/unittest/ohos_adapter/media_adapter_test:unittest",
+                "//base/web/webview/test/unittest/inner_api_test/clipboard_controller_test:unittest"
             ]
         }
     }
