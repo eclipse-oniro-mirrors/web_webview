@@ -18,13 +18,11 @@
 #include <gtest/gtest.h>
 
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
-#include "sqlite_database_utils.h"
+#include "rdb_sql_utils.h"
 
 #define private public
 #include "ohos_web_data_base_adapter_impl.h"
 #undef private
-
-#include "rdb_store_impl.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -195,7 +193,7 @@ HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_CallBack_005, Te
     std::string bundleName = "com.example";
     std::string databaseDir = "/data";
     int32_t errorCode = E_OK;
-    std::string realPath = SqliteDatabaseUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
+    std::string realPath = RdbSqlUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
     RdbStoreConfig config("");
     config.SetPath(std::move(realPath));
     config.SetBundleName(bundleName);
