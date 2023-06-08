@@ -22,44 +22,6 @@
 #include "ui/rs_surface_node.h"
 #undef private
 
-namespace OHOS::Rosen {
-class RSSurfaceMock : public OHOS::Rosen::RSSurface {
-public:
-    bool IsValid() const override
-    {
-        return true;
-    }
-    std::unique_ptr<Rosen::RSSurfaceFrame> RequestFrame(int32_t width, int32_t height,
-        uint64_t uiTimestamp = 0, bool useAFBC = true) override
-    {
-        return nullptr;
-    }
-
-    bool FlushFrame(std::unique_ptr<Rosen::RSSurfaceFrame>& frame, uint64_t uiTimestamp = 0) override
-    {
-        return true;
-    }
-
-    Rosen::RenderContext* GetRenderContext() override
-    {
-        return nullptr;
-    }
-    void SetRenderContext(Rosen::RenderContext* context) override
-    {}
-    ColorGamut GetColorSpace() const override
-    {
-        return ColorGamut::COLOR_GAMUT_STANDARD_BT601;
-    }
-    void SetColorSpace(ColorGamut colorSpace) override
-    {}
-    uint32_t GetQueueSize() const override
-    {
-        return 1;
-    }
-    void ClearBuffer() override
-    {}
-};
-}
 namespace OHOS::NWeb {
 NWebInitArgs GetInitArgs(void);
 
