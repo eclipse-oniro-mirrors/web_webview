@@ -153,6 +153,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "$location_path/frameworks/location_common/common:lbsservice_common",
   ]
 
+  innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
   subsystem_name = "web"
 }
