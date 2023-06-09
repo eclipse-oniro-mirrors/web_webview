@@ -15,17 +15,17 @@
 
 #include "nweb_helper.h"
 
+#include <cstdint>
+#include <dirent.h>
 #include <dlfcn.h>
+#include <memory>
 #include <refbase.h>
 #include <surface.h>
-
-#include <cstdint>
-#include <memory>
-#include <thread>
 #include <sys/stat.h>
+#include <thread>
 #include <unistd.h>
-#include <dirent.h>
 
+#include "config_policy_utils.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_enhance_surface_adapter.h"
 #include "nweb_log.h"
@@ -46,6 +46,7 @@ const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm";
 #endif
 const std::string LIB_NAME_WEB_ENGINE = "libweb_engine.so";
 static bool g_isFirstTimeStartUp = false;
+const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
 }
 
 namespace OHOS::NWeb {
@@ -327,8 +328,8 @@ bool NWebAdapterHelper::Init(bool from_ark)
     return NWebHelper::Instance().Init(from_ark);
 }
 
-std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const NWebInitArgs &initArgs, uint32_t width,
-    uint32_t height)
+std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(
+    sptr<Surface> surface, const NWebInitArgs& initArgs, uint32_t width, uint32_t height)
 {
     if (surface == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
@@ -339,6 +340,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const
         return nullptr;
     }
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height);
+    ParseConfig(createInfo);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
@@ -365,5 +367,74 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
         WVLOG_E("fail to create nweb instance");
     }
     return nweb;
+}
+
+std::string NWebAdapterHelper::GetConfigPath(const std::string& configFileName)
+{
+    char buf[PATH_MAX + 1];
+    char* configPath = GetOneCfgFile(configFileName.c_str(), buf, PATH_MAX + 1);
+    char tmpPath[PATH_MAX + 1] = { 0 };
+    if (!configPath || strlen(configPath) == 0 || strlen(configPath) > PATH_MAX || !realpath(configPath, tmpPath)) {
+        WVLOG_I("can not get customization config file");
+        return "/system/" + configFileName;
+    }
+    return std::string(tmpPath);
+}
+
+void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebCreateInfo& createInfo)
+{
+    for (xmlNodePtr curNodePtr = rootPtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string nodeName = reinterpret_cast<const char*>(curNodePtr->name);
+        for (xmlNodePtr curChildNodePtr = curNodePtr->xmlChildrenNode; curChildNodePtr != nullptr;
+             curChildNodePtr = curChildNodePtr->next) {
+            if (curChildNodePtr->name == nullptr || curChildNodePtr->type == XML_COMMENT_NODE) {
+                WVLOG_E("invalid node!");
+                continue;
+            }
+            std::string childNodeName = reinterpret_cast<const char*>(curChildNodePtr->name);
+            xmlChar* content = xmlNodeGetContent(curChildNodePtr);
+            if (content == nullptr) {
+                WVLOG_E("read xml node error: nodeName:(%{public}s)", curChildNodePtr->name);
+                continue;
+            }
+            std::string contentStr = reinterpret_cast<const char*>(content);
+            xmlFree(content);
+            if (nodeName == std::string("renderConfig") && childNodeName == std::string("renderProcessCount")) {
+                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                    std::string("--renderer-process-limit=") + contentStr);
+                continue;
+            }
+            if (nodeName == std::string("mediaConfig") &&
+                childNodeName == std::string("backgroundMediaShouldSuspend") && contentStr == std::string("false")) {
+                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                    std::string("--disable-background-media-suspend"));
+            }
+        }
+    }
+}
+
+void NWebAdapterHelper::ParseConfig(NWebCreateInfo& createInfo)
+{
+    auto configFilePath = GetConfigPath(WEB_CONFIG_PATH);
+    xmlDocPtr docPtr = xmlReadFile(configFilePath.c_str(), nullptr, XML_PARSE_NOBLANKS);
+    if (docPtr == nullptr) {
+        WVLOG_E("load xml error!");
+        return;
+    }
+
+    xmlNodePtr rootPtr = xmlDocGetRootElement(docPtr);
+    if (rootPtr == nullptr || rootPtr->name == nullptr ||
+        xmlStrcmp(rootPtr->name, reinterpret_cast<const xmlChar*>("WEB"))) {
+        WVLOG_E("get root element failed!");
+        xmlFreeDoc(docPtr);
+        return;
+    }
+
+    ReadConfig(rootPtr, createInfo);
+    xmlFreeDoc(docPtr);
 }
 } // namespace OHOS::NWeb
