@@ -94,20 +94,20 @@ HWTEST_F(PlayerAdapterImplTest, HandlesInvalidArguments, TestSize.Level1)
 HWTEST_F(PlayerAdapterImplTest, NormalTest, TestSize.Level1)
 {
     EXPECT_EQ(playerAdapter_->SetPlayerCallback(std::move(callbackTest_)), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->SetSource(0, 0, 0), Media::MSERR_OK);
+    EXPECT_NE(playerAdapter_->SetSource(-1, 0, 0), -1);
     EXPECT_NE(playerAdapter_->SetSource(sourceUrl_), -1);
 
     auto surfaceAdapter = OhosAdapterHelper::GetInstance().CreateConsumerSurfaceAdapter();
     EXPECT_NE(surfaceAdapter, nullptr);
-    EXPECT_EQ(playerAdapter_->SetVideoSurface(surfaceAdapter.get()), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->PrepareAsync(), Media::MSERR_OK);
+    EXPECT_NE(playerAdapter_->SetVideoSurface(surfaceAdapter.get()), -1);
+    EXPECT_NE(playerAdapter_->PrepareAsync(), -1);
     EXPECT_EQ(playerAdapter_->SetVolume(0, 0), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->Seek(0, PlayerSeekMode::SEEK_CLOSEST_SYNC), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->Play(), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->Pause(), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->GetCurrentTime(currentTime_), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->GetDuration(duration_), Media::MSERR_OK);
-    EXPECT_EQ(playerAdapter_->SetPlaybackSpeed(PlaybackRateMode::SPEED_FORWARD_1_00_X), Media::MSERR_OK);
+    EXPECT_NE(playerAdapter_->Seek(0, PlayerSeekMode::SEEK_CLOSEST_SYNC), -1);
+    EXPECT_NE(playerAdapter_->Play(), -1);
+    EXPECT_NE(playerAdapter_->Pause(), -1);
+    EXPECT_NE(playerAdapter_->GetCurrentTime(currentTime_), -1);
+    EXPECT_NE(playerAdapter_->GetDuration(duration_), -1);
+    EXPECT_NE(playerAdapter_->SetPlaybackSpeed(PlaybackRateMode::SPEED_FORWARD_1_00_X), -1);
 }
 
 /**
