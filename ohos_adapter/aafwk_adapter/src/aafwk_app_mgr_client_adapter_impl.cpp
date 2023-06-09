@@ -23,6 +23,7 @@
 namespace {
 constexpr int GET_TERMINATION_STATUS_MAX_CNT = 5;
 constexpr int START_RENDER_PROCESS_MAX_CNT = 10;
+constexpr int SLEEP_FOR_MILLI_SECONDS_CNT = 10;
 constexpr int RET_ALREADY_EXIST_RENDER = 8454244; // copy from ability_runtime
 }
 
@@ -44,14 +45,14 @@ int AafwkAppMgrClientAdapterImpl::StartRenderProcess(
         ret = appMgrClient_->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
         if (ret == RET_ALREADY_EXIST_RENDER) {
             WVLOG_E("app mgr client start render process failed, render process already exist.");
-            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_FOR_MILLI_SECONDS_CNT));
             continue;
         }
         if (ret != 0) {
             WVLOG_E("app mgr client start render process failed, ret = %{public}d.", ret);
             return -1;
         }
-    } while (ret != 0 && ++retryCnt < START_RENDER_PROCESS_MAX_CNT);
+    } while (++retryCnt < START_RENDER_PROCESS_MAX_CNT && ret != 0);
 
     if (ret != 0) {
         WVLOG_E("over max retry times, app mgr client start render process failed, ret = %{public}d.", ret);
