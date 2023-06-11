@@ -146,12 +146,11 @@ void OhosWebDataBaseAdapterImpl::GetHttpAuthCredentials(const std::string& host,
         return;
     }
 
-    std::unique_ptr<AbsSharedResultSet> resultSet = nullptr;
     std::vector<std::string> columns;
     NativeRdb::AbsRdbPredicates dirAbsPred(HTTPAUTH_TABLE_NAME);
     dirAbsPred.EqualTo(HTTPAUTH_HOST_COL, host);
     dirAbsPred.EqualTo(HTTPAUTH_REALM_COL, realm);
-    resultSet = rdbStore_->Query(dirAbsPred, columns);
+    auto resultSet = rdbStore_->Query(dirAbsPred, columns);
     if ((resultSet == nullptr) || (resultSet->GoToFirstRow() != NativeRdb::E_OK)) {
         WVLOG_E("webdatabase rdb store query failed");
         return;
