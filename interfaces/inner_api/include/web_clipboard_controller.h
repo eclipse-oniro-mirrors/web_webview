@@ -41,9 +41,10 @@ public:
     std::shared_ptr<std::string> RebuildHtml(std::shared_ptr<MiscServices::PasteData> pasteData) noexcept;
 
 private:
-    std::vector<std::pair<std::string, int>> SplitHtmlWithImgLabel(const std::shared_ptr<std::string> html) noexcept;
+    std::vector<std::pair<std::string, uint32_t>> SplitHtmlWithImgLabel(
+        const std::shared_ptr<std::string> html) noexcept;
     std::map<std::string, std::vector<uint8_t>> SplitHtmlWithImgSrcLabel(
-        const std::vector<std::pair<std::string, int>>& matchVec) noexcept;
+        const std::vector<std::pair<std::string, uint32_t>>& matchVec) noexcept;
     std::shared_ptr<MiscServices::PasteData> BuildPasteData(
         std::shared_ptr<std::string> html, const std::map<std::string, std::vector<uint8_t>>& imgSrcMap) noexcept;
     void RemoveAllRecord(std::shared_ptr<MiscServices::PasteData> pasteData) noexcept;
