@@ -47,7 +47,7 @@ ohos_unittest("ohos_adapter_helper_test") {
     "c_utils:utils",
     "graphic_standard:surface",
     "graphic_standard:window_animation",
-    "hicollie_native:libhicollie",
+    "hicollie:libhicollie",
     "hilog_native:libhilog",
     "hisysevent_native:libhisysevent",
     "imf:inputmethod_client",
