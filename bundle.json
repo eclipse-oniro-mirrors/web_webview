@@ -98,8 +98,6 @@
                 }
             ],
             "test": [
-                "//base/web/webview/test:nweb_test",
-                "//base/web/webview/test:web_render",
                 "//base/web/webview/test/fuzztest/load_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/cannavigatebackorforward_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/executejavascript_fuzzer:fuzztest",

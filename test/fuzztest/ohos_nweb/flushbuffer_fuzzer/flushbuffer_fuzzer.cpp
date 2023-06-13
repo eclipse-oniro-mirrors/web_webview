@@ -21,7 +21,6 @@
 
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
-#include "nweb_handler_impl_test.h"
 
 #define private public
 #include "nweb_surface_adapter.h"

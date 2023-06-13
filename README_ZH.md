@@ -1,7 +1,6 @@
 # web_webview
 - [简介](#简介)
 - [目录](#目录)
-- [使用说明](#使用说明)
 - [相关仓](#相关仓)
 ## 简介
 ### 内容介绍
@@ -22,26 +21,6 @@ nweb是OpenHarmony webview组件的Native引擎，基于Chromium和CEF构建。
 │   └── src
 └── test                 # nwebview测试代码
 ```
-## 使用说明
-**此代码仓是openharmony web组件的Native引擎，此处仅提供基于Native接口的测试使用说明。**
-
-1. 测试代码默认不编译，使用测试代码时，需要在代码仓根目录bundle.json中增加nweb_test目标：
-```
-"sub_component": [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//base/web/webview/ohos_nweb:nweb_hap",
-    "//base/web/webview/test:nweb_test"
-],
-```
-2. 编译
-```
-./build.sh --product-name rk3568 --ccache --build-target nweb_test
-```
-3. 运行，将nweb_test push到RK3568中，连接wifi保证网络可用，设置日期保证开发板与当前系统时间一致
-```
-nweb_test 1 --width=720 --height=1184 --add-args=--for-test
-```
-以上命令会默认加载百度首页，--url=xxx.com命令行参数可以设置你想加载的网页。
 
 ## 相关仓
 
