@@ -613,7 +613,7 @@ uint32_t CameraSurfaceBufferAdapterImpl::GetSize() const
     return buffer_->GetSize();
 }
 
-const sptr<SurfaceBuffer>& CameraSurfaceBufferAdapterImpl::GetBuffer()
+sptr<SurfaceBuffer>& CameraSurfaceBufferAdapterImpl::GetBuffer()
 {
     return buffer_;
 }
@@ -707,13 +707,25 @@ void CameraSurfaceListener::OnBufferAvailable()
             surfaceType_, size, buffer->GetWidth(), buffer->GetHeight(), surface_->GetTransform(),
             (int32_t)rotationInfo.rotation, rotationInfo.isFlipY, rotationInfo.isFlipX);
         auto bufferAdapter = std::make_unique<CameraSurfaceBufferAdapterImpl>(buffer);
+        auto surfaceAdapter = std::make_shared<CameraSurfaceAdapterImpl>(surface_);
         if (listener_ != nullptr) {
-            listener_->OnBufferAvailable(std::move(bufferAdapter), rotationInfo);
+            listener_->OnBufferAvailable(surfaceAdapter, std::move(bufferAdapter), rotationInfo);
         }
-
-        surface_->ReleaseBuffer(buffer, -1);
     } else {
         WVLOG_E("AcquireBuffer failed!");
     }
+}
+
+CameraSurfaceAdapterImpl::CameraSurfaceAdapterImpl(sptr<IConsumerSurface> surface) : cSurface_(surface) {}
+
+int32_t CameraSurfaceAdapterImpl::ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> bufferAdapter,
+                                                int32_t fence)
+{
+    if (!cSurface_ || !bufferAdapter) {
+        WVLOG_E("cSurface_ or bufferAdapter is nullptr");
+        return -1;
+    }
+    auto bufferImpl = static_cast<CameraSurfaceBufferAdapterImpl*>(bufferAdapter.get());
+    return cSurface_->ReleaseBuffer(bufferImpl->GetBuffer(), fence);
 }
 }  // namespace OHOS::NWeb

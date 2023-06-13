@@ -143,11 +143,21 @@ protected:
     CameraSurfaceBufferAdapter& operator=(const CameraSurfaceBufferAdapter&) = delete;
 };
 
+class CameraSurfaceAdapter {
+public:
+    CameraSurfaceAdapter() = default;
+
+    virtual ~CameraSurfaceAdapter() = default;
+
+    virtual int32_t ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> buffer, int32_t fence) = 0;
+};
+
 class CameraBufferListenerAdapter {
 public:
     virtual ~CameraBufferListenerAdapter() = default;
 
-    virtual void OnBufferAvailable(std::unique_ptr<CameraSurfaceBufferAdapter> buffer,
+    virtual void OnBufferAvailable(std::shared_ptr<CameraSurfaceAdapter> surface,
+        std::unique_ptr<CameraSurfaceBufferAdapter> buffer,
         CameraRotationInfo rotationInfo) = 0;
 };
 
