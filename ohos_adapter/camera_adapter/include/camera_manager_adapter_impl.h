@@ -64,7 +64,7 @@ public:
 
     uint8_t* GetBufferAddr() override;
 
-    const sptr<SurfaceBuffer>& GetBuffer();
+    sptr<SurfaceBuffer>& GetBuffer();
 
 private:
     sptr<SurfaceBuffer> buffer_ = nullptr;
@@ -157,6 +157,21 @@ private:
     const int32_t ROTATION_180 = 180;
     const int32_t ROTATION_270 = 270;
 };
+
+class CameraSurfaceAdapterImpl : public CameraSurfaceAdapter {
+public:
+    CameraSurfaceAdapterImpl();
+
+    CameraSurfaceAdapterImpl(sptr<IConsumerSurface> surface);
+
+    ~CameraSurfaceAdapterImpl() = default;
+
+    int32_t ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> bufferAdapter, int32_t fence) override;
+
+private:
+    sptr<IConsumerSurface> cSurface_ = nullptr;
+};
+
 }  // namespace OHOS::NWeb
 
 #endif // CAMERA_MANAGER_ADAPTER_IMPL_H
