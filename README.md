@@ -17,26 +17,6 @@ Below is the software architecture.
 │   └── src
 └── test                 # nwebview test code
 ```
-## Usage
-** This code repository is the native engine of the OpenHarmony web component. This topic describes only how to use the test code based on the native interfaces.**
-
-1. By default, the test code is not compiled. Therefore, to use the test code, you need to add the **nweb_test** target to the **bundle.json** file in the root directory of the code repository.
-```
-"sub_component": [
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//base/web/webview/ohos_nweb:nweb_hap",
-    "//base/web/webview/test:nweb_test"
-],
-```
-2. Build source code.
-```
-./build.sh --product-name rk3568 --ccache --build-target nweb_test
-```
-3. Push **nweb_test** to RK3568, connect to a Wi-Fi network, and make sure the time on RK3568 is the same as the current system time.
-```
-nweb_test 1 --width=720 --height=1184 --add-args=--for-test
-```
-The preceding command loads the Baidu home page by default. To load another page, run **--url=xxx.com**.
 
 ## Repositories Involved
 
