@@ -37,11 +37,6 @@ enum class SurfaceType {
     VIDEO
 };
 
-enum class CameraStatus {
-    OPENED = 0,
-    CLOSED
-};
-
 class CameraSurfaceListener;
 
 class CameraSurfaceBufferAdapterImpl : public CameraSurfaceBufferAdapter {
@@ -105,6 +100,8 @@ public:
     int32_t RestartSession() override;
 
     int32_t StopSession() override;
+
+    CameraStatus GetCameraStatus() override;
 
 private:
     VideoTransportType GetCameraTransportType(ConnectionType connectType);
