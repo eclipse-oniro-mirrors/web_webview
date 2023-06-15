@@ -66,6 +66,9 @@ NWeb::PlayerOnInfoType ConvertInfoType(Media::PlayerOnInfoType infoType)
 {
     NWeb::PlayerOnInfoType ret = NWeb::PlayerOnInfoType::INFO_TYPE_UNSET;
     switch (infoType) {
+        case Media::INFO_TYPE_SEEKDONE:
+            ret = NWeb::PlayerOnInfoType::INFO_TYPE_SEEKDONE;
+            break;
         case Media::INFO_TYPE_EOS:
             ret = NWeb::PlayerOnInfoType::INFO_TYPE_EOS;
             break;
