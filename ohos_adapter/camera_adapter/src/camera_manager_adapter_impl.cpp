@@ -253,9 +253,14 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
             WVLOG_E("Failed to create CameraInput");
             return result;
         }
-        cameraInput_->Open();
+        int32_t ret = cameraInput_->Open();
+        if (ret != CAMERA_OK) {
+            WVLOG_E("Failed to open CameraInput, err code %{public}d.", ret);
+            return result;
+        }
+        deviceId_ = deviceId;
     }
-    deviceId_ = deviceId;
+
     result = CAMERA_OK;
     return result;
 }
@@ -288,10 +293,9 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdap
                                          previewSize);
         WVLOG_I("preview output format: %{public}d, w: %{public}d, h: %{public}d",
             TransToOriCameraFormat(captureParams.captureFormat.pixelFormat), previewSize.width, previewSize.height);
-        listener_ = listener;
         previewSurfaceListener_ = new(std::nothrow) CameraSurfaceListener(SurfaceType::PREVIEW,
                                                                     previewSurface_,
-                                                                    (listener_));
+                                                                    (listener));
         previewSurface_->RegisterConsumerListener((sptr<IBufferConsumerListener> &)previewSurfaceListener_);
         sptr<IBufferProducer> bp = previewSurface_->GetProducer();
         sptr<Surface> pSurface = Surface::CreateSurfaceAsProducer(bp);
@@ -300,11 +304,11 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdap
             WVLOG_E("Failed to create previewOutput");
             return result;
         }
+        captureParams_ = captureParams;
+        listener_ = listener;
+
     }
     result = CAMERA_OK;
-    
-    captureParams_ = captureParams;
-    
     return result;
 }
 
@@ -555,6 +559,11 @@ int32_t CameraManagerAdapterImpl::ReleaseCameraManger()
     cameraManager_ = nullptr;
     status_ = CameraStatus::CLOSED;
     return CAMERA_OK;
+}
+
+CameraStatus CameraManagerAdapterImpl::GetCameraStatus()
+{
+    return status_;
 }
 
 CameraSurfaceBufferAdapterImpl::CameraSurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer) : buffer_(buffer) {}

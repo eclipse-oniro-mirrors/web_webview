@@ -76,6 +76,11 @@ enum class RangeIDAdapter {
     RANGE_ID_EXP_COMPENSATION,
 };
 
+enum class CameraStatus {
+    OPENED = 0,
+    CLOSED
+};
+
 typedef struct FormatAdapterTag {
     uint32_t width;
     uint32_t height;
@@ -195,6 +200,8 @@ public:
     virtual int32_t RestartSession() = 0;
 
     virtual int32_t StopSession() = 0;
+
+    virtual CameraStatus GetCameraStatus() = 0;
 };
 } // namespace OHOS::NWeb
 
