@@ -175,7 +175,11 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
             return false;
         }
     }
-    MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard);
+    int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard);
+    if (ret != 0) {
+        WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
+        return false;
+    }
     return true;
 }
 
