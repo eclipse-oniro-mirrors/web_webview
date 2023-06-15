@@ -71,7 +71,7 @@ std::shared_ptr<std::string> WebClipboardController::RebuildHtml(
         }
         std::map<std::string, std::vector<uint8_t>> customItemData = customData->GetItemData();
         for (auto& itemData : customItemData) {
-            for (auto i = 0; i < itemData.second.size(); i += FOUR_BYTES) {
+            for (uint32_t i = 0; i < itemData.second.size(); i += FOUR_BYTES) {
                 uint32_t offset = static_cast<uint32_t>(itemData.second[i]) |
                                   static_cast<uint32_t>(itemData.second[i + 1] << 8) |
                                   static_cast<uint32_t>(itemData.second[i + 2] << 16) |
@@ -160,7 +160,7 @@ std::shared_ptr<MiscServices::PasteData> WebClipboardController::BuildPasteData(
 void WebClipboardController::RemoveAllRecord(std::shared_ptr<MiscServices::PasteData> pasteData) noexcept
 {
     std::size_t recordCount = pasteData->GetRecordCount();
-    for (auto i = 0; i < recordCount; i++) {
+    for (uint32_t i = 0; i < recordCount; i++) {
         pasteData->RemoveRecordAt(i);
     }
 }
