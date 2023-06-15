@@ -112,7 +112,7 @@ void WebDataBaseAdapterImplTest::SetUp(void)
 void WebDataBaseAdapterImplTest::TearDown(void)
 {}
 
-class AbsSharedResultSetMock : public AbsSharedResultSet {
+class AbsSharedResultSetMock : public ResultSet {
 public:
     MOCK_METHOD0(GoToFirstRow, int());
 };
