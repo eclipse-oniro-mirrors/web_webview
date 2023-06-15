@@ -145,7 +145,7 @@ void OhosWebDnsDataBaseAdapterImpl::GetHostnames(std::vector<std::string>& hostn
 
     std::vector<std::string> columns;
     NativeRdb::AbsRdbPredicates dirAbsPred(DNS_TABLE_NAME);
-    std::unique_ptr<AbsSharedResultSet> resultSet = rdbStore_->Query(dirAbsPred, columns);
+    auto resultSet = rdbStore_->Query(dirAbsPred, columns);
     if ((resultSet == nullptr) || (resultSet->GoToFirstRow() != NativeRdb::E_OK)) {
         WVLOG_E("web dns database rdb store query failed");
         return;

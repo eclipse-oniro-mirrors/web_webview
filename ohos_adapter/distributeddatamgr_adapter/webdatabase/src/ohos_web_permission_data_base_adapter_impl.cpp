@@ -124,11 +124,10 @@ bool OhosWebPermissionDataBaseAdapterImpl::ExistPermissionByOrigin(const std::st
         return false;
     }
 
-    std::unique_ptr<AbsSharedResultSet> resultSet = nullptr;
     std::vector<std::string> columns;
     NativeRdb::AbsRdbPredicates dirAbsPred(tableName);
     dirAbsPred.EqualTo(PERMISSION_ORIGIN_COL, origin);
-    resultSet = rdbStore_->Query(dirAbsPred, columns);
+    auto resultSet = rdbStore_->Query(dirAbsPred, columns);
     if ((resultSet == nullptr) || (resultSet->GoToFirstRow() != NativeRdb::E_OK)) {
         WVLOG_E("web permissions database rdb store query failed");
         return false;
@@ -147,11 +146,11 @@ bool OhosWebPermissionDataBaseAdapterImpl::GetPermissionResultByOrigin(const std
     if (tableName.empty()) {
         return false;
     }
-    std::unique_ptr<AbsSharedResultSet> resultSet = nullptr;
+
     std::vector<std::string> columns;
     NativeRdb::AbsRdbPredicates dirAbsPred(tableName);
     dirAbsPred.EqualTo(PERMISSION_ORIGIN_COL, origin);
-    resultSet = rdbStore_->Query(dirAbsPred, columns);
+    auto resultSet = rdbStore_->Query(dirAbsPred, columns);
     if ((resultSet == nullptr) || (resultSet->GoToFirstRow() != NativeRdb::E_OK)) {
         WVLOG_E("web permissions database rdb store query failed");
         return false;
@@ -233,7 +232,7 @@ void OhosWebPermissionDataBaseAdapterImpl::GetOriginsByPermission(const WebPermi
     }
     std::vector<std::string> columns;
     NativeRdb::AbsRdbPredicates dirAbsPred(tableName);
-    std::unique_ptr<AbsSharedResultSet> resultSet = rdbStore_->Query(dirAbsPred, columns);
+    auto resultSet = rdbStore_->Query(dirAbsPred, columns);
     if ((resultSet == nullptr) || (resultSet->GoToFirstRow() != NativeRdb::E_OK)) {
         WVLOG_E("web permissions database rdb store query failed");
         return;
