@@ -29,6 +29,7 @@ enum class PlayerAdapterErrorType : int32_t {
 
 enum class PlayerOnInfoType : int32_t {
     INFO_TYPE_UNSET = -1,
+    INFO_TYPE_SEEKDONE = 1,
     INFO_TYPE_EOS = 4,
     INFO_TYPE_STATE_CHANGE,
     INFO_TYPE_POSITION_UPDATE,
