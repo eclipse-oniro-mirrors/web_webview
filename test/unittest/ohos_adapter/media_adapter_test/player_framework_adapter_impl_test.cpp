@@ -159,7 +159,7 @@ HWTEST_F(PlayerCallbackImplTest, InvalidScene, TestSize.Level1)
 {
     ASSERT_NE(playerCallback_, nullptr);
     auto callbackImpl = static_cast<PlayerCallbackTest*>(playerCallback_->callbackAdapter_.get());
-    playerCallback_->OnInfo(Media::INFO_TYPE_SEEKDONE, 0, infoBody_);
+    playerCallback_->OnInfo(Media::INFO_TYPE_ERROR_MSG, 0, infoBody_);
     EXPECT_EQ(callbackImpl->infoType_, PlayerOnInfoType::INFO_TYPE_UNSET);
     playerCallback_->OnError(Media::MSERR_EXT_OK, errorMsg_);
     EXPECT_EQ(callbackImpl->errorType_, PlayerAdapterErrorType::INVALID_CODE);
@@ -224,6 +224,6 @@ HWTEST_P(PlayerCallbackOnInfoParamTest, NormalTest, TestSize.Level1)
 }
 
 INSTANTIATE_TEST_SUITE_P(NormalTest, PlayerCallbackOnInfoParamTest,
-    testing::Values(Media::INFO_TYPE_EOS, Media::INFO_TYPE_STATE_CHANGE, Media::INFO_TYPE_POSITION_UPDATE,
-        Media::INFO_TYPE_MESSAGE));
+    testing::Values(Media::INFO_TYPE_SEEKDONE, Media::INFO_TYPE_EOS, Media::INFO_TYPE_STATE_CHANGE,
+        Media::INFO_TYPE_POSITION_UPDATE, Media::INFO_TYPE_MESSAGE));
 } // namespace OHOS::NWeb
