@@ -306,7 +306,6 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdap
         }
         captureParams_ = captureParams;
         listener_ = listener;
-
     }
     result = CAMERA_OK;
     return result;
