@@ -726,6 +726,13 @@ public:
      * @param windowId the window id.
      */
     virtual void UnRegisterScreenLockFunction(int32_t windowId) = 0;
+
+    /**
+     * Notify memory level.
+     *
+     * @param level the memory level.
+     */
+    virtual void NotifyMemoryLevel(int32_t level) = 0;
 };
 }  // namespace OHOS::NWeb
 
