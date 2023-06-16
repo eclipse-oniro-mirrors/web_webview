@@ -253,9 +253,14 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
             WVLOG_E("Failed to create CameraInput");
             return result;
         }
-        cameraInput_->Open();
+        int32_t ret = cameraInput_->Open();
+        if (ret != CAMERA_OK) {
+            WVLOG_E("Failed to open CameraInput, err code %{public}d.", ret);
+            return result;
+        }
+        deviceId_ = deviceId;
     }
-    deviceId_ = deviceId;
+
     result = CAMERA_OK;
     return result;
 }
@@ -288,10 +293,9 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdap
                                          previewSize);
         WVLOG_I("preview output format: %{public}d, w: %{public}d, h: %{public}d",
             TransToOriCameraFormat(captureParams.captureFormat.pixelFormat), previewSize.width, previewSize.height);
-        listener_ = listener;
         previewSurfaceListener_ = new(std::nothrow) CameraSurfaceListener(SurfaceType::PREVIEW,
                                                                     previewSurface_,
-                                                                    (listener_));
+                                                                    (listener));
         previewSurface_->RegisterConsumerListener((sptr<IBufferConsumerListener> &)previewSurfaceListener_);
         sptr<IBufferProducer> bp = previewSurface_->GetProducer();
         sptr<Surface> pSurface = Surface::CreateSurfaceAsProducer(bp);
@@ -300,11 +304,10 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdap
             WVLOG_E("Failed to create previewOutput");
             return result;
         }
+        captureParams_ = captureParams;
+        listener_ = listener;
     }
     result = CAMERA_OK;
-    
-    captureParams_ = captureParams;
-    
     return result;
 }
 
@@ -557,6 +560,11 @@ int32_t CameraManagerAdapterImpl::ReleaseCameraManger()
     return CAMERA_OK;
 }
 
+CameraStatus CameraManagerAdapterImpl::GetCameraStatus()
+{
+    return status_;
+}
+
 CameraSurfaceBufferAdapterImpl::CameraSurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer) : buffer_(buffer) {}
 
 int32_t CameraSurfaceBufferAdapterImpl::GetFileDescriptor() const
@@ -613,7 +621,7 @@ uint32_t CameraSurfaceBufferAdapterImpl::GetSize() const
     return buffer_->GetSize();
 }
 
-const sptr<SurfaceBuffer>& CameraSurfaceBufferAdapterImpl::GetBuffer()
+sptr<SurfaceBuffer>& CameraSurfaceBufferAdapterImpl::GetBuffer()
 {
     return buffer_;
 }
@@ -707,13 +715,25 @@ void CameraSurfaceListener::OnBufferAvailable()
             surfaceType_, size, buffer->GetWidth(), buffer->GetHeight(), surface_->GetTransform(),
             (int32_t)rotationInfo.rotation, rotationInfo.isFlipY, rotationInfo.isFlipX);
         auto bufferAdapter = std::make_unique<CameraSurfaceBufferAdapterImpl>(buffer);
+        auto surfaceAdapter = std::make_shared<CameraSurfaceAdapterImpl>(surface_);
         if (listener_ != nullptr) {
-            listener_->OnBufferAvailable(std::move(bufferAdapter), rotationInfo);
+            listener_->OnBufferAvailable(surfaceAdapter, std::move(bufferAdapter), rotationInfo);
         }
-
-        surface_->ReleaseBuffer(buffer, -1);
     } else {
         WVLOG_E("AcquireBuffer failed!");
     }
+}
+
+CameraSurfaceAdapterImpl::CameraSurfaceAdapterImpl(sptr<IConsumerSurface> surface) : cSurface_(surface) {}
+
+int32_t CameraSurfaceAdapterImpl::ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> bufferAdapter,
+                                                int32_t fence)
+{
+    if (!cSurface_ || !bufferAdapter) {
+        WVLOG_E("cSurface_ or bufferAdapter is nullptr");
+        return -1;
+    }
+    auto bufferImpl = static_cast<CameraSurfaceBufferAdapterImpl*>(bufferAdapter.get());
+    return cSurface_->ReleaseBuffer(bufferImpl->GetBuffer(), fence);
 }
 }  // namespace OHOS::NWeb
