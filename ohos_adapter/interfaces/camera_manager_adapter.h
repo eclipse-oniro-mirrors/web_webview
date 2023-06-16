@@ -76,6 +76,11 @@ enum class RangeIDAdapter {
     RANGE_ID_EXP_COMPENSATION,
 };
 
+enum class CameraStatus {
+    OPENED = 0,
+    CLOSED
+};
+
 typedef struct FormatAdapterTag {
     uint32_t width;
     uint32_t height;
@@ -143,11 +148,21 @@ protected:
     CameraSurfaceBufferAdapter& operator=(const CameraSurfaceBufferAdapter&) = delete;
 };
 
+class CameraSurfaceAdapter {
+public:
+    CameraSurfaceAdapter() = default;
+
+    virtual ~CameraSurfaceAdapter() = default;
+
+    virtual int32_t ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> buffer, int32_t fence) = 0;
+};
+
 class CameraBufferListenerAdapter {
 public:
     virtual ~CameraBufferListenerAdapter() = default;
 
-    virtual void OnBufferAvailable(std::unique_ptr<CameraSurfaceBufferAdapter> buffer,
+    virtual void OnBufferAvailable(std::shared_ptr<CameraSurfaceAdapter> surface,
+        std::unique_ptr<CameraSurfaceBufferAdapter> buffer,
         CameraRotationInfo rotationInfo) = 0;
 };
 
@@ -185,6 +200,8 @@ public:
     virtual int32_t RestartSession() = 0;
 
     virtual int32_t StopSession() = 0;
+
+    virtual CameraStatus GetCameraStatus() = 0;
 };
 } // namespace OHOS::NWeb
 
