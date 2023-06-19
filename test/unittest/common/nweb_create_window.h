@@ -35,7 +35,7 @@ public:
     {}
     void OnDestroy() override
     {}
-    void OnFocus() const override
+    void OnFocus(const FocusReason& focusReason = FocusReason::FOCUS_DEFAULT) const override
     {}
     void OnBlur(const BlurReason& blurReason) const override
     {}
