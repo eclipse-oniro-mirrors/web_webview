@@ -114,6 +114,11 @@ enum class BlurReason : int32_t {
     FRAME_DESTROY = 2,
 };
 
+enum class FocusReason : int32_t {
+    FOCUS_DEFAULT = 0,
+    EVENT_REQUEST = 1,
+};
+
 struct OHOS_NWEB_EXPORT NWebDOHConfig {
     /*
      * 0: OFF
@@ -140,7 +145,7 @@ public:
     virtual void OnDestroy() = 0;
 
     /* focus event */
-    virtual void OnFocus() const = 0;
+    virtual void OnFocus(const FocusReason& focusReason = FocusReason::FOCUS_DEFAULT) const = 0;
     virtual void OnBlur(const BlurReason& blurReason) const = 0;
 
     /* event interface */
