@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("../web_aafwk.gni")
 
 ohos_shared_library("nweb_ohos_wrapper") {
   sources = [ "src/nweb_location_wrapper.cpp" ]
@@ -28,11 +27,9 @@ ohos_shared_library("nweb_ohos_wrapper") {
     "c_utils:utils",
     "hilog_native:libhilog",
     "ipc:ipc_core",
+    "location:lbsservice_common",
     "location:locator_sdk",
   ]
-
-  deps =
-      [ "$location_path/frameworks/location_common/common:lbsservice_common" ]
 
   part_name = "webview"
   subsystem_name = "web"
