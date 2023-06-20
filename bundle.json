@@ -33,9 +33,11 @@
                 "battery_manager",
                 "bundle_framework",
                 "c_utils",
+                "camera_framework",
                 "cellular_data",
                 "certificate_manager",
                 "common_event_service",
+                "config_policy",
                 "core_service",
                 "data_share",
                 "eventhandler",
@@ -48,6 +50,7 @@
                 "init",
                 "input",
                 "ipc",
+                "libxml2",
                 "location",
                 "multimedia_image_framework",
                 "napi",
@@ -59,8 +62,7 @@
                 "relational_store",
                 "samgr",
                 "soc_perf",
-                "window_manager",
-                "zlib"
+                "window_manager"
             ],
             "third_party": [
                 "chromium",

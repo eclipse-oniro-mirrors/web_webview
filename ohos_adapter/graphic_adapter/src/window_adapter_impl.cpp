@@ -18,7 +18,7 @@
 #include <cstdarg>
 
 #include "nweb_log.h"
-#include "window.h"
+#include "foundation/graphic/graphic_2d/interfaces/inner_api/surface/window.h"
 
 namespace OHOS::NWeb {
 const int32_t WindowAdapter::SET_BUFFER_GEOMETRY = NativeWindowOperation::SET_BUFFER_GEOMETRY;
