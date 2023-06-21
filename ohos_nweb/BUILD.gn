@@ -70,7 +70,6 @@ ohos_shared_library("libnweb") {
 
   deps = [
     ":web_config",
-    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
     "//third_party/libxml2:libxml2",
   ]
 
@@ -78,6 +77,7 @@ ohos_shared_library("libnweb") {
     "c_utils:utils",
     "config_policy:configpolicy_util",
     "graphic_standard:libcomposer",
+    "graphic_standard:librender_service_client",
     "graphic_standard:surface",
     "hilog_native:libhilog",
     "input:libmmi-client",
