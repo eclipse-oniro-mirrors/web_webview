@@ -59,11 +59,11 @@ ohos_shared_library("webview_napi") {
     "multimedia_image_framework:image",
     "multimedia_image_framework:image_native",
     "napi:ace_napi",
-    "webview:libnweb",
   ]
 
   deps = [
     "../../../ohos_adapter:nweb_ohos_adapter",
+    "../../../ohos_nweb:libnweb",
     "js:js_export",
   ]
 
