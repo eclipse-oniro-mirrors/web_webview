@@ -27,6 +27,7 @@
 #include "nweb_controller_handler.h"
 #include "nweb_data_resubmission_callback.h"
 #include "nweb_date_time_chooser.h"
+#include "nweb_drag_data.h"
 #include "nweb_file_selector_params.h"
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
@@ -581,6 +582,12 @@ public:
         std::shared_ptr<NWebDateTimeChooserCallback> callback) {}
 
     virtual void OnDateTimeChooserClose() {};
+
+    virtual bool OnDragAndDropDataUdmf(std::shared_ptr<NWebDragData> dragData) {
+        return false;
+    }
+
+    virtual void UpdateDragCursor(NWebDragData::DragOperation op) {}
 };
 }  // namespace OHOS::NWeb
 
