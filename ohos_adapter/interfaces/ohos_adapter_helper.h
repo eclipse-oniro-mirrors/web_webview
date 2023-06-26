@@ -43,6 +43,7 @@
 #include "pasteboard_client_adapter.h"
 #include "power_mgr_client_adapter.h"
 #include "print_manager_adapter.h"
+#include "screen_capture_adapter.h"
 #include "soc_perf_client_adapter.h"
 #include "system_properties_adapter.h"
 
@@ -114,6 +115,8 @@ public:
     NetProxyAdapter& GetNetProxyInstance() const;
 
     CameraManagerAdapter& GetCameraManagerAdapter() const;
+
+    std::unique_ptr<ScreenCaptureAdapter> CreateScreenCaptureAdapter() const;
 
 private:
     OhosAdapterHelper() = default;
