@@ -741,6 +741,12 @@ public:
     virtual void NotifyMemoryLevel(int32_t level) = 0;
 
     /**
+     * Notify webview window status.
+     */
+    virtual void OnWebviewHide() const = 0;
+    virtual void OnWebviewShow() const = 0;
+
+    /**
      * Get the drag data.
      *
      * @return the data being dragged.
