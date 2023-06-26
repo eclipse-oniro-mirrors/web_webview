@@ -133,6 +133,8 @@ private:
     const uint32_t RANGE_MIN_INDEX = 0;
     const uint32_t RANGE_MAX_INDEX = 1;
     CameraStatus status_ = CameraStatus::CLOSED;
+    std::mutex mutex_;
+    bool input_inited_flag_ = false;
 };
 
 class CameraSurfaceListener : public IBufferConsumerListener {

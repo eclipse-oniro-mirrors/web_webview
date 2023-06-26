@@ -165,6 +165,7 @@ CameraManagerAdapterImpl& CameraManagerAdapterImpl::GetInstance()
 
 int32_t CameraManagerAdapterImpl::Create()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     WVLOG_I("create CameraManagerAdapterImpl");
     if (cameraManager_ == nullptr) {
         cameraManager_ = CameraManager::GetInstance();
@@ -195,6 +196,7 @@ std::vector<FormatAdapter> CameraManagerAdapterImpl::GetCameraSupportFormats(
 
 void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor> &devicesDiscriptor)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (cameraManager_ == nullptr) {
         WVLOG_E("camera manager is nullptr");
         return;
@@ -233,7 +235,18 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
 
 int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     int32_t result = CAMERA_ERROR;
+
+    if (status_ != CameraStatus::CLOSED) {
+        WVLOG_E("camera is not closed");
+        return result;
+    }
+
+    if (input_inited_flag_) {
+        WVLOG_E("input is already inited");
+        return result;
+    }
 
     if (cameraManager_ == nullptr) {
         WVLOG_E("camera manager is nullptr");
@@ -259,6 +272,7 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
             return result;
         }
         deviceId_ = deviceId;
+        input_inited_flag_ = true;
     }
 
     result = CAMERA_OK;
@@ -268,11 +282,17 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
 int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdapter &captureParams,
     std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     int32_t result = CAMERA_ERROR;
     Size previewSize;
 
+    if (!input_inited_flag_) {
+        WVLOG_E("input is not inited");
+        return result;
+    }
+
     if (cameraManager_ == nullptr) {
-        WVLOG_E("CameraManager::GetInstance() is null");
+        WVLOG_E("camera manager is null");
         return result;
     }
 
@@ -324,6 +344,7 @@ int32_t CameraManagerAdapterImpl::TransToAdapterExposureModes(
 
 int32_t CameraManagerAdapterImpl::GetExposureModes(std::vector<ExposureModeAdapter>& exposureModesAdapter)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get exposure modes");
         return CAMERA_ERROR;
@@ -341,6 +362,7 @@ int32_t CameraManagerAdapterImpl::GetExposureModes(std::vector<ExposureModeAdapt
 
 int32_t CameraManagerAdapterImpl::GetCurrentExposureMode(ExposureModeAdapter& exposureModeAdapter)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get current exposure modes");
         return CAMERA_ERROR;
@@ -370,6 +392,7 @@ int32_t CameraManagerAdapterImpl::GetExposureCompensation(VideoCaptureRangeAdapt
 
 int32_t CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId, VideoCaptureRangeAdapter& rangeVal)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get %{public}d range info", rangeId);
         return CAMERA_ERROR;
@@ -391,6 +414,7 @@ int32_t CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId, Vi
 
 bool CameraManagerAdapterImpl::IsFocusModeSupported(FocusModeAdapter focusMode)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get support focuc mode");
         return false;
@@ -403,6 +427,7 @@ bool CameraManagerAdapterImpl::IsFocusModeSupported(FocusModeAdapter focusMode)
 
 FocusModeAdapter CameraManagerAdapterImpl::GetCurrentFocusMode()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get support focuc mode");
         return FocusModeAdapter::FOCUS_MODE_MANUAL;
@@ -414,6 +439,7 @@ FocusModeAdapter CameraManagerAdapterImpl::GetCurrentFocusMode()
 
 bool CameraManagerAdapterImpl::IsFlashModeSupported(FlashModeAdapter focusMode)
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get support flash mode");
         return false;
@@ -426,9 +452,15 @@ bool CameraManagerAdapterImpl::IsFlashModeSupported(FlashModeAdapter focusMode)
 
 int32_t CameraManagerAdapterImpl::CreateAndStartSession()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     int32_t result = CAMERA_ERROR;
     if (status_ == CameraStatus::OPENED) {
         WVLOG_E("camera is already opened");
+        return result;
+    }
+
+    if ((cameraInput_ == nullptr) || (previewOutput_ == nullptr)) {
+        WVLOG_E("cameraInput_ or previewOutput_ is null");
         return result;
     }
 
@@ -503,6 +535,7 @@ int32_t CameraManagerAdapterImpl::RestartSession()
 
 int32_t CameraManagerAdapterImpl::StopSession()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     WVLOG_I("StopSession");
     if (status_ == CameraStatus::CLOSED) {
         WVLOG_E("camera is already closed when stop session");
@@ -511,6 +544,7 @@ int32_t CameraManagerAdapterImpl::StopSession()
     ReleaseSessionResource(deviceId_);
     ReleaseSession();
     status_ = CameraStatus::CLOSED;
+    input_inited_flag_ = false;
     return CAMERA_OK;
 }
 
@@ -552,16 +586,19 @@ int32_t CameraManagerAdapterImpl::ReleaseSessionResource(const std::string &devi
 
 int32_t CameraManagerAdapterImpl::ReleaseCameraManger()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     WVLOG_I("release camera manger");
     ReleaseSessionResource(deviceId_);
     ReleaseSession();
     cameraManager_ = nullptr;
     status_ = CameraStatus::CLOSED;
+    input_inited_flag_ = false;
     return CAMERA_OK;
 }
 
 CameraStatus CameraManagerAdapterImpl::GetCameraStatus()
 {
+    std::lock_guard<std::mutex> lock(mutex_);
     return status_;
 }
 
