@@ -275,6 +275,10 @@ public:
     {}
     void UnRegisterScreenLockFunction(int32_t windowId) override
     {}
+    std::shared_ptr<NWebDragData> GetOrCreateDragData() override
+    {
+        return nullptr;
+    }
 };
 }
 #endif
