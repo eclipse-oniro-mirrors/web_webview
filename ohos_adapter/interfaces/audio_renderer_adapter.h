@@ -114,6 +114,8 @@ public:
 
     virtual bool Start() = 0;
 
+    virtual bool Pause() = 0;
+
     virtual bool Stop() = 0;
 
     virtual bool Release() = 0;
@@ -126,8 +128,9 @@ public:
 
     virtual float GetVolume() const = 0;
 
-    virtual int32_t SetAudoiRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback,
-        bool audioExclusive) = 0;
+    virtual int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback) = 0;
+
+    virtual void SetInterruptMode(bool audioExclusive) = 0;
 
     virtual bool IsRendererStateRunning() = 0;
 };

@@ -48,6 +48,8 @@ public:
 
     bool Start() override;
 
+    bool Pause() override;
+
     bool Stop() override;
 
     bool Release() override;
@@ -60,8 +62,9 @@ public:
 
     float GetVolume() const override;
 
-    int32_t SetAudoiRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback,
-        bool audioExclusive) override;
+    int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback) override;
+
+    void SetInterruptMode(bool audioExclusive) override;
 
     bool IsRendererStateRunning() override;
 

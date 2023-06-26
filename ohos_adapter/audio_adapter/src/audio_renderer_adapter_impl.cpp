@@ -146,6 +146,15 @@ bool AudioRendererAdapterImpl::Start()
     return audio_renderer_->Start();
 }
 
+bool AudioRendererAdapterImpl::Pause()
+{
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return false;
+    }
+    return audio_renderer_->Pause();
+}
+
 bool AudioRendererAdapterImpl::Stop()
 {
     if (audio_renderer_ == nullptr) {
@@ -200,8 +209,8 @@ float AudioRendererAdapterImpl::GetVolume() const
     return audio_renderer_->GetVolume();
 }
 
-int32_t AudioRendererAdapterImpl::SetAudoiRendererCallback(
-    const std::shared_ptr<AudioRendererCallbackAdapter> &callback, bool audioExclusive)
+int32_t AudioRendererAdapterImpl::SetAudioRendererCallback(
+    const std::shared_ptr<AudioRendererCallbackAdapter> &callback)
 {
     if (callback == nullptr) {
         WVLOG_E("set audio manager interrupt callback is nullptr");
@@ -213,17 +222,25 @@ int32_t AudioRendererAdapterImpl::SetAudoiRendererCallback(
         WVLOG_E("audio rendderer is nullptr");
         return AUDIO_NULL_ERROR;
     }
-    InterruptMode interruptMode = audioExclusive
-                                ? InterruptMode::INDEPENDENT_MODE
-                                : InterruptMode::SHARE_MODE;
-    WVLOG_D("AudioRendererAdapterImpl::SetAudoiRendererCallback audioExclusive: %{public}d", audioExclusive);
-    audio_renderer_->SetInterruptMode(interruptMode);
     int32_t ret = audio_renderer_->SetRendererCallback(callback_);
     if (ret != AudioStandard::SUCCESS) {
         WVLOG_E("audio renderer set callback failed, code: %{public}d", ret);
         return AUDIO_ERROR;
     }
     return AUDIO_OK;
+}
+
+void AudioRendererAdapterImpl::SetInterruptMode(bool audioExclusive)
+{
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return;
+    }
+    InterruptMode interruptMode = audioExclusive
+                                ? InterruptMode::INDEPENDENT_MODE
+                                : InterruptMode::SHARE_MODE;
+    WVLOG_D("AudioRendererAdapterImpl::SetInterruptMode audioExclusive: %{public}d", audioExclusive);
+    audio_renderer_->SetInterruptMode(interruptMode);
 }
 
 bool AudioRendererAdapterImpl::IsRendererStateRunning()
