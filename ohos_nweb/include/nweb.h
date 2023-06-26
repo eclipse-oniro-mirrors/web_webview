@@ -23,6 +23,7 @@
 #include "nweb_export.h"
 
 #include "nweb_download_callback.h"
+#include "nweb_drag_data.h"
 #include "nweb_find_callback.h"
 #include "nweb_history_list.h"
 #include "nweb_javascript_result_callback.h"
@@ -738,6 +739,19 @@ public:
      * @param level the memory level.
      */
     virtual void NotifyMemoryLevel(int32_t level) = 0;
+
+    /**
+     * Notify webview window status.
+     */
+    virtual void OnWebviewHide() const = 0;
+    virtual void OnWebviewShow() const = 0;
+
+    /**
+     * Get the drag data.
+     *
+     * @return the data being dragged.
+    */
+    virtual std::shared_ptr<NWebDragData> GetOrCreateDragData() = 0;
 };
 }  // namespace OHOS::NWeb
 
