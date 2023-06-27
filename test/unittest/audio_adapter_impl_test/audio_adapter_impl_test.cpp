@@ -128,11 +128,11 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     float nowVolume = g_audioRender->GetVolume();
     EXPECT_EQ(nowVolume, volume);
 
-    retNum = g_audioRender->SetAudoiRendererCallback(nullptr, true);
+    retNum = g_audioRender->SetAudioRendererCallback(nullptr);
     EXPECT_NE(retNum, 0);
     std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackMock>();
     EXPECT_NE(callback, nullptr);
-    retNum = g_audioRender->SetAudoiRendererCallback(callback, true);
+    retNum = g_audioRender->SetAudioRendererCallback(callback);
     EXPECT_EQ(retNum, 0);
     g_audioRender->IsRendererStateRunning();
 
@@ -550,18 +550,18 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnInterrupt_016, TestSize.Le
 }
 
 /**
- * @tc.name: NWebAudioAdapterTest_SetAudoiRendererCallback_017.
+ * @tc.name: NWebAudioAdapterTest_SetAudioRendererCallback_017.
  * @tc.desc: Audio adapter unittest.
  * @tc.type: FUNC
  * @tc.require:I5HRX9
  */
-HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_SetAudoiRendererCallback_017, TestSize.Level1)
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_SetAudioRendererCallback_017, TestSize.Level1)
 {
     auto audioRender = std::make_shared<AudioRendererAdapterImpl>();
     ASSERT_NE(audioRender, nullptr);
     std::shared_ptr<AudioRendererCallbackAdapter> callback  = std::make_shared<AudioRendererCallbackMock>();
     ASSERT_NE(callback, nullptr);
-    int32_t retNum = audioRender->SetAudoiRendererCallback(callback, false);
+    int32_t retNum = audioRender->SetAudioRendererCallback(callback);
     EXPECT_NE(retNum, 0);
 }
 }  // namespace OHOS::NWeb
