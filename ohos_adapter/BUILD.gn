@@ -71,7 +71,6 @@ ohos_shared_library("nweb_ohos_adapter") {
   ]
 
   include_dirs = [
-    "//foundation/multimedia/player_framework/interfaces/kits/c",
     "../ohos_nweb/include",
     "aafwk_adapter/include",
     "access_token_adapter/include",
@@ -157,9 +156,6 @@ ohos_shared_library("nweb_ohos_adapter") {
     external_deps += [ "soc_perf:socperf_client" ]
     defines = [ "NWEB_SOC_PERF" ]
   }
-  deps = [
-    "//foundation/multimedia/player_framework/interfaces/kits/c:native_avscreen_capture"
-  ]
   innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
   subsystem_name = "web"

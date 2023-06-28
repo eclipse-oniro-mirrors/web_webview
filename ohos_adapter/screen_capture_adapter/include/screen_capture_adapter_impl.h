@@ -16,15 +16,25 @@
 #ifndef SCREEN_CAPTURE_ADAPTER_IMPL_H
 #define SCREEN_CAPTURE_ADAPTER_IMPL_H
 
-#include <mutex>
-#include <unordered_map>
-
-#include "native_avscreen_capture.h"
+#include "screen_capture.h"
 #include "screen_capture_adapter.h"
 
 namespace OHOS::NWeb {
-using ScreenCaptureCallbackMap =
-    std::unordered_map<OH_AVScreenCapture*, std::shared_ptr<ScreenCaptureCallbackAdapter>>;
+class OHScreenCaptureCallback : public OHOS::Media::ScreenCaptureCallBack {
+public:
+    OHScreenCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter>& callback) : callback_(callback) {}
+    virtual ~OHScreenCaptureCallback() = default;
+
+    void OnError(OHOS::Media::ScreenCaptureErrorType errorType, int32_t errorCode) override;
+
+    void OnAudioBufferAvailable(bool isReady, OHOS::Media::AudioCaptureSourceType type) override;
+
+    void OnVideoBufferAvailable(bool isReady) override;
+
+private:
+    std::shared_ptr<ScreenCaptureCallbackAdapter> callback_;
+};
+
 class ScreenCaptureAdapterImpl : public ScreenCaptureAdapter {
 public:
     ScreenCaptureAdapterImpl() = default;
@@ -34,49 +44,22 @@ public:
 
     int32_t SetMicrophoneEnable(bool enable) override;
 
-    int32_t StartRecord() override;
-
-    int32_t StopRecord() override;
-
     int32_t StartCapture() override;
 
     int32_t StopCapture() override;
 
     int32_t SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter>& callback) override;
 
-    void DelCaptureCallback() override;
-
-    int32_t AcquireAudioBuffer(AudioBufferAdapter& buffer, const AudioCaptureSourceTypeAdapter& type) override;
-
     std::unique_ptr<SurfaceBufferAdapter> AcquireVideoBuffer() override;
-
-    int32_t ReleaseAudioBuffer(const AudioCaptureSourceTypeAdapter& type) override;
 
     int32_t ReleaseVideoBuffer() override;
 
 private:
     void Release();
 
-    static void OnError(OH_AVScreenCapture* screenCapture, int32_t errorCode);
-
-    static void OnAudioBufferAvailable(
-        OH_AVScreenCapture* screenCapture, bool isReady, OH_AudioCaptureSourceType type);
-
-    static void OnVideoBufferAvailable(OH_AVScreenCapture* screenCapture, bool isReady);
-
-    static void AddCaptureCallback(
-        OH_AVScreenCapture* capture, const std::shared_ptr<ScreenCaptureCallbackAdapter>& callback);
-
-    static void DeleteCaptureCallback(OH_AVScreenCapture* capture);
-
-    static std::shared_ptr<ScreenCaptureCallbackAdapter> GetCaptureCallback(OH_AVScreenCapture* capture);
-
 private:
-    OH_AVScreenCapture* screenCapture_ = nullptr;
-
-    static std::mutex mutex_;
-
-    static ScreenCaptureCallbackMap callbackMap_;
+    std::shared_ptr<Media::ScreenCapture> screenCapture_ = nullptr;
+    std::shared_ptr<Media::ScreenCaptureCallBack> screenCaptureCallback_ = nullptr;
 };
 
 }  // namespace OHOS::NWeb

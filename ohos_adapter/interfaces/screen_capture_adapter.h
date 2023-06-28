@@ -16,6 +16,7 @@
 #ifndef SCREEN_CAPTURE_ADAPTER_H
 #define SCREEN_CAPTURE_ADAPTER_H
 
+#include <list>
 #include <memory>
 #include <string>
 
@@ -129,10 +130,8 @@ struct AudioInfoAdapter {
 struct VideoCaptureInfoAdapter {
     /* Display id, should be set while captureMode = CAPTURE_SPECIFIED_SCREEN */
     uint64_t displayId = 0;
-    /* The  ids of mission, should be set while captureMode = CAPTURE_SPECIFIED_WINDOW */
-    int32_t *missionIDs = nullptr;
-    /* Mission ids length, should be set while captureMode = CAPTURE_SPECIFIED_WINDOW */
-    int32_t missionIDsLen = 0;
+    /* The ids of mission, should be set while captureMode = CAPTURE_SPECIFIED_WINDOW */
+    std::list<int32_t> taskIDs;
     /* Video frame width of avscreeencapture */
     int32_t videoFrameWidth = 0;
     /* Video frame height of avscreeencapture */
@@ -173,17 +172,6 @@ struct ScreenCaptureConfigAdapter {
     RecorderInfoAdapter recorderInfo;
 };
 
-struct AudioBufferAdapter {
-    /* Audio buffer memory block  */
-    uint8_t *buf = nullptr;
-    /* Audio buffer memory block size */
-    int32_t size = 0;
-    /* Audio buffer timestamp info */
-    int64_t timestamp = 0;
-    /* Audio capture source type */
-    AudioCaptureSourceTypeAdapter type = AudioCaptureSourceTypeAdapter::SOURCE_INVALID;
-};
-
 class ScreenCaptureCallbackAdapter {
 public:
     ScreenCaptureCallbackAdapter() = default;
@@ -205,23 +193,13 @@ public:
 
     virtual int32_t SetMicrophoneEnable(bool enable) = 0;
 
-    virtual int32_t StartRecord() = 0;
-
-    virtual int32_t StopRecord() = 0;
-
     virtual int32_t StartCapture() = 0;
 
     virtual int32_t StopCapture() = 0;
 
     virtual int32_t SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter>& callback) = 0;
 
-    virtual void DelCaptureCallback() = 0;
-
-    virtual int32_t AcquireAudioBuffer(AudioBufferAdapter& buffer, const AudioCaptureSourceTypeAdapter& type) = 0;
-
     virtual std::unique_ptr<SurfaceBufferAdapter> AcquireVideoBuffer() = 0;
-
-    virtual int32_t ReleaseAudioBuffer(const AudioCaptureSourceTypeAdapter& type) = 0;
 
     virtual int32_t ReleaseVideoBuffer() = 0;
 };
