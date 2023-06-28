@@ -57,5 +57,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     EXPECT_NE(deviceInfo, "");
     int32_t result = SystemPropertiesAdapterImpl::GetInstance().GetDeviceInfoMajorVersion();
     EXPECT_NE(result, -1);
+    SystemPropertiesAdapterImpl::GetInstance().GetResourceUseHapPathEnable();
+    SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
 }
 } // namespace OHOS
