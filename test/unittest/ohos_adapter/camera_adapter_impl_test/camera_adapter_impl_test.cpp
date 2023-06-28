@@ -199,6 +199,8 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraSurfaceListener_003,
     EXPECT_TRUE(info.isFlipX);
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_ROTATE_BUTT);
     EXPECT_FALSE(info.isFlipX);
+    listener->surface_ = nullptr;
+    listener->OnBufferAvailable();
 }
 
 /**
@@ -404,5 +406,25 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_008, TestS
     EXPECT_EQ(focusMode, FocusModeAdapter::FOCUS_MODE_MANUAL);
     isMode = adapter.IsFlashModeSupported(FlashModeAdapter::FLASH_MODE_OPEN);
     EXPECT_FALSE(isMode);
+}
+
+/**
+ * @tc.name: CameraAdapterImplTest_CameraSurfaceAdapterImpl_009
+ * @tc.desc: CameraSurfaceAdapterImpl.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraSurfaceAdapterImpl_009, TestSize.Level1)
+{
+    sptr<IConsumerSurface> surface = IConsumerSurface::Create();
+    EXPECT_NE(surface, nullptr);
+    auto listener = std::make_shared<CameraSurfaceAdapterImpl>(surface);
+    EXPECT_NE(listener, nullptr);
+    listener->ReleaseBuffer(nullptr, -1);
+    int32_t result = listener->ReleaseBuffer(nullptr, -1);
+    EXPECT_EQ(result, -1);
+    listener->cSurface_ = nullptr;
+    result = listener->ReleaseBuffer(nullptr, -1);
+    EXPECT_EQ(result, -1);
 }
 } // namespace OHOS
