@@ -27,9 +27,11 @@
 using namespace testing;
 using namespace testing::ext;
 using namespace OHOS;
+using namespace OHOS::Rosen;
 
 namespace OHOS::NWeb {
 namespace {
+sptr<Surface> g_surface = nullptr;
 const bool RESULT_OK = true;
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
@@ -55,7 +57,14 @@ public:
 };
 
 void NwebHelperTest::SetUpTestCase(void)
-{}
+{
+    RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "webTestSurfaceName";
+    auto surfaceNode = RSSurfaceNode::Create(config, false);
+    EXPECT_NE(surfaceNode, nullptr);
+    g_surface = surfaceNode->GetSurface();
+    EXPECT_NE(g_surface, nullptr);
+}
 
 void NwebHelperTest::TearDownTestCase(void)
 {}
@@ -200,5 +209,31 @@ HWTEST_F(NwebHelperTest, NWebHelper_TryPreReadLib_004, TestSize.Level1)
     NWebHelper::Instance().TryPreReadLib(true, MOCK_INSTALLATION_DIR);
     bool result = NWebHelper::Instance().Init(false);
     EXPECT_TRUE(result);
+    sptr<Surface> surface = nullptr;
+    std::shared_ptr<NWeb> nweb =
+        NWebAdapterHelper::Instance().CreateNWeb(surface, GetInitArgs(),
+        DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    EXPECT_EQ(nweb, nullptr);
+    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs(),
+                                                    DEFAULT_WIDTH, NWEB_MAX_WIDTH);
+    EXPECT_EQ(nweb, nullptr);
+    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs(),
+                                                    NWEB_MAX_WIDTH, DEFAULT_HEIGHT);
+    EXPECT_EQ(nweb, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_GetConfigPath_005
+ * @tc.desc: GetConfigPath.
+ * @tc.type: FUNC
+ * @tc.require: AR000GGHJ8
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
+{
+    std::string configFileName = "test";
+    std::string figPath = NWebAdapterHelper::Instance().GetConfigPath(configFileName);
+    EXPECT_FALSE(figPath.empty());
+    NWebCreateInfo createInfo;
+    NWebAdapterHelper::Instance().ParseConfig(createInfo);
 }
 } // namespace OHOS::NWeb
