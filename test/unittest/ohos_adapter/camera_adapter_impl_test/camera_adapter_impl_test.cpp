@@ -281,6 +281,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
         .enableFaceDetection = true,
     };
     std::shared_ptr<CameraBufferListenerAdapter> listener = std::make_shared<CameraBufferListenerAdapterMock>();
+    adapter.input_inited_flag_ = true;
     result = adapter.InitPreviewOutput(captureParams, listener);
     EXPECT_EQ(result, 0);
     result = adapter.CreateAndStartSession();
@@ -338,6 +339,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureMode
         .enableFaceDetection = true,
     };
     std::shared_ptr<CameraBufferListenerAdapter> listener = std::make_shared<CameraBufferListenerAdapterMock>();
+    adapter.input_inited_flag_ = true;
     result = adapter.InitPreviewOutput(captureParams, listener);
     EXPECT_EQ(result, 0);
     result = adapter.CreateAndStartSession();
