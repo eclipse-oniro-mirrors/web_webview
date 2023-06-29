@@ -17,10 +17,6 @@
 
 #include "nweb_log.h"
 
-namespace {
-constexpr int MAX_STRING_LENGTH = 40960;
-}
-
 namespace OHOS {
 namespace NWeb {
 napi_value NapiParseUtils::CreateEnumConstructor(napi_env env, napi_callback_info info)
@@ -79,16 +75,26 @@ bool NapiParseUtils::ParseString(napi_env env, napi_value argv, std::string& out
         return false;
     }
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
-    if (bufferSize > MAX_STRING_LENGTH) {
+    if (bufferSize + 1 > UINT_MAX) {
+        WVLOG_E("String length is too long");
         return false;
     }
-    char stringValue[bufferSize + 1];
+    char *stringValue = new (std::nothrow) char[bufferSize + 1];
+    if (stringValue == nullptr) {
+        WVLOG_E("new String failed");
+        return false;
+    }
     size_t jsStringLength = 0;
     napi_get_value_string_utf8(env, argv, stringValue, bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
+        delete [] stringValue;
+        stringValue = nullptr;
         return false;
     }
-    outValue = stringValue;
+    std::string message(stringValue);
+    outValue = message;
+    delete [] stringValue;
+    stringValue = nullptr;
     return true;
 }
 
