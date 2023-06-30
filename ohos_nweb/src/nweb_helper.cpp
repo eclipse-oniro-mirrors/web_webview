@@ -37,15 +37,12 @@ namespace {
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
 const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
 #if defined(webview_arm64)
-const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm64";
 const std::string RELATIVE_PATH_FOR_HAP = "NWeb.hap!/libs/arm64-v8a";
 const std::string RELATIVE_PATH_FOR_COMPRESSED_HAP = "libs/arm64-v8a";
 #elif defined(webview_x86_64)
-const std::string RELATIVE_PATH_FOR_MOCK = "libs/x86_64";
 const std::string RELATIVE_PATH_FOR_HAP = "NWeb.hap!/libs/x86_64";
 const std::string RELATIVE_PATH_FOR_COMPRESSED_HAP = "libs/x86_64";
 #else
-const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm";
 const std::string RELATIVE_PATH_FOR_HAP = "NWeb.hap!/libs/armeabi-v7a";
 const std::string RELATIVE_PATH_FOR_COMPRESSED_HAP = "libs/armeabi-v7a";
 #endif
@@ -92,7 +89,7 @@ bool NWebHelper::LoadLib(bool from_ark)
     if (from_ark) {
         loadLibPath = GetNWebHapLibsPath();
     } else {
-        loadLibPath = bundlePath_ + "/" + RELATIVE_PATH_FOR_MOCK;
+        loadLibPath = GetNWebHapLibsPath();
     }
     Dl_namespace dlns;
     dlns_init(&dlns, "nweb_ns");
@@ -119,7 +116,7 @@ bool NWebHelper::LoadLib(bool from_ark)
     if (from_ark) {
         loadLibPath = GetNWebHapLibsPath();
     } else {
-        loadLibPath = bundlePath_ + "/" + RELATIVE_PATH_FOR_MOCK;
+        loadLibPath = GetNWebHapLibsPath();
     }
     const std::string libPathWebEngine = loadLibPath + "/" + LIB_NAME_WEB_ENGINE;
     void *libHandleWebEngine = ::dlopen(libPathWebEngine.c_str(), RTLD_NOW);
