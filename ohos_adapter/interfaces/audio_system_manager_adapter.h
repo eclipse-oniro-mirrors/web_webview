@@ -16,6 +16,7 @@
 #ifndef AUDIO_SYSTEM_MANAGER_ADAPTER_H
 #define AUDIO_SYSTEM_MANAGER_ADAPTER_H
 
+#include <vector>
 #include "audio_renderer_adapter.h"
 
 namespace OHOS::NWeb {
@@ -38,12 +39,29 @@ enum class AudioAdapterStreamType {
     STREAM_ALL = 100
 };
 
+enum AdapterDeviceFlag {
+    NONE_DEVICES_FLAG = 0,
+    OUTPUT_DEVICES_FLAG = 1,
+    INPUT_DEVICES_FLAG = 2,
+    ALL_DEVICES_FLAG = 3,
+    DISTRIBUTED_OUTPUT_DEVICES_FLAG = 4,
+    DISTRIBUTED_INPUT_DEVICES_FLAG = 8,
+    ALL_DISTRIBUTED_DEVICES_FLAG = 12,
+    ALL_L_D_DEVICES_FLAG = 15,
+    DEVICE_FLAG_MAX
+};
+
 struct AudioAdapterInterrupt {
     AudioAdapterStreamUsage streamUsage;
     AudioAdapterContentType contentType;
     AudioAdapterStreamType streamType;
     uint32_t sessionID;
     bool pauseWhenDucked;
+};
+
+struct AudioAdapterDeviceDesc {
+    int32_t deviceId;
+    std::string deviceName;
 };
 
 class AudioManagerCallbackAdapter {
@@ -74,6 +92,10 @@ public:
     virtual int32_t SetAudioManagerInterruptCallback(const std::shared_ptr<AudioManagerCallbackAdapter> &callback) = 0;
 
     virtual int32_t UnsetAudioManagerInterruptCallback() = 0;
+
+    virtual std::vector<AudioAdapterDeviceDesc> GetDevices(AdapterDeviceFlag flag) const = 0;
+
+    virtual int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const = 0;
 };
 } // namespace OHOS::NWeb
 

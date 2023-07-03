@@ -21,6 +21,7 @@
 #include "aafwk_app_mgr_client_adapter.h"
 #include "access_token_adapter.h"
 #include "audio_renderer_adapter.h"
+#include "audio_capturer_adapter.h"
 #include "audio_system_manager_adapter.h"
 #include "battery_mgr_client_adapter.h"
 #include "camera_manager_adapter.h"
@@ -67,6 +68,8 @@ public:
     PasteBoardClientAdapter& GetPasteBoard() const;
 
     std::unique_ptr<AudioRendererAdapter> CreateAudioRendererAdapter();
+
+    std::unique_ptr<AudioCapturerAdapter> CreateAudioCapturerAdapter();
 
     AudioSystemManagerAdapter& GetAudioSystemManager() const;
 
