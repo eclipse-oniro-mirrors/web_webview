@@ -311,6 +311,23 @@ void NWebHelper::SetHttpDns(const NWebDOHConfig &config)
     setHttpDnsFunc(config);
 }
 
+using PrepareForPageLoadFunc = void (*)(std::string, bool, int32_t);
+void NWebHelper::PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets)
+{
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
+        return;
+    }
+    const std::string PREPARE_FOR_PAGE_LOAD_FUNC_NAME = "PrepareForPageLoad";
+    PrepareForPageLoadFunc prepareForPageLoadFunc =
+        reinterpret_cast<PrepareForPageLoadFunc>(dlsym(libHandleWebEngine_, PREPARE_FOR_PAGE_LOAD_FUNC_NAME.c_str()));
+    if (prepareForPageLoadFunc == nullptr) {
+        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", PREPARE_FOR_PAGE_LOAD_FUNC_NAME.c_str());
+        return;
+    }
+    prepareForPageLoadFunc(url, preconnectable, numSockets);
+}
+
 using GetDataBaseFunc = NWebDataBase *(*)();
 NWebDataBase *NWebHelper::GetDataBase()
 {
