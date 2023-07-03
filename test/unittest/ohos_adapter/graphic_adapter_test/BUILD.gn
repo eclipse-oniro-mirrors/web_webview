@@ -45,7 +45,7 @@ ohos_unittest("graphic_adapter_test") {
     "ability_runtime:app_manager",
     "graphic_standard:libcomposer",
     "graphic_standard:surface",
-    "hilog_native:libhilog",
+    "hilog:libhilog",
     "relational_store:native_rdb",
   ]
 }
