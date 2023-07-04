@@ -30,6 +30,7 @@
                 "ability_runtime",
                 "access_token",
                 "audio_framework",
+                "av_session",
                 "background_task_mgr",
                 "battery_manager",
                 "bundle_framework",
