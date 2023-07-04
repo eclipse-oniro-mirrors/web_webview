@@ -25,7 +25,7 @@ ohos_shared_library("nweb_ohos_wrapper") {
 
   external_deps = [
     "c_utils:utils",
-    "hilog_native:libhilog",
+    "hilog:libhilog",
     "ipc:ipc_core",
     "location:lbsservice_common",
     "location:locator_sdk",
