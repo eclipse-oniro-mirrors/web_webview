@@ -80,7 +80,7 @@ ohos_shared_library("libnweb") {
     "graphic_standard:libcomposer",
     "graphic_standard:librender_service_client",
     "graphic_standard:surface",
-    "hilog_native:libhilog",
+    "hilog:libhilog",
     "input:libmmi-client",
     "ipc:ipc_core",
     "window_manager:libwm",
