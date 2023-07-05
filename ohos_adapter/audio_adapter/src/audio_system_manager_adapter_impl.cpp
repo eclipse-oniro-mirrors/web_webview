@@ -23,28 +23,70 @@
 
 namespace OHOS::NWeb {
 const std::unordered_map<AudioAdapterStreamType, AudioStreamType> STREAM_TYPE_MAP = {
-    {AudioAdapterStreamType::STREAM_DEFAULT, AudioStreamType::STREAM_DEFAULT},
-    {AudioAdapterStreamType::STREAM_VOICE_CALL, AudioStreamType::STREAM_VOICE_CALL},
-    {AudioAdapterStreamType::STREAM_MUSIC, AudioStreamType::STREAM_MUSIC},
-    {AudioAdapterStreamType::STREAM_RING, AudioStreamType::STREAM_RING},
-    {AudioAdapterStreamType::STREAM_MEDIA, AudioStreamType::STREAM_MEDIA},
-    {AudioAdapterStreamType::STREAM_VOICE_ASSISTANT, AudioStreamType::STREAM_VOICE_ASSISTANT},
-    {AudioAdapterStreamType::STREAM_SYSTEM, AudioStreamType::STREAM_SYSTEM},
-    {AudioAdapterStreamType::STREAM_ALARM, AudioStreamType::STREAM_ALARM},
-    {AudioAdapterStreamType::STREAM_NOTIFICATION, AudioStreamType::STREAM_NOTIFICATION},
-    {AudioAdapterStreamType::STREAM_BLUETOOTH_SCO, AudioStreamType::STREAM_BLUETOOTH_SCO},
-    {AudioAdapterStreamType::STREAM_ENFORCED_AUDIBLE, AudioStreamType::STREAM_ENFORCED_AUDIBLE},
-    {AudioAdapterStreamType::STREAM_DTMF, AudioStreamType::STREAM_DTMF},
-    {AudioAdapterStreamType::STREAM_TTS, AudioStreamType::STREAM_TTS},
-    {AudioAdapterStreamType::STREAM_ACCESSIBILITY, AudioStreamType::STREAM_ACCESSIBILITY},
-    {AudioAdapterStreamType::STREAM_RECORDING, AudioStreamType::STREAM_RECORDING},
-    {AudioAdapterStreamType::STREAM_ALL, AudioStreamType::STREAM_ALL},
+    { AudioAdapterStreamType::STREAM_DEFAULT, AudioStreamType::STREAM_DEFAULT },
+    { AudioAdapterStreamType::STREAM_VOICE_CALL, AudioStreamType::STREAM_VOICE_CALL },
+    { AudioAdapterStreamType::STREAM_MUSIC, AudioStreamType::STREAM_MUSIC },
+    { AudioAdapterStreamType::STREAM_RING, AudioStreamType::STREAM_RING },
+    { AudioAdapterStreamType::STREAM_MEDIA, AudioStreamType::STREAM_MEDIA },
+    { AudioAdapterStreamType::STREAM_VOICE_ASSISTANT, AudioStreamType::STREAM_VOICE_ASSISTANT },
+    { AudioAdapterStreamType::STREAM_SYSTEM, AudioStreamType::STREAM_SYSTEM },
+    { AudioAdapterStreamType::STREAM_ALARM, AudioStreamType::STREAM_ALARM },
+    { AudioAdapterStreamType::STREAM_NOTIFICATION, AudioStreamType::STREAM_NOTIFICATION },
+    { AudioAdapterStreamType::STREAM_BLUETOOTH_SCO, AudioStreamType::STREAM_BLUETOOTH_SCO },
+    { AudioAdapterStreamType::STREAM_ENFORCED_AUDIBLE, AudioStreamType::STREAM_ENFORCED_AUDIBLE },
+    { AudioAdapterStreamType::STREAM_DTMF, AudioStreamType::STREAM_DTMF },
+    { AudioAdapterStreamType::STREAM_TTS, AudioStreamType::STREAM_TTS },
+    { AudioAdapterStreamType::STREAM_ACCESSIBILITY, AudioStreamType::STREAM_ACCESSIBILITY },
+    { AudioAdapterStreamType::STREAM_RECORDING, AudioStreamType::STREAM_RECORDING },
+    { AudioAdapterStreamType::STREAM_ALL, AudioStreamType::STREAM_ALL },
 };
 
-AudioManagerCallbackAdapterImpl::AudioManagerCallbackAdapterImpl(
-    std::shared_ptr<AudioManagerCallbackAdapter> cb) : cb_(cb) {};
+const std::unordered_map<AdapterDeviceFlag, DeviceFlag> DEVICE_FLAG_MAP = {
+    { AdapterDeviceFlag::NONE_DEVICES_FLAG, DeviceFlag::NONE_DEVICES_FLAG },
+    { AdapterDeviceFlag::OUTPUT_DEVICES_FLAG, DeviceFlag::OUTPUT_DEVICES_FLAG },
+    { AdapterDeviceFlag::INPUT_DEVICES_FLAG, DeviceFlag::INPUT_DEVICES_FLAG },
+    { AdapterDeviceFlag::ALL_DEVICES_FLAG, DeviceFlag::ALL_DEVICES_FLAG },
+    { AdapterDeviceFlag::DISTRIBUTED_OUTPUT_DEVICES_FLAG, DeviceFlag::DISTRIBUTED_OUTPUT_DEVICES_FLAG },
+    { AdapterDeviceFlag::DISTRIBUTED_INPUT_DEVICES_FLAG, DeviceFlag::DISTRIBUTED_INPUT_DEVICES_FLAG },
+    { AdapterDeviceFlag::ALL_DISTRIBUTED_DEVICES_FLAG, DeviceFlag::ALL_DISTRIBUTED_DEVICES_FLAG },
+    { AdapterDeviceFlag::ALL_L_D_DEVICES_FLAG, DeviceFlag::ALL_L_D_DEVICES_FLAG },
+    { AdapterDeviceFlag::DEVICE_FLAG_MAX, DeviceFlag::DEVICE_FLAG_MAX },
+};
 
-void AudioManagerCallbackAdapterImpl::OnInterrupt(const InterruptAction &interruptAction)
+const std::string DEVICE_TYPE_NONE = "device/none";
+const std::string DEVICE_TYPE_INVALID = "device/invalid";
+const std::string DEVICE_TYPE_EARPIECE = "device/earpiece";
+const std::string DEVICE_TYPE_SPEAKER = "device/speaker";
+const std::string DEVICE_TYPE_WIRED_HEADSET = "device/wired_headset";
+const std::string DEVICE_TYPE_WIRED_HEADPHONES = "device/wired_headphones";
+const std::string DEVICE_TYPE_BLUETOOTH_SCO = "device/bluetooth_sco";
+const std::string DEVICE_TYPE_BLUETOOTH_A2DP = "device/bluetooth_a2dp";
+const std::string DEVICE_TYPE_MIC = "device/mic";
+const std::string DEVICE_TYPE_USB_HEADSET = "device/usb_headset";
+const std::string DEVICE_TYPE_FILE_SINK = "device/file_sink";
+const std::string DEVICE_TYPE_FILE_SOURCE = "device/file_source";
+const std::string DEVICE_TYPE_MAX = "device/max";
+
+const std::unordered_map<DeviceType, std::string> DEVICE_TYPE_MAP = {
+    { DeviceType::DEVICE_TYPE_NONE, DEVICE_TYPE_NONE },
+    { DeviceType::DEVICE_TYPE_INVALID, DEVICE_TYPE_INVALID },
+    { DeviceType::DEVICE_TYPE_EARPIECE, DEVICE_TYPE_EARPIECE },
+    { DeviceType::DEVICE_TYPE_SPEAKER, DEVICE_TYPE_SPEAKER },
+    { DeviceType::DEVICE_TYPE_WIRED_HEADSET, DEVICE_TYPE_WIRED_HEADSET },
+    { DeviceType::DEVICE_TYPE_WIRED_HEADPHONES, DEVICE_TYPE_WIRED_HEADPHONES },
+    { DeviceType::DEVICE_TYPE_BLUETOOTH_SCO, DEVICE_TYPE_BLUETOOTH_SCO },
+    { DeviceType::DEVICE_TYPE_BLUETOOTH_A2DP, DEVICE_TYPE_BLUETOOTH_A2DP },
+    { DeviceType::DEVICE_TYPE_MIC, DEVICE_TYPE_MIC },
+    { DeviceType::DEVICE_TYPE_USB_HEADSET, DEVICE_TYPE_USB_HEADSET },
+    { DeviceType::DEVICE_TYPE_FILE_SINK, DEVICE_TYPE_FILE_SINK },
+    { DeviceType::DEVICE_TYPE_FILE_SOURCE, DEVICE_TYPE_FILE_SOURCE },
+    { DeviceType::DEVICE_TYPE_MAX, DEVICE_TYPE_MAX },
+};
+
+AudioManagerCallbackAdapterImpl::AudioManagerCallbackAdapterImpl(std::shared_ptr<AudioManagerCallbackAdapter> cb)
+    : cb_(cb) {};
+
+void AudioManagerCallbackAdapterImpl::OnInterrupt(const InterruptAction& interruptAction)
 {
     if (!cb_) {
         return;
@@ -87,7 +129,7 @@ bool AudioSystemManagerAdapterImpl::HasAudioInputDevices() const
     return true;
 }
 
-int32_t AudioSystemManagerAdapterImpl::RequestAudioFocus(const AudioAdapterInterrupt &audioInterrupt)
+int32_t AudioSystemManagerAdapterImpl::RequestAudioFocus(const AudioAdapterInterrupt& audioInterrupt)
 {
     AudioInterrupt interruptParams;
     interruptParams.streamUsage = AudioRendererAdapterImpl::GetAudioStreamUsage(audioInterrupt.streamUsage);
@@ -102,7 +144,7 @@ int32_t AudioSystemManagerAdapterImpl::RequestAudioFocus(const AudioAdapterInter
     return AUDIO_OK;
 }
 
-int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const AudioAdapterInterrupt &audioInterrupt)
+int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const AudioAdapterInterrupt& audioInterrupt)
 {
     AudioInterrupt interruptParams;
     interruptParams.streamUsage = AudioRendererAdapterImpl::GetAudioStreamUsage(audioInterrupt.streamUsage);
@@ -118,7 +160,7 @@ int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const AudioAdapterInter
 }
 
 int32_t AudioSystemManagerAdapterImpl::SetAudioManagerInterruptCallback(
-    const std::shared_ptr<AudioManagerCallbackAdapter> &callback)
+    const std::shared_ptr<AudioManagerCallbackAdapter>& callback)
 {
     if (callback == nullptr) {
         WVLOG_E("set audio manager interrupt callback is nullptr");
@@ -145,6 +187,50 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return AUDIO_OK;
 }
 
+std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag) const
+{
+    auto item = DEVICE_FLAG_MAP.find(flag);
+    if (item == DEVICE_FLAG_MAP.end()) {
+        WVLOG_E("audio device type not found");
+        return std::vector<AudioAdapterDeviceDesc>();
+    }
+    auto deviceFlag = item->second;
+    auto audioDeviceList = AudioSystemManager::GetInstance()->GetDevices(deviceFlag);
+    std::vector<AudioAdapterDeviceDesc> audioAdapterDeviceList;
+    for (auto audioDevice : audioDeviceList) {
+        AudioAdapterDeviceDesc desc;
+        desc.deviceId = audioDevice->deviceId_;
+        auto deviceTypeKey = DEVICE_TYPE_MAP.find(audioDevice->deviceType_);
+        if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
+            desc.deviceName = deviceTypeKey->second;
+        }
+        audioAdapterDeviceList.emplace_back(desc);
+    }
+    return audioAdapterDeviceList;
+}
+
+int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const
+{
+    WVLOG_I("AudioSystemManagerAdapterImpl::SelectAudioDevice isInput: %{public}s", isInput ? "true" : "false");
+    auto item = isInput ? DEVICE_FLAG_MAP.find(AdapterDeviceFlag::INPUT_DEVICES_FLAG)
+                        : DEVICE_FLAG_MAP.find(AdapterDeviceFlag::OUTPUT_DEVICES_FLAG);
+    if (item == DEVICE_FLAG_MAP.end()) {
+        WVLOG_E("audio device type not found");
+        return -1;
+    }
+    auto deviceFlag = item->second;
+    auto audioDeviceList = AudioSystemManager::GetInstance()->GetDevices(deviceFlag);
+    for (auto device : audioDeviceList) {
+        if (device->deviceId_ == desc.deviceId) {
+            std::vector<sptr<AudioDeviceDescriptor>> selectedAudioDevice { device };
+            return isInput ? AudioSystemManager::GetInstance()->SelectInputDevice(selectedAudioDevice)
+                           : AudioSystemManager::GetInstance()->SelectOutputDevice(selectedAudioDevice);
+        }
+    }
+    WVLOG_E("can't find any device by audio device id");
+    return -1;
+}
+
 AudioStreamType AudioSystemManagerAdapterImpl::GetStreamType(AudioAdapterStreamType streamType)
 {
     auto item = STREAM_TYPE_MAP.find(streamType);
@@ -154,4 +240,4 @@ AudioStreamType AudioSystemManagerAdapterImpl::GetStreamType(AudioAdapterStreamT
     }
     return item->second;
 }
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb

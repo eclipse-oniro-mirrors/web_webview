@@ -55,6 +55,10 @@ public:
 
     int32_t UnsetAudioManagerInterruptCallback() override;
 
+    std::vector<AudioAdapterDeviceDesc> GetDevices(AdapterDeviceFlag flag) const override;
+
+    int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const override;
+
     static AudioStreamType GetStreamType(AudioAdapterStreamType streamType);
 
 private:
