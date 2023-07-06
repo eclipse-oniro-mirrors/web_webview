@@ -588,6 +588,8 @@ public:
     }
 
     virtual void UpdateDragCursor(NWebDragData::DragOperation op) {}
+
+    virtual void OnOverScroll(float xOffset, float yOffset) {}
 };
 }  // namespace OHOS::NWeb
 
