@@ -41,7 +41,7 @@ ohos_unittest("nweb_pasteboard_adapter_test") {
     "ability_base:base",
     "ability_base:want",
     "c_utils:utils",
-    "multimedia_image_framework:image_native",
+    "image_framework:image_native",
     "pasteboard:pasteboard_client",
   ]
 }
