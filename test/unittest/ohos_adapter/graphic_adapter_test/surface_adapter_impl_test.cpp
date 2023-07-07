@@ -171,7 +171,7 @@ HWTEST(PixelFormatAdapterTest, HandlesNormalScene, TestSize.Level1)
 {
     EXPECT_NE(PixelFormatAdapter::PIXEL_FMT_RGBA_8888, 0);
     EXPECT_NE(PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, 0);
-    EXPECT_EQ(PixelFormatAdapter::PIXEL_FMT_RGBA_8888, PixelFormat::PIXEL_FMT_RGBA_8888);
-    EXPECT_EQ(PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, PixelFormat::PIXEL_FMT_YCBCR_420_SP);
+    EXPECT_EQ(PixelFormatAdapter::PIXEL_FMT_RGBA_8888, GRAPHIC_PIXEL_FMT_RGBA_8888);
+    EXPECT_EQ(PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, GRAPHIC_PIXEL_FMT_YCBCR_420_SP);
 }
 } // namespace OHOS::NWeb
