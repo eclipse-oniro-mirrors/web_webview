@@ -42,7 +42,7 @@ class IMFTextListenerTest : public IMFTextListenerAdapter {
 public:
     IMFTextListenerTest() = default;
     ~IMFTextListenerTest() override = default;
-    void InsertText(const std::u16string &text) override
+    void InsertText(const std::u16string& text) override
     {
         WVLOG_I("test InsertText");
         isInsertText_ = true;
@@ -97,11 +97,30 @@ public:
         WVLOG_I("test HandleSelect");
         isHandleSelect_ = true;
     }
+    int32_t GetTextIndexAtCursor() override
+    {
+        WVLOG_I("test GetTextIndexAtCursor");
+        isGetTextIndexAtCursor_ = true;
+        return 0
+    }
+    std::u16string GetLeftTextOfCursor(int32_t number) override
+    {
+        WVLOG_I("test GetLeftTextOfCursor");
+        isGetLeftTextOfCursor_ = true;
+        return u"";
+    }
+    std::u16string GetRightTextOfCursor(int32_t number) override
+    {
+        WVLOG_I("test GetRightTextOfCursor");
+        isGetRightTextOfCursor_ = true;
+        return u"";
+    }
     bool VerifyAllSuccess()
     {
         return isInsertText_ && isDeleteForward_ && isDeleteBackward_ && isSendKeyEventFromInputMethod_ &&
                isSendKeyboardStatus_ && isSendFunctionKey_ && isSetKeyboardStatus_ && isMoveCursor_ &&
-               isHandleSetSelection_ && isHandleExtendAction_ && isHandleSelect_;
+               isHandleSetSelection_ && isHandleExtendAction_ && isHandleSelect_ && isGetTextIndexAtCursor_ &&
+               isGetLeftTextOfCursor_ && isGetRightTextOfCursor_;
     }
 
 private:
@@ -116,6 +135,9 @@ private:
     bool isHandleSetSelection_ = false;
     bool isHandleExtendAction_ = false;
     bool isHandleSelect_ = false;
+    bool isGetTextIndexAtCursor_ = false;
+    bool isGetLeftTextOfCursor_ = false;
+    bool isGetRightTextOfCursor_ = false;
 };
 
 void NWebIMFAdapterTest::SetUpTestCase(void)
@@ -238,6 +260,9 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_005, TestSize.Lev
     listenerTest->HandleSetSelection(0, 0);
     listenerTest->HandleExtendAction(0);
     listenerTest->HandleSelect(0, 0);
+    listenerTest->GetTextIndexAtCursor();
+    listenerTest->GetLeftTextOfCursor(0);
+    listenerTest->GetRightTextOfCursor(0);
     EXPECT_EQ(listener->VerifyAllSuccess(), true);
 }
 
@@ -265,5 +290,8 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
     listenerTest->HandleSetSelection(0, 0);
     listenerTest->HandleExtendAction(0);
     listenerTest->HandleSelect(0, 0);
+    listenerTest->GetTextIndexAtCursor();
+    listenerTest->GetLeftTextOfCursor(0);
+    listenerTest->GetRightTextOfCursor(0);
 }
 } // namespace OHOS::NWeb
