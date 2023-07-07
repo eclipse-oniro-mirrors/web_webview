@@ -48,6 +48,12 @@ public:
 
     void HandleSelect(int32_t keyCode, int32_t cursorMoveSkip) override;
 
+    int32_t GetTextIndexAtCursor() override;
+
+    std::u16string GetLeftTextOfCursor(int32_t number) override;
+
+    std::u16string GetRightTextOfCursor(int32_t number) override;
+
 private:
     std::shared_ptr<IMFTextListenerAdapter> listener_ = nullptr;
 };
