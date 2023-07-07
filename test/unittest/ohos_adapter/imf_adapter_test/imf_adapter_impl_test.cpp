@@ -101,7 +101,7 @@ public:
     {
         WVLOG_I("test GetTextIndexAtCursor");
         isGetTextIndexAtCursor_ = true;
-        return 0
+        return 0;
     }
     std::u16string GetLeftTextOfCursor(int32_t number) override
     {
