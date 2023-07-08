@@ -590,6 +590,14 @@ public:
     virtual void UpdateDragCursor(NWebDragData::DragOperation op) {}
 
     virtual void OnOverScroll(float xOffset, float yOffset) {}
+
+    /**
+     * @brief Ask for the screen capture permission.
+     *
+     * @param request std::shared_ptr<NWebScreenCaptureAccessRequest>: A request to ask for the
+     * screen capture permission.
+     */
+    virtual void OnScreenCaptureRequest(std::shared_ptr<NWebScreenCaptureAccessRequest> request) {}
 };
 }  // namespace OHOS::NWeb
 
