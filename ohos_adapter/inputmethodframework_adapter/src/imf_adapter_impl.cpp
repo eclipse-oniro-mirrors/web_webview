@@ -162,6 +162,30 @@ void IMFTextListenerAdapterImpl::HandleSelect(int32_t keyCode, int32_t cursorMov
     }
 }
 
+int32_t IMFTextListenerAdapterImpl::GetTextIndexAtCursor()
+{
+    if (listener_) {
+        return listener_->GetTextIndexAtCursor();
+    }
+    return -1;
+}
+
+std::u16string IMFTextListenerAdapterImpl::GetLeftTextOfCursor(int32_t number)
+{
+    if (listener_) {
+        return listener_->GetLeftTextOfCursor(number);
+    }
+    return u"";
+}
+
+std::u16string IMFTextListenerAdapterImpl::GetRightTextOfCursor(int32_t number)
+{
+    if (listener_) {
+        return listener_->GetRightTextOfCursor(number);
+    }
+    return u"";
+}
+
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard)
 {
     if (!listener) {
