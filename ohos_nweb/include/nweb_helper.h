@@ -40,6 +40,7 @@ public:
     std::weak_ptr<NWeb> GetNWeb(int32_t nweb_id);
     void SetBundlePath(const std::string &path);
     void SetHttpDns(const NWebDOHConfig& config);
+    void PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets);
 
 private:
     NWebHelper() = default;

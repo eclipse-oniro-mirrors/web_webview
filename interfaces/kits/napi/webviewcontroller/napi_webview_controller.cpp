@@ -16,6 +16,7 @@
 #include "napi_webview_controller.h"
 
 #include <cstdint>
+#include <regex>
 #include <securec.h>
 #include <unistd.h>
 #include <uv.h>
@@ -31,6 +32,11 @@
 #include "web_errors.h"
 #include "webview_javascript_execute_callback.h"
 
+namespace {
+constexpr uint32_t URL_MAXIMUM = 2048;
+constexpr uint32_t SOCKET_MAXIMUM = 6;
+constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
+}
 namespace OHOS {
 namespace NWeb {
 using namespace NWebError;
@@ -103,6 +109,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("innerGetCertificate", NapiWebviewController::InnerGetCertificate),
         DECLARE_NAPI_FUNCTION("setAudioMuted", NapiWebviewController::SetAudioMuted),
         DECLARE_NAPI_FUNCTION("innerGetThisVar", NapiWebviewController::InnerGetThisVar),
+        DECLARE_NAPI_FUNCTION("prefetchPage", NapiWebviewController::PrefetchPage),
+        DECLARE_NAPI_STATIC_FUNCTION("prepareForPageLoad", NapiWebviewController::PrepareForPageLoad),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -1388,7 +1396,7 @@ napi_value NapiWebMessagePort::PostMessageEvent(napi_env env, napi_callback_info
         }
         char* stringValue = new (std::nothrow) char[bufferSize + 1];
         if (stringValue == nullptr) {
-            BusinessError::ThrowErrorByErrcode(env, NEW_OOM);
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
             return result;
         }
         size_t jsStringLength = 0;
@@ -3352,6 +3360,154 @@ napi_value NapiWebviewController::SetAudioMuted(napi_env env, napi_callback_info
     }
 
     WVLOG_I("SetAudioMuted: %{public}s", (muted ? "true" : "false"));
+    return result;
+}
+
+napi_value NapiWebviewController::PrefetchPage(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO];
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((argc != INTEGER_ONE) && (argc != INTEGER_TWO)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+    std::string url;
+    if (!webviewController->ParseUrl(env, argv[INTEGER_ZERO], url)) {
+        BusinessError::ThrowErrorByErrcode(env, INVALID_URL);
+        return nullptr;
+    }
+    std::map<std::string, std::string> additionalHttpHeaders;
+    if (argc == INTEGER_ONE) {
+        ErrCode ret = webviewController->PrefetchPage(url, additionalHttpHeaders);
+        if (ret != NO_ERROR) {
+            WVLOG_E("PrefetchPage failed, error code: %{public}d", ret);
+            BusinessError::ThrowErrorByErrcode(env, ret);
+            return nullptr;
+        }
+        NAPI_CALL(env, napi_get_undefined(env, &result));
+        return result;
+    }
+    return PrefetchPageWithHttpHeaders(env, info, url, argv, webviewController);
+}
+
+napi_value NapiWebviewController::PrefetchPageWithHttpHeaders(napi_env env, napi_callback_info info, std::string& url,
+    const napi_value* argv, WebviewController* webviewController)
+{
+    napi_value result = nullptr;
+    std::map<std::string, std::string> additionalHttpHeaders;
+    napi_value array = argv[INTEGER_ONE];
+    bool isArray = false;
+    napi_is_array(env, array, &isArray);
+    if (isArray) {
+        uint32_t arrayLength = INTEGER_ZERO;
+        napi_get_array_length(env, array, &arrayLength);
+        for (uint32_t i = 0; i < arrayLength; ++i) {
+            std::string key;
+            std::string value;
+            napi_value obj = nullptr;
+            napi_value keyObj = nullptr;
+            napi_value valueObj = nullptr;
+            napi_get_element(env, array, i, &obj);
+            if (napi_get_named_property(env, obj, "headerKey", &keyObj) != napi_ok) {
+                continue;
+            }
+            if (napi_get_named_property(env, obj, "headerValue", &valueObj) != napi_ok) {
+                continue;
+            }
+            NapiParseUtils::ParseString(env, keyObj, key);
+            NapiParseUtils::ParseString(env, valueObj, value);
+            additionalHttpHeaders[key] = value;
+        }
+    } else {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    ErrCode ret = webviewController->PrefetchPage(url, additionalHttpHeaders);
+    if (ret != NO_ERROR) {
+        WVLOG_E("PrefetchPage failed, error code: %{public}d", ret);
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return nullptr;
+    }
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
+{
+    napi_valuetype valueType = napi_null;
+    napi_typeof(env, urlObj, &valueType);
+    if ((valueType != napi_object) && (valueType != napi_string)) {
+        WVLOG_E("Unable to parse url object.");
+        return false;
+    }
+
+    if (valueType == napi_string) {
+        NapiParseUtils::ParseString(env, urlObj, url);
+        if (url.size() > URL_MAXIMUM) {
+            WVLOG_E("The URL exceeds the maximum length of 2048");
+            return false;
+        }
+
+        if (!regex_match(url, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
+            WVLOG_E("ParsePrepareUrl error");
+            return false;
+        }
+
+        WVLOG_D("The parsed url is: %{public}s", url.c_str());
+        return true;
+    }
+
+    WVLOG_E("Unable to parse type from url object.");
+    return false;
+}
+
+napi_value NapiWebviewController::PrepareForPageLoad(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_THREE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    std::string url;
+    if (!ParsePrepareUrl(env, argv[INTEGER_ZERO], url)) {
+        BusinessError::ThrowErrorByErrcode(env, INVALID_URL);
+        return nullptr;
+    }
+
+    bool preconnectable = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ONE], preconnectable)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    int32_t numSockets = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], numSockets)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+    if (numSockets <= 0 || numSockets > SOCKET_MAXIMUM) {
+        BusinessError::ThrowErrorByErrcode(env, INVALID_SOCKET_NUMBER);
+        return nullptr;
+    }
+
+    NWebHelper::Instance().PrepareForPageLoad(url, preconnectable, numSockets);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace NWeb

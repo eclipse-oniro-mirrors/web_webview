@@ -31,8 +31,9 @@ const std::string CANNOT_DEL_JAVA_SCRIPT_PROXY_MSG = "Cannot delete JavaScriptPr
 const std::string CAN_NOT_POST_MESSAGE_MSG = "Can not post message using this port";
 const std::string INVALID_ORIGIN_MSG = "Invalid origin";
 const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invalid web storage origin";
-const std::string NEW_OOM_MSG = "New failed, out of memory";
+const std::string INVALID_SOCKET_NUMBER_MSG = "The number of preconnect sockets is invalid.";
 const std::string TYPE_NOT_MATCH_WITCH_VALUE_MSG = "The type does not match with the value of the message";
+const std::string NEW_OOM_MSG = "New failed, out of memory";
 }
 
 namespace OHOS {
@@ -49,8 +50,9 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {CAN_NOT_POST_MESSAGE, CAN_NOT_POST_MESSAGE_MSG},
     {INVALID_ORIGIN, INVALID_ORIGIN_MSG},
     {NO_WEBSTORAGE_ORIGIN, NO_WEBSTORAGE_ORIGIN_MSG},
-    {NEW_OOM, NEW_OOM_MSG},
-    {TYPE_NOT_MATCH_WITCH_VALUE, TYPE_NOT_MATCH_WITCH_VALUE_MSG}
+    {INVALID_SOCKET_NUMBER, INVALID_SOCKET_NUMBER_MSG},
+    {TYPE_NOT_MATCH_WITCH_VALUE, TYPE_NOT_MATCH_WITCH_VALUE_MSG},
+    {NEW_OOM, NEW_OOM_MSG}
 };
 
 std::string GetErrMsgByErrCode(ErrCode code)

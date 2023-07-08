@@ -182,6 +182,13 @@ private:
     static napi_value SetAudioMuted(napi_env env, napi_callback_info info);
 
     static napi_value InnerGetThisVar(napi_env env, napi_callback_info info);
+
+    static napi_value PrefetchPage(napi_env env, napi_callback_info info);
+
+    static napi_value PrefetchPageWithHttpHeaders(napi_env env, napi_callback_info info, std::string& url,
+        const napi_value* argv, WebviewController* webviewController);
+
+    static napi_value PrepareForPageLoad(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
