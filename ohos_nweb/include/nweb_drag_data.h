@@ -70,6 +70,12 @@ public:
 
     // set the title associated with the link that is being dragged.
     virtual bool SetLinkTitle(std::string& title) = 0;
+
+    // get the positon of the drag point.
+    virtual void GetDragStartPosition(int& x, int& y) = 0;
+
+    // is single iamge that is being dragged.
+    virtual bool IsSingleImageContent() = 0;
 };
 }
 #endif
