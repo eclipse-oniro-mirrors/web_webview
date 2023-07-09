@@ -19,7 +19,7 @@
 
 namespace {
 const std::string IMG_TAG_PATTERN = "<img.*?data-ohos=.*?>";
-const std::string IMG_TAG_SRC_PATTERN = "src='(.*?)'";
+const std::string IMG_TAG_SRC_PATTERN = "src=\"([^\"]*)\"";
 const std::string IMG_TAG_SRC_HEAD = "src=\"";
 const std::string IMG_LOCAL_URI = "file:///";
 const std::string IMG_LOCAL_PATH = "://";

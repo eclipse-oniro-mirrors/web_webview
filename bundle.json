@@ -99,6 +99,15 @@
                         "header_base": "//base/web/webview/ohos_nweb/include"
                     },
                     "name": "//base/web/webview/ohos_nweb:libnweb"
+                },
+                {
+                    "header": {
+                        "header_files": [
+                            "web_clipboard_controller.h"
+                        ],
+                        "header_base": "//base/web/webview/interfaces/inner_api/include"
+                    },
+                    "name": "//base/web/webview/interfaces/inner_api:web_inner_kit"
                 }
             ],
             "test": [
