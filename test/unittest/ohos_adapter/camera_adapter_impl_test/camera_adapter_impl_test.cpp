@@ -291,10 +291,10 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     result = adapter.CreateAndStartSession();
     EXPECT_NE(result, 0);
     result = adapter.RestartSession();
+    EXPECT_NE(result, 0);
+    result = adapter.StopSession(CameraStopType::NORMAL);
     EXPECT_EQ(result, 0);
-    result = adapter.StopSession();
-    EXPECT_EQ(result, 0);
-    result = adapter.StopSession();
+    result = adapter.StopSession(CameraStopType::NORMAL);
     EXPECT_EQ(result, 0);
     result = adapter.ReleaseSession();
     EXPECT_EQ(result, 0);
