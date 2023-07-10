@@ -14,15 +14,20 @@
  */
 
 #include <array>
-#include <string>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <string>
 
 #define private public
+#include "accesstoken_kit.h"
+#include "audio_capturer_adapter.h"
+#include "audio_capturer_adapter_impl.h"
 #include "audio_renderer_adapter.h"
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
+#include "nativetoken_kit.h"
+#include "token_setproc.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -34,15 +39,16 @@ const int RESULT_OK = 0;
 const bool TRUE_OK = true;
 const std::string CACHE_PATH = "/data/local/tmp";
 std::shared_ptr<NWeb::AudioRendererAdapterImpl> g_audioRender = nullptr;
+std::shared_ptr<NWeb::AudioCapturerAdapterImpl> g_audioCapturer = nullptr;
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
 
 namespace AbilityRuntime {
-    std::shared_ptr<ApplicationContext> Context::GetApplicationContext()
-    {
-        return g_applicationContext;
-    }
-} // namespace OHOS::AbilityRuntime
+std::shared_ptr<ApplicationContext> Context::GetApplicationContext()
+{
+    return g_applicationContext;
+}
+} // namespace AbilityRuntime
 
 namespace NWeb {
 class NWebAudioAdapterTest : public testing::Test {
@@ -80,7 +86,34 @@ public:
     void OnResume() override {};
 };
 
-void NWebAudioAdapterTest::SetUpTestCase(void) {}
+class AudioCapturerCallbackMock : public AudioCapturerReadCallbackAdapter {
+public:
+    AudioCapturerCallbackMock() = default;
+
+    virtual ~AudioCapturerCallbackMock() = default;
+
+    void OnReadData(size_t length) override {};
+};
+
+void NWebAudioAdapterTest::SetUpTestCase(void)
+{
+    uint64_t tokenId;
+    const char* perms[1];
+    perms[0] = "ohos.permission.MICROPHONE";
+    NativeTokenInfoParams infoInstance = {
+        .dcapsNum = 0,
+        .permsNum = 1,
+        .aclsNum = 0,
+        .dcaps = NULL,
+        .perms = perms,
+        .acls = NULL,
+        .processName = "web_audio_tdd",
+        .aplStr = "system_basic",
+    };
+    tokenId = GetAccessTokenId(&infoInstance);
+    SetSelfTokenID(tokenId);
+    OHOS::Security::AccessToken::AccessTokenKit::ReloadNativeTokenInfo();
+}
 
 void NWebAudioAdapterTest::TearDownTestCase(void) {}
 
@@ -113,7 +146,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     bool ret = g_audioRender->Start();
     EXPECT_EQ(ret, TRUE_OK);
 
-    std::array<uint8_t, 4> bufferArray = {0, 0, 0, 0};
+    std::array<uint8_t, 4> bufferArray = { 0, 0, 0, 0 };
     retNum = g_audioRender->Write(bufferArray.data(), bufferArray.size());
     EXPECT_EQ(retNum, bufferArray.size());
 
@@ -134,7 +167,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     EXPECT_NE(callback, nullptr);
     retNum = g_audioRender->SetAudioRendererCallback(callback);
     EXPECT_EQ(retNum, 0);
-    g_audioRender->IsRendererStateRunning();
+
+    g_audioRender->SetInterruptMode(true);
+    g_audioRender->SetInterruptMode(false);
+
+    ret = g_audioRender->IsRendererStateRunning();
+    EXPECT_EQ(ret, TRUE_OK);
+
+    ret = g_audioRender->Pause();
+    EXPECT_EQ(ret, TRUE_OK);
 
     ret = g_audioRender->Stop();
     EXPECT_EQ(ret, TRUE_OK);
@@ -167,8 +208,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_002, TestSi
     for (auto& sampling : samplingArray)
         AudioRendererAdapterImpl::GetAudioSamplingRate(sampling);
 
-    AudioSamplingRate testSampling = AudioRendererAdapterImpl::GetAudioSamplingRate(
-        static_cast<AudioAdapterSamplingRate>(0));
+    AudioSamplingRate testSampling =
+        AudioRendererAdapterImpl::GetAudioSamplingRate(static_cast<AudioAdapterSamplingRate>(0));
     EXPECT_EQ(testSampling, AudioSamplingRate::SAMPLE_RATE_44100);
 }
 
@@ -183,8 +224,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_003, TestSi
     AudioRendererAdapterImpl::GetAudioEncodingType(AudioAdapterEncodingType::ENCODING_PCM);
     AudioRendererAdapterImpl::GetAudioEncodingType(AudioAdapterEncodingType::ENCODING_INVALID);
 
-    AudioEncodingType testEncodingType = AudioRendererAdapterImpl::GetAudioEncodingType(
-        static_cast<AudioAdapterEncodingType>(1));
+    AudioEncodingType testEncodingType =
+        AudioRendererAdapterImpl::GetAudioEncodingType(static_cast<AudioAdapterEncodingType>(1));
     EXPECT_EQ(testEncodingType, AudioEncodingType::ENCODING_INVALID);
 }
 
@@ -207,8 +248,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_004, TestSi
     for (auto& format : formatArray)
         AudioRendererAdapterImpl::GetAudioSampleFormat(format);
 
-    AudioSampleFormat testFormat = AudioRendererAdapterImpl::GetAudioSampleFormat(
-        static_cast<AudioAdapterSampleFormat>(-2));
+    AudioSampleFormat testFormat =
+        AudioRendererAdapterImpl::GetAudioSampleFormat(static_cast<AudioAdapterSampleFormat>(-2));
     EXPECT_EQ(testFormat, AudioSampleFormat::INVALID_WIDTH);
 }
 
@@ -233,8 +274,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_005, TestSi
     for (auto& channel : channelArray)
         AudioRendererAdapterImpl::GetAudioChannel(channel);
 
-    AudioChannel testChannel = AudioRendererAdapterImpl::GetAudioChannel(
-        static_cast<AudioAdapterChannel>(0));
+    AudioChannel testChannel = AudioRendererAdapterImpl::GetAudioChannel(static_cast<AudioAdapterChannel>(0));
     EXPECT_EQ(testChannel, AudioChannel::STEREO);
 }
 
@@ -257,8 +297,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_006, TestSi
     for (auto& content : contentArray)
         AudioRendererAdapterImpl::GetAudioContentType(content);
 
-    ContentType testContent = AudioRendererAdapterImpl::GetAudioContentType(
-        static_cast<AudioAdapterContentType>(-1));
+    ContentType testContent = AudioRendererAdapterImpl::GetAudioContentType(static_cast<AudioAdapterContentType>(-1));
     EXPECT_EQ(testContent, ContentType::CONTENT_TYPE_MUSIC);
 }
 
@@ -280,8 +319,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_007, TestSi
     for (auto& usage : usageArray)
         AudioRendererAdapterImpl::GetAudioStreamUsage(usage);
 
-    StreamUsage testUsage = AudioRendererAdapterImpl::GetAudioStreamUsage(
-        static_cast<AudioAdapterStreamUsage>(-1));
+    StreamUsage testUsage = AudioRendererAdapterImpl::GetAudioStreamUsage(static_cast<AudioAdapterStreamUsage>(-1));
     EXPECT_EQ(testUsage, StreamUsage::STREAM_USAGE_MEDIA);
 }
 
@@ -343,6 +381,16 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_010, TestSi
 
     ret = AudioSystemManagerAdapterImpl::GetInstance().UnsetAudioManagerInterruptCallback();
     EXPECT_EQ(ret, RESULT_OK);
+    
+    AudioSystemManagerAdapterImpl::GetInstance().GetDevices(static_cast<AdapterDeviceFlag>(-1));
+
+    AudioAdapterDeviceDesc desc;
+    desc.deviceId = -1;
+    desc.deviceName = std::string();
+    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, true);
+    EXPECT_NE(ret, RESULT_OK);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, false);
+    EXPECT_NE(ret, RESULT_OK);
 }
 
 /**
@@ -374,8 +422,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_011, TestSi
 
     for (auto& stream : streamArray)
         AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(stream);
-    AudioStreamType testStream = AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(
-        static_cast<AudioAdapterStreamType>(-2));
+    AudioStreamType testStream =
+        AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<AudioAdapterStreamType>(-2));
     EXPECT_EQ(testStream, AudioStreamType::STREAM_DEFAULT);
 }
 
@@ -433,7 +481,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_013, TestSi
     bool ret = g_audioRender->Start();
     EXPECT_NE(ret, TRUE_OK);
 
-    std::array<uint8_t, 4> bufferArray = {0, 0, 0, 0};
+    std::array<uint8_t, 4> bufferArray = { 0, 0, 0, 0 };
     retNum = g_audioRender->Write(bufferArray.data(), bufferArray.size());
     EXPECT_NE(retNum, bufferArray.size());
 
@@ -447,6 +495,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_013, TestSi
 
     float nowVolume = g_audioRender->GetVolume();
     EXPECT_NE(nowVolume, volume);
+
+    ret = g_audioRender->Pause();
+    EXPECT_NE(ret, TRUE_OK);
 
     ret = g_audioRender->Stop();
     EXPECT_NE(ret, TRUE_OK);
@@ -463,11 +514,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_013, TestSi
  */
 HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_014, TestSize.Level1)
 {
-    ApplicationContextMock *contextMock = new ApplicationContextMock();
+    ApplicationContextMock* contextMock = new ApplicationContextMock();
     EXPECT_NE(contextMock, nullptr);
-    EXPECT_CALL(*contextMock, GetCacheDir())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(""));
+    EXPECT_CALL(*contextMock, GetCacheDir()).Times(1).WillRepeatedly(::testing::Return(""));
     EXPECT_EQ(g_applicationContext, nullptr);
     g_applicationContext.reset(contextMock);
     EXPECT_NE(g_applicationContext, nullptr);
@@ -497,11 +546,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_014, TestSi
  */
 HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_015, TestSize.Level1)
 {
-    ApplicationContextMock *contextMock = new ApplicationContextMock();
+    ApplicationContextMock* contextMock = new ApplicationContextMock();
     EXPECT_NE(contextMock, nullptr);
-    EXPECT_CALL(*contextMock, GetCacheDir())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(CACHE_PATH));
+    EXPECT_CALL(*contextMock, GetCacheDir()).Times(1).WillRepeatedly(::testing::Return(CACHE_PATH));
     EXPECT_EQ(g_applicationContext, nullptr);
     g_applicationContext.reset(contextMock);
     EXPECT_NE(g_applicationContext, nullptr);
@@ -531,7 +578,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_015, TestSi
  */
 HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnInterrupt_016, TestSize.Level1)
 {
-    std::shared_ptr<AudioRendererCallbackAdapter> cb  = std::make_shared<AudioRendererCallbackMock>();
+    std::shared_ptr<AudioRendererCallbackAdapter> cb = std::make_shared<AudioRendererCallbackMock>();
     EXPECT_NE(cb, nullptr);
     auto callBack = std::make_shared<AudioRendererCallbackImpl>(cb);
     EXPECT_NE(callBack, nullptr);
@@ -559,10 +606,236 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_SetAudioRendererCallback_017
 {
     auto audioRender = std::make_shared<AudioRendererAdapterImpl>();
     ASSERT_NE(audioRender, nullptr);
-    std::shared_ptr<AudioRendererCallbackAdapter> callback  = std::make_shared<AudioRendererCallbackMock>();
+    std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackMock>();
     ASSERT_NE(callback, nullptr);
     int32_t retNum = audioRender->SetAudioRendererCallback(callback);
     EXPECT_NE(retNum, 0);
 }
-}  // namespace OHOS::NWeb
-}  // namespace OHOS
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_018.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_018, TestSize.Level1)
+{
+    g_audioCapturer = std::make_shared<AudioCapturerAdapterImpl>();
+    ASSERT_NE(g_audioCapturer, nullptr);
+
+    AudioAdapterCapturerOptions capturerOptions;
+    capturerOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_48000;
+    capturerOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    capturerOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    capturerOptions.channels = AudioAdapterChannel::STEREO;
+    capturerOptions.sourceType = AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
+    capturerOptions.capturerFlags = 0;
+    int32_t retNum = g_audioCapturer->Create(capturerOptions, CACHE_PATH);
+    ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
+
+    std::shared_ptr<AudioCapturerReadCallbackAdapter> callback = std::make_shared<AudioCapturerCallbackMock>();
+    EXPECT_NE(callback, nullptr);
+    retNum = g_audioCapturer->SetCapturerReadCallback(callback);
+    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
+
+    bool ret = g_audioCapturer->Start();
+    EXPECT_EQ(ret, TRUE_OK);
+
+    BufferDescAdapter bufferDesc;
+    retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
+    EXPECT_EQ(retNum, 0);
+
+    retNum = g_audioCapturer->Enqueue(bufferDesc);
+    EXPECT_EQ(retNum, 0);
+
+    uint32_t frameCount = 0;
+    retNum = g_audioCapturer->GetFrameCount(frameCount);
+    EXPECT_EQ(retNum, 0);
+
+    int64_t result = g_audioCapturer->GetAudioTime();
+    EXPECT_NE(result, AudioAdapterCode::AUDIO_NULL_ERROR);
+
+    ret = g_audioCapturer->Stop();
+    EXPECT_EQ(ret, TRUE_OK);
+
+    ret = g_audioCapturer->Release();
+    EXPECT_EQ(ret, TRUE_OK);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_019.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_019, TestSize.Level1)
+{
+    g_audioCapturer = std::make_shared<AudioCapturerAdapterImpl>();
+    ASSERT_NE(g_audioCapturer, nullptr);
+
+    std::shared_ptr<AudioCapturerReadCallbackAdapter> callback = std::make_shared<AudioCapturerCallbackMock>();
+    int32_t retNum = g_audioCapturer->SetCapturerReadCallback(callback);
+    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
+
+    bool ret = g_audioCapturer->Start();
+    EXPECT_NE(ret, TRUE_OK);
+
+    BufferDescAdapter bufferDesc;
+    retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
+    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
+
+    retNum = g_audioCapturer->Enqueue(bufferDesc);
+    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
+
+    uint32_t frameCount = 0;
+    retNum = g_audioCapturer->GetFrameCount(frameCount);
+    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
+
+    int64_t result = g_audioCapturer->GetAudioTime();
+    EXPECT_EQ(result, AudioAdapterCode::AUDIO_NULL_ERROR);
+
+    ret = g_audioCapturer->Stop();
+    EXPECT_NE(ret, TRUE_OK);
+
+    ret = g_audioCapturer->Release();
+    EXPECT_NE(ret, TRUE_OK);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_020.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_020, TestSize.Level1)
+{
+    auto callback = std::make_shared<AudioCapturerCallbackMock>();
+    auto callbackTest = std::make_shared<AudioCapturerReadCallbackImpl>(callback);
+    EXPECT_NE(callbackTest, nullptr);
+
+    size_t length = 0;
+    callbackTest->OnReadData(length);
+
+    auto callbackTestNull = std::make_shared<AudioCapturerReadCallbackImpl>(nullptr);
+    EXPECT_EQ(callbackTestNull->cb_, nullptr);
+    callbackTest->OnReadData(length);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_0021.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_021, TestSize.Level1)
+{
+    std::array<AudioAdapterSamplingRate, 11> samplingArray = {
+        AudioAdapterSamplingRate::SAMPLE_RATE_8000,
+        AudioAdapterSamplingRate::SAMPLE_RATE_11025,
+        AudioAdapterSamplingRate::SAMPLE_RATE_12000,
+        AudioAdapterSamplingRate::SAMPLE_RATE_16000,
+        AudioAdapterSamplingRate::SAMPLE_RATE_22050,
+        AudioAdapterSamplingRate::SAMPLE_RATE_24000,
+        AudioAdapterSamplingRate::SAMPLE_RATE_32000,
+        AudioAdapterSamplingRate::SAMPLE_RATE_44100,
+        AudioAdapterSamplingRate::SAMPLE_RATE_48000,
+        AudioAdapterSamplingRate::SAMPLE_RATE_64000,
+        AudioAdapterSamplingRate::SAMPLE_RATE_96000,
+    };
+    for (auto& sampling : samplingArray)
+        AudioCapturerAdapterImpl::GetAudioSamplingRate(sampling);
+
+    AudioSamplingRate testSampling =
+        AudioCapturerAdapterImpl::GetAudioSamplingRate(static_cast<AudioAdapterSamplingRate>(0));
+    EXPECT_EQ(testSampling, AudioSamplingRate::SAMPLE_RATE_44100);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_022.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_022, TestSize.Level1)
+{
+    AudioCapturerAdapterImpl::GetAudioEncodingType(AudioAdapterEncodingType::ENCODING_PCM);
+    AudioCapturerAdapterImpl::GetAudioEncodingType(AudioAdapterEncodingType::ENCODING_INVALID);
+
+    AudioEncodingType testEncodingType =
+        AudioCapturerAdapterImpl::GetAudioEncodingType(static_cast<AudioAdapterEncodingType>(1));
+    EXPECT_EQ(testEncodingType, AudioEncodingType::ENCODING_INVALID);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_023.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_023, TestSize.Level1)
+{
+    std::array<AudioAdapterSampleFormat, 6> formatArray = {
+        AudioAdapterSampleFormat::SAMPLE_U8,
+        AudioAdapterSampleFormat::SAMPLE_S16LE,
+        AudioAdapterSampleFormat::SAMPLE_S24LE,
+        AudioAdapterSampleFormat::SAMPLE_S32LE,
+        AudioAdapterSampleFormat::SAMPLE_F32LE,
+        AudioAdapterSampleFormat::INVALID_WIDTH,
+    };
+    for (auto& format : formatArray)
+        AudioCapturerAdapterImpl::GetAudioSampleFormat(format);
+
+    AudioSampleFormat testFormat =
+        AudioCapturerAdapterImpl::GetAudioSampleFormat(static_cast<AudioAdapterSampleFormat>(-2));
+    EXPECT_EQ(testFormat, AudioSampleFormat::INVALID_WIDTH);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_024.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_024, TestSize.Level1)
+{
+    std::array<AudioAdapterChannel, 8> channelArray = {
+        AudioAdapterChannel::MONO,
+        AudioAdapterChannel::STEREO,
+        AudioAdapterChannel::CHANNEL_3,
+        AudioAdapterChannel::CHANNEL_4,
+        AudioAdapterChannel::CHANNEL_5,
+        AudioAdapterChannel::CHANNEL_6,
+        AudioAdapterChannel::CHANNEL_7,
+        AudioAdapterChannel::CHANNEL_8,
+    };
+    for (auto& channel : channelArray)
+        AudioCapturerAdapterImpl::GetAudioChannel(channel);
+
+    AudioChannel testChannel = AudioCapturerAdapterImpl::GetAudioChannel(static_cast<AudioAdapterChannel>(0));
+    EXPECT_EQ(testChannel, AudioChannel::STEREO);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_025.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_025, TestSize.Level1)
+{
+    std::array<AudioAdapterSourceType, 6> sourceArray = {
+        AudioAdapterSourceType::SOURCE_TYPE_INVALID,
+        AudioAdapterSourceType::SOURCE_TYPE_MIC,
+        AudioAdapterSourceType::SOURCE_TYPE_VOICE_RECOGNITION,
+        AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION,
+        AudioAdapterSourceType::SOURCE_TYPE_ULTRASONIC,
+    };
+    for (auto& source : sourceArray)
+        AudioCapturerAdapterImpl::GetAudioSourceType(source);
+
+    SourceType testSource = AudioCapturerAdapterImpl::GetAudioSourceType(static_cast<AudioAdapterSourceType>(-2));
+    EXPECT_EQ(testSource, SourceType::SOURCE_TYPE_VOICE_RECOGNITION);
+}
+
+} // namespace NWeb
+} // namespace OHOS
