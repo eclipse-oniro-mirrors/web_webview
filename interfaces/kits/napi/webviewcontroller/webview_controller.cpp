@@ -898,5 +898,15 @@ ErrCode WebviewController::SetAudioMuted(bool muted)
     return NWebError::NO_ERROR;
 }
 
+ErrCode WebviewController::PrefetchPage(std::string& url, std::map<std::string, std::string> additionalHttpHeaders)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->PrefetchPage(url, additionalHttpHeaders);
+    return NWebError::NO_ERROR;
+}
 } // namespace NWeb
 } // namespace OHOS

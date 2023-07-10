@@ -59,6 +59,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "power_mgr_adapter/src/power_mgr_client_adapter_impl.cpp",
     "pre_dns_adapter/src/nweb_pre_dns_adapter.cpp",
     "print_manager_adapter/src/print_manager_adapter_impl.cpp",
+    "screen_capture_adapter/src/screen_capture_adapter_impl.cpp",
     "soc_perf_adapter/src/soc_perf_client_adapter_impl.cpp",
     "system_properties_adapter/src/system_properties_adapter_impl.cpp",
   ]
@@ -94,6 +95,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "pasteboard_adapter/include",
     "power_mgr_adapter/include",
     "print_manager_adapter/include",
+    "screen_capture_adapter/include",
     "soc_perf_adapter/include",
     "system_properties_adapter/include",
   ]
@@ -154,7 +156,6 @@ ohos_shared_library("nweb_ohos_adapter") {
     external_deps += [ "soc_perf:socperf_client" ]
     defines = [ "NWEB_SOC_PERF" ]
   }
-
   innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
   subsystem_name = "web"
