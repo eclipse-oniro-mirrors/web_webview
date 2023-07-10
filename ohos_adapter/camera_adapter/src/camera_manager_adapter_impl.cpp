@@ -614,8 +614,8 @@ bool CameraManagerAdapterImpl::IsExistCaptureTask()
 }
 
 int32_t CameraManagerAdapterImpl::StartStream(const std::string &deviceId,
-        const VideoCaptureParamsAdapter &captureParams,
-        std::shared_ptr<CameraBufferListenerAdapter> listener)
+    const VideoCaptureParamsAdapter &captureParams,
+    std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
     std::lock_guard<std::mutex> lock(mutex_);
 
