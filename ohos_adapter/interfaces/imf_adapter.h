@@ -93,6 +93,12 @@ public:
     virtual void HandleExtendAction(int32_t action) = 0;
 
     virtual void HandleSelect(int32_t keyCode, int32_t cursorMoveSkip) = 0;
+
+    virtual int32_t GetTextIndexAtCursor() = 0;
+
+    virtual std::u16string GetLeftTextOfCursor(int32_t number) = 0;
+
+    virtual std::u16string GetRightTextOfCursor(int32_t number) = 0;
 };
 
 class IMFAdapter {
