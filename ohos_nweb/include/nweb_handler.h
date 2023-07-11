@@ -597,7 +597,8 @@ public:
      * @param request std::shared_ptr<NWebScreenCaptureAccessRequest>: A request to ask for the
      * screen capture permission.
      */
-    virtual void OnScreenCaptureRequest(std::shared_ptr<NWebScreenCaptureAccessRequest> request) {}
+    virtual void OnScreenCaptureRequest(
+        std::shared_ptr<NWebScreenCaptureAccessRequest> request) {}
 };
 }  // namespace OHOS::NWeb
 
