@@ -259,7 +259,6 @@
                 "//base/web/webview/test/unittest/ohos_adapter/net_proxy_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/camera_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/background_task_impl_test:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/screen_capture_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/audio_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_callback_impl_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_adapter_impl_test:unittest",
