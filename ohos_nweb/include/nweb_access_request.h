@@ -92,7 +92,7 @@ public:
     virtual void Agree(const NWebScreenCaptureConfig& config) = 0;
 
     /**
-    * Refuse the request.
+    * Refuse the screen capture request.
     */
     virtual void Refuse() = 0;
 };
