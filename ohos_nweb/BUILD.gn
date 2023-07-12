@@ -77,9 +77,9 @@ ohos_shared_library("libnweb") {
   external_deps = [
     "c_utils:utils",
     "config_policy:configpolicy_util",
-    "graphic_standard:libcomposer",
-    "graphic_standard:librender_service_client",
-    "graphic_standard:surface",
+    "graphic_2d:libcomposer",
+    "graphic_2d:librender_service_client",
+    "graphic_2d:surface",
     "hilog:libhilog",
     "input:libmmi-client",
     "ipc:ipc_core",
