@@ -175,6 +175,7 @@ struct ScreenCaptureConfigAdapter {
 class ScreenCaptureCallbackAdapter {
 public:
     ScreenCaptureCallbackAdapter() = default;
+
     virtual ~ScreenCaptureCallbackAdapter() = default;
 
     virtual void OnError(int32_t errorCode) = 0;
@@ -187,6 +188,7 @@ public:
 class ScreenCaptureAdapter {
 public:
     ScreenCaptureAdapter() = default;
+
     virtual ~ScreenCaptureAdapter() = default;
 
     virtual int32_t Init(const ScreenCaptureConfigAdapter& config) = 0;
@@ -203,6 +205,7 @@ public:
 
     virtual int32_t ReleaseVideoBuffer() = 0;
 };
+
 } // namespace OHOS::NWeb
 
 #endif // SCREEN_CAPTURE_ADAPTER_H
