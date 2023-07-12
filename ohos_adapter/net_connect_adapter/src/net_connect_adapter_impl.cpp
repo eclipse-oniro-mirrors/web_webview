@@ -34,7 +34,7 @@ int32_t NetConnectAdapterImpl::RegisterNetConnCallback(std::shared_ptr<NetConnCa
         return -1;
     }
 
-    int32_t ret = DelayedSingleton<NetConnClient>::GetInstance()->RegisterNetConnCallback(callbackImpl);
+    int32_t ret = NetConnClient::GetInstance().RegisterNetConnCallback(callbackImpl);
     if (ret != NETMANAGER_SUCCESS) {
         WVLOG_E("register NetConnCallback failed, ret = %{public}d.", ret);
         return -1;
@@ -58,7 +58,7 @@ int32_t NetConnectAdapterImpl::UnregisterNetConnCallback(std::shared_ptr<NetConn
         return -1;
     }
 
-    int32_t ret = DelayedSingleton<NetConnClient>::GetInstance()->UnregisterNetConnCallback(it->second);
+    int32_t ret = NetConnClient::GetInstance().UnregisterNetConnCallback(it->second);
     if (ret != NETMANAGER_SUCCESS) {
         WVLOG_E("unregister NetConnCallback failed, ret = %{public}d.", ret);
         return -1;
@@ -72,7 +72,7 @@ int32_t NetConnectAdapterImpl::UnregisterNetConnCallback(std::shared_ptr<NetConn
 int32_t NetConnectAdapterImpl::GetDefaultNetConnect(NetConnectType &type, NetConnectSubtype &subtype)
 {
     NetHandle netHandle;
-    int32_t ret = DelayedSingleton<NetConnClient>::GetInstance()->GetDefaultNet(netHandle);
+    int32_t ret = NetConnClient::GetInstance().GetDefaultNet(netHandle);
     if (ret != NETMANAGER_SUCCESS) {
         WVLOG_E("get default net failed, ret = %{public}d.", ret);
         return -1;
@@ -80,7 +80,7 @@ int32_t NetConnectAdapterImpl::GetDefaultNetConnect(NetConnectType &type, NetCon
     WVLOG_I("get default net success, net id = %{public}d.", netHandle.GetNetId());
 
     NetAllCapabilities netAllCap;
-    ret = DelayedSingleton<NetConnClient>::GetInstance()->GetNetCapabilities(netHandle, netAllCap);
+    ret = NetConnClient::GetInstance().GetNetCapabilities(netHandle, netAllCap);
     if (ret != NETMANAGER_SUCCESS) {
         WVLOG_E("get default net capbilities failed, ret = %{public}d.", ret);
         return -1;
