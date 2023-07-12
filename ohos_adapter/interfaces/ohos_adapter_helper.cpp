@@ -41,6 +41,7 @@
 #include "player_framework_adapter_impl.h"
 #include "power_mgr_client_adapter_impl.h"
 #include "print_manager_adapter_impl.h"
+#include "screen_capture_adapter_impl.h"
 #include "soc_perf_client_adapter_impl.h"
 #include "surface_adapter_impl.h"
 #include "system_properties_adapter_impl.h"
@@ -212,6 +213,6 @@ CameraManagerAdapter& OhosAdapterHelper::GetCameraManagerAdapter() const
 
 std::unique_ptr<ScreenCaptureAdapter> OhosAdapterHelper::CreateScreenCaptureAdapter() const
 {
-    return nullptr;
+    return std::make_unique<ScreenCaptureAdapterImpl>();
 }
 } // namespace OHOS::NWeb
