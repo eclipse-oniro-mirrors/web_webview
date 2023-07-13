@@ -142,6 +142,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "location:lbsservice_common",
     "location:locator_sdk",
     "multimedia_image_framework:image_native",
+    "napi:ace_napi",
     "netmanager_base:net_conn_manager_if",
     "pasteboard:pasteboard_client",
     "player_framework:media_client",
