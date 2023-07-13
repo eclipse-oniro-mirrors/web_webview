@@ -235,7 +235,6 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
 
 int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     int32_t result = CAMERA_ERROR;
 
     if (status_ != CameraStatus::CLOSED) {
@@ -282,7 +281,6 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
 int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdapter &captureParams,
     std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     int32_t result = CAMERA_ERROR;
     Size previewSize;
 
@@ -452,7 +450,6 @@ bool CameraManagerAdapterImpl::IsFlashModeSupported(FlashModeAdapter focusMode)
 
 int32_t CameraManagerAdapterImpl::CreateAndStartSession()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     int32_t result = CAMERA_ERROR;
     if (status_ == CameraStatus::OPENED) {
         WVLOG_E("camera is already opened");
@@ -500,12 +497,19 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
     }
     result = CAMERA_OK;
     status_ = CameraStatus::OPENED;
+    is_capturing_ = true;
     return result;
 }
 
 int32_t CameraManagerAdapterImpl::RestartSession()
 {
+    std::lock_guard<std::mutex> lock(restart_mutex_);
     WVLOG_I("RestartSession %{public}s", deviceId_.c_str());
+    if (!is_capturing_) {
+        WVLOG_E("this web tab is not capturing");
+        return CAMERA_OK;
+    }
+
     if (status_ == CameraStatus::OPENED) {
         WVLOG_E("camera is already opened");
         return CAMERA_OK;
@@ -515,25 +519,18 @@ int32_t CameraManagerAdapterImpl::RestartSession()
         WVLOG_E("cameraManager_ is null when start session");
         return CAMERA_ERROR;
     }
-    if (InitCameraInput(deviceId_) != CAMERA_OK) {
-        WVLOG_E("init camera input failed");
-        return CAMERA_ERROR;
-    }
 
-    if (InitPreviewOutput(captureParams_, (listener_)) != CAMERA_OK) {
-        WVLOG_E("init camera preview output failed");
-        return CAMERA_ERROR;
-    }
-
-    if (CreateAndStartSession() != CAMERA_OK) {
-        WVLOG_E("init camera preview output failed");
+    if (StartStream(deviceId_, captureParams_, listener_) != CAMERA_OK) {
+        WVLOG_E("restart stream failed");
+        ReleaseSessionResource(deviceId_);
+        ReleaseSession();
         return CAMERA_ERROR;
     }
     status_ = CameraStatus::OPENED;
     return CAMERA_OK;
 }
 
-int32_t CameraManagerAdapterImpl::StopSession()
+int32_t CameraManagerAdapterImpl::StopSession(CameraStopType stopType)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     WVLOG_I("StopSession");
@@ -543,8 +540,10 @@ int32_t CameraManagerAdapterImpl::StopSession()
     }
     ReleaseSessionResource(deviceId_);
     ReleaseSession();
-    status_ = CameraStatus::CLOSED;
-    input_inited_flag_ = false;
+    
+    if (stopType == CameraStopType::NORMAL) {
+        is_capturing_ = false;
+    }
     return CAMERA_OK;
 }
 
@@ -580,6 +579,8 @@ int32_t CameraManagerAdapterImpl::ReleaseSessionResource(const std::string &devi
 
     previewSurface_ = nullptr;
     previewSurfaceListener_ = nullptr;
+    status_ = CameraStatus::CLOSED;
+    input_inited_flag_ = false;
 
     return CAMERA_OK;
 }
@@ -600,6 +601,48 @@ CameraStatus CameraManagerAdapterImpl::GetCameraStatus()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     return status_;
+}
+
+bool CameraManagerAdapterImpl::IsExistCaptureTask()
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+    if (cameraManager_ == nullptr) {
+        WVLOG_E("cameraManager_ is nullptr");
+        return false;
+    }
+    return is_capturing_;
+}
+
+int32_t CameraManagerAdapterImpl::StartStream(const std::string &deviceId,
+    const VideoCaptureParamsAdapter &captureParams,
+    std::shared_ptr<CameraBufferListenerAdapter> listener)
+{
+    std::lock_guard<std::mutex> lock(mutex_);
+
+    if ((cameraManager_ == nullptr) || (listener == nullptr)) {
+        WVLOG_E("cameraManager or listener is null when start session");
+        return CAMERA_ERROR;
+    }
+
+    if (InitCameraInput(deviceId) != CAMERA_OK) {
+        WVLOG_E("init camera input failed");
+        ReleaseSessionResource(deviceId);
+        return CAMERA_ERROR;
+    }
+
+    if (InitPreviewOutput(captureParams, listener) != CAMERA_OK) {
+        WVLOG_E("init camera preview output failed");
+        ReleaseSessionResource(deviceId);
+        return CAMERA_ERROR;
+    }
+
+    if (CreateAndStartSession() != CAMERA_OK) {
+        WVLOG_E("create session failed");
+        ReleaseSession();
+        return CAMERA_ERROR;
+    }
+
+    return CAMERA_OK;
 }
 
 CameraSurfaceBufferAdapterImpl::CameraSurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer) : buffer_(buffer) {}

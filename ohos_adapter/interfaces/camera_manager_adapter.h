@@ -81,6 +81,11 @@ enum class CameraStatus {
     CLOSED
 };
 
+enum class CameraStopType {
+    TO_BACK = 0,
+    NORMAL
+};
+
 typedef struct FormatAdapterTag {
     uint32_t width;
     uint32_t height;
@@ -176,13 +181,6 @@ public:
 
     virtual void GetDevicesInfo(std::vector<VideoDeviceDescriptor> &devicesDiscriptor) = 0;
 
-    virtual int32_t InitCameraInput(const std::string &deviceId) = 0;
-
-    virtual int32_t InitPreviewOutput(const VideoCaptureParamsAdapter &captureParams,
-        std::shared_ptr<CameraBufferListenerAdapter> listener) = 0;
-
-    virtual int32_t CreateAndStartSession() = 0;
-
     virtual int32_t ReleaseCameraManger() = 0;
 
     virtual int32_t GetExposureModes(std::vector<ExposureModeAdapter>& exposureModesAdapter) = 0;
@@ -199,9 +197,15 @@ public:
 
     virtual int32_t RestartSession() = 0;
 
-    virtual int32_t StopSession() = 0;
+    virtual int32_t StopSession(CameraStopType stopType) = 0;
 
     virtual CameraStatus GetCameraStatus() = 0;
+
+    virtual bool IsExistCaptureTask() = 0;
+
+    virtual int32_t StartStream(const std::string &deviceId,
+        const VideoCaptureParamsAdapter &captureParams,
+        std::shared_ptr<CameraBufferListenerAdapter> listener) = 0;
 };
 } // namespace OHOS::NWeb
 
