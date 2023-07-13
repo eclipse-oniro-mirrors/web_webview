@@ -21,8 +21,8 @@
 #include <unistd.h>
 #include <uv.h>
 
+#include "application_context.h"
 #include "business_error.h"
-#include "context/application_context.h"
 #include "napi_parse_utils.h"
 #include "nweb.h"
 #include "nweb_helper.h"
@@ -3501,7 +3501,7 @@ napi_value NapiWebviewController::PrepareForPageLoad(napi_env env, napi_callback
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
-    if (numSockets <= 0 || numSockets > SOCKET_MAXIMUM) {
+    if (numSockets <= 0 || static_cast<uint32_t>(numSockets) > SOCKET_MAXIMUM) {
         BusinessError::ThrowErrorByErrcode(env, INVALID_SOCKET_NUMBER);
         return nullptr;
     }
