@@ -24,6 +24,7 @@
 #include <sys/stat.h>
 #include <thread>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include "config_policy_utils.h"
 #include "nweb_adapter_helper.h"
