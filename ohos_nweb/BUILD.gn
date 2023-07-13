@@ -70,7 +70,6 @@ ohos_shared_library("libnweb") {
 
   deps = [
     ":web_config",
-    "../ohos_adapter:nweb_ohos_adapter",
     "//third_party/libxml2:libxml2",
   ]
 
