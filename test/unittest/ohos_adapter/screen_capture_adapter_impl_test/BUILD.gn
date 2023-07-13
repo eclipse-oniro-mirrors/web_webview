@@ -45,7 +45,7 @@ ohos_unittest("screen_capture_adapter_impl_test") {
     "access_token:libtoken_setproc",
     "graphic_2d:libcomposer",
     "graphic_2d:surface",
-    "hilog_native:libhilog",
+    "hilog:libhilog",
     "ipc:ipc_core",
     "player_framework:media_client",
     "webview:libnweb",
