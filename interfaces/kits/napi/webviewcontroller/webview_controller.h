@@ -202,6 +202,8 @@ public:
 
     ErrCode SetAudioMuted(bool muted);
 
+    ErrCode PrefetchPage(std::string& url, std::map<std::string, std::string> additionalHttpHeaders);
+
 private:
     int ConverToWebHitTestType(int hitType);
 

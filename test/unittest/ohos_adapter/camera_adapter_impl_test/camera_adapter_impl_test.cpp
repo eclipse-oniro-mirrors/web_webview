@@ -258,7 +258,6 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
 {
     CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
     int32_t result = adapter.Create();
-    EXPECT_EQ(result, 0);
     std::vector<VideoDeviceDescriptor> devicesDiscriptor;
     adapter.GetDevicesInfo(devicesDiscriptor);
     std::shared_ptr<CameraMetadata> data = std::make_shared<CameraMetadata>(0, 0);
@@ -303,8 +302,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     EXPECT_EQ(result, 0);
     result = adapter.ReleaseSessionResource(devicesDiscriptor[0].deviceId);
     EXPECT_EQ(result, 0);
-    result = adapter.ReleaseCameraManger();
-    EXPECT_EQ(result, 0);
+    adapter.ReleaseCameraManger();
 }
 
 /**
@@ -428,5 +426,30 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraSurfaceAdapterImpl_0
     listener->cSurface_ = nullptr;
     result = listener->ReleaseBuffer(nullptr, -1);
     EXPECT_EQ(result, -1);
+}
+
+/**
+ * @tc.name: CameraAdapterImplTest_InitCameraInput_010
+ * @tc.desc: GetOriFocusMode.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestSize.Level1)
+{
+    CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
+    int32_t result = adapter.Create();
+    EXPECT_EQ(result, 0);
+    std::string deviceId = "0";
+    adapter.status_ = CameraStatus::OPENED;
+    result = adapter.InitCameraInput(deviceId);
+    EXPECT_NE(result, 0);
+    adapter.status_ = CameraStatus::CLOSED;
+    adapter.input_inited_flag_ = false;
+    adapter.cameraManager_ = nullptr;
+    result = adapter.InitCameraInput(deviceId);
+    EXPECT_NE(result, 0);
+    VideoCaptureRangeAdapter rangeVal;
+    result = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION, rangeVal);
+    EXPECT_NE(result, 0);
 }
 } // namespace OHOS

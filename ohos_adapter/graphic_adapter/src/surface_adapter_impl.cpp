@@ -94,6 +94,15 @@ uint32_t SurfaceBufferAdapterImpl::GetSize() const
     return buffer_->GetSize();
 }
 
+void* SurfaceBufferAdapterImpl::GetVirAddr() const
+{
+    if (!buffer_) {
+        WVLOG_E("buffer_ is nullptr");
+        return nullptr;
+    }
+    return buffer_->GetVirAddr();
+}
+
 sptr<SurfaceBuffer>& SurfaceBufferAdapterImpl::GetBuffer()
 {
     return buffer_;
