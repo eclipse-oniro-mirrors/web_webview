@@ -167,8 +167,8 @@ HWTEST_F(NWebSurfaceAdapterTest, NWebSurfaceAdapterTest_CopyFrame_004, TestSize.
         .width = DEFAULT_WIDTH,
         .height = DEFAULT_HEIGHT,
         .strideAlignment = sizeof(void *),
-        .format = PIXEL_FMT_RGBA_8888,
-        .usage = HBM_USE_CPU_READ | HBM_USE_CPU_WRITE | HBM_USE_MEM_DMA,
+        .format = GRAPHIC_PIXEL_FMT_RGBA_8888,
+        .usage = BUFFER_USAGE_CPU_READ | BUFFER_USAGE_CPU_WRITE | BUFFER_USAGE_MEM_DMA,
         .timeout = 0,
     };
     g_surface->RequestBuffer(g_surfaceBuffer, releaseFence, requestConfig);

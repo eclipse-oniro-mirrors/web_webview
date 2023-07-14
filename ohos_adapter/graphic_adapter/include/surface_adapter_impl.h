@@ -39,6 +39,8 @@ public:
 
     uint32_t GetSize() const override;
 
+    void *GetVirAddr() const override;
+
     sptr<SurfaceBuffer>& GetBuffer();
 
 private:

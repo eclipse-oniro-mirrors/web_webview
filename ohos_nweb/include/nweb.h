@@ -752,6 +752,17 @@ public:
      * @return the data being dragged.
     */
     virtual std::shared_ptr<NWebDragData> GetOrCreateDragData() = 0;
+
+    /**
+     * Prefetch the resources required by the page, but will not execute js or
+     * render the page.
+     *
+     * @param url  String: Which url to preresolve/preconnect.
+     * @param additionalHttpHeaders Additional HTTP request headers of the URL.
+     */
+    virtual void PrefetchPage(
+        std::string& url,
+        std::map<std::string, std::string> additionalHttpHeaders) = 0;
 };
 }  // namespace OHOS::NWeb
 
