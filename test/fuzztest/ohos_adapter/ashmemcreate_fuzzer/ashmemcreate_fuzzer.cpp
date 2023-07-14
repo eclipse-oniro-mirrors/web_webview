@@ -27,12 +27,16 @@ using namespace OHOS::NWeb;
 namespace OHOS {
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
-        if ((data == nullptr) || (size <= 0)) {
+        if ((data == nullptr) || (size == 0)) {
             return false;
         }
         AshmemAdapter ashmem;
-        char* name = new char[size + 1] {0};
+        char* name = new (std::nothrow) char[size + 1] {0};
+        if (name == nullptr) {
+            return false;
+        }
         if (memcpy_s(name, size, data, size) != 0) {
+            delete[] name;
             return false;
         }
         int fd = ashmem.AshmemCreate(name, size);

@@ -12,7 +12,6 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
-import("../../../web_aafwk.gni")
 
 config("web_public_config") {
   visibility = [ ":*" ]
@@ -28,7 +27,6 @@ config("web_public_config") {
 }
 
 ohos_shared_library("webview_napi") {
-  include_dirs = [ "$aafwk_path/interfaces/kits/native/appkit/ability_runtime" ]
   public_configs = [ ":web_public_config" ]
 
   sources = [

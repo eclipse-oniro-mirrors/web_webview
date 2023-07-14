@@ -203,7 +203,7 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
     }
 
     std::vector<sptr<CameraDevice>> cameraObjList = cameraManager_->GetSupportedCameras();
-    if (cameraObjList.size() <= 0) {
+    if (cameraObjList.size() == 0) {
         WVLOG_E("No cameras are available!!!");
         return;
     }
@@ -221,7 +221,6 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
         deviceDisc.facing = GetCameraFacingMode(cameraObj->GetPosition());
 
         deviceDisc.supportCaptureFormats = GetCameraSupportFormats(outputcapability);
-        devicesDiscriptor.emplace_back(std::move(deviceDisc));
         WVLOG_I("deviceDisc  id:%{public}s, control pan:%{public}d tilt:%{public}d, zoom:%{public}d \
             transType:%{public}d, facingMode:%{public}d",
             deviceDisc.deviceId.c_str(),
@@ -230,6 +229,7 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
             deviceDisc.controlSupport.zoom,
             deviceDisc.transportType,
             deviceDisc.facing);
+        devicesDiscriptor.emplace_back(std::move(deviceDisc));
     }
 }
 
@@ -367,7 +367,6 @@ int32_t CameraManagerAdapterImpl::GetCurrentExposureMode(ExposureModeAdapter& ex
         WVLOG_E("captureSession is nullptr when get current exposure modes");
         return CAMERA_ERROR;
     }
-    std::vector<ExposureMode> exposureModes;
 
     ExposureMode exposureMode = captureSession_->GetExposureMode();
     exposureModeAdapter = GetAdapterExposureMode(exposureMode);
