@@ -104,6 +104,7 @@ private:
     bool isLocalPaste_ = false;
     ObserverMap reg_;
     std::mutex mutex_;
+    std::string webviewPasteDataTag_ = "WebviewPasteDataTag";
 };
 } // namespace OHOS::NWeb
 

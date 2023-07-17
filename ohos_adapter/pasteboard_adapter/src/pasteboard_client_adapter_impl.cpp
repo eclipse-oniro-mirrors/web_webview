@@ -422,6 +422,7 @@ void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data)
         recordList.push_back(rawRecord->GetRecord());
     }
     PasteData pData(recordList);
+    pData.SetTag(webviewPasteDataTag_);
     PasteboardClient::GetInstance()->SetPasteData(pData);
 }
 
