@@ -20,56 +20,37 @@
 #include <dlfcn.h>
 #include <memory>
 #include <refbase.h>
-#include <securec.h>
 #include <surface.h>
 #include <sys/stat.h>
 #include <thread>
 #include <unistd.h>
+#include <fcntl.h>
 
 #include "config_policy_utils.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_enhance_surface_adapter.h"
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
-#include "ohos_adapter_helper.h"
 
 namespace {
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
 const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
 #if defined(webview_arm64)
-const std::string RELATIVE_PATH_FOR_HAP = "NWeb.hap!/libs/arm64-v8a";
-const std::string RELATIVE_PATH_FOR_COMPRESSED_HAP = "libs/arm64-v8a";
+const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm64";
+const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm64";
 #elif defined(webview_x86_64)
-const std::string RELATIVE_PATH_FOR_HAP = "NWeb.hap!/libs/x86_64";
-const std::string RELATIVE_PATH_FOR_COMPRESSED_HAP = "libs/x86_64";
+const std::string RELATIVE_PATH_FOR_MOCK = "libs/x86_64";
+const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/x86_64";
 #else
-const std::string RELATIVE_PATH_FOR_HAP = "NWeb.hap!/libs/armeabi-v7a";
-const std::string RELATIVE_PATH_FOR_COMPRESSED_HAP = "libs/armeabi-v7a";
+const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm";
+const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm";
 #endif
 const std::string LIB_NAME_WEB_ENGINE = "libweb_engine.so";
 static bool g_isFirstTimeStartUp = false;
 const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
-const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/";
-const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/";
 }
 
 namespace OHOS::NWeb {
-std::string GetNWebHapLibsPath()
-{
-    std::string libPath;
-    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
-        libPath = NWEB_HAP_PATH + RELATIVE_PATH_FOR_HAP;
-        WVLOG_D("get fix path, %{public}s", libPath.c_str());
-        return libPath;
-    }
-    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
-        libPath = NWEB_HAP_PATH_1 + RELATIVE_PATH_FOR_HAP;
-        WVLOG_D("get fix path, %{public}s", libPath.c_str());
-        return libPath;
-    }
-    return "";
-}
-
 NWebHelper &NWebHelper::Instance()
 {
     static NWebHelper helper;
@@ -87,17 +68,16 @@ bool NWebHelper::LoadLib(bool from_ark)
     }
     std::string loadLibPath;
     if (from_ark) {
-        loadLibPath = GetNWebHapLibsPath();
+        loadLibPath = bundlePath_ + "/" + RELATIVE_PATH_FOR_BUNDLE;
     } else {
-        loadLibPath = GetNWebHapLibsPath();
+        loadLibPath = bundlePath_ + "/" + RELATIVE_PATH_FOR_MOCK;
     }
     Dl_namespace dlns;
     dlns_init(&dlns, "nweb_ns");
     dlns_create(&dlns, loadLibPath.c_str());
     void *libHandleWebEngine = dlopen_ns(&dlns, LIB_NAME_WEB_ENGINE.c_str(), RTLD_NOW);
     if (libHandleWebEngine == nullptr) {
-        WVLOG_E("fail to dlopen %{public}s, %{public}s, errmsg=%{public}s", loadLibPath.c_str(),
-            LIB_NAME_WEB_ENGINE.c_str(), dlerror());
+        WVLOG_E("fail to dlopen %{public}s, errmsg=%{public}s", LIB_NAME_WEB_ENGINE.c_str(), dlerror());
         return false;
     }
     libHandleWebEngine_ = libHandleWebEngine;
@@ -114,15 +94,14 @@ bool NWebHelper::LoadLib(bool from_ark)
     }
     std::string loadLibPath;
     if (from_ark) {
-        loadLibPath = GetNWebHapLibsPath();
+        loadLibPath = bundlePath_ + "/" + RELATIVE_PATH_FOR_BUNDLE;
     } else {
-        loadLibPath = GetNWebHapLibsPath();
+        loadLibPath = bundlePath_ + "/" + RELATIVE_PATH_FOR_MOCK;
     }
     const std::string libPathWebEngine = loadLibPath + "/" + LIB_NAME_WEB_ENGINE;
     void *libHandleWebEngine = ::dlopen(libPathWebEngine.c_str(), RTLD_NOW);
     if (libHandleWebEngine == nullptr) {
-        WVLOG_E("fail to dlopen %{public}s, %{public}s, errmsg=%{public}s", loadLibPath.c_str(),
-            LIB_NAME_WEB_ENGINE.c_str(), dlerror());
+        WVLOG_E("fail to dlopen %{public}s, errmsg=%{public}s", libPathWebEngine.c_str(), dlerror());
         return false;
     }
     libHandleWebEngine_ = libHandleWebEngine;
@@ -138,52 +117,48 @@ void NWebHelper::UnloadLib()
     }
 }
 
-static void DoPreReadLib()
+static void DoPreReadLib(const std::string &bundlePath)
 {
     WVLOG_I("NWebHelper PreReadLib");
-    std::string libPathWebEngine = RELATIVE_PATH_FOR_COMPRESSED_HAP + "/" + LIB_NAME_WEB_ENGINE;
+    std::string libPathWebEngine = bundlePath + "/" + RELATIVE_PATH_FOR_BUNDLE + "/" + LIB_NAME_WEB_ENGINE;
 
-    auto resourceAdapter = OhosAdapterHelper::GetInstance().GetResourceAdapter();
-    std::unique_ptr<OHOS::NWeb::OhosFileMapper> fileMapper;
-    if (!resourceAdapter->GetRawFileMapper(libPathWebEngine, fileMapper, true)) {
-        WVLOG_E("get web engine so file from hap failed");
+    char tempPath[PATH_MAX] = {0};
+    if (realpath(libPathWebEngine.c_str(), tempPath) == nullptr) {
+        WVLOG_E("path to realpath error");
         return;
     }
 
-    if (fileMapper->IsCompressed()) {
-        WVLOG_W("can not pre-read for compressed web engine so file");
+    struct stat stats;
+    int ret = stat(tempPath, &stats);
+    if (ret < 0) {
+        WVLOG_E("stat web engine library failed, ret = %{public}d", ret);
         return;
     }
 
-    static const uint32_t SINGLE_READ_SIZE = 5 * 1024 * 1024;
+    static const int SINGLE_READ_SIZE = 5 * 1024 * 1024;
     char *buf = new (std::nothrow) char[SINGLE_READ_SIZE];
     if (buf == nullptr) {
         WVLOG_E("malloc buf failed");
         return;
     }
 
-    size_t readCnt = fileMapper->GetDataLen() / SINGLE_READ_SIZE;
-    size_t leftSize = fileMapper->GetDataLen();
-    uint8_t *currPtr = reinterpret_cast<uint8_t *>(fileMapper->GetDataPtr());
-
-    for (size_t i = 0; i < readCnt; i++) {
-        if (memcpy_s(buf, SINGLE_READ_SIZE, currPtr, SINGLE_READ_SIZE) != EOK) {
-            WVLOG_E("memcpy failed, abort pre-read");
-            delete [] buf;
-            return;
-        }
-        currPtr += SINGLE_READ_SIZE;
-        leftSize -= SINGLE_READ_SIZE;
+    int fd = open(tempPath, O_RDONLY);
+    if (fd <= 0) {
+        WVLOG_E("open web engine library failed");
+        delete [] buf;
+        return;
     }
 
-    if (readCnt * SINGLE_READ_SIZE < fileMapper->GetDataLen()) {
-        if (memcpy_s(buf, SINGLE_READ_SIZE, currPtr, leftSize) != EOK) {
-            WVLOG_E("memcpy failed, abort pre-read");
-            delete [] buf;
-            return;
-        }
+    int readCnt = stats.st_size / SINGLE_READ_SIZE;
+    if (readCnt * SINGLE_READ_SIZE < stats.st_size) {
+        readCnt += 1;
     }
 
+    for (int i = 0; i < readCnt; i++) {
+        (void)read(fd, buf, SINGLE_READ_SIZE);
+    }
+
+    (void)close(fd);
     delete [] buf;
     WVLOG_I("NWebHelper PreReadLib Finish");
 }
@@ -196,14 +171,14 @@ void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bu
         return;
     }
 
-    DoPreReadLib();
+    DoPreReadLib(bundlePath);
 }
 
-static void TryPreReadLibForFirstlyAppStartUp()
+static void TryPreReadLibForFirstlyAppStartUp(const std::string &bundlePath)
 {
     if (g_isFirstTimeStartUp) {
-        std::thread preReadThread([]() {
-            DoPreReadLib();
+        std::thread preReadThread([bundlePath]() {
+            DoPreReadLib(bundlePath);
         });
 
         preReadThread.detach();
@@ -212,7 +187,7 @@ static void TryPreReadLibForFirstlyAppStartUp()
 
 bool NWebHelper::Init(bool from_ark)
 {
-    TryPreReadLibForFirstlyAppStartUp();
+    TryPreReadLibForFirstlyAppStartUp(bundlePath_);
     return LoadLib(from_ark);
 }
 

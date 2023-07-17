@@ -76,13 +76,6 @@ public:
 
     void GetDevicesInfo(std::vector<VideoDeviceDescriptor> &devicesDiscriptor) override;
 
-    int32_t InitCameraInput(const std::string &deviceId) override;
-
-    int32_t InitPreviewOutput(const VideoCaptureParamsAdapter &captureParams,
-        std::shared_ptr<CameraBufferListenerAdapter> listener) override;
-
-    int32_t CreateAndStartSession() override;
-
     int32_t ReleaseCameraManger() override;
 
     int32_t GetExposureModes(std::vector<ExposureModeAdapter>& exposureModesAdapter) override;
@@ -99,9 +92,15 @@ public:
 
     int32_t RestartSession() override;
 
-    int32_t StopSession() override;
+    int32_t StopSession(CameraStopType stopType) override;
 
     CameraStatus GetCameraStatus() override;
+
+    bool IsExistCaptureTask() override;
+
+    int32_t StartStream(const std::string &deviceId,
+        const VideoCaptureParamsAdapter &captureParams,
+        std::shared_ptr<CameraBufferListenerAdapter> listener) override;
 
 private:
     VideoTransportType GetCameraTransportType(ConnectionType connectType);
@@ -119,6 +118,10 @@ private:
     FlashMode GetOriFlashMode(FlashModeAdapter flashMode);
     int32_t ReleaseSession();
     int32_t ReleaseSessionResource(const std::string &deviceId);
+    int32_t InitCameraInput(const std::string &deviceId);
+    int32_t InitPreviewOutput(const VideoCaptureParamsAdapter &captureParams,
+        std::shared_ptr<CameraBufferListenerAdapter> listener);
+    int32_t CreateAndStartSession();
     sptr<CameraManager> cameraManager_;
     sptr<CaptureSession> captureSession_;
     sptr<CaptureInput> cameraInput_;
@@ -135,6 +138,8 @@ private:
     CameraStatus status_ = CameraStatus::CLOSED;
     std::mutex mutex_;
     bool input_inited_flag_ = false;
+    bool is_capturing_ = false;
+    std::mutex restart_mutex_;
 };
 
 class CameraSurfaceListener : public IBufferConsumerListener {
