@@ -25,7 +25,7 @@ ohos_shared_library("web_inner_kit") {
   external_deps = [
     "ability_base:zuri",
     "c_utils:utils",
-    "multimedia_image_framework:image_native",
+    "image_framework:image_native",
     "pasteboard:pasteboard_client",
   ]
 
