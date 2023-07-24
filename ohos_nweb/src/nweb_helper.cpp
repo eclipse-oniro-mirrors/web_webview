@@ -424,12 +424,18 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebCreateInfo& cr
             if (nodeName == std::string("renderConfig") && childNodeName == std::string("renderProcessCount")) {
                 createInfo.init_args.web_engine_args_to_add.emplace_back(
                     std::string("--renderer-process-limit=") + contentStr);
-                continue;
-            }
-            if (nodeName == std::string("mediaConfig") &&
+            } else if (nodeName == std::string("mediaConfig") &&
                 childNodeName == std::string("backgroundMediaShouldSuspend") && contentStr == std::string("false")) {
                 createInfo.init_args.web_engine_args_to_add.emplace_back(
                     std::string("--disable-background-media-suspend"));
+            } else if (nodeName == std::string("loadurlSocPerfConfig") &&
+                childNodeName == std::string("loadurlSocPerfParam") && contentStr == std::string("true")) {
+                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                    std::string("--ohos-enable-loadurl-soc-perf"));
+            } else if (nodeName == std::string("mouseWheelSocPerfConfig") &&
+                childNodeName == std::string("mouseWheelSocPerfParam") && contentStr == std::string("true")) {
+                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                    std::string("--ohos-enable-mousewheel-soc-perf"));
             }
         }
     }
