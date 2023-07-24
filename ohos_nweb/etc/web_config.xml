@@ -6,4 +6,10 @@
   <mediaConfig>
       <backgroundMediaShouldSuspend>true</backgroundMediaShouldSuspend>
   </mediaConfig>
+  <loadurlSocPerfConfig>
+      <loadurlSocPerfParam>false</loadurlSocPerfParam>
+  </loadurlSocPerfConfig>
+  <mouseWheelSocPerfConfig>
+      <mouseWheelSocPerfParam>false</mouseWheelSocPerfParam>
+  </mouseWheelSocPerfConfig>
 </WEB>
