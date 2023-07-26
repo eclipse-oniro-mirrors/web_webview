@@ -382,6 +382,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_010, TestSi
     ret = AudioSystemManagerAdapterImpl::GetInstance().UnsetAudioManagerInterruptCallback();
     EXPECT_EQ(ret, RESULT_OK);
     
+    AudioSystemManagerAdapterImpl::GetInstance().GetDevices(AdapterDeviceFlag::OUTPUT_DEVICES_FLAG);
     AudioSystemManagerAdapterImpl::GetInstance().GetDevices(static_cast<AdapterDeviceFlag>(-1));
 
     AudioAdapterDeviceDesc desc;
@@ -640,6 +641,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_018, TestSi
 
     bool ret = g_audioCapturer->Start();
     EXPECT_EQ(ret, TRUE_OK);
+    ret = g_audioCapturer->Start();
+    EXPECT_EQ(ret, TRUE_OK);
 
     BufferDescAdapter bufferDesc;
     retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
@@ -837,5 +840,25 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_025, TestSi
     EXPECT_EQ(testSource, SourceType::SOURCE_TYPE_VOICE_RECOGNITION);
 }
 
+/**
+ * @tc.name: NWebAudioAdapterTest_Create_026.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_Create_026, TestSize.Level1)
+{
+    auto audioCapturer = std::make_shared<AudioCapturerAdapterImpl>();
+    ASSERT_NE(audioCapturer, nullptr);
+    AudioAdapterCapturerOptions capturerOptions;
+    capturerOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_48000;
+    capturerOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    capturerOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    capturerOptions.channels = AudioAdapterChannel::STEREO;
+    capturerOptions.sourceType = AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
+    capturerOptions.capturerFlags = 0;
+    int32_t retNum = audioCapturer->Create(capturerOptions);
+    ASSERT_NE(retNum, AudioAdapterCode::AUDIO_OK);
+}
 } // namespace NWeb
 } // namespace OHOS

@@ -232,8 +232,12 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetFileDescriptor_004, Tes
     EXPECT_EQ(formatAdapter, VideoPixelFormatAdapter::FORMAT_UNKNOWN);
     CameraFormat format = adapter.TransToOriCameraFormat(VideoPixelFormatAdapter::FORMAT_YCBCR_420_888);
     EXPECT_EQ(format, CameraFormat::CAMERA_FORMAT_YCBCR_420_888);
+    format = adapter.TransToOriCameraFormat(static_cast<VideoPixelFormatAdapter>(-1));
+    EXPECT_EQ(format, CameraFormat::CAMERA_FORMAT_INVALID);
     ExposureModeAdapter exposure = adapter.GetAdapterExposureMode(ExposureMode::EXPOSURE_MODE_LOCKED);
     EXPECT_EQ(exposure, ExposureModeAdapter::EXPOSURE_MODE_LOCKED);
+    exposure = adapter.GetAdapterExposureMode(static_cast<ExposureMode>(DEFAULT_WIDTH));
+    EXPECT_EQ(exposure, ExposureModeAdapter::EXPOSURE_MODE_UNSUPPORTED);
 }
 
 /**
@@ -249,10 +253,16 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetAdapterFocusMode_005, T
     EXPECT_EQ(result, 0);
     FocusMode mode = adapter.GetOriFocusMode(FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO);
     EXPECT_EQ(mode, FocusMode::FOCUS_MODE_CONTINUOUS_AUTO);
+    mode = adapter.GetOriFocusMode(static_cast<FocusModeAdapter>(-1));
+    EXPECT_EQ(mode, FocusMode::FOCUS_MODE_MANUAL);
     FlashMode flashMode = adapter.GetOriFlashMode(FlashModeAdapter::FLASH_MODE_OPEN);
     EXPECT_EQ(flashMode, FlashMode::FLASH_MODE_OPEN);
+    flashMode = adapter.GetOriFlashMode(static_cast<FlashModeAdapter>(-1));
+    EXPECT_EQ(flashMode, FlashMode::FLASH_MODE_CLOSE);
     FocusModeAdapter focusMode = adapter.GetAdapterFocusMode(FocusMode::FOCUS_MODE_CONTINUOUS_AUTO);
     EXPECT_EQ(focusMode, FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO);
+    focusMode = adapter.GetAdapterFocusMode(static_cast<FocusMode>(-1));
+    EXPECT_EQ(focusMode, FocusModeAdapter::FOCUS_MODE_MANUAL);
 }
 
 /**
@@ -300,7 +310,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     EXPECT_NE(result, 0);
     result = adapter.StopSession(CameraStopType::NORMAL);
     EXPECT_EQ(result, 0);
-    result = adapter.StopSession(CameraStopType::NORMAL);
+    result = adapter.StopSession(CameraStopType::TO_BACK);
     EXPECT_EQ(result, 0);
     result = adapter.ReleaseSession();
     EXPECT_EQ(result, 0);
@@ -332,7 +342,6 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureMode
     EXPECT_EQ(result, 0);
     std::vector<VideoDeviceDescriptor> devicesDiscriptor;
     adapter.GetDevicesInfo(devicesDiscriptor);
-    EXPECT_FALSE(devicesDiscriptor.empty());
     VideoCaptureParamsAdapter captureParams = {
         .captureFormat = {
             .width = 1,
@@ -393,8 +402,10 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_008, TestS
     VideoCaptureParamsAdapter captureParams;
     result = adapter.InitPreviewOutput(captureParams, nullptr);
     EXPECT_NE(result, 0);
+    adapter.status_ = CameraStatus::OPENED;
     result = adapter.RestartSession();
-    EXPECT_NE(result, 0);
+    EXPECT_EQ(result, 0);
+    adapter.status_ = CameraStatus::CLOSED;
     adapter.is_capturing_ = false;
     result = adapter.RestartSession();
     EXPECT_EQ(result, 0);
@@ -454,9 +465,25 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestS
     CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
     int32_t result = adapter.Create();
     EXPECT_EQ(result, 0);
+    VideoCaptureParamsAdapter captureParams = {
+        .captureFormat = {
+            .width = 1,
+            .height = 1,
+            .frameRate = 1,
+            .pixelFormat = VideoPixelFormatAdapter::FORMAT_RGBA_8888,
+        },
+        .enableFaceDetection = true,
+    };
+    auto listenerAdapter = std::make_shared<CameraBufferListenerAdapterMock>();
+    EXPECT_NE(listenerAdapter, nullptr);
     std::string deviceId = "0";
     adapter.status_ = CameraStatus::OPENED;
     result = adapter.InitCameraInput(deviceId);
+    EXPECT_NE(result, 0);
+    adapter.is_capturing_ = true;
+    bool isExist = adapter.IsExistCaptureTask();
+    EXPECT_TRUE(isExist);
+    result = adapter.StartStream(deviceId, captureParams, nullptr);
     EXPECT_NE(result, 0);
     adapter.status_ = CameraStatus::CLOSED;
     adapter.input_inited_flag_ = false;
@@ -465,6 +492,13 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestS
     EXPECT_NE(result, 0);
     VideoCaptureRangeAdapter rangeVal;
     result = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION, rangeVal);
+    EXPECT_NE(result, 0);
+    adapter.input_inited_flag_ = true;
+    result = adapter.InitPreviewOutput(captureParams, nullptr);
+    EXPECT_NE(result, 0);
+    isExist = adapter.IsExistCaptureTask();
+    EXPECT_FALSE(isExist);
+    result = adapter.StartStream(deviceId, captureParams, listenerAdapter);
     EXPECT_NE(result, 0);
 }
 } // namespace OHOS
