@@ -109,6 +109,8 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     helper.GetPasteBoard();
     std::unique_ptr<AudioRendererAdapter> audioRender = helper.CreateAudioRendererAdapter();
     EXPECT_NE(audioRender, nullptr);
+    std::unique_ptr<AudioCapturerAdapter> audioCapter = helper.CreateAudioCapturerAdapter();
+    EXPECT_NE(audioCapter, nullptr);
     helper.GetAudioSystemManager();
     helper.GetWebPermissionDataBaseInstance();
     std::unique_ptr<MMIAdapter> mmiAdapter = helper.CreateMMIAdapter();
@@ -160,5 +162,35 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     auto nweb = helper.GetNWeb(nweb_id);
     EXPECT_EQ(nweb.lock(), nullptr);
     helper.UnloadLib();
+}
+
+/**
+ * @tc.name: OhosAdapterHelper_GetSystemPropertiesInstance_004.
+ * @tc.desc: Test the GetSystemPropertiesInstance.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetSystemPropertiesInstance_004, TestSize.Level1)
+{
+    OhosAdapterHelper &helper = OhosAdapterHelper::GetInstance();
+    helper.GetSystemPropertiesInstance();
+    auto synvAdapter = helper.GetVSyncAdapter();
+    EXPECT_NE(synvAdapter, nullptr);
+    auto initWebAdapter = helper.GetInitWebAdapter();
+    EXPECT_NE(initWebAdapter, nullptr);
+    helper.GetDatashareInstance();
+    auto imfAdapter = helper.CreateIMFAdapter();
+    EXPECT_NE(imfAdapter, nullptr);
+    auto managerAdapter = helper.GetRootCertDataAdapter();
+    EXPECT_NE(managerAdapter, nullptr);
+    helper.GetAccessTokenAdapterInstance();
+    auto eventHandler = helper.GetEventHandlerAdapter();
+    EXPECT_NE(eventHandler, nullptr);
+    auto playerAdapter = helper.CreatePlayerAdapter();
+    EXPECT_NE(playerAdapter, nullptr);
+    helper.GetNetProxyInstance();
+    helper.GetCameraManagerAdapter();
+    auto screenCapture = helper.CreateScreenCaptureAdapter();
+    EXPECT_NE(screenCapture, nullptr);
 }
 }
