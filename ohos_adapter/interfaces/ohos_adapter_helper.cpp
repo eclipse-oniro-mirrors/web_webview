@@ -25,6 +25,7 @@
 #include "cert_mgr_adapter_impl.h"
 #include "datashare_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
+#include "enterprise_device_management_adapter_impl.h"
 #include "event_handler_adapter_impl.h"
 #include "hisysevent_adapter_impl.h"
 #include "hitrace_adapter_impl.h"
@@ -144,6 +145,11 @@ std::unique_ptr<VSyncAdapter> OhosAdapterHelper::GetVSyncAdapter() const
 std::unique_ptr<OhosInitWebAdapter> OhosAdapterHelper::GetInitWebAdapter() const
 {
     return std::make_unique<OhosInitWebAdapterImpl>();
+}
+
+EnterpriseDeviceManagementAdapter& OhosAdapterHelper::GetEnterpriseDeviceManagementInstance() const
+{
+    return EnterpriseDeviceManagementAdapterImpl::GetInstance();
 }
 
 DatashareAdapter& OhosAdapterHelper::GetDatashareInstance() const

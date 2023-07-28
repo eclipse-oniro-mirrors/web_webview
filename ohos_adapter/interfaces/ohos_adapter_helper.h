@@ -28,6 +28,7 @@
 #include "cert_mgr_adapter.h"
 #include "datashare_adapter.h"
 #include "display_manager_adapter.h"
+#include "enterprise_device_management_adapter.h"
 #include "event_handler_adapter.h"
 #include "graphic_adapter.h"
 #include "hisysevent_adapter.h"
@@ -89,6 +90,8 @@ public:
     std::unique_ptr<VSyncAdapter> GetVSyncAdapter() const;
 
     std::unique_ptr<OhosInitWebAdapter> GetInitWebAdapter() const;
+
+    EnterpriseDeviceManagementAdapter& GetEnterpriseDeviceManagementInstance() const;
 
     DatashareAdapter& GetDatashareInstance() const;
 
