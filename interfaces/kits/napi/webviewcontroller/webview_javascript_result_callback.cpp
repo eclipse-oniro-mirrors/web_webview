@@ -29,13 +29,13 @@ WebviewJavaScriptResultCallBack::~WebviewJavaScriptResultCallBack()
     }
 }
 
-void WebviewJavaScriptResultCallBack::UvJsCallbackThreadWoker(uv_work_t *work, int status)
+void WebviewJavaScriptResultCallBack::UvJsCallbackThreadWoker(uv_work_t* work, int status)
 {
     if (work == nullptr) {
         WVLOG_E("uv work is null");
         return;
     }
-    WebviewJavaScriptResultCallBack::NapiJsCallBackParm *param =
+    WebviewJavaScriptResultCallBack::NapiJsCallBackParm* param =
         reinterpret_cast<WebviewJavaScriptResultCallBack::NapiJsCallBackParm*>(work->data);
     if (param == nullptr) {
         WVLOG_E("NapiJsCallBackParm is null");
@@ -50,7 +50,7 @@ void WebviewJavaScriptResultCallBack::UvJsCallbackThreadWoker(uv_work_t *work, i
     }
 
     std::vector<napi_value> argv = {};
-    for (std::shared_ptr<NWebValue> input: param->args_) {
+    for (std::shared_ptr<NWebValue> input : param->args_) {
         ParseNwebValue2NapiValue(param->env_, input, argv);
     }
 
@@ -68,9 +68,7 @@ void WebviewJavaScriptResultCallBack::UvJsCallbackThreadWoker(uv_work_t *work, i
 }
 
 std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
-    std::vector<std::shared_ptr<NWebValue>> args,
-    const std::string& method,
-    const std::string& objName)
+    std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName)
 {
     WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResult method = %{public}s, objName = %{public}s",
         method.c_str(), objName.c_str());
@@ -84,8 +82,8 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
         return ret;
     }
 
-    uv_loop_s *loop = nullptr;
-    uv_work_t *work = nullptr;
+    uv_loop_s* loop = nullptr;
+    uv_work_t* work = nullptr;
     napi_get_uv_event_loop(jsObj.env, &loop);
     if (loop == nullptr) {
         WVLOG_E("get uv event loop failed");
@@ -96,7 +94,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
         WVLOG_E("new uv work failed");
         return ret;
     }
-    WebviewJavaScriptResultCallBack::NapiJsCallBackParm *param =
+    WebviewJavaScriptResultCallBack::NapiJsCallBackParm* param =
         new (std::nothrow) WebviewJavaScriptResultCallBack::NapiJsCallBackParm();
     if (param == nullptr) {
         WVLOG_E("new WebMsgPortParam failed");
@@ -110,7 +108,8 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     param->value_ = ret;
 
     work->data = reinterpret_cast<void*>(param);
-    uv_queue_work(loop, work, [](uv_work_t *work) {}, UvJsCallbackThreadWoker);
+    uv_queue_work(
+        loop, work, [](uv_work_t* work) {}, UvJsCallbackThreadWoker);
     std::unique_lock<std::mutex> lock(param->mutex_);
     param->condition_.wait(lock, [&param] { return param->ready_; });
     if (param != nullptr) {
@@ -124,8 +123,8 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     return ret;
 }
 
-void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(napi_env env, napi_value obj,
-    const std::string& objName, const std::vector<std::string>& methodList)
+void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(
+    napi_env env, napi_value obj, const std::string& objName, const std::vector<std::string>& methodList)
 {
     if (objectMap_.find(objName) != objectMap_.end()) {
         WVLOG_I("object already exists, objName = %{public}s", objName.c_str());
@@ -171,9 +170,7 @@ bool WebviewJavaScriptResultCallBack::DeleteJavaScriptRegister(const std::string
 }
 
 void WebviewJavaScriptResultCallBack::ParseNwebValue2NapiValue(
-    napi_env env,
-    std::shared_ptr<NWebValue> value,
-    std::vector<napi_value>& argv)
+    napi_env env, std::shared_ptr<NWebValue> value, std::vector<napi_value>& argv)
 {
     napi_value napiValue = nullptr;
 
@@ -196,14 +193,16 @@ void WebviewJavaScriptResultCallBack::ParseNwebValue2NapiValue(
             break;
         case NWebValue::Type::NONE:
         default:
+            std::string msgStr = "notSupportType";
+            napi_create_string_utf8(env, msgStr.c_str(), msgStr.length(), &napiValue);
+            argv.push_back(napiValue);
             WVLOG_E("ParseNwebValue2NapiValue invalid type");
             break;
     }
 }
 
 void WebviewJavaScriptResultCallBack::ParseNapiValue2NwebValue(
-    napi_env env, napi_value value,
-    std::shared_ptr<NWebValue> nwebValue)
+    napi_env env, napi_value value, std::shared_ptr<NWebValue> nwebValue)
 {
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, value, &valueType);
@@ -239,4 +238,4 @@ void WebviewJavaScriptResultCallBack::ParseNapiValue2NwebValue(
     }
 }
 
-}
+} // namespace OHOS::NWeb
