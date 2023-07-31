@@ -42,6 +42,7 @@
                 "config_policy",
                 "core_service",
                 "data_share",
+                "enterprise_device_management",
                 "eventhandler",
                 "file_api",
                 "graphic_2d",
