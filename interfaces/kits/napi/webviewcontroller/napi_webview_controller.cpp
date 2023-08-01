@@ -308,7 +308,7 @@ napi_value NapiWebviewController::InitializeWebEngine(napi_env env, napi_callbac
     // load so
     const std::string& bundle_path = ctx->GetBundleCodeDir();
     NWebHelper::Instance().SetBundlePath(bundle_path);
-    if (!NWebHelper::Instance().Init(true)) {
+    if (!NWebHelper::Instance().InitAndRun(true)) {
         WVLOG_E("Failed to init web engine due to NWebHelper failure.");
         return nullptr;
     }
