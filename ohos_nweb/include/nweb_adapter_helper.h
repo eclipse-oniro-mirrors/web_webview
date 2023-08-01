@@ -39,11 +39,12 @@ public:
                                      const NWebInitArgs &initArgs,
                                      uint32_t width = 0,
                                      uint32_t height = 0);
+    void ParseConfig(NWebInitArgs& createInfo);
 private:
     NWebAdapterHelper() = default;
     std::string GetConfigPath(const std::string& configFileName);
     void ParseConfig(NWebCreateInfo& createInfo);
-    void ReadConfig(const xmlNodePtr& rootPtr, NWebCreateInfo& createInfo);
+    void ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init_args);
 };
 } // namespace OHOS
 

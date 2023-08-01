@@ -234,8 +234,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     std::string configFileName = "test";
     std::string figPath = NWebAdapterHelper::Instance().GetConfigPath(configFileName);
     EXPECT_FALSE(figPath.empty());
-    NWebCreateInfo createInfo;
-    NWebAdapterHelper::Instance().ParseConfig(createInfo);
+    NWebInitArgs initArgs;
+    NWebAdapterHelper::Instance().ParseConfig(initArgs);
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
 }

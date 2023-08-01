@@ -26,6 +26,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include "application_context.h"
 #include "config_policy_utils.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_enhance_surface_adapter.h"
@@ -189,6 +190,52 @@ bool NWebHelper::Init(bool from_ark)
 {
     TryPreReadLibForFirstlyAppStartUp(bundlePath_);
     return LoadLib(from_ark);
+}
+
+using InitializeWebEngine = void (*)(const NWebInitArgs &);
+bool NWebHelper::InitAndRun(bool from_ark) {
+    if (!Init(from_ark)) {
+      return false;
+    }
+
+    WVLOG_I("InitializeWebEngine: load libs and initiallize cef.");
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_E("InitializeWebEngine: libHandleWebEngine_ is nullptr");
+        return false;
+    }
+
+    const std::string INITIALIZE_WEB_ENGINE_FUNC_NAME = "InitializeWebEngine";
+    InitializeWebEngine initializeWebEngine =
+        reinterpret_cast<InitializeWebEngine>(dlsym(libHandleWebEngine_,
+            INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str()));
+    if (initializeWebEngine == nullptr) {
+        WVLOG_E("initializeWebEngine: fail to dlsym %{public}s from libohoswebview.so",
+                INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str());
+        return false;
+    }
+
+    OHOS::NWeb::NWebInitArgs initArgs;
+    NWebAdapterHelper::Instance().ParseConfig(initArgs);
+    // obtain bundle path
+    std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+        AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (!ctx) {
+        WVLOG_E("Failed to init cef due to nil application context.");
+        return false;
+    }
+
+    if (ctx->GetBaseDir().empty()) {
+        WVLOG_E("Failed to init cef due to base dir is empty.");
+        return false;
+    }
+
+    initArgs.web_engine_args_to_add.push_back(
+        std::string("--user-data-dir=").append(ctx->GetBaseDir()));
+    initArgs.web_engine_args_to_add.push_back(
+        std::string("--bundle-installation-dir=").append(bundlePath_));
+
+    initializeWebEngine(initArgs);
+    return true;
 }
 
 void NWebHelper::SetBundlePath(const std::string &path)
@@ -358,7 +405,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(
         return nullptr;
     }
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height);
-    ParseConfig(createInfo);
+    ParseConfig(createInfo.init_args);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
@@ -399,7 +446,7 @@ std::string NWebAdapterHelper::GetConfigPath(const std::string& configFileName)
     return std::string(tmpPath);
 }
 
-void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebCreateInfo& createInfo)
+void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init_args)
 {
     for (xmlNodePtr curNodePtr = rootPtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
         if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
@@ -422,26 +469,26 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebCreateInfo& cr
             std::string contentStr = reinterpret_cast<const char*>(content);
             xmlFree(content);
             if (nodeName == std::string("renderConfig") && childNodeName == std::string("renderProcessCount")) {
-                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                init_args.web_engine_args_to_add.emplace_back(
                     std::string("--renderer-process-limit=") + contentStr);
             } else if (nodeName == std::string("mediaConfig") &&
                 childNodeName == std::string("backgroundMediaShouldSuspend") && contentStr == std::string("false")) {
-                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                init_args.web_engine_args_to_add.emplace_back(
                     std::string("--disable-background-media-suspend"));
             } else if (nodeName == std::string("loadurlSocPerfConfig") &&
                 childNodeName == std::string("loadurlSocPerfParam") && contentStr == std::string("true")) {
-                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                init_args.web_engine_args_to_add.emplace_back(
                     std::string("--ohos-enable-loadurl-soc-perf"));
             } else if (nodeName == std::string("mouseWheelSocPerfConfig") &&
                 childNodeName == std::string("mouseWheelSocPerfParam") && contentStr == std::string("true")) {
-                createInfo.init_args.web_engine_args_to_add.emplace_back(
+                init_args.web_engine_args_to_add.emplace_back(
                     std::string("--ohos-enable-mousewheel-soc-perf"));
             }
         }
     }
 }
 
-void NWebAdapterHelper::ParseConfig(NWebCreateInfo& createInfo)
+void NWebAdapterHelper::ParseConfig(NWebInitArgs& args)
 {
     auto configFilePath = GetConfigPath(WEB_CONFIG_PATH);
     xmlDocPtr docPtr = xmlReadFile(configFilePath.c_str(), nullptr, XML_PARSE_NOBLANKS);
@@ -458,7 +505,7 @@ void NWebAdapterHelper::ParseConfig(NWebCreateInfo& createInfo)
         return;
     }
 
-    ReadConfig(rootPtr, createInfo);
+    ReadConfig(rootPtr, args);
     xmlFreeDoc(docPtr);
 }
 } // namespace OHOS::NWeb
