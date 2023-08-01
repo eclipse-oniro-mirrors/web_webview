@@ -60,6 +60,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "power_mgr_adapter/src/power_mgr_client_adapter_impl.cpp",
     "pre_dns_adapter/src/nweb_pre_dns_adapter.cpp",
     "print_manager_adapter/src/print_manager_adapter_impl.cpp",
+    "res_sched_adapter/src/res_sched_client_adapter_impl.cpp",
     "screen_capture_adapter/src/screen_capture_adapter_impl.cpp",
     "soc_perf_adapter/src/soc_perf_client_adapter_impl.cpp",
     "system_properties_adapter/src/system_properties_adapter_impl.cpp",
@@ -152,6 +153,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "power_manager:powermgr_client",
     "print_fwk:print_client",
     "relational_store:native_rdb",
+    "resource_schedule_service:ressched_client",
     "samgr:samgr_proxy",
     "window_manager:libdm",
   ]
