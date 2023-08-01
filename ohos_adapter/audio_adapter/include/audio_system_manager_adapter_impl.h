@@ -59,6 +59,8 @@ public:
 
     int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const override;
 
+    AudioAdapterDeviceDesc GetDefaultOutputDevice() override;
+
     static AudioStreamType GetStreamType(AudioAdapterStreamType streamType);
 
 private:

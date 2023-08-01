@@ -96,6 +96,8 @@ public:
     virtual std::vector<AudioAdapterDeviceDesc> GetDevices(AdapterDeviceFlag flag) const = 0;
 
     virtual int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const = 0;
+
+    virtual AudioAdapterDeviceDesc GetDefaultOutputDevice() = 0;
 };
 } // namespace OHOS::NWeb
 
