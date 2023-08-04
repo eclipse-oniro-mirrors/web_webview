@@ -221,6 +221,7 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_OnReceiveEvent_001, TestSize.L
         .Times(1)
         .WillRepeatedly(::testing::Return(NetManagerStandard::NET_CONN_ERR_INPUT_NULL_PTR));
     NetProxyAdapterImpl::GetInstance().GetProperty(host, port, pacUrl, exclusion);
+    testing::Mock::AllowLeak(g_mock);
 }
 
 /**
