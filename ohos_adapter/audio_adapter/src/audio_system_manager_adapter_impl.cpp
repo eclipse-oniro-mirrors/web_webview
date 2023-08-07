@@ -83,6 +83,9 @@ const std::unordered_map<DeviceType, std::string> DEVICE_TYPE_MAP = {
     { DeviceType::DEVICE_TYPE_MAX, DEVICE_TYPE_MAX },
 };
 
+const int32_t ADAPTER_AUDIO_DEFAULT_DEVICE_ID = 1000000;
+const char* ADAPTER_AUDIO_DEFAULT_DEVICE_NAME = "(default)";
+
 AudioManagerCallbackAdapterImpl::AudioManagerCallbackAdapterImpl(std::shared_ptr<AudioManagerCallbackAdapter> cb)
     : cb_(cb) {};
 
@@ -216,9 +219,20 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc 
                         : DEVICE_FLAG_MAP.find(AdapterDeviceFlag::OUTPUT_DEVICES_FLAG);
     if (item == DEVICE_FLAG_MAP.end()) {
         WVLOG_E("audio device type not found");
-        return -1;
+        return AUDIO_ERROR;
     }
     auto deviceFlag = item->second;
+    if (!isInput && desc.deviceId == ADAPTER_AUDIO_DEFAULT_DEVICE_ID) {
+        WVLOG_I("Select default audio output Device.");
+        AudioRendererInfo rendererInfo;
+        rendererInfo.contentType = ContentType::CONTENT_TYPE_SPEECH;
+        rendererInfo.streamUsage = StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION;
+        rendererInfo.rendererFlags = 0;
+        std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
+        AudioRoutingManager::GetInstance()->GetPreferOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
+        AudioSystemManager::GetInstance()->SelectInputDevice(defaultOutputDevice);
+        return AUDIO_OK;
+    }
     auto audioDeviceList = AudioSystemManager::GetInstance()->GetDevices(deviceFlag);
     for (auto device : audioDeviceList) {
         if (device->deviceId_ == desc.deviceId) {
@@ -228,7 +242,25 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc 
         }
     }
     WVLOG_E("can't find any device by audio device id");
-    return -1;
+    return AUDIO_ERROR;
+}
+
+AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
+{
+    AudioRendererInfo rendererInfo;
+    rendererInfo.contentType = ContentType::CONTENT_TYPE_SPEECH;
+    rendererInfo.streamUsage = StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION;
+    rendererInfo.rendererFlags = 0;
+    std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
+    AudioRoutingManager::GetInstance()->GetPreferOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
+
+    AudioAdapterDeviceDesc desc;
+    auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultOutputDevice[0]->deviceType_);
+    desc.deviceId = defaultOutputDevice[0]->deviceId_;
+    if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
+        desc.deviceName = deviceTypeKey->second;
+    }
+    return desc;
 }
 
 AudioStreamType AudioSystemManagerAdapterImpl::GetStreamType(AudioAdapterStreamType streamType)
