@@ -18,11 +18,7 @@ module_output_path = "web/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [
-    "../../../ohos_adapter/audio_adapter/include",
-    "//third_party/googletest/googlemock/include",
-    "//third_party/json/include",
-  ]
+  include_dirs = [ "../../../ohos_adapter/audio_adapter/include" ]
 }
 
 ohos_unittest("nweb_audio_adapter_test") {
