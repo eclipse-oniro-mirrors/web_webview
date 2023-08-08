@@ -39,6 +39,7 @@ ohos_unittest("web_clipboard_controller_test") {
   external_deps = [
     "ability_base:zuri",
     "c_utils:utils",
+    "hilog:libhilog",
     "image_framework:image_native",
     "pasteboard:pasteboard_client",
     "webview:libnweb",

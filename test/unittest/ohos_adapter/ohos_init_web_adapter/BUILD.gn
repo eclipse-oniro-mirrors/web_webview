@@ -37,6 +37,11 @@ ohos_unittest("ohos_init_web_adapter_test") {
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
+
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+  ]
 }
 
 group("unittest") {

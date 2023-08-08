@@ -33,7 +33,11 @@ ohos_fuzztest("UnregisterDevListenerFuzzTest") {
   sources = [ "unregisterdevlistener_fuzzer.cpp" ]
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
-  external_deps = [ "input:libmmi-client" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "input:libmmi-client",
+  ]
 }
 
 ###############################################################################
