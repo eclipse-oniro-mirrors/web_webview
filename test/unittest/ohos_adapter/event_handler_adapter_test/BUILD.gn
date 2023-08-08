@@ -38,6 +38,7 @@ ohos_unittest("nweb_event_handler_adapter_test") {
   ]
 
   external_deps = [
+    "c_utils:utils",
     "eventhandler:libeventhandler",
     "hilog:libhilog",
   ]

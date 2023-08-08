@@ -42,6 +42,8 @@ ohos_unittest("dns_data_base_adapter_test") {
     "ability_runtime:app_context",
     "ability_runtime:app_manager",
     "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "hilog:libhilog",
     "relational_store:native_rdb",
   ]
 }

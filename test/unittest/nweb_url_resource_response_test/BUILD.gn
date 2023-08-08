@@ -22,7 +22,11 @@ ohos_unittest("nweb_url_resource_response_test") {
 
   deps = [ "//third_party/googletest:gtest_main" ]
 
-  external_deps = [ "webview:libnweb" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "webview:libnweb",
+  ]
 }
 
 group("unittest") {

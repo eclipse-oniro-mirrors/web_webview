@@ -47,6 +47,8 @@ ohos_unittest("nweb_audio_adapter_test") {
     "audio_framework:audio_client",
     "audio_framework:audio_renderer",
     "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "hilog:libhilog",
   ]
 }
 

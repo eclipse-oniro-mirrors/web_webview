@@ -37,7 +37,11 @@ ohos_unittest("soc_perf_adapter_test") {
     "//third_party/googletest:gtest_main",
     "//third_party/zlib:libz",
   ]
-  external_deps = [ "soc_perf:socperf_client" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "soc_perf:socperf_client",
+  ]
 }
 
 group("unittest") {

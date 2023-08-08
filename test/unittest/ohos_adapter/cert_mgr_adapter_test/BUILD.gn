@@ -41,7 +41,9 @@ ohos_unittest("cert_mgr_adapter_test") {
     "access_token:libaccesstoken_sdk",
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
+    "c_utils:utils",
     "certificate_manager:cert_manager_sdk",
+    "hilog:libhilog",
   ]
 }
 
