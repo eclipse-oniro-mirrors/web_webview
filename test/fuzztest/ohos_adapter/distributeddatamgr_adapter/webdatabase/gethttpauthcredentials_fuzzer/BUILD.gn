@@ -36,7 +36,11 @@ ohos_fuzztest("GetHttpAuthCredentialsFuzzTest") {
     "$webview_path/ohos_adapter:nweb_ohos_adapter",
   ]
 
-  external_deps = [ "relational_store:native_rdb" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "relational_store:native_rdb",
+  ]
 }
 
 group("fuzztest") {
