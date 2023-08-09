@@ -37,7 +37,11 @@ ohos_unittest("nweb_mmi_adapter_test") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "input:libmmi-client" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "input:libmmi-client",
+  ]
 }
 
 group("unittest") {

@@ -40,7 +40,11 @@ ohos_unittest("location_callback_adapter_test") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ "ipc:ipc_core" ]
+  external_deps = [
+    "c_utils:utils",
+    "hilog:libhilog",
+    "ipc:ipc_core",
+  ]
 }
 
 group("unittest") {
