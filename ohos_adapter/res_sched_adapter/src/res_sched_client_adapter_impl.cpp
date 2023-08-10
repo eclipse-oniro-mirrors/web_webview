@@ -63,6 +63,12 @@ constexpr char WINDOW_ID[] = "windowId";
 constexpr char SERIAL_NUMBER[] = "sn";
 constexpr char SCENE_ID[] = "sceneId";
 
+std::string GetUidString()
+{
+    static std::string uidString = std::to_string(getuid());
+    return uidString;
+}
+
 bool ConvertStatus(ResSchedStatusAdapter statusAdapter, int64_t& status)
 {
     if (auto it = RES_STATUS_MAP.find(statusAdapter); it == RES_STATUS_MAP.end()) {
@@ -91,8 +97,10 @@ bool ResSchedClientAdapter::ReportKeyThread(
         role = it->second;
     }
 
-    std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(getuid()) },
-        { PID, std::to_string(pid) }, { TID, std::to_string(tid) }, { ROLE, std::to_string(role) } };
+    std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
+        { TID, std::to_string(tid) }, { ROLE, std::to_string(role) } };
+    WVLOG_D("ReportKeyThread status: %{public}d, uid: %{public}s, pid: %{public}d, tid:%{public}d, role: %{public}d",
+        static_cast<int32_t>(status), GetUidString().c_str(), pid, tid, static_cast<int32_t>(role));
     ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
     return true;
 }
@@ -108,9 +116,11 @@ bool ResSchedClientAdapter::ReportWindowStatus(ResSchedStatusAdapter statusAdapt
     if (!ret)
         return false;
 
-    std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(getuid()) },
-        { PID, std::to_string(pid) }, { WINDOW_ID, std::to_string(windowId) },
-        { SERIAL_NUMBER, std::to_string(serial_num) } };
+    std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
+        { WINDOW_ID, std::to_string(windowId) }, { SERIAL_NUMBER, std::to_string(serial_num) } };
+    WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
+            "%{public}d",
+        static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, serial_num);
     ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
     serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
     return true;
@@ -132,8 +142,10 @@ bool ResSchedClientAdapter::ReportScene(ResSchedStatusAdapter statusAdapter, Res
         scene_id = it->second;
     }
 
-    std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(getuid()) },
+    std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() },
         { SCENE_ID, std::to_string(scene_id) } };
+    WVLOG_D("ReportScene status: %{public}d, uid: %{public}s, scene_id: %{public}d", static_cast<int32_t>(status),
+        GetUidString().c_str(), scene_id);
     ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
     return true;
 }
