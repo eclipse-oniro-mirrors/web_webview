@@ -29,6 +29,7 @@
 #define private public
 #include "screen_capture_adapter_impl.h"
 #undef private
+#include "foundation/multimedia/player_framework/interfaces/inner_api/native/media_errors.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -36,6 +37,22 @@ using namespace OHOS::Rosen;
 using namespace OHOS::Media;
 
 namespace OHOS {
+namespace Media {
+class ScreenCaptureImplMock : public ScreenCapture {
+public:
+    MOCK_METHOD0(Init, int32_t());
+    MOCK_METHOD1(Init, int32_t(AVScreenCaptureConfig));
+    MOCK_METHOD1(SetMicrophoneEnabled, int32_t(bool));
+    MOCK_METHOD0(StartScreenCapture, int32_t());
+    MOCK_METHOD0(StopScreenCapture, int32_t());
+    MOCK_METHOD2(AcquireAudioBuffer, int32_t(std::shared_ptr<AudioBuffer> &, AudioCaptureSourceType));
+    MOCK_METHOD3(AcquireVideoBuffer, sptr<OHOS::SurfaceBuffer>(int32_t &, int64_t &, OHOS::Rect &));
+    MOCK_METHOD1(ReleaseAudioBuffer, int32_t(AudioCaptureSourceType));
+    MOCK_METHOD0(ReleaseVideoBuffer, int32_t());
+    MOCK_METHOD0(Release, int32_t());
+    MOCK_METHOD1(SetScreenCaptureCallback, int32_t(const std::shared_ptr<ScreenCaptureCallBack> &));
+};
+} // namespace Media
 namespace NWeb {
 
 namespace {
@@ -43,7 +60,7 @@ constexpr int32_t AUDIO_SAMPLE_RATE = 16000;
 constexpr int32_t AUDIO_CHANNELS = 2;
 constexpr int32_t SCREEN_WIDTH = 1080;
 constexpr int32_t SCREEN_HEIGHT = 720;
-constexpr int32_t SLEEP_FOR_MILLI_SECONDS_CNT = 500;
+//constexpr int32_t SLEEP_FOR_MILLI_SECONDS_CNT = 500;
 std::shared_ptr<ScreenCaptureAdapterImpl> g_screenCapture = nullptr;
 
 class ScreenCaptureCallbackAdapterTest : public ScreenCaptureCallbackAdapter {
@@ -235,15 +252,34 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_Capture_004,
     EXPECT_EQ(result, -1);
     result = adapterImpl->StopCapture();
     EXPECT_EQ(result, -1);
+    ScreenCaptureImplMock *mock = new ScreenCaptureImplMock();
+    EXPECT_NE(mock, nullptr);
+    adapterImpl->screenCapture_.reset(mock);
+    EXPECT_CALL(*mock, StartScreenCapture())
+        .Times(1)
+        .WillRepeatedly(::testing::Return(Media::MSERR_OK));
+    EXPECT_CALL(*mock, StopScreenCapture())
+        .Times(1)
+        .WillRepeatedly(::testing::Return(Media::MSERR_OK));
 
+    result = adapterImpl->StartCapture();
+    EXPECT_EQ(result, 0);
+    result = adapterImpl->StopCapture();
+    EXPECT_EQ(result, 0);
+
+    EXPECT_CALL(*mock, StartScreenCapture())
+        .Times(1)
+        .WillRepeatedly(::testing::Return(Media::MSERR_NO_MEMORY));
+    EXPECT_CALL(*mock, StopScreenCapture())
+        .Times(1)
+        .WillRepeatedly(::testing::Return(Media::MSERR_NO_MEMORY));
+    result = adapterImpl->StartCapture();
+    EXPECT_EQ(result, -1);
+    result = adapterImpl->StopCapture();
+    EXPECT_EQ(result, -1);
     auto callbackAdapter = std::make_shared<ScreenCaptureCallbackAdapterTest>();
     EXPECT_NE(callbackAdapter, nullptr);
     result = g_screenCapture->SetCaptureCallback(callbackAdapter);
-    EXPECT_EQ(result, 0);
-    result = g_screenCapture->StartCapture();
-    EXPECT_EQ(result, 0);
-    std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_FOR_MILLI_SECONDS_CNT));
-    result = g_screenCapture->StopCapture();
     EXPECT_EQ(result, 0);
     result = g_screenCapture->SetCaptureCallback(nullptr);
     EXPECT_EQ(result, -1);
@@ -307,6 +343,9 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_Init_006, Te
     config.recorderInfo.fileFormat = ContainerFormatTypeAdapter::CFT_MPEG_4_TYPE;
     result = adapterImpl->Init(config);
     EXPECT_EQ(result, -1);
+    adapterImpl->screenCapture_ = OHOS::Media::ScreenCaptureFactory::CreateScreenCapture();
+    result = adapterImpl->Init(config);
+    EXPECT_EQ(result, 0);
 }
 }
 } // namespace NWeb
