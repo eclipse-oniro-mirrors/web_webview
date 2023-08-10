@@ -131,7 +131,6 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
 {
     g_audioRender = std::make_shared<AudioRendererAdapterImpl>();
     ASSERT_NE(g_audioRender, nullptr);
-
     AudioAdapterRendererOptions rendererOptions;
     rendererOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
     rendererOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
@@ -160,26 +159,20 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
 
     float nowVolume = g_audioRender->GetVolume();
     EXPECT_EQ(nowVolume, volume);
-
     retNum = g_audioRender->SetAudioRendererCallback(nullptr);
     EXPECT_NE(retNum, 0);
     std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackMock>();
     EXPECT_NE(callback, nullptr);
     retNum = g_audioRender->SetAudioRendererCallback(callback);
     EXPECT_EQ(retNum, 0);
-
     g_audioRender->SetInterruptMode(true);
     g_audioRender->SetInterruptMode(false);
-
     ret = g_audioRender->IsRendererStateRunning();
     EXPECT_EQ(ret, TRUE_OK);
-
     ret = g_audioRender->Pause();
     EXPECT_EQ(ret, TRUE_OK);
-
     ret = g_audioRender->Stop();
     EXPECT_EQ(ret, TRUE_OK);
-
     ret = g_audioRender->Release();
     EXPECT_EQ(ret, TRUE_OK);
 }
@@ -537,6 +530,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_014, TestSi
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
     EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_ERROR);
+    EXPECT_EQ(audioRenderImpl->audio_renderer_, nullptr);
+    audioRenderImpl->SetInterruptMode(false);
 }
 
 /**
@@ -721,6 +716,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_020, TestSi
 
     auto callbackTestNull = std::make_shared<AudioCapturerReadCallbackImpl>(nullptr);
     EXPECT_EQ(callbackTestNull->cb_, nullptr);
+    callbackTest->OnReadData(length);
+    callbackTest->cb_ = nullptr;
     callbackTest->OnReadData(length);
 }
 
