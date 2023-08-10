@@ -763,6 +763,11 @@ public:
     virtual void PrefetchPage(
         std::string& url,
         std::map<std::string, std::string> additionalHttpHeaders) = 0;
+
+    /**
+     * Set the window id.
+     */
+    virtual void SetWindowId(uint32_t window_id) = 0;
 };
 }  // namespace OHOS::NWeb
 
