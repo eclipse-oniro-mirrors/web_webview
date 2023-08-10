@@ -370,6 +370,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureMode
     EXPECT_EQ(result, 0);
     result = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION, rangeVal);
     EXPECT_EQ(result, 0);
+    adapter.GetCaptionRangeById(static_cast<RangeIDAdapter>(1), rangeVal);
     bool isMode = adapter.IsFocusModeSupported(FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO);
     EXPECT_FALSE(isMode);
     adapter.GetCurrentFocusMode();
