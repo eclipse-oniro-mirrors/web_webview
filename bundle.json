@@ -110,6 +110,14 @@
                         "header_base": "//base/web/webview/interfaces/inner_api/include"
                     },
                     "name": "//base/web/webview/interfaces/inner_api:web_inner_kit"
+                },
+                {
+                    "header": {
+                        "header_files": [
+                        ],
+                        "header_base": "//base/web/webview/ohos_adapter"
+                    },
+                    "name": "//base/web/webview/ohos_adapter:nweb_ohos_adapter"
                 }
             ],
             "test": [
