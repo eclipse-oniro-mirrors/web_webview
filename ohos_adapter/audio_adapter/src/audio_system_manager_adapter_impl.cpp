@@ -229,7 +229,7 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc 
         rendererInfo.streamUsage = StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION;
         rendererInfo.rendererFlags = 0;
         std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
-        AudioRoutingManager::GetInstance()->GetPreferOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
+        AudioRoutingManager::GetInstance()->GetPreferredOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
         AudioSystemManager::GetInstance()->SelectInputDevice(defaultOutputDevice);
         return AUDIO_OK;
     }
@@ -252,7 +252,7 @@ AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
     rendererInfo.streamUsage = StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION;
     rendererInfo.rendererFlags = 0;
     std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
-    AudioRoutingManager::GetInstance()->GetPreferOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
+    AudioRoutingManager::GetInstance()->GetPreferredOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
 
     AudioAdapterDeviceDesc desc;
     auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultOutputDevice[0]->deviceType_);
