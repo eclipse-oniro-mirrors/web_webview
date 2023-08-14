@@ -110,7 +110,7 @@ void OhosWebDataBaseAdapterImpl::SaveHttpAuthCredentials(const std::string& host
     const std::string& username, const char* password)
 {
     WVLOG_I("webdatabase save http auth info");
-    if (host.empty() || realm.empty() || username.empty() || password == nullptr) {
+    if (host.empty() || username.empty() || password == nullptr) {
         return;
     }
     if (rdbStore_ == nullptr) {
@@ -139,7 +139,7 @@ void OhosWebDataBaseAdapterImpl::GetHttpAuthCredentials(const std::string& host,
     std::string& username, char* password, uint32_t passwordSize) const
 {
     WVLOG_I("webdatabase get username and password");
-    if (host.empty() || realm.empty() || password == nullptr) {
+    if (host.empty() || password == nullptr) {
         return;
     }
     if (rdbStore_ == nullptr) {
