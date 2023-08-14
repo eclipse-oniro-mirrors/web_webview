@@ -26,6 +26,8 @@
 #include "web_errors.h"
 #include "securec.h"
 
+#include "nweb_log.h"
+
 namespace {
 constexpr int32_t MAX_STRING_LENGTH = 40960;
 constexpr int32_t MAX_PWD_LENGTH = 256;
@@ -164,7 +166,7 @@ napi_value NapiWebDataBase::JsSaveHttpAuthCredentials(napi_env env, napi_callbac
         return nullptr;
     }
 
-    if (host.empty() || realm.empty() || username.empty()) {
+    if (host.empty() || username.empty()) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -217,7 +219,7 @@ napi_value NapiWebDataBase::JsGetHttpAuthCredentials(napi_env env, napi_callback
         return nullptr;
     }
 
-    if (host.empty() || realm.empty()) {
+    if (host.empty()) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
