@@ -34,6 +34,9 @@
 
 namespace OHOS {
 namespace NWeb {
+using namespace NWebError;
+using NWebError::NO_ERROR;
+
 namespace {
 constexpr uint32_t URL_MAXIMUM = 2048;
 constexpr uint32_t SOCKET_MAXIMUM = 6;
@@ -62,10 +65,85 @@ bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
     WVLOG_E("Unable to parse type from url object.");
     return false;
 }
+
+napi_valuetype GetArrayValueType(napi_env env, napi_value* argv, bool& isDouble)
+{
+    uint32_t arrayLength = 0;
+    napi_get_array_length(env, argv[INTEGER_ZERO], &arrayLength);
+    napi_valuetype valueTypeFirst = napi_undefined;
+    napi_valuetype valueTypeCur = napi_undefined;
+    for (uint32_t i = 0; i < arrayLength; ++i) {
+        napi_value obj = nullptr;
+        napi_get_element(env, argv[INTEGER_ZERO], i, &obj);
+        napi_typeof(env, obj, &valueTypeCur);
+        if (i == 0) {
+            valueTypeFirst = valueTypeCur;
+        }
+        if (valueTypeCur != napi_string && valueTypeCur != napi_number && valueTypeCur != napi_boolean) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return napi_undefined;
+        }
+        if (valueTypeCur != valueTypeFirst) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return napi_undefined;
+        }
+        if (valueTypeFirst == napi_number) {
+            int32_t elementInt32 = 0;
+            double elementDouble = 0.0;
+            bool isReadValue32 = napi_get_value_int32(env, obj, &elementInt32) == napi_ok;
+            bool isReadDouble = napi_get_value_double(env, obj, &elementDouble) == napi_ok;
+            constexpr double MINIMAL_ERROR = 0.000001;
+            if (isReadValue32 && isReadDouble) {
+                isDouble = abs(elementDouble - elementInt32 * 1.0) > MINIMAL_ERROR;
+            } else if (isReadDouble) {
+                isDouble = true;
+            }
+        }
+    }
+    return valueTypeFirst;
+}
+
+void SetArrayHandlerBoolean(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+{
+    std::vector<bool> outValue;
+    if (!NapiParseUtils::ParseBooleanArray(env, argv[INTEGER_ZERO], outValue)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+    webMessageExt->SetBooleanArray(outValue);
+}
+
+void SetArrayHandlerString(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+{
+    std::vector<std::string> outValue;
+    if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ZERO], outValue)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+    webMessageExt->SetStringArray(outValue);
+}
+
+void SetArrayHandlerInteger(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+{
+    std::vector<int64_t> outValue;
+    if (!NapiParseUtils::ParseInt64Array(env, argv[INTEGER_ZERO], outValue)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+    webMessageExt->SetInt64Array(outValue);
+}
+
+void SetArrayHandlerDouble(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+{
+    std::vector<double> outValue;
+    if (!NapiParseUtils::ParseDoubleArray(env, argv[INTEGER_ZERO], outValue)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+    webMessageExt->SetDoubleArray(outValue);
+}
 } // namespace
 
-using namespace NWebError;
-using NWebError::NO_ERROR;
 thread_local napi_ref g_classWebMsgPort;
 thread_local napi_ref g_historyListRef;
 thread_local napi_ref g_webMsgExtClassRef;
@@ -1088,73 +1166,28 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-
-    uint32_t arrayLength = INTEGER_ZERO;
-    napi_get_array_length(env, argv[INTEGER_ZERO], &arrayLength);
-    napi_valuetype valueTypeFirst = napi_undefined;
-    napi_valuetype valueTypeCur = napi_undefined;
     bool isDouble = false;
-    for (uint32_t i = 0; i < arrayLength; ++i) {
-        napi_value obj = nullptr;
-        napi_get_element(env, argv[INTEGER_ZERO], i, &obj);
-        napi_typeof(env, obj, &valueTypeCur);
-        if (i == 0) {
-            valueTypeFirst = valueTypeCur;
-        }
-        if (valueTypeCur != napi_string && valueTypeCur != napi_number && valueTypeCur != napi_boolean) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-        if (valueTypeCur != valueTypeFirst) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-        if (valueTypeFirst == napi_number) {
-            int32_t elementInt32 = 0;
-            double elementDouble = 0.0;
-            bool isReadValue32 = napi_get_value_int32(env, obj, &elementInt32) == napi_ok;
-            bool isReadDouble = napi_get_value_double(env, obj, &elementDouble) == napi_ok;
-            constexpr double MINIMAL_ERROR = 0.000001;
-            if (isReadValue32 && isReadDouble) {
-                isDouble = abs(elementDouble - elementInt32 * 1.0) > MINIMAL_ERROR;
-            } else if (isReadValue32) {
-            } else if (isReadDouble) {
-                isDouble = true;
-            }
-        }
+    napi_valuetype valueType = GetArrayValueType(env, argv, isDouble);
+    if (valueType == napi_undefined) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
     }
 
-    if (valueTypeFirst == napi_string) {
-        std::vector<std::string> outValue;
-        if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ZERO], outValue)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-        webMessageExt->SetStringArray(outValue);
-    } else if (valueTypeFirst == napi_number) {
-        if (isDouble) {
-            std::vector<double> outValue;
-            if (!NapiParseUtils::ParseDoubleArray(env, argv[INTEGER_ZERO], outValue)) {
-                BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-                return result;
-            }
-            webMessageExt->SetDoubleArray(outValue);
-        } else {
-            std::vector<int64_t> outValue;
-            if (!NapiParseUtils::ParseInt64Array(env, argv[INTEGER_ZERO], outValue)) {
-                BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-                return result;
-            }
-            webMessageExt->SetInt64Array(outValue);
-        }
-    } else if (valueTypeFirst == napi_boolean) {
-        std::vector<bool> outValue;
-        if (!NapiParseUtils::ParseBooleanArray(env, argv[INTEGER_ZERO], outValue)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-        webMessageExt->SetBooleanArray(outValue);
+    using SetArrayHandler = std::function<void(napi_env, napi_value*, WebMessageExt*)>;
+    static const std::unordered_map<napi_valuetype, SetArrayHandler> functionMap = {
+        { napi_boolean, SetArrayHandlerBoolean },
+        { napi_string, SetArrayHandlerString },
+        { napi_number, [isDouble](napi_env env, napi_value* argv, WebMessageExt* msgExt) {
+            isDouble ? SetArrayHandlerDouble(env, argv, msgExt)
+                     : SetArrayHandlerInteger(env, argv, msgExt);
+        } }
+    };
+    auto it = functionMap.find(valueType);
+    if (it == functionMap.end()) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
     }
+    it->second(env, argv, webMessageExt);
     return result;
 }
 

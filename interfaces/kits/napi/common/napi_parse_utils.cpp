@@ -19,6 +19,139 @@
 
 namespace OHOS {
 namespace NWeb {
+namespace {
+bool ConvertToNapiHandlerOfString(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    std::string msgStr = src->GetString();
+    napi_create_string_utf8(env, msgStr.c_str(), msgStr.length(), &dst);
+    return true;
+}
+
+bool ConvertToNapiHandlerOfBinary(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    std::vector<uint8_t> msgArr = src->GetBinary();
+    void *arrayData = nullptr;
+    napi_create_arraybuffer(env, msgArr.size(), &arrayData, &dst);
+    if (arrayData == nullptr) {
+        WVLOG_E("Create arraybuffer failed");
+        return false;
+    }
+    for (size_t i = 0; i < msgArr.size(); ++i) {
+        *(uint8_t*)((uint8_t*)arrayData + i) = msgArr[i];
+    }
+    return true;
+}
+
+bool ConvertToNapiHandlerOfBoolean(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    bool value = src->GetBoolean();
+    napi_get_boolean(env, value, &dst);
+    return true;
+}
+
+bool ConvertToNapiHandlerOfInteger(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    int64_t value = src->GetInt64();
+    napi_create_int64(env, value, &dst);
+    return true;
+}
+
+bool ConvertToNapiHandlerOfDouble(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    double value = src->GetDouble();
+    napi_create_double(env, value, &dst);
+    return true;
+}
+
+bool ConvertToNapiHandlerOfError(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    std::string errorName = src->GetErrName();
+    std::string errorMsg = src->GetErrName() + ": " + src->GetErrMsg();
+    napi_value name = nullptr;
+    napi_value message = nullptr;
+    napi_create_string_utf8(env, errorName.c_str(), errorName.length(), &name);
+    napi_create_string_utf8(env, errorMsg.c_str(), errorMsg.length(), &message);
+    napi_create_error(env, name, message, &dst);
+    return true;
+}
+
+bool ConvertToNapiHandlerOfStringArray(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    std::vector<std::string> values = src->GetStringArray();
+    napi_create_array(env, &dst);
+    bool isArray = false;
+    if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
+        WVLOG_E("Create array failed");
+        return false;
+    }
+
+    int32_t index = 0;
+    for (auto value : values) {
+        napi_value element = nullptr;
+        napi_create_string_utf8(env, value.c_str(), value.length(), &element);
+        napi_set_element(env, dst, index++, element);
+    }
+    return true;
+}
+
+bool ConvertToNapiHandlerOfBooleanArray(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    std::vector<bool> values = src->GetBooleanArray();
+    napi_create_array(env, &dst);
+    bool isArray = false;
+    if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
+        WVLOG_E("Create array failed");
+        return false;
+    }
+
+    int32_t index = 0;
+    for (auto value : values) {
+        napi_value element = nullptr;
+        napi_get_boolean(env, value, &element);
+        napi_set_element(env, dst, index++, element);
+    }
+    return true;
+}
+
+bool ConvertToNapiHandlerOfDoubleArray(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    std::vector<double> values = src->GetDoubleArray();
+    napi_create_array(env, &dst);
+    bool isArray = false;
+    if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
+        WVLOG_E("Create array failed");
+        return false;
+    }
+
+    int32_t index = 0;
+    for (auto value : values) {
+        napi_value element = nullptr;
+        napi_create_double(env, value, &element);
+        napi_set_element(env, dst, index++, element);
+    }
+    return true;
+}
+
+bool ConvertToNapiHandlerOfInt64Array(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
+{
+    std::vector<int64_t> values = src->GetInt64Array();
+    napi_create_array(env, &dst);
+    bool isArray = false;
+    if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
+        WVLOG_E("Create array failed");
+        return false;
+    }
+
+    int32_t index = 0;
+    for (auto value : values) {
+        napi_value element = nullptr;
+        napi_create_int64(env, value, &element);
+        napi_set_element(env, dst, index++, element);
+    }
+    return true;
+}
+} // namespace
+
 napi_value NapiParseUtils::CreateEnumConstructor(napi_env env, napi_callback_info info)
 {
     napi_value arg = nullptr;
@@ -237,126 +370,27 @@ bool NapiParseUtils::ParseDouble(napi_env env, napi_value argv, double& outValue
 bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
 {
     NWebValue::Type type = src->GetType();
-    switch (type) {
-        case NWebValue::Type::STRING: {
-            std::string msgStr = src->GetString();
-            napi_create_string_utf8(env, msgStr.c_str(), msgStr.length(), &dst);
-            break;
-        }
-        case NWebValue::Type::BINARY: {
-            std::vector<uint8_t> msgArr = src->GetBinary();
-            void *arrayData = nullptr;
-            napi_create_arraybuffer(env, msgArr.size(), &arrayData, &dst);
-            if (arrayData == nullptr) {
-                WVLOG_E("Create arraybuffer failed");
-                return false;
-            }
-            for (size_t i = 0; i < msgArr.size(); ++i) {
-                *(uint8_t*)((uint8_t*)arrayData + i) = msgArr[i];
-            }
-            break;
-        }
-        case NWebValue::Type::BOOLEAN: {
-            bool value = src->GetBoolean();
-            napi_get_boolean(env, value, &dst);
-            break;
-        }
-        case NWebValue::Type::INTEGER: {
-            int64_t value = src->GetInt64();
-            napi_create_int64(env, value, &dst);
-            break;
-        }
-        case NWebValue::Type::DOUBLE: {
-            double value = src->GetDouble();
-            napi_create_double(env, value, &dst);
-            break;
-        }
-        case NWebValue::Type::ERROR: {
-            std::string errorName = src->GetErrName();
-            std::string errorMsg = src->GetErrName() + ": " + src->GetErrMsg();
-            napi_value name = nullptr;
-            napi_value message = nullptr;
-            napi_create_string_utf8(env, errorName.c_str(), errorName.length(), &name);
-            napi_create_string_utf8(env, errorMsg.c_str(), errorMsg.length(), &message);
-            napi_create_error(env, name, message, &dst);
-            break;
-        }
-        case NWebValue::Type::STRINGARRAY: {
-            std::vector<std::string> values = src->GetStringArray();
-            napi_create_array(env, &dst);
-            bool isArray = false;
-            if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
-                WVLOG_E("Create array failed");
-                return false;
-            }
-
-            int32_t index = 0;
-            for (auto value : values) {
-                napi_value element = nullptr;
-                napi_create_string_utf8(env, value.c_str(), value.length(), &element);
-                napi_set_element(env, dst, index++, element);
-            }
-            break;
-        }
-        case NWebValue::Type::BOOLEANARRAY: {
-            std::vector<bool> values = src->GetBooleanArray();
-            napi_create_array(env, &dst);
-            bool isArray = false;
-            if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
-                WVLOG_E("Create array failed");
-                return false;
-            }
-
-            int32_t index = 0;
-            for (auto value : values) {
-                napi_value element = nullptr;
-                napi_get_boolean(env, value, &element);
-                napi_set_element(env, dst, index++, element);
-            }
-            break;
-        }
-        case NWebValue::Type::DOUBLEARRAY: {
-            std::vector<double> values = src->GetDoubleArray();
-            napi_create_array(env, &dst);
-            bool isArray = false;
-            if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
-                WVLOG_E("Create array failed");
-                return false;
-            }
-
-            int32_t index = 0;
-            for (auto value : values) {
-                napi_value element = nullptr;
-                napi_create_double(env, value, &element);
-                napi_set_element(env, dst, index++, element);
-            }
-            break;
-        }
-        case NWebValue::Type::INT64ARRAY: {
-            std::vector<int64_t> values = src->GetInt64Array();
-            napi_create_array(env, &dst);
-            bool isArray = false;
-            if (napi_is_array(env, dst, &isArray) != napi_ok || !isArray) {
-                WVLOG_E("Create array failed");
-                return false;
-            }
-
-            int32_t index = 0;
-            for (auto value : values) {
-                napi_value element = nullptr;
-                napi_create_int64(env, value, &element);
-                napi_set_element(env, dst, index++, element);
-            }
-            break;
-        }
-        default: {
-            WVLOG_E("This type not support");
-            std::string msgStr = "This type not support";
-            napi_create_string_utf8(env, msgStr.c_str(), msgStr.length(), &dst);
-            break;
-        }
+    using ConvertNWebToNapiValueHandler = std::function<bool(napi_env, std::shared_ptr<NWebMessage>, napi_value&)>;
+    static const std::unordered_map<NWebValue::Type, ConvertNWebToNapiValueHandler> functionMap = {
+        { NWebValue::Type::STRING, ConvertToNapiHandlerOfString },
+        { NWebValue::Type::BINARY, ConvertToNapiHandlerOfBinary },
+        { NWebValue::Type::BOOLEAN, ConvertToNapiHandlerOfBoolean },
+        { NWebValue::Type::INTEGER, ConvertToNapiHandlerOfInteger },
+        { NWebValue::Type::DOUBLE, ConvertToNapiHandlerOfDouble },
+        { NWebValue::Type::ERROR, ConvertToNapiHandlerOfError },
+        { NWebValue::Type::STRINGARRAY, ConvertToNapiHandlerOfStringArray },
+        { NWebValue::Type::BOOLEANARRAY, ConvertToNapiHandlerOfBooleanArray },
+        { NWebValue::Type::DOUBLEARRAY, ConvertToNapiHandlerOfDoubleArray },
+        { NWebValue::Type::INT64ARRAY, ConvertToNapiHandlerOfInt64Array }
+    };
+    auto it = functionMap.find(type);
+    if (it == functionMap.end()) {
+        WVLOG_E("This type not support");
+        std::string msgStr = "This type not support";
+        napi_create_string_utf8(env, msgStr.c_str(), msgStr.length(), &dst);
+        return true;
     }
-    return true;
+    return it->second(env, src, dst);
 }
 } // namespace NWeb
 } // namespace OHOS
