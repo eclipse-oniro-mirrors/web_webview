@@ -35,7 +35,7 @@ void WebRunInitedCallbackImpl::RunInitedCallback()
         return;
     }
     work->data = reinterpret_cast<void*>(param_);
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
+    int ret = uv_queue_work_with_qos(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
         if (work == nullptr) {
             WVLOG_E("uv work is null");
             return;
@@ -61,7 +61,7 @@ void WebRunInitedCallbackImpl::RunInitedCallback()
         data = nullptr;
         delete work;
         work = nullptr;
-    });
+    }, uv_qos_user_initiated);
     if (ret != 0) {
         if (param_ != nullptr) {
             delete param_;

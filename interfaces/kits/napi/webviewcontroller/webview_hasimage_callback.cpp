@@ -49,7 +49,7 @@ void WebviewHasImageCallback::OnReceiveValue(bool result)
 
     work->data = reinterpret_cast<void*>(param);
 
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, UvAfterWorkCb);
+    int ret = uv_queue_work_with_qos(loop, work, [](uv_work_t *work) {}, UvAfterWorkCb, uv_qos_user_initiated);
     if (ret != 0) {
         if (param != nullptr) {
             delete param;
