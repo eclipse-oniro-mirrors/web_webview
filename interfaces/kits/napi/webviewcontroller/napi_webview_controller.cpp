@@ -66,15 +66,15 @@ bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
     return false;
 }
 
-napi_valuetype GetArrayValueType(napi_env env, napi_value* argv, bool& isDouble)
+napi_valuetype GetArrayValueType(napi_env env, napi_value array, bool& isDouble)
 {
     uint32_t arrayLength = 0;
-    napi_get_array_length(env, argv[INTEGER_ZERO], &arrayLength);
+    napi_get_array_length(env, array, &arrayLength);
     napi_valuetype valueTypeFirst = napi_undefined;
     napi_valuetype valueTypeCur = napi_undefined;
     for (uint32_t i = 0; i < arrayLength; ++i) {
         napi_value obj = nullptr;
-        napi_get_element(env, argv[INTEGER_ZERO], i, &obj);
+        napi_get_element(env, array, i, &obj);
         napi_typeof(env, obj, &valueTypeCur);
         if (i == 0) {
             valueTypeFirst = valueTypeCur;
@@ -103,40 +103,40 @@ napi_valuetype GetArrayValueType(napi_env env, napi_value* argv, bool& isDouble)
     return valueTypeFirst;
 }
 
-void SetArrayHandlerBoolean(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+void SetArrayHandlerBoolean(napi_env env, napi_value array, WebMessageExt* webMessageExt)
 {
     std::vector<bool> outValue;
-    if (!NapiParseUtils::ParseBooleanArray(env, argv[INTEGER_ZERO], outValue)) {
+    if (!NapiParseUtils::ParseBooleanArray(env, array, outValue)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
     webMessageExt->SetBooleanArray(outValue);
 }
 
-void SetArrayHandlerString(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+void SetArrayHandlerString(napi_env env, napi_value array, WebMessageExt* webMessageExt)
 {
     std::vector<std::string> outValue;
-    if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ZERO], outValue)) {
+    if (!NapiParseUtils::ParseStringArray(env, array, outValue)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
     webMessageExt->SetStringArray(outValue);
 }
 
-void SetArrayHandlerInteger(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+void SetArrayHandlerInteger(napi_env env, napi_value array, WebMessageExt* webMessageExt)
 {
     std::vector<int64_t> outValue;
-    if (!NapiParseUtils::ParseInt64Array(env, argv[INTEGER_ZERO], outValue)) {
+    if (!NapiParseUtils::ParseInt64Array(env, array, outValue)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
     webMessageExt->SetInt64Array(outValue);
 }
 
-void SetArrayHandlerDouble(napi_env env, napi_value* argv, WebMessageExt* webMessageExt)
+void SetArrayHandlerDouble(napi_env env, napi_value array, WebMessageExt* webMessageExt)
 {
     std::vector<double> outValue;
-    if (!NapiParseUtils::ParseDoubleArray(env, argv[INTEGER_ZERO], outValue)) {
+    if (!NapiParseUtils::ParseDoubleArray(env, array, outValue)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
@@ -1167,17 +1167,17 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
         return result;
     }
     bool isDouble = false;
-    napi_valuetype valueType = GetArrayValueType(env, argv, isDouble);
+    napi_valuetype valueType = GetArrayValueType(env, argv[INTEGER_ZERO], isDouble);
     if (valueType == napi_undefined) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
 
-    using SetArrayHandler = std::function<void(napi_env, napi_value*, WebMessageExt*)>;
+    using SetArrayHandler = std::function<void(napi_env, napi_value, WebMessageExt*)>;
     static const std::unordered_map<napi_valuetype, SetArrayHandler> functionMap = {
         { napi_boolean, SetArrayHandlerBoolean },
         { napi_string, SetArrayHandlerString },
-        { napi_number, [isDouble](napi_env env, napi_value* argv, WebMessageExt* msgExt) {
+        { napi_number, [isDouble](napi_env env, napi_value argv, WebMessageExt* msgExt) {
             isDouble ? SetArrayHandlerDouble(env, argv, msgExt)
                      : SetArrayHandlerInteger(env, argv, msgExt);
         } }
@@ -1187,7 +1187,7 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    it->second(env, argv, webMessageExt);
+    it->second(env, argv[INTEGER_ZERO], webMessageExt);
     return result;
 }
 
@@ -1290,6 +1290,36 @@ napi_value NapiWebviewController::CreateWebMessagePorts(napi_env env, napi_callb
     return result;
 }
 
+bool GetSendPorts(napi_env env, napi_value argv, std::vector<std::string>& sendPorts)
+{
+    uint32_t arrayLen = 0;
+    napi_get_array_length(env, argv, &arrayLen);
+    if (arrayLen == 0) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return false;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    for (uint32_t i = 0; i < arrayLen; i++) {
+        napi_value portItem = nullptr;
+        napi_get_element(env, argv, i, &portItem);
+        napi_typeof(env, portItem, &valueType);
+        if (valueType != napi_object) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return false;
+        }
+        WebMessagePort *msgPort = nullptr;
+        napi_status status = napi_unwrap(env, portItem, (void **)&msgPort);
+        if ((!msgPort) || (status != napi_ok)) {
+            WVLOG_E("post port to html failed, napi unwrap msg port fail");
+            return false;
+        }
+        std::string portHandle = msgPort->GetPortHandle();
+        sendPorts.emplace_back(portHandle);
+    }
+    return true;
+}
+
 napi_value NapiWebviewController::PostMessage(napi_env env, napi_callback_info info)
 {
     WVLOG_D("post message port");
@@ -1315,30 +1345,10 @@ napi_value NapiWebviewController::PostMessage(napi_env env, napi_callback_info i
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    uint32_t arrayLen = 0;
-    NAPI_CALL(env, napi_get_array_length(env, argv[INTEGER_ONE], &arrayLen));
-    if (arrayLen == 0) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
-    }
     std::vector<std::string> sendPorts;
-    napi_valuetype valueType = napi_undefined;
-    for (uint32_t i = 0; i < arrayLen; i++) {
-        napi_value portItem = nullptr;
-        napi_get_element(env, argv[INTEGER_ONE], i, &portItem);
-        NAPI_CALL(env, napi_typeof(env, portItem, &valueType));
-        if (valueType != napi_object) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-        WebMessagePort *msgPort = nullptr;
-        NAPI_CALL(env, napi_unwrap(env, portItem, (void **)&msgPort));
-        if (!msgPort) {
-            WVLOG_E("post port to html failed, napi unwrap msg port fail");
-            return nullptr;
-        }
-        std::string portHandle = msgPort->GetPortHandle();
-        sendPorts.emplace_back(portHandle);
+    if (!GetSendPorts(env, argv[INTEGER_ONE], sendPorts)) {
+        WVLOG_E("post port to html failed, getSendPorts fail");
+        return result;
     }
 
     std::string urlStr;
@@ -1424,6 +1434,40 @@ napi_value NapiWebMessagePort::Close(napi_env env, napi_callback_info info)
     return result;
 }
 
+bool PostMessageEventMsgHandler(napi_env env, napi_value argv, napi_valuetype valueType, bool isArrayBuffer,
+    std::shared_ptr<NWebMessage> webMsg)
+{
+    if (valueType == napi_string) {
+        size_t bufferSize = 0;
+        napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
+        if (bufferSize > UINT_MAX) {
+            WVLOG_E("String length is too long");
+            return false;
+        }
+        char* stringValue = new (std::nothrow) char[bufferSize + 1];
+        if (stringValue == nullptr) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return false;
+        }
+        size_t jsStringLength = 0;
+        napi_get_value_string_utf8(env, argv, stringValue, bufferSize + 1, &jsStringLength);
+        std::string message(stringValue);
+        delete [] stringValue;
+        stringValue = nullptr;
+
+        webMsg->SetType(NWebValue::Type::STRING);
+        webMsg->SetString(message);
+    } else if (isArrayBuffer) {
+        uint8_t *arrBuf = nullptr;
+        size_t byteLength = 0;
+        napi_get_arraybuffer_info(env, argv, (void**)&arrBuf, &byteLength);
+        std::vector<uint8_t> vecData(arrBuf, arrBuf + byteLength);
+        webMsg->SetType(NWebValue::Type::BINARY);
+        webMsg->SetBinary(vecData);
+    }
+    return true;
+}
+
 napi_value NapiWebMessagePort::PostMessageEvent(napi_env env, napi_callback_info info)
 {
     WVLOG_D("message port post message");
@@ -1447,33 +1491,9 @@ napi_value NapiWebMessagePort::PostMessageEvent(napi_env env, napi_callback_info
     }
 
     auto webMsg = std::make_shared<OHOS::NWeb::NWebMessage>(NWebValue::Type::NONE);
-    if (valueType == napi_string) {
-        size_t bufferSize = 0;
-        napi_get_value_string_utf8(env, argv[INTEGER_ZERO], nullptr, 0, &bufferSize);
-        if (bufferSize > UINT_MAX) {
-            WVLOG_E("String length is too long");
-            return result;
-        }
-        char* stringValue = new (std::nothrow) char[bufferSize + 1];
-        if (stringValue == nullptr) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-        size_t jsStringLength = 0;
-        napi_get_value_string_utf8(env, argv[INTEGER_ZERO], stringValue, bufferSize + 1, &jsStringLength);
-        std::string message(stringValue);
-        delete [] stringValue;
-        stringValue = nullptr;
-
-        webMsg->SetType(NWebValue::Type::STRING);
-        webMsg->SetString(message);
-    } else if (isArrayBuffer) {
-        uint8_t *arrBuf = nullptr;
-        size_t byteLength = 0;
-        napi_get_arraybuffer_info(env, argv[INTEGER_ZERO], (void**)&arrBuf, &byteLength);
-        std::vector<uint8_t> vecData(arrBuf, arrBuf + byteLength);
-        webMsg->SetType(NWebValue::Type::BINARY);
-        webMsg->SetBinary(vecData);
+    if (!PostMessageEventMsgHandler(env, argv[INTEGER_ZERO], valueType, isArrayBuffer, webMsg)) {
+        WVLOG_E("post message failed, PostMessageEventMsgHandler failed");
+        return result;
     }
 
     WebMessagePort *msgPort = nullptr;
@@ -1580,6 +1600,39 @@ napi_value NapiWebMessagePort::OnMessageEventExt(napi_env env, napi_callback_inf
     return result;
 }
 
+bool UvWebMsgOnReceiveCbDataHandler(NapiWebMessagePort::WebMsgPortParam *data, napi_value& result)
+{
+    if (data->extention_) {
+        napi_value webMsgExt = nullptr;
+        napi_status status = napi_get_reference_value(data->env_, g_webMsgExtClassRef, &webMsgExt);
+        if (status != napi_status::napi_ok) {
+            WVLOG_E("napi_get_reference_value failed.");
+            return false;
+        }
+        status = napi_new_instance(data->env_, webMsgExt, 0, NULL, &result);
+
+        WebMessageExt *webMessageExt = new (std::nothrow) WebMessageExt(data->msg_);
+        if (webMessageExt == nullptr) {
+            WVLOG_E("new WebMessageExt failed.");
+            return false;
+        }
+
+        status = napi_wrap(data->env_, result, webMessageExt,
+            [](napi_env env, void *data, void *hint) {
+                WebMessageExt *webMessageExt = static_cast<WebMessageExt *>(data);
+                delete webMessageExt;
+            },
+            nullptr, nullptr);
+        if (status != napi_status::napi_ok) {
+            WVLOG_E("napi_wrap failed.");
+            return false;
+        }
+    } else {
+        NapiParseUtils::ConvertNWebToNapiValue(data->env_, data->msg_, result);
+    }
+    return true;
+}
+
 void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, int status)
 {
     if (work == nullptr) {
@@ -1601,42 +1654,11 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
         return;
     }
     napi_value result[INTEGER_ONE] = {0};
-    if (data->extention_) {
-        napi_value webMsgExt = nullptr;
-        napi_status status = napi_get_reference_value(data->env_, g_webMsgExtClassRef, &webMsgExt);
-        if (status != napi_status::napi_ok) {
-            WVLOG_E("napi_get_reference_value failed.");
-            delete work;
-            work = nullptr;
-            napi_close_handle_scope(data->env_, scope);
-            return;
-        }
-        status = napi_new_instance(data->env_, webMsgExt, 0, NULL, &result[INTEGER_ZERO]);
-
-        WebMessageExt *webMessageExt = new (std::nothrow) WebMessageExt(data->msg_);
-        if (webMessageExt == nullptr) {
-            WVLOG_E("new WebMessageExt failed.");
-            delete work;
-            work = nullptr;
-            napi_close_handle_scope(data->env_, scope);
-            return;
-        }
-
-        status = napi_wrap(data->env_, result[INTEGER_ZERO], webMessageExt,
-            [](napi_env env, void *data, void *hint) {
-                WebMessageExt *webMessageExt = static_cast<WebMessageExt *>(data);
-                delete webMessageExt;
-            },
-            nullptr, nullptr);
-        if (status != napi_status::napi_ok) {
-            WVLOG_E("napi_wrap failed.");
-            delete work;
-            work = nullptr;
-            napi_close_handle_scope(data->env_, scope);
-            return;
-        }
-    } else {
-        NapiParseUtils::ConvertNWebToNapiValue(data->env_, data->msg_, result[INTEGER_ZERO]);
+    if (!UvWebMsgOnReceiveCbDataHandler(data, result[INTEGER_ZERO])) {
+        delete work;
+        work = nullptr;
+        napi_close_handle_scope(data->env_, scope);
+        return;
     }
 
     napi_value onMsgEventFunc = nullptr;
@@ -1690,6 +1712,26 @@ void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
     }
 }
 
+void UvNWebValueCallbackImplThreadWoker(uv_work_t *work, int status)
+{
+    if (work == nullptr) {
+        WVLOG_E("uv work is null");
+        return;
+    }
+    NapiWebMessagePort::WebMsgPortParam *data = reinterpret_cast<NapiWebMessagePort::WebMsgPortParam*>(work->data);
+    if (data == nullptr) {
+        WVLOG_E("WebMsgPortParam is null");
+        delete work;
+        return;
+    }
+
+    napi_delete_reference(data->env_, data->callback_);
+    delete data;
+    data = nullptr;
+    delete work;
+    work = nullptr;
+}
+
 NWebValueCallbackImpl::~NWebValueCallbackImpl()
 {
     WVLOG_D("~NWebValueCallbackImpl");
@@ -1714,25 +1756,8 @@ NWebValueCallbackImpl::~NWebValueCallbackImpl()
     param->env_ = env_;
     param->callback_ = callback_;
     work->data = reinterpret_cast<void*>(param);
-    int ret = uv_queue_work_with_qos(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
-        if (work == nullptr) {
-            WVLOG_E("uv work is null");
-            return;
-        }
-        NapiWebMessagePort::WebMsgPortParam *data = reinterpret_cast<NapiWebMessagePort::WebMsgPortParam*>(work->data);
-        if (data == nullptr) {
-            WVLOG_E("WebMsgPortParam is null");
-            delete work;
-            work = nullptr;
-            return;
-        }
-
-        napi_delete_reference(data->env_, data->callback_);
-        delete data;
-        data = nullptr;
-        delete work;
-        work = nullptr;
-    }, uv_qos_user_initiated);
+    int ret = uv_queue_work_with_qos(
+        loop, work, [](uv_work_t *work) {}, UvNWebValueCallbackImplThreadWoker, uv_qos_user_initiated);
     if (ret != 0) {
         if (param != nullptr) {
             delete param;
@@ -3222,6 +3247,44 @@ bool CheckSchemeName(const std::string& schemeName)
     return true;
 }
 
+bool CustomizeSchemesArrayDataHandler(napi_env env, napi_value array)
+{
+    std::string cmdLine;
+    uint32_t arrayLength = 0;
+    napi_get_array_length(env, array, &arrayLength);
+    if (arrayLength > MAX_CUSTOM_SCHEME_SIZE) {
+        return false;
+    }
+    for (uint32_t i = 0; i < arrayLength; ++i) {
+        std::string schemeName;
+        bool isSupportCORS;
+        bool isSupportFetch;
+        napi_value schemeNameObj = nullptr;
+        napi_value isSupportCORSObj = nullptr;
+        napi_value isSupportFetchObj = nullptr;
+        napi_value obj = nullptr;
+        napi_get_element(env, array, i, &obj);
+        if ((napi_get_named_property(env, obj, "schemeName", &schemeNameObj) != napi_ok) ||
+            (napi_get_named_property(env, obj, "isSupportCORS", &isSupportCORSObj) != napi_ok) ||
+            (napi_get_named_property(env, obj, "isSupportFetch", &isSupportFetchObj) != napi_ok)) {
+            return false;
+        }
+        NapiParseUtils::ParseString(env, schemeNameObj, schemeName);
+        if (!CheckSchemeName(schemeName)) {
+            return false;
+        }
+        NapiParseUtils::ParseBoolean(env, isSupportCORSObj, isSupportCORS);
+        NapiParseUtils::ParseBoolean(env, isSupportFetchObj, isSupportFetch);
+        std::string corsCmdLine = isSupportCORS ? "1," : "0,";
+        std::string fetchCmdLine = isSupportFetch ? "1;" : "0;";
+        cmdLine.append(schemeName + "," + corsCmdLine + fetchCmdLine);
+    }
+    cmdLine.pop_back();
+    WVLOG_I("Reg scheme cmdline %{public}s", cmdLine.c_str());
+    WebviewController::customeSchemeCmdLine_ = cmdLine;
+    return true;
+}
+
 napi_value NapiWebviewController::CustomizeSchemes(napi_env env, napi_callback_info info)
 {
     if (WebviewController::existNweb_) {
@@ -3240,44 +3303,11 @@ napi_value NapiWebviewController::CustomizeSchemes(napi_env env, napi_callback_i
     napi_value array = argv[INTEGER_ZERO];
     bool isArray = false;
     napi_is_array(env, array, &isArray);
-    if (isArray) {
-        std::string cmdLine;
-        uint32_t arrayLength = INTEGER_ZERO;
-        napi_get_array_length(env, array, &arrayLength);
-        if (arrayLength > MAX_CUSTOM_SCHEME_SIZE) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return nullptr;
-        }
-        for (uint32_t i = 0; i < arrayLength; ++i) {
-            std::string schemeName;
-            bool isSupportCORS;
-            bool isSupportFetch;
-            napi_value schemeNameObj = nullptr;
-            napi_value isSupportCORSObj = nullptr;
-            napi_value isSupportFetchObj = nullptr;
-            napi_value obj = nullptr;
-            napi_get_element(env, array, i, &obj);
-            if ((napi_get_named_property(env, obj, "schemeName", &schemeNameObj) != napi_ok) ||
-                (napi_get_named_property(env, obj, "isSupportCORS", &isSupportCORSObj) != napi_ok) ||
-                (napi_get_named_property(env, obj, "isSupportFetch", &isSupportFetchObj) != napi_ok)) {
-                BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-                return nullptr;
-            }
-            NapiParseUtils::ParseString(env, schemeNameObj, schemeName);
-            if (!CheckSchemeName(schemeName)) {
-                BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-                return nullptr;
-            }
-            NapiParseUtils::ParseBoolean(env, isSupportCORSObj, isSupportCORS);
-            NapiParseUtils::ParseBoolean(env, isSupportFetchObj, isSupportFetch);
-            std::string corsCmdLine = isSupportCORS ? "1," : "0,";
-            std::string fetchCmdLine = isSupportFetch ? "1;" : "0;";
-            cmdLine.append(schemeName + "," + corsCmdLine + fetchCmdLine);
-        }
-        cmdLine.pop_back();
-        WVLOG_I("Reg scheme cmdline %{public}s", cmdLine.c_str());
-        WebviewController::customeSchemeCmdLine_ = cmdLine;
-    } else {
+    if (!isArray) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+    if (!CustomizeSchemesArrayDataHandler(env, array)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }

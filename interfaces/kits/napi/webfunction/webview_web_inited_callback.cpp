@@ -19,6 +19,41 @@
 #include "uv.h"
 
 namespace OHOS::NWeb {
+namespace {
+void UvWebInitedCallbackThreadWoker(uv_work_t *work, int status)
+{
+    if (work == nullptr) {
+        WVLOG_E("uv work is null");
+        return;
+    }
+    WebInitedCallbackParam *data = reinterpret_cast<WebInitedCallbackParam*>(work->data);
+    if (data == nullptr) {
+        delete work;
+        work = nullptr;
+        return;
+    }
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(data->env_, &scope);
+    if (scope == nullptr) {
+        delete data;
+        data = nullptr;
+        delete work;
+        work = nullptr;
+        return;
+    }
+    napi_value webInitedResult = nullptr;
+    napi_value jsWebInitedCallback = nullptr;
+    napi_get_reference_value(data->env_, data->webInitedCallback_, &jsWebInitedCallback);
+    napi_call_function(data->env_, nullptr, jsWebInitedCallback, 0, {}, &webInitedResult);
+
+    napi_close_handle_scope(data->env_, scope);
+    delete data;
+    data = nullptr;
+    delete work;
+    work = nullptr;
+}
+} // namespace
+
 void WebRunInitedCallbackImpl::RunInitedCallback()
 {
     uv_loop_s *loop = nullptr;
@@ -35,33 +70,8 @@ void WebRunInitedCallbackImpl::RunInitedCallback()
         return;
     }
     work->data = reinterpret_cast<void*>(param_);
-    int ret = uv_queue_work_with_qos(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
-        if (work == nullptr) {
-            WVLOG_E("uv work is null");
-            return;
-        }
-        WebInitedCallbackParam *data = reinterpret_cast<WebInitedCallbackParam*>(work->data);
-        if (data == nullptr) {
-            delete work;
-            work = nullptr;
-            return;
-        }
-        napi_handle_scope scope = nullptr;
-        napi_open_handle_scope(data->env_, &scope);
-        if (scope == nullptr) {
-            return;
-        }
-        napi_value webInitedResult = nullptr;
-        napi_value jsWebInitedCallback = nullptr;
-        napi_get_reference_value(data->env_, data->webInitedCallback_, &jsWebInitedCallback);
-        napi_call_function(data->env_, nullptr, jsWebInitedCallback, 0, {}, &webInitedResult);
-
-        napi_close_handle_scope(data->env_, scope);
-        delete data;
-        data = nullptr;
-        delete work;
-        work = nullptr;
-    }, uv_qos_user_initiated);
+    int ret = uv_queue_work_with_qos(
+        loop, work, [](uv_work_t* work) {}, UvWebInitedCallbackThreadWoker, uv_qos_user_initiated);
     if (ret != 0) {
         if (param_ != nullptr) {
             delete param_;
