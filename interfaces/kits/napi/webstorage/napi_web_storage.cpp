@@ -231,7 +231,7 @@ napi_value NapiWebStorage::GetOriginsAsync(napi_env env, napi_value *argv)
     NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOrigins,
         GetOriginComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, param->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
     napi_get_undefined(env, &result);
     return result;
 }
@@ -255,7 +255,7 @@ napi_value NapiWebStorage::GetOriginsPromise(napi_env env)
     NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOrigins,
         GetOriginsPromiseComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, param->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
     return promise;
 }
 
@@ -394,7 +394,7 @@ napi_value NapiWebStorage::GetOriginUsageOrQuotaAsync(napi_env env,
     NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOriginUsageOrQuota,
         GetOriginUsageOrQuotaComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, param->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
     napi_get_undefined(env, &result);
     return result;
 }
@@ -424,7 +424,7 @@ napi_value NapiWebStorage::GetOriginUsageOrQuotaPromise(napi_env env,
     NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOriginUsageOrQuota,
         GetOriginUsageOrQuotaPromiseComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work(env, param->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
     return promise;
 }
 
