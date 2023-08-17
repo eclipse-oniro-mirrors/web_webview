@@ -108,8 +108,8 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     param->value_ = ret;
 
     work->data = reinterpret_cast<void*>(param);
-    uv_queue_work(
-        loop, work, [](uv_work_t* work) {}, UvJsCallbackThreadWoker);
+    uv_queue_work_with_qos(
+        loop, work, [](uv_work_t* work) {}, UvJsCallbackThreadWoker, uv_qos_user_initiated);
     std::unique_lock<std::mutex> lock(param->mutex_);
     param->condition_.wait(lock, [&param] { return param->ready_; });
     if (param != nullptr) {

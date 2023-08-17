@@ -1676,7 +1676,8 @@ void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
     param->msg_ = result;
     param->extention_ = extention_;
     work->data = reinterpret_cast<void*>(param);
-    uv_queue_work(loop, work, [](uv_work_t *work) {}, UvWebMessageOnReceiveValueCallback);
+    uv_queue_work_with_qos(
+        loop, work, [](uv_work_t* work) {}, UvWebMessageOnReceiveValueCallback, uv_qos_user_initiated);
     std::unique_lock<std::mutex> lock(param->mutex_);
     param->condition_.wait(lock, [&param] { return param->ready_; });
     if (param != nullptr) {
@@ -1713,7 +1714,7 @@ NWebValueCallbackImpl::~NWebValueCallbackImpl()
     param->env_ = env_;
     param->callback_ = callback_;
     work->data = reinterpret_cast<void*>(param);
-    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
+    int ret = uv_queue_work_with_qos(loop, work, [](uv_work_t *work) {}, [](uv_work_t *work, int status) {
         if (work == nullptr) {
             WVLOG_E("uv work is null");
             return;
@@ -1731,7 +1732,7 @@ NWebValueCallbackImpl::~NWebValueCallbackImpl()
         data = nullptr;
         delete work;
         work = nullptr;
-    });
+    }, uv_qos_user_initiated);
     if (ret != 0) {
         if (param != nullptr) {
             delete param;
