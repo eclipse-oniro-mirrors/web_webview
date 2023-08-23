@@ -84,7 +84,9 @@ const std::unordered_map<DeviceType, std::string> DEVICE_TYPE_MAP = {
 };
 
 const int32_t ADAPTER_AUDIO_DEFAULT_DEVICE_ID = 1000000;
+const int32_t ADAPTER_AUDIO_UNDEFINED_DEVICE_ID = 1000001;
 const char* ADAPTER_AUDIO_DEFAULT_DEVICE_NAME = "(default)";
+const char* ADAPTER_AUDIO_UNDEFINED_DEVICE_NAME = "(undefined)";
 
 AudioManagerCallbackAdapterImpl::AudioManagerCallbackAdapterImpl(std::shared_ptr<AudioManagerCallbackAdapter> cb)
     : cb_(cb) {};
@@ -222,6 +224,10 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc 
         return AUDIO_ERROR;
     }
     auto deviceFlag = item->second;
+    if (!isInput && desc.deviceId == ADAPTER_AUDIO_UNDEFINED_DEVICE_ID) {
+        WVLOG_E("Cannot select undefined audio device.");
+        return AUDIO_ERROR;
+    }
     if (!isInput && desc.deviceId == ADAPTER_AUDIO_DEFAULT_DEVICE_ID) {
         WVLOG_I("Select default audio output Device.");
         AudioRendererInfo rendererInfo;
@@ -253,7 +259,14 @@ AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
     rendererInfo.rendererFlags = 0;
     std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
     AudioRoutingManager::GetInstance()->GetPreferredOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
-
+    
+    if (defaultOutputDevice.empty()) {
+        WVLOG_E("AudioSystemManagerAdapterImpl::GetDefaultOutputDevice failed.");
+        AudioAdapterDeviceDesc undefinedDesc;
+        undefinedDesc.deviceName = ADAPTER_AUDIO_UNDEFINED_DEVICE_NAME;
+        undefinedDesc.deviceId = ADAPTER_AUDIO_UNDEFINED_DEVICE_ID;
+        return undefinedDesc;
+    }
     AudioAdapterDeviceDesc desc;
     auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultOutputDevice[0]->deviceType_);
     desc.deviceId = defaultOutputDevice[0]->deviceId_;
