@@ -35,6 +35,7 @@ const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.
 const std::string ARG_WIDTH = "--width";
 const std::string ARG_HEIGHT = "--height";
 std::unordered_map<std::string, std::string> g_argsMap;
+sptr<Surface> g_surface = nullptr;
 } // namespace
 
 static bool HasArg(const std::string& arg)
@@ -84,4 +85,21 @@ NWebInitArgs GetInitArgs(void)
     };
     return initArgs;
 }
+
+std::shared_ptr<NWeb> GetNwebForTest()
+{
+    if (!g_surface) {
+        Rosen::RSSurfaceNodeConfig config;
+        config.SurfaceNodeName = "webTestSurfaceName";
+        auto surfaceNode = Rosen::RSSurfaceNode::Create(config, false);
+        if (surfaceNode == nullptr) {
+            return nullptr;
+        }
+        g_surface = surfaceNode->GetSurface();
+        if (g_surface== nullptr) {
+            return nullptr;
+        }
+    }
+    return NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs());
 }
+} // namespace OHOS::NWeb
