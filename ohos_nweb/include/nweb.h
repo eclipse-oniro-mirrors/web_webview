@@ -768,6 +768,16 @@ public:
      * Set the window id.
      */
     virtual void SetWindowId(uint32_t window_id) = 0;
+
+    /**
+     * Notify that browser was occluded by other windows.
+     */
+    virtual void OnOccluded() const = 0;
+
+    /**
+     * Notify that browser was unoccluded by other windows.
+     */
+    virtual void OnUnoccluded() const = 0;
 };
 }  // namespace OHOS::NWeb
 
