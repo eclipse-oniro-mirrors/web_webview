@@ -23,7 +23,7 @@ ohos_fuzztest("PutBackgroundColorFuzzTest") {
   include_dirs = [
     "$webview_path/test/ohos_nweb",
     "$window_manager_path/interfaces/innerkits/wm",
-    "$webview_path/test/fuzztest",
+    "$webview_path/test/unittest/common",
   ]
   cflags = [
     "-g",
@@ -31,7 +31,10 @@ ohos_fuzztest("PutBackgroundColorFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "putbackgroundcolor_fuzzer.cpp" ]
+  sources = [
+    "../../unittest/common/nweb_create_window.cpp",
+    "putbackgroundcolor_fuzzer.cpp",
+  ]
   deps = [ "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client" ]
   external_deps = [
     "c_utils:utils",

@@ -15,105 +15,19 @@
 
 #include "executejavascriptcode_fuzzer.h"
 
-#include <refbase.h>
-#include <ui/rs_surface_node.h>
-
-#include <cstdint>
-#include <cstring>
-#include <iosfwd>
-#include <list>
-#include <memory>
-#include <new>
-#include <unordered_map>
-
 #include "nweb.h"
-#include "nweb_adapter_helper.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
-
-using namespace OHOS::Rosen;
+#include "nweb_create_window.h"
 
 namespace OHOS {
     std::shared_ptr<OHOS::NWeb::NWeb> g_nweb = nullptr;
-    sptr<Surface> g_surface = nullptr;
-    std::unordered_map<std::string, std::string> g_argsMap;
-    const std::string ARG_URL = "--url";
-    const std::string ARG_DUMP = "--dump-path";
-    const std::string ARG_FRAME_INFO = "--frame-info";
-    const std::string ARG_ADD_WEB_ENGINE_ARG = "--add-args";
-    const std::string ARG_DELETE_WEB_ENGINE_ARG = "--delete-args";
-    const std::string ARG_MULTI_RENDER_PROCESS = "--multi-renderer-process";
-    const std::string ARG_NWEB_TEST_MOCK_BUNDLEPATH = "--bundle-installation-dir";
-    const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
-    const std::string ARG_WIDTH = "--width";
-    const std::string ARG_HEIGHT = "--height";
-
-    bool HasArg(const std::string &arg)
-    {
-        return (!g_argsMap.empty()) && (g_argsMap.find(arg) != g_argsMap.end());
-    }
-
-    std::string GetArgValue(const std::string &arg)
-    {
-        if (!HasArg(arg)) {
-            return "";
-        }
-        return g_argsMap.at(arg);
-    }
-
-    std::list<std::string> GetWebEngineArgs(const std::string &arg)
-    {
-        std::string webEngineArgValue = GetArgValue(arg);
-        std::list<std::string> webEngineArgList;
-        if (webEngineArgValue.empty()) {
-            return webEngineArgList;
-        }
-        uint32_t start = 0;
-        uint32_t pos = 0;
-        while (pos < webEngineArgValue.size()) {
-            if (webEngineArgValue[pos] == ',') {
-                webEngineArgList.emplace_back(webEngineArgValue.substr(start, pos - start));
-                pos++;
-                start = pos;
-            } else {
-                pos++;
-            }
-        }
-        webEngineArgList.emplace_back(webEngineArgValue.substr(start, pos - start));
-        webEngineArgList.emplace_back(ARG_NWEB_TEST_MOCK_BUNDLEPATH + "=" + MOCK_INSTALLATION_DIR);
-        return webEngineArgList;
-    }
-
-    OHOS::NWeb::NWebInitArgs GetInitArgs()
-    {
-        OHOS::NWeb::NWebInitArgs initArgs = {
-            .dump_path = GetArgValue(ARG_DUMP),
-            .frame_info_dump = HasArg(ARG_FRAME_INFO) ? true : false,
-            .web_engine_args_to_add = GetWebEngineArgs(ARG_ADD_WEB_ENGINE_ARG),
-            .web_engine_args_to_delete = GetWebEngineArgs(ARG_DELETE_WEB_ENGINE_ARG),
-            .multi_renderer_process = HasArg(ARG_MULTI_RENDER_PROCESS) ? true : false,
-        };
-        return initArgs;
-    }
-
     bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return true;
         }
-        if (!g_surface) {
-            RSSurfaceNodeConfig config;
-            config.SurfaceNodeName = "webTestSurfaceName";
-            auto surfaceNode = RSSurfaceNode::Create(config, false);
-            if (surfaceNode == nullptr) {
-                return false;
-            }
-            g_surface = surfaceNode->GetSurface();
-            if (g_surface== nullptr) {
-                return false;
-            }
-        }
-        g_nweb = NWeb::NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs());
+        g_nweb = NWeb::GetNwebForTest();
         if (g_nweb == nullptr) {
             return true;
         }

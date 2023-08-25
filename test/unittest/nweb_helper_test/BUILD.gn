@@ -19,7 +19,12 @@ module_output_path = "web/webview"
 ohos_unittest("nweb_helper_test") {
   module_out_path = module_output_path
 
-  sources = [ "nweb_helper_test.cpp" ]
+  sources = [
+    "../common/nweb_create_window.cpp",
+    "nweb_helper_test.cpp",
+  ]
+
+  include_dirs = [ "../common" ]
 
   deps = [
     "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",

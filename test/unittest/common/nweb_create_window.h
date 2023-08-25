@@ -24,6 +24,7 @@
 
 namespace OHOS::NWeb {
 NWebInitArgs GetInitArgs(void);
+std::shared_ptr<NWeb> GetNwebForTest();
 
 class NWebMock : public NWeb {
 public:
