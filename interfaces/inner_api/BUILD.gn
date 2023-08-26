@@ -26,7 +26,7 @@ ohos_shared_library("web_inner_kit") {
     "ability_base:zuri",
     "c_utils:utils",
     "image_framework:image_native",
-    "pasteboard:pasteboard_client",
+    "pasteboard:pasteboard_data",
   ]
 
   cflags = [
