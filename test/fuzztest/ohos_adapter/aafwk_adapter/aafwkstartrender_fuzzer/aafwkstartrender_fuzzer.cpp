@@ -24,7 +24,7 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool AafwkStartRenderFuzzTest(const uint8_t* data, size_t size)
     {
         constexpr int fdNum = 2;
         if ((data == nullptr) || (size < fdNum * sizeof(int32_t))) {
@@ -51,6 +51,6 @@ namespace OHOS {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::AafwkStartRenderFuzzTest(data, size);
     return 0;
 }

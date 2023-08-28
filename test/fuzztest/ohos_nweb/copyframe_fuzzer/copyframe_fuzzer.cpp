@@ -29,7 +29,7 @@ using namespace OHOS::NWeb;
 
 namespace OHOS {
 
-bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+bool CopyFrameFuzzTest(const uint8_t* data, size_t size)
 {
     constexpr int BITS_PER_PIXEL = 4;
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
@@ -62,6 +62,6 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::CopyFrameFuzzTest(data, size);
     return 0;
 }

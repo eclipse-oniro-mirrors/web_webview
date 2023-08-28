@@ -19,7 +19,7 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool SetUriFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return false;
@@ -39,6 +39,6 @@ namespace OHOS {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::SetUriFuzzTest(data, size);
     return 0;
 }

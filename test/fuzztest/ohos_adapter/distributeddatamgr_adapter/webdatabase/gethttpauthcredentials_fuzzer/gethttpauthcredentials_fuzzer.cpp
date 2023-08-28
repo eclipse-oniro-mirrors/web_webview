@@ -23,7 +23,7 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool GetHttpAuthCredentialsFuzzTest(const uint8_t* data, size_t size)
     {
         constexpr int32_t maxLen = 256;
         if ((data == nullptr) || (size == 0)) {
@@ -43,6 +43,6 @@ namespace OHOS {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::GetHttpAuthCredentialsFuzzTest(data, size);
     return 0;
 }

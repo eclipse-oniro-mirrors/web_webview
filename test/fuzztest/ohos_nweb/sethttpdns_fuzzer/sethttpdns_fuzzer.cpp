@@ -26,7 +26,7 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+bool SetHttpDnsFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int))) {
         return false;
@@ -49,6 +49,6 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::SetHttpDnsFuzzTest(data, size);
     return 0;
 }

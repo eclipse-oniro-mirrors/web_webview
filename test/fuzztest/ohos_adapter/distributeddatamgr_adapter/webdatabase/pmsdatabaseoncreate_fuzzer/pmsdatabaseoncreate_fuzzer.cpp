@@ -25,7 +25,7 @@ using namespace OHOS::NWeb;
 using namespace OHOS::NativeRdb;
 
 namespace OHOS {
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool PmsDatabaseOnCreateFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return false;
@@ -52,6 +52,6 @@ namespace OHOS {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::PmsDatabaseOnCreateFuzzTest(data, size);
     return 0;
 }

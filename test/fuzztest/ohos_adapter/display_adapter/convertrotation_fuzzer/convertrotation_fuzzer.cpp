@@ -25,7 +25,7 @@ using namespace OHOS::NWeb;
 using namespace OHOS::Rosen;
 
 namespace OHOS {
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool ConvertRotationFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return false;
@@ -41,6 +41,6 @@ namespace OHOS {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::ConvertRotationFuzzTest(data, size);
     return 0;
 }
