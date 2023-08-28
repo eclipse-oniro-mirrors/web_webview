@@ -19,7 +19,7 @@
 using namespace OHOS::NWeb;
 using namespace OHOS::MiscServices;
 namespace OHOS {
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool GetRecordAtFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size < sizeof(size_t))) {
             return false;
@@ -41,6 +41,6 @@ namespace OHOS {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::GetRecordAtFuzzTest(data, size);
     return 0;
 }
