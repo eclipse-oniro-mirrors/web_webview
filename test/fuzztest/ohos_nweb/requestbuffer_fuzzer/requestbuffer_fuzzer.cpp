@@ -33,7 +33,7 @@ namespace {
 sptr<Surface> g_surface = nullptr;
 }
 
-bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+bool RequestBufferFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return false;
@@ -69,6 +69,6 @@ bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::RequestBufferFuzzTest(data, size);
     return 0;
 }

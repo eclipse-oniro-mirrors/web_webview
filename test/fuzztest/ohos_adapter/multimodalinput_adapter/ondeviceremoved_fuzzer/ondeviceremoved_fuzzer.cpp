@@ -29,7 +29,7 @@ public:
     void OnDeviceAdded(int32_t deviceId, const std::string &type) override {};
     void OnDeviceRemoved(int32_t deviceId, const std::string &type) override {};
 };
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool OnDeviceRemovedFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size < sizeof(int32_t))) {
             return false;
@@ -50,6 +50,6 @@ public:
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::OnDeviceRemovedFuzzTest(data, size);
     return 0;
 }

@@ -24,7 +24,7 @@ public:
     MockPasteboardObserver() = default;
     void OnPasteboardChanged() override {}
 };
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool OnPasteboardChangedFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return false;
@@ -40,6 +40,6 @@ public:
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::OnPasteboardChangedFuzzTest(data, size);
     return 0;
 }

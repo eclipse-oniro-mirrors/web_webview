@@ -20,7 +20,7 @@
 
 namespace OHOS {
     std::shared_ptr<OHOS::NWeb::NWeb> g_nweb = nullptr;
-    bool DoSomethingInterestingWithMyAPI(const uint8_t* data, size_t size)
+    bool LoadWithDataAndBaseUrlFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return true;
@@ -43,6 +43,6 @@ namespace OHOS {
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::DoSomethingInterestingWithMyAPI(data, size);
+    OHOS::LoadWithDataAndBaseUrlFuzzTest(data, size);
     return 0;
 }
