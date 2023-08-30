@@ -17,10 +17,7 @@
 
 #include "nweb_log.h"
 
-#include "base/print/print_fwk/frameworks/innerkitsimpl/include/print_manager_client.h"
-
 namespace OHOS::NWeb {
-
 // static
 PrintManagerAdapterImpl& PrintManagerAdapterImpl::GetInstance()
 {
@@ -37,5 +34,89 @@ int32_t PrintManagerAdapterImpl::StartPrint(
         return -1;
     }
     return ret;
+}
+
+int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
+    const std::shared_ptr<PrintDocumentAdapterAdapter>& listener, const PrintAttributesAdapter& printAttributes)
+{
+    OHOS::Print::PrintDocumentAdapter* adapter = new PrintDocumentAdapterImpl(listener);
+    if (!adapter) {
+        WVLOG_E("adapter get failed");
+        return -1;
+    }
+    sptr<OHOS::Print::IPrintCallback> iCallback = new (std::nothrow) OHOS::Print::PrintCallback(adapter);
+    if (!iCallback) {
+        WVLOG_E("iCallback get failed");
+        return -1;
+    }
+    OHOS::Print::PrintAttributes* attributes = new OHOS::Print::PrintAttributes();
+    if (!attributes) {
+        WVLOG_E("attributes get failed");
+        return -1;
+    }
+
+    int32_t ret = OHOS::Print::PrintManagerClient::GetInstance()->Print(printJobName, iCallback, *attributes);
+    if (ret != 0) {
+        WVLOG_E("print failed, failed id = %{public}d", ret);
+        return -1;
+    }
+    return ret;
+}
+
+PrintDocumentAdapterImpl::PrintDocumentAdapterImpl(const std::shared_ptr<PrintDocumentAdapterAdapter> cb)
+{
+    cb_ = cb;
+}
+
+PrintAttributesAdapter PrintDocumentAdapterImpl::ConvertPrintingParameters(OHOS::Print::PrintAttributes attrs)
+{
+    PrintAttributesAdapter printAttributesAdapter;
+    printAttributesAdapter.copyNumber = attrs.GetCopyNumber();
+    PrintRangeAdapter printRangeAdapter;
+    Print::PrintRange range;
+    attrs.GetPageRange(range);
+    printRangeAdapter.startPage = range.GetStartPage();
+    printRangeAdapter.endPage = range.GetEndPage();
+    std::vector<uint32_t> pages;
+    range.GetPages(pages);
+    printRangeAdapter.pages = pages;
+    printAttributesAdapter.pageRange = printRangeAdapter;
+    printAttributesAdapter.isSequential = attrs.GetIsSequential();
+    PrintPageSizeAdapter printPageSizeAdapter;
+    Print::PrintPageSize printPageSize;
+    attrs.GetPageSize(printPageSize);
+    printPageSizeAdapter.width = printPageSize.GetWidth();
+    printPageSizeAdapter.height = printPageSize.GetHeight();
+    printAttributesAdapter.pageSize = printPageSizeAdapter;
+    printAttributesAdapter.isLandscape = attrs.GetIsLandscape();
+    printAttributesAdapter.colorMode = attrs.GetColorMode();
+    printAttributesAdapter.duplexMode = attrs.GetDuplexMode();
+    PrintMarginAdapter printMarginAdapter;
+    Print::PrintMargin printMargin;
+    attrs.GetMargin(printMargin);
+    printMarginAdapter.top = printMargin.GetTop();
+    printMarginAdapter.bottom = printMargin.GetBottom();
+    printMarginAdapter.left = printMargin.GetLeft();
+    printMarginAdapter.right = printMargin.GetRight();
+    return printAttributesAdapter;
+}
+
+void PrintDocumentAdapterImpl::onStartLayoutWrite(const std::string& jobId,
+    const OHOS::Print::PrintAttributes& oldAttrs, const OHOS::Print::PrintAttributes& newAttrs, uint32_t fd,
+    std::function<void(std::string, uint32_t)> writeResultCallback)
+{
+    if (!cb_) {
+        return;
+    }
+    cb_->onStartLayoutWrite(
+        jobId, ConvertPrintingParameters(oldAttrs), ConvertPrintingParameters(newAttrs), fd, writeResultCallback);
+}
+
+void PrintDocumentAdapterImpl::onJobStateChanged(const std::string& jobId, uint32_t state)
+{
+    if (!cb_) {
+        return;
+    }
+    cb_->onJobStateChanged(jobId, state);
 }
 } // namespace OHOS::NWeb
