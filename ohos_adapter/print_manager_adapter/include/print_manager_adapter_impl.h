@@ -16,9 +16,28 @@
 #ifndef PRINT_MANAGER_ADAPTER_IMPL_H
 #define PRINT_MANAGER_ADAPTER_IMPL_H
 
+#include "iprint_callback.h"
+#include "print_callback.h"
 #include "print_manager_adapter.h"
+#include "print_manager_client.h"
 
 namespace OHOS::NWeb {
+
+class PrintDocumentAdapterImpl : public OHOS::Print::PrintDocumentAdapter {
+public:
+    PrintDocumentAdapterImpl(const std::shared_ptr<PrintDocumentAdapterAdapter> cb);
+
+    void onStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
+        const OHOS::Print::PrintAttributes& newAttrs, uint32_t fd,
+        std::function<void(std::string, uint32_t)> writeResultCallback) override;
+
+    void onJobStateChanged(const std::string& jobId, uint32_t state) override;
+
+private:
+    PrintAttributesAdapter ConvertPrintingParameters(Print::PrintAttributes attrs);
+
+    std::shared_ptr<PrintDocumentAdapterAdapter> cb_;
+};
 
 class PrintManagerAdapterImpl : public PrintManagerAdapter {
 public:
@@ -26,9 +45,11 @@ public:
 
     ~PrintManagerAdapterImpl() override = default;
 
-    int32_t StartPrint(const std::vector<std::string>& fileList,
-                       const std::vector<uint32_t>& fdList,
-                       std::string& taskId) override;
+    int32_t StartPrint(
+        const std::vector<std::string>& fileList, const std::vector<uint32_t>& fdList, std::string& taskId) override;
+
+    int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
+        const PrintAttributesAdapter& printAttributes) override;
 
 private:
     PrintManagerAdapterImpl() = default;
@@ -38,6 +59,6 @@ private:
     PrintManagerAdapterImpl& operator=(const PrintManagerAdapterImpl&) = delete;
 };
 
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
 
-#endif  // PRINT_MANAGER_ADAPTER_IMPL_H
+#endif // PRINT_MANAGER_ADAPTER_IMPL_H
