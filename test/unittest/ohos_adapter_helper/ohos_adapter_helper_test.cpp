@@ -34,7 +34,21 @@ namespace {
 sptr<Surface> g_surface = nullptr;
 const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
 const std::string PRINT_FILE_DIR = "/data/storage/el2/base/print.png";
-}
+const std::string PRINT_JOB_NAME = "webPrintTestJob";
+} // namespace
+
+class PrintDocumentAdapterImpl : public OHOS::NWeb::PrintDocumentAdapterAdapter {
+public:
+    PrintDocumentAdapterImpl() {}
+    ~PrintDocumentAdapterImpl() = default;
+
+    void onStartLayoutWrite(const std::string& jobId, const OHOS::NWeb::PrintAttributesAdapter& oldAttrs,
+        const OHOS::NWeb::PrintAttributesAdapter& newAttrs, uint32_t fd,
+        std::function<void(std::string, uint32_t)> writeResultCallback) override
+    {}
+
+    void onJobStateChanged(const std::string& jobId, uint32_t state) override {}
+};
 class OhosAdapterHelperTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -53,14 +67,11 @@ void OhosAdapterHelperTest::SetUpTestCase(void)
     EXPECT_NE(g_surface, nullptr);
 }
 
-void OhosAdapterHelperTest::TearDownTestCase(void)
-{}
+void OhosAdapterHelperTest::TearDownTestCase(void) {}
 
-void OhosAdapterHelperTest::SetUp(void)
-{}
+void OhosAdapterHelperTest::SetUp(void) {}
 
-void OhosAdapterHelperTest::TearDown(void)
-{}
+void OhosAdapterHelperTest::TearDown(void) {}
 
 /**
  * @tc.name: OhosAdapterHelper_GetCookieManager_001.
@@ -71,7 +82,7 @@ void OhosAdapterHelperTest::TearDown(void)
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize.Level1)
 {
     int32_t nweb_id = 1;
-    NWebHelper &helper = NWebHelper::Instance();
+    NWebHelper& helper = NWebHelper::Instance();
     helper.SetBundlePath(MOCK_INSTALLATION_DIR);
     helper.Init(false);
     auto cook = helper.GetCookieManager();
@@ -94,7 +105,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize
  */
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Level1)
 {
-    OhosAdapterHelper &helper = OhosAdapterHelper::GetInstance();
+    OhosAdapterHelper& helper = OhosAdapterHelper::GetInstance();
     std::unique_ptr<AafwkAppMgrClientAdapter> client = helper.CreateAafwkAdapter();
     EXPECT_NE(client, nullptr);
     std::unique_ptr<PowerMgrClientAdapter> powerMgr = helper.CreatePowerMgrClientAdapter();
@@ -116,11 +127,14 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     std::unique_ptr<MMIAdapter> mmiAdapter = helper.CreateMMIAdapter();
     EXPECT_NE(mmiAdapter, nullptr);
     PrintManagerAdapter& printAdapter = helper.GetPrintManagerInstance();
-    std::vector<std::string> fileList = {PRINT_FILE_DIR};
-    std::vector<uint32_t> fdList = {1};
+    std::vector<std::string> fileList = { PRINT_FILE_DIR };
+    std::vector<uint32_t> fdList = { 1 };
     std::string taskId;
-    int32_t ret =  printAdapter.StartPrint(fileList, fdList, taskId);
+    int32_t ret = printAdapter.StartPrint(fileList, fdList, taskId);
     EXPECT_EQ(ret, -1);
+    std::shared_ptr<PrintDocumentAdapterAdapter> printDocumentAdapterImpl;
+    PrintAttributesAdapter printAttributesAdapter;
+    EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter), -1);
     sptr<Surface> surface = nullptr;
     NWebInitArgs initArgs;
     uint32_t width = 1;
@@ -138,7 +152,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Level1)
 {
     int32_t nweb_id = 1;
-    NWebHelper &helper = NWebHelper::Instance();
+    NWebHelper& helper = NWebHelper::Instance();
     NWebCreateInfo create_info;
     helper.LoadLib(true);
     helper.libHandleWebEngine_ = nullptr;
@@ -172,7 +186,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
  */
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetSystemPropertiesInstance_004, TestSize.Level1)
 {
-    OhosAdapterHelper &helper = OhosAdapterHelper::GetInstance();
+    OhosAdapterHelper& helper = OhosAdapterHelper::GetInstance();
     helper.GetSystemPropertiesInstance();
     auto synvAdapter = helper.GetVSyncAdapter();
     EXPECT_NE(synvAdapter, nullptr);
@@ -193,4 +207,4 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetSystemPropertiesInstance_00
     auto screenCapture = helper.CreateScreenCaptureAdapter();
     EXPECT_NE(screenCapture, nullptr);
 }
-}
+} // namespace OHOS::NWeb
