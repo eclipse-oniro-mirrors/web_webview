@@ -69,6 +69,8 @@ ohos_shared_library("libnweb") {
   ]
 
   deps = [
+    ":web.para",
+    ":web.para.dac",
     ":web_config",
     "//third_party/libxml2:libxml2",
   ]
@@ -83,6 +85,7 @@ ohos_shared_library("libnweb") {
     "graphic_2d:librender_service_client",
     "graphic_2d:surface",
     "hilog:libhilog",
+    "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_core",
     "window_manager:libwm",
@@ -105,4 +108,18 @@ ohos_prebuilt_etc("web_config") {
   subsystem_name = "web"
   part_name = "webview"
   module_install_dir = "etc/web"
+}
+
+ohos_prebuilt_etc("web.para") {
+  source = "${webview_root_path}/ohos_nweb/etc/para/web.para"
+  subsystem_name = "web"
+  part_name = "webview"
+  module_install_dir = "etc/param"
+}
+
+ohos_prebuilt_etc("web.para.dac") {
+  source = "${webview_root_path}/ohos_nweb/etc/para/web.para.dac"
+  subsystem_name = "web"
+  part_name = "webview"
+  module_install_dir = "etc/param"
 }
