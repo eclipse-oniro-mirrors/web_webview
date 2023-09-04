@@ -135,6 +135,10 @@ public:
     {
         is_active_ = is_active;
     };
+    bool IsActive()
+    {
+        return is_active_;
+    };
     bool IsSet()
     {
         return (main_tid_ != -1 && compositor_tid_ != -1);
@@ -280,10 +284,13 @@ bool ResSchedClientAdapter::ReportScene(
             g_renderMap.emplace(nweb_id, RenderData(nweb_id));
         }
         renderData.SetLoaded();
+    } else if (renderData.IsActive()) {
+        return ReportSceneInternal(statusAdapter, sceneAdapter);
     }
 
     if (!renderData.ShouldReportScene()) {
         renderData.AddScene(sceneAdapter);
+        WVLOG_D("add report scene %{public}d", sceneAdapter);
         return true;
     }
     return ReportSceneInternal(statusAdapter, sceneAdapter);
