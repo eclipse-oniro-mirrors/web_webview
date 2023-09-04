@@ -483,7 +483,11 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init
                 childNodeName == std::string("mouseWheelSocPerfParam") && contentStr == std::string("true")) {
                 init_args.web_engine_args_to_add.emplace_back(
                     std::string("--ohos-enable-mousewheel-soc-perf"));
-            }
+            } else if (nodeName == std::string("touchEventConfig") &&
+                childNodeName == std::string("touchEventShouldRegister") && contentStr == std::string("false")) {
+                init_args.web_engine_args_to_add.emplace_back(
+                    std::string("--disable-touch-event-register"));
+            } 
         }
     }
 }

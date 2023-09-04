@@ -12,4 +12,7 @@
   <mouseWheelSocPerfConfig>
       <mouseWheelSocPerfParam>false</mouseWheelSocPerfParam>
   </mouseWheelSocPerfConfig>
+  <touchEventConfig>
+      <touchEventShouldRegister>false</touchEventShouldRegister>
+  </touchEventConfig>
 </WEB>
