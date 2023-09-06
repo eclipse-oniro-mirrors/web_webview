@@ -170,6 +170,14 @@ public:
     {
         return is_loaded_;
     };
+    void Reset()
+    {
+        main_tid_ = -1;
+        compositor_tid_ = -1;
+        scene_list_.clear();
+        is_active_ = false;
+        is_loaded_ = false;
+    };
 
 private:
     int32_t nweb_id_ = -1;
@@ -280,8 +288,7 @@ bool ResSchedClientAdapter::ReportScene(
     auto& renderData = g_renderMap[nweb_id];
     if (sceneAdapter == ResSchedSceneAdapter::LOAD_URL) {
         if (renderData.IsLoaded()) {
-            g_renderMap.erase(nweb_id);
-            g_renderMap.emplace(nweb_id, RenderData(nweb_id));
+            renderData.Reset();
         }
         renderData.SetLoaded();
     } else if (renderData.IsActive()) {
