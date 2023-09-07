@@ -107,6 +107,8 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   public_configs = [ ":ohos_adapter_public_interface" ]
 
+  deps = [ "../ohos_nweb:libnweb" ]
+
   external_deps = [
     "ability_base:extractortool",
     "ability_base:want",
