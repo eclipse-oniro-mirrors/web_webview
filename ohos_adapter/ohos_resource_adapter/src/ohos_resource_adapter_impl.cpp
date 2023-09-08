@@ -23,8 +23,8 @@
 #include "bundle_mgr_proxy.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
-#include "nweb_helper.h"
 #include "nweb_log.h"
+#include "nweb_system_properties.h"
 #include "system_ability_definition.h"
 
 using namespace OHOS::AbilityBase;
@@ -291,7 +291,7 @@ bool OhosResourceAdapterImpl::GetRawFileMapper(const std::shared_ptr<OHOS::Abili
         return false;
     }
     std::unique_ptr<OHOS::AbilityBase::FileMapper> fileMap;
-    if (NWebHelper::GetWebOptimizationValue()) {
+    if (NWebSystemProperties::GetWebOptimizationValue()) {
         fileMap = manager->GetMmapData(rawFile);
     } else {
         fileMap = manager->GetData(rawFile);
