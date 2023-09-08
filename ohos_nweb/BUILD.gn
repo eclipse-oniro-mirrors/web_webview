@@ -85,11 +85,19 @@ ohos_shared_library("libnweb") {
     "graphic_2d:librender_service_client",
     "graphic_2d:surface",
     "hilog:libhilog",
-    "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_core",
     "window_manager:libwm",
   ]
+
+  if (nweb_is_ohos) {
+    sources += [ "src/ohos/nweb_system_properties.cpp" ]
+    external_deps += [ "init:libbegetutil" ]
+  } else if (nweb_is_win || nweb_is_linux || nweb_is_android) {
+    sources += [ "src/windows/nweb_system_properties.cpp" ]
+  } else {
+    sources += [ "src/darwin/nweb_system_properties.cpp" ]
+  }
 
   innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
