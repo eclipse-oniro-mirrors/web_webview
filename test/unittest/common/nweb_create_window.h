@@ -28,7 +28,7 @@ std::shared_ptr<NWeb> GetNwebForTest();
 
 class NWebMock : public NWeb {
 public:
-    void Resize(uint32_t width, uint32_t height) override
+    void Resize(uint32_t width, uint32_t height, bool isKeyboard = false) override
     {}
     void OnPause() const override
     {}
