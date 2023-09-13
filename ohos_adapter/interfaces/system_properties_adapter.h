@@ -42,6 +42,8 @@ public:
     virtual int32_t GetDeviceInfoMajorVersion() const = 0;
 
     virtual ProductDeviceType GetProductDeviceType() const = 0;
+
+    virtual bool GetWebOptimizationValue() const = 0;
 };
 
 }  // namespace OHOS::NWeb
