@@ -15,6 +15,7 @@
 
 #include "system_properties_adapter_impl.h"
 
+#include "nweb_system_properties.h"
 #include "parameter.h"
 #include "parameters.h"
 #include "sysversion.h"
@@ -60,5 +61,10 @@ ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType() const
     }
 
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
+}
+
+bool SystemPropertiesAdapterImpl::GetWebOptimizationValue() const
+{
+    return NWebSystemProperties::GetWebOptimizationValue();
 }
 } // namespace OHOS::NWeb
