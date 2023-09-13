@@ -36,6 +36,8 @@ public:
 
     ProductDeviceType GetProductDeviceType() const override;
 
+    bool GetWebOptimizationValue() const override;
+
 private:
     SystemPropertiesAdapterImpl() = default;
 
