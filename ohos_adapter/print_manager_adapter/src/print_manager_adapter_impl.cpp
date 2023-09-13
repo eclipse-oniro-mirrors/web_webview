@@ -108,7 +108,7 @@ void PrintDocumentAdapterImpl::onStartLayoutWrite(const std::string& jobId,
     if (!cb_) {
         return;
     }
-    cb_->onStartLayoutWrite(
+    cb_->OnStartLayoutWrite(
         jobId, ConvertPrintingParameters(oldAttrs), ConvertPrintingParameters(newAttrs), fd, writeResultCallback);
 }
 
@@ -117,6 +117,6 @@ void PrintDocumentAdapterImpl::onJobStateChanged(const std::string& jobId, uint3
     if (!cb_) {
         return;
     }
-    cb_->onJobStateChanged(jobId, state);
+    cb_->OnJobStateChanged(jobId, state);
 }
 } // namespace OHOS::NWeb

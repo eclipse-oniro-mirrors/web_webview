@@ -60,10 +60,10 @@ public:
     static bool ReportKeyThread(
         ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid, ResSchedRoleAdapter roleAdapter);
     static bool ReportWindowStatus(
-        ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nweb_id = -1);
+        ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId = -1);
     static bool ReportScene(
-        ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter, int32_t nweb_id = -1);
-    static void ReportNWebInit(ResSchedStatusAdapter statusAdapter, int32_t nweb_id);
+        ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter, int32_t nwebId = -1);
+    static void ReportNWebInit(ResSchedStatusAdapter statusAdapter, int32_t nwebId);
 };
 } // namespace OHOS::NWeb
 

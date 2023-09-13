@@ -57,11 +57,11 @@ public:
     PrintDocumentAdapterAdapter() = default;
     virtual ~PrintDocumentAdapterAdapter() = default;
 
-    virtual void onStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
+    virtual void OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
         const PrintAttributesAdapter& newAttrs, uint32_t fd,
         std::function<void(std::string, uint32_t)> writeResultCallback) = 0;
 
-    virtual void onJobStateChanged(const std::string& jobId, uint32_t state) = 0;
+    virtual void OnJobStateChanged(const std::string& jobId, uint32_t state) = 0;
 };
 
 class PrintManagerAdapter {
