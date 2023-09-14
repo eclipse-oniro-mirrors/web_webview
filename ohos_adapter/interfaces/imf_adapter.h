@@ -138,7 +138,6 @@ public:
     virtual void OnCursorUpdate(IMFAdapterCursorInfo cursorInfo) = 0;
 
     virtual void OnSelectionChange(std::u16string text, int start, int end) = 0;
-
 };
 } // namespace OHOS::NWeb
 

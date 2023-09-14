@@ -42,12 +42,12 @@ public:
     PrintDocumentAdapterImpl() {}
     ~PrintDocumentAdapterImpl() = default;
 
-    void onStartLayoutWrite(const std::string& jobId, const OHOS::NWeb::PrintAttributesAdapter& oldAttrs,
+    void OnStartLayoutWrite(const std::string& jobId, const OHOS::NWeb::PrintAttributesAdapter& oldAttrs,
         const OHOS::NWeb::PrintAttributesAdapter& newAttrs, uint32_t fd,
         std::function<void(std::string, uint32_t)> writeResultCallback) override
     {}
 
-    void onJobStateChanged(const std::string& jobId, uint32_t state) override {}
+    void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
 };
 class OhosAdapterHelperTest : public testing::Test {
 public:
