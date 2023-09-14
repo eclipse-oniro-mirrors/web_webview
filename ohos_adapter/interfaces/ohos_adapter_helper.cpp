@@ -24,6 +24,7 @@
 #include "camera_manager_adapter_impl.h"
 #include "cert_mgr_adapter_impl.h"
 #include "datashare_adapter_impl.h"
+#include "date_time_format_adapter_impl.h"
 #include "display_manager_adapter_impl.h"
 #include "enterprise_device_management_adapter_impl.h"
 #include "event_handler_adapter_impl.h"
@@ -226,5 +227,10 @@ CameraManagerAdapter& OhosAdapterHelper::GetCameraManagerAdapter() const
 std::unique_ptr<ScreenCaptureAdapter> OhosAdapterHelper::CreateScreenCaptureAdapter() const
 {
     return std::make_unique<ScreenCaptureAdapterImpl>();
+}
+
+std::unique_ptr<DateTimeFormatAdapter> OhosAdapterHelper::CreateDateTimeFormatAdapter() const
+{
+    return std::make_unique<DateTimeFormatAdapterImpl>();
 }
 } // namespace OHOS::NWeb
