@@ -29,6 +29,8 @@ public:
 
     uint32_t GetAppCertMaxSize() override;
 
+    int32_t GetCertDataBySubject(char *subjectName, uint8_t* certData, int32_t certType) override;
+
     int32_t GetSytemRootCertData(uint32_t certCount, uint8_t* certData) override;
 
     uint32_t GetSytemRootCertSum() override;
@@ -45,6 +47,8 @@ private:
     int32_t InitCertList(struct CertList **cList);
 
     int32_t InitCertInfo(struct CertInfo *certInfo);
+
+    int32_t GetCertInfo(char *uri, struct CertInfo *certInfo, int32_t certType);
 
     void FreeCMBlobData(struct CmBlob *blob);
 
