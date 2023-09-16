@@ -29,6 +29,8 @@ public:
 
     virtual uint32_t GetAppCertMaxSize() = 0;
 
+    virtual int32_t GetCertDataBySubject(char *subjectName, uint8_t* certData, int32_t certType) = 0;
+
     virtual int32_t GetSytemRootCertData(uint32_t certCount, uint8_t* certData) = 0;
 
     virtual uint32_t GetSytemRootCertSum() = 0;
