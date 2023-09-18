@@ -11,13 +11,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-nweb_is_ohos = current_os == "ohos"
-nweb_is_android = current_os == "android"
-nweb_is_ios = current_os == "ios" || current_os == "tvos"
-nweb_is_mac = current_os == "mac"
-nweb_is_win = current_os == "win" || current_os == "mingw"
-nweb_is_linux = current_os == "linux"
-
 aafwk_kits_path = "//foundation/ability/ability_runtime/frameworks/kits"
 aafwk_path = "//foundation/ability/ability_runtime"
 
