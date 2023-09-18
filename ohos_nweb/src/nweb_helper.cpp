@@ -446,8 +446,34 @@ std::string NWebAdapterHelper::GetConfigPath(const std::string& configFileName)
     return std::string(tmpPath);
 }
 
+std::unordered_map<std::string_view, std::function<std::string(std::string&)>> GetConfigMap()
+{
+    static std::unordered_map<std::string_view, std::function<std::string(std::string&)>> configMap = {
+        { "renderConfig/renderProcessCount",
+            [](std::string& contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
+        { "mediaConfig/backgroundMediaShouldSuspend",
+            [](std::string& contentStr) {
+                return contentStr == "false" ? std::string("--disable-background-media-suspend") : std::string();
+            } },
+        { "loadurlSocPerfConfig/loadurlSocPerfParam",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-loadurl-soc-perf") : std::string();
+            } },
+        { "mouseWheelSocPerfConfig/mouseWheelSocPerfParam",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-mousewheel-soc-perf") : std::string();
+            } },
+        { "touchEventConfig/touchEventShouldRegister",
+            [](std::string& contentStr) {
+                return contentStr == "false" ? std::string("--disable-touch-event-register") : std::string();
+            } }
+    };
+    return configMap;
+}
+
 void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init_args)
 {
+    auto configMap = GetConfigMap();
     for (xmlNodePtr curNodePtr = rootPtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
         if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
             WVLOG_E("invalid node!");
@@ -468,26 +494,15 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init
             }
             std::string contentStr = reinterpret_cast<const char*>(content);
             xmlFree(content);
-            if (nodeName == std::string("renderConfig") && childNodeName == std::string("renderProcessCount")) {
-                init_args.web_engine_args_to_add.emplace_back(
-                    std::string("--renderer-process-limit=") + contentStr);
-            } else if (nodeName == std::string("mediaConfig") &&
-                childNodeName == std::string("backgroundMediaShouldSuspend") && contentStr == std::string("false")) {
-                init_args.web_engine_args_to_add.emplace_back(
-                    std::string("--disable-background-media-suspend"));
-            } else if (nodeName == std::string("loadurlSocPerfConfig") &&
-                childNodeName == std::string("loadurlSocPerfParam") && contentStr == std::string("true")) {
-                init_args.web_engine_args_to_add.emplace_back(
-                    std::string("--ohos-enable-loadurl-soc-perf"));
-            } else if (nodeName == std::string("mouseWheelSocPerfConfig") &&
-                childNodeName == std::string("mouseWheelSocPerfParam") && contentStr == std::string("true")) {
-                init_args.web_engine_args_to_add.emplace_back(
-                    std::string("--ohos-enable-mousewheel-soc-perf"));
-            } else if (nodeName == std::string("touchEventConfig") &&
-                childNodeName == std::string("touchEventShouldRegister") && contentStr == std::string("false")) {
-                init_args.web_engine_args_to_add.emplace_back(
-                    std::string("--disable-touch-event-register"));
-            } 
+            auto it = configMap.find(nodeName + "/" + childNodeName);
+            if (it == configMap.end()) {
+                WVLOG_W("not found for web_config: %{public}s/%{public}s", nodeName.c_str(), childNodeName.c_str());
+                continue;
+            }
+            std::string param = it->second(contentStr);
+            if (!param.empty()) {
+                init_args.web_engine_args_to_add.emplace_back(param);
+            }
         }
     }
 }
