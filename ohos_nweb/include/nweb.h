@@ -778,6 +778,11 @@ public:
      * Notify that browser was unoccluded by other windows.
      */
     virtual void OnUnoccluded() const = 0;
+
+    /**
+     * Set the token.
+     */
+    virtual void SetToken(void* token) = 0;
 };
 }  // namespace OHOS::NWeb
 

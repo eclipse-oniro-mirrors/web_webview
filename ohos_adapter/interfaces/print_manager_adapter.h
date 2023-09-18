@@ -74,6 +74,8 @@ public:
         const std::vector<std::string>& fileList, const std::vector<uint32_t>& fdList, std::string& taskId) = 0;
     virtual int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
         const PrintAttributesAdapter& printAttributes) = 0;
+    virtual int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
+        const PrintAttributesAdapter& printAttributes, void* contextToken) = 0;
 };
 
 } // namespace OHOS::NWeb
