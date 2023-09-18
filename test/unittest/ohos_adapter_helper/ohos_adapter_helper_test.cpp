@@ -135,6 +135,8 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     std::shared_ptr<PrintDocumentAdapterAdapter> printDocumentAdapterImpl;
     PrintAttributesAdapter printAttributesAdapter;
     EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter), -1);
+    void* token = nullptr;
+    EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter, token), -1);
     sptr<Surface> surface = nullptr;
     NWebInitArgs initArgs;
     uint32_t width = 1;
