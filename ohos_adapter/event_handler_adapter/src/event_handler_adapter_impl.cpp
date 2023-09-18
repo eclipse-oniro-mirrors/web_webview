@@ -46,7 +46,8 @@ bool EventHandlerAdapterImpl::AddFileDescriptorListener(
         return false;
     }
     auto fileDescriptorListener = std::make_shared<EventHandlerFDListenerAdapterImpl>(listener);
-    return eventHandler_->AddFileDescriptorListener(fileDescriptor, events, fileDescriptorListener) == EOK;
+    return eventHandler_->AddFileDescriptorListener(fileDescriptor, events, fileDescriptorListener,
+        "webViewTask") == EOK;
 }
 
 void EventHandlerAdapterImpl::RemoveFileDescriptorListener(int32_t fileDescriptor)
