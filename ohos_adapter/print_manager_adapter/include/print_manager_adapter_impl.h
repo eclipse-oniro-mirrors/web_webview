@@ -51,6 +51,9 @@ public:
     int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
         const PrintAttributesAdapter& printAttributes) override;
 
+    int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
+        const PrintAttributesAdapter& printAttributes, void* contextToken) override;
+
 private:
     PrintManagerAdapterImpl() = default;
 
