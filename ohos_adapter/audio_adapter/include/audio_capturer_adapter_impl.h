@@ -74,7 +74,6 @@ public:
 
 private:
     std::unique_ptr<AudioCapturer> audio_capturer_;
-    static std::unordered_set<AudioCapturerAdapterImpl*> audioCapturerAdapterSet_;
 };
 }  // namespace OHOS::NWeb
 
