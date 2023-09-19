@@ -16,7 +16,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ohos_fuzztest("DnsCreateDataBaseFuzzTest") {
-  module_out_path = "web/webview"
+  module_out_path = webview_fuzz_test_path
   fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/distributeddatamgr_adapter/webdatabase/dnscreatedatabase_fuzzer"
 
   include_dirs = [
