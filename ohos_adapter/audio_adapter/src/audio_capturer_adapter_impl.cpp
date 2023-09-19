@@ -23,8 +23,6 @@
 
 namespace OHOS::NWeb {
 
-std::unordered_set<AudioCapturerAdapterImpl*> AudioCapturerAdapterImpl::audioCapturerAdapterSet_ = {};
-
 constexpr int64_t NANOSECONDS_PER_SECOND = 1000000000;
 
 const std::unordered_map<AudioAdapterSamplingRate, AudioSamplingRate> SAMPLING_RATE_MAP = {
@@ -126,19 +124,6 @@ bool AudioCapturerAdapterImpl::Start()
         WVLOG_E("audio capturer is nullptr");
         return false;
     }
-    std::unordered_set<AudioCapturerAdapterImpl*> capturers;
-    for (auto capturer : audioCapturerAdapterSet_) {
-        if (capturer != nullptr) {
-            capturers.insert(capturer);
-        }
-    }
-    for (auto capturerToStop : capturers) {
-        if (capturerToStop != nullptr) {
-            WVLOG_I("audio capturer is interrupting other capturer");
-            capturerToStop->Stop();
-        }
-    }
-    audioCapturerAdapterSet_.insert(this);
     return audio_capturer_->Start();
 }
 
@@ -148,7 +133,6 @@ bool AudioCapturerAdapterImpl::Stop()
         WVLOG_E("audio capturer is nullptr");
         return false;
     }
-    audioCapturerAdapterSet_.erase(this);
     return audio_capturer_->Stop();
 }
 
