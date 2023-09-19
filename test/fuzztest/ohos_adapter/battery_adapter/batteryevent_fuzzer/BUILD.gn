@@ -18,7 +18,7 @@ import("//build/test.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("BatteryEventFuzzTest") {
-  module_out_path = "web/webview"
+  module_out_path = webview_fuzz_test_path
   fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/battery_adapter/batteryevent_fuzzer"
 
   include_dirs = [

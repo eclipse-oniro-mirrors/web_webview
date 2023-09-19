@@ -18,7 +18,7 @@ import("//build/test.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ClipboardToImageAlphaTypeFuzzTest") {
-  module_out_path = "web/webview"
+  module_out_path = webview_fuzz_test_path
   fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/pasteboard_adapter/clipboardtoimagealphatype_fuzzer"
   include_dirs = [
     "$webview_path/ohos_adapter/pasteboard_adapter/include",
