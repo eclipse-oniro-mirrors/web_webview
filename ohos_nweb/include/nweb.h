@@ -138,7 +138,7 @@ public:
     NWeb() = default;
     virtual ~NWeb() = default;
 
-    virtual void Resize(uint32_t width, uint32_t height) = 0;
+    virtual void Resize(uint32_t width, uint32_t height, bool isKeyboard = false) = 0;
 
     /* lifecycle interface */
     virtual void OnPause() const = 0;
