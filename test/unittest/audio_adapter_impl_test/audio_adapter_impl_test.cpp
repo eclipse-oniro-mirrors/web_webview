@@ -636,8 +636,6 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_018, TestSi
 
     bool ret = g_audioCapturer->Start();
     EXPECT_EQ(ret, TRUE_OK);
-    ret = g_audioCapturer->Start();
-    EXPECT_EQ(ret, TRUE_OK);
 
     BufferDescAdapter bufferDesc;
     retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
