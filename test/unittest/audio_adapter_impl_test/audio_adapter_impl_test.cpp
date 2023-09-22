@@ -95,6 +95,15 @@ public:
     void OnReadData(size_t length) override {};
 };
 
+class AudioManagerDeviceChangeCallbackAdapterMock : public AudioManagerDeviceChangeCallbackAdapter {
+public:
+    AudioManagerDeviceChangeCallbackAdapterMock() = default;
+
+    virtual ~AudioManagerDeviceChangeCallbackAdapterMock() = default;
+
+    void OnDeviceChange()  override {};
+};
+
 void NWebAudioAdapterTest::SetUpTestCase(void)
 {
     uint64_t tokenId;
@@ -329,6 +338,21 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
 
     ret = AudioSystemManagerAdapterImpl::GetInstance().HasAudioInputDevices();
     EXPECT_EQ(ret, TRUE_OK);
+
+    AudioAdapterDeviceDesc result = AudioSystemManagerAdapterImpl::GetInstance().GetDefaultOutputDevice();
+    EXPECT_NE(result.deviceId, -1);
+    int32_t status = AudioSystemManagerAdapterImpl::GetInstance().SetDeviceChangeCallback(nullptr);
+    EXPECT_NE(status, 0);
+    auto mock = std::make_shared<AudioManagerDeviceChangeCallbackAdapterMock>();
+    status = AudioSystemManagerAdapterImpl::GetInstance().SetDeviceChangeCallback(mock);
+    EXPECT_EQ(status, 0);
+
+    AudioStreamType type = 
+        AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(AudioAdapterStreamType::STREAM_VOICE_CALL);
+    EXPECT_EQ(type, AudioStreamType::STREAM_VOICE_CALL);
+    type = 
+        AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<AudioAdapterStreamType>(-2));
+    EXPECT_EQ(type, AudioStreamType::STREAM_DEFAULT);
 }
 
 /**
@@ -854,6 +878,27 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_Create_026, TestSize.Level1)
     capturerOptions.capturerFlags = 0;
     int32_t retNum = audioCapturer->Create(capturerOptions);
     ASSERT_NE(retNum, AudioAdapterCode::AUDIO_OK);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_OnDeviceChange_027.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:AR000I7I7N
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnDeviceChange_027, TestSize.Level1)
+{
+    auto mock = std::make_shared<AudioManagerDeviceChangeCallbackAdapterMock>();
+    ASSERT_NE(mock, nullptr);
+    auto callbackAdapter = std::make_shared<AudioManagerDeviceChangeCallbackAdapterImpl>(mock);
+    ASSERT_NE(callbackAdapter, nullptr);
+    DeviceChangeAction deviceChangeAction = {
+        .type = DeviceChangeType::CONNECT,
+        .flag = DeviceFlag::NONE_DEVICES_FLAG
+    };
+    callbackAdapter->OnDeviceChange(deviceChangeAction);
+    callbackAdapter->cb_ = nullptr;
+    callbackAdapter->OnDeviceChange(deviceChangeAction);
 }
 } // namespace NWeb
 } // namespace OHOS
