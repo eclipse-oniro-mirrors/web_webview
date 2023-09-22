@@ -67,6 +67,13 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportKeyThread_001, T
     result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
         1, 1, ResSchedRoleAdapter::IMPORTANT_AUDIO);
     EXPECT_TRUE(result);
+    result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+        1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
+    EXPECT_TRUE(result);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 1);
+    result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+        1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
+    EXPECT_TRUE(result);
 }
 
 /**
@@ -86,10 +93,17 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportWindowStatus_002
 
     result = resAdapter->ReportScene(static_cast<ResSchedStatusAdapter>(-1), ResSchedSceneAdapter::CLICK);
     EXPECT_FALSE(result);
-    result = resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, static_cast<ResSchedSceneAdapter>(-1));
-    EXPECT_FALSE(result);
-    result = resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, ResSchedSceneAdapter::CLICK);
+    result = resAdapter->ReportScene(static_cast<ResSchedStatusAdapter>(-1), ResSchedSceneAdapter::CLICK, 1);
     EXPECT_TRUE(result);
+    result = resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, static_cast<ResSchedSceneAdapter>(-1), 1);
+    EXPECT_TRUE(result);
+    result = resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, ResSchedSceneAdapter::CLICK, 1);
+    EXPECT_TRUE(result);
+
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 1);
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::THREAD_CREATED, 1, 1, 1);
+    EXPECT_TRUE(result);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_EXIT, 1);
 }
 }
 } // namespace NWeb

@@ -517,4 +517,29 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestS
     result = adapter.StartStream(deviceId, captureParams, listenerAdapter);
     EXPECT_NE(result, 0);
 }
+
+/**
+ * @tc.name: CameraAdapterImplTest_CameraManagerAdapterCallback_011
+ * @tc.desc: CameraManagerAdapterCallback.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraManagerAdapterCallback_011, TestSize.Level1)
+{
+    auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
+    EXPECT_NE(callback, nullptr);
+    CameraManagerAdapterCallback adapter(callback);
+    CameraStatusAdapter status = adapter.GetAdapterCameraStatus(CameraStatus::CAMERA_STATUS_APPEAR);
+    EXPECT_EQ(status, CameraStatusAdapter::APPEAR);
+    status = adapter.GetAdapterCameraStatus(static_cast<CameraStatus>(-1));
+    EXPECT_EQ(status, CameraStatusAdapter::APPEAR);
+    CameraStatusInfo cameraStatusInfo = {
+        .cameraInfo = nullptr,
+        .cameraDevice = nullptr,
+        .cameraStatus = CameraStatus::CAMERA_STATUS_APPEAR
+    };
+    adapter.OnCameraStatusChanged(cameraStatusInfo);
+    adapter.statusCallback_ = nullptr;
+    adapter.OnCameraStatusChanged(cameraStatusInfo);
+}
 } // namespace OHOS
