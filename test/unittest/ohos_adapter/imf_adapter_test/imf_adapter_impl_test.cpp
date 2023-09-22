@@ -294,4 +294,23 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
     listenerTest->GetLeftTextOfCursor(0);
     listenerTest->GetRightTextOfCursor(0);
 }
+
+/**
+ * @tc.name: NWebIMFAdapterTest_InsertText_007.
+ * @tc.desc: IMF adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_007, TestSize.Level1)
+{
+    IMFAdapterTextConfig config;
+    bool result = g_imf->Attach(nullptr, true, config);
+    EXPECT_FALSE(result);
+    auto listener = std::make_shared<IMFTextListenerTest>();
+    EXPECT_NE(listener, nullptr);
+    result = g_imf->Attach(nullptr, true, config);
+    EXPECT_FALSE(result);
+    result = g_imf->Attach(nullptr, true, config);
+    EXPECT_FALSE(result);
+}
 } // namespace OHOS::NWeb

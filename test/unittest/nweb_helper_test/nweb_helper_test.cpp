@@ -142,6 +142,9 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
                                                     NWEB_MAX_WIDTH, DEFAULT_HEIGHT);
     EXPECT_EQ(nweb, nullptr);
+    NWebCreateInfo create_info;
+    nweb = NWebHelper::Instance().CreateNWeb(create_info);
+    EXPECT_EQ(nweb, nullptr);
 }
 
 /**
@@ -184,6 +187,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
+    NWebHelper::Instance().bundlePath_.clear();
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
 }
