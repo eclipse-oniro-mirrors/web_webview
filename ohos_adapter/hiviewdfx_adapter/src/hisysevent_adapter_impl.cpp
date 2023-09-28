@@ -16,6 +16,8 @@
 #include "hisysevent_adapter_impl.h"
 
 #include "hisysevent.h"
+#include "application_context.h"
+#include "ability_manager_client.h"
 
 namespace OHOS::NWeb {
 namespace {
@@ -61,5 +63,27 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
         const std::string, const std::string>& data)
 {
     return ForwardToHiSysEvent(eventName, type, data);
+}
+
+using systemData = std::tuple<const std::string, const int ,const std::string, const std::string, const std::string,
+    const std::string, const std::string, const std::string>;
+
+int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
+    const std::tuple<const std::string, const int64_t, const std::string, const int, const std::string,
+        const std::string, const std::string, const std::vector<uint16_t>, const std::string, const int>& data)
+{
+    auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+    
+    AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+
+    systemData sysData = {
+        "VERSION_CODE", appInfo->versionCode,
+        "VERSION_NAME", appInfo->versionName.c_str(),
+        "BUNDLE_NAME", appInfo->bundleName.c_str(),
+        "ABILITY_NAME", elementName.GetAbilityName()
+    };
+
+    auto mergeData = std::tuple_cat(data, sysData);
+    return ForwardToHiSysEvent(eventName, type, mergeData);
 }
 } // namespace OHOS::NWeb
