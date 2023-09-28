@@ -151,6 +151,23 @@ struct TouchHandleHotZone {
     double height = 0.0;
 };
 
+enum class MediaPlayingState {
+    // Media is playing
+    PLAYING,
+
+    // Media playing is paused
+    PAUSED,
+
+    // Media playing is end
+    END,
+};
+
+enum class ActivityType {
+    VIDEO,
+    AUDIO,
+    FORM,
+};
+
 using FileSelectorCallback = NWebValueCallback<std::vector<std::string>&>;
 
 class OHOS_NWEB_EXPORT NWebHandler {
@@ -599,6 +616,16 @@ public:
      */
     virtual void OnScreenCaptureRequest(
         std::shared_ptr<NWebScreenCaptureAccessRequest> request) {}
+    
+    /**
+     * @brief Called when the activity(media or form) state on the web page changed.
+     * @param state state of the activity. Refer to the enum class MediaPlayingState and FormState
+     * @param ActivityType it can be form, media, or audio
+     * @return ture if the media(video or audio) is playing, or the form was being edited.
+     */
+    virtual bool OnActivityStateChanged(int state, ActivityType type) {
+        return false;
+    }
 };
 }  // namespace OHOS::NWeb
 
