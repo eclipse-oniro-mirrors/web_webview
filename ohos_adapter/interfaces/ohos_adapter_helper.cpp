@@ -139,12 +139,7 @@ SystemPropertiesAdapter& OhosAdapterHelper::GetSystemPropertiesInstance() const
     return SystemPropertiesAdapterImpl::GetInstance();
 }
 
-std::unique_ptr<VSyncAdapter> OhosAdapterHelper::GetVSyncAdapter() const
-{
-    return std::make_unique<VSyncAdapterImpl>();
-}
-
-VSyncAdapter& OhosAdapterHelper::GetVSyncAdapterInstance() const
+VSyncAdapter& OhosAdapterHelper::GetVSyncAdapter() const
 {
     return VSyncAdapterImpl::GetInstance();
 }

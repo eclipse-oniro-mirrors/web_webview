@@ -190,8 +190,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetSystemPropertiesInstance_00
 {
     OhosAdapterHelper& helper = OhosAdapterHelper::GetInstance();
     helper.GetSystemPropertiesInstance();
-    auto synvAdapter = helper.GetVSyncAdapter();
-    EXPECT_NE(synvAdapter, nullptr);
+    helper.GetVSyncAdapter();
     auto initWebAdapter = helper.GetInitWebAdapter();
     EXPECT_NE(initWebAdapter, nullptr);
     helper.GetDatashareInstance();
