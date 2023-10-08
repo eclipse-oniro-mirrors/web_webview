@@ -16,8 +16,8 @@
 #include "hisysevent_adapter_impl.h"
 
 #include "hisysevent.h"
-#include "application_context.h"
 #include "ability_manager_client.h"
+#include "application_context.h"
 
 namespace OHOS::NWeb {
 namespace {
