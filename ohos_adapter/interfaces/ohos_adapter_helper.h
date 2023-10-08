@@ -89,7 +89,9 @@ public:
 
     SystemPropertiesAdapter& GetSystemPropertiesInstance() const;
 
-    VSyncAdapter& GetVSyncAdapter() const;
+    std::unique_ptr<VSyncAdapter> GetVSyncAdapter() const;
+
+    VSyncAdapter& OhosAdapterHelper::GetVSyncAdapterInstance() const
 
     std::unique_ptr<OhosInitWebAdapter> GetInitWebAdapter() const;
 
