@@ -49,7 +49,7 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
         return VSyncErrorCode::SUCCESS;
     }
 
-    int ret = receiver_->RequestNextVSync(*frameCb_);
+    int ret = receiver_->RequestNextVSync(frameCallback_);
     if (ret != VsyncError::GSERROR_OK) {
         WVLOG_E("NWebWindowAdapter RequestVsync RequestNextVSync fail, ret=%{public}d", ret);
         return VSyncErrorCode::ERROR;
