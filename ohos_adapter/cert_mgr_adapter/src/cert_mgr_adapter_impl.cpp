@@ -190,7 +190,7 @@ int32_t CertManagerAdapterImpl::GetCertDataBySubject(const char *subjectName, ui
     }
 
     if (!uri) {
-        WVLOG_E("GetCertDataBySubject, can not find cert");
+        WVLOG_D("GetCertDataBySubject, can not find cert");
         FreeCertList(certList);
         return CM_FAILURE;
     }
