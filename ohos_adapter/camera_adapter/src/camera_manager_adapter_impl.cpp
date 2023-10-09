@@ -635,7 +635,7 @@ CameraStatusAdapter CameraManagerAdapterImpl::GetCameraStatus()
 void CameraManagerAdapterImpl::SetCameraStatus(CameraStatusAdapter status)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-    WVLOG_I("set camera status %{public}d",status);
+    WVLOG_I("set camera status %{public}d", status);
     status_ = status;
 }
 
