@@ -279,7 +279,7 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
         if (ret != CAMERA_OK) {
             WVLOG_E("Failed to open CameraInput, err code %{public}d.", ret);
             cameraInput_->Release();
-            cameraInput_=nullptr;
+            cameraInput_= nullptr;
             return result;
         }
         deviceId_ = deviceId;
@@ -526,7 +526,7 @@ int32_t CameraManagerAdapterImpl::RestartSession()
         return CAMERA_OK;
     }
 
-    if (cameraManager_ != nullptr) {
+    if (cameraManager_ == nullptr) {
         WVLOG_E("cameraManager_ is null when start session");
         return CAMERA_ERROR;
     }
@@ -881,9 +881,8 @@ CameraStatusAdapter CameraManagerAdapterCallback::GetAdapterCameraStatus(CameraS
 
 void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo &cameraStatusInfo) const
 {
-    WVLOG_I("OnCameraStatusChanged: %{public}d", cameraStatusInfo.cameraStatus);
+    WVLOG_I("OnCameraStatusChanged: deviceID %{public}s status %{public}d", cameraStatusInfo.cameraStatus);
     CameraStatusAdapter cameraStatusAdapter = GetAdapterCameraStatus(cameraStatusInfo.cameraStatus);
-    WVLOG_I("OnCameraStatusChanged: %{public}s", cameraStatusInfo.cameraDevice->GetID().c_str());
     if (statusCallback_) {
         WVLOG_I("adapter status callback");
         statusCallback_->OnCameraStatusChanged(cameraStatusAdapter, cameraStatusInfo.cameraDevice->GetID());
