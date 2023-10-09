@@ -220,6 +220,8 @@ public:
     virtual void SetForegroundFlag(bool isForeground) = 0;
 
     virtual void SetCameraStatus(CameraStatusAdapter status) = 0;
+    
+    virtual std::string GetCurrentDeviceId() = 0;
 };
 } // namespace OHOS::NWeb
 
