@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
+#include "date_time_format_adapter_impl.h"
+
 #include <cstddef>
 #include <string>
-
-#include "date_time_format_adapter_impl.h"
 
 #include "common_event_subscriber.h"
 #include "matching_skills.h"
@@ -34,14 +34,16 @@ bool WebTimezoneInfoImpl::GetIsValid()
     return isValid_;
 }
 
-NWebTimeZoneEventSubscriber::NWebTimeZoneEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, TimeZoneEventCallback& cb)
-    : EventFwk::CommonEventSubscriber(in), eventCallback_(cb) {}
+NWebTimeZoneEventSubscriber::NWebTimeZoneEventSubscriber(
+    EventFwk::CommonEventSubscribeInfo& in, TimeZoneEventCallback& cb)
+    : EventFwk::CommonEventSubscriber(in), eventCallback_(cb)
+{}
 
 void NWebTimeZoneEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& data)
 {
     const std::string action = data.GetWant().GetAction();
     WVLOG_I("receive timezone action: %{public}s", action.c_str());
-    if(action != EventFwk::CommonEventSupport::COMMON_EVENT_TIMEZONE_CHANGED) {
+    if (action != EventFwk::CommonEventSupport::COMMON_EVENT_TIMEZONE_CHANGED) {
         return;
     }
     std::string ret = OHOS::MiscServices::TimeServiceClient::GetInstance()->GetTimeZone();
@@ -55,7 +57,7 @@ void NWebTimeZoneEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData
 void DateTimeFormatAdapterImpl::RegTimezoneEvent(const TimeZoneEventCallback&& eventCallback)
 {
     WVLOG_I("Reg Timezone Event.");
-    cb_ = std::move(eventCallback);    
+    cb_ = std::move(eventCallback);
 }
 
 bool DateTimeFormatAdapterImpl::StartListen()
@@ -81,7 +83,7 @@ void DateTimeFormatAdapterImpl::StopListen()
             this->commonEventSubscriber_ = nullptr;
         } else {
             WVLOG_E("stop time_zone listen fail.");
-        }   
+        }
     }
 }
 
