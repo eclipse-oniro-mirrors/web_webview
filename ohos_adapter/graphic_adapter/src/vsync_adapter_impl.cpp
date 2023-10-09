@@ -25,7 +25,7 @@ VSyncAdapterImpl& VSyncAdapterImpl::GetInstance()
     return instance;
 }
 
-VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb)
+VSyncErrorCode VSyncAdapterImpl::Init()
 {
     if (!receiver_) {
         auto& rsClient = OHOS::Rosen::RSInterfaces::GetInstance();
@@ -41,6 +41,15 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
             return VSyncErrorCode::ERROR;
         }
     }
+    return VSyncErrorCode::SUCCESS;
+}
+
+VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb)
+{
+    if (Init() != VSyncErrorCode::SUCCESS) {
+        WVLOG_E("NWebWindowAdapter init fail");
+        return VSyncErrorCode::ERROR;
+    }
 
     std::lock_guard<std::mutex> lock(mtx_);
     vsyncCallbacks_.insert({data, NWebVSyncCb});
@@ -49,9 +58,9 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
         return VSyncErrorCode::SUCCESS;
     }
 
-    int ret = receiver_->RequestNextVSync(frameCallback_);
+    VsyncError ret = receiver_->RequestNextVSync(frameCallback_);
     if (ret != VsyncError::GSERROR_OK) {
-        WVLOG_E("NWebWindowAdapter RequestVsync RequestNextVSync fail, ret=%{public}d", ret);
+        WVLOG_E("NWebWindowAdapter RequestNextVSync fail, ret=%{public}d", ret);
         return VSyncErrorCode::ERROR;
     }
     hasRequestedVsync_ = true;
@@ -82,5 +91,19 @@ void VSyncAdapterImpl::VsyncCallbackInner(int64_t timestamp)
         }
     }
     hasRequestedVsync_ = false;
+}
+
+int64_t VSyncAdapterImpl::GetVSyncPeriod() {
+    int64_t period = 0;
+    if (Init() != VSyncErrorCode::SUCCESS) {
+        WVLOG_E("NWebWindowAdapter init fail");
+        return period;
+    }
+
+    VsyncError ret = receiver_->GetVSyncPeriod(period);
+    if (ret != VsyncError::GSERROR_OK) {
+        WVLOG_E("NWebWindowAdapter GetVSyncPeriod fail, ret=%{public}d", ret);
+    }
+    return period;
 }
 } // namespace OHOS::NWeb

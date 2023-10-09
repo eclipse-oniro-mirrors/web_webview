@@ -32,10 +32,12 @@ public:
 
     static VSyncAdapterImpl& GetInstance();
     VSyncErrorCode RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb) override;
+    int64_t GetVSyncPeriod() override;
 
 private:
     static void OnVsync(int64_t timestamp, void* data);
     void VsyncCallbackInner(int64_t nanoTimestamp);
+    VSyncErrorCode Init();
 
     std::mutex mtx_;
     bool hasRequestedVsync_ = false;
