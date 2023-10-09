@@ -29,8 +29,6 @@ public:
 
     uint32_t GetAppCertMaxSize() override;
 
-    int32_t GetCertDataBySubject(char *subjectName, uint8_t* certData, int32_t certType) override;
-
     int32_t GetSytemRootCertData(uint32_t certCount, uint8_t* certData) override;
 
     uint32_t GetSytemRootCertSum() override;
@@ -43,6 +41,8 @@ public:
 
     int32_t Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
         uint8_t* signData, uint32_t signDataLen) override;
+
+    int32_t GetCertDataBySubject(const char *subjectName, uint8_t* certData, int32_t certType) override;
 private:
     int32_t InitCertList(struct CertList **cList);
 

@@ -134,7 +134,7 @@ int32_t CertManagerAdapterImpl::GetCertInfo(char *uri, struct CertInfo *certInfo
         return CM_FAILURE;
     }
 
-    struct CmBlob uriBlob = {strlen(uri) + 1, (uint8_t *)(uri)};
+    struct CmBlob uriBlob = {strlen(uri) + 1, reinterpret_cast<uint8_t *>(uri)};
 
     if (certType == CM_USER_TRUSTED_STORE) {
         ret = CmGetUserCertInfo(&uriBlob, certType, certInfo);
@@ -155,7 +155,7 @@ int32_t CertManagerAdapterImpl::GetCertInfo(char *uri, struct CertInfo *certInfo
     return CM_SUCCESS;
 }
 
-int32_t CertManagerAdapterImpl::GetCertDataBySubject(char *subjectName, uint8_t* certData, int32_t certType)
+int32_t CertManagerAdapterImpl::GetCertDataBySubject(const char *subjectName, uint8_t* certData, int32_t certType)
 {
     struct CertList *certList = nullptr;
     int32_t ret = InitCertList(&certList);
@@ -190,7 +190,7 @@ int32_t CertManagerAdapterImpl::GetCertDataBySubject(char *subjectName, uint8_t*
     }
 
     if (!uri) {
-        WVLOG_E("GetCertDataBySubject, can not find cert, subject = %{public}s", subjectName);
+        WVLOG_E("GetCertDataBySubject, can not find cert");
         FreeCertList(certList);
         return CM_FAILURE;
     }
