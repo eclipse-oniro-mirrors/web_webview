@@ -72,7 +72,6 @@ public:
     void OnCameraStatusChanged(const CameraStatusInfo &cameraStatusInfo) const override;
     void OnFlashlightStatusChanged(const std::string &cameraID,
                                    const FlashStatus flashStatus) const override;
-
 private:
     CameraStatusAdapter GetAdapterCameraStatus(CameraStatus status) const;
     std::shared_ptr<CameraStatusCallbackAdapter> statusCallback_;
@@ -119,6 +118,7 @@ public:
 
     void SetCameraStatus(CameraStatusAdapter status) override;
 
+    std::string GetCurrentDeviceId() override;
 private:
     VideoTransportType GetCameraTransportType(ConnectionType connectType);
     VideoFacingModeAdapter GetCameraFacingMode(CameraPosition position);
