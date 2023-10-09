@@ -639,7 +639,7 @@ void CameraManagerAdapterImpl::SetCameraStatus(CameraStatusAdapter status)
     status_ = status;
 }
 
-std::str CameraManagerAdapterImpl::GetCurrentDeviceId()
+std::string CameraManagerAdapterImpl::GetCurrentDeviceId()
 {
     return deviceId_;
 }
