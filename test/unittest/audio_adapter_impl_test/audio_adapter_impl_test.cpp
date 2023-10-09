@@ -20,12 +20,12 @@
 
 #define private public
 #include "accesstoken_kit.h"
+#include "application_context.h"
 #include "audio_capturer_adapter.h"
 #include "audio_capturer_adapter_impl.h"
 #include "audio_renderer_adapter.h"
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
 
@@ -101,7 +101,7 @@ public:
 
     virtual ~AudioManagerDeviceChangeCallbackAdapterMock() = default;
 
-    void OnDeviceChange()  override {};
+    void OnDeviceChange() override {};
 };
 
 void NWebAudioAdapterTest::SetUpTestCase(void)
@@ -347,11 +347,10 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
     status = AudioSystemManagerAdapterImpl::GetInstance().SetDeviceChangeCallback(mock);
     EXPECT_EQ(status, 0);
 
-    AudioStreamType type = 
+    AudioStreamType type =
         AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(AudioAdapterStreamType::STREAM_VOICE_CALL);
     EXPECT_EQ(type, AudioStreamType::STREAM_VOICE_CALL);
-    type = 
-        AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<AudioAdapterStreamType>(-2));
+    type = AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<AudioAdapterStreamType>(-2));
     EXPECT_EQ(type, AudioStreamType::STREAM_DEFAULT);
 }
 
@@ -398,7 +397,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_010, TestSi
 
     ret = AudioSystemManagerAdapterImpl::GetInstance().UnsetAudioManagerInterruptCallback();
     EXPECT_EQ(ret, RESULT_OK);
-    
+
     AudioSystemManagerAdapterImpl::GetInstance().GetDevices(AdapterDeviceFlag::OUTPUT_DEVICES_FLAG);
     AudioSystemManagerAdapterImpl::GetInstance().GetDevices(static_cast<AdapterDeviceFlag>(-1));
 
