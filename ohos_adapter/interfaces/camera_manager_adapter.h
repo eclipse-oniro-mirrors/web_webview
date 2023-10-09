@@ -178,7 +178,7 @@ public:
     virtual ~CameraStatusCallbackAdapter() = default;
 
     virtual void OnCameraStatusChanged(CameraStatusAdapter cameraStatusAdapter,
-                                        std::string callBackDeviceId) = 0;
+                                        const std::string callBackDeviceId) = 0;
 };
 
 class CameraManagerAdapter {
