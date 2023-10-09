@@ -13,11 +13,10 @@
  * limitations under the License.
  */
 
-#include "hisysevent_adapter_impl.h"
-
-#include "hisysevent.h"
 #include "ability_manager_client.h"
 #include "application_context.h"
+#include "hisysevent_adapter_impl.h"
+#include "hisysevent.h"
 
 namespace OHOS::NWeb {
 namespace {
@@ -69,8 +68,8 @@ using systemData = std::tuple<const std::string, const int ,const std::string, c
     const std::string, const std::string, const std::string>;
 
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
-    const std::tuple<const std::string, const int64_t, const std::string, const int, const std::string,
-        const std::string, const std::string, const std::vector<uint16_t>, const std::string, const int>& data)
+    const std::tuple<const std::string, const int64_t, const std::string, const int, 
+    const std::string, const std::vector<uint16_t>, const std::string, const int>& data)
 {
     auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
     
