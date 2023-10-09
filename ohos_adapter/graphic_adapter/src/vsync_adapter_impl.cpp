@@ -93,7 +93,8 @@ void VSyncAdapterImpl::VsyncCallbackInner(int64_t timestamp)
     hasRequestedVsync_ = false;
 }
 
-int64_t VSyncAdapterImpl::GetVSyncPeriod() {
+int64_t VSyncAdapterImpl::GetVSyncPeriod()
+{
     int64_t period = 0;
     if (Init() != VSyncErrorCode::SUCCESS) {
         WVLOG_E("NWebWindowAdapter init fail");
