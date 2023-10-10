@@ -103,7 +103,7 @@ public:
     CameraStatusCallbackAdapterMock() {}
     ~CameraStatusCallbackAdapterMock() override = default;
 
-    void OnCameraStatusChanged(CameraStatusAdapter cameraStatusAdapter) override {}
+    void OnCameraStatusChanged(CameraStatusAdapter cameraStatusAdapter, std::string callBackDeviceId) override {}
 };
 
 class CameraManagerMock : public CameraManager {
