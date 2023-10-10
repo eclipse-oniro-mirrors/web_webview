@@ -13,6 +13,17 @@
 
 domain: WEBVIEW
 
+JANK_STATS_APP:
+  __BASE: {type: STATISTIC, level: MINOR, tag: performance, desc: jank statistics}
+  ABILITY_NAME: {type: STRING, desc: ability name}
+  BUNDLE_NAME: {type: STRING, desc: package name}
+  DURATION: {type: INT64, desc: duration since last report}
+  JANK_STATS: {type: UINT16, desc: jank frame stats}
+  JANK_STATS_VER: {type: UINT32, desc: jank range version}
+  STARTTIME: {type: INT64, desc: begin time since last report}
+  VERSION_CODE: {type: UINT32, desc: app version code}
+  VERSION_NAME: {type: STRING, desc: app version name}
+
 PAGE_LOAD_STATISTICS:
   __BASE: {type: STATISTIC, level: CRITICAL, tag: webStats, desc: page load statistics}
   INSTANCE_ID: {type: UINT32, desc: web instance id}
