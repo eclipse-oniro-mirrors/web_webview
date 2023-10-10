@@ -122,6 +122,98 @@ uint32_t CertManagerAdapterImpl::GetSytemRootCertSum()
     return certSum;
 }
 
+int32_t CertManagerAdapterImpl::GetCertInfo(char *uri, struct CertInfo *certInfo, int32_t certType)
+{
+    unsigned int len = sizeof(struct CertInfo);
+    (void)memset_s(certInfo, len, 0, len);
+    int32_t ret = InitCertInfo(certInfo);
+
+    if (ret != CM_SUCCESS) {
+        WVLOG_E("GetCertInfo, init cert failed, ret = %{public}d", ret);
+        FreeCMBlobData(&(certInfo->certInfo));
+        return CM_FAILURE;
+    }
+
+    struct CmBlob uriBlob = {strlen(uri) + 1, reinterpret_cast<uint8_t *>(uri)};
+
+    if (certType == CM_USER_TRUSTED_STORE) {
+        ret = CmGetUserCertInfo(&uriBlob, certType, certInfo);
+    } else if (certType == CM_SYSTEM_TRUSTED_STORE) {
+        ret = CmGetCertInfo(&uriBlob, certType, certInfo);
+    } else {
+        WVLOG_E("GetCertInfo, unknow certType = %{public}d", certType);
+        FreeCMBlobData(&(certInfo->certInfo));
+        return CM_FAILURE;
+    }
+
+    if (ret != CM_SUCCESS) {
+        WVLOG_E("GetCertInfo, get cert info failed, ret = %{public}d", ret);
+        FreeCMBlobData(&(certInfo->certInfo));
+        return ret;
+    }
+
+    return CM_SUCCESS;
+}
+
+int32_t CertManagerAdapterImpl::GetCertDataBySubject(const char *subjectName, uint8_t* certData, int32_t certType)
+{
+    struct CertList *certList = nullptr;
+    int32_t ret = InitCertList(&certList);
+
+    if (ret != CM_SUCCESS) {
+        WVLOG_E("GetCertDataBySubject, init cert list failed, ret = %{public}d", ret);
+        return CM_FAILURE;
+    }
+
+    if (certType == CM_USER_TRUSTED_STORE) {
+        ret = CmGetUserCertList(certType, certList);
+    } else if (certType == CM_SYSTEM_TRUSTED_STORE) {
+        ret = CmGetCertList(certType, certList);
+    } else {
+        WVLOG_E("GetCertDataBySubject, unknow certType = %{public}d", certType);
+        FreeCertList(certList);
+        return CM_FAILURE;
+    }
+
+    if (ret != CM_SUCCESS) {
+        WVLOG_E("GetCertDataBySubject, get cert list failed, ret = %{public}d", ret);
+        FreeCertList(certList);
+        return CM_FAILURE;
+    }
+
+    char *uri = nullptr;
+    for (uint32_t i = 0; i < certList->certsCount; i++) {
+        if (0 == strcmp(subjectName, certList->certAbstract[i].subjectName)) {
+            uri = certList->certAbstract[i].uri;
+            break;
+        }
+    }
+
+    if (!uri) {
+        WVLOG_D("GetCertDataBySubject, can not find cert");
+        FreeCertList(certList);
+        return CM_FAILURE;
+    }
+
+    struct CertInfo certInfo;
+    ret = GetCertInfo(uri, &certInfo, certType);
+    if (ret != CM_SUCCESS) {
+        WVLOG_E("GetCertDataBySubject, get cert info failed, ret = %{public}d", ret);
+        FreeCertList(certList);
+        return CM_FAILURE;
+    }
+
+    ret = CM_SUCCESS;
+    if (memcpy_s(certData, MAX_LEN_CERTIFICATE, certInfo.certInfo.data, certInfo.certInfo.size) != EOK) {
+        WVLOG_E("GetCertDataBySubject, memory copy failed");
+        ret = CM_FAILURE;
+    }
+
+    FreeCMBlobData(&(certInfo.certInfo));
+    FreeCertList(certList);
+    return ret;
+}
+
 int32_t CertManagerAdapterImpl::GetSytemRootCertData(uint32_t certCount, uint8_t* certData)
 {
     struct CertList *certList = nullptr;
