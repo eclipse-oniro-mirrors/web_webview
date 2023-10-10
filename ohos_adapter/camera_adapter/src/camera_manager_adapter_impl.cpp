@@ -885,6 +885,7 @@ void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo 
     if(cameraStatusInfo.cameraDevice) {
         callbackDeviceId = cameraStatusInfo.cameraDevice->GetID();
     }
+    
     WVLOG_I("OnCameraStatusChanged: deviceID %{public}s status %{public}d",
             callbackDeviceId.c_str(), cameraStatusInfo.cameraStatus);
     CameraStatusAdapter cameraStatusAdapter = GetAdapterCameraStatus(cameraStatusInfo.cameraStatus);
