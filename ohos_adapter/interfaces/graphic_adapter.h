@@ -31,6 +31,8 @@ public:
     virtual ~VSyncAdapter() = default;
 
     virtual VSyncErrorCode RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb) = 0;
+
+    virtual int64_t GetVSyncPeriod() = 0;
 };
 
 struct GSErrorCode {
