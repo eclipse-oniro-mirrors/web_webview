@@ -19,7 +19,13 @@
 #include "transaction/rs_interfaces.h"
 
 namespace OHOS::NWeb {
-VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb)
+VSyncAdapterImpl& VSyncAdapterImpl::GetInstance()
+{
+    static VSyncAdapterImpl instance;
+    return instance;
+}
+
+VSyncErrorCode VSyncAdapterImpl::Init()
 {
     if (!receiver_) {
         auto& rsClient = OHOS::Rosen::RSInterfaces::GetInstance();
@@ -34,22 +40,71 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
             receiver_ = nullptr;
             return VSyncErrorCode::ERROR;
         }
-
-        frameCb_ = std::make_unique<Rosen::VSyncReceiver::FrameCallback>();
-        if (!frameCb_) {
-            WVLOG_E("vsync frame callback make failed");
-            receiver_ = nullptr;
-            return VSyncErrorCode::ERROR;
-        }
-        frameCb_->userData_ = data;
-        frameCb_->callback_ = NWebVSyncCb;
-    }
-
-    int ret = receiver_->RequestNextVSync(*frameCb_);
-    if (ret != VsyncError::GSERROR_OK) {
-        WVLOG_E("NWebWindowAdapter RequestVsync RequestNextVSync fail, ret=%{public}d", ret);
-        return VSyncErrorCode::ERROR;
     }
     return VSyncErrorCode::SUCCESS;
+}
+
+VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb)
+{
+    if (Init() != VSyncErrorCode::SUCCESS) {
+        WVLOG_E("NWebWindowAdapter init fail");
+        return VSyncErrorCode::ERROR;
+    }
+
+    std::lock_guard<std::mutex> lock(mtx_);
+    vsyncCallbacks_.insert({data, NWebVSyncCb});
+
+    if (hasRequestedVsync_) {
+        return VSyncErrorCode::SUCCESS;
+    }
+
+    VsyncError ret = receiver_->RequestNextVSync(frameCallback_);
+    if (ret != VsyncError::GSERROR_OK) {
+        WVLOG_E("NWebWindowAdapter RequestNextVSync fail, ret=%{public}d", ret);
+        return VSyncErrorCode::ERROR;
+    }
+    hasRequestedVsync_ = true;
+    return VSyncErrorCode::SUCCESS;
+}
+
+void VSyncAdapterImpl::OnVsync(int64_t timestamp, void* client)
+{
+    auto vsyncClient = static_cast<VSyncAdapterImpl*>(client);
+    if (vsyncClient) {
+        vsyncClient->VsyncCallbackInner(timestamp);
+    } else {
+        WVLOG_E("VsyncClient is null");
+    }
+}
+
+void VSyncAdapterImpl::VsyncCallbackInner(int64_t timestamp)
+{
+    std::unordered_map<void*, std::function<void(int64_t, void*)>> vsyncCallbacks;
+    std::lock_guard<std::mutex> lock(mtx_);
+    vsyncCallbacks = vsyncCallbacks_;
+    vsyncCallbacks_.clear();
+
+    for (const auto& callback : vsyncCallbacks) {
+        auto func = callback.second;
+        if (func) {
+            func(timestamp, callback.first);
+        }
+    }
+    hasRequestedVsync_ = false;
+}
+
+int64_t VSyncAdapterImpl::GetVSyncPeriod()
+{
+    int64_t period = 0;
+    if (Init() != VSyncErrorCode::SUCCESS) {
+        WVLOG_E("NWebWindowAdapter init fail");
+        return period;
+    }
+
+    VsyncError ret = receiver_->GetVSyncPeriod(period);
+    if (ret != VsyncError::GSERROR_OK) {
+        WVLOG_E("NWebWindowAdapter GetVSyncPeriod fail, ret=%{public}d", ret);
+    }
+    return period;
 }
 } // namespace OHOS::NWeb

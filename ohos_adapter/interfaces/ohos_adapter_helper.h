@@ -27,6 +27,7 @@
 #include "camera_manager_adapter.h"
 #include "cert_mgr_adapter.h"
 #include "datashare_adapter.h"
+#include "date_time_format_adapter.h"
 #include "display_manager_adapter.h"
 #include "enterprise_device_management_adapter.h"
 #include "event_handler_adapter.h"
@@ -88,7 +89,7 @@ public:
 
     SystemPropertiesAdapter& GetSystemPropertiesInstance() const;
 
-    std::unique_ptr<VSyncAdapter> GetVSyncAdapter() const;
+    VSyncAdapter& GetVSyncAdapter() const;
 
     std::unique_ptr<OhosInitWebAdapter> GetInitWebAdapter() const;
 
@@ -124,6 +125,8 @@ public:
 
     std::unique_ptr<ScreenCaptureAdapter> CreateScreenCaptureAdapter() const;
 
+    std::unique_ptr<DateTimeFormatAdapter> CreateDateTimeFormatAdapter() const;
+    
 private:
     OhosAdapterHelper() = default;
 

@@ -599,6 +599,10 @@ public:
      */
     virtual void OnScreenCaptureRequest(
         std::shared_ptr<NWebScreenCaptureAccessRequest> request) {}
+
+    virtual void OnOverScrollFlingVelocity(float xVelocity, float yVelocity, bool isFling) {}
+
+    virtual void OnOverScrollFlingEnd() {}
 };
 }  // namespace OHOS::NWeb
 
