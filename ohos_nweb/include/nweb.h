@@ -20,17 +20,17 @@
 #include <map>
 #include <memory>
 #include <string>
-#include "nweb_export.h"
 
 #include "nweb_download_callback.h"
 #include "nweb_drag_data.h"
+#include "nweb_export.h"
 #include "nweb_find_callback.h"
 #include "nweb_history_list.h"
+#include "nweb_hit_testresult.h"
 #include "nweb_javascript_result_callback.h"
 #include "nweb_preference.h"
 #include "nweb_release_surface_callback.h"
 #include "nweb_value_callback.h"
-#include "nweb_hit_testresult.h"
 #include "nweb_web_message.h"
 
 namespace OHOS::NWeb {
@@ -128,6 +128,13 @@ struct OHOS_NWEB_EXPORT NWebDOHConfig {
      */
     int dohMode = -1;
     std::string dohConfig = "";
+};
+
+enum class NestedScrollMode : int32_t {
+    SELF_ONLY = 0,
+    SELF_FIRST = 1,
+    PARENT_FIRST = 2,
+    PARALLEL = 3,
 };
 
 using WebState = std::shared_ptr<std::vector<uint8_t>>;
@@ -783,6 +790,11 @@ public:
      * Set the token.
      */
     virtual void SetToken(void* token) = 0;
+
+    /**
+     * Set the nested scroll mode.
+     */
+    virtual void SetNestedScrollMode(const NestedScrollMode& nestedScrollMode) = 0;
 };
 }  // namespace OHOS::NWeb
 
