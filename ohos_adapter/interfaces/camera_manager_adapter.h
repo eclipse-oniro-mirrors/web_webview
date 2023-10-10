@@ -177,7 +177,8 @@ class CameraStatusCallbackAdapter {
 public:
     virtual ~CameraStatusCallbackAdapter() = default;
 
-    virtual void OnCameraStatusChanged(CameraStatusAdapter cameraStatusAdapter) = 0;
+    virtual void OnCameraStatusChanged(CameraStatusAdapter cameraStatusAdapter,
+                                        const std::string callBackDeviceId) = 0;
 };
 
 class CameraManagerAdapter {
@@ -219,6 +220,8 @@ public:
     virtual void SetForegroundFlag(bool isForeground) = 0;
 
     virtual void SetCameraStatus(CameraStatusAdapter status) = 0;
+    
+    virtual std::string GetCurrentDeviceId() = 0;
 };
 } // namespace OHOS::NWeb
 
