@@ -30,11 +30,23 @@ public:
     VSyncAdapterImpl(const VSyncAdapterImpl&) = delete;
     VSyncAdapterImpl& operator=(const VSyncAdapterImpl&) = delete;
 
+    static VSyncAdapterImpl& GetInstance();
     VSyncErrorCode RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb) override;
+    int64_t GetVSyncPeriod() override;
 
 private:
+    static void OnVsync(int64_t timestamp, void* data);
+    void VsyncCallbackInner(int64_t nanoTimestamp);
+    VSyncErrorCode Init();
+
+    std::mutex mtx_;
+    bool hasRequestedVsync_ = false;
     std::shared_ptr<Rosen::VSyncReceiver> receiver_ = nullptr;
-    std::unique_ptr<Rosen::VSyncReceiver::FrameCallback> frameCb_ = nullptr;
+    std::unordered_map<void*, std::function<void(int64_t, void*)>> vsyncCallbacks_;
+    Rosen::VSyncReceiver::FrameCallback frameCallback_ = {
+        .userData_ = this,
+        .callback_ = OnVsync,
+    };
 };
 } // namespace OHOS::NWeb
 

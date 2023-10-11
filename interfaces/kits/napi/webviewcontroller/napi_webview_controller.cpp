@@ -1584,6 +1584,10 @@ bool UvWebMsgOnReceiveCbDataHandler(NapiWebMessagePort::WebMsgPortParam *data, n
             return false;
         }
         status = napi_new_instance(data->env_, webMsgExt, 0, NULL, &result);
+        if (status != napi_status::napi_ok) {
+            WVLOG_E("napi_new_instance failed.");
+            return false;
+        }
 
         WebMessageExt *webMessageExt = new (std::nothrow) WebMessageExt(data->msg_);
         if (webMessageExt == nullptr) {

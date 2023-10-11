@@ -278,6 +278,8 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
         int32_t ret = cameraInput_->Open();
         if (ret != CAMERA_OK) {
             WVLOG_E("Failed to open CameraInput, err code %{public}d.", ret);
+            cameraInput_->Release();
+            cameraInput_= nullptr;
             return result;
         }
         deviceId_ = deviceId;
@@ -529,8 +531,17 @@ int32_t CameraManagerAdapterImpl::RestartSession()
         return CAMERA_ERROR;
     }
 
-    cameraInput_ = nullptr;
-    previewOutput_ = nullptr;
+    if (cameraInput_ != nullptr) {
+        cameraInput_->Release();
+        cameraInput_ = nullptr;
+    }
+    
+    if (previewOutput_ != nullptr) {
+        ((sptr<PreviewOutput> &)previewOutput_)->Stop();
+        previewOutput_->Release();
+        previewOutput_ = nullptr;
+    }
+    
     previewSurface_ = nullptr;
     previewSurfaceListener_ = nullptr;
     inputInitedFlag_ = false;
@@ -597,7 +608,6 @@ int32_t CameraManagerAdapterImpl::ReleaseSessionResource(const std::string &devi
     previewSurfaceListener_ = nullptr;
     status_ = CameraStatusAdapter::AVAILABLE;
     inputInitedFlag_ = false;
-    isForegound_ = false;
 
     return CAMERA_OK;
 }
@@ -625,12 +635,17 @@ CameraStatusAdapter CameraManagerAdapterImpl::GetCameraStatus()
 void CameraManagerAdapterImpl::SetCameraStatus(CameraStatusAdapter status)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    WVLOG_I("set camera status %{public}d", status);
     status_ = status;
+}
+
+std::string CameraManagerAdapterImpl::GetCurrentDeviceId()
+{
+    return deviceId_;
 }
 
 bool CameraManagerAdapterImpl::IsExistCaptureTask()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     if (cameraManager_ == nullptr) {
         WVLOG_E("cameraManager_ is nullptr");
         return false;
@@ -866,11 +881,17 @@ CameraStatusAdapter CameraManagerAdapterCallback::GetAdapterCameraStatus(CameraS
 
 void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo &cameraStatusInfo) const
 {
-    WVLOG_I("OnCameraStatusChanged: %{public}d", cameraStatusInfo.cameraStatus);
+    std::string callbackDeviceId;
+    if(cameraStatusInfo.cameraDevice) {
+        callbackDeviceId = cameraStatusInfo.cameraDevice->GetID();
+    }
+    
+    WVLOG_I("OnCameraStatusChanged: deviceID %{public}s status %{public}d",
+            callbackDeviceId.c_str(), cameraStatusInfo.cameraStatus);
     CameraStatusAdapter cameraStatusAdapter = GetAdapterCameraStatus(cameraStatusInfo.cameraStatus);
     if (statusCallback_) {
         WVLOG_I("adapter status callback");
-        statusCallback_->OnCameraStatusChanged(cameraStatusAdapter);
+        statusCallback_->OnCameraStatusChanged(cameraStatusAdapter, callbackDeviceId);
     }
     return;
 }

@@ -41,10 +41,14 @@ public:
 
     int32_t Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
         uint8_t* signData, uint32_t signDataLen) override;
+
+    int32_t GetCertDataBySubject(const char *subjectName, uint8_t* certData, int32_t certType) override;
 private:
     int32_t InitCertList(struct CertList **cList);
 
     int32_t InitCertInfo(struct CertInfo *certInfo);
+
+    int32_t GetCertInfo(char *uri, struct CertInfo *certInfo, int32_t certType);
 
     void FreeCMBlobData(struct CmBlob *blob);
 
