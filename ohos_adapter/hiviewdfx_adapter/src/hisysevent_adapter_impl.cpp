@@ -64,11 +64,11 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     return ForwardToHiSysEvent(eventName, type, data);
 }
 
-using systemData = std::tuple<const std::string, const int ,const std::string, const std::string, const std::string,
+using systemData = std::tuple<const std::string, const int, const std::string, const std::string, const std::string,
     const std::string, const std::string, const std::string>;
 
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
-    const std::tuple<const std::string, const int64_t, const std::string, const int, 
+    const std::tuple<const std::string, const int64_t, const std::string, const int,
     const std::string, const std::vector<uint16_t>, const std::string, const int>& data)
 {
     auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
