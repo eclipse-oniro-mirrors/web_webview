@@ -76,6 +76,15 @@ public:
 
     // is single iamge that is being dragged.
     virtual bool IsSingleImageContent() = 0;
+
+    // set the iamge file name that is being dragged.
+    virtual bool SetFileUri(std::string& uri) = 0;
+
+    // get the image file name that is being dragged.
+    virtual std::string GetImageFileName() = 0;
+
+    // clear the exist image file names.
+    virtual void ClearImageFileNames() = 0;
 };
 }
 #endif
