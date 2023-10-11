@@ -83,8 +83,6 @@ public:
 
     std::unique_ptr<SocPerfClientAdapter> CreateSocPerfClientAdapter();
 
-    OhosWebDnsDataBaseAdapter& GetWebDnsDataBaseInstance();
-
     std::unique_ptr<OhosResourceAdapter> GetResourceAdapter(const std::string& hapPath = "") const;
 
     SystemPropertiesAdapter& GetSystemPropertiesInstance() const;

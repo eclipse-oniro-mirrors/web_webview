@@ -38,7 +38,6 @@
 #include "ohos_init_web_adapter_impl.h"
 #include "ohos_resource_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
-#include "ohos_web_dns_data_base_adapter_impl.h"
 #include "ohos_web_permission_data_base_adapter_impl.h"
 #include "pasteboard_client_adapter_impl.h"
 #include "player_framework_adapter_impl.h"
@@ -122,11 +121,6 @@ std::unique_ptr<MMIAdapter> OhosAdapterHelper::CreateMMIAdapter()
 std::unique_ptr<SocPerfClientAdapter> OhosAdapterHelper::CreateSocPerfClientAdapter()
 {
     return std::make_unique<SocPerfClientAdapterImpl>();
-}
-
-OhosWebDnsDataBaseAdapter& OhosAdapterHelper::GetWebDnsDataBaseInstance()
-{
-    return OhosWebDnsDataBaseAdapterImpl::GetInstance();
 }
 
 std::unique_ptr<OhosResourceAdapter> OhosAdapterHelper::GetResourceAdapter(const std::string& hapPath) const

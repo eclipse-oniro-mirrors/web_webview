@@ -61,20 +61,5 @@ public:
 
     virtual void GetOriginsByPermission(const WebPermissionType& key, std::vector<std::string>& origins) const = 0;
 };
-
-class OhosWebDnsDataBaseAdapter {
-public:
-    OhosWebDnsDataBaseAdapter() = default;
-
-    virtual ~OhosWebDnsDataBaseAdapter() = default;
-
-    virtual bool ExistHostname(const std::string& hostname) const = 0;
-
-    virtual void InsertHostname(const std::string& hostname) = 0;
-
-    virtual void GetHostnames(std::vector<std::string>& hostnames) const = 0;
-
-    virtual void ClearAllHostname() = 0;
-};
 } // namespace OHOS::NWeb
 #endif // OHOS_WEB_DATA_BASE_ADAPTER_H
