@@ -18,6 +18,8 @@ config("web_inner_kit_config") {
 }
 
 ohos_shared_library("web_inner_kit") {
+  include_dirs = [ "../../ohos_nweb/include" ]
+
   public_configs = [ ":web_inner_kit_config" ]
 
   sources = [ "src/web_clipboard_controller.cpp" ]
@@ -25,6 +27,7 @@ ohos_shared_library("web_inner_kit") {
   external_deps = [
     "ability_base:zuri",
     "c_utils:utils",
+    "hilog:libhilog",
     "image_framework:image_native",
     "pasteboard:pasteboard_data",
   ]
