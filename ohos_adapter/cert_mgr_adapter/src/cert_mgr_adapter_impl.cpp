@@ -127,7 +127,6 @@ int32_t CertManagerAdapterImpl::GetCertInfo(char *uri, struct CertInfo *certInfo
     unsigned int len = sizeof(struct CertInfo);
     (void)memset_s(certInfo, len, 0, len);
     int32_t ret = InitCertInfo(certInfo);
-
     if (ret != CM_SUCCESS) {
         WVLOG_E("GetCertInfo, init cert failed, ret = %{public}d", ret);
         FreeCMBlobData(&(certInfo->certInfo));
@@ -159,7 +158,6 @@ int32_t CertManagerAdapterImpl::GetCertDataBySubject(const char *subjectName, ui
 {
     struct CertList *certList = nullptr;
     int32_t ret = InitCertList(&certList);
-
     if (ret != CM_SUCCESS) {
         WVLOG_E("GetCertDataBySubject, init cert list failed, ret = %{public}d", ret);
         return CM_FAILURE;
