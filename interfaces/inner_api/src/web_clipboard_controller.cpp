@@ -17,9 +17,11 @@
 
 #include <regex>
 
+#include "nweb_log.h"
+
 namespace {
 const std::string IMG_TAG_PATTERN = "<img.*?data-ohos=.*?>";
-const std::string IMG_TAG_SRC_PATTERN = "src=\"([^\"]*)\"";
+const std::string IMG_TAG_SRC_PATTERN = "src=(['\"])(.*?)\\1";
 const std::string IMG_TAG_SRC_HEAD = "src=\"";
 const std::string IMG_LOCAL_URI = "file:///";
 const std::string IMG_LOCAL_PATH = "://";
@@ -161,7 +163,9 @@ void WebClipboardController::RemoveAllRecord(std::shared_ptr<MiscServices::Paste
 {
     std::size_t recordCount = pasteData->GetRecordCount();
     for (uint32_t i = 0; i < recordCount; i++) {
-        pasteData->RemoveRecordAt(i);
+        if (!pasteData->RemoveRecordAt(0)) {
+            WVLOG_E("WebClipboardController RemoveRecord filed, i=%{public}u", i);
+        }
     }
 }
 

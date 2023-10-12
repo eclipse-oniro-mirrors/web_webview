@@ -123,17 +123,19 @@ HWTEST_F(ClipboardControllerTest, RebuildHtmlTest_004, TestSize.Level1)
  */
 HWTEST_F(ClipboardControllerTest, RebuildHtmlTest_005, TestSize.Level1)
 {
+    const int32_t splitRecordCount = 2;
     const std::string uri = "file:///data/storage/el2/distributedfiles/temp.png";
     auto webClipboardController = WebClipboardController::GetInstance();
     std::shared_ptr<std::string> html(
         new std::string("<img data-ohos='clipboard' src='file:///file1.jpg'><img data-ohos='clipboard' "
                         "src='https://data/storage/el2/distributedfiles/202305301.png'>"));
-    const std::string execptHtml =
+    const char* execptHtml =
         "<img data-ohos='clipboard' src='file:///data/storage/el2/distributedfiles/temp.png'><img "
         "data-ohos='clipboard' "
         "src='https://data/storage/el2/distributedfiles/202305301.png'>";
     auto pasteData = webClipboardController.SplitHtml(html);
     EXPECT_NE(pasteData, nullptr);
+    EXPECT_EQ(pasteData->GetRecordCount(), splitRecordCount);
     std::shared_ptr<MiscServices::PasteData> newPasteData = std::make_shared<MiscServices::PasteData>();
     std::vector<std::shared_ptr<MiscServices::PasteDataRecord>> pasteDataRecords = pasteData->AllRecords();
     EXPECT_EQ(*(pasteDataRecords[pasteData->GetRecordCount() - 1]->GetHtmlText()), *html);
@@ -147,8 +149,11 @@ HWTEST_F(ClipboardControllerTest, RebuildHtmlTest_005, TestSize.Level1)
         auto record = builder.Build();
         newPasteData->AddRecord(record);
     }
+    EXPECT_EQ(newPasteData->GetRecordCount(), splitRecordCount);
     std::shared_ptr<std::string> newHtml = webClipboardController.RebuildHtml(newPasteData);
-    EXPECT_NE(newHtml, nullptr);
+    EXPECT_EQ(newPasteData->GetRecordCount(), 1);
+    const char* newHtmlStr = newHtml.get()->c_str();
+    EXPECT_STREQ(newHtmlStr, execptHtml);
 }
 
 /**
@@ -159,19 +164,21 @@ HWTEST_F(ClipboardControllerTest, RebuildHtmlTest_005, TestSize.Level1)
  */
 HWTEST_F(ClipboardControllerTest, RebuildHtmlTest_006, TestSize.Level1)
 {
+    const int32_t splitRecordCount = 3;
     const std::string uri = "file:///data/storage/el2/distributedfiles/temp.png";
     auto webClipboardController = WebClipboardController::GetInstance();
     std::shared_ptr<std::string> html(
         new std::string("<img data-ohos='clipboard' src='file:///file1.jpg'><img data-ohos='clipboard' "
-                        "src='file2.jpg'><img data-ohos='clipboard' "
+                        "src=\"file2.jpg\"><img data-ohos='clipboard' "
                         "src='https://data/storage/el2/distributedfiles/202305301.png'>"));
-    const std::string execptHtml =
+    const char* execptHtml =
         "<img data-ohos='clipboard' src='file:///data/storage/el2/distributedfiles/temp.png'><img "
         "data-ohos='clipboard' "
-        "src='file:///data/storage/el2/distributedfiles/temp.png'><img data-ohos='clipboard' "
+        "src=\"file:///data/storage/el2/distributedfiles/temp.png\"><img data-ohos='clipboard' "
         "src='https://data/storage/el2/distributedfiles/202305301.png'>";
     auto pasteData = webClipboardController.SplitHtml(html);
     EXPECT_NE(pasteData, nullptr);
+    EXPECT_EQ(pasteData->GetRecordCount(), splitRecordCount);
     std::shared_ptr<MiscServices::PasteData> newPasteData = std::make_shared<MiscServices::PasteData>();
     std::vector<std::shared_ptr<MiscServices::PasteDataRecord>> pasteDataRecords = pasteData->AllRecords();
     EXPECT_EQ(*(pasteDataRecords[pasteData->GetRecordCount() - 1]->GetHtmlText()), *html);
@@ -185,8 +192,11 @@ HWTEST_F(ClipboardControllerTest, RebuildHtmlTest_006, TestSize.Level1)
         auto record = builder.Build();
         newPasteData->AddRecord(record);
     }
+    EXPECT_EQ(newPasteData->GetRecordCount(), splitRecordCount);
     std::shared_ptr<std::string> newHtml = webClipboardController.RebuildHtml(newPasteData);
-    EXPECT_NE(newHtml, nullptr);
+    EXPECT_EQ(newPasteData->GetRecordCount(), 1);
+    const char* newHtmlStr = newHtml.get()->c_str();
+    EXPECT_STREQ(newHtmlStr, execptHtml);
 }
 
 /**
