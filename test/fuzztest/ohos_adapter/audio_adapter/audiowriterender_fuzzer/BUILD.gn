@@ -20,6 +20,7 @@ import("//build/test.gni")
 ohos_fuzztest("AudioWriteRenderFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/audio_adapter/audiowriterender_fuzzer"
+  configs = [ "../:audio_adapter_fuzztest_config" ]
 
   include_dirs = [
     "$webview_path/test/ohos_nweb",
@@ -44,14 +45,3 @@ ohos_fuzztest("AudioWriteRenderFuzzTest") {
     "audio_framework:audio_renderer",
   ]
 }
-
-###############################################################################
-group("fuzztest") {
-  testonly = true
-  deps = []
-  deps += [
-    # deps file
-    ":AudioWriteRenderFuzzTest",
-  ]
-}
-###############################################################################

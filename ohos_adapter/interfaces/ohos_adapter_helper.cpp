@@ -20,7 +20,9 @@
 #include "audio_renderer_adapter_impl.h"
 #include "audio_capturer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
+#if defined(NWEB_BATTERY_MANAGER_ENABLE)
 #include "battery_mgr_client_adapter_impl.h"
+#endif
 #include "camera_manager_adapter_impl.h"
 #include "cert_mgr_adapter_impl.h"
 #include "datashare_adapter_impl.h"
@@ -33,17 +35,25 @@
 #include "imf_adapter_impl.h"
 #include "keystore_adapter_impl.h"
 #include "mmi_adapter_impl.h"
+#if defined(NWEB_TEL_ENABLE)
 #include "net_connect_adapter_impl.h"
+#endif
 #include "net_proxy_adapter_impl.h"
 #include "ohos_init_web_adapter_impl.h"
 #include "ohos_resource_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
 #include "ohos_web_permission_data_base_adapter_impl.h"
 #include "pasteboard_client_adapter_impl.h"
+#if defined(NWEB_MEDIA_PLAYER_ENABLE)
 #include "player_framework_adapter_impl.h"
+#endif
+#if defined(NWEB_POWER_MANAGER_ENABLE)
 #include "power_mgr_client_adapter_impl.h"
+#endif
 #include "print_manager_adapter_impl.h"
+#if defined(NWEB_CAMERA_ENABLE)
 #include "screen_capture_adapter_impl.h"
+#endif
 #include "soc_perf_client_adapter_impl.h"
 #include "surface_adapter_impl.h"
 #include "system_properties_adapter_impl.h"
@@ -65,7 +75,11 @@ std::unique_ptr<AafwkAppMgrClientAdapter> OhosAdapterHelper::CreateAafwkAdapter(
 
 std::unique_ptr<PowerMgrClientAdapter> OhosAdapterHelper::CreatePowerMgrClientAdapter()
 {
+#if defined(NWEB_POWER_MANAGER_ENABLE)
     return std::make_unique<PowerMgrClientAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<DisplayManagerAdapter> OhosAdapterHelper::CreateDisplayMgrAdapter()
@@ -75,7 +89,11 @@ std::unique_ptr<DisplayManagerAdapter> OhosAdapterHelper::CreateDisplayMgrAdapte
 
 std::unique_ptr<BatteryMgrClientAdapter> OhosAdapterHelper::CreateBatteryClientAdapter()
 {
+#if defined(NWEB_BATTERY_MANAGER_ENABLE)
     return std::make_unique<BatteryMgrClientAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 OhosWebDataBaseAdapter& OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
@@ -85,7 +103,11 @@ OhosWebDataBaseAdapter& OhosAdapterHelper::GetOhosWebDataBaseAdapterInstance()
 
 std::unique_ptr<NetConnectAdapter> OhosAdapterHelper::CreateNetConnectAdapter()
 {
+#if defined(NWEB_TEL_ENABLE)
     return std::make_unique<NetConnectAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 PasteBoardClientAdapter& OhosAdapterHelper::GetPasteBoard() const
@@ -95,12 +117,20 @@ PasteBoardClientAdapter& OhosAdapterHelper::GetPasteBoard() const
 
 std::unique_ptr<AudioRendererAdapter> OhosAdapterHelper::CreateAudioRendererAdapter()
 {
+#if defined(NWEB_AUDIO_ENABLE)
     return std::make_unique<AudioRendererAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<AudioCapturerAdapter> OhosAdapterHelper::CreateAudioCapturerAdapter()
 {
+#if defined(NWEB_AUDIO_ENABLE)
     return std::make_unique<AudioCapturerAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 AudioSystemManagerAdapter& OhosAdapterHelper::GetAudioSystemManager() const
@@ -190,7 +220,11 @@ std::unique_ptr<IConsumerSurfaceAdapter> OhosAdapterHelper::CreateConsumerSurfac
 
 std::unique_ptr<PlayerAdapter> OhosAdapterHelper::CreatePlayerAdapter() const
 {
+#if defined(NWEB_MEDIA_PLAYER_ENABLE)
     return std::make_unique<PlayerAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 WindowAdapter& OhosAdapterHelper::GetWindowAdapterInstance() const
@@ -220,7 +254,11 @@ CameraManagerAdapter& OhosAdapterHelper::GetCameraManagerAdapter() const
 
 std::unique_ptr<ScreenCaptureAdapter> OhosAdapterHelper::CreateScreenCaptureAdapter() const
 {
+#if defined(NWEB_CAMERA_ENABLE)
     return std::make_unique<ScreenCaptureAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<DateTimeFormatAdapter> OhosAdapterHelper::CreateDateTimeFormatAdapter() const
