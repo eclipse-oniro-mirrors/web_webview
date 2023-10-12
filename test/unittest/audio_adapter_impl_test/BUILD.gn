@@ -12,11 +12,16 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../config.gni")
 
 module_output_path = "web/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
+
+  if (webview_audio_enable) {
+    defines = [ "NWEB_AUDIO_ENABLE" ]
+  }
 
   include_dirs = [ "../../../ohos_adapter/audio_adapter/include" ]
 }
@@ -50,5 +55,8 @@ ohos_unittest("nweb_audio_adapter_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":nweb_audio_adapter_test" ]
+  deps = []
+  if (webview_audio_enable) {
+    deps += [ ":nweb_audio_adapter_test" ]
+  }
 }

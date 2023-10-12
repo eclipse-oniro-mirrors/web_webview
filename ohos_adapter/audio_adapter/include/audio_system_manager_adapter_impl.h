@@ -18,9 +18,12 @@
 
 #include "audio_system_manager_adapter.h"
 
+#if defined(NWEB_AUDIO_ENABLE)
 #include "audio_system_manager.h"
+#endif
 
 namespace OHOS::NWeb {
+#if defined(NWEB_AUDIO_ENABLE)
 using namespace OHOS::AudioStandard;
 
 class AudioManagerCallbackAdapterImpl : public AudioManagerCallback {
@@ -46,6 +49,7 @@ public:
 private:
     std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> cb_ = nullptr;
 };
+#endif
 
 class AudioSystemManagerAdapterImpl : public AudioSystemManagerAdapter {
 public:
@@ -77,11 +81,13 @@ public:
 
     int32_t UnsetDeviceChangeCallback() override;
 
+#if defined(NWEB_AUDIO_ENABLE)
     static AudioStreamType GetStreamType(AudioAdapterStreamType streamType);
 
 private:
     std::shared_ptr<AudioManagerCallbackAdapterImpl> callback_;
     std::shared_ptr<AudioManagerDeviceChangeCallbackAdapterImpl> deviceChangeCallback_ = nullptr;
+#endif
 };
 }  // namespace OHOS::NWeb
 
