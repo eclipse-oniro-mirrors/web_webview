@@ -29,7 +29,7 @@ ohos_shared_library("web_inner_kit") {
     "c_utils:utils",
     "hilog:libhilog",
     "image_framework:image_native",
-    "pasteboard:pasteboard_data",
+    "pasteboard:pasteboard_client",
   ]
 
   cflags = [
