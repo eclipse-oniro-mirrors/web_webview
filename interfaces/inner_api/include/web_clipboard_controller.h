@@ -24,6 +24,7 @@
 
 #include "paste_data.h"
 #include "paste_data_record.h"
+#include "pasteboard_client.h"
 #include "refbase.h"
 
 namespace OHOS {
