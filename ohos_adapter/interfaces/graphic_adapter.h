@@ -63,6 +63,7 @@ public:
     virtual uint32_t GetSize() const = 0;
 
     virtual void* GetVirAddr() const = 0;
+
 protected:
     SurfaceBufferAdapter(const SurfaceBufferAdapter&) = delete;
 

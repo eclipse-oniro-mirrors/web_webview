@@ -626,7 +626,7 @@ public:
 
     virtual void OnOverScrollFlingEnd() {}
 
-        /**
+    /**
      * @brief Called when the media or form state on the web page changed.
      * @param state state of the media or form. Refer to the enum class MediaPlayingState and FormState
      * @param ActivityType it can be form, media, or audio
