@@ -193,9 +193,10 @@ bool NWebHelper::Init(bool from_ark)
 }
 
 using InitializeWebEngine = void (*)(const NWebInitArgs &);
-bool NWebHelper::InitAndRun(bool from_ark) {
+bool NWebHelper::InitAndRun(bool from_ark)
+{
     if (!Init(from_ark)) {
-      return false;
+        return false;
     }
 
     WVLOG_I("InitializeWebEngine: load libs and initiallize cef.");
