@@ -1148,7 +1148,7 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
     }
 
     using SetArrayHandler = std::function<void(napi_env, napi_value, WebMessageExt*)>;
-    static const std::unordered_map<napi_valuetype, SetArrayHandler> functionMap = {
+    const std::unordered_map<napi_valuetype, SetArrayHandler> functionMap = {
         { napi_boolean, SetArrayHandlerBoolean },
         { napi_string, SetArrayHandlerString },
         { napi_number, [isDouble](napi_env env, napi_value array, WebMessageExt* msgExt) {
