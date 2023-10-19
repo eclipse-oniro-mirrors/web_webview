@@ -11,5 +11,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-web.optimization = root:root:0600
+web.optimization = root:root:0644
 
