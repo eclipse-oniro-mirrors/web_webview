@@ -31,6 +31,7 @@ const std::unordered_map<ResSchedTypeAdapter, uint32_t> RES_TYPE_MAP = {
     { ResSchedTypeAdapter::RES_TYPE_KEY_THREAD, ResType::RES_TYPE_REPORT_KEY_THREAD },
     { ResSchedTypeAdapter::RES_TYPE_WEB_STATUS_CHANGE, ResType::RES_TYPE_REPORT_WINDOW_STATE },
     { ResSchedTypeAdapter::RES_TYPE_WEB_SCENE, ResType::RES_TYPE_REPORT_SCENE_SCHED },
+    { ResSchedTypeAdapter::RES_TYPE_AUDIO_STATUS_CHANGE, ResType::RES_TYPE_AUDIO_STATUS_CHANGE },
 };
 
 const std::unordered_map<ResSchedStatusAdapter, int64_t> RES_STATUS_MAP = {
@@ -40,6 +41,8 @@ const std::unordered_map<ResSchedStatusAdapter, int64_t> RES_STATUS_MAP = {
     { ResSchedStatusAdapter::WEB_INACTIVE, ResType::WindowStates::INACTIVE },
     { ResSchedStatusAdapter::WEB_SCENE_ENTER, ResType::SceneControl::SCENE_IN },
     { ResSchedStatusAdapter::WEB_SCENE_EXIT, ResType::SceneControl::SCENE_OUT },
+    { ResSchedStatusAdapter::AUDIO_STATUS_START, ResType::AudioStatus::START },
+    { ResSchedStatusAdapter::AUDIO_STATUS_STOP, ResType::AudioStatus::STOP },
 };
 
 const std::unordered_map<ResSchedRoleAdapter, ResType::ThreadRole> RES_ROLE_MAP = {
@@ -227,6 +230,25 @@ bool ResSchedClientAdapter::ReportKeyThread(
             renderData.ReportScene();
         }
     }
+    return true;
+}
+
+bool ResSchedClientAdapter::ReportAudioData(ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid)
+{
+    static uint32_t resType = ResType::RES_TYPE_AUDIO_STATUS_CHANGE;
+
+    int64_t status;
+    if (!ConvertStatus(statusAdapter, status)) {
+        return false;
+    }
+
+    uid_t uid = getuid();
+    std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(uid) },
+        { PID, std::to_string(pid) }, { TID, std::to_string(tid) } };
+    WVLOG_D("ReportAudioData status: %{public}d, uid: %{public}d, pid: %{public}d, tid:%{public}d",
+        static_cast<int32_t>(status), uid, pid, tid);
+    ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
+
     return true;
 }
 

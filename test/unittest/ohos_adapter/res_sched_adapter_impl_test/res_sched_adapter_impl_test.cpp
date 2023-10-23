@@ -105,5 +105,21 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportWindowStatus_002
     EXPECT_TRUE(result);
     resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_EXIT, 1);
 }
+
+/**
+ * @tc.name: ResSchedAdapterImplTest_ReportAudioData_003
+ * @tc.desc: ReportAudioData.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportAudioData_003, TestSize.Level1)
+{
+    auto resAdapter = std::make_shared<ResSchedClientAdapter>();
+    EXPECT_NE(resAdapter, nullptr);
+    bool result = resAdapter->ReportAudioData(static_cast<ResSchedStatusAdapter>(-1), 1, 1);
+    EXPECT_FALSE(result);
+    result = resAdapter->ReportAudioData(ResSchedStatusAdapter::AUDIO_STATUS_START, 1, 1);
+    EXPECT_TRUE(result);
+}
 }
 } // namespace NWeb
