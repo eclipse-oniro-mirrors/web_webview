@@ -44,7 +44,7 @@ SocPerfClientAdapterImpl::SocPerfClientAdapterImpl()
     convertMap_ = {
         { SOC_PERF_WEB_GESTURE_ID, ResourceSchedule::ResType::RES_TYPE_WEB_GESTURE },
         { SOC_PERF_WEB_GESTURE_MOVE_ID, ResourceSchedule::ResType::RES_TYPE_WEB_GESTURE_MOVE },
-        { SOC_PERF_SLIDE_NORMAL_ID, ResourceSchedule::ResType::RES_TYPE_SLIDE_NORMAL },
+        { SOC_PERF_SLIDE_NORMAL_ID, ResourceSchedule::ResType::RES_TYPE_WEB_SLIDE_NORMAL },
         { SOC_PERF_LOAD_URL_ID, ResourceSchedule::ResType::RES_TYPE_LOAD_URL },
         { SOC_PERF_MOUSEWHEEL_ID, ResourceSchedule::ResType::RES_TYPE_MOUSEWHEEL },
     };
