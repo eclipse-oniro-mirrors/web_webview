@@ -38,7 +38,7 @@ namespace {
 #endif
 }
 
-SocPerfClientAdapterImpl::SocPerfClientAdapterImpl() 
+SocPerfClientAdapterImpl::SocPerfClientAdapterImpl()
 {
 #if defined(NWEB_SOC_PERF)
     convertMap_ = {
@@ -51,7 +51,7 @@ SocPerfClientAdapterImpl::SocPerfClientAdapterImpl()
 #endif
 }
 
-SocPerfClientAdapterImpl::~SocPerfClientAdapterImpl() 
+SocPerfClientAdapterImpl::~SocPerfClientAdapterImpl()
 {
     convertMap_.clear();
 }
