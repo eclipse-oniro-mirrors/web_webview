@@ -16,6 +16,8 @@
 #ifndef SOC_PERF_CLIENT_ADAPTER_IMPL_H
 #define SOC_PERF_CLIENT_ADAPTER_IMPL_H
 
+#include <unordered_map>
+
 #include "soc_perf_client_adapter.h"
 
 namespace OHOS::NWeb {
@@ -28,6 +30,11 @@ public:
     void ApplySocPerfConfigById(int32_t id) override;
 
     void ApplySocPerfConfigByIdEx(int32_t id, bool onOffTag) override;
+
+private:
+    uint32_t ConvertId(int32_t id);
+
+    std::unordered_map<int32_t, uint32_t> convertMap_;
 };
 }  // namespace content
 

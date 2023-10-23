@@ -14,24 +14,82 @@
  */
 
 #include "soc_perf_client_adapter_impl.h"
+
+#include "nweb_log.h"
 #if defined(NWEB_SOC_PERF)
+#include "res_sched_client.h"
+#include "res_type.h"
 #include "socperf_client.h"
 #endif
+
 namespace OHOS::NWeb {
-SocPerfClientAdapterImpl::SocPerfClientAdapterImpl() {}
+namespace {
+#if defined(NWEB_SOC_PERF)
+    const int32_t SOC_PERF_WEB_GESTURE_ID = 10012;
+    const int32_t SOC_PERF_WEB_GESTURE_MOVE_ID = 10020;
+    const int32_t SOC_PERF_SLIDE_NORMAL_ID = 10025;
+    const int32_t SOC_PERF_LOAD_URL_ID = 10070;
+    const int32_t SOC_PERF_MOUSEWHEEL_ID = 10071;
+
+    const int64_t SOC_PERF_START = 0;
+    const int64_t SOC_PERF_END = 1;
+
+    const uint32_t SOC_PERF_INVALID = UINT32_MAX;
+#endif
+}
+
+SocPerfClientAdapterImpl::SocPerfClientAdapterImpl() 
+{
+#if defined(NWEB_SOC_PERF)
+    convertMap_ = {
+        { SOC_PERF_WEB_GESTURE_ID, ResourceSchedule::ResType::RES_TYPE_WEB_GESTURE },
+        { SOC_PERF_WEB_GESTURE_MOVE_ID, ResourceSchedule::ResType::RES_TYPE_WEB_GESTURE_MOVE },
+        { SOC_PERF_SLIDE_NORMAL_ID, ResourceSchedule::ResType::RES_TYPE_SLIDE_NORMAL },
+        { SOC_PERF_LOAD_URL_ID, ResourceSchedule::ResType::RES_TYPE_LOAD_URL },
+        { SOC_PERF_MOUSEWHEEL_ID, ResourceSchedule::ResType::RES_TYPE_MOUSEWHEEL },
+    };
+#endif
+}
+
+SocPerfClientAdapterImpl::~SocPerfClientAdapterImpl() 
+{
+    convertMap_.clear();
+}
 
 void SocPerfClientAdapterImpl::ApplySocPerfConfigById(int32_t id)
 {
 #if defined(NWEB_SOC_PERF)
-    OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequest(id, "");
+    uint32_t resType = ConvertId(id);
+    if (resType == SOC_PERF_INVALID) {
+        return;
+    }
+
+    std::unordered_map<std::string, std::string> mapPayload;
+    OHOS::ResourceSchedule::ResSchedClient::GetInstance().ReportData(resType, SOC_PERF_START, mapPayload);
 #endif
 }
 
 void SocPerfClientAdapterImpl::ApplySocPerfConfigByIdEx(int32_t id, bool onOffTag)
 {
 #if defined(NWEB_SOC_PERF)
-    OHOS::SOCPERF::SocPerfClient::GetInstance().PerfRequestEx(id, onOffTag, "");
+    uint32_t resType = ConvertId(id);
+    if (resType == SOC_PERF_INVALID) {
+        return;
+    }
+
+    std::unordered_map<std::string, std::string> mapPayload;
+    int64_t value = onOffTag ? SOC_PERF_START : SOC_PERF_END;
+    OHOS::ResourceSchedule::ResSchedClient::GetInstance().ReportData(resType, value, mapPayload);
 #endif
 }
 
+uint32_t SocPerfClientAdapterImpl::ConvertId(int32_t id)
+{
+    auto mit = convertMap_.find(id);
+    if (mit == convertMap_.end()) {
+        WVLOG_E("invalid id: %{public}d", id);
+        return SOC_PERF_INVALID;
+    }
+    return mit->second;
+}
 }  // namespace OHOS::NWeb
