@@ -16,6 +16,7 @@
 #include <cstring>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <securec.h>
 
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "rdb_sql_utils.h"
