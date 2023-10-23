@@ -12,3 +12,4 @@
 # limitations under the License.
 
 web.optimization=true
+web.debug.devtools = false

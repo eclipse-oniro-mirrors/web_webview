@@ -27,6 +27,7 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
+#include "parameters.h"
 #include "pixel_map.h"
 #include "pixel_map_napi.h"
 #include "web_errors.h"
@@ -382,6 +383,7 @@ napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info
         WVLOG_E("Wrap native webviewController failed.");
         return nullptr;
     }
+    WebviewController::webDebuggingAccess_ = OHOS::system::GetBoolParameter("web.debug.devtools", false);
     return thisVar;
 }
 
@@ -461,9 +463,11 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
 napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callback_info info)
 {
     WVLOG_D("SetWebDebuggingAccess start");
-
-    napi_value thisVar = nullptr;
     napi_value result = nullptr;
+    if (OHOS::system::GetBoolParameter("web.debug.devtools", false)) {
+        return result;
+    }
+    napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = {0};
 
