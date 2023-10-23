@@ -25,7 +25,7 @@ class SocPerfClientAdapterImpl : public SocPerfClientAdapter {
 public:
     SocPerfClientAdapterImpl();
 
-    ~SocPerfClientAdapterImpl() override = default;
+    ~SocPerfClientAdapterImpl() override;
 
     void ApplySocPerfConfigById(int32_t id) override;
 
