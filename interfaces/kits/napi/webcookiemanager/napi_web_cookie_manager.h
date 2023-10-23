@@ -41,6 +41,13 @@ public:
         napi_deferred deferred_;
     };
 
+    struct WebFetchCookieManagerParam {
+        napi_env env_;
+        napi_ref callback_;
+        napi_deferred deferred_;
+        std::string result_;
+    };
+
     static napi_value Init(napi_env env, napi_value exports);
 
 private:
@@ -69,6 +76,14 @@ private:
     static napi_value JsDeleteSessionCookie(napi_env env, napi_callback_info info);
 
     static napi_value JsSaveCookieAsync(napi_env env, napi_callback_info info);
+
+    static napi_value JsFetchCookieAsync(napi_env env, napi_callback_info info);
+
+    static napi_value JsConfigCookieAsync(napi_env env, napi_callback_info info);
+
+    static napi_value JsClearAllCookiesAsync(napi_env env, napi_callback_info info);
+
+    static napi_value JsClearSessionCookieAsync(napi_env env, napi_callback_info info);
 };
 
 class NWebSaveCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<bool> {
@@ -85,6 +100,37 @@ private:
     napi_ref callback_;
     napi_deferred deferred_;
 };
+
+class NWebCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<bool> {
+public:
+    NWebCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
+        : env_(env), callback_(callback), deferred_(deferred) {}
+    ~NWebCookieCallbackImpl() = default;
+
+    void OnReceiveValue(bool result) override;
+
+    static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
+private:
+    napi_env env_;
+    napi_ref callback_;
+    napi_deferred deferred_;
+};
+
+class NWebFetchCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {
+public:
+    NWebFetchCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
+        : env_(env), callback_(callback), deferred_(deferred) {}
+    ~NWebFetchCookieCallbackImpl() = default;
+
+    void OnReceiveValue(std::string result) override;
+
+    static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
+private:
+    napi_env env_;
+    napi_ref callback_;
+    napi_deferred deferred_;
+};
+
 } // namespace NWeb
 } // namespace OHOS
 
