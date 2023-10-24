@@ -24,6 +24,7 @@ enum class ResSchedTypeAdapter : int32_t {
     RES_TYPE_KEY_THREAD = 0,
     RES_TYPE_WEB_STATUS_CHANGE,
     RES_TYPE_WEB_SCENE,
+    RES_TYPE_AUDIO_STATUS_CHANGE,
 };
 
 enum class ResSchedStatusAdapter : int32_t {
@@ -33,6 +34,8 @@ enum class ResSchedStatusAdapter : int32_t {
     WEB_INACTIVE,
     WEB_SCENE_ENTER,
     WEB_SCENE_EXIT,
+    AUDIO_STATUS_START,
+    AUDIO_STATUS_STOP,
 };
 
 enum class ResSchedRoleAdapter : int32_t {
@@ -63,6 +66,7 @@ public:
         ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId = -1);
     static bool ReportScene(
         ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter, int32_t nwebId = -1);
+    static bool ReportAudioData(ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid);
     static void ReportNWebInit(ResSchedStatusAdapter statusAdapter, int32_t nwebId);
 };
 } // namespace OHOS::NWeb
