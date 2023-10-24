@@ -18,9 +18,11 @@
 
 #include <map>
 
+#if defined(NWEB_LOCATION_ENABLE)
 #include "i_locator_callback.h"
 #include "location.h"
 #include "request_config.h"
+#endif
 
 #include "location_adapter.h"
 
@@ -36,15 +38,19 @@ public:
     void SetDistanceInterval(int32_t disInterval) override;
     void SetTimeInterval(int32_t timeInterval) override;
     void SetPriority(int32_t priority) override;
+#if defined(NWEB_LOCATION_ENABLE)
     std::unique_ptr<OHOS::Location::RequestConfig>& GetConfig();
 private:
     std::unique_ptr<OHOS::Location::RequestConfig> config_;
+#endif
 };
 
 class LocationInfoImpl : public LocationInfo {
 public:
+#if defined(NWEB_LOCATION_ENABLE)
     LocationInfoImpl() = delete;
     explicit LocationInfoImpl(std::unique_ptr<OHOS::Location::Location>& location);
+#endif
     virtual ~LocationInfoImpl() = default;
     
     double GetLatitude() const override;
@@ -56,11 +62,14 @@ public:
     int64_t GetTimeStamp() const override;
     int64_t GetTimeSinceBoot() const override;
     std::string GetAdditions() const override;
+#if defined(NWEB_LOCATION_ENABLE)
     std::unique_ptr<OHOS::Location::Location>& GetLocation();
 private:
     std::unique_ptr<OHOS::Location::Location> location_;
+#endif
 };
 
+#if defined(NWEB_LOCATION_ENABLE)
 using LocatorCallbackMap =
     std::map<LocationCallbackAdapter*, sptr<OHOS::Location::ILocatorCallback>>;
 using IsEnableLocationFuncType = bool(*)(bool& isEnabled);
@@ -70,6 +79,8 @@ using StartLocatingFuncType = bool(*)(
     OHOS::sptr<OHOS::Location::ILocatorCallback>& callback);
 using StopLocatingFuncType = bool(*)(
     OHOS::sptr<OHOS::Location::ILocatorCallback>& callback);
+#endif
+
 class LocationProxyAdapterImpl : public LocationProxyAdapter {
 public:
     LocationProxyAdapterImpl();
@@ -81,6 +92,7 @@ public:
     bool StopLocating(std::shared_ptr<LocationCallbackAdapter> callback) override;
     bool EnableAbility(bool isEnabled) override;
     bool IsLocationEnabled() override;
+#if defined(NWEB_LOCATION_ENABLE)
 private:
     static void* wrapperHandle_;
     static IsEnableLocationFuncType isEnableLocationFunc_;
@@ -88,6 +100,7 @@ private:
     static StartLocatingFuncType startLocatingFunc_;
     static StopLocatingFuncType stopLocatingFunc_;
     LocatorCallbackMap reg_;
+#endif
 };
 }
 

@@ -19,9 +19,12 @@
 #include "audio_capturer_adapter.h"
 
 #include <unordered_set>
+#if defined(NWEB_AUDIO_ENABLE)
 #include "audio_capturer.h"
+#endif
 
 namespace OHOS::NWeb {
+#if defined(NWEB_AUDIO_ENABLE)
 using namespace OHOS::AudioStandard;
 
 class AudioCapturerReadCallbackImpl : public AudioCapturerReadCallback {
@@ -35,6 +38,7 @@ public:
 private:
     std::shared_ptr<AudioCapturerReadCallbackAdapter> cb_ = nullptr;
 };
+#endif
 
 class AudioCapturerAdapterImpl : public AudioCapturerAdapter {
 public:
@@ -62,6 +66,7 @@ public:
 
     int64_t GetAudioTime() override;
 
+#if defined(NWEB_AUDIO_ENABLE)
     static AudioSamplingRate GetAudioSamplingRate(AudioAdapterSamplingRate samplingRate);
 
     static AudioEncodingType GetAudioEncodingType(AudioAdapterEncodingType encodingType);
@@ -74,6 +79,7 @@ public:
 
 private:
     std::unique_ptr<AudioCapturer> audio_capturer_;
+#endif
 };
 }  // namespace OHOS::NWeb
 
