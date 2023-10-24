@@ -13,11 +13,16 @@
 
 import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
+import("../../../../config.gni")
 
 module_output_path = "web/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
+
+  if (webview_camera_enable) {
+    defines = [ "NWEB_CAMERA_ENABLE" ]
+  }
 
   include_dirs = [
     "$webview_path/ohos_adapter/camera_adapter/include",
@@ -56,5 +61,8 @@ ohos_unittest("camera_adapter_impl_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":camera_adapter_impl_test" ]
+  deps = []
+  if (webview_camera_enable) {
+    deps += [ ":camera_adapter_impl_test" ]
+  }
 }

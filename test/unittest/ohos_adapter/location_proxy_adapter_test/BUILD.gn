@@ -12,12 +12,17 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../../config.gni")
 import("../../../../web_aafwk.gni")
 
 module_output_path = "web/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
+
+  if (webview_location_enable) {
+    defines = [ "NWEB_LOCATION_ENABLE" ]
+  }
 
   include_dirs = [
     "../../../../ohos_adapter/location_adapter/include",
@@ -48,5 +53,8 @@ ohos_unittest("location_proxy_adapter_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":location_proxy_adapter_test" ]
+  deps = []
+  if (webview_location_enable) {
+    deps += [ ":location_proxy_adapter_test" ]
+  }
 }

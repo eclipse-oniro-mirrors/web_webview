@@ -17,8 +17,6 @@
 #define CAMERA_MANAGER_ADAPTER_IMPL_H
 
 #include "camera_manager_adapter.h"
-#include "camera_manager.h"
-
 
 #include <cstdio>
 #include <fcntl.h>
@@ -26,7 +24,12 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#if defined(NWEB_CAMERA_ENABLE)
+#include "camera_manager.h"
+#endif
+
 namespace OHOS::NWeb {
+#if defined(NWEB_CAMERA_ENABLE)
 using namespace OHOS::CameraStandard;
 
 enum class SurfaceType {
@@ -76,6 +79,7 @@ private:
     CameraStatusAdapter GetAdapterCameraStatus(CameraStatus status) const;
     std::shared_ptr<CameraStatusCallbackAdapter> statusCallback_;
 };
+#endif
 
 class CameraManagerAdapterImpl : public CameraManagerAdapter {
 public:
@@ -119,6 +123,8 @@ public:
     void SetCameraStatus(CameraStatusAdapter status) override;
 
     std::string GetCurrentDeviceId() override;
+
+#if defined(NWEB_CAMERA_ENABLE)
 private:
     VideoTransportType GetCameraTransportType(ConnectionType connectType);
     VideoFacingModeAdapter GetCameraFacingMode(CameraPosition position);
@@ -159,8 +165,10 @@ private:
     bool isForegound_ = false;
     std::mutex restart_mutex_;
     std::shared_ptr<CameraManagerAdapterCallback> cameraMngrCallback_;
+#endif
 };
 
+#if defined(NWEB_CAMERA_ENABLE)
 class CameraSurfaceListener : public IBufferConsumerListener {
 public:
     CameraSurfaceListener(SurfaceType surfaceType,
@@ -194,7 +202,6 @@ public:
 private:
     sptr<IConsumerSurface> cSurface_ = nullptr;
 };
-
-}  // namespace OHOS::NWeb
-
+#endif
+} // namespace OHOS::NWeb
 #endif // CAMERA_MANAGER_ADAPTER_IMPL_H

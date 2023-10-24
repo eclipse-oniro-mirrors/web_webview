@@ -18,13 +18,16 @@
 
 #include "audio_renderer_adapter.h"
 
+#if defined(NWEB_AUDIO_ENABLE)
 #include "audio_renderer.h"
+#endif
 
 namespace OHOS::AVSession {
 class AVSession;
 };
 
 namespace OHOS::NWeb {
+#if defined(NWEB_AUDIO_ENABLE)
 using namespace OHOS::AudioStandard;
 
 class AudioRendererCallbackImpl : public AudioRendererCallback {
@@ -40,6 +43,7 @@ public:
 private:
     std::shared_ptr<AudioRendererCallbackAdapter> cb_ = nullptr;
 };
+#endif
 
 class AudioRendererAdapterImpl : public AudioRendererAdapter {
 public:
@@ -72,6 +76,7 @@ public:
 
     bool IsRendererStateRunning() override;
 
+#if defined(NWEB_AUDIO_ENABLE)
     static AudioSamplingRate GetAudioSamplingRate(AudioAdapterSamplingRate samplingRate);
 
     static AudioEncodingType GetAudioEncodingType(AudioAdapterEncodingType encodingType);
@@ -88,6 +93,7 @@ private:
     std::unique_ptr<AudioRenderer> audio_renderer_;
     std::shared_ptr<AudioRendererCallbackImpl> callback_;
     static std::shared_ptr<OHOS::AVSession::AVSession> avsession_;
+#endif
 };
 }  // namespace OHOS::NWeb
 
