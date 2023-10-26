@@ -39,11 +39,11 @@ ohos_unittest("print_manager_adapter_impl_test") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [ 
+external_deps = [
+    "napi:ace_napi",
     "print_fwk:print_client",
     "print_fwk:print_helper",
-    "napi:ace_napi", 
-    ]
+  ]
 }
 
 group("unittest") {

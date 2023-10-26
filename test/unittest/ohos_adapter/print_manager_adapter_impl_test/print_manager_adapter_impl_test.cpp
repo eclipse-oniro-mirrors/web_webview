@@ -20,6 +20,7 @@
 
 #define private public
 #include "print_manager_adapter_impl.h"
+#include "print_manager_adapter.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -51,16 +52,16 @@ void PrintManagerAdapterImplTest::SetUp(void)
 void PrintManagerAdapterImplTest::TearDown(void)
 {}
 
-class PrintDocumentAdapterImplMock : public OHOS::Print::PrintDocumentAdapter {
+class PrintDocumentAdapterImplMock : public PrintDocumentAdapterAdapter {
 public:
     PrintDocumentAdapterImplMock() = default;
     ~PrintDocumentAdapterImplMock() override = default;
 
-    void onStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
+    void OnStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
         const OHOS::Print::PrintAttributes& newAttrs, uint32_t fd,
-        std::function<void(std::string, uint32_t)> writeResultCallback) override {};
+        std::function<void(std::string, uint32_t)> writeResultCallback) override {}
 
-    void onJobStateChanged(const std::string& jobId, uint32_t state) override {};
+    void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
 
 };
 /**
@@ -79,10 +80,10 @@ public:
     auto writeResultCallback = [](std::string str, uint32_t index){};
     uint32_t state = 1;
 
-    documentAdapter.onStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
+    documentAdapter.OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
     documentAdapter.OnJobStateChanged(jobId, state);
     documentAdapter.cb_ = nullptr;
-    documentAdapter.onStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
+    documentAdapter.OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
     documentAdapter.OnJobStateChanged(jobId, state);
 }
 }
