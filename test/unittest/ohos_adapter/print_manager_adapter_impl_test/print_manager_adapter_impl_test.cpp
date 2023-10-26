@@ -56,11 +56,11 @@ public:
     PrintDocumentAdapterImplMock() = default;
     ~PrintDocumentAdapterImplMock() override = default;
 
-    void OnStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
+    void onStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
         const OHOS::Print::PrintAttributes& newAttrs, uint32_t fd,
         std::function<void(std::string, uint32_t)> writeResultCallback) override {}
 
-    void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
+    void onJobStateChanged(const std::string& jobId, uint32_t state) override {}
 
 };
 /**
@@ -80,11 +80,11 @@ public:
     auto writeResultCallback = [](std::string str, uint32_t index){};
     uint32_t state = 1;
 
-    documentAdapter.OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
-    documentAdapter.OnJobStateChanged(jobId, state);
+    documentAdapter.onStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
+    documentAdapter.onJobStateChanged(jobId, state);
     documentAdapter.cb_ = nullptr;
-    documentAdapter.OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
-    documentAdapter.OnJobStateChanged(jobId, state);
+    documentAdapter.onStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
+    documentAdapter.onJobStateChanged(jobId, state);
 }
 }
 } // namespace NWeb
