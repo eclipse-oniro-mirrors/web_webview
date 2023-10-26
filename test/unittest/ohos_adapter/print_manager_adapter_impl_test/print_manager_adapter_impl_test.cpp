@@ -20,7 +20,6 @@
 
 #define private public
 #include "print_manager_adapter_impl.h"
-#include "print_manager_adapter.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -76,6 +75,7 @@ public:
     PrintDocumentAdapterImpl documentAdapter(mock);
     std::string jobId = "abc";
     OHOS::Print::PrintAttributes oldAttrs = OHOS::Print::PrintAttributes();
+    OHOS::Print::PrintAttributes newAttrs = OHOS::Print::PrintAttributes();
     uint32_t fd = 1;
     auto writeResultCallback = [](std::string str, uint32_t index){};
     uint32_t state = 1;
