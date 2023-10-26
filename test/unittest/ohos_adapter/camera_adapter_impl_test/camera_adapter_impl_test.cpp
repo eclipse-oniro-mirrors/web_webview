@@ -35,6 +35,7 @@ using namespace OHOS::Camera;
 namespace OHOS::NWeb {
 namespace {
 sptr<SurfaceBuffer> g_surfaceBuffer = nullptr;
+sptr<CameraManager> g_cameraManager = nullptr;
 const uint32_t DEFAULT_WIDTH = 2560;
 const uint32_t DEFAULT_HEIGHT = 1396;
 } // namespace
@@ -66,17 +67,20 @@ void CameraAdapterImplTest::SetUpTestCase(void)
     perms[1] = "ohos.permission.CAMERA";
     NativeTokenInfoParams infoInstance = {
         .dcapsNum = 0,
-        .permsNum = 1,
+        .permsNum = 2,
         .aclsNum = 0,
         .dcaps = NULL,
         .perms = perms,
         .acls = NULL,
-        .processName = "web_camera_tdd",
+        .processName = "native_camera_tdd",
         .aplStr = "system_basic",
     };
     tokenId = GetAccessTokenId(&infoInstance);
     SetSelfTokenID(tokenId);
     OHOS::Security::AccessToken::AccessTokenKit::ReloadNativeTokenInfo();
+
+    g_cameraManager = CameraManager::GetInstance();
+    EXPECT_NE(g_cameraManager, nullptr);
 }
 
 void CameraAdapterImplTest::TearDownTestCase(void)
@@ -290,12 +294,13 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     adapter.GetDevicesInfo(devicesDiscriptor);
     std::shared_ptr<CameraMetadata> data = std::make_shared<CameraMetadata>(0, 0);
     dmDeviceInfo tempDmDeviceInfo;
-    sptr<CameraDevice> device = new(std::nothrow) CameraDevice("test", data, tempDmDeviceInfo);
     std::string deviceId = "0";
     result = adapter.InitCameraInput(deviceId);
     EXPECT_NE(result, 0);
     sptr<ICameraDeviceService> deviceObj = nullptr;
-    sptr<CameraInput> cameraInput = new(std::nothrow) CameraInput(deviceObj, device);
+    std::vector<sptr<CameraDevice>> cameras = g_cameraManager->GetSupportedCameras();
+    sptr<CameraInput> cameraInput = g_cameraManager->CreateCameraInput(cameras[0]);
+    ASSERT_NE(cameraInput, nullptr);
     adapter.cameraInput_ = cameraInput;
     result = adapter.InitCameraInput(deviceId);
     EXPECT_EQ(result, 0);
@@ -369,8 +374,8 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureMode
     EXPECT_EQ(result, 0);
     result = adapter.CreateAndStartSession();
     EXPECT_NE(result, 0);
-    sptr<ICaptureSession> session = nullptr;
-    sptr<CaptureSession> captureSession = new(std::nothrow) CaptureSession(session);
+    sptr<CaptureSession> captureSession = g_cameraManager->CreateCaptureSession();
+    EXPECT_NE(captureSession, nullptr);
     adapter.captureSession_ = captureSession;
     result = adapter.GetExposureModes(exposureModesAdapter);
     EXPECT_NE(result, 0);
