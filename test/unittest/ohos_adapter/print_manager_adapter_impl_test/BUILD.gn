@@ -40,9 +40,9 @@ ohos_unittest("print_manager_adapter_impl_test") {
   ]
 
 external_deps = [
-    "napi:ace_napi",
     "print_fwk:print_client",
     "print_fwk:print_helper",
+    "napi:ace_napi",
   ]
 }
 
