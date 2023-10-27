@@ -57,12 +57,11 @@ public:
     PrintDocumentAdapterImplMock() = default;
     ~PrintDocumentAdapterImplMock() override = default;
 
-    void OnStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
-        const OHOS::Print::PrintAttributes& newAttrs, uint32_t fd,
+    void OnStartLayoutWrite(const std::string& jobId, const PrintAttributes& oldAttrs,
+        const PrintAttributes& newAttrs, uint32_t fd,
         std::function<void(std::string, uint32_t)> writeResultCallback) override {}
 
     void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
-
 };
 /**
  * @tc.name: PrintManagerAdapterImplTest_InitParamSet_001
