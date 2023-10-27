@@ -57,8 +57,8 @@ public:
     PrintDocumentAdapterImplMock() = default;
     ~PrintDocumentAdapterImplMock() override = default;
 
-    void OnStartLayoutWrite(const std::string& jobId, const PrintAttributes& oldAttrs,
-        const PrintAttributes& newAttrs, uint32_t fd,
+    void OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
+        const PrintAttributesAdapter& newAttrs, uint32_t fd,
         std::function<void(std::string, uint32_t)> writeResultCallback) override {}
 
     void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
@@ -72,6 +72,7 @@ public:
  HWTEST_F(PrintManagerAdapterImplTest, PrintManagerAdapterImplTest_InitParamSet_001, TestSize.Level1)
 {
     std::shared_ptr<PrintDocumentAdapterAdapter> mock = std::make_shared<PrintDocumentAdapterImplMock>();
+    EXPECT_NE(mock, nullptr);
     PrintDocumentAdapterImpl documentAdapter(mock);
     std::string jobId = "abc";
     OHOS::Print::PrintAttributes oldAttrs = OHOS::Print::PrintAttributes();
@@ -80,6 +81,7 @@ public:
     auto writeResultCallback = [](std::string str, uint32_t index){};
     uint32_t state = 1;
 
+    EXPECT_NE(documentAdapter.cb_, nullptr);
     documentAdapter.onStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
     documentAdapter.onJobStateChanged(jobId, state);
     documentAdapter.cb_ = nullptr;
