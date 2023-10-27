@@ -867,6 +867,26 @@ NWebWebStorage *NWebHelper::GetWebStorage()
     return storageFunc();
 }
 
+using SetConnectionTimeoutFunc = void (*)(const int32_t&);
+void NWebHelper::SetConnectionTimeout(const int32_t& timeout)
+{
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
+        return;
+    }
+
+    const std::string SET_CONNECTION_TIMEOUT_FUNC_NAME = "SetConnectionTimeout";
+    SetConnectionTimeoutFunc setConnectionTimeoutFunc =
+        reinterpret_cast<SetConnectionTimeoutFunc>(dlsym(libHandleWebEngine_,
+                                                         SET_CONNECTION_TIMEOUT_FUNC_NAME.c_str()));
+    if (setConnectionTimeoutFunc == nullptr) {
+        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", SET_CONNECTION_TIMEOUT_FUNC_NAME.c_str());
+        return;
+    }
+    setConnectionTimeoutFunc(timeout);
+    WVLOG_I("timeout value in NWebHelper: %{public}d", timeout);
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;

@@ -43,6 +43,7 @@ public:
     void SetHttpDns(const NWebDOHConfig& config);
     void PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets);
     bool LoadNWebSDK();
+    void SetConnectionTimeout(const int32_t& timeout);
 
 private:
     NWebHelper() = default;
