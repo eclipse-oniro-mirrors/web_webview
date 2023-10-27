@@ -21,11 +21,64 @@
 namespace OHOS::NWeb {
 using namespace OHOS::EDM;
 
+namespace {
+  const char* const BROWSER_POLICY_CHANGED_EVENT = "com.ohos.edm.browserpolicychanged";
+}
+
 // static
 EnterpriseDeviceManagementAdapterImpl& EnterpriseDeviceManagementAdapterImpl::GetInstance()
 {
     static EnterpriseDeviceManagementAdapterImpl instance;
     return instance;
+}
+
+NWebEdmEventSubscriber::NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& cb)
+    : EventFwk::CommonEventSubscriber(in), eventCallback_(cb) {}
+
+void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& data)
+{
+    const std::string action = data.GetWant().GetAction();
+    WVLOG_I("Receive edm policy action: %{public}s", action.c_str());
+    if (action != BROWSER_POLICY_CHANGED_EVENT) {
+        return;
+    }
+
+    eventCallback_();
+}
+
+void EnterpriseDeviceManagementAdapterImpl::RegistPolicyChangeEventCallback(const EdmPolicyChangedEventCallback&& eventCallback)
+{
+    WVLOG_I("Regist edm policy change event callback");
+    cb = std::move(eventCallback);
+}
+
+bool EnterpriseDeviceManagementAdapterImpl::StartObservePolicyChange()
+{
+    WVLOG_I("Start observing edm policy change event");
+
+    EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
+    skill.AddEvent(BROWSER_POLICY_CHANGED_EVENT);
+    EventFwk::CommonEventSubscribeInfo info(skill);
+    this->commonEventSubscriber_ = std::make_shared<NWebEdmEventSubscriber>(info, this->cb);
+    bool ret = EventFwk::CommonEventManager::SubscribeCommonEvent(this->commonEventSubscriber_);
+    if (ret == false) {
+        WVLOG_E("Start observing edm policy failed");
+    }
+    return ret;
+}
+
+bool EnterpriseDeviceManagementAdapterImpl::StopObservePolicyChange()
+{
+    WVLOG_I("Stop observing edm policy change event");
+
+    if (this->commonEventSubscriber_ != nullptr) {
+        bool ret = EventFwk::CommonEventManager::UnSubscribeCommonEvent(this->commonEventSubscriber_);
+        if (ret == false) {
+            WVLOG_E("Stop observing edm policy change failed");
+        }
+        return ret;
+    }
+    return true;
 }
 
 int32_t EnterpriseDeviceManagementAdapterImpl::GetPolicies(std::string& policies)
