@@ -39,6 +39,10 @@ constexpr ErrCode NO_WEBSTORAGE_ORIGIN = 17100012;
 constexpr ErrCode INVALID_SOCKET_NUMBER = 17100013;
 constexpr ErrCode TYPE_NOT_MATCH_WITCH_VALUE = 17100014;
 constexpr ErrCode NEW_OOM = 17100015;
+constexpr ErrCode DOWNLOAD_NOT_PAUSED = 17100016;
+constexpr ErrCode NO_VALID_CONTROLLER_FOR_DOWNLOAD = 17100017;
+constexpr ErrCode NO_DOWNLOAD_DELEGATE_SET = 17100018;
+constexpr ErrCode DOWNLOAD_NOT_START = 17100019;
 
 std::string GetErrMsgByErrCode(ErrCode code);
 }

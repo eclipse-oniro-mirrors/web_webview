@@ -25,15 +25,15 @@ constexpr HiviewDFX::HiLogLabel LOG_LABEL = { LOG_CORE, 0xD004500, "NWEB" };
 #define FUNC_LINE_FMT " %{public}s<%{public}d>: "
 
 #define WVLOG_D(fmt, ...) \
-    HiviewDFX::HiLog::Debug(LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+    HiviewDFX::HiLog::Debug(OHOS::LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define WVLOG_I(fmt, ...) \
-    HiviewDFX::HiLog::Info(LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+    HiviewDFX::HiLog::Info(OHOS::LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define WVLOG_W(fmt, ...) \
-    HiviewDFX::HiLog::Warn(LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+    HiviewDFX::HiLog::Warn(OHOS::LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define WVLOG_E(fmt, ...) \
-    HiviewDFX::HiLog::Error(LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+    HiviewDFX::HiLog::Error(OHOS::LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 #define WVLOG_F(fmt, ...) \
-    HiviewDFX::HiLog::Fatal(LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
+    HiviewDFX::HiLog::Fatal(OHOS::LOG_LABEL, FUNC_LINE_FMT fmt, __FUNCTION__, __LINE__, ##__VA_ARGS__)
 } // namespace OHOS
 
 #endif // NWEB_HILOG_H

@@ -42,6 +42,7 @@ public:
     void SetBundlePath(const std::string &path);
     void SetHttpDns(const NWebDOHConfig& config);
     void PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets);
+    bool LoadNWebSDK();
 
 private:
     NWebHelper() = default;
