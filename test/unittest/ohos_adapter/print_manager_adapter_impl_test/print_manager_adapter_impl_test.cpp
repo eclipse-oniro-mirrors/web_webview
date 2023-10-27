@@ -20,6 +20,7 @@
 
 #define private public
 #include "print_manager_adapter_impl.h"
+#include "print_manager_adapter.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -56,11 +57,11 @@ public:
     PrintDocumentAdapterImplMock() = default;
     ~PrintDocumentAdapterImplMock() override = default;
 
-    void onStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
+    void OnStartLayoutWrite(const std::string& jobId, const OHOS::Print::PrintAttributes& oldAttrs,
         const OHOS::Print::PrintAttributes& newAttrs, uint32_t fd,
         std::function<void(std::string, uint32_t)> writeResultCallback) override {}
 
-    void onJobStateChanged(const std::string& jobId, uint32_t state) override {}
+    void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
 
 };
 /**
