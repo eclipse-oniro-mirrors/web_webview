@@ -24,6 +24,10 @@
 #include "napi_web_data_base.h"
 #include "napi_web_storage.h"
 
+#include "napi_web_download_manager.h"
+#include "napi_web_download_item.h"
+#include "napi_web_download_delegate.h"
+
 namespace OHOS {
 namespace NWeb {
 EXTERN_C_START
@@ -35,6 +39,9 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
     NapiWebviewController::Init(env, exports);
     NapiWebCookieManager::Init(env, exports);
     NapiGeolocationPermission::Init(env, exports);
+    NapiWebDownloadItem::Init(env, exports);
+    NapiWebDownloadManager::Init(env, exports);
+    NapiWebDownloadDelegate::Init(env, exports);
     WebFunctionInit(env, exports);
     return exports;
 }
