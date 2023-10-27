@@ -32,8 +32,8 @@ EnterpriseDeviceManagementAdapterImpl& EnterpriseDeviceManagementAdapterImpl::Ge
     return instance;
 }
 
-NWebEdmEventSubscriber::NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& cb)
-    : EventFwk::CommonEventSubscriber(in), eventCallback_(cb) {}
+NWebEdmEventSubscriber::NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& eventCallback)
+    : EventFwk::CommonEventSubscriber(in), eventCallback_(eventCallback) {}
 
 void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& data)
 {
@@ -49,7 +49,7 @@ void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& dat
 void EnterpriseDeviceManagementAdapterImpl::RegistPolicyChangeEventCallback(const EdmPolicyChangedEventCallback&& eventCallback)
 {
     WVLOG_I("Regist edm policy change event callback");
-    cb = std::move(eventCallback);
+    eventCallback_ = std::move(eventCallback);
 }
 
 bool EnterpriseDeviceManagementAdapterImpl::StartObservePolicyChange()
@@ -59,7 +59,7 @@ bool EnterpriseDeviceManagementAdapterImpl::StartObservePolicyChange()
     EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
     skill.AddEvent(BROWSER_POLICY_CHANGED_EVENT);
     EventFwk::CommonEventSubscribeInfo info(skill);
-    this->commonEventSubscriber_ = std::make_shared<NWebEdmEventSubscriber>(info, this->cb);
+    this->commonEventSubscriber_ = std::make_shared<NWebEdmEventSubscriber>(info, this->eventCallback_);
     bool ret = EventFwk::CommonEventManager::SubscribeCommonEvent(this->commonEventSubscriber_);
     if (ret == false) {
         WVLOG_E("Start observing edm policy failed");

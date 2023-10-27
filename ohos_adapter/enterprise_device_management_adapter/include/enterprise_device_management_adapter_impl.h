@@ -68,7 +68,7 @@ private:
     EnterpriseDeviceManagementAdapterImpl(const EnterpriseDeviceManagementAdapterImpl& other) = delete;
     EnterpriseDeviceManagementAdapterImpl& operator=(const EnterpriseDeviceManagementAdapterImpl&) = delete;
 
-    EdmPolicyChangedEventCallback cb = nullptr;
+    EdmPolicyChangedEventCallback eventCallback_ = nullptr;
     std::shared_ptr<EventFwk::CommonEventSubscriber> commonEventSubscriber_ = nullptr;
 };
 
