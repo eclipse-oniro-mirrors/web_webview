@@ -18,7 +18,23 @@
 
 #include "enterprise_device_management_adapter.h"
 
+#include "common_event_manager.h"
+#include "common_event_support.h"
+#include "matching_skills.h"
+#include "want.h"
+#include "common_event_subscriber.h"
+
 namespace OHOS::NWeb {
+
+class NWebEdmEventSubscriber : public EventFwk::CommonEventSubscriber {
+public:
+    NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& cb);
+    ~NWebEdmEventSubscriber() override = default;
+
+    void OnReceiveEvent(const EventFwk::CommonEventData& data) override;
+private:
+    EdmPolicyChangedEventCallback eventCallback_;
+};
 
 class EnterpriseDeviceManagementAdapterImpl : public EnterpriseDeviceManagementAdapter {
 public:
@@ -26,10 +42,34 @@ public:
     ~EnterpriseDeviceManagementAdapterImpl() override = default;
     int32_t GetPolicies(std::string& policies) override;
 
+    /**
+     * Set an EDM policy change event callback.
+     *
+     * @param eventCallback EDM policy change event callback.
+     */
+    void RegistPolicyChangeEventCallback(const EdmPolicyChangedEventCallback&& eventCallback) override;
+
+    /**
+     * Subscribe EDM policy change event from CommonEventSubscriber.
+     *
+     * @return Returns true if success; false otherwise.
+     */
+    bool StartObservePolicyChange() override;
+
+    /**
+     * Unsubscribe EDM policy change event from CommonEventSubscriber.
+     *
+     * @return Returns true if success; false otherwise.
+     */
+    bool StopObservePolicyChange() override;
+
 private:
     EnterpriseDeviceManagementAdapterImpl() = default;
     EnterpriseDeviceManagementAdapterImpl(const EnterpriseDeviceManagementAdapterImpl& other) = delete;
     EnterpriseDeviceManagementAdapterImpl& operator=(const EnterpriseDeviceManagementAdapterImpl&) = delete;
+
+    EdmPolicyChangedEventCallback cb = nullptr;
+    std::shared_ptr<EventFwk::CommonEventSubscriber> commonEventSubscriber_ = nullptr;
 };
 
 }  // namespace OHOS::NWeb
