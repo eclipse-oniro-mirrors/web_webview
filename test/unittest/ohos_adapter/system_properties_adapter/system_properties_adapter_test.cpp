@@ -59,5 +59,10 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     EXPECT_NE(result, -1);
     SystemPropertiesAdapterImpl::GetInstance().GetResourceUseHapPathEnable();
     SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    bool value = SystemPropertiesAdapterImpl::GetInstance().GetWebOptimizationValue();
+    EXPECT_TRUE(value);
+    system("param set web.optimization false");
+    value = SystemPropertiesAdapterImpl::GetInstance().GetWebOptimizationValue();
+    EXPECT_FALSE(value);
 }
 } // namespace OHOS
