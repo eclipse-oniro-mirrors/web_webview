@@ -25,6 +25,7 @@
 
 #include "nweb_log.h"
 #include "foundation/ability/ability_base/interfaces/kits/native/uri/include/uri.h"
+#include "foundation/filemanagement/app_file_service/interfaces/innerkits/native/file_uri/include/file_uri.h"
 #include "foundation/distributeddatamgr/data_share/interfaces/inner_api/consumer/include/datashare_helper.h"
 #include "foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include/system_ability_definition.h"
 #include "foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include/iservice_registry.h"
@@ -62,37 +63,7 @@ int DatashareAdapterImpl::OpenDataShareUriForRead(const std::string& uriStr) con
 
 std::string DatashareAdapterImpl::GetFileDisplayName(const std::string& uriStr)
 {
-    int fd = OpenDataShareUriForRead(uriStr);
-    if (fd < 0) {
-        WVLOG_E("fd is invaild ,return null");
-        return "";
-    }
-
-    char buf[PATH_MAX] = {'\0'};
-    char filePath[PATH_MAX] = {'\0'};
-
-    int ret = snprintf_s(buf, sizeof(buf), sizeof(buf), "/proc/self/fd/%d", fd);
-    if (ret < 0) {
-        close(fd);
-        WVLOG_E("GetFileDisplayName, snprintf failed with %{public}d", errno);
-        return "";
-    }
-
-    ret = readlink(buf, filePath, PATH_MAX - 1);
-    if (ret < 0) {
-        close(fd);
-        WVLOG_E("GetFileDisplayName, readlink failed with %{public}d", errno);
-        return "";
-    }
-
-    close(fd);
-    std::string fileName = filePath;
-    std::size_t firstSlash = fileName.rfind("/");
-    if (firstSlash == fileName.npos) {
-        WVLOG_E("GetFileDisplayName, get error path with %{public}s", fileName.c_str());
-        return "";
-    }
-    fileName = fileName.substr(firstSlash + 1, fileName.size() - firstSlash);
-    return fileName;
+    AppFileService::ModuleFileUri::FileUri fileUri(uriStr);
+    return fileUri.GetName();
 }
 } // namespace OHOS::NWeb
