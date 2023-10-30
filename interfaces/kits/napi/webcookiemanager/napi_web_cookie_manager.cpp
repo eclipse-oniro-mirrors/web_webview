@@ -279,8 +279,8 @@ void ConfigCookieAsyncCallback(napi_env env, napi_ref jsCallback, std::string ur
         NapiCallBackNullptr(env, jsCallback);
         napi_delete_reference(env, jsCallback);
     } else {
-        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebCookieCallbackImpl>(env, jsCallback, nullptr);
-        cookieManager->SetCookie(url, value, callbackImpl);
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebConfigCookieCallbackImpl>(env, jsCallback, nullptr);
+        cookieManager->ConfigCookie(url, value, callbackImpl);
     }
 }
 
@@ -292,8 +292,8 @@ void ConfigCookieAsyncPromise(napi_env env, napi_deferred deferred, std::string 
         napi_get_undefined(env, &jsResult);
         napi_reject_deferred(env, deferred, jsResult);
     } else {
-        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebCookieCallbackImpl>(env, nullptr, deferred);
-        cookieManager->SetCookie(url, value, callbackImpl);
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebConfigCookieCallbackImpl>(env, nullptr, deferred);
+        cookieManager->ConfigCookie(url, value, callbackImpl);
     }
 }
 
@@ -782,21 +782,33 @@ void NWebFetchCookieCallbackImpl::UvJsCallbackThreadWoker(uv_work_t *work, int s
     }
 
     if (data->callback_) {
-        napi_value result[INTEGER_ONE] = {0};
-        napi_get_null(data->env_, &result[INTEGER_ZERO]);
+        napi_value result[INTEGER_TWO] = {0};
+        napi_get_null(data->env_, &result[INTEGER_ONE]);
+        if (data->result_.c_str() == std::to_string(NWebError::INVALID_URL)) {
+            result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(data->env_, NWebError::INVALID_URL);
+        } else {
+            napi_get_undefined(data->env_, &result[INTEGER_ZERO]);
+            napi_create_string_utf8(data->env_, data->result_.c_str(), NAPI_AUTO_LENGTH, &result[INTEGER_ONE]);
+        }
 
         napi_value onGetCookieFunc = nullptr;
-        napi_create_string_utf8(data->env_, data->result_.c_str(), NAPI_AUTO_LENGTH, &result[0]);
         napi_get_reference_value(data->env_, data->callback_, &onGetCookieFunc);
+
+        napi_value args[INTEGER_TWO] = {result[INTEGER_ZERO], result[INTEGER_ONE]};
         napi_value callbackResult = nullptr;
         napi_call_function(data->env_, nullptr, onGetCookieFunc,
-            INTEGER_ONE, &result[INTEGER_ZERO], &callbackResult);
+            INTEGER_TWO, &args[INTEGER_ZERO], &callbackResult);
         napi_delete_reference(data->env_, data->callback_);
     } else if (data->deferred_) {
-        napi_value result;
-        napi_get_null(data->env_, &result);
-        napi_create_string_utf8(data->env_, data->result_.c_str(), NAPI_AUTO_LENGTH, &result);
-        napi_resolve_deferred(data->env_, data->deferred_, result);
+        napi_value result[INTEGER_TWO] = {0};
+        result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(data->env_, NWebError::INVALID_URL);
+        napi_create_string_utf8(data->env_, data->result_.c_str(), NAPI_AUTO_LENGTH, &result[INTEGER_ONE]);
+        napi_value args[INTEGER_TWO] = {result[INTEGER_ZERO], result[INTEGER_ONE]};
+        if (data->result_.c_str() == std::to_string(NWebError::INVALID_URL)) {
+            napi_reject_deferred(data->env_, data->deferred_, args[INTEGER_ZERO]);
+        } else {
+            napi_resolve_deferred(data->env_, data->deferred_, args[INTEGER_ONE]);
+        }
     }
 
     napi_close_handle_scope(data->env_, scope);
@@ -916,6 +928,101 @@ void NWebCookieCallbackImpl::OnReceiveValue(bool result)
     param->env_ = env_;
     param->callback_ = callback_;
     param->deferred_ = deferred_;
+
+    work->data = reinterpret_cast<void*>(param);
+    int ret = uv_queue_work_with_qos(
+        loop, work, [](uv_work_t* work) {}, UvJsCallbackThreadWoker, uv_qos_user_initiated);
+    if (ret != 0) {
+        if (param != nullptr) {
+            delete param;
+            param = nullptr;
+        }
+        if (work != nullptr) {
+            delete work;
+            work = nullptr;
+        }
+    }
+}
+
+void NWebConfigCookieCallbackImpl::UvJsCallbackThreadWoker(uv_work_t *work, int status)
+{
+    if (work == nullptr) {
+        WVLOG_E("NWebConfigCookieCallbackImpl uv work is null");
+        return;
+    }
+    NapiWebCookieManager::WebConfigCookieManagerParam *data =
+        reinterpret_cast<NapiWebCookieManager::WebConfigCookieManagerParam*>(work->data);
+    if (data == nullptr) {
+        WVLOG_E("NWebConfigCookieCallbackImpl WebConfigCookieManagerParam is null");
+        delete work;
+        work = nullptr;
+        return;
+    }
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(data->env_, &scope);
+    if (scope == nullptr) {
+        return;
+    }
+
+    if (data->callback_) {
+        napi_value result[INTEGER_ONE] = {0};
+        if (data->result_ != 1) {
+            result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(data->env_, data->result_);
+        } else {
+            napi_get_null(data->env_, &result[INTEGER_ZERO]);
+        }
+
+        napi_value onGetCookieFunc = nullptr;
+        napi_get_reference_value(data->env_, data->callback_, &onGetCookieFunc);
+
+        napi_value callbackResult = nullptr;
+        napi_call_function(data->env_, nullptr, onGetCookieFunc,
+            INTEGER_TWO, &result[INTEGER_ZERO], &callbackResult);
+        napi_delete_reference(data->env_, data->callback_);
+    } else if (data->deferred_) {
+        napi_value result[INTEGER_ONE] = {0};
+        if (data->result_ != 1) {
+            result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(data->env_, data->result_);
+            napi_reject_deferred(data->env_, data->deferred_, result[INTEGER_ZERO]);
+        } else {
+            napi_get_null(data->env_, &result[INTEGER_ZERO]);
+            napi_resolve_deferred(data->env_, data->deferred_, result[INTEGER_ZERO]);
+        }
+    }
+
+    napi_close_handle_scope(data->env_, scope);
+    delete data;
+    data = nullptr;
+    delete work;
+    work = nullptr;
+}
+
+void NWebConfigCookieCallbackImpl::OnReceiveValue(long result)
+{
+    WVLOG_D("NWebFetchCookieCallbackImpl received result");
+    uv_loop_s *loop = nullptr;
+    uv_work_t *work = nullptr;
+    napi_get_uv_event_loop(env_, &loop);
+    if (loop == nullptr) {
+        WVLOG_E("get uv event loop failed");
+        return;
+    }
+    work = new (std::nothrow) uv_work_t;
+    if (work == nullptr) {
+        WVLOG_E("new uv work failed");
+        return;
+    }
+    NapiWebCookieManager::WebConfigCookieManagerParam *param =
+        new (std::nothrow) NapiWebCookieManager::WebConfigCookieManagerParam();
+    if (param == nullptr) {
+        WVLOG_E("new WebConfigCookieManagerParam failed");
+        delete work;
+        return;
+    }
+    param->env_ = env_;
+    param->callback_ = callback_;
+    param->deferred_ = deferred_;
+    param->result_ = result;
 
     work->data = reinterpret_cast<void*>(param);
     int ret = uv_queue_work_with_qos(
