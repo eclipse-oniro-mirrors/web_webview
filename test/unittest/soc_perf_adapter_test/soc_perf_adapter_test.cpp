@@ -54,5 +54,8 @@ HWTEST_F(SocPerfAdapterTest, SocPerfAdapterTest_001, TestSize.Level1)
     EXPECT_NE(socPerfClient, nullptr);
     const int SOC_PERF_CONFIG_ID = 10020;
     socPerfClient->ApplySocPerfConfigById(SOC_PERF_CONFIG_ID);
+    socPerfClient->ApplySocPerfConfigById(0);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_CONFIG_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(0, true);
 }
 } // namespace NWeb
