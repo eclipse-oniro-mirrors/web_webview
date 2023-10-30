@@ -21,6 +21,7 @@
 #include "cert_manager_api.h"
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
+#include "securec.h"
 
 #define private public
 #include "cert_mgr_adapter_impl.h"
@@ -401,5 +402,25 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_InitCertList_007, TestSize.Level
     EXPECT_NE(certList, nullptr);
     certList->certAbstract = nullptr;
     adapter.FreeCertList(certList);
+
+    char uri[] = "webtest";
+    struct CertInfo certInfo;
+    unsigned int len = sizeof(struct CertInfo);
+    (void)memset_s(&certInfo, len, 0, len);
+    result = adapter.GetCertInfo(uri, &certInfo, CM_USER_TRUSTED_STORE);
+    EXPECT_NE(result, 0);
+    result = adapter.GetCertInfo(uri, &certInfo, CM_SYSTEM_TRUSTED_STORE);
+    EXPECT_NE(result, 0);
+    result = adapter.GetCertInfo(uri, &certInfo, CM_CREDENTIAL_STORE);
+    EXPECT_NE(result, 0);
+
+    char subjectName[] = "test";
+    uint8_t certData[] = "inner020";
+    result = adapter.GetCertDataBySubject(subjectName, certData, CM_CREDENTIAL_STORE);
+    EXPECT_NE(result, 0);
+    result = adapter.GetCertDataBySubject(subjectName, certData, CM_USER_TRUSTED_STORE);
+    EXPECT_NE(result, 0);
+    result = adapter.GetCertDataBySubject(subjectName, certData, CM_SYSTEM_TRUSTED_STORE);
+    EXPECT_NE(result, 0);
 }
 } // namespace OHOS
