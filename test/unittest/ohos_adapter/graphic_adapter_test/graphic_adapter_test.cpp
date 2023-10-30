@@ -53,12 +53,21 @@ void GraphicAdapterTest::TearDown(void)
  */
 HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level1)
 {
-    VSyncAdapterImpl adapter;
+    VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
     void* data = nullptr;
     std::function<void(int64_t, void*)> onKeyEventId = [] (int64_t, void*) {};
     VSyncErrorCode result = adapter.RequestVsync(data, std::move(onKeyEventId));
     EXPECT_EQ(result, VSyncErrorCode::SUCCESS);
     result = adapter.RequestVsync(data, std::move(onKeyEventId));
     EXPECT_EQ(result, VSyncErrorCode::SUCCESS);
+
+    VSyncAdapterImpl vsyncAdapter;
+    void* client = nullptr;
+    adapter.OnVsync(1, client);
+    client = &vsyncAdapter;
+    adapter.OnVsync(1, client);
+    adapter.VsyncCallbackInner(1);
+    int64_t period = adapter.GetVSyncPeriod();
+    EXPECT_EQ(period, 0);
 }
 } // namespace NWeb
