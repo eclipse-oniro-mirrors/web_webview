@@ -245,7 +245,7 @@ StopLocatingFuncType LocationProxyAdapterImpl::stopLocatingFunc_;
 LocationProxyAdapterImpl::LocationProxyAdapterImpl()
 {
     if (!wrapperHandle_) {
-        wrapperHandle_ = dlopen(NWEB_WRAPPER_SO_PATH.c_str(), RTLD_NOW);
+        wrapperHandle_ = dlopen(NWEB_WRAPPER_SO_PATH.c_str(), RTLD_NOW | RTLD_GLOBAL);
     }
     if (wrapperHandle_) {
         if (!isEnableLocationFunc_) {
