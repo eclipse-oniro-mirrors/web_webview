@@ -48,6 +48,13 @@ public:
         std::string result_;
     };
 
+    struct WebConfigCookieManagerParam {
+        napi_env env_;
+        napi_ref callback_;
+        napi_deferred deferred_;
+        long result_;
+    };
+
     static napi_value Init(napi_env env, napi_value exports);
 
 private:
@@ -123,6 +130,21 @@ public:
     ~NWebFetchCookieCallbackImpl() = default;
 
     void OnReceiveValue(std::string result) override;
+
+    static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
+private:
+    napi_env env_;
+    napi_ref callback_;
+    napi_deferred deferred_;
+};
+
+class NWebConfigCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<long> {
+public:
+    NWebConfigCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
+        : env_(env), callback_(callback), deferred_(deferred) {}
+    ~NWebConfigCookieCallbackImpl() = default;
+
+    void OnReceiveValue(long result) override;
 
     static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
 private:
