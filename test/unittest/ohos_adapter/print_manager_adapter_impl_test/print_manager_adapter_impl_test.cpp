@@ -69,7 +69,7 @@ public:
  * @tc.type: FUNC
  * @tc.require: AR000I7I57
  */
- HWTEST_F(PrintManagerAdapterImplTest, PrintManagerAdapterImplTest_InitParamSet_001, TestSize.Level1)
+HWTEST_F(PrintManagerAdapterImplTest, PrintManagerAdapterImplTest_InitParamSet_001, TestSize.Level1)
 {
     std::shared_ptr<PrintDocumentAdapterAdapter> mock = std::make_shared<PrintDocumentAdapterImplMock>();
     EXPECT_NE(mock, nullptr);
