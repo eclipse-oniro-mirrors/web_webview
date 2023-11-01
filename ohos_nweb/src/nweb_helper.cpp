@@ -33,6 +33,8 @@
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
 
+#include "nweb_c_api.h"
+
 namespace {
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
 const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
@@ -49,9 +51,496 @@ const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm";
 const std::string LIB_NAME_WEB_ENGINE = "libweb_engine.so";
 static bool g_isFirstTimeStartUp = false;
 const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
+
+// Run DO macro for every function defined in the API.
+#define FOR_EACH_API_FN(DO)                          \
+    DO(WebDownloadManager_PutDownloadCallback)       \
+    DO(WebDownloader_ResumeDownloadStatic)           \
+    DO(WebDownloader_StartDownload)                  \
+    DO(WebDownloader_CreateDownloadDelegateCallback) \
+    DO(WebDownloader_SetDownloadBeforeStart)         \
+    DO(WebDownloader_SetDownloadDidUpdate)           \
+    DO(WebDownload_Continue)                         \
+    DO(WebDownload_Cancel)                           \
+    DO(WebDownload_Pause)                            \
+    DO(WebDownload_Resume)                           \
+    DO(WebDownloadItem_Guid)                         \
+    DO(WebDownloadItem_GetDownloadItemId)            \
+    DO(WebDownloadItem_GetState)                     \
+    DO(WebDownloadItem_CurrentSpeed)                 \
+    DO(WebDownloadItem_PercentComplete)              \
+    DO(WebDownloadItem_TotalBytes)                   \
+    DO(WebDownloadItem_ReceivedBytes)                \
+    DO(WebDownloadItem_FullPath)                     \
+    DO(WebDownloadItem_Url)                          \
+    DO(WebDownloadItem_OriginalUrl)                  \
+    DO(WebDownloadItem_SuggestedFileName)            \
+    DO(WebDownloadItem_ContentDisposition)           \
+    DO(WebDownloadItem_ETag)                         \
+    DO(WebDownloadItem_MimeType)                     \
+    DO(WebDownloadItem_NWebId)                       \
+    DO(WebDownloadItem_IsPaused)                     \
+    DO(WebDownloadItem_Method)                       \
+    DO(WebDownloadItem_LastErrorCode)                \
+    DO(WebDownloadItem_ReceivedSlices)               \
+    DO(WebDownloadItem_LastModified)                 \
+    DO(WebDownloadItem_CreateWebDownloadItem)        \
+    DO(WebDownloadItem_Destroy)                      \
+    DO(WebDownloadItem_SetUrl)                       \
+    DO(WebDownloadItem_SetFullPath)                  \
+    DO(WebDownloadItem_SetETag)                      \
+    DO(WebDownloadItem_SetLastModified)              \
+    DO(WebDownloadItem_SetMimeType)                  \
+    DO(WebDownloadItem_SetReceivedBytes)             \
+    DO(WebDownloadItem_SetTotalBytes)                \
+    DO(WebDownloadItem_SetReceivedSlices)            \
+    DO(WebDownloadItem_SetGuid)                      \
+    DO(DestroyBeforeDownloadCallbackWrapper)         \
+    DO(DestroyDownloadItemCallbackWrapper)
+
+struct NWebCApi {
+    // Generate a function pointer field for every NWeb C API function.
+#define GEN_FN_PTR(fn) decltype(&fn) impl_##fn = nullptr;
+    FOR_EACH_API_FN(GEN_FN_PTR)
+#undef GEN_FN_PTR
+};
+
+template <typename Fn> void LoadFunction(void *handle, const char *function_name, Fn *fn_out)
+{
+    void *fn = dlsym(handle, function_name);
+    if (!fn) {
+        OHOS::WVLOG_E("%{public}s not found.", function_name);
+        return;
+    }
+    *fn_out = reinterpret_cast<Fn>(fn);
+}
+
+NWebCApi *g_nweb_c_api = nullptr;
+
+void LoadNWebCApi(void *handle, NWebCApi *api)
+{
+    // Initialize each NWebExApi function pointer field from the DLL
+#define LOAD_FN_PTR(fn) LoadFunction(handle, #fn, &api->impl_##fn);
+    FOR_EACH_API_FN(LOAD_FN_PTR)
+#undef LOAD_FN_PTR
+}
+
+bool LoadNWebSDK(void *handle)
+{
+    if (g_nweb_c_api) {
+        OHOS::WVLOG_E("LoadNWebSDK had loaded.");
+        return true;
+    }
+
+    if (handle == nullptr) {
+        OHOS::WVLOG_E("LoadNWebSDK handle is nullptr.");
+        return false;
+    }
+
+    auto *nweb_c_api = new NWebCApi();
+    if (nweb_c_api == nullptr) {
+        OHOS::WVLOG_E("nweb_c_api is nullptr.");
+        return false;
+    }
+    LoadNWebCApi(handle, nweb_c_api);
+    g_nweb_c_api = nweb_c_api;
+    return true;
+}
+#undef FOR_EACH_API_FN
+}
+
+void WebDownloadManager_PutDownloadCallback(WebDownloadDelegateCallback *callback)
+{
+    if (!g_nweb_c_api->impl_WebDownloadManager_PutDownloadCallback) {
+        OHOS::WVLOG_E("WebDownloadManager_PutDownloadCallback not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadManager_PutDownloadCallback(callback);
+}
+
+void WebDownloader_SetDownloadBeforeStart(WebDownloadDelegateCallback *callback, OnDownloadBeforeStart fun)
+{
+    if (!g_nweb_c_api->impl_WebDownloader_SetDownloadBeforeStart) {
+        OHOS::WVLOG_E("WebDownloader_SetDownloadBeforeStart not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloader_SetDownloadBeforeStart(callback, fun);
+}
+
+void WebDownloader_SetDownloadDidUpdate(WebDownloadDelegateCallback *callback, OnDownloadDidUpdate fun)
+{
+    if (!g_nweb_c_api->impl_WebDownloader_SetDownloadDidUpdate) {
+        OHOS::WVLOG_E("WebDownloader_SetDownloadDidUpdate not found");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloader_SetDownloadDidUpdate(callback, fun);
+}
+
+void WebDownloader_ResumeDownloadStatic(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloader_ResumeDownloadStatic) {
+        OHOS::WVLOG_E("WebDownloader_ResumeDownloadStatic not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloader_ResumeDownloadStatic(download_item);
+}
+
+void WebDownloader_StartDownload(int32_t nweb_id, const char* url)
+{
+    if (!g_nweb_c_api->impl_WebDownloader_StartDownload) {
+        OHOS::WVLOG_E("WebDownloader_StartDownload not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloader_StartDownload(nweb_id, url);
+}
+
+void WebDownloader_CreateDownloadDelegateCallback(WebDownloadDelegateCallback **callback)
+{
+    if (!g_nweb_c_api || !g_nweb_c_api->impl_WebDownloader_CreateDownloadDelegateCallback) {
+        OHOS::WVLOG_E("WebDownloader_CreateDownloadDelegateCallback not found.");
+        return;
+    }
+
+    return g_nweb_c_api->impl_WebDownloader_CreateDownloadDelegateCallback(callback);
+}
+
+void WebDownload_Continue(const WebBeforeDownloadCallbackWrapper *wrapper, const char *download_path)
+{
+    if (!g_nweb_c_api->impl_WebDownload_Continue) {
+        OHOS::WVLOG_E("WebDownload_Continue not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownload_Continue(wrapper, download_path);
+}
+
+void WebDownload_Cancel(const WebDownloadItemCallbackWrapper *wrapper)
+{
+    if (!g_nweb_c_api->impl_WebDownload_Cancel) {
+        OHOS::WVLOG_E("WebDownload_Cancel not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownload_Cancel(wrapper);
+}
+
+void WebDownload_Pause(const WebDownloadItemCallbackWrapper *wrapper)
+{
+    if (!g_nweb_c_api->impl_WebDownload_Pause) {
+        OHOS::WVLOG_E("WebDownload_Pause not found");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownload_Pause(wrapper);
+}
+
+void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper)
+{
+    if (!g_nweb_c_api->impl_WebDownload_Resume) {
+        OHOS::WVLOG_E("WebDownload_Resume not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownload_Resume(wrapper);
+}
+
+char *WebDownloadItem_Guid(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_Guid) {
+        OHOS::WVLOG_E("WebDownloadItem_Guid not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_Guid(download_item);
+}
+
+long WebDownloadItem_GetDownloadItemId(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_GetDownloadItemId) {
+        return false;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_GetDownloadItemId(download_item);
+}
+
+NWebDownloadItemState WebDownloadItem_GetState(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_GetState) {
+        return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_GetState(download_item);
+}
+
+int WebDownloadItem_CurrentSpeed(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_CurrentSpeed) {
+        OHOS::WVLOG_E("WebDownloadItem_CurrentSpeed not found.");
+        return 0;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_CurrentSpeed(download_item);
+}
+
+int WebDownloadItem_PercentComplete(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_PercentComplete) {
+        OHOS::WVLOG_E("WebDownloadItem_TotalBytes not found.");
+        return 0;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_PercentComplete(download_item);
+}
+
+int64_t WebDownloadItem_TotalBytes(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_TotalBytes) {
+        OHOS::WVLOG_E("WebDownloadItem_TotalBytes not found.");
+        return 0;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_TotalBytes(download_item);
+}
+
+int64_t WebDownloadItem_ReceivedBytes(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_ReceivedBytes) {
+        OHOS::WVLOG_E("WebDownloadItem_ReceivedBytes not found.");
+        return 0;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_ReceivedBytes(download_item);
+}
+
+char *WebDownloadItem_FullPath(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_FullPath) {
+        OHOS::WVLOG_E("WebDownloadItem_FullPath not found");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_FullPath(download_item);
+}
+
+char *WebDownloadItem_Url(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_Url) {
+        OHOS::WVLOG_E("WebDownloadItem_Url not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_Url(download_item);
+}
+
+char *WebDownloadItem_OriginalUrl(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_OriginalUrl) {
+        OHOS::WVLOG_E("WebDownloadItem_OriginalUrl not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_OriginalUrl(download_item);
+}
+
+char *WebDownloadItem_SuggestedFileName(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SuggestedFileName) {
+        OHOS::WVLOG_E("WebDownloadItem_SuggestedFileName not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_SuggestedFileName(download_item);
+}
+
+char *WebDownloadItem_ContentDisposition(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_ContentDisposition) {
+        OHOS::WVLOG_E("WebDownloadItem_ContentDisposition not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_ContentDisposition(download_item);
+}
+
+char *WebDownloadItem_ETag(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_ETag) {
+        OHOS::WVLOG_E("WebDownloadItem_ETag not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_ETag(download_item);
+}
+
+char *WebDownloadItem_MimeType(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_MimeType) {
+        OHOS::WVLOG_E("WebDownloadItem_MimeType not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_MimeType(download_item);
+}
+
+bool WebDownloadItem_IsPaused(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_IsPaused) {
+        OHOS::WVLOG_E("WebDownloadItem_IsPaused not found.");
+        return false;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_IsPaused(download_item);
+}
+
+char *WebDownloadItem_Method(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_Method) {
+        OHOS::WVLOG_E("WebDownloadItem_Method not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_Method(download_item);
+}
+
+int WebDownloadItem_LastErrorCode(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_LastErrorCode) {
+        OHOS::WVLOG_E("WebDownloadItem_LastErrorCode not found.");
+        return 0;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_LastErrorCode(download_item);
+}
+
+char *WebDownloadItem_ReceivedSlices(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_ReceivedSlices) {
+        OHOS::WVLOG_E("WebDownloadItem_ReceivedSlices not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_ReceivedSlices(download_item);
+}
+
+char *WebDownloadItem_LastModified(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_LastModified) {
+        OHOS::WVLOG_E("WebDownloadItem_LastModified not found.");
+        return nullptr;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_LastModified(download_item);
+}
+
+int WebDownloadItem_NWebId(const NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_NWebId) {
+        OHOS::WVLOG_E("WebDownloadItem_NWebId not found.");
+        return -1;
+    }
+    return g_nweb_c_api->impl_WebDownloadItem_NWebId(download_item);
+}
+
+void WebDownloadItem_CreateWebDownloadItem(NWebDownloadItem **download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_CreateWebDownloadItem) {
+        OHOS::WVLOG_E("WebDownloadItem_CreateWebDownloadItem not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_CreateWebDownloadItem(download_item);
+}
+
+void WebDownloadItem_Destroy(NWebDownloadItem *download_item)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_Destroy) {
+        OHOS::WVLOG_E("WebDownloadItem_Destroy not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_Destroy(download_item);
+}
+
+void DestroyBeforeDownloadCallbackWrapper(WebBeforeDownloadCallbackWrapper *wrapper)
+{
+    if (!g_nweb_c_api->impl_DestroyBeforeDownloadCallbackWrapper) {
+        OHOS::WVLOG_E("DestroyBeforeDownloadCallbackWrapper not found.");
+        return;
+    }
+    g_nweb_c_api->impl_DestroyBeforeDownloadCallbackWrapper(wrapper);
+}
+
+void DestroyDownloadItemCallbackWrapper(WebDownloadItemCallbackWrapper *wrapper)
+{
+    if (!g_nweb_c_api->impl_DestroyDownloadItemCallbackWrapper) {
+        OHOS::WVLOG_E("DestroyDownloadItemCallbackWrapper not found.");
+        return;
+    }
+    g_nweb_c_api->impl_DestroyDownloadItemCallbackWrapper(wrapper);
+}
+
+void WebDownloadItem_SetGuid(NWebDownloadItem *download_item, const char *guid)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetGuid) {
+        OHOS::WVLOG_E("WebDownloadItem_SetGuid not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetGuid(download_item, guid);
+}
+
+void WebDownloadItem_SetUrl(NWebDownloadItem *download_item, const char *url)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetUrl) {
+        OHOS::WVLOG_E("WebDownloadItem_SetUrl not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetUrl(download_item, url);
+}
+
+void WebDownloadItem_SetFullPath(NWebDownloadItem *download_item, const char *full_path)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetFullPath) {
+        OHOS::WVLOG_E("WebDownloadItem_SetFullPath not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetFullPath(download_item, full_path);
+}
+
+void WebDownloadItem_SetETag(NWebDownloadItem *download_item, const char *etag)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetETag) {
+        OHOS::WVLOG_E("WebDownloadItem_SetETag not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetETag(download_item, etag);
+}
+
+void WebDownloadItem_SetLastModified(NWebDownloadItem *download_item, const char *last_modified)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetLastModified) {
+        OHOS::WVLOG_E("WebDownloadItem_SetLastModified not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetLastModified(download_item, last_modified);
+}
+
+void WebDownloadItem_SetMimeType(NWebDownloadItem *download_item, const char *mime_type)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetMimeType) {
+        OHOS::WVLOG_E("WebDownloadItem_SetMimeType not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetMimeType(download_item, mime_type);
+}
+
+void WebDownloadItem_SetReceivedBytes(NWebDownloadItem *download_item, int64_t received_bytes)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetReceivedBytes) {
+        OHOS::WVLOG_E("WebDownloadItem_SetReceivedBytes not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetReceivedBytes(download_item, received_bytes);
+}
+
+void WebDownloadItem_SetTotalBytes(NWebDownloadItem *download_item, int64_t total_bytes)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetTotalBytes) {
+        OHOS::WVLOG_E("WebDownloadItem_SetTotalBytes not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetTotalBytes(download_item, total_bytes);
+}
+
+void WebDownloadItem_SetReceivedSlices(NWebDownloadItem *download_item, const char *received_slices)
+{
+    if (!g_nweb_c_api->impl_WebDownloadItem_SetReceivedSlices) {
+        OHOS::WVLOG_E("WebDownloadItem_SetReceivedSlices not found.");
+        return;
+    }
+    g_nweb_c_api->impl_WebDownloadItem_SetReceivedSlices(download_item, received_slices);
 }
 
 namespace OHOS::NWeb {
+bool NWebHelper::LoadNWebSDK()
+{
+    return ::LoadNWebSDK(libHandleWebEngine_);
+}
+
 NWebHelper &NWebHelper::Instance()
 {
     static NWebHelper helper;
@@ -102,7 +591,7 @@ bool NWebHelper::LoadLib(bool from_ark)
     const std::string libPathWebEngine = loadLibPath + "/" + LIB_NAME_WEB_ENGINE;
     void *libHandleWebEngine = ::dlopen(libPathWebEngine.c_str(), RTLD_NOW);
     if (libHandleWebEngine == nullptr) {
-        WVLOG_E("fail to dlopen %{public}s, errmsg=%{public}s", libPathWebEngine.c_str(), dlerror());
+        WVLOG_E("wanghui fail to dlopen %{public}s, errmsg=%{public}s", libPathWebEngine.c_str(), dlerror());
         return false;
     }
     libHandleWebEngine_ = libHandleWebEngine;
@@ -146,7 +635,7 @@ static void DoPreReadLib(const std::string &bundlePath)
     int fd = open(tempPath, O_RDONLY);
     if (fd <= 0) {
         WVLOG_E("open web engine library failed");
-        delete [] buf;
+        delete[] buf;
         return;
     }
 
@@ -160,7 +649,7 @@ static void DoPreReadLib(const std::string &bundlePath)
     }
 
     (void)close(fd);
-    delete [] buf;
+    delete[] buf;
     WVLOG_I("NWebHelper PreReadLib Finish");
 }
 
@@ -178,9 +667,7 @@ void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bu
 static void TryPreReadLibForFirstlyAppStartUp(const std::string &bundlePath)
 {
     if (g_isFirstTimeStartUp) {
-        std::thread preReadThread([bundlePath]() {
-            DoPreReadLib(bundlePath);
-        });
+        std::thread preReadThread([bundlePath]() { DoPreReadLib(bundlePath); });
 
         preReadThread.detach();
     }
@@ -207,11 +694,10 @@ bool NWebHelper::InitAndRun(bool from_ark)
 
     const std::string INITIALIZE_WEB_ENGINE_FUNC_NAME = "InitializeWebEngine";
     InitializeWebEngine initializeWebEngine =
-        reinterpret_cast<InitializeWebEngine>(dlsym(libHandleWebEngine_,
-            INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str()));
+        reinterpret_cast<InitializeWebEngine>(dlsym(libHandleWebEngine_, INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str()));
     if (initializeWebEngine == nullptr) {
         WVLOG_E("initializeWebEngine: fail to dlsym %{public}s from libohoswebview.so",
-                INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str());
+            INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str());
         return false;
     }
 
@@ -230,10 +716,8 @@ bool NWebHelper::InitAndRun(bool from_ark)
         return false;
     }
 
-    initArgs.web_engine_args_to_add.push_back(
-        std::string("--user-data-dir=").append(ctx->GetBaseDir()));
-    initArgs.web_engine_args_to_add.push_back(
-        std::string("--bundle-installation-dir=").append(bundlePath_));
+    initArgs.web_engine_args_to_add.push_back(std::string("--user-data-dir=").append(ctx->GetBaseDir()));
+    initArgs.web_engine_args_to_add.push_back(std::string("--bundle-installation-dir=").append(bundlePath_));
 
     initializeWebEngine(initArgs);
     return true;
@@ -249,7 +733,7 @@ NWebHelper::~NWebHelper()
     UnloadLib();
 }
 
-using CreateNWebFuncType = void(*)(const NWebCreateInfo &, std::shared_ptr<NWeb> &);
+using CreateNWebFuncType = void (*)(const NWebCreateInfo &, std::shared_ptr<NWeb> &);
 std::shared_ptr<NWeb> NWebHelper::CreateNWeb(const NWebCreateInfo &create_info)
 {
     if (libHandleWebEngine_ == nullptr) {
@@ -292,7 +776,7 @@ NWebCookieManager *NWebHelper::GetCookieManager()
     return cookieFunc();
 }
 
-using GetNWebFunc = void(*)(int32_t, std::weak_ptr<NWeb> &);
+using GetNWebFunc = void (*)(int32_t, std::weak_ptr<NWeb> &);
 std::weak_ptr<NWeb> NWebHelper::GetNWeb(int32_t nweb_id)
 {
     std::weak_ptr<OHOS::NWeb::NWeb> nweb;
@@ -394,8 +878,8 @@ bool NWebAdapterHelper::Init(bool from_ark)
     return NWebHelper::Instance().Init(from_ark);
 }
 
-std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(
-    sptr<Surface> surface, const NWebInitArgs& initArgs, uint32_t width, uint32_t height)
+std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const NWebInitArgs &initArgs, uint32_t width,
+    uint32_t height)
 {
     if (surface == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
@@ -414,10 +898,8 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(
     return nweb;
 }
 
-std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
-                                                    const NWebInitArgs &initArgs,
-                                                    uint32_t width,
-                                                    uint32_t height)
+std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo, const NWebInitArgs &initArgs,
+    uint32_t width, uint32_t height)
 {
     if (enhanceSurfaceInfo == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
@@ -435,10 +917,10 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
     return nweb;
 }
 
-std::string NWebAdapterHelper::GetConfigPath(const std::string& configFileName)
+std::string NWebAdapterHelper::GetConfigPath(const std::string &configFileName)
 {
     char buf[PATH_MAX + 1];
-    char* configPath = GetOneCfgFile(configFileName.c_str(), buf, PATH_MAX + 1);
+    char *configPath = GetOneCfgFile(configFileName.c_str(), buf, PATH_MAX + 1);
     char tmpPath[PATH_MAX + 1] = { 0 };
     if (!configPath || strlen(configPath) == 0 || strlen(configPath) > PATH_MAX || !realpath(configPath, tmpPath)) {
         WVLOG_I("can not get customization config file");
@@ -447,32 +929,32 @@ std::string NWebAdapterHelper::GetConfigPath(const std::string& configFileName)
     return std::string(tmpPath);
 }
 
-std::unordered_map<std::string_view, std::function<std::string(std::string&)>> GetConfigMap()
+std::unordered_map<std::string_view, std::function<std::string(std::string &)>> GetConfigMap()
 {
-    static std::unordered_map<std::string_view, std::function<std::string(std::string&)>> configMap = {
+    static std::unordered_map<std::string_view, std::function<std::string(std::string &)>> configMap = {
         { "renderConfig/renderProcessCount",
-            [](std::string& contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
+          [](std::string &contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
         { "mediaConfig/backgroundMediaShouldSuspend",
-            [](std::string& contentStr) {
-                return contentStr == "false" ? std::string("--disable-background-media-suspend") : std::string();
-            } },
+          [](std::string &contentStr) {
+            return contentStr == "false" ? std::string("--disable-background-media-suspend") : std::string();
+        } },
         { "loadurlSocPerfConfig/loadurlSocPerfParam",
-            [](std::string& contentStr) {
-                return contentStr == "true" ? std::string("--ohos-enable-loadurl-soc-perf") : std::string();
-            } },
+          [](std::string &contentStr) {
+            return contentStr == "true" ? std::string("--ohos-enable-loadurl-soc-perf") : std::string();
+        } },
         { "mouseWheelSocPerfConfig/mouseWheelSocPerfParam",
-            [](std::string& contentStr) {
-                return contentStr == "true" ? std::string("--ohos-enable-mousewheel-soc-perf") : std::string();
-            } },
+          [](std::string &contentStr) {
+            return contentStr == "true" ? std::string("--ohos-enable-mousewheel-soc-perf") : std::string();
+        } },
         { "touchEventConfig/touchEventShouldRegister",
-            [](std::string& contentStr) {
-                return contentStr == "false" ? std::string("--disable-touch-event-register") : std::string();
-            } }
+          [](std::string &contentStr) {
+            return contentStr == "false" ? std::string("--disable-touch-event-register") : std::string();
+        } }
     };
     return configMap;
 }
 
-void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init_args)
+void NWebAdapterHelper::ReadConfig(const xmlNodePtr &rootPtr, NWebInitArgs &init_args)
 {
     auto configMap = GetConfigMap();
     for (xmlNodePtr curNodePtr = rootPtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
@@ -480,20 +962,20 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init
             WVLOG_E("invalid node!");
             continue;
         }
-        std::string nodeName = reinterpret_cast<const char*>(curNodePtr->name);
+        std::string nodeName = reinterpret_cast<const char *>(curNodePtr->name);
         for (xmlNodePtr curChildNodePtr = curNodePtr->xmlChildrenNode; curChildNodePtr != nullptr;
-             curChildNodePtr = curChildNodePtr->next) {
+            curChildNodePtr = curChildNodePtr->next) {
             if (curChildNodePtr->name == nullptr || curChildNodePtr->type == XML_COMMENT_NODE) {
                 WVLOG_E("invalid node!");
                 continue;
             }
-            std::string childNodeName = reinterpret_cast<const char*>(curChildNodePtr->name);
-            xmlChar* content = xmlNodeGetContent(curChildNodePtr);
+            std::string childNodeName = reinterpret_cast<const char *>(curChildNodePtr->name);
+            xmlChar *content = xmlNodeGetContent(curChildNodePtr);
             if (content == nullptr) {
                 WVLOG_E("read xml node error: nodeName:(%{public}s)", curChildNodePtr->name);
                 continue;
             }
-            std::string contentStr = reinterpret_cast<const char*>(content);
+            std::string contentStr = reinterpret_cast<const char *>(content);
             xmlFree(content);
             auto it = configMap.find(nodeName + "/" + childNodeName);
             if (it == configMap.end()) {
@@ -508,7 +990,7 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr& rootPtr, NWebInitArgs& init
     }
 }
 
-void NWebAdapterHelper::ParseConfig(NWebInitArgs& args)
+void NWebAdapterHelper::ParseConfig(NWebInitArgs &args)
 {
     auto configFilePath = GetConfigPath(WEB_CONFIG_PATH);
     xmlDocPtr docPtr = xmlReadFile(configFilePath.c_str(), nullptr, XML_PARSE_NOBLANKS);
@@ -519,7 +1001,7 @@ void NWebAdapterHelper::ParseConfig(NWebInitArgs& args)
 
     xmlNodePtr rootPtr = xmlDocGetRootElement(docPtr);
     if (rootPtr == nullptr || rootPtr->name == nullptr ||
-        xmlStrcmp(rootPtr->name, reinterpret_cast<const xmlChar*>("WEB"))) {
+        xmlStrcmp(rootPtr->name, reinterpret_cast<const xmlChar *>("WEB"))) {
         WVLOG_E("get root element failed!");
         xmlFreeDoc(docPtr);
         return;
