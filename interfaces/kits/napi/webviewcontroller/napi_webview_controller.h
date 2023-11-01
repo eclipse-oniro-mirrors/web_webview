@@ -193,6 +193,10 @@ private:
         const napi_value* argv, WebviewController* webviewController);
 
     static napi_value PrepareForPageLoad(napi_env env, napi_callback_info info);
+
+    static napi_value SetDownloadDelegate(napi_env env, napi_callback_info info);
+
+    static napi_value StartDownload(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {

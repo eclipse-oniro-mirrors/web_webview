@@ -33,6 +33,9 @@
 #include "web_errors.h"
 #include "webview_javascript_execute_callback.h"
 
+#include "web_download_delegate.h"
+#include "web_download_manager.h"
+
 namespace OHOS {
 namespace NWeb {
 using namespace NWebError;
@@ -230,6 +233,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setAudioMuted", NapiWebviewController::SetAudioMuted),
         DECLARE_NAPI_FUNCTION("innerGetThisVar", NapiWebviewController::InnerGetThisVar),
         DECLARE_NAPI_FUNCTION("prefetchPage", NapiWebviewController::PrefetchPage),
+        DECLARE_NAPI_FUNCTION("setDownloadDelegate", NapiWebviewController::SetDownloadDelegate),
+        DECLARE_NAPI_FUNCTION("startDownload", NapiWebviewController::StartDownload),
         DECLARE_NAPI_STATIC_FUNCTION("prepareForPageLoad", NapiWebviewController::PrepareForPageLoad),
     };
     napi_value constructor = nullptr;
@@ -3553,5 +3558,61 @@ napi_value NapiWebviewController::PrepareForPageLoad(napi_env env, napi_callback
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
+
+napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callback_info cbinfo)
+{
+    WVLOG_E("wanghui WebDownloader::JS_SetDownloadDelegate");
+    NWebHelper::Instance().LoadNWebSDK();
+    size_t argc = 1;
+    napi_value argv[1] = {0};
+    napi_value thisVar = nullptr;
+    void* data = nullptr;
+    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
+
+    WebDownloadDelegate* delegate = nullptr;
+    napi_value obj = argv[0];
+    napi_unwrap(env, obj, (void**)&delegate);
+    napi_create_reference(env, obj, 1, &delegate->delegate_);
+
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("create message port failed, napi unwrap webviewController failed");
+        return nullptr;
+    }
+    int32_t nwebId = webviewController->GetWebId();
+    WebDownloadManager::AddDownloadDelegateForWeb(nwebId, delegate);
+    return nullptr;
+}
+
+napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info cbinfo)
+{
+    WVLOG_I("[DOWNLOAD] NapiWebviewController::StartDownload");
+    size_t argc = 1;
+    napi_value argv[1] = {0};
+    napi_value thisVar = nullptr;
+    void* data = nullptr;
+    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
+
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("create message port failed, napi unwrap webviewController failed");
+        return nullptr;
+    }
+
+    std::string url;
+    if (!ParsePrepareUrl(env, argv[INTEGER_ZERO], url)) {
+        BusinessError::ThrowErrorByErrcode(env, INVALID_URL);
+        return nullptr;
+    }
+    int32_t nwebId = webviewController->GetWebId();
+    NWebHelper::Instance().LoadNWebSDK();
+    WebDownloader_StartDownload(nwebId, url.c_str());
+    return nullptr;
+}
+
 } // namespace NWeb
 } // namespace OHOS

@@ -935,5 +935,6 @@ ErrCode WebviewController::PrefetchPage(std::string& url, std::map<std::string, 
     nweb_ptr->PrefetchPage(url, additionalHttpHeaders);
     return NWebError::NO_ERROR;
 }
+
 } // namespace NWeb
 } // namespace OHOS

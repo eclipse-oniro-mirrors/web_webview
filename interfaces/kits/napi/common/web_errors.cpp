@@ -34,6 +34,10 @@ const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invalid web storage origin";
 const std::string INVALID_SOCKET_NUMBER_MSG = "The number of preconnect sockets is invalid.";
 const std::string TYPE_NOT_MATCH_WITCH_VALUE_MSG = "The type does not match with the value of the message";
 const std::string NEW_OOM_MSG = "New failed, out of memory";
+const std::string DOWNLOAD_NOT_PAUSED_MSG = "The download is not paused.";
+const std::string NO_VALID_CONTROLLER_FOR_DOWNLOAD_MSG = "No valid WebviewController is associated.";
+const std::string NO_DOWNLOAD_DELEGATE_SET_MSG = "No valid WebviewController is associated.";
+const std::string DOWNLOAD_NOT_START_MSG = "The download has not been started yet.";
 }
 
 namespace OHOS {
@@ -52,7 +56,11 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {NO_WEBSTORAGE_ORIGIN, NO_WEBSTORAGE_ORIGIN_MSG},
     {INVALID_SOCKET_NUMBER, INVALID_SOCKET_NUMBER_MSG},
     {TYPE_NOT_MATCH_WITCH_VALUE, TYPE_NOT_MATCH_WITCH_VALUE_MSG},
-    {NEW_OOM, NEW_OOM_MSG}
+    {NEW_OOM, NEW_OOM_MSG},
+    {DOWNLOAD_NOT_PAUSED, DOWNLOAD_NOT_PAUSED_MSG},
+    {NO_VALID_CONTROLLER_FOR_DOWNLOAD, NO_VALID_CONTROLLER_FOR_DOWNLOAD_MSG},
+    {NO_DOWNLOAD_DELEGATE_SET, NO_DOWNLOAD_DELEGATE_SET_MSG},
+    {DOWNLOAD_NOT_START, DOWNLOAD_NOT_START_MSG}
 };
 
 std::string GetErrMsgByErrCode(ErrCode code)
