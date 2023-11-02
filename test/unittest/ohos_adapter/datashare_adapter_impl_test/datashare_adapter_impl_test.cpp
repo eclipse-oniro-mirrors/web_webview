@@ -51,10 +51,10 @@ void DatashareAdapterImplTest::TearDown(void)
  */
 HWTEST_F(DatashareAdapterImplTest, DatashareAdapterImplTest_GetInstance_001, TestSize.Level1)
 {
-    std::string uriStr = "datashare:///media";
-    int result = DatashareAdapterImpl::GetInstance().OpenDataShareUriForRead(uriStr);
+    std::string uri = "file:///data/storage/el2/base/file/test.txt";
+    int result = DatashareAdapterImpl::GetInstance().OpenDataShareUriForRead(uri);
     EXPECT_EQ(result, -1);
-    std::string displayName = DatashareAdapterImpl::GetInstance().GetFileDisplayName(uriStr);
-    EXPECT_EQ(displayName, "");
+    std::string displayName = DatashareAdapterImpl::GetInstance().GetFileDisplayName(uri);
+    EXPECT_EQ(displayName, "test.txt");
 }
 } // namespace OHOS
