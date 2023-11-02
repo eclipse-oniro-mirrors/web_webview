@@ -236,6 +236,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setDownloadDelegate", NapiWebviewController::SetDownloadDelegate),
         DECLARE_NAPI_FUNCTION("startDownload", NapiWebviewController::StartDownload),
         DECLARE_NAPI_STATIC_FUNCTION("prepareForPageLoad", NapiWebviewController::PrepareForPageLoad),
+        DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -3614,5 +3615,26 @@ napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info
     return nullptr;
 }
 
+napi_value NapiWebviewController::SetConnectionTimeout(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { nullptr };
+    napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t timeout = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], timeout) || (timeout <= 0)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    NWebHelper::Instance().SetConnectionTimeout(timeout);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
 } // namespace NWeb
 } // namespace OHOS

@@ -197,6 +197,8 @@ private:
     static napi_value SetDownloadDelegate(napi_env env, napi_callback_info info);
 
     static napi_value StartDownload(napi_env env, napi_callback_info info);
+
+    static napi_value SetConnectionTimeout(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
