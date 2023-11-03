@@ -47,7 +47,6 @@ public:
     static napi_value JS_GetUrl(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetSuggestedFileName(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetFullPath(napi_env env, napi_callback_info cbinfo);
-    static napi_value JS_SetDownloadPath(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_Start(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_Continue(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_Cancel(napi_env env, napi_callback_info cbinfo);

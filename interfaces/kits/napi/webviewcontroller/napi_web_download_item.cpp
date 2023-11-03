@@ -203,13 +203,13 @@ napi_value NapiWebDownloadItem::JS_GetMethod(napi_env env, napi_callback_info cb
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value method_value;
-    napi_status status = napi_create_string_utf8(env, webDownloadItem->method.c_str(), NAPI_AUTO_LENGTH, &method_value);
+    napi_value methodValue;
+    napi_status status = napi_create_string_utf8(env, webDownloadItem->method.c_str(), NAPI_AUTO_LENGTH, &methodValue);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetMethod failed");
         return nullptr;
     }
-    return method_value;
+    return methodValue;
 }
 
 napi_value NapiWebDownloadItem::JS_GetMimeType(napi_env env, napi_callback_info cbinfo)
@@ -224,14 +224,14 @@ napi_value NapiWebDownloadItem::JS_GetMimeType(napi_env env, napi_callback_info 
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value mime_type_value;
+    napi_value mimeTypeValue;
     napi_status status =
-        napi_create_string_utf8(env, webDownloadItem->mime_type.c_str(), NAPI_AUTO_LENGTH, &mime_type_value);
+        napi_create_string_utf8(env, webDownloadItem->mimeType.c_str(), NAPI_AUTO_LENGTH, &mimeTypeValue);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetMimeType failed");
         return nullptr;
     }
-    return mime_type_value;
+    return mimeTypeValue;
 }
 
 napi_value NapiWebDownloadItem::JS_GetUrl(napi_env env, napi_callback_info cbinfo)
@@ -246,13 +246,13 @@ napi_value NapiWebDownloadItem::JS_GetUrl(napi_env env, napi_callback_info cbinf
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value url_value;
-    napi_status status = napi_create_string_utf8(env, webDownloadItem->url.c_str(), NAPI_AUTO_LENGTH, &url_value);
+    napi_value urlValue;
+    napi_status status = napi_create_string_utf8(env, webDownloadItem->url.c_str(), NAPI_AUTO_LENGTH, &urlValue);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetUrl failed");
         return nullptr;
     }
-    return url_value;
+    return urlValue;
 }
 
 napi_value NapiWebDownloadItem::JS_GetSuggestedFileName(napi_env env, napi_callback_info cbinfo)
@@ -267,14 +267,14 @@ napi_value NapiWebDownloadItem::JS_GetSuggestedFileName(napi_env env, napi_callb
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value file_name_value;
+    napi_value fileNameValue;
     napi_status status =
-        napi_create_string_utf8(env, webDownloadItem->suggested_file_name.c_str(), NAPI_AUTO_LENGTH, &file_name_value);
+        napi_create_string_utf8(env, webDownloadItem->suggestedFileName.c_str(), NAPI_AUTO_LENGTH, &fileNameValue);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetSuggestedFileName failed");
         return nullptr;
     }
-    return file_name_value;
+    return fileNameValue;
 }
 
 napi_value NapiWebDownloadItem::JS_GetCurrentSpeed(napi_env env, napi_callback_info cbinfo)
@@ -289,13 +289,13 @@ napi_value NapiWebDownloadItem::JS_GetCurrentSpeed(napi_env env, napi_callback_i
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value current_speed;
-    napi_status status = napi_create_int64(env, webDownloadItem->current_speed, &current_speed);
+    napi_value currentSpeed;
+    napi_status status = napi_create_int64(env, webDownloadItem->currentSpeed, &currentSpeed);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetCurrentSpeed failed");
         return nullptr;
     }
-    return current_speed;
+    return currentSpeed;
 }
 
 napi_value NapiWebDownloadItem::JS_GetPercentComplete(napi_env env, napi_callback_info cbinfo)
@@ -310,13 +310,13 @@ napi_value NapiWebDownloadItem::JS_GetPercentComplete(napi_env env, napi_callbac
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value percent_complete;
-    napi_status status = napi_create_int64(env, webDownloadItem->percent_complete, &percent_complete);
+    napi_value percentComplete;
+    napi_status status = napi_create_int64(env, webDownloadItem->percentComplete, &percentComplete);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetPercentComplete failed");
         return nullptr;
     }
-    return percent_complete;
+    return percentComplete;
 }
 
 napi_value NapiWebDownloadItem::JS_GetTotalBytes(napi_env env, napi_callback_info cbinfo)
@@ -331,13 +331,13 @@ napi_value NapiWebDownloadItem::JS_GetTotalBytes(napi_env env, napi_callback_inf
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value total_bytes;
-    napi_status status = napi_create_int64(env, webDownloadItem->total_bytes, &total_bytes);
+    napi_value totalBytes;
+    napi_status status = napi_create_int64(env, webDownloadItem->totalBytes, &totalBytes);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetTotalBytes failed");
         return nullptr;
     }
-    return total_bytes;
+    return totalBytes;
 }
 
 napi_value NapiWebDownloadItem::JS_GetReceivedBytes(napi_env env, napi_callback_info cbinfo)
@@ -352,13 +352,13 @@ napi_value NapiWebDownloadItem::JS_GetReceivedBytes(napi_env env, napi_callback_
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    napi_value received_bytes;
-    napi_status status = napi_create_int64(env, webDownloadItem->received_bytes, &received_bytes);
+    napi_value receivedBytes;
+    napi_status status = napi_create_int64(env, webDownloadItem->receivedBytes, &receivedBytes);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetReceivedBytes failed");
         return nullptr;
     }
-    return received_bytes;
+    return receivedBytes;
 }
 
 napi_value NapiWebDownloadItem::JS_GetState(napi_env env, napi_callback_info cbinfo)
@@ -399,9 +399,9 @@ napi_value NapiWebDownloadItem::JS_GetLastErrorCode(napi_env env, napi_callback_
         return nullptr;
     }
 
-    napi_value error_code;
-    napi_create_int32(env, static_cast<int32_t>(webDownloadItem->last_error_code), &error_code);
-    return error_code;
+    napi_value errorCode;
+    napi_create_int32(env, static_cast<int32_t>(webDownloadItem->lastErrorCode), &errorCode);
+    return errorCode;
 }
 
 napi_value NapiWebDownloadItem::JS_GetGuid(napi_env env, napi_callback_info cbinfo)
@@ -447,13 +447,13 @@ napi_value NapiWebDownloadItem::JS_GetFullPath(napi_env env, napi_callback_info 
         return nullptr;
     }
 
-    napi_value full_path;
-    napi_status status = napi_create_string_utf8(env, webDownloadItem->full_path.c_str(), NAPI_AUTO_LENGTH, &full_path);
+    napi_value fullPath;
+    napi_status status = napi_create_string_utf8(env, webDownloadItem->fullPath.c_str(), NAPI_AUTO_LENGTH, &fullPath);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetFullPath failed");
         return nullptr;
     }
-    return full_path;
+    return fullPath;
 }
 
 napi_value NapiWebDownloadItem::JS_Continue(napi_env env, napi_callback_info cbinfo)
@@ -471,7 +471,7 @@ napi_value NapiWebDownloadItem::JS_Continue(napi_env env, napi_callback_info cbi
         return nullptr;
     }
 
-    WebDownload_Continue(webDownloadItem->before_download_callback, webDownloadItem->download_path_.c_str());
+    WebDownload_Continue(webDownloadItem->before_download_callback, webDownloadItem->downloadPath.c_str());
     return nullptr;
 }
 
@@ -563,38 +563,6 @@ napi_value NapiWebDownloadItem::JS_Constructor(napi_env env, napi_callback_info 
     return thisVar;
 }
 
-napi_value NapiWebDownloadItem::JS_SetDownloadPath(napi_env env, napi_callback_info cbinfo)
-{
-    size_t argc = 1;
-    napi_value argv[1] = {0};
-    napi_value thisVar = nullptr;
-    void *data = nullptr;
-    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
-
-    napi_valuetype value_type = napi_undefined;
-    napi_typeof(env, argv[0], &value_type);
-
-    size_t pathLen = 0;
-    napi_get_value_string_utf8(env, argv[0], nullptr, 0, &pathLen);
-    WebDownloadItem *webDownloadItem = nullptr;
-    napi_unwrap(env, thisVar, (void **)&webDownloadItem);
-
-    if (!webDownloadItem) {
-        WVLOG_E("[DOWNLOAD] unwrap webDownloadItem failed");
-        return nullptr;
-    }
-
-    char stringValue[pathLen + 1];
-    size_t jsStringLength = 0;
-    napi_get_value_string_utf8(env, argv[0], stringValue, pathLen + 1, &jsStringLength);
-    if (jsStringLength != pathLen) {
-        return nullptr;
-    }
-    webDownloadItem->download_path_ = std::string(stringValue);
-    WVLOG_I("NapiWebDownloadItem::JS_SetDownloadPath path: %{public}s", webDownloadItem->download_path_.c_str());
-    return nullptr;
-}
-
 napi_value NapiWebDownloadItem::JS_Start(napi_env env, napi_callback_info cbinfo)
 {
     WVLOG_I("NapiWebDownloadItem::JS_Start");
@@ -623,8 +591,8 @@ napi_value NapiWebDownloadItem::JS_Start(napi_env env, napi_callback_info cbinfo
     if (jsStringLength != pathLen) {
         return nullptr;
     }
-    webDownloadItem->download_path_ = std::string(stringValue);
-    WebDownload_Continue(webDownloadItem->before_download_callback, webDownloadItem->download_path_.c_str());
+    webDownloadItem->downloadPath = std::string(stringValue);
+    WebDownload_Continue(webDownloadItem->before_download_callback, webDownloadItem->downloadPath.c_str());
     return nullptr;
 }
 
@@ -637,48 +605,48 @@ napi_value NapiWebDownloadItem::JS_Serialize(napi_env env, napi_callback_info cb
     WebDownloadItem *webDownloadItem = nullptr;
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
 
-    browser_service::WebDownload web_download_pb;
-    web_download_pb.set_web_download_id(webDownloadItem->web_download_id);
-    web_download_pb.set_current_speed(webDownloadItem->current_speed);
-    web_download_pb.set_percent_complete(webDownloadItem->percent_complete);
-    web_download_pb.set_total_bytes(webDownloadItem->total_bytes);
-    web_download_pb.set_received_bytes(webDownloadItem->received_bytes);
-    web_download_pb.set_guid(webDownloadItem->guid);
-    web_download_pb.set_full_path(webDownloadItem->full_path);
-    web_download_pb.set_url(webDownloadItem->url);
-    web_download_pb.set_etag(webDownloadItem->etag);
-    web_download_pb.set_original_url(webDownloadItem->original_url);
-    web_download_pb.set_suggested_file_name(webDownloadItem->suggested_file_name);
-    web_download_pb.set_content_disposition(webDownloadItem->content_disposition);
-    web_download_pb.set_mime_type(webDownloadItem->mime_type);
-    web_download_pb.set_last_modified(webDownloadItem->last_modified);
-    web_download_pb.set_state(static_cast<browser_service::WebDownload::WebDownloadState>(webDownloadItem->state));
-    web_download_pb.set_method(webDownloadItem->method);
-    web_download_pb.set_last_error_code(webDownloadItem->last_error_code);
-    web_download_pb.set_received_slices(webDownloadItem->received_slices);
-    web_download_pb.set_download_path(webDownloadItem->download_path_);
+    browser_service::WebDownload webDownloadPb;
+    webDownloadPb.set_web_download_id(webDownloadItem->webDownloadId);
+    webDownloadPb.set_current_speed(webDownloadItem->currentSpeed);
+    webDownloadPb.set_percent_complete(webDownloadItem->percentComplete);
+    webDownloadPb.set_total_bytes(webDownloadItem->totalBytes);
+    webDownloadPb.set_received_bytes(webDownloadItem->receivedBytes);
+    webDownloadPb.set_guid(webDownloadItem->guid);
+    webDownloadPb.set_full_path(webDownloadItem->fullPath);
+    webDownloadPb.set_url(webDownloadItem->url);
+    webDownloadPb.set_etag(webDownloadItem->etag);
+    webDownloadPb.set_original_url(webDownloadItem->originalUrl);
+    webDownloadPb.set_suggested_file_name(webDownloadItem->suggestedFileName);
+    webDownloadPb.set_content_disposition(webDownloadItem->contentDisposition);
+    webDownloadPb.set_mime_type(webDownloadItem->mimeType);
+    webDownloadPb.set_last_modified(webDownloadItem->lastModified);
+    webDownloadPb.set_state(static_cast<browser_service::WebDownload::WebDownloadState>(webDownloadItem->state));
+    webDownloadPb.set_method(webDownloadItem->method);
+    webDownloadPb.set_last_error_code(webDownloadItem->lastErrorCode);
+    webDownloadPb.set_received_slices(webDownloadItem->receivedSlices);
+    webDownloadPb.set_download_path(webDownloadItem->downloadPath);
 
     std::string webDownloadValue;
-    web_download_pb.SerializeToString(&webDownloadValue);
+    webDownloadPb.SerializeToString(&webDownloadValue);
     napi_value arraybuffer;
     void *bufferData = nullptr;
 
     napi_status status = napi_create_arraybuffer(env, webDownloadValue.length(), (void **)&bufferData, &arraybuffer);
     memcpy_s(bufferData, webDownloadValue.length(), webDownloadValue.c_str(), webDownloadValue.length());
-    napi_ref arraybuffer_ref;
-    napi_create_reference(env, arraybuffer, 1, &arraybuffer_ref);
+    napi_ref arraybufferRef;
+    napi_create_reference(env, arraybuffer, 1, &arraybufferRef);
     if (status != napi_ok) {
         WVLOG_D("[DOWNLOAD] create array buffer failed, status: %{public}d", status);
         return nullptr;
     }
-    napi_value typed_array;
+    napi_value typedArray;
     status = napi_create_typedarray(env, napi_typedarray_type::napi_uint8_array, webDownloadValue.length(), arraybuffer,
-        0, &typed_array);
+        0, &typedArray);
     if (status != napi_ok) {
         WVLOG_D("[DOWNLOAD] create typed array failed, status: %{public}d", status);
         return nullptr;
     }
-    return typed_array;
+    return typedArray;
 }
 
 napi_value NapiWebDownloadItem::JS_Deserialize(napi_env env, napi_callback_info cbinfo)
@@ -701,33 +669,33 @@ napi_value NapiWebDownloadItem::JS_Deserialize(napi_env env, napi_callback_info 
     }
 
     char *buffer = (char *)buf;
-    browser_service::WebDownload web_download_pb;
-    bool result = web_download_pb.ParseFromArray(buffer, bufLen);
+    browser_service::WebDownload webDownloadPb;
+    bool result = webDownloadPb.ParseFromArray(buffer, bufLen);
     if (!result) {
         WVLOG_E("[DOWNLOAD] Unserialize webDownloadItem failed");
         return nullptr;
     }
 
     WebDownloadItem *webDownloadItem = new WebDownloadItem(env);
-    webDownloadItem->web_download_id = web_download_pb.web_download_id();
-    webDownloadItem->current_speed = web_download_pb.current_speed();
-    webDownloadItem->percent_complete = web_download_pb.percent_complete();
-    webDownloadItem->total_bytes = web_download_pb.total_bytes();
-    webDownloadItem->received_bytes = web_download_pb.received_bytes();
-    webDownloadItem->guid = web_download_pb.guid();
-    webDownloadItem->full_path = web_download_pb.full_path();
-    webDownloadItem->url = web_download_pb.url();
-    webDownloadItem->etag = web_download_pb.etag();
-    webDownloadItem->original_url = web_download_pb.original_url();
-    webDownloadItem->suggested_file_name = web_download_pb.suggested_file_name();
-    webDownloadItem->content_disposition = web_download_pb.content_disposition();
-    webDownloadItem->mime_type = web_download_pb.mime_type();
-    webDownloadItem->last_modified = web_download_pb.last_modified();
-    webDownloadItem->state = static_cast<NWebDownloadItemState>(web_download_pb.state());
-    webDownloadItem->method = web_download_pb.method();
-    webDownloadItem->last_error_code = web_download_pb.last_error_code();
-    webDownloadItem->received_slices = web_download_pb.received_slices();
-    webDownloadItem->download_path_ = web_download_pb.download_path();
+    webDownloadItem->webDownloadId = webDownloadPb.web_download_id();
+    webDownloadItem->currentSpeed = webDownloadPb.current_speed();
+    webDownloadItem->percentComplete = webDownloadPb.percent_complete();
+    webDownloadItem->totalBytes = webDownloadPb.total_bytes();
+    webDownloadItem->receivedBytes = webDownloadPb.received_bytes();
+    webDownloadItem->guid = webDownloadPb.guid();
+    webDownloadItem->fullPath = webDownloadPb.full_path();
+    webDownloadItem->url = webDownloadPb.url();
+    webDownloadItem->etag = webDownloadPb.etag();
+    webDownloadItem->originalUrl = webDownloadPb.original_url();
+    webDownloadItem->suggestedFileName = webDownloadPb.suggested_file_name();
+    webDownloadItem->contentDisposition = webDownloadPb.content_disposition();
+    webDownloadItem->mimeType = webDownloadPb.mime_type();
+    webDownloadItem->lastModified = webDownloadPb.last_modified();
+    webDownloadItem->state = static_cast<NWebDownloadItemState>(webDownloadPb.state());
+    webDownloadItem->method = webDownloadPb.method();
+    webDownloadItem->lastErrorCode = webDownloadPb.last_error_code();
+    webDownloadItem->receivedSlices = webDownloadPb.received_slices();
+    webDownloadItem->downloadPath = webDownloadPb.download_path();
 
     napi_value webDownloadUnserialized;
     napi_create_object(env, &webDownloadUnserialized);
@@ -762,7 +730,6 @@ napi_value NapiWebDownloadItem::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("pause", JS_Pause),
         DECLARE_NAPI_FUNCTION("cancel", JS_Cancel),
         DECLARE_NAPI_FUNCTION("resume", JS_Resume),
-        DECLARE_NAPI_FUNCTION("setDownloadPath", JS_SetDownloadPath),
         DECLARE_NAPI_FUNCTION("getReceivedBytes", JS_GetReceivedBytes),
         DECLARE_NAPI_FUNCTION("getFullPath", JS_GetFullPath),
         DECLARE_NAPI_FUNCTION("getGuid", JS_GetGuid),
@@ -1009,7 +976,6 @@ napi_status NapiWebDownloadItem::DefineProperties(napi_env env, napi_value *obje
         DECLARE_NAPI_FUNCTION("pause", JS_Pause),
         DECLARE_NAPI_FUNCTION("cancel", JS_Cancel),
         DECLARE_NAPI_FUNCTION("resume", JS_Resume),
-        DECLARE_NAPI_FUNCTION("setDownloadPath", JS_SetDownloadPath),
         DECLARE_NAPI_FUNCTION("getReceivedBytes", JS_GetReceivedBytes),
         DECLARE_NAPI_FUNCTION("getFullPath", JS_GetFullPath),
         DECLARE_NAPI_FUNCTION("getGuid", JS_GetGuid),

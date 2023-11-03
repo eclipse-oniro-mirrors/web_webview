@@ -171,18 +171,18 @@ void WebDownloadManager::ResumeDownload(const WebDownloadItem *webDownloadItem)
 {
     WVLOG_D("[DOWNLOAD] WebDownloadManager::ResumeDownload");
     NWebHelper::Instance().LoadNWebSDK();
-    NWebDownloadItem *download_item = nullptr;
-    WebDownloadItem_CreateWebDownloadItem(&download_item);
-    WebDownloadItem_SetGuid(download_item, webDownloadItem->guid.c_str());
-    WebDownloadItem_SetUrl(download_item, webDownloadItem->url.c_str());
-    WebDownloadItem_SetFullPath(download_item, webDownloadItem->full_path.c_str());
-    WebDownloadItem_SetETag(download_item, webDownloadItem->etag.c_str());
-    WebDownloadItem_SetMimeType(download_item, webDownloadItem->mime_type.c_str());
-    WebDownloadItem_SetReceivedBytes(download_item, webDownloadItem->received_bytes);
-    WebDownloadItem_SetTotalBytes(download_item, webDownloadItem->total_bytes);
-    WebDownloadItem_SetReceivedSlices(download_item, webDownloadItem->received_slices.c_str());
-    WebDownloadItem_SetLastModified(download_item, webDownloadItem->last_modified.c_str());
-    WebDownloader_ResumeDownloadStatic(download_item);
+    NWebDownloadItem *downloadItem = nullptr;
+    WebDownloadItem_CreateWebDownloadItem(&downloadItem);
+    WebDownloadItem_SetGuid(downloadItem, webDownloadItem->guid.c_str());
+    WebDownloadItem_SetUrl(downloadItem, webDownloadItem->url.c_str());
+    WebDownloadItem_SetFullPath(downloadItem, webDownloadItem->fullPath.c_str());
+    WebDownloadItem_SetETag(downloadItem, webDownloadItem->etag.c_str());
+    WebDownloadItem_SetMimeType(downloadItem, webDownloadItem->mimeType.c_str());
+    WebDownloadItem_SetReceivedBytes(downloadItem, webDownloadItem->receivedBytes);
+    WebDownloadItem_SetTotalBytes(downloadItem, webDownloadItem->totalBytes);
+    WebDownloadItem_SetReceivedSlices(downloadItem, webDownloadItem->receivedSlices.c_str());
+    WebDownloadItem_SetLastModified(downloadItem, webDownloadItem->lastModified.c_str());
+    WebDownloader_ResumeDownloadStatic(downloadItem);
     return;
 }
 } // namespace NWeb

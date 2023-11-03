@@ -28,32 +28,32 @@ namespace OHOS {
 namespace NWeb {
 class WebDownloadItem {
 public:
-    WebDownloadItem(napi_env env);
+    explicit WebDownloadItem(napi_env env);
     WebDownloadItem(napi_env env, NWebDownloadItem *item);
     ~WebDownloadItem();
 
-    long web_download_id;
-    int current_speed;
-    int percent_complete;
-    int64_t total_bytes;
-    int64_t received_bytes;
-    int last_error_code;
+    long webDownloadId;
+    int currentSpeed;
+    int percentComplete;
+    int64_t totalBytes;
+    int64_t receivedBytes;
+    int lastErrorCode;
 
     std::string guid;
-    std::string full_path;
+    std::string fullPath;
     std::string url;
     std::string etag;
-    std::string original_url;
-    std::string suggested_file_name;
-    std::string content_disposition;
-    std::string mime_type;
-    std::string last_modified;
+    std::string originalUrl;
+    std::string suggestedFileName;
+    std::string contentDisposition;
+    std::string mimeType;
+    std::string lastModified;
 
     NWebDownloadItemState state;
     std::string method;
-    std::string received_slices;
+    std::string receivedSlices;
 
-    std::string download_path_;
+    std::string downloadPath;
     WebBeforeDownloadCallbackWrapper *before_download_callback;
     WebDownloadItemCallbackWrapper *download_item_callback;
 
