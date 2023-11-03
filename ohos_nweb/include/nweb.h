@@ -810,6 +810,11 @@ public:
      * Set the virtual keyboard to override the web status.
      */
     virtual bool ShouldVirtualKeyboardOverlay() = 0;
+
+    /**
+     * Inject the JavaScript before WebView loads the DOM tree and run JavaScripts.
+     */
+    virtual void JavaScriptOnDocumentStart(const ScriptItems& scriptItems) = 0;
 };
 }  // namespace OHOS::NWeb
 
