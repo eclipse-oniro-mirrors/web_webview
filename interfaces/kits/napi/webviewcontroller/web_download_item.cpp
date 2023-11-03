@@ -23,17 +23,17 @@ namespace OHOS {
 namespace NWeb {
 WebDownloadItem::WebDownloadItem(napi_env env)
     : guid(""),
-      full_path(""),
+      fullPath(""),
       url(""),
       etag(""),
-      original_url(""),
-      suggested_file_name(""),
-      content_disposition(""),
-      mime_type(""),
-      last_modified(""),
+      originalUrl(""),
+      suggestedFileName(""),
+      contentDisposition(""),
+      mimeType(""),
+      lastModified(""),
       method(""),
-      received_slices(""),
-      download_path_(""),
+      receivedSlices(""),
+      downloadPath(""),
       before_download_callback(nullptr),
       download_item_callback(nullptr)
 {
@@ -41,41 +41,41 @@ WebDownloadItem::WebDownloadItem(napi_env env)
     this->env_ = env;
 }
 
-WebDownloadItem::WebDownloadItem(napi_env env, NWebDownloadItem *download_item)
+WebDownloadItem::WebDownloadItem(napi_env env, NWebDownloadItem *downloadItem)
     : guid(""),
-      full_path(""),
+      fullPath(""),
       url(""),
       etag(""),
-      original_url(""),
-      suggested_file_name(""),
-      content_disposition(""),
-      mime_type(""),
-      last_modified(""),
+      originalUrl(""),
+      suggestedFileName(""),
+      contentDisposition(""),
+      mimeType(""),
+      lastModified(""),
       method(""),
-      received_slices(""),
-      download_path_(""),
+      receivedSlices(""),
+      downloadPath(""),
       before_download_callback(nullptr),
       download_item_callback(nullptr)
 {
     WVLOG_D("[DOWNLOAD] WebDownloadItem constructor");
-    this->web_download_id = WebDownloadItem_GetDownloadItemId(download_item);
-    this->state = WebDownloadItem_GetState(download_item);
-    this->current_speed = WebDownloadItem_CurrentSpeed(download_item);
-    this->percent_complete = WebDownloadItem_PercentComplete(download_item);
-    this->total_bytes = WebDownloadItem_TotalBytes(download_item);
-    this->received_bytes = WebDownloadItem_ReceivedBytes(download_item);
-    this->guid = std::string(WebDownloadItem_Guid(download_item));
-    this->full_path = std::string(WebDownloadItem_FullPath(download_item));
-    this->url = std::string(WebDownloadItem_Url(download_item));
-    this->original_url = std::string(WebDownloadItem_OriginalUrl(download_item));
-    this->suggested_file_name = std::string(WebDownloadItem_SuggestedFileName(download_item));
-    this->content_disposition = std::string(WebDownloadItem_ContentDisposition(download_item));
-    this->method = std::string(WebDownloadItem_Method(download_item));
-    this->last_modified = std::string(WebDownloadItem_LastModified(download_item));
-    this->last_error_code = WebDownloadItem_LastErrorCode(download_item);
-    this->received_slices = std::string(WebDownloadItem_ReceivedSlices(download_item));
-    this->etag = std::string(WebDownloadItem_ETag(download_item));
-    this->mime_type = std::string(WebDownloadItem_MimeType(download_item));
+    this->webDownloadId = WebDownloadItem_GetDownloadItemId(downloadItem);
+    this->state = WebDownloadItem_GetState(downloadItem);
+    this->currentSpeed = WebDownloadItem_CurrentSpeed(downloadItem);
+    this->percentComplete = WebDownloadItem_PercentComplete(downloadItem);
+    this->totalBytes = WebDownloadItem_TotalBytes(downloadItem);
+    this->receivedBytes = WebDownloadItem_ReceivedBytes(downloadItem);
+    this->guid = std::string(WebDownloadItem_Guid(downloadItem));
+    this->fullPath = std::string(WebDownloadItem_FullPath(downloadItem));
+    this->url = std::string(WebDownloadItem_Url(downloadItem));
+    this->originalUrl = std::string(WebDownloadItem_OriginalUrl(downloadItem));
+    this->suggestedFileName = std::string(WebDownloadItem_SuggestedFileName(downloadItem));
+    this->contentDisposition = std::string(WebDownloadItem_ContentDisposition(downloadItem));
+    this->method = std::string(WebDownloadItem_Method(downloadItem));
+    this->lastModified = std::string(WebDownloadItem_LastModified(downloadItem));
+    this->lastErrorCode = WebDownloadItem_LastErrorCode(downloadItem);
+    this->receivedSlices = std::string(WebDownloadItem_ReceivedSlices(downloadItem));
+    this->etag = std::string(WebDownloadItem_ETag(downloadItem));
+    this->mimeType = std::string(WebDownloadItem_MimeType(downloadItem));
     env_ = env;
 }
 

@@ -3562,7 +3562,7 @@ napi_value NapiWebviewController::PrepareForPageLoad(napi_env env, napi_callback
 
 napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callback_info cbinfo)
 {
-    WVLOG_E("wanghui WebDownloader::JS_SetDownloadDelegate");
+    WVLOG_E("WebDownloader::JS_SetDownloadDelegate");
     NWebHelper::Instance().LoadNWebSDK();
     size_t argc = 1;
     napi_value argv[1] = {0};
