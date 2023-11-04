@@ -137,6 +137,7 @@ enum class NestedScrollMode : int32_t {
     PARALLEL = 3,
 };
 
+using ScriptItems = std::map<std::string, std::vector<std::string>>;
 using WebState = std::shared_ptr<std::vector<uint8_t>>;
 using SetKeepScreenOn = std::function<void(bool)>;
 
