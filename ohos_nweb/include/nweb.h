@@ -137,6 +137,11 @@ enum class NestedScrollMode : int32_t {
     PARALLEL = 3,
 };
 
+enum class WebType : int32_t {
+    SURFACE = 0,
+    TEXTURE = 1,
+};
+
 using WebState = std::shared_ptr<std::vector<uint8_t>>;
 using SetKeepScreenOn = std::function<void(bool)>;
 
@@ -810,6 +815,17 @@ public:
      * Set the virtual keyboard to override the web status.
      */
     virtual bool ShouldVirtualKeyboardOverlay() = 0;
+
+    /**
+     * Set draw rectmessage, x mean origin.x, y mean origin.y, width mean visible area'width, height mean visible area.height.
+     */
+    virtual void SetDrawRect(const int32_t x, const int32_t y, const int32_t width, const int32_t height) = 0;
+
+    /**
+     * Set draw mode.
+     *
+    */
+    virtual void SetDrawMode(const int32_t mode) = 0;
 };
 }  // namespace OHOS::NWeb
 
