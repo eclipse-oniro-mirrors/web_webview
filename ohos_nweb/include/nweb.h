@@ -137,11 +137,6 @@ enum class NestedScrollMode : int32_t {
     PARALLEL = 3,
 };
 
-enum class WebType : int32_t {
-    SURFACE = 0,
-    TEXTURE = 1,
-};
-
 using WebState = std::shared_ptr<std::vector<uint8_t>>;
 using SetKeepScreenOn = std::function<void(bool)>;
 
