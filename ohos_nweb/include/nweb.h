@@ -810,6 +810,21 @@ public:
      * Set the virtual keyboard to override the web status.
      */
     virtual bool ShouldVirtualKeyboardOverlay() = 0;
+
+    /**
+     * Set draw rectmessage
+     * @param x mean origin.x.
+     * @param y mean origin.y.
+     * @param width mean visible area'width.
+     * @param height mean visible area.height.
+     */
+    virtual void SetDrawRect(const int32_t x, const int32_t y, const int32_t width, const int32_t height) = 0;
+
+    /**
+     * Set draw mode.
+     *
+    */
+    virtual void SetDrawMode(const int32_t mode) = 0;
 };
 }  // namespace OHOS::NWeb
 
