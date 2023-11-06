@@ -44,6 +44,7 @@ public:
     void PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets);
     bool LoadNWebSDK();
     void SetConnectionTimeout(const int32_t& timeout);
+    void SetWebDebuggingAccess(bool isEnableDebug);
 
 private:
     NWebHelper() = default;

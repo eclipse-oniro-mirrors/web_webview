@@ -832,6 +832,25 @@ void NWebHelper::PrepareForPageLoad(std::string url, bool preconnectable, int32_
     prepareForPageLoadFunc(url, preconnectable, numSockets);
 }
 
+using SetWebDebuggingAccessFunc = void (*)(bool);
+void NWebHelper::SetWebDebuggingAccess(bool isEnableDebug)
+{
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_E("libHandleWebEngine_ is nullptr");
+        return;
+    }
+    
+    const std::string SET_WEB_DEBUG_ACCESS_FUNC_NAME = "SetWebDebuggingAccess";
+    SetWebDebuggingAccessFunc setWebDebuggingAccessFunc =
+        reinterpret_cast<SetWebDebuggingAccessFunc>(dlsym(libHandleWebEngine_, SET_WEB_DEBUG_ACCESS_FUNC_NAME.c_str()));
+    if (setWebDebuggingAccessFunc == nullptr) {
+        WVLOG_E("doh: fail to dlsym %{public}s from libohoswebview.so", SET_WEB_DEBUG_ACCESS_FUNC_NAME.c_str());
+        return;
+    }
+    setWebDebuggingAccessFunc(isEnableDebug);
+    WVLOG_I("doh: success to dlysm %{public}s from libohoswebview.so", SET_WEB_DEBUG_ACCESS_FUNC_NAME.c_str());
+}
+
 using GetDataBaseFunc = NWebDataBase *(*)();
 NWebDataBase *NWebHelper::GetDataBase()
 {
