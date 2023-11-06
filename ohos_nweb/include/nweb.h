@@ -825,6 +825,11 @@ public:
      *
     */
     virtual void SetDrawMode(const int32_t mode) = 0;
+
+    /**
+     * Create the web print document adapter.
+     */
+    virtual void* CreateWebPrintDocumentAdapter(const std::string& jobName) = 0;
 };
 }  // namespace OHOS::NWeb
 

@@ -936,5 +936,28 @@ ErrCode WebviewController::PrefetchPage(std::string& url, std::map<std::string, 
     return NWebError::NO_ERROR;
 }
 
+void WebPrintDocument::OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
+    const PrintAttributesAdapter& newAttrs, uint32_t fd, std::function<void(std::string, uint32_t)> writeResultCallback)
+{
+    if (printDocAdapter_) {
+        printDocAdapter_->OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
+    }
+}
+
+void WebPrintDocument::OnJobStateChanged(const std::string& jobId, uint32_t state)
+{
+    if (printDocAdapter_) {
+        printDocAdapter_->OnJobStateChanged(jobId, state);
+    }
+}
+
+void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobName)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return nullptr;
+    }
+    return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
+}
 } // namespace NWeb
 } // namespace OHOS
