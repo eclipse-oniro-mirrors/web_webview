@@ -35,6 +35,7 @@ const std::string WEB_HITTESTTYPE_V9_ENUM_NAME = "HitTestTypeV9";
 const std::string WEB_HITTESTTYPE_ENUM_NAME = "WebHitTestType";
 const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
 const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
+const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
 
 class NapiWebviewController {
 public:
@@ -199,6 +200,8 @@ private:
     static napi_value StartDownload(napi_env env, napi_callback_info info);
 
     static napi_value SetConnectionTimeout(napi_env env, napi_callback_info info);
+
+    static napi_value CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
@@ -277,6 +280,18 @@ public:
 
 private:
     static napi_value GetFavicon(napi_env env, std::shared_ptr<NWebHistoryItem> item);
+};
+
+class NapiWebPrintDocument {
+public:
+    NapiWebPrintDocument() = default;
+    ~NapiWebPrintDocument() = default;
+
+    static napi_value JsConstructor(napi_env env, napi_callback_info info);
+
+    static napi_value OnStartLayoutWrite(napi_env env, napi_callback_info info);
+
+    static napi_value OnJobStateChanged(napi_env env, napi_callback_info info);
 };
 } // namespace NWeb
 } // namespace OHOS
