@@ -24,7 +24,7 @@ enum class ResSchedTypeAdapter : int32_t {
     RES_TYPE_KEY_THREAD = 0,
     RES_TYPE_WEB_STATUS_CHANGE,
     RES_TYPE_WEB_SCENE,
-    RES_TYPE_AUDIO_STATUS_CHANGE,
+    RES_TYPE_WEBVIEW_AUDIO_STATUS_CHANGE,
 };
 
 enum class ResSchedStatusAdapter : int32_t {
