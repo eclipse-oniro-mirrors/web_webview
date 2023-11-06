@@ -69,6 +69,8 @@ ohos_shared_library("libnweb") {
   ]
 
   deps = [
+    ":alias",
+    ":context-menu",
     ":web.para",
     ":web.para.dac",
     ":web_config",
@@ -121,4 +123,18 @@ ohos_prebuilt_etc("web.para.dac") {
   subsystem_name = "web"
   part_name = "webview"
   module_install_dir = "etc/param"
+}
+
+ohos_prebuilt_etc("alias") {
+  source = "${webview_root_path}/ohos_nweb/etc/alias.svg"
+  subsystem_name = "web"
+  part_name = "webview"
+  relative_install_dir = "webview/ohos_nweb"
+}
+
+ohos_prebuilt_etc("context-menu") {
+  source = "${webview_root_path}/ohos_nweb/etc/context-menu.svg"
+  subsystem_name = "web"
+  part_name = "webview"
+  relative_install_dir = "webview/ohos_nweb"
 }
