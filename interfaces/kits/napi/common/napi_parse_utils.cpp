@@ -182,6 +182,22 @@ bool NapiParseUtils::ParseInt32(napi_env env, napi_value argv, int32_t& outValue
     return true;
 }
 
+bool NapiParseUtils::ParseUint32(napi_env env, napi_value argv, uint32_t& outValue)
+{
+    napi_valuetype valueType = napi_undefined;
+
+    napi_typeof(env, argv, &valueType);
+    if (valueType != napi_number) {
+        return false;
+    }
+
+    uint32_t number = 0;
+    napi_get_value_uint32(env, argv, &number);
+    outValue = number;
+
+    return true;
+}
+
 bool NapiParseUtils::ParseInt64(napi_env env, napi_value argv, int64_t& outValue)
 {
     napi_valuetype valueType = napi_undefined;
