@@ -16,6 +16,7 @@
 #include "webview_javascript_result_callback.h"
 
 #include "napi_parse_utils.h"
+#include "native_engine/native_engine.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
@@ -67,21 +68,11 @@ void WebviewJavaScriptResultCallBack::UvJsCallbackThreadWoker(uv_work_t* work, i
     napi_close_handle_scope(param->env_, scope);
 }
 
-std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
-    std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName)
+std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::PostGetJavaScriptResultToJsThread(JavaScriptObj& jsObj,
+    std::vector<std::shared_ptr<NWebValue>>& args,
+    const std::string& method)
 {
-    WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResult method = %{public}s, objName = %{public}s",
-        method.c_str(), objName.c_str());
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
-
-    if (objectMap_.find(objName) == objectMap_.end()) {
-        return ret;
-    }
-    JavaScriptObj jsObj = objectMap_[objName];
-    if (jsObj.methodMap.find(method) == jsObj.methodMap.end()) {
-        return ret;
-    }
-
     uv_loop_s* loop = nullptr;
     uv_work_t* work = nullptr;
     napi_get_uv_event_loop(jsObj.env, &loop);
@@ -122,6 +113,53 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
         work = nullptr;
     }
     return ret;
+}
+
+std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
+    std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName)
+{
+    WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResult method = %{public}s, objName = %{public}s",
+        method.c_str(), objName.c_str());
+    std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
+
+    if (objectMap_.find(objName) == objectMap_.end()) {
+        return ret;
+    }
+    JavaScriptObj jsObj = objectMap_[objName];
+    if (jsObj.methodMap.find(method) == jsObj.methodMap.end()) {
+        return ret;
+    }
+
+    auto engine = reinterpret_cast<NativeEngine*>(jsObj.env);
+    if (engine == nullptr) {
+        return ret;
+    }
+
+    if (pthread_self() == engine->GetTid()) {
+        WVLOG_D("get javaScript result already in js thread");
+        napi_handle_scope scope = nullptr;
+        napi_open_handle_scope(jsObj.env, &scope);
+        if (scope == nullptr) {
+            return ret;
+        }
+
+        std::vector<napi_value> argv = {};
+        for (std::shared_ptr<NWebValue> input : args) {
+            ParseNwebValue2NapiValue(jsObj.env, input, argv);
+        }
+
+        napi_value callback = nullptr;
+        napi_value callResult = nullptr;
+        napi_get_reference_value(jsObj.env, jsObj.methodMap[method], &callback);
+        napi_call_function(jsObj.env, nullptr, callback, argv.size(), &argv[0], &callResult);
+        // convert to nweb value
+        ParseNapiValue2NwebValue(jsObj.env, callResult, ret);
+        napi_close_handle_scope(jsObj.env, scope);
+        return ret;
+    } else {
+        WVLOG_D("get javaScript result, not in js thread, post task to js thread");
+        return PostGetJavaScriptResultToJsThread(jsObj, args, method);
+    }
 }
 
 void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(
