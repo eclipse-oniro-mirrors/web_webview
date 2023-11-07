@@ -211,6 +211,8 @@ public:
 
     void* CreateWebPrintDocumentAdapter(const std::string &jobName);
 
+    ErrCode PostUrl(std::string& url, std::vector<char>& postData);
+
 private:
     int ConverToWebHitTestType(int hitType);
 

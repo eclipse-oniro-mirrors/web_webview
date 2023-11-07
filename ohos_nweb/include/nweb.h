@@ -830,6 +830,23 @@ public:
      * Create the web print document adapter.
      */
     virtual void* CreateWebPrintDocumentAdapter(const std::string& jobName) = 0;
+
+    /**
+     * Loads the URL with postData using "POST" method into this WebView.
+     * If url is not a network URL, it will be loaded with loadUrl(String) instead.
+     *
+     * @param url String: the URL of the resource to load This value cannot be null.
+     * @param postData the data will be passed to "POST" request,
+     * whilch must be "application/x-www-form-urlencoded" encoded.
+     *
+     * @return title string for the current page.
+     */
+    virtual int PostUrl(const std::string& url, std::vector<char>& postData) = 0;
+
+    /**
+    * Inject the JavaScript before WebView loads the DOM tree and run JavaScripts.
+     */
+    virtual void JavaScriptOnDocumentStart(const ScriptItems& scriptItems) = 0;
 };
 }  // namespace OHOS::NWeb
 
