@@ -199,6 +199,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getHitTestValue", NapiWebviewController::GetHitTestValue),
         DECLARE_NAPI_FUNCTION("requestFocus", NapiWebviewController::RequestFocus),
         DECLARE_NAPI_FUNCTION("loadUrl", NapiWebviewController::LoadUrl),
+        DECLARE_NAPI_FUNCTION("postUrl", NapiWebviewController::PostUrl),
         DECLARE_NAPI_FUNCTION("loadData", NapiWebviewController::LoadData),
         DECLARE_NAPI_FUNCTION("getHitTest", NapiWebviewController::GetHitTest),
         DECLARE_NAPI_FUNCTION("clearMatches", NapiWebviewController::ClearMatches),
@@ -2109,6 +2110,57 @@ napi_value NapiWebviewController::RequestFocus(napi_env env, napi_callback_info 
     }
 
     webviewController->RequestFocus();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::PostUrl(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("NapiWebMessageExt::PostUrl start");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    std::string url;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], url)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool isArrayBuffer = false;
+    NAPI_CALL(env, napi_is_arraybuffer(env, argv[INTEGER_ONE], &isArrayBuffer));
+    if (!isArrayBuffer) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    char *arrBuf = nullptr;
+    size_t byteLength = 0;
+    napi_get_arraybuffer_info(env, argv[INTEGER_ONE], (void **)&arrBuf, &byteLength);
+
+    std::vector<char> postData(arrBuf, arrBuf + byteLength);
+    ErrCode ret = webviewController->PostUrl(url, postData);
+    if (ret != NO_ERROR) {
+        if (ret == NWEB_ERROR) {
+            WVLOG_E("PostData failed");
+            return result;
+        }
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
