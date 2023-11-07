@@ -31,7 +31,7 @@ const std::unordered_map<ResSchedTypeAdapter, uint32_t> RES_TYPE_MAP = {
     { ResSchedTypeAdapter::RES_TYPE_KEY_THREAD, ResType::RES_TYPE_REPORT_KEY_THREAD },
     { ResSchedTypeAdapter::RES_TYPE_WEB_STATUS_CHANGE, ResType::RES_TYPE_REPORT_WINDOW_STATE },
     { ResSchedTypeAdapter::RES_TYPE_WEB_SCENE, ResType::RES_TYPE_REPORT_SCENE_SCHED },
-    { ResSchedTypeAdapter::RES_TYPE_AUDIO_STATUS_CHANGE, ResType::RES_TYPE_AUDIO_STATUS_CHANGE },
+    { ResSchedTypeAdapter::RES_TYPE_WEBVIEW_AUDIO_STATUS_CHANGE, ResType::RES_TYPE_WEBVIEW_AUDIO_STATUS_CHANGE },
 };
 
 const std::unordered_map<ResSchedStatusAdapter, int64_t> RES_STATUS_MAP = {
@@ -145,7 +145,7 @@ bool ResSchedClientAdapter::ReportKeyThread(
 
 bool ResSchedClientAdapter::ReportAudioData(ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid)
 {
-    static uint32_t resType = ResType::RES_TYPE_AUDIO_STATUS_CHANGE;
+    static uint32_t resType = ResType::RES_TYPE_WEBVIEW_AUDIO_STATUS_CHANGE;
 
     int64_t status;
     if (!ConvertStatus(statusAdapter, status)) {

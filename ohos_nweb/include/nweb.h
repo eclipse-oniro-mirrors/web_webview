@@ -828,6 +828,11 @@ public:
     virtual void SetDrawMode(const int32_t mode) = 0;
 
     /**
+     * Create the web print document adapter.
+     */
+    virtual void* CreateWebPrintDocumentAdapter(const std::string& jobName) = 0;
+
+    /**
      * Inject the JavaScript before WebView loads the DOM tree and run JavaScripts.
      */
     virtual void JavaScriptOnDocumentStart(const ScriptItems& scriptItems) = 0;

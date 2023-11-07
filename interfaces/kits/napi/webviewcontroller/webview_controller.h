@@ -28,6 +28,7 @@
 #include "nweb_web_message.h"
 #include "web_errors.h"
 #include "webview_javascript_result_callback.h"
+#include "print_manager_adapter.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -71,7 +72,7 @@ enum class WebMessageType : int {
     ARRAY,
     ERROR
 };
-
+class WebPrintDocument;
 class WebviewController {
 public:
     explicit WebviewController() = default;
@@ -207,6 +208,8 @@ public:
     ErrCode SetAudioMuted(bool muted);
 
     ErrCode PrefetchPage(std::string& url, std::map<std::string, std::string> additionalHttpHeaders);
+
+    void* CreateWebPrintDocumentAdapter(const std::string &jobName);
 
 private:
     int ConverToWebHitTestType(int hitType);
@@ -439,6 +442,20 @@ public:
 private:
     OHOS::NWeb::NWeb* nweb_ = nullptr;
     std::shared_ptr<NWebHistoryList> sptrHistoryList_ = nullptr;
+};
+
+class WebPrintDocument {
+public:
+    explicit WebPrintDocument(void* webPrintdoc) : printDocAdapter_((PrintDocumentAdapterAdapter*)webPrintdoc) {};
+    ~WebPrintDocument() = default;
+    void OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
+        const PrintAttributesAdapter& newAttrs, uint32_t fd,
+        std::function<void(std::string, uint32_t)> writeResultCallback);
+
+    void OnJobStateChanged(const std::string& jobId, uint32_t state);
+
+private:
+    std::unique_ptr<PrintDocumentAdapterAdapter> printDocAdapter_ = nullptr;
 };
 } // namespace NWeb
 } // namespace OHOS
