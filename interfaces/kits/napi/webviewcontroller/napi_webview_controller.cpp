@@ -237,6 +237,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("startDownload", NapiWebviewController::StartDownload),
         DECLARE_NAPI_STATIC_FUNCTION("prepareForPageLoad", NapiWebviewController::PrepareForPageLoad),
         DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
+        DECLARE_NAPI_FUNCTION("createWebPrintDocumentAdapter", NapiWebviewController::CreateWebPrintDocumentAdapter),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -3635,6 +3636,286 @@ napi_value NapiWebviewController::SetConnectionTimeout(napi_env env, napi_callba
     NWebHelper::Instance().SetConnectionTimeout(timeout);
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
+}
+
+napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info)
+{
+    WVLOG_I("Create web print document adapter.");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    std::string jobName;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], jobName)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    void* webPrintDocument = webviewController->CreateWebPrintDocumentAdapter(jobName);
+    if (!webPrintDocument) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    napi_value cons = nullptr;
+    napi_property_descriptor NapiWebPrintDocument[] = {
+        DECLARE_NAPI_FUNCTION("onStartLayoutWrite", NapiWebPrintDocument::OnStartLayoutWrite),
+        DECLARE_NAPI_FUNCTION("onJobStateChanged", NapiWebPrintDocument::OnJobStateChanged),
+    };
+    napi_define_class(env, WEB_PRINT_DOCUMENT_CLASS_NAME.c_str(), WEB_PRINT_DOCUMENT_CLASS_NAME.length(),
+        NapiWebPrintDocument::JsConstructor, webPrintDocument, sizeof(NapiWebPrintDocument) / sizeof(NapiWebPrintDocument[0]),
+        NapiWebPrintDocument, &cons);
+    napi_value proxy = nullptr;
+    status = napi_new_instance(env, cons, argc, argv, &proxy);
+    if (status!= napi_ok) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    return proxy;
+}
+
+bool ParseWebPrintAttrParams(napi_env env, napi_value obj, PrintAttributesAdapter& printAttr)
+{
+    if (!obj) {
+        return false;
+    }
+    napi_value copyNumber = nullptr;
+    napi_value pageRange = nullptr;
+    napi_value isSequential = nullptr;
+    napi_value pageSize = nullptr;
+    napi_value isLandscape = nullptr;
+    napi_value colorMode = nullptr;
+    napi_value duplexMode = nullptr;
+    napi_value margin = nullptr;
+    napi_value option = nullptr;
+    napi_get_named_property(env, obj, "copyNumber", &copyNumber);
+    napi_get_named_property(env, obj, "pageRange", &pageRange);
+    napi_get_named_property(env, obj, "isSequential", &isSequential);
+    napi_get_named_property(env, obj, "pageSize", &pageSize);
+    napi_get_named_property(env, obj, "isLandscape", &isLandscape);
+    napi_get_named_property(env, obj, "colorMode", &colorMode);
+    napi_get_named_property(env, obj, "duplexMode", &duplexMode);
+    napi_get_named_property(env, obj, "margin", &margin);
+    napi_get_named_property(env, obj, "option", &option);
+    if (copyNumber) {
+        NapiParseUtils::ParseUint32(env, copyNumber, printAttr.copyNumber);
+    }
+    if (isSequential) {
+        NapiParseUtils::ParseBoolean(env, isSequential, printAttr.isSequential);
+    }
+    if (isLandscape) {
+        NapiParseUtils::ParseBoolean(env, isLandscape,  printAttr.isLandscape);
+    }
+    if (colorMode) {
+        NapiParseUtils::ParseUint32(env, colorMode, printAttr.colorMode);
+    }
+    if (duplexMode) {
+        NapiParseUtils::ParseUint32(env, duplexMode, printAttr.duplexMode);
+    }
+    if (option) {
+        NapiParseUtils::ParseString(env, option, printAttr.option);
+    }
+
+
+    napi_value startPage = nullptr;
+    napi_value endPage = nullptr;
+    napi_value pages = nullptr;
+    napi_get_named_property(env, pageRange, "startPage", &startPage);
+    napi_get_named_property(env, pageRange, "endPage", &endPage);
+    if (startPage) {
+        NapiParseUtils::ParseUint32(env, startPage, printAttr.pageRange.startPage);
+    }
+    if (endPage) {
+        NapiParseUtils::ParseUint32(env, endPage, printAttr.pageRange.endPage);
+    }
+    napi_get_named_property(env, pageRange, "pages", &pages);
+    uint32_t pageArrayLength = 0;
+    napi_get_array_length(env, pages, &pageArrayLength);
+    for (uint32_t i = 0; i < pageArrayLength; ++i) {
+        napi_value pagesNumObj = nullptr;
+        napi_get_element(env, pages, i, &pagesNumObj);
+        uint32_t pagesNum;
+        NapiParseUtils::ParseUint32(env, pagesNumObj, pagesNum);
+        printAttr.pageRange.pages.push_back(pagesNum);
+    }
+
+    napi_value id = nullptr;
+    napi_value name = nullptr;
+    napi_value width = nullptr;
+    napi_value height = nullptr;
+    napi_get_named_property(env, pageSize, "id", &id);
+    napi_get_named_property(env, pageSize, "name", &name);
+    napi_get_named_property(env, pageSize, "width", &width);
+    napi_get_named_property(env, pageSize, "height", &height);
+    if (width) {
+        NapiParseUtils::ParseUint32(env, width, printAttr.pageSize.width);
+    }
+    if (height) {
+        NapiParseUtils::ParseUint32(env, height, printAttr.pageSize.height);
+    }
+
+    napi_value top = nullptr;
+    napi_value bottom = nullptr;
+    napi_value left = nullptr;
+    napi_value right = nullptr;
+    napi_get_named_property(env, margin, "top", &top);
+    napi_get_named_property(env, margin, "bottom", &bottom);
+    napi_get_named_property(env, margin, "left", &left);
+    napi_get_named_property(env, margin, "right", &right);
+    if (top) {
+        NapiParseUtils::ParseUint32(env, top, printAttr.margin.top);
+    }
+    if (bottom) {
+        NapiParseUtils::ParseUint32(env, bottom, printAttr.margin.bottom);
+    }
+    if (left) {
+        NapiParseUtils::ParseUint32(env, left, printAttr.margin.left);
+    }
+    if (right) {
+        NapiParseUtils::ParseUint32(env, right, printAttr.margin.right);
+    }
+    return true;
+}
+
+napi_value NapiWebPrintDocument::OnStartLayoutWrite(napi_env env, napi_callback_info info)
+{
+    WVLOG_I("On Start Layout Write.");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_FIVE;
+    napi_value argv[INTEGER_FIVE] = { 0 };
+    WebPrintDocument *webPrintDocument = nullptr;
+
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
+    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webPrintDocument));
+    if (webPrintDocument == nullptr) {
+        WVLOG_E("unwrap webPrintDocument failed.");
+        return result;
+    }
+
+    std::string jobId;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], jobId)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t fd;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_THREE], fd)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    PrintAttributesAdapter oldPrintAttr;
+    PrintAttributesAdapter newPrintAttr;
+    bool ret = false;
+    ret = ParseWebPrintAttrParams(env, argv[INTEGER_ONE], oldPrintAttr);
+    if (!ret) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    ret = ParseWebPrintAttrParams(env, argv[INTEGER_TWO], newPrintAttr);
+    if (!ret) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    napi_ref jsCallback = nullptr;
+    napi_create_reference(env, argv[INTEGER_FOUR], 1, &jsCallback);
+
+    if (jsCallback) {
+        auto callbackImpl = [env, jCallback = std::move(jsCallback)](std::string jobId, uint32_t state) {
+            if (!env) {
+                return;
+            }
+            napi_handle_scope scope = nullptr;
+            napi_open_handle_scope(env, &scope);
+            if (scope == nullptr) {
+                return;
+            }
+            napi_value setResult[INTEGER_TWO] = {0};
+            napi_create_string_utf8(env, jobId.c_str(), NAPI_AUTO_LENGTH, &setResult[INTEGER_ZERO]);
+            napi_create_uint32(env, state, &setResult[INTEGER_ONE]);
+            napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
+            napi_value callback = nullptr;
+            napi_get_reference_value(env, jCallback, &callback);
+            napi_value callbackResult = nullptr;
+            napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
+            napi_delete_reference(env, jCallback);
+            napi_close_handle_scope(env, scope);
+        };
+        webPrintDocument->OnStartLayoutWrite(jobId, oldPrintAttr, newPrintAttr, fd, callbackImpl);
+    } else {
+        webPrintDocument->OnStartLayoutWrite(jobId, oldPrintAttr, newPrintAttr, fd, nullptr);
+    }
+    return result;
+}
+
+napi_value NapiWebPrintDocument::OnJobStateChanged(napi_env env, napi_callback_info info)
+{
+    WVLOG_I("On Job State Changed.");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO];
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    WebPrintDocument *webPrintDocument = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webPrintDocument));
+    if (webPrintDocument == nullptr) {
+        WVLOG_E("unwrap webPrintDocument failed.");
+        return result;
+    }
+    if (argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    std::string jobId;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], jobId)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t state;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], state)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    webPrintDocument->OnJobStateChanged(jobId, state);
+    return result;
+}
+
+napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
+
+    WebPrintDocument *webPrintDoc = new (std::nothrow) WebPrintDocument(data);
+    if (webPrintDoc == nullptr) {
+        WVLOG_E("new web print failed");
+        return nullptr;
+    }
+    NAPI_CALL(env, napi_wrap(env, thisVar, webPrintDoc,
+        [](napi_env env, void *data, void *hint) {
+            WebPrintDocument *webPrintDocument = static_cast<WebPrintDocument *>(data);
+            delete webPrintDocument;
+        },
+        nullptr, nullptr));
+    return thisVar;
 }
 } // namespace NWeb
 } // namespace OHOS
