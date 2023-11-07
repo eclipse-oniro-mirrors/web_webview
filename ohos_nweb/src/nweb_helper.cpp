@@ -51,8 +51,6 @@ const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm";
 const std::string LIB_NAME_WEB_ENGINE = "libweb_engine.so";
 static bool g_isFirstTimeStartUp = false;
 const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
-const std::string INIT_CONFIG = "initConfig";
-const std::string PERFORMANCE_CONFIG = "performanceConfig";
 
 // Run DO macro for every function defined in the API.
 #define FOR_EACH_API_FN(DO)                          \
@@ -1012,20 +1010,6 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr &rootPtr, NWebInitArgs &init
     }
 }
 
-xmlNodePtr NWebAdapterHelper::GetChildrenNode(xmlNodePtr NodePtr, const std::string &childrenNodeName)
-{
-    for (xmlNodePtr curNodePtr = NodePtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
-        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
-            WVLOG_E("invalid node!");
-            continue;
-        }
-        if (!xmlStrcmp(curNodePtr->name, reinterpret_cast<const xmlChar*>(childrenNodeName.c_str()))) {
-            return curNodePtr;
-        }
-    }
-    return nullptr;
-}
-
 void NWebAdapterHelper::ParseConfig(NWebInitArgs &args)
 {
     auto configFilePath = GetConfigPath(WEB_CONFIG_PATH);
@@ -1043,63 +1027,7 @@ void NWebAdapterHelper::ParseConfig(NWebInitArgs &args)
         return;
     }
 
-    xmlNodePtr initNodePtr = GetChildrenNode(rootPtr, INIT_CONFIG);
-    if (initNodePtr != nullptr) {
-        WVLOG_D("read config from init node");
-        ReadConfig(initNodePtr, args);
-    } else {
-        WVLOG_D("read config from root node");
-        ReadConfig(rootPtr, args);
-    }
-
-    if (perfConfig_.empty()) {
-        xmlNodePtr perfNodePtr = GetChildrenNode(rootPtr, PERFORMANCE_CONFIG);
-        if (perfNodePtr != nullptr) {
-            ParsePerfConfig(perfNodePtr);
-        }
-    }
-
+    ReadConfig(rootPtr, args);
     xmlFreeDoc(docPtr);
-}
-
-void NWebAdapterHelper::ParsePerfConfig(xmlNodePtr NodePtr)
-{
-    WVLOG_D("read performance config");
-    for (xmlNodePtr curNodePtr = NodePtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
-        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
-            WVLOG_E("invalid node!");
-            continue;
-        }
-        std::string nodeName = reinterpret_cast<const char*>(curNodePtr->name);
-        for (xmlNodePtr curChildNodePtr = curNodePtr->xmlChildrenNode; curChildNodePtr != nullptr;
-             curChildNodePtr = curChildNodePtr->next) {
-            if (curChildNodePtr->name == nullptr || curChildNodePtr->type == XML_COMMENT_NODE) {
-                WVLOG_E("invalid node!");
-                continue;
-            }
-            std::string childNodeName = reinterpret_cast<const char*>(curChildNodePtr->name);
-            xmlChar* content = xmlNodeGetContent(curChildNodePtr);
-            if (content == nullptr) {
-                WVLOG_E("read xml node error: nodeName:(%{public}s)", childNodeName.c_str());
-                continue;
-            }
-            std::string contentStr = reinterpret_cast<const char*>(content);
-            xmlFree(content);
-            perfConfig_.emplace(nodeName + "/" + childNodeName, contentStr);
-        }
-    }
-}
-
-std::string NWebAdapterHelper::ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName)
-{
-    auto it = perfConfig_.find(configNodeName + "/" + argsNodeName);
-    if (it == perfConfig_.end()) {
-        WVLOG_W("not found perf config for web_config: %{public}s/%{public}s", configNodeName.c_str(),
-                argsNodeName.c_str());
-        return "";
-    }
-    WVLOG_D("find performance config %{public}s/%{public}s, value is %{public}s.", configNodeName.c_str(),
-        argsNodeName.c_str(), it->second.c_str());
-    return it->second;
 }
 } // namespace OHOS::NWeb

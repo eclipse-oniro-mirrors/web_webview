@@ -1,25 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <WEB>
-  <initConfig>
-    <renderConfig>
-        <renderProcessCount>1</renderProcessCount>
-    </renderConfig>
-    <mediaConfig>
-        <backgroundMediaShouldSuspend>true</backgroundMediaShouldSuspend>
-    </mediaConfig>
-    <loadurlSocPerfConfig>
-        <loadurlSocPerfParam>false</loadurlSocPerfParam>
-    </loadurlSocPerfConfig>
-    <mouseWheelSocPerfConfig>
-        <mouseWheelSocPerfParam>false</mouseWheelSocPerfParam>
-    </mouseWheelSocPerfConfig>
-    <touchEventConfig>
-        <touchEventShouldRegister>true</touchEventShouldRegister>
-    </touchEventConfig>
-  </initConfig>
-  <performanceConfig>
-    <LowerFrameRateConfig>
-        <visibleAreaRatio>0.1</visibleAreaRatio>
-    </LowerFrameRateConfig>
-  </performanceConfig>
+  <renderConfig>
+      <renderProcessCount>1</renderProcessCount>
+  </renderConfig>
+  <mediaConfig>
+      <backgroundMediaShouldSuspend>true</backgroundMediaShouldSuspend>
+  </mediaConfig>
+  <loadurlSocPerfConfig>
+      <loadurlSocPerfParam>false</loadurlSocPerfParam>
+  </loadurlSocPerfConfig>
+  <mouseWheelSocPerfConfig>
+      <mouseWheelSocPerfParam>false</mouseWheelSocPerfParam>
+  </mouseWheelSocPerfConfig>
+  <touchEventConfig>
+      <touchEventShouldRegister>true</touchEventShouldRegister>
+  </touchEventConfig>
 </WEB>
