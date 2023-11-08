@@ -43,23 +43,23 @@ typedef struct NWebBeforeDownloadCallbackWrapper WebBeforeDownloadCallbackWrappe
 typedef struct NWebDownloadItemCallbackWrapper WebDownloadItemCallbackWrapper;
 typedef struct NWebDownloadItem NWebDownloadItem;
 
-typedef void (*OnDownloadBeforeStart)(NWebDownloadItem *download_item, WebBeforeDownloadCallbackWrapper *wrapper);
-typedef void (*OnDownloadDidUpdate)(NWebDownloadItem *download_item, WebDownloadItemCallbackWrapper *wrapper);
+typedef void (*OnDownloadBeforeStart)(NWebDownloadItem *downloadItem, WebBeforeDownloadCallbackWrapper *wrapper);
+typedef void (*OnDownloadDidUpdate)(NWebDownloadItem *downloadItem, WebDownloadItemCallbackWrapper *wrapper);
 
 // / WebDownloader functions.
 NWEB_EXPORT void WebDownloadManager_PutDownloadCallback(WebDownloadDelegateCallback *callback);
 
-NWEB_EXPORT void WebDownloader_StartDownload(int32_t nweb_id, const char* url);
+NWEB_EXPORT void WebDownloader_StartDownload(int32_t nwebId, const char* url);
 
 NWEB_EXPORT void WebDownloader_SetDownloadBeforeStart(WebDownloadDelegateCallback *callback, OnDownloadBeforeStart fun);
 
 NWEB_EXPORT void WebDownloader_SetDownloadDidUpdate(WebDownloadDelegateCallback *callback, OnDownloadDidUpdate fun);
 
-NWEB_EXPORT void WebDownloader_ResumeDownloadStatic(const NWebDownloadItem *download_item);
+NWEB_EXPORT void WebDownloader_ResumeDownloadStatic(const NWebDownloadItem *downloadItem);
 
 NWEB_EXPORT void WebDownloader_CreateDownloadDelegateCallback(WebDownloadDelegateCallback **callback);
 
-NWEB_EXPORT void WebDownload_Continue(const WebBeforeDownloadCallbackWrapper *wrapper, const char *download_path);
+NWEB_EXPORT void WebDownload_Continue(const WebBeforeDownloadCallbackWrapper *wrapper, const char *downloadPath);
 
 NWEB_EXPORT void WebDownload_Cancel(const WebDownloadItemCallbackWrapper *wrapper);
 
@@ -67,67 +67,67 @@ NWEB_EXPORT void WebDownload_Pause(const WebDownloadItemCallbackWrapper *wrapper
 
 NWEB_EXPORT void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper);
 
-NWEB_EXPORT void WebDownloadItem_CreateWebDownloadItem(NWebDownloadItem **download_item);
+NWEB_EXPORT void WebDownloadItem_CreateWebDownloadItem(NWebDownloadItem **downloadItem);
 
-NWEB_EXPORT void WebDownloadItem_Destroy(NWebDownloadItem *download_item);
+NWEB_EXPORT void WebDownloadItem_Destroy(NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT void WebDownloadItem_SetFullPath(NWebDownloadItem *download_item, const char *full_path);
+NWEB_EXPORT void WebDownloadItem_SetFullPath(NWebDownloadItem *downloadItem, const char *fullPath);
 
-NWEB_EXPORT void WebDownloadItem_SetReceivedBytes(NWebDownloadItem *download_item, int64_t received_bytes);
+NWEB_EXPORT void WebDownloadItem_SetReceivedBytes(NWebDownloadItem *downloadItem, int64_t receivedBytes);
 
-NWEB_EXPORT void WebDownloadItem_SetTotalBytes(NWebDownloadItem *download_item, int64_t total_bytes);
+NWEB_EXPORT void WebDownloadItem_SetTotalBytes(NWebDownloadItem *downloadItem, int64_t totalBytes);
 
-NWEB_EXPORT void WebDownloadItem_SetETag(NWebDownloadItem *download_item, const char *etag);
+NWEB_EXPORT void WebDownloadItem_SetETag(NWebDownloadItem *downloadItem, const char *etag);
 
-NWEB_EXPORT void WebDownloadItem_SetLastModified(NWebDownloadItem *download_item, const char *last_modified);
+NWEB_EXPORT void WebDownloadItem_SetLastModified(NWebDownloadItem *downloadItem, const char *lastModified);
 
-NWEB_EXPORT void WebDownloadItem_SetMimeType(NWebDownloadItem *download_item, const char *mime_type);
+NWEB_EXPORT void WebDownloadItem_SetMimeType(NWebDownloadItem *downloadItem, const char *mimeType);
 
-NWEB_EXPORT void WebDownloadItem_SetUrl(NWebDownloadItem *download_item, const char *url);
+NWEB_EXPORT void WebDownloadItem_SetUrl(NWebDownloadItem *downloadItem, const char *url);
 
-NWEB_EXPORT void WebDownloadItem_SetReceivedSlices(NWebDownloadItem *download_item, const char *received_slices);
+NWEB_EXPORT void WebDownloadItem_SetReceivedSlices(NWebDownloadItem *downloadItem, const char *receivedSlices);
 
-NWEB_EXPORT void WebDownloadItem_SetGuid(NWebDownloadItem *download_item, const char *guid);
+NWEB_EXPORT void WebDownloadItem_SetGuid(NWebDownloadItem *downloadItem, const char *guid);
 
-NWEB_EXPORT char *WebDownloadItem_Guid(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_Guid(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT long WebDownloadItem_GetDownloadItemId(const NWebDownloadItem *download_item);
+NWEB_EXPORT long WebDownloadItem_GetDownloadItemId(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT NWebDownloadItemState WebDownloadItem_GetState(const NWebDownloadItem *download_item);
+NWEB_EXPORT NWebDownloadItemState WebDownloadItem_GetState(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT int WebDownloadItem_CurrentSpeed(const NWebDownloadItem *download_item);
+NWEB_EXPORT int WebDownloadItem_CurrentSpeed(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT int WebDownloadItem_PercentComplete(const NWebDownloadItem *download_item);
+NWEB_EXPORT int WebDownloadItem_PercentComplete(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT int64_t WebDownloadItem_TotalBytes(const NWebDownloadItem *download_item);
+NWEB_EXPORT int64_t WebDownloadItem_TotalBytes(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT int64_t WebDownloadItem_ReceivedBytes(const NWebDownloadItem *download_item);
+NWEB_EXPORT int64_t WebDownloadItem_ReceivedBytes(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_FullPath(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_FullPath(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_Url(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_Url(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_OriginalUrl(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_OriginalUrl(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_SuggestedFileName(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_SuggestedFileName(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_ContentDisposition(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_ContentDisposition(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_ETag(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_ETag(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_MimeType(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_MimeType(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT bool WebDownloadItem_IsPaused(const NWebDownloadItem *download_item);
+NWEB_EXPORT bool WebDownloadItem_IsPaused(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_Method(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_Method(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT int WebDownloadItem_LastErrorCode(const NWebDownloadItem *download_item);
+NWEB_EXPORT int WebDownloadItem_LastErrorCode(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_ReceivedSlices(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_ReceivedSlices(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT char *WebDownloadItem_LastModified(const NWebDownloadItem *download_item);
+NWEB_EXPORT char *WebDownloadItem_LastModified(const NWebDownloadItem *downloadItem);
 
-NWEB_EXPORT int WebDownloadItem_NWebId(const NWebDownloadItem *download_item);
+NWEB_EXPORT int WebDownloadItem_NWebId(const NWebDownloadItem *downloadItem);
 
 NWEB_EXPORT void DestroyBeforeDownloadCallbackWrapper(WebBeforeDownloadCallbackWrapper *wrapper);
 

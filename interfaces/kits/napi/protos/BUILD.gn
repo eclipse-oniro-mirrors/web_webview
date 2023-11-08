@@ -14,7 +14,7 @@
 import("//build/ohos.gni")
 
 action("proto_gen") {
-  script = "protoc_wrapper.py"
+  script = "protoc_runner.py"
 
   sources = [ "web_download.proto" ]
 
@@ -24,8 +24,8 @@ action("proto_gen") {
   args = sources
   args += [
     "--protoc=clang_x64/thirdparty/protobuf/protoc",
-    "--cc-out-dir=$output_dir",
-    "--proto-in-dir=$proto_in_dir",
+    "--cpp-out=$output_dir",
+    "--protos-dir=$proto_in_dir",
   ]
 
   outputs = [

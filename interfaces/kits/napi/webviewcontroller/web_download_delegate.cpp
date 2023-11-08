@@ -241,12 +241,12 @@ void WebDownloadDelegate::PutDownloadDidFail(napi_env, napi_value callback)
 
 int32_t WebDownloadDelegate::GetNWebId()
 {
-    return nweb_id_;
+    return nwebId_;
 }
 
-void WebDownloadDelegate::SetNWebId(int32_t nweb_id)
+void WebDownloadDelegate::SetNWebId(int32_t nwebId)
 {
-    nweb_id_ = nweb_id;
+    nwebId_ = nwebId;
 }
 
 napi_env WebDownloadDelegate::GetEnv()

@@ -32,9 +32,9 @@ class WebDownloadDelegate;
 class WebDownloadManager {
 public:
     static void SetDownloadDelegate(WebDownloadDelegate *delegate);
-    static void ResumeDownload(const WebDownloadItem *web_download);
+    static void ResumeDownload(const WebDownloadItem *webDownload);
 
-    static void AddDownloadDelegateForWeb(int32_t nweb_id, WebDownloadDelegate *delegate);
+    static void AddDownloadDelegateForWeb(int32_t nwebId, WebDownloadDelegate *delegate);
     static void RemoveDownloadDelegate(WebDownloadDelegate *delegate);
 
     static bool HasValidDelegate();
