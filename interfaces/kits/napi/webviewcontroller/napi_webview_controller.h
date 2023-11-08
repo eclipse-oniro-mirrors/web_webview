@@ -202,6 +202,8 @@ private:
     static napi_value SetConnectionTimeout(napi_env env, napi_callback_info info);
 
     static napi_value CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info);
+
+    static napi_value PostUrl(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {

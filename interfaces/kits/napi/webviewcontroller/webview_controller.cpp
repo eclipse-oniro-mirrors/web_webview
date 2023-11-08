@@ -485,6 +485,15 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
     return false;
 }
 
+ErrCode WebviewController::PostUrl(std::string& url, std::vector<char>& postData)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    return nweb_ptr->PostUrl(url, postData);
+}
+
 ErrCode WebviewController::LoadUrl(std::string url)
 {
     auto nweb_ptr = nweb_.lock();
