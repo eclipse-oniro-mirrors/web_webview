@@ -26,6 +26,7 @@ WebviewJavaScriptResultCallBack::~WebviewJavaScriptResultCallBack()
         for (auto it2 = it1->second.methodMap.begin(); it2 != it1->second.methodMap.end(); ++it2) {
             napi_delete_reference(it1->second.env, it2->second);
         }
+        napi_delete_reference(it1->second.env, it1->second.objRef);
     }
 }
 
@@ -57,7 +58,9 @@ void WebviewJavaScriptResultCallBack::UvJsCallbackThreadWoker(uv_work_t* work, i
     napi_value callback = nullptr;
     napi_value callResult = nullptr;
     napi_get_reference_value(param->env_, param->callback_, &callback);
-    napi_call_function(param->env_, nullptr, callback, argv.size(), &argv[0], &callResult);
+    napi_value obj = nullptr;
+    napi_get_reference_value(param->env_, param->objRef_, &obj);
+    napi_call_function(param->env_, obj, callback, argv.size(), &argv[0], &callResult);
     // convert to nweb value
     ParseNapiValue2NwebValue(param->env_, callResult, param->value_);
 
@@ -106,6 +109,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     param->callback_ = jsObj.methodMap[method];
     param->args_ = args;
     param->value_ = ret;
+    param->objRef_ = jsObj.objRef;
 
     work->data = reinterpret_cast<void*>(param);
     uv_queue_work_with_qos(loop, work, [](uv_work_t* work) {}, UvJsCallbackThreadWoker, uv_qos_user_initiated);
@@ -134,6 +138,9 @@ void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(
 
     JavaScriptObj jsObj;
     jsObj.env = env;
+    napi_ref objRef = nullptr;
+    napi_create_reference(env, obj, 1, &objRef);
+    jsObj.objRef = objRef;
     for (uint32_t i = 0; i < methodList.size(); i++) {
         std::string methodName = methodList[i];
         bool hasFunc = false;
@@ -166,6 +173,7 @@ bool WebviewJavaScriptResultCallBack::DeleteJavaScriptRegister(const std::string
     for (auto it = objectMap_[objName].methodMap.begin(); it != objectMap_[objName].methodMap.end(); ++it) {
         napi_delete_reference(objectMap_[objName].env, it->second);
     }
+    napi_delete_reference(objectMap_[objName].env, objectMap_[objName].objRef);
     objectMap_.erase(objName);
     return true;
 }
