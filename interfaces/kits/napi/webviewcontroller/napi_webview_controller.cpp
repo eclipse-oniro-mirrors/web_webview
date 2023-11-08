@@ -491,6 +491,7 @@ napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callb
     }
     WebviewController::webDebuggingAccess_ = webDebuggingAccess;
 
+    NWebHelper::Instance().SetWebDebuggingAccess(WebviewController::webDebuggingAccess_);
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
