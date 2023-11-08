@@ -28,15 +28,15 @@ namespace OHOS {
 namespace NWeb {
 class WebDownloadDelegate {
 public:
-    static WebDownloadDelegate *FromNWebID(int32_t nweb_id);
+    static WebDownloadDelegate *FromNWebID(int32_t nwebId);
 
-    WebDownloadDelegate(napi_env env);
+    explicit WebDownloadDelegate(napi_env env);
     ~WebDownloadDelegate();
 
-    void DownloadBeforeStart(WebDownloadItem *web_download_item);
-    void DownloadDidUpdate(WebDownloadItem *web_download_item);
-    void DownloadDidFail(WebDownloadItem *web_download_item);
-    void DownloadDidFinish(WebDownloadItem *web_download_item);
+    void DownloadBeforeStart(WebDownloadItem *webDownloadItem);
+    void DownloadDidUpdate(WebDownloadItem *webDownloadItem);
+    void DownloadDidFail(WebDownloadItem *webDownloadItem);
+    void DownloadDidFinish(WebDownloadItem *webDownloadItem);
 
     void PutDownloadBeforeStart(napi_env, napi_value callback);
     void PutDownloadDidUpdate(napi_env, napi_value callback);
@@ -44,14 +44,14 @@ public:
     void PutDownloadDidFail(napi_env, napi_value callback);
 
     int32_t GetNWebId();
-    void SetNWebId(int32_t nweb_id);
+    void SetNWebId(int32_t nwebId);
     napi_env GetEnv();
 
     //  create this reference to make web download delegate not be deleted by gc.
     napi_ref delegate_;
 
 private:
-    int32_t nweb_id_;
+    int32_t nwebId_;
 
     napi_ref download_before_start_callback_;
     napi_ref download_did_update_callback_;
