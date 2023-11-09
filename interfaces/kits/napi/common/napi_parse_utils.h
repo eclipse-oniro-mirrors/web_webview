@@ -40,6 +40,7 @@ public:
     static napi_value ToInt32Value(napi_env env, int32_t number);
     static bool ParseUint32(napi_env env, napi_value argv, uint32_t& outValue);
     static bool ParseInt32(napi_env env, napi_value argv, int32_t& outValue);
+    static bool ParseUint64(napi_env env, napi_value argv, uint64_t& outValue, bool *lossless);
     static bool ParseInt64(napi_env env, napi_value argv, int64_t& outValue);
     static bool ParseDouble(napi_env env, napi_value argv, double& outValue);
     static bool ParseString(napi_env env, napi_value argv, std::string& outValue);
