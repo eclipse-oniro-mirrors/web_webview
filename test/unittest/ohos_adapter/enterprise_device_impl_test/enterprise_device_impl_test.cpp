@@ -17,14 +17,32 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#define private public
 #include "enterprise_device_management_adapter_impl.h"
 #include "browser_proxy.h"
+#include "common_event_data.h"
 
 using namespace testing;
 using namespace testing::ext;
 using namespace OHOS::EDM;
+using namespace OHOS::EventFwk;
 
 namespace OHOS {
+namespace {
+bool g_subscribeCommonEventRet = true;
+bool g_unSubscribeCommonEventRet = true;
+using Want = OHOS::AAFwk::Want;
+} //namespace
+namespace EventFwk {
+bool CommonEventManager::SubscribeCommonEvent(const std::shared_ptr<CommonEventSubscriber> &subscriber)
+{
+    return g_subscribeCommonEventRet; 
+}
+bool CommonEventManager::UnSubscribeCommonEvent(const std::shared_ptr<CommonEventSubscriber> &subscriber)
+{
+    return g_unSubscribeCommonEventRet; 
+}
+}
 namespace EDM {
 namespace {
 std::shared_ptr<BrowserProxy> g_browserProxy = nullptr;
@@ -70,6 +88,41 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_BackgroundTaskAdapte
     g_browserProxy = std::make_shared<BrowserProxy>();
     result = EnterpriseDeviceManagementAdapterImpl::GetInstance().GetPolicies(policies);
     EXPECT_EQ(result, 0);
+
+    bool start = EnterpriseDeviceManagementAdapterImpl::GetInstance().StartObservePolicyChange();
+    EXPECT_TRUE(start);
+    g_subscribeCommonEventRet = false;  
+    start = EnterpriseDeviceManagementAdapterImpl::GetInstance().StartObservePolicyChange();
+    EXPECT_FALSE(start);
+
+    bool stop = EnterpriseDeviceManagementAdapterImpl::GetInstance().StopObservePolicyChange();
+    EXPECT_TRUE(stop);
+    g_unSubscribeCommonEventRet = false;
+    stop = EnterpriseDeviceManagementAdapterImpl::GetInstance().StopObservePolicyChange();
+    EXPECT_FALSE(stop);
+    EnterpriseDeviceManagementAdapterImpl::GetInstance().commonEventSubscriber_ = nullptr;
+    stop = EnterpriseDeviceManagementAdapterImpl::GetInstance().StopObservePolicyChange();
+    EXPECT_TRUE(stop);
+}
+
+/**
+ * @tc.name: EnterpriseDeviceImplTest_OnReceiveEvent_002
+ * @tc.desc: OnReceiveEvent.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_002, TestSize.Level2)
+{
+    Want want;
+    want.SetAction("web_test");
+    OHOS::EventFwk::CommonEventData data(want);
+    OHOS::EventFwk::CommonEventSubscribeInfo in;
+    EdmPolicyChangedEventCallback cb = [](){};
+    std::shared_ptr<NWebEdmEventSubscriber> result = std::make_shared<NWebEdmEventSubscriber>(in, cb);
+    EXPECT_NE(result, nullptr);
+    result->OnReceiveEvent(data);
+    want.SetAction("com.ohos.edm.browserpolicychanged");
+    result->OnReceiveEvent(data);
 }
 }
 } // namespace OHOS
