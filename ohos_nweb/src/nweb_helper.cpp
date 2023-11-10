@@ -764,7 +764,25 @@ using GetCookieManagerFunc = NWebCookieManager *(*)();
 NWebCookieManager *NWebHelper::GetCookieManager()
 {
     if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleWebEngine_ is nullptr");
+        WVLOG_I("GetCookieManager: init web engine start.");
+        // obtain bundle path
+        std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+            AbilityRuntime::ApplicationContext::GetApplicationContext();
+        if (!ctx) {
+            WVLOG_E("GetCookieManager: Failed to init web engine due to nil application context.");
+            return nullptr;
+        }
+        // load so
+        const std::string& bundle_path = ctx->GetBundleCodeDir();
+        SetBundlePath(bundle_path);
+        if (!Init(true)) {
+            WVLOG_E("GetCookieManager: Failed to init web engine due to NWebHelper failure.");
+            return nullptr;
+        }
+        WVLOG_I("GetCookieManager: init web engine success.");
+    }
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_E("GetCookieManager: libHandleWebEngine_ is nullptr");
         return nullptr;
     }
 
