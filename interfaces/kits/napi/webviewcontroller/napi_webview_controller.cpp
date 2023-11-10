@@ -165,6 +165,7 @@ WebviewController* GetWebviewController(napi_env env, napi_callback_info info)
 thread_local napi_ref g_classWebMsgPort;
 thread_local napi_ref g_historyListRef;
 thread_local napi_ref g_webMsgExtClassRef;
+thread_local napi_ref g_webPrintDocClassRef;
 napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 {
     napi_property_descriptor properties[] = {
@@ -365,6 +366,18 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         historyListProperties, &historyList);
     napi_create_reference(env, historyList, 1, &g_historyListRef);
     napi_set_named_property(env, exports, WEB_HISTORY_LIST_CLASS_NAME.c_str(), historyList);
+
+    napi_value webPrintDoc = nullptr;
+    napi_property_descriptor WebPrintDocumentClass[] = {
+        DECLARE_NAPI_FUNCTION("onStartLayoutWrite", NapiWebPrintDocument::OnStartLayoutWrite),
+        DECLARE_NAPI_FUNCTION("onJobStateChanged", NapiWebPrintDocument::OnJobStateChanged),
+    };
+    napi_define_class(env, WEB_PRINT_DOCUMENT_CLASS_NAME.c_str(), WEB_PRINT_DOCUMENT_CLASS_NAME.length(),
+        NapiWebPrintDocument::JsConstructor, nullptr,
+        sizeof(WebPrintDocumentClass) / sizeof(WebPrintDocumentClass[0]),
+        WebPrintDocumentClass, &webPrintDoc);
+    napi_create_reference(env, webPrintDoc, 1, &g_webPrintDocClassRef);
+    napi_set_named_property(env, exports, WEB_PRINT_DOCUMENT_CLASS_NAME.c_str(), webPrintDoc);
 
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     return exports;
@@ -3723,16 +3736,13 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
         return result;
     }
 
-    napi_value cons = nullptr;
-    napi_property_descriptor NapiWebPrintDocument[] = {
-        DECLARE_NAPI_FUNCTION("onStartLayoutWrite", NapiWebPrintDocument::OnStartLayoutWrite),
-        DECLARE_NAPI_FUNCTION("onJobStateChanged", NapiWebPrintDocument::OnJobStateChanged),
-    };
-    napi_define_class(env, WEB_PRINT_DOCUMENT_CLASS_NAME.c_str(), WEB_PRINT_DOCUMENT_CLASS_NAME.length(),
-        NapiWebPrintDocument::JsConstructor, webPrintDocument, sizeof(NapiWebPrintDocument) / sizeof(NapiWebPrintDocument[0]),
-        NapiWebPrintDocument, &cons);
+    napi_value webPrintDoc = nullptr;
+    NAPI_CALL(env, napi_get_reference_value(env, g_webPrintDocClassRef, &webPrintDoc));
+    napi_value consParam[INTEGER_ONE] = {0};
+    NAPI_CALL(env, napi_create_bigint_uint64(env, reinterpret_cast<uint64_t>(webPrintDocument),
+                                             &consParam[INTEGER_ZERO]));
     napi_value proxy = nullptr;
-    status = napi_new_instance(env, cons, argc, argv, &proxy);
+    status = napi_new_instance(env, webPrintDoc, INTEGER_ONE, &consParam[INTEGER_ZERO], &proxy);
     if (status!= napi_ok) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
@@ -3781,7 +3791,6 @@ bool ParseWebPrintAttrParams(napi_env env, napi_value obj, PrintAttributesAdapte
     if (option) {
         NapiParseUtils::ParseString(env, option, printAttr.option);
     }
-
 
     napi_value startPage = nullptr;
     napi_value endPage = nullptr;
@@ -3954,10 +3963,18 @@ napi_value NapiWebPrintDocument::OnJobStateChanged(napi_env env, napi_callback_i
 napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
-    void *data = nullptr;
-    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    uint64_t addrWebPrintDoc = 0;
+    bool loseLess = true;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
 
-    WebPrintDocument *webPrintDoc = new (std::nothrow) WebPrintDocument(data);
+    if (!NapiParseUtils::ParseUint64(env, argv[INTEGER_ZERO], addrWebPrintDoc, &loseLess)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+    void *webPrintDocPtr = reinterpret_cast<void *>(addrWebPrintDoc);
+    WebPrintDocument *webPrintDoc = new (std::nothrow) WebPrintDocument(webPrintDocPtr);
     if (webPrintDoc == nullptr) {
         WVLOG_E("new web print failed");
         return nullptr;

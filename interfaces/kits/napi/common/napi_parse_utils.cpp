@@ -198,6 +198,22 @@ bool NapiParseUtils::ParseUint32(napi_env env, napi_value argv, uint32_t& outVal
     return true;
 }
 
+bool NapiParseUtils::ParseUint64(napi_env env, napi_value argv, uint64_t& outValue, bool *lossless)
+{
+    napi_valuetype valueType = napi_undefined;
+
+    napi_typeof(env, argv, &valueType);
+    if (valueType != napi_bigint) {
+        return false;
+    }
+
+    uint64_t number = 0;
+    napi_get_value_bigint_uint64(env, argv, &number, lossless);
+    outValue = number;
+
+    return true;
+}
+
 bool NapiParseUtils::ParseInt64(napi_env env, napi_value argv, int64_t& outValue)
 {
     napi_valuetype valueType = napi_undefined;
