@@ -1033,6 +1033,7 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr &rootPtr, NWebInitArgs &init
 
 xmlNodePtr NWebAdapterHelper::GetChildrenNode(xmlNodePtr NodePtr, const std::string &childrenNodeName)
 {
+    WVLOG_D("GetChildrenNode:(%{public}s)", childrenNodeName.c_str());
     for (xmlNodePtr curNodePtr = NodePtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
         if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
             WVLOG_E("invalid node!");
