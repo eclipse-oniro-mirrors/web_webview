@@ -57,6 +57,9 @@ private:
 
     static void ParseNapiValue2NwebValue(napi_env env, napi_value value, std::shared_ptr<NWebValue> nwebValue);
     static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
+    static std::shared_ptr<NWebValue> PostGetJavaScriptResultToJsThread(JavaScriptObj& jsObj,
+                                                                        std::vector<std::shared_ptr<NWebValue>>& args,
+                                                                        const std::string& method);
     struct NapiJsCallBackParm {
         napi_env env_;
         napi_ref callback_;
