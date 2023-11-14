@@ -19,12 +19,16 @@
 
 #define private public
 #include "enterprise_device_management_adapter_impl.h"
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 #include "browser_proxy.h"
+#endif
 #include "common_event_data.h"
 
 using namespace testing;
 using namespace testing::ext;
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 using namespace OHOS::EDM;
+#endif
 using namespace OHOS::EventFwk;
 
 namespace OHOS {
@@ -43,6 +47,8 @@ bool CommonEventManager::UnSubscribeCommonEvent(const std::shared_ptr<CommonEven
     return g_unSubscribeCommonEventRet; 
 }
 }
+
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 namespace EDM {
 namespace {
 std::shared_ptr<BrowserProxy> g_browserProxy = nullptr;
@@ -52,6 +58,7 @@ std::shared_ptr<BrowserProxy> BrowserProxy::GetBrowserProxy()
     return g_browserProxy;
 }
 }
+#endif
 
 namespace NWeb {
 class EnterpriseDeviceImplTest : public testing::Test {
@@ -82,6 +89,7 @@ void EnterpriseDeviceImplTest::TearDown(void)
  */
 HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_BackgroundTaskAdapter_001, TestSize.Level1)
 {
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     std::string policies = "web_test";
     int32_t result = EnterpriseDeviceManagementAdapterImpl::GetInstance().GetPolicies(policies);
     EXPECT_EQ(result, -1);
@@ -103,6 +111,11 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_BackgroundTaskAdapte
     EnterpriseDeviceManagementAdapterImpl::GetInstance().commonEventSubscriber_ = nullptr;
     stop = EnterpriseDeviceManagementAdapterImpl::GetInstance().StopObservePolicyChange();
     EXPECT_TRUE(stop);
+#else
+    std::string policies = "web_test";
+    int32_t result = EnterpriseDeviceManagementAdapterImpl::GetInstance().GetPolicies(policies);
+    EXPECT_EQ(result, -1);
+#endif
 }
 
 /**
@@ -111,6 +124,7 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_BackgroundTaskAdapte
  * @tc.type: FUNC
  * @tc.require:
  */
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_002, TestSize.Level2)
 {
     Want want;
@@ -124,5 +138,6 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_002, 
     want.SetAction("com.ohos.edm.browserpolicychanged");
     result->OnReceiveEvent(data);
 }
+#endif
 }
 } // namespace OHOS
