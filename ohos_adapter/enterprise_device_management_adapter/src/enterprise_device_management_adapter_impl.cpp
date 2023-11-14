@@ -28,7 +28,7 @@ using namespace OHOS::EDM;
 
 namespace {
 #if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
-  const char* const BROWSER_POLICY_CHANGED_EVENT = "com.ohos.edm.browserpolicychanged";
+const char* const BROWSER_POLICY_CHANGED_EVENT = "com.ohos.edm.browserpolicychanged";
 #endif
 }
 
@@ -39,12 +39,14 @@ EnterpriseDeviceManagementAdapterImpl& EnterpriseDeviceManagementAdapterImpl::Ge
     return instance;
 }
 
-NWebEdmEventSubscriber::NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& eventCallback)
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
+NWebEdmEventSubscriber::NWebEdmEventSubscriber(
+    EventFwk::CommonEventSubscribeInfo& in,
+    EdmPolicyChangedEventCallback& eventCallback)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(eventCallback) {}
 
 void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& data)
 {
-#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     const std::string action = data.GetWant().GetAction();
     WVLOG_I("Receive edm policy action: %{public}s", action.c_str());
     if (action != BROWSER_POLICY_CHANGED_EVENT) {
@@ -52,10 +54,11 @@ void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& dat
     }
 
     eventCallback_();
-#endif
 }
+#endif
 
-void EnterpriseDeviceManagementAdapterImpl::RegistPolicyChangeEventCallback(const EdmPolicyChangedEventCallback&& eventCallback)
+void EnterpriseDeviceManagementAdapterImpl::RegistPolicyChangeEventCallback(
+    const EdmPolicyChangedEventCallback&& eventCallback)
 {
 #if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     WVLOG_I("Regist edm policy change event callback");
