@@ -36,11 +36,11 @@ using Want = OHOS::AAFwk::Want;
 namespace EventFwk {
 bool CommonEventManager::SubscribeCommonEvent(const std::shared_ptr<CommonEventSubscriber> &subscriber)
 {
-    return g_subscribeCommonEventRet; 
+    return g_subscribeCommonEventRet;
 }
 bool CommonEventManager::UnSubscribeCommonEvent(const std::shared_ptr<CommonEventSubscriber> &subscriber)
 {
-    return g_unSubscribeCommonEventRet; 
+    return g_unSubscribeCommonEventRet;
 }
 }
 namespace EDM {
@@ -91,7 +91,7 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_BackgroundTaskAdapte
 
     bool start = EnterpriseDeviceManagementAdapterImpl::GetInstance().StartObservePolicyChange();
     EXPECT_TRUE(start);
-    g_subscribeCommonEventRet = false;  
+    g_subscribeCommonEventRet = false;
     start = EnterpriseDeviceManagementAdapterImpl::GetInstance().StartObservePolicyChange();
     EXPECT_FALSE(start);
 
