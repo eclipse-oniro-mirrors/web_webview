@@ -26,6 +26,7 @@
 
 namespace OHOS::NWeb {
 
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 class NWebEdmEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
     NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& cb);
@@ -35,6 +36,7 @@ public:
 private:
     EdmPolicyChangedEventCallback eventCallback_;
 };
+#endif
 
 class EnterpriseDeviceManagementAdapterImpl : public EnterpriseDeviceManagementAdapter {
 public:
