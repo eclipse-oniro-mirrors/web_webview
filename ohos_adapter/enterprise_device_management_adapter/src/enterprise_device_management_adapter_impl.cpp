@@ -16,13 +16,20 @@
 #include "enterprise_device_management_adapter_impl.h"
 
 #include "nweb_log.h"
+
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 #include "browser_proxy.h"
+#endif
 
 namespace OHOS::NWeb {
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 using namespace OHOS::EDM;
+#endif
 
 namespace {
-  const char* const BROWSER_POLICY_CHANGED_EVENT = "com.ohos.edm.browserpolicychanged";
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
+const char* const BROWSER_POLICY_CHANGED_EVENT = "com.ohos.edm.browserpolicychanged";
+#endif
 }
 
 // static
@@ -32,7 +39,10 @@ EnterpriseDeviceManagementAdapterImpl& EnterpriseDeviceManagementAdapterImpl::Ge
     return instance;
 }
 
-NWebEdmEventSubscriber::NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& eventCallback)
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
+NWebEdmEventSubscriber::NWebEdmEventSubscriber(
+    EventFwk::CommonEventSubscribeInfo& in,
+    EdmPolicyChangedEventCallback& eventCallback)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(eventCallback) {}
 
 void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& data)
@@ -45,15 +55,20 @@ void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& dat
 
     eventCallback_();
 }
+#endif
 
-void EnterpriseDeviceManagementAdapterImpl::RegistPolicyChangeEventCallback(const EdmPolicyChangedEventCallback&& eventCallback)
+void EnterpriseDeviceManagementAdapterImpl::RegistPolicyChangeEventCallback(
+    const EdmPolicyChangedEventCallback&& eventCallback)
 {
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     WVLOG_I("Regist edm policy change event callback");
     eventCallback_ = std::move(eventCallback);
+#endif
 }
 
 bool EnterpriseDeviceManagementAdapterImpl::StartObservePolicyChange()
 {
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     WVLOG_I("Start observing edm policy change event");
 
     EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
@@ -65,10 +80,14 @@ bool EnterpriseDeviceManagementAdapterImpl::StartObservePolicyChange()
         WVLOG_E("Start observing edm policy failed");
     }
     return ret;
+#else
+    return false;
+#endif
 }
 
 bool EnterpriseDeviceManagementAdapterImpl::StopObservePolicyChange()
 {
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     WVLOG_I("Stop observing edm policy change event");
 
     if (this->commonEventSubscriber_ != nullptr) {
@@ -79,16 +98,24 @@ bool EnterpriseDeviceManagementAdapterImpl::StopObservePolicyChange()
         return ret;
     }
     return true;
+#else
+    return true;
+#endif
 }
 
 int32_t EnterpriseDeviceManagementAdapterImpl::GetPolicies(std::string& policies)
 {
+#if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     auto proxy = BrowserProxy::GetBrowserProxy();
     if (!proxy) {
         WVLOG_E("EnterpriseDeviceManagementAdapterImpl BrowserProxy is null");
         return -1;
     }
     return proxy->GetPolicies(policies);
+#else
+    WVLOG_I("Enterprise device management not supported.");
+    return -1;
+#endif
 }
 
 } // namespace OHOS::NWeb
