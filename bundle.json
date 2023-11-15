@@ -31,6 +31,7 @@
                 "access_token",
                 "app_file_service",
                 "audio_framework",
+                "av_codec",
                 "av_session",
                 "background_task_mgr",
                 "battery_manager",
