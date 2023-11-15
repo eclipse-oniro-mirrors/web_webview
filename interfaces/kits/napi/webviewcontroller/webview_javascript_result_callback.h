@@ -33,6 +33,7 @@ namespace OHOS::NWeb {
 struct JavaScriptObj {
     napi_env env = nullptr;
     napi_ref objRef = nullptr;
+    int32_t containerScopeId = -1;
     std::unordered_map<std::string, napi_ref> methodMap;
 };
 
@@ -69,6 +70,7 @@ private:
         std::condition_variable condition_;
         bool ready_ = false;
         napi_ref objRef_;
+        int32_t containerScopeId_;
     };
 };
 }
