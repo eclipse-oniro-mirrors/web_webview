@@ -37,6 +37,7 @@
 #include "imf_adapter.h"
 #include "keystore_adapter.h"
 #include "media_adapter.h"
+#include "media_codec_decoder_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
 #include "net_proxy_adapter.h"
@@ -124,6 +125,8 @@ public:
     std::unique_ptr<ScreenCaptureAdapter> CreateScreenCaptureAdapter() const;
 
     std::unique_ptr<DateTimeFormatAdapter> CreateDateTimeFormatAdapter() const;
+
+    std::unique_ptr<MediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() const;
     
 private:
     OhosAdapterHelper() = default;
