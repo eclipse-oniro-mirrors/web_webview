@@ -44,6 +44,8 @@ public:
     virtual ProductDeviceType GetProductDeviceType() const = 0;
 
     virtual bool GetWebOptimizationValue() const = 0;
+
+    virtual bool GetLockdownModeStatus() const = 0;
 };
 
 }  // namespace OHOS::NWeb
