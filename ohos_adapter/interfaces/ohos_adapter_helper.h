@@ -124,7 +124,9 @@ public:
     std::unique_ptr<ScreenCaptureAdapter> CreateScreenCaptureAdapter() const;
 
     std::unique_ptr<DateTimeFormatAdapter> CreateDateTimeFormatAdapter() const;
-    
+
+    std::unique_ptr<NativeImageAdapter> CreateNativeImageAdapter() const;
+
 private:
     OhosAdapterHelper() = default;
 

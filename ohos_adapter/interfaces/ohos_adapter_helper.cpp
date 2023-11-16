@@ -35,6 +35,7 @@
 #include "imf_adapter_impl.h"
 #include "keystore_adapter_impl.h"
 #include "mmi_adapter_impl.h"
+#include "native_image_adapter_impl.h"
 #if defined(NWEB_TEL_ENABLE)
 #include "net_connect_adapter_impl.h"
 #endif
@@ -264,5 +265,10 @@ std::unique_ptr<ScreenCaptureAdapter> OhosAdapterHelper::CreateScreenCaptureAdap
 std::unique_ptr<DateTimeFormatAdapter> OhosAdapterHelper::CreateDateTimeFormatAdapter() const
 {
     return std::make_unique<DateTimeFormatAdapterImpl>();
+}
+
+std::unique_ptr<NativeImageAdapter> OhosAdapterHelper::CreateNativeImageAdapter() const
+{
+    return std::make_unique<NativeImageAdapterImpl>();
 }
 } // namespace OHOS::NWeb
