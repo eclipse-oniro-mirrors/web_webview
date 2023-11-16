@@ -15,6 +15,7 @@
 
 #include "webview_javascript_result_callback.h"
 
+#include "core/common/container_scope.h"
 #include "napi_parse_utils.h"
 #include "native_engine/native_engine.h"
 #include "nweb_log.h"
@@ -45,6 +46,7 @@ void WebviewJavaScriptResultCallBack::UvJsCallbackThreadWoker(uv_work_t* work, i
         work = nullptr;
         return;
     }
+    Ace::ContainerScope containerScope(param->containerScopeId_);
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(param->env_, &scope);
     if (scope == nullptr) {
@@ -101,6 +103,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::PostGetJavaScriptRes
     param->args_ = args;
     param->value_ = ret;
     param->objRef_ = jsObj.objRef;
+    param->containerScopeId_ = jsObj.containerScopeId;
 
     work->data = reinterpret_cast<void*>(param);
     uv_queue_work_with_qos(loop, work, [](uv_work_t* work) {}, UvJsCallbackThreadWoker, uv_qos_user_initiated);
@@ -179,6 +182,8 @@ void WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(
     napi_ref objRef = nullptr;
     napi_create_reference(env, obj, 1, &objRef);
     jsObj.objRef = objRef;
+    int32_t containerScopedId = Ace::ContainerScope::CurrentId();
+    jsObj.containerScopeId = containerScopedId;
     for (uint32_t i = 0; i < methodList.size(); i++) {
         std::string methodName = methodList[i];
         bool hasFunc = false;
