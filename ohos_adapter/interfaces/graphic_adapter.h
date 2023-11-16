@@ -113,6 +113,41 @@ class AshmemAdapter {
 public:
     static int AshmemCreate(const char* name, size_t size);
 };
+
+using OnFrameAvailableCb = void(*)(void* ctx);
+typedef struct FrameAvailableListener {
+    void* context;
+    OnFrameAvailableCb cb;
+} OnFrameAvailableListener;
+
+class NativeImageAdapter {
+public:
+    NativeImageAdapter() = default;
+
+    virtual ~NativeImageAdapter() = default;
+
+    virtual void CreateNativeImage(uint32_t textureId, uint32_t textureTarget) = 0;
+
+    virtual NWebNativeWindow AquireNativeWindowFromNativeImage() = 0;
+
+    virtual int32_t AttachContext(uint32_t textureId) = 0;
+
+    virtual int32_t DetachContext() = 0;
+
+    virtual int32_t UpdateSurfaceImage() = 0;
+
+    virtual int64_t GetTimestamp() = 0;
+
+    virtual int32_t GetTransformMatrix(float matrix[16]) = 0;
+
+    virtual int32_t GetSurfaceId(uint64_t* surfaceId) = 0;
+
+    virtual int32_t SetOnFrameAvailableListener(OnFrameAvailableListener* listener) = 0;
+
+    virtual int32_t UnsetOnFrameAvailableListener() = 0;
+
+    virtual void DestroyNativeImage() = 0;
+};
 } // namespace OHOS::NWeb
 
 #endif // GRAPHIC_ADAPTER_H
