@@ -128,6 +128,8 @@ public:
 
     std::unique_ptr<MediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() const;
     
+    std::unique_ptr<NativeImageAdapter> CreateNativeImageAdapter() const;
+
 private:
     OhosAdapterHelper() = default;
 
