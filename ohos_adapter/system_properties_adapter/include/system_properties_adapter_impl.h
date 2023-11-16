@@ -38,6 +38,8 @@ public:
 
     bool GetWebOptimizationValue() const override;
 
+    bool GetLockdownModeStatus() const override;
+
 private:
     SystemPropertiesAdapterImpl() = default;
 

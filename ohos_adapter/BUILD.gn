@@ -113,7 +113,6 @@ ohos_shared_library("nweb_ohos_adapter") {
     "common_event_service:cesfwk_innerkits",
     "data_share:datashare_common",
     "data_share:datashare_consumer",
-    "enterprise_device_management:edmservice_kits",
     "eventhandler:libeventhandler",
     "file_api:remote_uri_native",
     "graphic_2d:libcomposer",
@@ -226,6 +225,11 @@ ohos_shared_library("nweb_ohos_adapter") {
     sources += [ "power_mgr_adapter/src/power_mgr_client_adapter_impl.cpp" ]
     external_deps += [ "power_manager:powermgr_client" ]
     defines += [ "NWEB_POWER_MANAGER_ENABLE" ]
+  }
+
+  if (webview_enterprise_device_manager_enable) {
+    external_deps += [ "enterprise_device_management:edmservice_kits" ]
+    defines += [ "NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE" ]
   }
 
   innerapi_tags = [ "platformsdk" ]

@@ -21,6 +21,7 @@ declare_args() {
   webview_battery_manager_enable = true
   webview_power_manager_enable = true
   webview_avcodec_enable = true
+  webview_enterprise_device_manager_enable = true
 
   if (defined(global_parts_info) &&
       !defined(global_parts_info.resourceschedule_soc_perf)) {
@@ -59,5 +60,9 @@ declare_args() {
   if (defined(global_parts_info) &&
       !defined(global_parts_info.powermgr_power_manager)) {
     webview_power_manager_enable = false
+  }
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.customization_enterprise_device_management)) {
+    webview_enterprise_device_manager_enable = false
   }
 }

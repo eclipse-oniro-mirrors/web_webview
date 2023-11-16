@@ -15,6 +15,7 @@
 
 #include "system_properties_adapter_impl.h"
 
+#include "init_param.h"
 #include "parameter.h"
 #include "parameters.h"
 #include "sysversion.h"
@@ -65,5 +66,16 @@ ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType() const
 bool SystemPropertiesAdapterImpl::GetWebOptimizationValue() const
 {
     return OHOS::system::GetBoolParameter("web.optimization", true);
+}
+
+bool SystemPropertiesAdapterImpl::GetLockdownModeStatus() const
+{
+    char buffer[32] = { 0 };
+    uint32_t buffSize = sizeof(buffer);
+
+    if (SystemGetParameter("ohos.boot.advsecmode.state", buffer, &buffSize) == 0 && strcmp(buffer, "0") != 0) {
+        return true;
+    }
+    return false;
 }
 } // namespace OHOS::NWeb
