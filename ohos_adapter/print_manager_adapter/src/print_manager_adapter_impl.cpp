@@ -28,17 +28,22 @@ PrintManagerAdapterImpl& PrintManagerAdapterImpl::GetInstance()
 int32_t PrintManagerAdapterImpl::StartPrint(
     const std::vector<std::string>& fileList, const std::vector<uint32_t>& fdList, std::string& taskId)
 {
+#if defined(NWEB_PRINT_ENABLE)
     int32_t ret = OHOS::Print::PrintManagerClient::GetInstance()->StartPrint(fileList, fdList, taskId);
     if (ret != 0) {
         WVLOG_E("StartPrint failed, failed id = %{public}d", ret);
         return -1;
     }
     return ret;
+#else
+    return -1;
+#endif
 }
 
 int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
     const std::shared_ptr<PrintDocumentAdapterAdapter>& listener, const PrintAttributesAdapter& printAttributes)
 {
+#if defined(NWEB_PRINT_ENABLE)
     OHOS::Print::PrintDocumentAdapter* adapter = new PrintDocumentAdapterImpl(listener);
     if (!adapter) {
         WVLOG_E("adapter get failed");
@@ -60,12 +65,16 @@ int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
         return -1;
     }
     return ret;
+#else
+    return -1;
+#endif
 }
 
 int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
     const std::shared_ptr<PrintDocumentAdapterAdapter>& listener, const PrintAttributesAdapter& printAttributes,
     void* contextToken)
 {
+#if defined(NWEB_PRINT_ENABLE)
     OHOS::Print::PrintDocumentAdapter* adapter = new PrintDocumentAdapterImpl(listener);
     if (!adapter) {
         WVLOG_E("adapter get failed");
@@ -88,8 +97,12 @@ int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
         return -1;
     }
     return ret;
+#else
+    return -1;
+#endif
 }
 
+#if defined(NWEB_PRINT_ENABLE)
 PrintDocumentAdapterImpl::PrintDocumentAdapterImpl(const std::shared_ptr<PrintDocumentAdapterAdapter> cb)
 {
     cb_ = cb;
@@ -146,4 +159,5 @@ void PrintDocumentAdapterImpl::onJobStateChanged(const std::string& jobId, uint3
     }
     cb_->OnJobStateChanged(jobId, state);
 }
+#endif
 } // namespace OHOS::NWeb
