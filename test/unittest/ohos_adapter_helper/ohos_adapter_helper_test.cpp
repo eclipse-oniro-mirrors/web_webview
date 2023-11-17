@@ -33,10 +33,13 @@ namespace OHOS::NWeb {
 namespace {
 sptr<Surface> g_surface = nullptr;
 const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
+#if defined(NWEB_PRINT_ENABLE)
 const std::string PRINT_FILE_DIR = "/data/storage/el2/base/print.png";
 const std::string PRINT_JOB_NAME = "webPrintTestJob";
+#endif
 } // namespace
 
+#if defined(NWEB_PRINT_ENABLE)
 class PrintDocumentAdapterImpl : public OHOS::NWeb::PrintDocumentAdapterAdapter {
 public:
     PrintDocumentAdapterImpl() {}
@@ -49,6 +52,8 @@ public:
 
     void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
 };
+#endif
+
 class OhosAdapterHelperTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -126,6 +131,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     helper.GetWebPermissionDataBaseInstance();
     std::unique_ptr<MMIAdapter> mmiAdapter = helper.CreateMMIAdapter();
     EXPECT_NE(mmiAdapter, nullptr);
+#if defined(NWEB_PRINT_ENABLE)
     PrintManagerAdapter& printAdapter = helper.GetPrintManagerInstance();
     std::vector<std::string> fileList = { PRINT_FILE_DIR };
     std::vector<uint32_t> fdList = { 1 };
@@ -137,6 +143,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter), -1);
     void* token = nullptr;
     EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter, token), -1);
+#endif
     sptr<Surface> surface = nullptr;
     NWebInitArgs initArgs;
     uint32_t width = 1;

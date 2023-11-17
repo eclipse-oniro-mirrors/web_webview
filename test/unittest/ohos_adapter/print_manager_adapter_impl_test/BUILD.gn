@@ -13,6 +13,7 @@
 
 import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
+import("$webview_path/config.gni")
 
 module_output_path = "web/webview"
 
@@ -24,6 +25,10 @@ config("module_private_config") {
     "$webview_path/ohos_adapter/interfaces",
     "//third_party/googletest/googlemock/include",
   ]
+
+  if (webview_print_enable) {
+    defines = [ "NWEB_PRINT_ENABLE" ]
+  }
 }
 
 ohos_unittest("print_manager_adapter_impl_test") {
@@ -48,5 +53,7 @@ ohos_unittest("print_manager_adapter_impl_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":print_manager_adapter_impl_test" ]
+  if (webview_print_enable) {
+    deps = [ ":print_manager_adapter_impl_test" ]
+  }
 }
