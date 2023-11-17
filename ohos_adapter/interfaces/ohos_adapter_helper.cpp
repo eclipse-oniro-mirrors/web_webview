@@ -34,6 +34,9 @@
 #include "hitrace_adapter_impl.h"
 #include "imf_adapter_impl.h"
 #include "keystore_adapter_impl.h"
+#if defined(NWEB_MEDIA_AVCODEC_ENABLE)
+#include "media_codec_decoder_adapter_impl.h"
+#endif
 #include "mmi_adapter_impl.h"
 #include "native_image_adapter_impl.h"
 #if defined(NWEB_TEL_ENABLE)
@@ -265,6 +268,15 @@ std::unique_ptr<ScreenCaptureAdapter> OhosAdapterHelper::CreateScreenCaptureAdap
 std::unique_ptr<DateTimeFormatAdapter> OhosAdapterHelper::CreateDateTimeFormatAdapter() const
 {
     return std::make_unique<DateTimeFormatAdapterImpl>();
+}
+
+std::unique_ptr<MediaCodecDecoderAdapter> OhosAdapterHelper::CreateMediaCodecDecoderAdapter() const
+{
+#if defined(NWEB_MEDIA_AVCODEC_ENABLE)
+    return std::make_unique<MediaCodecDecoderAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 std::unique_ptr<NativeImageAdapter> OhosAdapterHelper::CreateNativeImageAdapter() const
