@@ -16,13 +16,17 @@
 #ifndef PRINT_MANAGER_ADAPTER_IMPL_H
 #define PRINT_MANAGER_ADAPTER_IMPL_H
 
+#include "print_manager_adapter.h"
+
+#if defined(NWEB_PRINT_ENABLE)
 #include "iprint_callback.h"
 #include "print_callback.h"
-#include "print_manager_adapter.h"
 #include "print_manager_client.h"
+#endif
 
 namespace OHOS::NWeb {
 
+#if defined(NWEB_PRINT_ENABLE)
 class PrintDocumentAdapterImpl : public OHOS::Print::PrintDocumentAdapter {
 public:
     PrintDocumentAdapterImpl(const std::shared_ptr<PrintDocumentAdapterAdapter> cb);
@@ -38,6 +42,7 @@ private:
 
     std::shared_ptr<PrintDocumentAdapterAdapter> cb_;
 };
+#endif
 
 class PrintManagerAdapterImpl : public PrintManagerAdapter {
 public:
