@@ -45,6 +45,7 @@ namespace {
 constexpr uint32_t URL_MAXIMUM = 2048;
 constexpr uint32_t SOCKET_MAXIMUM = 6;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
+using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
 
 bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
 {
@@ -3750,9 +3751,124 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
     return proxy;
 }
 
+void ParsePrintRangeAdapter(napi_env env, napi_value pageRange, PrintAttributesAdapter& printAttr)
+{
+    if (!pageRange) {
+        WVLOG_E("ParsePrintRangeAdapter failed.");
+        return;
+    }
+    napi_value startPage = nullptr;
+    napi_value endPage = nullptr;
+    napi_value pages = nullptr;
+    napi_get_named_property(env, pageRange, "startPage", &startPage);
+    napi_get_named_property(env, pageRange, "endPage", &endPage);
+    if (startPage) {
+        NapiParseUtils::ParseUint32(env, startPage, printAttr.pageRange.startPage);
+    }
+    if (endPage) {
+        NapiParseUtils::ParseUint32(env, endPage, printAttr.pageRange.endPage);
+    }
+    napi_get_named_property(env, pageRange, "pages", &pages);
+    uint32_t pageArrayLength = 0;
+    napi_get_array_length(env, pages, &pageArrayLength);
+    for (uint32_t i = 0; i < pageArrayLength; ++i) {
+        napi_value pagesNumObj = nullptr;
+        napi_get_element(env, pages, i, &pagesNumObj);
+        uint32_t pagesNum;
+        NapiParseUtils::ParseUint32(env, pagesNumObj, pagesNum);
+        printAttr.pageRange.pages.push_back(pagesNum);
+    }
+}
+
+void ParsePrintPageSizeAdapter(napi_env env, napi_value pageSize, PrintAttributesAdapter& printAttr)
+{
+    if (!pageSize) {
+        WVLOG_E("ParsePrintPageSizeAdapter failed.");
+        return;
+    }
+    napi_value id = nullptr;
+    napi_value name = nullptr;
+    napi_value width = nullptr;
+    napi_value height = nullptr;
+    napi_get_named_property(env, pageSize, "id", &id);
+    napi_get_named_property(env, pageSize, "name", &name);
+    napi_get_named_property(env, pageSize, "width", &width);
+    napi_get_named_property(env, pageSize, "height", &height);
+    if (width) {
+        NapiParseUtils::ParseUint32(env, width, printAttr.pageSize.width);
+    }
+    if (height) {
+        NapiParseUtils::ParseUint32(env, height, printAttr.pageSize.height);
+    }
+}
+
+void ParsePrintMarginAdapter(napi_env env, napi_value margin, PrintAttributesAdapter& printAttr)
+{
+    if (!margin) {
+        WVLOG_E("ParsePrintMarginAdapter failed.");
+        return;
+    }
+    napi_value top = nullptr;
+    napi_value bottom = nullptr;
+    napi_value left = nullptr;
+    napi_value right = nullptr;
+    napi_get_named_property(env, margin, "top", &top);
+    napi_get_named_property(env, margin, "bottom", &bottom);
+    napi_get_named_property(env, margin, "left", &left);
+    napi_get_named_property(env, margin, "right", &right);
+    if (top) {
+        NapiParseUtils::ParseUint32(env, top, printAttr.margin.top);
+    }
+    if (bottom) {
+        NapiParseUtils::ParseUint32(env, bottom, printAttr.margin.bottom);
+    }
+    if (left) {
+        NapiParseUtils::ParseUint32(env, left, printAttr.margin.left);
+    }
+    if (right) {
+        NapiParseUtils::ParseUint32(env, right, printAttr.margin.right);
+    }
+}
+
+WebPrintWriteResultCallback ParseWebPrintWriteResultCallback(napi_env env, napi_value argv)
+{
+    if (!argv) {
+        WVLOG_E("ParseWebPrintWriteResultCallback failed.");
+        return nullptr;
+    }
+    napi_ref jsCallback = nullptr;
+    napi_create_reference(env, argv, 1, &jsCallback);
+    if (jsCallback) {
+        WebPrintWriteResultCallback callbackImpl =
+            [env, jCallback = std::move(jsCallback)](std::string jobId, uint32_t state) {
+            if (!env) {
+                return;
+            }
+            napi_handle_scope scope = nullptr;
+            napi_open_handle_scope(env, &scope);
+            if (scope == nullptr) {
+                return;
+            }
+            napi_value setResult[INTEGER_TWO] = {0};
+            napi_create_string_utf8(env, jobId.c_str(), NAPI_AUTO_LENGTH, &setResult[INTEGER_ZERO]);
+            napi_create_uint32(env, state, &setResult[INTEGER_ONE]);
+            napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
+            napi_value callback = nullptr;
+            napi_get_reference_value(env, jCallback, &callback);
+            napi_value callbackResult = nullptr;
+            napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
+            napi_delete_reference(env, jCallback);
+            napi_close_handle_scope(env, scope);
+        };
+        return callbackImpl;
+    }
+    return nullptr;
+}
+
 bool ParseWebPrintAttrParams(napi_env env, napi_value obj, PrintAttributesAdapter& printAttr)
 {
     if (!obj) {
+        WVLOG_E("ParseWebPrintAttrParams failed.");
         return false;
     }
     napi_value copyNumber = nullptr;
@@ -3791,64 +3907,9 @@ bool ParseWebPrintAttrParams(napi_env env, napi_value obj, PrintAttributesAdapte
     if (option) {
         NapiParseUtils::ParseString(env, option, printAttr.option);
     }
-
-    napi_value startPage = nullptr;
-    napi_value endPage = nullptr;
-    napi_value pages = nullptr;
-    napi_get_named_property(env, pageRange, "startPage", &startPage);
-    napi_get_named_property(env, pageRange, "endPage", &endPage);
-    if (startPage) {
-        NapiParseUtils::ParseUint32(env, startPage, printAttr.pageRange.startPage);
-    }
-    if (endPage) {
-        NapiParseUtils::ParseUint32(env, endPage, printAttr.pageRange.endPage);
-    }
-    napi_get_named_property(env, pageRange, "pages", &pages);
-    uint32_t pageArrayLength = 0;
-    napi_get_array_length(env, pages, &pageArrayLength);
-    for (uint32_t i = 0; i < pageArrayLength; ++i) {
-        napi_value pagesNumObj = nullptr;
-        napi_get_element(env, pages, i, &pagesNumObj);
-        uint32_t pagesNum;
-        NapiParseUtils::ParseUint32(env, pagesNumObj, pagesNum);
-        printAttr.pageRange.pages.push_back(pagesNum);
-    }
-
-    napi_value id = nullptr;
-    napi_value name = nullptr;
-    napi_value width = nullptr;
-    napi_value height = nullptr;
-    napi_get_named_property(env, pageSize, "id", &id);
-    napi_get_named_property(env, pageSize, "name", &name);
-    napi_get_named_property(env, pageSize, "width", &width);
-    napi_get_named_property(env, pageSize, "height", &height);
-    if (width) {
-        NapiParseUtils::ParseUint32(env, width, printAttr.pageSize.width);
-    }
-    if (height) {
-        NapiParseUtils::ParseUint32(env, height, printAttr.pageSize.height);
-    }
-
-    napi_value top = nullptr;
-    napi_value bottom = nullptr;
-    napi_value left = nullptr;
-    napi_value right = nullptr;
-    napi_get_named_property(env, margin, "top", &top);
-    napi_get_named_property(env, margin, "bottom", &bottom);
-    napi_get_named_property(env, margin, "left", &left);
-    napi_get_named_property(env, margin, "right", &right);
-    if (top) {
-        NapiParseUtils::ParseUint32(env, top, printAttr.margin.top);
-    }
-    if (bottom) {
-        NapiParseUtils::ParseUint32(env, bottom, printAttr.margin.bottom);
-    }
-    if (left) {
-        NapiParseUtils::ParseUint32(env, left, printAttr.margin.left);
-    }
-    if (right) {
-        NapiParseUtils::ParseUint32(env, right, printAttr.margin.right);
-    }
+    ParsePrintRangeAdapter(env, pageRange, printAttr);
+    ParsePrintPageSizeAdapter(env, pageSize, printAttr);
+    ParsePrintMarginAdapter(env, margin, printAttr);
     return true;
 }
 
@@ -3892,35 +3953,9 @@ napi_value NapiWebPrintDocument::OnStartLayoutWrite(napi_env env, napi_callback_
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-
-    napi_ref jsCallback = nullptr;
-    napi_create_reference(env, argv[INTEGER_FOUR], 1, &jsCallback);
-
-    if (jsCallback) {
-        auto callbackImpl = [env, jCallback = std::move(jsCallback)](std::string jobId, uint32_t state) {
-            if (!env) {
-                return;
-            }
-            napi_handle_scope scope = nullptr;
-            napi_open_handle_scope(env, &scope);
-            if (scope == nullptr) {
-                return;
-            }
-            napi_value setResult[INTEGER_TWO] = {0};
-            napi_create_string_utf8(env, jobId.c_str(), NAPI_AUTO_LENGTH, &setResult[INTEGER_ZERO]);
-            napi_create_uint32(env, state, &setResult[INTEGER_ONE]);
-            napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
-            napi_value callback = nullptr;
-            napi_get_reference_value(env, jCallback, &callback);
-            napi_value callbackResult = nullptr;
-            napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
-            napi_delete_reference(env, jCallback);
-            napi_close_handle_scope(env, scope);
-        };
-        webPrintDocument->OnStartLayoutWrite(jobId, oldPrintAttr, newPrintAttr, fd, callbackImpl);
-    } else {
-        webPrintDocument->OnStartLayoutWrite(jobId, oldPrintAttr, newPrintAttr, fd, nullptr);
-    }
+    WebPrintWriteResultCallback writeResultCallback = nullptr;
+    writeResultCallback = ParseWebPrintWriteResultCallback(env, argv[INTEGER_FOUR]);
+    webPrintDocument->OnStartLayoutWrite(jobId, oldPrintAttr, newPrintAttr, fd, writeResultCallback);
     return result;
 }
 
