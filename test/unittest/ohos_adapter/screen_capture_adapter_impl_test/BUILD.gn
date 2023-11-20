@@ -13,6 +13,7 @@
 
 import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
+import("../../../../config.gni")
 
 module_output_path = "web/webview"
 
@@ -55,5 +56,8 @@ ohos_unittest("screen_capture_adapter_impl_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":screen_capture_adapter_impl_test" ]
+  deps = []
+  if (webview_camera_enable) {
+    deps += [ ":screen_capture_adapter_impl_test" ]
+  }
 }
