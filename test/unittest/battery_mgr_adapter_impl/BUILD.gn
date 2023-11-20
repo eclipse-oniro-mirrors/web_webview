@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../config.gni")
 
 module_output_path = "web/webview"
 
@@ -47,5 +48,8 @@ ohos_unittest("battery_mgr_adapter_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":battery_mgr_adapter_test" ]
+  deps = []
+  if (webview_battery_manager_enable) {
+    deps += [ ":battery_mgr_adapter_test" ]
+  }
 }

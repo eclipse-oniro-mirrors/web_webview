@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../../config.gni")
 import("../../../../web_aafwk.gni")
 
 module_output_path = "web/webview"
@@ -49,5 +50,8 @@ ohos_unittest("location_callback_adapter_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":location_callback_adapter_test" ]
+  deps = []
+  if (webview_location_enable) {
+    deps += [ ":location_callback_adapter_test" ]
+  }
 }
