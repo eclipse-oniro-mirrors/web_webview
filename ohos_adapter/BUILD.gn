@@ -231,6 +231,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     external_deps += [
       "print_fwk:print_client",
       "print_fwk:print_helper",
+      "print_fwk:print_models",
     ]
     defines += [ "NWEB_PRINT_ENABLE" ]
   }
