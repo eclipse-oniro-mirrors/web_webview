@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../config.gni")
 
 module_output_path = "web/webview"
 
@@ -51,5 +52,8 @@ ohos_unittest("net_connect_adapter_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":net_connect_adapter_test" ]
+  deps = []
+  if (webview_telephony_enable) {
+    deps += [ ":net_connect_adapter_test" ]
+  }
 }

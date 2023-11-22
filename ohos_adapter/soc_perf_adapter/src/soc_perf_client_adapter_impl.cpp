@@ -85,11 +85,15 @@ void SocPerfClientAdapterImpl::ApplySocPerfConfigByIdEx(int32_t id, bool onOffTa
 
 uint32_t SocPerfClientAdapterImpl::ConvertId(int32_t id)
 {
+#if defined(NWEB_SOC_PERF)
     auto mit = convertMap_.find(id);
     if (mit == convertMap_.end()) {
         WVLOG_E("invalid id: %{public}d", id);
         return SOC_PERF_INVALID;
     }
     return mit->second;
+#else
+    return 0;
+#endif
 }
 }  // namespace OHOS::NWeb
