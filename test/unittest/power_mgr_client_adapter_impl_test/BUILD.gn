@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../config.gni")
 
 module_output_path = "web/webview"
 
@@ -48,5 +49,8 @@ ohos_unittest("power_mgr_client_adapter_impl_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":power_mgr_client_adapter_impl_test" ]
+  deps = []
+  if (webview_power_manager_enable) {
+    deps += [ ":power_mgr_client_adapter_impl_test" ]
+  }
 }

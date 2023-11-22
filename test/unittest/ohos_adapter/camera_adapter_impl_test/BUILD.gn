@@ -35,7 +35,7 @@ config("module_private_config") {
 ohos_unittest("camera_adapter_impl_test") {
   module_out_path = module_output_path
 
-  sources = [ "camera_adapter_impl_test.cpp" ]
+  sources = []
 
   configs = [ ":module_private_config" ]
 
@@ -51,12 +51,16 @@ ohos_unittest("camera_adapter_impl_test") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
-    "camera_framework:camera_framework",
     "drivers_interface_camera:metadata",
     "hilog:libhilog",
     "ipc:ipc_core",
     "webview:libnweb",
   ]
+
+  if (webview_camera_enable) {
+    sources += [ "camera_adapter_impl_test.cpp" ]
+    external_deps += [ "camera_framework:camera_framework" ]
+  }
 }
 
 group("unittest") {

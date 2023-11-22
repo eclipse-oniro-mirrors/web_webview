@@ -12,6 +12,7 @@
 # limitations under the License.
 
 import("//build/test.gni")
+import("../../../../config.gni")
 
 module_output_path = "web/webview"
 
@@ -43,5 +44,8 @@ ohos_unittest("nweb_media_adapter_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":nweb_media_adapter_test" ]
+  deps = []
+  if (webview_media_player_enable) {
+    deps += [ ":nweb_media_adapter_test" ]
+  }
 }
