@@ -216,6 +216,7 @@ int32_t PlayerAdapterImpl::SetVideoSurface(IConsumerSurfaceAdapter* cSurfaceAdap
         return -1;
     }
     auto cSurface = static_cast<ConsumerSurfaceAdapterImpl*>(cSurfaceAdapter)->GetConsumerSurface();
+    cSurface->SetDefaultUsage(BUFFER_USAGE_CPU_READ);
     sptr<IBufferProducer> producer = cSurface->GetProducer();
     sptr<Surface> pSurface = Surface::CreateSurfaceAsProducer(producer);
     return player_->SetVideoSurface(pSurface);
