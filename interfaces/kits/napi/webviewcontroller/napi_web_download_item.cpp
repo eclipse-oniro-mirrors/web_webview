@@ -715,6 +715,21 @@ napi_value NapiWebDownloadItem::Init(napi_env env, napi_value exports)
     WVLOG_D("[DOWNLOAD] NapiWebDownloadItem::Init");
     /* export WebDownloadItem class */
 
+    ExportWebDownloadItemClass(env, &exports);
+
+    /* export WebDownloadState enum */
+	
+    ExportWebDownloadStateEnum(env, &exports);
+
+    /* export WebDownloadErrorCode enum */
+	
+    ExportWebDownloadErrorCodeEnum(env, &exports);
+    
+    return exports;
+}
+
+void NapiWebDownloadItem::ExportWebDownloadItemClass(napi_env env, napi_value* exportsPointer)
+{
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_FUNCTION("getCurrentSpeed", JS_GetCurrentSpeed),
         DECLARE_NAPI_FUNCTION("getPercentComplete", JS_GetPercentComplete),
@@ -741,9 +756,11 @@ napi_value NapiWebDownloadItem::Init(napi_env env, napi_value exports)
     napi_value webDownloadClass = nullptr;
     napi_define_class(env, WEB_DOWNLOAD_ITEMT.c_str(), WEB_DOWNLOAD_ITEMT.length(), JS_Constructor, nullptr,
         sizeof(properties) / sizeof(properties[0]), properties, &webDownloadClass);
-    napi_set_named_property(env, exports, WEB_DOWNLOAD_ITEMT.c_str(), webDownloadClass);
+    napi_set_named_property(env, *exportsPointer, WEB_DOWNLOAD_ITEMT.c_str(), webDownloadClass);
+}
 
-    /* export WebDownloadState enum */
+void NapiWebDownloadItem::ExportWebDownloadStateEnum(napi_env env, napi_value* exportsPointer)
+{
     napi_value webDownloadStateTypeEnum = nullptr;
     napi_property_descriptor webDownloadStateProperties[] = {
         DECLARE_NAPI_STATIC_PROPERTY(
@@ -778,9 +795,11 @@ napi_value NapiWebDownloadItem::Init(napi_env env, napi_value exports)
     napi_define_class(env, WEB_DOWNLOAD_STATE_ENUM_NAME.c_str(), WEB_DOWNLOAD_STATE_ENUM_NAME.length(),
         CreateEnumConstructor, nullptr, sizeof(webDownloadStateProperties) / sizeof(webDownloadStateProperties[0]),
         webDownloadStateProperties, &webDownloadStateTypeEnum);
-    napi_set_named_property(env, exports, WEB_DOWNLOAD_STATE_ENUM_NAME.c_str(), webDownloadStateTypeEnum);
+    napi_set_named_property(env, *exportsPointer, WEB_DOWNLOAD_STATE_ENUM_NAME.c_str(), webDownloadStateTypeEnum);
+}
 
-    /* export WebDownloadErrorCode enum */
+void NapiWebDownloadItem::ExportWebDownloadErrorCodeEnum(napi_env env, napi_value* exportsPointer)
+{
     napi_value webDownloadErrorCodeEnum = nullptr;
     napi_property_descriptor webDownloadErrorCodeEnumProperties[] = {
         DECLARE_NAPI_STATIC_PROPERTY(
@@ -955,8 +974,7 @@ napi_value NapiWebDownloadItem::Init(napi_env env, napi_value exports)
         CreateEnumConstructor, nullptr,
         sizeof(webDownloadErrorCodeEnumProperties) / sizeof(webDownloadErrorCodeEnumProperties[0]),
         webDownloadErrorCodeEnumProperties, &webDownloadErrorCodeEnum);
-    napi_set_named_property(env, exports, WEB_DOWNLOAD_ERROR_CODE_ENUM_NAME.c_str(), webDownloadErrorCodeEnum);
-    return exports;
+    napi_set_named_property(env, *exportsPointer, WEB_DOWNLOAD_ERROR_CODE_ENUM_NAME.c_str(), webDownloadErrorCodeEnum);
 }
 
 napi_status NapiWebDownloadItem::DefineProperties(napi_env env, napi_value *object)
