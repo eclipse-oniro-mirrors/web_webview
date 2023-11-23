@@ -33,6 +33,9 @@ public:
 
     static napi_value Init(napi_env env, napi_value exports);
     static napi_status DefineProperties(napi_env, napi_value *object);
+    static void ExportWebDownloadItemClass(napi_env, napi_value* exportsPointer);
+    static void ExportWebDownloadStateEnum(napi_env, napi_value* exportsPointer);
+    static void ExportWebDownloadErrorCodeEnum(napi_env, napi_value* exportsPointer);
 
     static napi_value JS_Constructor(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetGuid(napi_env env, napi_callback_info cbinfo);

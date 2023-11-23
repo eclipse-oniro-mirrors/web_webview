@@ -167,21 +167,21 @@ bool WebDownloadManager::HasValidDelegate()
 }
 
 // static
-void WebDownloadManager::ResumeDownload(const WebDownloadItem *webDownloadItem)
+void WebDownloadManager::ResumeDownload(const WebDownloadItem *webDownload)
 {
     WVLOG_D("[DOWNLOAD] WebDownloadManager::ResumeDownload");
     NWebHelper::Instance().LoadNWebSDK();
     NWebDownloadItem *downloadItem = nullptr;
     WebDownloadItem_CreateWebDownloadItem(&downloadItem);
-    WebDownloadItem_SetGuid(downloadItem, webDownloadItem->guid.c_str());
-    WebDownloadItem_SetUrl(downloadItem, webDownloadItem->url.c_str());
-    WebDownloadItem_SetFullPath(downloadItem, webDownloadItem->fullPath.c_str());
-    WebDownloadItem_SetETag(downloadItem, webDownloadItem->etag.c_str());
-    WebDownloadItem_SetMimeType(downloadItem, webDownloadItem->mimeType.c_str());
-    WebDownloadItem_SetReceivedBytes(downloadItem, webDownloadItem->receivedBytes);
-    WebDownloadItem_SetTotalBytes(downloadItem, webDownloadItem->totalBytes);
-    WebDownloadItem_SetReceivedSlices(downloadItem, webDownloadItem->receivedSlices.c_str());
-    WebDownloadItem_SetLastModified(downloadItem, webDownloadItem->lastModified.c_str());
+    WebDownloadItem_SetGuid(downloadItem, webDownload->guid.c_str());
+    WebDownloadItem_SetUrl(downloadItem, webDownload->url.c_str());
+    WebDownloadItem_SetFullPath(downloadItem, webDownload->fullPath.c_str());
+    WebDownloadItem_SetETag(downloadItem, webDownload->etag.c_str());
+    WebDownloadItem_SetMimeType(downloadItem, webDownload->mimeType.c_str());
+    WebDownloadItem_SetReceivedBytes(downloadItem, webDownload->receivedBytes);
+    WebDownloadItem_SetTotalBytes(downloadItem, webDownload->totalBytes);
+    WebDownloadItem_SetReceivedSlices(downloadItem, webDownload->receivedSlices.c_str());
+    WebDownloadItem_SetLastModified(downloadItem, webDownload->lastModified.c_str());
     WebDownloader_ResumeDownloadStatic(downloadItem);
     return;
 }
