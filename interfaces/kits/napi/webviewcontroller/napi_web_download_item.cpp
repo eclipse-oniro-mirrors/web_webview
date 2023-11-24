@@ -632,7 +632,10 @@ napi_value NapiWebDownloadItem::JS_Serialize(napi_env env, napi_callback_info cb
     void *bufferData = nullptr;
 
     napi_status status = napi_create_arraybuffer(env, webDownloadValue.length(), (void **)&bufferData, &arraybuffer);
-    memcpy_s(bufferData, webDownloadValue.length(), webDownloadValue.c_str(), webDownloadValue.length());
+    if (memcpy_s(bufferData, webDownloadValue.length(), webDownloadValue.c_str(), webDownloadValue.length()) != 0) {
+        WVLOG_D("[DOWNLOAD] memcpy failed");
+        return nullptr;
+    }
     napi_ref arraybufferRef;
     napi_create_reference(env, arraybuffer, 1, &arraybufferRef);
     if (status != napi_ok) {
