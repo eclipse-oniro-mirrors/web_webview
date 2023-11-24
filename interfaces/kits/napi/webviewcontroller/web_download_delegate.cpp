@@ -25,7 +25,8 @@
 namespace OHOS {
 namespace NWeb {
 WebDownloadDelegate::WebDownloadDelegate(napi_env env)
-    : download_before_start_callback_(nullptr),
+    : delegate_(nullptr),
+      download_before_start_callback_(nullptr),
       download_did_update_callback_(nullptr),
       download_did_finish_callback_(nullptr),
       download_did_fail_callback_(nullptr),

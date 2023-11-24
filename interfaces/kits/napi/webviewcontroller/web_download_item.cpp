@@ -39,6 +39,12 @@ WebDownloadItem::WebDownloadItem(napi_env env)
 {
     WVLOG_D("[DOWNLOAD] WebDownloadItem::constructor");
     this->env_ = env;
+    this->currentSpeed = 0;
+    this->percentComplete = 0;
+    this->totalBytes = 0;
+    this->receivedBytes = 0;
+    this->lastErrorCode = 0;
+    this->webDownloadId = 0;
 }
 
 WebDownloadItem::WebDownloadItem(napi_env env, NWebDownloadItem *downloadItem)
