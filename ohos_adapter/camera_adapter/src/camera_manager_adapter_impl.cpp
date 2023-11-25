@@ -521,11 +521,6 @@ int32_t CameraManagerAdapterImpl::RestartSession()
         return CAMERA_OK;
     }
 
-    if (!((isForegound_) && (status_ == CameraStatusAdapter::AVAILABLE))) {
-        WVLOG_E("can not restart session, status:%{public}d, isForeground:%{public}d", status_, isForegound_);
-        return CAMERA_OK;
-    }
-
     if (cameraManager_ == nullptr) {
         WVLOG_E("cameraManager_ is null when start session");
         return CAMERA_ERROR;
@@ -541,11 +536,12 @@ int32_t CameraManagerAdapterImpl::RestartSession()
         previewOutput_->Release();
         previewOutput_ = nullptr;
     }
-    
+
     previewSurface_ = nullptr;
     previewSurfaceListener_ = nullptr;
     inputInitedFlag_ = false;
     captureSession_ = nullptr;
+    status_ = CameraStatusAdapter::AVAILABLE;
 
     if (StartStream(deviceId_, captureParams_, listener_) != CAMERA_OK) {
         WVLOG_E("restart stream failed");
@@ -608,7 +604,6 @@ int32_t CameraManagerAdapterImpl::ReleaseSessionResource(const std::string &devi
     previewSurfaceListener_ = nullptr;
     status_ = CameraStatusAdapter::AVAILABLE;
     inputInitedFlag_ = false;
-
     return CAMERA_OK;
 }
 
@@ -628,7 +623,6 @@ int32_t CameraManagerAdapterImpl::ReleaseCameraManger()
 
 CameraStatusAdapter CameraManagerAdapterImpl::GetCameraStatus()
 {
-    std::lock_guard<std::mutex> lock(mutex_);
     return status_;
 }
 
@@ -885,12 +879,28 @@ void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo 
     if(cameraStatusInfo.cameraDevice) {
         callbackDeviceId = cameraStatusInfo.cameraDevice->GetID();
     }
+    std::string currentDeviceId = CameraManagerAdapterImpl::GetInstance().GetCurrentDeviceId();
     
-    WVLOG_I("OnCameraStatusChanged: deviceID %{public}s status %{public}d",
-            callbackDeviceId.c_str(), cameraStatusInfo.cameraStatus);
+    WVLOG_I("OnCameraStatusChanged: callbackdeviceID %{public}s, currentDeviceId:%{public}s, status %{public}d",
+            callbackDeviceId.c_str(), currentDeviceId.c_str(), cameraStatusInfo.cameraStatus);
     CameraStatusAdapter cameraStatusAdapter = GetAdapterCameraStatus(cameraStatusInfo.cameraStatus);
+
     if (statusCallback_) {
-        WVLOG_I("adapter status callback");
+        switch(cameraStatusAdapter) {
+            case CameraStatusAdapter::AVAILABLE:
+                WVLOG_I("do not handle status AVAILABLE");
+                return;
+            case CameraStatusAdapter::UNAVAILABLE:
+                WVLOG_I("do not handle status UNAVAILABLE");
+                return;
+            case CameraStatusAdapter::APPEAR:
+            case CameraStatusAdapter::DISAPPEAR:
+                break;
+            default:
+                WVLOG_I("unknow status");
+                return;
+        }
+        WVLOG_I("start do statusCallback");
         statusCallback_->OnCameraStatusChanged(cameraStatusAdapter, callbackDeviceId);
     }
     return;
