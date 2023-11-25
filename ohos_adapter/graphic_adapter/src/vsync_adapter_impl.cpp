@@ -32,7 +32,7 @@ VSyncAdapterImpl::~VSyncAdapterImpl()
         if (runner) {
             runner->Stop();
             ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_DESTROYED,
-                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::IMPORTANT_DISPLAY);
+                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
         }
         vsyncHandler_ = nullptr;
     }
@@ -82,7 +82,7 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
         // so need to confirm it several times
         if (runner && runner->GetKernelThreadId() != 0) {
             ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
-                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::IMPORTANT_DISPLAY);
+                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
             hasReportedKeyThread_ = true;
         }
     }
