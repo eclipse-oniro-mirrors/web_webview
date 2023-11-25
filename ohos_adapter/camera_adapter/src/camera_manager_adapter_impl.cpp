@@ -886,7 +886,7 @@ void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo 
     CameraStatusAdapter cameraStatusAdapter = GetAdapterCameraStatus(cameraStatusInfo.cameraStatus);
 
     if (statusCallback_) {
-        switch(cameraStatusAdapter) {
+        switch (cameraStatusAdapter) {
             case CameraStatusAdapter::AVAILABLE:
                 WVLOG_I("do not handle status AVAILABLE");
                 return;
