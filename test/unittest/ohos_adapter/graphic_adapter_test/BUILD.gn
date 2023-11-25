@@ -31,6 +31,7 @@ ohos_unittest("graphic_adapter_test") {
     "graphic_adapter_test.cpp",
     "surface_adapter_impl_test.cpp",
     "window_adapter_impl_test.cpp",
+    "native_image_adapter_impl_test.cpp"
   ]
 
   configs = [ ":module_private_config" ]
