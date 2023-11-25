@@ -14,11 +14,11 @@
  */
 
 #include "native_image_adapter_impl.h"
+
+#include "graphic_common_c.h"
 #include "iconsumer_surface.h"
 
 namespace OHOS::NWeb {
-
-constexpr int NATIVE_IMAGE_ADAPTER_FATAL_ERROR = 50002000;
 
 NativeImageAdapterImpl::~NativeImageAdapterImpl()
 {
@@ -41,7 +41,7 @@ NWebNativeWindow NativeImageAdapterImpl::AquireNativeWindowFromNativeImage()
 int32_t NativeImageAdapterImpl::AttachContext(uint32_t textureId)
 {
     if (ohNativeImage_ == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
     return OH_NativeImage_AttachContext(ohNativeImage_, textureId);
 }
@@ -49,7 +49,7 @@ int32_t NativeImageAdapterImpl::AttachContext(uint32_t textureId)
 int32_t NativeImageAdapterImpl::DetachContext()
 {
     if (ohNativeImage_ == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
     return OH_NativeImage_DetachContext(ohNativeImage_);
 }
@@ -57,7 +57,7 @@ int32_t NativeImageAdapterImpl::DetachContext()
 int32_t NativeImageAdapterImpl::UpdateSurfaceImage()
 {
     if (ohNativeImage_ == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
     return OH_NativeImage_UpdateSurfaceImage(ohNativeImage_);
 }
@@ -65,7 +65,7 @@ int32_t NativeImageAdapterImpl::UpdateSurfaceImage()
 int64_t NativeImageAdapterImpl::GetTimestamp()
 {
     if (ohNativeImage_ == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
     return OH_NativeImage_GetTimestamp(ohNativeImage_);
 }
@@ -73,7 +73,7 @@ int64_t NativeImageAdapterImpl::GetTimestamp()
 int32_t NativeImageAdapterImpl::GetTransformMatrix(float matrix[16])
 {
     if (ohNativeImage_ == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
     return OH_NativeImage_GetTransformMatrix(ohNativeImage_, matrix);
 }
@@ -81,31 +81,28 @@ int32_t NativeImageAdapterImpl::GetTransformMatrix(float matrix[16])
 int32_t NativeImageAdapterImpl::GetSurfaceId(uint64_t* surfaceId)
 {
     if (ohNativeImage_ == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
-    OH_NativeImage_GetSurfaceId(ohNativeImage_, surfaceId);
-    return 0;
+    return OH_NativeImage_GetSurfaceId(ohNativeImage_, surfaceId);
 }
 
 int32_t NativeImageAdapterImpl::SetOnFrameAvailableListener(OnFrameAvailableListener* listener)
 {
     if (ohNativeImage_ == nullptr || listener == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
     OH_OnFrameAvailableListener callback;
     callback.onFrameAvailable = listener->cb;
     callback.context = listener->context;
-    OH_NativeImage_SetOnFrameAvailableListener(ohNativeImage_, callback);
-    return 0;
+    return OH_NativeImage_SetOnFrameAvailableListener(ohNativeImage_, callback);
 }
 
 int32_t NativeImageAdapterImpl::UnsetOnFrameAvailableListener()
 {
     if (ohNativeImage_ == nullptr) {
-        return NATIVE_IMAGE_ADAPTER_FATAL_ERROR;
+        return SURFACE_ERROR_ERROR;
     }
-    OH_NativeImage_UnsetOnFrameAvailableListener(ohNativeImage_);
-    return 0;
+    return OH_NativeImage_UnsetOnFrameAvailableListener(ohNativeImage_);
 }
 
 void NativeImageAdapterImpl::DestroyNativeImage()

@@ -18,7 +18,6 @@
 
 #include "foundation/graphic/graphic_2d/interfaces/inner_api/surface/native_image.h"
 #include "graphic_adapter.h"
-#include "surface.h"
 
 namespace OHOS::NWeb {
 class NativeImageAdapterImpl : public NativeImageAdapter {
