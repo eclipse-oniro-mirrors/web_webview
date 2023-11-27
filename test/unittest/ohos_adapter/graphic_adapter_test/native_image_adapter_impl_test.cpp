@@ -25,7 +25,9 @@ using namespace testing;
 using namespace testing::ext;
 
 namespace OHOS::NWeb {
-
+namespace {
+    constexpr int NATIVE_IMAGE_ADAPTER_FATAL_ERROR = 50002000;
+}
 class NativeImageAdapterImplTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -57,12 +59,12 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_UpdateSurfaceIma
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
     int32_t result = imagerAdapter->UpdateSurfaceImage();
-    EXPECT_EQ(result, 50002000);
+    EXPECT_EQ(result, NATIVE_IMAGE_ADAPTER_FATAL_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
     result = imagerAdapter->UpdateSurfaceImage();
-    EXPECT_EQ(result, 50002000);
+    EXPECT_EQ(result, NATIVE_IMAGE_ADAPTER_FATAL_ERROR);
 }
 
 /**
@@ -76,7 +78,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetTimestamp_001
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
     int32_t result = imagerAdapter->GetTimestamp();
-    EXPECT_EQ(result, 50002000);
+    EXPECT_EQ(result, NATIVE_IMAGE_ADAPTER_FATAL_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
@@ -96,7 +98,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetTransformMatr
     EXPECT_NE(imagerAdapter, nullptr);
     float matrix[16] = {0};
     int32_t result = imagerAdapter->GetTransformMatrix(matrix);
-    EXPECT_EQ(result, 50002000);
+    EXPECT_EQ(result, NATIVE_IMAGE_ADAPTER_FATAL_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
@@ -116,7 +118,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetSurfaceId_001
     EXPECT_NE(imagerAdapter, nullptr);
     uint64_t surfaceId = 1;
     int32_t result = imagerAdapter->GetSurfaceId(&surfaceId);
-    EXPECT_EQ(result, 50002000);
+    EXPECT_EQ(result, NATIVE_IMAGE_ADAPTER_FATAL_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
@@ -136,7 +138,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_SetOnFrameAvaila
     EXPECT_NE(imagerAdapter, nullptr);
     OnFrameAvailableListener listener;
     int32_t result = imagerAdapter->SetOnFrameAvailableListener(&listener);
-    EXPECT_EQ(result, 50002000);
+    EXPECT_EQ(result, NATIVE_IMAGE_ADAPTER_FATAL_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
@@ -155,7 +157,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_UnsetOnFrameAvai
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
     int32_t result = imagerAdapter->UnsetOnFrameAvailableListener();
-    EXPECT_EQ(result, 50002000);
+    EXPECT_EQ(result, NATIVE_IMAGE_ADAPTER_FATAL_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
