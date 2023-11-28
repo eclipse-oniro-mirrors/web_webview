@@ -49,7 +49,7 @@ public:
     std::string mimeType;
     std::string lastModified;
 
-    NWebDownloadItemState state;
+    NWebDownloadItemState state = NWebDownloadItemState::MAX_DOWNLOAD_STATE;
     std::string method;
     std::string receivedSlices;
 
