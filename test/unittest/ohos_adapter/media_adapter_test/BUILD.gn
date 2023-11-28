@@ -38,8 +38,11 @@ ohos_unittest("nweb_media_adapter_test") {
     "c_utils:utils",
     "graphic_2d:surface",
     "hilog:libhilog",
-    "player_framework:media_client",
   ]
+
+  if (webview_media_player_enable) {
+    external_deps += [ "player_framework:media_client" ]
+  }
 }
 
 group("unittest") {

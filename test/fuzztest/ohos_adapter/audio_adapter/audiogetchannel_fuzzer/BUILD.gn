@@ -15,6 +15,7 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
+import("$webview_path/config.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("AudioGetChannelFuzzTest") {
@@ -34,14 +35,12 @@ ohos_fuzztest("AudioGetChannelFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "audiogetchannel_fuzzer.cpp" ]
-  deps = [
-    "$aafwk_path/interfaces/inner_api/app_manager:app_manager",
-    "$graphicsurface_path:libsurface",
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
-  external_deps = [
-    "audio_framework:audio_client",
-    "audio_framework:audio_renderer",
-  ]
+  if (webview_audio_enable) {
+    external_deps = [
+      "audio_framework:audio_client",
+      "audio_framework:audio_renderer",
+    ]
+  }
 }
