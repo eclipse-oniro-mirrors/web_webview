@@ -977,7 +977,7 @@ void NWebConfigCookieCallbackImpl::UvJsCallbackThreadWoker(uv_work_t *work, int 
 
         napi_value callbackResult = nullptr;
         napi_call_function(data->env_, nullptr, onGetCookieFunc,
-            INTEGER_TWO, &result[INTEGER_ZERO], &callbackResult);
+            INTEGER_ONE, &result[INTEGER_ZERO], &callbackResult);
         napi_delete_reference(data->env_, data->callback_);
     } else if (data->deferred_) {
         napi_value result[INTEGER_ONE] = {0};
