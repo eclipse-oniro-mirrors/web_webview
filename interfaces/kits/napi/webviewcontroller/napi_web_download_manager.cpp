@@ -98,10 +98,8 @@ napi_value NapiWebDownloadManager::Init(napi_env env, napi_value exports)
 {
     WVLOG_D("[DOWNLOAD] NapiWebDownloadManager::Init");
     napi_property_descriptor properties[] = {
-        {"setDownloadDelegate", nullptr, JS_SetDownloadDelegate,
-        nullptr, nullptr, nullptr, napi_static, nullptr},
-        {"resumeDownload", nullptr, JS_ResumeDownload,
-        nullptr, nullptr, nullptr, napi_static, nullptr},
+        { "setDownloadDelegate", nullptr, JS_SetDownloadDelegate, nullptr, nullptr, nullptr, napi_static, nullptr },
+        { "resumeDownload", nullptr, JS_ResumeDownload, nullptr, nullptr, nullptr, napi_static, nullptr },
     };
     napi_value webDownloadManagerClass = nullptr;
     napi_define_class(env, WEB_DOWNLOAD_MANAGER.c_str(), WEB_DOWNLOAD_MANAGER.length(), JS_Constructor, nullptr,

@@ -111,14 +111,11 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::PostGetJavaScriptRes
         std::unique_lock<std::mutex> lock(param->mutex_);
         param->condition_.wait(lock, [&param] { return param->ready_; });
     }
-    if (param != nullptr) {
-        delete param;
-        param = nullptr;
-    }
-    if (work != nullptr) {
-        delete work;
-        work = nullptr;
-    }
+
+    delete param;
+    param = nullptr;
+    delete work;
+    work = nullptr;
     return ret;
 }
 
