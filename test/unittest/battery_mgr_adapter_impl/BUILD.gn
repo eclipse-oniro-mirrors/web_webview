@@ -38,12 +38,15 @@ ohos_unittest("battery_mgr_adapter_test") {
   external_deps = [
     "ability_base:base",
     "ability_base:want",
-    "battery_manager:batterysrv_client",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
     "hilog:libhilog",
     "ipc:ipc_core",
   ]
+
+  if (webview_battery_manager_enable) {
+    external_deps += [ "battery_manager:batterysrv_client" ]
+  }
 }
 
 group("unittest") {
