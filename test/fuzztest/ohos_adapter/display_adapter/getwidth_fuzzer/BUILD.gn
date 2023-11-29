@@ -34,16 +34,10 @@ ohos_fuzztest("GetWidthFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "getwidth_fuzzer.cpp" ]
-  deps = [
-    "$graphicsurface_path:libsurface",
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
-    "audio_framework:audio_client",
-    "audio_framework:audio_renderer",
     "c_utils:utils",
-    "hilog:libhilog",
     "image_framework:image_native",
     "window_manager:libdm",
   ]

@@ -24,12 +24,7 @@ config("module_private_config") {
     defines = [ "NWEB_CAMERA_ENABLE" ]
   }
 
-  include_dirs = [
-    "$webview_path/ohos_adapter/camera_adapter/include",
-    "$webview_path/ohos_adapter/interfaces",
-    "//third_party/googletest/googlemock/include",
-    "$graphicsurface_path/frameworks/surface/include",
-  ]
+  include_dirs = [ "$webview_path/ohos_adapter/camera_adapter/include" ]
 }
 
 ohos_unittest("camera_adapter_impl_test") {
@@ -40,7 +35,6 @@ ohos_unittest("camera_adapter_impl_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
     "$webview_path/ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -52,6 +46,7 @@ ohos_unittest("camera_adapter_impl_test") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "drivers_interface_camera:metadata",
+    "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "ipc:ipc_core",
     "webview:libnweb",

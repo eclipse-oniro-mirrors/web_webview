@@ -15,6 +15,7 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
+import("$webview_path/config.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ApplySocPerfConfigByIdFuzzTest") {
@@ -33,17 +34,16 @@ ohos_fuzztest("ApplySocPerfConfigByIdFuzzTest") {
   ]
   sources = [ "applysocperfconfigbyid_fuzzer.cpp" ]
   deps = [
-    "$graphicsurface_path:libsurface",
     "$webview_path/ohos_adapter:nweb_ohos_adapter",
     "$webview_path/ohos_nweb:libnweb",
-    "//third_party/zlib:libz",
   ]
 
-  external_deps = [
-    "c_utils:utils",
-    "hilog:libhilog",
-    "soc_perf:socperf_client",
-  ]
+  external_deps = [ "c_utils:utils" ]
+
+  if (webview_soc_perf_enable) {
+    external_deps += [ "soc_perf:socperf_client" ]
+    defines = [ "NWEB_SOC_PERF" ]
+  }
 }
 
 ###############################################################################
