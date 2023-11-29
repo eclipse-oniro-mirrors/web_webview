@@ -32,11 +32,9 @@ ohos_unittest("permission_data_base_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
     "../../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//third_party/zlib:libz",
   ]
 
   external_deps = [
