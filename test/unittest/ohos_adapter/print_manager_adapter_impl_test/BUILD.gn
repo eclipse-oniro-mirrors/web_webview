@@ -44,12 +44,15 @@ ohos_unittest("print_manager_adapter_impl_test") {
     "//third_party/googletest:gtest_main",
   ]
 
-  external_deps = [
-    "napi:ace_napi",
-    "print_fwk:print_client",
-    "print_fwk:print_helper",
-    "print_fwk:print_models",
-  ]
+  external_deps = [ "napi:ace_napi" ]
+
+  if (webview_print_enable) {
+    external_deps += [
+      "print_fwk:print_client",
+      "print_fwk:print_helper",
+      "print_fwk:print_models",
+    ]
+  }
 }
 
 group("unittest") {

@@ -23,7 +23,6 @@ config("module_private_config") {
   include_dirs = [
     "../../../../ohos_adapter/location_adapter/include",
     "//third_party/googletest/googlemock/include",
-    "$location_path/interfaces/inner_api/include",
   ]
 }
 
@@ -35,7 +34,6 @@ ohos_unittest("location_callback_adapter_test") {
   configs = [ ":module_private_config" ]
 
   deps = [
-    "$location_path/frameworks/location_common/common:lbsservice_common",
     "../../../../ohos_adapter:nweb_ohos_adapter",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
@@ -46,6 +44,13 @@ ohos_unittest("location_callback_adapter_test") {
     "hilog:libhilog",
     "ipc:ipc_core",
   ]
+
+  if (webview_location_enable) {
+    external_deps += [
+      "location:lbsservice_common",
+      "location:locator_sdk",
+    ]
+  }
 }
 
 group("unittest") {
