@@ -30,7 +30,7 @@ config("module_private_config") {
 ohos_unittest("screen_capture_adapter_impl_test") {
   module_out_path = module_output_path
 
-  sources = [ "screen_capture_adapter_impl_test.cpp" ]
+  sources = []
 
   configs = [ ":module_private_config" ]
 
@@ -49,9 +49,13 @@ ohos_unittest("screen_capture_adapter_impl_test") {
     "graphic_2d:surface",
     "hilog:libhilog",
     "ipc:ipc_core",
-    "player_framework:media_client",
     "webview:libnweb",
   ]
+
+  if (webview_media_player_enable) {
+    sources += [ "screen_capture_adapter_impl_test.cpp" ]
+    external_deps += [ "player_framework:media_client" ]
+  }
 }
 
 group("unittest") {

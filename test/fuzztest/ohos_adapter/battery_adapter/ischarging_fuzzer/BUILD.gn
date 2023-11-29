@@ -15,6 +15,7 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
+import("$webview_path/config.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("IsChargingFuzzTest") {
@@ -33,12 +34,11 @@ ohos_fuzztest("IsChargingFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "ischarging_fuzzer.cpp" ]
-  deps = [
-    "$graphicsurface_path:libsurface",
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
-  external_deps = [ "battery_manager:batterysrv_client" ]
+  if (webview_battery_manager_enable) {
+    external_deps = [ "battery_manager:batterysrv_client" ]
+  }
 }
 
 ###############################################################################
