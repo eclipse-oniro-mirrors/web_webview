@@ -24,6 +24,7 @@
 #include "nweb_helper.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_create_window.h"
+#include "nweb_c_api.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -78,8 +79,10 @@ std::unordered_map<std::string, std::string> g_argsMap;
 HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
 {
     int32_t nweb_id = 1;
+    bool result = NWebHelper::Instance().LoadNWebSDK();
+    EXPECT_FALSE(result);
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
-    bool result = NWebAdapterHelper::Instance().Init(false);
+    result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_EQ(RESULT_OK, result);
     NWebCreateInfo create_info;
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
@@ -91,6 +94,11 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
     result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
+    result = NWebHelper::Instance().LoadNWebSDK();
+    EXPECT_TRUE(result);
+    result = NWebHelper::Instance().LoadNWebSDK();
+    EXPECT_TRUE(result);
+    WebDownloadManager_PutDownloadCallback(nullptr);
 }
 
 /**
@@ -107,6 +115,11 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebStorage_002, TestSize.Level1)
         result = true;
     }
     EXPECT_EQ(RESULT_OK, result);
+    std::string config = NWebAdapterHelper::Instance().ParsePerfConfig("web", "test");
+    EXPECT_TRUE(config.empty());
+    NWebAdapterHelper::Instance().perfConfig_.emplace("web/test", "web_test");
+    config = NWebAdapterHelper::Instance().ParsePerfConfig("web", "test");
+    EXPECT_FALSE(config.empty());
 }
 
 /**
@@ -190,5 +203,104 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().bundlePath_.clear();
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
+    NWebHelper::Instance().SetWebDebuggingAccess(true);
+    NWebHelper::Instance().SetConnectionTimeout(1);
+}
+
+/**
+ * @tc.name: NWebHelper_LoadNWebSDK_006
+ * @tc.desc: LoadNWebSDK.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_LoadNWebSDK_006, TestSize.Level1)
+{
+    static WebDownloadDelegateCallback *downloadCallback;
+    WebDownloader_CreateDownloadDelegateCallback(&downloadCallback);
+    EXPECT_NE(downloadCallback, nullptr);
+    OnDownloadBeforeStart fun = [] (NWebDownloadItem *downloadItem, WebBeforeDownloadCallbackWrapper *wrapper) {};
+    WebDownloader_SetDownloadBeforeStart(downloadCallback, fun);
+    WebDownloadManager_PutDownloadCallback(downloadCallback);
+    OnDownloadDidUpdate didUpdate = [] (NWebDownloadItem *downloadItem, WebDownloadItemCallbackWrapper *wrapper) {};
+    WebDownloader_SetDownloadDidUpdate(downloadCallback, didUpdate);
+    NWebDownloadItem *downloadItem = nullptr;
+    WebDownloadItem_CreateWebDownloadItem(&downloadItem);
+    EXPECT_NE(downloadItem, nullptr);
+    WebDownloader_ResumeDownloadStatic(downloadItem);
+    WebDownloader_StartDownload(1, "test_web");
+    WebDownload_Continue(nullptr, "test_web");
+    WebDownload_Cancel(nullptr);
+    WebDownload_Pause(nullptr);
+    WebDownload_Resume(nullptr);
+    long itemId = WebDownloadItem_GetDownloadItemId(downloadItem);
+    EXPECT_NE(itemId, -1);
+    NWebDownloadItemState state = WebDownloadItem_GetState(downloadItem);
+    EXPECT_NE(state, NWebDownloadItemState::MAX_DOWNLOAD_STATE);
+    int speed = WebDownloadItem_CurrentSpeed(downloadItem);
+    EXPECT_EQ(speed, 0);
+    int complete = WebDownloadItem_PercentComplete(downloadItem);
+    EXPECT_NE(complete, 0);
+    int64_t totalBytes = WebDownloadItem_TotalBytes(downloadItem);
+    EXPECT_NE(totalBytes, 0);
+    int64_t receivedBytes = WebDownloadItem_ReceivedBytes(downloadItem);
+    EXPECT_NE(receivedBytes, 0);
+    char* originalUrl = WebDownloadItem_OriginalUrl(downloadItem);
+    EXPECT_EQ(originalUrl, nullptr);
+    char* fileName = WebDownloadItem_SuggestedFileName(downloadItem);
+    EXPECT_EQ(fileName, nullptr);
+    char* disposition = WebDownloadItem_ContentDisposition(downloadItem);
+    EXPECT_EQ(disposition, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_WebDownloadItem_IsPaused_007
+ * @tc.desc: WebDownloadItem_IsPaused.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level1)
+{
+    NWebDownloadItem *downloadItem = nullptr;
+    WebDownloadItem_CreateWebDownloadItem(&downloadItem);
+    EXPECT_NE(downloadItem, nullptr);
+    bool isPaused = WebDownloadItem_IsPaused(downloadItem);
+    EXPECT_FALSE(isPaused);
+    char* method = WebDownloadItem_Method(downloadItem);
+    EXPECT_EQ(method, nullptr);
+    int errorCode = WebDownloadItem_LastErrorCode(downloadItem);
+    EXPECT_NE(errorCode, 0);
+    char* receivedSlices = WebDownloadItem_ReceivedSlices(downloadItem);
+    EXPECT_EQ(receivedSlices, nullptr);
+    char* lastModified = WebDownloadItem_LastModified(downloadItem);
+    EXPECT_EQ(lastModified, nullptr);
+    int nWebId = WebDownloadItem_NWebId(downloadItem);
+    EXPECT_NE(nWebId, 0);
+    WebDownloadItem_Destroy(downloadItem);
+    DestroyBeforeDownloadCallbackWrapper(nullptr);
+    DestroyDownloadItemCallbackWrapper(nullptr);
+    WebDownloadItem_SetGuid(downloadItem, "test_web");
+    WebDownloadItem_SetUrl(downloadItem, "test_web");
+    WebDownloadItem_SetFullPath(downloadItem, "test_web");
+    WebDownloadItem_SetETag(downloadItem, "test_web");
+    WebDownloadItem_SetLastModified(downloadItem, "test_web");
+    WebDownloadItem_SetMimeType(downloadItem, "test_web");
+    WebDownloadItem_SetReceivedBytes(downloadItem, 1);
+    WebDownloadItem_SetTotalBytes(downloadItem, 1);
+    WebDownloadItem_SetReceivedSlices(downloadItem, "test_web");
+
+    char* guid = WebDownloadItem_Guid(downloadItem);
+    EXPECT_NE(guid, nullptr);
+    int64_t totalBytes = WebDownloadItem_TotalBytes(downloadItem);
+    EXPECT_NE(totalBytes, 0);
+    int64_t receivedBytes = WebDownloadItem_ReceivedBytes(downloadItem);
+    EXPECT_NE(receivedBytes, 0);
+    char* fullPath = WebDownloadItem_FullPath(downloadItem);
+    EXPECT_NE(fullPath, nullptr);
+    char* url = WebDownloadItem_Url(downloadItem);
+    EXPECT_NE(url, nullptr);
+    char* eTag = WebDownloadItem_ETag(downloadItem);
+    EXPECT_NE(eTag, nullptr);
+    char* mimeType = WebDownloadItem_MimeType(downloadItem);
+    EXPECT_NE(mimeType, nullptr);
 }
 } // namespace OHOS::NWeb
