@@ -121,6 +121,7 @@ HWTEST_F(SurfaceAdapterImplTest, InvalidSceneOfSurfaceBufferAdapterImpl, TestSiz
     EXPECT_EQ(bufferAdapter->GetStride(), -1);
     EXPECT_EQ(bufferAdapter->GetFormat(), -1);
     EXPECT_EQ(bufferAdapter->GetSize(), 0);
+    EXPECT_EQ(bufferAdapter->GetVirAddr(), nullptr);
 }
 
 /**
@@ -156,6 +157,7 @@ HWTEST_F(SurfaceAdapterImplTest, HandlesNormalScene, TestSize.Level1)
         EXPECT_GE(bufferAdapter->GetStride(), 0);
         EXPECT_GE(bufferAdapter->GetFormat(), 0);
         EXPECT_GT(bufferAdapter->GetSize(), 0);
+        EXPECT_NE(bufferAdapter->GetVirAddr(), nullptr);
 
         surfaceAdapter_->ReleaseBuffer(std::move(bufferAdapter), fence);
     }
