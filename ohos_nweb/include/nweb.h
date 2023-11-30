@@ -867,8 +867,8 @@ public:
      * Inject the JavaScript before WebView loads the DOM tree and run JavaScripts.
      */
     virtual void JavaScriptOnDocumentStart(const ScriptItems& scriptItems) = 0;
-	
-	/**
+
+    /**
      * Execute an accessibility action on an accessibility node in the browser.
      * @param accessibilityId The id of the accessibility node.
      * @param action The action to be performed on the accessibility node.

@@ -3628,7 +3628,7 @@ napi_value NapiWebviewController::PrepareForPageLoad(napi_env env, napi_callback
     return result;
 }
 
-napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callback_info cbinfo)
+napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callback_info info)
 {
     WVLOG_E("WebDownloader::JS_SetDownloadDelegate");
     NWebHelper::Instance().LoadNWebSDK();
@@ -3636,7 +3636,7 @@ napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callbac
     napi_value argv[1] = {0};
     napi_value thisVar = nullptr;
     void* data = nullptr;
-    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
     WebDownloadDelegate* delegate = nullptr;
     napi_value obj = argv[0];
@@ -3655,14 +3655,14 @@ napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callbac
     return nullptr;
 }
 
-napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info cbinfo)
+napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info info)
 {
     WVLOG_I("[DOWNLOAD] NapiWebviewController::StartDownload");
     size_t argc = 1;
     napi_value argv[1] = {0};
     napi_value thisVar = nullptr;
     void* data = nullptr;
-    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
     WebviewController *webviewController = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
