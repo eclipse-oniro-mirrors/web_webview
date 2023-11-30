@@ -25,9 +25,6 @@ using namespace testing;
 using namespace testing::ext;
 
 namespace OHOS::NWeb {
-namespace {
-    constexpr int SURFACE_ERROR_ERROR = 50002000;
-}
 class NativeImageAdapterImplTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
