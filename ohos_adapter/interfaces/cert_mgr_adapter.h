@@ -43,6 +43,8 @@ public:
         uint8_t* signData, uint32_t signDataLen) = 0;
 
     virtual int32_t GetCertDataBySubject(const char *subjectName, uint8_t* certData, int32_t certType) = 0;
+
+    virtual int VerifyCertFromNetSsl(uint8_t* certData, uint32_t certSize) = 0;
 };
 
 } // namespace OHOS::NWeb
