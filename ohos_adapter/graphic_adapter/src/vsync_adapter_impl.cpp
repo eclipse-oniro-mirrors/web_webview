@@ -16,9 +16,29 @@
 #include "vsync_adapter_impl.h"
 
 #include "nweb_log.h"
+#include "res_sched_client_adapter.h"
 #include "transaction/rs_interfaces.h"
 
 namespace OHOS::NWeb {
+namespace {
+const std::string THREAD_NAME = "VSync-webview";
+}
+
+VSyncAdapterImpl::~VSyncAdapterImpl()
+{
+    if (vsyncHandler_) {
+        vsyncHandler_->RemoveAllEvents();
+        auto runner = vsyncHandler_->GetEventRunner();
+        if (runner) {
+            runner->Stop();
+            ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_DESTROYED,
+                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+        }
+        vsyncHandler_ = nullptr;
+    }
+    hasReportedKeyThread_ = false;
+}
+
 VSyncAdapterImpl& VSyncAdapterImpl::GetInstance()
 {
     static VSyncAdapterImpl instance;
@@ -28,16 +48,21 @@ VSyncAdapterImpl& VSyncAdapterImpl::GetInstance()
 VSyncErrorCode VSyncAdapterImpl::Init()
 {
     if (!receiver_) {
+        if (!vsyncHandler_) {
+            std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::Create(THREAD_NAME);
+            vsyncHandler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
+            runner->Run();
+        }
         auto& rsClient = OHOS::Rosen::RSInterfaces::GetInstance();
-        receiver_ = rsClient.CreateVSyncReceiver("NWeb_" + std::to_string(::getpid()));
+        receiver_ = rsClient.CreateVSyncReceiver("NWeb_" + std::to_string(::getpid()), vsyncHandler_);
         if (!receiver_) {
             WVLOG_E("CreateVSyncReceiver failed");
             return VSyncErrorCode::ERROR;
         }
         VsyncError ret = receiver_->Init();
         if (ret != VsyncError::GSERROR_OK) {
-            WVLOG_E("vsync receiver init failed, ret=%{public}d", ret);
             receiver_ = nullptr;
+            WVLOG_E("vsync receiver init failed, ret=%{public}d", ret);
             return VSyncErrorCode::ERROR;
         }
     }
@@ -49,6 +74,17 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
     if (Init() != VSyncErrorCode::SUCCESS) {
         WVLOG_E("NWebWindowAdapter init fail");
         return VSyncErrorCode::ERROR;
+    }
+
+    if (!hasReportedKeyThread_) {
+        auto runner = vsyncHandler_->GetEventRunner();
+        // At this point, the threadId corresponding to eventrunner may not be available,
+        // so need to confirm it several times
+        if (runner && runner->GetKernelThreadId() != 0) {
+            ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+            hasReportedKeyThread_ = true;
+        }
     }
 
     std::lock_guard<std::mutex> lock(mtx_);

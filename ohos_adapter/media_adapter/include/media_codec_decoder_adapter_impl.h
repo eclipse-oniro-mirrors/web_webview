@@ -23,23 +23,13 @@
 #include <queue>
 #include <thread>
 
+#include "avcodec_errors.h"
 #include "avcodec_video_decoder.h"
 #include "media_description.h"
 #include "media_codec_decoder_adapter.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::MediaAVCodec;
-
-class DecoderFormatImpl final : public DecoderFormat {
-public:
-    DecoderFormatImpl(int32_t width, int32_t height) : DecoderFormat(width, height) {};
-
-    ~DecoderFormatImpl() override = default;
-
-    void SetFormatWidth(int32_t width) override;
-
-    void SetFormatHeight(int32_t height) override;
-};
 
 class DecoderCallbackImpl : public MediaAVCodec::AVCodecCallback {
 public:
@@ -70,7 +60,7 @@ public:
 
     DecoderAdapterCode CreateVideoDecoderByName(const std::string& name) override;
 
-    DecoderAdapterCode ConfigureDecoder(int32_t width, int32_t height, double framerate) override;
+    DecoderAdapterCode ConfigureDecoder(const DecoderFormat& format) override;
 
     DecoderAdapterCode SetParameterDecoder(const DecoderFormat& format) override;
 
@@ -90,7 +80,7 @@ public:
 
     DecoderAdapterCode QueueInputBufferDec(uint32_t index, BufferInfo info, BufferFlag flag) override;
 
-    DecoderAdapterCode GetOutputFormatDec(int32_t& width, int32_t& height) override;
+    DecoderAdapterCode GetOutputFormatDec(DecoderFormat& format) override;
 
     DecoderAdapterCode ReleaseOutputBufferDec(uint32_t index, bool isRender) override;
 
@@ -106,6 +96,6 @@ private:
     std::shared_ptr<OHOS::MediaAVCodec::AVCodecVideoDecoder> decoder_ = nullptr;
     std::shared_ptr<DecoderCallbackImpl> callback_ = nullptr;
 };
-
 } // namespace OHOS::NWeb
-#endif
+
+#endif // MEDIA_CODEC_DECODER_ADAPTER_IMPL_H
