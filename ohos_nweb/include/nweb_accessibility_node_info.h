@@ -36,6 +36,7 @@ public:
     std::string hint;
     std::string content;
     std::string error;
+    std::string descriptionInfo;
     std::vector<int32_t> childIds;
     int32_t parentId = -1;
     int32_t gridRows = -1;
@@ -65,7 +66,6 @@ public:
     bool scrollable : 1;
     bool password : 1;
     bool visible : 1;
-    bool clicked : 1;
     bool hinting : 1;
     bool pluralLineSupported : 1;
     bool popupSupported : 1;

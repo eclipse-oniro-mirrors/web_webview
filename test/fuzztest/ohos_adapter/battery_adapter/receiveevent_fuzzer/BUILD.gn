@@ -15,6 +15,7 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
+import("$webview_path/config.gni")
 
 ##############################fuzztest##########################################
 ohos_fuzztest("ReceiveEventFuzzTest") {
@@ -33,15 +34,13 @@ ohos_fuzztest("ReceiveEventFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "receiveevent_fuzzer.cpp" ]
-  deps = [
-    "$graphicsurface_path:libsurface",
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
-  external_deps = [
-    "battery_manager:batterysrv_client",
-    "common_event_service:cesfwk_innerkits",
-  ]
+  external_deps = [ "common_event_service:cesfwk_innerkits" ]
+
+  if (webview_battery_manager_enable) {
+    external_deps += [ "battery_manager:batterysrv_client" ]
+  }
 }
 
 ###############################################################################

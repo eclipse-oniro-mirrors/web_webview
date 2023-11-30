@@ -32,20 +32,10 @@ enum class DecoderAdapterCode : int32_t {
     DECODER_RETRY = 2
 };
 
-class DecoderFormat {
-public:
-    DecoderFormat(int32_t width, int32_t height)
-        : width_(width), height_(height) {};
-
-    virtual ~DecoderFormat() = default;
-
-    virtual void SetFormatWidth(int32_t width) = 0;
-
-    virtual void SetFormatHeight(int32_t height) = 0;
-
-    int32_t width_;
-
-    int32_t height_;
+struct DecoderFormat {
+    int32_t width;
+    int32_t height;
+    double frameRate;
 };
 
 enum class ErrorType : int32_t {
@@ -97,7 +87,7 @@ public:
 
     virtual DecoderAdapterCode CreateVideoDecoderByName(const std::string& name) = 0;
 
-    virtual DecoderAdapterCode ConfigureDecoder(int32_t width, int32_t height, double framerate) = 0;
+    virtual DecoderAdapterCode ConfigureDecoder(const DecoderFormat& format) = 0;
 
     virtual DecoderAdapterCode SetParameterDecoder(const DecoderFormat &format) = 0;
 
@@ -117,12 +107,12 @@ public:
 
     virtual DecoderAdapterCode QueueInputBufferDec(uint32_t index, BufferInfo info, BufferFlag flag) = 0;
 
-    virtual DecoderAdapterCode GetOutputFormatDec(int32_t &width, int32_t &height) = 0;
+    virtual DecoderAdapterCode GetOutputFormatDec(DecoderFormat& format) = 0;
 
     virtual DecoderAdapterCode ReleaseOutputBufferDec(uint32_t index, bool isRender) = 0;
 
     virtual DecoderAdapterCode SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter> &callback) = 0;
 };
+} // namespace OHOS::NWeb
 
-}
-#endif
+#endif // MEDIA_CODEC_DECODER_ADAPTER_H

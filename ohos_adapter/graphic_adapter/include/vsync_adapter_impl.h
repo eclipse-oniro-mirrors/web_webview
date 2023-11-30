@@ -19,6 +19,7 @@
 #include <functional>
 #include <memory>
 
+#include "event_handler.h"
 #include "graphic_adapter.h"
 #include "vsync_receiver.h"
 
@@ -26,7 +27,7 @@ namespace OHOS::NWeb {
 class VSyncAdapterImpl : public VSyncAdapter {
 public:
     VSyncAdapterImpl() = default;
-    ~VSyncAdapterImpl() override = default;
+    ~VSyncAdapterImpl() override;
     VSyncAdapterImpl(const VSyncAdapterImpl&) = delete;
     VSyncAdapterImpl& operator=(const VSyncAdapterImpl&) = delete;
 
@@ -41,7 +42,9 @@ private:
 
     std::mutex mtx_;
     bool hasRequestedVsync_ = false;
+    bool hasReportedKeyThread_ = false;
     std::shared_ptr<Rosen::VSyncReceiver> receiver_ = nullptr;
+    std::shared_ptr<OHOS::AppExecFwk::EventHandler> vsyncHandler_;
     std::unordered_map<void*, std::function<void(int64_t, void*)>> vsyncCallbacks_;
     Rosen::VSyncReceiver::FrameCallback frameCallback_ = {
         .userData_ = this,

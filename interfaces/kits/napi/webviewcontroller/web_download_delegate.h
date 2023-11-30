@@ -51,7 +51,7 @@ public:
     napi_ref delegate_;
 
 private:
-    int32_t nwebId_;
+    int32_t nwebId_ = -1;
 
     napi_ref download_before_start_callback_;
     napi_ref download_did_update_callback_;
