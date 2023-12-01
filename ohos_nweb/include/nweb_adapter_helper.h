@@ -34,11 +34,13 @@ public:
     std::shared_ptr<NWeb> CreateNWeb(sptr<Surface> surface,
                                      const NWebInitArgs &initArgs,
                                      uint32_t width = 0,
-                                     uint32_t height = 0);
+                                     uint32_t height = 0,
+                                     bool incognitoMode = false);
     std::shared_ptr<NWeb> CreateNWeb(void *enhanceSurfaceInfo,
                                      const NWebInitArgs &initArgs,
                                      uint32_t width = 0,
-                                     uint32_t height = 0);
+                                     uint32_t height = 0,
+                                     bool incognitoMode = false);
     void ParseConfig(NWebInitArgs &createInfo);
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
 private:
