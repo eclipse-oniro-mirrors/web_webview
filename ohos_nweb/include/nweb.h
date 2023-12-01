@@ -867,8 +867,8 @@ public:
      * Inject the JavaScript before WebView loads the DOM tree and run JavaScripts.
      */
     virtual void JavaScriptOnDocumentStart(const ScriptItems& scriptItems) = 0;
-	
-	/**
+
+    /**
      * Execute an accessibility action on an accessibility node in the browser.
      * @param accessibilityId The id of the accessibility node.
      * @param action The action to be performed on the accessibility node.
@@ -910,6 +910,16 @@ public:
      * @param state Indicate whether the accessibility state is enabled or disabled.
      */
     virtual void SetAccessibilityState(bool state) = 0;
+
+    /**
+     * RegisterArkJSfunctionExt
+     *
+     * @param object_name  String: objector name
+     * @param method_list  vector<String>: vector list, method list
+     * @param object_id    int32_t: object id
+     */
+    virtual void RegisterArkJSfunctionExt(
+        const std::string& object_name, const std::vector<std::string>& method_list, const int32_t object_id) = 0;
 };
 }  // namespace OHOS::NWeb
 
