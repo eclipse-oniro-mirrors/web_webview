@@ -721,13 +721,13 @@ napi_value NapiWebDownloadItem::Init(napi_env env, napi_value exports)
     ExportWebDownloadItemClass(env, &exports);
 
     /* export WebDownloadState enum */
-	
+
     ExportWebDownloadStateEnum(env, &exports);
 
     /* export WebDownloadErrorCode enum */
-	
+
     ExportWebDownloadErrorCodeEnum(env, &exports);
-    
+
     return exports;
 }
 
