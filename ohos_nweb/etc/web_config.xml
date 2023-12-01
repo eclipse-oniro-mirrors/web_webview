@@ -2,7 +2,7 @@
 <WEB>
   <initConfig>
     <renderConfig>
-        <renderProcessCount>1</renderProcessCount>
+        <renderProcessCount>40</renderProcessCount>
     </renderConfig>
     <mediaConfig>
         <backgroundMediaShouldSuspend>true</backgroundMediaShouldSuspend>

@@ -938,7 +938,7 @@ bool NWebAdapterHelper::Init(bool from_ark)
 }
 
 std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const NWebInitArgs &initArgs, uint32_t width,
-    uint32_t height)
+    uint32_t height, bool incognitoMode)
 {
     if (surface == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
@@ -948,7 +948,8 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
-    auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height);
+    auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(
+        surface, initArgs, width, height, incognitoMode);
     ParseConfig(createInfo.init_args);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
@@ -958,7 +959,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const
 }
 
 std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo, const NWebInitArgs &initArgs,
-    uint32_t width, uint32_t height)
+    uint32_t width, uint32_t height, bool incognitoMode)
 {
     if (enhanceSurfaceInfo == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
@@ -968,7 +969,8 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo, co
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
-    auto createInfo = NWebEnhanceSurfaceAdapter::Instance().GetCreateInfo(enhanceSurfaceInfo, initArgs, width, height);
+    auto createInfo = NWebEnhanceSurfaceAdapter::Instance().GetCreateInfo(
+        enhanceSurfaceInfo, initArgs, width, height, incognitoMode);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");

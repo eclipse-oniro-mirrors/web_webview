@@ -29,6 +29,7 @@ namespace {
 constexpr int32_t PARAMZERO = 0;
 constexpr int32_t PARAMONE = 1;
 constexpr int32_t PARAMTWO = 2;
+constexpr int32_t PARAMTHREE = 3;
 constexpr int32_t RESULT_COUNT = 2;
 constexpr int32_t INTERFACE_OK = 0;
 constexpr int32_t INTERFACE_ERROR = -1;
@@ -43,10 +44,12 @@ struct GetPermissionOriginsParam {
     napi_ref callbackRef;
     napi_status status;
     int errCode;
+    bool incognitoMode;
 };
 
 struct GetOriginPermissionStateParam {
     bool retValue;
+    bool incognitoMode;
     std::string origin;
     napi_env env;
     napi_async_work asyncWork;
@@ -104,14 +107,30 @@ bool NapiGeolocationPermission::GetStringPara(napi_env env, napi_value argv, std
     return true;
 }
 
+bool NapiGeolocationPermission::GetBooleanPara(napi_env env, napi_value argv, bool& outValue)
+{
+    napi_valuetype valueType = napi_null;
+
+    napi_typeof(env, argv, &valueType);
+    if (valueType != napi_boolean) {
+        return false;
+    }
+
+    bool boolValue;
+    napi_get_value_bool(env, argv, &boolValue);
+    outValue = boolValue;
+    return true;
+}
+
 napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_callback_info info,
     int32_t operationType)
 {
     napi_value retValue = nullptr;
-    size_t argc = PARAMONE;
-    napi_value argv[PARAMONE] = { 0 };
+    size_t argc = PARAMTWO;
+    size_t argcForOld = PARAMONE;
+    napi_value argv[PARAMTWO] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    if (argc != PARAMONE) {
+    if (argc != PARAMTWO && argc != argcForOld) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -121,6 +140,10 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
+    bool incognito_mode = false;
+    if (argc == PARAMTWO) {
+      napi_get_value_bool(env, argv[PARAMONE], &incognito_mode);
+    }
 
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
@@ -129,14 +152,16 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
         return result;
     }
     if (operationType == ALLOW_PERMISSION_OPERATION) {
-        if (dataBase->SetPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
-            true) == NWebError::INVALID_ORIGIN) {
+        if (dataBase->SetPermissionByOrigin(origin,
+                OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
+                true, incognito_mode) == NWebError::INVALID_ORIGIN) {
             NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
             return result;
         }
     } else if (operationType == DELETE_PERMISSION_OPERATION) {
-        if (dataBase->ClearPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE)
-            == NWebError::INVALID_ORIGIN) {
+        if (dataBase->ClearPermissionByOrigin(origin,
+                OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
+                incognito_mode) == NWebError::INVALID_ORIGIN) {
             NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
             return result;
         }
@@ -156,9 +181,25 @@ napi_value NapiGeolocationPermission::JsDeleteGeolocation(napi_env env, napi_cal
 
 napi_value NapiGeolocationPermission::JsDeleteAllGeolocation(napi_env env, napi_callback_info info)
 {
-    OHOS::NWeb::NWebDataBase *dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    napi_value retValue = nullptr;
+    size_t argc = PARAMONE;
+    size_t argcForOld = 0;
+    napi_value argv[PARAMONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
+    if (argc != PARAMONE && argc != argcForOld) {
+        return nullptr;
+    }
+    bool incognito_mode = false;
+    if (argc == PARAMONE) {
+      napi_get_value_bool(env, argv[PARAMZERO], &incognito_mode);
+    }
+
+    OHOS::NWeb::NWebDataBase *dataBase =
+        OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (dataBase != nullptr) {
-        dataBase->ClearAllPermission(OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE);
+        dataBase->ClearAllPermission(
+            OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
+            incognito_mode);
     }
 
     napi_value result = nullptr;
@@ -229,7 +270,8 @@ void NapiGeolocationPermission::ExecuteGetPermissionState(napi_env env, void *da
         return;
     }
     if (dataBase->GetPermissionResultByOrigin(param->origin,
-        OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE, param->retValue)) {
+            OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
+            param->retValue, param->incognitoMode)) {
         param->errCode = INTERFACE_OK;
         param->status = napi_ok;
     } else {
@@ -238,14 +280,15 @@ void NapiGeolocationPermission::ExecuteGetPermissionState(napi_env env, void *da
     }
 }
 
-napi_value NapiGeolocationPermission::GetPermissionStateAsync(napi_env env, napi_value *argv,
-    const std::string& origin)
+napi_value NapiGeolocationPermission::GetPermissionStateAsync(napi_env env,
+    napi_value *argv, const std::string& origin, bool incognitoMode)
 {
     napi_value result = nullptr;
     napi_value resourceName = nullptr;
 
     GetOriginPermissionStateParam *param = new (std::nothrow) GetOriginPermissionStateParam {
         .retValue = false,
+        .incognitoMode = incognitoMode,
         .origin = origin,
         .env = env,
         .asyncWork = nullptr,
@@ -267,7 +310,7 @@ napi_value NapiGeolocationPermission::GetPermissionStateAsync(napi_env env, napi
 }
 
 napi_value NapiGeolocationPermission::GetPermissionStatePromise(napi_env env, napi_value *argv,
-    const std::string& origin)
+    const std::string& origin, bool incognitoMode)
 {
     napi_deferred deferred = nullptr;
     napi_value promise = nullptr;
@@ -275,6 +318,7 @@ napi_value NapiGeolocationPermission::GetPermissionStatePromise(napi_env env, na
 
     GetOriginPermissionStateParam *param = new (std::nothrow) GetOriginPermissionStateParam {
         .retValue = false,
+        .incognitoMode = incognitoMode,
         .origin = origin,
         .env = env,
         .asyncWork = nullptr,
@@ -297,35 +341,62 @@ napi_value NapiGeolocationPermission::GetPermissionStatePromise(napi_env env, na
 napi_value NapiGeolocationPermission::JsGetAccessibleGeolocation(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = PARAMTWO;
-    size_t argcPromise = PARAMONE;
-    size_t argcCallback = PARAMTWO;
-    napi_value argv[PARAMTWO] = { 0 };
+    size_t argc = PARAMTHREE;
+    size_t argcPromiseForOld = PARAMONE;
+    size_t argcPromise = PARAMTWO;
+    size_t argcCallback = PARAMTHREE;
+
+    napi_value argv[PARAMTHREE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    if (argc != argcPromise && argc != argcCallback) {
+    if (argc != argcPromise && argc != argcCallback && argc != argcPromiseForOld) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
-    std::string origin;
 
+    std::string origin;
     if (!GetStringPara(env, argv[PARAMZERO], origin)) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
 
+    bool incognitoMode = false;
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_undefined;
         napi_typeof(env, argv[PARAMONE], &valueType);
         if (valueType != napi_function) {
-            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+            NWebError::BusinessError::ThrowErrorByErrcode(env,
+                NWebError::PARAM_CHECK_ERROR);
             return nullptr;
         }
-        GetPermissionStateAsync(env, argv, origin);
+        if (!GetBooleanPara(env, argv[PARAMTWO], incognitoMode)) {
+            NWebError::BusinessError::ThrowErrorByErrcode(env,
+                NWebError::PARAM_CHECK_ERROR);
+            return nullptr;
+        }
+        GetPermissionStateAsync(env, argv, origin, incognitoMode);
         napi_value result = nullptr;
         napi_get_undefined(env, &result);
         return result;
     }
-    return GetPermissionStatePromise(env, argv, origin);
+
+    if (argc == PARAMTWO) {
+        napi_valuetype valueType = napi_undefined;
+        napi_typeof(env, argv[PARAMONE], &valueType);
+        if (valueType != napi_function) {
+            if (!GetBooleanPara(env, argv[PARAMONE], incognitoMode)) {
+                NWebError::BusinessError::ThrowErrorByErrcode(env,
+                    NWebError::PARAM_CHECK_ERROR);
+                return nullptr;
+            }
+            GetPermissionStatePromise(env, argv, origin, incognitoMode);
+        }
+        GetPermissionStateAsync(env, argv, origin, incognitoMode);
+        napi_value result = nullptr;
+        napi_get_undefined(env, &result);
+        return result;
+    }
+
+    return GetPermissionStatePromise(env, argv, origin, incognitoMode);
 }
 
 void NapiGeolocationPermission::GetOriginComplete(napi_env env, napi_status status, void *data)
@@ -400,12 +471,16 @@ void NapiGeolocationPermission::ExecuteGetOrigins(napi_env env, void *data)
         param->status = napi_generic_failure;
         return;
     }
-    param->origins = dataBase->GetOriginsByPermission(OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE);
+    param->origins = dataBase->GetOriginsByPermission(
+        OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE,
+        param->incognitoMode);
     param->errCode = INTERFACE_OK;
     param->status = napi_ok;
 }
 
-napi_value NapiGeolocationPermission::GetOriginsAsync(napi_env env, napi_value *argv)
+napi_value NapiGeolocationPermission::GetOriginsAsync(napi_env env,
+                                                      napi_value *argv,
+                                                      bool incognitoMode)
 {
     napi_value result = nullptr;
     napi_value resourceName = nullptr;
@@ -415,6 +490,7 @@ napi_value NapiGeolocationPermission::GetOriginsAsync(napi_env env, napi_value *
         .asyncWork = nullptr,
         .deferred = nullptr,
         .callbackRef = nullptr,
+        .incognitoMode = incognitoMode,
     };
     if (param == nullptr) {
         return nullptr;
@@ -428,7 +504,8 @@ napi_value NapiGeolocationPermission::GetOriginsAsync(napi_env env, napi_value *
     return result;
 }
 
-napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env)
+napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env,
+                                                        bool incognitoMode)
 {
     napi_deferred deferred = nullptr;
     napi_value promise = nullptr;
@@ -439,6 +516,7 @@ napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env)
         .asyncWork = nullptr,
         .deferred = deferred,
         .callbackRef = nullptr,
+        .incognitoMode = incognitoMode,
     };
     if (param == nullptr) {
         return nullptr;
@@ -454,28 +532,55 @@ napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env)
 napi_value NapiGeolocationPermission::JsGetStoredGeolocation(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = PARAMONE;
-    size_t argcPromise = PARAMZERO;
-    size_t argcCallback = PARAMONE;
-    napi_value argv = nullptr;
-    napi_get_cb_info(env, info, &argc, &argv, &retValue, nullptr);
-    if (argc != argcPromise && argc != argcCallback) {
+    size_t argc = PARAMTWO;
+    size_t argcForZero = PARAMZERO;
+    size_t argcPromise = PARAMONE;
+    size_t argcCallback = PARAMTWO;
+    napi_value argv[PARAMTWO] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
+    if (argc != argcPromise && argc != argcCallback && argc != argcForZero) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
+
+    bool incognitoMode = false;
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_undefined;
-        napi_typeof(env, argv, &valueType);
+        napi_typeof(env, argv[PARAMZERO], &valueType);
         if (valueType != napi_function) {
             NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
             return nullptr;
         }
-        GetOriginsAsync(env, &argv);
+
+        if (!GetBooleanPara(env, argv[PARAMONE], incognitoMode)) {
+            NWebError::BusinessError::ThrowErrorByErrcode(
+                env, NWebError::PARAM_CHECK_ERROR);
+            return nullptr;
+        }
+        GetOriginsAsync(env, argv, incognitoMode);
         napi_value result = nullptr;
         napi_get_undefined(env, &result);
         return result;
     }
-    return GetOriginsPromise(env);
+
+    if (argc == PARAMONE) {
+        napi_valuetype valueType = napi_undefined;
+        napi_typeof(env, argv[PARAMZERO], &valueType);
+        if (valueType != napi_function) {
+            if (!GetBooleanPara(env, argv[PARAMZERO], incognitoMode)) {
+                NWebError::BusinessError::ThrowErrorByErrcode(
+                    env, NWebError::PARAM_CHECK_ERROR);
+                return nullptr;
+            }
+            return GetOriginsPromise(env, incognitoMode);
+        }
+        GetOriginsAsync(env, argv, incognitoMode);
+        napi_value result = nullptr;
+        napi_get_undefined(env, &result);
+        return result;
+    }
+
+    return GetOriginsPromise(env, incognitoMode);
 }
 
 napi_value NapiGeolocationPermission::JsConstructor(napi_env env, napi_callback_info info)
