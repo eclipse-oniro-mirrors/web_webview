@@ -920,7 +920,14 @@ public:
      */
     virtual void RegisterArkJSfunctionExt(
         const std::string& object_name, const std::vector<std::string>& method_list, const int32_t object_id) = 0;
-    
+
+     /**
+     * Get whether need soft keyboard.
+     *
+     * @return true if need soft keyboard, otherwise false.
+     */
+    virtual bool NeedSoftKeyboard() const = 0;
+
     /**
      * Discard the webview window.
      * @return true if the discarding success, otherwise false.
