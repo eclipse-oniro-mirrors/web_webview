@@ -107,11 +107,10 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_InvalidV
  */
 HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_NormalTest_003, TestSize.Level1)
 {
+    mediaCodecDecoderAdapterImpl_->decoder_ = std::make_shared<MediaAVCodec::AVCodecVideoDecoderImpl>();
     uint32_t index_ = 1;
     BufferInfo buffer_;
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->QueueInputBufferDec(index_, buffer_, BufferFlag::CODEC_BUFFER_FLAG_NONE), 
-        DecoderAdapterCode::DECODER_ERROR);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->QueueInputBufferDec(index_, buffer_, BufferFlag::CODEC_BUFFER_FLAG_NONE), 
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->QueueInputBufferDec(index_, buffer_, BufferFlag::CODEC_BUFFER_FLAG_NONE),
         DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->GetOutputFormatDec(format_), DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->ReleaseOutputBufferDec(index_, true), DecoderAdapterCode::DECODER_ERROR);
