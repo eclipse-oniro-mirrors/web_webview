@@ -109,7 +109,7 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_NormalTe
 {
     uint32_t index_ = 1;
     BufferInfo buffer_;
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->QueueInputBufferDec(index_, buffer_, BufferFlag::CODEC_BUFFER_FLAG_NONE),
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->QueueInputBufferDec(index_, buffer_, BufferFlag::CODEC_BUFFER_FLAG_NONE), 
         DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->QueueInputBufferDec(index_, buffer_, BufferFlag::CODEC_BUFFER_FLAG_NONE), 
         DecoderAdapterCode::DECODER_ERROR);
