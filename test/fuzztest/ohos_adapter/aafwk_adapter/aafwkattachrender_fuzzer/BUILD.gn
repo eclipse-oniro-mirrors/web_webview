@@ -21,13 +21,7 @@ ohos_fuzztest("AafwkAttachRenderFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkattachrender_fuzzer"
 
-  include_dirs = [
-    "$webview_path/test/ohos_nweb",
-    "$webview_path/ohos_adapter/aafwk_adapter/include",
-    "$window_manager_path/interfaces/innerkits/wm",
-    "$webview_path/test/fuzztest",
-    "$webview_path/ohos_adapter/interfaces",
-  ]
+  include_dirs = [ "$webview_path/ohos_adapter/aafwk_adapter/include" ]
   cflags = [
     "-g",
     "-O0",
@@ -35,15 +29,10 @@ ohos_fuzztest("AafwkAttachRenderFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "aafwkattachrender_fuzzer.cpp" ]
-  deps = [
-    "$aafwk_path/interfaces/inner_api/app_manager:app_manager",
-    "$graphicsurface_path:libsurface",
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
   external_deps = [
+    "ability_runtime:app_manager",
     "c_utils:utils",
-    "hilog:libhilog",
-    "input:libmmi-client",
   ]
 }
 
