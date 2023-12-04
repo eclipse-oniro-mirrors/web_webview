@@ -242,6 +242,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("prepareForPageLoad", NapiWebviewController::PrepareForPageLoad),
         DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
         DECLARE_NAPI_FUNCTION("createWebPrintDocumentAdapter", NapiWebviewController::CreateWebPrintDocumentAdapter),
+        DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -295,6 +296,22 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         webMsgExtClsProperties, &webMsgExtClass);
     napi_create_reference(env, webMsgExtClass, 1, &g_webMsgExtClassRef);
     napi_set_named_property(env, exports, WEB_EXT_MSG_CLASS_NAME.c_str(), webMsgExtClass);
+
+    napi_value securityLevelEnum = nullptr;
+    napi_property_descriptor securityLevelProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("NONE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecurityLevel::NONE))),
+        DECLARE_NAPI_STATIC_PROPERTY("SECURE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecurityLevel::SECURE))),
+        DECLARE_NAPI_STATIC_PROPERTY("WARNING", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecurityLevel::WARNING))),
+        DECLARE_NAPI_STATIC_PROPERTY("DANGEROUS", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecurityLevel::DANGEROUS)))
+    };
+    napi_define_class(env, WEB_SECURITY_LEVEL_ENUM_NAME.c_str(), WEB_SECURITY_LEVEL_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(securityLevelProperties) /
+        sizeof(securityLevelProperties[0]), securityLevelProperties, &securityLevelEnum);
+    napi_set_named_property(env, exports, WEB_SECURITY_LEVEL_ENUM_NAME.c_str(), securityLevelEnum);
 
     napi_value msgPortCons = nullptr;
     napi_property_descriptor msgPortProperties[] = {
@@ -3773,6 +3790,19 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
         return result;
     }
     return proxy;
+}
+
+napi_value NapiWebviewController::GetSecurityLevel(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, NO_VALID_CONTROLLER_FOR_DOWNLOAD);
+    }
+
+    int32_t securityLevel = webviewController->GetSecurityLevel();
+    napi_create_int32(env, securityLevel, &result);
+    return result;
 }
 
 void ParsePrintRangeAdapter(napi_env env, napi_value pageRange, PrintAttributesAdapter& printAttr)
