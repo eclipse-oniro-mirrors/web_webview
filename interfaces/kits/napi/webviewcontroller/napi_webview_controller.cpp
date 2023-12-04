@@ -300,6 +300,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
     napi_value securityLevelEnum = nullptr;
     napi_property_descriptor securityLevelProperties[] = {
         DECLARE_NAPI_STATIC_PROPERTY("NONE", NapiParseUtils::ToInt32Value(env,
+<<<<<<< HEAD
             static_cast<int32_t>(SecurityLevel::NONE))),
         DECLARE_NAPI_STATIC_PROPERTY("SECURE", NapiParseUtils::ToInt32Value(env,
             static_cast<int32_t>(SecurityLevel::SECURE))),
@@ -307,6 +308,15 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             static_cast<int32_t>(SecurityLevel::WARNING))),
         DECLARE_NAPI_STATIC_PROPERTY("DANGEROUS", NapiParseUtils::ToInt32Value(env,
             static_cast<int32_t>(SecurityLevel::DANGEROUS)))
+=======
+            static_cast<int32_t>(SecurityLevelType::NONE))),
+        DECLARE_NAPI_STATIC_PROPERTY("SECURE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecurityLevelType::SECURE))),
+        DECLARE_NAPI_STATIC_PROPERTY("WARNING", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecurityLevelType::WARNING))),
+        DECLARE_NAPI_STATIC_PROPERTY("DANGEROUS", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(SecurityLevelType::DANGEROUS)))
+>>>>>>> 73118d62343833c704523561e7f39695d4a5d58a
     };
     napi_define_class(env, WEB_SECURITY_LEVEL_ENUM_NAME.c_str(), WEB_SECURITY_LEVEL_ENUM_NAME.length(),
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(securityLevelProperties) /
