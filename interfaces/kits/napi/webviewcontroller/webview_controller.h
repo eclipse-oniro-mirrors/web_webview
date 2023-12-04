@@ -72,6 +72,13 @@ enum class WebMessageType : int {
     ARRAY,
     ERROR
 };
+
+enum class SecurityLevel : int {
+    NONE = 0,
+    SECURE,
+    WARNING,
+    DANGEROUS
+};
 class WebPrintDocument;
 class WebviewController {
 public:
@@ -216,6 +223,8 @@ public:
     void* CreateWebPrintDocumentAdapter(const std::string &jobName);
 
     ErrCode PostUrl(std::string& url, std::vector<char>& postData);
+
+    int GetSecurityLevel();
 
 private:
     int ConverToWebHitTestType(int hitType);
