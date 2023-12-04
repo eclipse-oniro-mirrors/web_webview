@@ -920,6 +920,12 @@ public:
      */
     virtual void RegisterArkJSfunctionExt(
         const std::string& object_name, const std::vector<std::string>& method_list, const int32_t object_id) = 0;
+
+    /**
+     * Get the security level of current page.
+     * @return security level for current page.
+     */
+    virtual int GetSecurityLevel() = 0;
 };
 }  // namespace OHOS::NWeb
 

@@ -225,7 +225,7 @@ public:
     ErrCode PostUrl(std::string& url, std::vector<char>& postData);
 
     int GetSecurityLevel();
-    
+
 private:
     int ConverToWebHitTestType(int hitType);
 
