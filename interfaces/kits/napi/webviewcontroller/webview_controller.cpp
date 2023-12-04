@@ -1040,7 +1040,28 @@ void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobNam
 int WebviewController::GetSecurityLevel() 
 {
     auto nweb_ptr = nweb_.lock();
-    return static_cast<int>(SecurityLevel::DANGEROUS);
+    if (!nweb_ptr) {
+        return static_cast<int>(SecurityLevel::NONE);
+    }
+
+    int nwebSecurityLevel = nweb_ptr->GetSecurityLevel();
+    SecurityLevel securityLevel;
+    switch(nwebSecurityLevel) {
+        case 0:
+            securityLevel = SecurityLevel::NONE;
+            break;
+        case 3:
+            securityLevel = SecurityLevel::SECURE;
+            break;
+        case 5:
+            securityLevel = SecurityLevel::WARNING;
+            break;
+        case 6:
+            securityLevel = SecurityLevel::DANGEROUS;
+            break;
+    }
+
+    return static_cast<int>(securityLevel);
 }
 } // namespace NWeb
 } // namespace OHOS
