@@ -31,9 +31,9 @@ public:
     NapiWebDownloadManager(napi_env env, int32_t nweb_id);
     ~NapiWebDownloadManager() = default;
 
-    static napi_value JS_Constructor(napi_env env, napi_callback_info cb_info);
-    static napi_value JS_SetDownloadDelegate(napi_env env, napi_callback_info cb_info);
-    static napi_value JS_ResumeDownload(napi_env env, napi_callback_info cb_info);
+    static napi_value JS_Constructor(napi_env env, napi_callback_info info);
+    static napi_value JS_SetDownloadDelegate(napi_env env, napi_callback_info info);
+    static napi_value JS_ResumeDownload(napi_env env, napi_callback_info info);
 };
 } // namespace NWeb
 } // namespace OHOS
