@@ -1046,6 +1046,14 @@ napi_value NapiWebMessageExt::SetString(napi_env env, napi_callback_info info)
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
+
+    int32_t type = webMessageExt->GetType();
+    if (type != static_cast<int32_t>(WebMessageType::STRING) ||
+        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+        WVLOG_E("web message SetString error type:%{public}d", type);
+        BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
+        return result;
+    }
     webMessageExt->SetString(value);
     return result;
 }
@@ -1075,6 +1083,14 @@ napi_value NapiWebMessageExt::SetNumber(napi_env env, napi_callback_info info)
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
+
+    int32_t type = webMessageExt->GetType();
+    if (type != static_cast<int32_t>(WebMessageType::NUMBER) ||
+        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+        WVLOG_E("web message SetNumber error type:%{public}d", type);
+        BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
+        return result;
+    }
     webMessageExt->SetNumber(value);
     return result;
 }
@@ -1102,6 +1118,14 @@ napi_value NapiWebMessageExt::SetBoolean(napi_env env, napi_callback_info info)
     napi_status status = napi_unwrap(env, thisVar, (void **)&webMessageExt);
     if ((!webMessageExt) || (status != napi_ok)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t type = webMessageExt->GetType();
+    if (type != static_cast<int32_t>(WebMessageType::BOOLEAN) ||
+        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+        WVLOG_E("web message SetBoolean error type:%{public}d", type);
+        BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
     }
     webMessageExt->SetBoolean(value);
@@ -1138,6 +1162,14 @@ napi_value NapiWebMessageExt::SetArrayBuffer(napi_env env, napi_callback_info in
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
+
+    int32_t type = webMessageExt->GetType();
+    if (type != static_cast<int32_t>(WebMessageType::ARRAYBUFFER) ||
+        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+        WVLOG_E("web message SetArrayBuffer error type:%{public}d", type);
+        BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
+        return result;
+    }
     webMessageExt->SetArrayBuffer(vecData);
     return result;
 }
@@ -1166,6 +1198,14 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
     napi_status status = napi_unwrap(env, thisVar, (void **)&webMessageExt);
     if ((!webMessageExt) || (status != napi_ok)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t type = webMessageExt->GetType();
+    if (type != static_cast<int32_t>(WebMessageType::ARRAY) ||
+        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+        WVLOG_E("web message SetArray error type:%{public}d", type);
+        BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
     }
     bool isDouble = false;
@@ -1231,6 +1271,14 @@ napi_value NapiWebMessageExt::SetError(napi_env env, napi_callback_info info)
     napi_status status = napi_unwrap(env, thisVar, (void **)&webMessageExt);
     if ((!webMessageExt) || (status != napi_ok)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t type = webMessageExt->GetType();
+    if (type != static_cast<int32_t>(WebMessageType::ERROR) ||
+        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+        WVLOG_E("web message SetError error type:%{public}d", type);
+        BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
     }
     webMessageExt->SetError(nameVal, msgVal);

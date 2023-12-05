@@ -237,6 +237,7 @@ bool NapiParseUtils::ParseString(napi_env env, napi_value argv, std::string& out
 
     napi_typeof(env, argv, &valueType);
     if (valueType != napi_string) {
+        WVLOG_E("Not a valid napi string");
         return false;
     }
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
@@ -252,6 +253,7 @@ bool NapiParseUtils::ParseString(napi_env env, napi_value argv, std::string& out
     size_t jsStringLength = 0;
     napi_get_value_string_utf8(env, argv, stringValue, bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
+        WVLOG_E("The length values obtained twice are different");
         delete [] stringValue;
         stringValue = nullptr;
         return false;
