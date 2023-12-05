@@ -131,6 +131,10 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     helper.GetWebPermissionDataBaseInstance();
     std::unique_ptr<MMIAdapter> mmiAdapter = helper.CreateMMIAdapter();
     EXPECT_NE(mmiAdapter, nullptr);
+    auto socPerfClientAdapterImpl = helper.CreateSocPerfClientAdapter();
+    EXPECT_NE(socPerfClientAdapterImpl, nullptr);
+    auto ohosResourceAdapterImpl = helper.GetResourceAdapter("testPath");
+    EXPECT_NE(ohosResourceAdapterImpl, nullptr);
 #if defined(NWEB_PRINT_ENABLE)
     PrintManagerAdapter& printAdapter = helper.GetPrintManagerInstance();
     std::vector<std::string> fileList = { PRINT_FILE_DIR };
@@ -200,6 +204,8 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetSystemPropertiesInstance_00
     helper.GetVSyncAdapter();
     auto initWebAdapter = helper.GetInitWebAdapter();
     EXPECT_NE(initWebAdapter, nullptr);
+    helper.GetKeystoreAdapterInstance();
+    helper.GetEnterpriseDeviceManagementInstance();
     helper.GetDatashareInstance();
     auto imfAdapter = helper.CreateIMFAdapter();
     EXPECT_NE(imfAdapter, nullptr);
@@ -210,9 +216,16 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetSystemPropertiesInstance_00
     EXPECT_NE(eventHandler, nullptr);
     auto playerAdapter = helper.CreatePlayerAdapter();
     EXPECT_NE(playerAdapter, nullptr);
+    helper.GetWindowAdapterInstance();
+    helper.GetHiSysEventAdapterInstance();
+    helper.GetHiTraceAdapterInstance();
     helper.GetNetProxyInstance();
     helper.GetCameraManagerAdapter();
     auto screenCapture = helper.CreateScreenCaptureAdapter();
     EXPECT_NE(screenCapture, nullptr);
+    auto dateTimeFormat = helper.CreateDateTimeFormatAdapter();
+    EXPECT_NE(dateTimeFormat, nullptr);
+    auto nativeImage = helper.CreateNativeImageAdapter();
+    EXPECT_NE(nativeImage, nullptr);
 }
 } // namespace OHOS::NWeb

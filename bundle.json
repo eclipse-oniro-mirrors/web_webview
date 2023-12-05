@@ -69,7 +69,8 @@
                 "samgr",
                 "soc_perf",
                 "time_service",
-                "window_manager"
+                "window_manager",
+                "netstack"
             ],
             "third_party": [
                 "chromium",

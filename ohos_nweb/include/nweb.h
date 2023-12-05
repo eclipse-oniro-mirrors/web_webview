@@ -926,6 +926,24 @@ public:
      * @return security level for current page.
      */
     virtual int GetSecurityLevel() = 0;
+     /**
+     * Get whether need soft keyboard.
+     *
+     * @return true if need soft keyboard, otherwise false.
+     */
+    virtual bool NeedSoftKeyboard() const = 0;
+
+    /**
+     * Discard the webview window.
+     * @return true if the discarding success, otherwise false.
+     */
+    virtual bool Discard() = 0;
+
+    /**
+     * Reload the webview window that has been discarded before.
+     * @return true if the discarded window reload success, otherwise false.
+     */
+    virtual bool Restore() = 0;
 };
 }  // namespace OHOS::NWeb
 
