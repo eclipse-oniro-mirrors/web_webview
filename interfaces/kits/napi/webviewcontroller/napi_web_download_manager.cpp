@@ -33,14 +33,14 @@ namespace NWeb {
 using namespace NWebError;
 
 // static
-napi_value NapiWebDownloadManager::JS_SetDownloadDelegate(napi_env env, napi_callback_info cbinfo)
+napi_value NapiWebDownloadManager::JS_SetDownloadDelegate(napi_env env, napi_callback_info info)
 {
     WVLOG_D("[DOWNLOAD] NapiWebDownloadManager::JS_SetDownloadDelegate");
     size_t argc = 1;
     napi_value argv[1] = {0};
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
     napi_value obj = argv[0];
     // check download delegate is object type
@@ -55,13 +55,13 @@ napi_value NapiWebDownloadManager::JS_SetDownloadDelegate(napi_env env, napi_cal
 }
 
 // static
-napi_value NapiWebDownloadManager::JS_ResumeDownload(napi_env env, napi_callback_info cbinfo)
+napi_value NapiWebDownloadManager::JS_ResumeDownload(napi_env env, napi_callback_info info)
 {
     WVLOG_D("[DOWNLOAD] NapiWebDownloadManager::JS_ResumeDownload");
     size_t argc = 1;
     napi_value argv[1] = {0};
     napi_value thisVar = nullptr;
-    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, nullptr);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
 
     if (!WebDownloadManager::HasValidDelegate()) {
         BusinessError::ThrowErrorByErrcode(env, NO_DOWNLOAD_DELEGATE_SET);
@@ -82,14 +82,14 @@ napi_value NapiWebDownloadManager::JS_ResumeDownload(napi_env env, napi_callback
     return nullptr;
 }
 
-napi_value NapiWebDownloadManager::JS_Constructor(napi_env env, napi_callback_info cbinfo)
+napi_value NapiWebDownloadManager::JS_Constructor(napi_env env, napi_callback_info info)
 {
     WVLOG_D("[DOWNLOAD] NapiWebDownloadManager::JS_Constructor");
     size_t argc = 1;
     napi_value argv[1] = {0};
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
     return thisVar;
 }

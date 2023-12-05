@@ -21,10 +21,7 @@ ohos_unittest("napi_web_cookie_manager_test") {
 
   sources = [ "napi_web_cookie_manager_test.cpp" ]
 
-  deps = [
-    "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "//third_party/googletest:gtest_main" ]
 
   external_deps = [
     "c_utils:utils",
