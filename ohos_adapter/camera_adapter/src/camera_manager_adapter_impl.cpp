@@ -876,11 +876,11 @@ CameraStatusAdapter CameraManagerAdapterCallback::GetAdapterCameraStatus(CameraS
 void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo &cameraStatusInfo) const
 {
     std::string callbackDeviceId;
-    if(cameraStatusInfo.cameraDevice) {
+    if (cameraStatusInfo.cameraDevice) {
         callbackDeviceId = cameraStatusInfo.cameraDevice->GetID();
     }
     std::string currentDeviceId = CameraManagerAdapterImpl::GetInstance().GetCurrentDeviceId();
-    
+
     WVLOG_I("OnCameraStatusChanged: callbackdeviceID %{public}s, currentDeviceId:%{public}s, status %{public}d",
             callbackDeviceId.c_str(), currentDeviceId.c_str(), cameraStatusInfo.cameraStatus);
     CameraStatusAdapter cameraStatusAdapter = GetAdapterCameraStatus(cameraStatusInfo.cameraStatus);

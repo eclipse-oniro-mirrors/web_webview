@@ -18,6 +18,9 @@
 #include "cert_mgr_adapter_impl.h"
 #include "nweb_log.h"
 #include "securec.h"
+#include "openssl/ssl.h"
+
+#define SSL_ERROR_CODE_BASE 2305000
 
 using namespace OHOS::NWeb;
 
@@ -424,5 +427,36 @@ int32_t CertManagerAdapterImpl::Sign(const uint8_t* uri, const uint8_t* certData
     }
 
     return CM_SUCCESS;
+}
+
+int CertManagerAdapterImpl::VerifyCertFromNetSsl(uint8_t* certData, uint32_t certSize)
+{
+    if (certData == nullptr) {
+        WVLOG_E("VerifyCertFromNetSsl error, certData is null");
+        return X509_V_ERR_UNSPECIFIED;
+    }
+
+    if (certSize <= 0 || certSize > MAX_LEN_CERTIFICATE) {
+        WVLOG_E("VerifyCertFromNetSsl error, certSize is invalid");
+        return X509_V_ERR_UNSPECIFIED;
+    }
+
+    NetStack::Ssl::CertBlob certBlob {
+            .type = NetStack::Ssl::CERT_TYPE_DER,
+            .size = certSize,
+            .data = new uint8_t[certSize]
+    };
+    if (memcpy_s(certBlob.data, certSize, certData, certSize) != EOK) {
+        WVLOG_E("VerifyCertFromNetSsl error, memory copy failed");
+        delete[] certBlob.data;
+        return X509_V_ERR_UNSPECIFIED;
+    }
+
+    uint32_t result = NetStack::Ssl::NetStackVerifyCertification(&certBlob);
+    delete[] certBlob.data;
+    if (result != X509_V_OK) {
+        result = result - SSL_ERROR_CODE_BASE;
+    }
+    return result;
 }
 }

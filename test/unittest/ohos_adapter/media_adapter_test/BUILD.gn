@@ -25,7 +25,10 @@ config("module_private_config") {
 ohos_unittest("nweb_media_adapter_test") {
   module_out_path = module_output_path
 
-  sources = [ "player_framework_adapter_impl_test.cpp" ]
+  sources = [
+    "media_codec_decoder_adapter_impl_test.cpp",
+    "player_framework_adapter_impl_test.cpp",
+  ]
 
   configs = [ ":module_private_config" ]
 
@@ -39,6 +42,10 @@ ohos_unittest("nweb_media_adapter_test") {
     "graphic_2d:surface",
     "hilog:libhilog",
   ]
+
+  if (webview_avcodec_enable) {
+    external_deps += [ "av_codec:av_codec_client" ]
+  }
 
   if (webview_media_player_enable) {
     external_deps += [ "player_framework:media_client" ]

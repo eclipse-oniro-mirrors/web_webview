@@ -29,7 +29,7 @@ namespace NWeb {
 class WebDownloadItem {
 public:
     explicit WebDownloadItem(napi_env env);
-    WebDownloadItem(napi_env env, NWebDownloadItem *item);
+    WebDownloadItem(napi_env env, NWebDownloadItem *downloadItem);
     ~WebDownloadItem();
 
     long webDownloadId;

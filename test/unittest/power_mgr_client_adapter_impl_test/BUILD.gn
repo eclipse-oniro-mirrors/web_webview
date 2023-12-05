@@ -34,9 +34,7 @@ ohos_unittest("power_mgr_client_adapter_impl_test") {
 
   deps = [
     "../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
-    "//third_party/zlib:libz",
   ]
   external_deps = [
     "ability_runtime:app_manager",
