@@ -31,13 +31,12 @@ ohos_fuzztest("GetUserCertDataFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "getusercertdata_fuzzer.cpp" ]
-  deps = [
-    "$graphicsurface_path:libsurface",
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-    "//third_party/zlib:libz",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
-  external_deps = [ "certificate_manager:cert_manager_sdk" ]
+  external_deps = [
+    "certificate_manager:cert_manager_sdk",
+    "netstack:net_ssl",
+  ]
 }
 
 ###############################################################################

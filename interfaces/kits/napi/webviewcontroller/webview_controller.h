@@ -293,7 +293,7 @@ public:
                 break;
             }
             case WebMessageType::ARRAYBUFFER: {
-                nwebType = NWebValue::Type::STRINGARRAY;
+                nwebType = NWebValue::Type::BINARY;
                 break;
             }
             case WebMessageType::ARRAY: {

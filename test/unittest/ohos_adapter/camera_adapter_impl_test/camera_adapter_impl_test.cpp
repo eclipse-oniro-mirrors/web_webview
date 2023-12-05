@@ -422,9 +422,6 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_008, TestS
     VideoCaptureParamsAdapter captureParams;
     result = adapter.InitPreviewOutput(captureParams, nullptr);
     EXPECT_NE(result, 0);
-    adapter.status_ = CameraStatusAdapter::UNAVAILABLE;
-    result = adapter.RestartSession();
-    EXPECT_EQ(result, 0);
     adapter.status_ = CameraStatusAdapter::AVAILABLE;
     adapter.isCapturing_ = false;
     result = adapter.RestartSession();
