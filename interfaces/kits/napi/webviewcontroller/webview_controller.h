@@ -79,6 +79,13 @@ enum class SecurityLevel : int {
     WARNING,
     DANGEROUS
 };
+
+enum class CoreSecurityLevel : int {
+    NONE = 0,
+    SECURE = 3,
+    WARNING = 5,
+    DANGEROUS = 6
+};
 class WebPrintDocument;
 class WebviewController {
 public:

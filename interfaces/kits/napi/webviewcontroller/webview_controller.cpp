@@ -1037,7 +1037,7 @@ void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobNam
     return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
 }
 
-int WebviewController::GetSecurityLevel() 
+int WebviewController::GetSecurityLevel()
 {
     auto nweb_ptr = nweb_.lock();
     if (!nweb_ptr) {
@@ -1046,17 +1046,17 @@ int WebviewController::GetSecurityLevel()
 
     int nwebSecurityLevel = nweb_ptr->GetSecurityLevel();
     SecurityLevel securityLevel;
-    switch(nwebSecurityLevel) {
-        case 0:
+    switch (nwebSecurityLevel) {
+        case static_cast<int>(CoreSecurityLevel::NONE):
             securityLevel = SecurityLevel::NONE;
             break;
-        case 3:
+        case static_cast<int>(CoreSecurityLevel::SECURE):
             securityLevel = SecurityLevel::SECURE;
             break;
-        case 5:
+        case static_cast<int>(CoreSecurityLevel::WARNING):
             securityLevel = SecurityLevel::WARNING;
             break;
-        case 6:
+        case static_cast<int>(CoreSecurityLevel::DANGEROUS):
             securityLevel = SecurityLevel::DANGEROUS;
             break;
     }
