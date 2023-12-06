@@ -1041,7 +1041,7 @@ int WebviewController::GetSecurityLevel()
 {
     auto nweb_ptr = nweb_.lock();
     if (!nweb_ptr) {
-        return static_cast<int>(SecurityLevel::NONE);
+        return static_cast<int>(SecurityLevel::DANGEROUS);
     }
 
     int nwebSecurityLevel = nweb_ptr->GetSecurityLevel();
