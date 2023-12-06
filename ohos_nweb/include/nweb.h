@@ -966,6 +966,11 @@ public:
      * @return true if web is in incognito mode; otherwise fase.
      */
     virtual bool IsIncognitoMode() const = 0;
+
+    /**
+     * Inject the JavaScript after WebView loads the DOM tree and run JavaScripts.
+     */
+    virtual void JavaScriptOnDocumentEnd(const ScriptItems& scriptItems) = 0;
 };
 }  // namespace OHOS::NWeb
 
