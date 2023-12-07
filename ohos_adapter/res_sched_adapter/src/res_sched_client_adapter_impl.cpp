@@ -137,7 +137,7 @@ bool ResSchedClientAdapter::ReportKeyThread(
 
     // Load url may create new render process, repeat report load url event when
     // render key thread create to solve timing problem. Later events will overwrite previous events
-    if (statusAdapter == ResSchedStatusAdapter::THREAD_CREATED && pid != getpid() && pid != tid) {
+    if (statusAdapter == ResSchedStatusAdapter::THREAD_CREATED && pid != getprocpid() && pid != tid) {
         ReportSceneInternal(statusAdapter, ResSchedSceneAdapter::LOAD_URL);
     }
     return true;
