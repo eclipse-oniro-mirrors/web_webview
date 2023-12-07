@@ -3845,7 +3845,8 @@ napi_value NapiWebviewController::GetSecurityLevel(napi_env env, napi_callback_i
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, NO_VALID_CONTROLLER_FOR_DOWNLOAD);
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
     }
 
     int32_t securityLevel = webviewController->GetSecurityLevel();
