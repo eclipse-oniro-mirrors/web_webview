@@ -1039,13 +1039,16 @@ void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobNam
 
 int WebviewController::GetSecurityLevel()
 {
+    WVLOG_I("The function has coming here: webview_controller.cpp //20231127-1042");
     auto nweb_ptr = nweb_.lock();
     if (!nweb_ptr) {
         return static_cast<int>(SecurityLevel::DANGEROUS);
     }
 
+    WVLOG_I("The function has coming here: webview_controller.cpp //20231127-1048");
     int nwebSecurityLevel = nweb_ptr->GetSecurityLevel();
     SecurityLevel securityLevel;
+    WVLOG_I("The value of security level is: %{public}d", nwebSecurityLevel);
     switch (nwebSecurityLevel) {
         case static_cast<int>(CoreSecurityLevel::NONE):
             securityLevel = SecurityLevel::NONE;
