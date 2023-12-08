@@ -27,6 +27,7 @@
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "napi_parse_utils.h"
+#include "nweb.h"
 #include "nweb_javascript_result_callback.h"
 #include "nweb_log.h"
 #include "nweb_value.h"
@@ -57,17 +58,18 @@ public:
     JavaScriptOb(napi_env env, int32_t containerScopeId, napi_value value, size_t refCount = 1)
         : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(1)
     {
-        napi_status s = napi_create_reference(env, value, refCount, &obj_ref_);
+        napi_status s = napi_create_reference(env, value, refCount, &objRef_);
         if (s != napi_ok) {
             WVLOG_E("create javascript obj fail");
         }
     }
+
     JavaScriptOb(
         napi_env env, int32_t containerScopeId, napi_value value, std::set<int32_t> holders, size_t refCount = 1)
         : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(0), holders_(holders)
     {
         std::unique_lock<std::mutex> lock(mutex_);
-        napi_status s = napi_create_reference(env, value, refCount, &obj_ref_);
+        napi_status s = napi_create_reference(env, value, refCount, &objRef_);
         if (s != napi_ok) {
             WVLOG_E("create javascript obj fail");
         }
@@ -90,13 +92,13 @@ public:
             env_ = job.env_;
             isStrongRef_ = job.isStrongRef_;
             if (isStrongRef_) {
-                obj_ref_ = job.obj_ref_;
-                napi_status s = napi_reference_ref(env_, obj_ref_, nullptr);
+                objRef_ = job.objRef_;
+                napi_status s = napi_reference_ref(env_, objRef_, nullptr);
                 if (s != napi_ok) {
                     WVLOG_E("JavaScriptOb copy assign fail");
                 }
             } else {
-                napi_status s = CreateNewWeakRef(env_, job.obj_ref_, &obj_ref_);
+                napi_status s = CreateNewWeakRef(env_, job.objRef_, &objRef_);
                 if (s != napi_ok) {
                     WVLOG_E("JavaScriptOb copy assign fail");
                 }
@@ -110,9 +112,9 @@ public:
         if (this != &job) {
             Delete();
             env_ = job.env_;
-            obj_ref_ = job.obj_ref_;
+            objRef_ = job.objRef_;
             isStrongRef_ = job.isStrongRef_;
-            job.obj_ref_ = nullptr;
+            job.objRef_ = nullptr;
         }
         return *this;
     }
@@ -134,7 +136,7 @@ public:
 
     bool IsEmpty() const
     {
-        return !obj_ref_;
+        return !objRef_;
     }
 
     bool IsStrongRef()
@@ -145,13 +147,13 @@ public:
     napi_value GetValue() const
     {
         napi_value result = nullptr;
-        napi_get_reference_value(env_, obj_ref_, &result);
+        napi_get_reference_value(env_, objRef_, &result);
         return result;
     }
 
     void ToWeakRef()
     {
-        if (!isStrongRef_ || !obj_ref_) {
+        if (!isStrongRef_ || !objRef_) {
             return;
         }
 
@@ -161,7 +163,7 @@ public:
         }
 
         isStrongRef_ = false;
-        napi_status s = CreateNewWeakRef(env_, obj_ref_, &obj_ref_);
+        napi_status s = CreateNewWeakRef(env_, objRef_, &objRef_);
         if (s != napi_ok) {
             WVLOG_E("JavaScriptOb ToWeakRef fail");
         }
@@ -180,7 +182,6 @@ public:
         --namesCount_;
     }
 
-    // The following methods are called on the background thread.
     bool HasHolders()
     {
         return !holders_.empty();
@@ -208,6 +209,7 @@ public:
             WVLOG_E("HasMethod methodName null");
             return false;
         }
+
         if (!isMethodsSetup_) {
             SetUpMethods();
         }
@@ -231,6 +233,7 @@ public:
             napi_valuetype valueType = napi_undefined;
             napi_value obj = GetValue();
             if (!obj) {
+                WVLOG_E("JavaScriptOb FindMethod obj null");
                 return nullptr;
             }
             napi_status s = napi_has_named_property(env_, obj, methodName.c_str(), &hasFunc);
@@ -249,6 +252,7 @@ public:
             }
             napi_typeof(env_, result, &valueType);
             if (valueType != napi_function) {
+                WVLOG_E("JavaScriptOb FindMethod not function");
                 return nullptr;
             }
             return result;
@@ -261,7 +265,8 @@ public:
     {
         napi_value propertyNames;
         napi_value obj = GetValue();
-        napi_status s = napi_get_property_names(env_, obj, &propertyNames);
+        napi_status s = napi_get_all_property_names(env_, obj, napi_key_include_prototypes, napi_key_all_properties,
+            napi_key_numbers_to_strings, &propertyNames);
         if (s != napi_ok) {
             WVLOG_E("JavaScriptOb SetUpMethods fail");
             return;
@@ -278,15 +283,6 @@ public:
             if (s != napi_ok) {
                 WVLOG_E("JavaScriptOb SetUpMethods fail");
                 return;
-            }
-            bool hasOwnProperty = false;
-            s = napi_has_own_property(env_, obj, napiKeyTmp, &hasOwnProperty);
-            if (s != napi_ok) {
-                WVLOG_E("JavaScriptOb SetUpMethods fail");
-                return;
-            }
-            if (!hasOwnProperty) {
-                continue;
             }
             napi_valuetype valueType = napi_undefined;
             napi_value napiValueTmp;
@@ -328,20 +324,20 @@ private:
 
     void Delete()
     {
-        if (obj_ref_ && Release() == 0) {
+        if (objRef_ && Release() == 0) {
             WVLOG_E("JavaScriptOb delete called");
-            napi_delete_reference(env_, obj_ref_);
-            obj_ref_ = nullptr;
+            napi_delete_reference(env_, objRef_);
+            objRef_ = nullptr;
         }
     }
 
     uint32_t Release()
     {
-        if (!obj_ref_ || !isStrongRef_) {
+        if (!objRef_ || !isStrongRef_) {
             return 0;
         }
         uint32_t refCount = 0;
-        napi_status s = napi_reference_unref(env_, obj_ref_, &refCount);
+        napi_status s = napi_reference_unref(env_, objRef_, &refCount);
         if (s != napi_ok) {
             WVLOG_E("JavaScriptOb Release fail");
         }
@@ -350,7 +346,8 @@ private:
 
     napi_env env_ = nullptr;
     int32_t containerScopeId_ = -1;
-    napi_ref obj_ref_ = nullptr;
+
+    napi_ref objRef_ = nullptr;
     bool isStrongRef_ = true;
 
     std::vector<std::string> methods_;
@@ -367,6 +364,12 @@ public:
     typedef std::unordered_map<std::string, JavaScriptOb::ObjectID> NamedObjectMap;
     typedef std::unordered_map<JavaScriptOb::ObjectID, std::shared_ptr<JavaScriptOb>> ObjectMap;
     typedef int32_t ObjectID;
+    struct H5Bundle {
+        int32_t nwebId;
+        int32_t frameRoutingId;
+        int32_t h5Id;
+        std::string funcName;
+    };
 
     enum class NapiJsCallBackParmFlag : int32_t { ISOBJECT = 1, END = 2 };
 
@@ -391,6 +394,7 @@ public:
         // environment
         napi_env env = nullptr;
         int32_t containerScopedId = -1;
+
         std::mutex mutex;
         //  sync
         std::condition_variable condition;
@@ -406,6 +410,8 @@ public:
     };
 
     WebviewJavaScriptResultCallBack() {}
+
+    explicit WebviewJavaScriptResultCallBack(std::weak_ptr<OHOS::NWeb::NWeb>& nweb, int32_t nwebId);
 
     ~WebviewJavaScriptResultCallBack() override;
 
@@ -437,6 +443,8 @@ public:
 
     bool DeleteJavaScriptRegister(const std::string& objName);
 
+    void CallH5FunctionInternal(napi_env env, H5Bundle& bundle, std::vector<std::shared_ptr<NWebValue>> nwebArgs);
+
 private:
     bool RemoveNamedObject(const std::string& name);
 
@@ -449,6 +457,17 @@ private:
     std::shared_ptr<NWebValue> PostGetJavaScriptObjectMethodsToJsThread(int32_t objectId);
 
     void PostRemoveJavaScriptObjectHolderToJsThread(int32_t holder, JavaScriptOb::ObjectID objectId);
+
+    std::shared_ptr<NWebValue> GetJavaScriptResultSelf(std::vector<std::shared_ptr<NWebValue>> args,
+        const std::string& method, const std::string& objName, int32_t routingId, int32_t objectId);
+
+    int32_t GetNWebId()
+    {
+        return nwebId_;
+    }
+
+    std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
+    int32_t nwebId_ = -1;
 
     JavaScriptOb::ObjectID nextObjectId_ = 1;
     NamedObjectMap namedObjects_;

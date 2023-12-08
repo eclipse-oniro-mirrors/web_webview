@@ -37,6 +37,7 @@
 
 namespace OHOS::NWeb {
 class NWebHandler;
+class NWebValue;
 
 /**
  * @brief Describes how pixel bits encoder color data.
@@ -628,12 +629,12 @@ public:
      * Get navigation history list
      *
      * @return navigation history list
-    */
+     */
     virtual std::shared_ptr<NWebHistoryList> GetHistoryList() = 0;
 
     /**
-     * Set the NWebReleaseSurfaceCallback that will receive release surface event.
-     * This will replace the current handler.
+     * Set the NWebReleaseSurfaceCallback that will receive release surface
+     * event. This will replace the current handler.
      *
      * @param releaseSurfaceListener NWebReleaseSurfaceCallback.
      */
@@ -644,28 +645,28 @@ public:
      * Get Web back forward state.
      *
      * @return web back forward state.
-    */
+     */
     virtual WebState SerializeWebState() = 0;
 
     /**
      * Restore Web back forward state.
      *
      * @param web back forward state.
-    */
+     */
     virtual bool RestoreWebState(WebState state) = 0;
 
     /**
      * Move page up.
      *
      * @param top whether move to the top.
-    */
+     */
     virtual void PageUp(bool top) = 0;
 
     /**
      * Move page down.
      *
      * @param bottom whether move to the bottom.
-    */
+     */
     virtual void PageDown(bool bottom) = 0;
 
     /**
@@ -673,7 +674,7 @@ public:
      *
      * @param x the x of the position.
      * @param y the y of the position.
-    */
+     */
     virtual void ScrollTo(float x, float y) = 0;
 
     /**
@@ -681,7 +682,7 @@ public:
      *
      * @param deltaX the deltaX of the position.
      * @param deltaY the deltaY of the position.
-    */
+     */
     virtual void ScrollBy(float deltaX, float deltaY) = 0;
 
     /**
@@ -689,7 +690,7 @@ public:
      *
      * @param vx the vx of the speed.
      * @param vy the vy of the speed.
-    */
+     */
     virtual void SlideScroll(float vx, float vy) = 0;
 
     /**
@@ -939,6 +940,17 @@ public:
      * @return true if the discarded window reload success, otherwise false.
      */
     virtual bool Restore() = 0;
+
+    /**
+     * CallH5Function
+     *
+     * @param routingId         int32_t: the h5 frame routing id
+     * @param h5ObjectId        int32_t: the h5 side object id
+     * @param h5MethodName      string: the h5 side object method name
+     * @param args              vector<shared_ptr<NWebValue>>: the call args
+     */
+    virtual void CallH5Function(int32_t routingId, int32_t h5ObjectId, const std::string h5MethodName,
+        const std::vector<std::shared_ptr<NWebValue>> args) = 0;
 };
 }  // namespace OHOS::NWeb
 

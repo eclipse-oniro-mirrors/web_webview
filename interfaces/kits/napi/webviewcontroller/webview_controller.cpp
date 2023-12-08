@@ -715,7 +715,7 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
         return;
     }
 
-    javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>();
+    javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nweb_, id_);
     nweb_ptr->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
 }
 
@@ -743,6 +743,7 @@ void WebviewController::RegisterJavaScriptProxy(
     }
 
     objId = javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, methodList);
+
     nweb_ptr->RegisterArkJSfunctionExt(objName, methodList, objId);
 }
 
