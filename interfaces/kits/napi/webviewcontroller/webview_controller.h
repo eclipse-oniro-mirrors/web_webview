@@ -220,7 +220,8 @@ public:
 private:
     int ConverToWebHitTestType(int hitType);
 
-    bool GetRawFileUrl(const std::string &fileName, std::string &result);
+    bool GetRawFileUrl(const std::string &fileName,
+        const std::string& bundleName, const std::string& moduleName, std::string &result);
 
 public:
     static std::string customeSchemeCmdLine_;
