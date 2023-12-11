@@ -176,7 +176,7 @@ bool ResSchedClientAdapter::ReportKeyThread(
 
     if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER) {
         std::lock_guard<std::mutex> lock(g_windowIdMutex);
-        ReportWindowStatus(ResSchedSceneAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId);
+        ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId);
     }
 
     // Load url may create new render process, repeat report load url event when
