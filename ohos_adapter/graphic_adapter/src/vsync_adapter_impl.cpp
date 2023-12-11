@@ -32,7 +32,7 @@ VSyncAdapterImpl::~VSyncAdapterImpl()
         if (runner) {
             runner->Stop();
             ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_DESTROYED,
-                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+                getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
         }
         vsyncHandler_ = nullptr;
     }
@@ -54,7 +54,7 @@ VSyncErrorCode VSyncAdapterImpl::Init()
             runner->Run();
         }
         auto& rsClient = OHOS::Rosen::RSInterfaces::GetInstance();
-        receiver_ = rsClient.CreateVSyncReceiver("NWeb_" + std::to_string(::getpid()), vsyncHandler_);
+        receiver_ = rsClient.CreateVSyncReceiver("NWeb_" + std::to_string(::getprocpid()), vsyncHandler_);
         if (!receiver_) {
             WVLOG_E("CreateVSyncReceiver failed");
             return VSyncErrorCode::ERROR;
@@ -82,7 +82,7 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
         // so need to confirm it several times
         if (runner && runner->GetKernelThreadId() != 0) {
             ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
-                getpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+                getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
             hasReportedKeyThread_ = true;
         }
     }
