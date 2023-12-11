@@ -20,6 +20,7 @@
 #include <sstream>
 #include <unistd.h>
 
+#include "application_context.h"
 #include "bundle_mgr_proxy.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
@@ -34,6 +35,9 @@ const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
 const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
 const std::string NWEB_BUNDLE_NAME = "com.ohos.nweb";
 const std::string NWEB_PACKAGE = "entry";
+const std::string RAWFILE_PREFIX = "resources/rawfile/";
+const std::string BUNDLE_NAME_PREFIX = "bundleName:";
+const std::string MODULE_NAME_PREFIX = "moduleName:";
 constexpr uint32_t TM_YEAR_BITS = 9;
 constexpr uint32_t TM_MON_BITS = 5;
 constexpr uint32_t TM_MIN_BITS = 5;
@@ -57,6 +61,68 @@ sptr<OHOS::AppExecFwk::BundleMgrProxy> GetBundleMgrProxy()
     }
     WVLOG_D("get bundle manager proxy success.");
     return iface_cast<OHOS::AppExecFwk::BundleMgrProxy>(remoteObject);
+}
+
+std::shared_ptr<Global::Resource::ResourceManager> GetResourceMgr(
+    const std::string& bundleName, const std::string& moduleName)
+{
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (!context) {
+        WVLOG_E("Failed to get application context.");
+        return nullptr;
+    }
+
+    if (bundleName.empty() || moduleName.empty()) {
+        return context->GetResourceManager();
+    }
+    auto moduleContext = context->CreateModuleContext(bundleName, moduleName);
+    if (!moduleContext) {
+        WVLOG_E("Failed to crate module context, bundleName: %{public}s, moduleName: %{public}s.",
+            bundleName.c_str(), moduleName.c_str());
+        return nullptr;
+    }
+    return moduleContext->GetResourceManager();
+}
+
+bool ParseRawFile(const std::string& rawFile,
+    std::string& bundleName, std::string& moduleName, std::string& fileName)
+{
+    if (rawFile.substr(0, RAWFILE_PREFIX.size()) != RAWFILE_PREFIX) {
+        WVLOG_D("ParseRawFile failed, rawfile: %{public}s", rawFile.c_str());
+        return false;
+    }
+
+    std::string subStr = rawFile.substr(RAWFILE_PREFIX.size());
+    if (subStr.substr(0, BUNDLE_NAME_PREFIX.size()) != BUNDLE_NAME_PREFIX) {
+        return false;
+    }
+    subStr = subStr.substr(BUNDLE_NAME_PREFIX.size());
+    size_t pos = subStr.find('/');
+    if (pos == std::string::npos) {
+        WVLOG_D("ParseRawFile bundleName failed, rawfile: %{public}s", rawFile.c_str());
+        return false;
+    }
+    bundleName = subStr.substr(0, pos);
+
+    subStr = subStr.substr(pos + 1);
+    if (subStr.substr(0, MODULE_NAME_PREFIX.size()) != MODULE_NAME_PREFIX) {
+        return false;
+    }
+    subStr = subStr.substr(MODULE_NAME_PREFIX.size());
+    pos = subStr.find('/');
+    if (pos == std::string::npos) {
+        WVLOG_D("ParseRawFile moduleName failed, rawfile: %{public}s", rawFile.c_str());
+        return false;
+    }
+    moduleName = subStr.substr(0, pos);
+
+    fileName = subStr.substr(pos + 1);
+    if (fileName.empty()) {
+        WVLOG_D("ParseRawFile fileName failed, rawfile: %{public}s", rawFile.c_str());
+        return false;
+    }
+    return true;
 }
 
 std::string GetNWebHapPath()
@@ -156,7 +222,25 @@ void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t& len,
     std::unique_ptr<uint8_t[]>& dest, bool isSys)
 {
-    return GetRawFileData(isSys? sysExtractor_: extractor_, rawFile, len, dest);
+    if (isSys) {
+        return GetRawFileData(sysExtractor_, rawFile, len, dest);
+    }
+    std::string bundleName;
+    std::string moduleName;
+    std::string fileName;
+    if (ParseRawFile(rawFile, bundleName, moduleName, fileName)) {
+        auto resourceManager = GetResourceMgr(bundleName, moduleName);
+        if (!resourceManager) {
+            return GetRawFileData(extractor_, rawFile, len, dest);
+        }
+        auto state = resourceManager->GetRawFileFromHap(fileName, len, dest);
+        if (state != Global::Resource::SUCCESS) {
+            WVLOG_E("GetRawFileFromHap failed, state: %{public}d, fileName: %{public}s", state, fileName.c_str());
+            return GetRawFileData(extractor_, rawFile, len, dest);
+        }
+        return true;
+    }
+    return GetRawFileData(extractor_, rawFile, len, dest);
 }
 
 bool OhosResourceAdapterImpl::GetRawFileMapper(const std::string& rawFile,
