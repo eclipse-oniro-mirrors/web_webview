@@ -19,10 +19,14 @@
 #include <unistd.h>
 #include <vector>
 
+#include "app_mgr_constants.h"
+#include "bundle_mgr_interface.h"
+#include "iservice_registry.h"
 #include "nweb_log.h"
 #include "res_sched_client.h"
 #include "res_sched_client_adapter.h"
 #include "res_type.h"
+#include "system_ability_definition.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::ResourceSchedule;
@@ -61,6 +65,7 @@ const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
     { ResSchedSceneAdapter::VISIBLE, ResType::WebScene::WEB_SCENE_VISIBLE },
 };
 
+const int32_t INVALID_NUMBER = -1;
 constexpr char PID[] = "pid";
 constexpr char UID[] = "uid";
 constexpr char TID[] = "tid";
@@ -70,11 +75,36 @@ constexpr char SERIAL_NUMBER[] = "serialNum";
 constexpr char SCENE_ID[] = "sceneId";
 constexpr char STATE[] = "state";
 std::set<int32_t> g_nwebSet;
+std::mutex g_windowIdMutex {};
+int32_t g_windowId = INVALID_NUMBER;
+int32_t g_nwebId = INVALID_NUMBER;
 
 std::string GetUidString()
 {
     static std::string uidString = std::to_string(getuid());
     return uidString;
+}
+
+std::string GetBundleNameByUid(int32_t uid)
+{
+    sptr<ISystemAbilityManager> systemAbilityManager =
+        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityManager == nullptr) {
+        WVLOG_E("get SystemAbilityManager failed");
+        return "";
+    }
+    sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (remoteObject == nullptr) {
+        WVLOG_E("get Bundle Manager failed");
+        return "";
+    }
+    auto bundleMgr = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
+    if (bundleMgr == nullptr) {
+        return "";
+    }
+    std::string bundle {""};
+    bundleMgr->GetNameForUid(uid, bundle);
+    return bundle;
 }
 
 bool ConvertStatus(ResSchedStatusAdapter statusAdapter, int64_t& status)
@@ -131,13 +161,27 @@ bool ResSchedClientAdapter::ReportKeyThread(
 
     std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
         { TID, std::to_string(tid) }, { ROLE, std::to_string(role) } };
+
+    // Report process creation event first when render process is created
+    if (pid == tid) {
+        mapPayload["processType"] = std::to_string(static_cast<uint32_t>(AppExecFwk::ProcessType::RENDER));
+        mapPayload["bundleName"] = GetBundleNameByUid(getuid());
+        ResSchedClient::GetInstance().ReportData(
+            ResType::RES_TYPE_PROCESS_STATE_CHANGE, ResType::ProcessStatus::PROCESS_CREATED, mapPayload);
+    }
+
     ResSchedClient::GetInstance().ReportData(ResType::RES_TYPE_REPORT_KEY_THREAD, status, mapPayload);
     WVLOG_D("ReportKeyThread status: %{public}d, uid: %{public}s, pid: %{public}d, tid:%{public}d, role: %{public}d",
         static_cast<int32_t>(status), GetUidString().c_str(), pid, tid, static_cast<int32_t>(role));
 
+    if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER) {
+        std::lock_guard<std::mutex> lock(g_windowIdMutex);
+        ReportWindowStatus(ResSchedSceneAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId);
+    }
+
     // Load url may create new render process, repeat report load url event when
     // render key thread create to solve timing problem. Later events will overwrite previous events
-    if (statusAdapter == ResSchedStatusAdapter::THREAD_CREATED && pid != getprocpid() && pid != tid) {
+    if (statusAdapter == ResSchedStatusAdapter::THREAD_CREATED && pid != getprocpid()) {
         ReportSceneInternal(statusAdapter, ResSchedSceneAdapter::LOAD_URL);
     }
     return true;
@@ -208,6 +252,14 @@ bool ResSchedClientAdapter::ReportScene(
         return false;
     }
     return ReportSceneInternal(statusAdapter, sceneAdapter);
+}
+
+void ResSchedClientAdapter::ReportWindowId(int32_t windowId, int32_t nwebId)
+{
+    std::lock_guard<std::mutex> lock(g_windowIdMutex);
+    g_windowId = windowId;
+    g_nwebId = nwebId;
+    WVLOG_D("ReportWindowId windowId: %{public}d, nwebId: %{public}d", g_windowId, g_nwebId);
 }
 
 void ResSchedClientAdapter::ReportNWebInit(ResSchedStatusAdapter statusAdapter, int32_t nwebId)
