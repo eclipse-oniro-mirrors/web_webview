@@ -34,6 +34,13 @@ enum class ClipBoardImageAlphaType {
     ALPHA_TYPE_UNKNOWN
 };
 
+enum class CopyOptionMode {
+    NONE = 0,
+    IN_APP = 1,
+    LOCAL_DEVICE = 2,
+    CROSS_DEVICE = 3
+};
+
 typedef struct ClipBoardImageDataTag {
     ClipBoardImageColorType colorType;
     ClipBoardImageAlphaType alphaType;
@@ -66,7 +73,8 @@ public:
 
     virtual bool GetPasteData(PasteRecordList& data) = 0;
 
-    virtual void SetPasteData(const PasteRecordList& data) = 0;
+    virtual void SetPasteData(const PasteRecordList& data,
+                              CopyOptionMode copy_option = CopyOptionMode::CROSS_DEVICE) = 0;
 
     virtual bool HasPasteData() = 0;
 
