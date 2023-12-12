@@ -16,6 +16,7 @@
 #include <vector>
 
 #include "cert_mgr_adapter_impl.h"
+#include "net_conn_client.h"
 #include "nweb_log.h"
 #include "securec.h"
 #include "openssl/ssl.h"
@@ -458,5 +459,18 @@ int CertManagerAdapterImpl::VerifyCertFromNetSsl(uint8_t* certData, uint32_t cer
         result = result - SSL_ERROR_CODE_BASE;
     }
     return result;
+}
+
+bool CertManagerAdapterImpl::GetTrustAnchorsForHostName(
+    const std::string &hostname, std::vector<std::string> &certs)
+{
+    int32_t ret = OHOS::NetManagerStandard::NetConnClient::GetInstance().
+        GetTrustAnchorsForHostName(hostname, certs);
+    if (ret != OHOS::NetManagerStandard::NETMANAGER_SUCCESS) {
+        WVLOG_E("GetTrustAnchorsForHostName for hostname:%{public}s failed",
+            hostname.c_str());
+        return false;
+    }
+    return true;
 }
 }
