@@ -1048,8 +1048,7 @@ napi_value NapiWebMessageExt::SetString(napi_env env, napi_callback_info info)
     }
 
     int32_t type = webMessageExt->GetType();
-    if (type != static_cast<int32_t>(WebMessageType::STRING) ||
-        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+    if (type != static_cast<int32_t>(WebMessageType::STRING)) {
         WVLOG_E("web message SetString error type:%{public}d", type);
         BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
@@ -1085,8 +1084,7 @@ napi_value NapiWebMessageExt::SetNumber(napi_env env, napi_callback_info info)
     }
 
     int32_t type = webMessageExt->GetType();
-    if (type != static_cast<int32_t>(WebMessageType::NUMBER) ||
-        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+    if (type != static_cast<int32_t>(WebMessageType::NUMBER)) {
         WVLOG_E("web message SetNumber error type:%{public}d", type);
         BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
@@ -1122,8 +1120,7 @@ napi_value NapiWebMessageExt::SetBoolean(napi_env env, napi_callback_info info)
     }
 
     int32_t type = webMessageExt->GetType();
-    if (type != static_cast<int32_t>(WebMessageType::BOOLEAN) ||
-        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+    if (type != static_cast<int32_t>(WebMessageType::BOOLEAN)) {
         WVLOG_E("web message SetBoolean error type:%{public}d", type);
         BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
@@ -1164,8 +1161,7 @@ napi_value NapiWebMessageExt::SetArrayBuffer(napi_env env, napi_callback_info in
     }
 
     int32_t type = webMessageExt->GetType();
-    if (type != static_cast<int32_t>(WebMessageType::ARRAYBUFFER) ||
-        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+    if (type != static_cast<int32_t>(WebMessageType::ARRAYBUFFER)) {
         WVLOG_E("web message SetArrayBuffer error type:%{public}d", type);
         BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
@@ -1202,8 +1198,7 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
     }
 
     int32_t type = webMessageExt->GetType();
-    if (type != static_cast<int32_t>(WebMessageType::ARRAY) ||
-        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+    if (type != static_cast<int32_t>(WebMessageType::ARRAY)) {
         WVLOG_E("web message SetArray error type:%{public}d", type);
         BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
@@ -1275,8 +1270,7 @@ napi_value NapiWebMessageExt::SetError(napi_env env, napi_callback_info info)
     }
 
     int32_t type = webMessageExt->GetType();
-    if (type != static_cast<int32_t>(WebMessageType::ERROR) ||
-        type != static_cast<int32_t>(WebMessageType::NOTSUPPORT)) {
+    if (type != static_cast<int32_t>(WebMessageType::ERROR)) {
         WVLOG_E("web message SetError error type:%{public}d", type);
         BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
         return result;
