@@ -3846,11 +3846,9 @@ napi_value NapiWebviewController::GetSecurityLevel(napi_env env, napi_callback_i
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
-        WVLOG_I("The function has coming here: napi_webview_controller.cpp //20231127-3849");
         return result;
     }
-
-    WVLOG_I("The function has coming here: napi_webview_controller.cpp //20231127-3853");
+    
     int32_t securityLevel = webviewController->GetSecurityLevel();
     napi_create_int32(env, securityLevel, &result);
     return result;
