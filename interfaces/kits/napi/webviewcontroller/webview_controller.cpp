@@ -1041,12 +1041,11 @@ int WebviewController::GetSecurityLevel()
 {
     auto nweb_ptr = nweb_.lock();
     if (!nweb_ptr) {
-        return static_cast<int>(SecurityLevel::DANGEROUS);
+        return static_cast<int>(SecurityLevel::NONE);
     }
 
     int nwebSecurityLevel = nweb_ptr->GetSecurityLevel();
     SecurityLevel securityLevel;
-    WVLOG_I("The value of security level is: %{public}d", nwebSecurityLevel);
     switch (nwebSecurityLevel) {
         case static_cast<int>(CoreSecurityLevel::NONE):
             securityLevel = SecurityLevel::NONE;
