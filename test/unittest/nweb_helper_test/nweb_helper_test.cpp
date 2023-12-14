@@ -236,7 +236,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadNWebSDK_006, TestSize.Level1)
     EXPECT_NE(itemId, -1);
     NWebDownloadItemState state = WebDownloadItem_GetState(downloadItem);
     EXPECT_NE(state, NWebDownloadItemState::MAX_DOWNLOAD_STATE);
-    int speed = WebDownloadItem_CurrentSpeed(downloadItem);
+    NWebDownloadItem *download = nullptr;
+    int speed = WebDownloadItem_CurrentSpeed(download);
     EXPECT_EQ(speed, 0);
     int complete = WebDownloadItem_PercentComplete(downloadItem);
     EXPECT_NE(complete, 0);
@@ -263,7 +264,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     NWebDownloadItem *downloadItem = nullptr;
     WebDownloadItem_CreateWebDownloadItem(&downloadItem);
     EXPECT_NE(downloadItem, nullptr);
-    bool isPaused = WebDownloadItem_IsPaused(downloadItem);
+    NWebDownloadItem *download = nullptr;
+    bool isPaused = WebDownloadItem_IsPaused(download);
     EXPECT_FALSE(isPaused);
     char* method = WebDownloadItem_Method(downloadItem);
     EXPECT_EQ(method, nullptr);
