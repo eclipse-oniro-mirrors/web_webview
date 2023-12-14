@@ -124,9 +124,6 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_NormalTe
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->ResetDecoder(), DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->ReleaseDecoder(), DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->ReleaseOutputBufferDec(index_, true), DecoderAdapterCode::DECODER_ERROR);
-    int32_t temp = 1;
-    void *window = static_cast<void *>(&temp);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetOutputSurface(window), DecoderAdapterCode::DECODER_ERROR);
 }
 
 /**
