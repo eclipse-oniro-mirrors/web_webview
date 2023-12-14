@@ -44,6 +44,8 @@ public:
 
 private:
     NetProxyEventCallback cb_ = nullptr;
+    uint32_t appProxyCallbackId_ = 0;
+    void StartListenAppProxy();
     std::shared_ptr<EventFwk::CommonEventSubscriber> commonEventSubscriber_ = nullptr;
 };
 
