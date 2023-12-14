@@ -29,10 +29,41 @@ namespace {
 constexpr int32_t PARAMZERO = 0;
 constexpr int32_t PARAMONE = 1;
 constexpr int32_t RESULT_COUNT = 2;
+const std::string BUNDLE_NAME_PREFIX = "bundleName:";
+const std::string MODULE_NAME_PREFIX = "moduleName:";
 } // namespace
 
 namespace OHOS {
 namespace NWeb {
+namespace {
+bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleName)
+{
+    static std::string applicationBundleName;
+    static std::string applicationModuleName;
+    if (!applicationBundleName.empty() && !applicationBundleName.empty()) {
+        bundleName = applicationBundleName;
+        moduleName = applicationModuleName;
+        return true;
+    }
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (!context) {
+        WVLOG_E("Failed to get application context.");
+        return false;
+    }
+    auto resourceManager = context->GetResourceManager();
+    if (!resourceManager) {
+        WVLOG_E("Failed to get resource manager.");
+        return false;
+    }
+    applicationBundleName = resourceManager->bundleInfo.first;
+    applicationModuleName = resourceManager->bundleInfo.second;
+    bundleName = applicationBundleName;
+    moduleName = applicationModuleName;
+    WVLOG_D("application bundleName: %{public}s, moduleName: %{public}s", bundleName.c_str(), moduleName.c_str());
+    return true;
+}
+}
 using namespace NWebError;
 std::unordered_map<int32_t, WebviewController*> g_webview_controller_map;
 std::string WebviewController::customeSchemeCmdLine_ = "";
@@ -474,7 +505,8 @@ void WebviewController::RequestFocus()
     }
 }
 
-bool WebviewController::GetRawFileUrl(const std::string &fileName, std::string &result)
+bool WebviewController::GetRawFileUrl(const std::string &fileName,
+    const std::string& bundleName, const std::string& moduleName, std::string &result)
 {
     if (fileName.empty()) {
         WVLOG_E("File name is empty.");
@@ -491,7 +523,15 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName, std::string &
         result = isStage ? packagePath + "entry/resources/rawfile/" + fileName :
             packagePath + bundleName + "assets/entry/resources/rawfile/" + fileName;
     } else {
-        result = "resource://RAWFILE/" + fileName;
+        std::string appBundleName;
+        std::string appModuleName;
+        result = "resource://RAWFILE/";
+        if (GetAppBundleNameAndModuleName(appBundleName, appModuleName)) {
+            if (appBundleName != bundleName || appModuleName != moduleName) {
+                result += BUNDLE_NAME_PREFIX + bundleName + "/" + MODULE_NAME_PREFIX + moduleName + "/";
+            }
+        }
+        result += fileName;
     }
     WVLOG_D("The parsed url is: %{public}s", result.c_str());
     return true;
@@ -527,10 +567,18 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
                 return false;
             }
             napi_value fileNameObj;
+            napi_value bundleNameObj;
+            napi_value moduleNameObj;
             std::string fileName;
+            std::string bundleName;
+            std::string moduleName;
             napi_get_element(env, paraArray, 0, &fileNameObj);
+            napi_get_named_property(env, urlObj, "bundleName", &bundleNameObj);
+            napi_get_named_property(env, urlObj, "moduleName", &moduleNameObj);
             NapiParseUtils::ParseString(env, fileNameObj, fileName);
-            return GetRawFileUrl(fileName, result);
+            NapiParseUtils::ParseString(env, bundleNameObj, bundleName);
+            NapiParseUtils::ParseString(env, moduleNameObj, moduleName);
+            return GetRawFileUrl(fileName, bundleName, moduleName, result);
         }
         WVLOG_E("The type parsed from url object is not RAWFILE.");
         return false;
@@ -715,7 +763,7 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
         return;
     }
 
-    javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>();
+    javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nweb_, id_);
     nweb_ptr->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
 }
 
@@ -743,6 +791,7 @@ void WebviewController::RegisterJavaScriptProxy(
     }
 
     objId = javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, methodList);
+
     nweb_ptr->RegisterArkJSfunctionExt(objName, methodList, objId);
 }
 
