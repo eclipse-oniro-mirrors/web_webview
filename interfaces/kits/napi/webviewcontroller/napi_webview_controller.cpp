@@ -404,10 +404,27 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 
 napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info info)
 {
+    WVLOG_I("NapiWebviewController::JsConstructor start");
     napi_value thisVar = nullptr;
-    NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr));
 
-    WebviewController *webviewController = new (std::nothrow) WebviewController();
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
+
+    WebviewController *webviewController;
+    if (argc == 1) {
+        std::string webTag;
+        NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], webTag);
+        if (webTag.empty()) {
+            WVLOG_E("native webTag is empty");
+            return nullptr;
+        }
+        webviewController = new (std::nothrow) WebviewController(webTag);
+        WVLOG_I("new webview controller webname:%{public}s", webTag.c_str());
+    } else {
+        webviewController = new (std::nothrow) WebviewController();
+    }
+
     if (webviewController == nullptr) {
         WVLOG_E("new webview controller failed");
         return nullptr;
