@@ -225,7 +225,38 @@ bool NetProxyAdapterImpl::StartListen()
         return false;
     }
 
+    StartListenAppProxy();
     return true;
+}
+
+void NetProxyAdapterImpl::StartListenAppProxy()
+{
+    std::function<void(const NetManagerStandard::HttpProxy& httpProxy)> callback =
+        [this](const NetManagerStandard::HttpProxy& httpProxy) {
+            WVLOG_D("App netproxy config change, host is %{public}s, port is %{public}d", httpProxy.GetHost().c_str(),
+                httpProxy.GetPort());
+            std::string host;
+            host.assign(httpProxy.GetHost());
+            if (host == DEFAULT_HTTP_PROXY_HOST) {
+                WVLOG_W("get netproxy property failed, host is null");
+                host = std::string();
+            }
+            std::vector<std::string> exclusionList;
+            auto exclusion = httpProxy.GetExclusionList();
+            exclusionList.assign(exclusion.begin(), exclusion.end());
+            uint16_t port = httpProxy.GetPort();
+            WVLOG_D("App netproxy config change,host is %{public}s, port is %{public}d", host.c_str(), port);
+            for (auto it : exclusionList) {
+                WVLOG_D("App netproxy config change, exclusion is %{public}s", it.c_str());
+            }
+            if (cb_) {
+                cb_(host, port, "", exclusionList);
+            }
+        };
+    uint32_t appId;
+    NetManagerStandard::NetConnClient::GetInstance().RegisterAppHttpProxyCallback(callback, appId);
+    appProxyCallbackId_ = appId;
+    WVLOG_D("App netproxy config change, fromNet , appId =is %{public}d", appId);
 }
 
 void NetProxyAdapterImpl::StopListen()
@@ -239,6 +270,9 @@ void NetProxyAdapterImpl::StopListen()
             WVLOG_E("stop netproxy listen, unsubscribe common event failed");
         }
     }
+
+    WVLOG_D("App netproxy,UnregisterAppHttpProxyCallback, appId is %{public}d", appProxyCallbackId_);
+    NetManagerStandard::NetConnClient::GetInstance().UnregisterAppHttpProxyCallback(appProxyCallbackId_);
 }
 
 void NetProxyEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& data)
@@ -251,9 +285,9 @@ void NetProxyEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& da
     }
 
     NetManagerStandard::HttpProxy httpProxy;
-    int32_t ret = NetManagerStandard::NetConnClient::GetInstance().GetGlobalHttpProxy(httpProxy);
+    int32_t ret = NetManagerStandard::NetConnClient::GetInstance().GetDefaultHttpProxy(httpProxy);
     if (ret != NetManagerStandard::NET_CONN_SUCCESS) {
-        WVLOG_E("netproxy config change, get global http proxy from OH network failed");
+        WVLOG_E("netproxy config change, get default http proxy from OH network failed");
         return;
     }
 
@@ -282,10 +316,9 @@ void NetProxyAdapterImpl::GetProperty(std::string& host, uint16_t& port, std::st
 {
     std::string httpProxyExclusions;
     NetManagerStandard::HttpProxy httpProxy;
-
     int32_t ret = NetManagerStandard::NetConnClient::GetInstance().GetDefaultHttpProxy(httpProxy);
     if (ret != NetManagerStandard::NET_CONN_SUCCESS) {
-        WVLOG_E("netproxy config change, get global http proxy from OH network failed");
+        WVLOG_E("netproxy config change, get default http proxy from OH network failed");
         return;
     }
 
