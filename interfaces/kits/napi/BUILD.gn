@@ -24,6 +24,7 @@ config("web_public_config") {
     "webstorage",
     "webviewcontroller",
     "$target_gen_dir/protos",
+    "../../native",
   ]
 }
 
@@ -79,6 +80,7 @@ ohos_shared_library("webview_napi") {
   deps = [
     "../../../ohos_adapter:nweb_ohos_adapter",
     "../../../ohos_nweb:libnweb",
+    "../../native:ohweb",
     "js:js_export",
     "protos:proto_gen",
     "//third_party/protobuf:protobuf_lite",
