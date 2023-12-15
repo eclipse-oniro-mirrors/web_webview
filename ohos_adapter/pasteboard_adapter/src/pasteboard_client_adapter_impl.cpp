@@ -393,6 +393,25 @@ PasteBoardClientAdapterImpl& PasteBoardClientAdapterImpl::GetInstance()
     return instance;
 }
 
+MiscServices::ShareOption PasteBoardClientAdapterImpl::TransitionCopyOption(CopyOptionMode copy_option)
+{
+    auto shareOption = MiscServices::ShareOption::CrossDevice;
+    switch (copy_option) {
+        case CopyOptionMode::IN_APP:
+            shareOption = MiscServices::ShareOption::InApp;
+            break;
+        case CopyOptionMode::LOCAL_DEVICE:
+            shareOption = MiscServices::ShareOption::LocalDevice;
+            break;
+        case CopyOptionMode::CROSS_DEVICE:
+            shareOption = MiscServices::ShareOption::CrossDevice;
+            break;
+        default:
+            break;
+    }
+    return shareOption;
+}
+
 bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
 {
     PasteData pData;
@@ -410,8 +429,12 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
     return true;
 }
 
-void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data)
+void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data, CopyOptionMode copy_option)
 {
+    if (copy_option == CopyOptionMode::NONE) {
+        WVLOG_E("SetPasteData failed, copy option mode is 'NONE'");
+        return;
+    }
     std::vector<std::shared_ptr<PasteDataRecord>> recordList;
     for (auto& record: data) {
         PasteDataRecordAdapterImpl* rawRecord =
@@ -423,6 +446,8 @@ void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data)
     }
     PasteData pData(recordList);
     pData.SetTag(webviewPasteDataTag_);
+    auto shareOption = TransitionCopyOption(copy_option);
+    pData.SetShareOption(shareOption);
     PasteboardClient::GetInstance()->SetPasteData(pData);
 }
 
