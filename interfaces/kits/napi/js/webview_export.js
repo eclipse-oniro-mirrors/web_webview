@@ -79,11 +79,11 @@ Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFr
     let abilityContext = getContext(this);
     accessManger.requestPermissionsFromUser(abilityContext, ['ohos.permission.READ_PASTEBOARD'])
       .then((PermissionRequestResult) => {
-        if (PermissionRequestResult.authResults === -1) {
-          callback.request.deny(callback.request.getAccessibleResource());
-        }
-        else if (PermissionRequestResult.authResults === 0) {
+        if (PermissionRequestResult.authResults === 0) {
           callback.request.grant(callback.request.getAccessibleResource());
+        }
+        else {
+          callback.request.deny();
         }
       })
       .catch((error) => {
