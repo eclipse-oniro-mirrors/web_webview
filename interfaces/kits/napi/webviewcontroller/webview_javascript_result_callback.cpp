@@ -23,12 +23,51 @@
 namespace OHOS::NWeb {
 namespace {
 #define JS_BRIDGE_BINARY_ARGS_COUNT 2
+// For the sake of the storage API, make this quite large.
+const uint32_t MAX_RECURSION_DEPTH = 11;
+const uint32_t MAX_DATA_LENGTH = 10000;
 
 std::unordered_map<int32_t, WebviewJavaScriptResultCallBack*> g_webviewJsResultCallbackMap;
 std::mutex g_objectMtx;
 
-void ParseNapiValue2NwebValue(napi_env env, napi_value& value, std::shared_ptr<NWebValue> nwebValue, bool* isObject);
-void ParseNapiValue2NwebValue(napi_env env, napi_value* value, std::shared_ptr<NWebValue> nwebValue, bool* isObject);
+std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value& value,
+    std::shared_ptr<NWebValue> nwebValue, bool* isObject);
+std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value* value,
+    std::shared_ptr<NWebValue> nwebValue, bool* isObject);
+
+class ValueConvertState {
+public:
+    // Level scope which updates the current depth of some ValueConvertState.
+    class Level {
+    public:
+        explicit Level(ValueConvertState* state) : state_(state)
+        {
+            state_->maxRecursionDepth_--;
+        }
+        ~Level()
+        {
+            state_->maxRecursionDepth_++;
+        }
+
+    private:
+        ValueConvertState* state_;
+    };
+
+    explicit ValueConvertState() : maxRecursionDepth_(MAX_RECURSION_DEPTH)
+    {
+    }
+
+    ValueConvertState(const ValueConvertState&) = delete;
+    ValueConvertState& operator=(const ValueConvertState&) = delete;
+
+    bool HasReachedMaxRecursionDepth()
+    {
+        return maxRecursionDepth_ <= 0;
+    }
+
+private:
+    uint32_t maxRecursionDepth_;
+};
 
 WebviewJavaScriptResultCallBack* FromNwebID(int32_t nwebId)
 {
@@ -54,14 +93,17 @@ void CallH5Function(napi_env env, napi_value* napiArg, std::shared_ptr<NWebValue
 {
     WVLOG_D("CallH5Function called");
     bool isObject = false;
-    ParseNapiValue2NwebValue(env, napiArg, nwebValue, &isObject);
-    if (isObject) {
+    std::vector<std::string> methodNameList;
+    methodNameList = ParseNapiValue2NwebValue(env, napiArg, nwebValue, &isObject);
+    if (isObject && FromNwebID(bundle.nwebId)) {
         JavaScriptOb::ObjectID returnedObjectId;
         if (FromNwebID(bundle.nwebId)->FindObjectIdInJsTd(env, *napiArg, &returnedObjectId)) {
             FromNwebID(bundle.nwebId)->FindObject(returnedObjectId)->AddHolder(bundle.frameRoutingId);
         } else {
             returnedObjectId = FromNwebID(bundle.nwebId)->AddObject(env, *napiArg, false, bundle.frameRoutingId);
         }
+
+        FromNwebID(bundle.nwebId)->SetUpAnnotateMethods(returnedObjectId, methodNameList);
 
         napi_valuetype valueType = napi_undefined;
         napi_typeof(env, *napiArg, &valueType);
@@ -288,7 +330,7 @@ napi_value ParseBinNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebV
     WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId);
 
 void ParseDictionaryNapiValue2NwebValue(
-    napi_env env, napi_value& value, std::shared_ptr<NWebValue>& nwebValue, bool* isOject);
+    napi_env env, ValueConvertState* state, napi_value& value, std::shared_ptr<NWebValue>& nwebValue, bool* isOject);
 
 bool ParseBasicTypeNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebValue>& value, napi_value& napiValue)
 {
@@ -461,7 +503,8 @@ napi_value ParseNwebValue2NapiValue(napi_env env, std::shared_ptr<NWebValue> val
     return ParseNwebValue2NapiValueHelper(env, value, objectsMap, nwebId, frameId);
 }
 
-bool ParseBasicTypeNapiValue2NwebValue(napi_env env, napi_value& value, std::shared_ptr<NWebValue>& nwebValue)
+bool ParseBasicTypeNapiValue2NwebValue(napi_env env, napi_value& value,
+    std::shared_ptr<NWebValue>& nwebValue, bool* isObject)
 {
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, value, &valueType);
@@ -496,6 +539,9 @@ bool ParseBasicTypeNapiValue2NwebValue(napi_env env, napi_value& value, std::sha
                 WVLOG_E("ParseBasicTypeNapiValue2NwebValue NapiParseUtils::ParseString "
                         "failed");
             }
+            if (strVal == "methodNameListForJsProxy") {
+                *isObject = true;
+            }
             nwebValue->SetType(NWebValue::Type::STRING);
             nwebValue->SetString(strVal);
             break;
@@ -508,19 +554,20 @@ bool ParseBasicTypeNapiValue2NwebValue(napi_env env, napi_value& value, std::sha
 }
 
 void ParseNapiValue2NwebValueHelper(
-    napi_env env, napi_value& value, std::shared_ptr<NWebValue> nwebValue, bool* isOject)
+    napi_env env, ValueConvertState* state, napi_value& value,
+    std::shared_ptr<NWebValue> nwebValue, bool* isOject)
 {
-    if (!nwebValue || ParseBasicTypeNapiValue2NwebValue(env, value, nwebValue)) {
+    ValueConvertState::Level stateLevel(state);
+    if (state->HasReachedMaxRecursionDepth()) {
+        return;
+    }
+    if (!nwebValue || ParseBasicTypeNapiValue2NwebValue(env, value, nwebValue, isOject)) {
         return;
     }
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, value, &valueType);
     napi_status s = napi_ok;
     switch (valueType) {
-        case napi_function: {
-            *isOject = true;
-            break;
-        }
         case napi_object: {
             bool isArray;
             s = napi_is_array(env, value, &isArray);
@@ -528,12 +575,14 @@ void ParseNapiValue2NwebValueHelper(
                 WVLOG_E("ParseNapiValue2NwebValueHelper napi api call fail");
             }
             if (!isArray) {
-                ParseDictionaryNapiValue2NwebValue(env, value, nwebValue, isOject);
+                WVLOG_D("ParseNapiValue2NwebValueHelper napi isArray");
+                ParseDictionaryNapiValue2NwebValue(env, state, value, nwebValue, isOject);
                 break;
             }
             nwebValue->SetType(NWebValue::Type::LIST);
             uint32_t size;
             s = napi_get_array_length(env, value, &size);
+            size = std::min(size, MAX_DATA_LENGTH);
             if (s != napi_ok) {
                 WVLOG_E("ParseNapiValue2NwebValueHelper napi api call fail");
             }
@@ -544,20 +593,19 @@ void ParseNapiValue2NwebValueHelper(
                     WVLOG_E("ParseNapiValue2NwebValueHelper napi api call fail");
                 }
                 auto nwebTmp = std::make_shared<NWebValue>();
-                ParseNapiValue2NwebValueHelper(env, napiTmp, nwebTmp, isOject);
+                ParseNapiValue2NwebValueHelper(env, state, napiTmp, nwebTmp, isOject);
                 nwebValue->AddListValue(*nwebTmp);
             }
             break;
         }
         default: {
             WVLOG_E("ParseNapiValue2NwebValueHelper invalid type");
-            break;
         }
     }
 }
 
 void ParseDictionaryNapiValue2NwebValue(
-    napi_env env, napi_value& value, std::shared_ptr<NWebValue>& nwebValue, bool* isOject)
+    napi_env env, ValueConvertState* state, napi_value& value, std::shared_ptr<NWebValue>& nwebValue, bool* isOject)
 {
     napi_status s = napi_ok;
     nwebValue->SetType(NWebValue::Type::DICTIONARY);
@@ -568,6 +616,7 @@ void ParseDictionaryNapiValue2NwebValue(
     }
     uint32_t size;
     s = napi_get_array_length(env, propertyNames, &size);
+    size = std::min(size, MAX_DATA_LENGTH);
     if (s != napi_ok) {
         WVLOG_E("ParseDictionaryNapiValue2NwebValue napi api call fail");
     }
@@ -593,36 +642,113 @@ void ParseDictionaryNapiValue2NwebValue(
         }
         auto nwebValueTmp = std::make_shared<NWebValue>();
         auto nwebKeyTmp = std::make_shared<NWebValue>();
-        ParseNapiValue2NwebValueHelper(env, napiKeyTmp, nwebKeyTmp, isOject);
-        ParseNapiValue2NwebValueHelper(env, napiValueTmp, nwebValueTmp, isOject);
+        ParseNapiValue2NwebValueHelper(env, state, napiKeyTmp, nwebKeyTmp, isOject);
+        ParseNapiValue2NwebValueHelper(env, state, napiValueTmp, nwebValueTmp, isOject);
         nwebValue->AddDictionaryValue(nwebKeyTmp->GetString(), *nwebValueTmp);
     }
 }
 
-void ParseNapiValue2NwebValue(napi_env env, napi_value& value, std::shared_ptr<NWebValue> nwebValue, bool* isObject)
+bool IsCallableObject(napi_env env, napi_value& value, std::vector<std::string>* methodNameList)
+{
+    std::string annotation = "methodNameListForJsProxy";
+    napi_status s = napi_ok;
+    bool hasProperty = false;
+    s = napi_has_named_property(env, value, annotation.c_str(), &hasProperty);
+    if (s != napi_ok) {
+        WVLOG_E("IsCallableObject napi api call fail");
+    }
+    if (!hasProperty) {
+        WVLOG_D("IsCallableObject has not methodNameList property");
+        return false;
+    }
+    napi_value result;
+    s = napi_get_named_property(env, value, annotation.c_str(), &result);
+    if (s != napi_ok) {
+        WVLOG_E("IsCallableObject napi api call fail");
+    }
+    bool isArray = false;
+    s = napi_is_array(env, result, &isArray);
+    if (s != napi_ok) {
+        WVLOG_E("IsCallableObject napi api call fail");
+    }
+    if (!isArray) {
+        return false;
+    }
+    uint32_t size;
+    s = napi_get_array_length(env, result, &size);
+    if (s != napi_ok) {
+        WVLOG_E("IsCallableObject napi api call fail");
+    }
+    for (uint32_t i = 0; i < size; i++) {
+        napi_value napiTmp;
+        s = napi_get_element(env, result, i, &napiTmp);
+        if (s != napi_ok) {
+            WVLOG_E("IsCallableObject napi api call fail");
+        }
+        napi_valuetype valueType = napi_undefined;
+        napi_typeof(env, napiTmp, &valueType);
+        if (valueType != napi_string) {
+            continue;
+        }
+        std::string strVal;
+        if (!NapiParseUtils::ParseString(env, napiTmp, strVal)) {
+            WVLOG_E("IsCallableObject NapiParseUtils::ParseString failed");
+        }
+        methodNameList->push_back(strVal);
+    }
+    return true;
+}
+
+std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value& value,
+    std::shared_ptr<NWebValue> nwebValue, bool* isObject)
 {
     napi_status s = napi_ok;
+    std::vector<std::string> methodNameList;
+
     s = napi_is_promise(env, value, isObject);
     if (s != napi_ok) {
         WVLOG_E("ParseNapiValue2NwebValue napi api call fail");
     }
+
     if (*isObject) {
-        return;
+        return std::vector<std::string>{"then", "catch", "finally"};
     }
-    ParseNapiValue2NwebValueHelper(env, value, nwebValue, isObject);
+
+    if (IsCallableObject(env, value, &methodNameList)) {
+        *isObject = true;
+        return methodNameList;
+    }
+
+    ValueConvertState state;
+    bool isObjectForRecursion = false; // FixMe: for Recursion case, now not use
+    ParseNapiValue2NwebValueHelper(env, &state, value, nwebValue, &isObjectForRecursion);
+    return methodNameList;
 }
 
-void ParseNapiValue2NwebValue(napi_env env, napi_value* value, std::shared_ptr<NWebValue> nwebValue, bool* isObject)
+std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value* value,
+    std::shared_ptr<NWebValue> nwebValue, bool* isObject)
 {
     napi_status s = napi_ok;
+    std::vector<std::string> methodNameList;
+
     s = napi_is_promise(env, *value, isObject);
     if (s != napi_ok) {
         WVLOG_E("ParseNapiValue2NwebValue napi api call fail");
     }
+
     if (*isObject) {
-        return;
+        return std::vector<std::string>{"then", "catch", "finally"};
     }
-    ParseNapiValue2NwebValueHelper(env, *value, nwebValue, isObject);
+
+    if (IsCallableObject(env, *value, &methodNameList)) {
+        *isObject = true;
+        return methodNameList;
+    }
+
+    ValueConvertState state;
+    bool isObjectForRecursion = false; // FixMe: for Recursion case, now not use
+    ParseNapiValue2NwebValueHelper(env, &state, *value, nwebValue, &isObjectForRecursion);
+    return methodNameList;
 }
 } // namespace
 
@@ -652,7 +778,8 @@ std::shared_ptr<JavaScriptOb> WebviewJavaScriptResultCallBack::FindObject(JavaSc
 }
 
 void ProcessObjectCaseInJsTd(
-    napi_env env, WebviewJavaScriptResultCallBack::NapiJsCallBackParm* param, napi_value callResult)
+    napi_env env, WebviewJavaScriptResultCallBack::NapiJsCallBackParm* param,
+    napi_value callResult, std::vector<std::string>& methodNameList)
 {
     if (!param) {
         WVLOG_E("WebviewJavaScriptResultCallBack::ProcessObjectCaseInJsTd param null");
@@ -668,6 +795,8 @@ void ProcessObjectCaseInJsTd(
     } else {
         returnedObjectId = inParam->webJsResCb->AddObject(env, callResult, false, inParam->frameRoutingId);
     }
+
+    inParam->webJsResCb->SetUpAnnotateMethods(returnedObjectId, methodNameList);
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, callResult, &valueType);
@@ -718,10 +847,11 @@ void ExecuteGetJavaScriptResult(
         napi_value callResult = nullptr;
         napi_call_function(env, jsObj->GetValue(), callback, argv.size(), &argv[0], &callResult);
         bool isObject = false;
-        ParseNapiValue2NwebValue(
+        std::vector<std::string> methodNameList;
+        methodNameList = ParseNapiValue2NwebValue(
             env, callResult, *(static_cast<std::shared_ptr<NWebValue>*>(outParam->ret)), &isObject);
         if (isObject) {
-            ProcessObjectCaseInJsTd(env, param, callResult);
+            ProcessObjectCaseInJsTd(env, param, callResult, methodNameList);
         }
     }
 
@@ -755,7 +885,8 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultS
     napi_value callResult = nullptr;
     napi_call_function(jsObj->GetEnv(), jsObj->GetValue(), callback, argv.size(), &argv[0], &callResult);
     bool isObject = false;
-    ParseNapiValue2NwebValue(jsObj->GetEnv(), &callResult, ret, &isObject);
+    std::vector<std::string> methodNameList;
+    methodNameList = ParseNapiValue2NwebValue(jsObj->GetEnv(), &callResult, ret, &isObject);
     napi_valuetype valueType = napi_undefined;
     napi_typeof(jsObj->GetEnv(), callResult, &valueType);
     WVLOG_D("get javaScript result already in js thread end");
@@ -766,6 +897,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultS
         } else {
             returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, routingId);
         }
+        SetUpAnnotateMethods(returnedObjectId, methodNameList);
         std::string bin;
         if (valueType == napi_function) {
             WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResultSelf type is function");
@@ -1231,6 +1363,15 @@ void WebviewJavaScriptResultCallBack::RemoveTransientJavaScriptObject()
             retainedObjectSet_.erase(*iter1);
         }
         ++iter1;
+    }
+}
+
+void WebviewJavaScriptResultCallBack::SetUpAnnotateMethods(
+    JavaScriptOb::ObjectID objId, std::vector<std::string>& methodNameList)
+{
+    // set up annotate(methodNameListForJsProxy) object method
+    if (objects_[objId]) {
+        objects_[objId]->SetMethods(methodNameList);
     }
 }
 
