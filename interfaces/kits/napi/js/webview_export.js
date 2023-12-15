@@ -73,22 +73,22 @@ Object.defineProperty(webview.WebviewController.prototype, 'getCertificate', {
   }
 });
 
- Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFromUserWeb', {
+Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFromUserWeb', {
   value:  function (callback) {
     let accessManger = accessControl.createAtManager();
     let abilityContext = getContext(this);
     accessManger.requestPermissionsFromUser(abilityContext, ['ohos.permission.READ_PASTEBOARD'])
       .then((PermissionRequestResult) => {
-        if(PermissionRequestResult.authResults == -1) {
+        if (PermissionRequestResult.authResults == -1) {
           callback.request.deny(callback.request.getAccessibleResource());
         }
-        else if(PermissionRequestResult.authResults == 0) {
-        callback.request.grant(callback.request.getAccessibleResource());
+        else if (PermissionRequestResult.authResults == 0) {
+          callback.request.grant(callback.request.getAccessibleResource());
         }
-        })
+      })
       .catch((error) => {
         callback.request.deny();
-    });
+      });
   }
 });
 
