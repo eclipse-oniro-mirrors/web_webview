@@ -438,6 +438,8 @@ public:
 
     JavaScriptOb::ObjectID AddObject(napi_env env, const napi_value& object, bool methodName, int32_t holder);
 
+    void SetUpAnnotateMethods(JavaScriptOb::ObjectID objId, std::vector<std::string>& methodNameList);
+
     JavaScriptOb::ObjectID RegisterJavaScriptProxy(
         napi_env env, napi_value obj, const std::string& objName, const std::vector<std::string>& methodList);
 
