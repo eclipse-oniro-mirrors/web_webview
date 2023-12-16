@@ -942,6 +942,12 @@ public:
     virtual bool Restore() = 0;
 
     /**
+     * Get the security level of current page.
+     * @return security level for current page.
+     */
+    virtual int GetSecurityLevel() = 0;
+
+    /**
      * CallH5Function
      *
      * @param routingId         int32_t: the h5 frame routing id

@@ -36,6 +36,7 @@ const std::string WEB_HITTESTTYPE_ENUM_NAME = "WebHitTestType";
 const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
 const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
+const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "WebSecurityLevel";
 
 class NapiWebviewController {
 public:
@@ -206,6 +207,8 @@ private:
     static napi_value CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info);
 
     static napi_value PostUrl(napi_env env, napi_callback_info info);
+
+    static napi_value GetSecurityLevel(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
