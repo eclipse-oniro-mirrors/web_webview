@@ -1085,5 +1085,32 @@ void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobNam
     }
     return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
 }
+
+int WebviewController::GetSecurityLevel()
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return static_cast<int>(SecurityLevel::NONE);
+    }
+
+    int nwebSecurityLevel = nweb_ptr->GetSecurityLevel();
+    SecurityLevel securityLevel;
+    switch (nwebSecurityLevel) {
+        case static_cast<int>(CoreSecurityLevel::NONE):
+            securityLevel = SecurityLevel::NONE;
+            break;
+        case static_cast<int>(CoreSecurityLevel::SECURE):
+            securityLevel = SecurityLevel::SECURE;
+            break;
+        case static_cast<int>(CoreSecurityLevel::WARNING):
+            securityLevel = SecurityLevel::WARNING;
+            break;
+        case static_cast<int>(CoreSecurityLevel::DANGEROUS):
+            securityLevel = SecurityLevel::DANGEROUS;
+            break;
+    }
+
+    return static_cast<int>(securityLevel);
+}
 } // namespace NWeb
 } // namespace OHOS
