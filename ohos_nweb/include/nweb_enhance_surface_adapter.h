@@ -30,10 +30,12 @@ public:
     NWebCreateInfo GetCreateInfo(void *enhanceSurfaceInfo,
                                  const NWebInitArgs &initArgs,
                                  uint32_t width,
-                                 uint32_t height);
+                                 uint32_t height,
+                                 bool incognitoMode = false);
 private:
     void GetSize(NWebCreateInfo &createInfo, uint32_t width, uint32_t height) const;
     void GetRenderInterface(NWebCreateInfo &createInfo);
+    void GetIncognitoMode(NWebCreateInfo &createInfo, bool incognitoMode);
 };
 } // namespace OHOS::NWeb
 

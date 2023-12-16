@@ -199,11 +199,12 @@ napi_value NapiWebCookieManager::JsFetchCookieAsync(napi_env env, napi_callback_
 napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE] = { 0 };
+    size_t argc = INTEGER_TWO;
+    size_t argcForOld = INTEGER_ONE;
+    napi_value argv[INTEGER_TWO] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    if (argc != INTEGER_ONE) {
+    if (argc != INTEGER_TWO && argc != argcForOld) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -214,13 +215,20 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
         return nullptr;
     }
 
+    bool incognito_mode = false;
+    if (argc == INTEGER_TWO &&
+        !GetBooleanPara(env, argv[INTEGER_ONE], incognito_mode)) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
     napi_value result = nullptr;
     std::string cookieContent = "";
 
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     bool isValid = true;
     if (cookieManager != nullptr) {
-        cookieContent = cookieManager->ReturnCookie(url, isValid);
+        cookieContent = cookieManager->ReturnCookie(url, isValid, incognito_mode);
     }
 
     if (cookieContent == "" && !isValid) {
@@ -234,11 +242,12 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
 napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info info)
 {
     napi_value retValue = nullptr;
-    size_t argc = INTEGER_TWO;
-    napi_value argv[INTEGER_TWO] = { 0 };
+    size_t argc = INTEGER_THREE;
+    size_t argcForOld = INTEGER_TWO;
+    napi_value argv[INTEGER_THREE] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
-    if (argc != INTEGER_TWO) {
+    if (argc != INTEGER_THREE && argc != argcForOld) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -254,12 +263,19 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
         return nullptr;
     }
 
+    bool incognito_mode = false;
+    if (argc == INTEGER_THREE &&
+        !GetBooleanPara(env, argv[INTEGER_TWO], incognito_mode)) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
     napi_value result = nullptr;
     int isSet = -1;
 
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
-        isSet = cookieManager->SetCookie(url, value);
+        isSet = cookieManager->SetCookie(url, value, incognito_mode);
     }
     if (isSet == NWebError::INVALID_URL) {
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_URL);
@@ -435,12 +451,26 @@ napi_value NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled(napi_env env
 
 napi_value NapiWebCookieManager::JsExistCookie(napi_env env, napi_callback_info info)
 {
+    napi_value retValue = nullptr;
+    size_t argc = INTEGER_ONE;
+    size_t argcForOld = INTEGER_ZERO;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
+    if (argc != INTEGER_ONE && argc != argcForOld) {
+        return nullptr;
+    }
+
+    bool incognito_mode = false;
+    if (argc == INTEGER_ONE &&
+        !GetBooleanPara(env, argv[INTEGER_ZERO], incognito_mode)) {
+        return nullptr;
+    }
+
     napi_value result = nullptr;
     bool exist = true;
-
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
-        exist = cookieManager->ExistCookies();
+        exist = cookieManager->ExistCookies(incognito_mode);
     }
     NAPI_CALL(env, napi_get_boolean(env, exist, &result));
     return result;
@@ -454,7 +484,7 @@ void ClearAllCookiesAsyncCallback(napi_env env, napi_ref jsCallback)
         napi_delete_reference(env, jsCallback);
     } else {
         auto callbackImpl = std::make_shared<OHOS::NWeb::NWebCookieCallbackImpl>(env, jsCallback, nullptr);
-        cookieManager->DeleteCookieEntirely(callbackImpl);
+        cookieManager->DeleteCookieEntirely(callbackImpl, false);
     }
 }
 
@@ -467,7 +497,7 @@ void ClearAllCookiesAsyncPromise(napi_env env, napi_deferred deferred)
         napi_reject_deferred(env, deferred, jsResult);
     } else {
         auto callbackImpl = std::make_shared<OHOS::NWeb::NWebCookieCallbackImpl>(env, nullptr, deferred);
-        cookieManager->DeleteCookieEntirely(callbackImpl);
+        cookieManager->DeleteCookieEntirely(callbackImpl, false);
     }
 }
 
@@ -515,11 +545,25 @@ napi_value NapiWebCookieManager::JsClearAllCookiesAsync(napi_env env, napi_callb
 
 napi_value NapiWebCookieManager::JsDeleteEntireCookie(napi_env env, napi_callback_info info)
 {
+    napi_value retValue = nullptr;
+    size_t argc = INTEGER_ONE;
+    size_t argcForOld = INTEGER_ZERO;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
+    if (argc != INTEGER_ONE && argc != argcForOld) {
+        return nullptr;
+    }
+
+    bool incognito_mode = false;
+    if (argc == INTEGER_ONE &&
+        !GetBooleanPara(env, argv[INTEGER_ZERO], incognito_mode)) {
+        return nullptr;
+    }
     napi_value result = nullptr;
 
     OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
-        cookieManager->DeleteCookieEntirely(nullptr);
+        cookieManager->DeleteCookieEntirely(nullptr, incognito_mode);
     }
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;

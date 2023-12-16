@@ -56,9 +56,23 @@ napi_value NapiWebStorage::Init(napi_env env, napi_value exports)
 napi_value NapiWebStorage::JsDeleteAllData(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
+    napi_value retValue = nullptr;
+    size_t argc = 1;
+    size_t argcForOld = 0;
+    napi_value argv[1] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
+    if (argc != 1 && argc != argcForOld) {
+        return nullptr;
+    }
+
+    bool incognito_mode = false;
+    if (argc == 1) {
+      napi_get_value_bool(env, argv[0], &incognito_mode);
+    }
+
     OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (web_storage) {
-        web_storage->DeleteAllData();
+        web_storage->DeleteAllData(incognito_mode);
     }
     napi_get_undefined(env, &result);
     return result;

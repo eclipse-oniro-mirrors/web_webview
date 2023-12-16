@@ -38,7 +38,8 @@ NWebSurfaceAdapter &NWebSurfaceAdapter::Instance()
 NWebCreateInfo NWebSurfaceAdapter::GetCreateInfo(sptr<Surface> surface,
                                                  const NWebInitArgs &initArgs,
                                                  uint32_t width,
-                                                 uint32_t height)
+                                                 uint32_t height,
+                                                 bool incognitoMode)
 {
     NWebCreateInfo createInfo = {
         .init_args = initArgs,
@@ -49,6 +50,7 @@ NWebCreateInfo NWebSurfaceAdapter::GetCreateInfo(sptr<Surface> surface,
     }
     GetSize(surface, createInfo, width, height);
     GetRenderInterface(surface, createInfo);
+    GetIncognitoMode(createInfo, incognitoMode);
     return createInfo;
 }
 
@@ -178,5 +180,10 @@ bool NWebSurfaceAdapter::FlushBuffer(
     }
 
     return true;
+}
+
+void NWebSurfaceAdapter::GetIncognitoMode(NWebCreateInfo &createInfo, bool incognitoMode)
+{
+  createInfo.incognito_mode = incognitoMode;
 }
 } // namespace OHOS::NWeb

@@ -34,14 +34,16 @@ NWebEnhanceSurfaceAdapter &NWebEnhanceSurfaceAdapter::Instance()
 NWebCreateInfo NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo,
                                                         const NWebInitArgs &initArgs,
                                                         uint32_t width,
-                                                        uint32_t height)
+                                                        uint32_t height,
+                                                        bool incognitoMode)
 {
     NWebCreateInfo createInfo = {
         .init_args = initArgs,
-        .enhance_surface_info = enhanceSurfaceInfo,
+        .enhance_surface_info = enhanceSurfaceInfo
     };
     GetSize(createInfo, width, height);
     GetRenderInterface(createInfo);
+    GetIncognitoMode(createInfo, incognitoMode);
     return createInfo;
 }
 
@@ -59,4 +61,11 @@ void NWebEnhanceSurfaceAdapter::GetRenderInterface(NWebCreateInfo &createInfo)
         return true;
     };
 }
+
+void NWebEnhanceSurfaceAdapter::GetIncognitoMode(NWebCreateInfo &createInfo,
+                                                 bool incognitoMode)
+{
+    createInfo.incognito_mode = incognitoMode;
+}
+
 } // namespace OHOS::NWeb

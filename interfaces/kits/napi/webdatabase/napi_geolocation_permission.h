@@ -48,9 +48,11 @@ private:
 
     static void ExecuteGetPermissionState(napi_env env, void *data);
 
-    static napi_value GetPermissionStateAsync(napi_env env, napi_value *argv, const std::string& origin);
+    static napi_value GetPermissionStateAsync(napi_env env, napi_value *argv,
+        const std::string& origin, bool incognitoMode);
 
-    static napi_value GetPermissionStatePromise(napi_env env, napi_value *argv, const std::string& origin);
+    static napi_value GetPermissionStatePromise(napi_env env, napi_value *argv,
+        const std::string& origin, bool incognitoMode);
 
     static napi_value JsGetAccessibleGeolocation(napi_env env, napi_callback_info info);
 
@@ -60,15 +62,18 @@ private:
 
     static void ExecuteGetOrigins(napi_env env, void *data);
 
-    static napi_value GetOriginsAsync(napi_env env, napi_value *argv);
+    static napi_value GetOriginsAsync(napi_env env, napi_value *argv,
+        bool incognitoMode);
 
-    static napi_value GetOriginsPromise(napi_env env);
+    static napi_value GetOriginsPromise(napi_env env, bool incognitoMode);
 
     static napi_value JsGetStoredGeolocation(napi_env env, napi_callback_info info);
 
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
 
     static bool GetStringPara(napi_env env, napi_value argv, std::string& outValue);
+
+    static bool GetBooleanPara(napi_env env, napi_value argv, bool& outValue);
 };
 } // namespace NWeb
 } // namespace OHOS

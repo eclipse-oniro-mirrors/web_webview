@@ -94,6 +94,8 @@ struct OHOS_NWEB_EXPORT NWebCreateInfo {
     void* producer_surface = nullptr;
 
     void* enhance_surface_info = nullptr;
+
+    bool incognito_mode = false;
 };
 
 enum class OHOS_NWEB_EXPORT DragAction {
@@ -957,6 +959,13 @@ public:
      */
     virtual void CallH5Function(int32_t routingId, int32_t h5ObjectId, const std::string h5MethodName,
         const std::vector<std::shared_ptr<NWebValue>> args) = 0;
+
+    /**
+     * Get web weather has been set incognito mode.
+     *
+     * @return true if web is in incognito mode; otherwise fase.
+     */
+    virtual bool IsIncognitoMode() const = 0;
 };
 }  // namespace OHOS::NWeb
 
