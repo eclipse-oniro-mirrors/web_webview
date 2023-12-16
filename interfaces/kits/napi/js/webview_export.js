@@ -15,7 +15,7 @@
 
 let cert = requireInternal('security.cert');
 let webview = requireInternal('web.webview');
-
+let accessControl = requireNapi('abilityAccessCtrl');
 const PARAM_CHECK_ERROR = 401;
 
 const ERROR_MSG_INVALID_PARAM = 'Invalid input parameter';
@@ -70,6 +70,25 @@ Object.defineProperty(webview.WebviewController.prototype, 'getCertificate', {
         callback(error, undefined);
       });
     }
+  }
+});
+
+Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFromUserWeb', {
+  value:  function (callback) {
+    let accessManger = accessControl.createAtManager();
+    let abilityContext = getContext(this);
+    accessManger.requestPermissionsFromUser(abilityContext, ['ohos.permission.READ_PASTEBOARD'])
+      .then((PermissionRequestResult) => {
+        if (PermissionRequestResult.authResults === 0) {
+          callback.request.grant(callback.request.getAccessibleResource());
+        }
+        else {
+          callback.request.deny();
+        }
+      })
+      .catch((error) => {
+        callback.request.deny();
+      });
   }
 });
 
