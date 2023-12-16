@@ -34,7 +34,8 @@ public:
     NWebCreateInfo GetCreateInfo(sptr<Surface> surface,
                                  const NWebInitArgs &initArgs,
                                  uint32_t width,
-                                 uint32_t height);
+                                 uint32_t height,
+                                 bool incognitoMode = false);
 
 private:
     void GetSize(sptr<Surface> surface, NWebCreateInfo &createInfo, uint32_t width, uint32_t height) const;
@@ -42,6 +43,7 @@ private:
     sptr<SurfaceBuffer> RequestBuffer(sptr<Surface> surface, uint32_t width, uint32_t height);
     bool CopyFrame(sptr<SurfaceBuffer> surfaceBuffer, const char *src, uint32_t width, uint32_t height);
     bool FlushBuffer(sptr<Surface> surface, sptr<SurfaceBuffer> surfaceBuffer, uint32_t width, uint32_t height);
+    void GetIncognitoMode(NWebCreateInfo &createInfo, bool incognitoMode);
 };
 } // namespace OHOS::NWeb
 

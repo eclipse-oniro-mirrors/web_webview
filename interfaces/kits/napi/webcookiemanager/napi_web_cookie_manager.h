@@ -91,6 +91,14 @@ private:
     static napi_value JsClearAllCookiesAsync(napi_env env, napi_callback_info info);
 
     static napi_value JsClearSessionCookieAsync(napi_env env, napi_callback_info info);
+
+    static napi_value JsDeleteAllIncongitoCookies(napi_env env, napi_callback_info info);
+
+    static napi_value JsGetIncognitoCookie(napi_env env, napi_callback_info info);
+
+    static napi_value JsHasIncognitoCookie(napi_env env, napi_callback_info info);
+
+    static napi_value JsSetIncognitoCookie(napi_env env, napi_callback_info info);
 };
 
 class NWebSaveCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<bool> {
