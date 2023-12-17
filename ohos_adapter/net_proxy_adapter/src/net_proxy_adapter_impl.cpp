@@ -23,6 +23,7 @@
 namespace OHOS::NWeb {
 static constexpr const char* DEFAULT_HTTP_PROXY_HOST = "NONE";
 static constexpr const char* DEFAULT_HTTP_PROXY_EXCLUSION_LIST = "NONE";
+static constexpr const char* EMPTY_HTTP_PROXY_HOST = "";
 
 namespace Base64 {
 static std::string BASE64_CHARS = /* NOLINT */
@@ -232,11 +233,26 @@ bool NetProxyAdapterImpl::StartListen()
 void NetProxyAdapterImpl::StartListenAppProxy()
 {
     std::function<void(const NetManagerStandard::HttpProxy& httpProxy)> callback =
-        [this](const NetManagerStandard::HttpProxy& httpProxy) {
-            WVLOG_D("App netproxy config change, host is %{public}s, port is %{public}d", httpProxy.GetHost().c_str(),
-                httpProxy.GetPort());
+        [this](const NetManagerStandard::HttpProxy& receiveHttpProxy) {
+            NetManagerStandard::HttpProxy httpProxy = receiveHttpProxy;
+            WVLOG_D("App netproxy config change, receive host is %{public}s, port is %{public}d",
+                httpProxy.GetHost().c_str(), httpProxy.GetPort());
             std::string host;
             host.assign(httpProxy.GetHost());
+            if (host == EMPTY_HTTP_PROXY_HOST) {
+                WVLOG_D("App netproxy config change, clear proxy");
+                NetManagerStandard::HttpProxy tempHttpProxy;
+                int32_t ret = NetManagerStandard::NetConnClient::GetInstance().GetDefaultHttpProxy(tempHttpProxy);
+                if (ret != NetManagerStandard::NET_CONN_SUCCESS) {
+                    WVLOG_E("App netproxy config change, get default http proxy from OH network failed");
+                    return;
+                }
+                WVLOG_D("App netproxy config clear, GetDefaultHttpProxy host is %{public}s, port is %{public}d",
+                    tempHttpProxy.GetHost().c_str(), tempHttpProxy.GetPort());
+                httpProxy = tempHttpProxy;
+                host.assign(httpProxy.GetHost());
+            }
+
             if (host == DEFAULT_HTTP_PROXY_HOST) {
                 WVLOG_W("get netproxy property failed, host is null");
                 host = std::string();
@@ -245,11 +261,12 @@ void NetProxyAdapterImpl::StartListenAppProxy()
             auto exclusion = httpProxy.GetExclusionList();
             exclusionList.assign(exclusion.begin(), exclusion.end());
             uint16_t port = httpProxy.GetPort();
-            WVLOG_D("App netproxy config change,host is %{public}s, port is %{public}d", host.c_str(), port);
+
             for (auto it : exclusionList) {
                 WVLOG_D("App netproxy config change, exclusion is %{public}s", it.c_str());
             }
             if (cb_) {
+                WVLOG_D("App netproxy config change, host is %{public}s, port is %{public}d", host.c_str(), port);
                 cb_(host, port, "", exclusionList);
             }
         };
