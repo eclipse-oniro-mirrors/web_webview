@@ -388,7 +388,7 @@ napi_value NapiGeolocationPermission::JsGetAccessibleGeolocation(napi_env env, n
                     NWebError::PARAM_CHECK_ERROR);
                 return nullptr;
             }
-            GetPermissionStatePromise(env, argv, origin, incognitoMode);
+            return GetPermissionStatePromise(env, argv, origin, incognitoMode);
         }
         GetPermissionStateAsync(env, argv, origin, incognitoMode);
         napi_value result = nullptr;
