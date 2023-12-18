@@ -38,10 +38,10 @@ HWTEST_F(DecoderCallbackImplTest, DecoderCallbackImpl_NormalTest_001, TestSize.L
     const int32_t errorcode_ = 0;
     const AVCodecErrorType errorType_ = AVCODEC_ERROR_EXTEND_START;
     decoderCallbackImpl_->OnError(errorType_, errorcode_);
-    MediaAVCodec::Format fomat_;
+    Media::Format fomat_;
     decoderCallbackImpl_->OnOutputFormatChanged(fomat_);
     uint32_t index_ = 1;
-    std::shared_ptr<MediaAVCodec::AVSharedMemory> buffer_ = nullptr;
+    std::shared_ptr<Media::AVSharedMemory> buffer_ = nullptr;
     decoderCallbackImpl_->OnInputBufferAvailable(index_, buffer_);
 }
 
