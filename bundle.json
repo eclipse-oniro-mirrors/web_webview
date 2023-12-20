@@ -49,6 +49,7 @@
                 "file_api",
                 "graphic_2d",
                 "hilog",
+                "histreamer",
                 "hisysevent",
                 "hitrace",
                 "huks",

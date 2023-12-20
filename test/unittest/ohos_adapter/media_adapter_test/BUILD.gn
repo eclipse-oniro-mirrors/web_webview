@@ -44,7 +44,10 @@ ohos_unittest("nweb_media_adapter_test") {
   ]
 
   if (webview_avcodec_enable) {
-    external_deps += [ "av_codec:av_codec_client" ]
+    external_deps += [
+      "av_codec:av_codec_client",
+      "histreamer:media_foundation",
+    ]
   }
 
   if (webview_media_player_enable) {
