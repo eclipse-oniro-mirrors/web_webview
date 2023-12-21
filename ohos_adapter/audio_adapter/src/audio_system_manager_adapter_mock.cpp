@@ -79,4 +79,10 @@ int32_t AudioSystemManagerAdapterImpl::UnsetDeviceChangeCallback()
 {
     return -1;
 }
+
+AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultInputDevice()
+{
+    AudioAdapterDeviceDesc desc;
+    return desc;
+}
 } // namespace OHOS::NWeb
