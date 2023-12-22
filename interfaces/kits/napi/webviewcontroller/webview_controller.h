@@ -234,6 +234,10 @@ public:
 
     int GetSecurityLevel();
 
+    void EnableSafeBrowsing(bool enable);
+
+    bool IsSafeBrowsingEnabled();
+
 private:
     int ConverToWebHitTestType(int hitType);
 

@@ -54,6 +54,10 @@ private:
 
     static napi_value SetWebDebuggingAccess(napi_env env, napi_callback_info info);
 
+    static napi_value EnableSafeBrowsing(napi_env env, napi_callback_info info);
+
+    static napi_value IsSafeBrowsingEnabled(napi_env env, napi_callback_info info);
+
     static napi_value InnerGetWebDebuggingAccess(napi_env env, napi_callback_info info);
 
     static napi_value SetWebId(napi_env env, napi_callback_info info);

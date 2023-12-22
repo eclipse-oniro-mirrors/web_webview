@@ -716,6 +716,24 @@ void WebviewController::SearchNext(bool forward)
     }
 }
 
+void WebviewController::EnableSafeBrowsing(bool enable)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        nweb_ptr->EnableSafeBrowsing(enable);
+    }
+}
+
+bool WebviewController::IsSafeBrowsingEnabled()
+{  
+    bool is_safe_browsing_enabled = false;
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        is_safe_browsing_enabled = nweb_ptr->IsSafeBrowsingEnabled();
+    }
+    return is_safe_browsing_enabled;
+}
+
 void WebviewController::SearchAllAsync(const std::string& searchString)
 {
     auto nweb_ptr = nweb_.lock();
