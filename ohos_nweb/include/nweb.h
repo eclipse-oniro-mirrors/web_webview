@@ -968,6 +968,27 @@ public:
     virtual bool IsIncognitoMode() const = 0;
 
     /**
+     * Register native function.
+     */
+    virtual void RegisterNativeArkJSFunction(const char* objName, const char** methodName,
+        std::vector<std::function<char*(const char** argv, int32_t argc)>> callback, int32_t size) = 0;
+
+    /**
+     * Unregister native function.
+     */
+    virtual void UnRegisterNativeArkJSFunction(const char* objName) = 0;
+
+    /**
+     * Register native valide callback function.
+     */
+    virtual void RegisterNativeValideCallback(const char* webName, std::function<void(const char*)> callback) = 0;
+
+    /**
+     * Register native destroy callback function.
+     */
+    virtual void RegisterNativeDestroyCallback(const char* webName, std::function<void(const char*)> callback) = 0;
+
+    /**
      * Inject the JavaScript after WebView loads the DOM tree and run JavaScripts.
      */
     virtual void JavaScriptOnDocumentEnd(const ScriptItems& scriptItems) = 0;

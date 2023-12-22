@@ -14,10 +14,16 @@
  */
 
 #include "webview_controller.h"
+#include <memory>
+#include <unordered_map>
 
 #include "application_context.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
+
+#include "native_arkweb_utils.h"
+#include "native_interface_arkweb.h"
+
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
 #include "web_errors.h"
@@ -90,6 +96,22 @@ void WebviewController::SetWebId(int32_t nwebId)
     nweb_ = NWebHelper::Instance().GetNWeb(nwebId);
     std::unique_lock<std::mutex> lk(webMtx_);
     g_webview_controller_map.emplace(nwebId, this);
+
+    if (webTag_.empty()) {
+        WVLOG_I("native webtag is empty, don't care because it's not a native instance");
+        return;
+    }
+    if (auto nweb = nweb_.lock()) {
+        OH_NativeArkWeb_BindWebTagToWebInstance(webTag_.c_str(), nweb_);
+    }
+    SetNWebJavaScriptResultCallBack();
+    NativeArkWeb_OnValidCallback validCallback = OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag_.c_str());
+    if (validCallback) {
+        WVLOG_I("native validCallback start to call");
+        (*validCallback)(webTag_.c_str());
+    } else {
+        WVLOG_W("native validCallback is null, callback nothing");
+    }
 }
 
 WebviewController* WebviewController::FromID(int32_t nwebId)
