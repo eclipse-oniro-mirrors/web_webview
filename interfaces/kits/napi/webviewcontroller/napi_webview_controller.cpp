@@ -243,6 +243,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
         DECLARE_NAPI_FUNCTION("createWebPrintDocumentAdapter", NapiWebviewController::CreateWebPrintDocumentAdapter),
         DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
+        DECLARE_NAPI_FUNCTION("enableSafeBrowsing", NapiWebviewController::EnableSafeBrowsing),
+        DECLARE_NAPI_FUNCTION("isSafeBrowsingEnabled", NapiWebviewController::IsSafeBrowsingEnabled),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -543,6 +545,51 @@ napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callb
 
     NWebHelper::Instance().SetWebDebuggingAccess(WebviewController::webDebuggingAccess_);
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::EnableSafeBrowsing(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("EnableSafeBrowsing start");
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = {0};
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool safe_browsing_enable = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], safe_browsing_enable)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    controller->EnableSafeBrowsing(safe_browsing_enable);
+    return result;
+}
+
+napi_value NapiWebviewController::IsSafeBrowsingEnabled(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("IsSafeBrowsingEnabled start");
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+    
+    bool is_safe_browsing_enabled = webviewController->IsSafeBrowsingEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, is_safe_browsing_enabled, &result));
     return result;
 }
 
