@@ -32,12 +32,12 @@ ohos_fuzztest("GetKeyboardTypeFuzzTest") {
   ]
   sources = [ "getkeyboardtype_fuzzer.cpp" ]
   deps = [
-    "$graphicsurface_path:libsurface",
     "$webview_path/ohos_adapter:nweb_ohos_adapter",
   ]
 
   external_deps = [
     "c_utils:utils",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "input:libmmi-client",
   ]
