@@ -114,6 +114,7 @@ public:
             env_ = job.env_;
             objRef_ = job.objRef_;
             isStrongRef_ = job.isStrongRef_;
+            job.env_ = nullptr;
             job.objRef_ = nullptr;
         }
         return *this;

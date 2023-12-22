@@ -1257,11 +1257,9 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
         } }
     };
     auto it = functionMap.find(valueType);
-    if (it == functionMap.end()) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
+    if (it != functionMap.end()) {
+        it->second(env, argv[INTEGER_ZERO], webMessageExt);
     }
-    it->second(env, argv[INTEGER_ZERO], webMessageExt);
     return result;
 }
 
