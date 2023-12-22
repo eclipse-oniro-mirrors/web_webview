@@ -17,11 +17,15 @@
 
 #include <mutex>
 #include <unordered_map>
+
 #include "nweb_log.h"
 
 using namespace OHOS;
 
+namespace {
 std::unordered_map<std::string, std::weak_ptr<OHOS::NWeb::NWeb>> g_nwebMap;
+} // namespace
+
 void OH_NativeArkWeb_BindWebTagToWebInstance(const char* webTag, std::weak_ptr<OHOS::NWeb::NWeb> nwebPtr)
 {
     WVLOG_I("native OH_NativeArkWeb_BindWebTagToWebInstance webTag: %{public}s", webTag);
