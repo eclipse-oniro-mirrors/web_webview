@@ -971,6 +971,18 @@ public:
      * Inject the JavaScript after WebView loads the DOM tree and run JavaScripts.
      */
     virtual void JavaScriptOnDocumentEnd(const ScriptItems& scriptItems) = 0;
+
+   /**
+     * Enable the ability to check website security risks.
+     * Illegal and fraudulent websites are mandatory enabled and cann't be disabled by this function.
+     */
+    virtual void EnableSafeBrowsing(bool enable) = 0;
+
+    /**
+     * Get whether checking website security risks is enabled.
+     * @return true if enable the ability to check website security risks else false.
+     */
+    virtual bool IsSafeBrowsingEnabled() = 0;
 };
 }  // namespace OHOS::NWeb
 
