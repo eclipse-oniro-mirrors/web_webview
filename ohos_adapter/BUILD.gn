@@ -182,7 +182,10 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   if (webview_avcodec_enable) {
     sources += [ "media_adapter/src/media_codec_decoder_adapter_impl.cpp" ]
-    external_deps += [ "av_codec:av_codec_client" ]
+    external_deps += [
+      "av_codec:av_codec_client",
+      "histreamer:media_foundation",
+    ]
     defines += [ "NWEB_MEDIA_AVCODEC_ENABLE" ]
   }
 

@@ -84,7 +84,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const DecoderF
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
-    OHOS::MediaAVCodec::Format codecFormat;
+    OHOS::Media::Format codecFormat;
 
     codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, format.width);
     codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, format.height);
@@ -103,7 +103,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetParameterDecoder(const Decod
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
-    OHOS::MediaAVCodec::Format codecFormat;
+    OHOS::Media::Format codecFormat;
 
     codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, format.width);
     codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, format.height);
@@ -239,7 +239,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::QueueInputBufferDec(uint32_t in
 
 DecoderAdapterCode MediaCodecDecoderAdapterImpl::GetOutputFormatDec(DecoderFormat& format)
 {
-    OHOS::MediaAVCodec::Format codecFormat;
+    OHOS::Media::Format codecFormat;
 
     if (decoder_ == nullptr) {
         WVLOG_E("MediaCodecDecoder is nullptr.");
@@ -338,7 +338,7 @@ void DecoderCallbackImpl::OnError(AVCodecErrorType errorType, int32_t errorCode)
     cb_->OnError(errType, errorCode);
 }
 
-void DecoderCallbackImpl::OnOutputFormatChanged(const MediaAVCodec::Format& format)
+void DecoderCallbackImpl::OnOutputFormatChanged(const Media::Format& format)
 {
     if (!cb_) {
         WVLOG_E("callback is NULL.");
@@ -353,7 +353,7 @@ void DecoderCallbackImpl::OnOutputFormatChanged(const MediaAVCodec::Format& form
     cb_->OnStreamChanged(decoderFormat);
 }
 
-void DecoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr<AVSharedMemory> buffer)
+void DecoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr<Media::AVSharedMemory> buffer)
 {
     if (!cb_) {
         WVLOG_E("callback is NULL.");
@@ -368,7 +368,7 @@ void DecoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr
 }
 
 void DecoderCallbackImpl::OnOutputBufferAvailable(
-    uint32_t index, AVCodecBufferInfo info, AVCodecBufferFlag flag, std::shared_ptr<AVSharedMemory> buffer)
+    uint32_t index, AVCodecBufferInfo info, AVCodecBufferFlag flag, std::shared_ptr<Media::AVSharedMemory> buffer)
 {
     if (!cb_) {
         WVLOG_E("callback is NULL.");

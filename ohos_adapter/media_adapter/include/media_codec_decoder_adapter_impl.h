@@ -39,12 +39,12 @@ public:
 
     void OnError(MediaAVCodec::AVCodecErrorType errorType, int32_t errorCode) override;
 
-    void OnOutputFormatChanged(const MediaAVCodec::Format& format) override;
+    void OnOutputFormatChanged(const Media::Format& format) override;
 
-    void OnInputBufferAvailable(uint32_t index, std::shared_ptr<MediaAVCodec::AVSharedMemory> buffer) override;
+    void OnInputBufferAvailable(uint32_t index, std::shared_ptr<Media::AVSharedMemory> buffer) override;
 
     void OnOutputBufferAvailable(uint32_t index, MediaAVCodec::AVCodecBufferInfo info,
-        MediaAVCodec::AVCodecBufferFlag flag, std::shared_ptr<MediaAVCodec::AVSharedMemory> buffer) override;
+        MediaAVCodec::AVCodecBufferFlag flag, std::shared_ptr<Media::AVSharedMemory> buffer) override;
 
 private:
     std::shared_ptr<DecoderCallbackAdapter> cb_ = nullptr;

@@ -50,6 +50,7 @@
                 "graphic_2d",
                 "graphic_surface",
                 "hilog",
+                "histreamer",
                 "hisysevent",
                 "hitrace",
                 "huks",
