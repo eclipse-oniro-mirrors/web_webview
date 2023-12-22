@@ -81,7 +81,7 @@ int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
 pid_t g_lastPid = INVALID_PID;
 uint32_t g_lastWindowId = 0;
-static uint32_t serial_num = 0;
+static uint32_t g_serialNum = 0;
 static constexpr uint32_t SERIAL_NUM_MAX = 10000;
 
 std::string GetUidString()
@@ -215,21 +215,23 @@ bool ReportProcessStatus(int64_t status, pid_t pid, uint32_t windowId)
         g_lastWindowId = windowId;
         // The webpage of the same source website will share the same rendering process.
         // Inactivation events are not reported when switching tabs in the same process.
-        if (status == ResType::WindowStates::INACTIVE) return false;
+        if (status == ResType::WindowStates::INACTIVE) {
+            return false;
+        }
     } else if (g_lastPid != INVALID_PID && status == ResType::WindowStates::ACTIVE && windowId == g_lastWindowId) {
         // When switching between web pages of different processes,
         // supplement reporting inactivation events from the last process.
         std::unordered_map<std::string, std::string> mapPayloadLast { { UID, GetUidString() },
             { PID, std::to_string(g_lastPid) },
-            { WINDOW_ID, std::to_string(g_lastWindowId) }, { SERIAL_NUMBER, std::to_string(serial_num) },
+            { WINDOW_ID, std::to_string(g_lastWindowId) }, { SERIAL_NUMBER, std::to_string(g_serialNum) },
             { STATE, std::to_string(ResType::WindowStates::INACTIVE) } };
         ResSchedClient::GetInstance().ReportData(
             ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayloadLast);
         WVLOG_D("ReportWindowStatus: Last process data report! status: "
                 "%{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
                 "%{public}d", static_cast<int32_t>(ResType::WindowStates::INACTIVE),
-                GetUidString().c_str(), g_lastPid, g_lastWindowId, serial_num);
-        serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
+                GetUidString().c_str(), g_lastPid, g_lastWindowId, g_serialNum);
+        g_serialNum = (g_serialNum + 1) % SERIAL_NUM_MAX;
     }
     g_lastPid = pid;
     g_lastWindowId = windowId;
@@ -257,13 +259,13 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     }
 
     std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
-        { WINDOW_ID, std::to_string(windowId) }, { SERIAL_NUMBER, std::to_string(serial_num) },
+        { WINDOW_ID, std::to_string(windowId) }, { SERIAL_NUMBER, std::to_string(g_serialNum) },
         { STATE, std::to_string(status) } };
     ResSchedClient::GetInstance().ReportData(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
-            "%{public}d", static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, serial_num);
-    serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
+            "%{public}d", static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, g_serialNum);
+    g_serialNum = (g_serialNum + 1) % SERIAL_NUM_MAX;
 
     // Report visible scene event again when tab becomes active to solve timing problem
     if (statusAdapter == ResSchedStatusAdapter::WEB_ACTIVE) {
