@@ -35,7 +35,7 @@ ohos_fuzztest("SelectCertRequestFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "selectcertrequest_fuzzer.cpp" ]
-  deps = [ "$graphicsurface_path/rosen/modules/render_service_client:librender_service_client" ]
+  deps = [ "$graphic2d_path/rosen/modules/render_service_client:librender_service_client" ]
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",

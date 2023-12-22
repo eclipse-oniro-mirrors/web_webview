@@ -32,7 +32,6 @@ ohos_fuzztest("GetRecordAtFuzzTest") {
   ]
   sources = [ "getrecordat_fuzzer.cpp" ]
   deps = [
-    "$graphicsurface_path:libsurface",
     "$webview_path/ohos_adapter:nweb_ohos_adapter",
   ]
 
@@ -40,6 +39,7 @@ ohos_fuzztest("GetRecordAtFuzzTest") {
     "ability_base:base",
     "ability_base:want",
     "c_utils:utils",
+    "graphic_surface:surface",
     "image_framework:image_native",
     "pasteboard:pasteboard_client",
   ]
