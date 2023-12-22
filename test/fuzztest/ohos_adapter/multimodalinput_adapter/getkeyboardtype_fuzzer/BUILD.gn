@@ -31,9 +31,7 @@ ohos_fuzztest("GetKeyboardTypeFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "getkeyboardtype_fuzzer.cpp" ]
-  deps = [
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "c_utils:utils",

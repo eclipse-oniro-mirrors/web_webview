@@ -36,9 +36,7 @@ ohos_fuzztest("AshmemCreateFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "ashmemcreate_fuzzer.cpp" ]
-  deps = [
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
   external_deps = [
     "c_utils:utils",
     "graphic_surface:surface",
