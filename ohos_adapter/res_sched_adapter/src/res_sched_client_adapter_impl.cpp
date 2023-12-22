@@ -228,13 +228,16 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         g_rptLastWindowId = windowId;
         if (status == ResType::WindowStates::INACTIVE) return true;
     } else if (g_rptLastPid != -1 && status == ResType::WindowStates::ACTIVE && windowId == g_rptLastWindowId) {
-        std::unordered_map<std::string, std::string> mapPayloadLast { { UID, GetUidString() }, { PID, std::to_string(g_rptLastPid) },
+        std::unordered_map<std::string, std::string> mapPayloadLast { { UID, GetUidString() },
+            { PID, std::to_string(g_rptLastPid) },
             { WINDOW_ID, std::to_string(g_rptLastWindowId) }, { SERIAL_NUMBER, std::to_string(serial_num) },
             { STATE, std::to_string(ResType::WindowStates::INACTIVE) } };
         ResSchedClient::GetInstance().ReportData(
             ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayloadLast);
-        WVLOG_D("ReportWindowStatus: Last process data report! status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
-                "%{public}d", static_cast<int32_t>(ResType::WindowStates::INACTIVE), GetUidString().c_str(), g_rptLastPid, g_rptLastWindowId, serial_num);
+        WVLOG_D("ReportWindowStatus: Last process data report! status: "
+                "%{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
+                "%{public}d", static_cast<int32_t>(ResType::WindowStates::INACTIVE),
+                GetUidString().c_str(), g_rptLastPid, g_rptLastWindowId, serial_num);
         serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
     }
     g_rptLastPid = pid;
