@@ -78,6 +78,8 @@ std::set<int32_t> g_nwebSet;
 std::mutex g_windowIdMutex {};
 int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
+pid_t g_rptLastPid = -1;
+uint32_t g_rptLastWindowId = 0xffffffff;
 
 std::string GetUidString()
 {
@@ -166,8 +168,6 @@ bool ResSchedClientAdapter::ReportKeyThread(
     if (pid == tid) {
         mapPayload["processType"] = std::to_string(static_cast<uint32_t>(AppExecFwk::ProcessType::RENDER));
         mapPayload["bundleName"] = GetBundleNameByUid(getuid());
-        ResSchedClient::GetInstance().ReportData(
-            ResType::RES_TYPE_PROCESS_STATE_CHANGE, ResType::ProcessStatus::PROCESS_CREATED, mapPayload);
     }
 
     ResSchedClient::GetInstance().ReportData(ResType::RES_TYPE_REPORT_KEY_THREAD, status, mapPayload);
@@ -223,6 +223,22 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     if (!ret) {
         return false;
     }
+
+    if (pid == g_rptLastPid) {
+        g_rptLastWindowId = windowId;
+        if (status == ResType::WindowStates::INACTIVE) return true;
+    } else if (g_rptLastPid != -1 && status == ResType::WindowStates::ACTIVE && windowId == g_rptLastWindowId) {
+        std::unordered_map<std::string, std::string> mapPayloadLast { { UID, GetUidString() }, { PID, std::to_string(g_rptLastPid) },
+            { WINDOW_ID, std::to_string(g_rptLastWindowId) }, { SERIAL_NUMBER, std::to_string(serial_num) },
+            { STATE, std::to_string(ResType::WindowStates::INACTIVE) } };
+        ResSchedClient::GetInstance().ReportData(
+            ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayloadLast);
+        WVLOG_D("ReportWindowStatus: Last process data report! status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
+                "%{public}d", static_cast<int32_t>(ResType::WindowStates::INACTIVE), GetUidString().c_str(), g_rptLastPid, g_rptLastWindowId, serial_num);
+        serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
+    }
+    g_rptLastPid = pid;
+    g_rptLastWindowId = windowId;
 
     std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
         { WINDOW_ID, std::to_string(windowId) }, { SERIAL_NUMBER, std::to_string(serial_num) },
