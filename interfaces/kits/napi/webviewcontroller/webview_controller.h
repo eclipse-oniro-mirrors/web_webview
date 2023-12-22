@@ -91,6 +91,7 @@ class WebviewController {
 public:
     explicit WebviewController() = default;
     explicit WebviewController(int32_t nwebId);
+    explicit WebviewController(const std::string& webTag) : webTag_(webTag) {};
     ~WebviewController();
 
     bool IsInit();
@@ -250,6 +251,7 @@ private:
     int32_t id_ = -1;
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
     std::string hapPath_ = "";
+    std::string webTag_ = "";
 };
 
 class WebMessagePort {
