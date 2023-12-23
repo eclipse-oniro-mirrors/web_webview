@@ -639,11 +639,6 @@ public:
      */
     virtual void OnFirstContentfulPaint(int64_t navigationStartTick,
                                         int64_t firstContentfulPaintMs) {}
-   /**
-     * @brief Called when received website security risk check result.
-     * @param threat_type The threat type of website.
-     */
-    virtual void OnSafeBrowsingCheckResult(int threat_type) {}
 
     /**
      * @brief Called when swap buffer completed with new size.
@@ -712,6 +707,12 @@ public:
     virtual void OnNativeEmbedLifecycleChange(const NativeEmbedDataInfo& dataInfo) {}
 
     virtual void OnNativeEmbedGestureEvent(const NativeEmbedTouchEvent& event) {}
+
+    /**
+     * @brief Called when received website security risk check result.
+     * @param threat_type The threat type of website.
+     */
+    virtual void OnSafeBrowsingCheckResult(int threat_type) {}
 };
 }  // namespace OHOS::NWeb
 
