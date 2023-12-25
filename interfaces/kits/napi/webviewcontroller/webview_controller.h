@@ -238,6 +238,8 @@ public:
 
     bool IsSafeBrowsingEnabled();
 
+    bool IsIncognitoMode();
+
 private:
     int ConverToWebHitTestType(int hitType);
 
