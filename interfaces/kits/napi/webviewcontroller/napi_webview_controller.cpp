@@ -245,6 +245,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
         DECLARE_NAPI_FUNCTION("enableSafeBrowsing", NapiWebviewController::EnableSafeBrowsing),
         DECLARE_NAPI_FUNCTION("isSafeBrowsingEnabled", NapiWebviewController::IsSafeBrowsingEnabled),
+        DECLARE_NAPI_FUNCTION("isIncognitoMode", NapiWebviewController::IsIncognitoMode),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -3015,6 +3016,20 @@ napi_value NapiWebviewController::RemoveCache(napi_env env, napi_callback_info i
         return nullptr;
     }
     webviewController->RemoveCache(include_disk_files);
+    return result;
+}
+
+napi_value NapiWebviewController::IsIncognitoMode(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    bool incognitoMode = false;
+    incognitoMode = webviewController->IsIncognitoMode();
+    NAPI_CALL(env, napi_get_boolean(env, incognitoMode, &result));
     return result;
 }
 
