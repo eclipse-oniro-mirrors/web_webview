@@ -1152,5 +1152,15 @@ int WebviewController::GetSecurityLevel()
 
     return static_cast<int>(securityLevel);
 }
+
+bool WebviewController::IsIncognitoMode()
+{
+    bool incognitoMode = false;
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        incognitoMode = nweb_ptr->IsIncognitoMode();
+    }
+    return incognitoMode;
+}
 } // namespace NWeb
 } // namespace OHOS
