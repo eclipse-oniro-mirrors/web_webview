@@ -46,7 +46,7 @@ bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleN
 {
     static std::string applicationBundleName;
     static std::string applicationModuleName;
-    if (!applicationBundleName.empty() && !applicationBundleName.empty()) {
+    if (!applicationBundleName.empty() && !applicationModuleName.empty()) {
         bundleName = applicationBundleName;
         moduleName = applicationModuleName;
         return true;
@@ -538,12 +538,12 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
         std::shared_ptr<AbilityRuntime::ApplicationContext> context =
             AbilityRuntime::ApplicationContext::GetApplicationContext();
         std::string packagePath = "file:///" + context->GetBundleCodeDir() + "/";
-        std::string bundleName = context->GetBundleName() + "/";
+        std::string contextBundleName = context->GetBundleName() + "/";
         std::shared_ptr<AppExecFwk::ApplicationInfo> appInfo = context->GetApplicationInfo();
         std::string entryDir = appInfo->entryDir;
         bool isStage = entryDir.find("entry") == std::string::npos ? false : true;
         result = isStage ? packagePath + "entry/resources/rawfile/" + fileName :
-            packagePath + bundleName + "assets/entry/resources/rawfile/" + fileName;
+            packagePath + contextBundleName + "assets/entry/resources/rawfile/" + fileName;
     } else {
         std::string appBundleName;
         std::string appModuleName;

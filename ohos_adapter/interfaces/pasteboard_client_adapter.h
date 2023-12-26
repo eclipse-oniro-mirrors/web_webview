@@ -74,7 +74,7 @@ public:
     virtual bool GetPasteData(PasteRecordList& data) = 0;
 
     virtual void SetPasteData(const PasteRecordList& data,
-                              CopyOptionMode copy_option = CopyOptionMode::CROSS_DEVICE) = 0;
+                              CopyOptionMode copyOption = CopyOptionMode::CROSS_DEVICE) = 0;
 
     virtual bool HasPasteData() = 0;
 

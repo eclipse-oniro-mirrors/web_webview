@@ -24,7 +24,7 @@
 namespace OHOS::NWeb {
 class NativeJavaScriptExecuteCallback : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
 public:
-    NativeJavaScriptExecuteCallback(std::function<void(const char*)> callback) : callbackNative_(callback) {}
+    explicit NativeJavaScriptExecuteCallback(std::function<void(const char*)> callback) : callbackNative_(callback) {}
     ~NativeJavaScriptExecuteCallback() = default;
     void OnReceiveValue(std::shared_ptr<NWebMessage> result) override;
 

@@ -31,7 +31,7 @@
 #ifndef NATIVE_INTERFACE_ARKWEB_H
 #define NATIVE_INTERFACE_ARKWEB_H
 
-#include <stdint.h>
+#include <cstdint>
 
 #ifdef __cplusplus
 extern "C" {
