@@ -393,10 +393,10 @@ PasteBoardClientAdapterImpl& PasteBoardClientAdapterImpl::GetInstance()
     return instance;
 }
 
-MiscServices::ShareOption PasteBoardClientAdapterImpl::TransitionCopyOption(CopyOptionMode copy_option)
+MiscServices::ShareOption PasteBoardClientAdapterImpl::TransitionCopyOption(CopyOptionMode copyOption)
 {
     auto shareOption = MiscServices::ShareOption::CrossDevice;
-    switch (copy_option) {
+    switch (copyOption) {
         case CopyOptionMode::IN_APP:
             shareOption = MiscServices::ShareOption::InApp;
             break;
@@ -429,9 +429,9 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
     return true;
 }
 
-void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data, CopyOptionMode copy_option)
+void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data, CopyOptionMode copyOption)
 {
-    if (copy_option == CopyOptionMode::NONE) {
+    if (copyOption == CopyOptionMode::NONE) {
         WVLOG_E("SetPasteData failed, copy option mode is 'NONE'");
         return;
     }
@@ -446,7 +446,7 @@ void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data, Copy
     }
     PasteData pData(recordList);
     pData.SetTag(webviewPasteDataTag_);
-    auto shareOption = TransitionCopyOption(copy_option);
+    auto shareOption = TransitionCopyOption(copyOption);
     pData.SetShareOption(shareOption);
     PasteboardClient::GetInstance()->SetPasteData(pData);
 }

@@ -14,6 +14,7 @@
  */
 
 #include "native_interface_arkweb.h"
+
 #include <memory>
 #include <mutex>
 #include <unordered_map>
@@ -24,9 +25,11 @@
 #include "nweb.h"
 #include "nweb_log.h"
 
-std::mutex g_mtx_map; // the mutex to protect the shared resource
+namespace {
+std::mutex g_mtxMap; // the mutex to protect the shared resource
 std::unordered_map<std::string, NativeArkWeb_OnValidCallback> g_validMap;
 std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
+} // namespace
 
 using namespace OHOS;
 void OH_NativeArkWeb_RunJavaScript(const char* webTag, const char* jsCode, NativeArkWeb_OnJavaScriptCallback callback)
@@ -41,18 +44,18 @@ void OH_NativeArkWeb_RunJavaScript(const char* webTag, const char* jsCode, Nativ
     }
 }
 
-void OH_NativeArkWeb_RegisterJavaScriptProxy(
-    const char* webTag, const char* objName, const char** methodName, NativeArkWeb_OnJavaScriptProxyCallback* callback, int32_t size, bool isNeedRefresh)
+void OH_NativeArkWeb_RegisterJavaScriptProxy(const char* webTag, const char* objName, const char** methodList,
+    NativeArkWeb_OnJavaScriptProxyCallback* callback, int32_t size, bool isNeedRefresh)
 {
     WVLOG_I("native OH_NativeArkWeb_RegisterJavaScriptProxy webTag:%{public}s", webTag);
     std::vector<std::function<char*(const char**, int32_t size)>> callbackList;
     for (int i = 0; i < size; i++) {
         callbackList.emplace_back(callback[i]);
-    }        
+    }
 
     std::weak_ptr<OHOS::NWeb::NWeb> nwebWeak = OH_NativeArkWeb_GetWebInstanceByWebTag(webTag);
     if (auto nweb = nwebWeak.lock()) {
-        nweb->RegisterNativeArkJSFunction(objName, methodName, callbackList, size);
+        nweb->RegisterNativeArkJSFunction(objName, methodList, callbackList, size);
         if (isNeedRefresh) {
             nweb->Reload();
         }
@@ -75,7 +78,7 @@ void OH_NativeArkWeb_UnregisterJavaScriptProxy(const char* webTag, const char* o
 void OH_NativeArkWeb_SetDestroyCallback(const char* webTag, NativeArkWeb_OnDestroyCallback callback)
 {
     WVLOG_I("native RegisterDestroyCallback, webTag: %{public}s", webTag);
-    std::lock_guard<std::mutex> guard(g_mtx_map);
+    std::lock_guard<std::mutex> guard(g_mtxMap);
     g_destroyMap[webTag] = callback;
     std::weak_ptr<OHOS::NWeb::NWeb> nwebWeak = OH_NativeArkWeb_GetWebInstanceByWebTag(webTag);
     if (auto nweb = nwebWeak.lock()) {
@@ -89,7 +92,7 @@ void OH_NativeArkWeb_SetDestroyCallback(const char* webTag, NativeArkWeb_OnDestr
 NativeArkWeb_OnDestroyCallback OH_NativeArkWeb_GetDestroyCallback(const char* webTag)
 {
     WVLOG_I("native OH_Web_GetDestroyCallback, webTag: %{public}s", webTag);
-    std::lock_guard<std::mutex> guard(g_mtx_map);
+    std::lock_guard<std::mutex> guard(g_mtxMap);
     std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback>::iterator iter;
     if ((iter = g_destroyMap.find(webTag)) != g_destroyMap.end()) {
         return iter->second;
@@ -100,7 +103,7 @@ NativeArkWeb_OnDestroyCallback OH_NativeArkWeb_GetDestroyCallback(const char* we
 void OH_NativeArkWeb_SetJavaScriptProxyValidCallback(const char* webTag, NativeArkWeb_OnValidCallback callback)
 {
     WVLOG_I("native RegisterValidCallback, webTag: %{public}s", webTag);
-    std::lock_guard<std::mutex> guard(g_mtx_map);
+    std::lock_guard<std::mutex> guard(g_mtxMap);
     g_validMap[webTag] = callback;
     std::weak_ptr<OHOS::NWeb::NWeb> nwebWeak = OH_NativeArkWeb_GetWebInstanceByWebTag(webTag);
     if (auto nweb = nwebWeak.lock()) {
@@ -114,7 +117,7 @@ void OH_NativeArkWeb_SetJavaScriptProxyValidCallback(const char* webTag, NativeA
 NativeArkWeb_OnValidCallback OH_NativeArkWeb_GetJavaScriptProxyValidCallback(const char* webTag)
 {
     WVLOG_I("native OH_Web_GetValidCallback, webTag: %{public}s", webTag);
-    std::lock_guard<std::mutex> guard(g_mtx_map);
+    std::lock_guard<std::mutex> guard(g_mtxMap);
     std::unordered_map<std::string, NativeArkWeb_OnValidCallback>::iterator iter;
     if ((iter = g_validMap.find(webTag)) != g_validMap.end()) {
         return iter->second;
