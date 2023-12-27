@@ -165,8 +165,9 @@ int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rend
 
     WVLOG_I("audio renderer create avsession");
     AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
-    avsession_ = AVSessionManager::GetInstance().CreateSession(
-        elementName.GetBundleName(), OHOS::AVSession::AVSession::SESSION_TYPE_AUDIO, elementName);
+    int32_t type = (rendererOptions.streamUsage == AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION) ?
+        OHOS::AVSession::AVSession::SESSION_TYPE_VOICE_CALL : OHOS::AVSession::AVSession::SESSION_TYPE_AUDIO;
+    avsession_ = AVSessionManager::GetInstance().CreateSession(elementName.GetBundleName(), type, elementName);
     if (avsession_ == nullptr) {
         WVLOG_E("audio renderer create avsession failed");
         return AUDIO_NULL_ERROR;

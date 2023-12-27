@@ -204,13 +204,6 @@ enum class TouchType : size_t {
     CANCEL,
 };
 
-struct TouchPoint final {
-    int32_t id;
-    float x;
-    float y;
-    float screenX;
-    float screenY;
-};
 struct NativeEmbedTouchEvent {
     std::string embedId;
     int32_t id;
@@ -219,12 +212,8 @@ struct NativeEmbedTouchEvent {
     float screenX;
     float screenY;
     TouchType type;
-    uint64_t time;
-    double size = 0.0;
-    float force = 0.0f;
-
-    // all points on the touch screen.
-    std::vector<TouchPoint> pointers;
+    float offsetX = 0.0f;
+    float offsetY = 0.0f;
 };
 
 using FileSelectorCallback = NWebValueCallback<std::vector<std::string>&>;
@@ -707,6 +696,12 @@ public:
     virtual void OnNativeEmbedLifecycleChange(const NativeEmbedDataInfo& dataInfo) {}
 
     virtual void OnNativeEmbedGestureEvent(const NativeEmbedTouchEvent& event) {}
+
+    /**
+     * @brief Called when received website security risk check result.
+     * @param threat_type The threat type of website.
+     */
+    virtual void OnSafeBrowsingCheckResult(int threat_type) {}
 };
 }  // namespace OHOS::NWeb
 

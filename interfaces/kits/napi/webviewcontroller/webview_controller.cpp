@@ -14,10 +14,16 @@
  */
 
 #include "webview_controller.h"
+#include <memory>
+#include <unordered_map>
 
 #include "application_context.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
+
+#include "native_arkweb_utils.h"
+#include "native_interface_arkweb.h"
+
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
 #include "web_errors.h"
@@ -40,7 +46,7 @@ bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleN
 {
     static std::string applicationBundleName;
     static std::string applicationModuleName;
-    if (!applicationBundleName.empty() && !applicationBundleName.empty()) {
+    if (!applicationBundleName.empty() && !applicationModuleName.empty()) {
         bundleName = applicationBundleName;
         moduleName = applicationModuleName;
         return true;
@@ -90,6 +96,22 @@ void WebviewController::SetWebId(int32_t nwebId)
     nweb_ = NWebHelper::Instance().GetNWeb(nwebId);
     std::unique_lock<std::mutex> lk(webMtx_);
     g_webview_controller_map.emplace(nwebId, this);
+
+    if (webTag_.empty()) {
+        WVLOG_I("native webtag is empty, don't care because it's not a native instance");
+        return;
+    }
+    if (auto nweb = nweb_.lock()) {
+        OH_NativeArkWeb_BindWebTagToWebInstance(webTag_.c_str(), nweb_);
+    }
+    SetNWebJavaScriptResultCallBack();
+    NativeArkWeb_OnValidCallback validCallback = OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag_.c_str());
+    if (validCallback) {
+        WVLOG_I("native validCallback start to call");
+        (*validCallback)(webTag_.c_str());
+    } else {
+        WVLOG_W("native validCallback is null, callback nothing");
+    }
 }
 
 WebviewController* WebviewController::FromID(int32_t nwebId)
@@ -516,12 +538,12 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
         std::shared_ptr<AbilityRuntime::ApplicationContext> context =
             AbilityRuntime::ApplicationContext::GetApplicationContext();
         std::string packagePath = "file:///" + context->GetBundleCodeDir() + "/";
-        std::string bundleName = context->GetBundleName() + "/";
+        std::string contextBundleName = context->GetBundleName() + "/";
         std::shared_ptr<AppExecFwk::ApplicationInfo> appInfo = context->GetApplicationInfo();
         std::string entryDir = appInfo->entryDir;
         bool isStage = entryDir.find("entry") == std::string::npos ? false : true;
         result = isStage ? packagePath + "entry/resources/rawfile/" + fileName :
-            packagePath + bundleName + "assets/entry/resources/rawfile/" + fileName;
+            packagePath + contextBundleName + "assets/entry/resources/rawfile/" + fileName;
     } else {
         std::string appBundleName;
         std::string appModuleName;
@@ -692,6 +714,24 @@ void WebviewController::SearchNext(bool forward)
     if (nweb_ptr) {
         nweb_ptr->FindNext(forward);
     }
+}
+
+void WebviewController::EnableSafeBrowsing(bool enable)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        nweb_ptr->EnableSafeBrowsing(enable);
+    }
+}
+
+bool WebviewController::IsSafeBrowsingEnabled()
+{  
+    bool is_safe_browsing_enabled = false;
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        is_safe_browsing_enabled = nweb_ptr->IsSafeBrowsingEnabled();
+    }
+    return is_safe_browsing_enabled;
 }
 
 void WebviewController::SearchAllAsync(const std::string& searchString)
@@ -1111,6 +1151,16 @@ int WebviewController::GetSecurityLevel()
     }
 
     return static_cast<int>(securityLevel);
+}
+
+bool WebviewController::IsIncognitoMode()
+{
+    bool incognitoMode = false;
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        incognitoMode = nweb_ptr->IsIncognitoMode();
+    }
+    return incognitoMode;
 }
 } // namespace NWeb
 } // namespace OHOS

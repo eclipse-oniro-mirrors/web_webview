@@ -62,7 +62,7 @@ public:
 
     bool HasReachedMaxRecursionDepth()
     {
-        return maxRecursionDepth_ <= 0;
+        return maxRecursionDepth_ == 0;
     }
 
 private:
@@ -107,13 +107,12 @@ void CallH5Function(napi_env env, napi_value* napiArg, std::shared_ptr<NWebValue
 
         napi_valuetype valueType = napi_undefined;
         napi_typeof(env, *napiArg, &valueType);
-        std::string bin;
         if (valueType == napi_function) {
             WVLOG_D("CallH5Function function");
             nwebValue = std::make_shared<NWebValue>();
         } else {
             WVLOG_D("CallH5Function object");
-            bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
+            std::string bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
             nwebValue = std::make_shared<NWebValue>(bin.c_str(), bin.size());
         }
     }
@@ -800,12 +799,11 @@ void ProcessObjectCaseInJsTd(
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, callResult, &valueType);
-    std::string bin;
     if (valueType == napi_function) {
         WVLOG_D("WebviewJavaScriptResultCallBack::ProcessObjectCaseInJsTd type is function");
         *(static_cast<std::shared_ptr<NWebValue>*>(outParam->ret)) = std::make_shared<NWebValue>();
     } else {
-        bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
+        std::string bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
         *(static_cast<std::shared_ptr<NWebValue>*>(outParam->ret)) =
             std::make_shared<NWebValue>(bin.c_str(), bin.size());
     }
@@ -898,13 +896,12 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultS
             returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, routingId);
         }
         SetUpAnnotateMethods(returnedObjectId, methodNameList);
-        std::string bin;
         if (valueType == napi_function) {
             WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResultSelf type is function");
             ret = std::make_shared<NWebValue>();
         } else {
             WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResultSelf type is object");
-            bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
+            std::string bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
             ret = std::make_shared<NWebValue>(bin.c_str(), bin.size());
         }
     }
@@ -1455,7 +1452,6 @@ bool WebviewJavaScriptResultCallBack::RemoveNamedObject(const std::string& name)
     if (iter == namedObjects_.end()) {
         return false;
     }
-    const std::string methodName(name);
     if (objects_[iter->second]) {
         objects_[iter->second]->RemoveName();
     }

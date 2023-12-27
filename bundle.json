@@ -85,6 +85,7 @@
             "sub_component": [
                 "//base/web/webview/interfaces/inner_api:web_inner_kit",
                 "//base/web/webview/interfaces/kits/napi:webview_napi",
+                "//base/web/webview/interfaces/native:webview_ndk",
                 "//base/web/webview/ohos_nweb:libnweb",
                 "//base/web/webview/ohos_nweb:nweb_hap",
                 "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
