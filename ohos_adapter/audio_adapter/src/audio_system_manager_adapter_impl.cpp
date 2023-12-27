@@ -41,18 +41,6 @@ const std::unordered_map<AudioAdapterStreamType, AudioStreamType> STREAM_TYPE_MA
     { AudioAdapterStreamType::STREAM_ALL, AudioStreamType::STREAM_ALL },
 };
 
-const std::unordered_map<AdapterDeviceFlag, DeviceFlag> DEVICE_FLAG_MAP = {
-    { AdapterDeviceFlag::NONE_DEVICES_FLAG, DeviceFlag::NONE_DEVICES_FLAG },
-    { AdapterDeviceFlag::OUTPUT_DEVICES_FLAG, DeviceFlag::OUTPUT_DEVICES_FLAG },
-    { AdapterDeviceFlag::INPUT_DEVICES_FLAG, DeviceFlag::INPUT_DEVICES_FLAG },
-    { AdapterDeviceFlag::ALL_DEVICES_FLAG, DeviceFlag::ALL_DEVICES_FLAG },
-    { AdapterDeviceFlag::DISTRIBUTED_OUTPUT_DEVICES_FLAG, DeviceFlag::DISTRIBUTED_OUTPUT_DEVICES_FLAG },
-    { AdapterDeviceFlag::DISTRIBUTED_INPUT_DEVICES_FLAG, DeviceFlag::DISTRIBUTED_INPUT_DEVICES_FLAG },
-    { AdapterDeviceFlag::ALL_DISTRIBUTED_DEVICES_FLAG, DeviceFlag::ALL_DISTRIBUTED_DEVICES_FLAG },
-    { AdapterDeviceFlag::ALL_L_D_DEVICES_FLAG, DeviceFlag::ALL_L_D_DEVICES_FLAG },
-    { AdapterDeviceFlag::DEVICE_FLAG_MAX, DeviceFlag::DEVICE_FLAG_MAX },
-};
-
 const std::string DEVICE_TYPE_NONE = "device/none";
 const std::string DEVICE_TYPE_INVALID = "device/invalid";
 const std::string DEVICE_TYPE_EARPIECE = "device/earpiece";
@@ -206,20 +194,33 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
 
 std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag) const
 {
-    auto item = DEVICE_FLAG_MAP.find(flag);
-    if (item == DEVICE_FLAG_MAP.end()) {
-        WVLOG_E("audio device type not found");
-        return std::vector<AudioAdapterDeviceDesc>();
+    bool isCallDevice = false;
+    auto audioScene = AudioSystemManager::GetInstance()->GetAudioScene();
+    if (audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CALL ||
+        audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CHAT) {
+        isCallDevice = true;
     }
-    auto deviceFlag = item->second;
-    auto audioDeviceList = AudioSystemManager::GetInstance()->GetDevices(deviceFlag);
+    std::vector<std::unique_ptr<AudioDeviceDescriptor>> audioDeviceList;
+    if (flag == AdapterDeviceFlag::OUTPUT_DEVICES_FLAG) {
+        audioDeviceList = AudioRoutingManager::GetInstance()->GetAvailableDevices(
+            isCallDevice ? AudioDeviceUsage::CALL_OUTPUT_DEVICES : AudioDeviceUsage::MEDIA_OUTPUT_DEVICES);
+    } else if (flag == AdapterDeviceFlag::INPUT_DEVICES_FLAG) {
+        audioDeviceList = AudioRoutingManager::GetInstance()->GetAvailableDevices(AudioDeviceUsage::CALL_INPUT_DEVICES);
+    } else if (flag == AdapterDeviceFlag::ALL_DEVICES_FLAG) {
+        audioDeviceList = AudioRoutingManager::GetInstance()->GetAvailableDevices(
+            isCallDevice ? AudioDeviceUsage::ALL_CALL_DEVICES : AudioDeviceUsage::ALL_MEDIA_DEVICES);
+    }
     std::vector<AudioAdapterDeviceDesc> audioAdapterDeviceList;
-    for (auto audioDevice : audioDeviceList) {
+    for (auto& audioDevice : audioDeviceList) {
         AudioAdapterDeviceDesc desc;
         desc.deviceId = audioDevice->deviceId_;
-        auto deviceTypeKey = DEVICE_TYPE_MAP.find(audioDevice->deviceType_);
-        if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
-            desc.deviceName = deviceTypeKey->second;
+        if (audioDevice->deviceName_.empty()) {
+            auto deviceTypeKey = DEVICE_TYPE_MAP.find(audioDevice->deviceType_);
+            if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
+                desc.deviceName = deviceTypeKey->second;
+            }
+        } else {
+            desc.deviceName = audioDevice->deviceName_;
         }
         audioAdapterDeviceList.emplace_back(desc);
     }
@@ -227,11 +228,9 @@ std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(Ad
 }
 
 int32_t AudioSystemManagerAdapterImpl::SelectAudioOutputDevice(
-    const std::vector<sptr<AudioDeviceDescriptor>>& device) const
+    bool isCallDevice, const std::vector<sptr<AudioDeviceDescriptor>>& device) const
 {
-    auto audioScene = AudioSystemManager::GetInstance()->GetAudioScene();
-    if (audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CALL ||
-        audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CHAT) {
+    if (isCallDevice) {
         sptr<AudioRendererFilter> filter = new(std::nothrow) AudioRendererFilter;
         if (!filter) {
             WVLOG_E("AudioSystemManagerAdapterImpl::SelectAudioOutputDevice new filter failed");
@@ -247,26 +246,26 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioOutputDevice(
 int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const
 {
     WVLOG_I("AudioSystemManagerAdapterImpl::SelectAudioDevice isInput: %{public}s", isInput ? "true" : "false");
-    auto item = isInput ? DEVICE_FLAG_MAP.find(AdapterDeviceFlag::INPUT_DEVICES_FLAG)
-                        : DEVICE_FLAG_MAP.find(AdapterDeviceFlag::OUTPUT_DEVICES_FLAG);
-    if (item == DEVICE_FLAG_MAP.end()) {
-        WVLOG_E("audio device type not found");
-        return AUDIO_ERROR;
-    }
-    auto deviceFlag = item->second;
     if (desc.deviceId == ADAPTER_AUDIO_UNDEFINED_DEVICE_ID) {
         WVLOG_E("Cannot select undefined audio device.");
         return AUDIO_ERROR;
+    }
+    bool isCallDevice = false;
+    auto audioScene = AudioSystemManager::GetInstance()->GetAudioScene();
+    if (audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CALL ||
+        audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CHAT) {
+        isCallDevice = true;
     }
     if (!isInput && desc.deviceId == ADAPTER_AUDIO_DEFAULT_DEVICE_ID) {
         WVLOG_I("Select default audio output Device.");
         AudioRendererInfo rendererInfo;
         rendererInfo.contentType = ContentType::CONTENT_TYPE_SPEECH;
-        rendererInfo.streamUsage = StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION;
+        rendererInfo.streamUsage =
+            isCallDevice ? StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION : StreamUsage::STREAM_USAGE_MUSIC;
         rendererInfo.rendererFlags = 0;
         std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
         AudioRoutingManager::GetInstance()->GetPreferredOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
-        return SelectAudioOutputDevice(defaultOutputDevice);
+        return SelectAudioOutputDevice(isCallDevice, defaultOutputDevice);
     }
     if (isInput && desc.deviceId == ADAPTER_AUDIO_DEFAULT_DEVICE_ID) {
         WVLOG_I("Select default audio input Device.");
@@ -277,12 +276,20 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc 
         AudioRoutingManager::GetInstance()->GetPreferredInputDeviceForCapturerInfo(capturerInfo, defaultInputDevice);
         return AudioSystemManager::GetInstance()->SelectInputDevice(defaultInputDevice);
     }
-    auto audioDeviceList = AudioSystemManager::GetInstance()->GetDevices(deviceFlag);
-    for (auto device : audioDeviceList) {
+
+    std::vector<std::unique_ptr<AudioDeviceDescriptor>> audioDeviceList;
+    if (isCallDevice) {
+        audioDeviceList = AudioRoutingManager::GetInstance()->GetAvailableDevices(
+            isInput ? AudioDeviceUsage::CALL_INPUT_DEVICES : AudioDeviceUsage::CALL_OUTPUT_DEVICES);
+    } else {
+        audioDeviceList = AudioRoutingManager::GetInstance()->GetAvailableDevices(
+            isInput ? AudioDeviceUsage::CALL_INPUT_DEVICES : AudioDeviceUsage::MEDIA_OUTPUT_DEVICES);
+    }
+    for (auto& device : audioDeviceList) {
         if (device->deviceId_ == desc.deviceId) {
-            std::vector<sptr<AudioDeviceDescriptor>> selectedAudioDevice { device };
+            std::vector<sptr<AudioDeviceDescriptor>> selectedAudioDevice { device.release() };
             return isInput ? AudioSystemManager::GetInstance()->SelectInputDevice(selectedAudioDevice)
-                           : SelectAudioOutputDevice(selectedAudioDevice);
+                           : SelectAudioOutputDevice(isCallDevice, selectedAudioDevice);
         }
     }
     WVLOG_E("can't find any device by audio device id");
@@ -291,25 +298,37 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc 
 
 AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
 {
+    bool isCallDevice = false;
+    auto audioScene = AudioSystemManager::GetInstance()->GetAudioScene();
+    if (audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CALL ||
+        audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CHAT) {
+        isCallDevice = true;
+    }
     AudioRendererInfo rendererInfo;
     rendererInfo.contentType = ContentType::CONTENT_TYPE_SPEECH;
-    rendererInfo.streamUsage = StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION;
+    rendererInfo.streamUsage =
+        isCallDevice ? StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION : StreamUsage::STREAM_USAGE_MUSIC;
     rendererInfo.rendererFlags = 0;
     std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
     AudioRoutingManager::GetInstance()->GetPreferredOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
     
-    if (defaultOutputDevice.empty()) {
+    if (defaultOutputDevice.empty() || !defaultOutputDevice[0]) {
         WVLOG_E("AudioSystemManagerAdapterImpl::GetDefaultOutputDevice failed.");
         AudioAdapterDeviceDesc undefinedDesc;
         undefinedDesc.deviceName = ADAPTER_AUDIO_UNDEFINED_DEVICE_NAME;
         undefinedDesc.deviceId = ADAPTER_AUDIO_UNDEFINED_DEVICE_ID;
         return undefinedDesc;
     }
+    auto defaultDevice = defaultOutputDevice[0];
     AudioAdapterDeviceDesc desc;
-    auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultOutputDevice[0]->deviceType_);
-    desc.deviceId = defaultOutputDevice[0]->deviceId_;
-    if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
-        desc.deviceName = deviceTypeKey->second;
+    desc.deviceId = defaultDevice->deviceId_;
+    if (defaultDevice->deviceName_.empty()) {
+        auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultDevice->deviceType_);
+        if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
+            desc.deviceName = deviceTypeKey->second;
+        }
+    } else {
+        desc.deviceName = defaultDevice->deviceName_;
     }
     return desc;
 }
@@ -321,18 +340,23 @@ AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultInputDevice()
     capturerInfo.capturerFlags = 0;
     std::vector<sptr<AudioDeviceDescriptor>> defaultInputDevice;
     AudioRoutingManager::GetInstance()->GetPreferredInputDeviceForCapturerInfo(capturerInfo, defaultInputDevice);
-    if (defaultInputDevice.empty()) {
+    if (defaultInputDevice.empty() || !defaultInputDevice[0]) {
         WVLOG_E("AudioSystemManagerAdapterImpl::GetDefaultInputDevice failed.");
         AudioAdapterDeviceDesc undefinedDesc;
         undefinedDesc.deviceName = ADAPTER_AUDIO_UNDEFINED_DEVICE_NAME;
         undefinedDesc.deviceId = ADAPTER_AUDIO_UNDEFINED_DEVICE_ID;
         return undefinedDesc;
     }
+    auto defaultDevice = defaultInputDevice[0];
     AudioAdapterDeviceDesc desc;
-    auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultInputDevice[0]->deviceType_);
-    desc.deviceId = defaultInputDevice[0]->deviceId_;
-    if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
-        desc.deviceName = deviceTypeKey->second;
+    desc.deviceId = defaultDevice->deviceId_;
+    if (defaultDevice->deviceName_.empty()) {
+        auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultDevice->deviceType_);
+        if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
+            desc.deviceName = deviceTypeKey->second;
+        }
+    } else {
+        desc.deviceName = defaultDevice->deviceName_;
     }
     return desc;
 }

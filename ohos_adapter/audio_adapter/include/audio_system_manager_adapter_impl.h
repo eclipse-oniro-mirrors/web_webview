@@ -87,7 +87,7 @@ public:
     static AudioStreamType GetStreamType(AudioAdapterStreamType streamType);
 
 private:
-    int32_t SelectAudioOutputDevice(const std::vector<sptr<AudioDeviceDescriptor>>& device) const;
+    int32_t SelectAudioOutputDevice(bool isCallDevice, const std::vector<sptr<AudioDeviceDescriptor>>& device) const;
 
 private:
     std::shared_ptr<AudioManagerCallbackAdapterImpl> callback_;
