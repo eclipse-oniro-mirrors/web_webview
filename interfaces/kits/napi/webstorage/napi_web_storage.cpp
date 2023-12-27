@@ -65,14 +65,14 @@ napi_value NapiWebStorage::JsDeleteAllData(napi_env env, napi_callback_info info
         return nullptr;
     }
 
-    bool incognito_mode = false;
+    bool incognitoMode = false;
     if (argc == 1) {
-      napi_get_value_bool(env, argv[0], &incognito_mode);
+        napi_get_value_bool(env, argv[0], &incognitoMode);
     }
 
     OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (web_storage) {
-        web_storage->DeleteAllData(incognito_mode);
+        web_storage->DeleteAllData(incognitoMode);
     }
     napi_get_undefined(env, &result);
     return result;
