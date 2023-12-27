@@ -89,7 +89,7 @@ public:
     static PasteBoardClientAdapterImpl& GetInstance();
     bool GetPasteData(PasteRecordList& data) override;
     void SetPasteData(const PasteRecordList& data,
-                      CopyOptionMode copy_option = CopyOptionMode::CROSS_DEVICE) override;
+                      CopyOptionMode copyOption = CopyOptionMode::CROSS_DEVICE) override;
     bool HasPasteData() override;
     void Clear() override;
     int32_t OpenRemoteUri(const std::string& path) override;
@@ -106,7 +106,7 @@ private:
     ObserverMap reg_;
     std::mutex mutex_;
     std::string webviewPasteDataTag_ = "WebviewPasteDataTag";
-    MiscServices::ShareOption TransitionCopyOption(CopyOptionMode copy_option);
+    MiscServices::ShareOption TransitionCopyOption(CopyOptionMode copyOption);
 };
 } // namespace OHOS::NWeb
 

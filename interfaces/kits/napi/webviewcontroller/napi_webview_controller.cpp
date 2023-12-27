@@ -243,6 +243,9 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
         DECLARE_NAPI_FUNCTION("createWebPrintDocumentAdapter", NapiWebviewController::CreateWebPrintDocumentAdapter),
         DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
+        DECLARE_NAPI_FUNCTION("enableSafeBrowsing", NapiWebviewController::EnableSafeBrowsing),
+        DECLARE_NAPI_FUNCTION("isSafeBrowsingEnabled", NapiWebviewController::IsSafeBrowsingEnabled),
+        DECLARE_NAPI_FUNCTION("isIncognitoMode", NapiWebviewController::IsIncognitoMode),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -404,10 +407,27 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 
 napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info info)
 {
+    WVLOG_I("NapiWebviewController::JsConstructor start");
     napi_value thisVar = nullptr;
-    NAPI_CALL(env, napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr));
 
-    WebviewController *webviewController = new (std::nothrow) WebviewController();
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
+
+    WebviewController *webviewController;
+    if (argc == 1) {
+        std::string webTag;
+        NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], webTag);
+        if (webTag.empty()) {
+            WVLOG_E("native webTag is empty");
+            return nullptr;
+        }
+        webviewController = new (std::nothrow) WebviewController(webTag);
+        WVLOG_I("new webview controller webname:%{public}s", webTag.c_str());
+    } else {
+        webviewController = new (std::nothrow) WebviewController();
+    }
+
     if (webviewController == nullptr) {
         WVLOG_E("new webview controller failed");
         return nullptr;
@@ -526,6 +546,51 @@ napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callb
 
     NWebHelper::Instance().SetWebDebuggingAccess(WebviewController::webDebuggingAccess_);
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::EnableSafeBrowsing(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("EnableSafeBrowsing start");
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = {0};
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool safe_browsing_enable = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], safe_browsing_enable)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, (void **)&controller);
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    controller->EnableSafeBrowsing(safe_browsing_enable);
+    return result;
+}
+
+napi_value NapiWebviewController::IsSafeBrowsingEnabled(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("IsSafeBrowsingEnabled start");
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+    
+    bool is_safe_browsing_enabled = webviewController->IsSafeBrowsingEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, is_safe_browsing_enabled, &result));
     return result;
 }
 
@@ -1240,11 +1305,9 @@ napi_value NapiWebMessageExt::SetArray(napi_env env, napi_callback_info info)
         } }
     };
     auto it = functionMap.find(valueType);
-    if (it == functionMap.end()) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
+    if (it != functionMap.end()) {
+        it->second(env, argv[INTEGER_ZERO], webMessageExt);
     }
-    it->second(env, argv[INTEGER_ZERO], webMessageExt);
     return result;
 }
 
@@ -2951,6 +3014,20 @@ napi_value NapiWebviewController::RemoveCache(napi_env env, napi_callback_info i
         return nullptr;
     }
     webviewController->RemoveCache(include_disk_files);
+    return result;
+}
+
+napi_value NapiWebviewController::IsIncognitoMode(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    bool incognitoMode = false;
+    incognitoMode = webviewController->IsIncognitoMode();
+    NAPI_CALL(env, napi_get_boolean(env, incognitoMode, &result));
     return result;
 }
 

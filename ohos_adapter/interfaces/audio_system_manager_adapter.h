@@ -113,6 +113,8 @@ public:
     virtual int32_t UnsetDeviceChangeCallback() = 0;
 
     virtual AudioAdapterDeviceDesc GetDefaultOutputDevice() = 0;
+
+    virtual AudioAdapterDeviceDesc GetDefaultInputDevice() = 0;
 };
 } // namespace OHOS::NWeb
 

@@ -79,10 +79,12 @@ Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFr
     let abilityContext = getContext(this);
     accessManger.requestPermissionsFromUser(abilityContext, ['ohos.permission.READ_PASTEBOARD'])
       .then((PermissionRequestResult) => {
-        if (PermissionRequestResult.authResults === 0) {
+        if (PermissionRequestResult.authResults[0] === 0) {
+          console.log('requestPermissionsFromUserWeb is allowed');
           callback.request.grant(callback.request.getAccessibleResource());
         }
         else {
+          console.log('requestPermissionsFromUserWeb is refused');
           callback.request.deny();
         }
       })
