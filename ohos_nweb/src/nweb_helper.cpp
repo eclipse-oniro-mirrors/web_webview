@@ -951,6 +951,14 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(
         surface, initArgs, width, height, incognitoMode);
     ParseConfig(createInfo.init_args);
+    // obtain bundle path
+    std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+        AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (ctx) {
+        std::string bundleName = ctx->GetBundleName();
+        createInfo.init_args.web_engine_args_to_add.push_back(std::string("--bundle-name=").append(bundleName));
+    }
+
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
