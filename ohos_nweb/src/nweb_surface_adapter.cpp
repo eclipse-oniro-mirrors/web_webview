@@ -184,6 +184,6 @@ bool NWebSurfaceAdapter::FlushBuffer(
 
 void NWebSurfaceAdapter::GetIncognitoMode(NWebCreateInfo &createInfo, bool incognitoMode)
 {
-  createInfo.incognito_mode = incognitoMode;
+    createInfo.incognito_mode = incognitoMode;
 }
 } // namespace OHOS::NWeb

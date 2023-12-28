@@ -18,7 +18,7 @@
 #include "media_codec_decoder_adapter_impl.h"
 #include "avcodec_video_decoder_impl.h"
 #undef private
-#include "foundation/graphic/graphic_2d/interfaces/inner_api/surface/window.h"
+#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 #include "native_window.h"
 
 using testing::ext::TestSize;

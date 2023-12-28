@@ -646,7 +646,7 @@ public:
         const std::vector<DateTimeSuggestion>& suggestions,
         std::shared_ptr<NWebDateTimeChooserCallback> callback) {}
 
-    virtual void OnDateTimeChooserClose() {};
+    virtual void OnDateTimeChooserClose() {}
 
     virtual bool OnDragAndDropDataUdmf(std::shared_ptr<NWebDragData> dragData) {
         return false;

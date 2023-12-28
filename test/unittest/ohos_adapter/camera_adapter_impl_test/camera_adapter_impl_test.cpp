@@ -512,8 +512,6 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestS
     result = adapter.InitCameraInput(deviceId);
     EXPECT_NE(result, 0);
     adapter.inputInitedFlag_ = false;
-    sptr<CameraDevice> cameraObj = new(std::nothrow) CameraDevice();
-    adapter.cameraManager_->cameraObjList.emplace_back(cameraObj);
     result = adapter.InitCameraInput(deviceId);
     EXPECT_NE(result, 0);
     adapter.cameraManager_ = nullptr;
@@ -546,14 +544,11 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraManagerAdapterCallba
     EXPECT_EQ(status, CameraStatusAdapter::APPEAR);
     status = adapter.GetAdapterCameraStatus(static_cast<CameraStatus>(-1));
     EXPECT_EQ(status, CameraStatusAdapter::APPEAR);
-    sptr<CameraDevice> cameraObj = new(std::nothrow) CameraDevice();
     CameraStatusInfo cameraStatusInfo = {
         .cameraInfo = nullptr,
         .cameraDevice = nullptr,
         .cameraStatus = CameraStatus::CAMERA_STATUS_APPEAR
     };
-    adapter.OnCameraStatusChanged(cameraStatusInfo);
-    cameraStatusInfo.cameraDevice = cameraObj;
     adapter.OnCameraStatusChanged(cameraStatusInfo);
     cameraStatusInfo.cameraStatus = CameraStatus::CAMERA_STATUS_DISAPPEAR;
     adapter.OnCameraStatusChanged(cameraStatusInfo);
