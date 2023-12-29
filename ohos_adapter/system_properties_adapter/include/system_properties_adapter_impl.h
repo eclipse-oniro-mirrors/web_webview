@@ -40,6 +40,8 @@ public:
 
     bool GetLockdownModeStatus() const override;
 
+    std::string GetUserAgentOSName() const override;
+
 private:
     SystemPropertiesAdapterImpl() = default;
 
