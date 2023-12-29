@@ -241,9 +241,8 @@ bool ReportProcessStatus(int64_t status, pid_t pid, uint32_t windowId)
 bool ResSchedClientAdapter::ReportWindowStatus(
     ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
 {
-    if (g_nwebSet.find(nwebId) == g_nwebSet.end()) {
-        WVLOG_E(
-            "ReportWindowStatus nwebId %{public}d not exist in render set, status %{public}d", nwebId, statusAdapter);
+    if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
+        WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
         return false;
     }
 
