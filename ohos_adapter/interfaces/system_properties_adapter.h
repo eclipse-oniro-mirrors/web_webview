@@ -46,6 +46,8 @@ public:
     virtual bool GetWebOptimizationValue() const = 0;
 
     virtual bool GetLockdownModeStatus() const = 0;
+
+    virtual std::string GetUserAgentOSName() const = 0;
 };
 
 }  // namespace OHOS::NWeb

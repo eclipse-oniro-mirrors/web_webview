@@ -78,4 +78,10 @@ bool SystemPropertiesAdapterImpl::GetLockdownModeStatus() const
     }
     return false;
 }
+
+std::string SystemPropertiesAdapterImpl::GetUserAgentOSName() const
+{
+    std::string osName = "";
+    return OHOS::system::GetParameter("const.web.default_user_agent_os_name", "");
+}
 } // namespace OHOS::NWeb
