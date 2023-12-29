@@ -46,6 +46,8 @@ public:
     {}
     void OnTouchMove(int32_t id, double x, double y, bool fromOverlay = false) override
     {}
+    void OnTouchMove(const std::list<TouchPointInfo> touchPointInfoList, bool fromOverlay = false) override
+    {}
     void OnTouchCancel() override
     {}
     void OnNavigateBack() override
