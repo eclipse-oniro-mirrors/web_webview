@@ -48,7 +48,9 @@ public:
 
     int VerifyCertFromNetSsl(uint8_t* certData, uint32_t certSize) override;
 
-    bool GetTrustAnchorsForHostName(const std::string &hostname, std::vector<std::string> &certs) override;
+    bool GetTrustAnchorsForHostName(const std::string& hostname, std::vector<std::string>& certs) override;
+
+    bool GetPinSetForHostName(const std::string& hostname, std::vector<std::string>& pins) override;
 private:
     int32_t InitCertList(struct CertList **cList);
 
