@@ -46,7 +46,9 @@ public:
 
     virtual int VerifyCertFromNetSsl(uint8_t* certData, uint32_t certSize) = 0;
 
-    virtual bool GetTrustAnchorsForHostName(const std::string &hostname, std::vector<std::string> &certs) = 0;
+    virtual bool GetTrustAnchorsForHostName(const std::string& hostname, std::vector<std::string>& certs) = 0;
+
+    virtual bool GetPinSetForHostName(const std::string& hostname, std::vector<std::string>& pins) = 0;
 };
 
 } // namespace OHOS::NWeb
