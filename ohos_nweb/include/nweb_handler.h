@@ -181,7 +181,7 @@ enum class NativeEmbedStatus {
 };
 
 struct NativeEmbedInfo {
-    int32_t id;
+    std::string id;
     int32_t width;
     int32_t height;
     std::string type;
