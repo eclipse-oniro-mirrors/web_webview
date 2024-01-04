@@ -85,7 +85,7 @@ ohos_shared_library("libnweb") {
     "config_policy:configpolicy_util",
     "graphic_2d:libcomposer",
     "graphic_2d:librender_service_client",
-    "graphic_2d:surface",
+    "graphic_surface:surface",
     "hilog:libhilog",
     "input:libmmi-client",
     "ipc:ipc_core",

@@ -22,7 +22,7 @@
 #include <unordered_map>
 #include <utility>
 
-#include "foundation/graphic/graphic_2d/interfaces/inner_api/surface/window.h"
+#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 #include "native_window.h"
 #include "nweb_log.h"
 
