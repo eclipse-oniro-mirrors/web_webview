@@ -48,6 +48,10 @@ public:
     virtual bool GetLockdownModeStatus() const = 0;
 
     virtual std::string GetUserAgentOSName() const = 0;
+
+    virtual int32_t GetSoftwareMajorVersion() const = 0;
+
+    virtual int32_t GetSoftwareSeniorVersion() const = 0;
 };
 
 }  // namespace OHOS::NWeb

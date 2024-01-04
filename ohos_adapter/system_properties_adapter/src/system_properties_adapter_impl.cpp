@@ -15,18 +15,47 @@
 
 #include "system_properties_adapter_impl.h"
 
+#include <securec.h>
+
 #include "init_param.h"
+#include "nweb_log.h"
 #include "parameter.h"
 #include "parameters.h"
 #include "sysversion.h"
 
 namespace OHOS::NWeb {
-
 // static
 SystemPropertiesAdapterImpl& SystemPropertiesAdapterImpl::GetInstance()
 {
     static SystemPropertiesAdapterImpl instance;
     return instance;
+}
+
+SystemPropertiesAdapterImpl::SystemPropertiesAdapterImpl()
+{
+    std::string osFullName =
+        OHOS::system::GetParameter("const.ohos.fullname", "");
+    if (osFullName.empty()) {
+        WVLOG_E("get os full name failed");
+        return;
+    }
+    int versionPartOne;
+    int versionPartTwo;
+    int versionPartThree;
+    int versionPartFour;
+    const char *tmp = strstr(osFullName.c_str(), "-");
+    if (tmp == NULL) {
+        return;
+    }
+    tmp++;
+    int ret = sscanf_s(tmp, "%d.%d.%d.%d",
+        &versionPartOne, &versionPartTwo, &versionPartThree, &versionPartFour);
+    if (ret <= 0) {
+        WVLOG_E("paser os full name failed");
+        return;
+    }
+    softwareMajorVersion_ = versionPartOne;
+    softwareSeniorVersion_ = versionPartTwo;
 }
 
 bool SystemPropertiesAdapterImpl::GetResourceUseHapPathEnable() const
@@ -81,7 +110,16 @@ bool SystemPropertiesAdapterImpl::GetLockdownModeStatus() const
 
 std::string SystemPropertiesAdapterImpl::GetUserAgentOSName() const
 {
-    std::string osName = "";
-    return OHOS::system::GetParameter("const.web.default_user_agent_os_name", "");
+    return OHOS::system::GetParameter("const.product.os.dist.name", "");
+}
+
+int32_t SystemPropertiesAdapterImpl::GetSoftwareMajorVersion() const
+{
+    return softwareMajorVersion_;
+}
+
+int32_t SystemPropertiesAdapterImpl::GetSoftwareSeniorVersion() const
+{
+    return softwareSeniorVersion_;
 }
 } // namespace OHOS::NWeb

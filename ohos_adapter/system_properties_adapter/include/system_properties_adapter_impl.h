@@ -42,12 +42,17 @@ public:
 
     std::string GetUserAgentOSName() const override;
 
+    int32_t GetSoftwareMajorVersion() const override;
+
+    int32_t GetSoftwareSeniorVersion() const override;
 private:
-    SystemPropertiesAdapterImpl() = default;
+    SystemPropertiesAdapterImpl();
 
     SystemPropertiesAdapterImpl(const SystemPropertiesAdapterImpl& other) = delete;
 
     SystemPropertiesAdapterImpl& operator=(const SystemPropertiesAdapterImpl&) = delete;
+    int softwareMajorVersion_ = 4;
+    int softwareSeniorVersion_ = 1;
 };
 
 }  // namespace OHOS::NWeb
