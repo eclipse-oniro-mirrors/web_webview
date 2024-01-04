@@ -31,15 +31,13 @@ ohos_fuzztest("GetRecordAtFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "getrecordat_fuzzer.cpp" ]
-  deps = [
-    "$graphicsurface_path:libsurface",
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "ability_base:base",
     "ability_base:want",
     "c_utils:utils",
+    "graphic_surface:surface",
     "image_framework:image_native",
     "pasteboard:pasteboard_client",
   ]
