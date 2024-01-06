@@ -359,7 +359,7 @@ public:
      *
      * @param accessibilityIdGenerator Accessibility id generator.
      */
-    virtual void PutAccessibilityIdGenerator(std::function<int64_t()> accessibilityIdGenerator) = 0;
+    virtual void PutAccessibilityIdGenerator(std::function<int32_t()> accessibilityIdGenerator) = 0;
 
     /**
      * Set the NWebHandler that will receive various notifications and
@@ -883,7 +883,7 @@ public:
      * @param accessibilityId The id of the accessibility node.
      * @param action The action to be performed on the accessibility node.
      */
-    virtual void ExecuteAction(int64_t accessibilityId, uint32_t action) const = 0;
+    virtual void ExecuteAction(int32_t accessibilityId, uint32_t action) const = 0;
 
     /**
      * Get the information of the focused accessibility node on the given accessibility node in the browser.
@@ -894,7 +894,7 @@ public:
      * @return true if get accessibility node info successfully, otherwise false.
      */
     virtual bool GetFocusedAccessibilityNodeInfo(
-        int64_t accessibilityId, bool isAccessibilityFocus, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
+        int32_t accessibilityId, bool isAccessibilityFocus, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
 
     /**
      * Get the information of the accessibility node by its accessibility id in the browser.
@@ -903,7 +903,7 @@ public:
      * @return true if get accessibility node info successfully, otherwise false.
      */
     virtual bool GetAccessibilityNodeInfoById(
-        int64_t accessibilityId, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
+        int32_t accessibilityId, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
 
     /**
      * Get the information of the accessibility node by focus move in the browser.
@@ -913,7 +913,7 @@ public:
      * @return true if get accessibility node info successfully, otherwise false.
      */
     virtual bool GetAccessibilityNodeInfoByFocusMove(
-        int64_t accessibilityId, int32_t direction, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
+        int32_t accessibilityId, int32_t direction, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
 
     /**
      * Set the accessibility state in the browser.

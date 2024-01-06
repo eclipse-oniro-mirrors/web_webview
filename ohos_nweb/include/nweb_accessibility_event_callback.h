@@ -26,7 +26,7 @@ public:
     NWebAccessibilityEventCallback() = default;
 
     virtual ~NWebAccessibilityEventCallback() = default;
-    virtual void OnAccessibilityEvent(int64_t accessibilityId, uint32_t eventType) = 0;
+    virtual void OnAccessibilityEvent(int32_t nodeId, uint32_t eventType) = 0;
 };
 }  // namespace OHOS::NWeb
 
