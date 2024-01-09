@@ -19,6 +19,7 @@
 
 #include "nweb_log.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
+#include "foundation/graphic/graphic_2d/frameworks/surface/include/native_window.h"
 
 namespace OHOS::NWeb {
 const int32_t WindowAdapter::SET_BUFFER_GEOMETRY = NativeWindowOperation::SET_BUFFER_GEOMETRY;
@@ -32,6 +33,7 @@ WindowAdapterImpl& WindowAdapterImpl::GetInstance()
 NWebNativeWindow WindowAdapterImpl::CreateNativeWindowFromSurface(void* pSurface)
 {
     OHNativeWindow* window = ::CreateNativeWindowFromSurface(pSurface);
+    window->config.usage = BUFFER_USAGE_MEM_DMA;
     return reinterpret_cast<NWebNativeWindow>(window);
 }
 
