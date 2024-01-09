@@ -1148,6 +1148,9 @@ int WebviewController::GetSecurityLevel()
         case static_cast<int>(CoreSecurityLevel::DANGEROUS):
             securityLevel = SecurityLevel::DANGEROUS;
             break;
+        default:
+            securityLevel = SecurityLevel::NONE;
+            break;
     }
 
     return static_cast<int>(securityLevel);
