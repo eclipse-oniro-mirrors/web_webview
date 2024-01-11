@@ -43,6 +43,7 @@ public:
     int32_t gridItemRowSpan = -1;
     int32_t gridItemColumn = -1;
     int32_t gridItemColumnSpan = -1;
+    std::vector<uint32_t> actions;
     int32_t pageId = -1;
 
     size_t rectX = 0;
