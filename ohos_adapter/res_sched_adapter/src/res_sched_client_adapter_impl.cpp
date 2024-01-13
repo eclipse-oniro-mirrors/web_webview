@@ -81,6 +81,7 @@ int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
 pid_t g_lastPid = INVALID_PID;
 uint32_t g_lastWindowId = 0;
+int64_t g_lastStatus = ResType::WindowStates::INACTIVE;
 static uint32_t g_serialNum = 0;
 static constexpr uint32_t SERIAL_NUM_MAX = 10000;
 
@@ -214,8 +215,9 @@ bool ReportProcessStatus(int64_t status, pid_t pid, uint32_t windowId)
     if (pid == g_lastPid) {
         g_lastWindowId = windowId;
         // The webpage of the same source website will share the same rendering process.
-        // Inactivation events are not reported when switching tabs in the same process.
-        if (status == ResType::WindowStates::INACTIVE) {
+        // 1. Inactivation events are not reported when switching tabs in the same process.
+        // 2. Filter duplicate activation event reports.
+        if (status == ResType::WindowStates::INACTIVE || g_lastStatus == ResType::WindowStates::ACTIVE) {
             return false;
         }
     } else if (g_lastPid != INVALID_PID && status == ResType::WindowStates::ACTIVE && windowId == g_lastWindowId) {
@@ -235,6 +237,7 @@ bool ReportProcessStatus(int64_t status, pid_t pid, uint32_t windowId)
     }
     g_lastPid = pid;
     g_lastWindowId = windowId;
+    g_lastStatus = status;
     return true;
 }
 
