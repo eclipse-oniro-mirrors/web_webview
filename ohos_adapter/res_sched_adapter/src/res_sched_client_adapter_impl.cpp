@@ -63,6 +63,7 @@ const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
     { ResSchedSceneAdapter::SLIDE, ResType::WebScene::WEB_SCENE_SLIDE },
     { ResSchedSceneAdapter::RESIZE, ResType::WebScene::WEB_SCENE_RESIZE },
     { ResSchedSceneAdapter::VISIBLE, ResType::WebScene::WEB_SCENE_VISIBLE },
+    { ResSchedSceneAdapter::KEYBOARD_CLICK, ResType::WebScene::WEB_SCENE_KEYBOARD_CLICK },
 };
 
 const int32_t INVALID_NUMBER = -1;
