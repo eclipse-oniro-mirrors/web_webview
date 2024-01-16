@@ -52,6 +52,7 @@ enum class ResSchedSceneAdapter : int32_t {
     SLIDE,
     RESIZE,
     VISIBLE,
+    KEYBOARD_CLICK,
 };
 
 class ResSchedClientAdapter {
