@@ -20,6 +20,8 @@
 #undef private
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 #include "native_window.h"
+#include "avsharedmemory.h"
+#include "avsharedmemorybase.h"
 
 using testing::ext::TestSize;
 using namespace OHOS::MediaAVCodec;
@@ -139,6 +141,8 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_NormalTe
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->ConfigureDecoder(format_), DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetParameterDecoder(format_), DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetOutputSurface(nullptr), DecoderAdapterCode::DECODER_ERROR);
+    std::shared_ptr<DecoderCallbackAdapter> callback = std::make_shared<DecoderCallbackAdapterMock>();
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetCallbackDec(callback), DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->PrepareDecoder(), DecoderAdapterCode::DECODER_OK);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->StartDecoder(), DecoderAdapterCode::DECODER_ERROR);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->StopDecoder(), DecoderAdapterCode::DECODER_ERROR);
@@ -209,6 +213,8 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_OnError_
     MediaAVCodec::Format fomat;
     decoderCallbackImpl->OnOutputFormatChanged(fomat);
     decoderCallbackImpl->OnInputBufferAvailable(1, nullptr);
+    std::shared_ptr<Media::AVSharedMemory> memory = std::make_shared<Media::AVSharedMemoryBase>(1, 1.0, "test");
+    decoderCallbackImpl->OnInputBufferAvailable(1, memory);
     AVCodecBufferInfo info;
     decoderCallbackImpl->OnOutputBufferAvailable(1, info, AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, nullptr);
 }

@@ -529,6 +529,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_020, Test
     record->SetHtmlText(pasteData);
     data.push_back(record);
     PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data);
+    PasteBoardClientAdapterImpl::GetInstance().SetPasteData(data, CopyOptionMode::NONE);
 }
 
 /**
@@ -1001,5 +1002,15 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_AddPasteboardCha
     EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
     PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(nullptr);
     EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
+
+    MiscServices::ShareOption option =
+        PasteBoardClientAdapterImpl::GetInstance().TransitionCopyOption(CopyOptionMode::IN_APP);
+    EXPECT_EQ(option, MiscServices::ShareOption::InApp);
+    option = PasteBoardClientAdapterImpl::GetInstance().TransitionCopyOption(CopyOptionMode::LOCAL_DEVICE);
+    EXPECT_EQ(option, MiscServices::ShareOption::LocalDevice);
+    option = PasteBoardClientAdapterImpl::GetInstance().TransitionCopyOption(CopyOptionMode::CROSS_DEVICE);
+    EXPECT_EQ(option, MiscServices::ShareOption::CrossDevice);
+    option = PasteBoardClientAdapterImpl::GetInstance().TransitionCopyOption(CopyOptionMode::NONE);
+    EXPECT_EQ(option, MiscServices::ShareOption::CrossDevice);
 }
 }
