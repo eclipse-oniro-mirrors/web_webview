@@ -84,6 +84,7 @@ HWTEST_F(DateTimeAdapterImplTest, DateTimeAdapterImplTest_NWebTimeZoneEventSubsc
     EventFwk::CommonEventData data(want);
     adapter->OnReceiveEvent(data);
     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_TIMEZONE_CHANGED);
+    data.SetWant(want);
     adapter->OnReceiveEvent(data);
     adapter->eventCallback_ = nullptr;
     adapter->OnReceiveEvent(data);

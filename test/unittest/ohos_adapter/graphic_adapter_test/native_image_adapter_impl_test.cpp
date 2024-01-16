@@ -57,11 +57,21 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_UpdateSurfaceIma
     EXPECT_NE(imagerAdapter, nullptr);
     int32_t result = imagerAdapter->UpdateSurfaceImage();
     EXPECT_EQ(result, SURFACE_ERROR_ERROR);
+    NWebNativeWindow window = imagerAdapter->AquireNativeWindowFromNativeImage();
+    EXPECT_EQ(window, nullptr);
+    int32_t context = imagerAdapter->AttachContext(1);
+    EXPECT_EQ(context, SURFACE_ERROR_ERROR);
+    context = imagerAdapter->DetachContext();
+    EXPECT_EQ(context, SURFACE_ERROR_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
     result = imagerAdapter->UpdateSurfaceImage();
     EXPECT_EQ(result, SURFACE_ERROR_ERROR);
+    window = imagerAdapter->AquireNativeWindowFromNativeImage();
+    EXPECT_NE(window, nullptr);
+    imagerAdapter->AttachContext(1);
+    imagerAdapter->DetachContext();
 }
 
 /**

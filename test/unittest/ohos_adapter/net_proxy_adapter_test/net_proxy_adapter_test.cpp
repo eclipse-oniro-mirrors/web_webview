@@ -243,9 +243,38 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_RegNetProxyEvent_002, TestSize
     EXPECT_NE(NetProxyAdapterImpl::GetInstance().cb_, nullptr);
     result = NetProxyAdapterImpl::GetInstance().StartListen();
     EXPECT_TRUE(result);
+    NetManagerStandard::HttpProxy httpProxy;
+    NetManagerStandard::NetConnClient::GetInstance().SetAppHttpProxy(httpProxy);
+    httpProxy.SetHost("NONE");
+    NetManagerStandard::NetConnClient::GetInstance().SetAppHttpProxy(httpProxy);
+
+    EventFwk::CommonEventData data;
+    Want want;
+    want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_HTTP_PROXY_CHANGE);
+    data.SetWant(want);
+    EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
+    EventFwk::CommonEventSubscribeInfo info(skill);
+    NetProxyEventSubscriber criber(info, eventCallback);
+    NetManagerStandard::NetConnClient::GetInstance().appHttpProxy_.SetHost("web_test");
+    criber.OnReceiveEvent(data);
+    std::string host;
+    uint16_t port;
+    std::string pacUrl;
+    std::string exclusion;
+    NetProxyAdapterImpl::GetInstance().GetProperty(host, port, pacUrl, exclusion);
+    NetManagerStandard::NetConnClient::GetInstance().appHttpProxy_.SetHost("NONE");
+    NetProxyAdapterImpl::GetInstance().GetProperty(host, port, pacUrl, exclusion);
+    std::list<std::string> listString;
+    listString.push_back("testweb");
+    NetManagerStandard::HttpProxy proxy("test", 1, listString);
+    NetManagerStandard::NetConnClient::GetInstance().appHttpProxy_ = proxy;
+    NetProxyAdapterImpl::GetInstance().GetProperty(host, port, pacUrl, exclusion);
+
     g_subscribeCommonEventRet = false;
     result = NetProxyAdapterImpl::GetInstance().StartListen();
     EXPECT_FALSE(result);
+    NetProxyAdapterImpl::GetInstance().cb_ = nullptr;
+    NetManagerStandard::NetConnClient::GetInstance().SetAppHttpProxy(httpProxy);
 }
 
 /**
