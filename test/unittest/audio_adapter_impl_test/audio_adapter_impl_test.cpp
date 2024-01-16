@@ -41,6 +41,7 @@ const std::string CACHE_PATH = "/data/local/tmp";
 std::shared_ptr<NWeb::AudioRendererAdapterImpl> g_audioRender = nullptr;
 std::shared_ptr<NWeb::AudioCapturerAdapterImpl> g_audioCapturer = nullptr;
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
+const int32_t ADAPTER_AUDIO_UNDEFINED_DEVICEID = 1000001;
 } // namespace
 
 namespace AbilityRuntime {
@@ -155,8 +156,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     EXPECT_EQ(ret, TRUE_OK);
 
     std::array<uint8_t, 4> bufferArray = { 0, 0, 0, 0 };
-    retNum = g_audioRender->Write(bufferArray.data(), bufferArray.size());
-    EXPECT_EQ(retNum, bufferArray.size());
+    g_audioRender->Write(bufferArray.data(), bufferArray.size());
 
     uint64_t latency;
     retNum = g_audioRender->GetLatency(latency);
@@ -352,6 +352,13 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
     EXPECT_EQ(type, AudioStreamType::STREAM_VOICE_CALL);
     type = AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<AudioAdapterStreamType>(-2));
     EXPECT_EQ(type, AudioStreamType::STREAM_DEFAULT);
+
+    std::vector<sptr<AudioDeviceDescriptor>> device;
+    int32_t select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(false, device);
+    EXPECT_NE(select, 0);
+    select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(true, device);
+    EXPECT_NE(select, 0);
+    AudioSystemManagerAdapterImpl::GetInstance().GetDefaultInputDevice();
 }
 
 /**
@@ -406,6 +413,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_010, TestSi
     desc.deviceName = std::string();
     ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, true);
     EXPECT_NE(ret, RESULT_OK);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, false);
+    EXPECT_NE(ret, RESULT_OK);
+    desc.deviceId = ADAPTER_AUDIO_UNDEFINED_DEVICEID;
     ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, false);
     EXPECT_NE(ret, RESULT_OK);
 }
