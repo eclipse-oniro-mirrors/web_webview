@@ -102,6 +102,7 @@ ohos_prebuilt_etc("nweb_hap") {
   module_install_dir = "app/com.ohos.nweb"
   part_name = "webview"
   subsystem_name = "web"
+  license_file = "./prebuilts/NOTICE"
 }
 
 ohos_prebuilt_etc("web_config") {
