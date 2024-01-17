@@ -61,6 +61,7 @@ Note:If the text contains special characters, please escape them according to th
         <filefilterlist>
             <filefilter name="defaultFilter" desc="Files not to check" >
                 <filteritem type="filename" name="*.hap" desc="web hap package"/>
+                <filteritem type="filename" name="./prebuilts/NOTICE" desc="该文件的许可证为BSD-2-Clause"/>
             </filefilter>
         </filefilterlist>
     </oatconfig>
