@@ -246,6 +246,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("enableSafeBrowsing", NapiWebviewController::EnableSafeBrowsing),
         DECLARE_NAPI_FUNCTION("isSafeBrowsingEnabled", NapiWebviewController::IsSafeBrowsingEnabled),
         DECLARE_NAPI_FUNCTION("isIncognitoMode", NapiWebviewController::IsIncognitoMode),
+        DECLARE_NAPI_FUNCTION("setPrintBackground", NapiWebviewController::SetPrintBackground),
+        DECLARE_NAPI_FUNCTION("getPrintBackground", NapiWebviewController::GetPrintBackground),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -4189,6 +4191,50 @@ napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info 
         },
         nullptr, nullptr));
     return thisVar;
+}
+
+napi_value NapiWebPrintDocument::SetPrintBackground(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool printBackgroundEnabled = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], printBackgroundEnabled)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->SetPrintBackground(printBackgroundEnabled);
+    return result;
+}
+
+napi_value NapiWebPrintDocument::GetPrintBackground(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    bool printBackgroundEnabled = false;
+    WebviewController *webviewController = GetWebviewController(env, info);
+
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    bool printBackgroundEnabled = webviewController->GetPrintBackground();
+    napi_create_int32(env, printBackgroundEnabled, &result);
+    return result;
 }
 } // namespace NWeb
 } // namespace OHOS

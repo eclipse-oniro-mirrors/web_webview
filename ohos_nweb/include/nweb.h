@@ -1011,6 +1011,18 @@ public:
      * @return true if enable the ability to check website security risks else false.
      */
     virtual bool IsSafeBrowsingEnabled() = 0;
+
+    /**
+     * Set the ability to print web page background.
+     * @param enable Indicate whether the ability is enabled or disabled.
+     */
+    virtual void SetPrintBackground(bool enable) = 0;
+
+    /**
+     * Obtains whether to print the background of a web page.
+     * @return true if enable print web page background, otherwise false.
+     */
+    virtual bool GetPrintBackground() = 0;
 };
 }  // namespace OHOS::NWeb
 
