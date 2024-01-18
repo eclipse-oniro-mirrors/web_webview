@@ -41,8 +41,10 @@ public:
     std::weak_ptr<NWeb> GetNWeb(int32_t nweb_id);
     void SetBundlePath(const std::string &path);
     void SetHttpDns(const NWebDOHConfig& config);
+    void SetWebTag(int32_t nwebId, const char* webTag);
     void PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets);
     bool LoadNWebSDK();
+    void* GetWebEngineHandler();
     void SetConnectionTimeout(const int32_t& timeout);
     void SetWebDebuggingAccess(bool isEnableDebug);
 

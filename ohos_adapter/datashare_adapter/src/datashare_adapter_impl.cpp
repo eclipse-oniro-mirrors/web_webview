@@ -40,6 +40,13 @@ DatashareAdapterImpl& DatashareAdapterImpl::GetInstance()
     return instance;
 }
 
+std::string DatashareAdapterImpl::GetRealPath(const std::string& uriStr) const
+{
+    Uri uri = Uri(uriStr);
+    AppFileService::ModuleFileUri::FileUri fileUri(uriStr);
+    return fileUri.GetRealPath();
+}
+
 int DatashareAdapterImpl::OpenDataShareUriForRead(const std::string& uriStr) const
 {
     auto sam = OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
