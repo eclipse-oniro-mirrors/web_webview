@@ -29,6 +29,7 @@ public:
 
     virtual int OpenDataShareUriForRead(const std::string& uriStr) const = 0;
     virtual std::string GetFileDisplayName(const std::string& uriStr) = 0;
+    virtual std::string GetRealPath(const std::string& uriStr) const = 0;
 };
 
 }  // namespace OHOS::NWeb

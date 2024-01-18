@@ -98,7 +98,8 @@ const std::string PERFORMANCE_CONFIG = "performanceConfig";
     DO(WebDownloadItem_SetReceivedSlices)            \
     DO(WebDownloadItem_SetGuid)                      \
     DO(DestroyBeforeDownloadCallbackWrapper)         \
-    DO(DestroyDownloadItemCallbackWrapper)
+    DO(DestroyDownloadItemCallbackWrapper)           \
+
 
 struct NWebCApi {
     // Generate a function pointer field for every NWeb C API function.
@@ -582,6 +583,7 @@ bool NWebHelper::LoadLib(bool from_ark)
         return true;
     }
     if (bundlePath_.empty()) {
+        WVLOG_E("fail to load lib bundle path is empty";
         return false;
     }
     std::string loadLibPath;
@@ -600,6 +602,30 @@ bool NWebHelper::LoadLib(bool from_ark)
     return true;
 }
 #endif
+
+void* NWebHelper::GetWebEngineHandler()
+{
+    WVLOG_I("NWebHelper GetWebEngineHandler");
+    if (libHandleWebEngine_) {
+        return libHandleWebEngine_;
+    }
+
+    std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+        AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (!ctx) {
+        WVLOG_E("Failed to init web engine due to nil application context.");
+        return nullptr;
+    }
+ 
+    // load so
+    const std::string& bundle_path = ctx->GetBundleCodeDir();
+    SetBundlePath(bundle_path);
+    if (!Init(true)) {
+        WVLOG_I("NWebHelper Init failed");
+        return nullptr;
+    }
+    return libHandleWebEngine_;
+}
 
 void NWebHelper::UnloadLib()
 {
@@ -814,6 +840,25 @@ std::weak_ptr<NWeb> NWebHelper::GetNWeb(int32_t nweb_id)
 
     getNWebFunc(nweb_id, nweb);
     return nweb;
+}
+
+using SetWebTagFunc = void (*)(int32_t, const char*);
+void NWebHelper::SetWebTag(int32_t nweb_id, const char* webTag)
+{
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_E("libHandleNWebAdapter_ is nullptr");
+        return;
+    }
+
+    const std::string SET_WEB_TAG_FUNC_NAME = "SetWebTag";
+    SetWebTagFunc setWebTagFunc =
+        reinterpret_cast<SetWebTagFunc>(dlsym(libHandleWebEngine_, SET_WEB_TAG_FUNC_NAME.c_str()));
+    if (setWebTagFunc == nullptr) {
+        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", SET_WEB_TAG_FUNC_NAME.c_str());
+        return;
+    }
+
+    setWebTagFunc(nweb_id, webTag);
 }
 
 using SetHttpDnsFunc = void (*)(const NWebDOHConfig &);
