@@ -806,7 +806,7 @@ void NapiWebDownloadItem::ExportWebDownloadErrorCodeEnum(napi_env env, napi_valu
     napi_value webDownloadErrorCodeEnum = nullptr;
     napi_property_descriptor webDownloadErrorCodeEnumProperties[] = {
         DECLARE_NAPI_STATIC_PROPERTY(
-            "Error_None",
+            "ERROR_UNKNOWN",
             ToInt32Value(
                 env,
                 static_cast<int32_t>(download::DOWNLOAD_INTERRUPT_REASON_NONE))),
