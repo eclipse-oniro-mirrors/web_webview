@@ -103,6 +103,7 @@ void WebviewController::SetWebId(int32_t nwebId)
     }
     if (auto nweb = nweb_.lock()) {
         OH_NativeArkWeb_BindWebTagToWebInstance(webTag_.c_str(), nweb_);
+        NWebHelper::Instance().SetWebTag(id_, webTag_.c_str());
     }
     SetNWebJavaScriptResultCallBack();
     NativeArkWeb_OnValidCallback validCallback = OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag_.c_str());

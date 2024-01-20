@@ -31,6 +31,7 @@ ohos_shared_library("ohweb") {
   include_dirs = [ "../../ohos_nweb/include" ]
 
   sources = [
+    "arkweb_scheme_handler.cpp",
     "native_arkweb_utils.cpp",
     "native_interface_arkweb.cpp",
     "native_javascript_execute_callback.cpp",
@@ -41,6 +42,8 @@ ohos_shared_library("ohweb") {
     "hilog:libhilog",
     "napi:ace_napi",
   ]
+
+  deps = [ "../../ohos_nweb:libnweb" ]
   relative_install_dir = "ndk"
   part_name = "webview"
   subsystem_name = "web"
