@@ -28,6 +28,7 @@ public:
 
     int OpenDataShareUriForRead(const std::string& uriStr) const override;
     std::string GetFileDisplayName(const std::string& uriStr) override;
+    std::string GetRealPath(const std::string& uriStr) const override;
 
 private:
     DatashareAdapterImpl() = default;
