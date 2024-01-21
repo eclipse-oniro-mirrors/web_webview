@@ -54,6 +54,7 @@ namespace {
     DO(OH_ArkWeb_RegisterCustomSchemes)             \
     DO(OH_ArkWeb_SetSchemeHandler)                  \
     DO(OH_ArkWebServiceWorker_SetSchemeHandler)     \
+    DO(OH_ArkWebServiceWorker_ClearSchemeHandlers)  \
     DO(OH_ArkWeb_ClearSchemeHandlers)               \
     DO(OH_ArkWeb_CreateSchemeHandler)               \
     DO(OH_ArkWeb_DestroySchemeHandler)              \
@@ -423,6 +424,16 @@ void OH_ArkWeb_ClearSchemeHandlers(const char* webTag)
     }
  
     return g_SchemeHandlerApi->impl_OH_ArkWeb_ClearSchemeHandlers(webTag);
+}
+
+void OH_ArkWebServiceWorker_ClearSchemeHandlers(const char* webTag)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebServiceWorker_ClearSchemeHandlers) {
+        WVLOG_E("OH_ArkWebServiceWorker_ClearSchemeHandlers not found.");
+        return;
+    }
+ 
+    return g_SchemeHandlerApi->impl_OH_ArkWebServiceWorker_ClearSchemeHandlers(webTag);
 }
 
 void OH_ArkWeb_CreateSchemeHandler(ArkWeb_SchemeHandler** schemeHandler)
