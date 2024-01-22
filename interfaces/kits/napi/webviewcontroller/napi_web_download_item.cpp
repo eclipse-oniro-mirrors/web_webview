@@ -907,7 +907,11 @@ void NapiWebDownloadItem::ExportWebDownloadErrorCodeEnum(napi_env env, napi_valu
                 env, static_cast<int32_t>(
                         download::
                             DOWNLOAD_INTERRUPT_REASON_NETWORK_INVALID_REQUEST))),
-
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "SERVER_FAILED",
+            ToInt32Value(
+                env, static_cast<int32_t>(
+                        download::DOWNLOAD_INTERRUPT_REASON_SERVER_FAILED))),
         DECLARE_NAPI_STATIC_PROPERTY(
             "SERVER_NO_RANGE",
             ToInt32Value(
