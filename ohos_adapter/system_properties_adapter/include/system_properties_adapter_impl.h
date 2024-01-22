@@ -31,7 +31,7 @@ public:
     std::string GetDeviceInfoProductModel() const override;
 
     std::string GetDeviceInfoBrand() const override;
-    
+
     int32_t GetDeviceInfoMajorVersion() const override;
 
     ProductDeviceType GetProductDeviceType() const override;
@@ -45,6 +45,8 @@ public:
     int32_t GetSoftwareMajorVersion() const override;
 
     int32_t GetSoftwareSeniorVersion() const override;
+
+    std::string GetNetlogMode() const override;
 private:
     SystemPropertiesAdapterImpl();
 

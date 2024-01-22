@@ -122,4 +122,9 @@ int32_t SystemPropertiesAdapterImpl::GetSoftwareSeniorVersion() const
 {
     return softwareSeniorVersion_;
 }
+
+std::string SystemPropertiesAdapterImpl::GetNetlogMode() const
+{
+    return OHOS::system::GetParameter("web.debug.netlog", "");
+}
 } // namespace OHOS::NWeb
