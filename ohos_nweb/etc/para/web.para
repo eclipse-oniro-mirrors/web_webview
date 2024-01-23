@@ -13,3 +13,4 @@
 
 web.optimization=true
 web.debug.devtools = false
+web.debug.netlog = None

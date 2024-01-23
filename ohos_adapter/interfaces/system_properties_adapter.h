@@ -52,6 +52,8 @@ public:
     virtual int32_t GetSoftwareMajorVersion() const = 0;
 
     virtual int32_t GetSoftwareSeniorVersion() const = 0;
+
+    virtual std::string GetNetlogMode() const = 0;
 };
 
 }  // namespace OHOS::NWeb
