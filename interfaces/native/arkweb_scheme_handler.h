@@ -182,13 +182,13 @@ typedef void (*ArkWeb_OnRequestStart)(const ArkWeb_SchemeHandler* schemeHandler,
 /*
  * @brief Callback when the request is completed. This will called on the IO thread.
  * @param schemeHandler The ArkWeb_SchemeHandler.
- * @param resourceHandler The ArkWeb_ResourceHandler for the request.
+ * @param resourceRequest The ArkWeb_ResourceRequest.
  *
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
 typedef void (*ArkWeb_OnRequestStop)(const ArkWeb_SchemeHandler* schemeHandler,
-                                     ArkWeb_ResourceRequest* resourceRequest);
+                                     const ArkWeb_ResourceRequest* resourceRequest);
 
 /*
  * @brief Callback when the read operation done.
@@ -203,7 +203,7 @@ typedef void (*ArkWeb_OnRequestStop)(const ArkWeb_SchemeHandler* schemeHandler,
  */
 typedef void (*ArkWeb_PostDataReadCallback)(const ArkWeb_PostDataStream* postDataStream,
                                             uint8_t* buffer,
-                                            int64_t bytesRead);
+                                            int bytesRead);
 
 /*
  * @brief  Callback when the init operation done.
@@ -357,17 +357,17 @@ void OH_ArkWebPostDataStream_Init(ArkWeb_PostDataStream* postDataStream,
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-void OH_ArkWebPostDataStream_Read(const ArkWeb_PostDataStream* postDataStream, uint8_t* buffer, int64_t bufLen);
+void OH_ArkWebPostDataStream_Read(const ArkWeb_PostDataStream* postDataStream, uint8_t* buffer, int bufLen);
 
 /*
- * @brief Get the total size of the data stream. When data is trunked, always return zero.
+ * @brief Get the total size of the data stream. When data is chunked, always return zero.
  * @param postDataStream The ArkWeb_PostDataStream.
  * @return The size of data stream. -1 if postDataStream is invalid.
  *
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-int64_t OH_ArkWebPostDataStream_GetSize(const ArkWeb_PostDataStream* postDataStream);
+uint64_t OH_ArkWebPostDataStream_GetSize(const ArkWeb_PostDataStream* postDataStream);
 
 /*
  * @brief Get the current position of the data stream.
@@ -377,17 +377,17 @@ int64_t OH_ArkWebPostDataStream_GetSize(const ArkWeb_PostDataStream* postDataStr
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-int64_t OH_ArkWebPostDataStream_GetPosition(const ArkWeb_PostDataStream* postDataStream);
+uint64_t OH_ArkWebPostDataStream_GetPosition(const ArkWeb_PostDataStream* postDataStream);
 
 /*
- * @brief Get if the data stream is trunked.
+ * @brief Get if the data stream is chunked.
  * @param postDataStream The ArkWeb_PostDataStream.
- * @return True if is trunked; false otherwise.
+ * @return True if is chunked; false otherwise.
  *
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-bool OH_ArkWebPostDataStream_IsTrunked(const ArkWeb_PostDataStream* postDataStream);
+bool OH_ArkWebPostDataStream_IsChunked(const ArkWeb_PostDataStream* postDataStream);
 
 
 /*
@@ -502,12 +502,11 @@ bool OH_ArkWeb_SetSchemeHandler(const char* scheme, const char* webTag, ArkWeb_S
 
 /*
  * @brief Clear the handler registered on the specified web for service worker.
- * @param webTag The name of the web component.
  *
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-void OH_ArkWebServiceWorker_ClearSchemeHandlers(const char* webTag);
+void OH_ArkWebServiceWorker_ClearSchemeHandlers();
 
 /*
  * @brief Clear the handler registered on the specified web.
@@ -644,7 +643,7 @@ ArkWeb_NetError OH_ArkWebResponse_GetError(const ArkWeb_Response* response);
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-void OH_ArkWebResponse_SetStatus(ArkWeb_Response* response, int32_t status);
+void OH_ArkWebResponse_SetStatus(ArkWeb_Response* response, int status);
 
 /*
  * @brief Get the response's status code.
@@ -654,7 +653,7 @@ void OH_ArkWebResponse_SetStatus(ArkWeb_Response* response, int32_t status);
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-int32_t OH_ArkWebResponse_GetStatus(const ArkWeb_Response* response);
+int OH_ArkWebResponse_GetStatus(const ArkWeb_Response* response);
 
 /*
  * @brief Set a status text to ArkWebResponse.
