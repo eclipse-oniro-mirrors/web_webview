@@ -275,8 +275,14 @@ void CreateUvQueueWorkEnhanced(napi_env env, WebviewJavaScriptResultCallBack::Na
     int ret = uv_queue_work_with_qos(
         loop, work, [](uv_work_t* work) {}, callback, uv_qos_user_initiated);
     if (ret != 0) {
-        delete workData;
-        delete work;
+        if (workData) {
+            delete workData;
+            workData = nullptr;
+        }
+        if (work) {
+            delete work;
+            work = nullptr;
+        }
         return;
     }
 }
