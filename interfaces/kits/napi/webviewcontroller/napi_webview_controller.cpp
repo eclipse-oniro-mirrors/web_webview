@@ -231,6 +231,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("scrollTo", NapiWebviewController::ScrollTo),
         DECLARE_NAPI_FUNCTION("scrollBy", NapiWebviewController::ScrollBy),
         DECLARE_NAPI_FUNCTION("slideScroll", NapiWebviewController::SlideScroll),
+        DECLARE_NAPI_FUNCTION("setScrollable", NapiWebviewController::SetScrollable),
+        DECLARE_NAPI_FUNCTION("getScrollable", NapiWebviewController::GetScrollable),
         DECLARE_NAPI_STATIC_FUNCTION("customizeSchemes", NapiWebviewController::CustomizeSchemes),
         DECLARE_NAPI_FUNCTION("innerSetHapPath", NapiWebviewController::InnerSetHapPath),
         DECLARE_NAPI_FUNCTION("innerGetCertificate", NapiWebviewController::InnerGetCertificate),
@@ -3575,6 +3577,49 @@ napi_value NapiWebviewController::SlideScroll(napi_env env, napi_callback_info i
         return nullptr;
     }
     webviewController->SlideScroll(vx, vy);
+    return result;
+}
+
+napi_value NapiWebviewController::SetScrollable(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    bool isEnableScroll;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], isEnableScroll)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+    webviewController->SetScrollable(isEnableScroll);
+    return result;
+}
+
+napi_value NapiWebviewController::GetScrollable(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    bool isScrollable = webviewController->GetScrollable();
+    NAPI_CALL(env, napi_get_boolean(env, isScrollable, &result));
     return result;
 }
 

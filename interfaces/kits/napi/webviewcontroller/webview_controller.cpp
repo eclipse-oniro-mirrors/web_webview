@@ -1065,6 +1065,32 @@ void WebviewController::SlideScroll(float vx, float vy)
     return;
 }
 
+void WebviewController::SetScrollable(bool enable)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return;
+    }
+    std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+    if (!setting) {
+        return;
+    }
+    return setting->SetScrollable(enable);
+}
+
+bool WebviewController::GetScrollable()
+{
+    auto nweb_ptr = nweb_.lock();
+    if (!nweb_ptr) {
+        return true;
+    }
+    std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+    if (!setting) {
+        return true;
+    }
+    return setting->GetScrollable();
+}
+
 void WebviewController::InnerSetHapPath(const std::string &hapPath)
 {
     hapPath_ = hapPath;
