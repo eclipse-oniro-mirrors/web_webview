@@ -36,7 +36,7 @@ const std::string WEB_HITTESTTYPE_ENUM_NAME = "WebHitTestType";
 const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
 const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
-const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "WebSecurityLevel";
+const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
 
 class NapiWebviewController {
 public:
