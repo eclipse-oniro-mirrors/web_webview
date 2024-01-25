@@ -23,6 +23,7 @@ ohos_ndk_library("libohweb") {
   cflags = [ "-fstack-protector-all" ]
   min_compact_version = "11"
   ndk_description_file = "./libohweb.ndk.json"
+  system_capability = "SystemCapability.Web.Webview.Core"
   output_name = "ohweb"
 }
 

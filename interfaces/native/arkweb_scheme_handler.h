@@ -31,7 +31,7 @@
 #ifndef ARKWEB_SCHEME_HANDLER_H
 #define ARKWEB_SCHEME_HANDLER_H
 
-#include <cstdint>
+#include "stdint.h"
 
 #include "arkweb_net_error_list.h"
 
@@ -45,7 +45,7 @@ extern "C" {
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
-enum ArkWeb_CustomSchemeOption {
+typedef enum ArkWeb_CustomSchemeOption {
     OH_ARKWEB_SCHEME_OPTION_NONE = 0,
 
     /*
@@ -110,7 +110,7 @@ enum ArkWeb_CustomSchemeOption {
      * @since 12
      */
     ARKWEB_SCHEME_OPTION_FETCH_ENABLED = 1 << 6,
-};
+} ArkWeb_CustomSchemeOption;
 
 /*
  * @brief  This class is used to intercept requests for a specified scheme.
