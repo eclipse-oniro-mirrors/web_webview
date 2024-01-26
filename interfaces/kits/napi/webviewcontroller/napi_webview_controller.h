@@ -185,6 +185,10 @@ private:
 
     static napi_value SlideScroll(napi_env env, napi_callback_info info);
 
+    static napi_value SetScrollable(napi_env env, napi_callback_info info);
+
+    static napi_value GetScrollable(napi_env env, napi_callback_info info);
+
     static napi_value CustomizeSchemes(napi_env env, napi_callback_info info);
 
     static napi_value InnerSetHapPath(napi_env env, napi_callback_info info);
