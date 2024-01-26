@@ -219,6 +219,10 @@ private:
     static napi_value GetSecurityLevel(napi_env env, napi_callback_info info);
 
     static napi_value IsIncognitoMode(napi_env env, napi_callback_info info);
+
+    static napi_value SetPrintBackground(napi_env env, napi_callback_info info);
+
+    static napi_value GetPrintBackground(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {

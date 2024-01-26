@@ -244,6 +244,10 @@ public:
 
     bool IsIncognitoMode();
 
+    void SetPrintBackground(bool enable);
+
+    bool GetPrintBackground();
+
 private:
     int ConverToWebHitTestType(int hitType);
 
