@@ -220,6 +220,10 @@ public:
 
     void SlideScroll(float vx, float vy);
 
+    void SetScrollable(bool enable);
+
+    bool GetScrollable();
+
     void InnerSetHapPath(const std::string &hapPath);
 
     bool GetCertChainDerData(std::vector<std::string> &certChainDerData);
