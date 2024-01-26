@@ -4193,7 +4193,7 @@ napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info 
     return thisVar;
 }
 
-napi_value NapiWebPrintDocument::SetPrintBackground(napi_env env, napi_callback_info info)
+napi_value NapiWebviewController::SetPrintBackground(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
     napi_value thisVar = nullptr;
@@ -4221,7 +4221,7 @@ napi_value NapiWebPrintDocument::SetPrintBackground(napi_env env, napi_callback_
     return result;
 }
 
-napi_value NapiWebPrintDocument::GetPrintBackground(napi_env env, napi_callback_info info)
+napi_value NapiWebviewController::GetPrintBackground(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
