@@ -1165,5 +1165,24 @@ bool WebviewController::IsIncognitoMode()
     }
     return incognitoMode;
 }
+
+void WebviewController::SetPrintBackground(bool enable)
+{
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        nweb_ptr->SetPrintBackground(enable);
+    }
+}
+
+bool  WebviewController::GetPrintBackground()
+{
+    bool printBackgroundEnabled = false;
+    auto nweb_ptr = nweb_.lock();
+    if (nweb_ptr) {
+        printBackgroundEnabled = nweb_ptr->GetPrintBackground();
+    }
+
+    return printBackgroundEnabled;
+}
 } // namespace NWeb
 } // namespace OHOS
