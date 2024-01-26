@@ -22,8 +22,8 @@
 #include <vector>
 
 #include "nweb.h"
-#include "nweb_log.h"
 #include "nweb_helper.h"
+#include "nweb_log.h"
 
 namespace {
 
@@ -46,6 +46,8 @@ namespace {
     DO(OH_ArkWebPostDataStream_IsChunked)           \
     DO(OH_ArkWebPostDataStream_IsEof)               \
     DO(OH_ArkWebPostDataStream_IsInMemory)          \
+    DO(OH_ArkWebResourceRequest_SetUserData)        \
+    DO(OH_ArkWebResourceRequest_GetUserData)        \
     DO(OH_ArkWebResourceRequest_GetReferrer)        \
     DO(OH_ArkWebResourceRequest_GetRequestHeaders)  \
     DO(OH_ArkWebResourceRequest_IsRedirect)         \
@@ -91,9 +93,10 @@ struct SchemeHandlerApi {
 #undef GEN_FN_PTR
 };
 
-template <typename Fn> void LoadFunction(void *handle, const char *functionName, Fn *fnOut)
+template<typename Fn>
+void LoadFunction(void* handle, const char* functionName, Fn* fnOut)
 {
-    void *fn = dlsym(handle, functionName);
+    void* fn = dlsym(handle, functionName);
     if (!fn) {
         OHOS::WVLOG_E("%{public}s not found.", functionName);
         return;
@@ -101,9 +104,9 @@ template <typename Fn> void LoadFunction(void *handle, const char *functionName,
     *fnOut = reinterpret_cast<Fn>(fn);
 }
 
-SchemeHandlerApi *g_SchemeHandlerApi = nullptr;
+SchemeHandlerApi* g_SchemeHandlerApi = nullptr;
 
-void LoadSchemeHandlerApi(void *handle, SchemeHandlerApi *api)
+void LoadSchemeHandlerApi(void* handle, SchemeHandlerApi* api)
 {
     // Initialize each function pointer field from the so.
 #define LOAD_FN_PTR(fn) LoadFunction(handle, #fn, &api->impl_##fn);
@@ -111,7 +114,7 @@ void LoadSchemeHandlerApi(void *handle, SchemeHandlerApi *api)
 #undef LOAD_FN_PTR
 }
 
-bool EnsureSdkLoaded(void *handle)
+bool EnsureSdkLoaded(void* handle)
 {
     if (g_SchemeHandlerApi) {
         OHOS::WVLOG_I("SchemeHandlerApi had loaded.");
@@ -123,7 +126,7 @@ bool EnsureSdkLoaded(void *handle)
         return false;
     }
 
-    auto *schemeHandlerApi = new SchemeHandlerApi();
+    auto* schemeHandlerApi = new SchemeHandlerApi();
     if (schemeHandlerApi == nullptr) {
         OHOS::WVLOG_I("schemeHandlerApi is nullptr.");
         return false;
@@ -136,14 +139,14 @@ bool EnsureSdkLoaded(void *handle)
 } // namespace
 
 using namespace OHOS;
-void OH_ArkWebRequestHeaderList_Create(const ArkWeb_ResourceRequest* resourceRequest,
-                                       ArkWeb_RequestHeaderList** requestHeaderList)
+void OH_ArkWebRequestHeaderList_Create(
+    const ArkWeb_ResourceRequest* resourceRequest, ArkWeb_RequestHeaderList** requestHeaderList)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebRequestHeaderList_Create) {
         WVLOG_E("OH_ArkWebRequestHeaderList_Create not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebRequestHeaderList_Create(resourceRequest, requestHeaderList);
 }
 
@@ -153,7 +156,7 @@ void OH_ArkWebRequestHeaderList_Destroy(ArkWeb_RequestHeaderList* requestHeaderL
         WVLOG_E("OH_ArkWebRequestHeaderList_Destroy not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebRequestHeaderList_Destroy(requestHeaderList);
 }
 
@@ -163,19 +166,18 @@ int32_t OH_ArkWebRequestHeaderList_GetSize(const ArkWeb_RequestHeaderList* reque
         WVLOG_E("OH_ArkWebRequestHeaderList_GetSize not found.");
         return -1;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebRequestHeaderList_GetSize(requestHeaderList);
 }
 
-void OH_ArkWebRequestHeaderList_GetHeader(const ArkWeb_RequestHeaderList* requestHeaderList,
-                                          int32_t index, char** key,
-                                          char** value)
+void OH_ArkWebRequestHeaderList_GetHeader(
+    const ArkWeb_RequestHeaderList* requestHeaderList, int32_t index, char** key, char** value)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebRequestHeaderList_GetHeader) {
         WVLOG_E("OH_ArkWebRequestHeaderList_GetHeader not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebRequestHeaderList_GetHeader(requestHeaderList, index, key, value);
 }
 
@@ -185,7 +187,7 @@ void OH_ArkWebResourceRequest_GetMethod(const ArkWeb_ResourceRequest* resourceRe
         WVLOG_E("OH_ArkWebResourceRequest_GetMethod not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetMethod(resourceRequest, method);
 }
 
@@ -199,8 +201,8 @@ void OH_ArkWebResourceRequest_GetUrl(const ArkWeb_ResourceRequest* resourceReque
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetUrl(resourceRequest, url);
 }
 
-void OH_ArkWebResourceRequest_GetPostData(const ArkWeb_ResourceRequest* resourceRequest,
-                                          ArkWeb_PostDataStream** postDataStream)
+void OH_ArkWebResourceRequest_GetPostData(
+    const ArkWeb_ResourceRequest* resourceRequest, ArkWeb_PostDataStream** postDataStream)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetPostData) {
         WVLOG_E("OH_ArkWebResourceRequest_GetPostData not found.");
@@ -210,13 +212,13 @@ void OH_ArkWebResourceRequest_GetPostData(const ArkWeb_ResourceRequest* resource
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetPostData(resourceRequest, postDataStream);
 }
 
-void OH_ArkWebPostDataStream_SetUserData(ArkWeb_PostDataStream* postDataStream, void* userData)
+int32_t OH_ArkWebPostDataStream_SetUserData(ArkWeb_PostDataStream* postDataStream, void* userData)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetUserData) {
         WVLOG_E("OH_ArkWebPostDataStream_SetUserData not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
-    g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetUserData(postDataStream, userData);
+    return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetUserData(postDataStream, userData);
 }
 
 void* OH_ArkWebPostDataStream_GetUserData(const ArkWeb_PostDataStream* postDataStream)
@@ -228,23 +230,23 @@ void* OH_ArkWebPostDataStream_GetUserData(const ArkWeb_PostDataStream* postDataS
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_GetUserData(postDataStream);
 }
 
-void OH_ArkWebPostDataStream_SetReadCallback(ArkWeb_PostDataStream* postDataStream,
-                                             ArkWeb_PostDataReadCallback readCallback)
+int32_t OH_ArkWebPostDataStream_SetReadCallback(
+    ArkWeb_PostDataStream* postDataStream, ArkWeb_PostDataReadCallback readCallback)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetReadCallback) {
         WVLOG_E("OH_ArkWebPostDataStream_SetReadCallback not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetReadCallback(postDataStream, readCallback);
 }
 
-void OH_ArkWebPostDataStream_Init(ArkWeb_PostDataStream* postDataStream,
-                                  ArkWeb_PostDataStreamInitCallback readyCallback)
+int32_t OH_ArkWebPostDataStream_Init(
+    ArkWeb_PostDataStream* postDataStream, ArkWeb_PostDataStreamInitCallback readyCallback)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_Init) {
         WVLOG_E("OH_ArkWebPostDataStream_Init not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_Init(postDataStream, readyCallback);
@@ -316,18 +318,38 @@ void OH_ArkWebResourceRequest_GetReferrer(const ArkWeb_ResourceRequest* resource
         WVLOG_E("OH_ArkWebResourceRequest_GetReferrer not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetReferrer(resourceRequest, referrer);
 }
 
-void OH_ArkWebResourceRequest_GetRequestHeaders(const ArkWeb_ResourceRequest* resourceRequest,
-                                                ArkWeb_RequestHeaderList** requestHeaderList)
+int32_t OH_ArkWebResourceRequest_SetUserData(ArkWeb_ResourceRequest* resourceRequest, void* userData)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_SetUserData) {
+        WVLOG_E("OH_ArkWebResourceRequest_SetUserData not found.");
+        return ARKWEB_NET_UNKNOWN;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_SetUserData(resourceRequest, userData);
+}
+
+void* OH_ArkWebResourceRequest_GetUserData(const ArkWeb_ResourceRequest* resourceRequest)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetUserData) {
+        WVLOG_E("OH_ArkWebResourceRequest_GetUserData not found.");
+        return nullptr;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetUserData(resourceRequest);
+}
+
+void OH_ArkWebResourceRequest_GetRequestHeaders(
+    const ArkWeb_ResourceRequest* resourceRequest, ArkWeb_RequestHeaderList** requestHeaderList)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetRequestHeaders) {
         WVLOG_E("OH_ArkWebResourceRequest_GetRequestHeaders not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetRequestHeaders(resourceRequest, requestHeaderList);
 }
 
@@ -337,7 +359,7 @@ bool OH_ArkWebResourceRequest_IsRedirect(const ArkWeb_ResourceRequest* resourceR
         WVLOG_E("OH_ArkWebResourceRequest_IsRedirect not found.");
         return false;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_IsRedirect(resourceRequest);
 }
 
@@ -347,7 +369,7 @@ bool OH_ArkWebResourceRequest_IsMainFrame(const ArkWeb_ResourceRequest* resource
         WVLOG_E("OH_ArkWebResourceRequest_IsMainFrame not found.");
         return false;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_IsMainFrame(resourceRequest);
 }
 
@@ -357,11 +379,11 @@ bool OH_ArkWebResourceRequest_HasGesture(const ArkWeb_ResourceRequest* resourceR
         WVLOG_E("OH_ArkWebResourceRequest_HasGesture not found.");
         return false;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_HasGesture(resourceRequest);
 }
 
-void OH_ArkWeb_RegisterCustomSchemes(const char* scheme, int32_t option)
+int32_t OH_ArkWeb_RegisterCustomSchemes(const char* scheme, int32_t option)
 {
     void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler();
     if (webEngineHandle) {
@@ -371,12 +393,12 @@ void OH_ArkWeb_RegisterCustomSchemes(const char* scheme, int32_t option)
     } else {
         WVLOG_E("OH_ArkWeb_RegisterCustomSchemes webEngineHandle is nullptr.");
     }
-    
+
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWeb_RegisterCustomSchemes) {
         WVLOG_E("OH_ArkWeb_RegisterCustomSchemes not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_RegisterCustomSchemes(scheme, option);
 }
 
@@ -394,7 +416,7 @@ bool OH_ArkWeb_SetSchemeHandler(const char* scheme, const char* webTag, ArkWeb_S
         WVLOG_E("OH_ArkWeb_SetSchemeHandler not found.");
         return false;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_SetSchemeHandler(scheme, webTag, schemeHandler);
 }
 
@@ -412,27 +434,27 @@ bool OH_ArkWebServiceWorker_SetSchemeHandler(const char* scheme, ArkWeb_SchemeHa
         WVLOG_E("OH_ArkWebServiceWorker_SetSchemeHandler not found.");
         return false;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebServiceWorker_SetSchemeHandler(scheme, schemeHandler);
 }
 
-void OH_ArkWeb_ClearSchemeHandlers(const char* webTag)
+int32_t OH_ArkWeb_ClearSchemeHandlers(const char* webTag)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWeb_ClearSchemeHandlers) {
         WVLOG_E("OH_ArkWeb_ClearSchemeHandlers not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_ClearSchemeHandlers(webTag);
 }
 
-void OH_ArkWebServiceWorker_ClearSchemeHandlers()
+int32_t OH_ArkWebServiceWorker_ClearSchemeHandlers()
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebServiceWorker_ClearSchemeHandlers) {
         WVLOG_E("OH_ArkWebServiceWorker_ClearSchemeHandlers not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebServiceWorker_ClearSchemeHandlers();
 }
 
@@ -450,7 +472,7 @@ void OH_ArkWeb_CreateSchemeHandler(ArkWeb_SchemeHandler** schemeHandler)
         WVLOG_E("OH_ArkWeb_CreateSchemeHandler not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_CreateSchemeHandler(schemeHandler);
 }
 
@@ -460,17 +482,17 @@ void OH_ArkWeb_DestroySchemeHandler(ArkWeb_SchemeHandler* schemeHandler)
         WVLOG_E("OH_ArkWeb_DestroySchemeHandler not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_DestroySchemeHandler(schemeHandler);
 }
 
-void OH_ArkWebSchemeHandler_SetUserData(ArkWeb_SchemeHandler* schemeHandler, void* userData)
+int32_t OH_ArkWebSchemeHandler_SetUserData(ArkWeb_SchemeHandler* schemeHandler, void* userData)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetUserData) {
         WVLOG_E("OH_ArkWebSchemeHandler_SetUserData not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
-    g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetUserData(schemeHandler, userData);
+    return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetUserData(schemeHandler, userData);
 }
 
 void* OH_ArkWebSchemeHandler_GetUserData(const ArkWeb_SchemeHandler* schemeHandler)
@@ -482,27 +504,27 @@ void* OH_ArkWebSchemeHandler_GetUserData(const ArkWeb_SchemeHandler* schemeHandl
     return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_GetUserData(schemeHandler);
 }
 
-void OH_ArkWebSchemeHandler_SetOnRequestStart(ArkWeb_SchemeHandler* schemeHandler,
-                                              ArkWeb_OnRequestStart onRequestStart)
+int32_t OH_ArkWebSchemeHandler_SetOnRequestStart(
+    ArkWeb_SchemeHandler* schemeHandler, ArkWeb_OnRequestStart onRequestStart)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStart) {
         WVLOG_E("OH_ArkWebSchemeHandler_SetOnRequestStart not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStart(schemeHandler, onRequestStart);
 }
 
-void OH_ArkWebSchemeHandler_SetOnRequestStop(ArkWeb_SchemeHandler* schemeHandler, ArkWeb_OnRequestStop onRequestStop)
+int32_t OH_ArkWebSchemeHandler_SetOnRequestStop(
+    ArkWeb_SchemeHandler* schemeHandler, ArkWeb_OnRequestStop onRequestStop)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStop) {
         WVLOG_E("OH_ArkWebSchemeHandler_SetOnRequestStop not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStop(schemeHandler, onRequestStop);
 }
-
 
 void OH_ArkWeb_CreateResponse(ArkWeb_Response** response)
 {
@@ -510,7 +532,7 @@ void OH_ArkWeb_CreateResponse(ArkWeb_Response** response)
         WVLOG_E("OH_ArkWeb_CreateResponse not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_CreateResponse(response);
 }
 
@@ -520,17 +542,17 @@ void OH_ArkWeb_DestroyResponse(ArkWeb_Response* response)
         WVLOG_E("OH_ArkWeb_DestroyResponse not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_DestroyResponse(response);
 }
 
-void OH_ArkWebResponse_SetUrl(ArkWeb_Response* response, const char* url)
+int32_t OH_ArkWebResponse_SetUrl(ArkWeb_Response* response, const char* url)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetUrl) {
         WVLOG_E("OH_ArkWebResponse_SetUrl not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetUrl(response, url);
 }
 
@@ -540,17 +562,17 @@ void OH_ArkWebResponse_GetUrl(const ArkWeb_Response* response, char** url)
         WVLOG_E("OH_ArkWebResponse_GetUrl not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetUrl(response, url);
 }
 
-void OH_ArkWebResponse_SetError(ArkWeb_Response* response, ArkWeb_NetError errorCode)
+int32_t OH_ArkWebResponse_SetError(ArkWeb_Response* response, ArkWeb_NetError errorCode)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetError) {
         WVLOG_E("OH_ArkWebResponse_SetError not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetError(response, errorCode);
 }
 
@@ -560,17 +582,17 @@ ArkWeb_NetError OH_ArkWebResponse_GetError(const ArkWeb_Response* response)
         WVLOG_E("OH_ArkWebResponse_GetError not found.");
         return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetError(response);
 }
 
-void OH_ArkWebResponse_SetStatus(ArkWeb_Response* response, int status)
+int32_t OH_ArkWebResponse_SetStatus(ArkWeb_Response* response, int status)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatus) {
         WVLOG_E("OH_ArkWebResponse_SetStatus not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatus(response, status);
 }
 
@@ -580,17 +602,17 @@ int OH_ArkWebResponse_GetStatus(const ArkWeb_Response* response)
         WVLOG_E("OH_ArkWebResponse_GetStatus not found.");
         return -1;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetStatus(response);
 }
 
-void OH_ArkWebResponse_SetStatusText(ArkWeb_Response* response, const char* statusText)
+int32_t OH_ArkWebResponse_SetStatusText(ArkWeb_Response* response, const char* statusText)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatusText) {
         WVLOG_E("OH_ArkWebResponse_SetStatusText not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatusText(response, statusText);
 }
 
@@ -600,17 +622,17 @@ void OH_ArkWebResponse_GetStatusText(const ArkWeb_Response* response, char** sta
         WVLOG_E("OH_ArkWebResponse_GetStatusText not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetStatusText(response, statusText);
 }
 
-void OH_ArkWebResponse_SetMimeType(ArkWeb_Response* response, const char* mimeType)
+int32_t OH_ArkWebResponse_SetMimeType(ArkWeb_Response* response, const char* mimeType)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetMimeType) {
         WVLOG_E("OH_ArkWebResponse_SetMimeType not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetMimeType(response, mimeType);
 }
 
@@ -620,17 +642,17 @@ void OH_ArkWebResponse_GetMimeType(const ArkWeb_Response* response, char** mimeT
         WVLOG_E("OH_ArkWebResponse_GetMimeType not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetMimeType(response, mimeType);
 }
 
-void OH_ArkWebResponse_SetCharset(ArkWeb_Response* response, const char* charset)
+int32_t OH_ArkWebResponse_SetCharset(ArkWeb_Response* response, const char* charset)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetCharset) {
         WVLOG_E("OH_ArkWebResponse_SetCharset not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetCharset(response, charset);
 }
 
@@ -640,17 +662,18 @@ void OH_ArkWebResponse_GetCharset(const ArkWeb_Response* response, char** charse
         WVLOG_E("OH_ArkWebResponse_GetCharset not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetCharset(response, charset);
 }
 
-void OH_ArkWebResponse_SetHeaderByName(ArkWeb_Response* response, const char* name, const char* value, bool overwrite)
+int32_t OH_ArkWebResponse_SetHeaderByName(
+    ArkWeb_Response* response, const char* name, const char* value, bool overwrite)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetHeaderByName) {
         WVLOG_E("OH_ArkWebResponse_SetHeaderByName not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetHeaderByName(response, name, value, overwrite);
 }
 
@@ -660,51 +683,50 @@ void OH_ArkWebResponse_GetHeaderByName(const ArkWeb_Response* response, const ch
         WVLOG_E("OH_ArkWebResponse_GetHeaderByName not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetHeaderByName(response, name, value);
 }
 
-void OH_ArkWebResourceHandler_DidReceiveResponse(const ArkWeb_ResourceHandler* resourceHandler,
-                                                 const ArkWeb_Response* response)
+int32_t OH_ArkWebResourceHandler_DidReceiveResponse(
+    const ArkWeb_ResourceHandler* resourceHandler, const ArkWeb_Response* response)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveResponse) {
         WVLOG_E("OH_ArkWebResourceHandler_DidReceiveResponse not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveResponse(resourceHandler, response);
 }
 
-void OH_ArkWebResourceHandler_DidReceiveData(const ArkWeb_ResourceHandler* resourceHandler,
-                                             const uint8_t* buffer,
-                                             int64_t bufLen)
+int32_t OH_ArkWebResourceHandler_DidReceiveData(
+    const ArkWeb_ResourceHandler* resourceHandler, const uint8_t* buffer, int64_t bufLen)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveData) {
         WVLOG_E("OH_ArkWebResourceHandler_DidReceiveData not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveData(resourceHandler, buffer, bufLen);
 }
 
-void OH_ArkWebResourceHandler_DidFinish(const ArkWeb_ResourceHandler* resourceHandler)
+int32_t OH_ArkWebResourceHandler_DidFinish(const ArkWeb_ResourceHandler* resourceHandler)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFinish) {
         WVLOG_E("OH_ArkWeb_ResourceHandler_DidFinish not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFinish(resourceHandler);
 }
 
-void OH_ArkWebResourceHandler_DidFailWithError(const ArkWeb_ResourceHandler* resourceHandler,
-                                               ArkWeb_NetError errorCode)
+int32_t OH_ArkWebResourceHandler_DidFailWithError(
+    const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithError) {
         WVLOG_E("OH_ArkWeb_ResourceHandler_DidFailWithError not found.");
-        return;
+        return ARKWEB_NET_UNKNOWN;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode);
 }
 
@@ -714,7 +736,7 @@ void OH_ArkWeb_ReleaseString(char* string)
         WVLOG_E("OH_ArkWeb_ReleaseString not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_ReleaseString(string);
 }
 
@@ -724,6 +746,6 @@ void OH_ArkWeb_ReleaseByteArray(uint8_t* byteArray)
         WVLOG_E("OH_ArkWeb_ReleaseByteArray not found.");
         return;
     }
- 
+
     return g_SchemeHandlerApi->impl_OH_ArkWeb_ReleaseByteArray(byteArray);
 }
