@@ -33,6 +33,14 @@
 
 enum ArkWeb_NetError {
     /*
+     * @brief Invalid param.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 12
+     */
+    ARKWEB_NET_INVALID_PARAM = 2,
+
+    /*
      * @brief Unknown error.
      *
      * @syscap SystemCapability.Web.Webview.Core
