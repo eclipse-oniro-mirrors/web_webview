@@ -157,6 +157,14 @@
     },
     {
         "first_introduced": "12",
+        "name": "OH_ArkWebResourceRequest_SetUserData"
+    },
+    {
+        "first_introduced": "12",
+        "name": "OH_ArkWebResourceRequest_GetUserData"
+    },
+    {
+        "first_introduced": "12",
         "name": "OH_ArkWebResourceRequest_GetReferrer"
     },
     {
