@@ -109,6 +109,10 @@
     },
     {
         "first_introduced": "12",
+        "name": "OH_ArkWebResourceRequest_DestroyPostData"
+    },
+    {
+        "first_introduced": "12",
         "name": "OH_ArkWebPostDataStream_SetReadCallback"
     },
     {
