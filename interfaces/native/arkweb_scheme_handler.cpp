@@ -36,6 +36,7 @@ namespace {
     DO(OH_ArkWebResourceRequest_GetMethod)          \
     DO(OH_ArkWebResourceRequest_GetUrl)             \
     DO(OH_ArkWebResourceRequest_GetPostData)        \
+    DO(OH_ArkWebResourceRequest_DestroyPostData)    \
     DO(OH_ArkWebPostDataStream_SetReadCallback)     \
     DO(OH_ArkWebPostDataStream_SetUserData)         \
     DO(OH_ArkWebPostDataStream_GetUserData)         \
@@ -210,6 +211,16 @@ void OH_ArkWebResourceRequest_GetPostData(
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetPostData(resourceRequest, postDataStream);
+}
+
+void OH_ArkWebResourceRequest_DestroyPostData(ArkWeb_PostDataStream* postDataStream)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_DestroyPostData) {
+        WVLOG_E("OH_ArkWebResourceRequest_DestroyPostData not found.");
+        return;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_DestroyPostData(postDataStream);
 }
 
 int32_t OH_ArkWebPostDataStream_SetUserData(ArkWeb_PostDataStream* postDataStream, void* userData)
