@@ -47,6 +47,7 @@ namespace {
     DO(OH_ArkWebPostDataStream_IsChunked)           \
     DO(OH_ArkWebPostDataStream_IsEof)               \
     DO(OH_ArkWebPostDataStream_IsInMemory)          \
+    DO(OH_ArkWebResourceRequest_Destroy)            \
     DO(OH_ArkWebResourceRequest_SetUserData)        \
     DO(OH_ArkWebResourceRequest_GetUserData)        \
     DO(OH_ArkWebResourceRequest_GetReferrer)        \
@@ -81,6 +82,7 @@ namespace {
     DO(OH_ArkWebResponse_GetCharset)                \
     DO(OH_ArkWebResponse_SetHeaderByName)           \
     DO(OH_ArkWebResponse_GetHeaderByName)           \
+    DO(OH_ArkWebResourceHandler_Destroy)            \
     DO(OH_ArkWebResourceHandler_DidReceiveResponse) \
     DO(OH_ArkWebResourceHandler_DidReceiveData)     \
     DO(OH_ArkWebResourceHandler_DidFinish)          \
@@ -227,7 +229,7 @@ int32_t OH_ArkWebPostDataStream_SetUserData(ArkWeb_PostDataStream* postDataStrea
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetUserData) {
         WVLOG_E("OH_ArkWebPostDataStream_SetUserData not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetUserData(postDataStream, userData);
 }
@@ -246,7 +248,7 @@ int32_t OH_ArkWebPostDataStream_SetReadCallback(
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetReadCallback) {
         WVLOG_E("OH_ArkWebPostDataStream_SetReadCallback not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_SetReadCallback(postDataStream, readCallback);
@@ -257,7 +259,7 @@ int32_t OH_ArkWebPostDataStream_Init(
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_Init) {
         WVLOG_E("OH_ArkWebPostDataStream_Init not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_Init(postDataStream, readyCallback);
@@ -323,6 +325,16 @@ bool OH_ArkWebPostDataStream_IsInMemory(const ArkWeb_PostDataStream* postDataStr
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_IsInMemory(postDataStream);
 }
 
+int32_t OH_ArkWebResourceRequest_Destroy(const ArkWeb_ResourceRequest* resourceRequest)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_Destroy) {
+        WVLOG_E("OH_ArkWebResourceRequest_Destroy not found.");
+        return ARKWEB_ERROR_UNKNOWN;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_Destroy(resourceRequest);
+}
+
 void OH_ArkWebResourceRequest_GetReferrer(const ArkWeb_ResourceRequest* resourceRequest, char** referrer)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetReferrer) {
@@ -337,7 +349,7 @@ int32_t OH_ArkWebResourceRequest_SetUserData(ArkWeb_ResourceRequest* resourceReq
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_SetUserData) {
         WVLOG_E("OH_ArkWebResourceRequest_SetUserData not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_SetUserData(resourceRequest, userData);
@@ -407,7 +419,7 @@ int32_t OH_ArkWeb_RegisterCustomSchemes(const char* scheme, int32_t option)
 
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWeb_RegisterCustomSchemes) {
         WVLOG_E("OH_ArkWeb_RegisterCustomSchemes not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWeb_RegisterCustomSchemes(scheme, option);
@@ -453,7 +465,7 @@ int32_t OH_ArkWeb_ClearSchemeHandlers(const char* webTag)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWeb_ClearSchemeHandlers) {
         WVLOG_E("OH_ArkWeb_ClearSchemeHandlers not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWeb_ClearSchemeHandlers(webTag);
@@ -463,7 +475,7 @@ int32_t OH_ArkWebServiceWorker_ClearSchemeHandlers()
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebServiceWorker_ClearSchemeHandlers) {
         WVLOG_E("OH_ArkWebServiceWorker_ClearSchemeHandlers not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebServiceWorker_ClearSchemeHandlers();
@@ -501,7 +513,7 @@ int32_t OH_ArkWebSchemeHandler_SetUserData(ArkWeb_SchemeHandler* schemeHandler, 
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetUserData) {
         WVLOG_E("OH_ArkWebSchemeHandler_SetUserData not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
     return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetUserData(schemeHandler, userData);
 }
@@ -520,7 +532,7 @@ int32_t OH_ArkWebSchemeHandler_SetOnRequestStart(
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStart) {
         WVLOG_E("OH_ArkWebSchemeHandler_SetOnRequestStart not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStart(schemeHandler, onRequestStart);
@@ -531,7 +543,7 @@ int32_t OH_ArkWebSchemeHandler_SetOnRequestStop(
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStop) {
         WVLOG_E("OH_ArkWebSchemeHandler_SetOnRequestStop not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetOnRequestStop(schemeHandler, onRequestStop);
@@ -561,7 +573,7 @@ int32_t OH_ArkWebResponse_SetUrl(ArkWeb_Response* response, const char* url)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetUrl) {
         WVLOG_E("OH_ArkWebResponse_SetUrl not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetUrl(response, url);
@@ -581,7 +593,7 @@ int32_t OH_ArkWebResponse_SetError(ArkWeb_Response* response, ArkWeb_NetError er
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetError) {
         WVLOG_E("OH_ArkWebResponse_SetError not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetError(response, errorCode);
@@ -591,7 +603,7 @@ ArkWeb_NetError OH_ArkWebResponse_GetError(const ArkWeb_Response* response)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetError) {
         WVLOG_E("OH_ArkWebResponse_GetError not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERR_FAILED;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetError(response);
@@ -601,7 +613,7 @@ int32_t OH_ArkWebResponse_SetStatus(ArkWeb_Response* response, int status)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatus) {
         WVLOG_E("OH_ArkWebResponse_SetStatus not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatus(response, status);
@@ -621,7 +633,7 @@ int32_t OH_ArkWebResponse_SetStatusText(ArkWeb_Response* response, const char* s
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatusText) {
         WVLOG_E("OH_ArkWebResponse_SetStatusText not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetStatusText(response, statusText);
@@ -641,7 +653,7 @@ int32_t OH_ArkWebResponse_SetMimeType(ArkWeb_Response* response, const char* mim
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetMimeType) {
         WVLOG_E("OH_ArkWebResponse_SetMimeType not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetMimeType(response, mimeType);
@@ -661,7 +673,7 @@ int32_t OH_ArkWebResponse_SetCharset(ArkWeb_Response* response, const char* char
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetCharset) {
         WVLOG_E("OH_ArkWebResponse_SetCharset not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetCharset(response, charset);
@@ -682,7 +694,7 @@ int32_t OH_ArkWebResponse_SetHeaderByName(
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetHeaderByName) {
         WVLOG_E("OH_ArkWebResponse_SetHeaderByName not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_SetHeaderByName(response, name, value, overwrite);
@@ -698,12 +710,22 @@ void OH_ArkWebResponse_GetHeaderByName(const ArkWeb_Response* response, const ch
     return g_SchemeHandlerApi->impl_OH_ArkWebResponse_GetHeaderByName(response, name, value);
 }
 
+int32_t OH_ArkWebResourceHandler_Destroy(const ArkWeb_ResourceHandler* resourceHandler)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_Destroy) {
+        WVLOG_E("OH_ArkWebResourceHandler_Destroy not found.");
+        return ARKWEB_ERROR_UNKNOWN;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_Destroy(resourceHandler);
+}
+
 int32_t OH_ArkWebResourceHandler_DidReceiveResponse(
     const ArkWeb_ResourceHandler* resourceHandler, const ArkWeb_Response* response)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveResponse) {
         WVLOG_E("OH_ArkWebResourceHandler_DidReceiveResponse not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveResponse(resourceHandler, response);
@@ -714,7 +736,7 @@ int32_t OH_ArkWebResourceHandler_DidReceiveData(
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveData) {
         WVLOG_E("OH_ArkWebResourceHandler_DidReceiveData not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidReceiveData(resourceHandler, buffer, bufLen);
@@ -724,7 +746,7 @@ int32_t OH_ArkWebResourceHandler_DidFinish(const ArkWeb_ResourceHandler* resourc
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFinish) {
         WVLOG_E("OH_ArkWeb_ResourceHandler_DidFinish not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFinish(resourceHandler);
@@ -735,7 +757,7 @@ int32_t OH_ArkWebResourceHandler_DidFailWithError(
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithError) {
         WVLOG_E("OH_ArkWeb_ResourceHandler_DidFailWithError not found.");
-        return ARKWEB_NET_UNKNOWN;
+        return ARKWEB_ERROR_UNKNOWN;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode);
