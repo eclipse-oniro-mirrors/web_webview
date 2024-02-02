@@ -128,9 +128,9 @@ int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rend
     std::string cachePath)
 {
     std::string audioCachePath = cachePath;
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context;
     if (audioCachePath.empty()) {
-        std::shared_ptr<AbilityRuntime::ApplicationContext> context =
-            AbilityRuntime::ApplicationContext::GetApplicationContext();
+        context = AbilityRuntime::ApplicationContext::GetApplicationContext();
         if (!context) {
             WVLOG_E("application context get failed");
             return AUDIO_ERROR;
@@ -164,10 +164,13 @@ int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rend
     }
 
     WVLOG_I("audio renderer create avsession");
-    AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+    AppExecFwk::ElementName elementName;
+    AppExecFwk::ElementName topElementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+    elementName.SetBundleName(context->GetBundleName());
+    elementName.SetAbilityName(topElementName.GetAbilityName());
     int32_t type = (rendererOptions.streamUsage == AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION) ?
         OHOS::AVSession::AVSession::SESSION_TYPE_VOICE_CALL : OHOS::AVSession::AVSession::SESSION_TYPE_AUDIO;
-    avsession_ = AVSessionManager::GetInstance().CreateSession(elementName.GetBundleName(), type, elementName);
+    avsession_ = AVSessionManager::GetInstance().CreateSession(context->GetBundleName(), type, elementName);
     if (avsession_ == nullptr) {
         WVLOG_E("audio renderer create avsession failed");
         return AUDIO_NULL_ERROR;
