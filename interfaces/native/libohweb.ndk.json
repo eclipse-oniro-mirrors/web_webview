@@ -161,6 +161,10 @@
     },
     {
         "first_introduced": "12",
+        "name": "OH_ArkWebResourceRequest_Destroy"
+    },
+    {
+        "first_introduced": "12",
         "name": "OH_ArkWebResourceRequest_SetUserData"
     },
     {
@@ -294,6 +298,10 @@
     {
         "first_introduced": "12",
         "name": "OH_ArkWebResponse_GetHeaderByName"
+    },
+    {
+        "first_introduced": "12",
+        "name": "OH_ArkWebResourceHandler_Destroy"
     },
     {
         "first_introduced": "12",
