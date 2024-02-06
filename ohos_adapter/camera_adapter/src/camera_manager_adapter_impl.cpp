@@ -220,6 +220,11 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
     for (auto cameraObj : cameraObjList) {
         sptr<CameraOutputCapability> outputcapability =
             cameraManager_->GetSupportedOutputCapability(cameraObj);
+        if (outputcapability == nullptr) {
+            WVLOG_E("outputcapability is null");
+            continue;
+        }
+
         VideoDeviceDescriptor deviceDisc;
         deviceDisc.displayName = cameraObj->GetID();
         deviceDisc.deviceId = cameraObj->GetID();
