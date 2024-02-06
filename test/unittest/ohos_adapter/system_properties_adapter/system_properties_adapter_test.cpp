@@ -67,5 +67,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     system("param set web.optimization true");
     bool mode = SystemPropertiesAdapterImpl::GetInstance().GetLockdownModeStatus();
     EXPECT_FALSE(mode);
+    string logMode = SystemPropertiesAdapterImpl::GetInstance().GetNetlogMode();
+    EXPECT_EQ(logMode, "None");
 }
 } // namespace OHOS
