@@ -279,7 +279,7 @@ uint64_t OH_ArkWebPostDataStream_GetSize(const ArkWeb_PostDataStream* postDataSt
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_GetSize) {
         WVLOG_E("OH_ArkWebPostDataStream_GetSize not found.");
-        return -1;
+        return 0;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_GetSize(postDataStream);
@@ -289,7 +289,7 @@ uint64_t OH_ArkWebPostDataStream_GetPosition(const ArkWeb_PostDataStream* postDa
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_GetPosition) {
         WVLOG_E("OH_ArkWebPostDataStream_GetPosition not found.");
-        return -1;
+        return 0;
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebPostDataStream_GetPosition(postDataStream);
