@@ -278,7 +278,7 @@ int32_t ScreenCaptureAdapterImpl::StopCapture()
     return 0;
 }
 
-int32_t ScreenCaptureAdapterImpl::SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter>& callback)
+int32_t ScreenCaptureAdapterImpl::SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter> callback)
 {
     if (!screenCapture_ || !callback || screenCaptureCallback_) {
         WVLOG_E("not init or param error");
@@ -298,7 +298,7 @@ int32_t ScreenCaptureAdapterImpl::SetCaptureCallback(const std::shared_ptr<Scree
     return 0;
 }
 
-std::unique_ptr<SurfaceBufferAdapter> ScreenCaptureAdapterImpl::AcquireVideoBuffer()
+std::shared_ptr<SurfaceBufferAdapter> ScreenCaptureAdapterImpl::AcquireVideoBuffer()
 {
     if (!screenCapture_) {
         WVLOG_E("not init");
@@ -312,7 +312,7 @@ std::unique_ptr<SurfaceBufferAdapter> ScreenCaptureAdapterImpl::AcquireVideoBuff
         WVLOG_E("acquire video buffer failed");
         return nullptr;
     }
-    auto surfaceBufferImpl = std::make_unique<SurfaceBufferAdapterImpl>(surfaceBuffer);
+    auto surfaceBufferImpl = std::make_shared<SurfaceBufferAdapterImpl>(surfaceBuffer);
     if (!surfaceBufferImpl) {
         WVLOG_E("make_unique failed");
         (void)ReleaseVideoBuffer();

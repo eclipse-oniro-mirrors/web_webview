@@ -223,7 +223,7 @@ int32_t AudioRendererAdapterImpl::Write(uint8_t *buffer, size_t bufferSize)
     return audio_renderer_->Write(buffer, bufferSize);
 }
 
-int32_t AudioRendererAdapterImpl::GetLatency(uint64_t &latency) const
+int32_t AudioRendererAdapterImpl::GetLatency(uint64_t &latency)
 {
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer is nullptr");
@@ -232,7 +232,7 @@ int32_t AudioRendererAdapterImpl::GetLatency(uint64_t &latency) const
     return audio_renderer_->GetLatency(latency);
 }
 
-int32_t AudioRendererAdapterImpl::SetVolume(float volume) const
+int32_t AudioRendererAdapterImpl::SetVolume(float volume)
 {
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer is nullptr");
@@ -241,7 +241,7 @@ int32_t AudioRendererAdapterImpl::SetVolume(float volume) const
     return audio_renderer_->SetVolume(volume);
 }
 
-float AudioRendererAdapterImpl::GetVolume() const
+float AudioRendererAdapterImpl::GetVolume()
 {
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer is nullptr");

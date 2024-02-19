@@ -58,27 +58,27 @@ SystemPropertiesAdapterImpl::SystemPropertiesAdapterImpl()
     softwareSeniorVersion_ = versionPartTwo;
 }
 
-bool SystemPropertiesAdapterImpl::GetResourceUseHapPathEnable() const
+bool SystemPropertiesAdapterImpl::GetResourceUseHapPathEnable()
 {
     return OHOS::system::GetBoolParameter("compress", false);
 }
 
-std::string SystemPropertiesAdapterImpl::GetDeviceInfoProductModel() const
+std::string SystemPropertiesAdapterImpl::GetDeviceInfoProductModel()
 {
     return GetProductModel();
 }
 
-std::string SystemPropertiesAdapterImpl::GetDeviceInfoBrand() const
+std::string SystemPropertiesAdapterImpl::GetDeviceInfoBrand()
 {
     return GetBrand();
 }
 
-int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion() const
+int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion()
 {
     return GetMajorVersion();
 }
 
-ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType() const
+ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
 {
     std::string deviceType = OHOS::system::GetDeviceType();
     if (deviceType == "phone" || deviceType == "default") {
@@ -92,12 +92,12 @@ ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType() const
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
 }
 
-bool SystemPropertiesAdapterImpl::GetWebOptimizationValue() const
+bool SystemPropertiesAdapterImpl::GetWebOptimizationValue()
 {
     return OHOS::system::GetBoolParameter("web.optimization", true);
 }
 
-bool SystemPropertiesAdapterImpl::GetLockdownModeStatus() const
+bool SystemPropertiesAdapterImpl::GetLockdownModeStatus()
 {
     char buffer[32] = { 0 };
     uint32_t buffSize = sizeof(buffer);
@@ -108,27 +108,27 @@ bool SystemPropertiesAdapterImpl::GetLockdownModeStatus() const
     return false;
 }
 
-std::string SystemPropertiesAdapterImpl::GetUserAgentOSName() const
+std::string SystemPropertiesAdapterImpl::GetUserAgentOSName()
 {
     return OHOS::system::GetParameter("const.product.os.dist.name", "");
 }
 
-int32_t SystemPropertiesAdapterImpl::GetSoftwareMajorVersion() const
+int32_t SystemPropertiesAdapterImpl::GetSoftwareMajorVersion()
 {
     return softwareMajorVersion_;
 }
 
-int32_t SystemPropertiesAdapterImpl::GetSoftwareSeniorVersion() const
+int32_t SystemPropertiesAdapterImpl::GetSoftwareSeniorVersion()
 {
     return softwareSeniorVersion_;
 }
 
-std::string SystemPropertiesAdapterImpl::GetNetlogMode() const
+std::string SystemPropertiesAdapterImpl::GetNetlogMode()
 {
     return OHOS::system::GetParameter("web.debug.netlog", "");
 }
 
-bool SystemPropertiesAdapterImpl::GetTraceDebugEnable() const
+bool SystemPropertiesAdapterImpl::GetTraceDebugEnable()
 {
     return OHOS::system::GetBoolParameter("web.debug.trace", false);
 }

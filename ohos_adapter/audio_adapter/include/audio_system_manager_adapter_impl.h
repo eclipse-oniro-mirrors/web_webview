@@ -59,25 +59,25 @@ public:
 
     ~AudioSystemManagerAdapterImpl() override = default;
 
-    bool HasAudioOutputDevices() const override;
+    bool HasAudioOutputDevices() override;
 
-    bool HasAudioInputDevices() const override;
+    bool HasAudioInputDevices() override;
 
     int32_t RequestAudioFocus(const AudioAdapterInterrupt &audioInterrupt) override;
 
     int32_t AbandonAudioFocus(const AudioAdapterInterrupt &audioInterrupt) override;
 
-    int32_t SetAudioManagerInterruptCallback(const std::shared_ptr<AudioManagerCallbackAdapter> &callback) override;
+    int32_t SetAudioManagerInterruptCallback(std::shared_ptr<AudioManagerCallbackAdapter> callback) override;
 
     int32_t UnsetAudioManagerInterruptCallback() override;
 
-    std::vector<AudioAdapterDeviceDesc> GetDevices(AdapterDeviceFlag flag) const override;
+    std::vector<AudioAdapterDeviceDesc> GetDevices(AdapterDeviceFlag flag) override;
 
-    int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const override;
+    int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) override;
 
     AudioAdapterDeviceDesc GetDefaultOutputDevice() override;
 
-    int32_t SetDeviceChangeCallback(const std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter>& callback) override;
+    int32_t SetDeviceChangeCallback(std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> callback) override;
 
     int32_t UnsetDeviceChangeCallback() override;
 

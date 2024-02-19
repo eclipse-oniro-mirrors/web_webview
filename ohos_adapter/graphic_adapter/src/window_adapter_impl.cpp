@@ -22,7 +22,6 @@
 #include "foundation/graphic/graphic_surface/surface/include/native_window.h"
 
 namespace OHOS::NWeb {
-const int32_t WindowAdapter::SET_BUFFER_GEOMETRY = NativeWindowOperation::SET_BUFFER_GEOMETRY;
 
 WindowAdapterImpl& WindowAdapterImpl::GetInstance()
 {
@@ -42,23 +41,8 @@ void WindowAdapterImpl::DestroyNativeWindow(NWebNativeWindow window)
     ::DestoryNativeWindow(reinterpret_cast<OHNativeWindow*>(window));
 }
 
-int32_t WindowAdapterImpl::NativeWindowHandleOpt(NWebNativeWindow window, int code, ...)
+int32_t WindowAdapterImpl::NativeWindowSetBufferGeometry(NWebNativeWindow window, int32_t width, int32_t height)
 {
-    va_list args;
-    va_start(args, code);
-    int32_t ret = -1;
-    switch (code) {
-        case SET_BUFFER_GEOMETRY: {
-            int32_t width = va_arg(args, int32_t);
-            int32_t height = va_arg(args, int32_t);
-            ret = ::NativeWindowHandleOpt(reinterpret_cast<OHNativeWindow*>(window), code, width, height);
-            break;
-        }
-        default:
-            WVLOG_E("Unsupport parameter format");
-            break;
-    }
-    va_end(args);
-    return ret;
+    return ::NativeWindowHandleOpt(reinterpret_cast<OHNativeWindow*>(window), SET_BUFFER_GEOMETRY, width, height);
 }
 } // namespace OHOS::NWeb

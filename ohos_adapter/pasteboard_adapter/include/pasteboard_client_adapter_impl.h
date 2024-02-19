@@ -77,13 +77,13 @@ public:
     std::shared_ptr<std::string> GetPrimaryMimeType() override;
     std::shared_ptr<PasteDataRecordAdapter> GetRecordAt(std::size_t index) override;
     std::size_t GetRecordCount() override;
-    PasteRecordList AllRecords() const override;
+    PasteRecordList AllRecords() override;
 private:
     std::shared_ptr<MiscServices::PasteData> data_;
 };
 
 using ObserverMap =
-    std::map<PasteboardObserverAdapter*, sptr<MiscServices::PasteboardObserver>>;
+    std::map<int32_t, sptr<MiscServices::PasteboardObserver>>;
 class PasteBoardClientAdapterImpl : public PasteBoardClientAdapter {
 public:
     static PasteBoardClientAdapterImpl& GetInstance();
@@ -93,10 +93,10 @@ public:
     bool HasPasteData() override;
     void Clear() override;
     int32_t OpenRemoteUri(const std::string& path) override;
-    bool IsLocalPaste() const override;
-    uint32_t GetTokenId() const override;
-    void AddPasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) override;
-    void RemovePasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) override;
+    bool IsLocalPaste() override;
+    uint32_t GetTokenId() override;
+    int32_t AddPasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) override;
+    void RemovePasteboardChangedObserver(int32_t callbackId) override;
 private:
     PasteBoardClientAdapterImpl() = default;
     PasteBoardClientAdapterImpl(const PasteBoardClientAdapterImpl&) = delete;

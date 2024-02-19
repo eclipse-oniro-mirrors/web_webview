@@ -44,7 +44,8 @@ void MMIListenerAdapterImpl::OnDeviceRemoved(int32_t deviceId, const std::string
     }
 };
 
-MMIInputListenerAdapterImpl::MMIInputListenerAdapterImpl(const InputEventCallback& listener) : listener_(listener) {};
+MMIInputListenerAdapterImpl::MMIInputListenerAdapterImpl(std::shared_ptr<MMIInputListenerAdapter> listener) 
+    : listener_(listener) {};
 
 MMIInputListenerAdapterImpl::~MMIInputListenerAdapterImpl()
 {
@@ -61,7 +62,7 @@ void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> ke
         return;
     }
     int32_t keyAction = (keyEvent->GetKeyAction() == MMI::KeyEvent::KEY_ACTION_DOWN) ? KEY_DOWN : KEY_UP;
-    listener_(keyEvent->GetKeyCode(), keyAction);
+    listener_->OnInputEvent(keyEvent->GetKeyCode(), keyAction);
 };
 
 void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const
@@ -72,12 +73,12 @@ void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::AxisEvent> a
 {
 };
 
-const char* MMIAdapterImpl::KeyCodeToString(int32_t keyCode)
+char* MMIAdapterImpl::KeyCodeToString(int32_t keyCode)
 {
-    return MMI::KeyEvent::KeyCodeToString(keyCode);
+    return const_cast<char*>(MMI::KeyEvent::KeyCodeToString(keyCode));
 }
 
-int32_t MMIAdapterImpl::RegisterMMIInputListener(const InputEventCallback&& eventCallback)
+int32_t MMIAdapterImpl::RegisterMMIInputListener(std::shared_ptr<MMIInputListenerAdapter> eventCallback)
 {
     if (!eventCallback) {
         WVLOG_E("register input listener is nullptr");
@@ -109,22 +110,23 @@ int32_t MMIAdapterImpl::UnregisterDevListener(std::string type)
     return InputManager::GetInstance()->UnregisterDevListener(type, devListener_);
 };
 
-int32_t MMIAdapterImpl::GetKeyboardType(int32_t deviceId, std::function<void(int32_t)> callback)
+int32_t MMIAdapterImpl::GetKeyboardType(int32_t deviceId, int32_t& type)
 {
+    std::function<void(int32_t)> callback = [&type](int32_t param) { type = param; };
     return InputManager::GetInstance()->GetKeyboardType(deviceId, callback);
 };
 
-int32_t MMIAdapterImpl::GetDeviceIds(std::function<void(std::vector<int32_t>&)> callback)
+int32_t MMIAdapterImpl::GetDeviceIds(std::vector<int32_t>& ids)
 {
+    std::function<void(std::vector<int32_t>&)> callback = [&ids](std::vector<int32_t>& param) { ids = param; };
     return InputManager::GetInstance()->GetDeviceIds(callback);
 };
 
-int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, std::function<void(const MMIDeviceInfoAdapter&)> callback)
+int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, MMIDeviceInfoAdapter& info)
 {
-    if (!callback) {
-        WVLOG_E("get device info callback is nullptr");
-        return -1;
-    }
+    std::function<void(const MMIDeviceInfoAdapter&)> callback = 
+        [&info](const MMIDeviceInfoAdapter& param) { info = const_cast<MMIDeviceInfoAdapter&>(param); };
+
     int32_t ret = InputManager::GetInstance()->GetDevice(deviceId,
         [&callback](std::shared_ptr<MMI::InputDevice> device) {
             MMIDeviceInfoAdapter info;

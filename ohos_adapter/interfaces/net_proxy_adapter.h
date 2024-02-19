@@ -16,19 +16,25 @@
 #ifndef NET_PROXY_ADAPTER_H
 #define NET_PROXY_ADAPTER_H
 
-#include <functional>
 #include <memory>
 
 namespace OHOS::NWeb {
 
-using NetProxyEventCallback = std::function<void(
-    std::string& host, uint16_t& port, const std::string& pacUrl, const std::vector<std::string>& exclusionList)>;
+class NetProxyEventCallbackAdapter {
+public:
+    NetProxyEventCallbackAdapter() = default;
+    virtual ~NetProxyEventCallbackAdapter() = default;
+
+    virtual void Changed(const std::string& host, const uint16_t& port, const std::string& pacUrl, 
+                         const std::vector<std::string>& exclusionList) = 0;
+};
+
 class NetProxyAdapter {
 public:
     NetProxyAdapter() = default;
     virtual ~NetProxyAdapter() = default;
 
-    virtual void RegNetProxyEvent(const NetProxyEventCallback&& eventCallback) = 0;
+    virtual void RegNetProxyEvent(std::shared_ptr<NetProxyEventCallbackAdapter> eventCallback) = 0;
 
     virtual bool StartListen() = 0;
 

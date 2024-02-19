@@ -32,15 +32,9 @@ bool IsSupportFormat(int32_t format)
 }
 } // namespace
 
-const int32_t GSErrorCode::GSERROR_OK = GSError::GSERROR_OK;
-
-const int32_t PixelFormatAdapter::PIXEL_FMT_RGBA_8888 = PixelFormat::PIXEL_FMT_RGBA_8888;
-
-const int32_t PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP = PixelFormat::PIXEL_FMT_YCBCR_420_SP;
-
 SurfaceBufferAdapterImpl::SurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer) : buffer_(buffer) {}
 
-int32_t SurfaceBufferAdapterImpl::GetFileDescriptor() const
+int32_t SurfaceBufferAdapterImpl::GetFileDescriptor()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -49,7 +43,7 @@ int32_t SurfaceBufferAdapterImpl::GetFileDescriptor() const
     return buffer_->GetFileDescriptor();
 }
 
-int32_t SurfaceBufferAdapterImpl::GetWidth() const
+int32_t SurfaceBufferAdapterImpl::GetWidth()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -58,7 +52,7 @@ int32_t SurfaceBufferAdapterImpl::GetWidth() const
     return buffer_->GetWidth();
 }
 
-int32_t SurfaceBufferAdapterImpl::GetHeight() const
+int32_t SurfaceBufferAdapterImpl::GetHeight()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -67,7 +61,7 @@ int32_t SurfaceBufferAdapterImpl::GetHeight() const
     return buffer_->GetHeight();
 }
 
-int32_t SurfaceBufferAdapterImpl::GetStride() const
+int32_t SurfaceBufferAdapterImpl::GetStride()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -76,7 +70,7 @@ int32_t SurfaceBufferAdapterImpl::GetStride() const
     return buffer_->GetStride();
 }
 
-int32_t SurfaceBufferAdapterImpl::GetFormat() const
+int32_t SurfaceBufferAdapterImpl::GetFormat()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -85,7 +79,7 @@ int32_t SurfaceBufferAdapterImpl::GetFormat() const
     return buffer_->GetFormat();
 }
 
-uint32_t SurfaceBufferAdapterImpl::GetSize() const
+uint32_t SurfaceBufferAdapterImpl::GetSize()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -94,7 +88,7 @@ uint32_t SurfaceBufferAdapterImpl::GetSize() const
     return buffer_->GetSize();
 }
 
-void* SurfaceBufferAdapterImpl::GetVirAddr() const
+void* SurfaceBufferAdapterImpl::GetVirAddr()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -109,7 +103,7 @@ sptr<SurfaceBuffer>& SurfaceBufferAdapterImpl::GetBuffer()
 }
 
 BufferConsumerListenerImpl::BufferConsumerListenerImpl(
-    wptr<IConsumerSurface> surface, std::unique_ptr<IBufferConsumerListenerAdapter> listener)
+    wptr<IConsumerSurface> surface, std::shared_ptr<IBufferConsumerListenerAdapter> listener)
     : cSurface_(surface), listener_(std::move(listener))
 {}
 
@@ -129,7 +123,7 @@ void BufferConsumerListenerImpl::OnBufferAvailable()
     int64_t timestamp;
     Rect damage;
     GSError ret = surfaceTemp->AcquireBuffer(buffer, fence, timestamp, damage);
-    if (ret != GSERROR_OK) {
+    if (ret != (int32_t)GSERROR_OK) {
         WVLOG_E("acquire buffer failed, ret=%{public}d", ret);
         return;
     }
@@ -139,14 +133,14 @@ void BufferConsumerListenerImpl::OnBufferAvailable()
         surfaceTemp->ReleaseBuffer(buffer, -1);
         return;
     }
-    auto bufferAdapter = std::make_unique<SurfaceBufferAdapterImpl>(buffer);
+    auto bufferAdapter = std::make_shared<SurfaceBufferAdapterImpl>(buffer);
     listener_->OnBufferAvailable(std::move(bufferAdapter));
 }
 
 ConsumerSurfaceAdapterImpl::ConsumerSurfaceAdapterImpl() : cSurface_(IConsumerSurface::Create()) {}
 
 int32_t ConsumerSurfaceAdapterImpl::RegisterConsumerListener(
-    std::unique_ptr<IBufferConsumerListenerAdapter> listenerAdapter)
+    std::shared_ptr<IBufferConsumerListenerAdapter> listenerAdapter)
 {
     if (!cSurface_ || !listenerAdapter) {
         WVLOG_E("cSurface_ or listener_ is nullptr");
@@ -161,7 +155,7 @@ int32_t ConsumerSurfaceAdapterImpl::RegisterConsumerListener(
     return cSurface_->RegisterConsumerListener(listener);
 }
 
-int32_t ConsumerSurfaceAdapterImpl::ReleaseBuffer(std::unique_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence)
+int32_t ConsumerSurfaceAdapterImpl::ReleaseBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence)
 {
     if (!cSurface_ || !bufferAdapter) {
         WVLOG_E("cSurface_ or bufferAdapter is nullptr");

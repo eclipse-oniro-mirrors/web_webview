@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2022 Huawei Device Co., Ltd.
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License") = 0;
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -58,84 +58,77 @@ public:
 
     virtual ~OhosAdapterHelper() = default;
 
-    std::unique_ptr<AafwkAppMgrClientAdapter> CreateAafwkAdapter();
+    virtual std::unique_ptr<AafwkAppMgrClientAdapter> CreateAafwkAdapter() = 0;
 
-    std::unique_ptr<PowerMgrClientAdapter> CreatePowerMgrClientAdapter();
+    virtual std::unique_ptr<PowerMgrClientAdapter> CreatePowerMgrClientAdapter() = 0;
 
-    std::unique_ptr<DisplayManagerAdapter> CreateDisplayMgrAdapter();
+    virtual std::unique_ptr<DisplayManagerAdapter> CreateDisplayMgrAdapter() = 0;
 
-    std::unique_ptr<BatteryMgrClientAdapter> CreateBatteryClientAdapter();
+    virtual std::unique_ptr<BatteryMgrClientAdapter> CreateBatteryClientAdapter() = 0;
 
-    std::unique_ptr<NetConnectAdapter> CreateNetConnectAdapter();
+    virtual std::unique_ptr<NetConnectAdapter> CreateNetConnectAdapter() = 0;
 
-    OhosWebDataBaseAdapter& GetOhosWebDataBaseAdapterInstance();
+    virtual OhosWebDataBaseAdapter& GetOhosWebDataBaseAdapterInstance() = 0;
 
-    PasteBoardClientAdapter& GetPasteBoard() const;
+    virtual PasteBoardClientAdapter& GetPasteBoard() = 0;
 
-    std::unique_ptr<AudioRendererAdapter> CreateAudioRendererAdapter();
+    virtual std::unique_ptr<AudioRendererAdapter> CreateAudioRendererAdapter() = 0;
 
-    std::unique_ptr<AudioCapturerAdapter> CreateAudioCapturerAdapter();
+    virtual std::unique_ptr<AudioCapturerAdapter> CreateAudioCapturerAdapter() = 0;
 
-    AudioSystemManagerAdapter& GetAudioSystemManager() const;
+    virtual AudioSystemManagerAdapter& GetAudioSystemManager() = 0;
 
-    OhosWebPermissionDataBaseAdapter& GetWebPermissionDataBaseInstance();
+    virtual OhosWebPermissionDataBaseAdapter& GetWebPermissionDataBaseInstance() = 0;
 
-    std::unique_ptr<MMIAdapter> CreateMMIAdapter();
+    virtual std::unique_ptr<MMIAdapter> CreateMMIAdapter() = 0;
 
-    std::unique_ptr<SocPerfClientAdapter> CreateSocPerfClientAdapter();
+    virtual std::unique_ptr<SocPerfClientAdapter> CreateSocPerfClientAdapter() = 0;
 
-    std::unique_ptr<OhosResourceAdapter> GetResourceAdapter(const std::string& hapPath = "") const;
+    virtual std::unique_ptr<OhosResourceAdapter> GetResourceAdapter(const std::string& hapPath = "") = 0;
 
-    SystemPropertiesAdapter& GetSystemPropertiesInstance() const;
+    virtual SystemPropertiesAdapter& GetSystemPropertiesInstance() = 0;
 
-    VSyncAdapter& GetVSyncAdapter() const;
+    virtual VSyncAdapter& GetVSyncAdapter() = 0;
 
-    std::unique_ptr<OhosInitWebAdapter> GetInitWebAdapter() const;
+    virtual std::unique_ptr<OhosInitWebAdapter> GetInitWebAdapter() = 0;
 
-    KeystoreAdapter& GetKeystoreAdapterInstance() const;
+    virtual KeystoreAdapter& GetKeystoreAdapterInstance() = 0;
 
-    EnterpriseDeviceManagementAdapter& GetEnterpriseDeviceManagementInstance() const;
+    virtual EnterpriseDeviceManagementAdapter& GetEnterpriseDeviceManagementInstance() = 0;
 
-    DatashareAdapter& GetDatashareInstance() const;
+    virtual DatashareAdapter& GetDatashareInstance() = 0;
 
-    std::unique_ptr<IMFAdapter> CreateIMFAdapter() const;
+    virtual std::unique_ptr<IMFAdapter> CreateIMFAdapter() = 0;
 
-    std::unique_ptr<CertManagerAdapter> GetRootCertDataAdapter() const;
+    virtual std::unique_ptr<CertManagerAdapter> GetRootCertDataAdapter() = 0;
 
-    AccessTokenAdapter& GetAccessTokenAdapterInstance() const;
+    virtual AccessTokenAdapter& GetAccessTokenAdapterInstance() = 0;
 
-    std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() const;
+    virtual std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() = 0;
 
-    PrintManagerAdapter& GetPrintManagerInstance() const;
+    virtual PrintManagerAdapter& GetPrintManagerInstance() = 0;
 
-    std::unique_ptr<IConsumerSurfaceAdapter> CreateConsumerSurfaceAdapter() const;
+    virtual std::unique_ptr<IConsumerSurfaceAdapter> CreateConsumerSurfaceAdapter() = 0;
 
-    std::unique_ptr<PlayerAdapter> CreatePlayerAdapter() const;
+    virtual std::unique_ptr<PlayerAdapter> CreatePlayerAdapter() = 0;
 
-    WindowAdapter& GetWindowAdapterInstance() const;
+    virtual WindowAdapter& GetWindowAdapterInstance() = 0;
 
-    HiSysEventAdapter& GetHiSysEventAdapterInstance() const;
+    virtual HiSysEventAdapter& GetHiSysEventAdapterInstance() = 0;
 
-    HiTraceAdapter& GetHiTraceAdapterInstance() const;
+    virtual HiTraceAdapter& GetHiTraceAdapterInstance() = 0;
 
-    NetProxyAdapter& GetNetProxyInstance() const;
+    virtual NetProxyAdapter& GetNetProxyInstance() = 0;
 
-    CameraManagerAdapter& GetCameraManagerAdapter() const;
+    virtual CameraManagerAdapter& GetCameraManagerAdapter() = 0;
 
-    std::unique_ptr<ScreenCaptureAdapter> CreateScreenCaptureAdapter() const;
+    virtual std::unique_ptr<ScreenCaptureAdapter> CreateScreenCaptureAdapter() = 0;
 
-    std::unique_ptr<DateTimeFormatAdapter> CreateDateTimeFormatAdapter() const;
+    virtual std::unique_ptr<DateTimeFormatAdapter> CreateDateTimeFormatAdapter() = 0;
 
-    std::unique_ptr<MediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() const;
-    
-    std::unique_ptr<NativeImageAdapter> CreateNativeImageAdapter() const;
+    virtual std::unique_ptr<MediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() = 0;
 
-private:
-    OhosAdapterHelper() = default;
-
-    OhosAdapterHelper(const OhosAdapterHelper&) = delete;
-
-    OhosAdapterHelper& operator=(const OhosAdapterHelper&) = delete;
+    virtual std::unique_ptr<NativeImageAdapter> CreateNativeImageAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 

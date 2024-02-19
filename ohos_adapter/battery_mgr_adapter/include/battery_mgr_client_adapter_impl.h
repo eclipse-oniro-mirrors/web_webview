@@ -48,11 +48,11 @@ private:
 
 class NWebBatteryEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
-    NWebBatteryEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, BatteryEventCallback& cb);
+    NWebBatteryEventSubscriber(EventFwk::CommonEventSubscribeInfo& in,  std::shared_ptr<WebBatteryEventCallback> cb);
     ~NWebBatteryEventSubscriber() override = default;
     void OnReceiveEvent(const EventFwk::CommonEventData &data) override;
 private:
-    BatteryEventCallback eventCallback_;
+    std::shared_ptr<WebBatteryEventCallback> eventCallback_;
 };
 
 class BatteryMgrClientAdapterImpl : public BatteryMgrClientAdapter {
@@ -60,15 +60,15 @@ public:
     BatteryMgrClientAdapterImpl() = default;
     ~BatteryMgrClientAdapterImpl() override = default;
 
-    void RegBatteryEvent(const BatteryEventCallback&& eventCallback) override;
+    void RegBatteryEvent(std::shared_ptr<WebBatteryEventCallback> eventCallback) override;
   
     bool StartListen() override;
 
     void StopListen() override;
 
-    std::unique_ptr<WebBatteryInfo> RequestBatteryInfo() override;
+    std::shared_ptr<WebBatteryInfo> RequestBatteryInfo() override;
 private:
-    BatteryEventCallback cb = nullptr;
+    std::shared_ptr<WebBatteryEventCallback> cb_ = nullptr;
     std::shared_ptr<EventFwk::CommonEventSubscriber> commonEventSubscriber_ = nullptr;
 };
 }

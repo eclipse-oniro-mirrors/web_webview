@@ -22,7 +22,7 @@
 namespace OHOS::NWeb {
 class PlayerCallbackImpl : public Media::PlayerCallback {
 public:
-    explicit PlayerCallbackImpl(std::unique_ptr<PlayerCallbackAdapter> callback);
+    explicit PlayerCallbackImpl(std::shared_ptr<PlayerCallbackAdapter> callback);
 
     ~PlayerCallbackImpl() = default;
 
@@ -31,7 +31,7 @@ public:
     void OnError(int32_t errorCode, const std::string& errorMsg) override;
 
 private:
-    std::unique_ptr<PlayerCallbackAdapter> callbackAdapter_ = nullptr;
+    std::shared_ptr<PlayerCallbackAdapter> callbackAdapter_ = nullptr;
 };
 
 class PlayerAdapterImpl : public PlayerAdapter {
@@ -40,13 +40,13 @@ public:
 
     ~PlayerAdapterImpl() override;
 
-    int32_t SetPlayerCallback(std::unique_ptr<PlayerCallbackAdapter> callbackAdapter) override;
+    int32_t SetPlayerCallback(std::shared_ptr<PlayerCallbackAdapter> callbackAdapter) override;
 
     int32_t SetSource(const std::string& url) override;
 
     int32_t SetSource(int32_t fd, int64_t offset = 0, int64_t size = 0) override;
 
-    int32_t SetVideoSurface(IConsumerSurfaceAdapter* cSurfaceAdapter) override;
+    int32_t SetVideoSurface(std::shared_ptr<IConsumerSurfaceAdapter> cSurfaceAdapter) override;
 
     int32_t SetVolume(float leftVolume, float rightVolume) override;
 

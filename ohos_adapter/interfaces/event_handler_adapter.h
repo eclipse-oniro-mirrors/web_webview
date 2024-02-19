@@ -35,11 +35,16 @@ public:
     virtual ~EventHandlerAdapter() = default;
 
     virtual bool AddFileDescriptorListener(
-        int32_t fileDescriptor, uint32_t events, const std::shared_ptr<EventHandlerFDListenerAdapter>& listener) = 0;
+        int32_t fileDescriptor, uint32_t events, const std::shared_ptr<EventHandlerFDListenerAdapter> listener) = 0;
 
     virtual void RemoveFileDescriptorListener(int32_t fileDescriptor) = 0;
 
-    static const uint32_t INPUT_EVENT;
+    // be consistent with 
+    // rom/base/notification/eventhandler/interfaces/inner_api/file_descriptor_listener.h
+    // FILE_DESCRIPTOR_INPUT_EVENT
+    enum {
+      INPUT_EVENT = 1,
+    };
 };
 } // namespace OHOS::NWeb
 

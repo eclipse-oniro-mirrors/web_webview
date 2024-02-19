@@ -218,10 +218,9 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_005, TestS
     EXPECT_NE(displayManagerAdapterImpl, nullptr);
     EXPECT_NE(displayManagerAdapterImpl->GetDefaultDisplayId(), DISPLAY_ID_INVALID);
     EXPECT_NE(displayManagerAdapterImpl->GetDefaultDisplay(), nullptr);
-    EXPECT_EQ(displayManagerAdapterImpl->RegisterDisplayListener(listener), true);
-    EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(listener));
-    std::shared_ptr<DisplayListenerAdapter> listener1 = std::make_shared<DisplayListenerAdapterTest>();
-    EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(listener1));
+    EXPECT_EQ(displayManagerAdapterImpl->RegisterDisplayListener(listener), 1);
+    EXPECT_EQ(displayManagerAdapterImpl->UnregisterDisplayListener(1), true);
+    EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(2));
     g_unregister = DMError::DM_OK;
 }
 

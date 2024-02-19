@@ -20,7 +20,7 @@
 #include <string>
 
 namespace OHOS::NWeb {
-enum class NetConnectType {
+enum class NetConnectType : uint32_t {
     CONNECTION_UNKNOWN = 0,
     CONNECTION_ETHERNET = 1,
     CONNECTION_WIFI = 2,
@@ -33,7 +33,7 @@ enum class NetConnectType {
     CONNECTION_LAST = CONNECTION_5G
 };
 
-enum class NetConnectSubtype {
+enum class NetConnectSubtype : uint32_t {
     SUBTYPE_UNKNOWN = 0,
     SUBTYPE_NONE,
     SUBTYPE_OTHER,
@@ -72,6 +72,9 @@ enum class NetConnectSubtype {
 
 class NetConnCallback {
 public:
+    NetConnCallback() = default;
+    virtual ~NetConnCallback() = default;
+
     virtual int32_t NetAvailable() = 0;
     virtual int32_t NetCapabilitiesChange(const NetConnectType &netConnectType,
                                           const NetConnectSubtype &netConnectSubtype) = 0;
@@ -87,7 +90,7 @@ public:
 
     virtual int32_t RegisterNetConnCallback(std::shared_ptr<NetConnCallback> cb) = 0;
 
-    virtual int32_t UnregisterNetConnCallback(std::shared_ptr<NetConnCallback> cb) = 0;
+    virtual int32_t UnregisterNetConnCallback(int32_t id) = 0;
 
     virtual int32_t GetDefaultNetConnect(NetConnectType &type, NetConnectSubtype &netConnectSubtype) = 0;
 };

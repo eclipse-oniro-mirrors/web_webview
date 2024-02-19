@@ -20,11 +20,8 @@ config("ohos_glue_config") {
 
 ohos_shared_library("ohos_base_glue_source") {
   defines = [ "OHOS_GLUE_DEBUG" ]
-
   configs = [ ":ohos_glue_config" ]
-
   include_dirs = [ "../ohos_nweb" ]
-
   sources = [
     "base/bridge/ark_web_bridge_helper.cc",
     "base/bridge/ark_web_bridge_helper.h",
@@ -35,7 +32,6 @@ ohos_shared_library("ohos_base_glue_source") {
   ]
 
   external_deps = [ "hilog:libhilog" ]
-
   part_name = "webview"
   subsystem_name = "web"
 }

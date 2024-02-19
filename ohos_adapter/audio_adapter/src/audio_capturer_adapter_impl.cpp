@@ -146,8 +146,13 @@ bool AudioCapturerAdapterImpl::Release()
 }
 
 int32_t AudioCapturerAdapterImpl::SetCapturerReadCallback(
-    const std::shared_ptr<AudioCapturerReadCallbackAdapter> &callback)
+    std::shared_ptr<AudioCapturerReadCallbackAdapter> callback)
 {
+    if (callback == nullptr) {
+        WVLOG_E("audio capturer callback is nullptr");
+        return AUDIO_NULL_ERROR;
+    } 
+
     if (audio_capturer_ == nullptr) {
         WVLOG_E("audio capturer is nullptr");
         return AUDIO_NULL_ERROR;
@@ -174,7 +179,7 @@ int32_t AudioCapturerAdapterImpl::GetBufferDesc(BufferDescAdapter &bufferDesc)
     return 0;
 }
 
-int32_t AudioCapturerAdapterImpl::Enqueue(const BufferDescAdapter &bufferDesc) const
+int32_t AudioCapturerAdapterImpl::Enqueue(const BufferDescAdapter &bufferDesc)
 {
     if (audio_capturer_ == nullptr) {
         WVLOG_E("audio capturer is nullptr");
@@ -187,7 +192,7 @@ int32_t AudioCapturerAdapterImpl::Enqueue(const BufferDescAdapter &bufferDesc) c
     return audio_capturer_->Enqueue(bufDesc);
 }
 
-int32_t AudioCapturerAdapterImpl::GetFrameCount(uint32_t &frameCount) const
+int32_t AudioCapturerAdapterImpl::GetFrameCount(uint32_t &frameCount)
 {
     if (audio_capturer_ == nullptr) {
         WVLOG_E("audio capturer is nullptr");

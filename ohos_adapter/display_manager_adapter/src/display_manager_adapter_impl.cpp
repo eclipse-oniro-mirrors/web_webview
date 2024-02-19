@@ -146,22 +146,33 @@ std::shared_ptr<DisplayAdapter> DisplayManagerAdapterImpl::GetDefaultDisplay()
     return std::make_shared<DisplayAdapterImpl>(display);
 }
 
-bool DisplayManagerAdapterImpl::RegisterDisplayListener(
+uint32_t DisplayManagerAdapterImpl::RegisterDisplayListener(
     std::shared_ptr<DisplayListenerAdapter> listener)
 {
+    static uint32_t count = 1;   
     sptr<DisplayListenerAdapterImpl> reg =
         new (std::nothrow) DisplayListenerAdapterImpl(listener);
     if (reg == nullptr) {
         return false;
     }
-    reg_.emplace(std::make_pair(listener.get(), reg));
-    return DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK;
+    
+    uint32_t id = count++;
+    if (count == 0) {
+        count++;
+    }
+    
+    reg_.emplace(std::make_pair(id, reg));
+    
+    if (DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK) {
+        return id;
+    } else {
+        return 0;  
+    }
 }
 
-bool DisplayManagerAdapterImpl::UnregisterDisplayListener(
-    std::shared_ptr<DisplayListenerAdapter> listener)
+bool DisplayManagerAdapterImpl::UnregisterDisplayListener(uint32_t id)
 {
-    ListenerMap::iterator iter = reg_.find(listener.get());
+    ListenerMap::iterator iter = reg_.find(id);
     if (iter == reg_.end()) {
         return false;
     }

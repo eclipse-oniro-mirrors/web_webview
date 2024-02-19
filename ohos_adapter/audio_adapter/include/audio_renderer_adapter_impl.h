@@ -64,11 +64,11 @@ public:
 
     int32_t Write(uint8_t *buffer, size_t bufferSize) override;
 
-    int32_t GetLatency(uint64_t &latency) const override;
+    int32_t GetLatency(uint64_t &latency) override;
 
-    int32_t SetVolume(float volume) const override;
+    int32_t SetVolume(float volume) override;
 
-    float GetVolume() const override;
+    float GetVolume() override;
 
     int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback) override;
 

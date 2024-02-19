@@ -116,7 +116,7 @@ AudioSystemManagerAdapterImpl& AudioSystemManagerAdapterImpl::GetInstance()
     return instance;
 }
 
-bool AudioSystemManagerAdapterImpl::HasAudioOutputDevices() const
+bool AudioSystemManagerAdapterImpl::HasAudioOutputDevices()
 {
     DeviceType outputDeviceType = AudioSystemManager::GetInstance()->GetActiveOutputDevice();
     if (outputDeviceType == DeviceType::DEVICE_TYPE_NONE || outputDeviceType == DeviceType::DEVICE_TYPE_INVALID) {
@@ -125,7 +125,7 @@ bool AudioSystemManagerAdapterImpl::HasAudioOutputDevices() const
     return true;
 }
 
-bool AudioSystemManagerAdapterImpl::HasAudioInputDevices() const
+bool AudioSystemManagerAdapterImpl::HasAudioInputDevices()
 {
     DeviceType inputDeviceType = AudioSystemManager::GetInstance()->GetActiveInputDevice();
     if (inputDeviceType == DeviceType::DEVICE_TYPE_NONE || inputDeviceType == DeviceType::DEVICE_TYPE_INVALID) {
@@ -165,7 +165,7 @@ int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const AudioAdapterInter
 }
 
 int32_t AudioSystemManagerAdapterImpl::SetAudioManagerInterruptCallback(
-    const std::shared_ptr<AudioManagerCallbackAdapter>& callback)
+    std::shared_ptr<AudioManagerCallbackAdapter> callback)
 {
     if (callback == nullptr) {
         WVLOG_E("set audio manager interrupt callback is nullptr");
@@ -192,7 +192,7 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return AUDIO_OK;
 }
 
-std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag) const
+std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag)
 {
     bool isCallDevice = false;
     auto audioScene = AudioSystemManager::GetInstance()->GetAudioScene();
@@ -243,7 +243,7 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioOutputDevice(
     return AudioSystemManager::GetInstance()->SelectOutputDevice(device);
 }
 
-int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const
+int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) 
 {
     WVLOG_I("AudioSystemManagerAdapterImpl::SelectAudioDevice isInput: %{public}s", isInput ? "true" : "false");
     if (desc.deviceId == ADAPTER_AUDIO_UNDEFINED_DEVICE_ID) {
@@ -362,7 +362,7 @@ AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultInputDevice()
 }
 
 int32_t AudioSystemManagerAdapterImpl::SetDeviceChangeCallback(
-    const std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter>& callback)
+    std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> callback)
 {
     if (callback == nullptr) {
         WVLOG_E("audio device change callback is nullptr");

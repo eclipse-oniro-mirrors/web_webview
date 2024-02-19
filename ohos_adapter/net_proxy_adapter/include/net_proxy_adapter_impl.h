@@ -34,7 +34,7 @@ public:
 
     static NetProxyAdapterImpl& GetInstance();
 
-    void RegNetProxyEvent(const NetProxyEventCallback&& eventCallback) override;
+    void RegNetProxyEvent(std::shared_ptr<NetProxyEventCallbackAdapter> eventCallback) override;
 
     bool StartListen() override;
 
@@ -43,7 +43,7 @@ public:
     void GetProperty(std::string& host, uint16_t& port, std::string& pacUrl, std::string& exclusion) override;
 
 private:
-    NetProxyEventCallback cb_ = nullptr;
+    std::shared_ptr<NetProxyEventCallbackAdapter> cb_ = nullptr;
     uint32_t appProxyCallbackId_ = 0;
     void StartListenAppProxy();
     std::shared_ptr<EventFwk::CommonEventSubscriber> commonEventSubscriber_ = nullptr;
@@ -51,12 +51,12 @@ private:
 
 class NetProxyEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
-    NetProxyEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, NetProxyEventCallback& cb);
+    NetProxyEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, std::shared_ptr<NetProxyEventCallbackAdapter> cb);
     ~NetProxyEventSubscriber() override = default;
     void OnReceiveEvent(const EventFwk::CommonEventData& data) override;
 
 private:
-    NetProxyEventCallback eventCallback_ = nullptr;
+    std::shared_ptr<NetProxyEventCallbackAdapter> eventCallback_ = nullptr;
 };
 
 namespace Base64 {

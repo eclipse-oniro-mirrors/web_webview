@@ -32,6 +32,11 @@ const ::LogLevel LOG_LEVELS[] = {
 
 extern "C" {
 int HiLogPrintArgs(LogType type, LogLevel level, unsigned int domain, const char* tag, const char* fmt, va_list ap);
+
+int HiLogAdapterPrintLog(uint32_t level, const char* tag, const char* fmt, va_list ap) {
+  int ret = HiLogPrintArgs(LOG_CORE, LOG_LEVELS[level], NWEB_LOG_DOMAIN, tag, fmt, ap);
+  return ret;
+}
 }
 
 int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)

@@ -48,14 +48,15 @@ private:
 
 class NWebTimeZoneEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
-    NWebTimeZoneEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, TimeZoneEventCallback& cb);
+    NWebTimeZoneEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, 
+                                std::shared_ptr<TimezoneEventCallbackAdapter> cb);
 
     ~NWebTimeZoneEventSubscriber() override = default;
 
     void OnReceiveEvent(const EventFwk::CommonEventData& data) override;
 
 private:
-    TimeZoneEventCallback eventCallback_;
+    std::shared_ptr<TimezoneEventCallbackAdapter> eventCallback_;
 };
 
 class DateTimeFormatAdapterImpl : public DateTimeFormatAdapter {
@@ -64,7 +65,7 @@ public:
 
     ~DateTimeFormatAdapterImpl() override = default;
 
-    void RegTimezoneEvent(const TimeZoneEventCallback&& eventCallback) override;
+    void RegTimezoneEvent(const std::shared_ptr<TimezoneEventCallbackAdapter> eventCallback) override;
 
     bool StartListen() override;
 
@@ -73,7 +74,7 @@ public:
     std::string GetTimezone() override;
 
 private:
-    TimeZoneEventCallback cb_ = nullptr;
+    std::shared_ptr<TimezoneEventCallbackAdapter> cb_ = nullptr;
     std::shared_ptr<EventFwk::CommonEventSubscriber> commonEventSubscriber_ = nullptr;
 };
 } // namespace OHOS::NWeb

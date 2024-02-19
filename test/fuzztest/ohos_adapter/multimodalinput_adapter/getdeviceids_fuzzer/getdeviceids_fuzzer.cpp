@@ -26,8 +26,8 @@ namespace OHOS {
             return false;
         }
         std::shared_ptr<MMIAdapterImpl> AdapterImpl = std::make_shared<MMIAdapterImpl>();
-        auto callback = [](std::vector<int32_t>& devList) {};
-        AdapterImpl->GetDeviceIds(callback);
+        std::vector<int32_t> devList;
+        AdapterImpl->GetDeviceIds(devList);
         return true;
     }
 }

@@ -138,7 +138,7 @@ Media::PlaybackRateMode ConvertRateMode(NWeb::PlaybackRateMode mode)
 }
 } // namespace
 
-PlayerCallbackImpl::PlayerCallbackImpl(std::unique_ptr<PlayerCallbackAdapter> callback)
+PlayerCallbackImpl::PlayerCallbackImpl(std::shared_ptr<PlayerCallbackAdapter> callback)
     : callbackAdapter_(std::move(callback))
 {}
 
@@ -181,7 +181,7 @@ PlayerAdapterImpl::~PlayerAdapterImpl()
     }
 }
 
-int32_t PlayerAdapterImpl::SetPlayerCallback(std::unique_ptr<PlayerCallbackAdapter> callbackAdapter)
+int32_t PlayerAdapterImpl::SetPlayerCallback(std::shared_ptr<PlayerCallbackAdapter> callbackAdapter)
 {
     if (!player_ || !callbackAdapter) {
         WVLOG_E("player_ or callbackAdapter is nullptr");
@@ -209,13 +209,13 @@ int32_t PlayerAdapterImpl::SetSource(int32_t fd, int64_t offset, int64_t size)
     return player_->SetSource(fd, offset, size);
 }
 
-int32_t PlayerAdapterImpl::SetVideoSurface(IConsumerSurfaceAdapter* cSurfaceAdapter)
+int32_t PlayerAdapterImpl::SetVideoSurface(std::shared_ptr<IConsumerSurfaceAdapter> cSurfaceAdapter)
 {
     if (!player_ || !cSurfaceAdapter) {
         WVLOG_E("player_  or cSurfaceAdapter is nullptr");
         return -1;
     }
-    auto cSurface = static_cast<ConsumerSurfaceAdapterImpl*>(cSurfaceAdapter)->GetConsumerSurface();
+    auto cSurface = std::static_pointer_cast<ConsumerSurfaceAdapterImpl>(cSurfaceAdapter)->GetConsumerSurface();
     cSurface->SetDefaultUsage(BUFFER_USAGE_CPU_READ);
     sptr<IBufferProducer> producer = cSurface->GetProducer();
     sptr<Surface> pSurface = Surface::CreateSurfaceAsProducer(producer);

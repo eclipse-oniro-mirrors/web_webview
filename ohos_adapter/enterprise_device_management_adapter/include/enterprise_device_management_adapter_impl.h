@@ -29,12 +29,14 @@ namespace OHOS::NWeb {
 #if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 class NWebEdmEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
-    NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, EdmPolicyChangedEventCallback& cb);
+    NWebEdmEventSubscriber(EventFwk::CommonEventSubscribeInfo& in,
+                           std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> cb);
+
     ~NWebEdmEventSubscriber() override = default;
 
     void OnReceiveEvent(const EventFwk::CommonEventData& data) override;
 private:
-    EdmPolicyChangedEventCallback eventCallback_;
+    std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> eventCallback_;
 };
 #endif
 
@@ -49,7 +51,7 @@ public:
      *
      * @param eventCallback EDM policy change event callback.
      */
-    void RegistPolicyChangeEventCallback(const EdmPolicyChangedEventCallback&& eventCallback) override;
+    void RegistPolicyChangeEventCallback(std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> eventCallback) override;
 
     /**
      * Subscribe EDM policy change event from CommonEventSubscriber.
@@ -70,7 +72,7 @@ private:
     EnterpriseDeviceManagementAdapterImpl(const EnterpriseDeviceManagementAdapterImpl& other) = delete;
     EnterpriseDeviceManagementAdapterImpl& operator=(const EnterpriseDeviceManagementAdapterImpl&) = delete;
 
-    EdmPolicyChangedEventCallback eventCallback_ = nullptr;
+    std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> eventCallback_ = nullptr;
     std::shared_ptr<EventFwk::CommonEventSubscriber> commonEventSubscriber_ = nullptr;
 };
 

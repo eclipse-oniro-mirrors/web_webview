@@ -30,8 +30,7 @@ namespace OHOS {
             return false;
         }
         DisplayManagerAdapterImpl display;
-        std::shared_ptr<DisplayListenerAdapter> listener =nullptr;
-        display.UnregisterDisplayListener(listener);
+        display.UnregisterDisplayListener(0);
         return true;
     }
 }
