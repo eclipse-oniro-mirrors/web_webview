@@ -59,10 +59,17 @@ public:
 
     void OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
         const PrintAttributesAdapter& newAttrs, uint32_t fd,
-        std::function<void(std::string, uint32_t)> writeResultCallback) override {}
+        std::shared_ptr<PrintWriteResultCallbackAdapter> callback) override {}
 
     void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}
 };
+
+class MockPrintWriteResultCallbackAdapter : public PrintWriteResultCallbackAdapter {
+    public:
+        MockPrintWriteResultCallbackAdapter() = default;
+        void WriteResultCallback(std::string jobId, uint32_t code) {}
+};
+
 /**
  * @tc.name: PrintManagerAdapterImplTest_InitParamSet_001
  * @tc.desc: Init.

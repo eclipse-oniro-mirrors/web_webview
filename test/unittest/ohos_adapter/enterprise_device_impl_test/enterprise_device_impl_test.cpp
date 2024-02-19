@@ -81,6 +81,12 @@ void EnterpriseDeviceImplTest::SetUp(void)
 void EnterpriseDeviceImplTest::TearDown(void)
 {}
 
+class MockEdmPolicyChangedEventCallbackAdapter : public EdmPolicyChangedEventCallbackAdapter {
+public:
+    MockEdmPolicyChangedEventCallbackAdapter() = default;
+    void Changed() {}
+};
+
 /**
  * @tc.name: EnterpriseDeviceImplTest_BackgroundTaskAdapter_001
  * @tc.desc: BackgroundTaskAdapter.
@@ -131,7 +137,8 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_002, 
     want.SetAction("web_test");
     OHOS::EventFwk::CommonEventData data(want);
     OHOS::EventFwk::CommonEventSubscribeInfo in;
-    EdmPolicyChangedEventCallback cb = [](){};
+    std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> cb = 
+        std::make_shared<MockEdmPolicyChangedEventCallbackAdapter>();
     std::shared_ptr<NWebEdmEventSubscriber> result = std::make_shared<NWebEdmEventSubscriber>(in, cb);
     EXPECT_NE(result, nullptr);
     result->OnReceiveEvent(data);

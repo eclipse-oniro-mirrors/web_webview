@@ -22,12 +22,12 @@ AudioSystemManagerAdapterImpl& AudioSystemManagerAdapterImpl::GetInstance()
     return instance;
 }
 
-bool AudioSystemManagerAdapterImpl::HasAudioOutputDevices() const
+bool AudioSystemManagerAdapterImpl::HasAudioOutputDevices()
 {
     return false;
 }
 
-bool AudioSystemManagerAdapterImpl::HasAudioInputDevices() const
+bool AudioSystemManagerAdapterImpl::HasAudioInputDevices()
 {
     return false;
 }
@@ -43,7 +43,7 @@ int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const AudioAdapterInter
 }
 
 int32_t AudioSystemManagerAdapterImpl::SetAudioManagerInterruptCallback(
-    const std::shared_ptr<AudioManagerCallbackAdapter>& callback)
+    std::shared_ptr<AudioManagerCallbackAdapter> callback)
 {
     return -1;
 }
@@ -53,12 +53,12 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return -1;
 }
 
-std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag) const
+std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag)
 {
     return std::vector<AudioAdapterDeviceDesc>();
 }
 
-int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) const
+int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput)
 {
     return -1;
 }
@@ -70,7 +70,7 @@ AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
 }
 
 int32_t AudioSystemManagerAdapterImpl::SetDeviceChangeCallback(
-    const std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter>& callback)
+    std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> callback)
 {
     return -1;
 }

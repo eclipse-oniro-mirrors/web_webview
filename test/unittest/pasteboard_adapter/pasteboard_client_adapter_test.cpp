@@ -993,14 +993,12 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_AddPasteboardCha
         std::make_shared<MockPasteboardObserver>();
     std::shared_ptr<PasteboardObserverAdapter> observerInvalid =
         std::make_shared<MockPasteboardObserver>();
-    PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(observer);
+    int32_t id = PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(observer);
     PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(nullptr);
     EXPECT_EQ(1, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
-    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(observer);
+    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(id);
     EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
-    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(observerInvalid);
-    EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
-    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(nullptr);
+    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(-1);
     EXPECT_EQ(0, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
 
     MiscServices::ShareOption option =

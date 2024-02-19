@@ -35,12 +35,12 @@ public:
 
     int32_t RegisterNetConnCallback(std::shared_ptr<NetConnCallback> cb) override;
 
-    int32_t UnregisterNetConnCallback(std::shared_ptr<NetConnCallback> cb) override;
+    int32_t UnregisterNetConnCallback(int32_t id) override;
 
     int32_t GetDefaultNetConnect(NetConnectType &type, NetConnectSubtype &netConnectSubtype) override;
 
 private:
-    std::unordered_map<NetConnCallback*, sptr<NetConnectCallbackImpl>> netConnCallbackMap_;
+    std::unordered_map<int32_t, sptr<NetConnectCallbackImpl>> netConnCallbackMap_;
 };
 }  // namespace OHOS::NWeb
 

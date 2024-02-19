@@ -24,24 +24,62 @@ enum class VSyncErrorCode {
     ERROR,
 };
 
+typedef void (*NWebVSyncCb)(int64_t, void*);
+
 class VSyncAdapter {
 public:
     VSyncAdapter() = default;
 
     virtual ~VSyncAdapter() = default;
 
-    virtual VSyncErrorCode RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb) = 0;
+    virtual VSyncErrorCode RequestVsync(void* data, NWebVSyncCb cb) = 0;
 
     virtual int64_t GetVSyncPeriod() = 0;
 };
 
-struct GSErrorCode {
-    static const int32_t GSERROR_OK;
+// be consistent with rom/foundation/graphic/graphic_2d/interfaces/inner_api/common/graphic_common_c.h:GSError
+enum GSErrorCode {
+    GSERROR_OK = 0,
 };
 
-struct PixelFormatAdapter {
-    static const int32_t PIXEL_FMT_RGBA_8888;
-    static const int32_t PIXEL_FMT_YCBCR_420_SP;
+// be consistent with rom/drivers/peripheral/display/interfaces/include/display_type.h:PixelFormat
+enum PixelFormatAdapter {
+    PIXEL_FMT_CLUT8 = 0,                 /**< CLUT8 format */
+    PIXEL_FMT_CLUT1,                     /**< CLUT1 format */
+    PIXEL_FMT_CLUT4,                     /**< CLUT4 format */
+    PIXEL_FMT_RGB_565,                   /**< RGB565 format */
+    PIXEL_FMT_RGBA_5658,                 /**< RGBA5658 format */
+    PIXEL_FMT_RGBX_4444,                 /**< RGBX4444 format */
+    PIXEL_FMT_RGBA_4444,                 /**< RGBA4444 format */
+    PIXEL_FMT_RGB_444,                   /**< RGB444 format */
+    PIXEL_FMT_RGBX_5551,                 /**< RGBX5551 format */
+    PIXEL_FMT_RGBA_5551,                 /**< RGBA5551 format */
+    PIXEL_FMT_RGB_555,                   /**< RGB555 format */
+    PIXEL_FMT_RGBX_8888,                 /**< RGBX8888 format */
+    PIXEL_FMT_RGBA_8888,                 /**< RGBA8888 format */
+    PIXEL_FMT_RGB_888,                   /**< RGB888 format */
+    PIXEL_FMT_BGR_565,                   /**< BGR565 format */
+    PIXEL_FMT_BGRX_4444,                 /**< BGRX4444 format */
+    PIXEL_FMT_BGRA_4444,                 /**< BGRA4444 format */
+    PIXEL_FMT_BGRX_5551,                 /**< BGRX5551 format */
+    PIXEL_FMT_BGRA_5551,                 /**< BGRA5551 format */
+    PIXEL_FMT_BGRX_8888,                 /**< BGRX8888 format */
+    PIXEL_FMT_BGRA_8888,                 /**< BGRA8888 format */
+    PIXEL_FMT_YUV_422_I,                 /**< YUV422 interleaved format */
+    PIXEL_FMT_YCBCR_422_SP,              /**< YCBCR422 semi-planar format */
+    PIXEL_FMT_YCRCB_422_SP,              /**< YCRCB422 semi-planar format */
+    PIXEL_FMT_YCBCR_420_SP,              /**< YCBCR420 semi-planar format */
+    PIXEL_FMT_YCRCB_420_SP,              /**< YCRCB420 semi-planar format */
+    PIXEL_FMT_YCBCR_422_P,               /**< YCBCR422 planar format */
+    PIXEL_FMT_YCRCB_422_P,               /**< YCRCB422 planar format */
+    PIXEL_FMT_YCBCR_420_P,               /**< YCBCR420 planar format */
+    PIXEL_FMT_YCRCB_420_P,               /**< YCRCB420 planar format */
+    PIXEL_FMT_YUYV_422_PKG,              /**< YUYV422 packed format */
+    PIXEL_FMT_UYVY_422_PKG,              /**< UYVY422 packed format */
+    PIXEL_FMT_YVYU_422_PKG,              /**< YVYU422 packed format */
+    PIXEL_FMT_VYUY_422_PKG,              /**< VYUY422 packed format */
+    PIXEL_FMT_VENDER_MASK = 0X7FFF0000,  /**< vendor mask format */
+    PIXEL_FMT_BUTT = 0X7FFFFFFF          /**< Invalid pixel format */
 };
 
 class SurfaceBufferAdapter {
@@ -50,19 +88,19 @@ public:
 
     virtual ~SurfaceBufferAdapter() = default;
 
-    virtual int32_t GetFileDescriptor() const = 0;
+    virtual int32_t GetFileDescriptor() = 0;
 
-    virtual int32_t GetWidth() const = 0;
+    virtual int32_t GetWidth() = 0;
 
-    virtual int32_t GetHeight() const = 0;
+    virtual int32_t GetHeight() = 0;
 
-    virtual int32_t GetStride() const = 0;
+    virtual int32_t GetStride() = 0;
 
-    virtual int32_t GetFormat() const = 0;
+    virtual int32_t GetFormat() = 0;
 
-    virtual uint32_t GetSize() const = 0;
+    virtual uint32_t GetSize() = 0;
 
-    virtual void* GetVirAddr() const = 0;
+    virtual void* GetVirAddr() = 0;
 
 protected:
     SurfaceBufferAdapter(const SurfaceBufferAdapter&) = delete;
@@ -74,7 +112,7 @@ class IBufferConsumerListenerAdapter {
 public:
     virtual ~IBufferConsumerListenerAdapter() = default;
 
-    virtual void OnBufferAvailable(std::unique_ptr<SurfaceBufferAdapter> buffer) = 0;
+    virtual void OnBufferAvailable(std::shared_ptr<SurfaceBufferAdapter> buffer) = 0;
 };
 
 class IConsumerSurfaceAdapter {
@@ -83,9 +121,9 @@ public:
 
     virtual ~IConsumerSurfaceAdapter() = default;
 
-    virtual int32_t RegisterConsumerListener(std::unique_ptr<IBufferConsumerListenerAdapter> listener) = 0;
+    virtual int32_t RegisterConsumerListener(std::shared_ptr<IBufferConsumerListenerAdapter> listener) = 0;
 
-    virtual int32_t ReleaseBuffer(std::unique_ptr<SurfaceBufferAdapter> buffer, int32_t fence) = 0;
+    virtual int32_t ReleaseBuffer(std::shared_ptr<SurfaceBufferAdapter> buffer, int32_t fence) = 0;
 
     virtual int32_t SetUserData(const std::string& key, const std::string& val) = 0;
 
@@ -96,8 +134,6 @@ using NWebNativeWindow = void*;
 
 class WindowAdapter {
 public:
-    static const int32_t SET_BUFFER_GEOMETRY;
-
     WindowAdapter() = default;
 
     virtual ~WindowAdapter() = default;
@@ -106,7 +142,7 @@ public:
 
     virtual void DestroyNativeWindow(NWebNativeWindow window) = 0;
 
-    virtual int32_t NativeWindowHandleOpt(NWebNativeWindow window, int code, ...) = 0;
+    virtual int32_t NativeWindowSetBufferGeometry(NWebNativeWindow window, int32_t width, int32_t height) = 0;
 };
 
 class AshmemAdapter {
@@ -114,7 +150,7 @@ public:
     static int AshmemCreate(const char* name, size_t size);
 };
 
-using OnFrameAvailableCb = void(*)(void* ctx);
+typedef void (*OnFrameAvailableCb)(void* ctx);
 typedef struct FrameAvailableListener {
     void* context;
     OnFrameAvailableCb cb;

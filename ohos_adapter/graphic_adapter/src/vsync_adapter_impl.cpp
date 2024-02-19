@@ -69,7 +69,7 @@ VSyncErrorCode VSyncAdapterImpl::Init()
     return VSyncErrorCode::SUCCESS;
 }
 
-VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb)
+VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, NWebVSyncCb cb)
 {
     if (Init() != VSyncErrorCode::SUCCESS) {
         WVLOG_E("NWebWindowAdapter init fail");
@@ -88,7 +88,7 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, std::function<void(int
     }
 
     std::lock_guard<std::mutex> lock(mtx_);
-    vsyncCallbacks_.insert({data, NWebVSyncCb});
+    vsyncCallbacks_.insert({data, cb});
 
     if (hasRequestedVsync_) {
         return VSyncErrorCode::SUCCESS;
@@ -115,7 +115,7 @@ void VSyncAdapterImpl::OnVsync(int64_t timestamp, void* client)
 
 void VSyncAdapterImpl::VsyncCallbackInner(int64_t timestamp)
 {
-    std::unordered_map<void*, std::function<void(int64_t, void*)>> vsyncCallbacks;
+    std::unordered_map<void*, NWebVSyncCb> vsyncCallbacks;
     std::lock_guard<std::mutex> lock(mtx_);
     vsyncCallbacks = vsyncCallbacks_;
     vsyncCallbacks_.clear();

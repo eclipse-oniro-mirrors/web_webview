@@ -20,6 +20,27 @@
 #include "input_method_controller.h"
 
 namespace OHOS::NWeb {
+
+class IMFAdapterFunctionKeyAdapterImpl : public IMFAdapterFunctionKeyAdapter {
+public:
+    IMFAdapterFunctionKeyAdapterImpl() = default;
+
+    ~IMFAdapterFunctionKeyAdapterImpl() = default;
+
+    IMFAdapterEnterKeyType GetEnterKeyType() override
+    {
+        return enterKeyType;
+    }
+    
+    void SetEnterKeyType(IMFAdapterEnterKeyType keyType)
+    {
+        enterKeyType = keyType; 
+    }
+
+private:
+    IMFAdapterEnterKeyType enterKeyType = IMFAdapterEnterKeyType::UNSPECIFIED;
+};
+
 class IMFTextListenerAdapterImpl : public MiscServices::OnTextChangedListener {
 public:
     explicit IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter> &listener);

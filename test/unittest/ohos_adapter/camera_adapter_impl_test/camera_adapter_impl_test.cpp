@@ -100,7 +100,7 @@ public:
     ~CameraBufferListenerAdapterMock() override = default;
 
     void OnBufferAvailable(std::shared_ptr<CameraSurfaceAdapter> surface,
-        std::unique_ptr<CameraSurfaceBufferAdapter> buffer,
+        std::shared_ptr<CameraSurfaceBufferAdapter> buffer,
         CameraRotationInfo rotationInfo) override {}
 };
 

@@ -48,9 +48,9 @@ public:
 
     int32_t StopCapture() override;
 
-    int32_t SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter>& callback) override;
+    int32_t SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter> callback) override;
 
-    std::unique_ptr<SurfaceBufferAdapter> AcquireVideoBuffer() override;
+    std::shared_ptr<SurfaceBufferAdapter> AcquireVideoBuffer() override;
 
     int32_t ReleaseVideoBuffer() override;
 

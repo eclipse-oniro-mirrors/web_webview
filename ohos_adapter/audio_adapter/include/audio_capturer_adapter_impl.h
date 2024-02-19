@@ -56,13 +56,13 @@ public:
     bool Release() override;
 
     int32_t SetCapturerReadCallback(
-        const std::shared_ptr<AudioCapturerReadCallbackAdapter> &callbck) override;
+        std::shared_ptr<AudioCapturerReadCallbackAdapter> callbck) override;
 
     int32_t GetBufferDesc(BufferDescAdapter &buffferDesc) override;
 
-    int32_t Enqueue(const BufferDescAdapter &buffferDesc) const override;
+    int32_t Enqueue(const BufferDescAdapter &buffferDesc) override;
 
-    int32_t GetFrameCount(uint32_t &frameCount) const override;
+    int32_t GetFrameCount(uint32_t &frameCount) override;
 
     int64_t GetAudioTime() override;
 

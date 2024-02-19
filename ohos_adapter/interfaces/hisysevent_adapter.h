@@ -42,7 +42,7 @@ public:
             const int, const std::string, const std::string>& data);
 
     virtual int Write(const std::string& eventName, EventType type,
-        const std::tuple<const std::string, const int64_t, const std::string, const int,
+        const std::tuple<const std::string, const int64_t, const std::string, const int, 
         const std::string, const std::vector<uint16_t>, const std::string, const int>& data);
 
 protected:

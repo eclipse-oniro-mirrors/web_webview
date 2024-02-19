@@ -67,7 +67,7 @@ public:
         WVLOG_I("test SendKeyboardStatus");
         isSendKeyboardStatus_ = true;
     }
-    void SendFunctionKey(const IMFAdapterFunctionKey& adapterFunctionKey) override
+    void SendFunctionKey(std::shared_ptr<IMFAdapterFunctionKeyAdapter> functionKey) override
     {
         WVLOG_I("test SendFunctionKey");
         isSendFunctionKey_ = true;

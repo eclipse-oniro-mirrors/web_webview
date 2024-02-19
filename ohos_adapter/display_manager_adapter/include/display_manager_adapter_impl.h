@@ -55,15 +55,15 @@ private:
 };
 
 using ListenerMap =
-    std::map<DisplayListenerAdapter*, sptr<DisplayListenerAdapterImpl>>;
+    std::map<int32_t, sptr<DisplayListenerAdapterImpl>>;
 class DisplayManagerAdapterImpl : public DisplayManagerAdapter {
 public:
     DisplayManagerAdapterImpl() = default;
     ~DisplayManagerAdapterImpl() override = default;
     DisplayId GetDefaultDisplayId() override;
     std::shared_ptr<DisplayAdapter> GetDefaultDisplay() override;
-    bool RegisterDisplayListener(std::shared_ptr<DisplayListenerAdapter> listener) override;
-    bool UnregisterDisplayListener(std::shared_ptr<DisplayListenerAdapter> listener) override;
+    uint32_t RegisterDisplayListener(std::shared_ptr<DisplayListenerAdapter> listener) override;
+    bool UnregisterDisplayListener(uint32_t id) override;
     bool IsDefaultPortrait() override;
 private:
     ListenerMap reg_;

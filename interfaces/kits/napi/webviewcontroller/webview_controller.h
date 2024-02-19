@@ -497,6 +497,16 @@ public:
 private:
     std::unique_ptr<PrintDocumentAdapterAdapter> printDocAdapter_ = nullptr;
 };
+
+class WebPrintWriteResultCallbackAdapter : public PrintWriteResultCallbackAdapter {
+public:
+    WebPrintWriteResultCallbackAdapter(std::function<void(std::string, uint32_t)>& cb) : cb_(cb) {};
+
+    void WriteResultCallback(std::string jobId, uint32_t code) override;
+
+private:
+    std::function<void(std::string, uint32_t)> cb_;
+};
 } // namespace NWeb
 } // namespace OHOS
 

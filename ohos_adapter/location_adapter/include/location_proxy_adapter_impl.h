@@ -53,15 +53,15 @@ public:
 #endif
     virtual ~LocationInfoImpl() = default;
     
-    double GetLatitude() const override;
-    double GetLongitude() const override;
-    double GetAltitude() const override;
-    float GetAccuracy() const override;
-    float GetSpeed() const override;
-    double GetDirection() const override;
-    int64_t GetTimeStamp() const override;
-    int64_t GetTimeSinceBoot() const override;
-    std::string GetAdditions() const override;
+    double GetLatitude() override;
+    double GetLongitude() override;
+    double GetAltitude() override;
+    float GetAccuracy() override;
+    float GetSpeed() override;
+    double GetDirection() override;
+    int64_t GetTimeStamp() override;
+    int64_t GetTimeSinceBoot() override;
+    std::string GetAdditions() override;
 #if defined(NWEB_LOCATION_ENABLE)
     std::unique_ptr<OHOS::Location::Location>& GetLocation();
 private:
@@ -71,7 +71,7 @@ private:
 
 #if defined(NWEB_LOCATION_ENABLE)
 using LocatorCallbackMap =
-    std::map<LocationCallbackAdapter*, sptr<OHOS::Location::ILocatorCallback>>;
+    std::map<int32_t, sptr<OHOS::Location::ILocatorCallback>>;
 using IsEnableLocationFuncType = bool(*)(bool& isEnabled);
 using EnableAbilityFuncType = bool(*)(bool enable);
 using StartLocatingFuncType = bool(*)(
@@ -86,10 +86,10 @@ public:
     LocationProxyAdapterImpl();
     virtual ~LocationProxyAdapterImpl() = default;
 
-    bool StartLocating(
-        std::unique_ptr<LocationRequestConfig>& requestConfig,
+    int32_t StartLocating(
+        std::shared_ptr<LocationRequestConfig> requestConfig,
         std::shared_ptr<LocationCallbackAdapter> callback) override;
-    bool StopLocating(std::shared_ptr<LocationCallbackAdapter> callback) override;
+    bool StopLocating(int32_t callbackId) override;
     bool EnableAbility(bool isEnabled) override;
     bool IsLocationEnabled() override;
 #if defined(NWEB_LOCATION_ENABLE)

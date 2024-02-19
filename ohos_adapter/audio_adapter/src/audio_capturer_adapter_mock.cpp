@@ -37,7 +37,7 @@ bool AudioCapturerAdapterImpl::Release()
 }
 
 int32_t AudioCapturerAdapterImpl::SetCapturerReadCallback(
-    const std::shared_ptr<AudioCapturerReadCallbackAdapter>& callback)
+    std::shared_ptr<AudioCapturerReadCallbackAdapter> callback)
 {
     return -1;
 }
@@ -47,12 +47,12 @@ int32_t AudioCapturerAdapterImpl::GetBufferDesc(BufferDescAdapter& bufferDesc)
     return -1;
 }
 
-int32_t AudioCapturerAdapterImpl::Enqueue(const BufferDescAdapter& bufferDesc) const
+int32_t AudioCapturerAdapterImpl::Enqueue(const BufferDescAdapter& bufferDesc)
 {
     return -1;
 }
 
-int32_t AudioCapturerAdapterImpl::GetFrameCount(uint32_t& frameCount) const
+int32_t AudioCapturerAdapterImpl::GetFrameCount(uint32_t& frameCount)
 {
     return -1;
 }

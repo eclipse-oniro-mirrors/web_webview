@@ -31,8 +31,8 @@ namespace OHOS {
         }
         DisplayManagerAdapterImpl display;
         std::shared_ptr<DisplayListenerAdapter> listener =nullptr;
-        display.RegisterDisplayListener(listener);
-        display.UnregisterDisplayListener(listener);
+        uint32_t id = display.RegisterDisplayListener(listener);
+        display.UnregisterDisplayListener(id);
         return true;
     }
 }

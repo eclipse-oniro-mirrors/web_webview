@@ -48,17 +48,17 @@ public:
 
     ~CameraSurfaceBufferAdapterImpl() override = default;
 
-    int32_t GetFileDescriptor() const override;
+    int32_t GetFileDescriptor() override;
 
-    int32_t GetWidth() const override;
+    int32_t GetWidth() override;
 
-    int32_t GetHeight() const override;
+    int32_t GetHeight() override;
 
-    int32_t GetStride() const override;
+    int32_t GetStride() override;
 
-    int32_t GetFormat() const override;
+    int32_t GetFormat() override;
 
-    uint32_t GetSize() const override;
+    uint32_t GetSize() override;
 
     uint8_t* GetBufferAddr() override;
 
@@ -197,7 +197,7 @@ public:
 
     ~CameraSurfaceAdapterImpl() = default;
 
-    int32_t ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> bufferAdapter, int32_t fence) override;
+    int32_t ReleaseBuffer(std::shared_ptr<CameraSurfaceBufferAdapter> bufferAdapter, int32_t fence) override;
 
 private:
     sptr<IConsumerSurface> cSurface_ = nullptr;

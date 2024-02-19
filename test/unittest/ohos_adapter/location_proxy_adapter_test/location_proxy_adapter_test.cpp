@@ -54,7 +54,7 @@ public:
     LocationCallbackAdapterMock() = default;
 
     void OnLocationReport(
-        const std::unique_ptr<LocationInfo>& location)  override
+        const std::shared_ptr<LocationInfo> location)  override
     {}
 
     void OnLocatingStatusChange(const int status) override
@@ -72,9 +72,9 @@ public:
  */
 HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_LocationInstance_001, TestSize.Level1)
 {
-    std::unique_ptr<LocationProxyAdapter> proxyAdapter = LocationInstance::GetInstance().CreateLocationProxyAdapter();
+    std::shared_ptr<LocationProxyAdapter> proxyAdapter = LocationInstance::GetInstance().CreateLocationProxyAdapter();
     EXPECT_NE(proxyAdapter, nullptr);
-    std::unique_ptr<LocationRequestConfig> requestConfig =
+    std::shared_ptr<LocationRequestConfig> requestConfig =
         LocationInstance::GetInstance().CreateLocationRequestConfig();
     EXPECT_NE(requestConfig, nullptr);
 }
@@ -212,7 +212,7 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_006, T
 {
     auto proxyAdapterImpl = std::make_shared<LocationProxyAdapterImpl>();
     EXPECT_NE(proxyAdapterImpl, nullptr);
-    std::unique_ptr<LocationRequestConfig> requestConfig = std::make_unique<LocationRequestConfigImpl>();
+    std::shared_ptr<LocationRequestConfig> requestConfig = std::make_shared<LocationRequestConfigImpl>();
     EXPECT_NE(requestConfig, nullptr);
     std::shared_ptr<LocationCallbackAdapter> callback = std::make_shared<LocationCallbackAdapterMock>();
     EXPECT_NE(callback, nullptr);
@@ -225,17 +225,15 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_006, T
         EXPECT_FALSE(enabled);
     }
     result = proxyAdapterImpl->StartLocating(requestConfig, nullptr);
-    EXPECT_FALSE(result);
+    EXPECT_EQ(result, -1);
     result = proxyAdapterImpl->StartLocating(requestConfig, callback);
-    EXPECT_FALSE(result);
-    result = proxyAdapterImpl->StartLocating(requestConfig, callback);
-    EXPECT_FALSE(result);
+    EXPECT_EQ(result, 0);
 
-    result = proxyAdapterImpl->StopLocating(nullptr);
+    result = proxyAdapterImpl->StopLocating(-1);
     EXPECT_FALSE(result);
-    result = proxyAdapterImpl->StopLocating(callback);
-    EXPECT_FALSE(result);
-    result = proxyAdapterImpl->StopLocating(callback);
+    result = proxyAdapterImpl->StopLocating(0);
+    EXPECT_EQ(result, true);
+    result = proxyAdapterImpl->StopLocating(0);
     EXPECT_FALSE(result);
 }
 
@@ -256,14 +254,14 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_007, T
     result = proxyAdapterImpl->IsLocationEnabled();
     EXPECT_FALSE(result);
     proxyAdapterImpl->startLocatingFunc_ = nullptr;
-    std::unique_ptr<LocationRequestConfig> requestConfig = std::make_unique<LocationRequestConfigImpl>();
+    std::shared_ptr<LocationRequestConfig> requestConfig = std::make_shared<LocationRequestConfigImpl>();
     EXPECT_NE(requestConfig, nullptr);
     std::shared_ptr<LocationCallbackAdapter> callback = std::make_shared<LocationCallbackAdapterMock>();
     EXPECT_NE(callback, nullptr);
-    result = proxyAdapterImpl->StartLocating(requestConfig, callback);
-    EXPECT_FALSE(result);
+    int32_t id = proxyAdapterImpl->StartLocating(requestConfig, callback);
+    EXPECT_EQ(id, -1);
     proxyAdapterImpl->stopLocatingFunc_ = nullptr;
-    result = proxyAdapterImpl->StopLocating(callback);
+    result = proxyAdapterImpl->StopLocating(id);
     EXPECT_FALSE(result);
 }
 } // namespace OHOS::NWeb

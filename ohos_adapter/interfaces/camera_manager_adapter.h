@@ -28,14 +28,14 @@ typedef struct VideoControlSupportTag {
     bool zoom = false;
 } VideoControlSupport;
 
-enum class VideoTransportType {
+enum class VideoTransportType : int32_t {
     VIDEO_TRANS_TYPE_BUILD_IN,
     VIDEO_TRANS_TYPE_USB,
     VIDEO_TRANS_TYPE_REMOTE,
     VIDEO_TRANS_TYPE_OTHER
 };
 
-enum class VideoFacingModeAdapter {
+enum class VideoFacingModeAdapter : int32_t {
     FACING_NONE = 0,
     FACING_USER,
     FACING_ENVIRONMENT,
@@ -43,7 +43,7 @@ enum class VideoFacingModeAdapter {
     NUM_FACING_MODES
 };
 
-enum class VideoPixelFormatAdapter {
+enum class VideoPixelFormatAdapter : int32_t {
     FORMAT_RGBA_8888,
     FORMAT_YCBCR_420_888,
     FORMAT_YUV_420_SP,
@@ -51,35 +51,32 @@ enum class VideoPixelFormatAdapter {
     FORMAT_UNKNOWN
 };
 
-enum class ExposureModeAdapter {
+enum class ExposureModeAdapter : int32_t {
     EXPOSURE_MODE_UNSUPPORTED = -1,
     EXPOSURE_MODE_LOCKED = 0,
     EXPOSURE_MODE_AUTO,
     EXPOSURE_MODE_CONTINUOUS_AUTO
 };
 
-enum class FocusModeAdapter {
+enum class FocusModeAdapter : int32_t {
     FOCUS_MODE_MANUAL = 0,
     FOCUS_MODE_CONTINUOUS_AUTO,
     FOCUS_MODE_AUTO,
     FOCUS_MODE_LOCKED,
 };
 
-enum class FlashModeAdapter {
+enum class FlashModeAdapter : int32_t {
     FLASH_MODE_CLOSE = 0,
     FLASH_MODE_OPEN,
     FLASH_MODE_AUTO,
     FLASH_MODE_ALWAYS_OPEN,
 };
 
-enum class RangeIDAdapter {
+enum class RangeIDAdapter : int32_t {
     RANGE_ID_EXP_COMPENSATION,
 };
 
-enum class CameraStopType {
-    TO_BACK = 0,
-    NORMAL
-};
+enum class CameraStopType : int32_t { TO_BACK = 0, NORMAL };
 
 typedef struct FormatAdapterTag {
     uint32_t width;
@@ -88,11 +85,11 @@ typedef struct FormatAdapterTag {
     VideoPixelFormatAdapter pixelFormat;
 } FormatAdapter;
 
-enum CameraStatusAdapter {
+enum class CameraStatusAdapter : int32_t {
     APPEAR = 0,
     DISAPPEAR,
     AVAILABLE,
-    UNAVAILABLE
+    UNAVAILABLE,
 };
 
 typedef struct VideoDeviceDescriptorTag {
@@ -100,11 +97,11 @@ typedef struct VideoDeviceDescriptorTag {
     std::string deviceId;
     std::string modelId;
     VideoControlSupport controlSupport;
-    VideoTransportType transportType =
-        VideoTransportType::VIDEO_TRANS_TYPE_OTHER;
+    VideoTransportType transportType = VideoTransportType::VIDEO_TRANS_TYPE_OTHER;
     VideoFacingModeAdapter facing = VideoFacingModeAdapter::FACING_NONE;
     std::vector<FormatAdapter> supportCaptureFormats;
 } VideoDeviceDescriptor;
+
 typedef struct VideoCaptureParamsAdapterTag {
     FormatAdapter captureFormat;
     bool enableFaceDetection;
@@ -135,17 +132,17 @@ public:
 
     virtual ~CameraSurfaceBufferAdapter() = default;
 
-    virtual int32_t GetFileDescriptor() const = 0;
+    virtual int32_t GetFileDescriptor() = 0;
 
-    virtual int32_t GetWidth() const = 0;
+    virtual int32_t GetWidth() = 0;
 
-    virtual int32_t GetHeight() const = 0;
+    virtual int32_t GetHeight() = 0;
 
-    virtual int32_t GetStride() const = 0;
+    virtual int32_t GetStride() = 0;
 
-    virtual int32_t GetFormat() const = 0;
+    virtual int32_t GetFormat() = 0;
 
-    virtual uint32_t GetSize() const = 0;
+    virtual uint32_t GetSize() = 0;
 
     virtual uint8_t* GetBufferAddr() = 0;
 
@@ -161,7 +158,7 @@ public:
 
     virtual ~CameraSurfaceAdapter() = default;
 
-    virtual int32_t ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> buffer, int32_t fence) = 0;
+    virtual int32_t ReleaseBuffer(std::shared_ptr<CameraSurfaceBufferAdapter> buffer, int32_t fence) = 0;
 };
 
 class CameraBufferListenerAdapter {
@@ -169,16 +166,14 @@ public:
     virtual ~CameraBufferListenerAdapter() = default;
 
     virtual void OnBufferAvailable(std::shared_ptr<CameraSurfaceAdapter> surface,
-        std::unique_ptr<CameraSurfaceBufferAdapter> buffer,
-        CameraRotationInfo rotationInfo) = 0;
+        std::shared_ptr<CameraSurfaceBufferAdapter> buffer, CameraRotationInfo rotationInfo) = 0;
 };
 
 class CameraStatusCallbackAdapter {
 public:
     virtual ~CameraStatusCallbackAdapter() = default;
 
-    virtual void OnCameraStatusChanged(CameraStatusAdapter cameraStatusAdapter,
-                                        const std::string callBackDeviceId) = 0;
+    virtual void OnCameraStatusChanged(CameraStatusAdapter cameraStatusAdapter, const std::string callBackDeviceId) = 0;
 };
 
 class CameraManagerAdapter {
@@ -189,7 +184,7 @@ public:
 
     virtual int32_t Create(std::shared_ptr<CameraStatusCallbackAdapter> cameraStatusCallback) = 0;
 
-    virtual void GetDevicesInfo(std::vector<VideoDeviceDescriptor> &devicesDiscriptor) = 0;
+    virtual void GetDevicesInfo(std::vector<VideoDeviceDescriptor>& devicesDiscriptor) = 0;
 
     virtual int32_t ReleaseCameraManger() = 0;
 
@@ -199,7 +194,7 @@ public:
 
     virtual int32_t GetCaptionRangeById(RangeIDAdapter rangeId, VideoCaptureRangeAdapter& rangeVal) = 0;
 
-    virtual bool IsFocusModeSupported(FocusModeAdapter focusMode);
+    virtual bool IsFocusModeSupported(FocusModeAdapter focusMode) = 0;
 
     virtual FocusModeAdapter GetCurrentFocusMode() = 0;
 
@@ -213,14 +208,13 @@ public:
 
     virtual bool IsExistCaptureTask() = 0;
 
-    virtual int32_t StartStream(const std::string &deviceId,
-        const VideoCaptureParamsAdapter &captureParams,
+    virtual int32_t StartStream(const std::string& deviceId, const VideoCaptureParamsAdapter& captureParams,
         std::shared_ptr<CameraBufferListenerAdapter> listener) = 0;
 
     virtual void SetForegroundFlag(bool isForeground) = 0;
 
     virtual void SetCameraStatus(CameraStatusAdapter status) = 0;
-    
+
     virtual std::string GetCurrentDeviceId() = 0;
 };
 } // namespace OHOS::NWeb

@@ -52,6 +52,14 @@ struct PrintAttributesAdapter {
     std::string option;
 };
 
+class PrintWriteResultCallbackAdapter {
+public:
+    PrintWriteResultCallbackAdapter() = default;
+    virtual ~PrintWriteResultCallbackAdapter() = default;
+
+    virtual void WriteResultCallback(std::string jobId, uint32_t code) = 0;
+};
+
 class PrintDocumentAdapterAdapter {
 public:
     PrintDocumentAdapterAdapter() = default;
@@ -59,7 +67,7 @@ public:
 
     virtual void OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
         const PrintAttributesAdapter& newAttrs, uint32_t fd,
-        std::function<void(std::string, uint32_t)> writeResultCallback) = 0;
+        std::shared_ptr<PrintWriteResultCallbackAdapter> callback) = 0;
 
     virtual void OnJobStateChanged(const std::string& jobId, uint32_t state) = 0;
 };
@@ -72,9 +80,11 @@ public:
 
     virtual int32_t StartPrint(
         const std::vector<std::string>& fileList, const std::vector<uint32_t>& fdList, std::string& taskId) = 0;
-    virtual int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
+
+    virtual int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter> listener,
         const PrintAttributesAdapter& printAttributes) = 0;
-    virtual int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
+
+    virtual int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter> listener,
         const PrintAttributesAdapter& printAttributes, void* contextToken) = 0;
 };
 

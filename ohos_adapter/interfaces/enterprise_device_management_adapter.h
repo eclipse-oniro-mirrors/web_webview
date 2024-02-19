@@ -20,7 +20,13 @@
 
 namespace OHOS::NWeb {
 
-using EdmPolicyChangedEventCallback = std::function<void()>;
+class EdmPolicyChangedEventCallbackAdapter {
+public:
+    EdmPolicyChangedEventCallbackAdapter() = default;
+    virtual ~EdmPolicyChangedEventCallbackAdapter() = default;
+
+    virtual void Changed() = 0;
+};
 
 class EnterpriseDeviceManagementAdapter {
 public:
@@ -28,7 +34,8 @@ public:
     virtual ~EnterpriseDeviceManagementAdapter() = default;
     virtual int32_t GetPolicies(std::string& policies) = 0;
 
-    virtual void RegistPolicyChangeEventCallback(const EdmPolicyChangedEventCallback&& eventCallback) = 0;
+    virtual void RegistPolicyChangeEventCallback(
+        std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> eventCallback) = 0;
     virtual bool StartObservePolicyChange() = 0;
     virtual bool StopObservePolicyChange() = 0;
 };

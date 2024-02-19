@@ -44,6 +44,16 @@ private:
 };
 #endif
 
+class PrintWriteResultCallbackAdapterImpl : public PrintWriteResultCallbackAdapter {
+public:
+    PrintWriteResultCallbackAdapterImpl(std::function<void(std::string, uint32_t)>& cb);
+
+    void WriteResultCallback(std::string jobId, uint32_t code) override;
+
+private:
+    std::function<void(std::string, uint32_t)> cb_;
+};
+
 class PrintManagerAdapterImpl : public PrintManagerAdapter {
 public:
     static PrintManagerAdapterImpl& GetInstance();
@@ -53,10 +63,10 @@ public:
     int32_t StartPrint(
         const std::vector<std::string>& fileList, const std::vector<uint32_t>& fdList, std::string& taskId) override;
 
-    int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
+    int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter> listener,
         const PrintAttributesAdapter& printAttributes) override;
 
-    int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter>& listener,
+    int32_t Print(const std::string& printJobName, const std::shared_ptr<PrintDocumentAdapterAdapter> listener,
         const PrintAttributesAdapter& printAttributes, void* contextToken) override;
 
 private:

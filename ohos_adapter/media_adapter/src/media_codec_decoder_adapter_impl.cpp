@@ -271,7 +271,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ReleaseOutputBufferDec(uint32_t
     return DecoderAdapterCode::DECODER_OK;
 }
 
-DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter>& callback)
+DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter> callback)
 {
     if (callback == nullptr) {
         WVLOG_E("Media Callback is NULL.");

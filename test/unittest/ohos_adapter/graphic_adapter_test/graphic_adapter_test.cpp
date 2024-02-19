@@ -45,6 +45,9 @@ void GraphicAdapterTest::SetUp(void)
 void GraphicAdapterTest::TearDown(void)
 {}
 
+void MockNWebVSyncCb(int64_t, void*)
+{}
+
 /**
  * @tc.name: GraphicAdapterTest_RequestVsync_001
  * @tc.desc: RequestVsync.
@@ -55,10 +58,9 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
 {
     VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
     void* data = nullptr;
-    std::function<void(int64_t, void*)> onKeyEventId = [] (int64_t, void*) {};
-    VSyncErrorCode result = adapter.RequestVsync(data, std::move(onKeyEventId));
+    VSyncErrorCode result = adapter.RequestVsync(data, MockNWebVSyncCb);
     EXPECT_EQ(result, VSyncErrorCode::SUCCESS);
-    result = adapter.RequestVsync(data, std::move(onKeyEventId));
+    result = adapter.RequestVsync(data, MockNWebVSyncCb);
     EXPECT_EQ(result, VSyncErrorCode::SUCCESS);
 
     VSyncAdapterImpl vsyncAdapter;
