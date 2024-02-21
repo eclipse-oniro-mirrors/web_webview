@@ -22,6 +22,7 @@
 #include "nweb_handler.h"
 #include "nweb_helper.h"
 #include "nweb_adapter_helper.h"
+#include "nweb_init_params.h"
 
 using namespace OHOS::NWeb;
 
@@ -36,10 +37,10 @@ bool SetHttpDnsFuzzTest(const uint8_t* data, size_t size)
     if (memcpy_s(&mode, sizeof(int), data, sizeof(int)) != 0) {
         return false;
     }
-    NWebDOHConfig config = {
-        .dohMode = mode,
-        .dohConfig = dohConfig,
-    };
+
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
+    config->SetMode(mode);
+    config->SetConfig(dohConfig);
     NWebHelper::Instance().SetHttpDns(config);
     return true;
 }

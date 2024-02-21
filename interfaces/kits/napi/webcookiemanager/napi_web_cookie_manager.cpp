@@ -125,7 +125,8 @@ void NapiCallBackNullptr(napi_env env, napi_ref jsCallback)
 
 void FetchCookieAsyncCallback(napi_env env, napi_ref jsCallback, std::string url)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         NapiCallBackNullptr(env, jsCallback);
         napi_delete_reference(env, jsCallback);
@@ -137,7 +138,8 @@ void FetchCookieAsyncCallback(napi_env env, napi_ref jsCallback, std::string url
 
 void FetchCookieAsyncPromise(napi_env env, napi_deferred deferred, std::string url)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         napi_value jsResult = nullptr;
         napi_get_undefined(env, &jsResult);
@@ -224,7 +226,8 @@ napi_value NapiWebCookieManager::JsGetCookie(napi_env env, napi_callback_info in
     napi_value result = nullptr;
     std::string cookieContent = "";
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     bool isValid = true;
     if (cookieManager != nullptr) {
         cookieContent = cookieManager->ReturnCookie(url, isValid, incognitoMode);
@@ -271,7 +274,8 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
     napi_value result = nullptr;
     int isSet = -1;
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         isSet = cookieManager->SetCookie(url, value, incognitoMode);
     }
@@ -288,7 +292,8 @@ napi_value NapiWebCookieManager::JsSetCookie(napi_env env, napi_callback_info in
 
 void ConfigCookieAsyncCallback(napi_env env, napi_ref jsCallback, std::string url, std::string value)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         NapiCallBackNullptr(env, jsCallback);
         napi_delete_reference(env, jsCallback);
@@ -300,7 +305,8 @@ void ConfigCookieAsyncCallback(napi_env env, napi_ref jsCallback, std::string ur
 
 void ConfigCookieAsyncPromise(napi_env env, napi_deferred deferred, std::string url, std::string value)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         napi_value jsResult = nullptr;
         napi_get_undefined(env, &jsResult);
@@ -370,7 +376,8 @@ napi_value NapiWebCookieManager::JsIsCookieAllowed(napi_env env, napi_callback_i
     napi_value result = nullptr;
     bool accept = true;
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         accept = cookieManager->IsAcceptCookieAllowed();
     }
@@ -398,7 +405,8 @@ napi_value NapiWebCookieManager::JsPutAcceptCookieEnabled(napi_env env, napi_cal
 
     napi_value result = nullptr;
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         cookieManager->PutAcceptCookieEnabled(accept);
     }
@@ -411,7 +419,8 @@ napi_value NapiWebCookieManager::JsIsThirdPartyCookieAllowed(napi_env env, napi_
     napi_value result = nullptr;
     bool accept = true;
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         accept = cookieManager->IsThirdPartyCookieAllowed();
     }
@@ -439,7 +448,8 @@ napi_value NapiWebCookieManager::JsPutAcceptThirdPartyCookieEnabled(napi_env env
 
     napi_value result = nullptr;
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         cookieManager->PutAcceptThirdPartyCookieEnabled(accept);
     }
@@ -465,7 +475,8 @@ napi_value NapiWebCookieManager::JsExistCookie(napi_env env, napi_callback_info 
 
     napi_value result = nullptr;
     bool exist = true;
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         exist = cookieManager->ExistCookies(incognitoMode);
     }
@@ -475,7 +486,8 @@ napi_value NapiWebCookieManager::JsExistCookie(napi_env env, napi_callback_info 
 
 void ClearAllCookiesAsyncCallback(napi_env env, napi_ref jsCallback)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         NapiCallBackNullptr(env, jsCallback);
         napi_delete_reference(env, jsCallback);
@@ -487,7 +499,8 @@ void ClearAllCookiesAsyncCallback(napi_env env, napi_ref jsCallback)
 
 void ClearAllCookiesAsyncPromise(napi_env env, napi_deferred deferred)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         napi_value jsResult = nullptr;
         napi_get_undefined(env, &jsResult);
@@ -557,7 +570,8 @@ napi_value NapiWebCookieManager::JsDeleteEntireCookie(napi_env env, napi_callbac
     }
     napi_value result = nullptr;
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         cookieManager->DeleteCookieEntirely(nullptr, incognitoMode);
     }
@@ -567,7 +581,8 @@ napi_value NapiWebCookieManager::JsDeleteEntireCookie(napi_env env, napi_callbac
 
 void ClearSessionCookieAsyncCallback(napi_env env, napi_ref jsCallback)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         NapiCallBackNullptr(env, jsCallback);
         napi_delete_reference(env, jsCallback);
@@ -579,7 +594,8 @@ void ClearSessionCookieAsyncCallback(napi_env env, napi_ref jsCallback)
 
 void ClearSessionCookieAsyncPromise(napi_env env, napi_deferred deferred)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         napi_value jsResult = nullptr;
         napi_get_undefined(env, &jsResult);
@@ -636,7 +652,8 @@ napi_value NapiWebCookieManager::JsDeleteSessionCookie(napi_env env, napi_callba
 {
     napi_value result = nullptr;
 
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager != nullptr) {
         cookieManager->DeleteSessionCookies(nullptr);
     }
@@ -646,7 +663,8 @@ napi_value NapiWebCookieManager::JsDeleteSessionCookie(napi_env env, napi_callba
 
 void SaveCookieAsyncCallback(napi_env env, napi_ref jsCallback)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         napi_value jsResult = nullptr;
         napi_get_null(env, &jsResult);
@@ -663,7 +681,8 @@ void SaveCookieAsyncCallback(napi_env env, napi_ref jsCallback)
 
 void SaveCookieAsyncPromise(napi_env env, napi_deferred deferred)
 {
-    OHOS::NWeb::NWebCookieManager* cookieManager = OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         napi_value jsResult = nullptr;
         napi_get_undefined(env, &jsResult);
@@ -856,7 +875,7 @@ void NWebFetchCookieCallbackImpl::UvJsCallbackThreadWoker(uv_work_t *work, int s
     work = nullptr;
 }
 
-void NWebFetchCookieCallbackImpl::OnReceiveValue(std::string result)
+void NWebFetchCookieCallbackImpl::OnReceiveValue(const std::string &result)
 {
     WVLOG_D("NWebFetchCookieCallbackImpl received result");
     uv_loop_s *loop = nullptr;

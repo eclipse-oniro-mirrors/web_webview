@@ -143,8 +143,6 @@ struct NWebCursorInfo {
     int32_t x = 0;
     int32_t y = 0;
     float scale = 1.0;
-    // buff will be width*height*4 bytes in size and represents a BGRA image with an upper-left origin.
-    std::unique_ptr<uint8_t[]> buff = nullptr;
 };
 
 struct TouchHandleHotZone {
@@ -180,22 +178,35 @@ enum class NativeEmbedStatus {
     DESTROY,
 };
 
-struct NativeEmbedInfo {
-    std::string id;
-    int32_t width;
-    int32_t height;
-    std::string type;
-    std::string src;
-    std::string url;
+class NWebNativeEmbedInfo {
+public:
+    virtual ~NWebNativeEmbedInfo() = default;
+
+    virtual int32_t GetWidth() = 0;
+
+    virtual int32_t GetHeight() = 0;
+
+    virtual std::string GetId() = 0;
+
+    virtual std::string GetSrc() = 0;
+
+    virtual std::string GetUrl() = 0;
+
+    virtual std::string GetType() = 0;
 };
 
-struct NativeEmbedDataInfo {
-    NativeEmbedStatus status;
-    std::string surfaceId;
-    std::string embedId;
-    NativeEmbedInfo info;
-};
+class NWebNativeEmbedDataInfo {
+public:
+    virtual ~NWebNativeEmbedDataInfo() = default;
 
+    virtual NativeEmbedStatus GetStatus() = 0;
+
+    virtual std::string GetEmbedId() = 0;
+
+    virtual std::string GetSurfaceId() = 0;
+
+    virtual std::shared_ptr<NWebNativeEmbedInfo> GetNativeEmbedInfo() = 0;
+};
 
 enum class TouchType : size_t {
     DOWN = 0,
@@ -204,19 +215,28 @@ enum class TouchType : size_t {
     CANCEL,
 };
 
-struct NativeEmbedTouchEvent {
-    std::string embedId;
-    int32_t id;
-    float x;
-    float y;
-    float screenX;
-    float screenY;
-    TouchType type;
-    float offsetX = 0.0f;
-    float offsetY = 0.0f;
-};
+class NWebNativeEmbedTouchEvent {
+public:
+    virtual ~NWebNativeEmbedTouchEvent() = default;
 
-using FileSelectorCallback = NWebValueCallback<std::vector<std::string>&>;
+    virtual float GetX() = 0;
+
+    virtual float GetY() = 0;
+
+    virtual int32_t GetId() = 0;
+
+    virtual TouchType GetType() = 0;
+
+    virtual float GetOffsetX() = 0;
+
+    virtual float GetOffsetY() = 0;
+
+    virtual float GetScreenX() = 0;
+
+    virtual float GetScreenY() = 0;
+
+    virtual std::string GetEmbedId() = 0;
+};
 
 class OHOS_NWEB_EXPORT NWebHandler {
 public:
@@ -307,7 +327,7 @@ public:
      *
      * @retval visited history
      */
-    virtual const std::vector<std::string> VisitedUrlHistory() {
+    virtual std::vector<std::string> VisitedUrlHistory() {
         return std::vector<std::string>();
     }
 
@@ -316,12 +336,13 @@ public:
      * application to return the data.
      *
      * @param request request information
+     * @param response response information
      *
-     * @retval std::shared_ptr<NWebUrlResourceResponse> response information
+     * @retval true if handle success, otherwise false.
      */
-    virtual std::shared_ptr<NWebUrlResourceResponse> OnHandleInterceptRequest(
-        std::shared_ptr<NWebUrlResourceRequest> request) {
-        return nullptr;
+    virtual bool OnHandleInterceptRequest(std::shared_ptr<NWebUrlResourceRequest> request,
+                                          std::shared_ptr<NWebUrlResourceResponse> response) {
+        return false;
     }
 
     /**
@@ -371,10 +392,10 @@ public:
     /**
      * @brief Report a JavaScript console message to the host application.
      *
-     * @param message Details of the console message.
+     * @param consoleLog Details of the console message.
      * @return Return true to stop the message from being output to the console.
      */
-    virtual bool OnConsoleLog(const NWebConsoleLog& message) { return false; }
+    virtual bool OnConsoleLog(std::shared_ptr<NWebConsoleLog> consoleLog) { return false; }
 
     /**
      * @brief Show prompt to ask for the geolocation permission.
@@ -494,7 +515,7 @@ public:
      * @param callback the file list to select.
      * @param params the params of file selector.
      */
-    virtual bool OnFileSelectorShow(std::shared_ptr<FileSelectorCallback> callback,
+    virtual bool OnFileSelectorShow(std::shared_ptr<NWebStringVectorValueCallback> callback,
                                     std::shared_ptr<NWebFileSelectorParams> params) {
         return false;
     }
@@ -646,7 +667,7 @@ public:
 
     virtual void OnDateTimeChooserPopup(
         const DateTimeChooser& chooser,
-        const std::vector<DateTimeSuggestion>& suggestions,
+        const std::vector<std::shared_ptr<NWebDateTimeSuggestion>>& suggestions,
         std::shared_ptr<NWebDateTimeChooserCallback> callback) {}
 
     virtual void OnDateTimeChooserClose() {}
@@ -696,9 +717,10 @@ public:
      */
     virtual void OnNavigationEntryCommitted(
         std::shared_ptr<NWebLoadCommittedDetails> details) {}
-    virtual void OnNativeEmbedLifecycleChange(const NativeEmbedDataInfo& dataInfo) {}
 
-    virtual void OnNativeEmbedGestureEvent(const NativeEmbedTouchEvent& event) {}
+    virtual void OnNativeEmbedLifecycleChange(std::shared_ptr<NWebNativeEmbedDataInfo> dataInfo) {}
+
+    virtual void OnNativeEmbedGestureEvent(std::shared_ptr<NWebNativeEmbedTouchEvent> event) {}
 
     /**
      * @brief Called when received website security risk check result.

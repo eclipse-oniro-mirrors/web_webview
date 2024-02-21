@@ -101,7 +101,7 @@ private:
     static napi_value JsSetIncognitoCookie(napi_env env, napi_callback_info info);
 };
 
-class NWebSaveCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<bool> {
+class NWebSaveCookieCallbackImpl : public NWebBoolValueCallback {
 public:
     NWebSaveCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
         : env_(env), callback_(callback), deferred_(deferred) {}
@@ -116,7 +116,7 @@ private:
     napi_deferred deferred_;
 };
 
-class NWebCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<bool> {
+class NWebCookieCallbackImpl : public NWebBoolValueCallback {
 public:
     NWebCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
         : env_(env), callback_(callback), deferred_(deferred) {}
@@ -131,13 +131,13 @@ private:
     napi_deferred deferred_;
 };
 
-class NWebFetchCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::string> {
+class NWebFetchCookieCallbackImpl : public NWebStringValueCallback {
 public:
     NWebFetchCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
         : env_(env), callback_(callback), deferred_(deferred) {}
     ~NWebFetchCookieCallbackImpl() = default;
 
-    void OnReceiveValue(std::string result) override;
+    void OnReceiveValue(const std::string &result) override;
 
     static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
 private:
@@ -146,7 +146,7 @@ private:
     napi_deferred deferred_;
 };
 
-class NWebConfigCookieCallbackImpl : public OHOS::NWeb::NWebValueCallback<long> {
+class NWebConfigCookieCallbackImpl : public NWebLongValueCallback {
 public:
     NWebConfigCookieCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
         : env_(env), callback_(callback), deferred_(deferred) {}

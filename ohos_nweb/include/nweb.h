@@ -70,32 +70,45 @@ enum class ImageAlphaType {
     ALPHA_TYPE_POSTMULTIPLIED = 2,
 };
 
-struct OHOS_NWEB_EXPORT NWebInitArgs {
-    std::string dump_path = "";
-    bool frame_info_dump = false;
-    std::list<std::string> web_engine_args_to_add;
-    std::list<std::string> web_engine_args_to_delete;
-    bool multi_renderer_process = false;
-    bool is_enhance_surface = false;
-    bool is_popup = false;
+class OHOS_NWEB_EXPORT NWebEngineInitArgs {
+    public:
+    virtual ~NWebEngineInitArgs() = default;
+
+    virtual std::string GetDumpPath() = 0;
+    virtual bool GetIsFrameInfoDump() = 0;
+    virtual std::list<std::string> GetArgsToAdd() = 0;
+    virtual std::list<std::string> GetArgsToDelete() = 0;
+    virtual bool GetIsMultiRendererProcess() = 0;
+    virtual bool GetIsEnhanceSurface() = 0;
+    virtual bool GetIsPopup() = 0;
 };
 
-struct OHOS_NWEB_EXPORT NWebCreateInfo {
+class OHOS_NWEB_EXPORT NWebOutputFrameCallback {
+    public:
+    virtual ~NWebOutputFrameCallback() = default;
+
+    virtual bool Handle(const char *buffer, uint32_t width, uint32_t height) = 0;
+};
+
+class OHOS_NWEB_EXPORT NWebCreateInfo {
+    public:
+    virtual ~NWebCreateInfo() = default;
+
     /* size info */
-    uint32_t width = 0;
-    uint32_t height = 0;
+    virtual uint32_t GetWidth() = 0;
+    virtual uint32_t GetHeight() = 0;
 
     /* output frame cb */
-    std::function<bool(const char*, uint32_t, uint32_t)> output_render_frame = nullptr;
+    virtual std::shared_ptr<NWebOutputFrameCallback> GetOutputFrameCallback() = 0;
 
     /* init args */
-    NWebInitArgs init_args;
+    virtual std::shared_ptr<NWebEngineInitArgs> GetEngineInitArgs() = 0;
 
-    void* producer_surface = nullptr;
+    /* rs producer surface, for acquiring elgsurface from ohos */
+    virtual void *GetProducerSurface() = 0;
+    virtual void *GetEnhanceSurfaceInfo() = 0;
 
-    void* enhance_surface_info = nullptr;
-
-    bool incognito_mode = false;
+    virtual bool GetIsIncognitoMode() = 0;
 };
 
 enum class OHOS_NWEB_EXPORT DragAction {
@@ -125,16 +138,6 @@ enum class FocusReason : int32_t {
     EVENT_REQUEST = 1,
 };
 
-struct OHOS_NWEB_EXPORT NWebDOHConfig {
-    /*
-     * 0: OFF
-     * 1: AUTO
-     * 2: SECURE_ONLY
-     */
-    int dohMode = -1;
-    std::string dohConfig = "";
-};
-
 enum class NestedScrollMode : int32_t {
     SELF_ONLY = 0,
     SELF_FIRST = 1,
@@ -142,16 +145,36 @@ enum class NestedScrollMode : int32_t {
     PARALLEL = 3,
 };
 
-using ScriptItems = std::map<std::string, std::vector<std::string>>;
-using WebState = std::shared_ptr<std::vector<uint8_t>>;
-using SetKeepScreenOn = std::function<void(bool)>;
+class NWebTouchPointInfo {
+    public:
+    virtual ~NWebTouchPointInfo() = default;
 
-struct TouchPointInfo {
-    int id_ = 0;
-    double x_ = 0;
-    double y_ = 0;
+    virtual int GetId() = 0;
+    virtual double GetX() = 0;
+    virtual double GetY() = 0;
 };
 
+class NWebScreenLockCallback {
+    public:
+    virtual ~NWebScreenLockCallback() = default;
+
+    virtual void Handle(bool key) = 0;
+};
+
+typedef char *(*NativeArkWebOnJavaScriptProxyCallback)(const char **, int32_t);
+class NWebJsProxyCallback {
+public:
+    virtual ~NWebJsProxyCallback() = default;
+
+    virtual std::string GetMethodName() = 0;
+
+    virtual NativeArkWebOnJavaScriptProxyCallback GetMethodCallback() = 0;
+};
+
+typedef int64_t (*AccessibilityIdGenerateFunc)();
+typedef void (*NativeArkWebOnValidCallback)(const char *);
+typedef void (*NativeArkWebOnDestroyCallback)(const char *);
+using ScriptItems = std::map<std::string, std::vector<std::string>>;
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -160,19 +183,20 @@ public:
     virtual void Resize(uint32_t width, uint32_t height, bool isKeyboard = false) = 0;
 
     /* lifecycle interface */
-    virtual void OnPause() const = 0;
-    virtual void OnContinue() const = 0;
+    virtual void OnPause() = 0;
+    virtual void OnContinue() = 0;
     virtual void OnDestroy() = 0;
 
     /* focus event */
-    virtual void OnFocus(const FocusReason& focusReason = FocusReason::FOCUS_DEFAULT) const = 0;
-    virtual void OnBlur(const BlurReason& blurReason) const = 0;
+    virtual void OnFocus(const FocusReason& focusReason = FocusReason::FOCUS_DEFAULT) = 0;
+    virtual void OnBlur(const BlurReason& blurReason) = 0;
 
     /* event interface */
     virtual void OnTouchPress(int32_t id, double x, double y, bool fromOverlay = false) = 0;
     virtual void OnTouchRelease(int32_t id, double x = 0, double y = 0, bool fromOverlay = false) = 0;
     virtual void OnTouchMove(int32_t id, double x, double y, bool fromOverlay = false) = 0;
-    virtual void OnTouchMove(const std::list<TouchPointInfo> touchPointInfoList, bool fromOverlay = false) = 0;
+    virtual void OnTouchMove(const std::vector<std::shared_ptr<NWebTouchPointInfo>> &touch_point_infos,
+                             bool fromOverlay = false) = 0;
     virtual void OnTouchCancel() = 0;
     virtual void OnNavigateBack() = 0;
     virtual bool SendKeyEvent(int32_t keyCode, int32_t keyAction) = 0;
@@ -187,21 +211,21 @@ public:
      *
      * @return title string for the current page.
      */
-    virtual int Load(const std::string& url) const = 0;
+    virtual int Load(const std::string& url) = 0;
 
     /**
      * Get whether this NWeb has a back history item.
      *
      * @return true if this NWeb has a back history item
      */
-    virtual bool IsNavigatebackwardAllowed() const = 0;
+    virtual bool IsNavigatebackwardAllowed() = 0;
 
     /**
      * Get whether this NWeb has a forward history item.
      *
      * @return true if this NWeb has a forward history item
      */
-    virtual bool IsNavigateForwardAllowed() const = 0;
+    virtual bool IsNavigateForwardAllowed() = 0;
 
     /**
      * Get whether this NWeb has a back or forward history item for number of
@@ -211,25 +235,25 @@ public:
      * history.
      * @return true if this NWeb has a forward history item
      */
-    virtual bool CanNavigateBackOrForward(int numSteps) const = 0;
+    virtual bool CanNavigateBackOrForward(int numSteps) = 0;
 
     /**
      * Go back in the history of this NWeb.
      *
      */
-    virtual void NavigateBack() const = 0;
+    virtual void NavigateBack() = 0;
 
     /**
      * Go forward in the history of this NWeb.
      *
      */
-    virtual void NavigateForward() const = 0;
+    virtual void NavigateForward() = 0;
 
     /**
      * Goes to the history item that is the number of steps away from the current item.
      *
      */
-    virtual void NavigateBackOrForward(int step) const = 0;
+    virtual void NavigateBackOrForward(int step) = 0;
 
     /**
      * Delete back and forward history list.
@@ -240,7 +264,7 @@ public:
      * Reload the current URL.
      *
      */
-    virtual void Reload() const = 0;
+    virtual void Reload() = 0;
 
     /**
      * Perform a zoom operation in this NWeb.
@@ -252,7 +276,7 @@ public:
      * @return the error id.
      *
      */
-    virtual int Zoom(float zoomFactor) const = 0;
+    virtual int Zoom(float zoomFactor) = 0;
 
     /**
      * Performs a zooming in operation in this NWeb.
@@ -260,7 +284,7 @@ public:
      * @return the error id.
      *
      */
-    virtual int ZoomIn() const = 0;
+    virtual int ZoomIn() = 0;
 
     /**
      * Performs a zooming out operation in this NWeb.
@@ -268,20 +292,20 @@ public:
      * @return the error id.
      *
      */
-    virtual int ZoomOut() const = 0;
+    virtual int ZoomOut() = 0;
 
     /**
      * Stop the current load.
      *
      * @param code string: javascript code
      */
-    virtual void Stop() const = 0;
+    virtual void Stop() = 0;
 
     /**
      * ExecuteJavaScript
      *
      */
-    virtual void ExecuteJavaScript(const std::string& code) const = 0;
+    virtual void ExecuteJavaScript(const std::string& code) = 0;
 
     /**
      * ExecuteJavaScript plus
@@ -293,8 +317,8 @@ public:
      */
     virtual void ExecuteJavaScript(
         const std::string& code,
-        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback,
-        bool extention) const = 0;
+        std::shared_ptr<NWebMessageValueCallback> callback,
+        bool extention) = 0;
 
     /**
      * Get the NWebPreference object used to control the settings for this
@@ -303,21 +327,21 @@ public:
      * @return a NWebPreference object that can be used to control this NWeb's
      * settings This value cannot be null.
      */
-    virtual const std::shared_ptr<NWebPreference> GetPreference() const = 0;
+    virtual std::shared_ptr<NWebPreference> GetPreference() = 0;
 
     /**
      * Gets the web id.
      *
      * @return the web id
      */
-    virtual unsigned int GetWebId() const = 0;
+    virtual unsigned int GetWebId() = 0;
 
     /**
      * Get the last hit test result.
      *
      * @return the last HitTestResult
      */
-    virtual HitTestResult GetHitTestResult() const = 0;
+     virtual std::shared_ptr<HitTestResult> GetHitTestResult() = 0;
 
     /**
      * Set the background color for this view.
@@ -325,7 +349,7 @@ public:
      * @param color int: the color of the background
      *
      */
-    virtual void PutBackgroundColor(int color) const = 0;
+    virtual void PutBackgroundColor(int color) = 0;
 
     /**
      * Sets the initla scale for the page.
@@ -333,7 +357,7 @@ public:
      * @param scale float: the initla scale of the page.
      *
      */
-    virtual void InitialScale(float scale) const = 0;
+    virtual void InitialScale(float scale) = 0;
 
     /**
      * Set the NWebDownloadCallback that will receive download event.
@@ -359,7 +383,8 @@ public:
      *
      * @param accessibilityIdGenerator Accessibility id generator.
      */
-    virtual void PutAccessibilityIdGenerator(std::function<int64_t()> accessibilityIdGenerator) = 0;
+    virtual void PutAccessibilityIdGenerator(
+        const AccessibilityIdGenerateFunc accessibilityIdGenerator) = 0;
 
     /**
      * Set the NWebHandler that will receive various notifications and
@@ -369,13 +394,6 @@ public:
      * cannot be null.
      */
     virtual void SetNWebHandler(std::shared_ptr<NWebHandler> handler) = 0;
-
-    /**
-     * Get the NWebHandler.
-     *
-     * @return Gets the NWebHandler.
-     */
-    virtual const std::shared_ptr<NWebHandler> GetNWebHandler() const = 0;
 
     /**
      * Get the title for the current page.
@@ -418,8 +436,8 @@ public:
      * @param additionalHttpHeaders additionalHttpHeaders
      */
     virtual int Load(
-        std::string& url,
-        std::map<std::string, std::string> additionalHttpHeaders) = 0;
+        const std::string& url,
+        const std::map<std::string, std::string> &additionalHttpHeaders) = 0;
 
     /**
      * Load the given data into this NWeb, using baseUrl as the base URL for
@@ -461,11 +479,13 @@ public:
      * RegisterArkJSfunction
      *
      * @param object_name  String: objector name
-     * @param method_list vector<String>: vector list, method list
+     * @param method_list  vector<String>: vector list, method list
+     * @param object_id    int32_t: object id
      */
     virtual void RegisterArkJSfunction(
         const std::string& object_name,
-        const std::vector<std::string>& method_list) = 0;
+        const std::vector<std::string>& method_list,
+        const int32_t object_id) = 0;
 
     /**
      * UnregisterArkJSfunction
@@ -500,12 +520,12 @@ public:
      *
      * @param searchStr String: target string to find.
      */
-    virtual void FindAllAsync(const std::string &searchStr) const = 0;
+    virtual void FindAllAsync(const std::string &searchStr) = 0;
 
     /**
      * Clears the highlighting surrounding text matches created by findAllAsync
      */
-    virtual void ClearMatches() const = 0;
+    virtual void ClearMatches() = 0;
 
     /**
      * Highlights and scrolls to the next match found by findAllAsync(String),
@@ -513,7 +533,7 @@ public:
      *
      * @param forward bool: find back or forward.
      */
-    virtual void FindNext(const bool forward) const = 0;
+    virtual void FindNext(const bool forward) = 0;
 
     /**
      * Saves the current view as a web archive.
@@ -524,13 +544,13 @@ public:
      * current page.
      */
     virtual void StoreWebArchive(const std::string &baseName, bool autoName,
-        std::shared_ptr<NWebValueCallback<std::string>> callback) const = 0;
+        std::shared_ptr<NWebStringValueCallback> callback) = 0;
 
     /**
      * create two web message ports.
      * @param ports the web message ports.
      */
-    virtual void CreateWebMessagePorts(std::vector<std::string>& ports) = 0;
+    virtual std::vector<std::string> CreateWebMessagePorts() = 0;
 
     /**
      * post messag event to the html main frame.
@@ -538,34 +558,38 @@ public:
      * @param ports the web message ports.
      * @param uri the uri
      */
-    virtual void PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUri) = 0;
+    virtual void PostWebMessage(const std::string& message,
+                                const std::vector<std::string>& ports,
+                                const std::string& targetUri) = 0;
 
     /**
      * close the message port.
      * @param handle the web message port handle.
      */
-    virtual void ClosePort(std::string& handle) = 0;
+    virtual void ClosePort(const std::string& portHandle) = 0;
 
     /**
      * use the port to send message.
      * @param handle the web message port handle.
      * @param data the message send to html5.
      */
-    virtual void PostPortMessage(std::string& handle, std::shared_ptr<NWebMessage> data) = 0;
+    virtual void PostPortMessage(const std::string& portHandle,
+                                 std::shared_ptr<NWebMessage> data) = 0;
 
     /**
      * set the callback of th port handle.
      * @param handle the web message port handle.
      * @param callback to receive the message when th other port post message.
      */
-    virtual void SetPortMessageCallback(std::string& handle,
-        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback) = 0;
+    virtual void SetPortMessageCallback(
+        const std::string& portHandle,
+        std::shared_ptr<NWebMessageValueCallback> callback) = 0;
 
     /**
      * send drag event to nweb.
      * @param dragEvent the drag event information.
      */
-    virtual void SendDragEvent(const DragEvent& dragEvent) const = 0;
+    virtual void SendDragEvent(const DragEvent& dragEvent) = 0;
 
     /**
      * Clear ssl cache.
@@ -578,7 +602,7 @@ public:
      *
      * @return web page url.
      */
-    virtual std::string GetUrl() const = 0;
+    virtual std::string GetUrl() = 0;
 
     /**
      * Clears the client authentication certificate cache in the Web.
@@ -598,7 +622,7 @@ public:
      *
      * @return original url
      */
-    virtual const std::string GetOriginalUrl() const = 0;
+    virtual const std::string GetOriginalUrl() = 0;
 
     /**
      * get the favicon of the request web page.
@@ -625,7 +649,7 @@ public:
      *
      * @param callback has image or not
      */
-    virtual void HasImages(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
+    virtual void HasImages(std::shared_ptr<NWebBoolValueCallback> callback) = 0;
 
     /**
      * web remove cache
@@ -655,14 +679,14 @@ public:
      *
      * @return web back forward state.
      */
-    virtual WebState SerializeWebState() = 0;
+    virtual std::vector<uint8_t> SerializeWebState() = 0;
 
     /**
      * Restore Web back forward state.
      *
      * @param web back forward state.
      */
-    virtual bool RestoreWebState(WebState state) = 0;
+    virtual bool RestoreWebState(const std::vector<uint8_t> &state) = 0;
 
     /**
      * Move page up.
@@ -759,9 +783,10 @@ public:
      * Rigest the keep srceen on interface.
      *
      * @param windowId the window id.
-     * @param SetKeepScreenOn the screenon handle.
+     * @param callback the screenon handle callback.
      */
-    virtual void RegisterScreenLockFunction(int32_t windowId, const SetKeepScreenOn&& handle) = 0;
+    virtual void RegisterScreenLockFunction(int32_t windowId,
+        std::shared_ptr<NWebScreenLockCallback> callback) = 0;
 
     /**
      * UnRigest the keep srceen on interface.
@@ -780,8 +805,8 @@ public:
     /**
      * Notify webview window status.
      */
-    virtual void OnWebviewHide() const = 0;
-    virtual void OnWebviewShow() const = 0;
+    virtual void OnWebviewHide() = 0;
+    virtual void OnWebviewShow() = 0;
 
     /**
      * Get the drag data.
@@ -798,8 +823,8 @@ public:
      * @param additionalHttpHeaders Additional HTTP request headers of the URL.
      */
     virtual void PrefetchPage(
-        std::string& url,
-        std::map<std::string, std::string> additionalHttpHeaders) = 0;
+        const std::string& url,
+        const std::map<std::string, std::string> &additionalHttpHeaders) = 0;
 
     /**
      * Set the window id.
@@ -809,12 +834,12 @@ public:
     /**
      * Notify that browser was occluded by other windows.
      */
-    virtual void OnOccluded() const = 0;
+    virtual void OnOccluded() = 0;
 
     /**
      * Notify that browser was unoccluded by other windows.
      */
-    virtual void OnUnoccluded() const = 0;
+    virtual void OnUnoccluded() = 0;
 
     /**
      * Set the token.
@@ -829,7 +854,7 @@ public:
     /**
      * Set enable lower the frame rate.
      */
-    virtual void SetEnableLowerFrameRate(bool enabled) const = 0;
+    virtual void SetEnableLowerFrameRate(bool enabled) = 0;
 
     /**
      * Set the property values for width, height, and keyboard height.
@@ -848,13 +873,13 @@ public:
      * @param width mean visible area'width.
      * @param height mean visible area.height.
      */
-    virtual void SetDrawRect(const int32_t x, const int32_t y, const int32_t width, const int32_t height) = 0;
+    virtual void SetDrawRect(int32_t x, int32_t y, int32_t width, int32_t height) = 0;
 
     /**
      * Set draw mode.
      *
     */
-    virtual void SetDrawMode(const int32_t mode) = 0;
+    virtual void SetDrawMode(int32_t mode) = 0;
 
     /**
      * Create the web print document adapter.
@@ -871,7 +896,8 @@ public:
      *
      * @return title string for the current page.
      */
-    virtual int PostUrl(const std::string& url, std::vector<char>& postData) = 0;
+    virtual int PostUrl(const std::string& url,
+                        const std::vector<char>& postData) = 0;
 
     /**
      * Inject the JavaScript before WebView loads the DOM tree and run JavaScripts.
@@ -883,37 +909,36 @@ public:
      * @param accessibilityId The id of the accessibility node.
      * @param action The action to be performed on the accessibility node.
      */
-    virtual void ExecuteAction(int64_t accessibilityId, uint32_t action) const = 0;
+    virtual void ExecuteAction(int64_t accessibilityId, uint32_t action) = 0;
 
     /**
      * Get the information of the focused accessibility node on the given accessibility node in the browser.
      * @param accessibilityId Indicate the accessibility id of the parent node of the focused accessibility node.
      * @param isAccessibilityFocus Indicate whether the focused accessibility node is accessibility focused or input
      * focused.
-     * @param nodeInfo The obtained information of the accessibility node.
-     * @return true if get accessibility node info successfully, otherwise false.
+     * @return The obtained information of the accessibility node.
      */
-    virtual bool GetFocusedAccessibilityNodeInfo(
-        int64_t accessibilityId, bool isAccessibilityFocus, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
+    virtual std::shared_ptr<NWebAccessibilityNodeInfo>
+    GetFocusedAccessibilityNodeInfo(int64_t accessibilityId,
+                                    bool isAccessibilityFocus) = 0;
 
     /**
      * Get the information of the accessibility node by its accessibility id in the browser.
      * @param accessibilityId The accessibility id of the accessibility node.
-     * @param nodeInfo The obtained information of the accessibility node.
-     * @return true if get accessibility node info successfully, otherwise false.
+     * @return The obtained information of the accessibility node.
      */
-    virtual bool GetAccessibilityNodeInfoById(
-        int64_t accessibilityId, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
+    virtual std::shared_ptr<NWebAccessibilityNodeInfo>
+    GetAccessibilityNodeInfoById(int64_t accessibilityId) = 0;
 
     /**
      * Get the information of the accessibility node by focus move in the browser.
      * @param accessibilityId The accessibility id of the original accessibility node.
      * @param direction The focus move direction of the original accessibility node.
-     * @param nodeInfo The obtained information of the accessibility node.
-     * @return true if get accessibility node info successfully, otherwise false.
+     * @return The obtained information of the accessibility node.
      */
-    virtual bool GetAccessibilityNodeInfoByFocusMove(
-        int64_t accessibilityId, int32_t direction, OHOS::NWeb::NWebAccessibilityNodeInfo& nodeInfo) const = 0;
+    virtual std::shared_ptr<NWebAccessibilityNodeInfo>
+    GetAccessibilityNodeInfoByFocusMove(int64_t accessibilityId,
+                                        int32_t direction) = 0;
 
     /**
      * Set the accessibility state in the browser.
@@ -921,22 +946,12 @@ public:
      */
     virtual void SetAccessibilityState(bool state) = 0;
 
-    /**
-     * RegisterArkJSfunctionExt
-     *
-     * @param object_name  String: objector name
-     * @param method_list  vector<String>: vector list, method list
-     * @param object_id    int32_t: object id
-     */
-    virtual void RegisterArkJSfunctionExt(
-        const std::string& object_name, const std::vector<std::string>& method_list, const int32_t object_id) = 0;
-
      /**
      * Get whether need soft keyboard.
      *
      * @return true if need soft keyboard, otherwise false.
      */
-    virtual bool NeedSoftKeyboard() const = 0;
+    virtual bool NeedSoftKeyboard() = 0;
 
     /**
      * Discard the webview window.
@@ -964,21 +979,24 @@ public:
      * @param h5MethodName      string: the h5 side object method name
      * @param args              vector<shared_ptr<NWebValue>>: the call args
      */
-    virtual void CallH5Function(int32_t routingId, int32_t h5ObjectId, const std::string h5MethodName,
-        const std::vector<std::shared_ptr<NWebValue>> args) = 0;
+    virtual void CallH5Function(
+        int32_t routingId,
+        int32_t h5ObjectId,
+        const std::string& h5MethodName,
+        const std::vector<std::shared_ptr<NWebValue>>& args) = 0;
 
     /**
      * Get web weather has been set incognito mode.
      *
      * @return true if web is in incognito mode; otherwise fase.
      */
-    virtual bool IsIncognitoMode() const = 0;
+    virtual bool IsIncognitoMode() = 0;
 
     /**
      * Register native function.
      */
-    virtual void RegisterNativeArkJSFunction(const char* objName, const char** methodName,
-        std::vector<std::function<char*(const char** argv, int32_t argc)>> callback, int32_t size) = 0;
+    virtual void RegisterNativeArkJSFunction(const char* objName,
+        const std::vector<std::shared_ptr<NWebJsProxyCallback>> &callbacks) = 0;
 
     /**
      * Unregister native function.
@@ -988,12 +1006,12 @@ public:
     /**
      * Register native valide callback function.
      */
-    virtual void RegisterNativeValideCallback(const char* webName, std::function<void(const char*)> callback) = 0;
+    virtual void RegisterNativeValideCallback(const char* webName, const NativeArkWebOnValidCallback callback) = 0;
 
     /**
      * Register native destroy callback function.
      */
-    virtual void RegisterNativeDestroyCallback(const char* webName, std::function<void(const char*)> callback) = 0;
+    virtual void RegisterNativeDestroyCallback(const char* webName, const NativeArkWebOnDestroyCallback callback) = 0;
 
     /**
      * Inject the JavaScript after WebView loads the DOM tree and run JavaScripts.

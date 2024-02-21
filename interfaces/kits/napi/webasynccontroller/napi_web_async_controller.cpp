@@ -194,8 +194,7 @@ NapiWebAsyncController::NapiWebAsyncController(napi_env env, napi_value thisVar,
 void NapiWebAsyncController::StoreWebArchiveCallback(const std::string &baseName, bool autoName, napi_env env,
     napi_ref jsCallback)
 {
-    std::weak_ptr<NWeb> nweb_weak = OHOS::NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
-    auto nweb = nweb_weak.lock();
+    std::shared_ptr<NWeb> nweb = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb) {
         HILOG_ERROR(LOG_APP, "not found a valid nweb");
         napi_value callback = nullptr;
@@ -247,8 +246,7 @@ void NapiWebAsyncController::StoreWebArchiveCallback(const std::string &baseName
 void NapiWebAsyncController::StoreWebArchivePromise(const std::string &baseName, bool autoName, napi_env env,
     napi_deferred deferred)
 {
-    std::weak_ptr<NWeb> nweb_weak = OHOS::NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
-    auto nweb = nweb_weak.lock();
+    std::shared_ptr<NWeb> nweb = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb) {
         HILOG_ERROR(LOG_APP, "not found a valid nweb");
         napi_value jsResult = nullptr;
