@@ -22,7 +22,7 @@
 #include "nweb_web_message.h"
 
 namespace OHOS::NWeb {
-class NativeJavaScriptExecuteCallback : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
+class NativeJavaScriptExecuteCallback : public OHOS::NWeb::NWebMessageValueCallback {
 public:
     explicit NativeJavaScriptExecuteCallback(std::function<void(const char*)> callback) : callbackNative_(callback) {}
     ~NativeJavaScriptExecuteCallback() = default;

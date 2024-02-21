@@ -59,7 +59,7 @@ HWTEST_F(NapiWebCookieManagerTest, NapiWebCookieManagerTest_001, TestSize.Level1
 {
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     NWebAdapterHelper::Instance().Init(false);
-    NWebCookieManager* cookieManager = NWebHelper::Instance().GetCookieManager();
+    std::shared_ptr<NWebCookieManager> cookieManager = NWebHelper::Instance().GetCookieManager();
     EXPECT_NE(cookieManager, nullptr);
 }
 } // namespace OHOS::NWeb

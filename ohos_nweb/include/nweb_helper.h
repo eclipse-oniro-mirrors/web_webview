@@ -22,6 +22,7 @@
 #include "nweb.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_data_base.h"
+#include "nweb_engine.h"
 #include "nweb_export.h"
 #include "nweb_web_storage.h"
 
@@ -34,13 +35,13 @@ public:
     bool InitAndRun(bool from_ark = true);
     static void TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bundlePath);
 
-    std::shared_ptr<NWeb> CreateNWeb(const NWebCreateInfo &create_info);
-    NWebCookieManager *GetCookieManager();
-    NWebDataBase *GetDataBase();
-    NWebWebStorage *GetWebStorage();
-    std::weak_ptr<NWeb> GetNWeb(int32_t nweb_id);
+    std::shared_ptr<NWeb> CreateNWeb(std::shared_ptr<NWebCreateInfo> create_info);
+    std::shared_ptr<NWebCookieManager> GetCookieManager();
+    std::shared_ptr<NWebDataBase> GetDataBase();
+    std::shared_ptr<NWebWebStorage> GetWebStorage();
+    std::shared_ptr<NWeb> GetNWeb(int32_t nweb_id);
     void SetBundlePath(const std::string &path);
-    void SetHttpDns(const NWebDOHConfig& config);
+    void SetHttpDns(std::shared_ptr<NWebDOHConfig> config);
     void SetWebTag(int32_t nwebId, const char* webTag);
     void PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets);
     bool LoadNWebSDK();
@@ -52,10 +53,12 @@ private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);
     void UnloadLib();
+    bool LoadEngine();
 
 private:
     void *libHandleWebEngine_ = nullptr;
     std::string bundlePath_;
+    std::shared_ptr<NWebEngine> nwebEngine_;
 };
 } // namespace OHOS::NWeb
 

@@ -412,7 +412,7 @@ public:
 
     WebviewJavaScriptResultCallBack() {}
 
-    explicit WebviewJavaScriptResultCallBack(std::weak_ptr<OHOS::NWeb::NWeb>& nweb, int32_t nwebId);
+    explicit WebviewJavaScriptResultCallBack(int32_t nwebId);
 
     ~WebviewJavaScriptResultCallBack() override;
 
@@ -469,7 +469,6 @@ private:
     std::shared_ptr<NWebValue> GetJavaScriptResultSelf(std::vector<std::shared_ptr<NWebValue>> args,
         const std::string& method, const std::string& objName, int32_t routingId, int32_t objectId);
 
-    std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
     int32_t nwebId_ = -1;
 
     JavaScriptOb::ObjectID nextObjectId_ = 1;

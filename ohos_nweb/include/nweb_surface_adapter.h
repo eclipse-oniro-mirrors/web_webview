@@ -21,6 +21,7 @@
 #include <surface.h>
 
 #include "nweb.h"
+#include "nweb_init_params.h"
 #include "surface_buffer.h"
 
 namespace OHOS {
@@ -31,19 +32,17 @@ namespace OHOS::NWeb {
 class NWebSurfaceAdapter {
 public:
     static NWebSurfaceAdapter &Instance();
-    NWebCreateInfo GetCreateInfo(sptr<Surface> surface,
-                                 const NWebInitArgs &initArgs,
+    std::shared_ptr<NWebCreateInfoImpl> GetCreateInfo(sptr<Surface> surface,
+                                 std::shared_ptr<NWebEngineInitArgs> initArgs,
                                  uint32_t width,
                                  uint32_t height,
                                  bool incognitoMode = false);
+    bool OutputFrameCallback(const char *buffer, uint32_t width, uint32_t height, wptr<Surface> surfaceWeak);
 
 private:
-    void GetSize(sptr<Surface> surface, NWebCreateInfo &createInfo, uint32_t width, uint32_t height) const;
-    void GetRenderInterface(sptr<Surface> surface, NWebCreateInfo &createInfo);
     sptr<SurfaceBuffer> RequestBuffer(sptr<Surface> surface, uint32_t width, uint32_t height);
     bool CopyFrame(sptr<SurfaceBuffer> surfaceBuffer, const char *src, uint32_t width, uint32_t height);
     bool FlushBuffer(sptr<Surface> surface, sptr<SurfaceBuffer> surfaceBuffer, uint32_t width, uint32_t height);
-    void GetIncognitoMode(NWebCreateInfo &createInfo, bool incognitoMode);
 };
 } // namespace OHOS::NWeb
 

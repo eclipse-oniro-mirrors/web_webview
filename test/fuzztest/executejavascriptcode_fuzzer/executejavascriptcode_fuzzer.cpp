@@ -32,7 +32,7 @@ namespace OHOS {
             return true;
         }
         std::string code((const char *)data, size);
-        std::shared_ptr<NWeb::NWebValueCallback<std::shared_ptr<NWeb::NWebMessage>>> callback;
+        std::shared_ptr<NWeb::NWebMessageValueCallback> callback;
         g_nweb->ExecuteJavaScript(code, callback, false);
         return true;
     }

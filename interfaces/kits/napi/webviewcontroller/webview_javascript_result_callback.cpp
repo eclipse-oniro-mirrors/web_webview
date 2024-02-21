@@ -18,6 +18,7 @@
 #include "core/common/container_scope.h"
 #include "napi_parse_utils.h"
 #include "native_engine/native_engine.h"
+#include "nweb_helper.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
@@ -762,8 +763,8 @@ std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value* valu
 }
 } // namespace
 
-WebviewJavaScriptResultCallBack::WebviewJavaScriptResultCallBack(std::weak_ptr<OHOS::NWeb::NWeb>& nweb, int32_t nwebId)
-    : nweb_(nweb), nwebId_(nwebId)
+WebviewJavaScriptResultCallBack::WebviewJavaScriptResultCallBack(int32_t nwebId)
+    : nwebId_(nwebId)
 {
     std::unique_lock<std::mutex> lk(g_objectMtx);
     g_webviewJsResultCallbackMap.emplace(nwebId, this);
@@ -1483,7 +1484,7 @@ void WebviewJavaScriptResultCallBack::CallH5FunctionInternal(
         WVLOG_E("WebviewJavaScriptResultCallBack::CallH5FunctionInternal nweb id not equal");
         return;
     }
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         WVLOG_E("WebviewJavaScriptResultCallBack::CallH5FunctionInternal nweb_ptr null");
         return;

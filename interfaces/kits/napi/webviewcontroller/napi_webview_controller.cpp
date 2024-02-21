@@ -26,6 +26,7 @@
 #include "napi_parse_utils.h"
 #include "nweb.h"
 #include "nweb_helper.h"
+#include "nweb_init_params.h"
 #include "nweb_log.h"
 #include "parameters.h"
 #include "pixel_map.h"
@@ -513,9 +514,9 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
         return result;
     }
 
-    NWebDOHConfig config;
-    config.dohMode = dohMode;
-    config.dohConfig = dohConfig;
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
+    config->SetMode(dohMode);
+    config->SetConfig(dohConfig);
     WVLOG_I("set http dns mode:%{public}d doh_config:%{public}s", dohMode, dohConfig.c_str());
 
     NWebHelper::Instance().SetHttpDns(config);
@@ -1395,8 +1396,7 @@ napi_value NapiWebviewController::CreateWebMessagePorts(napi_env env, napi_callb
         return nullptr;
     }
     int32_t nwebId = webviewController->GetWebId();
-    std::vector<std::string> ports;
-    webviewController->CreateWebMessagePorts(ports);
+    std::vector<std::string> ports = webviewController->CreateWebMessagePorts();
     if (ports.size() != INTEGER_TWO) {
         WVLOG_E("create web message port failed");
         return result;
@@ -2231,16 +2231,24 @@ napi_value NapiWebviewController::GetHitTestValue(napi_env env, napi_callback_in
         return nullptr;
     }
 
-    HitTestResult nwebResult = webviewController->GetHitTestValue();
+    std::shared_ptr<HitTestResult> nwebResult = webviewController->GetHitTestValue();
 
     napi_create_object(env, &result);
 
     napi_value type;
-    napi_create_uint32(env, nwebResult.GetType(), &type);
+    if (nwebResult) {
+        napi_create_uint32(env, nwebResult->GetType(), &type);
+    } else {
+        napi_create_uint32(env, HitTestResult::UNKNOWN_TYPE, &type);
+    }
     napi_set_named_property(env, result, "type", type);
 
     napi_value extra;
-    napi_create_string_utf8(env, nwebResult.GetExtra().c_str(), NAPI_AUTO_LENGTH, &extra);
+    if (nwebResult) {
+        napi_create_string_utf8(env, nwebResult->GetExtra().c_str(), NAPI_AUTO_LENGTH, &extra);
+    } else {
+        napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &extra);
+    }
     napi_set_named_property(env, result, "extra", extra);
 
     return result;
@@ -3271,16 +3279,13 @@ napi_value NapiWebviewController::SerializeWebState(napi_env env, napi_callback_
     void *data = nullptr;
     napi_value buffer = nullptr;
     auto webState = webviewController->SerializeWebState();
-    if (!webState) {
-        return result;
-    }
 
-    NAPI_CALL(env, napi_create_arraybuffer(env, webState->size(), &data, &buffer));
-    int retCode = memcpy_s(data, webState->size(), webState->data(), webState->size());
+    NAPI_CALL(env, napi_create_arraybuffer(env, webState.size(), &data, &buffer));
+    int retCode = memcpy_s(data, webState.size(), webState.data(), webState.size());
     if (retCode != 0) {
         return result;
     }
-    NAPI_CALL(env, napi_create_typedarray(env, napi_uint8_array, webState->size(), buffer, 0, &result));
+    NAPI_CALL(env, napi_create_typedarray(env, napi_uint8_array, webState.size(), buffer, 0, &result));
     return result;
 }
 
@@ -3330,7 +3335,7 @@ napi_value NapiWebviewController::RestoreWebState(napi_env env, napi_callback_in
     if (retCode != 0) {
         return result;
     }
-    webviewController->RestoreWebState(std::make_shared<std::vector<uint8_t>>(state));
+    webviewController->RestoreWebState(state);
     return result;
 }
 

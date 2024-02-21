@@ -20,6 +20,7 @@
 #include "libxml/parser.h"
 #include "libxml/tree.h"
 #include "nweb_helper.h"
+#include "nweb_init_params.h"
 
 namespace OHOS {
 class Surface;
@@ -32,22 +33,22 @@ public:
     ~NWebAdapterHelper() = default;
     bool Init(bool from_ark = true);
     std::shared_ptr<NWeb> CreateNWeb(sptr<Surface> surface,
-                                     const NWebInitArgs &initArgs,
+                                     std::shared_ptr<NWebEngineInitArgsImpl> initArgs,
                                      uint32_t width = 0,
                                      uint32_t height = 0,
                                      bool incognitoMode = false);
     std::shared_ptr<NWeb> CreateNWeb(void *enhanceSurfaceInfo,
-                                     const NWebInitArgs &initArgs,
+                                     std::shared_ptr<NWebEngineInitArgsImpl> initArgs,
                                      uint32_t width = 0,
                                      uint32_t height = 0,
                                      bool incognitoMode = false);
-    void ParseConfig(NWebInitArgs &createInfo);
+    void ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
 private:
     NWebAdapterHelper() = default;
     std::string GetConfigPath(const std::string &configFileName);
-    void ParseConfig(NWebCreateInfo &createInfo);
-    void ReadConfig(const xmlNodePtr &rootPtr, NWebInitArgs &init_args);
+    void ParseConfig(std::shared_ptr<NWebCreateInfo> create_info);
+    void ReadConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     xmlNodePtr GetChildrenNode(xmlNodePtr NodePtr, const std::string &childrenNodeName);
     void ParsePerfConfig(xmlNodePtr NodePtr);
     std::map<std::string, std::string> perfConfig_;

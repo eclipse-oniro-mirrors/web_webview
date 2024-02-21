@@ -147,7 +147,7 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
 
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
-    OHOS::NWeb::NWebDataBase *dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (!dataBase) {
         return result;
     }
@@ -192,8 +192,7 @@ napi_value NapiGeolocationPermission::JsDeleteAllGeolocation(napi_env env, napi_
         napi_get_value_bool(env, argv[PARAMZERO], &incognitoMode);
     }
 
-    OHOS::NWeb::NWebDataBase *dataBase =
-        OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (dataBase != nullptr) {
         dataBase->ClearAllPermission(OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE, incognitoMode);
     }
@@ -259,7 +258,7 @@ void NapiGeolocationPermission::GetPermissionStatePromiseComplete(napi_env env, 
 void NapiGeolocationPermission::ExecuteGetPermissionState(napi_env env, void *data)
 {
     GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (!dataBase) {
         param->errCode = INTERFACE_ERROR;
         param->status = napi_generic_failure;
@@ -456,7 +455,7 @@ void NapiGeolocationPermission::GetOriginsPromiseComplete(napi_env env, napi_sta
 void NapiGeolocationPermission::ExecuteGetOrigins(napi_env env, void *data)
 {
     GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
-    OHOS::NWeb::NWebDataBase *dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (!dataBase) {
         param->errCode = INTERFACE_ERROR;
         param->status = napi_generic_failure;

@@ -31,6 +31,30 @@ std::unordered_map<std::string, NativeArkWeb_OnValidCallback> g_validMap;
 std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
 } // namespace
 
+namespace OHOS::NWeb {
+
+class NWebJsProxyCallbackImpl : public NWebJsProxyCallback {
+public:
+    NWebJsProxyCallbackImpl(const char *methodName, NativeArkWeb_OnJavaScriptProxyCallback methodCallback)
+        : methodName_(methodName), methodCallback_(methodCallback) {
+    }
+    ~NWebJsProxyCallbackImpl() = default;
+
+    std::string GetMethodName() override {
+        return methodName_;
+    }
+
+    NativeArkWeb_OnJavaScriptProxyCallback GetMethodCallback() override {
+        return methodCallback_;
+    }
+
+private:
+    std::string methodName_;
+    NativeArkWeb_OnJavaScriptProxyCallback methodCallback_;
+};
+
+}; // namespace OHOS::NWeb
+
 using namespace OHOS;
 void OH_NativeArkWeb_RunJavaScript(const char* webTag, const char* jsCode, NativeArkWeb_OnJavaScriptCallback callback)
 {
@@ -48,14 +72,16 @@ void OH_NativeArkWeb_RegisterJavaScriptProxy(const char* webTag, const char* obj
     NativeArkWeb_OnJavaScriptProxyCallback* callback, int32_t size, bool isNeedRefresh)
 {
     WVLOG_I("native OH_NativeArkWeb_RegisterJavaScriptProxy webTag:%{public}s", webTag);
-    std::vector<std::function<char*(const char**, int32_t size)>> callbackList;
+    std::vector<std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback>> proxyCallbacks;
     for (int i = 0; i < size; i++) {
-        callbackList.emplace_back(callback[i]);
+        std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback> proxyCallback =
+            std::make_shared<OHOS::NWeb::NWebJsProxyCallbackImpl>(methodList[i], callback[i]);
+        proxyCallbacks.push_back(proxyCallback);
     }
 
     std::weak_ptr<OHOS::NWeb::NWeb> nwebWeak = OH_NativeArkWeb_GetWebInstanceByWebTag(webTag);
     if (auto nweb = nwebWeak.lock()) {
-        nweb->RegisterNativeArkJSFunction(objName, methodList, callbackList, size);
+        nweb->RegisterNativeArkJSFunction(objName, proxyCallbacks);
         if (isNeedRefresh) {
             nweb->Reload();
         }

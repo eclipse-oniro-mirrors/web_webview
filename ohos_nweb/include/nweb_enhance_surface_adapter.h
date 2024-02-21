@@ -21,21 +21,18 @@
 #include <surface.h>
 
 #include "nweb.h"
+#include "nweb_init_params.h"
 #include "surface_buffer.h"
 
 namespace OHOS::NWeb {
 class NWebEnhanceSurfaceAdapter {
 public:
     static NWebEnhanceSurfaceAdapter &Instance();
-    NWebCreateInfo GetCreateInfo(void *enhanceSurfaceInfo,
-                                 const NWebInitArgs &initArgs,
+    std::shared_ptr<NWebCreateInfoImpl> GetCreateInfo(void *enhanceSurfaceInfo,
+                                 std::shared_ptr<NWebEngineInitArgs> initArgs,
                                  uint32_t width,
                                  uint32_t height,
                                  bool incognitoMode = false);
-private:
-    void GetSize(NWebCreateInfo &createInfo, uint32_t width, uint32_t height) const;
-    void GetRenderInterface(NWebCreateInfo &createInfo);
-    void GetIncognitoMode(NWebCreateInfo &createInfo, bool incognitoMode);
 };
 } // namespace OHOS::NWeb
 

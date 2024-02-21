@@ -23,9 +23,6 @@
 namespace OHOS::NWeb {
 class OHOS_NWEB_EXPORT HitTestResult {
 public:
-    HitTestResult() : type_(UNKNOWN_TYPE) {
-    }
-
     virtual ~HitTestResult() = default;
 
     /**
@@ -69,25 +66,11 @@ public:
      */
     static const int EDIT_TEXT_TYPE = 9;
 
-    void SetType(int type) {
-        type_ = type;
-    }
+    virtual void SetType(int type) = 0;
 
-    void SetExtra(std::string extra) {
-        extra_ = extra;
-    }
+    virtual int GetType() = 0;
 
-    int GetType() {
-        return type_;
-    }
-
-    std::string GetExtra() {
-        return extra_;
-    }
-
-private:
-    int type_;
-    std::string extra_;
+    virtual std::string GetExtra() = 0;
 };
 } // namespace OHOS::NWeb
 

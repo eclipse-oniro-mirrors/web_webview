@@ -39,8 +39,18 @@ config("nweb_public_interface") {
   include_dirs = [ "include" ]
 }
 
+config("nweb_glue_interface") {
+  include_dirs = [
+    "${webview_path}/ohos_glue",
+    "${webview_path}/ohos_glue/ohos_nweb/bridge",
+  ]
+}
+
 ohos_shared_library("libnweb") {
-  configs = [ ":nweb_config" ]
+  configs = [
+    ":nweb_config",
+    ":nweb_glue_interface",
+  ]
   public_configs = [ ":nweb_public_interface" ]
   sources = [
     "src/nweb_enhance_surface_adapter.cpp",
@@ -54,6 +64,7 @@ ohos_shared_library("libnweb") {
     ":web.para",
     ":web.para.dac",
     ":web_config",
+    "${webview_path}/ohos_glue:ohos_nweb_glue_source",
     "//third_party/libxml2:libxml2",
   ]
 
