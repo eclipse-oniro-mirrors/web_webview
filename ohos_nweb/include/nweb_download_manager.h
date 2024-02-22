@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,36 +13,31 @@
  * limitations under the License.
  */
 
-#ifndef NWEB_URL_RESOURCE_ERROR_H
-#define NWEB_URL_RESOURCE_ERROR_H
-
-#include <string>
+#ifndef NWEB_DOWNLOAD_MANAGER_H
+#define NWEB_DOWNLOAD_MANAGER_H
 
 #include "nweb_export.h"
+#include <string>
 
 namespace OHOS::NWeb {
-class OHOS_NWEB_EXPORT NWebUrlResourceError {
+
+class OHOS_NWEB_EXPORT NWebDOHConfig {
 public:
-    NWebUrlResourceError() = default;
+  virtual ~NWebDOHConfig() = default;
 
-    virtual ~NWebUrlResourceError() = default;
-
-    /**
-     * @brief Get the error description.
-     *
-     * @brief Get the ErrorInfo.
-     *
-     * @return The description of the error.
-     */
-    virtual std::string ErrorInfo() = 0;
-
-    /**
-     * @brief Get the Error Code.
-     *
-     * @return The error code.
-     */
-    virtual int ErrorCode() = 0;
+  virtual int GetMode() = 0;
+  virtual std::string GetConfig() = 0;
 };
+
+class OHOS_NWEB_EXPORT NWebDownloadManager {
+public:
+  virtual ~NWebDownloadManager() = default;
+
+  virtual void SetHttpDns(std::shared_ptr<NWebDOHConfig> config) = 0;
+
+  virtual void SetConnectionTimeout(const int &timeout) = 0;
+};
+
 } // namespace OHOS::NWeb
 
-#endif // NWEB_URL_RESOURCE_ERROR_H
+#endif // NWEB_DOWNLOAD_MANAGER_H

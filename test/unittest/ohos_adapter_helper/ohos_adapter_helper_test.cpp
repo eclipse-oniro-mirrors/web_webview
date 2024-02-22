@@ -23,6 +23,7 @@
 #include "nweb_helper.h"
 #undef private
 
+#include "nweb_init_params.h"
 #include "ohos_adapter_helper.h"
 
 using namespace testing;
@@ -97,8 +98,8 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize
     auto storage = helper.GetWebStorage();
     EXPECT_NE(storage, nullptr);
     auto nweb = helper.GetNWeb(nweb_id);
-    EXPECT_EQ(nweb.lock(), nullptr);
-    NWebDOHConfig config;
+    EXPECT_EQ(nweb, nullptr);
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     helper.SetHttpDns(config);
 }
 
@@ -149,7 +150,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter, token), -1);
 #endif
     sptr<Surface> surface = nullptr;
-    NWebInitArgs initArgs;
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
     uint32_t width = 1;
     uint32_t height = 1;
     auto nweb = NWebAdapterHelper::Instance().CreateNWeb(surface, initArgs, width, height);
@@ -166,7 +167,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
 {
     int32_t nweb_id = 1;
     NWebHelper& helper = NWebHelper::Instance();
-    NWebCreateInfo create_info;
+    std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     helper.LoadLib(true);
     helper.libHandleWebEngine_ = nullptr;
     helper.LoadLib(true);
@@ -176,7 +177,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     helper.LoadLib(true);
     helper.LoadLib(true);
     helper.libHandleWebEngine_ = nullptr;
-    NWebDOHConfig config;
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     auto webview = helper.CreateNWeb(create_info);
     EXPECT_EQ(webview, nullptr);
@@ -187,7 +188,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     auto storage = helper.GetWebStorage();
     EXPECT_EQ(storage, nullptr);
     auto nweb = helper.GetNWeb(nweb_id);
-    EXPECT_EQ(nweb.lock(), nullptr);
+    EXPECT_EQ(nweb, nullptr);
     helper.UnloadLib();
 }
 

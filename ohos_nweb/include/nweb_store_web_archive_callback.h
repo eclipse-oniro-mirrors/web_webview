@@ -19,12 +19,12 @@
 #include "nweb_value_callback.h"
 
 namespace OHOS::NWeb {
-class NWebStoreWebArchiveCallback : public OHOS::NWeb::NWebValueCallback<std::string> {
+class NWebStoreWebArchiveCallback : public NWebStringValueCallback {
 public:
     NWebStoreWebArchiveCallback() = default;
     ~NWebStoreWebArchiveCallback() = default;
 
-    void OnReceiveValue(std::string result) override
+    void OnReceiveValue(const std::string &result) override
     {
         if (callback_) {
             callback_(result);

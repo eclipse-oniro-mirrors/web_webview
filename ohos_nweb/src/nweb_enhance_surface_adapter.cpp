@@ -25,47 +25,32 @@
 #include "surface_type.h"
 
 namespace OHOS::NWeb {
+class NWebDefaultOutputFrameCallback : public NWebOutputFrameCallback {
+public:
+    NWebDefaultOutputFrameCallback() = default;
+    ~NWebDefaultOutputFrameCallback() = default;
+
+    bool Handle(const char *buffer, uint32_t width, uint32_t height) override {
+        return true;
+    }
+};
+
 NWebEnhanceSurfaceAdapter &NWebEnhanceSurfaceAdapter::Instance()
 {
     static NWebEnhanceSurfaceAdapter surfaceAdapter;
     return surfaceAdapter;
 }
 
-NWebCreateInfo NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo,
-                                                        const NWebInitArgs &initArgs,
-                                                        uint32_t width,
-                                                        uint32_t height,
-                                                        bool incognitoMode)
+std::shared_ptr<NWebCreateInfoImpl> NWebEnhanceSurfaceAdapter::GetCreateInfo(void *enhanceSurfaceInfo,
+    std::shared_ptr<NWebEngineInitArgs> initArgs, uint32_t width, uint32_t height, bool incognitoMode)
 {
-    NWebCreateInfo createInfo = {
-        .init_args = initArgs,
-        .enhance_surface_info = enhanceSurfaceInfo
-    };
-    GetSize(createInfo, width, height);
-    GetRenderInterface(createInfo);
-    GetIncognitoMode(createInfo, incognitoMode);
+    std::shared_ptr<NWebCreateInfoImpl> createInfo = std::make_shared<NWebCreateInfoImpl>();
+    createInfo->SetWidth(width);
+    createInfo->SetHeight(height);
+    createInfo->SetEngineInitArgs(initArgs);
+    createInfo->SetIsIncognitoMode(incognitoMode);
+    createInfo->SetEnhanceSurfaceInfo(enhanceSurfaceInfo);
+    createInfo->SetOutputFrameCallback(std::make_shared<NWebDefaultOutputFrameCallback>());
     return createInfo;
 }
-
-void NWebEnhanceSurfaceAdapter::GetSize(NWebCreateInfo &createInfo,
-                                        uint32_t width,
-                                        uint32_t height) const
-{
-    createInfo.width = width;
-    createInfo.height = height;
-}
-
-void NWebEnhanceSurfaceAdapter::GetRenderInterface(NWebCreateInfo &createInfo)
-{
-    createInfo.output_render_frame = [] (const char *buffer, uint32_t width, uint32_t height) -> bool {
-        return true;
-    };
-}
-
-void NWebEnhanceSurfaceAdapter::GetIncognitoMode(NWebCreateInfo &createInfo,
-                                                 bool incognitoMode)
-{
-    createInfo.incognito_mode = incognitoMode;
-}
-
 } // namespace OHOS::NWeb

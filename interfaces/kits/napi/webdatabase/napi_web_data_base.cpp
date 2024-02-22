@@ -62,7 +62,7 @@ napi_value NapiWebDataBase::Init(napi_env env, napi_value exports)
 napi_value NapiWebDataBase::JsDeleteHttpAuthCredentials(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (dataBase != nullptr) {
         dataBase->DeleteHttpAuthCredentials();
     }
@@ -75,7 +75,7 @@ napi_value NapiWebDataBase::JsExistHttpAuthCredentials(napi_env env, napi_callba
     bool isExist = false;
     napi_value result = nullptr;
 
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (dataBase != nullptr) {
         isExist = dataBase->ExistHttpAuthCredentials();
     }
@@ -183,7 +183,7 @@ napi_value NapiWebDataBase::JsSaveHttpAuthCredentials(napi_env env, napi_callbac
             return nullptr;
         }
 
-        OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+        std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
         if (dataBase != nullptr) {
             dataBase->SaveHttpAuthCredentials(host, realm, username, password);
         }
@@ -229,7 +229,7 @@ napi_value NapiWebDataBase::JsGetHttpAuthCredentials(napi_env env, napi_callback
     napi_value result = nullptr;
     napi_create_array(env, &result);
 
-    OHOS::NWeb::NWebDataBase* dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<OHOS::NWeb::NWebDataBase> dataBase = OHOS::NWeb::NWebHelper::Instance().GetDataBase();
     if (dataBase != nullptr) {
         dataBase->GetHttpAuthCredentials(host, realm, username, password, MAX_PWD_LENGTH + 1);
     }

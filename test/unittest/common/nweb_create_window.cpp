@@ -74,15 +74,14 @@ static std::list<std::string> GetWebEngineArgs(const std::string& arg)
     return webEngineArgList;
 }
 
-NWebInitArgs GetInitArgs(void)
+std::shared_ptr<NWebEngineInitArgsImpl> GetInitArgs(void)
 {
-    NWebInitArgs initArgs = {
-        .dump_path = GetArgValue(ARG_DUMP),
-        .frame_info_dump = HasArg(ARG_FRAME_INFO) ? true : false,
-        .web_engine_args_to_add = GetWebEngineArgs(ARG_ADD_WEB_ENGINE_ARG),
-        .web_engine_args_to_delete = GetWebEngineArgs(ARG_DELETE_WEB_ENGINE_ARG),
-        .multi_renderer_process = HasArg(ARG_MULTI_RENDER_PROCESS) ? true : false,
-    };
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    initArgs->SetDumpPath(GetArgValue(ARG_DUMP));
+    initArgs->SetIsFrameInfoDump(HasArg(ARG_FRAME_INFO) ? true : false);
+    initArgs->SetIsMultiRendererProcess(HasArg(ARG_MULTI_RENDER_PROCESS) ? true : false);
+    initArgs->SetArgsToAdd(GetWebEngineArgs(ARG_ADD_WEB_ENGINE_ARG));
+    initArgs->SetArgsToDelete(GetWebEngineArgs(ARG_DELETE_WEB_ENGINE_ARG));
     return initArgs;
 }
 
