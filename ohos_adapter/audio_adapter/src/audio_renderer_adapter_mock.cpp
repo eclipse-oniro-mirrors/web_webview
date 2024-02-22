@@ -48,17 +48,17 @@ int32_t AudioRendererAdapterImpl::Write(uint8_t* buffer, size_t bufferSize)
     return -1;
 }
 
-int32_t AudioRendererAdapterImpl::GetLatency(uint64_t& latency) const
+int32_t AudioRendererAdapterImpl::GetLatency(uint64_t& latency)
 {
     return -1;
 }
 
-int32_t AudioRendererAdapterImpl::SetVolume(float volume) const
+int32_t AudioRendererAdapterImpl::SetVolume(float volume)
 {
     return -1;
 }
 
-float AudioRendererAdapterImpl::GetVolume() const
+float AudioRendererAdapterImpl::GetVolume()
 {
     return -1;
 }

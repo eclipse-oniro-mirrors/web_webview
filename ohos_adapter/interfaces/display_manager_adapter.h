@@ -20,6 +20,7 @@
 
 namespace OHOS::NWeb {
 using DisplayId = uint64_t;
+using ListenerId = uint32_t;
 enum class RotationType : uint32_t {
     ROTATION_0,
     ROTATION_90,
@@ -82,9 +83,9 @@ public:
 
     virtual std::shared_ptr<DisplayAdapter> GetDefaultDisplay() = 0;
 
-    virtual bool RegisterDisplayListener(std::shared_ptr<DisplayListenerAdapter> listener) = 0;
+    virtual ListenerId RegisterDisplayListener(std::shared_ptr<DisplayListenerAdapter> listener) = 0;
 
-    virtual bool UnregisterDisplayListener(std::shared_ptr<DisplayListenerAdapter> listener) = 0;
+    virtual bool UnregisterDisplayListener(ListenerId id) = 0;
 
     virtual bool IsDefaultPortrait() = 0;
 };

@@ -35,7 +35,7 @@ bool WebTimezoneInfoImpl::GetIsValid()
 }
 
 NWebTimeZoneEventSubscriber::NWebTimeZoneEventSubscriber(
-    EventFwk::CommonEventSubscribeInfo& in, TimeZoneEventCallback& cb)
+    EventFwk::CommonEventSubscribeInfo& in, std::shared_ptr<TimezoneEventCallbackAdapter> cb)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(cb)
 {}
 
@@ -47,14 +47,14 @@ void NWebTimeZoneEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData
         return;
     }
     std::string ret = OHOS::MiscServices::TimeServiceClient::GetInstance()->GetTimeZone();
-    WebTimezoneInfoImpl timezoneinfo(ret, true);
+    std::shared_ptr<WebTimezoneInfoImpl> timezoneinfo = std::make_shared<WebTimezoneInfoImpl>(ret, true);
     if (eventCallback_ == nullptr) {
         return;
     }
-    eventCallback_(timezoneinfo);
+    eventCallback_->TimezoneChanged(timezoneinfo);
 }
 
-void DateTimeFormatAdapterImpl::RegTimezoneEvent(const TimeZoneEventCallback&& eventCallback)
+void DateTimeFormatAdapterImpl::RegTimezoneEvent(std::shared_ptr<TimezoneEventCallbackAdapter> eventCallback)
 {
     WVLOG_I("Reg Timezone Event.");
     cb_ = std::move(eventCallback);

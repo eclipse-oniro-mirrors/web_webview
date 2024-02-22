@@ -40,7 +40,7 @@ public:
     ~EventHandlerAdapterImpl() override = default;
 
     bool AddFileDescriptorListener(int32_t fileDescriptor, uint32_t events,
-        const std::shared_ptr<EventHandlerFDListenerAdapter>& listener) override;
+        const std::shared_ptr<EventHandlerFDListenerAdapter> listener) override;
 
     void RemoveFileDescriptorListener(int32_t fileDescriptor) override;
 

@@ -27,7 +27,7 @@ class BufferConsumerListenerTest : public IBufferConsumerListenerAdapter {
 public:
     BufferConsumerListenerTest() = default;
     ~BufferConsumerListenerTest() override = default;
-    void OnBufferAvailable(std::unique_ptr<SurfaceBufferAdapter> buffer) override
+    void OnBufferAvailable(std::shared_ptr<SurfaceBufferAdapter> buffer) override
     {
         WVLOG_I("test buffer is available, the format=%{public}d", buffer->GetFormat());
     }
@@ -173,7 +173,7 @@ HWTEST(PixelFormatAdapterTest, HandlesNormalScene, TestSize.Level1)
 {
     EXPECT_NE(PixelFormatAdapter::PIXEL_FMT_RGBA_8888, 0);
     EXPECT_NE(PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, 0);
-    EXPECT_EQ(PixelFormatAdapter::PIXEL_FMT_RGBA_8888, GRAPHIC_PIXEL_FMT_RGBA_8888);
-    EXPECT_EQ(PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, GRAPHIC_PIXEL_FMT_YCBCR_420_SP);
+    EXPECT_EQ((int)PixelFormatAdapter::PIXEL_FMT_RGBA_8888, (int)GRAPHIC_PIXEL_FMT_RGBA_8888);
+    EXPECT_EQ((int)PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, (int)GRAPHIC_PIXEL_FMT_YCBCR_420_SP);
 }
 } // namespace OHOS::NWeb

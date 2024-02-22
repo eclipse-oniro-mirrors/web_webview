@@ -62,23 +62,23 @@ public:
 
     virtual ~LocationInfo() = default;
 
-    virtual double GetLatitude() const = 0;
+    virtual double GetLatitude() = 0;
 
-    virtual double GetLongitude() const = 0;
+    virtual double GetLongitude() = 0;
 
-    virtual double GetAltitude() const = 0;
+    virtual double GetAltitude() = 0;
 
-    virtual float GetAccuracy() const = 0;
+    virtual float GetAccuracy() = 0;
 
-    virtual float GetSpeed() const = 0;
+    virtual float GetSpeed() = 0;
 
-    virtual double GetDirection() const = 0;
+    virtual double GetDirection() = 0;
 
-    virtual int64_t GetTimeStamp() const = 0;
+    virtual int64_t GetTimeStamp() = 0;
 
-    virtual int64_t GetTimeSinceBoot() const = 0;
+    virtual int64_t GetTimeSinceBoot() = 0;
 
-    virtual std::string GetAdditions() const = 0;
+    virtual std::string GetAdditions() = 0;
 };
 
 class LocationCallbackAdapter {
@@ -88,7 +88,7 @@ public:
     virtual ~LocationCallbackAdapter() = default;
 
     virtual void OnLocationReport(
-        const std::unique_ptr<LocationInfo>& location) = 0;
+        const std::shared_ptr<LocationInfo> location) = 0;
 
     virtual void OnLocatingStatusChange(const int status) = 0;
 
@@ -101,11 +101,11 @@ public:
 
     virtual ~LocationProxyAdapter() = default;
 
-    virtual bool StartLocating(
-        std::unique_ptr<LocationRequestConfig>& requestConfig,
+    virtual int32_t StartLocating(
+        std::shared_ptr<LocationRequestConfig> requestConfig,
         std::shared_ptr<LocationCallbackAdapter> callback) = 0;
 
-    virtual bool StopLocating(std::shared_ptr<LocationCallbackAdapter> callback) = 0;
+    virtual bool StopLocating(int32_t callbackId) = 0;
 
     virtual bool EnableAbility(bool isEnabled) = 0;
 
@@ -115,10 +115,12 @@ public:
 class LocationInstance {
 public:
     static LocationInstance& GetInstance();
+   
+    virtual ~LocationInstance() = default;
 
-    std::unique_ptr<LocationProxyAdapter> CreateLocationProxyAdapter();
+    virtual std::shared_ptr<LocationProxyAdapter> CreateLocationProxyAdapter() = 0;
     
-    std::unique_ptr<LocationRequestConfig> CreateLocationRequestConfig();
+    virtual std::shared_ptr<LocationRequestConfig> CreateLocationRequestConfig() = 0;
 };
 }
 

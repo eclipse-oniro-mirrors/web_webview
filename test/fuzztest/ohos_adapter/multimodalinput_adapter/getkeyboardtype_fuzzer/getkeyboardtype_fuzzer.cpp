@@ -31,8 +31,8 @@ namespace OHOS {
         if (memcpy_s(&deviceId, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
             return false;
         }
-        auto callback = [](int32_t type) {};
-        AdapterImpl->GetKeyboardType(deviceId, callback);
+        int32_t type;
+        AdapterImpl->GetKeyboardType(deviceId, type);
         return true;
     }
 }

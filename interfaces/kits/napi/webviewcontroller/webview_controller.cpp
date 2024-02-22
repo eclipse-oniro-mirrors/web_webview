@@ -1148,7 +1148,9 @@ void WebPrintDocument::OnStartLayoutWrite(const std::string& jobId, const PrintA
     const PrintAttributesAdapter& newAttrs, uint32_t fd, std::function<void(std::string, uint32_t)> writeResultCallback)
 {
     if (printDocAdapter_) {
-        printDocAdapter_->OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, writeResultCallback);
+        std::shared_ptr<PrintWriteResultCallbackAdapter> callback = 
+            std::make_shared<WebPrintWriteResultCallbackAdapter>(writeResultCallback);
+        printDocAdapter_->OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, callback);
     }
 }
 
@@ -1226,5 +1228,11 @@ bool  WebviewController::GetPrintBackground()
 
     return printBackgroundEnabled;
 }
+
+void WebPrintWriteResultCallbackAdapter::WriteResultCallback(std::string jobId, uint32_t code)
+{
+    cb_(jobId, code);
+}
+
 } // namespace NWeb
 } // namespace OHOS

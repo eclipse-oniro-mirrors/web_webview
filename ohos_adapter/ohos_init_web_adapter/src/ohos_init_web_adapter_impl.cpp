@@ -25,7 +25,7 @@ WebRunInitedCallback* OhosInitWebAdapterImpl::GetRunWebInitedCallback()
     return OhosInitWebAdapterImpl::webRunInitedCallback_;
 }
 
-void OhosInitWebAdapterImpl::SetRunWebInitedCallback(WebRunInitedCallback* &&callback)
+void OhosInitWebAdapterImpl::SetRunWebInitedCallback(WebRunInitedCallback* callback)
 {
     OhosInitWebAdapterImpl::webRunInitedCallback_ = callback;
 }

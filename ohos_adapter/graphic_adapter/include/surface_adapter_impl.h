@@ -27,19 +27,19 @@ public:
 
     ~SurfaceBufferAdapterImpl() override = default;
 
-    int32_t GetFileDescriptor() const override;
+    int32_t GetFileDescriptor() override;
 
-    int32_t GetWidth() const override;
+    int32_t GetWidth() override;
 
-    int32_t GetHeight() const override;
+    int32_t GetHeight() override;
 
-    int32_t GetStride() const override;
+    int32_t GetStride() override;
 
-    int32_t GetFormat() const override;
+    int32_t GetFormat() override;
 
-    uint32_t GetSize() const override;
+    uint32_t GetSize() override;
 
-    void *GetVirAddr() const override;
+    void *GetVirAddr() override;
 
     sptr<SurfaceBuffer>& GetBuffer();
 
@@ -50,7 +50,7 @@ private:
 class BufferConsumerListenerImpl : public IBufferConsumerListener {
 public:
     BufferConsumerListenerImpl(
-        wptr<IConsumerSurface> surface, std::unique_ptr<IBufferConsumerListenerAdapter> listener);
+        wptr<IConsumerSurface> surface, std::shared_ptr<IBufferConsumerListenerAdapter> listener);
 
     ~BufferConsumerListenerImpl() override = default;
 
@@ -59,7 +59,7 @@ public:
 private:
     wptr<IConsumerSurface> cSurface_ = nullptr;
 
-    std::unique_ptr<IBufferConsumerListenerAdapter> listener_ = nullptr;
+    std::shared_ptr<IBufferConsumerListenerAdapter> listener_ = nullptr;
 };
 
 class ConsumerSurfaceAdapterImpl : public IConsumerSurfaceAdapter {
@@ -68,9 +68,9 @@ public:
 
     ~ConsumerSurfaceAdapterImpl() = default;
 
-    int32_t RegisterConsumerListener(std::unique_ptr<IBufferConsumerListenerAdapter> listenerAdapter) override;
+    int32_t RegisterConsumerListener(std::shared_ptr<IBufferConsumerListenerAdapter> listenerAdapter) override;
 
-    int32_t ReleaseBuffer(std::unique_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence) override;
+    int32_t ReleaseBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence) override;
 
     int32_t SetUserData(const std::string& key, const std::string& val) override;
 

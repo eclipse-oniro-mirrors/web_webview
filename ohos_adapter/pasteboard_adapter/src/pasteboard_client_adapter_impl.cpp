@@ -375,7 +375,7 @@ std::size_t PasteDataAdapterImpl::GetRecordCount()
     return (data_ != nullptr) ? data_->GetRecordCount() : 0;
 }
 
-PasteRecordList PasteDataAdapterImpl::AllRecords() const
+PasteRecordList PasteDataAdapterImpl::AllRecords()
 {
     if (data_ == nullptr) {
         return PasteRecordList();
@@ -480,52 +480,54 @@ int32_t PasteBoardClientAdapterImpl::OpenRemoteUri(const std::string& path)
     return RemoteUri::OpenRemoteUri(path);
 }
 
-bool PasteBoardClientAdapterImpl::IsLocalPaste() const
+bool PasteBoardClientAdapterImpl::IsLocalPaste()
 {
     return isLocalPaste_;
 }
 
-uint32_t PasteBoardClientAdapterImpl::GetTokenId() const
+uint32_t PasteBoardClientAdapterImpl::GetTokenId()
 {
     return tokenId_;
 }
 
-void PasteBoardClientAdapterImpl::AddPasteboardChangedObserver(
+int32_t PasteBoardClientAdapterImpl::AddPasteboardChangedObserver(
     std::shared_ptr<PasteboardObserverAdapter> callback)
 {
+    static int32_t count = 0;
+    int32_t id = -1;
     if (callback) {
         sptr<PasteboardObserver> observer;
         {
             std::lock_guard<std::mutex> lock(mutex_);
-            ObserverMap::iterator iter = reg_.find(callback.get());
-            if (iter != reg_.end()) {
-                return;
-            }
             observer = new (std::nothrow) PasteboardObserverAdapterImpl(callback);
             if (!observer) {
-                return;
+                return -1;
             }
-            reg_.emplace(std::make_pair(callback.get(), observer));
+            
+            id = count++;
+            if (count < 0) {
+                count = 0;
+            }
+            reg_.emplace(std::make_pair(id, observer));
         }
         PasteboardClient::GetInstance()->AddPasteboardChangedObserver(observer);
     }
+    return id;
 }
 
 void PasteBoardClientAdapterImpl::RemovePasteboardChangedObserver(
-    std::shared_ptr<PasteboardObserverAdapter> callback)
+    int32_t callbackId)
 {
-    if (callback) {
-        sptr<PasteboardObserver> observer;
-        {
-            std::lock_guard<std::mutex> lock(mutex_);
-            ObserverMap::iterator iter = reg_.find(callback.get());
-            if (iter == reg_.end()) {
-                return;
-            }
-            observer = iter->second;
-            reg_.erase(iter);
+    sptr<PasteboardObserver> observer;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        ObserverMap::iterator iter = reg_.find(callbackId);
+        if (iter == reg_.end()) {
+            return;
         }
-        PasteboardClient::GetInstance()->RemovePasteboardChangedObserver(observer);
+        observer = iter->second;
+        reg_.erase(iter);
     }
+    PasteboardClient::GetInstance()->RemovePasteboardChangedObserver(observer);
 }
 } // namespace OHOS::NWeb

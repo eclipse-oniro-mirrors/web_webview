@@ -32,7 +32,7 @@ public:
     VSyncAdapterImpl& operator=(const VSyncAdapterImpl&) = delete;
 
     static VSyncAdapterImpl& GetInstance();
-    VSyncErrorCode RequestVsync(void* data, std::function<void(int64_t, void*)> NWebVSyncCb) override;
+    VSyncErrorCode RequestVsync(void* data, NWebVSyncCb cb) override;
     int64_t GetVSyncPeriod() override;
 
 private:
@@ -45,7 +45,7 @@ private:
     bool hasReportedKeyThread_ = false;
     std::shared_ptr<Rosen::VSyncReceiver> receiver_ = nullptr;
     std::shared_ptr<OHOS::AppExecFwk::EventHandler> vsyncHandler_;
-    std::unordered_map<void*, std::function<void(int64_t, void*)>> vsyncCallbacks_;
+    std::unordered_map<void*, NWebVSyncCb> vsyncCallbacks_;
     Rosen::VSyncReceiver::FrameCallback frameCallback_ = {
         .userData_ = this,
         .callback_ = OnVsync,

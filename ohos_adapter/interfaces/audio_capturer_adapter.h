@@ -69,13 +69,13 @@ public:
     virtual bool Release() = 0;
 
     virtual int32_t SetCapturerReadCallback(
-        const std::shared_ptr<AudioCapturerReadCallbackAdapter> &callbck) = 0;
+        std::shared_ptr<AudioCapturerReadCallbackAdapter> callbck) = 0;
 
     virtual int32_t GetBufferDesc(BufferDescAdapter &buffferDesc) = 0;
 
-    virtual int32_t Enqueue(const BufferDescAdapter &bufferDesc) const = 0;
+    virtual int32_t Enqueue(const BufferDescAdapter &bufferDesc) = 0;
 
-    virtual int32_t GetFrameCount(uint32_t &frameCount) const = 0;
+    virtual int32_t GetFrameCount(uint32_t &frameCount) = 0;
 
     virtual int64_t GetAudioTime() = 0;
 };

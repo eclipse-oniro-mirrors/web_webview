@@ -80,13 +80,13 @@ public:
 
     virtual ~PlayerAdapter() = default;
 
-    virtual int32_t SetPlayerCallback(std::unique_ptr<PlayerCallbackAdapter> callbackAdapter) = 0;
+    virtual int32_t SetPlayerCallback(std::shared_ptr<PlayerCallbackAdapter> callbackAdapter) = 0;
 
     virtual int32_t SetSource(const std::string& url) = 0;
 
     virtual int32_t SetSource(int32_t fd, int64_t offset = 0, int64_t size = 0) = 0;
 
-    virtual int32_t SetVideoSurface(IConsumerSurfaceAdapter* cSurfaceAdapter) = 0;
+    virtual int32_t SetVideoSurface(std::shared_ptr<IConsumerSurfaceAdapter> cSurfaceAdapter) = 0;
 
     virtual int32_t SetVolume(float leftVolume, float rightVolume) = 0;
 

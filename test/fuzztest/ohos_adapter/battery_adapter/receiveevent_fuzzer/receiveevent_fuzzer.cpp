@@ -24,14 +24,22 @@ using namespace OHOS::NWeb;
 using namespace OHOS::EventFwk;
 
 namespace OHOS {
+    namespace {
+        class EmptyCallback : public WebBatteryEventCallback {
+            public:
+                EmptyCallback() = default;
+            private:
+                void BatteryInfoChanged(std::shared_ptr<WebBatteryInfo>) {}
+        };  
+    }
     bool ReceiveEventFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
         CommonEventSubscribeInfo subscribe;
-        auto callback = [] (WebBatteryInfo& info) {};
-        BatteryEventCallback eventCallback = callback;
+        std::shared_ptr<WebBatteryEventCallback> eventCallback = 
+            std::make_shared<EmptyCallback>();
         NWebBatteryEventSubscriber batter(subscribe, eventCallback);
         CommonEventData receive;
         batter.OnReceiveEvent(receive);

@@ -71,31 +71,32 @@ void IMFTextListenerAdapterImpl::SendKeyboardStatus(const MiscServices::Keyboard
 void IMFTextListenerAdapterImpl::SendFunctionKey(const MiscServices::FunctionKey& functionKey)
 {
     if (listener_) {
-        IMFAdapterFunctionKey adapterFunction;
+        std::shared_ptr<IMFAdapterFunctionKeyAdapterImpl> adapterFunction = 
+            std::make_shared<IMFAdapterFunctionKeyAdapterImpl>();
         switch (functionKey.GetEnterKeyType()) {
             case MiscServices::EnterKeyType::UNSPECIFIED:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::UNSPECIFIED);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::UNSPECIFIED);
                 break;
             case MiscServices::EnterKeyType::NONE:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::NONE);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::NONE);
                 break;
             case MiscServices::EnterKeyType::GO:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::GO);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::GO);
                 break;
             case MiscServices::EnterKeyType::SEARCH:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::SEARCH);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::SEARCH);
                 break;
             case MiscServices::EnterKeyType::SEND:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::SEND);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::SEND);
                 break;
             case MiscServices::EnterKeyType::NEXT:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::NEXT);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::NEXT);
                 break;
             case MiscServices::EnterKeyType::DONE:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::DONE);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::DONE);
                 break;
             case MiscServices::EnterKeyType::PREVIOUS:
-                adapterFunction.SetEnterKeyType(IMFAdapterEnterKeyType::PREVIOUS);
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::PREVIOUS);
                 break;
             default:
                 WVLOG_E("unknown functionKey");

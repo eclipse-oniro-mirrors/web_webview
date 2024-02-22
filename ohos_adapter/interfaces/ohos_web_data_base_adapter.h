@@ -26,7 +26,7 @@ public:
 
     virtual ~OhosWebDataBaseAdapter() = default;
 
-    virtual bool ExistHttpAuthCredentials() const = 0;
+    virtual bool ExistHttpAuthCredentials() = 0;
 
     virtual void DeleteHttpAuthCredentials() = 0;
 
@@ -34,7 +34,7 @@ public:
         const std::string& username, const char* password) = 0;
 
     virtual void GetHttpAuthCredentials(const std::string& host, const std::string& realm,
-        std::string& username, char* password, uint32_t passwordSize) const = 0;
+        std::string& username, char* password, uint32_t passwordSize) = 0;
 };
 
 enum class WebPermissionType: int32_t {
@@ -48,10 +48,10 @@ public:
 
     virtual ~OhosWebPermissionDataBaseAdapter() = default;
 
-    virtual bool ExistPermissionByOrigin(const std::string& origin, const WebPermissionType& key) const = 0;
+    virtual bool ExistPermissionByOrigin(const std::string& origin, const WebPermissionType& key) = 0;
 
     virtual bool GetPermissionResultByOrigin(const std::string& origin, const WebPermissionType& key,
-        bool& result) const = 0;
+        bool& result) = 0;
 
     virtual void SetPermissionByOrigin(const std::string& origin, const WebPermissionType& key, bool result) = 0;
 
@@ -59,7 +59,7 @@ public:
 
     virtual void ClearAllPermission(const WebPermissionType& key) = 0;
 
-    virtual void GetOriginsByPermission(const WebPermissionType& key, std::vector<std::string>& origins) const = 0;
+    virtual void GetOriginsByPermission(const WebPermissionType& key, std::vector<std::string>& origins) = 0;
 };
 } // namespace OHOS::NWeb
 #endif // OHOS_WEB_DATA_BASE_ADAPTER_H

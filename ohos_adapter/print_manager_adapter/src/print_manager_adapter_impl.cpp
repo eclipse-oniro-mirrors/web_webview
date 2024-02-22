@@ -41,7 +41,7 @@ int32_t PrintManagerAdapterImpl::StartPrint(
 }
 
 int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
-    const std::shared_ptr<PrintDocumentAdapterAdapter>& listener, const PrintAttributesAdapter& printAttributes)
+    const std::shared_ptr<PrintDocumentAdapterAdapter> listener, const PrintAttributesAdapter& printAttributes)
 {
 #if defined(NWEB_PRINT_ENABLE)
     OHOS::Print::PrintDocumentAdapter* adapter = new PrintDocumentAdapterImpl(listener);
@@ -71,7 +71,7 @@ int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
 }
 
 int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
-    const std::shared_ptr<PrintDocumentAdapterAdapter>& listener, const PrintAttributesAdapter& printAttributes,
+    const std::shared_ptr<PrintDocumentAdapterAdapter> listener, const PrintAttributesAdapter& printAttributes,
     void* contextToken)
 {
 #if defined(NWEB_PRINT_ENABLE)
@@ -148,8 +148,15 @@ void PrintDocumentAdapterImpl::onStartLayoutWrite(const std::string& jobId,
     if (!cb_) {
         return;
     }
+    
+    std::shared_ptr<PrintWriteResultCallbackAdapter> callback = 
+        std::make_shared<PrintWriteResultCallbackAdapterImpl>(writeResultCallback);
+    if (!callback) {
+        return;
+    }
+
     cb_->OnStartLayoutWrite(
-        jobId, ConvertPrintingParameters(oldAttrs), ConvertPrintingParameters(newAttrs), fd, writeResultCallback);
+        jobId, ConvertPrintingParameters(oldAttrs), ConvertPrintingParameters(newAttrs), fd, callback);
 }
 
 void PrintDocumentAdapterImpl::onJobStateChanged(const std::string& jobId, uint32_t state)
@@ -160,4 +167,16 @@ void PrintDocumentAdapterImpl::onJobStateChanged(const std::string& jobId, uint3
     cb_->OnJobStateChanged(jobId, state);
 }
 #endif
+
+PrintWriteResultCallbackAdapterImpl::PrintWriteResultCallbackAdapterImpl(
+    std::function<void(std::string, uint32_t)>& cb) 
+{
+    cb_ = cb;   
+}
+
+void PrintWriteResultCallbackAdapterImpl::WriteResultCallback(std::string jobId, uint32_t code)
+{
+    cb_(jobId, code);
+}
+
 } // namespace OHOS::NWeb

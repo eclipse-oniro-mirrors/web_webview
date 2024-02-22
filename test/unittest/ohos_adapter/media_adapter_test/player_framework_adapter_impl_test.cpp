@@ -99,7 +99,7 @@ HWTEST_F(PlayerAdapterImplTest, NormalTest, TestSize.Level1)
 
     auto surfaceAdapter = OhosAdapterHelper::GetInstance().CreateConsumerSurfaceAdapter();
     EXPECT_NE(surfaceAdapter, nullptr);
-    EXPECT_NE(playerAdapter_->SetVideoSurface(surfaceAdapter.get()), -1);
+    EXPECT_NE(playerAdapter_->SetVideoSurface(std::move(surfaceAdapter)), -1);
     EXPECT_NE(playerAdapter_->PrepareAsync(), -1);
     EXPECT_EQ(playerAdapter_->SetVolume(0, 0), Media::MSERR_OK);
     EXPECT_NE(playerAdapter_->Seek(0, PlayerSeekMode::SEEK_CLOSEST_SYNC), -1);

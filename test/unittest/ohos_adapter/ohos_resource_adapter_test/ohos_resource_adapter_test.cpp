@@ -102,16 +102,16 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetRawFileData_002, Te
     std::unique_ptr<uint8_t[]> dest;
     std::string rawFile = "test_web";
     size_t len = rawFile.size();
-    bool result = adapterImpl.GetRawFileData(rawFile, len, dest, true);
+    uint8_t* data;
+    bool result = adapterImpl.GetRawFileData(rawFile, len, data, true);
     EXPECT_FALSE(result);
     std::shared_ptr<Extractor> extractor = std::make_shared<Extractor>(rawFile);
     result = adapterImpl.GetRawFileData(extractor, rawFile, len, dest);
     EXPECT_FALSE(result);
     result = adapterImpl.GetRawFileData(nullptr, rawFile, len, dest);
     EXPECT_FALSE(result);
-    std::unique_ptr<OhosFileMapper> fileMapper = nullptr;
-    result = adapterImpl.GetRawFileMapper(rawFile, fileMapper, true);
-    EXPECT_FALSE(result);
+    std::shared_ptr<OhosFileMapper> fileMapper = adapterImpl.GetRawFileMapper(rawFile, true);
+    EXPECT_EQ(fileMapper, nullptr);
     result = adapterImpl.IsRawFileExist(rawFile, true);
     EXPECT_FALSE(result);
     uint16_t date;
@@ -129,11 +129,10 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetRawFileData_002, Te
     EXPECT_FALSE(result);
     result = adapterImpl.HasEntry(nullptr, rawFile);
     EXPECT_FALSE(result);
-    std::unique_ptr<OhosFileMapper> mapper = nullptr;
-    result = adapterImpl.GetRawFileMapper(nullptr, rawFile, mapper);
-    EXPECT_FALSE(result);
-    result = adapterImpl.GetRawFileMapper(extractor, rawFile, mapper);
-    EXPECT_FALSE(result);
+    std::shared_ptr<OhosFileMapper> mapper = adapterImpl.GetRawFileMapper(nullptr, rawFile);
+    EXPECT_EQ(mapper, nullptr);
+    mapper = adapterImpl.GetRawFileMapper(extractor, rawFile);
+    EXPECT_EQ(mapper, nullptr);
     adapterImpl.sysExtractor_.reset();
     result = adapterImpl.GetRawFileLastModTime(rawFile, date, time, true);
     EXPECT_FALSE(result);
@@ -177,7 +176,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
     EXPECT_NE(data, nullptr);
     size_t dataLen = apperImpl.GetDataLen();
     EXPECT_NE(dataLen, 0);
-    std::unique_ptr<uint8_t[]> dest;
+    uint8_t* dest;
     isCompressed = apperImpl.UnzipData(dest, dataLen);
     EXPECT_FALSE(isCompressed);
     apperImpl.extractor_.reset();
@@ -252,7 +251,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetResourceMgr_005, Te
         hapPath = NWEB_HAP_PATH_1;
     }
     OhosResourceAdapterImpl adapterImpl(hapPath);
-    std::unique_ptr<uint8_t[]> dest;
+    uint8_t* dest;
     std::string rawFile = "test";
     size_t len = rawFile.size();
     bool result = adapterImpl.GetRawFileData(rawFile, len, dest, false);

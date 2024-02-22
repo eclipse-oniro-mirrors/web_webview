@@ -176,6 +176,13 @@ private:
     AccessTokenID accessID_ = 0;
 };
 
+class MockNetProxyEventCallbackAdapter : public NetProxyEventCallbackAdapter {
+    public:
+        MockNetProxyEventCallbackAdapter() = default;
+        void Changed(const std::string& host, const uint16_t& port, const std::string& pacUrl,
+                     const std::vector<std::string>& exclusionList) {}
+};
+
 /**
  * @tc.name: NetProxyAdapterTest_OnReceiveEvent_001.
  * @tc.desc: IMF adapter unittest.
@@ -186,9 +193,8 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_OnReceiveEvent_001, TestSize.L
 {
     EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
     EventFwk::CommonEventSubscribeInfo info(skill);
-    NetProxyEventCallback eventCallback =
-        [](std::string& host, uint16_t& port, const std::string& pacUrl,
-        const std::vector<std::string>& exclusionList) {};
+    std::shared_ptr<NetProxyEventCallbackAdapter> eventCallback =
+        std::make_shared<MockNetProxyEventCallbackAdapter>();
     NetProxyEventSubscriber criber(info, eventCallback);
     EXPECT_NE(criber.eventCallback_, nullptr);
     EventFwk::CommonEventData data;
@@ -236,9 +242,8 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_RegNetProxyEvent_002, TestSize
     EXPECT_EQ(NetProxyAdapterImpl::GetInstance().cb_, nullptr);
     bool result = NetProxyAdapterImpl::GetInstance().StartListen();
     EXPECT_FALSE(result);
-    NetProxyEventCallback eventCallback =
-        [](std::string& host, uint16_t& port, const std::string& pacUrl,
-        const std::vector<std::string>& exclusionList) {};
+    std::shared_ptr<NetProxyEventCallbackAdapter> eventCallback =
+        std::make_shared<MockNetProxyEventCallbackAdapter>();
     NetProxyAdapterImpl::GetInstance().RegNetProxyEvent(std::move(eventCallback));
     EXPECT_NE(NetProxyAdapterImpl::GetInstance().cb_, nullptr);
     result = NetProxyAdapterImpl::GetInstance().StartListen();

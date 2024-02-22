@@ -42,7 +42,7 @@ EnterpriseDeviceManagementAdapterImpl& EnterpriseDeviceManagementAdapterImpl::Ge
 #if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
 NWebEdmEventSubscriber::NWebEdmEventSubscriber(
     EventFwk::CommonEventSubscribeInfo& in,
-    EdmPolicyChangedEventCallback& eventCallback)
+    std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> eventCallback)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(eventCallback) {}
 
 void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& data)
@@ -53,12 +53,14 @@ void NWebEdmEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& dat
         return;
     }
 
-    eventCallback_();
+    if (eventCallback_) {
+        eventCallback_->Changed();
+    }
 }
 #endif
 
 void EnterpriseDeviceManagementAdapterImpl::RegistPolicyChangeEventCallback(
-    const EdmPolicyChangedEventCallback&& eventCallback)
+    std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> eventCallback)
 {
 #if defined(NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE)
     WVLOG_I("Regist edm policy change event callback");

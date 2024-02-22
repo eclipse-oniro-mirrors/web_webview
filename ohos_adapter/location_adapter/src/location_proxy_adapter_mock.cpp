@@ -24,12 +24,12 @@ LocationInstance& LocationInstance::GetInstance()
     return instance;
 }
 
-std::unique_ptr<LocationProxyAdapter> LocationInstance::CreateLocationProxyAdapter()
+std::shared_ptr<LocationProxyAdapter> LocationInstance::CreateLocationProxyAdapter()
 {
     return nullptr;
 }
 
-std::unique_ptr<LocationRequestConfig> LocationInstance::CreateLocationRequestConfig()
+std::shared_ptr<LocationRequestConfig> LocationInstance::CreateLocationRequestConfig()
 {
     return nullptr;
 }
@@ -48,60 +48,60 @@ void LocationRequestConfigImpl::SetTimeInterval(int32_t timeInterval) {}
 
 void LocationRequestConfigImpl::SetPriority(int32_t priority) {}
 
-double LocationInfoImpl::GetLatitude() const
+double LocationInfoImpl::GetLatitude()
 {
     return -1;
 }
 
-double LocationInfoImpl::GetLongitude() const
+double LocationInfoImpl::GetLongitude()
 {
     return -1;
 }
 
-double LocationInfoImpl::GetAltitude() const
+double LocationInfoImpl::GetAltitude()
 {
     return -1;
 }
 
-float LocationInfoImpl::GetAccuracy() const
+float LocationInfoImpl::GetAccuracy()
 {
     return -1;
 }
 
-float LocationInfoImpl::GetSpeed() const
+float LocationInfoImpl::GetSpeed()
 {
     return -1;
 }
 
-double LocationInfoImpl::GetDirection() const
+double LocationInfoImpl::GetDirection()
 {
     return -1;
 }
 
-int64_t LocationInfoImpl::GetTimeStamp() const
+int64_t LocationInfoImpl::GetTimeStamp()
 {
     return -1;
 }
 
-int64_t LocationInfoImpl::GetTimeSinceBoot() const
+int64_t LocationInfoImpl::GetTimeSinceBoot()
 {
     return -1;
 }
 
-std::string LocationInfoImpl::GetAdditions() const
+std::string LocationInfoImpl::GetAdditions()
 {
     return std::string();
 }
 
 LocationProxyAdapterImpl::LocationProxyAdapterImpl() {}
 
-bool LocationProxyAdapterImpl::StartLocating(
-    std::unique_ptr<LocationRequestConfig>& requestConfig, std::shared_ptr<LocationCallbackAdapter> callback)
+int32_t LocationProxyAdapterImpl::StartLocating(
+    std::shared_ptr<LocationRequestConfig> requestConfig, std::shared_ptr<LocationCallbackAdapter> callback)
 {
-    return false;
+    return -1;
 }
 
-bool LocationProxyAdapterImpl::StopLocating(std::shared_ptr<LocationCallbackAdapter> callback)
+bool LocationProxyAdapterImpl::StopLocating(int32_t callbackId)
 {
     return false;
 }

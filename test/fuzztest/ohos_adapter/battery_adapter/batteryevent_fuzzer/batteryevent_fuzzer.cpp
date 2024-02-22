@@ -23,15 +23,23 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+    namespace {
+        class EmptyCallback : public WebBatteryEventCallback {
+            public:
+                EmptyCallback() = default;
+            private:
+                void BatteryInfoChanged(std::shared_ptr<WebBatteryInfo>) {}
+        };
+    }
     bool BatteryEventFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
         BatteryMgrClientAdapterImpl battery;
-        auto callback = [] (WebBatteryInfo& info) {};
-        BatteryEventCallback eventCallback = callback;
-        battery.RegBatteryEvent(std::move(eventCallback));
+        std::shared_ptr<WebBatteryEventCallback> callback =
+            std::make_shared<EmptyCallback>();
+        battery.RegBatteryEvent(callback);
         return true;
     }
 }
