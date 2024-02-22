@@ -141,7 +141,6 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
 {
     ApplicationContextMock* contextMock = new ApplicationContextMock();
     EXPECT_NE(contextMock, nullptr);
-    EXPECT_CALL(*contextMock, GetCacheDir()).Times(1).WillRepeatedly(::testing::Return(CACHE_PATH));
     EXPECT_EQ(g_applicationContext, nullptr);
     g_applicationContext.reset(contextMock);
     EXPECT_NE(g_applicationContext, nullptr);
