@@ -26,6 +26,7 @@
 #include "nweb_adapter_helper.h"
 #include "nweb_create_window.h"
 #include "nweb_c_api.h"
+#include "nweb_init_params.h"
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 
 using namespace testing;
@@ -102,13 +103,13 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_EQ(RESULT_OK, result);
-    NWebCreateInfo create_info;
+    std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
     EXPECT_NE(nweb, nullptr);
-    NWebDOHConfig config;
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
-    EXPECT_EQ(nwebHelper.lock(), nullptr);
+    EXPECT_EQ(nwebHelper, nullptr);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
     result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
@@ -192,7 +193,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
                                                     NWEB_MAX_WIDTH, DEFAULT_HEIGHT);
     EXPECT_EQ(nweb, nullptr);
-    NWebCreateInfo create_info;
+    std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     nweb = NWebHelper::Instance().CreateNWeb(create_info);
     EXPECT_EQ(nweb, nullptr);
 }
@@ -233,7 +234,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     std::string configFileName = "test";
     std::string figPath = NWebAdapterHelper::Instance().GetConfigPath(configFileName);
     EXPECT_FALSE(figPath.empty());
-    NWebInitArgs initArgs;
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
@@ -252,7 +253,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
  */
 HWTEST_F(NwebHelperTest, NWebHelper_LoadNWebSDK_006, TestSize.Level1)
 {
-    NWebCreateInfo create_info;
+    std::shared_ptr<NWebCreateInfo> create_info = std::make_shared<NWebCreateInfoImpl>();
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     bool result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_EQ(RESULT_OK, result);

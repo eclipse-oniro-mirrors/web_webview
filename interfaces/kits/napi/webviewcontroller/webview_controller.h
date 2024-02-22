@@ -140,11 +140,11 @@ public:
 
     void StoreWebArchivePromise(const std::string &baseName, bool autoName, napi_env env, napi_deferred deferred);
 
-    ErrCode CreateWebMessagePorts(std::vector<std::string>& ports);
+    std::vector<std::string> CreateWebMessagePorts();
 
     ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
 
-    HitTestResult GetHitTestValue();
+    std::shared_ptr<HitTestResult> GetHitTestValue();
 
     void RequestFocus();
 
@@ -193,7 +193,7 @@ public:
 
     void PutNetworkAvailable(bool available);
 
-    bool HasImage(std::shared_ptr<NWebValueCallback<bool>> callback);
+    bool HasImage(std::shared_ptr<NWebBoolValueCallback> callback);
 
     ErrCode HasImagesCallback(napi_env env, napi_ref jsCallback);
 
@@ -206,9 +206,9 @@ public:
     bool GetFavicon(
         const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType);
 
-    WebState SerializeWebState();
+    std::vector<uint8_t> SerializeWebState();
 
-    bool RestoreWebState(WebState state);
+    bool RestoreWebState(const std::vector<uint8_t> &state);
 
     void ScrollPageDown(bool bottom);
 
@@ -261,8 +261,7 @@ public:
 
 private:
     std::mutex webMtx_;
-    std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
-    int32_t id_ = -1;
+    int32_t nwebId_ = -1;
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
     std::string hapPath_ = "";
     std::string webTag_ = "";
@@ -278,7 +277,7 @@ public:
 
     ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data);
 
-    ErrCode SetPortMessageCallback(std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback);
+    ErrCode SetPortMessageCallback(std::shared_ptr<NWebMessageValueCallback> callback);
 
     std::string GetPortHandle() const;
 
@@ -288,7 +287,7 @@ public:
     }
 
 private:
-    std::weak_ptr<OHOS::NWeb::NWeb> nweb_;
+    int32_t nwebId_ = -1;
     std::string portHandle_;
     bool isExtentionType_;
 };

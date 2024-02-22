@@ -70,7 +70,7 @@ napi_value NapiWebStorage::JsDeleteAllData(napi_env env, napi_callback_info info
         napi_get_value_bool(env, argv[0], &incognitoMode);
     }
 
-    OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
+    std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (web_storage) {
         web_storage->DeleteAllData(incognitoMode);
     }
@@ -109,7 +109,7 @@ napi_value NapiWebStorage::JsDeleteOrigin(napi_env env, napi_callback_info info)
         return nullptr;
     }
     std::string origin(stringValue);
-    OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
+    std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (web_storage) {
         if (web_storage->DeleteOrigin(origin) == NWebError::INVALID_ORIGIN) {
             NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
@@ -133,18 +133,18 @@ napi_value NapiWebStorage::GetErrorCodeValue(napi_env env, int errCode)
 void NapiWebStorage::ExecuteGetOrigins(napi_env env, void *data)
 {
     GetOriginsParam *param = reinterpret_cast<GetOriginsParam *>(data);
-    OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
+    std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (!web_storage) {
         param->errCode = INTERFACE_ERROR;
         param->status = napi_generic_failure;
         return;
     }
-    std::vector<OHOS::NWeb::NWebWebStorageOrigin> origins = web_storage->GetOrigins();
+    std::vector<std::shared_ptr<NWebWebStorageOrigin>> origins = web_storage->GetOrigins();
     for (auto origin : origins) {
         NapiWebStorageOrigin napiOrigin;
-        napiOrigin.origin = origin.GetOrigin();
-        napiOrigin.quota = origin.GetQuota();
-        napiOrigin.usage = origin.GetUsage();
+        napiOrigin.origin = origin->GetOrigin();
+        napiOrigin.quota = origin->GetQuota();
+        napiOrigin.usage = origin->GetUsage();
         param->origins.push_back(napiOrigin);
     }
     param->errCode = param->origins.empty() ? NWebError::NO_WEBSTORAGE_ORIGIN : INTERFACE_OK;
@@ -303,7 +303,7 @@ napi_value NapiWebStorage::JsGetOrigins(napi_env env, napi_callback_info info)
 void NapiWebStorage::ExecuteGetOriginUsageOrQuota(napi_env env, void *data)
 {
     GetOriginUsageOrQuotaParam *param = reinterpret_cast<GetOriginUsageOrQuotaParam *>(data);
-    OHOS::NWeb::NWebWebStorage* web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
+    std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (!web_storage) {
         param->errCode = INTERFACE_ERROR;
         param->status = napi_generic_failure;

@@ -18,7 +18,7 @@ config("ohos_glue_config") {
   include_dirs = [ "../ohos_glue" ]
 }
 
-ohos_shared_library("ohos_nweb_glue_source") {
+ohos_shared_library("ohos_base_glue_source") {
   defines = [ "OHOS_GLUE_DEBUG" ]
 
   configs = [ ":ohos_glue_config" ]
@@ -32,6 +32,22 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "base/include/ark_web_memory.h",
     "base/include/ark_web_types.cc",
     "base/include/ark_web_types.h",
+  ]
+
+  external_deps = [ "hilog:libhilog" ]
+
+  part_name = "webview"
+  subsystem_name = "web"
+}
+
+ohos_shared_library("ohos_nweb_glue_source") {
+  defines = [ "OHOS_GLUE_DEBUG" ]
+
+  configs = [ ":ohos_glue_config" ]
+
+  include_dirs = [ "../ohos_nweb" ]
+
+  sources = [
     "ohos_nweb/bridge/ark_web_access_request_wrapper.cc",
     "ohos_nweb/bridge/ark_web_access_request_wrapper.h",
     "ohos_nweb/bridge/ark_web_accessibility_event_callback_impl.cc",
@@ -303,6 +319,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/ctocpp/ark_web_web_storage_origin_vector_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_web_storage_origin_vector_ctocpp.h",
   ]
+
+  deps = [ ":ohos_base_glue_source" ]
 
   external_deps = [ "hilog:libhilog" ]
 

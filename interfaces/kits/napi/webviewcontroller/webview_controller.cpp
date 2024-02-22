@@ -76,7 +76,7 @@ std::string WebviewController::customeSchemeCmdLine_ = "";
 bool WebviewController::existNweb_ = false;
 bool WebviewController::webDebuggingAccess_ = false;
 
-WebviewController::WebviewController(int32_t nwebId) : nweb_(NWebHelper::Instance().GetNWeb(nwebId)), id_(nwebId)
+WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
 {
     if (IsInit()) {
         std::unique_lock<std::mutex> lk(webMtx_);
@@ -87,13 +87,12 @@ WebviewController::WebviewController(int32_t nwebId) : nweb_(NWebHelper::Instanc
 WebviewController::~WebviewController()
 {
     std::unique_lock<std::mutex> lk(webMtx_);
-    g_webview_controller_map.erase(id_);
+    g_webview_controller_map.erase(nwebId_);
 }
 
 void WebviewController::SetWebId(int32_t nwebId)
 {
-    id_ = nwebId;
-    nweb_ = NWebHelper::Instance().GetNWeb(nwebId);
+    nwebId_ = nwebId;
     std::unique_lock<std::mutex> lk(webMtx_);
     g_webview_controller_map.emplace(nwebId, this);
 
@@ -101,9 +100,11 @@ void WebviewController::SetWebId(int32_t nwebId)
         WVLOG_I("native webtag is empty, don't care because it's not a native instance");
         return;
     }
-    if (auto nweb = nweb_.lock()) {
-        OH_NativeArkWeb_BindWebTagToWebInstance(webTag_.c_str(), nweb_);
-        NWebHelper::Instance().SetWebTag(id_, webTag_.c_str());
+
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        OH_NativeArkWeb_BindWebTagToWebInstance(webTag_.c_str(), nweb_ptr);
+        NWebHelper::Instance().SetWebTag(nwebId_, webTag_.c_str());
     }
     SetNWebJavaScriptResultCallBack();
     NativeArkWeb_OnValidCallback validCallback = OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag_.c_str());
@@ -154,13 +155,13 @@ void WebviewController::InnerCompleteWindowNew(int32_t parentNwebId)
 
 bool WebviewController::IsInit()
 {
-    return nweb_.lock() ? true : false;
+    return NWebHelper::Instance().GetNWeb(nwebId_) ? true : false;
 }
 
 bool WebviewController::AccessForward()
 {
     bool access = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         access = nweb_ptr->IsNavigateForwardAllowed();
     }
@@ -170,7 +171,7 @@ bool WebviewController::AccessForward()
 bool WebviewController::AccessBackward()
 {
     bool access = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         access = nweb_ptr->IsNavigatebackwardAllowed();
     }
@@ -180,7 +181,7 @@ bool WebviewController::AccessBackward()
 bool WebviewController::AccessStep(int32_t step)
 {
     bool access = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         access = nweb_ptr->CanNavigateBackOrForward(step);
     }
@@ -189,7 +190,7 @@ bool WebviewController::AccessStep(int32_t step)
 
 void WebviewController::ClearHistory()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->DeleteNavigateHistory();
     }
@@ -197,7 +198,7 @@ void WebviewController::ClearHistory()
 
 void WebviewController::Forward()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->NavigateForward();
     }
@@ -205,7 +206,7 @@ void WebviewController::Forward()
 
 void WebviewController::Backward()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->NavigateBack();
     }
@@ -213,7 +214,7 @@ void WebviewController::Backward()
 
 void WebviewController::OnActive()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->OnContinue();
     }
@@ -221,7 +222,7 @@ void WebviewController::OnActive()
 
 void WebviewController::OnInactive()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->OnPause();
     }
@@ -229,7 +230,7 @@ void WebviewController::OnInactive()
 
 void WebviewController::Refresh()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->Reload();
     }
@@ -237,7 +238,7 @@ void WebviewController::Refresh()
 
 ErrCode WebviewController::ZoomIn()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -249,7 +250,7 @@ ErrCode WebviewController::ZoomIn()
 
 ErrCode WebviewController::ZoomOut()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -262,7 +263,7 @@ ErrCode WebviewController::ZoomOut()
 int32_t WebviewController::GetWebId() const
 {
     int32_t webId = -1;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         webId = static_cast<int32_t>(nweb_ptr->GetWebId());
     }
@@ -271,7 +272,7 @@ int32_t WebviewController::GetWebId() const
 
 std::string WebviewController::GetUserAgent()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return "";
     }
@@ -284,7 +285,7 @@ std::string WebviewController::GetUserAgent()
 
 std::string WebviewController::GetCustomUserAgent() const
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return "";
     }
@@ -297,7 +298,7 @@ std::string WebviewController::GetCustomUserAgent() const
 
 ErrCode WebviewController::SetCustomUserAgent(const std::string& userAgent)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return NWebError::INIT_ERROR;
     }
@@ -312,7 +313,7 @@ ErrCode WebviewController::SetCustomUserAgent(const std::string& userAgent)
 std::string WebviewController::GetTitle()
 {
     std::string title = "";
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         title = nweb_ptr->Title();
     }
@@ -322,7 +323,7 @@ std::string WebviewController::GetTitle()
 int32_t WebviewController::GetPageHeight()
 {
     int32_t pageHeight = 0;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         pageHeight = nweb_ptr->ContentHeight();
     }
@@ -331,7 +332,7 @@ int32_t WebviewController::GetPageHeight()
 
 ErrCode WebviewController::BackOrForward(int32_t step)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -343,7 +344,7 @@ ErrCode WebviewController::BackOrForward(int32_t step)
 void WebviewController::StoreWebArchiveCallback(const std::string &baseName, bool autoName, napi_env env,
     napi_ref jsCallback)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         napi_value setResult[RESULT_COUNT] = {0};
         setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR);
@@ -397,7 +398,7 @@ void WebviewController::StoreWebArchiveCallback(const std::string &baseName, boo
 void WebviewController::StoreWebArchivePromise(const std::string &baseName, bool autoName, napi_env env,
     napi_deferred deferred)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         napi_value jsResult = nullptr;
         jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
@@ -435,20 +436,20 @@ void WebviewController::StoreWebArchivePromise(const std::string &baseName, bool
     return;
 }
 
-ErrCode WebviewController::CreateWebMessagePorts(std::vector<std::string>& ports)
+std::vector<std::string> WebviewController::CreateWebMessagePorts()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
-        return INIT_ERROR;
+        std::vector<std::string> empty;
+        return empty;
     }
 
-    nweb_ptr->CreateWebMessagePorts(ports);
-    return NWebError::NO_ERROR;
+    return nweb_ptr->CreateWebMessagePorts();
 }
 
 ErrCode WebviewController::PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -458,12 +459,12 @@ ErrCode WebviewController::PostWebMessage(std::string& message, std::vector<std:
 }
 
 WebMessagePort::WebMessagePort(int32_t nwebId, std::string& port, bool isExtentionType)
-    : nweb_(NWebHelper::Instance().GetNWeb(nwebId)), portHandle_(port), isExtentionType_(isExtentionType)
+    : nwebId_(nwebId), portHandle_(port), isExtentionType_(isExtentionType)
 {}
 
 ErrCode WebMessagePort::ClosePort()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -475,7 +476,7 @@ ErrCode WebMessagePort::ClosePort()
 
 ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -489,9 +490,9 @@ ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
 }
 
 ErrCode WebMessagePort::SetPortMessageCallback(
-    std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback)
+    std::shared_ptr<NWebMessageValueCallback> callback)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -509,20 +510,24 @@ std::string WebMessagePort::GetPortHandle() const
     return portHandle_;
 }
 
-HitTestResult WebviewController::GetHitTestValue()
+std::shared_ptr<HitTestResult> WebviewController::GetHitTestValue()
 {
-    OHOS::NWeb::HitTestResult nwebResult;
-    auto nweb_ptr = nweb_.lock();
+    std::shared_ptr<HitTestResult> nwebResult;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nwebResult = nweb_ptr->GetHitTestResult();
-        nwebResult.SetType(ConverToWebHitTestType(nwebResult.GetType()));
+        if (nwebResult) {
+            nwebResult->SetType(ConverToWebHitTestType(nwebResult->GetType()));
+        } else {
+            nwebResult->SetType(ConverToWebHitTestType(HitTestResult::UNKNOWN_TYPE));
+        }
     }
     return nwebResult;
 }
 
 void WebviewController::RequestFocus()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->OnFocus();
     }
@@ -612,7 +617,7 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
 
 ErrCode WebviewController::PostUrl(std::string& url, std::vector<char>& postData)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -621,7 +626,7 @@ ErrCode WebviewController::PostUrl(std::string& url, std::vector<char>& postData
 
 ErrCode WebviewController::LoadUrl(std::string url)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -630,7 +635,7 @@ ErrCode WebviewController::LoadUrl(std::string url)
 
 ErrCode WebviewController::LoadUrl(std::string url, std::map<std::string, std::string> httpHeaders)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -640,7 +645,7 @@ ErrCode WebviewController::LoadUrl(std::string url, std::map<std::string, std::s
 ErrCode WebviewController::LoadData(std::string data, std::string mimeType, std::string encoding,
     std::string baseUrl, std::string historyUrl)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -693,9 +698,14 @@ int WebviewController::ConverToWebHitTestType(int hitType)
 
 int WebviewController::GetHitTest()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
-        return ConverToWebHitTestType(nweb_ptr->GetHitTestResult().GetType());
+        std::shared_ptr<HitTestResult> nwebResult = nweb_ptr->GetHitTestResult();
+        if (nwebResult) {
+            return ConverToWebHitTestType(nwebResult->GetType());
+        } else {
+            return ConverToWebHitTestType(HitTestResult::UNKNOWN_TYPE);
+        }
     }
     return static_cast<int>(WebHitTestType::UNKNOWN);
 }
@@ -703,7 +713,7 @@ int WebviewController::GetHitTest()
 
 void WebviewController::ClearMatches()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->ClearMatches();
     }
@@ -711,7 +721,7 @@ void WebviewController::ClearMatches()
 
 void WebviewController::SearchNext(bool forward)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->FindNext(forward);
     }
@@ -719,7 +729,7 @@ void WebviewController::SearchNext(bool forward)
 
 void WebviewController::EnableSafeBrowsing(bool enable)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->EnableSafeBrowsing(enable);
     }
@@ -728,7 +738,7 @@ void WebviewController::EnableSafeBrowsing(bool enable)
 bool WebviewController::IsSafeBrowsingEnabled()
 {  
     bool is_safe_browsing_enabled = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         is_safe_browsing_enabled = nweb_ptr->IsSafeBrowsingEnabled();
     }
@@ -737,7 +747,7 @@ bool WebviewController::IsSafeBrowsingEnabled()
 
 void WebviewController::SearchAllAsync(const std::string& searchString)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->FindAllAsync(searchString);
     }
@@ -745,7 +755,7 @@ void WebviewController::SearchAllAsync(const std::string& searchString)
 
 void WebviewController::ClearSslCache()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->ClearSslCache();
     }
@@ -753,7 +763,7 @@ void WebviewController::ClearSslCache()
 
 void WebviewController::ClearClientAuthenticationCache()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->ClearClientAuthenticationCache();
     }
@@ -761,7 +771,7 @@ void WebviewController::ClearClientAuthenticationCache()
 
 void WebviewController::Stop()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->Stop();
     }
@@ -769,7 +779,7 @@ void WebviewController::Stop()
 
 ErrCode WebviewController::Zoom(float factor)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return INIT_ERROR;
     }
@@ -782,7 +792,7 @@ ErrCode WebviewController::Zoom(float factor)
 ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
     const std::vector<std::string>& methodList)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->UnregisterArkJSfunction(objName, methodList);
     }
@@ -799,23 +809,23 @@ ErrCode WebviewController::DeleteJavaScriptRegister(const std::string& objName,
 
 void WebviewController::SetNWebJavaScriptResultCallBack()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return;
     }
 
-    if (javaScriptResultCb_ && (javaScriptResultCb_->GetNWebId() == id_)) {
+    if (javaScriptResultCb_ && (javaScriptResultCb_->GetNWebId() == nwebId_)) {
         return;
     }
 
-    javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nweb_, id_);
+    javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nwebId_);
     nweb_ptr->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
 }
 
 void WebviewController::RegisterJavaScriptProxy(
     napi_env env, napi_value obj, const std::string& objName, const std::vector<std::string>& methodList)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         WVLOG_E("WebviewController::RegisterJavaScriptProxy nweb_ptr is null");
         return;
@@ -837,13 +847,13 @@ void WebviewController::RegisterJavaScriptProxy(
 
     objId = javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, methodList);
 
-    nweb_ptr->RegisterArkJSfunctionExt(objName, methodList, objId);
+    nweb_ptr->RegisterArkJSfunction(objName, methodList, objId);
 }
 
 void WebviewController::RunJavaScriptCallback(
     const std::string& script, napi_env env, napi_ref jsCallback, bool extention)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         napi_value setResult[RESULT_COUNT] = {0};
         setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR);
@@ -869,7 +879,7 @@ void WebviewController::RunJavaScriptCallback(
 void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env env,
     napi_deferred deferred, bool extention)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         napi_value jsResult = nullptr;
         jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
@@ -888,7 +898,7 @@ void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env
 std::string WebviewController::GetUrl()
 {
     std::string url = "";
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         url = nweb_ptr->GetUrl();
     }
@@ -898,7 +908,7 @@ std::string WebviewController::GetUrl()
 std::string WebviewController::GetOriginalUrl()
 {
     std::string url = "";
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         url = nweb_ptr->GetOriginalUrl();
     }
@@ -907,7 +917,7 @@ std::string WebviewController::GetOriginalUrl()
 
 void WebviewController::PutNetworkAvailable(bool available)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->PutNetworkAvailable(available);
     }
@@ -915,7 +925,7 @@ void WebviewController::PutNetworkAvailable(bool available)
 
 ErrCode WebviewController::HasImagesCallback(napi_env env, napi_ref jsCallback)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         napi_value setResult[RESULT_COUNT] = {0};
         setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR);
@@ -941,7 +951,7 @@ ErrCode WebviewController::HasImagesCallback(napi_env env, napi_ref jsCallback)
 
 ErrCode WebviewController::HasImagesPromise(napi_env env, napi_deferred deferred)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         napi_value jsResult = nullptr;
         jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
@@ -960,7 +970,7 @@ ErrCode WebviewController::HasImagesPromise(napi_env env, napi_deferred deferred
 
 void WebviewController::RemoveCache(bool include_disk_files)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->RemoveCache(include_disk_files);
     }
@@ -968,7 +978,7 @@ void WebviewController::RemoveCache(bool include_disk_files)
 
 std::shared_ptr<NWebHistoryList> WebviewController::GetHistoryList()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return nullptr;
     }
@@ -998,26 +1008,27 @@ bool WebviewController::GetFavicon(
     const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType)
 {
     bool isGetFavicon = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         isGetFavicon = nweb_ptr->GetFavicon(data, width, height, colorType, alphaType);
     }
     return isGetFavicon;
 }
 
-WebState WebviewController::SerializeWebState()
+std::vector<uint8_t> WebviewController::SerializeWebState()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         return nweb_ptr->SerializeWebState();
     }
-    return nullptr;
+    std::vector<uint8_t> empty;
+    return empty;
 }
 
-bool WebviewController::RestoreWebState(WebState state)
+bool WebviewController::RestoreWebState(const std::vector<uint8_t> &state)
 {
     bool isRestored = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         isRestored = nweb_ptr->RestoreWebState(state);
     }
@@ -1026,7 +1037,7 @@ bool WebviewController::RestoreWebState(WebState state)
 
 void WebviewController::ScrollPageDown(bool bottom)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->PageDown(bottom);
     }
@@ -1035,7 +1046,7 @@ void WebviewController::ScrollPageDown(bool bottom)
 
 void WebviewController::ScrollPageUp(bool top)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->PageUp(top);
     }
@@ -1044,7 +1055,7 @@ void WebviewController::ScrollPageUp(bool top)
 
 void WebviewController::ScrollTo(float x, float y)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->ScrollTo(x, y);
     }
@@ -1053,7 +1064,7 @@ void WebviewController::ScrollTo(float x, float y)
 
 void WebviewController::ScrollBy(float deltaX, float deltaY)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->ScrollBy(deltaX, deltaY);
     }
@@ -1062,7 +1073,7 @@ void WebviewController::ScrollBy(float deltaX, float deltaY)
 
 void WebviewController::SlideScroll(float vx, float vy)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->SlideScroll(vx, vy);
     }
@@ -1071,7 +1082,7 @@ void WebviewController::SlideScroll(float vx, float vy)
 
 void WebviewController::SetScrollable(bool enable)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return;
     }
@@ -1084,7 +1095,7 @@ void WebviewController::SetScrollable(bool enable)
 
 bool WebviewController::GetScrollable()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return true;
     }
@@ -1102,7 +1113,7 @@ void WebviewController::InnerSetHapPath(const std::string &hapPath)
 
 bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainDerData)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         WVLOG_E("GetCertChainDerData failed, nweb ptr is null");
         return false;
@@ -1113,7 +1124,7 @@ bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainD
 
 ErrCode WebviewController::SetAudioMuted(bool muted)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return NWebError::INIT_ERROR;
     }
@@ -1124,7 +1135,7 @@ ErrCode WebviewController::SetAudioMuted(bool muted)
 
 ErrCode WebviewController::PrefetchPage(std::string& url, std::map<std::string, std::string> additionalHttpHeaders)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return NWebError::INIT_ERROR;
     }
@@ -1150,7 +1161,7 @@ void WebPrintDocument::OnJobStateChanged(const std::string& jobId, uint32_t stat
 
 void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobName)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return nullptr;
     }
@@ -1159,7 +1170,7 @@ void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobNam
 
 int WebviewController::GetSecurityLevel()
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return static_cast<int>(SecurityLevel::NONE);
     }
@@ -1190,7 +1201,7 @@ int WebviewController::GetSecurityLevel()
 bool WebviewController::IsIncognitoMode()
 {
     bool incognitoMode = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         incognitoMode = nweb_ptr->IsIncognitoMode();
     }
@@ -1199,7 +1210,7 @@ bool WebviewController::IsIncognitoMode()
 
 void WebviewController::SetPrintBackground(bool enable)
 {
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->SetPrintBackground(enable);
     }
@@ -1208,7 +1219,7 @@ void WebviewController::SetPrintBackground(bool enable)
 bool  WebviewController::GetPrintBackground()
 {
     bool printBackgroundEnabled = false;
-    auto nweb_ptr = nweb_.lock();
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         printBackgroundEnabled = nweb_ptr->GetPrintBackground();
     }

@@ -29,65 +29,67 @@ constexpr int BITS_PER_PIXEL = 4;
 }
 
 namespace OHOS::NWeb {
+class NWebOutputFrameCallbackImpl : public NWebOutputFrameCallback {
+public:
+    NWebOutputFrameCallbackImpl(wptr<Surface> surface, NWebSurfaceAdapter *adapter) : surface_(surface),
+                                                                                      adapter_(adapter) {}
+    ~NWebOutputFrameCallbackImpl() = default;
+
+    bool Handle(const char *buffer, uint32_t width, uint32_t height) override {
+        return adapter_->OutputFrameCallback(buffer, width, height, surface_);
+    }
+
+private:
+    wptr<Surface> surface_;
+    NWebSurfaceAdapter *adapter_;
+};
+
 NWebSurfaceAdapter &NWebSurfaceAdapter::Instance()
 {
     static NWebSurfaceAdapter surfaceAdapter;
     return surfaceAdapter;
 }
 
-NWebCreateInfo NWebSurfaceAdapter::GetCreateInfo(sptr<Surface> surface,
-                                                 const NWebInitArgs &initArgs,
-                                                 uint32_t width,
-                                                 uint32_t height,
-                                                 bool incognitoMode)
+std::shared_ptr<NWebCreateInfoImpl> NWebSurfaceAdapter::GetCreateInfo(sptr<Surface> surface,
+    std::shared_ptr<NWebEngineInitArgs> initArgs, uint32_t width, uint32_t height, bool incognitoMode)
 {
-    NWebCreateInfo createInfo = {
-        .init_args = initArgs,
-        .producer_surface = reinterpret_cast<void *>(&surface),
-    };
+    std::shared_ptr<NWebCreateInfoImpl> createInfo = std::make_shared<NWebCreateInfoImpl>();
+    createInfo->SetEngineInitArgs(initArgs);
+    createInfo->SetProducerSurface(reinterpret_cast<void *>(&surface));
+
     if (surface == nullptr) {
         return createInfo;
     }
-    GetSize(surface, createInfo, width, height);
-    GetRenderInterface(surface, createInfo);
-    GetIncognitoMode(createInfo, incognitoMode);
+
+    createInfo->SetIsIncognitoMode(incognitoMode);
+    createInfo->SetWidth((width == 0) ? (uint32_t)surface->GetDefaultWidth() : width);
+    createInfo->SetHeight((height == 0) ? (uint32_t)surface->GetDefaultHeight() : height);
+
+    wptr<Surface> surfaceWeak(surface);
+    createInfo->SetOutputFrameCallback(std::make_shared<NWebOutputFrameCallbackImpl>(surfaceWeak, this));
     return createInfo;
 }
 
-void NWebSurfaceAdapter::GetSize(sptr<Surface> surface,
-                                 NWebCreateInfo &createInfo,
-                                 uint32_t width,
-                                 uint32_t height) const
+bool NWebSurfaceAdapter::OutputFrameCallback(const char *buffer, uint32_t width, uint32_t height,
+                                             wptr<Surface> surfaceWeak)
 {
+    sptr<Surface> surface = surfaceWeak.promote();
     if (surface == nullptr) {
-        return;
+        WVLOG_E("surface is nullptr or has expired");
+        return false;
     }
-    createInfo.width = (width == 0) ? (uint32_t)surface->GetDefaultWidth() : width;
-    createInfo.height = (height == 0) ? (uint32_t)surface->GetDefaultHeight() : height;
-}
 
-void NWebSurfaceAdapter::GetRenderInterface(sptr<Surface> surface, NWebCreateInfo &createInfo)
-{
-    wptr<Surface> surfaceWeak(surface);
-    createInfo.output_render_frame = [surfaceWeak, this] (const char *buffer, uint32_t width, uint32_t height) -> bool {
-        sptr<Surface> surface = surfaceWeak.promote();
-        if (surface == nullptr) {
-            WVLOG_E("surface is nullptr or has expired");
-            return false;
-        }
+    sptr<SurfaceBuffer> surfaceBuffer = this->RequestBuffer(surface, width, height);
+    if (surfaceBuffer == nullptr) {
+        return false;
+    }
 
-        sptr<SurfaceBuffer> surfaceBuffer = this->RequestBuffer(surface, width, height);
-        if (surfaceBuffer == nullptr) {
-            return false;
-        }
+    if (!this->CopyFrame(surfaceBuffer, buffer, width, height)) {
+        surface->CancelBuffer(surfaceBuffer);
+        return false;
+    }
 
-        if (!this->CopyFrame(surfaceBuffer, buffer, width, height)) {
-            surface->CancelBuffer(surfaceBuffer);
-            return false;
-        }
-
-        return this->FlushBuffer(surface, surfaceBuffer, width, height);
-    };
+    return this->FlushBuffer(surface, surfaceBuffer, width, height);
 }
 
 sptr<SurfaceBuffer> NWebSurfaceAdapter::RequestBuffer(sptr<Surface> surface, uint32_t width, uint32_t height)
@@ -180,10 +182,5 @@ bool NWebSurfaceAdapter::FlushBuffer(
     }
 
     return true;
-}
-
-void NWebSurfaceAdapter::GetIncognitoMode(NWebCreateInfo &createInfo, bool incognitoMode)
-{
-    createInfo.incognito_mode = incognitoMode;
 }
 } // namespace OHOS::NWeb

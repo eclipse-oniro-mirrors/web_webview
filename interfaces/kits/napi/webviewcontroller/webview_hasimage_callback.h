@@ -21,7 +21,7 @@
 #include "nweb_value_callback.h"
 
 namespace OHOS::NWeb {
-class WebviewHasImageCallback : public OHOS::NWeb::NWebValueCallback<bool> {
+class WebviewHasImageCallback : public NWebBoolValueCallback {
 public:
     explicit WebviewHasImageCallback(napi_env env, napi_ref callbackRef, napi_deferred deferred)
         : env_(env), callbackRef_(callbackRef), deferred_(deferred) {}

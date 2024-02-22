@@ -225,7 +225,7 @@ private:
     static napi_value GetPrintBackground(napi_env env, napi_callback_info info);
 };
 
-class NWebValueCallbackImpl : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
+class NWebValueCallbackImpl : public NWebMessageValueCallback {
 public:
     NWebValueCallbackImpl(napi_env env, napi_ref callback, bool extention)
         : env_(env), callback_(callback), extention_(extention)

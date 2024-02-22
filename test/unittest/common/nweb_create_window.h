@@ -17,28 +17,29 @@
 #define NWEB_CREAT_WINDOW_H
 
 #include "nweb.h"
+#include "nweb_init_params.h"
 
 #define private public
 #include "ui/rs_surface_node.h"
 #undef private
 
 namespace OHOS::NWeb {
-NWebInitArgs GetInitArgs(void);
+std::shared_ptr<NWebEngineInitArgsImpl> GetInitArgs(void);
 std::shared_ptr<NWeb> GetNwebForTest();
 
 class NWebMock : public NWeb {
 public:
     void Resize(uint32_t width, uint32_t height, bool isKeyboard = false) override
     {}
-    void OnPause() const override
+    void OnPause() override
     {}
-    void OnContinue() const override
+    void OnContinue() override
     {}
     void OnDestroy() override
     {}
-    void OnFocus(const FocusReason& focusReason = FocusReason::FOCUS_DEFAULT) const override
+    void OnFocus(const FocusReason& focusReason = FocusReason::FOCUS_DEFAULT) override
     {}
-    void OnBlur(const BlurReason& blurReason) const override
+    void OnBlur(const BlurReason& blurReason) override
     {}
     void OnTouchPress(int32_t id, double x, double y, bool fromOverlay = false) override
     {}
@@ -46,7 +47,8 @@ public:
     {}
     void OnTouchMove(int32_t id, double x, double y, bool fromOverlay = false) override
     {}
-    void OnTouchMove(const std::list<TouchPointInfo> touchPointInfoList, bool fromOverlay = false) override
+    void OnTouchMove(const std::vector<std::shared_ptr<NWebTouchPointInfo>> &touch_point_infos,
+                     bool fromOverlay = false) override
     {}
     void OnTouchCancel() override
     {}
@@ -60,69 +62,69 @@ public:
     {}
     void SendMouseEvent(int x, int y, int button, int action, int count) override
     {}
-    int Load(const std::string& url) const override
+    int Load(const std::string& url) override
     {
         return 0;
     }
-    bool IsNavigatebackwardAllowed() const override
+    bool IsNavigatebackwardAllowed() override
     {
         return true;
     }
-    bool IsNavigateForwardAllowed() const override
+    bool IsNavigateForwardAllowed() override
     {
         return true;
     }
-    bool CanNavigateBackOrForward(int numSteps) const override
+    bool CanNavigateBackOrForward(int numSteps) override
     {
         return true;
     }
-    void NavigateBack() const override
+    void NavigateBack() override
     {}
-    void NavigateForward() const override
+    void NavigateForward() override
     {}
-    void NavigateBackOrForward(int step) const override
+    void NavigateBackOrForward(int step) override
     {}
     void DeleteNavigateHistory() override
     {}
-    void Reload() const override
+    void Reload() override
     {}
-    int Zoom(float zoomFactor) const override
+    int Zoom(float zoomFactor) override
     {
         return 0;
     }
-    int ZoomIn() const override
+    int ZoomIn() override
     {
         return 0;
     }
-    int ZoomOut() const override
+    int ZoomOut() override
     {
         return 0;
     }
-    void Stop() const override
+    void Stop() override
     {}
-    void ExecuteJavaScript(const std::string& code) const override
+    void ExecuteJavaScript(const std::string& code) override
     {}
     void ExecuteJavaScript(
         const std::string& code,
-        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback,
-        bool extention) const override
+        std::shared_ptr<NWebMessageValueCallback> callback,
+        bool extention) override
     {}
-    const std::shared_ptr<NWebPreference> GetPreference() const override
+    std::shared_ptr<NWebPreference> GetPreference() override
     {
         return nullptr;
     }
-    unsigned int GetWebId() const override
+    unsigned int GetWebId() override
     {
         return 0;
     }
-    HitTestResult GetHitTestResult() const override
+    std::shared_ptr<HitTestResult> GetHitTestResult() override
     {
-        HitTestResult test;
+        std::shared_ptr<HitTestResult> test;
         return test;
     }
-    void PutBackgroundColor(int color) const override
+    void PutBackgroundColor(int color) override
     {}
-    void InitialScale(float scale) const override
+    void InitialScale(float scale) override
     {}
     void PutDownloadCallback(
         std::shared_ptr<NWebDownloadCallback> downloadListener) override
@@ -132,10 +134,6 @@ public:
     {}
     void SetNWebHandler(std::shared_ptr<NWebHandler> handler) override
     {}
-    const std::shared_ptr<NWebHandler> GetNWebHandler() const override
-    {
-        return nullptr;
-    }
     std::string Title() override
     {
         return nullptr;
@@ -153,8 +151,8 @@ public:
         return 0;
     }
     int Load(
-        std::string& url,
-        std::map<std::string, std::string> additionalHttpHeaders) override
+        const std::string& url,
+        const std::map<std::string, std::string> &additionalHttpHeaders) override
     {
         return 0;
     }
@@ -173,10 +171,6 @@ public:
         return 0;
     }
     void RegisterArkJSfunction(
-        const std::string& object_name,
-        const std::vector<std::string>& method_list) override
-    {}
-    void RegisterArkJSfunctionExt(
         const std::string& object_name, const std::vector<std::string>& method_list, const int32_t object_id) override
     {}
     void UnregisterArkJSfunction(
@@ -189,31 +183,35 @@ public:
     void PutFindCallback(
         std::shared_ptr<NWebFindCallback> findListener) override
     {}
-    void FindAllAsync(const std::string &searchStr) const override
+    void FindAllAsync(const std::string &searchStr) override
     {}
-    void ClearMatches() const override
+    void ClearMatches() override
     {}
-    void FindNext(const bool forward) const override
+    void FindNext(const bool forward) override
     {}
     void StoreWebArchive(const std::string &baseName, bool autoName,
-        std::shared_ptr<NWebValueCallback<std::string>> callback) const override
+        std::shared_ptr<NWebStringValueCallback> callback) override
     {}
-    void CreateWebMessagePorts(std::vector<std::string>& ports) override
+    std::vector<std::string> CreateWebMessagePorts() override
+    {
+        std::vector<std::string> empty;
+        return empty;
+    }
+    void PostWebMessage(const std::string& message, const std::vector<std::string>& ports, const std::string& targetUri)
+        override
     {}
-    void PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUri) override
+    void ClosePort(const std::string& handle) override
     {}
-    void ClosePort(std::string& handle) override
+    void PostPortMessage(const std::string& handle, std::shared_ptr<NWebMessage> data) override
     {}
-    void PostPortMessage(std::string& handle, std::shared_ptr<NWebMessage> data) override
+    void SetPortMessageCallback(const std::string& handle,
+        std::shared_ptr<NWebMessageValueCallback> callback) override
     {}
-    void SetPortMessageCallback(std::string& handle,
-        std::shared_ptr<NWebValueCallback<std::shared_ptr<NWebMessage>>> callback) override
-    {}
-    void SendDragEvent(const DragEvent& dragEvent) const override
+    void SendDragEvent(const DragEvent& dragEvent) override
     {}
     void ClearSslCache() override
     {}
-    std::string GetUrl() const override
+    std::string GetUrl() override
     {
         return "/data";
     }
@@ -222,7 +220,7 @@ public:
     void UpdateLocale(const std::string& language, const std::string& region) override
     {}
 
-    const std::string GetOriginalUrl() const override
+    const std::string GetOriginalUrl() override
     {
         return "";
     }
@@ -234,7 +232,7 @@ public:
     void PutNetworkAvailable(bool available) override
     {}
 
-    void HasImages(std::shared_ptr<NWebValueCallback<bool>> callback) override
+    void HasImages(std::shared_ptr<NWebBoolValueCallback> callback) override
     {}
 
     void RemoveCache(bool include_disk_files) override
@@ -243,11 +241,12 @@ public:
     {
         return nullptr;
     }
-    WebState SerializeWebState() override
+    std::vector<uint8_t> SerializeWebState() override
     {
-        return nullptr;
+        std::vector<uint8_t> empty;
+        return empty;
     }
-    bool RestoreWebState(WebState state) override
+    bool RestoreWebState(const std::vector<uint8_t> &state) override
     {
         return false;
     }
@@ -277,7 +276,7 @@ public:
     {}
     void SetAudioExclusive(bool audioExclusive) override
     {}
-    void RegisterScreenLockFunction(int32_t windowId, const SetKeepScreenOn&& handle) override
+    void RegisterScreenLockFunction(int32_t windowId, std::shared_ptr<NWebScreenLockCallback> callback) override
     {}
     void UnRegisterScreenLockFunction(int32_t windowId) override
     {}

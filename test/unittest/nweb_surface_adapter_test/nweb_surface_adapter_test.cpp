@@ -46,7 +46,7 @@ using namespace OHOS::Rosen;
 
 namespace OHOS::NWeb {
 namespace {
-NWebCreateInfo g_info;
+std::shared_ptr<NWebCreateInfoImpl> g_info;
 sptr<Surface> g_surface = nullptr;
 sptr<SurfaceBuffer> g_surfaceBuffer = nullptr;
 const uint32_t DEFAULT_WIDTH = 2560;
@@ -101,37 +101,9 @@ HWTEST_F(NWebSurfaceAdapterTest, NWebSurfaceAdapterTest_GetCreateInfo_001, TestS
 {
     auto surfaceAdapter = NWebSurfaceAdapter::Instance();
     g_info = surfaceAdapter.GetCreateInfo(g_surface, GetInitArgs(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    EXPECT_NE(g_info.width, 0);
+    EXPECT_NE(g_info->GetWidth(), 0);
     sptr<Surface> surface = nullptr;
     surfaceAdapter.GetCreateInfo(surface, GetInitArgs(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
-
-    NWebCreateInfo createInfo;
-    surfaceAdapter.GetSize(g_surface, createInfo, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    EXPECT_NE(createInfo.width, 0);
-}
-
-/**
- * @tc.name: NWebSurfaceAdapterTest_GetRenderInterface_002.
- * @tc.desc: Test the GetRenderInterface.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebSurfaceAdapterTest, NWebSurfaceAdapterTest_GetRenderInterface_002, TestSize.Level1)
-{
-    auto surfaceAdapter = NWebSurfaceAdapter::Instance();
-    surfaceAdapter.GetRenderInterface(g_surface, g_info);
-    char *src = new char[DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL] {0};
-    EXPECT_NE(src, nullptr);
-    g_info.output_render_frame(src, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    sptr<Surface> surfaceInfo = nullptr;
-    surfaceAdapter.GetRenderInterface(surfaceInfo, g_info);
-    (void)memset_s(src, DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL, 0,
-        DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL);
-    g_info.output_render_frame(src, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    (void)memset_s(src, DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL, 0,
-        DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL);
-    g_info.output_render_frame(src, DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    delete[] src;
 }
 
 /**

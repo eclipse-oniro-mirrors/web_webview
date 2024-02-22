@@ -68,7 +68,7 @@ private:
     std::shared_ptr<NWebMessage> value_ = nullptr;
 };
 
-class WebviewJavaScriptExecuteCallback : public OHOS::NWeb::NWebValueCallback<std::shared_ptr<NWebMessage>> {
+class WebviewJavaScriptExecuteCallback : public NWebMessageValueCallback {
 public:
     explicit WebviewJavaScriptExecuteCallback(
         napi_env env, napi_ref callbackRef, napi_deferred deferred, bool extention)

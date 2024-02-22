@@ -34,7 +34,7 @@ public:
      *
      * @return true if the instance send and accept cookies.
      */
-    virtual bool IsAcceptCookieAllowed() const = 0;
+    virtual bool IsAcceptCookieAllowed() = 0;
 
     /**
      * @brief Set whether the instance should send and accept cookies.
@@ -49,7 +49,7 @@ public:
      *
      * @return true if the instance allows the setting of third-party cookies.
      */
-    virtual bool IsThirdPartyCookieAllowed() const = 0;
+    virtual bool IsThirdPartyCookieAllowed() = 0;
 
     /**
      * @brief Set whether the instance allows the use of third-party cookies.
@@ -64,7 +64,7 @@ public:
      *
      * @return true if instances send and accept cookies for file scheme URLs.
      */
-    virtual bool IsFileURLSchemeCookiesAllowed() const = 0;
+    virtual bool IsFileURLSchemeCookiesAllowed() = 0;
 
     /**
      * @brief Set whether the instance should send and accept cookies for file scheme URLs.
@@ -80,7 +80,7 @@ public:
      * @param callback a callback which is executed when the cookies have been gotten.
      */
     virtual void ReturnCookie(const std::string &url,
-                              std::shared_ptr<NWebValueCallback<std::string>> callback) = 0;
+                              std::shared_ptr<NWebStringValueCallback> callback) = 0;
     
     /**
      * @brief Get all the cookies for the given URL.
@@ -102,7 +102,7 @@ public:
      */
     virtual void SetCookie(const std::string &url,
                            const std::string &value,
-                           std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
+                           std::shared_ptr<NWebBoolValueCallback> callback) = 0;
 
     /**
      * @brief Set a single cookie (key-value pair) for the given URL sync.
@@ -121,7 +121,7 @@ public:
      *
      * @param callback a callback to be executed when the cookie has checked.
      */
-    virtual void ExistCookies(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
+    virtual void ExistCookies(std::shared_ptr<NWebBoolValueCallback> callback) = 0;
 
     /**
      * @brief Get whether there are stored cookies.
@@ -137,7 +137,7 @@ public:
      *
      * @param callback a callback to be executed when cookies has Stored.
      */
-    virtual void Store(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
+    virtual void Store(std::shared_ptr<NWebBoolValueCallback> callback) = 0;
 
     /**
      * @brief Ensure all cookies currently accessible through the ReturnCookie API are written to
@@ -152,7 +152,7 @@ public:
      *
      * @param callback a callback to be executed when all session cookies has removed.
      */
-    virtual void DeleteSessionCookies(std::shared_ptr<NWebValueCallback<bool>> callback) = 0;
+    virtual void DeleteSessionCookies(std::shared_ptr<NWebBoolValueCallback> callback) = 0;
 
     /**
      * @brief Remove all cookies.
@@ -160,9 +160,8 @@ public:
      * @param callback a callback to be executed when all cookies has removed.
      * incognito_mode true if web is in the incognito mode, flase otherwise.
      */
-    virtual void DeleteCookieEntirely(
-        std::shared_ptr<NWebValueCallback<bool>> callback,
-        bool incognito_mode) = 0;
+    virtual void DeleteCookieEntirely(std::shared_ptr<NWebBoolValueCallback> callback,
+                                      bool incognito_mode) = 0;
 
     /**
      * @brief Configs a single cookie (key-value pair) for the given URL.
@@ -173,7 +172,7 @@ public:
      */
     virtual void ConfigCookie(const std::string& url,
                               const std::string& value,
-                              std::shared_ptr<NWebValueCallback<long>> callback) = 0;
+                              std::shared_ptr<NWebLongValueCallback> callback) = 0;
 };
 } // namespace OHOS::NWeb
 

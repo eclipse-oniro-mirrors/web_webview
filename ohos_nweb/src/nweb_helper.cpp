@@ -27,6 +27,7 @@
 #include <fcntl.h>
 
 #include "application_context.h"
+#include "ark_web_nweb_bridge_helper.h"
 #include "config_policy_utils.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_enhance_surface_adapter.h"
@@ -635,6 +636,19 @@ void NWebHelper::UnloadLib()
     }
 }
 
+bool NWebHelper::LoadEngine() {
+    if (nwebEngine_) {
+        return true;
+    }
+
+    nwebEngine_ = NWebEngine::GetInstance();
+    if (nwebEngine_) {
+        return true;
+    }
+
+    return false;
+}
+
 static void DoPreReadLib(const std::string &bundlePath)
 {
     WVLOG_I("NWebHelper PreReadLib");
@@ -704,10 +718,17 @@ static void TryPreReadLibForFirstlyAppStartUp(const std::string &bundlePath)
 bool NWebHelper::Init(bool from_ark)
 {
     TryPreReadLibForFirstlyAppStartUp(bundlePath_);
-    return LoadLib(from_ark);
+    if (!LoadLib(from_ark)) {
+        return false;
+    }
+
+    if (!OHOS::ArkWeb::ArkWebNWebBridgeHelper::GetInstance().Init(from_ark, bundlePath_)) {
+        return false;
+    }
+
+    return LoadEngine();
 }
 
-using InitializeWebEngine = void (*)(const NWebInitArgs &);
 bool NWebHelper::InitAndRun(bool from_ark)
 {
     if (!Init(from_ark)) {
@@ -715,21 +736,12 @@ bool NWebHelper::InitAndRun(bool from_ark)
     }
 
     WVLOG_I("InitializeWebEngine: load libs and initiallize cef.");
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("InitializeWebEngine: libHandleWebEngine_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return false;
     }
 
-    const std::string INITIALIZE_WEB_ENGINE_FUNC_NAME = "InitializeWebEngine";
-    InitializeWebEngine initializeWebEngine =
-        reinterpret_cast<InitializeWebEngine>(dlsym(libHandleWebEngine_, INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str()));
-    if (initializeWebEngine == nullptr) {
-        WVLOG_E("initializeWebEngine: fail to dlsym %{public}s from libohoswebview.so",
-            INITIALIZE_WEB_ENGINE_FUNC_NAME.c_str());
-        return false;
-    }
-
-    OHOS::NWeb::NWebInitArgs initArgs;
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     // obtain bundle path
     std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
@@ -744,10 +756,10 @@ bool NWebHelper::InitAndRun(bool from_ark)
         return false;
     }
 
-    initArgs.web_engine_args_to_add.push_back(std::string("--user-data-dir=").append(ctx->GetBaseDir()));
-    initArgs.web_engine_args_to_add.push_back(std::string("--bundle-installation-dir=").append(bundlePath_));
+    initArgs->AddArg(std::string("--user-data-dir=").append(ctx->GetBaseDir()));
+    initArgs->AddArg(std::string("--bundle-installation-dir=").append(bundlePath_));
 
-    initializeWebEngine(initArgs);
+    nwebEngine_->InitializeWebEngine(initArgs);
     return true;
 }
 
@@ -761,33 +773,17 @@ NWebHelper::~NWebHelper()
     UnloadLib();
 }
 
-using CreateNWebFuncType = void (*)(const NWebCreateInfo &, std::shared_ptr<NWeb> &);
-std::shared_ptr<NWeb> NWebHelper::CreateNWeb(const NWebCreateInfo &create_info)
+std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> create_info)
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleWebEngine_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return nullptr;
     }
 
-    const std::string CREATE_NWEB_FUNC_NAME = "CreateNWeb";
-    CreateNWebFuncType funcCreateNWeb =
-        reinterpret_cast<CreateNWebFuncType>(dlsym(libHandleWebEngine_, CREATE_NWEB_FUNC_NAME.c_str()));
-    if (funcCreateNWeb == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", CREATE_NWEB_FUNC_NAME.c_str());
-        return nullptr;
-    }
-    std::shared_ptr<NWeb> nweb;
-    funcCreateNWeb(create_info, nweb);
-    if (nweb == nullptr) {
-        WVLOG_E("fail to create nweb");
-        return nullptr;
-    }
-
-    return nweb;
+    return nwebEngine_->CreateNWeb(create_info);
 }
 
-using GetCookieManagerFunc = NWebCookieManager *(*)();
-NWebCookieManager *NWebHelper::GetCookieManager()
+std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
 {
     if (libHandleWebEngine_ == nullptr) {
         WVLOG_I("GetCookieManager: init web engine start.");
@@ -807,167 +803,105 @@ NWebCookieManager *NWebHelper::GetCookieManager()
         }
         WVLOG_I("GetCookieManager: init web engine success.");
     }
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("GetCookieManager: libHandleWebEngine_ is nullptr");
+
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return nullptr;
     }
 
-    const std::string COOKIE_FUNC_NAME = "GetCookieManager";
-    GetCookieManagerFunc cookieFunc =
-        reinterpret_cast<GetCookieManagerFunc>(dlsym(libHandleWebEngine_, COOKIE_FUNC_NAME.c_str()));
-    if (cookieFunc == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", COOKIE_FUNC_NAME.c_str());
-        return nullptr;
-    }
-    return cookieFunc();
+    return nwebEngine_->GetCookieManager();
 }
 
-using GetNWebFunc = void (*)(int32_t, std::weak_ptr<NWeb> &);
-std::weak_ptr<NWeb> NWebHelper::GetNWeb(int32_t nweb_id)
+std::shared_ptr<NWeb> NWebHelper::GetNWeb(int32_t nweb_id)
 {
-    std::weak_ptr<OHOS::NWeb::NWeb> nweb;
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleWebEngine_ is nullptr");
-        return nweb;
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return nullptr;
     }
 
-    const std::string GET_NWEB_FUNC_NAME = "GetNWeb";
-    GetNWebFunc getNWebFunc = reinterpret_cast<GetNWebFunc>(dlsym(libHandleWebEngine_, GET_NWEB_FUNC_NAME.c_str()));
-    if (getNWebFunc == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", GET_NWEB_FUNC_NAME.c_str());
-        return nweb;
-    }
-
-    getNWebFunc(nweb_id, nweb);
-    return nweb;
+    return nwebEngine_->GetNWeb(nweb_id);
 }
 
-using SetWebTagFunc = void (*)(int32_t, const char*);
 void NWebHelper::SetWebTag(int32_t nweb_id, const char* webTag)
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleNWebAdapter_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return;
     }
 
-    const std::string SET_WEB_TAG_FUNC_NAME = "SetWebTag";
-    SetWebTagFunc setWebTagFunc =
-        reinterpret_cast<SetWebTagFunc>(dlsym(libHandleWebEngine_, SET_WEB_TAG_FUNC_NAME.c_str()));
-    if (setWebTagFunc == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", SET_WEB_TAG_FUNC_NAME.c_str());
-        return;
-    }
-
-    setWebTagFunc(nweb_id, webTag);
+    nwebEngine_->SetWebTag(nweb_id, webTag);
 }
 
-using SetHttpDnsFunc = void (*)(const NWebDOHConfig &);
-void NWebHelper::SetHttpDns(const NWebDOHConfig &config)
+void NWebHelper::SetHttpDns(std::shared_ptr<NWebDOHConfig> config)
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("doh: libHandleNWebAdapter_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return;
     }
 
-    const std::string SET_HTTP_DNS_FUNC_NAME = "SetHttpDns";
-    SetHttpDnsFunc setHttpDnsFunc =
-        reinterpret_cast<SetHttpDnsFunc>(dlsym(libHandleWebEngine_, SET_HTTP_DNS_FUNC_NAME.c_str()));
-    if (setHttpDnsFunc == nullptr) {
-        WVLOG_E("doh: fail to dlsym %{public}s from libohoswebview.so", SET_HTTP_DNS_FUNC_NAME.c_str());
+    std::shared_ptr<NWebDownloadManager> downloadManagr = nwebEngine_->GetDownloadManager();
+    if (!downloadManagr) {
+        WVLOG_E("download manager is nullptr");
         return;
     }
 
-    setHttpDnsFunc(config);
+    downloadManagr->SetHttpDns(config);
 }
 
-using PrepareForPageLoadFunc = void (*)(std::string, bool, int32_t);
 void NWebHelper::PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets)
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleNWebAdapter_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return;
     }
-    const std::string PREPARE_FOR_PAGE_LOAD_FUNC_NAME = "PrepareForPageLoad";
-    PrepareForPageLoadFunc prepareForPageLoadFunc =
-        reinterpret_cast<PrepareForPageLoadFunc>(dlsym(libHandleWebEngine_, PREPARE_FOR_PAGE_LOAD_FUNC_NAME.c_str()));
-    if (prepareForPageLoadFunc == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", PREPARE_FOR_PAGE_LOAD_FUNC_NAME.c_str());
-        return;
-    }
-    prepareForPageLoadFunc(url, preconnectable, numSockets);
+
+    nwebEngine_->PrepareForPageLoad(url, preconnectable, numSockets);
 }
 
-using SetWebDebuggingAccessFunc = void (*)(bool);
 void NWebHelper::SetWebDebuggingAccess(bool isEnableDebug)
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleWebEngine_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return;
     }
-    
-    const std::string SET_WEB_DEBUG_ACCESS_FUNC_NAME = "SetWebDebuggingAccess";
-    SetWebDebuggingAccessFunc setWebDebuggingAccessFunc =
-        reinterpret_cast<SetWebDebuggingAccessFunc>(dlsym(libHandleWebEngine_, SET_WEB_DEBUG_ACCESS_FUNC_NAME.c_str()));
-    if (setWebDebuggingAccessFunc == nullptr) {
-        WVLOG_E("doh: fail to dlsym %{public}s from libohoswebview.so", SET_WEB_DEBUG_ACCESS_FUNC_NAME.c_str());
-        return;
-    }
-    setWebDebuggingAccessFunc(isEnableDebug);
-    WVLOG_I("doh: success to dlysm %{public}s from libohoswebview.so", SET_WEB_DEBUG_ACCESS_FUNC_NAME.c_str());
+
+    nwebEngine_->SetWebDebuggingAccess(isEnableDebug);
 }
 
-using GetDataBaseFunc = NWebDataBase *(*)();
-NWebDataBase *NWebHelper::GetDataBase()
+std::shared_ptr<NWebDataBase> NWebHelper::GetDataBase()
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleWebEngine_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return nullptr;
     }
 
-    const std::string DATA_BASE_FUNC_NAME = "GetDataBase";
-    GetDataBaseFunc dataBaseFunc =
-        reinterpret_cast<GetDataBaseFunc>(dlsym(libHandleWebEngine_, DATA_BASE_FUNC_NAME.c_str()));
-    if (dataBaseFunc == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", DATA_BASE_FUNC_NAME.c_str());
-        return nullptr;
-    }
-    return dataBaseFunc();
+    return nwebEngine_->GetDataBase();
 }
 
-using GetWebStorageFunc = NWebWebStorage *(*)();
-NWebWebStorage *NWebHelper::GetWebStorage()
+std::shared_ptr<NWebWebStorage> NWebHelper::GetWebStorage()
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleWebEngine_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return nullptr;
     }
-    const std::string STORAGE_FUNC_NAME = "GetWebStorage";
-    GetWebStorageFunc storageFunc =
-        reinterpret_cast<GetWebStorageFunc>(dlsym(libHandleWebEngine_, STORAGE_FUNC_NAME.c_str()));
-    if (storageFunc == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", STORAGE_FUNC_NAME.c_str());
-        return nullptr;
-    }
-    return storageFunc();
+
+    return nwebEngine_->GetWebStorage();
 }
 
-using SetConnectionTimeoutFunc = void (*)(const int32_t&);
 void NWebHelper::SetConnectionTimeout(const int32_t& timeout)
 {
-    if (libHandleWebEngine_ == nullptr) {
-        WVLOG_E("libHandleNWebAdapter_ is nullptr");
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
         return;
     }
 
-    const std::string SET_CONNECTION_TIMEOUT_FUNC_NAME = "SetConnectionTimeout";
-    SetConnectionTimeoutFunc setConnectionTimeoutFunc =
-        reinterpret_cast<SetConnectionTimeoutFunc>(dlsym(libHandleWebEngine_,
-                                                         SET_CONNECTION_TIMEOUT_FUNC_NAME.c_str()));
-    if (setConnectionTimeoutFunc == nullptr) {
-        WVLOG_E("fail to dlsym %{public}s from libohoswebview.so", SET_CONNECTION_TIMEOUT_FUNC_NAME.c_str());
+    std::shared_ptr<NWebDownloadManager> downloadManagr = nwebEngine_->GetDownloadManager();
+    if (!downloadManagr) {
+        WVLOG_E("download manager is nullptr");
         return;
     }
-    setConnectionTimeoutFunc(timeout);
+
+    downloadManagr->SetConnectionTimeout(timeout);
     WVLOG_I("timeout value in NWebHelper: %{public}d", timeout);
 }
 
@@ -982,8 +916,9 @@ bool NWebAdapterHelper::Init(bool from_ark)
     return NWebHelper::Instance().Init(from_ark);
 }
 
-std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const NWebInitArgs &initArgs, uint32_t width,
-    uint32_t height, bool incognitoMode)
+std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs,
+    uint32_t width, uint32_t height, bool incognitoMode)
 {
     if (surface == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
@@ -995,13 +930,14 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const
     }
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(
         surface, initArgs, width, height, incognitoMode);
-    ParseConfig(createInfo.init_args);
+    ParseConfig(initArgs);
+
     // obtain bundle path
     std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
         AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (ctx) {
         std::string bundleName = ctx->GetBundleName();
-        createInfo.init_args.web_engine_args_to_add.push_back(std::string("--bundle-name=").append(bundleName));
+        initArgs->AddArg(std::string("--bundle-name=").append(bundleName));
     }
 
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
@@ -1011,8 +947,8 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface, const
     return nweb;
 }
 
-std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo, const NWebInitArgs &initArgs,
-    uint32_t width, uint32_t height, bool incognitoMode)
+std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs, uint32_t width, uint32_t height, bool incognitoMode)
 {
     if (enhanceSurfaceInfo == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
@@ -1068,7 +1004,7 @@ std::unordered_map<std::string_view, std::function<std::string(std::string &)>> 
     return configMap;
 }
 
-void NWebAdapterHelper::ReadConfig(const xmlNodePtr &rootPtr, NWebInitArgs &init_args)
+void NWebAdapterHelper::ReadConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
 {
     auto configMap = GetConfigMap();
     for (xmlNodePtr curNodePtr = rootPtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
@@ -1098,7 +1034,7 @@ void NWebAdapterHelper::ReadConfig(const xmlNodePtr &rootPtr, NWebInitArgs &init
             }
             std::string param = it->second(contentStr);
             if (!param.empty()) {
-                init_args.web_engine_args_to_add.emplace_back(param);
+                initArgs->AddArg(param);
             }
         }
     }
@@ -1119,7 +1055,7 @@ xmlNodePtr NWebAdapterHelper::GetChildrenNode(xmlNodePtr NodePtr, const std::str
     return nullptr;
 }
 
-void NWebAdapterHelper::ParseConfig(NWebInitArgs &args)
+void NWebAdapterHelper::ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
 {
     auto configFilePath = GetConfigPath(WEB_CONFIG_PATH);
     xmlDocPtr docPtr = xmlReadFile(configFilePath.c_str(), nullptr, XML_PARSE_NOBLANKS);
@@ -1139,10 +1075,10 @@ void NWebAdapterHelper::ParseConfig(NWebInitArgs &args)
     xmlNodePtr initNodePtr = GetChildrenNode(rootPtr, INIT_CONFIG);
     if (initNodePtr != nullptr) {
         WVLOG_D("read config from init node");
-        ReadConfig(initNodePtr, args);
+        ReadConfig(initNodePtr, initArgs);
     } else {
         WVLOG_D("read config from root node");
-        ReadConfig(rootPtr, args);
+        ReadConfig(rootPtr, initArgs);
     }
 
     if (perfConfig_.empty()) {
