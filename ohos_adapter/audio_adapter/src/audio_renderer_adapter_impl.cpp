@@ -130,11 +130,11 @@ int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rend
     std::string audioCachePath = cachePath;
     std::shared_ptr<AbilityRuntime::ApplicationContext> context =
         AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (!context) {
+        WVLOG_E("application context get failed");
+        return AUDIO_ERROR;
+    }
     if (audioCachePath.empty()) {
-        if (!context) {
-            WVLOG_E("application context get failed");
-            return AUDIO_ERROR;
-        }
         audioCachePath = context->GetCacheDir();
         if (audioCachePath.empty()) {
             WVLOG_E("application cache path get failed");
