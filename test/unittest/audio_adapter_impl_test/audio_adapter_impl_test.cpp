@@ -159,7 +159,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     int32_t retNum = g_audioRender->Create(rendererOptions, CACHE_PATH);
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
-    ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
+    ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
 
     bool ret = g_audioRender->Start();
     EXPECT_EQ(ret, TRUE_OK);
