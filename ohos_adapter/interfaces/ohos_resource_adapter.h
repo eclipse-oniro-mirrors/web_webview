@@ -25,19 +25,19 @@ public:
     OhosFileMapper() = default;
     virtual ~OhosFileMapper() = default;
 
-    virtual int32_t GetFd() const = 0;
+    virtual int32_t GetFd() = 0;
 
-    virtual int32_t GetOffset() const = 0;
+    virtual int32_t GetOffset() = 0;
 
-    virtual std::string GetFileName() const = 0;
+    virtual std::string GetFileName() = 0;
 
-    virtual bool IsCompressed() const = 0;
+    virtual bool IsCompressed() = 0;
 
-    virtual void* GetDataPtr() const = 0;
+    virtual void* GetDataPtr() = 0;
 
-    virtual size_t GetDataLen() const = 0;
+    virtual size_t GetDataLen() = 0;
 
-    virtual bool UnzipData(std::unique_ptr<uint8_t[]>& dest, size_t& len) = 0;
+    virtual bool UnzipData(uint8_t* &dest, size_t& len) = 0;
 };
 
 class OhosResourceAdapter {
@@ -46,9 +46,9 @@ public:
     virtual ~OhosResourceAdapter() = default;
 
     virtual bool GetRawFileData(const std::string& rawFile, size_t& len,
-        std::unique_ptr<uint8_t[]>& dest, bool isSys = false) = 0;
+        uint8_t* &dest, bool isSys = false) = 0;
 
-    virtual bool GetRawFileMapper(const std::string& rawFile, std::unique_ptr<OhosFileMapper>& dest,
+    virtual std::shared_ptr<OhosFileMapper> GetRawFileMapper(const std::string& rawFile,
         bool isSys = false) = 0;
 
     virtual bool IsRawFileExist(const std::string& rawFile, bool isSys = false) = 0;

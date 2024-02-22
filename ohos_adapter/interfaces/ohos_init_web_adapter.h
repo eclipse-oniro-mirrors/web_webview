@@ -37,7 +37,7 @@ public:
 
     virtual WebRunInitedCallback* GetRunWebInitedCallback() = 0;
 
-    virtual void SetRunWebInitedCallback(WebRunInitedCallback* &&callback) = 0;
+    virtual void SetRunWebInitedCallback(WebRunInitedCallback* callback) = 0;
 };
 }  // namespace OHOS::NWeb
 

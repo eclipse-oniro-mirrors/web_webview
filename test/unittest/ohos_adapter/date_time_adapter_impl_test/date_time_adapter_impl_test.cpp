@@ -67,6 +67,12 @@ void DateTimeAdapterImplTest::SetUp(void)
 void DateTimeAdapterImplTest::TearDown(void)
 {}
 
+class MockTimezoneEventCallbackAdapter : public TimezoneEventCallbackAdapter {
+public:
+    MockTimezoneEventCallbackAdapter() = default;
+    void TimezoneChanged(std::shared_ptr<WebTimezoneInfo> info) {}
+};
+
 /**
  * @tc.name: DateTimeAdapterImplTest_NWebTimeZoneEventSubscriber_001
  * @tc.desc: NWebTimeZoneEventSubscriber.
@@ -76,7 +82,8 @@ void DateTimeAdapterImplTest::TearDown(void)
 HWTEST_F(DateTimeAdapterImplTest, DateTimeAdapterImplTest_NWebTimeZoneEventSubscriber_001, TestSize.Level1)
 {
     EventFwk::CommonEventSubscribeInfo in;
-    TimeZoneEventCallback cb = [] (WebTimezoneInfo&) {};
+    std::shared_ptr<TimezoneEventCallbackAdapter> cb = 
+        std::make_shared<MockTimezoneEventCallbackAdapter>();
     auto adapter = std::make_shared<NWebTimeZoneEventSubscriber>(in, cb);
     EXPECT_NE(adapter, nullptr);
     Want want;
@@ -100,8 +107,9 @@ HWTEST_F(DateTimeAdapterImplTest, DateTimeAdapterImplTest_DateTimeFormatAdapterI
 {
     auto adapter = std::make_shared<DateTimeFormatAdapterImpl>();
     EXPECT_NE(adapter, nullptr);
-    TimeZoneEventCallback eventCallback = [] (WebTimezoneInfo&) {};
-    adapter->RegTimezoneEvent(std::move(eventCallback));
+    std::shared_ptr<TimezoneEventCallbackAdapter> cb = 
+        std::make_shared<MockTimezoneEventCallbackAdapter>();
+    adapter->RegTimezoneEvent(std::move(cb));
     bool result = adapter->StartListen();
     EXPECT_FALSE(result);
     g_commonEvent = true;

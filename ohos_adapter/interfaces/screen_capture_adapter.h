@@ -99,7 +99,9 @@ enum class ContainerFormatTypeAdapter: int32_t {
     /* Audio format type -- m4a */
     CFT_MPEG_4A_TYPE = 0,
     /* Video format type -- mp4 */
-    CFT_MPEG_4_TYPE = 1
+    CFT_MPEG_4_TYPE = 1,
+    /* Invalid format */
+    CFT_BUTT,
 };
 
 struct AudioCaptureInfoAdapter {
@@ -199,9 +201,9 @@ public:
 
     virtual int32_t StopCapture() = 0;
 
-    virtual int32_t SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter>& callback) = 0;
+    virtual int32_t SetCaptureCallback(const std::shared_ptr<ScreenCaptureCallbackAdapter> callback) = 0;
 
-    virtual std::unique_ptr<SurfaceBufferAdapter> AcquireVideoBuffer() = 0;
+    virtual std::shared_ptr<SurfaceBufferAdapter> AcquireVideoBuffer() = 0;
 
     virtual int32_t ReleaseVideoBuffer() = 0;
 };

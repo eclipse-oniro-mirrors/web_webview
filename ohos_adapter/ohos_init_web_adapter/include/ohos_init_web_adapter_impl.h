@@ -27,7 +27,7 @@ public:
 
     WebRunInitedCallback* GetRunWebInitedCallback() override;
 
-    void SetRunWebInitedCallback(WebRunInitedCallback* &&callback) override;
+    void SetRunWebInitedCallback(WebRunInitedCallback* callback) override;
 
     static WebRunInitedCallback* webRunInitedCallback_;
 };

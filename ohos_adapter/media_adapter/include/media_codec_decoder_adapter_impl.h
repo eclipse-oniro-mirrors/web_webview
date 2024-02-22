@@ -84,7 +84,7 @@ public:
 
     DecoderAdapterCode ReleaseOutputBufferDec(uint32_t index, bool isRender) override;
 
-    DecoderAdapterCode SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter>& callback) override;
+    DecoderAdapterCode SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter> callback) override;
 
     static ErrorType GetErrorType(MediaAVCodec::AVCodecErrorType codecErrorType);
 

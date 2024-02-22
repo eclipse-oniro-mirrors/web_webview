@@ -21,41 +21,42 @@
 
 namespace OHOS::NWeb {
 
-enum class ProductDeviceType {
+enum class ProductDeviceType : int32_t {
     DEVICE_TYPE_MOBILE,
     DEVICE_TYPE_TABLET,
     DEVICE_TYPE_2IN1,
     DEVICE_TYPE_UNKNOWN
 };
+
 class SystemPropertiesAdapter {
 public:
     SystemPropertiesAdapter() = default;
 
     virtual ~SystemPropertiesAdapter() = default;
 
-    virtual bool GetResourceUseHapPathEnable() const = 0;
+    virtual bool GetResourceUseHapPathEnable() = 0;
 
-    virtual std::string GetDeviceInfoProductModel() const = 0;
+    virtual std::string GetDeviceInfoProductModel() = 0;
 
-    virtual std::string GetDeviceInfoBrand() const = 0;
+    virtual std::string GetDeviceInfoBrand() = 0;
 
-    virtual int32_t GetDeviceInfoMajorVersion() const = 0;
+    virtual int32_t GetDeviceInfoMajorVersion() = 0;
 
-    virtual ProductDeviceType GetProductDeviceType() const = 0;
+    virtual ProductDeviceType GetProductDeviceType() = 0;
 
-    virtual bool GetWebOptimizationValue() const = 0;
+    virtual bool GetWebOptimizationValue() = 0;
 
-    virtual bool GetLockdownModeStatus() const = 0;
+    virtual bool GetLockdownModeStatus() = 0;
 
-    virtual std::string GetUserAgentOSName() const = 0;
+    virtual std::string GetUserAgentOSName() = 0;
 
-    virtual int32_t GetSoftwareMajorVersion() const = 0;
+    virtual int32_t GetSoftwareMajorVersion() = 0;
 
-    virtual int32_t GetSoftwareSeniorVersion() const = 0;
+    virtual int32_t GetSoftwareSeniorVersion() = 0;
 
-    virtual std::string GetNetlogMode() const = 0;
+    virtual std::string GetNetlogMode() = 0;
 
-    virtual bool GetTraceDebugEnable() const = 0;
+    virtual bool GetTraceDebugEnable() = 0;
 };
 
 }  // namespace OHOS::NWeb

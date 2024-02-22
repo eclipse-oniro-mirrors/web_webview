@@ -86,7 +86,7 @@ public:
         if (!isReady || !g_screenCapture) {
             return;
         }
-        std::unique_ptr<SurfaceBufferAdapter> buffer = g_screenCapture->AcquireVideoBuffer();
+        std::shared_ptr<SurfaceBufferAdapter> buffer = g_screenCapture->AcquireVideoBuffer();
         if (buffer) {
             g_screenCapture->ReleaseVideoBuffer();
         }
@@ -232,7 +232,7 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_AcquireVideo
 {
     auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
     EXPECT_NE(adapterImpl, nullptr);
-    std::unique_ptr<SurfaceBufferAdapter> buffer = adapterImpl->AcquireVideoBuffer();
+    std::shared_ptr<SurfaceBufferAdapter> buffer = adapterImpl->AcquireVideoBuffer();
     EXPECT_EQ(buffer, nullptr);
     int32_t result = adapterImpl->ReleaseVideoBuffer();
     EXPECT_EQ(result, -1);
@@ -378,7 +378,7 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_AcquireVideo
     EXPECT_CALL(*mock, ReleaseVideoBuffer())
         .Times(1)
         .WillRepeatedly(::testing::Return(Media::MSERR_OK));
-    std::unique_ptr<SurfaceBufferAdapter> buffer = adapterImpl->AcquireVideoBuffer();
+    std::shared_ptr<SurfaceBufferAdapter> buffer = adapterImpl->AcquireVideoBuffer();
     EXPECT_NE(buffer, nullptr);
     int32_t result = adapterImpl->ReleaseVideoBuffer();
     EXPECT_EQ(result, 0);

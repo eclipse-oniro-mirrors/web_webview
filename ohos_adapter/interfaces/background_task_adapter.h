@@ -16,8 +16,10 @@
 #ifndef BACKGROUND_TASK_ADAPTER_H
 #define BACKGROUND_TASK_ADAPTER_H
 
+#include <cstdint>
+
 namespace OHOS::NWeb {
-enum class BackgroundModeAdapter {
+enum class BackgroundModeAdapter : int32_t {
     DATA_TRANSFER = 1,
     AUDIO_PLAYBACK,
     AUDIO_RECORDING,

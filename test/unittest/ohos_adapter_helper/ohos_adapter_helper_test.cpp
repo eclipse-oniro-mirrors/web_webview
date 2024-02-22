@@ -48,7 +48,7 @@ public:
 
     void OnStartLayoutWrite(const std::string& jobId, const OHOS::NWeb::PrintAttributesAdapter& oldAttrs,
         const OHOS::NWeb::PrintAttributesAdapter& newAttrs, uint32_t fd,
-        std::function<void(std::string, uint32_t)> writeResultCallback) override
+        std::shared_ptr<PrintWriteResultCallbackAdapter> callback) override
     {}
 
     void OnJobStateChanged(const std::string& jobId, uint32_t state) override {}

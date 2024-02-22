@@ -692,7 +692,7 @@ int32_t CameraManagerAdapterImpl::StartStream(const std::string &deviceId,
 
 CameraSurfaceBufferAdapterImpl::CameraSurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer) : buffer_(buffer) {}
 
-int32_t CameraSurfaceBufferAdapterImpl::GetFileDescriptor() const
+int32_t CameraSurfaceBufferAdapterImpl::GetFileDescriptor()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -701,7 +701,7 @@ int32_t CameraSurfaceBufferAdapterImpl::GetFileDescriptor() const
     return buffer_->GetFileDescriptor();
 }
 
-int32_t CameraSurfaceBufferAdapterImpl::GetWidth() const
+int32_t CameraSurfaceBufferAdapterImpl::GetWidth()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -710,7 +710,7 @@ int32_t CameraSurfaceBufferAdapterImpl::GetWidth() const
     return buffer_->GetWidth();
 }
 
-int32_t CameraSurfaceBufferAdapterImpl::GetHeight() const
+int32_t CameraSurfaceBufferAdapterImpl::GetHeight()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -719,7 +719,7 @@ int32_t CameraSurfaceBufferAdapterImpl::GetHeight() const
     return buffer_->GetHeight();
 }
 
-int32_t CameraSurfaceBufferAdapterImpl::GetStride() const
+int32_t CameraSurfaceBufferAdapterImpl::GetStride()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -728,7 +728,7 @@ int32_t CameraSurfaceBufferAdapterImpl::GetStride() const
     return buffer_->GetStride();
 }
 
-int32_t CameraSurfaceBufferAdapterImpl::GetFormat() const
+int32_t CameraSurfaceBufferAdapterImpl::GetFormat()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -737,7 +737,7 @@ int32_t CameraSurfaceBufferAdapterImpl::GetFormat() const
     return buffer_->GetFormat();
 }
 
-uint32_t CameraSurfaceBufferAdapterImpl::GetSize() const
+uint32_t CameraSurfaceBufferAdapterImpl::GetSize()
 {
     if (!buffer_) {
         WVLOG_E("buffer_ is nullptr");
@@ -839,7 +839,7 @@ void CameraSurfaceListener::OnBufferAvailable()
             height: %{public}d, type: %{public}d, ratation: %{public}d, FilyY: %{public}d, FilyX: %{public}d",
             surfaceType_, size, buffer->GetWidth(), buffer->GetHeight(), surface_->GetTransform(),
             (int32_t)rotationInfo.rotation, rotationInfo.isFlipY, rotationInfo.isFlipX);
-        auto bufferAdapter = std::make_unique<CameraSurfaceBufferAdapterImpl>(buffer);
+        auto bufferAdapter = std::make_shared<CameraSurfaceBufferAdapterImpl>(buffer);
         auto surfaceAdapter = std::make_shared<CameraSurfaceAdapterImpl>(surface_);
         if (listener_ != nullptr) {
             listener_->OnBufferAvailable(surfaceAdapter, std::move(bufferAdapter), rotationInfo);
@@ -851,7 +851,7 @@ void CameraSurfaceListener::OnBufferAvailable()
 
 CameraSurfaceAdapterImpl::CameraSurfaceAdapterImpl(sptr<IConsumerSurface> surface) : cSurface_(surface) {}
 
-int32_t CameraSurfaceAdapterImpl::ReleaseBuffer(std::unique_ptr<CameraSurfaceBufferAdapter> bufferAdapter,
+int32_t CameraSurfaceAdapterImpl::ReleaseBuffer(std::shared_ptr<CameraSurfaceBufferAdapter> bufferAdapter,
                                                 int32_t fence)
 {
     if (!cSurface_ || !bufferAdapter) {

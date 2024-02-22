@@ -40,7 +40,8 @@ int WebBatteryInfoImpl::ChargingTime()
     return chargingTime_;
 }
 
-NWebBatteryEventSubscriber::NWebBatteryEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, BatteryEventCallback& cb)
+NWebBatteryEventSubscriber::NWebBatteryEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, 
+    std::shared_ptr<WebBatteryEventCallback> cb)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(cb) {}
 
 void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData &data)
@@ -63,14 +64,20 @@ void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData 
     const double changeFullLevel = 100.f;
     double changeLevel = capacity / changeFullLevel;
     WVLOG_I("receive capacity %{public}d  isChangingType %{public}d", capacity, isChangingType);
-    WebBatteryInfoImpl batterinfo(changeLevel, ischanging, -1, -1);
-    eventCallback_(batterinfo);
+    std::shared_ptr<WebBatteryInfoImpl> batterinfo = 
+        std::make_shared<WebBatteryInfoImpl>(changeLevel, ischanging, -1, -1);
+    eventCallback_->BatteryInfoChanged(batterinfo);
 }
 
-void BatteryMgrClientAdapterImpl::RegBatteryEvent(const BatteryEventCallback&& eventCallback)
+void BatteryMgrClientAdapterImpl::RegBatteryEvent(std::shared_ptr<WebBatteryEventCallback> eventCallback)
 {
+    if (eventCallback) {
+      WVLOG_E("WebBatteryEventCallback is nullptr.");
+      return;
+    }
+
     WVLOG_I("Reg Battery Event");
-    cb = std::move(eventCallback);
+    cb_ = std::move(eventCallback);
 }
 
 bool BatteryMgrClientAdapterImpl::StartListen()
@@ -79,7 +86,7 @@ bool BatteryMgrClientAdapterImpl::StartListen()
     EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
     skill.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_BATTERY_CHANGED);
     EventFwk::CommonEventSubscribeInfo info(skill);
-    this->commonEventSubscriber_ = std::make_shared<NWebBatteryEventSubscriber>(info, this->cb);
+    this->commonEventSubscriber_ = std::make_shared<NWebBatteryEventSubscriber>(info, this->cb_);
     bool ret = EventFwk::CommonEventManager::SubscribeCommonEvent(this->commonEventSubscriber_);
     if (ret == false) {
         WVLOG_E("start battery listen fail");
@@ -102,7 +109,7 @@ void BatteryMgrClientAdapterImpl::StopListen()
     }
 }
 
-std::unique_ptr<WebBatteryInfo> BatteryMgrClientAdapterImpl::RequestBatteryInfo()
+std::shared_ptr<WebBatteryInfo> BatteryMgrClientAdapterImpl::RequestBatteryInfo()
 {
     WVLOG_I("request batteryInfo");
     BatterySrvClient& battClient = BatterySrvClient::GetInstance();
@@ -115,6 +122,6 @@ std::unique_ptr<WebBatteryInfo> BatteryMgrClientAdapterImpl::RequestBatteryInfo(
     }
     const double changeFullLevel = 100.f;
     double changeLevel = capacity / changeFullLevel;
-    return std::make_unique<WebBatteryInfoImpl>(changeLevel, ischanging, -1, -1);
+    return std::make_shared<WebBatteryInfoImpl>(changeLevel, ischanging, -1, -1);
 }
 }

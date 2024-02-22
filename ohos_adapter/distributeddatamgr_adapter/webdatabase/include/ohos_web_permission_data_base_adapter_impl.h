@@ -41,10 +41,10 @@ public:
 
     ~OhosWebPermissionDataBaseAdapterImpl() override = default;
 
-    bool ExistPermissionByOrigin(const std::string& origin, const WebPermissionType& key) const override;
+    bool ExistPermissionByOrigin(const std::string& origin, const WebPermissionType& key) override;
 
     bool GetPermissionResultByOrigin(const std::string& origin, const WebPermissionType& key,
-        bool &result) const override;
+        bool &result) override;
 
     void SetPermissionByOrigin(const std::string& origin, const WebPermissionType& key, bool result) override;
 
@@ -52,7 +52,7 @@ public:
 
     void ClearAllPermission(const WebPermissionType& key) override;
 
-    void GetOriginsByPermission(const WebPermissionType& key, std::vector<std::string>& origins) const override;
+    void GetOriginsByPermission(const WebPermissionType& key, std::vector<std::string>& origins) override;
 
 private:
     OhosWebPermissionDataBaseAdapterImpl();

@@ -73,7 +73,7 @@ public:
 
     virtual bool GetPasteData(PasteRecordList& data) = 0;
 
-    virtual void SetPasteData(const PasteRecordList& data,
+    virtual void SetPasteData(const PasteRecordList& data, 
                               CopyOptionMode copyOption = CopyOptionMode::CROSS_DEVICE) = 0;
 
     virtual bool HasPasteData() = 0;
@@ -82,13 +82,13 @@ public:
 
     virtual int32_t OpenRemoteUri(const std::string& path) = 0;
 
-    virtual bool IsLocalPaste() const = 0;
+    virtual bool IsLocalPaste() = 0;
 
-    virtual uint32_t GetTokenId() const = 0;
+    virtual uint32_t GetTokenId() = 0;
 
-    virtual void AddPasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) = 0;
+    virtual int32_t AddPasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) = 0;
 
-    virtual void RemovePasteboardChangedObserver(std::shared_ptr<PasteboardObserverAdapter> callback) = 0;
+    virtual void RemovePasteboardChangedObserver(int32_t callbackId) = 0;
 };
 
 class PasteDataRecordAdapter {
@@ -150,7 +150,7 @@ public:
     
     virtual std::size_t GetRecordCount() = 0;
 
-    virtual PasteRecordList AllRecords() const = 0;
+    virtual PasteRecordList AllRecords() = 0;
 };
 }
 #endif

@@ -111,7 +111,7 @@ public:
 
     virtual DecoderAdapterCode ReleaseOutputBufferDec(uint32_t index, bool isRender) = 0;
 
-    virtual DecoderAdapterCode SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter> &callback) = 0;
+    virtual DecoderAdapterCode SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter> callback) = 0;
 };
 } // namespace OHOS::NWeb
 

@@ -82,22 +82,6 @@ int32_t ConvertPriority(int32_t priority)
 }
 
 namespace OHOS::NWeb {
-LocationInstance& LocationInstance::GetInstance()
-{
-    static LocationInstance instance;
-    return instance;
-}
-
-std::unique_ptr<LocationProxyAdapter> LocationInstance::CreateLocationProxyAdapter()
-{
-    return std::make_unique<LocationProxyAdapterImpl>();
-}
-
-std::unique_ptr<LocationRequestConfig> LocationInstance::CreateLocationRequestConfig()
-{
-    return std::make_unique<LocationRequestConfigImpl>();
-}
-
 LocationRequestConfigImpl::LocationRequestConfigImpl()
 {
     config_ = std::make_unique<OHOS::Location::RequestConfig>();
@@ -159,7 +143,7 @@ std::unique_ptr<OHOS::Location::RequestConfig>& LocationRequestConfigImpl::GetCo
 LocationInfoImpl::LocationInfoImpl(std::unique_ptr<OHOS::Location::Location>& location)
     : location_(std::move(location)) {}
 
-double LocationInfoImpl::GetLatitude() const
+double LocationInfoImpl::GetLatitude()
 {
     if (location_ == nullptr) {
         return 0;
@@ -167,7 +151,7 @@ double LocationInfoImpl::GetLatitude() const
     return location_->GetLatitude();
 }
 
-double LocationInfoImpl::GetLongitude() const
+double LocationInfoImpl::GetLongitude()
 {
     if (location_ == nullptr) {
         return 0;
@@ -175,7 +159,7 @@ double LocationInfoImpl::GetLongitude() const
     return location_->GetLongitude();
 }
 
-double LocationInfoImpl::GetAltitude() const
+double LocationInfoImpl::GetAltitude()
 {
     if (location_ == nullptr) {
         return 0;
@@ -183,7 +167,7 @@ double LocationInfoImpl::GetAltitude() const
     return location_->GetAltitude();
 }
 
-float LocationInfoImpl::GetAccuracy() const
+float LocationInfoImpl::GetAccuracy()
 {
     if (location_ == nullptr) {
         return 0;
@@ -191,7 +175,7 @@ float LocationInfoImpl::GetAccuracy() const
     return location_->GetAccuracy();
 }
 
-float LocationInfoImpl::GetSpeed() const
+float LocationInfoImpl::GetSpeed()
 {
     if (location_ == nullptr) {
         return 0;
@@ -199,7 +183,7 @@ float LocationInfoImpl::GetSpeed() const
     return location_->GetSpeed();
 }
 
-double LocationInfoImpl::GetDirection() const
+double LocationInfoImpl::GetDirection()
 {
     if (location_ == nullptr) {
         return 0;
@@ -207,7 +191,7 @@ double LocationInfoImpl::GetDirection() const
     return location_->GetDirection();
 }
 
-int64_t LocationInfoImpl::GetTimeStamp() const
+int64_t LocationInfoImpl::GetTimeStamp()
 {
     if (location_ == nullptr) {
         return 0;
@@ -215,7 +199,7 @@ int64_t LocationInfoImpl::GetTimeStamp() const
     return location_->GetTimeStamp();
 }
 
-int64_t LocationInfoImpl::GetTimeSinceBoot() const
+int64_t LocationInfoImpl::GetTimeSinceBoot()
 {
     if (location_ == nullptr) {
         return 0;
@@ -223,7 +207,7 @@ int64_t LocationInfoImpl::GetTimeSinceBoot() const
     return location_->GetTimeSinceBoot();
 }
 
-std::string LocationInfoImpl::GetAdditions() const
+std::string LocationInfoImpl::GetAdditions()
 {
     if (location_ == nullptr) {
         return "";
@@ -267,41 +251,41 @@ LocationProxyAdapterImpl::LocationProxyAdapterImpl()
     }
 }
 
-bool LocationProxyAdapterImpl::StartLocating(
-    std::unique_ptr<LocationRequestConfig>& requestConfig,
+int32_t LocationProxyAdapterImpl::StartLocating(
+    std::shared_ptr<LocationRequestConfig> requestConfig,
     std::shared_ptr<LocationCallbackAdapter> callback)
 {
+    static int32_t count = 0;
+    int32_t id = -1;
     if (!startLocatingFunc_ || !callback) {
         WVLOG_E("get Locator::GetInstance() failed or callback is nullptr");
-        return false;
+        return id;
     }
     sptr<OHOS::Location::ILocatorCallback> iCallback =
         sptr<OHOS::Location::ILocatorCallback>(new LocationCallbackImpl(callback));
-    LocatorCallbackMap::iterator iter = reg_.find(callback.get());
-    if (iter != reg_.end()) {
-        WVLOG_E("StartLocating failed, callback already in map");
-        return false;
-    }
     bool ret = startLocatingFunc_(
         reinterpret_cast<LocationRequestConfigImpl*>(requestConfig.get())->GetConfig(),
         iCallback);
     if (!ret) {
         WVLOG_E("StartLocating failed, errcode:%{public}d", ret);
-        return false;
+        return id;
     }
 
-    reg_.emplace(std::make_pair(callback.get(), iCallback));
-    return true;
+    id = count++;
+    if (count < 0) {
+        count = 0;
+    }
+    reg_.emplace(std::make_pair(id, iCallback));
+    return id;
 }
 
-bool LocationProxyAdapterImpl::StopLocating(
-    std::shared_ptr<LocationCallbackAdapter> callback)
+bool LocationProxyAdapterImpl::StopLocating(int32_t callbackId)
 {
-    if (!stopLocatingFunc_ || !callback) {
-        WVLOG_E("get Locator::GetInstance() failed or callback is nullptr");
+    if (!stopLocatingFunc_ || callbackId < 0) {
+        WVLOG_E("get Locator::GetInstance() failed or callback is null");
         return false;
     }
-    LocatorCallbackMap::iterator iter = reg_.find(callback.get());
+    LocatorCallbackMap::iterator iter = reg_.find(callbackId);
     if (iter == reg_.end()) {
         WVLOG_E("StopLocating failed due to reg_ not find iCallback");
         return false;

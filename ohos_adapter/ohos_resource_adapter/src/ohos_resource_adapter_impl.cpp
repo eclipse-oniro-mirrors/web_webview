@@ -156,40 +156,45 @@ OhosFileMapperImpl::OhosFileMapperImpl(std::unique_ptr<OHOS::AbilityBase::FileMa
 {
 }
 
-int32_t OhosFileMapperImpl::GetFd() const
+int32_t OhosFileMapperImpl::GetFd()
 {
     return -1;
 }
 
-int32_t OhosFileMapperImpl::GetOffset() const
+int32_t OhosFileMapperImpl::GetOffset()
 {
     return fileMap_ ? fileMap_->GetOffset(): -1;
 }
 
-std::string OhosFileMapperImpl::GetFileName() const
+std::string OhosFileMapperImpl::GetFileName()
 {
     return fileMap_ ? fileMap_->GetFileName(): "";
 }
 
-bool OhosFileMapperImpl::IsCompressed() const
+bool OhosFileMapperImpl::IsCompressed()
 {
     return fileMap_ ? fileMap_->IsCompressed(): false;
 }
 
-void* OhosFileMapperImpl::GetDataPtr() const
+void* OhosFileMapperImpl::GetDataPtr()
 {
     return fileMap_ ? fileMap_->GetDataPtr(): nullptr;
 }
 
-size_t OhosFileMapperImpl::GetDataLen() const
+size_t OhosFileMapperImpl::GetDataLen()
 {
     return fileMap_ ? fileMap_->GetDataLen(): 0;
 }
 
-bool OhosFileMapperImpl::UnzipData(std::unique_ptr<uint8_t[]>& dest, size_t& len)
+bool OhosFileMapperImpl::UnzipData(uint8_t* &dest, size_t& len)
 {
     if (extractor_ && IsCompressed()) {
-        return extractor_->UnzipData(std::move(fileMap_), dest, len);
+        std::unique_ptr<uint8_t[]> data;
+        bool result = extractor_->UnzipData(std::move(fileMap_), data, len);
+        if (result) {
+            dest = data.release();   
+        }
+        return result;
     }
     return false;
 }
@@ -220,10 +225,16 @@ void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 }
 
 bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t& len,
-    std::unique_ptr<uint8_t[]>& dest, bool isSys)
+    uint8_t* &dest, bool isSys)
 {
+    std::unique_ptr<uint8_t[]> data;
+    bool result;
     if (isSys) {
-        return GetRawFileData(sysExtractor_, rawFile, len, dest);
+        result =  GetRawFileData(sysExtractor_, rawFile, len, data);
+        if (result) {
+            dest = data.release();     
+        }
+        return result;
     }
     std::string bundleName;
     std::string moduleName;
@@ -231,22 +242,36 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t&
     if (ParseRawFile(rawFile, bundleName, moduleName, fileName)) {
         auto resourceManager = GetResourceMgr(bundleName, moduleName);
         if (!resourceManager) {
-            return GetRawFileData(extractor_, rawFile, len, dest);
+            result = GetRawFileData(extractor_, rawFile, len, data);
+            if (result) {
+                dest = data.release();
+            }
+            return result;
         }
-        auto state = resourceManager->GetRawFileFromHap(fileName, len, dest);
+        auto state = resourceManager->GetRawFileFromHap(fileName, len, data);
         if (state != Global::Resource::SUCCESS) {
             WVLOG_E("GetRawFileFromHap failed, state: %{public}d, fileName: %{public}s", state, fileName.c_str());
-            return GetRawFileData(extractor_, rawFile, len, dest);
+            result = GetRawFileData(extractor_, rawFile, len, data);
+            if (result) {
+                dest = data.release();
+            }
+            return result;
         }
+        dest = data.release();
         return true;
     }
-    return GetRawFileData(extractor_, rawFile, len, dest);
+    
+    result = GetRawFileData(extractor_, rawFile, len, data);
+    if (result) {
+        dest = data.release();
+    }
+    return result;
 }
 
-bool OhosResourceAdapterImpl::GetRawFileMapper(const std::string& rawFile,
-    std::unique_ptr<OhosFileMapper>& dest, bool isSys)
+std::shared_ptr<OhosFileMapper> OhosResourceAdapterImpl::GetRawFileMapper(const std::string& rawFile,
+    bool isSys)
 {
-    return GetRawFileMapper(isSys? sysExtractor_: extractor_, rawFile, dest);
+    return GetRawFileMapper(isSys? sysExtractor_: extractor_, rawFile);
 }
 
 bool OhosResourceAdapterImpl::IsRawFileExist(const std::string& rawFile, bool isSys)
@@ -368,11 +393,12 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::shared_ptr<Extractor>& m
     return manager->ExtractToBufByName(rawFilePath, dest, len);
 }
 
-bool OhosResourceAdapterImpl::GetRawFileMapper(const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
-    const std::string& rawFile, std::unique_ptr<OhosFileMapper>& dest)
+std::shared_ptr<OhosFileMapper> OhosResourceAdapterImpl::GetRawFileMapper(
+    const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
+    const std::string& rawFile)
 {
     if (!manager) {
-        return false;
+        return nullptr;
     }
     std::unique_ptr<OHOS::AbilityBase::FileMapper> fileMap;
     auto& systemPropertiesAdapter = OhosAdapterHelper::GetInstance().GetSystemPropertiesInstance();
@@ -382,10 +408,9 @@ bool OhosResourceAdapterImpl::GetRawFileMapper(const std::shared_ptr<OHOS::Abili
         fileMap = manager->GetData(rawFile);
     }
     if (fileMap == nullptr) {
-        return false;
+        return nullptr;
     }
     bool isCompressed = fileMap->IsCompressed();
-    dest = std::make_unique<OhosFileMapperImpl>(std::move(fileMap), isCompressed ? manager: nullptr);
-    return true;
+    return std::make_shared<OhosFileMapperImpl>(std::move(fileMap), isCompressed ? manager: nullptr);
 }
 }  // namespace OHOS::NWeb

@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2023 Huawei Device Co., Ltd.
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the "License").
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
@@ -20,111 +20,110 @@
 
 namespace OHOS::NWeb {
 namespace MMIAdapter {
-class KeyEvent {
-public:
-    static const int32_t KEYCODE_0;
-    static const int32_t KEYCODE_1;
-    static const int32_t KEYCODE_2;
-    static const int32_t KEYCODE_3;
-    static const int32_t KEYCODE_4;
-    static const int32_t KEYCODE_5;
-    static const int32_t KEYCODE_6;
-    static const int32_t KEYCODE_7;
-    static const int32_t KEYCODE_8;
-    static const int32_t KEYCODE_9;
-    static const int32_t KEYCODE_DPAD_UP;
-    static const int32_t KEYCODE_DPAD_DOWN;
-    static const int32_t KEYCODE_DPAD_LEFT;
-    static const int32_t KEYCODE_DPAD_RIGHT;
-    static const int32_t KEYCODE_A;
-    static const int32_t KEYCODE_B;
-    static const int32_t KEYCODE_C;
-    static const int32_t KEYCODE_D;
-    static const int32_t KEYCODE_E;
-    static const int32_t KEYCODE_F;
-    static const int32_t KEYCODE_G;
-    static const int32_t KEYCODE_H;
-    static const int32_t KEYCODE_I;
-    static const int32_t KEYCODE_J;
-    static const int32_t KEYCODE_K;
-    static const int32_t KEYCODE_L;
-    static const int32_t KEYCODE_M;
-    static const int32_t KEYCODE_N;
-    static const int32_t KEYCODE_O;
-    static const int32_t KEYCODE_P;
-    static const int32_t KEYCODE_Q;
-    static const int32_t KEYCODE_R;
-    static const int32_t KEYCODE_S;
-    static const int32_t KEYCODE_T;
-    static const int32_t KEYCODE_U;
-    static const int32_t KEYCODE_V;
-    static const int32_t KEYCODE_W;
-    static const int32_t KEYCODE_X;
-    static const int32_t KEYCODE_Y;
-    static const int32_t KEYCODE_Z;
-    static const int32_t KEYCODE_COMMA;
-    static const int32_t KEYCODE_PERIOD;
-    static const int32_t KEYCODE_ALT_LEFT;
-    static const int32_t KEYCODE_ALT_RIGHT;
-    static const int32_t KEYCODE_SHIFT_LEFT;
-    static const int32_t KEYCODE_SHIFT_RIGHT;
-    static const int32_t KEYCODE_TAB;
-    static const int32_t KEYCODE_SPACE;
-    static const int32_t KEYCODE_ENTER;
-    static const int32_t KEYCODE_DEL;
-    static const int32_t KEYCODE_GRAVE;
-    static const int32_t KEYCODE_MINUS;
-    static const int32_t KEYCODE_EQUALS;
-    static const int32_t KEYCODE_LEFT_BRACKET;
-    static const int32_t KEYCODE_RIGHT_BRACKET;
-    static const int32_t KEYCODE_BACKSLASH;
-    static const int32_t KEYCODE_SEMICOLON;
-    static const int32_t KEYCODE_APOSTROPHE;
-    static const int32_t KEYCODE_SLASH;
-    static const int32_t KEYCODE_PAGE_UP;
-    static const int32_t KEYCODE_PAGE_DOWN;
-    static const int32_t KEYCODE_ESCAPE;
-    static const int32_t KEYCODE_FORWARD_DEL;
-    static const int32_t KEYCODE_CTRL_LEFT;
-    static const int32_t KEYCODE_CTRL_RIGHT;
-    static const int32_t KEYCODE_CAPS_LOCK;
-    static const int32_t KEYCODE_SCROLL_LOCK;
-    static const int32_t KEYCODE_META_LEFT;
-    static const int32_t KEYCODE_META_RIGHT;
-    static const int32_t KEYCODE_SYSRQ;
-    static const int32_t KEYCODE_BREAK;
-    static const int32_t KEYCODE_MOVE_HOME;
-    static const int32_t KEYCODE_MOVE_END;
-    static const int32_t KEYCODE_INSERT;
-    static const int32_t KEYCODE_F1;
-    static const int32_t KEYCODE_F2;
-    static const int32_t KEYCODE_F3;
-    static const int32_t KEYCODE_F4;
-    static const int32_t KEYCODE_F5;
-    static const int32_t KEYCODE_F6;
-    static const int32_t KEYCODE_F7;
-    static const int32_t KEYCODE_F8;
-    static const int32_t KEYCODE_F9;
-    static const int32_t KEYCODE_F10;
-    static const int32_t KEYCODE_F11;
-    static const int32_t KEYCODE_F12;
-    static const int32_t KEYCODE_NUM_LOCK;
-    static const int32_t KEYCODE_NUMPAD_0;
-    static const int32_t KEYCODE_NUMPAD_1;
-    static const int32_t KEYCODE_NUMPAD_2;
-    static const int32_t KEYCODE_NUMPAD_3;
-    static const int32_t KEYCODE_NUMPAD_4;
-    static const int32_t KEYCODE_NUMPAD_5;
-    static const int32_t KEYCODE_NUMPAD_6;
-    static const int32_t KEYCODE_NUMPAD_7;
-    static const int32_t KEYCODE_NUMPAD_8;
-    static const int32_t KEYCODE_NUMPAD_9;
-    static const int32_t KEYCODE_NUMPAD_DIVIDE;
-    static const int32_t KEYCODE_NUMPAD_MULTIPLY;
-    static const int32_t KEYCODE_NUMPAD_SUBTRACT;
-    static const int32_t KEYCODE_NUMPAD_ADD;
-    static const int32_t KEYCODE_NUMPAD_DOT;
-    static const int32_t KEYCODE_NUMPAD_ENTER;
+enum KeyEvent {
+    KEYCODE_0 = 2000,
+    KEYCODE_1 = 2001,
+    KEYCODE_2 = 2002,
+    KEYCODE_3 = 2003,
+    KEYCODE_4 = 2004,
+    KEYCODE_5 = 2005,
+    KEYCODE_6 = 2006,
+    KEYCODE_7 = 2007,
+    KEYCODE_8 = 2008,
+    KEYCODE_9 = 2009,
+    KEYCODE_DPAD_UP = 2012,
+    KEYCODE_DPAD_DOWN = 2013,
+    KEYCODE_DPAD_LEFT = 2014,
+    KEYCODE_DPAD_RIGHT = 2015,
+    KEYCODE_A = 2017,
+    KEYCODE_B = 2018,
+    KEYCODE_C = 2019,
+    KEYCODE_D = 2020,
+    KEYCODE_E = 2021,
+    KEYCODE_F = 2022,
+    KEYCODE_G = 2023,
+    KEYCODE_H = 2024,
+    KEYCODE_I = 2025,
+    KEYCODE_J = 2026,
+    KEYCODE_K = 2027,
+    KEYCODE_L = 2028,
+    KEYCODE_M = 2029,
+    KEYCODE_N = 2030,
+    KEYCODE_O = 2031,
+    KEYCODE_P = 2032,
+    KEYCODE_Q = 2033,
+    KEYCODE_R = 2034,
+    KEYCODE_S = 2035,
+    KEYCODE_T = 2036,
+    KEYCODE_U = 2037,
+    KEYCODE_V = 2038,
+    KEYCODE_W = 2039,
+    KEYCODE_X = 2040,
+    KEYCODE_Y = 2041,
+    KEYCODE_Z = 2042,
+    KEYCODE_COMMA = 2043,
+    KEYCODE_PERIOD = 2044,
+    KEYCODE_ALT_LEFT = 2045,
+    KEYCODE_ALT_RIGHT = 2046,
+    KEYCODE_SHIFT_LEFT = 2047,
+    KEYCODE_SHIFT_RIGHT = 2048,
+    KEYCODE_TAB = 2049,
+    KEYCODE_SPACE = 2050,
+    KEYCODE_ENTER = 2054,
+    KEYCODE_DEL = 2055,
+    KEYCODE_GRAVE = 2056,
+    KEYCODE_MINUS = 2057,
+    KEYCODE_EQUALS = 2058,
+    KEYCODE_LEFT_BRACKET = 2059,
+    KEYCODE_RIGHT_BRACKET = 2060,
+    KEYCODE_BACKSLASH = 2061,
+    KEYCODE_SEMICOLON = 2062,
+    KEYCODE_APOSTROPHE = 2063,
+    KEYCODE_SLASH = 2064,
+    KEYCODE_PAGE_UP = 2068,
+    KEYCODE_PAGE_DOWN = 2069,
+    KEYCODE_ESCAPE = 2070,
+    KEYCODE_FORWARD_DEL = 2071,
+    KEYCODE_CTRL_LEFT = 2072,
+    KEYCODE_CTRL_RIGHT = 2073,
+    KEYCODE_CAPS_LOCK = 2074,
+    KEYCODE_SCROLL_LOCK = 2075,
+    KEYCODE_META_LEFT = 2076,
+    KEYCODE_META_RIGHT = 2077,
+    KEYCODE_SYSRQ = 2079,
+    KEYCODE_BREAK = 2080,
+    KEYCODE_MOVE_HOME = 2081,
+    KEYCODE_MOVE_END = 2082,
+    KEYCODE_INSERT = 2083,
+    KEYCODE_F1 = 2090,
+    KEYCODE_F2 = 2091,
+    KEYCODE_F3 = 2092,
+    KEYCODE_F4 = 2093,
+    KEYCODE_F5 = 2094,
+    KEYCODE_F6 = 2095,
+    KEYCODE_F7 = 2096,
+    KEYCODE_F8 = 2097,
+    KEYCODE_F9 = 2098,
+    KEYCODE_F10 = 2099,
+    KEYCODE_F11 = 2100,
+    KEYCODE_F12 = 2101,
+    KEYCODE_NUM_LOCK = 2102,
+    KEYCODE_NUMPAD_0 = 2103,
+    KEYCODE_NUMPAD_1 = 2104,
+    KEYCODE_NUMPAD_2 = 2105,
+    KEYCODE_NUMPAD_3 = 2106,
+    KEYCODE_NUMPAD_4 = 2107,
+    KEYCODE_NUMPAD_5 = 2108,
+    KEYCODE_NUMPAD_6 = 2109,
+    KEYCODE_NUMPAD_7 = 2110,
+    KEYCODE_NUMPAD_8 = 2111,
+    KEYCODE_NUMPAD_9 = 2112,
+    KEYCODE_NUMPAD_DIVIDE = 2113,
+    KEYCODE_NUMPAD_MULTIPLY = 2114,
+    KEYCODE_NUMPAD_SUBTRACT = 2115,
+    KEYCODE_NUMPAD_ADD = 2116,
+    KEYCODE_NUMPAD_DOT = 2117,
+    KEYCODE_NUMPAD_ENTER = 2119,
 };
 } // namespace MMIAdapter
 } // namespace OHOS::NWeb

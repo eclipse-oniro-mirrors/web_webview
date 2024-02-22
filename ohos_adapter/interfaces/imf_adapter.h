@@ -67,20 +67,13 @@ struct IMFAdapterTextConfig {
 
 enum class IMFAdapterKeyboardStatus : int32_t { NONE = 0, HIDE, SHOW };
 
-class IMFAdapterFunctionKey {
+class IMFAdapterFunctionKeyAdapter {
 public:
-    IMFAdapterEnterKeyType GetEnterKeyType() const
-    {
-        return enterKeyType;
-    }
+    IMFAdapterFunctionKeyAdapter() = default;
 
-    void SetEnterKeyType(IMFAdapterEnterKeyType keyType)
-    {
-        enterKeyType = keyType;
-    }
+    virtual ~IMFAdapterFunctionKeyAdapter() = default;
 
-private:
-    IMFAdapterEnterKeyType enterKeyType = IMFAdapterEnterKeyType::UNSPECIFIED;
+    virtual IMFAdapterEnterKeyType GetEnterKeyType() = 0;
 };
 
 class IMFTextListenerAdapter {
@@ -99,7 +92,7 @@ public:
 
     virtual void SendKeyboardStatus(const IMFAdapterKeyboardStatus& keyboardStatus) = 0;
 
-    virtual void SendFunctionKey(const IMFAdapterFunctionKey& functionKey) = 0;
+    virtual void SendFunctionKey(std::shared_ptr<IMFAdapterFunctionKeyAdapter> functionKey) = 0;
 
     virtual void SetKeyboardStatus(bool status) = 0;
 

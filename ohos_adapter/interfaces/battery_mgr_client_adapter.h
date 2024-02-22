@@ -16,7 +16,7 @@
 #ifndef BATTERY_MGR_CLIENT_ADAPTER_H
 #define BATTERY_MGR_CLIENT_ADAPTER_H
 
-#include <functional>
+#include <memory>
 
 namespace OHOS::NWeb {
 class WebBatteryInfo {
@@ -32,7 +32,12 @@ public:
     virtual int ChargingTime() = 0;
 };
 
-using BatteryEventCallback = std::function<void(WebBatteryInfo&)>;
+class WebBatteryEventCallback {
+public:
+  virtual ~WebBatteryEventCallback() = default;
+
+  virtual void BatteryInfoChanged(std::shared_ptr<WebBatteryInfo>) = 0;
+};
 
 class BatteryMgrClientAdapter {
 public:
@@ -40,13 +45,13 @@ public:
 
     virtual ~BatteryMgrClientAdapter() = default;
     
-    virtual void RegBatteryEvent(const BatteryEventCallback&& eventCallback) = 0;
+    virtual void RegBatteryEvent(std::shared_ptr<WebBatteryEventCallback> eventCallback) = 0;
   
     virtual bool StartListen() = 0;
 
     virtual void StopListen() = 0;
 
-    virtual std::unique_ptr<WebBatteryInfo> RequestBatteryInfo() = 0;
+    virtual std::shared_ptr<WebBatteryInfo> RequestBatteryInfo() = 0;
 };
 }  // namespace OHOS::NWeb
 

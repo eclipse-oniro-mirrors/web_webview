@@ -16,7 +16,6 @@
 #ifndef MMI_ADAPTER_H
 #define MMI_ADAPTER_H
 
-#include <functional>
 #include <string>
 
 namespace OHOS::NWeb {
@@ -50,7 +49,12 @@ public:
     virtual void OnDeviceRemoved(int32_t deviceId, const std::string &type) = 0;
 };
 
-using InputEventCallback = std::function<void(int32_t, int32_t)>;
+class MMIInputListenerAdapter {
+public:
+    MMIInputListenerAdapter() = default;
+    virtual ~MMIInputListenerAdapter() = default;
+    virtual void OnInputEvent(int32_t keyCode, int32_t keyAction) = 0;
+};
 
 class MMIAdapter {
 public:
@@ -58,9 +62,9 @@ public:
 
     virtual ~MMIAdapter() = default;
 
-    virtual const char* KeyCodeToString(int32_t keyCode) = 0;
+    virtual char* KeyCodeToString(int32_t keyCode) = 0;
 
-    virtual int32_t RegisterMMIInputListener(const InputEventCallback&& eventCallback) = 0;
+    virtual int32_t RegisterMMIInputListener(std::shared_ptr<MMIInputListenerAdapter> eventCallback) = 0;
 
     virtual void UnregisterMMIInputListener(int32_t monitorId) = 0;
 
@@ -68,11 +72,11 @@ public:
 
     virtual int32_t UnregisterDevListener(std::string type) = 0;
 
-    virtual int32_t GetKeyboardType(int32_t deviceId, std::function<void(int32_t)> callback) = 0;
+    virtual int32_t GetKeyboardType(int32_t deviceId, int32_t& type) = 0;
 
-    virtual int32_t GetDeviceIds(std::function<void(std::vector<int32_t>&)> callback) = 0;
+    virtual int32_t GetDeviceIds(std::vector<int32_t>& ids) = 0;
 
-    virtual int32_t GetDeviceInfo(int32_t deviceId, std::function<void(const MMIDeviceInfoAdapter&)> callback) = 0;
+    virtual int32_t GetDeviceInfo(int32_t deviceId, MMIDeviceInfoAdapter& info) = 0;
 };
 } // namespace OHOS::NWeb
 

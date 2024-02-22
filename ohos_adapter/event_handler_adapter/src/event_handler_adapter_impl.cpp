@@ -19,7 +19,6 @@
 #include "securec.h"
 
 namespace OHOS::NWeb {
-const uint32_t EventHandlerAdapter::INPUT_EVENT = AppExecFwk::FILE_DESCRIPTOR_INPUT_EVENT;
 
 EventHandlerFDListenerAdapterImpl::EventHandlerFDListenerAdapterImpl(
     const std::shared_ptr<EventHandlerFDListenerAdapter>& listener)
@@ -39,7 +38,7 @@ EventHandlerAdapterImpl::EventHandlerAdapterImpl()
 }
 
 bool EventHandlerAdapterImpl::AddFileDescriptorListener(
-    int32_t fileDescriptor, uint32_t events, const std::shared_ptr<EventHandlerFDListenerAdapter>& listener)
+    int32_t fileDescriptor, uint32_t events, const std::shared_ptr<EventHandlerFDListenerAdapter> listener)
 {
     if (!listener || !eventHandler_) {
         WVLOG_E("the listener or eventHandler_ is nullptr");

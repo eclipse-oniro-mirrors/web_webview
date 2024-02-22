@@ -184,7 +184,8 @@ std::string Decode(const std::string& encoded)
 }
 } // namespace Base64
 
-NetProxyEventSubscriber::NetProxyEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, NetProxyEventCallback& cb)
+NetProxyEventSubscriber::NetProxyEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, 
+    std::shared_ptr<NetProxyEventCallbackAdapter> cb)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(cb)
 {}
 
@@ -194,7 +195,7 @@ NetProxyAdapterImpl& NetProxyAdapterImpl::GetInstance()
     return instance;
 }
 
-void NetProxyAdapterImpl::RegNetProxyEvent(const NetProxyEventCallback&& eventCallback)
+void NetProxyAdapterImpl::RegNetProxyEvent(std::shared_ptr<NetProxyEventCallbackAdapter> eventCallback)
 {
     WVLOG_I("reg netproxy event");
     cb_ = std::move(eventCallback);
@@ -267,7 +268,7 @@ void NetProxyAdapterImpl::StartListenAppProxy()
             }
             if (cb_) {
                 WVLOG_D("App netproxy config change, host is %{public}s, port is %{public}d", host.c_str(), port);
-                cb_(host, port, "", exclusionList);
+                cb_->Changed(host, port, "", exclusionList);
             }
         };
     uint32_t appId;
@@ -326,7 +327,7 @@ void NetProxyEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& da
         WVLOG_E("netproxy config change, event callback is null");
     }
 
-    eventCallback_(host, port, "", exclusionList);
+    eventCallback_->Changed(host, port, "", exclusionList);
 }
 
 void NetProxyAdapterImpl::GetProperty(std::string& host, uint16_t& port, std::string& pacUrl, std::string& exclusion)

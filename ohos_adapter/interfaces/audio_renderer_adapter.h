@@ -122,11 +122,11 @@ public:
 
     virtual int32_t Write(uint8_t *buffer, size_t bufferSize) = 0;
 
-    virtual int32_t GetLatency(uint64_t &latency) const = 0;
+    virtual int32_t GetLatency(uint64_t &latency) = 0;
 
-    virtual int32_t SetVolume(float volume) const = 0;
+    virtual int32_t SetVolume(float volume) = 0;
 
-    virtual float GetVolume() const = 0;
+    virtual float GetVolume() = 0;
 
     virtual int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback) = 0;
 

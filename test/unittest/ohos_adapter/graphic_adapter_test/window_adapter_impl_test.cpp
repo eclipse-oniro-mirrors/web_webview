@@ -29,18 +29,13 @@ namespace OHOS::NWeb {
  */
 HWTEST(WindowAdapterImplTest, NormalTest, TestSize.Level1)
 {
-    EXPECT_EQ(WindowAdapter::SET_BUFFER_GEOMETRY, NativeWindowOperation::SET_BUFFER_GEOMETRY)
-        << "WindowAdapter::SET_BUFFER_GEOMETRY = " << WindowAdapter::SET_BUFFER_GEOMETRY
-        << ", NativeWindowOperation::SET_BUFFER_GEOMETRY = " << NativeWindowOperation::SET_BUFFER_GEOMETRY;
     auto cSurface = IConsumerSurface::Create("test");
     auto producer = cSurface->GetProducer();
     auto pSurface = Surface::CreateSurfaceAsProducer(producer);
     auto window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(&pSurface);
     EXPECT_NE(window, nullptr);
-    EXPECT_EQ(OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowHandleOpt(
-        window, WindowAdapter::SET_BUFFER_GEOMETRY, 0, 0), OHOS::GSERROR_OK);
-    EXPECT_EQ(OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowHandleOpt(
-        window, NativeWindowOperation::SET_FORMAT, 0), -1);
+    EXPECT_EQ(OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSetBufferGeometry(
+        window, 0, 0), OHOS::GSERROR_OK);
     OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().DestroyNativeWindow(window);
 }
 

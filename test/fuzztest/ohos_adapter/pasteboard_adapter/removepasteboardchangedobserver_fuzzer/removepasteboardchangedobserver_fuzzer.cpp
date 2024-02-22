@@ -29,8 +29,7 @@ public:
         if ((data == nullptr) || (size == 0)) {
             return false;
         }
-        std::shared_ptr<PasteboardObserverAdapter> observer = std::make_shared<MockPasteboardObserver>();
-        PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(observer);
+        PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(-1);
         return true;
     }
 }

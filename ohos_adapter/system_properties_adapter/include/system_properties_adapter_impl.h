@@ -26,29 +26,30 @@ public:
 
     ~SystemPropertiesAdapterImpl() override = default;
 
-    bool GetResourceUseHapPathEnable() const override;
+    bool GetResourceUseHapPathEnable() override;
 
-    std::string GetDeviceInfoProductModel() const override;
+    std::string GetDeviceInfoProductModel() override;
 
-    std::string GetDeviceInfoBrand() const override;
+    std::string GetDeviceInfoBrand() override;
+    
+    int32_t GetDeviceInfoMajorVersion() override;
 
-    int32_t GetDeviceInfoMajorVersion() const override;
+    ProductDeviceType GetProductDeviceType() override;
 
-    ProductDeviceType GetProductDeviceType() const override;
+    bool GetWebOptimizationValue() override;
 
-    bool GetWebOptimizationValue() const override;
+    bool GetLockdownModeStatus() override;
 
-    bool GetLockdownModeStatus() const override;
+    std::string GetUserAgentOSName() override;
 
-    std::string GetUserAgentOSName() const override;
+    int32_t GetSoftwareMajorVersion() override;
 
-    int32_t GetSoftwareMajorVersion() const override;
+    int32_t GetSoftwareSeniorVersion() override;
 
-    int32_t GetSoftwareSeniorVersion() const override;
+    std::string GetNetlogMode() override;
 
-    std::string GetNetlogMode() const override;
+    bool GetTraceDebugEnable() override;
 
-    bool GetTraceDebugEnable() const override;
 private:
     SystemPropertiesAdapterImpl();
 

@@ -41,7 +41,7 @@ public:
 
     ~OhosWebDataBaseAdapterImpl() override = default;
 
-    bool ExistHttpAuthCredentials() const override;
+    bool ExistHttpAuthCredentials() override;
 
     void DeleteHttpAuthCredentials() override;
 
@@ -49,7 +49,7 @@ public:
         const std::string& username, const char* password) override;
 
     void GetHttpAuthCredentials(const std::string& host, const std::string& realm,
-        std::string& username, char* password, uint32_t passwordSize) const override;
+        std::string& username, char* password, uint32_t passwordSize) override;
 
 private:
     OhosWebDataBaseAdapterImpl();

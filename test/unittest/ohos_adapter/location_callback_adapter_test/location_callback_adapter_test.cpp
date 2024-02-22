@@ -49,7 +49,7 @@ public:
     LocationCallbackAdapterMock() = default;
 
     void OnLocationReport(
-        const std::unique_ptr<LocationInfo>& location)  override
+        const std::shared_ptr<LocationInfo> location)  override
     {}
 
     void OnLocatingStatusChange(const int status) override

@@ -66,8 +66,8 @@ void LocationCallbackImpl::OnLocationReport(
 {
     std::unique_ptr<OHOS::Location::Location> tempLocation =
         std::make_unique<OHOS::Location::Location>(*location);
-    std::unique_ptr<LocationInfo> locationInfo =
-        std::make_unique<LocationInfoImpl>(tempLocation);
+    std::shared_ptr<LocationInfo> locationInfo =
+        std::make_shared<LocationInfoImpl>(tempLocation);
     if (locationCallbackAdapter_ != nullptr) {
         locationCallbackAdapter_->OnLocationReport(locationInfo);
     }

@@ -28,19 +28,19 @@ public:
 
     ~OhosFileMapperImpl() override = default;
 
-    int32_t GetFd() const override;
+    int32_t GetFd() override;
 
-    int32_t GetOffset() const override;
+    int32_t GetOffset() override;
 
-    std::string GetFileName() const override;
+    std::string GetFileName() override;
 
-    bool IsCompressed() const override;
+    bool IsCompressed() override;
 
-    void* GetDataPtr() const override;
+    void* GetDataPtr() override;
 
-    size_t GetDataLen() const override;
+    size_t GetDataLen() override;
 
-    bool UnzipData(std::unique_ptr<uint8_t[]>& dest, size_t& len) override;
+    bool UnzipData(uint8_t* &dest, size_t& len) override;
 
 private:
     std::shared_ptr<OHOS::AbilityBase::Extractor> extractor_ = nullptr;
@@ -55,9 +55,9 @@ public:
     ~OhosResourceAdapterImpl() override = default;
 
     bool GetRawFileData(const std::string& rawFile, size_t& len,
-        std::unique_ptr<uint8_t[]>& dest, bool isSys = false) override;
+        uint8_t* &dest, bool isSys = false) override;
 
-    bool GetRawFileMapper(const std::string& rawFile, std::unique_ptr<OhosFileMapper>& dest,
+    std::shared_ptr<OhosFileMapper> GetRawFileMapper(const std::string& rawFile,
         bool isSys = false) override;
 
     bool IsRawFileExist(const std::string& rawFile, bool isSys = false) override;
@@ -83,8 +83,9 @@ private:
     static bool GetFileInfo(const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
         const std::string& rawFile, OHOS::AbilityBase::FileInfo& info);
 
-    static bool GetRawFileMapper(const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
-        const std::string& rawFile, std::unique_ptr<OhosFileMapper>& dest);
+    static std::shared_ptr<OhosFileMapper> GetRawFileMapper(
+        const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
+        const std::string& rawFile);
 
     std::shared_ptr<OHOS::AbilityBase::Extractor> sysExtractor_;
     std::shared_ptr<OHOS::AbilityBase::Extractor> extractor_;
