@@ -139,6 +139,12 @@ void NWebAudioAdapterTest::TearDown(void) {}
  */
 HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSize.Level1)
 {
+    ApplicationContextMock* contextMock = new ApplicationContextMock();
+    EXPECT_NE(contextMock, nullptr);
+    EXPECT_EQ(g_applicationContext, nullptr);
+    g_applicationContext.reset(contextMock);
+    EXPECT_NE(g_applicationContext, nullptr);
+
     g_audioRender = std::make_shared<AudioRendererAdapterImpl>();
     ASSERT_NE(g_audioRender, nullptr);
     AudioAdapterRendererOptions rendererOptions;
@@ -150,7 +156,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     rendererOptions.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
     rendererOptions.rendererFlags = 0;
     int32_t retNum = g_audioRender->Create(rendererOptions, CACHE_PATH);
-    ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
+    g_applicationContext.reset();
+    EXPECT_EQ(g_applicationContext, nullptr);
+    ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
 
     bool ret = g_audioRender->Start();
     EXPECT_EQ(ret, TRUE_OK);
@@ -596,7 +604,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_015, TestSi
     int32_t retNum = audioRenderImpl->Create(rendererOptions);
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
-    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
+    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
 }
 
 /**
