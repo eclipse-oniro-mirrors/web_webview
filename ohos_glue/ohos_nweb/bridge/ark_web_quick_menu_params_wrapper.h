@@ -39,13 +39,13 @@ public:
 
   int32_t GetEditStateFlags() override;
 
-  int32_t GetSelectX();
+  int32_t GetSelectX() override;
 
-  int32_t GetSelectY();
+  int32_t GetSelectY() override;
 
-  int32_t GetSelectWidth();
+  int32_t GetSelectWidth() override;
 
-  int32_t GetSelectXHeight();
+  int32_t GetSelectXHeight() override;
 
   std::shared_ptr<OHOS::NWeb::NWebTouchHandleState>
   GetTouchHandleState(ArkWebTouchHandleType type) override;
