@@ -41,9 +41,9 @@ public:
 
   float GetEdgeHeight() override;
 
-  int32_t GetViewPortX();
+  int32_t GetViewPortX() override;
 
-  int32_t GetViewPortY();
+  int32_t GetViewPortY() override;
 
   int32_t GetTouchHandleId() override;
 
