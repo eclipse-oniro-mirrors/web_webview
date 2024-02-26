@@ -30,6 +30,8 @@
 #include "webview_javascript_result_callback.h"
 #include "print_manager_adapter.h"
 
+#include "web_scheme_handler_request.h"
+
 namespace OHOS {
 namespace NWeb {
 enum class WebHitTestType : int {
@@ -247,6 +249,17 @@ public:
     void SetPrintBackground(bool enable);
 
     bool GetPrintBackground();
+    
+    static std::string GenerateWebTag();
+
+    bool SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler);
+
+    int32_t ClearWebSchemeHandler();
+
+    static bool SetWebServiveWorkerSchemeHandler(
+        const char* scheme, WebSchemeHandler* handler);
+
+    static int32_t ClearWebServiceWorkerSchemeHandler();
 
 private:
     int ConverToWebHitTestType(int hitType);
@@ -258,6 +271,8 @@ public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;
     static bool webDebuggingAccess_;
+    static std::set<std::string> webTagSet_;
+    static int32_t webTagStrId_;
 
 private:
     std::mutex webMtx_;
