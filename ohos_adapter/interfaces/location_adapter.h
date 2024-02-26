@@ -78,7 +78,7 @@ public:
 
     virtual int64_t GetTimeSinceBoot() = 0;
 
-    virtual std::string GetAdditions() = 0;
+    virtual std::vector<std::string> GetAdditions() = 0;
 };
 
 class LocationCallbackAdapter {
