@@ -38,6 +38,18 @@ const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
 const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
 
+struct Scheme {
+    std::string name;
+    bool isSupportCORS;
+    bool isSupportFetch;
+    bool isStandard;
+    bool isLocal;
+    bool isDisplayIsolated;
+    bool isSecure;
+    bool isCspBypassing;
+    int32_t option = 0;
+};
+
 class NapiWebviewController {
 public:
     NapiWebviewController() {}

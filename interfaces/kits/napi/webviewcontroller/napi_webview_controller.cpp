@@ -36,6 +36,7 @@
 
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
+#include "arkweb_scheme_handler.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -3414,42 +3415,89 @@ bool CheckSchemeName(const std::string& schemeName)
     return true;
 }
 
-bool CustomizeSchemesArrayDataHandler(napi_env env, napi_value array)
+void SetCustomizeSchemeOption(Scheme& scheme)
 {
-    std::string cmdLine;
+    std::map<int, bool Scheme::*> schemeProperties = {
+        {0, &Scheme::isStandard},
+        {1, &Scheme::isLocal},
+        {2, &Scheme::isDisplayIsolated},
+        {3, &Scheme::isSecure},
+        {4, &Scheme::isSupportCORS},
+        {5, &Scheme::isCspBypassing},
+        {6, &Scheme::isSupportFetch}
+    };
+
+    for (const auto& property : schemeProperties) {
+        if (scheme.*(property.second)) {
+            scheme.option += 1 << property.first;
+        }
+    }
+}
+
+bool SetCustomizeScheme(napi_env env, napi_value obj, Scheme& scheme)
+{
+    std::map<std::string, bool Scheme::*> schemeBooleanProperties = {
+        {"isSupportCORS", &Scheme::isSupportCORS},
+        {"isSupportFetch", &Scheme::isSupportFetch},
+        {"isStandard", &Scheme::isStandard},
+        {"isLocal", &Scheme::isLocal},
+        {"isDisplayIsolated", &Scheme::isDisplayIsolated},
+        {"isSecure", &Scheme::isSecure},
+        {"isCspBypassing", &Scheme::isCspBypassing}
+    };
+
+    for (const auto& property : schemeBooleanProperties) {
+        napi_value propertyObj = nullptr;
+        if (napi_get_named_property(env, obj, property.first.c_str(), &propertyObj) != napi_ok) {
+            return false;
+        }
+        if(!NapiParseUtils::ParseBoolean(env, propertyObj, scheme.*(property.second))) {
+            return false;
+        }
+    }
+
+    napi_value schemeNameObj = nullptr;
+    if (napi_get_named_property(env, obj, "schemeName", &schemeNameObj) != napi_ok) {
+        return false;
+    }
+    if (!NapiParseUtils::ParseString(env, schemeNameObj, scheme.name)) {
+        return false;
+    }
+
+    if (!CheckSchemeName(scheme.name)) {
+        return false;
+    }
+
+    SetCustomizeSchemeOption(scheme);
+    return true;
+}
+
+int32_t CustomizeSchemesArrayDataHandler(napi_env env, napi_value array)
+{
     uint32_t arrayLength = 0;
     napi_get_array_length(env, array, &arrayLength);
     if (arrayLength > MAX_CUSTOM_SCHEME_SIZE) {
-        return false;
+        return PARAM_CHECK_ERROR;
     }
+    std::vector<Scheme> schemeVector;
     for (uint32_t i = 0; i < arrayLength; ++i) {
-        std::string schemeName;
-        bool isSupportCORS;
-        bool isSupportFetch;
-        napi_value schemeNameObj = nullptr;
-        napi_value isSupportCORSObj = nullptr;
-        napi_value isSupportFetchObj = nullptr;
         napi_value obj = nullptr;
         napi_get_element(env, array, i, &obj);
-        if ((napi_get_named_property(env, obj, "schemeName", &schemeNameObj) != napi_ok) ||
-            (napi_get_named_property(env, obj, "isSupportCORS", &isSupportCORSObj) != napi_ok) ||
-            (napi_get_named_property(env, obj, "isSupportFetch", &isSupportFetchObj) != napi_ok)) {
-            return false;
+        Scheme scheme;
+        bool result = SetCustomizeScheme(env, obj, scheme);
+        if (!result) {
+            return PARAM_CHECK_ERROR;
         }
-        NapiParseUtils::ParseString(env, schemeNameObj, schemeName);
-        if (!CheckSchemeName(schemeName)) {
-            return false;
-        }
-        NapiParseUtils::ParseBoolean(env, isSupportCORSObj, isSupportCORS);
-        NapiParseUtils::ParseBoolean(env, isSupportFetchObj, isSupportFetch);
-        std::string corsCmdLine = isSupportCORS ? "1," : "0,";
-        std::string fetchCmdLine = isSupportFetch ? "1;" : "0;";
-        cmdLine.append(schemeName + "," + corsCmdLine + fetchCmdLine);
+        schemeVector.push_back(scheme);
     }
-    cmdLine.pop_back();
-    WVLOG_I("Reg scheme cmdline %{public}s", cmdLine.c_str());
-    WebviewController::customeSchemeCmdLine_ = cmdLine;
-    return true;
+    int32_t registerResult;
+    for (auto it = schemeVector.begin(); it != schemeVector.end(); ++it) {
+        registerResult = OH_ArkWeb_RegisterCustomSchemes(it->name.c_str(), it->option);
+        if (registerResult != NO_ERROR) {
+            return registerResult;
+        }
+    }
+    return NO_ERROR;
 }
 
 napi_value NapiWebviewController::CustomizeSchemes(napi_env env, napi_callback_info info)
@@ -3474,12 +3522,17 @@ napi_value NapiWebviewController::CustomizeSchemes(napi_env env, napi_callback_i
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
-    if (!CustomizeSchemesArrayDataHandler(env, array)) {
+    int32_t registerResult = CustomizeSchemesArrayDataHandler(env, array);
+    if (registerResult == NO_ERROR) {
+        NAPI_CALL(env, napi_get_undefined(env, &result));
+        return result;
+    }
+    if (registerResult == PARAM_CHECK_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
-    NAPI_CALL(env, napi_get_undefined(env, &result));
-    return result;
+    BusinessError::ThrowErrorByErrcode(env, REGISTER_CUSTOM_SCHEME_FAILED);
+    return nullptr;
 }
 
 napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info)
