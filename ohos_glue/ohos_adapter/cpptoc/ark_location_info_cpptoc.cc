@@ -101,11 +101,11 @@ int64_t ARK_WEB_CALLBACK ark_location_info_get_time_since_boot(struct _ark_locat
     return ArkLocationInfoCppToC::Get(self)->GetTimeSinceBoot();
 }
 
-ArkWebString ARK_WEB_CALLBACK ark_location_info_get_additions(struct _ark_location_info_t* self)
+ArkWebStringVector ARK_WEB_CALLBACK ark_location_info_get_additions(struct _ark_location_info_t* self)
 {
     ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_vector_default);
 
     // Execute
     return ArkLocationInfoCppToC::Get(self)->GetAdditions();

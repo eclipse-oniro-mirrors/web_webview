@@ -61,7 +61,7 @@ public:
     double GetDirection() override;
     int64_t GetTimeStamp() override;
     int64_t GetTimeSinceBoot() override;
-    std::string GetAdditions() override;
+    std::vector<std::string> GetAdditions() override;
 #if defined(NWEB_LOCATION_ENABLE)
     std::unique_ptr<OHOS::Location::Location>& GetLocation();
 private:
