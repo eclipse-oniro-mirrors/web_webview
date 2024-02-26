@@ -27,6 +27,7 @@
 #include "napi_web_download_manager.h"
 #include "napi_web_download_item.h"
 #include "napi_web_download_delegate.h"
+#include "napi_web_scheme_handler_request.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -42,6 +43,9 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
     NapiWebDownloadItem::Init(env, exports);
     NapiWebDownloadManager::Init(env, exports);
     NapiWebDownloadDelegate::Init(env, exports);
+    NapiWebSchemeHandlerRequest::Init(env, exports);
+    NapiWebSchemeHandlerResponse::Init(env, exports);
+    NapiWebSchemeHandler::Init(env, exports);
     WebFunctionInit(env, exports);
     return exports;
 }

@@ -37,6 +37,7 @@
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
 #include "arkweb_scheme_handler.h"
+#include "web_scheme_handler_request.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -175,6 +176,10 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("initializeWebEngine", NapiWebviewController::InitializeWebEngine),
         DECLARE_NAPI_STATIC_FUNCTION("setHttpDns", NapiWebviewController::SetHttpDns),
         DECLARE_NAPI_STATIC_FUNCTION("setWebDebuggingAccess", NapiWebviewController::SetWebDebuggingAccess),
+        DECLARE_NAPI_STATIC_FUNCTION("setServiceWorkerWebSchemeHandler",
+                                     NapiWebviewController::SetServiceWorkerWebSchemeHandler),
+        DECLARE_NAPI_STATIC_FUNCTION("clearServiceWorkerWebSchemeHandler",
+                                     NapiWebviewController::ClearServiceWorkerWebSchemeHandler),
         DECLARE_NAPI_FUNCTION("getWebDebuggingAccess", NapiWebviewController::InnerGetWebDebuggingAccess),
         DECLARE_NAPI_FUNCTION("setWebId", NapiWebviewController::SetWebId),
         DECLARE_NAPI_FUNCTION("jsProxy", NapiWebviewController::InnerJsProxy),
@@ -252,6 +257,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("isIncognitoMode", NapiWebviewController::IsIncognitoMode),
         DECLARE_NAPI_FUNCTION("setPrintBackground", NapiWebviewController::SetPrintBackground),
         DECLARE_NAPI_FUNCTION("getPrintBackground", NapiWebviewController::GetPrintBackground),
+        DECLARE_NAPI_FUNCTION("setWebSchemeHandler", NapiWebviewController::SetWebSchemeHandler),
+        DECLARE_NAPI_FUNCTION("clearWebSchemeHandler", NapiWebviewController::ClearWebSchemeHandler),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -421,8 +428,8 @@ napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info
     NAPI_CALL(env, napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr));
 
     WebviewController *webviewController;
+    std::string webTag;
     if (argc == 1) {
-        std::string webTag;
         NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], webTag);
         if (webTag.empty()) {
             WVLOG_E("native webTag is empty");
@@ -431,8 +438,10 @@ napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info
         webviewController = new (std::nothrow) WebviewController(webTag);
         WVLOG_I("new webview controller webname:%{public}s", webTag.c_str());
     } else {
-        webviewController = new (std::nothrow) WebviewController();
+        webTag = WebviewController::GenerateWebTag();
+        webviewController = new (std::nothrow) WebviewController(webTag);
     }
+    WebviewController::webTagSet_.insert(webTag);
 
     if (webviewController == nullptr) {
         WVLOG_E("new webview controller failed");
@@ -4353,6 +4362,93 @@ napi_value NapiWebviewController::GetPrintBackground(napi_env env, napi_callback
     bool printBackgroundEnabled = webviewController->GetPrintBackground();
     NAPI_CALL(env, napi_get_boolean(env, printBackgroundEnabled, &result));
     return result;
+}
+
+napi_value NapiWebviewController::SetWebSchemeHandler(napi_env env, napi_callback_info info)
+{
+    size_t argc = 2;
+    napi_value argv[2] = {0};
+    napi_value thisVar = nullptr;
+    void* data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        WVLOG_E("create message port failed, napi unwrap webviewController failed");
+        return nullptr;
+    }
+
+    std::string scheme = "";
+    if (!NapiParseUtils::ParseString(env, argv[0], scheme)) {
+        WVLOG_E("NapiWebviewController::SetWebSchemeHandler parse scheme failed");
+        return nullptr;
+    }
+
+    WebSchemeHandler* handler = nullptr;
+    napi_value obj = argv[1];
+    napi_unwrap(env, obj, (void**)&handler);
+    napi_create_reference(env, obj, 1, &handler->delegate_);
+    
+    if (!webviewController->SetWebSchemeHandler(scheme.c_str(), handler)) {
+        WVLOG_E("NapiWebviewController::SetWebSchemeHandler failed");
+    }
+    return nullptr;
+}
+
+napi_value NapiWebviewController::ClearWebSchemeHandler(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    int32_t ret = webviewController->ClearWebSchemeHandler();
+    if (ret != 0) {
+        WVLOG_E("NapiWebviewController::ClearWebSchemeHandler failed");
+    }
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SetServiceWorkerWebSchemeHandler(
+    napi_env env, napi_callback_info info)
+{
+    size_t argc = 2;
+    napi_value argv[2] = {0};
+    napi_value thisVar = nullptr;
+    void* data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+
+    std::string scheme = "";
+    if (!NapiParseUtils::ParseString(env, argv[0], scheme)) {
+        WVLOG_E("NapiWebviewController::SetWebSchemeHandler parse scheme failed");
+        return nullptr;
+    }
+
+    WebSchemeHandler* handler = nullptr;
+    napi_value obj = argv[1];
+    napi_unwrap(env, obj, (void**)&handler);
+    napi_create_reference(env, obj, 1, &handler->delegate_);
+    
+    if (!WebviewController::SetWebServiveWorkerSchemeHandler(
+        scheme.c_str(), handler)) {
+        WVLOG_E("NapiWebviewController::SetWebSchemeHandler failed");
+    }
+    return nullptr;
+}
+
+napi_value NapiWebviewController::ClearServiceWorkerWebSchemeHandler(
+    napi_env env, napi_callback_info info)
+{
+    int32_t ret = WebviewController::ClearWebServiceWorkerSchemeHandler();
+    if (ret != 0) {
+        WVLOG_E("ClearServiceWorkerWebSchemeHandler ret=%{public}d", ret);
+        return nullptr;
+    }
+    return nullptr;
 }
 } // namespace NWeb
 } // namespace OHOS
