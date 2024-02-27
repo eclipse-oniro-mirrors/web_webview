@@ -3465,6 +3465,7 @@ bool CustomizeSchemesArrayDataHandler(napi_env env, napi_value array)
     cmdLine.pop_back();
     WVLOG_I("Reg scheme cmdline %{public}s", cmdLine.c_str());
     WebviewController::customeSchemeCmdLine_ = cmdLine;
+    NWebHelper::Instance().SetCustomSchemeCmdLine(cmdLine);
     return true;
 }
 
