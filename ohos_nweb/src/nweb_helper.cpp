@@ -758,7 +758,9 @@ bool NWebHelper::InitAndRun(bool from_ark)
 
     initArgs->AddArg(std::string("--user-data-dir=").append(ctx->GetBaseDir()));
     initArgs->AddArg(std::string("--bundle-installation-dir=").append(bundlePath_));
-
+    if (!customSchemeCmdLine_.empty()) {
+        initArgs->AddArg(std::string("--ohos-custom-scheme=").append(customSchemeCmdLine_));
+    }
     nwebEngine_->InitializeWebEngine(initArgs);
     return true;
 }
