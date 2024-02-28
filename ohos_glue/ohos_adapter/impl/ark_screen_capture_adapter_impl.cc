@@ -61,7 +61,7 @@ ArkWebRefPtr<ArkSurfaceBufferAdapter> ArkScreenCaptureAdapterImpl::AcquireVideoB
         return nullptr;
     }
 
-    return new ArkSurfaceBufferAdapterImpl(real_->AcquireVideoBuffer());
+    return new ArkSurfaceBufferAdapterImpl(buffer);
 }
 
 int32_t ArkScreenCaptureAdapterImpl::ReleaseVideoBuffer()
