@@ -91,7 +91,7 @@ class WebviewController {
 public:
     explicit WebviewController() = default;
     explicit WebviewController(int32_t nwebId);
-    explicit WebviewController(const std::string& webTag) : webTag_(webTag) {};
+    explicit WebviewController(const std::string& webTag);
     ~WebviewController();
 
     bool IsInit();

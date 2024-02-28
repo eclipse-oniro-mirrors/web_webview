@@ -617,7 +617,7 @@ void* NWebHelper::GetWebEngineHandler()
         WVLOG_E("Failed to init web engine due to nil application context.");
         return nullptr;
     }
- 
+
     // load so
     const std::string& bundle_path = ctx->GetBundleCodeDir();
     SetBundlePath(bundle_path);
@@ -827,8 +827,11 @@ std::shared_ptr<NWeb> NWebHelper::GetNWeb(int32_t nweb_id)
 void NWebHelper::SetWebTag(int32_t nweb_id, const char* webTag)
 {
     if (nwebEngine_ == nullptr) {
-        WVLOG_E("nweb engine is nullptr");
-        return;
+        WVLOG_I("SetWebTag try to init web engine handler");
+        if (GetWebEngineHandler() == nullptr) {
+            WVLOG_E("nwebEngine_ is nullptr");
+            return;
+        }
     }
 
     nwebEngine_->SetWebTag(nweb_id, webTag);
