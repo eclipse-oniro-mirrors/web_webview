@@ -88,7 +88,8 @@ namespace {
     DO(OH_ArkWebResourceHandler_DidFinish)          \
     DO(OH_ArkWebResourceHandler_DidFailWithError)   \
     DO(OH_ArkWeb_ReleaseString)                     \
-    DO(OH_ArkWeb_ReleaseByteArray)
+    DO(OH_ArkWeb_ReleaseByteArray)                  \
+    DO(OH_ArkWebSchemeHandler_SetFromEts)
 
 struct SchemeHandlerApi {
 #define GEN_FN_PTR(fn) decltype(&fn) impl_##fn = nullptr;
@@ -551,6 +552,14 @@ int32_t OH_ArkWebSchemeHandler_SetOnRequestStop(
 
 void OH_ArkWeb_CreateResponse(ArkWeb_Response** response)
 {
+    void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler();
+    if (webEngineHandle) {
+        if (!EnsureSdkLoaded(webEngineHandle)) {
+            WVLOG_E("scheme_handler sdk not loaded.");
+        }
+    } else {
+        WVLOG_E("scheme_handler webEngineHandle is nullptr.");
+    }
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWeb_CreateResponse) {
         WVLOG_E("OH_ArkWeb_CreateResponse not found.");
         return;
@@ -781,4 +790,15 @@ void OH_ArkWeb_ReleaseByteArray(uint8_t* byteArray)
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWeb_ReleaseByteArray(byteArray);
+}
+
+int32_t OH_ArkWebSchemeHandler_SetFromEts(
+    ArkWeb_SchemeHandler* schemeHandler, bool fromEts)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetFromEts) {
+        WVLOG_E("impl_OH_ArkWebSchemeHandler_SetFromEts not found.");
+        return ARKWEB_ERROR_UNKNOWN;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetFromEts(schemeHandler, fromEts);
 }
