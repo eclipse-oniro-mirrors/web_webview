@@ -196,8 +196,8 @@ public:
     virtual int32_t Init(const ScreenCaptureConfigAdapter& config) = 0;
 
     virtual int32_t SetMicrophoneEnable(bool enable) = 0;
-	
-	virtual int32_t SetScreenCanvasRotation(bool canvasRotation) = 0;
+
+    virtual int32_t SetScreenCanvasRotation(bool canvasRotation) = 0;
 
     virtual int32_t StartCapture() = 0;
 
