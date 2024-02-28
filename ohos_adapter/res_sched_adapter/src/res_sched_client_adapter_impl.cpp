@@ -27,6 +27,7 @@
 #include "res_sched_client.h"
 #include "res_sched_client_adapter.h"
 #include "res_type.h"
+#include "singleton.h"
 #include "system_ability_definition.h"
 
 namespace OHOS::NWeb {
