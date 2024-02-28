@@ -250,6 +250,20 @@ int32_t ScreenCaptureAdapterImpl::SetMicrophoneEnable(bool enable)
     return 0;
 }
 
+int32_t ScreenCaptureAdapterImpl::SetScreenCanvasRotation(bool canvasRotation)
+{
+    if (!screenCapture_) {
+        WVLOG_E("not init");
+        return -1;
+    }
+    int32_t ret = screenCapture_->SetScreenCanvasRotation(canvasRotation);
+    if (ret != Media::MSERR_OK) {
+        WVLOG_E("set screen canvas rotation failed, ret = %{public}d", ret);
+        return -1;
+    }
+    return 0;
+}
+
 int32_t ScreenCaptureAdapterImpl::StartCapture()
 {
     if (!screenCapture_) {
