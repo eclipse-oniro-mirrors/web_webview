@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <chrono>
 #include <mutex>
 #include <set>
 #include <string>
@@ -68,6 +69,7 @@ const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
 
 const int32_t INVALID_NUMBER = -1;
 const int64_t INVALID_NUMBER_INT64 = -1;
+const int64_t SLIDE_PERIOD_MS = 300;
 const pid_t INVALID_PID = -1;
 constexpr char PID[] = "pid";
 constexpr char UID[] = "uid";
@@ -83,6 +85,8 @@ int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
 pid_t g_lastPid = INVALID_PID;
 int64_t g_lastStatus = INVALID_NUMBER_INT64;
+int64_t g_timeStamp = 0;
+int64_t g_preTimeStamp = 0;
 
 std::string GetUidString()
 {
@@ -123,8 +127,27 @@ bool ConvertStatus(ResSchedStatusAdapter statusAdapter, int64_t& status)
     return true;
 }
 
+bool NeedReportScene(ResSchedSceneAdapter sceneAdapter)
+{
+    if (sceneAdapter != ResSchedSceneAdapter::SLIDE) {
+        return true;
+    }
+    auto currentTime = std::chrono::system_clock::now().time_since_epoch();
+    g_timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime).count();
+    if (g_timeStamp - g_preTimeStamp > SLIDE_PERIOD_MS) {
+        g_preTimeStamp = g_timeStamp;
+        return true;
+    }
+    return false;
+}
+
 bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter)
 {
+    // To limit the frequency of events reported in some scenarios
+    if(!NeedReportScene(sceneAdapter)) {
+        return false;
+    }
+
     int64_t status;
     bool ret = ConvertStatus(statusAdapter, status);
     if (!ret) {
