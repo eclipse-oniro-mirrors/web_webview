@@ -44,7 +44,7 @@ public:
     MOCK_METHOD0(Init, int32_t());
     MOCK_METHOD1(Init, int32_t(AVScreenCaptureConfig));
     MOCK_METHOD1(SetMicrophoneEnabled, int32_t(bool));
-    MOCK_METHOD0(SetScreenCanvasRotation, int32_t(bool));
+    MOCK_METHOD1(SetScreenCanvasRotation, int32_t(bool));
     MOCK_METHOD0(StartScreenCapture, int32_t());
     MOCK_METHOD0(StopScreenCapture, int32_t());
     MOCK_METHOD0(StartScreenRecording, int32_t());
