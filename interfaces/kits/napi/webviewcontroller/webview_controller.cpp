@@ -84,6 +84,11 @@ WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
     }
 }
 
+WebviewController::WebviewController(const std::string& webTag) : webTag_(webTag)
+{
+    NWebHelper::Instance().SetWebTag(-1, webTag_.c_str());
+}
+
 WebviewController::~WebviewController()
 {
     std::unique_lock<std::mutex> lk(webMtx_);
