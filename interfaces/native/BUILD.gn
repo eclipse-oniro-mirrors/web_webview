@@ -16,7 +16,11 @@ import("//build/ohos/ndk/ndk.gni")
 
 ohos_ndk_headers("web_header") {
   dest_dir = "$ndk_headers_out_dir/web/"
-  sources = [ "native_interface_arkweb.h" ]
+  sources = [
+    "arkweb_interface.h",
+    "arkweb_type.h",
+    "native_interface_arkweb.h",
+  ]
 }
 
 ohos_ndk_library("libohweb") {
@@ -32,6 +36,7 @@ ohos_shared_library("ohweb") {
   include_dirs = [ "../../ohos_nweb/include" ]
 
   sources = [
+    "arkweb_interface.cpp",
     "arkweb_scheme_handler.cpp",
     "native_arkweb_utils.cpp",
     "native_interface_arkweb.cpp",
