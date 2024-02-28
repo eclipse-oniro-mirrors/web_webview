@@ -29,7 +29,6 @@
 #include "res_type.h"
 #include "system_ability_definition.h"
 
-
 namespace OHOS::NWeb {
 using namespace OHOS::ResourceSchedule;
 
