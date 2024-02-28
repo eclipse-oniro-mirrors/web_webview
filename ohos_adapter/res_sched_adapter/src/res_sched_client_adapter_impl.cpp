@@ -239,7 +239,7 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     ResSchedClient::GetInstance().ReportData(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
     
-    auto appMgrClient = DelayedSingleton<AppExecFwk::appMgrClient>::GetInstance();
+    auto appMgrClient = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
     appMgrClient->UpdateRenderState(pid, status);
 
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
