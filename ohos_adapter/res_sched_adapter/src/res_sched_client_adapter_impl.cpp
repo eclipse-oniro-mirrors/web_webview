@@ -243,8 +243,8 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
     sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
     sptr<AppExecFwk::IAppMgr> appMgr = iface_cast<AppExecFwk::IAppMgr>(remoteObject);
-
-    appMgr->UpdateRenderState(static_cast<int32_t>(status), pid);
+    appMgr->UpdateRenderState(pid, status);
+    
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
             "%{public}d", static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, serial_num);
     serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
