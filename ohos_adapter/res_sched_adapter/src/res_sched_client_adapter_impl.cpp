@@ -20,7 +20,7 @@
 #include <vector>
 
 #include "app_mgr_constants.h"
-#include "app_mgr_interface.h"
+#include "app_mgr_client.h"
 #include "bundle_mgr_interface.h"
 #include "iservice_registry.h"
 #include "nweb_log.h"
@@ -238,13 +238,10 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         { STATE, std::to_string(status) } };
     ResSchedClient::GetInstance().ReportData(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
-
-    sptr<ISystemAbilityManager> systemAbilityManager =
-    SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    sptr<AppExecFwk::IAppMgr> appMgr = iface_cast<AppExecFwk::IAppMgr>(remoteObject);
-    appMgr->UpdateRenderState(pid, status);
     
+    auto appMgrClient = DelayedSingleton<AppExecFwk::appMgrClient>::GetInstance();
+    appMgrClient->UpdateRenderState(pid, status);
+
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
             "%{public}d", static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, serial_num);
     serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
