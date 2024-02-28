@@ -2771,11 +2771,27 @@ napi_value NapiWebviewController::RunJS(napi_env env, napi_callback_info info, b
         return result;
     }
     std::string script;
-    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], script)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType == napi_string) {
+        if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], script)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return result;
+        }
+    } else {
+        bool isArrayBuffer = false;
+        NAPI_CALL(env, napi_is_arraybuffer(env, argv[INTEGER_ZERO], &isArrayBuffer));
+        if (!isArrayBuffer) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return result;
+        }
+        char *arrBuf = nullptr;
+        size_t byteLength = 0;
+        napi_get_arraybuffer_info(env, argv[INTEGER_ZERO], (void**)&arrBuf, &byteLength);
+        if (arrBuf) {
+            script = std::string(arrBuf, byteLength);
+        }
     }
-
     if (argc == argcCallback) {
         napi_valuetype valueType = napi_null;
         napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);

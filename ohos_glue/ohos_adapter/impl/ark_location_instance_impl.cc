@@ -18,6 +18,8 @@
 #include "ark_location_proxy_adapter_impl.h"
 #include "ark_location_request_config_impl.h"
 
+#include "base/bridge/ark_web_bridge_macros.h"
+
 namespace OHOS::ArkWeb {
 
 ArkWebRefPtr<ArkLocationInstance> ArkLocationInstance::GetInstance()
@@ -31,12 +33,20 @@ ArkLocationInstanceImpl::ArkLocationInstanceImpl(NWeb::LocationInstance& ref) : 
 
 ArkWebRefPtr<ArkLocationProxyAdapter> ArkLocationInstanceImpl::CreateLocationProxyAdapter()
 {
-    return new ArkLocationProxyAdapterImpl(real_.CreateLocationProxyAdapter());
+    std::shared_ptr<OHOS::NWeb::LocationProxyAdapter> adapter = real_.CreateLocationProxyAdapter();
+    if (CHECK_SHARED_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+    return new ArkLocationProxyAdapterImpl(adapter);
 }
 
 ArkWebRefPtr<ArkLocationRequestConfig> ArkLocationInstanceImpl::CreateLocationRequestConfig()
 {
-    return new ArkLocationRequestConfigImpl(real_.CreateLocationRequestConfig());
+    std::shared_ptr<OHOS::NWeb::LocationRequestConfig> config = real_.CreateLocationRequestConfig();
+    if (CHECK_SHARED_PTR_IS_NULL(config)) {
+        return nullptr;
+    }
+    return new ArkLocationRequestConfigImpl(config);
 }
 
 } // namespace OHOS::ArkWeb

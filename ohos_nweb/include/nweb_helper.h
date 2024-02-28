@@ -48,6 +48,10 @@ public:
     void* GetWebEngineHandler();
     void SetConnectionTimeout(const int32_t& timeout);
     void SetWebDebuggingAccess(bool isEnableDebug);
+    void SetCustomSchemeCmdLine(const std::string& cmd)
+    {
+        customSchemeCmdLine_ = cmd;
+    }
 
 private:
     NWebHelper() = default;
@@ -59,6 +63,7 @@ private:
     void *libHandleWebEngine_ = nullptr;
     std::string bundlePath_;
     std::shared_ptr<NWebEngine> nwebEngine_;
+    std::string customSchemeCmdLine_;
 };
 } // namespace OHOS::NWeb
 
