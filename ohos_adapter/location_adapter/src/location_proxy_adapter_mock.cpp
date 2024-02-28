@@ -18,18 +18,33 @@
 #include <string>
 
 namespace OHOS::NWeb {
+class LocationInstanceImpl : public LocationInstance {
+public:
+    LocationInstanceImpl() = default;
+   
+    LocationInstanceImpl(const LocationInstanceImpl&) = delete;
+
+    LocationInstanceImpl& operator=(const LocationInstanceImpl&) = delete;
+ 
+    ~LocationInstanceImpl() = default;
+
+    std::shared_ptr<LocationProxyAdapter> CreateLocationProxyAdapter() override;
+
+    std::shared_ptr<LocationRequestConfig> CreateLocationRequestConfig() override;
+};
+
 LocationInstance& LocationInstance::GetInstance()
 {
-    static LocationInstance instance;
+    static LocationInstanceImpl instance;
     return instance;
 }
 
-std::shared_ptr<LocationProxyAdapter> LocationInstance::CreateLocationProxyAdapter()
+std::shared_ptr<LocationProxyAdapter> LocationInstanceImpl::CreateLocationProxyAdapter()
 {
     return nullptr;
 }
 
-std::shared_ptr<LocationRequestConfig> LocationInstance::CreateLocationRequestConfig()
+std::shared_ptr<LocationRequestConfig> LocationInstanceImpl::CreateLocationRequestConfig()
 {
     return nullptr;
 }
