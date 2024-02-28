@@ -235,6 +235,16 @@ private:
     static napi_value SetPrintBackground(napi_env env, napi_callback_info info);
 
     static napi_value GetPrintBackground(napi_env env, napi_callback_info info);
+
+    static napi_value SetWebSchemeHandler(napi_env env, napi_callback_info info);
+
+    static napi_value ClearWebSchemeHandler(napi_env env, napi_callback_info info);
+
+    static napi_value SetServiceWorkerWebSchemeHandler(
+        napi_env env, napi_callback_info info);
+
+    static napi_value ClearServiceWorkerWebSchemeHandler(
+        napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {
