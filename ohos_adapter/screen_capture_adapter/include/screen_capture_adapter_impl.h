@@ -44,8 +44,6 @@ public:
 
     int32_t SetMicrophoneEnable(bool enable) override;
 
-    int32_t SetScreenCanvasRotation(bool canvasRotation) override;
-
     int32_t StartCapture() override;
 
     int32_t StopCapture() override;
