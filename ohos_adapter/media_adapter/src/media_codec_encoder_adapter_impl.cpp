@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -87,6 +87,7 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::SetCodecCallback(const std::share
 
     int32_t ret = encoder_->SetCallback(callback_);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {
+        WVLOG_E("MediaCodecEncoder set callback failed.");
         return CodecCodeAdapter::ERROR;
     }
     return CodecCodeAdapter::OK;
@@ -109,7 +110,7 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::Configure(const CodecConfigPara& 
         OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_VIDEO_ENCODE_BITRATE_MODE, VideoEncodeBitrateMode::VBR);
     avCodecFormat.PutIntValue(
         OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_PIXEL_FORMAT, (int32_t)VideoPixelFormat::YUVI420);
-    WVLOG_E("Configure width: %{public}d, height: %{public}d, bitRate: %{public}d, framerate: %{public}lf,",
+    WVLOG_I("Configure width: %{public}d, height: %{public}d, bitRate: %{public}d, framerate: %{public}lf,",
         config.width, config.height, (int32_t)config.bitRate, config.frameRate);
     int32_t ret = encoder_->Configure(avCodecFormat);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {
@@ -208,7 +209,6 @@ std::shared_ptr<ProducerSurfaceAdapter> MediaCodecEncoderAdapterImpl::CreateInpu
     }
 
     return std::make_shared<ProducerSurfaceAdapterImpl>(avCodecEncoderSurface);
-    ;
 }
 
 CodecCodeAdapter MediaCodecEncoderAdapterImpl::ReleaseOutputBuffer(uint32_t index, bool isRender)
@@ -220,6 +220,7 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::ReleaseOutputBuffer(uint32_t inde
 
     int32_t ret = encoder_->ReleaseOutputBuffer(index);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {
+        WVLOG_E("release buffer failed.");
         return CodecCodeAdapter::ERROR;
     }
     return CodecCodeAdapter::OK;
@@ -233,7 +234,6 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::RequestKeyFrameSoon()
     }
 
     OHOS::MediaAVCodec::Format avCodecFormat;
-
     avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_REQUEST_I_FRAME, true);
 
     int32_t ret = encoder_->SetParameter(avCodecFormat);
@@ -269,6 +269,7 @@ EncoderCallbackImpl::EncoderCallbackImpl(std::shared_ptr<CodecCallbackAdapter> c
 void EncoderCallbackImpl::OnError(AVCodecErrorType errorType, int32_t errorCode)
 {
     if (!cb_) {
+        WVLOG_E("callback is null.");
         return;
     }
 
@@ -280,6 +281,7 @@ void EncoderCallbackImpl::OnError(AVCodecErrorType errorType, int32_t errorCode)
 void EncoderCallbackImpl::OnOutputFormatChanged(const Format& format)
 {
     if (!cb_) {
+        WVLOG_E("callback is null.");
         return;
     }
 
@@ -293,6 +295,7 @@ void EncoderCallbackImpl::OnOutputFormatChanged(const Format& format)
 void EncoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr<AVSharedMemory> buffer)
 {
     if (!cb_) {
+        WVLOG_E("callback is null.");
         return;
     }
 
@@ -311,6 +314,7 @@ void EncoderCallbackImpl::OnOutputBufferAvailable(
     uint32_t index, AVCodecBufferInfo info, AVCodecBufferFlag flag, std::shared_ptr<AVSharedMemory> buffer)
 {
     if (!cb_) {
+        WVLOG_E("callback is null.");
         return;
     }
 

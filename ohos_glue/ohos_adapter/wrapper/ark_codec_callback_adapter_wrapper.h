@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -28,14 +28,12 @@ public:
 
     void OnError(OHOS::NWeb::ErrorType errorType, int32_t errorCode) override;
 
-    void OnStreamChanged(const OHOS::NWeb::CodecFormatAdapter &format) override;
+    void OnStreamChanged(const OHOS::NWeb::CodecFormatAdapter& format) override;
 
     void OnNeedInputData(uint32_t index, OHOS::NWeb::OhosBuffer buffer) override;
 
-    void OnNeedOutputData(uint32_t index,
-                          OHOS::NWeb::BufferInfo info,
-                          OHOS::NWeb::BufferFlag flag,
-                          OHOS::NWeb::OhosBuffer buffer) override;
+    void OnNeedOutputData(uint32_t index, OHOS::NWeb::BufferInfo info, OHOS::NWeb::BufferFlag flag,
+        OHOS::NWeb::OhosBuffer buffer) override;
 
 private:
     ArkWebRefPtr<ArkCodecCallbackAdapter> ctocpp_;

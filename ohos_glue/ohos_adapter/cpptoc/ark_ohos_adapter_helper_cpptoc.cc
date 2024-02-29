@@ -582,11 +582,11 @@ ark_native_image_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_create_nati
 }
 
 ark_media_codec_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_create_media_codec_encoder_adapter(
-    struct _ark_ohos_adapter_helper_t* self) {
+    struct _ark_ohos_adapter_helper_t* self)
+{
     ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self,  NULL);
-
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
 
     // Execute
     ArkWebRefPtr<ArkMediaCodecAdapter> _retval =
@@ -597,21 +597,20 @@ ark_media_codec_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_create_media
 }
 
 ark_media_codec_list_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_get_media_codec_list_adapter(
-    struct _ark_ohos_adapter_helper_t* self) {
+    struct _ark_ohos_adapter_helper_t* self)
+{
     ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self,  NULL);
-
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
 
     // Execute
-    ArkWebRefPtr<ArkMediaCodecListAdapter> _retval =
-        ArkOhosAdapterHelperCppToC::Get(self)->GetMediaCodecListAdapter();
+    ArkWebRefPtr<ArkMediaCodecListAdapter> _retval = ArkOhosAdapterHelperCppToC::Get(self)->GetMediaCodecListAdapter();
 
     // Return type: refptr_same
     return ArkMediaCodecListAdapterCppToC::Invert(_retval);
 }
 
-}  // namespace
+} // namespace
 ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC()
 {
     GetStruct()->create_aafwk_adapter = ark_ohos_adapter_helper_create_aafwk_adapter;

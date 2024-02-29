@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -17,8 +17,7 @@
 
 namespace OHOS::ArkWeb {
 
-ArkCodecCallbackAdapterWapper::ArkCodecCallbackAdapterWapper(ArkWebRefPtr<ArkCodecCallbackAdapter> ref)
-    : ctocpp_(ref)
+ArkCodecCallbackAdapterWapper::ArkCodecCallbackAdapterWapper(ArkWebRefPtr<ArkCodecCallbackAdapter> ref) : ctocpp_(ref)
 {}
 
 void ArkCodecCallbackAdapterWapper::OnError(OHOS::NWeb::ErrorType errorType, int32_t errorCode)
@@ -26,7 +25,7 @@ void ArkCodecCallbackAdapterWapper::OnError(OHOS::NWeb::ErrorType errorType, int
     ctocpp_->OnError((int32_t)errorType, errorCode);
 }
 
-void ArkCodecCallbackAdapterWapper::OnStreamChanged(const OHOS::NWeb::CodecFormatAdapter &format)
+void ArkCodecCallbackAdapterWapper::OnStreamChanged(const OHOS::NWeb::CodecFormatAdapter& format)
 {
     ctocpp_->OnStreamChanged(format);
 }
@@ -36,10 +35,8 @@ void ArkCodecCallbackAdapterWapper::OnNeedInputData(uint32_t index, OHOS::NWeb::
     ctocpp_->OnNeedInputData(index, buffer);
 }
 
-void ArkCodecCallbackAdapterWapper::OnNeedOutputData(uint32_t index,
-                                                     OHOS::NWeb::BufferInfo info,
-                                                     OHOS::NWeb::BufferFlag flag,
-                                                     OHOS::NWeb::OhosBuffer buffer)
+void ArkCodecCallbackAdapterWapper::OnNeedOutputData(
+    uint32_t index, OHOS::NWeb::BufferInfo info, OHOS::NWeb::BufferFlag flag, OHOS::NWeb::OhosBuffer buffer)
 {
     ctocpp_->OnNeedOutputData(index, info, (uint32_t)flag, buffer);
 }

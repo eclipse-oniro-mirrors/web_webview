@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,8 +27,7 @@ MediaCodecListAdapterImpl& MediaCodecListAdapterImpl::GetInstance()
     return instance;
 }
 
-void MediaCodecListAdapterImpl::TransToAdapterCapability(const CapabilityData *data,
-    CapabilityDataAdapter &adapterData)
+void MediaCodecListAdapterImpl::TransToAdapterCapability(const CapabilityData* data, CapabilityDataAdapter& adapterData)
 {
     if (data == nullptr) {
         WVLOG_E("MediaCodecEncoder data is null.");
@@ -38,7 +37,7 @@ void MediaCodecListAdapterImpl::TransToAdapterCapability(const CapabilityData *d
     adapterData.maxframeRate = data->frameRate.maxVal;
 }
 
-CapabilityDataAdapter MediaCodecListAdapterImpl::GetCodecCapability(const std::string &mime, const bool isEncoder)
+CapabilityDataAdapter MediaCodecListAdapterImpl::GetCodecCapability(const std::string& mime, const bool isEncoder)
 {
     CapabilityDataAdapter capabilityAdapter;
     if (avCodecList_ == nullptr) {
@@ -48,9 +47,8 @@ CapabilityDataAdapter MediaCodecListAdapterImpl::GetCodecCapability(const std::s
         WVLOG_E("CreateAVCodecList failed.");
         return capabilityAdapter;
     }
-    CapabilityData *capabilityData =
-        avCodecList_->GetCapability(mime, true, AVCodecCategory::AVCODEC_NONE);
+    CapabilityData* capabilityData = avCodecList_->GetCapability(mime, true, AVCodecCategory::AVCODEC_NONE);
     TransToAdapterCapability(capabilityData, capabilityAdapter);
     return capabilityAdapter;
 }
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
