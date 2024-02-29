@@ -82,6 +82,56 @@ enum PixelFormatAdapter {
     PIXEL_FMT_BUTT = 0X7FFFFFFF          /**< Invalid pixel format */
 };
 
+enum class ColorGamutAdapter {
+    INVALID = -1,            /**< Invalid */
+    NATIVE = 0,              /**< Native or default */
+    STANDARD_BT601 = 1,      /**< Standard BT601 */
+    STANDARD_BT709 = 2,      /**< Standard BT709 */
+    DCI_P3 = 3,              /**< DCI P3 */
+    SRGB = 4,                /**< SRGB */
+    ADOBE_RGB = 5,           /**< Adobe RGB */
+    DISPLAY_P3 = 6,          /**< display P3 */
+    BT2020 = 7,              /**< BT2020 */
+    BT2100_PQ = 8,           /**< BT2100 PQ */
+    BT2100_HLG = 9,          /**< BT2100 HLG */
+    DISPLAY_BT2020 = 10,     /**< Display BT2020 */
+};
+
+enum class TransformTypeAdapter {
+    ROTATE_NONE = 0,        /**< No rotation */
+    ROTATE_90,              /**< Rotation by 90 degrees */
+    ROTATE_180,             /**< Rotation by 180 degrees */
+    ROTATE_270,             /**< Rotation by 270 degrees */
+    FLIP_H,                 /**< Flip horizontally */
+    FLIP_V,                 /**< Flip vertically */
+    FLIP_H_ROT90,           /**< Flip horizontally and rotate 90 degrees */
+    FLIP_V_ROT90,           /**< Flip vertically and rotate 90 degrees */
+    FLIP_H_ROT180,          /**< Flip horizontally and rotate 180 degrees */
+    FLIP_V_ROT180,          /**< Flip vertically and rotate 180 degrees */
+    FLIP_H_ROT270,          /**< Flip horizontally and rotate 270 degrees */
+    FLIP_V_ROT270,          /**< Flip vertically and rotate 270 degrees */
+    ROTATE_BUTT            /**< Invalid operation */
+};
+
+typedef struct BufferRequestConfigAdapterTag {
+    int32_t width;
+    int32_t height;
+    int32_t strideAlignment; // output parameter, system components can ignore it
+    int32_t format; // GraphicPixelFormat
+    uint64_t usage;
+    int32_t timeout;
+    ColorGamutAdapter colorGamut = ColorGamutAdapter::SRGB;
+    TransformTypeAdapter transformType = TransformTypeAdapter::ROTATE_NONE;
+}BufferRequestConfigAdapter;
+
+typedef struct BufferFlushConfigAdapterTag {
+    int32_t x;
+    int32_t y;
+    int32_t w;
+    int32_t h;
+    int64_t timestamp;
+}BufferFlushConfigAdapter;
+
 class SurfaceBufferAdapter {
 public:
     SurfaceBufferAdapter() = default;
@@ -183,6 +233,20 @@ public:
     virtual int32_t UnsetOnFrameAvailableListener() = 0;
 
     virtual void DestroyNativeImage() = 0;
+};
+
+class ProducerSurfaceAdapter {
+public:
+    ProducerSurfaceAdapter() = default;
+
+    virtual ~ProducerSurfaceAdapter() = default;
+
+    virtual std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(
+        int32_t &fence, BufferRequestConfigAdapter &config) = 0;
+
+    virtual int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> buffer,
+                                int32_t fence, BufferFlushConfigAdapter &flushConfig) = 0;
+
 };
 } // namespace OHOS::NWeb
 

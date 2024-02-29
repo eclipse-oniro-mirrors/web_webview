@@ -33,7 +33,9 @@
 #include "cpptoc/ark_iconsumer_surface_adapter_cpptoc.h"
 #include "cpptoc/ark_imfadapter_cpptoc.h"
 #include "cpptoc/ark_keystore_adapter_cpptoc.h"
+#include "cpptoc/ark_media_codec_adapter_cpptoc.h"
 #include "cpptoc/ark_media_codec_decoder_adapter_cpptoc.h"
+#include "cpptoc/ark_media_codec_list_adapter_cpptoc.h"
 #include "cpptoc/ark_mmiadapter_cpptoc.h"
 #include "cpptoc/ark_native_image_adapter_cpptoc.h"
 #include "cpptoc/ark_net_connect_adapter_cpptoc.h"
@@ -579,8 +581,37 @@ ark_native_image_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_create_nati
     return ArkNativeImageAdapterCppToC::Invert(_retval);
 }
 
-} // namespace
+ark_media_codec_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_create_media_codec_encoder_adapter(
+    struct _ark_ohos_adapter_helper_t* self) {
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
+    ARK_WEB_CPPTOC_CHECK_PARAM(self,  NULL);
+
+
+    // Execute
+    ArkWebRefPtr<ArkMediaCodecAdapter> _retval =
+        ArkOhosAdapterHelperCppToC::Get(self)->CreateMediaCodecEncoderAdapter();
+
+    // Return type: refptr_same
+    return ArkMediaCodecAdapterCppToC::Invert(_retval);
+}
+
+ark_media_codec_list_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_get_media_codec_list_adapter(
+    struct _ark_ohos_adapter_helper_t* self) {
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self,  NULL);
+
+
+    // Execute
+    ArkWebRefPtr<ArkMediaCodecListAdapter> _retval =
+        ArkOhosAdapterHelperCppToC::Get(self)->GetMediaCodecListAdapter();
+
+    // Return type: refptr_same
+    return ArkMediaCodecListAdapterCppToC::Invert(_retval);
+}
+
+}  // namespace
 ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC()
 {
     GetStruct()->create_aafwk_adapter = ark_ohos_adapter_helper_create_aafwk_adapter;
@@ -621,6 +652,8 @@ ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC()
     GetStruct()->create_date_time_format_adapter = ark_ohos_adapter_helper_create_date_time_format_adapter;
     GetStruct()->create_media_codec_decoder_adapter = ark_ohos_adapter_helper_create_media_codec_decoder_adapter;
     GetStruct()->create_native_image_adapter = ark_ohos_adapter_helper_create_native_image_adapter;
+    GetStruct()->create_media_codec_encoder_adapter = ark_ohos_adapter_helper_create_media_codec_encoder_adapter;
+    GetStruct()->get_media_codec_list_adapter = ark_ohos_adapter_helper_get_media_codec_list_adapter;
 }
 
 ArkOhosAdapterHelperCppToC::~ArkOhosAdapterHelperCppToC() {}

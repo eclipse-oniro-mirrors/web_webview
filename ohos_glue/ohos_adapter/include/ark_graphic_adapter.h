@@ -20,6 +20,7 @@
 
 #include "include/ark_web_base_ref_counted.h"
 #include "include/ark_web_types.h"
+#include "graphic_adapter.h"
 
 typedef void (*ArkVSyncCb)(int64_t, void*);
 typedef void (*ArkOnFrameAvailableCb)(void* ctx);
@@ -28,6 +29,8 @@ typedef struct FrameAvailableListener {
     ArkOnFrameAvailableCb cb;
 } ArkOnFrameAvailableListener;
 
+using ArkBufferRequestConfigAdapter = OHOS::NWeb::BufferRequestConfigAdapter;
+using ArkBufferFlushConfigAdapter = OHOS::NWeb::BufferFlushConfigAdapter;
 namespace OHOS::ArkWeb {
 
 /*--web engine(source=library)--*/
@@ -173,6 +176,26 @@ public:
 
     /*--web engine()--*/
     virtual void DestroyNativeImage() = 0;
+};
+
+/*--web engine(source=library)--*/
+class ArkProducerSurfaceAdapter : public virtual ArkWebBaseRefCounted {
+public:
+
+    /*--web engine()--*/
+    ArkProducerSurfaceAdapter() = default;
+
+    /*--web engine()--*/
+    virtual ~ArkProducerSurfaceAdapter() = default;
+
+    /*--web engine()--*/
+    virtual ArkWebRefPtr<ArkSurfaceBufferAdapter> RequestBuffer(
+        int32_t &fence, ArkBufferRequestConfigAdapter &config) = 0;
+
+    /*--web engine()--*/
+    virtual int32_t FlushBuffer(ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer,
+                                int32_t fence, ArkBufferFlushConfigAdapter &flushConfig) = 0;
+
 };
 } // namespace OHOS::ArkWeb
 

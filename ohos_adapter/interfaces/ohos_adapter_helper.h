@@ -37,6 +37,7 @@
 #include "imf_adapter.h"
 #include "keystore_adapter.h"
 #include "media_adapter.h"
+#include "media_codec_adapter.h"
 #include "media_codec_decoder_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
@@ -129,6 +130,10 @@ public:
     virtual std::unique_ptr<MediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() = 0;
 
     virtual std::unique_ptr<NativeImageAdapter> CreateNativeImageAdapter() = 0;
+
+    virtual std::unique_ptr<MediaCodecAdapter> CreateMediaCodecEncoderAdapter() = 0;
+
+    virtual MediaCodecListAdapter& GetMediaCodecListAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 
