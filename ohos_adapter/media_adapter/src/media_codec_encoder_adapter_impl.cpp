@@ -22,26 +22,28 @@
 namespace OHOS::NWeb {
 namespace {
 const std::unordered_map<OHOS::MediaAVCodec::AVCodecErrorType, ErrorType> ERROR_TYPE_MAP = {
-    {OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_INTERNAL, ErrorType::CODEC_ERROR_INTERNAL},
-    {OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_EXTEND_START, ErrorType::CODEC_ERROR_EXTEND_START}
+    { OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_INTERNAL, ErrorType::CODEC_ERROR_INTERNAL },
+    { OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_EXTEND_START, ErrorType::CODEC_ERROR_EXTEND_START }
 };
 
 const std::unordered_map<OHOS::MediaAVCodec::AVCodecBufferFlag, BufferFlag> BUFFER_FLAG_MAP = {
-    {OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_NONE, BufferFlag::CODEC_BUFFER_FLAG_NONE},
-    {OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, BufferFlag::CODEC_BUFFER_FLAG_EOS},
-    {OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_SYNC_FRAME, BufferFlag::CODEC_BUFFER_FLAG_SYNC_FRAME},
-    {OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_PARTIAL_FRAME, BufferFlag::CODEC_BUFFER_FLAG_PARTIAL_FRAME},
-    {OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_CODEC_DATA, BufferFlag::CODEC_BUFFER_FLAG_CODEC_DATA}
+    { OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_NONE, BufferFlag::CODEC_BUFFER_FLAG_NONE },
+    { OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, BufferFlag::CODEC_BUFFER_FLAG_EOS },
+    { OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_SYNC_FRAME, BufferFlag::CODEC_BUFFER_FLAG_SYNC_FRAME },
+    { OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_PARTIAL_FRAME,
+        BufferFlag::CODEC_BUFFER_FLAG_PARTIAL_FRAME },
+    { OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_CODEC_DATA, BufferFlag::CODEC_BUFFER_FLAG_CODEC_DATA }
 };
 
 const std::unordered_map<BufferFlag, OHOS::MediaAVCodec::AVCodecBufferFlag> AV_BUFFER_FLAG_MAP = {
-    {BufferFlag::CODEC_BUFFER_FLAG_NONE, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_NONE},
-    {BufferFlag::CODEC_BUFFER_FLAG_EOS, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS},
-    {BufferFlag::CODEC_BUFFER_FLAG_SYNC_FRAME, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_SYNC_FRAME},
-    {BufferFlag::CODEC_BUFFER_FLAG_PARTIAL_FRAME, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_PARTIAL_FRAME},
-    {BufferFlag::CODEC_BUFFER_FLAG_CODEC_DATA, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_CODEC_DATA}
+    { BufferFlag::CODEC_BUFFER_FLAG_NONE, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_NONE },
+    { BufferFlag::CODEC_BUFFER_FLAG_EOS, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS },
+    { BufferFlag::CODEC_BUFFER_FLAG_SYNC_FRAME, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_SYNC_FRAME },
+    { BufferFlag::CODEC_BUFFER_FLAG_PARTIAL_FRAME,
+        OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_PARTIAL_FRAME },
+    { BufferFlag::CODEC_BUFFER_FLAG_CODEC_DATA, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_CODEC_DATA }
 };
-}
+} // namespace
 
 CodecCodeAdapter MediaCodecEncoderAdapterImpl::CreateVideoCodecByMime(const std::string mimetype)
 {
@@ -50,7 +52,7 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::CreateVideoCodecByMime(const std:
         WVLOG_E("MediaCodecEncoder create by mime failed.");
         return CodecCodeAdapter::ERROR;
     }
-    
+
     return CodecCodeAdapter::OK;
 }
 
@@ -61,12 +63,11 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::CreateVideoCodecByName(const std:
         WVLOG_E("MediaCodecEncoder create by name failed.");
         return CodecCodeAdapter::ERROR;
     }
-    
+
     return CodecCodeAdapter::OK;
 }
 
-CodecCodeAdapter MediaCodecEncoderAdapterImpl::SetCodecCallback(
-        const std::shared_ptr<CodecCallbackAdapter> callback)
+CodecCodeAdapter MediaCodecEncoderAdapterImpl::SetCodecCallback(const std::shared_ptr<CodecCallbackAdapter> callback)
 {
     if (callback == nullptr) {
         WVLOG_E("Media Callback is NULL.");
@@ -91,7 +92,7 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::SetCodecCallback(
     return CodecCodeAdapter::OK;
 }
 
-CodecCodeAdapter MediaCodecEncoderAdapterImpl::Configure(const CodecConfigPara &config)
+CodecCodeAdapter MediaCodecEncoderAdapterImpl::Configure(const CodecConfigPara& config)
 {
     if (encoder_ == nullptr) {
         WVLOG_E("MediaCodecEncoder is nullptr when ConfigureEncoder.");
@@ -104,10 +105,10 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::Configure(const CodecConfigPara &
     avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, config.height);
     avCodecFormat.PutDoubleValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_FRAME_RATE, config.frameRate);
     avCodecFormat.PutLongValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_BITRATE, config.bitRate);
-    avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_VIDEO_ENCODE_BITRATE_MODE,
-                              VideoEncodeBitrateMode::VBR);
-    avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_PIXEL_FORMAT,
-                              (int32_t)VideoPixelFormat::YUVI420);
+    avCodecFormat.PutIntValue(
+        OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_VIDEO_ENCODE_BITRATE_MODE, VideoEncodeBitrateMode::VBR);
+    avCodecFormat.PutIntValue(
+        OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_PIXEL_FORMAT, (int32_t)VideoPixelFormat::YUVI420);
     WVLOG_E("Configure width: %{public}d, height: %{public}d, bitRate: %{public}d, framerate: %{public}lf,",
         config.width, config.height, (int32_t)config.bitRate, config.frameRate);
     int32_t ret = encoder_->Configure(avCodecFormat);
@@ -206,7 +207,8 @@ std::shared_ptr<ProducerSurfaceAdapter> MediaCodecEncoderAdapterImpl::CreateInpu
         return nullptr;
     }
 
-    return std::make_shared<ProducerSurfaceAdapterImpl>(avCodecEncoderSurface);;
+    return std::make_shared<ProducerSurfaceAdapterImpl>(avCodecEncoderSurface);
+    ;
 }
 
 CodecCodeAdapter MediaCodecEncoderAdapterImpl::ReleaseOutputBuffer(uint32_t index, bool isRender)
@@ -270,13 +272,12 @@ void EncoderCallbackImpl::OnError(AVCodecErrorType errorType, int32_t errorCode)
         return;
     }
 
-    ErrorType errType;
-    errType = MediaCodecEncoderAdapterImpl::GetErrorType(errorType);
+    ErrorType errType = MediaCodecEncoderAdapterImpl::GetErrorType(errorType);
 
     cb_->OnError(errType, errorCode);
 }
 
-void EncoderCallbackImpl::OnOutputFormatChanged(const Format &format)
+void EncoderCallbackImpl::OnOutputFormatChanged(const Format& format)
 {
     if (!cb_) {
         return;
@@ -306,8 +307,8 @@ void EncoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr
     WVLOG_E("callback input buffer is null");
 }
 
-void EncoderCallbackImpl::OnOutputBufferAvailable(uint32_t index,
-    AVCodecBufferInfo info, AVCodecBufferFlag flag, std::shared_ptr<AVSharedMemory> buffer)
+void EncoderCallbackImpl::OnOutputBufferAvailable(
+    uint32_t index, AVCodecBufferInfo info, AVCodecBufferFlag flag, std::shared_ptr<AVSharedMemory> buffer)
 {
     if (!cb_) {
         return;
@@ -318,8 +319,7 @@ void EncoderCallbackImpl::OnOutputBufferAvailable(uint32_t index,
     bufferInfo.size = info.size;
     bufferInfo.offset = info.offset;
 
-    BufferFlag flagAdapter;
-    flagAdapter = MediaCodecEncoderAdapterImpl::GetBufferFlag(flag);
+    BufferFlag flagAdapter = MediaCodecEncoderAdapterImpl::GetBufferFlag(flag);
 
     if (buffer != nullptr && buffer->GetBase() != nullptr) {
         OhosBuffer ohosBuffer;
@@ -331,4 +331,4 @@ void EncoderCallbackImpl::OnOutputBufferAvailable(uint32_t index,
 
     WVLOG_E("callback output buffer is null");
 }
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb

@@ -33,7 +33,7 @@ public:
 
     int32_t SetCodecCallback(const ArkWebRefPtr<ArkCodecCallbackAdapter> callback) override;
 
-    int32_t Configure(const ArkCodecConfigPara &config) override;
+    int32_t Configure(const ArkCodecConfigPara& config) override;
 
     int32_t Prepare() override;
 

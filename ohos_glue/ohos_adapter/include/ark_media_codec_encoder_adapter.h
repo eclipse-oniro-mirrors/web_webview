@@ -20,9 +20,9 @@
 
 #include <cstdint>
 
+#include "ark_graphic_adapter.h"
 #include "include/ark_web_base_ref_counted.h"
 #include "include/ark_web_types.h"
-#include "ark_graphic_adapter.h"
 #include "media_codec_adapter.h"
 
 using ArkCodecFormatAdapter = OHOS::NWeb::CodecFormatAdapter;
@@ -34,7 +34,7 @@ using ArkCapabilityDataAdapter = OHOS::NWeb::CapabilityDataAdapter;
 namespace OHOS::ArkWeb {
 
 /*--web engine(source=client)--*/
-class ArkCodecCallbackAdapter : public virtual ArkWebBaseRefCounted  {
+class ArkCodecCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
     /*--web engine()--*/
     ArkCodecCallbackAdapter() = default;
@@ -46,7 +46,7 @@ public:
     virtual void OnError(int32_t errorType, int32_t errorCode) = 0;
 
     /*--web engine()--*/
-    virtual void OnStreamChanged(const ArkCodecFormatAdapter &format) = 0;
+    virtual void OnStreamChanged(const ArkCodecFormatAdapter& format) = 0;
 
     /*--web engine()--*/
     virtual void OnNeedInputData(uint32_t index, ArkOhosBuffer buffer) = 0;
@@ -74,7 +74,7 @@ public:
     virtual int32_t SetCodecCallback(const ArkWebRefPtr<ArkCodecCallbackAdapter> callback) = 0;
 
     /*--web engine()--*/
-    virtual int32_t Configure(const ArkCodecConfigPara &config) = 0;
+    virtual int32_t Configure(const ArkCodecConfigPara& config) = 0;
 
     /*--web engine()--*/
     virtual int32_t Prepare() = 0;

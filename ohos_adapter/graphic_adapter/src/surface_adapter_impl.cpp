@@ -243,8 +243,8 @@ GraphicColorGamut ProducerSurfaceAdapterImpl::TransToGraphicColorGamut(const Col
 }
 
 void ProducerSurfaceAdapterImpl::TransToBufferConfig(
-        const BufferRequestConfigAdapter &configAdapter,
-        BufferRequestConfig &config)
+    const BufferRequestConfigAdapter &configAdapter,
+    BufferRequestConfig &config)
 {
     config.width = configAdapter.width;
     config.height = configAdapter.height;
@@ -267,11 +267,11 @@ std::shared_ptr<SurfaceBufferAdapter> ProducerSurfaceAdapterImpl::RequestBuffer
     BufferRequestConfig config;
     TransToBufferConfig(configAdapter, config);
     surface_->RequestBuffer(buffer, fence, config);
-    return std::make_shared<SurfaceBufferAdapterImpl>(buffer);;
+    return std::make_shared<SurfaceBufferAdapterImpl>(buffer);
 }
 
 int32_t ProducerSurfaceAdapterImpl::FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter,
-                                int32_t fence, BufferFlushConfigAdapter &flushConfigAdapter)
+    int32_t fence, BufferFlushConfigAdapter &flushConfigAdapter)
 {
     if (!surface_ || !bufferAdapter) {
         WVLOG_E("Surface_ or bufferAdapter is nullptr when flush");

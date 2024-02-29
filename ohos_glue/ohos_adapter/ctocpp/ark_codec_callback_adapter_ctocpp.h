@@ -13,39 +13,34 @@
  * limitations under the License.
  */
 
-
 #ifndef ARK_CODEC_CALLBACK_ADAPTER_CTOCPP_H_
 #define ARK_CODEC_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
 #include "capi/ark_media_codec_encoder_adapter_capi.h"
-#include "include/ark_media_codec_encoder_adapter.h"
 #include "ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "include/ark_media_codec_encoder_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkCodecCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkCodecCallbackAdapterCToCpp, ArkCodecCallbackAdapter, ark_codec_callback_adapter_t> {
-  public:
+class ArkCodecCallbackAdapterCToCpp : public ArkWebCToCppRefCounted<ArkCodecCallbackAdapterCToCpp,
+                                          ArkCodecCallbackAdapter, ark_codec_callback_adapter_t> {
+public:
     ArkCodecCallbackAdapterCToCpp();
     virtual ~ArkCodecCallbackAdapterCToCpp();
 
-  // ArkCodecCallbackAdapter methods.
-  void OnError(int32_t errorType, int32_t errorCode) override;
+    // ArkCodecCallbackAdapter methods.
+    void OnError(int32_t errorType, int32_t errorCode) override;
 
+    void OnStreamChanged(const ArkCodecFormatAdapter& format) override;
 
-  void OnStreamChanged(const ArkCodecFormatAdapter& format) override;
+    void OnNeedInputData(uint32_t index, ArkOhosBuffer buffer) override;
 
-
-  void OnNeedInputData(uint32_t index, ArkOhosBuffer buffer) override;
-
-
-  void OnNeedOutputData(uint32_t index, ArkBufferInfo info, int32_t flag, ArkOhosBuffer buffer) override;
+    void OnNeedOutputData(uint32_t index, ArkBufferInfo info, int32_t flag, ArkOhosBuffer buffer) override;
 };
 
-} // OHOS::ArkWeb
-
+} // namespace OHOS::ArkWeb
 
 #endif // ARK_CODEC_CALLBACK_ADAPTER_CTOCPP_H_
