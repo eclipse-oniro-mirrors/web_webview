@@ -35,6 +35,10 @@ public:
     virtual VSyncErrorCode RequestVsync(void* data, NWebVSyncCb cb) = 0;
 
     virtual int64_t GetVSyncPeriod() = 0;
+
+    virtual void SetFrameRateLinkerEnable(bool enabled) = 0;
+
+    virtual void SetFramePreferredRate(int32_t preferredRate) = 0;
 };
 
 // be consistent with rom/foundation/graphic/graphic_2d/interfaces/inner_api/common/graphic_common_c.h:GSError
