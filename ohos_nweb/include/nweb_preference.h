@@ -598,10 +598,17 @@ public:
      * Put whether the embed mode. The default is false.
      */
     virtual void SetNativeEmbedMode(bool flag) = 0;
+
     /**
      * Put whether the embed mode. The default is false.
      */
     virtual bool GetNativeEmbedMode() = 0;
+
+    /**
+     * Register native embed rule. The default pattern is ["embed", "native/"].
+     */
+    virtual void RegisterNativeEmbedRule(const std::string&,
+                                         const std::string&) = 0;
 
     /**
      * Set whether scrollable

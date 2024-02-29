@@ -96,6 +96,33 @@ ArkWebString ArkWebNativeEmbedInfoCToCpp::GetType() {
   return _struct->get_type(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+ArkWebString ArkWebNativeEmbedInfoCToCpp::GetTag() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_native_embed_info_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, ark_web_string_default);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_tag, ark_web_string_default);
+
+  // Execute
+  return _struct->get_tag(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+ArkWebStringMap ArkWebNativeEmbedInfoCToCpp::GetParams() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_native_embed_info_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, ark_web_string_map_default);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_params,
+                                   ark_web_string_map_default);
+
+  // Execute
+  return _struct->get_params(_struct);
+}
+
 ArkWebNativeEmbedInfoCToCpp::ArkWebNativeEmbedInfoCToCpp() {
 }
 
