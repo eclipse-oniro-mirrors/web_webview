@@ -42,6 +42,7 @@
 #include "ark_location_proxy_adapter_impl.h"
 #include "ark_location_request_config_impl.h"
 #include "ark_media_codec_decoder_adapter_impl.h"
+#include "ark_media_codec_encoder_adapter_impl.h"
 #include "ark_mmi_adapter_impl.h"
 #include "ark_native_image_adapter_impl.h"
 #include "ark_net_connect_adapter_impl.h"
@@ -328,4 +329,17 @@ ArkWebRefPtr<ArkNativeImageAdapter> ArkOhosAdapterHelperImpl::CreateNativeImageA
     return new ArkNativeImageAdapterImpl(shared);
 }
 
+ArkWebRefPtr<ArkMediaCodecListAdapter> ArkOhosAdapterHelperImpl::GetMediaCodecListAdapter()
+{
+    static NWeb::MediaCodecListAdapter& instance = real_.GetMediaCodecListAdapter();
+    static ArkMediaCodecListAdapterImpl impl(instance);
+    return &impl;
+}
+
+ArkWebRefPtr<ArkMediaCodecAdapter> ArkOhosAdapterHelperImpl::CreateMediaCodecEncoderAdapter()
+{
+    std::unique_ptr<NWeb::MediaCodecAdapter> adapter = real_.CreateMediaCodecEncoderAdapter();
+    std::shared_ptr<NWeb::MediaCodecAdapter> shared = std::move(adapter);
+    return new ArkMediaCodecEncoderAdapterImpl(shared);
+}
 } // namespace OHOS::ArkWeb

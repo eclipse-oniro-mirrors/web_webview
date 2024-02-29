@@ -23,6 +23,7 @@
 #include <queue>
 #include <string>
 
+#include "media_codec_adapter.h"
 #include "graphic_adapter.h"
 
 namespace OHOS::NWeb {
@@ -38,29 +39,6 @@ struct DecoderFormat {
     double frameRate;
 };
 
-enum class ErrorType : int32_t {
-    CODEC_ERROR_INTERNAL,
-    CODEC_ERROR_EXTEND_START = 0X10000,
-};
-
-struct BufferInfo {
-    int64_t presentationTimeUs = 0;
-    int32_t size = 0;
-    int32_t offset = 0;
-};
-
-enum class BufferFlag : uint32_t {
-    CODEC_BUFFER_FLAG_NONE = 0,
-    CODEC_BUFFER_FLAG_EOS = 1 << 0,
-    CODEC_BUFFER_FLAG_SYNC_FRAME = 1 << 1,
-    CODEC_BUFFER_FLAG_PARTIAL_FRAME = 1 << 2,
-    CODEC_BUFFER_FLAG_CODEC_DATA = 1 << 3,
-};
-
-struct OhosBuffer {
-    uint8_t *addr;
-    uint32_t bufferSize;
-};
 
 class DecoderCallbackAdapter {
 public:
