@@ -36,6 +36,7 @@
 #include "include/ark_keystore_adapter.h"
 #include "include/ark_media_adapter.h"
 #include "include/ark_media_codec_decoder_adapter.h"
+#include "include/ark_media_codec_encoder_adapter.h"
 #include "include/ark_mmi_adapter.h"
 #include "include/ark_net_connect_adapter.h"
 #include "include/ark_net_proxy_adapter.h"
@@ -168,6 +169,12 @@ public:
 
     /*--web engine()--*/
     virtual ArkWebRefPtr<ArkNativeImageAdapter> CreateNativeImageAdapter() = 0;
+
+    /*--web engine()--*/
+    virtual ArkWebRefPtr<ArkMediaCodecAdapter> CreateMediaCodecEncoderAdapter() = 0;
+
+    /*--web engine()--*/
+    virtual ArkWebRefPtr<ArkMediaCodecListAdapter> GetMediaCodecListAdapter() = 0;
 };
 } // namespace OHOS::ArkWeb
 

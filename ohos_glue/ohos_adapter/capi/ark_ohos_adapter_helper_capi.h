@@ -36,6 +36,7 @@
 #include "capi/ark_imf_adapter_capi.h"
 #include "capi/ark_keystore_adapter_capi.h"
 #include "capi/ark_media_adapter_capi.h"
+#include "capi/ark_media_codec_encoder_adapter_capi.h"
 #include "capi/ark_media_codec_decoder_adapter_capi.h"
 #include "capi/ark_mmi_adapter_capi.h"
 #include "capi/ark_net_connect_adapter_capi.h"
@@ -153,6 +154,12 @@ typedef struct _ark_ohos_adapter_helper_t {
         struct _ark_ohos_adapter_helper_t* self);
 
     ark_native_image_adapter_t*(ARK_WEB_CALLBACK* create_native_image_adapter)(struct _ark_ohos_adapter_helper_t* self);
+
+    ark_media_codec_adapter_t* (ARK_WEB_CALLBACK *create_media_codec_encoder_adapter)(
+        struct _ark_ohos_adapter_helper_t* self);
+
+    ark_media_codec_list_adapter_t* (ARK_WEB_CALLBACK *get_media_codec_list_adapter)(
+        struct _ark_ohos_adapter_helper_t* self);
 } ark_ohos_adapter_helper_t;
 
 ARK_WEB_EXPORT ark_ohos_adapter_helper_t* ark_ohos_adapter_helper_get_instance(void);
