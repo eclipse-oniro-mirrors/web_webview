@@ -16,6 +16,7 @@
 #include "ark_producer_surface_adapter_impl.h"
 
 #include "ark_surface_buffer_adapter_impl.h"
+
 #include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -24,8 +25,8 @@ ArkProducerSurfaceAdapterImpl::ArkProducerSurfaceAdapterImpl(std::shared_ptr<OHO
     : real_(ref)
 {}
 
-ArkWebRefPtr<ArkSurfaceBufferAdapter> ArkProducerSurfaceAdapterImpl::RequestBuffer
-    (int32_t &fence, ArkBufferRequestConfigAdapter &config)
+ArkWebRefPtr<ArkSurfaceBufferAdapter> ArkProducerSurfaceAdapterImpl::RequestBuffer(
+    int32_t& fence, ArkBufferRequestConfigAdapter& config)
 {
     std::shared_ptr<OHOS::NWeb::SurfaceBufferAdapter> buffer = real_->RequestBuffer(fence, config);
     if (CHECK_SHARED_PTR_IS_NULL(buffer)) {
@@ -35,8 +36,8 @@ ArkWebRefPtr<ArkSurfaceBufferAdapter> ArkProducerSurfaceAdapterImpl::RequestBuff
     return new ArkSurfaceBufferAdapterImpl(buffer);
 }
 
-int32_t ArkProducerSurfaceAdapterImpl::FlushBuffer(ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer,
-                        int32_t fence, ArkBufferFlushConfigAdapter &flushConfig)
+int32_t ArkProducerSurfaceAdapterImpl::FlushBuffer(
+    ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer, int32_t fence, ArkBufferFlushConfigAdapter& flushConfig)
 {
     ArkSurfaceBufferAdapterImpl* imp = static_cast<ArkSurfaceBufferAdapterImpl*>(buffer.get());
     return real_->FlushBuffer(std::move(imp->real_), fence, flushConfig);

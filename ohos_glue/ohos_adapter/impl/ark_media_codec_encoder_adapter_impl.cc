@@ -14,14 +14,15 @@
  */
 
 #include "ark_media_codec_encoder_adapter_impl.h"
+
 #include "ark_producer_surface_adapter_impl.h"
-#include "bridge/ark_web_bridge_macros.h"
 #include "wrapper/ark_codec_callback_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
-ArkMediaCodecEncoderAdapterImpl::ArkMediaCodecEncoderAdapterImpl(
-    std::shared_ptr<OHOS::NWeb::MediaCodecAdapter> ref)
+ArkMediaCodecEncoderAdapterImpl::ArkMediaCodecEncoderAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaCodecAdapter> ref)
     : real_(ref)
 {}
 
@@ -44,7 +45,7 @@ int32_t ArkMediaCodecEncoderAdapterImpl::SetCodecCallback(const ArkWebRefPtr<Ark
     return (int32_t)real_->SetCodecCallback(std::make_shared<ArkCodecCallbackAdapterWapper>(callback));
 }
 
-int32_t ArkMediaCodecEncoderAdapterImpl::Configure(const ArkCodecConfigPara &config)
+int32_t ArkMediaCodecEncoderAdapterImpl::Configure(const ArkCodecConfigPara& config)
 {
     return (int32_t)real_->Configure(config);
 }
@@ -94,11 +95,10 @@ int32_t ArkMediaCodecEncoderAdapterImpl::RequestKeyFrameSoon()
     return (int32_t)real_->RequestKeyFrameSoon();
 }
 
-ArkMediaCodecListAdapterImpl::ArkMediaCodecListAdapterImpl
-    (OHOS::NWeb::MediaCodecListAdapter& ref) : real_(ref) {}
+ArkMediaCodecListAdapterImpl::ArkMediaCodecListAdapterImpl(OHOS::NWeb::MediaCodecListAdapter& ref) : real_(ref) {}
 
-OHOS::NWeb::CapabilityDataAdapter ArkMediaCodecListAdapterImpl::GetCodecCapability
-    (const ArkWebString mime, const bool isCodec)
+OHOS::NWeb::CapabilityDataAdapter ArkMediaCodecListAdapterImpl::GetCodecCapability(
+    const ArkWebString mime, const bool isCodec)
 {
     return real_.GetCodecCapability(ArkWebStringStructToClass(mime), isCodec);
 }

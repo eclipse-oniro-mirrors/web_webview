@@ -13,14 +13,13 @@
  * limitations under the License.
  */
 
-
 #ifndef ARK_MEDIA_CODEC_ADAPTER_CPPTOC_H_
 #define ARK_MEDIA_CODEC_ADAPTER_CPPTOC_H_
 #pragma once
 
 #include "capi/ark_media_codec_encoder_adapter_capi.h"
-#include "include/ark_media_codec_encoder_adapter.h"
 #include "cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "include/ark_media_codec_encoder_adapter.h"
 
 namespace OHOS::ArkWeb {
 
@@ -28,13 +27,11 @@ namespace OHOS::ArkWeb {
 // This class may be instantiated and accessed DLL-side only.
 class ArkMediaCodecAdapterCppToC
     : public ArkWebCppToCRefCounted<ArkMediaCodecAdapterCppToC, ArkMediaCodecAdapter, ark_media_codec_adapter_t> {
-  public:
+public:
     ArkMediaCodecAdapterCppToC();
     virtual ~ArkMediaCodecAdapterCppToC();
-
 };
 
-} // OHOS::ArkWeb
-
+} // namespace OHOS::ArkWeb
 
 #endif // ARK_MEDIA_CODEC_ADAPTER_CPPTOC_H_
