@@ -21,7 +21,7 @@
 namespace OHOS::NWeb {
 class OhosAdapterHelperImpl : public OhosAdapterHelper {
 public:
-    OhosAdapterHelperImpl() = default;    
+    OhosAdapterHelperImpl() = default;
 
     OhosAdapterHelperImpl(const OhosAdapterHelperImpl&) = delete;
 
@@ -98,7 +98,7 @@ public:
     std::unique_ptr<DateTimeFormatAdapter> CreateDateTimeFormatAdapter() override;
 
     std::unique_ptr<MediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() override;
-    
+
     std::unique_ptr<NativeImageAdapter> CreateNativeImageAdapter() override;
 
     std::unique_ptr<MediaCodecAdapter> CreateMediaCodecEncoderAdapter() override;

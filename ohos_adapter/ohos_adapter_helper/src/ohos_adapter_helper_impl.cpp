@@ -17,8 +17,8 @@
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "access_token_adapter_impl.h"
-#include "audio_renderer_adapter_impl.h"
 #include "audio_capturer_adapter_impl.h"
+#include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
 #if defined(NWEB_BATTERY_MANAGER_ENABLE)
 #include "battery_mgr_client_adapter_impl.h"
