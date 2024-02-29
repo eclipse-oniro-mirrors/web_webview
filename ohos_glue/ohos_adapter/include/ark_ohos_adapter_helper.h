@@ -175,7 +175,6 @@ public:
 
     /*--web engine()--*/
     virtual ArkWebRefPtr<ArkMediaCodecListAdapter> GetMediaCodecListAdapter() = 0;
-
 };
 } // namespace OHOS::ArkWeb
 

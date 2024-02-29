@@ -27,11 +27,7 @@
 
 namespace OHOS::NWeb {
 
-enum class CodecCodeAdapter {
-    OK = 0,
-    ERROR = 1,
-    RETRY = 2
-};
+enum class CodecCodeAdapter { OK = 0, ERROR = 1, RETRY = 2 };
 
 typedef struct CapabilityDataAdapterTag {
     int32_t maxWidth;
@@ -42,7 +38,7 @@ typedef struct CapabilityDataAdapterTag {
 typedef struct CodecFormatAdapterTag {
     int32_t width;
     int32_t height;
-}CodecFormatAdapter;
+} CodecFormatAdapter;
 
 enum class ErrorType : int32_t {
     CODEC_ERROR_INTERNAL,
@@ -64,7 +60,7 @@ enum class BufferFlag : uint32_t {
 };
 
 struct OhosBuffer {
-    uint8_t *addr; 
+    uint8_t* addr;
 
     uint32_t bufferSize;
 };
@@ -84,7 +80,7 @@ public:
 
     virtual void OnError(ErrorType errorType, int32_t errorCode) = 0;
 
-    virtual void OnStreamChanged(const CodecFormatAdapter &format) = 0;
+    virtual void OnStreamChanged(const CodecFormatAdapter& format) = 0;
 
     virtual void OnNeedInputData(uint32_t index, OhosBuffer buffer) = 0;
 
@@ -103,7 +99,7 @@ public:
 
     virtual CodecCodeAdapter SetCodecCallback(const std::shared_ptr<CodecCallbackAdapter> callback) = 0;
 
-    virtual CodecCodeAdapter Configure(const CodecConfigPara &config) = 0;
+    virtual CodecCodeAdapter Configure(const CodecConfigPara& config) = 0;
 
     virtual CodecCodeAdapter Prepare() = 0;
 
@@ -128,8 +124,7 @@ public:
 
     virtual ~MediaCodecListAdapter() = default;
 
-    virtual CapabilityDataAdapter GetCodecCapability(const std::string &mime, const bool isCodec) = 0;
-
+    virtual CapabilityDataAdapter GetCodecCapability(const std::string& mime, const bool isCodec) = 0;
 };
-}
+} // namespace OHOS::NWeb
 #endif

@@ -140,14 +140,16 @@ typedef struct _ark_native_image_adapter_t {
 } ark_native_image_adapter_t;
 
 typedef struct _ark_producer_surface_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ark_surface_buffer_adapter_t* (ARK_WEB_CALLBACK *request_buffer)(struct _ark_producer_surface_adapter_t* self, int32_t* fence, ArkBufferRequestConfigAdapter* config);
+    ark_surface_buffer_adapter_t*(ARK_WEB_CALLBACK* request_buffer)(
+        struct _ark_producer_surface_adapter_t* self, int32_t* fence, ArkBufferRequestConfigAdapter* config);
 
-  int32_t (ARK_WEB_CALLBACK *flush_buffer)(struct _ark_producer_surface_adapter_t* self, ark_surface_buffer_adapter_t* buffer, int32_t fence, ArkBufferFlushConfigAdapter* flushConfig);
+    int32_t(ARK_WEB_CALLBACK* flush_buffer)(struct _ark_producer_surface_adapter_t* self,
+        ark_surface_buffer_adapter_t* buffer, int32_t fence, ArkBufferFlushConfigAdapter* flushConfig);
 } ark_producer_surface_adapter_t;
 #ifdef __cplusplus
 }

@@ -44,85 +44,85 @@ enum GSErrorCode {
 
 // be consistent with rom/drivers/peripheral/display/interfaces/include/display_type.h:PixelFormat
 enum PixelFormatAdapter {
-    PIXEL_FMT_CLUT8 = 0,                 /**< CLUT8 format */
-    PIXEL_FMT_CLUT1,                     /**< CLUT1 format */
-    PIXEL_FMT_CLUT4,                     /**< CLUT4 format */
-    PIXEL_FMT_RGB_565,                   /**< RGB565 format */
-    PIXEL_FMT_RGBA_5658,                 /**< RGBA5658 format */
-    PIXEL_FMT_RGBX_4444,                 /**< RGBX4444 format */
-    PIXEL_FMT_RGBA_4444,                 /**< RGBA4444 format */
-    PIXEL_FMT_RGB_444,                   /**< RGB444 format */
-    PIXEL_FMT_RGBX_5551,                 /**< RGBX5551 format */
-    PIXEL_FMT_RGBA_5551,                 /**< RGBA5551 format */
-    PIXEL_FMT_RGB_555,                   /**< RGB555 format */
-    PIXEL_FMT_RGBX_8888,                 /**< RGBX8888 format */
-    PIXEL_FMT_RGBA_8888,                 /**< RGBA8888 format */
-    PIXEL_FMT_RGB_888,                   /**< RGB888 format */
-    PIXEL_FMT_BGR_565,                   /**< BGR565 format */
-    PIXEL_FMT_BGRX_4444,                 /**< BGRX4444 format */
-    PIXEL_FMT_BGRA_4444,                 /**< BGRA4444 format */
-    PIXEL_FMT_BGRX_5551,                 /**< BGRX5551 format */
-    PIXEL_FMT_BGRA_5551,                 /**< BGRA5551 format */
-    PIXEL_FMT_BGRX_8888,                 /**< BGRX8888 format */
-    PIXEL_FMT_BGRA_8888,                 /**< BGRA8888 format */
-    PIXEL_FMT_YUV_422_I,                 /**< YUV422 interleaved format */
-    PIXEL_FMT_YCBCR_422_SP,              /**< YCBCR422 semi-planar format */
-    PIXEL_FMT_YCRCB_422_SP,              /**< YCRCB422 semi-planar format */
-    PIXEL_FMT_YCBCR_420_SP,              /**< YCBCR420 semi-planar format */
-    PIXEL_FMT_YCRCB_420_SP,              /**< YCRCB420 semi-planar format */
-    PIXEL_FMT_YCBCR_422_P,               /**< YCBCR422 planar format */
-    PIXEL_FMT_YCRCB_422_P,               /**< YCRCB422 planar format */
-    PIXEL_FMT_YCBCR_420_P,               /**< YCBCR420 planar format */
-    PIXEL_FMT_YCRCB_420_P,               /**< YCRCB420 planar format */
-    PIXEL_FMT_YUYV_422_PKG,              /**< YUYV422 packed format */
-    PIXEL_FMT_UYVY_422_PKG,              /**< UYVY422 packed format */
-    PIXEL_FMT_YVYU_422_PKG,              /**< YVYU422 packed format */
-    PIXEL_FMT_VYUY_422_PKG,              /**< VYUY422 packed format */
-    PIXEL_FMT_VENDER_MASK = 0X7FFF0000,  /**< vendor mask format */
-    PIXEL_FMT_BUTT = 0X7FFFFFFF          /**< Invalid pixel format */
+    PIXEL_FMT_CLUT8 = 0,                /**< CLUT8 format */
+    PIXEL_FMT_CLUT1,                    /**< CLUT1 format */
+    PIXEL_FMT_CLUT4,                    /**< CLUT4 format */
+    PIXEL_FMT_RGB_565,                  /**< RGB565 format */
+    PIXEL_FMT_RGBA_5658,                /**< RGBA5658 format */
+    PIXEL_FMT_RGBX_4444,                /**< RGBX4444 format */
+    PIXEL_FMT_RGBA_4444,                /**< RGBA4444 format */
+    PIXEL_FMT_RGB_444,                  /**< RGB444 format */
+    PIXEL_FMT_RGBX_5551,                /**< RGBX5551 format */
+    PIXEL_FMT_RGBA_5551,                /**< RGBA5551 format */
+    PIXEL_FMT_RGB_555,                  /**< RGB555 format */
+    PIXEL_FMT_RGBX_8888,                /**< RGBX8888 format */
+    PIXEL_FMT_RGBA_8888,                /**< RGBA8888 format */
+    PIXEL_FMT_RGB_888,                  /**< RGB888 format */
+    PIXEL_FMT_BGR_565,                  /**< BGR565 format */
+    PIXEL_FMT_BGRX_4444,                /**< BGRX4444 format */
+    PIXEL_FMT_BGRA_4444,                /**< BGRA4444 format */
+    PIXEL_FMT_BGRX_5551,                /**< BGRX5551 format */
+    PIXEL_FMT_BGRA_5551,                /**< BGRA5551 format */
+    PIXEL_FMT_BGRX_8888,                /**< BGRX8888 format */
+    PIXEL_FMT_BGRA_8888,                /**< BGRA8888 format */
+    PIXEL_FMT_YUV_422_I,                /**< YUV422 interleaved format */
+    PIXEL_FMT_YCBCR_422_SP,             /**< YCBCR422 semi-planar format */
+    PIXEL_FMT_YCRCB_422_SP,             /**< YCRCB422 semi-planar format */
+    PIXEL_FMT_YCBCR_420_SP,             /**< YCBCR420 semi-planar format */
+    PIXEL_FMT_YCRCB_420_SP,             /**< YCRCB420 semi-planar format */
+    PIXEL_FMT_YCBCR_422_P,              /**< YCBCR422 planar format */
+    PIXEL_FMT_YCRCB_422_P,              /**< YCRCB422 planar format */
+    PIXEL_FMT_YCBCR_420_P,              /**< YCBCR420 planar format */
+    PIXEL_FMT_YCRCB_420_P,              /**< YCRCB420 planar format */
+    PIXEL_FMT_YUYV_422_PKG,             /**< YUYV422 packed format */
+    PIXEL_FMT_UYVY_422_PKG,             /**< UYVY422 packed format */
+    PIXEL_FMT_YVYU_422_PKG,             /**< YVYU422 packed format */
+    PIXEL_FMT_VYUY_422_PKG,             /**< VYUY422 packed format */
+    PIXEL_FMT_VENDER_MASK = 0X7FFF0000, /**< vendor mask format */
+    PIXEL_FMT_BUTT = 0X7FFFFFFF         /**< Invalid pixel format */
 };
 
 enum class ColorGamutAdapter {
-    INVALID = -1,            /**< Invalid */
-    NATIVE = 0,              /**< Native or default */
-    STANDARD_BT601 = 1,      /**< Standard BT601 */
-    STANDARD_BT709 = 2,      /**< Standard BT709 */
-    DCI_P3 = 3,              /**< DCI P3 */
-    SRGB = 4,                /**< SRGB */
-    ADOBE_RGB = 5,           /**< Adobe RGB */
-    DISPLAY_P3 = 6,          /**< display P3 */
-    BT2020 = 7,              /**< BT2020 */
-    BT2100_PQ = 8,           /**< BT2100 PQ */
-    BT2100_HLG = 9,          /**< BT2100 HLG */
-    DISPLAY_BT2020 = 10,     /**< Display BT2020 */
+    INVALID = -1,        /**< Invalid */
+    NATIVE = 0,          /**< Native or default */
+    STANDARD_BT601 = 1,  /**< Standard BT601 */
+    STANDARD_BT709 = 2,  /**< Standard BT709 */
+    DCI_P3 = 3,          /**< DCI P3 */
+    SRGB = 4,            /**< SRGB */
+    ADOBE_RGB = 5,       /**< Adobe RGB */
+    DISPLAY_P3 = 6,      /**< display P3 */
+    BT2020 = 7,          /**< BT2020 */
+    BT2100_PQ = 8,       /**< BT2100 PQ */
+    BT2100_HLG = 9,      /**< BT2100 HLG */
+    DISPLAY_BT2020 = 10, /**< Display BT2020 */
 };
 
 enum class TransformTypeAdapter {
-    ROTATE_NONE = 0,        /**< No rotation */
-    ROTATE_90,              /**< Rotation by 90 degrees */
-    ROTATE_180,             /**< Rotation by 180 degrees */
-    ROTATE_270,             /**< Rotation by 270 degrees */
-    FLIP_H,                 /**< Flip horizontally */
-    FLIP_V,                 /**< Flip vertically */
-    FLIP_H_ROT90,           /**< Flip horizontally and rotate 90 degrees */
-    FLIP_V_ROT90,           /**< Flip vertically and rotate 90 degrees */
-    FLIP_H_ROT180,          /**< Flip horizontally and rotate 180 degrees */
-    FLIP_V_ROT180,          /**< Flip vertically and rotate 180 degrees */
-    FLIP_H_ROT270,          /**< Flip horizontally and rotate 270 degrees */
-    FLIP_V_ROT270,          /**< Flip vertically and rotate 270 degrees */
-    ROTATE_BUTT            /**< Invalid operation */
+    ROTATE_NONE = 0, /**< No rotation */
+    ROTATE_90,       /**< Rotation by 90 degrees */
+    ROTATE_180,      /**< Rotation by 180 degrees */
+    ROTATE_270,      /**< Rotation by 270 degrees */
+    FLIP_H,          /**< Flip horizontally */
+    FLIP_V,          /**< Flip vertically */
+    FLIP_H_ROT90,    /**< Flip horizontally and rotate 90 degrees */
+    FLIP_V_ROT90,    /**< Flip vertically and rotate 90 degrees */
+    FLIP_H_ROT180,   /**< Flip horizontally and rotate 180 degrees */
+    FLIP_V_ROT180,   /**< Flip vertically and rotate 180 degrees */
+    FLIP_H_ROT270,   /**< Flip horizontally and rotate 270 degrees */
+    FLIP_V_ROT270,   /**< Flip vertically and rotate 270 degrees */
+    ROTATE_BUTT      /**< Invalid operation */
 };
 
 typedef struct BufferRequestConfigAdapterTag {
     int32_t width;
     int32_t height;
     int32_t strideAlignment; // output parameter, system components can ignore it
-    int32_t format; // GraphicPixelFormat
+    int32_t format;          // GraphicPixelFormat
     uint64_t usage;
     int32_t timeout;
     ColorGamutAdapter colorGamut = ColorGamutAdapter::SRGB;
     TransformTypeAdapter transformType = TransformTypeAdapter::ROTATE_NONE;
-}BufferRequestConfigAdapter;
+} BufferRequestConfigAdapter;
 
 typedef struct BufferFlushConfigAdapterTag {
     int32_t x;
@@ -130,7 +130,7 @@ typedef struct BufferFlushConfigAdapterTag {
     int32_t w;
     int32_t h;
     int64_t timestamp;
-}BufferFlushConfigAdapter;
+} BufferFlushConfigAdapter;
 
 class SurfaceBufferAdapter {
 public:
@@ -241,12 +241,10 @@ public:
 
     virtual ~ProducerSurfaceAdapter() = default;
 
-    virtual std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(
-        int32_t &fence, BufferRequestConfigAdapter &config) = 0;
+    virtual std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(int32_t& fence, BufferRequestConfigAdapter& config) = 0;
 
-    virtual int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> buffer,
-                                int32_t fence, BufferFlushConfigAdapter &flushConfig) = 0;
-
+    virtual int32_t FlushBuffer(
+        std::shared_ptr<SurfaceBufferAdapter> buffer, int32_t fence, BufferFlushConfigAdapter& flushConfig) = 0;
 };
 } // namespace OHOS::NWeb
 
