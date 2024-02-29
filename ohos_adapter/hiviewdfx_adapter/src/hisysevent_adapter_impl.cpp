@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -26,59 +26,91 @@ const HiviewDFX::HiSysEvent::EventType EVENT_TYPES[] = {
     OHOS::HiviewDFX::HiSysEvent::EventType::SECURITY,
     OHOS::HiviewDFX::HiSysEvent::EventType::BEHAVIOR,
 };
-
-template<typename... Args>
-int ForwardToHiSysEvent(const std::string& eventName, HiSysEventAdapter::EventType type, const std::tuple<Args...>& tp)
-{
-    return std::apply(
-        [&](auto&&... args) {
-            return HiSysEventWrite(OHOS::HiviewDFX::HiSysEvent::Domain::WEBVIEW, eventName, EVENT_TYPES[type], args...);
-        },
-        tp);
 }
-} // namespace
 
+static std::string g_currentBundleName = "";
 HiSysEventAdapterImpl& HiSysEventAdapterImpl::GetInstance()
 {
     static HiSysEventAdapterImpl instance;
     return instance;
 }
 
+template<typename... Args>
+static int ForwardToHiSysEvent(const std::string& eventName, HiSysEventAdapter::EventType type,
+    const std::tuple<Args...>& tp)
+{
+    if (g_currentBundleName.empty()) {
+        auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+        if (appInfo != nullptr) {
+            g_currentBundleName = appInfo->bundleName.c_str();
+        }
+    }
+    std::tuple<const std::string, const std::string> sysData("BUNDLE_NAME", g_currentBundleName.c_str());
+    auto mergeData = std::tuple_cat(sysData, tp);
+
+    return std::apply(
+        [&](auto&&... args) {
+            return HiSysEventWrite(OHOS::HiviewDFX::HiSysEvent::Domain::WEBVIEW, eventName, EVENT_TYPES[type], args...);
+        },
+        mergeData);
+}
+
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
-    const std::tuple<const std::string, const int, const std::string, const int, const std::string, const int,
-        const std::string, const int, const std::string, const float>& data)
+    const std::tuple<const std::string, const std::string>& data)
 {
     return ForwardToHiSysEvent(eventName, type, data);
 }
 
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
-    const std::tuple<const std::string, const int, const std::string, const int, const std::string, const int>& data)
+    const std::tuple<const std::string, const std::string, const std::string, const std::string>& data)
 {
     return ForwardToHiSysEvent(eventName, type, data);
 }
 
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
-    const std::tuple<const std::string, const int, const std::string, const std::string, const std::string, const int,
-        const std::string, const std::string>& data)
+    const std::tuple<const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string>& data)
 {
     return ForwardToHiSysEvent(eventName, type, data);
 }
 
-using systemData = std::tuple<const std::string, const int, const std::string, const std::string, const std::string,
-    const std::string, const std::string, const std::string>;
+int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
+    const std::tuple<const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string, const std::string, const std::string>& data)
+{
+    return ForwardToHiSysEvent(eventName, type, data);
+}
+
+int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
+    const std::tuple<const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string>& data)
+{
+    return ForwardToHiSysEvent(eventName, type, data);
+}
+
+int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
+    const std::tuple<const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string, const std::string, const std::string>& data)
+{
+    return ForwardToHiSysEvent(eventName, type, data);
+}
+
+using systemData = std::tuple<const std::string, const int, const std::string, const std::string,
+                              const std::string, const std::string>;
 
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     const std::tuple<const std::string, const int64_t, const std::string, const int,
     const std::string, const std::vector<uint16_t>, const std::string, const int>& data)
 {
     auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
-    
+
     AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
 
     systemData sysData = {
         "VERSION_CODE", appInfo->versionCode,
         "VERSION_NAME", appInfo->versionName.c_str(),
-        "BUNDLE_NAME", appInfo->bundleName.c_str(),
         "ABILITY_NAME", elementName.GetAbilityName()
     };
 
