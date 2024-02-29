@@ -17,6 +17,7 @@
 
 #include "drivers/peripheral/display/interfaces/include/display_type.h"
 #include "nweb_log.h"
+#include <unordered_map>
 
 namespace OHOS::NWeb {
 namespace {
@@ -186,5 +187,103 @@ int32_t ConsumerSurfaceAdapterImpl::SetQueueSize(uint32_t queueSize)
 sptr<IConsumerSurface>& ConsumerSurfaceAdapterImpl::GetConsumerSurface()
 {
     return cSurface_;
+}
+
+const std::unordered_map<TransformTypeAdapter, GraphicTransformType> TO_TRANSFORM_TYPE_MAP = {
+    {TransformTypeAdapter::ROTATE_NONE, GraphicTransformType::GRAPHIC_ROTATE_NONE},
+    {TransformTypeAdapter::ROTATE_90, GraphicTransformType::GRAPHIC_ROTATE_90},
+    {TransformTypeAdapter::ROTATE_180, GraphicTransformType::GRAPHIC_ROTATE_180},
+    {TransformTypeAdapter::ROTATE_270, GraphicTransformType::GRAPHIC_ROTATE_270},
+    {TransformTypeAdapter::FLIP_H, GraphicTransformType::GRAPHIC_FLIP_H},
+    {TransformTypeAdapter::FLIP_V, GraphicTransformType::GRAPHIC_FLIP_V},
+    {TransformTypeAdapter::FLIP_H_ROT90, GraphicTransformType::GRAPHIC_FLIP_H_ROT90},
+    {TransformTypeAdapter::FLIP_V_ROT90, GraphicTransformType::GRAPHIC_FLIP_V_ROT90},
+    {TransformTypeAdapter::FLIP_H_ROT180, GraphicTransformType::GRAPHIC_FLIP_H_ROT180},
+    {TransformTypeAdapter::FLIP_V_ROT180, GraphicTransformType::GRAPHIC_FLIP_V_ROT180},
+    {TransformTypeAdapter::FLIP_H_ROT270, GraphicTransformType::GRAPHIC_FLIP_H_ROT270},
+    {TransformTypeAdapter::FLIP_V_ROT270, GraphicTransformType::GRAPHIC_FLIP_V_ROT270},
+    {TransformTypeAdapter::ROTATE_BUTT, GraphicTransformType::GRAPHIC_ROTATE_BUTT},
+};
+
+const std::unordered_map<ColorGamutAdapter, GraphicColorGamut> TO_GRAPHIC_COLOR_GAMUT_MAP = {
+    {ColorGamutAdapter::INVALID, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_INVALID},
+    {ColorGamutAdapter::NATIVE, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_NATIVE},
+    {ColorGamutAdapter::STANDARD_BT601, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_STANDARD_BT601},
+    {ColorGamutAdapter::STANDARD_BT709, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_STANDARD_BT709},
+    {ColorGamutAdapter::DCI_P3, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_DCI_P3},
+    {ColorGamutAdapter::SRGB, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_SRGB},
+    {ColorGamutAdapter::ADOBE_RGB, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_ADOBE_RGB},
+    {ColorGamutAdapter::DISPLAY_P3, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_DISPLAY_P3},
+    {ColorGamutAdapter::BT2020, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_BT2020},
+    {ColorGamutAdapter::BT2100_PQ, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_BT2100_PQ},
+    {ColorGamutAdapter::BT2100_HLG, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_BT2100_HLG},
+    {ColorGamutAdapter::DISPLAY_BT2020, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_DISPLAY_BT2020},
+};
+
+ProducerSurfaceAdapterImpl::ProducerSurfaceAdapterImpl(sptr<Surface> surface) : surface_(surface){}
+
+GraphicTransformType ProducerSurfaceAdapterImpl::TransToTransformType(const TransformTypeAdapter &type)
+{
+    auto item = TO_TRANSFORM_TYPE_MAP.find(type);
+    if (item == TO_TRANSFORM_TYPE_MAP.end()) {
+        WVLOG_E("to graphic transform type %{public}d not found", type);
+        return GraphicTransformType::GRAPHIC_ROTATE_NONE;
+    }
+    return item->second;
+}
+
+GraphicColorGamut ProducerSurfaceAdapterImpl::TransToGraphicColorGamut(const ColorGamutAdapter &colorGamut)
+{
+    auto item = TO_GRAPHIC_COLOR_GAMUT_MAP.find(colorGamut);
+    if (item == TO_GRAPHIC_COLOR_GAMUT_MAP.end()) {
+        WVLOG_E("to graphic color gamut %{public}d not found", colorGamut);
+        return GraphicColorGamut::GRAPHIC_COLOR_GAMUT_SRGB;
+    }
+    return item->second;
+}
+
+void ProducerSurfaceAdapterImpl::TransToBufferConfig(
+        const BufferRequestConfigAdapter &configAdapter,
+        BufferRequestConfig &config)
+{
+    config.width = configAdapter.width;
+    config.height = configAdapter.height;
+    config.strideAlignment = configAdapter.strideAlignment;
+    config.format = GRAPHIC_PIXEL_FMT_YCBCR_420_P;
+    config.usage = BUFFER_USAGE_CPU_READ | BUFFER_USAGE_CPU_WRITE | BUFFER_USAGE_MEM_DMA;
+    config.timeout = configAdapter.timeout;
+    config.colorGamut = TransToGraphicColorGamut(configAdapter.colorGamut);
+    config.transform = TransToTransformType(configAdapter.transformType);
+}
+
+std::shared_ptr<SurfaceBufferAdapter> ProducerSurfaceAdapterImpl::RequestBuffer
+    (int32_t &fence, BufferRequestConfigAdapter &configAdapter)
+{
+    if (!surface_ ) {
+        WVLOG_E("Surface_ is nullptr when request");
+        return nullptr;
+    }
+    OHOS::sptr<OHOS::SurfaceBuffer> buffer = nullptr;
+    BufferRequestConfig config;
+    TransToBufferConfig(configAdapter, config);
+    surface_->RequestBuffer(buffer, fence, config);
+    return std::make_shared<SurfaceBufferAdapterImpl>(buffer);;
+}
+
+int32_t ProducerSurfaceAdapterImpl::FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter,
+                                int32_t fence, BufferFlushConfigAdapter &flushConfigAdapter)
+{
+    if (!surface_ || !bufferAdapter) {
+        WVLOG_E("Surface_ or bufferAdapter is nullptr when flush");
+        return -1;
+    }
+    auto bufferImpl = static_cast<SurfaceBufferAdapterImpl*>(bufferAdapter.get());
+    BufferFlushConfig config;
+    config.damage.x = flushConfigAdapter.x;
+    config.damage.y = flushConfigAdapter.y;
+    config.damage.w = flushConfigAdapter.w;
+    config.damage.h = flushConfigAdapter.h;
+    config.timestamp = flushConfigAdapter.timestamp;
+    return surface_->FlushBuffer(bufferImpl->GetBuffer(), fence, config);
 }
 } // namespace OHOS::NWeb

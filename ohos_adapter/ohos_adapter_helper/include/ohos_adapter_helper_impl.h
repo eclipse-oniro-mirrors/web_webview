@@ -100,6 +100,10 @@ public:
     std::unique_ptr<MediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() override;
     
     std::unique_ptr<NativeImageAdapter> CreateNativeImageAdapter() override;
+
+    std::unique_ptr<MediaCodecAdapter> CreateMediaCodecEncoderAdapter() override;
+
+    MediaCodecListAdapter& GetMediaCodecListAdapter() override;
 };
 } // namespace OHOS::NWeb
 

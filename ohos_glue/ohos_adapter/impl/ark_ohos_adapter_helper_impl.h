@@ -99,6 +99,9 @@ public:
 
     ArkWebRefPtr<ArkNativeImageAdapter> CreateNativeImageAdapter() override;
 
+    ArkWebRefPtr<ArkMediaCodecAdapter> CreateMediaCodecEncoderAdapter() override;
+
+    ArkWebRefPtr<ArkMediaCodecListAdapter> GetMediaCodecListAdapter() override;
 private:
     NWeb::OhosAdapterHelper& real_;
 

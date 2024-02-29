@@ -23,6 +23,8 @@
 namespace OHOS::NWeb {
 class SurfaceBufferAdapterImpl : public SurfaceBufferAdapter {
 public:
+    SurfaceBufferAdapterImpl() = default;
+
     explicit SurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer);
 
     ~SurfaceBufferAdapterImpl() override = default;
@@ -80,6 +82,27 @@ public:
 
 private:
     sptr<IConsumerSurface> cSurface_ = nullptr;
+};
+
+class ProducerSurfaceAdapterImpl : public ProducerSurfaceAdapter {
+public:
+    explicit ProducerSurfaceAdapterImpl(sptr<Surface> surface);
+
+    ~ProducerSurfaceAdapterImpl() = default;
+
+    std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(int32_t &fence,
+                                                        BufferRequestConfigAdapter &config) override;
+
+    int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter,
+                        int32_t fence,
+                        BufferFlushConfigAdapter &flushConfigAdapter) override;
+
+private:
+    void TransToBufferConfig(const BufferRequestConfigAdapter &configAdapter,
+        BufferRequestConfig &config);
+    GraphicColorGamut TransToGraphicColorGamut(const ColorGamutAdapter &colorGamut);
+    GraphicTransformType TransToTransformType(const TransformTypeAdapter &type);
+    sptr<Surface> surface_ = nullptr;
 };
 } // namespace OHOS::NWeb
 
