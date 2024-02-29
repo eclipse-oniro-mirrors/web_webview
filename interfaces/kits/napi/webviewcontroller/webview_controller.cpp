@@ -1372,5 +1372,15 @@ ErrCode WebviewController::CloseCamera()
     nweb_ptr->CloseCamera();
     return NWebError::NO_ERROR;
 }
+
+std::string WebviewController::GetLastJavascriptProxyCallingFrameUrl()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return "";
+    }
+
+    return nweb_ptr->GetLastJavascriptProxyCallingFrameUrl();
+}
 } // namespace NWeb
 } // namespace OHOS
