@@ -55,6 +55,10 @@ public:
                           int32_t num_sockets) override;
 
   void SetWebDebuggingAccess(bool isEnableDebug) override;
+
+  void PauseAllTimers() override;
+
+  void ResumeAllTimers() override;
 };
 
 } // namespace OHOS::ArkWeb

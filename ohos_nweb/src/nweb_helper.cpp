@@ -910,6 +910,26 @@ void NWebHelper::SetConnectionTimeout(const int32_t& timeout)
     WVLOG_I("timeout value in NWebHelper: %{public}d", timeout);
 }
 
+void NWebHelper::PauseAllTimers()
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->PauseAllTimers();
+}
+
+void NWebHelper::ResumeAllTimers()
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ResumeAllTimers();
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;
