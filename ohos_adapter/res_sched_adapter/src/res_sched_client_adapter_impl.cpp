@@ -248,7 +248,7 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
         auto nwebMap = g_pidNwebMap[pid];
         for (auto it : nwebMap) {
-            if { it.second == ResSchedStatusAdapter::WEB_ACTIVE} {
+            if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
                 return false;
             }
         }
