@@ -933,6 +933,17 @@ void ARK_WEB_CALLBACK ark_web_handler_on_safe_browsing_check_result(
   ArkWebHandlerCppToC::Get(self)->OnSafeBrowsingCheckResult(threat_type);
 }
 
+bool ARK_WEB_CALLBACK ark_web_handler_on_handle_override_url_loading(
+    struct _ark_web_handler_t *self, ark_web_url_resource_request_t *request) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+
+  // Execute
+  return ArkWebHandlerCppToC::Get(self)->OnHandleOverrideUrlLoading(
+      ArkWebUrlResourceRequestCToCpp::Invert(request));
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1034,6 +1045,8 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_native_embed_gesture_event;
   GetStruct()->on_safe_browsing_check_result =
       ark_web_handler_on_safe_browsing_check_result;
+  GetStruct()->on_handle_override_url_loading =
+      ark_web_handler_on_handle_override_url_loading;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {
