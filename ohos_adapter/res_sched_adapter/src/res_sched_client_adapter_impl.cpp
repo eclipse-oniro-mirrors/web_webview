@@ -80,6 +80,7 @@ constexpr char SERIAL_NUMBER[] = "serialNum";
 constexpr char SCENE_ID[] = "sceneId";
 constexpr char STATE[] = "state";
 std::set<int32_t> g_nwebSet;
+std::unordered_map<pid_t, std::unordered_map<int32_t, ResSchedStatusAdapter>> g_pidNwebMap;
 std::mutex g_windowIdMutex {};
 int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
@@ -243,6 +244,17 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         return false;
     }
 
+    g_pidNwebMap[pid][nwebId] = statusAdapter;
+    if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
+        auto nwebMap = g_pidNwebMap[pid];
+        for (auto it : nwebMap) {
+            if { it.second == ResSchedStatusAdapter::WEB_ACTIVE} {
+                return false;
+            }
+        }
+        g_pidNwebMap.erase(pid);
+    }
+
     int64_t status;
     bool ret = ConvertStatus(statusAdapter, status);
     if (!ret) {
@@ -260,8 +272,9 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         { STATE, std::to_string(status) } };
     ResSchedClient::GetInstance().ReportData(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
-    WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
-            "%{public}d", static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, serial_num);
+    WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
+            "nwebId: %{public}d, sn: %{public}d", 
+            static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, nwebId, serial_num);
     serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
 
     // Report visible scene event again when tab becomes active to solve timing problem
@@ -302,6 +315,12 @@ void ResSchedClientAdapter::ReportNWebInit(ResSchedStatusAdapter statusAdapter, 
         g_nwebSet.emplace(nwebId);
     } else if (statusAdapter == ResSchedStatusAdapter::WEB_SCENE_EXIT) {
         g_nwebSet.erase(nwebId);
+        for (auto nwebMap : g_pidNwebMap) {
+            auto it = nwebMap.second.find(nwebId);
+            if (it != nwebMap.second.end()) {
+                nwebMap.second.erase(it);
+            }
+        }
     }
 }
 } // namespace OHOS::NWeb
