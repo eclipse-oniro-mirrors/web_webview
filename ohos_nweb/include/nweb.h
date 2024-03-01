@@ -1078,6 +1078,21 @@ public:
      * @return true if enable the ability intelligent tracking prevention; else false.
      */
     virtual bool IsIntelligentTrackingPreventionEnabled() const = 0;
+
+    /**
+     * Start current camera.
+     */
+    virtual void StartCamera() = 0;
+
+    /**
+     * Stop current camera.
+     */
+    virtual void StopCamera() = 0;
+
+    /**
+     * Close current camera.
+     */
+    virtual void CloseCamera() = 0;
 };
 }  // namespace OHOS::NWeb
 

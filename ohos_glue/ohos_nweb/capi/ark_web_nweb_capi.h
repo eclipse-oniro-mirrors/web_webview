@@ -449,6 +449,12 @@ typedef struct _ark_web_nweb_t {
 
   bool(ARK_WEB_CALLBACK *is_intelligent_tracking_prevention_enabled)(
       struct _ark_web_nweb_t *self);
+
+  void(ARK_WEB_CALLBACK* start_camera)(struct _ark_web_nweb_t* self);
+
+  void(ARK_WEB_CALLBACK* stop_camera)(struct _ark_web_nweb_t* self);
+
+  void(ARK_WEB_CALLBACK* close_camera)(struct _ark_web_nweb_t* self);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus
