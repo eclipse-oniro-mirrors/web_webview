@@ -89,7 +89,7 @@ public:
     virtual int64_t GetTimeSinceBoot() = 0;
 
     /*--web engine()--*/
-    virtual ArkWebString GetAdditions() = 0;
+    virtual ArkWebStringVector GetAdditions() = 0;
 };
 
 /*--web engine(source=client)--*/
