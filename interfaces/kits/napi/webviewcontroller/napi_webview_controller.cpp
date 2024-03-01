@@ -259,6 +259,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getPrintBackground", NapiWebviewController::GetPrintBackground),
         DECLARE_NAPI_FUNCTION("setWebSchemeHandler", NapiWebviewController::SetWebSchemeHandler),
         DECLARE_NAPI_FUNCTION("clearWebSchemeHandler", NapiWebviewController::ClearWebSchemeHandler),
+        DECLARE_NAPI_STATIC_FUNCTION("pauseAllTimers", NapiWebviewController::PauseAllTimers),
+        DECLARE_NAPI_STATIC_FUNCTION("resumeAllTimers", NapiWebviewController::ResumeAllTimers),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -4449,6 +4451,22 @@ napi_value NapiWebviewController::ClearServiceWorkerWebSchemeHandler(
         return nullptr;
     }
     return nullptr;
+}
+
+napi_value NapiWebviewController::PauseAllTimers(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NWebHelper::Instance().PauseAllTimers();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ResumeAllTimers(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NWebHelper::Instance().ResumeAllTimers();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
 }
 } // namespace NWeb
 } // namespace OHOS

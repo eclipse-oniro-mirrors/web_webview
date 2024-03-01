@@ -245,6 +245,10 @@ private:
 
     static napi_value ClearServiceWorkerWebSchemeHandler(
         napi_env env, napi_callback_info info);
+
+    static napi_value PauseAllTimers(napi_env env, napi_callback_info info);
+
+    static napi_value ResumeAllTimers(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {

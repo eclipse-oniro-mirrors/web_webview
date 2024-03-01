@@ -52,6 +52,8 @@ public:
     {
         customSchemeCmdLine_ = cmd;
     }
+    void PauseAllTimers();
+    void ResumeAllTimers();
 
 private:
     NWebHelper() = default;
