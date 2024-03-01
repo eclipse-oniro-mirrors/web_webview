@@ -59,10 +59,10 @@ int64_t ArkLocationInfoImpl::GetTimeSinceBoot()
     return real_->GetTimeSinceBoot();
 }
 
-ArkWebString ArkLocationInfoImpl::GetAdditions()
+ArkWebStringVector ArkLocationInfoImpl::GetAdditions()
 {
-    std::string str = real_->GetAdditions();
-    return ArkWebStringClassToStruct(str);
+    std::vector<std::string> vec = real_->GetAdditions();
+    return ArkWebStringVectorClassToStruct(vec);
 }
 
 } // namespace OHOS::ArkWeb

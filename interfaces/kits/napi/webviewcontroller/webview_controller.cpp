@@ -571,7 +571,8 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
         std::string appBundleName;
         std::string appModuleName;
         result = "resource://RAWFILE/";
-        if (GetAppBundleNameAndModuleName(appBundleName, appModuleName)) {
+        if (!bundleName.empty() && !moduleName.empty() &&
+            GetAppBundleNameAndModuleName(appBundleName, appModuleName)) {
             if (appBundleName != bundleName || appModuleName != moduleName) {
                 result += BUNDLE_NAME_PREFIX + bundleName + "/" + MODULE_NAME_PREFIX + moduleName + "/";
             }
