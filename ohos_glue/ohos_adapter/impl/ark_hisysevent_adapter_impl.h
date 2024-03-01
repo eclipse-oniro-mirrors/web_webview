@@ -27,16 +27,38 @@ class ArkHiSysEventAdapterImpl : public ArkHiSysEventAdapter {
 public:
     ArkHiSysEventAdapterImpl(NWeb::HiSysEventAdapter&);
 
-    int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const int value1,
-        const ArkWebString key2, const int value2, const ArkWebString key3, const int value3, const ArkWebString key4,
-        const int value4, const ArkWebString key5, const float value5) override;
+    int Write(const ArkWebString& eventName, uint32_t type,
+        const ArkWebString key1, const ArkWebString value1) override;
 
-    int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const int value1,
-        const ArkWebString key2, const int value2, const ArkWebString key3, const int value3) override;
+    int Write(const ArkWebString& eventName, uint32_t type,
+        const ArkWebString key1, const ArkWebString value1,
+        const ArkWebString key2, const ArkWebString value2) override;
 
-    int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const int value1,
-        const ArkWebString key2, const ArkWebString value2, const ArkWebString key3, const int value3,
+    int Write(const ArkWebString& eventName, uint32_t type,
+        const ArkWebString key1, const ArkWebString value1,
+        const ArkWebString key2, const ArkWebString value2,
+        const ArkWebString key3, const ArkWebString value3) override;
+
+    int Write(const ArkWebString& eventName, uint32_t type,
+        const ArkWebString key1, const ArkWebString value1,
+        const ArkWebString key2, const ArkWebString value2,
+        const ArkWebString key3, const ArkWebString value3,
         const ArkWebString key4, const ArkWebString value4) override;
+
+    int Write(const ArkWebString& eventName, uint32_t type,
+        const ArkWebString key1, const ArkWebString value1,
+        const ArkWebString key2, const ArkWebString value2,
+        const ArkWebString key3, const ArkWebString value3,
+        const ArkWebString key4, const ArkWebString value4,
+        const ArkWebString key5, const ArkWebString value5) override;
+
+    int Write(const ArkWebString& eventName, uint32_t type,
+        const ArkWebString key1, const ArkWebString value1,
+        const ArkWebString key2, const ArkWebString value2,
+        const ArkWebString key3, const ArkWebString value3,
+        const ArkWebString key4, const ArkWebString value4,
+        const ArkWebString key5, const ArkWebString value5,
+        const ArkWebString key6, const ArkWebString value6) override;
 
     int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const int64_t value1,
         const ArkWebString key2, const int value2, const ArkWebString key3, const ArkWebUint16Vector value3,
