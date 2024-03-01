@@ -75,6 +75,13 @@ enum class WebMessageType : int {
     ERROR
 };
 
+enum class MediaPlaybackState : int {
+    NONE = 0,
+    PLAYING,
+    PAUSED,
+    STOP
+};
+
 enum class SecurityLevel : int {
     NONE = 0,
     SECURE,
@@ -260,6 +267,16 @@ public:
         const char* scheme, WebSchemeHandler* handler);
 
     static int32_t ClearWebServiceWorkerSchemeHandler();
+
+    void CloseAllMediaPresentations();
+
+    void StopAllMedia();
+
+    void ResumeAllMedia();
+
+    void PauseAllMedia();
+
+    int GetMediaPlaybackState();
 
 private:
     int ConverToWebHitTestType(int hitType);
