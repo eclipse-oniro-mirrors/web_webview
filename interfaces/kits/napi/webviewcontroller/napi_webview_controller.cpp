@@ -259,6 +259,11 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getPrintBackground", NapiWebviewController::GetPrintBackground),
         DECLARE_NAPI_FUNCTION("setWebSchemeHandler", NapiWebviewController::SetWebSchemeHandler),
         DECLARE_NAPI_FUNCTION("clearWebSchemeHandler", NapiWebviewController::ClearWebSchemeHandler),
+        DECLARE_NAPI_FUNCTION("closeAllMediaPresentations", NapiWebviewController::CloseAllMediaPresentations),
+        DECLARE_NAPI_FUNCTION("stopAllMedia", NapiWebviewController::StopAllMedia),
+        DECLARE_NAPI_FUNCTION("resumeAllMedia", NapiWebviewController::ResumeAllMedia),
+        DECLARE_NAPI_FUNCTION("pauseAllMedia", NapiWebviewController::PauseAllMedia),
+        DECLARE_NAPI_FUNCTION("getMediaPlaybackState", NapiWebviewController::GetMediaPlaybackState),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -3965,6 +3970,76 @@ napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info
     NWebHelper::Instance().LoadNWebSDK();
     WebDownloader_StartDownload(nwebId, url.c_str());
     return nullptr;
+}
+
+napi_value NapiWebviewController::CloseAllMediaPresentations(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->CloseAllMediaPresentations();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::StopAllMedia(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->StopAllMedia();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ResumeAllMedia(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->ResumeAllMedia();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::PauseAllMedia(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->PauseAllMedia();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetMediaPlaybackState(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    int32_t mediaPlaybackState = webviewController->GetMediaPlaybackState();
+    napi_create_int32(env, mediaPlaybackState, &result);
+    return result;
 }
 
 napi_value NapiWebviewController::SetConnectionTimeout(napi_env env, napi_callback_info info)
