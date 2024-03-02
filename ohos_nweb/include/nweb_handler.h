@@ -727,6 +727,14 @@ public:
      * @param threat_type The threat type of website.
      */
     virtual void OnSafeBrowsingCheckResult(int threat_type) {}
+
+    /**
+     * @brief Called when tracker's cookie is prevented.
+     * @param website_host The host of website url.
+     * @param tracker_host The host of tracker url.
+    */
+    virtual void OnIntelligentTrackingPreventionResult(
+        const std::string& website_host, const std::string& tracker_host) {}
 };
 }  // namespace OHOS::NWeb
 

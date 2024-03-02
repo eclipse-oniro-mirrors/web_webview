@@ -67,6 +67,15 @@ typedef struct _ark_web_engine_t {
 
   void(ARK_WEB_CALLBACK *set_web_debugging_access)(
       struct _ark_web_engine_t *self, bool isEnableDebug);
+
+  void(ARK_WEB_CALLBACK *add_intelligent_tracking_prevention_bypassing_list)(
+      struct _ark_web_engine_t *self, const ArkWebStringVector *hosts);
+
+  void(ARK_WEB_CALLBACK *remove_intelligent_tracking_prevention_bypassing_list)(
+      struct _ark_web_engine_t *self, const ArkWebStringVector *hosts);
+
+  void(ARK_WEB_CALLBACK *clear_intelligent_tracking_prevention_bypassing_list)(
+      struct _ark_web_engine_t *self);
 } ark_web_engine_t;
 
 ARK_WEB_EXPORT ark_web_engine_t *ark_web_engine_get_instance(void);

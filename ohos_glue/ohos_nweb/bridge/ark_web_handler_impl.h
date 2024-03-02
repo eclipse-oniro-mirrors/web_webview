@@ -502,6 +502,16 @@ public:
    */
   void OnSafeBrowsingCheckResult(int threat_type) override;
 
+  /**
+   * @brief Called when tracker's cookie is prevented.
+   *
+   * @param website_host The host of website url.
+   *
+   * @param tracker_host The host of tracker url.
+  */
+  void OnIntelligentTrackingPreventionResult(
+      const ArkWebString &website_host, const ArkWebString &tracker_host) override;
+
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

@@ -761,6 +761,7 @@ bool NWebHelper::InitAndRun(bool from_ark)
     if (!customSchemeCmdLine_.empty()) {
         initArgs->AddArg(std::string("--ohos-custom-scheme=").append(customSchemeCmdLine_));
     }
+
     nwebEngine_->InitializeWebEngine(initArgs);
     return true;
 }
@@ -908,6 +909,36 @@ void NWebHelper::SetConnectionTimeout(const int32_t& timeout)
 
     downloadManagr->SetConnectionTimeout(timeout);
     WVLOG_I("timeout value in NWebHelper: %{public}d", timeout);
+}
+
+void NWebHelper::AddIntelligentTrackingPreventionBypassingList(
+    const std::vector<std::string>& hosts)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->AddIntelligentTrackingPreventionBypassingList(hosts);
+}
+
+void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(
+    const std::vector<std::string>& hosts) {
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->RemoveIntelligentTrackingPreventionBypassingList(hosts);
+}
+
+void NWebHelper::ClearIntelligentTrackingPreventionBypassingList() {
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ClearIntelligentTrackingPreventionBypassingList();
 }
 
 NWebAdapterHelper &NWebAdapterHelper::Instance()
