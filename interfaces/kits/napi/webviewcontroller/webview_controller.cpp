@@ -1288,6 +1288,24 @@ bool  WebviewController::GetPrintBackground()
     return printBackgroundEnabled;
 }
 
+void WebviewController::EnableIntelligentTrackingPrevention(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->EnableIntelligentTrackingPrevention(enable);
+    }
+}
+
+bool WebviewController::IsIntelligentTrackingPreventionEnabled()
+{
+    bool enabled = false;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        enabled = nweb_ptr->IsIntelligentTrackingPreventionEnabled();
+    }
+    return enabled;
+}
+
 void WebPrintWriteResultCallbackAdapter::WriteResultCallback(std::string jobId, uint32_t code)
 {
     cb_(jobId, code);

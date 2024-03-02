@@ -341,6 +341,10 @@ public:
   void PauseAllMedia() override;
 
   int GetMediaPlaybackState() override;
+
+  void EnableIntelligentTrackingPrevention(bool enable) override;
+
+  bool IsIntelligentTrackingPreventionEnabled() override;
 };
 
 } // namespace OHOS::ArkWeb
