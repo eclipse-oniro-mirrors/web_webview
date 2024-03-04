@@ -694,5 +694,8 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   defines += [ "OHOS_GLUE_DEBUG" ]
 
-  deps = [ "../ohos_glue:ohos_base_glue_source" ]
+  deps = [
+    "../ohos_glue:ohos_base_glue_source",
+    "../ohos_nweb:libnweb",
+  ]
 }
