@@ -237,10 +237,6 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_GetList_
 HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_Surface_001, TestSize.Level1)
 {
     const std::string mimetype = "video/avc";
-    // EXPECT_EQ(mediaCodecEncoderAdapterImpl->CreateVideoCodecByMime(mimetype), CodecCodeAdapter::OK);
-    // std::shared_ptr<ProducerSurfaceAdapter> surface =
-    //     mediaCodecEncoderAdapterImpl->CreateInputSurface();
-    // EXPECT_NE(surface, nullptr);
     auto surfaceAdapter = std::make_shared<ProducerSurfaceAdapterMock>();
     int32_t fence = -1;
     constexpr int32_t DEFAULT_STRIDE = 16;
