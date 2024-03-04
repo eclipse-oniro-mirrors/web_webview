@@ -267,8 +267,7 @@
                 "//base/web/webview/test/unittest/ohos_adapter/hiviewdfx_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/imf_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/media_adapter_test:unittest",
-                "//base/web/webview/test/unittest/inner_api_test/clipboard_controller_test:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/media_encoder_adapter_test:unittest"
+                "//base/web/webview/test/unittest/inner_api_test/clipboard_controller_test:unittest"
             ]
         }
     }
