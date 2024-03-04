@@ -54,7 +54,15 @@ static bool g_isFirstTimeStartUp = false;
 const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
 const std::string INIT_CONFIG = "initConfig";
 const std::string PERFORMANCE_CONFIG = "performanceConfig";
-
+// The config used in base/web/webview
+const std::string BASE_WEB_CONFIG = "baseWebConfig";
+const std::string FACTORY_CONFIG_VALUE = "factoryConfig";
+const std::string FACTORY_LEVEL_VALUE = "factoryLevel";
+const std::string FACTORY_LEVEL_WATCH = "16";
+const std::string FACTORY_LEVEL_PC = "8";
+const std::string FACTORY_LEVEL_TABLET = "4";
+const std::string FACTORY_LEVEL_PHONE = "2";
+const std::string FACTORY_LEVEL_DEFAULT = "1";
 // Run DO macro for every function defined in the API.
 #define FOR_EACH_API_FN(DO)                          \
     DO(WebDownloadManager_PutDownloadCallback)       \
@@ -984,27 +992,92 @@ std::string NWebAdapterHelper::GetConfigPath(const std::string &configFileName)
     return std::string(tmpPath);
 }
 
-std::unordered_map<std::string_view, std::function<std::string(std::string &)>> GetConfigMap()
+std::unordered_map<std::string_view, std::function<std::string(std::string&)>> GetConfigMap()
 {
-    static std::unordered_map<std::string_view, std::function<std::string(std::string &)>> configMap = {
+    static std::unordered_map<std::string_view, std::function<std::string(std::string&)>> configMap = {
         { "renderConfig/renderProcessCount",
-          [](std::string &contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
+            [](std::string& contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
         { "mediaConfig/backgroundMediaShouldSuspend",
-          [](std::string &contentStr) {
-            return contentStr == "false" ? std::string("--disable-background-media-suspend") : std::string();
-        } },
+            [](std::string& contentStr) {
+                return contentStr == "false" ? std::string("--disable-background-media-suspend") : std::string();
+            } },
         { "loadurlSocPerfConfig/loadurlSocPerfParam",
-          [](std::string &contentStr) {
-            return contentStr == "true" ? std::string("--ohos-enable-loadurl-soc-perf") : std::string();
-        } },
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-loadurl-soc-perf") : std::string();
+            } },
         { "mouseWheelSocPerfConfig/mouseWheelSocPerfParam",
-          [](std::string &contentStr) {
-            return contentStr == "true" ? std::string("--ohos-enable-mousewheel-soc-perf") : std::string();
-        } },
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-mousewheel-soc-perf") : std::string();
+            } },
         { "touchEventConfig/touchEventShouldRegister",
-          [](std::string &contentStr) {
-            return contentStr == "false" ? std::string("--disable-touch-event-register") : std::string();
-        } }
+            [](std::string& contentStr) {
+                return contentStr == "false" ? std::string("--disable-touch-event-register") : std::string();
+            } },
+        { "settingConfig/enableWaitForUsername",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-wait-for-username") : std::string();
+            } },
+        { "settingConfig/enableMaxNumberOfSavedFrames",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-max-number-of-saved-frames") : std::string();
+            } },
+        { "settingConfig/enableNumRasterThreads",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-num-raster-threads") : std::string();
+            } },
+        { "settingConfig/enableSingleRenderProcess",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-single-render-process") : std::string();
+            } },
+        { "userAgentConfig/userAgentValue",
+            [](std::string& contentStr) { return std::string("--ohos-user-agent-value=") + contentStr; } },
+        { "settingConfig/enableSimpleBackendIsDefault",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-simple-backend-is-default") : std::string();
+            } },
+        { "settingConfig/enableEmbedMode",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-embed-mode") : std::string();
+            } },
+        { "settingConfig/enableWebViewImplForLargeScreen",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-web-view-impl-for-large-screen")
+                                            : std::string();
+            } },
+        { "settingConfig/enableDeleteUnusedResourcesDelay",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-delete-unused-resources-delay")
+                                            : std::string();
+            } },
+        { "settingConfig/enableSetHttpCacheMaxSize",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-set-http-cache-max-size") : std::string();
+            } },
+        { "settingConfig/enableCookieConfigPersistSession",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-cookie-config-persist-session")
+                                            : std::string();
+            } },
+        { "settingConfig/enableDoubleTapForPlatform",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-double-tap-for-platform") : std::string();
+            } },
+        { "settingConfig/enableIgnoreLockdownMode",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-Ignore-lockdown-mode") : std::string();
+            } },
+        { "settingConfig/enablePrinting",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-printing") : std::string();
+            } },
+        { "settingConfig/enableHttpCacheSimple",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-http-cache-simple") : std::string();
+            } },
+        { "settingConfig/enableCalcTabletMode",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-calc-tablet-mode") : std::string();
+            } }
     };
     return configMap;
 }
@@ -1090,6 +1163,10 @@ void NWebAdapterHelper::ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> init
         xmlNodePtr perfNodePtr = GetChildrenNode(rootPtr, PERFORMANCE_CONFIG);
         if (perfNodePtr != nullptr) {
             ParsePerfConfig(perfNodePtr);
+        }
+        xmlNodePtr adapterNodePtr = GetChildrenNode(rootPtr, BASE_WEB_CONFIG);
+        if (adapterNodePtr != nullptr) {
+            ParsePerfConfig(adapterNodePtr);
         }
     }
 

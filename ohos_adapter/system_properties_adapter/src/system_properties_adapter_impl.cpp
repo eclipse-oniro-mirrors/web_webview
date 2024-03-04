@@ -18,12 +18,20 @@
 #include <securec.h>
 
 #include "init_param.h"
+#include "nweb_adapter_helper.h"
 #include "nweb_log.h"
 #include "parameter.h"
 #include "parameters.h"
 #include "sysversion.h"
 
 namespace OHOS::NWeb {
+const std::string FACTORY_CONFIG_VALUE = "factoryConfig";
+const std::string FACTORY_LEVEL_VALUE = "factoryLevel";
+const std::string FACTORY_LEVEL_WATCH = "16";
+const std::string FACTORY_LEVEL_PC = "8";
+const std::string FACTORY_LEVEL_TABLET = "4";
+const std::string FACTORY_LEVEL_PHONE = "2";
+const std::string FACTORY_LEVEL_DEFAULT = "1";
 // static
 SystemPropertiesAdapterImpl& SystemPropertiesAdapterImpl::GetInstance()
 {
@@ -43,7 +51,7 @@ SystemPropertiesAdapterImpl::SystemPropertiesAdapterImpl()
     int versionPartTwo;
     int versionPartThree;
     int versionPartFour;
-    const char *tmp = strstr(osFullName.c_str(), "-");
+    const char* tmp = strstr(osFullName.c_str(), "-");
     if (tmp == NULL) {
         return;
     }
@@ -80,15 +88,16 @@ int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion()
 
 ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
 {
-    std::string deviceType = OHOS::system::GetDeviceType();
-    if (deviceType == "phone" || deviceType == "default") {
+    std::string factoryLevel = NWebAdapterHelper::Instance().
+        ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
+    WVLOG_D("read config factoryLevel: %{public}s ", factoryLevel.c_str());
+    if (factoryLevel == FACTORY_LEVEL_PHONE || factoryLevel == FACTORY_LEVEL_DEFAULT) {
         return ProductDeviceType::DEVICE_TYPE_MOBILE;
-    } else if (deviceType == "tablet") {
+    } else if (factoryLevel == FACTORY_LEVEL_TABLET) {
         return ProductDeviceType::DEVICE_TYPE_TABLET;
-    } else if (deviceType == "2in1") {
+    } else if (factoryLevel == FACTORY_LEVEL_PC) {
         return ProductDeviceType::DEVICE_TYPE_2IN1;
     }
-
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
 }
 
