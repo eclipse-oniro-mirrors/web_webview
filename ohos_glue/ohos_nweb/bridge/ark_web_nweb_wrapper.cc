@@ -919,4 +919,12 @@ int ArkWebNWebWrapper::GetMediaPlaybackState() {
   return ark_web_nweb_->GetMediaPlaybackState();
 }
 
+void ArkWebNWebWrapper::EnableIntelligentTrackingPrevention(bool enable) {
+  ark_web_nweb_->EnableIntelligentTrackingPrevention(enable);
+}
+
+bool ArkWebNWebWrapper::IsIntelligentTrackingPreventionEnabled() const {
+  return ark_web_nweb_->IsIntelligentTrackingPreventionEnabled();
+}
+
 } // namespace OHOS::ArkWeb

@@ -962,6 +962,17 @@ public:
    */
   int GetMediaPlaybackState() override;
 
+  /**
+   * Enable the ability to intelligent tracking prevention, default disabled.
+   */
+  void EnableIntelligentTrackingPrevention(bool enable) override;
+
+  /**
+   * Get whether intelligent tracking prevention is enabled.
+   * @return true if enable the ability intelligent tracking prevention; else false.
+   */
+  bool IsIntelligentTrackingPreventionEnabled() const override;
+
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

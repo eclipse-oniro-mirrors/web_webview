@@ -1837,6 +1837,34 @@ int ArkWebNWebCToCpp::GetMediaPlaybackState() {
   return _struct->get_media_playback_state(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::EnableIntelligentTrackingPrevention(bool enable) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct,
+                                   enable_intelligent_tracking_prevention, );
+
+  // Execute
+  _struct->enable_intelligent_tracking_prevention(_struct, enable);
+}
+
+ARK_WEB_NO_SANITIZE
+bool ArkWebNWebCToCpp::IsIntelligentTrackingPreventionEnabled() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, false);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(
+      _struct, is_intelligent_tracking_prevention_enabled, false);
+
+  // Execute
+  return _struct->is_intelligent_tracking_prevention_enabled(_struct);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 
