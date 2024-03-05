@@ -56,6 +56,14 @@ public:
 
   void SetWebDebuggingAccess(bool isEnableDebug) override;
 
+  void AddIntelligentTrackingPreventionBypassingList(
+      const ArkWebStringVector &hosts) override;
+
+  void RemoveIntelligentTrackingPreventionBypassingList(
+      const ArkWebStringVector &hosts) override;
+
+  void ClearIntelligentTrackingPreventionBypassingList() override;
+
   void PauseAllTimers() override;
 
   void ResumeAllTimers() override;

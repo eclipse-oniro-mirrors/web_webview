@@ -696,4 +696,10 @@ void ArkWebHandlerImpl::OnSafeBrowsingCheckResult(int threat_type) {
   nweb_handler_->OnSafeBrowsingCheckResult(threat_type);
 }
 
+void ArkWebHandlerImpl::OnIntelligentTrackingPreventionResult(
+    const ArkWebString &website_host, const ArkWebString &tracker_host) {
+  nweb_handler_->OnIntelligentTrackingPreventionResult(
+      ArkWebStringStructToClass(website_host),
+      ArkWebStringStructToClass(tracker_host));
+}
 } // namespace OHOS::ArkWeb

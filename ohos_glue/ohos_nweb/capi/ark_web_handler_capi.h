@@ -314,6 +314,10 @@ typedef struct _ark_web_handler_t {
 
   void(ARK_WEB_CALLBACK *on_safe_browsing_check_result)(
       struct _ark_web_handler_t *self, int threat_type);
+
+  void(ARK_WEB_CALLBACK *on_intelligent_tracking_prevention_result)(
+      struct _ark_web_handler_t *self, const ArkWebString *website_host,
+      const ArkWebString *tracker_host);
 } ark_web_handler_t;
 
 #ifdef __cplusplus

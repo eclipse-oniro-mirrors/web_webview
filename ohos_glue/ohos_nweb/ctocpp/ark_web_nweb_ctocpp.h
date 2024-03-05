@@ -331,6 +331,20 @@ public:
   void SetPrintBackground(bool enable) override;
 
   bool GetPrintBackground() override;
+
+  void CloseAllMediaPresentations() override;
+
+  void StopAllMedia() override;
+
+  void ResumeAllMedia() override;
+
+  void PauseAllMedia() override;
+
+  int GetMediaPlaybackState() override;
+
+  void EnableIntelligentTrackingPrevention(bool enable) override;
+
+  bool IsIntelligentTrackingPreventionEnabled() override;
 };
 
 } // namespace OHOS::ArkWeb

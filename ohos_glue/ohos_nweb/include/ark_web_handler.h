@@ -610,6 +610,16 @@ public:
    */
   /*--ark web()--*/
   virtual void OnSafeBrowsingCheckResult(int threat_type) = 0;
+
+  /**
+   * @brief Called when tracker's cookie is prevented.
+   *
+   * @param website_host The host of website url.
+   *
+   * @param tracker_host The host of tracker url.
+  */
+  virtual void OnIntelligentTrackingPreventionResult(
+      const ArkWebString &website_host, const ArkWebString &tracker_host) = 0;
 };
 
 } // namespace OHOS::ArkWeb

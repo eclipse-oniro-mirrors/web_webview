@@ -55,6 +55,12 @@ public:
     void PauseAllTimers();
     void ResumeAllTimers();
 
+    void AddIntelligentTrackingPreventionBypassingList(
+        const std::vector<std::string>& hosts);
+    void RemoveIntelligentTrackingPreventionBypassingList(
+        const std::vector<std::string>& hosts);
+    void ClearIntelligentTrackingPreventionBypassingList();
+
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);

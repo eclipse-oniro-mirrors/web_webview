@@ -47,6 +47,11 @@ public:
 
     /*--web engine()--*/
     virtual int64_t GetVSyncPeriod() = 0;
+    /*--web engine()--*/
+    virtual void SetFrameRateLinkerEnable(bool enabled) = 0;
+
+    /*--web engine()--*/
+    virtual void SetFramePreferredRate(int32_t preferredRate) = 0;
 };
 
 /*--web engine(source=library)--*/
