@@ -696,6 +696,13 @@ void ArkWebHandlerImpl::OnSafeBrowsingCheckResult(int threat_type) {
   nweb_handler_->OnSafeBrowsingCheckResult(threat_type);
 }
 
+void ArkWebHandlerImpl::OnIntelligentTrackingPreventionResult(
+    const ArkWebString &website_host, const ArkWebString &tracker_host) {
+  nweb_handler_->OnIntelligentTrackingPreventionResult(
+      ArkWebStringStructToClass(website_host),
+      ArkWebStringStructToClass(tracker_host));
+}
+
 bool ArkWebHandlerImpl::OnHandleOverrideUrlLoading(
     ArkWebRefPtr<ArkWebUrlResourceRequest> request) {
   if (CHECK_REF_PTR_IS_NULL(request)) {
@@ -705,5 +712,4 @@ bool ArkWebHandlerImpl::OnHandleOverrideUrlLoading(
   return nweb_handler_->OnHandleOverrideUrlLoading(
       std::make_shared<ArkWebUrlResourceRequestWrapper>(request));
 }
-
 } // namespace OHOS::ArkWeb

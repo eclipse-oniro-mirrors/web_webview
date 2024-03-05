@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -102,7 +102,7 @@ void LoadFunction(void* handle, const char* functionName, Fn* fnOut)
 {
     void* fn = dlsym(handle, functionName);
     if (!fn) {
-        OHOS::WVLOG_E("%{public}s not found.", functionName);
+        WVLOG_E("%{public}s not found.", functionName);
         return;
     }
     *fnOut = reinterpret_cast<Fn>(fn);
@@ -121,18 +121,18 @@ void LoadSchemeHandlerApi(void* handle, SchemeHandlerApi* api)
 bool EnsureSdkLoaded(void* handle)
 {
     if (g_SchemeHandlerApi) {
-        OHOS::WVLOG_I("SchemeHandlerApi had loaded.");
+        WVLOG_I("SchemeHandlerApi had loaded.");
         return true;
     }
 
     if (handle == nullptr) {
-        OHOS::WVLOG_I("EnsureSdkLoaded handle is nullptr.");
+        WVLOG_I("EnsureSdkLoaded handle is nullptr.");
         return false;
     }
 
     auto* schemeHandlerApi = new SchemeHandlerApi();
     if (schemeHandlerApi == nullptr) {
-        OHOS::WVLOG_I("schemeHandlerApi is nullptr.");
+        WVLOG_I("schemeHandlerApi is nullptr.");
         return false;
     }
     LoadSchemeHandlerApi(handle, schemeHandlerApi);

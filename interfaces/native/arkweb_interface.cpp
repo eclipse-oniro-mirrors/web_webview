@@ -44,7 +44,7 @@ static void LoadFunction(void* handle, const char* functionName, Fn* fnOut)
 {
     void* fn = dlsym(handle, functionName);
     if (!fn) {
-        OHOS::WVLOG_E("%{public}s not found.", functionName);
+        WVLOG_E("%{public}s not found.", functionName);
         return;
     }
     *fnOut = reinterpret_cast<Fn>(fn);
@@ -53,19 +53,19 @@ static void LoadFunction(void* handle, const char* functionName, Fn* fnOut)
 static bool LoadComponentAPI()
 {
     if (g_ComponentImpl) {
-        OHOS::WVLOG_I("NativeArkWeb component api already loaded");
+        WVLOG_I("NativeArkWeb component api already loaded");
         return true;
     }
     g_ComponentImpl = new ArkWeb_ComponentAPI();
     if (!g_ComponentImpl) {
-        OHOS::WVLOG_E("NativeArkWeb component api is nullptr");
+        WVLOG_E("NativeArkWeb component api is nullptr");
         return false;
     }
     g_ComponentImpl->size = sizeof(ArkWeb_ComponentAPI);
 
     void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler();
     if (!webEngineHandle) {
-        OHOS::WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
         return false;
     }
 #define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(webEngineHandle, #ndkFn, &(g_ComponentImpl->fn));
@@ -78,19 +78,19 @@ static bool LoadComponentAPI()
 static bool LoadControllerAPI()
 {
     if (g_ControllerImpl) {
-        OHOS::WVLOG_I("NativeArkWeb controller api already loaded");
+        WVLOG_I("NativeArkWeb controller api already loaded");
         return true;
     }
     g_ControllerImpl = new ArkWeb_ControllerAPI();
     if (!g_ControllerImpl) {
-        OHOS::WVLOG_E("NativeArkWeb controller api is nullptr");
+        WVLOG_E("NativeArkWeb controller api is nullptr");
         return false;
     }
     g_ControllerImpl->size = sizeof(ArkWeb_ControllerAPI);
 
     void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler();
     if (!webEngineHandle) {
-        OHOS::WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
         return false;
     }
 #define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(webEngineHandle, #ndkFn, &(g_ControllerImpl->fn));
@@ -116,7 +116,7 @@ ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type)
             return reinterpret_cast<ArkWeb_AnyNativeAPI*>(g_ControllerImpl);
         }
         default: {
-            OHOS::WVLOG_E("fail to get %{public}d arkweb api family", type);
+            WVLOG_E("fail to get %{public}d arkweb api family", type);
             return nullptr;
         }
     }
