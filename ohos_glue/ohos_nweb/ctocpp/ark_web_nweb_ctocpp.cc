@@ -1904,6 +1904,18 @@ void ArkWebNWebCToCpp::CloseCamera() {
   _struct->close_camera(_struct);
 }
 
+ArkWebString ArkWebNWebCToCpp::GetLastJavascriptProxyCallingFrameUrl() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, ark_web_string_default);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_last_javascript_proxy_calling_frame_url, ark_web_string_default);
+
+  // Execute
+  return _struct->get_last_javascript_proxy_calling_frame_url(_struct);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 
