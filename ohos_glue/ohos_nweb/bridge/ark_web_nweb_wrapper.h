@@ -973,6 +973,24 @@ public:
    */
   bool IsIntelligentTrackingPreventionEnabled() const override;
 
+  /**
+   * @brief Start current camera.
+   */
+  /*--ark web()--*/
+  void StartCamera() override;
+
+  /**
+   * @brief Stop current camera.
+   */
+  /*--ark web()--*/
+  void StopCamera() override;
+
+  /**
+   * @brief Close current camera.
+   */
+  /*--ark web()--*/
+  void CloseCamera() override;
+
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

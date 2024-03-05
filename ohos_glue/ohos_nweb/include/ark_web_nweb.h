@@ -1103,6 +1103,24 @@ public:
    * @return true if enable the ability intelligent tracking prevention; else false.
    */
   virtual bool IsIntelligentTrackingPreventionEnabled() = 0;
+
+  /**
+   * @brief Start current camera.
+   */
+  /*--ark web()--*/
+  virtual void StartCamera() = 0;
+
+  /**
+   * @brief Stop current camera.
+   */
+  /*--ark web()--*/
+  virtual void StopCamera() = 0;
+
+  /**
+   * @brief Close current camera.
+   */
+  /*--ark web()--*/
+  virtual void CloseCamera() = 0;
 };
 
 } // namespace OHOS::ArkWeb

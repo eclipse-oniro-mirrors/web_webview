@@ -282,6 +282,12 @@ public:
 
     bool IsIntelligentTrackingPreventionEnabled();
 
+    ErrCode StartCamera();
+
+    ErrCode StopCamera();
+
+    ErrCode CloseCamera();
+
 private:
     int ConverToWebHitTestType(int hitType);
 
