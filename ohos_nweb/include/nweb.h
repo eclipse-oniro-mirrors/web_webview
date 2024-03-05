@@ -1093,6 +1093,14 @@ public:
      * Close current camera.
      */
     virtual void CloseCamera() = 0;
+
+    /**
+     * @brief Obtains the last javascript proxy calling frame url.
+     *
+     * @return the url of last calling frame url.
+     */
+    /*--ark web()--*/
+    virtual std::string GetLastJavascriptProxyCallingFrameUrl() = 0;
 };
 }  // namespace OHOS::NWeb
 

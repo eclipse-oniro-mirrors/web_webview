@@ -256,6 +256,8 @@ public:
     void SetPrintBackground(bool enable);
 
     bool GetPrintBackground();
+
+    std::string GetLastJavascriptProxyCallingFrameUrl();
     
     static std::string GenerateWebTag();
 
