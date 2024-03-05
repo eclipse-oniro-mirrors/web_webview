@@ -3478,11 +3478,12 @@ bool SetCustomizeScheme(napi_env env, napi_value obj, Scheme& scheme)
 
     for (const auto& property : schemeBooleanProperties) {
         napi_value propertyObj = nullptr;
-        if (napi_get_named_property(env, obj, property.first.c_str(), &propertyObj) != napi_ok) {
-            return false;
-        }
+        std::string property_name = property.first.c_str();
+        napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
         if(!NapiParseUtils::ParseBoolean(env, propertyObj, scheme.*(property.second))) {
-            return false;
+            if (property_name == "isSupportCORS" || property_name == "isSupportFetch") {
+                return false;
+            }
         }
     }
 
