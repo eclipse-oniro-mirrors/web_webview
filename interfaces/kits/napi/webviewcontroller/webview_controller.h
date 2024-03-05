@@ -278,6 +278,10 @@ public:
 
     int GetMediaPlaybackState();
 
+    void EnableIntelligentTrackingPrevention(bool enable);
+
+    bool IsIntelligentTrackingPreventionEnabled();
+
 private:
     int ConverToWebHitTestType(int hitType);
 

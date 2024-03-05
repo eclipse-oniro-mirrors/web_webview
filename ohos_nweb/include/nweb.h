@@ -1067,6 +1067,17 @@ public:
      * @return The playback status of all audio and video.
      */
     virtual int GetMediaPlaybackState() = 0;
+
+    /**
+     * Enable the ability to intelligent tracking prevention, default disabled.
+     */
+    virtual void EnableIntelligentTrackingPrevention(bool enable) = 0;
+
+    /**
+     * Get whether intelligent tracking prevention is enabled.
+     * @return true if enable the ability intelligent tracking prevention; else false.
+     */
+    virtual bool IsIntelligentTrackingPreventionEnabled() const = 0;
 };
 }  // namespace OHOS::NWeb
 
