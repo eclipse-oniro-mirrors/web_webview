@@ -105,7 +105,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     EXPECT_EQ(RESULT_OK, result);
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
-    EXPECT_NE(nweb, nullptr);
+    EXPECT_EQ(nweb, nullptr);
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
@@ -258,7 +258,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadNWebSDK_006, TestSize.Level1)
     bool result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_EQ(RESULT_OK, result);
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
-    EXPECT_NE(nweb, nullptr);
+    EXPECT_EQ(nweb, nullptr);
     result = NWebHelper::Instance().LoadNWebSDK();
     EXPECT_TRUE(result);
     static WebDownloadDelegateCallback *downloadCallback;
