@@ -259,6 +259,21 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getPrintBackground", NapiWebviewController::GetPrintBackground),
         DECLARE_NAPI_FUNCTION("setWebSchemeHandler", NapiWebviewController::SetWebSchemeHandler),
         DECLARE_NAPI_FUNCTION("clearWebSchemeHandler", NapiWebviewController::ClearWebSchemeHandler),
+        DECLARE_NAPI_FUNCTION("closeAllMediaPresentations", NapiWebviewController::CloseAllMediaPresentations),
+        DECLARE_NAPI_FUNCTION("stopAllMedia", NapiWebviewController::StopAllMedia),
+        DECLARE_NAPI_FUNCTION("resumeAllMedia", NapiWebviewController::ResumeAllMedia),
+        DECLARE_NAPI_FUNCTION("pauseAllMedia", NapiWebviewController::PauseAllMedia),
+        DECLARE_NAPI_FUNCTION("getMediaPlaybackState", NapiWebviewController::GetMediaPlaybackState),
+        DECLARE_NAPI_FUNCTION("enableIntelligentTrackingPrevention",
+            NapiWebviewController::EnableIntelligentTrackingPrevention),
+        DECLARE_NAPI_FUNCTION("isIntelligentTrackingPreventionEnabled",
+            NapiWebviewController::IsIntelligentTrackingPreventionEnabled),
+        DECLARE_NAPI_STATIC_FUNCTION("addIntelligentTrackingPreventionBypassingList",
+            NapiWebviewController::AddIntelligentTrackingPreventionBypassingList),
+        DECLARE_NAPI_STATIC_FUNCTION("removeIntelligentTrackingPreventionBypassingList",
+            NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingList),
+        DECLARE_NAPI_STATIC_FUNCTION("clearIntelligentTrackingPreventionBypassingList",
+            NapiWebviewController::ClearIntelligentTrackingPreventionBypassingList),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -3473,11 +3488,12 @@ bool SetCustomizeScheme(napi_env env, napi_value obj, Scheme& scheme)
 
     for (const auto& property : schemeBooleanProperties) {
         napi_value propertyObj = nullptr;
-        if (napi_get_named_property(env, obj, property.first.c_str(), &propertyObj) != napi_ok) {
-            return false;
-        }
+        std::string property_name = property.first.c_str();
+        napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
         if(!NapiParseUtils::ParseBoolean(env, propertyObj, scheme.*(property.second))) {
-            return false;
+            if (property_name == "isSupportCORS" || property_name == "isSupportFetch") {
+                return false;
+            }
         }
     }
 
@@ -3967,6 +3983,76 @@ napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info
     return nullptr;
 }
 
+napi_value NapiWebviewController::CloseAllMediaPresentations(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->CloseAllMediaPresentations();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::StopAllMedia(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->StopAllMedia();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ResumeAllMedia(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->ResumeAllMedia();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::PauseAllMedia(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    webviewController->PauseAllMedia();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetMediaPlaybackState(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    int32_t mediaPlaybackState = webviewController->GetMediaPlaybackState();
+    napi_create_int32(env, mediaPlaybackState, &result);
+    return result;
+}
+
 napi_value NapiWebviewController::SetConnectionTimeout(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
@@ -4449,6 +4535,161 @@ napi_value NapiWebviewController::ClearServiceWorkerWebSchemeHandler(
         return nullptr;
     }
     return nullptr;
+}
+
+napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
+    napi_env env, napi_callback_info info)
+{
+    WVLOG_I("enable/disable intelligent tracking prevention.");
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool enabled = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ZERO], enabled)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->EnableIntelligentTrackingPrevention(enabled);
+    return result;
+}
+
+napi_value NapiWebviewController::IsIntelligentTrackingPreventionEnabled(
+    napi_env env, napi_callback_info info)
+{
+    WVLOG_I("get intelligent tracking prevention enabled value.");
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+
+    if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    bool enabled = webviewController->
+        IsIntelligentTrackingPreventionEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, enabled, &result));
+    return result;
+}
+
+bool GetHostList(napi_env env, napi_value array, std::vector<std::string>& hosts)
+{
+    uint32_t arrayLen = 0;
+    napi_get_array_length(env, array, &arrayLen);
+    if (arrayLen == 0) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return false;
+    }
+
+    for (uint32_t i = 0; i < arrayLen; i++) {
+        napi_value hostItem = nullptr;
+        napi_get_element(env, array, i, &hostItem);
+
+        size_t hostLen = 0;
+        napi_get_value_string_utf8(env, hostItem, nullptr, 0, &hostLen);
+        if (hostLen < 0 || hostLen > UINT_MAX) {
+            WVLOG_E("hostitem length is invalid");
+            return false;
+        }
+
+        char host[hostLen + 1];
+        int retCode = memset_s(host, sizeof(host), 0, hostLen + 1);
+        if (retCode < 0) {
+            WVLOG_E("memset_s failed, retCode=%{public}d", retCode);
+            return false;
+        }
+        napi_get_value_string_utf8(env, hostItem, host, sizeof(host), &hostLen);
+        std::string hostStr(host);
+        hosts.emplace_back(hostStr);
+    }
+    return true;
+}
+
+napi_value NapiWebviewController::AddIntelligentTrackingPreventionBypassingList(
+    napi_env env, napi_callback_info info)
+{
+    WVLOG_I("Add intelligent tracking prevention bypassing list.");
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool isArray = false;
+    NAPI_CALL(env, napi_is_array(env, argv[INTEGER_ZERO], &isArray));
+    if (!isArray) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    std::vector<std::string> hosts;
+    if (!GetHostList(env, argv[INTEGER_ZERO], hosts)) {
+        WVLOG_E("get host list failed, GetHostList fail");
+        return result;
+    }
+
+    NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingList(
+    napi_env env, napi_callback_info info)
+{
+    WVLOG_I("Remove intelligent tracking prevention bypassing list.");
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    bool isArray = false;
+    NAPI_CALL(env, napi_is_array(env, argv[INTEGER_ZERO], &isArray));
+    if (!isArray) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    std::vector<std::string> hosts;
+    if (!GetHostList(env, argv[INTEGER_ZERO], hosts)) {
+        WVLOG_E("get host list failed, GetHostList fail");
+        return result;
+    }
+
+    NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ClearIntelligentTrackingPreventionBypassingList(
+    napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WVLOG_I("Clear intelligent tracking prevention bypassing list.");
+    NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
 }
 } // namespace NWeb
 } // namespace OHOS

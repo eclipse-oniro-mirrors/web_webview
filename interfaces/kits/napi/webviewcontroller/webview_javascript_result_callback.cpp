@@ -666,7 +666,7 @@ bool IsCallableObject(napi_env env, napi_value& value, std::vector<std::string>*
     bool hasProperty = false;
     s = napi_has_named_property(env, value, annotation.c_str(), &hasProperty);
     if (s != napi_ok) {
-        WVLOG_W("IsCallableObject napi api call fail");
+        WVLOG_D("IsCallableObject napi api call fail");
     }
     if (!hasProperty) {
         WVLOG_D("IsCallableObject has not methodNameList property");

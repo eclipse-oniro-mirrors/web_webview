@@ -31,6 +31,10 @@ public:
 
     int64_t GetVSyncPeriod() override;
 
+    void SetFrameRateLinkerEnable(bool enabled) override;
+
+    void SetFramePreferredRate(int32_t preferredRate) override;
+
 private:
     NWeb::VSyncAdapter& real_;
 

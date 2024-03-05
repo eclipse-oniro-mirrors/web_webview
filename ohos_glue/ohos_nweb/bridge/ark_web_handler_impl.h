@@ -503,6 +503,16 @@ public:
   void OnSafeBrowsingCheckResult(int threat_type) override;
 
   /**
+   * @brief Called when tracker's cookie is prevented.
+   *
+   * @param website_host The host of website url.
+   *
+   * @param tracker_host The host of tracker url.
+  */
+  void OnIntelligentTrackingPreventionResult(
+      const ArkWebString &website_host, const ArkWebString &tracker_host) override;
+
+  /**
    * @brief Give the SDK a chance to decide whether to override loading the
    * url.
    *
