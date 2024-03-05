@@ -899,4 +899,24 @@ bool ArkWebNWebWrapper::GetPrintBackground() {
   return ark_web_nweb_->GetPrintBackground();
 }
 
+void ArkWebNWebWrapper::CloseAllMediaPresentations() {
+  ark_web_nweb_->CloseAllMediaPresentations();
+}
+
+void ArkWebNWebWrapper::StopAllMedia() {
+  ark_web_nweb_->StopAllMedia();
+}
+
+void ArkWebNWebWrapper::ResumeAllMedia() {
+  ark_web_nweb_->ResumeAllMedia();
+}
+
+void ArkWebNWebWrapper::PauseAllMedia() {
+  ark_web_nweb_->PauseAllMedia();
+}
+
+int ArkWebNWebWrapper::GetMediaPlaybackState() {
+  return ark_web_nweb_->GetMediaPlaybackState();
+}
+
 } // namespace OHOS::ArkWeb

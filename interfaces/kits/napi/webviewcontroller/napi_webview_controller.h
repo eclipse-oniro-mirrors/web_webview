@@ -245,6 +245,16 @@ private:
 
     static napi_value ClearServiceWorkerWebSchemeHandler(
         napi_env env, napi_callback_info info);
+
+    static napi_value CloseAllMediaPresentations(napi_env env, napi_callback_info info);
+
+    static napi_value StopAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value ResumeAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value PauseAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value GetMediaPlaybackState(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {
