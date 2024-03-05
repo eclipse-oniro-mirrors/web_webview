@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -113,7 +113,7 @@ template <typename Fn> void LoadFunction(void *handle, const char *functionName,
 {
     void *fn = dlsym(handle, functionName);
     if (!fn) {
-        OHOS::WVLOG_E("%{public}s not found.", functionName);
+        WVLOG_E("%{public}s not found.", functionName);
         return;
     }
     *fnOut = reinterpret_cast<Fn>(fn);
@@ -132,18 +132,18 @@ void LoadNWebCApi(void *handle, NWebCApi *api)
 bool LoadNWebSDK(void *handle)
 {
     if (g_nwebCApi) {
-        OHOS::WVLOG_E("LoadNWebSDK had loaded.");
+        WVLOG_E("LoadNWebSDK had loaded.");
         return true;
     }
 
     if (handle == nullptr) {
-        OHOS::WVLOG_E("LoadNWebSDK handle is nullptr.");
+        WVLOG_E("LoadNWebSDK handle is nullptr.");
         return false;
     }
 
     auto *nwebCApi = new NWebCApi();
     if (nwebCApi == nullptr) {
-        OHOS::WVLOG_E("nwebCApi is nullptr.");
+        WVLOG_E("nwebCApi is nullptr.");
         return false;
     }
     LoadNWebCApi(handle, nwebCApi);
@@ -156,7 +156,7 @@ bool LoadNWebSDK(void *handle)
 extern "C" void WebDownloadManager_PutDownloadCallback(WebDownloadDelegateCallback *callback)
 {
     if (!g_nwebCApi->impl_WebDownloadManager_PutDownloadCallback) {
-        OHOS::WVLOG_E("WebDownloadManager_PutDownloadCallback not found.");
+        WVLOG_E("WebDownloadManager_PutDownloadCallback not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadManager_PutDownloadCallback(callback);
@@ -165,7 +165,7 @@ extern "C" void WebDownloadManager_PutDownloadCallback(WebDownloadDelegateCallba
 extern "C" void WebDownloader_SetDownloadBeforeStart(WebDownloadDelegateCallback *callback, OnDownloadBeforeStart fun)
 {
     if (!g_nwebCApi->impl_WebDownloader_SetDownloadBeforeStart) {
-        OHOS::WVLOG_E("WebDownloader_SetDownloadBeforeStart not found.");
+        WVLOG_E("WebDownloader_SetDownloadBeforeStart not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloader_SetDownloadBeforeStart(callback, fun);
@@ -174,7 +174,7 @@ extern "C" void WebDownloader_SetDownloadBeforeStart(WebDownloadDelegateCallback
 extern "C" void WebDownloader_SetDownloadDidUpdate(WebDownloadDelegateCallback *callback, OnDownloadDidUpdate fun)
 {
     if (!g_nwebCApi->impl_WebDownloader_SetDownloadDidUpdate) {
-        OHOS::WVLOG_E("WebDownloader_SetDownloadDidUpdate not found");
+        WVLOG_E("WebDownloader_SetDownloadDidUpdate not found");
         return;
     }
     g_nwebCApi->impl_WebDownloader_SetDownloadDidUpdate(callback, fun);
@@ -183,7 +183,7 @@ extern "C" void WebDownloader_SetDownloadDidUpdate(WebDownloadDelegateCallback *
 extern "C" void WebDownloader_ResumeDownloadStatic(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloader_ResumeDownloadStatic) {
-        OHOS::WVLOG_E("WebDownloader_ResumeDownloadStatic not found.");
+        WVLOG_E("WebDownloader_ResumeDownloadStatic not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloader_ResumeDownloadStatic(downloadItem);
@@ -192,7 +192,7 @@ extern "C" void WebDownloader_ResumeDownloadStatic(const NWebDownloadItem *downl
 extern "C" void WebDownloader_StartDownload(int32_t nwebId, const char* url)
 {
     if (!g_nwebCApi->impl_WebDownloader_StartDownload) {
-        OHOS::WVLOG_E("WebDownloader_StartDownload not found.");
+        WVLOG_E("WebDownloader_StartDownload not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloader_StartDownload(nwebId, url);
@@ -201,7 +201,7 @@ extern "C" void WebDownloader_StartDownload(int32_t nwebId, const char* url)
 extern "C" void WebDownloader_CreateDownloadDelegateCallback(WebDownloadDelegateCallback **callback)
 {
     if (!g_nwebCApi || !g_nwebCApi->impl_WebDownloader_CreateDownloadDelegateCallback) {
-        OHOS::WVLOG_E("WebDownloader_CreateDownloadDelegateCallback not found.");
+        WVLOG_E("WebDownloader_CreateDownloadDelegateCallback not found.");
         return;
     }
 
@@ -211,7 +211,7 @@ extern "C" void WebDownloader_CreateDownloadDelegateCallback(WebDownloadDelegate
 extern "C" void WebDownload_Continue(const WebBeforeDownloadCallbackWrapper *wrapper, const char *downloadPath)
 {
     if (!g_nwebCApi->impl_WebDownload_Continue) {
-        OHOS::WVLOG_E("WebDownload_Continue not found.");
+        WVLOG_E("WebDownload_Continue not found.");
         return;
     }
     g_nwebCApi->impl_WebDownload_Continue(wrapper, downloadPath);
@@ -220,7 +220,7 @@ extern "C" void WebDownload_Continue(const WebBeforeDownloadCallbackWrapper *wra
 extern "C" void WebDownload_Cancel(const WebDownloadItemCallbackWrapper *wrapper)
 {
     if (!g_nwebCApi->impl_WebDownload_Cancel) {
-        OHOS::WVLOG_E("WebDownload_Cancel not found.");
+        WVLOG_E("WebDownload_Cancel not found.");
         return;
     }
     g_nwebCApi->impl_WebDownload_Cancel(wrapper);
@@ -229,7 +229,7 @@ extern "C" void WebDownload_Cancel(const WebDownloadItemCallbackWrapper *wrapper
 extern "C" void WebDownload_Pause(const WebDownloadItemCallbackWrapper *wrapper)
 {
     if (!g_nwebCApi->impl_WebDownload_Pause) {
-        OHOS::WVLOG_E("WebDownload_Pause not found");
+        WVLOG_E("WebDownload_Pause not found");
         return;
     }
     g_nwebCApi->impl_WebDownload_Pause(wrapper);
@@ -238,7 +238,7 @@ extern "C" void WebDownload_Pause(const WebDownloadItemCallbackWrapper *wrapper)
 extern "C" void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper)
 {
     if (!g_nwebCApi->impl_WebDownload_Resume) {
-        OHOS::WVLOG_E("WebDownload_Resume not found.");
+        WVLOG_E("WebDownload_Resume not found.");
         return;
     }
     g_nwebCApi->impl_WebDownload_Resume(wrapper);
@@ -247,7 +247,7 @@ extern "C" void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper
 extern "C" char *WebDownloadItem_Guid(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_Guid) {
-        OHOS::WVLOG_E("WebDownloadItem_Guid not found.");
+        WVLOG_E("WebDownloadItem_Guid not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_Guid(downloadItem);
@@ -272,7 +272,7 @@ extern "C" NWebDownloadItemState WebDownloadItem_GetState(const NWebDownloadItem
 extern "C" int WebDownloadItem_CurrentSpeed(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_CurrentSpeed) {
-        OHOS::WVLOG_E("WebDownloadItem_CurrentSpeed not found.");
+        WVLOG_E("WebDownloadItem_CurrentSpeed not found.");
         return 0;
     }
     return g_nwebCApi->impl_WebDownloadItem_CurrentSpeed(downloadItem);
@@ -281,7 +281,7 @@ extern "C" int WebDownloadItem_CurrentSpeed(const NWebDownloadItem *downloadItem
 extern "C" int WebDownloadItem_PercentComplete(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_PercentComplete) {
-        OHOS::WVLOG_E("WebDownloadItem_TotalBytes not found.");
+        WVLOG_E("WebDownloadItem_TotalBytes not found.");
         return 0;
     }
     return g_nwebCApi->impl_WebDownloadItem_PercentComplete(downloadItem);
@@ -290,7 +290,7 @@ extern "C" int WebDownloadItem_PercentComplete(const NWebDownloadItem *downloadI
 extern "C" int64_t WebDownloadItem_TotalBytes(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_TotalBytes) {
-        OHOS::WVLOG_E("WebDownloadItem_TotalBytes not found.");
+        WVLOG_E("WebDownloadItem_TotalBytes not found.");
         return 0;
     }
     return g_nwebCApi->impl_WebDownloadItem_TotalBytes(downloadItem);
@@ -299,7 +299,7 @@ extern "C" int64_t WebDownloadItem_TotalBytes(const NWebDownloadItem *downloadIt
 extern "C" int64_t WebDownloadItem_ReceivedBytes(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_ReceivedBytes) {
-        OHOS::WVLOG_E("WebDownloadItem_ReceivedBytes not found.");
+        WVLOG_E("WebDownloadItem_ReceivedBytes not found.");
         return 0;
     }
     return g_nwebCApi->impl_WebDownloadItem_ReceivedBytes(downloadItem);
@@ -308,7 +308,7 @@ extern "C" int64_t WebDownloadItem_ReceivedBytes(const NWebDownloadItem *downloa
 extern "C" char *WebDownloadItem_FullPath(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_FullPath) {
-        OHOS::WVLOG_E("WebDownloadItem_FullPath not found");
+        WVLOG_E("WebDownloadItem_FullPath not found");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_FullPath(downloadItem);
@@ -317,7 +317,7 @@ extern "C" char *WebDownloadItem_FullPath(const NWebDownloadItem *downloadItem)
 extern "C" char *WebDownloadItem_Url(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_Url) {
-        OHOS::WVLOG_E("WebDownloadItem_Url not found.");
+        WVLOG_E("WebDownloadItem_Url not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_Url(downloadItem);
@@ -326,7 +326,7 @@ extern "C" char *WebDownloadItem_Url(const NWebDownloadItem *downloadItem)
 extern "C" char *WebDownloadItem_OriginalUrl(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_OriginalUrl) {
-        OHOS::WVLOG_E("WebDownloadItem_OriginalUrl not found.");
+        WVLOG_E("WebDownloadItem_OriginalUrl not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_OriginalUrl(downloadItem);
@@ -335,7 +335,7 @@ extern "C" char *WebDownloadItem_OriginalUrl(const NWebDownloadItem *downloadIte
 extern "C" char *WebDownloadItem_SuggestedFileName(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SuggestedFileName) {
-        OHOS::WVLOG_E("WebDownloadItem_SuggestedFileName not found.");
+        WVLOG_E("WebDownloadItem_SuggestedFileName not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_SuggestedFileName(downloadItem);
@@ -344,7 +344,7 @@ extern "C" char *WebDownloadItem_SuggestedFileName(const NWebDownloadItem *downl
 extern "C" char *WebDownloadItem_ContentDisposition(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_ContentDisposition) {
-        OHOS::WVLOG_E("WebDownloadItem_ContentDisposition not found.");
+        WVLOG_E("WebDownloadItem_ContentDisposition not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_ContentDisposition(downloadItem);
@@ -353,7 +353,7 @@ extern "C" char *WebDownloadItem_ContentDisposition(const NWebDownloadItem *down
 extern "C" char *WebDownloadItem_ETag(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_ETag) {
-        OHOS::WVLOG_E("WebDownloadItem_ETag not found.");
+        WVLOG_E("WebDownloadItem_ETag not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_ETag(downloadItem);
@@ -362,7 +362,7 @@ extern "C" char *WebDownloadItem_ETag(const NWebDownloadItem *downloadItem)
 extern "C" char *WebDownloadItem_MimeType(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_MimeType) {
-        OHOS::WVLOG_E("WebDownloadItem_MimeType not found.");
+        WVLOG_E("WebDownloadItem_MimeType not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_MimeType(downloadItem);
@@ -371,7 +371,7 @@ extern "C" char *WebDownloadItem_MimeType(const NWebDownloadItem *downloadItem)
 extern "C" bool WebDownloadItem_IsPaused(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_IsPaused) {
-        OHOS::WVLOG_E("WebDownloadItem_IsPaused not found.");
+        WVLOG_E("WebDownloadItem_IsPaused not found.");
         return false;
     }
     return g_nwebCApi->impl_WebDownloadItem_IsPaused(downloadItem);
@@ -380,7 +380,7 @@ extern "C" bool WebDownloadItem_IsPaused(const NWebDownloadItem *downloadItem)
 extern "C" char *WebDownloadItem_Method(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_Method) {
-        OHOS::WVLOG_E("WebDownloadItem_Method not found.");
+        WVLOG_E("WebDownloadItem_Method not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_Method(downloadItem);
@@ -389,7 +389,7 @@ extern "C" char *WebDownloadItem_Method(const NWebDownloadItem *downloadItem)
 extern "C" int WebDownloadItem_LastErrorCode(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_LastErrorCode) {
-        OHOS::WVLOG_E("WebDownloadItem_LastErrorCode not found.");
+        WVLOG_E("WebDownloadItem_LastErrorCode not found.");
         return 0;
     }
     return g_nwebCApi->impl_WebDownloadItem_LastErrorCode(downloadItem);
@@ -398,7 +398,7 @@ extern "C" int WebDownloadItem_LastErrorCode(const NWebDownloadItem *downloadIte
 extern "C" char *WebDownloadItem_ReceivedSlices(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_ReceivedSlices) {
-        OHOS::WVLOG_E("WebDownloadItem_ReceivedSlices not found.");
+        WVLOG_E("WebDownloadItem_ReceivedSlices not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_ReceivedSlices(downloadItem);
@@ -407,7 +407,7 @@ extern "C" char *WebDownloadItem_ReceivedSlices(const NWebDownloadItem *download
 extern "C" char *WebDownloadItem_LastModified(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_LastModified) {
-        OHOS::WVLOG_E("WebDownloadItem_LastModified not found.");
+        WVLOG_E("WebDownloadItem_LastModified not found.");
         return nullptr;
     }
     return g_nwebCApi->impl_WebDownloadItem_LastModified(downloadItem);
@@ -416,7 +416,7 @@ extern "C" char *WebDownloadItem_LastModified(const NWebDownloadItem *downloadIt
 extern "C" int WebDownloadItem_NWebId(const NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_NWebId) {
-        OHOS::WVLOG_E("WebDownloadItem_NWebId not found.");
+        WVLOG_E("WebDownloadItem_NWebId not found.");
         return -1;
     }
     return g_nwebCApi->impl_WebDownloadItem_NWebId(downloadItem);
@@ -425,7 +425,7 @@ extern "C" int WebDownloadItem_NWebId(const NWebDownloadItem *downloadItem)
 extern "C" void WebDownloadItem_CreateWebDownloadItem(NWebDownloadItem **downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_CreateWebDownloadItem) {
-        OHOS::WVLOG_E("WebDownloadItem_CreateWebDownloadItem not found.");
+        WVLOG_E("WebDownloadItem_CreateWebDownloadItem not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_CreateWebDownloadItem(downloadItem);
@@ -434,7 +434,7 @@ extern "C" void WebDownloadItem_CreateWebDownloadItem(NWebDownloadItem **downloa
 extern "C" void WebDownloadItem_Destroy(NWebDownloadItem *downloadItem)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_Destroy) {
-        OHOS::WVLOG_E("WebDownloadItem_Destroy not found.");
+        WVLOG_E("WebDownloadItem_Destroy not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_Destroy(downloadItem);
@@ -443,7 +443,7 @@ extern "C" void WebDownloadItem_Destroy(NWebDownloadItem *downloadItem)
 extern "C" void DestroyBeforeDownloadCallbackWrapper(WebBeforeDownloadCallbackWrapper *wrapper)
 {
     if (!g_nwebCApi->impl_DestroyBeforeDownloadCallbackWrapper) {
-        OHOS::WVLOG_E("DestroyBeforeDownloadCallbackWrapper not found.");
+        WVLOG_E("DestroyBeforeDownloadCallbackWrapper not found.");
         return;
     }
     g_nwebCApi->impl_DestroyBeforeDownloadCallbackWrapper(wrapper);
@@ -452,7 +452,7 @@ extern "C" void DestroyBeforeDownloadCallbackWrapper(WebBeforeDownloadCallbackWr
 extern "C" void DestroyDownloadItemCallbackWrapper(WebDownloadItemCallbackWrapper *wrapper)
 {
     if (!g_nwebCApi->impl_DestroyDownloadItemCallbackWrapper) {
-        OHOS::WVLOG_E("DestroyDownloadItemCallbackWrapper not found.");
+        WVLOG_E("DestroyDownloadItemCallbackWrapper not found.");
         return;
     }
     g_nwebCApi->impl_DestroyDownloadItemCallbackWrapper(wrapper);
@@ -461,7 +461,7 @@ extern "C" void DestroyDownloadItemCallbackWrapper(WebDownloadItemCallbackWrappe
 extern "C" void WebDownloadItem_SetGuid(NWebDownloadItem *downloadItem, const char *guid)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetGuid) {
-        OHOS::WVLOG_E("WebDownloadItem_SetGuid not found.");
+        WVLOG_E("WebDownloadItem_SetGuid not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetGuid(downloadItem, guid);
@@ -470,7 +470,7 @@ extern "C" void WebDownloadItem_SetGuid(NWebDownloadItem *downloadItem, const ch
 extern "C" void WebDownloadItem_SetUrl(NWebDownloadItem *downloadItem, const char *url)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetUrl) {
-        OHOS::WVLOG_E("WebDownloadItem_SetUrl not found.");
+        WVLOG_E("WebDownloadItem_SetUrl not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetUrl(downloadItem, url);
@@ -479,7 +479,7 @@ extern "C" void WebDownloadItem_SetUrl(NWebDownloadItem *downloadItem, const cha
 extern "C" void WebDownloadItem_SetFullPath(NWebDownloadItem *downloadItem, const char *full_path)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetFullPath) {
-        OHOS::WVLOG_E("WebDownloadItem_SetFullPath not found.");
+        WVLOG_E("WebDownloadItem_SetFullPath not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetFullPath(downloadItem, full_path);
@@ -488,7 +488,7 @@ extern "C" void WebDownloadItem_SetFullPath(NWebDownloadItem *downloadItem, cons
 extern "C" void WebDownloadItem_SetETag(NWebDownloadItem *downloadItem, const char *etag)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetETag) {
-        OHOS::WVLOG_E("WebDownloadItem_SetETag not found.");
+        WVLOG_E("WebDownloadItem_SetETag not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetETag(downloadItem, etag);
@@ -497,7 +497,7 @@ extern "C" void WebDownloadItem_SetETag(NWebDownloadItem *downloadItem, const ch
 extern "C" void WebDownloadItem_SetLastModified(NWebDownloadItem *downloadItem, const char *lastModified)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetLastModified) {
-        OHOS::WVLOG_E("WebDownloadItem_SetLastModified not found.");
+        WVLOG_E("WebDownloadItem_SetLastModified not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetLastModified(downloadItem, lastModified);
@@ -506,7 +506,7 @@ extern "C" void WebDownloadItem_SetLastModified(NWebDownloadItem *downloadItem, 
 extern "C" void WebDownloadItem_SetMimeType(NWebDownloadItem *downloadItem, const char *mimeType)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetMimeType) {
-        OHOS::WVLOG_E("WebDownloadItem_SetMimeType not found.");
+        WVLOG_E("WebDownloadItem_SetMimeType not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetMimeType(downloadItem, mimeType);
@@ -515,7 +515,7 @@ extern "C" void WebDownloadItem_SetMimeType(NWebDownloadItem *downloadItem, cons
 extern "C" void WebDownloadItem_SetReceivedBytes(NWebDownloadItem *downloadItem, int64_t receivedBytes)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetReceivedBytes) {
-        OHOS::WVLOG_E("WebDownloadItem_SetReceivedBytes not found.");
+        WVLOG_E("WebDownloadItem_SetReceivedBytes not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetReceivedBytes(downloadItem, receivedBytes);
@@ -524,7 +524,7 @@ extern "C" void WebDownloadItem_SetReceivedBytes(NWebDownloadItem *downloadItem,
 extern "C" void WebDownloadItem_SetTotalBytes(NWebDownloadItem *downloadItem, int64_t totalBytes)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetTotalBytes) {
-        OHOS::WVLOG_E("WebDownloadItem_SetTotalBytes not found.");
+        WVLOG_E("WebDownloadItem_SetTotalBytes not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetTotalBytes(downloadItem, totalBytes);
@@ -533,7 +533,7 @@ extern "C" void WebDownloadItem_SetTotalBytes(NWebDownloadItem *downloadItem, in
 extern "C" void WebDownloadItem_SetReceivedSlices(NWebDownloadItem *downloadItem, const char *receivedSlices)
 {
     if (!g_nwebCApi->impl_WebDownloadItem_SetReceivedSlices) {
-        OHOS::WVLOG_E("WebDownloadItem_SetReceivedSlices not found.");
+        WVLOG_E("WebDownloadItem_SetReceivedSlices not found.");
         return;
     }
     g_nwebCApi->impl_WebDownloadItem_SetReceivedSlices(downloadItem, receivedSlices);
@@ -699,7 +699,7 @@ void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bu
 {
     g_isFirstTimeStartUp = isFirstTimeStartUpWeb;
     if (isFirstTimeStartUpWeb) {
-        WVLOG_I("first time startup, need to wait until the nweb init stage");
+        WVLOG_D("first time startup, need to wait until the nweb init stage");
         return;
     }
 
