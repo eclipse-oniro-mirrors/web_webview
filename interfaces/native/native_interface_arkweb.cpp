@@ -50,7 +50,7 @@ public:
 
 private:
     std::string methodName_;
-    NativeArkWeb_OnJavaScriptProxyCallback methodCallback_;
+    NativeArkWeb_OnJavaScriptProxyCallback methodCallback_ = nullptr;
 };
 
 }; // namespace OHOS::NWeb
