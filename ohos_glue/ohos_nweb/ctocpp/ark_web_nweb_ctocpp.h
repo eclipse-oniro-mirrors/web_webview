@@ -345,6 +345,12 @@ public:
   void EnableIntelligentTrackingPrevention(bool enable) override;
 
   bool IsIntelligentTrackingPreventionEnabled() override;
+
+  void StartCamera() override;
+
+  void StopCamera() override;
+
+  void CloseCamera() override;
 };
 
 } // namespace OHOS::ArkWeb

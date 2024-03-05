@@ -274,6 +274,9 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingList),
         DECLARE_NAPI_STATIC_FUNCTION("clearIntelligentTrackingPreventionBypassingList",
             NapiWebviewController::ClearIntelligentTrackingPreventionBypassingList),
+        DECLARE_NAPI_FUNCTION("startCamera", NapiWebviewController::StartCamera),
+        DECLARE_NAPI_FUNCTION("stopCamera", NapiWebviewController::StopCamera),
+        DECLARE_NAPI_FUNCTION("closeCamera", NapiWebviewController::CloseCamera),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -4689,6 +4692,45 @@ napi_value NapiWebviewController::ClearIntelligentTrackingPreventionBypassingLis
     WVLOG_I("Clear intelligent tracking prevention bypassing list.");
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::StartCamera(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->StartCamera();
+
+    return result;
+}
+
+napi_value NapiWebviewController::StopCamera(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->StopCamera();
+
+    return result;
+}
+
+napi_value NapiWebviewController::CloseCamera(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->CloseCamera();
+
     return result;
 }
 } // namespace NWeb

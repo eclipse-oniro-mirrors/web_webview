@@ -1865,6 +1865,45 @@ bool ArkWebNWebCToCpp::IsIntelligentTrackingPreventionEnabled() {
   return _struct->is_intelligent_tracking_prevention_enabled(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::StartCamera() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, start_camera, );
+
+  // Execute
+  _struct->start_camera(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::StopCamera() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, stop_camera, );
+
+  // Execute
+  _struct->stop_camera(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::CloseCamera() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, close_camera, );
+
+  // Execute
+  _struct->close_camera(_struct);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 
