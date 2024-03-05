@@ -25,8 +25,8 @@ namespace OHOS::ArkWeb {
 ArkWebRefPtr<ArkLocationInstance> ArkLocationInstance::GetInstance()
 {
     static NWeb::LocationInstance& instance = NWeb::LocationInstance::GetInstance();
-    static ArkLocationInstanceImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkLocationInstance> impl = new ArkLocationInstanceImpl(instance);
+    return impl;
 }
 
 ArkLocationInstanceImpl::ArkLocationInstanceImpl(NWeb::LocationInstance& ref) : real_(ref) {}

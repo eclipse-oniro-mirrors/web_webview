@@ -244,7 +244,7 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_RegNetProxyEvent_002, TestSize
     EXPECT_FALSE(result);
     std::shared_ptr<NetProxyEventCallbackAdapter> eventCallback =
         std::make_shared<MockNetProxyEventCallbackAdapter>();
-    NetProxyAdapterImpl::GetInstance().RegNetProxyEvent(std::move(eventCallback));
+    NetProxyAdapterImpl::GetInstance().RegNetProxyEvent(eventCallback);
     EXPECT_NE(NetProxyAdapterImpl::GetInstance().cb_, nullptr);
     result = NetProxyAdapterImpl::GetInstance().StartListen();
     EXPECT_TRUE(result);
