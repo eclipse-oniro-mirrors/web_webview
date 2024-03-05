@@ -68,7 +68,7 @@ private:
 private:
     void *libHandleWebEngine_ = nullptr;
     std::string bundlePath_;
-    std::shared_ptr<NWebEngine> nwebEngine_;
+    std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::string customSchemeCmdLine_;
 };
 } // namespace OHOS::NWeb

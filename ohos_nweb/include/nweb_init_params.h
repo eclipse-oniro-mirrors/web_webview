@@ -117,8 +117,8 @@ private:
   void *producerSurface_ = nullptr;
   void *enhanceSurfaceInfo_ = nullptr;
 
-  std::shared_ptr<NWebEngineInitArgs> initArgs_;
-  std::shared_ptr<NWebOutputFrameCallback> outputFrameCallback_;
+  std::shared_ptr<NWebEngineInitArgs> initArgs_ = nullptr;
+  std::shared_ptr<NWebOutputFrameCallback> outputFrameCallback_ = nullptr;
 };
 
 class NWebEngineInitArgsImpl : public NWebEngineInitArgs {
