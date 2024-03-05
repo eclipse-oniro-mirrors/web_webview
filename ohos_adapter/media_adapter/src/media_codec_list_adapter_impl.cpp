@@ -31,6 +31,10 @@ void MediaCodecListAdapterImpl::TransToAdapterCapability(const CapabilityData* d
 {
     if (data == nullptr) {
         WVLOG_E("MediaCodecEncoder data is null.");
+        adapterData.maxWidth = 0;
+        adapterData.maxHeight = 0;
+        adapterData.maxframeRate = 0;
+        return;
     }
     adapterData.maxWidth = data->width.maxVal;
     adapterData.maxHeight = data->height.maxVal;

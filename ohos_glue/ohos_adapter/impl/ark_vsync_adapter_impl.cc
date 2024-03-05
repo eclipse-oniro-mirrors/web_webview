@@ -29,4 +29,14 @@ int64_t ArkVSyncAdapterImpl::GetVSyncPeriod()
     return real_.GetVSyncPeriod();
 }
 
+void ArkVSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
+{
+    return real_.SetFrameRateLinkerEnable(enabled);
+}
+
+void ArkVSyncAdapterImpl::SetFramePreferredRate(int32_t preferredRate)
+{
+    return real_.SetFramePreferredRate(preferredRate);
+}
+
 } // namespace OHOS::ArkWeb

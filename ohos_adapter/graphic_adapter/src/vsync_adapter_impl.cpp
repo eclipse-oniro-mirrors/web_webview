@@ -54,7 +54,9 @@ VSyncErrorCode VSyncAdapterImpl::Init()
             runner->Run();
         }
         auto& rsClient = OHOS::Rosen::RSInterfaces::GetInstance();
-        receiver_ = rsClient.CreateVSyncReceiver("NWeb_" + std::to_string(::getprocpid()), vsyncHandler_);
+        frameRateLinker_ = OHOS::Rosen::RSFrameRateLinker::Create();
+        receiver_ = rsClient.CreateVSyncReceiver("NWeb_" + std::to_string(::getprocpid()),
+                                                frameRateLinker_->GetId(), vsyncHandler_);
         if (!receiver_) {
             WVLOG_E("CreateVSyncReceiver failed");
             return VSyncErrorCode::ERROR;
@@ -142,5 +144,25 @@ int64_t VSyncAdapterImpl::GetVSyncPeriod()
         WVLOG_E("NWebWindowAdapter GetVSyncPeriod fail, ret=%{public}d", ret);
     }
     return period;
+}
+void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
+{
+    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 120};
+    if (frameRateLinker_) {
+        if (!enabled) {
+            range = {0, RANGE_MAX_REFRESHRATE, 0};
+        }
+        frameRateLinker_->UpdateFrameRateRangeImme(range);
+        frameRateLinker_->SetEnable(enabled);
+    }
+}
+
+void VSyncAdapterImpl::SetFramePreferredRate(int32_t preferredRate)
+{
+    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, preferredRate};
+    if (frameRateLinker_) {
+        frameRateLinker_->UpdateFrameRateRangeImme(range);
+        frameRateLinker_->SetEnable(true);
+    }
 }
 } // namespace OHOS::NWeb
