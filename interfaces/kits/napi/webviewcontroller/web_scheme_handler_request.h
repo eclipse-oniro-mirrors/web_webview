@@ -41,7 +41,7 @@ public:
     bool IsMainFrame();
     bool HasGesture();
     const WebHeaderList& GetHeader();
-    ArkWeb_PostDataStream* GetPostDataStream();
+    ArkWeb_HttpBodyStream* GetHttpBodyStream();
 private:
     napi_env env_;
     char* url_ = nullptr;
@@ -51,7 +51,7 @@ private:
     bool isMainFrame_ = false;
     bool hasGesture_ = false;
     WebHeaderList headerList_;
-    ArkWeb_PostDataStream* stream_ = nullptr;
+    ArkWeb_HttpBodyStream* stream_ = nullptr;
 };
 
 class WebSchemeHandlerResponse {
@@ -143,15 +143,15 @@ private:
     napi_env env_;
 };
 
-class WebPostDataStream {
+class WebHttpBodyStream {
 public:
-    explicit WebPostDataStream(napi_env env);
-    static void PostDataStreamReadCallback(
-        const ArkWeb_PostDataStream* postDataStream, uint8_t* buffer, int bytesRead);
-    static void PostDataStreamInitCallback(
-        const ArkWeb_PostDataStream* postDataStream, ArkWeb_NetError result);
-    WebPostDataStream(napi_env env, ArkWeb_PostDataStream* stream);
-    ~WebPostDataStream();
+    explicit WebHttpBodyStream(napi_env env);
+    static void HttpBodyStreamReadCallback(
+        const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bytesRead);
+    static void HttpBodyStreamInitCallback(
+        const ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_NetError result);
+    WebHttpBodyStream(napi_env env, ArkWeb_HttpBodyStream* stream);
+    ~WebHttpBodyStream();
     void Init(napi_ref jsCallback, napi_deferred deferred);
     void Read(int bufLen, napi_ref jsCallback, napi_deferred deferred);
     uint64_t GetPostion();
@@ -188,7 +188,7 @@ private:
     napi_ref readJsCallback_ = nullptr;
     napi_deferred readDeferred_ = nullptr;
     napi_env env_;
-    ArkWeb_PostDataStream* stream_ = nullptr;
+    ArkWeb_HttpBodyStream* stream_ = nullptr;
 };
 }
 }
