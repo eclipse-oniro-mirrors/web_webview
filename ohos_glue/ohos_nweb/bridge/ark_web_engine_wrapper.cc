@@ -166,4 +166,12 @@ void ArkWebEngineWrapper::ClearIntelligentTrackingPreventionBypassingList() {
   ark_web_engine_->ClearIntelligentTrackingPreventionBypassingList();
 }
 
+void ArkWebEngineWrapper::PauseAllTimers() {
+  ark_web_engine_->PauseAllTimers();
+}
+
+void ArkWebEngineWrapper::ResumeAllTimers() {
+  ark_web_engine_->ResumeAllTimers();
+}
+
 } // namespace OHOS::ArkWeb

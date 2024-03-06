@@ -76,6 +76,10 @@ typedef struct _ark_web_engine_t {
 
   void(ARK_WEB_CALLBACK *clear_intelligent_tracking_prevention_bypassing_list)(
       struct _ark_web_engine_t *self);
+
+  void (ARK_WEB_CALLBACK *pause_all_timers)(struct _ark_web_engine_t* self);
+
+  void (ARK_WEB_CALLBACK *resume_all_timers)(struct _ark_web_engine_t* self);
 } ark_web_engine_t;
 
 ARK_WEB_EXPORT ark_web_engine_t *ark_web_engine_get_instance(void);

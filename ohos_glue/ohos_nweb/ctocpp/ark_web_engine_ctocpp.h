@@ -63,6 +63,10 @@ public:
       const ArkWebStringVector &hosts) override;
 
   void ClearIntelligentTrackingPreventionBypassingList() override;
+
+  void PauseAllTimers() override;
+
+  void ResumeAllTimers() override;
 };
 
 } // namespace OHOS::ArkWeb

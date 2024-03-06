@@ -52,6 +52,8 @@ public:
     {
         customSchemeCmdLine_ = cmd;
     }
+    void PauseAllTimers();
+    void ResumeAllTimers();
 
     void AddIntelligentTrackingPreventionBypassingList(
         const std::vector<std::string>& hosts);

@@ -76,6 +76,12 @@ public:
 
   /*--ark web()--*/
   virtual void ClearIntelligentTrackingPreventionBypassingList() = 0;
+
+  /*--ark web()--*/
+  virtual void PauseAllTimers() = 0;
+
+  /*--ark web()--*/
+  virtual void ResumeAllTimers() = 0;
 };
 
 } // namespace OHOS::ArkWeb
