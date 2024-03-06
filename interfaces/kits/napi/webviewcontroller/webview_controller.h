@@ -75,6 +75,13 @@ enum class WebMessageType : int {
     ERROR
 };
 
+enum class MediaPlaybackState : int {
+    NONE = 0,
+    PLAYING,
+    PAUSED,
+    STOP
+};
+
 enum class SecurityLevel : int {
     NONE = 0,
     SECURE,
@@ -249,6 +256,8 @@ public:
     void SetPrintBackground(bool enable);
 
     bool GetPrintBackground();
+
+    std::string GetLastJavascriptProxyCallingFrameUrl();
     
     static std::string GenerateWebTag();
 
@@ -260,6 +269,26 @@ public:
         const char* scheme, WebSchemeHandler* handler);
 
     static int32_t ClearWebServiceWorkerSchemeHandler();
+
+    void CloseAllMediaPresentations();
+
+    void StopAllMedia();
+
+    void ResumeAllMedia();
+
+    void PauseAllMedia();
+
+    int GetMediaPlaybackState();
+
+    void EnableIntelligentTrackingPrevention(bool enable);
+
+    bool IsIntelligentTrackingPreventionEnabled();
+
+    ErrCode StartCamera();
+
+    ErrCode StopCamera();
+
+    ErrCode CloseCamera();
 
 private:
     int ConverToWebHitTestType(int hitType);

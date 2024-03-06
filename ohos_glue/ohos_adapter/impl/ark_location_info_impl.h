@@ -43,7 +43,7 @@ public:
 
     int64_t GetTimeSinceBoot() override;
 
-    ArkWebString GetAdditions() override;
+    ArkWebStringVector GetAdditions() override;
 
 private:
     std::shared_ptr<OHOS::NWeb::LocationInfo> real_;

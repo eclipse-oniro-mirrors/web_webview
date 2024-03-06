@@ -22,6 +22,7 @@
 #include "event_handler.h"
 #include "graphic_adapter.h"
 #include "vsync_receiver.h"
+#include "foundation/graphic/graphic_2d/rosen/modules/render_service_client/core/ui/rs_frame_rate_linker.h"
 
 namespace OHOS::NWeb {
 class VSyncAdapterImpl : public VSyncAdapter {
@@ -34,6 +35,8 @@ public:
     static VSyncAdapterImpl& GetInstance();
     VSyncErrorCode RequestVsync(void* data, NWebVSyncCb cb) override;
     int64_t GetVSyncPeriod() override;
+    void SetFrameRateLinkerEnable(bool enabled) override;
+    void SetFramePreferredRate(int32_t preferredRate) override;
 
 private:
     static void OnVsync(int64_t timestamp, void* data);
@@ -50,6 +53,7 @@ private:
         .userData_ = this,
         .callback_ = OnVsync,
     };
+    std::shared_ptr<Rosen::RSFrameRateLinker> frameRateLinker_;
 };
 } // namespace OHOS::NWeb
 

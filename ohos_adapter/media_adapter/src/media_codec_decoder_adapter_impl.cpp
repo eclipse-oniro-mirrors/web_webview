@@ -128,6 +128,8 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetOutputSurface(void* window)
     }
 
     OHNativeWindow* window_ = reinterpret_cast<OHNativeWindow*>(window);
+    window_->config.usage = BUFFER_USAGE_MEM_DMA;
+    WVLOG_I("MediaCodecDecoder default to opening Hebc.");
 
     int32_t ret = decoder_->SetOutputSurface(window_->surface);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {

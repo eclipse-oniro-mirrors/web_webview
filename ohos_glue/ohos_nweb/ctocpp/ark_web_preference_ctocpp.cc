@@ -1126,6 +1126,20 @@ bool ArkWebPreferenceCToCpp::GetNativeEmbedMode() {
 }
 
 ARK_WEB_NO_SANITIZE
+void ArkWebPreferenceCToCpp::RegisterNativeEmbedRule(const ArkWebString &tag,
+                                                     const ArkWebString &type) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_preference_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, register_native_embed_rule, );
+
+  // Execute
+  _struct->register_native_embed_rule(_struct, &tag, &type);
+}
+
+ARK_WEB_NO_SANITIZE
 void ArkWebPreferenceCToCpp::SetScrollable(bool enable) {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 

@@ -1772,6 +1772,150 @@ bool ArkWebNWebCToCpp::GetPrintBackground() {
   return _struct->get_print_background(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::CloseAllMediaPresentations() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, close_all_media_presentations, );
+
+  // Execute
+  _struct->close_all_media_presentations(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::StopAllMedia() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, stop_all_media, );
+
+  // Execute
+  _struct->stop_all_media(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::ResumeAllMedia() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, resume_all_media, );
+
+  // Execute
+  _struct->resume_all_media(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::PauseAllMedia() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, pause_all_media, );
+
+  // Execute
+  _struct->pause_all_media(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+int ArkWebNWebCToCpp::GetMediaPlaybackState() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_media_playback_state, 0);
+
+  // Execute
+  return _struct->get_media_playback_state(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::EnableIntelligentTrackingPrevention(bool enable) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct,
+                                   enable_intelligent_tracking_prevention, );
+
+  // Execute
+  _struct->enable_intelligent_tracking_prevention(_struct, enable);
+}
+
+ARK_WEB_NO_SANITIZE
+bool ArkWebNWebCToCpp::IsIntelligentTrackingPreventionEnabled() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, false);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(
+      _struct, is_intelligent_tracking_prevention_enabled, false);
+
+  // Execute
+  return _struct->is_intelligent_tracking_prevention_enabled(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::StartCamera() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, start_camera, );
+
+  // Execute
+  _struct->start_camera(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::StopCamera() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, stop_camera, );
+
+  // Execute
+  _struct->stop_camera(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::CloseCamera() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, close_camera, );
+
+  // Execute
+  _struct->close_camera(_struct);
+}
+
+ArkWebString ArkWebNWebCToCpp::GetLastJavascriptProxyCallingFrameUrl() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, ark_web_string_default);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_last_javascript_proxy_calling_frame_url, ark_web_string_default);
+
+  // Execute
+  return _struct->get_last_javascript_proxy_calling_frame_url(_struct);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 

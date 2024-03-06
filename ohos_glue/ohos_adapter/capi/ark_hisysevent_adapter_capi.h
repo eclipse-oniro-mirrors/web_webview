@@ -12,7 +12,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #ifndef ARK_HISYSEVENT_ADAPTER_CAPI_H
 #define ARK_HISYSEVENT_ADAPTER_CAPI_H
 #pragma once
@@ -25,27 +24,56 @@ extern "C" {
 #endif
 
 typedef struct _ark_hi_sys_event_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    int(ARK_WEB_CALLBACK* write1)(struct _ark_hi_sys_event_adapter_t* self, const ArkWebString* eventName,
-        uint32_t type, const ArkWebString key1, const int value1, const ArkWebString key2, const int value2,
-        const ArkWebString key3, const int value3, const ArkWebString key4, const int value4, const ArkWebString key5,
-        const float value5);
+  int(ARK_WEB_CALLBACK *write1)(struct _ark_hi_sys_event_adapter_t* self,
+                                const ArkWebString* eventName, uint32_t type,
+                                const ArkWebString key1, const ArkWebString value1);
 
-    int(ARK_WEB_CALLBACK* write2)(struct _ark_hi_sys_event_adapter_t* self, const ArkWebString* eventName,
-        uint32_t type, const ArkWebString key1, const int value1, const ArkWebString key2, const int value2,
-        const ArkWebString key3, const int value3);
+  int(ARK_WEB_CALLBACK *write2)(struct _ark_hi_sys_event_adapter_t* self,
+                                const ArkWebString* eventName, uint32_t type,
+                                const ArkWebString key1, const ArkWebString value1,
+                                const ArkWebString key2, const ArkWebString value2);
 
-    int(ARK_WEB_CALLBACK* write3)(struct _ark_hi_sys_event_adapter_t* self, const ArkWebString* eventName,
-        uint32_t type, const ArkWebString key1, const int value1, const ArkWebString key2, const ArkWebString value2,
-        const ArkWebString key3, const int value3, const ArkWebString key4, const ArkWebString value4);
+  int(ARK_WEB_CALLBACK *write3)(struct _ark_hi_sys_event_adapter_t* self,
+                                const ArkWebString* eventName, uint32_t type,
+                                const ArkWebString key1, const ArkWebString value1,
+                                const ArkWebString key2, const ArkWebString value2,
+                                const ArkWebString key3, const ArkWebString value3);
 
-    int(ARK_WEB_CALLBACK* write4)(struct _ark_hi_sys_event_adapter_t* self, const ArkWebString* eventName,
-        uint32_t type, const ArkWebString key1, const int64_t value1, const ArkWebString key2, const int value2,
-        const ArkWebString key3, const ArkWebUint16Vector value3, const ArkWebString key4, const int value4);
+  int(ARK_WEB_CALLBACK *write4)(struct _ark_hi_sys_event_adapter_t* self,
+                                const ArkWebString* eventName, uint32_t type,
+                                const ArkWebString key1, const ArkWebString value1,
+                                const ArkWebString key2, const ArkWebString value2,
+                                const ArkWebString key3, const ArkWebString value3,
+                                const ArkWebString key4, const ArkWebString value4);
+
+  int(ARK_WEB_CALLBACK *write5)(struct _ark_hi_sys_event_adapter_t* self,
+                                const ArkWebString* eventName, uint32_t type,
+                                const ArkWebString key1, const ArkWebString value1,
+                                const ArkWebString key2, const ArkWebString value2,
+                                const ArkWebString key3, const ArkWebString value3,
+                                const ArkWebString key4, const ArkWebString value4,
+                                const ArkWebString key5, const ArkWebString value5);
+
+  int(ARK_WEB_CALLBACK *write6)(struct _ark_hi_sys_event_adapter_t* self,
+                                const ArkWebString* eventName, uint32_t type,
+                                const ArkWebString key1, const ArkWebString value1,
+                                const ArkWebString key2, const ArkWebString value2,
+                                const ArkWebString key3, const ArkWebString value3,
+                                const ArkWebString key4, const ArkWebString value4,
+                                const ArkWebString key5, const ArkWebString value5,
+                                const ArkWebString key6, const ArkWebString value6);
+
+  int(ARK_WEB_CALLBACK *write7)(struct _ark_hi_sys_event_adapter_t* self,
+                                const ArkWebString* eventName, uint32_t type,
+                                const ArkWebString key1, const int64_t value1,
+                                const ArkWebString key2, const int value2,
+                                const ArkWebString key3, const ArkWebUint16Vector value3,
+                                const ArkWebString key4, const int value4);
 } ark_hi_sys_event_adapter_t;
 
 #ifdef __cplusplus

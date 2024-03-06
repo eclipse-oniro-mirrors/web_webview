@@ -65,7 +65,7 @@ typedef struct _ark_location_info_t {
 
     int64_t(ARK_WEB_CALLBACK* get_time_since_boot)(struct _ark_location_info_t* self);
 
-    ArkWebString(ARK_WEB_CALLBACK* get_additions)(struct _ark_location_info_t* self);
+    ArkWebStringVector(ARK_WEB_CALLBACK* get_additions)(struct _ark_location_info_t* self);
 } ark_location_info_t;
 
 typedef struct _ark_location_callback_adapter_t {

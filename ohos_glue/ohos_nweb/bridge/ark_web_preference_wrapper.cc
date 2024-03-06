@@ -434,6 +434,12 @@ bool ArkWebPreferenceWrapper::GetNativeEmbedMode() {
   return ark_web_preference_->GetNativeEmbedMode();
 }
 
+void ArkWebPreferenceWrapper::RegisterNativeEmbedRule(const std::string& tag,
+                                                      const std::string& type) {
+  ark_web_preference_->RegisterNativeEmbedRule(ArkWebStringClassToStruct(tag),
+                                               ArkWebStringClassToStruct(type));
+}
+
 void ArkWebPreferenceWrapper::SetScrollable(bool enable) {
   ark_web_preference_->SetScrollable(enable);
 }

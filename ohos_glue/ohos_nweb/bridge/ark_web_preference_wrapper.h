@@ -606,6 +606,12 @@ public:
   bool GetNativeEmbedMode() override;
 
   /**
+   * @brief Register native embed rule. The default pattern is ["embed", "native/"].
+   */
+  void RegisterNativeEmbedRule(const std::string&,
+                               const std::string&) override;
+
+  /**
    * @brief Set whether the scroll is enabled.
    */
   void SetScrollable(bool enable) override;

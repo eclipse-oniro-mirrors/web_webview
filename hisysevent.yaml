@@ -15,8 +15,8 @@ domain: WEBVIEW
 
 JANK_STATS_APP:
   __BASE: {type: STATISTIC, level: MINOR, tag: performance, desc: jank statistics}
-  ABILITY_NAME: {type: STRING, desc: ability name}
   BUNDLE_NAME: {type: STRING, desc: package name}
+  ABILITY_NAME: {type: STRING, desc: ability name}
   DURATION: {type: INT64, desc: duration since last report}
   JANK_STATS: {type: UINT16, desc: jank frame stats}
   JANK_STATS_VER: {type: UINT32, desc: jank range version}
@@ -26,24 +26,32 @@ JANK_STATS_APP:
 
 PAGE_LOAD_STATISTICS:
   __BASE: {type: STATISTIC, level: CRITICAL, tag: webStats, desc: page load statistics}
-  INSTANCE_ID: {type: UINT32, desc: web instance id}
-  ACCESS_SUM_COUNT: {type: UINT32, desc: page access sum count}
-  ACCESS_SUCC_COUNT: {type: UINT32, desc: page access success count}
-  ACCESS_FAIL_COUNT: {type: UINT32, desc: page access fail count}
-  ACCESS_FAIL_RATIO: {type: FLOAT, desc: page access fail ratio}
+  BUNDLE_NAME: {type: STRING, desc: package name}
+  INSTANCE_ID: {type: STRING, desc: web instance id}
+  ACCESS_SUM_COUNT: {type: STRING, desc: page access sum count}
+  ACCESS_SUCC_COUNT: {type: STRING, desc: page access success count}
+  ACCESS_FAIL_COUNT: {type: STRING, desc: page access fail count}
+  ACCESS_FAIL_RATIO: {type: STRING, desc: page access fail ratio}
 
 MULTI_INSTANCE_STATISTICS:
   __BASE: {type: STATISTIC, level: CRITICAL, tag: webStats, desc: statistics of multiple instances}
-  INSTANCE_ID: {type: UINT32, desc: web instance id}
-  INSTANCE_COUNT: {type: UINT32, desc: web instance count}
-  MAX_COUNT: {type: UINT32, desc: maximum  instance count}
+  BUNDLE_NAME: {type: STRING, desc: package name}
+  INSTANCE_ID: {type: STRING, desc: web instance id}
+  INSTANCE_COUNT: {type: STRING, desc: web instance count}
+  MAX_COUNT: {type: STRING, desc: maximum  instance count}
 
 PAGE_LOAD_ERROR:
   __BASE: {type: FAULT, level: CRITICAL, tag: webError, desc: page load error info}
-  INSTANCE_ID: {type: UINT32, desc: web instance id}
+  BUNDLE_NAME: {type: STRING, desc: package name}
+  INSTANCE_ID: {type: STRING, desc: web instance id}
   ERROR_TYPE: {type: STRING, desc: page error type}
-  ERROR_CODE: {type: UINT32, desc: page error code}
+  ERROR_CODE: {type: STRING, desc: page error code}
   ERROR_DESC: {type: STRING, desc: page error description}
+
+RENDER_JIT_LOCKDOWN:
+  __BASE: {type: BEHAVIOR, level: CRITICAL, tag: webStats, desc: interaction complete statistics}
+  BUNDLE_NAME: {type: STRING, desc: package name}
+  LOCKDOWN_MODE_STATUS: {type: STRING, desc: lockdown is enable}
 
 CAMERA_CAPTURE_ERROR:
   __BASE: {type: FAULT, level: CRITICAL, tag: webError, desc: camera capture error}

@@ -933,6 +933,36 @@ void ARK_WEB_CALLBACK ark_web_handler_on_safe_browsing_check_result(
   ArkWebHandlerCppToC::Get(self)->OnSafeBrowsingCheckResult(threat_type);
 }
 
+void ARK_WEB_CALLBACK ark_web_handler_on_intelligent_tracking_prevention_result(
+    struct _ark_web_handler_t *self, const ArkWebString *website_host,
+    const ArkWebString *tracker_host) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(website_host, );
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(tracker_host, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnIntelligentTrackingPreventionResult(
+      *website_host, *tracker_host);
+}
+
+void ARK_WEB_CALLBACK ark_web_handler_on_full_screen_enter_with_video_size(
+    struct _ark_web_handler_t *self,
+    ark_web_full_screen_exit_handler_t *handler, int video_natural_width,
+    int video_natural_height) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnFullScreenEnterWithVideoSize(
+      ArkWebFullScreenExitHandlerCToCpp::Invert(handler), video_natural_width,
+      video_natural_height);
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1034,6 +1064,10 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_native_embed_gesture_event;
   GetStruct()->on_safe_browsing_check_result =
       ark_web_handler_on_safe_browsing_check_result;
+  GetStruct()->on_intelligent_tracking_prevention_result =
+      ark_web_handler_on_intelligent_tracking_prevention_result;
+  GetStruct()->on_full_screen_enter_with_video_size =
+      ark_web_handler_on_full_screen_enter_with_video_size;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {
