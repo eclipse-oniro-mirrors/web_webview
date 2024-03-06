@@ -45,6 +45,10 @@ public:
   ArkWebString GetUrl() override;
 
   ArkWebString GetType() override;
+
+  ArkWebString GetTag() override;
+
+  ArkWebStringMap GetParams() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -199,6 +199,9 @@ public:
 
   bool GetNativeEmbedMode() override;
 
+  void RegisterNativeEmbedRule(const ArkWebString &tag,
+                               const ArkWebString &type) override;
+
   void SetScrollable(bool enable) override;
 
   bool GetScrollable() override;

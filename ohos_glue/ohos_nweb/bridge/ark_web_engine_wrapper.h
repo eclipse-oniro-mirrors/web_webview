@@ -51,6 +51,18 @@ public:
 
   void SetWebDebuggingAccess(bool isEnableDebug) override;
 
+  void AddIntelligentTrackingPreventionBypassingList(
+      const std::vector<std::string> &hosts) override;
+
+  void RemoveIntelligentTrackingPreventionBypassingList(
+      const std::vector<std::string> &hosts) override;
+
+  void ClearIntelligentTrackingPreventionBypassingList() override;
+
+  void PauseAllTimers() override;
+
+  void ResumeAllTimers() override;
+
 private:
   ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };

@@ -29,17 +29,34 @@ namespace OHOS::NWeb {
 HWTEST(HiViewDFXAdapterTest, NormalScene, TestSize.Level1)
 {
     HiLogAdapter::PrintLog(LogLevelAdapter::INFO, "nwebTest", "nweb hilogAdapter PrintLog Test");
-    int ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
-        HiSysEventAdapter::EventType::STATISTIC,
-        { "testkey1", 0, "testkey2", 0, "testkey3", 0, "testkey4", 0, "testkey5", 0.0 });
+
+    int ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "testEvent", HiSysEventAdapter::EventType::STATISTIC, { "testkey1", "0"});
     EXPECT_EQ(ret, 0);
+
     ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
-        "testEvent", HiSysEventAdapter::EventType::STATISTIC, { "testkey1", 0, "testkey2", 0, "testkey3", 0 });
+        "testEvent", HiSysEventAdapter::EventType::STATISTIC, { "testkey1", "0", "testkey2", "0"});
     EXPECT_EQ(ret, 0);
+
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "testEvent", HiSysEventAdapter::EventType::STATISTIC, { "testkey1", "0", "testkey2", "0", "testkey3", "0" });
+    EXPECT_EQ(ret, 0);
+
     ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
         HiSysEventAdapter::EventType::STATISTIC,
-        { "testkey1", 0, "testkey2", "testvalue2", "testkey3", 0, "testkey4", "testvalue4" });
+        { "testkey1", "0", "testkey2", "testvalue2", "testkey3", "0", "testkey4", "testvalue4" });
     EXPECT_EQ(ret, 0);
+
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
+        HiSysEventAdapter::EventType::STATISTIC,
+        { "testkey1", "0", "testkey2", "0", "testkey3", "0", "testkey4", "0", "testkey5", "0.0" });
+    EXPECT_EQ(ret, 0);
+
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
+        HiSysEventAdapter::EventType::STATISTIC,
+        { "testkey1", "0", "testkey2", "0", "testkey3", "0", "testkey4", "0", "testkey5", "0.0", "testkey6", "0.0" });
+    EXPECT_EQ(ret, 0);
+
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartTrace("test");
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartAsyncTrace("test", 0);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountTrace("test", 1);

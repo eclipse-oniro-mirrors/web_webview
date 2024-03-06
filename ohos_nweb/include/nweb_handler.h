@@ -727,6 +727,27 @@ public:
      * @param threat_type The threat type of website.
      */
     virtual void OnSafeBrowsingCheckResult(int threat_type) {}
+
+    /**
+     * @brief Called when tracker's cookie is prevented.
+     * @param website_host The host of website url.
+     * @param tracker_host The host of tracker url.
+    */
+    virtual void OnIntelligentTrackingPreventionResult(
+        const std::string& website_host, const std::string& tracker_host) {}
+
+    /**
+     * @brief called when the page enter the full-screen mode.
+     *
+     * @param handler to exit full-screen mode.
+     * @param video_natural_width indicates the width of the <video> element
+     * entering full screen.
+     * @param video_natural_height indicates the height of the <video> element
+     * entering full screen.
+     */
+    virtual void OnFullScreenEnterWithVideoSize(
+        std::shared_ptr<NWebFullScreenExitHandler> handler,
+        int video_natural_width, int video_natural_height) {}
 };
 }  // namespace OHOS::NWeb
 

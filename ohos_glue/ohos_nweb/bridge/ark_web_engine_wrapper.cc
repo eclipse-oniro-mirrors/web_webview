@@ -144,4 +144,34 @@ void ArkWebEngineWrapper::SetWebDebuggingAccess(bool isEnableDebug) {
   ark_web_engine_->SetWebDebuggingAccess(isEnableDebug);
 }
 
+void ArkWebEngineWrapper::AddIntelligentTrackingPreventionBypassingList(
+    const std::vector<std::string> &hosts) {
+  ArkWebStringVector stHosts = ArkWebStringVectorClassToStruct(hosts);
+
+  ark_web_engine_->AddIntelligentTrackingPreventionBypassingList(stHosts);
+
+  ArkWebStringVectorStructRelease(stHosts);
+}
+
+void ArkWebEngineWrapper::RemoveIntelligentTrackingPreventionBypassingList(
+    const std::vector<std::string> &hosts) {
+  ArkWebStringVector stHosts = ArkWebStringVectorClassToStruct(hosts);
+
+  ark_web_engine_->RemoveIntelligentTrackingPreventionBypassingList(stHosts);
+
+  ArkWebStringVectorStructRelease(stHosts);
+}
+
+void ArkWebEngineWrapper::ClearIntelligentTrackingPreventionBypassingList() {
+  ark_web_engine_->ClearIntelligentTrackingPreventionBypassingList();
+}
+
+void ArkWebEngineWrapper::PauseAllTimers() {
+  ark_web_engine_->PauseAllTimers();
+}
+
+void ArkWebEngineWrapper::ResumeAllTimers() {
+  ark_web_engine_->ResumeAllTimers();
+}
+
 } // namespace OHOS::ArkWeb

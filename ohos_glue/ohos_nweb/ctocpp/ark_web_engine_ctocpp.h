@@ -55,6 +55,18 @@ public:
                           int32_t num_sockets) override;
 
   void SetWebDebuggingAccess(bool isEnableDebug) override;
+
+  void AddIntelligentTrackingPreventionBypassingList(
+      const ArkWebStringVector &hosts) override;
+
+  void RemoveIntelligentTrackingPreventionBypassingList(
+      const ArkWebStringVector &hosts) override;
+
+  void ClearIntelligentTrackingPreventionBypassingList() override;
+
+  void PauseAllTimers() override;
+
+  void ResumeAllTimers() override;
 };
 
 } // namespace OHOS::ArkWeb

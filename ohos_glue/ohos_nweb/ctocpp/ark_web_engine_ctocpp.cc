@@ -201,6 +201,76 @@ void ArkWebEngineCToCpp::SetWebDebuggingAccess(bool isEnableDebug) {
   _struct->set_web_debugging_access(_struct, isEnableDebug);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::AddIntelligentTrackingPreventionBypassingList(
+    const ArkWebStringVector &hosts) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(
+      _struct, add_intelligent_tracking_prevention_bypassing_list, );
+
+  // Execute
+  _struct->add_intelligent_tracking_prevention_bypassing_list(_struct, &hosts);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::RemoveIntelligentTrackingPreventionBypassingList(
+    const ArkWebStringVector &hosts) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(
+      _struct, remove_intelligent_tracking_prevention_bypassing_list, );
+
+  // Execute
+  _struct->remove_intelligent_tracking_prevention_bypassing_list(_struct, &hosts);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::ClearIntelligentTrackingPreventionBypassingList() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(
+      _struct, clear_intelligent_tracking_prevention_bypassing_list, );
+
+  // Execute
+  _struct->clear_intelligent_tracking_prevention_bypassing_list(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::PauseAllTimers() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t* _struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, pause_all_timers, );
+
+  // Execute
+  _struct->pause_all_timers(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::ResumeAllTimers() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t* _struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, resume_all_timers, );
+
+  // Execute
+  _struct->resume_all_timers(_struct);
+}
+
 ArkWebEngineCToCpp::ArkWebEngineCToCpp() {
 }
 

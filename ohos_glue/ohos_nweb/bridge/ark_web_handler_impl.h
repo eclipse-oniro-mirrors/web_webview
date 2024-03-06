@@ -502,6 +502,29 @@ public:
    */
   void OnSafeBrowsingCheckResult(int threat_type) override;
 
+  /**
+   * @brief Called when tracker's cookie is prevented.
+   *
+   * @param website_host The host of website url.
+   *
+   * @param tracker_host The host of tracker url.
+  */
+  void OnIntelligentTrackingPreventionResult(
+      const ArkWebString &website_host, const ArkWebString &tracker_host) override;
+
+  /**
+   * @brief called when the page enter the full-screen mode.
+   *
+   * @param handler to exit full-screen mode.
+   * @param video_natural_width indicates the width of the <video> element
+   * entering full screen.
+   * @param video_natural_height indicates the height of the <video> element
+   * entering full screen.
+   */
+  void OnFullScreenEnterWithVideoSize(
+      ArkWebRefPtr<ArkWebFullScreenExitHandler> handler,
+      int video_natural_width, int video_natural_height) override;
+
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

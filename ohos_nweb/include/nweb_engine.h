@@ -52,6 +52,18 @@ public:
                                   int32_t num_sockets) = 0;
 
   virtual void SetWebDebuggingAccess(bool isEnableDebug) = 0;
+
+  virtual void AddIntelligentTrackingPreventionBypassingList(
+      const std::vector<std::string>& hosts) = 0;
+
+  virtual void RemoveIntelligentTrackingPreventionBypassingList(
+      const std::vector<std::string>& hosts) = 0;
+
+  virtual void ClearIntelligentTrackingPreventionBypassingList() = 0;
+
+  virtual void PauseAllTimers() = 0;
+
+  virtual void ResumeAllTimers() = 0;
 };
 
 } // namespace OHOS::NWeb

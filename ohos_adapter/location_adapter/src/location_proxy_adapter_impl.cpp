@@ -207,10 +207,11 @@ int64_t LocationInfoImpl::GetTimeSinceBoot()
     return location_->GetTimeSinceBoot();
 }
 
-std::string LocationInfoImpl::GetAdditions()
+std::vector<std::string> LocationInfoImpl::GetAdditions()
 {
     if (location_ == nullptr) {
-        return "";
+        std::vector<std::string> emptyLoc;
+        return emptyLoc;
     }
     return location_->GetAdditions();
 }

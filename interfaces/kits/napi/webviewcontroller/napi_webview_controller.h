@@ -245,6 +245,43 @@ private:
 
     static napi_value ClearServiceWorkerWebSchemeHandler(
         napi_env env, napi_callback_info info);
+
+    static napi_value CloseAllMediaPresentations(napi_env env, napi_callback_info info);
+
+    static napi_value StopAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value ResumeAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value PauseAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value GetMediaPlaybackState(napi_env env, napi_callback_info info);
+
+    static napi_value EnableIntelligentTrackingPrevention(
+        napi_env env, napi_callback_info info);
+
+    static napi_value IsIntelligentTrackingPreventionEnabled(
+        napi_env env, napi_callback_info info);
+
+    static napi_value AddIntelligentTrackingPreventionBypassingList(
+        napi_env env, napi_callback_info info);
+
+    static napi_value RemoveIntelligentTrackingPreventionBypassingList(
+        napi_env env, napi_callback_info info);
+
+    static napi_value ClearIntelligentTrackingPreventionBypassingList(
+        napi_env env, napi_callback_info info);
+
+    static napi_value PauseAllTimers(napi_env env, napi_callback_info info);
+
+    static napi_value ResumeAllTimers(napi_env env, napi_callback_info info);
+
+    static napi_value StartCamera(napi_env env, napi_callback_info info);
+
+    static napi_value StopCamera(napi_env env, napi_callback_info info);
+
+    static napi_value CloseCamera(napi_env env, napi_callback_info info);
+
+    static napi_value GetLastJavascriptProxyCallingFrameUrl(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {

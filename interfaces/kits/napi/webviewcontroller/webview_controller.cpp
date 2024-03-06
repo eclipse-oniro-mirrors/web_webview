@@ -571,7 +571,8 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
         std::string appBundleName;
         std::string appModuleName;
         result = "resource://RAWFILE/";
-        if (GetAppBundleNameAndModuleName(appBundleName, appModuleName)) {
+        if (!bundleName.empty() && !moduleName.empty() &&
+            GetAppBundleNameAndModuleName(appBundleName, appModuleName)) {
             if (appBundleName != bundleName || appModuleName != moduleName) {
                 result += BUNDLE_NAME_PREFIX + bundleName + "/" + MODULE_NAME_PREFIX + moduleName + "/";
             }
@@ -1187,6 +1188,47 @@ void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobNam
     return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
 }
 
+void WebviewController::CloseAllMediaPresentations()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->CloseAllMediaPresentations();
+    }
+}
+
+void WebviewController::StopAllMedia()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->StopAllMedia();
+    }
+}
+
+void WebviewController::ResumeAllMedia()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->ResumeAllMedia();
+    }
+}
+
+void WebviewController::PauseAllMedia()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->PauseAllMedia();
+    }
+}
+
+int WebviewController::GetMediaPlaybackState()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return static_cast<int>(MediaPlaybackState::NONE);
+    }
+    return nweb_ptr->GetMediaPlaybackState();
+}
+
 int WebviewController::GetSecurityLevel()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1246,6 +1288,24 @@ bool  WebviewController::GetPrintBackground()
     return printBackgroundEnabled;
 }
 
+void WebviewController::EnableIntelligentTrackingPrevention(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->EnableIntelligentTrackingPrevention(enable);
+    }
+}
+
+bool WebviewController::IsIntelligentTrackingPreventionEnabled()
+{
+    bool enabled = false;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        enabled = nweb_ptr->IsIntelligentTrackingPreventionEnabled();
+    }
+    return enabled;
+}
+
 void WebPrintWriteResultCallbackAdapter::WriteResultCallback(std::string jobId, uint32_t code)
 {
     cb_(jobId, code);
@@ -1278,6 +1338,49 @@ bool WebviewController::SetWebServiveWorkerSchemeHandler(
 int32_t WebviewController::ClearWebServiceWorkerSchemeHandler()
 {
     return OH_ArkWebServiceWorker_ClearSchemeHandlers();
+}
+
+ErrCode WebviewController::StartCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->StartCamera();
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::StopCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->StopCamera();
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::CloseCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->CloseCamera();
+    return NWebError::NO_ERROR;
+}
+
+std::string WebviewController::GetLastJavascriptProxyCallingFrameUrl()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return "";
+    }
+
+    return nweb_ptr->GetLastJavascriptProxyCallingFrameUrl();
 }
 } // namespace NWeb
 } // namespace OHOS

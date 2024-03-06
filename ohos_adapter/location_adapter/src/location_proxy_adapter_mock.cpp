@@ -103,9 +103,10 @@ int64_t LocationInfoImpl::GetTimeSinceBoot()
     return -1;
 }
 
-std::string LocationInfoImpl::GetAdditions()
+std::vector<std::string> LocationInfoImpl::GetAdditions()
 {
-    return std::string();
+    std::vector<std::string> emptyLoc;
+    return emptyLoc;
 }
 
 LocationProxyAdapterImpl::LocationProxyAdapterImpl() {}
