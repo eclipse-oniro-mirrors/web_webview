@@ -963,6 +963,17 @@ void ARK_WEB_CALLBACK ark_web_handler_on_full_screen_enter_with_video_size(
       video_natural_height);
 }
 
+bool ARK_WEB_CALLBACK ark_web_handler_on_handle_override_url_loading(
+    struct _ark_web_handler_t *self, ark_web_url_resource_request_t *request) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+
+  // Execute
+  return ArkWebHandlerCppToC::Get(self)->OnHandleOverrideUrlLoading(
+      ArkWebUrlResourceRequestCToCpp::Invert(request));
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1068,6 +1079,8 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_intelligent_tracking_prevention_result;
   GetStruct()->on_full_screen_enter_with_video_size =
       ark_web_handler_on_full_screen_enter_with_video_size;
+  GetStruct()->on_handle_override_url_loading =
+      ark_web_handler_on_handle_override_url_loading;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {
