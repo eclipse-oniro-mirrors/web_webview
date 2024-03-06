@@ -623,6 +623,20 @@ public:
       const ArkWebString &website_host, const ArkWebString &tracker_host) = 0;
 
   /**
+   * @brief called when the page enter the full-screen mode.
+   *
+   * @param handler to exit full-screen mode.
+   * @param video_natural_width indicates the width of the <video> element
+   * entering full screen.
+   * @param video_natural_height indicates the height of the <video> element
+   * entering full screen.
+   */
+  /*--ark web()--*/
+  virtual void OnFullScreenEnterWithVideoSize(
+      ArkWebRefPtr<ArkWebFullScreenExitHandler> handler,
+      int video_natural_width, int video_natural_height) = 0;
+
+  /**
    * @brief Give the SDK a chance to decide whether to override loading the
    * url.
    *
