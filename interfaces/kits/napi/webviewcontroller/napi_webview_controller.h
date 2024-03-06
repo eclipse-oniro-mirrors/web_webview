@@ -274,6 +274,14 @@ private:
     static napi_value PauseAllTimers(napi_env env, napi_callback_info info);
 
     static napi_value ResumeAllTimers(napi_env env, napi_callback_info info);
+
+    static napi_value StartCamera(napi_env env, napi_callback_info info);
+
+    static napi_value StopCamera(napi_env env, napi_callback_info info);
+
+    static napi_value CloseCamera(napi_env env, napi_callback_info info);
+
+    static napi_value GetLastJavascriptProxyCallingFrameUrl(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {

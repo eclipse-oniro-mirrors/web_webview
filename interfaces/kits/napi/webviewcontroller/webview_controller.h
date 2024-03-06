@@ -256,6 +256,8 @@ public:
     void SetPrintBackground(bool enable);
 
     bool GetPrintBackground();
+
+    std::string GetLastJavascriptProxyCallingFrameUrl();
     
     static std::string GenerateWebTag();
 
@@ -281,6 +283,12 @@ public:
     void EnableIntelligentTrackingPrevention(bool enable);
 
     bool IsIntelligentTrackingPreventionEnabled();
+
+    ErrCode StartCamera();
+
+    ErrCode StopCamera();
+
+    ErrCode CloseCamera();
 
 private:
     int ConverToWebHitTestType(int hitType);

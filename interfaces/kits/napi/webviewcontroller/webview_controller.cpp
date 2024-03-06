@@ -1339,5 +1339,48 @@ int32_t WebviewController::ClearWebServiceWorkerSchemeHandler()
 {
     return OH_ArkWebServiceWorker_ClearSchemeHandlers();
 }
+
+ErrCode WebviewController::StartCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->StartCamera();
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::StopCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->StopCamera();
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::CloseCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->CloseCamera();
+    return NWebError::NO_ERROR;
+}
+
+std::string WebviewController::GetLastJavascriptProxyCallingFrameUrl()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return "";
+    }
+
+    return nweb_ptr->GetLastJavascriptProxyCallingFrameUrl();
+}
 } // namespace NWeb
 } // namespace OHOS

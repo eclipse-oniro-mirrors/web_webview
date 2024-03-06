@@ -276,6 +276,11 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::ClearIntelligentTrackingPreventionBypassingList),
         DECLARE_NAPI_STATIC_FUNCTION("pauseAllTimers", NapiWebviewController::PauseAllTimers),
         DECLARE_NAPI_STATIC_FUNCTION("resumeAllTimers", NapiWebviewController::ResumeAllTimers),
+        DECLARE_NAPI_FUNCTION("startCamera", NapiWebviewController::StartCamera),
+        DECLARE_NAPI_FUNCTION("stopCamera", NapiWebviewController::StopCamera),
+        DECLARE_NAPI_FUNCTION("closeCamera", NapiWebviewController::CloseCamera),
+        DECLARE_NAPI_FUNCTION("getLastJavascriptProxyCallingFrameUrl",
+            NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -3890,6 +3895,19 @@ napi_value NapiWebviewController::PrefetchPageWithHttpHeaders(napi_env env, napi
     return result;
 }
 
+napi_value NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    std::string lastCallingFrameUrl = webviewController->GetLastJavascriptProxyCallingFrameUrl();
+    napi_create_string_utf8(env, lastCallingFrameUrl.c_str(), lastCallingFrameUrl.length(), &result);
+    return result;
+}
+
 napi_value NapiWebviewController::PrepareForPageLoad(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
@@ -4707,6 +4725,45 @@ napi_value NapiWebviewController::ResumeAllTimers(napi_env env, napi_callback_in
     napi_value result = nullptr;
     NWebHelper::Instance().ResumeAllTimers();
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::StartCamera(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->StartCamera();
+
+    return result;
+}
+
+napi_value NapiWebviewController::StopCamera(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->StopCamera();
+
+    return result;
+}
+
+napi_value NapiWebviewController::CloseCamera(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return result;
+    }
+    webviewController->CloseCamera();
+
     return result;
 }
 } // namespace NWeb
