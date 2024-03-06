@@ -534,10 +534,8 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
         ReportErrorSysEvent(CameraErrorType::CREATE_CAPTURE_SESSION_FAILED);
         return result;
     }
-    WVLOG_I("BeginConfig");
-    captureSession_->BeginConfig();
-    WVLOG_I("AddInput");
 
+    captureSession_->BeginConfig();
     result = captureSession_->AddInput(cameraInput_);
     if (result != CAMERA_OK) {
         WVLOG_E("Failed to add input");
@@ -545,21 +543,18 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
         return result;
     }
 
-    WVLOG_I("AddOutput");
     result = captureSession_->AddOutput(previewOutput_);
     if (result != CAMERA_OK) {
         WVLOG_E("Failed to add preview output");
         ReportErrorSysEvent(CameraErrorType::ADD_OUTPUT_FAILED);
         return result;
     }
-    WVLOG_I("CommitConfig");
     result = captureSession_->CommitConfig();
     if (result != CAMERA_OK) {
         WVLOG_E("Failed to commit config");
         ReportErrorSysEvent(CameraErrorType::COMMIT_CONFIG_FAILED);
         return result;
     }
-    WVLOG_I("Start");
     result = captureSession_->Start();
     if (result != CAMERA_OK) {
         WVLOG_E("Failed to start session");
