@@ -274,6 +274,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingList),
         DECLARE_NAPI_STATIC_FUNCTION("clearIntelligentTrackingPreventionBypassingList",
             NapiWebviewController::ClearIntelligentTrackingPreventionBypassingList),
+        DECLARE_NAPI_STATIC_FUNCTION("pauseAllTimers", NapiWebviewController::PauseAllTimers),
+        DECLARE_NAPI_STATIC_FUNCTION("resumeAllTimers", NapiWebviewController::ResumeAllTimers),
         DECLARE_NAPI_FUNCTION("startCamera", NapiWebviewController::StartCamera),
         DECLARE_NAPI_FUNCTION("stopCamera", NapiWebviewController::StopCamera),
         DECLARE_NAPI_FUNCTION("closeCamera", NapiWebviewController::CloseCamera),
@@ -4706,6 +4708,22 @@ napi_value NapiWebviewController::ClearIntelligentTrackingPreventionBypassingLis
     napi_value result = nullptr;
     WVLOG_I("Clear intelligent tracking prevention bypassing list.");
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::PauseAllTimers(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NWebHelper::Instance().PauseAllTimers();
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ResumeAllTimers(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NWebHelper::Instance().ResumeAllTimers();
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
