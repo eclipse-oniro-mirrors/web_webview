@@ -17,71 +17,91 @@
 
 #include <unordered_map>
 
+#include "hisysevent_adapter.h"
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::CameraStandard;
 const std::unordered_map<ConnectionType, VideoTransportType> TRANS_TYPE_MAP = {
-    {CAMERA_CONNECTION_BUILT_IN, VideoTransportType::VIDEO_TRANS_TYPE_BUILD_IN},
-    {CAMERA_CONNECTION_USB_PLUGIN, VideoTransportType::VIDEO_TRANS_TYPE_USB},
-    {CAMERA_CONNECTION_REMOTE, VideoTransportType::VIDEO_TRANS_TYPE_REMOTE},
+    { CAMERA_CONNECTION_BUILT_IN, VideoTransportType::VIDEO_TRANS_TYPE_BUILD_IN },
+    { CAMERA_CONNECTION_USB_PLUGIN, VideoTransportType::VIDEO_TRANS_TYPE_USB },
+    { CAMERA_CONNECTION_REMOTE, VideoTransportType::VIDEO_TRANS_TYPE_REMOTE },
 };
 
 const std::unordered_map<CameraPosition, VideoFacingModeAdapter> FACING_MODE_MAP = {
-    {CAMERA_POSITION_UNSPECIFIED, VideoFacingModeAdapter::FACING_NONE},
-    {CAMERA_POSITION_FRONT, VideoFacingModeAdapter::FACING_USER},
-    {CAMERA_POSITION_BACK, VideoFacingModeAdapter::FACING_ENVIRONMENT},
+    { CAMERA_POSITION_UNSPECIFIED, VideoFacingModeAdapter::FACING_NONE },
+    { CAMERA_POSITION_FRONT, VideoFacingModeAdapter::FACING_USER },
+    { CAMERA_POSITION_BACK, VideoFacingModeAdapter::FACING_ENVIRONMENT },
 };
 
 const std::unordered_map<CameraFormat, VideoPixelFormatAdapter> TO_ADAPTER_PIXEL_FORMAT_MAP = {
-    {CAMERA_FORMAT_RGBA_8888, VideoPixelFormatAdapter::FORMAT_RGBA_8888},
-    {CAMERA_FORMAT_YCBCR_420_888, VideoPixelFormatAdapter::FORMAT_YCBCR_420_888},
-    {CAMERA_FORMAT_YUV_420_SP, VideoPixelFormatAdapter::FORMAT_YUV_420_SP},
-    {CAMERA_FORMAT_JPEG, VideoPixelFormatAdapter::FORMAT_JPEG},
-    {CAMERA_FORMAT_INVALID, VideoPixelFormatAdapter::FORMAT_UNKNOWN},
+    { CAMERA_FORMAT_RGBA_8888, VideoPixelFormatAdapter::FORMAT_RGBA_8888 },
+    { CAMERA_FORMAT_YCBCR_420_888, VideoPixelFormatAdapter::FORMAT_YCBCR_420_888 },
+    { CAMERA_FORMAT_YUV_420_SP, VideoPixelFormatAdapter::FORMAT_YUV_420_SP },
+    { CAMERA_FORMAT_JPEG, VideoPixelFormatAdapter::FORMAT_JPEG },
+    { CAMERA_FORMAT_INVALID, VideoPixelFormatAdapter::FORMAT_UNKNOWN },
 };
 
 const std::unordered_map<VideoPixelFormatAdapter, CameraFormat> TO_OHOS_PIXEL_FORMAT_MAP = {
-    {VideoPixelFormatAdapter::FORMAT_RGBA_8888, CAMERA_FORMAT_RGBA_8888},
-    {VideoPixelFormatAdapter::FORMAT_YCBCR_420_888, CAMERA_FORMAT_YCBCR_420_888},
-    {VideoPixelFormatAdapter::FORMAT_YUV_420_SP, CAMERA_FORMAT_YUV_420_SP},
-    {VideoPixelFormatAdapter::FORMAT_JPEG, CAMERA_FORMAT_JPEG},
-    {VideoPixelFormatAdapter::FORMAT_UNKNOWN, CAMERA_FORMAT_INVALID},
+    { VideoPixelFormatAdapter::FORMAT_RGBA_8888, CAMERA_FORMAT_RGBA_8888 },
+    { VideoPixelFormatAdapter::FORMAT_YCBCR_420_888, CAMERA_FORMAT_YCBCR_420_888 },
+    { VideoPixelFormatAdapter::FORMAT_YUV_420_SP, CAMERA_FORMAT_YUV_420_SP },
+    { VideoPixelFormatAdapter::FORMAT_JPEG, CAMERA_FORMAT_JPEG },
+    { VideoPixelFormatAdapter::FORMAT_UNKNOWN, CAMERA_FORMAT_INVALID },
 };
 
 const std::unordered_map<ExposureMode, ExposureModeAdapter> EXPOSURE_MODE_MAP = {
-    {EXPOSURE_MODE_UNSUPPORTED, ExposureModeAdapter::EXPOSURE_MODE_UNSUPPORTED},
-    {EXPOSURE_MODE_LOCKED, ExposureModeAdapter::EXPOSURE_MODE_LOCKED},
-    {EXPOSURE_MODE_AUTO, ExposureModeAdapter::EXPOSURE_MODE_AUTO},
-    {EXPOSURE_MODE_CONTINUOUS_AUTO, ExposureModeAdapter::EXPOSURE_MODE_CONTINUOUS_AUTO},
+    { EXPOSURE_MODE_UNSUPPORTED, ExposureModeAdapter::EXPOSURE_MODE_UNSUPPORTED },
+    { EXPOSURE_MODE_LOCKED, ExposureModeAdapter::EXPOSURE_MODE_LOCKED },
+    { EXPOSURE_MODE_AUTO, ExposureModeAdapter::EXPOSURE_MODE_AUTO },
+    { EXPOSURE_MODE_CONTINUOUS_AUTO, ExposureModeAdapter::EXPOSURE_MODE_CONTINUOUS_AUTO },
 };
 
 const std::unordered_map<FocusModeAdapter, FocusMode> FOCUS_MODE_MAP = {
-    {FocusModeAdapter::FOCUS_MODE_MANUAL, FOCUS_MODE_MANUAL},
-    {FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO, FOCUS_MODE_CONTINUOUS_AUTO},
-    {FocusModeAdapter::FOCUS_MODE_AUTO, FOCUS_MODE_AUTO},
-    {FocusModeAdapter::FOCUS_MODE_LOCKED, FOCUS_MODE_LOCKED},
+    { FocusModeAdapter::FOCUS_MODE_MANUAL, FOCUS_MODE_MANUAL },
+    { FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO, FOCUS_MODE_CONTINUOUS_AUTO },
+    { FocusModeAdapter::FOCUS_MODE_AUTO, FOCUS_MODE_AUTO },
+    { FocusModeAdapter::FOCUS_MODE_LOCKED, FOCUS_MODE_LOCKED },
 };
 
 const std::unordered_map<FocusMode, FocusModeAdapter> ADAPTER_FOCUS_MODE_MAP = {
-    {FOCUS_MODE_MANUAL, FocusModeAdapter::FOCUS_MODE_MANUAL},
-    {FOCUS_MODE_CONTINUOUS_AUTO, FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO},
-    {FOCUS_MODE_AUTO, FocusModeAdapter::FOCUS_MODE_AUTO},
-    {FOCUS_MODE_LOCKED, FocusModeAdapter::FOCUS_MODE_LOCKED},
+    { FOCUS_MODE_MANUAL, FocusModeAdapter::FOCUS_MODE_MANUAL },
+    { FOCUS_MODE_CONTINUOUS_AUTO, FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO },
+    { FOCUS_MODE_AUTO, FocusModeAdapter::FOCUS_MODE_AUTO },
+    { FOCUS_MODE_LOCKED, FocusModeAdapter::FOCUS_MODE_LOCKED },
 };
 
 const std::unordered_map<FlashModeAdapter, FlashMode> FLASH_MODE_MAP = {
-    {FlashModeAdapter::FLASH_MODE_CLOSE, FLASH_MODE_CLOSE},
-    {FlashModeAdapter::FLASH_MODE_OPEN, FLASH_MODE_OPEN},
-    {FlashModeAdapter::FLASH_MODE_AUTO, FLASH_MODE_AUTO},
-    {FlashModeAdapter::FLASH_MODE_ALWAYS_OPEN, FLASH_MODE_ALWAYS_OPEN},
+    { FlashModeAdapter::FLASH_MODE_CLOSE, FLASH_MODE_CLOSE },
+    { FlashModeAdapter::FLASH_MODE_OPEN, FLASH_MODE_OPEN },
+    { FlashModeAdapter::FLASH_MODE_AUTO, FLASH_MODE_AUTO },
+    { FlashModeAdapter::FLASH_MODE_ALWAYS_OPEN, FLASH_MODE_ALWAYS_OPEN },
 };
 
 const std::unordered_map<CameraStatus, CameraStatusAdapter> CAMERA_STATUS_MAP = {
-    {CAMERA_STATUS_APPEAR, CameraStatusAdapter::APPEAR},
-    {CAMERA_STATUS_DISAPPEAR, CameraStatusAdapter::DISAPPEAR},
-    {CAMERA_STATUS_AVAILABLE, CameraStatusAdapter::AVAILABLE},
-    {CAMERA_STATUS_UNAVAILABLE, CameraStatusAdapter::UNAVAILABLE},
+    { CAMERA_STATUS_APPEAR, CameraStatusAdapter::APPEAR },
+    { CAMERA_STATUS_DISAPPEAR, CameraStatusAdapter::DISAPPEAR },
+    { CAMERA_STATUS_AVAILABLE, CameraStatusAdapter::AVAILABLE },
+    { CAMERA_STATUS_UNAVAILABLE, CameraStatusAdapter::UNAVAILABLE },
+};
+
+const std::unordered_map<CameraErrorType, std::string> ERROR_TYPE_MAP = {
+    { CameraErrorType::CAMERA_NOT_CLOSE, "CAMERA_NOT_CLOSE" },
+    { CameraErrorType::INPUT_ALREADY_INIT, "INPUT_ALREADY_INIT" },
+    { CameraErrorType::CAMERA_MANAGER_IS_NULL, "CAMERA_MANAGER_IS_NULL" },
+    { CameraErrorType::GET_CAMERA_OBJ_FAILED, "GET_CAMERA_OBJ_FAILED" },
+    { CameraErrorType::CREATE_INPUT_FAILED, "CREATE_INPUT_FAILED" },
+    { CameraErrorType::INPUT_OPEN_FAILED, "INPUT_OPEN_FAILED" },
+    { CameraErrorType::INPUT_NOT_INIT, "INPUT_NOT_INIT" },
+    { CameraErrorType::CREATE_PREVIEW_SURFACE_FAILED, "CREATE_PREVIEW_SURFACE_FAILED" },
+    { CameraErrorType::CREATE_PREVIEW_OUTPUT_FAILED, "CREATE_PREVIEW_OUTPUT_FAILED" },
+    { CameraErrorType::CREATE_CAPTURE_SESSION_FAILED, "CREATE_CAPTURE_SESSION_FAILED" },
+    { CameraErrorType::ADD_INPUT_FAILED, "ADD_INPUT_FAILED" },
+    { CameraErrorType::ADD_OUTPUT_FAILED, "ADD_OUTPUT_FAILED" },
+    { CameraErrorType::START_SESSION_FAILED, "START_SESSION_FAILED" },
+    { CameraErrorType::INPUT_OR_OUTPUT_IS_NULL, "INPUT_OR_OUTPUT_IS_NULL" },
+    { CameraErrorType::COMMIT_CONFIG_FAILED, "COMMIT_CONFIG_FAILED" },
 };
 
 VideoTransportType CameraManagerAdapterImpl::GetCameraTransportType(ConnectionType connectType)
@@ -170,6 +190,32 @@ CameraManagerAdapterImpl& CameraManagerAdapterImpl::GetInstance()
     return instance;
 }
 
+int32_t CameraManagerAdapterImpl::ErrorTypeToString(CameraErrorType errorType, std::string& errnoTypeString)
+{
+    auto item = ERROR_TYPE_MAP.find(errorType);
+    if (item == ERROR_TYPE_MAP.end()) {
+        WVLOG_E("ori error type %{public}d not found", errorType);
+        return CAMERA_ERROR;
+    }
+
+    errnoTypeString = item->second;
+    return CAMERA_OK;
+}
+
+void CameraManagerAdapterImpl::ReportErrorSysEvent(CameraErrorType errorType)
+{
+    WVLOG_I("ReportErrorSysEvent: %{public}d", errorType);
+    const std::string CAMERA_CAPTURE_ERROR = "CAMERA_CAPTURE_ERROR";
+    const std::string DEVICE_ID = "DEVICE_ID";
+    const std::string ERROR_DESC = "ERROR_DESC";
+    std::string errnoTypeString = "";
+    if (ErrorTypeToString(errorType, errnoTypeString) != CAMERA_OK) {
+        return;
+    }
+    OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(CAMERA_CAPTURE_ERROR,
+        HiSysEventAdapter::EventType::FAULT, { DEVICE_ID, wantedDeviceId_, ERROR_DESC, errnoTypeString });
+}
+
 int32_t CameraManagerAdapterImpl::Create(std::shared_ptr<CameraStatusCallbackAdapter> cameraStatusCallback)
 {
     std::lock_guard<std::mutex> lock(mutex_);
@@ -191,7 +237,7 @@ std::vector<FormatAdapter> CameraManagerAdapterImpl::GetCameraSupportFormats(
     sptr<CameraOutputCapability> outputcapability)
 {
     std::vector<FormatAdapter> captureFormats;
-    
+
     std::vector<Profile> previewProfiles = outputcapability->GetPreviewProfiles();
     for (auto i : previewProfiles) {
         FormatAdapter format;
@@ -204,7 +250,7 @@ std::vector<FormatAdapter> CameraManagerAdapterImpl::GetCameraSupportFormats(
     return captureFormats;
 }
 
-void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor> &devicesDiscriptor)
+void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>& devicesDiscriptor)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (cameraManager_ == nullptr) {
@@ -218,8 +264,7 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
         return;
     }
     for (auto cameraObj : cameraObjList) {
-        sptr<CameraOutputCapability> outputcapability =
-            cameraManager_->GetSupportedOutputCapability(cameraObj);
+        sptr<CameraOutputCapability> outputcapability = cameraManager_->GetSupportedOutputCapability(cameraObj);
         if (outputcapability == nullptr) {
             WVLOG_E("outputcapability is null");
             continue;
@@ -238,32 +283,31 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
         deviceDisc.supportCaptureFormats = GetCameraSupportFormats(outputcapability);
         WVLOG_I("deviceDisc  id:%{public}s, control pan:%{public}d tilt:%{public}d, zoom:%{public}d \
             transType:%{public}d, facingMode:%{public}d",
-            deviceDisc.deviceId.c_str(),
-            deviceDisc.controlSupport.pan,
-            deviceDisc.controlSupport.tilt,
-            deviceDisc.controlSupport.zoom,
-            deviceDisc.transportType,
-            deviceDisc.facing);
+            deviceDisc.deviceId.c_str(), deviceDisc.controlSupport.pan, deviceDisc.controlSupport.tilt,
+            deviceDisc.controlSupport.zoom, deviceDisc.transportType, deviceDisc.facing);
         devicesDiscriptor.emplace_back(std::move(deviceDisc));
     }
 }
 
-int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
+int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string& deviceId)
 {
     int32_t result = CAMERA_ERROR;
 
     if (status_ == CameraStatusAdapter::UNAVAILABLE) {
         WVLOG_E("camera is not closed");
+        ReportErrorSysEvent(CameraErrorType::CAMERA_NOT_CLOSE);
         return result;
     }
 
     if (inputInitedFlag_) {
         WVLOG_E("input is already inited");
+        ReportErrorSysEvent(CameraErrorType::INPUT_ALREADY_INIT);
         return result;
     }
 
     if (cameraManager_ == nullptr) {
         WVLOG_E("camera manager is nullptr");
+        ReportErrorSysEvent(CameraErrorType::CAMERA_MANAGER_IS_NULL);
         return CAMERA_NULL_ERROR;
     }
 
@@ -272,19 +316,22 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
         sptr<CameraDevice> cameraObj = cameraManager_->GetCameraDeviceFromId(deviceId);
         if (cameraObj == nullptr) {
             WVLOG_E("No cameras are available!!!");
+            ReportErrorSysEvent(CameraErrorType::GET_CAMERA_OBJ_FAILED);
             return CAMERA_NULL_ERROR;
         }
 
         cameraInput_ = cameraManager_->CreateCameraInput(cameraObj);
         if (cameraInput_ == nullptr) {
             WVLOG_E("Failed to create CameraInput");
+            ReportErrorSysEvent(CameraErrorType::CREATE_INPUT_FAILED);
             return result;
         }
         int32_t ret = cameraInput_->Open();
         if (ret != CAMERA_OK) {
             WVLOG_E("Failed to open CameraInput, err code %{public}d.", ret);
             cameraInput_->Release();
-            cameraInput_= nullptr;
+            cameraInput_ = nullptr;
+            ReportErrorSysEvent(CameraErrorType::INPUT_OPEN_FAILED);
             return result;
         }
         deviceId_ = deviceId;
@@ -295,27 +342,30 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string &deviceId)
     return result;
 }
 
-int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdapter &captureParams,
-    std::shared_ptr<CameraBufferListenerAdapter> listener)
+int32_t CameraManagerAdapterImpl::InitPreviewOutput(
+    const VideoCaptureParamsAdapter& captureParams, std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
     int32_t result = CAMERA_ERROR;
     Size previewSize;
 
     if (!inputInitedFlag_) {
         WVLOG_E("input is not inited");
+        ReportErrorSysEvent(CameraErrorType::INPUT_NOT_INIT);
         return result;
     }
 
     if (cameraManager_ == nullptr) {
         WVLOG_E("camera manager is null");
+        ReportErrorSysEvent(CameraErrorType::CAMERA_MANAGER_IS_NULL);
         return result;
     }
 
     if (previewOutput_ == nullptr) {
         WVLOG_I("preview output create");
         previewSurface_ = IConsumerSurface::Create();
-        if (previewSurface_ ==  nullptr) {
+        if (previewSurface_ == nullptr) {
             WVLOG_E("previewSurface_ is null");
+            ReportErrorSysEvent(CameraErrorType::CREATE_PREVIEW_SURFACE_FAILED);
             return result;
         }
         previewSize.width = captureParams.captureFormat.width;
@@ -323,20 +373,19 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdap
         previewSurface_->SetDefaultWidthAndHeight(previewSize.width, previewSize.height);
         previewSurface_->SetUserData(CameraManager::surfaceFormat,
             std::to_string(TransToOriCameraFormat(captureParams.captureFormat.pixelFormat)));
-        Profile previewproFile = Profile(static_cast<CameraFormat>(
-                                        TransToOriCameraFormat(captureParams.captureFormat.pixelFormat)),
-                                         previewSize);
+        Profile previewproFile = Profile(
+            static_cast<CameraFormat>(TransToOriCameraFormat(captureParams.captureFormat.pixelFormat)), previewSize);
         WVLOG_I("preview output format: %{public}d, w: %{public}d, h: %{public}d",
             TransToOriCameraFormat(captureParams.captureFormat.pixelFormat), previewSize.width, previewSize.height);
-        previewSurfaceListener_ = new(std::nothrow) CameraSurfaceListener(SurfaceType::PREVIEW,
-                                                                    previewSurface_,
-                                                                    (listener));
-        previewSurface_->RegisterConsumerListener((sptr<IBufferConsumerListener> &)previewSurfaceListener_);
+        previewSurfaceListener_ =
+            new (std::nothrow) CameraSurfaceListener(SurfaceType::PREVIEW, previewSurface_, (listener));
+        previewSurface_->RegisterConsumerListener((sptr<IBufferConsumerListener>&)previewSurfaceListener_);
         sptr<IBufferProducer> bp = previewSurface_->GetProducer();
         sptr<Surface> pSurface = Surface::CreateSurfaceAsProducer(bp);
         previewOutput_ = cameraManager_->CreatePreviewOutput(previewproFile, pSurface);
         if (previewOutput_ == nullptr) {
             WVLOG_E("Failed to create previewOutput");
+            ReportErrorSysEvent(CameraErrorType::CREATE_PREVIEW_OUTPUT_FAILED);
             return result;
         }
         captureParams_ = captureParams;
@@ -347,8 +396,7 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const VideoCaptureParamsAdap
 }
 
 int32_t CameraManagerAdapterImpl::TransToAdapterExposureModes(
-    std::vector<ExposureMode>& exposureModes,
-    std::vector<ExposureModeAdapter>& exposureModesAdapter)
+    std::vector<ExposureMode>& exposureModes, std::vector<ExposureModeAdapter>& exposureModesAdapter)
 {
     for (auto exportMode : exposureModes) {
         exposureModesAdapter.push_back(GetAdapterExposureMode(exportMode));
@@ -399,7 +447,7 @@ int32_t CameraManagerAdapterImpl::GetExposureCompensation(VideoCaptureRangeAdapt
         rangeVal.min = exposureBiasRange.at(RANGE_MIN_INDEX);
         rangeVal.max = exposureBiasRange.at(RANGE_MAX_INDEX);
     }
-    
+
     rangeVal.current = exposureCompos;
     return CAMERA_OK;
 }
@@ -469,11 +517,13 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
     int32_t result = CAMERA_ERROR;
     if (status_ == CameraStatusAdapter::UNAVAILABLE) {
         WVLOG_E("camera is already opened");
+        ReportErrorSysEvent(CameraErrorType::CAMERA_NOT_CLOSE);
         return result;
     }
 
     if ((cameraInput_ == nullptr) || (previewOutput_ == nullptr)) {
         WVLOG_E("cameraInput_ or previewOutput_ is null");
+        ReportErrorSysEvent(CameraErrorType::INPUT_OR_OUTPUT_IS_NULL);
         return result;
     }
 
@@ -481,6 +531,7 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
     captureSession_ = cameraManager_->CreateCaptureSession();
     if (captureSession_ == nullptr) {
         WVLOG_E("Failed to create capture session");
+        ReportErrorSysEvent(CameraErrorType::CREATE_CAPTURE_SESSION_FAILED);
         return result;
     }
     WVLOG_I("BeginConfig");
@@ -489,7 +540,8 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
 
     result = captureSession_->AddInput(cameraInput_);
     if (result != CAMERA_OK) {
-        WVLOG_E("Failed to add in put");
+        WVLOG_E("Failed to add input");
+        ReportErrorSysEvent(CameraErrorType::ADD_INPUT_FAILED);
         return result;
     }
 
@@ -497,18 +549,21 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
     result = captureSession_->AddOutput(previewOutput_);
     if (result != CAMERA_OK) {
         WVLOG_E("Failed to add preview output");
+        ReportErrorSysEvent(CameraErrorType::ADD_OUTPUT_FAILED);
         return result;
     }
     WVLOG_I("CommitConfig");
     result = captureSession_->CommitConfig();
     if (result != CAMERA_OK) {
         WVLOG_E("Failed to commit config");
+        ReportErrorSysEvent(CameraErrorType::COMMIT_CONFIG_FAILED);
         return result;
     }
     WVLOG_I("Start");
     result = captureSession_->Start();
     if (result != CAMERA_OK) {
         WVLOG_E("Failed to start session");
+        ReportErrorSysEvent(CameraErrorType::START_SESSION_FAILED);
         return result;
     }
     result = CAMERA_OK;
@@ -535,9 +590,9 @@ int32_t CameraManagerAdapterImpl::RestartSession()
         cameraInput_->Release();
         cameraInput_ = nullptr;
     }
-    
+
     if (previewOutput_ != nullptr) {
-        ((sptr<PreviewOutput> &)previewOutput_)->Stop();
+        ((sptr<PreviewOutput>&)previewOutput_)->Stop();
         previewOutput_->Release();
         previewOutput_ = nullptr;
     }
@@ -568,7 +623,7 @@ int32_t CameraManagerAdapterImpl::StopSession(CameraStopType stopType)
     }
     ReleaseSessionResource(deviceId_);
     ReleaseSession();
-    
+
     if (stopType == CameraStopType::NORMAL) {
         isCapturing_ = false;
     }
@@ -587,7 +642,7 @@ int32_t CameraManagerAdapterImpl::ReleaseSession()
     return CAMERA_OK;
 }
 
-int32_t CameraManagerAdapterImpl::ReleaseSessionResource(const std::string &deviceId)
+int32_t CameraManagerAdapterImpl::ReleaseSessionResource(const std::string& deviceId)
 {
     WVLOG_I("release session resource");
     if (deviceId_ != deviceId) {
@@ -600,7 +655,7 @@ int32_t CameraManagerAdapterImpl::ReleaseSessionResource(const std::string &devi
     }
 
     if (previewOutput_ != nullptr) {
-        ((sptr<PreviewOutput> &)previewOutput_)->Stop();
+        ((sptr<PreviewOutput>&)previewOutput_)->Stop();
         previewOutput_->Release();
         previewOutput_ = nullptr;
     }
@@ -657,13 +712,11 @@ void CameraManagerAdapterImpl::SetForegroundFlag(bool isForeground)
     isForegound_ = isForeground;
 }
 
-
-int32_t CameraManagerAdapterImpl::StartStream(const std::string &deviceId,
-    const VideoCaptureParamsAdapter &captureParams,
-    std::shared_ptr<CameraBufferListenerAdapter> listener)
+int32_t CameraManagerAdapterImpl::StartStream(const std::string& deviceId,
+    const VideoCaptureParamsAdapter& captureParams, std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
     std::lock_guard<std::mutex> lock(mutex_);
-
+    wantedDeviceId_ = deviceId;
     if ((cameraManager_ == nullptr) || (listener == nullptr)) {
         WVLOG_E("cameraManager or listener is null when start session");
         return CAMERA_ERROR;
@@ -757,14 +810,13 @@ uint8_t* CameraSurfaceBufferAdapterImpl::GetBufferAddr()
         WVLOG_E("buffer_ is nullptr");
         return 0;
     }
-    return static_cast<uint8_t *>(buffer_->GetVirAddr());
+    return static_cast<uint8_t*>(buffer_->GetVirAddr());
 }
 
-CameraSurfaceListener::CameraSurfaceListener(SurfaceType type,
-    sptr<IConsumerSurface> surface,
-    std::shared_ptr<CameraBufferListenerAdapter> listener)
-    : surfaceType_(type), surface_(surface), listener_(listener) {
-}
+CameraSurfaceListener::CameraSurfaceListener(
+    SurfaceType type, sptr<IConsumerSurface> surface, std::shared_ptr<CameraBufferListenerAdapter> listener)
+    : surfaceType_(type), surface_(surface), listener_(listener)
+{}
 
 CameraRotationInfo CameraSurfaceListener::FillRotationInfo(int roration, bool isFlipX, bool isFlipY)
 {
@@ -851,8 +903,8 @@ void CameraSurfaceListener::OnBufferAvailable()
 
 CameraSurfaceAdapterImpl::CameraSurfaceAdapterImpl(sptr<IConsumerSurface> surface) : cSurface_(surface) {}
 
-int32_t CameraSurfaceAdapterImpl::ReleaseBuffer(std::shared_ptr<CameraSurfaceBufferAdapter> bufferAdapter,
-                                                int32_t fence)
+int32_t CameraSurfaceAdapterImpl::ReleaseBuffer(
+    std::shared_ptr<CameraSurfaceBufferAdapter> bufferAdapter, int32_t fence)
 {
     if (!cSurface_ || !bufferAdapter) {
         WVLOG_E("cSurface_ or bufferAdapter is nullptr");
@@ -862,8 +914,9 @@ int32_t CameraSurfaceAdapterImpl::ReleaseBuffer(std::shared_ptr<CameraSurfaceBuf
     return cSurface_->ReleaseBuffer(bufferImpl->GetBuffer(), fence);
 }
 
-CameraManagerAdapterCallback::CameraManagerAdapterCallback(std::shared_ptr<CameraStatusCallbackAdapter>
-    cameraStatusCallback): statusCallback_(cameraStatusCallback)
+CameraManagerAdapterCallback::CameraManagerAdapterCallback(
+    std::shared_ptr<CameraStatusCallbackAdapter> cameraStatusCallback)
+    : statusCallback_(cameraStatusCallback)
 {
     WVLOG_I("Create CameraManagerAdapterCallback");
 }
@@ -878,7 +931,7 @@ CameraStatusAdapter CameraManagerAdapterCallback::GetAdapterCameraStatus(CameraS
     return item->second;
 }
 
-void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo &cameraStatusInfo) const
+void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo& cameraStatusInfo) const
 {
     std::string callbackDeviceId;
     if (cameraStatusInfo.cameraDevice) {
@@ -887,7 +940,7 @@ void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo 
     std::string currentDeviceId = CameraManagerAdapterImpl::GetInstance().GetCurrentDeviceId();
 
     WVLOG_I("OnCameraStatusChanged: callbackdeviceID %{public}s, currentDeviceId:%{public}s, status %{public}d",
-            callbackDeviceId.c_str(), currentDeviceId.c_str(), cameraStatusInfo.cameraStatus);
+        callbackDeviceId.c_str(), currentDeviceId.c_str(), cameraStatusInfo.cameraStatus);
     CameraStatusAdapter cameraStatusAdapter = GetAdapterCameraStatus(cameraStatusInfo.cameraStatus);
 
     if (statusCallback_) {
@@ -911,9 +964,9 @@ void CameraManagerAdapterCallback::OnCameraStatusChanged(const CameraStatusInfo 
     return;
 }
 
-void CameraManagerAdapterCallback::OnFlashlightStatusChanged(const std::string &cameraID,
-                                                             const FlashStatus flashStatus) const
+void CameraManagerAdapterCallback::OnFlashlightStatusChanged(
+    const std::string& cameraID, const FlashStatus flashStatus) const
 {
     return;
 }
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
