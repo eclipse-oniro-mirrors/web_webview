@@ -22,6 +22,24 @@
 
 namespace OHOS::NWeb {
 
+enum class CameraErrorType : int32_t {
+    CAMERA_NOT_CLOSE,
+    INPUT_ALREADY_INIT,
+    CAMERA_MANAGER_IS_NULL,
+    GET_CAMERA_OBJ_FAILED,
+    CREATE_INPUT_FAILED,
+    INPUT_OPEN_FAILED,
+    INPUT_NOT_INIT,
+    CREATE_PREVIEW_SURFACE_FAILED,
+    CREATE_PREVIEW_OUTPUT_FAILED,
+    CREATE_CAPTURE_SESSION_FAILED,
+    ADD_INPUT_FAILED,
+    ADD_OUTPUT_FAILED,
+    COMMIT_CONFIG_FAILED,
+    START_SESSION_FAILED,
+    INPUT_OR_OUTPUT_IS_NULL,
+};
+
 typedef struct VideoControlSupportTag {
     bool pan = false;
     bool tilt = false;
