@@ -927,4 +927,20 @@ bool ArkWebNWebWrapper::IsIntelligentTrackingPreventionEnabled() const {
   return ark_web_nweb_->IsIntelligentTrackingPreventionEnabled();
 }
 
+void ArkWebNWebWrapper::StartCamera() {
+  ark_web_nweb_->StartCamera();
+}
+
+void ArkWebNWebWrapper::StopCamera() {
+  ark_web_nweb_->StopCamera();
+}
+
+void ArkWebNWebWrapper::CloseCamera() {
+  ark_web_nweb_->CloseCamera();
+}
+
+std::string ArkWebNWebWrapper::GetLastJavascriptProxyCallingFrameUrl() {
+  return ArkWebStringStructToClass(ark_web_nweb_->GetLastJavascriptProxyCallingFrameUrl());
+}
+
 } // namespace OHOS::ArkWeb
