@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+#include <chrono>
 #include <mutex>
 #include <set>
 #include <string>
@@ -70,6 +71,7 @@ const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
 
 const int32_t INVALID_NUMBER = -1;
 const int64_t INVALID_NUMBER_INT64 = -1;
+const int64_t SLIDE_PERIOD_MS = 300;
 const pid_t INVALID_PID = -1;
 constexpr char PID[] = "pid";
 constexpr char UID[] = "uid";
@@ -80,11 +82,14 @@ constexpr char SERIAL_NUMBER[] = "serialNum";
 constexpr char SCENE_ID[] = "sceneId";
 constexpr char STATE[] = "state";
 std::set<int32_t> g_nwebSet;
+std::unordered_map<pid_t, std::unordered_map<int32_t, ResSchedStatusAdapter>> g_pidNwebMap;
 std::mutex g_windowIdMutex {};
 int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
 pid_t g_lastPid = INVALID_PID;
 int64_t g_lastStatus = INVALID_NUMBER_INT64;
+int64_t g_timeStamp = 0;
+int64_t g_preTimeStamp = 0;
 
 std::string GetUidString()
 {
@@ -125,8 +130,27 @@ bool ConvertStatus(ResSchedStatusAdapter statusAdapter, int64_t& status)
     return true;
 }
 
+bool NeedReportScene(ResSchedSceneAdapter sceneAdapter)
+{
+    if (sceneAdapter != ResSchedSceneAdapter::SLIDE) {
+        return true;
+    }
+    auto currentTime = std::chrono::system_clock::now().time_since_epoch();
+    g_timeStamp = std::chrono::duration_cast<std::chrono::milliseconds>(currentTime).count();
+    if (g_timeStamp - g_preTimeStamp > SLIDE_PERIOD_MS) {
+        g_preTimeStamp = g_timeStamp;
+        return true;
+    }
+    return false;
+}
+
 bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter)
 {
+    // To limit the frequency of events reported in some scenarios
+    if(!NeedReportScene(sceneAdapter)) {
+        return false;
+    }
+
     int64_t status;
     bool ret = ConvertStatus(statusAdapter, status);
     if (!ret) {
@@ -222,6 +246,17 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         return false;
     }
 
+    g_pidNwebMap[pid][nwebId] = statusAdapter;
+    if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
+        auto nwebMap = g_pidNwebMap[pid];
+        for (auto it : nwebMap) {
+            if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
+                return false;
+            }
+        }
+        g_pidNwebMap.erase(pid);
+    }
+
     int64_t status;
     bool ret = ConvertStatus(statusAdapter, status);
     if (!ret) {
@@ -243,8 +278,9 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     auto appMgrClient = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
     appMgrClient->UpdateRenderState(pid, status);
 
-    WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId:%{public}d, sn: "
-            "%{public}d", static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, serial_num);
+    WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
+            "nwebId: %{public}d, sn: %{public}d", 
+            static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, nwebId, serial_num);
     serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
 
     // Report visible scene event again when tab becomes active to solve timing problem
@@ -285,6 +321,12 @@ void ResSchedClientAdapter::ReportNWebInit(ResSchedStatusAdapter statusAdapter, 
         g_nwebSet.emplace(nwebId);
     } else if (statusAdapter == ResSchedStatusAdapter::WEB_SCENE_EXIT) {
         g_nwebSet.erase(nwebId);
+        for (auto nwebMap : g_pidNwebMap) {
+            auto it = nwebMap.second.find(nwebId);
+            if (it != nwebMap.second.end()) {
+                nwebMap.second.erase(it);
+            }
+        }
     }
 }
 } // namespace OHOS::NWeb

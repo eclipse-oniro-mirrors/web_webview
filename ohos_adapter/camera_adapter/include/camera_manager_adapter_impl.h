@@ -16,13 +16,13 @@
 #ifndef CAMERA_MANAGER_ADAPTER_IMPL_H
 #define CAMERA_MANAGER_ADAPTER_IMPL_H
 
-#include "camera_manager_adapter.h"
-
 #include <cstdio>
 #include <fcntl.h>
 #include <securec.h>
 #include <sys/time.h>
 #include <unistd.h>
+
+#include "camera_manager_adapter.h"
 
 #if defined(NWEB_CAMERA_ENABLE)
 #include "camera_manager.h"
@@ -32,13 +32,7 @@ namespace OHOS::NWeb {
 #if defined(NWEB_CAMERA_ENABLE)
 using namespace OHOS::CameraStandard;
 
-enum class SurfaceType {
-    INVALID = 0,
-    PREVIEW,
-    SECOND_PREVIEW,
-    PHOTO,
-    VIDEO
-};
+enum class SurfaceType { INVALID = 0, PREVIEW, SECOND_PREVIEW, PHOTO, VIDEO };
 
 class CameraSurfaceListener;
 
@@ -72,9 +66,9 @@ class CameraManagerAdapterCallback : public CameraManagerCallback {
 public:
     explicit CameraManagerAdapterCallback(std::shared_ptr<CameraStatusCallbackAdapter> callback);
     ~CameraManagerAdapterCallback() = default;
-    void OnCameraStatusChanged(const CameraStatusInfo &cameraStatusInfo) const override;
-    void OnFlashlightStatusChanged(const std::string &cameraID,
-                                   const FlashStatus flashStatus) const override;
+    void OnCameraStatusChanged(const CameraStatusInfo& cameraStatusInfo) const override;
+    void OnFlashlightStatusChanged(const std::string& cameraID, const FlashStatus flashStatus) const override;
+
 private:
     CameraStatusAdapter GetAdapterCameraStatus(CameraStatus status) const;
     std::shared_ptr<CameraStatusCallbackAdapter> statusCallback_;
@@ -90,7 +84,7 @@ public:
 
     int32_t Create(std::shared_ptr<CameraStatusCallbackAdapter> cameraStatusCallback) override;
 
-    void GetDevicesInfo(std::vector<VideoDeviceDescriptor> &devicesDiscriptor) override;
+    void GetDevicesInfo(std::vector<VideoDeviceDescriptor>& devicesDiscriptor) override;
 
     int32_t ReleaseCameraManger() override;
 
@@ -114,8 +108,7 @@ public:
 
     bool IsExistCaptureTask() override;
 
-    int32_t StartStream(const std::string &deviceId,
-        const VideoCaptureParamsAdapter &captureParams,
+    int32_t StartStream(const std::string& deviceId, const VideoCaptureParamsAdapter& captureParams,
         std::shared_ptr<CameraBufferListenerAdapter> listener) override;
 
     void SetForegroundFlag(bool isForeground) override;
@@ -133,18 +126,19 @@ private:
     ExposureModeAdapter GetAdapterExposureMode(ExposureMode exportMode);
     CameraFormat TransToOriCameraFormat(VideoPixelFormatAdapter format);
     int32_t TransToAdapterExposureModes(
-        std::vector<ExposureMode>& exposureModes,
-        std::vector<ExposureModeAdapter>& exposureModesAdapter);
+        std::vector<ExposureMode>& exposureModes, std::vector<ExposureModeAdapter>& exposureModesAdapter);
     int32_t GetExposureCompensation(VideoCaptureRangeAdapter& rangeVal);
     FocusMode GetOriFocusMode(FocusModeAdapter focusMode);
     FocusModeAdapter GetAdapterFocusMode(FocusMode focusMode);
     FlashMode GetOriFlashMode(FlashModeAdapter flashMode);
     int32_t ReleaseSession();
-    int32_t ReleaseSessionResource(const std::string &deviceId);
-    int32_t InitCameraInput(const std::string &deviceId);
-    int32_t InitPreviewOutput(const VideoCaptureParamsAdapter &captureParams,
-        std::shared_ptr<CameraBufferListenerAdapter> listener);
+    int32_t ReleaseSessionResource(const std::string& deviceId);
+    int32_t InitCameraInput(const std::string& deviceId);
+    int32_t InitPreviewOutput(
+        const VideoCaptureParamsAdapter& captureParams, std::shared_ptr<CameraBufferListenerAdapter> listener);
     int32_t CreateAndStartSession();
+    int32_t ErrorTypeToString(CameraErrorType errorType, std::string& errnoTypeString);
+    void ReportErrorSysEvent(CameraErrorType errorType);
     sptr<CameraManager> cameraManager_;
     sptr<CaptureSession> captureSession_;
     sptr<CaptureInput> cameraInput_;
@@ -165,15 +159,15 @@ private:
     bool isForegound_ = false;
     std::mutex restart_mutex_;
     std::shared_ptr<CameraManagerAdapterCallback> cameraMngrCallback_;
+    std::string wantedDeviceId_;
 #endif
 };
 
 #if defined(NWEB_CAMERA_ENABLE)
 class CameraSurfaceListener : public IBufferConsumerListener {
 public:
-    CameraSurfaceListener(SurfaceType surfaceType,
-                    sptr<IConsumerSurface> surface,
-                    std::shared_ptr<CameraBufferListenerAdapter> listener);
+    CameraSurfaceListener(
+        SurfaceType surfaceType, sptr<IConsumerSurface> surface, std::shared_ptr<CameraBufferListenerAdapter> listener);
     virtual ~CameraSurfaceListener() = default;
     void OnBufferAvailable() override;
 

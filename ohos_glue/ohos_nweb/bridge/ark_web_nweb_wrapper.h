@@ -935,6 +935,70 @@ public:
    */
   bool GetPrintBackground() override;
 
+  /**
+   * @brief Close fullScreen video.
+   */
+  void CloseAllMediaPresentations() override;
+
+  /**
+   * @brief Stop all audio and video playback on the web page.
+   */
+  void StopAllMedia() override;
+
+  /**
+   * @brief Restart playback of all audio and video on the web page.
+   */
+  void ResumeAllMedia() override;
+
+  /**
+   * @brief Pause all audio and video playback on the web page.
+   */
+  void PauseAllMedia() override;
+
+  /**
+   * @brief View the playback status of all audio and video on the web page.
+   *
+   * @return The playback status of all audio and video.
+   */
+  int GetMediaPlaybackState() override;
+
+  /**
+   * Enable the ability to intelligent tracking prevention, default disabled.
+   */
+  void EnableIntelligentTrackingPrevention(bool enable) override;
+
+  /**
+   * Get whether intelligent tracking prevention is enabled.
+   * @return true if enable the ability intelligent tracking prevention; else false.
+   */
+  bool IsIntelligentTrackingPreventionEnabled() const override;
+
+  /**
+   * @brief Start current camera.
+   */
+  /*--ark web()--*/
+  void StartCamera() override;
+
+  /**
+   * @brief Stop current camera.
+   */
+  /*--ark web()--*/
+  void StopCamera() override;
+
+  /**
+   * @brief Close current camera.
+   */
+  /*--ark web()--*/
+  void CloseCamera() override;
+
+  /**  
+   * @brief Obtains the last javascript proxy calling frame url.
+   *
+   * @return the url of last calling frame url.
+   */
+  /*--ark web()--*/
+  std::string GetLastJavascriptProxyCallingFrameUrl() override;
+
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

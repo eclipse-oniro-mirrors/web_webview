@@ -51,6 +51,8 @@ ohos_shared_library("webview_napi") {
     "webviewcontroller/napi_web_download_item.h",
     "webviewcontroller/napi_web_download_manager.cpp",
     "webviewcontroller/napi_web_download_manager.h",
+    "webviewcontroller/napi_web_scheme_handler_request.cpp",
+    "webviewcontroller/napi_web_scheme_handler_request.h",
     "webviewcontroller/napi_webview_controller.cpp",
     "webviewcontroller/web_download_delegate.cpp",
     "webviewcontroller/web_download_delegate.h",
@@ -58,6 +60,8 @@ ohos_shared_library("webview_napi") {
     "webviewcontroller/web_download_item.h",
     "webviewcontroller/web_download_manager.cpp",
     "webviewcontroller/web_download_manager.h",
+    "webviewcontroller/web_scheme_handler_request.cpp",
+    "webviewcontroller/web_scheme_handler_request.h",
     "webviewcontroller/webview_controller.cpp",
     "webviewcontroller/webview_hasimage_callback.cpp",
     "webviewcontroller/webview_javascript_execute_callback.cpp",
@@ -84,6 +88,25 @@ ohos_shared_library("webview_napi") {
     "js:js_export",
     "protos:proto_gen",
     "//third_party/protobuf:protobuf_lite",
+  ]
+
+  relative_install_dir = "module/web"
+
+  part_name = "webview"
+  subsystem_name = "web"
+}
+
+ohos_shared_library("neterrorlist_napi") {
+  public_configs = [ ":web_public_config" ]
+
+  sources = [
+    "web_net_error_code/napi_web_net_errorcode.cpp",
+    "web_net_error_code/napi_web_net_errorcode_module.cpp",
+  ]
+
+  external_deps = [
+    "napi:ace_container_scope",
+    "napi:ace_napi",
   ]
 
   relative_install_dir = "module/web"

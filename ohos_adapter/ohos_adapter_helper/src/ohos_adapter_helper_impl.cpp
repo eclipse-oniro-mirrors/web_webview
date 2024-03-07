@@ -17,8 +17,8 @@
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "access_token_adapter_impl.h"
-#include "audio_renderer_adapter_impl.h"
 #include "audio_capturer_adapter_impl.h"
+#include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
 #if defined(NWEB_BATTERY_MANAGER_ENABLE)
 #include "battery_mgr_client_adapter_impl.h"
@@ -36,6 +36,8 @@
 #include "keystore_adapter_impl.h"
 #if defined(NWEB_MEDIA_AVCODEC_ENABLE)
 #include "media_codec_decoder_adapter_impl.h"
+#include "media_codec_encoder_adapter_impl.h"
+#include "media_codec_list_adapter_impl.h"
 #endif
 #include "mmi_adapter_impl.h"
 #include "native_image_adapter_impl.h"
@@ -282,5 +284,23 @@ std::unique_ptr<MediaCodecDecoderAdapter> OhosAdapterHelperImpl::CreateMediaCode
 std::unique_ptr<NativeImageAdapter> OhosAdapterHelperImpl::CreateNativeImageAdapter()
 {
     return std::make_unique<NativeImageAdapterImpl>();
+}
+
+std::unique_ptr<MediaCodecAdapter> OhosAdapterHelperImpl::CreateMediaCodecEncoderAdapter()
+{
+#if defined(NWEB_MEDIA_AVCODEC_ENABLE)
+    return std::make_unique<MediaCodecEncoderAdapterImpl>();
+#else
+    return nullptr;
+#endif
+}
+
+MediaCodecListAdapter& OhosAdapterHelperImpl::GetMediaCodecListAdapter()
+{
+#if defined(NWEB_MEDIA_AVCODEC_ENABLE)
+    return MediaCodecListAdapterImpl::GetInstance();
+#else
+    return nullptr;
+#endif
 }
 } // namespace OHOS::NWeb

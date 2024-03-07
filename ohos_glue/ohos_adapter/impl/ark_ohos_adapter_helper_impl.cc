@@ -42,6 +42,7 @@
 #include "ark_location_proxy_adapter_impl.h"
 #include "ark_location_request_config_impl.h"
 #include "ark_media_codec_decoder_adapter_impl.h"
+#include "ark_media_codec_encoder_adapter_impl.h"
 #include "ark_mmi_adapter_impl.h"
 #include "ark_native_image_adapter_impl.h"
 #include "ark_net_connect_adapter_impl.h"
@@ -70,8 +71,8 @@ namespace OHOS::ArkWeb {
 ArkWebRefPtr<ArkOhosAdapterHelper> ArkOhosAdapterHelper::GetInstance()
 {
     static NWeb::OhosAdapterHelper& instance = NWeb::OhosAdapterHelper::GetInstance();
-    static ArkOhosAdapterHelperImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkOhosAdapterHelper> impl = new ArkOhosAdapterHelperImpl(instance);
+    return impl;
 }
 
 ArkOhosAdapterHelperImpl::ArkOhosAdapterHelperImpl(NWeb::OhosAdapterHelper& ref) : real_(ref) {}
@@ -114,15 +115,15 @@ ArkWebRefPtr<ArkNetConnectAdapter> ArkOhosAdapterHelperImpl::CreateNetConnectAda
 ArkWebRefPtr<ArkOhosWebDataBaseAdapter> ArkOhosAdapterHelperImpl::GetOhosWebDataBaseAdapterInstance()
 {
     static NWeb::OhosWebDataBaseAdapter& instance = real_.GetOhosWebDataBaseAdapterInstance();
-    static ArkOhosWebDataBaseAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkOhosWebDataBaseAdapter> impl = new ArkOhosWebDataBaseAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkPasteBoardClientAdapter> ArkOhosAdapterHelperImpl::GetPasteBoard()
 {
     static NWeb::PasteBoardClientAdapter& instance = real_.GetPasteBoard();
-    static ArkPasteBoardClientAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkPasteBoardClientAdapter> impl = new ArkPasteBoardClientAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkAudioRendererAdapter> ArkOhosAdapterHelperImpl::CreateAudioRendererAdapter()
@@ -142,15 +143,16 @@ ArkWebRefPtr<ArkAudioCapturerAdapter> ArkOhosAdapterHelperImpl::CreateAudioCaptu
 ArkWebRefPtr<ArkAudioSystemManagerAdapter> ArkOhosAdapterHelperImpl::GetAudioSystemManager()
 {
     static NWeb::AudioSystemManagerAdapter& instance = real_.GetAudioSystemManager();
-    static ArkAudioSystemManagerAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkAudioSystemManagerAdapter> impl = new ArkAudioSystemManagerAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkOhosWebPermissionDataBaseAdapter> ArkOhosAdapterHelperImpl::GetWebPermissionDataBaseInstance()
 {
     static NWeb::OhosWebPermissionDataBaseAdapter& instance = real_.GetWebPermissionDataBaseInstance();
-    static ArkOhosWebPermissionDataBaseAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkOhosWebPermissionDataBaseAdapter> impl =
+        new ArkOhosWebPermissionDataBaseAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkMMIAdapter> ArkOhosAdapterHelperImpl::CreateMMIAdapter()
@@ -177,15 +179,15 @@ ArkWebRefPtr<ArkOhosResourceAdapter> ArkOhosAdapterHelperImpl::GetResourceAdapte
 ArkWebRefPtr<ArkSystemPropertiesAdapter> ArkOhosAdapterHelperImpl::GetSystemPropertiesInstance()
 {
     static NWeb::SystemPropertiesAdapter& instance = real_.GetSystemPropertiesInstance();
-    static ArkSystemPropertiesAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkSystemPropertiesAdapter> impl = new ArkSystemPropertiesAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkVSyncAdapter> ArkOhosAdapterHelperImpl::GetVSyncAdapter()
 {
     static NWeb::VSyncAdapter& instance = real_.GetVSyncAdapter();
-    static ArkVSyncAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkVSyncAdapter> impl = new ArkVSyncAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkOhosInitWebAdapter> ArkOhosAdapterHelperImpl::GetInitWebAdapter()
@@ -198,22 +200,23 @@ ArkWebRefPtr<ArkOhosInitWebAdapter> ArkOhosAdapterHelperImpl::GetInitWebAdapter(
 ArkWebRefPtr<ArkKeystoreAdapter> ArkOhosAdapterHelperImpl::GetKeystoreAdapterInstance()
 {
     static NWeb::KeystoreAdapter& instance = real_.GetKeystoreAdapterInstance();
-    static ArkKeystoreAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkKeystoreAdapter> impl = new ArkKeystoreAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> ArkOhosAdapterHelperImpl::GetEnterpriseDeviceManagementInstance()
 {
     static NWeb::EnterpriseDeviceManagementAdapter& instance = real_.GetEnterpriseDeviceManagementInstance();
-    static ArkEnterpriseDeviceManagementAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> impl =
+        new ArkEnterpriseDeviceManagementAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkDatashareAdapter> ArkOhosAdapterHelperImpl::GetDatashareInstance()
 {
     static NWeb::DatashareAdapter& instance = real_.GetDatashareInstance();
-    static ArkDatashareAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkDatashareAdapter> impl = new ArkDatashareAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkIMFAdapter> ArkOhosAdapterHelperImpl::CreateIMFAdapter()
@@ -233,8 +236,8 @@ ArkWebRefPtr<ArkCertManagerAdapter> ArkOhosAdapterHelperImpl::GetRootCertDataAda
 ArkWebRefPtr<ArkAccessTokenAdapter> ArkOhosAdapterHelperImpl::GetAccessTokenAdapterInstance()
 {
     static NWeb::AccessTokenAdapter& instance = real_.GetAccessTokenAdapterInstance();
-    static ArkAccessTokenAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkAccessTokenAdapter> impl = new ArkAccessTokenAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkEventHandlerAdapter> ArkOhosAdapterHelperImpl::GetEventHandlerAdapter()
@@ -247,8 +250,8 @@ ArkWebRefPtr<ArkEventHandlerAdapter> ArkOhosAdapterHelperImpl::GetEventHandlerAd
 ArkWebRefPtr<ArkPrintManagerAdapter> ArkOhosAdapterHelperImpl::GetPrintManagerInstance()
 {
     static NWeb::PrintManagerAdapter& instance = real_.GetPrintManagerInstance();
-    static ArkPrintManagerAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkPrintManagerAdapter> impl = new ArkPrintManagerAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkIConsumerSurfaceAdapter> ArkOhosAdapterHelperImpl::CreateConsumerSurfaceAdapter()
@@ -268,36 +271,36 @@ ArkWebRefPtr<ArkPlayerAdapter> ArkOhosAdapterHelperImpl::CreatePlayerAdapter()
 ArkWebRefPtr<ArkWindowAdapter> ArkOhosAdapterHelperImpl::GetWindowAdapterInstance()
 {
     static NWeb::WindowAdapter& instance = real_.GetWindowAdapterInstance();
-    static ArkWindowAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkWindowAdapter> impl = new ArkWindowAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkHiSysEventAdapter> ArkOhosAdapterHelperImpl::GetHiSysEventAdapterInstance()
 {
     static NWeb::HiSysEventAdapter& instance = real_.GetHiSysEventAdapterInstance();
-    static ArkHiSysEventAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkHiSysEventAdapter> impl = new ArkHiSysEventAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkHiTraceAdapter> ArkOhosAdapterHelperImpl::GetHiTraceAdapterInstance()
 {
     static NWeb::HiTraceAdapter& instance = real_.GetHiTraceAdapterInstance();
-    static ArkHiTraceAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkHiTraceAdapter> impl = new ArkHiTraceAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkNetProxyAdapter> ArkOhosAdapterHelperImpl::GetNetProxyInstance()
 {
     static NWeb::NetProxyAdapter& instance = real_.GetNetProxyInstance();
-    static ArkNetProxyAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkNetProxyAdapter> impl = new ArkNetProxyAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkCameraManagerAdapter> ArkOhosAdapterHelperImpl::GetCameraManagerAdapter()
 {
     static NWeb::CameraManagerAdapter& instance = real_.GetCameraManagerAdapter();
-    static ArkCameraManagerAdapterImpl impl(instance);
-    return &impl;
+    static ArkWebRefPtr<ArkCameraManagerAdapter> impl = new ArkCameraManagerAdapterImpl(instance);
+    return impl;
 }
 
 ArkWebRefPtr<ArkScreenCaptureAdapter> ArkOhosAdapterHelperImpl::CreateScreenCaptureAdapter()
@@ -328,4 +331,17 @@ ArkWebRefPtr<ArkNativeImageAdapter> ArkOhosAdapterHelperImpl::CreateNativeImageA
     return new ArkNativeImageAdapterImpl(shared);
 }
 
+ArkWebRefPtr<ArkMediaCodecListAdapter> ArkOhosAdapterHelperImpl::GetMediaCodecListAdapter()
+{
+    static NWeb::MediaCodecListAdapter& instance = real_.GetMediaCodecListAdapter();
+    static ArkWebRefPtr<ArkMediaCodecListAdapter> impl = new ArkMediaCodecListAdapterImpl(instance);
+    return impl;
+}
+
+ArkWebRefPtr<ArkMediaCodecAdapter> ArkOhosAdapterHelperImpl::CreateMediaCodecEncoderAdapter()
+{
+    std::unique_ptr<NWeb::MediaCodecAdapter> adapter = real_.CreateMediaCodecEncoderAdapter();
+    std::shared_ptr<NWeb::MediaCodecAdapter> shared = std::move(adapter);
+    return new ArkMediaCodecEncoderAdapterImpl(shared);
+}
 } // namespace OHOS::ArkWeb

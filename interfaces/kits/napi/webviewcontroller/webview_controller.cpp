@@ -75,6 +75,8 @@ std::unordered_map<int32_t, WebviewController*> g_webview_controller_map;
 std::string WebviewController::customeSchemeCmdLine_ = "";
 bool WebviewController::existNweb_ = false;
 bool WebviewController::webDebuggingAccess_ = false;
+std::set<std::string> WebviewController::webTagSet_;
+int32_t WebviewController::webTagStrId_ = 0;
 
 WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
 {
@@ -82,6 +84,11 @@ WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
         std::unique_lock<std::mutex> lk(webMtx_);
         g_webview_controller_map.emplace(nwebId, this);
     }
+}
+
+WebviewController::WebviewController(const std::string& webTag) : webTag_(webTag)
+{
+    NWebHelper::Instance().SetWebTag(-1, webTag_.c_str());
 }
 
 WebviewController::~WebviewController()
@@ -533,6 +540,16 @@ void WebviewController::RequestFocus()
     }
 }
 
+std::string WebviewController::GenerateWebTag()
+{
+    std::string webTag = "arkweb:" + std::to_string(WebviewController::webTagStrId_);
+    while (WebviewController::webTagSet_.find(webTag) != WebviewController::webTagSet_.end()) {
+        WebviewController::webTagStrId_++;
+        webTag = "arkweb:" + std::to_string(WebviewController::webTagStrId_);
+    }
+    return webTag;
+}
+
 bool WebviewController::GetRawFileUrl(const std::string &fileName,
     const std::string& bundleName, const std::string& moduleName, std::string &result)
 {
@@ -554,7 +571,8 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
         std::string appBundleName;
         std::string appModuleName;
         result = "resource://RAWFILE/";
-        if (GetAppBundleNameAndModuleName(appBundleName, appModuleName)) {
+        if (!bundleName.empty() && !moduleName.empty() &&
+            GetAppBundleNameAndModuleName(appBundleName, appModuleName)) {
             if (appBundleName != bundleName || appModuleName != moduleName) {
                 result += BUNDLE_NAME_PREFIX + bundleName + "/" + MODULE_NAME_PREFIX + moduleName + "/";
             }
@@ -1170,6 +1188,47 @@ void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobNam
     return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
 }
 
+void WebviewController::CloseAllMediaPresentations()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->CloseAllMediaPresentations();
+    }
+}
+
+void WebviewController::StopAllMedia()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->StopAllMedia();
+    }
+}
+
+void WebviewController::ResumeAllMedia()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->ResumeAllMedia();
+    }
+}
+
+void WebviewController::PauseAllMedia()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->PauseAllMedia();
+    }
+}
+
+int WebviewController::GetMediaPlaybackState()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return static_cast<int>(MediaPlaybackState::NONE);
+    }
+    return nweb_ptr->GetMediaPlaybackState();
+}
+
 int WebviewController::GetSecurityLevel()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1229,10 +1288,99 @@ bool  WebviewController::GetPrintBackground()
     return printBackgroundEnabled;
 }
 
+void WebviewController::EnableIntelligentTrackingPrevention(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->EnableIntelligentTrackingPrevention(enable);
+    }
+}
+
+bool WebviewController::IsIntelligentTrackingPreventionEnabled()
+{
+    bool enabled = false;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        enabled = nweb_ptr->IsIntelligentTrackingPreventionEnabled();
+    }
+    return enabled;
+}
+
 void WebPrintWriteResultCallbackAdapter::WriteResultCallback(std::string jobId, uint32_t code)
 {
     cb_(jobId, code);
 }
 
+bool WebviewController::SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler)
+{
+    if (!handler || !scheme) {
+        WVLOG_E("WebviewController::SetWebSchemeHandler handler or scheme is nullptr");
+        return false;
+    }
+    ArkWeb_SchemeHandler* schemeHandler =
+        const_cast<ArkWeb_SchemeHandler*>(WebSchemeHandler::GetArkWebSchemeHandler(handler));
+    return OH_ArkWeb_SetSchemeHandler(scheme, webTag_.c_str(), schemeHandler);
+}
+
+int32_t WebviewController::ClearWebSchemeHandler()
+{
+    return OH_ArkWeb_ClearSchemeHandlers(webTag_.c_str());
+}
+
+bool WebviewController::SetWebServiveWorkerSchemeHandler(
+    const char* scheme, WebSchemeHandler* handler)
+{
+    ArkWeb_SchemeHandler* schemeHandler =
+        const_cast<ArkWeb_SchemeHandler*>(WebSchemeHandler::GetArkWebSchemeHandler(handler));
+    return OH_ArkWebServiceWorker_SetSchemeHandler(scheme, schemeHandler);
+}
+
+int32_t WebviewController::ClearWebServiceWorkerSchemeHandler()
+{
+    return OH_ArkWebServiceWorker_ClearSchemeHandlers();
+}
+
+ErrCode WebviewController::StartCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->StartCamera();
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::StopCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->StopCamera();
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::CloseCamera()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    nweb_ptr->CloseCamera();
+    return NWebError::NO_ERROR;
+}
+
+std::string WebviewController::GetLastJavascriptProxyCallingFrameUrl()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return "";
+    }
+
+    return nweb_ptr->GetLastJavascriptProxyCallingFrameUrl();
+}
 } // namespace NWeb
 } // namespace OHOS

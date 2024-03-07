@@ -219,7 +219,7 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_005, TestS
     EXPECT_NE(displayManagerAdapterImpl->GetDefaultDisplayId(), DISPLAY_ID_INVALID);
     EXPECT_NE(displayManagerAdapterImpl->GetDefaultDisplay(), nullptr);
     EXPECT_EQ(displayManagerAdapterImpl->RegisterDisplayListener(listener), 1);
-    EXPECT_EQ(displayManagerAdapterImpl->UnregisterDisplayListener(1), true);
+    EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(1));
     EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(2));
     g_unregister = DMError::DM_OK;
 }

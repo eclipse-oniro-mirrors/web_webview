@@ -40,6 +40,9 @@ public:
 
   std::string GetType() override;
 
+  std::string GetTag() override;
+
+  std::map<std::string, std::string> GetParams() override;
 private:
   ArkWebRefPtr<ArkWebNativeEmbedInfo> ark_web_native_embed_info_;
 };

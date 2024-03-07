@@ -30,6 +30,8 @@
 #include "webview_javascript_result_callback.h"
 #include "print_manager_adapter.h"
 
+#include "web_scheme_handler_request.h"
+
 namespace OHOS {
 namespace NWeb {
 enum class WebHitTestType : int {
@@ -73,6 +75,13 @@ enum class WebMessageType : int {
     ERROR
 };
 
+enum class MediaPlaybackState : int {
+    NONE = 0,
+    PLAYING,
+    PAUSED,
+    STOP
+};
+
 enum class SecurityLevel : int {
     NONE = 0,
     SECURE,
@@ -91,7 +100,7 @@ class WebviewController {
 public:
     explicit WebviewController() = default;
     explicit WebviewController(int32_t nwebId);
-    explicit WebviewController(const std::string& webTag) : webTag_(webTag) {};
+    explicit WebviewController(const std::string& webTag);
     ~WebviewController();
 
     bool IsInit();
@@ -248,6 +257,39 @@ public:
 
     bool GetPrintBackground();
 
+    std::string GetLastJavascriptProxyCallingFrameUrl();
+    
+    static std::string GenerateWebTag();
+
+    bool SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler);
+
+    int32_t ClearWebSchemeHandler();
+
+    static bool SetWebServiveWorkerSchemeHandler(
+        const char* scheme, WebSchemeHandler* handler);
+
+    static int32_t ClearWebServiceWorkerSchemeHandler();
+
+    void CloseAllMediaPresentations();
+
+    void StopAllMedia();
+
+    void ResumeAllMedia();
+
+    void PauseAllMedia();
+
+    int GetMediaPlaybackState();
+
+    void EnableIntelligentTrackingPrevention(bool enable);
+
+    bool IsIntelligentTrackingPreventionEnabled();
+
+    ErrCode StartCamera();
+
+    ErrCode StopCamera();
+
+    ErrCode CloseCamera();
+
 private:
     int ConverToWebHitTestType(int hitType);
 
@@ -258,6 +300,8 @@ public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;
     static bool webDebuggingAccess_;
+    static std::set<std::string> webTagSet_;
+    static int32_t webTagStrId_;
 
 private:
     std::mutex webMtx_;

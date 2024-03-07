@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "graphic_adapter.h"
 #include "include/ark_web_base_ref_counted.h"
 #include "include/ark_web_types.h"
 
@@ -28,6 +29,8 @@ typedef struct FrameAvailableListener {
     ArkOnFrameAvailableCb cb;
 } ArkOnFrameAvailableListener;
 
+using ArkBufferRequestConfigAdapter = OHOS::NWeb::BufferRequestConfigAdapter;
+using ArkBufferFlushConfigAdapter = OHOS::NWeb::BufferFlushConfigAdapter;
 namespace OHOS::ArkWeb {
 
 /*--web engine(source=library)--*/
@@ -44,6 +47,11 @@ public:
 
     /*--web engine()--*/
     virtual int64_t GetVSyncPeriod() = 0;
+    /*--web engine()--*/
+    virtual void SetFrameRateLinkerEnable(bool enabled) = 0;
+
+    /*--web engine()--*/
+    virtual void SetFramePreferredRate(int32_t preferredRate) = 0;
 };
 
 /*--web engine(source=library)--*/
@@ -173,6 +181,24 @@ public:
 
     /*--web engine()--*/
     virtual void DestroyNativeImage() = 0;
+};
+
+/*--web engine(source=library)--*/
+class ArkProducerSurfaceAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--web engine()--*/
+    ArkProducerSurfaceAdapter() = default;
+
+    /*--web engine()--*/
+    virtual ~ArkProducerSurfaceAdapter() = default;
+
+    /*--web engine()--*/
+    virtual ArkWebRefPtr<ArkSurfaceBufferAdapter> RequestBuffer(
+        int32_t& fence, ArkBufferRequestConfigAdapter& config) = 0;
+
+    /*--web engine()--*/
+    virtual int32_t FlushBuffer(
+        ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer, int32_t fence, ArkBufferFlushConfigAdapter& flushConfig) = 0;
 };
 } // namespace OHOS::ArkWeb
 

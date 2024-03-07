@@ -38,6 +38,9 @@ const std::string DOWNLOAD_NOT_PAUSED_MSG = "The download is not paused.";
 const std::string NO_VALID_CONTROLLER_FOR_DOWNLOAD_MSG = "No valid WebviewController is associated.";
 const std::string NO_DOWNLOAD_DELEGATE_SET_MSG = "No valid WebviewController is associated.";
 const std::string DOWNLOAD_NOT_START_MSG = "The download has not been started yet.";
+const std::string REGISTER_CUSTOM_SCHEME_FAILED_MSG = "Register custom schemes failed.";
+const std::string POST_DATA_STREAN_INIT_FAILED_MSG = "The post data stream init failed";
+const std::string RESOURCE_HANDLER_INVALID_MSG = "Resource handler is invalid";
 }
 
 namespace OHOS {
@@ -60,7 +63,10 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {DOWNLOAD_NOT_PAUSED, DOWNLOAD_NOT_PAUSED_MSG},
     {NO_VALID_CONTROLLER_FOR_DOWNLOAD, NO_VALID_CONTROLLER_FOR_DOWNLOAD_MSG},
     {NO_DOWNLOAD_DELEGATE_SET, NO_DOWNLOAD_DELEGATE_SET_MSG},
-    {DOWNLOAD_NOT_START, DOWNLOAD_NOT_START_MSG}
+    {DOWNLOAD_NOT_START, DOWNLOAD_NOT_START_MSG},
+    {REGISTER_CUSTOM_SCHEME_FAILED, REGISTER_CUSTOM_SCHEME_FAILED_MSG},
+    {POST_DATA_STREAN_INIT_FAILED, POST_DATA_STREAN_INIT_FAILED_MSG},
+    {RESOURCE_HANDLER_INVALID, RESOURCE_HANDLER_INVALID_MSG},
 };
 
 std::string GetErrMsgByErrCode(ErrCode code)

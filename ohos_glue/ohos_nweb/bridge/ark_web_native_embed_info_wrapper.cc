@@ -63,4 +63,19 @@ std::string ArkWebNativeEmbedInfoWrapper::GetType() {
   return objType;
 }
 
+std::string ArkWebNativeEmbedInfoWrapper::GetTag() {
+  ArkWebString stType = ark_web_native_embed_info_->GetTag();
+
+  std::string objType = ArkWebStringStructToClass(stType);
+  ArkWebStringStructRelease(stType);
+  return objType;
+}
+
+std::map<std::string, std::string> ArkWebNativeEmbedInfoWrapper::GetParams() {
+  ArkWebStringMap stType = ark_web_native_embed_info_->GetParams();
+
+  std::map<std::string, std::string>objType = ArkWebStringMapStructToClass(stType);
+  ArkWebStringMapStructRelease(stType);
+  return objType;
+}
 } // namespace OHOS::ArkWeb
