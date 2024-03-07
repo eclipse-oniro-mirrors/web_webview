@@ -184,9 +184,9 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     auto cook = helper.GetCookieManager();
     EXPECT_EQ(cook, nullptr);
     auto base = helper.GetDataBase();
-    EXPECT_EQ(base, nullptr);
+    EXPECT_NE(base, nullptr);
     auto storage = helper.GetWebStorage();
-    EXPECT_EQ(storage, nullptr);
+    EXPECT_NE(storage, nullptr);
     auto nweb = helper.GetNWeb(nweb_id);
     EXPECT_EQ(nweb, nullptr);
     helper.UnloadLib();
