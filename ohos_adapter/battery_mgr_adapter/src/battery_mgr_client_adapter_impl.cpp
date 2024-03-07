@@ -71,7 +71,7 @@ void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData 
 
 void BatteryMgrClientAdapterImpl::RegBatteryEvent(std::shared_ptr<WebBatteryEventCallback> eventCallback)
 {
-    if (eventCallback) {
+    if (!eventCallback) {
       WVLOG_E("WebBatteryEventCallback is nullptr.");
       return;
     }

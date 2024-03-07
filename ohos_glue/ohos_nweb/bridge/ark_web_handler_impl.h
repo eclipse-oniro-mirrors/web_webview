@@ -502,6 +502,40 @@ public:
    */
   void OnSafeBrowsingCheckResult(int threat_type) override;
 
+  /**
+   * @brief Called when tracker's cookie is prevented.
+   *
+   * @param website_host The host of website url.
+   *
+   * @param tracker_host The host of tracker url.
+  */
+  void OnIntelligentTrackingPreventionResult(
+      const ArkWebString &website_host, const ArkWebString &tracker_host) override;
+
+  /**
+   * @brief called when the page enter the full-screen mode.
+   *
+   * @param handler to exit full-screen mode.
+   * @param video_natural_width indicates the width of the <video> element
+   * entering full screen.
+   * @param video_natural_height indicates the height of the <video> element
+   * entering full screen.
+   */
+  void OnFullScreenEnterWithVideoSize(
+      ArkWebRefPtr<ArkWebFullScreenExitHandler> handler,
+      int video_natural_width, int video_natural_height) override;
+
+  /**
+   * @brief Give the SDK a chance to decide whether to override loading the
+   * url.
+   *
+   * @param request The request information.
+   * @return true to abort loading the url, false to continue loading the url
+   * as usual.
+   */
+  bool OnHandleOverrideUrlLoading(
+      ArkWebRefPtr<ArkWebUrlResourceRequest> request) override;
+
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

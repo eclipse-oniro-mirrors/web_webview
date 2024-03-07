@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2023-2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -88,7 +88,8 @@ namespace {
     DO(OH_ArkWebResourceHandler_DidFinish)          \
     DO(OH_ArkWebResourceHandler_DidFailWithError)   \
     DO(OH_ArkWeb_ReleaseString)                     \
-    DO(OH_ArkWeb_ReleaseByteArray)
+    DO(OH_ArkWeb_ReleaseByteArray)                  \
+    DO(OH_ArkWebSchemeHandler_SetFromEts)
 
 struct SchemeHandlerApi {
 #define GEN_FN_PTR(fn) decltype(&fn) impl_##fn = nullptr;
@@ -101,7 +102,7 @@ void LoadFunction(void* handle, const char* functionName, Fn* fnOut)
 {
     void* fn = dlsym(handle, functionName);
     if (!fn) {
-        OHOS::WVLOG_E("%{public}s not found.", functionName);
+        WVLOG_E("%{public}s not found.", functionName);
         return;
     }
     *fnOut = reinterpret_cast<Fn>(fn);
@@ -120,18 +121,18 @@ void LoadSchemeHandlerApi(void* handle, SchemeHandlerApi* api)
 bool EnsureSdkLoaded(void* handle)
 {
     if (g_SchemeHandlerApi) {
-        OHOS::WVLOG_I("SchemeHandlerApi had loaded.");
+        WVLOG_I("SchemeHandlerApi had loaded.");
         return true;
     }
 
     if (handle == nullptr) {
-        OHOS::WVLOG_I("EnsureSdkLoaded handle is nullptr.");
+        WVLOG_I("EnsureSdkLoaded handle is nullptr.");
         return false;
     }
 
     auto* schemeHandlerApi = new SchemeHandlerApi();
     if (schemeHandlerApi == nullptr) {
-        OHOS::WVLOG_I("schemeHandlerApi is nullptr.");
+        WVLOG_I("schemeHandlerApi is nullptr.");
         return false;
     }
     LoadSchemeHandlerApi(handle, schemeHandlerApi);
@@ -551,6 +552,14 @@ int32_t OH_ArkWebSchemeHandler_SetOnRequestStop(
 
 void OH_ArkWeb_CreateResponse(ArkWeb_Response** response)
 {
+    void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler();
+    if (webEngineHandle) {
+        if (!EnsureSdkLoaded(webEngineHandle)) {
+            WVLOG_E("scheme_handler sdk not loaded.");
+        }
+    } else {
+        WVLOG_E("scheme_handler webEngineHandle is nullptr.");
+    }
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWeb_CreateResponse) {
         WVLOG_E("OH_ArkWeb_CreateResponse not found.");
         return;
@@ -781,4 +790,15 @@ void OH_ArkWeb_ReleaseByteArray(uint8_t* byteArray)
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWeb_ReleaseByteArray(byteArray);
+}
+
+int32_t OH_ArkWebSchemeHandler_SetFromEts(
+    ArkWeb_SchemeHandler* schemeHandler, bool fromEts)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetFromEts) {
+        WVLOG_E("impl_OH_ArkWebSchemeHandler_SetFromEts not found.");
+        return ARKWEB_ERROR_UNKNOWN;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebSchemeHandler_SetFromEts(schemeHandler, fromEts);
 }

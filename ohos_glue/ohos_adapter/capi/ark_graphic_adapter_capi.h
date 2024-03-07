@@ -34,6 +34,10 @@ typedef struct _ark_vsync_adapter_t {
     uint32_t(ARK_WEB_CALLBACK* request_vsync)(struct _ark_vsync_adapter_t* self, void* data, ArkVSyncCb cb);
 
     int64_t(ARK_WEB_CALLBACK* get_vsync_period)(struct _ark_vsync_adapter_t* self);
+
+    void (ARK_WEB_CALLBACK* set_frame_rate_linker_enable)(struct _ark_vsync_adapter_t* self, bool enabled);
+
+    void (ARK_WEB_CALLBACK* set_frame_preferred_rate)(struct _ark_vsync_adapter_t* self, int32_t preferredRate);
 } ark_vsync_adapter_t;
 
 typedef struct _ark_surface_buffer_adapter_t {
@@ -139,6 +143,18 @@ typedef struct _ark_native_image_adapter_t {
     void(ARK_WEB_CALLBACK* destroy_native_image)(struct _ark_native_image_adapter_t* self);
 } ark_native_image_adapter_t;
 
+typedef struct _ark_producer_surface_adapter_t {
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
+
+    ark_surface_buffer_adapter_t*(ARK_WEB_CALLBACK* request_buffer)(
+        struct _ark_producer_surface_adapter_t* self, int32_t* fence, ArkBufferRequestConfigAdapter* config);
+
+    int32_t(ARK_WEB_CALLBACK* flush_buffer)(struct _ark_producer_surface_adapter_t* self,
+        ark_surface_buffer_adapter_t* buffer, int32_t fence, ArkBufferFlushConfigAdapter* flushConfig);
+} ark_producer_surface_adapter_t;
 #ifdef __cplusplus
 }
 #endif

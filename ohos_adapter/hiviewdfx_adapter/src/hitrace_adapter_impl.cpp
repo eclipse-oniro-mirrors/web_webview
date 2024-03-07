@@ -57,7 +57,7 @@ bool HiTraceAdapterImpl::IsHiTraceEnable()
 
     uint64_t tags = OHOS::system::GetUintParameter<uint64_t>(KEY_TRACE_TAG, 0);
     if (tags == 0) {
-        WVLOG_E("HiTraceAdapterImpl GetUintParameter %s error.", KEY_TRACE_TAG.c_str());
+        WVLOG_E("HiTraceAdapterImpl GetUintParameter %{public}s error.", KEY_TRACE_TAG.c_str());
         return false;
     }
     return (tags & HITRACE_TAG_NWEB);
