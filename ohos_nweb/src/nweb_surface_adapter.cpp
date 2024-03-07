@@ -40,8 +40,8 @@ public:
     }
 
 private:
-    wptr<Surface> surface_;
-    NWebSurfaceAdapter *adapter_;
+    wptr<Surface> surface_ = nullptr;
+    NWebSurfaceAdapter *adapter_ = nullptr;
 };
 
 NWebSurfaceAdapter &NWebSurfaceAdapter::Instance()
