@@ -21,12 +21,14 @@
 #include <vector>
 
 #include "app_mgr_constants.h"
+#include "app_mgr_client.h"
 #include "bundle_mgr_interface.h"
 #include "iservice_registry.h"
 #include "nweb_log.h"
 #include "res_sched_client.h"
 #include "res_sched_client_adapter.h"
 #include "res_type.h"
+#include "singleton.h"
 #include "system_ability_definition.h"
 
 namespace OHOS::NWeb {
@@ -272,6 +274,10 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         { STATE, std::to_string(status) } };
     ResSchedClient::GetInstance().ReportData(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
+    
+    auto appMgrClient = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
+    appMgrClient->UpdateRenderState(pid, status);
+
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
             "nwebId: %{public}d, sn: %{public}d", 
             static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, nwebId, serial_num);
