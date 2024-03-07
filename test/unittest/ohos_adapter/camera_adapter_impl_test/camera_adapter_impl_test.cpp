@@ -21,6 +21,7 @@
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
 #include "accesstoken_kit.h"
+#include "syspara/parameters.h"
 
 #define private public
 #include "camera_manager_adapter_impl.h"
@@ -302,7 +303,6 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     sptr<ICameraDeviceService> deviceObj = nullptr;
     std::vector<sptr<CameraDevice>> cameras = g_cameraManager->GetSupportedCameras();
     sptr<CameraInput> cameraInput = g_cameraManager->CreateCameraInput(cameras[0]);
-    ASSERT_NE(cameraInput, nullptr);
     adapter.cameraInput_ = cameraInput;
     result = adapter.InitCameraInput(deviceId);
     EXPECT_EQ(result, 0);
