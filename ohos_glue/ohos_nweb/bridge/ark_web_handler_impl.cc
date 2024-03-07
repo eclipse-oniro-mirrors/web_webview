@@ -529,6 +529,20 @@ void ArkWebHandlerImpl::OnFullScreenEnter(
       std::make_shared<ArkWebFullScreenExitHandlerWrapper>(handler));
 }
 
+void ArkWebHandlerImpl::OnFullScreenEnterWithVideoSize(
+    ArkWebRefPtr<ArkWebFullScreenExitHandler> handler,
+    int video_natural_width, int video_natural_height) {
+  if (CHECK_REF_PTR_IS_NULL(handler)) {
+    nweb_handler_->OnFullScreenEnterWithVideoSize(
+        nullptr,video_natural_width, video_natural_height);
+    return;
+  }
+
+  nweb_handler_->OnFullScreenEnterWithVideoSize(
+      std::make_shared<ArkWebFullScreenExitHandlerWrapper>(handler),
+      video_natural_width, video_natural_height);
+}
+
 bool ArkWebHandlerImpl::OnDragAndDropData(const void *data, size_t len,
                                           const ArkWebImageOptions &opt) {
   OHOS::NWeb::ImageOptions nweb_image_options =
@@ -701,5 +715,15 @@ void ArkWebHandlerImpl::OnIntelligentTrackingPreventionResult(
   nweb_handler_->OnIntelligentTrackingPreventionResult(
       ArkWebStringStructToClass(website_host),
       ArkWebStringStructToClass(tracker_host));
+}
+
+bool ArkWebHandlerImpl::OnHandleOverrideUrlLoading(
+    ArkWebRefPtr<ArkWebUrlResourceRequest> request) {
+  if (CHECK_REF_PTR_IS_NULL(request)) {
+    return nweb_handler_->OnHandleOverrideUrlLoading(nullptr);
+  }
+
+  return nweb_handler_->OnHandleOverrideUrlLoading(
+      std::make_shared<ArkWebUrlResourceRequestWrapper>(request));
 }
 } // namespace OHOS::ArkWeb

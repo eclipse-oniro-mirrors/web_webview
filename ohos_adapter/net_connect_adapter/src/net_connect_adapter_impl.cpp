@@ -49,7 +49,7 @@ int32_t NetConnectAdapterImpl::RegisterNetConnCallback(std::shared_ptr<NetConnCa
     
     netConnCallbackMap_.insert(std::make_pair(id, callbackImpl));
     WVLOG_I("register NetConnCallback success.");
-    return 0;
+    return id;
 }
 
 int32_t NetConnectAdapterImpl::UnregisterNetConnCallback(int32_t id)

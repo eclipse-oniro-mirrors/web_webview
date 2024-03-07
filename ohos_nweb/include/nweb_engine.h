@@ -60,6 +60,10 @@ public:
       const std::vector<std::string>& hosts) = 0;
 
   virtual void ClearIntelligentTrackingPreventionBypassingList() = 0;
+
+  virtual void PauseAllTimers() = 0;
+
+  virtual void ResumeAllTimers() = 0;
 };
 
 } // namespace OHOS::NWeb
