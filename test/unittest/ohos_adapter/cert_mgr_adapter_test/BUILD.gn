@@ -44,6 +44,7 @@ ohos_unittest("cert_mgr_adapter_test") {
     "c_utils:utils",
     "certificate_manager:cert_manager_sdk",
     "hilog:libhilog",
+    "init:libbegetutil",
     "netstack:net_ssl",
   ]
 }
