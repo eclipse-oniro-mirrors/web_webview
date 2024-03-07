@@ -59,6 +59,10 @@ public:
 
   void ClearIntelligentTrackingPreventionBypassingList() override;
 
+  void PauseAllTimers() override;
+
+  void ResumeAllTimers() override;
+
 private:
   ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };

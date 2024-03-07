@@ -52,3 +52,9 @@ RENDER_JIT_LOCKDOWN:
   __BASE: {type: BEHAVIOR, level: CRITICAL, tag: webStats, desc: interaction complete statistics}
   BUNDLE_NAME: {type: STRING, desc: package name}
   LOCKDOWN_MODE_STATUS: {type: STRING, desc: lockdown is enable}
+
+CAMERA_CAPTURE_ERROR:
+  __BASE: {type: FAULT, level: CRITICAL, tag: webError, desc: camera capture error}
+  BUNDLE_NAME: {type: STRING, desc: package name}
+  DEVICE_ID: {type: STRING, desc: device ID of camera capture}
+  ERROR_DESC: {type: STRING, desc: camera capture error description}

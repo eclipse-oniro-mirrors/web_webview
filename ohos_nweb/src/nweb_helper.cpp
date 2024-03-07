@@ -941,6 +941,26 @@ void NWebHelper::ClearIntelligentTrackingPreventionBypassingList() {
     nwebEngine_->ClearIntelligentTrackingPreventionBypassingList();
 }
 
+void NWebHelper::PauseAllTimers()
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->PauseAllTimers();
+}
+
+void NWebHelper::ResumeAllTimers()
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ResumeAllTimers();
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;

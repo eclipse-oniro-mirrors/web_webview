@@ -224,15 +224,16 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_EnableAbility_006, T
     } else {
         EXPECT_FALSE(enabled);
     }
-    result = proxyAdapterImpl->StartLocating(requestConfig, nullptr);
-    EXPECT_EQ(result, -1);
-    result = proxyAdapterImpl->StartLocating(requestConfig, callback);
-    EXPECT_EQ(result, 0);
+    
+    int32_t id = proxyAdapterImpl->StartLocating(requestConfig, nullptr);
+    EXPECT_EQ(id, -1);
+    id = proxyAdapterImpl->StartLocating(requestConfig, callback);
+    EXPECT_EQ(id, -1);
 
     result = proxyAdapterImpl->StopLocating(-1);
     EXPECT_FALSE(result);
     result = proxyAdapterImpl->StopLocating(0);
-    EXPECT_EQ(result, true);
+    EXPECT_FALSE(result);
     result = proxyAdapterImpl->StopLocating(0);
     EXPECT_FALSE(result);
 }

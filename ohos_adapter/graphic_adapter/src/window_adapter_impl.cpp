@@ -32,6 +32,9 @@ WindowAdapterImpl& WindowAdapterImpl::GetInstance()
 NWebNativeWindow WindowAdapterImpl::CreateNativeWindowFromSurface(void* pSurface)
 {
     OHNativeWindow* window = ::CreateNativeWindowFromSurface(pSurface);
+    if (!window) {
+        return nullptr;
+    }
     window->config.usage = BUFFER_USAGE_MEM_DMA;
     return reinterpret_cast<NWebNativeWindow>(window);
 }
