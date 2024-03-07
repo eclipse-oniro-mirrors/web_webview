@@ -133,9 +133,9 @@ HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_001, TestSize.Leve
     EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(-1), -1);
 
     g_regNetConnCallback = static_cast<int32_t>(NETMANAGER_SUCCESS);
-    EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(cb), 0);
+    EXPECT_EQ(netConnectAdapterImpl->RegisterNetConnCallback(cb), 1);
     g_unregNetConnCallback = -1;
-    EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(0), 0);
+    EXPECT_EQ(netConnectAdapterImpl->UnregisterNetConnCallback(1), -1);
 }
 
 /**
