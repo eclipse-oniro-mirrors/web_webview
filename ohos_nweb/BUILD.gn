@@ -47,6 +47,9 @@ config("nweb_glue_interface") {
 }
 
 ohos_shared_library("libnweb") {
+  branch_protector_ret = "pac_ret"
+  branch_protector_frt = "bti"
+
   configs = [
     ":nweb_config",
     ":nweb_glue_interface",
