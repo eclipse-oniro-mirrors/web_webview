@@ -107,7 +107,9 @@
                             "nweb_url_resource_request.h",
                             "nweb_adapter_helper.h",
                             "nweb_helper.h",
-                            "nweb_load_committed_details.h"
+                            "nweb_load_committed_details.h",
+                            "nweb_first_meaningful_paint_details.h",
+                            "nweb_largest_contentful_paint_details.h"
                         ],
                         "header_base": "//base/web/webview/ohos_nweb/include"
                     },
