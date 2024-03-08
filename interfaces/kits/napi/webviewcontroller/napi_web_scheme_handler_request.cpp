@@ -49,7 +49,7 @@ void NapiWebSchemeHandlerRequest::ExportWebSchemeHandlerRequestClass(
         DECLARE_NAPI_FUNCTION("isRedirect", JS_IsRedirect),
         DECLARE_NAPI_FUNCTION("isMainFrame", JS_IsMainFrame),
         DECLARE_NAPI_FUNCTION("hasGesture", JS_HasGesture),
-        DECLARE_NAPI_FUNCTION("getPostDataStream", JS_PostDataStream),
+        DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_PostDataStream),
     };
     napi_value webSchemeHandlerRequest = nullptr;
     napi_define_class(env, WEB_SCHEME_HANDLER_REQUEST.c_str(), WEB_SCHEME_HANDLER_REQUEST.length(),
@@ -70,7 +70,7 @@ napi_status NapiWebSchemeHandlerRequest::DefineProperties(
         DECLARE_NAPI_FUNCTION("isRedirect", JS_IsRedirect),
         DECLARE_NAPI_FUNCTION("isMainFrame", JS_IsMainFrame),
         DECLARE_NAPI_FUNCTION("hasGesture", JS_HasGesture),
-        DECLARE_NAPI_FUNCTION("getPostDataStream", JS_PostDataStream),
+        DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_PostDataStream),
     };
     return napi_define_properties(env, *object, sizeof(properties) / sizeof(properties[0]), properties);
 }
