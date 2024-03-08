@@ -128,8 +128,8 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
 
     std::tuple<const std::string, const std::string, const std::string, const std::string,
-        const std::string, const std::string, const std::string, const std::string> sysData = {
-        "SCENE_ID", eventName,
+        const std::string, const std::string> sysData = {
+        "SCENE_ID", "",
         "ABILITY_NAME", elementName.GetAbilityName(),
         "PAGE_URL", ""
     };

@@ -58,16 +58,3 @@ CAMERA_CAPTURE_ERROR:
   BUNDLE_NAME: {type: STRING, desc: package name}
   DEVICE_ID: {type: STRING, desc: device ID of camera capture}
   ERROR_DESC: {type: STRING, desc: camera capture error description}
-
-DYNAMIC_FRAME_DROP_STATISTICS:
-  __BASE: {type: STATISTIC, level: MINOR, tag: performance, desc: dynamic frame loss statistics}
-  BUNDLE_NAME: {type: STRING, desc: package name}
-  ABILITY_NAME: {type: STRING, desc: ability name}
-  PAGE_URL: {type: STRING, desc: page URL}
-  SCENE_ID: {type: STRING, desc: interaction scene id}
-  STARTTIME: {type: INT64, desc: interaction scene begin time}
-  DURATION: {type: INT64, desc: interaction duration}
-  TOTAL_APP_FRAMES: {type: INT32, desc: total app frames during the scene}
-  TOTAL_APP_MISSED_FRAMES: {type: INT32, desc: total app missed frames during the scene}
-  MAX_APP_FRAMETIME: {type: INT64, desc: max single frame during the scene}
-  MAX_APP_SEQ_MISSSED_FRAMES: {type: INT32, desc: max successive missed frames during the scene}
