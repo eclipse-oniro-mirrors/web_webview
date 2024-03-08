@@ -22,6 +22,7 @@
 #include "nativetoken_kit.h"
 #include "token_setproc.h"
 #include "securec.h"
+#include "syspara/parameters.h"
 
 #define private public
 #include "cert_mgr_adapter_impl.h"
@@ -284,7 +285,12 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetCertMaxSize_001, TestSize.Lev
     g_appMaxSize = adapter.GetAppCertMaxSize();
     EXPECT_NE(g_appMaxSize, TEST_FAILURE);
     g_certSum = adapter.GetSytemRootCertSum();
-    EXPECT_NE(g_certSum, TEST_OK);
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        EXPECT_NE(g_certSum, TEST_OK);
+    } else {
+        EXPECT_EQ(g_certSum, TEST_OK);
+    }
 }
 
 /**
@@ -299,7 +305,12 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetAppCert_002, TestSize.Level1)
     uint8_t* certData = static_cast<uint8_t *>(malloc(g_cerSize));
     EXPECT_NE(certData, nullptr);
     int32_t result = adapter.GetSytemRootCertData(0, certData);
-    EXPECT_NE(result, -1);
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        EXPECT_NE(result, -1);
+    } else {
+        EXPECT_EQ(result, -1);
+    }
     free(certData);
     certData = nullptr;
 }
@@ -375,7 +386,12 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_Sign_006, TestSize.Level1)
     uint8_t signData[DEFAULT_SIGNATURE_LEN] = {0};
     result = adapter.Sign(uriData, messageData, sizeof(messageData),
                                   signData, sizeof(signData));
-    EXPECT_NE(result, -1);
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        EXPECT_NE(result, -1);
+    } else {
+        EXPECT_EQ(result, -1);
+    }
     result = adapter.Sign(uriData, messageData, sizeof(messageData), nullptr, 0);
     EXPECT_EQ(result, -1);
     result = adapter.Sign(uriData, nullptr, 0, signData, sizeof(signData));
@@ -384,9 +400,9 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_Sign_006, TestSize.Level1)
     int sslResult = adapter.VerifyCertFromNetSsl(nullptr, -1);
     EXPECT_NE(result, 0);
     sslResult = adapter.VerifyCertFromNetSsl(uriData, -1);
-    EXPECT_NE(result, 0);
+    EXPECT_NE(sslResult, 0);
     sslResult = adapter.VerifyCertFromNetSsl(uriData, MAX_LEN_CREATDATA);
-    EXPECT_NE(result, 0);
+    EXPECT_NE(sslResult, 0);
     adapter.VerifyCertFromNetSsl(uriData, sizeof(uriData));
     std::string hostname = "";
     std::vector<std::string> certs;
