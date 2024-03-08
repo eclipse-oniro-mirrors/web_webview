@@ -26,7 +26,7 @@ const std::string WEB_SCHEME_HANDLER = "WebSchemeHandler";
 const std::string WEB_SCHEME_HANDLER_REQUEST = "WebSchemeHandlerRequest";
 const std::string WEB_SCHEME_HANDLER_RESPONSE = "WebSchemeHandlerResponse";
 const std::string WEB_RESOURCE_HANDLER = "WebResourceHandler";
-const std::string WEB_POST_DATA_STREAM = "WebPostDataStream";
+const std::string WEB_POST_DATA_STREAM = "WebHttpBodyStream";
 const std::string WEB_NET_ERROR_CODE = "WebNetErrorCode";
 class NapiWebSchemeHandlerRequest {
 public:
