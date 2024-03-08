@@ -29,6 +29,7 @@
 #include "nweb_date_time_chooser.h"
 #include "nweb_drag_data.h"
 #include "nweb_file_selector_params.h"
+#include "nweb_first_meaningful_paint_details.h"
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
 #include "nweb_js_dialog_result.h"
@@ -36,6 +37,7 @@
 #include "nweb_js_ssl_error_result.h"
 #include "nweb_js_ssl_select_cert_result.h"
 #include "nweb_key_event.h"
+#include "nweb_largest_contentful_paint_details.h"
 #include "nweb_load_committed_details.h"
 #include "nweb_select_popup_menu.h"
 #include "nweb_touch_handle_state.h"
@@ -656,6 +658,20 @@ public:
      */
     virtual void OnFirstContentfulPaint(int64_t navigationStartTick,
                                         int64_t firstContentfulPaintMs) {}
+
+    /**
+     * @brief Called when the first meaningful paint rendering of web page.
+     * @param details represents the details of first meaningful paint.
+     */
+    virtual void OnFirstMeaningfulPaint(
+		std::shared_ptr<NWebFirstMeaningfulPaintDetails> details) {}
+
+    /**
+     * @brief Called when the largest contentful paint rendering of web page.
+     * @param details represents the details of largest contentful paint.
+     */
+    virtual void OnLargestContentfulPaint(
+		std::shared_ptr<NWebLargestContentfulPaintDetails> details) {}
 
     /**
      * @brief Called when swap buffer completed with new size.

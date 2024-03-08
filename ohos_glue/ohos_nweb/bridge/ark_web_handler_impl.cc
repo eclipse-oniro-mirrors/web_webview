@@ -47,6 +47,8 @@
 #include "ohos_nweb/bridge/ark_web_url_resource_response_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 #include "ohos_nweb/ctocpp/ark_web_date_time_suggestion_vector_ctocpp.h"
+#include "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_impl.h"
+#include "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_impl.h"
 
 namespace OHOS::ArkWeb {
 
@@ -708,6 +710,26 @@ void ArkWebHandlerImpl::OnNativeEmbedGestureEvent(
 
 void ArkWebHandlerImpl::OnSafeBrowsingCheckResult(int threat_type) {
   nweb_handler_->OnSafeBrowsingCheckResult(threat_type);
+}
+
+void ArkWebHandlerImpl::OnFirstMeaningfulPaint(ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details)
+{
+    if (CHECK_REF_PTR_IS_NULL(details)) {
+      ARK_WEB_IMPL_WRAN_LOG("firstMeaningfulPaint details is null");  
+      return;
+    }
+
+    nweb_handler_->OnFirstMeaningfulPaint(std::make_shared<ArkWebFirstMeaningfulPaintDetailsImpl>(details));
+}
+
+void ArkWebHandlerImpl::OnLargestContentfulPaint(ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details)
+{
+    if (CHECK_REF_PTR_IS_NULL(details)) {
+      ARK_WEB_IMPL_WRAN_LOG("largestContentfulPaint details is null");  
+      return;
+    }
+
+    nweb_handler_->OnLargestContentfulPaint(std::make_shared<ArkWebLargestContentfulPaintDetailsImpl>(details));
 }
 
 void ArkWebHandlerImpl::OnIntelligentTrackingPreventionResult(
