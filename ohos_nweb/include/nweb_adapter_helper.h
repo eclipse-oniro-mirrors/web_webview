@@ -43,6 +43,7 @@ public:
                                      uint32_t height = 0,
                                      bool incognitoMode = false);
     void ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
+    void ReadConfigIfNeeded();
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
 private:
     NWebAdapterHelper() = default;
