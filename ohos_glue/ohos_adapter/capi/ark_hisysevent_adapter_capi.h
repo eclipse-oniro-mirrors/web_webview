@@ -82,8 +82,7 @@ typedef struct _ark_hi_sys_event_adapter_t {
                               const ArkWebString key3, const int value3,
                               const ArkWebString key4, const int value4,
                               const ArkWebString key5, const int64_t value5,
-                              const ArkWebString key6,
-                              const int64_t value6);
+                              const ArkWebString key6, const int value6);
 } ark_hi_sys_event_adapter_t;
 
 #ifdef __cplusplus
