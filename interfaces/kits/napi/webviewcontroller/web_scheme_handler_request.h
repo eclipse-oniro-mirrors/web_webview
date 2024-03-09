@@ -119,8 +119,8 @@ private:
     napi_env env_;
     ArkWeb_OnRequestStart onRequestStart_ = nullptr;
     ArkWeb_OnRequestStop onRequestStop_ = nullptr;
-    napi_ref request_start_callback_;
-    napi_ref request_stop_callback_;
+    napi_ref request_start_callback_ = nullptr;
+    napi_ref request_stop_callback_ = nullptr;
 };
 
 class WebResourceHandler {

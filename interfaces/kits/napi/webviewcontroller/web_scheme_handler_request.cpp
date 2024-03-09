@@ -751,6 +751,9 @@ void WebPostDataStream::ExecuteReadComplete(napi_env env, napi_status status, vo
         param->bytesRead > 0) {
         WVLOG_W("WebPostDataStream::ExecuteRead memcpy failed");
     }
+    if (param->buffer) {
+        delete param->buffer;
+    }
     if (param->callbackRef) {
         napi_value callback = nullptr;
         napi_get_reference_value(env, param->callbackRef, &callback);
