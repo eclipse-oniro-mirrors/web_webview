@@ -191,6 +191,7 @@ ArkHiSysEventAdapterCppToC::ArkHiSysEventAdapterCppToC() {
   GetStruct()->write5 = ark_hi_sys_event_adapter_write5;
   GetStruct()->write6 = ark_hi_sys_event_adapter_write6;
   GetStruct()->write7 = ark_hi_sys_event_adapter_write7;
+  GetStruct()->write8 = ark_hi_sys_event_adapter_write8;
 }
 
 ArkHiSysEventAdapterCppToC::~ArkHiSysEventAdapterCppToC() {}

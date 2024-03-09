@@ -74,6 +74,16 @@ typedef struct _ark_hi_sys_event_adapter_t {
                                 const ArkWebString key2, const int value2,
                                 const ArkWebString key3, const ArkWebUint16Vector value3,
                                 const ArkWebString key4, const int value4);
+
+  int(ARK_WEB_CALLBACK *write8)(struct _ark_hi_sys_event_adapter_t *self,
+                              const ArkWebString *eventName, uint32_t type,
+                              const ArkWebString key1, const int64_t value1,
+                              const ArkWebString key2, const int64_t value2,
+                              const ArkWebString key3, const int value3,
+                              const ArkWebString key4, const int value4,
+                              const ArkWebString key5, const int64_t value5,
+                              const ArkWebString key6,
+                              const int64_t value6);
 } ark_hi_sys_event_adapter_t;
 
 #ifdef __cplusplus

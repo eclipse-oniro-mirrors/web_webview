@@ -69,6 +69,15 @@ public:
     virtual int Write(const ArkWebString &eventName, uint32_t type, const ArkWebString key1, const int64_t value1,
         const ArkWebString key2, const int value2, const ArkWebString key3, const ArkWebUint16Vector value3,
         const ArkWebString key4, const int value4) = 0;
+
+    /*--web engine()--*/
+    virtual int Write(const ArkWebString &eventName, uint32_t type,
+        const ArkWebString key1, const int64_t value1,
+        const ArkWebString key2, const int64_t value2,
+        const ArkWebString key3, const int value3,
+        const ArkWebString key4, const int value4,
+        const ArkWebString key5, const int64_t value5,
+        const ArkWebString key6, const int value6) = 0;
 };
 } // namespace OHOS::ArkWeb
 
