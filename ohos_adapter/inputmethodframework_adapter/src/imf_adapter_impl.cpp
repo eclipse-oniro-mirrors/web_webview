@@ -233,7 +233,9 @@ bool IMFAdapterImpl::Attach(
         .height = config.cursorInfo.height
     };
 
-    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute, .cursorInfo = imfInfo };
+    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute,
+                                            .cursorInfo = imfInfo,
+                                            .windowId = config.windowId };
     int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
