@@ -171,6 +171,16 @@ private:
         ArkWeb_NetError result;
     };
 
+    struct ReadParam {
+        napi_env env;
+        napi_async_work asyncWork;
+        napi_deferred deferred;
+        napi_ref callbackRef;
+        uint8_t* buffer = nullptr;
+        int bytesRead = 0;
+    };
+
+    static void ExecuteReadComplete(napi_env env, napi_status status, void* data);
     static void ExecuteInitComplete(napi_env env, napi_status status, void* data);
 
     napi_ref initJsCallback_ = nullptr;
