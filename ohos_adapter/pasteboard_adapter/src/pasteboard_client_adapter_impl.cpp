@@ -18,9 +18,13 @@
 #include <mutex>
 #include <securec.h>
 
+#include "hisysevent_adapter.h"
 #include "media_errors.h"
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
 #include "remote_uri.h"
+
+#define SET_PASTE_DATA_SUCCESS 77987840
 
 using namespace OHOS::MiscServices;
 using namespace OHOS::DistributedFS::ModuleRemoteUri;
@@ -412,11 +416,41 @@ MiscServices::ShareOption PasteBoardClientAdapterImpl::TransitionCopyOption(Copy
     return shareOption;
 }
 
+void ReportPasteboardErrorEvent(int32_t errorCode, int32_t recordSize, const std::string &dataType)
+{
+    const std::string PASTE_BOARD_ERROR = "PASTE_BOARD_ERROR";
+    const std::string ERROR_CODE = "ERROR_CODE";
+    const std::string RECORD_SIZE = "RECORE_SIZE";
+    const std::string DATA_TYPE = "DATA_TYPE";
+    OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(PASTE_BOARD_ERROR,
+        HiSysEventAdapter::EventType::FAULT, { ERROR_CODE, std::to_string(errorCode),
+            RECORD_SIZE, std::to_string(recordSize), DATA_TYPE, dataType });
+}
+
+std::string GetPasteMimeTypeExtention(PasteData &pData)
+{
+    const std::string MIMETYPE_HYBRID = "hybrid";
+    bool isHybrid = false;
+    std::string primaryMimeType = *pData.GetPrimaryMimeType().get();
+    for (auto &item : pData.AllRecords()) {
+        if (primaryMimeType != item->GetMimeType()) {
+            isHybrid = true;
+            break;
+        }
+    }
+    if (isHybrid) {
+        return MIMETYPE_HYBRID;
+    }
+    return primaryMimeType;
+}
+
 bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
 {
     PasteData pData;
     if (!PasteboardClient::GetInstance()->HasPasteData() ||
         !PasteboardClient::GetInstance()->GetPasteData(pData)) {
+        ReportPasteboardErrorEvent(PasteboardClient::GetInstance()->GetPasteData(pData),
+            pData.AllRecords().size(), GetPasteMimeTypeExtention(pData));
         isLocalPaste_ = false;
         tokenId_ = 0;
         return false;
@@ -448,7 +482,10 @@ void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data, Copy
     pData.SetTag(webviewPasteDataTag_);
     auto shareOption = TransitionCopyOption(copyOption);
     pData.SetShareOption(shareOption);
-    PasteboardClient::GetInstance()->SetPasteData(pData);
+    int32_t ret = PasteboardClient::GetInstance()->SetPasteData(pData);
+    if (ret != SET_PASTE_DATA_SUCCESS) {
+        ReportPasteboardErrorEvent(ret, pData.AllRecords().size(), GetPasteMimeTypeExtention(pData));
+    }
 }
 
 bool PasteBoardClientAdapterImpl::HasPasteData()
