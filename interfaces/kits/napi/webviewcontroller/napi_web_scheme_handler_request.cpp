@@ -742,6 +742,11 @@ napi_value NapiWebSchemeHandler::JS_RequestStart(napi_env env, napi_callback_inf
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
 
+    if (argc != INTEGER_ONE || valueType != napi_function) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
     handler->PutRequestStart(env, argv[0]);
     return thisVar;
 }
@@ -764,6 +769,11 @@ napi_value NapiWebSchemeHandler::JS_RequestStop(napi_env env, napi_callback_info
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
+
+    if (argc != INTEGER_ONE || valueType != napi_function) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
 
     handler->PutRequestStop(env, argv[0]);
     return thisVar;
