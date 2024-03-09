@@ -731,32 +731,62 @@ void WebPostDataStream::ExecuteInitComplete(napi_env env, napi_status status, vo
     delete param;
 }
 
+void WebPostDataStream::ExecuteReadComplete(napi_env env, napi_status status, void* data)
+{
+    WVLOG_D("WebPostDataStream::ExecuteReadComplete");
+    ReadParam* param = static_cast<ReadParam*>(data);
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(env, &scope);
+    if (!param) {
+        return;
+    } 
+    if (!scope) {
+        delete param;
+        return;
+    }
+    napi_value result[INTEGER_ONE] = {0};
+    void *bufferData = nullptr;
+    napi_create_arraybuffer(env, param->bytesRead, &bufferData, &result[INTEGER_ZERO]);
+    if (memcpy_s(bufferData, param->bytesRead, param->buffer, param->bytesRead) != 0 &&
+        param->bytesRead > 0) {
+        WVLOG_W("WebPostDataStream::ExecuteRead memcpy failed");
+    }
+    if (param->callbackRef) {
+        napi_value callback = nullptr;
+        napi_get_reference_value(env, param->callbackRef, &callback);
+        napi_call_function(env, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
+        napi_delete_reference(env, param->callbackRef);
+    } else if (param->deferred) {
+        napi_resolve_deferred(env, param->deferred, result[INTEGER_ZERO]);
+    }
+    napi_delete_async_work(env, param->asyncWork);
+    napi_close_handle_scope(env, scope);
+    delete param;
+}
+
 void WebPostDataStream::ExecuteRead(uint8_t* buffer, int bytesRead)
 {
     if (!env_) {
         return;
     }
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env_, &scope);
-    if (scope == nullptr) {
+    ReadParam *param = new (std::nothrow) ReadParam {
+        .env = env_,
+        .asyncWork = nullptr,
+        .deferred = readDeferred_,
+        .callbackRef = readJsCallback_,
+        .buffer = buffer,
+        .bytesRead = bytesRead,
+    };
+    if (param == nullptr) {
         return;
     }
-    napi_value result[INTEGER_ONE] = {0};
-    void *bufferData = nullptr;
-    napi_create_arraybuffer(env_, bytesRead, &bufferData, &result[INTEGER_ZERO]);
-    if (memcpy_s(bufferData, bytesRead, buffer, bytesRead) != 0 && bytesRead > 0) {
-        WVLOG_W("WebPostDataStream::ExecuteRead memcpy failed");
-    }
-    if (readJsCallback_) {
-        napi_value callback = nullptr;
-        napi_get_reference_value(env_, readJsCallback_, &callback);
-        napi_call_function(
-            env_, nullptr, callback, INTEGER_ZERO, &result[INTEGER_ZERO], nullptr);
-        napi_delete_reference(env_, readJsCallback_);
-    } else if (readDeferred_) {
-        napi_resolve_deferred(env_, readDeferred_, result[INTEGER_ZERO]);
-    }
-    napi_close_handle_scope(env_, scope);
+    napi_value resourceName = nullptr;
+    NAPI_CALL_RETURN_VOID(env_, napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL_RETURN_VOID(env_, napi_create_async_work(env_, nullptr, resourceName,
+        [](napi_env env, void *data) {},
+        ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork));
+    NAPI_CALL_RETURN_VOID(env_, 
+        napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
 }
 
 uint64_t WebPostDataStream::GetPostion()
