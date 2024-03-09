@@ -15,7 +15,9 @@
 
 #include "imf_adapter_impl.h"
 
+#include "hisysevent_adapter.h"
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
 
 namespace OHOS::NWeb {
 IMFTextListenerAdapterImpl::IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener)
@@ -208,17 +210,31 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
     return true;
 }
 
+void ReportImfErrorEvent(int32_t ret, bool isShowKeyboard)
+{
+    const std::string INPUT_METHOD = "INPUT_METHOD";
+    const std::string ATTACH_CODE = "ATTACH_CODE";
+    const std::string IS_SHOW_KEY_BOARD = "IS_SHOW_KEY_BOARD";
+    std::string isShowKeyboardStr = isShowKeyboard ? "true" : "false";
+    OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(INPUT_METHOD,
+        HiSysEventAdapter::EventType::FAULT, { ATTACH_CODE, std::to_string(ret),
+            IS_SHOW_KEY_BOARD, isShowKeyboardStr });
+}
+
 bool IMFAdapterImpl::Attach(
     std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard, const IMFAdapterTextConfig &config)
 {
+    const int32_t ERROR_NULL_POINT = 1;
     if (!listener) {
         WVLOG_E("the listener is nullptr");
+        ReportImfErrorEvent(ERROR_NULL_POINT, isShowKeyboard);
         return false;
     }
     if (!textListener_) {
         textListener_ = new (std::nothrow) IMFTextListenerAdapterImpl(listener);
         if (!textListener_) {
             WVLOG_E("new textListener failed");
+            ReportImfErrorEvent(ERROR_NULL_POINT, isShowKeyboard);
             return false;
         }
     }
@@ -239,6 +255,7 @@ bool IMFAdapterImpl::Attach(
     int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
+        ReportImfErrorEvent(ret, isShowKeyboard);
         return false;
     }
     return true;
