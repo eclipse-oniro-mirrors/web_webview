@@ -56,13 +56,7 @@ const std::string INIT_CONFIG = "initConfig";
 const std::string PERFORMANCE_CONFIG = "performanceConfig";
 // The config used in base/web/webview
 const std::string BASE_WEB_CONFIG = "baseWebConfig";
-const std::string FACTORY_CONFIG_VALUE = "factoryConfig";
-const std::string FACTORY_LEVEL_VALUE = "factoryLevel";
-const std::string FACTORY_LEVEL_WATCH = "16";
-const std::string FACTORY_LEVEL_PC = "8";
-const std::string FACTORY_LEVEL_TABLET = "4";
-const std::string FACTORY_LEVEL_PHONE = "2";
-const std::string FACTORY_LEVEL_DEFAULT = "1";
+
 // Run DO macro for every function defined in the API.
 #define FOR_EACH_API_FN(DO)                          \
     DO(WebDownloadManager_PutDownloadCallback)       \
@@ -772,6 +766,14 @@ bool NWebHelper::InitAndRun(bool from_ark)
 
     nwebEngine_->InitializeWebEngine(initArgs);
     return true;
+}
+
+void NWebAdapterHelper::ReadConfigIfNeeded()
+{
+    if (perfConfig_.empty()) {
+        std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+        NWebAdapterHelper::Instance().ParseConfig(initArgs);
+    }
 }
 
 void NWebHelper::SetBundlePath(const std::string &path)
