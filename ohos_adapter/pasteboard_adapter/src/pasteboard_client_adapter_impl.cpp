@@ -30,6 +30,12 @@ using namespace OHOS::MiscServices;
 using namespace OHOS::DistributedFS::ModuleRemoteUri;
 
 namespace OHOS::NWeb {
+constexpr char PASTE_BOARD_ERROR[] = "PASTE_BOARD_ERROR";
+constexpr char ERROR_CODE[] = "ERROR_CODE";
+constexpr char RECORD_SIZE[] = "RECORD_SIZE";
+constexpr char DATA_TYPE[] = "DATA_TYPE";
+constexpr char MIMETYPE_HYBRID[] = "hybrid";
+
 PasteboardObserverAdapterImpl::PasteboardObserverAdapterImpl(
     std::shared_ptr<PasteboardObserverAdapter> observer)
     : observer_(observer) {}
@@ -418,10 +424,6 @@ MiscServices::ShareOption PasteBoardClientAdapterImpl::TransitionCopyOption(Copy
 
 void ReportPasteboardErrorEvent(int32_t errorCode, int32_t recordSize, const std::string &dataType)
 {
-    const std::string PASTE_BOARD_ERROR = "PASTE_BOARD_ERROR";
-    const std::string ERROR_CODE = "ERROR_CODE";
-    const std::string RECORD_SIZE = "RECORE_SIZE";
-    const std::string DATA_TYPE = "DATA_TYPE";
     OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(PASTE_BOARD_ERROR,
         HiSysEventAdapter::EventType::FAULT, { ERROR_CODE, std::to_string(errorCode),
             RECORD_SIZE, std::to_string(recordSize), DATA_TYPE, dataType });
@@ -429,7 +431,6 @@ void ReportPasteboardErrorEvent(int32_t errorCode, int32_t recordSize, const std
 
 std::string GetPasteMimeTypeExtention(PasteData &pData)
 {
-    const std::string MIMETYPE_HYBRID = "hybrid";
     bool isHybrid = false;
     std::string primaryMimeType = *pData.GetPrimaryMimeType().get();
     for (auto &item : pData.AllRecords()) {
