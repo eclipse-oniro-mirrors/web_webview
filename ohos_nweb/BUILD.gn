@@ -55,6 +55,7 @@ ohos_shared_library("libnweb") {
   sources = [
     "src/nweb_enhance_surface_adapter.cpp",
     "src/nweb_helper.cpp",
+    "src/nweb_hisysevent.cpp",
     "src/nweb_surface_adapter.cpp",
   ]
 
@@ -69,6 +70,7 @@ ohos_shared_library("libnweb") {
   ]
 
   external_deps = [
+    "ability_runtime:ability_manager",
     "ability_runtime:app_context",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
@@ -78,6 +80,7 @@ ohos_shared_library("libnweb") {
     "graphic_2d:librender_service_client",
     "graphic_surface:surface",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "input:libmmi-client",
     "ipc:ipc_core",
     "window_manager:libwm",
