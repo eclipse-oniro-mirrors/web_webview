@@ -137,4 +137,30 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     auto mergeData = std::tuple_cat(data, sysData);
     return ForwardToHiSysEvent(eventName, type, mergeData);
 }
+
+int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
+        const std::tuple<const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const uint32_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t,
+        const std::string, const int64_t, const std::string, const int64_t>& data)
+{
+    auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+
+    AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+
+    std::tuple<const std::string, const std::string> sysData = {
+        "ABILITY_NAME", elementName.GetAbilityName(),
+    };
+
+    auto mergeData = std::tuple_cat(data, sysData);
+    return ForwardToHiSysEvent(eventName, type, mergeData);
+}
 } // namespace OHOS::NWeb
