@@ -24,6 +24,7 @@
 #include "ohos_nweb/ctocpp/ark_web_date_time_chooser_callback_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_drag_data_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_file_selector_params_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_first_meaningful_paint_details_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_full_screen_exit_handler_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_geo_location_callback_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_js_dialog_result_ctocpp.h"
@@ -31,6 +32,7 @@
 #include "ohos_nweb/ctocpp/ark_web_js_ssl_error_result_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_js_ssl_select_cert_result_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_key_event_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_largest_contentful_paint_details_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_load_committed_details_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_native_embed_data_info_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_native_embed_touch_event_ctocpp.h"
@@ -974,6 +976,30 @@ bool ARK_WEB_CALLBACK ark_web_handler_on_handle_override_url_loading(
       ArkWebUrlResourceRequestCToCpp::Invert(request));
 }
 
+void ARK_WEB_CALLBACK ark_web_handler_on_first_meaningful_paint(
+    struct _ark_web_handler_t *self,
+    ark_web_first_meaningful_paint_details_t *details) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnFirstMeaningfulPaint(
+      ArkWebFirstMeaningfulPaintDetailsCToCpp::Invert(details));
+}
+
+void ARK_WEB_CALLBACK ark_web_handler_on_largest_contentful_paint(
+    struct _ark_web_handler_t *self,
+    ark_web_largest_contentful_paint_details_t *details) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnLargestContentfulPaint(
+      ArkWebLargestContentfulPaintDetailsCToCpp::Invert(details));
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1081,6 +1107,10 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_full_screen_enter_with_video_size;
   GetStruct()->on_handle_override_url_loading =
       ark_web_handler_on_handle_override_url_loading;
+  GetStruct()->on_first_meaningful_paint =
+      ark_web_handler_on_first_meaningful_paint;
+  GetStruct()->on_largest_contentful_paint =
+      ark_web_handler_on_largest_contentful_paint;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {

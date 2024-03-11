@@ -536,6 +536,24 @@ public:
   bool OnHandleOverrideUrlLoading(
       ArkWebRefPtr<ArkWebUrlResourceRequest> request) override;
 
+  /**
+   * @brief Called when the first meaningful paint rendering of web page.
+   *
+   * @param details represents the details of first meaningful paint.
+   */
+  void OnFirstMeaningfulPaint(
+      ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details)
+      override;
+
+  /**
+   * @brief Called when the largest contentful paint rendering of web page.
+   *
+   * @param details represents the details of largest contentful paint.
+   */
+  void OnLargestContentfulPaint(
+      ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details)
+      override;
+
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
