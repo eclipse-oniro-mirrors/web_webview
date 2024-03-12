@@ -30,6 +30,8 @@ public:
     void DestroyNativeWindow(NWebNativeWindow window) override;
 
     int32_t NativeWindowSetBufferGeometry(NWebNativeWindow window, int32_t width, int32_t height) override;
+
+    void NativeWindowSurfaceCleanCache(NWebNativeWindow window) override;
 };
 } // namespace OHOS::NWeb
 

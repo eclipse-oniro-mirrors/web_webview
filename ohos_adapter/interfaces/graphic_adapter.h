@@ -197,6 +197,8 @@ public:
     virtual void DestroyNativeWindow(NWebNativeWindow window) = 0;
 
     virtual int32_t NativeWindowSetBufferGeometry(NWebNativeWindow window, int32_t width, int32_t height) = 0;
+
+    virtual void NativeWindowSurfaceCleanCache(NWebNativeWindow window) = 0;
 };
 
 class AshmemAdapter {
