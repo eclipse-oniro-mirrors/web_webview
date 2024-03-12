@@ -34,9 +34,11 @@
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
 
+#include "nweb_hisysevent.h"
 #include "nweb_c_api.h"
 
 namespace {
+const int32_t NS_TO_S = 1000000000;
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
 const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
 #if defined(webview_arm64)
@@ -982,10 +984,20 @@ bool NWebAdapterHelper::Init(bool from_ark)
     return NWebHelper::Instance().Init(from_ark);
 }
 
+static int64_t GetCurrentRealTimeNs()
+{
+    struct timespec ts = { 0, 0 };
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
+        return 0;
+    }
+    return (ts.tv_sec * NS_TO_S + ts.tv_nsec);
+}
+
 std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
     std::shared_ptr<NWebEngineInitArgsImpl> initArgs,
     uint32_t width, uint32_t height, bool incognitoMode)
 {
+    int64_t startTime = GetCurrentRealTimeNs();
     if (surface == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
         return nullptr;
@@ -1010,12 +1022,15 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
     }
+    int64_t endTime = GetCurrentRealTimeNs();
+    EventReport::ReportCreateWebInstanceTime(nweb->GetWebId(), endTime - startTime);
     return nweb;
 }
 
 std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
     std::shared_ptr<NWebEngineInitArgsImpl> initArgs, uint32_t width, uint32_t height, bool incognitoMode)
 {
+    int64_t startTime = GetCurrentRealTimeNs();
     if (enhanceSurfaceInfo == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
         return nullptr;
@@ -1030,6 +1045,8 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
     }
+    int64_t endTime = GetCurrentRealTimeNs();
+    EventReport::ReportCreateWebInstanceTime(nweb->GetWebId(), endTime - startTime);
     return nweb;
 }
 
