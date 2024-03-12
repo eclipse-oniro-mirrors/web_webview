@@ -1205,7 +1205,32 @@ xmlNodePtr NWebAdapterHelper::GetChildrenNode(xmlNodePtr NodePtr, const std::str
 
 void NWebAdapterHelper::ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
 {
-    auto configFilePath = GetConfigPath(WEB_CONFIG_PATH);
+    CfgFiles* cfgFiles = GetCfgFiles(WEB_CONFIG_PATH.c_str());
+    if (cfgFiles == nullptr) {
+        WVLOG_E("Not found webConfigxml,read system config");
+        ParseWebConfigXml("/system/" + WEB_CONFIG_PATH, initArgs);
+        return;
+    }
+    // When i is 0 ,it means /system/ + WEB_CONFIG_PATH, ignore
+    for (int32_t i = 1; i < MAX_CFG_POLICY_DIRS_CNT; i++) {
+        auto cfgFilePath = cfgFiles->paths[i];
+        if (!cfgFilePath || *(cfgFilePath) == '\0') {
+            break;
+        }
+        WVLOG_D("web config file path:%{public}s", cfgFilePath);
+        if (!cfgFilePath || strlen(cfgFilePath) == 0 || strlen(cfgFilePath) > PATH_MAX) {
+            WVLOG_W("can not get customization config file");
+            ParseWebConfigXml("/system/" + WEB_CONFIG_PATH, initArgs);
+            continue;
+        }
+        ParseWebConfigXml(cfgFiles->paths[i], initArgs);
+    }
+    FreeCfgFiles(cfgFiles);
+}
+
+void NWebAdapterHelper::ParseWebConfigXml(const std::string& configFilePath,
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
+{
     xmlDocPtr docPtr = xmlReadFile(configFilePath.c_str(), nullptr, XML_PARSE_NOBLANKS);
     if (docPtr == nullptr) {
         WVLOG_E("load xml error!");
