@@ -32,7 +32,8 @@ const std::string CRASHPAD_HANDLER_PATH = "unsupport";
 const std::string LIB_CRASHPAD_HANDLER = "libchrome_crashpad_handler.so";
 }
 
-int main(int argc, char* argv[]) {
+int main(int argc, char* argv[])
+{
     const std::string libCrashpadHandler = CRASHPAD_HANDLER_PATH + "/" + LIB_CRASHPAD_HANDLER;
     void *handle = dlopen(libCrashpadHandler.c_str(), RTLD_NOW | RTLD_GLOBAL);
     if (handle == nullptr) {
