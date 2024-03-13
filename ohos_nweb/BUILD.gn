@@ -130,3 +130,25 @@ ohos_prebuilt_etc("context-menu") {
   part_name = "webview"
   relative_install_dir = "webview/ohos_nweb"
 }
+
+ohos_executable("chrome_crashpad_handler") {
+  install_enable = true
+
+  include_dirs = [ "include" ]
+
+  sources = [ "src/nweb_crashpad_handler_main.cpp" ]
+
+  external_deps = [ "hilog:libhilog" ]
+
+  defines = []
+  if (target_cpu == "arm64") {
+    defines += [ "webview_arm64" ]
+  } else if (target_cpu == "arm") {
+    defines += [ "webview_arm" ]
+  } else if (target_cpu == "x86_64") {
+    defines += [ "webview_x86_64" ]
+  }
+
+  subsystem_name = "web"
+  part_name = "webview"
+}
