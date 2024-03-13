@@ -35,6 +35,7 @@ constexpr char ERROR_CODE[] = "ERROR_CODE";
 constexpr char RECORD_SIZE[] = "RECORD_SIZE";
 constexpr char DATA_TYPE[] = "DATA_TYPE";
 constexpr char MIMETYPE_HYBRID[] = "hybrid";
+constexpr char MIMETYPE_NULL[] = "null";
 
 PasteboardObserverAdapterImpl::PasteboardObserverAdapterImpl(
     std::shared_ptr<PasteboardObserverAdapter> observer)
@@ -429,11 +430,14 @@ void ReportPasteboardErrorEvent(int32_t errorCode, int32_t recordSize, const std
             RECORD_SIZE, std::to_string(recordSize), DATA_TYPE, dataType });
 }
 
-std::string GetPasteMimeTypeExtention(PasteData &pData)
+std::string GetPasteMimeTypeExtention(const PasteRecordList& data)
 {
+    if (data.empty()) {
+        return MIMETYPE_NULL;
+    }
     bool isHybrid = false;
-    std::string primaryMimeType = *pData.GetPrimaryMimeType().get();
-    for (auto &item : pData.AllRecords()) {
+    std::string primaryMimeType = data.front()->GetMimeType();
+    for (auto &item : data) {
         if (primaryMimeType != item->GetMimeType()) {
             isHybrid = true;
             break;
@@ -451,7 +455,7 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
     if (!PasteboardClient::GetInstance()->HasPasteData() ||
         !PasteboardClient::GetInstance()->GetPasteData(pData)) {
         ReportPasteboardErrorEvent(PasteboardClient::GetInstance()->GetPasteData(pData),
-            pData.AllRecords().size(), GetPasteMimeTypeExtention(pData));
+            pData.AllRecords().size(), GetPasteMimeTypeExtention(data));
         isLocalPaste_ = false;
         tokenId_ = 0;
         return false;
@@ -485,7 +489,7 @@ void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data, Copy
     pData.SetShareOption(shareOption);
     int32_t ret = PasteboardClient::GetInstance()->SetPasteData(pData);
     if (ret != SET_PASTE_DATA_SUCCESS) {
-        ReportPasteboardErrorEvent(ret, pData.AllRecords().size(), GetPasteMimeTypeExtention(pData));
+        ReportPasteboardErrorEvent(ret, pData.AllRecords().size(), GetPasteMimeTypeExtention(data));
     }
 }
 
