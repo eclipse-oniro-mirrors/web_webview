@@ -78,4 +78,13 @@ std::map<std::string, std::string> ArkWebNativeEmbedInfoWrapper::GetParams() {
   ArkWebStringMapStructRelease(stType);
   return objType;
 }
+
+int32_t ArkWebNativeEmbedInfoWrapper::GetX() {
+  return ark_web_native_embed_info_->GetX();
+}
+
+int32_t ArkWebNativeEmbedInfoWrapper::GetY() {
+  return ark_web_native_embed_info_->GetY();
+}
+
 } // namespace OHOS::ArkWeb
