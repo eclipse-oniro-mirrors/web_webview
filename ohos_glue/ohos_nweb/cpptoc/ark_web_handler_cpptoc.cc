@@ -47,6 +47,7 @@
 #include "ohos_nweb/ctocpp/ark_web_url_resource_error_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_url_resource_request_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_url_resource_response_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_js_all_ssl_error_result_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
@@ -1000,6 +1001,36 @@ void ARK_WEB_CALLBACK ark_web_handler_on_largest_contentful_paint(
       ArkWebLargestContentfulPaintDetailsCToCpp::Invert(details));
 }
 
+bool ARK_WEB_CALLBACK ark_web_handler_on_all_ssl_error_request_by_js(
+    struct _ark_web_handler_t *self,
+    ark_web_js_all_ssl_error_result_t *result,
+    int error,
+    const ArkWebString *url,
+    const ArkWebString *originalUrl,
+    const ArkWebString *referrer,
+    bool isFatalError,
+    bool isMainFrame) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self,  false);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(url,  false);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(originalUrl,  false);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(referrer,  false);
+
+  // Execute
+  return ArkWebHandlerCppToC::Get(self)->OnAllSslErrorRequestByJS(
+      ArkWebJsAllSslErrorResultCToCpp::Invert(result),
+      error,
+      *url,
+      *originalUrl,
+      *referrer,
+      isFatalError,
+      isMainFrame);
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1111,6 +1142,8 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_first_meaningful_paint;
   GetStruct()->on_largest_contentful_paint =
       ark_web_handler_on_largest_contentful_paint;
+  GetStruct()->on_all_ssl_error_request_by_js =
+      ark_web_handler_on_all_ssl_error_request_by_js;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {
