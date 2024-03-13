@@ -56,6 +56,8 @@ public:
     MOCK_METHOD0(ReleaseVideoBuffer, int32_t());
     MOCK_METHOD0(Release, int32_t());
     MOCK_METHOD1(SetScreenCaptureCallback, int32_t(const std::shared_ptr<ScreenCaptureCallBack> &));
+    MOCK_METHOD1(ExcludeContent, int32_t(ScreenCaptureContentFilter &));
+    MOCK_METHOD0(SetPrivacyAuthorityEnabled, int32_t());
 };
 } // namespace Media
 namespace NWeb {
