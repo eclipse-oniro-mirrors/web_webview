@@ -29,6 +29,7 @@
 #include "ohos_nweb/bridge/ark_web_js_dialog_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_http_auth_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_ssl_error_result_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_js_all_ssl_error_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_ssl_select_cert_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_key_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_load_committed_details_wrapper.h"
@@ -747,5 +748,36 @@ bool ArkWebHandlerImpl::OnHandleOverrideUrlLoading(
 
   return nweb_handler_->OnHandleOverrideUrlLoading(
       std::make_shared<ArkWebUrlResourceRequestWrapper>(request));
+}
+
+bool ArkWebHandlerImpl::OnAllSslErrorRequestByJS(
+    ArkWebRefPtr<ArkWebJsAllSslErrorResult> result,
+    int error,
+    const ArkWebString &url,
+    const ArkWebString &originalUrl,
+    const ArkWebString &referrer,
+    bool isFatalError,
+    bool isMainFrame
+    ) {
+  if (CHECK_REF_PTR_IS_NULL(result)) {
+    return nweb_handler_->OnAllSslErrorRequestByJS(
+        nullptr, static_cast<ArkWebSslError>(error),
+        ArkWebStringStructToClass(url),
+        ArkWebStringStructToClass(originalUrl),
+        ArkWebStringStructToClass(referrer),
+        isFatalError,
+        isMainFrame
+        );
+  }
+
+  return nweb_handler_->OnAllSslErrorRequestByJS(
+      std::make_shared<ArkWebJsAllSslErrorResultWrapper>(result),
+      static_cast<ArkWebSslError>(error),
+      ArkWebStringStructToClass(url),
+      ArkWebStringStructToClass(originalUrl),
+      ArkWebStringStructToClass(referrer),
+      isFatalError,
+      isMainFrame
+      );
 }
 } // namespace OHOS::ArkWeb

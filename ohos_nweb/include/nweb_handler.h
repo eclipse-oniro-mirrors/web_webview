@@ -781,6 +781,17 @@ public:
         std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request) {
       return false;
     }
+
+    virtual bool OnAllSslErrorRequestByJS(
+          std::shared_ptr<NWebJSAllSslErrorResult> result,
+          SslError error,
+          const std::string& url,
+          const std::string& originalUrl,
+          const std::string& referrer,
+          bool isFatalError,
+          bool isMainFrame) {
+        return false;
+    }
 };
 }  // namespace OHOS::NWeb
 
