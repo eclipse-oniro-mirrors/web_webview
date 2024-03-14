@@ -53,6 +53,8 @@ public:
 
     bool GetTraceDebugEnable() override;
 
+    ArkWebString GetSiteIsolationMode() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

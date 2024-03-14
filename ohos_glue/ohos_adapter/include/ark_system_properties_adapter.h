@@ -65,6 +65,9 @@ public:
 
     /*--web engine()--*/
     virtual bool GetTraceDebugEnable() = 0;
+
+    /*--web engine()--*/
+    virtual ArkWebString GetSiteIsolationMode() = 0;
 };
 
 } // namespace OHOS::ArkWeb
