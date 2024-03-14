@@ -57,6 +57,8 @@ public:
     virtual std::string GetNetlogMode() = 0;
 
     virtual bool GetTraceDebugEnable() = 0;
+
+    virtual std::string GetSiteIsolationMode() = 0;
 };
 
 }  // namespace OHOS::NWeb
