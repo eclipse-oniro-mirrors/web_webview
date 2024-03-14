@@ -175,6 +175,16 @@ typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char *);
 typedef void (*NativeArkWebOnDestroyCallback)(const char *);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
+
+class OHOS_NWEB_EXPORT NWebEnginePrefetchArgs {
+    public:
+    virtual ~NWebEnginePrefetchArgs() = default;
+
+    virtual std::string GetUrl() = 0;
+    virtual std::string GetMethod() = 0;
+    virtual std::string GetFormData() = 0;
+};
+
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
