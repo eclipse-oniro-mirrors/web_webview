@@ -17,6 +17,7 @@
 #include "base/ctocpp/ark_web_ctocpp_macros.h"
 #include "ohos_nweb/bridge/ark_web_nweb_bridge_helper.h"
 #include "ohos_nweb/cpptoc/ark_web_engine_init_args_cpptoc.h"
+#include "ohos_nweb/cpptoc/ark_web_engine_prefetch_args_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_nweb_create_info_cpptoc.h"
 #include "ohos_nweb/ctocpp/ark_web_cookie_manager_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_data_base_ctocpp.h"
@@ -269,6 +270,39 @@ void ArkWebEngineCToCpp::ResumeAllTimers() {
 
   // Execute
   _struct->resume_all_timers(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::PrefetchResource(
+    ArkWebRefPtr<ArkWebEnginePrefetchArgs> &pre_args,
+    const ArkWebStringMap &additional_http_headers,
+    const ArkWebString &cache_key, const uint32_t &cache_valid_time) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, prefetch_resource, );
+
+  // Translate param: pre_args; type: refptr_diff_byref
+  ark_web_engine_prefetch_args_t *pre_argsStruct = NULL;
+  if (pre_args.get()) {
+    pre_argsStruct = ArkWebEnginePrefetchArgsCppToC::Invert(pre_args);
+  }
+  ark_web_engine_prefetch_args_t *pre_argsOrig = pre_argsStruct;
+
+  // Execute
+  _struct->prefetch_resource(_struct, &pre_argsStruct, &additional_http_headers,
+                             &cache_key, &cache_valid_time);
+
+  // Restore param:pre_args; type: refptr_diff_byref
+  if (pre_argsStruct) {
+    if (pre_argsStruct != pre_argsOrig) {
+      pre_args = ArkWebEnginePrefetchArgsCppToC::Revert(pre_argsStruct);
+    }
+  } else {
+    pre_args = nullptr;
+  }
 }
 
 ArkWebEngineCToCpp::ArkWebEngineCToCpp() {

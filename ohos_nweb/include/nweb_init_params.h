@@ -198,6 +198,33 @@ private:
   std::list<std::string> argsToDelete_;
 };
 
+class NWebEnginePrefetchArgsImpl : public NWebEnginePrefetchArgs {
+public:
+  NWebEnginePrefetchArgsImpl(const std::string& url,
+                             const std::string& method,
+                             const std::string& formData)
+                             : url_(url), method_(method), form_data_(formData) {
+}
+  ~NWebEnginePrefetchArgsImpl() = default;
+
+  std::string GetUrl() override {
+    return url_;
+  }
+
+  std::string GetMethod() override {
+    return method_;
+  }
+
+  std::string GetFormData() override {
+    return form_data_;
+  }
+
+private:
+  std::string url_;
+  std::string method_;
+  std::string form_data_;
+};
+
 } // namespace OHOS::NWeb
 
 #endif // NWEB_INIT_PARAMS_H
