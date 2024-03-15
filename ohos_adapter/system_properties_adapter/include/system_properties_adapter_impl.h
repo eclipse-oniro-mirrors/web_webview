@@ -50,6 +50,8 @@ public:
 
     bool GetTraceDebugEnable() override;
 
+    std::string GetSiteIsolationMode() override;
+    
 private:
     SystemPropertiesAdapterImpl();
 
