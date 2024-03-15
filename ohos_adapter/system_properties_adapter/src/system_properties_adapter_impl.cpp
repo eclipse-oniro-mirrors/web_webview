@@ -146,4 +146,9 @@ bool SystemPropertiesAdapterImpl::GetTraceDebugEnable()
 {
     return OHOS::system::GetBoolParameter("web.debug.trace", false);
 }
+
+std::string SystemPropertiesAdapterImpl::GetSiteIsolationMode()
+{
+    return OHOS::system::GetParameter("web.debug.strictsiteIsolation.enable", "");
+}
 } // namespace OHOS::NWeb
