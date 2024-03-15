@@ -53,6 +53,17 @@ int32_t ARK_WEB_CALLBACK ark_window_adapter_native_window_set_buffer_geometry(
     return ArkWindowAdapterCppToC::Get(self)->NativeWindowSetBufferGeometry(window, width, height);
 }
 
+void ARK_WEB_CALLBACK ark_window_adapter_native_window_surface_clean_cache(
+    struct _ark_window_adapter_t *self, void *window)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+    // Execute
+    ArkWindowAdapterCppToC::Get(self)->NativeWindowSurfaceCleanCache(window);
+}
+
 } // namespace
 
 ArkWindowAdapterCppToC::ArkWindowAdapterCppToC()
@@ -60,6 +71,7 @@ ArkWindowAdapterCppToC::ArkWindowAdapterCppToC()
     GetStruct()->create_native_window_from_surface = ark_window_adapter_create_native_window_from_surface;
     GetStruct()->destroy_native_window = ark_window_adapter_destroy_native_window;
     GetStruct()->native_window_set_buffer_geometry = ark_window_adapter_native_window_set_buffer_geometry;
+    GetStruct()->native_window_surface_clean_cache = ark_window_adapter_native_window_surface_clean_cache;
 }
 
 ArkWindowAdapterCppToC::~ArkWindowAdapterCppToC() {}

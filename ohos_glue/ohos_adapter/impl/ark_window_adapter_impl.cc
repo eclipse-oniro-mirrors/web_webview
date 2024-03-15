@@ -33,4 +33,8 @@ int32_t ArkWindowAdapterImpl::NativeWindowSetBufferGeometry(void* window, int32_
     return real_.NativeWindowSetBufferGeometry(window, width, height);
 }
 
+void ArkWindowAdapterImpl::NativeWindowSurfaceCleanCache(void* window)
+{
+    return real_.NativeWindowSurfaceCleanCache(window);
+}
 } // namespace OHOS::ArkWeb
