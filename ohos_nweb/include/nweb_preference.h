@@ -621,6 +621,11 @@ public:
      * @return whether scrolling is allowed.
      */
     virtual bool GetScrollable() = 0;
+
+    /**
+     * Put whether fonts are automatically laid out, default value is ture.
+     */
+    virtual void PutTextAutosizingEnabled(bool flag) = 0;
 };
 }  // namespace OHOS::NWeb
 #endif  // NWEB_PREFERENCE_H
