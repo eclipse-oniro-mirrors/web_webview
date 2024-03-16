@@ -1171,7 +1171,6 @@ void ArkWebPreferenceCToCpp::PutTextAutosizingEnabled(bool flag) {
 
   ark_web_preference_t *_struct = GetStruct();
   ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
-
   ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, put_text_autosizing_enabled, );
 
   // Execute
@@ -1189,6 +1188,19 @@ void ArkWebPreferenceCToCpp::SetViewportEnable(bool enable) {
 
   // Execute
   _struct->set_viewport_enable(_struct, enable);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebPreferenceCToCpp::SetNativeVideoPlayerConfig(bool enable,
+                                                        bool shouldOverlay) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_preference_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, set_native_video_player_config, );
+
+  // Execute
+  _struct->set_native_video_player_config(_struct, enable, shouldOverlay);
 }
 
 ArkWebPreferenceCToCpp::ArkWebPreferenceCToCpp() {
