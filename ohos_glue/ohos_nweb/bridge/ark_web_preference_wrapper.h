@@ -621,6 +621,11 @@ public:
    */
   bool GetScrollable() override;
 
+  /**
+   * @brief Put whether fonts are automatically laid out, default value is ture.
+   */
+  void PutTextAutosizingEnabled(bool flag) override;
+
 private:
   ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };
