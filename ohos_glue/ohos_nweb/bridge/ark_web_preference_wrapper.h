@@ -626,6 +626,11 @@ public:
    */
   void PutTextAutosizingEnabled(bool flag) override;
 
+  /**
+   * @brief Set whether to support the viewport attribute of the meta tag in the frontend page.
+   */
+  void SetViewportEnable(bool enable) override;
+
 private:
   ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };

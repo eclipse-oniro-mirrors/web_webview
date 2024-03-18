@@ -207,6 +207,8 @@ public:
   bool GetScrollable() override;
 
   void PutTextAutosizingEnabled(bool flag) override;
+
+  void SetViewportEnable(bool enable) override;
 };
 
 } // namespace OHOS::ArkWeb
