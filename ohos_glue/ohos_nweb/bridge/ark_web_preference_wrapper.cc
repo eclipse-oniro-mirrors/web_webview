@@ -453,4 +453,10 @@ void ArkWebPreferenceWrapper::PutTextAutosizingEnabled(bool flag) {
     ark_web_preference_->PutTextAutosizingEnabled(flag);
 }
 
+void ArkWebPreferenceWrapper::SetViewportEnable(bool enable) {
+  if (ark_web_preference_) {
+    ark_web_preference_->SetViewportEnable(enable);
+  }
+}
+
 } // namespace OHOS::ArkWeb
