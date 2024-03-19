@@ -164,6 +164,84 @@ WebviewController* GetWebviewController(napi_env env, napi_callback_info info)
     }
     return webviewController;
 }
+
+bool ParsePrepareRequestMethod(napi_env env, napi_value methodObj, std::string& method)
+{
+    napi_valuetype valueType = napi_null;
+    napi_typeof(env, methodObj, &valueType);
+
+    if (valueType == napi_string) {
+        NapiParseUtils::ParseString(env, methodObj, method);
+        if (method != "POST") {
+            WVLOG_E("The method %{public}s is not supported.", method.c_str());
+            return false;
+        }
+        return true;
+    }
+
+    WVLOG_E("Unable to parse type from method object.");
+    return false;
+}
+
+bool ParseHttpHeaders(napi_env env, napi_value headersArray, std::map<std::string, std::string>* headers)
+{
+    bool isArray = false;
+    napi_is_array(env, headersArray, &isArray);
+    if (isArray) {
+        uint32_t arrayLength = INTEGER_ZERO;
+        napi_get_array_length(env, headersArray, &arrayLength);
+        for (uint32_t i = 0; i < arrayLength; ++i) {
+            std::string key;
+            std::string value;
+            napi_value obj = nullptr;
+            napi_value keyObj = nullptr;
+            napi_value valueObj = nullptr;
+            napi_get_element(env, headersArray, i, &obj);
+            if (napi_get_named_property(env, obj, "headerKey", &keyObj) != napi_ok) {
+                continue;
+            }
+            if (napi_get_named_property(env, obj, "headerValue", &valueObj) != napi_ok) {
+                continue;
+            }
+            NapiParseUtils::ParseString(env, keyObj, key);
+            NapiParseUtils::ParseString(env, valueObj, value);
+            (*headers)[key] = value;
+        }
+    } else {
+        WVLOG_E("Unable to parse type from headers array object.");
+        return false;
+    }
+    return true;
+}
+
+std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_value preArgs) {
+    napi_value urlObj = nullptr;
+    std::string url;
+    napi_get_named_property(env, preArgs, "url", &urlObj);
+    if (!ParsePrepareUrl(env, urlObj, url)) {
+        BusinessError::ThrowErrorByErrcode(env, INVALID_URL);
+        return nullptr;
+    }
+
+    napi_value methodObj = nullptr;
+    std::string method;
+    napi_get_named_property(env, preArgs, "method", &methodObj);
+    if (!ParsePrepareRequestMethod(env, methodObj, method)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    napi_value formDataObj = nullptr;
+    std::string formData;
+    napi_get_named_property(env, preArgs, "formData", &formDataObj);
+    if (!NapiParseUtils::ParseString(env, formDataObj, formData)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+    std::shared_ptr<NWebEnginePrefetchArgs> prefetchArgs = std::make_shared<NWebEnginePrefetchArgsImpl>(
+        url, method, formData);
+    return prefetchArgs;
+}
 } // namespace
 
 thread_local napi_ref g_classWebMsgPort;
@@ -281,6 +359,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("closeCamera", NapiWebviewController::CloseCamera),
         DECLARE_NAPI_FUNCTION("getLastJavascriptProxyCallingFrameUrl",
             NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl),
+        DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -3944,6 +4023,52 @@ napi_value NapiWebviewController::PrepareForPageLoad(napi_env env, napi_callback
     }
 
     NWebHelper::Instance().PrepareForPageLoad(url, preconnectable, numSockets);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_FOUR;
+    napi_value argv[INTEGER_FOUR] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc > INTEGER_FOUR || argc < INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    std::shared_ptr<NWebEnginePrefetchArgs> prefetchArgs = ParsePrefetchArgs(env, argv[INTEGER_ZERO]);
+    if (prefetchArgs == nullptr) {
+        return nullptr;
+    }
+
+    std::map<std::string, std::string> additionalHttpHeaders;
+    if (argc >= INTEGER_TWO && !ParseHttpHeaders(env, argv[INTEGER_ONE], &additionalHttpHeaders)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    std::string cacheKey;
+    if ((argc >= INTEGER_THREE) && !NapiParseUtils::ParseString(env, argv[INTEGER_TWO], cacheKey)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    if (cacheKey.empty()) {
+        cacheKey = prefetchArgs->GetUrl();
+    }
+
+    uint32_t cacheValidTime = 0;
+    if ((argc >= INTEGER_FOUR) && !NapiParseUtils::ParseUint32(env, argv[INTEGER_THREE], cacheValidTime)
+        && cacheValidTime <= 0) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    NWebHelper::Instance().PrefetchResource(prefetchArgs, additionalHttpHeaders, cacheKey, cacheValidTime);
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
