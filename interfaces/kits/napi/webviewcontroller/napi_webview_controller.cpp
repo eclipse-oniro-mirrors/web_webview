@@ -15,6 +15,7 @@
 
 #include "napi_webview_controller.h"
 
+#include <climits>
 #include <cstdint>
 #include <regex>
 #include <securec.h>
@@ -214,7 +215,8 @@ bool ParseHttpHeaders(napi_env env, napi_value headersArray, std::map<std::strin
     return true;
 }
 
-std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_value preArgs) {
+std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_value preArgs)
+{
     napi_value urlObj = nullptr;
     std::string url;
     napi_get_named_property(env, preArgs, "url", &urlObj);
@@ -4061,11 +4063,13 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
         cacheKey = prefetchArgs->GetUrl();
     }
 
-    uint32_t cacheValidTime = 0;
-    if ((argc >= INTEGER_FOUR) && !NapiParseUtils::ParseUint32(env, argv[INTEGER_THREE], cacheValidTime)
-        && cacheValidTime <= 0) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return nullptr;
+    int32_t cacheValidTime = 0;
+    if (argc >= INTEGER_FOUR) {
+        if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_THREE], cacheValidTime) || cacheValidTime <= 0 ||
+            cacheValidTime > INT_MAX) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return nullptr;
+        }
     }
 
     NWebHelper::Instance().PrefetchResource(prefetchArgs, additionalHttpHeaders, cacheKey, cacheValidTime);
