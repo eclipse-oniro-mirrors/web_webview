@@ -973,6 +973,19 @@ void NWebHelper::ResumeAllTimers()
     nwebEngine_->ResumeAllTimers();
 }
 
+void NWebHelper::PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs> &pre_args,
+                                  const std::map<std::string, std::string> &additional_http_headers,
+                                  const std::string &cache_key,
+                                  const uint32_t &cache_valid_time)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->PrefetchResource(pre_args, additional_http_headers, cache_key, cache_valid_time);
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;
