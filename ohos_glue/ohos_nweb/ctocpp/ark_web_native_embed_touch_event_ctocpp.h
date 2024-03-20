@@ -51,6 +51,8 @@ public:
   float GetScreenY() override;
 
   ArkWebString GetEmbedId() override;
+
+  ArkWebRefPtr<ArkWebGestureEventResult> GetResult() override;
 };
 
 } // namespace OHOS::ArkWeb
