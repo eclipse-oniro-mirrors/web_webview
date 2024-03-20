@@ -631,6 +631,11 @@ public:
    */
   void SetViewportEnable(bool enable) override;
 
+  /**
+   * @brief Set native video player config.
+   */
+  void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) override;
+
 private:
   ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };
