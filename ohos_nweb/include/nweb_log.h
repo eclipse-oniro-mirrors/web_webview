@@ -24,8 +24,9 @@
 #define BROWSER_UID_BASE  20000000
 #define LOG_APP_DOMAIN    0xD004500
 #define LOG_RENDER_DOMAIN 0xD004501
+#ifndef HILOG_TAG
 #define HILOG_TAG         "webview"
-
+#endif
 #define FILE_NAME (__builtin_strrchr("/" __FILE__, '/') + 1)
 #define FUNC_LINE_FMT "[%{public}s:%{public}d] "
 
