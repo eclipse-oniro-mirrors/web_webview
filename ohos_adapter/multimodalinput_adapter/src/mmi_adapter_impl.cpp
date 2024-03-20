@@ -124,8 +124,9 @@ int32_t MMIAdapterImpl::GetDeviceIds(std::vector<int32_t>& ids)
 
 int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, MMIDeviceInfoAdapter& info)
 {
-    std::function<void(const MMIDeviceInfoAdapter&)> callback = 
-        [&info](const MMIDeviceInfoAdapter& param) { info = const_cast<MMIDeviceInfoAdapter&>(param); };
+    std::function<void(const MMIDeviceInfoAdapter&)> callback = [&info](const MMIDeviceInfoAdapter& param) {
+        info = const_cast<MMIDeviceInfoAdapter&>(param);
+    };
 
     int32_t ret = InputManager::GetInstance()->GetDevice(deviceId,
         [&callback](std::shared_ptr<MMI::InputDevice> device) {

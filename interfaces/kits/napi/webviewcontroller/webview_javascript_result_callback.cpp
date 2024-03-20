@@ -1012,9 +1012,6 @@ void ExecuteHasJavaScriptObjectMethods(
     napi_env env, napi_status status, WebviewJavaScriptResultCallBack::NapiJsCallBackParm* param)
 {
     if (!param) {
-        std::unique_lock<std::mutex> lock(param->mutex);
-        param->ready = true;
-        param->condition.notify_all();
         return;
     }
 
@@ -1119,9 +1116,6 @@ void ExecuteGetJavaScriptObjectMethods(
     napi_env env, napi_status status, WebviewJavaScriptResultCallBack::NapiJsCallBackParm* param)
 {
     if (!param) {
-        std::unique_lock<std::mutex> lock(param->mutex);
-        param->ready = true;
-        param->condition.notify_all();
         return;
     }
 
@@ -1242,9 +1236,6 @@ void ExecuteRemoveJavaScriptObjectHolder(
     napi_env env, napi_status status, WebviewJavaScriptResultCallBack::NapiJsCallBackParm* param)
 {
     if (!param) {
-        std::unique_lock<std::mutex> lock(param->mutex);
-        param->ready = true;
-        param->condition.notify_all();
         return;
     }
 

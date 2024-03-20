@@ -274,7 +274,7 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         { STATE, std::to_string(status) } };
     ResSchedClient::GetInstance().ReportData(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
-    
+
     auto appMgrClient = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
     appMgrClient->UpdateRenderState(pid, status);
 

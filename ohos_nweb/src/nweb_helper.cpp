@@ -588,7 +588,7 @@ bool NWebHelper::LoadLib(bool from_ark)
         return true;
     }
     if (bundlePath_.empty()) {
-        WVLOG_E("fail to load lib bundle path is empty";
+        WVLOG_E("fail to load lib bundle path is empty");
         return false;
     }
     std::string loadLibPath;
@@ -640,7 +640,8 @@ void NWebHelper::UnloadLib()
     }
 }
 
-bool NWebHelper::LoadEngine() {
+bool NWebHelper::LoadEngine()
+{
     if (nwebEngine_) {
         return true;
     }
@@ -934,8 +935,8 @@ void NWebHelper::AddIntelligentTrackingPreventionBypassingList(
     nwebEngine_->AddIntelligentTrackingPreventionBypassingList(hosts);
 }
 
-void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(
-    const std::vector<std::string>& hosts) {
+void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts)
+{
     if (nwebEngine_ == nullptr) {
         WVLOG_E("nweb engine is nullptr");
         return;
@@ -944,7 +945,8 @@ void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(
     nwebEngine_->RemoveIntelligentTrackingPreventionBypassingList(hosts);
 }
 
-void NWebHelper::ClearIntelligentTrackingPreventionBypassingList() {
+void NWebHelper::ClearIntelligentTrackingPreventionBypassingList()
+{
     if (nwebEngine_ == nullptr) {
         WVLOG_E("nweb engine is nullptr");
         return;

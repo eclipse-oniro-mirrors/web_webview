@@ -155,14 +155,13 @@ uint32_t DisplayManagerAdapterImpl::RegisterDisplayListener(
     if (reg == nullptr) {
         return false;
     }
-    
+
     uint32_t id = count++;
     if (count == 0) {
         count++;
     }
-    
+
     reg_.emplace(std::make_pair(id, reg));
-    
     if (DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK) {
         return id;
     } else {

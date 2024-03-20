@@ -685,7 +685,7 @@ napi_value NapiWebviewController::EnableSafeBrowsing(napi_env env, napi_callback
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    
+
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller || !controller->IsInit()) {
@@ -704,7 +704,7 @@ napi_value NapiWebviewController::IsSafeBrowsingEnabled(napi_env env, napi_callb
     if (!webviewController) {
         return nullptr;
     }
-    
+
     bool is_safe_browsing_enabled = webviewController->IsSafeBrowsingEnabled();
     NAPI_CALL(env, napi_get_boolean(env, is_safe_browsing_enabled, &result));
     return result;
@@ -2903,7 +2903,7 @@ napi_value NapiWebviewController::RunJS(napi_env env, napi_callback_info info, b
         }
     }
     if (argc == argcCallback) {
-        napi_valuetype valueType = napi_null;
+        valueType = napi_null;
         napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
         napi_typeof(env, argv[argcCallback - 1], &valueType);
         if (valueType != napi_function) {
@@ -4274,7 +4274,7 @@ napi_value NapiWebviewController::GetSecurityLevel(napi_env env, napi_callback_i
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-    
+
     int32_t securityLevel = webviewController->GetSecurityLevel();
     napi_create_int32(env, securityLevel, &result);
     return result;
@@ -4621,7 +4621,7 @@ napi_value NapiWebviewController::SetWebSchemeHandler(napi_env env, napi_callbac
     napi_value obj = argv[1];
     napi_unwrap(env, obj, (void**)&handler);
     napi_create_reference(env, obj, 1, &handler->delegate_);
-    
+
     if (!webviewController->SetWebSchemeHandler(scheme.c_str(), handler)) {
         WVLOG_E("NapiWebviewController::SetWebSchemeHandler failed");
     }
@@ -4663,7 +4663,7 @@ napi_value NapiWebviewController::SetServiceWorkerWebSchemeHandler(
     napi_value obj = argv[1];
     napi_unwrap(env, obj, (void**)&handler);
     napi_create_reference(env, obj, 1, &handler->delegate_);
-    
+
     if (!WebviewController::SetWebServiveWorkerSchemeHandler(
         scheme.c_str(), handler)) {
         WVLOG_E("NapiWebviewController::SetWebSchemeHandler failed");
@@ -4745,7 +4745,7 @@ bool GetHostList(napi_env env, napi_value array, std::vector<std::string>& hosts
 
         size_t hostLen = 0;
         napi_get_value_string_utf8(env, hostItem, nullptr, 0, &hostLen);
-        if (hostLen < 0 || hostLen > UINT_MAX) {
+        if (hostLen == 0 || hostLen > UINT_MAX) {
             WVLOG_E("hostitem length is invalid");
             return false;
         }
