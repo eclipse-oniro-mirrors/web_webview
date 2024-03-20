@@ -15,6 +15,7 @@
 
 #include "ohos_nweb/ctocpp/ark_web_native_embed_touch_event_ctocpp.h"
 #include "base/ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_nweb/ctocpp/ark_web_gesture_event_result_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
@@ -134,6 +135,22 @@ ArkWebString ArkWebNativeEmbedTouchEventCToCpp::GetEmbedId() {
 
   // Execute
   return _struct->get_embed_id(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+ArkWebRefPtr<ArkWebGestureEventResult> ArkWebNativeEmbedTouchEventCToCpp::GetResult() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_native_embed_touch_event_t* _struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct,  nullptr);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_result,  nullptr);
+
+  // Execute
+  ark_web_gesture_event_result_t* _retval = _struct->get_result(_struct);
+
+  // Return type: refptr_same
+  return ArkWebGestureEventResultCToCpp::Invert(_retval);
 }
 
 ArkWebNativeEmbedTouchEventCToCpp::ArkWebNativeEmbedTouchEventCToCpp() {
