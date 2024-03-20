@@ -632,6 +632,13 @@ public:
      * @param enable set whether viewport is allowed.
      */
     virtual void SetViewportEnable(bool enable) = 0;
+
+    /**
+     * Set native video player config.
+     * @param enable Enable native video player or not.
+     * @param shouldOverlay Native video player should overlay web page or not.
+     */
+    virtual void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) = 0;
 };
 }  // namespace OHOS::NWeb
 #endif  // NWEB_PREFERENCE_H
