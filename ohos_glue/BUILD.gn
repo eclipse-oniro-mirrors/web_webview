@@ -23,6 +23,14 @@ ohos_shared_library("ohos_base_glue_source") {
   branch_protector_frt = "bti"
 
   defines = [ "OHOS_GLUE_DEBUG" ]
+  if (target_cpu == "arm64") {
+    defines += [ "webview_arm64" ]
+  } else if (target_cpu == "arm") {
+    defines += [ "webview_arm" ]
+  } else if (target_cpu == "x86_64") {
+    defines += [ "webview_x86_64" ]
+  }
+
   configs = [ ":ohos_glue_config" ]
   include_dirs = [ "../ohos_nweb" ]
   sources = [
