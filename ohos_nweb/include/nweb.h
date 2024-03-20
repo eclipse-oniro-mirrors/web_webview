@@ -351,7 +351,7 @@ public:
      *
      * @return the last HitTestResult
      */
-     virtual std::shared_ptr<HitTestResult> GetHitTestResult() = 0;
+    virtual std::shared_ptr<HitTestResult> GetHitTestResult() = 0;
 
     /**
      * Set the background color for this view.

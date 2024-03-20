@@ -137,7 +137,7 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_002, 
     want.SetAction("web_test");
     OHOS::EventFwk::CommonEventData data(want);
     OHOS::EventFwk::CommonEventSubscribeInfo in;
-    std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> cb = 
+    std::shared_ptr<EdmPolicyChangedEventCallbackAdapter> cb =
         std::make_shared<MockEdmPolicyChangedEventCallbackAdapter>();
     std::shared_ptr<NWebEdmEventSubscriber> result = std::make_shared<NWebEdmEventSubscriber>(in, cb);
     EXPECT_NE(result, nullptr);

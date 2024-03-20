@@ -170,6 +170,10 @@ bool WebDownloadManager::HasValidDelegate()
 void WebDownloadManager::ResumeDownload(const WebDownloadItem *webDownload)
 {
     WVLOG_D("[DOWNLOAD] WebDownloadManager::ResumeDownload");
+    if (!webDownload) {
+        WVLOG_E("webDownload is nullptr");
+        return;
+    }
     NWebHelper::Instance().LoadNWebSDK();
     NWebDownloadItem *downloadItem = nullptr;
     WebDownloadItem_CreateWebDownloadItem(&downloadItem);
