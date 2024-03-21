@@ -78,7 +78,7 @@ void IMFTextListenerAdapterImpl::SendKeyboardStatus(const MiscServices::Keyboard
 void IMFTextListenerAdapterImpl::SendFunctionKey(const MiscServices::FunctionKey& functionKey)
 {
     if (listener_) {
-        std::shared_ptr<IMFAdapterFunctionKeyAdapterImpl> adapterFunction = 
+        std::shared_ptr<IMFAdapterFunctionKeyAdapterImpl> adapterFunction =
             std::make_shared<IMFAdapterFunctionKeyAdapterImpl>();
         switch (functionKey.GetEnterKeyType()) {
             case MiscServices::EnterKeyType::UNSPECIFIED:

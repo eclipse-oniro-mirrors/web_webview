@@ -545,7 +545,7 @@ int32_t PasteBoardClientAdapterImpl::AddPasteboardChangedObserver(
             if (!observer) {
                 return -1;
             }
-            
+
             id = count++;
             if (count < 0) {
                 count = 0;

@@ -393,6 +393,10 @@ bool NapiParseUtils::ParseDouble(napi_env env, napi_value argv, double& outValue
 //static
 bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
 {
+    if (!src) {
+        WVLOG_E("src is nullptr");
+        return false;
+    }
     NWebValue::Type type = src->GetType();
     using ConvertNWebToNapiValueHandler = std::function<bool(napi_env, std::shared_ptr<NWebMessage>, napi_value&)>;
     static const std::unordered_map<NWebValue::Type, ConvertNWebToNapiValueHandler> functionMap = {
