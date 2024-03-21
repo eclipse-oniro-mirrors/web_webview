@@ -30,7 +30,8 @@ public:
     NWebDefaultOutputFrameCallback() = default;
     ~NWebDefaultOutputFrameCallback() = default;
 
-    bool Handle(const char *buffer, uint32_t width, uint32_t height) override {
+    bool Handle(const char* buffer, uint32_t width, uint32_t height) override
+    {
         return true;
     }
 };

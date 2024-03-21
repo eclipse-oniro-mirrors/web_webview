@@ -1166,7 +1166,7 @@ void WebPrintDocument::OnStartLayoutWrite(const std::string& jobId, const PrintA
     const PrintAttributesAdapter& newAttrs, uint32_t fd, std::function<void(std::string, uint32_t)> writeResultCallback)
 {
     if (printDocAdapter_) {
-        std::shared_ptr<PrintWriteResultCallbackAdapter> callback = 
+        std::shared_ptr<PrintWriteResultCallbackAdapter> callback =
             std::make_shared<WebPrintWriteResultCallbackAdapter>(writeResultCallback);
         printDocAdapter_->OnStartLayoutWrite(jobId, oldAttrs, newAttrs, fd, callback);
     }

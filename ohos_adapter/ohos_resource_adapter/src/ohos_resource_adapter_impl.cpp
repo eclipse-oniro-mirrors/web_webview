@@ -232,7 +232,7 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t&
     if (isSys) {
         result =  GetRawFileData(sysExtractor_, rawFile, len, data);
         if (result) {
-            dest = data.release();     
+            dest = data.release();
         }
         return result;
     }
@@ -260,7 +260,7 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t&
         dest = data.release();
         return true;
     }
-    
+
     result = GetRawFileData(extractor_, rawFile, len, data);
     if (result) {
         dest = data.release();

@@ -64,7 +64,7 @@ void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData 
     const double changeFullLevel = 100.f;
     double changeLevel = capacity / changeFullLevel;
     WVLOG_I("receive capacity %{public}d  isChangingType %{public}d", capacity, isChangingType);
-    std::shared_ptr<WebBatteryInfoImpl> batterinfo = 
+    std::shared_ptr<WebBatteryInfoImpl> batterinfo =
         std::make_shared<WebBatteryInfoImpl>(changeLevel, ischanging, -1, -1);
     eventCallback_->BatteryInfoChanged(batterinfo);
 }

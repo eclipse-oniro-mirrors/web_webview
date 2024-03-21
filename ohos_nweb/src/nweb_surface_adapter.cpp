@@ -35,7 +35,8 @@ public:
                                                                                       adapter_(adapter) {}
     ~NWebOutputFrameCallbackImpl() = default;
 
-    bool Handle(const char *buffer, uint32_t width, uint32_t height) override {
+    bool Handle(const char* buffer, uint32_t width, uint32_t height) override
+    {
         return adapter_->OutputFrameCallback(buffer, width, height, surface_);
     }
 
