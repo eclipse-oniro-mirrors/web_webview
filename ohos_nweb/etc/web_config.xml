@@ -51,10 +51,18 @@
             <userAgentValue>Phone</userAgentValue>
         </userAgentConfig>
     </initConfig>
+    <deleteArgsConfig>
+        <outOfProcessGPUConfig>
+            <enableOopGpu>false</enableOopGpu>
+        </outOfProcessGPUConfig>
+    </deleteArgsConfig>
     <performanceConfig>
         <LowerFrameRateConfig>
             <visibleAreaRatio>0.1</visibleAreaRatio>
         </LowerFrameRateConfig>
+        <flowBufferConfig>
+            <maxFdNumber>0</maxFdNumber>
+        </flowBufferConfig>
     </performanceConfig>
     <baseWebConfig>
         <factoryConfig>
