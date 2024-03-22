@@ -39,7 +39,7 @@ public:
 
     /**
      * @brief Create ashmem
-     * 
+     *
      * @param size size of the ashmem to be created
      * @param mapType mapType of the ashmem to be created
      * @param fd fd of the ashmem to be created
@@ -49,7 +49,7 @@ public:
 
     /**
      * @brief Create ashmem with fd
-     * 
+     *
      * @param fd fd of the ashmem to be created
      * @param size size of the ashmem to be created
      * @param mapType mapType of the ashmem to be created
