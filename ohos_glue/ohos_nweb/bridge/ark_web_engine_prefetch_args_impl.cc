@@ -19,18 +19,20 @@ namespace OHOS::ArkWeb {
 
 ArkWebEnginePrefetchArgsImpl::ArkWebEnginePrefetchArgsImpl(
     std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> nweb_engine_pre_args)
-    : nweb_engine_pre_args_(nweb_engine_pre_args) {
+    : nweb_engine_pre_args_(nweb_engine_pre_args) {}
+
+ArkWebString ArkWebEnginePrefetchArgsImpl::GetUrl()
+{
+    return ArkWebStringClassToStruct(nweb_engine_pre_args_->GetUrl());
 }
 
-ArkWebString ArkWebEnginePrefetchArgsImpl::GetUrl() {
-  return ArkWebStringClassToStruct(nweb_engine_pre_args_->GetUrl());
+ArkWebString ArkWebEnginePrefetchArgsImpl::GetMethod()
+{
+    return ArkWebStringClassToStruct(nweb_engine_pre_args_->GetMethod());
 }
 
-ArkWebString ArkWebEnginePrefetchArgsImpl::GetMethod() {
-  return ArkWebStringClassToStruct(nweb_engine_pre_args_->GetMethod());
-}
-
-ArkWebString ArkWebEnginePrefetchArgsImpl::GetFormData() {
-  return ArkWebStringClassToStruct(nweb_engine_pre_args_->GetFormData());
+ArkWebString ArkWebEnginePrefetchArgsImpl::GetFormData()
+{
+    return ArkWebStringClassToStruct(nweb_engine_pre_args_->GetFormData());
 }
 } // namespace OHOS::ArkWeb
