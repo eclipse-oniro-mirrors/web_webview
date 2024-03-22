@@ -151,4 +151,20 @@ std::string SystemPropertiesAdapterImpl::GetSiteIsolationMode()
 {
     return OHOS::system::GetParameter("web.debug.strictsiteIsolation.enable", "");
 }
+
+bool SystemPropertiesAdapterImpl::GetOOPGPUEnable()
+{
+    if (OHOS::system::GetParameter("web.oop.gpu", "") == "true") {
+        return true;
+    }
+    return false;
+}
+
+void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
+{
+    if (OHOS::system::GetParameter("web.oop.gpu", "") == "None") {
+        OHOS::system::SetParameter("web.oop.gpu", "false");
+    }
+    return;
+}
 } // namespace OHOS::NWeb
