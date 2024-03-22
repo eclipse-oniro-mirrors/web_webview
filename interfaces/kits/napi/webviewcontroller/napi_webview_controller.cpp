@@ -25,9 +25,11 @@
 #include "business_error.h"
 #include "napi_parse_utils.h"
 #include "nweb.h"
+#include "nweb_adapter_helper.h"
 #include "nweb_helper.h"
 #include "nweb_init_params.h"
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
 #include "parameters.h"
 #include "pixel_map.h"
 #include "pixel_map_napi.h"
@@ -243,6 +245,9 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
     return prefetchArgs;
 }
 } // namespace
+
+int32_t NapiWebviewController::maxFdNum_ = -1;
+std::atomic<int32_t> NapiWebviewController::usedFd_ {0};
 
 thread_local napi_ref g_classWebMsgPort;
 thread_local napi_ref g_historyListRef;
@@ -2880,36 +2885,34 @@ napi_value NapiWebviewController::RunJS(napi_env env, napi_callback_info info, b
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    std::string script;
-    napi_valuetype valueType = napi_undefined;
-    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
-    if (valueType == napi_string) {
-        if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], script)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-    } else {
-        bool isArrayBuffer = false;
-        NAPI_CALL(env, napi_is_arraybuffer(env, argv[INTEGER_ZERO], &isArrayBuffer));
-        if (!isArrayBuffer) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-        char *arrBuf = nullptr;
-        size_t byteLength = 0;
-        napi_get_arraybuffer_info(env, argv[INTEGER_ZERO], (void**)&arrBuf, &byteLength);
-        if (arrBuf) {
-            script = std::string(arrBuf, byteLength);
-        }
-    }
+
     if (argc == argcCallback) {
-        valueType = napi_null;
+        napi_valuetype valueType = napi_null;
         napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
         napi_typeof(env, argv[argcCallback - 1], &valueType);
         if (valueType != napi_function) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
             return result;
         }
+    }
+
+    if (maxFdNum_ == -1) {
+        maxFdNum_ =
+            std::atoi(NWebAdapterHelper::Instance().ParsePerConfig("flowBufferConfig", "maxFdNumber").c_str());
+    }
+
+    if (usedFd_.load() < maxFdNum_) {
+        return RunJavaScriptInternalExt(env, info, extention);
+    }
+
+    std::string script;
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    bool parseResult = (valueType == napi_string) ? NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], script) :
+        NapiParseUtils::ParseArrayBuffer(env, argv[INTEGER_ZERO], script);
+    if (!parseResult) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
     }
     return RunJavaScriptInternal(env, info, script, extention);
 }
@@ -2953,6 +2956,81 @@ napi_value NapiWebviewController::RunJavaScriptInternal(napi_env env, napi_callb
         }
         return promise;
     }
+    return result;
+}
+
+ErrCode NapiWebviewController::ConstructFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength)
+{
+    auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+    if (!flowbufferAdapter) {
+        return NWebError::NEW_OOM;
+    }
+    flowbufferAdapter->StartPerformanceBoost();
+
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv, &valueType);
+
+    ErrCode constructResult = (valueType == napi_string) ?
+        NapiParseUtils::ConstructStringFlowbuf(env, argv, fd, scriptLength) :
+        NapiParseUtils::ConstructArrayBufFlowbuf(env, argv, fd, scriptLength);
+    return constructResult;
+}
+
+napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    size_t argcPromise = INTEGER_ONE;
+    size_t argcCallback = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = {0};
+
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    int fd;
+    size_t scriptLength;
+    ErrCode constructResult = ConstructFlowbuf(env, argv[INTEGER_ZERO], fd, scriptLength);
+    if (constructResult != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, constructResult);
+        return result;
+    }
+    usedFd_++;
+
+    WebviewController *webviewController = nullptr;
+    napi_unwrap(env, thisVar, (void **)&webviewController);
+
+    if (!webviewController || !webviewController->IsInit()) {
+        close(fd);
+        usedFd_--;
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    if (argc == argcCallback) {
+        napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+        napi_ref jsCallback = nullptr;
+        napi_create_reference(env, argv[argcCallback - 1], 1, &jsCallback);
+
+        if (jsCallback) {
+            // RunJavaScriptCallbackExt will close fd after IPC
+            webviewController->RunJavaScriptCallbackExt(fd, scriptLength, env, std::move(jsCallback), extention);
+        }
+        usedFd_--;
+        return result;
+    } else if (argc == argcPromise) {
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
+        napi_create_promise(env, &deferred, &promise);
+        if (promise && deferred) {
+            // RunJavaScriptCallbackExt will close fd after IPC
+            webviewController->RunJavaScriptPromiseExt(fd, scriptLength, env, deferred, extention);
+        }
+        usedFd_--;
+        return promise;
+    }
+    close(fd);
+    usedFd_--;
     return result;
 }
 

@@ -33,6 +33,8 @@
 #include "nweb_enhance_surface_adapter.h"
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
+#include "parameter.h"
+#include "parameters.h"
 
 #include "nweb_hisysevent.h"
 #include "nweb_c_api.h"
@@ -1309,6 +1311,7 @@ void NWebAdapterHelper::ParsePerfConfig(xmlNodePtr NodePtr)
             std::string contentStr = reinterpret_cast<const char*>(content);
             xmlFree(content);
             perfConfig_.emplace(nodeName + "/" + childNodeName, contentStr);
+            WriteConfigValueToSysPara(nodeName + "/" + childNodeName, contentStr);
         }
     }
 }
@@ -1324,5 +1327,12 @@ std::string NWebAdapterHelper::ParsePerfConfig(const std::string &configNodeName
     WVLOG_D("find performance config %{public}s/%{public}s, value is %{public}s.", configNodeName.c_str(),
         argsNodeName.c_str(), it->second.c_str());
     return it->second;
+}
+
+void NWebAdapterHelper::WriteConfigValueToSysPara(const std::string &configName, const std::string &value)
+{
+    if (configName == "flowBufferConfig/maxFdNumber") {
+        OHOS::system::SetParameter("web.flowbuffer.maxfd", value);
+    }
 }
 } // namespace OHOS::NWeb

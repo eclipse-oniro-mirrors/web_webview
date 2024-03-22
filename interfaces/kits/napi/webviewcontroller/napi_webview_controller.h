@@ -16,6 +16,7 @@
 #ifndef NWEB_NAPI_WEBVIEW_CONTROLLER_H
 #define NWEB_NAPI_WEBVIEW_CONTROLLER_H
 
+#include <atomic>
 #include <condition_variable>
 #include <mutex>
 
@@ -165,6 +166,10 @@ private:
     static napi_value RunJavaScriptInternal(napi_env env, napi_callback_info info,
         const std::string &script, bool extention);
 
+    static ErrCode ConstructFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength);
+
+    static napi_value RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention);
+
     static napi_value GetUrl(napi_env env, napi_callback_info info);
 
     static napi_value GetOriginalUrl(napi_env env, napi_callback_info info);
@@ -284,6 +289,9 @@ private:
     static napi_value GetLastJavascriptProxyCallingFrameUrl(napi_env env, napi_callback_info info);
 
     static napi_value PrefetchResource(napi_env env, napi_callback_info info);
+
+    static int32_t maxFdNum_;
+    static std::atomic<int32_t> usedFd_;
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {
