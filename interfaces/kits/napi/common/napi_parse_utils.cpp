@@ -15,7 +15,11 @@
 
 #include "napi_parse_utils.h"
 
+#include <sys/mman.h>
+#include <unistd.h>
+
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -255,6 +259,25 @@ bool NapiParseUtils::ParseString(napi_env env, napi_value argv, std::string& out
     return true;
 }
 
+bool NapiParseUtils::ParseArrayBuffer(napi_env env, napi_value argv, std::string& outValue)
+{
+    bool isArrayBuffer = false;
+    if (napi_ok != napi_is_arraybuffer(env, argv, &isArrayBuffer) || !isArrayBuffer) {
+        WVLOG_E("Not a valid napi ArrayBuffer");
+        return false;
+    }
+
+    char *arrBuf = nullptr;
+    size_t byteLength = 0;
+    napi_get_arraybuffer_info(env, argv, (void**)&arrBuf, &byteLength);
+    if (!arrBuf) {
+        WVLOG_E("Get arrayBuffer info failed");
+        return false;
+    }
+    outValue = std::string(arrBuf, byteLength);
+    return true;
+}
+
 bool NapiParseUtils::ParseBoolean(napi_env env, napi_value argv, bool& outValue)
 {
     napi_valuetype valueType = napi_null;
@@ -419,6 +442,74 @@ bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMe
         return true;
     }
     return it->second(env, src, dst);
+}
+
+ErrCode NapiParseUtils::ConstructStringFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength)
+{
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv, &valueType);
+    if (valueType != napi_string) {
+        WVLOG_E("Not a valid napi string");
+        return NWebError::PARAM_CHECK_ERROR;
+    }
+
+    napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
+    if (bufferSize + 1 > UINT_MAX) {
+        WVLOG_E("String length is too long");
+        return NWebError::PARAM_CHECK_ERROR;
+    }
+
+    // get ashmem
+    auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+    if (!flowbufferAdapter) {
+        WVLOG_E("Create flowbuffer adapter failed");
+        return NWebError::NEW_OOM;
+    }
+    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
+    if (!ashmem) {
+        return NWebError::NEW_OOM;
+    }
+
+    // write to ashmem
+    size_t jsStringLength = 0;
+    napi_get_value_string_utf8(env, argv, static_cast<char*>(ashmem), scriptLength + 1, &jsStringLength);
+    if (jsStringLength != scriptLength) {
+        close(fd);
+        WVLOG_E("Write js string failed, the length values are different");
+        return NWebError::PARAM_CHECK_ERROR;
+    }
+    return NWebError::NO_ERROR;
+}
+
+bool NapiParseUtils::ConstructArrayBufFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength)
+{
+    bool isArrayBuffer = false;
+    if (napi_ok != napi_is_arraybuffer(env, argv, &isArrayBuffer) || !isArrayBuffer) {
+        WVLOG_E("Not a valid napi ArrayBuffer");
+        return NWebError::PARAM_CHECK_ERROR;
+    }
+
+    char *arrBuf = nullptr;
+    napi_get_arraybuffer_info(env, argv, (void**)&arrBuf, &scriptLength);
+    if (!arrBuf) {
+        WVLOG_E("Get arrayBuffer info failed");
+        return NWebError::PARAM_CHECK_ERROR;
+    }
+
+    // get ashmem
+    auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+    if (!flowbufferAdapter) {
+        WVLOG_E("Create flowbuffer adapter failed");
+        return NWebError::NEW_OOM;
+    }
+    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
+    if (!ashmem) {
+        return NWebError::NEW_OOM;
+    }
+
+    // write to ashmem
+    memcpy_s(ashmem, scriptLength + 1, arrBuf, scriptLength + 1);
+    return NWebError::NO_ERROR;
 }
 } // namespace NWeb
 } // namespace OHOS

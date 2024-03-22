@@ -22,6 +22,7 @@
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "nweb_web_message.h"
+#include "web_errors.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -44,6 +45,7 @@ public:
     static bool ParseInt64(napi_env env, napi_value argv, int64_t& outValue);
     static bool ParseDouble(napi_env env, napi_value argv, double& outValue);
     static bool ParseString(napi_env env, napi_value argv, std::string& outValue);
+    static bool ParseArrayBuffer(napi_env env, napi_value argv, std::string& outValue);
     static bool ParseBoolean(napi_env env, napi_value argv, bool& outValue);
     static bool ParseStringArray(napi_env env, napi_value argv, std::vector<std::string>& outValue);
     static bool ParseBooleanArray(napi_env env, napi_value argv, std::vector<bool>& outValue);
@@ -51,6 +53,8 @@ public:
     static bool ParseInt64Array(napi_env env, napi_value argv, std::vector<int64_t>& outValue);
     static bool ParseFloat(napi_env env, napi_value argv, float& outValue);
     static bool ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst);
+    static ErrCode ConstructStringFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength);
+    static ErrCode ConstructArrayBufFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength);
 };
 } // namespace NWeb
 } // namespace OHOS
