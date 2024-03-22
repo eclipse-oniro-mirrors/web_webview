@@ -55,6 +55,10 @@ public:
 
     ArkWebString GetSiteIsolationMode() override;
 
+    bool GetOOPGPUEnable() override;
+
+    void SetOOPGPUDisable() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
