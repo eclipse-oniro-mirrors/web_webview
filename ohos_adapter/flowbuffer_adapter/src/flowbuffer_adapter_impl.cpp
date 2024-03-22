@@ -71,7 +71,7 @@ void* FlowbufferAdapterImpl::CreateAshmem(size_t size, int mapType, int& fd)
         return nullptr;
     }
 
-    int result = AshmemSetPort(fd, PROT_READ | PROT_WRITE);
+    int result = AshmemSetProt(fd, PROT_READ | PROT_WRITE);
     if (result < 0) {
         close(fd);
         WVLOG_E("Ashmem set port failed, result: %{public}d", result);
@@ -96,7 +96,7 @@ void* FlowbufferAdapterImpl::CreateAshmemWithFd(const int fd, size_t size, int m
         return nullptr;
     }
 
-    int ashmemSize = AshmemSize(fd);
+    int ashmemSize = AshmemGetSize(fd);
     if (ashmemSize < 0 || size_t(ashmemSize) < size) {
         WVLOG_E("CreateAshmemWithFd failed, ashmemSize: %{public}d, size: %{public}zu", ashmemSize, size);
         return nullptr;

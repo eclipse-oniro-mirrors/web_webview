@@ -2898,7 +2898,7 @@ napi_value NapiWebviewController::RunJS(napi_env env, napi_callback_info info, b
 
     if (maxFdNum_ == -1) {
         maxFdNum_ =
-            std::atoi(NWebAdapterHelper::Instance().ParsePerConfig("flowBufferConfig", "maxFdNumber").c_str());
+            std::atoi(NWebAdapterHelper::Instance().ParsePerfConfig("flowBufferConfig", "maxFdNumber").c_str());
     }
 
     if (usedFd_.load() < maxFdNum_) {

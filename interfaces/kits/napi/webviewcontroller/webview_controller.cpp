@@ -942,7 +942,7 @@ void WebviewController::RunJavaScriptCallbackExt(
 }
 
 void WebviewController::RunJavaScriptPromiseExt(
-    const int fd, const size_t scriptLength, napi_env env, napi_ref jsCallback, bool extention)
+    const int fd, const size_t scriptLength, napi_env env, napi_deferred deferred, bool extention)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {

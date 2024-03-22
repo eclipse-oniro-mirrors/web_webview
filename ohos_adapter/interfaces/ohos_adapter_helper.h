@@ -136,7 +136,7 @@ public:
 
     virtual MediaCodecListAdapter& GetMediaCodecListAdapter() = 0;
 
-    virtual std::unique_ptr<FlowbufferAdapter> GetFlowbufferAdapter() = 0;
+    virtual std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 
