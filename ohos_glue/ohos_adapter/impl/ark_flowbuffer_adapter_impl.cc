@@ -21,7 +21,7 @@ ArkFlowbufferAdapterImpl::ArkFlowbufferAdapterImpl(std::shared_ptr<OHOS::NWeb::F
     : real_(ref)
 {}
 
-bool ArkFlowbufferAdapterImpl::StartPerformanceBoost()
+void ArkFlowbufferAdapterImpl::StartPerformanceBoost()
 {
     real_->StartPerformanceBoost();
 }

@@ -23,14 +23,14 @@ namespace OHOS::NWeb {
 class FlowbufferAdapter {
 public:
     /**
-     * @brief Construct a new FlowbufferAdapterImpl object
+     * @brief Construct a new FlowbufferAdapter object
      */
-    FlowbufferAdapterImpl() = default;
+    FlowbufferAdapter() = default;
 
     /**
-     * @brief Destroy the FlowbufferAdapterImpl object
+     * @brief Destroy the FlowbufferAdapter object
      */
-    virtual ~FlowbufferAdapterImpl() = default;
+    virtual ~FlowbufferAdapter() = default;
 
     /**
      * @brief Start temporary performance boost when some key tasks are running

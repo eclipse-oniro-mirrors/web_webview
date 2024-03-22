@@ -14,21 +14,21 @@
  */
 
 
-#include "ctocpp/ark_flowbuffer_adapter_cpptoc.h"
+#include "cpptoc/ark_flowbuffer_adapter_cpptoc.h"
 #include "cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-void ARK_WEB_CALLBACK ark_flowbuffer_adapter_start_performance_boost(struct _ark_event_handler_adapter_t* self)
+void ARK_WEB_CALLBACK ark_flowbuffer_adapter_start_performance_boost(struct _ark_flowbuffer_adapter_t* self)
 {
     ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self);
+    ARK_WEB_CPPTOC_CHECK_PARAM(self,);
 
     // Execute
-    return ArkFlowbufferAdapterCppToC::Get(self)->StartPerformanceBoost();
+    ArkFlowbufferAdapterCppToC::Get(self)->StartPerformanceBoost();
 }
 
 void *ARK_WEB_CALLBACK ark_flowbuffer_adapter_create_ashmem(

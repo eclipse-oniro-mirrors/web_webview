@@ -31,7 +31,7 @@ public:
 
     void* CreateAshmem(size_t size, int mapType, int& fd) override;
 
-    void* CreateAshmemWithFd(cosnt int fd, size_t size, int mapType) override;
+    void* CreateAshmemWithFd(const int fd, size_t size, int mapType) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::FlowbufferAdapter> real_;

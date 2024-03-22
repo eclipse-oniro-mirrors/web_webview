@@ -453,8 +453,8 @@ ErrCode NapiParseUtils::ConstructStringFlowbuf(napi_env env, napi_value argv, in
         return NWebError::PARAM_CHECK_ERROR;
     }
 
-    napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
-    if (bufferSize + 1 > UINT_MAX) {
+    napi_get_value_string_utf8(env, argv, nullptr, 0, &scriptLength);
+    if (scriptLength + 1 > UINT_MAX) {
         WVLOG_E("String length is too long");
         return NWebError::PARAM_CHECK_ERROR;
     }
@@ -481,7 +481,7 @@ ErrCode NapiParseUtils::ConstructStringFlowbuf(napi_env env, napi_value argv, in
     return NWebError::NO_ERROR;
 }
 
-bool NapiParseUtils::ConstructArrayBufFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength)
+ErrCode NapiParseUtils::ConstructArrayBufFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength)
 {
     bool isArrayBuffer = false;
     if (napi_ok != napi_is_arraybuffer(env, argv, &isArrayBuffer) || !isArrayBuffer) {
@@ -502,7 +502,7 @@ bool NapiParseUtils::ConstructArrayBufFlowbuf(napi_env env, napi_value argv, int
         WVLOG_E("Create flowbuffer adapter failed");
         return NWebError::NEW_OOM;
     }
-    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
+    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength + 1, PROT_READ | PROT_WRITE, fd);
     if (!ashmem) {
         return NWebError::NEW_OOM;
     }
