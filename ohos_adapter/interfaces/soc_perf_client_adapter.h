@@ -21,6 +21,19 @@
 namespace OHOS::NWeb {
 class SocPerfClientAdapter {
 public:
+    enum : int32_t {
+        SOC_PERF_WEB_GESTURE_ID = 10012;
+        SOC_PERF_WEB_GESTURE_MOVE_ID = 10020;
+        SOC_PERF_SLIDE_NORMAL_ID = 10025;
+        SOC_PERF_LOAD_URL_ID = 10070;
+        SOC_PERF_MOUSEWHEEL_ID = 10071;
+    }
+
+    enum : int64_t {
+        SOC_PERF_START = 0;
+        SOC_PERF_END = 1;
+    }
+
     SocPerfClientAdapter() = default;
 
     virtual ~SocPerfClientAdapter() = default;
@@ -31,4 +44,4 @@ public:
 };
 }  // namespace OHOS::NWeb
 
-#endif  // SOC_PERF_CLIENT_ADAPTER_H
+#endif  // SOC_PERF_CLIENT_ADAPTER_H

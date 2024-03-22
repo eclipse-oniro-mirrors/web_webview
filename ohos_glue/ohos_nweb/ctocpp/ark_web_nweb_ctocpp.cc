@@ -1916,6 +1916,22 @@ ArkWebString ArkWebNWebCToCpp::GetLastJavascriptProxyCallingFrameUrl() {
   return _struct->get_last_javascript_proxy_calling_frame_url(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
+    ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention)
+{
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct,);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, execute_java_script_ext,);
+
+  // Execute
+  _struct->execute_java_script_ext(_struct, fd, scriptLength,
+      ArkWebMessageValueCallbackCppToC::Invert(callback), extention);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 
