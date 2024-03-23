@@ -15,6 +15,7 @@
 
 #include "napi_parse_utils.h"
 
+#include <stdio.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
