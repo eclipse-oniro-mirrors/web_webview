@@ -36,7 +36,8 @@ public:
    *
    * @param config screen capture config.
    */
-  void Agree(const OHOS::NWeb::NWebScreenCaptureConfig &config) override;
+  void
+  Agree(std::shared_ptr<OHOS::NWeb::NWebScreenCaptureConfig> config) override;
 
   /**
    * @brief Refuse the request.
