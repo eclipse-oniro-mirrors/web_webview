@@ -59,4 +59,4 @@ public:
 };
 } // namespace OHOS::NWeb
 
-#endif // GRAPHIC_ADAPTER_H
+#endif // FLOWBUFFER_ADAPTER_H
