@@ -18,9 +18,7 @@ module_output_path = "web/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [
-    "../../../../ohos_adapter/flowbuffer_adapter/include",
-  ]
+  include_dirs = [ "../../../../ohos_adapter/flowbuffer_adapter/include" ]
 }
 
 ohos_unittest("flowbuffer_adapter_impl_test") {
@@ -30,9 +28,7 @@ ohos_unittest("flowbuffer_adapter_impl_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "../../../../ohos_adapter:nweb_ohos_adapter",
-  ]
+  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "c_utils:utils",
@@ -43,5 +39,6 @@ ohos_unittest("flowbuffer_adapter_impl_test") {
 
 group("unittest") {
   testonly = true
+
   deps = [ ":flowbuffer_adapter_impl_test" ]
 }
