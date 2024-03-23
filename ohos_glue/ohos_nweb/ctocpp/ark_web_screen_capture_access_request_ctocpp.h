@@ -34,7 +34,7 @@ public:
   virtual ~ArkWebScreenCaptureAccessRequestCToCpp();
 
   // ArkWebScreenCaptureAccessRequest methods.
-  void Agree(const ArkWebScreenCaptureConfig &config) override;
+  void Agree(ArkWebRefPtr<ArkWebScreenCaptureConfig> config) override;
 
   void Refuse() override;
 

@@ -121,10 +121,13 @@ enum class OHOS_NWEB_EXPORT DragAction {
     DRAG_CANCEL,
 };
 
-struct OHOS_NWEB_EXPORT DragEvent {
-    double x;
-    double y;
-    DragAction action;
+class NWebDragEvent {
+    public:
+    virtual ~NWebDragEvent() = default;
+
+    virtual double GetX() = 0;
+    virtual double GetY() = 0;
+    virtual DragAction GetAction() = 0;
 };
 
 enum class BlurReason : int32_t {
@@ -599,7 +602,7 @@ public:
      * send drag event to nweb.
      * @param dragEvent the drag event information.
      */
-    virtual void SendDragEvent(const DragEvent& dragEvent) = 0;
+    virtual void SendDragEvent(std::shared_ptr<NWebDragEvent> dragEvent) = 0;
 
     /**
      * Clear ssl cache.
