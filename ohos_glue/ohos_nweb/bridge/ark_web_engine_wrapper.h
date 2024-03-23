@@ -21,6 +21,7 @@
 #include "ohos_nweb/include/ark_web_engine.h"
 
 namespace OHOS::ArkWeb {
+using ArkWebRenderProcessMode = OHOS::NWeb::RenderProcessMode;
 
 class ArkWebEngineWrapper : public OHOS::NWeb::NWebEngine {
 public:
@@ -67,6 +68,10 @@ public:
       const std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> &pre_args,
       const std::map<std::string, std::string> &additional_http_headers,
       const std::string &cache_key, const uint32_t &cache_valid_time) override;
+
+  void SetRenderProcessMode(ArkWebRenderProcessMode mode) override;
+
+  ArkWebRenderProcessMode GetRenderProcessMode() override;
 
 private:
   ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
