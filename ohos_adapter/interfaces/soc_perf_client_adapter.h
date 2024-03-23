@@ -27,12 +27,12 @@ public:
         SOC_PERF_SLIDE_NORMAL_ID = 10025,
         SOC_PERF_LOAD_URL_ID = 10070,
         SOC_PERF_MOUSEWHEEL_ID = 10071,
-    }
+    };
 
     enum : int64_t {
         SOC_PERF_START = 0,
         SOC_PERF_END = 1,
-    }
+    };
 
     SocPerfClientAdapter() = default;
 
