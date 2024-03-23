@@ -15,12 +15,12 @@
 
 #include "napi_parse_utils.h"
 
-#include <stdio.h>
 #include <sys/mman.h>
 #include <unistd.h>
 
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
+#include "securec.h"
 
 namespace OHOS {
 namespace NWeb {
