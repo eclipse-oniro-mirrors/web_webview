@@ -11,7 +11,7 @@
     "scripts": {},
     "component": {
         "name": "webview",
-        "subsystem": "ArkWeb",
+        "subsystem": "web",
         "syscap": [
             "SystemCapability.Web.Webview.Core"
         ],
