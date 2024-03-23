@@ -367,6 +367,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getLastJavascriptProxyCallingFrameUrl",
             NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl),
         DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
+        DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
+        DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -521,6 +523,18 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         WebPrintDocumentClass, &webPrintDoc);
     napi_create_reference(env, webPrintDoc, 1, &g_webPrintDocClassRef);
     napi_set_named_property(env, exports, WEB_PRINT_DOCUMENT_CLASS_NAME.c_str(), webPrintDoc);
+
+    napi_value renderProcessModeEnum = nullptr;
+    napi_property_descriptor renderProcessModeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("SINGLE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(RenderProcessMode::SINGLE_MODE))),
+        DECLARE_NAPI_STATIC_PROPERTY("MULTIPLE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(RenderProcessMode::MULTIPLE_MODE))),
+    };
+    napi_define_class(env, WEB_RENDER_PROCESS_MODE_ENUM_NAME.c_str(), WEB_RENDER_PROCESS_MODE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(renderProcessModeProperties) /
+        sizeof(renderProcessModeProperties[0]), renderProcessModeProperties, &renderProcessModeEnum);
+    napi_set_named_property(env, exports, WEB_RENDER_PROCESS_MODE_ENUM_NAME.c_str(), renderProcessModeEnum);
 
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     return exports;
@@ -4971,6 +4985,45 @@ napi_value NapiWebviewController::CloseCamera(napi_env env, napi_callback_info i
     }
     webviewController->CloseCamera();
 
+    return result;
+}
+
+napi_value NapiWebviewController::SetRenderProcessMode(
+    napi_env env, napi_callback_info info)
+{
+    WVLOG_I("set render process mode.");
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t mode = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], mode)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    NWebHelper::Instance().SetRenderProcessMode(
+        static_cast<RenderProcessMode>(mode));
+
+    return result;
+}
+
+napi_value NapiWebviewController::GetRenderProcessMode(
+    napi_env env, napi_callback_info info)
+{
+    WVLOG_I("get render mode.");
+    napi_value result = nullptr;
+
+    int32_t mode = static_cast<int32_t>(NWebHelper::Instance().GetRenderProcessMode());
+    NAPI_CALL(env, napi_create_int32(env, mode, &result));
     return result;
 }
 } // namespace NWeb

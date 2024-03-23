@@ -66,6 +66,9 @@ public:
                           const std::string &cache_key,
                           const uint32_t &cache_valid_time);
 
+    void SetRenderProcessMode(RenderProcessMode mode);
+    RenderProcessMode GetRenderProcessMode();
+
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);

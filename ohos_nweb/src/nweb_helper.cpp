@@ -991,6 +991,24 @@ void NWebHelper::PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs> 
     nwebEngine_->PrefetchResource(pre_args, additional_http_headers, cache_key, cache_valid_time);
 }
 
+void NWebHelper::SetRenderProcessMode(RenderProcessMode mode) {
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->SetRenderProcessMode(mode);
+}
+
+RenderProcessMode NWebHelper::GetRenderProcessMode() {
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return RenderProcessMode::SINGLE_MODE;
+    }
+
+    return nwebEngine_->GetRenderProcessMode();
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;
