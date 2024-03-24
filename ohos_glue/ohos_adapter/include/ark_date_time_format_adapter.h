@@ -18,45 +18,46 @@
 
 #pragma once
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkWebTimezoneInfo : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual ArkWebString GetTzId() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetTzId() = 0;
 };
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkTimezoneEventCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual void TimezoneChanged(ArkWebRefPtr<ArkWebTimezoneInfo> info) = 0;
+  /*--ark web()--*/
+  virtual void TimezoneChanged(ArkWebRefPtr<ArkWebTimezoneInfo> info) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkDateTimeFormatAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkDateTimeFormatAdapter() = default;
+  /*--ark web()--*/
+  ArkDateTimeFormatAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkDateTimeFormatAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkDateTimeFormatAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void RegTimezoneEvent(ArkWebRefPtr<ArkTimezoneEventCallbackAdapter> eventCallback) = 0;
+  /*--ark web()--*/
+  virtual void RegTimezoneEvent(
+      ArkWebRefPtr<ArkTimezoneEventCallbackAdapter> eventCallback) = 0;
 
-    /*--web engine()--*/
-    virtual bool StartListen() = 0;
+  /*--ark web()--*/
+  virtual bool StartListen() = 0;
 
-    /*--web engine()--*/
-    virtual void StopListen() = 0;
+  /*--ark web()--*/
+  virtual void StopListen() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetTimezone() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetTimezone() = 0;
 };
 
 } // namespace OHOS::ArkWeb

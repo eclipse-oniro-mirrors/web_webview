@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "mmi_adapter.h"
 #include "include/ark_mmi_adapter.h"
 
 namespace OHOS::ArkWeb {

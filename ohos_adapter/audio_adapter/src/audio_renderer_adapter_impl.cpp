@@ -32,63 +32,63 @@ std::shared_ptr<OHOS::AVSession::AVSession> AudioRendererAdapterImpl::avsession_
 static int32_t g_audioRendererNum = 0;
 
 const std::unordered_map<AudioAdapterSamplingRate, AudioSamplingRate> SAMPLING_RATE_MAP = {
-    {AudioAdapterSamplingRate::SAMPLE_RATE_8000, AudioSamplingRate::SAMPLE_RATE_8000},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_11025, AudioSamplingRate::SAMPLE_RATE_11025},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_12000, AudioSamplingRate::SAMPLE_RATE_12000},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_16000, AudioSamplingRate::SAMPLE_RATE_16000},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_22050, AudioSamplingRate::SAMPLE_RATE_22050},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_24000, AudioSamplingRate::SAMPLE_RATE_24000},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_32000, AudioSamplingRate::SAMPLE_RATE_32000},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_44100, AudioSamplingRate::SAMPLE_RATE_44100},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_48000, AudioSamplingRate::SAMPLE_RATE_48000},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_64000, AudioSamplingRate::SAMPLE_RATE_64000},
-    {AudioAdapterSamplingRate::SAMPLE_RATE_96000, AudioSamplingRate::SAMPLE_RATE_96000},
+    { AudioAdapterSamplingRate::SAMPLE_RATE_8000, AudioSamplingRate::SAMPLE_RATE_8000 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_11025, AudioSamplingRate::SAMPLE_RATE_11025 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_12000, AudioSamplingRate::SAMPLE_RATE_12000 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_16000, AudioSamplingRate::SAMPLE_RATE_16000 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_22050, AudioSamplingRate::SAMPLE_RATE_22050 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_24000, AudioSamplingRate::SAMPLE_RATE_24000 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_32000, AudioSamplingRate::SAMPLE_RATE_32000 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_44100, AudioSamplingRate::SAMPLE_RATE_44100 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_48000, AudioSamplingRate::SAMPLE_RATE_48000 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_64000, AudioSamplingRate::SAMPLE_RATE_64000 },
+    { AudioAdapterSamplingRate::SAMPLE_RATE_96000, AudioSamplingRate::SAMPLE_RATE_96000 },
 };
 
 const std::unordered_map<AudioAdapterEncodingType, AudioEncodingType> ENCODING_TYPE_MAP = {
-    {AudioAdapterEncodingType::ENCODING_PCM, AudioEncodingType::ENCODING_PCM},
-    {AudioAdapterEncodingType::ENCODING_INVALID, AudioEncodingType::ENCODING_INVALID}
+    { AudioAdapterEncodingType::ENCODING_PCM, AudioEncodingType::ENCODING_PCM },
+    { AudioAdapterEncodingType::ENCODING_INVALID, AudioEncodingType::ENCODING_INVALID }
 };
 
 const std::unordered_map<AudioAdapterSampleFormat, AudioSampleFormat> SAMPLE_FORMAT_MAP = {
-    {AudioAdapterSampleFormat::SAMPLE_U8, AudioSampleFormat::SAMPLE_U8},
-    {AudioAdapterSampleFormat::SAMPLE_S16LE, AudioSampleFormat::SAMPLE_S16LE},
-    {AudioAdapterSampleFormat::SAMPLE_S24LE, AudioSampleFormat::SAMPLE_S24LE},
-    {AudioAdapterSampleFormat::SAMPLE_S32LE, AudioSampleFormat::SAMPLE_S32LE},
-    {AudioAdapterSampleFormat::SAMPLE_F32LE, AudioSampleFormat::SAMPLE_F32LE},
+    { AudioAdapterSampleFormat::SAMPLE_U8, AudioSampleFormat::SAMPLE_U8 },
+    { AudioAdapterSampleFormat::SAMPLE_S16LE, AudioSampleFormat::SAMPLE_S16LE },
+    { AudioAdapterSampleFormat::SAMPLE_S24LE, AudioSampleFormat::SAMPLE_S24LE },
+    { AudioAdapterSampleFormat::SAMPLE_S32LE, AudioSampleFormat::SAMPLE_S32LE },
+    { AudioAdapterSampleFormat::SAMPLE_F32LE, AudioSampleFormat::SAMPLE_F32LE },
 };
 
 const std::unordered_map<AudioAdapterChannel, AudioChannel> AUDIO_CHANNEL_MAP = {
-    {AudioAdapterChannel::MONO, AudioChannel::MONO},
-    {AudioAdapterChannel::STEREO, AudioChannel::STEREO},
-    {AudioAdapterChannel::CHANNEL_3, AudioChannel::CHANNEL_3},
-    {AudioAdapterChannel::CHANNEL_4, AudioChannel::CHANNEL_4},
-    {AudioAdapterChannel::CHANNEL_5, AudioChannel::CHANNEL_5},
-    {AudioAdapterChannel::CHANNEL_6, AudioChannel::CHANNEL_6},
-    {AudioAdapterChannel::CHANNEL_7, AudioChannel::CHANNEL_7},
-    {AudioAdapterChannel::CHANNEL_8, AudioChannel::CHANNEL_8},
+    { AudioAdapterChannel::MONO, AudioChannel::MONO },
+    { AudioAdapterChannel::STEREO, AudioChannel::STEREO },
+    { AudioAdapterChannel::CHANNEL_3, AudioChannel::CHANNEL_3 },
+    { AudioAdapterChannel::CHANNEL_4, AudioChannel::CHANNEL_4 },
+    { AudioAdapterChannel::CHANNEL_5, AudioChannel::CHANNEL_5 },
+    { AudioAdapterChannel::CHANNEL_6, AudioChannel::CHANNEL_6 },
+    { AudioAdapterChannel::CHANNEL_7, AudioChannel::CHANNEL_7 },
+    { AudioAdapterChannel::CHANNEL_8, AudioChannel::CHANNEL_8 },
 };
 
 const std::unordered_map<AudioAdapterContentType, ContentType> CONTENT_TYPE_MAP = {
-    {AudioAdapterContentType::CONTENT_TYPE_UNKNOWN, ContentType::CONTENT_TYPE_UNKNOWN},
-    {AudioAdapterContentType::CONTENT_TYPE_SPEECH, ContentType::CONTENT_TYPE_SPEECH},
-    {AudioAdapterContentType::CONTENT_TYPE_MUSIC, ContentType::CONTENT_TYPE_MUSIC},
-    {AudioAdapterContentType::CONTENT_TYPE_MOVIE, ContentType::CONTENT_TYPE_MOVIE},
-    {AudioAdapterContentType::CONTENT_TYPE_SONIFICATION, ContentType::CONTENT_TYPE_SONIFICATION},
-    {AudioAdapterContentType::CONTENT_TYPE_RINGTONE, ContentType::CONTENT_TYPE_RINGTONE},
+    { AudioAdapterContentType::CONTENT_TYPE_UNKNOWN, ContentType::CONTENT_TYPE_UNKNOWN },
+    { AudioAdapterContentType::CONTENT_TYPE_SPEECH, ContentType::CONTENT_TYPE_SPEECH },
+    { AudioAdapterContentType::CONTENT_TYPE_MUSIC, ContentType::CONTENT_TYPE_MUSIC },
+    { AudioAdapterContentType::CONTENT_TYPE_MOVIE, ContentType::CONTENT_TYPE_MOVIE },
+    { AudioAdapterContentType::CONTENT_TYPE_SONIFICATION, ContentType::CONTENT_TYPE_SONIFICATION },
+    { AudioAdapterContentType::CONTENT_TYPE_RINGTONE, ContentType::CONTENT_TYPE_RINGTONE },
 };
 
 const std::unordered_map<AudioAdapterStreamUsage, StreamUsage> STREAM_USAGE_MAP = {
-    {AudioAdapterStreamUsage::STREAM_USAGE_UNKNOWN, StreamUsage::STREAM_USAGE_UNKNOWN},
-    {AudioAdapterStreamUsage::STREAM_USAGE_MEDIA, StreamUsage::STREAM_USAGE_MEDIA},
-    {AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION, StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION},
-    {AudioAdapterStreamUsage::STREAM_USAGE_VOICE_ASSISTANT, StreamUsage::STREAM_USAGE_VOICE_ASSISTANT},
-    {AudioAdapterStreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE, StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE},
+    { AudioAdapterStreamUsage::STREAM_USAGE_UNKNOWN, StreamUsage::STREAM_USAGE_UNKNOWN },
+    { AudioAdapterStreamUsage::STREAM_USAGE_MEDIA, StreamUsage::STREAM_USAGE_MEDIA },
+    { AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION, StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION },
+    { AudioAdapterStreamUsage::STREAM_USAGE_VOICE_ASSISTANT, StreamUsage::STREAM_USAGE_VOICE_ASSISTANT },
+    { AudioAdapterStreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE, StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE },
 };
 
 AudioRendererCallbackImpl::AudioRendererCallbackImpl(std::shared_ptr<AudioRendererCallbackAdapter> cb) : cb_(cb) {};
 
-void AudioRendererCallbackImpl::OnInterrupt(const InterruptEvent &interruptEvent)
+void AudioRendererCallbackImpl::OnInterrupt(const InterruptEvent& interruptEvent)
 {
     if (!cb_) {
         return;
@@ -124,8 +124,8 @@ AudioRendererAdapterImpl::~AudioRendererAdapterImpl()
     }
 }
 
-int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rendererOptions,
-    std::string cachePath)
+int32_t AudioRendererAdapterImpl::Create(
+    const std::shared_ptr<AudioRendererOptionsAdapter> rendererOptions, std::string cachePath)
 {
     std::string audioCachePath = cachePath;
     std::shared_ptr<AbilityRuntime::ApplicationContext> context =
@@ -141,16 +141,13 @@ int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rend
             return AUDIO_ERROR;
         }
     }
+    if (!rendererOptions) {
+        WVLOG_E("rendererOptions is nullptr");
+        return AUDIO_ERROR;
+    }
 
     AudioRendererOptions audioOptions;
-    audioOptions.streamInfo.samplingRate = GetAudioSamplingRate(rendererOptions.samplingRate);
-    audioOptions.streamInfo.encoding = GetAudioEncodingType(rendererOptions.encoding);
-    audioOptions.streamInfo.format = GetAudioSampleFormat(rendererOptions.format);
-    audioOptions.streamInfo.channels = GetAudioChannel(rendererOptions.channels);
-    audioOptions.rendererInfo.contentType = GetAudioContentType(rendererOptions.contentType);
-    audioOptions.rendererInfo.streamUsage = GetAudioStreamUsage(rendererOptions.streamUsage);
-    audioOptions.rendererInfo.rendererFlags = rendererOptions.rendererFlags;
-
+    TransformToAudioRendererOptions(audioOptions, rendererOptions);
     audio_renderer_ = AudioRenderer::Create(audioCachePath, audioOptions);
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer create failed");
@@ -168,8 +165,9 @@ int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions &rend
     AppExecFwk::ElementName topElementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
     elementName.SetBundleName(context->GetBundleName());
     elementName.SetAbilityName(topElementName.GetAbilityName());
-    int32_t type = (rendererOptions.streamUsage == AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION) ?
-        OHOS::AVSession::AVSession::SESSION_TYPE_VOICE_CALL : OHOS::AVSession::AVSession::SESSION_TYPE_AUDIO;
+    int32_t type = (rendererOptions->GetStreamUsage() == AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION)
+                       ? OHOS::AVSession::AVSession::SESSION_TYPE_VOICE_CALL
+                       : OHOS::AVSession::AVSession::SESSION_TYPE_AUDIO;
     avsession_ = AVSessionManager::GetInstance().CreateSession(context->GetBundleName(), type, elementName);
     if (avsession_ == nullptr) {
         WVLOG_E("audio renderer create avsession failed");
@@ -214,7 +212,7 @@ bool AudioRendererAdapterImpl::Release()
     return audio_renderer_->Release();
 }
 
-int32_t AudioRendererAdapterImpl::Write(uint8_t *buffer, size_t bufferSize)
+int32_t AudioRendererAdapterImpl::Write(uint8_t* buffer, size_t bufferSize)
 {
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer is nullptr");
@@ -223,7 +221,7 @@ int32_t AudioRendererAdapterImpl::Write(uint8_t *buffer, size_t bufferSize)
     return audio_renderer_->Write(buffer, bufferSize);
 }
 
-int32_t AudioRendererAdapterImpl::GetLatency(uint64_t &latency)
+int32_t AudioRendererAdapterImpl::GetLatency(uint64_t& latency)
 {
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer is nullptr");
@@ -251,7 +249,7 @@ float AudioRendererAdapterImpl::GetVolume()
 }
 
 int32_t AudioRendererAdapterImpl::SetAudioRendererCallback(
-    const std::shared_ptr<AudioRendererCallbackAdapter> &callback)
+    const std::shared_ptr<AudioRendererCallbackAdapter>& callback)
 {
     if (callback == nullptr) {
         WVLOG_E("set audio manager interrupt callback is nullptr");
@@ -277,9 +275,7 @@ void AudioRendererAdapterImpl::SetInterruptMode(bool audioExclusive)
         WVLOG_E("audio rendderer is nullptr");
         return;
     }
-    InterruptMode interruptMode = audioExclusive
-                                ? InterruptMode::INDEPENDENT_MODE
-                                : InterruptMode::SHARE_MODE;
+    InterruptMode interruptMode = audioExclusive ? InterruptMode::INDEPENDENT_MODE : InterruptMode::SHARE_MODE;
     WVLOG_D("AudioRendererAdapterImpl::SetInterruptMode audioExclusive: %{public}d", audioExclusive);
     audio_renderer_->SetInterruptMode(interruptMode);
 }
@@ -348,4 +344,17 @@ StreamUsage AudioRendererAdapterImpl::GetAudioStreamUsage(AudioAdapterStreamUsag
     }
     return item->second;
 }
-}  // namespace OHOS::NWeb
+
+void AudioRendererAdapterImpl::TransformToAudioRendererOptions(
+    AudioRendererOptions& out, const std::shared_ptr<AudioRendererOptionsAdapter>& in)
+{
+    out.streamInfo.samplingRate = GetAudioSamplingRate(in->GetSamplingRate());
+    out.streamInfo.encoding = GetAudioEncodingType(in->GetEncodingType());
+    out.streamInfo.format = GetAudioSampleFormat(in->GetSampleFormat());
+    out.streamInfo.channels = GetAudioChannel(in->GetChannel());
+    out.rendererInfo.contentType = GetAudioContentType(in->GetContentType());
+    out.rendererInfo.streamUsage = GetAudioStreamUsage(in->GetStreamUsage());
+    out.rendererInfo.rendererFlags = in->GetRenderFlags();
+}
+
+} // namespace OHOS::NWeb

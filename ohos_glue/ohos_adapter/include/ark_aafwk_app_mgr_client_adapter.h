@@ -20,29 +20,32 @@
 #include <sys/types.h>
 
 #include "ark_aafwk_render_scheduler_host_adapter.h"
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkAafwkAppMgrClientAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkAafwkAppMgrClientAdapter() = default;
+  /*--ark web()--*/
+  ArkAafwkAppMgrClientAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkAafwkAppMgrClientAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkAafwkAppMgrClientAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int StartRenderProcess(
-        const ArkWebString& renderParam, int32_t ipcFd, int32_t sharedFd, int32_t crashFd, pid_t& renderPid) = 0;
+  /*--ark web()--*/
+  virtual int StartRenderProcess(const ArkWebString &renderParam, int32_t ipcFd,
+                                 int32_t sharedFd, int32_t crashFd,
+                                 pid_t &renderPid) = 0;
 
-    /*--web engine()--*/
-    virtual void AttachRenderProcess(ArkWebRefPtr<ArkAafwkRenderSchedulerHostAdapter> adapter) = 0;
+  /*--ark web()--*/
+  virtual void AttachRenderProcess(
+      ArkWebRefPtr<ArkAafwkRenderSchedulerHostAdapter> adapter) = 0;
 
-    /*--web engine()--*/
-    virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int& status) = 0;
+  /*--ark web()--*/
+  virtual int GetRenderProcessTerminationStatus(pid_t renderPid,
+                                                int &status) = 0;
 };
 } // namespace OHOS::ArkWeb
 

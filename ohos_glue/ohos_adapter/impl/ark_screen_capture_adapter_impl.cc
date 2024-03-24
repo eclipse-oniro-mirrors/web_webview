@@ -16,8 +16,10 @@
 #include "ark_screen_capture_adapter_impl.h"
 
 #include "ark_surface_buffer_adapter_impl.h"
-#include "bridge/ark_web_bridge_macros.h"
 #include "wrapper/ark_screen_capture_callback_adapter_wrapper.h"
+#include "wrapper/ark_screen_capture_config_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -25,9 +27,13 @@ ArkScreenCaptureAdapterImpl::ArkScreenCaptureAdapterImpl(std::shared_ptr<OHOS::N
     : real_(ref)
 {}
 
-int32_t ArkScreenCaptureAdapterImpl::Init(const ArkScreenCaptureConfigAdapter& config)
+int32_t ArkScreenCaptureAdapterImpl::Init(const ArkWebRefPtr<ArkScreenCaptureConfigAdapter> config)
 {
-    return real_->Init(config);
+    if (CHECK_REF_PTR_IS_NULL(config)) {
+        return real_->Init(nullptr);
+    }
+
+    return real_->Init(std::make_shared<ArkScreenCaptureConfigAdapterWrapper>(config));
 }
 
 int32_t ArkScreenCaptureAdapterImpl::SetMicrophoneEnable(bool enable)

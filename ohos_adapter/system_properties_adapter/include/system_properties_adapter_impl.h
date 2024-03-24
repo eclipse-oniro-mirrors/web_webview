@@ -56,7 +56,7 @@ public:
 
     void SetOOPGPUDisable() override;
 
-    int32_t GetFlowBufMaxFd() const override;
+    int32_t GetFlowBufMaxFd() override;
 
 private:
     SystemPropertiesAdapterImpl();

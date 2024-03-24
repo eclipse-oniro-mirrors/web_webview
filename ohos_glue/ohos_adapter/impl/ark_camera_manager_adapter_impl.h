@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "camera_manager_adapter.h"
 #include "include/ark_camera_manager_adapter.h"
 
 namespace OHOS::ArkWeb {
@@ -28,7 +29,7 @@ public:
 
     int32_t Create(ArkWebRefPtr<ArkCameraStatusCallbackAdapter> cameraStatusCallback) override;
 
-    void GetDevicesInfo(void* devicesDiscriptor) override;
+    ArkVideoDeviceDescriptorAdapterVector GetDevicesInfo() override;
 
     int32_t ReleaseCameraManger() override;
 
@@ -36,7 +37,7 @@ public:
 
     int32_t GetCurrentExposureMode(int32_t& exposureModeAdapter) override;
 
-    int32_t GetCaptionRangeById(int32_t rangeId, ArkVideoCaptureRangeAdapter& rangeVal) override;
+    ArkWebRefPtr<ArkVideoCaptureRangeAdapter> GetCaptionRangeById(int32_t rangeId) override;
 
     bool IsFocusModeSupported(int32_t focusMode) override;
 
@@ -52,7 +53,7 @@ public:
 
     bool IsExistCaptureTask() override;
 
-    int32_t StartStream(const ArkWebString& deviceId, const ArkVideoCaptureParamsAdapter& captureParams,
+    int32_t StartStream(const ArkWebString& deviceId, const ArkWebRefPtr<ArkVideoCaptureParamsAdapter> captureParams,
         ArkWebRefPtr<ArkCameraBufferListenerAdapter> listener) override;
 
     void SetForegroundFlag(bool isForeground) override;

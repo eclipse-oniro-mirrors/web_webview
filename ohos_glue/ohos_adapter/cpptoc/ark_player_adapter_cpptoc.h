@@ -13,25 +13,26 @@
  * limitations under the License.
  */
 
-#ifndef ARK_PLAYER_ADAPTER_CPPTOC_H
-#define ARK_PLAYER_ADAPTER_CPPTOC_H
+#ifndef ARK_PLAYER_ADAPTER_CPPTOC_H_
+#define ARK_PLAYER_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "capi/ark_media_adapter_capi.h"
-#include "cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "include/ark_media_adapter.h"
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "ohos_adapter/capi/ark_media_adapter_capi.h"
+#include "ohos_adapter/include/ark_media_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkPlayerAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkPlayerAdapterCppToC, ArkPlayerAdapter, ark_player_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkPlayerAdapterCppToC, ArkPlayerAdapter,
+                                    ark_player_adapter_t> {
 public:
-    ArkPlayerAdapterCppToC();
-    virtual ~ArkPlayerAdapterCppToC();
+  ArkPlayerAdapterCppToC();
+  virtual ~ArkPlayerAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_PLAYER_ADAPTER_CPPTOC_H
+#endif // ARK_PLAYER_ADAPTER_CPPTOC_H_

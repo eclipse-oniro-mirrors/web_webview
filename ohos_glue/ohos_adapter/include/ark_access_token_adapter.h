@@ -16,22 +16,22 @@
 #ifndef ARK_ACCESS_TOKEN_ADAPTER_H
 #define ARK_ACCESS_TOKEN_ADAPTER_H
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkAccessTokenAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual bool VerifyAccessToken(const ArkWebString& permissionName) = 0;
+  /*--ark web()--*/
+  virtual bool VerifyAccessToken(const ArkWebString &permissionName) = 0;
 
 protected:
-    /*--web engine()--*/
-    ArkAccessTokenAdapter() = default;
-    /*--web engine()--*/
-    virtual ~ArkAccessTokenAdapter() = default;
+  /*--ark web()--*/
+  ArkAccessTokenAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkAccessTokenAdapter() = default;
 };
 } // namespace OHOS::ArkWeb
 

@@ -18,10 +18,11 @@
 
 #include <memory>
 #include <string>
+
 #include "audio_renderer_adapter.h"
 
 namespace OHOS::NWeb {
-enum class AudioAdapterSourceType {
+enum class AudioAdapterSourceType : int32_t {
     SOURCE_TYPE_INVALID = -1,
     SOURCE_TYPE_MIC,
     SOURCE_TYPE_VOICE_RECOGNITION = 1,
@@ -29,19 +30,42 @@ enum class AudioAdapterSourceType {
     SOURCE_TYPE_ULTRASONIC = 8
 };
 
-struct AudioAdapterCapturerOptions {
-    AudioAdapterSamplingRate samplingRate;
-    AudioAdapterEncodingType encoding;
-    AudioAdapterSampleFormat format;
-    AudioAdapterChannel channels;
-    AudioAdapterSourceType sourceType;
-    int32_t capturerFlags;
+class AudioCapturerOptionsAdapter {
+public:
+    AudioCapturerOptionsAdapter() = default;
+
+    virtual ~AudioCapturerOptionsAdapter() = default;
+
+    virtual AudioAdapterSamplingRate GetSamplingRate() = 0;
+
+    virtual AudioAdapterEncodingType GetEncoding() = 0;
+
+    virtual AudioAdapterSampleFormat GetSampleFormat() = 0;
+
+    virtual AudioAdapterChannel GetChannels() = 0;
+
+    virtual AudioAdapterSourceType GetSourceType() = 0;
+
+    virtual int32_t GetCapturerFlags() = 0;
 };
 
-struct BufferDescAdapter {
-    uint8_t* buffer;
-    size_t bufLength;
-    size_t dataLength;
+class BufferDescAdapter {
+public:
+    BufferDescAdapter() = default;
+
+    virtual ~BufferDescAdapter() = default;
+
+    virtual uint8_t* GetBuffer() = 0;
+
+    virtual size_t GetBufLength() = 0;
+
+    virtual size_t GetDataLength() = 0;
+
+    virtual void SetBuffer(uint8_t* buffer) = 0;
+
+    virtual void SetBufLength(size_t bufLength) = 0;
+
+    virtual void SetDataLength(size_t dataLength) = 0;
 };
 
 class AudioCapturerReadCallbackAdapter {
@@ -59,8 +83,8 @@ public:
 
     virtual ~AudioCapturerAdapter() = default;
 
-    virtual int32_t Create(const AudioAdapterCapturerOptions &capturerOptions,
-        std::string cachePath = std::string()) = 0;
+    virtual int32_t Create(
+        const std::shared_ptr<AudioCapturerOptionsAdapter> capturerOptions, std::string cachePath = std::string()) = 0;
 
     virtual bool Start() = 0;
 
@@ -68,14 +92,13 @@ public:
 
     virtual bool Release() = 0;
 
-    virtual int32_t SetCapturerReadCallback(
-        std::shared_ptr<AudioCapturerReadCallbackAdapter> callbck) = 0;
+    virtual int32_t SetCapturerReadCallback(std::shared_ptr<AudioCapturerReadCallbackAdapter> callbck) = 0;
 
-    virtual int32_t GetBufferDesc(BufferDescAdapter &buffferDesc) = 0;
+    virtual int32_t GetBufferDesc(std::shared_ptr<BufferDescAdapter> bufferDesc) = 0;
 
-    virtual int32_t Enqueue(const BufferDescAdapter &bufferDesc) = 0;
+    virtual int32_t Enqueue(const std::shared_ptr<BufferDescAdapter> bufferDesc) = 0;
 
-    virtual int32_t GetFrameCount(uint32_t &frameCount) = 0;
+    virtual int32_t GetFrameCount(uint32_t& frameCount) = 0;
 
     virtual int64_t GetAudioTime() = 0;
 };

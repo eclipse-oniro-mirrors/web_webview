@@ -42,7 +42,7 @@ public:
 
     int32_t GetSurfaceId(uint64_t* surfaceId) override;
 
-    int32_t SetOnFrameAvailableListener(OnFrameAvailableListener* listener) override;
+    int32_t SetOnFrameAvailableListener(std::shared_ptr<FrameAvailableListener> listener) override;
 
     int32_t UnsetOnFrameAvailableListener() override;
 

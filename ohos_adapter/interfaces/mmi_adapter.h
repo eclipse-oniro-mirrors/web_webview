@@ -28,25 +28,55 @@ enum MMIAdapterKeyboardType : int32_t {
     REMOTE_CONTROL = 5,
 };
 
-struct MMIDeviceInfoAdapter {
+class MMIDeviceInfoAdapter {
 public:
-    int32_t id = -1;
-    int32_t type = 0;
-    int32_t bus = 0;
-    int32_t version = 0;
-    int32_t product = 0;
-    int32_t vendor = 0;
-    std::string name;
-    std::string phys;
-    std::string uniq;
+    MMIDeviceInfoAdapter() = default;
+
+    virtual ~MMIDeviceInfoAdapter() = default;
+
+    virtual int32_t GetId() = 0;
+
+    virtual int32_t GetType() = 0;
+
+    virtual int32_t GetBus() = 0;
+
+    virtual int32_t GetVersion() = 0;
+
+    virtual int32_t GetProduct() = 0;
+
+    virtual int32_t GetVendor() = 0;
+
+    virtual std::string GetName() = 0;
+
+    virtual std::string GetPhys() = 0;
+
+    virtual std::string GetUniq() = 0;
+
+    virtual void SetId(int32_t id) = 0;
+
+    virtual void SetType(int32_t type) = 0;
+
+    virtual void SetBus(int32_t bus) = 0;
+
+    virtual void SetVersion(int32_t version) = 0;
+
+    virtual void SetProduct(int32_t product) = 0;
+
+    virtual void SetVendor(int32_t vendor) = 0;
+
+    virtual void SetName(std::string name) = 0;
+
+    virtual void SetPhys(std::string phys) = 0;
+
+    virtual void SetUniq(std::string uniq) = 0;
 };
 
 class MMIListenerAdapter {
 public:
     MMIListenerAdapter() = default;
     virtual ~MMIListenerAdapter() = default;
-    virtual void OnDeviceAdded(int32_t deviceId, const std::string &type) = 0;
-    virtual void OnDeviceRemoved(int32_t deviceId, const std::string &type) = 0;
+    virtual void OnDeviceAdded(int32_t deviceId, const std::string& type) = 0;
+    virtual void OnDeviceRemoved(int32_t deviceId, const std::string& type) = 0;
 };
 
 class MMIInputListenerAdapter {
@@ -76,7 +106,7 @@ public:
 
     virtual int32_t GetDeviceIds(std::vector<int32_t>& ids) = 0;
 
-    virtual int32_t GetDeviceInfo(int32_t deviceId, MMIDeviceInfoAdapter& info) = 0;
+    virtual int32_t GetDeviceInfo(int32_t deviceId, std::shared_ptr<MMIDeviceInfoAdapter> info) = 0;
 };
 } // namespace OHOS::NWeb
 

@@ -13,28 +13,31 @@
  * limitations under the License.
  */
 
-#ifndef ARK_CAMERA_STATUS_CALLBACK_ADAPTER_CTOCPP_H
-#define ARK_CAMERA_STATUS_CALLBACK_ADAPTER_CTOCPP_H
+#ifndef ARK_CAMERA_STATUS_CALLBACK_ADAPTER_CTOCPP_H_
+#define ARK_CAMERA_STATUS_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_camera_manager_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_camera_manager_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_camera_manager_adapter_capi.h"
+#include "ohos_adapter/include/ark_camera_manager_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkCameraStatusCallbackAdapterCToCpp : public ArkWebCToCppRefCounted<ArkCameraStatusCallbackAdapterCToCpp,
-                                                 ArkCameraStatusCallbackAdapter, ark_camera_status_callback_adapter_t> {
+class ArkCameraStatusCallbackAdapterCToCpp
+    : public ArkWebCToCppRefCounted<ArkCameraStatusCallbackAdapterCToCpp,
+                                    ArkCameraStatusCallbackAdapter,
+                                    ark_camera_status_callback_adapter_t> {
 public:
-    ArkCameraStatusCallbackAdapterCToCpp();
-    virtual ~ArkCameraStatusCallbackAdapterCToCpp();
+  ArkCameraStatusCallbackAdapterCToCpp();
+  virtual ~ArkCameraStatusCallbackAdapterCToCpp();
 
-    // ArkCameraStatusCallbackAdapter methods.
-    void OnCameraStatusChanged(int32_t cameraStatusAdapter, const ArkWebString callBackDeviceId) override;
+  // ArkCameraStatusCallbackAdapter methods.
+  void OnCameraStatusChanged(int32_t cameraStatusAdapter,
+                             const ArkWebString callBackDeviceId) override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_CAMERA_STATUS_CALLBACK_ADAPTER_CTOCPP_H
+#endif // ARK_CAMERA_STATUS_CALLBACK_ADAPTER_CTOCPP_H_

@@ -20,91 +20,125 @@
 
 #include <cstdint>
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
-#include "media_codec_decoder_adapter.h"
-
-using ArkDecoderFormat = OHOS::NWeb::DecoderFormat;
-using ArkBufferInfo = OHOS::NWeb::BufferInfo;
-using ArkOhosBuffer = OHOS::NWeb::OhosBuffer;
+#include "ark_media_codec_adapter.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
-class ArkDecoderCallbackAdapter : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=web core)--*/
+class ArkDecoderFormatAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkDecoderCallbackAdapter() = default;
+  /*--ark web()--*/
+  ArkDecoderFormatAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkDecoderCallbackAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkDecoderFormatAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void OnError(int32_t errorType, int32_t errorCode) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetWidth() = 0;
 
-    /*--web engine()--*/
-    virtual void OnStreamChanged(const ArkDecoderFormat& format) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetHeight() = 0;
 
-    /*--web engine()--*/
-    virtual void OnNeedInputData(uint32_t index, ArkOhosBuffer buffer) = 0;
+  /*--ark web()--*/
+  virtual double GetFrameRate() = 0;
 
-    /*--web engine()--*/
-    virtual void OnNeedOutputData(uint32_t index, ArkBufferInfo info, uint32_t flag) = 0;
+  /*--ark web()--*/
+  virtual void SetWidth(int32_t width) = 0;
+
+  /*--ark web()--*/
+  virtual void SetHeight(int32_t height) = 0;
+
+  /*--ark web()--*/
+  virtual void SetFrameRate(double frameRate) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=web core)--*/
+class ArkDecoderCallbackAdapter : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkDecoderCallbackAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkDecoderCallbackAdapter() = default;
+
+  /*--ark web()--*/
+  virtual void OnError(int32_t errorType, int32_t errorCode) = 0;
+
+  /*--ark web()--*/
+  virtual void OnStreamChanged(int32_t width, int32_t height,
+                               double frameRate) = 0;
+
+  /*--ark web()--*/
+  virtual void OnNeedInputData(uint32_t index,
+                               ArkWebRefPtr<ArkOhosBufferAdapter> buffer) = 0;
+
+  /*--ark web()--*/
+  virtual void OnNeedOutputData(uint32_t index,
+                                ArkWebRefPtr<ArkBufferInfoAdapter> info,
+                                uint32_t flag) = 0;
+};
+
+/*--ark web(source=library)--*/
 class ArkMediaCodecDecoderAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkMediaCodecDecoderAdapter() = default;
+  /*--ark web()--*/
+  ArkMediaCodecDecoderAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkMediaCodecDecoderAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkMediaCodecDecoderAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t CreateVideoDecoderByMime(const ArkWebString& mimetype) = 0;
+  /*--ark web()--*/
+  virtual int32_t CreateVideoDecoderByMime(const ArkWebString &mimetype) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t CreateVideoDecoderByName(const ArkWebString& name) = 0;
+  /*--ark web()--*/
+  virtual int32_t CreateVideoDecoderByName(const ArkWebString &name) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t ConfigureDecoder(const ArkDecoderFormat& format) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  ConfigureDecoder(const ArkWebRefPtr<ArkDecoderFormatAdapter> format) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetParameterDecoder(const ArkDecoderFormat& format) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  SetParameterDecoder(const ArkWebRefPtr<ArkDecoderFormatAdapter> format) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetOutputSurface(void* window) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetOutputSurface(void *window) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t PrepareDecoder() = 0;
+  /*--ark web()--*/
+  virtual int32_t PrepareDecoder() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t StartDecoder() = 0;
+  /*--ark web()--*/
+  virtual int32_t StartDecoder() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t StopDecoder() = 0;
+  /*--ark web()--*/
+  virtual int32_t StopDecoder() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t FlushDecoder() = 0;
+  /*--ark web()--*/
+  virtual int32_t FlushDecoder() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t ResetDecoder() = 0;
+  /*--ark web()--*/
+  virtual int32_t ResetDecoder() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t ReleaseDecoder() = 0;
+  /*--ark web()--*/
+  virtual int32_t ReleaseDecoder() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t QueueInputBufferDec(uint32_t index, ArkBufferInfo info, uint32_t flag) = 0;
+  /*--ark web()--*/
+  virtual int32_t QueueInputBufferDec(uint32_t index,
+                                      int64_t presentationTimeUs, int32_t size,
+                                      int32_t offset, uint32_t flag) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetOutputFormatDec(ArkDecoderFormat& format) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  GetOutputFormatDec(ArkWebRefPtr<ArkDecoderFormatAdapter> format) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t ReleaseOutputBufferDec(uint32_t index, bool isRender) = 0;
+  /*--ark web()--*/
+  virtual int32_t ReleaseOutputBufferDec(uint32_t index, bool isRender) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetCallbackDec(const ArkWebRefPtr<ArkDecoderCallbackAdapter> callback) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  SetCallbackDec(const ArkWebRefPtr<ArkDecoderCallbackAdapter> callback) = 0;
 };
 } // namespace OHOS::ArkWeb
 

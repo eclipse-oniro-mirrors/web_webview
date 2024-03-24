@@ -16,7 +16,8 @@
 #include "audio_capturer_adapter_impl.h"
 
 namespace OHOS::NWeb {
-int32_t AudioCapturerAdapterImpl::Create(const AudioAdapterCapturerOptions& capturerOptions, std::string cachePath)
+
+int32_t AudioCapturerAdapterImpl::Create(const std::shared_ptr<AudioCapturerOptionsAdapter> capturerOptions, std::string cachePath)
 {
     return -1;
 }
@@ -42,12 +43,12 @@ int32_t AudioCapturerAdapterImpl::SetCapturerReadCallback(
     return -1;
 }
 
-int32_t AudioCapturerAdapterImpl::GetBufferDesc(BufferDescAdapter& bufferDesc)
+int32_t AudioCapturerAdapterImpl::GetBufferDesc(std::shared_ptr<BufferDescAdapter> bufferDesc)
 {
     return -1;
 }
 
-int32_t AudioCapturerAdapterImpl::Enqueue(const BufferDescAdapter& bufferDesc)
+int32_t AudioCapturerAdapterImpl::Enqueue(const std::shared_ptr<BufferDescAdapter> bufferDesc)
 {
     return -1;
 }

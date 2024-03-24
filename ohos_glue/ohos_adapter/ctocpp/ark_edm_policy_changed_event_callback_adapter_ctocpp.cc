@@ -13,33 +13,37 @@
  * limitations under the License.
  */
 
-#include "ctocpp/ark_edm_policy_changed_event_callback_adapter_ctocpp.h"
-
-#include "ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_adapter/ctocpp/ark_edm_policy_changed_event_callback_adapter_ctocpp.h"
+#include "base/ctocpp/ark_web_ctocpp_macros.h"
 
 namespace OHOS::ArkWeb {
 
 ARK_WEB_NO_SANITIZE
-void ArkEdmPolicyChangedEventCallbackAdapterCToCpp::Changed()
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+void ArkEdmPolicyChangedEventCallbackAdapterCToCpp::Changed() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_edm_policy_changed_event_callback_adapter_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ark_edm_policy_changed_event_callback_adapter_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, changed, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, changed, );
 
-    // Execute
-    _struct->changed(_struct);
+  // Execute
+  _struct->changed(_struct);
 }
 
-ArkEdmPolicyChangedEventCallbackAdapterCToCpp::ArkEdmPolicyChangedEventCallbackAdapterCToCpp() {}
+ArkEdmPolicyChangedEventCallbackAdapterCToCpp::
+    ArkEdmPolicyChangedEventCallbackAdapterCToCpp() {
+}
 
-ArkEdmPolicyChangedEventCallbackAdapterCToCpp::~ArkEdmPolicyChangedEventCallbackAdapterCToCpp() {}
+ArkEdmPolicyChangedEventCallbackAdapterCToCpp::
+    ~ArkEdmPolicyChangedEventCallbackAdapterCToCpp() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCToCppRefCounted<ArkEdmPolicyChangedEventCallbackAdapterCToCpp,
-    ArkEdmPolicyChangedEventCallbackAdapter, ark_edm_policy_changed_event_callback_adapter_t>::kBridgeType =
+template <>
+ArkWebBridgeType ArkWebCToCppRefCounted<
+    ArkEdmPolicyChangedEventCallbackAdapterCToCpp,
+    ArkEdmPolicyChangedEventCallbackAdapter,
+    ark_edm_policy_changed_event_callback_adapter_t>::kBridgeType =
     ARK_EDM_POLICY_CHANGED_EVENT_CALLBACK_ADAPTER;
 
 } // namespace OHOS::ArkWeb
