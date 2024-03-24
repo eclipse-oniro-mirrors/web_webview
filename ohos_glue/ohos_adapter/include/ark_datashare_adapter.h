@@ -20,28 +20,28 @@
 
 #include <cstdint>
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkDatashareAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkDatashareAdapter() = default;
+  /*--ark web()--*/
+  ArkDatashareAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkDatashareAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkDatashareAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int OpenDataShareUriForRead(const ArkWebString& uriStr) = 0;
+  /*--ark web()--*/
+  virtual int OpenDataShareUriForRead(const ArkWebString &uriStr) = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetFileDisplayName(const ArkWebString& uriStr) = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetFileDisplayName(const ArkWebString &uriStr) = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetRealPath(const ArkWebString& uriStr) = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetRealPath(const ArkWebString &uriStr) = 0;
 };
 
 } // namespace OHOS::ArkWeb

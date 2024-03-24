@@ -13,32 +13,34 @@
  * limitations under the License.
  */
 
-#ifndef ARK_DISPLAY_LISTENER_ADAPTER_CTOCPP_H
-#define ARK_DISPLAY_LISTENER_ADAPTER_CTOCPP_H
+#ifndef ARK_DISPLAY_LISTENER_ADAPTER_CTOCPP_H_
+#define ARK_DISPLAY_LISTENER_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_display_manager_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_display_manager_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_display_manager_adapter_capi.h"
+#include "ohos_adapter/include/ark_display_manager_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkDisplayListenerAdapterCToCpp : public ArkWebCToCppRefCounted<ArkDisplayListenerAdapterCToCpp,
-                                            ArkDisplayListenerAdapter, ark_display_listener_adapter_t> {
+class ArkDisplayListenerAdapterCToCpp
+    : public ArkWebCToCppRefCounted<ArkDisplayListenerAdapterCToCpp,
+                                    ArkDisplayListenerAdapter,
+                                    ark_display_listener_adapter_t> {
 public:
-    ArkDisplayListenerAdapterCToCpp();
-    virtual ~ArkDisplayListenerAdapterCToCpp();
+  ArkDisplayListenerAdapterCToCpp();
+  virtual ~ArkDisplayListenerAdapterCToCpp();
 
-    // ArkDisplayListenerAdapter methods.
-    void OnCreate(uint64_t displayId) override;
+  // ArkDisplayListenerAdapter methods.
+  void OnCreate(uint64_t displayId) override;
 
-    void OnDestroy(uint64_t displayId) override;
+  void OnDestroy(uint64_t displayId) override;
 
-    void OnChange(uint64_t displayId) override;
+  void OnChange(uint64_t displayId) override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_DISPLAY_LISTENER_ADAPTER_CTOCPP_H
+#endif // ARK_DISPLAY_LISTENER_ADAPTER_CTOCPP_H_

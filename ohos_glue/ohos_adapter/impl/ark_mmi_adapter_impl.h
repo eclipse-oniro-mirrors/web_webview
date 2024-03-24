@@ -16,6 +16,7 @@
 #ifndef ARK_MMI_ADAPTER_IMPL_H
 #define ARK_MMI_ADAPTER_IMPL_H
 
+#include "mmi_adapter.h"
 #include "include/ark_mmi_adapter.h"
 
 namespace OHOS::ArkWeb {
@@ -38,7 +39,7 @@ public:
 
     int32_t GetDeviceIds(ArkWebInt32Vector& ids) override;
 
-    int32_t GetDeviceInfo(int32_t deviceId, ArkMMIDeviceInfoAdapter& info) override;
+    int32_t GetDeviceInfo(int32_t deviceId, ArkWebRefPtr<ArkMMIDeviceInfoAdapter> info) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::MMIAdapter> real_;

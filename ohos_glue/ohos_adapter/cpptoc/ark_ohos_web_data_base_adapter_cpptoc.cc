@@ -13,87 +13,97 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_ohos_web_data_base_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_ohos_web_data_base_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-bool ARK_WEB_CALLBACK ark_ohos_web_data_base_adapter_exist_http_auth_credentials(
-    struct _ark_ohos_web_data_base_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_ohos_web_data_base_adapter_exist_http_auth_credentials(
+    struct _ark_ohos_web_data_base_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkOhosWebDataBaseAdapterCppToC::Get(self)->ExistHttpAuthCredentials();
+  // Execute
+  return ArkOhosWebDataBaseAdapterCppToC::Get(self)->ExistHttpAuthCredentials();
 }
 
-void ARK_WEB_CALLBACK ark_ohos_web_data_base_adapter_delete_http_auth_credentials(
-    struct _ark_ohos_web_data_base_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK
+ark_ohos_web_data_base_adapter_delete_http_auth_credentials(
+    struct _ark_ohos_web_data_base_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkOhosWebDataBaseAdapterCppToC::Get(self)->DeleteHttpAuthCredentials();
+  // Execute
+  ArkOhosWebDataBaseAdapterCppToC::Get(self)->DeleteHttpAuthCredentials();
 }
 
 void ARK_WEB_CALLBACK ark_ohos_web_data_base_adapter_save_http_auth_credentials(
-    struct _ark_ohos_web_data_base_adapter_t* self, const ArkWebString* host, const ArkWebString* realm,
-    const ArkWebString* username, const char* password)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_ohos_web_data_base_adapter_t *self, const ArkWebString *host,
+    const ArkWebString *realm, const ArkWebString *username,
+    const char *password) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(host, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(host, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(realm, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(realm, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(username, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(username, );
 
-    // Execute
-    ArkOhosWebDataBaseAdapterCppToC::Get(self)->SaveHttpAuthCredentials(*host, *realm, *username, password);
+  ARK_WEB_CPPTOC_CHECK_PARAM(password, );
+
+  // Execute
+  ArkOhosWebDataBaseAdapterCppToC::Get(self)->SaveHttpAuthCredentials(
+      *host, *realm, *username, password);
 }
 
 void ARK_WEB_CALLBACK ark_ohos_web_data_base_adapter_get_http_auth_credentials(
-    struct _ark_ohos_web_data_base_adapter_t* self, const ArkWebString* host, const ArkWebString* realm,
-    ArkWebString* username, char* password, uint32_t passwordSize)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_ohos_web_data_base_adapter_t *self, const ArkWebString *host,
+    const ArkWebString *realm, ArkWebString *username, char *password,
+    uint32_t passwordSize) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(host, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(host, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(realm, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(realm, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(username, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(username, );
 
-    // Execute
-    ArkOhosWebDataBaseAdapterCppToC::Get(self)->GetHttpAuthCredentials(
-        *host, *realm, *username, password, passwordSize);
+  ARK_WEB_CPPTOC_CHECK_PARAM(password, );
+
+  // Execute
+  ArkOhosWebDataBaseAdapterCppToC::Get(self)->GetHttpAuthCredentials(
+      *host, *realm, *username, password, passwordSize);
 }
 
 } // namespace
 
-ArkOhosWebDataBaseAdapterCppToC::ArkOhosWebDataBaseAdapterCppToC()
-{
-    GetStruct()->exist_http_auth_credentials = ark_ohos_web_data_base_adapter_exist_http_auth_credentials;
-    GetStruct()->delete_http_auth_credentials = ark_ohos_web_data_base_adapter_delete_http_auth_credentials;
-    GetStruct()->save_http_auth_credentials = ark_ohos_web_data_base_adapter_save_http_auth_credentials;
-    GetStruct()->get_http_auth_credentials = ark_ohos_web_data_base_adapter_get_http_auth_credentials;
+ArkOhosWebDataBaseAdapterCppToC::ArkOhosWebDataBaseAdapterCppToC() {
+  GetStruct()->exist_http_auth_credentials =
+      ark_ohos_web_data_base_adapter_exist_http_auth_credentials;
+  GetStruct()->delete_http_auth_credentials =
+      ark_ohos_web_data_base_adapter_delete_http_auth_credentials;
+  GetStruct()->save_http_auth_credentials =
+      ark_ohos_web_data_base_adapter_save_http_auth_credentials;
+  GetStruct()->get_http_auth_credentials =
+      ark_ohos_web_data_base_adapter_get_http_auth_credentials;
 }
 
-ArkOhosWebDataBaseAdapterCppToC::~ArkOhosWebDataBaseAdapterCppToC() {}
+ArkOhosWebDataBaseAdapterCppToC::~ArkOhosWebDataBaseAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkOhosWebDataBaseAdapterCppToC, ArkOhosWebDataBaseAdapter,
-    ark_ohos_web_data_base_adapter_t>::kBridgeType = ARK_OHOS_WEB_DATA_BASE_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkOhosWebDataBaseAdapterCppToC, ArkOhosWebDataBaseAdapter,
+    ark_ohos_web_data_base_adapter_t>::kBridgeType =
+    ARK_OHOS_WEB_DATA_BASE_ADAPTER;
 
 } // namespace OHOS::ArkWeb

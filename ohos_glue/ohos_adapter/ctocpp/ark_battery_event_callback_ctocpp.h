@@ -13,28 +13,30 @@
  * limitations under the License.
  */
 
-#ifndef ARK_BATTERY_EVENT_CALLBACK_CTOCPP_H
-#define ARK_BATTERY_EVENT_CALLBACK_CTOCPP_H
+#ifndef ARK_BATTERY_EVENT_CALLBACK_CTOCPP_H_
+#define ARK_BATTERY_EVENT_CALLBACK_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_battery_mgr_client_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_battery_mgr_client_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_battery_mgr_client_adapter_capi.h"
+#include "ohos_adapter/include/ark_battery_mgr_client_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkBatteryEventCallbackCToCpp : public ArkWebCToCppRefCounted<ArkBatteryEventCallbackCToCpp,
-                                          ArkBatteryEventCallback, ark_battery_event_callback_t> {
+class ArkBatteryEventCallbackCToCpp
+    : public ArkWebCToCppRefCounted<ArkBatteryEventCallbackCToCpp,
+                                    ArkBatteryEventCallback,
+                                    ark_battery_event_callback_t> {
 public:
-    ArkBatteryEventCallbackCToCpp();
-    virtual ~ArkBatteryEventCallbackCToCpp();
+  ArkBatteryEventCallbackCToCpp();
+  virtual ~ArkBatteryEventCallbackCToCpp();
 
-    // ArkBatteryEventCallback methods.
-    void BatteryInfoChanged(ArkWebRefPtr<ArkBatteryInfo> info) override;
+  // ArkBatteryEventCallback methods.
+  void BatteryInfoChanged(ArkWebRefPtr<ArkBatteryInfo> info) override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_BATTERY_EVENT_CALLBACK_CTOCPP_H
+#endif // ARK_BATTERY_EVENT_CALLBACK_CTOCPP_H_

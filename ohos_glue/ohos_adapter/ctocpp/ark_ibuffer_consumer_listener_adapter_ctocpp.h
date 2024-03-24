@@ -13,29 +13,30 @@
  * limitations under the License.
  */
 
-#ifndef ARK_IBUFFER_CONSUMER_LISTENER_ADAPTER_CTOCPP_H
-#define ARK_IBUFFER_CONSUMER_LISTENER_ADAPTER_CTOCPP_H
+#ifndef ARK_IBUFFER_CONSUMER_LISTENER_ADAPTER_CTOCPP_H_
+#define ARK_IBUFFER_CONSUMER_LISTENER_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_graphic_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_graphic_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_graphic_adapter_capi.h"
+#include "ohos_adapter/include/ark_graphic_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkIBufferConsumerListenerAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkIBufferConsumerListenerAdapterCToCpp, ArkIBufferConsumerListenerAdapter,
-          ark_ibuffer_consumer_listener_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkIBufferConsumerListenerAdapterCToCpp,
+                                    ArkIBufferConsumerListenerAdapter,
+                                    ark_ibuffer_consumer_listener_adapter_t> {
 public:
-    ArkIBufferConsumerListenerAdapterCToCpp();
-    virtual ~ArkIBufferConsumerListenerAdapterCToCpp();
+  ArkIBufferConsumerListenerAdapterCToCpp();
+  virtual ~ArkIBufferConsumerListenerAdapterCToCpp();
 
-    // ArkIBufferConsumerListenerAdapter methods.
-    void OnBufferAvailable(ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer) override;
+  // ArkIBufferConsumerListenerAdapter methods.
+  void OnBufferAvailable(ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer) override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_IBUFFER_CONSUMER_LISTENER_ADAPTER_CTOCPP_H
+#endif // ARK_IBUFFER_CONSUMER_LISTENER_ADAPTER_CTOCPP_H_

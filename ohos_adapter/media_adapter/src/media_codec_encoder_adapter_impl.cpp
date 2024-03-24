@@ -14,6 +14,10 @@
  */
 
 #include "media_codec_encoder_adapter_impl.h"
+#include "ohos_buffer_adapter_impl.h"
+#include "buffer_info_adapter_impl.h"
+#include "capability_data_adapter_impl.h"
+#include "codec_format_adapter_impl.h"
 
 #include <unordered_map>
 
@@ -93,25 +97,30 @@ CodecCodeAdapter MediaCodecEncoderAdapterImpl::SetCodecCallback(const std::share
     return CodecCodeAdapter::OK;
 }
 
-CodecCodeAdapter MediaCodecEncoderAdapterImpl::Configure(const CodecConfigPara& config)
+CodecCodeAdapter MediaCodecEncoderAdapterImpl::Configure(const std::shared_ptr<CodecConfigParaAdapter> config)
 {
     if (encoder_ == nullptr) {
         WVLOG_E("MediaCodecEncoder is nullptr when ConfigureEncoder.");
         return CodecCodeAdapter::ERROR;
     }
 
+    if (config == nullptr) {
+        WVLOG_E("config is nullptr when ConfigureEncoder.");
+        return CodecCodeAdapter::ERROR;
+    }
+
     OHOS::MediaAVCodec::Format avCodecFormat;
 
-    avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, config.width);
-    avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, config.height);
-    avCodecFormat.PutDoubleValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_FRAME_RATE, config.frameRate);
-    avCodecFormat.PutLongValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_BITRATE, config.bitRate);
+    avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, config->GetWidth());
+    avCodecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, config->GetHeight());
+    avCodecFormat.PutDoubleValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_FRAME_RATE, config->GetFrameRate());
+    avCodecFormat.PutLongValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_BITRATE, config->GetBitRate());
     avCodecFormat.PutIntValue(
         OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_VIDEO_ENCODE_BITRATE_MODE, VideoEncodeBitrateMode::VBR);
     avCodecFormat.PutIntValue(
         OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_PIXEL_FORMAT, (int32_t)VideoPixelFormat::YUVI420);
     WVLOG_I("Configure width: %{public}d, height: %{public}d, bitRate: %{public}d, framerate: %{public}lf,",
-        config.width, config.height, (int32_t)config.bitRate, config.frameRate);
+        config->GetWidth(), config->GetHeight(), (int32_t)config->GetBitRate(), config->GetFrameRate());
     int32_t ret = encoder_->Configure(avCodecFormat);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {
         WVLOG_E("encoder config error.");
@@ -285,10 +294,18 @@ void EncoderCallbackImpl::OnOutputFormatChanged(const Format& format)
         return;
     }
 
-    CodecFormatAdapter formatAdapter;
-    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, formatAdapter.width);
-    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, formatAdapter.height);
+    std::shared_ptr<CodecFormatAdapterImpl> formatAdapter = std::make_shared<CodecFormatAdapterImpl>();
+    if (!formatAdapter) {
+        WVLOG_E("formatAdapter is null");
+        return;
+    }
 
+    int32_t width = 0;
+    int32_t height = 0;
+    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, width);
+    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, height);
+    formatAdapter->SetWidth(width);
+    formatAdapter->SetHeight(height);
     cb_->OnStreamChanged(formatAdapter);
 }
 
@@ -299,15 +316,20 @@ void EncoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr
         return;
     }
 
-    if (buffer != nullptr && buffer->GetBase() != nullptr) {
-        OhosBuffer ohosBuffer;
-        ohosBuffer.addr = buffer->GetBase();
-        ohosBuffer.bufferSize = buffer->GetSize();
-        cb_->OnNeedInputData(index, ohosBuffer);
+    if (buffer == nullptr || buffer->GetBase() == nullptr) {
+        WVLOG_E("callback input buffer is null");
         return;
     }
 
-    WVLOG_E("callback input buffer is null");
+    std::shared_ptr<OhosBufferAdapterImpl> ohosBuffer = std::make_shared<OhosBufferAdapterImpl>();
+    if (!ohosBuffer) {
+        WVLOG_E("new OhosBufferAdapterImpl failed");
+        return;
+    }
+
+    ohosBuffer->SetAddr(buffer->GetBase());
+    ohosBuffer->SetBufferSize(buffer->GetSize());
+    cb_->OnNeedInputData(index, ohosBuffer);
 }
 
 void EncoderCallbackImpl::OnOutputBufferAvailable(
@@ -318,21 +340,31 @@ void EncoderCallbackImpl::OnOutputBufferAvailable(
         return;
     }
 
-    BufferInfo bufferInfo;
-    bufferInfo.presentationTimeUs = info.presentationTimeUs;
-    bufferInfo.size = info.size;
-    bufferInfo.offset = info.offset;
-
-    BufferFlag flagAdapter = MediaCodecEncoderAdapterImpl::GetBufferFlag(flag);
-
-    if (buffer != nullptr && buffer->GetBase() != nullptr) {
-        OhosBuffer ohosBuffer;
-        ohosBuffer.addr = buffer->GetBase();
-        ohosBuffer.bufferSize = info.size;
-        cb_->OnNeedOutputData(index, bufferInfo, flagAdapter, ohosBuffer);
+    if (buffer == nullptr || buffer->GetBase() == nullptr) {
+        WVLOG_E("callback output buffer is null");
         return;
     }
 
-    WVLOG_E("callback output buffer is null");
+    std::shared_ptr<BufferInfoAdapterImpl> bufferInfo = std::make_shared<BufferInfoAdapterImpl>();
+    if (bufferInfo == nullptr) {
+        WVLOG_E("new bufferInfoAdapterImpl failed");
+        return;
+    }
+
+    std::shared_ptr<OhosBufferAdapterImpl> ohosBuffer = std::make_shared<OhosBufferAdapterImpl>();
+    if (ohosBuffer == nullptr) {
+        WVLOG_E("new OhosBufferAdapterImpl failed");
+        return;
+    }
+
+    bufferInfo->SetPresentationTimeUs(info.presentationTimeUs);
+    bufferInfo->SetSize(info.size);
+    bufferInfo->SetOffset(info.offset);
+
+    BufferFlag flagAdapter = MediaCodecEncoderAdapterImpl::GetBufferFlag(flag);
+
+    ohosBuffer->SetAddr(buffer->GetBase());
+    ohosBuffer->SetBufferSize(info.size);
+    cb_->OnNeedOutputData(index, bufferInfo, flagAdapter, ohosBuffer);
 }
 } // namespace OHOS::NWeb

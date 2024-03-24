@@ -15,6 +15,10 @@
 
 #include "ark_paste_data_record_adapter_impl.h"
 
+#include "wrapper/ark_clip_board_image_data_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
+
 namespace OHOS::ArkWeb {
 
 ArkWebRefPtr<ArkPasteDataRecordAdapter> ArkPasteDataRecordAdapter::NewRecord(const ArkWebString& mimeType)
@@ -50,11 +54,13 @@ bool ArkPasteDataRecordAdapterImpl::SetPlainText(void* plainText)
     return real_->SetPlainText(*temp);
 }
 
-bool ArkPasteDataRecordAdapterImpl::SetImgData(void* imageData)
+bool ArkPasteDataRecordAdapterImpl::SetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData)
 {
-    std::shared_ptr<NWeb::ClipBoardImageData>* temp =
-        static_cast<std::shared_ptr<NWeb::ClipBoardImageData>*>(imageData);
-    return real_->SetImgData(*temp);
+    if (CHECK_REF_PTR_IS_NULL(imageData)) {
+        return real_->SetImgData(nullptr);
+    }
+
+    return real_->SetImgData(std::make_shared<ArkClipBoardImageDataAdapterWrapper>(imageData));
 }
 
 ArkWebString ArkPasteDataRecordAdapterImpl::GetMimeType()
@@ -76,10 +82,13 @@ void ArkPasteDataRecordAdapterImpl::GetPlainText(void* data)
     *text = str;
 }
 
-bool ArkPasteDataRecordAdapterImpl::GetImgData(void* imageData)
+bool ArkPasteDataRecordAdapterImpl::GetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData)
 {
-    NWeb::ClipBoardImageData* temp = static_cast<NWeb::ClipBoardImageData*>(imageData);
-    return real_->GetImgData(*temp);
+    if (CHECK_REF_PTR_IS_NULL(imageData)) {
+        return real_->GetImgData(nullptr);
+    }
+
+    return real_->GetImgData(std::make_shared<ArkClipBoardImageDataAdapterWrapper>(imageData));
 }
 
 bool ArkPasteDataRecordAdapterImpl::SetUri(const ArkWebString& uriString)

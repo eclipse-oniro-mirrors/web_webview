@@ -21,7 +21,7 @@
 #include "audio_renderer_adapter.h"
 
 namespace OHOS::NWeb {
-enum class AudioAdapterStreamType {
+enum class AudioAdapterStreamType : int32_t {
     STREAM_DEFAULT = -1,
     STREAM_VOICE_CALL = 0,
     STREAM_MUSIC = 1,
@@ -40,7 +40,7 @@ enum class AudioAdapterStreamType {
     STREAM_ALL = 100
 };
 
-enum AdapterDeviceFlag {
+enum AdapterDeviceFlag : int32_t {
     NONE_DEVICES_FLAG = 0,
     OUTPUT_DEVICES_FLAG = 1,
     INPUT_DEVICES_FLAG = 2,
@@ -52,17 +52,32 @@ enum AdapterDeviceFlag {
     DEVICE_FLAG_MAX
 };
 
-struct AudioAdapterInterrupt {
-    AudioAdapterStreamUsage streamUsage;
-    AudioAdapterContentType contentType;
-    AudioAdapterStreamType streamType;
-    uint32_t sessionID;
-    bool pauseWhenDucked;
+class AudioInterruptAdapter {
+public:
+    AudioInterruptAdapter() = default;
+
+    virtual ~AudioInterruptAdapter() = default;
+
+    virtual AudioAdapterStreamUsage GetStreamUsage() = 0;
+
+    virtual AudioAdapterContentType GetContentType() = 0;
+
+    virtual AudioAdapterStreamType GetStreamType() = 0;
+
+    virtual uint32_t GetSessionID() = 0;
+
+    virtual bool GetPauseWhenDucked() = 0;
 };
 
-struct AudioAdapterDeviceDesc {
-    int32_t deviceId;
-    std::string deviceName;
+class AudioDeviceDescAdapter {
+public:
+    AudioDeviceDescAdapter() = default;
+
+    virtual ~AudioDeviceDescAdapter() = default;
+
+    virtual int32_t GetDeviceId() = 0;
+
+    virtual std::string GetDeviceName() = 0;
 };
 
 class AudioManagerCallbackAdapter {
@@ -95,26 +110,26 @@ public:
 
     virtual bool HasAudioInputDevices() = 0;
 
-    virtual int32_t RequestAudioFocus(const AudioAdapterInterrupt& audioInterrupt) = 0;
+    virtual int32_t RequestAudioFocus(const std::shared_ptr<AudioInterruptAdapter> audioInterrupt) = 0;
 
-    virtual int32_t AbandonAudioFocus(const AudioAdapterInterrupt& audioInterrupt) = 0;
+    virtual int32_t AbandonAudioFocus(const std::shared_ptr<AudioInterruptAdapter> audioInterrupt) = 0;
 
     virtual int32_t SetAudioManagerInterruptCallback(std::shared_ptr<AudioManagerCallbackAdapter> callback) = 0;
 
     virtual int32_t UnsetAudioManagerInterruptCallback() = 0;
 
-    virtual std::vector<AudioAdapterDeviceDesc> GetDevices(AdapterDeviceFlag flag) = 0;
+    virtual std::vector<std::shared_ptr<AudioDeviceDescAdapter>> GetDevices(AdapterDeviceFlag flag) = 0;
 
-    virtual int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) = 0;
+    virtual int32_t SelectAudioDeviceById(int32_t deviceId, bool isInput) = 0;
 
     virtual int32_t SetDeviceChangeCallback(std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> callback) = 0;
 
     virtual int32_t UnsetDeviceChangeCallback() = 0;
 
-    virtual AudioAdapterDeviceDesc GetDefaultOutputDevice() = 0;
+    virtual std::shared_ptr<AudioDeviceDescAdapter> GetDefaultOutputDevice() = 0;
 
-    virtual AudioAdapterDeviceDesc GetDefaultInputDevice() = 0;
+    virtual std::shared_ptr<AudioDeviceDescAdapter> GetDefaultInputDevice() = 0;
 };
 } // namespace OHOS::NWeb
 
-#endif // AUDIO_SYSTEM_MANAGER_ADAPTER_H
+#endif // AUDIO_RENDERER_ADAPTER_H

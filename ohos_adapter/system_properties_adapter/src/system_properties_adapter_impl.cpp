@@ -168,7 +168,7 @@ void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
     return;
 }
 
-int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd() const
+int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd() 
 {
     return OHOS::system::GetIntParameter("web.flowbuffer.maxfd", -1);
 }

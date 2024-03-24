@@ -13,35 +13,40 @@
  * limitations under the License.
  */
 
-#ifndef ARK_AAFWK_APP_MGR_CLIENT_ADAPTER_CAPI_H
-#define ARK_AAFWK_APP_MGR_CLIENT_ADAPTER_CAPI_H
+#ifndef ARK_AAFWK_APP_MGR_CLIENT_ADAPTER_CAPI_H_
+#define ARK_AAFWK_APP_MGR_CLIENT_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "ark_aafwk_render_scheduler_host_adapter_capi.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_aafwk_app_mgr_client_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    int(ARK_WEB_CALLBACK* start_render_process)(struct _ark_aafwk_app_mgr_client_adapter_t* self,
-        const ArkWebString* renderParam, int32_t ipcFd, int32_t sharedFd, int32_t crashFd, pid_t* renderPid);
+  int(ARK_WEB_CALLBACK *start_render_process)(
+      struct _ark_aafwk_app_mgr_client_adapter_t *self,
+      const ArkWebString *renderParam, int32_t ipcFd, int32_t sharedFd,
+      int32_t crashFd, pid_t *renderPid);
 
-    void(ARK_WEB_CALLBACK* attach_render_process)(
-        struct _ark_aafwk_app_mgr_client_adapter_t* self, struct _ark_aafwk_render_scheduler_host_adapter_t* adapter);
+  void(ARK_WEB_CALLBACK *attach_render_process)(
+      struct _ark_aafwk_app_mgr_client_adapter_t *self,
+      ark_aafwk_render_scheduler_host_adapter_t *adapter);
 
-    int(ARK_WEB_CALLBACK* get_render_process_termination_status)(
-        struct _ark_aafwk_app_mgr_client_adapter_t* self, pid_t renderPid, int* status);
+  int(ARK_WEB_CALLBACK *get_render_process_termination_status)(
+      struct _ark_aafwk_app_mgr_client_adapter_t *self, pid_t renderPid,
+      int *status);
 } ark_aafwk_app_mgr_client_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_AAFWK_APP_MGR_CLIENT_ADAPTER_CAPI_H
+#endif // ARK_AAFWK_APP_MGR_CLIENT_ADAPTER_CAPI_H_

@@ -41,19 +41,44 @@ enum class CopyOptionMode {
     CROSS_DEVICE = 3
 };
 
-typedef struct ClipBoardImageDataTag {
-    ClipBoardImageColorType colorType;
-    ClipBoardImageAlphaType alphaType;
-    uint32_t *data;
-    size_t dataSize;
-    size_t rowBytes;
-    int32_t width;
-    int32_t height;
-} ClipBoardImageData;
+class ClipBoardImageDataAdapter {
+public:
+    ClipBoardImageDataAdapter() = default;
+   
+    virtual ~ClipBoardImageDataAdapter() = default;
+
+    virtual ClipBoardImageColorType GetColorType() = 0;
+
+    virtual ClipBoardImageAlphaType GetAlphaType() = 0;
+
+    virtual uint32_t* GetData() = 0;
+
+    virtual size_t GetDataSize() = 0;
+
+    virtual size_t GetRowBytes() = 0;
+
+    virtual int32_t GetWidth() = 0;
+
+    virtual int32_t GetHeight() = 0;
+
+    virtual void SetColorType(ClipBoardImageColorType color) = 0;
+
+    virtual void SetAlphaType(ClipBoardImageAlphaType alpha) = 0;
+
+    virtual void SetData(uint32_t* data) = 0;
+
+    virtual void SetDataSize(size_t size) = 0;
+
+    virtual void SetRowBytes(size_t rowBytes) = 0;
+
+    virtual void SetWidth(int32_t width) = 0;
+
+    virtual void SetHeight(int32_t height) = 0;
+};
 
 class PasteDataRecordAdapter;
 class PasteDataAdapter;
-using PasteRecordList = std::vector<std::shared_ptr<PasteDataRecordAdapter>>;
+using PasteRecordVector = std::vector<std::shared_ptr<PasteDataRecordAdapter>>;
 using PasteCustomData = std::map<std::string, std::vector<uint8_t>>;
 
 class PasteboardObserverAdapter {
@@ -71,9 +96,9 @@ public:
 
     virtual ~PasteBoardClientAdapter() = default;
 
-    virtual bool GetPasteData(PasteRecordList& data) = 0;
+    virtual bool GetPasteData(PasteRecordVector& data) = 0;
 
-    virtual void SetPasteData(const PasteRecordList& data, 
+    virtual void SetPasteData(const PasteRecordVector& data, 
                               CopyOptionMode copyOption = CopyOptionMode::CROSS_DEVICE) = 0;
 
     virtual bool HasPasteData() = 0;
@@ -109,7 +134,7 @@ public:
 
     virtual bool SetPlainText(std::shared_ptr<std::string> plainText) = 0;
 
-    virtual bool SetImgData(std::shared_ptr<ClipBoardImageData> imageData) = 0;
+    virtual bool SetImgData(std::shared_ptr<ClipBoardImageDataAdapter> imageData) = 0;
 
     virtual std::string GetMimeType() = 0;
 
@@ -117,7 +142,7 @@ public:
 
     virtual std::shared_ptr<std::string> GetPlainText() = 0;
 
-    virtual bool GetImgData(ClipBoardImageData &imageData) = 0;
+    virtual bool GetImgData(std::shared_ptr<ClipBoardImageDataAdapter> imageData) = 0;
 
     virtual bool SetUri(const std::string& uriString) = 0;
 
@@ -150,7 +175,7 @@ public:
     
     virtual std::size_t GetRecordCount() = 0;
 
-    virtual PasteRecordList AllRecords() = 0;
+    virtual PasteRecordVector AllRecords() = 0;
 };
 }
 #endif

@@ -191,26 +191,26 @@ Media::PixelFormat PasteDataRecordAdapterImpl::ClipboardToImageColorType
     }
 }
 
-bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageData> imageData)
+bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageDataAdapter> imageData)
 {
     if (imageData == nullptr) {
         WVLOG_E("imageData is null");
         return false;
     }
     Media::InitializationOptions opt;
-    opt.size.width = imageData->width;
-    opt.size.height = imageData->height;
-    opt.pixelFormat = ClipboardToImageColorType(imageData->colorType);
-    opt.alphaType = ClipboardToImageAlphaType(imageData->alphaType);
+    opt.size.width = imageData->GetWidth();
+    opt.size.height = imageData->GetHeight();
+    opt.pixelFormat = ClipboardToImageColorType(imageData->GetColorType());
+    opt.alphaType = ClipboardToImageAlphaType(imageData->GetAlphaType());
     opt.editable = true;
     std::unique_ptr<Media::PixelMap> pixelMap = Media::PixelMap::Create(opt);
     if (pixelMap == nullptr) {
         WVLOG_E("create pixel map failed");
         return false;
     }
-    uint64_t stride = static_cast<uint64_t>(imageData->width) << 2;
-    uint64_t bufferSize = stride * static_cast<uint64_t>(imageData->height);
-    uint32_t ret = pixelMap->WritePixels(reinterpret_cast<const uint8_t *>(imageData->data), bufferSize);
+    uint64_t stride = static_cast<uint64_t>(imageData->GetWidth()) << 2;
+    uint64_t bufferSize = stride * static_cast<uint64_t>(imageData->GetHeight());
+    uint32_t ret = pixelMap->WritePixels(reinterpret_cast<const uint8_t *>(imageData->GetData()), bufferSize);
     if (ret != Media::SUCCESS) {
         WVLOG_E("write pixel map failed %{public}u", ret);
         return false;
@@ -241,12 +241,18 @@ std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetPlainText()
     return (record_ != nullptr) ? record_->GetPlainText() : nullptr;
 }
 
-bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
+bool PasteDataRecordAdapterImpl::GetImgData(std::shared_ptr<ClipBoardImageDataAdapter> imageData)
 {
     if (record_ == nullptr) {
         WVLOG_E("record_ is null");
         return false;
     }
+
+    if (imageData == nullptr) {
+        WVLOG_E("imageData is null");
+        return false;
+    }
+
     std::shared_ptr<Media::PixelMap> pixelMap = record_->GetPixelMap();
     if (pixelMap == nullptr) {
         WVLOG_E("pixelMap is null");
@@ -278,13 +284,13 @@ bool PasteDataRecordAdapterImpl::GetImgData(ClipBoardImageData &imageData)
     pixelMap->GetImageInfo(imgInfo);
     int32_t rowBytes = pixelMap->GetRowBytes();
 
-    imageData.colorType = ImageToClipboardColorType(imgInfo);
-    imageData.alphaType = ImageToClipboardAlphaType(imgInfo);
-    imageData.data = (uint32_t *)(imgBuffer_);
-    imageData.dataSize = static_cast<size_t>(bufferSize_);
-    imageData.width = width;
-    imageData.height = height;
-    imageData.rowBytes = static_cast<size_t>(rowBytes);
+    imageData->SetColorType(ImageToClipboardColorType(imgInfo));
+    imageData->SetAlphaType(ImageToClipboardAlphaType(imgInfo));
+    imageData->SetData((uint32_t *)(imgBuffer_));
+    imageData->SetDataSize(static_cast<size_t>(bufferSize_));
+    imageData->SetWidth(width);
+    imageData->SetHeight(height);
+    imageData->SetRowBytes(static_cast<size_t>(rowBytes));
     return true;
 }
 
@@ -386,12 +392,12 @@ std::size_t PasteDataAdapterImpl::GetRecordCount()
     return (data_ != nullptr) ? data_->GetRecordCount() : 0;
 }
 
-PasteRecordList PasteDataAdapterImpl::AllRecords()
+PasteRecordVector PasteDataAdapterImpl::AllRecords()
 {
     if (data_ == nullptr) {
-        return PasteRecordList();
+        return PasteRecordVector();
     }
-    PasteRecordList result;
+    PasteRecordVector result;
     for (auto& record: data_->AllRecords()) {
         result.push_back(std::make_shared<PasteDataRecordAdapterImpl>(record));
     }
@@ -430,7 +436,7 @@ void ReportPasteboardErrorEvent(int32_t errorCode, int32_t recordSize, const std
             RECORD_SIZE, std::to_string(recordSize), DATA_TYPE, dataType });
 }
 
-std::string GetPasteMimeTypeExtention(const PasteRecordList& data)
+std::string GetPasteMimeTypeExtention(const PasteRecordVector& data)
 {
     if (data.empty()) {
         return MIMETYPE_NULL;
@@ -449,7 +455,7 @@ std::string GetPasteMimeTypeExtention(const PasteRecordList& data)
     return primaryMimeType;
 }
 
-bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
+bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordVector& data)
 {
     PasteData pData;
     if (!PasteboardClient::GetInstance()->HasPasteData() ||
@@ -468,7 +474,7 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordList& data)
     return true;
 }
 
-void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordList& data, CopyOptionMode copyOption)
+void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordVector& data, CopyOptionMode copyOption)
 {
     if (copyOption == CopyOptionMode::NONE) {
         WVLOG_E("SetPasteData failed, copy option mode is 'NONE'");
@@ -500,13 +506,13 @@ bool PasteBoardClientAdapterImpl::HasPasteData()
 
 void PasteBoardClientAdapterImpl::Clear()
 {
-    PasteRecordList recordList;
-    if (!GetPasteData(recordList)) {
+    PasteRecordVector recordVector;
+    if (!GetPasteData(recordVector)) {
         WVLOG_E("get paste data failed while clear");
         PasteboardClient::GetInstance()->Clear();
         return;
     }
-    for (auto& record: recordList) {
+    for (auto& record: recordVector) {
         PasteDataRecordAdapterImpl* rawRecord =
             reinterpret_cast<PasteDataRecordAdapterImpl*>(record.get());
         if (rawRecord == nullptr) {

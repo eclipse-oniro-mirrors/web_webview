@@ -15,8 +15,10 @@
 
 #include "ark_media_codec_encoder_adapter_impl.h"
 
+#include "ark_capability_data_adapter_impl.h"
 #include "ark_producer_surface_adapter_impl.h"
 #include "wrapper/ark_codec_callback_adapter_wrapper.h"
+#include "wrapper/ark_codec_config_para_adapter_wrapper.h"
 
 #include "bridge/ark_web_bridge_macros.h"
 
@@ -45,9 +47,12 @@ int32_t ArkMediaCodecEncoderAdapterImpl::SetCodecCallback(const ArkWebRefPtr<Ark
     return (int32_t)real_->SetCodecCallback(std::make_shared<ArkCodecCallbackAdapterWapper>(callback));
 }
 
-int32_t ArkMediaCodecEncoderAdapterImpl::Configure(const ArkCodecConfigPara& config)
+int32_t ArkMediaCodecEncoderAdapterImpl::Configure(const ArkWebRefPtr<ArkCodecConfigParaAdapter> config)
 {
-    return (int32_t)real_->Configure(config);
+    if (CHECK_REF_PTR_IS_NULL(config)) {
+        return (int32_t)real_->Configure(nullptr);
+    }
+    return (int32_t)real_->Configure(std::make_shared<ArkCodecConfigParaAdapterWrapper>(config));
 }
 
 int32_t ArkMediaCodecEncoderAdapterImpl::Prepare()
@@ -77,12 +82,12 @@ int32_t ArkMediaCodecEncoderAdapterImpl::Release()
 
 ArkWebRefPtr<ArkProducerSurfaceAdapter> ArkMediaCodecEncoderAdapterImpl::CreateInputSurface()
 {
-    std::shared_ptr<OHOS::NWeb::ProducerSurfaceAdapter> surface = real_->CreateInputSurface();
+    std::shared_ptr<NWeb::ProducerSurfaceAdapter> surface = real_->CreateInputSurface();
     if (CHECK_SHARED_PTR_IS_NULL(surface)) {
         return nullptr;
     }
 
-    return new OHOS::ArkWeb::ArkProducerSurfaceAdapterImpl(surface);
+    return new ArkProducerSurfaceAdapterImpl(surface);
 }
 
 int32_t ArkMediaCodecEncoderAdapterImpl::ReleaseOutputBuffer(uint32_t index, bool isRender)
@@ -97,9 +102,15 @@ int32_t ArkMediaCodecEncoderAdapterImpl::RequestKeyFrameSoon()
 
 ArkMediaCodecListAdapterImpl::ArkMediaCodecListAdapterImpl(OHOS::NWeb::MediaCodecListAdapter& ref) : real_(ref) {}
 
-OHOS::NWeb::CapabilityDataAdapter ArkMediaCodecListAdapterImpl::GetCodecCapability(
+ArkWebRefPtr<ArkCapabilityDataAdapter> ArkMediaCodecListAdapterImpl::GetCodecCapability(
     const ArkWebString mime, const bool isCodec)
 {
-    return real_.GetCodecCapability(ArkWebStringStructToClass(mime), isCodec);
+    std::shared_ptr<NWeb::CapabilityDataAdapter> adapter =
+        real_.GetCodecCapability(ArkWebStringStructToClass(mime), isCodec);
+    if (CHECK_SHARED_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return new ArkCapabilityDataAdapterImpl(adapter);
 }
 } // namespace OHOS::ArkWeb

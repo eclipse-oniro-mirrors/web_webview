@@ -24,6 +24,7 @@ constexpr char INPUT_METHOD[] = "INPUT_METHOD";
 constexpr char ATTACH_CODE[] = "ATTACH_CODE";
 constexpr char IS_SHOW_KEY_BOARD[] = "IS_SHOW_KEY_BOARD";
 constexpr int32_t IMF_LISTENER_NULL_POINT = 1;
+constexpr int32_t IMF_TEXT_CONFIG_NULL_POINT = 2;
 
 IMFTextListenerAdapterImpl::IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener)
     : listener_(listener) {};
@@ -219,18 +220,24 @@ void ReportImfErrorEvent(int32_t ret, bool isShowKeyboard)
 {
     std::string isShowKeyboardStr = isShowKeyboard ? "true" : "false";
     OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(INPUT_METHOD,
-        HiSysEventAdapter::EventType::FAULT, { ATTACH_CODE, std::to_string(ret),
-            IS_SHOW_KEY_BOARD, isShowKeyboardStr });
+        HiSysEventAdapter::EventType::FAULT,
+        { ATTACH_CODE, std::to_string(ret), IS_SHOW_KEY_BOARD, isShowKeyboardStr });
 }
 
-bool IMFAdapterImpl::Attach(
-    std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard, const IMFAdapterTextConfig &config)
+bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
+    const std::shared_ptr<IMFTextConfigAdapter> config)
 {
     if (!listener) {
         WVLOG_E("the listener is nullptr");
         ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
         return false;
     }
+    if (!config || !(config->GetInputAttribute()) || !(config->GetCursorInfo())) {
+        WVLOG_E("the config is nullptr");
+        ReportImfErrorEvent(IMF_TEXT_CONFIG_NULL_POINT, isShowKeyboard);
+        return false;
+    }
+
     if (!textListener_) {
         textListener_ = new (std::nothrow) IMFTextListenerAdapterImpl(listener);
         if (!textListener_) {
@@ -240,19 +247,17 @@ bool IMFAdapterImpl::Attach(
         }
     }
 
-    MiscServices::InputAttribute inputAttribute = { .inputPattern = config.inputAttribute.inputPattern,
-        .enterKeyType = config.inputAttribute.enterKeyType };
+    MiscServices::InputAttribute inputAttribute = { .inputPattern = config->GetInputAttribute()->GetInputPattern(),
+        .enterKeyType = config->GetInputAttribute()->GetEnterKeyType() };
 
-    MiscServices::CursorInfo imfInfo = {
-        .left = config.cursorInfo.left,
-        .top = config.cursorInfo.top,
-        .width = config.cursorInfo.width,
-        .height = config.cursorInfo.height
+    MiscServices::CursorInfo imfInfo = { .left = config->GetCursorInfo()->GetLeft(),
+        .top = config->GetCursorInfo()->GetTop(),
+        .width = config->GetCursorInfo()->GetWidth(),
+        .height = config->GetCursorInfo()->GetHeight() };
+
+    MiscServices::TextConfig textConfig = {
+        .inputAttribute = inputAttribute, .cursorInfo = imfInfo, .windowId = config->GetWindowId()
     };
-
-    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute,
-                                            .cursorInfo = imfInfo,
-                                            .windowId = config.windowId };
     int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
@@ -284,16 +289,19 @@ void IMFAdapterImpl::Close()
     MiscServices::InputMethodController::GetInstance()->Close();
 }
 
-void IMFAdapterImpl::OnCursorUpdate(IMFAdapterCursorInfo cursorInfo)
+void IMFAdapterImpl::OnCursorUpdate(const std::shared_ptr<IMFCursorInfoAdapter> cursorInfo)
 {
-    MiscServices::CursorInfo imfInfo = {
-        .left = cursorInfo.left,
-        .top = cursorInfo.top,
-        .width = cursorInfo.width,
-        .height = cursorInfo.height
-    };
-    WVLOG_D("CursorInfo left = %{public}f, top = %{public}f, width = %{public}f, height = %{public}f",
-        cursorInfo.left, cursorInfo.top, cursorInfo.width, cursorInfo.height);
+    if (!cursorInfo) {
+        WVLOG_E("inputmethod OnCursorUpdate cursorInfo is null");
+        return;
+    }
+
+    MiscServices::CursorInfo imfInfo = { .left = cursorInfo->GetLeft(),
+        .top = cursorInfo->GetTop(),
+        .width = cursorInfo->GetWidth(),
+        .height = cursorInfo->GetHeight() };
+    WVLOG_D("imfInfo left = %{public}f, top = %{public}f, width = %{public}f, height = %{public}f", imfInfo.left,
+        imfInfo.top, imfInfo.width, imfInfo.height);
     MiscServices::InputMethodController::GetInstance()->OnCursorUpdate(imfInfo);
 }
 

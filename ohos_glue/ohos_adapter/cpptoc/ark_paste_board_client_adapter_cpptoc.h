@@ -13,25 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_PASTE_BOARD_CLIENT_ADAPTER_CPPTOC_H
-#define ARK_PASTE_BOARD_CLIENT_ADAPTER_CPPTOC_H
+#ifndef ARK_PASTE_BOARD_CLIENT_ADAPTER_CPPTOC_H_
+#define ARK_PASTE_BOARD_CLIENT_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "capi/ark_pasteboard_client_adapter_capi.h"
-#include "cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "include/ark_pasteboard_client_adapter.h"
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "ohos_adapter/capi/ark_pasteboard_client_adapter_capi.h"
+#include "ohos_adapter/include/ark_pasteboard_client_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkPasteBoardClientAdapterCppToC : public ArkWebCppToCRefCounted<ArkPasteBoardClientAdapterCppToC,
-                                             ArkPasteBoardClientAdapter, ark_paste_board_client_adapter_t> {
+class ArkPasteBoardClientAdapterCppToC
+    : public ArkWebCppToCRefCounted<ArkPasteBoardClientAdapterCppToC,
+                                    ArkPasteBoardClientAdapter,
+                                    ark_paste_board_client_adapter_t> {
 public:
-    ArkPasteBoardClientAdapterCppToC();
-    virtual ~ArkPasteBoardClientAdapterCppToC();
+  ArkPasteBoardClientAdapterCppToC();
+  virtual ~ArkPasteBoardClientAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_PASTE_BOARD_CLIENT_ADAPTER_CPPTOC_H
+#endif // ARK_PASTE_BOARD_CLIENT_ADAPTER_CPPTOC_H_

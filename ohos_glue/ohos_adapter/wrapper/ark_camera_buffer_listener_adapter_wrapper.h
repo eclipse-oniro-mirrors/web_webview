@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "camera_manager_adapter.h"
 #include "include/ark_camera_manager_adapter.h"
 
 namespace OHOS::ArkWeb {
@@ -27,7 +28,8 @@ public:
     ArkCameraBufferListenerAdapterWrapper(ArkWebRefPtr<ArkCameraBufferListenerAdapter>);
 
     void OnBufferAvailable(std::shared_ptr<NWeb::CameraSurfaceAdapter> surface,
-        std::shared_ptr<NWeb::CameraSurfaceBufferAdapter> buffer, NWeb::CameraRotationInfo rotationInfo) override;
+        std::shared_ptr<NWeb::CameraSurfaceBufferAdapter> buffer,
+        std::shared_ptr<NWeb::CameraRotationInfoAdapter> rotationInfo) override;
 
 private:
     ArkWebRefPtr<ArkCameraBufferListenerAdapter> ctocpp_;

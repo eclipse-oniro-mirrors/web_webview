@@ -86,14 +86,14 @@ int32_t NativeImageAdapterImpl::GetSurfaceId(uint64_t* surfaceId)
     return OH_NativeImage_GetSurfaceId(ohNativeImage_, surfaceId);
 }
 
-int32_t NativeImageAdapterImpl::SetOnFrameAvailableListener(OnFrameAvailableListener* listener)
+int32_t NativeImageAdapterImpl::SetOnFrameAvailableListener(std::shared_ptr<FrameAvailableListener> listener)
 {
     if (ohNativeImage_ == nullptr || listener == nullptr) {
         return SURFACE_ERROR_ERROR;
     }
     OH_OnFrameAvailableListener callback;
-    callback.onFrameAvailable = listener->cb;
-    callback.context = listener->context;
+    callback.onFrameAvailable = listener->GetOnFrameAvailableCb();
+    callback.context = listener->GetContext();
     return OH_NativeImage_SetOnFrameAvailableListener(ohNativeImage_, callback);
 }
 
