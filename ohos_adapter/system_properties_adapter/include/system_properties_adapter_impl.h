@@ -51,6 +51,10 @@ public:
     bool GetTraceDebugEnable() override;
 
     std::string GetSiteIsolationMode() override;
+
+    bool GetOOPGPUEnable() override;
+
+    void SetOOPGPUDisable() override;
     
 private:
     SystemPropertiesAdapterImpl();

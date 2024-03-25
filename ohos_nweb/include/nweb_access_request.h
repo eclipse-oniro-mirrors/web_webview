@@ -66,9 +66,12 @@ public:
     virtual void Refuse() = 0;
 };
 
-struct NWebScreenCaptureConfig {
-    int32_t mode = 0;
-    int32_t sourceId = -1;
+class NWebScreenCaptureConfig {
+public:
+    virtual ~NWebScreenCaptureConfig() = default;
+
+    virtual int32_t GetMode() = 0;
+    virtual int32_t GetSourceId() = 0;
 };
 
 class OHOS_NWEB_EXPORT NWebScreenCaptureAccessRequest {
@@ -90,7 +93,7 @@ public:
     *
     * @param config screen capture config.
     */
-    virtual void Agree(const NWebScreenCaptureConfig& config) = 0;
+    virtual void Agree(std::shared_ptr<NWebScreenCaptureConfig> config) = 0;
 
     /**
     * Refuse the screen capture request.

@@ -55,6 +55,7 @@ const std::string LIB_NAME_WEB_ENGINE = "libweb_engine.so";
 static bool g_isFirstTimeStartUp = false;
 const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
 const std::string INIT_CONFIG = "initConfig";
+const std::string DELETE_CONFIG = "deleteArgsConfig";
 const std::string PERFORMANCE_CONFIG = "performanceConfig";
 // The config used in base/web/webview
 const std::string BASE_WEB_CONFIG = "baseWebConfig";
@@ -1164,6 +1165,10 @@ std::unordered_map<std::string_view, std::function<std::string(std::string&)>> G
         { "settingConfig/enableCalcTabletMode",
             [](std::string& contentStr) {
                 return contentStr == "true" ? std::string("--ohos-enable-calc-tablet-mode") : std::string();
+            } },
+        { "outOfProcessGPUConfig/enableOOPGPU",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--in-process-gpu") : std::string();
             } }
     };
     return configMap;
@@ -1271,6 +1276,12 @@ void NWebAdapterHelper::ParseWebConfigXml(const std::string& configFilePath,
         ReadConfig(rootPtr, initArgs);
     }
 
+    xmlNodePtr deleteNodePtr = GetChildrenNode(rootPtr, DELETE_CONFIG);
+    if (deleteNodePtr != nullptr) {
+        WVLOG_D("read config from delete node");
+        ParseDeleteConfig(deleteNodePtr, initArgs);
+    }
+
     if (perfConfig_.empty()) {
         xmlNodePtr perfNodePtr = GetChildrenNode(rootPtr, PERFORMANCE_CONFIG);
         if (perfNodePtr != nullptr) {
@@ -1324,5 +1335,41 @@ std::string NWebAdapterHelper::ParsePerfConfig(const std::string &configNodeName
     WVLOG_D("find performance config %{public}s/%{public}s, value is %{public}s.", configNodeName.c_str(),
         argsNodeName.c_str(), it->second.c_str());
     return it->second;
+}
+
+void NWebAdapterHelper::ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
+{
+    auto configMap = GetConfigMap();
+    for (xmlNodePtr curNodePtr = rootPtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string nodeName = reinterpret_cast<const char *>(curNodePtr->name);
+        for (xmlNodePtr curChildNodePtr = curNodePtr->xmlChildrenNode; curChildNodePtr != nullptr;
+            curChildNodePtr = curChildNodePtr->next) {
+            if (curChildNodePtr->name == nullptr || curChildNodePtr->type == XML_COMMENT_NODE) {
+                WVLOG_E("invalid node!");
+                continue;
+            }
+            std::string childNodeName = reinterpret_cast<const char *>(curChildNodePtr->name);
+            xmlChar *content = xmlNodeGetContent(curChildNodePtr);
+            if (content == nullptr) {
+                WVLOG_E("read xml node error: nodeName:(%{public}s)", curChildNodePtr->name);
+                continue;
+            }
+            std::string contentStr = reinterpret_cast<const char *>(content);
+            xmlFree(content);
+            auto it = configMap.find(nodeName + "/" + childNodeName);
+            if (it == configMap.end()) {
+                WVLOG_W("not found for web_config: %{public}s/%{public}s", nodeName.c_str(), childNodeName.c_str());
+                continue;
+            }
+            std::string param = it->second(contentStr);
+            if (!param.empty()) {
+                initArgs->AddDeleteArg(param);
+            }
+        }
+    }
 }
 } // namespace OHOS::NWeb

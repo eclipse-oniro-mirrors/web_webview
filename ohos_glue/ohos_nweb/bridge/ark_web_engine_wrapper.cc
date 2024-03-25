@@ -175,18 +175,20 @@ void ArkWebEngineWrapper::ResumeAllTimers() {
   ark_web_engine_->ResumeAllTimers();
 }
 
-void ArkWebEngineWrapper::PrefetchResource(const std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> &pre_args,
-                                           const std::map<std::string, std::string> &additional_http_headers,
-                                           const std::string &cache_key,
-                                           const uint32_t &cache_valid_time)
-{
-    ArkWebRefPtr<ArkWebEnginePrefetchArgs> ark_web_engine_pre_args = new ArkWebEnginePrefetchArgsImpl(pre_args);
-    ArkWebStringMap stHeaders = ArkWebStringMapClassToStruct(additional_http_headers);
-    ArkWebString stCacheKey = ArkWebStringClassToStruct(cache_key);
-    ark_web_engine_->PrefetchResource(ark_web_engine_pre_args, stHeaders, stCacheKey, cache_valid_time);
+void ArkWebEngineWrapper::PrefetchResource(
+    const std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> &pre_args,
+    const std::map<std::string, std::string> &additional_http_headers,
+    const std::string &cache_key, const uint32_t &cache_valid_time) {
+  ArkWebRefPtr<ArkWebEnginePrefetchArgs> ark_web_engine_pre_args =
+      new ArkWebEnginePrefetchArgsImpl(pre_args);
+  ArkWebStringMap stHeaders =
+      ArkWebStringMapClassToStruct(additional_http_headers);
+  ArkWebString stCacheKey = ArkWebStringClassToStruct(cache_key);
+  ark_web_engine_->PrefetchResource(ark_web_engine_pre_args, stHeaders,
+                                    stCacheKey, cache_valid_time);
 
-    ArkWebStringMapStructRelease(stHeaders);
-    ArkWebStringStructRelease(stCacheKey);
+  ArkWebStringMapStructRelease(stHeaders);
+  ArkWebStringStructRelease(stCacheKey);
 }
 
 } // namespace OHOS::ArkWeb

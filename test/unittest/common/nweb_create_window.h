@@ -207,7 +207,7 @@ public:
     void SetPortMessageCallback(const std::string& handle,
         std::shared_ptr<NWebMessageValueCallback> callback) override
     {}
-    void SendDragEvent(const DragEvent& dragEvent) override
+    void SendDragEvent(std::shared_ptr<NWebDragEvent> dragEvent) override
     {}
     void ClearSslCache() override
     {}

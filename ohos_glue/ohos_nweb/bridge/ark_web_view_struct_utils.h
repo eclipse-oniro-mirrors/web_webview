@@ -28,26 +28,8 @@ ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime &class_value);
 OHOS::NWeb::DateTime
 ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value);
 
-ArkWebDragEvent
-ArkWebDragEventClassToStruct(const OHOS::NWeb::DragEvent &class_value);
-
 OHOS::NWeb::NWebCursorInfo
 ArkWebCursorInfoStructToClass(const ArkWebCursorInfo &struct_value);
-
-OHOS::NWeb::ImageOptions
-ArkWebImageOptionsStructToClass(const ArkWebImageOptions &struct_value);
-
-OHOS::NWeb::DateTimeChooser
-ArkWebDateTimeChooserStructToClass(const ArkWebDateTimeChooser &struct_value);
-
-OHOS::NWeb::SelectMenuBound
-ArkWebSelectMenuBoundStructToClass(const ArkWebSelectMenuBound &struct_value);
-
-ArkWebTouchHandleHotZone ArkWebTouchHandleHotZoneClassToStruct(
-    const OHOS::NWeb::TouchHandleHotZone &class_value);
-
-ArkWebScreenCaptureConfig ArkWebScreenCaptureConfigClassToStruct(
-    const OHOS::NWeb::NWebScreenCaptureConfig &class_value);
 
 } // namespace OHOS::ArkWeb
 
