@@ -56,6 +56,12 @@ void ark_res_sched_client_adapter_report_nweb_init(int32_t statusAdapter, int32_
     ArkResSchedClientAdapter::ReportNWebInit(statusAdapter, nweb_id);
 }
 
+void ark_res_sched_client_adapter_report_render_process_status(int32_t statusAdapter, pid_t pid)
+{
+    // Execute
+    ArkResSchedClientAdapter::ReportRenderProcessStatus(statusAdapter, pid);
+}
+
 ArkResSchedClientAdapterCppToC::ArkResSchedClientAdapterCppToC() {}
 
 ArkResSchedClientAdapterCppToC::~ArkResSchedClientAdapterCppToC() {}
@@ -115,6 +121,12 @@ ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_nweb_init_static(int32_t
     OHOS::ArkWeb::ark_res_sched_client_adapter_report_nweb_init(statusAdapter, nweb_id);
 }
 
+ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_render_process_status_static(int32_t statusAdapter, pid_t pid)
+{
+    ARK_WEB_CPPTOC_DV_LOG();
+
+    OHOS::ArkWeb::ark_res_sched_client_adapter_report_render_process_status(statusAdapter, pid);
+}
 #ifdef __cplusplus
 }
 #endif // __cplusplus
