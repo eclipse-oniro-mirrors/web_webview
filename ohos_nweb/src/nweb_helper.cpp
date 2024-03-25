@@ -1344,6 +1344,7 @@ void NWebAdapterHelper::WriteConfigValueToSysPara(const std::string &configName,
 {
     if (configName == "flowBufferConfig/maxFdNumber") {
         OHOS::system::SetParameter("web.flowbuffer.maxfd", value);
+    }
 }
 
 void NWebAdapterHelper::ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
