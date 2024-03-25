@@ -41,7 +41,7 @@ namespace {
 }
 
 namespace NetManagerStandard {
-int32_t NetConnClient::RegisterNetConnCallback(const sptr<INetConnCallback> &callback)
+int32_t NetConnClient::RegisterNetConnCallback(const sptr<INetConnCallback> callback)
 {
     return g_regNetConnCallback;
 }

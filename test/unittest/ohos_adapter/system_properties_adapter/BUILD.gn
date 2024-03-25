@@ -18,10 +18,8 @@ module_output_path = "web/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [
-    "../../../../ohos_adapter/system_properties_adapter/include",
-    "//third_party/googletest/googlemock/include",
-  ]
+  include_dirs =
+      [ "../../../../ohos_adapter/system_properties_adapter/include" ]
 }
 
 ohos_unittest("system_properties_adapter_test") {

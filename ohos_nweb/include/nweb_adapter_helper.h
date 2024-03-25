@@ -43,6 +43,7 @@ public:
                                      uint32_t height = 0,
                                      bool incognitoMode = false);
     void ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
+    void ReadConfigIfNeeded();
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
 private:
     NWebAdapterHelper() = default;
@@ -51,6 +52,8 @@ private:
     void ReadConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     xmlNodePtr GetChildrenNode(xmlNodePtr NodePtr, const std::string &childrenNodeName);
     void ParsePerfConfig(xmlNodePtr NodePtr);
+    void ParseWebConfigXml(const std::string &configFilePath, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
+    void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     std::map<std::string, std::string> perfConfig_;
 };
 } // namespace OHOS

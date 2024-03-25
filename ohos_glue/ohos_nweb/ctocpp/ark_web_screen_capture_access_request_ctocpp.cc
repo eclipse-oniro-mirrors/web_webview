@@ -15,12 +15,13 @@
 
 #include "ohos_nweb/ctocpp/ark_web_screen_capture_access_request_ctocpp.h"
 #include "base/ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_nweb/cpptoc/ark_web_screen_capture_config_cpptoc.h"
 
 namespace OHOS::ArkWeb {
 
 ARK_WEB_NO_SANITIZE
 void ArkWebScreenCaptureAccessRequestCToCpp::Agree(
-    const ArkWebScreenCaptureConfig &config) {
+    ArkWebRefPtr<ArkWebScreenCaptureConfig> config) {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
   ark_web_screen_capture_access_request_t *_struct = GetStruct();
@@ -29,7 +30,7 @@ void ArkWebScreenCaptureAccessRequestCToCpp::Agree(
   ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, agree, );
 
   // Execute
-  _struct->agree(_struct, &config);
+  _struct->agree(_struct, ArkWebScreenCaptureConfigCppToC::Invert(config));
 }
 
 ARK_WEB_NO_SANITIZE

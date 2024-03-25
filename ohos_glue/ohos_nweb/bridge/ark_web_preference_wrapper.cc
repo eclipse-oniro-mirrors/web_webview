@@ -448,4 +448,19 @@ bool ArkWebPreferenceWrapper::GetScrollable() {
   return ark_web_preference_->GetScrollable();
 }
 
+void ArkWebPreferenceWrapper::PutTextAutosizingEnabled(bool flag) {
+  if (ark_web_preference_)
+    ark_web_preference_->PutTextAutosizingEnabled(flag);
+}
+
+void ArkWebPreferenceWrapper::SetViewportEnable(bool enable) {
+  if (ark_web_preference_) {
+    ark_web_preference_->SetViewportEnable(enable);
+  }
+}
+
+void ArkWebPreferenceWrapper::SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) {
+  ark_web_preference_->SetNativeVideoPlayerConfig(enable, shouldOverlay);
+}
+
 } // namespace OHOS::ArkWeb

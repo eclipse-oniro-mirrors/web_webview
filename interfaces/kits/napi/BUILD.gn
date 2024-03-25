@@ -29,6 +29,9 @@ config("web_public_config") {
 }
 
 ohos_shared_library("webview_napi") {
+  branch_protector_ret = "pac_ret"
+  branch_protector_frt = "bti"
+
   public_configs = [ ":web_public_config" ]
 
   sources = [
@@ -97,6 +100,9 @@ ohos_shared_library("webview_napi") {
 }
 
 ohos_shared_library("neterrorlist_napi") {
+  branch_protector_ret = "pac_ret"
+  branch_protector_frt = "bti"
+
   public_configs = [ ":web_public_config" ]
 
   sources = [

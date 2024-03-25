@@ -15,7 +15,7 @@
 
 #include "ohos_nweb/bridge/ark_web_select_popup_menu_param_wrapper.h"
 #include "base/bridge/ark_web_bridge_macros.h"
-#include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
+#include "ohos_nweb/bridge/ark_web_select_menu_bound_wrapper.h"
 #include "ohos_nweb/ctocpp/ark_web_select_popup_menu_item_vector_ctocpp.h"
 
 namespace OHOS::ArkWeb {
@@ -54,11 +54,16 @@ bool ArkWebSelectPopupMenuParamWrapper::GetIsRightAligned() {
   return ark_web_select_popup_menu_param_->GetIsRightAligned();
 }
 
-OHOS::NWeb::SelectMenuBound
+std::shared_ptr<OHOS::NWeb::NWebSelectMenuBound>
 ArkWebSelectPopupMenuParamWrapper::GetSelectMenuBound() {
-  ArkWebSelectMenuBound ark_wen_select_menu_bound =
+  ArkWebRefPtr<ArkWebSelectMenuBound> ark_wen_select_menu_bound =
       ark_web_select_popup_menu_param_->GetSelectMenuBound();
-  return ArkWebSelectMenuBoundStructToClass(ark_wen_select_menu_bound);
+  if (CHECK_REF_PTR_IS_NULL(ark_wen_select_menu_bound)) {
+    return nullptr;
+  }
+
+  return std::make_shared<ArkWebSelectMenuBoundWrapper>(
+      ark_wen_select_menu_bound);
 }
 
 bool ArkWebSelectPopupMenuParamWrapper::GetIsAllowMultipleSelection() {

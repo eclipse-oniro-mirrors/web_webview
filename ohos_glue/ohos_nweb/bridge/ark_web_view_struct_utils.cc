@@ -40,13 +40,6 @@ ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value) {
   return class_value;
 }
 
-ArkWebDragEvent
-ArkWebDragEventClassToStruct(const OHOS::NWeb::DragEvent &class_value) {
-  ArkWebDragEvent struct_value = {.x = class_value.x, .y = class_value.y};
-  struct_value.action = static_cast<int>(class_value.action);
-  return struct_value;
-}
-
 OHOS::NWeb::NWebCursorInfo
 ArkWebCursorInfoStructToClass(const ArkWebCursorInfo &struct_value) {
   OHOS::NWeb::NWebCursorInfo class_value = {.width = struct_value.width,
@@ -55,55 +48,6 @@ ArkWebCursorInfoStructToClass(const ArkWebCursorInfo &struct_value) {
                                             .y = struct_value.y,
                                             .scale = struct_value.scale};
   return class_value;
-}
-
-OHOS::NWeb::ImageOptions
-ArkWebImageOptionsStructToClass(const ArkWebImageOptions &struct_value) {
-  OHOS::NWeb::ImageOptions class_value = {.width = struct_value.width,
-                                          .height = struct_value.height};
-  class_value.alphaType =
-      static_cast<OHOS::NWeb::ImageAlphaType>(struct_value.alphaType);
-  class_value.colorType =
-      static_cast<OHOS::NWeb::ImageColorType>(struct_value.colorType);
-  return class_value;
-}
-
-OHOS::NWeb::DateTimeChooser
-ArkWebDateTimeChooserStructToClass(const ArkWebDateTimeChooser &struct_value) {
-  OHOS::NWeb::DateTimeChooser class_value = {
-      .step = struct_value.step,
-      .suggestionIndex = struct_value.suggestionIndex,
-      .hasSelected = struct_value.hasSelected};
-  class_value.type =
-      static_cast<OHOS::NWeb::DateTimeChooserType>(struct_value.type);
-  class_value.minimum = ArkWebDateTimeStructToClass(struct_value.minimum);
-  class_value.maximum = ArkWebDateTimeStructToClass(struct_value.maximum);
-  class_value.dialogValue =
-      ArkWebDateTimeStructToClass(struct_value.dialogValue);
-  return class_value;
-}
-
-OHOS::NWeb::SelectMenuBound
-ArkWebSelectMenuBoundStructToClass(const ArkWebSelectMenuBound &struct_value) {
-  OHOS::NWeb::SelectMenuBound class_value = {.x = struct_value.x,
-                                             .y = struct_value.y,
-                                             .width = struct_value.width,
-                                             .height = struct_value.height};
-  return class_value;
-}
-
-ArkWebTouchHandleHotZone ArkWebTouchHandleHotZoneClassToStruct(
-    const OHOS::NWeb::TouchHandleHotZone &class_value) {
-  ArkWebTouchHandleHotZone struct_value = {.width = class_value.width,
-                                           .height = class_value.height};
-  return struct_value;
-}
-
-ArkWebScreenCaptureConfig ArkWebScreenCaptureConfigClassToStruct(
-    const OHOS::NWeb::NWebScreenCaptureConfig &class_value) {
-  ArkWebScreenCaptureConfig struct_value = {.mode = class_value.mode,
-                                            .sourceId = class_value.sourceId};
-  return struct_value;
 }
 
 } // namespace OHOS::ArkWeb

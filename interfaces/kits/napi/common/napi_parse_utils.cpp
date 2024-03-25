@@ -245,23 +245,13 @@ bool NapiParseUtils::ParseString(napi_env env, napi_value argv, std::string& out
         WVLOG_E("String length is too long");
         return false;
     }
-    char *stringValue = new (std::nothrow) char[bufferSize + 1];
-    if (stringValue == nullptr) {
-        WVLOG_E("new String failed");
-        return false;
-    }
     size_t jsStringLength = 0;
-    napi_get_value_string_utf8(env, argv, stringValue, bufferSize + 1, &jsStringLength);
+    outValue.resize(bufferSize);
+    napi_get_value_string_utf8(env, argv, outValue.data(), bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
         WVLOG_E("The length values obtained twice are different");
-        delete [] stringValue;
-        stringValue = nullptr;
         return false;
     }
-    std::string message(stringValue);
-    outValue = message;
-    delete [] stringValue;
-    stringValue = nullptr;
     return true;
 }
 
@@ -403,6 +393,10 @@ bool NapiParseUtils::ParseDouble(napi_env env, napi_value argv, double& outValue
 //static
 bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst)
 {
+    if (!src) {
+        WVLOG_E("src is nullptr");
+        return false;
+    }
     NWebValue::Type type = src->GetType();
     using ConvertNWebToNapiValueHandler = std::function<bool(napi_env, std::shared_ptr<NWebMessage>, napi_value&)>;
     static const std::unordered_map<NWebValue::Type, ConvertNWebToNapiValueHandler> functionMap = {

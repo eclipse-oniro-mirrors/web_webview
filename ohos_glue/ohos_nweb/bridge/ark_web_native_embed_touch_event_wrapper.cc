@@ -15,6 +15,7 @@
 
 #include "ohos_nweb/bridge/ark_web_native_embed_touch_event_wrapper.h"
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "ohos_nweb/bridge/ark_web_gesture_event_result_wrapper.h"
 
 namespace OHOS::ArkWeb {
 
@@ -62,6 +63,17 @@ std::string ArkWebNativeEmbedTouchEventWrapper::GetEmbedId() {
   std::string objEmbedId = ArkWebStringStructToClass(stEmbedId);
   ArkWebStringStructRelease(stEmbedId);
   return objEmbedId;
+}
+
+std::shared_ptr<OHOS::NWeb::NWebGestureEventResult> 
+    ArkWebNativeEmbedTouchEventWrapper::GetResult() {
+ ArkWebRefPtr<ArkWebGestureEventResult> result =
+      ark_web_native_embed_touch_event_->GetResult();
+  if (CHECK_REF_PTR_IS_NULL(result)) {
+    return nullptr;
+  }
+
+  return std::make_shared<ArkWebGestureEventResultWrapper>(result);
 }
 
 } // namespace OHOS::ArkWeb

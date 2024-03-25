@@ -18,6 +18,7 @@
 #include <cstdarg>
 
 #include "nweb_log.h"
+#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/surface.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 #include "foundation/graphic/graphic_surface/surface/include/native_window.h"
 
@@ -47,5 +48,11 @@ void WindowAdapterImpl::DestroyNativeWindow(NWebNativeWindow window)
 int32_t WindowAdapterImpl::NativeWindowSetBufferGeometry(NWebNativeWindow window, int32_t width, int32_t height)
 {
     return ::NativeWindowHandleOpt(reinterpret_cast<OHNativeWindow*>(window), SET_BUFFER_GEOMETRY, width, height);
+}
+
+void WindowAdapterImpl::NativeWindowSurfaceCleanCache(NWebNativeWindow window)
+{
+    WVLOG_D("WindowAdapterImpl::NativeWindowSurfaceCleanCache");
+    reinterpret_cast<OHNativeWindow*>(window)->surface->CleanCache();
 }
 } // namespace OHOS::NWeb

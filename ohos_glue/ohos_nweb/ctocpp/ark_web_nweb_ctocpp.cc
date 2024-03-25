@@ -18,6 +18,7 @@
 #include "ohos_nweb/cpptoc/ark_web_accessibility_event_callback_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_bool_value_callback_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_download_callback_cpptoc.h"
+#include "ohos_nweb/cpptoc/ark_web_drag_event_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_find_callback_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_handler_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_js_result_callback_cpptoc.h"
@@ -854,7 +855,7 @@ void ArkWebNWebCToCpp::SetPortMessageCallback(
 }
 
 ARK_WEB_NO_SANITIZE
-void ArkWebNWebCToCpp::SendDragEvent(const ArkWebDragEvent &drag_event) {
+void ArkWebNWebCToCpp::SendDragEvent(ArkWebRefPtr<ArkWebDragEvent> drag_event) {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
   ark_web_nweb_t *_struct = GetStruct();
@@ -863,7 +864,7 @@ void ArkWebNWebCToCpp::SendDragEvent(const ArkWebDragEvent &drag_event) {
   ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, send_drag_event, );
 
   // Execute
-  _struct->send_drag_event(_struct, &drag_event);
+  _struct->send_drag_event(_struct, ArkWebDragEventCppToC::Invert(drag_event));
 }
 
 ARK_WEB_NO_SANITIZE
@@ -1904,13 +1905,16 @@ void ArkWebNWebCToCpp::CloseCamera() {
   _struct->close_camera(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
 ArkWebString ArkWebNWebCToCpp::GetLastJavascriptProxyCallingFrameUrl() {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
   ark_web_nweb_t *_struct = GetStruct();
   ARK_WEB_CTOCPP_CHECK_PARAM(_struct, ark_web_string_default);
 
-  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_last_javascript_proxy_calling_frame_url, ark_web_string_default);
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct,
+                                   get_last_javascript_proxy_calling_frame_url,
+                                   ark_web_string_default);
 
   // Execute
   return _struct->get_last_javascript_proxy_calling_frame_url(_struct);

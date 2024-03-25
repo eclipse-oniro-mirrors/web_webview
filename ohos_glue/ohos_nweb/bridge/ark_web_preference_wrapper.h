@@ -621,6 +621,21 @@ public:
    */
   bool GetScrollable() override;
 
+  /**
+   * @brief Put whether fonts are automatically laid out, default value is ture.
+   */
+  void PutTextAutosizingEnabled(bool flag) override;
+
+  /**
+   * @brief Set whether to support the viewport attribute of the meta tag in the frontend page.
+   */
+  void SetViewportEnable(bool enable) override;
+
+  /**
+   * @brief Set native video player config.
+   */
+  void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) override;
+
 private:
   ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };

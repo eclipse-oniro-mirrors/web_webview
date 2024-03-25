@@ -19,6 +19,10 @@ config("ohos_adapter_public_interface") {
 }
 
 ohos_shared_library("nweb_ohos_adapter") {
+  branch_protector_ret = "pac_ret"
+  branch_protector_frt = "bti"
+
+  defines = [ "HILOG_TAG=\"webadapter\"" ]
   sources = [
     "aafwk_adapter/src/aafwk_app_mgr_client_adapter_impl.cpp",
     "aafwk_adapter/src/aafwk_render_scheduler_impl.cpp",
@@ -142,7 +146,7 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   if (webview_soc_perf_enable) {
     external_deps += [ "soc_perf:socperf_client" ]
-    defines = [ "NWEB_SOC_PERF" ]
+    defines += [ "NWEB_SOC_PERF" ]
   }
 
   if (webview_audio_enable) {
@@ -694,5 +698,8 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   defines += [ "OHOS_GLUE_DEBUG" ]
 
-  deps = [ "../ohos_glue:ohos_base_glue_source" ]
+  deps = [
+    "../ohos_glue:ohos_base_glue_source",
+    "../ohos_nweb:libnweb",
+  ]
 }

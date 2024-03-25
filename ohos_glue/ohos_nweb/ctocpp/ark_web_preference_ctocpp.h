@@ -205,6 +205,12 @@ public:
   void SetScrollable(bool enable) override;
 
   bool GetScrollable() override;
+
+  void PutTextAutosizingEnabled(bool flag) override;
+
+  void SetViewportEnable(bool enable) override;
+
+  void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) override;
 };
 
 } // namespace OHOS::ArkWeb

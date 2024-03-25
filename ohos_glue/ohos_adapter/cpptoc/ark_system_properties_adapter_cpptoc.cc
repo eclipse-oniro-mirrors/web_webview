@@ -153,6 +153,39 @@ bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_trace_debug_enable(
     return ArkSystemPropertiesAdapterCppToC::Get(self)->GetTraceDebugEnable();
 }
 
+ArkWebString ARK_WEB_CALLBACK ark_system_properties_adapter_get_site_isolation_mode(
+    struct _ark_system_properties_adapter_t* self) 
+{
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self,  ark_web_string_default);
+
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetSiteIsolationMode();
+}
+
+bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_oop_gpu_enable(
+    struct _ark_system_properties_adapter_t* self)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+
+    // Execute
+    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetOOPGPUEnable();
+}
+
+void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oop_gpu_disable(
+    struct _ark_system_properties_adapter_t* self) 
+{
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkSystemPropertiesAdapterCppToC::Get(self)->SetOOPGPUDisable();
+}
+
 } // namespace
 
 ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC()
@@ -169,6 +202,9 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC()
     GetStruct()->get_software_senior_version = ark_system_properties_adapter_get_software_senior_version;
     GetStruct()->get_netlog_mode = ark_system_properties_adapter_get_netlog_mode;
     GetStruct()->get_trace_debug_enable = ark_system_properties_adapter_get_trace_debug_enable;
+    GetStruct()->get_site_isolation_mode = ark_system_properties_adapter_get_site_isolation_mode;
+    GetStruct()->get_oop_gpu_enable = ark_system_properties_adapter_get_oop_gpu_enable;
+    GetStruct()->set_oop_gpu_disable = ark_system_properties_adapter_set_oop_gpu_disable;
 }
 
 ArkSystemPropertiesAdapterCppToC::~ArkSystemPropertiesAdapterCppToC() {}

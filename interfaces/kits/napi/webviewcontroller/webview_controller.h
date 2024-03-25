@@ -258,7 +258,7 @@ public:
     bool GetPrintBackground();
 
     std::string GetLastJavascriptProxyCallingFrameUrl();
-    
+
     static std::string GenerateWebTag();
 
     bool SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler);
@@ -544,7 +544,7 @@ private:
 
 class WebPrintWriteResultCallbackAdapter : public PrintWriteResultCallbackAdapter {
 public:
-    WebPrintWriteResultCallbackAdapter(std::function<void(std::string, uint32_t)>& cb) : cb_(cb) {};
+    explicit WebPrintWriteResultCallbackAdapter(std::function<void(std::string, uint32_t)>& cb) : cb_(cb) {};
 
     void WriteResultCallback(std::string jobId, uint32_t code) override;
 

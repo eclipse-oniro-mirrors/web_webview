@@ -44,7 +44,9 @@ public:
     MOCK_METHOD0(Init, int32_t());
     MOCK_METHOD1(Init, int32_t(AVScreenCaptureConfig));
     MOCK_METHOD1(SetMicrophoneEnabled, int32_t(bool));
+    MOCK_METHOD1(SetCanvasRotation, int32_t(bool));
     MOCK_METHOD0(StartScreenCapture, int32_t());
+    MOCK_METHOD1(StartScreenCaptureWithSurface, int32_t(sptr<Surface>));
     MOCK_METHOD0(StopScreenCapture, int32_t());
     MOCK_METHOD0(StartScreenRecording, int32_t());
     MOCK_METHOD0(StopScreenRecording, int32_t());
@@ -54,6 +56,8 @@ public:
     MOCK_METHOD0(ReleaseVideoBuffer, int32_t());
     MOCK_METHOD0(Release, int32_t());
     MOCK_METHOD1(SetScreenCaptureCallback, int32_t(const std::shared_ptr<ScreenCaptureCallBack> &));
+    MOCK_METHOD1(ExcludeContent, int32_t(ScreenCaptureContentFilter &));
+    MOCK_METHOD0(SetPrivacyAuthorityEnabled, int32_t());
 };
 } // namespace Media
 namespace NWeb {

@@ -79,7 +79,7 @@ WebSchemeHandlerRequest::WebSchemeHandlerRequest(napi_env env,
     isRedirect_ = OH_ArkWebResourceRequest_IsRedirect(request);
     isMainFrame_ = OH_ArkWebResourceRequest_IsMainFrame(request);
     hasGesture_ = OH_ArkWebResourceRequest_HasGesture(request);
-    OH_ArkWebResourceRequest_GetPostData(request, &stream_);
+    OH_ArkWebResourceRequest_GetHttpBodyStream(request, &stream_);
 
     ArkWeb_RequestHeaderList* arkWebHeaderlist = nullptr;
     OH_ArkWebResourceRequest_GetRequestHeaders(request, &arkWebHeaderlist);
@@ -151,7 +151,7 @@ const WebHeaderList& WebSchemeHandlerRequest::GetHeader()
     return headerList_;
 }
 
-ArkWeb_PostDataStream* WebSchemeHandlerRequest::GetPostDataStream()
+ArkWeb_HttpBodyStream* WebSchemeHandlerRequest::GetHttpBodyStream()
 {
     return stream_;
 }
@@ -575,64 +575,64 @@ void WebResourceHandler::DestoryArkWebResourceHandler()
     }
 }
 
-WebPostDataStream::WebPostDataStream(napi_env env)
+WebHttpBodyStream::WebHttpBodyStream(napi_env env)
 {
-    WVLOG_D("WebPostDataStream::WebPostDataStream");
+    WVLOG_D("WebHttpBodyStream::WebHttpBodyStream");
     env_ = env;
 }
 
-WebPostDataStream::WebPostDataStream(napi_env env,
-    ArkWeb_PostDataStream* stream)
+WebHttpBodyStream::WebHttpBodyStream(napi_env env,
+    ArkWeb_HttpBodyStream* stream)
 {
-    WVLOG_D("WebPostDataStream::WebPostDataStream");
+    WVLOG_D("WebHttpBodyStream::WebHttpBodyStream");
     env_ = env;
     stream_ = stream;
-    if (OH_ArkWebPostDataStream_SetUserData(stream_, this) != 0) {
-        WVLOG_E("OH_ArkWebPostDataStream_SetUserData failed");
+    if (OH_ArkWebHttpBodyStream_SetUserData(stream_, this) != 0) {
+        WVLOG_E("OH_ArkWebHttpBodyStream_SetUserData failed");
         return;
     }
-    if (OH_ArkWebPostDataStream_SetReadCallback(stream_,
-        &WebPostDataStream::PostDataStreamReadCallback) != 0) {
-        WVLOG_E("OH_ArkWebPostDataStream_SetReadCallback failed");
+    if (OH_ArkWebHttpBodyStream_SetReadCallback(stream_,
+        &WebHttpBodyStream::HttpBodyStreamReadCallback) != 0) {
+        WVLOG_E("OH_ArkWebHttpBodyStream_SetReadCallback failed");
         return;
     }
 }
 
-WebPostDataStream::~WebPostDataStream()
+WebHttpBodyStream::~WebHttpBodyStream()
 {
-    WVLOG_D("WebPostDataStream::~WebPostDataStream");
+    WVLOG_D("WebHttpBodyStream::~WebHttpBodyStream");
 }
 
-void WebPostDataStream::PostDataStreamReadCallback(
-    const ArkWeb_PostDataStream* postDataStream, uint8_t* buffer, int bytesRead)
+void WebHttpBodyStream::HttpBodyStreamReadCallback(
+    const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bytesRead)
 {
-    WVLOG_D("WebPostDataStream::PostDataStreamReadCallback");
-    WebPostDataStream* stream = reinterpret_cast<WebPostDataStream*>(
-        OH_ArkWebPostDataStream_GetUserData(postDataStream));
+    WVLOG_D("WebHttpBodyStream::HttpBodyStreamReadCallback");
+    WebHttpBodyStream* stream = reinterpret_cast<WebHttpBodyStream*>(
+        OH_ArkWebHttpBodyStream_GetUserData(httpBodyStream));
     if (!stream) {
-        WVLOG_E("OH_ArkWebPostDataStream_GetUserData is nullptr");
+        WVLOG_E("OH_ArkWebHttpBodyStream_GetUserData is nullptr");
         return;
     }
     stream->ExecuteRead(buffer, bytesRead);
 }
 
-void WebPostDataStream::PostDataStreamInitCallback(
-    const ArkWeb_PostDataStream* postDataStream, ArkWeb_NetError result)
+void WebHttpBodyStream::HttpBodyStreamInitCallback(
+    const ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_NetError result)
 {
-    WVLOG_D("WebPostDataStream::PostDataStreamInitCallback");
-    WebPostDataStream* stream = reinterpret_cast<WebPostDataStream*>(
-        OH_ArkWebPostDataStream_GetUserData(postDataStream));
+    WVLOG_D("WebHttpBodyStream::HttpBodyStreamInitCallback");
+    WebHttpBodyStream* stream = reinterpret_cast<WebHttpBodyStream*>(
+        OH_ArkWebHttpBodyStream_GetUserData(httpBodyStream));
     if (!stream) {
-        WVLOG_E("OH_ArkWebPostDataStream_GetUserData is nullptr");
+        WVLOG_E("OH_ArkWebHttpBodyStream_GetUserData is nullptr");
         return;
     }
     stream->ExecuteInit(result);
 }
 
-void WebPostDataStream::Init(napi_ref jsCallback, napi_deferred deferred)
+void WebHttpBodyStream::Init(napi_ref jsCallback, napi_deferred deferred)
 {
     if (!jsCallback && !deferred) {
-        WVLOG_E("WebPostDataStream::InitCallback callback is nullptr");
+        WVLOG_E("WebHttpBodyStream::InitCallback callback is nullptr");
         return;
     }
     if (jsCallback) {
@@ -641,19 +641,19 @@ void WebPostDataStream::Init(napi_ref jsCallback, napi_deferred deferred)
     if (deferred) {
         initDeferred_ = std::move(deferred);
     }
-    int ret = OH_ArkWebPostDataStream_Init(stream_,
-        &WebPostDataStream::PostDataStreamInitCallback);
+    int ret = OH_ArkWebHttpBodyStream_Init(stream_,
+        &WebHttpBodyStream::HttpBodyStreamInitCallback);
     if (ret != 0) {
-        WVLOG_E("OH_ArkWebPostDataStream_Init failed");
+        WVLOG_E("OH_ArkWebHttpBodyStream_Init failed");
         return;
     }
 }
 
-void WebPostDataStream::Read(int bufLen, napi_ref jsCallback, napi_deferred deferred)
+void WebHttpBodyStream::Read(int bufLen, napi_ref jsCallback, napi_deferred deferred)
 {
-    WVLOG_D("WebPostDataStream::Read");
+    WVLOG_D("WebHttpBodyStream::Read");
     if (!jsCallback && !deferred) {
-        WVLOG_E("WebPostDataStream::Read callback is nullptr");
+        WVLOG_E("WebHttpBodyStream::Read callback is nullptr");
         return;
     }
     if (bufLen <= 0) {
@@ -666,12 +666,12 @@ void WebPostDataStream::Read(int bufLen, napi_ref jsCallback, napi_deferred defe
         readDeferred_ = std::move(deferred);
     }
     uint8_t* buffer = new (std::nothrow) uint8_t[bufLen];
-    OH_ArkWebPostDataStream_Read(stream_, buffer, bufLen);
+    OH_ArkWebHttpBodyStream_Read(stream_, buffer, bufLen);
 }
 
-void WebPostDataStream::ExecuteInit(ArkWeb_NetError result)
+void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
 {
-    WVLOG_D("WebPostDataStream::ExecuteInit");
+    WVLOG_D("WebHttpBodyStream::ExecuteInit");
     if (!env_) {
         return ;
     }
@@ -694,9 +694,9 @@ void WebPostDataStream::ExecuteInit(ArkWeb_NetError result)
         napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
 }
 
-void WebPostDataStream::ExecuteInitComplete(napi_env env, napi_status status, void* data)
+void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, void* data)
 {
-    WVLOG_D("WebPostDataStream::ExecuteInitComplete");
+    WVLOG_D("WebHttpBodyStream::ExecuteInitComplete");
     InitParam* param = static_cast<InitParam*>(data);
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(env, &scope);
@@ -710,7 +710,7 @@ void WebPostDataStream::ExecuteInitComplete(napi_env env, napi_status status, vo
     napi_value result[INTEGER_ONE] = {0};
     if (param->result != 0) {
         result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(
-            env, NWebError::POST_DATA_STREAN_INIT_FAILED);
+            env, NWebError::HTTP_BODY_STREAN_INIT_FAILED);
     } else {
         napi_get_null(env, &result[INTEGER_ZERO]);
     }
@@ -731,56 +731,89 @@ void WebPostDataStream::ExecuteInitComplete(napi_env env, napi_status status, vo
     delete param;
 }
 
-void WebPostDataStream::ExecuteRead(uint8_t* buffer, int bytesRead)
+void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, void* data)
 {
-    if (!env_) {
-        return;
-    }
+    WVLOG_D("WebHttpBodyStream::ExecuteReadComplete");
+    ReadParam* param = static_cast<ReadParam*>(data);
     napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env_, &scope);
-    if (scope == nullptr) {
+    napi_open_handle_scope(env, &scope);
+    if (!param) {
+        return;
+    } 
+    if (!scope) {
+        delete param;
         return;
     }
     napi_value result[INTEGER_ONE] = {0};
     void *bufferData = nullptr;
-    napi_create_arraybuffer(env_, bytesRead, &bufferData, &result[INTEGER_ZERO]);
-    if (memcpy_s(bufferData, bytesRead, buffer, bytesRead) != 0 && bytesRead > 0) {
-        WVLOG_W("WebPostDataStream::ExecuteRead memcpy failed");
+    napi_create_arraybuffer(env, param->bytesRead, &bufferData, &result[INTEGER_ZERO]);
+    if (memcpy_s(bufferData, param->bytesRead, param->buffer, param->bytesRead) != 0 &&
+        param->bytesRead > 0) {
+        WVLOG_W("WebHttpBodyStream::ExecuteRead memcpy failed");
     }
-    if (readJsCallback_) {
+    if (param->buffer) {
+        delete param->buffer;
+    }
+    if (param->callbackRef) {
         napi_value callback = nullptr;
-        napi_get_reference_value(env_, readJsCallback_, &callback);
-        napi_call_function(
-            env_, nullptr, callback, INTEGER_ZERO, &result[INTEGER_ZERO], nullptr);
-        napi_delete_reference(env_, readJsCallback_);
-    } else if (readDeferred_) {
-        napi_resolve_deferred(env_, readDeferred_, result[INTEGER_ZERO]);
+        napi_get_reference_value(env, param->callbackRef, &callback);
+        napi_call_function(env, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
+        napi_delete_reference(env, param->callbackRef);
+    } else if (param->deferred) {
+        napi_resolve_deferred(env, param->deferred, result[INTEGER_ZERO]);
     }
-    napi_close_handle_scope(env_, scope);
+    napi_delete_async_work(env, param->asyncWork);
+    napi_close_handle_scope(env, scope);
+    delete param;
 }
 
-uint64_t WebPostDataStream::GetPostion()
+void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
 {
-    return OH_ArkWebPostDataStream_GetPosition(stream_);
+    if (!env_) {
+        return;
+    }
+    ReadParam *param = new (std::nothrow) ReadParam {
+        .env = env_,
+        .asyncWork = nullptr,
+        .deferred = readDeferred_,
+        .callbackRef = readJsCallback_,
+        .buffer = buffer,
+        .bytesRead = bytesRead,
+    };
+    if (param == nullptr) {
+        return;
+    }
+    napi_value resourceName = nullptr;
+    NAPI_CALL_RETURN_VOID(env_, napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL_RETURN_VOID(env_, napi_create_async_work(env_, nullptr, resourceName,
+        [](napi_env env, void *data) {},
+        ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork));
+    NAPI_CALL_RETURN_VOID(env_, 
+        napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
 }
 
-uint64_t WebPostDataStream::GetSize()
+uint64_t WebHttpBodyStream::GetPostion()
 {
-    return OH_ArkWebPostDataStream_GetSize(stream_);
+    return OH_ArkWebHttpBodyStream_GetPosition(stream_);
 }
 
-bool WebPostDataStream::IsChunked()
+uint64_t WebHttpBodyStream::GetSize()
 {
-    return OH_ArkWebPostDataStream_IsChunked(stream_);
+    return OH_ArkWebHttpBodyStream_GetSize(stream_);
 }
 
-bool WebPostDataStream::IsEof()
+bool WebHttpBodyStream::IsChunked()
 {
-    return OH_ArkWebPostDataStream_IsEof(stream_);
+    return OH_ArkWebHttpBodyStream_IsChunked(stream_);
 }
 
-bool WebPostDataStream::IsInMemory()
+bool WebHttpBodyStream::IsEof()
 {
-    return OH_ArkWebPostDataStream_IsInMemory(stream_);
+    return OH_ArkWebHttpBodyStream_IsEof(stream_);
+}
+
+bool WebHttpBodyStream::IsInMemory()
+{
+    return OH_ArkWebHttpBodyStream_IsInMemory(stream_);
 }
 }
