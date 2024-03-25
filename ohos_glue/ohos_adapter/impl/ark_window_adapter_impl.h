@@ -33,6 +33,8 @@ public:
 
     int32_t NativeWindowSetBufferGeometry(void* window, int32_t width, int32_t height) override;
 
+    void NativeWindowSurfaceCleanCache(void* window) override;
+
 private:
     NWeb::WindowAdapter& real_;
 

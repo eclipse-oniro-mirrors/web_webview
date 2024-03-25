@@ -49,7 +49,7 @@ void NapiWebSchemeHandlerRequest::ExportWebSchemeHandlerRequestClass(
         DECLARE_NAPI_FUNCTION("isRedirect", JS_IsRedirect),
         DECLARE_NAPI_FUNCTION("isMainFrame", JS_IsMainFrame),
         DECLARE_NAPI_FUNCTION("hasGesture", JS_HasGesture),
-        DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_PostDataStream),
+        DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_HttpBodyStream),
     };
     napi_value webSchemeHandlerRequest = nullptr;
     napi_define_class(env, WEB_SCHEME_HANDLER_REQUEST.c_str(), WEB_SCHEME_HANDLER_REQUEST.length(),
@@ -70,7 +70,7 @@ napi_status NapiWebSchemeHandlerRequest::DefineProperties(
         DECLARE_NAPI_FUNCTION("isRedirect", JS_IsRedirect),
         DECLARE_NAPI_FUNCTION("isMainFrame", JS_IsMainFrame),
         DECLARE_NAPI_FUNCTION("hasGesture", JS_HasGesture),
-        DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_PostDataStream),
+        DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_HttpBodyStream),
     };
     return napi_define_properties(env, *object, sizeof(properties) / sizeof(properties[0]), properties);
 }
@@ -252,7 +252,7 @@ napi_value NapiWebSchemeHandlerRequest::JS_HasGesture(napi_env env, napi_callbac
     return value;
 }
 
-napi_value NapiWebSchemeHandlerRequest::JS_PostDataStream(napi_env env, napi_callback_info cbinfo)
+napi_value NapiWebSchemeHandlerRequest::JS_HttpBodyStream(napi_env env, napi_callback_info cbinfo)
 {
     napi_value thisVar = nullptr;
     void *data = nullptr;
@@ -261,27 +261,27 @@ napi_value NapiWebSchemeHandlerRequest::JS_PostDataStream(napi_env env, napi_cal
 
     napi_unwrap(env, thisVar, (void **)&request);
     if (!request) {
-        WVLOG_E("NapiWebSchemeHandlerRequest::JS_PostDataStream request is nullptr");
+        WVLOG_E("NapiWebSchemeHandlerRequest::JS_HttpBodyStream request is nullptr");
         return nullptr;
     }
 
-    ArkWeb_PostDataStream* arkWebPostStream = request->GetPostDataStream();
+    ArkWeb_HttpBodyStream* arkWebPostStream = request->GetHttpBodyStream();
     if (!arkWebPostStream) {
-        WVLOG_D("NapiWebSchemeHandlerRequest::JS_PostDataStream stream is nullptr");
+        WVLOG_D("NapiWebSchemeHandlerRequest::JS_HttpBodyStream stream is nullptr");
         return nullptr;
     }
-    napi_value postDataStreamObject;
-    WebPostDataStream* stream = new (std::nothrow) WebPostDataStream(env, arkWebPostStream);
-    NAPI_CALL(env, napi_create_object(env, &postDataStreamObject));
+    napi_value httpBodyStreamObject;
+    WebHttpBodyStream* stream = new (std::nothrow) WebHttpBodyStream(env, arkWebPostStream);
+    NAPI_CALL(env, napi_create_object(env, &httpBodyStreamObject));
     napi_wrap(
-        env, postDataStreamObject, stream,
+        env, httpBodyStreamObject, stream,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebPostDataStream *stream = (WebPostDataStream *)data;
+            WebHttpBodyStream *stream = (WebHttpBodyStream *)data;
             delete stream;
         },
         nullptr, nullptr);
-    NapiWebPostDataStream::DefineProperties(env, &postDataStreamObject);
-    return postDataStreamObject;
+    NapiWebHttpBodyStream::DefineProperties(env, &httpBodyStreamObject);
+    return httpBodyStreamObject;
 }
 
 napi_value NapiWebSchemeHandlerResponse::Init(napi_env env, napi_value exports)
@@ -742,6 +742,11 @@ napi_value NapiWebSchemeHandler::JS_RequestStart(napi_env env, napi_callback_inf
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
 
+    if (argc != INTEGER_ONE || valueType != napi_function) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
     handler->PutRequestStart(env, argv[0]);
     return thisVar;
 }
@@ -764,6 +769,11 @@ napi_value NapiWebSchemeHandler::JS_RequestStop(napi_env env, napi_callback_info
 
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[0], &valueType);
+
+    if (argc != INTEGER_ONE || valueType != napi_function) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
 
     handler->PutRequestStop(env, argv[0]);
     return thisVar;
@@ -950,13 +960,13 @@ napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callba
     return nullptr;
 }
 
-napi_value NapiWebPostDataStream::Init(napi_env env, napi_value exports)
+napi_value NapiWebHttpBodyStream::Init(napi_env env, napi_value exports)
 {
-    ExportWebPostDataStreamClass(env, &exports);
+    ExportWebHttpBodyStreamClass(env, &exports);
     return exports;
 }
 
-void NapiWebPostDataStream::ExportWebPostDataStreamClass(
+void NapiWebHttpBodyStream::ExportWebHttpBodyStreamClass(
     napi_env env, napi_value* exportsPointer)
 {
     napi_property_descriptor properties[] = {
@@ -968,15 +978,15 @@ void NapiWebPostDataStream::ExportWebPostDataStreamClass(
         DECLARE_NAPI_FUNCTION("isEof", JS_IsEof),
         DECLARE_NAPI_FUNCTION("isInMemory", JS_IsInMemory),
     };
-    napi_value webPostDataStream = nullptr;
-    napi_define_class(env, WEB_POST_DATA_STREAM.c_str(), WEB_POST_DATA_STREAM.length(),
+    napi_value webHttpBodyStream = nullptr;
+    napi_define_class(env, WEB_HTTP_BODY_STREAM.c_str(), WEB_HTTP_BODY_STREAM.length(),
         JS_Constructor, nullptr,
-        sizeof(properties) / sizeof(properties[0]), properties, &webPostDataStream);
-    napi_set_named_property(env, *exportsPointer, WEB_POST_DATA_STREAM.c_str(),
-        webPostDataStream);
+        sizeof(properties) / sizeof(properties[0]), properties, &webHttpBodyStream);
+    napi_set_named_property(env, *exportsPointer, WEB_HTTP_BODY_STREAM.c_str(),
+        webHttpBodyStream);
 }
 
-napi_status NapiWebPostDataStream::DefineProperties(
+napi_status NapiWebHttpBodyStream::DefineProperties(
     napi_env env, napi_value* exportsPointer)
 {
     napi_property_descriptor properties[] = {
@@ -992,39 +1002,39 @@ napi_status NapiWebPostDataStream::DefineProperties(
         sizeof(properties) / sizeof(properties[0]), properties);
 }
 
-napi_value NapiWebPostDataStream::JS_Constructor(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_Constructor(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiWebPostDataStream::JS_Constructor is called");
+    WVLOG_D("NapiWebHttpBodyStream::JS_Constructor is called");
     napi_value thisVar = nullptr;
     void *data = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
 
-    WebPostDataStream *stream = new WebPostDataStream(env);
+    WebHttpBodyStream *stream = new WebHttpBodyStream(env);
     napi_wrap(
         env, thisVar, stream,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebPostDataStream *stream = (WebPostDataStream *)data;
+            WebHttpBodyStream *stream = (WebHttpBodyStream *)data;
             delete stream;
         },
         nullptr, nullptr);
     return thisVar;
 }
 
-napi_value NapiWebPostDataStream::JS_Initialize(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_Initialize(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     size_t argcPromise = INTEGER_ZERO;
     size_t argcCallback = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = {0};
-    WebPostDataStream *stream = nullptr;
+    WebHttpBodyStream *stream = nullptr;
     
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     napi_unwrap(env, thisVar, (void **)&stream);
     if (!stream) {
-        WVLOG_E("NapiWebPostDataStream::JS_Initialize stream is nullptr");
+        WVLOG_E("NapiWebHttpBodyStream::JS_Initialize stream is nullptr");
         return nullptr;
     }
     if (argc != argcPromise && argc != argcCallback) {
@@ -1057,7 +1067,7 @@ napi_value NapiWebPostDataStream::JS_Initialize(napi_env env, napi_callback_info
     return result;
 }
 
-napi_value NapiWebPostDataStream::JS_Read(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_Read(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     void* data = nullptr;
@@ -1065,14 +1075,14 @@ napi_value NapiWebPostDataStream::JS_Read(napi_env env, napi_callback_info info)
     size_t argcPromise = INTEGER_ONE;
     size_t argcCallback = INTEGER_TWO;
     napi_value argv[INTEGER_TWO] = {0};
-    WebPostDataStream *stream = nullptr;
+    WebHttpBodyStream *stream = nullptr;
     
     napi_value result = nullptr;
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
     napi_unwrap(env, thisVar, (void **)&stream);
     if (!stream) {
-        WVLOG_E("NapiWebPostDataStream::JS_Initialize stream is nullptr");
+        WVLOG_E("NapiWebHttpBodyStream::JS_Initialize stream is nullptr");
         return nullptr;
     }
     if (argc != argcPromise && argc != argcCallback) {
@@ -1082,7 +1092,7 @@ napi_value NapiWebPostDataStream::JS_Read(napi_env env, napi_callback_info info)
     int32_t bufLen = 0;
     if (!NapiParseUtils::ParseInt32(env, argv[0], bufLen) || bufLen <= 0) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        WVLOG_E("NapiWebPostDataStream::JS_Read parse failed");
+        WVLOG_E("NapiWebHttpBodyStream::JS_Read parse failed");
         return nullptr;
     }
     if (argc == argcCallback) {
@@ -1111,16 +1121,16 @@ napi_value NapiWebPostDataStream::JS_Read(napi_env env, napi_callback_info info)
     return result;
 }
 
-napi_value NapiWebPostDataStream::JS_GetSize(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_GetSize(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    WebPostDataStream *stream = nullptr;
+    WebHttpBodyStream *stream = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&stream);
     if (!stream) {
-        WVLOG_E("NapiWebPostDataStream::JS_GetSize stream is nullptr");
+        WVLOG_E("NapiWebHttpBodyStream::JS_GetSize stream is nullptr");
         return nullptr;
     }
 
@@ -1130,16 +1140,16 @@ napi_value NapiWebPostDataStream::JS_GetSize(napi_env env, napi_callback_info in
     return value;
 }
 
-napi_value NapiWebPostDataStream::JS_GetPostion(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_GetPostion(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    WebPostDataStream *stream = nullptr;
+    WebHttpBodyStream *stream = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&stream);
     if (!stream) {
-        WVLOG_E("NapiWebPostDataStream::JS_GetPostion stream is nullptr");
+        WVLOG_E("NapiWebHttpBodyStream::JS_GetPostion stream is nullptr");
         return nullptr;
     }
 
@@ -1149,16 +1159,16 @@ napi_value NapiWebPostDataStream::JS_GetPostion(napi_env env, napi_callback_info
     return value;
 }
 
-napi_value NapiWebPostDataStream::JS_IsChunked(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_IsChunked(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    WebPostDataStream *stream = nullptr;
+    WebHttpBodyStream *stream = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&stream);
     if (!stream) {
-        WVLOG_E("NapiWebPostDataStream::JS_IsChunked stream is nullptr");
+        WVLOG_E("NapiWebHttpBodyStream::JS_IsChunked stream is nullptr");
         return nullptr;
     }
 
@@ -1168,16 +1178,16 @@ napi_value NapiWebPostDataStream::JS_IsChunked(napi_env env, napi_callback_info 
     return value;
 }
 
-napi_value NapiWebPostDataStream::JS_IsEof(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_IsEof(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    WebPostDataStream *stream = nullptr;
+    WebHttpBodyStream *stream = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&stream);
     if (!stream) {
-        WVLOG_E("NapiWebPostDataStream::JS_IsEof stream is nullptr");
+        WVLOG_E("NapiWebHttpBodyStream::JS_IsEof stream is nullptr");
         return nullptr;
     }
 
@@ -1187,16 +1197,16 @@ napi_value NapiWebPostDataStream::JS_IsEof(napi_env env, napi_callback_info info
     return value;
 }
 
-napi_value NapiWebPostDataStream::JS_IsInMemory(napi_env env, napi_callback_info info)
+napi_value NapiWebHttpBodyStream::JS_IsInMemory(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    WebPostDataStream *stream = nullptr;
+    WebHttpBodyStream *stream = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&stream);
     if (!stream) {
-        WVLOG_E("NapiWebPostDataStream::JS_IsInMemory stream is nullptr");
+        WVLOG_E("NapiWebHttpBodyStream::JS_IsInMemory stream is nullptr");
         return nullptr;
     }
 

@@ -38,7 +38,7 @@ bool RequestBufferFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(uint32_t))) {
         return false;
     }
-    
+
     auto surfaceAdapter = NWebSurfaceAdapter::Instance();
     uint32_t width;
     uint32_t height;

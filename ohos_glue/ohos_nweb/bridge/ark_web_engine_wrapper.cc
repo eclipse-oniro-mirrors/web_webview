@@ -19,6 +19,7 @@
 #include "ohos_nweb/bridge/ark_web_data_base_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_download_manager_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_engine_init_args_impl.h"
+#include "ohos_nweb/bridge/ark_web_engine_prefetch_args_impl.h"
 #include "ohos_nweb/bridge/ark_web_nweb_create_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_nweb_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_web_storage_wrapper.h"
@@ -172,6 +173,22 @@ void ArkWebEngineWrapper::PauseAllTimers() {
 
 void ArkWebEngineWrapper::ResumeAllTimers() {
   ark_web_engine_->ResumeAllTimers();
+}
+
+void ArkWebEngineWrapper::PrefetchResource(
+    const std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> &pre_args,
+    const std::map<std::string, std::string> &additional_http_headers,
+    const std::string &cache_key, const uint32_t &cache_valid_time) {
+  ArkWebRefPtr<ArkWebEnginePrefetchArgs> ark_web_engine_pre_args =
+      new ArkWebEnginePrefetchArgsImpl(pre_args);
+  ArkWebStringMap stHeaders =
+      ArkWebStringMapClassToStruct(additional_http_headers);
+  ArkWebString stCacheKey = ArkWebStringClassToStruct(cache_key);
+  ark_web_engine_->PrefetchResource(ark_web_engine_pre_args, stHeaders,
+                                    stCacheKey, cache_valid_time);
+
+  ArkWebStringMapStructRelease(stHeaders);
+  ArkWebStringStructRelease(stCacheKey);
 }
 
 } // namespace OHOS::ArkWeb

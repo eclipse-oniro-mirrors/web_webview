@@ -19,12 +19,25 @@ config("ohos_glue_config") {
 }
 
 ohos_shared_library("ohos_base_glue_source") {
+  branch_protector_ret = "pac_ret"
+  branch_protector_frt = "bti"
+
   defines = [ "OHOS_GLUE_DEBUG" ]
+  if (target_cpu == "arm64") {
+    defines += [ "webview_arm64" ]
+  } else if (target_cpu == "arm") {
+    defines += [ "webview_arm" ]
+  } else if (target_cpu == "x86_64") {
+    defines += [ "webview_x86_64" ]
+  }
+
   configs = [ ":ohos_glue_config" ]
   include_dirs = [ "../ohos_nweb" ]
   sources = [
     "base/bridge/ark_web_bridge_helper.cc",
     "base/bridge/ark_web_bridge_helper.h",
+    "base/include/ark_web_errno.cc",
+    "base/include/ark_web_errno.h",
     "base/include/ark_web_memory.cc",
     "base/include/ark_web_memory.h",
     "base/include/ark_web_types.cc",
@@ -37,6 +50,9 @@ ohos_shared_library("ohos_base_glue_source") {
 }
 
 ohos_shared_library("ohos_nweb_glue_source") {
+  branch_protector_ret = "pac_ret"
+  branch_protector_frt = "bti"
+
   defines = [ "OHOS_GLUE_DEBUG" ]
 
   configs = [ ":ohos_glue_config" ]
@@ -68,6 +84,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_data_resubmission_callback_wrapper.h",
     "ohos_nweb/bridge/ark_web_date_time_chooser_callback_wrapper.cc",
     "ohos_nweb/bridge/ark_web_date_time_chooser_callback_wrapper.h",
+    "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.cc",
+    "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h",
     "ohos_nweb/bridge/ark_web_date_time_suggestion_wrapper.cc",
     "ohos_nweb/bridge/ark_web_date_time_suggestion_wrapper.h",
     "ohos_nweb/bridge/ark_web_doh_config_impl.cc",
@@ -78,18 +96,26 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_download_manager_wrapper.h",
     "ohos_nweb/bridge/ark_web_drag_data_wrapper.cc",
     "ohos_nweb/bridge/ark_web_drag_data_wrapper.h",
+    "ohos_nweb/bridge/ark_web_drag_event_impl.cc",
+    "ohos_nweb/bridge/ark_web_drag_event_impl.h",
     "ohos_nweb/bridge/ark_web_engine_init_args_impl.cc",
     "ohos_nweb/bridge/ark_web_engine_init_args_impl.h",
+    "ohos_nweb/bridge/ark_web_engine_prefetch_args_impl.cc",
+    "ohos_nweb/bridge/ark_web_engine_prefetch_args_impl.h",
     "ohos_nweb/bridge/ark_web_engine_wrapper.cc",
     "ohos_nweb/bridge/ark_web_engine_wrapper.h",
     "ohos_nweb/bridge/ark_web_file_selector_params_wrapper.cc",
     "ohos_nweb/bridge/ark_web_file_selector_params_wrapper.h",
     "ohos_nweb/bridge/ark_web_find_callback_impl.cc",
     "ohos_nweb/bridge/ark_web_find_callback_impl.h",
+    "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_impl.cc",
+    "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_impl.h",
     "ohos_nweb/bridge/ark_web_full_screen_exit_handler_wrapper.cc",
     "ohos_nweb/bridge/ark_web_full_screen_exit_handler_wrapper.h",
     "ohos_nweb/bridge/ark_web_geo_location_callback_wrapper.cc",
     "ohos_nweb/bridge/ark_web_geo_location_callback_wrapper.h",
+    "ohos_nweb/bridge/ark_web_gesture_event_result_wrapper.cc",
+    "ohos_nweb/bridge/ark_web_gesture_event_result_wrapper.h",
     "ohos_nweb/bridge/ark_web_handler_impl.cc",
     "ohos_nweb/bridge/ark_web_handler_impl.h",
     "ohos_nweb/bridge/ark_web_history_item_wrapper.cc",
@@ -98,6 +124,10 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_history_list_wrapper.h",
     "ohos_nweb/bridge/ark_web_hit_test_result_wrapper.cc",
     "ohos_nweb/bridge/ark_web_hit_test_result_wrapper.h",
+    "ohos_nweb/bridge/ark_web_image_options_wrapper.cc",
+    "ohos_nweb/bridge/ark_web_image_options_wrapper.h",
+    "ohos_nweb/bridge/ark_web_js_all_ssl_error_result_wrapper.cc",
+    "ohos_nweb/bridge/ark_web_js_all_ssl_error_result_wrapper.h",
     "ohos_nweb/bridge/ark_web_js_dialog_result_wrapper.cc",
     "ohos_nweb/bridge/ark_web_js_dialog_result_wrapper.h",
     "ohos_nweb/bridge/ark_web_js_http_auth_result_wrapper.cc",
@@ -112,6 +142,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_js_ssl_select_cert_result_wrapper.h",
     "ohos_nweb/bridge/ark_web_key_event_wrapper.cc",
     "ohos_nweb/bridge/ark_web_key_event_wrapper.h",
+    "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_impl.cc",
+    "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_impl.h",
     "ohos_nweb/bridge/ark_web_load_committed_details_wrapper.cc",
     "ohos_nweb/bridge/ark_web_load_committed_details_wrapper.h",
     "ohos_nweb/bridge/ark_web_long_value_callback_impl.cc",
@@ -144,8 +176,12 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_resource_ready_callback_impl.h",
     "ohos_nweb/bridge/ark_web_screen_capture_access_request_wrapper.cc",
     "ohos_nweb/bridge/ark_web_screen_capture_access_request_wrapper.h",
+    "ohos_nweb/bridge/ark_web_screen_capture_config_impl.cc",
+    "ohos_nweb/bridge/ark_web_screen_capture_config_impl.h",
     "ohos_nweb/bridge/ark_web_screen_lock_callback_impl.cc",
     "ohos_nweb/bridge/ark_web_screen_lock_callback_impl.h",
+    "ohos_nweb/bridge/ark_web_select_menu_bound_wrapper.cc",
+    "ohos_nweb/bridge/ark_web_select_menu_bound_wrapper.h",
     "ohos_nweb/bridge/ark_web_select_popup_menu_callback_wrapper.cc",
     "ohos_nweb/bridge/ark_web_select_popup_menu_callback_wrapper.h",
     "ohos_nweb/bridge/ark_web_select_popup_menu_item_wrapper.cc",
@@ -156,6 +192,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/bridge/ark_web_string_value_callback_impl.h",
     "ohos_nweb/bridge/ark_web_string_vector_value_callback_wrapper.cc",
     "ohos_nweb/bridge/ark_web_string_vector_value_callback_wrapper.h",
+    "ohos_nweb/bridge/ark_web_touch_handle_hot_zone_wrapper.cc",
+    "ohos_nweb/bridge/ark_web_touch_handle_hot_zone_wrapper.h",
     "ohos_nweb/bridge/ark_web_touch_handle_state_wrapper.cc",
     "ohos_nweb/bridge/ark_web_touch_handle_state_wrapper.h",
     "ohos_nweb/bridge/ark_web_touch_point_info_impl.cc",
@@ -182,10 +220,16 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/cpptoc/ark_web_doh_config_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_download_callback_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_download_callback_cpptoc.h",
+    "ohos_nweb/cpptoc/ark_web_drag_event_cpptoc.cc",
+    "ohos_nweb/cpptoc/ark_web_drag_event_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_engine_init_args_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_engine_init_args_cpptoc.h",
+    "ohos_nweb/cpptoc/ark_web_engine_prefetch_args_cpptoc.cc",
+    "ohos_nweb/cpptoc/ark_web_engine_prefetch_args_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_find_callback_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_find_callback_cpptoc.h",
+    "ohos_nweb/cpptoc/ark_web_first_meaningful_paint_details_cpptoc.cc",
+    "ohos_nweb/cpptoc/ark_web_first_meaningful_paint_details_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_handler_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_handler_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_js_proxy_callback_cpptoc.cc",
@@ -194,6 +238,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/cpptoc/ark_web_js_proxy_callback_vector_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_js_result_callback_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_js_result_callback_cpptoc.h",
+    "ohos_nweb/cpptoc/ark_web_largest_contentful_paint_details_cpptoc.cc",
+    "ohos_nweb/cpptoc/ark_web_largest_contentful_paint_details_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_long_value_callback_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_long_value_callback_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_message_value_callback_cpptoc.cc",
@@ -206,6 +252,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/cpptoc/ark_web_release_surface_callback_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_resource_ready_callback_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_resource_ready_callback_cpptoc.h",
+    "ohos_nweb/cpptoc/ark_web_screen_capture_config_cpptoc.cc",
+    "ohos_nweb/cpptoc/ark_web_screen_capture_config_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_screen_lock_callback_cpptoc.cc",
     "ohos_nweb/cpptoc/ark_web_screen_lock_callback_cpptoc.h",
     "ohos_nweb/cpptoc/ark_web_string_value_callback_cpptoc.cc",
@@ -238,6 +286,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/ctocpp/ark_web_data_resubmission_callback_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_date_time_chooser_callback_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_date_time_chooser_callback_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_date_time_chooser_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_date_time_chooser_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_date_time_suggestion_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_date_time_suggestion_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_date_time_suggestion_vector_ctocpp.cc",
@@ -250,16 +300,24 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/ctocpp/ark_web_engine_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_file_selector_params_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_file_selector_params_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_first_meaningful_paint_details_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_first_meaningful_paint_details_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_full_screen_exit_handler_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_full_screen_exit_handler_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_geo_location_callback_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_geo_location_callback_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_gesture_event_result_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_gesture_event_result_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_history_item_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_history_item_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_history_list_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_history_list_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_hit_test_result_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_hit_test_result_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_image_options_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_image_options_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_js_all_ssl_error_result_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_js_all_ssl_error_result_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_js_dialog_result_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_js_dialog_result_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_js_http_auth_result_ctocpp.cc",
@@ -270,6 +328,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/ctocpp/ark_web_js_ssl_select_cert_result_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_key_event_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_key_event_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_largest_contentful_paint_details_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_largest_contentful_paint_details_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_load_committed_details_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_load_committed_details_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_native_embed_data_info_ctocpp.cc",
@@ -288,6 +348,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/ctocpp/ark_web_quick_menu_params_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_screen_capture_access_request_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_screen_capture_access_request_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_select_menu_bound_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_select_menu_bound_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_select_popup_menu_callback_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_select_popup_menu_callback_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_select_popup_menu_item_ctocpp.cc",
@@ -298,6 +360,8 @@ ohos_shared_library("ohos_nweb_glue_source") {
     "ohos_nweb/ctocpp/ark_web_select_popup_menu_param_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_string_vector_value_callback_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_string_vector_value_callback_ctocpp.h",
+    "ohos_nweb/ctocpp/ark_web_touch_handle_hot_zone_ctocpp.cc",
+    "ohos_nweb/ctocpp/ark_web_touch_handle_hot_zone_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_touch_handle_state_ctocpp.cc",
     "ohos_nweb/ctocpp/ark_web_touch_handle_state_ctocpp.h",
     "ohos_nweb/ctocpp/ark_web_url_resource_error_ctocpp.cc",

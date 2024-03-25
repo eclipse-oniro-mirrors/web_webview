@@ -101,6 +101,9 @@ typedef struct _ark_window_adapter_t {
 
     int32_t(ARK_WEB_CALLBACK* native_window_set_buffer_geometry)(
         struct _ark_window_adapter_t* self, void* window, int32_t width, int32_t height);
+
+    void(ARK_WEB_CALLBACK *native_window_surface_clean_cache)(
+        struct _ark_window_adapter_t *self, void *window);
 } ark_window_adapter_t;
 
 typedef struct _ark_ashmem_adapter_t {

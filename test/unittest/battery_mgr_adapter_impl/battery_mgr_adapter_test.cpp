@@ -62,9 +62,9 @@ std::shared_ptr<NWeb::BatteryMgrClientAdapterImpl> g_batterImpl;
 class MockWebBatteryEventCallback : public WebBatteryEventCallback {
 public:
     MockWebBatteryEventCallback() = default;
-    void BatteryInfoChanged(std::shared_ptr<WebBatteryInfo>) {};  
+    void BatteryInfoChanged(std::shared_ptr<WebBatteryInfo>) {};
 };
-    
+
 class BatteryMgrAdapterTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -77,9 +77,8 @@ void BatteryMgrAdapterTest::SetUpTestCase(void)
 {
     bool result = true;
     CommonEventSubscribeInfo subscribe;
-    
-    std::shared_ptr<WebBatteryEventCallback> eventCallback = 
-        std::make_shared<MockWebBatteryEventCallback>();
+
+    std::shared_ptr<WebBatteryEventCallback> eventCallback = std::make_shared<MockWebBatteryEventCallback>();
     g_batter = std::make_shared<NWebBatteryEventSubscriber>(subscribe, eventCallback);
     if (g_batter == nullptr) {
         result = false;
@@ -130,8 +129,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_OnReceiveEvent_001, TestSize.Leve
  */
 HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_RegBatteryEvent_002, TestSize.Level1)
 {
-    std::shared_ptr<WebBatteryEventCallback> eventCallback = 
-        std::make_shared<MockWebBatteryEventCallback>();
+    std::shared_ptr<WebBatteryEventCallback> eventCallback = std::make_shared<MockWebBatteryEventCallback>();
     EXPECT_NE(g_batterImpl, nullptr);
     g_batterImpl->RegBatteryEvent(std::move(eventCallback));
 }

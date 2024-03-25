@@ -83,4 +83,19 @@ bool ArkSystemPropertiesAdapterImpl::GetTraceDebugEnable()
     return real_.GetTraceDebugEnable();
 }
 
+ArkWebString ArkSystemPropertiesAdapterImpl::GetSiteIsolationMode()
+{
+    std::string str = real_.GetSiteIsolationMode();
+    return ArkWebStringClassToStruct(str);
+}
+
+bool ArkSystemPropertiesAdapterImpl::GetOOPGPUEnable()
+{
+    return real_.GetOOPGPUEnable();
+}
+
+void ArkSystemPropertiesAdapterImpl::SetOOPGPUDisable()
+{
+    real_.SetOOPGPUDisable();
+}
 } // namespace OHOS::ArkWeb

@@ -40,7 +40,8 @@ public:
 
   bool GetIsRightAligned() override;
 
-  OHOS::NWeb::SelectMenuBound GetSelectMenuBound() override;
+  std::shared_ptr<OHOS::NWeb::NWebSelectMenuBound>
+  GetSelectMenuBound() override;
 
   bool GetIsAllowMultipleSelection() override;
 
