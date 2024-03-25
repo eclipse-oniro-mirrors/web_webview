@@ -85,10 +85,11 @@ public:
   virtual void ResumeAllTimers() = 0;
 
   /*--ark web()--*/
-  virtual void PrefetchResource(ArkWebRefPtr<ArkWebEnginePrefetchArgs> &pre_args,
-                                const ArkWebStringMap &additional_http_headers,
-                                const ArkWebString &cache_key,
-                                const uint32_t &cache_valid_time) = 0;
+  virtual void
+  PrefetchResource(ArkWebRefPtr<ArkWebEnginePrefetchArgs> &pre_args,
+                   const ArkWebStringMap &additional_http_headers,
+                   const ArkWebString &cache_key,
+                   const uint32_t &cache_valid_time) = 0;
 };
 
 } // namespace OHOS::ArkWeb

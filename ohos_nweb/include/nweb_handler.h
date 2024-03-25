@@ -64,6 +64,16 @@ enum class RenderExitReason {
     PROCESS_EXIT_UNKNOWN,
 };
 
+class NWebImageOptions {
+public:
+    virtual ~NWebImageOptions() = default;
+
+    virtual ImageColorType GetColorType() = 0;
+    virtual ImageAlphaType GetAlphaType() = 0;
+    virtual size_t GetWidth() = 0;
+    virtual size_t GetHeight() = 0;
+};
+
 enum class SslError {
     // General error
     INVALID,
@@ -76,13 +86,6 @@ enum class SslError {
 
     // The certificate authority is not trusted
     UNTRUSTED,
-};
-
-struct ImageOptions {
-    ImageColorType colorType;
-    ImageAlphaType alphaType;
-    size_t width;
-    size_t height;
 };
 
 // Cursor type values.
@@ -148,9 +151,12 @@ struct NWebCursorInfo {
     float scale = 1.0;
 };
 
-struct TouchHandleHotZone {
-    double width = 0.0;
-    double height = 0.0;
+class NWebTouchHandleHotZone {
+public:
+    virtual ~NWebTouchHandleHotZone() = default;
+
+    virtual void SetWidth(double width) = 0;
+    virtual void SetHeight(double height) = 0;
 };
 
 enum class MediaPlayingState {
@@ -562,7 +568,8 @@ public:
 
     virtual void OnScroll(double xOffset, double yOffset) {}
 
-    virtual bool OnDragAndDropData(const void* data, size_t len, const ImageOptions& opt) {
+    virtual bool OnDragAndDropData(const void* data, size_t len,
+                                   std::shared_ptr<NWebImageOptions> opt) {
         return false;
     }
 
@@ -690,10 +697,10 @@ public:
      */
     virtual void OnResizeNotWork() {}
 
-    virtual void OnGetTouchHandleHotZone(TouchHandleHotZone& hotZone) {}
+    virtual void OnGetTouchHandleHotZone(std::shared_ptr<NWebTouchHandleHotZone> hotZone) {}
 
     virtual void OnDateTimeChooserPopup(
-        const DateTimeChooser& chooser,
+        std::shared_ptr<NWebDateTimeChooser> chooser,
         const std::vector<std::shared_ptr<NWebDateTimeSuggestion>>& suggestions,
         std::shared_ptr<NWebDateTimeChooserCallback> callback) {}
 

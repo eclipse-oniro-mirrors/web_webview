@@ -229,7 +229,8 @@ void ArkWebEngineCToCpp::RemoveIntelligentTrackingPreventionBypassingList(
       _struct, remove_intelligent_tracking_prevention_bypassing_list, );
 
   // Execute
-  _struct->remove_intelligent_tracking_prevention_bypassing_list(_struct, &hosts);
+  _struct->remove_intelligent_tracking_prevention_bypassing_list(_struct,
+                                                                 &hosts);
 }
 
 ARK_WEB_NO_SANITIZE
@@ -250,7 +251,7 @@ ARK_WEB_NO_SANITIZE
 void ArkWebEngineCToCpp::PauseAllTimers() {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-  ark_web_engine_t* _struct = GetStruct();
+  ark_web_engine_t *_struct = GetStruct();
   ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
   ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, pause_all_timers, );
@@ -263,7 +264,7 @@ ARK_WEB_NO_SANITIZE
 void ArkWebEngineCToCpp::ResumeAllTimers() {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-  ark_web_engine_t* _struct = GetStruct();
+  ark_web_engine_t *_struct = GetStruct();
   ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
   ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, resume_all_timers, );
