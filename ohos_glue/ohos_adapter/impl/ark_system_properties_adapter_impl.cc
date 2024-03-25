@@ -89,4 +89,13 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetSiteIsolationMode()
     return ArkWebStringClassToStruct(str);
 }
 
+bool ArkSystemPropertiesAdapterImpl::GetOOPGPUEnable()
+{
+    return real_.GetOOPGPUEnable();
+}
+
+void ArkSystemPropertiesAdapterImpl::SetOOPGPUDisable()
+{
+    real_.SetOOPGPUDisable();
+}
 } // namespace OHOS::ArkWeb

@@ -59,6 +59,10 @@ public:
     virtual bool GetTraceDebugEnable() = 0;
 
     virtual std::string GetSiteIsolationMode() = 0;
+
+    virtual bool GetOOPGPUEnable() = 0;
+
+    virtual void SetOOPGPUDisable() = 0;
 };
 
 }  // namespace OHOS::NWeb
