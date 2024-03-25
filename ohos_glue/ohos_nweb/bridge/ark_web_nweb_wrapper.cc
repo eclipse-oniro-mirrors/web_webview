@@ -943,4 +943,11 @@ std::string ArkWebNWebWrapper::GetLastJavascriptProxyCallingFrameUrl() {
   return ArkWebStringStructToClass(ark_web_nweb_->GetLastJavascriptProxyCallingFrameUrl());
 }
 
+void ArkWebNWebWrapper::OnRenderToBackground() {
+  ark_web_nweb_->OnRenderToBackground();
+}
+
+void ArkWebNWebWrapper::OnRenderToForeground() {
+  ark_web_nweb_->OnRenderToForeground();
+}
 } // namespace OHOS::ArkWeb

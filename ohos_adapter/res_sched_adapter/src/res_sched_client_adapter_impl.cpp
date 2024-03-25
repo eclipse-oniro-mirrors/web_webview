@@ -90,6 +90,8 @@ pid_t g_lastPid = INVALID_PID;
 int64_t g_lastStatus = INVALID_NUMBER_INT64;
 int64_t g_timeStamp = 0;
 int64_t g_preTimeStamp = 0;
+pid_t g_lastRenderPid = INVALID_PID;
+int64_t g_lastRenderStatus = INVALID_NUMBER_INT64;
 
 std::string GetUidString()
 {
@@ -274,9 +276,6 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         { STATE, std::to_string(status) } };
     ResSchedClient::GetInstance().ReportData(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
-    
-    auto appMgrClient = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
-    appMgrClient->UpdateRenderState(pid, status);
 
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
             "nwebId: %{public}d, sn: %{public}d", 
@@ -328,5 +327,30 @@ void ResSchedClientAdapter::ReportNWebInit(ResSchedStatusAdapter statusAdapter, 
             }
         }
     }
+}
+
+void ResSchedClientAdapter::ReportRenderProcessStatus(ResSchedStatusAdapter statusAdapter, pid_t pid)
+{
+    int64_t status;
+    bool ret = ConvertStatus(statusAdapter, status);
+    if (!ret) {
+        WVLOG_E("ReportRenderProcessStatus get appMgrClient failed");
+        return;
+    }
+
+    if (pid == g_lastRenderPid && status == g_lastRenderStatus) {
+        WVLOG_D("ReportRenderProcessStatus same status: %{public}d, same process: %{public}d ", static_cast<int32_t>(status), pid);
+        return;
+    }
+    g_lastRenderPid = pid;
+    g_lastRenderStatus = status;
+    
+    auto appMgrClient = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
+    if (appMgrClient == nullptr) {
+        WVLOG_E("ReportRenderProcessStatus get appMgrClient failed");
+        return;
+    }
+    appMgrClient->UpdateRenderState(pid, status);
+    WVLOG_D("ReportRenderProcessStatus status: %{public}d, pid: %{public}d", static_cast<int32_t>(status), pid);
 }
 } // namespace OHOS::NWeb

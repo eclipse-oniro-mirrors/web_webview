@@ -1129,6 +1129,18 @@ public:
    */
   /*--ark web()--*/
   virtual ArkWebString GetLastJavascriptProxyCallingFrameUrl() = 0;
+
+  /**
+   * @brief Render process switch to background.
+   */
+  /*--ark web()--*/
+  virtual void OnRenderToBackground() = 0;
+
+  /**
+   * @brief Render process switch to foreground.
+   */
+  /*--ark web()--*/
+  virtual void OnRenderToForeground() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -70,6 +70,7 @@ public:
     static bool ReportAudioData(ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid);
     static void ReportWindowId(int32_t windowId, int32_t nwebId = -1);
     static void ReportNWebInit(ResSchedStatusAdapter statusAdapter, int32_t nwebId);
+    static void ReportRenderProcessStatus(ResSchedStatusAdapter statusAdapter, pid_t pid);
 };
 } // namespace OHOS::NWeb
 
