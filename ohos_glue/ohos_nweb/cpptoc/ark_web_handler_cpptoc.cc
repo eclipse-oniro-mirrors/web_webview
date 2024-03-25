@@ -1031,6 +1031,15 @@ bool ARK_WEB_CALLBACK ark_web_handler_on_all_ssl_error_request_by_js(
       isMainFrame);
 }
 
+void ARK_WEB_CALLBACK ark_web_handler_release_resize_hold(struct _ark_web_handler_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->ReleaseResizeHold();
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1144,6 +1153,8 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_largest_contentful_paint;
   GetStruct()->on_all_ssl_error_request_by_js =
       ark_web_handler_on_all_ssl_error_request_by_js;
+  GetStruct()->release_resize_hold =
+      ark_web_handler_release_resize_hold;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {

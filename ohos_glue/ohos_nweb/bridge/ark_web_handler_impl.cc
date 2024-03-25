@@ -780,4 +780,8 @@ bool ArkWebHandlerImpl::OnAllSslErrorRequestByJS(
       isMainFrame
       );
 }
+
+void ArkWebHandlerImpl::ReleaseResizeHold() {
+  nweb_handler_->ReleaseResizeHold();
+}
 } // namespace OHOS::ArkWeb

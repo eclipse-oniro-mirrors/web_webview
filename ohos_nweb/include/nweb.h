@@ -1111,6 +1111,14 @@ public:
      */
     /*--ark web()--*/
     virtual std::string GetLastJavascriptProxyCallingFrameUrl() = 0;
+
+    /**
+     * @brief get pendingsize status.
+     *
+     * @return the result of last pendingsize status.
+     */
+    /*--ark web()--*/
+    virtual bool GetPendingSizeStatus() = 0;
 };
 }  // namespace OHOS::NWeb
 

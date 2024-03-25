@@ -1129,6 +1129,13 @@ public:
    */
   /*--ark web()--*/
   virtual ArkWebString GetLastJavascriptProxyCallingFrameUrl() = 0;
+
+  /**
+   * Get pendingsize status.
+   * @return result of last pendingsize status.
+   */
+  /*--ark web()--*/
+  virtual bool GetPendingSizeStatus() = 0;
 };
 
 } // namespace OHOS::ArkWeb

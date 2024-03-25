@@ -999,6 +999,14 @@ public:
   /*--ark web()--*/
   std::string GetLastJavascriptProxyCallingFrameUrl() override;
 
+  /**
+   * @brief get pendingsize status.
+   *
+   * @return the result of last pendingsize status.
+   */
+  /*--ark web()--*/
+  bool GetPendingSizeStatus() override;
+
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

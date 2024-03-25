@@ -457,6 +457,8 @@ typedef struct _ark_web_nweb_t {
   void(ARK_WEB_CALLBACK* close_camera)(struct _ark_web_nweb_t* self);
 
   ArkWebString(ARK_WEB_CALLBACK *get_last_javascript_proxy_calling_frame_url)(struct _ark_web_nweb_t *self);
+
+  bool(ARK_WEB_CALLBACK *get_pending_size_status)(struct _ark_web_nweb_t* self);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus
