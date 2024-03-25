@@ -22,11 +22,14 @@
 #include "ohos_nweb/ctocpp/ark_web_controller_handler_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_data_resubmission_callback_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_date_time_chooser_callback_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_date_time_chooser_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_drag_data_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_file_selector_params_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_first_meaningful_paint_details_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_full_screen_exit_handler_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_geo_location_callback_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_image_options_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_js_all_ssl_error_result_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_js_dialog_result_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_js_http_auth_result_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_js_ssl_error_result_ctocpp.h"
@@ -43,11 +46,11 @@
 #include "ohos_nweb/ctocpp/ark_web_select_popup_menu_callback_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_select_popup_menu_param_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_string_vector_value_callback_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_touch_handle_hot_zone_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_touch_handle_state_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_url_resource_error_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_url_resource_request_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_url_resource_response_ctocpp.h"
-#include "ohos_nweb/ctocpp/ark_web_js_all_ssl_error_result_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
@@ -704,17 +707,16 @@ void ARK_WEB_CALLBACK ark_web_handler_on_full_screen_enter(
 
 bool ARK_WEB_CALLBACK ark_web_handler_on_drag_and_drop_data(
     struct _ark_web_handler_t *self, const void *data, size_t len,
-    const ArkWebImageOptions *opt) {
+    ark_web_image_options_t *opt) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(data, false);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(opt, false);
-
   // Execute
-  return ArkWebHandlerCppToC::Get(self)->OnDragAndDropData(data, len, *opt);
+  return ArkWebHandlerCppToC::Get(self)->OnDragAndDropData(
+      data, len, ArkWebImageOptionsCToCpp::Invert(opt));
 }
 
 void ARK_WEB_CALLBACK ark_web_handler_on_select_popup_menu(
@@ -807,20 +809,18 @@ void ARK_WEB_CALLBACK ark_web_handler_on_first_contentful_paint(
 }
 
 void ARK_WEB_CALLBACK ark_web_handler_on_date_time_chooser_popup(
-    struct _ark_web_handler_t *self, const ArkWebDateTimeChooser *chooser,
+    struct _ark_web_handler_t *self, ark_web_date_time_chooser_t *chooser,
     const ArkWebDateTimeSuggestionVector *suggestions,
     ark_web_date_time_chooser_callback_t *callback) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(chooser, );
-
   ARK_WEB_CPPTOC_CHECK_PARAM(suggestions, );
 
   // Execute
   ArkWebHandlerCppToC::Get(self)->OnDateTimeChooserPopup(
-      *chooser, *suggestions,
+      ArkWebDateTimeChooserCToCpp::Invert(chooser), *suggestions,
       ArkWebDateTimeChooserCallbackCToCpp::Invert(callback));
 }
 
@@ -857,15 +857,15 @@ void ARK_WEB_CALLBACK ark_web_handler_on_activity_state_changed(
 }
 
 void ARK_WEB_CALLBACK ark_web_handler_on_get_touch_handle_hot_zone(
-    struct _ark_web_handler_t *self, ArkWebTouchHandleHotZone *hot_zone) {
+    struct _ark_web_handler_t *self,
+    ark_web_touch_handle_hot_zone_t *hot_zone) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(hot_zone, );
-
   // Execute
-  ArkWebHandlerCppToC::Get(self)->OnGetTouchHandleHotZone(*hot_zone);
+  ArkWebHandlerCppToC::Get(self)->OnGetTouchHandleHotZone(
+      ArkWebTouchHandleHotZoneCToCpp::Invert(hot_zone));
 }
 
 void ARK_WEB_CALLBACK ark_web_handler_on_complete_swap_with_new_size(
@@ -1002,33 +1002,23 @@ void ARK_WEB_CALLBACK ark_web_handler_on_largest_contentful_paint(
 }
 
 bool ARK_WEB_CALLBACK ark_web_handler_on_all_ssl_error_request_by_js(
-    struct _ark_web_handler_t *self,
-    ark_web_js_all_ssl_error_result_t *result,
-    int error,
-    const ArkWebString *url,
-    const ArkWebString *originalUrl,
-    const ArkWebString *referrer,
-    bool isFatalError,
-    bool isMainFrame) {
+    struct _ark_web_handler_t *self, ark_web_js_all_ssl_error_result_t *result,
+    int error, const ArkWebString *url, const ArkWebString *originalUrl,
+    const ArkWebString *referrer, bool isFatalError, bool isMainFrame) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(self,  false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(url,  false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(url, false);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(originalUrl,  false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(originalUrl, false);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(referrer,  false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(referrer, false);
 
   // Execute
   return ArkWebHandlerCppToC::Get(self)->OnAllSslErrorRequestByJS(
-      ArkWebJsAllSslErrorResultCToCpp::Invert(result),
-      error,
-      *url,
-      *originalUrl,
-      *referrer,
-      isFatalError,
-      isMainFrame);
+      ArkWebJsAllSslErrorResultCToCpp::Invert(result), error, *url,
+      *originalUrl, *referrer, isFatalError, isMainFrame);
 }
 
 } // namespace

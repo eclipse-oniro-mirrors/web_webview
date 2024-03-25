@@ -398,7 +398,7 @@ public:
   OnFullScreenEnter(ArkWebRefPtr<ArkWebFullScreenExitHandler> handler) override;
 
   bool OnDragAndDropData(const void *data, size_t len,
-                         const ArkWebImageOptions &opt) override;
+                         ArkWebRefPtr<ArkWebImageOptions> opt) override;
 
   void OnSelectPopupMenu(
       ArkWebRefPtr<ArkWebSelectPopupMenuParam> params,
@@ -447,7 +447,7 @@ public:
                               int64_t first_contentful_paint_ms) override;
 
   void OnDateTimeChooserPopup(
-      const ArkWebDateTimeChooser &chooser,
+      ArkWebRefPtr<ArkWebDateTimeChooser> chooser,
       const ArkWebDateTimeSuggestionVector &suggestions,
       ArkWebRefPtr<ArkWebDateTimeChooserCallback> callback) override;
 
@@ -471,7 +471,8 @@ public:
    */
   void OnActivityStateChanged(int state, int type) override;
 
-  void OnGetTouchHandleHotZone(ArkWebTouchHandleHotZone &hot_zone) override;
+  void OnGetTouchHandleHotZone(
+      ArkWebRefPtr<ArkWebTouchHandleHotZone> hot_zone) override;
 
   /**
    * @brief Called when swap buffer completed with new size.
@@ -508,9 +509,10 @@ public:
    * @param website_host The host of website url.
    *
    * @param tracker_host The host of tracker url.
-  */
+   */
   void OnIntelligentTrackingPreventionResult(
-      const ArkWebString &website_host, const ArkWebString &tracker_host) override;
+      const ArkWebString &website_host,
+      const ArkWebString &tracker_host) override;
 
   /**
    * @brief called when the page enter the full-screen mode.
@@ -542,8 +544,7 @@ public:
    * @param details represents the details of first meaningful paint.
    */
   void OnFirstMeaningfulPaint(
-      ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details)
-      override;
+      ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details) override;
 
   /**
    * @brief Called when the largest contentful paint rendering of web page.
@@ -551,17 +552,13 @@ public:
    * @param details represents the details of largest contentful paint.
    */
   void OnLargestContentfulPaint(
-      ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details)
-      override;
+      ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details) override;
 
-  bool OnAllSslErrorRequestByJS(
-      ArkWebRefPtr<ArkWebJsAllSslErrorResult> result,
-      int error,
-      const ArkWebString &url,
-      const ArkWebString &originalUrl,
-      const ArkWebString &referrer,
-      bool isFatalError,
-      bool isMainFrame) override;
+  bool OnAllSslErrorRequestByJS(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result,
+                                int error, const ArkWebString &url,
+                                const ArkWebString &originalUrl,
+                                const ArkWebString &referrer, bool isFatalError,
+                                bool isMainFrame) override;
 
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;

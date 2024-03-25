@@ -130,6 +130,10 @@ public:
     argsToAdd_.emplace_back(arg);
   }
 
+  void AddDeleteArg(const std::string &arg) {
+    argsToDelete_.emplace_back(arg);
+  }
+
   void SetDumpPath(const std::string &dumpPath) {
     dumpPath_ = dumpPath;
   }
@@ -200,29 +204,30 @@ private:
 
 class NWebEnginePrefetchArgsImpl : public NWebEnginePrefetchArgs {
 public:
-  NWebEnginePrefetchArgsImpl(const std::string& url,
-                             const std::string& method,
-                             const std::string& formData)
-                             : url_(url), method_(method), form_data_(formData) {
-}
-  ~NWebEnginePrefetchArgsImpl() = default;
+    NWebEnginePrefetchArgsImpl(const std::string &url, const std::string &method, const std::string &formData)
+        : url_(url), method_(method), form_data_(formData) {}
 
-  std::string GetUrl() override {
-    return url_;
-  }
+    ~NWebEnginePrefetchArgsImpl() = default;
 
-  std::string GetMethod() override {
-    return method_;
-  }
+    std::string GetUrl() override
+    {
+        return url_;
+    }
 
-  std::string GetFormData() override {
-    return form_data_;
-  }
+    std::string GetMethod() override
+    {
+        return method_;
+    }
+
+    std::string GetFormData() override
+    {
+        return form_data_;
+    }
 
 private:
-  std::string url_;
-  std::string method_;
-  std::string form_data_;
+    std::string url_;
+    std::string method_;
+    std::string form_data_;
 };
 
 } // namespace OHOS::NWeb

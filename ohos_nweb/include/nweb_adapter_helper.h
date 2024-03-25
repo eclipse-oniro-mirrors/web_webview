@@ -54,6 +54,7 @@ private:
     void ParsePerfConfig(xmlNodePtr NodePtr);
     void ParseWebConfigXml(const std::string &configFilePath, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     void WriteConfigValueToSysPara(const std::string &configName, const std::string &value);
+    void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     std::map<std::string, std::string> perfConfig_;
 };
 } // namespace OHOS
