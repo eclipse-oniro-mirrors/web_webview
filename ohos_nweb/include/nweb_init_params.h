@@ -130,6 +130,10 @@ public:
     argsToAdd_.emplace_back(arg);
   }
 
+  void AddDeleteArg(const std::string &arg) {
+    argsToDelete_.emplace_back(arg);
+  }
+
   void SetDumpPath(const std::string &dumpPath) {
     dumpPath_ = dumpPath;
   }
