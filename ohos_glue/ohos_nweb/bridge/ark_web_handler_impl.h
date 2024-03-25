@@ -563,6 +563,8 @@ public:
       bool isFatalError,
       bool isMainFrame) override;
 
+  void ReleaseResizeHold() override;
+
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
