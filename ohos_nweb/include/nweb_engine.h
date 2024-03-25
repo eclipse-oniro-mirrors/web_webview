@@ -43,7 +43,7 @@ public:
 
   virtual std::shared_ptr<NWebDownloadManager> GetDownloadManager() = 0;
 
-  virtual void SetWebTag(int32_t nweb_id, const char *webTag) = 0;
+  virtual void SetWebTag(int32_t nweb_id, const char *web_tag) = 0;
 
   virtual void
   InitializeWebEngine(std::shared_ptr<NWebEngineInitArgs> init_args) = 0;
@@ -54,10 +54,10 @@ public:
   virtual void SetWebDebuggingAccess(bool isEnableDebug) = 0;
 
   virtual void AddIntelligentTrackingPreventionBypassingList(
-      const std::vector<std::string>& hosts) = 0;
+      const std::vector<std::string> &hosts) = 0;
 
   virtual void RemoveIntelligentTrackingPreventionBypassingList(
-      const std::vector<std::string>& hosts) = 0;
+      const std::vector<std::string> &hosts) = 0;
 
   virtual void ClearIntelligentTrackingPreventionBypassingList() = 0;
 

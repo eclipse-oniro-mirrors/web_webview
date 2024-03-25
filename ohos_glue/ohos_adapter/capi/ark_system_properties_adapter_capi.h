@@ -55,6 +55,10 @@ typedef struct _ark_system_properties_adapter_t {
     bool(ARK_WEB_CALLBACK* get_trace_debug_enable)(struct _ark_system_properties_adapter_t* self);
 
     ArkWebString (ARK_WEB_CALLBACK *get_site_isolation_mode)(struct _ark_system_properties_adapter_t* self);
+
+    bool(ARK_WEB_CALLBACK* get_oop_gpu_enable)(struct _ark_system_properties_adapter_t* self);
+
+    void(ARK_WEB_CALLBACK* set_oop_gpu_disable)(struct _ark_system_properties_adapter_t* self);
 } ark_system_properties_adapter_t;
 
 #ifdef __cplusplus

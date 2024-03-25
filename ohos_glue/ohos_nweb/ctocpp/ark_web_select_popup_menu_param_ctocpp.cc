@@ -15,6 +15,7 @@
 
 #include "ohos_nweb/ctocpp/ark_web_select_popup_menu_param_ctocpp.h"
 #include "base/ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_nweb/ctocpp/ark_web_select_menu_bound_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
@@ -87,17 +88,21 @@ bool ArkWebSelectPopupMenuParamCToCpp::GetIsRightAligned() {
 }
 
 ARK_WEB_NO_SANITIZE
-ArkWebSelectMenuBound ArkWebSelectPopupMenuParamCToCpp::GetSelectMenuBound() {
+ArkWebRefPtr<ArkWebSelectMenuBound>
+ArkWebSelectPopupMenuParamCToCpp::GetSelectMenuBound() {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
   ark_web_select_popup_menu_param_t *_struct = GetStruct();
-  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, ark_web_select_menu_bound_default);
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, nullptr);
 
-  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_select_menu_bound,
-                                   ark_web_select_menu_bound_default);
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_select_menu_bound, nullptr);
 
   // Execute
-  return _struct->get_select_menu_bound(_struct);
+  ark_web_select_menu_bound_t *_retval =
+      _struct->get_select_menu_bound(_struct);
+
+  // Return type: refptr_same
+  return ArkWebSelectMenuBoundCToCpp::Invert(_retval);
 }
 
 ARK_WEB_NO_SANITIZE

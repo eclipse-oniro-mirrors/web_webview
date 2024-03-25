@@ -446,7 +446,8 @@ public:
       const std::string &port_handle,
       std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) override;
 
-  void SendDragEvent(const OHOS::NWeb::DragEvent &drag_event) override;
+  void
+  SendDragEvent(std::shared_ptr<OHOS::NWeb::NWebDragEvent> drag_event) override;
 
   /**
    * @brief Clear ssl cache.
@@ -969,7 +970,8 @@ public:
 
   /**
    * Get whether intelligent tracking prevention is enabled.
-   * @return true if enable the ability intelligent tracking prevention; else false.
+   * @return true if enable the ability intelligent tracking prevention; else
+   * false.
    */
   bool IsIntelligentTrackingPreventionEnabled() const override;
 
@@ -991,7 +993,7 @@ public:
   /*--ark web()--*/
   void CloseCamera() override;
 
-  /**  
+  /**
    * @brief Obtains the last javascript proxy calling frame url.
    *
    * @return the url of last calling frame url.

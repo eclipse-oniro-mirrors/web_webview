@@ -68,6 +68,12 @@ public:
 
     /*--web engine()--*/
     virtual ArkWebString GetSiteIsolationMode() = 0;
+
+    /*--web engine()--*/
+    virtual bool GetOOPGPUEnable() = 0;
+
+    /*--web engine()--*/
+    virtual void SetOOPGPUDisable() = 0;
 };
 
 } // namespace OHOS::ArkWeb
