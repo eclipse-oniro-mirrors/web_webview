@@ -55,4 +55,14 @@ void ArkResSchedClientAdapter::ReportRenderProcessStatus(int32_t statusAdapter, 
 {
     NWeb::ResSchedClientAdapter::ReportRenderProcessStatus((NWeb::ResSchedStatusAdapter)statusAdapter, pid);
 }
+
+bool ArkResSchedClientAdapter::ReportScreenCapture(int32_t statusAdapter, pid_t pid)
+{
+    return NWeb::ResSchedClientAdapter::ReportScreenCapture((NWeb::ResSchedStatusAdapter)statusAdapter, pid);
+}
+
+bool ArkResSchedClientAdapter::ReportVideoPlaying(int32_t statusAdapter, pid_t pid)
+{
+    return NWeb::ResSchedClientAdapter::ReportVideoPlaying((NWeb::ResSchedStatusAdapter)statusAdapter, pid);
+}
 } // namespace OHOS::ArkWeb

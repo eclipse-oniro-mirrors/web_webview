@@ -41,7 +41,8 @@ ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_scene(
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_audio_data(int32_t statusAdapter, pid_t pid, pid_t tid);
 ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_window_id(int32_t windowId, int32_t nwebId);
 ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_nweb_init(int32_t statusAdapter, int32_t nweb_id);
-
+ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_screen_capture(int32_t statusAdapter, pid_t pid);
+ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_video_playing(int32_t statusAdapter, pid_t pid);
 #ifdef __cplusplus
 }
 #endif
