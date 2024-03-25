@@ -20,6 +20,7 @@
 #include "ohos_nweb/bridge/ark_web_bool_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_drag_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_find_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_handler_impl.h"
 #include "ohos_nweb/bridge/ark_web_history_list_wrapper.h"
@@ -468,9 +469,14 @@ void ArkWebNWebWrapper::SetPortMessageCallback(
   ArkWebStringStructRelease(stPort);
 }
 
-void ArkWebNWebWrapper::SendDragEvent(const OHOS::NWeb::DragEvent &drag_event) {
-  ArkWebDragEvent ark_web_drag_event = ArkWebDragEventClassToStruct(drag_event);
-  ark_web_nweb_->SendDragEvent(ark_web_drag_event);
+void ArkWebNWebWrapper::SendDragEvent(
+    std::shared_ptr<OHOS::NWeb::NWebDragEvent> drag_event) {
+  if (CHECK_SHARED_PTR_IS_NULL(drag_event)) {
+    ark_web_nweb_->SendDragEvent(nullptr);
+    return;
+  }
+
+  ark_web_nweb_->SendDragEvent(new ArkWebDragEventImpl(drag_event));
 }
 
 void ArkWebNWebWrapper::ClearSslCache() {
@@ -940,7 +946,8 @@ void ArkWebNWebWrapper::CloseCamera() {
 }
 
 std::string ArkWebNWebWrapper::GetLastJavascriptProxyCallingFrameUrl() {
-  return ArkWebStringStructToClass(ark_web_nweb_->GetLastJavascriptProxyCallingFrameUrl());
+  return ArkWebStringStructToClass(
+      ark_web_nweb_->GetLastJavascriptProxyCallingFrameUrl());
 }
 
 void ArkWebNWebWrapper::ExecuteJavaScriptExt(const int fd, const size_t scriptLength,

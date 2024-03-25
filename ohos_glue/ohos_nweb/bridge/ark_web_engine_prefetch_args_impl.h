@@ -23,21 +23,20 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebEnginePrefetchArgsImpl : public ArkWebEnginePrefetchArgs {
-  IMPLEMENT_REFCOUNTING(ArkWebEnginePrefetchArgsImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebEnginePrefetchArgsImpl);
 
 public:
-  ArkWebEnginePrefetchArgsImpl(
-    std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> nweb_engine_pre_args);
-  ~ArkWebEnginePrefetchArgsImpl() = default;
+    ArkWebEnginePrefetchArgsImpl(std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> nweb_engine_pre_args);
+    ~ArkWebEnginePrefetchArgsImpl() = default;
 
-  ArkWebString GetUrl() override;
+    ArkWebString GetUrl() override;
 
-  ArkWebString GetMethod() override;
+    ArkWebString GetMethod() override;
 
-  ArkWebString GetFormData() override;
+    ArkWebString GetFormData() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> nweb_engine_pre_args_;
+    std::shared_ptr<OHOS::NWeb::NWebEnginePrefetchArgs> nweb_engine_pre_args_;
 };
 
 } // namespace OHOS::ArkWeb

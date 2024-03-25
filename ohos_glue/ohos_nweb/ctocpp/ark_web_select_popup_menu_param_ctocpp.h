@@ -44,7 +44,7 @@ public:
 
   bool GetIsRightAligned() override;
 
-  ArkWebSelectMenuBound GetSelectMenuBound() override;
+  ArkWebRefPtr<ArkWebSelectMenuBound> GetSelectMenuBound() override;
 
   bool GetIsAllowMultipleSelection() override;
 };
