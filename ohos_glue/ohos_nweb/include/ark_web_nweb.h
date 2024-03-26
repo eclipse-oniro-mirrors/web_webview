@@ -1137,6 +1137,14 @@ public:
   virtual ArkWebString GetLastJavascriptProxyCallingFrameUrl() = 0;
 
   /**
+   * @brief get pendingsize status.
+   *
+   * @return the result of last pendingsize status.
+   */
+  /*--ark web()--*/
+  virtual bool GetPendingSizeStatus() = 0;
+
+  /**
    * @brief ExecuteJavaScript with ashmem
    *
    * @param fd fd of the ashmem
