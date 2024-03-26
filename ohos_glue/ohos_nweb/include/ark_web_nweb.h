@@ -1147,6 +1147,8 @@ public:
    */
   /*--ark web()--*/
   virtual void OnRenderToForeground() = 0;
+
+  /**
    * Get pendingsize status.
    * @return result of last pendingsize status.
    */
