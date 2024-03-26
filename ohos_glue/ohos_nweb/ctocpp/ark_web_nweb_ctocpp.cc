@@ -1921,6 +1921,20 @@ ArkWebString ArkWebNWebCToCpp::GetLastJavascriptProxyCallingFrameUrl() {
 }
 
 ARK_WEB_NO_SANITIZE
+bool ArkWebNWebCToCpp::GetPendingSizeStatus() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, false);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(
+      _struct, get_pending_size_status, false);
+
+  // Execute
+  return _struct->get_pending_size_status(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
 void ArkWebNWebCToCpp::ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
     ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention)
 {

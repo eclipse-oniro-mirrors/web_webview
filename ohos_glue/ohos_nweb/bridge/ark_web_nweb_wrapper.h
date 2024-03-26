@@ -1002,6 +1002,14 @@ public:
   std::string GetLastJavascriptProxyCallingFrameUrl() override;
 
   /**
+   * @brief get pendingsize status.
+   *
+   * @return the result of last pendingsize status.
+   */
+  /*--ark web()--*/
+  bool GetPendingSizeStatus() override;
+
+  /**
    * @brief ExecuteJavaScript with ashmem
    *
    * @param fd fd of the ashmem
