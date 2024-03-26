@@ -357,6 +357,7 @@ public:
   void OnRenderToBackground() override;
 
   void OnRenderToForeground() override;
+  bool GetPendingSizeStatus() override;
 };
 
 } // namespace OHOS::ArkWeb
