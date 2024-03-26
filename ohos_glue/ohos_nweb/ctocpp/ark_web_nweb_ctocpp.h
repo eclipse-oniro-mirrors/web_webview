@@ -358,6 +358,9 @@ public:
                          float vy) override;
 
   bool GetPendingSizeStatus() override;
+
+  void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
+      ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention) override;
 };
 
 } // namespace OHOS::ArkWeb

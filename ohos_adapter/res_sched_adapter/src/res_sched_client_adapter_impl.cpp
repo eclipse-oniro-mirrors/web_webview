@@ -58,6 +58,7 @@ const std::unordered_map<ResSchedRoleAdapter, ResType::ThreadRole> RES_ROLE_MAP 
     { ResSchedRoleAdapter::IMPORTANT_DISPLAY, ResType::ThreadRole::IMPORTANT_DISPLAY },
     { ResSchedRoleAdapter::NORMAL_AUDIO, ResType::ThreadRole::NORMAL_AUDIO },
     { ResSchedRoleAdapter::IMPORTANT_AUDIO, ResType::ThreadRole::IMPORTANT_AUDIO },
+    { ResSchedRoleAdapter::IMAGE_DECODE, ResType::ThreadRole::IMAGE_DECODE },
 };
 
 const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
@@ -67,6 +68,8 @@ const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
     { ResSchedSceneAdapter::RESIZE, ResType::WebScene::WEB_SCENE_RESIZE },
     { ResSchedSceneAdapter::VISIBLE, ResType::WebScene::WEB_SCENE_VISIBLE },
     { ResSchedSceneAdapter::KEYBOARD_CLICK, ResType::WebScene::WEB_SCENE_KEYBOARD_CLICK },
+    { ResSchedSceneAdapter::KEY_TASK, ResType::WebScene::WEB_SCENE_KEY_TASK },
+    { ResSchedSceneAdapter::IMAGE_DECODE, ResType::WebScene::WEB_SCENE_IMAGE_DECODE },
 };
 
 const int32_t INVALID_NUMBER = -1;
