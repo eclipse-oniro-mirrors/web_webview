@@ -1020,6 +1020,17 @@ public:
   /*--ark web()--*/
   bool GetPendingSizeStatus() override;
 
+  /**
+   * @brief ExecuteJavaScript with ashmem
+   *
+   * @param fd fd of the ashmem
+   * @param scriptLength javascript code length
+   * @param callback javascript running result
+   * @param extention true if is extension
+   */
+  void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
+      std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback, bool extention) override;
+
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

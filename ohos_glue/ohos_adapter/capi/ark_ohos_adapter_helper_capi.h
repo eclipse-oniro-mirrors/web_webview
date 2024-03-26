@@ -30,6 +30,7 @@
 #include "capi/ark_display_manager_adapter_capi.h"
 #include "capi/ark_enterprise_device_management_adapter_capi.h"
 #include "capi/ark_event_handler_adapter_capi.h"
+#include "capi/ark_flowbuffer_adapter_capi.h"
 #include "capi/ark_graphic_adapter_capi.h"
 #include "capi/ark_hisysevent_adapter_capi.h"
 #include "capi/ark_hitrace_adapter_capi.h"
@@ -159,6 +160,9 @@ typedef struct _ark_ohos_adapter_helper_t {
         struct _ark_ohos_adapter_helper_t* self);
 
     ark_media_codec_list_adapter_t* (ARK_WEB_CALLBACK *get_media_codec_list_adapter)(
+        struct _ark_ohos_adapter_helper_t* self);
+
+    ark_flowbuffer_adapter_t* (ARK_WEB_CALLBACK *create_flowbuffer_adapter)(
         struct _ark_ohos_adapter_helper_t* self);
 } ark_ohos_adapter_helper_t;
 

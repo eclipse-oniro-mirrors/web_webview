@@ -25,15 +25,6 @@
 namespace OHOS::NWeb {
 namespace {
 #if defined(NWEB_SOC_PERF)
-    const int32_t SOC_PERF_WEB_GESTURE_ID = 10012;
-    const int32_t SOC_PERF_WEB_GESTURE_MOVE_ID = 10020;
-    const int32_t SOC_PERF_SLIDE_NORMAL_ID = 10025;
-    const int32_t SOC_PERF_LOAD_URL_ID = 10070;
-    const int32_t SOC_PERF_MOUSEWHEEL_ID = 10071;
-
-    const int64_t SOC_PERF_START = 0;
-    const int64_t SOC_PERF_END = 1;
-
     const uint32_t SOC_PERF_INVALID = UINT32_MAX;
 #endif
 }

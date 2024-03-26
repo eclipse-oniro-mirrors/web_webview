@@ -464,6 +464,10 @@ typedef struct _ark_web_nweb_t {
                                                float vx, float vy);
 
   bool(ARK_WEB_CALLBACK *get_pending_size_status)(struct _ark_web_nweb_t* self);
+
+  void(ARK_WEB_CALLBACK *execute_java_script_ext)(
+      struct _ark_web_nweb_t *self, const int fd, const size_t scriptLength,
+      ark_web_message_value_callback_t *callback, bool extention);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus

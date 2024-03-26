@@ -30,6 +30,7 @@
 #include "display_manager_adapter_impl.h"
 #include "enterprise_device_management_adapter_impl.h"
 #include "event_handler_adapter_impl.h"
+#include "flowbuffer_adapter_impl.h"
 #include "hisysevent_adapter_impl.h"
 #include "hitrace_adapter_impl.h"
 #include "imf_adapter_impl.h"
@@ -302,5 +303,10 @@ MediaCodecListAdapter& OhosAdapterHelperImpl::GetMediaCodecListAdapter()
 #else
     return nullptr;
 #endif
+}
+
+std::unique_ptr<FlowbufferAdapter> OhosAdapterHelperImpl::CreateFlowbufferAdapter()
+{
+    return std::make_unique<FlowbufferAdapterImpl>();
 }
 } // namespace OHOS::NWeb
