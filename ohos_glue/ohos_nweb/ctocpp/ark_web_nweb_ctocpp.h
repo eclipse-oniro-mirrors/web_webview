@@ -354,6 +354,9 @@ public:
 
   ArkWebString GetLastJavascriptProxyCallingFrameUrl() override;
 
+  void ScrollByRefScreen(float delta_x, float delta_y, float vx,
+                         float vy) override;
+
   bool GetPendingSizeStatus() override;
 
   void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
