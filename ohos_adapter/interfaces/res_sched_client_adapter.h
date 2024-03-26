@@ -44,6 +44,7 @@ enum class ResSchedRoleAdapter : int32_t {
     IMPORTANT_DISPLAY,
     NORMAL_AUDIO,
     IMPORTANT_AUDIO,
+    IMAGE_DECODE,
 };
 
 enum class ResSchedSceneAdapter : int32_t {
@@ -53,6 +54,8 @@ enum class ResSchedSceneAdapter : int32_t {
     RESIZE,
     VISIBLE,
     KEYBOARD_CLICK,
+    KEY_TASK,
+    IMAGE_DECODE,
 };
 
 class ResSchedClientAdapter {

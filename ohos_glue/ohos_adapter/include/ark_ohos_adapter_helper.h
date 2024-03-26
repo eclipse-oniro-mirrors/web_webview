@@ -29,6 +29,7 @@
 #include "include/ark_display_manager_adapter.h"
 #include "include/ark_enterprise_device_management_adapter.h"
 #include "include/ark_event_handler_adapter.h"
+#include "include/ark_flowbuffer_adapter.h"
 #include "include/ark_graphic_adapter.h"
 #include "include/ark_hisysevent_adapter.h"
 #include "include/ark_hitrace_adapter.h"
@@ -175,6 +176,9 @@ public:
 
     /*--web engine()--*/
     virtual ArkWebRefPtr<ArkMediaCodecListAdapter> GetMediaCodecListAdapter() = 0;
+
+    /*--web engine()--*/
+    virtual ArkWebRefPtr<ArkFlowbufferAdapter> CreateFlowbufferAdapter() = 0;
 };
 } // namespace OHOS::ArkWeb
 

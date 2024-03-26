@@ -359,6 +359,9 @@ public:
 
   bool GetPendingSizeStatus() override;
 
+  void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
+      ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention) override;
+
   void OnRenderToBackground() override;
 
   void OnRenderToForeground() override;

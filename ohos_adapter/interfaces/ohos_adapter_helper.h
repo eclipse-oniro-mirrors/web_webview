@@ -31,6 +31,7 @@
 #include "display_manager_adapter.h"
 #include "enterprise_device_management_adapter.h"
 #include "event_handler_adapter.h"
+#include "flowbuffer_adapter.h"
 #include "graphic_adapter.h"
 #include "hisysevent_adapter.h"
 #include "hitrace_adapter.h"
@@ -134,6 +135,8 @@ public:
     virtual std::unique_ptr<MediaCodecAdapter> CreateMediaCodecEncoderAdapter() = 0;
 
     virtual MediaCodecListAdapter& GetMediaCodecListAdapter() = 0;
+
+    virtual std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 
