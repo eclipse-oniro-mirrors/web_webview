@@ -1019,7 +1019,7 @@ public:
    */
   /*--ark web()--*/
   bool GetPendingSizeStatus() override;
-  
+
   /**
    * @brief ExecuteJavaScript with ashmem
    *
