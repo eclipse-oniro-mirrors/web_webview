@@ -1148,12 +1148,25 @@ public:
   virtual void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) = 0;
 
   /**
-   * Get pendingsize status.
+   * @brief Get pendingsize status.
+   *
    * @return result of last pendingsize status.
    */
   /*--ark web()--*/
   virtual bool GetPendingSizeStatus() = 0;
-
+  
+  /**
+   * @brief ExecuteJavaScript with ashmem
+   *
+   * @param fd fd of the ashmem
+   * @param scriptLength javascript code length
+   * @param callback javascript running result
+   * @param extention true if is extension
+   */
+  /*--ark web()--*/
+  virtual void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
+      ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention) = 0;
+    
   /**
    * @brief Render process switch to background.
    */

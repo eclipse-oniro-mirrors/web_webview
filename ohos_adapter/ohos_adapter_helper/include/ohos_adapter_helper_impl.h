@@ -104,6 +104,8 @@ public:
     std::unique_ptr<MediaCodecAdapter> CreateMediaCodecEncoderAdapter() override;
 
     MediaCodecListAdapter& GetMediaCodecListAdapter() override;
+
+    std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() override;
 };
 } // namespace OHOS::NWeb
 

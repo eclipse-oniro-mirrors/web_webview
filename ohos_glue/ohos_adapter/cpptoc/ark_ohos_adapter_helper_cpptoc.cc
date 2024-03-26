@@ -28,6 +28,7 @@
 #include "cpptoc/ark_display_manager_adapter_cpptoc.h"
 #include "cpptoc/ark_enterprise_device_management_adapter_cpptoc.h"
 #include "cpptoc/ark_event_handler_adapter_cpptoc.h"
+#include "cpptoc/ark_flowbuffer_adapter_cpptoc.h"
 #include "cpptoc/ark_hi_sys_event_adapter_cpptoc.h"
 #include "cpptoc/ark_hi_trace_adapter_cpptoc.h"
 #include "cpptoc/ark_iconsumer_surface_adapter_cpptoc.h"
@@ -610,6 +611,20 @@ ark_media_codec_list_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_get_med
     return ArkMediaCodecListAdapterCppToC::Invert(_retval);
 }
 
+ark_flowbuffer_adapter_t* ARK_WEB_CALLBACK ark_ohos_adapter_helper_create_flowbuffer_adapter(
+    struct _ark_ohos_adapter_helper_t* self)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
+
+    // Execute
+    ArkWebRefPtr<ArkFlowbufferAdapter> _retval = ArkOhosAdapterHelperCppToC::Get(self)->CreateFlowbufferAdapter();
+
+    // Return type: refptr_same
+    return ArkFlowbufferAdapterCppToC::Invert(_retval);
+}
+
 } // namespace
 ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC()
 {
@@ -653,6 +668,7 @@ ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC()
     GetStruct()->create_native_image_adapter = ark_ohos_adapter_helper_create_native_image_adapter;
     GetStruct()->create_media_codec_encoder_adapter = ark_ohos_adapter_helper_create_media_codec_encoder_adapter;
     GetStruct()->get_media_codec_list_adapter = ark_ohos_adapter_helper_get_media_codec_list_adapter;
+    GetStruct()->create_flowbuffer_adapter = ark_ohos_adapter_helper_create_flowbuffer_adapter;
 }
 
 ArkOhosAdapterHelperCppToC::~ArkOhosAdapterHelperCppToC() {}

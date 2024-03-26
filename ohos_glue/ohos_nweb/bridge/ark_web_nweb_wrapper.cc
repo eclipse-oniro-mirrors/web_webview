@@ -958,6 +958,16 @@ bool ArkWebNWebWrapper::GetPendingSizeStatus() {
   return ark_web_nweb_->GetPendingSizeStatus();
 }
 
+void ArkWebNWebWrapper::ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
+    std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback, bool extention)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->ExecuteJavaScriptExt(fd, scriptLength, nullptr, extention);
+    } else {
+        ark_web_nweb_->ExecuteJavaScriptExt(fd, scriptLength, new ArkWebMessageValueCallbackImpl(callback), extention);
+    }
+}
+
 void ArkWebNWebWrapper::OnRenderToBackground() {
   ark_web_nweb_->OnRenderToBackground();
 }
@@ -965,5 +975,4 @@ void ArkWebNWebWrapper::OnRenderToBackground() {
 void ArkWebNWebWrapper::OnRenderToForeground() {
   ark_web_nweb_->OnRenderToForeground();
 }
-
 } // namespace OHOS::ArkWeb

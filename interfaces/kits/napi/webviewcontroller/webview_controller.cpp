@@ -913,6 +913,55 @@ void WebviewController::RunJavaScriptPromise(const std::string &script, napi_env
     nweb_ptr->ExecuteJavaScript(script, callbackImpl, extention);
 }
 
+void WebviewController::RunJavaScriptCallbackExt(
+    const int fd, const size_t scriptLength, napi_env env, napi_ref jsCallback, bool extention)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        napi_value setResult[RESULT_COUNT] = {0};
+        setResult[PARAMZERO] = BusinessError::CreateError(env, NWebError::INIT_ERROR);
+        napi_get_null(env, &setResult[PARAMONE]);
+
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
+        napi_value callback = nullptr;
+        napi_get_reference_value(env, jsCallback, &callback);
+        napi_value callbackResult = nullptr;
+        napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &callbackResult);
+        napi_delete_reference(env, jsCallback);
+        close(fd);
+        return;
+    }
+
+    if (jsCallback == nullptr) {
+        close(fd);
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>(env, jsCallback, nullptr, extention);
+    nweb_ptr->ExecuteJavaScriptExt(fd, scriptLength, callbackImpl, extention);
+}
+
+void WebviewController::RunJavaScriptPromiseExt(
+    const int fd, const size_t scriptLength, napi_env env, napi_deferred deferred, bool extention)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        napi_value jsResult = nullptr;
+        jsResult = NWebError::BusinessError::CreateError(env, NWebError::INIT_ERROR);
+        napi_reject_deferred(env, deferred, jsResult);
+        close(fd);
+        return;
+    }
+
+    if (deferred == nullptr) {
+        close(fd);
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<WebviewJavaScriptExecuteCallback>(env, nullptr, deferred, extention);
+    nweb_ptr->ExecuteJavaScriptExt(fd, scriptLength, callbackImpl, extention);
+}
+
 std::string WebviewController::GetUrl()
 {
     std::string url = "";

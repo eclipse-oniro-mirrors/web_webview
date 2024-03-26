@@ -32,6 +32,7 @@
 #include "ark_display_manager_adapter_impl.h"
 #include "ark_enterprise_device_management_adapter_impl.h"
 #include "ark_event_handler_adapter_impl.h"
+#include "ark_flowbuffer_adapter_impl.h"
 #include "ark_hisysevent_adapter_impl.h"
 #include "ark_hitrace_adapter_impl.h"
 #include "ark_iconsumer_surface_adapter_impl.h"
@@ -343,5 +344,12 @@ ArkWebRefPtr<ArkMediaCodecAdapter> ArkOhosAdapterHelperImpl::CreateMediaCodecEnc
     std::unique_ptr<NWeb::MediaCodecAdapter> adapter = real_.CreateMediaCodecEncoderAdapter();
     std::shared_ptr<NWeb::MediaCodecAdapter> shared = std::move(adapter);
     return new ArkMediaCodecEncoderAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkFlowbufferAdapter> ArkOhosAdapterHelperImpl::CreateFlowbufferAdapter()
+{
+    std::unique_ptr<NWeb::FlowbufferAdapter> adapter = real_.CreateFlowbufferAdapter();
+    std::shared_ptr<NWeb::FlowbufferAdapter> shared = std::move(adapter);
+    return new ArkFlowbufferAdapterImpl(shared);
 }
 } // namespace OHOS::ArkWeb
