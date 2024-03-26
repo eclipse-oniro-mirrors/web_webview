@@ -69,5 +69,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     EXPECT_FALSE(mode);
     string logMode = SystemPropertiesAdapterImpl::GetInstance().GetNetlogMode();
     EXPECT_EQ(logMode, "None");
+    string siteIsolationMode = SystemPropertiesAdapterImpl::GetInstance().GetSiteIsolationMode();
+    EXPECT_EQ(siteIsolationMode, "none");
 }
 } // namespace OHOS
