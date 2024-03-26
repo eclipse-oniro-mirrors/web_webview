@@ -1154,7 +1154,7 @@ public:
    */
   /*--ark web()--*/
   virtual bool GetPendingSizeStatus() = 0;
-  
+
   /**
    * @brief ExecuteJavaScript with ashmem
    *
