@@ -950,4 +950,8 @@ std::string ArkWebNWebWrapper::GetLastJavascriptProxyCallingFrameUrl() {
       ark_web_nweb_->GetLastJavascriptProxyCallingFrameUrl());
 }
 
+bool ArkWebNWebWrapper::GetPendingSizeStatus() {
+  return ark_web_nweb_->GetPendingSizeStatus();
+}
+
 } // namespace OHOS::ArkWeb
