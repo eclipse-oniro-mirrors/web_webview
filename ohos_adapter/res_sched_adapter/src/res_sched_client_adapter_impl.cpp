@@ -340,7 +340,6 @@ void ResSchedClientAdapter::ReportRenderProcessStatus(ResSchedStatusAdapter stat
 
     if (pid == g_lastRenderPid && status == g_lastRenderStatus) {
         WVLOG_D("ReportRenderProcessStatus same status and process");
-        WVLOG_D("ReportRenderProcessStatus status: %{public}d, process: %{public}d ", static_cast<int32_t>(status), pid);
         return;
     }
     g_lastRenderPid = pid;
