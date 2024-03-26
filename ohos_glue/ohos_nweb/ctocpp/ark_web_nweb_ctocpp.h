@@ -353,11 +353,12 @@ public:
   void CloseCamera() override;
 
   ArkWebString GetLastJavascriptProxyCallingFrameUrl() override;
+  bool GetPendingSizeStatus() override;
 
   void OnRenderToBackground() override;
 
   void OnRenderToForeground() override;
-  bool GetPendingSizeStatus() override;
+
 };
 
 } // namespace OHOS::ArkWeb

@@ -950,15 +950,16 @@ std::string ArkWebNWebWrapper::GetLastJavascriptProxyCallingFrameUrl() {
       ark_web_nweb_->GetLastJavascriptProxyCallingFrameUrl());
 }
 
+bool ArkWebNWebWrapper::GetPendingSizeStatus() {
+  return ark_web_nweb_->GetPendingSizeStatus();
+}
+
 void ArkWebNWebWrapper::OnRenderToBackground() {
   ark_web_nweb_->OnRenderToBackground();
 }
 
 void ArkWebNWebWrapper::OnRenderToForeground() {
   ark_web_nweb_->OnRenderToForeground();
-}
-bool ArkWebNWebWrapper::GetPendingSizeStatus() {
-  return ark_web_nweb_->GetPendingSizeStatus();
 }
 
 } // namespace OHOS::ArkWeb
