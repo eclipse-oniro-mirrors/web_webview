@@ -15,6 +15,7 @@
 
 #include "napi_webview_controller.h"
 
+#include <cctype>
 #include <climits>
 #include <cstdint>
 #include <regex>
@@ -204,8 +205,14 @@ bool ParseHttpHeaders(napi_env env, napi_value headersArray, std::map<std::strin
             if (napi_get_named_property(env, obj, "headerValue", &valueObj) != napi_ok) {
                 continue;
             }
-            NapiParseUtils::ParseString(env, keyObj, key);
-            NapiParseUtils::ParseString(env, valueObj, value);
+            if (!NapiParseUtils::ParseString(env, keyObj, key) || !NapiParseUtils::ParseString(env, valueObj, value)) {
+                WVLOG_E("Unable to parse string from headers array object.");
+                return false;
+            }
+            if (key.empty()) {
+                WVLOG_E("Key from headers is empty.");
+                return false;
+            }
             (*headers)[key] = value;
         }
     } else {
@@ -4061,6 +4068,13 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
 
     if (cacheKey.empty()) {
         cacheKey = prefetchArgs->GetUrl();
+    } else {
+        for (char c : cacheKey) {
+            if (!isalnum(c)) {
+                BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+                return nullptr;
+            }
+        }
     }
 
     int32_t cacheValidTime = 0;
@@ -4072,8 +4086,8 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
         }
     }
 
-    NWebHelper::Instance().PrefetchResource(prefetchArgs, additionalHttpHeaders, cacheKey, cacheValidTime);
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    NWebHelper::Instance().PrefetchResource(prefetchArgs, additionalHttpHeaders, cacheKey, cacheValidTime);
     return result;
 }
 
