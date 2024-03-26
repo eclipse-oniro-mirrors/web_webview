@@ -806,6 +806,12 @@ public:
           bool isMainFrame) {
         return false;
     }
+
+    /**
+     * @brief called when resizehold is released.
+     *
+     */
+    virtual void ReleaseResizeHold() {}
 };
 }  // namespace OHOS::NWeb
 

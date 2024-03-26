@@ -957,4 +957,8 @@ void ArkWebNWebWrapper::OnRenderToBackground() {
 void ArkWebNWebWrapper::OnRenderToForeground() {
   ark_web_nweb_->OnRenderToForeground();
 }
+bool ArkWebNWebWrapper::GetPendingSizeStatus() {
+  return ark_web_nweb_->GetPendingSizeStatus();
+}
+
 } // namespace OHOS::ArkWeb
