@@ -1948,6 +1948,7 @@ bool ArkWebNWebCToCpp::GetPendingSizeStatus() {
   return _struct->get_pending_size_status(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
 void ArkWebNWebCToCpp::ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
     ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention)
 {
