@@ -1920,6 +1920,7 @@ ArkWebString ArkWebNWebCToCpp::GetLastJavascriptProxyCallingFrameUrl() {
   return _struct->get_last_javascript_proxy_calling_frame_url(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
 bool ArkWebNWebCToCpp::GetPendingSizeStatus() {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
