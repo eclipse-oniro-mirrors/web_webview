@@ -47,6 +47,9 @@ config("nweb_glue_interface") {
 }
 
 ohos_shared_library("libnweb") {
+  branch_protector_ret = "pac_ret"
+  branch_protector_frt = "bti"
+
   configs = [
     ":nweb_config",
     ":nweb_glue_interface",
@@ -55,6 +58,7 @@ ohos_shared_library("libnweb") {
   sources = [
     "src/nweb_enhance_surface_adapter.cpp",
     "src/nweb_helper.cpp",
+    "src/nweb_hisysevent.cpp",
     "src/nweb_surface_adapter.cpp",
   ]
 
@@ -69,6 +73,7 @@ ohos_shared_library("libnweb") {
   ]
 
   external_deps = [
+    "ability_runtime:ability_manager",
     "ability_runtime:app_context",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
@@ -78,6 +83,7 @@ ohos_shared_library("libnweb") {
     "graphic_2d:librender_service_client",
     "graphic_surface:surface",
     "hilog:libhilog",
+    "hisysevent:libhisysevent",
     "input:libmmi-client",
     "ipc:ipc_core",
     "window_manager:libwm",
@@ -129,4 +135,26 @@ ohos_prebuilt_etc("context-menu") {
   subsystem_name = "web"
   part_name = "webview"
   relative_install_dir = "webview/ohos_nweb"
+}
+
+ohos_executable("chrome_crashpad_handler") {
+  install_enable = true
+
+  include_dirs = [ "include" ]
+
+  sources = [ "src/nweb_crashpad_handler_main.cpp" ]
+
+  external_deps = [ "hilog:libhilog" ]
+
+  defines = []
+  if (target_cpu == "arm64") {
+    defines += [ "webview_arm64" ]
+  } else if (target_cpu == "arm") {
+    defines += [ "webview_arm" ]
+  } else if (target_cpu == "x86_64") {
+    defines += [ "webview_x86_64" ]
+  }
+
+  subsystem_name = "web"
+  part_name = "webview"
 }

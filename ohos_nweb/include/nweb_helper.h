@@ -61,6 +61,11 @@ public:
         const std::vector<std::string>& hosts);
     void ClearIntelligentTrackingPreventionBypassingList();
 
+    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs> &pre_args,
+                          const std::map<std::string, std::string> &additional_http_headers,
+                          const std::string &cache_key,
+                          const uint32_t &cache_valid_time);
+
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);

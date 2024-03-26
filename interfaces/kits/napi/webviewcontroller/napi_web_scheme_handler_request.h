@@ -26,7 +26,7 @@ const std::string WEB_SCHEME_HANDLER = "WebSchemeHandler";
 const std::string WEB_SCHEME_HANDLER_REQUEST = "WebSchemeHandlerRequest";
 const std::string WEB_SCHEME_HANDLER_RESPONSE = "WebSchemeHandlerResponse";
 const std::string WEB_RESOURCE_HANDLER = "WebResourceHandler";
-const std::string WEB_POST_DATA_STREAM = "WebHttpBodyStream";
+const std::string WEB_HTTP_BODY_STREAM = "WebHttpBodyStream";
 const std::string WEB_NET_ERROR_CODE = "WebNetErrorCode";
 class NapiWebSchemeHandlerRequest {
 public:
@@ -45,7 +45,7 @@ public:
     static napi_value JS_IsRedirect(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_IsMainFrame(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_HasGesture(napi_env env, napi_callback_info cbinfo);
-    static napi_value JS_PostDataStream(napi_env env, napi_callback_info cbinfo);
+    static napi_value JS_HttpBodyStream(napi_env env, napi_callback_info cbinfo);
 };
 
 class NapiWebSchemeHandlerResponse {
@@ -100,13 +100,13 @@ public:
     static napi_value JS_DidFailWithError(napi_env env, napi_callback_info info);
 };
 
-class NapiWebPostDataStream {
+class NapiWebHttpBodyStream {
 public:
-    NapiWebPostDataStream() = default;
-    ~NapiWebPostDataStream() = default;
+    NapiWebHttpBodyStream() = default;
+    ~NapiWebHttpBodyStream() = default;
 
     static napi_value Init(napi_env env, napi_value exports);
-    static void ExportWebPostDataStreamClass(napi_env, napi_value* exportsPointer);
+    static void ExportWebHttpBodyStreamClass(napi_env, napi_value* exportsPointer);
     static napi_status DefineProperties(napi_env env, napi_value* object);
 
     static napi_value JS_Constructor(napi_env env, napi_callback_info info);

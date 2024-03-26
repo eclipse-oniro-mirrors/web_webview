@@ -22,13 +22,13 @@
 #include "ohos_nweb/include/ark_web_bool_value_callback.h"
 #include "ohos_nweb/include/ark_web_download_callback.h"
 #include "ohos_nweb/include/ark_web_drag_data.h"
+#include "ohos_nweb/include/ark_web_drag_event.h"
 #include "ohos_nweb/include/ark_web_find_callback.h"
 #include "ohos_nweb/include/ark_web_history_list.h"
 #include "ohos_nweb/include/ark_web_hit_test_result.h"
 #include "ohos_nweb/include/ark_web_js_proxy_callback_vector.h"
 #include "ohos_nweb/include/ark_web_js_result_callback.h"
 #include "ohos_nweb/include/ark_web_message_value_callback.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_screen_lock_callback.h"
@@ -514,7 +514,7 @@ public:
                          ArkWebRefPtr<ArkWebMessageValueCallback> callback) = 0;
 
   /*--ark web()--*/
-  virtual void SendDragEvent(const ArkWebDragEvent &drag_event) = 0;
+  virtual void SendDragEvent(ArkWebRefPtr<ArkWebDragEvent> drag_event) = 0;
 
   /**
    * @brief Clear ssl cache.
@@ -1094,14 +1094,20 @@ public:
   virtual int GetMediaPlaybackState() = 0;
 
   /**
-   * Enable the ability to intelligent tracking prevention, default disabled.
-  */
+   * @brief Enable the ability to intelligent tracking prevention, default
+   * disabled.
+   *
+   * @param enable Indicate whether the abilitiy is enabled or disabled.
+   */
+  /*--ark web()--*/
   virtual void EnableIntelligentTrackingPrevention(bool enable) = 0;
 
   /**
-   * Get whether intelligent tracking prevention is enabled.
-   * @return true if enable the ability intelligent tracking prevention; else false.
+   * @brief Get whether intelligent tracking prevention is enabled.
+   * @return true if enable the ability intelligent tracking prevention; else
+   * false.
    */
+  /*--ark web()--*/
   virtual bool IsIntelligentTrackingPreventionEnabled() = 0;
 
   /**

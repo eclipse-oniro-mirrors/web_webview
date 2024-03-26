@@ -21,7 +21,6 @@ config("module_private_config") {
   include_dirs = [
     "../../../../ohos_adapter/ohos_init_web_adapter/include",
     "../../../../interfaces/kits/napi/webfunction",
-    "//third_party/googletest/googlemock/include",
   ]
 }
 
