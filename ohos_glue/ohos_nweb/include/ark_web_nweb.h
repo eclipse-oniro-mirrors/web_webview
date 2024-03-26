@@ -1154,7 +1154,6 @@ public:
    */
   /*--ark web()--*/
   virtual void OnRenderToForeground() = 0;
-
 };
 
 } // namespace OHOS::ArkWeb

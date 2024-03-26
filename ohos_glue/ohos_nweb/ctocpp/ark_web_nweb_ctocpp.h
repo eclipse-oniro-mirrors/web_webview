@@ -358,7 +358,6 @@ public:
   void OnRenderToBackground() override;
 
   void OnRenderToForeground() override;
-
 };
 
 } // namespace OHOS::ArkWeb
