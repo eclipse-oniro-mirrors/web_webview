@@ -23,8 +23,7 @@
 namespace OHOS::NWeb {
 int32_t NetConnectAdapterImpl::RegisterNetConnCallback(std::shared_ptr<NetConnCallback> cb)
 {
-    static int32_t count = 0;    
-
+    static int32_t count = 0;
     if (cb == nullptr) {
         WVLOG_E("register NetConnCallback, cb is nullptr.");
         return -1;
@@ -46,7 +45,7 @@ int32_t NetConnectAdapterImpl::RegisterNetConnCallback(std::shared_ptr<NetConnCa
     if (count < 0) {
         count = 0;
     }
-    
+
     netConnCallbackMap_.insert(std::make_pair(id, callbackImpl));
     WVLOG_I("register NetConnCallback success.");
     return id;

@@ -23,7 +23,6 @@ config("module_private_config") {
   include_dirs = [
     "$webview_path/ohos_adapter/interfaces",
     "$webview_path/ohos_adapter/enterprise_device_management_adapter/include",
-    "//third_party/googletest/googlemock/include",
   ]
 
   if (webview_enterprise_device_manager_enable) {

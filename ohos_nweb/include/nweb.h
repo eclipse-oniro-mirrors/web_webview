@@ -121,10 +121,13 @@ enum class OHOS_NWEB_EXPORT DragAction {
     DRAG_CANCEL,
 };
 
-struct OHOS_NWEB_EXPORT DragEvent {
-    double x;
-    double y;
-    DragAction action;
+class NWebDragEvent {
+    public:
+    virtual ~NWebDragEvent() = default;
+
+    virtual double GetX() = 0;
+    virtual double GetY() = 0;
+    virtual DragAction GetAction() = 0;
 };
 
 enum class BlurReason : int32_t {
@@ -175,6 +178,16 @@ typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char *);
 typedef void (*NativeArkWebOnDestroyCallback)(const char *);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
+
+class OHOS_NWEB_EXPORT NWebEnginePrefetchArgs {
+    public:
+    virtual ~NWebEnginePrefetchArgs() = default;
+
+    virtual std::string GetUrl() = 0;
+    virtual std::string GetMethod() = 0;
+    virtual std::string GetFormData() = 0;
+};
+
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -341,7 +354,7 @@ public:
      *
      * @return the last HitTestResult
      */
-     virtual std::shared_ptr<HitTestResult> GetHitTestResult() = 0;
+    virtual std::shared_ptr<HitTestResult> GetHitTestResult() = 0;
 
     /**
      * Set the background color for this view.
@@ -589,7 +602,7 @@ public:
      * send drag event to nweb.
      * @param dragEvent the drag event information.
      */
-    virtual void SendDragEvent(const DragEvent& dragEvent) = 0;
+    virtual void SendDragEvent(std::shared_ptr<NWebDragEvent> dragEvent) = 0;
 
     /**
      * Clear ssl cache.

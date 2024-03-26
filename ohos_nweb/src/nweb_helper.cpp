@@ -34,9 +34,11 @@
 #include "nweb_log.h"
 #include "nweb_surface_adapter.h"
 
+#include "nweb_hisysevent.h"
 #include "nweb_c_api.h"
 
 namespace {
+const int32_t NS_TO_S = 1000000000;
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
 const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
 #if defined(webview_arm64)
@@ -53,7 +55,10 @@ const std::string LIB_NAME_WEB_ENGINE = "libweb_engine.so";
 static bool g_isFirstTimeStartUp = false;
 const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
 const std::string INIT_CONFIG = "initConfig";
+const std::string DELETE_CONFIG = "deleteArgsConfig";
 const std::string PERFORMANCE_CONFIG = "performanceConfig";
+// The config used in base/web/webview
+const std::string BASE_WEB_CONFIG = "baseWebConfig";
 
 // Run DO macro for every function defined in the API.
 #define FOR_EACH_API_FN(DO)                          \
@@ -584,7 +589,7 @@ bool NWebHelper::LoadLib(bool from_ark)
         return true;
     }
     if (bundlePath_.empty()) {
-        WVLOG_E("fail to load lib bundle path is empty";
+        WVLOG_E("fail to load lib bundle path is empty");
         return false;
     }
     std::string loadLibPath;
@@ -636,7 +641,8 @@ void NWebHelper::UnloadLib()
     }
 }
 
-bool NWebHelper::LoadEngine() {
+bool NWebHelper::LoadEngine()
+{
     if (nwebEngine_) {
         return true;
     }
@@ -764,6 +770,14 @@ bool NWebHelper::InitAndRun(bool from_ark)
 
     nwebEngine_->InitializeWebEngine(initArgs);
     return true;
+}
+
+void NWebAdapterHelper::ReadConfigIfNeeded()
+{
+    if (perfConfig_.empty()) {
+        std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+        NWebAdapterHelper::Instance().ParseConfig(initArgs);
+    }
 }
 
 void NWebHelper::SetBundlePath(const std::string &path)
@@ -922,8 +936,8 @@ void NWebHelper::AddIntelligentTrackingPreventionBypassingList(
     nwebEngine_->AddIntelligentTrackingPreventionBypassingList(hosts);
 }
 
-void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(
-    const std::vector<std::string>& hosts) {
+void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts)
+{
     if (nwebEngine_ == nullptr) {
         WVLOG_E("nweb engine is nullptr");
         return;
@@ -932,7 +946,8 @@ void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(
     nwebEngine_->RemoveIntelligentTrackingPreventionBypassingList(hosts);
 }
 
-void NWebHelper::ClearIntelligentTrackingPreventionBypassingList() {
+void NWebHelper::ClearIntelligentTrackingPreventionBypassingList()
+{
     if (nwebEngine_ == nullptr) {
         WVLOG_E("nweb engine is nullptr");
         return;
@@ -961,6 +976,19 @@ void NWebHelper::ResumeAllTimers()
     nwebEngine_->ResumeAllTimers();
 }
 
+void NWebHelper::PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs> &pre_args,
+                                  const std::map<std::string, std::string> &additional_http_headers,
+                                  const std::string &cache_key,
+                                  const uint32_t &cache_valid_time)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->PrefetchResource(pre_args, additional_http_headers, cache_key, cache_valid_time);
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;
@@ -972,10 +1000,20 @@ bool NWebAdapterHelper::Init(bool from_ark)
     return NWebHelper::Instance().Init(from_ark);
 }
 
+static int64_t GetCurrentRealTimeNs()
+{
+    struct timespec ts = { 0, 0 };
+    if (clock_gettime(CLOCK_MONOTONIC, &ts) != 0) {
+        return 0;
+    }
+    return (ts.tv_sec * NS_TO_S + ts.tv_nsec);
+}
+
 std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
     std::shared_ptr<NWebEngineInitArgsImpl> initArgs,
     uint32_t width, uint32_t height, bool incognitoMode)
 {
+    int64_t startTime = GetCurrentRealTimeNs();
     if (surface == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
         return nullptr;
@@ -999,13 +1037,17 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
+        return nullptr;
     }
+    int64_t endTime = GetCurrentRealTimeNs();
+    EventReport::ReportCreateWebInstanceTime(nweb->GetWebId(), endTime - startTime);
     return nweb;
 }
 
 std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
     std::shared_ptr<NWebEngineInitArgsImpl> initArgs, uint32_t width, uint32_t height, bool incognitoMode)
 {
+    int64_t startTime = GetCurrentRealTimeNs();
     if (enhanceSurfaceInfo == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
         return nullptr;
@@ -1019,7 +1061,10 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void *enhanceSurfaceInfo,
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
     if (nweb == nullptr) {
         WVLOG_E("fail to create nweb instance");
+        return nullptr;
     }
+    int64_t endTime = GetCurrentRealTimeNs();
+    EventReport::ReportCreateWebInstanceTime(nweb->GetWebId(), endTime - startTime);
     return nweb;
 }
 
@@ -1035,27 +1080,96 @@ std::string NWebAdapterHelper::GetConfigPath(const std::string &configFileName)
     return std::string(tmpPath);
 }
 
-std::unordered_map<std::string_view, std::function<std::string(std::string &)>> GetConfigMap()
+std::unordered_map<std::string_view, std::function<std::string(std::string&)>> GetConfigMap()
 {
-    static std::unordered_map<std::string_view, std::function<std::string(std::string &)>> configMap = {
+    static std::unordered_map<std::string_view, std::function<std::string(std::string&)>> configMap = {
         { "renderConfig/renderProcessCount",
-          [](std::string &contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
+            [](std::string& contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
         { "mediaConfig/backgroundMediaShouldSuspend",
-          [](std::string &contentStr) {
-            return contentStr == "false" ? std::string("--disable-background-media-suspend") : std::string();
-        } },
+            [](std::string& contentStr) {
+                return contentStr == "false" ? std::string("--disable-background-media-suspend") : std::string();
+            } },
         { "loadurlSocPerfConfig/loadurlSocPerfParam",
-          [](std::string &contentStr) {
-            return contentStr == "true" ? std::string("--ohos-enable-loadurl-soc-perf") : std::string();
-        } },
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-loadurl-soc-perf") : std::string();
+            } },
         { "mouseWheelSocPerfConfig/mouseWheelSocPerfParam",
-          [](std::string &contentStr) {
-            return contentStr == "true" ? std::string("--ohos-enable-mousewheel-soc-perf") : std::string();
-        } },
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-mousewheel-soc-perf") : std::string();
+            } },
         { "touchEventConfig/touchEventShouldRegister",
-          [](std::string &contentStr) {
-            return contentStr == "false" ? std::string("--disable-touch-event-register") : std::string();
-        } }
+            [](std::string& contentStr) {
+                return contentStr == "false" ? std::string("--disable-touch-event-register") : std::string();
+            } },
+        { "settingConfig/enableWaitForUsername",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-wait-for-username") : std::string();
+            } },
+        { "settingConfig/enableMaxNumberOfSavedFrames",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-max-number-of-saved-frames") : std::string();
+            } },
+        { "settingConfig/enableNumRasterThreads",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-num-raster-threads") : std::string();
+            } },
+        { "settingConfig/enableSingleRenderProcess",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-single-render-process") : std::string();
+            } },
+        { "userAgentConfig/userAgentValue",
+            [](std::string& contentStr) { return std::string("--ohos-user-agent-value=") + contentStr; } },
+        { "settingConfig/enableSimpleBackendIsDefault",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-simple-backend-is-default") : std::string();
+            } },
+        { "settingConfig/enableEmbedMode",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-embed-mode") : std::string();
+            } },
+        { "settingConfig/enableWebViewImplForLargeScreen",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-web-view-impl-for-large-screen")
+                                            : std::string();
+            } },
+        { "settingConfig/enableDeleteUnusedResourcesDelay",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-delete-unused-resources-delay")
+                                            : std::string();
+            } },
+        { "settingConfig/enableSetHttpCacheMaxSize",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-set-http-cache-max-size") : std::string();
+            } },
+        { "settingConfig/enableCookieConfigPersistSession",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-cookie-config-persist-session")
+                                            : std::string();
+            } },
+        { "settingConfig/enableDoubleTapForPlatform",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-double-tap-for-platform") : std::string();
+            } },
+        { "settingConfig/enableIgnoreLockdownMode",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-Ignore-lockdown-mode") : std::string();
+            } },
+        { "settingConfig/enablePrinting",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-printing") : std::string();
+            } },
+        { "settingConfig/enableHttpCacheSimple",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-http-cache-simple") : std::string();
+            } },
+        { "settingConfig/enableCalcTabletMode",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--ohos-enable-calc-tablet-mode") : std::string();
+            } },
+        { "outOfProcessGPUConfig/enableOOPGPU",
+            [](std::string& contentStr) {
+                return contentStr == "true" ? std::string("--in-process-gpu") : std::string();
+            } }
     };
     return configMap;
 }
@@ -1113,7 +1227,32 @@ xmlNodePtr NWebAdapterHelper::GetChildrenNode(xmlNodePtr NodePtr, const std::str
 
 void NWebAdapterHelper::ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
 {
-    auto configFilePath = GetConfigPath(WEB_CONFIG_PATH);
+    CfgFiles* cfgFiles = GetCfgFiles(WEB_CONFIG_PATH.c_str());
+    if (cfgFiles == nullptr) {
+        WVLOG_E("Not found webConfigxml,read system config");
+        ParseWebConfigXml("/system/" + WEB_CONFIG_PATH, initArgs);
+        return;
+    }
+    // When i is 0 ,it means /system/ + WEB_CONFIG_PATH, ignore
+    for (int32_t i = 1; i < MAX_CFG_POLICY_DIRS_CNT; i++) {
+        auto cfgFilePath = cfgFiles->paths[i];
+        if (!cfgFilePath || *(cfgFilePath) == '\0') {
+            break;
+        }
+        WVLOG_D("web config file path:%{public}s", cfgFilePath);
+        if (!cfgFilePath || strlen(cfgFilePath) == 0 || strlen(cfgFilePath) > PATH_MAX) {
+            WVLOG_W("can not get customization config file");
+            ParseWebConfigXml("/system/" + WEB_CONFIG_PATH, initArgs);
+            continue;
+        }
+        ParseWebConfigXml(cfgFiles->paths[i], initArgs);
+    }
+    FreeCfgFiles(cfgFiles);
+}
+
+void NWebAdapterHelper::ParseWebConfigXml(const std::string& configFilePath,
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
+{
     xmlDocPtr docPtr = xmlReadFile(configFilePath.c_str(), nullptr, XML_PARSE_NOBLANKS);
     if (docPtr == nullptr) {
         WVLOG_E("load xml error!");
@@ -1137,10 +1276,20 @@ void NWebAdapterHelper::ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> init
         ReadConfig(rootPtr, initArgs);
     }
 
+    xmlNodePtr deleteNodePtr = GetChildrenNode(rootPtr, DELETE_CONFIG);
+    if (deleteNodePtr != nullptr) {
+        WVLOG_D("read config from delete node");
+        ParseDeleteConfig(deleteNodePtr, initArgs);
+    }
+
     if (perfConfig_.empty()) {
         xmlNodePtr perfNodePtr = GetChildrenNode(rootPtr, PERFORMANCE_CONFIG);
         if (perfNodePtr != nullptr) {
             ParsePerfConfig(perfNodePtr);
+        }
+        xmlNodePtr adapterNodePtr = GetChildrenNode(rootPtr, BASE_WEB_CONFIG);
+        if (adapterNodePtr != nullptr) {
+            ParsePerfConfig(adapterNodePtr);
         }
     }
 
@@ -1186,5 +1335,41 @@ std::string NWebAdapterHelper::ParsePerfConfig(const std::string &configNodeName
     WVLOG_D("find performance config %{public}s/%{public}s, value is %{public}s.", configNodeName.c_str(),
         argsNodeName.c_str(), it->second.c_str());
     return it->second;
+}
+
+void NWebAdapterHelper::ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
+{
+    auto configMap = GetConfigMap();
+    for (xmlNodePtr curNodePtr = rootPtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string nodeName = reinterpret_cast<const char *>(curNodePtr->name);
+        for (xmlNodePtr curChildNodePtr = curNodePtr->xmlChildrenNode; curChildNodePtr != nullptr;
+            curChildNodePtr = curChildNodePtr->next) {
+            if (curChildNodePtr->name == nullptr || curChildNodePtr->type == XML_COMMENT_NODE) {
+                WVLOG_E("invalid node!");
+                continue;
+            }
+            std::string childNodeName = reinterpret_cast<const char *>(curChildNodePtr->name);
+            xmlChar *content = xmlNodeGetContent(curChildNodePtr);
+            if (content == nullptr) {
+                WVLOG_E("read xml node error: nodeName:(%{public}s)", curChildNodePtr->name);
+                continue;
+            }
+            std::string contentStr = reinterpret_cast<const char *>(content);
+            xmlFree(content);
+            auto it = configMap.find(nodeName + "/" + childNodeName);
+            if (it == configMap.end()) {
+                WVLOG_W("not found for web_config: %{public}s/%{public}s", nodeName.c_str(), childNodeName.c_str());
+                continue;
+            }
+            std::string param = it->second(contentStr);
+            if (!param.empty()) {
+                initArgs->AddDeleteArg(param);
+            }
+        }
+    }
 }
 } // namespace OHOS::NWeb

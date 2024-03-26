@@ -148,8 +148,8 @@ void PrintDocumentAdapterImpl::onStartLayoutWrite(const std::string& jobId,
     if (!cb_) {
         return;
     }
-    
-    std::shared_ptr<PrintWriteResultCallbackAdapter> callback = 
+
+    std::shared_ptr<PrintWriteResultCallbackAdapter> callback =
         std::make_shared<PrintWriteResultCallbackAdapterImpl>(writeResultCallback);
     if (!callback) {
         return;

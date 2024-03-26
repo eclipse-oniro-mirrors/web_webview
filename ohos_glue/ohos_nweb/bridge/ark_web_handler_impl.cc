@@ -22,15 +22,20 @@
 #include "ohos_nweb/bridge/ark_web_controller_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_data_resubmission_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_file_selector_params_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_impl.h"
 #include "ohos_nweb/bridge/ark_web_full_screen_exit_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_geo_location_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_image_options_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_js_all_ssl_error_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_dialog_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_http_auth_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_ssl_error_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_ssl_select_cert_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_key_event_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_impl.h"
 #include "ohos_nweb/bridge/ark_web_load_committed_details_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_data_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_touch_event_wrapper.h"
@@ -41,6 +46,7 @@
 #include "ohos_nweb/bridge/ark_web_select_popup_menu_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_select_popup_menu_param_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_string_vector_value_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_touch_handle_hot_zone_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_touch_handle_state_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_url_resource_error_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_url_resource_request_wrapper.h"
@@ -530,11 +536,11 @@ void ArkWebHandlerImpl::OnFullScreenEnter(
 }
 
 void ArkWebHandlerImpl::OnFullScreenEnterWithVideoSize(
-    ArkWebRefPtr<ArkWebFullScreenExitHandler> handler,
-    int video_natural_width, int video_natural_height) {
+    ArkWebRefPtr<ArkWebFullScreenExitHandler> handler, int video_natural_width,
+    int video_natural_height) {
   if (CHECK_REF_PTR_IS_NULL(handler)) {
-    nweb_handler_->OnFullScreenEnterWithVideoSize(
-        nullptr,video_natural_width, video_natural_height);
+    nweb_handler_->OnFullScreenEnterWithVideoSize(nullptr, video_natural_width,
+                                                  video_natural_height);
     return;
   }
 
@@ -543,11 +549,14 @@ void ArkWebHandlerImpl::OnFullScreenEnterWithVideoSize(
       video_natural_width, video_natural_height);
 }
 
-bool ArkWebHandlerImpl::OnDragAndDropData(const void *data, size_t len,
-                                          const ArkWebImageOptions &opt) {
-  OHOS::NWeb::ImageOptions nweb_image_options =
-      ArkWebImageOptionsStructToClass(opt);
-  return nweb_handler_->OnDragAndDropData(data, len, nweb_image_options);
+bool ArkWebHandlerImpl::OnDragAndDropData(
+    const void *data, size_t len, ArkWebRefPtr<ArkWebImageOptions> opt) {
+  if (CHECK_REF_PTR_IS_NULL(opt)) {
+    return nweb_handler_->OnDragAndDropData(data, len, nullptr);
+  }
+
+  return nweb_handler_->OnDragAndDropData(
+      data, len, std::make_shared<ArkWebImageOptionsWrapper>(opt));
 }
 
 void ArkWebHandlerImpl::OnSelectPopupMenu(
@@ -618,21 +627,27 @@ void ArkWebHandlerImpl::OnFirstContentfulPaint(
 }
 
 void ArkWebHandlerImpl::OnDateTimeChooserPopup(
-    const ArkWebDateTimeChooser &chooser,
+    ArkWebRefPtr<ArkWebDateTimeChooser> chooser,
     const ArkWebDateTimeSuggestionVector &suggestions,
     ArkWebRefPtr<ArkWebDateTimeChooserCallback> callback) {
-  OHOS::NWeb::DateTimeChooser nweb_chooser =
-      ArkWebDateTimeChooserStructToClass(chooser);
-  if (CHECK_REF_PTR_IS_NULL(callback)) {
-    nweb_handler_->OnDateTimeChooserPopup(
-        nweb_chooser, ArkWebDateTimeSuggestionVectorStructToClass(suggestions),
-        nullptr);
-    return;
+  std::shared_ptr<OHOS::NWeb::NWebDateTimeChooser> nweb_date_time_chooser =
+      nullptr;
+  if (!CHECK_REF_PTR_IS_NULL(chooser)) {
+    nweb_date_time_chooser =
+        std::make_shared<ArkWebDateTimeChooserWrapper>(chooser);
+  }
+
+  std::shared_ptr<OHOS::NWeb::NWebDateTimeChooserCallback>
+      nweb_date_time_chooser_callback = nullptr;
+  if (!CHECK_REF_PTR_IS_NULL(callback)) {
+    nweb_date_time_chooser_callback =
+        std::make_shared<ArkWebDateTimeChooserCallbackWrapper>(callback);
   }
 
   nweb_handler_->OnDateTimeChooserPopup(
-      nweb_chooser, ArkWebDateTimeSuggestionVectorStructToClass(suggestions),
-      std::make_shared<ArkWebDateTimeChooserCallbackWrapper>(callback));
+      nweb_date_time_chooser,
+      ArkWebDateTimeSuggestionVectorStructToClass(suggestions),
+      nweb_date_time_chooser_callback);
 }
 
 void ArkWebHandlerImpl::OnDateTimeChooserClose() {
@@ -656,11 +671,14 @@ void ArkWebHandlerImpl::OnActivityStateChanged(int state, int type) {
 }
 
 void ArkWebHandlerImpl::OnGetTouchHandleHotZone(
-    ArkWebTouchHandleHotZone &hot_zone) {
-  OHOS::NWeb::TouchHandleHotZone nweb_hot_zone;
-  nweb_handler_->OnGetTouchHandleHotZone(nweb_hot_zone);
+    ArkWebRefPtr<ArkWebTouchHandleHotZone> hot_zone) {
+  if (CHECK_REF_PTR_IS_NULL(hot_zone)) {
+    nweb_handler_->OnGetTouchHandleHotZone(nullptr);
+    return;
+  }
 
-  hot_zone = ArkWebTouchHandleHotZoneClassToStruct(nweb_hot_zone);
+  nweb_handler_->OnGetTouchHandleHotZone(
+      std::make_shared<ArkWebTouchHandleHotZoneWrapper>(hot_zone));
 }
 
 void ArkWebHandlerImpl::OnCompleteSwapWithNewSize() {
@@ -710,6 +728,28 @@ void ArkWebHandlerImpl::OnSafeBrowsingCheckResult(int threat_type) {
   nweb_handler_->OnSafeBrowsingCheckResult(threat_type);
 }
 
+void ArkWebHandlerImpl::OnFirstMeaningfulPaint(
+    ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details) {
+  if (CHECK_REF_PTR_IS_NULL(details)) {
+    ARK_WEB_IMPL_WRAN_LOG("firstMeaningfulPaint details is null");
+    return;
+  }
+
+  nweb_handler_->OnFirstMeaningfulPaint(
+      std::make_shared<ArkWebFirstMeaningfulPaintDetailsImpl>(details));
+}
+
+void ArkWebHandlerImpl::OnLargestContentfulPaint(
+    ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details) {
+  if (CHECK_REF_PTR_IS_NULL(details)) {
+    ARK_WEB_IMPL_WRAN_LOG("largestContentfulPaint details is null");
+    return;
+  }
+
+  nweb_handler_->OnLargestContentfulPaint(
+      std::make_shared<ArkWebLargestContentfulPaintDetailsImpl>(details));
+}
+
 void ArkWebHandlerImpl::OnIntelligentTrackingPreventionResult(
     const ArkWebString &website_host, const ArkWebString &tracker_host) {
   nweb_handler_->OnIntelligentTrackingPreventionResult(
@@ -725,5 +765,23 @@ bool ArkWebHandlerImpl::OnHandleOverrideUrlLoading(
 
   return nweb_handler_->OnHandleOverrideUrlLoading(
       std::make_shared<ArkWebUrlResourceRequestWrapper>(request));
+}
+
+bool ArkWebHandlerImpl::OnAllSslErrorRequestByJS(
+    ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error,
+    const ArkWebString &url, const ArkWebString &originalUrl,
+    const ArkWebString &referrer, bool isFatalError, bool isMainFrame) {
+  if (CHECK_REF_PTR_IS_NULL(result)) {
+    return nweb_handler_->OnAllSslErrorRequestByJS(
+        nullptr, static_cast<ArkWebSslError>(error),
+        ArkWebStringStructToClass(url), ArkWebStringStructToClass(originalUrl),
+        ArkWebStringStructToClass(referrer), isFatalError, isMainFrame);
+  }
+
+  return nweb_handler_->OnAllSslErrorRequestByJS(
+      std::make_shared<ArkWebJsAllSslErrorResultWrapper>(result),
+      static_cast<ArkWebSslError>(error), ArkWebStringStructToClass(url),
+      ArkWebStringStructToClass(originalUrl),
+      ArkWebStringStructToClass(referrer), isFatalError, isMainFrame);
 }
 } // namespace OHOS::ArkWeb

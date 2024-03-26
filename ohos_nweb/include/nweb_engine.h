@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,7 @@ public:
 
   virtual std::shared_ptr<NWebDownloadManager> GetDownloadManager() = 0;
 
-  virtual void SetWebTag(int32_t nweb_id, const char *webTag) = 0;
+  virtual void SetWebTag(int32_t nweb_id, const char *web_tag) = 0;
 
   virtual void
   InitializeWebEngine(std::shared_ptr<NWebEngineInitArgs> init_args) = 0;
@@ -54,16 +54,21 @@ public:
   virtual void SetWebDebuggingAccess(bool isEnableDebug) = 0;
 
   virtual void AddIntelligentTrackingPreventionBypassingList(
-      const std::vector<std::string>& hosts) = 0;
+      const std::vector<std::string> &hosts) = 0;
 
   virtual void RemoveIntelligentTrackingPreventionBypassingList(
-      const std::vector<std::string>& hosts) = 0;
+      const std::vector<std::string> &hosts) = 0;
 
   virtual void ClearIntelligentTrackingPreventionBypassingList() = 0;
 
   virtual void PauseAllTimers() = 0;
 
   virtual void ResumeAllTimers() = 0;
+
+  virtual void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& pre_args,
+                                const std::map<std::string, std::string>& additional_http_headers,
+                                const std::string& cache_key,
+                                const uint32_t& cache_valid_time) = 0;
 };
 
 } // namespace OHOS::NWeb

@@ -163,8 +163,7 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_006, TestSize.Lev
     EXPECT_NE(code, nullptr);
     int32_t result = g_mmi->RegisterMMIInputListener(nullptr);
     EXPECT_EQ(result, -1);
-    std::shared_ptr<MMIInputListenerAdapter> eventCallback = 
-        std::make_shared<MockMMIInputListenerAdapter>();
+    std::shared_ptr<MMIInputListenerAdapter> eventCallback = std::make_shared<MockMMIInputListenerAdapter>();
     result = g_mmi->RegisterMMIInputListener(std::move(eventCallback));
     EXPECT_NE(result, -1);
     g_mmi->UnregisterMMIInputListener(MMI::KeyEvent::KEYCODE_UNKNOWN);
@@ -178,8 +177,7 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_006, TestSize.Lev
  */
 HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIInputListenerAdapterImpl_007, TestSize.Level1)
 {
-    std::shared_ptr<MMIInputListenerAdapter> listener = 
-        std::make_shared<MockMMIInputListenerAdapter>();
+    std::shared_ptr<MMIInputListenerAdapter> listener = std::make_shared<MockMMIInputListenerAdapter>();
     MMIInputListenerAdapterImpl listenerAdapter(listener);
     std::shared_ptr<MMI::KeyEvent> keyEvent = MMI::KeyEvent::Create();
     EXPECT_NE(keyEvent, nullptr);

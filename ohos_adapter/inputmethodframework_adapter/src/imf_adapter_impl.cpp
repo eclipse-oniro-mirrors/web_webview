@@ -15,9 +15,16 @@
 
 #include "imf_adapter_impl.h"
 
+#include "hisysevent_adapter.h"
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
 
 namespace OHOS::NWeb {
+constexpr char INPUT_METHOD[] = "INPUT_METHOD";
+constexpr char ATTACH_CODE[] = "ATTACH_CODE";
+constexpr char IS_SHOW_KEY_BOARD[] = "IS_SHOW_KEY_BOARD";
+constexpr int32_t IMF_LISTENER_NULL_POINT = 1;
+
 IMFTextListenerAdapterImpl::IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener)
     : listener_(listener) {};
 
@@ -71,7 +78,7 @@ void IMFTextListenerAdapterImpl::SendKeyboardStatus(const MiscServices::Keyboard
 void IMFTextListenerAdapterImpl::SendFunctionKey(const MiscServices::FunctionKey& functionKey)
 {
     if (listener_) {
-        std::shared_ptr<IMFAdapterFunctionKeyAdapterImpl> adapterFunction = 
+        std::shared_ptr<IMFAdapterFunctionKeyAdapterImpl> adapterFunction =
             std::make_shared<IMFAdapterFunctionKeyAdapterImpl>();
         switch (functionKey.GetEnterKeyType()) {
             case MiscServices::EnterKeyType::UNSPECIFIED:
@@ -208,17 +215,27 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
     return true;
 }
 
+void ReportImfErrorEvent(int32_t ret, bool isShowKeyboard)
+{
+    std::string isShowKeyboardStr = isShowKeyboard ? "true" : "false";
+    OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(INPUT_METHOD,
+        HiSysEventAdapter::EventType::FAULT, { ATTACH_CODE, std::to_string(ret),
+            IS_SHOW_KEY_BOARD, isShowKeyboardStr });
+}
+
 bool IMFAdapterImpl::Attach(
     std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard, const IMFAdapterTextConfig &config)
 {
     if (!listener) {
         WVLOG_E("the listener is nullptr");
+        ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
         return false;
     }
     if (!textListener_) {
         textListener_ = new (std::nothrow) IMFTextListenerAdapterImpl(listener);
         if (!textListener_) {
             WVLOG_E("new textListener failed");
+            ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
             return false;
         }
     }
@@ -233,10 +250,13 @@ bool IMFAdapterImpl::Attach(
         .height = config.cursorInfo.height
     };
 
-    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute, .cursorInfo = imfInfo };
+    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute,
+                                            .cursorInfo = imfInfo,
+                                            .windowId = config.windowId };
     int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
+        ReportImfErrorEvent(ret, isShowKeyboard);
         return false;
     }
     return true;

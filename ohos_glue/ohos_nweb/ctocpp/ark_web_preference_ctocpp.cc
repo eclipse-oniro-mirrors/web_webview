@@ -1165,6 +1165,44 @@ bool ArkWebPreferenceCToCpp::GetScrollable() {
   return _struct->get_scrollable(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebPreferenceCToCpp::PutTextAutosizingEnabled(bool flag) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_preference_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, put_text_autosizing_enabled, );
+
+  // Execute
+  _struct->put_text_autosizing_enabled(_struct, flag);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebPreferenceCToCpp::SetViewportEnable(bool enable) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_preference_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, set_viewport_enable, );
+
+  // Execute
+  _struct->set_viewport_enable(_struct, enable);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebPreferenceCToCpp::SetNativeVideoPlayerConfig(bool enable,
+                                                        bool shouldOverlay) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_preference_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, set_native_video_player_config, );
+
+  // Execute
+  _struct->set_native_video_player_config(_struct, enable, shouldOverlay);
+}
+
 ArkWebPreferenceCToCpp::ArkWebPreferenceCToCpp() {
 }
 

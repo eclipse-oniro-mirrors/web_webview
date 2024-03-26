@@ -30,7 +30,7 @@ namespace OHOS {
                 EmptyCallback() = default;
             private:
                 void BatteryInfoChanged(std::shared_ptr<WebBatteryInfo>) {}
-        };  
+        };
     }
     bool ReceiveEventFuzzTest(const uint8_t* data, size_t size)
     {
@@ -38,7 +38,7 @@ namespace OHOS {
             return false;
         }
         CommonEventSubscribeInfo subscribe;
-        std::shared_ptr<WebBatteryEventCallback> eventCallback = 
+        std::shared_ptr<WebBatteryEventCallback> eventCallback =
             std::make_shared<EmptyCallback>();
         NWebBatteryEventSubscriber batter(subscribe, eventCallback);
         CommonEventData receive;

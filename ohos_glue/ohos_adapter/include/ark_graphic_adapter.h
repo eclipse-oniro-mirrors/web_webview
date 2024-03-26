@@ -131,6 +131,9 @@ public:
 
     /*--web engine()--*/
     virtual int32_t NativeWindowSetBufferGeometry(void* window, int32_t width, int32_t height) = 0;
+
+    /*--web engine()--*/
+    virtual void NativeWindowSurfaceCleanCache(void* window) = 0;
 };
 
 /*--web engine(source=library)--*/
