@@ -353,6 +353,10 @@ public:
   void CloseCamera() override;
 
   ArkWebString GetLastJavascriptProxyCallingFrameUrl() override;
+
+  void ScrollByRefScreen(float delta_x, float delta_y, float vx,
+                         float vy) override;
+
   bool GetPendingSizeStatus() override;
 
   void OnRenderToBackground() override;
