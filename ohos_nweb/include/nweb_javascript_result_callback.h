@@ -37,6 +37,9 @@ public:
 
     virtual void RemoveJavaScriptObjectHolder(int32_t holder, int32_t objectId) = 0;
     virtual void RemoveTransientJavaScriptObject() = 0;
+
+    virtual std::shared_ptr<NWebValue> GetJavaScriptResultFlowbuf(std::vector<std::shared_ptr<NWebValue>> args,
+        const std::string& method, const std::string& object_name, int fd, int32_t routing_id, int32_t object_id) = 0;
 };
 } // namespace OHOS::NWeb
 

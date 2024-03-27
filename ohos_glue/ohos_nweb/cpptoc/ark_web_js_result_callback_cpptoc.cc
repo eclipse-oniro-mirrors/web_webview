@@ -87,6 +87,23 @@ ark_web_js_result_callback_remove_transient_java_script_object(
   ArkWebJsResultCallbackCppToC::Get(self)->RemoveTransientJavaScriptObject();
 }
 
+ArkWebValue ARK_WEB_CALLBACK ark_web_js_result_callback_get_java_script_result_flowbuf(
+    struct _ark_web_js_result_callback_t* self, ArkWebValueVector args,
+    const ArkWebString* method, const ArkWebString* object_name, int fd,
+    int32_t routing_id, int32_t object_id) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self,  ark_web_value_default);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(method,  ark_web_value_default);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(object_name,  ark_web_value_default);
+
+  // Execute
+  return ArkWebJsResultCallbackCppToC::Get(self)->GetJavaScriptResultFlowbuf(
+      args, *method, *object_name, fd, routing_id, object_id);
+}
+
 } // namespace
 
 ArkWebJsResultCallbackCppToC::ArkWebJsResultCallbackCppToC() {
@@ -100,6 +117,8 @@ ArkWebJsResultCallbackCppToC::ArkWebJsResultCallbackCppToC() {
       ark_web_js_result_callback_remove_java_script_object_holder;
   GetStruct()->remove_transient_java_script_object =
       ark_web_js_result_callback_remove_transient_java_script_object;
+  GetStruct()->get_java_script_result_flowbuf =
+      ark_web_js_result_callback_get_java_script_result_flowbuf;
 }
 
 ArkWebJsResultCallbackCppToC::~ArkWebJsResultCallbackCppToC() {
