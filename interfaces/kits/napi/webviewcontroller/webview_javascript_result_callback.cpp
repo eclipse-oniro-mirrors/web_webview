@@ -1159,7 +1159,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultF
             std::string str(flowbuf_str);
             std::shared_ptr<NWebValue> insert_arg = std::make_shared<NWebValue>(str);
             args.insert(args.begin() + arg_index, insert_arg);
-        } while (true);
+        } while (arg_index <= MAX_ENTRIES);
 
         close(fd);
         WVLOG_D("get javaScript result, not in js thread, post task to js thread");
