@@ -35,6 +35,16 @@ ArkWebValue ArkWebJsResultCallbackImpl::GetJavaScriptResult(
   return ark_web_value;
 }
 
+ArkWebValue ArkWebJsResultCallbackImpl::GetJavaScriptResultFlowbuf(
+    ArkWebValueVector args, const ArkWebString &method,
+    const ArkWebString &object_name, int fd, int32_t routing_id, int32_t object_id) {
+  ArkWebValue ark_web_value;
+  ark_web_value.nweb_value = nweb_js_result_callback_->GetJavaScriptResultFlowbuf(
+      ArkWebValueVectorStructToClass(args), ArkWebStringStructToClass(method),
+      ArkWebStringStructToClass(object_name), fd, routing_id, object_id);
+  return ark_web_value;
+}
+
 bool ArkWebJsResultCallbackImpl::HasJavaScriptObjectMethods(
     int32_t object_id, const ArkWebString &method_name) {
   return nweb_js_result_callback_->HasJavaScriptObjectMethods(

@@ -419,6 +419,9 @@ public:
     std::shared_ptr<NWebValue> GetJavaScriptResult(std::vector<std::shared_ptr<NWebValue>> args,
         const std::string& method, const std::string& objName, int32_t routingId, int32_t objectId) override;
 
+    std::shared_ptr<NWebValue> GetJavaScriptResultFlowbuf(std::vector<std::shared_ptr<NWebValue>> args,
+        const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId) override;
+
     bool HasJavaScriptObjectMethods(int32_t objectId, const std::string& methodName) override;
 
     std::shared_ptr<NWebValue> GetJavaScriptObjectMethods(int32_t objectId) override;
@@ -469,6 +472,17 @@ private:
     std::shared_ptr<NWebValue> GetJavaScriptResultSelf(std::vector<std::shared_ptr<NWebValue>> args,
         const std::string& method, const std::string& objName, int32_t routingId, int32_t objectId);
 
+    bool ConstructArgv(void* ashmem, std::vector<std::shared_ptr<NWebValue>> args,
+    	std::vector<napi_value>& argv, std::shared_ptr<JavaScriptOb> jsObj, int32_t routingId);
+
+    std::shared_ptr<NWebValue> GetJavaScriptResultSelfHelper(std::shared_ptr<JavaScriptOb> jsObj,
+        const std::string& method, int32_t routingId, napi_handle_scope scope, std::vector<napi_value> argv);
+
+    char* FlowbufStrAtIndex(void* mem, int flowbuf_index, int* arg_index, int* str_len);
+
+    std::shared_ptr<NWebValue> GetJavaScriptResultSelfFlowbuf(std::vector<std::shared_ptr<NWebValue>> args,
+        const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId);
+    
     int32_t nwebId_ = -1;
 
     JavaScriptOb::ObjectID nextObjectId_ = 1;

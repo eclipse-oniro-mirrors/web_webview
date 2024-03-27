@@ -37,6 +37,13 @@ public:
                                   int32_t routing_id,
                                   int32_t object_id) override;
 
+  ArkWebValue GetJavaScriptResultFlowbuf(ArkWebValueVector args,
+                                          const ArkWebString &method,
+                                          const ArkWebString &object_name,
+                                          int fd,
+                                          int32_t routing_id,
+                                          int32_t object_id) override;
+
   /**
    * @brief GetJavaScriptObjectMethods
    *
