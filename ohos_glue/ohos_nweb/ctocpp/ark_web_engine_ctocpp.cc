@@ -306,6 +306,32 @@ void ArkWebEngineCToCpp::PrefetchResource(
   }
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::SetRenderProcessMode(int32_t mode) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, set_render_process_mode, );
+
+  // Execute
+  _struct->set_render_process_mode(_struct, mode);
+}
+
+ARK_WEB_NO_SANITIZE
+int32_t ArkWebEngineCToCpp::GetRenderProcessMode() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_render_process_mode, 0);
+
+  // Execute
+  return _struct->get_render_process_mode(_struct);
+}
+
 ArkWebEngineCToCpp::ArkWebEngineCToCpp() {
 }
 
