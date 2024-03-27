@@ -1166,6 +1166,18 @@ public:
   /*--ark web()--*/
   virtual void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
       ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention) = 0;
+    
+  /**
+   * @brief Render process switch to background.
+   */
+  /*--ark web()--*/
+  virtual void OnRenderToBackground() = 0;
+
+  /**
+   * @brief Render process switch to foreground.
+   */
+  /*--ark web()--*/
+  virtual void OnRenderToForeground() = 0;
 };
 
 } // namespace OHOS::ArkWeb
