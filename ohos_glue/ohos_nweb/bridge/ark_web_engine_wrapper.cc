@@ -191,4 +191,13 @@ void ArkWebEngineWrapper::PrefetchResource(
   ArkWebStringStructRelease(stCacheKey);
 }
 
+void ArkWebEngineWrapper::SetRenderProcessMode(
+    ArkWebRenderProcessMode mode) {
+  ark_web_engine_->SetRenderProcessMode(static_cast<int32_t>(mode));
+}
+
+ArkWebRenderProcessMode ArkWebEngineWrapper::GetRenderProcessMode() {
+  return static_cast<ArkWebRenderProcessMode>(
+      ark_web_engine_->GetRenderProcessMode());
+}
 } // namespace OHOS::ArkWeb

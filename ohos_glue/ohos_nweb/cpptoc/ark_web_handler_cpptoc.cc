@@ -1021,6 +1021,18 @@ bool ARK_WEB_CALLBACK ark_web_handler_on_all_ssl_error_request_by_js(
       *originalUrl, *referrer, isFatalError, isMainFrame);
 }
 
+void ARK_WEB_CALLBACK ark_web_handler_on_tooltip(
+    struct _ark_web_handler_t *self, const ArkWebString *tooltip) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(tooltip, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnTooltip(*tooltip);
+}
+
 void ARK_WEB_CALLBACK ark_web_handler_release_resize_hold(struct _ark_web_handler_t *self) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
@@ -1145,6 +1157,7 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_all_ssl_error_request_by_js;
   GetStruct()->release_resize_hold =
       ark_web_handler_release_resize_hold;
+  GetStruct()->on_tooltip = ark_web_handler_on_tooltip;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {
