@@ -1031,6 +1031,17 @@ public:
   void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
       std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback, bool extention) override;
 
+  /**
+   * @brief Render process switch to background.
+   */
+  /*--ark web()--*/
+  void OnRenderToBackground() override;
+
+  /**
+   * @brief Render process switch to foreground.
+   */
+  /*--ark web()--*/
+  void OnRenderToForeground() override;
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

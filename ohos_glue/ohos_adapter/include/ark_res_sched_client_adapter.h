@@ -49,6 +49,9 @@ public:
 
     /*--web engine()--*/
     static void ReportNWebInit(int32_t statusAdapter, int32_t nweb_id);
+
+    /*--web engine()--*/
+    static void ReportRenderProcessStatus(int32_t statusAdapter, pid_t pid);
 };
 } // namespace OHOS::ArkWeb
 

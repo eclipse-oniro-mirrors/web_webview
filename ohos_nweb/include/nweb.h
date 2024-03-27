@@ -1151,6 +1151,19 @@ public:
      * @param vx      vertical velocity in physical pixel.
     */
     virtual void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) = 0;
+    
+    /**
+     * @brief Render process switch to background.
+     */
+    /*--ark web()--*/
+    virtual void OnRenderToBackground() = 0;
+
+    /**
+     * @brief Render process switch to foreground.
+     */
+    /*--ark web()--*/
+    virtual void OnRenderToForeground() = 0;
+
 };
 }  // namespace OHOS::NWeb
 

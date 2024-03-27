@@ -51,4 +51,8 @@ void ArkResSchedClientAdapter::ReportNWebInit(int32_t statusAdapter, int32_t nwe
     NWeb::ResSchedClientAdapter::ReportNWebInit((NWeb::ResSchedStatusAdapter)statusAdapter, nweb_id);
 }
 
+void ArkResSchedClientAdapter::ReportRenderProcessStatus(int32_t statusAdapter, pid_t pid)
+{
+    NWeb::ResSchedClientAdapter::ReportRenderProcessStatus((NWeb::ResSchedStatusAdapter)statusAdapter, pid);
+}
 } // namespace OHOS::ArkWeb

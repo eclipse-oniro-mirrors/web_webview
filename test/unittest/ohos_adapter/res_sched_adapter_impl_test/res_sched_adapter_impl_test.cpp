@@ -148,5 +148,22 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportAudioData_003, T
     result = resAdapter->ReportAudioData(ResSchedStatusAdapter::AUDIO_STATUS_START, 1, 1);
     EXPECT_TRUE(result);
 }
+
+/**
+ * @tc.name: ResSchedAdapterImplTest_ReportRenderProcessStatus_004
+ * @tc.desc: ReportRenderProcessStatus.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportRenderProcessStatus_004, TestSize.Level1)
+{
+    auto resAdapter = std::make_shared<ResSchedClientAdapter>();
+    EXPECT_NE(resAdapter, nullptr);
+    resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(-1), 1);
+    resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(2), 0);
+    resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(2), 0);
+    resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(3), 0);
+    resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(3), 1);
+}
 }
 } // namespace NWeb

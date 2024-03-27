@@ -968,4 +968,11 @@ void ArkWebNWebWrapper::ExecuteJavaScriptExt(const int fd, const size_t scriptLe
     }
 }
 
+void ArkWebNWebWrapper::OnRenderToBackground() {
+  ark_web_nweb_->OnRenderToBackground();
+}
+
+void ArkWebNWebWrapper::OnRenderToForeground() {
+  ark_web_nweb_->OnRenderToForeground();
+}
 } // namespace OHOS::ArkWeb

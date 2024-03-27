@@ -361,6 +361,10 @@ public:
 
   void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
       ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention) override;
+
+  void OnRenderToBackground() override;
+
+  void OnRenderToForeground() override;
 };
 
 } // namespace OHOS::ArkWeb
