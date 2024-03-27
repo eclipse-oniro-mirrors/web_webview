@@ -1151,14 +1151,6 @@ public:
      * @param vx      vertical velocity in physical pixel.
     */
     virtual void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) = 0;
-
-    /**
-     * @brief get pendingsize status.
-     *
-     * @return the result of last pendingsize status.
-     */
-    /*--ark web()--*/
-    virtual bool GetPendingSizeStatus() = 0;
     
     /**
      * @brief Render process switch to background.
