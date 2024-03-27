@@ -16,6 +16,7 @@
 #include "webview_controller.h"
 #include <memory>
 #include <unordered_map>
+#include <securec.h>
 
 #include "application_context.h"
 #include "business_error.h"
@@ -30,6 +31,9 @@
 #include "webview_hasimage_callback.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_javascript_result_callback.h"
+
+#include "nweb_precompile_callback.h"
+#include "nweb_cache_options_impl.h"
 
 namespace {
 constexpr int32_t PARAMZERO = 0;
@@ -1430,6 +1434,166 @@ std::string WebviewController::GetLastJavascriptProxyCallingFrameUrl()
     }
 
     return nweb_ptr->GetLastJavascriptProxyCallingFrameUrl();
+}
+
+bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::string &script)
+{
+    napi_valuetype valueType;
+    napi_typeof(env, value, &valueType);
+    if (valueType == napi_string) {
+        std::string str;
+        if (!NapiParseUtils::ParseString(env, value, str)) {
+            WVLOG_E("PrecompileJavaScript: parse script text to string failed.");
+            return false;
+        }
+
+        script = str;
+        return true;
+    }
+
+    napi_typedarray_type typedArrayType;
+    size_t length = 0;
+    napi_value buffer = nullptr;
+    size_t offset = 0;
+    napi_get_typedarray_info(env, value, &typedArrayType, &length, nullptr, &buffer, &offset);
+    if (typedArrayType != napi_uint8_array) {
+        WVLOG_E("PrecompileJavaScript: script text is not string or unit8array.");
+        return false;
+    }
+
+    uint8_t *data = nullptr;
+    size_t total = 0;
+    napi_get_arraybuffer_info(env, buffer, reinterpret_cast<void **>(&data), &total);
+    length = std::min<size_t>(length, total - offset);
+    std::vector<uint8_t> vec(length);
+    int retCode = memcpy_s(vec.data(), vec.size(), &data[offset], length);
+    if (retCode != 0) {
+        return false;
+    }
+
+    std::string str(vec.begin(), vec.end());
+    script = str;
+    return true;
+}
+
+std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env, napi_value value) {
+    std::map<std::string, std::string> responseHeaders;
+    bool isModule = false;
+    bool isTopLevel = false;
+    auto defaultCacheOptions = std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
+
+    if (!ParseResponseHeaders(env, value, responseHeaders)) {
+        WVLOG_D("PrecompileJavaScript: parse 'responseHeaders' of CacheOptions failed. use default options");
+        return defaultCacheOptions;
+    }
+
+    napi_value isModuleValue;
+    if (napi_get_named_property(env, value, "isModule", &isModuleValue) != napi_ok) {
+        WVLOG_D("PrecompileJavaScript: 'isModule' of CacheOptions is not boolean. use default options");
+        return defaultCacheOptions;
+    }
+
+    if (!NapiParseUtils::ParseBoolean(env, isModuleValue, isModule)) {
+        WVLOG_D("PrecompileJavaScript: parse 'isModule' of CacheOptions to boolean failed. use default options");
+        return defaultCacheOptions;
+    }
+
+    napi_value isTopLevelValue;
+    if (napi_get_named_property(env, value, "isTopLevel", &isTopLevelValue) != napi_ok) {
+        WVLOG_D("PrecompileJavaScript: 'isTopLevel' of CacheOptions is not boolean. use default options");
+        return defaultCacheOptions;
+    }
+
+    if (!NapiParseUtils::ParseBoolean(env, isTopLevelValue, isTopLevel)) {
+        WVLOG_D("PrecompileJavaScript: parse 'isTopLevel' of CacheOptions to boolean failed. use default options");
+        return defaultCacheOptions;
+    }
+
+    return std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
+}
+
+ErrCode WebviewController::PrecompileJavaScriptPromise(
+    napi_env env, napi_deferred deferred,
+    const std::string &url, const std::string &script, std::shared_ptr<CacheOptions> cacheOptions)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    if (!deferred) {
+        return NWebError::INIT_ERROR;
+    }
+
+    auto callbackImpl = std::make_shared<OHOS::NWeb::NWebPrecompileCallback>();
+    callbackImpl->SetCallback([env, deferred](int64_t result) {
+        if (!env) {
+            return;
+        }
+
+        napi_handle_scope scope = nullptr;
+        napi_open_handle_scope(env, &scope);
+        if (scope == nullptr) {
+            return;
+        }
+
+        napi_value setResult[RESULT_COUNT] = {0};
+        napi_create_int64(env, result, &setResult[PARAMZERO]);
+        napi_value args[RESULT_COUNT] = {setResult[PARAMZERO]};
+        if (result == static_cast<int64_t>(PrecompileError::OK)) {
+            napi_resolve_deferred(env, deferred, args[PARAMZERO]);
+        } else {
+            napi_reject_deferred(env, deferred, args[PARAMZERO]);
+        }
+
+        napi_close_handle_scope(env, scope);
+    });
+
+    nweb_ptr->PrecompileJavaScript(url, script, cacheOptions, callbackImpl);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::ParseResponseHeaders(
+    napi_env env, napi_value value,
+    std::map<std::string, std::string> &responseHeaders)
+{
+    napi_value responseHeadersValue = nullptr;
+    if (napi_get_named_property(env, value, "responseHeaders", &responseHeadersValue) != napi_ok) {
+        WVLOG_D("PrecompileJavaScript: cannot get 'responseHeaders' of CacheOptions.");
+        return false;
+    }
+
+    bool isArray = false;
+    napi_is_array(env, responseHeadersValue, &isArray);
+    if (!isArray) {
+        WVLOG_D("PrecompileJavaScript: 'responseHeaders' of CacheOptions is not array.");
+        return false;
+    }
+
+    uint32_t length = INTEGER_ZERO;
+    napi_get_array_length(env, responseHeadersValue, &length);
+    for (uint32_t i = 0; i < length; i++) {
+        std::string key;
+        std::string value;
+        napi_value header = nullptr;
+        napi_value keyObj = nullptr;
+        napi_value valueObj = nullptr;
+        napi_get_element(env, responseHeadersValue, i, &header);
+
+        if (napi_get_named_property(env, header, "headerKey", &keyObj) != napi_ok ||
+            !NapiParseUtils::ParseString(env, keyObj, key)) {
+            continue;
+        }
+
+        if (napi_get_named_property(env, header, "headerValue", &valueObj) != napi_ok ||
+            !NapiParseUtils::ParseString(env, valueObj, value)) {
+            continue;
+        }
+
+        responseHeaders[key] = value;
+    }
+
+    return true;
 }
 } // namespace NWeb
 } // namespace OHOS
