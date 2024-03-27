@@ -148,6 +148,11 @@ enum class NestedScrollMode : int32_t {
     PARALLEL = 3,
 };
 
+enum class RenderProcessMode : int32_t {
+    SINGLE_MODE = 0,
+    MULTIPLE_MODE = 1,
+};
+
 class NWebTouchPointInfo {
     public:
     virtual ~NWebTouchPointInfo() = default;

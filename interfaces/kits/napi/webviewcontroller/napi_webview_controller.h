@@ -38,6 +38,7 @@ const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
 const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
 const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
+const std::string WEB_RENDER_PROCESS_MODE_ENUM_NAME = "RenderProcessMode";
 
 struct Scheme {
     std::string name;
@@ -290,9 +291,13 @@ private:
 
     static napi_value PrefetchResource(napi_env env, napi_callback_info info);
 
+    static napi_value SetRenderProcessMode(napi_env env, napi_callback_info info);
+
+    static napi_value GetRenderProcessMode(napi_env env, napi_callback_info info);
+
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
-};
+    };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {
 public:
