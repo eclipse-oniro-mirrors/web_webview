@@ -1002,6 +1002,14 @@ public:
   std::string GetLastJavascriptProxyCallingFrameUrl() override;
 
   /**
+   * @brief get pendingsize status.
+   *
+   * @return the result of last pendingsize status.
+   */
+  /*--ark web()--*/
+  bool GetPendingSizeStatus() override;
+
+  /**
    * Scroll by the delta distance or velocity takes the screen as a reference.
    *
    * @param delta_x horizontal offset in physical pixel.
@@ -1011,14 +1019,6 @@ public:
    */
   /*--ark web()--*/
   void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) override;
-
-  /**
-   * @brief get pendingsize status.
-   *
-   * @return the result of last pendingsize status.
-   */
-  /*--ark web()--*/
-  bool GetPendingSizeStatus() override;
 
   /**
    * @brief ExecuteJavaScript with ashmem

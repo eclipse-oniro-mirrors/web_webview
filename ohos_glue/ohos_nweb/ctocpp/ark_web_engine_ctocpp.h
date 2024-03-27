@@ -72,6 +72,10 @@ public:
                         const ArkWebStringMap &additional_http_headers,
                         const ArkWebString &cache_key,
                         const uint32_t &cache_valid_time) override;
+
+  void SetRenderProcessMode(int32_t mode) override;
+
+  int32_t GetRenderProcessMode() override;
 };
 
 } // namespace OHOS::ArkWeb

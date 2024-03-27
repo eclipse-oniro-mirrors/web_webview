@@ -148,6 +148,11 @@ enum class NestedScrollMode : int32_t {
     PARALLEL = 3,
 };
 
+enum class RenderProcessMode : int32_t {
+    SINGLE_MODE = 0,
+    MULTIPLE_MODE = 1,
+};
+
 class NWebTouchPointInfo {
     public:
     virtual ~NWebTouchPointInfo() = default;
@@ -1128,6 +1133,14 @@ public:
      */
     /*--ark web()--*/
     virtual std::string GetLastJavascriptProxyCallingFrameUrl() = 0;
+
+    /**
+     * @brief get pendingsize status.
+     *
+     * @return the result of last pendingsize status.
+     */
+    /*--ark web()--*/
+    virtual bool GetPendingSizeStatus() = 0;
 
     /**
      * Scroll by the delta distance or velocity takes the screen as a reference.
