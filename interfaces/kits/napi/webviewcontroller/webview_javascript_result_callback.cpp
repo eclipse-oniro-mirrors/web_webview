@@ -28,6 +28,7 @@
 #define MAX_FLOWBUF_DATA_SIZE 52428800 /* 50MB*/
 #define MAX_ENTRIES 10
 #define HEADER_SIZE (MAX_ENTRIES * 8)  /* 10 * (int position + int length) */
+#define INDEX_SIZE 2
 
 namespace OHOS::NWeb {
 namespace {
@@ -964,7 +965,7 @@ char* WebviewJavaScriptResultCallBack::FlowbufStrAtIndex(void* mem, int flowbuf_
         return nullptr;
     }
 
-    int* entry = header + (flowbuf_index * 2);
+    int* entry = header + (flowbuf_index * INDEX_SIZE);
     if (*(entry + 1) == 0) { // Check if length is 0, indicating unused entry
         *arg_index = -1;
         return nullptr;
@@ -972,10 +973,10 @@ char* WebviewJavaScriptResultCallBack::FlowbufStrAtIndex(void* mem, int flowbuf_
 
     int i = 0;
     for (i = 0; i < flowbuf_index; i++) {
-        offset += *(header + (i * 2) + 1);
+        offset += *(header + (i * INDEX_SIZE) + 1);
     }
     
-    *str_len = *(header + (i * 2) + 1) - 1;
+    *str_len = *(header + (i * INDEX_SIZE) + 1) - 1;
 
     *arg_index = *entry;
 
@@ -990,7 +991,10 @@ bool WebviewJavaScriptResultCallBack::ConstructArgv(void* ashmem,
     std::shared_ptr<JavaScriptOb> jsObj,
     int32_t routingId)
 {
-    int arg_index = -1, curr_index = 0, flowbuf_index = 0, str_len = 0;
+    int arg_index = -1;
+    int curr_index = 0;
+    int flowbuf_index = 0;
+    int str_len = 0;
     char* flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
     flowbuf_index++;
     while (arg_index == curr_index) {
