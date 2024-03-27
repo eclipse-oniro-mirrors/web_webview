@@ -15,11 +15,19 @@
 
 #include "webview_javascript_result_callback.h"
 
+#include <sys/mman.h>
+#include <unistd.h>
+
 #include "core/common/container_scope.h"
 #include "napi_parse_utils.h"
 #include "native_engine/native_engine.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
+
+#define MAX_FLOWBUF_DATA_SIZE 52428800 /* 50MB*/
+#define MAX_ENTRIES 10
+#define HEADER_SIZE (MAX_ENTRIES * 8)  /* 10 * (int position + int length) */
 
 namespace OHOS::NWeb {
 namespace {
@@ -942,6 +950,214 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     if (pthread_self() == engine->GetTid()) {
         return GetJavaScriptResultSelf(args, method, objName, routingId, objectId);
     } else {
+        WVLOG_D("get javaScript result, not in js thread, post task to js thread");
+        return PostGetJavaScriptResultToJsThread(args, method, objName, routingId, objectId);
+    }
+}
+
+char* WebviewJavaScriptResultCallBack::FlowbufStrAtIndex(void* mem, int flowbuf_index, int* arg_index, int* str_len) {
+    int* header = static_cast<int*>(mem); // Cast the memory block to int* for easier access
+    int offset = 0;
+
+    if (flowbuf_index >=  MAX_ENTRIES) {
+        *arg_index = -1;
+        return nullptr;
+    }
+
+    int* entry = header + (flowbuf_index * 2);
+    if (*(entry + 1) == 0) { // Check if length is 0, indicating unused entry
+        *arg_index = -1;
+        return nullptr;
+    }
+
+    int i = 0;
+    for (i = 0; i < flowbuf_index; i++) {
+        offset += *(header + (i * 2) + 1);
+    }
+    
+    *str_len = *(header + (i * 2) + 1) - 1;
+
+    *arg_index = *entry;
+
+    char* dataSegment = static_cast<char*>(mem) + HEADER_SIZE;
+    char* currentString = dataSegment + offset;
+    return currentString;
+}
+
+bool WebviewJavaScriptResultCallBack::ConstructArgv(void* ashmem,
+    std::vector<std::shared_ptr<NWebValue>> args,
+    std::vector<napi_value>& argv,
+    std::shared_ptr<JavaScriptOb> jsObj,
+    int32_t routingId)
+{
+    int arg_index = -1, curr_index = 0, flowbuf_index = 0, str_len = 0;
+    char* flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
+    flowbuf_index++;
+    while (arg_index == curr_index) {
+        napi_value napiValue = nullptr;
+        napi_status s = napi_ok;
+        s = napi_create_string_utf8(jsObj->GetEnv(), flowbuf_str, str_len, &napiValue);
+        if (s != napi_ok) {
+            WVLOG_E("ParseBasicTypeNwebValue2NapiValue napi api call fail");
+            return false;
+        }
+        argv.push_back(napiValue);
+        curr_index ++;
+        flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index , &arg_index, &str_len);
+        flowbuf_index++;
+    }
+
+    for (std::shared_ptr<NWebValue> input : args) {
+        while (arg_index == curr_index) {
+            napi_value napiValue = nullptr;
+            napi_status s = napi_ok;
+            s = napi_create_string_utf8(jsObj->GetEnv(), flowbuf_str, str_len, &napiValue);
+            if (s != napi_ok) {
+                WVLOG_E("ParseBasicTypeNwebValue2NapiValue napi api call fail");
+            }
+            argv.push_back(napiValue);
+            curr_index ++;
+            flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
+            flowbuf_index++;
+        }
+       
+       argv.push_back(ParseNwebValue2NapiValue(jsObj->GetEnv(), input, GetObjectMap(), GetNWebId(), routingId));
+       curr_index++;
+    }
+
+    while (arg_index == curr_index) {
+        napi_value napiValue = nullptr;
+        napi_status s = napi_ok;
+        s = napi_create_string_utf8(jsObj->GetEnv(), flowbuf_str, str_len, &napiValue);
+        if (s != napi_ok) {
+            WVLOG_E("ParseBasicTypeNwebValue2NapiValue napi api call fail");
+        }
+        argv.push_back(napiValue);
+        curr_index ++;
+        flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
+        flowbuf_index++;
+    }
+    return true;
+}
+
+std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfHelper(
+    std::shared_ptr<JavaScriptOb> jsObj,
+    const std::string& method,
+    int32_t routingId,
+    napi_handle_scope scope,
+    std::vector<napi_value> argv)
+{
+    std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
+     napi_value callback = jsObj->FindMethod(method);
+    if (!callback) {
+        WVLOG_E("WebviewJavaScriptResultCallBack::ExecuteGetJavaScriptResult callback null");
+    }
+    napi_value callResult = nullptr;
+    napi_call_function(jsObj->GetEnv(), jsObj->GetValue(), callback, argv.size(), &argv[0], &callResult);
+    bool isObject = false;
+    std::vector<std::string> methodNameList;
+    methodNameList = ParseNapiValue2NwebValue(jsObj->GetEnv(), &callResult, ret, &isObject);
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(jsObj->GetEnv(), callResult, &valueType);
+    WVLOG_D("get javaScript result already in js thread end");
+    if (!isObject) {
+    	napi_close_handle_scope(jsObj->GetEnv(), scope);
+    	return ret;
+    }
+    JavaScriptOb::ObjectID returnedObjectId;
+    if (FindObjectIdInJsTd(jsObj->GetEnv(), callResult, &returnedObjectId)) {
+        FindObject(returnedObjectId)->AddHolder(routingId);
+    } else {
+        returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, routingId);
+    }
+    SetUpAnnotateMethods(returnedObjectId, methodNameList);
+    if (valueType == napi_function) {
+        WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResultSelf type is function");
+           ret = std::make_shared<NWebValue>();
+    } else {
+        WVLOG_D("WebviewJavaScriptResultCallBack::GetJavaScriptResultSelf type is object");
+        std::string bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
+        ret = std::make_shared<NWebValue>(bin.c_str(), bin.size());
+    }
+    napi_close_handle_scope(jsObj->GetEnv(), scope);
+    return ret;
+}
+
+std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfFlowbuf(
+    std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName, int fd,
+    int32_t routingId, int32_t objectId)
+{	
+    std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(jsObj->GetEnv(), &scope);
+    if (scope == nullptr) {
+        return ret;
+    }
+    auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+    if (!flowbufferAdapter) {
+        return ret;
+    }
+    auto ashmem = flowbufferAdapter->CreateAshmemWithFd(fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
+    if (!ashmem) {
+        return ret;
+    }
+    
+    std::vector<napi_value> argv = {};
+    if(!ConstructArgv(ashmem, args, argv, jsObj, routingId)) {
+    	return ret;
+    }
+    close(fd);
+    
+    ret = GetJavaScriptResultSelfHelper(jsObj, method, routingId, scope, argv);
+    return ret;
+}
+
+std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbuf(
+    std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName, int fd,
+    int32_t routingId, int32_t objectId)
+{
+    (void)objName; // to be compatible with older webcotroller, classname may be empty
+    WVLOG_D("GetJavaScriptResult method = %{public}s", method.c_str());
+    std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    if (!jsObj || !jsObj->HasMethod(method)) {
+        return ret;
+    }
+
+    auto engine = reinterpret_cast<NativeEngine*>(jsObj->GetEnv());
+    if (engine == nullptr) {
+        return ret;
+    }
+
+    if (pthread_self() == engine->GetTid()) {
+        return GetJavaScriptResultSelfFlowbuf(args, method, objName,fd, routingId, objectId);
+    } else {
+        auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+        if (!flowbufferAdapter) {
+            return ret;
+        }
+
+        auto ashmem = flowbufferAdapter->CreateAshmemWithFd(fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
+        if (!ashmem) {
+            return ret;
+        }
+
+        int arg_index = -1;
+        int flowbuf_index = 0;
+	int str_len = 0;
+        do {
+            char* flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
+            if(arg_index == -1){
+                break;
+            }
+            flowbuf_index++;
+            std::string str(flowbuf_str);
+            std::shared_ptr<NWebValue> insert_arg = std::make_shared<NWebValue>(str);
+            args.insert(args.begin() + arg_index, insert_arg);
+        } while (true);
+
+        close(fd);
         WVLOG_D("get javaScript result, not in js thread, post task to js thread");
         return PostGetJavaScriptResultToJsThread(args, method, objName, routingId, objectId);
     }

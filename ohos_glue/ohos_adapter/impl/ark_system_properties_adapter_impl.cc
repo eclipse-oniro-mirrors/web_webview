@@ -98,4 +98,9 @@ void ArkSystemPropertiesAdapterImpl::SetOOPGPUDisable()
 {
     real_.SetOOPGPUDisable();
 }
+
+int32_t ArkSystemPropertiesAdapterImpl::GetFlowBufMaxFd()
+{
+    return real_.GetFlowBufMaxFd();
+}
 } // namespace OHOS::ArkWeb
