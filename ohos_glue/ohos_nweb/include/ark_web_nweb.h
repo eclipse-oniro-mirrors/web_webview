@@ -1137,6 +1137,14 @@ public:
   virtual ArkWebString GetLastJavascriptProxyCallingFrameUrl() = 0;
 
   /**
+   * @brief Get pendingsize status.
+   *
+   * @return result of last pendingsize status.
+   */
+  /*--ark web()--*/
+  virtual bool GetPendingSizeStatus() = 0;
+
+  /**
    * @brief Scroll by the delta distance or velocity takes the screen as a reference.
    *
    * @param delta_x horizontal offset in physical pixel.
@@ -1146,14 +1154,6 @@ public:
    */
   /*--ark web()--*/
   virtual void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) = 0;
-
-  /**
-   * @brief Get pendingsize status.
-   *
-   * @return result of last pendingsize status.
-   */
-  /*--ark web()--*/
-  virtual bool GetPendingSizeStatus() = 0;
 
   /**
    * @brief ExecuteJavaScript with ashmem
