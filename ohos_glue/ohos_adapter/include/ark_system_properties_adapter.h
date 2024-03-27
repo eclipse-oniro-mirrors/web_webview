@@ -74,6 +74,9 @@ public:
 
     /*--web engine()--*/
     virtual void SetOOPGPUDisable() = 0;
+
+    /*--web engine()--*/
+    virtual int32_t GetFlowBufMaxFd() = 0;
 };
 
 } // namespace OHOS::ArkWeb

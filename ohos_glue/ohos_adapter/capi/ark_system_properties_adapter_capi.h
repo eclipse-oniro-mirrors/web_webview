@@ -59,6 +59,8 @@ typedef struct _ark_system_properties_adapter_t {
     bool(ARK_WEB_CALLBACK* get_oop_gpu_enable)(struct _ark_system_properties_adapter_t* self);
 
     void(ARK_WEB_CALLBACK* set_oop_gpu_disable)(struct _ark_system_properties_adapter_t* self);
+
+    int32_t (ARK_WEB_CALLBACK *get_flow_buf_max_fd)(struct _ark_system_properties_adapter_t* self);
 } ark_system_properties_adapter_t;
 
 #ifdef __cplusplus

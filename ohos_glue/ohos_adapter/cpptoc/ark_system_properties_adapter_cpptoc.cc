@@ -186,6 +186,17 @@ void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oop_gpu_disable(
   ArkSystemPropertiesAdapterCppToC::Get(self)->SetOOPGPUDisable();
 }
 
+int32_t ARK_WEB_CALLBACK ark_system_properties_adapter_get_flow_buf_max_fd(
+    struct _ark_system_properties_adapter_t* self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self,  0);
+
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetFlowBufMaxFd();
+}
+
+
 } // namespace
 
 ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC()
@@ -205,6 +216,7 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC()
     GetStruct()->get_site_isolation_mode = ark_system_properties_adapter_get_site_isolation_mode;
     GetStruct()->get_oop_gpu_enable = ark_system_properties_adapter_get_oop_gpu_enable;
     GetStruct()->set_oop_gpu_disable = ark_system_properties_adapter_set_oop_gpu_disable;
+    GetStruct()->get_flow_buf_max_fd = ark_system_properties_adapter_get_flow_buf_max_fd;
 }
 
 ArkSystemPropertiesAdapterCppToC::~ArkSystemPropertiesAdapterCppToC() {}

@@ -63,6 +63,8 @@ public:
     virtual bool GetOOPGPUEnable() = 0;
 
     virtual void SetOOPGPUDisable() = 0;
+
+    virtual int32_t GetFlowBufMaxFd() const = 0;
 };
 
 }  // namespace OHOS::NWeb

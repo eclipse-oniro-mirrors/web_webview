@@ -59,6 +59,8 @@ public:
 
     void SetOOPGPUDisable() override;
 
+    int32_t GetFlowBufMaxFd() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

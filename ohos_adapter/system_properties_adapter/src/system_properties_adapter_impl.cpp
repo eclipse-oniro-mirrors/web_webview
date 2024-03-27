@@ -167,4 +167,9 @@ void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
     }
     return;
 }
+
+int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd() const
+{
+    return OHOS::system::GetIntParameter("web.flowbuffer.maxfd", -1);
+}
 } // namespace OHOS::NWeb
