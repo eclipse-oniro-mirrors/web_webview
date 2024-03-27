@@ -369,6 +369,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
         DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
         DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
+        DECLARE_NAPI_FUNCTION("precompileJavaScript", NapiWebviewController::PrecompileJavaScript),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5025,6 +5026,59 @@ napi_value NapiWebviewController::GetRenderProcessMode(
     int32_t mode = static_cast<int32_t>(NWebHelper::Instance().GetRenderProcessMode());
     NAPI_CALL(env, napi_create_int32(env, mode, &result));
     return result;
+}
+
+napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = {0};
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_THREE) {
+        WVLOG_E("PrecompileJavaScript: args count is not allowed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("PrecompileJavaScript: init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    std::string url;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], url) || url.empty()) {
+        WVLOG_E("PrecompileJavaScript: the given url is not allowed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    std::string script;
+    bool parseResult = webviewController->ParseScriptContent(env, argv[INTEGER_ONE], script);
+    if (!parseResult) {
+        WVLOG_E("PrecompileJavaScript: the given script is not allowed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    auto cacheOptions = webviewController->ParseCacheOptions(env, argv[INTEGER_TWO]);
+
+    napi_deferred deferred = nullptr;
+    napi_value promise = nullptr;
+    napi_create_promise(env, &deferred, &promise);
+    if (promise && deferred) {
+        ErrCode code = webviewController->PrecompileJavaScriptPromise(
+            env, deferred, url, script, cacheOptions);
+        if (code != NO_ERROR) {
+            WVLOG_E("PrecompileJavaScript: failed to compile javascript.");
+            BusinessError::ThrowErrorByErrcode(env, code);
+            return promise;
+        }
+    }
+
+    return promise;
 }
 } // namespace NWeb
 } // namespace OHOS

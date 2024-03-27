@@ -296,11 +296,22 @@ public:
 
     ErrCode CloseCamera();
 
+    bool ParseScriptContent(napi_env env, napi_value value, std::string &script);
+
+    std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value);
+
+    ErrCode PrecompileJavaScriptPromise(napi_env env, napi_deferred deferred,
+        const std::string &url, const std::string &script,
+        std::shared_ptr<CacheOptions> cacheOptions);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
     bool GetRawFileUrl(const std::string &fileName,
         const std::string& bundleName, const std::string& moduleName, std::string &result);
+
+    bool ParseResponseHeaders(napi_env env, napi_value value,
+        std::map<std::string, std::string> &responseHeaders);
 
 public:
     static std::string customeSchemeCmdLine_;
