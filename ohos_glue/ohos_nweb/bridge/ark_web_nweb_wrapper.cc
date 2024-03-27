@@ -950,12 +950,12 @@ std::string ArkWebNWebWrapper::GetLastJavascriptProxyCallingFrameUrl() {
       ark_web_nweb_->GetLastJavascriptProxyCallingFrameUrl());
 }
 
-void ArkWebNWebWrapper::ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) {
-  ark_web_nweb_->ScrollByRefScreen(delta_x, delta_y, vx, vy);
-}
-
 bool ArkWebNWebWrapper::GetPendingSizeStatus() {
   return ark_web_nweb_->GetPendingSizeStatus();
+}
+
+void ArkWebNWebWrapper::ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) {
+  ark_web_nweb_->ScrollByRefScreen(delta_x, delta_y, vx, vy);
 }
 
 void ArkWebNWebWrapper::ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
