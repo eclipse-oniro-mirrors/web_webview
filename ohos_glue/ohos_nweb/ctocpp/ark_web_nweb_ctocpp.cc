@@ -17,6 +17,7 @@
 #include "base/ctocpp/ark_web_ctocpp_macros.h"
 #include "ohos_nweb/cpptoc/ark_web_accessibility_event_callback_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_bool_value_callback_cpptoc.h"
+#include "ohos_nweb/cpptoc/ark_web_cache_options_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_download_callback_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_drag_event_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_find_callback_cpptoc.h"
@@ -1988,6 +1989,40 @@ void ArkWebNWebCToCpp::OnRenderToForeground() {
 
   // Execute
   return _struct->on_render_to_foreground(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::PrecompileJavaScript(
+    const ArkWebString &url, const ArkWebString &script,
+    ArkWebRefPtr<ArkWebCacheOptions> &cacheOptions,
+    ArkWebRefPtr<ArkWebMessageValueCallback> callback) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, precompile_java_script, );
+
+  // Translate param: cacheOptions; type: refptr_diff_byref
+  ark_web_cache_options_t *cacheOptionsStruct = NULL;
+  if (cacheOptions.get()) {
+    cacheOptionsStruct = ArkWebCacheOptionsCppToC::Invert(cacheOptions);
+  }
+  ark_web_cache_options_t *cacheOptionsOrig = cacheOptionsStruct;
+
+  // Execute
+  _struct->precompile_java_script(
+      _struct, &url, &script, &cacheOptionsStruct,
+      ArkWebMessageValueCallbackCppToC::Invert(callback));
+
+  // Restore param:cacheOptions; type: refptr_diff_byref
+  if (cacheOptionsStruct) {
+    if (cacheOptionsStruct != cacheOptionsOrig) {
+      cacheOptions = ArkWebCacheOptionsCppToC::Revert(cacheOptionsStruct);
+    }
+  } else {
+    cacheOptions = nullptr;
+  }
 }
 
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {

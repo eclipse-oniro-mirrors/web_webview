@@ -365,6 +365,11 @@ public:
   void OnRenderToBackground() override;
 
   void OnRenderToForeground() override;
+
+  void PrecompileJavaScript(
+      const ArkWebString &url, const ArkWebString &script,
+      ArkWebRefPtr<ArkWebCacheOptions> &cacheOptions,
+      ArkWebRefPtr<ArkWebMessageValueCallback> callback) override;
 };
 
 } // namespace OHOS::ArkWeb
