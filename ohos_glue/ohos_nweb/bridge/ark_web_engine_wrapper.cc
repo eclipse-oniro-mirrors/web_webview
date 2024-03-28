@@ -200,4 +200,12 @@ ArkWebRenderProcessMode ArkWebEngineWrapper::GetRenderProcessMode() {
   return static_cast<ArkWebRenderProcessMode>(
       ark_web_engine_->GetRenderProcessMode());
 }
+
+void ArkWebEngineWrapper::WarmupServiceWorker(const std::string &url {
+  ArkWebString stUrl = ArkWebStringClassToStruct(url);
+
+  ark_web_engine_->WarmupServiceWorker(stUrl);
+
+  ArkWebStringStructRelease(stUrl);
+}
 } // namespace OHOS::ArkWeb

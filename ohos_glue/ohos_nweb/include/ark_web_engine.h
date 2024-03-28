@@ -96,6 +96,9 @@ public:
 
   /*--ark web()--*/
   virtual int32_t GetRenderProcessMode() = 0;                       
+
+  /*--ark web()--*/
+  virtual void WarmupServiceWorker(const ArkWebString &url) = 0;
 };
 
 } // namespace OHOS::ArkWeb
