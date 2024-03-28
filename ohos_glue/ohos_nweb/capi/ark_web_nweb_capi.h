@@ -478,6 +478,9 @@ typedef struct _ark_web_nweb_t {
       struct _ark_web_nweb_t *self, const ArkWebString *url,
       const ArkWebString *script, ark_web_cache_options_t **cacheOptions,
       ark_web_message_value_callback_t *callback);
+
+  void(ARK_WEB_CALLBACK *drag_resize)(struct _ark_web_nweb_t *self, uint32_t width,
+                                 uint32_t height, uint32_t pre_height, uint32_t pre_width);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus
