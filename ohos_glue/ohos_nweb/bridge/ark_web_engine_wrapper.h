@@ -73,6 +73,8 @@ public:
 
   ArkWebRenderProcessMode GetRenderProcessMode() override;
 
+  void WarmupServiceWorker(cosnt std::string &url) override;
+
 private:
   ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };

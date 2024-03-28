@@ -332,6 +332,19 @@ int32_t ArkWebEngineCToCpp::GetRenderProcessMode() {
   return _struct->get_render_process_mode(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::WarmupServiceWorker(const ArkWebString &url) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, warmup_service_worker, );
+
+  // Execute
+  _struct->warmup_service_worker(_struct, &url);
+}
+
 ArkWebEngineCToCpp::ArkWebEngineCToCpp() {
 }
 

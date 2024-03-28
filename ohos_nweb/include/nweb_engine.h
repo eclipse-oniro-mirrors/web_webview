@@ -73,6 +73,8 @@ public:
   virtual void SetRenderProcessMode(RenderProcessMode mode) = 0;
 
   virtual RenderProcessMode GetRenderProcessMode() = 0;
+
+  virtual void WarmupServiceWorker(const std::string &url);
 };
 
 } // namespace OHOS::NWeb

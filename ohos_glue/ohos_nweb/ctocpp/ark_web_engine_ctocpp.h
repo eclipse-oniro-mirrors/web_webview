@@ -76,6 +76,8 @@ public:
   void SetRenderProcessMode(int32_t mode) override;
 
   int32_t GetRenderProcessMode() override;
+
+  void WarmupServiceWorker(const ArkWebString &url) override;
 };
 
 } // namespace OHOS::ArkWeb
