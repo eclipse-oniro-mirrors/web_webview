@@ -22,7 +22,6 @@ ohos_shared_library("ohos_base_glue_source") {
   branch_protector_ret = "pac_ret"
   branch_protector_frt = "bti"
 
-  defines = [ "OHOS_GLUE_DEBUG" ]
   if (target_cpu == "arm64") {
     defines += [ "webview_arm64" ]
   } else if (target_cpu == "arm") {
@@ -52,8 +51,6 @@ ohos_shared_library("ohos_base_glue_source") {
 ohos_shared_library("ohos_nweb_glue_source") {
   branch_protector_ret = "pac_ret"
   branch_protector_frt = "bti"
-
-  defines = [ "OHOS_GLUE_DEBUG" ]
 
   configs = [ ":ohos_glue_config" ]
 
