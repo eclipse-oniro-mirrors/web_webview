@@ -981,11 +981,15 @@ void ArkWebNWebWrapper::PrecompileJavaScript(const std::string &url,
                                              const std::string &script,
                                              std::shared_ptr<OHOS::NWeb::CacheOptions> &cacheOptions,
                                              std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) {
-  ArkWebRefPtr<ArkWebCacheOptions> options = new ArkWebCacheOptionsImpl(cacheOptions);
-  ark_web_nweb_->PrecompileJavaScript(
-      ArkWebStringClassToStruct(url),
-      ArkWebStringClassToStruct(script),
-      options,
-      new ArkWebMessageValueCallbackImpl(callback));
+    ArkWebString ark_url = ArkWebStringClassToStruct(url);
+    ArkWebString ark_script = ArkWebStringClassToStruct(script);
+    ArkWebRefPtr<ArkWebCacheOptions> options = new ArkWebCacheOptionsImpl(cacheOptions);
+    ark_web_nweb_->PrecompileJavaScript(
+        ark_url,
+        ark_script,
+        options,
+        new ArkWebMessageValueCallbackImpl(callback));
+    ArkWebStringStructRelease(ark_url);
+    ArkWebStringStructRelease(ark_script);
 }
 } // namespace OHOS::ArkWeb
