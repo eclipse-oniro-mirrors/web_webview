@@ -62,6 +62,18 @@ void ark_res_sched_client_adapter_report_render_process_status(int32_t statusAda
     ArkResSchedClientAdapter::ReportRenderProcessStatus(statusAdapter, pid);
 }
 
+bool ark_res_sched_client_adapter_report_screen_capture(int32_t statusAdapter, pid_t pid)
+{
+    // Execute
+    return ArkResSchedClientAdapter::ReportScreenCapture(statusAdapter, pid);
+}
+
+bool ark_res_sched_client_adapter_report_video_playing(int32_t statusAdapter, pid_t pid)
+{
+    // Execute
+    return ArkResSchedClientAdapter::ReportVideoPlaying(statusAdapter, pid);
+}
+
 ArkResSchedClientAdapterCppToC::ArkResSchedClientAdapterCppToC() {}
 
 ArkResSchedClientAdapterCppToC::~ArkResSchedClientAdapterCppToC() {}
@@ -126,6 +138,20 @@ ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_render_process_status_st
     ARK_WEB_CPPTOC_DV_LOG();
 
     OHOS::ArkWeb::ark_res_sched_client_adapter_report_render_process_status(statusAdapter, pid);
+}
+
+ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_screen_capture_static(int32_t statusAdapter, pid_t pid)
+{
+    ARK_WEB_CPPTOC_DV_LOG();
+
+    return OHOS::ArkWeb::ark_res_sched_client_adapter_report_screen_capture(statusAdapter, pid);
+}
+
+ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_video_playing_static(int32_t statusAdapter, pid_t pid)
+{
+    ARK_WEB_CPPTOC_DV_LOG();
+
+    return OHOS::ArkWeb::ark_res_sched_client_adapter_report_video_playing(statusAdapter, pid);
 }
 #ifdef __cplusplus
 }

@@ -39,6 +39,8 @@ const std::unordered_map<ResSchedTypeAdapter, uint32_t> RES_TYPE_MAP = {
     { ResSchedTypeAdapter::RES_TYPE_WEB_STATUS_CHANGE, ResType::RES_TYPE_REPORT_WINDOW_STATE },
     { ResSchedTypeAdapter::RES_TYPE_WEB_SCENE, ResType::RES_TYPE_REPORT_SCENE_SCHED },
     { ResSchedTypeAdapter::RES_TYPE_WEBVIEW_AUDIO_STATUS_CHANGE, ResType::RES_TYPE_WEBVIEW_AUDIO_STATUS_CHANGE },
+    { ResSchedTypeAdapter::RES_TYPE_WEBVIEW_SCREEN_CAPTURE, ResType::RES_TYPE_WEBVIEW_SCREEN_CAPTURE },
+    { ResSchedTypeAdapter::RES_TYPE_WEBVIEW_VIDEO_STATUS_CHANGE, ResType::RES_TYPE_WEBVIEW_VIDEO_STATUS_CHANGE },
 };
 
 const std::unordered_map<ResSchedStatusAdapter, int64_t> RES_STATUS_MAP = {
@@ -50,6 +52,10 @@ const std::unordered_map<ResSchedStatusAdapter, int64_t> RES_STATUS_MAP = {
     { ResSchedStatusAdapter::WEB_SCENE_EXIT, ResType::SceneControl::SCENE_OUT },
     { ResSchedStatusAdapter::AUDIO_STATUS_START, ResType::AudioStatus::START },
     { ResSchedStatusAdapter::AUDIO_STATUS_STOP, ResType::AudioStatus::STOP },
+    { ResSchedStatusAdapter::SCREEN_CAPTURE_START, ResType::WebScreenCapture::WEB_SCREEN_CAPTURE_START },
+    { ResSchedStatusAdapter::SCREEN_CAPTURE_STOP, ResType::WebScreenCapture::WEB_SCREEN_CAPTURE_STOP },
+    { ResSchedStatusAdapter::VIDEO_PLAYING_START, ResType::WebVideoState::WEB_VIDEO_PLAYING_START },
+    { ResSchedStatusAdapter::VIDEO_PLAYING_STOP, ResType::WebVideoState::WEB_VIDEO_PLAYING_STOP },
 };
 
 const std::unordered_map<ResSchedRoleAdapter, ResType::ThreadRole> RES_ROLE_MAP = {
@@ -281,7 +287,7 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
 
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
-            "nwebId: %{public}d, sn: %{public}d", 
+            "nwebId: %{public}d, sn: %{public}d",
             static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, nwebId, serial_num);
     serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
 
@@ -347,7 +353,7 @@ void ResSchedClientAdapter::ReportRenderProcessStatus(ResSchedStatusAdapter stat
     }
     g_lastRenderPid = pid;
     g_lastRenderStatus = status;
-    
+
     auto appMgrClient = DelayedSingleton<AppExecFwk::AppMgrClient>::GetInstance();
     if (appMgrClient == nullptr) {
         WVLOG_E("ReportRenderProcessStatus get appMgrClient failed");
@@ -355,5 +361,43 @@ void ResSchedClientAdapter::ReportRenderProcessStatus(ResSchedStatusAdapter stat
     }
     appMgrClient->UpdateRenderState(pid, status);
     WVLOG_D("ReportRenderProcessStatus status: %{public}d, pid: %{public}d", static_cast<int32_t>(status), pid);
+}
+
+bool ResSchedClientAdapter::ReportScreenCapture(ResSchedStatusAdapter statusAdapter, pid_t pid)
+{
+    static uint32_t resType = ResType::RES_TYPE_WEBVIEW_SCREEN_CAPTURE;
+
+    int64_t status;
+    if (!ConvertStatus(statusAdapter, status)) {
+        return false;
+    }
+
+    uid_t uid = getuid();
+    std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(uid) },
+        { PID, std::to_string(pid) } };
+    WVLOG_D("ReportScreenCapture status: %{public}d, uid: %{public}d, pid: %{public}d",
+        static_cast<int32_t>(status), uid, pid);
+    ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
+
+    return true;
+}
+
+bool ResSchedClientAdapter::ReportVideoPlaying(ResSchedStatusAdapter statusAdapter, pid_t pid)
+{
+    static uint32_t resType = ResType::RES_TYPE_WEBVIEW_VIDEO_STATUS_CHANGE;
+
+    int64_t status;
+    if (!ConvertStatus(statusAdapter, status)) {
+        return false;
+    }
+
+    uid_t uid = getuid();
+    std::unordered_map<std::string, std::string> mapPayload { { UID, std::to_string(uid) },
+        { PID, std::to_string(pid) } };
+    WVLOG_D("ReportVideoPlaying status: %{public}d, uid: %{public}d, pid: %{public}d",
+        static_cast<int32_t>(status), uid, pid);
+    ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
+
+    return true;
 }
 } // namespace OHOS::NWeb
