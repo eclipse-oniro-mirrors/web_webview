@@ -45,6 +45,7 @@ WebDownloadItem::WebDownloadItem(napi_env env)
     this->receivedBytes = 0;
     this->lastErrorCode = 0;
     this->webDownloadId = 0;
+    this->nwebId = 0;
 }
 
 WebDownloadItem::WebDownloadItem(napi_env env, NWebDownloadItem *downloadItem)
@@ -82,6 +83,7 @@ WebDownloadItem::WebDownloadItem(napi_env env, NWebDownloadItem *downloadItem)
     this->receivedSlices = std::string(WebDownloadItem_ReceivedSlices(downloadItem));
     this->etag = std::string(WebDownloadItem_ETag(downloadItem));
     this->mimeType = std::string(WebDownloadItem_MimeType(downloadItem));
+    this->nwebId = WebDownloadItem_NWebId(downloadItem);
     env_ = env;
 }
 
