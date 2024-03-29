@@ -52,6 +52,12 @@ public:
 
     /*--web engine()--*/
     static void ReportRenderProcessStatus(int32_t statusAdapter, pid_t pid);
+
+    /*--web engine()--*/
+    static bool ReportScreenCapture(int32_t statusAdapter, pid_t pid);
+
+    /*--web engine()--*/
+    static bool ReportVideoPlaying(int32_t statusAdapter, pid_t pid);
 };
 } // namespace OHOS::ArkWeb
 
