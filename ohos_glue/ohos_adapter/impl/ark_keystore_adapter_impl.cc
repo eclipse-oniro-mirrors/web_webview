@@ -34,7 +34,7 @@ ArkWebString ArkKeystoreAdapterImpl::DecryptKey(const ArkWebString& alias, const
     std::string s_alias = ArkWebStringStructToClass(alias);
     std::string s_encryptedData = ArkWebStringStructToClass(encryptedData);
 
-    std::string result = real_.EncryptKey(s_alias, s_encryptedData);
+    std::string result = real_.DecryptKey(s_alias, s_encryptedData);
 
     return ArkWebStringClassToStruct(result);
 }
