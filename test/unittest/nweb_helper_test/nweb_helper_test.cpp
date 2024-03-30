@@ -277,6 +277,9 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadNWebSDK_006, TestSize.Level1)
     WebDownloader_ResumeDownloadStatic(downloadItem);
     WebDownloader_StartDownload(1, "test_web");
     WebDownload_Continue(nullptr, "test_web");
+    WebDownload_CancelBeforeDownload(nullptr);
+    WebDownload_PauseBeforeDownload(nullptr);
+    WebDownload_ResumeBeforeDownload(nullptr);
     WebDownload_Cancel(nullptr);
     WebDownload_Pause(nullptr);
     WebDownload_Resume(nullptr);
