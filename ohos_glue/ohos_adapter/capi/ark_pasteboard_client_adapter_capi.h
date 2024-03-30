@@ -166,7 +166,7 @@ ARK_WEB_EXPORT ark_paste_data_record_adapter_t *
 ark_paste_data_record_adapter_new_record1(const ArkWebString *mimeType);
 ARK_WEB_EXPORT ark_paste_data_record_adapter_t *
 ark_paste_data_record_adapter_new_record2(const ArkWebString *mimeType,
-                                         void *htmlText, void *plainText);
+                                          void *htmlText, void *plainText);
 
 typedef struct _ark_paste_data_adapter_t {
   /**
