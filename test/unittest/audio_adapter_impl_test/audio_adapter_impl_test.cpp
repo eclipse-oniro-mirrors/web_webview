@@ -60,6 +60,171 @@ public:
     void TearDown();
 };
 
+class AudioRendererOptionsAdapterMock : public AudioRendererOptionsAdapter {
+public:
+    AudioRendererOptionsAdapterMock() = default;
+
+    AudioAdapterSamplingRate GetSamplingRate() override
+    {
+        return samplingRate;
+    }
+
+    AudioAdapterEncodingType GetEncodingType() override
+    {
+        return encoding;
+    }
+
+    AudioAdapterSampleFormat GetSampleFormat() override
+    {
+        return format;
+    }
+
+    AudioAdapterChannel GetChannel() override
+    {
+        return channels;
+    }
+
+    AudioAdapterContentType GetContentType() override
+    {
+        return contentType;
+    }
+
+    AudioAdapterStreamUsage GetStreamUsage() override
+    {
+        return streamUsage;
+    }
+
+    int32_t GetRenderFlags() override
+    {
+        return rendererFlags;
+    }
+
+    AudioAdapterSamplingRate samplingRate;
+    AudioAdapterEncodingType encoding;
+    AudioAdapterSampleFormat format;
+    AudioAdapterChannel channels;
+    AudioAdapterContentType contentType;
+    AudioAdapterStreamUsage streamUsage;
+    int32_t rendererFlags;
+};
+
+class AudioInterruptAdapterMock : public AudioInterruptAdapter {
+public:
+    AudioInterruptAdapterMock() = default;
+
+    AudioAdapterStreamUsage GetStreamUsage() override
+    {
+        return streamUsage;
+    }
+
+    AudioAdapterContentType GetContentType() override
+    {
+        return contentType;
+    }
+
+    AudioAdapterStreamType GetStreamType() override
+    {
+        return streamType;
+    }
+
+    uint32_t GetSessionID() override
+    {
+        return sessionID;
+    }
+
+    bool GetPauseWhenDucked() override
+    {
+        return pauseWhenDucked;
+    }
+
+    AudioAdapterStreamUsage streamUsage;
+    AudioAdapterContentType contentType;
+    AudioAdapterStreamType streamType;
+    uint32_t sessionID;
+    bool pauseWhenDucked;
+};
+
+class AudioCapturerOptionsAdapterMock : public AudioCapturerOptionsAdapter {
+public:
+    AudioCapturerOptionsAdapterMock() = default;
+
+    AudioAdapterSamplingRate GetSamplingRate() override
+    {
+        return samplingRate;
+    }
+
+    AudioAdapterEncodingType GetEncoding() override
+    {
+        return encoding;
+    }
+
+    AudioAdapterSampleFormat GetSampleFormat() override
+    {
+        return format;
+    }
+
+    AudioAdapterChannel GetChannels() override
+    {
+        return channels;
+    }
+
+    AudioAdapterSourceType GetSourceType() override
+    {
+        return sourceType;
+    }
+
+    int32_t GetCapturerFlags() override
+    {
+        return capturerFlags;
+    }
+
+    AudioAdapterSamplingRate samplingRate;
+    AudioAdapterEncodingType encoding;
+    AudioAdapterSampleFormat format;
+    AudioAdapterChannel channels;
+    AudioAdapterSourceType sourceType;
+    int32_t capturerFlags;
+};
+
+class BufferDescAdapterMock : public BufferDescAdapter {
+public:
+    BufferDescAdapterMock() = default;
+
+    uint8_t* GetBuffer() override
+    {
+        return buffer;
+    }
+
+    size_t GetBufLength() override
+    {
+        return bufLength;
+    }
+
+    size_t GetDataLength() override
+    {
+        return dataLength;
+    }
+
+    void SetBuffer(uint8_t* buf) override
+    {
+        buffer = buf;
+    }
+
+    void SetBufLength(size_t bufLen) override
+    {
+        bufLength = bufLen;
+    }
+
+    void SetDataLength(size_t dataLen) override
+    {
+        dataLength = dataLen;
+    }
+
+    uint8_t* buffer;
+    size_t bufLength;
+    size_t dataLength;
+};
+
 class ApplicationContextMock : public ApplicationContext {
 public:
     MOCK_METHOD0(GetCacheDir, std::string());
@@ -147,14 +312,16 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
 
     g_audioRender = std::make_shared<AudioRendererAdapterImpl>();
     ASSERT_NE(g_audioRender, nullptr);
-    AudioAdapterRendererOptions rendererOptions;
-    rendererOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
-    rendererOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    rendererOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    rendererOptions.channels = AudioAdapterChannel::STEREO;
-    rendererOptions.contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-    rendererOptions.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
-    rendererOptions.rendererFlags = 0;
+
+    std::shared_ptr<AudioRendererOptionsAdapterMock> rendererOptions =
+        std::make_shared<AudioRendererOptionsAdapterMock>();
+    rendererOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
+    rendererOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    rendererOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    rendererOptions->channels = AudioAdapterChannel::STEREO;
+    rendererOptions->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
+    rendererOptions->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
+    rendererOptions->rendererFlags = 0;
     int32_t retNum = g_audioRender->Create(rendererOptions, CACHE_PATH);
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
@@ -347,8 +514,10 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
     ret = AudioSystemManagerAdapterImpl::GetInstance().HasAudioInputDevices();
     EXPECT_EQ(ret, TRUE_OK);
 
-    AudioAdapterDeviceDesc result = AudioSystemManagerAdapterImpl::GetInstance().GetDefaultOutputDevice();
-    EXPECT_NE(result.deviceId, -1);
+    std::shared_ptr<AudioDeviceDescAdapter> result =
+        AudioSystemManagerAdapterImpl::GetInstance().GetDefaultOutputDevice();
+    EXPECT_NE(result, nullptr);
+    EXPECT_NE(result->GetDeviceId(), -1);
     int32_t status = AudioSystemManagerAdapterImpl::GetInstance().SetDeviceChangeCallback(nullptr);
     EXPECT_NE(status, 0);
     auto mock = std::make_shared<AudioManagerDeviceChangeCallbackAdapterMock>();
@@ -377,17 +546,18 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
  */
 HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_009, TestSize.Level1)
 {
-    AudioAdapterInterrupt interrupt;
-    interrupt.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
-    interrupt.contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-    interrupt.streamType = AudioAdapterStreamType::STREAM_DEFAULT;
+    std::shared_ptr<AudioInterruptAdapterMock> interrupt = std::make_shared<AudioInterruptAdapterMock>();
+    EXPECT_NE(interrupt, nullptr);
+    interrupt->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
+    interrupt->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
+    interrupt->streamType = AudioAdapterStreamType::STREAM_DEFAULT;
 
     int32_t ret = AudioSystemManagerAdapterImpl::GetInstance().RequestAudioFocus(interrupt);
     EXPECT_NE(ret, RESULT_OK);
     ret = AudioSystemManagerAdapterImpl::GetInstance().AbandonAudioFocus(interrupt);
     EXPECT_NE(ret, RESULT_OK);
 
-    interrupt.streamType = AudioAdapterStreamType::STREAM_MUSIC;
+    interrupt->streamType = AudioAdapterStreamType::STREAM_MUSIC;
     ret = AudioSystemManagerAdapterImpl::GetInstance().RequestAudioFocus(interrupt);
     EXPECT_EQ(ret, RESULT_OK);
 
@@ -416,15 +586,12 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_010, TestSi
     AudioSystemManagerAdapterImpl::GetInstance().GetDevices(AdapterDeviceFlag::OUTPUT_DEVICES_FLAG);
     AudioSystemManagerAdapterImpl::GetInstance().GetDevices(static_cast<AdapterDeviceFlag>(-1));
 
-    AudioAdapterDeviceDesc desc;
-    desc.deviceId = -1;
-    desc.deviceName = std::string();
-    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, true);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDeviceById(-1, true);
     EXPECT_NE(ret, RESULT_OK);
-    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, false);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDeviceById(-1, false);
     EXPECT_NE(ret, RESULT_OK);
-    desc.deviceId = ADAPTER_AUDIO_UNDEFINED_DEVICEID;
-    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDevice(desc, false);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioDeviceById(
+        (int32_t)ADAPTER_AUDIO_UNDEFINED_DEVICEID, false);
     EXPECT_NE(ret, RESULT_OK);
 }
 
@@ -502,14 +669,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_013, TestSi
     g_audioRender = std::make_shared<AudioRendererAdapterImpl>();
     ASSERT_NE(g_audioRender, nullptr);
 
-    AudioAdapterRendererOptions rendererOptions;
-    rendererOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
-    rendererOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    rendererOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    rendererOptions.channels = AudioAdapterChannel::STEREO;
-    rendererOptions.contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-    rendererOptions.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
-    rendererOptions.rendererFlags = 0;
+    std::shared_ptr<AudioRendererOptionsAdapterMock> rendererOptions =
+        std::make_shared<AudioRendererOptionsAdapterMock>();
+    rendererOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
+    rendererOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    rendererOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    rendererOptions->channels = AudioAdapterChannel::STEREO;
+    rendererOptions->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
+    rendererOptions->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
+    rendererOptions->rendererFlags = 0;
     int32_t retNum = g_audioRender->Create(rendererOptions);
     ASSERT_NE(retNum, AudioAdapterCode::AUDIO_OK);
 
@@ -559,14 +727,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_014, TestSi
     std::shared_ptr<AudioRendererAdapterImpl> audioRenderImpl = std::make_shared<AudioRendererAdapterImpl>();
     EXPECT_NE(audioRenderImpl, nullptr);
 
-    AudioAdapterRendererOptions rendererOptions;
-    rendererOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
-    rendererOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    rendererOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    rendererOptions.channels = AudioAdapterChannel::STEREO;
-    rendererOptions.contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-    rendererOptions.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
-    rendererOptions.rendererFlags = 0;
+    std::shared_ptr<AudioRendererOptionsAdapterMock> rendererOptions =
+        std::make_shared<AudioRendererOptionsAdapterMock>();
+    rendererOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
+    rendererOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    rendererOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    rendererOptions->channels = AudioAdapterChannel::STEREO;
+    rendererOptions->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
+    rendererOptions->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
+    rendererOptions->rendererFlags = 0;
     int32_t retNum = audioRenderImpl->Create(rendererOptions);
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
@@ -593,14 +762,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_015, TestSi
     std::shared_ptr<AudioRendererAdapterImpl> audioRenderImpl = std::make_shared<AudioRendererAdapterImpl>();
     EXPECT_NE(audioRenderImpl, nullptr);
 
-    AudioAdapterRendererOptions rendererOptions;
-    rendererOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
-    rendererOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    rendererOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    rendererOptions.channels = AudioAdapterChannel::STEREO;
-    rendererOptions.contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-    rendererOptions.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
-    rendererOptions.rendererFlags = 0;
+    std::shared_ptr<AudioRendererOptionsAdapterMock> rendererOptions =
+        std::make_shared<AudioRendererOptionsAdapterMock>();
+    rendererOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
+    rendererOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    rendererOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    rendererOptions->channels = AudioAdapterChannel::STEREO;
+    rendererOptions->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
+    rendererOptions->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
+    rendererOptions->rendererFlags = 0;
     int32_t retNum = audioRenderImpl->Create(rendererOptions);
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
@@ -660,13 +830,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_018, TestSi
     g_audioCapturer = std::make_shared<AudioCapturerAdapterImpl>();
     ASSERT_NE(g_audioCapturer, nullptr);
 
-    AudioAdapterCapturerOptions capturerOptions;
-    capturerOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_48000;
-    capturerOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    capturerOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    capturerOptions.channels = AudioAdapterChannel::STEREO;
-    capturerOptions.sourceType = AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
-    capturerOptions.capturerFlags = 0;
+    std::shared_ptr<AudioCapturerOptionsAdapterMock> capturerOptions =
+        std::make_shared<AudioCapturerOptionsAdapterMock>();
+    EXPECT_NE(capturerOptions, nullptr);
+    capturerOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_48000;
+    capturerOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    capturerOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    capturerOptions->channels = AudioAdapterChannel::STEREO;
+    capturerOptions->sourceType = AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
+    capturerOptions->capturerFlags = 0;
     int32_t retNum = g_audioCapturer->Create(capturerOptions, CACHE_PATH);
     ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
 
@@ -678,7 +850,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_018, TestSi
     bool ret = g_audioCapturer->Start();
     EXPECT_EQ(ret, TRUE_OK);
 
-    BufferDescAdapter bufferDesc;
+    std::shared_ptr<BufferDescAdapterMock> bufferDesc = std::make_shared<BufferDescAdapterMock>();
+    EXPECT_NE(bufferDesc, nullptr);
     retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
     EXPECT_EQ(retNum, 0);
 
@@ -717,7 +890,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_019, TestSi
     bool ret = g_audioCapturer->Start();
     EXPECT_NE(ret, TRUE_OK);
 
-    BufferDescAdapter bufferDesc;
+    std::shared_ptr<BufferDescAdapterMock> bufferDesc = std::make_shared<BufferDescAdapterMock>();
+    EXPECT_NE(bufferDesc, nullptr);
     retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
     EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
 
@@ -886,13 +1060,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_Create_026, TestSize.Level1)
 {
     auto audioCapturer = std::make_shared<AudioCapturerAdapterImpl>();
     ASSERT_NE(audioCapturer, nullptr);
-    AudioAdapterCapturerOptions capturerOptions;
-    capturerOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_48000;
-    capturerOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    capturerOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    capturerOptions.channels = AudioAdapterChannel::STEREO;
-    capturerOptions.sourceType = AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
-    capturerOptions.capturerFlags = 0;
+    std::shared_ptr<AudioCapturerOptionsAdapterMock> capturerOptions =
+        std::make_shared<AudioCapturerOptionsAdapterMock>();
+    EXPECT_NE(capturerOptions, nullptr);
+    capturerOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_48000;
+    capturerOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    capturerOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    capturerOptions->channels = AudioAdapterChannel::STEREO;
+    capturerOptions->sourceType = AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
+    capturerOptions->capturerFlags = 0;
     int32_t retNum = audioCapturer->Create(capturerOptions);
     ASSERT_NE(retNum, AudioAdapterCode::AUDIO_OK);
 }
@@ -909,10 +1085,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnDeviceChange_027, TestSize
     ASSERT_NE(mock, nullptr);
     auto callbackAdapter = std::make_shared<AudioManagerDeviceChangeCallbackAdapterImpl>(mock);
     ASSERT_NE(callbackAdapter, nullptr);
-    DeviceChangeAction deviceChangeAction = {
-        .type = DeviceChangeType::CONNECT,
-        .flag = DeviceFlag::NONE_DEVICES_FLAG
-    };
+    DeviceChangeAction deviceChangeAction = { .type = DeviceChangeType::CONNECT,
+        .flag = DeviceFlag::NONE_DEVICES_FLAG };
     callbackAdapter->OnDeviceChange(deviceChangeAction);
     callbackAdapter->cb_ = nullptr;
     callbackAdapter->OnDeviceChange(deviceChangeAction);

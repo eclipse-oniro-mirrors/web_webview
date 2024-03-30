@@ -13,11 +13,9 @@
  * limitations under the License.
  */
 
-#include "media_codec_list_adapter_impl.h"
-
 #include <unordered_map>
 
-#include "nweb_log.h"
+#include "media_codec_list_adapter_impl.h"
 
 namespace OHOS::NWeb {
 
@@ -27,9 +25,10 @@ MediaCodecListAdapterImpl& MediaCodecListAdapterImpl::GetInstance()
     return instance;
 }
 
-std::shared_ptr<CapabilityDataAdapter> MediaCodecListAdapterImpl::GetCodecCapability(const std::string& mime, const bool isEncoder)
+std::shared_ptr<CapabilityDataAdapter> MediaCodecListAdapterImpl::GetCodecCapability(
+    const std::string& mime, const bool isEncoder)
 {
-  return nullptr;
+    return nullptr;
 }
 
 } // namespace OHOS::NWeb
