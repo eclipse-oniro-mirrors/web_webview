@@ -13,50 +13,54 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_event_handler_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
-#include "ctocpp/ark_event_handler_fdlistener_adapter_ctocpp.h"
+#include "ohos_adapter/cpptoc/ark_event_handler_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/ctocpp/ark_event_handler_fdlistener_adapter_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-bool ARK_WEB_CALLBACK ark_event_handler_adapter_add_file_descriptor_listener(struct _ark_event_handler_adapter_t* self,
-    int32_t fileDescriptor, uint32_t events, ark_event_handler_fdlistener_adapter_t* listener)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK ark_event_handler_adapter_add_file_descriptor_listener(
+    struct _ark_event_handler_adapter_t *self, int32_t fileDescriptor,
+    uint32_t events, ark_event_handler_fdlistener_adapter_t *listener) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkEventHandlerAdapterCppToC::Get(self)->AddFileDescriptorListener(
-        fileDescriptor, events, ArkEventHandlerFDListenerAdapterCToCpp::Invert(listener));
+  // Execute
+  return ArkEventHandlerAdapterCppToC::Get(self)->AddFileDescriptorListener(
+      fileDescriptor, events,
+      ArkEventHandlerFDListenerAdapterCToCpp::Invert(listener));
 }
 
 void ARK_WEB_CALLBACK ark_event_handler_adapter_remove_file_descriptor_listener(
-    struct _ark_event_handler_adapter_t* self, int32_t fileDescriptor)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_event_handler_adapter_t *self, int32_t fileDescriptor) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkEventHandlerAdapterCppToC::Get(self)->RemoveFileDescriptorListener(fileDescriptor);
+  // Execute
+  ArkEventHandlerAdapterCppToC::Get(self)->RemoveFileDescriptorListener(
+      fileDescriptor);
 }
 
 } // namespace
 
-ArkEventHandlerAdapterCppToC::ArkEventHandlerAdapterCppToC()
-{
-    GetStruct()->add_file_descriptor_listener = ark_event_handler_adapter_add_file_descriptor_listener;
-    GetStruct()->remove_file_descriptor_listener = ark_event_handler_adapter_remove_file_descriptor_listener;
+ArkEventHandlerAdapterCppToC::ArkEventHandlerAdapterCppToC() {
+  GetStruct()->add_file_descriptor_listener =
+      ark_event_handler_adapter_add_file_descriptor_listener;
+  GetStruct()->remove_file_descriptor_listener =
+      ark_event_handler_adapter_remove_file_descriptor_listener;
 }
 
-ArkEventHandlerAdapterCppToC::~ArkEventHandlerAdapterCppToC() {}
+ArkEventHandlerAdapterCppToC::~ArkEventHandlerAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkEventHandlerAdapterCppToC, ArkEventHandlerAdapter,
-    ark_event_handler_adapter_t>::kBridgeType = ARK_EVENT_HANDLER_ADAPTER;
+template <>
+ArkWebBridgeType
+    ArkWebCppToCRefCounted<ArkEventHandlerAdapterCppToC, ArkEventHandlerAdapter,
+                           ark_event_handler_adapter_t>::kBridgeType =
+        ARK_EVENT_HANDLER_ADAPTER;
 
 } // namespace OHOS::ArkWeb

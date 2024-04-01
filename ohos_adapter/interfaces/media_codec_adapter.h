@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,28 +27,48 @@
 
 namespace OHOS::NWeb {
 
-enum class CodecCodeAdapter { OK = 0, ERROR = 1, RETRY = 2 };
+enum class CodecCodeAdapter : int32_t { OK = 0, ERROR = 1, RETRY = 2 };
 
-typedef struct CapabilityDataAdapterTag {
-    int32_t maxWidth;
-    int32_t maxHeight;
-    int32_t maxframeRate;
-} CapabilityDataAdapter;
+class CapabilityDataAdapter {
+public:
+    CapabilityDataAdapter() = default;
 
-typedef struct CodecFormatAdapterTag {
-    int32_t width;
-    int32_t height;
-} CodecFormatAdapter;
+    virtual ~CapabilityDataAdapter() = default;
+
+    virtual int32_t GetMaxWidth() = 0;
+
+    virtual int32_t GetMaxHeight() = 0;
+
+    virtual int32_t GetMaxframeRate() = 0;
+};
+
+class CodecFormatAdapter {
+public:
+    CodecFormatAdapter() = default;
+
+    virtual ~CodecFormatAdapter() = default;
+
+    virtual int32_t GetWidth() = 0;
+
+    virtual int32_t GetHeight() = 0;
+};
 
 enum class ErrorType : int32_t {
     CODEC_ERROR_INTERNAL,
     CODEC_ERROR_EXTEND_START = 0X10000,
 };
 
-struct BufferInfo {
-    int64_t presentationTimeUs = 0;
-    int32_t size = 0;
-    int32_t offset = 0;
+class BufferInfoAdapter {
+public:
+    BufferInfoAdapter() = default;
+
+    virtual ~BufferInfoAdapter() = default;
+
+    virtual int64_t GetPresentationTimeUs() = 0;
+
+    virtual int32_t GetSize() = 0;
+
+    virtual int32_t GetOffset() = 0;
 };
 
 enum class BufferFlag : uint32_t {
@@ -59,17 +79,30 @@ enum class BufferFlag : uint32_t {
     CODEC_BUFFER_FLAG_CODEC_DATA = 1 << 3,
 };
 
-struct OhosBuffer {
-    uint8_t* addr;
+class OhosBufferAdapter {
+public:
+    OhosBufferAdapter() = default;
 
-    uint32_t bufferSize;
+    virtual ~OhosBufferAdapter() = default;
+
+    virtual uint8_t* GetAddr() = 0;
+
+    virtual uint32_t GetBufferSize() = 0;
 };
 
-struct CodecConfigPara {
-    int32_t width;
-    int32_t height;
-    int64_t bitRate;
-    double frameRate;
+class CodecConfigParaAdapter {
+public:
+    CodecConfigParaAdapter() = default;
+
+    virtual ~CodecConfigParaAdapter() = default;
+
+    virtual int32_t GetWidth() = 0;
+
+    virtual int32_t GetHeight() = 0;
+
+    virtual int64_t GetBitRate() = 0;
+
+    virtual double GetFrameRate() = 0;
 };
 
 class CodecCallbackAdapter {
@@ -80,11 +113,12 @@ public:
 
     virtual void OnError(ErrorType errorType, int32_t errorCode) = 0;
 
-    virtual void OnStreamChanged(const CodecFormatAdapter& format) = 0;
+    virtual void OnStreamChanged(const std::shared_ptr<CodecFormatAdapter> format) = 0;
 
-    virtual void OnNeedInputData(uint32_t index, OhosBuffer buffer) = 0;
+    virtual void OnNeedInputData(uint32_t index, std::shared_ptr<OhosBufferAdapter> buffer) = 0;
 
-    virtual void OnNeedOutputData(uint32_t index, BufferInfo info, BufferFlag flag, OhosBuffer buffer) = 0;
+    virtual void OnNeedOutputData(uint32_t index, std::shared_ptr<BufferInfoAdapter> info, BufferFlag flag,
+        std::shared_ptr<OhosBufferAdapter> buffer) = 0;
 };
 
 class MediaCodecAdapter {
@@ -99,7 +133,7 @@ public:
 
     virtual CodecCodeAdapter SetCodecCallback(const std::shared_ptr<CodecCallbackAdapter> callback) = 0;
 
-    virtual CodecCodeAdapter Configure(const CodecConfigPara& config) = 0;
+    virtual CodecCodeAdapter Configure(const std::shared_ptr<CodecConfigParaAdapter> config) = 0;
 
     virtual CodecCodeAdapter Prepare() = 0;
 
@@ -124,7 +158,7 @@ public:
 
     virtual ~MediaCodecListAdapter() = default;
 
-    virtual CapabilityDataAdapter GetCodecCapability(const std::string& mime, const bool isCodec) = 0;
+    virtual std::shared_ptr<CapabilityDataAdapter> GetCodecCapability(const std::string& mime, const bool isCodec) = 0;
 };
 } // namespace OHOS::NWeb
 #endif

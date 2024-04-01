@@ -13,31 +13,32 @@
  * limitations under the License.
  */
 
-#ifndef ARK_SOC_PERF_CLIENT_ADAPTER_CAPI_H
-#define ARK_SOC_PERF_CLIENT_ADAPTER_CAPI_H
+#ifndef ARK_SOC_PERF_CLIENT_ADAPTER_CAPI_H_
+#define ARK_SOC_PERF_CLIENT_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_soc_perf_client_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    void(ARK_WEB_CALLBACK* apply_soc_perf_config_by_id)(struct _ark_soc_perf_client_adapter_t* self, int32_t id);
+  void(ARK_WEB_CALLBACK *apply_soc_perf_config_by_id)(
+      struct _ark_soc_perf_client_adapter_t *self, int32_t id);
 
-    void(ARK_WEB_CALLBACK* apply_soc_perf_config_by_id_ex)(
-        struct _ark_soc_perf_client_adapter_t* self, int32_t id, bool onOffTag);
+  void(ARK_WEB_CALLBACK *apply_soc_perf_config_by_id_ex)(
+      struct _ark_soc_perf_client_adapter_t *self, int32_t id, bool onOffTag);
 } ark_soc_perf_client_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_SOC_PERF_CLIENT_ADAPTER_CAPI_H
+#endif // ARK_SOC_PERF_CLIENT_ADAPTER_CAPI_H_

@@ -13,46 +13,50 @@
  * limitations under the License.
  */
 
-#ifndef ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_CAPI_H
-#define ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_CAPI_H
+#ifndef ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_CAPI_H_
+#define ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_edm_policy_changed_event_callback_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    void(ARK_WEB_CALLBACK* changed)(struct _ark_edm_policy_changed_event_callback_adapter_t* self);
+  void(ARK_WEB_CALLBACK *changed)(
+      struct _ark_edm_policy_changed_event_callback_adapter_t *self);
 } ark_edm_policy_changed_event_callback_adapter_t;
 
 typedef struct _ark_enterprise_device_management_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    int32_t(ARK_WEB_CALLBACK* get_policies)(
-        struct _ark_enterprise_device_management_adapter_t* self, ArkWebString* policies);
+  int32_t(ARK_WEB_CALLBACK *get_policies)(
+      struct _ark_enterprise_device_management_adapter_t *self,
+      ArkWebString *policies);
 
-    void(ARK_WEB_CALLBACK* regist_policy_change_event_callback)(
-        struct _ark_enterprise_device_management_adapter_t* self,
-        ark_edm_policy_changed_event_callback_adapter_t* eventCallback);
+  void(ARK_WEB_CALLBACK *regist_policy_change_event_callback)(
+      struct _ark_enterprise_device_management_adapter_t *self,
+      ark_edm_policy_changed_event_callback_adapter_t *eventCallback);
 
-    bool(ARK_WEB_CALLBACK* start_observe_policy_change)(struct _ark_enterprise_device_management_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *start_observe_policy_change)(
+      struct _ark_enterprise_device_management_adapter_t *self);
 
-    bool(ARK_WEB_CALLBACK* stop_observe_policy_change)(struct _ark_enterprise_device_management_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *stop_observe_policy_change)(
+      struct _ark_enterprise_device_management_adapter_t *self);
 } ark_enterprise_device_management_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_CAPI_H
+#endif // ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_CAPI_H_

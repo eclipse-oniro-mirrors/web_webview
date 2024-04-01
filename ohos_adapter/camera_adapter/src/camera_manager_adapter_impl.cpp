@@ -17,9 +17,14 @@
 
 #include <unordered_map>
 
+#include "camera_rotation_info_adapter_impl.h"
+#include "format_adapter_impl.h"
 #include "hisysevent_adapter.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
+#include "video_capture_range_adapter_impl.h"
+#include "video_control_support_adapter_impl.h"
+#include "video_device_descriptor_adapter_impl.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::CameraStandard;
@@ -233,36 +238,43 @@ int32_t CameraManagerAdapterImpl::Create(std::shared_ptr<CameraStatusCallbackAda
     return CAMERA_OK;
 }
 
-std::vector<FormatAdapter> CameraManagerAdapterImpl::GetCameraSupportFormats(
+std::vector<std::shared_ptr<FormatAdapter>> CameraManagerAdapterImpl::GetCameraSupportFormats(
     sptr<CameraOutputCapability> outputcapability)
 {
-    std::vector<FormatAdapter> captureFormats;
+    std::vector<std::shared_ptr<FormatAdapter>> captureFormats;
 
     std::vector<Profile> previewProfiles = outputcapability->GetPreviewProfiles();
     for (auto i : previewProfiles) {
-        FormatAdapter format;
-        format.width = i.GetSize().width;
-        format.height = i.GetSize().height;
-        format.frameRate = DEFAULT_FRAME_RATE;
-        format.pixelFormat = TransToAdapterCameraFormat(i.GetCameraFormat());
+        std::shared_ptr<FormatAdapterImpl> format = std::make_shared<FormatAdapterImpl>();
+        if (!format) {
+            WVLOG_E("new FormatAdapter failed");
+            return captureFormats;
+        }
+
+        format->SetWidth(i.GetSize().width);
+        format->SetHeight(i.GetSize().height);
+        format->SetFrameRate(DEFAULT_FRAME_RATE);
+        format->SetPixelFormat(TransToAdapterCameraFormat(i.GetCameraFormat()));
         captureFormats.push_back(format);
     }
     return captureFormats;
 }
 
-void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>& devicesDiscriptor)
+std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> CameraManagerAdapterImpl::GetDevicesInfo()
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (cameraManager_ == nullptr) {
         WVLOG_E("camera manager is nullptr");
-        return;
+        return std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>>();
     }
 
     std::vector<sptr<CameraDevice>> cameraObjList = cameraManager_->GetSupportedCameras();
     if (cameraObjList.size() == 0) {
         WVLOG_E("No cameras are available!!!");
-        return;
+        return std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>>();
     }
+
+    std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> devicesDiscriptor;
     for (auto cameraObj : cameraObjList) {
         sptr<CameraOutputCapability> outputcapability = cameraManager_->GetSupportedOutputCapability(cameraObj);
         if (outputcapability == nullptr) {
@@ -270,23 +282,41 @@ void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>
             continue;
         }
 
-        VideoDeviceDescriptor deviceDisc;
-        deviceDisc.displayName = cameraObj->GetID();
-        deviceDisc.deviceId = cameraObj->GetID();
-        deviceDisc.modelId = cameraObj->GetID();
-        deviceDisc.controlSupport.pan = false;
-        deviceDisc.controlSupport.tilt = false;
-        deviceDisc.controlSupport.zoom = false;
-        deviceDisc.transportType = GetCameraTransportType(cameraObj->GetConnectionType());
-        deviceDisc.facing = GetCameraFacingMode(cameraObj->GetPosition());
+        std::shared_ptr<VideoDeviceDescriptorAdapterImpl> deviceDisc =
+            std::make_shared<VideoDeviceDescriptorAdapterImpl>();
+        if (!deviceDisc) {
+            WVLOG_E("new VideoDeviceDescriptorAdapter failed");
+            return devicesDiscriptor;
+        }
 
-        deviceDisc.supportCaptureFormats = GetCameraSupportFormats(outputcapability);
+        deviceDisc->SetDisplayName(cameraObj->GetID());
+        deviceDisc->SetDeviceId(cameraObj->GetID());
+        deviceDisc->SetModelId(cameraObj->GetID());
+
+        std::shared_ptr<VideoControlSupportAdapterImpl> controlSupport =
+            std::make_shared<VideoControlSupportAdapterImpl>();
+        if (!controlSupport) {
+            WVLOG_E("new VideoControlSupportAdapter failed");
+            return devicesDiscriptor;
+        }
+
+        controlSupport->SetPan(false);
+        controlSupport->SetTilt(false);
+        controlSupport->SetZoom(false);
+        deviceDisc->SetControlSupport(controlSupport);
+
+        deviceDisc->SetTransportType(GetCameraTransportType(cameraObj->GetConnectionType()));
+        deviceDisc->SetFacingMode(GetCameraFacingMode(cameraObj->GetPosition()));
+
+        deviceDisc->SetSupportCaptureFormats(GetCameraSupportFormats(outputcapability));
         WVLOG_I("deviceDisc  id:%{public}s, control pan:%{public}d tilt:%{public}d, zoom:%{public}d \
             transType:%{public}d, facingMode:%{public}d",
-            deviceDisc.deviceId.c_str(), deviceDisc.controlSupport.pan, deviceDisc.controlSupport.tilt,
-            deviceDisc.controlSupport.zoom, deviceDisc.transportType, deviceDisc.facing);
+            deviceDisc->GetDeviceId().c_str(), deviceDisc->GetControlSupport()->GetPan(),
+            deviceDisc->GetControlSupport()->GetTilt(), deviceDisc->GetControlSupport()->GetZoom(),
+            deviceDisc->GetTransportType(), deviceDisc->GetFacingMode());
         devicesDiscriptor.emplace_back(std::move(deviceDisc));
     }
+    return devicesDiscriptor;
 }
 
 int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string& deviceId)
@@ -342,8 +372,8 @@ int32_t CameraManagerAdapterImpl::InitCameraInput(const std::string& deviceId)
     return result;
 }
 
-int32_t CameraManagerAdapterImpl::InitPreviewOutput(
-    const VideoCaptureParamsAdapter& captureParams, std::shared_ptr<CameraBufferListenerAdapter> listener)
+int32_t CameraManagerAdapterImpl::InitPreviewOutput(const std::shared_ptr<VideoCaptureParamsAdapter> captureParams,
+    std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
     int32_t result = CAMERA_ERROR;
     Size previewSize;
@@ -368,15 +398,15 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(
             ReportErrorSysEvent(CameraErrorType::CREATE_PREVIEW_SURFACE_FAILED);
             return result;
         }
-        previewSize.width = captureParams.captureFormat.width;
-        previewSize.height = captureParams.captureFormat.height;
+        previewSize.width = captureParams->GetWidth();
+        previewSize.height = captureParams->GetHeight();
         previewSurface_->SetDefaultWidthAndHeight(previewSize.width, previewSize.height);
-        previewSurface_->SetUserData(CameraManager::surfaceFormat,
-            std::to_string(TransToOriCameraFormat(captureParams.captureFormat.pixelFormat)));
-        Profile previewproFile = Profile(
-            static_cast<CameraFormat>(TransToOriCameraFormat(captureParams.captureFormat.pixelFormat)), previewSize);
+        previewSurface_->SetUserData(
+            CameraManager::surfaceFormat, std::to_string(TransToOriCameraFormat(captureParams->GetPixelFormat())));
+        Profile previewproFile =
+            Profile(static_cast<CameraFormat>(TransToOriCameraFormat(captureParams->GetPixelFormat())), previewSize);
         WVLOG_I("preview output format: %{public}d, w: %{public}d, h: %{public}d",
-            TransToOriCameraFormat(captureParams.captureFormat.pixelFormat), previewSize.width, previewSize.height);
+            TransToOriCameraFormat(captureParams->GetPixelFormat()), previewSize.width, previewSize.height);
         previewSurfaceListener_ =
             new (std::nothrow) CameraSurfaceListener(SurfaceType::PREVIEW, previewSurface_, (listener));
         previewSurface_->RegisterConsumerListener((sptr<IBufferConsumerListener>&)previewSurfaceListener_);
@@ -436,41 +466,45 @@ int32_t CameraManagerAdapterImpl::GetCurrentExposureMode(ExposureModeAdapter& ex
     return CAMERA_OK;
 }
 
-int32_t CameraManagerAdapterImpl::GetExposureCompensation(VideoCaptureRangeAdapter& rangeVal)
+std::shared_ptr<VideoCaptureRangeAdapter> CameraManagerAdapterImpl::GetExposureCompensation()
 {
     if (captureSession_ == nullptr) {
-        return CAMERA_ERROR;
+        return nullptr;
     }
+
+    std::shared_ptr<VideoCaptureRangeAdapterImpl> rangeVal = std::make_shared<VideoCaptureRangeAdapterImpl>();
+    if (!rangeVal) {
+        WVLOG_E("new VideoCaptureRangeAdapter failed");
+        return nullptr;
+    }
+
     std::vector<float> exposureBiasRange = captureSession_->GetExposureBiasRange();
     int32_t exposureCompos = captureSession_->GetExposureValue();
     if (exposureBiasRange.size() == RANGE_MAX_SIZE) {
-        rangeVal.min = exposureBiasRange.at(RANGE_MIN_INDEX);
-        rangeVal.max = exposureBiasRange.at(RANGE_MAX_INDEX);
+        rangeVal->SetMin(exposureBiasRange.at(RANGE_MIN_INDEX));
+        rangeVal->SetMax(exposureBiasRange.at(RANGE_MAX_INDEX));
     }
 
-    rangeVal.current = exposureCompos;
-    return CAMERA_OK;
+    rangeVal->SetCurrent(exposureCompos);
+    return rangeVal;
 }
 
-int32_t CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId, VideoCaptureRangeAdapter& rangeVal)
+std::shared_ptr<VideoCaptureRangeAdapter> CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     if (captureSession_ == nullptr) {
         WVLOG_E("captureSession is nullptr when get %{public}d range info", rangeId);
-        return CAMERA_ERROR;
+        return nullptr;
     }
-    int32_t result = CAMERA_OK;
-    switch (rangeId) {
-        case RangeIDAdapter::RANGE_ID_EXP_COMPENSATION:
-            if (GetExposureCompensation(rangeVal) != CAMERA_OK) {
-                WVLOG_E("get exposure compensation failed.");
-                result = CAMERA_ERROR;
-            }
-            break;
-        default:
-            result = CAMERA_ERROR;
-            break;
+
+    std::shared_ptr<VideoCaptureRangeAdapter> result = nullptr;
+    if (rangeId == RangeIDAdapter::RANGE_ID_EXP_COMPENSATION) {
+        result = GetExposureCompensation();
+        if (!result) {
+            WVLOG_E("get exposure compensation failed.");
+        }
     }
+
     return result;
 }
 
@@ -708,12 +742,18 @@ void CameraManagerAdapterImpl::SetForegroundFlag(bool isForeground)
 }
 
 int32_t CameraManagerAdapterImpl::StartStream(const std::string& deviceId,
-    const VideoCaptureParamsAdapter& captureParams, std::shared_ptr<CameraBufferListenerAdapter> listener)
+    const std::shared_ptr<VideoCaptureParamsAdapter> captureParams,
+    std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
     std::lock_guard<std::mutex> lock(mutex_);
     wantedDeviceId_ = deviceId;
     if ((cameraManager_ == nullptr) || (listener == nullptr)) {
         WVLOG_E("cameraManager or listener is null when start session");
+        return CAMERA_ERROR;
+    }
+
+    if (captureParams == nullptr) {
+        WVLOG_E("captureParams is null");
         return CAMERA_ERROR;
     }
 
@@ -813,16 +853,22 @@ CameraSurfaceListener::CameraSurfaceListener(
     : surfaceType_(type), surface_(surface), listener_(listener)
 {}
 
-CameraRotationInfo CameraSurfaceListener::FillRotationInfo(int roration, bool isFlipX, bool isFlipY)
+std::shared_ptr<CameraRotationInfoAdapter> CameraSurfaceListener::FillRotationInfo(
+    int roration, bool isFlipX, bool isFlipY)
 {
-    CameraRotationInfo rotationInfo;
-    rotationInfo.rotation = roration;
-    rotationInfo.isFlipX = isFlipX;
-    rotationInfo.isFlipY = isFlipY;
+    std::shared_ptr<CameraRotationInfoAdapterImpl> rotationInfo = std::make_shared<CameraRotationInfoAdapterImpl>();
+    if (!rotationInfo) {
+        WVLOG_E("new CameraRotationInfo failed");
+        return nullptr;
+    }
+
+    rotationInfo->SetRotation(roration);
+    rotationInfo->SetIsFlipX(isFlipX);
+    rotationInfo->SetIsFlipY(isFlipY);
     return rotationInfo;
 }
 
-CameraRotationInfo CameraSurfaceListener::GetRotationInfo(GraphicTransformType transform)
+std::shared_ptr<CameraRotationInfoAdapter> CameraSurfaceListener::GetRotationInfo(GraphicTransformType transform)
 {
     switch (transform) {
         case GraphicTransformType::GRAPHIC_ROTATE_NONE: {
@@ -881,15 +927,20 @@ void CameraSurfaceListener::OnBufferAvailable()
     if (buffer != nullptr) {
         uint32_t size = buffer->GetSize();
 
-        CameraRotationInfo rotationInfo = GetRotationInfo(surface_->GetTransform());
+        std::shared_ptr<CameraRotationInfoAdapter> rotationInfo = GetRotationInfo(surface_->GetTransform());
+        if (!rotationInfo) {
+            WVLOG_E("rotationInfo is null");
+            return;
+        }
+
         WVLOG_D("OnBufferAvailable, surfaceType_: %{public}d, size: %{public}d, width: %{public}d,\
             height: %{public}d, type: %{public}d, ratation: %{public}d, FilyY: %{public}d, FilyX: %{public}d",
             surfaceType_, size, buffer->GetWidth(), buffer->GetHeight(), surface_->GetTransform(),
-            (int32_t)rotationInfo.rotation, rotationInfo.isFlipY, rotationInfo.isFlipX);
+            (int32_t)rotationInfo->GetRotation(), rotationInfo->GetIsFlipY(), rotationInfo->GetIsFlipX());
         auto bufferAdapter = std::make_shared<CameraSurfaceBufferAdapterImpl>(buffer);
         auto surfaceAdapter = std::make_shared<CameraSurfaceAdapterImpl>(surface_);
         if (listener_ != nullptr) {
-            listener_->OnBufferAvailable(surfaceAdapter, std::move(bufferAdapter), rotationInfo);
+            listener_->OnBufferAvailable(surfaceAdapter, std::move(bufferAdapter), std::move(rotationInfo));
         }
     } else {
         WVLOG_E("AcquireBuffer failed!");

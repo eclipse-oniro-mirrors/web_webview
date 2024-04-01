@@ -22,26 +22,76 @@
 
 using namespace OHOS::NWeb;
 
-namespace OHOS {
-    bool AudioCreateRenderFuzzTest(const uint8_t* data, size_t size)
+class MockAudioRendererOptionsAdapter : public AudioRendererOptionsAdapter {
+public:
+    MockAudioRendererOptionsAdapter() = default;
+
+    AudioAdapterSamplingRate GetSamplingRate() override
     {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        AudioAdapterRendererOptions rendererOptions;
-        rendererOptions.samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
-        rendererOptions.encoding = AudioAdapterEncodingType::ENCODING_PCM;
-        rendererOptions.format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-        rendererOptions.channels = AudioAdapterChannel::STEREO;
-        rendererOptions.contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-        rendererOptions.streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
-        rendererOptions.rendererFlags = 0;
-        std::string cachePath(reinterpret_cast<const char*>(data), size);
-        AudioRendererAdapterImpl adapter;
-        adapter.Create(rendererOptions, cachePath);
-        return true;
+        return samplingRate;
     }
+
+    AudioAdapterEncodingType GetEncodingType() override
+    {
+        return encoding;
+    }
+
+    AudioAdapterSampleFormat GetSampleFormat() override
+    {
+        return format;
+    }
+
+    AudioAdapterChannel GetChannel() override
+    {
+        return channels;
+    }
+
+    AudioAdapterContentType GetContentType() override
+    {
+        return contentType;
+    }
+
+    AudioAdapterStreamUsage GetStreamUsage() override
+    {
+        return streamUsage;
+    }
+
+    int32_t GetRenderFlags() override
+    {
+        return rendererFlags;
+    }
+
+    AudioAdapterSamplingRate samplingRate;
+    AudioAdapterEncodingType encoding;
+    AudioAdapterSampleFormat format;
+    AudioAdapterChannel channels;
+    AudioAdapterContentType contentType;
+    AudioAdapterStreamUsage streamUsage;
+    int32_t rendererFlags;
+};
+
+namespace OHOS {
+bool AudioCreateRenderFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
+
+    std::shared_ptr<MockAudioRendererOptionsAdapter> rendererOptions =
+        std::make_shared<MockAudioRendererOptionsAdapter>();
+    rendererOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
+    rendererOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
+    rendererOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
+    rendererOptions->channels = AudioAdapterChannel::STEREO;
+    rendererOptions->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
+    rendererOptions->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
+    rendererOptions->rendererFlags = 0;
+    std::string cachePath(reinterpret_cast<const char*>(data), size);
+    AudioRendererAdapterImpl adapter;
+    adapter.Create(rendererOptions, cachePath);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

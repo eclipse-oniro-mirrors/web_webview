@@ -13,60 +13,62 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_producer_surface_adapter_cpptoc.h"
-
-#include "cpptoc/ark_surface_buffer_adapter_cpptoc.h"
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_producer_surface_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_surface_buffer_adapter_cpptoc.h"
+#include "ohos_adapter/ctocpp/ark_buffer_flush_config_adapter_ctocpp.h"
+#include "ohos_adapter/ctocpp/ark_buffer_request_config_adapter_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-ark_surface_buffer_adapter_t* ARK_WEB_CALLBACK ark_producer_surface_adapter_request_buffer(
-    struct _ark_producer_surface_adapter_t* self, int32_t* fence, ArkBufferRequestConfigAdapter* config)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ark_surface_buffer_adapter_t *ARK_WEB_CALLBACK
+ark_producer_surface_adapter_request_buffer(
+    struct _ark_producer_surface_adapter_t *self, int32_t *fence,
+    ark_buffer_request_config_adapter_t *config) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(fence, NULL);
+  ARK_WEB_CPPTOC_CHECK_PARAM(fence, NULL);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(config, NULL);
+  // Execute
+  ArkWebRefPtr<ArkSurfaceBufferAdapter> _retval =
+      ArkProducerSurfaceAdapterCppToC::Get(self)->RequestBuffer(
+          *fence, ArkBufferRequestConfigAdapterCToCpp::Invert(config));
 
-    // Execute
-    ArkWebRefPtr<ArkSurfaceBufferAdapter> _retval =
-        ArkProducerSurfaceAdapterCppToC::Get(self)->RequestBuffer(*fence, *config);
-
-    // Return type: refptr_same
-    return ArkSurfaceBufferAdapterCppToC::Invert(_retval);
+  // Return type: refptr_same
+  return ArkSurfaceBufferAdapterCppToC::Invert(_retval);
 }
 
-int32_t ARK_WEB_CALLBACK ark_producer_surface_adapter_flush_buffer(struct _ark_producer_surface_adapter_t* self,
-    ark_surface_buffer_adapter_t* buffer, int32_t fence, ArkBufferFlushConfigAdapter* flushConfig)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_producer_surface_adapter_flush_buffer(
+    struct _ark_producer_surface_adapter_t *self,
+    ark_surface_buffer_adapter_t *buffer, int32_t fence,
+    ark_buffer_flush_config_adapter_t *config) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(flushConfig, 0);
-
-    // Execute
-    return ArkProducerSurfaceAdapterCppToC::Get(self)->FlushBuffer(
-        ArkSurfaceBufferAdapterCppToC::Revert(buffer), fence, *flushConfig);
+  // Execute
+  return ArkProducerSurfaceAdapterCppToC::Get(self)->FlushBuffer(
+      ArkSurfaceBufferAdapterCppToC::Revert(buffer), fence,
+      ArkBufferFlushConfigAdapterCToCpp::Invert(config));
 }
 
 } // namespace
 
-ArkProducerSurfaceAdapterCppToC::ArkProducerSurfaceAdapterCppToC()
-{
-    GetStruct()->request_buffer = ark_producer_surface_adapter_request_buffer;
-    GetStruct()->flush_buffer = ark_producer_surface_adapter_flush_buffer;
+ArkProducerSurfaceAdapterCppToC::ArkProducerSurfaceAdapterCppToC() {
+  GetStruct()->request_buffer = ark_producer_surface_adapter_request_buffer;
+  GetStruct()->flush_buffer = ark_producer_surface_adapter_flush_buffer;
 }
 
-ArkProducerSurfaceAdapterCppToC::~ArkProducerSurfaceAdapterCppToC() {}
+ArkProducerSurfaceAdapterCppToC::~ArkProducerSurfaceAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkProducerSurfaceAdapterCppToC, ArkProducerSurfaceAdapter,
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkProducerSurfaceAdapterCppToC, ArkProducerSurfaceAdapter,
     ark_producer_surface_adapter_t>::kBridgeType = ARK_PRODUCER_SURFACE_ADAPTER;
 
 } // namespace OHOS::ArkWeb

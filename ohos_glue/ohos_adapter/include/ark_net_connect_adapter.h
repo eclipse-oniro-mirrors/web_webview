@@ -18,44 +18,47 @@
 
 #pragma once
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkNetConnCallback : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual int32_t NetAvailable() = 0;
+  /*--ark web()--*/
+  virtual int32_t NetAvailable() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t NetCapabilitiesChange(const uint32_t& netConnectType, const uint32_t& netConnectSubtype) = 0;
+  /*--ark web()--*/
+  virtual int32_t NetCapabilitiesChange(const uint32_t &netConnectType,
+                                        const uint32_t &netConnectSubtype) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t NetConnectionPropertiesChange() = 0;
+  /*--ark web()--*/
+  virtual int32_t NetConnectionPropertiesChange() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t NetUnavailable() = 0;
+  /*--ark web()--*/
+  virtual int32_t NetUnavailable() = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkNetConnectAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkNetConnectAdapter() = default;
+  /*--ark web()--*/
+  ArkNetConnectAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkNetConnectAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkNetConnectAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t RegisterNetConnCallback(ArkWebRefPtr<ArkNetConnCallback> cb) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  RegisterNetConnCallback(ArkWebRefPtr<ArkNetConnCallback> cb) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t UnregisterNetConnCallback(int32_t id) = 0;
+  /*--ark web()--*/
+  virtual int32_t UnregisterNetConnCallback(int32_t id) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetDefaultNetConnect(uint32_t& type, uint32_t& netConnectSubtype) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetDefaultNetConnect(uint32_t &type,
+                                       uint32_t &netConnectSubtype) = 0;
 };
 } // namespace OHOS::ArkWeb
 

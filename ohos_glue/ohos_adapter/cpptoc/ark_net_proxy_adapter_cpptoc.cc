@@ -13,80 +13,82 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_net_proxy_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
-#include "ctocpp/ark_net_proxy_event_callback_adapter_ctocpp.h"
+#include "ohos_adapter/cpptoc/ark_net_proxy_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/ctocpp/ark_net_proxy_event_callback_adapter_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 void ARK_WEB_CALLBACK ark_net_proxy_adapter_reg_net_proxy_event(
-    struct _ark_net_proxy_adapter_t* self, ark_net_proxy_event_callback_adapter_t* eventCallback)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_net_proxy_adapter_t *self,
+    ark_net_proxy_event_callback_adapter_t *eventCallback) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkNetProxyAdapterCppToC::Get(self)->RegNetProxyEvent(ArkNetProxyEventCallbackAdapterCToCpp::Invert(eventCallback));
+  // Execute
+  ArkNetProxyAdapterCppToC::Get(self)->RegNetProxyEvent(
+      ArkNetProxyEventCallbackAdapterCToCpp::Invert(eventCallback));
 }
 
-bool ARK_WEB_CALLBACK ark_net_proxy_adapter_start_listen(struct _ark_net_proxy_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_net_proxy_adapter_start_listen(struct _ark_net_proxy_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkNetProxyAdapterCppToC::Get(self)->StartListen();
+  // Execute
+  return ArkNetProxyAdapterCppToC::Get(self)->StartListen();
 }
 
-void ARK_WEB_CALLBACK ark_net_proxy_adapter_stop_listen(struct _ark_net_proxy_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK
+ark_net_proxy_adapter_stop_listen(struct _ark_net_proxy_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkNetProxyAdapterCppToC::Get(self)->StopListen();
+  // Execute
+  ArkNetProxyAdapterCppToC::Get(self)->StopListen();
 }
 
-void ARK_WEB_CALLBACK ark_net_proxy_adapter_get_property(struct _ark_net_proxy_adapter_t* self, ArkWebString* host,
-    uint16_t* port, ArkWebString* pacUrl, ArkWebString* exclusion)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK ark_net_proxy_adapter_get_property(
+    struct _ark_net_proxy_adapter_t *self, ArkWebString *host, uint16_t *port,
+    ArkWebString *pacUrl, ArkWebString *exclusion) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(host, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(host, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(port, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(port, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(pacUrl, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(pacUrl, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(exclusion, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(exclusion, );
 
-    // Execute
-    ArkNetProxyAdapterCppToC::Get(self)->GetProperty(*host, *port, *pacUrl, *exclusion);
+  // Execute
+  ArkNetProxyAdapterCppToC::Get(self)->GetProperty(*host, *port, *pacUrl,
+                                                   *exclusion);
 }
 
 } // namespace
 
-ArkNetProxyAdapterCppToC::ArkNetProxyAdapterCppToC()
-{
-    GetStruct()->reg_net_proxy_event = ark_net_proxy_adapter_reg_net_proxy_event;
-    GetStruct()->start_listen = ark_net_proxy_adapter_start_listen;
-    GetStruct()->stop_listen = ark_net_proxy_adapter_stop_listen;
-    GetStruct()->get_property = ark_net_proxy_adapter_get_property;
+ArkNetProxyAdapterCppToC::ArkNetProxyAdapterCppToC() {
+  GetStruct()->reg_net_proxy_event = ark_net_proxy_adapter_reg_net_proxy_event;
+  GetStruct()->start_listen = ark_net_proxy_adapter_start_listen;
+  GetStruct()->stop_listen = ark_net_proxy_adapter_stop_listen;
+  GetStruct()->get_property = ark_net_proxy_adapter_get_property;
 }
 
-ArkNetProxyAdapterCppToC::~ArkNetProxyAdapterCppToC() {}
+ArkNetProxyAdapterCppToC::~ArkNetProxyAdapterCppToC() {
+}
 
-template<>
+template <>
 ArkWebBridgeType
-    ArkWebCppToCRefCounted<ArkNetProxyAdapterCppToC, ArkNetProxyAdapter, ark_net_proxy_adapter_t>::kBridgeType =
+    ArkWebCppToCRefCounted<ArkNetProxyAdapterCppToC, ArkNetProxyAdapter,
+                           ark_net_proxy_adapter_t>::kBridgeType =
         ARK_NET_PROXY_ADAPTER;
 
 } // namespace OHOS::ArkWeb

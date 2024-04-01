@@ -13,103 +13,104 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_camera_surface_buffer_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_camera_surface_buffer_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_file_descriptor(
-    struct _ark_camera_surface_buffer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_camera_surface_buffer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetFileDescriptor();
+  // Execute
+  return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetFileDescriptor();
 }
 
-int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_width(struct _ark_camera_surface_buffer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_width(
+    struct _ark_camera_surface_buffer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetWidth();
+  // Execute
+  return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetWidth();
 }
 
-int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_height(struct _ark_camera_surface_buffer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_height(
+    struct _ark_camera_surface_buffer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetHeight();
+  // Execute
+  return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetHeight();
 }
 
-int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_stride(struct _ark_camera_surface_buffer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_stride(
+    struct _ark_camera_surface_buffer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetStride();
+  // Execute
+  return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetStride();
 }
 
-int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_format(struct _ark_camera_surface_buffer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_format(
+    struct _ark_camera_surface_buffer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetFormat();
+  // Execute
+  return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetFormat();
 }
 
-uint32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_size(struct _ark_camera_surface_buffer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+uint32_t ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_size(
+    struct _ark_camera_surface_buffer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetSize();
+  // Execute
+  return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetSize();
 }
 
-uint8_t* ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_buffer_addr(
-    struct _ark_camera_surface_buffer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+uint8_t *ARK_WEB_CALLBACK ark_camera_surface_buffer_adapter_get_buffer_addr(
+    struct _ark_camera_surface_buffer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
 
-    // Execute
-    return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetBufferAddr();
+  // Execute
+  return ArkCameraSurfaceBufferAdapterCppToC::Get(self)->GetBufferAddr();
 }
 
 } // namespace
 
-ArkCameraSurfaceBufferAdapterCppToC::ArkCameraSurfaceBufferAdapterCppToC()
-{
-    GetStruct()->get_file_descriptor = ark_camera_surface_buffer_adapter_get_file_descriptor;
-    GetStruct()->get_width = ark_camera_surface_buffer_adapter_get_width;
-    GetStruct()->get_height = ark_camera_surface_buffer_adapter_get_height;
-    GetStruct()->get_stride = ark_camera_surface_buffer_adapter_get_stride;
-    GetStruct()->get_format = ark_camera_surface_buffer_adapter_get_format;
-    GetStruct()->get_size = ark_camera_surface_buffer_adapter_get_size;
-    GetStruct()->get_buffer_addr = ark_camera_surface_buffer_adapter_get_buffer_addr;
+ArkCameraSurfaceBufferAdapterCppToC::ArkCameraSurfaceBufferAdapterCppToC() {
+  GetStruct()->get_file_descriptor =
+      ark_camera_surface_buffer_adapter_get_file_descriptor;
+  GetStruct()->get_width = ark_camera_surface_buffer_adapter_get_width;
+  GetStruct()->get_height = ark_camera_surface_buffer_adapter_get_height;
+  GetStruct()->get_stride = ark_camera_surface_buffer_adapter_get_stride;
+  GetStruct()->get_format = ark_camera_surface_buffer_adapter_get_format;
+  GetStruct()->get_size = ark_camera_surface_buffer_adapter_get_size;
+  GetStruct()->get_buffer_addr =
+      ark_camera_surface_buffer_adapter_get_buffer_addr;
 }
 
-ArkCameraSurfaceBufferAdapterCppToC::~ArkCameraSurfaceBufferAdapterCppToC() {}
+ArkCameraSurfaceBufferAdapterCppToC::~ArkCameraSurfaceBufferAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkCameraSurfaceBufferAdapterCppToC, ArkCameraSurfaceBufferAdapter,
-    ark_camera_surface_buffer_adapter_t>::kBridgeType = ARK_CAMERA_SURFACE_BUFFER_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkCameraSurfaceBufferAdapterCppToC, ArkCameraSurfaceBufferAdapter,
+    ark_camera_surface_buffer_adapter_t>::kBridgeType =
+    ARK_CAMERA_SURFACE_BUFFER_ADAPTER;
 
 } // namespace OHOS::ArkWeb

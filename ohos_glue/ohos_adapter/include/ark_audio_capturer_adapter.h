@@ -16,63 +16,121 @@
 #ifndef ARK_AUDIO_CAPTURE_ADAPTER_H
 #define ARK_AUDIO_CAPTURE_ADAPTER_H
 
-#include "audio_capturer_adapter.h"
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
-
-using ArkAudioAdapterCapturerOptions = OHOS::NWeb::AudioAdapterCapturerOptions;
-using ArkBufferDescAdapter = OHOS::NWeb::BufferDescAdapter;
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
-class ArkAudioCapturerReadCallbackAdapter : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=web core)--*/
+class ArkAudioCapturerOptionsAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkAudioCapturerReadCallbackAdapter() = default;
+  /*--ark web()--*/
+  ArkAudioCapturerOptionsAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkAudioCapturerReadCallbackAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkAudioCapturerOptionsAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void OnReadData(size_t length) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetSamplingRate() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetEncoding() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetSampleFormat() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetChannels() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetSourceType() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetCapturerFlags() = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=web core)--*/
+class ArkBufferDescAdapter : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkBufferDescAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkBufferDescAdapter() = default;
+
+  /*--ark web()--*/
+  virtual uint8_t *GetBuffer() = 0;
+
+  /*--ark web()--*/
+  virtual size_t GetBufLength() = 0;
+
+  /*--ark web()--*/
+  virtual size_t GetDataLength() = 0;
+
+  /*--ark web()--*/
+  virtual void SetBuffer(uint8_t *buffer) = 0;
+
+  /*--ark web()--*/
+  virtual void SetBufLength(size_t bufLength) = 0;
+
+  /*--ark web()--*/
+  virtual void SetDataLength(size_t dataLength) = 0;
+};
+
+/*--ark web(source=web core)--*/
+class ArkAudioCapturerReadCallbackAdapter
+    : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkAudioCapturerReadCallbackAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkAudioCapturerReadCallbackAdapter() = default;
+
+  /*--ark web()--*/
+  virtual void OnReadData(size_t length) = 0;
+};
+
+/*--ark web(source=library)--*/
 class ArkAudioCapturerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkAudioCapturerAdapter() = default;
+  /*--ark web()--*/
+  ArkAudioCapturerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkAudioCapturerAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkAudioCapturerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t Create(const ArkAudioAdapterCapturerOptions& capturerOptions, ArkWebString& cachePath) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  Create(const ArkWebRefPtr<ArkAudioCapturerOptionsAdapter> capturerOptions,
+         ArkWebString &cachePath) = 0;
 
-    /*--web engine()--*/
-    virtual bool Start() = 0;
+  /*--ark web()--*/
+  virtual bool Start() = 0;
 
-    /*--web engine()--*/
-    virtual bool Stop() = 0;
+  /*--ark web()--*/
+  virtual bool Stop() = 0;
 
-    /*--web engine()--*/
-    virtual bool Release2() = 0;
+  /*--ark web()--*/
+  virtual bool Release2() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetCapturerReadCallback(ArkWebRefPtr<ArkAudioCapturerReadCallbackAdapter> callbck) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetCapturerReadCallback(
+      ArkWebRefPtr<ArkAudioCapturerReadCallbackAdapter> callbck) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetBufferDesc(ArkBufferDescAdapter& buffferDesc) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  GetBufferDesc(ArkWebRefPtr<ArkBufferDescAdapter> buffferDesc) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t Enqueue(const ArkBufferDescAdapter& bufferDesc) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  Enqueue(const ArkWebRefPtr<ArkBufferDescAdapter> bufferDesc) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetFrameCount(uint32_t& frameCount) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetFrameCount(uint32_t &frameCount) = 0;
 
-    /*--web engine()--*/
-    virtual int64_t GetAudioTime() = 0;
+  /*--ark web()--*/
+  virtual int64_t GetAudioTime() = 0;
 };
 } // namespace OHOS::ArkWeb
 

@@ -15,6 +15,11 @@
 
 #include "ark_decoder_callback_adapter_wrapper.h"
 
+#include "impl/ark_buffer_info_adapter_impl.h"
+#include "impl/ark_ohos_buffer_adapter_impl.h"
+
+#include "bridge/ark_web_bridge_macros.h"
+
 namespace OHOS::ArkWeb {
 
 ArkDecoderCallbackAdapterWrapper::ArkDecoderCallbackAdapterWrapper(ArkWebRefPtr<ArkDecoderCallbackAdapter> ref)
@@ -26,20 +31,28 @@ void ArkDecoderCallbackAdapterWrapper::OnError(OHOS::NWeb::ErrorType errorType, 
     ctocpp_->OnError((int32_t)errorType, errorCode);
 }
 
-void ArkDecoderCallbackAdapterWrapper::OnStreamChanged(const OHOS::NWeb::DecoderFormat& format)
+void ArkDecoderCallbackAdapterWrapper::OnStreamChanged(int32_t width, int32_t height, double frameRate)
 {
-    ctocpp_->OnStreamChanged(format);
+    ctocpp_->OnStreamChanged(width, height, frameRate);
 }
 
-void ArkDecoderCallbackAdapterWrapper::OnNeedInputData(uint32_t index, OHOS::NWeb::OhosBuffer buffer)
+void ArkDecoderCallbackAdapterWrapper::OnNeedInputData(uint32_t index, std::shared_ptr<NWeb::OhosBufferAdapter> buffer)
 {
-    ctocpp_->OnNeedInputData(index, buffer);
+    if (CHECK_SHARED_PTR_IS_NULL(buffer)) {
+        return ctocpp_->OnNeedInputData(index, nullptr);
+    }
+
+    ctocpp_->OnNeedInputData(index, new ArkOhosBufferAdapterImpl(buffer));
 }
 
 void ArkDecoderCallbackAdapterWrapper::OnNeedOutputData(
-    uint32_t index, OHOS::NWeb::BufferInfo info, OHOS::NWeb::BufferFlag flag)
+    uint32_t index, std::shared_ptr<NWeb::BufferInfoAdapter> info, NWeb::BufferFlag flag)
 {
-    ctocpp_->OnNeedOutputData(index, info, (uint32_t)flag);
+    if (CHECK_SHARED_PTR_IS_NULL(info)) {
+        return ctocpp_->OnNeedOutputData(index, nullptr, (uint32_t)flag);
+    }
+
+    ctocpp_->OnNeedOutputData(index, new ArkBufferInfoAdapterImpl(info), (uint32_t)flag);
 }
 
 } // namespace OHOS::ArkWeb

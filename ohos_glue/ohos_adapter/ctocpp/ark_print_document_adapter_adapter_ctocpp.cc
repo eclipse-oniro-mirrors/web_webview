@@ -13,50 +13,54 @@
  * limitations under the License.
  */
 
-#include "ctocpp/ark_print_document_adapter_adapter_ctocpp.h"
-
-#include "cpptoc/ark_print_write_result_callback_adapter_cpptoc.h"
-#include "ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_adapter/ctocpp/ark_print_document_adapter_adapter_ctocpp.h"
+#include "base/ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_adapter/cpptoc/ark_print_write_result_callback_adapter_cpptoc.h"
 
 namespace OHOS::ArkWeb {
 
 ARK_WEB_NO_SANITIZE
-void ArkPrintDocumentAdapterAdapterCToCpp::OnStartLayoutWrite(const ArkWebString& jobId,
-    const ArkPrintAttributesAdapter& oldAttrs, const ArkPrintAttributesAdapter& newAttrs, uint32_t fd,
-    ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter> callback)
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+void ArkPrintDocumentAdapterAdapterCToCpp::OnStartLayoutWrite(
+    const ArkWebString &jobId, const ArkPrintAttributesAdapter &oldAttrs,
+    const ArkPrintAttributesAdapter &newAttrs, uint32_t fd,
+    ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter> callback) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_print_document_adapter_adapter_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ark_print_document_adapter_adapter_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_start_layout_write, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_start_layout_write, );
 
-    // Execute
-    _struct->on_start_layout_write(
-        _struct, &jobId, &oldAttrs, &newAttrs, fd, ArkPrintWriteResultCallbackAdapterCppToC::Invert(callback));
+  // Execute
+  _struct->on_start_layout_write(
+      _struct, &jobId, &oldAttrs, &newAttrs, fd,
+      ArkPrintWriteResultCallbackAdapterCppToC::Invert(callback));
 }
 
 ARK_WEB_NO_SANITIZE
-void ArkPrintDocumentAdapterAdapterCToCpp::OnJobStateChanged(const ArkWebString& jobId, uint32_t state)
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+void ArkPrintDocumentAdapterAdapterCToCpp::OnJobStateChanged(
+    const ArkWebString &jobId, uint32_t state) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_print_document_adapter_adapter_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ark_print_document_adapter_adapter_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_job_state_changed, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_job_state_changed, );
 
-    // Execute
-    _struct->on_job_state_changed(_struct, &jobId, state);
+  // Execute
+  _struct->on_job_state_changed(_struct, &jobId, state);
 }
 
-ArkPrintDocumentAdapterAdapterCToCpp::ArkPrintDocumentAdapterAdapterCToCpp() {}
+ArkPrintDocumentAdapterAdapterCToCpp::ArkPrintDocumentAdapterAdapterCToCpp() {
+}
 
-ArkPrintDocumentAdapterAdapterCToCpp::~ArkPrintDocumentAdapterAdapterCToCpp() {}
+ArkPrintDocumentAdapterAdapterCToCpp::~ArkPrintDocumentAdapterAdapterCToCpp() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCToCppRefCounted<ArkPrintDocumentAdapterAdapterCToCpp, ArkPrintDocumentAdapterAdapter,
-    ark_print_document_adapter_adapter_t>::kBridgeType = ARK_PRINT_DOCUMENT_ADAPTER_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCToCppRefCounted<
+    ArkPrintDocumentAdapterAdapterCToCpp, ArkPrintDocumentAdapterAdapter,
+    ark_print_document_adapter_adapter_t>::kBridgeType =
+    ARK_PRINT_DOCUMENT_ADAPTER_ADAPTER;
 
 } // namespace OHOS::ArkWeb

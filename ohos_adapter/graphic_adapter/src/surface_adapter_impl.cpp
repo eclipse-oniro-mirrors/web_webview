@@ -244,25 +244,36 @@ GraphicColorGamut ProducerSurfaceAdapterImpl::TransToGraphicColorGamut(const Col
 }
 
 void ProducerSurfaceAdapterImpl::TransToBufferConfig(
-    const BufferRequestConfigAdapter& configAdapter, BufferRequestConfig& config)
+    const std::shared_ptr<BufferRequestConfigAdapter> configAdapter, BufferRequestConfig& config)
 {
-    config.width = configAdapter.width;
-    config.height = configAdapter.height;
-    config.strideAlignment = configAdapter.strideAlignment;
+    if (!configAdapter) {
+        WVLOG_E("TransToBufferConfig configAdapter is null");
+        return;
+    }
+
+    config.width = configAdapter->GetWidth();
+    config.height = configAdapter->GetHeight();
+    config.strideAlignment = configAdapter->GetStrideAlignment();
     config.format = GRAPHIC_PIXEL_FMT_YCBCR_420_P;
     config.usage = BUFFER_USAGE_CPU_READ | BUFFER_USAGE_CPU_WRITE | BUFFER_USAGE_MEM_DMA;
-    config.timeout = configAdapter.timeout;
-    config.colorGamut = TransToGraphicColorGamut(configAdapter.colorGamut);
-    config.transform = TransToTransformType(configAdapter.transformType);
+    config.timeout = configAdapter->GetTimeout();
+    config.colorGamut = TransToGraphicColorGamut(configAdapter->GetColorGamut());
+    config.transform = TransToTransformType(configAdapter->GetTransformType());
 }
 
 std::shared_ptr<SurfaceBufferAdapter> ProducerSurfaceAdapterImpl::RequestBuffer(
-    int32_t& fence, BufferRequestConfigAdapter& configAdapter)
+    int32_t& fence, std::shared_ptr<BufferRequestConfigAdapter> configAdapter)
 {
     if (!surface_) {
         WVLOG_E("Surface_ is nullptr when request");
         return nullptr;
     }
+
+    if (!configAdapter) {
+        WVLOG_E("configAdapter is nullptr when request");
+        return nullptr;
+    }
+
     OHOS::sptr<OHOS::SurfaceBuffer> buffer = nullptr;
     BufferRequestConfig config;
     TransToBufferConfig(configAdapter, config);
@@ -270,20 +281,20 @@ std::shared_ptr<SurfaceBufferAdapter> ProducerSurfaceAdapterImpl::RequestBuffer(
     return std::make_shared<SurfaceBufferAdapterImpl>(buffer);
 }
 
-int32_t ProducerSurfaceAdapterImpl::FlushBuffer(
-    std::shared_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence, BufferFlushConfigAdapter& flushConfigAdapter)
+int32_t ProducerSurfaceAdapterImpl::FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence,
+    std::shared_ptr<BufferFlushConfigAdapter> flushConfigAdapter)
 {
-    if (!surface_ || !bufferAdapter) {
-        WVLOG_E("Surface_ or bufferAdapter is nullptr when flush");
+    if (!surface_ || !bufferAdapter || !flushConfigAdapter) {
+        WVLOG_E("Surface_ or params is nullptr when flush");
         return -1;
     }
     auto bufferImpl = static_cast<SurfaceBufferAdapterImpl*>(bufferAdapter.get());
     BufferFlushConfig config;
-    config.damage.x = flushConfigAdapter.x;
-    config.damage.y = flushConfigAdapter.y;
-    config.damage.w = flushConfigAdapter.w;
-    config.damage.h = flushConfigAdapter.h;
-    config.timestamp = flushConfigAdapter.timestamp;
+    config.damage.x = flushConfigAdapter->GetX();
+    config.damage.y = flushConfigAdapter->GetY();
+    config.damage.w = flushConfigAdapter->GetW();
+    config.damage.h = flushConfigAdapter->GetH();
+    config.timestamp = flushConfigAdapter->GetTimestamp();
     return surface_->FlushBuffer(bufferImpl->GetBuffer(), fence, config);
 }
 } // namespace OHOS::NWeb

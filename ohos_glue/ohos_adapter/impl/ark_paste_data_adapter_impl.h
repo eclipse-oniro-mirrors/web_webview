@@ -43,7 +43,7 @@ public:
 
     size_t GetRecordCount() override;
 
-    ArkPasteRecordList AllRecords() override;
+    ArkPasteRecordVector AllRecords() override;
 
 private:
     std::shared_ptr<OHOS::NWeb::PasteDataAdapter> real_;

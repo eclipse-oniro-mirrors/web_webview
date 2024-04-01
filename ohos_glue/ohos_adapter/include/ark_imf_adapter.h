@@ -20,112 +20,186 @@
 
 #include <cstdint>
 
-#include "imf_adapter.h"
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
-
-using ArkIMFAdapterCursorInfo = OHOS::NWeb::IMFAdapterCursorInfo;
-using ArkIMFAdapterInputAttribute = OHOS::NWeb::IMFAdapterInputAttribute;
-using ArkIMFAdapterSelectionRange = OHOS::NWeb::IMFAdapterSelectionRange;
-using ArkIMFAdapterTextConfig = OHOS::NWeb::IMFAdapterTextConfig;
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=web core)--*/
+class ArkIMFCursorInfoAdapter : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkIMFCursorInfoAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkIMFCursorInfoAdapter() = default;
+
+  /*--ark web()--*/
+  virtual double GetLeft() = 0;
+
+  /*--ark web()--*/
+  virtual double GetTop() = 0;
+
+  /*--ark web()--*/
+  virtual double GetWidth() = 0;
+
+  /*--ark web()--*/
+  virtual double GetHeight() = 0;
+};
+
+/*--ark web(source=web core)--*/
+class ArkIMFInputAttributeAdapter : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkIMFInputAttributeAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkIMFInputAttributeAdapter() = default;
+
+  /*--ark web()--*/
+  virtual int32_t GetInputPattern() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetEnterKeyType() = 0;
+};
+
+/*--ark web(source=web core)--*/
+class ArkIMFSelectionRangeAdapter : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkIMFSelectionRangeAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkIMFSelectionRangeAdapter() = default;
+
+  /*--ark web()--*/
+  virtual int32_t GetStart() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetEnd() = 0;
+};
+
+/*--ark web(source=web core)--*/
+class ArkIMFTextConfigAdapter : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkIMFTextConfigAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkIMFTextConfigAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkIMFInputAttributeAdapter> GetInputAttribute() = 0;
+
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkIMFCursorInfoAdapter> GetCursorInfo() = 0;
+
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkIMFSelectionRangeAdapter> GetSelectionRange() = 0;
+
+  /*--ark web()--*/
+  virtual uint32_t GetWindowId() = 0;
+};
+
+/*--ark web(source=library)--*/
 class ArkIMFAdapterFunctionKeyAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkIMFAdapterFunctionKeyAdapter() = default;
+  /*--ark web()--*/
+  ArkIMFAdapterFunctionKeyAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkIMFAdapterFunctionKeyAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkIMFAdapterFunctionKeyAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t GetEnterKeyType() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetEnterKeyType() = 0;
 };
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkIMFTextListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkIMFTextListenerAdapter() = default;
+  /*--ark web()--*/
+  ArkIMFTextListenerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkIMFTextListenerAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkIMFTextListenerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void InsertText(const ArkWebU16String& text) = 0;
+  /*--ark web()--*/
+  virtual void InsertText(const ArkWebU16String &text) = 0;
 
-    /*--web engine()--*/
-    virtual void DeleteForward(int32_t length) = 0;
+  /*--ark web()--*/
+  virtual void DeleteForward(int32_t length) = 0;
 
-    /*--web engine()--*/
-    virtual void DeleteBackward(int32_t length) = 0;
+  /*--ark web()--*/
+  virtual void DeleteBackward(int32_t length) = 0;
 
-    /*--web engine()--*/
-    virtual void SendKeyEventFromInputMethod() = 0;
+  /*--ark web()--*/
+  virtual void SendKeyEventFromInputMethod() = 0;
 
-    /*--web engine()--*/
-    virtual void SendKeyboardStatus(const int32_t& keyboardStatus) = 0;
+  /*--ark web()--*/
+  virtual void SendKeyboardStatus(const int32_t &keyboardStatus) = 0;
 
-    /*--web engine()--*/
-    virtual void SendFunctionKey(ArkWebRefPtr<ArkIMFAdapterFunctionKeyAdapter> functionKey) = 0;
+  /*--ark web()--*/
+  virtual void SendFunctionKey(
+      ArkWebRefPtr<ArkIMFAdapterFunctionKeyAdapter> functionKey) = 0;
 
-    /*--web engine()--*/
-    virtual void SetKeyboardStatus(bool status) = 0;
+  /*--ark web()--*/
+  virtual void SetKeyboardStatus(bool status) = 0;
 
-    /*--web engine()--*/
-    virtual void MoveCursor(const uint32_t direction) = 0;
+  /*--ark web()--*/
+  virtual void MoveCursor(const uint32_t direction) = 0;
 
-    /*--web engine()--*/
-    virtual void HandleSetSelection(int32_t start, int32_t end) = 0;
+  /*--ark web()--*/
+  virtual void HandleSetSelection(int32_t start, int32_t end) = 0;
 
-    /*--web engine()--*/
-    virtual void HandleExtendAction(int32_t action) = 0;
+  /*--ark web()--*/
+  virtual void HandleExtendAction(int32_t action) = 0;
 
-    /*--web engine()--*/
-    virtual void HandleSelect(int32_t keyCode, int32_t cursorMoveSkip) = 0;
+  /*--ark web()--*/
+  virtual void HandleSelect(int32_t keyCode, int32_t cursorMoveSkip) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetTextIndexAtCursor() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetTextIndexAtCursor() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebU16String GetLeftTextOfCursor(int32_t number) = 0;
+  /*--ark web()--*/
+  virtual ArkWebU16String GetLeftTextOfCursor(int32_t number) = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebU16String GetRightTextOfCursor(int32_t number) = 0;
+  /*--ark web()--*/
+  virtual ArkWebU16String GetRightTextOfCursor(int32_t number) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkIMFAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkIMFAdapter() = default;
+  /*--ark web()--*/
+  ArkIMFAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkIMFAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkIMFAdapter() = default;
 
-    /*--web engine()--*/
-    virtual bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard) = 0;
+  /*--ark web()--*/
+  virtual bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener,
+                      bool isShowKeyboard) = 0;
 
-    /*--web engine()--*/
-    virtual bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard,
-        const ArkIMFAdapterTextConfig& config) = 0;
+  /*--ark web()--*/
+  virtual bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener,
+                      bool isShowKeyboard,
+                      ArkWebRefPtr<ArkIMFTextConfigAdapter> config) = 0;
 
-    /*--web engine()--*/
-    virtual void ShowCurrentInput(const int32_t& inputType) = 0;
+  /*--ark web()--*/
+  virtual void ShowCurrentInput(const int32_t &inputType) = 0;
 
-    /*--web engine()--*/
-    virtual void HideTextInput() = 0;
+  /*--ark web()--*/
+  virtual void HideTextInput() = 0;
 
-    /*--web engine()--*/
-    virtual void Close() = 0;
+  /*--ark web()--*/
+  virtual void Close() = 0;
 
-    /*--web engine()--*/
-    virtual void OnCursorUpdate(ArkIMFAdapterCursorInfo cursorInfo) = 0;
+  /*--ark web()--*/
+  virtual void
+  OnCursorUpdate(ArkWebRefPtr<ArkIMFCursorInfoAdapter> cursorInfo) = 0;
 
-    /*--web engine()--*/
-    virtual void OnSelectionChange(ArkWebU16String& text, int start, int end) = 0;
+  /*--ark web()--*/
+  virtual void OnSelectionChange(ArkWebU16String &text, int start, int end) = 0;
 };
 } // namespace OHOS::ArkWeb
 

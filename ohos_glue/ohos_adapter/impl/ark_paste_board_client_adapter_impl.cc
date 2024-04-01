@@ -16,7 +16,7 @@
 #include "ark_paste_board_client_adapter_impl.h"
 
 #include "cpptoc/ark_paste_data_record_adapter_cpptoc.h"
-#include "cpptoc/ark_paste_record_list_cpptoc.h"
+#include "cpptoc/ark_paste_record_vector_cpptoc.h"
 #include "impl/ark_paste_data_record_adapter_impl.h"
 #include "wrapper/ark_paste_board_observer_adapter_wrapper.h"
 
@@ -24,9 +24,9 @@
 
 namespace OHOS::ArkWeb {
 
-static NWeb::PasteRecordList ArkPasteRecordListStructToClass(const ArkPasteRecordList& struct_value)
+static NWeb::PasteRecordVector ArkPasteRecordVectorStructToClass(const ArkPasteRecordVector& struct_value)
 {
-    NWeb::PasteRecordList class_value;
+    NWeb::PasteRecordVector class_value;
     if (struct_value.size > 0) {
         for (int count = 0; count < struct_value.size; count++) {
             ArkWebRefPtr<ArkPasteDataRecordAdapter> data =
@@ -42,18 +42,18 @@ static NWeb::PasteRecordList ArkPasteRecordListStructToClass(const ArkPasteRecor
 
 ArkPasteBoardClientAdapterImpl::ArkPasteBoardClientAdapterImpl(NWeb::PasteBoardClientAdapter& ref) : real_(ref) {}
 
-bool ArkPasteBoardClientAdapterImpl::GetPasteData(ArkPasteRecordList& data)
+bool ArkPasteBoardClientAdapterImpl::GetPasteData(ArkPasteRecordVector& data)
 {
-    NWeb::PasteRecordList list;
-    bool result = real_.GetPasteData(list);
-    data = ArkPasteRecordListClassToStruct(list);
+    NWeb::PasteRecordVector temp;
+    bool result = real_.GetPasteData(temp);
+    data = ArkPasteRecordVectorClassToStruct(temp);
     return result;
 }
 
-void ArkPasteBoardClientAdapterImpl::SetPasteData(ArkPasteRecordList& data, int32_t copyOption)
+void ArkPasteBoardClientAdapterImpl::SetPasteData(ArkPasteRecordVector& data, int32_t copyOption)
 {
-    NWeb::PasteRecordList list = ArkPasteRecordListStructToClass(data);
-    real_.SetPasteData(list, (NWeb::CopyOptionMode)copyOption);
+    NWeb::PasteRecordVector temp = ArkPasteRecordVectorStructToClass(data);
+    real_.SetPasteData(temp, (NWeb::CopyOptionMode)copyOption);
 }
 
 bool ArkPasteBoardClientAdapterImpl::HasPasteData()

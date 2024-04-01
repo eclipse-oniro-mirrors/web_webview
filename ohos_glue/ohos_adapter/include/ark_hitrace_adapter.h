@@ -16,36 +16,37 @@
 #ifndef ARK_HITRACE_ADAPTER_H
 #define ARK_HITRACE_ADAPTER_H
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkHiTraceAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual void StartTrace(const ArkWebString& value, float limit) = 0;
+  /*--ark web()--*/
+  virtual void StartTrace(const ArkWebString &value, float limit) = 0;
 
-    /*--web engine()--*/
-    virtual void FinishTrace() = 0;
+  /*--ark web()--*/
+  virtual void FinishTrace() = 0;
 
-    /*--web engine()--*/
-    virtual void StartAsyncTrace(const ArkWebString& value, int32_t taskId, float limit) = 0;
+  /*--ark web()--*/
+  virtual void StartAsyncTrace(const ArkWebString &value, int32_t taskId,
+                               float limit) = 0;
 
-    /*--web engine()--*/
-    virtual void FinishAsyncTrace(const ArkWebString& value, int32_t taskId) = 0;
+  /*--ark web()--*/
+  virtual void FinishAsyncTrace(const ArkWebString &value, int32_t taskId) = 0;
 
-    /*--web engine()--*/
-    virtual void CountTrace(const ArkWebString& name, int64_t count) = 0;
+  /*--ark web()--*/
+  virtual void CountTrace(const ArkWebString &name, int64_t count) = 0;
 
-    /*--web engine()--*/
-    virtual bool IsHiTraceEnable() = 0;
+  /*--ark web()--*/
+  virtual bool IsHiTraceEnable() = 0;
 
 protected:
-    ArkHiTraceAdapter() = default;
+  ArkHiTraceAdapter() = default;
 
-    virtual ~ArkHiTraceAdapter() = default;
+  virtual ~ArkHiTraceAdapter() = default;
 };
 } // namespace OHOS::ArkWeb
 

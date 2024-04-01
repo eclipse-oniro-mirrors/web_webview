@@ -27,9 +27,9 @@ class ArkPasteBoardClientAdapterImpl : public ArkPasteBoardClientAdapter {
 public:
     ArkPasteBoardClientAdapterImpl(NWeb::PasteBoardClientAdapter&);
 
-    bool GetPasteData(ArkPasteRecordList& data) override;
+    bool GetPasteData(ArkPasteRecordVector& data) override;
 
-    void SetPasteData(ArkPasteRecordList& data, int32_t copyOption) override;
+    void SetPasteData(ArkPasteRecordVector& data, int32_t copyOption) override;
 
     bool HasPasteData() override;
 

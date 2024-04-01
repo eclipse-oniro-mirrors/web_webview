@@ -15,8 +15,10 @@
 
 #include "ark_media_codec_decoder_adapter_impl.h"
 
-#include "bridge/ark_web_bridge_macros.h"
 #include "wrapper/ark_decoder_callback_adapter_wrapper.h"
+#include "wrapper/ark_decoder_format_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -35,14 +37,20 @@ int32_t ArkMediaCodecDecoderAdapterImpl::CreateVideoDecoderByName(const ArkWebSt
     return (int32_t)real_->CreateVideoDecoderByName(ArkWebStringStructToClass(name));
 }
 
-int32_t ArkMediaCodecDecoderAdapterImpl::ConfigureDecoder(const ArkDecoderFormat& format)
+int32_t ArkMediaCodecDecoderAdapterImpl::ConfigureDecoder(const ArkWebRefPtr<ArkDecoderFormatAdapter> format)
 {
-    return (int32_t)real_->ConfigureDecoder(format);
+    if (CHECK_REF_PTR_IS_NULL(format)) {
+        return (int32_t)real_->ConfigureDecoder(nullptr);
+    }
+    return (int32_t)real_->ConfigureDecoder(std::make_shared<ArkDecoderFormatAdapterWrapper>(format));
 }
 
-int32_t ArkMediaCodecDecoderAdapterImpl::SetParameterDecoder(const ArkDecoderFormat& format)
+int32_t ArkMediaCodecDecoderAdapterImpl::SetParameterDecoder(const ArkWebRefPtr<ArkDecoderFormatAdapter> format)
 {
-    return (int32_t)real_->SetParameterDecoder(format);
+    if (CHECK_REF_PTR_IS_NULL(format)) {
+        return (int32_t)real_->SetParameterDecoder(nullptr);
+    }
+    return (int32_t)real_->SetParameterDecoder(std::make_shared<ArkDecoderFormatAdapterWrapper>(format));
 }
 
 int32_t ArkMediaCodecDecoderAdapterImpl::SetOutputSurface(void* window)
@@ -80,14 +88,18 @@ int32_t ArkMediaCodecDecoderAdapterImpl::ReleaseDecoder()
     return (int32_t)real_->ReleaseDecoder();
 }
 
-int32_t ArkMediaCodecDecoderAdapterImpl::QueueInputBufferDec(uint32_t index, ArkBufferInfo info, uint32_t flag)
+int32_t ArkMediaCodecDecoderAdapterImpl::QueueInputBufferDec(
+    uint32_t index, int64_t presentationTimeUs, int32_t size, int32_t offset, uint32_t flag)
 {
-    return (int32_t)real_->QueueInputBufferDec(index, info, (OHOS::NWeb::BufferFlag)flag);
+    return (int32_t)real_->QueueInputBufferDec(index, presentationTimeUs, size, offset, (NWeb::BufferFlag)flag);
 }
 
-int32_t ArkMediaCodecDecoderAdapterImpl::GetOutputFormatDec(ArkDecoderFormat& format)
+int32_t ArkMediaCodecDecoderAdapterImpl::GetOutputFormatDec(ArkWebRefPtr<ArkDecoderFormatAdapter> format)
 {
-    return (int32_t)real_->GetOutputFormatDec(format);
+    if (CHECK_REF_PTR_IS_NULL(format)) {
+        return (int32_t)real_->GetOutputFormatDec(nullptr);
+    }
+    return (int32_t)real_->GetOutputFormatDec(std::make_shared<ArkDecoderFormatAdapterWrapper>(format));
 }
 
 int32_t ArkMediaCodecDecoderAdapterImpl::ReleaseOutputBufferDec(uint32_t index, bool isRender)

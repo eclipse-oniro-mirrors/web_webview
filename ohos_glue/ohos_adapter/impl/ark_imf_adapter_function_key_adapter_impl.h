@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "imf_adapter.h"
 #include "include/ark_imf_adapter.h"
 
 namespace OHOS::ArkWeb {

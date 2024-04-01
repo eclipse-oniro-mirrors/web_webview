@@ -13,24 +13,26 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_background_task_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_background_task_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
-bool ark_background_task_adapter_request_background_running(bool running, int32_t bgMode)
-{
-    // Execute
-    return ArkBackgroundTaskAdapter::RequestBackgroundRunning(running, bgMode);
+bool ark_background_task_adapter_request_background_running(bool running,
+                                                            int32_t bgMode) {
+  // Execute
+  return ArkBackgroundTaskAdapter::RequestBackgroundRunning(running, bgMode);
 }
 
-ArkBackgroundTaskAdapterCppToC::ArkBackgroundTaskAdapterCppToC() {}
+ArkBackgroundTaskAdapterCppToC::ArkBackgroundTaskAdapterCppToC() {
+}
 
-ArkBackgroundTaskAdapterCppToC::~ArkBackgroundTaskAdapterCppToC() {}
+ArkBackgroundTaskAdapterCppToC::~ArkBackgroundTaskAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkBackgroundTaskAdapterCppToC, ArkBackgroundTaskAdapter,
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkBackgroundTaskAdapterCppToC, ArkBackgroundTaskAdapter,
     ark_background_task_adapter_t>::kBridgeType = ARK_BACKGROUND_TASK_ADAPTER;
 
 } // namespace OHOS::ArkWeb
@@ -39,11 +41,13 @@ ArkWebBridgeType ArkWebCppToCRefCounted<ArkBackgroundTaskAdapterCppToC, ArkBackg
 extern "C" {
 #endif // __cplusplus
 
-ARK_WEB_EXPORT bool ark_background_task_adapter_request_background_running_static(bool running, int32_t bgMode)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT bool
+ark_background_task_adapter_request_background_running_static(bool running,
+                                                              int32_t bgMode) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_background_task_adapter_request_background_running(running, bgMode);
+  return OHOS::ArkWeb::ark_background_task_adapter_request_background_running(
+      running, bgMode);
 }
 
 #ifdef __cplusplus

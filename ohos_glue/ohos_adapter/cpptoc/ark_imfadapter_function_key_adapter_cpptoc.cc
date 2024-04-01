@@ -13,36 +13,38 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_imfadapter_function_key_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_imfadapter_function_key_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 int32_t ARK_WEB_CALLBACK ark_imfadapter_function_key_adapter_get_enter_key_type(
-    struct _ark_imfadapter_function_key_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_imfadapter_function_key_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkIMFAdapterFunctionKeyAdapterCppToC::Get(self)->GetEnterKeyType();
+  // Execute
+  return ArkIMFAdapterFunctionKeyAdapterCppToC::Get(self)->GetEnterKeyType();
 }
 
 } // namespace
 
-ArkIMFAdapterFunctionKeyAdapterCppToC::ArkIMFAdapterFunctionKeyAdapterCppToC()
-{
-    GetStruct()->get_enter_key_type = ark_imfadapter_function_key_adapter_get_enter_key_type;
+ArkIMFAdapterFunctionKeyAdapterCppToC::ArkIMFAdapterFunctionKeyAdapterCppToC() {
+  GetStruct()->get_enter_key_type =
+      ark_imfadapter_function_key_adapter_get_enter_key_type;
 }
 
-ArkIMFAdapterFunctionKeyAdapterCppToC::~ArkIMFAdapterFunctionKeyAdapterCppToC() {}
+ArkIMFAdapterFunctionKeyAdapterCppToC::
+    ~ArkIMFAdapterFunctionKeyAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkIMFAdapterFunctionKeyAdapterCppToC, ArkIMFAdapterFunctionKeyAdapter,
-    ark_imfadapter_function_key_adapter_t>::kBridgeType = ARK_IMFADAPTER_FUNCTION_KEY_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkIMFAdapterFunctionKeyAdapterCppToC, ArkIMFAdapterFunctionKeyAdapter,
+    ark_imfadapter_function_key_adapter_t>::kBridgeType =
+    ARK_IMFADAPTER_FUNCTION_KEY_ADAPTER;
 
 } // namespace OHOS::ArkWeb
