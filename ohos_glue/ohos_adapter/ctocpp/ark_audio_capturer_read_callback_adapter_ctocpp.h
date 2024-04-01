@@ -13,29 +13,31 @@
  * limitations under the License.
  */
 
-#ifndef ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER_CTOCPP_H
-#define ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER_CTOCPP_H
+#ifndef ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER_CTOCPP_H_
+#define ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_audio_capturer_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_audio_capturer_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_audio_capturer_adapter_capi.h"
+#include "ohos_adapter/include/ark_audio_capturer_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkAudioCapturerReadCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkAudioCapturerReadCallbackAdapterCToCpp, ArkAudioCapturerReadCallbackAdapter,
+    : public ArkWebCToCppRefCounted<
+          ArkAudioCapturerReadCallbackAdapterCToCpp,
+          ArkAudioCapturerReadCallbackAdapter,
           ark_audio_capturer_read_callback_adapter_t> {
 public:
-    ArkAudioCapturerReadCallbackAdapterCToCpp();
-    virtual ~ArkAudioCapturerReadCallbackAdapterCToCpp();
+  ArkAudioCapturerReadCallbackAdapterCToCpp();
+  virtual ~ArkAudioCapturerReadCallbackAdapterCToCpp();
 
-    // ArkAudioCapturerReadCallbackAdapter methods.
-    void OnReadData(size_t length) override;
+  // ArkAudioCapturerReadCallbackAdapter methods.
+  void OnReadData(size_t length) override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER_CTOCPP_H
+#endif // ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER_CTOCPP_H_

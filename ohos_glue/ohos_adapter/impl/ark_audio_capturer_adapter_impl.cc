@@ -15,8 +15,11 @@
 
 #include "ark_audio_capturer_adapter_impl.h"
 
-#include "bridge/ark_web_bridge_macros.h"
+#include "wrapper/ark_audio_capturer_options_adapter_wrapper.h"
 #include "wrapper/ark_audio_capturer_read_callback_adapter_wrapper.h"
+#include "wrapper/ark_buffer_desc_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -25,10 +28,13 @@ ArkAudioCapturerAdapterImpl::ArkAudioCapturerAdapterImpl(std::shared_ptr<OHOS::N
 {}
 
 int32_t ArkAudioCapturerAdapterImpl::Create(
-    const ArkAudioAdapterCapturerOptions& capturerOptions, ArkWebString& cachePath)
+    const ArkWebRefPtr<ArkAudioCapturerOptionsAdapter> capturerOptions, ArkWebString& cachePath)
 {
     std::string str = ArkWebStringStructToClass(cachePath);
-    return real_->Create(capturerOptions, str);
+    if (CHECK_REF_PTR_IS_NULL(capturerOptions)) {
+        return real_->Create(nullptr, str);
+    }
+    return real_->Create(std::make_shared<ArkAudioCapturerOptionsAdapterWrapper>(capturerOptions), str);
 }
 
 bool ArkAudioCapturerAdapterImpl::Start()
@@ -56,14 +62,20 @@ int32_t ArkAudioCapturerAdapterImpl::SetCapturerReadCallback(
     return real_->SetCapturerReadCallback(std::make_shared<ArkAudioCapturerReadCallbackAdapterWrapper>(callback));
 }
 
-int32_t ArkAudioCapturerAdapterImpl::GetBufferDesc(ArkBufferDescAdapter& buffferDesc)
+int32_t ArkAudioCapturerAdapterImpl::GetBufferDesc(ArkWebRefPtr<ArkBufferDescAdapter> bufferDesc)
 {
-    return real_->GetBufferDesc(buffferDesc);
+    if (CHECK_REF_PTR_IS_NULL(bufferDesc)) {
+        return real_->GetBufferDesc(nullptr);
+    }
+    return real_->GetBufferDesc(std::make_shared<ArkBufferDescAdapterWrapper>(bufferDesc));
 }
 
-int32_t ArkAudioCapturerAdapterImpl::Enqueue(const ArkBufferDescAdapter& bufferDesc)
+int32_t ArkAudioCapturerAdapterImpl::Enqueue(const ArkWebRefPtr<ArkBufferDescAdapter> bufferDesc)
 {
-    return real_->Enqueue(bufferDesc);
+    if (CHECK_REF_PTR_IS_NULL(bufferDesc)) {
+        return real_->Enqueue(nullptr);
+    }
+    return real_->Enqueue(std::make_shared<ArkBufferDescAdapterWrapper>(bufferDesc));
 }
 
 int32_t ArkAudioCapturerAdapterImpl::GetFrameCount(uint32_t& frameCount)

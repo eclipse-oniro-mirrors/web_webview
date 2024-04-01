@@ -13,58 +13,74 @@
  * limitations under the License.
  */
 
-#ifndef ARK_SYSTEM_PROPERTIES_ADAPTER_CAPI_H
-#define ARK_SYSTEM_PROPERTIES_ADAPTER_CAPI_H
+#ifndef ARK_SYSTEM_PROPERTIES_ADAPTER_CAPI_H_
+#define ARK_SYSTEM_PROPERTIES_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_system_properties_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    bool(ARK_WEB_CALLBACK* get_resource_use_hap_path_enable)(struct _ark_system_properties_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *get_resource_use_hap_path_enable)(
+      struct _ark_system_properties_adapter_t *self);
 
-    ArkWebString(ARK_WEB_CALLBACK* get_device_info_product_model)(struct _ark_system_properties_adapter_t* self);
+  ArkWebString(ARK_WEB_CALLBACK *get_device_info_product_model)(
+      struct _ark_system_properties_adapter_t *self);
 
-    ArkWebString(ARK_WEB_CALLBACK* get_device_info_brand)(struct _ark_system_properties_adapter_t* self);
+  ArkWebString(ARK_WEB_CALLBACK *get_device_info_brand)(
+      struct _ark_system_properties_adapter_t *self);
 
-    int32_t(ARK_WEB_CALLBACK* get_device_info_major_version)(struct _ark_system_properties_adapter_t* self);
+  int32_t(ARK_WEB_CALLBACK *get_device_info_major_version)(
+      struct _ark_system_properties_adapter_t *self);
 
-    int32_t(ARK_WEB_CALLBACK* get_product_device_type)(struct _ark_system_properties_adapter_t* self);
+  int32_t(ARK_WEB_CALLBACK *get_product_device_type)(
+      struct _ark_system_properties_adapter_t *self);
 
-    bool(ARK_WEB_CALLBACK* get_web_optimization_value)(struct _ark_system_properties_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *get_web_optimization_value)(
+      struct _ark_system_properties_adapter_t *self);
 
-    bool(ARK_WEB_CALLBACK* get_lockdown_mode_status)(struct _ark_system_properties_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *get_lockdown_mode_status)(
+      struct _ark_system_properties_adapter_t *self);
 
-    ArkWebString(ARK_WEB_CALLBACK* get_user_agent_osname)(struct _ark_system_properties_adapter_t* self);
+  ArkWebString(ARK_WEB_CALLBACK *get_user_agent_osname)(
+      struct _ark_system_properties_adapter_t *self);
 
-    int32_t(ARK_WEB_CALLBACK* get_software_major_version)(struct _ark_system_properties_adapter_t* self);
+  int32_t(ARK_WEB_CALLBACK *get_software_major_version)(
+      struct _ark_system_properties_adapter_t *self);
 
-    int32_t(ARK_WEB_CALLBACK* get_software_senior_version)(struct _ark_system_properties_adapter_t* self);
+  int32_t(ARK_WEB_CALLBACK *get_software_senior_version)(
+      struct _ark_system_properties_adapter_t *self);
 
-    ArkWebString(ARK_WEB_CALLBACK* get_netlog_mode)(struct _ark_system_properties_adapter_t* self);
+  ArkWebString(ARK_WEB_CALLBACK *get_netlog_mode)(
+      struct _ark_system_properties_adapter_t *self);
 
-    bool(ARK_WEB_CALLBACK* get_trace_debug_enable)(struct _ark_system_properties_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *get_trace_debug_enable)(
+      struct _ark_system_properties_adapter_t *self);
 
-    ArkWebString (ARK_WEB_CALLBACK *get_site_isolation_mode)(struct _ark_system_properties_adapter_t* self);
+  ArkWebString(ARK_WEB_CALLBACK *get_site_isolation_mode)(
+      struct _ark_system_properties_adapter_t *self);
 
-    bool(ARK_WEB_CALLBACK* get_oop_gpu_enable)(struct _ark_system_properties_adapter_t* self);
+  int32_t(ARK_WEB_CALLBACK *get_flow_buf_max_fd)(
+      struct _ark_system_properties_adapter_t *self);
 
-    void(ARK_WEB_CALLBACK* set_oop_gpu_disable)(struct _ark_system_properties_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *get_oopgpuenable)(
+      struct _ark_system_properties_adapter_t *self);
 
-    int32_t (ARK_WEB_CALLBACK *get_flow_buf_max_fd)(struct _ark_system_properties_adapter_t* self);
+  void(ARK_WEB_CALLBACK *set_oopgpudisable)(
+      struct _ark_system_properties_adapter_t *self);
 } ark_system_properties_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_SYSTEM_PROPERTIES_ADAPTER_CAPI_H
+#endif // ARK_SYSTEM_PROPERTIES_ADAPTER_CAPI_H_

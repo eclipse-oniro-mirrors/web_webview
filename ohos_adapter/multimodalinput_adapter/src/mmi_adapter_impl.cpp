@@ -30,21 +30,21 @@ MMIListenerAdapterImpl::~MMIListenerAdapterImpl()
     listener_ = nullptr;
 };
 
-void MMIListenerAdapterImpl::OnDeviceAdded(int32_t deviceId, const std::string &type)
+void MMIListenerAdapterImpl::OnDeviceAdded(int32_t deviceId, const std::string& type)
 {
     if (listener_) {
         listener_->OnDeviceAdded(deviceId, type);
     }
 };
 
-void MMIListenerAdapterImpl::OnDeviceRemoved(int32_t deviceId, const std::string &type)
+void MMIListenerAdapterImpl::OnDeviceRemoved(int32_t deviceId, const std::string& type)
 {
     if (listener_) {
         listener_->OnDeviceRemoved(deviceId, type);
     }
 };
 
-MMIInputListenerAdapterImpl::MMIInputListenerAdapterImpl(std::shared_ptr<MMIInputListenerAdapter> listener) 
+MMIInputListenerAdapterImpl::MMIInputListenerAdapterImpl(std::shared_ptr<MMIInputListenerAdapter> listener)
     : listener_(listener) {};
 
 MMIInputListenerAdapterImpl::~MMIInputListenerAdapterImpl()
@@ -65,13 +65,9 @@ void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::KeyEvent> ke
     listener_->OnInputEvent(keyEvent->GetKeyCode(), keyAction);
 };
 
-void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const
-{
-};
+void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::PointerEvent> pointerEvent) const {};
 
-void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::AxisEvent> axisEvent) const
-{
-};
+void MMIInputListenerAdapterImpl::OnInputEvent(std::shared_ptr<MMI::AxisEvent> axisEvent) const {};
 
 char* MMIAdapterImpl::KeyCodeToString(int32_t keyCode)
 {
@@ -122,29 +118,33 @@ int32_t MMIAdapterImpl::GetDeviceIds(std::vector<int32_t>& ids)
     return InputManager::GetInstance()->GetDeviceIds(callback);
 };
 
-int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, MMIDeviceInfoAdapter& info)
+int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, std::shared_ptr<MMIDeviceInfoAdapter> info)
 {
-    std::function<void(const MMIDeviceInfoAdapter&)> callback = [&info](const MMIDeviceInfoAdapter& param) {
-        info = const_cast<MMIDeviceInfoAdapter&>(param);
+    if (!info) {
+        WVLOG_E("GetDeviceInfo info is nullptr");
+        return -1; 
+    }
+
+    std::function<void(std::shared_ptr<MMI::InputDevice>)> callback = [&info](
+                                                                          std::shared_ptr<MMI::InputDevice> device) {
+        if (device) {
+            info->SetId(device->GetId());
+            info->SetType(device->GetType());
+            info->SetBus(device->GetBus());
+            info->SetVersion(device->GetVersion());
+            info->SetProduct(device->GetProduct());
+            info->SetVendor(device->GetVendor());
+            info->SetName(device->GetName());
+            info->SetPhys(device->GetPhys());
+            info->SetUniq(device->GetUniq());
+        }
     };
 
-    int32_t ret = InputManager::GetInstance()->GetDevice(deviceId,
-        [&callback](std::shared_ptr<MMI::InputDevice> device) {
-            MMIDeviceInfoAdapter info;
-            info.id = device->GetId();
-            info.type = device->GetType();
-            info.bus = device->GetBus();
-            info.version = device->GetVersion();
-            info.product = device->GetProduct();
-            info.vendor = device->GetVendor();
-            info.name = device->GetName();
-            info.phys = device->GetPhys();
-            info.uniq = device->GetUniq();
-            callback(info);
-        });
+    int32_t ret = InputManager::GetInstance()->GetDevice(
+        deviceId, [&callback](std::shared_ptr<MMI::InputDevice> device) { callback(device); });
     if (ret != 0) {
         WVLOG_E("InputManager GetDevice failed, ret: %{public}d", ret);
     }
     return ret;
 }
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb

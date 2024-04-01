@@ -13,57 +13,58 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_running_lock_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_running_lock_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-bool ARK_WEB_CALLBACK ark_running_lock_adapter_is_used(struct _ark_running_lock_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_running_lock_adapter_is_used(struct _ark_running_lock_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkRunningLockAdapterCppToC::Get(self)->IsUsed();
+  // Execute
+  return ArkRunningLockAdapterCppToC::Get(self)->IsUsed();
 }
 
-int32_t ARK_WEB_CALLBACK ark_running_lock_adapter_lock(struct _ark_running_lock_adapter_t* self, uint32_t timeOutMs)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_running_lock_adapter_lock(
+    struct _ark_running_lock_adapter_t *self, uint32_t timeOutMs) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkRunningLockAdapterCppToC::Get(self)->Lock(timeOutMs);
+  // Execute
+  return ArkRunningLockAdapterCppToC::Get(self)->Lock(timeOutMs);
 }
 
-int32_t ARK_WEB_CALLBACK ark_running_lock_adapter_un_lock(struct _ark_running_lock_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK
+ark_running_lock_adapter_un_lock(struct _ark_running_lock_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkRunningLockAdapterCppToC::Get(self)->UnLock();
+  // Execute
+  return ArkRunningLockAdapterCppToC::Get(self)->UnLock();
 }
 
 } // namespace
 
-ArkRunningLockAdapterCppToC::ArkRunningLockAdapterCppToC()
-{
-    GetStruct()->is_used = ark_running_lock_adapter_is_used;
-    GetStruct()->lock = ark_running_lock_adapter_lock;
-    GetStruct()->un_lock = ark_running_lock_adapter_un_lock;
+ArkRunningLockAdapterCppToC::ArkRunningLockAdapterCppToC() {
+  GetStruct()->is_used = ark_running_lock_adapter_is_used;
+  GetStruct()->lock = ark_running_lock_adapter_lock;
+  GetStruct()->un_lock = ark_running_lock_adapter_un_lock;
 }
 
-ArkRunningLockAdapterCppToC::~ArkRunningLockAdapterCppToC() {}
+ArkRunningLockAdapterCppToC::~ArkRunningLockAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkRunningLockAdapterCppToC, ArkRunningLockAdapter,
-    ark_running_lock_adapter_t>::kBridgeType = ARK_RUNNING_LOCK_ADAPTER;
+template <>
+ArkWebBridgeType
+    ArkWebCppToCRefCounted<ArkRunningLockAdapterCppToC, ArkRunningLockAdapter,
+                           ark_running_lock_adapter_t>::kBridgeType =
+        ARK_RUNNING_LOCK_ADAPTER;
 
 } // namespace OHOS::ArkWeb

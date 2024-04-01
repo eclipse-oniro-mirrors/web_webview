@@ -37,11 +37,13 @@ public:
 
     void OnError(ErrorType errorType, int32_t errorCode) override {}
 
-    void OnStreamChanged(const CodecFormatAdapter& formatApadter_) override {}
+    void OnStreamChanged(const std::shared_ptr<CodecFormatAdapter> formatApadter_) override {}
 
-    void OnNeedInputData(uint32_t index, OhosBuffer buffer) override {}
+    void OnNeedInputData(uint32_t index, std::shared_ptr<OhosBufferAdapter> buffer) override {}
 
-    void OnNeedOutputData(uint32_t index, BufferInfo info, BufferFlag flag, OhosBuffer buffer) override {}
+    void OnNeedOutputData(uint32_t index, std::shared_ptr<BufferInfoAdapter> info, BufferFlag flag,
+        std::shared_ptr<OhosBufferAdapter> buffer) override
+    {}
 };
 
 class ProducerSurfaceAdapterMock : public ProducerSurfaceAdapter {
@@ -51,16 +53,46 @@ public:
     virtual ~ProducerSurfaceAdapterMock() = default;
 
     std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(
-        int32_t& fence, BufferRequestConfigAdapter& configAdapter) override
+        int32_t& fence, std::shared_ptr<BufferRequestConfigAdapter> configAdapter) override
     {
         return nullptr;
     };
 
     int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence,
-        BufferFlushConfigAdapter& flushConfigAdapter) override
+        std::shared_ptr<BufferFlushConfigAdapter> flushConfigAdapter) override
     {
         return 0;
     };
+};
+
+class CodecConfigParaAdapterMock : public CodecConfigParaAdapter {
+public:
+    CodecConfigParaAdapterMock() = default;
+
+    int32_t GetWidth() override
+    {
+        return width;
+    }
+
+    int32_t GetHeight() override
+    {
+        return height;
+    }
+
+    int64_t GetBitRate() override
+    {
+        return bitRate;
+    }
+
+    double GetFrameRate() override
+    {
+        return frameRate;
+    }
+
+    int32_t width;
+    int32_t height;
+    int64_t bitRate;
+    double frameRate;
 };
 
 /**
@@ -88,8 +120,7 @@ HWTEST_F(EncoderCallbackImplTest, EncoderCallbackImpl_NormalTest_001, TestSize.L
 class MediaCodecEncoderAdapterImplTest : public testing::Test {
 protected:
     void SetUp() override;
-    CodecFormatAdapter formatApadter_ = { 640, 360 };
-    CodecConfigPara config_ = { 640, 360, 300000, 15 };
+    std::shared_ptr<CodecConfigParaAdapterMock> config_ = nullptr;
     std::shared_ptr<MediaCodecEncoderAdapterImpl> mediaCodecEncoderAdapterImpl = nullptr;
 };
 
@@ -99,6 +130,13 @@ void MediaCodecEncoderAdapterImplTest::SetUp()
     mediaCodecEncoderAdapterImpl = std::make_unique<MediaCodecEncoderAdapterImpl>();
     EXPECT_NE(mediaCodecEncoderAdapterImpl, nullptr);
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->encoder_, nullptr);
+    EXPECT_EQ(config_, nullptr);
+    config_ = std::make_shared<CodecConfigParaAdapterMock>();
+    EXPECT_NE(config_, nullptr);
+    config_->width = 640;
+    config_->height = 360;
+    config_->bitRate = 300000;
+    config_->frameRate = 15;
 }
 
 /**
@@ -221,11 +259,13 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_GetList_
 {
     MediaCodecListAdapterImpl codecListImpl = MediaCodecListAdapterImpl::GetInstance();
 
-    CapabilityDataAdapter capaData = codecListImpl.GetCodecCapability("test", true);
-    EXPECT_EQ(capaData.maxWidth, 0);
+    std::shared_ptr<CapabilityDataAdapter> capaData = codecListImpl.GetCodecCapability("test", true);
+    EXPECT_NE(capaData, nullptr);
+    EXPECT_EQ(capaData->GetMaxWidth(), 0);
 
     capaData = codecListImpl.GetCodecCapability("video/avc", true);
-    EXPECT_NE(capaData.maxWidth, 0);
+    EXPECT_NE(capaData, nullptr);
+    EXPECT_NE(capaData->GetMaxWidth(), 0);
 }
 
 /**
@@ -239,21 +279,10 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_Surface_
     const std::string mimetype = "video/avc";
     auto surfaceAdapter = std::make_shared<ProducerSurfaceAdapterMock>();
     int32_t fence = -1;
-    constexpr int32_t DEFAULT_STRIDE = 16;
-    BufferRequestConfigAdapter configAdapter;
-    configAdapter.width = config_.width;
-    configAdapter.height = config_.height;
-    configAdapter.strideAlignment = DEFAULT_STRIDE;
-    std::shared_ptr<SurfaceBufferAdapter> SurfaceBufferAdapter = surfaceAdapter->RequestBuffer(fence, configAdapter);
+    std::shared_ptr<SurfaceBufferAdapter> SurfaceBufferAdapter = surfaceAdapter->RequestBuffer(fence, nullptr);
     EXPECT_EQ(SurfaceBufferAdapter, nullptr);
 
-    BufferFlushConfigAdapter fulshConfigAdapter;
-    fulshConfigAdapter.x = 0;
-    fulshConfigAdapter.y = 0;
-    fulshConfigAdapter.w = configAdapter.width;
-    fulshConfigAdapter.h = configAdapter.height;
-    fulshConfigAdapter.timestamp = 0;
-    int32_t ret = surfaceAdapter->FlushBuffer(SurfaceBufferAdapter, fence, fulshConfigAdapter);
+    int32_t ret = surfaceAdapter->FlushBuffer(SurfaceBufferAdapter, fence, nullptr);
     EXPECT_EQ(ret, 0);
 }
 } // namespace OHOS::NWeb

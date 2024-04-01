@@ -27,23 +27,35 @@ MediaCodecListAdapterImpl& MediaCodecListAdapterImpl::GetInstance()
     return instance;
 }
 
-void MediaCodecListAdapterImpl::TransToAdapterCapability(const CapabilityData* data, CapabilityDataAdapter& adapterData)
+void MediaCodecListAdapterImpl::TransToAdapterCapability(
+    const CapabilityData* data, std::shared_ptr<CapabilityDataAdapterImpl>& adapterData)
 {
-    if (data == nullptr) {
-        WVLOG_E("MediaCodecEncoder data is null.");
-        adapterData.maxWidth = 0;
-        adapterData.maxHeight = 0;
-        adapterData.maxframeRate = 0;
+    if (adapterData == nullptr) {
+        WVLOG_E("MediaCodecEncoder adapterData is null");
         return;
     }
-    adapterData.maxWidth = data->width.maxVal;
-    adapterData.maxHeight = data->height.maxVal;
-    adapterData.maxframeRate = data->frameRate.maxVal;
+
+    if (data == nullptr) {
+        WVLOG_E("MediaCodecEncoder data is null.");
+        adapterData->SetMaxWidth(0);
+        adapterData->SetMaxHeight(0);
+        adapterData->SetMaxframeRate(0);
+        return;
+    }
+    adapterData->SetMaxWidth(data->width.maxVal);
+    adapterData->SetMaxHeight(data->height.maxVal);
+    adapterData->SetMaxframeRate(data->frameRate.maxVal);
 }
 
-CapabilityDataAdapter MediaCodecListAdapterImpl::GetCodecCapability(const std::string& mime, const bool isEncoder)
+std::shared_ptr<CapabilityDataAdapter> MediaCodecListAdapterImpl::GetCodecCapability(
+    const std::string& mime, const bool isEncoder)
 {
-    CapabilityDataAdapter capabilityAdapter;
+    std::shared_ptr<CapabilityDataAdapterImpl> capabilityAdapter = std::make_shared<CapabilityDataAdapterImpl>();
+    if (capabilityAdapter == nullptr) {
+        WVLOG_E("new CapabilityDataAdapterImpl failed.");
+        return nullptr;
+    }
+
     if (avCodecList_ == nullptr) {
         avCodecList_ = AVCodecListFactory::CreateAVCodecList();
     }

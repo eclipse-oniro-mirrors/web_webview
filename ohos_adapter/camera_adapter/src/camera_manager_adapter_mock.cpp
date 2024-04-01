@@ -27,7 +27,10 @@ int32_t CameraManagerAdapterImpl::Create(std::shared_ptr<CameraStatusCallbackAda
     return -1;
 }
 
-void CameraManagerAdapterImpl::GetDevicesInfo(std::vector<VideoDeviceDescriptor>& devicesDiscriptor) {}
+std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> CameraManagerAdapterImpl::GetDevicesInfo()
+{
+    return std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>>();
+}
 
 int32_t CameraManagerAdapterImpl::GetExposureModes(std::vector<ExposureModeAdapter>& exposureModesAdapter)
 {
@@ -39,9 +42,9 @@ int32_t CameraManagerAdapterImpl::GetCurrentExposureMode(ExposureModeAdapter& ex
     return -1;
 }
 
-int32_t CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId, VideoCaptureRangeAdapter& rangeVal)
+std::shared_ptr<VideoCaptureRangeAdapter> CameraManagerAdapterImpl::GetCaptionRangeById(RangeIDAdapter rangeId)
 {
-    return -1;
+    return nullptr;
 }
 
 bool CameraManagerAdapterImpl::IsFocusModeSupported(FocusModeAdapter focusMode)
@@ -94,7 +97,8 @@ bool CameraManagerAdapterImpl::IsExistCaptureTask()
 void CameraManagerAdapterImpl::SetForegroundFlag(bool isForeground) {}
 
 int32_t CameraManagerAdapterImpl::StartStream(const std::string& deviceId,
-    const VideoCaptureParamsAdapter& captureParams, std::shared_ptr<CameraBufferListenerAdapter> listener)
+    const std::shared_ptr<VideoCaptureParamsAdapter> captureParams,
+    std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
     return -1;
 }

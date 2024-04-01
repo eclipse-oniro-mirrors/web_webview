@@ -16,19 +16,19 @@
 #ifndef ARK_BACKGROUND_TASK_ADAPTER_H
 #define ARK_BACKGROUND_TASK_ADAPTER_H
 
-#include "include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_base_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkBackgroundTaskAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    ArkBackgroundTaskAdapter() = default;
+  ArkBackgroundTaskAdapter() = default;
 
-    virtual ~ArkBackgroundTaskAdapter() = default;
+  virtual ~ArkBackgroundTaskAdapter() = default;
 
-    /*--web engine()--*/
-    static bool RequestBackgroundRunning(bool running, int32_t bgMode);
+  /*--ark web()--*/
+  static bool RequestBackgroundRunning(bool running, int32_t bgMode);
 };
 } // namespace OHOS::ArkWeb
 

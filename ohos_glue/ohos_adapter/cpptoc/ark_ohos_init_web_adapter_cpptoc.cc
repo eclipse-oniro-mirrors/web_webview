@@ -13,9 +13,8 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_ohos_init_web_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_ohos_init_web_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -51,10 +50,14 @@ ArkOhosInitWebAdapterCppToC::ArkOhosInitWebAdapterCppToC()
     GetStruct()->set_run_web_inited_callback = ark_ohos_init_web_adapter_set_run_web_inited_callback;
 }
 
-ArkOhosInitWebAdapterCppToC::~ArkOhosInitWebAdapterCppToC() {}
+ArkOhosInitWebAdapterCppToC::~ArkOhosInitWebAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkOhosInitWebAdapterCppToC, ArkOhosInitWebAdapter,
-    ark_ohos_init_web_adapter_t>::kBridgeType = ARK_OHOS_INIT_WEB_ADAPTER;
+template <>
+ArkWebBridgeType
+    ArkWebCppToCRefCounted<ArkOhosInitWebAdapterCppToC, ArkOhosInitWebAdapter,
+                           ark_ohos_init_web_adapter_t>::kBridgeType =
+        ARK_OHOS_INIT_WEB_ADAPTER;
+
 
 } // namespace OHOS::ArkWeb

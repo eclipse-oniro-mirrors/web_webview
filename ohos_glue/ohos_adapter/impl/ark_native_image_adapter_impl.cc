@@ -15,6 +15,10 @@
 
 #include "ark_native_image_adapter_impl.h"
 
+#include "wrapper/ark_frame_available_listener_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
+
 namespace OHOS::ArkWeb {
 
 ArkNativeImageAdapterImpl::ArkNativeImageAdapterImpl(std::shared_ptr<OHOS::NWeb::NativeImageAdapter> ref) : real_(ref)
@@ -57,9 +61,13 @@ int32_t ArkNativeImageAdapterImpl::GetSurfaceId(uint64_t* surfaceId)
     return real_->GetSurfaceId(surfaceId);
 }
 
-int32_t ArkNativeImageAdapterImpl::SetOnFrameAvailableListener(ArkOnFrameAvailableListener* listener)
+int32_t ArkNativeImageAdapterImpl::SetOnFrameAvailableListener(ArkWebRefPtr<ArkFrameAvailableListener> listener)
 {
-    return real_->SetOnFrameAvailableListener(reinterpret_cast<OHOS::NWeb::OnFrameAvailableListener*>(listener));
+    if (CHECK_REF_PTR_IS_NULL(listener)) {
+        return real_->SetOnFrameAvailableListener(nullptr);
+    }
+
+    return real_->SetOnFrameAvailableListener(std::make_shared<ArkFrameAvailableListenerWrapper>(listener));
 }
 
 int32_t ArkNativeImageAdapterImpl::UnsetOnFrameAvailableListener()

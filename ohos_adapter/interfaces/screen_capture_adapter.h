@@ -24,7 +24,7 @@
 
 namespace OHOS::NWeb {
 
-enum class CaptureModeAdapter: int32_t {
+enum class CaptureModeAdapter : int32_t {
     /* capture home screen */
     CAPTURE_HOME_SCREEN = 0,
     /* capture a specified screen */
@@ -34,7 +34,7 @@ enum class CaptureModeAdapter: int32_t {
     CAPTURE_INVAILD = -1
 };
 
-enum class DataTypeAdapter: int32_t {
+enum class DataTypeAdapter : int32_t {
     /* YUV/RGBA/PCM, etc. original stream */
     ORIGINAL_STREAM_DATA_TYPE = 0,
     /* h264/AAC, etc. encoded stream */
@@ -44,7 +44,7 @@ enum class DataTypeAdapter: int32_t {
     INVAILD_DATA_TYPE = -1
 };
 
-enum class AudioCaptureSourceTypeAdapter: int32_t {
+enum class AudioCaptureSourceTypeAdapter : int32_t {
     /* Invalid audio source */
     SOURCE_INVALID = -1,
     /* Default audio source */
@@ -57,7 +57,7 @@ enum class AudioCaptureSourceTypeAdapter: int32_t {
     APP_PLAYBACK = 3,
 };
 
-enum class AudioCodecFormatAdapter: int32_t {
+enum class AudioCodecFormatAdapter : int32_t {
     /* Default format */
     AUDIO_DEFAULT = 0,
     /* Advanced Audio Coding Low Complexity (AAC-LC) */
@@ -66,7 +66,7 @@ enum class AudioCodecFormatAdapter: int32_t {
     AUDIO_CODEC_FORMAT_BUTT,
 };
 
-enum class VideoSourceTypeAdapter: int32_t {
+enum class VideoSourceTypeAdapter : int32_t {
     /* Unsupported App Usage. */
     /* YUV video data provided through graphic */
     VIDEO_SOURCE_SURFACE_YUV = 0,
@@ -78,7 +78,7 @@ enum class VideoSourceTypeAdapter: int32_t {
     VIDEO_SOURCE_BUTT
 };
 
-enum class VideoCodecFormatAdapter: int32_t {
+enum class VideoCodecFormatAdapter : int32_t {
     /* Default format */
     VIDEO_DEFAULT = 0,
     /* H.264 */
@@ -95,7 +95,7 @@ enum class VideoCodecFormatAdapter: int32_t {
     VIDEO_CODEC_FORMAT_BUTT,
 };
 
-enum class ContainerFormatTypeAdapter: int32_t {
+enum class ContainerFormatTypeAdapter : int32_t {
     /* Audio format type -- m4a */
     CFT_MPEG_4A_TYPE = 0,
     /* Video format type -- mp4 */
@@ -104,74 +104,130 @@ enum class ContainerFormatTypeAdapter: int32_t {
     CFT_BUTT,
 };
 
-struct AudioCaptureInfoAdapter {
+class AudioCaptureInfoAdapter {
+public:
+    AudioCaptureInfoAdapter() = default;
+
+    virtual ~AudioCaptureInfoAdapter() = default;
+
     /* Audio capture sample rate info */
-    int32_t audioSampleRate;
+    virtual int32_t GetAudioSampleRate() = 0;
+
     /* Audio capture channel info */
-    int32_t audioChannels;
+    virtual int32_t GetAudioChannels() = 0;
+
     /* Audio capture source type */
-    AudioCaptureSourceTypeAdapter audioSource = AudioCaptureSourceTypeAdapter::SOURCE_DEFAULT;
+    virtual AudioCaptureSourceTypeAdapter GetAudioSource() = 0;
 };
 
-struct AudioEncInfoAdapter {
+class AudioEncInfoAdapter {
+public:
+    AudioEncInfoAdapter() = default;
+
+    virtual ~AudioEncInfoAdapter() = default;
+
     /* Audio encoder bitrate */
-    int32_t audioBitrate = 0;
+    virtual int32_t GetAudioBitrate() = 0;
+
     /* Audio codec format */
-    AudioCodecFormatAdapter audioCodecformat = AudioCodecFormatAdapter::AUDIO_DEFAULT;
+    virtual AudioCodecFormatAdapter GetAudioCodecformat() = 0;
 };
 
-struct AudioInfoAdapter {
+class AudioInfoAdapter {
+public:
+    AudioInfoAdapter() = default;
+
+    virtual ~AudioInfoAdapter() = default;
+
     /* Audio capture info of microphone */
-    AudioCaptureInfoAdapter micCapInfo;
+    virtual std::shared_ptr<AudioCaptureInfoAdapter> GetMicCapInfo() = 0;
+
     /* Audio capture info of inner */
-    AudioCaptureInfoAdapter innerCapInfo;
+    virtual std::shared_ptr<AudioCaptureInfoAdapter> GetInnerCapInfo() = 0;
+
     /* Audio encoder info, no need to set, while dataType = ORIGINAL_STREAM_DATA_TYPE */
-    AudioEncInfoAdapter audioEncInfo;
+    virtual std::shared_ptr<AudioEncInfoAdapter> GetAudioEncInfo() = 0;
 };
 
-struct VideoCaptureInfoAdapter {
+class VideoCaptureInfoAdapter {
+public:
+    VideoCaptureInfoAdapter() = default;
+
+    virtual ~VideoCaptureInfoAdapter() = default;
+
     /* Display id, should be set while captureMode = CAPTURE_SPECIFIED_SCREEN */
-    uint64_t displayId = 0;
+    virtual uint64_t GetDisplayId() = 0;
+
     /* The ids of mission, should be set while captureMode = CAPTURE_SPECIFIED_WINDOW */
-    std::list<int32_t> taskIDs;
+    virtual std::list<int32_t> GetTaskIDs() = 0;
+
     /* Video frame width of avscreeencapture */
-    int32_t videoFrameWidth = 0;
+    virtual int32_t GetVideoFrameWidth() = 0;
+
     /* Video frame height of avscreeencapture */
-    int32_t videoFrameHeight = 0;
+    virtual int32_t GetVideoFrameHeight() = 0;
+
     /* Video source type of avscreeencapture */
-    VideoSourceTypeAdapter videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_RGBA;
+    virtual VideoSourceTypeAdapter GetVideoSourceType() = 0;
 };
 
-struct VideoEncInfoAdapter {
+class VideoEncInfoAdapter {
+public:
+    VideoEncInfoAdapter() = default;
+
+    virtual ~VideoEncInfoAdapter() = default;
+
     /* Video encoder format */
-    VideoCodecFormatAdapter videoCodec = VideoCodecFormatAdapter::VIDEO_DEFAULT;
+    virtual VideoCodecFormatAdapter GetVideoCodecFormat() = 0;
+
     /* Video encoder bitrate */
-    int32_t videoBitrate = 0;
+    virtual int32_t GetVideoBitrate() = 0;
+
     /* Video encoder frame rate */
-    int32_t videoFrameRate = 0;
+    virtual int32_t GetVideoFrameRate() = 0;
 };
 
-struct VideoInfoAdapter {
+class VideoInfoAdapter {
+public:
+    VideoInfoAdapter() = default;
+
+    virtual ~VideoInfoAdapter() = default;
+
     /* Video capture info */
-    VideoCaptureInfoAdapter videoCapInfo;
+    virtual std::shared_ptr<VideoCaptureInfoAdapter> GetVideoCapInfo() = 0;
+
     /* Video encoder info */
-    VideoEncInfoAdapter videoEncInfo;
+    virtual std::shared_ptr<VideoEncInfoAdapter> GetVideoEncInfo() = 0;
 };
 
-struct RecorderInfoAdapter {
+class RecorderInfoAdapter {
+public:
+    RecorderInfoAdapter() = default;
+
+    virtual ~RecorderInfoAdapter() = default;
+
     /* Recorder file url */
-    std::string url;
+    virtual std::string GetUrl() = 0;
+
     /* Recorder file format */
-    ContainerFormatTypeAdapter fileFormat = ContainerFormatTypeAdapter::CFT_MPEG_4A_TYPE;
+    virtual ContainerFormatTypeAdapter GetFileFormat() = 0;
 };
 
-struct ScreenCaptureConfigAdapter {
-    CaptureModeAdapter captureMode = CaptureModeAdapter::CAPTURE_INVAILD;
-    DataTypeAdapter dataType = DataTypeAdapter::INVAILD_DATA_TYPE;
-    AudioInfoAdapter audioInfo;
-    VideoInfoAdapter videoInfo;
-    /* should be set, while dataType = CAPTURE_FILE */
-    RecorderInfoAdapter recorderInfo;
+class ScreenCaptureConfigAdapter {
+public:
+    ScreenCaptureConfigAdapter() = default;
+
+    virtual ~ScreenCaptureConfigAdapter() = default;
+
+    virtual CaptureModeAdapter GetCaptureMode() = 0;
+
+    virtual DataTypeAdapter GetDataType() = 0;
+
+    virtual std::shared_ptr<AudioInfoAdapter> GetAudioInfo() = 0;
+
+    virtual std::shared_ptr<VideoInfoAdapter> GetVideoInfo() = 0;
+
+    virtual std::shared_ptr<RecorderInfoAdapter> GetRecorderInfo() = 0;
 };
 
 class ScreenCaptureCallbackAdapter {
@@ -193,7 +249,7 @@ public:
 
     virtual ~ScreenCaptureAdapter() = default;
 
-    virtual int32_t Init(const ScreenCaptureConfigAdapter& config) = 0;
+    virtual int32_t Init(const std::shared_ptr<ScreenCaptureConfigAdapter> config) = 0;
 
     virtual int32_t SetMicrophoneEnable(bool enable) = 0;
 

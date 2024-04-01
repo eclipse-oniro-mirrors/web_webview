@@ -13,25 +13,29 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_ashmem_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_ashmem_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
-int ark_ashmem_adapter_ashmem_create(const char* name, size_t size)
-{
-    // Execute
-    return ArkAshmemAdapter::AshmemCreate(name, size);
+int ark_ashmem_adapter_ashmem_create(const char *name, size_t size) {
+  ARK_WEB_CPPTOC_CHECK_PARAM(name, 0);
+
+  // Execute
+  return ArkAshmemAdapter::AshmemCreate(name, size);
 }
 
-ArkAshmemAdapterCppToC::ArkAshmemAdapterCppToC() {}
+ArkAshmemAdapterCppToC::ArkAshmemAdapterCppToC() {
+}
 
-ArkAshmemAdapterCppToC::~ArkAshmemAdapterCppToC() {}
+ArkAshmemAdapterCppToC::~ArkAshmemAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkAshmemAdapterCppToC, ArkAshmemAdapter, ark_ashmem_adapter_t>::kBridgeType =
-    ARK_ASHMEM_ADAPTER;
+template <>
+ArkWebBridgeType
+    ArkWebCppToCRefCounted<ArkAshmemAdapterCppToC, ArkAshmemAdapter,
+                           ark_ashmem_adapter_t>::kBridgeType =
+        ARK_ASHMEM_ADAPTER;
 
 } // namespace OHOS::ArkWeb
 
@@ -39,11 +43,11 @@ ArkWebBridgeType ArkWebCppToCRefCounted<ArkAshmemAdapterCppToC, ArkAshmemAdapter
 extern "C" {
 #endif // __cplusplus
 
-ARK_WEB_EXPORT int ark_ashmem_adapter_ashmem_create_static(const char* name, size_t size)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT int ark_ashmem_adapter_ashmem_create_static(const char *name,
+                                                           size_t size) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_ashmem_adapter_ashmem_create(name, size);
+  return OHOS::ArkWeb::ark_ashmem_adapter_ashmem_create(name, size);
 }
 
 #ifdef __cplusplus

@@ -29,7 +29,7 @@ class ArkAudioRendererAdapterImpl : public ArkAudioRendererAdapter {
 public:
     ArkAudioRendererAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioRendererAdapter>);
 
-    int32_t Create(const ArkAudioAdapterRendererOptions& rendererOptions, ArkWebString& str) override;
+    int32_t Create(const ArkWebRefPtr<ArkAudioRendererOptionsAdapter> rendererOptions, ArkWebString& str) override;
 
     bool Start() override;
 

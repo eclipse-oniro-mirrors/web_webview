@@ -18,27 +18,27 @@
 
 #pragma once
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 #include "ohos_init_web_adapter.h"
 
 using ArkWebRunInitedCallback = OHOS::NWeb::WebRunInitedCallback;
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkOhosInitWebAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkOhosInitWebAdapter() = default;
+  /*--ark web()--*/
+  ArkOhosInitWebAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkOhosInitWebAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkOhosInitWebAdapter() = default;
 
-    /*--web engine()--*/
+    /*--ark web()--*/
     virtual ArkWebRunInitedCallback* GetRunWebInitedCallback() = 0;
 
-    /*--web engine()--*/
+    /*--ark web()--*/
     virtual void SetRunWebInitedCallback(ArkWebRunInitedCallback* callback) = 0;
 };
 } // namespace OHOS::ArkWeb

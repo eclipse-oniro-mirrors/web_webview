@@ -13,76 +13,76 @@
  * limitations under the License.
  */
 
-#include "ctocpp/ark_net_conn_callback_ctocpp.h"
-
-#include "ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_adapter/ctocpp/ark_net_conn_callback_ctocpp.h"
+#include "base/ctocpp/ark_web_ctocpp_macros.h"
 
 namespace OHOS::ArkWeb {
 
 ARK_WEB_NO_SANITIZE
-int32_t ArkNetConnCallbackCToCpp::NetAvailable()
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+int32_t ArkNetConnCallbackCToCpp::NetAvailable() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_net_conn_callback_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+  ark_net_conn_callback_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_available, 0);
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_available, 0);
 
-    // Execute
-    return _struct->net_available(_struct);
+  // Execute
+  return _struct->net_available(_struct);
 }
 
 ARK_WEB_NO_SANITIZE
 int32_t ArkNetConnCallbackCToCpp::NetCapabilitiesChange(
-    const uint32_t& netConnectType, const uint32_t& netConnectSubtype)
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+    const uint32_t &netConnectType, const uint32_t &netConnectSubtype) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_net_conn_callback_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+  ark_net_conn_callback_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_capabilities_change, 0);
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_capabilities_change, 0);
 
-    // Execute
-    return _struct->net_capabilities_change(_struct, &netConnectType, &netConnectSubtype);
+  // Execute
+  return _struct->net_capabilities_change(_struct, &netConnectType,
+                                          &netConnectSubtype);
 }
 
 ARK_WEB_NO_SANITIZE
-int32_t ArkNetConnCallbackCToCpp::NetConnectionPropertiesChange()
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+int32_t ArkNetConnCallbackCToCpp::NetConnectionPropertiesChange() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_net_conn_callback_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+  ark_net_conn_callback_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_connection_properties_change, 0);
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_connection_properties_change,
+                                   0);
 
-    // Execute
-    return _struct->net_connection_properties_change(_struct);
+  // Execute
+  return _struct->net_connection_properties_change(_struct);
 }
 
 ARK_WEB_NO_SANITIZE
-int32_t ArkNetConnCallbackCToCpp::NetUnavailable()
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+int32_t ArkNetConnCallbackCToCpp::NetUnavailable() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_net_conn_callback_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+  ark_net_conn_callback_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_unavailable, 0);
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, net_unavailable, 0);
 
-    // Execute
-    return _struct->net_unavailable(_struct);
+  // Execute
+  return _struct->net_unavailable(_struct);
 }
 
-ArkNetConnCallbackCToCpp::ArkNetConnCallbackCToCpp() {}
+ArkNetConnCallbackCToCpp::ArkNetConnCallbackCToCpp() {
+}
 
-ArkNetConnCallbackCToCpp::~ArkNetConnCallbackCToCpp() {}
+ArkNetConnCallbackCToCpp::~ArkNetConnCallbackCToCpp() {
+}
 
-template<>
+template <>
 ArkWebBridgeType
-    ArkWebCToCppRefCounted<ArkNetConnCallbackCToCpp, ArkNetConnCallback, ark_net_conn_callback_t>::kBridgeType =
+    ArkWebCToCppRefCounted<ArkNetConnCallbackCToCpp, ArkNetConnCallback,
+                           ark_net_conn_callback_t>::kBridgeType =
         ARK_NET_CONN_CALLBACK;
 
 } // namespace OHOS::ArkWeb

@@ -13,54 +13,57 @@
  * limitations under the License.
  */
 
-#ifndef ARK_IMFTEXT_LISTENER_ADAPTER_CTOCPP_H
-#define ARK_IMFTEXT_LISTENER_ADAPTER_CTOCPP_H
+#ifndef ARK_IMFTEXT_LISTENER_ADAPTER_CTOCPP_H_
+#define ARK_IMFTEXT_LISTENER_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_imf_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_imf_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_imf_adapter_capi.h"
+#include "ohos_adapter/include/ark_imf_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkIMFTextListenerAdapterCToCpp : public ArkWebCToCppRefCounted<ArkIMFTextListenerAdapterCToCpp,
-                                            ArkIMFTextListenerAdapter, ark_imftext_listener_adapter_t> {
+class ArkIMFTextListenerAdapterCToCpp
+    : public ArkWebCToCppRefCounted<ArkIMFTextListenerAdapterCToCpp,
+                                    ArkIMFTextListenerAdapter,
+                                    ark_imftext_listener_adapter_t> {
 public:
-    ArkIMFTextListenerAdapterCToCpp();
-    virtual ~ArkIMFTextListenerAdapterCToCpp();
+  ArkIMFTextListenerAdapterCToCpp();
+  virtual ~ArkIMFTextListenerAdapterCToCpp();
 
-    // ArkIMFTextListenerAdapter methods.
-    void InsertText(const ArkWebU16String& text) override;
+  // ArkIMFTextListenerAdapter methods.
+  void InsertText(const ArkWebU16String &text) override;
 
-    void DeleteForward(int32_t length) override;
+  void DeleteForward(int32_t length) override;
 
-    void DeleteBackward(int32_t length) override;
+  void DeleteBackward(int32_t length) override;
 
-    void SendKeyEventFromInputMethod() override;
+  void SendKeyEventFromInputMethod() override;
 
-    void SendKeyboardStatus(const int32_t& keyboardStatus) override;
+  void SendKeyboardStatus(const int32_t &keyboardStatus) override;
 
-    void SendFunctionKey(ArkWebRefPtr<ArkIMFAdapterFunctionKeyAdapter> functionKey) override;
+  void SendFunctionKey(
+      ArkWebRefPtr<ArkIMFAdapterFunctionKeyAdapter> functionKey) override;
 
-    void SetKeyboardStatus(bool status) override;
+  void SetKeyboardStatus(bool status) override;
 
-    void MoveCursor(const uint32_t direction) override;
+  void MoveCursor(const uint32_t direction) override;
 
-    void HandleSetSelection(int32_t start, int32_t end) override;
+  void HandleSetSelection(int32_t start, int32_t end) override;
 
-    void HandleExtendAction(int32_t action) override;
+  void HandleExtendAction(int32_t action) override;
 
-    void HandleSelect(int32_t keyCode, int32_t cursorMoveSkip) override;
+  void HandleSelect(int32_t keyCode, int32_t cursorMoveSkip) override;
 
-    int32_t GetTextIndexAtCursor() override;
+  int32_t GetTextIndexAtCursor() override;
 
-    ArkWebU16String GetLeftTextOfCursor(int32_t number) override;
+  ArkWebU16String GetLeftTextOfCursor(int32_t number) override;
 
-    ArkWebU16String GetRightTextOfCursor(int32_t number) override;
+  ArkWebU16String GetRightTextOfCursor(int32_t number) override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_IMFTEXT_LISTENER_ADAPTER_CTOCPP_H
+#endif // ARK_IMFTEXT_LISTENER_ADAPTER_CTOCPP_H_

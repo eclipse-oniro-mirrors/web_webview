@@ -13,33 +13,35 @@
  * limitations under the License.
  */
 
-#include "ctocpp/ark_battery_event_callback_ctocpp.h"
-
-#include "cpptoc/ark_battery_info_cpptoc.h"
-#include "ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_adapter/ctocpp/ark_battery_event_callback_ctocpp.h"
+#include "base/ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_adapter/cpptoc/ark_battery_info_cpptoc.h"
 
 namespace OHOS::ArkWeb {
 
 ARK_WEB_NO_SANITIZE
-void ArkBatteryEventCallbackCToCpp::BatteryInfoChanged(ArkWebRefPtr<ArkBatteryInfo> info)
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+void ArkBatteryEventCallbackCToCpp::BatteryInfoChanged(
+    ArkWebRefPtr<ArkBatteryInfo> info) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_battery_event_callback_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ark_battery_event_callback_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, battery_info_changed, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, battery_info_changed, );
 
-    // Execute
-    _struct->battery_info_changed(_struct, ArkBatteryInfoCppToC::Invert(info));
+  // Execute
+  _struct->battery_info_changed(_struct, ArkBatteryInfoCppToC::Invert(info));
 }
 
-ArkBatteryEventCallbackCToCpp::ArkBatteryEventCallbackCToCpp() {}
+ArkBatteryEventCallbackCToCpp::ArkBatteryEventCallbackCToCpp() {
+}
 
-ArkBatteryEventCallbackCToCpp::~ArkBatteryEventCallbackCToCpp() {}
+ArkBatteryEventCallbackCToCpp::~ArkBatteryEventCallbackCToCpp() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCToCppRefCounted<ArkBatteryEventCallbackCToCpp, ArkBatteryEventCallback,
+template <>
+ArkWebBridgeType ArkWebCToCppRefCounted<
+    ArkBatteryEventCallbackCToCpp, ArkBatteryEventCallback,
     ark_battery_event_callback_t>::kBridgeType = ARK_BATTERY_EVENT_CALLBACK;
 
 } // namespace OHOS::ArkWeb
