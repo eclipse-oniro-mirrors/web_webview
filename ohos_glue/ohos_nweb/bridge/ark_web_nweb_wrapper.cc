@@ -19,6 +19,7 @@
 #include "ohos_nweb/bridge/ark_web_accessibility_node_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_bool_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_cache_options_impl.h"
+#include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_impl.h"
@@ -955,18 +956,22 @@ bool ArkWebNWebWrapper::GetPendingSizeStatus() {
   return ark_web_nweb_->GetPendingSizeStatus();
 }
 
-void ArkWebNWebWrapper::ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) {
+void ArkWebNWebWrapper::ScrollByRefScreen(float delta_x, float delta_y,
+                                          float vx, float vy) {
   ark_web_nweb_->ScrollByRefScreen(delta_x, delta_y, vx, vy);
 }
 
-void ArkWebNWebWrapper::ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
-    std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback, bool extention)
-{
-    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
-        ark_web_nweb_->ExecuteJavaScriptExt(fd, scriptLength, nullptr, extention);
-    } else {
-        ark_web_nweb_->ExecuteJavaScriptExt(fd, scriptLength, new ArkWebMessageValueCallbackImpl(callback), extention);
-    }
+void ArkWebNWebWrapper::ExecuteJavaScriptExt(
+    const int fd, const size_t scriptLength,
+    std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback,
+    bool extention) {
+  if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+    ark_web_nweb_->ExecuteJavaScriptExt(fd, scriptLength, nullptr, extention);
+  } else {
+    ark_web_nweb_->ExecuteJavaScriptExt(
+        fd, scriptLength, new ArkWebMessageValueCallbackImpl(callback),
+        extention);
+  }
 }
 
 void ArkWebNWebWrapper::OnRenderToBackground() {
@@ -977,19 +982,29 @@ void ArkWebNWebWrapper::OnRenderToForeground() {
   ark_web_nweb_->OnRenderToForeground();
 }
 
-void ArkWebNWebWrapper::PrecompileJavaScript(const std::string &url,
-                                             const std::string &script,
-                                             std::shared_ptr<OHOS::NWeb::CacheOptions> &cacheOptions,
-                                             std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) {
-    ArkWebString ark_url = ArkWebStringClassToStruct(url);
-    ArkWebString ark_script = ArkWebStringClassToStruct(script);
-    ArkWebRefPtr<ArkWebCacheOptions> options = new ArkWebCacheOptionsImpl(cacheOptions);
-    ark_web_nweb_->PrecompileJavaScript(
-        ark_url,
-        ark_script,
-        options,
-        new ArkWebMessageValueCallbackImpl(callback));
-    ArkWebStringStructRelease(ark_url);
-    ArkWebStringStructRelease(ark_script);
+void ArkWebNWebWrapper::PrecompileJavaScript(
+    const std::string &url, const std::string &script,
+    std::shared_ptr<OHOS::NWeb::CacheOptions> &cacheOptions,
+    std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) {
+  ArkWebString ark_url = ArkWebStringClassToStruct(url);
+  ArkWebString ark_script = ArkWebStringClassToStruct(script);
+  ArkWebRefPtr<ArkWebCacheOptions> options =
+      new ArkWebCacheOptionsImpl(cacheOptions);
+  ark_web_nweb_->PrecompileJavaScript(
+      ark_url, ark_script, options,
+      new ArkWebMessageValueCallbackImpl(callback));
+  ArkWebStringStructRelease(ark_url);
+  ArkWebStringStructRelease(ark_script);
 }
+
+void ArkWebNWebWrapper::OnCreateNativeMediaPlayer(
+    std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback> callback) {
+  if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+    return;
+  }
+
+  ark_web_nweb_->OnCreateNativeMediaPlayer(
+      new ArkWebCreateNativeMediaPlayerCallbackImpl(callback));
+}
+
 } // namespace OHOS::ArkWeb

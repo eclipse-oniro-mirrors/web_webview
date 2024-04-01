@@ -13,17 +13,22 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_INTERFACE_RESULT_H_
-#define ARK_WEB_INTERFACE_RESULT_H_
+#ifndef ARK_WEB_MEDIA_SOURCE_INFO_VECTOR_CTOCPP_H_
+#define ARK_WEB_MEDIA_SOURCE_INFO_VECTOR_CTOCPP_H_
 #pragma once
 
-enum ArkWebInterfaceResult {
-  RESULT_OK = 0,
-  RESULT_NOT_IMPL,
-  RESULT_CPPTOC_ERROR,
-  RESULT_CTOCPP_ERROR
-};
+#include "include/nweb_native_media_player.h"
+#include "ohos_nweb/include/ark_web_media_source_info_vector.h"
 
-static thread_local ArkWebInterfaceResult interface_result;
+namespace OHOS::ArkWeb {
 
-#endif // ARK_WEB_INTERFACE_RESULT_H_
+std::vector<std::shared_ptr<OHOS::NWeb::NWebMediaSourceInfo>>
+ArkWebMediaSourceInfoVectorStructToClass(
+    const ArkWebMediaSourceInfoVector &struct_value);
+
+void ArkWebMediaSourceInfoVectorStructRelease(
+    ArkWebMediaSourceInfoVector &struct_value);
+
+} // namespace OHOS::ArkWeb
+
+#endif // ARK_WEB_MEDIA_SOURCE_INFO_VECTOR_CTOCPP_H_
