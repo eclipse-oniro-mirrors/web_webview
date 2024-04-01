@@ -296,6 +296,8 @@ public:
 
     ErrCode CloseCamera();
 
+    void OnCreateNativeMediaPlayer(napi_env env, napi_ref callback);
+
     bool ParseScriptContent(napi_env env, napi_value value, std::string &script);
 
     std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value);
