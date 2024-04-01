@@ -139,7 +139,7 @@ public:
     }
 private:
     bool isFinished_ = false;
-    ArkWeb_ResourceHandler* handler_;
+    ArkWeb_ResourceHandler* handler_ = nullptr;
     napi_env env_;
 };
 
