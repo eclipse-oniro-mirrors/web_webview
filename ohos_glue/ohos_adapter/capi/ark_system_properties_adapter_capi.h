@@ -19,6 +19,7 @@
 
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
+#include "system_properties_adapter.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -77,6 +78,12 @@ typedef struct _ark_system_properties_adapter_t {
 
   void(ARK_WEB_CALLBACK *set_oopgpudisable)(
       struct _ark_system_properties_adapter_t *self);
+
+  void (ARK_WEB_CALLBACK *attach_sys_prop_observer)(
+      struct _ark_system_properties_adapter_t* self, int32_t key, OHOS::NWeb::SystemPropertiesObserver* observer);
+
+  void (ARK_WEB_CALLBACK *detach_sys_prop_observer)(
+      struct _ark_system_properties_adapter_t* self, int32_t key, OHOS::NWeb::SystemPropertiesObserver* observer);
 } ark_system_properties_adapter_t;
 
 #ifdef __cplusplus
