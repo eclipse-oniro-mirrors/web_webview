@@ -48,7 +48,7 @@ typedef struct _ark_system_properties_adapter_t {
   bool(ARK_WEB_CALLBACK *get_web_optimization_value)(
       struct _ark_system_properties_adapter_t *self);
 
-  bool(ARK_WEB_CALLBACK *get_lockdown_mode_status)(
+  bool(ARK_WEB_CALLBACK *is_advanced_security_mode)(
       struct _ark_system_properties_adapter_t *self);
 
   ArkWebString(ARK_WEB_CALLBACK *get_user_agent_osname)(
