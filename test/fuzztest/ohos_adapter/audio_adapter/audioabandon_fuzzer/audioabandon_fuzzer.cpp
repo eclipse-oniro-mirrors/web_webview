@@ -24,16 +24,15 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool AudioAbandonFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        AudioAdapterInterrupt audioInterrupt;
-        AudioSystemManagerAdapterImpl::GetInstance().AbandonAudioFocus(audioInterrupt);
-        return true;
+bool AudioAbandonFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    AudioSystemManagerAdapterImpl::GetInstance().AbandonAudioFocus(nullptr);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

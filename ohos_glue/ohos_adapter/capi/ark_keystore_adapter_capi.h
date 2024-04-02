@@ -13,32 +13,34 @@
  * limitations under the License.
  */
 
-#ifndef ARK_KEYSTORE_ADAPTER_CAPI_H
-#define ARK_KEYSTORE_ADAPTER_CAPI_H
+#ifndef ARK_KEYSTORE_ADAPTER_CAPI_H_
+#define ARK_KEYSTORE_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_keystore_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    ArkWebString(ARK_WEB_CALLBACK* encrypt_key)(
-        struct _ark_keystore_adapter_t* self, const ArkWebString* alias, const ArkWebString* plainData);
+  ArkWebString(ARK_WEB_CALLBACK *encrypt_key)(
+      struct _ark_keystore_adapter_t *self, const ArkWebString *alias,
+      const ArkWebString *plainData);
 
-    ArkWebString(ARK_WEB_CALLBACK* decrypt_key)(
-        struct _ark_keystore_adapter_t* self, const ArkWebString* alis, const ArkWebString* encryptedData);
+  ArkWebString(ARK_WEB_CALLBACK *decrypt_key)(
+      struct _ark_keystore_adapter_t *self, const ArkWebString *alis,
+      const ArkWebString *encryptedData);
 } ark_keystore_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_KEYSTORE_ADAPTER_CAPI_H
+#endif // ARK_KEYSTORE_ADAPTER_CAPI_H_

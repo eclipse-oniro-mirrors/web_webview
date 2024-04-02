@@ -13,34 +13,37 @@
  * limitations under the License.
  */
 
-#ifndef ARK_FLOWBUFFER_ADAPTER_CAPI_H
-#define ARK_FLOWBUFFER_ADAPTER_CAPI_H
+#ifndef ARK_FLOWBUFFER_ADAPTER_CAPI_H_
+#define ARK_FLOWBUFFER_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_flowbuffer_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    void(ARK_WEB_CALLBACK *start_performance_boost)(struct _ark_flowbuffer_adapter_t *self);
+  void(ARK_WEB_CALLBACK *start_performance_boost)(
+      struct _ark_flowbuffer_adapter_t *self);
 
-    void *(ARK_WEB_CALLBACK *create_ashmem)(
-        struct _ark_flowbuffer_adapter_t *self, size_t size, int mapType, int*fd);
+  void *(ARK_WEB_CALLBACK *create_ashmem)(
+      struct _ark_flowbuffer_adapter_t *self, size_t size, int mapType,
+      int *fd);
 
-    void *(ARK_WEB_CALLBACK *create_ashmem_with_fd)(
-        struct _ark_flowbuffer_adapter_t *self, const int fd, size_t size, int mapType);
+  void *(ARK_WEB_CALLBACK *create_ashmem_with_fd)(
+      struct _ark_flowbuffer_adapter_t *self, const int fd, size_t size,
+      int mapType);
 } ark_flowbuffer_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_FLOWBUFFER_ADAPTER_CAPI_H
+#endif // ARK_FLOWBUFFER_ADAPTER_CAPI_H_

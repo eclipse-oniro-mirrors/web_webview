@@ -13,71 +13,72 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_date_time_format_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
-#include "ctocpp/ark_timezone_event_callback_adapter_ctocpp.h"
+#include "ohos_adapter/cpptoc/ark_date_time_format_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/ctocpp/ark_timezone_event_callback_adapter_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 void ARK_WEB_CALLBACK ark_date_time_format_adapter_reg_timezone_event(
-    struct _ark_date_time_format_adapter_t* self, ark_timezone_event_callback_adapter_t* eventCallback)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_date_time_format_adapter_t *self,
+    ark_timezone_event_callback_adapter_t *eventCallback) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkDateTimeFormatAdapterCppToC::Get(self)->RegTimezoneEvent(
-        ArkTimezoneEventCallbackAdapterCToCpp::Invert(eventCallback));
+  // Execute
+  ArkDateTimeFormatAdapterCppToC::Get(self)->RegTimezoneEvent(
+      ArkTimezoneEventCallbackAdapterCToCpp::Invert(eventCallback));
 }
 
-bool ARK_WEB_CALLBACK ark_date_time_format_adapter_start_listen(struct _ark_date_time_format_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK ark_date_time_format_adapter_start_listen(
+    struct _ark_date_time_format_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkDateTimeFormatAdapterCppToC::Get(self)->StartListen();
+  // Execute
+  return ArkDateTimeFormatAdapterCppToC::Get(self)->StartListen();
 }
 
-void ARK_WEB_CALLBACK ark_date_time_format_adapter_stop_listen(struct _ark_date_time_format_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK ark_date_time_format_adapter_stop_listen(
+    struct _ark_date_time_format_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkDateTimeFormatAdapterCppToC::Get(self)->StopListen();
+  // Execute
+  ArkDateTimeFormatAdapterCppToC::Get(self)->StopListen();
 }
 
-ArkWebString ARK_WEB_CALLBACK ark_date_time_format_adapter_get_timezone(struct _ark_date_time_format_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ArkWebString ARK_WEB_CALLBACK ark_date_time_format_adapter_get_timezone(
+    struct _ark_date_time_format_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    // Execute
-    return ArkDateTimeFormatAdapterCppToC::Get(self)->GetTimezone();
+  // Execute
+  return ArkDateTimeFormatAdapterCppToC::Get(self)->GetTimezone();
 }
 
 } // namespace
 
-ArkDateTimeFormatAdapterCppToC::ArkDateTimeFormatAdapterCppToC()
-{
-    GetStruct()->reg_timezone_event = ark_date_time_format_adapter_reg_timezone_event;
-    GetStruct()->start_listen = ark_date_time_format_adapter_start_listen;
-    GetStruct()->stop_listen = ark_date_time_format_adapter_stop_listen;
-    GetStruct()->get_timezone = ark_date_time_format_adapter_get_timezone;
+ArkDateTimeFormatAdapterCppToC::ArkDateTimeFormatAdapterCppToC() {
+  GetStruct()->reg_timezone_event =
+      ark_date_time_format_adapter_reg_timezone_event;
+  GetStruct()->start_listen = ark_date_time_format_adapter_start_listen;
+  GetStruct()->stop_listen = ark_date_time_format_adapter_stop_listen;
+  GetStruct()->get_timezone = ark_date_time_format_adapter_get_timezone;
 }
 
-ArkDateTimeFormatAdapterCppToC::~ArkDateTimeFormatAdapterCppToC() {}
+ArkDateTimeFormatAdapterCppToC::~ArkDateTimeFormatAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkDateTimeFormatAdapterCppToC, ArkDateTimeFormatAdapter,
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkDateTimeFormatAdapterCppToC, ArkDateTimeFormatAdapter,
     ark_date_time_format_adapter_t>::kBridgeType = ARK_DATE_TIME_FORMAT_ADAPTER;
 
 } // namespace OHOS::ArkWeb

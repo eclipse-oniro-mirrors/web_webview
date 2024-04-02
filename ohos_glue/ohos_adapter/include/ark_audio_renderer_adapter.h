@@ -16,74 +16,105 @@
 #ifndef ARK_AUDIO_RENDERER_ADAPTER_H
 #define ARK_AUDIO_RENDERER_ADAPTER_H
 
-#include "audio_renderer_adapter.h"
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
-
-using ArkAudioAdapterRendererOptions = OHOS::NWeb::AudioAdapterRendererOptions;
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
-class ArkAudioRendererCallbackAdapter : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=web core)--*/
+class ArkAudioRendererOptionsAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkAudioRendererCallbackAdapter() = default;
+  /*--ark web()--*/
+  ArkAudioRendererOptionsAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkAudioRendererCallbackAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkAudioRendererOptionsAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void OnSuspend() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetSamplingRate() = 0;
 
-    /*--web engine()--*/
-    virtual void OnResume() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetEncodingType() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetSampleFormat() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetChannel() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetContentType() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetStreamUsage() = 0;
+
+  /*--ark web()--*/
+  virtual int32_t GetRenderFlags() = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=web core)--*/
+class ArkAudioRendererCallbackAdapter : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  ArkAudioRendererCallbackAdapter() = default;
+
+  /*--ark web()--*/
+  virtual ~ArkAudioRendererCallbackAdapter() = default;
+
+  /*--ark web()--*/
+  virtual void OnSuspend() = 0;
+
+  /*--ark web()--*/
+  virtual void OnResume() = 0;
+};
+
+/*--ark web(source=library)--*/
 class ArkAudioRendererAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkAudioRendererAdapter() = default;
+  /*--ark web()--*/
+  ArkAudioRendererAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkAudioRendererAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkAudioRendererAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t Create(const ArkAudioAdapterRendererOptions& rendererOptions, ArkWebString& str) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  Create(const ArkWebRefPtr<ArkAudioRendererOptionsAdapter> options,
+         ArkWebString &str) = 0;
 
-    /*--web engine()--*/
-    virtual bool Start() = 0;
+  /*--ark web()--*/
+  virtual bool Start() = 0;
 
-    /*--web engine()--*/
-    virtual bool Pause() = 0;
+  /*--ark web()--*/
+  virtual bool Pause() = 0;
 
-    /*--web engine()--*/
-    virtual bool Stop() = 0;
+  /*--ark web()--*/
+  virtual bool Stop() = 0;
 
-    /*--web engine()--*/
-    virtual bool Release2() = 0;
+  /*--ark web()--*/
+  virtual bool Release2() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t Write(uint8_t* buffer, size_t bufferSize) = 0;
+  /*--ark web()--*/
+  virtual int32_t Write(uint8_t *buffer, size_t bufferSize) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetLatency(uint64_t& latency) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetLatency(uint64_t &latency) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetVolume(float volume) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetVolume(float volume) = 0;
 
-    /*--web engine()--*/
-    virtual float GetVolume() = 0;
+  /*--ark web()--*/
+  virtual float GetVolume() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetAudioRendererCallback(const ArkWebRefPtr<ArkAudioRendererCallbackAdapter> callback) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetAudioRendererCallback(
+      const ArkWebRefPtr<ArkAudioRendererCallbackAdapter> callback) = 0;
 
-    /*--web engine()--*/
-    virtual void SetInterruptMode(bool audioExclusive) = 0;
+  /*--ark web()--*/
+  virtual void SetInterruptMode(bool audioExclusive) = 0;
 
-    /*--web engine()--*/
-    virtual bool IsRendererStateRunning() = 0;
+  /*--ark web()--*/
+  virtual bool IsRendererStateRunning() = 0;
 };
 } // namespace OHOS::ArkWeb
 

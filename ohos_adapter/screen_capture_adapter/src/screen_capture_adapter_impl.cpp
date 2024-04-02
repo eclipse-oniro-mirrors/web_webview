@@ -139,38 +139,57 @@ std::string GetOHContainerFormatType(const ContainerFormatTypeAdapter& type)
     return std::string(OHOS::Media::ContainerFormatType::CFT_MPEG_4);
 }
 
-OHOS::Media::AVScreenCaptureConfig ConvertScreenCaptureConfig(const ScreenCaptureConfigAdapter& config)
+OHOS::Media::AVScreenCaptureConfig ConvertScreenCaptureConfig(const std::shared_ptr<ScreenCaptureConfigAdapter> config)
 {
     OHOS::Media::AVScreenCaptureConfig avConfig;
-    avConfig.captureMode = GetOHCaptureMode(config.captureMode);
-    avConfig.dataType = GetOHDataType(config.dataType);
 
-    avConfig.audioInfo.micCapInfo.audioSampleRate = config.audioInfo.micCapInfo.audioSampleRate;
-    avConfig.audioInfo.micCapInfo.audioChannels = config.audioInfo.micCapInfo.audioChannels;
-    avConfig.audioInfo.micCapInfo.audioSource = GetOHAudioCaptureSourceType(config.audioInfo.micCapInfo.audioSource);
+    if (!config) {
+        WVLOG_I("ConvertScreenCaptureConfig config is null");
+        return avConfig;
+    }
 
-    avConfig.audioInfo.innerCapInfo.audioSampleRate = config.audioInfo.innerCapInfo.audioSampleRate;
-    avConfig.audioInfo.innerCapInfo.audioChannels = config.audioInfo.innerCapInfo.audioChannels;
-    avConfig.audioInfo.innerCapInfo.audioSource =
-        GetOHAudioCaptureSourceType(config.audioInfo.innerCapInfo.audioSource);
+    avConfig.captureMode = GetOHCaptureMode(config->GetCaptureMode());
+    avConfig.dataType = GetOHDataType(config->GetDataType());
 
-    avConfig.audioInfo.audioEncInfo.audioBitrate = config.audioInfo.audioEncInfo.audioBitrate;
-    avConfig.audioInfo.audioEncInfo.audioCodecformat =
-        GetOHAudioCodecFormat(config.audioInfo.audioEncInfo.audioCodecformat);
-    avConfig.videoInfo.videoCapInfo.displayId = config.videoInfo.videoCapInfo.displayId;
-    avConfig.videoInfo.videoCapInfo.taskIDs = config.videoInfo.videoCapInfo.taskIDs;
+    if (config->GetAudioInfo() && config->GetAudioInfo()->GetMicCapInfo() &&
+        config->GetAudioInfo()->GetInnerCapInfo() && config->GetAudioInfo()->GetAudioEncInfo()) {
+        avConfig.audioInfo.micCapInfo.audioSampleRate = config->GetAudioInfo()->GetMicCapInfo()->GetAudioSampleRate();
+        avConfig.audioInfo.micCapInfo.audioChannels = config->GetAudioInfo()->GetMicCapInfo()->GetAudioChannels();
+        avConfig.audioInfo.micCapInfo.audioSource =
+            GetOHAudioCaptureSourceType(config->GetAudioInfo()->GetMicCapInfo()->GetAudioSource());
 
-    avConfig.videoInfo.videoCapInfo.videoFrameWidth = config.videoInfo.videoCapInfo.videoFrameWidth;
-    avConfig.videoInfo.videoCapInfo.videoFrameHeight = config.videoInfo.videoCapInfo.videoFrameHeight;
-    avConfig.videoInfo.videoCapInfo.videoSource = GetOHVideoSourceType(config.videoInfo.videoCapInfo.videoSource);
+        avConfig.audioInfo.innerCapInfo.audioSampleRate =
+            config->GetAudioInfo()->GetInnerCapInfo()->GetAudioSampleRate();
+        avConfig.audioInfo.innerCapInfo.audioChannels = config->GetAudioInfo()->GetInnerCapInfo()->GetAudioChannels();
+        avConfig.audioInfo.innerCapInfo.audioSource =
+            GetOHAudioCaptureSourceType(config->GetAudioInfo()->GetInnerCapInfo()->GetAudioSource());
 
-    avConfig.videoInfo.videoEncInfo.videoCodec = GetOHVideoCodecFormat(config.videoInfo.videoEncInfo.videoCodec);
-    avConfig.videoInfo.videoEncInfo.videoBitrate = config.videoInfo.videoEncInfo.videoBitrate;
-    avConfig.videoInfo.videoEncInfo.videoFrameRate = config.videoInfo.videoEncInfo.videoFrameRate;
+        avConfig.audioInfo.audioEncInfo.audioBitrate = config->GetAudioInfo()->GetAudioEncInfo()->GetAudioBitrate();
+        avConfig.audioInfo.audioEncInfo.audioCodecformat =
+            GetOHAudioCodecFormat(config->GetAudioInfo()->GetAudioEncInfo()->GetAudioCodecformat());
+    }
 
-    if (config.dataType == DataTypeAdapter::CAPTURE_FILE_DATA_TYPE) {
-        avConfig.recorderInfo.url = config.recorderInfo.url;
-        avConfig.recorderInfo.fileFormat = GetOHContainerFormatType(config.recorderInfo.fileFormat);
+    if (config->GetVideoInfo() && config->GetVideoInfo()->GetVideoCapInfo() &&
+        config->GetVideoInfo()->GetVideoEncInfo()) {
+        avConfig.videoInfo.videoCapInfo.displayId = config->GetVideoInfo()->GetVideoCapInfo()->GetDisplayId();
+        avConfig.videoInfo.videoCapInfo.taskIDs = config->GetVideoInfo()->GetVideoCapInfo()->GetTaskIDs();
+
+        avConfig.videoInfo.videoCapInfo.videoFrameWidth =
+            config->GetVideoInfo()->GetVideoCapInfo()->GetVideoFrameWidth();
+        avConfig.videoInfo.videoCapInfo.videoFrameHeight =
+            config->GetVideoInfo()->GetVideoCapInfo()->GetVideoFrameHeight();
+        avConfig.videoInfo.videoCapInfo.videoSource =
+            GetOHVideoSourceType(config->GetVideoInfo()->GetVideoCapInfo()->GetVideoSourceType());
+
+        avConfig.videoInfo.videoEncInfo.videoCodec =
+            GetOHVideoCodecFormat(config->GetVideoInfo()->GetVideoEncInfo()->GetVideoCodecFormat());
+        avConfig.videoInfo.videoEncInfo.videoBitrate = config->GetVideoInfo()->GetVideoEncInfo()->GetVideoBitrate();
+        avConfig.videoInfo.videoEncInfo.videoFrameRate = config->GetVideoInfo()->GetVideoEncInfo()->GetVideoFrameRate();
+    }
+
+    if (config->GetDataType() == DataTypeAdapter::CAPTURE_FILE_DATA_TYPE && config->GetRecorderInfo()) {
+        avConfig.recorderInfo.url = config->GetRecorderInfo()->GetUrl();
+        avConfig.recorderInfo.fileFormat = GetOHContainerFormatType(config->GetRecorderInfo()->GetFileFormat());
     }
 
     return avConfig;
@@ -204,7 +223,7 @@ ScreenCaptureAdapterImpl::~ScreenCaptureAdapterImpl()
     Release();
 }
 
-int32_t ScreenCaptureAdapterImpl::Init(const ScreenCaptureConfigAdapter& config)
+int32_t ScreenCaptureAdapterImpl::Init(const std::shared_ptr<ScreenCaptureConfigAdapter> config)
 {
     if (screenCapture_) {
         return 0;
@@ -214,6 +233,12 @@ int32_t ScreenCaptureAdapterImpl::Init(const ScreenCaptureConfigAdapter& config)
         WVLOG_E("CreateScreenCapture create failed");
         return -1;
     }
+
+    if (!config || !(config->GetAudioInfo()) || !(config->GetVideoInfo()) || (!config->GetRecorderInfo())) {
+        WVLOG_E("config is null");
+        return -1;
+    }
+
     int32_t ret = screenCapture_->Init(ConvertScreenCaptureConfig(config));
     if (ret != Media::MSERR_OK) {
         WVLOG_E("OH_AVScreenCapture init failed, ret = %{public}d", ret);

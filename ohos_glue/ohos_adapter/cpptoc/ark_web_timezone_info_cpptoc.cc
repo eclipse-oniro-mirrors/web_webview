@@ -13,36 +13,36 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_web_timezone_info_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_web_timezone_info_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-ArkWebString ARK_WEB_CALLBACK ark_web_timezone_info_get_tz_id(struct _ark_web_timezone_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ArkWebString ARK_WEB_CALLBACK
+ark_web_timezone_info_get_tz_id(struct _ark_web_timezone_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    // Execute
-    return ArkWebTimezoneInfoCppToC::Get(self)->GetTzId();
+  // Execute
+  return ArkWebTimezoneInfoCppToC::Get(self)->GetTzId();
 }
 
 } // namespace
 
-ArkWebTimezoneInfoCppToC::ArkWebTimezoneInfoCppToC()
-{
-    GetStruct()->get_tz_id = ark_web_timezone_info_get_tz_id;
+ArkWebTimezoneInfoCppToC::ArkWebTimezoneInfoCppToC() {
+  GetStruct()->get_tz_id = ark_web_timezone_info_get_tz_id;
 }
 
-ArkWebTimezoneInfoCppToC::~ArkWebTimezoneInfoCppToC() {}
+ArkWebTimezoneInfoCppToC::~ArkWebTimezoneInfoCppToC() {
+}
 
-template<>
+template <>
 ArkWebBridgeType
-    ArkWebCppToCRefCounted<ArkWebTimezoneInfoCppToC, ArkWebTimezoneInfo, ark_web_timezone_info_t>::kBridgeType =
+    ArkWebCppToCRefCounted<ArkWebTimezoneInfoCppToC, ArkWebTimezoneInfo,
+                           ark_web_timezone_info_t>::kBridgeType =
         ARK_WEB_TIMEZONE_INFO;
 
 } // namespace OHOS::ArkWeb

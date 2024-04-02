@@ -13,28 +13,30 @@
  * limitations under the License.
  */
 
-#ifndef ARK_PASTE_BOARD_OBSERVER_ADAPTER_CTOCPP_H
-#define ARK_PASTE_BOARD_OBSERVER_ADAPTER_CTOCPP_H
+#ifndef ARK_PASTE_BOARD_OBSERVER_ADAPTER_CTOCPP_H_
+#define ARK_PASTE_BOARD_OBSERVER_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_pasteboard_client_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_pasteboard_client_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_pasteboard_client_adapter_capi.h"
+#include "ohos_adapter/include/ark_pasteboard_client_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkPasteBoardObserverAdapterCToCpp : public ArkWebCToCppRefCounted<ArkPasteBoardObserverAdapterCToCpp,
-                                               ArkPasteBoardObserverAdapter, ark_paste_board_observer_adapter_t> {
+class ArkPasteBoardObserverAdapterCToCpp
+    : public ArkWebCToCppRefCounted<ArkPasteBoardObserverAdapterCToCpp,
+                                    ArkPasteBoardObserverAdapter,
+                                    ark_paste_board_observer_adapter_t> {
 public:
-    ArkPasteBoardObserverAdapterCToCpp();
-    virtual ~ArkPasteBoardObserverAdapterCToCpp();
+  ArkPasteBoardObserverAdapterCToCpp();
+  virtual ~ArkPasteBoardObserverAdapterCToCpp();
 
-    // ArkPasteBoardObserverAdapter methods.
-    void OnPasteBoardChanged() override;
+  // ArkPasteBoardObserverAdapter methods.
+  void OnPasteBoardChanged() override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_PASTE_BOARD_OBSERVER_ADAPTER_CTOCPP_H
+#endif // ARK_PASTE_BOARD_OBSERVER_ADAPTER_CTOCPP_H_

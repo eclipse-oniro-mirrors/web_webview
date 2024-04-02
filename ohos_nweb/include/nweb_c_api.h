@@ -61,11 +61,19 @@ NWEB_EXPORT void WebDownloader_CreateDownloadDelegateCallback(WebDownloadDelegat
 
 NWEB_EXPORT void WebDownload_Continue(const WebBeforeDownloadCallbackWrapper *wrapper, const char *downloadPath);
 
+NWEB_EXPORT void WebDownload_CancelBeforeDownload(const WebBeforeDownloadCallbackWrapper *wrapper);
+
+NWEB_EXPORT void WebDownload_PauseBeforeDownload(const WebBeforeDownloadCallbackWrapper *wrapper);
+
+NWEB_EXPORT void WebDownload_ResumeBeforeDownload(const WebBeforeDownloadCallbackWrapper *wrapper);
+
 NWEB_EXPORT void WebDownload_Cancel(const WebDownloadItemCallbackWrapper *wrapper);
 
 NWEB_EXPORT void WebDownload_Pause(const WebDownloadItemCallbackWrapper *wrapper);
 
 NWEB_EXPORT void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper);
+
+NWEB_EXPORT NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long downloadItemId);
 
 NWEB_EXPORT void WebDownloadItem_CreateWebDownloadItem(NWebDownloadItem **downloadItem);
 

@@ -13,28 +13,29 @@
  * limitations under the License.
  */
 
-#ifndef ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_CAPI_H
-#define ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_CAPI_H
+#ifndef ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_CAPI_H_
+#define ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_aafwk_render_scheduler_host_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    void(ARK_WEB_CALLBACK* notify_browser_fd)(
-        struct _ark_aafwk_render_scheduler_host_adapter_t* self, int32_t ipcFd, int32_t sharedFd, int32_t crashFd);
+  void(ARK_WEB_CALLBACK *notify_browser_fd)(
+      struct _ark_aafwk_render_scheduler_host_adapter_t *self, int32_t ipcFd,
+      int32_t sharedFd, int32_t crashFd);
 } ark_aafwk_render_scheduler_host_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_CAPI_H
+#endif // ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_CAPI_H_

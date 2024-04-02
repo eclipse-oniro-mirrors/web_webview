@@ -32,7 +32,7 @@ public:
 
     ~AudioManagerCallbackAdapterImpl() override = default;
 
-    void OnInterrupt(const InterruptAction &interruptAction) override;
+    void OnInterrupt(const InterruptAction& interruptAction) override;
 
 private:
     std::shared_ptr<AudioManagerCallbackAdapter> cb_ = nullptr;
@@ -63,25 +63,25 @@ public:
 
     bool HasAudioInputDevices() override;
 
-    int32_t RequestAudioFocus(const AudioAdapterInterrupt &audioInterrupt) override;
+    int32_t RequestAudioFocus(const std::shared_ptr<AudioInterruptAdapter> audioInterrupt) override;
 
-    int32_t AbandonAudioFocus(const AudioAdapterInterrupt &audioInterrupt) override;
+    int32_t AbandonAudioFocus(const std::shared_ptr<AudioInterruptAdapter> audioInterrupt) override;
 
     int32_t SetAudioManagerInterruptCallback(std::shared_ptr<AudioManagerCallbackAdapter> callback) override;
 
     int32_t UnsetAudioManagerInterruptCallback() override;
 
-    std::vector<AudioAdapterDeviceDesc> GetDevices(AdapterDeviceFlag flag) override;
+    virtual std::vector<std::shared_ptr<AudioDeviceDescAdapter>> GetDevices(AdapterDeviceFlag flag) override;
 
-    int32_t SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput) override;
+    int32_t SelectAudioDeviceById(int32_t deviceId, bool isInput) override;
 
-    AudioAdapterDeviceDesc GetDefaultOutputDevice() override;
+    std::shared_ptr<AudioDeviceDescAdapter> GetDefaultOutputDevice() override;
 
     int32_t SetDeviceChangeCallback(std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> callback) override;
 
     int32_t UnsetDeviceChangeCallback() override;
 
-    AudioAdapterDeviceDesc GetDefaultInputDevice() override;
+    std::shared_ptr<AudioDeviceDescAdapter> GetDefaultInputDevice() override;
 
 #if defined(NWEB_AUDIO_ENABLE)
     static AudioStreamType GetStreamType(AudioAdapterStreamType streamType);
@@ -94,6 +94,6 @@ private:
     std::shared_ptr<AudioManagerDeviceChangeCallbackAdapterImpl> deviceChangeCallback_ = nullptr;
 #endif
 };
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
 
 #endif // AUDIO_SYSTEM_MANAGER_ADAPTER_IMPL_H

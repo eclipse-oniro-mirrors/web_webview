@@ -83,7 +83,8 @@ void AudioCapturerReadCallbackImpl::OnReadData(size_t length)
     cb_->OnReadData(length);
 }
 
-int32_t AudioCapturerAdapterImpl::Create(const AudioAdapterCapturerOptions &capturerOptions,
+int32_t AudioCapturerAdapterImpl::Create(
+    const std::shared_ptr<AudioCapturerOptionsAdapter> capturerOptions,
     std::string cachePath)
 {
     std::string audioCachePath = cachePath;
@@ -101,13 +102,18 @@ int32_t AudioCapturerAdapterImpl::Create(const AudioAdapterCapturerOptions &capt
         }
     }
 
+    if (!capturerOptions) {
+        WVLOG_E("capturerOptions is nullptr");
+        return AUDIO_ERROR;
+    }
+
     AudioCapturerOptions options;
-    options.streamInfo.samplingRate = GetAudioSamplingRate(capturerOptions.samplingRate);
-    options.streamInfo.encoding = GetAudioEncodingType(capturerOptions.encoding);
-    options.streamInfo.format = GetAudioSampleFormat(capturerOptions.format);
-    options.streamInfo.channels = GetAudioChannel(capturerOptions.channels);
-    options.capturerInfo.sourceType = GetAudioSourceType(capturerOptions.sourceType);
-    options.capturerInfo.capturerFlags = capturerOptions.capturerFlags;
+    options.streamInfo.samplingRate = GetAudioSamplingRate(capturerOptions->GetSamplingRate());
+    options.streamInfo.encoding = GetAudioEncodingType(capturerOptions->GetEncoding());
+    options.streamInfo.format = GetAudioSampleFormat(capturerOptions->GetSampleFormat());
+    options.streamInfo.channels = GetAudioChannel(capturerOptions->GetChannels());
+    options.capturerInfo.sourceType = GetAudioSourceType(capturerOptions->GetSourceType());
+    options.capturerInfo.capturerFlags = capturerOptions->GetCapturerFlags();
 
     audio_capturer_ = AudioCapturer::Create(options, audioCachePath);
     if (audio_capturer_ == nullptr) {
@@ -165,30 +171,42 @@ int32_t AudioCapturerAdapterImpl::SetCapturerReadCallback(
     return audio_capturer_->SetCapturerReadCallback(capturerReadCallback);
 }
 
-int32_t AudioCapturerAdapterImpl::GetBufferDesc(BufferDescAdapter &bufferDesc)
+int32_t AudioCapturerAdapterImpl::GetBufferDesc(std::shared_ptr<BufferDescAdapter> bufferDesc)
 {
     if (audio_capturer_ == nullptr) {
         WVLOG_E("audio capturer is nullptr");
         return AUDIO_NULL_ERROR;
     }
+
+    if (!bufferDesc) {
+        WVLOG_E("bufferDesc is nullptr");
+        return AUDIO_NULL_ERROR;
+    }
+
     BufferDesc bufDesc;
     audio_capturer_->GetBufferDesc(bufDesc);
-    bufferDesc.buffer = bufDesc.buffer;
-    bufferDesc.bufLength = bufDesc.bufLength;
-    bufferDesc.dataLength = bufDesc.dataLength;
+    bufferDesc->SetBuffer(bufDesc.buffer);
+    bufferDesc->SetBufLength(bufDesc.bufLength);
+    bufferDesc->SetDataLength(bufDesc.dataLength);
     return 0;
 }
 
-int32_t AudioCapturerAdapterImpl::Enqueue(const BufferDescAdapter &bufferDesc)
+int32_t AudioCapturerAdapterImpl::Enqueue(const std::shared_ptr<BufferDescAdapter> bufferDesc)
 {
     if (audio_capturer_ == nullptr) {
         WVLOG_E("audio capturer is nullptr");
         return AUDIO_NULL_ERROR;
     }
+ 
+    if (!bufferDesc) {
+        WVLOG_E("bufferDesc is nullptr");
+        return AUDIO_NULL_ERROR;
+    }
+
     BufferDesc bufDesc;
-    bufDesc.buffer = bufferDesc.buffer;
-    bufDesc.bufLength = bufferDesc.bufLength;
-    bufDesc.dataLength = bufferDesc.dataLength;
+    bufDesc.buffer = bufferDesc->GetBuffer();
+    bufDesc.bufLength = bufferDesc->GetBufLength();
+    bufDesc.dataLength = bufferDesc->GetDataLength();
     return audio_capturer_->Enqueue(bufDesc);
 }
 

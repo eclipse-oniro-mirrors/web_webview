@@ -42,14 +42,14 @@ public:
     explicit PasteDataRecordAdapterImpl(const std::string& mimeType);
     bool SetHtmlText(std::shared_ptr<std::string> htmlText) override;
     bool SetPlainText(std::shared_ptr<std::string> plainText) override;
-    bool SetImgData(std::shared_ptr<ClipBoardImageData> imageData) override;
+    bool SetImgData(std::shared_ptr<ClipBoardImageDataAdapter> imageData) override;
     bool SetUri(const std::string& uriString) override;
     bool SetCustomData(PasteCustomData& data) override;
     std::string GetMimeType() override;
     std::shared_ptr<std::string> GetHtmlText() override;
     std::shared_ptr<std::string> GetPlainText() override;
     std::shared_ptr<MiscServices::PasteDataRecord> GetRecord();
-    bool GetImgData(ClipBoardImageData &imageData) override;
+    bool GetImgData(std::shared_ptr<ClipBoardImageDataAdapter> imageData) override;
     std::shared_ptr<std::string> GetUri() override;
     std::shared_ptr<PasteCustomData> GetCustomData() override;
     void Clear();
@@ -77,7 +77,7 @@ public:
     std::shared_ptr<std::string> GetPrimaryMimeType() override;
     std::shared_ptr<PasteDataRecordAdapter> GetRecordAt(std::size_t index) override;
     std::size_t GetRecordCount() override;
-    PasteRecordList AllRecords() override;
+    PasteRecordVector AllRecords() override;
 private:
     std::shared_ptr<MiscServices::PasteData> data_;
 };
@@ -87,8 +87,8 @@ using ObserverMap =
 class PasteBoardClientAdapterImpl : public PasteBoardClientAdapter {
 public:
     static PasteBoardClientAdapterImpl& GetInstance();
-    bool GetPasteData(PasteRecordList& data) override;
-    void SetPasteData(const PasteRecordList& data,
+    bool GetPasteData(PasteRecordVector& data) override;
+    void SetPasteData(const PasteRecordVector& data,
                       CopyOptionMode copyOption = CopyOptionMode::CROSS_DEVICE) override;
     bool HasPasteData() override;
     void Clear() override;

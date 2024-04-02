@@ -18,59 +18,64 @@
 
 #include <sys/types.h>
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkOhosFileMapper : public virtual ArkWebBaseRefCounted {
 public:
-    ArkOhosFileMapper() = default;
-    virtual ~ArkOhosFileMapper() = default;
+  ArkOhosFileMapper() = default;
+  virtual ~ArkOhosFileMapper() = default;
 
-    /*--web engine()--*/
-    virtual int32_t GetFd() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetFd() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetOffset() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetOffset() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetFileName() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetFileName() = 0;
 
-    /*--web engine()--*/
-    virtual bool IsCompressed() = 0;
+  /*--ark web()--*/
+  virtual bool IsCompressed() = 0;
 
-    /*--web engine()--*/
-    virtual void* GetDataPtr() = 0;
+  /*--ark web()--*/
+  virtual void *GetDataPtr() = 0;
 
-    /*--web engine()--*/
-    virtual size_t GetDataLen() = 0;
+  /*--ark web()--*/
+  virtual size_t GetDataLen() = 0;
 
-    /*--web engine()--*/
-    virtual bool UnzipData(uint8_t*& dest, size_t& len) = 0;
+  /*--ark web()--*/
+  virtual bool UnzipData(uint8_t *&dest, size_t &len) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkOhosResourceAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    ArkOhosResourceAdapter() = default;
-    virtual ~ArkOhosResourceAdapter() = default;
+  ArkOhosResourceAdapter() = default;
+  virtual ~ArkOhosResourceAdapter() = default;
 
-    /*--web engine()--*/
-    virtual bool GetRawFileData(const ArkWebString& rawFile, size_t& len, uint8_t*& dest, bool isSys) = 0;
+  /*--ark web()--*/
+  virtual bool GetRawFileData(const ArkWebString &rawFile, size_t &len,
+                              uint8_t *&dest, bool isSys) = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkOhosFileMapper> GetRawFileMapper(const ArkWebString& rawFile, bool isSys) = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkOhosFileMapper>
+  GetRawFileMapper(const ArkWebString &rawFile, bool isSys) = 0;
 
-    /*--web engine()--*/
-    virtual bool IsRawFileExist(const ArkWebString& rawFile, bool isSys) = 0;
+  /*--ark web()--*/
+  virtual bool IsRawFileExist(const ArkWebString &rawFile, bool isSys) = 0;
 
-    /*--web engine()--*/
-    virtual bool GetRawFileLastModTime(const ArkWebString& rawFile, uint16_t& date, uint16_t& time, bool isSys) = 0;
+  /*--ark web()--*/
+  virtual bool GetRawFileLastModTime(const ArkWebString &rawFile,
+                                     uint16_t &date, uint16_t &time,
+                                     bool isSys) = 0;
 
-    /*--web engine()--*/
-    virtual bool GetRawFileLastModTime(const ArkWebString& rawFile, time_t& time, bool isSys) = 0;
+  /*--ark web()--*/
+  virtual bool GetRawFileLastModTime(const ArkWebString &rawFile, time_t &time,
+                                     bool isSys) = 0;
 };
 } // namespace OHOS::ArkWeb
 

@@ -16,169 +16,186 @@
 #ifndef ARK_OHOS_ADAPTER_HELPER_H
 #define ARK_OHOS_ADAPTER_HELPER_H
 
-#include "include/ark_aafwk_app_mgr_client_adapter.h"
-#include "include/ark_access_token_adapter.h"
-#include "include/ark_audio_capturer_adapter.h"
-#include "include/ark_audio_renderer_adapter.h"
-#include "include/ark_audio_system_manager_adapter.h"
-#include "include/ark_battery_mgr_client_adapter.h"
-#include "include/ark_camera_manager_adapter.h"
-#include "include/ark_cert_manager_adapter.h"
-#include "include/ark_datashare_adapter.h"
-#include "include/ark_date_time_format_adapter.h"
-#include "include/ark_display_manager_adapter.h"
-#include "include/ark_enterprise_device_management_adapter.h"
-#include "include/ark_event_handler_adapter.h"
-#include "include/ark_flowbuffer_adapter.h"
-#include "include/ark_graphic_adapter.h"
-#include "include/ark_hisysevent_adapter.h"
-#include "include/ark_hitrace_adapter.h"
-#include "include/ark_imf_adapter.h"
-#include "include/ark_keystore_adapter.h"
-#include "include/ark_media_adapter.h"
-#include "include/ark_media_codec_decoder_adapter.h"
-#include "include/ark_media_codec_encoder_adapter.h"
-#include "include/ark_mmi_adapter.h"
-#include "include/ark_net_connect_adapter.h"
-#include "include/ark_net_proxy_adapter.h"
-#include "include/ark_ohos_init_web_adapter.h"
-#include "include/ark_ohos_resource_adapter.h"
-#include "include/ark_ohos_web_data_base_adapter.h"
-#include "include/ark_pasteboard_client_adapter.h"
-#include "include/ark_power_mgr_client_adapter.h"
-#include "include/ark_print_manager_adapter.h"
-#include "include/ark_screen_capture_adapter.h"
-#include "include/ark_soc_perf_client_adapter.h"
-#include "include/ark_system_properties_adapter.h"
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "ark_aafwk_app_mgr_client_adapter.h"
+#include "ark_access_token_adapter.h"
+#include "ark_audio_capturer_adapter.h"
+#include "ark_audio_renderer_adapter.h"
+#include "ark_audio_system_manager_adapter.h"
+#include "ark_battery_mgr_client_adapter.h"
+#include "ark_camera_manager_adapter.h"
+#include "ark_cert_manager_adapter.h"
+#include "ark_datashare_adapter.h"
+#include "ark_date_time_format_adapter.h"
+#include "ark_display_manager_adapter.h"
+#include "ark_enterprise_device_management_adapter.h"
+#include "ark_event_handler_adapter.h"
+#include "ark_flowbuffer_adapter.h"
+#include "ark_graphic_adapter.h"
+#include "ark_hisysevent_adapter.h"
+#include "ark_hitrace_adapter.h"
+#include "ark_imf_adapter.h"
+#include "ark_keystore_adapter.h"
+#include "ark_media_adapter.h"
+#include "ark_media_codec_adapter.h"
+#include "ark_media_codec_decoder_adapter.h"
+#include "ark_mmi_adapter.h"
+#include "ark_net_connect_adapter.h"
+#include "ark_net_proxy_adapter.h"
+#include "ark_ohos_init_web_adapter.h"
+#include "ark_ohos_resource_adapter.h"
+#include "ark_ohos_web_data_base_adapter.h"
+#include "ark_pasteboard_client_adapter.h"
+#include "ark_power_mgr_client_adapter.h"
+#include "ark_print_manager_adapter.h"
+#include "ark_screen_capture_adapter.h"
+#include "ark_soc_perf_client_adapter.h"
+#include "ark_system_properties_adapter.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkOhosAdapterHelper : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    static ArkWebRefPtr<ArkOhosAdapterHelper> GetInstance();
+  /*--ark web()--*/
+  static ArkWebRefPtr<ArkOhosAdapterHelper> GetInstance();
 
-    virtual ~ArkOhosAdapterHelper() = default;
+  virtual ~ArkOhosAdapterHelper() = default;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkAafwkAppMgrClientAdapter> CreateAafwkAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkAafwkAppMgrClientAdapter> CreateAafwkAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkPowerMgrClientAdapter> CreatePowerMgrClientAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkPowerMgrClientAdapter>
+  CreatePowerMgrClientAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkDisplayManagerAdapter> CreateDisplayMgrAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkDisplayManagerAdapter> CreateDisplayMgrAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkBatteryMgrClientAdapter> CreateBatteryClientAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkBatteryMgrClientAdapter>
+  CreateBatteryClientAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkNetConnectAdapter> CreateNetConnectAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkNetConnectAdapter> CreateNetConnectAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkOhosWebDataBaseAdapter> GetOhosWebDataBaseAdapterInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkOhosWebDataBaseAdapter>
+  GetOhosWebDataBaseAdapterInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkPasteBoardClientAdapter> GetPasteBoard() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkPasteBoardClientAdapter> GetPasteBoard() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkAudioRendererAdapter> CreateAudioRendererAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkAudioRendererAdapter>
+  CreateAudioRendererAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkAudioCapturerAdapter> CreateAudioCapturerAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkAudioCapturerAdapter>
+  CreateAudioCapturerAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkAudioSystemManagerAdapter> GetAudioSystemManager() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkAudioSystemManagerAdapter>
+  GetAudioSystemManager() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkOhosWebPermissionDataBaseAdapter> GetWebPermissionDataBaseInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkOhosWebPermissionDataBaseAdapter>
+  GetWebPermissionDataBaseInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkMMIAdapter> CreateMMIAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkMMIAdapter> CreateMMIAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkSocPerfClientAdapter> CreateSocPerfClientAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkSocPerfClientAdapter>
+  CreateSocPerfClientAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkOhosResourceAdapter> GetResourceAdapter(const ArkWebString& hapPath) = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkOhosResourceAdapter>
+  GetResourceAdapter(const ArkWebString &hapPath) = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkSystemPropertiesAdapter> GetSystemPropertiesInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkSystemPropertiesAdapter>
+  GetSystemPropertiesInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkVSyncAdapter> GetVSyncAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkVSyncAdapter> GetVSyncAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkOhosInitWebAdapter> GetInitWebAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkOhosInitWebAdapter> GetInitWebAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkKeystoreAdapter> GetKeystoreAdapterInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkKeystoreAdapter> GetKeystoreAdapterInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> GetEnterpriseDeviceManagementInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter>
+  GetEnterpriseDeviceManagementInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkDatashareAdapter> GetDatashareInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkDatashareAdapter> GetDatashareInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkIMFAdapter> CreateIMFAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkIMFAdapter> CreateIMFAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkCertManagerAdapter> GetRootCertDataAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkCertManagerAdapter> GetRootCertDataAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkAccessTokenAdapter> GetAccessTokenAdapterInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkAccessTokenAdapter>
+  GetAccessTokenAdapterInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkEventHandlerAdapter> GetEventHandlerAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkEventHandlerAdapter> GetEventHandlerAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkPrintManagerAdapter> GetPrintManagerInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkPrintManagerAdapter> GetPrintManagerInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkIConsumerSurfaceAdapter> CreateConsumerSurfaceAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkIConsumerSurfaceAdapter>
+  CreateConsumerSurfaceAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkPlayerAdapter> CreatePlayerAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkPlayerAdapter> CreatePlayerAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkWindowAdapter> GetWindowAdapterInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkWindowAdapter> GetWindowAdapterInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkHiSysEventAdapter> GetHiSysEventAdapterInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkHiSysEventAdapter> GetHiSysEventAdapterInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkHiTraceAdapter> GetHiTraceAdapterInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkHiTraceAdapter> GetHiTraceAdapterInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkNetProxyAdapter> GetNetProxyInstance() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkNetProxyAdapter> GetNetProxyInstance() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkCameraManagerAdapter> GetCameraManagerAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkCameraManagerAdapter> GetCameraManagerAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkScreenCaptureAdapter> CreateScreenCaptureAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkScreenCaptureAdapter>
+  CreateScreenCaptureAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkDateTimeFormatAdapter> CreateDateTimeFormatAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkDateTimeFormatAdapter>
+  CreateDateTimeFormatAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkMediaCodecDecoderAdapter> CreateMediaCodecDecoderAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkMediaCodecDecoderAdapter>
+  CreateMediaCodecDecoderAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkNativeImageAdapter> CreateNativeImageAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkNativeImageAdapter> CreateNativeImageAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkMediaCodecAdapter> CreateMediaCodecEncoderAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkMediaCodecAdapter>
+  CreateMediaCodecEncoderAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkMediaCodecListAdapter> GetMediaCodecListAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkMediaCodecListAdapter> GetMediaCodecListAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkFlowbufferAdapter> CreateFlowbufferAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkFlowbufferAdapter> CreateFlowbufferAdapter() = 0;
 };
 } // namespace OHOS::ArkWeb
 

@@ -20,6 +20,7 @@
 
 #include <memory>
 
+#include "imf_adapter.h"
 #include "include/ark_imf_adapter.h"
 
 namespace OHOS::ArkWeb {
@@ -31,7 +32,7 @@ public:
     bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard) override;
 
     bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard,
-        const ArkIMFAdapterTextConfig& config) override;
+        ArkWebRefPtr<ArkIMFTextConfigAdapter> config) override;
 
     void ShowCurrentInput(const int32_t& inputType) override;
 
@@ -39,7 +40,7 @@ public:
 
     void Close() override;
 
-    void OnCursorUpdate(ArkIMFAdapterCursorInfo cursorInfo) override;
+    void OnCursorUpdate(ArkWebRefPtr<ArkIMFCursorInfoAdapter> cursorInfo) override;
 
     void OnSelectionChange(ArkWebU16String& text, int start, int end) override;
 

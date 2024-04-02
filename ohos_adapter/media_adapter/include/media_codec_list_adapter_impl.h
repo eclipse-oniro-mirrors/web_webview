@@ -16,12 +16,19 @@
 #ifndef MEDIA_CODEC_LIST_ADAPTER_IMPL_H
 #define MEDIA_CODEC_LIST_ADAPTER_IMPL_H
 
+#if defined(NWEB_MEDIA_AVCODEC_ENABLE)
 #include "foundation/multimedia/av_codec/interfaces/inner_api/native/avcodec_list.h"
 #include "foundation/multimedia/av_codec/interfaces/inner_api/native/media_description.h"
+#endif
+
 #include "media_codec_adapter.h"
+#include "capability_data_adapter_impl.h"
 
 namespace OHOS::NWeb {
+
+#if defined(NWEB_MEDIA_AVCODEC_ENABLE)
 using namespace OHOS::MediaAVCodec;
+#endif
 
 class MediaCodecListAdapterImpl : public MediaCodecListAdapter {
 public:
@@ -31,11 +38,14 @@ public:
 
     ~MediaCodecListAdapterImpl() override = default;
 
-    CapabilityDataAdapter GetCodecCapability(const std::string& mime, const bool isEncoder) override;
+    std::shared_ptr<CapabilityDataAdapter> GetCodecCapability(const std::string& mime, const bool isEncoder) override;
 
+#if defined(NWEB_MEDIA_AVCODEC_ENABLE)
 private:
-    void TransToAdapterCapability(const CapabilityData* data, CapabilityDataAdapter& adapterData);
+    void TransToAdapterCapability(const CapabilityData* data, std::shared_ptr<CapabilityDataAdapterImpl>& adapterData);
     std::shared_ptr<AVCodecList> avCodecList_;
+#endif
 };
+
 } // namespace OHOS::NWeb
 #endif // MEDIA_CODEC_LIST_ADAPTER_IMPL_H

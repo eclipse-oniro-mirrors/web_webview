@@ -14,10 +14,13 @@
  */
 
 #include "ark_camera_manager_adapter_impl.h"
-
-#include "bridge/ark_web_bridge_macros.h"
+#include "cpptoc/ark_video_device_descriptor_adapter_vector_cpptoc.h"
+#include "impl/ark_video_capture_range_adapter_impl.h"
 #include "wrapper/ark_camera_buffer_listener_adapter_wrapper.h"
 #include "wrapper/ark_camera_status_callback_adapter_wrapper.h"
+#include "wrapper/ark_video_capture_params_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -32,9 +35,11 @@ int32_t ArkCameraManagerAdapterImpl::Create(ArkWebRefPtr<ArkCameraStatusCallback
     return real_.Create(std::make_shared<ArkCameraStatusCallbackAdapterWrapper>(cameraStatusCallback));
 }
 
-void ArkCameraManagerAdapterImpl::GetDevicesInfo(void* devicesDiscriptor)
+ArkVideoDeviceDescriptorAdapterVector ArkCameraManagerAdapterImpl::GetDevicesInfo()
 {
-    real_.GetDevicesInfo(*(std::vector<NWeb::VideoDeviceDescriptor>*)devicesDiscriptor);
+    std::vector<std::shared_ptr<NWeb::VideoDeviceDescriptorAdapter>> desc = real_.GetDevicesInfo();
+    ArkVideoDeviceDescriptorAdapterVector result = ArkVideoDeviceDescriptorAdapterVectorClassToStruct(desc);
+    return result;
 }
 
 int32_t ArkCameraManagerAdapterImpl::ReleaseCameraManger()
@@ -67,9 +72,14 @@ int32_t ArkCameraManagerAdapterImpl::GetCurrentExposureMode(int32_t& exposureMod
     return result;
 }
 
-int32_t ArkCameraManagerAdapterImpl::GetCaptionRangeById(int32_t rangeId, ArkVideoCaptureRangeAdapter& rangeVal)
+ArkWebRefPtr<ArkVideoCaptureRangeAdapter> ArkCameraManagerAdapterImpl::GetCaptionRangeById(int32_t rangeId)
 {
-    return real_.GetCaptionRangeById((NWeb::RangeIDAdapter)rangeId, rangeVal);
+    std::shared_ptr<NWeb::VideoCaptureRangeAdapter> adapter = real_.GetCaptionRangeById((NWeb::RangeIDAdapter)rangeId);
+    if (CHECK_SHARED_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return new ArkVideoCaptureRangeAdapterImpl(adapter);
 }
 
 bool ArkCameraManagerAdapterImpl::IsFocusModeSupported(int32_t focusMode)
@@ -108,14 +118,22 @@ bool ArkCameraManagerAdapterImpl::IsExistCaptureTask()
 }
 
 int32_t ArkCameraManagerAdapterImpl::StartStream(const ArkWebString& deviceId,
-    const ArkVideoCaptureParamsAdapter& captureParams, ArkWebRefPtr<ArkCameraBufferListenerAdapter> listener)
+    const ArkWebRefPtr<ArkVideoCaptureParamsAdapter> captureParams,
+    ArkWebRefPtr<ArkCameraBufferListenerAdapter> listener)
 {
-    if (CHECK_REF_PTR_IS_NULL(listener)) {
-        return real_.StartStream(ArkWebStringStructToClass(deviceId), captureParams, nullptr);
+    if (CHECK_REF_PTR_IS_NULL(listener) && CHECK_REF_PTR_IS_NULL(captureParams)) {
+        return real_.StartStream(ArkWebStringStructToClass(deviceId), nullptr, nullptr);
+    } else if (!CHECK_REF_PTR_IS_NULL(listener) && !CHECK_REF_PTR_IS_NULL(captureParams)) {
+        return real_.StartStream(ArkWebStringStructToClass(deviceId),
+            std::make_shared<ArkVideoCaptureParamsAdapterWrapper>(captureParams),
+            std::make_shared<ArkCameraBufferListenerAdapterWrapper>(listener));
+    } else if (CHECK_REF_PTR_IS_NULL(listener)) {
+        return real_.StartStream(ArkWebStringStructToClass(deviceId),
+            std::make_shared<ArkVideoCaptureParamsAdapterWrapper>(captureParams), nullptr);
+    } else {
+        return real_.StartStream(ArkWebStringStructToClass(deviceId), nullptr,
+            std::make_shared<ArkCameraBufferListenerAdapterWrapper>(listener));
     }
-
-    return real_.StartStream(ArkWebStringStructToClass(deviceId), captureParams,
-        std::make_shared<ArkCameraBufferListenerAdapterWrapper>(listener));
 }
 
 void ArkCameraManagerAdapterImpl::SetForegroundFlag(bool isForeground)

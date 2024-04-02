@@ -71,9 +71,13 @@ const std::string BASE_WEB_CONFIG = "baseWebConfig";
     DO(WebDownloader_SetDownloadBeforeStart)         \
     DO(WebDownloader_SetDownloadDidUpdate)           \
     DO(WebDownload_Continue)                         \
+    DO(WebDownload_CancelBeforeDownload)             \
+    DO(WebDownload_PauseBeforeDownload)              \
+    DO(WebDownload_ResumeBeforeDownload)             \
     DO(WebDownload_Cancel)                           \
     DO(WebDownload_Pause)                            \
     DO(WebDownload_Resume)                           \
+    DO(WebDownload_GetItemState)                     \
     DO(WebDownloadItem_Guid)                         \
     DO(WebDownloadItem_GetDownloadItemId)            \
     DO(WebDownloadItem_GetState)                     \
@@ -224,6 +228,33 @@ extern "C" void WebDownload_Continue(const WebBeforeDownloadCallbackWrapper *wra
     g_nwebCApi->impl_WebDownload_Continue(wrapper, downloadPath);
 }
 
+extern "C" void WebDownload_CancelBeforeDownload(const WebBeforeDownloadCallbackWrapper *wrapper)
+{
+    if (!g_nwebCApi->impl_WebDownload_CancelBeforeDownload) {
+        WVLOG_E("WebDownload_CancelBeforeDownload not found.");
+        return;
+    }
+    g_nwebCApi->impl_WebDownload_CancelBeforeDownload(wrapper);
+}
+
+extern "C" void WebDownload_PauseBeforeDownload(const WebBeforeDownloadCallbackWrapper *wrapper)
+{
+    if (!g_nwebCApi->impl_WebDownload_PauseBeforeDownload) {
+        WVLOG_E("WebDownload_PauseBeforeDownload not found.");
+        return;
+    }
+    g_nwebCApi->impl_WebDownload_PauseBeforeDownload(wrapper);
+}
+
+extern "C" void WebDownload_ResumeBeforeDownload(const WebBeforeDownloadCallbackWrapper *wrapper)
+{
+    if (!g_nwebCApi->impl_WebDownload_ResumeBeforeDownload) {
+        WVLOG_E("WebDownload_ResumeBeforeDownload not found.");
+        return;
+    }
+    g_nwebCApi->impl_WebDownload_ResumeBeforeDownload(wrapper);
+}
+
 extern "C" void WebDownload_Cancel(const WebDownloadItemCallbackWrapper *wrapper)
 {
     if (!g_nwebCApi->impl_WebDownload_Cancel) {
@@ -249,6 +280,13 @@ extern "C" void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper
         return;
     }
     g_nwebCApi->impl_WebDownload_Resume(wrapper);
+}
+
+extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long downloadItemId) {
+    if (!g_nwebCApi->impl_WebDownload_GetItemState) {
+        return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+    }
+    return g_nwebCApi->impl_WebDownload_GetItemState(nwebId, downloadItemId);
 }
 
 extern "C" char *WebDownloadItem_Guid(const NWebDownloadItem *downloadItem)

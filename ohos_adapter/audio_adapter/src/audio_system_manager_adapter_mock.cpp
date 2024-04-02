@@ -32,12 +32,12 @@ bool AudioSystemManagerAdapterImpl::HasAudioInputDevices()
     return false;
 }
 
-int32_t AudioSystemManagerAdapterImpl::RequestAudioFocus(const AudioAdapterInterrupt& audioInterrupt)
+int32_t AudioSystemManagerAdapterImpl::RequestAudioFocus(const std::shared_ptr<AudioInterruptAdapter> audioInterrupt)
 {
     return -1;
 }
 
-int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const AudioAdapterInterrupt& audioInterrupt)
+int32_t AudioSystemManagerAdapterImpl::AbandonAudioFocus(const std::shared_ptr<AudioInterruptAdapter> audioInterrupt)
 {
     return -1;
 }
@@ -53,20 +53,19 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return -1;
 }
 
-std::vector<AudioAdapterDeviceDesc> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag)
+std::vector<std::shared_ptr<AudioDeviceDescAdapter>> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag)
 {
-    return std::vector<AudioAdapterDeviceDesc>();
+    return std::vector<std::shared_ptr<AudioDeviceDescAdapter>>();
 }
 
-int32_t AudioSystemManagerAdapterImpl::SelectAudioDevice(AudioAdapterDeviceDesc desc, bool isInput)
+int32_t AudioSystemManagerAdapterImpl::SelectAudioDeviceById(int32_t deviceId, bool isInput)
 {
     return -1;
 }
 
-AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
+std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
 {
-    AudioAdapterDeviceDesc desc;
-    return desc;
+    return nullptr;
 }
 
 int32_t AudioSystemManagerAdapterImpl::SetDeviceChangeCallback(
@@ -80,9 +79,8 @@ int32_t AudioSystemManagerAdapterImpl::UnsetDeviceChangeCallback()
     return -1;
 }
 
-AudioAdapterDeviceDesc AudioSystemManagerAdapterImpl::GetDefaultInputDevice()
+std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaultInputDevice()
 {
-    AudioAdapterDeviceDesc desc;
-    return desc;
+    return nullptr;
 }
 } // namespace OHOS::NWeb

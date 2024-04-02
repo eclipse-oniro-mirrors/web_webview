@@ -13,67 +13,70 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_location_instance_cpptoc.h"
-
-#include "cpptoc/ark_location_proxy_adapter_cpptoc.h"
-#include "cpptoc/ark_location_request_config_cpptoc.h"
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_location_instance_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_location_proxy_adapter_cpptoc.h"
+#include "ohos_adapter/cpptoc/ark_location_request_config_cpptoc.h"
 
 namespace OHOS::ArkWeb {
 
-ark_location_instance_t* ark_location_instance_get_instance()
-{
-    // Execute
-    ArkWebRefPtr<ArkLocationInstance> _retval = ArkLocationInstance::GetInstance();
+ark_location_instance_t *ark_location_instance_get_instance() {
+  // Execute
+  ArkWebRefPtr<ArkLocationInstance> _retval =
+      ArkLocationInstance::GetInstance();
 
-    // Return type: refptr_same
-    return ArkLocationInstanceCppToC::Invert(_retval);
+  // Return type: refptr_same
+  return ArkLocationInstanceCppToC::Invert(_retval);
 }
 
 namespace {
 
-ark_location_proxy_adapter_t* ARK_WEB_CALLBACK ark_location_instance_create_location_proxy_adapter(
-    struct _ark_location_instance_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ark_location_proxy_adapter_t *ARK_WEB_CALLBACK
+ark_location_instance_create_location_proxy_adapter(
+    struct _ark_location_instance_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
 
-    // Execute
-    ArkWebRefPtr<ArkLocationProxyAdapter> _retval = ArkLocationInstanceCppToC::Get(self)->CreateLocationProxyAdapter();
+  // Execute
+  ArkWebRefPtr<ArkLocationProxyAdapter> _retval =
+      ArkLocationInstanceCppToC::Get(self)->CreateLocationProxyAdapter();
 
-    // Return type: refptr_same
-    return ArkLocationProxyAdapterCppToC::Invert(_retval);
+  // Return type: refptr_same
+  return ArkLocationProxyAdapterCppToC::Invert(_retval);
 }
 
-ark_location_request_config_t* ARK_WEB_CALLBACK ark_location_instance_create_location_request_config(
-    struct _ark_location_instance_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ark_location_request_config_t *ARK_WEB_CALLBACK
+ark_location_instance_create_location_request_config(
+    struct _ark_location_instance_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
 
-    // Execute
-    ArkWebRefPtr<ArkLocationRequestConfig> _retval =
-        ArkLocationInstanceCppToC::Get(self)->CreateLocationRequestConfig();
+  // Execute
+  ArkWebRefPtr<ArkLocationRequestConfig> _retval =
+      ArkLocationInstanceCppToC::Get(self)->CreateLocationRequestConfig();
 
-    // Return type: refptr_same
-    return ArkLocationRequestConfigCppToC::Invert(_retval);
+  // Return type: refptr_same
+  return ArkLocationRequestConfigCppToC::Invert(_retval);
 }
 
 } // namespace
 
-ArkLocationInstanceCppToC::ArkLocationInstanceCppToC()
-{
-    GetStruct()->create_location_proxy_adapter = ark_location_instance_create_location_proxy_adapter;
-    GetStruct()->create_location_request_config = ark_location_instance_create_location_request_config;
+ArkLocationInstanceCppToC::ArkLocationInstanceCppToC() {
+  GetStruct()->create_location_proxy_adapter =
+      ark_location_instance_create_location_proxy_adapter;
+  GetStruct()->create_location_request_config =
+      ark_location_instance_create_location_request_config;
 }
 
-ArkLocationInstanceCppToC::~ArkLocationInstanceCppToC() {}
+ArkLocationInstanceCppToC::~ArkLocationInstanceCppToC() {
+}
 
-template<>
+template <>
 ArkWebBridgeType
-    ArkWebCppToCRefCounted<ArkLocationInstanceCppToC, ArkLocationInstance, ark_location_instance_t>::kBridgeType =
+    ArkWebCppToCRefCounted<ArkLocationInstanceCppToC, ArkLocationInstance,
+                           ark_location_instance_t>::kBridgeType =
         ARK_LOCATION_INSTANCE;
 
 } // namespace OHOS::ArkWeb
@@ -82,11 +85,11 @@ ArkWebBridgeType
 extern "C" {
 #endif // __cplusplus
 
-ARK_WEB_EXPORT ark_location_instance_t* ark_location_instance_get_instance_static()
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT ark_location_instance_t *
+ark_location_instance_get_instance_static() {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_location_instance_get_instance();
+  return OHOS::ArkWeb::ark_location_instance_get_instance();
 }
 
 #ifdef __cplusplus

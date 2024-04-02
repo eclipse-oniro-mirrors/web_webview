@@ -13,38 +13,41 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_access_token_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_access_token_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 bool ARK_WEB_CALLBACK ark_access_token_adapter_verify_access_token(
-    struct _ark_access_token_adapter_t* self, const ArkWebString* permissionName)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_access_token_adapter_t *self,
+    const ArkWebString *permissionName) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(permissionName, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(permissionName, false);
 
-    // Execute
-    return ArkAccessTokenAdapterCppToC::Get(self)->VerifyAccessToken(*permissionName);
+  // Execute
+  return ArkAccessTokenAdapterCppToC::Get(self)->VerifyAccessToken(
+      *permissionName);
 }
 
 } // namespace
 
-ArkAccessTokenAdapterCppToC::ArkAccessTokenAdapterCppToC()
-{
-    GetStruct()->verify_access_token = ark_access_token_adapter_verify_access_token;
+ArkAccessTokenAdapterCppToC::ArkAccessTokenAdapterCppToC() {
+  GetStruct()->verify_access_token =
+      ark_access_token_adapter_verify_access_token;
 }
 
-ArkAccessTokenAdapterCppToC::~ArkAccessTokenAdapterCppToC() {}
+ArkAccessTokenAdapterCppToC::~ArkAccessTokenAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkAccessTokenAdapterCppToC, ArkAccessTokenAdapter,
-    ark_access_token_adapter_t>::kBridgeType = ARK_ACCESS_TOKEN_ADAPTER;
+template <>
+ArkWebBridgeType
+    ArkWebCppToCRefCounted<ArkAccessTokenAdapterCppToC, ArkAccessTokenAdapter,
+                           ark_access_token_adapter_t>::kBridgeType =
+        ARK_ACCESS_TOKEN_ADAPTER;
 
 } // namespace OHOS::ArkWeb

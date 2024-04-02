@@ -13,25 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_ACCESS_TOKEN_ADAPTER_CPPTOC_H
-#define ARK_ACCESS_TOKEN_ADAPTER_CPPTOC_H
+#ifndef ARK_ACCESS_TOKEN_ADAPTER_CPPTOC_H_
+#define ARK_ACCESS_TOKEN_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "capi/ark_access_token_adapter_capi.h"
-#include "cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "include/ark_access_token_adapter.h"
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "ohos_adapter/capi/ark_access_token_adapter_capi.h"
+#include "ohos_adapter/include/ark_access_token_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkAccessTokenAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkAccessTokenAdapterCppToC, ArkAccessTokenAdapter, ark_access_token_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkAccessTokenAdapterCppToC,
+                                    ArkAccessTokenAdapter,
+                                    ark_access_token_adapter_t> {
 public:
-    ArkAccessTokenAdapterCppToC();
-    virtual ~ArkAccessTokenAdapterCppToC();
+  ArkAccessTokenAdapterCppToC();
+  virtual ~ArkAccessTokenAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_ACCESS_TOKEN_ADAPTER_CPPTOC_H
+#endif // ARK_ACCESS_TOKEN_ADAPTER_CPPTOC_H_

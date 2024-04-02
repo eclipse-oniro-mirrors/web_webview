@@ -28,7 +28,7 @@ class ArkScreenCaptureAdapterImpl : public ArkScreenCaptureAdapter {
 public:
     ArkScreenCaptureAdapterImpl(std::shared_ptr<OHOS::NWeb::ScreenCaptureAdapter>);
 
-    int32_t Init(const ArkScreenCaptureConfigAdapter& config) override;
+    int32_t Init(const ArkWebRefPtr<ArkScreenCaptureConfigAdapter> config) override;
 
     int32_t SetMicrophoneEnable(bool enable) override;
 

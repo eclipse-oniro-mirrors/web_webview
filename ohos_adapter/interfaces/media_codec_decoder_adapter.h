@@ -23,22 +23,30 @@
 #include <queue>
 #include <string>
 
-#include "media_codec_adapter.h"
 #include "graphic_adapter.h"
+#include "media_codec_adapter.h"
 
 namespace OHOS::NWeb {
-enum class DecoderAdapterCode : int32_t {
-    DECODER_OK = 0,
-    DECODER_ERROR = 1,
-    DECODER_RETRY = 2
-};
+enum class DecoderAdapterCode : int32_t { DECODER_OK = 0, DECODER_ERROR = 1, DECODER_RETRY = 2 };
 
-struct DecoderFormat {
-    int32_t width;
-    int32_t height;
-    double frameRate;
-};
+class DecoderFormatAdapter {
+public:
+    DecoderFormatAdapter() = default;
 
+    virtual ~DecoderFormatAdapter() = default;
+
+    virtual int32_t GetWidth() = 0;
+
+    virtual int32_t GetHeight() = 0;
+
+    virtual double GetFrameRate() = 0;
+
+    virtual void SetWidth(int32_t width) = 0;
+
+    virtual void SetHeight(int32_t height) = 0;
+
+    virtual void SetFrameRate(double frameRate) = 0;
+};
 
 class DecoderCallbackAdapter {
 public:
@@ -48,11 +56,11 @@ public:
 
     virtual void OnError(ErrorType errorType, int32_t errorCode) = 0;
 
-    virtual void OnStreamChanged(const DecoderFormat &format) = 0;
+    virtual void OnStreamChanged(int32_t width, int32_t height, double frameRate) = 0;
 
-    virtual void OnNeedInputData(uint32_t index, OhosBuffer buffer) = 0;
+    virtual void OnNeedInputData(uint32_t index, std::shared_ptr<OhosBufferAdapter> buffer) = 0;
 
-    virtual void OnNeedOutputData(uint32_t index, BufferInfo info, BufferFlag flag) = 0;
+    virtual void OnNeedOutputData(uint32_t index, std::shared_ptr<BufferInfoAdapter> info, BufferFlag flag) = 0;
 };
 
 class MediaCodecDecoderAdapter {
@@ -65,9 +73,9 @@ public:
 
     virtual DecoderAdapterCode CreateVideoDecoderByName(const std::string& name) = 0;
 
-    virtual DecoderAdapterCode ConfigureDecoder(const DecoderFormat& format) = 0;
+    virtual DecoderAdapterCode ConfigureDecoder(const std::shared_ptr<DecoderFormatAdapter> format) = 0;
 
-    virtual DecoderAdapterCode SetParameterDecoder(const DecoderFormat &format) = 0;
+    virtual DecoderAdapterCode SetParameterDecoder(const std::shared_ptr<DecoderFormatAdapter> format) = 0;
 
     virtual DecoderAdapterCode SetOutputSurface(void* window) = 0;
 
@@ -83,9 +91,10 @@ public:
 
     virtual DecoderAdapterCode ReleaseDecoder() = 0;
 
-    virtual DecoderAdapterCode QueueInputBufferDec(uint32_t index, BufferInfo info, BufferFlag flag) = 0;
+    virtual DecoderAdapterCode QueueInputBufferDec(
+        uint32_t index, int64_t presentationTimeUs, int32_t size, int32_t offset, BufferFlag flag) = 0;
 
-    virtual DecoderAdapterCode GetOutputFormatDec(DecoderFormat& format) = 0;
+    virtual DecoderAdapterCode GetOutputFormatDec(std::shared_ptr<DecoderFormatAdapter> format) = 0;
 
     virtual DecoderAdapterCode ReleaseOutputBufferDec(uint32_t index, bool isRender) = 0;
 

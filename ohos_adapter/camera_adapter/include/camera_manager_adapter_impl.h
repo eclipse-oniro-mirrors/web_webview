@@ -84,7 +84,7 @@ public:
 
     int32_t Create(std::shared_ptr<CameraStatusCallbackAdapter> cameraStatusCallback) override;
 
-    void GetDevicesInfo(std::vector<VideoDeviceDescriptor>& devicesDiscriptor) override;
+    std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> GetDevicesInfo() override;
 
     int32_t ReleaseCameraManger() override;
 
@@ -92,7 +92,7 @@ public:
 
     int32_t GetCurrentExposureMode(ExposureModeAdapter& exposureModeAdapter) override;
 
-    int32_t GetCaptionRangeById(RangeIDAdapter rangeId, VideoCaptureRangeAdapter& rangeVal) override;
+    std::shared_ptr<VideoCaptureRangeAdapter> GetCaptionRangeById(RangeIDAdapter rangeId) override;
 
     bool IsFocusModeSupported(FocusModeAdapter focusMode) override;
 
@@ -108,7 +108,7 @@ public:
 
     bool IsExistCaptureTask() override;
 
-    int32_t StartStream(const std::string& deviceId, const VideoCaptureParamsAdapter& captureParams,
+    int32_t StartStream(const std::string& deviceId, const std::shared_ptr<VideoCaptureParamsAdapter> captureParams,
         std::shared_ptr<CameraBufferListenerAdapter> listener) override;
 
     void SetForegroundFlag(bool isForeground) override;
@@ -121,21 +121,21 @@ public:
 private:
     VideoTransportType GetCameraTransportType(ConnectionType connectType);
     VideoFacingModeAdapter GetCameraFacingMode(CameraPosition position);
-    std::vector<FormatAdapter> GetCameraSupportFormats(sptr<CameraOutputCapability> outputcapability);
+    std::vector<std::shared_ptr<FormatAdapter>> GetCameraSupportFormats(sptr<CameraOutputCapability> outputcapability);
     VideoPixelFormatAdapter TransToAdapterCameraFormat(CameraFormat format);
     ExposureModeAdapter GetAdapterExposureMode(ExposureMode exportMode);
     CameraFormat TransToOriCameraFormat(VideoPixelFormatAdapter format);
     int32_t TransToAdapterExposureModes(
         std::vector<ExposureMode>& exposureModes, std::vector<ExposureModeAdapter>& exposureModesAdapter);
-    int32_t GetExposureCompensation(VideoCaptureRangeAdapter& rangeVal);
+    std::shared_ptr<VideoCaptureRangeAdapter> GetExposureCompensation();
     FocusMode GetOriFocusMode(FocusModeAdapter focusMode);
     FocusModeAdapter GetAdapterFocusMode(FocusMode focusMode);
     FlashMode GetOriFlashMode(FlashModeAdapter flashMode);
     int32_t ReleaseSession();
     int32_t ReleaseSessionResource(const std::string& deviceId);
     int32_t InitCameraInput(const std::string& deviceId);
-    int32_t InitPreviewOutput(
-        const VideoCaptureParamsAdapter& captureParams, std::shared_ptr<CameraBufferListenerAdapter> listener);
+    int32_t InitPreviewOutput(const std::shared_ptr<VideoCaptureParamsAdapter> captureParams,
+        std::shared_ptr<CameraBufferListenerAdapter> listener);
     int32_t CreateAndStartSession();
     int32_t ErrorTypeToString(CameraErrorType errorType, std::string& errnoTypeString);
     void ReportErrorSysEvent(CameraErrorType errorType);
@@ -146,7 +146,7 @@ private:
     sptr<CameraSurfaceListener> previewSurfaceListener_;
     sptr<CaptureOutput> previewOutput_;
     std::string deviceId_;
-    VideoCaptureParamsAdapter captureParams_;
+    std::shared_ptr<VideoCaptureParamsAdapter> captureParams_;
     std::shared_ptr<CameraBufferListenerAdapter> listener_;
     const int32_t DEFAULT_FRAME_RATE = 30;
     const uint32_t RANGE_MAX_SIZE = 2;
@@ -172,8 +172,8 @@ public:
     void OnBufferAvailable() override;
 
 private:
-    CameraRotationInfo GetRotationInfo(GraphicTransformType transform);
-    CameraRotationInfo FillRotationInfo(int roration, bool isFlipX, bool isFlipY);
+    std::shared_ptr<CameraRotationInfoAdapter> GetRotationInfo(GraphicTransformType transform);
+    std::shared_ptr<CameraRotationInfoAdapter> FillRotationInfo(int roration, bool isFlipX, bool isFlipY);
     SurfaceType surfaceType_;
     sptr<IConsumerSurface> surface_;
     std::shared_ptr<CameraBufferListenerAdapter> listener_ = nullptr;
