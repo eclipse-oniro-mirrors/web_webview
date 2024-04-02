@@ -113,4 +113,9 @@ void ArkSystemPropertiesAdapterImpl::DetachSysPropObserver(
     int32_t key, ArkSystemPropertiesObserver* observer) {
     real_.DetachSysPropObserver((NWeb::PropertiesKey)key, observer);
 }
+
+bool ArkSystemPropertiesAdapterImpl::GetBoolParameter(ArkWebString key, bool defaultValue)
+{
+    return real_.GetBoolParameter(ArkWebStringStructToClass(key), defaultValue);
+}
 } // namespace OHOS::ArkWeb

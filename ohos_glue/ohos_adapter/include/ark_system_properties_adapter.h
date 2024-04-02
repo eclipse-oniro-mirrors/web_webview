@@ -86,6 +86,9 @@ public:
 
   /*--web engine()--*/
   virtual void DetachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) = 0;
+
+  /*--web engine()--*/
+  virtual bool GetBoolParameter(ArkWebString key, bool defaultValue) = 0;
 };
 
 } // namespace OHOS::ArkWeb

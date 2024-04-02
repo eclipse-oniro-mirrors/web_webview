@@ -82,6 +82,8 @@ public:
     virtual void AttachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) = 0;
 
     virtual void DetachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) = 0;
+
+    virtual bool GetBoolParameter(const std::string& key, bool defaultValue) = 0;
 };
 
 }  // namespace OHOS::NWeb
