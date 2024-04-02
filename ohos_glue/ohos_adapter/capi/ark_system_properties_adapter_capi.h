@@ -84,6 +84,9 @@ typedef struct _ark_system_properties_adapter_t {
 
   void (ARK_WEB_CALLBACK *detach_sys_prop_observer)(
       struct _ark_system_properties_adapter_t* self, int32_t key, OHOS::NWeb::SystemPropertiesObserver* observer);
+
+  bool(ARK_WEB_CALLBACK *get_bool_parameter)(
+      struct _ark_system_properties_adapter_t* self, ArkWebString key, bool defaultValue);
 } ark_system_properties_adapter_t;
 
 #ifdef __cplusplus

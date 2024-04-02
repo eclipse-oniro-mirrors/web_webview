@@ -68,6 +68,8 @@ public:
 
     void DispatchAllWatcherInfo(const char* key, const char* value);
 
+    bool GetBoolParameter(const std::string& key, bool defaultValue) override;
+
 private:
     SystemPropertiesAdapterImpl();
 
