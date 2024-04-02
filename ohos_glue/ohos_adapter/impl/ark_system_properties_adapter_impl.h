@@ -61,6 +61,10 @@ public:
 
     int32_t GetFlowBufMaxFd() override;
 
+    void AttachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) override;
+
+    void DetachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
