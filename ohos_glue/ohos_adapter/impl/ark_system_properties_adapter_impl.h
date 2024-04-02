@@ -41,7 +41,7 @@ public:
 
     bool GetWebOptimizationValue() override;
 
-    bool GetLockdownModeStatus() override;
+    bool IsAdvancedSecurityMode() override;
 
     ArkWebString GetUserAgentOSName() override;
 

@@ -59,7 +59,7 @@ public:
 
     virtual bool GetWebOptimizationValue() = 0;
 
-    virtual bool GetLockdownModeStatus() = 0;
+    virtual bool IsAdvancedSecurityMode() = 0;
 
     virtual std::string GetUserAgentOSName() = 0;
 

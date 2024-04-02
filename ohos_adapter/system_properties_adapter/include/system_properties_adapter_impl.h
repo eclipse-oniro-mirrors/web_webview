@@ -42,7 +42,7 @@ public:
 
     bool GetWebOptimizationValue() override;
 
-    bool GetLockdownModeStatus() override;
+    bool IsAdvancedSecurityMode() override;
 
     std::string GetUserAgentOSName() override;
 

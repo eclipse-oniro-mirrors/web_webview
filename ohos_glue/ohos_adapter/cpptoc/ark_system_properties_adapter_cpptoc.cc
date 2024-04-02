@@ -87,14 +87,14 @@ bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_web_optimization_value(
   return ArkSystemPropertiesAdapterCppToC::Get(self)->GetWebOptimizationValue();
 }
 
-bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_lockdown_mode_status(
+bool ARK_WEB_CALLBACK ark_system_properties_adapter_is_advanced_security_mode(
     struct _ark_system_properties_adapter_t *self) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
   // Execute
-  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetLockdownModeStatus();
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->IsAdvancedSecurityMode();
 }
 
 ArkWebString ARK_WEB_CALLBACK
@@ -231,8 +231,8 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
       ark_system_properties_adapter_get_product_device_type;
   GetStruct()->get_web_optimization_value =
       ark_system_properties_adapter_get_web_optimization_value;
-  GetStruct()->get_lockdown_mode_status =
-      ark_system_properties_adapter_get_lockdown_mode_status;
+  GetStruct()->is_advanced_security_mode =
+      ark_system_properties_adapter_is_advanced_security_mode;
   GetStruct()->get_user_agent_osname =
       ark_system_properties_adapter_get_user_agent_osname;
   GetStruct()->get_software_major_version =
