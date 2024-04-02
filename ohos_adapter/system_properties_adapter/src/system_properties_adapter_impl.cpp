@@ -111,7 +111,7 @@ bool SystemPropertiesAdapterImpl::GetWebOptimizationValue()
     return OHOS::system::GetBoolParameter("web.optimization", true);
 }
 
-bool SystemPropertiesAdapterImpl::GetLockdownModeStatus()
+bool SystemPropertiesAdapterImpl::IsAdvancedSecurityMode()
 {
     char buffer[32] = { 0 };
     uint32_t buffSize = sizeof(buffer);

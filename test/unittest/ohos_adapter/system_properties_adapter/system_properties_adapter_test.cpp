@@ -65,7 +65,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     value = SystemPropertiesAdapterImpl::GetInstance().GetWebOptimizationValue();
     EXPECT_FALSE(value);
     system("param set web.optimization true");
-    bool mode = SystemPropertiesAdapterImpl::GetInstance().GetLockdownModeStatus();
+    bool mode = SystemPropertiesAdapterImpl::GetInstance().IsAdvancedSecurityMode();
     EXPECT_FALSE(mode);
     string logMode = SystemPropertiesAdapterImpl::GetInstance().GetNetlogMode();
     EXPECT_EQ(logMode, "None");

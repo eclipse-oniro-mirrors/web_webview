@@ -51,9 +51,9 @@ bool ArkSystemPropertiesAdapterImpl::GetWebOptimizationValue()
     return real_.GetWebOptimizationValue();
 }
 
-bool ArkSystemPropertiesAdapterImpl::GetLockdownModeStatus()
+bool ArkSystemPropertiesAdapterImpl::IsAdvancedSecurityMode()
 {
-    return real_.GetLockdownModeStatus();
+    return real_.IsAdvancedSecurityMode();
 }
 
 ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentOSName()
