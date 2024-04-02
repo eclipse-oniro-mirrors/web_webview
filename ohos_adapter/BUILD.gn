@@ -132,6 +132,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "huks:libhukssdk",
     "image_framework:image_native",
     "imf:inputmethod_client",
+    "init:libbeget_proxy",
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_core",

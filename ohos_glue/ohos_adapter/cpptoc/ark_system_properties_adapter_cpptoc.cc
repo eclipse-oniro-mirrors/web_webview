@@ -192,6 +192,30 @@ void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oopgpudisable(
   ArkSystemPropertiesAdapterCppToC::Get(self)->SetOOPGPUDisable();
 }
 
+void ARK_WEB_CALLBACK ark_system_properties_adapter_attach_sys_prop_observer(
+    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkSystemPropertiesAdapterCppToC::Get(self)->AttachSysPropObserver(
+      key,
+      observer);
+}
+
+void ARK_WEB_CALLBACK ark_system_properties_adapter_detach_sys_prop_observer(
+    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkSystemPropertiesAdapterCppToC::Get(self)->DetachSysPropObserver(
+      key,
+      observer);
+}
+
 } // namespace
 
 ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
@@ -226,6 +250,8 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
       ark_system_properties_adapter_get_oopgpuenable;
   GetStruct()->set_oopgpudisable =
       ark_system_properties_adapter_set_oopgpudisable;
+  GetStruct()->attach_sys_prop_observer = ark_system_properties_adapter_attach_sys_prop_observer;
+  GetStruct()->detach_sys_prop_observer = ark_system_properties_adapter_detach_sys_prop_observer;
 }
 
 ArkSystemPropertiesAdapterCppToC::~ArkSystemPropertiesAdapterCppToC() {
