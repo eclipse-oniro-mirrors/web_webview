@@ -703,12 +703,12 @@ napi_value NapiWebSchemeHandler::Init(napi_env env, napi_value exports)
     return exports;
 }
 
-napi_value NapiWebSchemeHandler::JS_Constructor(napi_env env, napi_callback_info cbinfo)
+napi_value NapiWebSchemeHandler::JS_Constructor(napi_env env, napi_callback_info info)
 {
     WVLOG_D("NapiWebSchemeHandler::JS_Constructor is called");
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
 
     WebSchemeHandler *handler = new WebSchemeHandler(env);
 
@@ -986,8 +986,7 @@ void NapiWebHttpBodyStream::ExportWebHttpBodyStreamClass(
         webHttpBodyStream);
 }
 
-napi_status NapiWebHttpBodyStream::DefineProperties(
-    napi_env env, napi_value* exportsPointer)
+napi_status NapiWebHttpBodyStream::DefineProperties(napi_env env, napi_value* object)
 {
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_FUNCTION("initialize", JS_Initialize),
@@ -998,7 +997,7 @@ napi_status NapiWebHttpBodyStream::DefineProperties(
         DECLARE_NAPI_FUNCTION("isEof", JS_IsEof),
         DECLARE_NAPI_FUNCTION("isInMemory", JS_IsInMemory),
     };
-    return napi_define_properties(env, *exportsPointer,
+    return napi_define_properties(env, *object,
         sizeof(properties) / sizeof(properties[0]), properties);
 }
 

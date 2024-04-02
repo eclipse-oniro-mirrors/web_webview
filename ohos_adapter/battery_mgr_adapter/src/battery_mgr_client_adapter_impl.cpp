@@ -40,9 +40,10 @@ int WebBatteryInfoImpl::ChargingTime()
     return chargingTime_;
 }
 
-NWebBatteryEventSubscriber::NWebBatteryEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, 
-    std::shared_ptr<WebBatteryEventCallback> cb)
-    : EventFwk::CommonEventSubscriber(in), eventCallback_(cb) {}
+NWebBatteryEventSubscriber::NWebBatteryEventSubscriber(
+    EventFwk::CommonEventSubscribeInfo& in, std::shared_ptr<WebBatteryEventCallback> cb)
+    : EventFwk::CommonEventSubscriber(in), eventCallback_(cb)
+{}
 
 void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData &data)
 {
@@ -72,8 +73,8 @@ void NWebBatteryEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData 
 void BatteryMgrClientAdapterImpl::RegBatteryEvent(std::shared_ptr<WebBatteryEventCallback> eventCallback)
 {
     if (!eventCallback) {
-      WVLOG_E("WebBatteryEventCallback is nullptr.");
-      return;
+        WVLOG_E("WebBatteryEventCallback is nullptr.");
+        return;
     }
 
     WVLOG_I("Reg Battery Event");
