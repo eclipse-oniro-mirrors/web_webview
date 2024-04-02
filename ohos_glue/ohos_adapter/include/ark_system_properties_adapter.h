@@ -52,7 +52,7 @@ public:
   virtual bool GetWebOptimizationValue() = 0;
 
   /*--ark web()--*/
-  virtual bool GetLockdownModeStatus() = 0;
+  virtual bool IsAdvancedSecurityMode() = 0;
 
   /*--ark web()--*/
   virtual ArkWebString GetUserAgentOSName() = 0;
