@@ -257,7 +257,7 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_OnError_
  */
 HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_GetList_001, TestSize.Level1)
 {
-    MediaCodecListAdapterImpl codecListImpl = MediaCodecListAdapterImpl::GetInstance();
+    MediaCodecListAdapterImpl& codecListImpl = MediaCodecListAdapterImpl::GetInstance();
 
     std::shared_ptr<CapabilityDataAdapter> capaData = codecListImpl.GetCodecCapability("test", true);
     EXPECT_NE(capaData, nullptr);
