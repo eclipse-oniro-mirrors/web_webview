@@ -19,21 +19,22 @@
 
 #include <cstdint>
 
-#include "include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_base_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkAafwkRenderSchedulerHostAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkAafwkRenderSchedulerHostAdapter() = default;
+  /*--ark web()--*/
+  ArkAafwkRenderSchedulerHostAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkAafwkRenderSchedulerHostAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkAafwkRenderSchedulerHostAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) = 0;
+  /*--ark web()--*/
+  virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd,
+                               int32_t crashFd) = 0;
 };
 } // namespace OHOS::ArkWeb
 

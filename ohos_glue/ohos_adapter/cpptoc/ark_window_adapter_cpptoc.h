@@ -13,25 +13,26 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WINDOW_ADAPTER_CPPTOC_H
-#define ARK_WINDOW_ADAPTER_CPPTOC_H
+#ifndef ARK_WINDOW_ADAPTER_CPPTOC_H_
+#define ARK_WINDOW_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "capi/ark_graphic_adapter_capi.h"
-#include "cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "include/ark_graphic_adapter.h"
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "ohos_adapter/capi/ark_graphic_adapter_capi.h"
+#include "ohos_adapter/include/ark_graphic_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWindowAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkWindowAdapterCppToC, ArkWindowAdapter, ark_window_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkWindowAdapterCppToC, ArkWindowAdapter,
+                                    ark_window_adapter_t> {
 public:
-    ArkWindowAdapterCppToC();
-    virtual ~ArkWindowAdapterCppToC();
+  ArkWindowAdapterCppToC();
+  virtual ~ArkWindowAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_WINDOW_ADAPTER_CPPTOC_H
+#endif // ARK_WINDOW_ADAPTER_CPPTOC_H_

@@ -25,8 +25,8 @@
 
 #include "avcodec_errors.h"
 #include "avcodec_video_decoder.h"
-#include "media_description.h"
 #include "media_codec_decoder_adapter.h"
+#include "media_description.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::MediaAVCodec;
@@ -60,9 +60,9 @@ public:
 
     DecoderAdapterCode CreateVideoDecoderByName(const std::string& name) override;
 
-    DecoderAdapterCode ConfigureDecoder(const DecoderFormat& format) override;
+    DecoderAdapterCode ConfigureDecoder(const std::shared_ptr<DecoderFormatAdapter> format) override;
 
-    DecoderAdapterCode SetParameterDecoder(const DecoderFormat& format) override;
+    DecoderAdapterCode SetParameterDecoder(const std::shared_ptr<DecoderFormatAdapter> format) override;
 
     DecoderAdapterCode SetOutputSurface(void* window) override;
 
@@ -78,9 +78,10 @@ public:
 
     DecoderAdapterCode ReleaseDecoder() override;
 
-    DecoderAdapterCode QueueInputBufferDec(uint32_t index, BufferInfo info, BufferFlag flag) override;
+    DecoderAdapterCode QueueInputBufferDec(
+        uint32_t index, int64_t presentationTimeUs, int32_t size, int32_t offset, BufferFlag flag) override;
 
-    DecoderAdapterCode GetOutputFormatDec(DecoderFormat& format) override;
+    DecoderAdapterCode GetOutputFormatDec(std::shared_ptr<DecoderFormatAdapter> format) override;
 
     DecoderAdapterCode ReleaseOutputBufferDec(uint32_t index, bool isRender) override;
 

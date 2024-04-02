@@ -13,103 +13,103 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_hi_trace_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_hi_trace_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-void ARK_WEB_CALLBACK ark_hi_trace_adapter_start_trace(
-    struct _ark_hi_trace_adapter_t* self, const ArkWebString* value, float limit)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK
+ark_hi_trace_adapter_start_trace(struct _ark_hi_trace_adapter_t *self,
+                                 const ArkWebString *value, float limit) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(value, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(value, );
 
-    // Execute
-    ArkHiTraceAdapterCppToC::Get(self)->StartTrace(*value, limit);
+  // Execute
+  ArkHiTraceAdapterCppToC::Get(self)->StartTrace(*value, limit);
 }
 
-void ARK_WEB_CALLBACK ark_hi_trace_adapter_finish_trace(struct _ark_hi_trace_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK
+ark_hi_trace_adapter_finish_trace(struct _ark_hi_trace_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkHiTraceAdapterCppToC::Get(self)->FinishTrace();
+  // Execute
+  ArkHiTraceAdapterCppToC::Get(self)->FinishTrace();
 }
 
 void ARK_WEB_CALLBACK ark_hi_trace_adapter_start_async_trace(
-    struct _ark_hi_trace_adapter_t* self, const ArkWebString* value, int32_t taskId, float limit)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_hi_trace_adapter_t *self, const ArkWebString *value,
+    int32_t taskId, float limit) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(value, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(value, );
 
-    // Execute
-    ArkHiTraceAdapterCppToC::Get(self)->StartAsyncTrace(*value, taskId, limit);
+  // Execute
+  ArkHiTraceAdapterCppToC::Get(self)->StartAsyncTrace(*value, taskId, limit);
 }
 
 void ARK_WEB_CALLBACK ark_hi_trace_adapter_finish_async_trace(
-    struct _ark_hi_trace_adapter_t* self, const ArkWebString* value, int32_t taskId)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_hi_trace_adapter_t *self, const ArkWebString *value,
+    int32_t taskId) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(value, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(value, );
 
-    // Execute
-    ArkHiTraceAdapterCppToC::Get(self)->FinishAsyncTrace(*value, taskId);
+  // Execute
+  ArkHiTraceAdapterCppToC::Get(self)->FinishAsyncTrace(*value, taskId);
 }
 
-void ARK_WEB_CALLBACK ark_hi_trace_adapter_count_trace(
-    struct _ark_hi_trace_adapter_t* self, const ArkWebString* name, int64_t count)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK
+ark_hi_trace_adapter_count_trace(struct _ark_hi_trace_adapter_t *self,
+                                 const ArkWebString *name, int64_t count) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(name, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(name, );
 
-    // Execute
-    ArkHiTraceAdapterCppToC::Get(self)->CountTrace(*name, count);
+  // Execute
+  ArkHiTraceAdapterCppToC::Get(self)->CountTrace(*name, count);
 }
 
-bool ARK_WEB_CALLBACK ark_hi_trace_adapter_is_hi_trace_enable(struct _ark_hi_trace_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_hi_trace_adapter_is_hi_trace_enable(struct _ark_hi_trace_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkHiTraceAdapterCppToC::Get(self)->IsHiTraceEnable();
+  // Execute
+  return ArkHiTraceAdapterCppToC::Get(self)->IsHiTraceEnable();
 }
 
 } // namespace
 
-ArkHiTraceAdapterCppToC::ArkHiTraceAdapterCppToC()
-{
-    GetStruct()->start_trace = ark_hi_trace_adapter_start_trace;
-    GetStruct()->finish_trace = ark_hi_trace_adapter_finish_trace;
-    GetStruct()->start_async_trace = ark_hi_trace_adapter_start_async_trace;
-    GetStruct()->finish_async_trace = ark_hi_trace_adapter_finish_async_trace;
-    GetStruct()->count_trace = ark_hi_trace_adapter_count_trace;
-    GetStruct()->is_hi_trace_enable = ark_hi_trace_adapter_is_hi_trace_enable;
+ArkHiTraceAdapterCppToC::ArkHiTraceAdapterCppToC() {
+  GetStruct()->start_trace = ark_hi_trace_adapter_start_trace;
+  GetStruct()->finish_trace = ark_hi_trace_adapter_finish_trace;
+  GetStruct()->start_async_trace = ark_hi_trace_adapter_start_async_trace;
+  GetStruct()->finish_async_trace = ark_hi_trace_adapter_finish_async_trace;
+  GetStruct()->count_trace = ark_hi_trace_adapter_count_trace;
+  GetStruct()->is_hi_trace_enable = ark_hi_trace_adapter_is_hi_trace_enable;
 }
 
-ArkHiTraceAdapterCppToC::~ArkHiTraceAdapterCppToC() {}
+ArkHiTraceAdapterCppToC::~ArkHiTraceAdapterCppToC() {
+}
 
-template<>
+template <>
 ArkWebBridgeType
-    ArkWebCppToCRefCounted<ArkHiTraceAdapterCppToC, ArkHiTraceAdapter, ark_hi_trace_adapter_t>::kBridgeType =
-        ARK_HITRACE_ADAPTER;
+    ArkWebCppToCRefCounted<ArkHiTraceAdapterCppToC, ArkHiTraceAdapter,
+                           ark_hi_trace_adapter_t>::kBridgeType =
+        ARK_HI_TRACE_ADAPTER;
 
 } // namespace OHOS::ArkWeb

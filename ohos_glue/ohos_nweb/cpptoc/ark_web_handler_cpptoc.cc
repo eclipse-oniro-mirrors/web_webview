@@ -1155,9 +1155,9 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_largest_contentful_paint;
   GetStruct()->on_all_ssl_error_request_by_js =
       ark_web_handler_on_all_ssl_error_request_by_js;
+  GetStruct()->on_tooltip = ark_web_handler_on_tooltip;
   GetStruct()->release_resize_hold =
       ark_web_handler_release_resize_hold;
-  GetStruct()->on_tooltip = ark_web_handler_on_tooltip;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {

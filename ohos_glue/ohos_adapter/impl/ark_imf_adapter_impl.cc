@@ -15,8 +15,11 @@
 
 #include "ark_imf_adapter_impl.h"
 
-#include "bridge/ark_web_bridge_macros.h"
+#include "wrapper/ark_imfcursor_info_adapter_wrapper.h"
+#include "wrapper/ark_imftext_config_adapter_wrapper.h"
 #include "wrapper/ark_imftext_listener_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -32,13 +35,18 @@ bool ArkIMFAdapterImpl::Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener,
 }
 
 bool ArkIMFAdapterImpl::Attach(
-    ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard, const ArkIMFAdapterTextConfig& config)
+    ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard, ArkWebRefPtr<ArkIMFTextConfigAdapter> config)
 {
-    if (CHECK_REF_PTR_IS_NULL(listener)) {
-        return real_->Attach(nullptr, isShowKeyboard, config);
+    if (CHECK_REF_PTR_IS_NULL(listener) && CHECK_REF_PTR_IS_NULL(config)) {
+        return real_->Attach(nullptr, isShowKeyboard, nullptr);
+    } else if (!CHECK_REF_PTR_IS_NULL(listener) && !CHECK_REF_PTR_IS_NULL(config)) {
+        return real_->Attach(std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener), isShowKeyboard,
+            std::make_shared<ArkIMFTextConfigAdapterWrapper>(config));
+    } else if (CHECK_REF_PTR_IS_NULL(listener)) {
+        return real_->Attach(nullptr, isShowKeyboard, std::make_shared<ArkIMFTextConfigAdapterWrapper>(config));
+    } else {
+        return real_->Attach(std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener), isShowKeyboard, nullptr);
     }
-
-    return real_->Attach(std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener), isShowKeyboard, config);
 }
 
 void ArkIMFAdapterImpl::ShowCurrentInput(const int32_t& inputType)
@@ -56,9 +64,12 @@ void ArkIMFAdapterImpl::Close()
     real_->Close();
 }
 
-void ArkIMFAdapterImpl::OnCursorUpdate(ArkIMFAdapterCursorInfo cursorInfo)
+void ArkIMFAdapterImpl::OnCursorUpdate(ArkWebRefPtr<ArkIMFCursorInfoAdapter> cursorInfo)
 {
-    real_->OnCursorUpdate(cursorInfo);
+    if (CHECK_REF_PTR_IS_NULL(cursorInfo)) {
+        return real_->OnCursorUpdate(nullptr);
+    }
+    real_->OnCursorUpdate(std::make_shared<ArkIMFCursorInfoAdapterWrapper>(cursorInfo));
 }
 
 void ArkIMFAdapterImpl::OnSelectionChange(ArkWebU16String& text, int start, int end)

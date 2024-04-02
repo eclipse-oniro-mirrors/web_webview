@@ -13,91 +13,92 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_display_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_display_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-uint64_t ARK_WEB_CALLBACK ark_display_adapter_get_id(struct _ark_display_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+uint64_t ARK_WEB_CALLBACK
+ark_display_adapter_get_id(struct _ark_display_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkDisplayAdapterCppToC::Get(self)->GetId();
+  // Execute
+  return ArkDisplayAdapterCppToC::Get(self)->GetId();
 }
 
-int32_t ARK_WEB_CALLBACK ark_display_adapter_get_width(struct _ark_display_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK
+ark_display_adapter_get_width(struct _ark_display_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkDisplayAdapterCppToC::Get(self)->GetWidth();
+  // Execute
+  return ArkDisplayAdapterCppToC::Get(self)->GetWidth();
 }
 
-int32_t ARK_WEB_CALLBACK ark_display_adapter_get_height(struct _ark_display_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK
+ark_display_adapter_get_height(struct _ark_display_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkDisplayAdapterCppToC::Get(self)->GetHeight();
+  // Execute
+  return ArkDisplayAdapterCppToC::Get(self)->GetHeight();
 }
 
-float ARK_WEB_CALLBACK ark_display_adapter_get_virtual_pixel_ratio(struct _ark_display_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+float ARK_WEB_CALLBACK ark_display_adapter_get_virtual_pixel_ratio(
+    struct _ark_display_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkDisplayAdapterCppToC::Get(self)->GetVirtualPixelRatio();
+  // Execute
+  return ArkDisplayAdapterCppToC::Get(self)->GetVirtualPixelRatio();
 }
 
-uint32_t ARK_WEB_CALLBACK ark_display_adapter_get_rotation(struct _ark_display_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+uint32_t ARK_WEB_CALLBACK
+ark_display_adapter_get_rotation(struct _ark_display_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkDisplayAdapterCppToC::Get(self)->GetRotation();
+  // Execute
+  return ArkDisplayAdapterCppToC::Get(self)->GetRotation();
 }
 
-uint32_t ARK_WEB_CALLBACK ark_display_adapter_get_orientation(struct _ark_display_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+uint32_t ARK_WEB_CALLBACK
+ark_display_adapter_get_orientation(struct _ark_display_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkDisplayAdapterCppToC::Get(self)->GetOrientation();
+  // Execute
+  return ArkDisplayAdapterCppToC::Get(self)->GetOrientation();
 }
 
 } // namespace
 
-ArkDisplayAdapterCppToC::ArkDisplayAdapterCppToC()
-{
-    GetStruct()->get_id = ark_display_adapter_get_id;
-    GetStruct()->get_width = ark_display_adapter_get_width;
-    GetStruct()->get_height = ark_display_adapter_get_height;
-    GetStruct()->get_virtual_pixel_ratio = ark_display_adapter_get_virtual_pixel_ratio;
-    GetStruct()->get_rotation = ark_display_adapter_get_rotation;
-    GetStruct()->get_orientation = ark_display_adapter_get_orientation;
+ArkDisplayAdapterCppToC::ArkDisplayAdapterCppToC() {
+  GetStruct()->get_id = ark_display_adapter_get_id;
+  GetStruct()->get_width = ark_display_adapter_get_width;
+  GetStruct()->get_height = ark_display_adapter_get_height;
+  GetStruct()->get_virtual_pixel_ratio =
+      ark_display_adapter_get_virtual_pixel_ratio;
+  GetStruct()->get_rotation = ark_display_adapter_get_rotation;
+  GetStruct()->get_orientation = ark_display_adapter_get_orientation;
 }
 
-ArkDisplayAdapterCppToC::~ArkDisplayAdapterCppToC() {}
+ArkDisplayAdapterCppToC::~ArkDisplayAdapterCppToC() {
+}
 
-template<>
+template <>
 ArkWebBridgeType
-    ArkWebCppToCRefCounted<ArkDisplayAdapterCppToC, ArkDisplayAdapter, ark_display_adapter_t>::kBridgeType =
+    ArkWebCppToCRefCounted<ArkDisplayAdapterCppToC, ArkDisplayAdapter,
+                           ark_display_adapter_t>::kBridgeType =
         ARK_DISPLAY_ADAPTER;
 
 } // namespace OHOS::ArkWeb

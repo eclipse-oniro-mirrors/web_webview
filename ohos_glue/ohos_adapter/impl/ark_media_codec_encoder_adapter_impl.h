@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "include/ark_media_codec_encoder_adapter.h"
+#include "include/ark_media_codec_adapter.h"
 #include "media_codec_adapter.h"
 
 namespace OHOS::ArkWeb {
@@ -33,7 +33,7 @@ public:
 
     int32_t SetCodecCallback(const ArkWebRefPtr<ArkCodecCallbackAdapter> callback) override;
 
-    int32_t Configure(const ArkCodecConfigPara& config) override;
+    int32_t Configure(const ArkWebRefPtr<ArkCodecConfigParaAdapter> config) override;
 
     int32_t Prepare() override;
 
@@ -61,7 +61,7 @@ class ArkMediaCodecListAdapterImpl : public ArkMediaCodecListAdapter {
 public:
     ArkMediaCodecListAdapterImpl(OHOS::NWeb::MediaCodecListAdapter&);
 
-    OHOS::NWeb::CapabilityDataAdapter GetCodecCapability(const ArkWebString mime, const bool isCodec) override;
+    ArkWebRefPtr<ArkCapabilityDataAdapter> GetCodecCapability(const ArkWebString mime, const bool isCodec) override;
 
 private:
     OHOS::NWeb::MediaCodecListAdapter& real_;

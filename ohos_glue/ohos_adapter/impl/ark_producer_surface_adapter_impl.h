@@ -27,10 +27,11 @@ class ArkProducerSurfaceAdapterImpl : public ArkProducerSurfaceAdapter {
 public:
     ArkProducerSurfaceAdapterImpl(std::shared_ptr<OHOS::NWeb::ProducerSurfaceAdapter>);
 
-    ArkWebRefPtr<ArkSurfaceBufferAdapter> RequestBuffer(int32_t& fence, ArkBufferRequestConfigAdapter& config) override;
+    ArkWebRefPtr<ArkSurfaceBufferAdapter> RequestBuffer(
+        int32_t& fence, ArkWebRefPtr<ArkBufferRequestConfigAdapter> config) override;
 
-    int32_t FlushBuffer(
-        ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer, int32_t fence, ArkBufferFlushConfigAdapter& flushConfig) override;
+    int32_t FlushBuffer(ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer, int32_t fence,
+        ArkWebRefPtr<ArkBufferFlushConfigAdapter> flushConfig) override;
 
     std::shared_ptr<OHOS::NWeb::ProducerSurfaceAdapter> real_;
 

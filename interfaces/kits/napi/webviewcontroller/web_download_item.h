@@ -57,6 +57,8 @@ public:
     WebBeforeDownloadCallbackWrapper *before_download_callback;
     WebDownloadItemCallbackWrapper *download_item_callback;
 
+    int32_t nwebId;
+
 private:
     napi_env env_;
 };

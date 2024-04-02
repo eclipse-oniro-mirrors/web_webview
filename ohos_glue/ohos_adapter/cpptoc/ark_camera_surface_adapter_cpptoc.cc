@@ -13,38 +13,38 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_camera_surface_adapter_cpptoc.h"
-
-#include "cpptoc/ark_camera_surface_buffer_adapter_cpptoc.h"
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_camera_surface_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_camera_surface_buffer_adapter_cpptoc.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 int32_t ARK_WEB_CALLBACK ark_camera_surface_adapter_release_buffer(
-    struct _ark_camera_surface_adapter_t* self, ark_camera_surface_buffer_adapter_t* buffer, int32_t fence)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_camera_surface_adapter_t *self,
+    ark_camera_surface_buffer_adapter_t *buffer, int32_t fence) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkCameraSurfaceAdapterCppToC::Get(self)->ReleaseBuffer(
-        ArkCameraSurfaceBufferAdapterCppToC::Revert(buffer), fence);
+  // Execute
+  return ArkCameraSurfaceAdapterCppToC::Get(self)->ReleaseBuffer(
+      ArkCameraSurfaceBufferAdapterCppToC::Revert(buffer), fence);
 }
 
 } // namespace
 
-ArkCameraSurfaceAdapterCppToC::ArkCameraSurfaceAdapterCppToC()
-{
-    GetStruct()->release_buffer = ark_camera_surface_adapter_release_buffer;
+ArkCameraSurfaceAdapterCppToC::ArkCameraSurfaceAdapterCppToC() {
+  GetStruct()->release_buffer = ark_camera_surface_adapter_release_buffer;
 }
 
-ArkCameraSurfaceAdapterCppToC::~ArkCameraSurfaceAdapterCppToC() {}
+ArkCameraSurfaceAdapterCppToC::~ArkCameraSurfaceAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkCameraSurfaceAdapterCppToC, ArkCameraSurfaceAdapter,
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkCameraSurfaceAdapterCppToC, ArkCameraSurfaceAdapter,
     ark_camera_surface_adapter_t>::kBridgeType = ARK_CAMERA_SURFACE_ADAPTER;
 
 } // namespace OHOS::ArkWeb

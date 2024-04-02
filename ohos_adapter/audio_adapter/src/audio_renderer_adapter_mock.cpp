@@ -18,7 +18,8 @@
 namespace OHOS::NWeb {
 AudioRendererAdapterImpl::~AudioRendererAdapterImpl() {}
 
-int32_t AudioRendererAdapterImpl::Create(const AudioAdapterRendererOptions& rendererOptions, std::string cachePath)
+int32_t AudioRendererAdapterImpl::Create(
+    const std::shared_ptr<AudioRendererOptionsAdapter> rendererOptions, std::string cachePath)
 {
     return -1;
 }

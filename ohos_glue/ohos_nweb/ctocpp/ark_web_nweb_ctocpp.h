@@ -360,7 +360,8 @@ public:
                          float vy) override;
 
   void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
-      ArkWebRefPtr<ArkWebMessageValueCallback> callback, bool extention) override;
+                            ArkWebRefPtr<ArkWebMessageValueCallback> callback,
+                            bool extention) override;
 
   void OnRenderToBackground() override;
 
@@ -370,6 +371,9 @@ public:
       const ArkWebString &url, const ArkWebString &script,
       ArkWebRefPtr<ArkWebCacheOptions> &cacheOptions,
       ArkWebRefPtr<ArkWebMessageValueCallback> callback) override;
+
+  void OnCreateNativeMediaPlayer(
+      ArkWebRefPtr<ArkWebCreateNativeMediaPlayerCallback> callback) override;
 };
 
 } // namespace OHOS::ArkWeb

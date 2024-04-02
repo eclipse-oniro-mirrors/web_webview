@@ -19,7 +19,7 @@
 #include <string>
 
 namespace OHOS::NWeb {
-enum class IMFAdapterTextInputType {
+enum class IMFAdapterTextInputType : int32_t {
     NONE = -1,
     TEXT = 0,
     MULTILINE,
@@ -31,9 +31,9 @@ enum class IMFAdapterTextInputType {
     VISIBLE_PASSWORD,
 };
 
-enum class IMFAdapterEnterKeyType { UNSPECIFIED = 0, NONE, GO, SEARCH, SEND, NEXT, DONE, PREVIOUS };
+enum class IMFAdapterEnterKeyType : int32_t { UNSPECIFIED = 0, NONE, GO, SEARCH, SEND, NEXT, DONE, PREVIOUS };
 
-enum class IMFAdapterDirection {
+enum class IMFAdapterDirection : int32_t {
     NONE = 0,
     UP = 1,
     DOWN,
@@ -41,28 +41,56 @@ enum class IMFAdapterDirection {
     RIGHT,
 };
 
-struct IMFAdapterCursorInfo {
-    double left = 0.0;
-    double top = 0.0;
-    double width = 0.0;
-    double height = 0.0;
+class IMFCursorInfoAdapter {
+public:
+    IMFCursorInfoAdapter() = default;
+
+    virtual ~IMFCursorInfoAdapter() = default;
+
+    virtual double GetLeft() = 0;
+
+    virtual double GetTop() = 0;
+
+    virtual double GetWidth() = 0;
+
+    virtual double GetHeight() = 0;
 };
 
-struct IMFAdapterInputAttribute {
-    int32_t inputPattern = 0;
-    int32_t enterKeyType = 0;
+class IMFInputAttributeAdapter {
+public:
+    IMFInputAttributeAdapter() = default;
+
+    virtual ~IMFInputAttributeAdapter() = default;
+
+    virtual int32_t GetInputPattern() = 0;
+
+    virtual int32_t GetEnterKeyType() = 0;
 };
 
-struct IMFAdapterSelectionRange {
-    int32_t start = -1;
-    int32_t end = -1;
+class IMFSelectionRangeAdapter {
+public:
+    IMFSelectionRangeAdapter() = default;
+
+    virtual ~IMFSelectionRangeAdapter() = default;
+
+    virtual int32_t GetStart() = 0;
+
+    virtual int32_t GetEnd() = 0;
 };
 
-struct IMFAdapterTextConfig {
-    IMFAdapterInputAttribute inputAttribute = {};
-    IMFAdapterCursorInfo cursorInfo = {};
-    IMFAdapterSelectionRange range = {};
-    uint32_t windowId = -1;
+class IMFTextConfigAdapter {
+public:
+    IMFTextConfigAdapter() = default;
+
+    virtual ~IMFTextConfigAdapter() = default;
+
+    virtual std::shared_ptr<IMFInputAttributeAdapter> GetInputAttribute() = 0;
+
+    virtual std::shared_ptr<IMFCursorInfoAdapter> GetCursorInfo() = 0;
+
+    virtual std::shared_ptr<IMFSelectionRangeAdapter> GetSelectionRange() = 0;
+
+    virtual uint32_t GetWindowId() = 0;
 };
 
 enum class IMFAdapterKeyboardStatus : int32_t { NONE = 0, HIDE, SHOW };
@@ -82,7 +110,7 @@ public:
 
     virtual ~IMFTextListenerAdapter() = default;
 
-    virtual void InsertText(const std::u16string &text) = 0;
+    virtual void InsertText(const std::u16string& text) = 0;
 
     virtual void DeleteForward(int32_t length) = 0;
 
@@ -119,16 +147,16 @@ public:
 
     virtual bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard) = 0;
 
-    virtual bool Attach(
-        std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard, const IMFAdapterTextConfig& config) = 0;
+    virtual bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
+        const std::shared_ptr<IMFTextConfigAdapter> config) = 0;
 
-    virtual void ShowCurrentInput(const IMFAdapterTextInputType &inputType) = 0;
+    virtual void ShowCurrentInput(const IMFAdapterTextInputType& inputType) = 0;
 
     virtual void HideTextInput() = 0;
 
     virtual void Close() = 0;
 
-    virtual void OnCursorUpdate(IMFAdapterCursorInfo cursorInfo) = 0;
+    virtual void OnCursorUpdate(const std::shared_ptr<IMFCursorInfoAdapter> cursorInfo) = 0;
 
     virtual void OnSelectionChange(std::u16string text, int start, int end) = 0;
 };

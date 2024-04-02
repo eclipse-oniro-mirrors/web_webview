@@ -18,25 +18,25 @@
 
 #include <cstdint>
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkSocPerfClientAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkSocPerfClientAdapter() = default;
+  /*--ark web()--*/
+  ArkSocPerfClientAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkSocPerfClientAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkSocPerfClientAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void ApplySocPerfConfigById(int32_t id) = 0;
+  /*--ark web()--*/
+  virtual void ApplySocPerfConfigById(int32_t id) = 0;
 
-    /*--web engine()--*/
-    virtual void ApplySocPerfConfigByIdEx(int32_t id, bool onOffTag) = 0;
+  /*--ark web()--*/
+  virtual void ApplySocPerfConfigByIdEx(int32_t id, bool onOffTag) = 0;
 };
 } // namespace OHOS::ArkWeb
 

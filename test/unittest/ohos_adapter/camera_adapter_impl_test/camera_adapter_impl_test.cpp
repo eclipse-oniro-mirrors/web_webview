@@ -17,17 +17,18 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <ui/rs_surface_node.h>
-#include "nweb_adapter_helper.h"
-#include "nativetoken_kit.h"
-#include "token_setproc.h"
+
 #include "accesstoken_kit.h"
+#include "nativetoken_kit.h"
+#include "nweb_adapter_helper.h"
 #include "syspara/parameters.h"
+#include "token_setproc.h"
 
 #define private public
-#include "camera_manager_adapter_impl.h"
-#include "nweb_surface_adapter.h"
 #include "camera_device.h"
 #include "camera_manager.h"
+#include "camera_manager_adapter_impl.h"
+#include "nweb_surface_adapter.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -65,7 +66,7 @@ void CameraAdapterImplTest::SetUpTestCase(void)
 
     // set native token
     uint64_t tokenId;
-    const char *perms[2];
+    const char* perms[2];
     perms[0] = "ohos.permission.DISTRIBUTED_DATASYNC";
     perms[1] = "ohos.permission.CAMERA";
     NativeTokenInfoParams infoInstance = {
@@ -86,14 +87,11 @@ void CameraAdapterImplTest::SetUpTestCase(void)
     EXPECT_NE(g_cameraManager, nullptr);
 }
 
-void CameraAdapterImplTest::TearDownTestCase(void)
-{}
+void CameraAdapterImplTest::TearDownTestCase(void) {}
 
-void CameraAdapterImplTest::SetUp(void)
-{}
+void CameraAdapterImplTest::SetUp(void) {}
 
-void CameraAdapterImplTest::TearDown(void)
-{}
+void CameraAdapterImplTest::TearDown(void) {}
 
 class CameraBufferListenerAdapterMock : public CameraBufferListenerAdapter {
 public:
@@ -102,7 +100,8 @@ public:
 
     void OnBufferAvailable(std::shared_ptr<CameraSurfaceAdapter> surface,
         std::shared_ptr<CameraSurfaceBufferAdapter> buffer,
-        CameraRotationInfo rotationInfo) override {}
+        std::shared_ptr<CameraRotationInfoAdapter> rotationInfo) override
+    {}
 };
 
 class CameraStatusCallbackAdapterMock : public CameraStatusCallbackAdapter {
@@ -116,6 +115,42 @@ public:
 class CameraManagerMock : public CameraManager {
 public:
     MOCK_METHOD0(CreateCaptureSession, sptr<CaptureSession>());
+};
+
+class VideoCaptureParamsAdapterMock : public VideoCaptureParamsAdapter {
+public:
+    VideoCaptureParamsAdapterMock() = default;
+
+    uint32_t GetWidth() override
+    {
+        return width;
+    }
+
+    uint32_t GetHeight() override
+    {
+        return height;
+    }
+
+    float GetFrameRate() override
+    {
+        return frameRate;
+    }
+
+    VideoPixelFormatAdapter GetPixelFormat() override
+    {
+        return pixelFormat;
+    }
+
+    bool GetEnableFaceDetection() override
+    {
+        return enableFaceDetection;
+    }
+
+    uint32_t width;
+    uint32_t height;
+    float frameRate;
+    VideoPixelFormatAdapter pixelFormat;
+    bool enableFaceDetection;
 };
 
 /**
@@ -142,7 +177,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetFileDescriptor_001, Tes
     EXPECT_NE(surfaceBufferSize, 0);
     sptr<SurfaceBuffer> buffer = adapterImpl->GetBuffer();
     EXPECT_NE(buffer, nullptr);
-    uint8_t *addBuffer = adapterImpl->GetBufferAddr();
+    uint8_t* addBuffer = adapterImpl->GetBufferAddr();
     EXPECT_NE(addBuffer, nullptr);
 }
 
@@ -168,7 +203,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetFileDescriptor_002, Tes
     EXPECT_EQ(result, -1);
     uint32_t surfaceBufferSize = adapterImpl->GetSize();
     EXPECT_EQ(surfaceBufferSize, 0);
-    uint8_t *addBuffer = adapterImpl->GetBufferAddr();
+    uint8_t* addBuffer = adapterImpl->GetBufferAddr();
     EXPECT_EQ(addBuffer, nullptr);
 }
 
@@ -188,32 +223,34 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraSurfaceListener_003,
     EXPECT_NE(listener, nullptr);
     listener->OnBufferAvailable();
 
-    CameraRotationInfo info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_ROTATE_NONE);
-    EXPECT_FALSE(info.isFlipX);
+    std::shared_ptr<CameraRotationInfoAdapter> info =
+        listener->GetRotationInfo(GraphicTransformType::GRAPHIC_ROTATE_NONE);
+    EXPECT_NE(info, nullptr);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_ROTATE_90);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_ROTATE_180);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_ROTATE_270);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_H);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_V);
-    EXPECT_TRUE(info.isFlipX);
+    EXPECT_TRUE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_H_ROT90);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_V_ROT90);
-    EXPECT_TRUE(info.isFlipX);
+    EXPECT_TRUE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_H_ROT180);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_V_ROT180);
-    EXPECT_TRUE(info.isFlipX);
+    EXPECT_TRUE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_H_ROT270);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_FLIP_V_ROT270);
-    EXPECT_TRUE(info.isFlipX);
+    EXPECT_TRUE(info->GetIsFlipX());
     info = listener->GetRotationInfo(GraphicTransformType::GRAPHIC_ROTATE_BUTT);
-    EXPECT_FALSE(info.isFlipX);
+    EXPECT_FALSE(info->GetIsFlipX());
     listener->surface_ = nullptr;
     listener->OnBufferAvailable();
 }
@@ -227,7 +264,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraSurfaceListener_003,
 HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetFileDescriptor_004, TestSize.Level1)
 {
     auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
-    CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
+    CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
     int32_t result = CameraManagerAdapterImpl::GetInstance().Create(callback);
     EXPECT_EQ(result, 0);
     result = CameraManagerAdapterImpl::GetInstance().Create(callback);
@@ -243,8 +280,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetFileDescriptor_004, Tes
     VideoPixelFormatAdapter formatAdapter =
         adapter.TransToAdapterCameraFormat(CameraFormat::CAMERA_FORMAT_YCBCR_420_888);
     EXPECT_EQ(formatAdapter, VideoPixelFormatAdapter::FORMAT_YCBCR_420_888);
-    formatAdapter =
-        adapter.TransToAdapterCameraFormat(static_cast<CameraFormat>(0));
+    formatAdapter = adapter.TransToAdapterCameraFormat(static_cast<CameraFormat>(0));
     EXPECT_EQ(formatAdapter, VideoPixelFormatAdapter::FORMAT_UNKNOWN);
     CameraFormat format = adapter.TransToOriCameraFormat(VideoPixelFormatAdapter::FORMAT_YCBCR_420_888);
     EXPECT_EQ(format, CameraFormat::CAMERA_FORMAT_YCBCR_420_888);
@@ -265,7 +301,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetFileDescriptor_004, Tes
 HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetAdapterFocusMode_005, TestSize.Level1)
 {
     auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
-    CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
+    CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
     int32_t result = CameraManagerAdapterImpl::GetInstance().Create(callback);
     EXPECT_EQ(result, 0);
     FocusMode mode = adapter.GetOriFocusMode(FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO);
@@ -291,10 +327,9 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetAdapterFocusMode_005, T
 HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestSize.Level1)
 {
     auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
-    CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
+    CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
     int32_t result = adapter.Create(callback);
-    std::vector<VideoDeviceDescriptor> devicesDiscriptor;
-    adapter.GetDevicesInfo(devicesDiscriptor);
+    std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> devicesDiscriptor = adapter.GetDevicesInfo();
     std::shared_ptr<CameraMetadata> data = std::make_shared<CameraMetadata>(0, 0);
     dmDeviceInfo tempDmDeviceInfo;
     std::string deviceId = "0";
@@ -306,15 +341,13 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     adapter.cameraInput_ = cameraInput;
     result = adapter.InitCameraInput(deviceId);
     EXPECT_EQ(result, 0);
-    VideoCaptureParamsAdapter captureParams = {
-        .captureFormat = {
-            .width = 1,
-            .height = 1,
-            .frameRate = 1,
-            .pixelFormat = VideoPixelFormatAdapter::FORMAT_RGBA_8888,
-        },
-        .enableFaceDetection = true,
-    };
+    std::shared_ptr<VideoCaptureParamsAdapterMock> captureParams = std::make_shared<VideoCaptureParamsAdapterMock>();
+    EXPECT_NE(captureParams, nullptr);
+    captureParams->width = 1;
+    captureParams->height = 1;
+    captureParams->frameRate = 1;
+    captureParams->pixelFormat = VideoPixelFormatAdapter::FORMAT_RGBA_8888;
+    captureParams->enableFaceDetection = true;
     std::shared_ptr<CameraBufferListenerAdapter> listener = std::make_shared<CameraBufferListenerAdapterMock>();
     adapter.inputInitedFlag_ = true;
     result = adapter.InitPreviewOutput(captureParams, listener);
@@ -347,7 +380,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
  */
 HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureModes_007, TestSize.Level1)
 {
-    CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
+    CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
     auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
     int32_t result = adapter.Create(callback);
     EXPECT_EQ(result, 0);
@@ -359,17 +392,14 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureMode
     std::vector<ExposureModeAdapter> exposureModesAdapter;
     result = adapter.TransToAdapterExposureModes(exposureModes, exposureModesAdapter);
     EXPECT_EQ(result, 0);
-    std::vector<VideoDeviceDescriptor> devicesDiscriptor;
-    adapter.GetDevicesInfo(devicesDiscriptor);
-    VideoCaptureParamsAdapter captureParams = {
-        .captureFormat = {
-            .width = 1,
-            .height = 1,
-            .frameRate = 1,
-            .pixelFormat = VideoPixelFormatAdapter::FORMAT_RGBA_8888,
-        },
-        .enableFaceDetection = true,
-    };
+    std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> devicesDiscriptor = adapter.GetDevicesInfo();
+    std::shared_ptr<VideoCaptureParamsAdapterMock> captureParams = std::make_shared<VideoCaptureParamsAdapterMock>();
+    EXPECT_NE(captureParams, nullptr);
+    captureParams->width = 1;
+    captureParams->height = 1;
+    captureParams->frameRate = 1;
+    captureParams->pixelFormat = VideoPixelFormatAdapter::FORMAT_RGBA_8888;
+    captureParams->enableFaceDetection = true;
     std::shared_ptr<CameraBufferListenerAdapter> listener = std::make_shared<CameraBufferListenerAdapterMock>();
     adapter.inputInitedFlag_ = true;
     result = adapter.InitPreviewOutput(captureParams, listener);
@@ -384,12 +414,12 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureMode
     ExposureModeAdapter exposureModeAdapter;
     result = adapter.GetCurrentExposureMode(exposureModeAdapter);
     EXPECT_EQ(result, 0);
-    VideoCaptureRangeAdapter rangeVal;
-    result = adapter.GetExposureCompensation(rangeVal);
-    EXPECT_EQ(result, 0);
-    result = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION, rangeVal);
-    EXPECT_EQ(result, 0);
-    adapter.GetCaptionRangeById(static_cast<RangeIDAdapter>(1), rangeVal);
+    std::shared_ptr<VideoCaptureRangeAdapter> rangeVal = adapter.GetExposureCompensation();
+    EXPECT_NE(rangeVal, nullptr);
+    rangeVal = nullptr;
+    rangeVal = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION);
+    EXPECT_NE(rangeVal, nullptr);
+    rangeVal = adapter.GetCaptionRangeById(static_cast<RangeIDAdapter>(1));
     bool isMode = adapter.IsFocusModeSupported(FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO);
     EXPECT_FALSE(isMode);
     adapter.GetCurrentFocusMode();
@@ -405,7 +435,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_TransToAdapterExposureMode
  */
 HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_008, TestSize.Level1)
 {
-    CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
+    CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
     auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
     int32_t result = adapter.Create(callback);
     EXPECT_EQ(result, 0);
@@ -418,13 +448,13 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_008, TestS
     adapter.cameraManager_ = nullptr;
     result = adapter.RestartSession();
     EXPECT_NE(result, 0);
-    std::vector<VideoDeviceDescriptor> devicesDiscriptor;
-    adapter.GetDevicesInfo(devicesDiscriptor);
+    std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> devicesDiscriptor = adapter.GetDevicesInfo();
     EXPECT_TRUE(devicesDiscriptor.empty());
     std::string deviceId = "0";
     result = adapter.InitCameraInput(deviceId);
     EXPECT_NE(result, 0);
-    VideoCaptureParamsAdapter captureParams;
+    std::shared_ptr<VideoCaptureParamsAdapterMock> captureParams = std::make_shared<VideoCaptureParamsAdapterMock>();
+    EXPECT_NE(captureParams, nullptr);
     result = adapter.InitPreviewOutput(captureParams, nullptr);
     EXPECT_NE(result, 0);
     adapter.status_ = CameraStatusAdapter::AVAILABLE;
@@ -442,11 +472,11 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_008, TestS
     ExposureModeAdapter exposureModeAdapter;
     result = adapter.GetCurrentExposureMode(exposureModeAdapter);
     EXPECT_NE(result, 0);
-    VideoCaptureRangeAdapter rangeVal;
-    result = adapter.GetExposureCompensation(rangeVal);
-    EXPECT_NE(result, 0);
-    result = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION, rangeVal);
-    EXPECT_NE(result, 0);
+    std::shared_ptr<VideoCaptureRangeAdapter> rangeVal = adapter.GetExposureCompensation();
+    EXPECT_EQ(rangeVal, nullptr);
+    rangeVal = nullptr;
+    rangeVal = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION);
+    EXPECT_EQ(rangeVal, nullptr);
     bool isMode = adapter.IsFocusModeSupported(FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO);
     EXPECT_FALSE(isMode);
     FocusModeAdapter focusMode = adapter.GetCurrentFocusMode();
@@ -483,19 +513,17 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraSurfaceAdapterImpl_0
  */
 HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestSize.Level1)
 {
-    CameraManagerAdapterImpl &adapter = CameraManagerAdapterImpl::GetInstance();
+    CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
     auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
     int32_t result = adapter.Create(callback);
     EXPECT_EQ(result, 0);
-    VideoCaptureParamsAdapter captureParams = {
-        .captureFormat = {
-            .width = 1,
-            .height = 1,
-            .frameRate = 1,
-            .pixelFormat = VideoPixelFormatAdapter::FORMAT_RGBA_8888,
-        },
-        .enableFaceDetection = true,
-    };
+    std::shared_ptr<VideoCaptureParamsAdapterMock> captureParams = std::make_shared<VideoCaptureParamsAdapterMock>();
+    EXPECT_NE(captureParams, nullptr);
+    captureParams->width = 1;
+    captureParams->height = 1;
+    captureParams->frameRate = 1;
+    captureParams->pixelFormat = VideoPixelFormatAdapter::FORMAT_RGBA_8888;
+    captureParams->enableFaceDetection = true;
     auto listenerAdapter = std::make_shared<CameraBufferListenerAdapterMock>();
     EXPECT_NE(listenerAdapter, nullptr);
     std::string deviceId = "0";
@@ -517,9 +545,10 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestS
     adapter.cameraManager_ = nullptr;
     result = adapter.InitCameraInput(deviceId);
     EXPECT_NE(result, 0);
-    VideoCaptureRangeAdapter rangeVal;
-    result = adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION, rangeVal);
-    EXPECT_NE(result, 0);
+
+    std::shared_ptr<VideoCaptureRangeAdapter> rangeVal =
+        adapter.GetCaptionRangeById(RangeIDAdapter::RANGE_ID_EXP_COMPENSATION);
+    EXPECT_EQ(rangeVal, nullptr);
     adapter.inputInitedFlag_ = true;
     result = adapter.InitPreviewOutput(captureParams, nullptr);
     EXPECT_NE(result, 0);
@@ -545,9 +574,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraManagerAdapterCallba
     status = adapter.GetAdapterCameraStatus(static_cast<CameraStatus>(-1));
     EXPECT_EQ(status, CameraStatusAdapter::APPEAR);
     CameraStatusInfo cameraStatusInfo = {
-        .cameraInfo = nullptr,
-        .cameraDevice = nullptr,
-        .cameraStatus = CameraStatus::CAMERA_STATUS_APPEAR
+        .cameraInfo = nullptr, .cameraDevice = nullptr, .cameraStatus = CameraStatus::CAMERA_STATUS_APPEAR
     };
     adapter.OnCameraStatusChanged(cameraStatusInfo);
     cameraStatusInfo.cameraStatus = CameraStatus::CAMERA_STATUS_DISAPPEAR;
@@ -561,4 +588,4 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraManagerAdapterCallba
     adapter.statusCallback_ = nullptr;
     adapter.OnCameraStatusChanged(cameraStatusInfo);
 }
-} // namespace OHOS
+} // namespace OHOS::NWeb

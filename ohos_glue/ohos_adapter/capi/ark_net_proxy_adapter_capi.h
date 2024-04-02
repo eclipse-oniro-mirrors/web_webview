@@ -13,46 +13,51 @@
  * limitations under the License.
  */
 
-#ifndef ARK_NET_PROXY_ADAPTER_CAPI_H
-#define ARK_NET_PROXY_ADAPTER_CAPI_H
+#ifndef ARK_NET_PROXY_ADAPTER_CAPI_H_
+#define ARK_NET_PROXY_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_net_proxy_event_callback_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    void(ARK_WEB_CALLBACK* changed)(struct _ark_net_proxy_event_callback_adapter_t* self, const ArkWebString* host,
-        const uint16_t* port, const ArkWebString* pacUrl, const ArkWebStringVector* exclusionList);
+  void(ARK_WEB_CALLBACK *changed)(
+      struct _ark_net_proxy_event_callback_adapter_t *self,
+      const ArkWebString *host, const uint16_t *port,
+      const ArkWebString *pacUrl, const ArkWebStringVector *exclusionList);
 } ark_net_proxy_event_callback_adapter_t;
 
 typedef struct _ark_net_proxy_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    void(ARK_WEB_CALLBACK* reg_net_proxy_event)(
-        struct _ark_net_proxy_adapter_t* self, ark_net_proxy_event_callback_adapter_t* eventCallback);
+  void(ARK_WEB_CALLBACK *reg_net_proxy_event)(
+      struct _ark_net_proxy_adapter_t *self,
+      ark_net_proxy_event_callback_adapter_t *eventCallback);
 
-    bool(ARK_WEB_CALLBACK* start_listen)(struct _ark_net_proxy_adapter_t* self);
+  bool(ARK_WEB_CALLBACK *start_listen)(struct _ark_net_proxy_adapter_t *self);
 
-    void(ARK_WEB_CALLBACK* stop_listen)(struct _ark_net_proxy_adapter_t* self);
+  void(ARK_WEB_CALLBACK *stop_listen)(struct _ark_net_proxy_adapter_t *self);
 
-    void(ARK_WEB_CALLBACK* get_property)(struct _ark_net_proxy_adapter_t* self, ArkWebString* host, uint16_t* port,
-        ArkWebString* pacUrl, ArkWebString* exclusion);
+  void(ARK_WEB_CALLBACK *get_property)(struct _ark_net_proxy_adapter_t *self,
+                                       ArkWebString *host, uint16_t *port,
+                                       ArkWebString *pacUrl,
+                                       ArkWebString *exclusion);
 } ark_net_proxy_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_NET_PROXY_ADAPTER_CAPI_H
+#endif // ARK_NET_PROXY_ADAPTER_CAPI_H_

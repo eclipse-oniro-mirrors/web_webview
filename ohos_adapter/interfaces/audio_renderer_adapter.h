@@ -20,7 +20,7 @@
 #include <string>
 
 namespace OHOS::NWeb {
-enum class AudioAdapterSampleFormat {
+enum class AudioAdapterSampleFormat : int32_t {
     SAMPLE_U8 = 0,
     SAMPLE_S16LE = 1,
     SAMPLE_S24LE = 2,
@@ -29,7 +29,7 @@ enum class AudioAdapterSampleFormat {
     INVALID_WIDTH = -1
 };
 
-enum class AudioAdapterSamplingRate {
+enum class AudioAdapterSamplingRate : int32_t {
     SAMPLE_RATE_8000 = 8000,
     SAMPLE_RATE_11025 = 11025,
     SAMPLE_RATE_12000 = 12000,
@@ -43,7 +43,7 @@ enum class AudioAdapterSamplingRate {
     SAMPLE_RATE_96000 = 96000
 };
 
-enum class AudioAdapterChannel {
+enum class AudioAdapterChannel : int32_t {
     MONO = 1,
     STEREO = 2,
     CHANNEL_3 = 3,
@@ -54,12 +54,9 @@ enum class AudioAdapterChannel {
     CHANNEL_8 = 8
 };
 
-enum class AudioAdapterEncodingType {
-    ENCODING_PCM = 0,
-    ENCODING_INVALID = -1
-};
+enum class AudioAdapterEncodingType : int32_t { ENCODING_PCM = 0, ENCODING_INVALID = -1 };
 
-enum class AudioAdapterContentType {
+enum class AudioAdapterContentType : int32_t {
     CONTENT_TYPE_UNKNOWN = 0,
     CONTENT_TYPE_SPEECH = 1,
     CONTENT_TYPE_MUSIC = 2,
@@ -68,7 +65,7 @@ enum class AudioAdapterContentType {
     CONTENT_TYPE_RINGTONE = 5
 };
 
-enum class AudioAdapterStreamUsage {
+enum class AudioAdapterStreamUsage : int32_t {
     STREAM_USAGE_UNKNOWN = 0,
     STREAM_USAGE_MEDIA = 1,
     STREAM_USAGE_VOICE_COMMUNICATION = 2,
@@ -76,14 +73,25 @@ enum class AudioAdapterStreamUsage {
     STREAM_USAGE_NOTIFICATION_RINGTONE = 6
 };
 
-struct AudioAdapterRendererOptions {
-    AudioAdapterSamplingRate samplingRate;
-    AudioAdapterEncodingType encoding;
-    AudioAdapterSampleFormat format;
-    AudioAdapterChannel channels;
-    AudioAdapterContentType contentType;
-    AudioAdapterStreamUsage streamUsage;
-    int32_t rendererFlags;
+class AudioRendererOptionsAdapter {
+public:
+    AudioRendererOptionsAdapter() = default;
+
+    virtual ~AudioRendererOptionsAdapter() = default;
+
+    virtual AudioAdapterSamplingRate GetSamplingRate() = 0;
+
+    virtual AudioAdapterEncodingType GetEncodingType() = 0;
+
+    virtual AudioAdapterSampleFormat GetSampleFormat() = 0;
+
+    virtual AudioAdapterChannel GetChannel() = 0;
+
+    virtual AudioAdapterContentType GetContentType() = 0;
+
+    virtual AudioAdapterStreamUsage GetStreamUsage() = 0;
+
+    virtual int32_t GetRenderFlags() = 0;
 };
 
 enum AudioAdapterCode : int32_t {
@@ -109,8 +117,8 @@ public:
 
     virtual ~AudioRendererAdapter() = default;
 
-    virtual int32_t Create(const AudioAdapterRendererOptions &rendererOptions,
-        std::string cachePath = std::string()) = 0;
+    virtual int32_t Create(
+        const std::shared_ptr<AudioRendererOptionsAdapter> options, std::string cachePath = std::string()) = 0;
 
     virtual bool Start() = 0;
 
@@ -120,15 +128,15 @@ public:
 
     virtual bool Release() = 0;
 
-    virtual int32_t Write(uint8_t *buffer, size_t bufferSize) = 0;
+    virtual int32_t Write(uint8_t* buffer, size_t bufferSize) = 0;
 
-    virtual int32_t GetLatency(uint64_t &latency) = 0;
+    virtual int32_t GetLatency(uint64_t& latency) = 0;
 
     virtual int32_t SetVolume(float volume) = 0;
 
     virtual float GetVolume() = 0;
 
-    virtual int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback) = 0;
+    virtual int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter>& callback) = 0;
 
     virtual void SetInterruptMode(bool audioExclusive) = 0;
 

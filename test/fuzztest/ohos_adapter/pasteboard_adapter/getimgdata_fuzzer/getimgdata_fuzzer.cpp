@@ -21,24 +21,23 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool GetImgDataFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        std::string text((const char*) data, size);
-        ClipBoardImageData image;
-        std::shared_ptr<PasteDataRecordAdapterImpl>  dataRecordAdapterImpl =
-        std::make_shared<PasteDataRecordAdapterImpl>(text);
-        dataRecordAdapterImpl->GetImgData(image);
-        dataRecordAdapterImpl->GetUri();
-        dataRecordAdapterImpl->GetCustomData();
-        dataRecordAdapterImpl->ClearImgBuffer();
-        dataRecordAdapterImpl->Clear();
-        dataRecordAdapterImpl->GetRecord();
-        return true;
+bool GetImgDataFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    std::string text((const char*)data, size);
+    std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
+        std::make_shared<PasteDataRecordAdapterImpl>(text);
+    dataRecordAdapterImpl->GetImgData(nullptr);
+    dataRecordAdapterImpl->GetUri();
+    dataRecordAdapterImpl->GetCustomData();
+    dataRecordAdapterImpl->ClearImgBuffer();
+    dataRecordAdapterImpl->Clear();
+    dataRecordAdapterImpl->GetRecord();
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

@@ -16,67 +16,67 @@
 #ifndef ARK_SYSTEM_PROPERTIES_ADAPTER_H
 #define ARK_SYSTEM_PROPERTIES_ADAPTER_H
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkSystemPropertiesAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkSystemPropertiesAdapter() = default;
+  /*--ark web()--*/
+  ArkSystemPropertiesAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkSystemPropertiesAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkSystemPropertiesAdapter() = default;
 
-    /*--web engine()--*/
-    virtual bool GetResourceUseHapPathEnable() = 0;
+  /*--ark web()--*/
+  virtual bool GetResourceUseHapPathEnable() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetDeviceInfoProductModel() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetDeviceInfoProductModel() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetDeviceInfoBrand() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetDeviceInfoBrand() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetDeviceInfoMajorVersion() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetDeviceInfoMajorVersion() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetProductDeviceType() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetProductDeviceType() = 0;
 
-    /*--web engine()--*/
-    virtual bool GetWebOptimizationValue() = 0;
+  /*--ark web()--*/
+  virtual bool GetWebOptimizationValue() = 0;
 
-    /*--web engine()--*/
-    virtual bool GetLockdownModeStatus() = 0;
+  /*--ark web()--*/
+  virtual bool GetLockdownModeStatus() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetUserAgentOSName() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetUserAgentOSName() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetSoftwareMajorVersion() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetSoftwareMajorVersion() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetSoftwareSeniorVersion() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetSoftwareSeniorVersion() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetNetlogMode() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetNetlogMode() = 0;
 
-    /*--web engine()--*/
-    virtual bool GetTraceDebugEnable() = 0;
+  /*--ark web()--*/
+  virtual bool GetTraceDebugEnable() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString GetSiteIsolationMode() = 0;
+  /*--ark web()--*/
+  virtual ArkWebString GetSiteIsolationMode() = 0;
 
-    /*--web engine()--*/
-    virtual bool GetOOPGPUEnable() = 0;
+  /*--ark web()--*/
+  virtual int32_t GetFlowBufMaxFd() = 0;
 
-    /*--web engine()--*/
-    virtual void SetOOPGPUDisable() = 0;
+  /*--ark web()--*/
+  virtual bool GetOOPGPUEnable() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetFlowBufMaxFd() = 0;
+  /*--ark web()--*/
+  virtual void SetOOPGPUDisable() = 0;
 };
 
 } // namespace OHOS::ArkWeb

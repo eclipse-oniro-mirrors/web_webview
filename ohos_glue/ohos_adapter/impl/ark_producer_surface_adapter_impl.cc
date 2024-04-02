@@ -16,6 +16,8 @@
 #include "ark_producer_surface_adapter_impl.h"
 
 #include "ark_surface_buffer_adapter_impl.h"
+#include "wrapper/ark_buffer_flush_config_adapter_wrapper.h"
+#include "wrapper/ark_buffer_request_config_adapter_wrapper.h"
 
 #include "bridge/ark_web_bridge_macros.h"
 
@@ -26,9 +28,15 @@ ArkProducerSurfaceAdapterImpl::ArkProducerSurfaceAdapterImpl(std::shared_ptr<OHO
 {}
 
 ArkWebRefPtr<ArkSurfaceBufferAdapter> ArkProducerSurfaceAdapterImpl::RequestBuffer(
-    int32_t& fence, ArkBufferRequestConfigAdapter& config)
+    int32_t& fence, ArkWebRefPtr<ArkBufferRequestConfigAdapter> config)
 {
-    std::shared_ptr<OHOS::NWeb::SurfaceBufferAdapter> buffer = real_->RequestBuffer(fence, config);
+    std::shared_ptr<OHOS::NWeb::SurfaceBufferAdapter> buffer = nullptr;
+    if (CHECK_REF_PTR_IS_NULL(config)) {
+        buffer = real_->RequestBuffer(fence, nullptr);
+    } else {
+        buffer = real_->RequestBuffer(fence, std::make_shared<ArkBufferRequestConfigAdapterWrapper>(config));
+    }
+
     if (CHECK_SHARED_PTR_IS_NULL(buffer)) {
         return nullptr;
     }
@@ -37,10 +45,15 @@ ArkWebRefPtr<ArkSurfaceBufferAdapter> ArkProducerSurfaceAdapterImpl::RequestBuff
 }
 
 int32_t ArkProducerSurfaceAdapterImpl::FlushBuffer(
-    ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer, int32_t fence, ArkBufferFlushConfigAdapter& flushConfig)
+    ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer, int32_t fence, ArkWebRefPtr<ArkBufferFlushConfigAdapter> flushConfig)
 {
     ArkSurfaceBufferAdapterImpl* imp = static_cast<ArkSurfaceBufferAdapterImpl*>(buffer.get());
-    return real_->FlushBuffer(std::move(imp->real_), fence, flushConfig);
+    if (CHECK_REF_PTR_IS_NULL(flushConfig)) {
+        return real_->FlushBuffer(std::move(imp->real_), fence, nullptr);
+    }
+
+    return real_->FlushBuffer(
+        std::move(imp->real_), fence, std::make_shared<ArkBufferFlushConfigAdapterWrapper>(flushConfig));
 }
 
 } // namespace OHOS::ArkWeb

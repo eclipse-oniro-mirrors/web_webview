@@ -22,129 +22,133 @@
 #include <memory>
 #include <sys/types.h>
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkLocationRequestConfig : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkLocationRequestConfig() = default;
+  /*--ark web()--*/
+  ArkLocationRequestConfig() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkLocationRequestConfig() = default;
+  /*--ark web()--*/
+  virtual ~ArkLocationRequestConfig() = default;
 
-    /*--web engine()--*/
-    virtual void SetScenario(int32_t scenario) = 0;
+  /*--ark web()--*/
+  virtual void SetScenario(int32_t scenario) = 0;
 
-    /*--web engine()--*/
-    virtual void SetFixNumber(int32_t number) = 0;
+  /*--ark web()--*/
+  virtual void SetFixNumber(int32_t number) = 0;
 
-    /*--web engine()--*/
-    virtual void SetMaxAccuracy(int32_t maxAccuary) = 0;
+  /*--ark web()--*/
+  virtual void SetMaxAccuracy(int32_t maxAccuary) = 0;
 
-    /*--web engine()--*/
-    virtual void SetDistanceInterval(int32_t disInterval) = 0;
+  /*--ark web()--*/
+  virtual void SetDistanceInterval(int32_t disInterval) = 0;
 
-    /*--web engine()--*/
-    virtual void SetTimeInterval(int32_t timeInterval) = 0;
+  /*--ark web()--*/
+  virtual void SetTimeInterval(int32_t timeInterval) = 0;
 
-    /*--web engine()--*/
-    virtual void SetPriority(int32_t priority) = 0;
+  /*--ark web()--*/
+  virtual void SetPriority(int32_t priority) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkLocationInfo : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkLocationInfo() = default;
+  /*--ark web()--*/
+  ArkLocationInfo() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkLocationInfo() = default;
+  /*--ark web()--*/
+  virtual ~ArkLocationInfo() = default;
 
-    /*--web engine()--*/
-    virtual double GetLatitude() = 0;
+  /*--ark web()--*/
+  virtual double GetLatitude() = 0;
 
-    /*--web engine()--*/
-    virtual double GetLongitude() = 0;
+  /*--ark web()--*/
+  virtual double GetLongitude() = 0;
 
-    /*--web engine()--*/
-    virtual double GetAltitude() = 0;
+  /*--ark web()--*/
+  virtual double GetAltitude() = 0;
 
-    /*--web engine()--*/
-    virtual float GetAccuracy() = 0;
+  /*--ark web()--*/
+  virtual float GetAccuracy() = 0;
 
-    /*--web engine()--*/
-    virtual float GetSpeed() = 0;
+  /*--ark web()--*/
+  virtual float GetSpeed() = 0;
 
-    /*--web engine()--*/
-    virtual double GetDirection() = 0;
+  /*--ark web()--*/
+  virtual double GetDirection() = 0;
 
-    /*--web engine()--*/
-    virtual int64_t GetTimeStamp() = 0;
+  /*--ark web()--*/
+  virtual int64_t GetTimeStamp() = 0;
 
-    /*--web engine()--*/
-    virtual int64_t GetTimeSinceBoot() = 0;
+  /*--ark web()--*/
+  virtual int64_t GetTimeSinceBoot() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebStringVector GetAdditions() = 0;
+  /*--ark web()--*/
+  virtual ArkWebStringVector GetAdditions() = 0;
 };
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkLocationCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkLocationCallbackAdapter() = default;
+  /*--ark web()--*/
+  ArkLocationCallbackAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkLocationCallbackAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkLocationCallbackAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void OnLocationReport(const ArkWebRefPtr<ArkLocationInfo> location) = 0;
+  /*--ark web()--*/
+  virtual void
+  OnLocationReport(const ArkWebRefPtr<ArkLocationInfo> location) = 0;
 
-    /*--web engine()--*/
-    virtual void OnLocatingStatusChange(const int status) = 0;
+  /*--ark web()--*/
+  virtual void OnLocatingStatusChange(const int status) = 0;
 
-    /*--web engine()--*/
-    virtual void OnErrorReport(const int errorCode) = 0;
+  /*--ark web()--*/
+  virtual void OnErrorReport(const int errorCode) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkLocationProxyAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkLocationProxyAdapter() = default;
+  /*--ark web()--*/
+  ArkLocationProxyAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkLocationProxyAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkLocationProxyAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t StartLocating(
-        ArkWebRefPtr<ArkLocationRequestConfig> requestConfig, ArkWebRefPtr<ArkLocationCallbackAdapter> callback) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  StartLocating(ArkWebRefPtr<ArkLocationRequestConfig> requestConfig,
+                ArkWebRefPtr<ArkLocationCallbackAdapter> callback) = 0;
 
-    /*--web engine()--*/
-    virtual bool StopLocating(int32_t callbackId) = 0;
+  /*--ark web()--*/
+  virtual bool StopLocating(int32_t callbackId) = 0;
 
-    /*--web engine()--*/
-    virtual bool EnableAbility(bool isEnabled) = 0;
+  /*--ark web()--*/
+  virtual bool EnableAbility(bool isEnabled) = 0;
 
-    /*--web engine()--*/
-    virtual bool IsLocationEnabled() = 0;
+  /*--ark web()--*/
+  virtual bool IsLocationEnabled() = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkLocationInstance : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    static ArkWebRefPtr<ArkLocationInstance> GetInstance();
+  /*--ark web()--*/
+  static ArkWebRefPtr<ArkLocationInstance> GetInstance();
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkLocationProxyAdapter> CreateLocationProxyAdapter() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkLocationProxyAdapter>
+  CreateLocationProxyAdapter() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkLocationRequestConfig> CreateLocationRequestConfig() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkLocationRequestConfig>
+  CreateLocationRequestConfig() = 0;
 };
 } // namespace OHOS::ArkWeb
 

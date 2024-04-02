@@ -13,31 +13,32 @@
  * limitations under the License.
  */
 
-#ifndef ARK_AUDIO_RENDERER_CALLBACK_ADAPTER_CTOCPP_H
-#define ARK_AUDIO_RENDERER_CALLBACK_ADAPTER_CTOCPP_H
+#ifndef ARK_AUDIO_RENDERER_CALLBACK_ADAPTER_CTOCPP_H_
+#define ARK_AUDIO_RENDERER_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_audio_renderer_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_audio_renderer_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_audio_renderer_adapter_capi.h"
+#include "ohos_adapter/include/ark_audio_renderer_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkAudioRendererCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkAudioRendererCallbackAdapterCToCpp, ArkAudioRendererCallbackAdapter,
-          ark_audio_renderer_callback_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkAudioRendererCallbackAdapterCToCpp,
+                                    ArkAudioRendererCallbackAdapter,
+                                    ark_audio_renderer_callback_adapter_t> {
 public:
-    ArkAudioRendererCallbackAdapterCToCpp();
-    virtual ~ArkAudioRendererCallbackAdapterCToCpp();
+  ArkAudioRendererCallbackAdapterCToCpp();
+  virtual ~ArkAudioRendererCallbackAdapterCToCpp();
 
-    // ArkAudioRendererCallbackAdapter methods.
-    void OnSuspend() override;
+  // ArkAudioRendererCallbackAdapter methods.
+  void OnSuspend() override;
 
-    void OnResume() override;
+  void OnResume() override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_AUDIO_RENDERER_CALLBACK_ADAPTER_CTOCPP_H
+#endif // ARK_AUDIO_RENDERER_CALLBACK_ADAPTER_CTOCPP_H_

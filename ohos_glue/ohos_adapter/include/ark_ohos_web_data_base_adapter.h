@@ -20,61 +20,72 @@
 
 #include <vector>
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkOhosWebDataBaseAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkOhosWebDataBaseAdapter() = default;
+  /*--ark web()--*/
+  ArkOhosWebDataBaseAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkOhosWebDataBaseAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkOhosWebDataBaseAdapter() = default;
 
-    /*--web engine()--*/
-    virtual bool ExistHttpAuthCredentials() = 0;
+  /*--ark web()--*/
+  virtual bool ExistHttpAuthCredentials() = 0;
 
-    /*--web engine()--*/
-    virtual void DeleteHttpAuthCredentials() = 0;
+  /*--ark web()--*/
+  virtual void DeleteHttpAuthCredentials() = 0;
 
-    /*--web engine()--*/
-    virtual void SaveHttpAuthCredentials(
-        const ArkWebString& host, const ArkWebString& realm, const ArkWebString& username, const char* password) = 0;
+  /*--ark web()--*/
+  virtual void SaveHttpAuthCredentials(const ArkWebString &host,
+                                       const ArkWebString &realm,
+                                       const ArkWebString &username,
+                                       const char *password) = 0;
 
-    /*--web engine()--*/
-    virtual void GetHttpAuthCredentials(const ArkWebString& host, const ArkWebString& realm, ArkWebString& username,
-        char* password, uint32_t passwordSize) = 0;
+  /*--ark web()--*/
+  virtual void GetHttpAuthCredentials(const ArkWebString &host,
+                                      const ArkWebString &realm,
+                                      ArkWebString &username, char *password,
+                                      uint32_t passwordSize) = 0;
 };
 
-/*--web engine(source=library)--*/
-class ArkOhosWebPermissionDataBaseAdapter : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=library)--*/
+class ArkOhosWebPermissionDataBaseAdapter
+    : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkOhosWebPermissionDataBaseAdapter() = default;
+  /*--ark web()--*/
+  ArkOhosWebPermissionDataBaseAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkOhosWebPermissionDataBaseAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkOhosWebPermissionDataBaseAdapter() = default;
 
-    /*--web engine()--*/
-    virtual bool ExistPermissionByOrigin(const ArkWebString& origin, const int32_t& key) = 0;
+  /*--ark web()--*/
+  virtual bool ExistPermissionByOrigin(const ArkWebString &origin,
+                                       const int32_t &key) = 0;
 
-    /*--web engine()--*/
-    virtual bool GetPermissionResultByOrigin(const ArkWebString& origin, const int32_t& key, bool& result) = 0;
+  /*--ark web()--*/
+  virtual bool GetPermissionResultByOrigin(const ArkWebString &origin,
+                                           const int32_t &key,
+                                           bool &result) = 0;
 
-    /*--web engine()--*/
-    virtual void SetPermissionByOrigin(const ArkWebString& origin, const int32_t& key, bool result) = 0;
+  /*--ark web()--*/
+  virtual void SetPermissionByOrigin(const ArkWebString &origin,
+                                     const int32_t &key, bool result) = 0;
 
-    /*--web engine()--*/
-    virtual void ClearPermissionByOrigin(const ArkWebString& origin, const int32_t& key) = 0;
+  /*--ark web()--*/
+  virtual void ClearPermissionByOrigin(const ArkWebString &origin,
+                                       const int32_t &key) = 0;
 
-    /*--web engine()--*/
-    virtual void ClearAllPermission(const int32_t& key) = 0;
+  /*--ark web()--*/
+  virtual void ClearAllPermission(const int32_t &key) = 0;
 
-    /*--web engine()--*/
-    virtual void GetOriginsByPermission(const int32_t& key, ArkWebStringVector& origins) = 0;
+  /*--ark web()--*/
+  virtual void GetOriginsByPermission(const int32_t &key,
+                                      ArkWebStringVector &origins) = 0;
 };
 
 } // namespace OHOS::ArkWeb

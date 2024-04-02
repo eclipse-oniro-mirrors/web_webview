@@ -13,68 +13,68 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_battery_info_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_battery_info_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-double ARK_WEB_CALLBACK ark_battery_info_get_level(struct _ark_battery_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+double ARK_WEB_CALLBACK
+ark_battery_info_get_level(struct _ark_battery_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkBatteryInfoCppToC::Get(self)->GetLevel();
+  // Execute
+  return ArkBatteryInfoCppToC::Get(self)->GetLevel();
 }
 
-bool ARK_WEB_CALLBACK ark_battery_info_is_charging(struct _ark_battery_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_battery_info_is_charging(struct _ark_battery_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkBatteryInfoCppToC::Get(self)->IsCharging();
+  // Execute
+  return ArkBatteryInfoCppToC::Get(self)->IsCharging();
 }
 
-int ARK_WEB_CALLBACK ark_battery_info_dis_charging_time(struct _ark_battery_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int ARK_WEB_CALLBACK
+ark_battery_info_dis_charging_time(struct _ark_battery_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkBatteryInfoCppToC::Get(self)->DisChargingTime();
+  // Execute
+  return ArkBatteryInfoCppToC::Get(self)->DisChargingTime();
 }
 
-int ARK_WEB_CALLBACK ark_battery_info_charging_time(struct _ark_battery_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int ARK_WEB_CALLBACK
+ark_battery_info_charging_time(struct _ark_battery_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkBatteryInfoCppToC::Get(self)->ChargingTime();
+  // Execute
+  return ArkBatteryInfoCppToC::Get(self)->ChargingTime();
 }
 
 } // namespace
 
-ArkBatteryInfoCppToC::ArkBatteryInfoCppToC()
-{
-    GetStruct()->get_level = ark_battery_info_get_level;
-    GetStruct()->is_charging = ark_battery_info_is_charging;
-    GetStruct()->dis_charging_time = ark_battery_info_dis_charging_time;
-    GetStruct()->charging_time = ark_battery_info_charging_time;
+ArkBatteryInfoCppToC::ArkBatteryInfoCppToC() {
+  GetStruct()->get_level = ark_battery_info_get_level;
+  GetStruct()->is_charging = ark_battery_info_is_charging;
+  GetStruct()->dis_charging_time = ark_battery_info_dis_charging_time;
+  GetStruct()->charging_time = ark_battery_info_charging_time;
 }
 
-ArkBatteryInfoCppToC::~ArkBatteryInfoCppToC() {}
+ArkBatteryInfoCppToC::~ArkBatteryInfoCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkBatteryInfoCppToC, ArkBatteryInfo, ark_battery_info_t>::kBridgeType =
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<ArkBatteryInfoCppToC, ArkBatteryInfo,
+                                        ark_battery_info_t>::kBridgeType =
     ARK_BATTERY_INFO;
 
 } // namespace OHOS::ArkWeb

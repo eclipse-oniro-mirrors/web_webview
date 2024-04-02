@@ -31,7 +31,7 @@ public:
 
     bool SetPlainText(void* plainText) override;
 
-    bool SetImgData(void* imageData) override;
+    bool SetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData) override;
 
     ArkWebString GetMimeType() override;
 
@@ -39,7 +39,7 @@ public:
 
     void GetPlainText(void* data) override;
 
-    bool GetImgData(void* imageData) override;
+    bool GetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData) override;
 
     bool SetUri(const ArkWebString& uriString) override;
 

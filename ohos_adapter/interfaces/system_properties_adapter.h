@@ -60,11 +60,11 @@ public:
 
     virtual std::string GetSiteIsolationMode() = 0;
 
+    virtual int32_t GetFlowBufMaxFd() = 0;
+
     virtual bool GetOOPGPUEnable() = 0;
 
     virtual void SetOOPGPUDisable() = 0;
-
-    virtual int32_t GetFlowBufMaxFd() const = 0;
 };
 
 }  // namespace OHOS::NWeb

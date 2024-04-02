@@ -15,6 +15,7 @@
 
 #include "napi_webview_controller.h"
 
+#include <cctype>
 #include <climits>
 #include <cstdint>
 #include <regex>
@@ -206,8 +207,14 @@ bool ParseHttpHeaders(napi_env env, napi_value headersArray, std::map<std::strin
             if (napi_get_named_property(env, obj, "headerValue", &valueObj) != napi_ok) {
                 continue;
             }
-            NapiParseUtils::ParseString(env, keyObj, key);
-            NapiParseUtils::ParseString(env, valueObj, value);
+            if (!NapiParseUtils::ParseString(env, keyObj, key) || !NapiParseUtils::ParseString(env, valueObj, value)) {
+                WVLOG_E("Unable to parse string from headers array object.");
+                return false;
+            }
+            if (key.empty()) {
+                WVLOG_E("Key from headers is empty.");
+                return false;
+            }
             (*headers)[key] = value;
         }
     } else {
@@ -366,6 +373,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("closeCamera", NapiWebviewController::CloseCamera),
         DECLARE_NAPI_FUNCTION("getLastJavascriptProxyCallingFrameUrl",
             NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl),
+        DECLARE_NAPI_FUNCTION("onCreateNativeMediaPlayer", NapiWebviewController::OnCreateNativeMediaPlayer),
         DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
         DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
         DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
@@ -4155,6 +4163,13 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
 
     if (cacheKey.empty()) {
         cacheKey = prefetchArgs->GetUrl();
+    } else {
+        for (char c : cacheKey) {
+            if (!isalnum(c)) {
+                BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+                return nullptr;
+            }
+        }
     }
 
     int32_t cacheValidTime = 0;
@@ -4166,8 +4181,8 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
         }
     }
 
-    NWebHelper::Instance().PrefetchResource(prefetchArgs, additionalHttpHeaders, cacheKey, cacheValidTime);
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    NWebHelper::Instance().PrefetchResource(prefetchArgs, additionalHttpHeaders, cacheKey, cacheValidTime);
     return result;
 }
 
@@ -4988,6 +5003,46 @@ napi_value NapiWebviewController::CloseCamera(napi_env env, napi_callback_info i
     webviewController->CloseCamera();
 
     return result;
+}
+
+napi_value NapiWebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("put on_create_native_media_player callback");
+
+    size_t argc = INTEGER_ONE;
+    napi_value value = nullptr;
+    napi_value argv[INTEGER_ONE];
+    napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType != napi_function) {
+        WVLOG_E("arg type is invalid");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    napi_ref callback = nullptr;
+    napi_create_reference(env, argv[INTEGER_ZERO], INTEGER_ONE, &callback);
+    if (!callback) {
+        WVLOG_E("failed to create reference for callback");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController || !webviewController->IsInit()) {
+        WVLOG_E("webview controller is null or not init");
+        return nullptr;
+    }
+
+    webviewController->OnCreateNativeMediaPlayer(env, std::move(callback));
+    return nullptr;
 }
 
 napi_value NapiWebviewController::SetRenderProcessMode(

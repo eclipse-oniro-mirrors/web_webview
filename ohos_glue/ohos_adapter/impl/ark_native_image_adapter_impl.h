@@ -43,7 +43,7 @@ public:
 
     int32_t GetSurfaceId(uint64_t* surfaceId) override;
 
-    int32_t SetOnFrameAvailableListener(ArkOnFrameAvailableListener* listener) override;
+    int32_t SetOnFrameAvailableListener(ArkWebRefPtr<ArkFrameAvailableListener> listener) override;
 
     int32_t UnsetOnFrameAvailableListener() override;
 

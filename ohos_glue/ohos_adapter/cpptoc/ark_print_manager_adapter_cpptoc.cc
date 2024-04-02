@@ -13,81 +13,86 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_print_manager_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
-#include "ctocpp/ark_print_document_adapter_adapter_ctocpp.h"
+#include "ohos_adapter/cpptoc/ark_print_manager_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/ctocpp/ark_print_document_adapter_adapter_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-int32_t ARK_WEB_CALLBACK ark_print_manager_adapter_start_print(struct _ark_print_manager_adapter_t* self,
-    const ArkWebStringVector* fileList, const ArkWebUint32Vector* fdList, ArkWebString* taskId)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_print_manager_adapter_start_print(
+    struct _ark_print_manager_adapter_t *self,
+    const ArkWebStringVector *fileList, const ArkWebUint32Vector *fdList,
+    ArkWebString *taskId) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(fileList, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(fileList, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(fdList, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(fdList, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(taskId, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(taskId, 0);
 
-    // Execute
-    return ArkPrintManagerAdapterCppToC::Get(self)->StartPrint(*fileList, *fdList, *taskId);
+  // Execute
+  return ArkPrintManagerAdapterCppToC::Get(self)->StartPrint(*fileList, *fdList,
+                                                             *taskId);
 }
 
-int32_t ARK_WEB_CALLBACK ark_print_manager_adapter_print1(struct _ark_print_manager_adapter_t* self,
-    const ArkWebString* printJobName, ark_print_document_adapter_adapter_t* listener,
-    const ArkPrintAttributesAdapter* printAttributes)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_print_manager_adapter_print1(
+    struct _ark_print_manager_adapter_t *self, const ArkWebString *printJobName,
+    ark_print_document_adapter_adapter_t *listener,
+    const ArkPrintAttributesAdapter *printAttributes) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(printJobName, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(printJobName, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(printAttributes, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(printAttributes, 0);
 
-    // Execute
-    return ArkPrintManagerAdapterCppToC::Get(self)->Print(
-        *printJobName, ArkPrintDocumentAdapterAdapterCToCpp::Invert(listener), *printAttributes);
+  // Execute
+  return ArkPrintManagerAdapterCppToC::Get(self)->Print(
+      *printJobName, ArkPrintDocumentAdapterAdapterCToCpp::Invert(listener),
+      *printAttributes);
 }
 
-int32_t ARK_WEB_CALLBACK ark_print_manager_adapter_print2(struct _ark_print_manager_adapter_t* self,
-    const ArkWebString* printJobName, ark_print_document_adapter_adapter_t* listener,
-    const ArkPrintAttributesAdapter* printAttributes, void* contextToken)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_print_manager_adapter_print2(
+    struct _ark_print_manager_adapter_t *self, const ArkWebString *printJobName,
+    ark_print_document_adapter_adapter_t *listener,
+    const ArkPrintAttributesAdapter *printAttributes, void *contextToken) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(printJobName, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(printJobName, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(printAttributes, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(printAttributes, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(contextToken, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(contextToken, 0);
 
-    // Execute
-    return ArkPrintManagerAdapterCppToC::Get(self)->Print(
-        *printJobName, ArkPrintDocumentAdapterAdapterCToCpp::Invert(listener), *printAttributes, contextToken);
+  // Execute
+  return ArkPrintManagerAdapterCppToC::Get(self)->Print(
+      *printJobName, ArkPrintDocumentAdapterAdapterCToCpp::Invert(listener),
+      *printAttributes, contextToken);
 }
 
 } // namespace
 
-ArkPrintManagerAdapterCppToC::ArkPrintManagerAdapterCppToC()
-{
-    GetStruct()->start_print = ark_print_manager_adapter_start_print;
-    GetStruct()->print1 = ark_print_manager_adapter_print1;
-    GetStruct()->print2 = ark_print_manager_adapter_print2;
+ArkPrintManagerAdapterCppToC::ArkPrintManagerAdapterCppToC() {
+  GetStruct()->start_print = ark_print_manager_adapter_start_print;
+  GetStruct()->print1 = ark_print_manager_adapter_print1;
+  GetStruct()->print2 = ark_print_manager_adapter_print2;
 }
 
-ArkPrintManagerAdapterCppToC::~ArkPrintManagerAdapterCppToC() {}
+ArkPrintManagerAdapterCppToC::~ArkPrintManagerAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkPrintManagerAdapterCppToC, ArkPrintManagerAdapter,
-    ark_print_manager_adapter_t>::kBridgeType = ARK_PRINT_MANAGER_ADAPTER;
+template <>
+ArkWebBridgeType
+    ArkWebCppToCRefCounted<ArkPrintManagerAdapterCppToC, ArkPrintManagerAdapter,
+                           ark_print_manager_adapter_t>::kBridgeType =
+        ARK_PRINT_MANAGER_ADAPTER;
 
 } // namespace OHOS::ArkWeb

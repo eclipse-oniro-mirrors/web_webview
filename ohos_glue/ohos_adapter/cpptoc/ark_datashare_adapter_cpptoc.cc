@@ -13,67 +13,66 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_datashare_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_datashare_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 int ARK_WEB_CALLBACK ark_datashare_adapter_open_data_share_uri_for_read(
-    struct _ark_datashare_adapter_t* self, const ArkWebString* uriStr)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_datashare_adapter_t *self, const ArkWebString *uriStr) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(uriStr, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(uriStr, 0);
 
-    // Execute
-    return ArkDatashareAdapterCppToC::Get(self)->OpenDataShareUriForRead(*uriStr);
+  // Execute
+  return ArkDatashareAdapterCppToC::Get(self)->OpenDataShareUriForRead(*uriStr);
 }
 
 ArkWebString ARK_WEB_CALLBACK ark_datashare_adapter_get_file_display_name(
-    struct _ark_datashare_adapter_t* self, const ArkWebString* uriStr)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_datashare_adapter_t *self, const ArkWebString *uriStr) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(uriStr, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(uriStr, ark_web_string_default);
 
-    // Execute
-    return ArkDatashareAdapterCppToC::Get(self)->GetFileDisplayName(*uriStr);
+  // Execute
+  return ArkDatashareAdapterCppToC::Get(self)->GetFileDisplayName(*uriStr);
 }
 
 ArkWebString ARK_WEB_CALLBACK ark_datashare_adapter_get_real_path(
-    struct _ark_datashare_adapter_t* self, const ArkWebString* uriStr)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_datashare_adapter_t *self, const ArkWebString *uriStr) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(uriStr, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(uriStr, ark_web_string_default);
 
-    // Execute
-    return ArkDatashareAdapterCppToC::Get(self)->GetRealPath(*uriStr);
+  // Execute
+  return ArkDatashareAdapterCppToC::Get(self)->GetRealPath(*uriStr);
 }
 
 } // namespace
 
-ArkDatashareAdapterCppToC::ArkDatashareAdapterCppToC()
-{
-    GetStruct()->open_data_share_uri_for_read = ark_datashare_adapter_open_data_share_uri_for_read;
-    GetStruct()->get_file_display_name = ark_datashare_adapter_get_file_display_name;
-    GetStruct()->get_real_path = ark_datashare_adapter_get_real_path;
+ArkDatashareAdapterCppToC::ArkDatashareAdapterCppToC() {
+  GetStruct()->open_data_share_uri_for_read =
+      ark_datashare_adapter_open_data_share_uri_for_read;
+  GetStruct()->get_file_display_name =
+      ark_datashare_adapter_get_file_display_name;
+  GetStruct()->get_real_path = ark_datashare_adapter_get_real_path;
 }
 
-ArkDatashareAdapterCppToC::~ArkDatashareAdapterCppToC() {}
+ArkDatashareAdapterCppToC::~ArkDatashareAdapterCppToC() {
+}
 
-template<>
+template <>
 ArkWebBridgeType
-    ArkWebCppToCRefCounted<ArkDatashareAdapterCppToC, ArkDatashareAdapter, ark_datashare_adapter_t>::kBridgeType =
+    ArkWebCppToCRefCounted<ArkDatashareAdapterCppToC, ArkDatashareAdapter,
+                           ark_datashare_adapter_t>::kBridgeType =
         ARK_DATASHARE_ADAPTER;
 
 } // namespace OHOS::ArkWeb

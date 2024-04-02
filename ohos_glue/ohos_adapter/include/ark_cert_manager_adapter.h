@@ -16,56 +16,63 @@
 #ifndef ARK_CERT_MANAGER_ADAPTER_H
 #define ARK_CERT_MANAGER_ADAPTER_H
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkCertManagerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkCertManagerAdapter() = default;
+  /*--ark web()--*/
+  ArkCertManagerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkCertManagerAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkCertManagerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual uint32_t GetCertMaxSize() = 0;
+  /*--ark web()--*/
+  virtual uint32_t GetCertMaxSize() = 0;
 
-    /*--web engine()--*/
-    virtual uint32_t GetAppCertMaxSize() = 0;
+  /*--ark web()--*/
+  virtual uint32_t GetAppCertMaxSize() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetSytemRootCertData(uint32_t certCount, uint8_t* certData) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetSytemRootCertData(uint32_t certCount,
+                                       uint8_t *certData) = 0;
 
-    /*--web engine()--*/
-    virtual uint32_t GetSytemRootCertSum() = 0;
+  /*--ark web()--*/
+  virtual uint32_t GetSytemRootCertSum() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetUserRootCertData(uint32_t certCount, uint8_t* certData) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetUserRootCertData(uint32_t certCount,
+                                      uint8_t *certData) = 0;
 
-    /*--web engine()--*/
-    virtual uint32_t GetUserRootCertSum() = 0;
+  /*--ark web()--*/
+  virtual uint32_t GetUserRootCertSum() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetAppCert(uint8_t* uriData, uint8_t* certData, uint32_t* len) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetAppCert(uint8_t *uriData, uint8_t *certData,
+                             uint32_t *len) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t Sign(
-        const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen, uint8_t* signData, uint32_t signDataLen) = 0;
+  /*--ark web()--*/
+  virtual int32_t Sign(const uint8_t *uri, const uint8_t *certData,
+                       uint32_t certDataLen, uint8_t *signData,
+                       uint32_t signDataLen) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetCertDataBySubject(const char* subjectName, uint8_t* certData, int32_t certType) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetCertDataBySubject(const char *subjectName,
+                                       uint8_t *certData, int32_t certType) = 0;
 
-    /*--web engine()--*/
-    virtual int VerifyCertFromNetSsl(uint8_t* certData, uint32_t certSize) = 0;
+  /*--ark web()--*/
+  virtual int VerifyCertFromNetSsl(uint8_t *certData, uint32_t certSize) = 0;
 
-    /*--web engine()--*/
-    virtual bool GetTrustAnchorsForHostName(const ArkWebString& hostname, ArkWebStringVector& certs) = 0;
+  /*--ark web()--*/
+  virtual bool GetTrustAnchorsForHostName(const ArkWebString &hostname,
+                                          ArkWebStringVector &certs) = 0;
 
-    /*--web engine()--*/
-    virtual bool GetPinSetForHostName(const ArkWebString& hostname, ArkWebStringVector& pins) = 0;
+  /*--ark web()--*/
+  virtual bool GetPinSetForHostName(const ArkWebString &hostname,
+                                    ArkWebStringVector &pins) = 0;
 };
 
 } // namespace OHOS::ArkWeb

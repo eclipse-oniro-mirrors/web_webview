@@ -31,10 +31,10 @@ public:
     {
         return enterKeyType;
     }
-    
+
     void SetEnterKeyType(IMFAdapterEnterKeyType keyType)
     {
-        enterKeyType = keyType; 
+        enterKeyType = keyType;
     }
 
 private:
@@ -43,17 +43,17 @@ private:
 
 class IMFTextListenerAdapterImpl : public MiscServices::OnTextChangedListener {
 public:
-    explicit IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter> &listener);
+    explicit IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener);
 
     ~IMFTextListenerAdapterImpl();
 
-    void InsertText(const std::u16string &text) override;
+    void InsertText(const std::u16string& text) override;
 
     void DeleteForward(int32_t length) override;
 
     void DeleteBackward(int32_t length) override;
 
-    void SendKeyEventFromInputMethod(const MiscServices::KeyEvent &event) override;
+    void SendKeyEventFromInputMethod(const MiscServices::KeyEvent& event) override;
 
     void SendKeyboardStatus(const MiscServices::KeyboardStatus& keyboardStatus) override;
 
@@ -88,15 +88,15 @@ public:
     bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard) override;
 
     bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
-        const IMFAdapterTextConfig& config) override;
+        const std::shared_ptr<IMFTextConfigAdapter> config) override;
 
-    void ShowCurrentInput(const IMFAdapterTextInputType &inputType) override;
+    void ShowCurrentInput(const IMFAdapterTextInputType& inputType) override;
 
     void HideTextInput() override;
 
     void Close() override;
 
-    void OnCursorUpdate(IMFAdapterCursorInfo cursorInfo) override;
+    void OnCursorUpdate(const std::shared_ptr<IMFCursorInfoAdapter> cursorInfo) override;
 
     void OnSelectionChange(std::u16string text, int start, int end) override;
 
