@@ -102,6 +102,7 @@ int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion()
 {
     return GetMajorVersion();
 }
+
 ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
 {
     ProductDeviceType factoryLevel = AnalysisFromConfig();
@@ -127,8 +128,8 @@ ProductDeviceType SystemPropertiesAdapterImpl::AnalysisFromConfig()
         .ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
     if (factoryLevel.empty()) {
         NWebAdapterHelper::Instance().ReadConfigIfNeeded();
-        factoryLevel = NWebAdapterHelper::Instance()
-            .ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
+        factoryLevel = NWebAdapterHelper::Instance().
+            ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
     }
     WVLOG_D("read config factoryLevel: %{public}s ", factoryLevel.c_str());
     if (factoryLevel == FACTORY_LEVEL_PHONE || factoryLevel == FACTORY_LEVEL_DEFAULT) {
