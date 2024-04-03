@@ -114,7 +114,6 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ability_runtime:app_manager",
     "access_token:libaccesstoken_sdk",
     "ace_engine:ace_forward_compatibility",
-    "ai_engine:ai_text_analyzer_innerapi",
     "app_file_service:fileuri_native",
     "background_task_mgr:bgtaskmgr_innerkits",
     "bundle_framework:appexecfwk_base",
