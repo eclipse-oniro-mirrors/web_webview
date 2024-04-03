@@ -133,12 +133,11 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetOutputSurface(void* window)
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
-    if (window == nullptr) {
+    OHNativeWindow* window_ = reinterpret_cast<OHNativeWindow*>(window);
+    if (window_ == nullptr || window_->surface == nullptr) {
         WVLOG_E("Window is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
-
-    OHNativeWindow* window_ = reinterpret_cast<OHNativeWindow*>(window);
     window_->config.usage = BUFFER_USAGE_MEM_DMA;
     WVLOG_I("MediaCodecDecoder default to opening Hebc.");
 
