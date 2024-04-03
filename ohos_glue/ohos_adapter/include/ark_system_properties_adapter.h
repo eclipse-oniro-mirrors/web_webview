@@ -81,10 +81,10 @@ public:
   /*--ark web()--*/
   virtual void SetOOPGPUDisable() = 0;
 
-  /*--web engine()--*/
+  /*--ark web()--*/
   virtual void AttachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) = 0;
 
-  /*--web engine()--*/
+  /*--ark web()--*/
   virtual void DetachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) = 0;
 };
 
