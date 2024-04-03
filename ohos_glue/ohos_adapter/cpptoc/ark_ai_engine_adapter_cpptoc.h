@@ -26,11 +26,12 @@ namespace OHOS::ArkWeb {
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkAiEngineAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkAiEngineAdapterCppToC, ArkAiEngineAdapter, ark_ai_engine_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkAiEngineAdapterCppToC,
+                                    ArkAiEngineAdapter,
+                                    ark_ai_engine_adapter_t> {
   public:
     ArkAiEngineAdapterCppToC();
     virtual ~ArkAiEngineAdapterCppToC();
-
 };
 
 } // OHOS::ArkWeb
