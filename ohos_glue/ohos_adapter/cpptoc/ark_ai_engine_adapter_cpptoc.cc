@@ -21,13 +21,15 @@ namespace OHOS::ArkWeb {
 
 namespace {
 
-ArkWebCharVector ARK_WEB_CALLBACK ark_ai_engine_adapter_get_word_selection(struct _ark_ai_engine_adapter_t* self, const ArkWebString* text, int8_t offset) {
+ArkWebCharVector ARK_WEB_CALLBACK ark_ai_engine_adapter_get_word_selection(
+    struct _ark_ai_engine_adapter_t* self,
+    const ArkWebString* text,
+    int8_t offset) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self,  ark_web_char_vector_default);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(text,  ark_web_char_vector_default);
-
 
   // Execute
   return ArkAiEngineAdapterCppToC::Get(self)->GetWordSelection(

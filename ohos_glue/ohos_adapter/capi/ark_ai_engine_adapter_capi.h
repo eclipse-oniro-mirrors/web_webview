@@ -30,7 +30,10 @@ typedef struct _ark_ai_engine_adapter_t {
    */
   ark_web_base_ref_counted_t base;
 
-  ArkWebCharVector (ARK_WEB_CALLBACK *get_word_selection)(struct _ark_ai_engine_adapter_t* self, const ArkWebString* text, int8_t offset);
+  ArkWebCharVector (ARK_WEB_CALLBACK *get_word_selection)(
+      struct _ark_ai_engine_adapter_t* self,
+      const ArkWebString* text,
+      int8_t offset);
 } ark_ai_engine_adapter_t;
 
 #ifdef __cplusplus
