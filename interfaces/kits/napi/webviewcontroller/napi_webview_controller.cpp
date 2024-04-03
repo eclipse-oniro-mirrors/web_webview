@@ -5013,7 +5013,7 @@ napi_value NapiWebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_c
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }

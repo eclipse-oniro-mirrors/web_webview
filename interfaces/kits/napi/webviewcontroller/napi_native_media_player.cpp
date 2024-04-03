@@ -60,7 +60,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleStatusChanged(napi_env env, napi_
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -98,7 +98,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleVolumeChanged(napi_env env, napi_
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -136,7 +136,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleMutedChanged(napi_env env, napi_c
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -168,7 +168,7 @@ napi_value NapiNativeMediaPlayerHandler::HandlePlaybackRateChanged(napi_env env,
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -206,7 +206,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleDurationChanged(napi_env env, nap
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -244,7 +244,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleTimeUpdate(napi_env env, napi_cal
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -282,7 +282,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleBufferedEndTimeChanged(napi_env e
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -338,7 +338,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleNetworkStateChanged(napi_env env,
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -376,7 +376,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleReadyStateChanged(napi_env env, n
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -415,7 +415,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleFullScreenChanged(napi_env env, n
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -483,7 +483,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleError(napi_env env, napi_callback
     napi_value argv[INTEGER_TWO];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_TWO) {
-        WVLOG_E("arg count %{public}d is not equal to 2", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 2", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -528,7 +528,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleVideoSizeChanged(napi_env env, na
     napi_value argv[INTEGER_TWO];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_TWO) {
-        WVLOG_E("arg count %{public}d is not equal to 2", static_cast<int>(argc));
+        WVLOG_E("arg count %{public}zu is not equal to 2", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
