@@ -17,6 +17,7 @@
 #include "base/cpptoc/ark_web_cpptoc_macros.h"
 #include "ohos_adapter/cpptoc/ark_aafwk_app_mgr_client_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_access_token_adapter_cpptoc.h"
+#include "ohos_adapter/cpptoc/ark_ai_engine_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_audio_capturer_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_audio_renderer_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_audio_system_manager_adapter_cpptoc.h"
@@ -652,6 +653,21 @@ ark_ohos_adapter_helper_create_flowbuffer_adapter(
 
   // Return type: refptr_same
   return ArkFlowbufferAdapterCppToC::Invert(_retval);
+}
+
+ark_ai_engine_adapter_t* ARK_WEB_CALLBACK
+ark_ohos_adapter_helper_get_ai_engine_adapter_instance(
+    struct _ark_ohos_adapter_helper_t* self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self,  NULL);
+
+
+  // Execute
+  ArkWebRefPtr<ArkAiEngineAdapter> _retval = ArkOhosAdapterHelperCppToC::Get(self)->GetAiEngineAdapterInstance();
+
+  // Return type: refptr_same
+  return ArkAiEngineAdapterCppToC::Invert(_retval);
 }
 
 } // namespace
