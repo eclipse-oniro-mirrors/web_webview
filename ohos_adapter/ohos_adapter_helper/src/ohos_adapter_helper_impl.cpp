@@ -17,6 +17,7 @@
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "access_token_adapter_impl.h"
+#include "ai_engine_adapter_impl.h"
 #include "audio_capturer_adapter_impl.h"
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
@@ -304,5 +305,9 @@ MediaCodecListAdapter& OhosAdapterHelperImpl::GetMediaCodecListAdapter()
 std::unique_ptr<FlowbufferAdapter> OhosAdapterHelperImpl::CreateFlowbufferAdapter()
 {
     return std::make_unique<FlowbufferAdapterImpl>();
+}
+
+AiEngineAdapter& OhosAdapterHelperImpl::GetAiEngineAdapterInstance() {
+    return AiEngineAdapterImpl::GetInstance();
 }
 } // namespace OHOS::NWeb
