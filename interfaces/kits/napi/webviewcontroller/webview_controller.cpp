@@ -1440,7 +1440,7 @@ std::string WebviewController::GetLastJavascriptProxyCallingFrameUrl()
 void WebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_ref callback)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
-    if (nweb_ptr) {
+    if (!nweb_ptr) {
         return;
     }
 
