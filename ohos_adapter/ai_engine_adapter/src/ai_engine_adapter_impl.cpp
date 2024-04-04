@@ -15,7 +15,7 @@
 
 #include "ai_engine_adapter_impl.h"
 
-#include "foundation/arkui/ace_engine/frameworks/core/common/ai/data_detector_mgr.h"
+#include "text_analyzer.h"
 
 namespace OHOS::NWeb {
 AiEngineAdapterImpl& AiEngineAdapterImpl::GetInstance()
@@ -26,7 +26,7 @@ AiEngineAdapterImpl& AiEngineAdapterImpl::GetInstance()
 
 std::vector<int8_t> AiEngineAdapterImpl::GetWordSelection(const std::string& text, int8_t offset)
 {
-    OHOS::ACE::DataDetectorMgr dataDetectorMgr = DataDetectorMgr::GetInstance();
+    OHOS::AI::DataDetectorImpl dataDetectorImpl;
     return dataDetectorImpl.GetWordSelection(text, offset);
 }
 } // namespace OHOS::NWeb
