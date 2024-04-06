@@ -193,27 +193,31 @@ void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oopgpudisable(
 }
 
 void ARK_WEB_CALLBACK ark_system_properties_adapter_attach_sys_prop_observer(
-    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
+    struct _ark_system_properties_adapter_t *self, int32_t key,
+    void *observer) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
+  ARK_WEB_CPPTOC_CHECK_PARAM(observer, );
+
   // Execute
-  ArkSystemPropertiesAdapterCppToC::Get(self)->AttachSysPropObserver(
-      key,
-      observer);
+  ArkSystemPropertiesAdapterCppToC::Get(self)->AttachSysPropObserver(key,
+                                                                     observer);
 }
 
 void ARK_WEB_CALLBACK ark_system_properties_adapter_detach_sys_prop_observer(
-    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
+    struct _ark_system_properties_adapter_t *self, int32_t key,
+    void *observer) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
+  ARK_WEB_CPPTOC_CHECK_PARAM(observer, );
+
   // Execute
-  ArkSystemPropertiesAdapterCppToC::Get(self)->DetachSysPropObserver(
-      key,
-      observer);
+  ArkSystemPropertiesAdapterCppToC::Get(self)->DetachSysPropObserver(key,
+                                                                     observer);
 }
 
 } // namespace
@@ -250,8 +254,10 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
       ark_system_properties_adapter_get_oopgpuenable;
   GetStruct()->set_oopgpudisable =
       ark_system_properties_adapter_set_oopgpudisable;
-  GetStruct()->attach_sys_prop_observer = ark_system_properties_adapter_attach_sys_prop_observer;
-  GetStruct()->detach_sys_prop_observer = ark_system_properties_adapter_detach_sys_prop_observer;
+  GetStruct()->attach_sys_prop_observer =
+      ark_system_properties_adapter_attach_sys_prop_observer;
+  GetStruct()->detach_sys_prop_observer =
+      ark_system_properties_adapter_detach_sys_prop_observer;
 }
 
 ArkSystemPropertiesAdapterCppToC::~ArkSystemPropertiesAdapterCppToC() {
