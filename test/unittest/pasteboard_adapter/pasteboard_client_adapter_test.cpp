@@ -624,6 +624,10 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_021, Test
     PasteRecordVector data;
     bool result = PasteBoardClientAdapterImpl::GetInstance().GetPasteData(data);
     EXPECT_EQ(false, result);
+    std::shared_ptr<PasteDataRecordAdapter> adapter = std::make_shared<PasteDataRecordAdapterImpl>("test");
+    data.push_back(adapter);
+    result = PasteBoardClientAdapterImpl::GetInstance().GetPasteData(data);
+    EXPECT_EQ(false, result);
 }
 
 /**

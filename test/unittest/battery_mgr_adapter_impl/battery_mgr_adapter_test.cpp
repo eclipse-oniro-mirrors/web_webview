@@ -115,10 +115,14 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_OnReceiveEvent_001, TestSize.Leve
     EXPECT_NE(g_batter, nullptr);
     g_batter->OnReceiveEvent(data);
 
-    want.SetParam(key, static_cast<int>(BatteryPluggedType::PLUGGED_TYPE_NONE));
-    g_batter->OnReceiveEvent(data);
-    want.SetParam(key, static_cast<int>(BatteryPluggedType::PLUGGED_TYPE_BUTT));
-    g_batter->OnReceiveEvent(data);
+    Want want1;
+    want1.SetParam(key, static_cast<int>(BatteryPluggedType::PLUGGED_TYPE_NONE));
+    CommonEventData data1(want1);
+    g_batter->OnReceiveEvent(data1);
+    Want wantEvent;
+    wantEvent.SetParam(key, static_cast<int>(BatteryPluggedType::PLUGGED_TYPE_BUTT));
+    CommonEventData dataEvent(wantEvent);
+    g_batter->OnReceiveEvent(dataEvent);
 }
 
 /**
@@ -132,6 +136,7 @@ HWTEST_F(BatteryMgrAdapterTest, BatteryAdapter_RegBatteryEvent_002, TestSize.Lev
     std::shared_ptr<WebBatteryEventCallback> eventCallback = std::make_shared<MockWebBatteryEventCallback>();
     EXPECT_NE(g_batterImpl, nullptr);
     g_batterImpl->RegBatteryEvent(std::move(eventCallback));
+    g_batterImpl->RegBatteryEvent(nullptr);
 }
 
 /**

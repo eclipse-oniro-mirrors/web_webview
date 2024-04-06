@@ -142,8 +142,10 @@ HWTEST_F(EnterpriseDeviceImplTest, EnterpriseDeviceImplTest_OnReceiveEvent_002, 
     std::shared_ptr<NWebEdmEventSubscriber> result = std::make_shared<NWebEdmEventSubscriber>(in, cb);
     EXPECT_NE(result, nullptr);
     result->OnReceiveEvent(data);
-    want.SetAction("com.ohos.edm.browserpolicychanged");
-    result->OnReceiveEvent(data);
+    Want setwant;
+    setwant.SetAction("com.ohos.edm.browserpolicychanged");
+    OHOS::EventFwk::CommonEventData test(setwant);
+    result->OnReceiveEvent(test);
 }
 #endif
 }
