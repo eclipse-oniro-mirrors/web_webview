@@ -886,6 +886,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_019, TestSi
     std::shared_ptr<AudioCapturerReadCallbackAdapter> callback = std::make_shared<AudioCapturerCallbackMock>();
     int32_t retNum = g_audioCapturer->SetCapturerReadCallback(callback);
     EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
+    retNum = g_audioCapturer->SetCapturerReadCallback(nullptr);
+    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
 
     bool ret = g_audioCapturer->Start();
     EXPECT_NE(ret, TRUE_OK);

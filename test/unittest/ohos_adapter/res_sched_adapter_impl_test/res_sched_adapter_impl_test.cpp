@@ -118,6 +118,7 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportWindowStatus_002
     EXPECT_TRUE(result);
     result = resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, static_cast<ResSchedSceneAdapter>(-1), -1);
     EXPECT_FALSE(result);
+    resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, ResSchedSceneAdapter::SLIDE, -1);
 
     result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::THREAD_CREATED, 0, 1, 1);
     EXPECT_FALSE(result);
