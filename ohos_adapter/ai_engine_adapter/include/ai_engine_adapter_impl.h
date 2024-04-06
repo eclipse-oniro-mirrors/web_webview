@@ -57,10 +57,14 @@ private:
     AiEngineAdapterImpl& operator=(const AiEngineAdapterImpl&) = delete;
 
     void *mLibraryHandle_ = dlopen(AI_ADAPTER_SO_PATH, RTLD_LAZY);
-    OHOS::NWeb::DataDetectorInterface* (*mCreateDataDetectorInstance_)() = (OHOS::NWeb::DataDetectorInterface* (*)())dlsym(mLibraryHandle_,
-        "OHOS_NWeb_createDataDetectorInstance");
-    void (*mDestoryDataDetectorInstance_)(OHOS::NWeb::DataDetectorInterface*) = (void (*)(OHOS::NWeb::DataDetectorInterface*))dlsym(
-        mLibraryHandle_, "OHOS_NWeb_destroyDataDetectorInstance");
+    OHOS::NWeb::DataDetectorInterface* (*mCreateDataDetectorInstance_)() =
+        (OHOS::NWeb::DataDetectorInterface* (*)())dlsym(
+            mLibraryHandle_,
+            "OHOS_NWeb_createDataDetectorInstance");
+    void (*mDestoryDataDetectorInstance_)(OHOS::NWeb::DataDetectorInterface*) =
+        (void (*)(OHOS::NWeb::DataDetectorInterface*))dlsym(
+            mLibraryHandle_,
+            "OHOS_NWeb_destroyDataDetectorInstance");
 };
 } // namespace OHOS::NWeb
 
