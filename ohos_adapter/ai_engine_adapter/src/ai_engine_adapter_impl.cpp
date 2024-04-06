@@ -12,10 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 #include "ai_engine_adapter_impl.h"
-
-#include "text_analyzer.h"
 
 namespace OHOS::NWeb {
 AiEngineAdapterImpl& AiEngineAdapterImpl::GetInstance()
@@ -26,7 +23,11 @@ AiEngineAdapterImpl& AiEngineAdapterImpl::GetInstance()
 
 std::vector<int8_t> AiEngineAdapterImpl::GetWordSelection(const std::string& text, int8_t offset)
 {
-    OHOS::AI::DataDetectorImpl dataDetectorImpl;
-    return dataDetectorImpl.GetWordSelection(text, offset);
+    DataDetectorInstance engine = 
+        DataDetectorInstance(mCreateDataDetectorInstance_(),
+        [destroy = mDestoryDataDetectorInstance_](DataDetectorInterface* e) {
+            destroy(e);
+        });
+    return engine->GetWordSelection(text, offset);
 }
 } // namespace OHOS::NWeb
