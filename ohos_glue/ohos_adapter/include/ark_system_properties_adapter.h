@@ -18,11 +18,8 @@
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "system_properties_adapter.h"
 
 namespace OHOS::ArkWeb {
-
-using ArkSystemPropertiesObserver = OHOS::NWeb::SystemPropertiesObserver;
 
 /*--ark web(source=library)--*/
 class ArkSystemPropertiesAdapter : public virtual ArkWebBaseRefCounted {
@@ -82,10 +79,10 @@ public:
   virtual void SetOOPGPUDisable() = 0;
 
   /*--ark web()--*/
-  virtual void AttachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) = 0;
+  virtual void AttachSysPropObserver(int32_t key, void *observer) = 0;
 
   /*--ark web()--*/
-  virtual void DetachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) = 0;
+  virtual void DetachSysPropObserver(int32_t key, void *observer) = 0;
 };
 
 } // namespace OHOS::ArkWeb

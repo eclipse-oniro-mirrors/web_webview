@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -19,23 +19,22 @@
 
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_init_web_adapter.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_ohos_init_web_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    OHOS::NWeb::WebRunInitedCallback*(ARK_WEB_CALLBACK* get_run_web_inited_callback)(
-        struct _ark_ohos_init_web_adapter_t* self);
+  void *(ARK_WEB_CALLBACK *get_run_web_inited_callback)(
+      struct _ark_ohos_init_web_adapter_t *self);
 
-    void(ARK_WEB_CALLBACK* set_run_web_inited_callback)(
-        struct _ark_ohos_init_web_adapter_t* self, OHOS::NWeb::WebRunInitedCallback* callback);
+  void(ARK_WEB_CALLBACK *set_run_web_inited_callback)(
+      struct _ark_ohos_init_web_adapter_t *self, void *callback);
 } ark_ohos_init_web_adapter_t;
 
 #ifdef __cplusplus
