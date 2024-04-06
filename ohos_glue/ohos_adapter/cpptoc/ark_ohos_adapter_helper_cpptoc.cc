@@ -747,6 +747,8 @@ ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC() {
       ark_ohos_adapter_helper_get_media_codec_list_adapter;
   GetStruct()->create_flowbuffer_adapter =
       ark_ohos_adapter_helper_create_flowbuffer_adapter;
+  GetStruct()->get_ai_engine_adapter_instance =
+      ark_ohos_adapter_helper_get_ai_engine_adapter_instance;
 }
 
 ArkOhosAdapterHelperCppToC::~ArkOhosAdapterHelperCppToC() {
