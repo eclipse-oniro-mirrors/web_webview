@@ -74,6 +74,15 @@ public:
     MOCK_METHOD2(CreateModuleContext, std::shared_ptr<Context>(const std::string &, const std::string &));
 };
 
+class ExtractorMock : public Extractor{
+public:
+    explicit ExtractorMock() : Extractor("web_test") {}
+    ~ExtractorMock() override = default;
+    MOCK_METHOD0(Init, bool());
+    MOCK_METHOD0(IsStageModel, bool());
+    MOCK_METHOD3(ExtractToBufByName, bool(const std::string &, std::unique_ptr<uint8_t[]> &, size_t &));
+};
+
 /**
  * @tc.name: OhosResourceAdapterTest_Init_001
  * @tc.desc: Init.
@@ -110,6 +119,10 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetRawFileData_002, Te
     EXPECT_FALSE(result);
     result = adapterImpl.GetRawFileData(nullptr, rawFile, len, dest);
     EXPECT_FALSE(result);
+    auto mock = std::make_shared<ExtractorMock>();
+    EXPECT_CALL(*mock, IsStageModel())
+        .WillRepeatedly(::testing::Return(false));
+    adapterImpl.GetRawFileData(mock, rawFile, len, dest);
     std::shared_ptr<OhosFileMapper> fileMapper = adapterImpl.GetRawFileMapper(rawFile, true);
     EXPECT_EQ(fileMapper, nullptr);
     result = adapterImpl.IsRawFileExist(rawFile, true);
@@ -233,6 +246,10 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, T
     EXPECT_EQ(result, "");
     free(configStr);
     configStr = nullptr;
+    auto mock = std::make_shared<ExtractorMock>();
+    EXPECT_CALL(*mock, ExtractToBufByName(::testing::_, ::testing::_, ::testing::_))
+        .WillRepeatedly(::testing::Return(true));
+    adapterImpl.ParseModuleName(mock);
 }
 
 /**

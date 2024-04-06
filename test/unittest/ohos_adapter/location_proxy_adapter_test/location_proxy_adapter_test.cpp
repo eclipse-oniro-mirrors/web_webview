@@ -171,6 +171,8 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_LocationInfoImpl_004
     EXPECT_EQ(timeStamp, 0);
     std::unique_ptr<OHOS::Location::Location>& locationInfo = locationInfoImpl->GetLocation();
     EXPECT_NE(locationInfo, nullptr);
+    locationInfoImpl->GetAdditions();
+    EXPECT_NE(locationInfoImpl->location_, nullptr);
 }
 
 /**
@@ -200,6 +202,8 @@ HWTEST_F(LocationProxyAdapterTest, LocationProxyAdapterTest_LocationInfoImpl_005
     EXPECT_EQ(timeStamp, 0);
     timeStamp = locationInfoImpl->GetTimeSinceBoot();
     EXPECT_EQ(timeStamp, 0);
+    locationInfoImpl->GetAdditions();
+    EXPECT_EQ(locationInfoImpl->location_, nullptr);
 }
 
 /**
