@@ -55,7 +55,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleStatusChanged(napi_env env, napi_
 {
     WVLOG_D("handle_status_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -93,7 +93,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleVolumeChanged(napi_env env, napi_
 {
     WVLOG_D("handle_volume_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -131,7 +131,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleMutedChanged(napi_env env, napi_c
 {
     WVLOG_D("handle_muted_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -163,7 +163,7 @@ napi_value NapiNativeMediaPlayerHandler::HandlePlaybackRateChanged(napi_env env,
 {
     WVLOG_D("handle_playback_rate_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -201,7 +201,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleDurationChanged(napi_env env, nap
 {
     WVLOG_D("handle_duration_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -239,7 +239,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleTimeUpdate(napi_env env, napi_cal
 {
     WVLOG_D("handle_time_update is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -277,7 +277,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleBufferedEndTimeChanged(napi_env e
 {
     WVLOG_D("handle_buffered_end_time_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -333,7 +333,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleNetworkStateChanged(napi_env env,
 {
     WVLOG_D("handle_network_state_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -371,7 +371,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleReadyStateChanged(napi_env env, n
 {
     WVLOG_D("handle_ready_state_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -410,7 +410,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleFullScreenChanged(napi_env env, n
 {
     WVLOG_D("handle_full_screen_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -478,7 +478,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleError(napi_env env, napi_callback
 {
     WVLOG_D("handle_error is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_TWO;
     napi_value value = nullptr;
     napi_value argv[INTEGER_TWO];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
@@ -523,7 +523,7 @@ napi_value NapiNativeMediaPlayerHandler::HandleVideoSizeChanged(napi_env env, na
 {
     WVLOG_D("handle_video_size_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_TWO;
     napi_value value = nullptr;
     napi_value argv[INTEGER_TWO];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);

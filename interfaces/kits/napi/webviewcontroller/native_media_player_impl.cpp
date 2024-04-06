@@ -38,7 +38,7 @@ void NWebNativeMediaPlayerBridgeImpl::UpdateRect(double x, double y, double widt
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, width, &argv[INTEGER_TWO]));
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, height, &argv[INTEGER_THREE]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_FOUR, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_FOUR, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Play()
@@ -48,7 +48,7 @@ void NWebNativeMediaPlayerBridgeImpl::Play()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "play", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Pause()
@@ -58,7 +58,7 @@ void NWebNativeMediaPlayerBridgeImpl::Pause()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "pause", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Seek(double time)
@@ -71,7 +71,7 @@ void NWebNativeMediaPlayerBridgeImpl::Seek(double time)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, time, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::SetVolume(double volume)
@@ -84,7 +84,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetVolume(double volume)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, volume, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::SetMuted(bool isMuted)
@@ -97,7 +97,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetMuted(bool isMuted)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_get_boolean(env_, isMuted, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::SetPlaybackRate(double playbackRate)
@@ -110,7 +110,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetPlaybackRate(double playbackRate)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, playbackRate, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Release()
@@ -120,7 +120,7 @@ void NWebNativeMediaPlayerBridgeImpl::Release()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "release", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::EnterFullScreen()
@@ -130,7 +130,7 @@ void NWebNativeMediaPlayerBridgeImpl::EnterFullScreen()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "enterFullscreen", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
@@ -140,7 +140,7 @@ void NWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "exitFullscreen", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 NapiNativeMediaPlayerHandlerImpl::NapiNativeMediaPlayerHandlerImpl(
