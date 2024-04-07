@@ -4818,6 +4818,7 @@ napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
 
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     webviewController->EnableIntelligentTrackingPrevention(enabled);
