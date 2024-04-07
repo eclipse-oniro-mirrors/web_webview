@@ -118,6 +118,7 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportWindowStatus_002
     EXPECT_TRUE(result);
     result = resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, static_cast<ResSchedSceneAdapter>(-1), -1);
     EXPECT_FALSE(result);
+    resAdapter->ReportScene(ResSchedStatusAdapter::THREAD_CREATED, ResSchedSceneAdapter::SLIDE, -1);
 
     result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::THREAD_CREATED, 0, 1, 1);
     EXPECT_FALSE(result);
@@ -164,6 +165,38 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportRenderProcessSta
     resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(2), 0);
     resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(3), 0);
     resAdapter->ReportRenderProcessStatus(static_cast<ResSchedStatusAdapter>(3), 1);
+}
+
+/*
+ * @tc.name: ResSchedAdapterImplTest_ReportScreenCapture_005
+ * @tc.desc: ReportScreenCapture.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportScreenCapture_003, TestSize.Level1)
+{
+    auto resAdapter = std::make_shared<ResSchedClientAdapter>();
+    EXPECT_NE(resAdapter, nullptr);
+    bool result = resAdapter->ReportScreenCapture(static_cast<ResSchedStatusAdapter>(-1), 1);
+    EXPECT_FALSE(result);
+    result = resAdapter->ReportScreenCapture(ResSchedStatusAdapter::AUDIO_STATUS_START, 1);
+    EXPECT_TRUE(result);
+}
+
+/**
+ * @tc.name: ResSchedAdapterImplTest_ReportVideoPlaying_006
+ * @tc.desc: ReportVideoPlaying.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportVideoPlaying_003, TestSize.Level1)
+{
+    auto resAdapter = std::make_shared<ResSchedClientAdapter>();
+    EXPECT_NE(resAdapter, nullptr);
+    bool result = resAdapter->ReportVideoPlaying(static_cast<ResSchedStatusAdapter>(-1), 1);
+    EXPECT_FALSE(result);
+    result = resAdapter->ReportVideoPlaying(ResSchedStatusAdapter::AUDIO_STATUS_START, 1);
+    EXPECT_TRUE(result);
 }
 }
 } // namespace NWeb

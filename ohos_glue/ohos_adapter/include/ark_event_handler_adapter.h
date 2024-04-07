@@ -18,39 +18,40 @@
 
 #pragma once
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkEventHandlerFDListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkEventHandlerFDListenerAdapter() = default;
+  /*--ark web()--*/
+  ArkEventHandlerFDListenerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkEventHandlerFDListenerAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkEventHandlerFDListenerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void OnReadable(int32_t fileDescriptor) = 0;
+  /*--ark web()--*/
+  virtual void OnReadable(int32_t fileDescriptor) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkEventHandlerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkEventHandlerAdapter() = default;
+  /*--ark web()--*/
+  ArkEventHandlerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkEventHandlerAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkEventHandlerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual bool AddFileDescriptorListener(
-        int32_t fileDescriptor, uint32_t events, const ArkWebRefPtr<ArkEventHandlerFDListenerAdapter> listener) = 0;
+  /*--ark web()--*/
+  virtual bool AddFileDescriptorListener(
+      int32_t fileDescriptor, uint32_t events,
+      const ArkWebRefPtr<ArkEventHandlerFDListenerAdapter> listener) = 0;
 
-    /*--web engine()--*/
-    virtual void RemoveFileDescriptorListener(int32_t fileDescriptor) = 0;
+  /*--ark web()--*/
+  virtual void RemoveFileDescriptorListener(int32_t fileDescriptor) = 0;
 };
 } // namespace OHOS::ArkWeb
 

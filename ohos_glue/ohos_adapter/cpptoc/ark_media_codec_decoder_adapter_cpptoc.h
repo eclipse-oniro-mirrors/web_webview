@@ -13,25 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_MEDIA_CODEC_DECODER_ADAPTER_CPPTOC_H
-#define ARK_MEDIA_CODEC_DECODER_ADAPTER_CPPTOC_H
+#ifndef ARK_MEDIA_CODEC_DECODER_ADAPTER_CPPTOC_H_
+#define ARK_MEDIA_CODEC_DECODER_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "capi/ark_media_codec_decoder_adapter_capi.h"
-#include "cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "include/ark_media_codec_decoder_adapter.h"
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "ohos_adapter/capi/ark_media_codec_decoder_adapter_capi.h"
+#include "ohos_adapter/include/ark_media_codec_decoder_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkMediaCodecDecoderAdapterCppToC : public ArkWebCppToCRefCounted<ArkMediaCodecDecoderAdapterCppToC,
-                                              ArkMediaCodecDecoderAdapter, ark_media_codec_decoder_adapter_t> {
+class ArkMediaCodecDecoderAdapterCppToC
+    : public ArkWebCppToCRefCounted<ArkMediaCodecDecoderAdapterCppToC,
+                                    ArkMediaCodecDecoderAdapter,
+                                    ark_media_codec_decoder_adapter_t> {
 public:
-    ArkMediaCodecDecoderAdapterCppToC();
-    virtual ~ArkMediaCodecDecoderAdapterCppToC();
+  ArkMediaCodecDecoderAdapterCppToC();
+  virtual ~ArkMediaCodecDecoderAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_MEDIA_CODEC_DECODER_ADAPTER_CPPTOC_H
+#endif // ARK_MEDIA_CODEC_DECODER_ADAPTER_CPPTOC_H_

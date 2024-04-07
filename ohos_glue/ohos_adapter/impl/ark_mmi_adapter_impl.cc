@@ -18,6 +18,7 @@
 #include "bridge/ark_web_bridge_macros.h"
 #include "wrapper/ark_mmi_input_listener_adapter_wrapper.h"
 #include "wrapper/ark_mmi_listener_adapter_wrapper.h"
+#include "wrapper/ark_mmi_device_info_adapter_wrapper.h"
 
 namespace OHOS::ArkWeb {
 
@@ -70,9 +71,12 @@ int32_t ArkMMIAdapterImpl::GetDeviceIds(ArkWebInt32Vector& ids)
     return result;
 }
 
-int32_t ArkMMIAdapterImpl::GetDeviceInfo(int32_t deviceId, ArkMMIDeviceInfoAdapter& info)
+int32_t ArkMMIAdapterImpl::GetDeviceInfo(int32_t deviceId, ArkWebRefPtr<ArkMMIDeviceInfoAdapter> info)
 {
-    return real_->GetDeviceInfo(deviceId, info);
+    if (CHECK_REF_PTR_IS_NULL(info)) {
+      return real_->GetDeviceInfo(deviceId, nullptr);
+    }
+    return real_->GetDeviceInfo(deviceId, std::make_shared<ArkMMIDeviceInfoAdapterWrapper>(info));
 }
 
 } // namespace OHOS::ArkWeb

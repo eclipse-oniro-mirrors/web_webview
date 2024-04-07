@@ -205,9 +205,8 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_003, TestSize.Lev
  */
 HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_004, TestSize.Level1)
 {
-    IMFAdapterCursorInfo cursorInfo;
     EXPECT_NE(g_imf, nullptr);
-    g_imf->OnCursorUpdate(cursorInfo);
+    g_imf->OnCursorUpdate(nullptr);
     std::u16string text;
     g_imf->OnSelectionChange(text, 0, 0);
     g_imf->Close();
@@ -303,14 +302,13 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
  */
 HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_007, TestSize.Level1)
 {
-    IMFAdapterTextConfig config;
-    bool result = g_imf->Attach(nullptr, true, config);
+    bool result = g_imf->Attach(nullptr, true, nullptr);
     EXPECT_FALSE(result);
     auto listener = std::make_shared<IMFTextListenerTest>();
     EXPECT_NE(listener, nullptr);
-    result = g_imf->Attach(nullptr, true, config);
+    result = g_imf->Attach(nullptr, true, nullptr);
     EXPECT_FALSE(result);
-    result = g_imf->Attach(nullptr, true, config);
+    result = g_imf->Attach(nullptr, true, nullptr);
     EXPECT_FALSE(result);
 }
 } // namespace OHOS::NWeb

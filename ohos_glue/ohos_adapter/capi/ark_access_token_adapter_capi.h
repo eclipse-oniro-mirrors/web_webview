@@ -13,29 +13,30 @@
  * limitations under the License.
  */
 
-#ifndef ARK_ACCESS_TOKEN_ADAPTER_CAPI_H
-#define ARK_ACCESS_TOKEN_ADAPTER_CAPI_H
+#ifndef ARK_ACCESS_TOKEN_ADAPTER_CAPI_H_
+#define ARK_ACCESS_TOKEN_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_access_token_adapter_t {
-    /**
-     * @brief Base structure.
-     */
-    ark_web_base_ref_counted_t base;
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-    bool(ARK_WEB_CALLBACK* verify_access_token)(
-        struct _ark_access_token_adapter_t* self, const ArkWebString* permissionName);
+  bool(ARK_WEB_CALLBACK *verify_access_token)(
+      struct _ark_access_token_adapter_t *self,
+      const ArkWebString *permissionName);
 } ark_access_token_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_ACCESS_TOKEN_ADAPTER_CAPI_H
+#endif // ARK_ACCESS_TOKEN_ADAPTER_CAPI_H_

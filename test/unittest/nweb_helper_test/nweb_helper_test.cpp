@@ -177,6 +177,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
     EXPECT_EQ(RESULT_OK, result);
 
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
+    std::shared_ptr<NWebCookieManager> cook = NWebHelper::Instance().GetCookieManager();
+    EXPECT_EQ(cook, nullptr);
 
     void *enhanceSurfaceInfo = nullptr;
     int32_t temp = 1;
@@ -245,6 +247,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     EXPECT_FALSE(result);
     NWebHelper::Instance().SetWebDebuggingAccess(true);
     NWebHelper::Instance().SetConnectionTimeout(1);
+    NWebHelper::Instance().GetWebEngineHandler();
 }
 
 /**
@@ -277,6 +280,9 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadNWebSDK_006, TestSize.Level1)
     WebDownloader_ResumeDownloadStatic(downloadItem);
     WebDownloader_StartDownload(1, "test_web");
     WebDownload_Continue(nullptr, "test_web");
+    WebDownload_CancelBeforeDownload(nullptr);
+    WebDownload_PauseBeforeDownload(nullptr);
+    WebDownload_ResumeBeforeDownload(nullptr);
     WebDownload_Cancel(nullptr);
     WebDownload_Pause(nullptr);
     WebDownload_Resume(nullptr);
@@ -353,6 +359,55 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     EXPECT_NE(eTag, nullptr);
     char* mimeType = WebDownloadItem_MimeType(downloadItem);
     EXPECT_NE(mimeType, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_GetWebEngineHandler_008
+ * @tc.desc: GetWebEngineHandler.
+ * @tc.type: FUNC
+ * @tc.require: AR000GGHJ8
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
+{
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
+    std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
+    EXPECT_EQ(nweb, nullptr);
+    nweb = NWebHelper::Instance().GetNWeb(1);
+    EXPECT_EQ(nweb, nullptr);
+    std::shared_ptr<NWebCookieManager> cook = NWebHelper::Instance().GetCookieManager();
+    EXPECT_EQ(cook, nullptr);
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
+    NWebHelper::Instance().SetHttpDns(config);
+    NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
+    NWebHelper::Instance().SetWebDebuggingAccess(true);
+    NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<NWebWebStorage> storage = NWebHelper::Instance().GetWebStorage();
+    EXPECT_EQ(storage, nullptr);
+    NWebHelper::Instance().SetConnectionTimeout(1);
+    std::vector<std::string> hosts;
+    NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
+    NWebHelper::Instance().PauseAllTimers();
+    NWebHelper::Instance().ResumeAllTimers();
+    EXPECT_NE(NWebHelper::Instance().libHandleWebEngine_, nullptr);
+    NWebHelper::Instance().GetWebEngineHandler();
+    bool result = NWebHelper::Instance().LoadEngine();
+    EXPECT_TRUE(result);
+    result = NWebHelper::Instance().LoadEngine();
+    EXPECT_TRUE(result);
+    cook = NWebHelper::Instance().GetCookieManager();
+    EXPECT_NE(cook, nullptr);
+    NWebHelper::Instance().SetWebTag(1, "webtag");
+
+    NWebHelper::Instance().libHandleWebEngine_ = nullptr;
+    NWebHelper::Instance().SetWebTag(1, "webtag");
+    NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
+    NWebHelper::Instance().PauseAllTimers();
+    NWebHelper::Instance().ResumeAllTimers();
 }
 } // namespace OHOS::NWeb
 }

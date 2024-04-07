@@ -13,25 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_DATASHARE_ADAPTER_CPPTOC_H
-#define ARK_DATASHARE_ADAPTER_CPPTOC_H
+#ifndef ARK_DATASHARE_ADAPTER_CPPTOC_H_
+#define ARK_DATASHARE_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "capi/ark_datashare_adapter_capi.h"
-#include "cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "include/ark_datashare_adapter.h"
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "ohos_adapter/capi/ark_datashare_adapter_capi.h"
+#include "ohos_adapter/include/ark_datashare_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkDatashareAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkDatashareAdapterCppToC, ArkDatashareAdapter, ark_datashare_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkDatashareAdapterCppToC,
+                                    ArkDatashareAdapter,
+                                    ark_datashare_adapter_t> {
 public:
-    ArkDatashareAdapterCppToC();
-    virtual ~ArkDatashareAdapterCppToC();
+  ArkDatashareAdapterCppToC();
+  virtual ~ArkDatashareAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_DATASHARE_ADAPTER_CPPTOC_H
+#endif // ARK_DATASHARE_ADAPTER_CPPTOC_H_

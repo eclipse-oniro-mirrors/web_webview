@@ -29,7 +29,8 @@ class ArkAudioCapturerAdapterImpl : public ArkAudioCapturerAdapter {
 public:
     ArkAudioCapturerAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioCapturerAdapter>);
 
-    int32_t Create(const ArkAudioAdapterCapturerOptions& capturerOptions, ArkWebString& cachePath) override;
+    int32_t Create(
+        const ArkWebRefPtr<ArkAudioCapturerOptionsAdapter> capturerOptions, ArkWebString& cachePath) override;
 
     bool Start() override;
 
@@ -39,9 +40,9 @@ public:
 
     int32_t SetCapturerReadCallback(const ArkWebRefPtr<ArkAudioCapturerReadCallbackAdapter> callbck) override;
 
-    int32_t GetBufferDesc(ArkBufferDescAdapter& buffferDesc) override;
+    int32_t GetBufferDesc(ArkWebRefPtr<ArkBufferDescAdapter> bufferDesc) override;
 
-    int32_t Enqueue(const ArkBufferDescAdapter& bufferDesc) override;
+    int32_t Enqueue(const ArkWebRefPtr<ArkBufferDescAdapter> bufferDesc) override;
 
     int32_t GetFrameCount(uint32_t& frameCount) override;
 

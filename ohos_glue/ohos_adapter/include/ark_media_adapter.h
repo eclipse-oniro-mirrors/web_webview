@@ -17,65 +17,67 @@
 #define ARK_MEDIA_ADAPTER_H
 
 #include "ark_graphic_adapter.h"
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkPlayerCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual void OnInfo(int32_t type, int32_t extra, int32_t value) = 0;
+  /*--ark web()--*/
+  virtual void OnInfo(int32_t type, int32_t extra, int32_t value) = 0;
 
-    /*--web engine()--*/
-    virtual void OnError(int32_t errorType) = 0;
+  /*--ark web()--*/
+  virtual void OnError(int32_t errorType) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkPlayerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkPlayerAdapter() = default;
+  /*--ark web()--*/
+  ArkPlayerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkPlayerAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkPlayerAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t SetPlayerCallback(ArkWebRefPtr<ArkPlayerCallbackAdapter> callbackAdapter) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  SetPlayerCallback(ArkWebRefPtr<ArkPlayerCallbackAdapter> callbackAdapter) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetSource(const ArkWebString& url) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetSource(const ArkWebString &url) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetSource(int32_t fd, int64_t offset, int64_t size) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetSource(int32_t fd, int64_t offset, int64_t size) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetVideoSurface(ArkWebRefPtr<ArkIConsumerSurfaceAdapter> cSurfaceAdapter) = 0;
+  /*--ark web()--*/
+  virtual int32_t
+  SetVideoSurface(ArkWebRefPtr<ArkIConsumerSurfaceAdapter> cSurfaceAdapter) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetVolume(float leftVolume, float rightVolume) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetVolume(float leftVolume, float rightVolume) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t Seek(int32_t mSeconds, int32_t mode) = 0;
+  /*--ark web()--*/
+  virtual int32_t Seek(int32_t mSeconds, int32_t mode) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t Play() = 0;
+  /*--ark web()--*/
+  virtual int32_t Play() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t Pause() = 0;
+  /*--ark web()--*/
+  virtual int32_t Pause() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t PrepareAsync() = 0;
+  /*--ark web()--*/
+  virtual int32_t PrepareAsync() = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetCurrentTime(int32_t& currentTime) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetCurrentTime(int32_t &currentTime) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t GetDuration(int32_t& duration) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetDuration(int32_t &duration) = 0;
 
-    /*--web engine()--*/
-    virtual int32_t SetPlaybackSpeed(int32_t mode) = 0;
+  /*--ark web()--*/
+  virtual int32_t SetPlaybackSpeed(int32_t mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb

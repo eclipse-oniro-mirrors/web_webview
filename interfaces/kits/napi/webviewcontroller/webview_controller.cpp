@@ -24,6 +24,7 @@
 
 #include "native_arkweb_utils.h"
 #include "native_interface_arkweb.h"
+#include "native_media_player_impl.h"
 
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
@@ -1434,6 +1435,17 @@ std::string WebviewController::GetLastJavascriptProxyCallingFrameUrl()
     }
 
     return nweb_ptr->GetLastJavascriptProxyCallingFrameUrl();
+}
+
+void WebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_ref callback)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<NWebCreateNativeMediaPlayerCallbackImpl>(nwebId_, env, callback);
+    nweb_ptr->OnCreateNativeMediaPlayer(callbackImpl);
 }
 
 bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::string &script)

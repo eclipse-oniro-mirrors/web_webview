@@ -14,7 +14,7 @@
  */
 
 #include "media_codec_decoder_adapter_impl.h"
-
+#include "buffer_info_adapter_impl.h"
 #include <cstddef>
 #include <cstdint>
 #include <memory>
@@ -25,6 +25,7 @@
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 #include "native_window.h"
 #include "nweb_log.h"
+#include "ohos_buffer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 using namespace std;
@@ -77,17 +78,22 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByName(const 
     return DecoderAdapterCode::DECODER_OK;
 }
 
-DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const DecoderFormat& format)
+DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const std::shared_ptr<DecoderFormatAdapter> format)
 {
     if (decoder_ == nullptr) {
         WVLOG_E("MediaCodecDecoder is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
+    if (format == nullptr) {
+        WVLOG_E("format is nullptr.");
+        return DecoderAdapterCode::DECODER_ERROR;
+    }
+
     OHOS::Media::Format codecFormat;
 
-    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, format.width);
-    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, format.height);
+    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, format->GetWidth());
+    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, format->GetHeight());
 
     int32_t ret = decoder_->Configure(codecFormat);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {
@@ -96,17 +102,22 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const DecoderF
     return DecoderAdapterCode::DECODER_OK;
 }
 
-DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetParameterDecoder(const DecoderFormat& format)
+DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetParameterDecoder(const std::shared_ptr<DecoderFormatAdapter> format)
 {
     if (decoder_ == nullptr) {
         WVLOG_E("MediaCodecDecoder is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
+    if (format == nullptr) {
+        WVLOG_E("format is nullptr.");
+        return DecoderAdapterCode::DECODER_ERROR;
+    }
+
     OHOS::Media::Format codecFormat;
 
-    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, format.width);
-    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, format.height);
+    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, format->GetWidth());
+    codecFormat.PutIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, format->GetHeight());
 
     int32_t ret = decoder_->SetParameter(codecFormat);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {
@@ -122,12 +133,11 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetOutputSurface(void* window)
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
-    if (window == nullptr) {
+    OHNativeWindow* window_ = reinterpret_cast<OHNativeWindow*>(window);
+    if (window_ == nullptr || window_->surface == nullptr) {
         WVLOG_E("Window is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
-
-    OHNativeWindow* window_ = reinterpret_cast<OHNativeWindow*>(window);
     window_->config.usage = BUFFER_USAGE_MEM_DMA;
     WVLOG_I("MediaCodecDecoder default to opening Hebc.");
 
@@ -217,13 +227,14 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ReleaseDecoder()
     return DecoderAdapterCode::DECODER_OK;
 }
 
-DecoderAdapterCode MediaCodecDecoderAdapterImpl::QueueInputBufferDec(uint32_t index, BufferInfo info, BufferFlag flag)
+DecoderAdapterCode MediaCodecDecoderAdapterImpl::QueueInputBufferDec(
+    uint32_t index, int64_t presentationTimeUs, int32_t size, int32_t offset, BufferFlag flag)
 {
     struct OHOS::MediaAVCodec::AVCodecBufferInfo bufferInfo;
 
-    bufferInfo.presentationTimeUs = info.presentationTimeUs;
-    bufferInfo.size = info.size;
-    bufferInfo.offset = info.offset;
+    bufferInfo.presentationTimeUs = presentationTimeUs;
+    bufferInfo.size = size;
+    bufferInfo.offset = offset;
 
     AVCodecBufferFlag bufferFlag = MediaCodecDecoderAdapterImpl::GetAVBufferFlag(flag);
 
@@ -239,7 +250,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::QueueInputBufferDec(uint32_t in
     return DecoderAdapterCode::DECODER_OK;
 }
 
-DecoderAdapterCode MediaCodecDecoderAdapterImpl::GetOutputFormatDec(DecoderFormat& format)
+DecoderAdapterCode MediaCodecDecoderAdapterImpl::GetOutputFormatDec(std::shared_ptr<DecoderFormatAdapter> format)
 {
     OHOS::Media::Format codecFormat;
 
@@ -248,13 +259,22 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::GetOutputFormatDec(DecoderForma
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
+    if (format == nullptr) {
+        WVLOG_E("format is nullptr.");
+        return DecoderAdapterCode::DECODER_ERROR;
+    }
+
     int32_t ret = decoder_->GetOutputFormat(codecFormat);
     if (ret != AVCodecServiceErrCode::AVCS_ERR_OK) {
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
-    codecFormat.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, format.width);
-    codecFormat.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, format.height);
+    int32_t width = 0;
+    int32_t height = 0;
+    codecFormat.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, width);
+    codecFormat.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, height);
+    format->SetWidth(width);
+    format->SetHeight(height);
 
     return DecoderAdapterCode::DECODER_OK;
 }
@@ -347,12 +367,12 @@ void DecoderCallbackImpl::OnOutputFormatChanged(const Media::Format& format)
         return;
     }
 
-    DecoderFormat decoderFormat;
+    int32_t width = 0;
+    int32_t height = 0;
+    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, width);
+    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, height);
 
-    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, decoderFormat.width);
-    format.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, decoderFormat.height);
-
-    cb_->OnStreamChanged(decoderFormat);
+    cb_->OnStreamChanged(width, height, 0);
 }
 
 void DecoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr<Media::AVSharedMemory> buffer)
@@ -361,12 +381,20 @@ void DecoderCallbackImpl::OnInputBufferAvailable(uint32_t index, std::shared_ptr
         WVLOG_E("callback is NULL.");
         return;
     }
-    if (buffer != nullptr && buffer->GetBase() != nullptr) {
-        OhosBuffer ohosBuffer_;
-        ohosBuffer_.addr = buffer->GetBase();
-        ohosBuffer_.bufferSize = buffer->GetSize();
-        cb_->OnNeedInputData(index, ohosBuffer_);
+
+    if (buffer == nullptr || buffer->GetBase() == nullptr) {
+        return;
     }
+
+    std::shared_ptr<OhosBufferAdapterImpl> ohosBuffer = std::make_shared<OhosBufferAdapterImpl>();
+    if (ohosBuffer == nullptr) {
+        WVLOG_E("new OhosBufferAdapterImpl failed");
+        return;
+    }
+
+    ohosBuffer->SetAddr(buffer->GetBase());
+    ohosBuffer->SetBufferSize(buffer->GetSize());
+    cb_->OnNeedInputData(index, ohosBuffer);
 }
 
 void DecoderCallbackImpl::OnOutputBufferAvailable(
@@ -377,10 +405,15 @@ void DecoderCallbackImpl::OnOutputBufferAvailable(
         return;
     }
 
-    BufferInfo info_;
-    info_.presentationTimeUs = info.presentationTimeUs;
-    info_.size = info.size;
-    info_.offset = info.offset;
+    std::shared_ptr<BufferInfoAdapterImpl> info_ = std::make_shared<BufferInfoAdapterImpl>();
+    if (!info_) {
+        WVLOG_E("new BufferInfoAdapterImpl failed");
+        return;
+    }
+
+    info_->SetPresentationTimeUs(info.presentationTimeUs);
+    info_->SetSize(info.size);
+    info_->SetOffset(info.offset);
 
     BufferFlag flag_;
 

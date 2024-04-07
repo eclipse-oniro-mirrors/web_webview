@@ -137,7 +137,7 @@ void WebDownloadDelegate::DownloadDidFail(WebDownloadItem *webDownloadItem)
     napi_status status;
 
     if (!download_did_fail_callback_) {
-        WVLOG_E("[DOWNLOAD] downloadBeforeStart not exists.");
+        WVLOG_E("[DOWNLOAD] DownloadDidFail not exists.");
         return;
     }
     status = napi_get_reference_value(env_, download_did_fail_callback_, &callbackFunc);

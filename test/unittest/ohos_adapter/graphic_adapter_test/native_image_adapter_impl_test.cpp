@@ -18,8 +18,8 @@
 #include <gtest/gtest.h>
 
 #define private public
-#include "native_image_adapter_impl.h"
 #include "iconsumer_surface.h"
+#include "native_image_adapter_impl.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -33,17 +33,13 @@ public:
     void TearDown();
 };
 
-void NativeImageAdapterImplTest::SetUpTestCase(void)
-{}
+void NativeImageAdapterImplTest::SetUpTestCase(void) {}
 
-void NativeImageAdapterImplTest::TearDownTestCase(void)
-{}
+void NativeImageAdapterImplTest::TearDownTestCase(void) {}
 
-void NativeImageAdapterImplTest::SetUp(void)
-{}
+void NativeImageAdapterImplTest::SetUp(void) {}
 
-void NativeImageAdapterImplTest::TearDown(void)
-{}
+void NativeImageAdapterImplTest::TearDown(void) {}
 
 /**
  * @tc.name: NativeImageAdapterImplTest_UpdateSurfaceImage_001
@@ -103,7 +99,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetTransformMatr
 {
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
-    float matrix[16] = {0};
+    float matrix[16] = { 0 };
     int32_t result = imagerAdapter->GetTransformMatrix(matrix);
     EXPECT_EQ(result, SURFACE_ERROR_ERROR);
     uint32_t textureId = 1;
@@ -143,13 +139,12 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_SetOnFrameAvaila
 {
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
-    OnFrameAvailableListener listener;
-    int32_t result = imagerAdapter->SetOnFrameAvailableListener(&listener);
+    int32_t result = imagerAdapter->SetOnFrameAvailableListener(nullptr);
     EXPECT_EQ(result, SURFACE_ERROR_ERROR);
     uint32_t textureId = 1;
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
-    result = imagerAdapter->SetOnFrameAvailableListener(&listener);
+    result = imagerAdapter->SetOnFrameAvailableListener(nullptr);
     EXPECT_EQ(result, SURFACE_ERROR_ERROR);
 }
 
@@ -184,4 +179,4 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_DestroyNativeIma
     EXPECT_NE(imagerAdapter, nullptr);
     imagerAdapter->DestroyNativeImage();
 }
-}
+} // namespace OHOS::NWeb

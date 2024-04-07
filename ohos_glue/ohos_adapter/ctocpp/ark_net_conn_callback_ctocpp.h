@@ -13,34 +13,37 @@
  * limitations under the License.
  */
 
-#ifndef ARK_NET_CONN_CALLBACK_CTOCPP_H
-#define ARK_NET_CONN_CALLBACK_CTOCPP_H
+#ifndef ARK_NET_CONN_CALLBACK_CTOCPP_H_
+#define ARK_NET_CONN_CALLBACK_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_net_connect_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_net_connect_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_net_connect_adapter_capi.h"
+#include "ohos_adapter/include/ark_net_connect_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkNetConnCallbackCToCpp
-    : public ArkWebCToCppRefCounted<ArkNetConnCallbackCToCpp, ArkNetConnCallback, ark_net_conn_callback_t> {
+    : public ArkWebCToCppRefCounted<ArkNetConnCallbackCToCpp,
+                                    ArkNetConnCallback,
+                                    ark_net_conn_callback_t> {
 public:
-    ArkNetConnCallbackCToCpp();
-    virtual ~ArkNetConnCallbackCToCpp();
+  ArkNetConnCallbackCToCpp();
+  virtual ~ArkNetConnCallbackCToCpp();
 
-    // ArkNetConnCallback methods.
-    int32_t NetAvailable() override;
+  // ArkNetConnCallback methods.
+  int32_t NetAvailable() override;
 
-    int32_t NetCapabilitiesChange(const uint32_t& netConnectType, const uint32_t& netConnectSubtype) override;
+  int32_t NetCapabilitiesChange(const uint32_t &netConnectType,
+                                const uint32_t &netConnectSubtype) override;
 
-    int32_t NetConnectionPropertiesChange() override;
+  int32_t NetConnectionPropertiesChange() override;
 
-    int32_t NetUnavailable() override;
+  int32_t NetUnavailable() override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_NET_CONN_CALLBACK_CTOCPP_H
+#endif // ARK_NET_CONN_CALLBACK_CTOCPP_H_

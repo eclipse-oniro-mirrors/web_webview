@@ -15,6 +15,7 @@
 
 #include "ark_camera_buffer_listener_adapter_wrapper.h"
 
+#include "impl/ark_camera_rotation_info_adapter_impl.h"
 #include "impl/ark_camera_surface_adapter_impl.h"
 #include "impl/ark_camera_surface_buffer_adapter_impl.h"
 
@@ -26,10 +27,15 @@ ArkCameraBufferListenerAdapterWrapper::ArkCameraBufferListenerAdapterWrapper(
 {}
 
 void ArkCameraBufferListenerAdapterWrapper::OnBufferAvailable(std::shared_ptr<NWeb::CameraSurfaceAdapter> surface,
-    std::shared_ptr<NWeb::CameraSurfaceBufferAdapter> buffer, NWeb::CameraRotationInfo rotationInfo)
+    std::shared_ptr<NWeb::CameraSurfaceBufferAdapter> buffer,
+    std::shared_ptr<NWeb::CameraRotationInfoAdapter> rotationInfo)
 {
-    ctocpp_->OnBufferAvailable(
-        new ArkCameraSurfaceAdapterImpl(surface), new ArkCameraSurfaceBufferAdapterImpl(buffer), rotationInfo);
+    if (!surface || !buffer || !rotationInfo) {
+        return;
+    }
+
+    ctocpp_->OnBufferAvailable(new ArkCameraSurfaceAdapterImpl(surface), new ArkCameraSurfaceBufferAdapterImpl(buffer),
+        new ArkCameraRotationInfoAdapterImpl(rotationInfo));
 }
 
 } // namespace OHOS::ArkWeb

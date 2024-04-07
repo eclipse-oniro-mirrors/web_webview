@@ -16,6 +16,10 @@
 #ifndef SYSTEM_PROPERTIES_ADAPTER_IMPL_H
 #define SYSTEM_PROPERTIES_ADAPTER_IMPL_H
 
+#include <mutex>
+#include <shared_mutex>
+#include <unordered_map>
+#include <vector>
 #include "system_properties_adapter.h"
 
 namespace OHOS::NWeb {
@@ -24,7 +28,7 @@ class SystemPropertiesAdapterImpl : public SystemPropertiesAdapter {
 public:
     static SystemPropertiesAdapterImpl& GetInstance();
 
-    ~SystemPropertiesAdapterImpl() override = default;
+    ~SystemPropertiesAdapterImpl() override;
 
     bool GetResourceUseHapPathEnable() override;
 
@@ -38,7 +42,7 @@ public:
 
     bool GetWebOptimizationValue() override;
 
-    bool GetLockdownModeStatus() override;
+    bool IsAdvancedSecurityMode() override;
 
     std::string GetUserAgentOSName() override;
 
@@ -56,7 +60,13 @@ public:
 
     void SetOOPGPUDisable() override;
 
-    int32_t GetFlowBufMaxFd() const override;
+    int32_t GetFlowBufMaxFd() override;
+
+    void AttachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) override;
+
+    void DetachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) override;
+
+    void DispatchAllWatcherInfo(const char* key, const char* value);
 
 private:
     SystemPropertiesAdapterImpl();
@@ -64,8 +74,16 @@ private:
     SystemPropertiesAdapterImpl(const SystemPropertiesAdapterImpl& other) = delete;
 
     SystemPropertiesAdapterImpl& operator=(const SystemPropertiesAdapterImpl&) = delete;
+
+    void AddAllSysPropWatchers();
+
+    void RemoveAllSysPropWatchers();
+
     int softwareMajorVersion_ = 4;
     int softwareSeniorVersion_ = 1;
+
+    std::unordered_map<PropertiesKey, std::vector<SystemPropertiesObserver*>> sysPropObserver_;
+    std::unordered_map<PropertiesKey, std::shared_mutex> sysPropMutex_;
 };
 
 }  // namespace OHOS::NWeb

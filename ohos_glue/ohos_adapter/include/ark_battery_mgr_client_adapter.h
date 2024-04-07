@@ -16,60 +16,61 @@
 #ifndef ARK_BATTERY_MGR_CLIENT_ADAPTER_H
 #define ARK_BATTERY_MGR_CLIENT_ADAPTER_H
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkBatteryInfo : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual ~ArkBatteryInfo() = default;
+  /*--ark web()--*/
+  virtual ~ArkBatteryInfo() = default;
 
-    /*--web engine()--*/
-    virtual double GetLevel() = 0;
+  /*--ark web()--*/
+  virtual double GetLevel() = 0;
 
-    /*--web engine()--*/
-    virtual bool IsCharging() = 0;
+  /*--ark web()--*/
+  virtual bool IsCharging() = 0;
 
-    /*--web engine()--*/
-    virtual int DisChargingTime() = 0;
+  /*--ark web()--*/
+  virtual int DisChargingTime() = 0;
 
-    /*--web engine()--*/
-    virtual int ChargingTime() = 0;
+  /*--ark web()--*/
+  virtual int ChargingTime() = 0;
 };
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkBatteryEventCallback : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    virtual ~ArkBatteryEventCallback() = default;
+  /*--ark web()--*/
+  virtual ~ArkBatteryEventCallback() = default;
 
-    /*--web engine()--*/
-    virtual void BatteryInfoChanged(ArkWebRefPtr<ArkBatteryInfo> info) = 0;
+  /*--ark web()--*/
+  virtual void BatteryInfoChanged(ArkWebRefPtr<ArkBatteryInfo> info) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkBatteryMgrClientAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkBatteryMgrClientAdapter() = default;
+  /*--ark web()--*/
+  ArkBatteryMgrClientAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkBatteryMgrClientAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkBatteryMgrClientAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void RegBatteryEvent(ArkWebRefPtr<ArkBatteryEventCallback> eventCallback) = 0;
+  /*--ark web()--*/
+  virtual void
+  RegBatteryEvent(ArkWebRefPtr<ArkBatteryEventCallback> eventCallback) = 0;
 
-    /*--web engine()--*/
-    virtual bool StartListen() = 0;
+  /*--ark web()--*/
+  virtual bool StartListen() = 0;
 
-    /*--web engine()--*/
-    virtual void StopListen() = 0;
+  /*--ark web()--*/
+  virtual void StopListen() = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebRefPtr<ArkBatteryInfo> RequestBatteryInfo() = 0;
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkBatteryInfo> RequestBatteryInfo() = 0;
 };
 } // namespace OHOS::ArkWeb
 

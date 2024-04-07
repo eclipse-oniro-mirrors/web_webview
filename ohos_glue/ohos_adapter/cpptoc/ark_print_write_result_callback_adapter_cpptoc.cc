@@ -13,36 +13,43 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_print_write_result_callback_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_print_write_result_callback_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-void ARK_WEB_CALLBACK ark_print_write_result_callback_adapter_write_result_callback(
-    struct _ark_print_write_result_callback_adapter_t* self, ArkWebString jobId, uint32_t code)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK
+ark_print_write_result_callback_adapter_write_result_callback(
+    struct _ark_print_write_result_callback_adapter_t *self, ArkWebString jobId,
+    uint32_t code) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkPrintWriteResultCallbackAdapterCppToC::Get(self)->WriteResultCallback(jobId, code);
+  // Execute
+  ArkPrintWriteResultCallbackAdapterCppToC::Get(self)->WriteResultCallback(
+      jobId, code);
 }
 
 } // namespace
 
-ArkPrintWriteResultCallbackAdapterCppToC::ArkPrintWriteResultCallbackAdapterCppToC()
-{
-    GetStruct()->write_result_callback = ark_print_write_result_callback_adapter_write_result_callback;
+ArkPrintWriteResultCallbackAdapterCppToC::
+    ArkPrintWriteResultCallbackAdapterCppToC() {
+  GetStruct()->write_result_callback =
+      ark_print_write_result_callback_adapter_write_result_callback;
 }
 
-ArkPrintWriteResultCallbackAdapterCppToC::~ArkPrintWriteResultCallbackAdapterCppToC() {}
+ArkPrintWriteResultCallbackAdapterCppToC::
+    ~ArkPrintWriteResultCallbackAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkPrintWriteResultCallbackAdapterCppToC, ArkPrintWriteResultCallbackAdapter,
-    ark_print_write_result_callback_adapter_t>::kBridgeType = ARK_PRINT_WRITE_RESULT_CALLBACK_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkPrintWriteResultCallbackAdapterCppToC,
+    ArkPrintWriteResultCallbackAdapter,
+    ark_print_write_result_callback_adapter_t>::kBridgeType =
+    ARK_PRINT_WRITE_RESULT_CALLBACK_ADAPTER;
 
 } // namespace OHOS::ArkWeb

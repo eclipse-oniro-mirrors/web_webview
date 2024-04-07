@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-#ifndef ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H
-#define ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H
+#ifndef ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H_
+#define ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H_
 #pragma once
 
-#include "capi/ark_web_base_ref_counted_capi.h"
-#include "include/ark_web_types.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 #include "ohos_init_web_adapter.h"
 
 #ifdef __cplusplus
@@ -42,4 +42,4 @@ typedef struct _ark_ohos_init_web_adapter_t {
 }
 #endif
 
-#endif // ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H
+#endif // ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H_

@@ -16,7 +16,7 @@
 #include "ark_paste_data_adapter_impl.h"
 
 #include "ark_paste_data_record_adapter_impl.h"
-#include "cpptoc/ark_paste_record_list_cpptoc.h"
+#include "cpptoc/ark_paste_record_vector_cpptoc.h"
 
 namespace OHOS::ArkWeb {
 
@@ -68,10 +68,10 @@ size_t ArkPasteDataAdapterImpl::GetRecordCount()
     return real_->GetRecordCount();
 }
 
-ArkPasteRecordList ArkPasteDataAdapterImpl::AllRecords()
+ArkPasteRecordVector ArkPasteDataAdapterImpl::AllRecords()
 {
-    NWeb::PasteRecordList list = real_->AllRecords();
-    return ArkPasteRecordListClassToStruct(list);
+    NWeb::PasteRecordVector temp = real_->AllRecords();
+    return ArkPasteRecordVectorClassToStruct(temp);
 }
 
 } // namespace OHOS::ArkWeb

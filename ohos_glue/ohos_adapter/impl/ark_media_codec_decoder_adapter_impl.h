@@ -31,9 +31,9 @@ public:
 
     int32_t CreateVideoDecoderByName(const ArkWebString& name) override;
 
-    int32_t ConfigureDecoder(const ArkDecoderFormat& format) override;
+    int32_t ConfigureDecoder(const ArkWebRefPtr<ArkDecoderFormatAdapter> format) override;
 
-    int32_t SetParameterDecoder(const ArkDecoderFormat& format) override;
+    int32_t SetParameterDecoder(const ArkWebRefPtr<ArkDecoderFormatAdapter> format) override;
 
     int32_t SetOutputSurface(void* window) override;
 
@@ -49,9 +49,10 @@ public:
 
     int32_t ReleaseDecoder() override;
 
-    int32_t QueueInputBufferDec(uint32_t index, ArkBufferInfo info, uint32_t flag) override;
+    int32_t QueueInputBufferDec(
+        uint32_t index, int64_t presentationTimeUs, int32_t size, int32_t offset, uint32_t flag) override;
 
-    int32_t GetOutputFormatDec(ArkDecoderFormat& format) override;
+    int32_t GetOutputFormatDec(ArkWebRefPtr<ArkDecoderFormatAdapter> format) override;
 
     int32_t ReleaseOutputBufferDec(uint32_t index, bool isRender) override;
 

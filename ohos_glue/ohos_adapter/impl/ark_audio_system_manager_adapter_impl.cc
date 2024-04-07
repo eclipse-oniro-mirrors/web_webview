@@ -15,44 +15,15 @@
 
 #include "ark_audio_system_manager_adapter_impl.h"
 
-#include "bridge/ark_web_bridge_macros.h"
+#include "cpptoc/ark_audio_device_desc_adapter_vector_cpptoc.h"
+#include "impl/ark_audio_device_desc_adapter_impl.h"
+#include "wrapper/ark_audio_interrupt_adapter_wrapper.h"
 #include "wrapper/ark_audio_manager_callback_adapter_wrapper.h"
 #include "wrapper/ark_audio_manager_device_change_callback_adapter_wrapper.h"
 
+#include "bridge/ark_web_bridge_macros.h"
+
 namespace OHOS::ArkWeb {
-
-static OHOS::NWeb::AudioAdapterDeviceDesc ConvertArkAudioAdapterDeviceDesc(const ArkAudioAdapterDeviceDesc& desc)
-{
-    OHOS::NWeb::AudioAdapterDeviceDesc result;
-    result.deviceId = desc.deviceId;
-    result.deviceName = ArkWebStringStructToClass(desc.deviceName);
-    return result;
-}
-
-static ArkAudioAdapterDeviceDesc ConvertAudioAdapterDeviceDesc(const OHOS::NWeb::AudioAdapterDeviceDesc& desc)
-{
-    ArkAudioAdapterDeviceDesc result;
-    result.deviceId = desc.deviceId;
-    result.deviceName = ArkWebStringClassToStruct(desc.deviceName);
-    return result;
-}
-
-static ArkAudioAdapterDeviceDescVector ConvertAudioAdapterDeviceDescVector(
-    const std::vector<OHOS::NWeb::AudioAdapterDeviceDesc>& desc)
-{
-    ArkAudioAdapterDeviceDescVector result = { .size = desc.size(), .ark_web_mem_free_func = ArkWebMemFree };
-    if (result.size > 0) {
-        result.value = (ArkAudioAdapterDeviceDesc*)ArkWebMemMalloc(sizeof(ArkAudioAdapterDeviceDesc) * result.size);
-
-        int count = 0;
-        for (auto it = desc.begin(); it != desc.end(); it++) {
-            result.value[count] = ConvertAudioAdapterDeviceDesc(*it);
-            count++;
-        }
-    }
-
-    return result;
-}
 
 ArkAudioSystemManagerAdapterImpl::ArkAudioSystemManagerAdapterImpl(NWeb::AudioSystemManagerAdapter& ref) : real_(ref) {}
 
@@ -66,14 +37,20 @@ bool ArkAudioSystemManagerAdapterImpl::HasAudioInputDevices()
     return real_.HasAudioInputDevices();
 }
 
-int32_t ArkAudioSystemManagerAdapterImpl::RequestAudioFocus(const ArkAudioAdapterInterrupt& audioInterrupt)
+int32_t ArkAudioSystemManagerAdapterImpl::RequestAudioFocus(const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt)
 {
-    return real_.RequestAudioFocus(audioInterrupt);
+    if (CHECK_REF_PTR_IS_NULL(audioInterrupt)) {
+        return real_.RequestAudioFocus(nullptr);
+    }
+    return real_.RequestAudioFocus(std::make_shared<ArkAudioInterruptAdapterWrapper>(audioInterrupt));
 }
 
-int32_t ArkAudioSystemManagerAdapterImpl::AbandonAudioFocus(const ArkAudioAdapterInterrupt& audioInterrupt)
+int32_t ArkAudioSystemManagerAdapterImpl::AbandonAudioFocus(const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt)
 {
-    return real_.AbandonAudioFocus(audioInterrupt);
+    if (CHECK_REF_PTR_IS_NULL(audioInterrupt)) {
+        return real_.AbandonAudioFocus(nullptr);
+    }
+    return real_.AbandonAudioFocus(std::make_shared<ArkAudioInterruptAdapterWrapper>(audioInterrupt));
 }
 
 int32_t ArkAudioSystemManagerAdapterImpl::SetAudioManagerInterruptCallback(
@@ -91,17 +68,16 @@ int32_t ArkAudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return real_.UnsetAudioManagerInterruptCallback();
 }
 
-ArkAudioAdapterDeviceDescVector ArkAudioSystemManagerAdapterImpl::GetDevices(int32_t flag)
+ArkAudioDeviceDescAdapterVector ArkAudioSystemManagerAdapterImpl::GetDevices(int32_t flag)
 {
-    std::vector<OHOS::NWeb::AudioAdapterDeviceDesc> descs = real_.GetDevices((OHOS::NWeb::AdapterDeviceFlag)flag);
-    return ConvertAudioAdapterDeviceDescVector(descs);
+    std::vector<std::shared_ptr<NWeb::AudioDeviceDescAdapter>> descs = real_.GetDevices((NWeb::AdapterDeviceFlag)flag);
+    ArkAudioDeviceDescAdapterVector result = ArkAudioDeviceDescAdapterVectorClassToStruct(descs);
+    return result;
 }
 
-int32_t ArkAudioSystemManagerAdapterImpl::SelectAudioDevice(ArkAudioAdapterDeviceDesc desc, bool isInput)
+int32_t ArkAudioSystemManagerAdapterImpl::SelectAudioDeviceById(int32_t id, bool isInput)
 {
-    OHOS::NWeb::AudioAdapterDeviceDesc nweb_desc = ConvertArkAudioAdapterDeviceDesc(desc);
-
-    return real_.SelectAudioDevice(nweb_desc, isInput);
+    return real_.SelectAudioDeviceById(id, isInput);
 }
 
 int32_t ArkAudioSystemManagerAdapterImpl::SetDeviceChangeCallback(
@@ -119,16 +95,24 @@ int32_t ArkAudioSystemManagerAdapterImpl::UnsetDeviceChangeCallback()
     return real_.UnsetDeviceChangeCallback();
 }
 
-ArkAudioAdapterDeviceDesc ArkAudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
+ArkWebRefPtr<ArkAudioDeviceDescAdapter> ArkAudioSystemManagerAdapterImpl::GetDefaultOutputDevice()
 {
-    OHOS::NWeb::AudioAdapterDeviceDesc desc = real_.GetDefaultOutputDevice();
-    return ConvertAudioAdapterDeviceDesc(desc);
+    std::shared_ptr<NWeb::AudioDeviceDescAdapter> desc = real_.GetDefaultOutputDevice();
+    if (CHECK_SHARED_PTR_IS_NULL(desc)) {
+        return nullptr;
+    }
+
+    return new ArkAudioDeviceDescAdapterImpl(desc);
 }
 
-ArkAudioAdapterDeviceDesc ArkAudioSystemManagerAdapterImpl::GetDefaultInputDevice()
+ArkWebRefPtr<ArkAudioDeviceDescAdapter> ArkAudioSystemManagerAdapterImpl::GetDefaultInputDevice()
 {
-    OHOS::NWeb::AudioAdapterDeviceDesc desc = real_.GetDefaultInputDevice();
-    return ConvertAudioAdapterDeviceDesc(desc);
+    std::shared_ptr<NWeb::AudioDeviceDescAdapter> desc = real_.GetDefaultInputDevice();
+    if (CHECK_SHARED_PTR_IS_NULL(desc)) {
+        return nullptr;
+    }
+
+    return new ArkAudioDeviceDescAdapterImpl(desc);
 }
 
 } // namespace OHOS::ArkWeb

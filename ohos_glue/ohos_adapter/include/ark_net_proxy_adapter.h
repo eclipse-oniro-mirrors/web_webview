@@ -18,39 +18,42 @@
 
 #include <memory>
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
+/*--ark web(source=web core)--*/
 class ArkNetProxyEventCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    ArkNetProxyEventCallbackAdapter() = default;
-    virtual ~ArkNetProxyEventCallbackAdapter() = default;
+  ArkNetProxyEventCallbackAdapter() = default;
+  virtual ~ArkNetProxyEventCallbackAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void Changed(const ArkWebString& host, const uint16_t& port, const ArkWebString& pacUrl,
-        const ArkWebStringVector& exclusionList) = 0;
+  /*--ark web()--*/
+  virtual void Changed(const ArkWebString &host, const uint16_t &port,
+                       const ArkWebString &pacUrl,
+                       const ArkWebStringVector &exclusionList) = 0;
 };
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkNetProxyAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    ArkNetProxyAdapter() = default;
-    virtual ~ArkNetProxyAdapter() = default;
+  ArkNetProxyAdapter() = default;
+  virtual ~ArkNetProxyAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void RegNetProxyEvent(ArkWebRefPtr<ArkNetProxyEventCallbackAdapter> eventCallback) = 0;
+  /*--ark web()--*/
+  virtual void RegNetProxyEvent(
+      ArkWebRefPtr<ArkNetProxyEventCallbackAdapter> eventCallback) = 0;
 
-    /*--web engine()--*/
-    virtual bool StartListen() = 0;
+  /*--ark web()--*/
+  virtual bool StartListen() = 0;
 
-    /*--web engine()--*/
-    virtual void StopListen() = 0;
+  /*--ark web()--*/
+  virtual void StopListen() = 0;
 
-    /*--web engine()--*/
-    virtual void GetProperty(ArkWebString& host, uint16_t& port, ArkWebString& pacUrl, ArkWebString& exclusion) = 0;
+  /*--ark web()--*/
+  virtual void GetProperty(ArkWebString &host, uint16_t &port,
+                           ArkWebString &pacUrl, ArkWebString &exclusion) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -489,8 +489,13 @@ napi_value NapiWebDownloadItem::JS_Cancel(napi_env env, napi_callback_info cbinf
         WVLOG_E("[DOWNLOAD] unwrap webDownloadItem failed");
         return nullptr;
     }
-
-    WebDownload_Cancel(webDownloadItem->download_item_callback);
+    if (webDownloadItem->download_item_callback) {
+        WebDownload_Cancel(webDownloadItem->download_item_callback);
+    } else if (webDownloadItem->before_download_callback) {
+        WebDownload_CancelBeforeDownload(webDownloadItem->before_download_callback);
+    } else {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_Cancel failed for callback nullptr");
+    }
     return nullptr;
 }
 
@@ -508,13 +513,20 @@ napi_value NapiWebDownloadItem::JS_Pause(napi_env env, napi_callback_info cbinfo
         WVLOG_E("[DOWNLOAD] unwrap webDownloadItem failed");
         return nullptr;
     }
-
-    if (webDownloadItem->state != NWebDownloadItemState::IN_PROGRESS) {
+    NWebDownloadItemState state = WebDownload_GetItemState(
+        webDownloadItem->nwebId, webDownloadItem->webDownloadId);
+    if (state != NWebDownloadItemState::IN_PROGRESS &&
+            state != NWebDownloadItemState::PENDING) {
         BusinessError::ThrowErrorByErrcode(env, DOWNLOAD_NOT_START);
         return nullptr;
     }
-
-    WebDownload_Pause(webDownloadItem->download_item_callback);
+    if (webDownloadItem->download_item_callback) {
+        WebDownload_Pause(webDownloadItem->download_item_callback);
+    } else if (webDownloadItem->before_download_callback) {
+        WebDownload_PauseBeforeDownload(webDownloadItem->before_download_callback);
+    } else {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_Pause failed for callback nullptr");
+    }
     return nullptr;
 }
 
@@ -533,12 +545,20 @@ napi_value NapiWebDownloadItem::JS_Resume(napi_env env, napi_callback_info cbinf
         return nullptr;
     }
 
-    if (webDownloadItem->state != NWebDownloadItemState::PAUSED) {
+    NWebDownloadItemState state = WebDownload_GetItemState(
+        webDownloadItem->nwebId, webDownloadItem->webDownloadId);
+    if (state != NWebDownloadItemState::PAUSED) {
         BusinessError::ThrowErrorByErrcode(env, DOWNLOAD_NOT_PAUSED);
         return nullptr;
     }
 
-    WebDownload_Resume(webDownloadItem->download_item_callback);
+    if (webDownloadItem->download_item_callback) {
+        WebDownload_Resume(webDownloadItem->download_item_callback);
+    } else if (webDownloadItem->before_download_callback) {
+        WebDownload_ResumeBeforeDownload(webDownloadItem->before_download_callback);
+    } else {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_Resume failed for callback nullptr");
+    }
     return nullptr;
 }
 

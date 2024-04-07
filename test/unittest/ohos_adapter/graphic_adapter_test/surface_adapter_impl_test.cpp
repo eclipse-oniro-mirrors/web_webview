@@ -23,6 +23,10 @@
 using testing::ext::TestSize;
 
 namespace OHOS::NWeb {
+namespace {
+const int32_t DEFAULT_WIDTH = 1396;
+const int32_t DEFAULT_HEIGHT = 1396;
+}
 class BufferConsumerListenerTest : public IBufferConsumerListenerAdapter {
 public:
     BufferConsumerListenerTest() = default;
@@ -68,6 +72,85 @@ BufferRequestConfig SurfaceAdapterImplTest::GetBufferRequestConfig(int32_t myFor
     };
     return requestConfig;
 }
+
+class BufferRequestConfigAdapterMock : public BufferRequestConfigAdapter {
+public:
+    BufferRequestConfigAdapterMock() = default;
+
+    ~BufferRequestConfigAdapterMock() override = default;
+
+    int32_t GetWidth() override
+    {
+        return DEFAULT_WIDTH;
+    }
+
+    int32_t GetHeight() override
+    {
+        return DEFAULT_HEIGHT;
+    }
+
+    int32_t GetStrideAlignment() override
+    {
+        return 1;
+    }
+
+    int32_t GetFormat() override
+    {
+        return 1;
+    }
+
+    uint64_t GetUsage() override
+    {
+        return 1;
+    }
+
+    int32_t GetTimeout() override
+    {
+        return 1;
+    }
+
+    ColorGamutAdapter GetColorGamut() override
+    {
+        return ColorGamutAdapter::STANDARD_BT601;
+    }
+
+    TransformTypeAdapter GetTransformType() override
+    {
+        return TransformTypeAdapter::ROTATE_90;
+    }
+};
+
+class BufferFlushConfigAdapterMock : public BufferFlushConfigAdapter {
+public:
+    BufferFlushConfigAdapterMock() = default;
+
+    ~BufferFlushConfigAdapterMock() override = default;
+
+    int32_t GetX() override
+    {
+        return 1;
+    }
+
+    int32_t GetY() override
+    {
+        return 1;
+    }
+
+    int32_t GetW() override
+    {
+        return DEFAULT_WIDTH;
+    }
+
+    int32_t GetH() override
+    {
+        return DEFAULT_HEIGHT;
+    }
+
+    int64_t GetTimestamp() override
+    {
+        return 1;
+    }
+};
 
 /**
  * @tc.name: InvalidSceneOfSurfaceAdapterImpl.
@@ -175,5 +258,55 @@ HWTEST(PixelFormatAdapterTest, HandlesNormalScene, TestSize.Level1)
     EXPECT_NE(PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, 0);
     EXPECT_EQ((int)PixelFormatAdapter::PIXEL_FMT_RGBA_8888, (int)GRAPHIC_PIXEL_FMT_RGBA_8888);
     EXPECT_EQ((int)PixelFormatAdapter::PIXEL_FMT_YCBCR_420_SP, (int)GRAPHIC_PIXEL_FMT_YCBCR_420_SP);
+}
+
+/**
+ * @tc.name: ProducerSurfaceAdapterImpl.
+ * @tc.desc: test normal scene of SurfaceAdapterImplTest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(SurfaceAdapterImplTest, ProducerSurfaceAdapterImpl, TestSize.Level1)
+{
+    int32_t fence = -1;
+    auto surfaceAdapter = std::make_unique<ConsumerSurfaceAdapterImpl>();
+    auto cSurface = surfaceAdapter->GetConsumerSurface();
+    auto producer = cSurface->GetProducer();
+    sptr<Surface> pSurface = Surface::CreateSurfaceAsProducer(producer);
+    ASSERT_NE(pSurface, nullptr);
+    auto adapter = std::make_unique<ProducerSurfaceAdapterImpl>(pSurface);
+    ASSERT_NE(adapter, nullptr);
+    GraphicTransformType type = adapter->TransToTransformType(TransformTypeAdapter::ROTATE_NONE);
+    EXPECT_EQ(type, GraphicTransformType::GRAPHIC_ROTATE_NONE);
+    type = adapter->TransToTransformType(static_cast<TransformTypeAdapter>(-1));
+    EXPECT_EQ(type, GraphicTransformType::GRAPHIC_ROTATE_NONE);
+    GraphicColorGamut gamut = adapter->TransToGraphicColorGamut(ColorGamutAdapter::INVALID);
+    EXPECT_EQ(gamut, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_INVALID);
+    gamut = adapter->TransToGraphicColorGamut(static_cast<ColorGamutAdapter>(-2));
+    EXPECT_EQ(gamut, GraphicColorGamut::GRAPHIC_COLOR_GAMUT_SRGB);
+    BufferRequestConfig config;
+    auto configAdapter = std::make_shared<BufferRequestConfigAdapterMock>();
+    ASSERT_NE(configAdapter, nullptr);
+    auto flushConfigAdapter = std::make_shared<BufferFlushConfigAdapterMock>();
+    ASSERT_NE(flushConfigAdapter, nullptr);
+    adapter->TransToBufferConfig(nullptr, config);
+    adapter->TransToBufferConfig(configAdapter, config);
+    std::shared_ptr<SurfaceBufferAdapter> buffer = adapter->RequestBuffer(fence, configAdapter);
+    ASSERT_NE(buffer, nullptr);
+    buffer = adapter->RequestBuffer(fence, nullptr);
+    ASSERT_EQ(buffer, nullptr);
+    int32_t result = adapter->FlushBuffer(nullptr, 1, flushConfigAdapter);
+    EXPECT_EQ(result, -1);
+    result = adapter->FlushBuffer(buffer, 1, flushConfigAdapter);
+    EXPECT_NE(result, 0);
+    result = adapter->FlushBuffer(buffer, 1, nullptr);
+    EXPECT_EQ(result, -1);
+    adapter->surface_ = nullptr;
+    buffer = adapter->RequestBuffer(fence, configAdapter);
+    EXPECT_EQ(buffer, nullptr);
+    result = adapter->FlushBuffer(buffer, 1, flushConfigAdapter);
+    EXPECT_EQ(result, -1);
+    result = adapter->FlushBuffer(nullptr, 1, flushConfigAdapter);
+    EXPECT_EQ(result, -1);
 }
 } // namespace OHOS::NWeb

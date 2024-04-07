@@ -18,22 +18,22 @@
 
 #pragma once
 
-#include "include/ark_media_codec_encoder_adapter.h"
+#include "include/ark_media_codec_adapter.h"
 #include "media_codec_adapter.h"
 
 namespace OHOS::ArkWeb {
-class ArkCodecCallbackAdapterWapper : public OHOS::NWeb::CodecCallbackAdapter {
+class ArkCodecCallbackAdapterWapper : public NWeb::CodecCallbackAdapter {
 public:
     ArkCodecCallbackAdapterWapper(ArkWebRefPtr<ArkCodecCallbackAdapter>);
 
     void OnError(OHOS::NWeb::ErrorType errorType, int32_t errorCode) override;
 
-    void OnStreamChanged(const OHOS::NWeb::CodecFormatAdapter& format) override;
+    void OnStreamChanged(const std::shared_ptr<NWeb::CodecFormatAdapter> format) override;
 
-    void OnNeedInputData(uint32_t index, OHOS::NWeb::OhosBuffer buffer) override;
+    void OnNeedInputData(uint32_t index, std::shared_ptr<NWeb::OhosBufferAdapter> buffer) override;
 
-    void OnNeedOutputData(uint32_t index, OHOS::NWeb::BufferInfo info, OHOS::NWeb::BufferFlag flag,
-        OHOS::NWeb::OhosBuffer buffer) override;
+    void OnNeedOutputData(uint32_t index, std::shared_ptr<NWeb::BufferInfoAdapter> info, NWeb::BufferFlag flag,
+        std::shared_ptr<NWeb::OhosBufferAdapter> buffer) override;
 
 private:
     ArkWebRefPtr<ArkCodecCallbackAdapter> ctocpp_;

@@ -13,181 +13,198 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_paste_data_record_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_paste_data_record_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/ctocpp/ark_clip_board_image_data_adapter_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
-ark_paste_data_record_adapter_t* ark_paste_data_record_adapter_new_record1(const ArkWebString* mimeType)
-{
-    ARK_WEB_CPPTOC_CHECK_PARAM(mimeType, NULL);
+ark_paste_data_record_adapter_t *
+ark_paste_data_record_adapter_new_record1(const ArkWebString *mimeType) {
+  ARK_WEB_CPPTOC_CHECK_PARAM(mimeType, NULL);
 
-    // Execute
-    ArkWebRefPtr<ArkPasteDataRecordAdapter> _retval = ArkPasteDataRecordAdapter::NewRecord(*mimeType);
+  // Execute
+  ArkWebRefPtr<ArkPasteDataRecordAdapter> _retval =
+      ArkPasteDataRecordAdapter::NewRecord(*mimeType);
 
-    // Return type: refptr_same
-    return ArkPasteDataRecordAdapterCppToC::Invert(_retval);
+  // Return type: refptr_same
+  return ArkPasteDataRecordAdapterCppToC::Invert(_retval);
 }
 
-ark_paste_data_record_adapter_t* ark_paste_data_record_adapter_new_record2(
-    const ArkWebString* mimeType, void* htmlText, void* plainText)
-{
-    ARK_WEB_CPPTOC_CHECK_PARAM(mimeType, NULL);
+ark_paste_data_record_adapter_t *
+ark_paste_data_record_adapter_new_record2(const ArkWebString *mimeType,
+                                          void *htmlText, void *plainText) {
+  ARK_WEB_CPPTOC_CHECK_PARAM(mimeType, NULL);
 
-    // Execute
-    ArkWebRefPtr<ArkPasteDataRecordAdapter> _retval =
-        ArkPasteDataRecordAdapter::NewRecord(*mimeType, htmlText, plainText);
+  ARK_WEB_CPPTOC_CHECK_PARAM(htmlText, NULL);
 
-    // Return type: refptr_same
-    return ArkPasteDataRecordAdapterCppToC::Invert(_retval);
+  ARK_WEB_CPPTOC_CHECK_PARAM(plainText, NULL);
+
+  // Execute
+  ArkWebRefPtr<ArkPasteDataRecordAdapter> _retval =
+      ArkPasteDataRecordAdapter::NewRecord(*mimeType, htmlText, plainText);
+
+  // Return type: refptr_same
+  return ArkPasteDataRecordAdapterCppToC::Invert(_retval);
 }
 
 namespace {
 
 bool ARK_WEB_CALLBACK ark_paste_data_record_adapter_set_html_text(
-    struct _ark_paste_data_record_adapter_t* self, void* htmlText)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self, void *htmlText) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkPasteDataRecordAdapterCppToC::Get(self)->SetHtmlText(htmlText);
+  ARK_WEB_CPPTOC_CHECK_PARAM(htmlText, false);
+
+  // Execute
+  return ArkPasteDataRecordAdapterCppToC::Get(self)->SetHtmlText(htmlText);
 }
 
 bool ARK_WEB_CALLBACK ark_paste_data_record_adapter_set_plain_text(
-    struct _ark_paste_data_record_adapter_t* self, void* plainText)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self, void *plainText) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkPasteDataRecordAdapterCppToC::Get(self)->SetPlainText(plainText);
+  ARK_WEB_CPPTOC_CHECK_PARAM(plainText, false);
+
+  // Execute
+  return ArkPasteDataRecordAdapterCppToC::Get(self)->SetPlainText(plainText);
 }
 
 bool ARK_WEB_CALLBACK ark_paste_data_record_adapter_set_img_data(
-    struct _ark_paste_data_record_adapter_t* self, void* imageData)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self,
+    ark_clip_board_image_data_adapter_t *imageData) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkPasteDataRecordAdapterCppToC::Get(self)->SetImgData(imageData);
+  // Execute
+  return ArkPasteDataRecordAdapterCppToC::Get(self)->SetImgData(
+      ArkClipBoardImageDataAdapterCToCpp::Invert(imageData));
 }
 
-ArkWebString ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_mime_type(struct _ark_paste_data_record_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ArkWebString ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_mime_type(
+    struct _ark_paste_data_record_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    // Execute
-    return ArkPasteDataRecordAdapterCppToC::Get(self)->GetMimeType();
+  // Execute
+  return ArkPasteDataRecordAdapterCppToC::Get(self)->GetMimeType();
 }
 
 void ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_html_text(
-    struct _ark_paste_data_record_adapter_t* self, void* data)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self, void *data) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkPasteDataRecordAdapterCppToC::Get(self)->GetHtmlText(data);
+  ARK_WEB_CPPTOC_CHECK_PARAM(data, );
+
+  // Execute
+  ArkPasteDataRecordAdapterCppToC::Get(self)->GetHtmlText(data);
 }
 
 void ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_plain_text(
-    struct _ark_paste_data_record_adapter_t* self, void* data)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self, void *data) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkPasteDataRecordAdapterCppToC::Get(self)->GetPlainText(data);
+  ARK_WEB_CPPTOC_CHECK_PARAM(data, );
+
+  // Execute
+  ArkPasteDataRecordAdapterCppToC::Get(self)->GetPlainText(data);
 }
 
 bool ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_img_data(
-    struct _ark_paste_data_record_adapter_t* self, void* imageData)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self,
+    ark_clip_board_image_data_adapter_t *imageData) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkPasteDataRecordAdapterCppToC::Get(self)->GetImgData(imageData);
+  // Execute
+  return ArkPasteDataRecordAdapterCppToC::Get(self)->GetImgData(
+      ArkClipBoardImageDataAdapterCToCpp::Invert(imageData));
 }
 
 bool ARK_WEB_CALLBACK ark_paste_data_record_adapter_set_uri(
-    struct _ark_paste_data_record_adapter_t* self, const ArkWebString* uriString)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self,
+    const ArkWebString *uriString) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(uriString, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(uriString, false);
 
-    // Execute
-    return ArkPasteDataRecordAdapterCppToC::Get(self)->SetUri(*uriString);
+  // Execute
+  return ArkPasteDataRecordAdapterCppToC::Get(self)->SetUri(*uriString);
 }
 
 bool ARK_WEB_CALLBACK ark_paste_data_record_adapter_set_custom_data(
-    struct _ark_paste_data_record_adapter_t* self, void* data)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self, void *data) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkPasteDataRecordAdapterCppToC::Get(self)->SetCustomData(data);
+  ARK_WEB_CPPTOC_CHECK_PARAM(data, false);
+
+  // Execute
+  return ArkPasteDataRecordAdapterCppToC::Get(self)->SetCustomData(data);
 }
 
-void ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_uri(struct _ark_paste_data_record_adapter_t* self, void* data)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_uri(
+    struct _ark_paste_data_record_adapter_t *self, void *data) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkPasteDataRecordAdapterCppToC::Get(self)->GetUri(data);
+  ARK_WEB_CPPTOC_CHECK_PARAM(data, );
+
+  // Execute
+  ArkPasteDataRecordAdapterCppToC::Get(self)->GetUri(data);
 }
 
 void ARK_WEB_CALLBACK ark_paste_data_record_adapter_get_custom_data(
-    struct _ark_paste_data_record_adapter_t* self, void* data)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_paste_data_record_adapter_t *self, void *data) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkPasteDataRecordAdapterCppToC::Get(self)->GetCustomData(data);
+  ARK_WEB_CPPTOC_CHECK_PARAM(data, );
+
+  // Execute
+  ArkPasteDataRecordAdapterCppToC::Get(self)->GetCustomData(data);
 }
 
 } // namespace
 
-ArkPasteDataRecordAdapterCppToC::ArkPasteDataRecordAdapterCppToC()
-{
-    GetStruct()->set_html_text = ark_paste_data_record_adapter_set_html_text;
-    GetStruct()->set_plain_text = ark_paste_data_record_adapter_set_plain_text;
-    GetStruct()->set_img_data = ark_paste_data_record_adapter_set_img_data;
-    GetStruct()->get_mime_type = ark_paste_data_record_adapter_get_mime_type;
-    GetStruct()->get_html_text = ark_paste_data_record_adapter_get_html_text;
-    GetStruct()->get_plain_text = ark_paste_data_record_adapter_get_plain_text;
-    GetStruct()->get_img_data = ark_paste_data_record_adapter_get_img_data;
-    GetStruct()->set_uri = ark_paste_data_record_adapter_set_uri;
-    GetStruct()->set_custom_data = ark_paste_data_record_adapter_set_custom_data;
-    GetStruct()->get_uri = ark_paste_data_record_adapter_get_uri;
-    GetStruct()->get_custom_data = ark_paste_data_record_adapter_get_custom_data;
+ArkPasteDataRecordAdapterCppToC::ArkPasteDataRecordAdapterCppToC() {
+  GetStruct()->set_html_text = ark_paste_data_record_adapter_set_html_text;
+  GetStruct()->set_plain_text = ark_paste_data_record_adapter_set_plain_text;
+  GetStruct()->set_img_data = ark_paste_data_record_adapter_set_img_data;
+  GetStruct()->get_mime_type = ark_paste_data_record_adapter_get_mime_type;
+  GetStruct()->get_html_text = ark_paste_data_record_adapter_get_html_text;
+  GetStruct()->get_plain_text = ark_paste_data_record_adapter_get_plain_text;
+  GetStruct()->get_img_data = ark_paste_data_record_adapter_get_img_data;
+  GetStruct()->set_uri = ark_paste_data_record_adapter_set_uri;
+  GetStruct()->set_custom_data = ark_paste_data_record_adapter_set_custom_data;
+  GetStruct()->get_uri = ark_paste_data_record_adapter_get_uri;
+  GetStruct()->get_custom_data = ark_paste_data_record_adapter_get_custom_data;
 }
 
-ArkPasteDataRecordAdapterCppToC::~ArkPasteDataRecordAdapterCppToC() {}
+ArkPasteDataRecordAdapterCppToC::~ArkPasteDataRecordAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkPasteDataRecordAdapterCppToC, ArkPasteDataRecordAdapter,
-    ark_paste_data_record_adapter_t>::kBridgeType = ARK_PASTE_DATA_RECORD_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkPasteDataRecordAdapterCppToC, ArkPasteDataRecordAdapter,
+    ark_paste_data_record_adapter_t>::kBridgeType =
+    ARK_PASTE_DATA_RECORD_ADAPTER;
 
 } // namespace OHOS::ArkWeb
 
@@ -195,20 +212,21 @@ ArkWebBridgeType ArkWebCppToCRefCounted<ArkPasteDataRecordAdapterCppToC, ArkPast
 extern "C" {
 #endif // __cplusplus
 
-ARK_WEB_EXPORT ark_paste_data_record_adapter_t* ark_paste_data_record_adapter_new_record1_static(
-    const ArkWebString* mimeType)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT ark_paste_data_record_adapter_t *
+ark_paste_data_record_adapter_new_record1_static(const ArkWebString *mimeType) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_paste_data_record_adapter_new_record1(mimeType);
+  return OHOS::ArkWeb::ark_paste_data_record_adapter_new_record1(mimeType);
 }
 
-ARK_WEB_EXPORT ark_paste_data_record_adapter_t* ark_paste_data_record_adapter_new_record2_static(
-    const ArkWebString* mimeType, void* htmlText, void* plainText)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT ark_paste_data_record_adapter_t *
+ark_paste_data_record_adapter_new_record2_static(const ArkWebString *mimeType,
+                                                 void *htmlText,
+                                                 void *plainText) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_paste_data_record_adapter_new_record2(mimeType, htmlText, plainText);
+  return OHOS::ArkWeb::ark_paste_data_record_adapter_new_record2(
+      mimeType, htmlText, plainText);
 }
 
 #ifdef __cplusplus

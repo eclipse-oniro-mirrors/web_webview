@@ -27,7 +27,7 @@ class ArkVSyncAdapterImpl : public ArkVSyncAdapter {
 public:
     ArkVSyncAdapterImpl(NWeb::VSyncAdapter&);
 
-    uint32_t RequestVsync(void* data, ArkVSyncCb cb) override;
+    uint32_t RequestVsync(void* data, void* cb) override;
 
     int64_t GetVSyncPeriod() override;
 

@@ -15,8 +15,10 @@
 
 #include "ark_audio_renderer_adapter_impl.h"
 
-#include "bridge/ark_web_bridge_macros.h"
 #include "wrapper/ark_audio_renderer_callback_adapter_wrapper.h"
+#include "wrapper/ark_audio_renderer_options_adapter_wrapper.h"
+
+#include "bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -25,10 +27,13 @@ ArkAudioRendererAdapterImpl::ArkAudioRendererAdapterImpl(std::shared_ptr<OHOS::N
 {}
 
 int32_t ArkAudioRendererAdapterImpl::Create(
-    const ArkAudioAdapterRendererOptions& rendererOptions, ArkWebString& cachePath)
+    const ArkWebRefPtr<ArkAudioRendererOptionsAdapter> options, ArkWebString& cachePath)
 {
     std::string str = ArkWebStringStructToClass(cachePath);
-    return real_->Create(rendererOptions, str);
+    if (CHECK_REF_PTR_IS_NULL(options)) {
+        return real_->Create(nullptr, str);
+    }
+    return real_->Create(std::make_shared<ArkAudioRendererOptionsAdapterWrapper>(options), str);
 }
 
 bool ArkAudioRendererAdapterImpl::Start()

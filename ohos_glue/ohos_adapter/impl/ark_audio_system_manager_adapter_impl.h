@@ -33,25 +33,25 @@ public:
 
     bool HasAudioInputDevices() override;
 
-    int32_t RequestAudioFocus(const ArkAudioAdapterInterrupt& audioInterrupt) override;
+    int32_t RequestAudioFocus(const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt) override;
 
-    int32_t AbandonAudioFocus(const ArkAudioAdapterInterrupt& audioInterrupt) override;
+    int32_t AbandonAudioFocus(const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt) override;
 
     int32_t SetAudioManagerInterruptCallback(ArkWebRefPtr<ArkAudioManagerCallbackAdapter> callback) override;
 
     int32_t UnsetAudioManagerInterruptCallback() override;
 
-    ArkAudioAdapterDeviceDescVector GetDevices(int32_t flag) override;
+    ArkAudioDeviceDescAdapterVector GetDevices(int32_t flag) override;
 
-    int32_t SelectAudioDevice(ArkAudioAdapterDeviceDesc desc, bool isInput) override;
+    int32_t SelectAudioDeviceById(int32_t deviceId, bool isInput) override;
 
     int32_t SetDeviceChangeCallback(ArkWebRefPtr<ArkAudioManagerDeviceChangeCallbackAdapter> callback) override;
 
     int32_t UnsetDeviceChangeCallback() override;
 
-    ArkAudioAdapterDeviceDesc GetDefaultOutputDevice() override;
+    ArkWebRefPtr<ArkAudioDeviceDescAdapter> GetDefaultOutputDevice() override;
 
-    ArkAudioAdapterDeviceDesc GetDefaultInputDevice() override;
+    ArkWebRefPtr<ArkAudioDeviceDescAdapter> GetDefaultInputDevice() override;
 
 private:
     NWeb::AudioSystemManagerAdapter& real_;

@@ -13,32 +13,37 @@
  * limitations under the License.
  */
 
-#include "ctocpp/ark_audio_capturer_read_callback_adapter_ctocpp.h"
-
-#include "ctocpp/ark_web_ctocpp_macros.h"
+#include "ohos_adapter/ctocpp/ark_audio_capturer_read_callback_adapter_ctocpp.h"
+#include "base/ctocpp/ark_web_ctocpp_macros.h"
 
 namespace OHOS::ArkWeb {
 
 ARK_WEB_NO_SANITIZE
-void ArkAudioCapturerReadCallbackAdapterCToCpp::OnReadData(size_t length)
-{
-    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+void ArkAudioCapturerReadCallbackAdapterCToCpp::OnReadData(size_t length) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 
-    ark_audio_capturer_read_callback_adapter_t* _struct = GetStruct();
-    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+  ark_audio_capturer_read_callback_adapter_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
-    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_read_data, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_read_data, );
 
-    // Execute
-    _struct->on_read_data(_struct, length);
+  // Execute
+  _struct->on_read_data(_struct, length);
 }
 
-ArkAudioCapturerReadCallbackAdapterCToCpp::ArkAudioCapturerReadCallbackAdapterCToCpp() {}
+ArkAudioCapturerReadCallbackAdapterCToCpp::
+    ArkAudioCapturerReadCallbackAdapterCToCpp() {
+}
 
-ArkAudioCapturerReadCallbackAdapterCToCpp::~ArkAudioCapturerReadCallbackAdapterCToCpp() {}
+ArkAudioCapturerReadCallbackAdapterCToCpp::
+    ~ArkAudioCapturerReadCallbackAdapterCToCpp() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCToCppRefCounted<ArkAudioCapturerReadCallbackAdapterCToCpp, ArkAudioCapturerReadCallbackAdapter,
-    ark_audio_capturer_read_callback_adapter_t>::kBridgeType = ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCToCppRefCounted<
+    ArkAudioCapturerReadCallbackAdapterCToCpp,
+    ArkAudioCapturerReadCallbackAdapter,
+    ark_audio_capturer_read_callback_adapter_t>::kBridgeType =
+    ARK_AUDIO_CAPTURER_READ_CALLBACK_ADAPTER;
 
 } // namespace OHOS::ArkWeb

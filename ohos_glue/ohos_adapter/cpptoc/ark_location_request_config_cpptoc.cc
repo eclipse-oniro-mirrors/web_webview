@@ -13,96 +13,92 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_location_request_config_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_location_request_config_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 void ARK_WEB_CALLBACK ark_location_request_config_set_scenario(
-    struct _ark_location_request_config_t* self, int32_t scenario)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_location_request_config_t *self, int32_t scenario) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkLocationRequestConfigCppToC::Get(self)->SetScenario(scenario);
+  // Execute
+  ArkLocationRequestConfigCppToC::Get(self)->SetScenario(scenario);
 }
 
 void ARK_WEB_CALLBACK ark_location_request_config_set_fix_number(
-    struct _ark_location_request_config_t* self, int32_t number)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_location_request_config_t *self, int32_t number) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkLocationRequestConfigCppToC::Get(self)->SetFixNumber(number);
+  // Execute
+  ArkLocationRequestConfigCppToC::Get(self)->SetFixNumber(number);
 }
 
 void ARK_WEB_CALLBACK ark_location_request_config_set_max_accuracy(
-    struct _ark_location_request_config_t* self, int32_t maxAccuary)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_location_request_config_t *self, int32_t maxAccuary) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkLocationRequestConfigCppToC::Get(self)->SetMaxAccuracy(maxAccuary);
+  // Execute
+  ArkLocationRequestConfigCppToC::Get(self)->SetMaxAccuracy(maxAccuary);
 }
 
 void ARK_WEB_CALLBACK ark_location_request_config_set_distance_interval(
-    struct _ark_location_request_config_t* self, int32_t disInterval)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_location_request_config_t *self, int32_t disInterval) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkLocationRequestConfigCppToC::Get(self)->SetDistanceInterval(disInterval);
+  // Execute
+  ArkLocationRequestConfigCppToC::Get(self)->SetDistanceInterval(disInterval);
 }
 
 void ARK_WEB_CALLBACK ark_location_request_config_set_time_interval(
-    struct _ark_location_request_config_t* self, int32_t timeInterval)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_location_request_config_t *self, int32_t timeInterval) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkLocationRequestConfigCppToC::Get(self)->SetTimeInterval(timeInterval);
+  // Execute
+  ArkLocationRequestConfigCppToC::Get(self)->SetTimeInterval(timeInterval);
 }
 
 void ARK_WEB_CALLBACK ark_location_request_config_set_priority(
-    struct _ark_location_request_config_t* self, int32_t priority)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_location_request_config_t *self, int32_t priority) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkLocationRequestConfigCppToC::Get(self)->SetPriority(priority);
+  // Execute
+  ArkLocationRequestConfigCppToC::Get(self)->SetPriority(priority);
 }
 
 } // namespace
 
-ArkLocationRequestConfigCppToC::ArkLocationRequestConfigCppToC()
-{
-    GetStruct()->set_scenario = ark_location_request_config_set_scenario;
-    GetStruct()->set_fix_number = ark_location_request_config_set_fix_number;
-    GetStruct()->set_max_accuracy = ark_location_request_config_set_max_accuracy;
-    GetStruct()->set_distance_interval = ark_location_request_config_set_distance_interval;
-    GetStruct()->set_time_interval = ark_location_request_config_set_time_interval;
-    GetStruct()->set_priority = ark_location_request_config_set_priority;
+ArkLocationRequestConfigCppToC::ArkLocationRequestConfigCppToC() {
+  GetStruct()->set_scenario = ark_location_request_config_set_scenario;
+  GetStruct()->set_fix_number = ark_location_request_config_set_fix_number;
+  GetStruct()->set_max_accuracy = ark_location_request_config_set_max_accuracy;
+  GetStruct()->set_distance_interval =
+      ark_location_request_config_set_distance_interval;
+  GetStruct()->set_time_interval =
+      ark_location_request_config_set_time_interval;
+  GetStruct()->set_priority = ark_location_request_config_set_priority;
 }
 
-ArkLocationRequestConfigCppToC::~ArkLocationRequestConfigCppToC() {}
+ArkLocationRequestConfigCppToC::~ArkLocationRequestConfigCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkLocationRequestConfigCppToC, ArkLocationRequestConfig,
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkLocationRequestConfigCppToC, ArkLocationRequestConfig,
     ark_location_request_config_t>::kBridgeType = ARK_LOCATION_REQUEST_CONFIG;
 
 } // namespace OHOS::ArkWeb
