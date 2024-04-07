@@ -1056,10 +1056,10 @@ public:
    * javascript.
    */
   /*--ark web()--*/
-  void PrecompileJavaScript(const std::string &url,
-                            const std::string &script,
-                            std::shared_ptr<OHOS::NWeb::CacheOptions> &cacheOptions,
-                            std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) override;
+  void PrecompileJavaScript(
+      const std::string &url, const std::string &script,
+      std::shared_ptr<OHOS::NWeb::CacheOptions> &cacheOptions,
+      std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) override;
 
   void OnCreateNativeMediaPlayer(
       std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback> callback)

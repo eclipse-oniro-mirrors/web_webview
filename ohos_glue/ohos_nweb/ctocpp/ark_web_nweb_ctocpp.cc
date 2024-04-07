@@ -2035,6 +2035,7 @@ void ArkWebNWebCToCpp::OnCreateNativeMediaPlayer(
   ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
   ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_create_native_media_player, );
+
   // Execute
   _struct->on_create_native_media_player(
       _struct, ArkWebCreateNativeMediaPlayerCallbackCppToC::Invert(callback));
@@ -2051,6 +2052,7 @@ void ArkWebNWebCToCpp::DragResize(uint32_t width,
   ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
   ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, drag_resize, );
+
   // Execute
   _struct->drag_resize(_struct, width, height, pre_height, pre_width);
 }
