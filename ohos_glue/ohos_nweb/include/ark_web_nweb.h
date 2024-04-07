@@ -1195,10 +1195,10 @@ public:
    * javascript.
    */
   /*--ark web()--*/
-  virtual void PrecompileJavaScript(const ArkWebString &url,
-                                    const ArkWebString &script,
-                                    ArkWebRefPtr<ArkWebCacheOptions> &cacheOptions,
-                                    ArkWebRefPtr<ArkWebMessageValueCallback> callback) = 0;
+  virtual void
+  PrecompileJavaScript(const ArkWebString &url, const ArkWebString &script,
+                       ArkWebRefPtr<ArkWebCacheOptions> &cacheOptions,
+                       ArkWebRefPtr<ArkWebMessageValueCallback> callback) = 0;
 
   /*--ark web()--*/
   virtual void OnCreateNativeMediaPlayer(
