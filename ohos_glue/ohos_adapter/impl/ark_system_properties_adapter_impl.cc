@@ -104,13 +104,13 @@ void ArkSystemPropertiesAdapterImpl::SetOOPGPUDisable()
     real_.SetOOPGPUDisable();
 }
 
-void ArkSystemPropertiesAdapterImpl::AttachSysPropObserver(
-    int32_t key, ArkSystemPropertiesObserver* observer) {
-    real_.AttachSysPropObserver((NWeb::PropertiesKey)key, observer);
+void ArkSystemPropertiesAdapterImpl::AttachSysPropObserver(int32_t key, void* observer)
+{
+    real_.AttachSysPropObserver((NWeb::PropertiesKey)key, (NWeb::SystemPropertiesObserver*)observer);
 }
 
-void ArkSystemPropertiesAdapterImpl::DetachSysPropObserver(
-    int32_t key, ArkSystemPropertiesObserver* observer) {
-    real_.DetachSysPropObserver((NWeb::PropertiesKey)key, observer);
+void ArkSystemPropertiesAdapterImpl::DetachSysPropObserver(int32_t key, void* observer)
+{
+    real_.DetachSysPropObserver((NWeb::PropertiesKey)key, (NWeb::SystemPropertiesObserver*)observer);
 }
 } // namespace OHOS::ArkWeb

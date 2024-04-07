@@ -20,9 +20,6 @@
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_init_web_adapter.h"
-
-using ArkWebRunInitedCallback = OHOS::NWeb::WebRunInitedCallback;
 
 namespace OHOS::ArkWeb {
 
@@ -35,11 +32,11 @@ public:
   /*--ark web()--*/
   virtual ~ArkOhosInitWebAdapter() = default;
 
-    /*--ark web()--*/
-    virtual ArkWebRunInitedCallback* GetRunWebInitedCallback() = 0;
+  /*--ark web()--*/
+  virtual void *GetRunWebInitedCallback() = 0;
 
-    /*--ark web()--*/
-    virtual void SetRunWebInitedCallback(ArkWebRunInitedCallback* callback) = 0;
+  /*--ark web()--*/
+  virtual void SetRunWebInitedCallback(void *callback) = 0;
 };
 } // namespace OHOS::ArkWeb
 
