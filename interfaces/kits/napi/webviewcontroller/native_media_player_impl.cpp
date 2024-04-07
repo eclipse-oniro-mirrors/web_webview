@@ -377,7 +377,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructControls(
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructHeaders(
     napi_value* value, const std::map<std::string, std::string>& headers)
 {
-    NAPI_CALL_RETURN_VOID(env_, napi_create_array_with_length(env_, headers.size(), value));
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
     for (const auto& header : headers) {
         napi_value argv;
@@ -389,7 +389,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructHeaders(
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructAttributes(
     napi_value* value, const std::map<std::string, std::string>& attributes)
 {
-    NAPI_CALL_RETURN_VOID(env_, napi_create_array_with_length(env_, attributes.size(), value));
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
     for (const auto& attribute : attributes) {
         napi_value argv;
