@@ -20,14 +20,14 @@ namespace OHOS::ArkWeb {
 ArkOhosInitWebAdapterImpl::ArkOhosInitWebAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter> ref) : real_(ref)
 {}
 
-NWeb::WebRunInitedCallback* ArkOhosInitWebAdapterImpl::GetRunWebInitedCallback()
+void* ArkOhosInitWebAdapterImpl::GetRunWebInitedCallback()
 {
-    return real_->GetRunWebInitedCallback();
+    return (void*)real_->GetRunWebInitedCallback();
 }
 
-void ArkOhosInitWebAdapterImpl::SetRunWebInitedCallback(NWeb::WebRunInitedCallback* callback)
+void ArkOhosInitWebAdapterImpl::SetRunWebInitedCallback(void* callback)
 {
-    real_->SetRunWebInitedCallback(callback);
+    real_->SetRunWebInitedCallback((NWeb::WebRunInitedCallback*)callback);
 }
 
 } // namespace OHOS::ArkWeb
