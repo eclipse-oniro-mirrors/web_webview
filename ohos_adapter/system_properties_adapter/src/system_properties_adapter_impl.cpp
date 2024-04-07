@@ -105,8 +105,27 @@ int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion()
 
 ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
 {
-    std::string factoryLevel = NWebAdapterHelper::Instance().
-        ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
+    ProductDeviceType factoryLevel = AnalysisFromConfig();
+    if (factoryLevel != ProductDeviceType::DEVICE_TYPE_UNKNOWN) {
+        return factoryLevel;
+    }
+    WVLOG_W("read config factoryLevel: fail");
+    // RK or other device cant read config，need read from system deviceType
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        return ProductDeviceType::DEVICE_TYPE_MOBILE;
+    } else if (deviceType == "tablet") {
+        return ProductDeviceType::DEVICE_TYPE_TABLET;
+    } else if (deviceType == "2in1") {
+        return ProductDeviceType::DEVICE_TYPE_2IN1;
+    }
+    return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
+}
+
+ProductDeviceType SystemPropertiesAdapterImpl::AnalysisFromConfig()
+{
+    std::string factoryLevel = NWebAdapterHelper::Instance()
+        .ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
     if (factoryLevel.empty()) {
         NWebAdapterHelper::Instance().ReadConfigIfNeeded();
         factoryLevel = NWebAdapterHelper::Instance().
