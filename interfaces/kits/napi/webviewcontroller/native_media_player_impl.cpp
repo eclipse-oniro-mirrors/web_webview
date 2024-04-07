@@ -430,11 +430,11 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructMediaInfo(
 
     napi_value headersMap;
     ConstructHeaders(&headersMap, mediaInfo->GetHeaders());
-    napi_set_named_property(env_, *value, "headersMap", headersMap);
+    napi_set_named_property(env_, *value, "headers", headersMap);
 
     napi_value attributesMap;
     ConstructAttributes(&attributesMap, mediaInfo->GetAttributes());
-    napi_set_named_property(env_, *value, "attributesMap", attributesMap);
+    napi_set_named_property(env_, *value, "attributes", attributesMap);
 
     napi_value isMuted;
     napi_get_boolean(env_, mediaInfo->GetIsMuted(), &isMuted);

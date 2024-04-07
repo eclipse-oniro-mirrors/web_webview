@@ -41,7 +41,7 @@ napi_status NapiNativeMediaPlayerHandler::DefineProperties(napi_env env, napi_va
         DECLARE_NAPI_FUNCTION("handleEnded", NapiNativeMediaPlayerHandler::HandleEnded),
         DECLARE_NAPI_FUNCTION("handleNetworkStateChanged", NapiNativeMediaPlayerHandler::HandleNetworkStateChanged),
         DECLARE_NAPI_FUNCTION("handleReadyStateChanged", NapiNativeMediaPlayerHandler::HandleReadyStateChanged),
-        DECLARE_NAPI_FUNCTION("handleFullScreenChanged", NapiNativeMediaPlayerHandler::HandleFullScreenChanged),
+        DECLARE_NAPI_FUNCTION("handleFullscreenChanged", NapiNativeMediaPlayerHandler::HandleFullScreenChanged),
         DECLARE_NAPI_FUNCTION("handleSeeking", NapiNativeMediaPlayerHandler::HandleSeeking),
         DECLARE_NAPI_FUNCTION("handleSeekFinished", NapiNativeMediaPlayerHandler::HandleSeekFinished),
         DECLARE_NAPI_FUNCTION("handleError", NapiNativeMediaPlayerHandler::HandleError),
