@@ -13,19 +13,19 @@
  * limitations under the License.
  */
 
-#include <cstring>
 #include <cstdint>
+#include <cstring>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <securec.h>
 #include <thread>
 
 #include "accesstoken_kit.h"
+#include "foundation/graphic/graphic_surface/surface/include/surface_buffer_impl.h"
 #include "nativetoken_kit.h"
 #include "nweb_adapter_helper.h"
-#include "token_setproc.h"
 #include "screen_capture.h"
-#include "foundation/graphic/graphic_surface/surface/include/surface_buffer_impl.h"
+#include "token_setproc.h"
 
 #define private public
 #include "screen_capture_adapter_impl.h"
@@ -50,17 +50,215 @@ public:
     MOCK_METHOD0(StopScreenCapture, int32_t());
     MOCK_METHOD0(StartScreenRecording, int32_t());
     MOCK_METHOD0(StopScreenRecording, int32_t());
-    MOCK_METHOD2(AcquireAudioBuffer, int32_t(std::shared_ptr<AudioBuffer> &, AudioCaptureSourceType));
-    MOCK_METHOD3(AcquireVideoBuffer, sptr<OHOS::SurfaceBuffer>(int32_t &, int64_t &, OHOS::Rect &));
+    MOCK_METHOD2(AcquireAudioBuffer, int32_t(std::shared_ptr<AudioBuffer>&, AudioCaptureSourceType));
+    MOCK_METHOD3(AcquireVideoBuffer, sptr<OHOS::SurfaceBuffer>(int32_t&, int64_t&, OHOS::Rect&));
     MOCK_METHOD1(ReleaseAudioBuffer, int32_t(AudioCaptureSourceType));
     MOCK_METHOD0(ReleaseVideoBuffer, int32_t());
     MOCK_METHOD0(Release, int32_t());
-    MOCK_METHOD1(SetScreenCaptureCallback, int32_t(const std::shared_ptr<ScreenCaptureCallBack> &));
-    MOCK_METHOD1(ExcludeContent, int32_t(ScreenCaptureContentFilter &));
+    MOCK_METHOD1(SetScreenCaptureCallback, int32_t(const std::shared_ptr<ScreenCaptureCallBack>&));
+    MOCK_METHOD1(ExcludeContent, int32_t(ScreenCaptureContentFilter&));
     MOCK_METHOD0(SetPrivacyAuthorityEnabled, int32_t());
 };
 } // namespace Media
 namespace NWeb {
+
+class MockAudioCaptureInfoAdapter : public AudioCaptureInfoAdapter {
+public:
+    MockAudioCaptureInfoAdapter() = default;
+
+    int32_t GetAudioSampleRate() override
+    {
+        return audioSampleRate;
+    }
+
+    int32_t GetAudioChannels() override
+    {
+        return audioChannels;
+    }
+
+    AudioCaptureSourceTypeAdapter GetAudioSource() override
+    {
+        return audioSource;
+    }
+
+    int32_t audioSampleRate;
+    int32_t audioChannels;
+    AudioCaptureSourceTypeAdapter audioSource = AudioCaptureSourceTypeAdapter::SOURCE_DEFAULT;
+};
+
+class MockAudioEncInfoAdapter : public AudioEncInfoAdapter {
+public:
+    MockAudioEncInfoAdapter() = default;
+
+    int32_t GetAudioBitrate() override
+    {
+        return audioBitrate;
+    }
+
+    AudioCodecFormatAdapter GetAudioCodecformat() override
+    {
+        return audioCodecformat;
+    }
+
+    int32_t audioBitrate = 0;
+    AudioCodecFormatAdapter audioCodecformat = AudioCodecFormatAdapter::AUDIO_DEFAULT;
+};
+
+class MockAudioInfoAdapter : public AudioInfoAdapter {
+public:
+    MockAudioInfoAdapter() = default;
+
+    std::shared_ptr<AudioCaptureInfoAdapter> GetMicCapInfo() override
+    {
+        return micCapInfo;
+    }
+
+    std::shared_ptr<AudioCaptureInfoAdapter> GetInnerCapInfo() override
+    {
+        return innerCapInfo;
+    }
+
+    std::shared_ptr<AudioEncInfoAdapter> GetAudioEncInfo() override
+    {
+        return audioEncInfo;
+    }
+
+    std::shared_ptr<MockAudioCaptureInfoAdapter> micCapInfo = nullptr;
+    std::shared_ptr<MockAudioCaptureInfoAdapter> innerCapInfo = nullptr;
+    std::shared_ptr<MockAudioEncInfoAdapter> audioEncInfo = nullptr;
+};
+
+class MockVideoCaptureInfoAdapter : public VideoCaptureInfoAdapter {
+public:
+    MockVideoCaptureInfoAdapter() = default;
+
+    uint64_t GetDisplayId() override
+    {
+        return displayId;
+    }
+
+    std::list<int32_t> GetTaskIDs() override
+    {
+        return taskIDs;
+    }
+
+    int32_t GetVideoFrameWidth() override
+    {
+        return videoFrameWidth;
+    }
+
+    int32_t GetVideoFrameHeight() override
+    {
+        return videoFrameHeight;
+    }
+
+    VideoSourceTypeAdapter GetVideoSourceType() override
+    {
+        return videoSource;
+    }
+
+    uint64_t displayId = 0;
+    std::list<int32_t> taskIDs;
+    int32_t videoFrameWidth = 0;
+    int32_t videoFrameHeight = 0;
+    VideoSourceTypeAdapter videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_RGBA;
+};
+
+class MockVideoEncInfoAdapter : public VideoEncInfoAdapter {
+public:
+    MockVideoEncInfoAdapter() = default;
+
+    VideoCodecFormatAdapter GetVideoCodecFormat() override
+    {
+        return videoCodec;
+    }
+
+    int32_t GetVideoBitrate() override
+    {
+        return videoBitrate;
+    }
+
+    int32_t GetVideoFrameRate() override
+    {
+        return videoFrameRate;
+    }
+
+    VideoCodecFormatAdapter videoCodec = VideoCodecFormatAdapter::VIDEO_DEFAULT;
+    int32_t videoBitrate = 0;
+    int32_t videoFrameRate = 0;
+};
+
+class MockVideoInfoAdapter : public VideoInfoAdapter {
+public:
+    MockVideoInfoAdapter() = default;
+
+    std::shared_ptr<VideoCaptureInfoAdapter> GetVideoCapInfo()
+    {
+        return videoCapInfo;
+    }
+
+    std::shared_ptr<VideoEncInfoAdapter> GetVideoEncInfo()
+    {
+        return videoEncInfo;
+    }
+
+    std::shared_ptr<MockVideoCaptureInfoAdapter> videoCapInfo = nullptr;
+    std::shared_ptr<MockVideoEncInfoAdapter> videoEncInfo = nullptr;
+};
+
+class MockRecorderInfoAdapter : public RecorderInfoAdapter {
+public:
+    MockRecorderInfoAdapter() = default;
+
+    std::string GetUrl() override
+    {
+        return url;
+    }
+
+    ContainerFormatTypeAdapter GetFileFormat() override
+    {
+        return fileFormat;
+    }
+
+    std::string url = "";
+    ContainerFormatTypeAdapter fileFormat = ContainerFormatTypeAdapter::CFT_MPEG_4A_TYPE;
+};
+
+class MockScreenCaptureConfigAdapter : public ScreenCaptureConfigAdapter {
+public:
+    MockScreenCaptureConfigAdapter() = default;
+
+    CaptureModeAdapter GetCaptureMode() override
+    {
+        return captureMode;
+    }
+
+    DataTypeAdapter GetDataType() override
+    {
+        return dataType;
+    }
+
+    std::shared_ptr<AudioInfoAdapter> GetAudioInfo()
+    {
+        return audioInfo;
+    }
+
+    std::shared_ptr<VideoInfoAdapter> GetVideoInfo()
+    {
+        return videoInfo;
+    }
+
+    std::shared_ptr<RecorderInfoAdapter> GetRecorderInfo()
+    {
+        return recorderInfo;
+    }
+
+    CaptureModeAdapter captureMode = CaptureModeAdapter::CAPTURE_INVAILD;
+    DataTypeAdapter dataType = DataTypeAdapter::INVAILD_DATA_TYPE;
+    std::shared_ptr<MockAudioInfoAdapter> audioInfo = nullptr;
+    std::shared_ptr<MockVideoInfoAdapter> videoInfo = nullptr;
+    std::shared_ptr<MockRecorderInfoAdapter> recorderInfo = nullptr;
+};
 
 namespace {
 constexpr int32_t AUDIO_SAMPLE_RATE = 16000;
@@ -68,6 +266,15 @@ constexpr int32_t AUDIO_CHANNELS = 2;
 constexpr int32_t SCREEN_WIDTH = 1080;
 constexpr int32_t SCREEN_HEIGHT = 720;
 std::shared_ptr<ScreenCaptureAdapterImpl> g_screenCapture = nullptr;
+std::shared_ptr<MockAudioCaptureInfoAdapter> g_micCapInfo = nullptr;
+std::shared_ptr<MockAudioCaptureInfoAdapter> g_innerCapInfo = nullptr;
+std::shared_ptr<MockAudioEncInfoAdapter> g_audioEncInfo = nullptr;
+std::shared_ptr<MockAudioInfoAdapter> g_audioInfo = nullptr;
+std::shared_ptr<MockVideoCaptureInfoAdapter> g_videoCaptureInfo = nullptr;
+std::shared_ptr<MockVideoEncInfoAdapter> g_videoEncInfo = nullptr;
+std::shared_ptr<MockVideoInfoAdapter> g_videoInfo = nullptr;
+std::shared_ptr<MockRecorderInfoAdapter> g_recorderInfo = nullptr;
+std::shared_ptr<MockScreenCaptureConfigAdapter> g_screenCaptureConfig = nullptr;
 
 class ScreenCaptureCallbackAdapterTest : public ScreenCaptureCallbackAdapter {
 public:
@@ -96,7 +303,7 @@ public:
         }
     }
 };
-}
+} // namespace
 
 class ScreenCaptureAdapterImplTest : public testing::Test {
 public:
@@ -110,7 +317,7 @@ void ScreenCaptureAdapterImplTest::SetUpTestCase(void)
 {
     // set native token
     uint64_t tokenId;
-    const char *perms[2];
+    const char* perms[2];
     perms[0] = "ohos.permission.CAPTURE_SCREEN";
     perms[1] = "ohos.permission.MICROPHONE";
     NativeTokenInfoParams infoInstance = {
@@ -126,30 +333,55 @@ void ScreenCaptureAdapterImplTest::SetUpTestCase(void)
     tokenId = GetAccessTokenId(&infoInstance);
     SetSelfTokenID(tokenId);
     OHOS::Security::AccessToken::AccessTokenKit::ReloadNativeTokenInfo();
-    
+
     g_screenCapture = std::make_shared<ScreenCaptureAdapterImpl>();
+    g_micCapInfo = std::make_shared<MockAudioCaptureInfoAdapter>();
+    g_innerCapInfo = std::make_shared<MockAudioCaptureInfoAdapter>();
+    g_audioEncInfo = std::make_shared<MockAudioEncInfoAdapter>();
+    g_audioInfo = std::make_shared<MockAudioInfoAdapter>();
+    g_videoCaptureInfo = std::make_shared<MockVideoCaptureInfoAdapter>();
+    g_videoEncInfo = std::make_shared<MockVideoEncInfoAdapter>();
+    g_videoInfo = std::make_shared<MockVideoInfoAdapter>();
+    g_recorderInfo = std::make_shared<MockRecorderInfoAdapter>();
+    g_screenCaptureConfig = std::make_shared<MockScreenCaptureConfigAdapter>();
+
     EXPECT_NE(g_screenCapture, nullptr);
-    ScreenCaptureConfigAdapter config;
-    config.captureMode = CaptureModeAdapter::CAPTURE_HOME_SCREEN;
-    config.dataType = DataTypeAdapter::ORIGINAL_STREAM_DATA_TYPE;
-    config.audioInfo.micCapInfo.audioSampleRate = AUDIO_SAMPLE_RATE;
-    config.audioInfo.micCapInfo.audioChannels = AUDIO_CHANNELS;
-    config.audioInfo.innerCapInfo.audioSampleRate = AUDIO_SAMPLE_RATE;
-    config.audioInfo.innerCapInfo.audioChannels = AUDIO_CHANNELS;
-    config.videoInfo.videoCapInfo.videoFrameWidth = SCREEN_WIDTH;
-    config.videoInfo.videoCapInfo.videoFrameHeight = SCREEN_HEIGHT;
-    int32_t result = g_screenCapture->Init(config);
+    EXPECT_NE(g_micCapInfo, nullptr);
+    EXPECT_NE(g_innerCapInfo, nullptr);
+    EXPECT_NE(g_audioEncInfo, nullptr);
+    EXPECT_NE(g_audioInfo, nullptr);
+    EXPECT_NE(g_videoCaptureInfo, nullptr);
+    EXPECT_NE(g_videoEncInfo, nullptr);
+    EXPECT_NE(g_videoInfo, nullptr);
+    EXPECT_NE(g_recorderInfo, nullptr);
+    EXPECT_NE(g_screenCaptureConfig, nullptr);
+
+    g_screenCaptureConfig->captureMode = CaptureModeAdapter::CAPTURE_HOME_SCREEN;
+    g_screenCaptureConfig->dataType = DataTypeAdapter::ORIGINAL_STREAM_DATA_TYPE;
+    g_micCapInfo->audioSampleRate = AUDIO_SAMPLE_RATE;
+    g_micCapInfo->audioChannels = AUDIO_CHANNELS;
+    g_innerCapInfo->audioSampleRate = AUDIO_SAMPLE_RATE;
+    g_innerCapInfo->audioChannels = AUDIO_CHANNELS;
+    g_audioInfo->micCapInfo = g_micCapInfo;
+    g_audioInfo->innerCapInfo = g_innerCapInfo;
+    g_audioInfo->audioEncInfo = g_audioEncInfo;
+    g_videoCaptureInfo->videoFrameWidth = SCREEN_WIDTH;
+    g_videoCaptureInfo->videoFrameHeight = SCREEN_HEIGHT;
+    g_videoInfo->videoCapInfo = g_videoCaptureInfo;
+    g_videoInfo->videoEncInfo = g_videoEncInfo;
+    g_screenCaptureConfig->audioInfo = g_audioInfo;
+    g_screenCaptureConfig->videoInfo = g_videoInfo;
+    g_screenCaptureConfig->recorderInfo = g_recorderInfo;
+
+    int32_t result = g_screenCapture->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, 0);
 }
 
-void ScreenCaptureAdapterImplTest::TearDownTestCase(void)
-{}
+void ScreenCaptureAdapterImplTest::TearDownTestCase(void) {}
 
-void ScreenCaptureAdapterImplTest::SetUp(void)
-{}
+void ScreenCaptureAdapterImplTest::SetUp(void) {}
 
-void ScreenCaptureAdapterImplTest::TearDown(void)
-{}
+void ScreenCaptureAdapterImplTest::TearDown(void) {}
 
 /**
  * @tc.name: ScreenCaptureAdapterImplTest_Init_001
@@ -161,50 +393,49 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_Init_001, Te
 {
     auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
     EXPECT_NE(adapterImpl, nullptr);
-    ScreenCaptureConfigAdapter config;
-    config.captureMode = CaptureModeAdapter::CAPTURE_INVAILD;
-    config.dataType = DataTypeAdapter::INVAILD_DATA_TYPE;
-    config.audioInfo.micCapInfo.audioSampleRate = AUDIO_SAMPLE_RATE;
-    config.audioInfo.micCapInfo.audioChannels = AUDIO_CHANNELS;
-    config.audioInfo.innerCapInfo.audioSampleRate = AUDIO_SAMPLE_RATE;
-    config.audioInfo.innerCapInfo.audioChannels = AUDIO_CHANNELS;
-    config.videoInfo.videoCapInfo.videoFrameWidth = SCREEN_WIDTH;
-    config.videoInfo.videoCapInfo.videoFrameHeight = SCREEN_HEIGHT;
-    config.audioInfo.micCapInfo.audioSource = AudioCaptureSourceTypeAdapter::SOURCE_INVALID;
-    config.audioInfo.audioEncInfo.audioCodecformat = AudioCodecFormatAdapter::AUDIO_DEFAULT;
-    config.videoInfo.videoCapInfo.videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_YUV;
-    config.videoInfo.videoEncInfo.videoCodec = VideoCodecFormatAdapter::VIDEO_DEFAULT;
-    int32_t result = adapterImpl->Init(config);
+    g_screenCaptureConfig->captureMode = CaptureModeAdapter::CAPTURE_INVAILD;
+    g_screenCaptureConfig->dataType = DataTypeAdapter::INVAILD_DATA_TYPE;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioSampleRate = AUDIO_SAMPLE_RATE;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioChannels = AUDIO_CHANNELS;
+    g_screenCaptureConfig->audioInfo->innerCapInfo->audioSampleRate = AUDIO_SAMPLE_RATE;
+    g_screenCaptureConfig->audioInfo->innerCapInfo->audioChannels = AUDIO_CHANNELS;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoFrameWidth = SCREEN_WIDTH;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoFrameHeight = SCREEN_HEIGHT;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioSource = AudioCaptureSourceTypeAdapter::SOURCE_INVALID;
+    g_screenCaptureConfig->audioInfo->audioEncInfo->audioCodecformat = AudioCodecFormatAdapter::AUDIO_DEFAULT;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_YUV;
+    g_screenCaptureConfig->videoInfo->videoEncInfo->videoCodec = VideoCodecFormatAdapter::VIDEO_DEFAULT;
+    int32_t result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
-    config.captureMode = CaptureModeAdapter::CAPTURE_HOME_SCREEN;
-    config.dataType = DataTypeAdapter::ENCODED_STREAM_DATA_TYPE;
-    config.audioInfo.micCapInfo.audioSource = AudioCaptureSourceTypeAdapter::SOURCE_DEFAULT;
-    config.audioInfo.audioEncInfo.audioCodecformat = AudioCodecFormatAdapter::AAC_LC;
-    config.videoInfo.videoCapInfo.videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_ES;
-    config.videoInfo.videoEncInfo.videoCodec = VideoCodecFormatAdapter::H264;
-    result = adapterImpl->Init(config);
+    g_screenCaptureConfig->captureMode = CaptureModeAdapter::CAPTURE_HOME_SCREEN;
+    g_screenCaptureConfig->dataType = DataTypeAdapter::ENCODED_STREAM_DATA_TYPE;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioSource = AudioCaptureSourceTypeAdapter::SOURCE_DEFAULT;
+    g_screenCaptureConfig->audioInfo->audioEncInfo->audioCodecformat = AudioCodecFormatAdapter::AAC_LC;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_ES;
+    g_screenCaptureConfig->videoInfo->videoEncInfo->videoCodec = VideoCodecFormatAdapter::H264;
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
-    config.captureMode = CaptureModeAdapter::CAPTURE_SPECIFIED_SCREEN;
-    config.dataType = DataTypeAdapter::CAPTURE_FILE_DATA_TYPE;
-    config.audioInfo.micCapInfo.audioSource =  AudioCaptureSourceTypeAdapter::MIC;
-    config.audioInfo.audioEncInfo.audioCodecformat = AudioCodecFormatAdapter::AUDIO_CODEC_FORMAT_BUTT;
-    config.videoInfo.videoCapInfo.videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_RGBA;
-    config.videoInfo.videoEncInfo.videoCodec = VideoCodecFormatAdapter::H265;
-    result = adapterImpl->Init(config);
+    g_screenCaptureConfig->captureMode = CaptureModeAdapter::CAPTURE_SPECIFIED_SCREEN;
+    g_screenCaptureConfig->dataType = DataTypeAdapter::CAPTURE_FILE_DATA_TYPE;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioSource = AudioCaptureSourceTypeAdapter::MIC;
+    g_screenCaptureConfig->audioInfo->audioEncInfo->audioCodecformat = AudioCodecFormatAdapter::AUDIO_CODEC_FORMAT_BUTT;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_SURFACE_RGBA;
+    g_screenCaptureConfig->videoInfo->videoEncInfo->videoCodec = VideoCodecFormatAdapter::H265;
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
-    config.captureMode = CaptureModeAdapter::CAPTURE_SPECIFIED_WINDOW;
-    config.dataType = DataTypeAdapter::ORIGINAL_STREAM_DATA_TYPE;
-    config.audioInfo.micCapInfo.audioSource = AudioCaptureSourceTypeAdapter::ALL_PLAYBACK;
-    config.videoInfo.videoCapInfo.videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_BUTT;
-    config.videoInfo.videoEncInfo.videoCodec = VideoCodecFormatAdapter::MPEG4;
-    result = adapterImpl->Init(config);
+    g_screenCaptureConfig->captureMode = CaptureModeAdapter::CAPTURE_SPECIFIED_WINDOW;
+    g_screenCaptureConfig->dataType = DataTypeAdapter::ORIGINAL_STREAM_DATA_TYPE;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioSource = AudioCaptureSourceTypeAdapter::ALL_PLAYBACK;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoSource = VideoSourceTypeAdapter::VIDEO_SOURCE_BUTT;
+    g_screenCaptureConfig->videoInfo->videoEncInfo->videoCodec = VideoCodecFormatAdapter::MPEG4;
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
-    config.audioInfo.micCapInfo.audioSource = AudioCaptureSourceTypeAdapter::APP_PLAYBACK;
-    config.videoInfo.videoEncInfo.videoCodec = VideoCodecFormatAdapter::VP8;
-    result = adapterImpl->Init(config);
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioSource = AudioCaptureSourceTypeAdapter::APP_PLAYBACK;
+    g_screenCaptureConfig->videoInfo->videoEncInfo->videoCodec = VideoCodecFormatAdapter::VP8;
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
-    config.videoInfo.videoEncInfo.videoCodec = VideoCodecFormatAdapter::VP9;
-    result = adapterImpl->Init(config);
+    g_screenCaptureConfig->videoInfo->videoEncInfo->videoCodec = VideoCodecFormatAdapter::VP9;
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
 }
 
@@ -258,15 +489,11 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_Capture_004,
     EXPECT_EQ(result, -1);
     result = adapterImpl->StopCapture();
     EXPECT_EQ(result, -1);
-    ScreenCaptureImplMock *mock = new ScreenCaptureImplMock();
+    ScreenCaptureImplMock* mock = new ScreenCaptureImplMock();
     EXPECT_NE(mock, nullptr);
     adapterImpl->screenCapture_.reset(mock);
-    EXPECT_CALL(*mock, StartScreenCapture())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(Media::MSERR_OK));
-    EXPECT_CALL(*mock, StopScreenCapture())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(Media::MSERR_OK));
+    EXPECT_CALL(*mock, StartScreenCapture()).Times(1).WillRepeatedly(::testing::Return(Media::MSERR_OK));
+    EXPECT_CALL(*mock, StopScreenCapture()).Times(1).WillRepeatedly(::testing::Return(Media::MSERR_OK));
     EXPECT_CALL(*mock, SetMicrophoneEnabled(::testing::_))
         .Times(1)
         .WillRepeatedly(::testing::Return(Media::MSERR_NO_MEMORY));
@@ -275,12 +502,8 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_Capture_004,
     adapterImpl->SetMicrophoneEnable(true);
     result = adapterImpl->StopCapture();
     EXPECT_EQ(result, 0);
-    EXPECT_CALL(*mock, StartScreenCapture())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(Media::MSERR_NO_MEMORY));
-    EXPECT_CALL(*mock, StopScreenCapture())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(Media::MSERR_NO_MEMORY));
+    EXPECT_CALL(*mock, StartScreenCapture()).Times(1).WillRepeatedly(::testing::Return(Media::MSERR_NO_MEMORY));
+    EXPECT_CALL(*mock, StopScreenCapture()).Times(1).WillRepeatedly(::testing::Return(Media::MSERR_NO_MEMORY));
     result = adapterImpl->StartCapture();
     EXPECT_EQ(result, -1);
     result = adapterImpl->StopCapture();
@@ -336,27 +559,26 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_Init_006, Te
 {
     auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
     EXPECT_NE(adapterImpl, nullptr);
-    ScreenCaptureConfigAdapter config;
-    config.captureMode = CaptureModeAdapter::CAPTURE_HOME_SCREEN;
-    config.dataType = DataTypeAdapter::ENCODED_STREAM_DATA_TYPE;
-    int32_t result = adapterImpl->Init(config);
+    g_screenCaptureConfig->captureMode = CaptureModeAdapter::CAPTURE_HOME_SCREEN;
+    g_screenCaptureConfig->dataType = DataTypeAdapter::ENCODED_STREAM_DATA_TYPE;
+    int32_t result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
-    config.dataType = DataTypeAdapter::CAPTURE_FILE_DATA_TYPE;
-    config.audioInfo.micCapInfo.audioSampleRate = AUDIO_SAMPLE_RATE;
-    config.audioInfo.micCapInfo.audioChannels = AUDIO_CHANNELS;
-    config.audioInfo.innerCapInfo.audioSampleRate = AUDIO_SAMPLE_RATE;
-    config.audioInfo.innerCapInfo.audioChannels = AUDIO_CHANNELS;
-    config.videoInfo.videoCapInfo.videoFrameWidth = SCREEN_WIDTH;
-    config.videoInfo.videoCapInfo.videoFrameHeight = SCREEN_HEIGHT;
-    config.videoInfo.videoEncInfo.videoCodec = VideoCodecFormatAdapter::VIDEO_CODEC_FORMAT_BUTT;
-    config.recorderInfo.fileFormat = ContainerFormatTypeAdapter::CFT_MPEG_4A_TYPE;
-    result = adapterImpl->Init(config);
+    g_screenCaptureConfig->dataType = DataTypeAdapter::CAPTURE_FILE_DATA_TYPE;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioSampleRate = AUDIO_SAMPLE_RATE;
+    g_screenCaptureConfig->audioInfo->micCapInfo->audioChannels = AUDIO_CHANNELS;
+    g_screenCaptureConfig->audioInfo->innerCapInfo->audioSampleRate = AUDIO_SAMPLE_RATE;
+    g_screenCaptureConfig->audioInfo->innerCapInfo->audioChannels = AUDIO_CHANNELS;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoFrameWidth = SCREEN_WIDTH;
+    g_screenCaptureConfig->videoInfo->videoCapInfo->videoFrameHeight = SCREEN_HEIGHT;
+    g_screenCaptureConfig->videoInfo->videoEncInfo->videoCodec = VideoCodecFormatAdapter::VIDEO_CODEC_FORMAT_BUTT;
+    g_screenCaptureConfig->recorderInfo->fileFormat = ContainerFormatTypeAdapter::CFT_MPEG_4A_TYPE;
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
-    config.recorderInfo.fileFormat = ContainerFormatTypeAdapter::CFT_MPEG_4_TYPE;
-    result = adapterImpl->Init(config);
+    g_screenCaptureConfig->recorderInfo->fileFormat = ContainerFormatTypeAdapter::CFT_MPEG_4_TYPE;
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, -1);
     adapterImpl->screenCapture_ = OHOS::Media::ScreenCaptureFactory::CreateScreenCapture();
-    result = adapterImpl->Init(config);
+    result = adapterImpl->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, 0);
 }
 
@@ -370,7 +592,7 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_AcquireVideo
 {
     auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
     EXPECT_NE(adapterImpl, nullptr);
-    ScreenCaptureImplMock *mock = new ScreenCaptureImplMock();
+    ScreenCaptureImplMock* mock = new ScreenCaptureImplMock();
     EXPECT_NE(mock, nullptr);
     sptr<OHOS::SurfaceBuffer> surfacebuffer = new SurfaceBufferImpl(0);
     EXPECT_NE(surfacebuffer, nullptr);
@@ -379,14 +601,12 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_AcquireVideo
         .Times(1)
         .WillRepeatedly(::testing::Return(surfacebuffer));
 
-    EXPECT_CALL(*mock, ReleaseVideoBuffer())
-        .Times(1)
-        .WillRepeatedly(::testing::Return(Media::MSERR_OK));
+    EXPECT_CALL(*mock, ReleaseVideoBuffer()).Times(1).WillRepeatedly(::testing::Return(Media::MSERR_OK));
     std::shared_ptr<SurfaceBufferAdapter> buffer = adapterImpl->AcquireVideoBuffer();
     EXPECT_NE(buffer, nullptr);
     int32_t result = adapterImpl->ReleaseVideoBuffer();
     EXPECT_EQ(result, 0);
     adapterImpl->screenCapture_.reset();
 }
-}
 } // namespace NWeb
+} // namespace OHOS

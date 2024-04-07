@@ -40,7 +40,7 @@ public:
     ScreenCaptureAdapterImpl() = default;
     ~ScreenCaptureAdapterImpl() override;
 
-    int32_t Init(const ScreenCaptureConfigAdapter& config) override;
+    int32_t Init(const std::shared_ptr<ScreenCaptureConfigAdapter> config) override;
 
     int32_t SetMicrophoneEnable(bool enable) override;
 

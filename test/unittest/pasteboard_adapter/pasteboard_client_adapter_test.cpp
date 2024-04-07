@@ -21,10 +21,10 @@
 #include "pasteboard_client_adapter_impl.h"
 #undef private
 
+#include "ohos_adapter_helper.h"
 #include "paste_data.h"
 #include "paste_data_record.h"
 #include "pasteboard_client_adapter.h"
-#include "ohos_adapter_helper.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -94,34 +94,114 @@ void NWebPasteboardAdapterTest::SetUpTestCase(void)
     EXPECT_EQ(RESULT_OK, result);
 }
 
-void NWebPasteboardAdapterTest::TearDownTestCase(void)
-{}
+void NWebPasteboardAdapterTest::TearDownTestCase(void) {}
 
-void NWebPasteboardAdapterTest::SetUp(void)
-{}
+void NWebPasteboardAdapterTest::SetUp(void) {}
 
-void NWebPasteboardAdapterTest::TearDown(void)
-{}
+void NWebPasteboardAdapterTest::TearDown(void) {}
 
 class MockPasteData : public PasteData {
 public:
     MOCK_METHOD1(GetRecordAt, std::shared_ptr<PasteDataRecord>(std::size_t));
     MOCK_METHOD0(GetRecordCount, std::size_t());
-    MOCK_METHOD1(Encode, bool(std::vector<uint8_t> &));
-    MOCK_METHOD1(Decode, bool(const std::vector<uint8_t> &));
+    MOCK_METHOD1(Encode, bool(std::vector<uint8_t>&));
+    MOCK_METHOD1(Decode, bool(const std::vector<uint8_t>&));
 };
 
 class MockPasteDataRecord : public PasteDataRecord {
 public:
     MOCK_METHOD0(GetPixelMap, std::shared_ptr<PixelMap>());
-    MOCK_METHOD1(Encode, bool(std::vector<uint8_t> &));
-    MOCK_METHOD1(Decode, bool(const std::vector<uint8_t> &));
+    MOCK_METHOD1(Encode, bool(std::vector<uint8_t>&));
+    MOCK_METHOD1(Decode, bool(const std::vector<uint8_t>&));
 };
 
 class MockPasteboardObserver : public PasteboardObserverAdapter {
 public:
     MockPasteboardObserver() = default;
     void OnPasteboardChanged() override {}
+};
+
+class MockClipBoardImageDataAdapter : public ClipBoardImageDataAdapter {
+public:
+    MockClipBoardImageDataAdapter() = default;
+
+    ClipBoardImageColorType GetColorType() override
+    {
+        return colorType;
+    }
+
+    ClipBoardImageAlphaType GetAlphaType() override
+    {
+        return alphaType;
+    }
+
+    uint32_t* GetData() override
+    {
+        return data;
+    }
+
+    size_t GetDataSize() override
+    {
+        return dataSize;
+    }
+
+    size_t GetRowBytes() override
+    {
+        return rowBytes;
+    }
+
+    int32_t GetWidth() override
+    {
+        return width;
+    }
+
+    int32_t GetHeight() override
+    {
+        return height;
+    }
+
+    void SetColorType(ClipBoardImageColorType color) override
+    {
+        colorType = color;
+    }
+
+    void SetAlphaType(ClipBoardImageAlphaType alpha) override
+    {
+        alphaType = alpha;
+    }
+
+    void SetData(uint32_t* d) override
+    {
+        data = d;
+    }
+
+    void SetDataSize(size_t size) override
+    {
+        dataSize = size;
+    }
+
+    void SetRowBytes(size_t r) override
+    {
+        rowBytes = r;
+    }
+
+    void SetWidth(int32_t w) override
+    {
+        width = w;
+    }
+
+    void SetHeight(int32_t h) override
+    {
+        height = h;
+    }
+
+    ClipBoardImageColorType colorType;
+    ClipBoardImageAlphaType alphaType;
+    uint32_t* data;
+    size_t dataSize;
+    size_t rowBytes;
+    int32_t width;
+    int32_t height;
 };
 
 /**
@@ -396,8 +476,8 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPrimaryText_014, Te
     }
     EXPECT_EQ(RESULT_OK, result);
     result = 0;
-    PasteRecordList recordList = g_dataAdapter->AllRecords();
-    if (recordList.empty()) {
+    PasteRecordVector recordVector = g_dataAdapter->AllRecords();
+    if (recordVector.empty()) {
         result = -1;
     }
     EXPECT_EQ(RESULT_OK, result);
@@ -457,8 +537,8 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordAt_017, TestS
 {
     int result = 0;
     std::size_t index = 0;
-    MockPasteData *mock1 = new MockPasteData();
-    g_dataAdapterNull->data_.reset((PasteData *)mock1);
+    MockPasteData* mock1 = new MockPasteData();
+    g_dataAdapterNull->data_.reset((PasteData*)mock1);
     std::shared_ptr<PasteDataRecordAdapter> str = g_dataAdapterNull->GetRecordAt(index);
     if (str == nullptr) {
         result = -1;
@@ -482,8 +562,8 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordCount_018, Te
     }
     EXPECT_EQ(RESULT_OK, result);
     result = 0;
-    MockPasteData *mock2 = new MockPasteData();
-    g_dataAdapterNull->data_.reset((PasteData *)mock2);
+    MockPasteData* mock2 = new MockPasteData();
+    g_dataAdapterNull->data_.reset((PasteData*)mock2);
     std::size_t count = g_dataAdapterNull->GetRecordCount();
     EXPECT_EQ(RESULT_OK, count);
     g_dataAdapterNull->data_ = nullptr;
@@ -498,15 +578,15 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetRecordCount_018, Te
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AllRecords_019, TestSize.Level1)
 {
     int result = 0;
-    PasteRecordList record = g_dataAdapterNull->AllRecords();
+    PasteRecordVector record = g_dataAdapterNull->AllRecords();
     if (record.empty()) {
         result = -1;
     }
     EXPECT_NE(RESULT_OK, result);
     result = 0;
-    MockPasteData *mock = new MockPasteData();
-    g_dataAdapterNull->data_.reset((PasteData *)mock);
-    PasteRecordList str = g_dataAdapterNull->AllRecords();
+    MockPasteData* mock = new MockPasteData();
+    g_dataAdapterNull->data_.reset((PasteData*)mock);
+    PasteRecordVector str = g_dataAdapterNull->AllRecords();
     if (str.empty()) {
         result = -1;
     }
@@ -521,7 +601,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_AllRecords_019, TestSi
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_020, TestSize.Level1)
 {
-    PasteRecordList data;
+    PasteRecordVector data;
     std::shared_ptr<PasteDataRecordAdapter> record = PasteDataRecordAdapter::NewRecord("text/html");
     EXPECT_NE(record, nullptr);
     std::shared_ptr<std::string> pasteData = std::make_shared<std::string>("test");
@@ -541,8 +621,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetPasteData_020, Test
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetPasteData_021, TestSize.Level1)
 {
     PasteBoardClientAdapterImpl::GetInstance().Clear();
-    PasteRecordList data;
+    PasteRecordVector data;
     bool result = PasteBoardClientAdapterImpl::GetInstance().GetPasteData(data);
+    EXPECT_EQ(false, result);
+    std::shared_ptr<PasteDataRecordAdapter> adapter = std::make_shared<PasteDataRecordAdapterImpl>("test");
+    data.push_back(adapter);
+    result = PasteBoardClientAdapterImpl::GetInstance().GetPasteData(data);
     EXPECT_EQ(false, result);
 }
 
@@ -691,7 +775,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageAlphaT
     ClipBoardImageAlphaType alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
     Media::AlphaType result = g_datarecord->ClipboardToImageAlphaType(alphaType);
     EXPECT_EQ(result, Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN);
-    
+
     alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_OPAQUE;
     result = g_datarecord->ClipboardToImageAlphaType(alphaType);
     EXPECT_EQ(result, Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE);
@@ -735,30 +819,30 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_ClipboardToImageColorT
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_031, TestSize.Level1)
 {
     uint32_t storage[][5] = {
-        {0xCA, 0xDA, 0xCA, 0xC9, 0xA3},
-        {0xAC, 0xA8, 0x89, 0x47, 0x87},
-        {0x4B, 0x25, 0x25, 0x25, 0x46},
-        {0x90, 0x1, 0x25, 0x41, 0x33},
-        {0x75, 0x55, 0x44, 0x20, 0x00},
+        { 0xCA, 0xDA, 0xCA, 0xC9, 0xA3 },
+        { 0xAC, 0xA8, 0x89, 0x47, 0x87 },
+        { 0x4B, 0x25, 0x25, 0x25, 0x46 },
+        { 0x90, 0x1, 0x25, 0x41, 0x33 },
+        { 0x75, 0x55, 0x44, 0x20, 0x00 },
     };
-    ClipBoardImageData *image = new ClipBoardImageData;
-    image->colorType = ClipBoardImageColorType::COLOR_TYPE_BGRA_8888;
-    image->alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
-    image->data = storage[0];
-    image->dataSize = sizeof(storage);
-    image->rowBytes = 5;
-    image->width = 5;
-    image->height = 5;
-    std::shared_ptr<ClipBoardImageData> imageData(image);
-    bool reset = g_datarecord->SetImgData(imageData);
+
+    std::shared_ptr<MockClipBoardImageDataAdapter> image = std::make_shared<MockClipBoardImageDataAdapter>();
+    image->SetColorType(ClipBoardImageColorType::COLOR_TYPE_BGRA_8888);
+    image->SetAlphaType(ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN);
+    image->SetData(storage[0]);
+    image->SetDataSize(sizeof(storage));
+    image->SetRowBytes(5);
+    image->SetWidth(5);
+    image->SetHeight(5);
+    bool reset = g_datarecord->SetImgData(image);
     EXPECT_EQ(TRUE_OK, reset);
-    reset = g_datarecordnull->SetImgData(imageData);
+    reset = g_datarecordnull->SetImgData(image);
     EXPECT_NE(TRUE_OK, reset);
-    imageData->dataSize = 1;
-    reset = g_datarecordnull->SetImgData(imageData);
+    image->SetDataSize(1);
+    reset = g_datarecordnull->SetImgData(image);
     EXPECT_NE(TRUE_OK, reset);
-    imageData = nullptr;
-    reset = g_datarecordnull->SetImgData(imageData);
+    image = nullptr;
+    reset = g_datarecordnull->SetImgData(image);
     EXPECT_NE(TRUE_OK, reset);
 }
 
@@ -770,7 +854,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetImgData_031, TestSi
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_032, TestSize.Level1)
 {
-    ClipBoardImageData image;
+    std::shared_ptr<MockClipBoardImageDataAdapter> image = std::make_shared<MockClipBoardImageDataAdapter>();
     bool reset = g_datarecordnull->GetImgData(image);
     EXPECT_NE(TRUE_OK, reset);
     reset = g_paster->GetImgData(image);
@@ -785,7 +869,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_032, TestSi
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetImgData_033, TestSize.Level1)
 {
-    ClipBoardImageData image;
+    std::shared_ptr<MockClipBoardImageDataAdapter> image = std::make_shared<MockClipBoardImageDataAdapter>();
     bool reset = g_datarecord->GetImgData(image);
     EXPECT_EQ(TRUE_OK, reset);
 }
@@ -801,7 +885,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_034, TestSize.Le
     uint32_t bufferSize = 20;
     EXPECT_NE(g_datarecord, nullptr);
     if (g_datarecord->imgBuffer_ == nullptr) {
-        g_datarecord->imgBuffer_ = static_cast<uint8_t *>(calloc(static_cast<size_t>(bufferSize), sizeof(uint8_t)));
+        g_datarecord->imgBuffer_ = static_cast<uint8_t*>(calloc(static_cast<size_t>(bufferSize), sizeof(uint8_t)));
     }
     g_datarecord->Clear();
 }
@@ -814,7 +898,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_034, TestSize.Le
  */
 HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_Clear_035, TestSize.Level1)
 {
-    PasteRecordList data;
+    PasteRecordVector data;
     data.clear();
     EXPECT_EQ(data.size(), 0);
     PasteBoardClientAdapterImpl::GetInstance().Clear();
@@ -853,7 +937,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_SetCustomData_037, Tes
     int result = 0;
     PasteCustomData emptyTestData;
     std::string format = "format";
-    vector<uint8_t> data = {0, 1, 2};
+    vector<uint8_t> data = { 0, 1, 2 };
     PasteCustomData testData;
     testData.insert(std::make_pair(format, data));
     EXPECT_EQ(RESULT_OK, result);
@@ -903,7 +987,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_GetCustomData_039, Tes
 {
     int result = 0;
     std::string format = "format";
-    vector<uint8_t> data = {0, 1, 2};
+    vector<uint8_t> data = { 0, 1, 2 };
     PasteCustomData testData;
     g_datarecord->SetCustomData(testData);
     std::shared_ptr<PasteCustomData> customData = g_datarecord->GetCustomData();
@@ -972,8 +1056,7 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_IsLocalPaste_042
  */
 HWTEST_F(NWebPasteboardAdapterTest, PasteboardObserverAdapter_OnPasteboardChanged_043, TestSize.Level1)
 {
-    std::shared_ptr<PasteboardObserverAdapter> observer =
-        std::make_shared<MockPasteboardObserver>();
+    std::shared_ptr<PasteboardObserverAdapter> observer = std::make_shared<MockPasteboardObserver>();
     EXPECT_NE(observer, nullptr);
     PasteboardObserverAdapterImpl observerImpl(observer);
     observerImpl.OnPasteboardChanged();
@@ -989,10 +1072,8 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteboardObserverAdapter_OnPasteboardChange
  */
 HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_AddPasteboardChangedObserver_044, TestSize.Level1)
 {
-    std::shared_ptr<PasteboardObserverAdapter> observer =
-        std::make_shared<MockPasteboardObserver>();
-    std::shared_ptr<PasteboardObserverAdapter> observerInvalid =
-        std::make_shared<MockPasteboardObserver>();
+    std::shared_ptr<PasteboardObserverAdapter> observer = std::make_shared<MockPasteboardObserver>();
+    std::shared_ptr<PasteboardObserverAdapter> observerInvalid = std::make_shared<MockPasteboardObserver>();
     int32_t id = PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(observer);
     PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(nullptr);
     EXPECT_EQ(1, PasteBoardClientAdapterImpl::GetInstance().reg_.size());
@@ -1011,4 +1092,4 @@ HWTEST_F(NWebPasteboardAdapterTest, PasteBoardClientAdapterImpl_AddPasteboardCha
     option = PasteBoardClientAdapterImpl::GetInstance().TransitionCopyOption(CopyOptionMode::NONE);
     EXPECT_EQ(option, MiscServices::ShareOption::CrossDevice);
 }
-}
+} // namespace OHOS::NWeb

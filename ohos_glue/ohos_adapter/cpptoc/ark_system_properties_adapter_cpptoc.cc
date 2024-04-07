@@ -13,171 +13,177 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_system_properties_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_system_properties_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_resource_use_hap_path_enable(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_resource_use_hap_path_enable(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetResourceUseHapPathEnable();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)
+      ->GetResourceUseHapPathEnable();
 }
 
-ArkWebString ARK_WEB_CALLBACK ark_system_properties_adapter_get_device_info_product_model(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ArkWebString ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_device_info_product_model(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetDeviceInfoProductModel();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)
+      ->GetDeviceInfoProductModel();
 }
 
-ArkWebString ARK_WEB_CALLBACK ark_system_properties_adapter_get_device_info_brand(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ArkWebString ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_device_info_brand(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetDeviceInfoBrand();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetDeviceInfoBrand();
 }
 
-int32_t ARK_WEB_CALLBACK ark_system_properties_adapter_get_device_info_major_version(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_device_info_major_version(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetDeviceInfoMajorVersion();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)
+      ->GetDeviceInfoMajorVersion();
 }
 
 int32_t ARK_WEB_CALLBACK ark_system_properties_adapter_get_product_device_type(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetProductDeviceType();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetProductDeviceType();
 }
 
 bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_web_optimization_value(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetWebOptimizationValue();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetWebOptimizationValue();
 }
 
-bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_lockdown_mode_status(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK ark_system_properties_adapter_is_advanced_security_mode(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetLockdownModeStatus();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->IsAdvancedSecurityMode();
 }
 
-ArkWebString ARK_WEB_CALLBACK ark_system_properties_adapter_get_user_agent_osname(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ArkWebString ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_user_agent_osname(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetUserAgentOSName();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetUserAgentOSName();
 }
 
-int32_t ARK_WEB_CALLBACK ark_system_properties_adapter_get_software_major_version(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_software_major_version(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetSoftwareMajorVersion();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetSoftwareMajorVersion();
 }
 
-int32_t ARK_WEB_CALLBACK ark_system_properties_adapter_get_software_senior_version(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_software_senior_version(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetSoftwareSeniorVersion();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)
+      ->GetSoftwareSeniorVersion();
 }
 
 ArkWebString ARK_WEB_CALLBACK ark_system_properties_adapter_get_netlog_mode(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetNetlogMode();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetNetlogMode();
 }
 
 bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_trace_debug_enable(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
-
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
-
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetTraceDebugEnable();
-}
-
-ArkWebString ARK_WEB_CALLBACK ark_system_properties_adapter_get_site_isolation_mode(
-    struct _ark_system_properties_adapter_t* self) 
-{
+    struct _ark_system_properties_adapter_t *self) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(self,  ark_web_string_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetTraceDebugEnable();
+}
+
+ArkWebString ARK_WEB_CALLBACK
+ark_system_properties_adapter_get_site_isolation_mode(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_default);
 
   // Execute
   return ArkSystemPropertiesAdapterCppToC::Get(self)->GetSiteIsolationMode();
 }
 
-bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_oop_gpu_enable(
-    struct _ark_system_properties_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_system_properties_adapter_get_flow_buf_max_fd(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetOOPGPUEnable();
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetFlowBufMaxFd();
 }
 
-void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oop_gpu_disable(
-    struct _ark_system_properties_adapter_t* self) 
-{
+bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_oopgpuenable(
+    struct _ark_system_properties_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+
+  // Execute
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetOOPGPUEnable();
+}
+
+void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oopgpudisable(
+    struct _ark_system_properties_adapter_t *self) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, );
@@ -186,43 +192,75 @@ void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oop_gpu_disable(
   ArkSystemPropertiesAdapterCppToC::Get(self)->SetOOPGPUDisable();
 }
 
-int32_t ARK_WEB_CALLBACK ark_system_properties_adapter_get_flow_buf_max_fd(
-    struct _ark_system_properties_adapter_t* self) {
+void ARK_WEB_CALLBACK ark_system_properties_adapter_attach_sys_prop_observer(
+    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(self,  0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
   // Execute
-  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetFlowBufMaxFd();
+  ArkSystemPropertiesAdapterCppToC::Get(self)->AttachSysPropObserver(
+      key,
+      observer);
 }
 
+void ARK_WEB_CALLBACK ark_system_properties_adapter_detach_sys_prop_observer(
+    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkSystemPropertiesAdapterCppToC::Get(self)->DetachSysPropObserver(
+      key,
+      observer);
+}
 
 } // namespace
 
-ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC()
-{
-    GetStruct()->get_resource_use_hap_path_enable = ark_system_properties_adapter_get_resource_use_hap_path_enable;
-    GetStruct()->get_device_info_product_model = ark_system_properties_adapter_get_device_info_product_model;
-    GetStruct()->get_device_info_brand = ark_system_properties_adapter_get_device_info_brand;
-    GetStruct()->get_device_info_major_version = ark_system_properties_adapter_get_device_info_major_version;
-    GetStruct()->get_product_device_type = ark_system_properties_adapter_get_product_device_type;
-    GetStruct()->get_web_optimization_value = ark_system_properties_adapter_get_web_optimization_value;
-    GetStruct()->get_lockdown_mode_status = ark_system_properties_adapter_get_lockdown_mode_status;
-    GetStruct()->get_user_agent_osname = ark_system_properties_adapter_get_user_agent_osname;
-    GetStruct()->get_software_major_version = ark_system_properties_adapter_get_software_major_version;
-    GetStruct()->get_software_senior_version = ark_system_properties_adapter_get_software_senior_version;
-    GetStruct()->get_netlog_mode = ark_system_properties_adapter_get_netlog_mode;
-    GetStruct()->get_trace_debug_enable = ark_system_properties_adapter_get_trace_debug_enable;
-    GetStruct()->get_site_isolation_mode = ark_system_properties_adapter_get_site_isolation_mode;
-    GetStruct()->get_oop_gpu_enable = ark_system_properties_adapter_get_oop_gpu_enable;
-    GetStruct()->set_oop_gpu_disable = ark_system_properties_adapter_set_oop_gpu_disable;
-    GetStruct()->get_flow_buf_max_fd = ark_system_properties_adapter_get_flow_buf_max_fd;
+ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
+  GetStruct()->get_resource_use_hap_path_enable =
+      ark_system_properties_adapter_get_resource_use_hap_path_enable;
+  GetStruct()->get_device_info_product_model =
+      ark_system_properties_adapter_get_device_info_product_model;
+  GetStruct()->get_device_info_brand =
+      ark_system_properties_adapter_get_device_info_brand;
+  GetStruct()->get_device_info_major_version =
+      ark_system_properties_adapter_get_device_info_major_version;
+  GetStruct()->get_product_device_type =
+      ark_system_properties_adapter_get_product_device_type;
+  GetStruct()->get_web_optimization_value =
+      ark_system_properties_adapter_get_web_optimization_value;
+  GetStruct()->is_advanced_security_mode =
+      ark_system_properties_adapter_is_advanced_security_mode;
+  GetStruct()->get_user_agent_osname =
+      ark_system_properties_adapter_get_user_agent_osname;
+  GetStruct()->get_software_major_version =
+      ark_system_properties_adapter_get_software_major_version;
+  GetStruct()->get_software_senior_version =
+      ark_system_properties_adapter_get_software_senior_version;
+  GetStruct()->get_netlog_mode = ark_system_properties_adapter_get_netlog_mode;
+  GetStruct()->get_trace_debug_enable =
+      ark_system_properties_adapter_get_trace_debug_enable;
+  GetStruct()->get_site_isolation_mode =
+      ark_system_properties_adapter_get_site_isolation_mode;
+  GetStruct()->get_flow_buf_max_fd =
+      ark_system_properties_adapter_get_flow_buf_max_fd;
+  GetStruct()->get_oopgpuenable =
+      ark_system_properties_adapter_get_oopgpuenable;
+  GetStruct()->set_oopgpudisable =
+      ark_system_properties_adapter_set_oopgpudisable;
+  GetStruct()->attach_sys_prop_observer = ark_system_properties_adapter_attach_sys_prop_observer;
+  GetStruct()->detach_sys_prop_observer = ark_system_properties_adapter_detach_sys_prop_observer;
 }
 
-ArkSystemPropertiesAdapterCppToC::~ArkSystemPropertiesAdapterCppToC() {}
+ArkSystemPropertiesAdapterCppToC::~ArkSystemPropertiesAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkSystemPropertiesAdapterCppToC, ArkSystemPropertiesAdapter,
-    ark_system_properties_adapter_t>::kBridgeType = ARK_SYSTEM_PROPERTIES_ADAPTER;
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkSystemPropertiesAdapterCppToC, ArkSystemPropertiesAdapter,
+    ark_system_properties_adapter_t>::kBridgeType =
+    ARK_SYSTEM_PROPERTIES_ADAPTER;
 
 } // namespace OHOS::ArkWeb

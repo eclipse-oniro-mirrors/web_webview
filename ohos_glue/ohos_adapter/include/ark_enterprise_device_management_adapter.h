@@ -16,40 +16,42 @@
 #ifndef ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_H
 #define ARK_ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_H
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=client)--*/
-class ArkEdmPolicyChangedEventCallbackAdapter : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=web core)--*/
+class ArkEdmPolicyChangedEventCallbackAdapter
+    : public virtual ArkWebBaseRefCounted {
 public:
-    ArkEdmPolicyChangedEventCallbackAdapter() = default;
+  ArkEdmPolicyChangedEventCallbackAdapter() = default;
 
-    virtual ~ArkEdmPolicyChangedEventCallbackAdapter() = default;
+  virtual ~ArkEdmPolicyChangedEventCallbackAdapter() = default;
 
-    /*--web engine()--*/
-    virtual void Changed() = 0;
+  /*--ark web()--*/
+  virtual void Changed() = 0;
 };
 
-/*--web engine(source=library)--*/
-class ArkEnterpriseDeviceManagementAdapter : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=library)--*/
+class ArkEnterpriseDeviceManagementAdapter
+    : public virtual ArkWebBaseRefCounted {
 public:
-    ArkEnterpriseDeviceManagementAdapter() = default;
-    virtual ~ArkEnterpriseDeviceManagementAdapter() = default;
+  ArkEnterpriseDeviceManagementAdapter() = default;
+  virtual ~ArkEnterpriseDeviceManagementAdapter() = default;
 
-    /*--web engine()--*/
-    virtual int32_t GetPolicies(ArkWebString& policies) = 0;
+  /*--ark web()--*/
+  virtual int32_t GetPolicies(ArkWebString &policies) = 0;
 
-    /*--web engine()--*/
-    virtual void RegistPolicyChangeEventCallback(
-        ArkWebRefPtr<ArkEdmPolicyChangedEventCallbackAdapter> eventCallback) = 0;
+  /*--ark web()--*/
+  virtual void RegistPolicyChangeEventCallback(
+      ArkWebRefPtr<ArkEdmPolicyChangedEventCallbackAdapter> eventCallback) = 0;
 
-    /*--web engine()--*/
-    virtual bool StartObservePolicyChange() = 0;
+  /*--ark web()--*/
+  virtual bool StartObservePolicyChange() = 0;
 
-    /*--web engine()--*/
-    virtual bool StopObservePolicyChange() = 0;
+  /*--ark web()--*/
+  virtual bool StopObservePolicyChange() = 0;
 };
 
 } // namespace OHOS::ArkWeb

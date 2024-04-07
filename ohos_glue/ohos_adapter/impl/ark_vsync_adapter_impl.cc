@@ -19,9 +19,9 @@ namespace OHOS::ArkWeb {
 
 ArkVSyncAdapterImpl::ArkVSyncAdapterImpl(NWeb::VSyncAdapter& ref) : real_(ref) {}
 
-uint32_t ArkVSyncAdapterImpl::RequestVsync(void* data, ArkVSyncCb cb)
+uint32_t ArkVSyncAdapterImpl::RequestVsync(void* data, void* cb)
 {
-    return (uint32_t)real_.RequestVsync(data, cb);
+    return (uint32_t)real_.RequestVsync(data, reinterpret_cast<NWeb::NWebVSyncCb>(cb));
 }
 
 int64_t ArkVSyncAdapterImpl::GetVSyncPeriod()

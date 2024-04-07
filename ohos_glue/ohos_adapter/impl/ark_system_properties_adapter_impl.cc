@@ -51,9 +51,9 @@ bool ArkSystemPropertiesAdapterImpl::GetWebOptimizationValue()
     return real_.GetWebOptimizationValue();
 }
 
-bool ArkSystemPropertiesAdapterImpl::GetLockdownModeStatus()
+bool ArkSystemPropertiesAdapterImpl::IsAdvancedSecurityMode()
 {
-    return real_.GetLockdownModeStatus();
+    return real_.IsAdvancedSecurityMode();
 }
 
 ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentOSName()
@@ -89,6 +89,11 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetSiteIsolationMode()
     return ArkWebStringClassToStruct(str);
 }
 
+int32_t ArkSystemPropertiesAdapterImpl::GetFlowBufMaxFd()
+{
+    return real_.GetFlowBufMaxFd();
+}
+
 bool ArkSystemPropertiesAdapterImpl::GetOOPGPUEnable()
 {
     return real_.GetOOPGPUEnable();
@@ -99,8 +104,13 @@ void ArkSystemPropertiesAdapterImpl::SetOOPGPUDisable()
     real_.SetOOPGPUDisable();
 }
 
-int32_t ArkSystemPropertiesAdapterImpl::GetFlowBufMaxFd()
-{
-    return real_.GetFlowBufMaxFd();
+void ArkSystemPropertiesAdapterImpl::AttachSysPropObserver(
+    int32_t key, ArkSystemPropertiesObserver* observer) {
+    real_.AttachSysPropObserver((NWeb::PropertiesKey)key, observer);
+}
+
+void ArkSystemPropertiesAdapterImpl::DetachSysPropObserver(
+    int32_t key, ArkSystemPropertiesObserver* observer) {
+    real_.DetachSysPropObserver((NWeb::PropertiesKey)key, observer);
 }
 } // namespace OHOS::ArkWeb

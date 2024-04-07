@@ -46,7 +46,7 @@ public:
 
     ~AudioCapturerAdapterImpl() override = default;
 
-    int32_t Create(const AudioAdapterCapturerOptions &rendererOptions,
+    int32_t Create(const std::shared_ptr<AudioCapturerOptionsAdapter> capturerOptions,
         std::string cachePath = std::string()) override;
 
     bool Start() override;
@@ -58,9 +58,9 @@ public:
     int32_t SetCapturerReadCallback(
         std::shared_ptr<AudioCapturerReadCallbackAdapter> callbck) override;
 
-    int32_t GetBufferDesc(BufferDescAdapter &buffferDesc) override;
+    int32_t GetBufferDesc(std::shared_ptr<BufferDescAdapter> bufferDesc) override;
 
-    int32_t Enqueue(const BufferDescAdapter &buffferDesc) override;
+    int32_t Enqueue(const std::shared_ptr<BufferDescAdapter> bufferDesc) override;
 
     int32_t GetFrameCount(uint32_t &frameCount) override;
 

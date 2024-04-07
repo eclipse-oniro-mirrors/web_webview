@@ -13,140 +13,141 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_audio_capturer_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
-#include "ctocpp/ark_audio_capturer_read_callback_adapter_ctocpp.h"
+#include "ohos_adapter/cpptoc/ark_audio_capturer_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/ctocpp/ark_audio_capturer_options_adapter_ctocpp.h"
+#include "ohos_adapter/ctocpp/ark_audio_capturer_read_callback_adapter_ctocpp.h"
+#include "ohos_adapter/ctocpp/ark_buffer_desc_adapter_ctocpp.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-int32_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_create(struct _ark_audio_capturer_adapter_t* self,
-    const ArkAudioAdapterCapturerOptions* capturerOptions, ArkWebString* cachePath)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_create(
+    struct _ark_audio_capturer_adapter_t *self,
+    ark_audio_capturer_options_adapter_t *capturerOptions,
+    ArkWebString *cachePath) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(capturerOptions, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(cachePath, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(cachePath, 0);
-
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->Create(*capturerOptions, *cachePath);
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->Create(
+      ArkAudioCapturerOptionsAdapterCToCpp::Invert(capturerOptions),
+      *cachePath);
 }
 
-bool ARK_WEB_CALLBACK ark_audio_capturer_adapter_start(struct _ark_audio_capturer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_audio_capturer_adapter_start(struct _ark_audio_capturer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->Start();
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->Start();
 }
 
-bool ARK_WEB_CALLBACK ark_audio_capturer_adapter_stop(struct _ark_audio_capturer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK
+ark_audio_capturer_adapter_stop(struct _ark_audio_capturer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->Stop();
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->Stop();
 }
 
-bool ARK_WEB_CALLBACK ark_audio_capturer_adapter_release2(struct _ark_audio_capturer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+bool ARK_WEB_CALLBACK ark_audio_capturer_adapter_release2(
+    struct _ark_audio_capturer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->Release2();
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->Release2();
 }
 
 int32_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_set_capturer_read_callback(
-    struct _ark_audio_capturer_adapter_t* self, ark_audio_capturer_read_callback_adapter_t* callbck)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_audio_capturer_adapter_t *self,
+    ark_audio_capturer_read_callback_adapter_t *callbck) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->SetCapturerReadCallback(
-        ArkAudioCapturerReadCallbackAdapterCToCpp::Invert(callbck));
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->SetCapturerReadCallback(
+      ArkAudioCapturerReadCallbackAdapterCToCpp::Invert(callbck));
 }
 
 int32_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_get_buffer_desc(
-    struct _ark_audio_capturer_adapter_t* self, ArkBufferDescAdapter* buffferDesc)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_audio_capturer_adapter_t *self,
+    ark_buffer_desc_adapter_t *buffferDesc) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(buffferDesc, 0);
-
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->GetBufferDesc(*buffferDesc);
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->GetBufferDesc(
+      ArkBufferDescAdapterCToCpp::Invert(buffferDesc));
 }
 
-int32_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_enqueue(
-    struct _ark_audio_capturer_adapter_t* self, const ArkBufferDescAdapter* bufferDesc)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int32_t ARK_WEB_CALLBACK
+ark_audio_capturer_adapter_enqueue(struct _ark_audio_capturer_adapter_t *self,
+                                   ark_buffer_desc_adapter_t *bufferDesc) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(bufferDesc, 0);
-
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->Enqueue(*bufferDesc);
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->Enqueue(
+      ArkBufferDescAdapterCToCpp::Invert(bufferDesc));
 }
 
 int32_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_get_frame_count(
-    struct _ark_audio_capturer_adapter_t* self, uint32_t* frameCount)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_audio_capturer_adapter_t *self, uint32_t *frameCount) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(frameCount, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(frameCount, 0);
 
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->GetFrameCount(*frameCount);
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->GetFrameCount(*frameCount);
 }
 
-int64_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_get_audio_time(struct _ark_audio_capturer_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int64_t ARK_WEB_CALLBACK ark_audio_capturer_adapter_get_audio_time(
+    struct _ark_audio_capturer_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkAudioCapturerAdapterCppToC::Get(self)->GetAudioTime();
+  // Execute
+  return ArkAudioCapturerAdapterCppToC::Get(self)->GetAudioTime();
 }
 
 } // namespace
 
-ArkAudioCapturerAdapterCppToC::ArkAudioCapturerAdapterCppToC()
-{
-    GetStruct()->create = ark_audio_capturer_adapter_create;
-    GetStruct()->start = ark_audio_capturer_adapter_start;
-    GetStruct()->stop = ark_audio_capturer_adapter_stop;
-    GetStruct()->release2 = ark_audio_capturer_adapter_release2;
-    GetStruct()->set_capturer_read_callback = ark_audio_capturer_adapter_set_capturer_read_callback;
-    GetStruct()->get_buffer_desc = ark_audio_capturer_adapter_get_buffer_desc;
-    GetStruct()->enqueue = ark_audio_capturer_adapter_enqueue;
-    GetStruct()->get_frame_count = ark_audio_capturer_adapter_get_frame_count;
-    GetStruct()->get_audio_time = ark_audio_capturer_adapter_get_audio_time;
+ArkAudioCapturerAdapterCppToC::ArkAudioCapturerAdapterCppToC() {
+  GetStruct()->create = ark_audio_capturer_adapter_create;
+  GetStruct()->start = ark_audio_capturer_adapter_start;
+  GetStruct()->stop = ark_audio_capturer_adapter_stop;
+  GetStruct()->release2 = ark_audio_capturer_adapter_release2;
+  GetStruct()->set_capturer_read_callback =
+      ark_audio_capturer_adapter_set_capturer_read_callback;
+  GetStruct()->get_buffer_desc = ark_audio_capturer_adapter_get_buffer_desc;
+  GetStruct()->enqueue = ark_audio_capturer_adapter_enqueue;
+  GetStruct()->get_frame_count = ark_audio_capturer_adapter_get_frame_count;
+  GetStruct()->get_audio_time = ark_audio_capturer_adapter_get_audio_time;
 }
 
-ArkAudioCapturerAdapterCppToC::~ArkAudioCapturerAdapterCppToC() {}
+ArkAudioCapturerAdapterCppToC::~ArkAudioCapturerAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkAudioCapturerAdapterCppToC, ArkAudioCapturerAdapter,
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkAudioCapturerAdapterCppToC, ArkAudioCapturerAdapter,
     ark_audio_capturer_adapter_t>::kBridgeType = ARK_AUDIO_CAPTURER_ADAPTER;
 
 } // namespace OHOS::ArkWeb

@@ -49,7 +49,7 @@ public:
     CodecCodeAdapter CreateVideoCodecByMime(const std::string mimetype) override;
     CodecCodeAdapter CreateVideoCodecByName(const std::string name) override;
     CodecCodeAdapter SetCodecCallback(const std::shared_ptr<CodecCallbackAdapter> callback) override;
-    CodecCodeAdapter Configure(const CodecConfigPara& config) override;
+    CodecCodeAdapter Configure(const std::shared_ptr<CodecConfigParaAdapter> config) override;
     CodecCodeAdapter Prepare() override;
     CodecCodeAdapter Start() override;
     CodecCodeAdapter Stop() override;

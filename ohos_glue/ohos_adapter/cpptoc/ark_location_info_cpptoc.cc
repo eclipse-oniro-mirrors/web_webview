@@ -13,123 +13,123 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_location_info_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_location_info_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
-double ARK_WEB_CALLBACK ark_location_info_get_latitude(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+double ARK_WEB_CALLBACK
+ark_location_info_get_latitude(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetLatitude();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetLatitude();
 }
 
-double ARK_WEB_CALLBACK ark_location_info_get_longitude(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+double ARK_WEB_CALLBACK
+ark_location_info_get_longitude(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetLongitude();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetLongitude();
 }
 
-double ARK_WEB_CALLBACK ark_location_info_get_altitude(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+double ARK_WEB_CALLBACK
+ark_location_info_get_altitude(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetAltitude();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetAltitude();
 }
 
-float ARK_WEB_CALLBACK ark_location_info_get_accuracy(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+float ARK_WEB_CALLBACK
+ark_location_info_get_accuracy(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetAccuracy();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetAccuracy();
 }
 
-float ARK_WEB_CALLBACK ark_location_info_get_speed(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+float ARK_WEB_CALLBACK
+ark_location_info_get_speed(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetSpeed();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetSpeed();
 }
 
-double ARK_WEB_CALLBACK ark_location_info_get_direction(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+double ARK_WEB_CALLBACK
+ark_location_info_get_direction(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetDirection();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetDirection();
 }
 
-int64_t ARK_WEB_CALLBACK ark_location_info_get_time_stamp(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int64_t ARK_WEB_CALLBACK
+ark_location_info_get_time_stamp(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetTimeStamp();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetTimeStamp();
 }
 
-int64_t ARK_WEB_CALLBACK ark_location_info_get_time_since_boot(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+int64_t ARK_WEB_CALLBACK
+ark_location_info_get_time_since_boot(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetTimeSinceBoot();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetTimeSinceBoot();
 }
 
-ArkWebStringVector ARK_WEB_CALLBACK ark_location_info_get_additions(struct _ark_location_info_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+ArkWebStringVector ARK_WEB_CALLBACK
+ark_location_info_get_additions(struct _ark_location_info_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_vector_default);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_vector_default);
 
-    // Execute
-    return ArkLocationInfoCppToC::Get(self)->GetAdditions();
+  // Execute
+  return ArkLocationInfoCppToC::Get(self)->GetAdditions();
 }
 
 } // namespace
 
-ArkLocationInfoCppToC::ArkLocationInfoCppToC()
-{
-    GetStruct()->get_latitude = ark_location_info_get_latitude;
-    GetStruct()->get_longitude = ark_location_info_get_longitude;
-    GetStruct()->get_altitude = ark_location_info_get_altitude;
-    GetStruct()->get_accuracy = ark_location_info_get_accuracy;
-    GetStruct()->get_speed = ark_location_info_get_speed;
-    GetStruct()->get_direction = ark_location_info_get_direction;
-    GetStruct()->get_time_stamp = ark_location_info_get_time_stamp;
-    GetStruct()->get_time_since_boot = ark_location_info_get_time_since_boot;
-    GetStruct()->get_additions = ark_location_info_get_additions;
+ArkLocationInfoCppToC::ArkLocationInfoCppToC() {
+  GetStruct()->get_latitude = ark_location_info_get_latitude;
+  GetStruct()->get_longitude = ark_location_info_get_longitude;
+  GetStruct()->get_altitude = ark_location_info_get_altitude;
+  GetStruct()->get_accuracy = ark_location_info_get_accuracy;
+  GetStruct()->get_speed = ark_location_info_get_speed;
+  GetStruct()->get_direction = ark_location_info_get_direction;
+  GetStruct()->get_time_stamp = ark_location_info_get_time_stamp;
+  GetStruct()->get_time_since_boot = ark_location_info_get_time_since_boot;
+  GetStruct()->get_additions = ark_location_info_get_additions;
 }
 
-ArkLocationInfoCppToC::~ArkLocationInfoCppToC() {}
+ArkLocationInfoCppToC::~ArkLocationInfoCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkLocationInfoCppToC, ArkLocationInfo, ark_location_info_t>::kBridgeType =
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<ArkLocationInfoCppToC, ArkLocationInfo,
+                                        ark_location_info_t>::kBridgeType =
     ARK_LOCATION_INFO;
 
 } // namespace OHOS::ArkWeb

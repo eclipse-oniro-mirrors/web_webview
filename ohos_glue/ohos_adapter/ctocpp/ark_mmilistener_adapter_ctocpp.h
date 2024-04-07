@@ -13,30 +13,32 @@
  * limitations under the License.
  */
 
-#ifndef ARK_MMILISTENER_ADAPTER_CTOCPP_H
-#define ARK_MMILISTENER_ADAPTER_CTOCPP_H
+#ifndef ARK_MMILISTENER_ADAPTER_CTOCPP_H_
+#define ARK_MMILISTENER_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "capi/ark_mmi_adapter_capi.h"
-#include "ctocpp/ark_web_ctocpp_ref_counted.h"
-#include "include/ark_mmi_adapter.h"
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
+#include "ohos_adapter/capi/ark_mmi_adapter_capi.h"
+#include "ohos_adapter/include/ark_mmi_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkMMIListenerAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkMMIListenerAdapterCToCpp, ArkMMIListenerAdapter, ark_mmilistener_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkMMIListenerAdapterCToCpp,
+                                    ArkMMIListenerAdapter,
+                                    ark_mmilistener_adapter_t> {
 public:
-    ArkMMIListenerAdapterCToCpp();
-    virtual ~ArkMMIListenerAdapterCToCpp();
+  ArkMMIListenerAdapterCToCpp();
+  virtual ~ArkMMIListenerAdapterCToCpp();
 
-    // ArkMMIListenerAdapter methods.
-    void OnDeviceAdded(int32_t deviceId, const ArkWebString& type) override;
+  // ArkMMIListenerAdapter methods.
+  void OnDeviceAdded(int32_t deviceId, const ArkWebString &type) override;
 
-    void OnDeviceRemoved(int32_t deviceId, const ArkWebString& type) override;
+  void OnDeviceRemoved(int32_t deviceId, const ArkWebString &type) override;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_MMILISTENER_ADAPTER_CTOCPP_H
+#endif // ARK_MMILISTENER_ADAPTER_CTOCPP_H_

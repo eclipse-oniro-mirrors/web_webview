@@ -13,48 +13,50 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_soc_perf_client_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_soc_perf_client_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
 namespace {
 
 void ARK_WEB_CALLBACK ark_soc_perf_client_adapter_apply_soc_perf_config_by_id(
-    struct _ark_soc_perf_client_adapter_t* self, int32_t id)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_soc_perf_client_adapter_t *self, int32_t id) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkSocPerfClientAdapterCppToC::Get(self)->ApplySocPerfConfigById(id);
+  // Execute
+  ArkSocPerfClientAdapterCppToC::Get(self)->ApplySocPerfConfigById(id);
 }
 
-void ARK_WEB_CALLBACK ark_soc_perf_client_adapter_apply_soc_perf_config_by_id_ex(
-    struct _ark_soc_perf_client_adapter_t* self, int32_t id, bool onOffTag)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void ARK_WEB_CALLBACK
+ark_soc_perf_client_adapter_apply_soc_perf_config_by_id_ex(
+    struct _ark_soc_perf_client_adapter_t *self, int32_t id, bool onOffTag) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkSocPerfClientAdapterCppToC::Get(self)->ApplySocPerfConfigByIdEx(id, onOffTag);
+  // Execute
+  ArkSocPerfClientAdapterCppToC::Get(self)->ApplySocPerfConfigByIdEx(id,
+                                                                     onOffTag);
 }
 
 } // namespace
 
-ArkSocPerfClientAdapterCppToC::ArkSocPerfClientAdapterCppToC()
-{
-    GetStruct()->apply_soc_perf_config_by_id = ark_soc_perf_client_adapter_apply_soc_perf_config_by_id;
-    GetStruct()->apply_soc_perf_config_by_id_ex = ark_soc_perf_client_adapter_apply_soc_perf_config_by_id_ex;
+ArkSocPerfClientAdapterCppToC::ArkSocPerfClientAdapterCppToC() {
+  GetStruct()->apply_soc_perf_config_by_id =
+      ark_soc_perf_client_adapter_apply_soc_perf_config_by_id;
+  GetStruct()->apply_soc_perf_config_by_id_ex =
+      ark_soc_perf_client_adapter_apply_soc_perf_config_by_id_ex;
 }
 
-ArkSocPerfClientAdapterCppToC::~ArkSocPerfClientAdapterCppToC() {}
+ArkSocPerfClientAdapterCppToC::~ArkSocPerfClientAdapterCppToC() {
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkSocPerfClientAdapterCppToC, ArkSocPerfClientAdapter,
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkSocPerfClientAdapterCppToC, ArkSocPerfClientAdapter,
     ark_soc_perf_client_adapter_t>::kBridgeType = ARK_SOC_PERF_CLIENT_ADAPTER;
 
 } // namespace OHOS::ArkWeb

@@ -17,9 +17,9 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
-#include "ohos_adapter_helper.h"
-#include "mmi_adapter.h"
 #include "key_event.h"
+#include "mmi_adapter.h"
+#include "ohos_adapter_helper.h"
 
 #define private public
 #include "mmi_adapter_impl.h"
@@ -34,6 +34,29 @@ const int RESULT_ERROR = -1;
 std::shared_ptr<MMIAdapterImpl> g_mmi;
 } // namespace
 
+class MMIDeviceInfoAdapterMock : public MMIDeviceInfoAdapter {
+public:
+    MMIDeviceInfoAdapterMock() = default;
+    MOCK_METHOD0(GetId, int32_t());
+    MOCK_METHOD0(GetType, int32_t());
+    MOCK_METHOD0(GetBus, int32_t());
+    MOCK_METHOD0(GetVersion, int32_t());
+    MOCK_METHOD0(GetProduct, int32_t());
+    MOCK_METHOD0(GetVendor, int32_t());
+    MOCK_METHOD0(GetName, std::string());
+    MOCK_METHOD0(GetPhys, std::string());
+    MOCK_METHOD0(GetUniq, std::string());
+    MOCK_METHOD1(SetId, void(int32_t));
+    MOCK_METHOD1(SetType, void(int32_t));
+    MOCK_METHOD1(SetBus, void(int32_t));
+    MOCK_METHOD1(SetVersion, void(int32_t));
+    MOCK_METHOD1(SetProduct, void(int32_t));
+    MOCK_METHOD1(SetVendor, void(int32_t));
+    MOCK_METHOD1(SetName, void(std::string));
+    MOCK_METHOD1(SetPhys, void(std::string));
+    MOCK_METHOD1(SetUniq, void(std::string));
+};
+
 class NWebMMIAdapterTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -46,8 +69,8 @@ class MMIListenerTest : public MMIListenerAdapter {
 public:
     MMIListenerTest() = default;
     virtual ~MMIListenerTest() = default;
-    void OnDeviceAdded(int32_t deviceId, const std::string &type) override {};
-    void OnDeviceRemoved(int32_t deviceId, const std::string &type) override {};
+    void OnDeviceAdded(int32_t deviceId, const std::string& type) override {};
+    void OnDeviceRemoved(int32_t deviceId, const std::string& type) override {};
 };
 
 void NWebMMIAdapterTest::SetUpTestCase(void)
@@ -63,9 +86,9 @@ void NWebMMIAdapterTest::SetUp(void) {}
 void NWebMMIAdapterTest::TearDown(void) {}
 
 class MockMMIInputListenerAdapter : public MMIInputListenerAdapter {
-    public:
-        MockMMIInputListenerAdapter() = default;
-        void OnInputEvent(int32_t keyCode, int32_t keyAction) {}
+public:
+    MockMMIInputListenerAdapter() = default;
+    void OnInputEvent(int32_t keyCode, int32_t keyAction) {}
 };
 
 /**
@@ -109,7 +132,8 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_003, TestSize.Lev
     int32_t ret = g_mmi->GetDeviceIds(devList);
     EXPECT_EQ(ret, RESULT_OK);
 
-    MMIDeviceInfoAdapter info;
+    std::shared_ptr<MMIDeviceInfoAdapterMock> info = std::make_shared<MMIDeviceInfoAdapterMock>();
+    EXPECT_NE(info, nullptr);
     ret = g_mmi->GetDeviceInfo(0, info);
     EXPECT_EQ(ret, RESULT_OK);
 }
@@ -159,7 +183,7 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_006, TestSize.Lev
     listenerTest->OnDeviceAdded(1, "add");
     listenerTest->OnDeviceRemoved(1, "remove");
 
-    const char *code = g_mmi->KeyCodeToString(MMI::KeyEvent::KEYCODE_UNKNOWN);
+    const char* code = g_mmi->KeyCodeToString(MMI::KeyEvent::KEYCODE_UNKNOWN);
     EXPECT_NE(code, nullptr);
     int32_t result = g_mmi->RegisterMMIInputListener(nullptr);
     EXPECT_EQ(result, -1);
@@ -196,4 +220,4 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIInputListenerAdapterImpl_007,
     MMIInputListenerAdapterImpl listenerAdapterImpl(nullptr);
     listenerAdapterImpl.OnInputEvent(keyEvent);
 }
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb

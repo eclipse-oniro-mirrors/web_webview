@@ -86,7 +86,7 @@ enum PixelFormatAdapter {
     PIXEL_FMT_BUTT = 0X7FFFFFFF         /**< Invalid pixel format */
 };
 
-enum class ColorGamutAdapter {
+enum class ColorGamutAdapter : int32_t {
     INVALID = -1,        /**< Invalid */
     NATIVE = 0,          /**< Native or default */
     STANDARD_BT601 = 1,  /**< Standard BT601 */
@@ -101,7 +101,7 @@ enum class ColorGamutAdapter {
     DISPLAY_BT2020 = 10, /**< Display BT2020 */
 };
 
-enum class TransformTypeAdapter {
+enum class TransformTypeAdapter : int32_t {
     ROTATE_NONE = 0, /**< No rotation */
     ROTATE_90,       /**< Rotation by 90 degrees */
     ROTATE_180,      /**< Rotation by 180 degrees */
@@ -117,24 +117,45 @@ enum class TransformTypeAdapter {
     ROTATE_BUTT      /**< Invalid operation */
 };
 
-typedef struct BufferRequestConfigAdapterTag {
-    int32_t width;
-    int32_t height;
-    int32_t strideAlignment; // output parameter, system components can ignore it
-    int32_t format;          // GraphicPixelFormat
-    uint64_t usage;
-    int32_t timeout;
-    ColorGamutAdapter colorGamut = ColorGamutAdapter::SRGB;
-    TransformTypeAdapter transformType = TransformTypeAdapter::ROTATE_NONE;
-} BufferRequestConfigAdapter;
+class BufferRequestConfigAdapter {
+public:
+    BufferRequestConfigAdapter() = default;
 
-typedef struct BufferFlushConfigAdapterTag {
-    int32_t x;
-    int32_t y;
-    int32_t w;
-    int32_t h;
-    int64_t timestamp;
-} BufferFlushConfigAdapter;
+    virtual ~BufferRequestConfigAdapter() = default;
+
+    virtual int32_t GetWidth() = 0;
+
+    virtual int32_t GetHeight() = 0;
+
+    virtual int32_t GetStrideAlignment() = 0;
+
+    virtual int32_t GetFormat() = 0;
+
+    virtual uint64_t GetUsage() = 0;
+
+    virtual int32_t GetTimeout() = 0;
+
+    virtual ColorGamutAdapter GetColorGamut() = 0;
+
+    virtual TransformTypeAdapter GetTransformType() = 0;
+};
+
+class BufferFlushConfigAdapter {
+public:
+    BufferFlushConfigAdapter() = default;
+
+    virtual ~BufferFlushConfigAdapter() = default;
+
+    virtual int32_t GetX() = 0;
+
+    virtual int32_t GetY() = 0;
+
+    virtual int32_t GetW() = 0;
+
+    virtual int32_t GetH() = 0;
+
+    virtual int64_t GetTimestamp() = 0;
+};
 
 class SurfaceBufferAdapter {
 public:
@@ -207,10 +228,17 @@ public:
 };
 
 typedef void (*OnFrameAvailableCb)(void* ctx);
-typedef struct FrameAvailableListener {
-    void* context;
-    OnFrameAvailableCb cb;
-} OnFrameAvailableListener;
+
+class FrameAvailableListener {
+public:
+    FrameAvailableListener() = default;
+
+    virtual ~FrameAvailableListener() = default;
+
+    virtual void* GetContext() = 0;
+
+    virtual OnFrameAvailableCb GetOnFrameAvailableCb() = 0;
+};
 
 class NativeImageAdapter {
 public:
@@ -234,7 +262,7 @@ public:
 
     virtual int32_t GetSurfaceId(uint64_t* surfaceId) = 0;
 
-    virtual int32_t SetOnFrameAvailableListener(OnFrameAvailableListener* listener) = 0;
+    virtual int32_t SetOnFrameAvailableListener(std::shared_ptr<FrameAvailableListener> listener) = 0;
 
     virtual int32_t UnsetOnFrameAvailableListener() = 0;
 
@@ -247,10 +275,11 @@ public:
 
     virtual ~ProducerSurfaceAdapter() = default;
 
-    virtual std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(int32_t& fence, BufferRequestConfigAdapter& config) = 0;
+    virtual std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(
+        int32_t& fence, std::shared_ptr<BufferRequestConfigAdapter> config) = 0;
 
-    virtual int32_t FlushBuffer(
-        std::shared_ptr<SurfaceBufferAdapter> buffer, int32_t fence, BufferFlushConfigAdapter& flushConfig) = 0;
+    virtual int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> buffer, int32_t fence,
+        std::shared_ptr<BufferFlushConfigAdapter> config) = 0;
 };
 } // namespace OHOS::NWeb
 

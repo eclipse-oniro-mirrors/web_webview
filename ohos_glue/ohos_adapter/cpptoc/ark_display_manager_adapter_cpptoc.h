@@ -13,25 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_DISPLAY_MANAGER_ADAPTER_CPPTOC_H
-#define ARK_DISPLAY_MANAGER_ADAPTER_CPPTOC_H
+#ifndef ARK_DISPLAY_MANAGER_ADAPTER_CPPTOC_H_
+#define ARK_DISPLAY_MANAGER_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "capi/ark_display_manager_adapter_capi.h"
-#include "cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "include/ark_display_manager_adapter.h"
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
+#include "ohos_adapter/capi/ark_display_manager_adapter_capi.h"
+#include "ohos_adapter/include/ark_display_manager_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkDisplayManagerAdapterCppToC : public ArkWebCppToCRefCounted<ArkDisplayManagerAdapterCppToC,
-                                           ArkDisplayManagerAdapter, ark_display_manager_adapter_t> {
+class ArkDisplayManagerAdapterCppToC
+    : public ArkWebCppToCRefCounted<ArkDisplayManagerAdapterCppToC,
+                                    ArkDisplayManagerAdapter,
+                                    ark_display_manager_adapter_t> {
 public:
-    ArkDisplayManagerAdapterCppToC();
-    virtual ~ArkDisplayManagerAdapterCppToC();
+  ArkDisplayManagerAdapterCppToC();
+  virtual ~ArkDisplayManagerAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_DISPLAY_MANAGER_ADAPTER_CPPTOC_H
+#endif // ARK_DISPLAY_MANAGER_ADAPTER_CPPTOC_H_

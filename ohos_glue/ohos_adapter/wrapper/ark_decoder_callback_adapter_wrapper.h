@@ -23,17 +23,18 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkDecoderCallbackAdapterWrapper : public OHOS::NWeb::DecoderCallbackAdapter {
+class ArkDecoderCallbackAdapterWrapper : public NWeb::DecoderCallbackAdapter {
 public:
     ArkDecoderCallbackAdapterWrapper(ArkWebRefPtr<ArkDecoderCallbackAdapter>);
 
     void OnError(OHOS::NWeb::ErrorType errorType, int32_t errorCode) override;
 
-    void OnStreamChanged(const OHOS::NWeb::DecoderFormat& format) override;
+    void OnStreamChanged(int32_t width, int32_t height, double frameRate) override;
 
-    void OnNeedInputData(uint32_t index, OHOS::NWeb::OhosBuffer buffer) override;
+    void OnNeedInputData(uint32_t index, std::shared_ptr<NWeb::OhosBufferAdapter> buffer) override;
 
-    void OnNeedOutputData(uint32_t index, OHOS::NWeb::BufferInfo info, OHOS::NWeb::BufferFlag flag) override;
+    void OnNeedOutputData(
+        uint32_t index, std::shared_ptr<NWeb::BufferInfoAdapter> info, NWeb::BufferFlag flag) override;
 
 private:
     ArkWebRefPtr<ArkDecoderCallbackAdapter> ctocpp_;

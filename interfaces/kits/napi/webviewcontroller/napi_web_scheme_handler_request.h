@@ -37,7 +37,7 @@ public:
     static void ExportWebSchemeHandlerRequestClass(napi_env, napi_value* exportsPointer);
     static napi_status DefineProperties(napi_env env, napi_value* object);
     
-    static napi_value JS_Constructor(napi_env env, napi_callback_info info);
+    static napi_value JS_Constructor(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetHeader(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetRequestUrl(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetRequestMethod(napi_env env, napi_callback_info cbinfo);
@@ -56,7 +56,7 @@ public:
     static napi_value Init(napi_env env, napi_value exports);
     static void ExportWebSchemeHandlerResponseClass(napi_env, napi_value* exportsPointer);
 
-    static napi_value JS_Constructor(napi_env env, napi_callback_info info);
+    static napi_value JS_Constructor(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetUrl(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_SetUrl(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_GetStatus(napi_env env, napi_callback_info cbinfo);

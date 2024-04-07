@@ -18,25 +18,27 @@
 
 #pragma once
 
-#include "include/ark_web_base_ref_counted.h"
-#include "include/ark_web_types.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-/*--web engine(source=library)--*/
+/*--ark web(source=library)--*/
 class ArkKeystoreAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--web engine()--*/
-    ArkKeystoreAdapter() = default;
+  /*--ark web()--*/
+  ArkKeystoreAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ~ArkKeystoreAdapter() = default;
+  /*--ark web()--*/
+  virtual ~ArkKeystoreAdapter() = default;
 
-    /*--web engine()--*/
-    virtual ArkWebString EncryptKey(const ArkWebString& alias, const ArkWebString& plainData) = 0;
+  /*--ark web()--*/
+  virtual ArkWebString EncryptKey(const ArkWebString &alias,
+                                  const ArkWebString &plainData) = 0;
 
-    /*--web engine()--*/
-    virtual ArkWebString DecryptKey(const ArkWebString& alis, const ArkWebString& encryptedData) = 0;
+  /*--ark web()--*/
+  virtual ArkWebString DecryptKey(const ArkWebString &alis,
+                                  const ArkWebString &encryptedData) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -90,13 +90,15 @@ public:
 
     ~ProducerSurfaceAdapterImpl() = default;
 
-    std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(int32_t& fence, BufferRequestConfigAdapter& config) override;
+    std::shared_ptr<SurfaceBufferAdapter> RequestBuffer(
+        int32_t& fence, std::shared_ptr<BufferRequestConfigAdapter> config) override;
 
     int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> bufferAdapter, int32_t fence,
-        BufferFlushConfigAdapter& flushConfigAdapter) override;
+        std::shared_ptr<BufferFlushConfigAdapter> flushConfigAdapter) override;
 
 private:
-    void TransToBufferConfig(const BufferRequestConfigAdapter& configAdapter, BufferRequestConfig& config);
+    void TransToBufferConfig(
+        const std::shared_ptr<BufferRequestConfigAdapter> configAdapter, BufferRequestConfig& config);
     GraphicColorGamut TransToGraphicColorGamut(const ColorGamutAdapter& colorGamut);
     GraphicTransformType TransToTransformType(const TransformTypeAdapter& type);
     sptr<Surface> surface_ = nullptr;

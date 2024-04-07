@@ -1018,7 +1018,8 @@ public:
    * @param vx      vertical velocity in physical pixel.
    */
   /*--ark web()--*/
-  void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) override;
+  void ScrollByRefScreen(float delta_x, float delta_y, float vx,
+                         float vy) override;
 
   /**
    * @brief ExecuteJavaScript with ashmem
@@ -1028,8 +1029,10 @@ public:
    * @param callback javascript running result
    * @param extention true if is extension
    */
-  void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
-      std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback, bool extention) override;
+  void ExecuteJavaScriptExt(
+      const int fd, const size_t scriptLength,
+      std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback,
+      bool extention) override;
 
   /**
    * @brief Render process switch to background.
@@ -1045,17 +1048,22 @@ public:
 
   /**
    * @brief Compile javascript and generate code cache.
-   * 
+   *
    * @param url url of javascript.
    * @param script javascript text content.
    * @param cacheOptions compile options and info.
-   * @param callback callback will be called on getting the result of compiling javascript.
+   * @param callback callback will be called on getting the result of compiling
+   * javascript.
    */
   /*--ark web()--*/
   void PrecompileJavaScript(const std::string &url,
                             const std::string &script,
                             std::shared_ptr<OHOS::NWeb::CacheOptions> &cacheOptions,
                             std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) override;
+
+  void OnCreateNativeMediaPlayer(
+      std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback> callback)
+      override;
 
   /**
    * @brief Web drag resize optimize.

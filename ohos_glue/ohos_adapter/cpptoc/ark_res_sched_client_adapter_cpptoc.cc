@@ -13,61 +13,81 @@
  * limitations under the License.
  */
 
-#include "cpptoc/ark_res_sched_client_adapter_cpptoc.h"
-
-#include "cpptoc/ark_web_cpptoc_macros.h"
+#include "ohos_adapter/cpptoc/ark_res_sched_client_adapter_cpptoc.h"
+#include "base/cpptoc/ark_web_cpptoc_macros.h"
 
 namespace OHOS::ArkWeb {
 
-bool ark_res_sched_client_adapter_report_key_thread(int32_t statusAdapter, pid_t pid, pid_t tid, int32_t roleAdapter)
-{
-    // Execute
-    return ArkResSchedClientAdapter::ReportKeyThread(statusAdapter, pid, tid, roleAdapter);
+bool ark_res_sched_client_adapter_report_key_thread(int32_t statusAdapter,
+                                                    pid_t pid, pid_t tid,
+                                                    int32_t roleAdapter) {
+  // Execute
+  return ArkResSchedClientAdapter::ReportKeyThread(statusAdapter, pid, tid,
+                                                   roleAdapter);
 }
 
-bool ark_res_sched_client_adapter_report_window_status(
-    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
-{
-    // Execute
-    return ArkResSchedClientAdapter::ReportWindowStatus(statusAdapter, pid, windowId, nwebId);
+bool ark_res_sched_client_adapter_report_window_status(int32_t statusAdapter,
+                                                       pid_t pid,
+                                                       uint32_t windowId,
+                                                       int32_t nwebId) {
+  // Execute
+  return ArkResSchedClientAdapter::ReportWindowStatus(statusAdapter, pid,
+                                                      windowId, nwebId);
 }
 
-bool ark_res_sched_client_adapter_report_scene(int32_t statusAdapter, int32_t sceneAdapter, int32_t nwebId)
-{
-    // Execute
-    return ArkResSchedClientAdapter::ReportScene(statusAdapter, sceneAdapter, nwebId);
+bool ark_res_sched_client_adapter_report_scene(int32_t statusAdapter,
+                                               int32_t sceneAdapter,
+                                               int32_t nwebId) {
+  // Execute
+  return ArkResSchedClientAdapter::ReportScene(statusAdapter, sceneAdapter,
+                                               nwebId);
 }
 
-bool ark_res_sched_client_adapter_report_audio_data(int32_t statusAdapter, pid_t pid, pid_t tid)
-{
-    // Execute
-    return ArkResSchedClientAdapter::ReportAudioData(statusAdapter, pid, tid);
+bool ark_res_sched_client_adapter_report_audio_data(int32_t statusAdapter,
+                                                    pid_t pid, pid_t tid) {
+  // Execute
+  return ArkResSchedClientAdapter::ReportAudioData(statusAdapter, pid, tid);
 }
 
-void ark_res_sched_client_adapter_report_window_id(int32_t windowId, int32_t nwebId)
-{
-    // Execute
-    ArkResSchedClientAdapter::ReportWindowId(windowId, nwebId);
+void ark_res_sched_client_adapter_report_window_id(int32_t windowId,
+                                                   int32_t nwebId) {
+  // Execute
+  ArkResSchedClientAdapter::ReportWindowId(windowId, nwebId);
 }
 
-void ark_res_sched_client_adapter_report_nweb_init(int32_t statusAdapter, int32_t nweb_id)
-{
-    // Execute
-    ArkResSchedClientAdapter::ReportNWebInit(statusAdapter, nweb_id);
+void ark_res_sched_client_adapter_report_nweb_init(int32_t statusAdapter,
+                                                   int32_t nweb_id) {
+  // Execute
+  ArkResSchedClientAdapter::ReportNWebInit(statusAdapter, nweb_id);
 }
 
-void ark_res_sched_client_adapter_report_render_process_status(int32_t statusAdapter, pid_t pid)
-{
-    // Execute
-    ArkResSchedClientAdapter::ReportRenderProcessStatus(statusAdapter, pid);
+void ark_res_sched_client_adapter_report_render_process_status(
+    int32_t statusAdapter, pid_t pid) {
+  // Execute
+  ArkResSchedClientAdapter::ReportRenderProcessStatus(statusAdapter, pid);
 }
 
-ArkResSchedClientAdapterCppToC::ArkResSchedClientAdapterCppToC() {}
+bool ark_res_sched_client_adapter_report_screen_capture(int32_t statusAdapter,
+                                                        pid_t pid) {
+  // Execute
+  return ArkResSchedClientAdapter::ReportScreenCapture(statusAdapter, pid);
+}
 
-ArkResSchedClientAdapterCppToC::~ArkResSchedClientAdapterCppToC() {}
+bool ark_res_sched_client_adapter_report_video_playing(int32_t statusAdapter,
+                                                       pid_t pid) {
+  // Execute
+  return ArkResSchedClientAdapter::ReportVideoPlaying(statusAdapter, pid);
+}
 
-template<>
-ArkWebBridgeType ArkWebCppToCRefCounted<ArkResSchedClientAdapterCppToC, ArkResSchedClientAdapter,
+ArkResSchedClientAdapterCppToC::ArkResSchedClientAdapterCppToC() {
+}
+
+ArkResSchedClientAdapterCppToC::~ArkResSchedClientAdapterCppToC() {
+}
+
+template <>
+ArkWebBridgeType ArkWebCppToCRefCounted<
+    ArkResSchedClientAdapterCppToC, ArkResSchedClientAdapter,
     ark_res_sched_client_adapter_t>::kBridgeType = ARK_RES_SCHED_CLIENT_ADAPTER;
 
 } // namespace OHOS::ArkWeb
@@ -77,56 +97,82 @@ extern "C" {
 #endif // __cplusplus
 
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_key_thread_static(
-    int32_t statusAdapter, pid_t pid, pid_t tid, int32_t roleAdapter)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+    int32_t statusAdapter, pid_t pid, pid_t tid, int32_t roleAdapter) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_res_sched_client_adapter_report_key_thread(statusAdapter, pid, tid, roleAdapter);
+  return OHOS::ArkWeb::ark_res_sched_client_adapter_report_key_thread(
+      statusAdapter, pid, tid, roleAdapter);
 }
 
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_window_status_static(
-    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_res_sched_client_adapter_report_window_status(statusAdapter, pid, windowId, nwebId);
+  return OHOS::ArkWeb::ark_res_sched_client_adapter_report_window_status(
+      statusAdapter, pid, windowId, nwebId);
 }
 
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_scene_static(
-    int32_t statusAdapter, int32_t sceneAdapter, int32_t nwebId)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+    int32_t statusAdapter, int32_t sceneAdapter, int32_t nwebId) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_res_sched_client_adapter_report_scene(statusAdapter, sceneAdapter, nwebId);
+  return OHOS::ArkWeb::ark_res_sched_client_adapter_report_scene(
+      statusAdapter, sceneAdapter, nwebId);
 }
 
-ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_audio_data_static(int32_t statusAdapter, pid_t pid, pid_t tid)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT bool
+ark_res_sched_client_adapter_report_audio_data_static(int32_t statusAdapter,
+                                                      pid_t pid, pid_t tid) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    return OHOS::ArkWeb::ark_res_sched_client_adapter_report_audio_data(statusAdapter, pid, tid);
+  return OHOS::ArkWeb::ark_res_sched_client_adapter_report_audio_data(
+      statusAdapter, pid, tid);
 }
 
-ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_window_id_static(int32_t windowId, int32_t nwebId)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT void
+ark_res_sched_client_adapter_report_window_id_static(int32_t windowId,
+                                                     int32_t nwebId) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    OHOS::ArkWeb::ark_res_sched_client_adapter_report_window_id(windowId, nwebId);
+  OHOS::ArkWeb::ark_res_sched_client_adapter_report_window_id(windowId, nwebId);
 }
 
-ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_nweb_init_static(int32_t statusAdapter, int32_t nweb_id)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT void
+ark_res_sched_client_adapter_report_nweb_init_static(int32_t statusAdapter,
+                                                     int32_t nweb_id) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    OHOS::ArkWeb::ark_res_sched_client_adapter_report_nweb_init(statusAdapter, nweb_id);
+  OHOS::ArkWeb::ark_res_sched_client_adapter_report_nweb_init(statusAdapter,
+                                                              nweb_id);
 }
 
-ARK_WEB_EXPORT void ark_res_sched_client_adapter_report_render_process_status_static(int32_t statusAdapter, pid_t pid)
-{
-    ARK_WEB_CPPTOC_DV_LOG();
+ARK_WEB_EXPORT void
+ark_res_sched_client_adapter_report_render_process_status_static(
+    int32_t statusAdapter, pid_t pid) {
+  ARK_WEB_CPPTOC_DV_LOG();
 
-    OHOS::ArkWeb::ark_res_sched_client_adapter_report_render_process_status(statusAdapter, pid);
+  OHOS::ArkWeb::ark_res_sched_client_adapter_report_render_process_status(
+      statusAdapter, pid);
 }
+
+ARK_WEB_EXPORT bool
+ark_res_sched_client_adapter_report_screen_capture_static(int32_t statusAdapter,
+                                                          pid_t pid) {
+  ARK_WEB_CPPTOC_DV_LOG();
+
+  return OHOS::ArkWeb::ark_res_sched_client_adapter_report_screen_capture(
+      statusAdapter, pid);
+}
+
+ARK_WEB_EXPORT bool
+ark_res_sched_client_adapter_report_video_playing_static(int32_t statusAdapter,
+                                                         pid_t pid) {
+  ARK_WEB_CPPTOC_DV_LOG();
+
+  return OHOS::ArkWeb::ark_res_sched_client_adapter_report_video_playing(
+      statusAdapter, pid);
+}
+
 #ifdef __cplusplus
 }
 #endif // __cplusplus

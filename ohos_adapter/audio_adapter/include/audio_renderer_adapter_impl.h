@@ -36,7 +36,7 @@ public:
 
     ~AudioRendererCallbackImpl() override = default;
 
-    void OnInterrupt(const InterruptEvent &interruptEvent) override;
+    void OnInterrupt(const InterruptEvent& interruptEvent) override;
 
     void OnStateChange(const RendererState state, const StateChangeCmdType cmdType = CMD_FROM_CLIENT) override;
 
@@ -51,7 +51,7 @@ public:
 
     ~AudioRendererAdapterImpl();
 
-    int32_t Create(const AudioAdapterRendererOptions &rendererOptions,
+    int32_t Create(const std::shared_ptr<AudioRendererOptionsAdapter> rendererOptions,
         std::string cachePath = std::string()) override;
 
     bool Start() override;
@@ -62,15 +62,15 @@ public:
 
     bool Release() override;
 
-    int32_t Write(uint8_t *buffer, size_t bufferSize) override;
+    int32_t Write(uint8_t* buffer, size_t bufferSize) override;
 
-    int32_t GetLatency(uint64_t &latency) override;
+    int32_t GetLatency(uint64_t& latency) override;
 
     int32_t SetVolume(float volume) override;
 
     float GetVolume() override;
 
-    int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter> &callback) override;
+    int32_t SetAudioRendererCallback(const std::shared_ptr<AudioRendererCallbackAdapter>& callback) override;
 
     void SetInterruptMode(bool audioExclusive) override;
 
@@ -89,12 +89,15 @@ public:
 
     static StreamUsage GetAudioStreamUsage(AudioAdapterStreamUsage streamUsage);
 
+    static void TransformToAudioRendererOptions(
+        AudioRendererOptions& out, const std::shared_ptr<AudioRendererOptionsAdapter>& in);
+
 private:
     std::unique_ptr<AudioRenderer> audio_renderer_;
     std::shared_ptr<AudioRendererCallbackImpl> callback_;
     static std::shared_ptr<OHOS::AVSession::AVSession> avsession_;
 #endif
 };
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
 
 #endif // AUDIO_RENDERER_ADAPTER_IMPL_H

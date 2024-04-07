@@ -18,6 +18,7 @@
 
 #pragma once
 
+#include "camera_manager_adapter.h"
 #include "include/ark_camera_manager_adapter.h"
 
 namespace OHOS::ArkWeb {
