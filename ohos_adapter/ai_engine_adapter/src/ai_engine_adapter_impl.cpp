@@ -14,6 +14,8 @@
  */
 #include "ai_engine_adapter_impl.h"
 
+#include "nweb_log.h"
+
 namespace OHOS::NWeb {
 AiEngineAdapterImpl& AiEngineAdapterImpl::GetInstance()
 {
@@ -21,13 +23,64 @@ AiEngineAdapterImpl& AiEngineAdapterImpl::GetInstance()
     return instance;
 }
 
-std::vector<int8_t> AiEngineAdapterImpl::GetWordSelection(const std::string& text, int8_t offset)
-{
-    DataDetectorInstance engine = 
+AiEngineAdapterImpl::AiEngineAdapterImpl() {
+    mLibraryHandle_ = dlopen(AI_ADAPTER_SO_PATH, RTLD_LAZY);
+
+    mCreateDataDetectorInstance_ = (DataDetectorInterface* (*)())dlsym(
+        mLibraryHandle_,
+        "OHOS_ACE_createDataDetectorInstance");
+
+    mDestoryDataDetectorInstance_ = (void (*)(DataDetectorInterface*))dlsym(
+        mLibraryHandle_,
+        "OHOS_ACE_destroyDataDetectorInstance");
+
+    engine_ = 
         DataDetectorInstance(mCreateDataDetectorInstance_(),
-        [destroy = mDestoryDataDetectorInstance_](DataDetectorInterface* e) {
-            destroy(e);
-        });
-    return engine->GetWordSelection(text, offset);
+            [destroy = mDestoryDataDetectorInstance_](DataDetectorInterface* e) {
+                destroy(e);
+            });
+}
+
+bool AiEngineAdapterImpl::IsDataDetectorSupported()
+{
+    if (engine_) {
+        return engine_->IsDataDetectorSupported();
+    }
+    return false;
+}
+
+void AiEngineAdapterImpl::DataDetect(const TextDataDetectInfo& info,
+                                     const TextDetectResultFunc& resultFunc)
+{
+    if (!IsDataDetectorSupported()) {
+        TextDataDetectResult result;
+        result.code = UNSUPPORTED_CODE;
+        resultFunc(result);
+        return;
+    }
+    if (engine_) {
+        engine_->DataDetect(info, resultFunc);
+    }
+}
+
+std::vector<int8_t> AiEngineAdapterImpl::GetWordSelection(const std::string& text,
+                                                          int8_t offset)
+{
+    if (engine_) {
+        WVLOG_I("AiEngineAdapterImpl::GetWordSelection success.");
+        return engine_->GetWordSelection(text, offset);
+    }
+
+    WVLOG_E("AiEngineAdapterImpl::GetWordSelection failed, engine_ is null.");
+    return std::vector<int8_t> { -1, -1 };
+}
+
+int8_t AiEngineAdapterImpl::GetCursorPosition(const std::string& text, int8_t offset)
+{
+    if (engine_) {
+        return engine_->GetCursorPosition(text, offset);
+    }
+
+    return -1;
 }
 } // namespace OHOS::NWeb
