@@ -201,7 +201,7 @@ ArkWebRenderProcessMode ArkWebEngineWrapper::GetRenderProcessMode() {
       ark_web_engine_->GetRenderProcessMode());
 }
 
-void ArkWebEngineWrapper::WarmupServiceWorker(const std::string &url {
+void ArkWebEngineWrapper::WarmupServiceWorker(const std::string &url) {
   ArkWebString stUrl = ArkWebStringClassToStruct(url);
 
   ark_web_engine_->WarmupServiceWorker(stUrl);
