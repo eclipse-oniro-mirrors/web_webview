@@ -12,6 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+#include <dlfcn.h>
+
 #include "ai_engine_adapter_impl.h"
 
 #include "nweb_log.h"
@@ -25,6 +27,9 @@ AiEngineAdapterImpl& AiEngineAdapterImpl::GetInstance()
 
 AiEngineAdapterImpl::AiEngineAdapterImpl() {
     mLibraryHandle_ = dlopen(AI_ADAPTER_SO_PATH, RTLD_LAZY);
+    if (mLibraryHandle_ == nullptr) {
+        return;
+    }
 
     mCreateDataDetectorInstance_ = (DataDetectorInterface* (*)())dlsym(
         mLibraryHandle_,
@@ -33,6 +38,12 @@ AiEngineAdapterImpl::AiEngineAdapterImpl() {
     mDestoryDataDetectorInstance_ = (void (*)(DataDetectorInterface*))dlsym(
         mLibraryHandle_,
         "OHOS_ACE_destroyDataDetectorInstance");
+
+    if (mCreateDataDetectorInstance_ == nullptr || mDestoryDataDetectorInstance_ == nullptr) {
+        WVLOG_E("Cound not find engine interface function in %{public}s", AI_ADAPTER_SO_PATH);
+        Close();
+        return;
+    }
 
     engine_ = 
         DataDetectorInstance(mCreateDataDetectorInstance_(),
@@ -82,5 +93,14 @@ int8_t AiEngineAdapterImpl::GetCursorPosition(const std::string& text, int8_t of
     }
 
     return -1;
+}
+
+void AiEngineAdapterImpl::Close() {
+    if (mLibraryHandle_ != nullptr) {
+        dlclose(mLibraryHandle_);
+    }
+    mLibraryHandle_ = nullptr;
+    mCreateDataDetectorInstance_ = nullptr;
+    mDestoryDataDetectorInstance_ = nullptr;
 }
 } // namespace OHOS::NWeb
