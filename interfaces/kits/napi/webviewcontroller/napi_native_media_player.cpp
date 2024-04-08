@@ -30,8 +30,6 @@ void NapiNativeMediaPlayerHandler::Init(napi_env env, napi_value value)
 {
     WVLOG_I("begin to init native media player napi properties");
 
-    NAPI_CALL_RETURN_VOID(env, ExportClassInterface(env, &value));
-
     NAPI_CALL_RETURN_VOID(env, ExportEnumMediaError(env, &value));
 
     NAPI_CALL_RETURN_VOID(env, ExportEnumReadyState(env, &value));
@@ -64,54 +62,6 @@ napi_status NapiNativeMediaPlayerHandler::DefineProperties(napi_env env, napi_va
     };
 
     return napi_define_properties(env, *value, sizeof(properties) / sizeof(properties[0]), properties);
-}
-
-napi_value NapiNativeMediaPlayerHandler::CreatePlayerHandler(napi_env env, napi_callback_info info)
-{
-    void* data = nullptr;
-    napi_value value = nullptr;
-    napi_get_cb_info(env, info, nullptr, nullptr, &value, &data);
-
-    napi_wrap(
-        env, value, new NapiNativeMediaPlayerHandler(),
-        [](napi_env /* env */, void* data, void* /* hint */) {
-            NapiNativeMediaPlayerHandler* handler = (NapiNativeMediaPlayerHandler*)data;
-            delete handler;
-        },
-        nullptr, nullptr);
-
-    return value;
-}
-
-napi_status NapiNativeMediaPlayerHandler::ExportClassInterface(napi_env env, napi_value* value)
-{
-    WVLOG_D("begin to export class interface");
-
-    const std::string NPI_NATIVE_MEDIA_PLAYER_HANDLER_CLASS_NAME = "NativeMediaPlayerHandler";
-    napi_property_descriptor properties[] = {
-        DECLARE_NAPI_FUNCTION("handleStatusChanged", NapiNativeMediaPlayerHandler::HandleStatusChanged),
-        DECLARE_NAPI_FUNCTION("handleVolumeChanged", NapiNativeMediaPlayerHandler::HandleVolumeChanged),
-        DECLARE_NAPI_FUNCTION("handleMutedChanged", NapiNativeMediaPlayerHandler::HandleMutedChanged),
-        DECLARE_NAPI_FUNCTION("handlePlaybackRateChanged", NapiNativeMediaPlayerHandler::HandlePlaybackRateChanged),
-        DECLARE_NAPI_FUNCTION("handleDurationChanged", NapiNativeMediaPlayerHandler::HandleDurationChanged),
-        DECLARE_NAPI_FUNCTION("handleTimeUpdate", NapiNativeMediaPlayerHandler::HandleTimeUpdate),
-        DECLARE_NAPI_FUNCTION(
-            "handleBufferedEndTimeChanged", NapiNativeMediaPlayerHandler::HandleBufferedEndTimeChanged),
-        DECLARE_NAPI_FUNCTION("handleEnded", NapiNativeMediaPlayerHandler::HandleEnded),
-        DECLARE_NAPI_FUNCTION("handleNetworkStateChanged", NapiNativeMediaPlayerHandler::HandleNetworkStateChanged),
-        DECLARE_NAPI_FUNCTION("handleReadyStateChanged", NapiNativeMediaPlayerHandler::HandleReadyStateChanged),
-        DECLARE_NAPI_FUNCTION("handleFullscreenChanged", NapiNativeMediaPlayerHandler::HandleFullScreenChanged),
-        DECLARE_NAPI_FUNCTION("handleSeeking", NapiNativeMediaPlayerHandler::HandleSeeking),
-        DECLARE_NAPI_FUNCTION("handleSeekFinished", NapiNativeMediaPlayerHandler::HandleSeekFinished),
-        DECLARE_NAPI_FUNCTION("handleError", NapiNativeMediaPlayerHandler::HandleError),
-        DECLARE_NAPI_FUNCTION("handleVideoSizeChanged", NapiNativeMediaPlayerHandler::HandleVideoSizeChanged),
-    };
-
-    napi_value handler = nullptr;
-    napi_define_class(env, NPI_NATIVE_MEDIA_PLAYER_HANDLER_CLASS_NAME.c_str(),
-        NPI_NATIVE_MEDIA_PLAYER_HANDLER_CLASS_NAME.length(), CreatePlayerHandler, nullptr,
-        sizeof(properties) / sizeof(properties[0]), properties, &handler);
-    return napi_set_named_property(env, *value, NPI_NATIVE_MEDIA_PLAYER_HANDLER_CLASS_NAME.c_str(), handler);
 }
 
 napi_status NapiNativeMediaPlayerHandler::ExportEnumMediaError(napi_env env, napi_value* value)
