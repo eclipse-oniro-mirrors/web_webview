@@ -30,21 +30,17 @@ AiEngineAdapterImpl::AiEngineAdapterImpl() {
     if (mLibraryHandle_ == nullptr) {
         return;
     }
-
     mCreateDataDetectorInstance_ = (DataDetectorInterface* (*)())dlsym(
         mLibraryHandle_,
         "OHOS_ACE_createDataDetectorInstance");
-
     mDestoryDataDetectorInstance_ = (void (*)(DataDetectorInterface*))dlsym(
         mLibraryHandle_,
         "OHOS_ACE_destroyDataDetectorInstance");
-
     if (mCreateDataDetectorInstance_ == nullptr || mDestoryDataDetectorInstance_ == nullptr) {
         WVLOG_E("Cound not find engine interface function in %{public}s", AI_ADAPTER_SO_PATH);
         Close();
         return;
     }
-
     engine_ = 
         DataDetectorInstance(mCreateDataDetectorInstance_(),
             [destroy = mDestoryDataDetectorInstance_](DataDetectorInterface* e) {
