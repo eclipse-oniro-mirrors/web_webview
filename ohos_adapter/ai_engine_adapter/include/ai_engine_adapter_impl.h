@@ -16,7 +16,6 @@
 #ifndef AI_ENGINE_ADAPTER_IMPL_H
 #define AI_ENGINE_ADAPTER_IMPL_H
 
-#include <dlfcn.h>
 #include <memory>
 
 #include "ai_engine_adapter.h"
@@ -88,7 +87,9 @@ private:
     AiEngineAdapterImpl(const AiEngineAdapterImpl&) = delete;
 
     AiEngineAdapterImpl& operator=(const AiEngineAdapterImpl&) = delete;
-    
+
+    void Close();
+
     void *mLibraryHandle_ = nullptr;
 
     DataDetectorInterface* (*mCreateDataDetectorInstance_)() = nullptr;
