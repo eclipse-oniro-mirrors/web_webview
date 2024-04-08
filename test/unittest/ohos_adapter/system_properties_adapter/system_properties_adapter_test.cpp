@@ -106,6 +106,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
  */
 HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_OptSystemPropertiesObserver_002, TestSize.Level1)
 {
+    system("param set web.render.dump false");
     auto& system_properties_adapter = SystemPropertiesAdapterImpl::GetInstance();
     system_properties_adapter.AttachSysPropObserver(PropertiesKey::PROP_RENDER_DUMP, nullptr);
 
