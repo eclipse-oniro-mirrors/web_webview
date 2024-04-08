@@ -17,6 +17,7 @@
 #include "napi/native_api.h"
 #include "napi/native_node_api.h"
 #include "napi_geolocation_permission.h"
+#include "napi_native_media_player.h"
 #include "napi_web_async_controller.h"
 #include "napi_webview_controller.h"
 #include "napi_webview_function.h"
@@ -47,6 +48,7 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
     NapiWebSchemeHandlerResponse::Init(env, exports);
     NapiWebSchemeHandler::Init(env, exports);
     WebFunctionInit(env, exports);
+    NapiNativeMediaPlayerHandler::Init(env, exports);
     return exports;
 }
 EXTERN_C_END

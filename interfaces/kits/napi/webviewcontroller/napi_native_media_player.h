@@ -25,9 +25,23 @@ public:
     NapiNativeMediaPlayerHandler() = default;
     ~NapiNativeMediaPlayerHandler() = default;
 
+    static void Init(napi_env env, napi_value value);
+
     static napi_status DefineProperties(napi_env env, napi_value* value);
 
 private:
+    static napi_value CreatePlayerHandler(napi_env env, napi_callback_info info);
+
+    static napi_status ExportClassInterface(napi_env env, napi_value* value);
+
+    static napi_status ExportEnumMediaError(napi_env env, napi_value* value);
+
+    static napi_status ExportEnumReadyState(napi_env env, napi_value* value);
+
+    static napi_status ExportEnumNetworkState(napi_env env, napi_value* value);
+
+    static napi_status ExportEnumPlaybackStatus(napi_env env, napi_value* value);
+
     static napi_value HandleStatusChanged(napi_env env, napi_callback_info info);
 
     static napi_value HandleVolumeChanged(napi_env env, napi_callback_info info);
