@@ -20,6 +20,7 @@
 
 #include "aafwk_app_mgr_client_adapter.h"
 #include "access_token_adapter.h"
+#include "ai_engine_adapter.h"
 #include "audio_capturer_adapter.h"
 #include "audio_renderer_adapter.h"
 #include "audio_system_manager_adapter.h"
@@ -137,6 +138,8 @@ public:
     virtual MediaCodecListAdapter& GetMediaCodecListAdapter() = 0;
 
     virtual std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() = 0;
+
+    virtual AiEngineAdapter& GetAiEngineAdapterInstance() = 0;
 };
 } // namespace OHOS::NWeb
 
