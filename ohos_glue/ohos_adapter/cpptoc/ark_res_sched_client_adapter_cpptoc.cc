@@ -29,10 +29,11 @@ bool ark_res_sched_client_adapter_report_key_thread(int32_t statusAdapter,
 bool ark_res_sched_client_adapter_report_window_status(int32_t statusAdapter,
                                                        pid_t pid,
                                                        uint32_t windowId,
-                                                       int32_t nwebId) {
+                                                       int32_t nwebId,
+                                                       bool isNewRender) {
   // Execute
   return ArkResSchedClientAdapter::ReportWindowStatus(statusAdapter, pid,
-                                                      windowId, nwebId);
+                                                      windowId, nwebId, isNewRender);
 }
 
 bool ark_res_sched_client_adapter_report_scene(int32_t statusAdapter,
@@ -79,6 +80,11 @@ bool ark_res_sched_client_adapter_report_video_playing(int32_t statusAdapter,
   return ArkResSchedClientAdapter::ReportVideoPlaying(statusAdapter, pid);
 }
 
+void ark_res_sched_client_adapter_report_process_in_use(pid_t pid) {
+  // Execute
+  ArkResSchedClientAdapter::ReportProcessInUse(pid);
+}
+
 ArkResSchedClientAdapterCppToC::ArkResSchedClientAdapterCppToC() {
 }
 
@@ -105,11 +111,11 @@ ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_key_thread_static(
 }
 
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_window_status_static(
-    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId) {
+    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId, bool isNewRender) {
   ARK_WEB_CPPTOC_DV_LOG();
 
   return OHOS::ArkWeb::ark_res_sched_client_adapter_report_window_status(
-      statusAdapter, pid, windowId, nwebId);
+      statusAdapter, pid, windowId, nwebId, isNewRender);
 }
 
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_scene_static(
@@ -171,6 +177,13 @@ ark_res_sched_client_adapter_report_video_playing_static(int32_t statusAdapter,
 
   return OHOS::ArkWeb::ark_res_sched_client_adapter_report_video_playing(
       statusAdapter, pid);
+}
+
+ARK_WEB_EXPORT void
+ark_res_sched_client_adapter_report_process_in_use_static(pid_t pid) {
+  ARK_WEB_CPPTOC_DV_LOG();
+
+  OHOS::ArkWeb::ark_res_sched_client_adapter_report_process_in_use(pid);
 }
 
 #ifdef __cplusplus

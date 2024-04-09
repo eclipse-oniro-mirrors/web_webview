@@ -38,7 +38,7 @@ public:
 
   /*--ark web()--*/
   static bool ReportWindowStatus(int32_t statusAdapter, pid_t pid,
-                                 uint32_t windowId, int32_t nwebId);
+                                 uint32_t windowId, int32_t nwebId, bool isNewRender);
 
   /*--ark web()--*/
   static bool ReportScene(int32_t statusAdapter, int32_t sceneAdapter,
@@ -61,6 +61,9 @@ public:
 
   /*--ark web()--*/
   static bool ReportVideoPlaying(int32_t statusAdapter, pid_t pid);
+
+  /*--ark web()--*/
+  static void ReportProcessInUse(pid_t pid);
 };
 } // namespace OHOS::ArkWeb
 
