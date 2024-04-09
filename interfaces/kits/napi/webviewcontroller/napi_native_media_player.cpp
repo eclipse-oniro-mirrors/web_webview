@@ -26,6 +26,19 @@ namespace OHOS::NWeb {
 const double MAX_VOLUME = 1.0;
 const double MAX_PLAYBACK_RATE = 10.0;
 
+void NapiNativeMediaPlayerHandler::Init(napi_env env, napi_value value)
+{
+    WVLOG_I("begin to init native media player napi properties");
+
+    NAPI_CALL_RETURN_VOID(env, ExportEnumMediaError(env, &value));
+
+    NAPI_CALL_RETURN_VOID(env, ExportEnumReadyState(env, &value));
+
+    NAPI_CALL_RETURN_VOID(env, ExportEnumNetworkState(env, &value));
+
+    NAPI_CALL_RETURN_VOID(env, ExportEnumPlaybackStatus(env, &value));
+}
+
 napi_status NapiNativeMediaPlayerHandler::DefineProperties(napi_env env, napi_value* value)
 {
     const std::string NPI_NATIVE_MEDIA_PLAYER_HANDLER_CLASS_NAME = "NativeMediaPlayerHandler";
@@ -41,7 +54,7 @@ napi_status NapiNativeMediaPlayerHandler::DefineProperties(napi_env env, napi_va
         DECLARE_NAPI_FUNCTION("handleEnded", NapiNativeMediaPlayerHandler::HandleEnded),
         DECLARE_NAPI_FUNCTION("handleNetworkStateChanged", NapiNativeMediaPlayerHandler::HandleNetworkStateChanged),
         DECLARE_NAPI_FUNCTION("handleReadyStateChanged", NapiNativeMediaPlayerHandler::HandleReadyStateChanged),
-        DECLARE_NAPI_FUNCTION("handleFullScreenChanged", NapiNativeMediaPlayerHandler::HandleFullScreenChanged),
+        DECLARE_NAPI_FUNCTION("handleFullscreenChanged", NapiNativeMediaPlayerHandler::HandleFullScreenChanged),
         DECLARE_NAPI_FUNCTION("handleSeeking", NapiNativeMediaPlayerHandler::HandleSeeking),
         DECLARE_NAPI_FUNCTION("handleSeekFinished", NapiNativeMediaPlayerHandler::HandleSeekFinished),
         DECLARE_NAPI_FUNCTION("handleError", NapiNativeMediaPlayerHandler::HandleError),
@@ -51,16 +64,104 @@ napi_status NapiNativeMediaPlayerHandler::DefineProperties(napi_env env, napi_va
     return napi_define_properties(env, *value, sizeof(properties) / sizeof(properties[0]), properties);
 }
 
+napi_status NapiNativeMediaPlayerHandler::ExportEnumMediaError(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum media error");
+
+    const std::string NPI_MEDIA_ERROR_ENUM_NAME = "MediaError";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "NETWORK_ERROR", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(MediaError::NETWORK_ERROR))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "FORMAT_ERROR", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(MediaError::FORMAT_ERROR))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "DECODE_ERROR", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(MediaError::DECODE_ERROR))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_MEDIA_ERROR_ENUM_NAME.c_str(), NPI_MEDIA_ERROR_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_MEDIA_ERROR_ENUM_NAME.c_str(), enumValue);
+}
+
+napi_status NapiNativeMediaPlayerHandler::ExportEnumReadyState(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum ready state");
+
+    const std::string NPI_READY_STATE_ENUM_NAME = "ReadyState";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "HAVE_NOTHING", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(ReadyState::HAVE_NOTHING))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "HAVE_METADATA", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(ReadyState::HAVE_METADATA))),
+        DECLARE_NAPI_STATIC_PROPERTY("HAVE_CURRENT_DATA",
+            NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(ReadyState::HAVE_CURRENT_DATA))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "HAVE_FUTURE_DATA", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(ReadyState::HAVE_FUTURE_DATA))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "HAVE_ENOUGH_DATA", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(ReadyState::HAVE_ENOUGH_DATA))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_READY_STATE_ENUM_NAME.c_str(), NPI_READY_STATE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_READY_STATE_ENUM_NAME.c_str(), enumValue);
+}
+
+napi_status NapiNativeMediaPlayerHandler::ExportEnumNetworkState(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum network state");
+
+    const std::string NPI_NETWORK_STATE_ENUM_NAME = "NetworkState";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "EMPTY", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NetworkState::EMPTY))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "IDLE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NetworkState::IDLE))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "LOADING", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NetworkState::LOADING))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "NETWORK_ERROR", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NetworkState::NETWORK_ERROR))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_NETWORK_STATE_ENUM_NAME.c_str(), NPI_NETWORK_STATE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_NETWORK_STATE_ENUM_NAME.c_str(), enumValue);
+}
+
+napi_status NapiNativeMediaPlayerHandler::ExportEnumPlaybackStatus(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum playback status");
+
+    const std::string NPI_PLAYBACK_STATUS_ENUM_NAME = "PlaybackStatus";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "PAUSED", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(PlaybackStatus::PAUSED))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "PLAYING", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(PlaybackStatus::PLAYING))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_PLAYBACK_STATUS_ENUM_NAME.c_str(), NPI_PLAYBACK_STATUS_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_PLAYBACK_STATUS_ENUM_NAME.c_str(), enumValue);
+}
+
 napi_value NapiNativeMediaPlayerHandler::HandleStatusChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_status_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -93,12 +194,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleVolumeChanged(napi_env env, napi_
 {
     WVLOG_D("handle_volume_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -131,12 +232,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleMutedChanged(napi_env env, napi_c
 {
     WVLOG_D("handle_muted_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -163,12 +264,12 @@ napi_value NapiNativeMediaPlayerHandler::HandlePlaybackRateChanged(napi_env env,
 {
     WVLOG_D("handle_playback_rate_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -201,12 +302,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleDurationChanged(napi_env env, nap
 {
     WVLOG_D("handle_duration_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -239,12 +340,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleTimeUpdate(napi_env env, napi_cal
 {
     WVLOG_D("handle_time_update is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -277,12 +378,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleBufferedEndTimeChanged(napi_env e
 {
     WVLOG_D("handle_buffered_end_time_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -333,12 +434,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleNetworkStateChanged(napi_env env,
 {
     WVLOG_D("handle_network_state_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -371,12 +472,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleReadyStateChanged(napi_env env, n
 {
     WVLOG_D("handle_ready_state_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -410,12 +511,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleFullScreenChanged(napi_env env, n
 {
     WVLOG_D("handle_full_screen_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("arg count %{public}d is not equal to 1", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -478,12 +579,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleError(napi_env env, napi_callback
 {
     WVLOG_D("handle_error is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_TWO;
     napi_value value = nullptr;
     napi_value argv[INTEGER_TWO];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_TWO) {
-        WVLOG_E("arg count %{public}d is not equal to 2", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 2", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -523,12 +624,12 @@ napi_value NapiNativeMediaPlayerHandler::HandleVideoSizeChanged(napi_env env, na
 {
     WVLOG_D("handle_video_size_changed is called");
 
-    size_t argc = 0;
+    size_t argc = INTEGER_TWO;
     napi_value value = nullptr;
     napi_value argv[INTEGER_TWO];
     napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
     if (argc != INTEGER_TWO) {
-        WVLOG_E("arg count %{public}d is not equal to 2", argc);
+        WVLOG_E("arg count %{public}zu is not equal to 2", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
         return nullptr;
     }

@@ -21,6 +21,7 @@
 #include <memory>
 
 #include "include/ark_ohos_init_web_adapter.h"
+#include "ohos_init_web_adapter.h"
 
 namespace OHOS::ArkWeb {
 
@@ -28,9 +29,9 @@ class ArkOhosInitWebAdapterImpl : public ArkOhosInitWebAdapter {
 public:
     ArkOhosInitWebAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter>);
 
-    NWeb::WebRunInitedCallback* GetRunWebInitedCallback() override;
+    void* GetRunWebInitedCallback() override;
 
-    void SetRunWebInitedCallback(NWeb::WebRunInitedCallback* callback) override;
+    void SetRunWebInitedCallback(void* callback) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter> real_;

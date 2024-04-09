@@ -13,27 +13,28 @@
  * limitations under the License.
  */
 
-#ifndef ARK_FLOWBUFFER_ADAPTER_CPPTOC_H_
-#define ARK_FLOWBUFFER_ADAPTER_CPPTOC_H_
+#ifndef ARK_AI_ENGINE_ADAPTER_CPPTOC_H_
+#define ARK_AI_ENGINE_ADAPTER_CPPTOC_H_
 #pragma once
 
 #include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "ohos_adapter/capi/ark_flowbuffer_adapter_capi.h"
-#include "ohos_adapter/include/ark_flowbuffer_adapter.h"
+#include "ohos_adapter/capi/ark_ai_engine_adapter_capi.h"
+#include "ohos_adapter/include/ark_ai_engine_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkFlowbufferAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkFlowbufferAdapterCppToC,
-                                    ArkFlowbufferAdapter,
-                                    ark_flowbuffer_adapter_t> {
-public:
-  ArkFlowbufferAdapterCppToC();
-  virtual ~ArkFlowbufferAdapterCppToC();
+class ArkAiEngineAdapterCppToC
+    : public ArkWebCppToCRefCounted<ArkAiEngineAdapterCppToC,
+                                    ArkAiEngineAdapter,
+                                    ark_ai_engine_adapter_t> {
+  public:
+    ArkAiEngineAdapterCppToC();
+    virtual ~ArkAiEngineAdapterCppToC();
 };
 
-} // namespace OHOS::ArkWeb
+} // OHOS::ArkWeb
 
-#endif // ARK_FLOWBUFFER_ADAPTER_CPPTOC_H_
+
+#endif // ARK_AI_ENGINE_ADAPTER_CPPTOC_H_

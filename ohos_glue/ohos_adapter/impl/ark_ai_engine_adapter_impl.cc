@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,21 +13,21 @@
  * limitations under the License.
  */
 
-#include "ark_ohos_init_web_adapter_impl.h"
+#include "ark_ai_engine_adapter_impl.h"
 
 namespace OHOS::ArkWeb {
 
-ArkOhosInitWebAdapterImpl::ArkOhosInitWebAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter> ref) : real_(ref)
-{}
+ArkAiEngineAdapterImpl::ArkAiEngineAdapterImpl(NWeb::AiEngineAdapter& ref) : real_(ref) {}
 
-void* ArkOhosInitWebAdapterImpl::GetRunWebInitedCallback()
+ArkWebCharVector ArkAiEngineAdapterImpl::GetWordSelection(const ArkWebString& text, int8_t offset)
 {
-    return (void*)real_->GetRunWebInitedCallback();
-}
-
-void ArkOhosInitWebAdapterImpl::SetRunWebInitedCallback(void* callback)
-{
-    real_->SetRunWebInitedCallback((NWeb::WebRunInitedCallback*)callback);
+    std::vector<int8_t> vec = real_.GetWordSelection(ArkWebStringStructToClass(text), offset);
+    std::vector<char> result;
+    for (int8_t select : vec) {
+        result.push_back(select);
+    }
+    ArkWebCharVector ark_result = ArkWebBasicVectorClassToStruct<char, ArkWebCharVector>(result);
+    return ark_result;
 }
 
 } // namespace OHOS::ArkWeb

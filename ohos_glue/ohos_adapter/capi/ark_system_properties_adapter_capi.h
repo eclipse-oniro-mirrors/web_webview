@@ -19,7 +19,6 @@
 
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "system_properties_adapter.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -49,7 +48,7 @@ typedef struct _ark_system_properties_adapter_t {
   bool(ARK_WEB_CALLBACK *get_web_optimization_value)(
       struct _ark_system_properties_adapter_t *self);
 
-  bool(ARK_WEB_CALLBACK *get_lockdown_mode_status)(
+  bool(ARK_WEB_CALLBACK *is_advanced_security_mode)(
       struct _ark_system_properties_adapter_t *self);
 
   ArkWebString(ARK_WEB_CALLBACK *get_user_agent_osname)(
@@ -79,11 +78,13 @@ typedef struct _ark_system_properties_adapter_t {
   void(ARK_WEB_CALLBACK *set_oopgpudisable)(
       struct _ark_system_properties_adapter_t *self);
 
-  void (ARK_WEB_CALLBACK *attach_sys_prop_observer)(
-      struct _ark_system_properties_adapter_t* self, int32_t key, OHOS::NWeb::SystemPropertiesObserver* observer);
+  void(ARK_WEB_CALLBACK *attach_sys_prop_observer)(
+      struct _ark_system_properties_adapter_t *self, int32_t key,
+      void *observer);
 
-  void (ARK_WEB_CALLBACK *detach_sys_prop_observer)(
-      struct _ark_system_properties_adapter_t* self, int32_t key, OHOS::NWeb::SystemPropertiesObserver* observer);
+  void(ARK_WEB_CALLBACK *detach_sys_prop_observer)(
+      struct _ark_system_properties_adapter_t *self, int32_t key,
+      void *observer);
 
   bool(ARK_WEB_CALLBACK *get_bool_parameter)(
       struct _ark_system_properties_adapter_t* self, ArkWebString key, bool defaultValue);

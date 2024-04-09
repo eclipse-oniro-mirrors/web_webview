@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,21 +13,22 @@
  * limitations under the License.
  */
 
-#include "ark_ohos_init_web_adapter_impl.h"
+#ifndef AI_ENGINE_ADAPTER_H
+#define AI_ENGINE_ADAPTER_H
 
-namespace OHOS::ArkWeb {
+#include <string>
+#include <vector>
 
-ArkOhosInitWebAdapterImpl::ArkOhosInitWebAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter> ref) : real_(ref)
-{}
+namespace OHOS::NWeb {
+class AiEngineAdapter {
+public:
+  virtual std::vector<int8_t> GetWordSelection(const std::string& text, int8_t offset) = 0;
 
-void* ArkOhosInitWebAdapterImpl::GetRunWebInitedCallback()
-{
-    return (void*)real_->GetRunWebInitedCallback();
-}
+protected:
+  AiEngineAdapter() = default;
 
-void ArkOhosInitWebAdapterImpl::SetRunWebInitedCallback(void* callback)
-{
-    real_->SetRunWebInitedCallback((NWeb::WebRunInitedCallback*)callback);
-}
+  virtual ~AiEngineAdapter() = default;
+};
+} // namespace OHOS::NWeb
 
-} // namespace OHOS::ArkWeb
+#endif // AI_ENGINE_ADAPTER_H

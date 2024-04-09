@@ -87,14 +87,14 @@ bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_web_optimization_value(
   return ArkSystemPropertiesAdapterCppToC::Get(self)->GetWebOptimizationValue();
 }
 
-bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_lockdown_mode_status(
+bool ARK_WEB_CALLBACK ark_system_properties_adapter_is_advanced_security_mode(
     struct _ark_system_properties_adapter_t *self) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
   // Execute
-  return ArkSystemPropertiesAdapterCppToC::Get(self)->GetLockdownModeStatus();
+  return ArkSystemPropertiesAdapterCppToC::Get(self)->IsAdvancedSecurityMode();
 }
 
 ArkWebString ARK_WEB_CALLBACK
@@ -193,27 +193,31 @@ void ARK_WEB_CALLBACK ark_system_properties_adapter_set_oopgpudisable(
 }
 
 void ARK_WEB_CALLBACK ark_system_properties_adapter_attach_sys_prop_observer(
-    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
+    struct _ark_system_properties_adapter_t *self, int32_t key,
+    void *observer) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
+  ARK_WEB_CPPTOC_CHECK_PARAM(observer, );
+
   // Execute
-  ArkSystemPropertiesAdapterCppToC::Get(self)->AttachSysPropObserver(
-      key,
-      observer);
+  ArkSystemPropertiesAdapterCppToC::Get(self)->AttachSysPropObserver(key,
+                                                                     observer);
 }
 
 void ARK_WEB_CALLBACK ark_system_properties_adapter_detach_sys_prop_observer(
-    struct _ark_system_properties_adapter_t* self, int32_t key, ArkSystemPropertiesObserver* observer) {
+    struct _ark_system_properties_adapter_t *self, int32_t key,
+    void *observer) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
+  ARK_WEB_CPPTOC_CHECK_PARAM(observer, );
+
   // Execute
-  ArkSystemPropertiesAdapterCppToC::Get(self)->DetachSysPropObserver(
-      key,
-      observer);
+  ArkSystemPropertiesAdapterCppToC::Get(self)->DetachSysPropObserver(key,
+                                                                     observer);
 }
 
 bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_bool_parameter(
@@ -241,8 +245,8 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
       ark_system_properties_adapter_get_product_device_type;
   GetStruct()->get_web_optimization_value =
       ark_system_properties_adapter_get_web_optimization_value;
-  GetStruct()->get_lockdown_mode_status =
-      ark_system_properties_adapter_get_lockdown_mode_status;
+  GetStruct()->is_advanced_security_mode =
+      ark_system_properties_adapter_is_advanced_security_mode;
   GetStruct()->get_user_agent_osname =
       ark_system_properties_adapter_get_user_agent_osname;
   GetStruct()->get_software_major_version =
@@ -260,8 +264,10 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
       ark_system_properties_adapter_get_oopgpuenable;
   GetStruct()->set_oopgpudisable =
       ark_system_properties_adapter_set_oopgpudisable;
-  GetStruct()->attach_sys_prop_observer = ark_system_properties_adapter_attach_sys_prop_observer;
-  GetStruct()->detach_sys_prop_observer = ark_system_properties_adapter_detach_sys_prop_observer;
+  GetStruct()->attach_sys_prop_observer =
+      ark_system_properties_adapter_attach_sys_prop_observer;
+  GetStruct()->detach_sys_prop_observer =
+      ark_system_properties_adapter_detach_sys_prop_observer;
   GetStruct()->get_bool_parameter = ark_system_properties_adapter_get_bool_parameter;
 }
 

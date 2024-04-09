@@ -20,34 +20,35 @@ namespace OHOS::ArkWeb {
 
 namespace {
 
-ArkWebRunInitedCallback* ARK_WEB_CALLBACK ark_ohos_init_web_adapter_get_run_web_inited_callback(
-    struct _ark_ohos_init_web_adapter_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+void *ARK_WEB_CALLBACK ark_ohos_init_web_adapter_get_run_web_inited_callback(
+    struct _ark_ohos_init_web_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
 
-    // Execute
-    return ArkOhosInitWebAdapterCppToC::Get(self)->GetRunWebInitedCallback();
+  // Execute
+  return ArkOhosInitWebAdapterCppToC::Get(self)->GetRunWebInitedCallback();
 }
 
 void ARK_WEB_CALLBACK ark_ohos_init_web_adapter_set_run_web_inited_callback(
-    struct _ark_ohos_init_web_adapter_t* self, ArkWebRunInitedCallback* callback)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+    struct _ark_ohos_init_web_adapter_t *self, void *callback) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
 
-    // Execute
-    ArkOhosInitWebAdapterCppToC::Get(self)->SetRunWebInitedCallback(callback);
+  ARK_WEB_CPPTOC_CHECK_PARAM(callback, );
+
+  // Execute
+  ArkOhosInitWebAdapterCppToC::Get(self)->SetRunWebInitedCallback(callback);
 }
 
 } // namespace
 
-ArkOhosInitWebAdapterCppToC::ArkOhosInitWebAdapterCppToC()
-{
-    GetStruct()->get_run_web_inited_callback = ark_ohos_init_web_adapter_get_run_web_inited_callback;
-    GetStruct()->set_run_web_inited_callback = ark_ohos_init_web_adapter_set_run_web_inited_callback;
+ArkOhosInitWebAdapterCppToC::ArkOhosInitWebAdapterCppToC() {
+  GetStruct()->get_run_web_inited_callback =
+      ark_ohos_init_web_adapter_get_run_web_inited_callback;
+  GetStruct()->set_run_web_inited_callback =
+      ark_ohos_init_web_adapter_set_run_web_inited_callback;
 }
 
 ArkOhosInitWebAdapterCppToC::~ArkOhosInitWebAdapterCppToC() {
@@ -58,6 +59,5 @@ ArkWebBridgeType
     ArkWebCppToCRefCounted<ArkOhosInitWebAdapterCppToC, ArkOhosInitWebAdapter,
                            ark_ohos_init_web_adapter_t>::kBridgeType =
         ARK_OHOS_INIT_WEB_ADAPTER;
-
 
 } // namespace OHOS::ArkWeb

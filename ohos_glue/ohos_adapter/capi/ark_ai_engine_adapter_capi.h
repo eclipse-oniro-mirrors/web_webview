@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H_
-#define ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H_
+#ifndef ARK_AI_ENGINE_ADAPTER_CAPI_H_
+#define ARK_AI_ENGINE_ADAPTER_CAPI_H_
 #pragma once
 
 #include "base/capi/ark_web_base_ref_counted_capi.h"
@@ -24,21 +24,20 @@
 extern "C" {
 #endif
 
-typedef struct _ark_ohos_init_web_adapter_t {
+typedef struct _ark_ai_engine_adapter_t {
   /**
    * @brief Base structure.
    */
   ark_web_base_ref_counted_t base;
 
-  void *(ARK_WEB_CALLBACK *get_run_web_inited_callback)(
-      struct _ark_ohos_init_web_adapter_t *self);
-
-  void(ARK_WEB_CALLBACK *set_run_web_inited_callback)(
-      struct _ark_ohos_init_web_adapter_t *self, void *callback);
-} ark_ohos_init_web_adapter_t;
+  ArkWebCharVector (ARK_WEB_CALLBACK *get_word_selection)(
+      struct _ark_ai_engine_adapter_t* self,
+      const ArkWebString* text,
+      int8_t offset);
+} ark_ai_engine_adapter_t;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // ARK_OHOS_INIT_WEB_ADAPTER_CAPI_H_
+#endif // ARK_AI_ENGINE_ADAPTER_CAPI_H_

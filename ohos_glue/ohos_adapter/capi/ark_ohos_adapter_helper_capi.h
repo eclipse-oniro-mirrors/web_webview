@@ -19,6 +19,7 @@
 
 #include "ark_aafwk_app_mgr_client_adapter_capi.h"
 #include "ark_access_token_adapter_capi.h"
+#include "ark_ai_engine_adapter_capi.h"
 #include "ark_audio_capturer_adapter_capi.h"
 #include "ark_audio_renderer_adapter_capi.h"
 #include "ark_audio_system_manager_adapter_capi.h"
@@ -198,6 +199,9 @@ typedef struct _ark_ohos_adapter_helper_t {
 
   ark_flowbuffer_adapter_t *(ARK_WEB_CALLBACK *create_flowbuffer_adapter)(
       struct _ark_ohos_adapter_helper_t *self);
+
+  ark_ai_engine_adapter_t* (ARK_WEB_CALLBACK *get_ai_engine_adapter_instance)(
+      struct _ark_ohos_adapter_helper_t* self);
 } ark_ohos_adapter_helper_t;
 
 ARK_WEB_EXPORT ark_ohos_adapter_helper_t *

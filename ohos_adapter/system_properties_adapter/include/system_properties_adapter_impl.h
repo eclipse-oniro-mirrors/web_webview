@@ -42,7 +42,7 @@ public:
 
     bool GetWebOptimizationValue() override;
 
-    bool GetLockdownModeStatus() override;
+    bool IsAdvancedSecurityMode() override;
 
     std::string GetUserAgentOSName() override;
 
@@ -81,6 +81,7 @@ private:
 
     void RemoveAllSysPropWatchers();
 
+    ProductDeviceType AnalysisFromConfig();
     int softwareMajorVersion_ = 4;
     int softwareSeniorVersion_ = 1;
 

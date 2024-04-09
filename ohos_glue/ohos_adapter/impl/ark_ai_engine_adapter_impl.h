@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,21 +13,30 @@
  * limitations under the License.
  */
 
-#include "ark_ohos_init_web_adapter_impl.h"
+#ifndef ARK_AI_ENGINE_ADAPTER_IMPL_H
+#define ARK_AI_ENGINE_ADAPTER_IMPL_H
+
+#pragma once
+
+#include <memory>
+
+#include "ai_engine_adapter.h"
+#include "include/ark_ai_engine_adapter.h"
 
 namespace OHOS::ArkWeb {
 
-ArkOhosInitWebAdapterImpl::ArkOhosInitWebAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter> ref) : real_(ref)
-{}
+class ArkAiEngineAdapterImpl : public ArkAiEngineAdapter {
+public:
+    ArkAiEngineAdapterImpl(NWeb::AiEngineAdapter&);
 
-void* ArkOhosInitWebAdapterImpl::GetRunWebInitedCallback()
-{
-    return (void*)real_->GetRunWebInitedCallback();
-}
+    ArkWebCharVector GetWordSelection(const ArkWebString& text, int8_t offset) override;
 
-void ArkOhosInitWebAdapterImpl::SetRunWebInitedCallback(void* callback)
-{
-    real_->SetRunWebInitedCallback((NWeb::WebRunInitedCallback*)callback);
-}
+private:
+    NWeb::AiEngineAdapter& real_;
+
+    IMPLEMENT_REFCOUNTING(ArkAiEngineAdapterImpl);
+};
 
 } // namespace OHOS::ArkWeb
+
+#endif // ARK_AI_ENGINE_ADAPTER_IMPL_H
