@@ -3904,7 +3904,6 @@ napi_value NapiWebviewController::GetScrollable(napi_env env, napi_callback_info
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
 
@@ -4245,7 +4244,6 @@ napi_value NapiWebviewController::CloseAllMediaPresentations(napi_env env, napi_
     napi_value result = nullptr;
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -4259,7 +4257,6 @@ napi_value NapiWebviewController::StopAllMedia(napi_env env, napi_callback_info 
     napi_value result = nullptr;
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -4273,7 +4270,6 @@ napi_value NapiWebviewController::ResumeAllMedia(napi_env env, napi_callback_inf
     napi_value result = nullptr;
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -4287,7 +4283,6 @@ napi_value NapiWebviewController::PauseAllMedia(napi_env env, napi_callback_info
     napi_value result = nullptr;
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -4301,7 +4296,6 @@ napi_value NapiWebviewController::GetMediaPlaybackState(napi_env env, napi_callb
     napi_value result = nullptr;
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -4383,7 +4377,6 @@ napi_value NapiWebviewController::GetSecurityLevel(napi_env env, napi_callback_i
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -4698,7 +4691,6 @@ napi_value NapiWebviewController::GetPrintBackground(napi_env env, napi_callback
     WebviewController *webviewController = GetWebviewController(env, info);
 
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -4818,7 +4810,6 @@ napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
 
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     webviewController->EnableIntelligentTrackingPrevention(enabled);
@@ -4833,7 +4824,6 @@ napi_value NapiWebviewController::IsIntelligentTrackingPreventionEnabled(
     WebviewController *webviewController = GetWebviewController(env, info);
 
     if (!webviewController) {
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5100,7 +5090,6 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("PrecompileJavaScript: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
