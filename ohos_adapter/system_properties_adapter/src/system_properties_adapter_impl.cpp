@@ -293,4 +293,9 @@ void SystemPropertiesAdapterImpl::DetachSysPropObserver(PropertiesKey key, Syste
         observerVec.erase(it);
     }
 }
+
+bool SystemPropertiesAdapterImpl::GetBoolParameter(const std::string& key, bool defaultValue)
+{
+    return OHOS::system::GetBoolParameter(key, defaultValue);
+}
 } // namespace OHOS::NWeb

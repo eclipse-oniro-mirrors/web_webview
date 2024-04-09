@@ -65,6 +65,8 @@ public:
 
     void DetachSysPropObserver(int32_t key, void* observer) override;
 
+    bool GetBoolParameter(ArkWebString key, bool defaultValue) override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
