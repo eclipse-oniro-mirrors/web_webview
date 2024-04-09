@@ -255,6 +255,12 @@ void ResSchedClientAdapter::ReportProcessInUse(pid_t pid)
 
 void ReportStatusData(int64_t status, pid_t pid, uint32_t windowId, int32_t nwebId, uint32_t serialNum)
 {
+    if (pid == g_lastPid && status == g_lastStatus) {
+        return;
+    }
+    g_lastPid = pid;
+    g_lastStatus = status;
+
     std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
         { WINDOW_ID, std::to_string(windowId) }, { SERIAL_NUMBER, std::to_string(serialNum) },
         { STATE, std::to_string(status) } };
@@ -264,6 +270,21 @@ void ReportStatusData(int64_t status, pid_t pid, uint32_t windowId, int32_t nweb
     WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
             "nwebId: %{public}d, sn: %{public}d",
             static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, nwebId, serialNum);
+}
+
+bool IsReportInactiveStatus(pid_t pid, int32_t nwebId, ResSchedStatusAdapter statusAdapter)
+{
+    g_pidNwebMap[pid][nwebId] = statusAdapter;
+    if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
+        auto nwebMap = g_pidNwebMap[pid];
+        for (auto it : nwebMap) {
+            if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
+                return false;
+            }
+        }
+        g_pidNwebMap.erase(pid);
+    }
+    return true;
 }
 
 bool ResSchedClientAdapter::ReportWindowStatus(
@@ -277,17 +298,8 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         return false;
     }
 
-    if (!isNewRender) {
-        g_pidNwebMap[pid][nwebId] = statusAdapter;
-        if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
-            auto nwebMap = g_pidNwebMap[pid];
-            for (auto it : nwebMap) {
-                if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
-                    return false;
-                }
-            }
-            g_pidNwebMap.erase(pid);
-        }
+    if (!isNewRender && !IsReportInactiveStatus(pid, nwebId, statusAdapter)) {
+        return false;
     }
 
     int64_t status;
@@ -295,12 +307,6 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     if (!ret) {
         return false;
     }
-
-    if (pid == g_lastPid && status == g_lastStatus) {
-        return true;
-    }
-    g_lastPid = pid;
-    g_lastStatus = status;
 
     if (!isNewRender) {
         ReportStatusData(status, pid, windowId, nwebId, serial_num);
