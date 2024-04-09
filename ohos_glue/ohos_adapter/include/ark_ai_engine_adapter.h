@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,10 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_OHOS_INIT_WEB_ADAPTER_H
-#define ARK_OHOS_INIT_WEB_ADAPTER_H
-
-#pragma once
+#ifndef ARK_AI_ENGINE_ADAPTER_H
+#define ARK_AI_ENGINE_ADAPTER_H
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -24,20 +22,17 @@
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
-class ArkOhosInitWebAdapter : public virtual ArkWebBaseRefCounted {
+class ArkAiEngineAdapter : public virtual ArkWebBaseRefCounted {
 public:
   /*--ark web()--*/
-  ArkOhosInitWebAdapter() = default;
+  virtual ArkWebCharVector GetWordSelection(const ArkWebString &text, int8_t offset) = 0;
 
+protected:
   /*--ark web()--*/
-  virtual ~ArkOhosInitWebAdapter() = default;
-
+  ArkAiEngineAdapter() = default;
   /*--ark web()--*/
-  virtual void *GetRunWebInitedCallback() = 0;
-
-  /*--ark web()--*/
-  virtual void SetRunWebInitedCallback(void *callback) = 0;
+  virtual ~ArkAiEngineAdapter() = default;
 };
 } // namespace OHOS::ArkWeb
 
-#endif // OHOS_INIT_WEB_ADAPTER_H
+#endif // ARK_AI_ENGINE_ADAPTER_H

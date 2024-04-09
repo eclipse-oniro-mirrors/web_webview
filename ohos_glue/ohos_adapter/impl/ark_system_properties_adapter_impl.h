@@ -41,7 +41,7 @@ public:
 
     bool GetWebOptimizationValue() override;
 
-    bool GetLockdownModeStatus() override;
+    bool IsAdvancedSecurityMode() override;
 
     ArkWebString GetUserAgentOSName() override;
 
@@ -61,9 +61,9 @@ public:
 
     int32_t GetFlowBufMaxFd() override;
 
-    void AttachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) override;
+    void AttachSysPropObserver(int32_t key, void* observer) override;
 
-    void DetachSysPropObserver(int32_t key, ArkSystemPropertiesObserver* observer) override;
+    void DetachSysPropObserver(int32_t key, void* observer) override;
 
     bool GetBoolParameter(ArkWebString key, bool defaultValue) override;
 

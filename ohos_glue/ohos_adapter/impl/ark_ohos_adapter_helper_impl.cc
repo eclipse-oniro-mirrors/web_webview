@@ -17,6 +17,7 @@
 
 #include "ark_aafwk_app_mgr_client_adapter_impl.h"
 #include "ark_access_token_adapter_impl.h"
+#include "ark_ai_engine_adapter_impl.h"
 #include "ark_audio_capturer_adapter_impl.h"
 #include "ark_audio_renderer_adapter_impl.h"
 #include "ark_audio_system_manager_adapter_impl.h"
@@ -351,5 +352,12 @@ ArkWebRefPtr<ArkFlowbufferAdapter> ArkOhosAdapterHelperImpl::CreateFlowbufferAda
     std::unique_ptr<NWeb::FlowbufferAdapter> adapter = real_.CreateFlowbufferAdapter();
     std::shared_ptr<NWeb::FlowbufferAdapter> shared = std::move(adapter);
     return new ArkFlowbufferAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkAiEngineAdapter> ArkOhosAdapterHelperImpl::GetAiEngineAdapterInstance()
+{
+    static NWeb::AiEngineAdapter& instance = real_.GetAiEngineAdapterInstance();
+    static ArkWebRefPtr<ArkAiEngineAdapter> impl = new ArkAiEngineAdapterImpl(instance);
+    return impl;
 }
 } // namespace OHOS::ArkWeb

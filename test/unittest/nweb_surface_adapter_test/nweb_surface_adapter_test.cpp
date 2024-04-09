@@ -172,5 +172,11 @@ HWTEST_F(NWebSurfaceAdapterTest, NWebSurfaceAdapterTest_FlushBuffer_005, TestSiz
     sptr<Surface> surface = nullptr;
     result = surfaceAdapter.FlushBuffer(surface, g_surfaceBuffer, DEFAULT_WIDTH, DEFAULT_WIDTH);
     EXPECT_FALSE(result);
+    wptr<Surface> surfaceWeak(surface);
+    result = surfaceAdapter.OutputFrameCallback("buffer", 1, 1, surfaceWeak);
+    EXPECT_FALSE(result);
+    surfaceWeak = g_surface;
+    result = surfaceAdapter.OutputFrameCallback("buffer", 1, 1, surfaceWeak);
+    EXPECT_TRUE(result);
 }
 }
