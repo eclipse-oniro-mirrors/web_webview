@@ -72,8 +72,8 @@ public:
 
     static bool ReportKeyThread(
         ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid, ResSchedRoleAdapter roleAdapter);
-    static bool ReportWindowStatus(ResSchedStatusAdapter statusAdapter,
-        pid_t pid, uint32_t windowId, int32_t nwebId = -1, bool isNewRender = false);
+    static bool ReportWindowStatus(
+        ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId = -1);
     static bool ReportScene(
         ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter, int32_t nwebId = -1);
     static bool ReportAudioData(ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid);
