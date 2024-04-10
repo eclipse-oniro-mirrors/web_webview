@@ -918,16 +918,6 @@ void NWebHelper::PrepareForPageLoad(std::string url, bool preconnectable, int32_
     nwebEngine_->PrepareForPageLoad(url, preconnectable, numSockets);
 }
 
-void NWebHelper::SetWebDebuggingAccess(bool isEnableDebug)
-{
-    if (nwebEngine_ == nullptr) {
-        WVLOG_E("nweb engine is nullptr");
-        return;
-    }
-
-    nwebEngine_->SetWebDebuggingAccess(isEnableDebug);
-}
-
 std::shared_ptr<NWebDataBase> NWebHelper::GetDataBase()
 {
     if (nwebEngine_ == nullptr) {
