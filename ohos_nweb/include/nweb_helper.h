@@ -47,7 +47,6 @@ public:
     bool LoadNWebSDK();
     void* GetWebEngineHandler();
     void SetConnectionTimeout(const int32_t& timeout);
-    void SetWebDebuggingAccess(bool isEnableDebug);
     void SetCustomSchemeCmdLine(const std::string& cmd)
     {
         customSchemeCmdLine_ = cmd;
