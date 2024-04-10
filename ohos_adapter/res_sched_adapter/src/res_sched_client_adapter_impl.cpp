@@ -249,8 +249,12 @@ bool ResSchedClientAdapter::ReportAudioData(ResSchedStatusAdapter statusAdapter,
 
 void ResSchedClientAdapter::ReportProcessInUse(pid_t pid)
 {
-    WVLOG_D("ReportProcessInUse pid: %{public}d", pid);
-    g_nwebProcessMap[g_nwebId].push_back(pid);
+    int32_t nwebId = g_nwebId;
+    if (g_pidNwebMap.count(pid)) {
+        nwebId = g_pidNwebMap[pid].begin()->first;
+    }
+    g_nwebProcessMap[nwebId].push_back(pid);
+    WVLOG_D("ReportProcessInUse nwebId: %{public}d, pid: %{public}d", nwebId, pid);
 }
 
 void ReportStatusData(int64_t status, pid_t pid, uint32_t windowId, int32_t nwebId, uint32_t serialNum)
