@@ -83,6 +83,7 @@ public:
     static bool ReportScreenCapture(ResSchedStatusAdapter statusAdapter, pid_t pid);
     static bool ReportVideoPlaying(ResSchedStatusAdapter statusAdapter, pid_t pid);
     static void ReportProcessInUse(pid_t pid);
+    static void ReportSiteIsolationMode(bool mode);
 };
 } // namespace OHOS::NWeb
 

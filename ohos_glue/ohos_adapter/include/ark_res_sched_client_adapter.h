@@ -64,6 +64,9 @@ public:
 
   /*--ark web()--*/
   static void ReportProcessInUse(pid_t pid);
+
+  /*--ark web()--*/
+  static void ReportSiteIsolationMode(bool mode);
 };
 } // namespace OHOS::ArkWeb
 

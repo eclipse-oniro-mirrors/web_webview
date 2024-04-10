@@ -85,6 +85,11 @@ void ark_res_sched_client_adapter_report_process_in_use(pid_t pid) {
   ArkResSchedClientAdapter::ReportProcessInUse(pid);
 }
 
+void ark_res_sched_client_adapter_report_site_isolation_mode(bool mode) {
+  // Execute
+  ArkResSchedClientAdapter::ReportSiteIsolationMode(mode);
+}
+
 ArkResSchedClientAdapterCppToC::ArkResSchedClientAdapterCppToC() {
 }
 
@@ -186,6 +191,12 @@ ark_res_sched_client_adapter_report_process_in_use_static(pid_t pid) {
   OHOS::ArkWeb::ark_res_sched_client_adapter_report_process_in_use(pid);
 }
 
+ARK_WEB_EXPORT void
+ark_res_sched_client_adapter_report_site_isolation_mode_static(bool mode) {
+  ARK_WEB_CPPTOC_DV_LOG();
+
+  OHOS::ArkWeb::ark_res_sched_client_adapter_report_site_isolation_mode(mode);
+}
 #ifdef __cplusplus
 }
 #endif // __cplusplus
