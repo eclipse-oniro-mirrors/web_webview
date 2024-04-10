@@ -38,7 +38,7 @@ public:
 
   /*--ark web()--*/
   static bool ReportWindowStatus(int32_t statusAdapter, pid_t pid,
-                                 uint32_t windowId, int32_t nwebId, bool isNewRender);
+                                 uint32_t windowId, int32_t nwebId);
 
   /*--ark web()--*/
   static bool ReportScene(int32_t statusAdapter, int32_t sceneAdapter,

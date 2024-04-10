@@ -29,11 +29,10 @@ bool ark_res_sched_client_adapter_report_key_thread(int32_t statusAdapter,
 bool ark_res_sched_client_adapter_report_window_status(int32_t statusAdapter,
                                                        pid_t pid,
                                                        uint32_t windowId,
-                                                       int32_t nwebId,
-                                                       bool isNewRender) {
+                                                       int32_t nwebId) {
   // Execute
   return ArkResSchedClientAdapter::ReportWindowStatus(statusAdapter, pid,
-                                                      windowId, nwebId, isNewRender);
+                                                      windowId, nwebId);
 }
 
 bool ark_res_sched_client_adapter_report_scene(int32_t statusAdapter,
@@ -116,11 +115,11 @@ ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_key_thread_static(
 }
 
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_window_status_static(
-    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId, bool isNewRender) {
+    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId) {
   ARK_WEB_CPPTOC_DV_LOG();
 
   return OHOS::ArkWeb::ark_res_sched_client_adapter_report_window_status(
-      statusAdapter, pid, windowId, nwebId, isNewRender);
+      statusAdapter, pid, windowId, nwebId);
 }
 
 ARK_WEB_EXPORT bool ark_res_sched_client_adapter_report_scene_static(

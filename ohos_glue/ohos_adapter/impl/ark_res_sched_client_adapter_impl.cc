@@ -24,11 +24,10 @@ bool ArkResSchedClientAdapter::ReportKeyThread(int32_t statusAdapter, pid_t pid,
         (NWeb::ResSchedStatusAdapter)statusAdapter, pid, tid, (NWeb::ResSchedRoleAdapter)roleAdapter);
 }
 
-bool ArkResSchedClientAdapter::ReportWindowStatus(
-    int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId, bool isNewRender)
+bool ArkResSchedClientAdapter::ReportWindowStatus(int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
 {
     return NWeb::ResSchedClientAdapter::ReportWindowStatus(
-        (NWeb::ResSchedStatusAdapter)statusAdapter, pid, windowId, nwebId, isNewRender);
+        (NWeb::ResSchedStatusAdapter)statusAdapter, pid, windowId, nwebId);
 }
 
 bool ArkResSchedClientAdapter::ReportScene(int32_t statusAdapter, int32_t sceneAdapter, int32_t nwebId)
