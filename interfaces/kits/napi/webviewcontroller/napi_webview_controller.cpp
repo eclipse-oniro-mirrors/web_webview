@@ -5147,17 +5147,16 @@ napi_value NapiWebviewController::WarmupServiceWorker(napi_env env, napi_callbac
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return nullptr;
+        return result;
     }
 
     std::string url;
     if (!ParsePrepareUrl(env, argv[INTEGER_ZERO], url)) {
         BusinessError::ThrowErrorByErrcode(env, INVALID_URL);
-        return nullptr;
+        return result;
     }
 
     NWebHelper::Instance().WarmupServiceWorker(url);
-    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace NWeb
