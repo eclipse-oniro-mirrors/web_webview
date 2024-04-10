@@ -245,7 +245,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().bundlePath_.clear();
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
-    NWebHelper::Instance().SetWebDebuggingAccess(true);
     NWebHelper::Instance().SetConnectionTimeout(1);
     NWebHelper::Instance().GetWebEngineHandler();
 }
@@ -380,7 +379,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
-    NWebHelper::Instance().SetWebDebuggingAccess(true);
     NWebHelper::Instance().GetDataBase();
     std::shared_ptr<NWebWebStorage> storage = NWebHelper::Instance().GetWebStorage();
     EXPECT_EQ(storage, nullptr);
