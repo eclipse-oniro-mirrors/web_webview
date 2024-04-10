@@ -193,13 +193,13 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t w
 
     if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
         WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
-        return false;
+        return;
     }
 
     int64_t status;
     bool ret = ConvertStatus(statusAdapter, status);
     if (!ret) {
-        return false;
+        return;
     }
 
     if (pid == g_lastPid && status == g_lastStatus) {
@@ -322,12 +322,12 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         g_pidNwebMap.erase(pid);
     }
 
-    ReportStatusData(status, pid, windowId, nwebId);
+    ReportStatusData(statusAdapter, pid, windowId, nwebId);
     for (auto pidInNweb : g_nwebProcessMap[nwebId]) {
         if (pidInNweb == pid) {
             continue;
         }
-        ReportStatusData(status, pidInNweb, windowId, nwebId);
+        ReportStatusData(statusAdapter, pidInNweb, windowId, nwebId);
     }
 
     return true;
