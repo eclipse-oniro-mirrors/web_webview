@@ -71,4 +71,9 @@ void ArkResSchedClientAdapter::ReportProcessInUse(pid_t pid)
 {
     NWeb::ResSchedClientAdapter::ReportProcessInUse(pid);
 }
+
+void ArkResSchedClientAdapter::ReportSiteIsolationMode(bool mode)
+{
+    NWeb::ResSchedClientAdapter::ReportSiteIsolationMode(mode);
+}
 } // namespace OHOS::ArkWeb
