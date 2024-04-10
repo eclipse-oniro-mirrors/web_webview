@@ -29,7 +29,8 @@ enum class ProductDeviceType : int32_t {
 };
 
 enum class PropertiesKey: int32_t {
-    PROP_RENDER_DUMP
+    PROP_RENDER_DUMP,
+    PROP_HITRACE_ENABLEFLAGS
 };
 
 class SystemPropertiesObserver {
