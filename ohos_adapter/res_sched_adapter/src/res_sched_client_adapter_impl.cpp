@@ -92,6 +92,7 @@ constexpr char SCENE_ID[] = "sceneId";
 constexpr char STATE[] = "state";
 std::set<int32_t> g_nwebSet;
 std::unordered_map<pid_t, std::unordered_map<int32_t, ResSchedStatusAdapter>> g_pidNwebMap;
+std::unordered_map<int32_t, std::vector<pid_t>> g_nwebProcessMap;
 std::mutex g_windowIdMutex {};
 int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
@@ -101,6 +102,7 @@ int64_t g_timeStamp = 0;
 int64_t g_preTimeStamp = 0;
 pid_t g_lastRenderPid = INVALID_PID;
 int64_t g_lastRenderStatus = INVALID_NUMBER_INT64;
+bool g_siteIsolationMode = false;
 
 std::string GetUidString()
 {
@@ -184,6 +186,45 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
     return true;
 }
 
+void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
+{
+    static uint32_t serial_num = 0;
+    static constexpr uint32_t SERIAL_NUM_MAX = 10000;
+
+    if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
+        WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
+        return;
+    }
+
+    int64_t status;
+    bool ret = ConvertStatus(statusAdapter, status);
+    if (!ret) {
+        return;
+    }
+
+    if (pid == g_lastPid && status == g_lastStatus) {
+        return;
+    }
+    g_lastPid = pid;
+    g_lastStatus = status;
+
+    std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
+        { WINDOW_ID, std::to_string(windowId) }, { SERIAL_NUMBER, std::to_string(serial_num) },
+        { STATE, std::to_string(status) } };
+    ResSchedClient::GetInstance().ReportData(
+        ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
+
+    WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
+            "nwebId: %{public}d, sn: %{public}d",
+            static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, nwebId, serial_num);
+    serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
+
+    // Report visible scene event again when tab becomes active to solve timing problem
+    if (statusAdapter == ResSchedStatusAdapter::WEB_ACTIVE) {
+        ReportSceneInternal(statusAdapter, ResSchedSceneAdapter::VISIBLE);
+    }
+}
+
 bool ResSchedClientAdapter::ReportKeyThread(
     ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid, ResSchedRoleAdapter roleAdapter)
 {
@@ -214,9 +255,9 @@ bool ResSchedClientAdapter::ReportKeyThread(
     WVLOG_D("ReportKeyThread status: %{public}d, uid: %{public}s, pid: %{public}d, tid:%{public}d, role: %{public}d",
         static_cast<int32_t>(status), GetUidString().c_str(), pid, tid, static_cast<int32_t>(role));
 
-    if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER) {
+    if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER && !g_siteIsolationMode) {
         std::lock_guard<std::mutex> lock(g_windowIdMutex);
-        ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId);
+        ReportStatusData(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId);
     }
 
     // Load url may create new render process, repeat report load url event when
@@ -246,12 +287,25 @@ bool ResSchedClientAdapter::ReportAudioData(ResSchedStatusAdapter statusAdapter,
     return true;
 }
 
+void ResSchedClientAdapter::ReportProcessInUse(pid_t pid)
+{
+    int32_t nwebId = g_nwebId;
+    if (g_pidNwebMap.count(pid)) {
+        nwebId = g_pidNwebMap[pid].begin()->first;
+    }
+    g_nwebProcessMap[nwebId].push_back(pid);
+    WVLOG_D("ReportProcessInUse nwebId: %{public}d, pid: %{public}d", nwebId, pid);
+}
+
+void ResSchedClientAdapter::ReportSiteIsolationMode(bool mode)
+{
+    g_siteIsolationMode = mode;
+    WVLOG_D("ReportSiteIsolationMode g_siteIsolationMode: %{public}d", mode);
+}
+
 bool ResSchedClientAdapter::ReportWindowStatus(
     ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
 {
-    static uint32_t serial_num = 0;
-    static constexpr uint32_t SERIAL_NUM_MAX = 10000;
-
     if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
         WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
         return false;
@@ -268,33 +322,14 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         g_pidNwebMap.erase(pid);
     }
 
-    int64_t status;
-    bool ret = ConvertStatus(statusAdapter, status);
-    if (!ret) {
-        return false;
+    ReportStatusData(statusAdapter, pid, windowId, nwebId);
+    for (auto pidInNweb : g_nwebProcessMap[nwebId]) {
+        if (pidInNweb == pid) {
+            continue;
+        }
+        ReportStatusData(statusAdapter, pidInNweb, windowId, nwebId);
     }
 
-    if (pid == g_lastPid && status == g_lastStatus) {
-        return true;
-    }
-    g_lastPid = pid;
-    g_lastStatus = status;
-
-    std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() }, { PID, std::to_string(pid) },
-        { WINDOW_ID, std::to_string(windowId) }, { SERIAL_NUMBER, std::to_string(serial_num) },
-        { STATE, std::to_string(status) } };
-    ResSchedClient::GetInstance().ReportData(
-        ResType::RES_TYPE_REPORT_WINDOW_STATE, ResType::ReportChangeStatus::CREATE, mapPayload);
-
-    WVLOG_D("ReportWindowStatus status: %{public}d, uid: %{public}s, pid: %{public}d, windowId: %{public}d, "
-            "nwebId: %{public}d, sn: %{public}d",
-            static_cast<int32_t>(status), GetUidString().c_str(), pid, windowId, nwebId, serial_num);
-    serial_num = (serial_num + 1) % SERIAL_NUM_MAX;
-
-    // Report visible scene event again when tab becomes active to solve timing problem
-    if (statusAdapter == ResSchedStatusAdapter::WEB_ACTIVE) {
-        ReportSceneInternal(statusAdapter, ResSchedSceneAdapter::VISIBLE);
-    }
     return true;
 }
 
@@ -329,6 +364,7 @@ void ResSchedClientAdapter::ReportNWebInit(ResSchedStatusAdapter statusAdapter, 
         g_nwebSet.emplace(nwebId);
     } else if (statusAdapter == ResSchedStatusAdapter::WEB_SCENE_EXIT) {
         g_nwebSet.erase(nwebId);
+        g_nwebProcessMap.erase(nwebId);
         for (auto nwebMap : g_pidNwebMap) {
             auto it = nwebMap.second.find(nwebId);
             if (it != nwebMap.second.end()) {
