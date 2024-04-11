@@ -65,4 +65,14 @@ bool ArkResSchedClientAdapter::ReportVideoPlaying(int32_t statusAdapter, pid_t p
 {
     return NWeb::ResSchedClientAdapter::ReportVideoPlaying((NWeb::ResSchedStatusAdapter)statusAdapter, pid);
 }
+
+void ArkResSchedClientAdapter::ReportProcessInUse(pid_t pid)
+{
+    NWeb::ResSchedClientAdapter::ReportProcessInUse(pid);
+}
+
+void ArkResSchedClientAdapter::ReportSiteIsolationMode(bool mode)
+{
+    NWeb::ResSchedClientAdapter::ReportSiteIsolationMode(mode);
+}
 } // namespace OHOS::ArkWeb
