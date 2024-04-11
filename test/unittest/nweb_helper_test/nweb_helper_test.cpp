@@ -247,6 +247,19 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     EXPECT_FALSE(result);
     NWebHelper::Instance().SetConnectionTimeout(1);
     NWebHelper::Instance().GetWebEngineHandler();
+
+    // To test SetRenderProcessMode and GetRenderProcessMode.
+    NWebHelper::Instance().SetRenderProcessMode(RenderProcessMode::SINGLE_MODE);
+    RenderProcessMode render_process_mode =
+        NWebHelper::Instance().GetRenderProcessMode();
+    EXPECT_EQ(render_process_mode, RenderProcessMode::SINGLE_MODE);
+    NWebHelper::Instance().SetRenderProcessMode(RenderProcessMode::MULTIPLE_MODE);
+    render_process_mode = NWebHelper::Instance().GetRenderProcessMode();
+    EXPECT_EQ(render_process_mode, RenderProcessMode::MULTIPLE_MODE);
+
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().SetRenderProcessMode(RenderProcessMode::MULTIPLE_MODE);
+    EXPECT_EQ(NWebHelper::Instance().GetRenderProcessMode(), RenderProcessMode::SINGLE_MODE);
 }
 
 /**
