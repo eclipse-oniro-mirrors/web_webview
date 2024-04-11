@@ -224,6 +224,43 @@ bool ParseHttpHeaders(napi_env env, napi_value headersArray, std::map<std::strin
     return true;
 }
 
+bool ParseCacheKeyList(napi_env env, napi_value cacheKeyArray, std::vector<std::string>* cacheKeyList)
+{
+    bool isArray = false;
+    napi_is_array(env, cacheKeyArray, &isArray);
+    if (!isArray) {
+        WVLOG_E("Unable to parse type from CacheKey array object.");
+        return false;
+    }
+    uint32_t arrayLength = INTEGER_ZERO;
+    napi_get_array_length(env, cacheKeyArray, &arrayLength);
+    if (arrayLength == 0) {
+        WVLOG_E("cacheKey array length is invalid");
+        return false;
+    }
+    for (uint32_t i = 0; i < arrayLength; ++i) {
+        napi_value cacheKeyItem = nullptr;
+        napi_get_element(env, cacheKeyArray, i, &cacheKeyItem);
+        std::string CacheKeyStr;
+        if (!NapiParseUtils::ParseString(env, cacheKeyItem, CacheKeyStr)) {
+            WVLOG_E("Unable to parse string from cacheKey array object.");
+            return false;
+        }
+        if (CacheKeyStr.empty()) {
+            WVLOG_E("Cache Key is empty.");
+            return false;
+        }
+        for (char c : CacheKeyStr) {
+            if (!isalnum(c)) {
+                WVLOG_E("Cache Key is invalid.");
+                return false;
+            }
+        }
+        cacheKeyList->emplace_back(CacheKeyStr);
+    }
+    return true;
+}
+
 std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_value preArgs)
 {
     napi_value urlObj = nullptr;
@@ -375,6 +412,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl),
         DECLARE_NAPI_FUNCTION("onCreateNativeMediaPlayer", NapiWebviewController::OnCreateNativeMediaPlayer),
         DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
+        DECLARE_NAPI_STATIC_FUNCTION("clearPrefetchedResource", NapiWebviewController::ClearPrefetchedResource),
         DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
         DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
         DECLARE_NAPI_FUNCTION("precompileJavaScript", NapiWebviewController::PrecompileJavaScript),
@@ -4180,6 +4218,30 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
 
     NAPI_CALL(env, napi_get_undefined(env, &result));
     NWebHelper::Instance().PrefetchResource(prefetchArgs, additionalHttpHeaders, cacheKey, cacheValidTime);
+    return result;
+}
+
+napi_value NapiWebviewController::ClearPrefetchedResource(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    std::vector<std::string> cacheKeyList;
+    if (!ParseCacheKeyList(env, argv[INTEGER_ZERO], &cacheKeyList)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    NWebHelper::Instance().ClearPrefetchedResource(cacheKeyList);
     return result;
 }
 

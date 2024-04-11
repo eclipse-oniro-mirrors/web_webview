@@ -200,4 +200,13 @@ ArkWebRenderProcessMode ArkWebEngineWrapper::GetRenderProcessMode() {
   return static_cast<ArkWebRenderProcessMode>(
       ark_web_engine_->GetRenderProcessMode());
 }
+
+void ArkWebEngineWrapper::ClearPrefetchedResource(const std::vector<std::string>& cache_key_list)
+{
+  ArkWebStringVector stCacheKeyList = ArkWebStringVectorClassToStruct(cache_key_list);
+
+  ark_web_engine_->ClearPrefetchedResource(stCacheKeyList);
+
+  ArkWebStringVectorStructRelease(stCacheKeyList);
+}
 } // namespace OHOS::ArkWeb
