@@ -338,8 +338,6 @@ napi_value NapiNativeMediaPlayerHandler::HandleDurationChanged(napi_env env, nap
 
 napi_value NapiNativeMediaPlayerHandler::HandleTimeUpdate(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("handle_time_update is called");
-
     size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
     napi_value argv[INTEGER_ONE];
