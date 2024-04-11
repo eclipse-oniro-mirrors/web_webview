@@ -38,6 +38,7 @@
 #include "ark_imf_adapter_capi.h"
 #include "ark_keystore_adapter_capi.h"
 #include "ark_media_adapter_capi.h"
+#include "ark_media_avsession_adapter_capi.h"
 #include "ark_media_codec_adapter_capi.h"
 #include "ark_media_codec_decoder_adapter_capi.h"
 #include "ark_mmi_adapter_capi.h"
@@ -202,6 +203,10 @@ typedef struct _ark_ohos_adapter_helper_t {
 
   ark_ai_engine_adapter_t* (ARK_WEB_CALLBACK *get_ai_engine_adapter_instance)(
       struct _ark_ohos_adapter_helper_t* self);
+
+  ark_media_avsession_adapter_t *(
+      ARK_WEB_CALLBACK *create_media_avsession_adapter)(
+      struct _ark_ohos_adapter_helper_t *self);
 } ark_ohos_adapter_helper_t;
 
 ARK_WEB_EXPORT ark_ohos_adapter_helper_t *

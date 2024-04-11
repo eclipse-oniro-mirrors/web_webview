@@ -37,6 +37,7 @@
 #include "ark_imf_adapter.h"
 #include "ark_keystore_adapter.h"
 #include "ark_media_adapter.h"
+#include "ark_media_avsession_adapter.h"
 #include "ark_media_codec_adapter.h"
 #include "ark_media_codec_decoder_adapter.h"
 #include "ark_mmi_adapter.h"
@@ -200,6 +201,10 @@ public:
 
   /*--ark web()--*/
   virtual ArkWebRefPtr<ArkAiEngineAdapter> GetAiEngineAdapterInstance() = 0;
+
+  /*--ark web()--*/
+  virtual ArkWebRefPtr<ArkMediaAVSessionAdapter>
+  CreateMediaAVSessionAdapter() = 0;
 };
 } // namespace OHOS::ArkWeb
 
