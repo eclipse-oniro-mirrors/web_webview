@@ -195,8 +195,6 @@ void NapiNativeMediaPlayerHandlerImpl::HandleDurationChanged(double duration)
 
 void NapiNativeMediaPlayerHandlerImpl::HandleTimeUpdate(double playTime)
 {
-    WVLOG_D("begin to handle time update,nweb id is %{public}d", nwebId_);
-
     if (handler_) {
         handler_->HandleTimeUpdate(playTime);
     }
@@ -465,7 +463,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructSourceInfos(
 
         napi_value type;
         napi_create_int32(env_, static_cast<int>(sourceInfos[i]->GetType()), &type);
-        napi_set_named_property(env_, *value, "type", type);
+        napi_set_named_property(env_, sourceInfo, "type", type);
 
         napi_value source;
         std::string mediaSource = sourceInfos[i]->GetSource();
