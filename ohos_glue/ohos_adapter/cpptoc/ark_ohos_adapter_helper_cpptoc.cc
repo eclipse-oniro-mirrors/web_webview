@@ -35,6 +35,7 @@
 #include "ohos_adapter/cpptoc/ark_iconsumer_surface_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_imfadapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_keystore_adapter_cpptoc.h"
+#include "ohos_adapter/cpptoc/ark_media_avsession_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_media_codec_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_media_codec_decoder_adapter_cpptoc.h"
 #include "ohos_adapter/cpptoc/ark_media_codec_list_adapter_cpptoc.h"
@@ -670,6 +671,21 @@ ark_ohos_adapter_helper_get_ai_engine_adapter_instance(
   return ArkAiEngineAdapterCppToC::Invert(_retval);
 }
 
+ark_media_avsession_adapter_t *ARK_WEB_CALLBACK
+ark_ohos_adapter_helper_create_media_avsession_adapter(
+    struct _ark_ohos_adapter_helper_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, NULL);
+
+  // Execute
+  ArkWebRefPtr<ArkMediaAVSessionAdapter> _retval =
+      ArkOhosAdapterHelperCppToC::Get(self)->CreateMediaAVSessionAdapter();
+
+  // Return type: refptr_same
+  return ArkMediaAVSessionAdapterCppToC::Invert(_retval);
+}
+
 } // namespace
 
 ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC() {
@@ -749,6 +765,8 @@ ArkOhosAdapterHelperCppToC::ArkOhosAdapterHelperCppToC() {
       ark_ohos_adapter_helper_create_flowbuffer_adapter;
   GetStruct()->get_ai_engine_adapter_instance =
       ark_ohos_adapter_helper_get_ai_engine_adapter_instance;
+  GetStruct()->create_media_avsession_adapter =
+      ark_ohos_adapter_helper_create_media_avsession_adapter;
 }
 
 ArkOhosAdapterHelperCppToC::~ArkOhosAdapterHelperCppToC() {

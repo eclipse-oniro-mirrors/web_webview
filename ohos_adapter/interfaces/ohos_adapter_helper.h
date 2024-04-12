@@ -39,6 +39,7 @@
 #include "imf_adapter.h"
 #include "keystore_adapter.h"
 #include "media_adapter.h"
+#include "media_avsession_adapter.h"
 #include "media_codec_adapter.h"
 #include "media_codec_decoder_adapter.h"
 #include "mmi_adapter.h"
@@ -140,6 +141,8 @@ public:
     virtual std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() = 0;
 
     virtual AiEngineAdapter& GetAiEngineAdapterInstance() = 0;
+
+    virtual std::unique_ptr<MediaAVSessionAdapter> CreateMediaAVSessionAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 

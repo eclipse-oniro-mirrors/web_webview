@@ -36,6 +36,9 @@
 #include "hitrace_adapter_impl.h"
 #include "imf_adapter_impl.h"
 #include "keystore_adapter_impl.h"
+#if defined(NWEB_MEDIA_AVSESSION_ENABLE)
+#include "media_avsession_adapter_impl.h"
+#endif
 #include "media_codec_list_adapter_impl.h"
 #if defined(NWEB_MEDIA_AVCODEC_ENABLE)
 #include "media_codec_decoder_adapter_impl.h"
@@ -309,5 +312,14 @@ std::unique_ptr<FlowbufferAdapter> OhosAdapterHelperImpl::CreateFlowbufferAdapte
 
 AiEngineAdapter& OhosAdapterHelperImpl::GetAiEngineAdapterInstance() {
     return AiEngineAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<MediaAVSessionAdapter> OhosAdapterHelperImpl::CreateMediaAVSessionAdapter()
+{
+#if defined(NWEB_MEDIA_AVSESSION_ENABLE)
+    return std::make_unique<MediaAVSessionAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 } // namespace OHOS::NWeb
