@@ -1499,28 +1499,6 @@ std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env,
         return defaultCacheOptions;
     }
 
-    napi_value isModuleValue;
-    if (napi_get_named_property(env, value, "isModule", &isModuleValue) != napi_ok) {
-        WVLOG_D("PrecompileJavaScript: 'isModule' of CacheOptions is not boolean. use default options");
-        return defaultCacheOptions;
-    }
-
-    if (!NapiParseUtils::ParseBoolean(env, isModuleValue, isModule)) {
-        WVLOG_D("PrecompileJavaScript: parse 'isModule' of CacheOptions to boolean failed. use default options");
-        return defaultCacheOptions;
-    }
-
-    napi_value isTopLevelValue;
-    if (napi_get_named_property(env, value, "isTopLevel", &isTopLevelValue) != napi_ok) {
-        WVLOG_D("PrecompileJavaScript: 'isTopLevel' of CacheOptions is not boolean. use default options");
-        return defaultCacheOptions;
-    }
-
-    if (!NapiParseUtils::ParseBoolean(env, isTopLevelValue, isTopLevel)) {
-        WVLOG_D("PrecompileJavaScript: parse 'isTopLevel' of CacheOptions to boolean failed. use default options");
-        return defaultCacheOptions;
-    }
-
     return std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
 }
 
