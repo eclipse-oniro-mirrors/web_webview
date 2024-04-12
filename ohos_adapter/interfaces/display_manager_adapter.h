@@ -48,9 +48,9 @@ public:
     virtual ~DisplayListenerAdapter() = default;
 
     virtual void OnCreate(DisplayId) = 0;
-    
+
     virtual void OnDestroy(DisplayId) = 0;
-    
+
     virtual void OnChange(DisplayId) = 0;
 };
 
@@ -71,6 +71,8 @@ public:
     virtual RotationType GetRotation() = 0;
 
     virtual OrientationType GetOrientation() = 0;
+
+    virtual int32_t GetDpi() = 0;
 };
 
 class DisplayManagerAdapter {

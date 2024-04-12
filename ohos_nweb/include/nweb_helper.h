@@ -19,6 +19,7 @@
 #include <iosfwd>
 #include <memory>
 #include <string>
+#include <vector>
 #include "nweb.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_data_base.h"
@@ -27,6 +28,12 @@
 #include "nweb_web_storage.h"
 
 namespace OHOS::NWeb {
+struct FrameRateSetting {
+    int32_t min_ {0};
+    int32_t max_ {0};
+    int32_t preferredFrameRate_ {0};
+};
+
 class OHOS_NWEB_EXPORT NWebHelper {
 public:
     static NWebHelper &Instance();

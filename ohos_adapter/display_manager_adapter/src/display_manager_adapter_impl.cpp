@@ -135,6 +135,14 @@ OrientationType DisplayAdapterImpl::GetOrientation()
     return OrientationType::BUTT;
 }
 
+int32_t DisplayAdapterImpl::GetDpi()
+{
+    if (display_ != nullptr) {
+        return display_->GetDpi();
+    }
+    return -1;
+}
+
 DisplayId DisplayManagerAdapterImpl::GetDefaultDisplayId()
 {
     return DisplayManager::GetInstance().GetDefaultDisplayId();
@@ -149,7 +157,7 @@ std::shared_ptr<DisplayAdapter> DisplayManagerAdapterImpl::GetDefaultDisplay()
 uint32_t DisplayManagerAdapterImpl::RegisterDisplayListener(
     std::shared_ptr<DisplayListenerAdapter> listener)
 {
-    static uint32_t count = 1;   
+    static uint32_t count = 1;
     sptr<DisplayListenerAdapterImpl> reg =
         new (std::nothrow) DisplayListenerAdapterImpl(listener);
     if (reg == nullptr) {
@@ -165,7 +173,7 @@ uint32_t DisplayManagerAdapterImpl::RegisterDisplayListener(
     if (DisplayManager::GetInstance().RegisterDisplayListener(reg) == DMError::DM_OK) {
         return id;
     } else {
-        return 0;  
+        return 0;
     }
 }
 

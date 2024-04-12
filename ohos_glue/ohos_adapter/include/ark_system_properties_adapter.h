@@ -18,6 +18,7 @@
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
+#include "include/ark_frame_rate_setting_adapter_vector.h"
 
 namespace OHOS::ArkWeb {
 
@@ -86,6 +87,9 @@ public:
 
   /*--web engine()--*/
   virtual bool GetBoolParameter(ArkWebString key, bool defaultValue) = 0;
+
+  /*--ark web()--*/
+  virtual ArkFrameRateSettingAdapterVector GetLTPOConfig(const ArkWebString& settingName) = 0;
 };
 
 } // namespace OHOS::ArkWeb

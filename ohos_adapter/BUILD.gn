@@ -317,6 +317,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/include/ark_event_handler_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_flowbuffer_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_format_adapter_vector.h",
+    "../ohos_glue/ohos_adapter/include/ark_frame_rate_setting_adapter_vector.h",
     "../ohos_glue/ohos_adapter/include/ark_graphic_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_hisysevent_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_hitrace_adapter.h",

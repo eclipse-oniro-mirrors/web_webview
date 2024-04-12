@@ -35,7 +35,7 @@ public:
     std::string GetDeviceInfoProductModel() override;
 
     std::string GetDeviceInfoBrand() override;
-    
+
     int32_t GetDeviceInfoMajorVersion() override;
 
     ProductDeviceType GetProductDeviceType() override;
@@ -70,6 +70,7 @@ public:
 
     bool GetBoolParameter(const std::string& key, bool defaultValue) override;
 
+    std::vector<FrameRateSetting> GetLTPOConfig(const std::string& settingName) override;
 private:
     SystemPropertiesAdapterImpl();
 
