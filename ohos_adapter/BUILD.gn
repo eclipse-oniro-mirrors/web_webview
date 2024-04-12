@@ -279,6 +279,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     defines += [ "NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE" ]
   }
 
+  if (webview_media_avsession_enable) {
+    sources += [ "media_adapter/src/media_avsession_adapter_impl.cpp" ]
+    external_deps += [ "av_session:avsession_client" ]
+    defines += [ "NWEB_MEDIA_AVSESSION_ENABLE" ]
+  }
+
   innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
   subsystem_name = "web"
@@ -318,6 +324,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/include/ark_keystore_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_location_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_media_adapter.h",
+    "../ohos_glue/ohos_adapter/include/ark_media_avsession_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_media_codec_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_media_codec_encoder_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_mmi_adapter.h",
@@ -364,6 +371,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/capi/ark_keystore_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_location_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_media_adapter_capi.h",
+    "../ohos_glue/ohos_adapter/capi/ark_media_avsession_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_media_codec_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_media_codec_decoder_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_mmi_adapter_capi.h",
@@ -462,6 +470,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/cpptoc/ark_location_proxy_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_location_request_config_cpptoc.cc",
     "../ohos_glue/ohos_adapter/cpptoc/ark_location_request_config_cpptoc.h",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_media_avsession_adapter_cpptoc.cc",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_media_avsession_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_media_codec_adapter_cpptoc.cc",
     "../ohos_glue/ohos_adapter/cpptoc/ark_media_codec_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_media_codec_decoder_adapter_cpptoc.cc",
@@ -604,6 +614,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/ctocpp/ark_imftext_listener_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_location_callback_adapter_ctocpp.cc",
     "../ohos_glue/ohos_adapter/ctocpp/ark_location_callback_adapter_ctocpp.h",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_callback_adapter_ctocpp.cc",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_callback_adapter_ctocpp.h",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_metadata_adapter_ctocpp.cc",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_metadata_adapter_ctocpp.h",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_position_adapter_ctocpp.cc",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_position_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_mmidevice_info_adapter_ctocpp.cc",
     "../ohos_glue/ohos_adapter/ctocpp/ark_mmidevice_info_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_mmiinput_listener_adapter_ctocpp.cc",
@@ -706,6 +722,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/wrapper/ark_imftext_listener_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/wrapper/ark_location_callback_adapter_wrapper.cc",
     "../ohos_glue/ohos_adapter/wrapper/ark_location_callback_adapter_wrapper.h",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_callback_adapter_wrapper.cc",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_callback_adapter_wrapper.h",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_metadata_adapter_wrapper.cc",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_metadata_adapter_wrapper.h",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_position_adapter_wrapper.cc",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_position_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/wrapper/ark_mmi_device_info_adapter_wrapper.cc",
     "../ohos_glue/ohos_adapter/wrapper/ark_mmi_device_info_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/wrapper/ark_mmi_input_listener_adapter_wrapper.cc",
@@ -814,6 +836,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/impl/ark_location_proxy_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_location_request_config_impl.cc",
     "../ohos_glue/ohos_adapter/impl/ark_location_request_config_impl.h",
+    "../ohos_glue/ohos_adapter/impl/ark_media_avsession_adapter_impl.cc",
+    "../ohos_glue/ohos_adapter/impl/ark_media_avsession_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_media_codec_decoder_adapter_impl.cc",
     "../ohos_glue/ohos_adapter/impl/ark_media_codec_decoder_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_media_codec_encoder_adapter_impl.cc",
