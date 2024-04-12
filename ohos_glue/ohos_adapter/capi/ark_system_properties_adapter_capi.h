@@ -19,6 +19,7 @@
 
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
+#include "include/ark_frame_rate_setting_adapter_vector.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -88,6 +89,10 @@ typedef struct _ark_system_properties_adapter_t {
 
   bool(ARK_WEB_CALLBACK *get_bool_parameter)(
       struct _ark_system_properties_adapter_t* self, ArkWebString key, bool defaultValue);
+
+  ArkFrameRateSettingAdapterVector(ARK_WEB_CALLBACK* get_ltpo_config)(
+      struct _ark_system_properties_adapter_t* self,
+      const ArkWebString settingName);
 } ark_system_properties_adapter_t;
 
 #ifdef __cplusplus

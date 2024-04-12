@@ -20,6 +20,7 @@ config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
+    "../../../../ohos_nweb/include",
     "../../../../ohos_adapter/media_adapter/include",
     "../../../../ohos_adapter/graphic_adapter/include",
   ]
@@ -38,6 +39,7 @@ ohos_unittest("nweb_media_adapter_test") {
 
   deps = [
     "../../../../ohos_adapter:nweb_ohos_adapter",
+    "../../../../ohos_nweb:libnweb",
     "//third_party/googletest:gtest_main",
   ]
 

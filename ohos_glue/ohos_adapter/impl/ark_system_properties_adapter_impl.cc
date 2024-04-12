@@ -118,4 +118,23 @@ bool ArkSystemPropertiesAdapterImpl::GetBoolParameter(ArkWebString key, bool def
 {
     return real_.GetBoolParameter(ArkWebStringStructToClass(key), defaultValue);
 }
+
+ArkFrameRateSettingAdapterVector ArkSystemPropertiesAdapterImpl::GetLTPOConfig(const ArkWebString& settingName)
+{
+    std::vector<NWeb::FrameRateSetting> frameRateSettingVector = real_.GetLTPOConfig(
+        ArkWebStringStructToClass(settingName));
+    ArkFrameRateSettingAdapterVector result = { .size = frameRateSettingVector.size(),
+        .ark_web_mem_free_func = ArkWebMemFree };
+    if (result.size > 0) {
+        result.value = (ArkFrameRateSettingAdapter*)ArkWebMemMalloc(sizeof(ArkFrameRateSettingAdapter) * result.size);
+
+        int count = 0;
+        for (auto it = frameRateSettingVector.begin(); it != frameRateSettingVector.end(); it++) {
+            result.value[count] = {it->min_, it->max_, it->preferredFrameRate_};
+            count++;
+        }
+    }
+
+    return result;
+}
 } // namespace OHOS::ArkWeb
