@@ -73,6 +73,8 @@ public:
 
   ArkWebRenderProcessMode GetRenderProcessMode() override;
 
+  void ClearPrefetchedResource(const std::vector<std::string>& cache_key_list) override;
+
 private:
   ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };

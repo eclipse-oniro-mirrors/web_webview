@@ -112,6 +112,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     EXPECT_EQ(nwebHelper, nullptr);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
+    NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
     ApplicationContextMock *contextMock = new ApplicationContextMock();
@@ -242,6 +243,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
+    NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     NWebHelper::Instance().bundlePath_.clear();
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);

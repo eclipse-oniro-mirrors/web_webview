@@ -76,6 +76,9 @@ public:
   void SetRenderProcessMode(int32_t mode) override;
 
   int32_t GetRenderProcessMode() override;
+
+  void
+  ClearPrefetchedResource(const ArkWebStringVector &cache_key_list) override;
 };
 
 } // namespace OHOS::ArkWeb

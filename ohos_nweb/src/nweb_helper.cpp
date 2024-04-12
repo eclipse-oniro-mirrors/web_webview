@@ -1019,6 +1019,16 @@ void NWebHelper::PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs> 
     nwebEngine_->PrefetchResource(pre_args, additional_http_headers, cache_key, cache_valid_time);
 }
 
+void NWebHelper::ClearPrefetchedResource(const std::vector<std::string>& cache_key_list)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ClearPrefetchedResource(cache_key_list);
+}
+
 void NWebHelper::SetRenderProcessMode(RenderProcessMode mode) {
     if (nwebEngine_ == nullptr) {
         WVLOG_E("nweb engine is nullptr");
