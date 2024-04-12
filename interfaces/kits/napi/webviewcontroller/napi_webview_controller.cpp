@@ -241,22 +241,22 @@ bool ParseCacheKeyList(napi_env env, napi_value cacheKeyArray, std::vector<std::
     for (uint32_t i = 0; i < arrayLength; ++i) {
         napi_value cacheKeyItem = nullptr;
         napi_get_element(env, cacheKeyArray, i, &cacheKeyItem);
-        std::string CacheKeyStr;
-        if (!NapiParseUtils::ParseString(env, cacheKeyItem, CacheKeyStr)) {
+        std::string cacheKeyStr;
+        if (!NapiParseUtils::ParseString(env, cacheKeyItem, cacheKeyStr)) {
             WVLOG_E("Unable to parse string from cacheKey array object.");
             return false;
         }
-        if (CacheKeyStr.empty()) {
+        if (cacheKeyStr.empty()) {
             WVLOG_E("Cache Key is empty.");
             return false;
         }
-        for (char c : CacheKeyStr) {
+        for (char c : cacheKeyStr) {
             if (!isalnum(c)) {
                 WVLOG_E("Cache Key is invalid.");
                 return false;
             }
         }
-        cacheKeyList->emplace_back(CacheKeyStr);
+        cacheKeyList->emplace_back(cacheKeyStr);
     }
     return true;
 }
