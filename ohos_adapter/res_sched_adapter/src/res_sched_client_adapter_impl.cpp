@@ -207,7 +207,7 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t w
         auto nwebMap = g_pidNwebMap[pid];
         for (auto it : nwebMap) {
             if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
-                return false;
+                return;
             }
         }
         g_pidNwebMap.erase(pid);
