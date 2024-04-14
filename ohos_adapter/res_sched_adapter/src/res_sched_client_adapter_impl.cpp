@@ -333,6 +333,9 @@ bool ResSchedClientAdapter::ReportWindowStatus(
     if (!ConvertStatus(statusAdapter, status)) {
         return false;
     }
+    if (statusAdapter == ResSchedStatusAdapter::WEB_ACTIVE) {
+        ReportWindowId(windowId, nwebId);
+    }
 
     ReportStatusData(statusAdapter, pid, windowId, nwebId);
     for (auto pidInNweb : g_nwebProcessMap[nwebId]) {
