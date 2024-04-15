@@ -27,6 +27,7 @@
 #include "avcodec_video_decoder.h"
 #include "media_codec_decoder_adapter.h"
 #include "media_description.h"
+#include "meta_key.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::MediaAVCodec;
