@@ -28,6 +28,19 @@ enum class ProductDeviceType : int32_t {
     DEVICE_TYPE_UNKNOWN
 };
 
+enum class PropertiesKey: int32_t {
+    PROP_RENDER_DUMP
+};
+
+class SystemPropertiesObserver {
+   public:
+    SystemPropertiesObserver() = default;
+
+    virtual ~SystemPropertiesObserver() = default;
+
+    virtual void PropertiesUpdate(const char* value) = 0;
+};
+
 class SystemPropertiesAdapter {
 public:
     SystemPropertiesAdapter() = default;
@@ -46,7 +59,7 @@ public:
 
     virtual bool GetWebOptimizationValue() = 0;
 
-    virtual bool GetLockdownModeStatus() = 0;
+    virtual bool IsAdvancedSecurityMode() = 0;
 
     virtual std::string GetUserAgentOSName() = 0;
 
@@ -65,6 +78,12 @@ public:
     virtual bool GetOOPGPUEnable() = 0;
 
     virtual void SetOOPGPUDisable() = 0;
+
+    virtual void AttachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) = 0;
+
+    virtual void DetachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) = 0;
+
+    virtual bool GetBoolParameter(const std::string& key, bool defaultValue) = 0;
 };
 
 }  // namespace OHOS::NWeb

@@ -49,7 +49,7 @@ public:
   virtual bool GetWebOptimizationValue() = 0;
 
   /*--ark web()--*/
-  virtual bool GetLockdownModeStatus() = 0;
+  virtual bool IsAdvancedSecurityMode() = 0;
 
   /*--ark web()--*/
   virtual ArkWebString GetUserAgentOSName() = 0;
@@ -77,6 +77,15 @@ public:
 
   /*--ark web()--*/
   virtual void SetOOPGPUDisable() = 0;
+
+  /*--ark web()--*/
+  virtual void AttachSysPropObserver(int32_t key, void *observer) = 0;
+
+  /*--ark web()--*/
+  virtual void DetachSysPropObserver(int32_t key, void *observer) = 0;
+
+  /*--web engine()--*/
+  virtual bool GetBoolParameter(ArkWebString key, bool defaultValue) = 0;
 };
 
 } // namespace OHOS::ArkWeb

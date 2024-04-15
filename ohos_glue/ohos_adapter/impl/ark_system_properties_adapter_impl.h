@@ -41,7 +41,7 @@ public:
 
     bool GetWebOptimizationValue() override;
 
-    bool GetLockdownModeStatus() override;
+    bool IsAdvancedSecurityMode() override;
 
     ArkWebString GetUserAgentOSName() override;
 
@@ -60,6 +60,12 @@ public:
     void SetOOPGPUDisable() override;
 
     int32_t GetFlowBufMaxFd() override;
+
+    void AttachSysPropObserver(int32_t key, void* observer) override;
+
+    void DetachSysPropObserver(int32_t key, void* observer) override;
+
+    bool GetBoolParameter(ArkWebString key, bool defaultValue) override;
 
 private:
     NWeb::SystemPropertiesAdapter& real_;

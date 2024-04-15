@@ -32,6 +32,17 @@ const std::string FACTORY_LEVEL_PC = "8";
 const std::string FACTORY_LEVEL_TABLET = "4";
 const std::string FACTORY_LEVEL_PHONE = "2";
 const std::string FACTORY_LEVEL_DEFAULT = "1";
+
+const std::string PROP_RENDER_DUMP = "web.render.dump";
+
+const std::unordered_map<std::string, PropertiesKey> PROP_KEY_MAP = {
+    {PROP_RENDER_DUMP, PropertiesKey::PROP_RENDER_DUMP}};
+
+void SystemPropertiesChangeCallback(const char* key, const char* value, void* context) {
+    WVLOG_D("sys prop change key: %{public}s ,value : %{public}s ", key,  value);
+    SystemPropertiesAdapterImpl::GetInstance().DispatchAllWatcherInfo(key, value);
+}
+
 // static
 SystemPropertiesAdapterImpl& SystemPropertiesAdapterImpl::GetInstance()
 {
@@ -64,6 +75,12 @@ SystemPropertiesAdapterImpl::SystemPropertiesAdapterImpl()
     }
     softwareMajorVersion_ = versionPartOne;
     softwareSeniorVersion_ = versionPartTwo;
+    AddAllSysPropWatchers();
+}
+
+SystemPropertiesAdapterImpl::~SystemPropertiesAdapterImpl()
+{
+    RemoveAllSysPropWatchers();
 }
 
 bool SystemPropertiesAdapterImpl::GetResourceUseHapPathEnable()
@@ -88,8 +105,27 @@ int32_t SystemPropertiesAdapterImpl::GetDeviceInfoMajorVersion()
 
 ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
 {
-    std::string factoryLevel = NWebAdapterHelper::Instance().
-        ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
+    ProductDeviceType factoryLevel = AnalysisFromConfig();
+    if (factoryLevel != ProductDeviceType::DEVICE_TYPE_UNKNOWN) {
+        return factoryLevel;
+    }
+    WVLOG_W("read config factoryLevel: fail");
+    // RK or other device cant read config，need read from system deviceType
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        return ProductDeviceType::DEVICE_TYPE_MOBILE;
+    } else if (deviceType == "tablet") {
+        return ProductDeviceType::DEVICE_TYPE_TABLET;
+    } else if (deviceType == "2in1") {
+        return ProductDeviceType::DEVICE_TYPE_2IN1;
+    }
+    return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
+}
+
+ProductDeviceType SystemPropertiesAdapterImpl::AnalysisFromConfig()
+{
+    std::string factoryLevel = NWebAdapterHelper::Instance()
+        .ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
     if (factoryLevel.empty()) {
         NWebAdapterHelper::Instance().ReadConfigIfNeeded();
         factoryLevel = NWebAdapterHelper::Instance().
@@ -111,7 +147,7 @@ bool SystemPropertiesAdapterImpl::GetWebOptimizationValue()
     return OHOS::system::GetBoolParameter("web.optimization", true);
 }
 
-bool SystemPropertiesAdapterImpl::GetLockdownModeStatus()
+bool SystemPropertiesAdapterImpl::IsAdvancedSecurityMode()
 {
     char buffer[32] = { 0 };
     uint32_t buffSize = sizeof(buffer);
@@ -171,5 +207,95 @@ void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
 int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd() 
 {
     return OHOS::system::GetIntParameter("web.flowbuffer.maxfd", -1);
+}
+
+void SystemPropertiesAdapterImpl::AddAllSysPropWatchers()
+{
+    for (auto &item : PROP_KEY_MAP) {
+        auto errNo =  WatchParameter(item.first.c_str(), SystemPropertiesChangeCallback, nullptr);
+        if (errNo == 0) {
+            sysPropObserver_[item.second];
+            sysPropMutex_[item.second];
+        } else {
+            WVLOG_E("add watch error result: %{public}d", errNo);
+        }
+    }
+}
+
+void SystemPropertiesAdapterImpl::RemoveAllSysPropWatchers()
+{
+    for (auto &item : PROP_KEY_MAP) {
+        auto errNo = RemoveParameterWatcher(item.first.c_str(), nullptr, nullptr);
+        if (errNo != 0) {
+            WVLOG_E("remove watch error result: %{public}d", errNo);
+        }
+    }
+}
+
+void SystemPropertiesAdapterImpl::DispatchAllWatcherInfo(const char* key, const char* value)
+{
+    auto propKeyIt = PROP_KEY_MAP.find(key);
+    if (propKeyIt == PROP_KEY_MAP.end()) {
+        WVLOG_E("sys prop change key is invalid: %{public}s", key);
+        return;
+    }
+
+    PropertiesKey propkey = propKeyIt->second;
+    auto& keyObservers = sysPropObserver_[propkey];
+
+    if (keyObservers.size() == 0) {
+        WVLOG_E("no observers in this key: %{public}s", key);
+        return;
+    }
+
+    std::shared_lock lock(sysPropMutex_[propkey]);
+    for (auto &item : keyObservers) {
+        item->PropertiesUpdate(value);
+    }
+}
+
+void SystemPropertiesAdapterImpl::AttachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer)
+{
+    auto observerIt = sysPropObserver_.find(key);
+    if (observerIt == sysPropObserver_.end()) {
+        WVLOG_E("properties key invalid in attach");
+        return;
+    }
+
+    if (observer == nullptr) {
+        WVLOG_E("properties key observer invalid in attach");
+        return;
+    }
+
+    std::vector<SystemPropertiesObserver*>& observerVec = observerIt->second;
+    std::unique_lock lock(sysPropMutex_[key]);
+    observerVec.push_back(observer);
+}
+
+void SystemPropertiesAdapterImpl::DetachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer)
+{
+    auto observerIt = sysPropObserver_.find(key);
+    if (observerIt == sysPropObserver_.end()) {
+        WVLOG_E("properties key invalid in detach");
+        return;
+    }
+
+    if (observer == nullptr) {
+        WVLOG_E("properties key observer invalid in detach");
+        return;
+    }
+
+    std::vector<SystemPropertiesObserver*>& observerVec = observerIt->second;
+    std::unique_lock lock(sysPropMutex_[key]);
+
+    auto it = std::find(observerVec.begin(), observerVec.end(), observer);
+    if (it != observerVec.end()) {
+        observerVec.erase(it);
+    }
+}
+
+bool SystemPropertiesAdapterImpl::GetBoolParameter(const std::string& key, bool defaultValue)
+{
+    return OHOS::system::GetBoolParameter(key, defaultValue);
 }
 } // namespace OHOS::NWeb

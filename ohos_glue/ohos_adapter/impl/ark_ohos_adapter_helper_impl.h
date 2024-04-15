@@ -104,6 +104,10 @@ public:
     ArkWebRefPtr<ArkMediaCodecListAdapter> GetMediaCodecListAdapter() override;
 
     ArkWebRefPtr<ArkFlowbufferAdapter> CreateFlowbufferAdapter() override;
+
+    ArkWebRefPtr<ArkAiEngineAdapter> GetAiEngineAdapterInstance() override;
+
+    ArkWebRefPtr<ArkMediaAVSessionAdapter> CreateMediaAVSessionAdapter() override;
 private:
     NWeb::OhosAdapterHelper& real_;
 

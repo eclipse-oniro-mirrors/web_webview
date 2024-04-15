@@ -333,6 +333,20 @@ int32_t ArkWebEngineCToCpp::GetRenderProcessMode() {
 }
 
 ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::ClearPrefetchedResource(
+    const ArkWebStringVector &cache_key_list) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, clear_prefetched_resource, );
+
+  // Execute
+  _struct->clear_prefetched_resource(_struct, &cache_key_list);
+}
+
+ARK_WEB_NO_SANITIZE
 void ArkWebEngineCToCpp::WarmupServiceWorker(const ArkWebString &url) {
   ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
 

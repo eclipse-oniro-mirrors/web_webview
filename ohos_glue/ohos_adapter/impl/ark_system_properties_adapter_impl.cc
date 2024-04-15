@@ -51,9 +51,9 @@ bool ArkSystemPropertiesAdapterImpl::GetWebOptimizationValue()
     return real_.GetWebOptimizationValue();
 }
 
-bool ArkSystemPropertiesAdapterImpl::GetLockdownModeStatus()
+bool ArkSystemPropertiesAdapterImpl::IsAdvancedSecurityMode()
 {
-    return real_.GetLockdownModeStatus();
+    return real_.IsAdvancedSecurityMode();
 }
 
 ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentOSName()
@@ -104,4 +104,18 @@ void ArkSystemPropertiesAdapterImpl::SetOOPGPUDisable()
     real_.SetOOPGPUDisable();
 }
 
+void ArkSystemPropertiesAdapterImpl::AttachSysPropObserver(int32_t key, void* observer)
+{
+    real_.AttachSysPropObserver((NWeb::PropertiesKey)key, (NWeb::SystemPropertiesObserver*)observer);
+}
+
+void ArkSystemPropertiesAdapterImpl::DetachSysPropObserver(int32_t key, void* observer)
+{
+    real_.DetachSysPropObserver((NWeb::PropertiesKey)key, (NWeb::SystemPropertiesObserver*)observer);
+}
+
+bool ArkSystemPropertiesAdapterImpl::GetBoolParameter(ArkWebString key, bool defaultValue)
+{
+    return real_.GetBoolParameter(ArkWebStringStructToClass(key), defaultValue);
+}
 } // namespace OHOS::ArkWeb

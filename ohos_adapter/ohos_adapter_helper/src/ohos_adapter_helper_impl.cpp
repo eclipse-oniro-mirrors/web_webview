@@ -17,6 +17,7 @@
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "access_token_adapter_impl.h"
+#include "ai_engine_adapter_impl.h"
 #include "audio_capturer_adapter_impl.h"
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
@@ -35,6 +36,9 @@
 #include "hitrace_adapter_impl.h"
 #include "imf_adapter_impl.h"
 #include "keystore_adapter_impl.h"
+#if defined(NWEB_MEDIA_AVSESSION_ENABLE)
+#include "media_avsession_adapter_impl.h"
+#endif
 #include "media_codec_list_adapter_impl.h"
 #if defined(NWEB_MEDIA_AVCODEC_ENABLE)
 #include "media_codec_decoder_adapter_impl.h"
@@ -304,5 +308,18 @@ MediaCodecListAdapter& OhosAdapterHelperImpl::GetMediaCodecListAdapter()
 std::unique_ptr<FlowbufferAdapter> OhosAdapterHelperImpl::CreateFlowbufferAdapter()
 {
     return std::make_unique<FlowbufferAdapterImpl>();
+}
+
+AiEngineAdapter& OhosAdapterHelperImpl::GetAiEngineAdapterInstance() {
+    return AiEngineAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<MediaAVSessionAdapter> OhosAdapterHelperImpl::CreateMediaAVSessionAdapter()
+{
+#if defined(NWEB_MEDIA_AVSESSION_ENABLE)
+    return std::make_unique<MediaAVSessionAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 } // namespace OHOS::NWeb

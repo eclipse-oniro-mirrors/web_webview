@@ -113,6 +113,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
     NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
+    NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
     ApplicationContextMock *contextMock = new ApplicationContextMock();
@@ -178,6 +179,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
     EXPECT_EQ(RESULT_OK, result);
 
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
+    std::shared_ptr<NWebCookieManager> cook = NWebHelper::Instance().GetCookieManager();
+    EXPECT_EQ(cook, nullptr);
 
     void *enhanceSurfaceInfo = nullptr;
     int32_t temp = 1;
@@ -242,11 +245,25 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
     NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
+    NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     NWebHelper::Instance().bundlePath_.clear();
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
-    NWebHelper::Instance().SetWebDebuggingAccess(true);
     NWebHelper::Instance().SetConnectionTimeout(1);
+    NWebHelper::Instance().GetWebEngineHandler();
+
+    // To test SetRenderProcessMode and GetRenderProcessMode.
+    NWebHelper::Instance().SetRenderProcessMode(RenderProcessMode::SINGLE_MODE);
+    RenderProcessMode render_process_mode =
+        NWebHelper::Instance().GetRenderProcessMode();
+    EXPECT_EQ(render_process_mode, RenderProcessMode::SINGLE_MODE);
+    NWebHelper::Instance().SetRenderProcessMode(RenderProcessMode::MULTIPLE_MODE);
+    render_process_mode = NWebHelper::Instance().GetRenderProcessMode();
+    EXPECT_EQ(render_process_mode, RenderProcessMode::MULTIPLE_MODE);
+
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().SetRenderProcessMode(RenderProcessMode::MULTIPLE_MODE);
+    EXPECT_EQ(NWebHelper::Instance().GetRenderProcessMode(), RenderProcessMode::SINGLE_MODE);
 }
 
 /**
@@ -358,6 +375,54 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     EXPECT_NE(eTag, nullptr);
     char* mimeType = WebDownloadItem_MimeType(downloadItem);
     EXPECT_NE(mimeType, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_GetWebEngineHandler_008
+ * @tc.desc: GetWebEngineHandler.
+ * @tc.type: FUNC
+ * @tc.require: AR000GGHJ8
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
+{
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
+    std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
+    EXPECT_EQ(nweb, nullptr);
+    nweb = NWebHelper::Instance().GetNWeb(1);
+    EXPECT_EQ(nweb, nullptr);
+    std::shared_ptr<NWebCookieManager> cook = NWebHelper::Instance().GetCookieManager();
+    EXPECT_EQ(cook, nullptr);
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
+    NWebHelper::Instance().SetHttpDns(config);
+    NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
+    NWebHelper::Instance().GetDataBase();
+    std::shared_ptr<NWebWebStorage> storage = NWebHelper::Instance().GetWebStorage();
+    EXPECT_EQ(storage, nullptr);
+    NWebHelper::Instance().SetConnectionTimeout(1);
+    std::vector<std::string> hosts;
+    NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
+    NWebHelper::Instance().PauseAllTimers();
+    NWebHelper::Instance().ResumeAllTimers();
+    EXPECT_NE(NWebHelper::Instance().libHandleWebEngine_, nullptr);
+    NWebHelper::Instance().GetWebEngineHandler();
+    bool result = NWebHelper::Instance().LoadEngine();
+    EXPECT_TRUE(result);
+    result = NWebHelper::Instance().LoadEngine();
+    EXPECT_TRUE(result);
+    cook = NWebHelper::Instance().GetCookieManager();
+    EXPECT_NE(cook, nullptr);
+    NWebHelper::Instance().SetWebTag(1, "webtag");
+
+    NWebHelper::Instance().libHandleWebEngine_ = nullptr;
+    NWebHelper::Instance().SetWebTag(1, "webtag");
+    NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
+    NWebHelper::Instance().PauseAllTimers();
+    NWebHelper::Instance().ResumeAllTimers();
 }
 } // namespace OHOS::NWeb
 }

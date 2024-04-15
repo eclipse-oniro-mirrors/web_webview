@@ -27,6 +27,10 @@ using testing::ext::TestSize;
 using namespace OHOS::MediaAVCodec;
 
 namespace OHOS::NWeb {
+namespace {
+const int32_t DEFAULT_WIDTH = 1396;
+const int32_t DEFAULT_HEIGHT = 1396;
+}
 class EncoderCallbackImplTest : public testing::Test {};
 
 class EncoderCallbackAdapterMock : public CodecCallbackAdapter {
@@ -93,6 +97,85 @@ public:
     int32_t height;
     int64_t bitRate;
     double frameRate;
+};
+
+class BufferRequestConfigAdapterMock : public BufferRequestConfigAdapter {
+public:
+    BufferRequestConfigAdapterMock() = default;
+
+    ~BufferRequestConfigAdapterMock() override = default;
+
+    int32_t GetWidth() override
+    {
+        return DEFAULT_WIDTH;
+    }
+
+    int32_t GetHeight() override
+    {
+        return DEFAULT_HEIGHT;
+    }
+
+    int32_t GetStrideAlignment() override
+    {
+        return 1;
+    }
+
+    int32_t GetFormat() override
+    {
+        return 1;
+    }
+
+    uint64_t GetUsage() override
+    {
+        return 1;
+    }
+
+    int32_t GetTimeout() override
+    {
+        return 1;
+    }
+
+    ColorGamutAdapter GetColorGamut() override
+    {
+        return ColorGamutAdapter::STANDARD_BT601;
+    }
+
+    TransformTypeAdapter GetTransformType() override
+    {
+        return TransformTypeAdapter::ROTATE_90;
+    }
+};
+
+class BufferFlushConfigAdapterMock : public BufferFlushConfigAdapter {
+public:
+    BufferFlushConfigAdapterMock() = default;
+
+    ~BufferFlushConfigAdapterMock() override = default;
+
+    int32_t GetX() override
+    {
+        return 1;
+    }
+
+    int32_t GetY() override
+    {
+        return 1;
+    }
+
+    int32_t GetW() override
+    {
+        return DEFAULT_WIDTH;
+    }
+
+    int32_t GetH() override
+    {
+        return DEFAULT_HEIGHT;
+    }
+
+    int64_t GetTimestamp() override
+    {
+        return 1;
+    }
 };
 
 /**
@@ -246,7 +329,7 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_OnError_
     std::shared_ptr<Media::AVSharedMemory> memory = std::make_shared<Media::AVSharedMemoryBase>(1, 1.0, "test");
     callbackImpl->OnInputBufferAvailable(1, memory);
     AVCodecBufferInfo info;
-    callbackImpl->OnOutputBufferAvailable(1, info, AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, nullptr);
+    callbackImpl->OnOutputBufferAvailable(1, info, AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, memory);
 }
 
 /**
@@ -257,7 +340,7 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_OnError_
  */
 HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_GetList_001, TestSize.Level1)
 {
-    MediaCodecListAdapterImpl codecListImpl = MediaCodecListAdapterImpl::GetInstance();
+    MediaCodecListAdapterImpl& codecListImpl = MediaCodecListAdapterImpl::GetInstance();
 
     std::shared_ptr<CapabilityDataAdapter> capaData = codecListImpl.GetCodecCapability("test", true);
     EXPECT_NE(capaData, nullptr);
@@ -277,12 +360,30 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_GetList_
 HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_Surface_001, TestSize.Level1)
 {
     const std::string mimetype = "video/avc";
-    auto surfaceAdapter = std::make_shared<ProducerSurfaceAdapterMock>();
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->CreateVideoCodecByMime(mimetype), CodecCodeAdapter::OK);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(config_), CodecCodeAdapter::OK);
+    std::shared_ptr<ProducerSurfaceAdapter> surfaceAdapter =
+        mediaCodecEncoderAdapterImpl->CreateInputSurface();
+    ASSERT_NE(surfaceAdapter, nullptr);
     int32_t fence = -1;
-    std::shared_ptr<SurfaceBufferAdapter> SurfaceBufferAdapter = surfaceAdapter->RequestBuffer(fence, nullptr);
-    EXPECT_EQ(SurfaceBufferAdapter, nullptr);
+    auto configAdapter = std::make_shared<BufferRequestConfigAdapterMock>();
+    EXPECT_NE(configAdapter, nullptr);
+    std::shared_ptr<SurfaceBufferAdapter> SurfaceBufferAdapter = 
+        surfaceAdapter->RequestBuffer(fence, configAdapter);
+    EXPECT_NE(SurfaceBufferAdapter, nullptr);
 
-    int32_t ret = surfaceAdapter->FlushBuffer(SurfaceBufferAdapter, fence, nullptr);
-    EXPECT_EQ(ret, 0);
+    auto fulshConfigAdapter = std::make_shared<BufferFlushConfigAdapterMock>();
+    EXPECT_NE(fulshConfigAdapter, nullptr);
+    int32_t ret = surfaceAdapter->FlushBuffer(SurfaceBufferAdapter, fence, fulshConfigAdapter);
+    EXPECT_NE(ret, 0);
+
+    uint32_t index = 0;
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Prepare(), CodecCodeAdapter::OK);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Start(), CodecCodeAdapter::OK);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Stop(), CodecCodeAdapter::OK);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Reset(), CodecCodeAdapter::OK);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Release(), CodecCodeAdapter::OK);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->ReleaseOutputBuffer(index, true), CodecCodeAdapter::ERROR);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->RequestKeyFrameSoon(), CodecCodeAdapter::ERROR);
 }
 } // namespace OHOS::NWeb

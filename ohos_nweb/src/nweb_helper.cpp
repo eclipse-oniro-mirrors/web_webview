@@ -918,16 +918,6 @@ void NWebHelper::PrepareForPageLoad(std::string url, bool preconnectable, int32_
     nwebEngine_->PrepareForPageLoad(url, preconnectable, numSockets);
 }
 
-void NWebHelper::SetWebDebuggingAccess(bool isEnableDebug)
-{
-    if (nwebEngine_ == nullptr) {
-        WVLOG_E("nweb engine is nullptr");
-        return;
-    }
-
-    nwebEngine_->SetWebDebuggingAccess(isEnableDebug);
-}
-
 std::shared_ptr<NWebDataBase> NWebHelper::GetDataBase()
 {
     if (nwebEngine_ == nullptr) {
@@ -1027,6 +1017,16 @@ void NWebHelper::PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs> 
     }
 
     nwebEngine_->PrefetchResource(pre_args, additional_http_headers, cache_key, cache_valid_time);
+}
+
+void NWebHelper::ClearPrefetchedResource(const std::vector<std::string>& cache_key_list)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ClearPrefetchedResource(cache_key_list);
 }
 
 void NWebHelper::SetRenderProcessMode(RenderProcessMode mode) {
