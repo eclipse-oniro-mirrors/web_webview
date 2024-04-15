@@ -191,10 +191,10 @@ std::string SystemPropertiesAdapterImpl::GetSiteIsolationMode()
 
 bool SystemPropertiesAdapterImpl::GetOOPGPUEnable()
 {
-    if (OHOS::system::GetParameter("web.oop.gpu", "") == "true") {
-        return true;
+    if (OHOS::system::GetParameter("web.oop.gpu", "") == "false") {
+        return false;
     }
-    return false;
+    return true;
 }
 
 void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
