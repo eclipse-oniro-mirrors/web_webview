@@ -291,6 +291,8 @@ private:
 
     static napi_value PrefetchResource(napi_env env, napi_callback_info info);
 
+    static napi_value ClearPrefetchedResource(napi_env env, napi_callback_info info);
+
     static napi_value OnCreateNativeMediaPlayer(napi_env env, napi_callback_info info);
 
     static napi_value SetRenderProcessMode(napi_env env, napi_callback_info info);

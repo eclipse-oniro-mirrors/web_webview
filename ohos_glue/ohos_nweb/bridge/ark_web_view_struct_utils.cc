@@ -46,7 +46,8 @@ ArkWebCursorInfoStructToClass(const ArkWebCursorInfo &struct_value) {
                                             .height = struct_value.height,
                                             .x = struct_value.x,
                                             .y = struct_value.y,
-                                            .scale = struct_value.scale};
+                                            .scale = struct_value.scale,
+                                            .buff = struct_value.buff};
   return class_value;
 }
 

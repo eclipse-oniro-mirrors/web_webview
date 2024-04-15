@@ -201,6 +201,15 @@ ArkWebRenderProcessMode ArkWebEngineWrapper::GetRenderProcessMode() {
       ark_web_engine_->GetRenderProcessMode());
 }
 
+void ArkWebEngineWrapper::ClearPrefetchedResource(const std::vector<std::string>& cache_key_list)
+{
+  ArkWebStringVector stCacheKeyList = ArkWebStringVectorClassToStruct(cache_key_list);
+
+  ark_web_engine_->ClearPrefetchedResource(stCacheKeyList);
+
+  ArkWebStringVectorStructRelease(stCacheKeyList);
+}
+
 void ArkWebEngineWrapper::WarmupServiceWorker(const std::string &url) {
   ArkWebString stUrl = ArkWebStringClassToStruct(url);
 

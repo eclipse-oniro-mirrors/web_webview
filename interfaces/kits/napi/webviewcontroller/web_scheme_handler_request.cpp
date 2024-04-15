@@ -337,6 +337,13 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
                                     const ArkWeb_ResourceHandler* ArkWeb_ResourceHandler,
                                     bool* intercept)
 {
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(env_, &scope);
+    if (!scope) {
+        WVLOG_E("scheme handler RequestStart scope is nullptr");
+        return;
+    }
+    
     WVLOG_D("WebSchemeHandler::RequestStart");
     size_t paramCount = 2;
     napi_value callbackFunc = nullptr;
@@ -388,6 +395,7 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
     if (!*intercept) {
         resourceHandler->SetFinishFlag();
     }
+    napi_close_handle_scope(env_, scope);
 }
 
 void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
@@ -601,6 +609,10 @@ WebHttpBodyStream::WebHttpBodyStream(napi_env env,
 WebHttpBodyStream::~WebHttpBodyStream()
 {
     WVLOG_D("WebHttpBodyStream::~WebHttpBodyStream");
+    if (!stream_) {
+        OH_ArkWebResourceRequest_DestroyHttpBodyStream(stream_);
+        stream_ = nullptr;
+    }
 }
 
 void WebHttpBodyStream::HttpBodyStreamReadCallback(

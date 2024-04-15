@@ -27,6 +27,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "aafwk_adapter/src/aafwk_app_mgr_client_adapter_impl.cpp",
     "aafwk_adapter/src/aafwk_render_scheduler_impl.cpp",
     "access_token_adapter/src/access_token_adapter_impl.cpp",
+    "ai_engine_adapter/src/ai_engine_adapter_impl.cpp",
     "background_task_adapter/src/background_task_impl.cpp",
     "cert_mgr_adapter/src/cert_mgr_adapter_impl.cpp",
     "datashare_adapter/src/datashare_adapter_impl.cpp",
@@ -69,6 +70,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_nweb/include",
     "aafwk_adapter/include",
     "access_token_adapter/include",
+    "ai_engine_adapter/include",
     "audio_adapter/include",
     "battery_mgr_adapter/include",
     "camera_adapter/include",
@@ -132,6 +134,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "huks:libhukssdk",
     "image_framework:image_native",
     "imf:inputmethod_client",
+    "init:libbeget_proxy",
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_core",
@@ -276,6 +279,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     defines += [ "NWEB_ENTERPRISE_DEVICE_MANAGER_ENABLE" ]
   }
 
+  if (webview_media_avsession_enable) {
+    sources += [ "media_adapter/src/media_avsession_adapter_impl.cpp" ]
+    external_deps += [ "av_session:avsession_client" ]
+    defines += [ "NWEB_MEDIA_AVSESSION_ENABLE" ]
+  }
+
   innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
   subsystem_name = "web"
@@ -292,6 +301,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/include/ark_aafwk_app_mgr_client_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_aafwk_render_scheduler_host_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_access_token_adapter.h",
+    "../ohos_glue/ohos_adapter/include/ark_ai_engine_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_audio_capturer_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_audio_device_desc_adapter_vector.h",
     "../ohos_glue/ohos_adapter/include/ark_audio_renderer_adapter.h",
@@ -314,6 +324,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/include/ark_keystore_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_location_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_media_adapter.h",
+    "../ohos_glue/ohos_adapter/include/ark_media_avsession_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_media_codec_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_media_codec_encoder_adapter.h",
     "../ohos_glue/ohos_adapter/include/ark_mmi_adapter.h",
@@ -339,6 +350,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/capi/ark_aafwk_app_mgr_client_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_aafwk_render_scheduler_host_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_access_token_adapter_capi.h",
+    "../ohos_glue/ohos_adapter/capi/ark_ai_engine_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_audio_capturer_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_audio_renderer_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_audio_system_manager_adapter_capi.h",
@@ -359,6 +371,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/capi/ark_keystore_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_location_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_media_adapter_capi.h",
+    "../ohos_glue/ohos_adapter/capi/ark_media_avsession_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_media_codec_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_media_codec_decoder_adapter_capi.h",
     "../ohos_glue/ohos_adapter/capi/ark_mmi_adapter_capi.h",
@@ -383,6 +396,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/cpptoc/ark_aafwk_app_mgr_client_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_access_token_adapter_cpptoc.cc",
     "../ohos_glue/ohos_adapter/cpptoc/ark_access_token_adapter_cpptoc.h",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_ai_engine_adapter_cpptoc.cc",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_ai_engine_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_ashmem_adapter_cpptoc.cc",
     "../ohos_glue/ohos_adapter/cpptoc/ark_ashmem_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_audio_capturer_adapter_cpptoc.cc",
@@ -455,6 +470,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/cpptoc/ark_location_proxy_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_location_request_config_cpptoc.cc",
     "../ohos_glue/ohos_adapter/cpptoc/ark_location_request_config_cpptoc.h",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_media_avsession_adapter_cpptoc.cc",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_media_avsession_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_media_codec_adapter_cpptoc.cc",
     "../ohos_glue/ohos_adapter/cpptoc/ark_media_codec_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_media_codec_decoder_adapter_cpptoc.cc",
@@ -597,6 +614,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/ctocpp/ark_imftext_listener_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_location_callback_adapter_ctocpp.cc",
     "../ohos_glue/ohos_adapter/ctocpp/ark_location_callback_adapter_ctocpp.h",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_callback_adapter_ctocpp.cc",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_callback_adapter_ctocpp.h",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_metadata_adapter_ctocpp.cc",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_metadata_adapter_ctocpp.h",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_position_adapter_ctocpp.cc",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_media_avsession_position_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_mmidevice_info_adapter_ctocpp.cc",
     "../ohos_glue/ohos_adapter/ctocpp/ark_mmidevice_info_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_mmiinput_listener_adapter_ctocpp.cc",
@@ -699,6 +722,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/wrapper/ark_imftext_listener_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/wrapper/ark_location_callback_adapter_wrapper.cc",
     "../ohos_glue/ohos_adapter/wrapper/ark_location_callback_adapter_wrapper.h",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_callback_adapter_wrapper.cc",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_callback_adapter_wrapper.h",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_metadata_adapter_wrapper.cc",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_metadata_adapter_wrapper.h",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_position_adapter_wrapper.cc",
+    "../ohos_glue/ohos_adapter/wrapper/ark_media_avsession_position_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/wrapper/ark_mmi_device_info_adapter_wrapper.cc",
     "../ohos_glue/ohos_adapter/wrapper/ark_mmi_device_info_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/wrapper/ark_mmi_input_listener_adapter_wrapper.cc",
@@ -739,6 +768,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/impl/ark_aafwk_app_mgr_client_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_access_token_adapter_impl.cc",
     "../ohos_glue/ohos_adapter/impl/ark_access_token_adapter_impl.h",
+    "../ohos_glue/ohos_adapter/impl/ark_ai_engine_adapter_impl.cc",
+    "../ohos_glue/ohos_adapter/impl/ark_ai_engine_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_ashmem_adapter_impl.cc",
     "../ohos_glue/ohos_adapter/impl/ark_audio_capturer_adapter_impl.cc",
     "../ohos_glue/ohos_adapter/impl/ark_audio_capturer_adapter_impl.h",
@@ -805,6 +836,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/impl/ark_location_proxy_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_location_request_config_impl.cc",
     "../ohos_glue/ohos_adapter/impl/ark_location_request_config_impl.h",
+    "../ohos_glue/ohos_adapter/impl/ark_media_avsession_adapter_impl.cc",
+    "../ohos_glue/ohos_adapter/impl/ark_media_avsession_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_media_codec_decoder_adapter_impl.cc",
     "../ohos_glue/ohos_adapter/impl/ark_media_codec_decoder_adapter_impl.h",
     "../ohos_glue/ohos_adapter/impl/ark_media_codec_encoder_adapter_impl.cc",

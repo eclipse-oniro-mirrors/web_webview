@@ -47,7 +47,6 @@ public:
     bool LoadNWebSDK();
     void* GetWebEngineHandler();
     void SetConnectionTimeout(const int32_t& timeout);
-    void SetWebDebuggingAccess(bool isEnableDebug);
     void SetCustomSchemeCmdLine(const std::string& cmd)
     {
         customSchemeCmdLine_ = cmd;
@@ -65,6 +64,8 @@ public:
                           const std::map<std::string, std::string> &additional_http_headers,
                           const std::string &cache_key,
                           const uint32_t &cache_valid_time);
+
+    void ClearPrefetchedResource(const std::vector<std::string>& cache_key_list);
 
     void SetRenderProcessMode(RenderProcessMode mode);
     RenderProcessMode GetRenderProcessMode();

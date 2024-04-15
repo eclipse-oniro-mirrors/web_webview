@@ -38,7 +38,7 @@ void NWebNativeMediaPlayerBridgeImpl::UpdateRect(double x, double y, double widt
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, width, &argv[INTEGER_TWO]));
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, height, &argv[INTEGER_THREE]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_FOUR, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_FOUR, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Play()
@@ -48,7 +48,7 @@ void NWebNativeMediaPlayerBridgeImpl::Play()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "play", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Pause()
@@ -58,7 +58,7 @@ void NWebNativeMediaPlayerBridgeImpl::Pause()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "pause", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Seek(double time)
@@ -71,7 +71,7 @@ void NWebNativeMediaPlayerBridgeImpl::Seek(double time)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, time, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::SetVolume(double volume)
@@ -84,7 +84,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetVolume(double volume)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, volume, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::SetMuted(bool isMuted)
@@ -97,7 +97,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetMuted(bool isMuted)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_get_boolean(env_, isMuted, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::SetPlaybackRate(double playbackRate)
@@ -110,7 +110,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetPlaybackRate(double playbackRate)
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, playbackRate, &argv[INTEGER_ZERO]));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ONE, argv, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ONE, argv, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::Release()
@@ -120,7 +120,7 @@ void NWebNativeMediaPlayerBridgeImpl::Release()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "release", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::EnterFullScreen()
@@ -130,7 +130,7 @@ void NWebNativeMediaPlayerBridgeImpl::EnterFullScreen()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "enterFullscreen", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 void NWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
@@ -140,7 +140,7 @@ void NWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
     napi_value callback = nullptr;
     NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "exitFullscreen", &callback));
 
-    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, nullptr, callback, INTEGER_ZERO, nullptr, nullptr));
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
 NapiNativeMediaPlayerHandlerImpl::NapiNativeMediaPlayerHandlerImpl(
@@ -195,8 +195,6 @@ void NapiNativeMediaPlayerHandlerImpl::HandleDurationChanged(double duration)
 
 void NapiNativeMediaPlayerHandlerImpl::HandleTimeUpdate(double playTime)
 {
-    WVLOG_D("begin to handle time update,nweb id is %{public}d", nwebId_);
-
     if (handler_) {
         handler_->HandleTimeUpdate(playTime);
     }
@@ -322,13 +320,20 @@ std::shared_ptr<NWebNativeMediaPlayerBridge> NWebCreateNativeMediaPlayerCallback
     napi_value result = nullptr;
     NAPI_CALL(env_, napi_call_function(env_, nullptr, callback, INTEGER_TWO, argv, &result));
 
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env_, result, &valueType);
+    if (valueType != napi_object) {
+        WVLOG_E("result type is invalid,nweb id is %{public}d", nwebId_);
+        return nullptr;
+    }
+
     return std::make_shared<NWebNativeMediaPlayerBridgeImpl>(nwebId_, env_, result);
 }
 
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructRect(
     napi_value* value, std::shared_ptr<NWebNativeMediaPlayerSurfaceInfo> surfaceInfo)
 {
-    napi_create_object(env_, value);
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
     napi_value x;
     napi_create_double(env_, surfaceInfo->GetX(), &x);
@@ -350,7 +355,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructRect(
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructHandler(
     napi_value* value, std::shared_ptr<NWebNativeMediaPlayerHandler> handler)
 {
-    napi_create_object(env_, value);
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
     napi_wrap(
         env_, *value, new NapiNativeMediaPlayerHandlerImpl(nwebId_, handler),
@@ -365,7 +370,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructHandler(
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructControls(
     napi_value* value, const std::vector<std::string>& controls)
 {
-    napi_create_array_with_length(env_, controls.size(), value);
+    NAPI_CALL_RETURN_VOID(env_, napi_create_array_with_length(env_, controls.size(), value));
 
     for (unsigned int i = 0; i < controls.size(); i++) {
         napi_value control;
@@ -377,55 +382,31 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructControls(
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructHeaders(
     napi_value* value, const std::map<std::string, std::string>& headers)
 {
-    napi_value global = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_global(env_, &global));
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
-    napi_value constructor = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, global, "Map", &constructor));
-
-    NAPI_CALL_RETURN_VOID(env_, napi_new_instance(env_, constructor, 0, nullptr, value));
-
-    napi_value setFunc = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, *value, "set", &setFunc));
-
-    napi_value result = nullptr;
-    napi_value argv[INTEGER_TWO] = { nullptr };
     for (const auto& header : headers) {
-        napi_create_string_utf8(env_, header.first.c_str(), header.first.length(), &argv[INTEGER_ZERO]);
-        napi_create_string_utf8(env_, header.second.c_str(), header.second.length(), &argv[INTEGER_ONE]);
-
-        NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, *value, setFunc, INTEGER_TWO, argv, &result));
+        napi_value argv;
+        napi_create_string_utf8(env_, header.second.c_str(), header.second.length(), &argv);
+        napi_set_named_property(env_, *value, header.first.c_str(), argv);
     }
 }
 
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructAttributes(
     napi_value* value, const std::map<std::string, std::string>& attributes)
 {
-    napi_value global = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_global(env_, &global));
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
-    napi_value constructor = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, global, "Map", &constructor));
-
-    NAPI_CALL_RETURN_VOID(env_, napi_new_instance(env_, constructor, 0, nullptr, value));
-
-    napi_value setFunc = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, *value, "set", &setFunc));
-
-    napi_value result = nullptr;
-    napi_value argv[INTEGER_TWO] = { nullptr };
     for (const auto& attribute : attributes) {
-        napi_create_string_utf8(env_, attribute.first.c_str(), attribute.first.length(), &argv[INTEGER_ZERO]);
-        napi_create_string_utf8(env_, attribute.second.c_str(), attribute.second.length(), &argv[INTEGER_ONE]);
-
-        NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, *value, setFunc, INTEGER_TWO, argv, &result));
+        napi_value argv;
+        napi_create_string_utf8(env_, attribute.second.c_str(), attribute.second.length(), &argv);
+        napi_set_named_property(env_, *value, attribute.first.c_str(), argv);
     }
 }
 
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructMediaInfo(
     napi_value* value, std::shared_ptr<NWebMediaInfo> mediaInfo)
 {
-    napi_create_object(env_, value);
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
     napi_value embedId;
     std::string id = mediaInfo->GetEmbedId();
@@ -452,13 +433,13 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructMediaInfo(
     ConstructControls(&controlList, mediaInfo->GetControls());
     napi_set_named_property(env_, *value, "controlList", controlList);
 
-    napi_value headersMap;
-    ConstructHeaders(&headersMap, mediaInfo->GetHeaders());
-    napi_set_named_property(env_, *value, "headersMap", headersMap);
+    napi_value headers;
+    ConstructHeaders(&headers, mediaInfo->GetHeaders());
+    napi_set_named_property(env_, *value, "headers", headers);
 
-    napi_value attributesMap;
-    ConstructAttributes(&attributesMap, mediaInfo->GetAttributes());
-    napi_set_named_property(env_, *value, "attributesMap", attributesMap);
+    napi_value attributes;
+    ConstructAttributes(&attributes, mediaInfo->GetAttributes());
+    napi_set_named_property(env_, *value, "attributes", attributes);
 
     napi_value isMuted;
     napi_get_boolean(env_, mediaInfo->GetIsMuted(), &isMuted);
@@ -477,7 +458,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructMediaInfo(
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructSourceInfos(
     napi_value* value, const std::vector<std::shared_ptr<NWebMediaSourceInfo>>& sourceInfos)
 {
-    napi_create_array_with_length(env_, sourceInfos.size(), value);
+    NAPI_CALL_RETURN_VOID(env_, napi_create_array_with_length(env_, sourceInfos.size(), value));
 
     for (unsigned int i = 0; i < sourceInfos.size(); i++) {
         if (!sourceInfos[i]) {
@@ -489,7 +470,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructSourceInfos(
 
         napi_value type;
         napi_create_int32(env_, static_cast<int>(sourceInfos[i]->GetType()), &type);
-        napi_set_named_property(env_, *value, "type", type);
+        napi_set_named_property(env_, sourceInfo, "type", type);
 
         napi_value source;
         std::string mediaSource = sourceInfos[i]->GetSource();
@@ -508,7 +489,7 @@ void NWebCreateNativeMediaPlayerCallbackImpl::ConstructSourceInfos(
 void NWebCreateNativeMediaPlayerCallbackImpl::ConstructSurfaceInfo(
     napi_value* value, std::shared_ptr<NWebNativeMediaPlayerSurfaceInfo> surfaceInfo)
 {
-    napi_create_object(env_, value);
+    NAPI_CALL_RETURN_VOID(env_, napi_create_object(env_, value));
 
     if (!surfaceInfo) {
         return;
