@@ -825,7 +825,7 @@ public:
      * @brief Called when select a word.
      *
      * @param text The content of the text.
-     * @param text The offset of the point.
+     * @param offset The offset of the point.
      */
     virtual std::vector<int8_t> GetWordSelection(const std::string& text, int8_t offset) {
         return { -1, -1 };
