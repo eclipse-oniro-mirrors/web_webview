@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#include "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_impl.h"
+#include "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
-ArkWebFirstMeaningfulPaintDetailsImpl::ArkWebFirstMeaningfulPaintDetailsImpl(
+ArkWebFirstMeaningfulPaintDetailsWrapper::ArkWebFirstMeaningfulPaintDetailsWrapper(
     ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> ark_web_first_meaningful_paint_details)
     : ark_web_first_meaningful_paint_details_(ark_web_first_meaningful_paint_details)
 {}
 
-int64_t ArkWebFirstMeaningfulPaintDetailsImpl::GetNavigationStartTime()
+int64_t ArkWebFirstMeaningfulPaintDetailsWrapper::GetNavigationStartTime()
 {
     if (CHECK_REF_PTR_IS_NULL(ark_web_first_meaningful_paint_details_)) {
         return 0;
@@ -33,7 +33,7 @@ int64_t ArkWebFirstMeaningfulPaintDetailsImpl::GetNavigationStartTime()
     return ark_web_first_meaningful_paint_details_->GetNavigationStartTime();
 }
 
-int64_t ArkWebFirstMeaningfulPaintDetailsImpl::GetFirstMeaningfulPaintTime()
+int64_t ArkWebFirstMeaningfulPaintDetailsWrapper::GetFirstMeaningfulPaintTime()
 {
     if (CHECK_REF_PTR_IS_NULL(ark_web_first_meaningful_paint_details_)) {
         return 0;
