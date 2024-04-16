@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-#include "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_impl.h"
+#include "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
-ArkWebLargestContentfulPaintDetailsImpl::ArkWebLargestContentfulPaintDetailsImpl(
+ArkWebLargestContentfulPaintDetailsWrapper::ArkWebLargestContentfulPaintDetailsWrapper(
     ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> ark_web_largest_contentful_paint_details)
     : ark_web_largest_contentful_paint_details_(ark_web_largest_contentful_paint_details)
 {}
 
-int64_t ArkWebLargestContentfulPaintDetailsImpl::GetNavigationStartTime()
+int64_t ArkWebLargestContentfulPaintDetailsWrapper::GetNavigationStartTime()
 {
   if (CHECK_REF_PTR_IS_NULL(ark_web_largest_contentful_paint_details_)) {
       return 0;
@@ -33,7 +33,7 @@ int64_t ArkWebLargestContentfulPaintDetailsImpl::GetNavigationStartTime()
   return ark_web_largest_contentful_paint_details_->GetNavigationStartTime();
 }
 
-int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestImagePaintTime()
+int64_t ArkWebLargestContentfulPaintDetailsWrapper::GetLargestImagePaintTime()
 {
   if (CHECK_REF_PTR_IS_NULL(ark_web_largest_contentful_paint_details_)) {
       return 0;
@@ -42,7 +42,7 @@ int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestImagePaintTime()
   return ark_web_largest_contentful_paint_details_->GetLargestImagePaintTime();
 }
 
-int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestTextPaintTime()
+int64_t ArkWebLargestContentfulPaintDetailsWrapper::GetLargestTextPaintTime()
 {
   if (CHECK_REF_PTR_IS_NULL(ark_web_largest_contentful_paint_details_)) {
       return 0;
@@ -51,7 +51,7 @@ int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestTextPaintTime()
   return ark_web_largest_contentful_paint_details_->GetLargestTextPaintTime();
 }
 
-int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestImageLoadStartTime()
+int64_t ArkWebLargestContentfulPaintDetailsWrapper::GetLargestImageLoadStartTime()
 {
   if (CHECK_REF_PTR_IS_NULL(ark_web_largest_contentful_paint_details_)) {
       return 0;
@@ -60,7 +60,7 @@ int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestImageLoadStartTime()
   return ark_web_largest_contentful_paint_details_->GetLargestImageLoadStartTime();
 }
 
-int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestImageLoadEndTime()
+int64_t ArkWebLargestContentfulPaintDetailsWrapper::GetLargestImageLoadEndTime()
 {
   if (CHECK_REF_PTR_IS_NULL(ark_web_largest_contentful_paint_details_)) {
       return 0;
@@ -69,7 +69,7 @@ int64_t ArkWebLargestContentfulPaintDetailsImpl::GetLargestImageLoadEndTime()
   return ark_web_largest_contentful_paint_details_->GetLargestImageLoadEndTime();
 }
 
-double_t ArkWebLargestContentfulPaintDetailsImpl::GetImageBPP()
+double_t ArkWebLargestContentfulPaintDetailsWrapper::GetImageBPP()
 {
   if (CHECK_REF_PTR_IS_NULL(ark_web_largest_contentful_paint_details_)) {
       return 0.0;
