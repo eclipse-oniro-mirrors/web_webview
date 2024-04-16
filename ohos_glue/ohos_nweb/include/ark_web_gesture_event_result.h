@@ -17,7 +17,6 @@
 #define ARK_WEB_GESTURE_EVENT_RESULT_H
 
 #include "base/include/ark_web_base_ref_counted.h"
-#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
