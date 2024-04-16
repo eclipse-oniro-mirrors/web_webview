@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_FIRST_LARGEST_CONTENTFUL_PAINT_DETAILS_IMPL_H_
-#define ARK_WEB_FIRST_LARGEST_CONTENTFUL_PAINT_DETAILS_IMPL_H_
+#ifndef ARK_WEB_FIRST_LARGEST_CONTENTFUL_PAINT_DETAILS_WRAPPER_H_
+#define ARK_WEB_FIRST_LARGEST_CONTENTFUL_PAINT_DETAILS_WRAPPER_H_
 #pragma once
 
 #include "include/nweb_largest_contentful_paint_details.h"
@@ -22,11 +22,11 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebLargestContentfulPaintDetailsImpl : public OHOS::NWeb::NWebLargestContentfulPaintDetails {
+class ArkWebLargestContentfulPaintDetailsWrapper : public OHOS::NWeb::NWebLargestContentfulPaintDetails {
 public:
-    explicit ArkWebLargestContentfulPaintDetailsImpl(
+    explicit ArkWebLargestContentfulPaintDetailsWrapper(
         ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> nweb_largest_contentful_paint_details);
-    ~ArkWebLargestContentfulPaintDetailsImpl() = default;
+    ~ArkWebLargestContentfulPaintDetailsWrapper() = default;
 
     /**
      * @brief Get start time of navigation.
