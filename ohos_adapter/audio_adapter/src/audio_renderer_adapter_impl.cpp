@@ -17,19 +17,11 @@
 
 #include <unordered_map>
 
-#include "ability_manager_client.h"
 #include "application_context.h"
 #include "audio_errors.h"
-#include "avsession_errors.h"
-#include "avsession_manager.h"
-#include "element_name.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
-using namespace OHOS::AVSession;
-
-std::shared_ptr<OHOS::AVSession::AVSession> AudioRendererAdapterImpl::avsession_ = nullptr;
-static int32_t g_audioRendererNum = 0;
 
 const std::unordered_map<AudioAdapterSamplingRate, AudioSamplingRate> SAMPLING_RATE_MAP = {
     { AudioAdapterSamplingRate::SAMPLE_RATE_8000, AudioSamplingRate::SAMPLE_RATE_8000 },
@@ -111,19 +103,6 @@ void AudioRendererCallbackImpl::OnInterrupt(const InterruptEvent& interruptEvent
 
 void AudioRendererCallbackImpl::OnStateChange(const RendererState state, const StateChangeCmdType cmdType) {}
 
-AudioRendererAdapterImpl::~AudioRendererAdapterImpl()
-{
-    g_audioRendererNum--;
-    if (g_audioRendererNum == 0 && avsession_ != nullptr) {
-        WVLOG_I("avsession destroy");
-        int32_t ret = avsession_->Destroy();
-        if (ret != OHOS::AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("avsession destroy failed, ret: %{public}d", ret);
-        }
-        avsession_ = nullptr;
-    }
-}
-
 int32_t AudioRendererAdapterImpl::Create(
     const std::shared_ptr<AudioRendererOptionsAdapter> rendererOptions, std::string cachePath)
 {
@@ -151,26 +130,6 @@ int32_t AudioRendererAdapterImpl::Create(
     audio_renderer_ = AudioRenderer::Create(audioCachePath, audioOptions);
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer create failed");
-        return AUDIO_NULL_ERROR;
-    }
-
-    g_audioRendererNum++;
-    // audio create on the same thread, there is no concurrent operation, so no need to lock
-    if (avsession_ != nullptr) {
-        return AUDIO_OK;
-    }
-
-    WVLOG_I("audio renderer create avsession");
-    AppExecFwk::ElementName elementName;
-    AppExecFwk::ElementName topElementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
-    elementName.SetBundleName(context->GetBundleName());
-    elementName.SetAbilityName(topElementName.GetAbilityName());
-    int32_t type = (rendererOptions->GetStreamUsage() == AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION)
-                       ? OHOS::AVSession::AVSession::SESSION_TYPE_VOICE_CALL
-                       : OHOS::AVSession::AVSession::SESSION_TYPE_AUDIO;
-    avsession_ = AVSessionManager::GetInstance().CreateSession(context->GetBundleName(), type, elementName);
-    if (avsession_ == nullptr) {
-        WVLOG_E("audio renderer create avsession failed");
         return AUDIO_NULL_ERROR;
     }
     return AUDIO_OK;
