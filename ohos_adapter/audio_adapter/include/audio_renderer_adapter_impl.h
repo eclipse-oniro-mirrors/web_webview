@@ -22,10 +22,6 @@
 #include "audio_renderer.h"
 #endif
 
-namespace OHOS::AVSession {
-class AVSession;
-};
-
 namespace OHOS::NWeb {
 #if defined(NWEB_AUDIO_ENABLE)
 using namespace OHOS::AudioStandard;
@@ -49,7 +45,7 @@ class AudioRendererAdapterImpl : public AudioRendererAdapter {
 public:
     AudioRendererAdapterImpl() = default;
 
-    ~AudioRendererAdapterImpl();
+    ~AudioRendererAdapterImpl() override = default;
 
     int32_t Create(const std::shared_ptr<AudioRendererOptionsAdapter> rendererOptions,
         std::string cachePath = std::string()) override;
@@ -95,7 +91,6 @@ public:
 private:
     std::unique_ptr<AudioRenderer> audio_renderer_;
     std::shared_ptr<AudioRendererCallbackImpl> callback_;
-    static std::shared_ptr<OHOS::AVSession::AVSession> avsession_;
 #endif
 };
 } // namespace OHOS::NWeb

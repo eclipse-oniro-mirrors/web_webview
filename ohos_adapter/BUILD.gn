@@ -165,7 +165,6 @@ ohos_shared_library("nweb_ohos_adapter") {
       "audio_framework:audio_capturer",
       "audio_framework:audio_client",
       "audio_framework:audio_renderer",
-      "av_session:avsession_client",
     ]
     defines += [ "NWEB_AUDIO_ENABLE" ]
   } else {
