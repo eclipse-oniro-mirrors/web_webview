@@ -792,4 +792,15 @@ void ArkWebHandlerImpl::OnTooltip(const ArkWebString &tooltip) {
 void ArkWebHandlerImpl::ReleaseResizeHold() {
   nweb_handler_->ReleaseResizeHold();
 }
+
+ArkWebCharVector ArkWebHandlerImpl::GetWordSelection(const ArkWebString& text, int8_t offset)
+{
+    std::vector<int8_t> vec = nweb_handler_.GetWordSelection(ArkWebStringStructToClass(text), offset);
+    std::vector<char> result;
+    for (int8_t select : vec) {
+        result.push_back(select);
+    }
+    ArkWebCharVector ark_result = ArkWebBasicVectorClassToStruct<char, ArkWebCharVector>(result);
+    return ark_result;
+}
 } // namespace OHOS::ArkWeb
