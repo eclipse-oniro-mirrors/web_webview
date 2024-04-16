@@ -25,7 +25,6 @@
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_file_selector_params_wrapper.h"
-#include "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_impl.h"
 #include "ohos_nweb/bridge/ark_web_full_screen_exit_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_geo_location_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_image_options_wrapper.h"
@@ -35,7 +34,6 @@
 #include "ohos_nweb/bridge/ark_web_js_ssl_error_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_ssl_select_cert_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_key_event_wrapper.h"
-#include "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_impl.h"
 #include "ohos_nweb/bridge/ark_web_load_committed_details_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_data_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_touch_event_wrapper.h"
@@ -53,6 +51,8 @@
 #include "ohos_nweb/bridge/ark_web_url_resource_response_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 #include "ohos_nweb/ctocpp/ark_web_date_time_suggestion_vector_ctocpp.h"
+#include "ohos_nweb/bridge/ark_web_first_meaningful_paint_details_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_largest_contentful_paint_details_wrapper.h"
 
 namespace OHOS::ArkWeb {
 
@@ -736,7 +736,7 @@ void ArkWebHandlerImpl::OnFirstMeaningfulPaint(
   }
 
   nweb_handler_->OnFirstMeaningfulPaint(
-      std::make_shared<ArkWebFirstMeaningfulPaintDetailsImpl>(details));
+      std::make_shared<ArkWebFirstMeaningfulPaintDetailsWrapper>(details));
 }
 
 void ArkWebHandlerImpl::OnLargestContentfulPaint(
@@ -747,7 +747,7 @@ void ArkWebHandlerImpl::OnLargestContentfulPaint(
   }
 
   nweb_handler_->OnLargestContentfulPaint(
-      std::make_shared<ArkWebLargestContentfulPaintDetailsImpl>(details));
+      std::make_shared<ArkWebLargestContentfulPaintDetailsWrapper>(details));
 }
 
 void ArkWebHandlerImpl::OnIntelligentTrackingPreventionResult(
