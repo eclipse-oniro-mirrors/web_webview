@@ -234,7 +234,7 @@ int32_t ScreenCaptureAdapterImpl::Init(const std::shared_ptr<ScreenCaptureConfig
         return -1;
     }
 
-    if (!config || !(config->GetAudioInfo()) || !(config->GetVideoInfo()) || (!config->GetRecorderInfo())) {
+    if (!config) {
         WVLOG_E("config is null");
         return -1;
     }
