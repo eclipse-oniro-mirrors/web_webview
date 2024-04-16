@@ -31,7 +31,7 @@ ARK_WEB_NO_SANITIZE
 ArkWebRefPtr<ArkWebEngine> ArkWebEngine::GetInstance() {
   ARK_WEB_CTOCPP_DV_LOG();
 
-  using ArkWebEngineGetInstanceFunc = ark_web_engine_t *(*)();
+  using ArkWebEngineGetInstanceFunc = ark_web_engine_t *(*)(void);
   ArkWebEngineGetInstanceFunc ark_web_engine_get_instance =
       reinterpret_cast<ArkWebEngineGetInstanceFunc>(
           ArkWebNWebBridgeHelper::GetInstance().LoadFuncSymbol(
