@@ -14,6 +14,7 @@
  */
 
 #include "ark_system_properties_adapter_impl.h"
+#include "nweb_adapter_helper.h"
 
 namespace OHOS::ArkWeb {
 

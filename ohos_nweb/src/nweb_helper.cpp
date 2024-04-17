@@ -1363,18 +1363,26 @@ void NWebAdapterHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
             WVLOG_E("invalid node!");
             continue;
         }
-        std::string settingName = (char *)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        char* namePtr = (char *)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        if (!namePtr) {
+          WVLOG_E("invalid name!");
+          continue;
+        }
+        std::string settingName = namePtr;
         std::vector<FrameRateSetting> frameRateSetting;
-        for(xmlNodePtr curDynamicNodePtr = curNodePtr->xmlChildrenNode; curDynamicNodePtr; curDynamicNodePtr = curDynamicNodePtr->next) {
+        for(xmlNodePtr curDynamicNodePtr = curNodePtr->xmlChildrenNode; curDynamicNodePtr;
+          curDynamicNodePtr = curDynamicNodePtr->next) {
             if (curDynamicNodePtr->name == nullptr || curDynamicNodePtr->type == XML_COMMENT_NODE) {
                 WVLOG_E("invalid node!");
                 continue;
             }
             FrameRateSetting setting;
-            // setting.name = (char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_NAME));
             setting.min_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_MIN)));
             setting.max_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_MAX)));
             setting.preferredFrameRate_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_FPS)));
+            if ((setting.max_ >= 0 && setting.min_ >= setting.max_) || setting.preferredFrameRate_ <= 0) {
+              continue;
+            }
             frameRateSetting.emplace_back(setting);
         }
         ltpoConfig_[settingName] = frameRateSetting;

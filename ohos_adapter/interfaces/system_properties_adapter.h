@@ -18,9 +18,10 @@
 
 #include <cstdint>
 #include <string>
-#include "nweb_adapter_helper.h"
 
 namespace OHOS::NWeb {
+
+struct FrameRateSetting;
 
 enum class ProductDeviceType : int32_t {
     DEVICE_TYPE_MOBILE,
