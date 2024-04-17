@@ -396,6 +396,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
+    NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().GetDataBase();
     std::shared_ptr<NWebWebStorage> storage = NWebHelper::Instance().GetWebStorage();
     EXPECT_EQ(storage, nullptr);
