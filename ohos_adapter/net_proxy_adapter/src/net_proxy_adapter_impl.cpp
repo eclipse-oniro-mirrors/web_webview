@@ -325,6 +325,7 @@ void NetProxyEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& da
 
     if (!eventCallback_) {
         WVLOG_E("netproxy config change, event callback is null");
+        return;
     }
 
     eventCallback_->Changed(host, port, "", exclusionList);
