@@ -230,6 +230,17 @@ bool ARK_WEB_CALLBACK ark_system_properties_adapter_get_bool_parameter(
   return ArkSystemPropertiesAdapterCppToC::Get(self)->GetBoolParameter(
       key, defaultValue);
 }
+
+ArkFrameRateSettingAdapterVector ARK_WEB_CALLBACK ark_system_properties_adapter_get_ltpo_config(
+    struct _ark_system_properties_adapter_t* self, const ArkWebString settingName)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_frame_rate_setting_adapter_vector_default);
+
+    // Execute
+    return ArkSystemPropertiesAdapterCppToC::Get(self)->GetLTPOConfig(settingName);
+}
 } // namespace
 
 ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
@@ -269,6 +280,7 @@ ArkSystemPropertiesAdapterCppToC::ArkSystemPropertiesAdapterCppToC() {
   GetStruct()->detach_sys_prop_observer =
       ark_system_properties_adapter_detach_sys_prop_observer;
   GetStruct()->get_bool_parameter = ark_system_properties_adapter_get_bool_parameter;
+  GetStruct()->get_ltpo_config = ark_system_properties_adapter_get_ltpo_config;
 }
 
 ArkSystemPropertiesAdapterCppToC::~ArkSystemPropertiesAdapterCppToC() {
