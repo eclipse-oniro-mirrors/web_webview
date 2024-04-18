@@ -157,7 +157,7 @@ int32_t AudioCapturerAdapterImpl::SetCapturerReadCallback(
     if (callback == nullptr) {
         WVLOG_E("audio capturer callback is nullptr");
         return AUDIO_NULL_ERROR;
-    } 
+    }
 
     if (audio_capturer_ == nullptr) {
         WVLOG_E("audio capturer is nullptr");

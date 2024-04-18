@@ -40,11 +40,13 @@ public:
     }
     ~NWebJsProxyCallbackImpl() = default;
 
-    std::string GetMethodName() override {
+    std::string GetMethodName() override
+    {
         return methodName_;
     }
 
-    NativeArkWeb_OnJavaScriptProxyCallback GetMethodCallback() override {
+    NativeArkWeb_OnJavaScriptProxyCallback GetMethodCallback() override
+    {
         return methodCallback_;
     }
 
