@@ -210,6 +210,7 @@ void NapiWebStorage::GetOriginsPromiseComplete(napi_env env, napi_status status,
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(env, &scope);
     if (scope == nullptr) {
+        delete param;
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};

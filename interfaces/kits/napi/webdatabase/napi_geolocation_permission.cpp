@@ -429,6 +429,7 @@ void NapiGeolocationPermission::GetOriginsPromiseComplete(napi_env env, napi_sta
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(env, &scope);
     if (scope == nullptr) {
+        delete param;
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};

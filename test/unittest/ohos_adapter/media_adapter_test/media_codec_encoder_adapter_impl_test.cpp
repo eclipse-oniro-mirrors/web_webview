@@ -209,6 +209,11 @@ protected:
 
 void MediaCodecEncoderAdapterImplTest::SetUp()
 {
+    constexpr int32_t testWidth = 640;
+    constexpr int32_t testHeight = 360;
+    constexpr int32_t testBitRate = 300000;
+    constexpr int32_t testFrameRate = 15;
+
     EXPECT_EQ(mediaCodecEncoderAdapterImpl, nullptr);
     mediaCodecEncoderAdapterImpl = std::make_unique<MediaCodecEncoderAdapterImpl>();
     EXPECT_NE(mediaCodecEncoderAdapterImpl, nullptr);
@@ -216,10 +221,10 @@ void MediaCodecEncoderAdapterImplTest::SetUp()
     EXPECT_EQ(config_, nullptr);
     config_ = std::make_shared<CodecConfigParaAdapterMock>();
     EXPECT_NE(config_, nullptr);
-    config_->width = 640;
-    config_->height = 360;
-    config_->bitRate = 300000;
-    config_->frameRate = 15;
+    config_->width = testWidth;
+    config_->height = testHeight;
+    config_->bitRate = testBitRate;
+    config_->frameRate = testFrameRate;
 }
 
 /**

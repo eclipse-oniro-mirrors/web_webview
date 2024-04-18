@@ -288,7 +288,8 @@ extern "C" void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper
     g_nwebCApi->impl_WebDownload_Resume(wrapper);
 }
 
-extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long downloadItemId) {
+extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long downloadItemId)
+{
     if (!g_nwebCApi->impl_WebDownload_GetItemState) {
         return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
     }
