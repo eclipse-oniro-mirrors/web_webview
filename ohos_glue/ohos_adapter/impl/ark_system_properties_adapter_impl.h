@@ -67,6 +67,7 @@ public:
 
     bool GetBoolParameter(ArkWebString key, bool defaultValue) override;
 
+    ArkFrameRateSettingAdapterVector GetLTPOConfig(const ArkWebString& settingName) override;
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

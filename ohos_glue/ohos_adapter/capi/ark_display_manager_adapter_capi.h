@@ -59,6 +59,8 @@ typedef struct _ark_display_adapter_t {
 
   uint32_t(ARK_WEB_CALLBACK *get_orientation)(
       struct _ark_display_adapter_t *self);
+
+  int32_t(ARK_WEB_CALLBACK* get_dpi)(struct _ark_display_adapter_t* self);
 } ark_display_adapter_t;
 
 typedef struct _ark_display_manager_adapter_t {

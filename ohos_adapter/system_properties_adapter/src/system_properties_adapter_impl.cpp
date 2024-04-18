@@ -205,7 +205,7 @@ void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
     return;
 }
 
-int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd() 
+int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd()
 {
     return OHOS::system::GetIntParameter("web.flowbuffer.maxfd", -1);
 }
@@ -298,5 +298,11 @@ void SystemPropertiesAdapterImpl::DetachSysPropObserver(PropertiesKey key, Syste
 bool SystemPropertiesAdapterImpl::GetBoolParameter(const std::string& key, bool defaultValue)
 {
     return OHOS::system::GetBoolParameter(key, defaultValue);
+}
+
+std::vector<FrameRateSetting> SystemPropertiesAdapterImpl::GetLTPOConfig(const std::string& settingName)
+{
+    return NWebAdapterHelper::Instance().
+        GetPerfConfig(settingName);
 }
 } // namespace OHOS::NWeb

@@ -66,6 +66,9 @@ public:
 
   /*--ark web()--*/
   virtual uint32_t GetOrientation() = 0;
+
+  /*--web engine()--*/
+  virtual int32_t GetDpi() = 0;
 };
 
 /*--ark web(source=library)--*/

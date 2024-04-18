@@ -45,6 +45,9 @@ public:
     void ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     void ReadConfigIfNeeded();
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
+    void ParseNWebLTPOConfig(xmlNodePtr nodePtr);
+    std::vector<FrameRateSetting> GetPerfConfig(const std::string& settingName);
+
 private:
     NWebAdapterHelper() = default;
     std::string GetConfigPath(const std::string &configFileName);
@@ -56,6 +59,7 @@ private:
     void WriteConfigValueToSysPara(const std::string &configName, const std::string &value);
     void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     std::map<std::string, std::string> perfConfig_;
+    std::map<std::string, std::vector<FrameRateSetting>> ltpoConfig_;
 };
 } // namespace OHOS
 
