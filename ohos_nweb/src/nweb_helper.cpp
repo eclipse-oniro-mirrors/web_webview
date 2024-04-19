@@ -29,6 +29,7 @@
 #include "application_context.h"
 #include "ark_web_nweb_bridge_helper.h"
 #include "config_policy_utils.h"
+#include "locale_config.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_enhance_surface_adapter.h"
 #include "nweb_log.h"
@@ -814,6 +815,13 @@ bool NWebHelper::InitAndRun(bool from_ark)
     if (!customSchemeCmdLine_.empty()) {
         initArgs->AddArg(std::string("--ohos-custom-scheme=").append(customSchemeCmdLine_));
     }
+
+    std::string systemLanguage = OHOS::Global::I18n::LocaleConfig::GetSystemLanguage();
+    std::string systemRegion = OHOS::Global::I18n::LocaleConfig::GetSystemRegion();
+    size_t dashPos = systemLanguage.find('-');
+    std::string baseLanguage = (dashPos == std::string::npos) ? systemLanguage : systemLanguage.substr(0, dashPos);
+    std::string simplifiedLocale = baseLanguage + "-" + systemRegion;
+    initArgs->AddArg(std::string("--lang=").append(simplifiedLocale));
 
     nwebEngine_->InitializeWebEngine(initArgs);
     return true;
