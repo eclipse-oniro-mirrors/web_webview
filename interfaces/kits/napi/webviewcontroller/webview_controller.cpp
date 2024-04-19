@@ -760,12 +760,12 @@ void WebviewController::EnableSafeBrowsing(bool enable)
 
 bool WebviewController::IsSafeBrowsingEnabled()
 {  
-    bool is_safe_browsing_enabled = false;
+    bool isSafeBrowsingEnabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
-        is_safe_browsing_enabled = nweb_ptr->IsSafeBrowsingEnabled();
+        isSafeBrowsingEnabled = nweb_ptr->IsSafeBrowsingEnabled();
     }
-    return is_safe_browsing_enabled;
+    return isSafeBrowsingEnabled;
 }
 
 void WebviewController::SearchAllAsync(const std::string& searchString)
@@ -1040,11 +1040,11 @@ ErrCode WebviewController::HasImagesPromise(napi_env env, napi_deferred deferred
     return NWebError::NO_ERROR;
 }
 
-void WebviewController::RemoveCache(bool include_disk_files)
+void WebviewController::RemoveCache(bool includeDiskFiles)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
-        nweb_ptr->RemoveCache(include_disk_files);
+        nweb_ptr->RemoveCache(includeDiskFiles);
     }
 }
 

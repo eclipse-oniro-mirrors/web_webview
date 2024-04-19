@@ -214,7 +214,7 @@ public:
 
     ErrCode HasImagesPromise(napi_env env, napi_deferred deferred);
 
-    void RemoveCache(bool include_disk_files);
+    void RemoveCache(bool includeDiskFiles);
 
     std::shared_ptr<NWebHistoryList> GetHistoryList();
 

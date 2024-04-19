@@ -379,6 +379,11 @@ public:
                   uint32_t height,
                   uint32_t pre_height,
                   uint32_t pre_width) override;
+
+  void OnTouchCancelById(int32_t id, double x, double y,
+                         bool from_overlay) override;
+                         
+  int ScaleGestureChange(double scale, double centerX, double centerY) override;
 };
 
 } // namespace OHOS::ArkWeb

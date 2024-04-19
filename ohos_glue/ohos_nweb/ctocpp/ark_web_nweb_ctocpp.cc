@@ -2057,6 +2057,34 @@ void ArkWebNWebCToCpp::DragResize(uint32_t width,
   _struct->drag_resize(_struct, width, height, pre_height, pre_width);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::OnTouchCancelById(int32_t id, double x, double y,
+                                         bool from_overlay) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_touch_cancel_by_id, );
+
+  // Execute
+  _struct->on_touch_cancel_by_id(_struct, id, x, y, from_overlay);
+}
+
+ARK_WEB_NO_SANITIZE
+int ArkWebNWebCToCpp::ScaleGestureChange(double scale, double centerX,
+                                         double centerY) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, scale_gesture_change, 0);
+
+  // Execute
+  return _struct->scale_gesture_change(_struct, scale, centerX, centerY);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 

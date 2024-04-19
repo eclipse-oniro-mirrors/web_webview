@@ -48,6 +48,7 @@ public:
     float GetVirtualPixelRatio() override;
     RotationType GetRotation() override;
     OrientationType GetOrientation() override;
+    int32_t GetDpi() override;
 private:
     sptr<OHOS::Rosen::Display> display_;
     OHOS::NWeb::RotationType ConvertRotationType(OHOS::Rosen::Rotation type);

@@ -792,9 +792,9 @@ public:
      * @return true to abort loading the url, false to continue loading the url
      * as usual.
      */
-    virtual bool OnHandleOverrideUrlLoading(
-        std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request) {
-      return false;
+    virtual bool OnHandleOverrideUrlLoading(std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request)
+    {
+        return false;
     }
 
     virtual bool OnAllSslErrorRequestByJS(
@@ -820,6 +820,16 @@ public:
      *
      */
     virtual void ReleaseResizeHold() {}
+
+    /**
+     * @brief Called when select a word.
+     *
+     * @param text The content of the text.
+     * @param offset The offset of the point.
+     */
+    virtual std::vector<int8_t> GetWordSelection(const std::string& text, int8_t offset) {
+        return { -1, -1 };
+    }
 };
 }  // namespace OHOS::NWeb
 

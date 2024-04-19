@@ -101,7 +101,7 @@ public:
     void PutRequestStart(napi_env, napi_value callback);
     void PutRequestStop(napi_env, napi_value callback);
 
-    napi_ref delegate_;
+    napi_ref delegate_ = nullptr;
     static std::unordered_map<WebSchemeHandler*, const ArkWeb_SchemeHandler*>
         webSchemeHandlerMap_;
     static std::unordered_map<const ArkWeb_SchemeHandler*, WebSchemeHandler*>

@@ -272,6 +272,9 @@ napi_value NapiWebSchemeHandlerRequest::JS_HttpBodyStream(napi_env env, napi_cal
     }
     napi_value httpBodyStreamObject;
     WebHttpBodyStream* stream = new (std::nothrow) WebHttpBodyStream(env, arkWebPostStream);
+    if (stream == nullptr) {
+        return nullptr;
+    }
     NAPI_CALL(env, napi_create_object(env, &httpBodyStreamObject));
     napi_wrap(
         env, httpBodyStreamObject, stream,

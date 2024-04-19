@@ -18,6 +18,7 @@
 #pragma once
 
 #include "include/nweb_gesture_event_result.h"
+#include "base/include/ark_web_types.h"
 #include "ohos_nweb/include/ark_web_gesture_event_result.h"
 
 namespace OHOS::ArkWeb {

@@ -271,8 +271,8 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::GetOutputFormatDec(std::shared_
 
     int32_t width = 0;
     int32_t height = 0;
-    codecFormat.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_WIDTH, width);
-    codecFormat.GetIntValue(OHOS::MediaAVCodec::MediaDescriptionKey::MD_KEY_HEIGHT, height);
+    codecFormat.GetIntValue(OHOS::Media::Tag::VIDEO_DISPLAY_WIDTH, width);
+    codecFormat.GetIntValue(OHOS::Media::Tag::VIDEO_DISPLAY_HEIGHT, height);
     format->SetWidth(width);
     format->SetHeight(height);
 

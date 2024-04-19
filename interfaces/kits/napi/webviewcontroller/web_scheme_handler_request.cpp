@@ -361,10 +361,11 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
     napi_value requestValue[2] = {0};
     napi_create_object(env_, &requestValue[0]);
     napi_create_object(env_, &requestValue[1]);
-    WebSchemeHandlerRequest* schemeHandlerRequest =
-        new (std::nothrow) WebSchemeHandlerRequest(env_, request); 
-    WebResourceHandler* resourceHandler =
-        new (std::nothrow) WebResourceHandler(env_, ArkWeb_ResourceHandler);
+    WebSchemeHandlerRequest* schemeHandlerRequest = new (std::nothrow) WebSchemeHandlerRequest(env_, request);
+    WebResourceHandler* resourceHandler = new (std::nothrow) WebResourceHandler(env_, ArkWeb_ResourceHandler);
+    if (schemeHandlerRequest == nullptr || resourceHandler == nullptr) {
+        return;
+    }
     if (OH_ArkWebResourceRequest_SetUserData(request, resourceHandler) != 0) {
         WVLOG_W("OH_ArkWebResourceRequest_SetUserData failed");
     }
@@ -419,11 +420,12 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
         return;
     }
     napi_value callbackFunc = nullptr;
-    napi_status napiStatus; 
+    napi_status napiStatus;
     if (!param->callbackRef_) {
         WVLOG_E("scheme handler onRequestStop nil env");
         delete param;
         delete work;
+        napi_close_handle_scope(param->env_, scope);
         return;
     }
     napiStatus = napi_get_reference_value(param->env_, param->callbackRef_, &callbackFunc);
@@ -431,6 +433,7 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
         WVLOG_E("scheme handler get onRequestStop func failed.");
         delete param;
         delete work;
+        napi_close_handle_scope(param->env_, scope);
         return;
     }
     napi_value requestValue;
@@ -482,8 +485,10 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
     }
     param->env_ = env_;
     param->callbackRef_ = request_stop_callback_;
-    param->request_ =
-        new (std::nothrow) WebSchemeHandlerRequest(param->env_, resourceRequest);
+    param->request_ = new (std::nothrow) WebSchemeHandlerRequest(param->env_, resourceRequest);
+    if (param->request_ == nullptr) {
+        return;
+    }
     param->arkWebRequest_ = resourceRequest;
     work->data = reinterpret_cast<void*>(param);
     int ret = uv_queue_work_with_qos(loop, work, [](uv_work_t *work) {},
@@ -670,7 +675,7 @@ void WebHttpBodyStream::Read(int bufLen, napi_ref jsCallback, napi_deferred defe
     }
     if (bufLen <= 0) {
         return;
-    } 
+    }
     if (jsCallback) {
         readJsCallback_ = std::move(jsCallback);
     }
@@ -678,6 +683,9 @@ void WebHttpBodyStream::Read(int bufLen, napi_ref jsCallback, napi_deferred defe
         readDeferred_ = std::move(deferred);
     }
     uint8_t* buffer = new (std::nothrow) uint8_t[bufLen];
+    if (buffer == nullptr) {
+        return;
+    }
     OH_ArkWebHttpBodyStream_Read(stream_, buffer, bufLen);
 }
 
@@ -702,8 +710,7 @@ void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
     NAPI_CALL_RETURN_VOID(env_, napi_create_async_work(env_, nullptr, resourceName,
         [](napi_env env, void *data) {},
         ExecuteInitComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL_RETURN_VOID(env_, 
-        napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
+    NAPI_CALL_RETURN_VOID(env_, napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
 }
 
 void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, void* data)
@@ -714,7 +721,7 @@ void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, vo
     napi_open_handle_scope(env, &scope);
     if (!param) {
         return;
-    } 
+    }
     if (!scope) {
         delete param;
         return;

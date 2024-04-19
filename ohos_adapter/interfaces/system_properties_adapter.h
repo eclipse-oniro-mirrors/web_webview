@@ -21,6 +21,8 @@
 
 namespace OHOS::NWeb {
 
+struct FrameRateSetting;
+
 enum class ProductDeviceType : int32_t {
     DEVICE_TYPE_MOBILE,
     DEVICE_TYPE_TABLET,
@@ -29,7 +31,8 @@ enum class ProductDeviceType : int32_t {
 };
 
 enum class PropertiesKey: int32_t {
-    PROP_RENDER_DUMP
+    PROP_RENDER_DUMP,
+    PROP_HITRACE_ENABLEFLAGS
 };
 
 class SystemPropertiesObserver {
@@ -84,6 +87,8 @@ public:
     virtual void DetachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) = 0;
 
     virtual bool GetBoolParameter(const std::string& key, bool defaultValue) = 0;
+
+    virtual std::vector<FrameRateSetting> GetLTPOConfig(const std::string& settingName) = 0;
 };
 
 }  // namespace OHOS::NWeb

@@ -39,11 +39,11 @@ public:
 
     virtual void RemoveFileDescriptorListener(int32_t fileDescriptor) = 0;
 
-    // be consistent with 
+    // be consistent with
     // rom/base/notification/eventhandler/interfaces/inner_api/file_descriptor_listener.h
     // FILE_DESCRIPTOR_INPUT_EVENT
     enum {
-      INPUT_EVENT = 1,
+        INPUT_EVENT = 1,
     };
 };
 } // namespace OHOS::NWeb

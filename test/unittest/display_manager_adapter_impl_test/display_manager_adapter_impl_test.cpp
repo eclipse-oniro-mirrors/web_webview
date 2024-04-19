@@ -97,6 +97,7 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_001, TestS
     EXPECT_EQ(displayAdapterImpl->GetVirtualPixelRatio(), -1);
     EXPECT_EQ(displayAdapterImpl->GetRotation(), RotationType::ROTATION_BUTT);
     EXPECT_EQ(displayAdapterImpl->GetOrientation(), OrientationType::BUTT);
+    EXPECT_EQ(displayAdapterImpl->GetDpi(), -1);
 }
 
 /**

@@ -169,9 +169,9 @@ void PrintDocumentAdapterImpl::onJobStateChanged(const std::string& jobId, uint3
 #endif
 
 PrintWriteResultCallbackAdapterImpl::PrintWriteResultCallbackAdapterImpl(
-    std::function<void(std::string, uint32_t)>& cb) 
+    std::function<void(std::string, uint32_t)>& cb)
 {
-    cb_ = cb;   
+    cb_ = cb;
 }
 
 void PrintWriteResultCallbackAdapterImpl::WriteResultCallback(std::string jobId, uint32_t code)

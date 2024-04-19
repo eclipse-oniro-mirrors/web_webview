@@ -1042,6 +1042,22 @@ void ARK_WEB_CALLBACK ark_web_handler_release_resize_hold(struct _ark_web_handle
   ArkWebHandlerCppToC::Get(self)->ReleaseResizeHold();
 }
 
+ArkWebCharVector ARK_WEB_CALLBACK ark_web_handler_get_word_selection(
+    struct _ark_web_handler_t* self,
+    const ArkWebString* text,
+    int8_t offset) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_char_vector_default);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(text, ark_web_char_vector_default);
+
+  // Execute
+  return ArkWebHandlerCppToC::Get(self)->GetWordSelection(
+      *text,
+      offset);
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1158,6 +1174,8 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
   GetStruct()->on_tooltip = ark_web_handler_on_tooltip;
   GetStruct()->release_resize_hold =
       ark_web_handler_release_resize_hold;
+  GetStruct()->get_word_selection =
+      ark_web_handler_get_word_selection;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {

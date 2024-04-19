@@ -50,7 +50,10 @@ ohos_unittest("screen_capture_adapter_impl_test") {
 
   if (webview_media_player_enable) {
     sources += [ "screen_capture_adapter_impl_test.cpp" ]
-    external_deps += [ "player_framework:media_client" ]
+    external_deps += [
+      "av_codec:av_codec_client",
+      "player_framework:media_client",
+    ]
   }
 }
 

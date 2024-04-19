@@ -92,6 +92,8 @@ void DownloadDidUpdate(NWebDownloadItem *downloadItem, WebDownloadItemCallbackWr
         case NWebDownloadItemState::PENDING:
             //  When in PENDING state, chromium call downloadDidUpdate
             //  while file path is temporary file, just stop calling ui.
+            delete webDownloadItem;
+            webDownloadItem = nullptr;
             break;
         case NWebDownloadItemState::IN_PROGRESS:
         case NWebDownloadItemState::PAUSED:
@@ -105,10 +107,13 @@ void DownloadDidUpdate(NWebDownloadItem *downloadItem, WebDownloadItemCallbackWr
             webDownloadDelegate->DownloadDidFinish(webDownloadItem);
             break;
         case NWebDownloadItemState::MAX_DOWNLOAD_STATE:
+        default:
+            delete webDownloadItem;
+            webDownloadItem = nullptr;
             break;
     }
 }
-}
+} // namespace
 
 // static
 void WebDownloadManager::RegisterDownloadCallback()
