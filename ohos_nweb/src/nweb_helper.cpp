@@ -1054,6 +1054,16 @@ RenderProcessMode NWebHelper::GetRenderProcessMode() {
     return nwebEngine_->GetRenderProcessMode();
 }
 
+void NWebHelper::WarmupServiceWorker(const std::string &url)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->WarmupServiceWorker(url);
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;

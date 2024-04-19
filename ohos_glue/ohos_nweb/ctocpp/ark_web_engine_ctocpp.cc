@@ -346,6 +346,19 @@ void ArkWebEngineCToCpp::ClearPrefetchedResource(
   _struct->clear_prefetched_resource(_struct, &cache_key_list);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::WarmupServiceWorker(const ArkWebString &url) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_engine_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, warmup_service_worker, );
+
+  // Execute
+  _struct->warmup_service_worker(_struct, &url);
+}
+
 ArkWebEngineCToCpp::ArkWebEngineCToCpp() {
 }
 

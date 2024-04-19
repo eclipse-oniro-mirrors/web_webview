@@ -111,6 +111,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
     EXPECT_EQ(nwebHelper, nullptr);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
+    NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
     NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     result = NWebHelper::Instance().InitAndRun(false);
@@ -242,6 +243,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
+    NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
     NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     NWebHelper::Instance().bundlePath_.clear();
@@ -394,6 +396,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
+    NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().GetDataBase();
     std::shared_ptr<NWebWebStorage> storage = NWebHelper::Instance().GetWebStorage();
     EXPECT_EQ(storage, nullptr);

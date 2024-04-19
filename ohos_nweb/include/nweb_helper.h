@@ -77,6 +77,8 @@ public:
     void SetRenderProcessMode(RenderProcessMode mode);
     RenderProcessMode GetRenderProcessMode();
 
+    void WarmupServiceWorker(const std::string &url);
+
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);
