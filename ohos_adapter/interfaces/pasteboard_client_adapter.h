@@ -98,8 +98,8 @@ public:
 
     virtual bool GetPasteData(PasteRecordVector& data) = 0;
 
-    virtual void SetPasteData(const PasteRecordVector& data, 
-                              CopyOptionMode copyOption = CopyOptionMode::CROSS_DEVICE) = 0;
+    virtual void SetPasteData(
+        const PasteRecordVector& data, CopyOptionMode copyOption = CopyOptionMode::CROSS_DEVICE) = 0;
 
     virtual bool HasPasteData() = 0;
 

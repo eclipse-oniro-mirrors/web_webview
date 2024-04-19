@@ -792,9 +792,9 @@ public:
      * @return true to abort loading the url, false to continue loading the url
      * as usual.
      */
-    virtual bool OnHandleOverrideUrlLoading(
-        std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request) {
-      return false;
+    virtual bool OnHandleOverrideUrlLoading(std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request)
+    {
+        return false;
     }
 
     virtual bool OnAllSslErrorRequestByJS(

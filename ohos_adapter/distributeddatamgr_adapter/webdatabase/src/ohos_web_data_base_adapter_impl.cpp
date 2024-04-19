@@ -139,7 +139,7 @@ void OhosWebDataBaseAdapterImpl::GetHttpAuthCredentials(const std::string& host,
     std::string& username, char* password, uint32_t passwordSize)
 {
     WVLOG_I("webdatabase get username and password");
-    if (host.empty() || password == nullptr) {
+    if (host.empty() || password == nullptr || passwordSize == 0) {
         return;
     }
     if (rdbStore_ == nullptr) {

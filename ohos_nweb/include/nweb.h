@@ -1166,7 +1166,7 @@ public:
      * @param vx      vertical velocity in physical pixel.
     */
     virtual void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) = 0;
-    
+
     /**
      * @brief Render process switch to background.
      */
@@ -1182,7 +1182,7 @@ public:
 
     /**
      * @brief Compile javascript and generate code cache.
-     * 
+     *
      * @param url url of javascript.
      * @param script javascript text content.
      * @param cacheOptions compile options and info.
@@ -1206,7 +1206,7 @@ public:
                             uint32_t pre_width) = 0;
 
     virtual void OnTouchCancelById(int32_t id, double x, double y, bool from_overlay) = 0;
-    
+
     /**
      * @brief Set the params when the scale of WebView changed by pinch gestrue.
      *

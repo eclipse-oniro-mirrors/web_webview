@@ -192,7 +192,7 @@ bool OhosFileMapperImpl::UnzipData(uint8_t* &dest, size_t& len)
         std::unique_ptr<uint8_t[]> data;
         bool result = extractor_->UnzipData(std::move(fileMap_), data, len);
         if (result) {
-            dest = data.release();   
+            dest = data.release();
         }
         return result;
     }
@@ -346,7 +346,7 @@ std::string OhosResourceAdapterImpl::GetModuleName(const char *configStr, size_t
         return std::string();
     }
     auto end = config.find("\"", start + 1);
-    if (end == std::string::npos) {
+    if (end == std::string::npos || end < start + 1) {
         return std::string();
     }
 

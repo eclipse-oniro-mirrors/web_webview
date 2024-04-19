@@ -122,7 +122,7 @@ int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, std::shared_ptr<MMIDevic
 {
     if (!info) {
         WVLOG_E("GetDeviceInfo info is nullptr");
-        return -1; 
+        return -1;
     }
 
     std::function<void(std::shared_ptr<MMI::InputDevice>)> callback = [&info](
