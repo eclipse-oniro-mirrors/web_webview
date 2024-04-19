@@ -209,4 +209,12 @@ void ArkWebEngineWrapper::ClearPrefetchedResource(const std::vector<std::string>
 
   ArkWebStringVectorStructRelease(stCacheKeyList);
 }
+
+void ArkWebEngineWrapper::WarmupServiceWorker(const std::string &url) {
+  ArkWebString stUrl = ArkWebStringClassToStruct(url);
+
+  ark_web_engine_->WarmupServiceWorker(stUrl);
+
+  ArkWebStringStructRelease(stUrl);
+}
 } // namespace OHOS::ArkWeb
