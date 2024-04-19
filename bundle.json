@@ -53,6 +53,7 @@
                 "hisysevent",
                 "hitrace",
                 "huks",
+                "i18n",
                 "image_framework",
                 "imf",
                 "init",

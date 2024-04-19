@@ -84,6 +84,7 @@ ohos_shared_library("libnweb") {
     "graphic_surface:surface",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
+    "i18n:intl_util",
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_core",
