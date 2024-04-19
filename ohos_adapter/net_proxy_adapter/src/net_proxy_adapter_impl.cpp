@@ -184,8 +184,8 @@ std::string Decode(const std::string& encoded)
 }
 } // namespace Base64
 
-NetProxyEventSubscriber::NetProxyEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, 
-    std::shared_ptr<NetProxyEventCallbackAdapter> cb)
+NetProxyEventSubscriber::NetProxyEventSubscriber(
+    EventFwk::CommonEventSubscribeInfo& in, std::shared_ptr<NetProxyEventCallbackAdapter> cb)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(cb)
 {}
 

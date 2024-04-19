@@ -52,7 +52,7 @@ public:
     {}
     void OnTouchCancel() override
     {}
-    void OnTouchCancelById(int32_t id, double x, double y, bool from_overlay) override
+    void OnTouchCancelById(int32_t id, double x, double y, bool fromOverlay) override
     {}
     void OnNavigateBack() override
     {}

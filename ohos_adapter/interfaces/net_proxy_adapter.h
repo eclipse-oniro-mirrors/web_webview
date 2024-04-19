@@ -25,8 +25,8 @@ public:
     NetProxyEventCallbackAdapter() = default;
     virtual ~NetProxyEventCallbackAdapter() = default;
 
-    virtual void Changed(const std::string& host, const uint16_t& port, const std::string& pacUrl, 
-                         const std::vector<std::string>& exclusionList) = 0;
+    virtual void Changed(const std::string& host, const uint16_t& port, const std::string& pacUrl,
+        const std::vector<std::string>& exclusionList) = 0;
 };
 
 class NetProxyAdapter {
