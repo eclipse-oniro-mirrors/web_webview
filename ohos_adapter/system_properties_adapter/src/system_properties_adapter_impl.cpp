@@ -34,9 +34,10 @@ const std::string FACTORY_LEVEL_PHONE = "2";
 const std::string FACTORY_LEVEL_DEFAULT = "1";
 
 const std::string PROP_RENDER_DUMP = "web.render.dump";
-
+const std::string PROP_HITRACE_ENABLEFLAGS = "debug.hitrace.tags.enableflags";
 const std::unordered_map<std::string, PropertiesKey> PROP_KEY_MAP = {
-    {PROP_RENDER_DUMP, PropertiesKey::PROP_RENDER_DUMP}};
+    {PROP_RENDER_DUMP, PropertiesKey::PROP_RENDER_DUMP},
+    {PROP_HITRACE_ENABLEFLAGS, PropertiesKey::PROP_HITRACE_ENABLEFLAGS}};
 
 void SystemPropertiesChangeCallback(const char* key, const char* value, void* context) {
     WVLOG_D("sys prop change key: %{public}s ,value : %{public}s ", key,  value);
@@ -190,10 +191,10 @@ std::string SystemPropertiesAdapterImpl::GetSiteIsolationMode()
 
 bool SystemPropertiesAdapterImpl::GetOOPGPUEnable()
 {
-    if (OHOS::system::GetParameter("web.oop.gpu", "") == "true") {
-        return true;
+    if (OHOS::system::GetParameter("web.oop.gpu", "") == "false") {
+        return false;
     }
-    return false;
+    return true;
 }
 
 void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
@@ -204,7 +205,7 @@ void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
     return;
 }
 
-int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd() 
+int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd()
 {
     return OHOS::system::GetIntParameter("web.flowbuffer.maxfd", -1);
 }
@@ -297,5 +298,11 @@ void SystemPropertiesAdapterImpl::DetachSysPropObserver(PropertiesKey key, Syste
 bool SystemPropertiesAdapterImpl::GetBoolParameter(const std::string& key, bool defaultValue)
 {
     return OHOS::system::GetBoolParameter(key, defaultValue);
+}
+
+std::vector<FrameRateSetting> SystemPropertiesAdapterImpl::GetLTPOConfig(const std::string& settingName)
+{
+    return NWebAdapterHelper::Instance().
+        GetPerfConfig(settingName);
 }
 } // namespace OHOS::NWeb

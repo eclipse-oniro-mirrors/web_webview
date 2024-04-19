@@ -114,6 +114,10 @@ protected:
 
 void MediaCodecDecoderAdapterImplTest::SetUp()
 {
+    constexpr int32_t testWidth = 200;
+    constexpr int32_t testHeight = 300;
+    constexpr int32_t testFrameRate = 20;
+
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_, nullptr);
     mediaCodecDecoderAdapterImpl_ = std::make_unique<MediaCodecDecoderAdapterImpl>();
     EXPECT_NE(mediaCodecDecoderAdapterImpl_, nullptr);
@@ -121,9 +125,9 @@ void MediaCodecDecoderAdapterImplTest::SetUp()
     EXPECT_EQ(format_, nullptr);
     format_ = std::make_unique<DecoderFormatAdapterMock>();
     EXPECT_NE(format_, nullptr);
-    format_->width = 200;
-    format_->height = 300;
-    format_->frameRate = 20;
+    format_->width = testWidth;
+    format_->height = testHeight;
+    format_->frameRate = testFrameRate;
 }
 
 /**

@@ -80,6 +80,15 @@ ark_display_adapter_get_orientation(struct _ark_display_adapter_t *self) {
   return ArkDisplayAdapterCppToC::Get(self)->GetOrientation();
 }
 
+int32_t ARK_WEB_CALLBACK ark_display_adapter_get_dpi(struct _ark_display_adapter_t* self)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+
+    // Execute
+    return ArkDisplayAdapterCppToC::Get(self)->GetDpi();
+}
 } // namespace
 
 ArkDisplayAdapterCppToC::ArkDisplayAdapterCppToC() {
@@ -90,6 +99,7 @@ ArkDisplayAdapterCppToC::ArkDisplayAdapterCppToC() {
       ark_display_adapter_get_virtual_pixel_ratio;
   GetStruct()->get_rotation = ark_display_adapter_get_rotation;
   GetStruct()->get_orientation = ark_display_adapter_get_orientation;
+  GetStruct()->get_dpi = ark_display_adapter_get_dpi;
 }
 
 ArkDisplayAdapterCppToC::~ArkDisplayAdapterCppToC() {

@@ -563,6 +563,8 @@ public:
   void OnTooltip(const ArkWebString &tooltip) override;
 
   void ReleaseResizeHold() override;
+
+  ArkWebCharVector GetWordSelection(const ArkWebString &text, int8_t offset) override;
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

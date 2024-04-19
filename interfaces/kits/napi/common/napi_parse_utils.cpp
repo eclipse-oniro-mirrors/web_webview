@@ -509,7 +509,8 @@ ErrCode NapiParseUtils::ConstructArrayBufFlowbuf(napi_env env, napi_value argv, 
     }
 
     // write to ashmem
-    memcpy_s(ashmem, scriptLength + 1, arrBuf, scriptLength + 1);
+    memcpy_s(ashmem, scriptLength + 1, arrBuf, scriptLength);
+    static_cast<char*>(ashmem)[scriptLength] = '\0';
     return NWebError::NO_ERROR;
 }
 } // namespace NWeb

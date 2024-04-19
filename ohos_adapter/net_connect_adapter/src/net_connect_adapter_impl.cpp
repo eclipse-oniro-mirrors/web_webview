@@ -40,7 +40,7 @@ int32_t NetConnectAdapterImpl::RegisterNetConnCallback(std::shared_ptr<NetConnCa
         WVLOG_E("register NetConnCallback failed, ret = %{public}d.", ret);
         return -1;
     }
-   
+
     int32_t id = count++;
     if (count < 0) {
         count = 0;

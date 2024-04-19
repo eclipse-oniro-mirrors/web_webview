@@ -48,7 +48,7 @@ private:
 
 class NWebTimeZoneEventSubscriber : public EventFwk::CommonEventSubscriber {
 public:
-    NWebTimeZoneEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, 
+    NWebTimeZoneEventSubscriber(EventFwk::CommonEventSubscribeInfo& in,
                                 std::shared_ptr<TimezoneEventCallbackAdapter> cb);
 
     ~NWebTimeZoneEventSubscriber() override = default;

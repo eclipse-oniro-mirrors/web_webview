@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_FIRST_MEANINGFUL_PAINT_DETAILS_IMPL_H_
-#define ARK_WEB_FIRST_MEANINGFUL_PAINT_DETAILS_IMPL_H_
+#ifndef ARK_WEB_FIRST_MEANINGFUL_PAINT_DETAILS_WRAPPER_H_
+#define ARK_WEB_FIRST_MEANINGFUL_PAINT_DETAILS_WRAPPER_H_
 #pragma once
 
 #include "include/nweb_first_meaningful_paint_details.h"
@@ -22,11 +22,11 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebFirstMeaningfulPaintDetailsImpl : public OHOS::NWeb::NWebFirstMeaningfulPaintDetails {
+class ArkWebFirstMeaningfulPaintDetailsWrapper : public OHOS::NWeb::NWebFirstMeaningfulPaintDetails {
 public:
-    explicit ArkWebFirstMeaningfulPaintDetailsImpl(
+    explicit ArkWebFirstMeaningfulPaintDetailsWrapper(
         ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> nweb_first_meaningful_paint_details);
-    ~ArkWebFirstMeaningfulPaintDetailsImpl() = default;
+    ~ArkWebFirstMeaningfulPaintDetailsWrapper() = default;
 
     /**
      * @brief Get start time of navigation.

@@ -198,5 +198,22 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportVideoPlaying_003
     result = resAdapter->ReportVideoPlaying(ResSchedStatusAdapter::AUDIO_STATUS_START, 1);
     EXPECT_TRUE(result);
 }
+
+/**
+ * @tc.name: ResSchedAdapterImplTest_ReportProcessInUse_007
+ * @tc.desc: ReportProcessInUse.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportProcessInUse_007, TestSize.Level1)
+{
+    auto resAdapter = std::make_shared<ResSchedClientAdapter>();
+    EXPECT_NE(resAdapter, nullptr);
+    resAdapter->ReportSiteIsolationMode(true);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 1);
+    bool result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, 1);
+    EXPECT_TRUE(result);
+    resAdapter->ReportProcessInUse(1);
+}
 }
 } // namespace NWeb

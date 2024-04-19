@@ -21,35 +21,34 @@
 
 namespace OHOS::NWeb {
 class WebTimezoneInfo {
- public:
-  virtual ~WebTimezoneInfo() = default;
+public:
+    virtual ~WebTimezoneInfo() = default;
 
-  virtual std::string GetTzId() = 0;
+    virtual std::string GetTzId() = 0;
 };
 
 class TimezoneEventCallbackAdapter {
- public:
-  virtual ~TimezoneEventCallbackAdapter() = default;
+public:
+    virtual ~TimezoneEventCallbackAdapter() = default;
 
-  virtual void TimezoneChanged(std::shared_ptr<WebTimezoneInfo> info) = 0;
+    virtual void TimezoneChanged(std::shared_ptr<WebTimezoneInfo> info) = 0;
 };
 
 class DateTimeFormatAdapter {
- public:
-  DateTimeFormatAdapter() = default;
+public:
+    DateTimeFormatAdapter() = default;
 
-  virtual ~DateTimeFormatAdapter() = default;
+    virtual ~DateTimeFormatAdapter() = default;
 
-  virtual void RegTimezoneEvent(
-      std::shared_ptr<TimezoneEventCallbackAdapter> eventCallback) = 0;
+    virtual void RegTimezoneEvent(std::shared_ptr<TimezoneEventCallbackAdapter> eventCallback) = 0;
 
-  virtual bool StartListen() = 0;
+    virtual bool StartListen() = 0;
 
-  virtual void StopListen() = 0;
+    virtual void StopListen() = 0;
 
-  virtual std::string GetTimezone() = 0;
+    virtual std::string GetTimezone() = 0;
 };
 
-}  // namespace OHOS::NWeb
+} // namespace OHOS::NWeb
 
-#endif  // DATE_TIME_FORMAT_ADAPTER_H
+#endif // DATE_TIME_FORMAT_ADAPTER_H

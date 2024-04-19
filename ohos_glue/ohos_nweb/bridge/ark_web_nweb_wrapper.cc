@@ -1014,4 +1014,13 @@ void ArkWebNWebWrapper::DragResize(uint32_t width,
   ark_web_nweb_->DragResize(width, height, pre_height, pre_width);
 }
 
+void ArkWebNWebWrapper::OnTouchCancelById(int32_t id, double x, double y,
+                                          bool from_overlay) {
+  ark_web_nweb_->OnTouchCancelById(id, x, y, from_overlay);
+}
+
+int ArkWebNWebWrapper::ScaleGestureChange(double scale, double centerX, double centerY) {
+  return ark_web_nweb_->ScaleGestureChange(scale, centerX, centerY);
+}
+
 } // namespace OHOS::ArkWeb

@@ -241,22 +241,22 @@ bool ParseCacheKeyList(napi_env env, napi_value cacheKeyArray, std::vector<std::
     for (uint32_t i = 0; i < arrayLength; ++i) {
         napi_value cacheKeyItem = nullptr;
         napi_get_element(env, cacheKeyArray, i, &cacheKeyItem);
-        std::string CacheKeyStr;
-        if (!NapiParseUtils::ParseString(env, cacheKeyItem, CacheKeyStr)) {
+        std::string cacheKeyStr;
+        if (!NapiParseUtils::ParseString(env, cacheKeyItem, cacheKeyStr)) {
             WVLOG_E("Unable to parse string from cacheKey array object.");
             return false;
         }
-        if (CacheKeyStr.empty()) {
+        if (cacheKeyStr.empty()) {
             WVLOG_E("Cache Key is empty.");
             return false;
         }
-        for (char c : CacheKeyStr) {
+        for (char c : cacheKeyStr) {
             if (!isalnum(c)) {
                 WVLOG_E("Cache Key is invalid.");
                 return false;
             }
         }
-        cacheKeyList->emplace_back(CacheKeyStr);
+        cacheKeyList->emplace_back(cacheKeyStr);
     }
     return true;
 }
@@ -645,8 +645,8 @@ napi_value NapiWebviewController::InitializeWebEngine(napi_env env, napi_callbac
     }
 
     // load so
-    const std::string& bundle_path = ctx->GetBundleCodeDir();
-    NWebHelper::Instance().SetBundlePath(bundle_path);
+    const std::string& bundlePath = ctx->GetBundleCodeDir();
+    NWebHelper::Instance().SetBundlePath(bundlePath);
     if (!NWebHelper::Instance().InitAndRun(true)) {
         WVLOG_E("Failed to init web engine due to NWebHelper failure.");
         return nullptr;
@@ -654,7 +654,7 @@ napi_value NapiWebviewController::InitializeWebEngine(napi_env env, napi_callbac
 
     napi_value result = nullptr;
     NAPI_CALL(env, napi_get_undefined(env, &result));
-    WVLOG_I("NWebHelper initialized, init web engine done, bundle_path: %{public}s", bundle_path.c_str());
+    WVLOG_I("NWebHelper initialized, init web engine done, bundle_path: %{public}s", bundlePath.c_str());
     return result;
 }
 
@@ -3231,10 +3231,9 @@ napi_value NapiWebviewController::HasImageInternal(napi_env env, napi_callback_i
 
         if (jsCallback) {
             ErrCode ret = webviewController->HasImagesCallback(env, std::move(jsCallback));
-            if (ret != NO_ERROR) {
-                if (ret == NWEB_ERROR) {
-                    return nullptr;
-                }
+            if (ret == NWEB_ERROR) {
+                return nullptr;
+            } else if (ret != NO_ERROR) {
                 BusinessError::ThrowErrorByErrcode(env, ret);
                 return nullptr;
             }
@@ -3246,10 +3245,9 @@ napi_value NapiWebviewController::HasImageInternal(napi_env env, napi_callback_i
         napi_create_promise(env, &deferred, &promise);
         if (promise && deferred) {
             ErrCode ret = webviewController->HasImagesPromise(env, deferred);
-            if (ret != NO_ERROR) {
-                if (ret == NWEB_ERROR) {
-                    return nullptr;
-                }
+            if (ret == NWEB_ERROR) {
+                return nullptr;
+            } else if (ret != NO_ERROR) {
                 BusinessError::ThrowErrorByErrcode(env, ret);
                 return nullptr;
             }
@@ -3265,7 +3263,7 @@ napi_value NapiWebviewController::RemoveCache(napi_env env, napi_callback_info i
     napi_value result = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
-    bool include_disk_files;
+    bool includeDiskFiles;
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
@@ -3273,7 +3271,7 @@ napi_value NapiWebviewController::RemoveCache(napi_env env, napi_callback_info i
         return result;
     }
 
-    if (!NapiParseUtils::ParseBoolean(env, argv[0], include_disk_files)) {
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], includeDiskFiles)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -3284,7 +3282,7 @@ napi_value NapiWebviewController::RemoveCache(napi_env env, napi_callback_info i
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    webviewController->RemoveCache(include_disk_files);
+    webviewController->RemoveCache(includeDiskFiles);
     return result;
 }
 
@@ -3717,7 +3715,7 @@ bool SetCustomizeScheme(napi_env env, napi_value obj, Scheme& scheme)
         napi_value propertyObj = nullptr;
         std::string property_name = property.first.c_str();
         napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
-        if(!NapiParseUtils::ParseBoolean(env, propertyObj, scheme.*(property.second))) {
+        if (!NapiParseUtils::ParseBoolean(env, propertyObj, scheme.*(property.second))) {
             if (property_name == "isSupportCORS" || property_name == "isSupportFetch") {
                 return false;
             }

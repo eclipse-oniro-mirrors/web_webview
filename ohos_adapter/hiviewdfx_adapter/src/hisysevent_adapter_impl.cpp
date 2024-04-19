@@ -163,4 +163,13 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     auto mergeData = std::tuple_cat(data, sysData);
     return ForwardToHiSysEvent(eventName, type, mergeData);
 }
+
+int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
+    const std::tuple<const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string, const std::string, const std::string,
+                     const std::string, const std::string>& data)
+{
+    return ForwardToHiSysEvent(eventName, type, data);
+}
 } // namespace OHOS::NWeb

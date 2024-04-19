@@ -112,8 +112,8 @@ std::string OhosWebPermissionDataBaseAdapterImpl::KeyToTableName(const WebPermis
     return "";
 }
 
-bool OhosWebPermissionDataBaseAdapterImpl::ExistPermissionByOrigin(const std::string& origin,
-    const WebPermissionType& key) 
+bool OhosWebPermissionDataBaseAdapterImpl::ExistPermissionByOrigin(
+    const std::string& origin, const WebPermissionType& key)
 {
     WVLOG_I("web permission database check exist permissions origin=%{public}s info", origin.c_str());
     if (rdbStore_ == nullptr || origin.empty()) {

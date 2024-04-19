@@ -79,14 +79,16 @@ bool ark_res_sched_client_adapter_report_video_playing(int32_t statusAdapter,
   return ArkResSchedClientAdapter::ReportVideoPlaying(statusAdapter, pid);
 }
 
-void ark_res_sched_client_adapter_report_process_in_use(pid_t pid) {
-  // Execute
-  ArkResSchedClientAdapter::ReportProcessInUse(pid);
+void ark_res_sched_client_adapter_report_process_in_use(pid_t pid)
+{
+    // Execute
+    ArkResSchedClientAdapter::ReportProcessInUse(pid);
 }
 
-void ark_res_sched_client_adapter_report_site_isolation_mode(bool mode) {
-  // Execute
-  ArkResSchedClientAdapter::ReportSiteIsolationMode(mode);
+void ark_res_sched_client_adapter_report_site_isolation_mode(bool mode)
+{
+    // Execute
+    ArkResSchedClientAdapter::ReportSiteIsolationMode(mode);
 }
 
 ArkResSchedClientAdapterCppToC::ArkResSchedClientAdapterCppToC() {
@@ -184,17 +186,19 @@ ark_res_sched_client_adapter_report_video_playing_static(int32_t statusAdapter,
 }
 
 ARK_WEB_EXPORT void
-ark_res_sched_client_adapter_report_process_in_use_static(pid_t pid) {
-  ARK_WEB_CPPTOC_DV_LOG();
+ark_res_sched_client_adapter_report_process_in_use_static(pid_t pid)
+{
+    ARK_WEB_CPPTOC_DV_LOG();
 
-  OHOS::ArkWeb::ark_res_sched_client_adapter_report_process_in_use(pid);
+    OHOS::ArkWeb::ark_res_sched_client_adapter_report_process_in_use(pid);
 }
 
 ARK_WEB_EXPORT void
-ark_res_sched_client_adapter_report_site_isolation_mode_static(bool mode) {
-  ARK_WEB_CPPTOC_DV_LOG();
+ark_res_sched_client_adapter_report_site_isolation_mode_static(bool mode)
+{
+    ARK_WEB_CPPTOC_DV_LOG();
 
-  OHOS::ArkWeb::ark_res_sched_client_adapter_report_site_isolation_mode(mode);
+    OHOS::ArkWeb::ark_res_sched_client_adapter_report_site_isolation_mode(mode);
 }
 #ifdef __cplusplus
 }

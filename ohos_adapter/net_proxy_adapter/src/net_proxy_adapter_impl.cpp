@@ -184,8 +184,8 @@ std::string Decode(const std::string& encoded)
 }
 } // namespace Base64
 
-NetProxyEventSubscriber::NetProxyEventSubscriber(EventFwk::CommonEventSubscribeInfo& in, 
-    std::shared_ptr<NetProxyEventCallbackAdapter> cb)
+NetProxyEventSubscriber::NetProxyEventSubscriber(
+    EventFwk::CommonEventSubscribeInfo& in, std::shared_ptr<NetProxyEventCallbackAdapter> cb)
     : EventFwk::CommonEventSubscriber(in), eventCallback_(cb)
 {}
 
@@ -325,6 +325,7 @@ void NetProxyEventSubscriber::OnReceiveEvent(const EventFwk::CommonEventData& da
 
     if (!eventCallback_) {
         WVLOG_E("netproxy config change, event callback is null");
+        return;
     }
 
     eventCallback_->Changed(host, port, "", exclusionList);
