@@ -800,7 +800,7 @@ ArkWebCharVector ArkWebHandlerImpl::GetWordSelection(const ArkWebString& text, i
   }
   std::vector<int8_t> vec = nweb_handler_->GetWordSelection(ArkWebStringStructToClass(text), offset);
   std::vector<char> result(vec.size());
-  for (int i = 0; i < vec.size(); i++) {
+  for (size_t i = 0; i < vec.size(); i++) {
     result[i] = vec[i];
   }
   ArkWebCharVector ark_result = ArkWebBasicVectorClassToStruct<char, ArkWebCharVector>(result);

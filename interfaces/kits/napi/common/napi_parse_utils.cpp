@@ -509,7 +509,10 @@ ErrCode NapiParseUtils::ConstructArrayBufFlowbuf(napi_env env, napi_value argv, 
     }
 
     // write to ashmem
-    memcpy_s(ashmem, scriptLength + 1, arrBuf, scriptLength);
+    if (memcpy_s(ashmem, scriptLength + 1, arrBuf, scriptLength) != EOK) {
+        WVLOG_E("ConstructArrayBufFlowbuf, memory copy failed");
+        return NWebError::NEW_OOM;
+    }
     static_cast<char*>(ashmem)[scriptLength] = '\0';
     return NWebError::NO_ERROR;
 }
