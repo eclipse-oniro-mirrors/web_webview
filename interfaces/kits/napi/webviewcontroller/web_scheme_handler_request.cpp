@@ -362,8 +362,12 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
     napi_create_object(env_, &requestValue[0]);
     napi_create_object(env_, &requestValue[1]);
     WebSchemeHandlerRequest* schemeHandlerRequest = new (std::nothrow) WebSchemeHandlerRequest(env_, request);
+    if (schemeHandlerRequest == nullptr) {
+        return;
+    }
     WebResourceHandler* resourceHandler = new (std::nothrow) WebResourceHandler(env_, ArkWeb_ResourceHandler);
-    if (schemeHandlerRequest == nullptr || resourceHandler == nullptr) {
+    if (resourceHandler == nullptr) {
+        delete schemeHandlerRequest;
         return;
     }
     if (OH_ArkWebResourceRequest_SetUserData(request, resourceHandler) != 0) {
@@ -423,17 +427,17 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
     napi_status napiStatus;
     if (!param->callbackRef_) {
         WVLOG_E("scheme handler onRequestStop nil env");
+        napi_close_handle_scope(param->env_, scope);
         delete param;
         delete work;
-        napi_close_handle_scope(param->env_, scope);
         return;
     }
     napiStatus = napi_get_reference_value(param->env_, param->callbackRef_, &callbackFunc);
     if (napiStatus != napi_ok || callbackFunc == nullptr) {
         WVLOG_E("scheme handler get onRequestStop func failed.");
+        napi_close_handle_scope(param->env_, scope);
         delete param;
         delete work;
-        napi_close_handle_scope(param->env_, scope);
         return;
     }
     napi_value requestValue;
@@ -487,6 +491,8 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
     param->callbackRef_ = request_stop_callback_;
     param->request_ = new (std::nothrow) WebSchemeHandlerRequest(param->env_, resourceRequest);
     if (param->request_ == nullptr) {
+        delete work;
+        delete param;
         return;
     }
     param->arkWebRequest_ = resourceRequest;
