@@ -169,6 +169,9 @@ private:
 
     static ErrCode ConstructFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength);
 
+    static napi_value RunJSBackToOriginal(napi_env env, napi_callback_info info,
+        bool extention, napi_value argv, napi_value result);
+
     static napi_value RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention);
 
     static napi_value GetUrl(napi_env env, napi_callback_info info);
