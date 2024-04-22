@@ -282,9 +282,7 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_005, TestSize.Lev
     listenerTest->GetTextIndexAtCursor();
     listenerTest->GetLeftTextOfCursor(0);
     listenerTest->GetRightTextOfCursor(0);
-    MiscServices::Range range;
-    range.start = 0;
-    range.end = 0;
+    MiscServices::Range range { 0, 0 };
     listenerTest->SetPreviewText(text, range);
     listenerTest->FinishTextPreview();
     const std::unordered_map<std::string, MiscServices::PrivateDataValue> privateCommand;
@@ -319,9 +317,7 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
     listenerTest->GetTextIndexAtCursor();
     listenerTest->GetLeftTextOfCursor(0);
     listenerTest->GetRightTextOfCursor(0);
-    MiscServices::Range range;
-    range.start = 0;
-    range.end = 0;
+    MiscServices::Range range { 0, 0 };
     listenerTest->SetPreviewText(text, range);
     listenerTest->FinishTextPreview();
     const std::unordered_map<std::string, MiscServices::PrivateDataValue> privateCommand;
