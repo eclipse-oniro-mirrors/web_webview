@@ -137,6 +137,12 @@ public:
     virtual std::u16string GetLeftTextOfCursor(int32_t number) = 0;
 
     virtual std::u16string GetRightTextOfCursor(int32_t number) = 0;
+
+    virtual int32_t SetPreviewText(const std::u16string& text, int32_t start, int32_t end) = 0;
+
+    virtual void FinishTextPreview() = 0;
+
+    virtual void SetNeedUnderLine(bool isNeedUnderline) = 0;
 };
 
 class IMFAdapter {

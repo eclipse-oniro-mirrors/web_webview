@@ -115,12 +115,29 @@ public:
         isGetRightTextOfCursor_ = true;
         return u"";
     }
+    int32_t SetPreviewText(const std::u16string& text, int32_t start, int32_t end) override
+    {
+        WVLOG_I("test SetPreviewText");
+        isSetPreviewText_ = true;
+        return 0;
+    }
+    void FinishTextPreview() override
+    {
+        WVLOG_I("test FinishTextPreview");
+        isFinishTextPreview_ = true;
+    }
+    void SetNeedUnderLine(bool isNeedUnderline) override
+    {
+        WVLOG_I("test SetNeedUnderLine");
+        isSetNeedUnderLine_ = true;
+    }
     bool VerifyAllSuccess()
     {
         return isInsertText_ && isDeleteForward_ && isDeleteBackward_ && isSendKeyEventFromInputMethod_ &&
                isSendKeyboardStatus_ && isSendFunctionKey_ && isSetKeyboardStatus_ && isMoveCursor_ &&
                isHandleSetSelection_ && isHandleExtendAction_ && isHandleSelect_ && isGetTextIndexAtCursor_ &&
-               isGetLeftTextOfCursor_ && isGetRightTextOfCursor_;
+               isGetLeftTextOfCursor_ && isGetRightTextOfCursor_ && isSetPreviewText_ && isFinishTextPreview_ &&
+               isSetNeedUnderLine_;
     }
 
 private:
@@ -138,6 +155,9 @@ private:
     bool isGetTextIndexAtCursor_ = false;
     bool isGetLeftTextOfCursor_ = false;
     bool isGetRightTextOfCursor_ = false;
+    bool isSetPreviewText_ = false;
+    bool isFinishTextPreview_ = false;
+    bool isSetNeedUnderLine_ = false;
 };
 
 void NWebIMFAdapterTest::SetUpTestCase(void)
@@ -262,6 +282,13 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_005, TestSize.Lev
     listenerTest->GetTextIndexAtCursor();
     listenerTest->GetLeftTextOfCursor(0);
     listenerTest->GetRightTextOfCursor(0);
+    MiscServices::Range range;
+    range.start = 0;
+    range.end = 0;
+    listenerTest->SetPreviewText(text, range);
+    listenerTest->FinishTextPreview();
+    const std::unordered_map<std::string, MiscServices::PrivateDataValue> privateCommand;
+    listenerTest->ReceivePrivateCommand(privateCommand);
     EXPECT_EQ(listener->VerifyAllSuccess(), true);
 }
 
@@ -292,6 +319,13 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
     listenerTest->GetTextIndexAtCursor();
     listenerTest->GetLeftTextOfCursor(0);
     listenerTest->GetRightTextOfCursor(0);
+    MiscServices::Range range;
+    range.start = 0;
+    range.end = 0;
+    listenerTest->SetPreviewText(text, range);
+    listenerTest->FinishTextPreview();
+    const std::unordered_map<std::string, MiscServices::PrivateDataValue> privateCommand;
+    listenerTest->ReceivePrivateCommand(privateCommand);
 }
 
 /**
@@ -310,5 +344,24 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_007, TestSize.Level1)
     EXPECT_FALSE(result);
     result = g_imf->Attach(nullptr, true, nullptr);
     EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: NWebIMFAdapterTest_IMFAdapterImpl_008.
+ * @tc.desc: IMF adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_008, TestSize.Level1)
+{
+    auto imf_adapter = OhosAdapterHelper::GetInstance().CreateMMIAdapter();
+    EXPECT_NE(imf_adapter, nullptr);
+    auto listener = std::make_shared<IMFTextListenerTest>();
+    auto listenerTest = std::make_shared<IMFTextListenerAdapterImpl>(listener);
+    std::unordered_map<std::string, MiscServices::PrivateDataValue> privateCommand;
+    privateCommand = { { "test", "test" } };
+    listenerTest->ReceivePrivateCommand(privateCommand);
+    privateCommand = { { "previewTextStyle", "underline" } };
+    listenerTest->ReceivePrivateCommand(privateCommand);
 }
 } // namespace OHOS::NWeb

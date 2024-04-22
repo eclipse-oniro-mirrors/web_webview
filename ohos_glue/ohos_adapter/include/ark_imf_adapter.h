@@ -165,6 +165,15 @@ public:
 
   /*--ark web()--*/
   virtual ArkWebU16String GetRightTextOfCursor(int32_t number) = 0;
+
+  /*--ark web()--*/
+  virtual int32_t SetPreviewText(const ArkWebU16String& text, int32_t start, int32_t end) = 0;
+
+  /*--ark web()--*/
+  virtual void FinishTextPreview() = 0;
+
+  /*--ark web()--*/
+  virtual void SetNeedUnderLine(bool isNeedUnderline) = 0;
 };
 
 /*--ark web(source=library)--*/

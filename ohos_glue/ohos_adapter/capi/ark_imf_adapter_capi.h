@@ -148,6 +148,16 @@ typedef struct _ark_imftext_listener_adapter_t {
 
   ArkWebU16String(ARK_WEB_CALLBACK *get_right_text_of_cursor)(
       struct _ark_imftext_listener_adapter_t *self, int32_t number);
+
+  int32_t(ARK_WEB_CALLBACK *set_preview_text)(
+      struct _ark_imftext_listener_adapter_t *self, const ArkWebU16String *text,
+      int32_t start, int32_t end);
+
+  void(ARK_WEB_CALLBACK *finish_text_preview)(
+      struct _ark_imftext_listener_adapter_t *self);
+
+  void(ARK_WEB_CALLBACK *set_need_under_line)(
+      struct _ark_imftext_listener_adapter_t *self, bool isNeedUnderline);
 } ark_imftext_listener_adapter_t;
 
 typedef struct _ark_imfadapter_t {

@@ -210,6 +210,48 @@ ArkIMFTextListenerAdapterCToCpp::GetRightTextOfCursor(int32_t number) {
   return _struct->get_right_text_of_cursor(_struct, number);
 }
 
+ARK_WEB_NO_SANITIZE
+int32_t
+ArkIMFTextListenerAdapterCToCpp::SetPreviewText(const ArkWebU16String &text,
+                                                int32_t start, int32_t end) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_imftext_listener_adapter_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, set_preview_text, 0);
+
+  // Execute
+  return _struct->set_preview_text(_struct, &text, start, end);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkIMFTextListenerAdapterCToCpp::FinishTextPreview() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_imftext_listener_adapter_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, finish_text_preview, );
+
+  // Execute
+  _struct->finish_text_preview(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkIMFTextListenerAdapterCToCpp::SetNeedUnderLine(bool isNeedUnderline) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_imftext_listener_adapter_t* _struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, set_need_under_line, );
+
+  // Execute
+  _struct->set_need_under_line(_struct,
+      isNeedUnderline);
+}
+
 ArkIMFTextListenerAdapterCToCpp::ArkIMFTextListenerAdapterCToCpp() {
 }
 
