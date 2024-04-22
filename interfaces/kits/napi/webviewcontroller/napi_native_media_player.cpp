@@ -41,7 +41,6 @@ void NapiNativeMediaPlayerHandler::Init(napi_env env, napi_value value)
 
 napi_status NapiNativeMediaPlayerHandler::DefineProperties(napi_env env, napi_value* value)
 {
-    const std::string NPI_NATIVE_MEDIA_PLAYER_HANDLER_CLASS_NAME = "NativeMediaPlayerHandler";
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_FUNCTION("handleStatusChanged", NapiNativeMediaPlayerHandler::HandleStatusChanged),
         DECLARE_NAPI_FUNCTION("handleVolumeChanged", NapiNativeMediaPlayerHandler::HandleVolumeChanged),

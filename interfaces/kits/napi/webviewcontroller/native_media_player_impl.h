@@ -101,21 +101,21 @@ public:
         std::shared_ptr<NWebNativeMediaPlayerHandler> handler, std::shared_ptr<NWebMediaInfo> mediaInfo) override;
 
 private:
-    void ConstructRect(napi_value* argv, std::shared_ptr<NWebNativeMediaPlayerSurfaceInfo> surfaceInfo);
+    void ConstructRect(napi_value* value, std::shared_ptr<NWebNativeMediaPlayerSurfaceInfo> surfaceInfo);
 
-    void ConstructHandler(napi_value* argv, std::shared_ptr<NWebNativeMediaPlayerHandler> handler);
+    void ConstructHandler(napi_value* value, std::shared_ptr<NWebNativeMediaPlayerHandler> handler);
 
-    void ConstructControls(napi_value* argv, const std::vector<std::string>& controls);
+    void ConstructControls(napi_value* value, const std::vector<std::string>& controls);
 
-    void ConstructHeaders(napi_value* argv, const std::map<std::string, std::string>& headers);
+    void ConstructHeaders(napi_value* value, const std::map<std::string, std::string>& headers);
 
-    void ConstructAttributes(napi_value* argv, const std::map<std::string, std::string>& attributes);
+    void ConstructAttributes(napi_value* value, const std::map<std::string, std::string>& attributes);
 
-    void ConstructMediaInfo(napi_value* argv, std::shared_ptr<NWebMediaInfo> mediaInfo);
+    void ConstructMediaInfo(napi_value* value, std::shared_ptr<NWebMediaInfo> mediaInfo);
 
-    void ConstructSourceInfos(napi_value* argv, const std::vector<std::shared_ptr<NWebMediaSourceInfo>>& sourceInfos);
+    void ConstructSourceInfos(napi_value* value, const std::vector<std::shared_ptr<NWebMediaSourceInfo>>& sourceInfos);
 
-    void ConstructSurfaceInfo(napi_value* argv, std::shared_ptr<NWebNativeMediaPlayerSurfaceInfo> surfaceInfo);
+    void ConstructSurfaceInfo(napi_value* value, std::shared_ptr<NWebNativeMediaPlayerSurfaceInfo> surfaceInfo);
 
 private:
     int32_t nwebId_ = -1;

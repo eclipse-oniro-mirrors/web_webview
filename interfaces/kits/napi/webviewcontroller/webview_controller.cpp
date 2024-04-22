@@ -759,7 +759,7 @@ void WebviewController::EnableSafeBrowsing(bool enable)
 }
 
 bool WebviewController::IsSafeBrowsingEnabled()
-{  
+{
     bool isSafeBrowsingEnabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
@@ -1564,7 +1564,7 @@ bool WebviewController::ParseResponseHeaders(
     napi_get_array_length(env, responseHeadersValue, &length);
     for (uint32_t i = 0; i < length; i++) {
         std::string key;
-        std::string value;
+        std::string stringValue;
         napi_value header = nullptr;
         napi_value keyObj = nullptr;
         napi_value valueObj = nullptr;
@@ -1576,11 +1576,11 @@ bool WebviewController::ParseResponseHeaders(
         }
 
         if (napi_get_named_property(env, header, "headerValue", &valueObj) != napi_ok ||
-            !NapiParseUtils::ParseString(env, valueObj, value)) {
+            !NapiParseUtils::ParseString(env, valueObj, stringValue)) {
             continue;
         }
 
-        responseHeaders[key] = value;
+        responseHeaders[key] = stringValue;
     }
 
     return true;
