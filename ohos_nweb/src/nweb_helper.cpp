@@ -1387,7 +1387,7 @@ void NWebAdapterHelper::ParseWebConfigXml(const std::string& configFilePath,
 
 void NWebAdapterHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
 {
-    for(xmlNodePtr curNodePtr = nodePtr->xmlChildrenNode; curNodePtr; curNodePtr = curNodePtr->next) {
+    for (xmlNodePtr curNodePtr = nodePtr->xmlChildrenNode; curNodePtr; curNodePtr = curNodePtr->next) {
         if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
             WVLOG_E("invalid node!");
             continue;

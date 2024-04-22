@@ -244,14 +244,14 @@ int32_t OH_ArkWebHttpBodyStream_SetReadCallback(
 }
 
 int32_t OH_ArkWebHttpBodyStream_Init(
-    ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamInitCallback readyCallback)
+    ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamInitCallback initCallback)
 {
     if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebHttpBodyStream_Init) {
         WVLOG_E("OH_ArkWebHttpBodyStream_Init not found.");
         return ARKWEB_ERROR_UNKNOWN;
     }
 
-    return g_SchemeHandlerApi->impl_OH_ArkWebHttpBodyStream_Init(httpBodyStream, readyCallback);
+    return g_SchemeHandlerApi->impl_OH_ArkWebHttpBodyStream_Init(httpBodyStream, initCallback);
 }
 
 void OH_ArkWebHttpBodyStream_Read(const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bufLen)
