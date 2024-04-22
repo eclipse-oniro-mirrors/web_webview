@@ -36,6 +36,7 @@ IMFTextListenerAdapterImpl::~IMFTextListenerAdapterImpl()
 
 void IMFTextListenerAdapterImpl::InsertText(const std::u16string& text)
 {
+    WVLOG_E("inputmethod InsertText");
     if (listener_) {
         listener_->InsertText(text);
     }
@@ -195,8 +196,43 @@ std::u16string IMFTextListenerAdapterImpl::GetRightTextOfCursor(int32_t number)
     return u"";
 }
 
+int32_t IMFTextListenerAdapterImpl::SetPreviewText(const std::u16string& text, const MiscServices::Range& range)
+{
+    if (listener_) {
+        return listener_->SetPreviewText(text, range.start, range.end);
+    }
+    return -1;
+}
+
+void IMFTextListenerAdapterImpl::FinishTextPreview()
+{
+    if (listener_) {
+        listener_->FinishTextPreview();
+    }
+}
+
+int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
+    const std::unordered_map<std::string, MiscServices::PrivateDataValue>& privateCommand)
+{
+    WVLOG_I("ReceivePrivateCommand");
+    bool is_need_underline = false;
+    auto item = privateCommand.find(PREVIEW_TEXT_STYLE_KEY);
+    if (item != privateCommand.end()) {
+        MiscServices::PrivateDataValue data = item->second;
+        std::string previewStyle = std::get<std::string>(data);
+        if (previewStyle == PREVIEW_TEXT_STYLE_UNDERLINE) {
+            is_need_underline = true;
+        }
+    }
+    if (listener_) {
+        listener_->SetNeedUnderLine(is_need_underline);
+    }
+    return 0;
+}
+
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard)
 {
+    WVLOG_E("inputmethod attach isShowKeyboard=%{public}d", isShowKeyboard);
     if (!listener) {
         WVLOG_E("the listener is nullptr");
         return false;
@@ -227,6 +263,7 @@ void ReportImfErrorEvent(int32_t ret, bool isShowKeyboard)
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
     const std::shared_ptr<IMFTextConfigAdapter> config)
 {
+    WVLOG_E("inputmethod attach 222 isShowKeyboard=%{public}d", isShowKeyboard);
     if (!listener) {
         WVLOG_E("the listener is nullptr");
         ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
@@ -248,7 +285,8 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
     }
 
     MiscServices::InputAttribute inputAttribute = { .inputPattern = config->GetInputAttribute()->GetInputPattern(),
-        .enterKeyType = config->GetInputAttribute()->GetEnterKeyType() };
+        .enterKeyType = config->GetInputAttribute()->GetEnterKeyType(),
+        .isTextPreviewSupported = true };
 
     MiscServices::CursorInfo imfInfo = { .left = config->GetCursorInfo()->GetLeft(),
         .top = config->GetCursorInfo()->GetTop(),
@@ -258,6 +296,7 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
     MiscServices::TextConfig textConfig = {
         .inputAttribute = inputAttribute, .cursorInfo = imfInfo, .windowId = config->GetWindowId()
     };
+    WVLOG_E("inputmethod attach isTextPreviewSupported=%{public}d", textConfig.inputAttribute.isTextPreviewSupported);
     int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);

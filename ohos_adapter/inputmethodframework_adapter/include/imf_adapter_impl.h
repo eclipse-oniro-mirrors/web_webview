@@ -75,8 +75,17 @@ public:
 
     std::u16string GetRightTextOfCursor(int32_t number) override;
 
+    int32_t SetPreviewText(const std::u16string& text, const MiscServices::Range& range) override;
+
+    void FinishTextPreview() override;
+
+    int32_t ReceivePrivateCommand(
+        const std::unordered_map<std::string, MiscServices::PrivateDataValue>& privateCommand) override;
+
 private:
     std::shared_ptr<IMFTextListenerAdapter> listener_ = nullptr;
+    const std::string PREVIEW_TEXT_STYLE_KEY = "previewTextStyle";
+    const std::string PREVIEW_TEXT_STYLE_UNDERLINE = "underline";
 };
 
 class IMFAdapterImpl : public IMFAdapter {

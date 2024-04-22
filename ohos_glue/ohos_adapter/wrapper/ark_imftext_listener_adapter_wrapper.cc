@@ -109,4 +109,23 @@ std::u16string ArkIMFTextListenerAdapterWrapper::GetRightTextOfCursor(int32_t nu
     return result;
 }
 
+int32_t ArkIMFTextListenerAdapterWrapper::SetPreviewText(const std::u16string &text, int32_t start, int32_t end)
+{
+    ArkWebU16String str = ArkWebU16StringClassToStruct(text);
+    int32_t result = ctocpp_->SetPreviewText(str, start, end);
+
+    ArkWebU16StringStructRelease(str);
+    return result;
+}
+
+void ArkIMFTextListenerAdapterWrapper::FinishTextPreview()
+{
+    ctocpp_->FinishTextPreview();
+}
+
+void ArkIMFTextListenerAdapterWrapper::SetNeedUnderLine(bool isNeedUnderline)
+{
+    ctocpp_->SetNeedUnderLine(isNeedUnderline);
+}
+
 } // namespace OHOS::ArkWeb

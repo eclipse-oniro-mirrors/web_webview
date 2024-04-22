@@ -55,6 +55,12 @@ public:
 
     std::u16string GetRightTextOfCursor(int32_t number) override;
 
+    int32_t SetPreviewText(const std::u16string &text, int32_t start, int32_t end) override;
+
+    void FinishTextPreview() override;
+
+    void SetNeedUnderLine(bool isNeedUnderline) override;
+
 private:
     ArkWebRefPtr<ArkIMFTextListenerAdapter> ctocpp_;
 };
