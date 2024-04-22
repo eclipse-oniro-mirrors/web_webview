@@ -107,8 +107,6 @@ public:
 
     std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() override;
 
-    AiEngineAdapter& GetAiEngineAdapterInstance() override;
-
     std::unique_ptr<MediaAVSessionAdapter> CreateMediaAVSessionAdapter() override;
 };
 } // namespace OHOS::NWeb
