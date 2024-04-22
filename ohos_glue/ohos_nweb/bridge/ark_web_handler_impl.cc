@@ -806,4 +806,9 @@ ArkWebCharVector ArkWebHandlerImpl::GetWordSelection(const ArkWebString& text, i
   ArkWebCharVector ark_result = ArkWebBasicVectorClassToStruct<char, ArkWebCharVector>(result);
   return ark_result;
 }
+
+void ArkWebHandlerImpl::UpdateClippedSelectionBounds(int x, int y, int w, int h)
+{
+  nweb_handler_->UpdateClippedSelectionBounds(x, y, w, h);
+}
 } // namespace OHOS::ArkWeb
