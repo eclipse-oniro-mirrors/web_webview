@@ -3039,6 +3039,21 @@ ErrCode NapiWebviewController::ConstructFlowbuf(napi_env env, napi_value argv, i
     return constructResult;
 }
 
+napi_value NapiWebviewController::RunJSBackToOriginal(napi_env env, napi_callback_info info,
+    bool extention, napi_value argv, napi_value result)
+{
+    std::string script;
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv, &valueType);
+    bool parseResult = (valueType == napi_string) ? NapiParseUtils::ParseString(env, argv, script) :
+        NapiParseUtils::ParseArrayBuffer(env, argv, script);
+    if (!parseResult) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+    return RunJavaScriptInternal(env, info, script, extention);
+}
+
 napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention)
 {
     napi_value thisVar = nullptr;
@@ -3055,8 +3070,7 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
     size_t scriptLength;
     ErrCode constructResult = ConstructFlowbuf(env, argv[INTEGER_ZERO], fd, scriptLength);
     if (constructResult != NO_ERROR) {
-        BusinessError::ThrowErrorByErrcode(env, constructResult);
-        return result;
+        return RunJSBackToOriginal(env, info, extention, argv[INTEGER_ZERO], result);
     }
     usedFd_++;
 
