@@ -36,7 +36,6 @@ IMFTextListenerAdapterImpl::~IMFTextListenerAdapterImpl()
 
 void IMFTextListenerAdapterImpl::InsertText(const std::u16string& text)
 {
-    WVLOG_E("inputmethod InsertText");
     if (listener_) {
         listener_->InsertText(text);
     }
@@ -232,7 +231,6 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
 
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard)
 {
-    WVLOG_E("inputmethod attach isShowKeyboard=%{public}d", isShowKeyboard);
     if (!listener) {
         WVLOG_E("the listener is nullptr");
         return false;
@@ -296,7 +294,6 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
     MiscServices::TextConfig textConfig = {
         .inputAttribute = inputAttribute, .cursorInfo = imfInfo, .windowId = config->GetWindowId()
     };
-    WVLOG_E("inputmethod attach isTextPreviewSupported=%{public}d", textConfig.inputAttribute.isTextPreviewSupported);
     int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
