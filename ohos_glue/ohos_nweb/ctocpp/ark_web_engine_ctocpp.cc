@@ -359,6 +359,34 @@ void ArkWebEngineCToCpp::WarmupServiceWorker(const ArkWebString &url) {
   _struct->warmup_service_worker(_struct, &url);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::SetHostIP(const ArkWebString& hostName, const ArkWebString& address, int32_t aliveTime)
+{
+    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+    ark_web_engine_t* _struct = GetStruct();
+    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, set_host_ip, );
+
+    // Execute
+    _struct->set_host_ip(_struct, &hostName, &address, aliveTime);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::ClearHostIP(const ArkWebString& hostName)
+{
+    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+    ark_web_engine_t* _struct = GetStruct();
+    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, clear_host_ip, );
+
+    // Execute
+    _struct->clear_host_ip(_struct, &hostName);
+}
+
 ArkWebEngineCToCpp::ArkWebEngineCToCpp() {
 }
 
