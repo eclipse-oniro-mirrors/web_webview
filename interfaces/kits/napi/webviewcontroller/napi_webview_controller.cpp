@@ -5354,5 +5354,57 @@ void NapiWebviewController::AddResourceToMemoryCache(napi_env env,
 
     webviewController->InjectOfflineResource(urlList, resource, responseHeaders, type);
 }
+
+napi_value NapiWebviewController::SetHostIP(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = { 0 };
+    std::string hostName;
+    std::string address;
+    int32_t aliveTime = INTEGER_ZERO;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_THREE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], hostName) ||
+        !NapiParseUtils::ParseString(env, argv[INTEGER_ONE], address) ||
+        !NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], aliveTime)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    NWebHelper::Instance().SetHostIP(hostName, address, aliveTime);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::ClearHostIP(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    std::string hostName;
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], hostName)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    NWebHelper::Instance().ClearHostIP(hostName);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
 } // namespace NWeb
 } // namespace OHOS
