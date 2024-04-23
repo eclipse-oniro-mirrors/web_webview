@@ -30,6 +30,12 @@ public:
     static napi_status DefineProperties(napi_env env, napi_value* value);
 
 private:
+    static napi_status ExportEnumPreload(napi_env env, napi_value* value);
+
+    static napi_status ExportEnumMediaType(napi_env env, napi_value* value);
+
+    static napi_status ExportEnumSourceType(napi_env env, napi_value* value);
+
     static napi_status ExportEnumMediaError(napi_env env, napi_value* value);
 
     static napi_status ExportEnumReadyState(napi_env env, napi_value* value);
