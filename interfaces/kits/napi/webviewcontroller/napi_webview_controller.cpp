@@ -52,6 +52,8 @@ namespace {
 constexpr uint32_t URL_MAXIMUM = 2048;
 constexpr uint32_t SOCKET_MAXIMUM = 6;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
+constexpr size_t MAX_RESOURCES_COUNT = 30;
+constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
 
 bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
@@ -417,6 +419,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
         DECLARE_NAPI_FUNCTION("precompileJavaScript", NapiWebviewController::PrecompileJavaScript),
         DECLARE_NAPI_STATIC_FUNCTION("warmupServiceWorker", NapiWebviewController::WarmupServiceWorker),
+        DECLARE_NAPI_FUNCTION("injectOfflineResource", NapiWebviewController::InjectOfflineResource),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -583,6 +586,22 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(renderProcessModeProperties) /
         sizeof(renderProcessModeProperties[0]), renderProcessModeProperties, &renderProcessModeEnum);
     napi_set_named_property(env, exports, WEB_RENDER_PROCESS_MODE_ENUM_NAME.c_str(), renderProcessModeEnum);
+
+    napi_value offlineResourceTypeEnum = nullptr;
+    napi_property_descriptor offlineResourceTypeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("IMAGE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(OfflineResourceType::IMAGE))),
+        DECLARE_NAPI_STATIC_PROPERTY("CSS", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(OfflineResourceType::CSS))),
+        DECLARE_NAPI_STATIC_PROPERTY("CLASSIC_JS", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(OfflineResourceType::CLASSIC_JS))),
+        DECLARE_NAPI_STATIC_PROPERTY("MODULE_JS", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(OfflineResourceType::MODULE_JS))),
+    };
+    napi_define_class(env, OFFLINE_RESOURCE_TYPE_ENUM_NAME.c_str(), OFFLINE_RESOURCE_TYPE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(offlineResourceTypeProperties) /
+        sizeof(offlineResourceTypeProperties[0]), offlineResourceTypeProperties, &offlineResourceTypeEnum);
+    napi_set_named_property(env, exports, OFFLINE_RESOURCE_TYPE_ENUM_NAME.c_str(), offlineResourceTypeEnum);
 
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     return exports;
@@ -5164,6 +5183,7 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("PrecompileJavaScript: init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5221,6 +5241,118 @@ napi_value NapiWebviewController::WarmupServiceWorker(napi_env env, napi_callbac
 
     NWebHelper::Instance().WarmupServiceWorker(url);
     return result;
+}
+
+napi_value NapiWebviewController::InjectOfflineResource(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = {0};
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("InjectOfflineResource: args count is not allowed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    napi_value resourcesList = argv[INTEGER_ZERO];
+    bool isArray = false;
+    napi_is_array(env, resourcesList, &isArray);
+    if (!isArray) {
+        WVLOG_E("InjectOfflineResource: param is not array.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    AddResourcesToMemoryCache(env, info, resourcesList);
+    return result;
+}
+
+void NapiWebviewController::AddResourcesToMemoryCache(napi_env env,
+                                                      napi_callback_info info,
+                                                      napi_value& resourcesList)
+{
+    uint32_t resourcesCount = 0;
+    napi_get_array_length(env, resourcesList, &resourcesCount);
+
+    if (resourcesCount > MAX_RESOURCES_COUNT || resourcesCount == 0) {
+        WVLOG_E("InjectOfflineResource: too many resources or empty resources.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+
+    for (uint32_t i = 0 ; i < resourcesCount ; i++) {
+        napi_value urlListObj = nullptr;    
+        napi_value resourceObj = nullptr;
+        napi_value headersObj = nullptr;
+        napi_value typeObj = nullptr;
+        napi_value obj = nullptr;
+
+        napi_create_array(env, &headersObj);
+        napi_create_array(env, &urlListObj);
+
+        napi_get_element(env, resourcesList, i, &obj);
+        if ((napi_get_named_property(env, obj, "urlList", &urlListObj) != napi_ok) ||
+            (napi_get_named_property(env, obj, "resource", &resourceObj) != napi_ok) ||
+            (napi_get_named_property(env, obj, "responseHeaders", &headersObj) != napi_ok) ||
+            (napi_get_named_property(env, obj, "type", &typeObj) != napi_ok)) {
+            WVLOG_E("InjectOfflineResource: parse params from resource map failed.");
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            continue;
+        }
+
+        OfflineResourceValue resourceValue;
+        resourceValue.urlList = urlListObj;
+        resourceValue.resource = resourceObj;
+        resourceValue.responseHeaders = headersObj;
+        resourceValue.type = typeObj;
+        AddResourceToMemoryCache(env, info, resourceValue);
+    }
+}
+
+void NapiWebviewController::AddResourceToMemoryCache(napi_env env,
+                                                     napi_callback_info info,
+                                                     OfflineResourceValue resourceValue)
+{
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("InjectOfflineResource: init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return;
+    }
+
+    std::vector<std::string> urlList;
+    ParseURLResult result = webviewController->ParseURLList(env, resourceValue.urlList, urlList);
+    if (result != ParseURLResult::OK) {
+        WVLOG_E("InjectOfflineResource: parse url list failed.");
+        auto errCode = result == ParseURLResult::FAILED ? PARAM_CHECK_ERROR : INVALID_URL;
+        BusinessError::ThrowErrorByErrcode(env, errCode);
+        return;
+    }
+
+    std::vector<uint8_t> resource = webviewController->ParseUint8Array(env, resourceValue.resource);
+    if (resource.empty() || resource.size() > MAX_RESOURCE_SIZE) {
+        WVLOG_E("InjectOfflineResource: parse resource failed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+
+    std::map<std::string, std::string> responseHeaders;
+    if (!webviewController->ParseResponseHeaders(env, resourceValue.responseHeaders, responseHeaders)) {
+        WVLOG_E("InjectOfflineResource: parse response headers failed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+
+    uint32_t type = 0;
+    if (!NapiParseUtils::ParseUint32(env, resourceValue.type, type)) {
+        WVLOG_E("InjectOfflineResource: parse type failed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+
+    webviewController->InjectOfflineResource(urlList, resource, responseHeaders, type);
 }
 } // namespace NWeb
 } // namespace OHOS
