@@ -17,6 +17,7 @@
 #include <memory>
 #include <unordered_map>
 #include <securec.h>
+#include <regex>
 
 #include "application_context.h"
 #include "business_error.h"
@@ -47,6 +48,7 @@ const std::string MODULE_NAME_PREFIX = "moduleName:";
 namespace OHOS {
 namespace NWeb {
 namespace {
+constexpr uint32_t URL_MAXIMUM = 2048;
 bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleName)
 {
     static std::string applicationBundleName;
@@ -1462,24 +1464,10 @@ bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::
         script = str;
         return true;
     }
-
-    napi_typedarray_type typedArrayType;
-    size_t length = 0;
-    napi_value buffer = nullptr;
-    size_t offset = 0;
-    napi_get_typedarray_info(env, value, &typedArrayType, &length, nullptr, &buffer, &offset);
-    if (typedArrayType != napi_uint8_array) {
-        WVLOG_E("PrecompileJavaScript: script text is not string or unit8array.");
-        return false;
-    }
-
-    uint8_t *data = nullptr;
-    size_t total = 0;
-    napi_get_arraybuffer_info(env, buffer, reinterpret_cast<void **>(&data), &total);
-    length = std::min<size_t>(length, total - offset);
-    std::vector<uint8_t> vec(length);
-    int retCode = memcpy_s(vec.data(), vec.size(), &data[offset], length);
-    if (retCode != 0) {
+    
+    std::vector<uint8_t> vec = ParseUint8Array(env, value);
+    if (!vec.size()) {
+        WVLOG_E("PrecompileJavaScript: parse script text to Uint8Array failed.");
         return false;
     }
 
@@ -1494,7 +1482,13 @@ std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env,
     bool isTopLevel = false;
     auto defaultCacheOptions = std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
 
-    if (!ParseResponseHeaders(env, value, responseHeaders)) {
+    napi_value responseHeadersValue = nullptr;
+    if (napi_get_named_property(env, value, "responseHeaders", &responseHeadersValue) != napi_ok) {
+        WVLOG_D("PrecompileJavaScript: cannot get 'responseHeaders' of CacheOptions.");
+        return defaultCacheOptions;
+    }
+
+    if (!ParseResponseHeaders(env, responseHeadersValue, responseHeaders)) {
         WVLOG_D("PrecompileJavaScript: parse 'responseHeaders' of CacheOptions failed. use default options");
         return defaultCacheOptions;
     }
@@ -1543,47 +1537,118 @@ ErrCode WebviewController::PrecompileJavaScriptPromise(
     return NWebError::NO_ERROR;
 }
 
-bool WebviewController::ParseResponseHeaders(
-    napi_env env, napi_value value,
-    std::map<std::string, std::string> &responseHeaders)
+bool WebviewController::ParseResponseHeaders(napi_env env,
+                                             napi_value value,
+                                             std::map<std::string, std::string> &responseHeaders)
 {
-    napi_value responseHeadersValue = nullptr;
-    if (napi_get_named_property(env, value, "responseHeaders", &responseHeadersValue) != napi_ok) {
-        WVLOG_D("PrecompileJavaScript: cannot get 'responseHeaders' of CacheOptions.");
-        return false;
-    }
-
     bool isArray = false;
-    napi_is_array(env, responseHeadersValue, &isArray);
+    napi_is_array(env, value, &isArray);
     if (!isArray) {
-        WVLOG_D("PrecompileJavaScript: 'responseHeaders' of CacheOptions is not array.");
+        WVLOG_E("Response headers is not array.");
         return false;
     }
 
     uint32_t length = INTEGER_ZERO;
-    napi_get_array_length(env, responseHeadersValue, &length);
+    napi_get_array_length(env, value, &length);
     for (uint32_t i = 0; i < length; i++) {
-        std::string key;
-        std::string stringValue;
+        std::string keyString;
+        std::string valueString;
         napi_value header = nullptr;
         napi_value keyObj = nullptr;
         napi_value valueObj = nullptr;
-        napi_get_element(env, responseHeadersValue, i, &header);
+        napi_get_element(env, value, i, &header);
 
         if (napi_get_named_property(env, header, "headerKey", &keyObj) != napi_ok ||
-            !NapiParseUtils::ParseString(env, keyObj, key)) {
+            !NapiParseUtils::ParseString(env, keyObj, keyString)) {
             continue;
         }
 
         if (napi_get_named_property(env, header, "headerValue", &valueObj) != napi_ok ||
-            !NapiParseUtils::ParseString(env, valueObj, stringValue)) {
+            !NapiParseUtils::ParseString(env, valueObj, valueString)) {
             continue;
         }
 
-        responseHeaders[key] = stringValue;
+        responseHeaders[keyString] = valueString;
     }
 
     return true;
+}
+
+ParseURLResult WebviewController::ParseURLList(napi_env env, napi_value value, std::vector<std::string>& urlList)
+{
+    if (!NapiParseUtils::ParseStringArray(env, value, urlList)) {
+        return ParseURLResult::FAILED;
+    }
+
+    for (auto url : urlList) {
+        if (!CheckURL(url)) {
+            return ParseURLResult::INVALID_URL;
+        }
+    }
+
+    return ParseURLResult::OK;
+}
+
+bool WebviewController::CheckURL(std::string& url)
+{
+    if (url.size() > URL_MAXIMUM) {
+        WVLOG_E("The URL exceeds the maximum length of %{public}d. URL: %{public}s", URL_MAXIMUM, url.c_str());
+        return false;
+    }
+
+    if (!regex_match(url, std::regex("^http(s)?:\\/\\/.+", std::regex_constants::icase))) {
+        WVLOG_E("The Parse URL error. URL: %{public}s", url.c_str());
+        return false;
+    }
+
+    return true;
+}
+
+std::vector<uint8_t> WebviewController::ParseUint8Array(napi_env env, napi_value value)
+{
+    napi_typedarray_type typedArrayType;
+    size_t length = 0;
+    napi_value buffer = nullptr;
+    size_t offset = 0;
+    napi_get_typedarray_info(env, value, &typedArrayType, &length, nullptr, &buffer, &offset);
+    if (typedArrayType != napi_uint8_array) {
+        WVLOG_E("Param is not Unit8Array.");
+        return std::vector<uint8_t>();
+    }
+
+    uint8_t *data = nullptr;
+    size_t total = 0;
+    napi_get_arraybuffer_info(env, buffer, reinterpret_cast<void **>(&data), &total);
+    length = std::min<size_t>(length, total - offset);
+    std::vector<uint8_t> vec(length);
+    int retCode = memcpy_s(vec.data(), vec.size(), &data[offset], length);
+    if (retCode != 0) {
+        WVLOG_E("Parse Uint8Array failed.");
+        return std::vector<uint8_t>();
+    }
+
+    return vec;
+}
+
+void WebviewController::InjectOfflineResource(const std::vector<std::string>& urlList,
+                                              const std::vector<uint8_t>& resource,
+                                              const std::map<std::string, std::string>& response_headers,
+                                              const uint32_t type)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return;
+    }
+
+    std::string originUrl = urlList[0];
+    if (urlList.size() == 1) {
+        nweb_ptr->InjectOfflineResource(originUrl, originUrl, resource, response_headers, type);
+        return;
+    }
+
+    for (size_t i = 1 ; i < urlList.size() ; i++) {
+        nweb_ptr->InjectOfflineResource(urlList[i], originUrl, resource, response_headers, type);
+    }
 }
 } // namespace NWeb
 } // namespace OHOS

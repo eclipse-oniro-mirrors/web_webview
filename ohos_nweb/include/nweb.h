@@ -1220,6 +1220,21 @@ public:
      */
     /*--ark web()--*/
     virtual int ScaleGestureChange(double scale, double centerX, double centerY) = 0;
+
+    /**
+     * @brief Inject offline resource into MemoryCache.
+     *
+     * @param url url of resource.
+     * @param origin origin of resource.
+     * @param resource data of resource.
+     * @param response_headers response headers of resource.
+     * @param type resource type.
+     */
+    virtual void InjectOfflineResource(const std::string& url,
+                                       const std::string& origin,
+                                       const std::vector<uint8_t>& resource,
+                                       const std::map<std::string, std::string>& responseHeaders,
+                                       const int type) = 0;
 };
 }  // namespace OHOS::NWeb
 

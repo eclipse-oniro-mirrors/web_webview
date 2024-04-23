@@ -2085,6 +2085,23 @@ int ArkWebNWebCToCpp::ScaleGestureChange(double scale, double centerX,
   return _struct->scale_gesture_change(_struct, scale, centerX, centerY);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::InjectOfflineResource(
+    const ArkWebString &url, const ArkWebString &origin,
+    const ArkWebUint8Vector &resource, const ArkWebStringMap &responseHeaders,
+    const int type) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, inject_offline_resource, );
+
+  // Execute
+  _struct->inject_offline_resource(_struct, &url, &origin, &resource, &responseHeaders,
+                                   type);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 

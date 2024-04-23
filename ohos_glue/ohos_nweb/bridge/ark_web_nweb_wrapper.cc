@@ -1023,4 +1023,25 @@ int ArkWebNWebWrapper::ScaleGestureChange(double scale, double centerX, double c
   return ark_web_nweb_->ScaleGestureChange(scale, centerX, centerY);
 }
 
+void ArkWebNWebWrapper::InjectOfflineResource(const std::string& url,
+                                              const std::string& origin,
+                                              const std::vector<uint8_t>& resource,
+                                              const std::map<std::string, std::string>& responseHeaders,
+                                              const int type) {
+  ArkWebString arkUrl = ArkWebStringClassToStruct(url);
+  ArkWebString arkOrigin = ArkWebStringClassToStruct(origin);
+
+  auto responseHeadersMap = ArkWebStringMapClassToStruct(responseHeaders);
+
+  ArkWebUint8Vector arkResource =
+      ArkWebBasicVectorClassToStruct<uint8_t, ArkWebUint8Vector>(resource);
+
+  ark_web_nweb_->InjectOfflineResource(arkUrl, arkOrigin, arkResource, responseHeadersMap, type);
+
+  ArkWebStringStructRelease(arkUrl);
+  ArkWebStringStructRelease(arkOrigin);
+  ArkWebBasicVectorStructRelease<ArkWebUint8Vector>(arkResource);
+  ArkWebStringMapStructRelease(responseHeadersMap);
+}
+
 } // namespace OHOS::ArkWeb

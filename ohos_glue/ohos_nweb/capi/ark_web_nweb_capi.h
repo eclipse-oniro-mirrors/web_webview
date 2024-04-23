@@ -494,6 +494,11 @@ typedef struct _ark_web_nweb_t {
   int(ARK_WEB_CALLBACK *scale_gesture_change)(struct _ark_web_nweb_t *self,
                                               double scale, double centerX,
                                               double centerY);
+
+  void(ARK_WEB_CALLBACK *inject_offline_resource)(
+      struct _ark_web_nweb_t *self, const ArkWebString *url,
+      const ArkWebString *origin, const ArkWebUint8Vector *resource,
+      const ArkWebStringMap *responseHeaders, const int type);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus
