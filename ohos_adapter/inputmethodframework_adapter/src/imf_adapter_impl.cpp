@@ -261,7 +261,6 @@ void ReportImfErrorEvent(int32_t ret, bool isShowKeyboard)
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
     const std::shared_ptr<IMFTextConfigAdapter> config)
 {
-    WVLOG_E("inputmethod attach 222 isShowKeyboard=%{public}d", isShowKeyboard);
     if (!listener) {
         WVLOG_E("the listener is nullptr");
         ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
