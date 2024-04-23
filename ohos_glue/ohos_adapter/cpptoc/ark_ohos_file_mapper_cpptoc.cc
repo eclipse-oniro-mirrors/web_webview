@@ -86,12 +86,12 @@ bool ARK_WEB_CALLBACK ark_ohos_file_mapper_unzip_data(
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(&dest, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(dest, false);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(len, false);
 
   // Execute
-  return ArkOhosFileMapperCppToC::Get(self)->UnzipData(*dest, *len);
+  return ArkOhosFileMapperCppToC::Get(self)->UnzipData(dest, *len);
 }
 
 } // namespace

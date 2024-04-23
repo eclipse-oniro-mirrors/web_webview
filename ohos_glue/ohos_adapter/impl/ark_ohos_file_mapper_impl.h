@@ -37,7 +37,7 @@ public:
 
     size_t GetDataLen() override;
 
-    bool UnzipData(uint8_t*& dest, size_t& len) override;
+    bool UnzipData(uint8_t** dest, size_t& len) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::OhosFileMapper> real_;

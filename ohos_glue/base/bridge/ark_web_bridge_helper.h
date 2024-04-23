@@ -17,6 +17,7 @@
 #define ARK_WEB_BRIDGE_HELPER_H_
 #pragma once
 
+#include <dlfcn.h>
 #include <string>
 
 namespace OHOS::ArkWeb {
@@ -33,17 +34,14 @@ protected:
   ArkWebBridgeHelper() = default;
 
 #ifdef __MUSL__
-  bool LoadLibFile(bool runMode, const std::string &libNsName,
+  bool LoadLibFile(int mode, const std::string &libNsName,
                    const std::string &libDirPath,
                    const std::string &libFileName);
 #else
-  bool LoadLibFile(bool runMode, const std::string &libDirPath,
-                   const std::string &libFileName);
+  bool LoadLibFile(int mode, const std::string &libFilePath);
 #endif
 
 private:
-  std::string GetDirPath(bool runMode, const std::string &baseDir);
-
   void UnloadLibFile();
 
   void *libFileHandler_;

@@ -112,7 +112,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetRawFileData_002, Te
     std::string rawFile = "test_web";
     size_t len = rawFile.size();
     uint8_t* data;
-    bool result = adapterImpl.GetRawFileData(rawFile, len, data, true);
+    bool result = adapterImpl.GetRawFileData(rawFile, len, &data, true);
     EXPECT_FALSE(result);
     std::shared_ptr<Extractor> extractor = std::make_shared<Extractor>(rawFile);
     result = adapterImpl.GetRawFileData(extractor, rawFile, len, dest);
@@ -190,10 +190,10 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
     size_t dataLen = apperImpl.GetDataLen();
     EXPECT_NE(dataLen, 0);
     uint8_t* dest;
-    isCompressed = apperImpl.UnzipData(dest, dataLen);
+    isCompressed = apperImpl.UnzipData(&dest, dataLen);
     EXPECT_FALSE(isCompressed);
     apperImpl.extractor_.reset();
-    isCompressed = apperImpl.UnzipData(dest, dataLen);
+    isCompressed = apperImpl.UnzipData(&dest, dataLen);
     EXPECT_FALSE(isCompressed);
 }
 
@@ -271,38 +271,38 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetResourceMgr_005, Te
     uint8_t* dest;
     std::string rawFile = "test";
     size_t len = rawFile.size();
-    bool result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    bool result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     rawFile = "resources/rawfile/";
     len = rawFile.size();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     rawFile = "resources/rawfile/bundleName";
     len = rawFile.size();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     rawFile = "resources/rawfile/bundleName:";
     len = rawFile.size();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     rawFile = "resources/rawfile/bundleName:test/";
     len = rawFile.size();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     rawFile = "resources/rawfile/bundleName:test/moduleName:";
     len = rawFile.size();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     rawFile = "resources/rawfile/bundleName:test/moduleName:web/";
     len = rawFile.size();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     rawFile = "resources/rawfile/bundleName:test/moduleName:web/webtest";
     len = rawFile.size();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
     g_applicationContext = std::make_shared<ApplicationContextMock>();
-    result = adapterImpl.GetRawFileData(rawFile, len, dest, false);
+    result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
 }
 }

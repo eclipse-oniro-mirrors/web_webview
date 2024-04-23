@@ -48,7 +48,7 @@ public:
   virtual size_t GetDataLen() = 0;
 
   /*--ark web()--*/
-  virtual bool UnzipData(uint8_t *&dest, size_t &len) = 0;
+  virtual bool UnzipData(uint8_t **dest, size_t &len) = 0;
 };
 
 /*--ark web(source=library)--*/
@@ -59,7 +59,7 @@ public:
 
   /*--ark web()--*/
   virtual bool GetRawFileData(const ArkWebString &rawFile, size_t &len,
-                              uint8_t *&dest, bool isSys) = 0;
+                              uint8_t **dest, bool isSys) = 0;
 
   /*--ark web()--*/
   virtual ArkWebRefPtr<ArkOhosFileMapper>

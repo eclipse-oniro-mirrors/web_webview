@@ -37,7 +37,7 @@ public:
 
     virtual size_t GetDataLen() = 0;
 
-    virtual bool UnzipData(uint8_t* &dest, size_t& len) = 0;
+    virtual bool UnzipData(uint8_t** dest, size_t& len) = 0;
 };
 
 class OhosResourceAdapter {
@@ -46,7 +46,7 @@ public:
     virtual ~OhosResourceAdapter() = default;
 
     virtual bool GetRawFileData(const std::string& rawFile, size_t& len,
-        uint8_t* &dest, bool isSys = false) = 0;
+        uint8_t** dest, bool isSys = false) = 0;
 
     virtual std::shared_ptr<OhosFileMapper> GetRawFileMapper(const std::string& rawFile,
         bool isSys = false) = 0;
