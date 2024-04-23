@@ -195,6 +195,40 @@ std::u16string IMFTextListenerAdapterImpl::GetRightTextOfCursor(int32_t number)
     return u"";
 }
 
+int32_t IMFTextListenerAdapterImpl::SetPreviewText(const std::u16string& text, const MiscServices::Range& range)
+{
+    if (listener_) {
+        return listener_->SetPreviewText(text, range.start, range.end);
+    }
+    return -1;
+}
+
+void IMFTextListenerAdapterImpl::FinishTextPreview()
+{
+    if (listener_) {
+        listener_->FinishTextPreview();
+    }
+}
+
+int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
+    const std::unordered_map<std::string, MiscServices::PrivateDataValue>& privateCommand)
+{
+    WVLOG_I("ReceivePrivateCommand");
+    bool is_need_underline = false;
+    auto item = privateCommand.find(PREVIEW_TEXT_STYLE_KEY);
+    if (item != privateCommand.end()) {
+        MiscServices::PrivateDataValue data = item->second;
+        std::string previewStyle = std::get<std::string>(data);
+        if (previewStyle == PREVIEW_TEXT_STYLE_UNDERLINE) {
+            is_need_underline = true;
+        }
+    }
+    if (listener_) {
+        listener_->SetNeedUnderLine(is_need_underline);
+    }
+    return 0;
+}
+
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard)
 {
     if (!listener) {
@@ -248,7 +282,8 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
     }
 
     MiscServices::InputAttribute inputAttribute = { .inputPattern = config->GetInputAttribute()->GetInputPattern(),
-        .enterKeyType = config->GetInputAttribute()->GetEnterKeyType() };
+        .enterKeyType = config->GetInputAttribute()->GetEnterKeyType(),
+        .isTextPreviewSupported = true };
 
     MiscServices::CursorInfo imfInfo = { .left = config->GetCursorInfo()->GetLeft(),
         .top = config->GetCursorInfo()->GetTop(),

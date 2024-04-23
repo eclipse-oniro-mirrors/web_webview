@@ -62,6 +62,13 @@ public:
   ArkWebU16String GetLeftTextOfCursor(int32_t number) override;
 
   ArkWebU16String GetRightTextOfCursor(int32_t number) override;
+
+  int32_t SetPreviewText(const ArkWebU16String &text, int32_t start,
+                         int32_t end) override;
+
+  void FinishTextPreview() override;
+
+  void SetNeedUnderLine(bool isNeedUnderline) override;
 };
 
 } // namespace OHOS::ArkWeb
