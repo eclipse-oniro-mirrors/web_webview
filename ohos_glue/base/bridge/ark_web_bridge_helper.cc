@@ -15,50 +15,27 @@
 
 #include "base/bridge/ark_web_bridge_helper.h"
 #include "base/bridge/ark_web_bridge_macros.h"
-#include <dlfcn.h>
 
 namespace OHOS::ArkWeb {
-
-#if defined(webview_arm64)
-const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm64";
-const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm64";
-#elif defined(webview_x86_64)
-const std::string RELATIVE_PATH_FOR_MOCK = "libs/x86_64";
-const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/x86_64";
-#else
-const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm";
-const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm";
-#endif
 
 ArkWebBridgeHelper::~ArkWebBridgeHelper() {
   UnloadLibFile();
 }
 
-std::string ArkWebBridgeHelper::GetDirPath(bool runMode,
-                                           const std::string &baseDir) {
-  if (runMode) {
-    return baseDir + "/" + RELATIVE_PATH_FOR_BUNDLE;
-  }
-
-  return baseDir + "/" + RELATIVE_PATH_FOR_MOCK;
-}
-
 #ifdef __MUSL__
-bool ArkWebBridgeHelper::LoadLibFile(bool runMode, const std::string &libNsName,
+bool ArkWebBridgeHelper::LoadLibFile(int mode, const std::string &libNsName,
                                      const std::string &libDirPath,
                                      const std::string &libFileName) {
   Dl_namespace dlns;
   dlns_init(&dlns, libNsName.c_str());
 
-  std::string dirPath = GetDirPath(runMode, libDirPath);
-  dlns_create(&dlns, dirPath.c_str());
+  dlns_create(&dlns, libDirPath.c_str());
 
-  void *libFileHandler =
-      dlopen_ns(&dlns, libFileName.c_str(), RTLD_NOW | RTLD_GLOBAL);
+  void *libFileHandler = dlopen_ns(&dlns, libFileName.c_str(), mode);
   if (!libFileHandler) {
     ARK_WEB_WRAPPER_ERROR_LOG("failed to load lib file,lib file name is "
                               "%{public}s,lib dir name is %{public}s",
-                              libFileName.c_str(), dirPath.c_str());
+                              libFileName.c_str(), libDirPath.c_str());
     return false;
   }
 
@@ -66,12 +43,8 @@ bool ArkWebBridgeHelper::LoadLibFile(bool runMode, const std::string &libNsName,
   return true;
 }
 #else
-bool ArkWebBridgeHelper::LoadLibFile(bool runMode,
-                                     const std::string &libDirPath,
-                                     const std::string &libFileName) {
-  std::string dirPath = GetDirPath(runMode, libDirPath);
-  std::string libFilePath = dirPath + "/" + libFileName;
-  void *libFileHandler = ::dlopen(libFilePath.c_str(), RTLD_NOW);
+bool ArkWebBridgeHelper::LoadLibFile(int mode, const std::string &libFilePath) {
+  void *libFileHandler = ::dlopen(libFilePath.c_str(), mode);
   if (!libFileHandler) {
     ARK_WEB_WRAPPER_ERROR_LOG(
         "failed to load lib file,lib file path is %{public}s",

@@ -25,7 +25,7 @@ class ArkOhosResourceAdapterImpl : public ArkOhosResourceAdapter {
 public:
     ArkOhosResourceAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosResourceAdapter>);
 
-    bool GetRawFileData(const ArkWebString& rawFile, size_t& len, uint8_t*& dest, bool isSys) override;
+    bool GetRawFileData(const ArkWebString& rawFile, size_t& len, uint8_t** dest, bool isSys) override;
 
     ArkWebRefPtr<ArkOhosFileMapper> GetRawFileMapper(const ArkWebString& rawFile, bool isSys) override;
 

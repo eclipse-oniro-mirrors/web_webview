@@ -20,6 +20,7 @@
 #include "ohos_nweb/bridge/ark_web_context_menu_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_params_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_controller_handler_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_cursor_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_data_resubmission_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h"
@@ -505,11 +506,13 @@ void ArkWebHandlerImpl::OnScaleChanged(float old_scale_factor,
 }
 
 bool ArkWebHandlerImpl::OnCursorChange(const int32_t &type,
-                                       const ArkWebCursorInfo &info) {
-  OHOS::NWeb::NWebCursorInfo nweb_cursor_info =
-      ArkWebCursorInfoStructToClass(info);
+                                       ArkWebRefPtr<ArkWebCursorInfo> info) {
+  if (CHECK_REF_PTR_IS_NULL(info)) {
+    return nweb_handler_->OnCursorChange(static_cast<ArkWebCursorType>(type), nullptr);
+  }
+
   return nweb_handler_->OnCursorChange(static_cast<ArkWebCursorType>(type),
-                                       nweb_cursor_info);
+                                       std::make_shared<ArkWebCursorInfoWrapper>(info));
 }
 
 void ArkWebHandlerImpl::OnRenderExited(int reason) {

@@ -30,6 +30,8 @@ public:
   bool Init(bool runMode, const std::string &baseDir) override;
 
 private:
+  std::string GetDirPath(bool runMode, const std::string &baseDir);
+
   ArkWebNWebBridgeHelper() = default;
 };
 
