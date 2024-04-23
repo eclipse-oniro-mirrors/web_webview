@@ -1089,6 +1089,22 @@ public:
    */
   /*--ark web()--*/
   int ScaleGestureChange(double scale, double centerX, double centerY) override;
+
+  /**
+   * @brief Inject offline resource into MemoryCache.
+   *
+   * @param url url of resource.
+   * @param origin origin of resource.
+   * @param resource data of resource.
+   * @param response_headers response headers of resource.
+   * @param type resource type.
+   */
+  /*--ark web()--*/
+  void InjectOfflineResource(const std::string& url,
+                             const std::string& origin,
+                             const std::vector<uint8_t>& resource,
+                             const std::map<std::string, std::string>& responseHeaders,
+                             const int type) override;
   
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
