@@ -39,6 +39,7 @@ const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
 const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
 const std::string WEB_RENDER_PROCESS_MODE_ENUM_NAME = "RenderProcessMode";
+const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
 
 struct Scheme {
     std::string name;
@@ -50,6 +51,13 @@ struct Scheme {
     bool isSecure;
     bool isCspBypassing;
     int32_t option = 0;
+};
+
+struct OfflineResourceValue {
+    napi_value urlList;
+    napi_value resource;
+    napi_value responseHeaders;
+    napi_value type;
 };
 
 class NapiWebviewController {
@@ -305,6 +313,16 @@ private:
     static napi_value PrecompileJavaScript(napi_env env, napi_callback_info info);
 
     static napi_value WarmupServiceWorker(napi_env env, napi_callback_info info);
+
+    static napi_value InjectOfflineResource(napi_env env, napi_callback_info info);
+
+    static void AddResourcesToMemoryCache(napi_env env,
+                                          napi_callback_info info,
+                                          napi_value& resourcesList);
+
+    static void AddResourceToMemoryCache(napi_env env,
+                                         napi_callback_info info,
+                                         OfflineResourceValue resourceValue);
 
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;

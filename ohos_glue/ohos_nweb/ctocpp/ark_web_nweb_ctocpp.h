@@ -384,6 +384,12 @@ public:
                          bool from_overlay) override;
                          
   int ScaleGestureChange(double scale, double centerX, double centerY) override;
+
+  void InjectOfflineResource(const ArkWebString &url,
+                             const ArkWebString &origin,
+                             const ArkWebUint8Vector &resource,
+                             const ArkWebStringMap &responseHeaders,
+                             const int type) override;
 };
 
 } // namespace OHOS::ArkWeb
