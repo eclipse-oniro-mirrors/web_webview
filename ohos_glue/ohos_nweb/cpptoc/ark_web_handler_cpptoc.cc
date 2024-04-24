@@ -20,6 +20,7 @@
 #include "ohos_nweb/ctocpp/ark_web_context_menu_callback_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_context_menu_params_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_controller_handler_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_cursor_info_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_data_resubmission_callback_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_date_time_chooser_callback_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_date_time_chooser_ctocpp.h"
@@ -650,17 +651,16 @@ void ARK_WEB_CALLBACK ark_web_handler_on_scale_changed(
 
 bool ARK_WEB_CALLBACK ark_web_handler_on_cursor_change(
     struct _ark_web_handler_t *self, const int32_t *type,
-    const ArkWebCursorInfo *info) {
+    ark_web_cursor_info_t *info) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
 
   ARK_WEB_CPPTOC_CHECK_PARAM(type, false);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(info, false);
-
   // Execute
-  return ArkWebHandlerCppToC::Get(self)->OnCursorChange(*type, *info);
+  return ArkWebHandlerCppToC::Get(self)->OnCursorChange(
+      *type, ArkWebCursorInfoCToCpp::Invert(info));
 }
 
 void ARK_WEB_CALLBACK

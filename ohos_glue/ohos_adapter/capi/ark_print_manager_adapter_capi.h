@@ -19,7 +19,7 @@
 
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "include/ark_print_manager_adapter.h"
+#include "ohos_adapter/include/ark_web_adapter_structs.h"
 
 #ifdef __cplusplus
 extern "C" {

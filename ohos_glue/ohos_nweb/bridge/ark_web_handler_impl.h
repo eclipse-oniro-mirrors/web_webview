@@ -368,7 +368,7 @@ public:
    *         handling.
    */
   bool OnCursorChange(const int32_t &type,
-                      const ArkWebCursorInfo &info) override;
+                      ArkWebRefPtr<ArkWebCursorInfo> info) override;
 
   /**
    * @brief called when the render process exit.
