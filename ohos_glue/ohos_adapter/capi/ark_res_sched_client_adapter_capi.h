@@ -56,6 +56,12 @@ ARK_WEB_EXPORT bool
 ark_res_sched_client_adapter_report_video_playing(int32_t statusAdapter,
                                                   pid_t pid);
 
+ARK_WEB_EXPORT void
+ark_res_sched_client_adapter_report_process_in_use(pid_t pid);
+
+ARK_WEB_EXPORT void
+ark_res_sched_client_adapter_report_site_isolation_mode(bool mode);
+
 #ifdef __cplusplus
 }
 #endif

@@ -24,7 +24,7 @@ ArkOhosResourceAdapterImpl::ArkOhosResourceAdapterImpl(std::shared_ptr<OHOS::NWe
     : real_(ref)
 {}
 
-bool ArkOhosResourceAdapterImpl::GetRawFileData(const ArkWebString& rawFile, size_t& len, uint8_t*& dest, bool isSys)
+bool ArkOhosResourceAdapterImpl::GetRawFileData(const ArkWebString& rawFile, size_t& len, uint8_t** dest, bool isSys)
 {
     return real_->GetRawFileData(ArkWebStringStructToClass(rawFile), len, dest, isSys);
 }

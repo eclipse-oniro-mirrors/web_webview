@@ -35,5 +35,6 @@ typedef struct {
 } ArkFrameRateSettingAdapterVector;
 
 const ArkFrameRateSettingAdapterVector ark_frame_rate_setting_adapter_vector_default = { 0 };
-#endif // #define ARK_FRAME_RATE_SETTING_ADAPTER_VECTOR_H
+
+#endif // ARK_FRAME_RATE_SETTING_ADAPTER_VECTOR_H
 

@@ -90,9 +90,9 @@ typedef struct _ark_system_properties_adapter_t {
   bool(ARK_WEB_CALLBACK *get_bool_parameter)(
       struct _ark_system_properties_adapter_t* self, ArkWebString key, bool defaultValue);
 
-  ArkFrameRateSettingAdapterVector(ARK_WEB_CALLBACK* get_ltpo_config)(
+  ArkFrameRateSettingAdapterVector(ARK_WEB_CALLBACK* get_ltpoconfig)(
       struct _ark_system_properties_adapter_t* self,
-      const ArkWebString settingName);
+      const ArkWebString *settingName);
 } ark_system_properties_adapter_t;
 
 #ifdef __cplusplus
