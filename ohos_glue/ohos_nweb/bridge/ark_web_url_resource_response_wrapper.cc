@@ -170,4 +170,16 @@ void ArkWebUrlResourceResponseWrapper::PutResponseReadyCallback(
       new ArkWebResourceReadyCallbackImpl(callback));
 }
 
+void ArkWebUrlResourceResponseWrapper::PutResponseDataBuffer(char* buffer, size_t bufferSize) {
+  ark_web_url_resource_response_->PutResponseDataBuffer(buffer, bufferSize);
+}
+
+char* ArkWebUrlResourceResponseWrapper::GetResponseDataBuffer() {
+  return ark_web_url_resource_response_->GetResponseDataBuffer();
+}
+
+size_t ArkWebUrlResourceResponseWrapper::GetResponseDataBufferSize() {
+  return ark_web_url_resource_response_->GetResponseDataBufferSize();
+}
+
 } // namespace OHOS::ArkWeb
