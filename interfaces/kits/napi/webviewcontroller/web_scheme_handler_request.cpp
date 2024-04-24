@@ -462,7 +462,7 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
         reinterpret_cast<WebResourceHandler*>(
             OH_ArkWebResourceRequest_GetUserData(param->arkWebRequest_));
     if (resourceHandler) {
-        resourceHandler->DestoryArkWebResourceHandler();
+        resourceHandler->SetFinishFlag();
     }
     napi_close_handle_scope(param->env_, scope);
     delete param;
