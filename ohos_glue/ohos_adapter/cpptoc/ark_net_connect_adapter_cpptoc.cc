@@ -58,6 +58,16 @@ int32_t ARK_WEB_CALLBACK ark_net_connect_adapter_get_default_net_connect(
       *type, *netConnectSubtype);
 }
 
+ArkWebStringVector ARK_WEB_CALLBACK ark_net_connect_adapter_get_dns_servers(
+    struct _ark_net_connect_adapter_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, ark_web_string_vector_default);
+
+  // Execute
+  return ArkNetConnectAdapterCppToC::Get(self)->GetDnsServers();
+}
+
 } // namespace
 
 ArkNetConnectAdapterCppToC::ArkNetConnectAdapterCppToC() {
@@ -67,6 +77,7 @@ ArkNetConnectAdapterCppToC::ArkNetConnectAdapterCppToC() {
       ark_net_connect_adapter_unregister_net_conn_callback;
   GetStruct()->get_default_net_connect =
       ark_net_connect_adapter_get_default_net_connect;
+  GetStruct()->get_dns_servers = ark_net_connect_adapter_get_dns_servers;
 }
 
 ArkNetConnectAdapterCppToC::~ArkNetConnectAdapterCppToC() {
