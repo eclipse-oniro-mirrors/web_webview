@@ -3703,7 +3703,8 @@ void SetCustomizeSchemeOption(Scheme& scheme)
         {3, &Scheme::isSecure},
         {4, &Scheme::isSupportCORS},
         {5, &Scheme::isCspBypassing},
-        {6, &Scheme::isSupportFetch}
+        {6, &Scheme::isSupportFetch},
+        {7, &Scheme::isCodeCacheSupported}
     };
 
     for (const auto& property : schemeProperties) {
@@ -3722,7 +3723,8 @@ bool SetCustomizeScheme(napi_env env, napi_value obj, Scheme& scheme)
         {"isLocal", &Scheme::isLocal},
         {"isDisplayIsolated", &Scheme::isDisplayIsolated},
         {"isSecure", &Scheme::isSecure},
-        {"isCspBypassing", &Scheme::isCspBypassing}
+        {"isCspBypassing", &Scheme::isCspBypassing},
+        {"isCodeCacheSupported", &Scheme::isCodeCacheSupported}
     };
 
     for (const auto& property : schemeBooleanProperties) {
