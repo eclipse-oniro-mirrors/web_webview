@@ -132,6 +132,7 @@ int32_t AudioRendererAdapterImpl::Create(
         WVLOG_E("audio rendderer create failed");
         return AUDIO_NULL_ERROR;
     }
+    audio_renderer_->SetOffloadAllowed(false);
     return AUDIO_OK;
 }
 
