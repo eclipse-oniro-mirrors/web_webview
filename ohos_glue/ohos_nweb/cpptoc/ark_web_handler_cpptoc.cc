@@ -1058,6 +1058,16 @@ ArkWebCharVector ARK_WEB_CALLBACK ark_web_handler_get_word_selection(
       offset);
 }
 
+void ARK_WEB_CALLBACK ark_web_handler_update_clipped_selection_bounds(
+    struct _ark_web_handler_t* self, int x, int y, int w, int h) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->UpdateClippedSelectionBounds(x, y, w, h);
+}
+
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1176,6 +1186,8 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_release_resize_hold;
   GetStruct()->get_word_selection =
       ark_web_handler_get_word_selection;
+  GetStruct()->update_clipped_selection_bounds =
+      ark_web_handler_update_clipped_selection_bounds;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {
