@@ -1105,7 +1105,16 @@ public:
                              const std::vector<uint8_t>& resource,
                              const std::map<std::string, std::string>& responseHeaders,
                              const int type) override;
-  
+
+  /*
+   * @brief Terminate render process
+   *
+   * @return true if it was possible to terminate this render process, false
+   * otherwise.
+   */
+  /*--ark web()--*/
+  bool TerminateRenderProcess() override;
+
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
