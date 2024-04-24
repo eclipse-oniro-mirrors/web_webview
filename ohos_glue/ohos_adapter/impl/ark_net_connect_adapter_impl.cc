@@ -46,4 +46,10 @@ int32_t ArkNetConnectAdapterImpl::GetDefaultNetConnect(uint32_t& type, uint32_t&
     return result;
 }
 
+ArkWebStringVector ArkNetConnectAdapterImpl::GetDnsServers()
+{
+    std::vector<std::string> servers = real_->GetDnsServers();
+    return ArkWebStringVectorClassToStruct(servers);
+}
+
 } // namespace OHOS::ArkWeb
