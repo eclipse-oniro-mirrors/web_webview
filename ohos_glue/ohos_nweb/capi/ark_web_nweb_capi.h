@@ -499,6 +499,8 @@ typedef struct _ark_web_nweb_t {
       struct _ark_web_nweb_t *self, const ArkWebString *url,
       const ArkWebString *origin, const ArkWebUint8Vector *resource,
       const ArkWebStringMap *responseHeaders, const int type);
+
+  bool(ARK_WEB_CALLBACK *terminate_render_process)(struct _ark_web_nweb_t *self);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus

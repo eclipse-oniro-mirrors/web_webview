@@ -182,6 +182,8 @@ private:
 
     static napi_value RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention);
 
+    static napi_value TerminateRenderProcess(napi_env env, napi_callback_info info);
+
     static napi_value GetUrl(napi_env env, napi_callback_info info);
 
     static napi_value GetOriginalUrl(napi_env env, napi_callback_info info);

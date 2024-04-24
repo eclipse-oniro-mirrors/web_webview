@@ -989,6 +989,16 @@ std::string WebviewController::GetOriginalUrl()
     return url;
 }
 
+bool WebviewController::TerminateRenderProcess()
+{
+    bool ret = false;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        ret = nweb_ptr->TerminateRenderProcess();
+    }
+    return ret;
+}
+
 void WebviewController::PutNetworkAvailable(bool available)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);

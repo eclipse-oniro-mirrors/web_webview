@@ -355,6 +355,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("runJavaScript", NapiWebviewController::RunJavaScript),
         DECLARE_NAPI_FUNCTION("runJavaScriptExt", NapiWebviewController::RunJavaScriptExt),
         DECLARE_NAPI_FUNCTION("getUrl", NapiWebviewController::GetUrl),
+        DECLARE_NAPI_FUNCTION("terminateRenderProcess", NapiWebviewController::TerminateRenderProcess),
         DECLARE_NAPI_FUNCTION("getOriginalUrl", NapiWebviewController::GetOriginalUrl),
         DECLARE_NAPI_FUNCTION("setNetworkAvailable", NapiWebviewController::SetNetworkAvailable),
         DECLARE_NAPI_FUNCTION("innerGetWebId", NapiWebviewController::InnerGetWebId),
@@ -3156,6 +3157,19 @@ napi_value NapiWebviewController::GetOriginalUrl(napi_env env, napi_callback_inf
     std::string url = "";
     url = webviewController->GetOriginalUrl();
     napi_create_string_utf8(env, url.c_str(), url.length(), &result);
+    return result;
+}
+
+napi_value NapiWebviewController::TerminateRenderProcess(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+    bool ret = false;
+    ret = webviewController->TerminateRenderProcess();
+    NAPI_CALL(env, napi_get_boolean(env, ret, &result));
     return result;
 }
 
