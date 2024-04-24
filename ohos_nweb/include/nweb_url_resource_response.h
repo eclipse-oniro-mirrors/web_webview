@@ -137,6 +137,12 @@ public:
 
     virtual void PutResponseReadyCallback(
         std::shared_ptr<NWebResourceReadyCallback> readyCallback) = 0;
+
+    virtual void PutResponseDataBuffer(char* buffer, size_t bufferSize) = 0;
+
+    virtual char* GetResponseDataBuffer() = 0;
+
+    virtual size_t GetResponseDataBufferSize() = 0;
 };
 } // namespace OHOS::NWeb
 
