@@ -1246,6 +1246,14 @@ public:
                                      const ArkWebUint8Vector &resource,
                                      const ArkWebStringMap &responseHeaders,
                                      const int type) = 0;
+  /*
+   * @brief Terminate render process
+   *
+   * @return true if it was possible to terminate this render process, false
+   * otherwise.
+   */
+  /*--ark web()--*/
+  virtual bool TerminateRenderProcess() = 0;
 };
 
 } // namespace OHOS::ArkWeb
