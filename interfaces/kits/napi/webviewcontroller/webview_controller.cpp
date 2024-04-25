@@ -162,7 +162,8 @@ void WebviewController::InnerCompleteWindowNew(int32_t parentNwebId)
     for (auto it = objs.begin(); it != objs.end(); it++) {
         if (it->second && IsInit()) {
             RegisterJavaScriptProxy(
-                it->second->GetEnv(), it->second->GetValue(), it->first, it->second->GetMethodNames());
+                it->second->GetEnv(), it->second->GetValue(), it->first,
+                it->second->GetSyncMethodNames(), it->second->GetAsyncMethodNames());
         }
     }
 }
@@ -848,7 +849,9 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
 }
 
 void WebviewController::RegisterJavaScriptProxy(
-    napi_env env, napi_value obj, const std::string& objName, const std::vector<std::string>& methodList)
+    napi_env env, napi_value obj, const std::string& objName,
+    const std::vector<std::string>& syncMethodList,
+    const std::vector<std::string>& asyncMethodList)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -864,15 +867,19 @@ void WebviewController::RegisterJavaScriptProxy(
         return;
     }
 
-    if (methodList.empty()) {
-        WVLOG_E("WebviewController::RegisterJavaScriptProxy methodList is "
+    if (syncMethodList.empty() && asyncMethodList.empty()) {
+        WVLOG_E("WebviewController::RegisterJavaScriptProxy all methodList are "
                 "empty");
         return;
     }
 
-    objId = javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, methodList);
+    std::vector<std::string> allMethodList;
+    std::merge(syncMethodList.begin(), syncMethodList.end(),
+               asyncMethodList.begin(), asyncMethodList.end(),
+               std::back_inserter(allMethodList));
+    objId = javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, allMethodList, asyncMethodList);
 
-    nweb_ptr->RegisterArkJSfunction(objName, methodList, objId);
+    nweb_ptr->RegisterArkJSfunction(objName, syncMethodList, asyncMethodList, objId);
 }
 
 void WebviewController::RunJavaScriptCallback(
