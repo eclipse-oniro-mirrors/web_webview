@@ -16,6 +16,7 @@
 #include "ohos_nweb/bridge/ark_web_handler_impl.h"
 #include "base/bridge/ark_web_bridge_macros.h"
 #include "ohos_nweb/bridge/ark_web_access_request_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_app_link_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_console_log_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_params_wrapper.h"
@@ -813,5 +814,17 @@ ArkWebCharVector ArkWebHandlerImpl::GetWordSelection(const ArkWebString& text, i
 void ArkWebHandlerImpl::UpdateClippedSelectionBounds(int x, int y, int w, int h)
 {
   nweb_handler_->UpdateClippedSelectionBounds(x, y, w, h);
+}
+
+bool ArkWebHandlerImpl::OnOpenAppLink(
+    const ArkWebString& url,
+    ArkWebRefPtr<ArkWebAppLinkCallback> callback) {
+  if (CHECK_REF_PTR_IS_NULL(callback)) {
+    return nweb_handler_->OnOpenAppLink(ArkWebStringStructToClass(url), nullptr);
+  }
+ 
+  return nweb_handler_->OnOpenAppLink(
+      ArkWebStringStructToClass(url),
+      std::make_shared<ArkWebAppLinkCallbackWrapper>(callback)); 
 }
 } // namespace OHOS::ArkWeb
