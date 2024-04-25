@@ -567,6 +567,10 @@ public:
   ArkWebCharVector GetWordSelection(const ArkWebString &text, int8_t offset) override;
 
   void UpdateClippedSelectionBounds(int x, int y, int w, int h) override;
+
+  bool OnOpenAppLink(const ArkWebString& url,
+                     ArkWebRefPtr<ArkWebAppLinkCallback> callback) override;
+
 private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
