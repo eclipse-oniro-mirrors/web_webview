@@ -2102,6 +2102,18 @@ void ArkWebNWebCToCpp::InjectOfflineResource(
                                    type);
 }
 
+bool ArkWebNWebCToCpp::TerminateRenderProcess() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, false);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, terminate_render_process, false);
+
+  // Execute
+  return _struct->terminate_render_process(_struct);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 

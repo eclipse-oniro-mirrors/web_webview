@@ -1044,4 +1044,8 @@ void ArkWebNWebWrapper::InjectOfflineResource(const std::string& url,
   ArkWebStringMapStructRelease(responseHeadersMap);
 }
 
+bool ArkWebNWebWrapper::TerminateRenderProcess() {
+  return ark_web_nweb_->TerminateRenderProcess();
+}
+
 } // namespace OHOS::ArkWeb

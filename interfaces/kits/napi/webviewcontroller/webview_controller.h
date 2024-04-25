@@ -220,6 +220,8 @@ public:
 
     std::string GetOriginalUrl();
 
+    bool TerminateRenderProcess();
+
     void PutNetworkAvailable(bool available);
 
     bool HasImage(std::shared_ptr<NWebBoolValueCallback> callback);
