@@ -201,7 +201,9 @@ public:
     void SetNWebJavaScriptResultCallBack();
 
     void RegisterJavaScriptProxy(
-        napi_env env, napi_value obj, const std::string& objName, const std::vector<std::string>& methodList);
+        napi_env env, napi_value obj, const std::string& objName,
+        const std::vector<std::string>& methodList,
+        const std::vector<std::string>& asyncMethodList);
 
     ErrCode DeleteJavaScriptRegister(const std::string& objName,
         const std::vector<std::string>& methodList);

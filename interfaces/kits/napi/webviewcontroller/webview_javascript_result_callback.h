@@ -204,6 +204,30 @@ public:
         return methods_;
     }
 
+    std::vector<std::string> GetSyncMethodNames()
+    {
+        if (!isMethodsSetup_) {
+            SetUpMethods();
+        }
+        if (asyncMethods_.empty()) {
+            return methods_;
+        }
+
+        std::vector<std::string> syncMethodNames;
+        for (const auto& method : methods_) {
+            auto it = std::find(asyncMethods_.begin(), asyncMethods_.end(), method);
+            if (it == asyncMethods_.end()) {
+                syncMethodNames.emplace_back(method);
+            }
+        }
+        return syncMethodNames;
+    }
+
+    std::vector<std::string> GetAsyncMethodNames()
+    {
+        return asyncMethods_;
+    }
+
     bool HasMethod(const std::string& methodName)
     {
         if (methodName.empty()) {
@@ -313,6 +337,12 @@ public:
         isMethodsSetup_ = true;
     }
 
+    void SetAsyncMethods(std::vector<std::string> async_methods_name)
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        asyncMethods_ = async_methods_name;
+    }
+
 private:
     static napi_status CreateNewWeakRef(napi_env env, napi_ref ref, napi_ref* new_ref)
     {
@@ -351,7 +381,9 @@ private:
     napi_ref objRef_ = nullptr;
     bool isStrongRef_ = true;
 
+    // methods_ contains sync methods and async methods.
     std::vector<std::string> methods_;
+    std::vector<std::string> asyncMethods_;
     // An object must be kept in retainedObjectSet_ either if it has
     // names or if it has a non-empty holders set.
     int namesCount_;
@@ -445,7 +477,9 @@ public:
     void SetUpAnnotateMethods(JavaScriptOb::ObjectID objId, std::vector<std::string>& methodNameList);
 
     JavaScriptOb::ObjectID RegisterJavaScriptProxy(
-        napi_env env, napi_value obj, const std::string& objName, const std::vector<std::string>& methodList);
+        napi_env env, napi_value obj, const std::string& objName,
+        const std::vector<std::string>& allMethodList,
+        const std::vector<std::string>& asyncMethodList = std::vector<std::string>());
 
     bool DeleteJavaScriptRegister(const std::string& objName);
 

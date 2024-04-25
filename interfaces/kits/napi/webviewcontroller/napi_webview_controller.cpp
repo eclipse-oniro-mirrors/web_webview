@@ -879,12 +879,12 @@ napi_value NapiWebviewController::InnerJsProxy(napi_env env, napi_callback_info 
     WVLOG_D("NapiWebviewController::InnerJsProxy");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_THREE;
-    napi_value argv[INTEGER_THREE] = { 0 };
+    size_t argc = INTEGER_FOUR;
+    napi_value argv[INTEGER_FOUR] = { 0 };
 
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_THREE) {
+    if (argc != INTEGER_FOUR) {
         WVLOG_E("Failed to run InnerJsProxy beacuse of wrong Param number.");
         return result;
     }
@@ -897,10 +897,17 @@ napi_value NapiWebviewController::InnerJsProxy(napi_env env, napi_callback_info 
     }
 
     std::string objName;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], objName)) {
+        WVLOG_E("Failed to run InnerJsProxy beacuse of wrong object name.");
+        return result;
+    }
+
     std::vector<std::string> methodList;
-    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], objName) ||
-        !NapiParseUtils::ParseStringArray(env, argv[INTEGER_TWO], methodList)) {
-        WVLOG_E("Failed to run InnerJsProxy beacuse of wrong Param type.");
+    bool hasSyncMethod = NapiParseUtils::ParseStringArray(env, argv[INTEGER_TWO], methodList);
+    std::vector<std::string> asyncMethodList;
+    bool hasAsyncMethod = NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList);
+    if (!hasSyncMethod && !hasAsyncMethod) {
+        WVLOG_E("Failed to run InnerJsProxy beacuse of empty method lists.");
         return result;
     }
 
@@ -911,7 +918,7 @@ napi_value NapiWebviewController::InnerJsProxy(napi_env env, napi_callback_info 
         return result;
     }
     controller->SetNWebJavaScriptResultCallBack();
-    controller->RegisterJavaScriptProxy(env, argv[INTEGER_ZERO], objName, methodList);
+    controller->RegisterJavaScriptProxy(env, argv[INTEGER_ZERO], objName, methodList, asyncMethodList);
     return result;
 }
 
@@ -2867,12 +2874,12 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
     WVLOG_D("NapiWebviewController::RegisterJavaScriptProxy");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_THREE;
-    napi_value argv[INTEGER_THREE] = { 0 };
+    size_t argc = INTEGER_FOUR;
+    napi_value argv[INTEGER_FOUR] = { 0 };
 
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_THREE) {
+    if (argc != INTEGER_THREE && argc != INTEGER_FOUR) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -2896,6 +2903,14 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
         return result;
     }
 
+    std::vector<std::string> asyncMethodList;
+    if (argc == INTEGER_FOUR) {
+        if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return result;
+        }
+    }
+
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller || !controller->IsInit()) {
@@ -2903,7 +2918,7 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
         return result;
     }
     controller->SetNWebJavaScriptResultCallBack();
-    controller->RegisterJavaScriptProxy(env, argv[INTEGER_ZERO], objName, methodList);
+    controller->RegisterJavaScriptProxy(env, argv[INTEGER_ZERO], objName, methodList, asyncMethodList);
     return result;
 }
 
