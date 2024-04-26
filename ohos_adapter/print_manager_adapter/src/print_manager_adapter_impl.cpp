@@ -54,12 +54,12 @@ int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
         WVLOG_E("iCallback get failed");
         return -1;
     }
-    OHOS::Print::PrintAttributes* attributes = new OHOS::Print::PrintAttributes();
+    auto attributes = std::make_shared<OHOS::Print::PrintAttributes>();
     if (!attributes) {
         WVLOG_E("attributes get failed");
         return -1;
     }
-    int32_t ret = OHOS::Print::PrintManagerClient::GetInstance()->Print(printJobName, iCallback, *attributes);
+    int32_t ret = OHOS::Print::PrintManagerClient::GetInstance()->Print(printJobName, iCallback, attributes);
     if (ret != 0) {
         WVLOG_E("print failed, failed id = %{public}d", ret);
         return -1;
@@ -85,13 +85,13 @@ int32_t PrintManagerAdapterImpl::Print(const std::string& printJobName,
         WVLOG_E("iCallback get failed");
         return -1;
     }
-    OHOS::Print::PrintAttributes* attributes = new OHOS::Print::PrintAttributes();
+    auto attributes = std::make_shared<OHOS::Print::PrintAttributes>();
     if (!attributes) {
         WVLOG_E("attributes get failed");
         return -1;
     }
     int32_t ret =
-        OHOS::Print::PrintManagerClient::GetInstance()->Print(printJobName, iCallback, *attributes, contextToken);
+        OHOS::Print::PrintManagerClient::GetInstance()->Print(printJobName, iCallback, attributes, contextToken);
     if (ret != 0) {
         WVLOG_E("print failed, failed id = %{public}d", ret);
         return -1;
