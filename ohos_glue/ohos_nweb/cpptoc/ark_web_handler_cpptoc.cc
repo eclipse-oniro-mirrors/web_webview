@@ -1082,6 +1082,30 @@ bool ARK_WEB_CALLBACK ark_web_handler_on_open_app_link(
   return ArkWebHandlerCppToC::Get(self)->OnOpenAppLink(
       *url, ArkWebAppLinkCallbackCToCpp::Invert(callback));
 }
+
+void ARK_WEB_CALLBACK ark_web_handler_on_render_process_not_responding(
+    struct _ark_web_handler_t *self, const ArkWebString *js_stack, int pid,
+    int reason) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(js_stack, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnRenderProcessNotResponding(*js_stack, pid,
+                                                               reason);
+}
+
+void ARK_WEB_CALLBACK
+ark_web_handler_on_render_process_responding(struct _ark_web_handler_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnRenderProcessResponding();
+}
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1203,6 +1227,10 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
   GetStruct()->update_clipped_selection_bounds =
       ark_web_handler_update_clipped_selection_bounds;
   GetStruct()->on_open_app_link = ark_web_handler_on_open_app_link;
+  GetStruct()->on_render_process_not_responding =
+      ark_web_handler_on_render_process_not_responding;
+  GetStruct()->on_render_process_responding =
+      ark_web_handler_on_render_process_responding;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {

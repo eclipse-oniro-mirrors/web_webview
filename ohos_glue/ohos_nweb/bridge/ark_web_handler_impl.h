@@ -571,7 +571,10 @@ public:
   bool OnOpenAppLink(const ArkWebString& url,
                      ArkWebRefPtr<ArkWebAppLinkCallback> callback) override;
 
-private:
+  void OnRenderProcessNotResponding(const ArkWebString& js_stack, int pid, int reason) override;
+  void OnRenderProcessResponding() override;
+
+  private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
 

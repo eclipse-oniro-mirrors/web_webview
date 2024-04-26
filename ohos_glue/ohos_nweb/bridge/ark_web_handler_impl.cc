@@ -63,6 +63,7 @@ using ArkWebCursorType = OHOS::NWeb::CursorType;
 using ArkWebActivityType = OHOS::NWeb::ActivityType;
 using ArkWebRenderExitReason = OHOS::NWeb::RenderExitReason;
 using ArkWebDragOperation = OHOS::NWeb::NWebDragData::DragOperation;
+using ArkWebRenderProcessNotRespondingReason = OHOS::NWeb::RenderProcessNotRespondingReason;
 
 ArkWebHandlerImpl::ArkWebHandlerImpl(
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler)
@@ -826,5 +827,15 @@ bool ArkWebHandlerImpl::OnOpenAppLink(
   return nweb_handler_->OnOpenAppLink(
       ArkWebStringStructToClass(url),
       std::make_shared<ArkWebAppLinkCallbackWrapper>(callback)); 
+}
+void ArkWebHandlerImpl::OnRenderProcessNotResponding(const ArkWebString& js_stack, int pid, int reason)
+{
+    nweb_handler_->OnRenderProcessNotResponding(
+        ArkWebStringStructToClass(js_stack), pid, static_cast<ArkWebRenderProcessNotRespondingReason>(reason));
+}
+
+void ArkWebHandlerImpl::OnRenderProcessResponding()
+{
+    nweb_handler_->OnRenderProcessResponding();
 }
 } // namespace OHOS::ArkWeb
