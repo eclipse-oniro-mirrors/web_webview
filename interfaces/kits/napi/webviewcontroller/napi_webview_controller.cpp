@@ -5307,13 +5307,13 @@ void NapiWebviewController::AddResourcesToMemoryCache(napi_env env,
         resourceValue.resource = resourceObj;
         resourceValue.responseHeaders = headersObj;
         resourceValue.type = typeObj;
-        AddResourceToMemoryCache(env, info, resourceValue);
+        AddResourceItemToMemoryCache(env, info, resourceValue);
     }
 }
 
-void NapiWebviewController::AddResourceToMemoryCache(napi_env env,
-                                                     napi_callback_info info,
-                                                     OfflineResourceValue resourceValue)
+void NapiWebviewController::AddResourceItemToMemoryCache(napi_env env,
+                                                         napi_callback_info info,
+                                                         OfflineResourceValue resourceValue)
 {
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {

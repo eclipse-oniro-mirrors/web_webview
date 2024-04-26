@@ -320,9 +320,9 @@ private:
                                           napi_callback_info info,
                                           napi_value& resourcesList);
 
-    static void AddResourceToMemoryCache(napi_env env,
-                                         napi_callback_info info,
-                                         OfflineResourceValue resourceValue);
+    static void AddResourceItemToMemoryCache(napi_env env,
+                                             napi_callback_info info,
+                                             OfflineResourceValue resourceValue);
 
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
