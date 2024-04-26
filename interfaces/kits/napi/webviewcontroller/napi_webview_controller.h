@@ -50,6 +50,7 @@ struct Scheme {
     bool isDisplayIsolated;
     bool isSecure;
     bool isCspBypassing;
+    bool isCodeCacheSupported;
     int32_t option = 0;
 };
 
