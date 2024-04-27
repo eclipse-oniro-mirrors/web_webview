@@ -136,6 +136,8 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_003, TestSize.Lev
     EXPECT_NE(info, nullptr);
     ret = g_mmi->GetDeviceInfo(0, info);
     EXPECT_EQ(ret, RESULT_OK);
+    ret = g_mmi->GetDeviceInfo(0, nullptr);
+    EXPECT_NE(ret, RESULT_OK);
 }
 
 /**

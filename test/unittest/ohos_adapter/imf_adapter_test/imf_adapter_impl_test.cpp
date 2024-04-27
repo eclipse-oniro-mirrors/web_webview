@@ -38,6 +38,33 @@ public:
     void TearDown();
 };
 
+class IMFCursorInfoAdapterMock : public IMFCursorInfoAdapter {
+public:
+    IMFCursorInfoAdapterMock() = default;
+
+    ~IMFCursorInfoAdapterMock() override = default;
+
+    double GetLeft() override
+    {
+        return 0.0;
+    }
+
+    double GetTop() override
+    {
+        return 0.0;
+    }
+
+    double GetWidth() override
+    {
+        return 0.0;
+    }
+
+    double GetHeight() override
+    {
+        return 0.0;
+    }
+};
+
 class IMFTextListenerTest : public IMFTextListenerAdapter {
 public:
     IMFTextListenerTest() = default;
@@ -230,6 +257,8 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_004, TestSize.Lev
     std::u16string text;
     g_imf->OnSelectionChange(text, 0, 0);
     g_imf->Close();
+    auto mock = std::make_shared<IMFCursorInfoAdapterMock>();
+    g_imf->OnCursorUpdate(mock);
 }
 
 /**

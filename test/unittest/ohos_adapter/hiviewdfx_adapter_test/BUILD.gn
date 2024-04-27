@@ -11,12 +11,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
 
 module_output_path = "web/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
+
+  include_dirs = [ "$webview_path/ohos_adapter/hiviewdfx_adapter/include" ]
 }
 
 ohos_unittest("nweb_hiviewdfx_adapter_test") {
