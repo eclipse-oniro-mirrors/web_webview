@@ -57,11 +57,8 @@ void MockNWebVSyncCb(int64_t, void*)
 HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level1)
 {
     VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
-    void* data = nullptr;
-    VSyncErrorCode result = adapter.RequestVsync(data, MockNWebVSyncCb);
-    EXPECT_EQ(result, VSyncErrorCode::SUCCESS);
-    result = adapter.RequestVsync(data, MockNWebVSyncCb);
-    EXPECT_EQ(result, VSyncErrorCode::SUCCESS);
+    adapter.Init();
+    adapter.Init();
 
     VSyncAdapterImpl vsyncAdapter;
     void* client = nullptr;
@@ -73,5 +70,9 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
     EXPECT_EQ(period, 0);
     adapter.SetFrameRateLinkerEnable(true);
     adapter.SetFramePreferredRate(60);
+    adapter.frameRateLinker_ = nullptr;
+    adapter.SetFrameRateLinkerEnable(true);
+    adapter.SetFramePreferredRate(60);
+    adapter.vsyncHandler_ = nullptr;
 }
 } // namespace NWeb

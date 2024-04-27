@@ -16,6 +16,7 @@
 #include "gtest/gtest.h"
 #include "hilog_adapter.h"
 #include "ohos_adapter_helper.h"
+#include "hitrace_adapter_impl.h"
 
 using testing::ext::TestSize;
 
@@ -62,5 +63,6 @@ HWTEST(HiViewDFXAdapterTest, NormalScene, TestSize.Level1)
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountTrace("test", 1);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishAsyncTrace("test", 0);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishTrace();
+    HiTraceAdapterImpl::GetInstance().IsHiTraceEnable();
 }
 } // namespace OHOS::NWeb
