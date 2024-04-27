@@ -67,6 +67,9 @@ public:
 
     bool GetRawFileLastModTime(const std::string& rawFile, time_t& time, bool isSys = false) override;
 
+    static bool GetResourceString(const std::string& bundleName, const std::string& moduleName,
+        const int32_t resId, std::string& result);
+
 private:
     void Init(const std::string& hapPath);
 
