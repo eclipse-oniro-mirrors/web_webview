@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "nweb_access_request.h"
+#include "nweb_app_link_callback.h"
 #include "nweb.h"
 #include "nweb_console_log.h"
 #include "nweb_context_menu_params.h"
@@ -45,6 +46,8 @@
 #include "nweb_url_resource_request.h"
 #include "nweb_url_resource_response.h"
 #include "nweb_gesture_event_result.h"
+
+#include "nweb_log.h"
 
 namespace OHOS::NWeb {
 enum class RenderExitReason {
@@ -835,6 +838,11 @@ public:
     }
 
     virtual void UpdateClippedSelectionBounds(int x, int y, int w, int h) {}
+
+    virtual bool OnOpenAppLink(const std::string& url,
+                               std::shared_ptr<NWebAppLinkCallback> callback) {
+        return false;
+    }
 };
 }  // namespace OHOS::NWeb
 
