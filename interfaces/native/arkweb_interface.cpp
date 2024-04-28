@@ -32,7 +32,8 @@ namespace {
     DO(runJavaScript, OH_ArkWeb_RunJavaScript)                     \
     DO(registerJavaScriptProxy, OH_ArkWeb_RegisterJavaScriptProxy) \
     DO(deleteJavaScriptRegister, OH_ArkWeb_DeleteJavaScriptProxy)  \
-    DO(refresh, OH_ArkWeb_Refresh)
+    DO(refresh, OH_ArkWeb_Refresh)                                 \
+    DO(registerAsyncJavaScriptProxy, OH_ArkWeb_RegisterAsyncJavaScriptProxy)
 
 ArkWeb_ComponentAPI* g_ComponentImpl = nullptr;
 ArkWeb_ControllerAPI* g_ControllerImpl = nullptr;

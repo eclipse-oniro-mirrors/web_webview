@@ -1244,6 +1244,20 @@ public:
      */
     /*--ark web()--*/
     virtual bool TerminateRenderProcess() = 0;
+
+    /**
+     * RegisterArkJSfunction
+     *
+     * @param object_name  String: objector name
+     * @param method_list  vector<String>: vector list, sync method list
+     * @param async_method_list  vector<String>: vector list, async method list
+     * @param object_id    int32_t: object id
+     */
+    virtual void RegisterArkJSfunction(
+        const std::string& object_name,
+        const std::vector<std::string>& method_list,
+        const std::vector<std::string>& async_method_list,
+        const int32_t object_id) = 0;
 };
 }  // namespace OHOS::NWeb
 
