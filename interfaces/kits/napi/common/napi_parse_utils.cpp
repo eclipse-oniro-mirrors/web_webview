@@ -22,6 +22,8 @@
 #include "ohos_adapter_helper.h"
 #include "securec.h"
 
+#define MAX_FLOWBUF_DATA_SIZE 52428800 /* 50 MB */
+
 namespace OHOS {
 namespace NWeb {
 namespace {
@@ -455,7 +457,7 @@ ErrCode NapiParseUtils::ConstructStringFlowbuf(napi_env env, napi_value argv, in
     }
 
     napi_get_value_string_utf8(env, argv, nullptr, 0, &scriptLength);
-    if (scriptLength + 1 > UINT_MAX) {
+    if (scriptLength + 1 > MAX_FLOWBUF_DATA_SIZE) {
         WVLOG_E("String length is too long");
         return NWebError::PARAM_CHECK_ERROR;
     }
@@ -466,7 +468,7 @@ ErrCode NapiParseUtils::ConstructStringFlowbuf(napi_env env, napi_value argv, in
         WVLOG_E("Create flowbuffer adapter failed");
         return NWebError::NEW_OOM;
     }
-    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
+    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength + 1, PROT_READ | PROT_WRITE, fd);
     if (!ashmem) {
         return NWebError::NEW_OOM;
     }
@@ -494,6 +496,11 @@ ErrCode NapiParseUtils::ConstructArrayBufFlowbuf(napi_env env, napi_value argv, 
     napi_get_arraybuffer_info(env, argv, (void**)&arrBuf, &scriptLength);
     if (!arrBuf) {
         WVLOG_E("Get arrayBuffer info failed");
+        return NWebError::PARAM_CHECK_ERROR;
+    }
+
+    if (scriptLength + 1 > MAX_FLOWBUF_DATA_SIZE) {
+        WVLOG_E("Arraybuffer length is too long");
         return NWebError::PARAM_CHECK_ERROR;
     }
 
