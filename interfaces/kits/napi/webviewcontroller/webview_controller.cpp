@@ -22,6 +22,7 @@
 #include "application_context.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
+#include "ohos_resource_adapter_impl.h"
 
 #include "native_arkweb_utils.h"
 #include "native_interface_arkweb.h"
@@ -611,32 +612,71 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
         int32_t typeInteger;
         NapiParseUtils::ParseInt32(env, type, typeInteger);
         if (typeInteger == static_cast<int>(ResourceType::RAWFILE)) {
-            napi_value paraArray = nullptr;
-            napi_get_named_property(env, urlObj, "params", &paraArray);
-            bool isArray = false;
-            napi_is_array(env, paraArray, &isArray);
-            if (!isArray) {
-                WVLOG_E("Unable to parse parameter array from url object.");
+            return ParseRawFileUrl(env, urlObj, result);
+        } else if (typeInteger == static_cast<int>(ResourceType::STRING)) {
+            if (!GetResourceUrl(env, urlObj, result)) {
+                WVLOG_E("Unable to parse string from url object.");
                 return false;
             }
-            napi_value fileNameObj;
-            napi_value bundleNameObj;
-            napi_value moduleNameObj;
-            std::string fileName;
-            std::string bundleName;
-            std::string moduleName;
-            napi_get_element(env, paraArray, 0, &fileNameObj);
-            napi_get_named_property(env, urlObj, "bundleName", &bundleNameObj);
-            napi_get_named_property(env, urlObj, "moduleName", &moduleNameObj);
-            NapiParseUtils::ParseString(env, fileNameObj, fileName);
-            NapiParseUtils::ParseString(env, bundleNameObj, bundleName);
-            NapiParseUtils::ParseString(env, moduleNameObj, moduleName);
-            return GetRawFileUrl(fileName, bundleName, moduleName, result);
+            return true;
         }
         WVLOG_E("The type parsed from url object is not RAWFILE.");
         return false;
     }
     WVLOG_E("Unable to parse type from url object.");
+    return false;
+}
+
+bool WebviewController::ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result)
+{
+    napi_value paraArray = nullptr;
+    napi_get_named_property(env, urlObj, "params", &paraArray);
+    bool isArray = false;
+    napi_is_array(env, paraArray, &isArray);
+    if (!isArray) {
+        WVLOG_E("Unable to parse parameter array from url object.");
+        return false;
+    }
+    napi_value fileNameObj;
+    napi_value bundleNameObj;
+    napi_value moduleNameObj;
+    std::string fileName;
+    std::string bundleName;
+    std::string moduleName;
+    napi_get_element(env, paraArray, 0, &fileNameObj);
+    napi_get_named_property(env, urlObj, "bundleName", &bundleNameObj);
+    napi_get_named_property(env, urlObj, "moduleName", &moduleNameObj);
+    NapiParseUtils::ParseString(env, fileNameObj, fileName);
+    NapiParseUtils::ParseString(env, bundleNameObj, bundleName);
+    NapiParseUtils::ParseString(env, moduleNameObj, moduleName);
+    return GetRawFileUrl(fileName, bundleName, moduleName, result);
+}
+
+bool WebviewController::GetResourceUrl(napi_env env, napi_value urlObj, std::string& result)
+{
+    napi_value resIdObj = nullptr;
+    napi_value bundleNameObj = nullptr;
+    napi_value moduleNameObj = nullptr;
+
+    int32_t resId;
+    std::string bundleName;
+    std::string moduleName;
+
+    if ((napi_get_named_property(env, urlObj, "id", &resIdObj) != napi_ok) ||
+        (napi_get_named_property(env, urlObj, "bundleName", &bundleNameObj) != napi_ok) ||
+        (napi_get_named_property(env, urlObj, "moduleName", &moduleNameObj) != napi_ok)) {
+        return false;
+    }
+
+    if (!NapiParseUtils::ParseInt32(env, resIdObj, resId) ||
+        !NapiParseUtils::ParseString(env, bundleNameObj, bundleName) ||
+        !NapiParseUtils::ParseString(env, moduleNameObj, moduleName)) {
+        return false;
+    }
+
+    if (OhosResourceAdapterImpl::GetResourceString(bundleName, moduleName, resId, result)) {
+        return true;
+    }
     return false;
 }
 
