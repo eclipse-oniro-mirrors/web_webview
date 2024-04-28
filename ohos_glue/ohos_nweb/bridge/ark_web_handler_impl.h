@@ -563,7 +563,7 @@ public:
   void OnTooltip(const ArkWebString &tooltip) override;
 
   void ReleaseResizeHold() override;
-
+  
   ArkWebCharVector GetWordSelection(const ArkWebString &text, int8_t offset) override;
 
   void UpdateClippedSelectionBounds(int x, int y, int w, int h) override;
@@ -574,7 +574,13 @@ public:
   void OnRenderProcessNotResponding(const ArkWebString& js_stack, int pid, int reason) override;
   void OnRenderProcessResponding() override;
 
-  private:
+  void OnShowAutofillPopup(
+      const float offsetX,
+      const float offsetY,
+      const ArkWebStringVector &menu_items) override;
+  
+  void OnHideAutofillPopup() override;
+private:
   std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
 

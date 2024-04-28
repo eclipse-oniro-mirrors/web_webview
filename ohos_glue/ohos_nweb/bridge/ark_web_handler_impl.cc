@@ -838,4 +838,15 @@ void ArkWebHandlerImpl::OnRenderProcessResponding()
 {
     nweb_handler_->OnRenderProcessResponding();
 }
+
+void ArkWebHandlerImpl::OnShowAutofillPopup(
+    const float offsetX,
+    const float offsetY,
+    const ArkWebStringVector &menu_items) {
+  nweb_handler_->OnShowAutofillPopup(offsetX, offsetY, ArkWebStringVectorStructToClass(menu_items));
+}
+
+void ArkWebHandlerImpl::OnHideAutofillPopup() {
+  nweb_handler_->OnHideAutofillPopup();
+}
 } // namespace OHOS::ArkWeb

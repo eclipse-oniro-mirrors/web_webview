@@ -1042,6 +1042,10 @@ void ArkWebNWebWrapper::InjectOfflineResource(const std::string& url,
   ArkWebStringStructRelease(arkOrigin);
   ArkWebBasicVectorStructRelease<ArkWebUint8Vector>(arkResource);
   ArkWebStringMapStructRelease(responseHeadersMap);
+ }
+ 
+void ArkWebNWebWrapper::SuggestionSelected(int32_t index){
+  ark_web_nweb_->SuggestionSelected(index);
 }
 
 bool ArkWebNWebWrapper::TerminateRenderProcess() {

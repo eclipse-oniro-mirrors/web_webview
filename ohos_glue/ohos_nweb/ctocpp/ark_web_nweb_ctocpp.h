@@ -397,6 +397,8 @@ public:
                              const ArkWebStringVector &method_list,
                              const ArkWebStringVector &async_method_list,
                              const int32_t object_id) override;
+  
+  void SuggestionSelected(int32_t index) override;
 };
 
 } // namespace OHOS::ArkWeb
