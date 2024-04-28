@@ -93,6 +93,8 @@ public:
     virtual int32_t UnregisterNetConnCallback(int32_t id) = 0;
 
     virtual int32_t GetDefaultNetConnect(NetConnectType &type, NetConnectSubtype &netConnectSubtype) = 0;
+
+    virtual std::vector<std::string> GetDnsServers() = 0;
 };
 }  // namespace OHOS::NWeb
 

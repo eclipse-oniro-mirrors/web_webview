@@ -33,6 +33,8 @@ public:
 
     int32_t GetDefaultNetConnect(uint32_t& type, uint32_t& netConnectSubtype) override;
 
+    ArkWebStringVector GetDnsServers() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NetConnectAdapter> real_;
 
