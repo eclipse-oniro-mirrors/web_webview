@@ -18,12 +18,7 @@
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "print_manager_adapter.h"
-
-using ArkPrintRangeAdapter = OHOS::NWeb::PrintRangeAdapter;
-using ArkPrintPageSizeAdapter = OHOS::NWeb::PrintPageSizeAdapter;
-using ArkPrintMarginAdapter = OHOS::NWeb::PrintMarginAdapter;
-using ArkPrintAttributesAdapter = OHOS::NWeb::PrintAttributesAdapter;
+#include "ohos_adapter/include/ark_web_adapter_structs.h"
 
 namespace OHOS::ArkWeb {
 

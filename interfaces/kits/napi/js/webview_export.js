@@ -94,4 +94,26 @@ Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFr
   }
 });
 
+Object.defineProperty(webview.WebviewController.prototype, 'openAppLink', {
+  value:  function (callback) {
+    let abilityContext = getContext(this);
+    try {
+      let option = {
+        appLinkingOnly: true
+      };
+      abilityContext.openLink(callback.url, option, null)
+        .then(() => {
+          console.log("applink success openLink");
+          callback.result.cancelLoad();
+        })
+        .catch((error) => {
+          callback.result.continueLoad();
+        });
+    } catch(err) {
+      console.log(`applink openLink ErrorCode: ${err.code},  Message: ${err.message}`);
+      callback.result.continueLoad();
+    }
+  }
+});
+
 export default webview;

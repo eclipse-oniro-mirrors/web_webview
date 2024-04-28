@@ -29,6 +29,7 @@ ohos_unittest("nweb_media_adapter_test") {
   module_out_path = module_output_path
 
   sources = [
+    "media_avsession_adapter_impl_test.cpp",
     "media_codec_decoder_adapter_impl_test.cpp",
     "media_codec_encoder_adapter_impl_test.cpp",
     "player_framework_adapter_impl_test.cpp",
@@ -38,6 +39,7 @@ ohos_unittest("nweb_media_adapter_test") {
 
   deps = [
     "../../../../ohos_adapter:nweb_ohos_adapter",
+    "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
 
@@ -56,6 +58,16 @@ ohos_unittest("nweb_media_adapter_test") {
 
   if (webview_media_player_enable) {
     external_deps += [ "player_framework:media_client" ]
+  }
+
+  if (webview_media_avsession_enable) {
+    external_deps += [
+      "ability_base:want",
+      "ability_runtime:app_context",
+      "ability_runtime:wantagent_innerkits",
+      "av_session:avsession_client",
+      "input:libmmi-client",
+    ]
   }
 }
 

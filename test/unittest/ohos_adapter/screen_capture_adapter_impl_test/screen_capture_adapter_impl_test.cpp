@@ -355,6 +355,8 @@ void ScreenCaptureAdapterImplTest::SetUpTestCase(void)
     EXPECT_NE(g_videoInfo, nullptr);
     EXPECT_NE(g_recorderInfo, nullptr);
     EXPECT_NE(g_screenCaptureConfig, nullptr);
+    int32_t result = g_screenCapture->Init(nullptr);
+    EXPECT_EQ(result, -1);
 
     g_screenCaptureConfig->captureMode = CaptureModeAdapter::CAPTURE_HOME_SCREEN;
     g_screenCaptureConfig->dataType = DataTypeAdapter::ORIGINAL_STREAM_DATA_TYPE;
@@ -369,11 +371,16 @@ void ScreenCaptureAdapterImplTest::SetUpTestCase(void)
     g_videoCaptureInfo->videoFrameHeight = SCREEN_HEIGHT;
     g_videoInfo->videoCapInfo = g_videoCaptureInfo;
     g_videoInfo->videoEncInfo = g_videoEncInfo;
+    result = g_screenCapture->Init(g_screenCaptureConfig);
+    EXPECT_EQ(result, 0);
     g_screenCaptureConfig->audioInfo = g_audioInfo;
+    result = g_screenCapture->Init(g_screenCaptureConfig);
+    EXPECT_EQ(result, 0);
     g_screenCaptureConfig->videoInfo = g_videoInfo;
+    result = g_screenCapture->Init(g_screenCaptureConfig);
+    EXPECT_EQ(result, 0);
     g_screenCaptureConfig->recorderInfo = g_recorderInfo;
-
-    int32_t result = g_screenCapture->Init(g_screenCaptureConfig);
+    result = g_screenCapture->Init(g_screenCaptureConfig);
     EXPECT_EQ(result, 0);
 }
 

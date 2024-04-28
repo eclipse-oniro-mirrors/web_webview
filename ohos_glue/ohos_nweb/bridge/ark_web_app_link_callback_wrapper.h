@@ -13,21 +13,30 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
-#define ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
+#ifndef ARK_WEB_APP_LINK_CALLBACK_WRAPPER_H_
+#define ARK_WEB_APP_LINK_CALLBACK_WRAPPER_H_
 #pragma once
 
-#include "include/nweb_handler.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
+#include "base/include/ark_web_types.h"
+#include "include/nweb_app_link_callback.h"
+#include "ohos_nweb/include/ark_web_applink_callback.h"
 
 namespace OHOS::ArkWeb {
 
-ArkWebDateTime
-ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime &class_value);
+class ArkWebAppLinkCallbackWrapper : public OHOS::NWeb::NWebAppLinkCallback {
+public:
+  ArkWebAppLinkCallbackWrapper(
+      ArkWebRefPtr<ArkWebAppLinkCallback> ark_web_app_link_callback);
+  ~ArkWebAppLinkCallbackWrapper() = default;
 
-OHOS::NWeb::DateTime
-ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value);
+  void ContinueLoad() override;
+
+  void CancelLoad() override;
+
+private:
+  ArkWebRefPtr<ArkWebAppLinkCallback> ark_web_app_link_callback_;
+};
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_WEB_VIEW_STRUCT_WRAPPER_UTILS_H_
+#endif // ARK_WEB_JS_SSL_ERROR_RESULT_WRAPPER_H_

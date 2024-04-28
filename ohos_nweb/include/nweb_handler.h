@@ -21,6 +21,7 @@
 #include <vector>
 
 #include "nweb_access_request.h"
+#include "nweb_app_link_callback.h"
 #include "nweb.h"
 #include "nweb_console_log.h"
 #include "nweb_context_menu_params.h"
@@ -45,6 +46,8 @@
 #include "nweb_url_resource_request.h"
 #include "nweb_url_resource_response.h"
 #include "nweb_gesture_event_result.h"
+
+#include "nweb_log.h"
 
 namespace OHOS::NWeb {
 enum class RenderExitReason {
@@ -143,13 +146,16 @@ enum class CursorType: int32_t {
     CT_MAX_VALUE,
 };
 
-struct NWebCursorInfo {
-    int32_t width = 0;
-    int32_t height = 0;
-    int32_t x = 0;
-    int32_t y = 0;
-    float scale = 1.0;
-    uint8_t* buff = nullptr;
+class NWebCursorInfo {
+public:
+    virtual ~NWebCursorInfo() = default;
+
+    virtual int32_t GetX() = 0;
+    virtual int32_t GetY() = 0;
+    virtual uint8_t *GetBuff() = 0;
+    virtual float GetScale() = 0;
+    virtual int32_t GetWidth() = 0;
+    virtual int32_t GetHeight() = 0;
 };
 
 class NWebTouchHandleHotZone {
@@ -653,7 +659,7 @@ public:
      * @param info If |type| is CT_CUSTOM then |info| will be populated with the custom cursor information.
      * @return True if the cursor change was handled or false for default handling.
      */
-    virtual bool OnCursorChange(const CursorType& type, const NWebCursorInfo& info) {
+    virtual bool OnCursorChange(const CursorType& type, std::shared_ptr<NWebCursorInfo> info) {
         return false;
     }
 
@@ -829,6 +835,13 @@ public:
      */
     virtual std::vector<int8_t> GetWordSelection(const std::string& text, int8_t offset) {
         return { -1, -1 };
+    }
+
+    virtual void UpdateClippedSelectionBounds(int x, int y, int w, int h) {}
+
+    virtual bool OnOpenAppLink(const std::string& url,
+                               std::shared_ptr<NWebAppLinkCallback> callback) {
+        return false;
     }
 };
 }  // namespace OHOS::NWeb

@@ -1235,6 +1235,15 @@ public:
                                        const std::vector<uint8_t>& resource,
                                        const std::map<std::string, std::string>& responseHeaders,
                                        const int type) = 0;
+
+    /*
+     * @brief Terminate render process
+     *
+     * @return true if it was possible to terminate this render process, false
+     *         otherwise.
+     */
+    /*--ark web()--*/
+    virtual bool TerminateRenderProcess() = 0;
 };
 }  // namespace OHOS::NWeb
 

@@ -79,7 +79,7 @@ void MediaAVSessionCallbackImpl::OnMediaKeyEvent(const MMI::KeyEvent& keyEvent) 
 }
 
 void MediaAVSessionCallbackImpl::OnOutputDeviceChange(const int32_t connectionState,
-    const AVSession::OutputDeviceInfo& outputDeviceInfo, bool isDelay) {
+    const AVSession::OutputDeviceInfo& outputDeviceInfo) {
 }
 
 void MediaAVSessionCallbackImpl::OnCommonCommand(

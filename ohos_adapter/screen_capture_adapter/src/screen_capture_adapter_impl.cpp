@@ -151,36 +151,39 @@ OHOS::Media::AVScreenCaptureConfig ConvertScreenCaptureConfig(const std::shared_
     avConfig.captureMode = GetOHCaptureMode(config->GetCaptureMode());
     avConfig.dataType = GetOHDataType(config->GetDataType());
 
-    if (config->GetAudioInfo() && config->GetAudioInfo()->GetMicCapInfo() &&
-        config->GetAudioInfo()->GetInnerCapInfo() && config->GetAudioInfo()->GetAudioEncInfo()) {
+    if (config->GetAudioInfo() && config->GetAudioInfo()->GetMicCapInfo()) {
         avConfig.audioInfo.micCapInfo.audioSampleRate = config->GetAudioInfo()->GetMicCapInfo()->GetAudioSampleRate();
         avConfig.audioInfo.micCapInfo.audioChannels = config->GetAudioInfo()->GetMicCapInfo()->GetAudioChannels();
         avConfig.audioInfo.micCapInfo.audioSource =
             GetOHAudioCaptureSourceType(config->GetAudioInfo()->GetMicCapInfo()->GetAudioSource());
+    }
 
+    if (config->GetAudioInfo() && config->GetAudioInfo()->GetInnerCapInfo()) {
         avConfig.audioInfo.innerCapInfo.audioSampleRate =
             config->GetAudioInfo()->GetInnerCapInfo()->GetAudioSampleRate();
         avConfig.audioInfo.innerCapInfo.audioChannels = config->GetAudioInfo()->GetInnerCapInfo()->GetAudioChannels();
         avConfig.audioInfo.innerCapInfo.audioSource =
             GetOHAudioCaptureSourceType(config->GetAudioInfo()->GetInnerCapInfo()->GetAudioSource());
+    }
 
+    if (config->GetAudioInfo() && config->GetAudioInfo()->GetAudioEncInfo()) {
         avConfig.audioInfo.audioEncInfo.audioBitrate = config->GetAudioInfo()->GetAudioEncInfo()->GetAudioBitrate();
         avConfig.audioInfo.audioEncInfo.audioCodecformat =
             GetOHAudioCodecFormat(config->GetAudioInfo()->GetAudioEncInfo()->GetAudioCodecformat());
     }
 
-    if (config->GetVideoInfo() && config->GetVideoInfo()->GetVideoCapInfo() &&
-        config->GetVideoInfo()->GetVideoEncInfo()) {
+    if (config->GetVideoInfo() && config->GetVideoInfo()->GetVideoCapInfo()) {
         avConfig.videoInfo.videoCapInfo.displayId = config->GetVideoInfo()->GetVideoCapInfo()->GetDisplayId();
         avConfig.videoInfo.videoCapInfo.taskIDs = config->GetVideoInfo()->GetVideoCapInfo()->GetTaskIDs();
-
         avConfig.videoInfo.videoCapInfo.videoFrameWidth =
             config->GetVideoInfo()->GetVideoCapInfo()->GetVideoFrameWidth();
         avConfig.videoInfo.videoCapInfo.videoFrameHeight =
             config->GetVideoInfo()->GetVideoCapInfo()->GetVideoFrameHeight();
         avConfig.videoInfo.videoCapInfo.videoSource =
             GetOHVideoSourceType(config->GetVideoInfo()->GetVideoCapInfo()->GetVideoSourceType());
+    }
 
+    if (config->GetVideoInfo() && config->GetVideoInfo()->GetVideoEncInfo()) {
         avConfig.videoInfo.videoEncInfo.videoCodec =
             GetOHVideoCodecFormat(config->GetVideoInfo()->GetVideoEncInfo()->GetVideoCodecFormat());
         avConfig.videoInfo.videoEncInfo.videoBitrate = config->GetVideoInfo()->GetVideoEncInfo()->GetVideoBitrate();

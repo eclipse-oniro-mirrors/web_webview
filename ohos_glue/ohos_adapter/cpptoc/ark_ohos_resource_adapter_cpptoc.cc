@@ -32,11 +32,11 @@ bool ARK_WEB_CALLBACK ark_ohos_resource_adapter_get_raw_file_data(
 
   ARK_WEB_CPPTOC_CHECK_PARAM(len, false);
 
-  ARK_WEB_CPPTOC_CHECK_PARAM(&dest, false);
+  ARK_WEB_CPPTOC_CHECK_PARAM(dest, false);
 
   // Execute
   return ArkOhosResourceAdapterCppToC::Get(self)->GetRawFileData(*rawFile, *len,
-                                                                 *dest, isSys);
+                                                                 dest, isSys);
 }
 
 ark_ohos_file_mapper_t *ARK_WEB_CALLBACK
