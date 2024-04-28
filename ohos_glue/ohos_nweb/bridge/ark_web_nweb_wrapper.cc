@@ -1048,4 +1048,21 @@ bool ArkWebNWebWrapper::TerminateRenderProcess() {
   return ark_web_nweb_->TerminateRenderProcess();
 }
 
+void ArkWebNWebWrapper::RegisterArkJSfunction(
+    const std::string &object_name, const std::vector<std::string> &method_list,
+    const std::vector<std::string> &async_method_list,
+    const int32_t object_id) {
+  ArkWebString stName = ArkWebStringClassToStruct(object_name);
+  ArkWebStringVector stMethods = ArkWebStringVectorClassToStruct(method_list);
+  ArkWebStringVector stAsyncMethods =
+    ArkWebStringVectorClassToStruct(async_method_list);
+
+  ark_web_nweb_->RegisterArkJSfunction(stName, stMethods, stAsyncMethods,
+                                       object_id);
+
+  ArkWebStringStructRelease(stName);
+  ArkWebStringVectorStructRelease(stMethods);
+  ArkWebStringVectorStructRelease(stAsyncMethods);
+}
+
 } // namespace OHOS::ArkWeb

@@ -392,6 +392,11 @@ public:
                              const int type) override;
 
   bool TerminateRenderProcess() override;
+
+  void RegisterArkJSfunction(const ArkWebString &object_name,
+                             const ArkWebStringVector &method_list,
+                             const ArkWebStringVector &async_method_list,
+                             const int32_t object_id) override;
 };
 
 } // namespace OHOS::ArkWeb

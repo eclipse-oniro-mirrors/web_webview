@@ -676,11 +676,11 @@ void ArkWebNWebCToCpp::RegisterArkJSfunction(
   ark_web_nweb_t *_struct = GetStruct();
   ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
 
-  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, register_ark_jsfunction, );
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, register_ark_jsfunction1, );
 
   // Execute
-  _struct->register_ark_jsfunction(_struct, &object_name, &method_list,
-                                   object_id);
+  _struct->register_ark_jsfunction1(_struct, &object_name, &method_list,
+                                    object_id);
 }
 
 ARK_WEB_NO_SANITIZE
@@ -2112,6 +2112,22 @@ bool ArkWebNWebCToCpp::TerminateRenderProcess() {
 
   // Execute
   return _struct->terminate_render_process(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::RegisterArkJSfunction(
+    const ArkWebString &object_name, const ArkWebStringVector &method_list,
+    const ArkWebStringVector &async_method_list, const int32_t object_id) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, register_ark_jsfunction2, );
+
+  // Execute
+  _struct->register_ark_jsfunction2(_struct, &object_name, &method_list,
+                                    &async_method_list, object_id);
 }
 
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
