@@ -67,6 +67,15 @@ enum class RenderExitReason {
     PROCESS_EXIT_UNKNOWN,
 };
 
+enum class RenderProcessNotRespondingReason {
+    // Input  ack from Render process timeout.
+    INPUT_TIMEOUT,
+
+    // Navigation commit ack from Render process timeout.
+    NAVIGATION_COMMIT_TIMEOUT,
+};
+
+
 class NWebImageOptions {
 public:
     virtual ~NWebImageOptions() = default;
@@ -843,6 +852,25 @@ public:
                                std::shared_ptr<NWebAppLinkCallback> callback) {
         return false;
     }
+
+    /**
+     * @brief Called when the render process not responding.
+     *
+     * @param js_stack Javascript stack info of webpage when render process not responding.
+     * @param pid Process id of the render process not responding.
+     * @param reason Reason of the render process not responding.
+     */
+
+    virtual void OnRenderProcessNotResponding(
+        const std::string& js_stack, int pid, RenderProcessNotRespondingReason reason)
+    {}
+
+    /**
+     * @brief Called when the unresponding render process becomes responsive.
+     *
+     */
+
+    virtual void OnRenderProcessResponding() {}
 };
 }  // namespace OHOS::NWeb
 
