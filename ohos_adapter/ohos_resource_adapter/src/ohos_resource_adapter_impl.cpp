@@ -268,6 +268,19 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t&
     return result;
 }
 
+bool OhosResourceAdapterImpl::GetResourceString(const std::string& bundleName,
+    const std::string& moduleName, const int32_t resId, std::string& result)
+{
+    auto resourceManager = GetResourceMgr(bundleName, moduleName);
+    if (!resourceManager) {
+        return false;
+    }
+    if (resourceManager->GetStringById(resId, result) == Global::Resource::SUCCESS) {
+        return true;
+    }
+    return false;
+}
+
 std::shared_ptr<OhosFileMapper> OhosResourceAdapterImpl::GetRawFileMapper(const std::string& rawFile,
     bool isSys)
 {

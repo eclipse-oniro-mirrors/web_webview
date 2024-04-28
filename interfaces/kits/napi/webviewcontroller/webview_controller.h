@@ -344,6 +344,10 @@ private:
     bool GetRawFileUrl(const std::string &fileName,
         const std::string& bundleName, const std::string& moduleName, std::string &result);
 
+    bool ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result);
+
+    bool GetResourceUrl(napi_env env, napi_value urlObj, std::string& result);
+
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;
