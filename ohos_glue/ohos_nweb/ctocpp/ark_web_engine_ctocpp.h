@@ -81,6 +81,11 @@ public:
   ClearPrefetchedResource(const ArkWebStringVector &cache_key_list) override;
 
   void WarmupServiceWorker(const ArkWebString &url) override;
+
+  void SetHostIP(
+      const ArkWebString& hostName, const ArkWebString& address, int32_t aliveTime) override;
+
+  void ClearHostIP(const ArkWebString& hostName) override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -79,6 +79,9 @@ public:
 
     void WarmupServiceWorker(const std::string &url);
 
+    void SetHostIP(
+        const std::string& hostName, const std::string& address, int32_t aliveTime);
+    void ClearHostIP(const std::string& hostName);
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);

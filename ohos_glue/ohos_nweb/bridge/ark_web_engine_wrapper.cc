@@ -217,4 +217,14 @@ void ArkWebEngineWrapper::WarmupServiceWorker(const std::string &url) {
 
   ArkWebStringStructRelease(stUrl);
 }
+
+void ArkWebEngineWrapper::SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime)
+{
+    ark_web_engine_->SetHostIP(ArkWebStringClassToStruct(hostName), ArkWebStringClassToStruct(address), aliveTime);
+}
+
+void ArkWebEngineWrapper::ClearHostIP(const std::string& hostName)
+{
+    ark_web_engine_->ClearHostIP(ArkWebStringClassToStruct(hostName));
+}
 } // namespace OHOS::ArkWeb
