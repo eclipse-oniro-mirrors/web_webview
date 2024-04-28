@@ -296,6 +296,46 @@ void ArkWebUrlResourceResponseCToCpp::PutResponseReadyCallback(
       _struct, ArkWebResourceReadyCallbackCppToC::Invert(callback));
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebUrlResourceResponseCToCpp::PutResponseDataBuffer(char *buffer,
+                                                            size_t bufferSize) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_url_resource_response_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, put_response_data_buffer, );
+
+  // Execute
+  _struct->put_response_data_buffer(_struct, buffer, bufferSize);
+}
+
+ARK_WEB_NO_SANITIZE
+char *ArkWebUrlResourceResponseCToCpp::GetResponseDataBuffer() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_url_resource_response_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, NULL);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_response_data_buffer, NULL);
+
+  // Execute
+  return _struct->get_response_data_buffer(_struct);
+}
+
+ARK_WEB_NO_SANITIZE
+size_t ArkWebUrlResourceResponseCToCpp::GetResponseDataBufferSize() {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_url_resource_response_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, 0);
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, get_response_data_buffer_size, 0);
+
+  // Execute
+  return _struct->get_response_data_buffer_size(_struct);
+}
+
 ArkWebUrlResourceResponseCToCpp::ArkWebUrlResourceResponseCToCpp() {
 }
 
