@@ -49,7 +49,7 @@ size_t ArkOhosFileMapperImpl::GetDataLen()
     return real_->GetDataLen();
 }
 
-bool ArkOhosFileMapperImpl::UnzipData(uint8_t*& dest, size_t& len)
+bool ArkOhosFileMapperImpl::UnzipData(uint8_t** dest, size_t& len)
 {
     return real_->UnzipData(dest, len);
 }

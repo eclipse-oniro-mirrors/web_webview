@@ -18,6 +18,17 @@
 
 namespace OHOS::ArkWeb {
 
+#if defined(webview_arm64)
+const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm64";
+const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm64";
+#elif defined(webview_x86_64)
+const std::string RELATIVE_PATH_FOR_MOCK = "libs/x86_64";
+const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/x86_64";
+#else
+const std::string RELATIVE_PATH_FOR_MOCK = "libs/arm";
+const std::string RELATIVE_PATH_FOR_BUNDLE = "nweb/libs/arm";
+#endif
+
 ArkWebNWebBridgeHelper &ArkWebNWebBridgeHelper::GetInstance() {
   static ArkWebNWebBridgeHelper helper;
   return helper;
@@ -25,10 +36,23 @@ ArkWebNWebBridgeHelper &ArkWebNWebBridgeHelper::GetInstance() {
 
 bool ArkWebNWebBridgeHelper::Init(bool runMode, const std::string &baseDir) {
 #ifdef __MUSL__
-  return LoadLibFile(runMode, "nweb_ns", baseDir, "libweb_engine.so");
+  std::string libDirPath = GetDirPath(runMode, baseDir);
+  return LoadLibFile(RTLD_NOW | RTLD_GLOBAL, "nweb_ns", libDirPath,
+                     "libweb_engine.so");
 #else
-  return LoadLibFile(runMode, baseDir, "libweb_engine.so");
+  std::string dirPath = GetDirPath(runMode, baseDir);
+  std::string libFilePath = dirPath + "/libweb_engine.so";
+  return LoadLibFile(RTLD_NOW, libFilePath);
 #endif
+}
+
+std::string ArkWebNWebBridgeHelper::GetDirPath(bool runMode,
+                                               const std::string &baseDir) {
+  if (runMode) {
+    return baseDir + "/" + RELATIVE_PATH_FOR_BUNDLE;
+  }
+
+  return baseDir + "/" + RELATIVE_PATH_FOR_MOCK;
 }
 
 } // namespace OHOS::ArkWeb

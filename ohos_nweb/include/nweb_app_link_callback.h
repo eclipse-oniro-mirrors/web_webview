@@ -13,21 +13,20 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
-#define ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
-#pragma once
+#ifndef NWEB_APP_LINK_CALLBACK_H
+#define NWEB_APP_LINK_CALLBACK_H
 
-#include "include/nweb_handler.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
+#include "nweb_export.h"
 
-namespace OHOS::ArkWeb {
+namespace OHOS::NWeb {
+class OHOS_NWEB_EXPORT NWebAppLinkCallback {
+public:
+    virtual ~NWebAppLinkCallback() = default;
 
-ArkWebDateTime
-ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime &class_value);
+    virtual void ContinueLoad() = 0;
 
-OHOS::NWeb::DateTime
-ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value);
+    virtual void CancelLoad() = 0;
+};
+} // namespace OHOS::NWeb
 
-} // namespace OHOS::ArkWeb
-
-#endif // ARK_WEB_VIEW_STRUCT_WRAPPER_UTILS_H_
+#endif // NWEB_GESTURE_EVENT_RESULT_H

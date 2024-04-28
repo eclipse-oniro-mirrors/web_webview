@@ -363,10 +363,12 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
     napi_create_object(env_, &requestValue[1]);
     WebSchemeHandlerRequest* schemeHandlerRequest = new (std::nothrow) WebSchemeHandlerRequest(env_, request);
     if (schemeHandlerRequest == nullptr) {
+        WVLOG_E("RequestStart, new schemeHandlerRequest failed");
         return;
     }
     WebResourceHandler* resourceHandler = new (std::nothrow) WebResourceHandler(env_, ArkWeb_ResourceHandler);
     if (resourceHandler == nullptr) {
+        WVLOG_E("RequestStart, new resourceHandler failed");
         delete schemeHandlerRequest;
         return;
     }
@@ -460,7 +462,7 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
         reinterpret_cast<WebResourceHandler*>(
             OH_ArkWebResourceRequest_GetUserData(param->arkWebRequest_));
     if (resourceHandler) {
-        resourceHandler->DestoryArkWebResourceHandler();
+        resourceHandler->SetFinishFlag();
     }
     napi_close_handle_scope(param->env_, scope);
     delete param;

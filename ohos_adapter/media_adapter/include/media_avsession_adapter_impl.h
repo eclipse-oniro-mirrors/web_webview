@@ -41,7 +41,7 @@ public:
     void OnToggleFavorite(const std::string& assertId) override;
     void OnMediaKeyEvent(const MMI::KeyEvent& keyEvent) override;
     void OnOutputDeviceChange(const int32_t connectionState,
-             const AVSession::OutputDeviceInfo& outputDeviceInfo, bool isDelay) override;
+             const AVSession::OutputDeviceInfo& outputDeviceInfo) override;
     void OnCommonCommand(const std::string& commonCommand, const AAFwk::WantParams& commandArgs) override;
     void OnSkipToQueueItem(int32_t itemId) override;
     void OnAVCallAnswer() override;

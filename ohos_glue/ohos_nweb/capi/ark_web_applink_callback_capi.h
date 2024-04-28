@@ -13,21 +13,32 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
-#define ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
+#ifndef ARK_WEB_APPLINK_CALLBACK_CAPI_H_
+#define ARK_WEB_APPLINK_CALLBACK_CAPI_H_
 #pragma once
 
-#include "include/nweb_handler.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
-namespace OHOS::ArkWeb {
+#ifdef __cplusplus
+extern "C" {
+#endif
 
-ArkWebDateTime
-ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime &class_value);
+typedef struct _ark_web_app_link_callback_t {
+  /**
+   * @brief Base structure.
+   */
+  ark_web_base_ref_counted_t base;
 
-OHOS::NWeb::DateTime
-ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value);
+  void(ARK_WEB_CALLBACK *continue_load)(
+      struct _ark_web_app_link_callback_t *self);
 
-} // namespace OHOS::ArkWeb
+  void(ARK_WEB_CALLBACK *cancel_load)(
+      struct _ark_web_app_link_callback_t *self);
+} ark_web_app_link_callback_t;
 
-#endif // ARK_WEB_VIEW_STRUCT_WRAPPER_UTILS_H_
+#ifdef __cplusplus
+}
+#endif
+
+#endif // ARK_WEB_APPLINK_CALLBACK_CAPI_H_

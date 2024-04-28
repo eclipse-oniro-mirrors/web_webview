@@ -13,21 +13,25 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
-#define ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
+#ifndef ARK_WEB_APPLINK_CALLBACK_H_
+#define ARK_WEB_APPLINK_CALLBACK_H_
 #pragma once
 
-#include "include/nweb_handler.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-ArkWebDateTime
-ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime &class_value);
+/*--ark web(source=web core)--*/
+class ArkWebAppLinkCallback : public virtual ArkWebBaseRefCounted {
+public:
+  /*--ark web()--*/
+  virtual void ContinueLoad() = 0;
 
-OHOS::NWeb::DateTime
-ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value);
+  /*--ark web()--*/
+  virtual void CancelLoad() = 0;
+};
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_WEB_VIEW_STRUCT_WRAPPER_UTILS_H_
+#endif // ARK_WEB_APPLINK_CALLBACK_H_

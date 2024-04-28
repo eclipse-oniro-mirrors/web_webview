@@ -390,6 +390,8 @@ public:
                              const ArkWebUint8Vector &resource,
                              const ArkWebStringMap &responseHeaders,
                              const int type) override;
+
+  bool TerminateRenderProcess() override;
 };
 
 } // namespace OHOS::ArkWeb

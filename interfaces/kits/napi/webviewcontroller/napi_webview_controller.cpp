@@ -355,6 +355,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("runJavaScript", NapiWebviewController::RunJavaScript),
         DECLARE_NAPI_FUNCTION("runJavaScriptExt", NapiWebviewController::RunJavaScriptExt),
         DECLARE_NAPI_FUNCTION("getUrl", NapiWebviewController::GetUrl),
+        DECLARE_NAPI_FUNCTION("terminateRenderProcess", NapiWebviewController::TerminateRenderProcess),
         DECLARE_NAPI_FUNCTION("getOriginalUrl", NapiWebviewController::GetOriginalUrl),
         DECLARE_NAPI_FUNCTION("setNetworkAvailable", NapiWebviewController::SetNetworkAvailable),
         DECLARE_NAPI_FUNCTION("innerGetWebId", NapiWebviewController::InnerGetWebId),
@@ -3159,6 +3160,19 @@ napi_value NapiWebviewController::GetOriginalUrl(napi_env env, napi_callback_inf
     return result;
 }
 
+napi_value NapiWebviewController::TerminateRenderProcess(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+    bool ret = false;
+    ret = webviewController->TerminateRenderProcess();
+    NAPI_CALL(env, napi_get_boolean(env, ret, &result));
+    return result;
+}
+
 napi_value NapiWebviewController::SetNetworkAvailable(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
@@ -3722,7 +3736,8 @@ void SetCustomizeSchemeOption(Scheme& scheme)
         {3, &Scheme::isSecure},
         {4, &Scheme::isSupportCORS},
         {5, &Scheme::isCspBypassing},
-        {6, &Scheme::isSupportFetch}
+        {6, &Scheme::isSupportFetch},
+        {7, &Scheme::isCodeCacheSupported}
     };
 
     for (const auto& property : schemeProperties) {
@@ -3741,7 +3756,8 @@ bool SetCustomizeScheme(napi_env env, napi_value obj, Scheme& scheme)
         {"isLocal", &Scheme::isLocal},
         {"isDisplayIsolated", &Scheme::isDisplayIsolated},
         {"isSecure", &Scheme::isSecure},
-        {"isCspBypassing", &Scheme::isCspBypassing}
+        {"isCspBypassing", &Scheme::isCspBypassing},
+        {"isCodeCacheSupported", &Scheme::isCodeCacheSupported}
     };
 
     for (const auto& property : schemeBooleanProperties) {

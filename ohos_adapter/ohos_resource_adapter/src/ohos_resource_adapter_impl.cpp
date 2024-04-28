@@ -186,13 +186,13 @@ size_t OhosFileMapperImpl::GetDataLen()
     return fileMap_ ? fileMap_->GetDataLen(): 0;
 }
 
-bool OhosFileMapperImpl::UnzipData(uint8_t* &dest, size_t& len)
+bool OhosFileMapperImpl::UnzipData(uint8_t** dest, size_t& len)
 {
     if (extractor_ && IsCompressed()) {
         std::unique_ptr<uint8_t[]> data;
         bool result = extractor_->UnzipData(std::move(fileMap_), data, len);
         if (result) {
-            dest = data.release();
+            *dest = data.release();
         }
         return result;
     }
@@ -225,14 +225,14 @@ void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 }
 
 bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t& len,
-    uint8_t* &dest, bool isSys)
+    uint8_t** dest, bool isSys)
 {
     std::unique_ptr<uint8_t[]> data;
     bool result;
     if (isSys) {
         result =  GetRawFileData(sysExtractor_, rawFile, len, data);
         if (result) {
-            dest = data.release();
+            *dest = data.release();
         }
         return result;
     }
@@ -244,7 +244,7 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t&
         if (!resourceManager) {
             result = GetRawFileData(extractor_, rawFile, len, data);
             if (result) {
-                dest = data.release();
+                *dest = data.release();
             }
             return result;
         }
@@ -253,17 +253,17 @@ bool OhosResourceAdapterImpl::GetRawFileData(const std::string& rawFile, size_t&
             WVLOG_E("GetRawFileFromHap failed, state: %{public}d, fileName: %{public}s", state, fileName.c_str());
             result = GetRawFileData(extractor_, rawFile, len, data);
             if (result) {
-                dest = data.release();
+                *dest = data.release();
             }
             return result;
         }
-        dest = data.release();
+        *dest = data.release();
         return true;
     }
 
     result = GetRawFileData(extractor_, rawFile, len, data);
     if (result) {
-        dest = data.release();
+        *dest = data.release();
     }
     return result;
 }

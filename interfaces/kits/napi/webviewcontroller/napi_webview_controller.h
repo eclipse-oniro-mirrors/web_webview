@@ -50,6 +50,7 @@ struct Scheme {
     bool isDisplayIsolated;
     bool isSecure;
     bool isCspBypassing;
+    bool isCodeCacheSupported;
     int32_t option = 0;
 };
 
@@ -181,6 +182,8 @@ private:
         bool extention, napi_value argv, napi_value result);
 
     static napi_value RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention);
+
+    static napi_value TerminateRenderProcess(napi_env env, napi_callback_info info);
 
     static napi_value GetUrl(napi_env env, napi_callback_info info);
 

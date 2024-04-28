@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,21 +13,11 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
-#define ARK_WEB_VIEW_STRUCT_IMPL_UTILS_H_
-#pragma once
+#ifndef ARK_WEB_ADAPTER_STRUCTS_H
+#define ARK_WEB_ADAPTER_STRUCTS_H
 
-#include "include/nweb_handler.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
+#include "print_manager_adapter.h"
 
-namespace OHOS::ArkWeb {
+using ArkPrintAttributesAdapter = OHOS::NWeb::PrintAttributesAdapter;
 
-ArkWebDateTime
-ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime &class_value);
-
-OHOS::NWeb::DateTime
-ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value);
-
-} // namespace OHOS::ArkWeb
-
-#endif // ARK_WEB_VIEW_STRUCT_WRAPPER_UTILS_H_
+#endif // ARK_WEB_ADAPTER_STRUCTS_H

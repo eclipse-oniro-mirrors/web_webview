@@ -30,6 +30,12 @@ void NapiNativeMediaPlayerHandler::Init(napi_env env, napi_value value)
 {
     WVLOG_I("begin to init native media player napi properties");
 
+    NAPI_CALL_RETURN_VOID(env, ExportEnumPreload(env, &value));
+
+    NAPI_CALL_RETURN_VOID(env, ExportEnumMediaType(env, &value));
+
+    NAPI_CALL_RETURN_VOID(env, ExportEnumSourceType(env, &value));
+
     NAPI_CALL_RETURN_VOID(env, ExportEnumMediaError(env, &value));
 
     NAPI_CALL_RETURN_VOID(env, ExportEnumReadyState(env, &value));
@@ -61,6 +67,61 @@ napi_status NapiNativeMediaPlayerHandler::DefineProperties(napi_env env, napi_va
     };
 
     return napi_define_properties(env, *value, sizeof(properties) / sizeof(properties[0]), properties);
+}
+
+napi_status NapiNativeMediaPlayerHandler::ExportEnumPreload(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum preload");
+
+    const std::string NPI_PRELOAD_ENUM_NAME = "Preload";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("NONE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(Preload::NONE))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "METADATA", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(Preload::METADATA))),
+        DECLARE_NAPI_STATIC_PROPERTY("AUTO", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(Preload::AUTO))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_PRELOAD_ENUM_NAME.c_str(), NPI_PRELOAD_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_PRELOAD_ENUM_NAME.c_str(), enumValue);
+}
+
+napi_status NapiNativeMediaPlayerHandler::ExportEnumMediaType(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum media type");
+
+    const std::string NPI_MEDIA_TYPE_ENUM_NAME = "MediaType";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "VIDEO", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(MediaType::VIDEO))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "AUDIO", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(MediaType::AUDIO))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_MEDIA_TYPE_ENUM_NAME.c_str(), NPI_MEDIA_TYPE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_MEDIA_TYPE_ENUM_NAME.c_str(), enumValue);
+}
+
+napi_status NapiNativeMediaPlayerHandler::ExportEnumSourceType(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum source type");
+
+    const std::string NPI_SOURCE_TYPE_ENUM_NAME = "SourceType";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("URL", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SourceType::URL))),
+        DECLARE_NAPI_STATIC_PROPERTY("MSE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SourceType::MSE))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_SOURCE_TYPE_ENUM_NAME.c_str(), NPI_SOURCE_TYPE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_SOURCE_TYPE_ENUM_NAME.c_str(), enumValue);
 }
 
 napi_status NapiNativeMediaPlayerHandler::ExportEnumMediaError(napi_env env, napi_value* value)
