@@ -36,6 +36,12 @@ public:
     void CountTrace(const std::string& name, int64_t count) override;
 
     bool IsHiTraceEnable() override;
+
+    void StartOHOSTrace(const std::string& value, float limit = -1) override;
+
+    void FinishOHOSTrace() override;
+
+    void CountOHOSTrace(const std::string& name, int64_t count) override;
 };
 } // namespace OHOS::NWeb
 
