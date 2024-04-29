@@ -25,23 +25,23 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebWebStorageOrigin : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual long GetQuota() = 0;
+    /*--ark web()--*/
+    virtual long GetQuota() = 0;
 
-  /*--ark web()--*/
-  virtual void SetQuota(long quota) = 0;
+    /*--ark web()--*/
+    virtual void SetQuota(long quota) = 0;
 
-  /*--ark web()--*/
-  virtual long GetUsage() = 0;
+    /*--ark web()--*/
+    virtual long GetUsage() = 0;
 
-  /*--ark web()--*/
-  virtual void SetUsage(long usage) = 0;
+    /*--ark web()--*/
+    virtual void SetUsage(long usage) = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetOrigin() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetOrigin() = 0;
 
-  /*--ark web()--*/
-  virtual void SetOrigin(const ArkWebString &origin) = 0;
+    /*--ark web()--*/
+    virtual void SetOrigin(const ArkWebString& origin) = 0;
 };
 
 } // namespace OHOS::ArkWeb

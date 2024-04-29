@@ -25,21 +25,21 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebUrlResourceError : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Get the error code.
-   *
-   * @return The error code.
-   */
-  /*--ark web()--*/
-  virtual int ErrorCode() = 0;
+    /**
+     * @brief Get the error code.
+     *
+     * @return The error code.
+     */
+    /*--ark web()--*/
+    virtual int ErrorCode() = 0;
 
-  /**
-   * @brief Get the error info.
-   *
-   * @return The error info.
-   */
-  /*--ark web()--*/
-  virtual ArkWebString ErrorInfo() = 0;
+    /**
+     * @brief Get the error info.
+     *
+     * @return The error info.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString ErrorInfo() = 0;
 };
 
 } // namespace OHOS::ArkWeb

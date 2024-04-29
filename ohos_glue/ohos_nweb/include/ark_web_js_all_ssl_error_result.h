@@ -24,18 +24,18 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebJsAllSslErrorResult : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Handle the result if the user cancelled the url request.
-   */
-  /*--ark web()--*/
-  virtual void HandleCancel() = 0;
+    /**
+     * @brief Handle the result if the user cancelled the url request.
+     */
+    /*--ark web()--*/
+    virtual void HandleCancel() = 0;
 
-  /**
-   * @brief Handle a confirmation response from the user, the url request will
-   *        be continued.
-   */
-  /*--ark web()--*/
-  virtual void HandleConfirm() = 0;
+    /**
+     * @brief Handle a confirmation response from the user, the url request will
+     *        be continued.
+     */
+    /*--ark web()--*/
+    virtual void HandleConfirm() = 0;
 };
 
 } // namespace OHOS::ArkWeb

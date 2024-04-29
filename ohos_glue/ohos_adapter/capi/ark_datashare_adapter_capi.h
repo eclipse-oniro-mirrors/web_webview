@@ -25,19 +25,18 @@ extern "C" {
 #endif
 
 typedef struct _ark_datashare_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *open_data_share_uri_for_read)(
-      struct _ark_datashare_adapter_t *self, const ArkWebString *uriStr);
+    int(ARK_WEB_CALLBACK* open_data_share_uri_for_read)(
+        struct _ark_datashare_adapter_t* self, const ArkWebString* uriStr);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_file_display_name)(
-      struct _ark_datashare_adapter_t *self, const ArkWebString *uriStr);
+    ArkWebString(ARK_WEB_CALLBACK* get_file_display_name)(
+        struct _ark_datashare_adapter_t* self, const ArkWebString* uriStr);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_real_path)(
-      struct _ark_datashare_adapter_t *self, const ArkWebString *uriStr);
+    ArkWebString(ARK_WEB_CALLBACK* get_real_path)(struct _ark_datashare_adapter_t* self, const ArkWebString* uriStr);
 } ark_datashare_adapter_t;
 
 #ifdef __cplusplus

@@ -15,10 +15,7 @@
 
 #ifndef ARK_OHOS_WEB_DATA_BASE_ADAPTER_H
 #define ARK_OHOS_WEB_DATA_BASE_ADAPTER_H
-
 #pragma once
-
-#include <vector>
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -28,65 +25,43 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkOhosWebDataBaseAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkOhosWebDataBaseAdapter() = default;
+    /*--ark web()--*/
+    virtual bool ExistHttpAuthCredentials() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkOhosWebDataBaseAdapter() = default;
+    /*--ark web()--*/
+    virtual void DeleteHttpAuthCredentials() = 0;
 
-  /*--ark web()--*/
-  virtual bool ExistHttpAuthCredentials() = 0;
+    /*--ark web()--*/
+    virtual void SaveHttpAuthCredentials(
+        const ArkWebString& host, const ArkWebString& realm, const ArkWebString& username, const char* password) = 0;
 
-  /*--ark web()--*/
-  virtual void DeleteHttpAuthCredentials() = 0;
-
-  /*--ark web()--*/
-  virtual void SaveHttpAuthCredentials(const ArkWebString &host,
-                                       const ArkWebString &realm,
-                                       const ArkWebString &username,
-                                       const char *password) = 0;
-
-  /*--ark web()--*/
-  virtual void GetHttpAuthCredentials(const ArkWebString &host,
-                                      const ArkWebString &realm,
-                                      ArkWebString &username, char *password,
-                                      uint32_t passwordSize) = 0;
+    /*--ark web()--*/
+    virtual void GetHttpAuthCredentials(const ArkWebString& host, const ArkWebString& realm, ArkWebString& username,
+        char* password, uint32_t passwordSize) = 0;
 };
 
 /*--ark web(source=library)--*/
-class ArkOhosWebPermissionDataBaseAdapter
-    : public virtual ArkWebBaseRefCounted {
+class ArkOhosWebPermissionDataBaseAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkOhosWebPermissionDataBaseAdapter() = default;
+    /*--ark web()--*/
+    virtual bool ExistPermissionByOrigin(const ArkWebString& origin, const int32_t& key) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkOhosWebPermissionDataBaseAdapter() = default;
+    /*--ark web()--*/
+    virtual bool GetPermissionResultByOrigin(const ArkWebString& origin, const int32_t& key, bool& result) = 0;
 
-  /*--ark web()--*/
-  virtual bool ExistPermissionByOrigin(const ArkWebString &origin,
-                                       const int32_t &key) = 0;
+    /*--ark web()--*/
+    virtual void SetPermissionByOrigin(const ArkWebString& origin, const int32_t& key, bool result) = 0;
 
-  /*--ark web()--*/
-  virtual bool GetPermissionResultByOrigin(const ArkWebString &origin,
-                                           const int32_t &key,
-                                           bool &result) = 0;
+    /*--ark web()--*/
+    virtual void ClearPermissionByOrigin(const ArkWebString& origin, const int32_t& key) = 0;
 
-  /*--ark web()--*/
-  virtual void SetPermissionByOrigin(const ArkWebString &origin,
-                                     const int32_t &key, bool result) = 0;
+    /*--ark web()--*/
+    virtual void ClearAllPermission(const int32_t& key) = 0;
 
-  /*--ark web()--*/
-  virtual void ClearPermissionByOrigin(const ArkWebString &origin,
-                                       const int32_t &key) = 0;
-
-  /*--ark web()--*/
-  virtual void ClearAllPermission(const int32_t &key) = 0;
-
-  /*--ark web()--*/
-  virtual void GetOriginsByPermission(const int32_t &key,
-                                      ArkWebStringVector &origins) = 0;
+    /*--ark web()--*/
+    virtual void GetOriginsByPermission(const int32_t& key, ArkWebStringVector& origins) = 0;
 };
 
 } // namespace OHOS::ArkWeb
+
 #endif // ARK_OHOS_WEB_DATA_BASE_ADAPTER_H

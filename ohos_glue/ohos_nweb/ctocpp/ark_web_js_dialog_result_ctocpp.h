@@ -17,28 +17,27 @@
 #define ARK_WEB_JS_DIALOG_RESULT_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_js_dialog_result_capi.h"
 #include "ohos_nweb/include/ark_web_js_dialog_result.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebJsDialogResultCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebJsDialogResultCToCpp,
-                                    ArkWebJsDialogResult,
-                                    ark_web_js_dialog_result_t> {
+    : public ArkWebCToCppRefCounted<ArkWebJsDialogResultCToCpp, ArkWebJsDialogResult, ark_web_js_dialog_result_t> {
 public:
-  ArkWebJsDialogResultCToCpp();
-  virtual ~ArkWebJsDialogResultCToCpp();
+    ArkWebJsDialogResultCToCpp();
+    virtual ~ArkWebJsDialogResultCToCpp();
 
-  // ArkWebJsDialogResult methods.
-  void Cancel() override;
+    // ArkWebJsDialogResult methods.
+    void Cancel() override;
 
-  void Confirm() override;
+    void Confirm() override;
 
-  void Confirm(const ArkWebString &message) override;
+    void Confirm(const ArkWebString& message) override;
 };
 
 } // namespace OHOS::ArkWeb

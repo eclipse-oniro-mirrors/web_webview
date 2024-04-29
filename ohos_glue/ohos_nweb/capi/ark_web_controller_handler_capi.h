@@ -24,20 +24,18 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_controller_handler_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_id)(struct _ark_web_controller_handler_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_id)(struct _ark_web_controller_handler_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_frist)(struct _ark_web_controller_handler_t *self);
+    bool(ARK_WEB_CALLBACK* is_frist)(struct _ark_web_controller_handler_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_nweb_handler_id)(
-      struct _ark_web_controller_handler_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_nweb_handler_id)(struct _ark_web_controller_handler_t* self);
 
-  void(ARK_WEB_CALLBACK *set_nweb_handler_by_id)(
-      struct _ark_web_controller_handler_t *self, int32_t nweb_id);
+    void(ARK_WEB_CALLBACK* set_nweb_handler_by_id)(struct _ark_web_controller_handler_t* self, int32_t nweb_id);
 } ark_web_controller_handler_t;
 
 #ifdef __cplusplus

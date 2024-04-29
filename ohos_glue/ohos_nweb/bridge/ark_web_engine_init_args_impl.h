@@ -23,29 +23,28 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebEngineInitArgsImpl : public ArkWebEngineInitArgs {
-  IMPLEMENT_REFCOUNTING(ArkWebEngineInitArgsImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebEngineInitArgsImpl);
 
 public:
-  ArkWebEngineInitArgsImpl(
-      std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> nweb_engine_init_args);
-  ~ArkWebEngineInitArgsImpl() = default;
+    ArkWebEngineInitArgsImpl(std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> nweb_engine_init_args);
+    ~ArkWebEngineInitArgsImpl() = default;
 
-  bool GetIsPopup() override;
+    bool GetIsPopup() override;
 
-  ArkWebString GetDumpPath() override;
+    ArkWebString GetDumpPath() override;
 
-  ArkWebStringList GetArgsToAdd() override;
+    ArkWebStringList GetArgsToAdd() override;
 
-  ArkWebStringList GetArgsToDelete() override;
+    ArkWebStringList GetArgsToDelete() override;
 
-  bool GetIsFrameInfoDump() override;
+    bool GetIsFrameInfoDump() override;
 
-  bool GetIsEnhanceSurface() override;
+    bool GetIsEnhanceSurface() override;
 
-  bool GetIsMultiRendererProcess() override;
+    bool GetIsMultiRendererProcess() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> nweb_engine_init_args_;
+    std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> nweb_engine_init_args_;
 };
 
 } // namespace OHOS::ArkWeb

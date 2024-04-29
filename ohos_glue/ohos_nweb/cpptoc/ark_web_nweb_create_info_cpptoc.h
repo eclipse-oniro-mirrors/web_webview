@@ -17,21 +17,20 @@
 #define ARK_WEB_NWEB_CREATE_INFO_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_nweb_create_info_capi.h"
 #include "ohos_nweb/include/ark_web_nweb_create_info.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebNWebCreateInfoCppToC
-    : public ArkWebCppToCRefCounted<ArkWebNWebCreateInfoCppToC,
-                                    ArkWebNWebCreateInfo,
-                                    ark_web_nweb_create_info_t> {
+    : public ArkWebCppToCRefCounted<ArkWebNWebCreateInfoCppToC, ArkWebNWebCreateInfo, ark_web_nweb_create_info_t> {
 public:
-  ArkWebNWebCreateInfoCppToC();
-  virtual ~ArkWebNWebCreateInfoCppToC();
+    ArkWebNWebCreateInfoCppToC();
+    virtual ~ArkWebNWebCreateInfoCppToC();
 };
 
 } // namespace OHOS::ArkWeb

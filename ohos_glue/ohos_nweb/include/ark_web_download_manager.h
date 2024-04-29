@@ -24,11 +24,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebDownloadManager : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void SetHttpDns(ArkWebRefPtr<ArkWebDohConfig> config) = 0;
+    /*--ark web()--*/
+    virtual void SetHttpDns(ArkWebRefPtr<ArkWebDohConfig> config) = 0;
 
-  /*--ark web()--*/
-  virtual void SetConnectionTimeout(const int &timeout) = 0;
+    /*--ark web()--*/
+    virtual void SetConnectionTimeout(const int& timeout) = 0;
 };
 
 } // namespace OHOS::ArkWeb

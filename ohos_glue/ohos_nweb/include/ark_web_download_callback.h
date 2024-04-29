@@ -25,21 +25,18 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebDownloadCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Notify the host application that a file should be downloaded
-   *
-   * @param url The full url to the content that should be downloaded.
-   * @param user_agent The user agent to be used for the download.
-   * @param content_disposition Content-Disposition http header, if present.
-   * @param mime_type The mimetype of the content reported by the server.
-   * @param content_length The file size reported by the server.
-   */
-  /*--ark web()--*/
-  virtual void OnDownloadStart(const ArkWebString &url,
-                               const ArkWebString &user_agent,
-                               const ArkWebString &content_disposition,
-                               const ArkWebString &mime_type,
-                               long content_length) = 0;
+    /**
+     * @brief Notify the host application that a file should be downloaded
+     *
+     * @param url The full url to the content that should be downloaded.
+     * @param user_agent The user agent to be used for the download.
+     * @param content_disposition Content-Disposition http header, if present.
+     * @param mime_type The mimetype of the content reported by the server.
+     * @param content_length The file size reported by the server.
+     */
+    /*--ark web()--*/
+    virtual void OnDownloadStart(const ArkWebString& url, const ArkWebString& user_agent,
+        const ArkWebString& content_disposition, const ArkWebString& mime_type, long content_length) = 0;
 };
 
 } // namespace OHOS::ArkWeb

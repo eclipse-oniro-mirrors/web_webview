@@ -15,6 +15,7 @@
 
 #ifndef ARK_DISPLAY_MANAGER_ADAPTER_H
 #define ARK_DISPLAY_MANAGER_ADAPTER_H
+#pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -24,78 +25,60 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkDisplayListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkDisplayListenerAdapter() = default;
+    /*--ark web()--*/
+    virtual void OnCreate(uint64_t displayId) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkDisplayListenerAdapter() = default;
+    /*--ark web()--*/
+    virtual void OnDestroy(uint64_t displayId) = 0;
 
-  /*--ark web()--*/
-  virtual void OnCreate(uint64_t displayId) = 0;
-
-  /*--ark web()--*/
-  virtual void OnDestroy(uint64_t displayId) = 0;
-
-  /*--ark web()--*/
-  virtual void OnChange(uint64_t displayId) = 0;
+    /*--ark web()--*/
+    virtual void OnChange(uint64_t displayId) = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkDisplayAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkDisplayAdapter() = default;
+    /*--ark web()--*/
+    virtual uint64_t GetId() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkDisplayAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual uint64_t GetId() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetHeight() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual float GetVirtualPixelRatio() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetHeight() = 0;
+    /*--ark web()--*/
+    virtual uint32_t GetRotation() = 0;
 
-  /*--ark web()--*/
-  virtual float GetVirtualPixelRatio() = 0;
+    /*--ark web()--*/
+    virtual uint32_t GetOrientation() = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t GetRotation() = 0;
-
-  /*--ark web()--*/
-  virtual uint32_t GetOrientation() = 0;
-
-  /*--ark web()--*/
-  virtual int32_t GetDpi() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetDpi() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkDisplayManagerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkDisplayManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual uint64_t GetDefaultDisplayId() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkDisplayManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkDisplayAdapter> GetDefaultDisplay() = 0;
 
-  /*--ark web()--*/
-  virtual uint64_t GetDefaultDisplayId() = 0;
+    /*--ark web()--*/
+    virtual uint32_t RegisterDisplayListener(ArkWebRefPtr<ArkDisplayListenerAdapter> listener) = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkDisplayAdapter> GetDefaultDisplay() = 0;
+    /*--ark web()--*/
+    virtual bool UnregisterDisplayListener(uint32_t id) = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t
-  RegisterDisplayListener(ArkWebRefPtr<ArkDisplayListenerAdapter> listener) = 0;
-
-  /*--ark web()--*/
-  virtual bool UnregisterDisplayListener(uint32_t id) = 0;
-
-  /*--ark web()--*/
-  virtual bool IsDefaultPortrait() = 0;
+    /*--ark web()--*/
+    virtual bool IsDefaultPortrait() = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_DISPLAY_MANAGER_ADAPTER_H

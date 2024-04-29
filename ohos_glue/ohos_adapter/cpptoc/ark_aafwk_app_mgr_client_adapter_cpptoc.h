@@ -17,21 +17,20 @@
 #define ARK_AAFWK_APP_MGR_CLIENT_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_aafwk_app_mgr_client_adapter_capi.h"
 #include "ohos_adapter/include/ark_aafwk_app_mgr_client_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkAafwkAppMgrClientAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkAafwkAppMgrClientAdapterCppToC,
-                                    ArkAafwkAppMgrClientAdapter,
-                                    ark_aafwk_app_mgr_client_adapter_t> {
+class ArkAafwkAppMgrClientAdapterCppToC : public ArkWebCppToCRefCounted<ArkAafwkAppMgrClientAdapterCppToC,
+                                              ArkAafwkAppMgrClientAdapter, ark_aafwk_app_mgr_client_adapter_t> {
 public:
-  ArkAafwkAppMgrClientAdapterCppToC();
-  virtual ~ArkAafwkAppMgrClientAdapterCppToC();
+    ArkAafwkAppMgrClientAdapterCppToC();
+    virtual ~ArkAafwkAppMgrClientAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb

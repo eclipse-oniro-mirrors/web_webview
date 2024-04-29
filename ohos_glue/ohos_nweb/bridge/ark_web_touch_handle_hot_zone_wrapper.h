@@ -17,25 +17,24 @@
 #define ARK_WEB_TOUCH_HANDLE_HOT_ZONE_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_handler.h"
 #include "ohos_nweb/include/ark_web_touch_handle_hot_zone.h"
 
+#include "base/include/ark_web_types.h"
+
 namespace OHOS::ArkWeb {
 
-class ArkWebTouchHandleHotZoneWrapper
-    : public OHOS::NWeb::NWebTouchHandleHotZone {
+class ArkWebTouchHandleHotZoneWrapper : public OHOS::NWeb::NWebTouchHandleHotZone {
 public:
-  ArkWebTouchHandleHotZoneWrapper(
-      ArkWebRefPtr<ArkWebTouchHandleHotZone> ark_web_touch_handle_hot_zone);
-  ~ArkWebTouchHandleHotZoneWrapper() = default;
+    ArkWebTouchHandleHotZoneWrapper(ArkWebRefPtr<ArkWebTouchHandleHotZone> ark_web_touch_handle_hot_zone);
+    ~ArkWebTouchHandleHotZoneWrapper() = default;
 
-  void SetWidth(double width) override;
+    void SetWidth(double width) override;
 
-  void SetHeight(double height) override;
+    void SetHeight(double height) override;
 
 private:
-  ArkWebRefPtr<ArkWebTouchHandleHotZone> ark_web_touch_handle_hot_zone_;
+    ArkWebRefPtr<ArkWebTouchHandleHotZone> ark_web_touch_handle_hot_zone_;
 };
 
 } // namespace OHOS::ArkWeb

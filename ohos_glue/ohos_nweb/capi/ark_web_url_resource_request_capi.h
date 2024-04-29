@@ -25,28 +25,22 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_url_resource_request_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *url)(
-      struct _ark_web_url_resource_request_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* url)(struct _ark_web_url_resource_request_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *method)(
-      struct _ark_web_url_resource_request_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* method)(struct _ark_web_url_resource_request_t* self);
 
-  bool(ARK_WEB_CALLBACK *from_gesture)(
-      struct _ark_web_url_resource_request_t *self);
+    bool(ARK_WEB_CALLBACK* from_gesture)(struct _ark_web_url_resource_request_t* self);
 
-  ArkWebStringMap(ARK_WEB_CALLBACK *request_headers)(
-      struct _ark_web_url_resource_request_t *self);
+    ArkWebStringMap(ARK_WEB_CALLBACK* request_headers)(struct _ark_web_url_resource_request_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_about_main_frame)(
-      struct _ark_web_url_resource_request_t *self);
+    bool(ARK_WEB_CALLBACK* is_about_main_frame)(struct _ark_web_url_resource_request_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_request_redirect)(
-      struct _ark_web_url_resource_request_t *self);
+    bool(ARK_WEB_CALLBACK* is_request_redirect)(struct _ark_web_url_resource_request_t* self);
 } ark_web_url_resource_request_t;
 
 #ifdef __cplusplus

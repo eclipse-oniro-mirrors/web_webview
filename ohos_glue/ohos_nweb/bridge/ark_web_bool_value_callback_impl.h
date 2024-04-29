@@ -23,17 +23,16 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebBoolValueCallbackImpl : public ArkWebBoolValueCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebBoolValueCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebBoolValueCallbackImpl);
 
 public:
-  ArkWebBoolValueCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebBoolValueCallback>
-                                  nweb_bool_value_callback);
-  ~ArkWebBoolValueCallbackImpl() = default;
+    ArkWebBoolValueCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebBoolValueCallback> nweb_bool_value_callback);
+    ~ArkWebBoolValueCallbackImpl() = default;
 
-  void OnReceiveValue(bool value) override;
+    void OnReceiveValue(bool value) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebBoolValueCallback> nweb_bool_value_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebBoolValueCallback> nweb_bool_value_callback_;
 };
 
 } // namespace OHOS::ArkWeb

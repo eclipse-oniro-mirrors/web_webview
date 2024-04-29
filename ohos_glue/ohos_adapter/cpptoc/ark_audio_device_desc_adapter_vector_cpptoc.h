@@ -19,7 +19,7 @@
 #pragma once
 
 #include "audio_system_manager_adapter.h"
-#include "include/ark_audio_device_desc_adapter_vector.h"
+#include "ohos_adapter/include/ark_audio_device_desc_adapter_vector.h"
 
 namespace OHOS::ArkWeb {
 

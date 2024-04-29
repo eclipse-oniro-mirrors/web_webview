@@ -25,31 +25,24 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_engine_init_args_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *get_is_popup)(
-      struct _ark_web_engine_init_args_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_popup)(struct _ark_web_engine_init_args_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_dump_path)(
-      struct _ark_web_engine_init_args_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_dump_path)(struct _ark_web_engine_init_args_t* self);
 
-  ArkWebStringList(ARK_WEB_CALLBACK *get_args_to_add)(
-      struct _ark_web_engine_init_args_t *self);
+    ArkWebStringList(ARK_WEB_CALLBACK* get_args_to_add)(struct _ark_web_engine_init_args_t* self);
 
-  ArkWebStringList(ARK_WEB_CALLBACK *get_args_to_delete)(
-      struct _ark_web_engine_init_args_t *self);
+    ArkWebStringList(ARK_WEB_CALLBACK* get_args_to_delete)(struct _ark_web_engine_init_args_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_frame_info_dump)(
-      struct _ark_web_engine_init_args_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_frame_info_dump)(struct _ark_web_engine_init_args_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_enhance_surface)(
-      struct _ark_web_engine_init_args_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_enhance_surface)(struct _ark_web_engine_init_args_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_multi_renderer_process)(
-      struct _ark_web_engine_init_args_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_multi_renderer_process)(struct _ark_web_engine_init_args_t* self);
 } ark_web_engine_init_args_t;
 
 #ifdef __cplusplus

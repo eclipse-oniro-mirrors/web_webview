@@ -17,32 +17,31 @@
 #define ARK_BUFFER_FLUSH_CONFIG_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_graphic_adapter_capi.h"
 #include "ohos_adapter/include/ark_graphic_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkBufferFlushConfigAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkBufferFlushConfigAdapterCToCpp,
-                                    ArkBufferFlushConfigAdapter,
-                                    ark_buffer_flush_config_adapter_t> {
+class ArkBufferFlushConfigAdapterCToCpp : public ArkWebCToCppRefCounted<ArkBufferFlushConfigAdapterCToCpp,
+                                              ArkBufferFlushConfigAdapter, ark_buffer_flush_config_adapter_t> {
 public:
-  ArkBufferFlushConfigAdapterCToCpp();
-  virtual ~ArkBufferFlushConfigAdapterCToCpp();
+    ArkBufferFlushConfigAdapterCToCpp();
+    virtual ~ArkBufferFlushConfigAdapterCToCpp();
 
-  // ArkBufferFlushConfigAdapter methods.
-  int32_t GetX() override;
+    // ArkBufferFlushConfigAdapter methods.
+    int32_t GetX() override;
 
-  int32_t GetY() override;
+    int32_t GetY() override;
 
-  int32_t GetW() override;
+    int32_t GetW() override;
 
-  int32_t GetH() override;
+    int32_t GetH() override;
 
-  int64_t GetTimestamp() override;
+    int64_t GetTimestamp() override;
 };
 
 } // namespace OHOS::ArkWeb

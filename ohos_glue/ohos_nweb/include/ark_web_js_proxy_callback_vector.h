@@ -17,14 +17,15 @@
 #define ARK_WEB_JS_PROXY_CALLBACK_VECTOR_H_
 #pragma once
 
-#include "base/include/ark_web_memory.h"
 #include "ohos_nweb/capi/ark_web_js_proxy_callback_capi.h"
 
-typedef struct {
-  int size;
-  ark_web_js_proxy_callback_t **value;
+#include "base/include/ark_web_memory.h"
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+typedef struct {
+    int size;
+    ark_web_js_proxy_callback_t** value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebJsProxyCallbackVector;
 
 const ArkWebJsProxyCallbackVector ark_web_js_proxy_callback_vector_default = {

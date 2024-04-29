@@ -17,49 +17,40 @@
 #define ARK_WEB_NATIVE_EMBED_TOUCH_EVENT_CAPI_H_
 #pragma once
 
+#include "ohos_nweb/capi/ark_web_gesture_event_result_capi.h"
+
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/capi/ark_web_gesture_event_result_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_native_embed_touch_event_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  float(ARK_WEB_CALLBACK *get_x)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    float(ARK_WEB_CALLBACK* get_x)(struct _ark_web_native_embed_touch_event_t* self);
 
-  float(ARK_WEB_CALLBACK *get_y)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    float(ARK_WEB_CALLBACK* get_y)(struct _ark_web_native_embed_touch_event_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_id)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_id)(struct _ark_web_native_embed_touch_event_t* self);
 
-  size_t(ARK_WEB_CALLBACK *get_type)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    size_t(ARK_WEB_CALLBACK* get_type)(struct _ark_web_native_embed_touch_event_t* self);
 
-  float(ARK_WEB_CALLBACK *get_offset_x)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    float(ARK_WEB_CALLBACK* get_offset_x)(struct _ark_web_native_embed_touch_event_t* self);
 
-  float(ARK_WEB_CALLBACK *get_offset_y)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    float(ARK_WEB_CALLBACK* get_offset_y)(struct _ark_web_native_embed_touch_event_t* self);
 
-  float(ARK_WEB_CALLBACK *get_screen_x)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    float(ARK_WEB_CALLBACK* get_screen_x)(struct _ark_web_native_embed_touch_event_t* self);
 
-  float(ARK_WEB_CALLBACK *get_screen_y)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    float(ARK_WEB_CALLBACK* get_screen_y)(struct _ark_web_native_embed_touch_event_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_embed_id)(
-      struct _ark_web_native_embed_touch_event_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_embed_id)(struct _ark_web_native_embed_touch_event_t* self);
 
-  ark_web_gesture_event_result_t* (ARK_WEB_CALLBACK *get_result)(
-      struct _ark_web_native_embed_touch_event_t* self);
+    ark_web_gesture_event_result_t*(ARK_WEB_CALLBACK* get_result)(struct _ark_web_native_embed_touch_event_t* self);
 } ark_web_native_embed_touch_event_t;
 
 #ifdef __cplusplus

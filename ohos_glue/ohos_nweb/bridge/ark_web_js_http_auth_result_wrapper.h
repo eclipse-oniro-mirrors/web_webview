@@ -24,27 +24,26 @@ namespace OHOS::ArkWeb {
 
 class ArkWebJsHttpAuthResultWrapper : public OHOS::NWeb::NWebJSHttpAuthResult {
 public:
-  ArkWebJsHttpAuthResultWrapper(
-      ArkWebRefPtr<ArkWebJsHttpAuthResult> ark_web_js_http_auth_result);
-  ~ArkWebJsHttpAuthResultWrapper() = default;
+    ArkWebJsHttpAuthResultWrapper(ArkWebRefPtr<ArkWebJsHttpAuthResult> ark_web_js_http_auth_result);
+    ~ArkWebJsHttpAuthResultWrapper() = default;
 
-  /**
-   * @brief Handle the result if the user cancelled the dialog.
-   */
-  void Cancel() override;
+    /**
+     * @brief Handle the result if the user cancelled the dialog.
+     */
+    void Cancel() override;
 
-  /**
-   * @brief Handle a confirmation response from the user.
-   */
-  bool Confirm(const std::string &user_name, const std::string &pwd) override;
+    /**
+     * @brief Handle a confirmation response from the user.
+     */
+    bool Confirm(const std::string& user_name, const std::string& pwd) override;
 
-  /**
-   * @brief Handle a IsHttpAuthInfoSaved response from the user.
-   */
-  bool IsHttpAuthInfoSaved() override;
+    /**
+     * @brief Handle a IsHttpAuthInfoSaved response from the user.
+     */
+    bool IsHttpAuthInfoSaved() override;
 
 private:
-  ArkWebRefPtr<ArkWebJsHttpAuthResult> ark_web_js_http_auth_result_;
+    ArkWebRefPtr<ArkWebJsHttpAuthResult> ark_web_js_http_auth_result_;
 };
 
 } // namespace OHOS::ArkWeb

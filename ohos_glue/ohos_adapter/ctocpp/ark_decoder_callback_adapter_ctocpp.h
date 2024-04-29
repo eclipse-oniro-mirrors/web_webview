@@ -17,33 +17,29 @@
 #define ARK_DECODER_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_codec_decoder_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_codec_decoder_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkDecoderCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkDecoderCallbackAdapterCToCpp,
-                                    ArkDecoderCallbackAdapter,
-                                    ark_decoder_callback_adapter_t> {
+class ArkDecoderCallbackAdapterCToCpp : public ArkWebCToCppRefCounted<ArkDecoderCallbackAdapterCToCpp,
+                                            ArkDecoderCallbackAdapter, ark_decoder_callback_adapter_t> {
 public:
-  ArkDecoderCallbackAdapterCToCpp();
-  virtual ~ArkDecoderCallbackAdapterCToCpp();
+    ArkDecoderCallbackAdapterCToCpp();
+    virtual ~ArkDecoderCallbackAdapterCToCpp();
 
-  // ArkDecoderCallbackAdapter methods.
-  void OnError(int32_t errorType, int32_t errorCode) override;
+    // ArkDecoderCallbackAdapter methods.
+    void OnError(int32_t errorType, int32_t errorCode) override;
 
-  void OnStreamChanged(int32_t width, int32_t height,
-                       double frameRate) override;
+    void OnStreamChanged(int32_t width, int32_t height, double frameRate) override;
 
-  void OnNeedInputData(uint32_t index,
-                       ArkWebRefPtr<ArkOhosBufferAdapter> buffer) override;
+    void OnNeedInputData(uint32_t index, ArkWebRefPtr<ArkOhosBufferAdapter> buffer) override;
 
-  void OnNeedOutputData(uint32_t index, ArkWebRefPtr<ArkBufferInfoAdapter> info,
-                        uint32_t flag) override;
+    void OnNeedOutputData(uint32_t index, ArkWebRefPtr<ArkBufferInfoAdapter> info, uint32_t flag) override;
 };
 
 } // namespace OHOS::ArkWeb

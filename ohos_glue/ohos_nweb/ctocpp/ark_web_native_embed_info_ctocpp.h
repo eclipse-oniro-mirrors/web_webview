@@ -17,42 +17,41 @@
 #define ARK_WEB_NATIVE_EMBED_INFO_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_native_embed_info_capi.h"
 #include "ohos_nweb/include/ark_web_native_embed_info.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebNativeEmbedInfoCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebNativeEmbedInfoCToCpp,
-                                    ArkWebNativeEmbedInfo,
-                                    ark_web_native_embed_info_t> {
+    : public ArkWebCToCppRefCounted<ArkWebNativeEmbedInfoCToCpp, ArkWebNativeEmbedInfo, ark_web_native_embed_info_t> {
 public:
-  ArkWebNativeEmbedInfoCToCpp();
-  virtual ~ArkWebNativeEmbedInfoCToCpp();
+    ArkWebNativeEmbedInfoCToCpp();
+    virtual ~ArkWebNativeEmbedInfoCToCpp();
 
-  // ArkWebNativeEmbedInfo methods.
-  int32_t GetWidth() override;
+    // ArkWebNativeEmbedInfo methods.
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  ArkWebString GetId() override;
+    ArkWebString GetId() override;
 
-  ArkWebString GetSrc() override;
+    ArkWebString GetSrc() override;
 
-  ArkWebString GetUrl() override;
+    ArkWebString GetUrl() override;
 
-  ArkWebString GetType() override;
+    ArkWebString GetType() override;
 
-  ArkWebString GetTag() override;
+    ArkWebString GetTag() override;
 
-  ArkWebStringMap GetParams() override;
+    ArkWebStringMap GetParams() override;
 
-  int32_t GetX() override;
+    int32_t GetX() override;
 
-  int32_t GetY() override;
+    int32_t GetY() override;
 };
 
 } // namespace OHOS::ArkWeb

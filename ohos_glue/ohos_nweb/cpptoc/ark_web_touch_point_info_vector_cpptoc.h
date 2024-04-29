@@ -23,11 +23,9 @@
 namespace OHOS::ArkWeb {
 
 ArkWebTouchPointInfoVector ArkWebTouchPointInfoVectorClassToStruct(
-    const std::vector<std::shared_ptr<OHOS::NWeb::NWebTouchPointInfo>>
-        &class_value);
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebTouchPointInfo>>& class_value);
 
-void ArkWebTouchPointInfoVectorStructRelease(
-    ArkWebTouchPointInfoVector &struct_value);
+void ArkWebTouchPointInfoVectorStructRelease(ArkWebTouchPointInfoVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

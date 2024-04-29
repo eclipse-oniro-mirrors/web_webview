@@ -17,21 +17,20 @@
 #define ARK_WEB_LONG_VALUE_CALLBACK_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_long_value_callback_capi.h"
 #include "ohos_nweb/include/ark_web_long_value_callback.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkWebLongValueCallbackCppToC
-    : public ArkWebCppToCRefCounted<ArkWebLongValueCallbackCppToC,
-                                    ArkWebLongValueCallback,
-                                    ark_web_long_value_callback_t> {
+class ArkWebLongValueCallbackCppToC : public ArkWebCppToCRefCounted<ArkWebLongValueCallbackCppToC,
+                                          ArkWebLongValueCallback, ark_web_long_value_callback_t> {
 public:
-  ArkWebLongValueCallbackCppToC();
-  virtual ~ArkWebLongValueCallbackCppToC();
+    ArkWebLongValueCallbackCppToC();
+    virtual ~ArkWebLongValueCallbackCppToC();
 };
 
 } // namespace OHOS::ArkWeb

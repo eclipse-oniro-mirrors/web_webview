@@ -17,33 +17,33 @@
 #define ARK_WEB_CURSOR_INFO_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_cursor_info_capi.h"
 #include "ohos_nweb/include/ark_web_cursor_info.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebCursorInfoCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebCursorInfoCToCpp, ArkWebCursorInfo,
-                                    ark_web_cursor_info_t> {
+    : public ArkWebCToCppRefCounted<ArkWebCursorInfoCToCpp, ArkWebCursorInfo, ark_web_cursor_info_t> {
 public:
-  ArkWebCursorInfoCToCpp();
-  virtual ~ArkWebCursorInfoCToCpp();
+    ArkWebCursorInfoCToCpp();
+    virtual ~ArkWebCursorInfoCToCpp();
 
-  // ArkWebCursorInfo methods.
-  int32_t GetX() override;
+    // ArkWebCursorInfo methods.
+    int32_t GetX() override;
 
-  int32_t GetY() override;
+    int32_t GetY() override;
 
-  uint8_t *GetBuff() override;
+    uint8_t* GetBuff() override;
 
-  float GetScale() override;
+    float GetScale() override;
 
-  int32_t GetWidth() override;
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 };
 
 } // namespace OHOS::ArkWeb

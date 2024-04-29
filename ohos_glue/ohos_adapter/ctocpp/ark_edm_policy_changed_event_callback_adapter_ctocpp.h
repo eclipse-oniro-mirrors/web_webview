@@ -17,25 +17,24 @@
 #define ARK_EDM_POLICY_CHANGED_EVENT_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_enterprise_device_management_adapter_capi.h"
 #include "ohos_adapter/include/ark_enterprise_device_management_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkEdmPolicyChangedEventCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<
-          ArkEdmPolicyChangedEventCallbackAdapterCToCpp,
-          ArkEdmPolicyChangedEventCallbackAdapter,
-          ark_edm_policy_changed_event_callback_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkEdmPolicyChangedEventCallbackAdapterCToCpp,
+          ArkEdmPolicyChangedEventCallbackAdapter, ark_edm_policy_changed_event_callback_adapter_t> {
 public:
-  ArkEdmPolicyChangedEventCallbackAdapterCToCpp();
-  virtual ~ArkEdmPolicyChangedEventCallbackAdapterCToCpp();
+    ArkEdmPolicyChangedEventCallbackAdapterCToCpp();
+    virtual ~ArkEdmPolicyChangedEventCallbackAdapterCToCpp();
 
-  // ArkEdmPolicyChangedEventCallbackAdapter methods.
-  void Changed() override;
+    // ArkEdmPolicyChangedEventCallbackAdapter methods.
+    void Changed() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -15,29 +15,22 @@
 
 #ifndef ARK_SOC_PERF_CLIENT_ADAPTER_H
 #define ARK_SOC_PERF_CLIENT_ADAPTER_H
-
-#include <cstdint>
+#pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
-#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkSocPerfClientAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkSocPerfClientAdapter() = default;
+    /*--ark web()--*/
+    virtual void ApplySocPerfConfigById(int32_t id) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkSocPerfClientAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void ApplySocPerfConfigById(int32_t id) = 0;
-
-  /*--ark web()--*/
-  virtual void ApplySocPerfConfigByIdEx(int32_t id, bool onOffTag) = 0;
+    /*--ark web()--*/
+    virtual void ApplySocPerfConfigByIdEx(int32_t id, bool onOffTag) = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_SOC_PERF_CLIENT_ADAPTER_H

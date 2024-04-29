@@ -17,26 +17,25 @@
 #define ARK_PLAYER_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkPlayerCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkPlayerCallbackAdapterCToCpp,
-                                    ArkPlayerCallbackAdapter,
-                                    ark_player_callback_adapter_t> {
+class ArkPlayerCallbackAdapterCToCpp : public ArkWebCToCppRefCounted<ArkPlayerCallbackAdapterCToCpp,
+                                           ArkPlayerCallbackAdapter, ark_player_callback_adapter_t> {
 public:
-  ArkPlayerCallbackAdapterCToCpp();
-  virtual ~ArkPlayerCallbackAdapterCToCpp();
+    ArkPlayerCallbackAdapterCToCpp();
+    virtual ~ArkPlayerCallbackAdapterCToCpp();
 
-  // ArkPlayerCallbackAdapter methods.
-  void OnInfo(int32_t type, int32_t extra, int32_t value) override;
+    // ArkPlayerCallbackAdapter methods.
+    void OnInfo(int32_t type, int32_t extra, int32_t value) override;
 
-  void OnError(int32_t errorType) override;
+    void OnError(int32_t errorType) override;
 };
 
 } // namespace OHOS::ArkWeb

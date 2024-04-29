@@ -25,18 +25,16 @@ extern "C" {
 #endif
 
 typedef struct _ark_keystore_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *encrypt_key)(
-      struct _ark_keystore_adapter_t *self, const ArkWebString *alias,
-      const ArkWebString *plainData);
+    ArkWebString(ARK_WEB_CALLBACK* encrypt_key)(
+        struct _ark_keystore_adapter_t* self, const ArkWebString* alias, const ArkWebString* plainData);
 
-  ArkWebString(ARK_WEB_CALLBACK *decrypt_key)(
-      struct _ark_keystore_adapter_t *self, const ArkWebString *alis,
-      const ArkWebString *encryptedData);
+    ArkWebString(ARK_WEB_CALLBACK* decrypt_key)(
+        struct _ark_keystore_adapter_t* self, const ArkWebString* alis, const ArkWebString* encryptedData);
 } ark_keystore_adapter_t;
 
 #ifdef __cplusplus

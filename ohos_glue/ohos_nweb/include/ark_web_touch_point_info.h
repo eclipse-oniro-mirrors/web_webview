@@ -24,14 +24,14 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebTouchPointInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int GetId() = 0;
+    /*--ark web()--*/
+    virtual int GetId() = 0;
 
-  /*--ark web()--*/
-  virtual double GetX() = 0;
+    /*--ark web()--*/
+    virtual double GetX() = 0;
 
-  /*--ark web()--*/
-  virtual double GetY() = 0;
+    /*--ark web()--*/
+    virtual double GetY() = 0;
 };
 
 } // namespace OHOS::ArkWeb

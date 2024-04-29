@@ -23,29 +23,28 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebNWebCreateInfoImpl : public ArkWebNWebCreateInfo {
-  IMPLEMENT_REFCOUNTING(ArkWebNWebCreateInfoImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebNWebCreateInfoImpl);
 
 public:
-  ArkWebNWebCreateInfoImpl(
-      std::shared_ptr<OHOS::NWeb::NWebCreateInfo> nweb_create_info);
-  ~ArkWebNWebCreateInfoImpl() = default;
+    ArkWebNWebCreateInfoImpl(std::shared_ptr<OHOS::NWeb::NWebCreateInfo> nweb_create_info);
+    ~ArkWebNWebCreateInfoImpl() = default;
 
-  uint32_t GetWidth() override;
+    uint32_t GetWidth() override;
 
-  uint32_t GetHeight() override;
+    uint32_t GetHeight() override;
 
-  bool GetIsIncognitoMode() override;
+    bool GetIsIncognitoMode() override;
 
-  void *GetProducerSurface() override;
+    void* GetProducerSurface() override;
 
-  void *GetEnhanceSurfaceInfo() override;
+    void* GetEnhanceSurfaceInfo() override;
 
-  ArkWebRefPtr<ArkWebEngineInitArgs> GetEngineInitArgs() override;
+    ArkWebRefPtr<ArkWebEngineInitArgs> GetEngineInitArgs() override;
 
-  ArkWebRefPtr<ArkWebOutputFrameCallback> GetOutputFrameCallback() override;
+    ArkWebRefPtr<ArkWebOutputFrameCallback> GetOutputFrameCallback() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebCreateInfo> nweb_create_info_;
+    std::shared_ptr<OHOS::NWeb::NWebCreateInfo> nweb_create_info_;
 };
 
 } // namespace OHOS::ArkWeb

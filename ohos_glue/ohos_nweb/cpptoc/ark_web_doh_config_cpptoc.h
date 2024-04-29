@@ -17,20 +17,20 @@
 #define ARK_WEB_DOH_CONFIG_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_doh_config_capi.h"
 #include "ohos_nweb/include/ark_web_doh_config.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebDohConfigCppToC
-    : public ArkWebCppToCRefCounted<ArkWebDohConfigCppToC, ArkWebDohConfig,
-                                    ark_web_doh_config_t> {
+    : public ArkWebCppToCRefCounted<ArkWebDohConfigCppToC, ArkWebDohConfig, ark_web_doh_config_t> {
 public:
-  ArkWebDohConfigCppToC();
-  virtual ~ArkWebDohConfigCppToC();
+    ArkWebDohConfigCppToC();
+    virtual ~ArkWebDohConfigCppToC();
 };
 
 } // namespace OHOS::ArkWeb

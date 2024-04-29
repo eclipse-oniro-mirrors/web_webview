@@ -24,18 +24,18 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_image_options_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  size_t(ARK_WEB_CALLBACK *get_width)(struct _ark_web_image_options_t *self);
+    size_t(ARK_WEB_CALLBACK* get_width)(struct _ark_web_image_options_t* self);
 
-  size_t(ARK_WEB_CALLBACK *get_height)(struct _ark_web_image_options_t *self);
+    size_t(ARK_WEB_CALLBACK* get_height)(struct _ark_web_image_options_t* self);
 
-  int(ARK_WEB_CALLBACK *get_alpha_type)(struct _ark_web_image_options_t *self);
+    int(ARK_WEB_CALLBACK* get_alpha_type)(struct _ark_web_image_options_t* self);
 
-  int(ARK_WEB_CALLBACK *get_color_type)(struct _ark_web_image_options_t *self);
+    int(ARK_WEB_CALLBACK* get_color_type)(struct _ark_web_image_options_t* self);
 } ark_web_image_options_t;
 
 #ifdef __cplusplus

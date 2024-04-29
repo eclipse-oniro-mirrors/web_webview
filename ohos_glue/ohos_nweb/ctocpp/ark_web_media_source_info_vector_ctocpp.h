@@ -22,12 +22,10 @@
 
 namespace OHOS::ArkWeb {
 
-std::vector<std::shared_ptr<OHOS::NWeb::NWebMediaSourceInfo>>
-ArkWebMediaSourceInfoVectorStructToClass(
-    const ArkWebMediaSourceInfoVector &struct_value);
+std::vector<std::shared_ptr<OHOS::NWeb::NWebMediaSourceInfo>> ArkWebMediaSourceInfoVectorStructToClass(
+    const ArkWebMediaSourceInfoVector& struct_value);
 
-void ArkWebMediaSourceInfoVectorStructRelease(
-    ArkWebMediaSourceInfoVector &struct_value);
+void ArkWebMediaSourceInfoVectorStructRelease(ArkWebMediaSourceInfoVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

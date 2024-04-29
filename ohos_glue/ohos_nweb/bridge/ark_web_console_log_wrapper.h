@@ -26,39 +26,39 @@ using ArkWebLogLevel = OHOS::NWeb::NWebConsoleLog::NWebConsoleLogLevel;
 
 class ArkWebConsoleLogWrapper : public OHOS::NWeb::NWebConsoleLog {
 public:
-  ArkWebConsoleLogWrapper(ArkWebRefPtr<ArkWebConsoleLog> ark_web_console_log);
-  ~ArkWebConsoleLogWrapper() = default;
+    ArkWebConsoleLogWrapper(ArkWebRefPtr<ArkWebConsoleLog> ark_web_console_log);
+    ~ArkWebConsoleLogWrapper() = default;
 
-  /**
-   * @brief Get console log message
-   *
-   * @return message
-   */
-  std::string Log() override;
+    /**
+     * @brief Get console log message
+     *
+     * @return message
+     */
+    std::string Log() override;
 
-  /**
-   * @brief Get console log source id
-   *
-   * @return source id
-   */
-  std::string SourceId() override;
+    /**
+     * @brief Get console log source id
+     *
+     * @return source id
+     */
+    std::string SourceId() override;
 
-  /**
-   * @brief Get console log message level
-   *
-   * @return message level
-   */
-  ArkWebLogLevel LogLevel() override;
+    /**
+     * @brief Get console log message level
+     *
+     * @return message level
+     */
+    ArkWebLogLevel LogLevel() override;
 
-  /**
-   * @brief Get console log line number
-   *
-   * @return line number
-   */
-  int LineNumer() override;
+    /**
+     * @brief Get console log line number
+     *
+     * @return line number
+     */
+    int LineNumer() override;
 
 private:
-  ArkWebRefPtr<ArkWebConsoleLog> ark_web_console_log_;
+    ArkWebRefPtr<ArkWebConsoleLog> ark_web_console_log_;
 };
 
 } // namespace OHOS::ArkWeb

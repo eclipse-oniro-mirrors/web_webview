@@ -22,23 +22,19 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebCreateNativeMediaPlayerCallbackImpl
-    : public ArkWebCreateNativeMediaPlayerCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebCreateNativeMediaPlayerCallbackImpl);
+class ArkWebCreateNativeMediaPlayerCallbackImpl : public ArkWebCreateNativeMediaPlayerCallback {
+    IMPLEMENT_REFCOUNTING(ArkWebCreateNativeMediaPlayerCallbackImpl);
 
 public:
-  ArkWebCreateNativeMediaPlayerCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback>
-          nweb_create_native_vide_player_callback);
-  ~ArkWebCreateNativeMediaPlayerCallbackImpl() = default;
+    ArkWebCreateNativeMediaPlayerCallbackImpl(
+        std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback> nweb_create_native_vide_player_callback);
+    ~ArkWebCreateNativeMediaPlayerCallbackImpl() = default;
 
-  ArkWebRefPtr<ArkWebNativeMediaPlayerBridge>
-  OnCreate(ArkWebRefPtr<ArkWebNativeMediaPlayerHandler> handler,
-           ArkWebRefPtr<ArkWebMediaInfo> mediaInfo) override;
+    ArkWebRefPtr<ArkWebNativeMediaPlayerBridge> OnCreate(
+        ArkWebRefPtr<ArkWebNativeMediaPlayerHandler> handler, ArkWebRefPtr<ArkWebMediaInfo> mediaInfo) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback>
-      nweb_create_native_vide_player_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback> nweb_create_native_vide_player_callback_;
 };
 
 } // namespace OHOS::ArkWeb

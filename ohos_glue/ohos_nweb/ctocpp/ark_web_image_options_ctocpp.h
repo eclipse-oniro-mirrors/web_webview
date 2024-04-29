@@ -17,30 +17,29 @@
 #define ARK_WEB_IMAGE_OPTIONS_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_image_options_capi.h"
 #include "ohos_nweb/include/ark_web_image_options.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebImageOptionsCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebImageOptionsCToCpp,
-                                    ArkWebImageOptions,
-                                    ark_web_image_options_t> {
+    : public ArkWebCToCppRefCounted<ArkWebImageOptionsCToCpp, ArkWebImageOptions, ark_web_image_options_t> {
 public:
-  ArkWebImageOptionsCToCpp();
-  virtual ~ArkWebImageOptionsCToCpp();
+    ArkWebImageOptionsCToCpp();
+    virtual ~ArkWebImageOptionsCToCpp();
 
-  // ArkWebImageOptions methods.
-  size_t GetWidth() override;
+    // ArkWebImageOptions methods.
+    size_t GetWidth() override;
 
-  size_t GetHeight() override;
+    size_t GetHeight() override;
 
-  int GetAlphaType() override;
+    int GetAlphaType() override;
 
-  int GetColorType() override;
+    int GetColorType() override;
 };
 
 } // namespace OHOS::ArkWeb

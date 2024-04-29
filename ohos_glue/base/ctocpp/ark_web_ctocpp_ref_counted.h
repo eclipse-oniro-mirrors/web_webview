@@ -25,176 +25,161 @@
 
 namespace OHOS::ArkWeb {
 
-template <class ClassName, class BaseName, class StructName>
+template<class ClassName, class BaseName, class StructName>
 class ArkWebCToCppRefCounted : public BaseName {
 public:
-  ArkWebCToCppRefCounted(const ArkWebCToCppRefCounted &) = delete;
-  ArkWebCToCppRefCounted &operator=(const ArkWebCToCppRefCounted &) = delete;
+    ArkWebCToCppRefCounted(const ArkWebCToCppRefCounted&) = delete;
+    ArkWebCToCppRefCounted& operator=(const ArkWebCToCppRefCounted&) = delete;
 
-  static ArkWebRefPtr<BaseName> Invert(StructName *s);
+    static ArkWebRefPtr<BaseName> Invert(StructName* s);
 
-  static StructName *Revert(ArkWebRefPtr<BaseName> c);
+    static StructName* Revert(ArkWebRefPtr<BaseName> c);
 
-  void IncreRef() const;
+    void IncreRef() const;
 
-  void DecreRef() const;
+    void DecreRef() const;
 
 protected:
-  ArkWebCToCppRefCounted() = default;
-  virtual ~ArkWebCToCppRefCounted() = default;
+    ArkWebCToCppRefCounted() = default;
+    virtual ~ArkWebCToCppRefCounted() = default;
 
-  StructName *GetStruct() const;
+    StructName* GetStruct() const;
 
-  void StructIncreRef() const;
+    void StructIncreRef() const;
 
-  void StructDecreRef() const;
+    void StructDecreRef() const;
 
 private:
-  struct BridgeStruct {
-    ArkWebBridgeType type_;
-    StructName *struct_;
-    ClassName class_;
-  };
+    struct BridgeStruct {
+        ArkWebBridgeType type_;
+        StructName* struct_;
+        ClassName class_;
+    };
 
-  static BridgeStruct *GetBridgeStruct(const BaseName *obj);
+    static BridgeStruct* GetBridgeStruct(const BaseName* obj);
 
-  ArkWebRefCount ref_count_;
+    ArkWebRefCount ref_count_;
 
-  static inline ArkWebBridgeType kBridgeType;
+    static inline ArkWebBridgeType kBridgeType;
 };
 
-template <class ClassName, class BaseName, class StructName>
-ArkWebRefPtr<BaseName>
-ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::Invert(StructName *s) {
-  if (!s) {
-    ARK_WEB_CTOCPP_DEBUG_LOG("capi struct is null,bridge type is %{public}d",
-                             kBridgeType);
-    return nullptr;
-  }
+template<class ClassName, class BaseName, class StructName>
+ArkWebRefPtr<BaseName> ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::Invert(StructName* s)
+{
+    if (!s) {
+        ARK_WEB_CTOCPP_DEBUG_LOG("capi struct is null,bridge type is %{public}d", kBridgeType);
+        return nullptr;
+    }
 
-  BridgeStruct *bridgeStruct = new BridgeStruct;
+    BridgeStruct* bridgeStruct = new BridgeStruct;
 
-  ARK_WEB_CTOCPP_DV_LOG("bridge type is %{public}d,this is %{public}ld,capi "
-                        "struct is %{public}ld",
-                        kBridgeType, (long)&bridgeStruct->class_, (long)s);
+    ARK_WEB_CTOCPP_DV_LOG("bridge type is %{public}d,this is %{public}ld,capi "
+                          "struct is %{public}ld",
+        kBridgeType, (long)&bridgeStruct->class_, (long)s);
 
-  bridgeStruct->type_ = kBridgeType;
-  bridgeStruct->struct_ = s;
+    bridgeStruct->type_ = kBridgeType;
+    bridgeStruct->struct_ = s;
 
-  ArkWebRefPtr<BaseName> bridgePtr(&bridgeStruct->class_);
-  bridgeStruct->class_.StructDecreRef();
-  return bridgePtr;
+    ArkWebRefPtr<BaseName> bridgePtr(&bridgeStruct->class_);
+    bridgeStruct->class_.StructDecreRef();
+    return bridgePtr;
 }
 
-template <class ClassName, class BaseName, class StructName>
-StructName *ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::Revert(
-    ArkWebRefPtr<BaseName> c) {
-  BridgeStruct *bridgeStruct = GetBridgeStruct(c.get());
-  if (!bridgeStruct) {
-    ARK_WEB_CTOCPP_DEBUG_LOG(
-        "failed to get bridge struct,bridge type is %{public}d", kBridgeType);
-    return nullptr;
-  }
+template<class ClassName, class BaseName, class StructName>
+StructName* ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::Revert(ArkWebRefPtr<BaseName> c)
+{
+    BridgeStruct* bridgeStruct = GetBridgeStruct(c.get());
+    if (!bridgeStruct) {
+        ARK_WEB_CTOCPP_DEBUG_LOG("failed to get bridge struct,bridge type is %{public}d", kBridgeType);
+        return nullptr;
+    }
 
-  ARK_WEB_CTOCPP_DV_LOG("bridge type is %{public}d,this is %{public}ld,capi "
-                        "struct is %{public}ld,class is %{public}ld",
-                        kBridgeType, (long)&bridgeStruct->class_,
-                        (long)bridgeStruct->struct_, (long)c.get());
+    ARK_WEB_CTOCPP_DV_LOG("bridge type is %{public}d,this is %{public}ld,capi "
+                          "struct is %{public}ld,class is %{public}ld",
+        kBridgeType, (long)&bridgeStruct->class_, (long)bridgeStruct->struct_, (long)c.get());
 
-  bridgeStruct->class_.StructIncreRef();
-  return bridgeStruct->struct_;
+    bridgeStruct->class_.StructIncreRef();
+    return bridgeStruct->struct_;
 }
 
-template <class ClassName, class BaseName, class StructName>
-StructName *
-ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::GetStruct() const {
-  BridgeStruct *bridgeStruct = GetBridgeStruct(this);
-  if (!bridgeStruct) {
-    ARK_WEB_CTOCPP_INFO_LOG(
-        "failed to get bridge struct,bridge type is %{public}d", kBridgeType);
-    return nullptr;
-  }
+template<class ClassName, class BaseName, class StructName>
+StructName* ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::GetStruct() const
+{
+    BridgeStruct* bridgeStruct = GetBridgeStruct(this);
+    if (!bridgeStruct) {
+        ARK_WEB_CTOCPP_INFO_LOG("failed to get bridge struct,bridge type is %{public}d", kBridgeType);
+        return nullptr;
+    }
 
-  return bridgeStruct->struct_;
+    return bridgeStruct->struct_;
 }
 
-template <class ClassName, class BaseName, class StructName>
-typename ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::BridgeStruct *
-ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::GetBridgeStruct(
-    const BaseName *obj) {
-  if (!obj) {
-    ARK_WEB_CTOCPP_DEBUG_LOG("base class is null,bridge type is %{public}d",
-                             kBridgeType);
-    return nullptr;
-  }
+template<class ClassName, class BaseName, class StructName>
+typename ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::BridgeStruct*
+ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::GetBridgeStruct(const BaseName* obj)
+{
+    if (!obj) {
+        ARK_WEB_CTOCPP_DEBUG_LOG("base class is null,bridge type is %{public}d", kBridgeType);
+        return nullptr;
+    }
 
-  BridgeStruct *bridgeStruct = reinterpret_cast<BridgeStruct *>(
-      reinterpret_cast<char *>(const_cast<BaseName *>(obj)) -
-      (sizeof(BridgeStruct) - sizeof(ClassName)));
-  if (bridgeStruct->type_ != kBridgeType) {
-    ARK_WEB_CTOCPP_INFO_LOG("bridge type %{public}d - %{public}d is invalid",
-                            bridgeStruct->type_, kBridgeType);
-    return nullptr;
-  }
+    BridgeStruct* bridgeStruct = reinterpret_cast<BridgeStruct*>(
+        reinterpret_cast<char*>(const_cast<BaseName*>(obj)) - (sizeof(BridgeStruct) - sizeof(ClassName)));
+    if (bridgeStruct->type_ != kBridgeType) {
+        ARK_WEB_CTOCPP_INFO_LOG("bridge type %{public}d - %{public}d is invalid", bridgeStruct->type_, kBridgeType);
+        return nullptr;
+    }
 
-  return bridgeStruct;
+    return bridgeStruct;
 }
 
-template <class ClassName, class BaseName, class StructName>
-void ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::IncreRef() const {
-  ARK_WEB_CTOCPP_REF_LOG(
-      "bridge type is %{public}d,ref count is %{public}d,this is %{public}ld",
-      kBridgeType, ref_count_.GetRefCount(), (long)this);
+template<class ClassName, class BaseName, class StructName>
+void ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::IncreRef() const
+{
+    ARK_WEB_CTOCPP_REF_LOG("bridge type is %{public}d,ref count is %{public}d,this is %{public}ld", kBridgeType,
+        ref_count_.GetRefCount(), (long)this);
 
-  StructIncreRef();
+    StructIncreRef();
 
-  ref_count_.IncreRef();
+    ref_count_.IncreRef();
 }
 
-template <class ClassName, class BaseName, class StructName>
-void ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::DecreRef() const {
-  ARK_WEB_CTOCPP_REF_LOG(
-      "bridge type is %{public}d,ref count is %{public}d,this is %{public}ld",
-      kBridgeType, ref_count_.GetRefCount(), (long)this);
+template<class ClassName, class BaseName, class StructName>
+void ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::DecreRef() const
+{
+    ARK_WEB_CTOCPP_REF_LOG("bridge type is %{public}d,ref count is %{public}d,this is %{public}ld", kBridgeType,
+        ref_count_.GetRefCount(), (long)this);
 
-  StructDecreRef();
+    StructDecreRef();
 
-  if (ref_count_.DecreRef()) {
-    ARK_WEB_CTOCPP_DV_LOG(
-        "delete ctocpp,bridge type is %{public}d,this is %{public}ld",
-        kBridgeType, (long)this);
+    if (ref_count_.DecreRef()) {
+        ARK_WEB_CTOCPP_DV_LOG("delete ctocpp,bridge type is %{public}d,this is %{public}ld", kBridgeType, (long)this);
 
-    BridgeStruct *bridgeStruct = GetBridgeStruct(this);
-    delete bridgeStruct;
-  }
+        BridgeStruct* bridgeStruct = GetBridgeStruct(this);
+        delete bridgeStruct;
+    }
 }
 
-template <class ClassName, class BaseName, class StructName>
-ARK_WEB_NO_SANITIZE void
-ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::StructIncreRef()
-    const {
-  ARK_WEB_CTOCPP_REF_LOG("bridge type is %{public}d,this is %{public}ld",
-                         kBridgeType, (long)this);
+template<class ClassName, class BaseName, class StructName>
+ARK_WEB_NO_SANITIZE void ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::StructIncreRef() const
+{
+    ARK_WEB_CTOCPP_REF_LOG("bridge type is %{public}d,this is %{public}ld", kBridgeType, (long)this);
 
-  ark_web_base_ref_counted_t *base =
-      reinterpret_cast<ark_web_base_ref_counted_t *>(GetStruct());
-  if (base->incre_ref) {
-    base->incre_ref(base);
-  }
+    ark_web_base_ref_counted_t* base = reinterpret_cast<ark_web_base_ref_counted_t*>(GetStruct());
+    if (base->incre_ref) {
+        base->incre_ref(base);
+    }
 }
 
-template <class ClassName, class BaseName, class StructName>
-ARK_WEB_NO_SANITIZE void
-ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::StructDecreRef()
-    const {
-  ARK_WEB_CTOCPP_REF_LOG("bridge type is %{public}d,this is %{public}ld",
-                         kBridgeType, (long)this);
+template<class ClassName, class BaseName, class StructName>
+ARK_WEB_NO_SANITIZE void ArkWebCToCppRefCounted<ClassName, BaseName, StructName>::StructDecreRef() const
+{
+    ARK_WEB_CTOCPP_REF_LOG("bridge type is %{public}d,this is %{public}ld", kBridgeType, (long)this);
 
-  ark_web_base_ref_counted_t *base =
-      reinterpret_cast<ark_web_base_ref_counted_t *>(GetStruct());
-  if (base->decre_ref) {
-    base->decre_ref(base);
-  }
+    ark_web_base_ref_counted_t* base = reinterpret_cast<ark_web_base_ref_counted_t*>(GetStruct());
+    if (base->decre_ref) {
+        base->decre_ref(base);
+    }
 }
 
 } // namespace OHOS::ArkWeb

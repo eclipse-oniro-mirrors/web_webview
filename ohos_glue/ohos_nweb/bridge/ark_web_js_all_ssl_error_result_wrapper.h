@@ -17,31 +17,31 @@
 #define ARK_WEB_JS_ALL_SSL_ERROR_RESULT_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_js_ssl_error_result.h"
 #include "ohos_nweb/include/ark_web_js_all_ssl_error_result.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 class ArkWebJsAllSslErrorResultWrapper : public OHOS::NWeb::NWebJSAllSslErrorResult {
 public:
-  ArkWebJsAllSslErrorResultWrapper(
-      ArkWebRefPtr<ArkWebJsAllSslErrorResult> ark_web_js_ssl_error_result);
-  ~ArkWebJsAllSslErrorResultWrapper() = default;
+    ArkWebJsAllSslErrorResultWrapper(ArkWebRefPtr<ArkWebJsAllSslErrorResult> ark_web_js_ssl_error_result);
+    ~ArkWebJsAllSslErrorResultWrapper() = default;
 
-  /**
-   * @brief Handle the result if the user cancelled the url request.
-   */
-  void HandleCancel() override;
+    /**
+     * @brief Handle the result if the user cancelled the url request.
+     */
+    void HandleCancel() override;
 
-  /**
-   * @brief Handle a confirmation response from the user, the url request will
-   *        be continued.
-   */
-  void HandleConfirm() override;
+    /**
+     * @brief Handle a confirmation response from the user, the url request will
+     *        be continued.
+     */
+    void HandleConfirm() override;
 
 private:
-  ArkWebRefPtr<ArkWebJsAllSslErrorResult> ark_web_js_all_ssl_error_result_;
+    ArkWebRefPtr<ArkWebJsAllSslErrorResult> ark_web_js_all_ssl_error_result_;
 };
 
 } // namespace OHOS::ArkWeb

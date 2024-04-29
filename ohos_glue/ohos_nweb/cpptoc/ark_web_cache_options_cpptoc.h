@@ -17,21 +17,20 @@
 #define ARK_WEB_CACHE_OPTIONS_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_cache_options_capi.h"
 #include "ohos_nweb/include/ark_web_cache_options.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebCacheOptionsCppToC
-    : public ArkWebCppToCRefCounted<ArkWebCacheOptionsCppToC,
-                                    ArkWebCacheOptions,
-                                    ark_web_cache_options_t> {
+    : public ArkWebCppToCRefCounted<ArkWebCacheOptionsCppToC, ArkWebCacheOptions, ark_web_cache_options_t> {
 public:
-  ArkWebCacheOptionsCppToC();
-  virtual ~ArkWebCacheOptionsCppToC();
+    ArkWebCacheOptionsCppToC();
+    virtual ~ArkWebCacheOptionsCppToC();
 };
 
 } // namespace OHOS::ArkWeb

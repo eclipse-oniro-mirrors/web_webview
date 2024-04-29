@@ -17,34 +17,33 @@
 #define ARK_WEB_WEB_STORAGE_ORIGIN_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_web_storage_origin_capi.h"
 #include "ohos_nweb/include/ark_web_web_storage_origin.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebWebStorageOriginCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebWebStorageOriginCToCpp,
-                                    ArkWebWebStorageOrigin,
-                                    ark_web_web_storage_origin_t> {
+class ArkWebWebStorageOriginCToCpp : public ArkWebCToCppRefCounted<ArkWebWebStorageOriginCToCpp, ArkWebWebStorageOrigin,
+                                         ark_web_web_storage_origin_t> {
 public:
-  ArkWebWebStorageOriginCToCpp();
-  virtual ~ArkWebWebStorageOriginCToCpp();
+    ArkWebWebStorageOriginCToCpp();
+    virtual ~ArkWebWebStorageOriginCToCpp();
 
-  // ArkWebWebStorageOrigin methods.
-  long GetQuota() override;
+    // ArkWebWebStorageOrigin methods.
+    long GetQuota() override;
 
-  void SetQuota(long quota) override;
+    void SetQuota(long quota) override;
 
-  long GetUsage() override;
+    long GetUsage() override;
 
-  void SetUsage(long usage) override;
+    void SetUsage(long usage) override;
 
-  ArkWebString GetOrigin() override;
+    ArkWebString GetOrigin() override;
 
-  void SetOrigin(const ArkWebString &origin) override;
+    void SetOrigin(const ArkWebString& origin) override;
 };
 
 } // namespace OHOS::ArkWeb

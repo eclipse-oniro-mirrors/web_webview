@@ -22,31 +22,27 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebSelectPopupMenuParamWrapper
-    : public OHOS::NWeb::NWebSelectPopupMenuParam {
+class ArkWebSelectPopupMenuParamWrapper : public OHOS::NWeb::NWebSelectPopupMenuParam {
 public:
-  ArkWebSelectPopupMenuParamWrapper(
-      ArkWebRefPtr<ArkWebSelectPopupMenuParam> ark_web_select_popup_menu_param);
-  ~ArkWebSelectPopupMenuParamWrapper() = default;
+    ArkWebSelectPopupMenuParamWrapper(ArkWebRefPtr<ArkWebSelectPopupMenuParam> ark_web_select_popup_menu_param);
+    ~ArkWebSelectPopupMenuParamWrapper() = default;
 
-  std::vector<std::shared_ptr<OHOS::NWeb::NWebSelectPopupMenuItem>>
-  GetMenuItems() override;
+    std::vector<std::shared_ptr<OHOS::NWeb::NWebSelectPopupMenuItem>> GetMenuItems() override;
 
-  int GetItemHeight() override;
+    int GetItemHeight() override;
 
-  int GetSelectedItem() override;
+    int GetSelectedItem() override;
 
-  double GetItemFontSize() override;
+    double GetItemFontSize() override;
 
-  bool GetIsRightAligned() override;
+    bool GetIsRightAligned() override;
 
-  std::shared_ptr<OHOS::NWeb::NWebSelectMenuBound>
-  GetSelectMenuBound() override;
+    std::shared_ptr<OHOS::NWeb::NWebSelectMenuBound> GetSelectMenuBound() override;
 
-  bool GetIsAllowMultipleSelection() override;
+    bool GetIsAllowMultipleSelection() override;
 
 private:
-  ArkWebRefPtr<ArkWebSelectPopupMenuParam> ark_web_select_popup_menu_param_;
+    ArkWebRefPtr<ArkWebSelectPopupMenuParam> ark_web_select_popup_menu_param_;
 };
 
 } // namespace OHOS::ArkWeb

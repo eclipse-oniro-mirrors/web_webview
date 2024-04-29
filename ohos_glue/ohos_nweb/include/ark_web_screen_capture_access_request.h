@@ -17,38 +17,39 @@
 #define ARK_WEB_SCREEN_CAPTURE_ACCESS_REQUEST_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_screen_capture_config.h"
+
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/include/ark_web_screen_capture_config.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkWebScreenCaptureAccessRequest : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Agree the origin to access the given resources. The granted access
-   *        is only valid for this WebView.
-   *
-   * @param config screen capture config.
-   */
-  /*--ark web()--*/
-  virtual void Agree(ArkWebRefPtr<ArkWebScreenCaptureConfig> config) = 0;
+    /**
+     * @brief Agree the origin to access the given resources. The granted access
+     *        is only valid for this WebView.
+     *
+     * @param config screen capture config.
+     */
+    /*--ark web()--*/
+    virtual void Agree(ArkWebRefPtr<ArkWebScreenCaptureConfig> config) = 0;
 
-  /**
-   * @brief Refuse the request.
-   */
-  /*--ark web()--*/
-  virtual void Refuse() = 0;
+    /**
+     * @brief Refuse the request.
+     */
+    /*--ark web()--*/
+    virtual void Refuse() = 0;
 
-  /**
-   * @brief Get the origin of the web page which is trying to access the screen
-   *        capture resource.
-   *
-   * @return the origin of the web page which is trying to access the resource.
-   */
-  /*--ark web()--*/
-  virtual ArkWebString Origin() = 0;
+    /**
+     * @brief Get the origin of the web page which is trying to access the screen
+     *        capture resource.
+     *
+     * @return the origin of the web page which is trying to access the resource.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString Origin() = 0;
 };
 
 } // namespace OHOS::ArkWeb

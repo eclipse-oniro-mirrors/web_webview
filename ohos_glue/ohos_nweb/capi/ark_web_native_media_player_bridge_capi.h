@@ -24,41 +24,31 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_native_media_player_bridge_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *update_rect)(
-      struct _ark_web_native_media_player_bridge_t *self, double x, double y,
-      double width, double height);
+    void(ARK_WEB_CALLBACK* update_rect)(
+        struct _ark_web_native_media_player_bridge_t* self, double x, double y, double width, double height);
 
-  void(ARK_WEB_CALLBACK *play)(
-      struct _ark_web_native_media_player_bridge_t *self);
+    void(ARK_WEB_CALLBACK* play)(struct _ark_web_native_media_player_bridge_t* self);
 
-  void(ARK_WEB_CALLBACK *pause)(
-      struct _ark_web_native_media_player_bridge_t *self);
+    void(ARK_WEB_CALLBACK* pause)(struct _ark_web_native_media_player_bridge_t* self);
 
-  void(ARK_WEB_CALLBACK *seek)(
-      struct _ark_web_native_media_player_bridge_t *self, double time);
+    void(ARK_WEB_CALLBACK* seek)(struct _ark_web_native_media_player_bridge_t* self, double time);
 
-  void(ARK_WEB_CALLBACK *set_volume)(
-      struct _ark_web_native_media_player_bridge_t *self, double volume);
+    void(ARK_WEB_CALLBACK* set_volume)(struct _ark_web_native_media_player_bridge_t* self, double volume);
 
-  void(ARK_WEB_CALLBACK *set_muted)(
-      struct _ark_web_native_media_player_bridge_t *self, bool isMuted);
+    void(ARK_WEB_CALLBACK* set_muted)(struct _ark_web_native_media_player_bridge_t* self, bool isMuted);
 
-  void(ARK_WEB_CALLBACK *set_playback_rate)(
-      struct _ark_web_native_media_player_bridge_t *self, double playbackRate);
+    void(ARK_WEB_CALLBACK* set_playback_rate)(struct _ark_web_native_media_player_bridge_t* self, double playbackRate);
 
-  void(ARK_WEB_CALLBACK *release)(
-      struct _ark_web_native_media_player_bridge_t *self);
+    void(ARK_WEB_CALLBACK* release)(struct _ark_web_native_media_player_bridge_t* self);
 
-  void(ARK_WEB_CALLBACK *enter_full_screen)(
-      struct _ark_web_native_media_player_bridge_t *self);
+    void(ARK_WEB_CALLBACK* enter_full_screen)(struct _ark_web_native_media_player_bridge_t* self);
 
-  void(ARK_WEB_CALLBACK *exit_full_screen)(
-      struct _ark_web_native_media_player_bridge_t *self);
+    void(ARK_WEB_CALLBACK* exit_full_screen)(struct _ark_web_native_media_player_bridge_t* self);
 } ark_web_native_media_player_bridge_t;
 
 #ifdef __cplusplus

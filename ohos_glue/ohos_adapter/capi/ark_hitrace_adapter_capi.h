@@ -25,29 +25,24 @@ extern "C" {
 #endif
 
 typedef struct _ark_hi_trace_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *start_trace)(struct _ark_hi_trace_adapter_t *self,
-                                      const ArkWebString *value, float limit);
+    void(ARK_WEB_CALLBACK* start_trace)(struct _ark_hi_trace_adapter_t* self, const ArkWebString* value, float limit);
 
-  void(ARK_WEB_CALLBACK *finish_trace)(struct _ark_hi_trace_adapter_t *self);
+    void(ARK_WEB_CALLBACK* finish_trace)(struct _ark_hi_trace_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *start_async_trace)(
-      struct _ark_hi_trace_adapter_t *self, const ArkWebString *value,
-      int32_t taskId, float limit);
+    void(ARK_WEB_CALLBACK* start_async_trace)(
+        struct _ark_hi_trace_adapter_t* self, const ArkWebString* value, int32_t taskId, float limit);
 
-  void(ARK_WEB_CALLBACK *finish_async_trace)(
-      struct _ark_hi_trace_adapter_t *self, const ArkWebString *value,
-      int32_t taskId);
+    void(ARK_WEB_CALLBACK* finish_async_trace)(
+        struct _ark_hi_trace_adapter_t* self, const ArkWebString* value, int32_t taskId);
 
-  void(ARK_WEB_CALLBACK *count_trace)(struct _ark_hi_trace_adapter_t *self,
-                                      const ArkWebString *name, int64_t count);
+    void(ARK_WEB_CALLBACK* count_trace)(struct _ark_hi_trace_adapter_t* self, const ArkWebString* name, int64_t count);
 
-  bool(ARK_WEB_CALLBACK *is_hi_trace_enable)(
-      struct _ark_hi_trace_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* is_hi_trace_enable)(struct _ark_hi_trace_adapter_t* self);
 } ark_hi_trace_adapter_t;
 
 #ifdef __cplusplus

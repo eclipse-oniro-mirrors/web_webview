@@ -25,19 +25,16 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_engine_prefetch_args_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *get_url)(
-      struct _ark_web_engine_prefetch_args_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_url)(struct _ark_web_engine_prefetch_args_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_method)(
-      struct _ark_web_engine_prefetch_args_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_method)(struct _ark_web_engine_prefetch_args_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_form_data)(
-      struct _ark_web_engine_prefetch_args_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_form_data)(struct _ark_web_engine_prefetch_args_t* self);
 } ark_web_engine_prefetch_args_t;
 
 #ifdef __cplusplus

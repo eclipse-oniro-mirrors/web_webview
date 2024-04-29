@@ -25,31 +25,29 @@ namespace OHOS::ArkWeb {
 using NWebTextDirection = OHOS::NWeb::TextDirection;
 using NWebSelectPopupMenuItemType = OHOS::NWeb::SelectPopupMenuItemType;
 
-class ArkWebSelectPopupMenuItemWrapper
-    : public OHOS::NWeb::NWebSelectPopupMenuItem {
+class ArkWebSelectPopupMenuItemWrapper : public OHOS::NWeb::NWebSelectPopupMenuItem {
 public:
-  ArkWebSelectPopupMenuItemWrapper(
-      ArkWebRefPtr<ArkWebSelectPopupMenuItem> ark_web_select_popup_menu_item);
-  ~ArkWebSelectPopupMenuItemWrapper() = default;
+    ArkWebSelectPopupMenuItemWrapper(ArkWebRefPtr<ArkWebSelectPopupMenuItem> ark_web_select_popup_menu_item);
+    ~ArkWebSelectPopupMenuItemWrapper() = default;
 
-  NWebSelectPopupMenuItemType GetType() override;
+    NWebSelectPopupMenuItemType GetType() override;
 
-  std::string GetLabel() override;
+    std::string GetLabel() override;
 
-  uint32_t GetAction() override;
+    uint32_t GetAction() override;
 
-  std::string GetToolTip() override;
+    std::string GetToolTip() override;
 
-  bool GetIsChecked() override;
+    bool GetIsChecked() override;
 
-  bool GetIsEnabled() override;
+    bool GetIsEnabled() override;
 
-  NWebTextDirection GetTextDirection() override;
+    NWebTextDirection GetTextDirection() override;
 
-  bool GetHasTextDirectionOverride() override;
+    bool GetHasTextDirectionOverride() override;
 
 private:
-  ArkWebRefPtr<ArkWebSelectPopupMenuItem> ark_web_select_popup_menu_item_;
+    ArkWebRefPtr<ArkWebSelectPopupMenuItem> ark_web_select_popup_menu_item_;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,19 +17,19 @@
 #define ARK_WEB_SELECT_POPUP_MENU_ITEM_VECTOR_H_
 #pragma once
 
-#include "base/include/ark_web_memory.h"
 #include "ohos_nweb/capi/ark_web_select_popup_menu_item_capi.h"
 
-typedef struct {
-  int size;
-  ark_web_select_popup_menu_item_t **value;
+#include "base/include/ark_web_memory.h"
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+typedef struct {
+    int size;
+    ark_web_select_popup_menu_item_t** value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebSelectPopupMenuItemVector;
 
-const ArkWebSelectPopupMenuItemVector
-    ark_web_select_popup_menu_item_vector_default = {
-        0,
+const ArkWebSelectPopupMenuItemVector ark_web_select_popup_menu_item_vector_default = {
+    0,
 };
 
 #endif // ARK_WEB_SELECT_POPUP_MENU_ITEM_VECTOR_H_

@@ -24,32 +24,32 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebTouchHandleState : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetX() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetX() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetY() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetY() = 0;
 
-  /*--ark web()--*/
-  virtual bool IsEnable() = 0;
+    /*--ark web()--*/
+    virtual bool IsEnable() = 0;
 
-  /*--ark web()--*/
-  virtual float GetAlpha() = 0;
+    /*--ark web()--*/
+    virtual float GetAlpha() = 0;
 
-  /*--ark web()--*/
-  virtual float GetEdgeHeight() = 0;
+    /*--ark web()--*/
+    virtual float GetEdgeHeight() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetViewPortX() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetViewPortX() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetViewPortY() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetViewPortY() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetTouchHandleId() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetTouchHandleId() = 0;
 
-  /*--ark web()--*/
-  virtual int GetTouchHandleType() = 0;
+    /*--ark web()--*/
+    virtual int GetTouchHandleType() = 0;
 };
 
 } // namespace OHOS::ArkWeb

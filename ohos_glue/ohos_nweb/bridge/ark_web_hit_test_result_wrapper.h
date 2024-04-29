@@ -24,18 +24,17 @@ namespace OHOS::ArkWeb {
 
 class ArkWebHitTestResultWrapper : public OHOS::NWeb::HitTestResult {
 public:
-  ArkWebHitTestResultWrapper(
-      ArkWebRefPtr<ArkWebHitTestResult> ark_web_hit_test_result);
-  ~ArkWebHitTestResultWrapper() = default;
+    ArkWebHitTestResultWrapper(ArkWebRefPtr<ArkWebHitTestResult> ark_web_hit_test_result);
+    ~ArkWebHitTestResultWrapper() = default;
 
-  void SetType(int type) override;
+    void SetType(int type) override;
 
-  int GetType() override;
+    int GetType() override;
 
-  std::string GetExtra() override;
+    std::string GetExtra() override;
 
 private:
-  ArkWebRefPtr<ArkWebHitTestResult> ark_web_hit_test_result_;
+    ArkWebRefPtr<ArkWebHitTestResult> ark_web_hit_test_result_;
 };
 
 } // namespace OHOS::ArkWeb

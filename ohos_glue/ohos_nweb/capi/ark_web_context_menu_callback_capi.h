@@ -24,16 +24,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_context_menu_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *cancel)(struct _ark_web_context_menu_callback_t *self);
+    void(ARK_WEB_CALLBACK* cancel)(struct _ark_web_context_menu_callback_t* self);
 
-  void(ARK_WEB_CALLBACK *continue0)(
-      struct _ark_web_context_menu_callback_t *self, int32_t command_id,
-      int flag);
+    void(ARK_WEB_CALLBACK* continue0)(struct _ark_web_context_menu_callback_t* self, int32_t command_id, int flag);
 } ark_web_context_menu_callback_t;
 
 #ifdef __cplusplus

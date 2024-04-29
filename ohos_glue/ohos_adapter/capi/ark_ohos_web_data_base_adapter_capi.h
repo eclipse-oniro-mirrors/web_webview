@@ -25,57 +25,46 @@ extern "C" {
 #endif
 
 typedef struct _ark_ohos_web_data_base_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *exist_http_auth_credentials)(
-      struct _ark_ohos_web_data_base_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* exist_http_auth_credentials)(struct _ark_ohos_web_data_base_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *delete_http_auth_credentials)(
-      struct _ark_ohos_web_data_base_adapter_t *self);
+    void(ARK_WEB_CALLBACK* delete_http_auth_credentials)(struct _ark_ohos_web_data_base_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *save_http_auth_credentials)(
-      struct _ark_ohos_web_data_base_adapter_t *self, const ArkWebString *host,
-      const ArkWebString *realm, const ArkWebString *username,
-      const char *password);
+    void(ARK_WEB_CALLBACK* save_http_auth_credentials)(struct _ark_ohos_web_data_base_adapter_t* self,
+        const ArkWebString* host, const ArkWebString* realm, const ArkWebString* username, const char* password);
 
-  void(ARK_WEB_CALLBACK *get_http_auth_credentials)(
-      struct _ark_ohos_web_data_base_adapter_t *self, const ArkWebString *host,
-      const ArkWebString *realm, ArkWebString *username, char *password,
-      uint32_t passwordSize);
+    void(ARK_WEB_CALLBACK* get_http_auth_credentials)(struct _ark_ohos_web_data_base_adapter_t* self,
+        const ArkWebString* host, const ArkWebString* realm, ArkWebString* username, char* password,
+        uint32_t passwordSize);
 } ark_ohos_web_data_base_adapter_t;
 
 typedef struct _ark_ohos_web_permission_data_base_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *exist_permission_by_origin)(
-      struct _ark_ohos_web_permission_data_base_adapter_t *self,
-      const ArkWebString *origin, const int32_t *key);
+    bool(ARK_WEB_CALLBACK* exist_permission_by_origin)(
+        struct _ark_ohos_web_permission_data_base_adapter_t* self, const ArkWebString* origin, const int32_t* key);
 
-  bool(ARK_WEB_CALLBACK *get_permission_result_by_origin)(
-      struct _ark_ohos_web_permission_data_base_adapter_t *self,
-      const ArkWebString *origin, const int32_t *key, bool *result);
+    bool(ARK_WEB_CALLBACK* get_permission_result_by_origin)(struct _ark_ohos_web_permission_data_base_adapter_t* self,
+        const ArkWebString* origin, const int32_t* key, bool* result);
 
-  void(ARK_WEB_CALLBACK *set_permission_by_origin)(
-      struct _ark_ohos_web_permission_data_base_adapter_t *self,
-      const ArkWebString *origin, const int32_t *key, bool result);
+    void(ARK_WEB_CALLBACK* set_permission_by_origin)(struct _ark_ohos_web_permission_data_base_adapter_t* self,
+        const ArkWebString* origin, const int32_t* key, bool result);
 
-  void(ARK_WEB_CALLBACK *clear_permission_by_origin)(
-      struct _ark_ohos_web_permission_data_base_adapter_t *self,
-      const ArkWebString *origin, const int32_t *key);
+    void(ARK_WEB_CALLBACK* clear_permission_by_origin)(
+        struct _ark_ohos_web_permission_data_base_adapter_t* self, const ArkWebString* origin, const int32_t* key);
 
-  void(ARK_WEB_CALLBACK *clear_all_permission)(
-      struct _ark_ohos_web_permission_data_base_adapter_t *self,
-      const int32_t *key);
+    void(ARK_WEB_CALLBACK* clear_all_permission)(
+        struct _ark_ohos_web_permission_data_base_adapter_t* self, const int32_t* key);
 
-  void(ARK_WEB_CALLBACK *get_origins_by_permission)(
-      struct _ark_ohos_web_permission_data_base_adapter_t *self,
-      const int32_t *key, ArkWebStringVector *origins);
+    void(ARK_WEB_CALLBACK* get_origins_by_permission)(
+        struct _ark_ohos_web_permission_data_base_adapter_t* self, const int32_t* key, ArkWebStringVector* origins);
 } ark_ohos_web_permission_data_base_adapter_t;
 
 #ifdef __cplusplus

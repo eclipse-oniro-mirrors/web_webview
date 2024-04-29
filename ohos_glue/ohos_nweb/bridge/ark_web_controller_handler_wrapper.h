@@ -17,29 +17,28 @@
 #define ARK_WEB_CONTROLLER_HANDLER_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_controller_handler.h"
 #include "ohos_nweb/include/ark_web_controller_handler.h"
 
+#include "base/include/ark_web_types.h"
+
 namespace OHOS::ArkWeb {
 
-class ArkWebControllerHandlerWrapper
-    : public OHOS::NWeb::NWebControllerHandler {
+class ArkWebControllerHandlerWrapper : public OHOS::NWeb::NWebControllerHandler {
 public:
-  ArkWebControllerHandlerWrapper(
-      ArkWebRefPtr<ArkWebControllerHandler> ark_web_comtroller_handler);
-  ~ArkWebControllerHandlerWrapper() = default;
+    ArkWebControllerHandlerWrapper(ArkWebRefPtr<ArkWebControllerHandler> ark_web_comtroller_handler);
+    ~ArkWebControllerHandlerWrapper() = default;
 
-  int32_t GetId() override;
+    int32_t GetId() override;
 
-  bool IsFrist() override;
+    bool IsFrist() override;
 
-  int32_t GetNWebHandlerId() override;
+    int32_t GetNWebHandlerId() override;
 
-  void SetNWebHandlerById(int32_t nweb_id) override;
+    void SetNWebHandlerById(int32_t nweb_id) override;
 
 private:
-  ArkWebRefPtr<ArkWebControllerHandler> ark_web_comtroller_handler_;
+    ArkWebRefPtr<ArkWebControllerHandler> ark_web_comtroller_handler_;
 };
 
 } // namespace OHOS::ArkWeb

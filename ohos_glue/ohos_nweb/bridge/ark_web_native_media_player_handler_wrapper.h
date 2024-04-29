@@ -27,47 +27,44 @@ using ArkWebReadyState = OHOS::NWeb::ReadyState;
 using ArkWebNetworkState = OHOS::NWeb::NetworkState;
 using ArkWebPlaybackStatus = OHOS::NWeb::PlaybackStatus;
 
-class ArkWebNativeMediaPlayerHandlerWrapper
-    : public OHOS::NWeb::NWebNativeMediaPlayerHandler {
+class ArkWebNativeMediaPlayerHandlerWrapper : public OHOS::NWeb::NWebNativeMediaPlayerHandler {
 public:
-  ArkWebNativeMediaPlayerHandlerWrapper(
-      ArkWebRefPtr<ArkWebNativeMediaPlayerHandler>
-          ark_web_native_media_player_handler);
-  ~ArkWebNativeMediaPlayerHandlerWrapper() = default;
+    ArkWebNativeMediaPlayerHandlerWrapper(
+        ArkWebRefPtr<ArkWebNativeMediaPlayerHandler> ark_web_native_media_player_handler);
+    ~ArkWebNativeMediaPlayerHandlerWrapper() = default;
 
-  void HandleStatusChanged(ArkWebPlaybackStatus status) override;
+    void HandleStatusChanged(ArkWebPlaybackStatus status) override;
 
-  void HandleVolumeChanged(double volume) override;
+    void HandleVolumeChanged(double volume) override;
 
-  void HandleMutedChanged(bool isMuted) override;
+    void HandleMutedChanged(bool isMuted) override;
 
-  void HandlePlaybackRateChanged(double playbackRate) override;
+    void HandlePlaybackRateChanged(double playbackRate) override;
 
-  void HandleDurationChanged(double duration) override;
+    void HandleDurationChanged(double duration) override;
 
-  void HandleTimeUpdate(double playTime) override;
+    void HandleTimeUpdate(double playTime) override;
 
-  void HandleBufferedEndTimeChanged(double bufferedEndTime) override;
+    void HandleBufferedEndTimeChanged(double bufferedEndTime) override;
 
-  void HandleEnded() override;
+    void HandleEnded() override;
 
-  void HandleNetworkStateChanged(ArkWebNetworkState state) override;
+    void HandleNetworkStateChanged(ArkWebNetworkState state) override;
 
-  void HandleReadyStateChanged(ArkWebReadyState state) override;
+    void HandleReadyStateChanged(ArkWebReadyState state) override;
 
-  void HandleFullScreenChanged(bool isFullScreen) override;
+    void HandleFullScreenChanged(bool isFullScreen) override;
 
-  void HandleSeeking() override;
+    void HandleSeeking() override;
 
-  void HandleSeekFinished() override;
+    void HandleSeekFinished() override;
 
-  void HandleError(ArkWebMediaError error, const std::string &message) override;
+    void HandleError(ArkWebMediaError error, const std::string& message) override;
 
-  void HandleVideoSizeChanged(double width, double height) override;
+    void HandleVideoSizeChanged(double width, double height) override;
 
 private:
-  ArkWebRefPtr<ArkWebNativeMediaPlayerHandler>
-      ark_web_native_media_player_handler_;
+    ArkWebRefPtr<ArkWebNativeMediaPlayerHandler> ark_web_native_media_player_handler_;
 };
 
 } // namespace OHOS::ArkWeb

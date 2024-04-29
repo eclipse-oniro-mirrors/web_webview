@@ -24,31 +24,31 @@ namespace OHOS::ArkWeb {
 
 class ArkWebNativeEmbedInfoWrapper : public OHOS::NWeb::NWebNativeEmbedInfo {
 public:
-  ArkWebNativeEmbedInfoWrapper(
-      ArkWebRefPtr<ArkWebNativeEmbedInfo> ark_web_native_embed_info);
-  ~ArkWebNativeEmbedInfoWrapper() = default;
+    ArkWebNativeEmbedInfoWrapper(ArkWebRefPtr<ArkWebNativeEmbedInfo> ark_web_native_embed_info);
+    ~ArkWebNativeEmbedInfoWrapper() = default;
 
-  int32_t GetWidth() override;
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  std::string GetId() override;
+    std::string GetId() override;
 
-  std::string GetSrc() override;
+    std::string GetSrc() override;
 
-  std::string GetUrl() override;
+    std::string GetUrl() override;
 
-  std::string GetType() override;
+    std::string GetType() override;
 
-  std::string GetTag() override;
+    std::string GetTag() override;
 
-  std::map<std::string, std::string> GetParams() override;
+    std::map<std::string, std::string> GetParams() override;
 
-  int32_t GetX() override;
+    int32_t GetX() override;
 
-  int32_t GetY() override;
+    int32_t GetY() override;
+
 private:
-  ArkWebRefPtr<ArkWebNativeEmbedInfo> ark_web_native_embed_info_;
+    ArkWebRefPtr<ArkWebNativeEmbedInfo> ark_web_native_embed_info_;
 };
 
 } // namespace OHOS::ArkWeb

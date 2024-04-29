@@ -17,25 +17,25 @@
 #define ARK_WEB_CREATE_NATIVE_MEDIA_PLAYER_CALLBACK_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/capi/ark_web_media_info_capi.h"
 #include "ohos_nweb/capi/ark_web_native_media_player_bridge_capi.h"
 #include "ohos_nweb/capi/ark_web_native_media_player_handler_capi.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_create_native_media_player_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ark_web_native_media_player_bridge_t *(ARK_WEB_CALLBACK *on_create)(
-      struct _ark_web_create_native_media_player_callback_t *self,
-      ark_web_native_media_player_handler_t *handler,
-      ark_web_media_info_t *mediaInfo);
+    ark_web_native_media_player_bridge_t*(ARK_WEB_CALLBACK* on_create)(
+        struct _ark_web_create_native_media_player_callback_t* self, ark_web_native_media_player_handler_t* handler,
+        ark_web_media_info_t* mediaInfo);
 } ark_web_create_native_media_player_callback_t;
 
 #ifdef __cplusplus

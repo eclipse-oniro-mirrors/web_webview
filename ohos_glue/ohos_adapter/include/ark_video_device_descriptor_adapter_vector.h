@@ -22,10 +22,10 @@
 struct _ark_video_device_descriptor_adapter_t;
 
 typedef struct {
-  int size;
-  struct _ark_video_device_descriptor_adapter_t **value;
+    int size;
+    struct _ark_video_device_descriptor_adapter_t** value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkVideoDeviceDescriptorAdapterVector;
 
 #endif // ARK_VIDEO_DEVICE_DESCRIPTOR_ADAPTER_VECTOR_H

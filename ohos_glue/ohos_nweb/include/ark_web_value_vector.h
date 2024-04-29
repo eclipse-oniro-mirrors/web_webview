@@ -17,14 +17,15 @@
 #define ARK_WEB_VALUE_VECTOR_H_
 #pragma once
 
-#include "base/include/ark_web_memory.h"
 #include "ohos_nweb/include/ark_web_value.h"
 
-typedef struct {
-  int size;
-  ArkWebValue *value;
+#include "base/include/ark_web_memory.h"
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+typedef struct {
+    int size;
+    ArkWebValue* value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebValueVector;
 
 const ArkWebValueVector ark_web_value_vector_default = {
