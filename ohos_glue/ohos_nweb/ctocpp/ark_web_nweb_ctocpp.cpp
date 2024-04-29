@@ -2195,6 +2195,24 @@ void ArkWebNWebCToCpp::SuggestionSelected(int32_t index)
     _struct->suggestion_selected(_struct, index);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::SendTouchpadFlingEvent(double x, double y, double vx, double vy)
+{
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t* _struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, send_touchpad_fling_event, );
+
+  // Execute
+  _struct->send_touchpad_fling_event(_struct,
+      x,
+      y,
+      vx,
+      vy);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {}
 
 ArkWebNWebCToCpp::~ArkWebNWebCToCpp() {}

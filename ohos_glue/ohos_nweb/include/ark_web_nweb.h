@@ -1214,6 +1214,17 @@ public:
      */
     /*--ark web()--*/
     virtual void SuggestionSelected(int32_t index) = 0;
+
+    /**
+     * @brief Send touchpad fling event.
+     *
+     * @param x location of x.
+     * @param y location of y.
+     * @param vx velocity of x.
+     * @param vy velocity of y.
+     */
+    /*--ark web()--*/
+    virtual void SendTouchpadFlingEvent(double x, double y, double vx, double vy) = 0;
 };
 
 } // namespace OHOS::ArkWeb

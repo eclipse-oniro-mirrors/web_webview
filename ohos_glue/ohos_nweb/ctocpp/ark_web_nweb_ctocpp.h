@@ -345,6 +345,8 @@ public:
         const ArkWebStringVector& async_method_list, const int32_t object_id) override;
 
     void SuggestionSelected(int32_t index) override;
+
+    void SendTouchpadFlingEvent(double x, double y, double vx, double vy) override;
 };
 
 } // namespace OHOS::ArkWeb

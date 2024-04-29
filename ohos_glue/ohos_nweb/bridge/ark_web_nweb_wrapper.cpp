@@ -1091,6 +1091,10 @@ void ArkWebNWebWrapper::SuggestionSelected(int32_t index)
     ark_web_nweb_->SuggestionSelected(index);
 }
 
+void ArkWebNWebWrapper::SendTouchpadFlingEvent(double x, double y, double vx, double vy) {
+    ark_web_nweb_->SendTouchpadFlingEvent(x, y, vx, vy);
+}
+
 bool ArkWebNWebWrapper::TerminateRenderProcess()
 {
     return ark_web_nweb_->TerminateRenderProcess();
