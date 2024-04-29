@@ -2130,6 +2130,19 @@ void ArkWebNWebCToCpp::RegisterArkJSfunction(
                                     &async_method_list, object_id);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::SuggestionSelected(int32_t index) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_web_nweb_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, suggestion_selected, );
+
+  // Execute
+  _struct->suggestion_selected(_struct, index);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {
 }
 

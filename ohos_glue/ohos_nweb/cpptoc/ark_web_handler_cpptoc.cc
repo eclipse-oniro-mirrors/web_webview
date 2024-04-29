@@ -1106,6 +1106,30 @@ ark_web_handler_on_render_process_responding(struct _ark_web_handler_t *self) {
   // Execute
   ArkWebHandlerCppToC::Get(self)->OnRenderProcessResponding();
 }
+
+void ARK_WEB_CALLBACK ark_web_handler_on_show_autofill_popup(
+    struct _ark_web_handler_t *self, const float offsetX, const float offsetY,
+    const ArkWebStringVector *menu_items) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(menu_items, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnShowAutofillPopup(offsetX, offsetY,
+                                                      *menu_items);
+}
+
+void ARK_WEB_CALLBACK
+ark_web_handler_on_hide_autofill_popup(struct _ark_web_handler_t *self) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+  // Execute
+  ArkWebHandlerCppToC::Get(self)->OnHideAutofillPopup();
+}
 } // namespace
 
 ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
@@ -1231,6 +1255,8 @@ ArkWebHandlerCppToC::ArkWebHandlerCppToC() {
       ark_web_handler_on_render_process_not_responding;
   GetStruct()->on_render_process_responding =
       ark_web_handler_on_render_process_responding;
+  GetStruct()->on_show_autofill_popup = ark_web_handler_on_show_autofill_popup;
+  GetStruct()->on_hide_autofill_popup = ark_web_handler_on_hide_autofill_popup;
 }
 
 ArkWebHandlerCppToC::~ArkWebHandlerCppToC() {
