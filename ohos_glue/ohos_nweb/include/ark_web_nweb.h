@@ -1246,6 +1246,7 @@ public:
                                      const ArkWebUint8Vector &resource,
                                      const ArkWebStringMap &responseHeaders,
                                      const int type) = 0;
+                                     
   /*
    * @brief Terminate render process
    *
@@ -1268,6 +1269,13 @@ public:
                                      const ArkWebStringVector &method_list,
                                      const ArkWebStringVector &async_method_list,
                                      const int32_t object_id) = 0;
+  
+  /**
+   * Get value of Autofill index.
+   * @param index index value.
+   */
+  /*--ark web()--*/
+  virtual void SuggestionSelected(int32_t index) = 0;
 };
 
 } // namespace OHOS::ArkWeb

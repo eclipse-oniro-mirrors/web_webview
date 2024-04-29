@@ -1129,6 +1129,13 @@ public:
                              const std::vector<std::string> &async_method_list,
                              const int32_t object_id) override;
 
+  /**
+   * Get value of Autofill index.
+   * @param index index value.
+   */
+  /*--ark web()--*/
+  void SuggestionSelected(int32_t index) override;
+  
 private:
   ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
