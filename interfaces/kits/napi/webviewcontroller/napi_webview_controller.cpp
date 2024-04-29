@@ -420,7 +420,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
         DECLARE_NAPI_FUNCTION("precompileJavaScript", NapiWebviewController::PrecompileJavaScript),
         DECLARE_NAPI_STATIC_FUNCTION("warmupServiceWorker", NapiWebviewController::WarmupServiceWorker),
-        DECLARE_NAPI_FUNCTION("injectOfflineResource", NapiWebviewController::InjectOfflineResource),
+        DECLARE_NAPI_FUNCTION("injectOfflineResources", NapiWebviewController::InjectOfflineResource),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5338,13 +5338,13 @@ void NapiWebviewController::AddResourcesToMemoryCache(napi_env env,
         resourceValue.resource = resourceObj;
         resourceValue.responseHeaders = headersObj;
         resourceValue.type = typeObj;
-        AddResourceToMemoryCache(env, info, resourceValue);
+        AddResourceItemToMemoryCache(env, info, resourceValue);
     }
 }
 
-void NapiWebviewController::AddResourceToMemoryCache(napi_env env,
-                                                     napi_callback_info info,
-                                                     OfflineResourceValue resourceValue)
+void NapiWebviewController::AddResourceItemToMemoryCache(napi_env env,
+                                                         napi_callback_info info,
+                                                         OfflineResourceValue resourceValue)
 {
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {

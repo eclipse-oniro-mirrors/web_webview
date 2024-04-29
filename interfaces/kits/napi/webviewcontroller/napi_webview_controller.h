@@ -323,9 +323,9 @@ private:
                                           napi_callback_info info,
                                           napi_value& resourcesList);
 
-    static void AddResourceToMemoryCache(napi_env env,
-                                         napi_callback_info info,
-                                         OfflineResourceValue resourceValue);
+    static void AddResourceItemToMemoryCache(napi_env env,
+                                             napi_callback_info info,
+                                             OfflineResourceValue resourceValue);
 
     static napi_value SetHostIP(napi_env env, napi_callback_info info);
 
