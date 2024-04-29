@@ -17,25 +17,24 @@
 #define ARK_WEB_KEY_EVENT_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_key_event_capi.h"
 #include "ohos_nweb/include/ark_web_key_event.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebKeyEventCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebKeyEventCToCpp, ArkWebKeyEvent,
-                                    ark_web_key_event_t> {
+class ArkWebKeyEventCToCpp : public ArkWebCToCppRefCounted<ArkWebKeyEventCToCpp, ArkWebKeyEvent, ark_web_key_event_t> {
 public:
-  ArkWebKeyEventCToCpp();
-  virtual ~ArkWebKeyEventCToCpp();
+    ArkWebKeyEventCToCpp();
+    virtual ~ArkWebKeyEventCToCpp();
 
-  // ArkWebKeyEvent methods.
-  int32_t GetAction() override;
+    // ArkWebKeyEvent methods.
+    int32_t GetAction() override;
 
-  int32_t GetKeyCode() override;
+    int32_t GetKeyCode() override;
 };
 
 } // namespace OHOS::ArkWeb

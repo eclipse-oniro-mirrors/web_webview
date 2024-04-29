@@ -17,32 +17,31 @@
 #define ARK_VIDEO_CAPTURE_PARAMS_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_camera_manager_adapter_capi.h"
 #include "ohos_adapter/include/ark_camera_manager_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkVideoCaptureParamsAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkVideoCaptureParamsAdapterCToCpp,
-                                    ArkVideoCaptureParamsAdapter,
-                                    ark_video_capture_params_adapter_t> {
+class ArkVideoCaptureParamsAdapterCToCpp : public ArkWebCToCppRefCounted<ArkVideoCaptureParamsAdapterCToCpp,
+                                               ArkVideoCaptureParamsAdapter, ark_video_capture_params_adapter_t> {
 public:
-  ArkVideoCaptureParamsAdapterCToCpp();
-  virtual ~ArkVideoCaptureParamsAdapterCToCpp();
+    ArkVideoCaptureParamsAdapterCToCpp();
+    virtual ~ArkVideoCaptureParamsAdapterCToCpp();
 
-  // ArkVideoCaptureParamsAdapter methods.
-  uint32_t GetWidth() override;
+    // ArkVideoCaptureParamsAdapter methods.
+    uint32_t GetWidth() override;
 
-  uint32_t GetHeight() override;
+    uint32_t GetHeight() override;
 
-  float GetFrameRate() override;
+    float GetFrameRate() override;
 
-  int32_t GetPixelFormat() override;
+    int32_t GetPixelFormat() override;
 
-  bool GetEnableFaceDetection() override;
+    bool GetEnableFaceDetection() override;
 };
 
 } // namespace OHOS::ArkWeb

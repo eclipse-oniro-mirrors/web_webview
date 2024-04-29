@@ -23,19 +23,18 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebJsProxyCallbackImpl : public ArkWebJsProxyCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebJsProxyCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebJsProxyCallbackImpl);
 
 public:
-  ArkWebJsProxyCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback> nweb_js_proxy_callback);
-  ~ArkWebJsProxyCallbackImpl() = default;
+    ArkWebJsProxyCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback> nweb_js_proxy_callback);
+    ~ArkWebJsProxyCallbackImpl() = default;
 
-  ArkWebString GetMethodName() override;
+    ArkWebString GetMethodName() override;
 
-  NativeArkWebOnJavaScriptProxyCallback GetMethodCallback() override;
+    NativeArkWebOnJavaScriptProxyCallback GetMethodCallback() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback> nweb_js_proxy_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback> nweb_js_proxy_callback_;
 };
 
 } // namespace OHOS::ArkWeb

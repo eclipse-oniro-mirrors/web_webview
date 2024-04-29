@@ -17,95 +17,74 @@
 #define ARK_WEB_URL_RESOURCE_RESPONSE_CAPI_H_
 #pragma once
 
+#include "ohos_nweb/capi/ark_web_resource_ready_callback_capi.h"
+
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/capi/ark_web_resource_ready_callback_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_url_resource_response_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *response_data)(
-      struct _ark_web_url_resource_response_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* response_data)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_data)(
-      struct _ark_web_url_resource_response_t *self,
-      const ArkWebString *input_stream);
+    void(ARK_WEB_CALLBACK* put_response_data)(
+        struct _ark_web_url_resource_response_t* self, const ArkWebString* input_stream);
 
-  ArkWebString(ARK_WEB_CALLBACK *response_status)(
-      struct _ark_web_url_resource_response_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* response_status)(struct _ark_web_url_resource_response_t* self);
 
-  const ArkWebStringMap(ARK_WEB_CALLBACK *response_headers)(
-      struct _ark_web_url_resource_response_t *self);
+    const ArkWebStringMap(ARK_WEB_CALLBACK* response_headers)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_headers)(
-      struct _ark_web_url_resource_response_t *self,
-      const ArkWebStringMap *response_headers);
+    void(ARK_WEB_CALLBACK* put_response_headers)(
+        struct _ark_web_url_resource_response_t* self, const ArkWebStringMap* response_headers);
 
-  int32_t(ARK_WEB_CALLBACK *response_data_type)(
-      struct _ark_web_url_resource_response_t *self);
+    int32_t(ARK_WEB_CALLBACK* response_data_type)(struct _ark_web_url_resource_response_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *response_mime_type)(
-      struct _ark_web_url_resource_response_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* response_mime_type)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_mime_type)(
-      struct _ark_web_url_resource_response_t *self,
-      const ArkWebString *mime_type);
+    void(ARK_WEB_CALLBACK* put_response_mime_type)(
+        struct _ark_web_url_resource_response_t* self, const ArkWebString* mime_type);
 
-  ArkWebString(ARK_WEB_CALLBACK *response_encoding)(
-      struct _ark_web_url_resource_response_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* response_encoding)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_encoding)(
-      struct _ark_web_url_resource_response_t *self,
-      const ArkWebString *encoding);
+    void(ARK_WEB_CALLBACK* put_response_encoding)(
+        struct _ark_web_url_resource_response_t* self, const ArkWebString* encoding);
 
-  bool(ARK_WEB_CALLBACK *response_data_status)(
-      struct _ark_web_url_resource_response_t *self);
+    bool(ARK_WEB_CALLBACK* response_data_status)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_data_status)(
-      struct _ark_web_url_resource_response_t *self, bool is_data_ready);
+    void(ARK_WEB_CALLBACK* put_response_data_status)(struct _ark_web_url_resource_response_t* self, bool is_data_ready);
 
-  int(ARK_WEB_CALLBACK *response_status_code)(
-      struct _ark_web_url_resource_response_t *self);
+    int(ARK_WEB_CALLBACK* response_status_code)(struct _ark_web_url_resource_response_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *response_resource_url)(
-      struct _ark_web_url_resource_response_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* response_resource_url)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_resource_url)(
-      struct _ark_web_url_resource_response_t *self, const ArkWebString *url);
+    void(ARK_WEB_CALLBACK* put_response_resource_url)(
+        struct _ark_web_url_resource_response_t* self, const ArkWebString* url);
 
-  int(ARK_WEB_CALLBACK *response_file_handle)(
-      struct _ark_web_url_resource_response_t *self);
+    int(ARK_WEB_CALLBACK* response_file_handle)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_file_handle)(
-      struct _ark_web_url_resource_response_t *self, int fd);
+    void(ARK_WEB_CALLBACK* put_response_file_handle)(struct _ark_web_url_resource_response_t* self, int fd);
 
-  bool(ARK_WEB_CALLBACK *response_is_file_handle)(
-      struct _ark_web_url_resource_response_t *self);
+    bool(ARK_WEB_CALLBACK* response_is_file_handle)(struct _ark_web_url_resource_response_t* self);
 
-  void(ARK_WEB_CALLBACK *put_response_state_and_statuscode)(
-      struct _ark_web_url_resource_response_t *self, int status_code,
-      const ArkWebString *reason_phrase);
+    void(ARK_WEB_CALLBACK* put_response_state_and_statuscode)(
+        struct _ark_web_url_resource_response_t* self, int status_code, const ArkWebString* reason_phrase);
 
-  void(ARK_WEB_CALLBACK *put_response_ready_callback)(
-      struct _ark_web_url_resource_response_t *self,
-      ark_web_resource_ready_callback_t *callback);
+    void(ARK_WEB_CALLBACK* put_response_ready_callback)(
+        struct _ark_web_url_resource_response_t* self, ark_web_resource_ready_callback_t* callback);
 
-  void(ARK_WEB_CALLBACK *put_response_data_buffer)(
-      struct _ark_web_url_resource_response_t *self, char *buffer,
-      size_t bufferSize);
+    void(ARK_WEB_CALLBACK* put_response_data_buffer)(
+        struct _ark_web_url_resource_response_t* self, char* buffer, size_t bufferSize);
 
-  char *(ARK_WEB_CALLBACK *get_response_data_buffer)(
-      struct _ark_web_url_resource_response_t *self);
+    char*(ARK_WEB_CALLBACK* get_response_data_buffer)(struct _ark_web_url_resource_response_t* self);
 
-  size_t(ARK_WEB_CALLBACK *get_response_data_buffer_size)(
-      struct _ark_web_url_resource_response_t *self);
+    size_t(ARK_WEB_CALLBACK* get_response_data_buffer_size)(struct _ark_web_url_resource_response_t* self);
 } ark_web_url_resource_response_t;
 
 #ifdef __cplusplus

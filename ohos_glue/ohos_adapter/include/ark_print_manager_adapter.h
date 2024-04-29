@@ -15,63 +15,48 @@
 
 #ifndef ARK_PRINT_MANAGER_ADAPTER_H
 #define ARK_PRINT_MANAGER_ADAPTER_H
+#pragma once
+
+#include "ohos_adapter/include/ark_web_adapter_structs.h"
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_adapter/include/ark_web_adapter_structs.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkPrintWriteResultCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkPrintWriteResultCallbackAdapter() = default;
-  virtual ~ArkPrintWriteResultCallbackAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void WriteResultCallback(ArkWebString jobId, uint32_t code) = 0;
+    /*--ark web()--*/
+    virtual void WriteResultCallback(ArkWebString jobId, uint32_t code) = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkPrintDocumentAdapterAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkPrintDocumentAdapterAdapter() = default;
-  virtual ~ArkPrintDocumentAdapterAdapter() = default;
+    /*--ark web()--*/
+    virtual void OnStartLayoutWrite(const ArkWebString& jobId, const ArkPrintAttributesAdapter& oldAttrs,
+        const ArkPrintAttributesAdapter& newAttrs, uint32_t fd,
+        ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter> callback) = 0;
 
-  /*--ark web()--*/
-  virtual void OnStartLayoutWrite(
-      const ArkWebString &jobId, const ArkPrintAttributesAdapter &oldAttrs,
-      const ArkPrintAttributesAdapter &newAttrs, uint32_t fd,
-      ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter> callback) = 0;
-
-  /*--ark web()--*/
-  virtual void OnJobStateChanged(const ArkWebString &jobId, uint32_t state) = 0;
+    /*--ark web()--*/
+    virtual void OnJobStateChanged(const ArkWebString& jobId, uint32_t state) = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkPrintManagerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkPrintManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t StartPrint(
+        const ArkWebStringVector& fileList, const ArkWebUint32Vector& fdList, ArkWebString& taskId) = 0;
 
-  virtual ~ArkPrintManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t Print(const ArkWebString& printJobName, const ArkWebRefPtr<ArkPrintDocumentAdapterAdapter> listener,
+        const ArkPrintAttributesAdapter& printAttributes) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t StartPrint(const ArkWebStringVector &fileList,
-                             const ArkWebUint32Vector &fdList,
-                             ArkWebString &taskId) = 0;
-
-  /*--ark web()--*/
-  virtual int32_t
-  Print(const ArkWebString &printJobName,
-        const ArkWebRefPtr<ArkPrintDocumentAdapterAdapter> listener,
-        const ArkPrintAttributesAdapter &printAttributes) = 0;
-
-  /*--ark web()--*/
-  virtual int32_t
-  Print(const ArkWebString &printJobName,
-        const ArkWebRefPtr<ArkPrintDocumentAdapterAdapter> listener,
-        const ArkPrintAttributesAdapter &printAttributes,
-        void *contextToken) = 0;
+    /*--ark web()--*/
+    virtual int32_t Print(const ArkWebString& printJobName, const ArkWebRefPtr<ArkPrintDocumentAdapterAdapter> listener,
+        const ArkPrintAttributesAdapter& printAttributes, void* contextToken) = 0;
 };
 
 } // namespace OHOS::ArkWeb

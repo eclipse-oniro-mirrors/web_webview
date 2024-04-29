@@ -17,21 +17,20 @@
 #define ARK_WEB_TIMEZONE_INFO_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_date_time_format_adapter_capi.h"
 #include "ohos_adapter/include/ark_date_time_format_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebTimezoneInfoCppToC
-    : public ArkWebCppToCRefCounted<ArkWebTimezoneInfoCppToC,
-                                    ArkWebTimezoneInfo,
-                                    ark_web_timezone_info_t> {
+    : public ArkWebCppToCRefCounted<ArkWebTimezoneInfoCppToC, ArkWebTimezoneInfo, ark_web_timezone_info_t> {
 public:
-  ArkWebTimezoneInfoCppToC();
-  virtual ~ArkWebTimezoneInfoCppToC();
+    ArkWebTimezoneInfoCppToC();
+    virtual ~ArkWebTimezoneInfoCppToC();
 };
 
 } // namespace OHOS::ArkWeb

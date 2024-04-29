@@ -25,8 +25,8 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebStringValueCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void OnReceiveValue(const ArkWebString &value) = 0;
+    /*--ark web()--*/
+    virtual void OnReceiveValue(const ArkWebString& value) = 0;
 };
 
 } // namespace OHOS::ArkWeb

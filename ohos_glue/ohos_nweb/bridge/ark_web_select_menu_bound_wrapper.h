@@ -17,28 +17,28 @@
 #define ARK_WEB_SELECT_MENU_BOUND_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_select_popup_menu.h"
 #include "ohos_nweb/include/ark_web_select_menu_bound.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 class ArkWebSelectMenuBoundWrapper : public OHOS::NWeb::NWebSelectMenuBound {
 public:
-  ArkWebSelectMenuBoundWrapper(
-      ArkWebRefPtr<ArkWebSelectMenuBound> ark_web_select_menu_bound);
-  ~ArkWebSelectMenuBoundWrapper() = default;
+    ArkWebSelectMenuBoundWrapper(ArkWebRefPtr<ArkWebSelectMenuBound> ark_web_select_menu_bound);
+    ~ArkWebSelectMenuBoundWrapper() = default;
 
-  int GetX() override;
+    int GetX() override;
 
-  int GetY() override;
+    int GetY() override;
 
-  int GetWidth() override;
+    int GetWidth() override;
 
-  int GetHeight() override;
+    int GetHeight() override;
 
 private:
-  ArkWebRefPtr<ArkWebSelectMenuBound> ark_web_select_menu_bound_;
+    ArkWebRefPtr<ArkWebSelectMenuBound> ark_web_select_menu_bound_;
 };
 
 } // namespace OHOS::ArkWeb

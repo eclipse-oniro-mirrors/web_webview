@@ -25,21 +25,21 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebFirstMeaningfulPaintDetails : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Get start time of navigation.
-   *
-   * @return Start time of navigation.
-   */
-  /*--ark web()--*/
-  virtual int64_t GetNavigationStartTime() = 0;
+    /**
+     * @brief Get start time of navigation.
+     *
+     * @return Start time of navigation.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetNavigationStartTime() = 0;
 
-  /**
-   * @brief Get paint time of first meaningful content.
-   *
-   * @return Paint time of first meaningful content.
-   */
-  /*--ark web()--*/
-  virtual int64_t GetFirstMeaningfulPaintTime() = 0;
+    /**
+     * @brief Get paint time of first meaningful content.
+     *
+     * @return Paint time of first meaningful content.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetFirstMeaningfulPaintTime() = 0;
 };
 } // namespace OHOS::ArkWeb
 

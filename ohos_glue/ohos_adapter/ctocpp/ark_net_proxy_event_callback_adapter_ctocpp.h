@@ -17,26 +17,25 @@
 #define ARK_NET_PROXY_EVENT_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_net_proxy_adapter_capi.h"
 #include "ohos_adapter/include/ark_net_proxy_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkNetProxyEventCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkNetProxyEventCallbackAdapterCToCpp,
-                                    ArkNetProxyEventCallbackAdapter,
-                                    ark_net_proxy_event_callback_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkNetProxyEventCallbackAdapterCToCpp, ArkNetProxyEventCallbackAdapter,
+          ark_net_proxy_event_callback_adapter_t> {
 public:
-  ArkNetProxyEventCallbackAdapterCToCpp();
-  virtual ~ArkNetProxyEventCallbackAdapterCToCpp();
+    ArkNetProxyEventCallbackAdapterCToCpp();
+    virtual ~ArkNetProxyEventCallbackAdapterCToCpp();
 
-  // ArkNetProxyEventCallbackAdapter methods.
-  void Changed(const ArkWebString &host, const uint16_t &port,
-               const ArkWebString &pacUrl,
-               const ArkWebStringVector &exclusionList) override;
+    // ArkNetProxyEventCallbackAdapter methods.
+    void Changed(const ArkWebString& host, const uint16_t& port, const ArkWebString& pacUrl,
+        const ArkWebStringVector& exclusionList) override;
 };
 
 } // namespace OHOS::ArkWeb

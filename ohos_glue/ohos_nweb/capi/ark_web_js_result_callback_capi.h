@@ -17,48 +17,40 @@
 #define ARK_WEB_JS_RESULT_CALLBACK_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
-#include "base/include/ark_web_types.h"
 #include "ohos_nweb/include/ark_web_value.h"
 #include "ohos_nweb/include/ark_web_value_vector.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_js_result_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebValue(ARK_WEB_CALLBACK *get_java_script_result)(
-      struct _ark_web_js_result_callback_t *self, ArkWebValueVector args,
-      const ArkWebString *method, const ArkWebString *object_name,
-      int32_t routing_id, int32_t object_id);
+    ArkWebValue(ARK_WEB_CALLBACK* get_java_script_result)(struct _ark_web_js_result_callback_t* self,
+        ArkWebValueVector args, const ArkWebString* method, const ArkWebString* object_name, int32_t routing_id,
+        int32_t object_id);
 
-  bool(ARK_WEB_CALLBACK *has_java_script_object_methods)(
-      struct _ark_web_js_result_callback_t *self, int32_t object_id,
-      const ArkWebString *method_name);
+    bool(ARK_WEB_CALLBACK* has_java_script_object_methods)(
+        struct _ark_web_js_result_callback_t* self, int32_t object_id, const ArkWebString* method_name);
 
-  ArkWebValue(ARK_WEB_CALLBACK *get_java_script_object_methods)(
-      struct _ark_web_js_result_callback_t *self, int32_t object_id);
+    ArkWebValue(ARK_WEB_CALLBACK* get_java_script_object_methods)(
+        struct _ark_web_js_result_callback_t* self, int32_t object_id);
 
-  void(ARK_WEB_CALLBACK *remove_java_script_object_holder)(
-      struct _ark_web_js_result_callback_t *self, int32_t holder,
-      int32_t object_id);
+    void(ARK_WEB_CALLBACK* remove_java_script_object_holder)(
+        struct _ark_web_js_result_callback_t* self, int32_t holder, int32_t object_id);
 
-  void(ARK_WEB_CALLBACK *remove_transient_java_script_object)(
-      struct _ark_web_js_result_callback_t *self);
+    void(ARK_WEB_CALLBACK* remove_transient_java_script_object)(struct _ark_web_js_result_callback_t* self);
 
-  ArkWebValue(ARK_WEB_CALLBACK *get_java_script_result_flowbuf)(
-    struct _ark_web_js_result_callback_t* self,
-    ArkWebValueVector args,
-    const ArkWebString* method,
-    const ArkWebString* object_name,
-    int fd,
-    int32_t routing_id,
-    int32_t object_id);
+    ArkWebValue(ARK_WEB_CALLBACK* get_java_script_result_flowbuf)(struct _ark_web_js_result_callback_t* self,
+        ArkWebValueVector args, const ArkWebString* method, const ArkWebString* object_name, int fd, int32_t routing_id,
+        int32_t object_id);
 } ark_web_js_result_callback_t;
 
 #ifdef __cplusplus

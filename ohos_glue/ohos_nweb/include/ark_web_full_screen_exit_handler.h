@@ -24,11 +24,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebFullScreenExitHandler : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief the handler to exit the full screen mode.
-   */
-  /*--ark web()--*/
-  virtual void ExitFullScreen() = 0;
+    /**
+     * @brief the handler to exit the full screen mode.
+     */
+    /*--ark web()--*/
+    virtual void ExitFullScreen() = 0;
 };
 
 } // namespace OHOS::ArkWeb

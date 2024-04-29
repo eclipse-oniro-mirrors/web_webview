@@ -17,23 +17,24 @@
 #define ARK_WEB_DATE_TIME_SUGGESTION_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_nweb_structs.h"
+
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkWebDateTimeSuggestion : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebString GetLabel() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetLabel() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebDateTime GetValue() = 0;
+    /*--ark web()--*/
+    virtual ArkWebDateTime GetValue() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetLocalizedValue() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetLocalizedValue() = 0;
 };
 
 } // namespace OHOS::ArkWeb

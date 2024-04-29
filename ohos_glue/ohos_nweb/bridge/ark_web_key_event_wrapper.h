@@ -17,23 +17,24 @@
 #define ARK_WEB_KEY_EVENT_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_key_event.h"
 #include "ohos_nweb/include/ark_web_key_event.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 class ArkWebKeyEventWrapper : public OHOS::NWeb::NWebKeyEvent {
 public:
-  ArkWebKeyEventWrapper(ArkWebRefPtr<ArkWebKeyEvent> ark_web_key_event);
-  ~ArkWebKeyEventWrapper() = default;
+    ArkWebKeyEventWrapper(ArkWebRefPtr<ArkWebKeyEvent> ark_web_key_event);
+    ~ArkWebKeyEventWrapper() = default;
 
-  int32_t GetAction() override;
+    int32_t GetAction() override;
 
-  int32_t GetKeyCode() override;
+    int32_t GetKeyCode() override;
 
 private:
-  ArkWebRefPtr<ArkWebKeyEvent> ark_web_key_event_;
+    ArkWebRefPtr<ArkWebKeyEvent> ark_web_key_event_;
 };
 
 } // namespace OHOS::ArkWeb

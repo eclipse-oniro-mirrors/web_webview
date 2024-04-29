@@ -17,33 +17,32 @@
 #define ARK_WEB_NATIVE_MEDIA_PLAYER_SURFACE_INFO_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_native_media_player_surface_info_capi.h"
 #include "ohos_nweb/include/ark_web_native_media_player_surface_info.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebNativeMediaPlayerSurfaceInfoCToCpp
-    : public ArkWebCToCppRefCounted<
-          ArkWebNativeMediaPlayerSurfaceInfoCToCpp,
-          ArkWebNativeMediaPlayerSurfaceInfo,
+    : public ArkWebCToCppRefCounted<ArkWebNativeMediaPlayerSurfaceInfoCToCpp, ArkWebNativeMediaPlayerSurfaceInfo,
           ark_web_native_media_player_surface_info_t> {
 public:
-  ArkWebNativeMediaPlayerSurfaceInfoCToCpp();
-  virtual ~ArkWebNativeMediaPlayerSurfaceInfoCToCpp();
+    ArkWebNativeMediaPlayerSurfaceInfoCToCpp();
+    virtual ~ArkWebNativeMediaPlayerSurfaceInfoCToCpp();
 
-  // ArkWebNativeMediaPlayerSurfaceInfo methods.
-  ArkWebString GetId() override;
+    // ArkWebNativeMediaPlayerSurfaceInfo methods.
+    ArkWebString GetId() override;
 
-  double GetX() override;
+    double GetX() override;
 
-  double GetY() override;
+    double GetY() override;
 
-  double GetWidth() override;
+    double GetWidth() override;
 
-  double GetHeight() override;
+    double GetHeight() override;
 };
 
 } // namespace OHOS::ArkWeb

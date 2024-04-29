@@ -17,28 +17,28 @@
 #define ARK_SCREEN_CAPTURE_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_screen_capture_adapter_capi.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkScreenCaptureCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkScreenCaptureCallbackAdapterCToCpp,
-                                    ArkScreenCaptureCallbackAdapter,
-                                    ark_screen_capture_callback_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkScreenCaptureCallbackAdapterCToCpp, ArkScreenCaptureCallbackAdapter,
+          ark_screen_capture_callback_adapter_t> {
 public:
-  ArkScreenCaptureCallbackAdapterCToCpp();
-  virtual ~ArkScreenCaptureCallbackAdapterCToCpp();
+    ArkScreenCaptureCallbackAdapterCToCpp();
+    virtual ~ArkScreenCaptureCallbackAdapterCToCpp();
 
-  // ArkScreenCaptureCallbackAdapter methods.
-  void OnError(int32_t errorCode) override;
+    // ArkScreenCaptureCallbackAdapter methods.
+    void OnError(int32_t errorCode) override;
 
-  void OnAudioBufferAvailable(bool isReady, int32_t type) override;
+    void OnAudioBufferAvailable(bool isReady, int32_t type) override;
 
-  void OnVideoBufferAvailable(bool isReady) override;
+    void OnVideoBufferAvailable(bool isReady) override;
 };
 
 } // namespace OHOS::ArkWeb

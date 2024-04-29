@@ -17,25 +17,25 @@
 #define ARK_WEB_JS_PROXY_CALLBACK_CAPI_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_nweb_structs.h"
+
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_js_proxy_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *get_method_name)(
-      struct _ark_web_js_proxy_callback_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_method_name)(struct _ark_web_js_proxy_callback_t* self);
 
-  NativeArkWebOnJavaScriptProxyCallback(ARK_WEB_CALLBACK *get_method_callback)(
-      struct _ark_web_js_proxy_callback_t *self);
+    NativeArkWebOnJavaScriptProxyCallback(ARK_WEB_CALLBACK* get_method_callback)(
+        struct _ark_web_js_proxy_callback_t* self);
 } ark_web_js_proxy_callback_t;
 
 #ifdef __cplusplus

@@ -22,32 +22,29 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebJsSslSelectCertResultWrapper
-    : public OHOS::NWeb::NWebJSSslSelectCertResult {
+class ArkWebJsSslSelectCertResultWrapper : public OHOS::NWeb::NWebJSSslSelectCertResult {
 public:
-  ArkWebJsSslSelectCertResultWrapper(ArkWebRefPtr<ArkWebJsSslSelectCertResult>
-                                         ark_web_js_ssl_select_cert_result);
-  ~ArkWebJsSslSelectCertResultWrapper() = default;
+    ArkWebJsSslSelectCertResultWrapper(ArkWebRefPtr<ArkWebJsSslSelectCertResult> ark_web_js_ssl_select_cert_result);
+    ~ArkWebJsSslSelectCertResultWrapper() = default;
 
-  /**
-   * @brief Cancel this certificate request.
-   */
-  void Cancel() override;
+    /**
+     * @brief Cancel this certificate request.
+     */
+    void Cancel() override;
 
-  /**
-   * @brief Ignore this certificate request temporarily.
-   */
-  void Ignore() override;
+    /**
+     * @brief Ignore this certificate request temporarily.
+     */
+    void Ignore() override;
 
-  /**
-   * @brief Confirm to use the specified private key and client certificate
-   *        chain.
-   */
-  void Confirm(const std::string &private_key_file,
-               const std::string &cert_chain_file) override;
+    /**
+     * @brief Confirm to use the specified private key and client certificate
+     *        chain.
+     */
+    void Confirm(const std::string& private_key_file, const std::string& cert_chain_file) override;
 
 private:
-  ArkWebRefPtr<ArkWebJsSslSelectCertResult> ark_web_js_ssl_select_cert_result_;
+    ArkWebRefPtr<ArkWebJsSslSelectCertResult> ark_web_js_ssl_select_cert_result_;
 };
 
 } // namespace OHOS::ArkWeb

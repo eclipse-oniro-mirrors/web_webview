@@ -25,15 +25,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_download_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_download_start)(
-      struct _ark_web_download_callback_t *self, const ArkWebString *url,
-      const ArkWebString *user_agent, const ArkWebString *content_disposition,
-      const ArkWebString *mime_type, long content_length);
+    void(ARK_WEB_CALLBACK* on_download_start)(struct _ark_web_download_callback_t* self, const ArkWebString* url,
+        const ArkWebString* user_agent, const ArkWebString* content_disposition, const ArkWebString* mime_type,
+        long content_length);
 } ark_web_download_callback_t;
 
 #ifdef __cplusplus

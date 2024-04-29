@@ -22,10 +22,10 @@
 struct _ark_format_adapter_t;
 
 typedef struct {
-  int size;
-  struct _ark_format_adapter_t **value;
+    int size;
+    struct _ark_format_adapter_t** value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkFormatAdapterVector;
 
 #endif // ARK_FORMAT_ADAPTER_VECTOR_H

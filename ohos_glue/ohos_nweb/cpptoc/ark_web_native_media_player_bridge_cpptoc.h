@@ -17,21 +17,20 @@
 #define ARK_WEB_NATIVE_MEDIA_PLAYER_BRIDGE_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_native_media_player_bridge_capi.h"
 #include "ohos_nweb/include/ark_web_native_media_player_bridge.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkWebNativeMediaPlayerBridgeCppToC
-    : public ArkWebCppToCRefCounted<ArkWebNativeMediaPlayerBridgeCppToC,
-                                    ArkWebNativeMediaPlayerBridge,
-                                    ark_web_native_media_player_bridge_t> {
+class ArkWebNativeMediaPlayerBridgeCppToC : public ArkWebCppToCRefCounted<ArkWebNativeMediaPlayerBridgeCppToC,
+                                                ArkWebNativeMediaPlayerBridge, ark_web_native_media_player_bridge_t> {
 public:
-  ArkWebNativeMediaPlayerBridgeCppToC();
-  virtual ~ArkWebNativeMediaPlayerBridgeCppToC();
+    ArkWebNativeMediaPlayerBridgeCppToC();
+    virtual ~ArkWebNativeMediaPlayerBridgeCppToC();
 };
 
 } // namespace OHOS::ArkWeb

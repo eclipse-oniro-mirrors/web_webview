@@ -22,28 +22,25 @@
 
 namespace OHOS::ArkWeb {
 
-using ArkWebFileSelectorMode =
-    OHOS::NWeb::NWebFileSelectorParams::FileSelectorMode;
+using ArkWebFileSelectorMode = OHOS::NWeb::NWebFileSelectorParams::FileSelectorMode;
 
-class ArkWebFileSelectorParamsWrapper
-    : public OHOS::NWeb::NWebFileSelectorParams {
+class ArkWebFileSelectorParamsWrapper : public OHOS::NWeb::NWebFileSelectorParams {
 public:
-  ArkWebFileSelectorParamsWrapper(
-      ArkWebRefPtr<ArkWebFileSelectorParams> ark_web_file_selector_params);
-  ~ArkWebFileSelectorParamsWrapper() = default;
+    ArkWebFileSelectorParamsWrapper(ArkWebRefPtr<ArkWebFileSelectorParams> ark_web_file_selector_params);
+    ~ArkWebFileSelectorParamsWrapper() = default;
 
-  ArkWebFileSelectorMode Mode() override;
+    ArkWebFileSelectorMode Mode() override;
 
-  const std::string Title() override;
+    const std::string Title() override;
 
-  bool IsCapture() override;
+    bool IsCapture() override;
 
-  const std::vector<std::string> AcceptType() override;
+    const std::vector<std::string> AcceptType() override;
 
-  const std::string DefaultFilename() override;
+    const std::string DefaultFilename() override;
 
 private:
-  ArkWebRefPtr<ArkWebFileSelectorParams> ark_web_file_selector_params_;
+    ArkWebRefPtr<ArkWebFileSelectorParams> ark_web_file_selector_params_;
 };
 
 } // namespace OHOS::ArkWeb

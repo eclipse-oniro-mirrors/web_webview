@@ -17,20 +17,20 @@
 #define ARK_WEB_DRAG_EVENT_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_drag_event_capi.h"
 #include "ohos_nweb/include/ark_web_drag_event.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebDragEventCppToC
-    : public ArkWebCppToCRefCounted<ArkWebDragEventCppToC, ArkWebDragEvent,
-                                    ark_web_drag_event_t> {
+    : public ArkWebCppToCRefCounted<ArkWebDragEventCppToC, ArkWebDragEvent, ark_web_drag_event_t> {
 public:
-  ArkWebDragEventCppToC();
-  virtual ~ArkWebDragEventCppToC();
+    ArkWebDragEventCppToC();
+    virtual ~ArkWebDragEventCppToC();
 };
 
 } // namespace OHOS::ArkWeb

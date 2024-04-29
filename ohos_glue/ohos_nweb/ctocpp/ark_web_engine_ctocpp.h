@@ -17,75 +17,66 @@
 #define ARK_WEB_ENGINE_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_engine_capi.h"
 #include "ohos_nweb/include/ark_web_engine.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebEngineCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebEngineCToCpp, ArkWebEngine,
-                                    ark_web_engine_t> {
+class ArkWebEngineCToCpp : public ArkWebCToCppRefCounted<ArkWebEngineCToCpp, ArkWebEngine, ark_web_engine_t> {
 public:
-  ArkWebEngineCToCpp();
-  virtual ~ArkWebEngineCToCpp();
+    ArkWebEngineCToCpp();
+    virtual ~ArkWebEngineCToCpp();
 
-  // ArkWebEngine methods.
-  ArkWebRefPtr<ArkWebNWeb>
-  CreateNWeb(ArkWebRefPtr<ArkWebNWebCreateInfo> create_info) override;
+    // ArkWebEngine methods.
+    ArkWebRefPtr<ArkWebNWeb> CreateNWeb(ArkWebRefPtr<ArkWebNWebCreateInfo> create_info) override;
 
-  ArkWebRefPtr<ArkWebNWeb> GetNWeb(int32_t nweb_id) override;
+    ArkWebRefPtr<ArkWebNWeb> GetNWeb(int32_t nweb_id) override;
 
-  ArkWebRefPtr<ArkWebDataBase> GetDataBase() override;
+    ArkWebRefPtr<ArkWebDataBase> GetDataBase() override;
 
-  ArkWebRefPtr<ArkWebWebStorage> GetWebStorage() override;
+    ArkWebRefPtr<ArkWebWebStorage> GetWebStorage() override;
 
-  ArkWebRefPtr<ArkWebCookieManager> GetCookieManager() override;
+    ArkWebRefPtr<ArkWebCookieManager> GetCookieManager() override;
 
-  ArkWebRefPtr<ArkWebDownloadManager> GetDownloadManager() override;
+    ArkWebRefPtr<ArkWebDownloadManager> GetDownloadManager() override;
 
-  void SetWebTag(int32_t nweb_id, const char *web_tag) override;
+    void SetWebTag(int32_t nweb_id, const char* web_tag) override;
 
-  void
-  InitializeWebEngine(ArkWebRefPtr<ArkWebEngineInitArgs> init_args) override;
+    void InitializeWebEngine(ArkWebRefPtr<ArkWebEngineInitArgs> init_args) override;
 
-  void PrepareForPageLoad(const ArkWebString &url, bool preconnectable,
-                          int32_t num_sockets) override;
+    void PrepareForPageLoad(const ArkWebString& url, bool preconnectable, int32_t num_sockets) override;
 
-  void SetWebDebuggingAccess(bool isEnableDebug) override;
+    void SetWebDebuggingAccess(bool isEnableDebug) override;
 
-  void AddIntelligentTrackingPreventionBypassingList(
-      const ArkWebStringVector &hosts) override;
+    void AddIntelligentTrackingPreventionBypassingList(const ArkWebStringVector& hosts) override;
 
-  void RemoveIntelligentTrackingPreventionBypassingList(
-      const ArkWebStringVector &hosts) override;
+    void RemoveIntelligentTrackingPreventionBypassingList(const ArkWebStringVector& hosts) override;
 
-  void ClearIntelligentTrackingPreventionBypassingList() override;
+    void ClearIntelligentTrackingPreventionBypassingList() override;
 
-  void PauseAllTimers() override;
+    void PauseAllTimers() override;
 
-  void ResumeAllTimers() override;
+    void ResumeAllTimers() override;
 
-  void PrefetchResource(ArkWebRefPtr<ArkWebEnginePrefetchArgs> &pre_args,
-                        const ArkWebStringMap &additional_http_headers,
-                        const ArkWebString &cache_key,
-                        const uint32_t &cache_valid_time) override;
+    void PrefetchResource(ArkWebRefPtr<ArkWebEnginePrefetchArgs>& pre_args,
+        const ArkWebStringMap& additional_http_headers, const ArkWebString& cache_key,
+        const uint32_t& cache_valid_time) override;
 
-  void SetRenderProcessMode(int32_t mode) override;
+    void SetRenderProcessMode(int32_t mode) override;
 
-  int32_t GetRenderProcessMode() override;
+    int32_t GetRenderProcessMode() override;
 
-  void
-  ClearPrefetchedResource(const ArkWebStringVector &cache_key_list) override;
+    void ClearPrefetchedResource(const ArkWebStringVector& cache_key_list) override;
 
-  void WarmupServiceWorker(const ArkWebString &url) override;
+    void WarmupServiceWorker(const ArkWebString& url) override;
 
-  void SetHostIP(
-      const ArkWebString& hostName, const ArkWebString& address, int32_t aliveTime) override;
+    void SetHostIP(const ArkWebString& hostName, const ArkWebString& address, int32_t aliveTime) override;
 
-  void ClearHostIP(const ArkWebString& hostName) override;
+    void ClearHostIP(const ArkWebString& hostName) override;
 };
 
 } // namespace OHOS::ArkWeb

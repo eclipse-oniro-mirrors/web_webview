@@ -24,11 +24,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebTouchHandleHotZone : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void SetWidth(double width) = 0;
+    /*--ark web()--*/
+    virtual void SetWidth(double width) = 0;
 
-  /*--ark web()--*/
-  virtual void SetHeight(double height) = 0;
+    /*--ark web()--*/
+    virtual void SetHeight(double height) = 0;
 };
 
 } // namespace OHOS::ArkWeb

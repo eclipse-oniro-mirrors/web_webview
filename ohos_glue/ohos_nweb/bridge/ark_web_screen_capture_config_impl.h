@@ -23,21 +23,18 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebScreenCaptureConfigImpl : public ArkWebScreenCaptureConfig {
-  IMPLEMENT_REFCOUNTING(ArkWebScreenCaptureConfigImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebScreenCaptureConfigImpl);
 
 public:
-  ArkWebScreenCaptureConfigImpl(
-      std::shared_ptr<OHOS::NWeb::NWebScreenCaptureConfig>
-          nweb_screen_capture_config);
-  ~ArkWebScreenCaptureConfigImpl() = default;
+    ArkWebScreenCaptureConfigImpl(std::shared_ptr<OHOS::NWeb::NWebScreenCaptureConfig> nweb_screen_capture_config);
+    ~ArkWebScreenCaptureConfigImpl() = default;
 
-  int32_t GetMode() override;
+    int32_t GetMode() override;
 
-  int32_t GetSourceId() override;
+    int32_t GetSourceId() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebScreenCaptureConfig>
-      nweb_screen_capture_config_;
+    std::shared_ptr<OHOS::NWeb::NWebScreenCaptureConfig> nweb_screen_capture_config_;
 };
 
 } // namespace OHOS::ArkWeb

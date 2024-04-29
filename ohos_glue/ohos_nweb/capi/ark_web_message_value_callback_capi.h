@@ -17,22 +17,22 @@
 #define ARK_WEB_MESSAGE_VALUE_CALLBACK_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/include/ark_web_message.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_message_value_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_receive_value)(
-      struct _ark_web_message_value_callback_t *self,
-      const ArkWebMessage *value);
+    void(ARK_WEB_CALLBACK* on_receive_value)(
+        struct _ark_web_message_value_callback_t* self, const ArkWebMessage* value);
 } ark_web_message_value_callback_t;
 
 #ifdef __cplusplus

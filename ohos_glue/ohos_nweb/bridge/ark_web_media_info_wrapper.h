@@ -27,35 +27,33 @@ using ArkWebMediaType = OHOS::NWeb::MediaType;
 
 class ArkWebMediaInfoWrapper : public OHOS::NWeb::NWebMediaInfo {
 public:
-  ArkWebMediaInfoWrapper(ArkWebRefPtr<ArkWebMediaInfo> ark_web_media_info);
-  ~ArkWebMediaInfoWrapper() = default;
+    ArkWebMediaInfoWrapper(ArkWebRefPtr<ArkWebMediaInfo> ark_web_media_info);
+    ~ArkWebMediaInfoWrapper() = default;
 
-  ArkWebPreload GetPreload() override;
+    ArkWebPreload GetPreload() override;
 
-  bool GetIsMuted() override;
+    bool GetIsMuted() override;
 
-  std::string GetEmbedId() override;
+    std::string GetEmbedId() override;
 
-  std::string GetPosterUrl() override;
+    std::string GetPosterUrl() override;
 
-  ArkWebMediaType GetMediaType() override;
+    ArkWebMediaType GetMediaType() override;
 
-  bool GetIsControlsShown() override;
+    bool GetIsControlsShown() override;
 
-  std::vector<std::string> GetControls() override;
+    std::vector<std::string> GetControls() override;
 
-  std::map<std::string, std::string> GetHeaders() override;
+    std::map<std::string, std::string> GetHeaders() override;
 
-  std::map<std::string, std::string> GetAttributes() override;
+    std::map<std::string, std::string> GetAttributes() override;
 
-  std::vector<std::shared_ptr<OHOS::NWeb::NWebMediaSourceInfo>>
-  GetSourceInfos() override;
+    std::vector<std::shared_ptr<OHOS::NWeb::NWebMediaSourceInfo>> GetSourceInfos() override;
 
-  std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerSurfaceInfo>
-  GetSurfaceInfo() override;
+    std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerSurfaceInfo> GetSurfaceInfo() override;
 
 private:
-  ArkWebRefPtr<ArkWebMediaInfo> ark_web_media_info_;
+    ArkWebRefPtr<ArkWebMediaInfo> ark_web_media_info_;
 };
 
 } // namespace OHOS::ArkWeb

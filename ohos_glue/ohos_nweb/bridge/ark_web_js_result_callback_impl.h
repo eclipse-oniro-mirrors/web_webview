@@ -23,60 +23,49 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebJsResultCallbackImpl : public ArkWebJsResultCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebJsResultCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebJsResultCallbackImpl);
 
 public:
-  ArkWebJsResultCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebJavaScriptResultCallBack>
-          nweb_js_result_callback);
-  ~ArkWebJsResultCallbackImpl() = default;
+    ArkWebJsResultCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebJavaScriptResultCallBack> nweb_js_result_callback);
+    ~ArkWebJsResultCallbackImpl() = default;
 
-  ArkWebValue GetJavaScriptResult(ArkWebValueVector args,
-                                  const ArkWebString &method,
-                                  const ArkWebString &object_name,
-                                  int32_t routing_id,
-                                  int32_t object_id) override;
+    ArkWebValue GetJavaScriptResult(ArkWebValueVector args, const ArkWebString& method, const ArkWebString& object_name,
+        int32_t routing_id, int32_t object_id) override;
 
-  ArkWebValue GetJavaScriptResultFlowbuf(ArkWebValueVector args,
-                                          const ArkWebString &method,
-                                          const ArkWebString &object_name,
-                                          int fd,
-                                          int32_t routing_id,
-                                          int32_t object_id) override;
+    ArkWebValue GetJavaScriptResultFlowbuf(ArkWebValueVector args, const ArkWebString& method,
+        const ArkWebString& object_name, int fd, int32_t routing_id, int32_t object_id) override;
 
-  /**
-   * @brief GetJavaScriptObjectMethods
-   *
-   * @param object_id: means the JavaScript object id
-   * @param object_id: means the method name
-   */
-  bool HasJavaScriptObjectMethods(int32_t object_id,
-                                  const ArkWebString &method_name) override;
+    /**
+     * @brief GetJavaScriptObjectMethods
+     *
+     * @param object_id: means the JavaScript object id
+     * @param object_id: means the method name
+     */
+    bool HasJavaScriptObjectMethods(int32_t object_id, const ArkWebString& method_name) override;
 
-  /**
-   * @brief GetJavaScriptObjectMethods
-   *
-   * @param object_id: means the JavaScript object id
-   */
-  ArkWebValue GetJavaScriptObjectMethods(int32_t object_id) override;
+    /**
+     * @brief GetJavaScriptObjectMethods
+     *
+     * @param object_id: means the JavaScript object id
+     */
+    ArkWebValue GetJavaScriptObjectMethods(int32_t object_id) override;
 
-  /**
-   * @brief RemoveJavaScriptObjectHolder
-   *
-   * @param holder: means the JavaScript object is holded by
-   * it(routing_id)
-   * @param object_id: means the JavaScript object id
-   */
-  void RemoveJavaScriptObjectHolder(int32_t holder, int32_t object_id) override;
+    /**
+     * @brief RemoveJavaScriptObjectHolder
+     *
+     * @param holder: means the JavaScript object is holded by
+     * it(routing_id)
+     * @param object_id: means the JavaScript object id
+     */
+    void RemoveJavaScriptObjectHolder(int32_t holder, int32_t object_id) override;
 
-  /**
-   * @brief Remove Transient JavaScript Object
-   */
-  void RemoveTransientJavaScriptObject() override;
+    /**
+     * @brief Remove Transient JavaScript Object
+     */
+    void RemoveTransientJavaScriptObject() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebJavaScriptResultCallBack>
-      nweb_js_result_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebJavaScriptResultCallBack> nweb_js_result_callback_;
 };
 
 } // namespace OHOS::ArkWeb

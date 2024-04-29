@@ -25,25 +25,20 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_native_media_player_surface_info_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *get_id)(
-      struct _ark_web_native_media_player_surface_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_id)(struct _ark_web_native_media_player_surface_info_t* self);
 
-  double(ARK_WEB_CALLBACK *get_x)(
-      struct _ark_web_native_media_player_surface_info_t *self);
+    double(ARK_WEB_CALLBACK* get_x)(struct _ark_web_native_media_player_surface_info_t* self);
 
-  double(ARK_WEB_CALLBACK *get_y)(
-      struct _ark_web_native_media_player_surface_info_t *self);
+    double(ARK_WEB_CALLBACK* get_y)(struct _ark_web_native_media_player_surface_info_t* self);
 
-  double(ARK_WEB_CALLBACK *get_width)(
-      struct _ark_web_native_media_player_surface_info_t *self);
+    double(ARK_WEB_CALLBACK* get_width)(struct _ark_web_native_media_player_surface_info_t* self);
 
-  double(ARK_WEB_CALLBACK *get_height)(
-      struct _ark_web_native_media_player_surface_info_t *self);
+    double(ARK_WEB_CALLBACK* get_height)(struct _ark_web_native_media_player_surface_info_t* self);
 } ark_web_native_media_player_surface_info_t;
 
 #ifdef __cplusplus

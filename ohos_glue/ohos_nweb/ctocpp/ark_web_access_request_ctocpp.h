@@ -17,30 +17,29 @@
 #define ARK_WEB_ACCESS_REQUEST_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_access_request_capi.h"
 #include "ohos_nweb/include/ark_web_access_request.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebAccessRequestCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebAccessRequestCToCpp,
-                                    ArkWebAccessRequest,
-                                    ark_web_access_request_t> {
+    : public ArkWebCToCppRefCounted<ArkWebAccessRequestCToCpp, ArkWebAccessRequest, ark_web_access_request_t> {
 public:
-  ArkWebAccessRequestCToCpp();
-  virtual ~ArkWebAccessRequestCToCpp();
+    ArkWebAccessRequestCToCpp();
+    virtual ~ArkWebAccessRequestCToCpp();
 
-  // ArkWebAccessRequest methods.
-  void Agree(int resource_id) override;
+    // ArkWebAccessRequest methods.
+    void Agree(int resource_id) override;
 
-  ArkWebString Origin() override;
+    ArkWebString Origin() override;
 
-  void Refuse() override;
+    void Refuse() override;
 
-  int ResourceAccessId() override;
+    int ResourceAccessId() override;
 };
 
 } // namespace OHOS::ArkWeb

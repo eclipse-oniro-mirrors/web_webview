@@ -17,44 +17,45 @@
 #define ARK_WEB_NATIVE_EMBED_TOUCH_EVENT_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_gesture_event_result.h"
+
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/include/ark_web_gesture_event_result.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkWebNativeEmbedTouchEvent : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual float GetX() = 0;
+    /*--ark web()--*/
+    virtual float GetX() = 0;
 
-  /*--ark web()--*/
-  virtual float GetY() = 0;
+    /*--ark web()--*/
+    virtual float GetY() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetId() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetId() = 0;
 
-  /*--ark web()--*/
-  virtual size_t GetType() = 0;
+    /*--ark web()--*/
+    virtual size_t GetType() = 0;
 
-  /*--ark web()--*/
-  virtual float GetOffsetX() = 0;
+    /*--ark web()--*/
+    virtual float GetOffsetX() = 0;
 
-  /*--ark web()--*/
-  virtual float GetOffsetY() = 0;
+    /*--ark web()--*/
+    virtual float GetOffsetY() = 0;
 
-  /*--ark web()--*/
-  virtual float GetScreenX() = 0;
+    /*--ark web()--*/
+    virtual float GetScreenX() = 0;
 
-  /*--ark web()--*/
-  virtual float GetScreenY() = 0;
+    /*--ark web()--*/
+    virtual float GetScreenY() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetEmbedId() = 0;
-  
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkWebGestureEventResult> GetResult() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetEmbedId() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebGestureEventResult> GetResult() = 0;
 };
 
 } // namespace OHOS::ArkWeb

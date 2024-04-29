@@ -17,51 +17,42 @@
 #define ARK_WEB_DATA_BASE_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_data_base_capi.h"
 #include "ohos_nweb/include/ark_web_data_base.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebDataBaseCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebDataBaseCToCpp, ArkWebDataBase,
-                                    ark_web_data_base_t> {
+class ArkWebDataBaseCToCpp : public ArkWebCToCppRefCounted<ArkWebDataBaseCToCpp, ArkWebDataBase, ark_web_data_base_t> {
 public:
-  ArkWebDataBaseCToCpp();
-  virtual ~ArkWebDataBaseCToCpp();
+    ArkWebDataBaseCToCpp();
+    virtual ~ArkWebDataBaseCToCpp();
 
-  // ArkWebDataBase methods.
-  void ClearAllPermission(int type, bool incognito) override;
+    // ArkWebDataBase methods.
+    void ClearAllPermission(int type, bool incognito) override;
 
-  void GetHttpAuthCredentials(const ArkWebString &host,
-                              const ArkWebString &realm,
-                              ArkWebString &user_name, char *password,
-                              uint32_t password_size) override;
+    void GetHttpAuthCredentials(const ArkWebString& host, const ArkWebString& realm, ArkWebString& user_name,
+        char* password, uint32_t password_size) override;
 
-  void SaveHttpAuthCredentials(const ArkWebString &host,
-                               const ArkWebString &realm,
-                               const ArkWebString &user_name,
-                               const char *password) override;
+    void SaveHttpAuthCredentials(const ArkWebString& host, const ArkWebString& realm, const ArkWebString& user_name,
+        const char* password) override;
 
-  bool ExistHttpAuthCredentials() override;
+    bool ExistHttpAuthCredentials() override;
 
-  void DeleteHttpAuthCredentials() override;
+    void DeleteHttpAuthCredentials() override;
 
-  ArkWebStringVector GetOriginsByPermission(int type, bool incognito) override;
+    ArkWebStringVector GetOriginsByPermission(int type, bool incognito) override;
 
-  bool GetPermissionByOrigin(const ArkWebString &origin, int type, bool &result,
-                             bool incognito) override;
+    bool GetPermissionByOrigin(const ArkWebString& origin, int type, bool& result, bool incognito) override;
 
-  int SetPermissionByOrigin(const ArkWebString &origin, int type, bool result,
-                            bool incognito) override;
+    int SetPermissionByOrigin(const ArkWebString& origin, int type, bool result, bool incognito) override;
 
-  bool ExistPermissionByOrigin(const ArkWebString &origin, int type,
-                               bool incognito) override;
+    bool ExistPermissionByOrigin(const ArkWebString& origin, int type, bool incognito) override;
 
-  int ClearPermissionByOrigin(const ArkWebString &origin, int type,
-                              bool incognito) override;
+    int ClearPermissionByOrigin(const ArkWebString& origin, int type, bool incognito) override;
 };
 
 } // namespace OHOS::ArkWeb

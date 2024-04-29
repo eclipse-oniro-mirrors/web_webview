@@ -23,19 +23,17 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebReleaseSurfaceCallbackImpl : public ArkWebReleaseSurfaceCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebReleaseSurfaceCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebReleaseSurfaceCallbackImpl);
 
 public:
-  ArkWebReleaseSurfaceCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebReleaseSurfaceCallback>
-          nweb_release_surface_callback);
-  ~ArkWebReleaseSurfaceCallbackImpl() = default;
+    ArkWebReleaseSurfaceCallbackImpl(
+        std::shared_ptr<OHOS::NWeb::NWebReleaseSurfaceCallback> nweb_release_surface_callback);
+    ~ArkWebReleaseSurfaceCallbackImpl() = default;
 
-  void ReleaseSurface() override;
+    void ReleaseSurface() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebReleaseSurfaceCallback>
-      nweb_release_surface_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebReleaseSurfaceCallback> nweb_release_surface_callback_;
 };
 
 } // namespace OHOS::ArkWeb

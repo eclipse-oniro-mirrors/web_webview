@@ -23,9 +23,9 @@
 namespace OHOS::ArkWeb {
 
 ArkWebValueVector ArkWebValueVectorClassToStruct(
-    const std::vector<std::shared_ptr<OHOS::NWeb::NWebValue>> &class_value);
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebValue>>& class_value);
 
-void ArkWebValueVectorStructRelease(ArkWebValueVector &struct_value);
+void ArkWebValueVectorStructRelease(ArkWebValueVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

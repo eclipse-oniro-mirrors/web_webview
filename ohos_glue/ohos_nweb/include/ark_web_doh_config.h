@@ -25,11 +25,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebDohConfig : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetMode() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetMode() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetConfig() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetConfig() = 0;
 };
 
 } // namespace OHOS::ArkWeb

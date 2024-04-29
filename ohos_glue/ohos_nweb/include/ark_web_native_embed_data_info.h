@@ -17,25 +17,26 @@
 #define ARK_WEB_NATIVE_EMBED_DATA_INFO_H_
 #pragma once
 
-#include "base/include/ark_web_base_ref_counted.h"
 #include "ohos_nweb/include/ark_web_native_embed_info.h"
+
+#include "base/include/ark_web_base_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkWebNativeEmbedDataInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int GetStatus() = 0;
+    /*--ark web()--*/
+    virtual int GetStatus() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetEmbedId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetEmbedId() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetSurfaceId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetSurfaceId() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkWebNativeEmbedInfo> GetNativeEmbedInfo() = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebNativeEmbedInfo> GetNativeEmbedInfo() = 0;
 };
 
 } // namespace OHOS::ArkWeb

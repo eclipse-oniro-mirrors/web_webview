@@ -17,36 +17,35 @@
 #define ARK_WEB_SELECT_POPUP_MENU_PARAM_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_select_popup_menu_param_capi.h"
 #include "ohos_nweb/include/ark_web_select_popup_menu_param.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebSelectPopupMenuParamCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebSelectPopupMenuParamCToCpp,
-                                    ArkWebSelectPopupMenuParam,
-                                    ark_web_select_popup_menu_param_t> {
+class ArkWebSelectPopupMenuParamCToCpp : public ArkWebCToCppRefCounted<ArkWebSelectPopupMenuParamCToCpp,
+                                             ArkWebSelectPopupMenuParam, ark_web_select_popup_menu_param_t> {
 public:
-  ArkWebSelectPopupMenuParamCToCpp();
-  virtual ~ArkWebSelectPopupMenuParamCToCpp();
+    ArkWebSelectPopupMenuParamCToCpp();
+    virtual ~ArkWebSelectPopupMenuParamCToCpp();
 
-  // ArkWebSelectPopupMenuParam methods.
-  ArkWebSelectPopupMenuItemVector GetMenuItems() override;
+    // ArkWebSelectPopupMenuParam methods.
+    ArkWebSelectPopupMenuItemVector GetMenuItems() override;
 
-  int GetItemHeight() override;
+    int GetItemHeight() override;
 
-  int GetSelectedItem() override;
+    int GetSelectedItem() override;
 
-  double GetItemFontSize() override;
+    double GetItemFontSize() override;
 
-  bool GetIsRightAligned() override;
+    bool GetIsRightAligned() override;
 
-  ArkWebRefPtr<ArkWebSelectMenuBound> GetSelectMenuBound() override;
+    ArkWebRefPtr<ArkWebSelectMenuBound> GetSelectMenuBound() override;
 
-  bool GetIsAllowMultipleSelection() override;
+    bool GetIsAllowMultipleSelection() override;
 };
 
 } // namespace OHOS::ArkWeb

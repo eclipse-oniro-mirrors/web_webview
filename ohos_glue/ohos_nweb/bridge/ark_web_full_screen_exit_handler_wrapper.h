@@ -17,26 +17,25 @@
 #define ARK_WEB_FULL_SCREEN_EXIT_HANDLER_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_full_screen_exit_handler.h"
 #include "ohos_nweb/include/ark_web_full_screen_exit_handler.h"
 
+#include "base/include/ark_web_types.h"
+
 namespace OHOS::ArkWeb {
 
-class ArkWebFullScreenExitHandlerWrapper
-    : public OHOS::NWeb::NWebFullScreenExitHandler {
+class ArkWebFullScreenExitHandlerWrapper : public OHOS::NWeb::NWebFullScreenExitHandler {
 public:
-  ArkWebFullScreenExitHandlerWrapper(ArkWebRefPtr<ArkWebFullScreenExitHandler>
-                                         ark_web_full_screen_exit_handler);
-  ~ArkWebFullScreenExitHandlerWrapper() = default;
+    ArkWebFullScreenExitHandlerWrapper(ArkWebRefPtr<ArkWebFullScreenExitHandler> ark_web_full_screen_exit_handler);
+    ~ArkWebFullScreenExitHandlerWrapper() = default;
 
-  /**
-   * @brief the handler to exit the full screen mode.
-   */
-  void ExitFullScreen() override;
+    /**
+     * @brief the handler to exit the full screen mode.
+     */
+    void ExitFullScreen() override;
 
 private:
-  ArkWebRefPtr<ArkWebFullScreenExitHandler> ark_web_full_screen_exit_handler_;
+    ArkWebRefPtr<ArkWebFullScreenExitHandler> ark_web_full_screen_exit_handler_;
 };
 
 } // namespace OHOS::ArkWeb

@@ -16,38 +16,27 @@
 #ifndef ARK_WEB_NWEB_STRUCTS_H
 #define ARK_WEB_NWEB_STRUCTS_H
 
+#include <stdint.h>
+
 typedef struct {
-  int32_t year;
-  int32_t month;
-  int32_t day;
-  int32_t hour;
-  int32_t minute;
-  int32_t second;
+    int32_t year;
+    int32_t month;
+    int32_t day;
+    int32_t hour;
+    int32_t minute;
+    int32_t second;
 } ArkWebDateTime;
 
 const ArkWebDateTime ark_web_date_time_default = {
     0,
 };
 
-typedef struct {
-  int32_t width;
-  int32_t height;
-  int32_t x;
-  int32_t y;
-  float scale;
-  uint8_t* buff;
-} ArkWebCursorInfo;
-
-const ArkWebCursorInfo ark_web_cursor_info_default = {
-    0,
-};
-
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 
-typedef void (*NativeArkWebOnValidCallback)(const char *);
+typedef void (*NativeArkWebOnValidCallback)(const char*);
 
-typedef void (*NativeArkWebOnDestroyCallback)(const char *);
+typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 
-typedef char *(*NativeArkWebOnJavaScriptProxyCallback)(const char **, int32_t);
+typedef char* (*NativeArkWebOnJavaScriptProxyCallback)(const char**, int32_t);
 
 #endif // ARK_WEB_NWEB_STRUCTS_H

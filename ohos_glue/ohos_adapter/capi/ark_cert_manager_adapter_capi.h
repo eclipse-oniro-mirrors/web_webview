@@ -25,55 +25,42 @@ extern "C" {
 #endif
 
 typedef struct _ark_cert_manager_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  uint32_t(ARK_WEB_CALLBACK *get_cert_max_size)(
-      struct _ark_cert_manager_adapter_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_cert_max_size)(struct _ark_cert_manager_adapter_t* self);
 
-  uint32_t(ARK_WEB_CALLBACK *get_app_cert_max_size)(
-      struct _ark_cert_manager_adapter_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_app_cert_max_size)(struct _ark_cert_manager_adapter_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_sytem_root_cert_data)(
-      struct _ark_cert_manager_adapter_t *self, uint32_t certCount,
-      uint8_t *certData);
+    int32_t(ARK_WEB_CALLBACK* get_sytem_root_cert_data)(
+        struct _ark_cert_manager_adapter_t* self, uint32_t certCount, uint8_t* certData);
 
-  uint32_t(ARK_WEB_CALLBACK *get_sytem_root_cert_sum)(
-      struct _ark_cert_manager_adapter_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_sytem_root_cert_sum)(struct _ark_cert_manager_adapter_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_user_root_cert_data)(
-      struct _ark_cert_manager_adapter_t *self, uint32_t certCount,
-      uint8_t *certData);
+    int32_t(ARK_WEB_CALLBACK* get_user_root_cert_data)(
+        struct _ark_cert_manager_adapter_t* self, uint32_t certCount, uint8_t* certData);
 
-  uint32_t(ARK_WEB_CALLBACK *get_user_root_cert_sum)(
-      struct _ark_cert_manager_adapter_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_user_root_cert_sum)(struct _ark_cert_manager_adapter_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_app_cert)(
-      struct _ark_cert_manager_adapter_t *self, uint8_t *uriData,
-      uint8_t *certData, uint32_t *len);
+    int32_t(ARK_WEB_CALLBACK* get_app_cert)(
+        struct _ark_cert_manager_adapter_t* self, uint8_t* uriData, uint8_t* certData, uint32_t* len);
 
-  int32_t(ARK_WEB_CALLBACK *sign)(struct _ark_cert_manager_adapter_t *self,
-                                  const uint8_t *uri, const uint8_t *certData,
-                                  uint32_t certDataLen, uint8_t *signData,
-                                  uint32_t signDataLen);
+    int32_t(ARK_WEB_CALLBACK* sign)(struct _ark_cert_manager_adapter_t* self, const uint8_t* uri,
+        const uint8_t* certData, uint32_t certDataLen, uint8_t* signData, uint32_t signDataLen);
 
-  int32_t(ARK_WEB_CALLBACK *get_cert_data_by_subject)(
-      struct _ark_cert_manager_adapter_t *self, const char *subjectName,
-      uint8_t *certData, int32_t certType);
+    int32_t(ARK_WEB_CALLBACK* get_cert_data_by_subject)(
+        struct _ark_cert_manager_adapter_t* self, const char* subjectName, uint8_t* certData, int32_t certType);
 
-  int(ARK_WEB_CALLBACK *verify_cert_from_net_ssl)(
-      struct _ark_cert_manager_adapter_t *self, uint8_t *certData,
-      uint32_t certSize);
+    int(ARK_WEB_CALLBACK* verify_cert_from_net_ssl)(
+        struct _ark_cert_manager_adapter_t* self, uint8_t* certData, uint32_t certSize);
 
-  bool(ARK_WEB_CALLBACK *get_trust_anchors_for_host_name)(
-      struct _ark_cert_manager_adapter_t *self, const ArkWebString *hostname,
-      ArkWebStringVector *certs);
+    bool(ARK_WEB_CALLBACK* get_trust_anchors_for_host_name)(
+        struct _ark_cert_manager_adapter_t* self, const ArkWebString* hostname, ArkWebStringVector* certs);
 
-  bool(ARK_WEB_CALLBACK *get_pin_set_for_host_name)(
-      struct _ark_cert_manager_adapter_t *self, const ArkWebString *hostname,
-      ArkWebStringVector *pins);
+    bool(ARK_WEB_CALLBACK* get_pin_set_for_host_name)(
+        struct _ark_cert_manager_adapter_t* self, const ArkWebString* hostname, ArkWebStringVector* pins);
 } ark_cert_manager_adapter_t;
 
 #ifdef __cplusplus

@@ -17,26 +17,25 @@
 #define ARK_WEB_QUICK_MENU_CALLBACK_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_quick_menu_callback_capi.h"
 #include "ohos_nweb/include/ark_web_quick_menu_callback.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebQuickMenuCallbackCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebQuickMenuCallbackCToCpp,
-                                    ArkWebQuickMenuCallback,
-                                    ark_web_quick_menu_callback_t> {
+class ArkWebQuickMenuCallbackCToCpp : public ArkWebCToCppRefCounted<ArkWebQuickMenuCallbackCToCpp,
+                                          ArkWebQuickMenuCallback, ark_web_quick_menu_callback_t> {
 public:
-  ArkWebQuickMenuCallbackCToCpp();
-  virtual ~ArkWebQuickMenuCallbackCToCpp();
+    ArkWebQuickMenuCallbackCToCpp();
+    virtual ~ArkWebQuickMenuCallbackCToCpp();
 
-  // ArkWebQuickMenuCallback methods.
-  void Cancel() override;
+    // ArkWebQuickMenuCallback methods.
+    void Cancel() override;
 
-  void Continue(int32_t command_id, int flag) override;
+    void Continue(int32_t command_id, int flag) override;
 };
 
 } // namespace OHOS::ArkWeb

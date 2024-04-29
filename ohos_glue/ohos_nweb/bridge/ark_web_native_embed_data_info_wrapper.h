@@ -24,24 +24,21 @@ namespace OHOS::ArkWeb {
 
 using ArkWebNativeEmbedStatus = OHOS::NWeb::NativeEmbedStatus;
 
-class ArkWebNativeEmbedDataInfoWrapper
-    : public OHOS::NWeb::NWebNativeEmbedDataInfo {
+class ArkWebNativeEmbedDataInfoWrapper : public OHOS::NWeb::NWebNativeEmbedDataInfo {
 public:
-  ArkWebNativeEmbedDataInfoWrapper(
-      ArkWebRefPtr<ArkWebNativeEmbedDataInfo> ark_web_native_embed_data_info);
-  ~ArkWebNativeEmbedDataInfoWrapper() = default;
+    ArkWebNativeEmbedDataInfoWrapper(ArkWebRefPtr<ArkWebNativeEmbedDataInfo> ark_web_native_embed_data_info);
+    ~ArkWebNativeEmbedDataInfoWrapper() = default;
 
-  ArkWebNativeEmbedStatus GetStatus() override;
+    ArkWebNativeEmbedStatus GetStatus() override;
 
-  std::string GetEmbedId() override;
+    std::string GetEmbedId() override;
 
-  std::string GetSurfaceId() override;
+    std::string GetSurfaceId() override;
 
-  std::shared_ptr<OHOS::NWeb::NWebNativeEmbedInfo>
-  GetNativeEmbedInfo() override;
+    std::shared_ptr<OHOS::NWeb::NWebNativeEmbedInfo> GetNativeEmbedInfo() override;
 
 private:
-  ArkWebRefPtr<ArkWebNativeEmbedDataInfo> ark_web_native_embed_data_info_;
+    ArkWebRefPtr<ArkWebNativeEmbedDataInfo> ark_web_native_embed_data_info_;
 };
 
 } // namespace OHOS::ArkWeb

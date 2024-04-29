@@ -25,48 +25,37 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_data_base_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *clear_all_permission)(
-      struct _ark_web_data_base_t *self, int type, bool incognito);
+    void(ARK_WEB_CALLBACK* clear_all_permission)(struct _ark_web_data_base_t* self, int type, bool incognito);
 
-  void(ARK_WEB_CALLBACK *get_http_auth_credentials)(
-      struct _ark_web_data_base_t *self, const ArkWebString *host,
-      const ArkWebString *realm, ArkWebString *user_name, char *password,
-      uint32_t password_size);
+    void(ARK_WEB_CALLBACK* get_http_auth_credentials)(struct _ark_web_data_base_t* self, const ArkWebString* host,
+        const ArkWebString* realm, ArkWebString* user_name, char* password, uint32_t password_size);
 
-  void(ARK_WEB_CALLBACK *save_http_auth_credentials)(
-      struct _ark_web_data_base_t *self, const ArkWebString *host,
-      const ArkWebString *realm, const ArkWebString *user_name,
-      const char *password);
+    void(ARK_WEB_CALLBACK* save_http_auth_credentials)(struct _ark_web_data_base_t* self, const ArkWebString* host,
+        const ArkWebString* realm, const ArkWebString* user_name, const char* password);
 
-  bool(ARK_WEB_CALLBACK *exist_http_auth_credentials)(
-      struct _ark_web_data_base_t *self);
+    bool(ARK_WEB_CALLBACK* exist_http_auth_credentials)(struct _ark_web_data_base_t* self);
 
-  void(ARK_WEB_CALLBACK *delete_http_auth_credentials)(
-      struct _ark_web_data_base_t *self);
+    void(ARK_WEB_CALLBACK* delete_http_auth_credentials)(struct _ark_web_data_base_t* self);
 
-  ArkWebStringVector(ARK_WEB_CALLBACK *get_origins_by_permission)(
-      struct _ark_web_data_base_t *self, int type, bool incognito);
+    ArkWebStringVector(ARK_WEB_CALLBACK* get_origins_by_permission)(
+        struct _ark_web_data_base_t* self, int type, bool incognito);
 
-  bool(ARK_WEB_CALLBACK *get_permission_by_origin)(
-      struct _ark_web_data_base_t *self, const ArkWebString *origin, int type,
-      bool *result, bool incognito);
+    bool(ARK_WEB_CALLBACK* get_permission_by_origin)(
+        struct _ark_web_data_base_t* self, const ArkWebString* origin, int type, bool* result, bool incognito);
 
-  int(ARK_WEB_CALLBACK *set_permission_by_origin)(
-      struct _ark_web_data_base_t *self, const ArkWebString *origin, int type,
-      bool result, bool incognito);
+    int(ARK_WEB_CALLBACK* set_permission_by_origin)(
+        struct _ark_web_data_base_t* self, const ArkWebString* origin, int type, bool result, bool incognito);
 
-  bool(ARK_WEB_CALLBACK *exist_permission_by_origin)(
-      struct _ark_web_data_base_t *self, const ArkWebString *origin, int type,
-      bool incognito);
+    bool(ARK_WEB_CALLBACK* exist_permission_by_origin)(
+        struct _ark_web_data_base_t* self, const ArkWebString* origin, int type, bool incognito);
 
-  int(ARK_WEB_CALLBACK *clear_permission_by_origin)(
-      struct _ark_web_data_base_t *self, const ArkWebString *origin, int type,
-      bool incognito);
+    int(ARK_WEB_CALLBACK* clear_permission_by_origin)(
+        struct _ark_web_data_base_t* self, const ArkWebString* origin, int type, bool incognito);
 } ark_web_data_base_t;
 
 #ifdef __cplusplus

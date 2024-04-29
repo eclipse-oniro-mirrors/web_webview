@@ -24,17 +24,17 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebSelectMenuBound : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int GetX() = 0;
+    /*--ark web()--*/
+    virtual int GetX() = 0;
 
-  /*--ark web()--*/
-  virtual int GetY() = 0;
+    /*--ark web()--*/
+    virtual int GetY() = 0;
 
-  /*--ark web()--*/
-  virtual int GetWidth() = 0;
+    /*--ark web()--*/
+    virtual int GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual int GetHeight() = 0;
+    /*--ark web()--*/
+    virtual int GetHeight() = 0;
 };
 
 } // namespace OHOS::ArkWeb

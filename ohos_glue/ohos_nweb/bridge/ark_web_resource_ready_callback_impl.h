@@ -23,21 +23,19 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebResourceReadyCallbackImpl : public ArkWebResourceReadyCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebResourceReadyCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebResourceReadyCallbackImpl);
 
 public:
-  ArkWebResourceReadyCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebResourceReadyCallback>
-          nweb_resource_ready_callback);
-  ~ArkWebResourceReadyCallbackImpl() = default;
+    ArkWebResourceReadyCallbackImpl(
+        std::shared_ptr<OHOS::NWeb::NWebResourceReadyCallback> nweb_resource_ready_callback);
+    ~ArkWebResourceReadyCallbackImpl() = default;
 
-  void Cancel() override;
+    void Cancel() override;
 
-  void Continue() override;
+    void Continue() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebResourceReadyCallback>
-      nweb_resource_ready_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebResourceReadyCallback> nweb_resource_ready_callback_;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,26 +17,25 @@
 #define ARK_RECORDER_INFO_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_screen_capture_adapter_capi.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkRecorderInfoAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkRecorderInfoAdapterCToCpp,
-                                    ArkRecorderInfoAdapter,
-                                    ark_recorder_info_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkRecorderInfoAdapterCToCpp, ArkRecorderInfoAdapter, ark_recorder_info_adapter_t> {
 public:
-  ArkRecorderInfoAdapterCToCpp();
-  virtual ~ArkRecorderInfoAdapterCToCpp();
+    ArkRecorderInfoAdapterCToCpp();
+    virtual ~ArkRecorderInfoAdapterCToCpp();
 
-  // ArkRecorderInfoAdapter methods.
-  ArkWebString GetUrl() override;
+    // ArkRecorderInfoAdapter methods.
+    ArkWebString GetUrl() override;
 
-  int32_t GetFileFormat() override;
+    int32_t GetFileFormat() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,28 +17,27 @@
 #define ARK_VIDEO_ENC_INFO_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_screen_capture_adapter_capi.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkVideoEncInfoAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkVideoEncInfoAdapterCToCpp,
-                                    ArkVideoEncInfoAdapter,
-                                    ark_video_enc_info_adapter_t> {
+class ArkVideoEncInfoAdapterCToCpp : public ArkWebCToCppRefCounted<ArkVideoEncInfoAdapterCToCpp, ArkVideoEncInfoAdapter,
+                                         ark_video_enc_info_adapter_t> {
 public:
-  ArkVideoEncInfoAdapterCToCpp();
-  virtual ~ArkVideoEncInfoAdapterCToCpp();
+    ArkVideoEncInfoAdapterCToCpp();
+    virtual ~ArkVideoEncInfoAdapterCToCpp();
 
-  // ArkVideoEncInfoAdapter methods.
-  int32_t GetVideoCodecFormat() override;
+    // ArkVideoEncInfoAdapter methods.
+    int32_t GetVideoCodecFormat() override;
 
-  int32_t GetVideoBitrate() override;
+    int32_t GetVideoBitrate() override;
 
-  int32_t GetVideoFrameRate() override;
+    int32_t GetVideoFrameRate() override;
 };
 
 } // namespace OHOS::ArkWeb

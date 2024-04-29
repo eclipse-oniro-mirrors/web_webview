@@ -17,43 +17,39 @@
 #define ARK_WEB_WEB_STORAGE_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "ohos_nweb/include/ark_web_long_value_callback.h"
 #include "ohos_nweb/include/ark_web_web_storage_origin_vector_value_callback.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkWebWebStorage : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebWebStorageOriginVector GetOrigins() = 0;
+    /*--ark web()--*/
+    virtual ArkWebWebStorageOriginVector GetOrigins() = 0;
 
-  /*--ark web()--*/
-  virtual void GetOrigins(
-      ArkWebRefPtr<ArkWebWebStorageOriginVectorValueCallback> callback) = 0;
+    /*--ark web()--*/
+    virtual void GetOrigins(ArkWebRefPtr<ArkWebWebStorageOriginVectorValueCallback> callback) = 0;
 
-  /*--ark web()--*/
-  virtual long GetOriginQuota(const ArkWebString &origin) = 0;
+    /*--ark web()--*/
+    virtual long GetOriginQuota(const ArkWebString& origin) = 0;
 
-  /*--ark web()--*/
-  virtual void
-  GetOriginQuota(const ArkWebString &origin,
-                 ArkWebRefPtr<ArkWebLongValueCallback> callback) = 0;
+    /*--ark web()--*/
+    virtual void GetOriginQuota(const ArkWebString& origin, ArkWebRefPtr<ArkWebLongValueCallback> callback) = 0;
 
-  /*--ark web()--*/
-  virtual long GetOriginUsage(const ArkWebString &origin) = 0;
+    /*--ark web()--*/
+    virtual long GetOriginUsage(const ArkWebString& origin) = 0;
 
-  /*--ark web()--*/
-  virtual void
-  GetOriginUsage(const ArkWebString &origin,
-                 ArkWebRefPtr<ArkWebLongValueCallback> callback) = 0;
+    /*--ark web()--*/
+    virtual void GetOriginUsage(const ArkWebString& origin, ArkWebRefPtr<ArkWebLongValueCallback> callback) = 0;
 
-  /*--ark web()--*/
-  virtual int DeleteOrigin(const ArkWebString &origin) = 0;
+    /*--ark web()--*/
+    virtual int DeleteOrigin(const ArkWebString& origin) = 0;
 
-  /*--ark web()--*/
-  virtual void DeleteAllData(bool incognito_mode) = 0;
+    /*--ark web()--*/
+    virtual void DeleteAllData(bool incognito_mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb

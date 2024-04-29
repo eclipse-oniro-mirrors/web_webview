@@ -25,18 +25,16 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_media_source_info_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *get_type)(struct _ark_web_media_source_info_t *self);
+    int(ARK_WEB_CALLBACK* get_type)(struct _ark_web_media_source_info_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_format)(
-      struct _ark_web_media_source_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_format)(struct _ark_web_media_source_info_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_source)(
-      struct _ark_web_media_source_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_source)(struct _ark_web_media_source_info_t* self);
 } ark_web_media_source_info_t;
 
 #ifdef __cplusplus

@@ -17,28 +17,27 @@
 #define ARK_WEB_JS_HTTP_AUTH_RESULT_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_js_http_auth_result_capi.h"
 #include "ohos_nweb/include/ark_web_js_http_auth_result.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebJsHttpAuthResultCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebJsHttpAuthResultCToCpp,
-                                    ArkWebJsHttpAuthResult,
-                                    ark_web_js_http_auth_result_t> {
+class ArkWebJsHttpAuthResultCToCpp : public ArkWebCToCppRefCounted<ArkWebJsHttpAuthResultCToCpp, ArkWebJsHttpAuthResult,
+                                         ark_web_js_http_auth_result_t> {
 public:
-  ArkWebJsHttpAuthResultCToCpp();
-  virtual ~ArkWebJsHttpAuthResultCToCpp();
+    ArkWebJsHttpAuthResultCToCpp();
+    virtual ~ArkWebJsHttpAuthResultCToCpp();
 
-  // ArkWebJsHttpAuthResult methods.
-  void Cancel() override;
+    // ArkWebJsHttpAuthResult methods.
+    void Cancel() override;
 
-  bool Confirm(const ArkWebString &user_name, const ArkWebString &pwd) override;
+    bool Confirm(const ArkWebString& user_name, const ArkWebString& pwd) override;
 
-  bool IsHttpAuthInfoSaved() override;
+    bool IsHttpAuthInfoSaved() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -25,55 +25,40 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_context_menu_params_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_xcoord)(
-      struct _ark_web_context_menu_params_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_xcoord)(struct _ark_web_context_menu_params_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_ycoord)(
-      struct _ark_web_context_menu_params_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_ycoord)(struct _ark_web_context_menu_params_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_editable)(
-      struct _ark_web_context_menu_params_t *self);
+    bool(ARK_WEB_CALLBACK* is_editable)(struct _ark_web_context_menu_params_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_link_url)(
-      struct _ark_web_context_menu_params_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_link_url)(struct _ark_web_context_menu_params_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_page_url)(
-      struct _ark_web_context_menu_params_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_page_url)(struct _ark_web_context_menu_params_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_source_url)(
-      struct _ark_web_context_menu_params_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_source_url)(struct _ark_web_context_menu_params_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_title_text)(
-      struct _ark_web_context_menu_params_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_title_text)(struct _ark_web_context_menu_params_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_selection_text)(
-      struct _ark_web_context_menu_params_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_selection_text)(struct _ark_web_context_menu_params_t* self);
 
-  int(ARK_WEB_CALLBACK *get_media_type)(
-      struct _ark_web_context_menu_params_t *self);
+    int(ARK_WEB_CALLBACK* get_media_type)(struct _ark_web_context_menu_params_t* self);
 
-  int(ARK_WEB_CALLBACK *get_source_type)(
-      struct _ark_web_context_menu_params_t *self);
+    int(ARK_WEB_CALLBACK* get_source_type)(struct _ark_web_context_menu_params_t* self);
 
-  int(ARK_WEB_CALLBACK *get_input_field_type)(
-      struct _ark_web_context_menu_params_t *self);
+    int(ARK_WEB_CALLBACK* get_input_field_type)(struct _ark_web_context_menu_params_t* self);
 
-  bool(ARK_WEB_CALLBACK *has_image_contents)(
-      struct _ark_web_context_menu_params_t *self);
+    bool(ARK_WEB_CALLBACK* has_image_contents)(struct _ark_web_context_menu_params_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_edit_state_flags)(
-      struct _ark_web_context_menu_params_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_edit_state_flags)(struct _ark_web_context_menu_params_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_unfiltered_link_url)(
-      struct _ark_web_context_menu_params_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_unfiltered_link_url)(struct _ark_web_context_menu_params_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_context_menu_type_flags)(
-      struct _ark_web_context_menu_params_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_context_menu_type_flags)(struct _ark_web_context_menu_params_t* self);
 } ark_web_context_menu_params_t;
 
 #ifdef __cplusplus

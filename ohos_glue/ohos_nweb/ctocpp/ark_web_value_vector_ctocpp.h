@@ -17,14 +17,15 @@
 #define ARK_WEB_VALUE_VECTOR_CTOCPP_H_
 #pragma once
 
-#include "base/include/ark_web_macros.h"
 #include "include/nweb_value.h"
 #include "ohos_nweb/include/ark_web_value_vector.h"
 
+#include "base/include/ark_web_macros.h"
+
 namespace OHOS::ArkWeb {
 
-std::vector<std::shared_ptr<OHOS::NWeb::NWebValue>> ARK_WEB_CALLBACK
-ArkWebValueVectorStructToClass(const ArkWebValueVector &struct_value);
+std::vector<std::shared_ptr<OHOS::NWeb::NWebValue>> ARK_WEB_CALLBACK ArkWebValueVectorStructToClass(
+    const ArkWebValueVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

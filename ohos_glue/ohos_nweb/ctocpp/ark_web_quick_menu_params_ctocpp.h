@@ -17,42 +17,41 @@
 #define ARK_WEB_QUICK_MENU_PARAMS_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_quick_menu_params_capi.h"
 #include "ohos_nweb/include/ark_web_quick_menu_params.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebQuickMenuParamsCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebQuickMenuParamsCToCpp,
-                                    ArkWebQuickMenuParams,
-                                    ark_web_quick_menu_params_t> {
+    : public ArkWebCToCppRefCounted<ArkWebQuickMenuParamsCToCpp, ArkWebQuickMenuParams, ark_web_quick_menu_params_t> {
 public:
-  ArkWebQuickMenuParamsCToCpp();
-  virtual ~ArkWebQuickMenuParamsCToCpp();
+    ArkWebQuickMenuParamsCToCpp();
+    virtual ~ArkWebQuickMenuParamsCToCpp();
 
-  // ArkWebQuickMenuParams methods.
-  int32_t GetXCoord() override;
+    // ArkWebQuickMenuParams methods.
+    int32_t GetXCoord() override;
 
-  int32_t GetYCoord() override;
+    int32_t GetYCoord() override;
 
-  int32_t GetWidth() override;
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  int32_t GetEditStateFlags() override;
+    int32_t GetEditStateFlags() override;
 
-  int32_t GetSelectX() override;
+    int32_t GetSelectX() override;
 
-  int32_t GetSelectY() override;
+    int32_t GetSelectY() override;
 
-  int32_t GetSelectWidth() override;
+    int32_t GetSelectWidth() override;
 
-  int32_t GetSelectXHeight() override;
+    int32_t GetSelectXHeight() override;
 
-  ArkWebRefPtr<ArkWebTouchHandleState> GetTouchHandleState(int type) override;
+    ArkWebRefPtr<ArkWebTouchHandleState> GetTouchHandleState(int type) override;
 };
 
 } // namespace OHOS::ArkWeb

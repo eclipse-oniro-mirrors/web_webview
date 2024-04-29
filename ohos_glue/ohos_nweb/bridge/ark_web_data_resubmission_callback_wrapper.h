@@ -17,33 +17,31 @@
 #define ARK_WEB_DATA_RESUBMISSION_CALLBACK_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_data_resubmission_callback.h"
 #include "ohos_nweb/include/ark_web_data_resubmission_callback.h"
 
+#include "base/include/ark_web_types.h"
+
 namespace OHOS::ArkWeb {
 
-class ArkWebDataResubmissionCallbackWrapper
-    : public OHOS::NWeb::NWebDataResubmissionCallback {
+class ArkWebDataResubmissionCallbackWrapper : public OHOS::NWeb::NWebDataResubmissionCallback {
 public:
-  ArkWebDataResubmissionCallbackWrapper(
-      ArkWebRefPtr<ArkWebDataResubmissionCallback>
-          ark_web_data_resubmission_callback);
-  ~ArkWebDataResubmissionCallbackWrapper() = default;
+    ArkWebDataResubmissionCallbackWrapper(
+        ArkWebRefPtr<ArkWebDataResubmissionCallback> ark_web_data_resubmission_callback);
+    ~ArkWebDataResubmissionCallbackWrapper() = default;
 
-  /**
-   * @brief Do not resend data.
-   */
-  void Cancel() override;
+    /**
+     * @brief Do not resend data.
+     */
+    void Cancel() override;
 
-  /**
-   * @brief Resend the data.
-   */
-  void Resend() override;
+    /**
+     * @brief Resend the data.
+     */
+    void Resend() override;
 
 private:
-  ArkWebRefPtr<ArkWebDataResubmissionCallback>
-      ark_web_data_resubmission_callback_;
+    ArkWebRefPtr<ArkWebDataResubmissionCallback> ark_web_data_resubmission_callback_;
 };
 
 } // namespace OHOS::ArkWeb

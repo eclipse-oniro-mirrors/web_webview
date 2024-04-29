@@ -24,23 +24,23 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebCursorInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetX() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetX() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetY() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetY() = 0;
 
-  /*--ark web()--*/
-  virtual uint8_t *GetBuff() = 0;
+    /*--ark web()--*/
+    virtual uint8_t* GetBuff() = 0;
 
-  /*--ark web()--*/
-  virtual float GetScale() = 0;
+    /*--ark web()--*/
+    virtual float GetScale() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetHeight() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetHeight() = 0;
 };
 
 } // namespace OHOS::ArkWeb

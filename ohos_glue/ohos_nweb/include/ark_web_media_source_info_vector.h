@@ -17,14 +17,15 @@
 #define ARK_WEB_MEDIA_SOURCE_INFO_VECTOR_H_
 #pragma once
 
-#include "base/include/ark_web_memory.h"
 #include "ohos_nweb/capi/ark_web_media_source_info_capi.h"
 
-typedef struct {
-  int size;
-  ark_web_media_source_info_t **value;
+#include "base/include/ark_web_memory.h"
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+typedef struct {
+    int size;
+    ark_web_media_source_info_t** value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebMediaSourceInfoVector;
 
 const ArkWebMediaSourceInfoVector ark_web_media_source_info_vector_default = {

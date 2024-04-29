@@ -17,21 +17,20 @@
 #define ARK_WEB_SCREEN_CAPTURE_CONFIG_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_screen_capture_config_capi.h"
 #include "ohos_nweb/include/ark_web_screen_capture_config.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkWebScreenCaptureConfigCppToC
-    : public ArkWebCppToCRefCounted<ArkWebScreenCaptureConfigCppToC,
-                                    ArkWebScreenCaptureConfig,
-                                    ark_web_screen_capture_config_t> {
+class ArkWebScreenCaptureConfigCppToC : public ArkWebCppToCRefCounted<ArkWebScreenCaptureConfigCppToC,
+                                            ArkWebScreenCaptureConfig, ark_web_screen_capture_config_t> {
 public:
-  ArkWebScreenCaptureConfigCppToC();
-  virtual ~ArkWebScreenCaptureConfigCppToC();
+    ArkWebScreenCaptureConfigCppToC();
+    virtual ~ArkWebScreenCaptureConfigCppToC();
 };
 
 } // namespace OHOS::ArkWeb

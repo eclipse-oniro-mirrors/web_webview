@@ -25,28 +25,25 @@ extern "C" {
 #endif
 
 typedef struct _ark_event_handler_fdlistener_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_readable)(
-      struct _ark_event_handler_fdlistener_adapter_t *self,
-      int32_t fileDescriptor);
+    void(ARK_WEB_CALLBACK* on_readable)(struct _ark_event_handler_fdlistener_adapter_t* self, int32_t fileDescriptor);
 } ark_event_handler_fdlistener_adapter_t;
 
 typedef struct _ark_event_handler_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *add_file_descriptor_listener)(
-      struct _ark_event_handler_adapter_t *self, int32_t fileDescriptor,
-      uint32_t events, ark_event_handler_fdlistener_adapter_t *listener);
+    bool(ARK_WEB_CALLBACK* add_file_descriptor_listener)(struct _ark_event_handler_adapter_t* self,
+        int32_t fileDescriptor, uint32_t events, ark_event_handler_fdlistener_adapter_t* listener);
 
-  void(ARK_WEB_CALLBACK *remove_file_descriptor_listener)(
-      struct _ark_event_handler_adapter_t *self, int32_t fileDescriptor);
+    void(ARK_WEB_CALLBACK* remove_file_descriptor_listener)(
+        struct _ark_event_handler_adapter_t* self, int32_t fileDescriptor);
 } ark_event_handler_adapter_t;
 
 #ifdef __cplusplus

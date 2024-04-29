@@ -25,20 +25,20 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebFileSelectorParams : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int Mode() = 0;
+    /*--ark web()--*/
+    virtual int Mode() = 0;
 
-  /*--ark web()--*/
-  virtual const ArkWebString Title() = 0;
+    /*--ark web()--*/
+    virtual const ArkWebString Title() = 0;
 
-  /*--ark web()--*/
-  virtual bool IsCapture() = 0;
+    /*--ark web()--*/
+    virtual bool IsCapture() = 0;
 
-  /*--ark web()--*/
-  virtual const ArkWebStringVector AcceptType() = 0;
+    /*--ark web()--*/
+    virtual const ArkWebStringVector AcceptType() = 0;
 
-  /*--ark web()--*/
-  virtual const ArkWebString DefaultFilename() = 0;
+    /*--ark web()--*/
+    virtual const ArkWebString DefaultFilename() = 0;
 };
 
 } // namespace OHOS::ArkWeb

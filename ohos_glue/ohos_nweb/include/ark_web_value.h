@@ -20,9 +20,9 @@
 #include "include/nweb_value.h"
 
 typedef struct {
-  std::shared_ptr<OHOS::NWeb::NWebValue> nweb_value;
+    std::shared_ptr<OHOS::NWeb::NWebValue> nweb_value;
 } ArkWebValue;
 
-const ArkWebValue ark_web_value_default = {0};
+const ArkWebValue ark_web_value_default = { 0 };
 
 #endif // ARK_WEB_VALUE_H_

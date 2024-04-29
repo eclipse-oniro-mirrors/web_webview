@@ -17,34 +17,33 @@
 #define ARK_WEB_URL_RESOURCE_REQUEST_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_url_resource_request_capi.h"
 #include "ohos_nweb/include/ark_web_url_resource_request.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebUrlResourceRequestCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebUrlResourceRequestCToCpp,
-                                    ArkWebUrlResourceRequest,
-                                    ark_web_url_resource_request_t> {
+class ArkWebUrlResourceRequestCToCpp : public ArkWebCToCppRefCounted<ArkWebUrlResourceRequestCToCpp,
+                                           ArkWebUrlResourceRequest, ark_web_url_resource_request_t> {
 public:
-  ArkWebUrlResourceRequestCToCpp();
-  virtual ~ArkWebUrlResourceRequestCToCpp();
+    ArkWebUrlResourceRequestCToCpp();
+    virtual ~ArkWebUrlResourceRequestCToCpp();
 
-  // ArkWebUrlResourceRequest methods.
-  ArkWebString Url() override;
+    // ArkWebUrlResourceRequest methods.
+    ArkWebString Url() override;
 
-  ArkWebString Method() override;
+    ArkWebString Method() override;
 
-  bool FromGesture() override;
+    bool FromGesture() override;
 
-  ArkWebStringMap RequestHeaders() override;
+    ArkWebStringMap RequestHeaders() override;
 
-  bool IsAboutMainFrame() override;
+    bool IsAboutMainFrame() override;
 
-  bool IsRequestRedirect() override;
+    bool IsRequestRedirect() override;
 };
 
 } // namespace OHOS::ArkWeb

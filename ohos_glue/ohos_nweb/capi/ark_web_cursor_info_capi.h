@@ -24,22 +24,22 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_cursor_info_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_x)(struct _ark_web_cursor_info_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_x)(struct _ark_web_cursor_info_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_y)(struct _ark_web_cursor_info_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_y)(struct _ark_web_cursor_info_t* self);
 
-  uint8_t *(ARK_WEB_CALLBACK *get_buff)(struct _ark_web_cursor_info_t *self);
+    uint8_t*(ARK_WEB_CALLBACK* get_buff)(struct _ark_web_cursor_info_t* self);
 
-  float(ARK_WEB_CALLBACK *get_scale)(struct _ark_web_cursor_info_t *self);
+    float(ARK_WEB_CALLBACK* get_scale)(struct _ark_web_cursor_info_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_width)(struct _ark_web_cursor_info_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_width)(struct _ark_web_cursor_info_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_height)(struct _ark_web_cursor_info_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_height)(struct _ark_web_cursor_info_t* self);
 } ark_web_cursor_info_t;
 
 #ifdef __cplusplus

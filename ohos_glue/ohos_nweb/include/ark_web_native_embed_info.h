@@ -25,35 +25,35 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebNativeEmbedInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetHeight() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetHeight() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetId() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetSrc() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetSrc() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetUrl() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetType() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetType() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetTag() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetTag() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebStringMap GetParams() = 0;
+    /*--ark web()--*/
+    virtual ArkWebStringMap GetParams() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetX() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetX() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetY() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetY() = 0;
 };
 
 } // namespace OHOS::ArkWeb

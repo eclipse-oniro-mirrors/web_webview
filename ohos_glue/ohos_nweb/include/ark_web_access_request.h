@@ -25,39 +25,39 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebAccessRequest : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Agree the origin to access the given resources. The granted access
-   *        is only valid for this WebView.
-   *
-   * @param resource_id id of the resource agreed to be accessed by origin. It
-   *        must be equal to requested resource id returned by
-   *        {@link#GetResourceAccessId()}.
-   */
-  /*--ark web()--*/
-  virtual void Agree(int resource_id) = 0;
+    /**
+     * @brief Agree the origin to access the given resources. The granted access
+     *        is only valid for this WebView.
+     *
+     * @param resource_id id of the resource agreed to be accessed by origin. It
+     *        must be equal to requested resource id returned by
+     *        {@link#GetResourceAccessId()}.
+     */
+    /*--ark web()--*/
+    virtual void Agree(int resource_id) = 0;
 
-  /**
-   * @brief Get the origin of the web page which is trying to access the
-   *        resource.
-   *
-   * @return the origin of the web page which is trying to access the resource.
-   */
-  /*--ark web()--*/
-  virtual ArkWebString Origin() = 0;
+    /**
+     * @brief Get the origin of the web page which is trying to access the
+     *        resource.
+     *
+     * @return the origin of the web page which is trying to access the resource.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString Origin() = 0;
 
-  /**
-   * @brief Refuse the request.
-   */
-  /*--ark web()--*/
-  virtual void Refuse() = 0;
+    /**
+     * @brief Refuse the request.
+     */
+    /*--ark web()--*/
+    virtual void Refuse() = 0;
 
-  /**
-   * @brief Get the resource id of the web page which is trying to access.
-   *
-   * @return the resource id of the web page which is trying to access.
-   */
-  /*--ark web()--*/
-  virtual int ResourceAccessId() = 0;
+    /**
+     * @brief Get the resource id of the web page which is trying to access.
+     *
+     * @return the resource id of the web page which is trying to access.
+     */
+    /*--ark web()--*/
+    virtual int ResourceAccessId() = 0;
 };
 
 } // namespace OHOS::ArkWeb

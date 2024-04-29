@@ -23,19 +23,18 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebDohConfigImpl : public ArkWebDohConfig {
-  IMPLEMENT_REFCOUNTING(ArkWebDohConfigImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebDohConfigImpl);
 
 public:
-  ArkWebDohConfigImpl(
-      std::shared_ptr<OHOS::NWeb::NWebDOHConfig> nweb_doh_config);
-  ~ArkWebDohConfigImpl() = default;
+    ArkWebDohConfigImpl(std::shared_ptr<OHOS::NWeb::NWebDOHConfig> nweb_doh_config);
+    ~ArkWebDohConfigImpl() = default;
 
-  int32_t GetMode() override;
+    int32_t GetMode() override;
 
-  ArkWebString GetConfig() override;
+    ArkWebString GetConfig() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebDOHConfig> nweb_doh_config_;
+    std::shared_ptr<OHOS::NWeb::NWebDOHConfig> nweb_doh_config_;
 };
 
 } // namespace OHOS::ArkWeb

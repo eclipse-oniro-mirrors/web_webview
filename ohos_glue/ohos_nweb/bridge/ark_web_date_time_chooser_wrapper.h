@@ -17,9 +17,10 @@
 #define ARK_WEB_DATE_TIME_CHOOSER_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_date_time_chooser.h"
 #include "ohos_nweb/include/ark_web_date_time_chooser.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
@@ -27,26 +28,25 @@ using ArkWebDateTimeChooserType = OHOS::NWeb::DateTimeChooserType;
 
 class ArkWebDateTimeChooserWrapper : public OHOS::NWeb::NWebDateTimeChooser {
 public:
-  ArkWebDateTimeChooserWrapper(
-      ArkWebRefPtr<ArkWebDateTimeChooser> ark_web_date_time_chooser);
-  ~ArkWebDateTimeChooserWrapper() = default;
+    ArkWebDateTimeChooserWrapper(ArkWebRefPtr<ArkWebDateTimeChooser> ark_web_date_time_chooser);
+    ~ArkWebDateTimeChooserWrapper() = default;
 
-  ArkWebDateTimeChooserType GetType() override;
+    ArkWebDateTimeChooserType GetType() override;
 
-  double GetStep() override;
+    double GetStep() override;
 
-  OHOS::NWeb::DateTime GetMinimum() override;
+    OHOS::NWeb::DateTime GetMinimum() override;
 
-  OHOS::NWeb::DateTime GetMaximum() override;
+    OHOS::NWeb::DateTime GetMaximum() override;
 
-  OHOS::NWeb::DateTime GetDialogValue() override;
+    OHOS::NWeb::DateTime GetDialogValue() override;
 
-  bool GetHasSelected() override;
+    bool GetHasSelected() override;
 
-  size_t GetSuggestionIndex() override;
+    size_t GetSuggestionIndex() override;
 
 private:
-  ArkWebRefPtr<ArkWebDateTimeChooser> ark_web_date_time_chooser_;
+    ArkWebRefPtr<ArkWebDateTimeChooser> ark_web_date_time_chooser_;
 };
 
 } // namespace OHOS::ArkWeb

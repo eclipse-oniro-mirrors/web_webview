@@ -25,11 +25,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebAppLinkCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void ContinueLoad() = 0;
+    /*--ark web()--*/
+    virtual void ContinueLoad() = 0;
 
-  /*--ark web()--*/
-  virtual void CancelLoad() = 0;
+    /*--ark web()--*/
+    virtual void CancelLoad() = 0;
 };
 
 } // namespace OHOS::ArkWeb

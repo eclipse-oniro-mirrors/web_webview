@@ -24,29 +24,28 @@ namespace OHOS::ArkWeb {
 
 class ArkWebJsDialogResultWrapper : public OHOS::NWeb::NWebJSDialogResult {
 public:
-  ArkWebJsDialogResultWrapper(
-      ArkWebRefPtr<ArkWebJsDialogResult> ark_web_js_dialog_result);
-  ~ArkWebJsDialogResultWrapper() = default;
+    ArkWebJsDialogResultWrapper(ArkWebRefPtr<ArkWebJsDialogResult> ark_web_js_dialog_result);
+    ~ArkWebJsDialogResultWrapper() = default;
 
-  /**
-   * @brief Handle the result if the user cancelled the dialog.
-   */
-  void Cancel() override;
+    /**
+     * @brief Handle the result if the user cancelled the dialog.
+     */
+    void Cancel() override;
 
-  /**
-   * @brief Handle a confirmation response from the user.
-   */
-  void Confirm() override;
+    /**
+     * @brief Handle a confirmation response from the user.
+     */
+    void Confirm() override;
 
-  /**
-   * @brief Handle a confirmation response from the user with input message.
-   *
-   * @param message confirm message.
-   */
-  void Confirm(const std::string &message) override;
+    /**
+     * @brief Handle a confirmation response from the user with input message.
+     *
+     * @param message confirm message.
+     */
+    void Confirm(const std::string& message) override;
 
 private:
-  ArkWebRefPtr<ArkWebJsDialogResult> ark_web_js_dialog_result_;
+    ArkWebRefPtr<ArkWebJsDialogResult> ark_web_js_dialog_result_;
 };
 
 } // namespace OHOS::ArkWeb

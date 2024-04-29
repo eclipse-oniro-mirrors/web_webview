@@ -17,19 +17,19 @@
 #define ARK_WEB_DATE_TIME_SUGGESTION_VECTOR_H_
 #pragma once
 
-#include "base/include/ark_web_memory.h"
 #include "ohos_nweb/capi/ark_web_date_time_suggestion_capi.h"
 
-typedef struct {
-  int size;
-  ark_web_date_time_suggestion_t **value;
+#include "base/include/ark_web_memory.h"
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+typedef struct {
+    int size;
+    ark_web_date_time_suggestion_t** value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebDateTimeSuggestionVector;
 
-const ArkWebDateTimeSuggestionVector
-    ark_web_date_time_suggestion_vector_default = {
-        0,
+const ArkWebDateTimeSuggestionVector ark_web_date_time_suggestion_vector_default = {
+    0,
 };
 
 #endif // ARK_WEB_DATE_TIME_SUGGESTION_VECTOR_H_

@@ -15,7 +15,6 @@
 
 #ifndef ARK_NET_CONNECT_ADAPTER_H
 #define ARK_NET_CONNECT_ADAPTER_H
-
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
@@ -26,43 +25,35 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkNetConnCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t NetAvailable() = 0;
+    /*--ark web()--*/
+    virtual int32_t NetAvailable() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t NetCapabilitiesChange(const uint32_t &netConnectType,
-                                        const uint32_t &netConnectSubtype) = 0;
+    /*--ark web()--*/
+    virtual int32_t NetCapabilitiesChange(const uint32_t& netConnectType, const uint32_t& netConnectSubtype) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t NetConnectionPropertiesChange() = 0;
+    /*--ark web()--*/
+    virtual int32_t NetConnectionPropertiesChange() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t NetUnavailable() = 0;
+    /*--ark web()--*/
+    virtual int32_t NetUnavailable() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkNetConnectAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkNetConnectAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t RegisterNetConnCallback(ArkWebRefPtr<ArkNetConnCallback> cb) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkNetConnectAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t UnregisterNetConnCallback(int32_t id) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t
-  RegisterNetConnCallback(ArkWebRefPtr<ArkNetConnCallback> cb) = 0;
+    /*--ark web()--*/
+    virtual int32_t GetDefaultNetConnect(uint32_t& type, uint32_t& netConnectSubtype) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t UnregisterNetConnCallback(int32_t id) = 0;
-
-  /*--ark web()--*/
-  virtual int32_t GetDefaultNetConnect(uint32_t &type,
-                                       uint32_t &netConnectSubtype) = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebStringVector GetDnsServers() = 0;
+    /*--ark web()--*/
+    virtual ArkWebStringVector GetDnsServers() = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_NET_CONNECT_ADAPTER_H

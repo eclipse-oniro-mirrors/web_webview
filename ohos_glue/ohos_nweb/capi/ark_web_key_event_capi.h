@@ -24,14 +24,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_key_event_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_action)(struct _ark_web_key_event_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_action)(struct _ark_web_key_event_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_key_code)(struct _ark_web_key_event_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_key_code)(struct _ark_web_key_event_t* self);
 } ark_web_key_event_t;
 
 #ifdef __cplusplus

@@ -15,7 +15,6 @@
 
 #ifndef ARK_KEYSTORE_ADAPTER_H
 #define ARK_KEYSTORE_ADAPTER_H
-
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
@@ -26,19 +25,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkKeystoreAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkKeystoreAdapter() = default;
+    /*--ark web()--*/
+    virtual ArkWebString EncryptKey(const ArkWebString& alias, const ArkWebString& plainData) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkKeystoreAdapter() = default;
-
-  /*--ark web()--*/
-  virtual ArkWebString EncryptKey(const ArkWebString &alias,
-                                  const ArkWebString &plainData) = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebString DecryptKey(const ArkWebString &alis,
-                                  const ArkWebString &encryptedData) = 0;
+    /*--ark web()--*/
+    virtual ArkWebString DecryptKey(const ArkWebString& alis, const ArkWebString& encryptedData) = 0;
 };
 
 } // namespace OHOS::ArkWeb

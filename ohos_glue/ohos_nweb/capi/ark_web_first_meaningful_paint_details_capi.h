@@ -25,14 +25,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_first_meaningful_paint_details_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int64_t(ARK_WEB_CALLBACK* get_navigation_start_time)(struct _ark_web_first_meaningful_paint_details_t* self);
+    int64_t(ARK_WEB_CALLBACK* get_navigation_start_time)(struct _ark_web_first_meaningful_paint_details_t* self);
 
-  int64_t(ARK_WEB_CALLBACK* get_first_meaningful_paint_time)(struct _ark_web_first_meaningful_paint_details_t* self);
+    int64_t(ARK_WEB_CALLBACK* get_first_meaningful_paint_time)(struct _ark_web_first_meaningful_paint_details_t* self);
 } ark_web_first_meaningful_paint_details_t;
 
 #ifdef __cplusplus

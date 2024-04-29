@@ -17,25 +17,24 @@
 #define ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_aafwk_render_scheduler_host_adapter_capi.h"
 #include "ohos_adapter/include/ark_aafwk_render_scheduler_host_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkAafwkRenderSchedulerHostAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkAafwkRenderSchedulerHostAdapterCToCpp,
-                                    ArkAafwkRenderSchedulerHostAdapter,
-                                    ark_aafwk_render_scheduler_host_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkAafwkRenderSchedulerHostAdapterCToCpp, ArkAafwkRenderSchedulerHostAdapter,
+          ark_aafwk_render_scheduler_host_adapter_t> {
 public:
-  ArkAafwkRenderSchedulerHostAdapterCToCpp();
-  virtual ~ArkAafwkRenderSchedulerHostAdapterCToCpp();
+    ArkAafwkRenderSchedulerHostAdapterCToCpp();
+    virtual ~ArkAafwkRenderSchedulerHostAdapterCToCpp();
 
-  // ArkAafwkRenderSchedulerHostAdapter methods.
-  void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd,
-                       int32_t crashFd) override;
+    // ArkAafwkRenderSchedulerHostAdapter methods.
+    void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) override;
 };
 
 } // namespace OHOS::ArkWeb

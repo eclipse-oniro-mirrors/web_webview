@@ -23,19 +23,16 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebScreenLockCallbackImpl : public ArkWebScreenLockCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebScreenLockCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebScreenLockCallbackImpl);
 
 public:
-  ArkWebScreenLockCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebScreenLockCallback>
-          nweb_screen_lock_callback);
-  ~ArkWebScreenLockCallbackImpl() = default;
+    ArkWebScreenLockCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebScreenLockCallback> nweb_screen_lock_callback);
+    ~ArkWebScreenLockCallbackImpl() = default;
 
-  void Handle(bool key) override;
+    void Handle(bool key) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebScreenLockCallback>
-      nweb_screen_lock_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebScreenLockCallback> nweb_screen_lock_callback_;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,26 +17,25 @@
 #define ARK_IMFSELECTION_RANGE_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_imf_adapter_capi.h"
 #include "ohos_adapter/include/ark_imf_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkIMFSelectionRangeAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkIMFSelectionRangeAdapterCToCpp,
-                                    ArkIMFSelectionRangeAdapter,
-                                    ark_imfselection_range_adapter_t> {
+class ArkIMFSelectionRangeAdapterCToCpp : public ArkWebCToCppRefCounted<ArkIMFSelectionRangeAdapterCToCpp,
+                                              ArkIMFSelectionRangeAdapter, ark_imfselection_range_adapter_t> {
 public:
-  ArkIMFSelectionRangeAdapterCToCpp();
-  virtual ~ArkIMFSelectionRangeAdapterCToCpp();
+    ArkIMFSelectionRangeAdapterCToCpp();
+    virtual ~ArkIMFSelectionRangeAdapterCToCpp();
 
-  // ArkIMFSelectionRangeAdapter methods.
-  int32_t GetStart() override;
+    // ArkIMFSelectionRangeAdapter methods.
+    int32_t GetStart() override;
 
-  int32_t GetEnd() override;
+    int32_t GetEnd() override;
 };
 
 } // namespace OHOS::ArkWeb

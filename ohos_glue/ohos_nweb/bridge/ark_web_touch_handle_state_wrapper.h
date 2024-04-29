@@ -17,9 +17,10 @@
 #define ARK_WEB_TOUCH_HANDLE_STATE_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_touch_handle_state.h"
 #include "ohos_nweb/include/ark_web_touch_handle_state.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
@@ -27,30 +28,29 @@ using ArkWebTouchHandleType = OHOS::NWeb::NWebTouchHandleState::TouchHandleType;
 
 class ArkWebTouchHandleStateWrapper : public OHOS::NWeb::NWebTouchHandleState {
 public:
-  ArkWebTouchHandleStateWrapper(
-      ArkWebRefPtr<ArkWebTouchHandleState> ark_web_touch_handle_state);
-  ~ArkWebTouchHandleStateWrapper() = default;
+    ArkWebTouchHandleStateWrapper(ArkWebRefPtr<ArkWebTouchHandleState> ark_web_touch_handle_state);
+    ~ArkWebTouchHandleStateWrapper() = default;
 
-  int32_t GetX() override;
+    int32_t GetX() override;
 
-  int32_t GetY() override;
+    int32_t GetY() override;
 
-  bool IsEnable() override;
+    bool IsEnable() override;
 
-  float GetAlpha() override;
+    float GetAlpha() override;
 
-  float GetEdgeHeight() override;
+    float GetEdgeHeight() override;
 
-  int32_t GetViewPortX() override;
+    int32_t GetViewPortX() override;
 
-  int32_t GetViewPortY() override;
+    int32_t GetViewPortY() override;
 
-  int32_t GetTouchHandleId() override;
+    int32_t GetTouchHandleId() override;
 
-  ArkWebTouchHandleType GetTouchHandleType() override;
+    ArkWebTouchHandleType GetTouchHandleType() override;
 
 private:
-  ArkWebRefPtr<ArkWebTouchHandleState> ark_web_touch_handle_state_;
+    ArkWebRefPtr<ArkWebTouchHandleState> ark_web_touch_handle_state_;
 };
 
 } // namespace OHOS::ArkWeb
