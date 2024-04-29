@@ -33,6 +33,11 @@ public:
 
     virtual bool IsHiTraceEnable() = 0;
 
+    virtual void StartOHOSTrace(const std::string& value, float limit = -1) = 0;
+
+    virtual void FinishOHOSTrace() = 0;
+
+    virtual void CountOHOSTrace(const std::string& name, int64_t count) = 0;
 protected:
     HiTraceAdapter() = default;
 
