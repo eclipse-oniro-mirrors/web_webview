@@ -26,14 +26,4 @@ ArkWebStringMap ArkWebCacheOptionsImpl::GetResponseHeaders()
     return ArkWebStringMapClassToStruct(cacheOptions_->GetResponseHeaders());
 }
 
-bool ArkWebCacheOptionsImpl::IsModule()
-{
-    return cacheOptions_->IsModule();
-}
-
-bool ArkWebCacheOptionsImpl::IsTopLevel()
-{
-    return cacheOptions_->IsTopLevel();
-};
-
 } // namespace OHOS::ArkWeb
