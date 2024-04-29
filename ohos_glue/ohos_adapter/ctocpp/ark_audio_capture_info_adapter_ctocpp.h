@@ -17,28 +17,27 @@
 #define ARK_AUDIO_CAPTURE_INFO_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_screen_capture_adapter_capi.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkAudioCaptureInfoAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkAudioCaptureInfoAdapterCToCpp,
-                                    ArkAudioCaptureInfoAdapter,
-                                    ark_audio_capture_info_adapter_t> {
+class ArkAudioCaptureInfoAdapterCToCpp : public ArkWebCToCppRefCounted<ArkAudioCaptureInfoAdapterCToCpp,
+                                             ArkAudioCaptureInfoAdapter, ark_audio_capture_info_adapter_t> {
 public:
-  ArkAudioCaptureInfoAdapterCToCpp();
-  virtual ~ArkAudioCaptureInfoAdapterCToCpp();
+    ArkAudioCaptureInfoAdapterCToCpp();
+    virtual ~ArkAudioCaptureInfoAdapterCToCpp();
 
-  // ArkAudioCaptureInfoAdapter methods.
-  int32_t GetAudioSampleRate() override;
+    // ArkAudioCaptureInfoAdapter methods.
+    int32_t GetAudioSampleRate() override;
 
-  int32_t GetAudioChannels() override;
+    int32_t GetAudioChannels() override;
 
-  int32_t GetAudioSource() override;
+    int32_t GetAudioSource() override;
 };
 
 } // namespace OHOS::ArkWeb

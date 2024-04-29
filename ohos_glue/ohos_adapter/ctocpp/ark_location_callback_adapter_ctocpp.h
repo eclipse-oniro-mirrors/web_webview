@@ -17,28 +17,27 @@
 #define ARK_LOCATION_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_location_adapter_capi.h"
 #include "ohos_adapter/include/ark_location_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkLocationCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkLocationCallbackAdapterCToCpp,
-                                    ArkLocationCallbackAdapter,
-                                    ark_location_callback_adapter_t> {
+class ArkLocationCallbackAdapterCToCpp : public ArkWebCToCppRefCounted<ArkLocationCallbackAdapterCToCpp,
+                                             ArkLocationCallbackAdapter, ark_location_callback_adapter_t> {
 public:
-  ArkLocationCallbackAdapterCToCpp();
-  virtual ~ArkLocationCallbackAdapterCToCpp();
+    ArkLocationCallbackAdapterCToCpp();
+    virtual ~ArkLocationCallbackAdapterCToCpp();
 
-  // ArkLocationCallbackAdapter methods.
-  void OnLocationReport(const ArkWebRefPtr<ArkLocationInfo> location) override;
+    // ArkLocationCallbackAdapter methods.
+    void OnLocationReport(const ArkWebRefPtr<ArkLocationInfo> location) override;
 
-  void OnLocatingStatusChange(const int status) override;
+    void OnLocatingStatusChange(const int status) override;
 
-  void OnErrorReport(const int errorCode) override;
+    void OnErrorReport(const int errorCode) override;
 };
 
 } // namespace OHOS::ArkWeb

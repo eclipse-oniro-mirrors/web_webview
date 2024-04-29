@@ -25,50 +25,50 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebContextMenuParams : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetXCoord() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetXCoord() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetYCoord() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetYCoord() = 0;
 
-  /*--ark web()--*/
-  virtual bool IsEditable() = 0;
+    /*--ark web()--*/
+    virtual bool IsEditable() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetLinkUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetLinkUrl() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetPageUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetPageUrl() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetSourceUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetSourceUrl() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetTitleText() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetTitleText() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetSelectionText() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetSelectionText() = 0;
 
-  /*--ark web()--*/
-  virtual int GetMediaType() = 0;
+    /*--ark web()--*/
+    virtual int GetMediaType() = 0;
 
-  /*--ark web()--*/
-  virtual int GetSourceType() = 0;
+    /*--ark web()--*/
+    virtual int GetSourceType() = 0;
 
-  /*--ark web()--*/
-  virtual int GetInputFieldType() = 0;
+    /*--ark web()--*/
+    virtual int GetInputFieldType() = 0;
 
-  /*--ark web()--*/
-  virtual bool HasImageContents() = 0;
+    /*--ark web()--*/
+    virtual bool HasImageContents() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetEditStateFlags() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetEditStateFlags() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetUnfilteredLinkUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetUnfilteredLinkUrl() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetContextMenuTypeFlags() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetContextMenuTypeFlags() = 0;
 };
 
 } // namespace OHOS::ArkWeb

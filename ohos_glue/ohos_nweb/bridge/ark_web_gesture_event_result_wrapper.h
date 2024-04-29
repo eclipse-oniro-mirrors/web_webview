@@ -18,24 +18,24 @@
 #pragma once
 
 #include "include/nweb_gesture_event_result.h"
-#include "base/include/ark_web_types.h"
 #include "ohos_nweb/include/ark_web_gesture_event_result.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 class ArkWebGestureEventResultWrapper : public OHOS::NWeb::NWebGestureEventResult {
 public:
-  ArkWebGestureEventResultWrapper(
-      ArkWebRefPtr<ArkWebGestureEventResult> ark_web_gesture_event_result);
-  ~ArkWebGestureEventResultWrapper() = default;
+    ArkWebGestureEventResultWrapper(ArkWebRefPtr<ArkWebGestureEventResult> ark_web_gesture_event_result);
+    ~ArkWebGestureEventResultWrapper() = default;
 
-  /**
-   * @brief Handle the result if the user used.
-   */
-  void SetGestureEventResult(bool result) override;
+    /**
+     * @brief Handle the result if the user used.
+     */
+    void SetGestureEventResult(bool result) override;
 
 private:
-  ArkWebRefPtr<ArkWebGestureEventResult> ark_web_gesture_event_result_;
+    ArkWebRefPtr<ArkWebGestureEventResult> ark_web_gesture_event_result_;
 };
 
 } // namespace OHOS::ArkWeb

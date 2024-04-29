@@ -24,35 +24,33 @@ namespace OHOS::ArkWeb {
 
 using ArkWebTouchType = OHOS::NWeb::TouchType;
 
-class ArkWebNativeEmbedTouchEventWrapper
-    : public OHOS::NWeb::NWebNativeEmbedTouchEvent {
+class ArkWebNativeEmbedTouchEventWrapper : public OHOS::NWeb::NWebNativeEmbedTouchEvent {
 public:
-  ArkWebNativeEmbedTouchEventWrapper(ArkWebRefPtr<ArkWebNativeEmbedTouchEvent>
-                                         ark_web_native_embed_touch_event);
-  ~ArkWebNativeEmbedTouchEventWrapper() = default;
+    ArkWebNativeEmbedTouchEventWrapper(ArkWebRefPtr<ArkWebNativeEmbedTouchEvent> ark_web_native_embed_touch_event);
+    ~ArkWebNativeEmbedTouchEventWrapper() = default;
 
-  float GetX() override;
+    float GetX() override;
 
-  float GetY() override;
+    float GetY() override;
 
-  int32_t GetId() override;
+    int32_t GetId() override;
 
-  ArkWebTouchType GetType() override;
+    ArkWebTouchType GetType() override;
 
-  float GetOffsetX() override;
+    float GetOffsetX() override;
 
-  float GetOffsetY() override;
+    float GetOffsetY() override;
 
-  float GetScreenX() override;
+    float GetScreenX() override;
 
-  float GetScreenY() override;
+    float GetScreenY() override;
 
-  std::string GetEmbedId() override;
+    std::string GetEmbedId() override;
 
-  std::shared_ptr<OHOS::NWeb::NWebGestureEventResult> GetResult() override;
+    std::shared_ptr<OHOS::NWeb::NWebGestureEventResult> GetResult() override;
 
 private:
-  ArkWebRefPtr<ArkWebNativeEmbedTouchEvent> ark_web_native_embed_touch_event_;
+    ArkWebRefPtr<ArkWebNativeEmbedTouchEvent> ark_web_native_embed_touch_event_;
 };
 
 } // namespace OHOS::ArkWeb

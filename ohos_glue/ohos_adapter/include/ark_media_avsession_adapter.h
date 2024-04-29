@@ -15,6 +15,7 @@
 
 #ifndef ARK_MEDIA_AVSESSION_ADAPTER_H
 #define ARK_MEDIA_AVSESSION_ADAPTER_H
+#pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -24,113 +25,92 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkMediaAVSessionMetadataAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkMediaAVSessionMetadataAdapter() = default;
+    /*--ark web()--*/
+    virtual void SetTitle(const ArkWebString& title) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkMediaAVSessionMetadataAdapter() = default;
+    /*--ark web()--*/
+    virtual ArkWebString GetTitle() = 0;
 
-  /*--ark web()--*/
-  virtual void SetTitle(const ArkWebString &title) = 0;
+    /*--ark web()--*/
+    virtual void SetArtist(const ArkWebString& artist) = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetTitle() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetArtist() = 0;
 
-  /*--ark web()--*/
-  virtual void SetArtist(const ArkWebString &artist) = 0;
+    /*--ark web()--*/
+    virtual void SetAlbum(const ArkWebString& album) = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetArtist() = 0;
-
-  /*--ark web()--*/
-  virtual void SetAlbum(const ArkWebString &album) = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebString GetAlbum() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetAlbum() = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkMediaAVSessionPositionAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkMediaAVSessionPositionAdapter() = default;
+    /*--ark web()--*/
+    virtual void SetDuration(int64_t duration) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkMediaAVSessionPositionAdapter() = default;
+    /*--ark web()--*/
+    virtual int64_t GetDuration() = 0;
 
-  /*--ark web()--*/
-  virtual void SetDuration(int64_t duration) = 0;
+    /*--ark web()--*/
+    virtual void SetElapsedTime(int64_t elapsedTime) = 0;
 
-  /*--ark web()--*/
-  virtual int64_t GetDuration() = 0;
+    /*--ark web()--*/
+    virtual int64_t GetElapsedTime() = 0;
 
-  /*--ark web()--*/
-  virtual void SetElapsedTime(int64_t elapsedTime) = 0;
+    /*--ark web()--*/
+    virtual void SetUpdateTime(int64_t updateTime) = 0;
 
-  /*--ark web()--*/
-  virtual int64_t GetElapsedTime() = 0;
-
-  /*--ark web()--*/
-  virtual void SetUpdateTime(int64_t updateTime) = 0;
-
-  /*--ark web()--*/
-  virtual int64_t GetUpdateTime() = 0;
+    /*--ark web()--*/
+    virtual int64_t GetUpdateTime() = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkMediaAVSessionCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void Play() = 0;
+    /*--ark web()--*/
+    virtual void Play() = 0;
 
-  /*--ark web()--*/
-  virtual void Pause() = 0;
+    /*--ark web()--*/
+    virtual void Pause() = 0;
 
-  /*--ark web()--*/
-  virtual void Stop() = 0;
+    /*--ark web()--*/
+    virtual void Stop() = 0;
 
-  /*--ark web()--*/
-  virtual void SeekTo(int64_t millisTime) = 0;
+    /*--ark web()--*/
+    virtual void SeekTo(int64_t millisTime) = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkMediaAVSessionAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkMediaAVSessionAdapter() = default;
+    /*--ark web()--*/
+    virtual bool CreateAVSession(int32_t type) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkMediaAVSessionAdapter() = default;
+    /*--ark web()--*/
+    virtual void DestroyAVSession() = 0;
 
-  /*--ark web()--*/
-  virtual bool CreateAVSession(int32_t type) = 0;
+    /*--ark web()--*/
+    virtual bool RegistCallback(ArkWebRefPtr<ArkMediaAVSessionCallbackAdapter> callbackAdapter) = 0;
 
-  /*--ark web()--*/
-  virtual void DestroyAVSession() = 0;
+    /*--ark web()--*/
+    virtual bool IsActivated() = 0;
 
-  /*--ark web()--*/
-  virtual bool RegistCallback(
-      ArkWebRefPtr<ArkMediaAVSessionCallbackAdapter> callbackAdapter) = 0;
+    /*--ark web()--*/
+    virtual bool Activate() = 0;
 
-  /*--ark web()--*/
-  virtual bool IsActivated() = 0;
+    /*--ark web()--*/
+    virtual void DeActivate() = 0;
 
-  /*--ark web()--*/
-  virtual bool Activate() = 0;
+    /*--ark web()--*/
+    virtual void SetMetadata(const ArkWebRefPtr<ArkMediaAVSessionMetadataAdapter> metadata) = 0;
 
-  /*--ark web()--*/
-  virtual void DeActivate() = 0;
+    /*--ark web()--*/
+    virtual void SetPlaybackState(int32_t state) = 0;
 
-  /*--ark web()--*/
-  virtual void SetMetadata(
-      const ArkWebRefPtr<ArkMediaAVSessionMetadataAdapter> metadata) = 0;
-
-  /*--ark web()--*/
-  virtual void SetPlaybackState(int32_t state) = 0;
-
-  /*--ark web()--*/
-  virtual void SetPlaybackPosition(
-      const ArkWebRefPtr<ArkMediaAVSessionPositionAdapter> position) = 0;
+    /*--ark web()--*/
+    virtual void SetPlaybackPosition(const ArkWebRefPtr<ArkMediaAVSessionPositionAdapter> position) = 0;
 };
 
 } // namespace OHOS::ArkWeb

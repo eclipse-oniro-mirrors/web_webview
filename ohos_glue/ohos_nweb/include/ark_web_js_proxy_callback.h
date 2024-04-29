@@ -17,20 +17,21 @@
 #define ARK_WEB_JS_PROXY_CALLBACK_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_nweb_structs.h"
+
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkWebJsProxyCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebString GetMethodName() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetMethodName() = 0;
 
-  /*--ark web()--*/
-  virtual NativeArkWebOnJavaScriptProxyCallback GetMethodCallback() = 0;
+    /*--ark web()--*/
+    virtual NativeArkWebOnJavaScriptProxyCallback GetMethodCallback() = 0;
 };
 
 } // namespace OHOS::ArkWeb

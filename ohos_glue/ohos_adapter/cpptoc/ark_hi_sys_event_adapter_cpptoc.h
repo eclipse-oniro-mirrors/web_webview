@@ -17,21 +17,20 @@
 #define ARK_HI_SYS_EVENT_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_hisysevent_adapter_capi.h"
 #include "ohos_adapter/include/ark_hisysevent_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkHiSysEventAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkHiSysEventAdapterCppToC,
-                                    ArkHiSysEventAdapter,
-                                    ark_hi_sys_event_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkHiSysEventAdapterCppToC, ArkHiSysEventAdapter, ark_hi_sys_event_adapter_t> {
 public:
-  ArkHiSysEventAdapterCppToC();
-  virtual ~ArkHiSysEventAdapterCppToC();
+    ArkHiSysEventAdapterCppToC();
+    virtual ~ArkHiSysEventAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb

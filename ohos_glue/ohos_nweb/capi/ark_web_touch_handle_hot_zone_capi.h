@@ -24,16 +24,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_touch_handle_hot_zone_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *set_width)(
-      struct _ark_web_touch_handle_hot_zone_t *self, double width);
+    void(ARK_WEB_CALLBACK* set_width)(struct _ark_web_touch_handle_hot_zone_t* self, double width);
 
-  void(ARK_WEB_CALLBACK *set_height)(
-      struct _ark_web_touch_handle_hot_zone_t *self, double height);
+    void(ARK_WEB_CALLBACK* set_height)(struct _ark_web_touch_handle_hot_zone_t* self, double height);
 } ark_web_touch_handle_hot_zone_t;
 
 #ifdef __cplusplus

@@ -24,24 +24,23 @@ namespace OHOS::ArkWeb {
 
 class ArkWebWebStorageOriginWrapper : public OHOS::NWeb::NWebWebStorageOrigin {
 public:
-  ArkWebWebStorageOriginWrapper(
-      ArkWebRefPtr<ArkWebWebStorageOrigin> ark_web_web_storage_origin);
-  ~ArkWebWebStorageOriginWrapper() = default;
+    ArkWebWebStorageOriginWrapper(ArkWebRefPtr<ArkWebWebStorageOrigin> ark_web_web_storage_origin);
+    ~ArkWebWebStorageOriginWrapper() = default;
 
-  long GetQuota() override;
+    long GetQuota() override;
 
-  void SetQuota(long quota) override;
+    void SetQuota(long quota) override;
 
-  long GetUsage() override;
+    long GetUsage() override;
 
-  void SetUsage(long usage) override;
+    void SetUsage(long usage) override;
 
-  std::string GetOrigin() override;
+    std::string GetOrigin() override;
 
-  void SetOrigin(const std::string &origin) override;
+    void SetOrigin(const std::string& origin) override;
 
 private:
-  ArkWebRefPtr<ArkWebWebStorageOrigin> ark_web_web_storage_origin_;
+    ArkWebRefPtr<ArkWebWebStorageOrigin> ark_web_web_storage_origin_;
 };
 
 } // namespace OHOS::ArkWeb

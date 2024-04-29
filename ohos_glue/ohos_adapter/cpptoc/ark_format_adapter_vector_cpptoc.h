@@ -19,7 +19,7 @@
 #pragma once
 
 #include "camera_manager_adapter.h"
-#include "include/ark_format_adapter_vector.h"
+#include "ohos_adapter/include/ark_format_adapter_vector.h"
 
 namespace OHOS::ArkWeb {
 

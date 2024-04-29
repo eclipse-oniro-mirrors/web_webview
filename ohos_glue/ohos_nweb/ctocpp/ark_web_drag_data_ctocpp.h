@@ -17,53 +17,50 @@
 #define ARK_WEB_DRAG_DATA_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_drag_data_capi.h"
 #include "ohos_nweb/include/ark_web_drag_data.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebDragDataCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebDragDataCToCpp, ArkWebDragData,
-                                    ark_web_drag_data_t> {
+class ArkWebDragDataCToCpp : public ArkWebCToCppRefCounted<ArkWebDragDataCToCpp, ArkWebDragData, ark_web_drag_data_t> {
 public:
-  ArkWebDragDataCToCpp();
-  virtual ~ArkWebDragDataCToCpp();
+    ArkWebDragDataCToCpp();
+    virtual ~ArkWebDragDataCToCpp();
 
-  // ArkWebDragData methods.
-  bool SetFileUri(const ArkWebString &uri) override;
+    // ArkWebDragData methods.
+    bool SetFileUri(const ArkWebString& uri) override;
 
-  ArkWebString GetLinkURL() override;
+    ArkWebString GetLinkURL() override;
 
-  bool SetLinkURL(const ArkWebString &url) override;
+    bool SetLinkURL(const ArkWebString& url) override;
 
-  ArkWebString GetLinkTitle() override;
+    ArkWebString GetLinkTitle() override;
 
-  bool SetLinkTitle(const ArkWebString &title) override;
+    bool SetLinkTitle(const ArkWebString& title) override;
 
-  ArkWebString GetFragmentText() override;
+    ArkWebString GetFragmentText() override;
 
-  bool SetFragmentText(const ArkWebString &text) override;
+    bool SetFragmentText(const ArkWebString& text) override;
 
-  ArkWebString GetFragmentHtml() override;
+    ArkWebString GetFragmentHtml() override;
 
-  bool SetFragmentHtml(const ArkWebString &html) override;
+    bool SetFragmentHtml(const ArkWebString& html) override;
 
-  ArkWebString GetImageFileName() override;
+    ArkWebString GetImageFileName() override;
 
-  bool GetPixelMapSetting(const void **data, size_t &len, int &width,
-                          int &height) override;
+    bool GetPixelMapSetting(const void** data, size_t& len, int& width, int& height) override;
 
-  bool SetPixelMapSetting(const void *data, size_t len, int width,
-                          int height) override;
+    bool SetPixelMapSetting(const void* data, size_t len, int width, int height) override;
 
-  void ClearImageFileNames() override;
+    void ClearImageFileNames() override;
 
-  bool IsSingleImageContent() override;
+    bool IsSingleImageContent() override;
 
-  void GetDragStartPosition(int &x, int &y) override;
+    void GetDragStartPosition(int& x, int& y) override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,22 +17,22 @@
 #define ARK_WEB_WEB_STORAGE_ORIGIN_VECTOR_VALUE_CALLBACK_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/include/ark_web_web_storage_origin_vector.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_web_storage_origin_vector_value_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_receive_value)(
-      struct _ark_web_web_storage_origin_vector_value_callback_t *self,
-      const ArkWebWebStorageOriginVector *value);
+    void(ARK_WEB_CALLBACK* on_receive_value)(
+        struct _ark_web_web_storage_origin_vector_value_callback_t* self, const ArkWebWebStorageOriginVector* value);
 } ark_web_web_storage_origin_vector_value_callback_t;
 
 #ifdef __cplusplus

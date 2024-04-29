@@ -24,17 +24,17 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebDataResubmissionCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Do not resend data.
-   */
-  /*--ark web()--*/
-  virtual void Cancel() = 0;
+    /**
+     * @brief Do not resend data.
+     */
+    /*--ark web()--*/
+    virtual void Cancel() = 0;
 
-  /**
-   * @brief Resend the data.
-   */
-  /*--ark web()--*/
-  virtual void Resend() = 0;
+    /**
+     * @brief Resend the data.
+     */
+    /*--ark web()--*/
+    virtual void Resend() = 0;
 };
 
 } // namespace OHOS::ArkWeb

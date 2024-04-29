@@ -15,7 +15,6 @@
 
 #ifndef ARK_DATE_TIME_FORMAT_ADAPTER_H
 #define ARK_DATE_TIME_FORMAT_ADAPTER_H
-
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
@@ -26,38 +25,31 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebTimezoneInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebString GetTzId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetTzId() = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkTimezoneEventCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void TimezoneChanged(ArkWebRefPtr<ArkWebTimezoneInfo> info) = 0;
+    /*--ark web()--*/
+    virtual void TimezoneChanged(ArkWebRefPtr<ArkWebTimezoneInfo> info) = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkDateTimeFormatAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkDateTimeFormatAdapter() = default;
+    /*--ark web()--*/
+    virtual void RegTimezoneEvent(ArkWebRefPtr<ArkTimezoneEventCallbackAdapter> eventCallback) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkDateTimeFormatAdapter() = default;
+    /*--ark web()--*/
+    virtual bool StartListen() = 0;
 
-  /*--ark web()--*/
-  virtual void RegTimezoneEvent(
-      ArkWebRefPtr<ArkTimezoneEventCallbackAdapter> eventCallback) = 0;
+    /*--ark web()--*/
+    virtual void StopListen() = 0;
 
-  /*--ark web()--*/
-  virtual bool StartListen() = 0;
-
-  /*--ark web()--*/
-  virtual void StopListen() = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebString GetTimezone() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetTimezone() = 0;
 };
 
 } // namespace OHOS::ArkWeb

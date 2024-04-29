@@ -23,21 +23,20 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebTouchPointInfoImpl : public ArkWebTouchPointInfo {
-  IMPLEMENT_REFCOUNTING(ArkWebTouchPointInfoImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebTouchPointInfoImpl);
 
 public:
-  ArkWebTouchPointInfoImpl(
-      std::shared_ptr<OHOS::NWeb::NWebTouchPointInfo> nweb_touch_point_info);
-  ~ArkWebTouchPointInfoImpl() = default;
+    ArkWebTouchPointInfoImpl(std::shared_ptr<OHOS::NWeb::NWebTouchPointInfo> nweb_touch_point_info);
+    ~ArkWebTouchPointInfoImpl() = default;
 
-  int GetId() override;
+    int GetId() override;
 
-  double GetX() override;
+    double GetX() override;
 
-  double GetY() override;
+    double GetY() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebTouchPointInfo> nweb_touch_point_info_;
+    std::shared_ptr<OHOS::NWeb::NWebTouchPointInfo> nweb_touch_point_info_;
 };
 
 } // namespace OHOS::ArkWeb

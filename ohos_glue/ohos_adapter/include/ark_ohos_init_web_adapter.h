@@ -15,29 +15,22 @@
 
 #ifndef ARK_OHOS_INIT_WEB_ADAPTER_H
 #define ARK_OHOS_INIT_WEB_ADAPTER_H
-
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
-#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkOhosInitWebAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkOhosInitWebAdapter() = default;
+    /*--ark web()--*/
+    virtual void* GetRunWebInitedCallback() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkOhosInitWebAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void *GetRunWebInitedCallback() = 0;
-
-  /*--ark web()--*/
-  virtual void SetRunWebInitedCallback(void *callback) = 0;
+    /*--ark web()--*/
+    virtual void SetRunWebInitedCallback(void* callback) = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // OHOS_INIT_WEB_ADAPTER_H

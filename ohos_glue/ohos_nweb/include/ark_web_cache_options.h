@@ -25,29 +25,29 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebCacheOptions : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Get response headers map
-   *
-   * @return response headers map
-   */
-  /*--ark web()--*/
-  virtual ArkWebStringMap GetResponseHeaders() = 0;
+    /**
+     * @brief Get response headers map
+     *
+     * @return response headers map
+     */
+    /*--ark web()--*/
+    virtual ArkWebStringMap GetResponseHeaders() = 0;
 
-  /**
-   * @brief Get If script is module script.
-   *
-   * @return if the script is module script or not.
-   */
-  /*--ark web()--*/
-  virtual bool IsModule() = 0;
+    /**
+     * @brief Get If script is module script.
+     *
+     * @return if the script is module script or not.
+     */
+    /*--ark web()--*/
+    virtual bool IsModule() = 0;
 
-  /**
-   * @brief Get if use top-level compile.
-   *
-   * @return use top-level compile or not.
-   */
-  /*--ark web()--*/
-  virtual bool IsTopLevel() = 0;
+    /**
+     * @brief Get if use top-level compile.
+     *
+     * @return use top-level compile or not.
+     */
+    /*--ark web()--*/
+    virtual bool IsTopLevel() = 0;
 };
 
 } // namespace OHOS::ArkWeb

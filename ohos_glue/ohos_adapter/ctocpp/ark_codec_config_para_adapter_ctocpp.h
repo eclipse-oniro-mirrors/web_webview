@@ -17,30 +17,29 @@
 #define ARK_CODEC_CONFIG_PARA_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_codec_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_codec_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkCodecConfigParaAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkCodecConfigParaAdapterCToCpp,
-                                    ArkCodecConfigParaAdapter,
-                                    ark_codec_config_para_adapter_t> {
+class ArkCodecConfigParaAdapterCToCpp : public ArkWebCToCppRefCounted<ArkCodecConfigParaAdapterCToCpp,
+                                            ArkCodecConfigParaAdapter, ark_codec_config_para_adapter_t> {
 public:
-  ArkCodecConfigParaAdapterCToCpp();
-  virtual ~ArkCodecConfigParaAdapterCToCpp();
+    ArkCodecConfigParaAdapterCToCpp();
+    virtual ~ArkCodecConfigParaAdapterCToCpp();
 
-  // ArkCodecConfigParaAdapter methods.
-  int32_t GetWidth() override;
+    // ArkCodecConfigParaAdapter methods.
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  int64_t GetBitRate() override;
+    int64_t GetBitRate() override;
 
-  double GetFrameRate() override;
+    double GetFrameRate() override;
 };
 
 } // namespace OHOS::ArkWeb

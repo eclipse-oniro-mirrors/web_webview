@@ -24,26 +24,25 @@ namespace OHOS::ArkWeb {
 
 class ArkWebUrlResourceErrorWrapper : public OHOS::NWeb::NWebUrlResourceError {
 public:
-  ArkWebUrlResourceErrorWrapper(
-      ArkWebRefPtr<ArkWebUrlResourceError> ark_web_url_resource_error);
-  ~ArkWebUrlResourceErrorWrapper() = default;
+    ArkWebUrlResourceErrorWrapper(ArkWebRefPtr<ArkWebUrlResourceError> ark_web_url_resource_error);
+    ~ArkWebUrlResourceErrorWrapper() = default;
 
-  /**
-   * @brief Get the error code.
-   *
-   * @return The error code.
-   */
-  int ErrorCode() override;
+    /**
+     * @brief Get the error code.
+     *
+     * @return The error code.
+     */
+    int ErrorCode() override;
 
-  /**
-   * @brief Get the error info.
-   *
-   * @return The error info.
-   */
-  std::string ErrorInfo() override;
+    /**
+     * @brief Get the error info.
+     *
+     * @return The error info.
+     */
+    std::string ErrorInfo() override;
 
 private:
-  ArkWebRefPtr<ArkWebUrlResourceError> ark_web_url_resource_error_;
+    ArkWebRefPtr<ArkWebUrlResourceError> ark_web_url_resource_error_;
 };
 
 } // namespace OHOS::ArkWeb

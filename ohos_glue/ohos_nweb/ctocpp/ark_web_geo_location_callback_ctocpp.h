@@ -17,25 +17,23 @@
 #define ARK_WEB_GEO_LOCATION_CALLBACK_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_geo_location_callback_capi.h"
 #include "ohos_nweb/include/ark_web_geo_location_callback.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebGeoLocationCallbackCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebGeoLocationCallbackCToCpp,
-                                    ArkWebGeoLocationCallback,
-                                    ark_web_geo_location_callback_t> {
+class ArkWebGeoLocationCallbackCToCpp : public ArkWebCToCppRefCounted<ArkWebGeoLocationCallbackCToCpp,
+                                            ArkWebGeoLocationCallback, ark_web_geo_location_callback_t> {
 public:
-  ArkWebGeoLocationCallbackCToCpp();
-  virtual ~ArkWebGeoLocationCallbackCToCpp();
+    ArkWebGeoLocationCallbackCToCpp();
+    virtual ~ArkWebGeoLocationCallbackCToCpp();
 
-  // ArkWebGeoLocationCallback methods.
-  void GeoLocationCallbackInvoke(const ArkWebString &origin, bool allow,
-                                 bool retain, bool incognito) override;
+    // ArkWebGeoLocationCallback methods.
+    void GeoLocationCallbackInvoke(const ArkWebString& origin, bool allow, bool retain, bool incognito) override;
 };
 
 } // namespace OHOS::ArkWeb

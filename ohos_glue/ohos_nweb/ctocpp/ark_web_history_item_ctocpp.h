@@ -17,30 +17,29 @@
 #define ARK_WEB_HISTORY_ITEM_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_history_item_capi.h"
 #include "ohos_nweb/include/ark_web_history_item.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebHistoryItemCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebHistoryItemCToCpp, ArkWebHistoryItem,
-                                    ark_web_history_item_t> {
+    : public ArkWebCToCppRefCounted<ArkWebHistoryItemCToCpp, ArkWebHistoryItem, ark_web_history_item_t> {
 public:
-  ArkWebHistoryItemCToCpp();
-  virtual ~ArkWebHistoryItemCToCpp();
+    ArkWebHistoryItemCToCpp();
+    virtual ~ArkWebHistoryItemCToCpp();
 
-  // ArkWebHistoryItem methods.
-  bool GetFavicon(void **data, int &width, int &height, int &color_type,
-                  int &alpha_type) override;
+    // ArkWebHistoryItem methods.
+    bool GetFavicon(void** data, int& width, int& height, int& color_type, int& alpha_type) override;
 
-  ArkWebString GetHistoryUrl() override;
+    ArkWebString GetHistoryUrl() override;
 
-  ArkWebString GetHistoryTitle() override;
+    ArkWebString GetHistoryTitle() override;
 
-  ArkWebString GetHistoryRawUrl() override;
+    ArkWebString GetHistoryRawUrl() override;
 };
 
 } // namespace OHOS::ArkWeb

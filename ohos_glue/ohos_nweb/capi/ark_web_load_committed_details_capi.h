@@ -25,25 +25,20 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_load_committed_details_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *is_main_frame)(
-      struct _ark_web_load_committed_details_t *self);
+    bool(ARK_WEB_CALLBACK* is_main_frame)(struct _ark_web_load_committed_details_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_same_document)(
-      struct _ark_web_load_committed_details_t *self);
+    bool(ARK_WEB_CALLBACK* is_same_document)(struct _ark_web_load_committed_details_t* self);
 
-  bool(ARK_WEB_CALLBACK *did_replace_entry)(
-      struct _ark_web_load_committed_details_t *self);
+    bool(ARK_WEB_CALLBACK* did_replace_entry)(struct _ark_web_load_committed_details_t* self);
 
-  int(ARK_WEB_CALLBACK *get_navigation_type)(
-      struct _ark_web_load_committed_details_t *self);
+    int(ARK_WEB_CALLBACK* get_navigation_type)(struct _ark_web_load_committed_details_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_url)(
-      struct _ark_web_load_committed_details_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_url)(struct _ark_web_load_committed_details_t* self);
 } ark_web_load_committed_details_t;
 
 #ifdef __cplusplus

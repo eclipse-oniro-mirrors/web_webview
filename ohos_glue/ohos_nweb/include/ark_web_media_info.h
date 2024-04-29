@@ -25,38 +25,38 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebMediaInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int GetPreload() = 0;
+    /*--ark web()--*/
+    virtual int GetPreload() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsMuted() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsMuted() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetEmbedId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetEmbedId() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetPosterUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetPosterUrl() = 0;
 
-  /*--ark web()--*/
-  virtual int GetMediaType() = 0;
+    /*--ark web()--*/
+    virtual int GetMediaType() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsControlsShown() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsControlsShown() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebStringVector GetControls() = 0;
+    /*--ark web()--*/
+    virtual ArkWebStringVector GetControls() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebStringMap GetHeaders() = 0;
+    /*--ark web()--*/
+    virtual ArkWebStringMap GetHeaders() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebStringMap GetAttributes() = 0;
+    /*--ark web()--*/
+    virtual ArkWebStringMap GetAttributes() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebMediaSourceInfoVector GetSourceInfos() = 0;
+    /*--ark web()--*/
+    virtual ArkWebMediaSourceInfoVector GetSourceInfos() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo> GetSurfaceInfo() = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo> GetSurfaceInfo() = 0;
 };
 
 } // namespace OHOS::ArkWeb

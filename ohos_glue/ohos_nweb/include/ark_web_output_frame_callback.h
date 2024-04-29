@@ -24,8 +24,8 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebOutputFrameCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual bool Handle(const char *buffer, uint32_t width, uint32_t height) = 0;
+    /*--ark web()--*/
+    virtual bool Handle(const char* buffer, uint32_t width, uint32_t height) = 0;
 };
 
 } // namespace OHOS::ArkWeb

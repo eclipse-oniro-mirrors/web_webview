@@ -17,28 +17,28 @@
 #define ARK_WEB_SCREEN_CAPTURE_ACCESS_REQUEST_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_screen_capture_access_request_capi.h"
 #include "ohos_nweb/include/ark_web_screen_capture_access_request.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebScreenCaptureAccessRequestCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebScreenCaptureAccessRequestCToCpp,
-                                    ArkWebScreenCaptureAccessRequest,
-                                    ark_web_screen_capture_access_request_t> {
+    : public ArkWebCToCppRefCounted<ArkWebScreenCaptureAccessRequestCToCpp, ArkWebScreenCaptureAccessRequest,
+          ark_web_screen_capture_access_request_t> {
 public:
-  ArkWebScreenCaptureAccessRequestCToCpp();
-  virtual ~ArkWebScreenCaptureAccessRequestCToCpp();
+    ArkWebScreenCaptureAccessRequestCToCpp();
+    virtual ~ArkWebScreenCaptureAccessRequestCToCpp();
 
-  // ArkWebScreenCaptureAccessRequest methods.
-  void Agree(ArkWebRefPtr<ArkWebScreenCaptureConfig> config) override;
+    // ArkWebScreenCaptureAccessRequest methods.
+    void Agree(ArkWebRefPtr<ArkWebScreenCaptureConfig> config) override;
 
-  void Refuse() override;
+    void Refuse() override;
 
-  ArkWebString Origin() override;
+    ArkWebString Origin() override;
 };
 
 } // namespace OHOS::ArkWeb

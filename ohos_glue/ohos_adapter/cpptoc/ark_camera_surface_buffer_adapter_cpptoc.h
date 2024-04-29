@@ -17,21 +17,20 @@
 #define ARK_CAMERA_SURFACE_BUFFER_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_camera_manager_adapter_capi.h"
 #include "ohos_adapter/include/ark_camera_manager_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkCameraSurfaceBufferAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkCameraSurfaceBufferAdapterCppToC,
-                                    ArkCameraSurfaceBufferAdapter,
-                                    ark_camera_surface_buffer_adapter_t> {
+class ArkCameraSurfaceBufferAdapterCppToC : public ArkWebCppToCRefCounted<ArkCameraSurfaceBufferAdapterCppToC,
+                                                ArkCameraSurfaceBufferAdapter, ark_camera_surface_buffer_adapter_t> {
 public:
-  ArkCameraSurfaceBufferAdapterCppToC();
-  virtual ~ArkCameraSurfaceBufferAdapterCppToC();
+    ArkCameraSurfaceBufferAdapterCppToC();
+    virtual ~ArkCameraSurfaceBufferAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb

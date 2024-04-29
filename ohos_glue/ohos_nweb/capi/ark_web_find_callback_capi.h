@@ -24,14 +24,13 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_find_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_find_result_received)(
-      struct _ark_web_find_callback_t *self, const int active_match_ordinal,
-      const int number_of_matches, const bool is_done_counting);
+    void(ARK_WEB_CALLBACK* on_find_result_received)(struct _ark_web_find_callback_t* self,
+        const int active_match_ordinal, const int number_of_matches, const bool is_done_counting);
 } ark_web_find_callback_t;
 
 #ifdef __cplusplus

@@ -17,29 +17,27 @@
 #define ARK_WEB_JS_SSL_SELECT_CERT_RESULT_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_js_ssl_select_cert_result_capi.h"
 #include "ohos_nweb/include/ark_web_js_ssl_select_cert_result.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebJsSslSelectCertResultCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebJsSslSelectCertResultCToCpp,
-                                    ArkWebJsSslSelectCertResult,
-                                    ark_web_js_ssl_select_cert_result_t> {
+class ArkWebJsSslSelectCertResultCToCpp : public ArkWebCToCppRefCounted<ArkWebJsSslSelectCertResultCToCpp,
+                                              ArkWebJsSslSelectCertResult, ark_web_js_ssl_select_cert_result_t> {
 public:
-  ArkWebJsSslSelectCertResultCToCpp();
-  virtual ~ArkWebJsSslSelectCertResultCToCpp();
+    ArkWebJsSslSelectCertResultCToCpp();
+    virtual ~ArkWebJsSslSelectCertResultCToCpp();
 
-  // ArkWebJsSslSelectCertResult methods.
-  void Cancel() override;
+    // ArkWebJsSslSelectCertResult methods.
+    void Cancel() override;
 
-  void Ignore() override;
+    void Ignore() override;
 
-  void Confirm(const ArkWebString &private_key_file,
-               const ArkWebString &cert_chain_file) override;
+    void Confirm(const ArkWebString& private_key_file, const ArkWebString& cert_chain_file) override;
 };
 
 } // namespace OHOS::ArkWeb

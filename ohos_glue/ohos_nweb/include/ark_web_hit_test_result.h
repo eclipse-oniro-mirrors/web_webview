@@ -25,14 +25,14 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebHitTestResult : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void SetType(int type) = 0;
+    /*--ark web()--*/
+    virtual void SetType(int type) = 0;
 
-  /*--ark web()--*/
-  virtual int GetType() = 0;
+    /*--ark web()--*/
+    virtual int GetType() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetExtra() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetExtra() = 0;
 };
 
 } // namespace OHOS::ArkWeb

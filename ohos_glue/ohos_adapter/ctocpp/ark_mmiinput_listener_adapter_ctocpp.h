@@ -17,24 +17,23 @@
 #define ARK_MMIINPUT_LISTENER_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_mmi_adapter_capi.h"
 #include "ohos_adapter/include/ark_mmi_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkMMIInputListenerAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkMMIInputListenerAdapterCToCpp,
-                                    ArkMMIInputListenerAdapter,
-                                    ark_mmiinput_listener_adapter_t> {
+class ArkMMIInputListenerAdapterCToCpp : public ArkWebCToCppRefCounted<ArkMMIInputListenerAdapterCToCpp,
+                                             ArkMMIInputListenerAdapter, ark_mmiinput_listener_adapter_t> {
 public:
-  ArkMMIInputListenerAdapterCToCpp();
-  virtual ~ArkMMIInputListenerAdapterCToCpp();
+    ArkMMIInputListenerAdapterCToCpp();
+    virtual ~ArkMMIInputListenerAdapterCToCpp();
 
-  // ArkMMIInputListenerAdapter methods.
-  void OnInputEvent(int32_t keyCode, int32_t keyAction) override;
+    // ArkMMIInputListenerAdapter methods.
+    void OnInputEvent(int32_t keyCode, int32_t keyAction) override;
 };
 
 } // namespace OHOS::ArkWeb

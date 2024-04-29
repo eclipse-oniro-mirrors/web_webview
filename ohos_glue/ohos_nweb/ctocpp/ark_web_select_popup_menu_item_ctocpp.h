@@ -17,38 +17,37 @@
 #define ARK_WEB_SELECT_POPUP_MENU_ITEM_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_select_popup_menu_item_capi.h"
 #include "ohos_nweb/include/ark_web_select_popup_menu_item.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebSelectPopupMenuItemCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebSelectPopupMenuItemCToCpp,
-                                    ArkWebSelectPopupMenuItem,
-                                    ark_web_select_popup_menu_item_t> {
+class ArkWebSelectPopupMenuItemCToCpp : public ArkWebCToCppRefCounted<ArkWebSelectPopupMenuItemCToCpp,
+                                            ArkWebSelectPopupMenuItem, ark_web_select_popup_menu_item_t> {
 public:
-  ArkWebSelectPopupMenuItemCToCpp();
-  virtual ~ArkWebSelectPopupMenuItemCToCpp();
+    ArkWebSelectPopupMenuItemCToCpp();
+    virtual ~ArkWebSelectPopupMenuItemCToCpp();
 
-  // ArkWebSelectPopupMenuItem methods.
-  int GetType() override;
+    // ArkWebSelectPopupMenuItem methods.
+    int GetType() override;
 
-  ArkWebString GetLabel() override;
+    ArkWebString GetLabel() override;
 
-  uint32_t GetAction() override;
+    uint32_t GetAction() override;
 
-  ArkWebString GetToolTip() override;
+    ArkWebString GetToolTip() override;
 
-  bool GetIsChecked() override;
+    bool GetIsChecked() override;
 
-  bool GetIsEnabled() override;
+    bool GetIsEnabled() override;
 
-  int GetTextDirection() override;
+    int GetTextDirection() override;
 
-  bool GetHasTextDirectionOverride() override;
+    bool GetHasTextDirectionOverride() override;
 };
 
 } // namespace OHOS::ArkWeb

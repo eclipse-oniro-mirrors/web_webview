@@ -25,44 +25,38 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_timezone_info_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *get_tz_id)(
-      struct _ark_web_timezone_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_tz_id)(struct _ark_web_timezone_info_t* self);
 } ark_web_timezone_info_t;
 
 typedef struct _ark_timezone_event_callback_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *timezone_changed)(
-      struct _ark_timezone_event_callback_adapter_t *self,
-      ark_web_timezone_info_t *info);
+    void(ARK_WEB_CALLBACK* timezone_changed)(
+        struct _ark_timezone_event_callback_adapter_t* self, ark_web_timezone_info_t* info);
 } ark_timezone_event_callback_adapter_t;
 
 typedef struct _ark_date_time_format_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *reg_timezone_event)(
-      struct _ark_date_time_format_adapter_t *self,
-      ark_timezone_event_callback_adapter_t *eventCallback);
+    void(ARK_WEB_CALLBACK* reg_timezone_event)(
+        struct _ark_date_time_format_adapter_t* self, ark_timezone_event_callback_adapter_t* eventCallback);
 
-  bool(ARK_WEB_CALLBACK *start_listen)(
-      struct _ark_date_time_format_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* start_listen)(struct _ark_date_time_format_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *stop_listen)(
-      struct _ark_date_time_format_adapter_t *self);
+    void(ARK_WEB_CALLBACK* stop_listen)(struct _ark_date_time_format_adapter_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_timezone)(
-      struct _ark_date_time_format_adapter_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_timezone)(struct _ark_date_time_format_adapter_t* self);
 } ark_date_time_format_adapter_t;
 
 #ifdef __cplusplus

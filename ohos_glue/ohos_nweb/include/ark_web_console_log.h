@@ -25,37 +25,37 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebConsoleLog : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Get console log message
-   *
-   * @return message
-   */
-  /*--ark web()--*/
-  virtual ArkWebString Log() = 0;
+    /**
+     * @brief Get console log message
+     *
+     * @return message
+     */
+    /*--ark web()--*/
+    virtual ArkWebString Log() = 0;
 
-  /**
-   * @brief Get console log source id
-   *
-   * @return source id
-   */
-  /*--ark web()--*/
-  virtual ArkWebString SourceId() = 0;
+    /**
+     * @brief Get console log source id
+     *
+     * @return source id
+     */
+    /*--ark web()--*/
+    virtual ArkWebString SourceId() = 0;
 
-  /**
-   * @brief Get console log message level
-   *
-   * @return message level
-   */
-  /*--ark web()--*/
-  virtual int LogLevel() = 0;
+    /**
+     * @brief Get console log message level
+     *
+     * @return message level
+     */
+    /*--ark web()--*/
+    virtual int LogLevel() = 0;
 
-  /**
-   * @brief Get console log line number
-   *
-   * @return line number
-   */
-  /*--ark web()--*/
-  virtual int LineNumer() = 0;
+    /**
+     * @brief Get console log line number
+     *
+     * @return line number
+     */
+    /*--ark web()--*/
+    virtual int LineNumer() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,36 +17,35 @@
 #define ARK_WEB_DATE_TIME_CHOOSER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_date_time_chooser_capi.h"
 #include "ohos_nweb/include/ark_web_date_time_chooser.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebDateTimeChooserCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebDateTimeChooserCToCpp,
-                                    ArkWebDateTimeChooser,
-                                    ark_web_date_time_chooser_t> {
+    : public ArkWebCToCppRefCounted<ArkWebDateTimeChooserCToCpp, ArkWebDateTimeChooser, ark_web_date_time_chooser_t> {
 public:
-  ArkWebDateTimeChooserCToCpp();
-  virtual ~ArkWebDateTimeChooserCToCpp();
+    ArkWebDateTimeChooserCToCpp();
+    virtual ~ArkWebDateTimeChooserCToCpp();
 
-  // ArkWebDateTimeChooser methods.
-  int GetType() override;
+    // ArkWebDateTimeChooser methods.
+    int GetType() override;
 
-  double GetStep() override;
+    double GetStep() override;
 
-  ArkWebDateTime GetMinimum() override;
+    ArkWebDateTime GetMinimum() override;
 
-  ArkWebDateTime GetMaximum() override;
+    ArkWebDateTime GetMaximum() override;
 
-  ArkWebDateTime GetDialogValue() override;
+    ArkWebDateTime GetDialogValue() override;
 
-  bool GetHasSelected() override;
+    bool GetHasSelected() override;
 
-  size_t GetSuggestionIndex() override;
+    size_t GetSuggestionIndex() override;
 };
 
 } // namespace OHOS::ArkWeb

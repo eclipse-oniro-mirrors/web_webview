@@ -17,9 +17,10 @@
 #define ARK_WEB_IMAGE_OPTIONS_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_handler.h"
 #include "ohos_nweb/include/ark_web_image_options.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
@@ -28,20 +29,19 @@ using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 
 class ArkWebImageOptionsWrapper : public OHOS::NWeb::NWebImageOptions {
 public:
-  ArkWebImageOptionsWrapper(
-      ArkWebRefPtr<ArkWebImageOptions> ark_web_image_options);
-  ~ArkWebImageOptionsWrapper() = default;
+    ArkWebImageOptionsWrapper(ArkWebRefPtr<ArkWebImageOptions> ark_web_image_options);
+    ~ArkWebImageOptionsWrapper() = default;
 
-  size_t GetWidth() override;
+    size_t GetWidth() override;
 
-  size_t GetHeight() override;
+    size_t GetHeight() override;
 
-  ArkWebImageAlphaType GetAlphaType() override;
+    ArkWebImageAlphaType GetAlphaType() override;
 
-  ArkWebImageColorType GetColorType() override;
+    ArkWebImageColorType GetColorType() override;
 
 private:
-  ArkWebRefPtr<ArkWebImageOptions> ark_web_image_options_;
+    ArkWebRefPtr<ArkWebImageOptions> ark_web_image_options_;
 };
 
 } // namespace OHOS::ArkWeb

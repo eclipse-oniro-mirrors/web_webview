@@ -22,21 +22,19 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebDateTimeSuggestionWrapper
-    : public OHOS::NWeb::NWebDateTimeSuggestion {
+class ArkWebDateTimeSuggestionWrapper : public OHOS::NWeb::NWebDateTimeSuggestion {
 public:
-  ArkWebDateTimeSuggestionWrapper(
-      ArkWebRefPtr<ArkWebDateTimeSuggestion> ark_web_date_time_suggestion);
-  ~ArkWebDateTimeSuggestionWrapper() = default;
+    ArkWebDateTimeSuggestionWrapper(ArkWebRefPtr<ArkWebDateTimeSuggestion> ark_web_date_time_suggestion);
+    ~ArkWebDateTimeSuggestionWrapper() = default;
 
-  std::string GetLabel() override;
+    std::string GetLabel() override;
 
-  OHOS::NWeb::DateTime GetValue() override;
+    OHOS::NWeb::DateTime GetValue() override;
 
-  std::string GetLocalizedValue() override;
+    std::string GetLocalizedValue() override;
 
 private:
-  ArkWebRefPtr<ArkWebDateTimeSuggestion> ark_web_date_time_suggestion_;
+    ArkWebRefPtr<ArkWebDateTimeSuggestion> ark_web_date_time_suggestion_;
 };
 
 } // namespace OHOS::ArkWeb

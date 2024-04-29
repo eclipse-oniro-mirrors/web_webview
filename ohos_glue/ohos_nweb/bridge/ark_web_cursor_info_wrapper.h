@@ -18,30 +18,31 @@
 #pragma once
 
 #include "include/nweb_handler.h"
-#include "base/include/ark_web_types.h"
 #include "ohos_nweb/include/ark_web_cursor_info.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 class ArkWebCursorInfoWrapper : public OHOS::NWeb::NWebCursorInfo {
 public:
-  ArkWebCursorInfoWrapper(ArkWebRefPtr<ArkWebCursorInfo> ark_web_cursor_info);
-  ~ArkWebCursorInfoWrapper() = default;
+    ArkWebCursorInfoWrapper(ArkWebRefPtr<ArkWebCursorInfo> ark_web_cursor_info);
+    ~ArkWebCursorInfoWrapper() = default;
 
-  int32_t GetX() override;
+    int32_t GetX() override;
 
-  int32_t GetY() override;
+    int32_t GetY() override;
 
-  uint8_t *GetBuff() override;
+    uint8_t* GetBuff() override;
 
-  float GetScale() override;
+    float GetScale() override;
 
-  int32_t GetWidth() override;
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
 private:
-  ArkWebRefPtr<ArkWebCursorInfo> ark_web_cursor_info_;
+    ArkWebRefPtr<ArkWebCursorInfo> ark_web_cursor_info_;
 };
 
 } // namespace OHOS::ArkWeb

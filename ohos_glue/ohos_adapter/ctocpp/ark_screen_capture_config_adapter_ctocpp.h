@@ -17,32 +17,31 @@
 #define ARK_SCREEN_CAPTURE_CONFIG_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_screen_capture_adapter_capi.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkScreenCaptureConfigAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkScreenCaptureConfigAdapterCToCpp,
-                                    ArkScreenCaptureConfigAdapter,
-                                    ark_screen_capture_config_adapter_t> {
+class ArkScreenCaptureConfigAdapterCToCpp : public ArkWebCToCppRefCounted<ArkScreenCaptureConfigAdapterCToCpp,
+                                                ArkScreenCaptureConfigAdapter, ark_screen_capture_config_adapter_t> {
 public:
-  ArkScreenCaptureConfigAdapterCToCpp();
-  virtual ~ArkScreenCaptureConfigAdapterCToCpp();
+    ArkScreenCaptureConfigAdapterCToCpp();
+    virtual ~ArkScreenCaptureConfigAdapterCToCpp();
 
-  // ArkScreenCaptureConfigAdapter methods.
-  int32_t GetCaptureMode() override;
+    // ArkScreenCaptureConfigAdapter methods.
+    int32_t GetCaptureMode() override;
 
-  int32_t GetDataType() override;
+    int32_t GetDataType() override;
 
-  ArkWebRefPtr<ArkAudioInfoAdapter> GetAudioInfo() override;
+    ArkWebRefPtr<ArkAudioInfoAdapter> GetAudioInfo() override;
 
-  ArkWebRefPtr<ArkVideoInfoAdapter> GetVideoInfo() override;
+    ArkWebRefPtr<ArkVideoInfoAdapter> GetVideoInfo() override;
 
-  ArkWebRefPtr<ArkRecorderInfoAdapter> GetRecorderInfo() override;
+    ArkWebRefPtr<ArkRecorderInfoAdapter> GetRecorderInfo() override;
 };
 
 } // namespace OHOS::ArkWeb

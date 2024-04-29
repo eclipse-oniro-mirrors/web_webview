@@ -17,25 +17,24 @@
 #define ARK_AUDIO_MANAGER_DEVICE_CHANGE_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_audio_system_manager_adapter_capi.h"
 #include "ohos_adapter/include/ark_audio_system_manager_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkAudioManagerDeviceChangeCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<
-          ArkAudioManagerDeviceChangeCallbackAdapterCToCpp,
-          ArkAudioManagerDeviceChangeCallbackAdapter,
-          ark_audio_manager_device_change_callback_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkAudioManagerDeviceChangeCallbackAdapterCToCpp,
+          ArkAudioManagerDeviceChangeCallbackAdapter, ark_audio_manager_device_change_callback_adapter_t> {
 public:
-  ArkAudioManagerDeviceChangeCallbackAdapterCToCpp();
-  virtual ~ArkAudioManagerDeviceChangeCallbackAdapterCToCpp();
+    ArkAudioManagerDeviceChangeCallbackAdapterCToCpp();
+    virtual ~ArkAudioManagerDeviceChangeCallbackAdapterCToCpp();
 
-  // ArkAudioManagerDeviceChangeCallbackAdapter methods.
-  void OnDeviceChange() override;
+    // ArkAudioManagerDeviceChangeCallbackAdapter methods.
+    void OnDeviceChange() override;
 };
 
 } // namespace OHOS::ArkWeb

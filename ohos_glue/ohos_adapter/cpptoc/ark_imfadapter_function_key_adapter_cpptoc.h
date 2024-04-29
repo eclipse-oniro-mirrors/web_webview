@@ -17,21 +17,21 @@
 #define ARK_IMFADAPTER_FUNCTION_KEY_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_imf_adapter_capi.h"
 #include "ohos_adapter/include/ark_imf_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkIMFAdapterFunctionKeyAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkIMFAdapterFunctionKeyAdapterCppToC,
-                                    ArkIMFAdapterFunctionKeyAdapter,
-                                    ark_imfadapter_function_key_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkIMFAdapterFunctionKeyAdapterCppToC, ArkIMFAdapterFunctionKeyAdapter,
+          ark_imfadapter_function_key_adapter_t> {
 public:
-  ArkIMFAdapterFunctionKeyAdapterCppToC();
-  virtual ~ArkIMFAdapterFunctionKeyAdapterCppToC();
+    ArkIMFAdapterFunctionKeyAdapterCppToC();
+    virtual ~ArkIMFAdapterFunctionKeyAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb

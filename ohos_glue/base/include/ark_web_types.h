@@ -26,14 +26,14 @@
 #include "base/include/ark_web_memory.h"
 #include "base/include/ark_web_scoped_refptr.h"
 
-template <class T>
+template<class T>
 using ArkWebRefPtr = ark_web_scoped_refptr<T>;
 
 typedef struct {
-  int size;
-  char *value;
+    int size;
+    char* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebCharVector;
 
 const ArkWebCharVector ark_web_char_vector_default = {
@@ -41,10 +41,10 @@ const ArkWebCharVector ark_web_char_vector_default = {
 };
 
 typedef struct {
-  int size;
-  uint8_t *value;
+    int size;
+    uint8_t* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebUint8Vector;
 
 const ArkWebUint8Vector ark_web_uint8_vector_default = {
@@ -63,10 +63,10 @@ const ArkWebUint16Vector ark_web_uint16_vector_default = {
 };
 
 typedef struct {
-  int size;
-  int32_t *value;
+    int size;
+    int32_t* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebInt32Vector;
 
 const ArkWebInt32Vector ark_web_int32_vector_default = {
@@ -74,10 +74,10 @@ const ArkWebInt32Vector ark_web_int32_vector_default = {
 };
 
 typedef struct {
-  int size;
-  int64_t *value;
+    int size;
+    int64_t* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebInt64Vector;
 
 const ArkWebInt64Vector ark_web_int64_vector_default = {
@@ -85,10 +85,10 @@ const ArkWebInt64Vector ark_web_int64_vector_default = {
 };
 
 typedef struct {
-  int size;
-  uint32_t *value;
+    int size;
+    uint32_t* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebUint32Vector;
 
 const ArkWebUint32Vector ark_web_uint32_vector_default = {
@@ -96,10 +96,10 @@ const ArkWebUint32Vector ark_web_uint32_vector_default = {
 };
 
 typedef struct {
-  int size;
-  double *value;
+    int size;
+    double* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebDoubleVector;
 
 const ArkWebDoubleVector ark_web_double_vector_default = {
@@ -107,10 +107,10 @@ const ArkWebDoubleVector ark_web_double_vector_default = {
 };
 
 typedef struct {
-  int size;
-  bool *value;
+    int size;
+    bool* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebBooleanVector;
 
 const ArkWebBooleanVector ark_web_boolean_vector_default = {
@@ -118,10 +118,10 @@ const ArkWebBooleanVector ark_web_boolean_vector_default = {
 };
 
 typedef struct {
-  int size;
-  int32_t *value;
+    int size;
+    int32_t* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebInt32List;
 
 const ArkWebInt32List ark_web_int32_list_default = {
@@ -129,10 +129,10 @@ const ArkWebInt32List ark_web_int32_list_default = {
 };
 
 typedef struct {
-  int size;
-  char *value;
+    int size;
+    char* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebString;
 
 const ArkWebString ark_web_string_default = {
@@ -155,7 +155,7 @@ typedef struct {
     ArkWebString* key;
     ArkWebString* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebStringMap;
 
 const ArkWebStringMap ark_web_string_map_default = {
@@ -163,10 +163,10 @@ const ArkWebStringMap ark_web_string_map_default = {
 };
 
 typedef struct {
-  int size;
-  ArkWebString *value;
+    int size;
+    ArkWebString* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebStringList;
 
 const ArkWebStringList ark_web_string_list_default = {
@@ -174,10 +174,10 @@ const ArkWebStringList ark_web_string_list_default = {
 };
 
 typedef struct {
-  int size;
-  ArkWebString *value;
+    int size;
+    ArkWebString* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebStringVector;
 
 const ArkWebStringVector ark_web_string_vector_default = {
@@ -185,129 +185,134 @@ const ArkWebStringVector ark_web_string_vector_default = {
 };
 
 typedef struct {
-  int size;
-  ArkWebString *key;
-  ArkWebStringVector *value;
+    int size;
+    ArkWebString* key;
+    ArkWebStringVector* value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebStringVectorMap;
 
 const ArkWebStringVectorMap ark_web_string_vector_map_default = {
     0,
 };
 
-template <typename T1, typename T2, typename R>
-R ArkWebBasicMapClassToStruct(const std::map<T1, T2> &class_value) {
-  R struct_value = {.size = class_value.size(),
-                    .ark_web_mem_free_func = ArkWebMemFree};
-  if (struct_value.size > 0) {
-    struct_value.key = (T1 *)ArkWebMemMalloc(sizeof(T1) * struct_value.size);
-    struct_value.value = (T2 *)ArkWebMemMalloc(sizeof(T2) * struct_value.size);
+template<typename T1, typename T2, typename R>
+R ArkWebBasicMapClassToStruct(const std::map<T1, T2>& class_value)
+{
+    R struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
+    if (struct_value.size > 0) {
+        struct_value.key = (T1*)ArkWebMemMalloc(sizeof(T1) * struct_value.size);
+        struct_value.value = (T2*)ArkWebMemMalloc(sizeof(T2) * struct_value.size);
 
-    int count = 0;
-    for (auto it = class_value.begin(); it != class_value.end(); it++) {
-      struct_value.key[count] = it->first;
-      struct_value.value[count] = it->second;
-      count++;
+        int count = 0;
+        for (auto it = class_value.begin(); it != class_value.end(); it++) {
+            struct_value.key[count] = it->first;
+            struct_value.value[count] = it->second;
+            count++;
+        }
     }
-  }
 
-  return struct_value;
+    return struct_value;
 }
 
-template <typename T1, typename T2, typename P>
-std::map<T1, T2> ArkWebBasicMapStructToClass(const P &struct_value) {
-  std::map<T1, T2> class_value;
-  if (struct_value.size > 0) {
-    for (int count = 0; count < struct_value.size; count++) {
-      class_value.insert(std::map<T1, T2>::value_type(
-          struct_value.key[count], struct_value.value[count]));
+template<typename T1, typename T2, typename P>
+std::map<T1, T2> ArkWebBasicMapStructToClass(const P& struct_value)
+{
+    std::map<T1, T2> class_value;
+    if (struct_value.size > 0) {
+        for (int count = 0; count < struct_value.size; count++) {
+            class_value.insert(std::map<T1, T2>::value_type(struct_value.key[count], struct_value.value[count]));
+        }
     }
-  }
 
-  return class_value;
+    return class_value;
 }
 
-template <typename P>
-void ArkWebBasicMapStructRelease(P &struct_value) {
-  struct_value.size = 0;
-  SAFE_FREE(struct_value.key, struct_value.ark_web_mem_free_func);
-  SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
+template<typename P>
+void ArkWebBasicMapStructRelease(P& struct_value)
+{
+    struct_value.size = 0;
+    SAFE_FREE(struct_value.key, struct_value.ark_web_mem_free_func);
+    SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
 }
 
-template <typename T, typename R>
-R ArkWebBasicListClassToStruct(const std::list<T> &class_value) {
-  R struct_value = {.size = class_value.size(),
-                    .ark_web_mem_free_func = ArkWebMemFree};
-  if (struct_value.size > 0) {
-    struct_value.value = (T *)ArkWebMemMalloc(sizeof(T) * struct_value.size);
+template<typename T, typename R>
+R ArkWebBasicListClassToStruct(const std::list<T>& class_value)
+{
+    R struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
+    if (struct_value.size > 0) {
+        struct_value.value = (T*)ArkWebMemMalloc(sizeof(T) * struct_value.size);
 
-    int count = 0;
-    for (auto it = class_value.begin(); it != class_value.end(); it++) {
-      struct_value.value[count] = *it;
-      count++;
+        int count = 0;
+        for (auto it = class_value.begin(); it != class_value.end(); it++) {
+            struct_value.value[count] = *it;
+            count++;
+        }
     }
-  }
 
-  return struct_value;
+    return struct_value;
 }
 
-template <typename T, typename P>
-std::list<T> ArkWebBasicListStructToClass(const P &struct_value) {
-  std::list<T> class_value;
-  if (struct_value.size > 0) {
-    for (int count = 0; count < struct_value.size; count++) {
-      class_value.push_back(struct_value.value[count]);
+template<typename T, typename P>
+std::list<T> ArkWebBasicListStructToClass(const P& struct_value)
+{
+    std::list<T> class_value;
+    if (struct_value.size > 0) {
+        for (int count = 0; count < struct_value.size; count++) {
+            class_value.push_back(struct_value.value[count]);
+        }
     }
-  }
 
-  return class_value;
+    return class_value;
 }
 
-template <typename P>
-void ArkWebBasicListStructRelease(P &struct_value) {
-  struct_value.size = 0;
-  SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
+template<typename P>
+void ArkWebBasicListStructRelease(P& struct_value)
+{
+    struct_value.size = 0;
+    SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
 }
 
-template <typename T, typename R>
-R ArkWebBasicVectorClassToStruct(const std::vector<T> &class_value) {
-  R struct_value = {.size = class_value.size(),
-                    .ark_web_mem_free_func = ArkWebMemFree};
-  if (struct_value.size > 0) {
-    struct_value.value = (T *)ArkWebMemMalloc(sizeof(T) * struct_value.size);
+template<typename T, typename R>
+R ArkWebBasicVectorClassToStruct(const std::vector<T>& class_value)
+{
+    R struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
+    if (struct_value.size > 0) {
+        struct_value.value = (T*)ArkWebMemMalloc(sizeof(T) * struct_value.size);
 
-    int count = 0;
-    for (auto it = class_value.begin(); it != class_value.end(); it++) {
-      struct_value.value[count] = *it;
-      count++;
+        int count = 0;
+        for (auto it = class_value.begin(); it != class_value.end(); it++) {
+            struct_value.value[count] = *it;
+            count++;
+        }
     }
-  }
 
-  return struct_value;
+    return struct_value;
 }
 
-template <typename T, typename P>
-std::vector<T> ArkWebBasicVectorStructToClass(const P &struct_value) {
-  std::vector<T> class_value;
-  if (struct_value.size > 0) {
-    for (int count = 0; count < struct_value.size; count++) {
-      class_value.push_back(struct_value.value[count]);
+template<typename T, typename P>
+std::vector<T> ArkWebBasicVectorStructToClass(const P& struct_value)
+{
+    std::vector<T> class_value;
+    if (struct_value.size > 0) {
+        for (int count = 0; count < struct_value.size; count++) {
+            class_value.push_back(struct_value.value[count]);
+        }
     }
-  }
 
-  return class_value;
+    return class_value;
 }
 
-template <typename P>
-void ArkWebBasicVectorStructRelease(P &struct_value) {
-  struct_value.size = 0;
-  SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
+template<typename P>
+void ArkWebBasicVectorStructRelease(P& struct_value)
+{
+    struct_value.size = 0;
+    SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
 }
 
-ArkWebString ArkWebStringClassToStruct(const std::string &class_value);
+ArkWebString ArkWebStringClassToStruct(const std::string& class_value);
 
-std::string ArkWebStringStructToClass(const ArkWebString &struct_value);
+std::string ArkWebStringStructToClass(const ArkWebString& struct_value);
 
 ArkWebU16String ArkWebU16StringClassToStruct(const std::u16string& class_value);
 
@@ -315,38 +320,32 @@ std::u16string ArkWebU16StringStructToClass(const ArkWebU16String& struct_value)
 
 void ArkWebStringStructRelease(ArkWebString& struct_value);
 
-void ArkWebU16StringStructRelease(ArkWebU16String &struct_value);
+void ArkWebU16StringStructRelease(ArkWebU16String& struct_value);
 
-ArkWebStringMap ArkWebStringMapClassToStruct(
-    const std::map<std::string, std::string> &class_value);
+ArkWebStringMap ArkWebStringMapClassToStruct(const std::map<std::string, std::string>& class_value);
 
-std::map<std::string, std::string>
-ArkWebStringMapStructToClass(const ArkWebStringMap &struct_value);
+std::map<std::string, std::string> ArkWebStringMapStructToClass(const ArkWebStringMap& struct_value);
 
-void ArkWebStringMapStructRelease(ArkWebStringMap &struct_value);
+void ArkWebStringMapStructRelease(ArkWebStringMap& struct_value);
 
-ArkWebStringList
-ArkWebStringListClassToStruct(const std::list<std::string> &class_value);
+ArkWebStringList ArkWebStringListClassToStruct(const std::list<std::string>& class_value);
 
-std::list<std::string>
-ArkWebStringListStructToClass(const ArkWebStringList &struct_value);
+std::list<std::string> ArkWebStringListStructToClass(const ArkWebStringList& struct_value);
 
-void ArkWebStringListStructRelease(ArkWebStringList &struct_value);
+void ArkWebStringListStructRelease(ArkWebStringList& struct_value);
 
-ArkWebStringVector
-ArkWebStringVectorClassToStruct(const std::vector<std::string> &class_value);
+ArkWebStringVector ArkWebStringVectorClassToStruct(const std::vector<std::string>& class_value);
 
-std::vector<std::string>
-ArkWebStringVectorStructToClass(const ArkWebStringVector &struct_value);
+std::vector<std::string> ArkWebStringVectorStructToClass(const ArkWebStringVector& struct_value);
 
-void ArkWebStringVectorStructRelease(ArkWebStringVector &struct_value);
+void ArkWebStringVectorStructRelease(ArkWebStringVector& struct_value);
 
 ArkWebStringVectorMap ArkWebStringVectorMapClassToStruct(
-    const std::map<std::string, std::vector<std::string>> &class_value);
+    const std::map<std::string, std::vector<std::string>>& class_value);
 
-std::map<std::string, std::vector<std::string>>
-ArkWebStringVectorMapStructToClass(const ArkWebStringVectorMap &struct_value);
+std::map<std::string, std::vector<std::string>> ArkWebStringVectorMapStructToClass(
+    const ArkWebStringVectorMap& struct_value);
 
-void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap &struct_value);
+void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap& struct_value);
 
 #endif // ARK_WEB_TYPES_H_

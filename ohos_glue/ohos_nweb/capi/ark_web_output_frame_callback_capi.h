@@ -24,14 +24,13 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_output_frame_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *handle)(struct _ark_web_output_frame_callback_t *self,
-                                 const char *buffer, uint32_t width,
-                                 uint32_t height);
+    bool(ARK_WEB_CALLBACK* handle)(
+        struct _ark_web_output_frame_callback_t* self, const char* buffer, uint32_t width, uint32_t height);
 } ark_web_output_frame_callback_t;
 
 #ifdef __cplusplus

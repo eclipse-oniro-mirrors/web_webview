@@ -17,28 +17,26 @@
 #define ARK_WEB_DATE_TIME_SUGGESTION_CAPI_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_nweb_structs.h"
+
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/include/ark_web_nweb_structs.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_date_time_suggestion_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *get_label)(
-      struct _ark_web_date_time_suggestion_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_label)(struct _ark_web_date_time_suggestion_t* self);
 
-  ArkWebDateTime(ARK_WEB_CALLBACK *get_value)(
-      struct _ark_web_date_time_suggestion_t *self);
+    ArkWebDateTime(ARK_WEB_CALLBACK* get_value)(struct _ark_web_date_time_suggestion_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_localized_value)(
-      struct _ark_web_date_time_suggestion_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_localized_value)(struct _ark_web_date_time_suggestion_t* self);
 } ark_web_date_time_suggestion_t;
 
 #ifdef __cplusplus

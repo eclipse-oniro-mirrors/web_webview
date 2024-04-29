@@ -24,34 +24,28 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_touch_handle_state_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_x)(struct _ark_web_touch_handle_state_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_x)(struct _ark_web_touch_handle_state_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_y)(struct _ark_web_touch_handle_state_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_y)(struct _ark_web_touch_handle_state_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_enable)(struct _ark_web_touch_handle_state_t *self);
+    bool(ARK_WEB_CALLBACK* is_enable)(struct _ark_web_touch_handle_state_t* self);
 
-  float(ARK_WEB_CALLBACK *get_alpha)(
-      struct _ark_web_touch_handle_state_t *self);
+    float(ARK_WEB_CALLBACK* get_alpha)(struct _ark_web_touch_handle_state_t* self);
 
-  float(ARK_WEB_CALLBACK *get_edge_height)(
-      struct _ark_web_touch_handle_state_t *self);
+    float(ARK_WEB_CALLBACK* get_edge_height)(struct _ark_web_touch_handle_state_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_view_port_x)(
-      struct _ark_web_touch_handle_state_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_view_port_x)(struct _ark_web_touch_handle_state_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_view_port_y)(
-      struct _ark_web_touch_handle_state_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_view_port_y)(struct _ark_web_touch_handle_state_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_touch_handle_id)(
-      struct _ark_web_touch_handle_state_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_touch_handle_id)(struct _ark_web_touch_handle_state_t* self);
 
-  int(ARK_WEB_CALLBACK *get_touch_handle_type)(
-      struct _ark_web_touch_handle_state_t *self);
+    int(ARK_WEB_CALLBACK* get_touch_handle_type)(struct _ark_web_touch_handle_state_t* self);
 } ark_web_touch_handle_state_t;
 
 #ifdef __cplusplus

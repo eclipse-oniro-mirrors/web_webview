@@ -25,24 +25,20 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_file_selector_params_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *mode)(struct _ark_web_file_selector_params_t *self);
+    int(ARK_WEB_CALLBACK* mode)(struct _ark_web_file_selector_params_t* self);
 
-  const ArkWebString(ARK_WEB_CALLBACK *title)(
-      struct _ark_web_file_selector_params_t *self);
+    const ArkWebString(ARK_WEB_CALLBACK* title)(struct _ark_web_file_selector_params_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_capture)(
-      struct _ark_web_file_selector_params_t *self);
+    bool(ARK_WEB_CALLBACK* is_capture)(struct _ark_web_file_selector_params_t* self);
 
-  const ArkWebStringVector(ARK_WEB_CALLBACK *accept_type)(
-      struct _ark_web_file_selector_params_t *self);
+    const ArkWebStringVector(ARK_WEB_CALLBACK* accept_type)(struct _ark_web_file_selector_params_t* self);
 
-  const ArkWebString(ARK_WEB_CALLBACK *default_filename)(
-      struct _ark_web_file_selector_params_t *self);
+    const ArkWebString(ARK_WEB_CALLBACK* default_filename)(struct _ark_web_file_selector_params_t* self);
 } ark_web_file_selector_params_t;
 
 #ifdef __cplusplus

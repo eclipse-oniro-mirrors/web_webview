@@ -25,28 +25,26 @@ extern "C" {
 #endif
 
 typedef struct _ark_running_lock_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *is_used)(struct _ark_running_lock_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* is_used)(struct _ark_running_lock_adapter_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *lock)(struct _ark_running_lock_adapter_t *self,
-                                  uint32_t timeOutMs);
+    int32_t(ARK_WEB_CALLBACK* lock)(struct _ark_running_lock_adapter_t* self, uint32_t timeOutMs);
 
-  int32_t(ARK_WEB_CALLBACK *un_lock)(struct _ark_running_lock_adapter_t *self);
+    int32_t(ARK_WEB_CALLBACK* un_lock)(struct _ark_running_lock_adapter_t* self);
 } ark_running_lock_adapter_t;
 
 typedef struct _ark_power_mgr_client_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ark_running_lock_adapter_t *(ARK_WEB_CALLBACK *create_running_lock)(
-      struct _ark_power_mgr_client_adapter_t *self, const ArkWebString *name,
-      uint32_t type);
+    ark_running_lock_adapter_t*(ARK_WEB_CALLBACK* create_running_lock)(
+        struct _ark_power_mgr_client_adapter_t* self, const ArkWebString* name, uint32_t type);
 } ark_power_mgr_client_adapter_t;
 
 #ifdef __cplusplus

@@ -24,8 +24,8 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebReleaseSurfaceCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void ReleaseSurface() = 0;
+    /*--ark web()--*/
+    virtual void ReleaseSurface() = 0;
 };
 
 } // namespace OHOS::ArkWeb

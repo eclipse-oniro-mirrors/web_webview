@@ -24,13 +24,11 @@
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
-class ArkWebCreateNativeMediaPlayerCallback
-    : public virtual ArkWebBaseRefCounted {
+class ArkWebCreateNativeMediaPlayerCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkWebNativeMediaPlayerBridge>
-  OnCreate(ArkWebRefPtr<ArkWebNativeMediaPlayerHandler> handler,
-           ArkWebRefPtr<ArkWebMediaInfo> mediaInfo) = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebNativeMediaPlayerBridge> OnCreate(
+        ArkWebRefPtr<ArkWebNativeMediaPlayerHandler> handler, ArkWebRefPtr<ArkWebMediaInfo> mediaInfo) = 0;
 };
 
 } // namespace OHOS::ArkWeb

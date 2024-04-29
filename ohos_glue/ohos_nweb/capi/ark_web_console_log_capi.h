@@ -25,19 +25,18 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_console_log_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebString(ARK_WEB_CALLBACK *log)(struct _ark_web_console_log_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* log)(struct _ark_web_console_log_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *source_id)(
-      struct _ark_web_console_log_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* source_id)(struct _ark_web_console_log_t* self);
 
-  int(ARK_WEB_CALLBACK *log_level)(struct _ark_web_console_log_t *self);
+    int(ARK_WEB_CALLBACK* log_level)(struct _ark_web_console_log_t* self);
 
-  int(ARK_WEB_CALLBACK *line_numer)(struct _ark_web_console_log_t *self);
+    int(ARK_WEB_CALLBACK* line_numer)(struct _ark_web_console_log_t* self);
 } ark_web_console_log_t;
 
 #ifdef __cplusplus

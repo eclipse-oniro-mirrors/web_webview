@@ -23,19 +23,16 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebOutputFrameCallbackImpl : public ArkWebOutputFrameCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebOutputFrameCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebOutputFrameCallbackImpl);
 
 public:
-  ArkWebOutputFrameCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebOutputFrameCallback>
-          nweb_output_frame_callback);
-  ~ArkWebOutputFrameCallbackImpl() = default;
+    ArkWebOutputFrameCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebOutputFrameCallback> nweb_output_frame_callback);
+    ~ArkWebOutputFrameCallbackImpl() = default;
 
-  bool Handle(const char *buffer, uint32_t width, uint32_t height) override;
+    bool Handle(const char* buffer, uint32_t width, uint32_t height) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebOutputFrameCallback>
-      nweb_output_frame_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebOutputFrameCallback> nweb_output_frame_callback_;
 };
 
 } // namespace OHOS::ArkWeb

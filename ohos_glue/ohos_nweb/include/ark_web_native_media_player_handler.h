@@ -25,50 +25,50 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebNativeMediaPlayerHandler : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void HandleStatusChanged(int status) = 0;
+    /*--ark web()--*/
+    virtual void HandleStatusChanged(int status) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleVolumeChanged(double volume) = 0;
+    /*--ark web()--*/
+    virtual void HandleVolumeChanged(double volume) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleMutedChanged(bool isMuted) = 0;
+    /*--ark web()--*/
+    virtual void HandleMutedChanged(bool isMuted) = 0;
 
-  /*--ark web()--*/
-  virtual void HandlePlaybackRateChanged(double playbackRate) = 0;
+    /*--ark web()--*/
+    virtual void HandlePlaybackRateChanged(double playbackRate) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleDurationChanged(double duration) = 0;
+    /*--ark web()--*/
+    virtual void HandleDurationChanged(double duration) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleTimeUpdate(double playTime) = 0;
+    /*--ark web()--*/
+    virtual void HandleTimeUpdate(double playTime) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleBufferedEndTimeChanged(double bufferedEndTime) = 0;
+    /*--ark web()--*/
+    virtual void HandleBufferedEndTimeChanged(double bufferedEndTime) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleEnded() = 0;
+    /*--ark web()--*/
+    virtual void HandleEnded() = 0;
 
-  /*--ark web()--*/
-  virtual void HandleNetworkStateChanged(int state) = 0;
+    /*--ark web()--*/
+    virtual void HandleNetworkStateChanged(int state) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleReadyStateChanged(int state) = 0;
+    /*--ark web()--*/
+    virtual void HandleReadyStateChanged(int state) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleFullScreenChanged(bool isFullScreen) = 0;
+    /*--ark web()--*/
+    virtual void HandleFullScreenChanged(bool isFullScreen) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleSeeking() = 0;
+    /*--ark web()--*/
+    virtual void HandleSeeking() = 0;
 
-  /*--ark web()--*/
-  virtual void HandleSeekFinished() = 0;
+    /*--ark web()--*/
+    virtual void HandleSeekFinished() = 0;
 
-  /*--ark web()--*/
-  virtual void HandleError(int error, const ArkWebString &message) = 0;
+    /*--ark web()--*/
+    virtual void HandleError(int error, const ArkWebString& message) = 0;
 
-  /*--ark web()--*/
-  virtual void HandleVideoSizeChanged(double width, double height) = 0;
+    /*--ark web()--*/
+    virtual void HandleVideoSizeChanged(double width, double height) = 0;
 };
 
 } // namespace OHOS::ArkWeb

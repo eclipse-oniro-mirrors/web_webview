@@ -17,63 +17,57 @@
 #define ARK_WEB_COOKIE_MANAGER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_cookie_manager_capi.h"
 #include "ohos_nweb/include/ark_web_cookie_manager.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebCookieManagerCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebCookieManagerCToCpp,
-                                    ArkWebCookieManager,
-                                    ark_web_cookie_manager_t> {
+    : public ArkWebCToCppRefCounted<ArkWebCookieManagerCToCpp, ArkWebCookieManager, ark_web_cookie_manager_t> {
 public:
-  ArkWebCookieManagerCToCpp();
-  virtual ~ArkWebCookieManagerCToCpp();
+    ArkWebCookieManagerCToCpp();
+    virtual ~ArkWebCookieManagerCToCpp();
 
-  // ArkWebCookieManager methods.
-  bool Store() override;
+    // ArkWebCookieManager methods.
+    bool Store() override;
 
-  void Store(ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
+    void Store(ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
 
-  int SetCookie(const ArkWebString &url, const ArkWebString &value,
-                bool incognito_mode) override;
+    int SetCookie(const ArkWebString& url, const ArkWebString& value, bool incognito_mode) override;
 
-  void SetCookie(const ArkWebString &url, const ArkWebString &value,
-                 ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
+    void SetCookie(
+        const ArkWebString& url, const ArkWebString& value, ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
 
-  bool ExistCookies(bool incognito_mode) override;
+    bool ExistCookies(bool incognito_mode) override;
 
-  void ExistCookies(ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
+    void ExistCookies(ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
 
-  ArkWebString ReturnCookie(const ArkWebString &url, bool &is_valid,
-                            bool incognito_mode) override;
+    ArkWebString ReturnCookie(const ArkWebString& url, bool& is_valid, bool incognito_mode) override;
 
-  void ReturnCookie(const ArkWebString &url,
-                    ArkWebRefPtr<ArkWebStringValueCallback> callback) override;
+    void ReturnCookie(const ArkWebString& url, ArkWebRefPtr<ArkWebStringValueCallback> callback) override;
 
-  void ConfigCookie(const ArkWebString &url, const ArkWebString &value,
-                    ArkWebRefPtr<ArkWebLongValueCallback> callback) override;
+    void ConfigCookie(
+        const ArkWebString& url, const ArkWebString& value, ArkWebRefPtr<ArkWebLongValueCallback> callback) override;
 
-  void
-  DeleteSessionCookies(ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
+    void DeleteSessionCookies(ArkWebRefPtr<ArkWebBoolValueCallback> callback) override;
 
-  void DeleteCookieEntirely(ArkWebRefPtr<ArkWebBoolValueCallback> callback,
-                            bool incognito_mode) override;
+    void DeleteCookieEntirely(ArkWebRefPtr<ArkWebBoolValueCallback> callback, bool incognito_mode) override;
 
-  bool IsAcceptCookieAllowed() override;
+    bool IsAcceptCookieAllowed() override;
 
-  void PutAcceptCookieEnabled(bool accept) override;
+    void PutAcceptCookieEnabled(bool accept) override;
 
-  bool IsThirdPartyCookieAllowed() override;
+    bool IsThirdPartyCookieAllowed() override;
 
-  bool IsFileURLSchemeCookiesAllowed() override;
+    bool IsFileURLSchemeCookiesAllowed() override;
 
-  void PutAcceptThirdPartyCookieEnabled(bool accept) override;
+    void PutAcceptThirdPartyCookieEnabled(bool accept) override;
 
-  void PutAcceptFileURLSchemeCookiesEnabled(bool allow) override;
+    void PutAcceptFileURLSchemeCookiesEnabled(bool allow) override;
 };
 
 } // namespace OHOS::ArkWeb

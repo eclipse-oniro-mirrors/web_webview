@@ -23,30 +23,28 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebFindCallbackImpl : public ArkWebFindCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebFindCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebFindCallbackImpl);
 
 public:
-  ArkWebFindCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebFindCallback> nweb_find_callback);
-  ~ArkWebFindCallbackImpl() = default;
+    ArkWebFindCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebFindCallback> nweb_find_callback);
+    ~ArkWebFindCallbackImpl() = default;
 
-  /**
-   * @brief Notify the host application that OnFindResultReceived
-   *
-   * @param active_match_ordinal int: the zero-based ordinal of the currently
-   *        selected match
-   * @param number_of_matches int: how many matches have been found
-   * @param is_done_counting bool: whether the find operation has actually
-   *        completed. The listener may be notified multiple times while the
-   *        operation is underway, and the number_of_matches value should not be
-   *        considered final unless is_done_counting is true.
-   */
-  void OnFindResultReceived(const int active_match_ordinal,
-                            const int number_of_matches,
-                            const bool is_done_counting) override;
+    /**
+     * @brief Notify the host application that OnFindResultReceived
+     *
+     * @param active_match_ordinal int: the zero-based ordinal of the currently
+     *        selected match
+     * @param number_of_matches int: how many matches have been found
+     * @param is_done_counting bool: whether the find operation has actually
+     *        completed. The listener may be notified multiple times while the
+     *        operation is underway, and the number_of_matches value should not be
+     *        considered final unless is_done_counting is true.
+     */
+    void OnFindResultReceived(
+        const int active_match_ordinal, const int number_of_matches, const bool is_done_counting) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebFindCallback> nweb_find_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebFindCallback> nweb_find_callback_;
 };
 
 } // namespace OHOS::ArkWeb

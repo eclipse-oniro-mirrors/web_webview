@@ -17,32 +17,31 @@
 #define ARK_AUDIO_INTERRUPT_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_audio_system_manager_adapter_capi.h"
 #include "ohos_adapter/include/ark_audio_system_manager_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkAudioInterruptAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkAudioInterruptAdapterCToCpp,
-                                    ArkAudioInterruptAdapter,
-                                    ark_audio_interrupt_adapter_t> {
+class ArkAudioInterruptAdapterCToCpp : public ArkWebCToCppRefCounted<ArkAudioInterruptAdapterCToCpp,
+                                           ArkAudioInterruptAdapter, ark_audio_interrupt_adapter_t> {
 public:
-  ArkAudioInterruptAdapterCToCpp();
-  virtual ~ArkAudioInterruptAdapterCToCpp();
+    ArkAudioInterruptAdapterCToCpp();
+    virtual ~ArkAudioInterruptAdapterCToCpp();
 
-  // ArkAudioInterruptAdapter methods.
-  int32_t GetStreamUsage() override;
+    // ArkAudioInterruptAdapter methods.
+    int32_t GetStreamUsage() override;
 
-  int32_t GetContentType() override;
+    int32_t GetContentType() override;
 
-  int32_t GetStreamType() override;
+    int32_t GetStreamType() override;
 
-  uint32_t GetSessionID() override;
+    uint32_t GetSessionID() override;
 
-  bool GetPauseWhenDucked() override;
+    bool GetPauseWhenDucked() override;
 };
 
 } // namespace OHOS::ArkWeb

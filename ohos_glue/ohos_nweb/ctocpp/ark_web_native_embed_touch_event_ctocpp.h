@@ -17,42 +17,41 @@
 #define ARK_WEB_NATIVE_EMBED_TOUCH_EVENT_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_native_embed_touch_event_capi.h"
 #include "ohos_nweb/include/ark_web_native_embed_touch_event.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebNativeEmbedTouchEventCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebNativeEmbedTouchEventCToCpp,
-                                    ArkWebNativeEmbedTouchEvent,
-                                    ark_web_native_embed_touch_event_t> {
+class ArkWebNativeEmbedTouchEventCToCpp : public ArkWebCToCppRefCounted<ArkWebNativeEmbedTouchEventCToCpp,
+                                              ArkWebNativeEmbedTouchEvent, ark_web_native_embed_touch_event_t> {
 public:
-  ArkWebNativeEmbedTouchEventCToCpp();
-  virtual ~ArkWebNativeEmbedTouchEventCToCpp();
+    ArkWebNativeEmbedTouchEventCToCpp();
+    virtual ~ArkWebNativeEmbedTouchEventCToCpp();
 
-  // ArkWebNativeEmbedTouchEvent methods.
-  float GetX() override;
+    // ArkWebNativeEmbedTouchEvent methods.
+    float GetX() override;
 
-  float GetY() override;
+    float GetY() override;
 
-  int32_t GetId() override;
+    int32_t GetId() override;
 
-  size_t GetType() override;
+    size_t GetType() override;
 
-  float GetOffsetX() override;
+    float GetOffsetX() override;
 
-  float GetOffsetY() override;
+    float GetOffsetY() override;
 
-  float GetScreenX() override;
+    float GetScreenX() override;
 
-  float GetScreenY() override;
+    float GetScreenY() override;
 
-  ArkWebString GetEmbedId() override;
+    ArkWebString GetEmbedId() override;
 
-  ArkWebRefPtr<ArkWebGestureEventResult> GetResult() override;
+    ArkWebRefPtr<ArkWebGestureEventResult> GetResult() override;
 };
 
 } // namespace OHOS::ArkWeb

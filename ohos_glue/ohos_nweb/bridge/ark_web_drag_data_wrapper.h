@@ -24,88 +24,86 @@ namespace OHOS::ArkWeb {
 
 class ArkWebDragDataWrapper : public OHOS::NWeb::NWebDragData {
 public:
-  ArkWebDragDataWrapper(ArkWebRefPtr<ArkWebDragData> ark_web_drag_data);
-  ~ArkWebDragDataWrapper() = default;
+    ArkWebDragDataWrapper(ArkWebRefPtr<ArkWebDragData> ark_web_drag_data);
+    ~ArkWebDragDataWrapper() = default;
 
-  /**
-   * @brief set the image file name that is being dragged.
-   */
-  bool SetFileUri(const std::string &uri) override;
+    /**
+     * @brief set the image file name that is being dragged.
+     */
+    bool SetFileUri(const std::string& uri) override;
 
-  /**
-   * @brief get the link URL that is being dragged.
-   */
-  std::string GetLinkURL() override;
+    /**
+     * @brief get the link URL that is being dragged.
+     */
+    std::string GetLinkURL() override;
 
-  /**
-   * @brief set the link URL that is being dragged.
-   */
-  bool SetLinkURL(const std::string &url) override;
+    /**
+     * @brief set the link URL that is being dragged.
+     */
+    bool SetLinkURL(const std::string& url) override;
 
-  /**
-   * @brief get the title associated with the link that is being dragged.
-   */
-  std::string GetLinkTitle() override;
+    /**
+     * @brief get the title associated with the link that is being dragged.
+     */
+    std::string GetLinkTitle() override;
 
-  /**
-   * @brief set the title associated with the link that is being dragged.
-   */
-  bool SetLinkTitle(const std::string &title) override;
+    /**
+     * @brief set the title associated with the link that is being dragged.
+     */
+    bool SetLinkTitle(const std::string& title) override;
 
-  /**
-   * @brief get the plain text that is being dragged.
-   */
-  std::string GetFragmentText() override;
+    /**
+     * @brief get the plain text that is being dragged.
+     */
+    std::string GetFragmentText() override;
 
-  /**
-   * @brief set the plain text that is being dragged.
-   */
-  bool SetFragmentText(const std::string &text) override;
+    /**
+     * @brief set the plain text that is being dragged.
+     */
+    bool SetFragmentText(const std::string& text) override;
 
-  /**
-   * @brief get the text/html fragment that is being dragged.
-   */
-  std::string GetFragmentHtml() override;
+    /**
+     * @brief get the text/html fragment that is being dragged.
+     */
+    std::string GetFragmentHtml() override;
 
-  /**
-   * @brief set the text/html fragment that is being dragged.
-   */
-  bool SetFragmentHtml(const std::string &html) override;
+    /**
+     * @brief set the text/html fragment that is being dragged.
+     */
+    bool SetFragmentHtml(const std::string& html) override;
 
-  /**
-   * @brief get the image file name that is being dragged.
-   */
-  std::string GetImageFileName() override;
+    /**
+     * @brief get the image file name that is being dragged.
+     */
+    std::string GetImageFileName() override;
 
-  /**
-   * @brief get the image representation data that is beging dragged.
-   */
-  bool GetPixelMapSetting(const void **data, size_t &len, int &width,
-                          int &height) override;
+    /**
+     * @brief get the image representation data that is beging dragged.
+     */
+    bool GetPixelMapSetting(const void** data, size_t& len, int& width, int& height) override;
 
-  /**
-   * @brief set the image representation data that is beging dragged.
-   */
-  bool SetPixelMapSetting(const void *data, size_t len, int width,
-                          int height) override;
+    /**
+     * @brief set the image representation data that is beging dragged.
+     */
+    bool SetPixelMapSetting(const void* data, size_t len, int width, int height) override;
 
-  /**
-   * @brief clear the exist image file names.
-   */
-  void ClearImageFileNames() override;
+    /**
+     * @brief clear the exist image file names.
+     */
+    void ClearImageFileNames() override;
 
-  /**
-   * @brief is single image that is being dragged.
-   */
-  bool IsSingleImageContent() override;
+    /**
+     * @brief is single image that is being dragged.
+     */
+    bool IsSingleImageContent() override;
 
-  /**
-   * @brief get the positon point that is beging dragged.
-   */
-  void GetDragStartPosition(int &x, int &y) override;
+    /**
+     * @brief get the positon point that is beging dragged.
+     */
+    void GetDragStartPosition(int& x, int& y) override;
 
 private:
-  ArkWebRefPtr<ArkWebDragData> ark_web_drag_data_;
+    ArkWebRefPtr<ArkWebDragData> ark_web_drag_data_;
 };
 
 } // namespace OHOS::ArkWeb

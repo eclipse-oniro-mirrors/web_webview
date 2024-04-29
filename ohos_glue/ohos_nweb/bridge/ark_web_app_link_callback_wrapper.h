@@ -17,24 +17,24 @@
 #define ARK_WEB_APP_LINK_CALLBACK_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_app_link_callback.h"
 #include "ohos_nweb/include/ark_web_applink_callback.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 class ArkWebAppLinkCallbackWrapper : public OHOS::NWeb::NWebAppLinkCallback {
 public:
-  ArkWebAppLinkCallbackWrapper(
-      ArkWebRefPtr<ArkWebAppLinkCallback> ark_web_app_link_callback);
-  ~ArkWebAppLinkCallbackWrapper() = default;
+    ArkWebAppLinkCallbackWrapper(ArkWebRefPtr<ArkWebAppLinkCallback> ark_web_app_link_callback);
+    ~ArkWebAppLinkCallbackWrapper() = default;
 
-  void ContinueLoad() override;
+    void ContinueLoad() override;
 
-  void CancelLoad() override;
+    void CancelLoad() override;
 
 private:
-  ArkWebRefPtr<ArkWebAppLinkCallback> ark_web_app_link_callback_;
+    ArkWebRefPtr<ArkWebAppLinkCallback> ark_web_app_link_callback_;
 };
 
 } // namespace OHOS::ArkWeb

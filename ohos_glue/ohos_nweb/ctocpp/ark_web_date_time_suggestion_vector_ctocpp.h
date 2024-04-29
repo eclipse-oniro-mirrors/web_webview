@@ -23,8 +23,7 @@
 namespace OHOS::ArkWeb {
 
 std::vector<std::shared_ptr<OHOS::NWeb::NWebDateTimeSuggestion>>
-    ARK_WEB_CALLBACK ArkWebDateTimeSuggestionVectorStructToClass(
-        const ArkWebDateTimeSuggestionVector &struct_value);
+    ARK_WEB_CALLBACK ArkWebDateTimeSuggestionVectorStructToClass(const ArkWebDateTimeSuggestionVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

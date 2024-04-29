@@ -17,21 +17,20 @@
 #define ARK_OHOS_ADAPTER_HELPER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_ohos_adapter_helper_capi.h"
 #include "ohos_adapter/include/ark_ohos_adapter_helper.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkOhosAdapterHelperCppToC
-    : public ArkWebCppToCRefCounted<ArkOhosAdapterHelperCppToC,
-                                    ArkOhosAdapterHelper,
-                                    ark_ohos_adapter_helper_t> {
+    : public ArkWebCppToCRefCounted<ArkOhosAdapterHelperCppToC, ArkOhosAdapterHelper, ark_ohos_adapter_helper_t> {
 public:
-  ArkOhosAdapterHelperCppToC();
-  virtual ~ArkOhosAdapterHelperCppToC();
+    ArkOhosAdapterHelperCppToC();
+    virtual ~ArkOhosAdapterHelperCppToC();
 };
 
 } // namespace OHOS::ArkWeb

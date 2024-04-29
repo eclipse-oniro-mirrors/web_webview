@@ -23,11 +23,9 @@
 namespace OHOS::ArkWeb {
 
 std::vector<std::shared_ptr<OHOS::NWeb::NWebSelectPopupMenuItem>>
-    ARK_WEB_CALLBACK ArkWebSelectPopupMenuItemVectorStructToClass(
-        const ArkWebSelectPopupMenuItemVector &struct_value);
+    ARK_WEB_CALLBACK ArkWebSelectPopupMenuItemVectorStructToClass(const ArkWebSelectPopupMenuItemVector& struct_value);
 
-void ArkWebSelectPopupMenuItemVectorStructRelease(
-    ArkWebSelectPopupMenuItemVector &struct_value);
+void ArkWebSelectPopupMenuItemVectorStructRelease(ArkWebSelectPopupMenuItemVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

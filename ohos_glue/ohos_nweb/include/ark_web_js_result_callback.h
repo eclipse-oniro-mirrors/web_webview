@@ -17,65 +17,57 @@
 #define ARK_WEB_JS_RESULT_CALLBACK_H_
 #pragma once
 
-#include "base/include/ark_web_base_ref_counted.h"
-#include "base/include/ark_web_types.h"
 #include "ohos_nweb/include/ark_web_value.h"
 #include "ohos_nweb/include/ark_web_value_vector.h"
+
+#include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkWebJsResultCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebValue GetJavaScriptResult(ArkWebValueVector args,
-                                          const ArkWebString &method,
-                                          const ArkWebString &object_name,
-                                          int32_t routing_id,
-                                          int32_t object_id) = 0;
+    /*--ark web()--*/
+    virtual ArkWebValue GetJavaScriptResult(ArkWebValueVector args, const ArkWebString& method,
+        const ArkWebString& object_name, int32_t routing_id, int32_t object_id) = 0;
 
-  /**
-   * @brief GetJavaScriptObjectMethods
-   *
-   * @param object_id: means the JavaScript object id
-   * @param object_id: means the method name
-   */
-  /*--ark web()--*/
-  virtual bool HasJavaScriptObjectMethods(int32_t object_id,
-                                          const ArkWebString &method_name) = 0;
+    /**
+     * @brief GetJavaScriptObjectMethods
+     *
+     * @param object_id: means the JavaScript object id
+     * @param object_id: means the method name
+     */
+    /*--ark web()--*/
+    virtual bool HasJavaScriptObjectMethods(int32_t object_id, const ArkWebString& method_name) = 0;
 
-  /**
-   * @brief GetJavaScriptObjectMethods
-   *
-   * @param object_id: means the JavaScript object id
-   */
-  /*--ark web()--*/
-  virtual ArkWebValue GetJavaScriptObjectMethods(int32_t object_id) = 0;
+    /**
+     * @brief GetJavaScriptObjectMethods
+     *
+     * @param object_id: means the JavaScript object id
+     */
+    /*--ark web()--*/
+    virtual ArkWebValue GetJavaScriptObjectMethods(int32_t object_id) = 0;
 
-  /**
-   * @brief RemoveJavaScriptObjectHolder
-   *
-   * @param holder: means the JavaScript object is holded by
-   * it(routing_id)
-   * @param object_id: means the JavaScript object id
-   */
-  /*--ark web()--*/
-  virtual void RemoveJavaScriptObjectHolder(int32_t holder,
-                                            int32_t object_id) = 0;
+    /**
+     * @brief RemoveJavaScriptObjectHolder
+     *
+     * @param holder: means the JavaScript object is holded by
+     * it(routing_id)
+     * @param object_id: means the JavaScript object id
+     */
+    /*--ark web()--*/
+    virtual void RemoveJavaScriptObjectHolder(int32_t holder, int32_t object_id) = 0;
 
-  /**
-   * @brief Remove Transient JavaScript Object
-   */
-  /*--ark web()--*/
-  virtual void RemoveTransientJavaScriptObject() = 0;
+    /**
+     * @brief Remove Transient JavaScript Object
+     */
+    /*--ark web()--*/
+    virtual void RemoveTransientJavaScriptObject() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebValue GetJavaScriptResultFlowbuf(ArkWebValueVector args,
-                                          const ArkWebString &method,
-                                          const ArkWebString &object_name,
-                                          int fd,
-                                          int32_t routing_id,
-                                          int32_t object_id) = 0;
+    /*--ark web()--*/
+    virtual ArkWebValue GetJavaScriptResultFlowbuf(ArkWebValueVector args, const ArkWebString& method,
+        const ArkWebString& object_name, int fd, int32_t routing_id, int32_t object_id) = 0;
 };
 
 } // namespace OHOS::ArkWeb

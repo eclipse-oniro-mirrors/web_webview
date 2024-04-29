@@ -24,16 +24,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_js_ssl_error_result_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *handle_cancel)(
-      struct _ark_web_js_ssl_error_result_t *self);
+    void(ARK_WEB_CALLBACK* handle_cancel)(struct _ark_web_js_ssl_error_result_t* self);
 
-  void(ARK_WEB_CALLBACK *handle_confirm)(
-      struct _ark_web_js_ssl_error_result_t *self);
+    void(ARK_WEB_CALLBACK* handle_confirm)(struct _ark_web_js_ssl_error_result_t* self);
 } ark_web_js_ssl_error_result_t;
 
 #ifdef __cplusplus

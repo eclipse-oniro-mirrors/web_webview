@@ -25,57 +25,42 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_drag_data_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *set_file_uri)(struct _ark_web_drag_data_t *self,
-                                       const ArkWebString *uri);
+    bool(ARK_WEB_CALLBACK* set_file_uri)(struct _ark_web_drag_data_t* self, const ArkWebString* uri);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_link_url)(
-      struct _ark_web_drag_data_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_link_url)(struct _ark_web_drag_data_t* self);
 
-  bool(ARK_WEB_CALLBACK *set_link_url)(struct _ark_web_drag_data_t *self,
-                                       const ArkWebString *url);
+    bool(ARK_WEB_CALLBACK* set_link_url)(struct _ark_web_drag_data_t* self, const ArkWebString* url);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_link_title)(
-      struct _ark_web_drag_data_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_link_title)(struct _ark_web_drag_data_t* self);
 
-  bool(ARK_WEB_CALLBACK *set_link_title)(struct _ark_web_drag_data_t *self,
-                                         const ArkWebString *title);
+    bool(ARK_WEB_CALLBACK* set_link_title)(struct _ark_web_drag_data_t* self, const ArkWebString* title);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_fragment_text)(
-      struct _ark_web_drag_data_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_fragment_text)(struct _ark_web_drag_data_t* self);
 
-  bool(ARK_WEB_CALLBACK *set_fragment_text)(struct _ark_web_drag_data_t *self,
-                                            const ArkWebString *text);
+    bool(ARK_WEB_CALLBACK* set_fragment_text)(struct _ark_web_drag_data_t* self, const ArkWebString* text);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_fragment_html)(
-      struct _ark_web_drag_data_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_fragment_html)(struct _ark_web_drag_data_t* self);
 
-  bool(ARK_WEB_CALLBACK *set_fragment_html)(struct _ark_web_drag_data_t *self,
-                                            const ArkWebString *html);
+    bool(ARK_WEB_CALLBACK* set_fragment_html)(struct _ark_web_drag_data_t* self, const ArkWebString* html);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_image_file_name)(
-      struct _ark_web_drag_data_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_image_file_name)(struct _ark_web_drag_data_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_pixel_map_setting)(
-      struct _ark_web_drag_data_t *self, const void **data, size_t *len,
-      int *width, int *height);
+    bool(ARK_WEB_CALLBACK* get_pixel_map_setting)(
+        struct _ark_web_drag_data_t* self, const void** data, size_t* len, int* width, int* height);
 
-  bool(ARK_WEB_CALLBACK *set_pixel_map_setting)(
-      struct _ark_web_drag_data_t *self, const void *data, size_t len,
-      int width, int height);
+    bool(ARK_WEB_CALLBACK* set_pixel_map_setting)(
+        struct _ark_web_drag_data_t* self, const void* data, size_t len, int width, int height);
 
-  void(ARK_WEB_CALLBACK *clear_image_file_names)(
-      struct _ark_web_drag_data_t *self);
+    void(ARK_WEB_CALLBACK* clear_image_file_names)(struct _ark_web_drag_data_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_single_image_content)(
-      struct _ark_web_drag_data_t *self);
+    bool(ARK_WEB_CALLBACK* is_single_image_content)(struct _ark_web_drag_data_t* self);
 
-  void(ARK_WEB_CALLBACK *get_drag_start_position)(
-      struct _ark_web_drag_data_t *self, int *x, int *y);
+    void(ARK_WEB_CALLBACK* get_drag_start_position)(struct _ark_web_drag_data_t* self, int* x, int* y);
 } ark_web_drag_data_t;
 
 #ifdef __cplusplus

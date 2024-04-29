@@ -25,28 +25,24 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_largest_contentful_paint_details_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int64_t(ARK_WEB_CALLBACK *get_navigation_start_time)(
-      struct _ark_web_largest_contentful_paint_details_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_navigation_start_time)(struct _ark_web_largest_contentful_paint_details_t* self);
 
-  int64_t(ARK_WEB_CALLBACK *get_largest_image_paint_time)(
-      struct _ark_web_largest_contentful_paint_details_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_largest_image_paint_time)(struct _ark_web_largest_contentful_paint_details_t* self);
 
-  int64_t(ARK_WEB_CALLBACK *get_largest_text_paint_time)(
-      struct _ark_web_largest_contentful_paint_details_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_largest_text_paint_time)(struct _ark_web_largest_contentful_paint_details_t* self);
 
-  int64_t(ARK_WEB_CALLBACK *get_largest_image_load_start_time)(
-      struct _ark_web_largest_contentful_paint_details_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_largest_image_load_start_time)(
+        struct _ark_web_largest_contentful_paint_details_t* self);
 
-  int64_t(ARK_WEB_CALLBACK *get_largest_image_load_end_time)(
-      struct _ark_web_largest_contentful_paint_details_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_largest_image_load_end_time)(
+        struct _ark_web_largest_contentful_paint_details_t* self);
 
-  double_t(ARK_WEB_CALLBACK *get_image_bpp)(
-      struct _ark_web_largest_contentful_paint_details_t *self);
+    double_t(ARK_WEB_CALLBACK* get_image_bpp)(struct _ark_web_largest_contentful_paint_details_t* self);
 } ark_web_largest_contentful_paint_details_t;
 
 #ifdef __cplusplus

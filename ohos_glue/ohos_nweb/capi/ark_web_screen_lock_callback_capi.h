@@ -24,13 +24,12 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_screen_lock_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *handle)(struct _ark_web_screen_lock_callback_t *self,
-                                 bool key);
+    void(ARK_WEB_CALLBACK* handle)(struct _ark_web_screen_lock_callback_t* self, bool key);
 } ark_web_screen_lock_callback_t;
 
 #ifdef __cplusplus

@@ -25,14 +25,13 @@ extern "C" {
 #endif
 
 typedef struct _ark_access_token_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *verify_access_token)(
-      struct _ark_access_token_adapter_t *self,
-      const ArkWebString *permissionName);
+    bool(ARK_WEB_CALLBACK* verify_access_token)(
+        struct _ark_access_token_adapter_t* self, const ArkWebString* permissionName);
 } ark_access_token_adapter_t;
 
 #ifdef __cplusplus

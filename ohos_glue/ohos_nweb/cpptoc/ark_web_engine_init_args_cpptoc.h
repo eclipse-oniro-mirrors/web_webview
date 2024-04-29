@@ -17,21 +17,20 @@
 #define ARK_WEB_ENGINE_INIT_ARGS_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_engine_init_args_capi.h"
 #include "ohos_nweb/include/ark_web_engine_init_args.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebEngineInitArgsCppToC
-    : public ArkWebCppToCRefCounted<ArkWebEngineInitArgsCppToC,
-                                    ArkWebEngineInitArgs,
-                                    ark_web_engine_init_args_t> {
+    : public ArkWebCppToCRefCounted<ArkWebEngineInitArgsCppToC, ArkWebEngineInitArgs, ark_web_engine_init_args_t> {
 public:
-  ArkWebEngineInitArgsCppToC();
-  virtual ~ArkWebEngineInitArgsCppToC();
+    ArkWebEngineInitArgsCppToC();
+    virtual ~ArkWebEngineInitArgsCppToC();
 };
 
 } // namespace OHOS::ArkWeb
