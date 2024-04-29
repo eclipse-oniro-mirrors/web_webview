@@ -31,10 +31,6 @@ public:
 
     ArkWebStringMap GetResponseHeaders() override;
 
-    bool IsModule() override;
-
-    bool IsTopLevel() override;
-
 private:
     std::shared_ptr<OHOS::NWeb::CacheOptions> cacheOptions_;
 };

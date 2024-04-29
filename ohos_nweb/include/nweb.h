@@ -204,8 +204,6 @@ class OHOS_NWEB_EXPORT CacheOptions {
     virtual ~CacheOptions() = default;
 
     virtual std::map<std::string, std::string> GetResponseHeaders() = 0;
-    virtual bool IsModule() = 0;
-    virtual bool IsTopLevel() = 0;
 };
 
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
