@@ -60,8 +60,7 @@ int32_t NetConnClient::GetNetCapabilities(const NetHandle &nethamdle, NetAllCapa
     netAllCap.bearerTypes_.insert(NetBearType::BEARER_CELLULAR);
     return g_getNetCap;
 }
-int32_t NetConnClient::GetConnectionProperties(const NetHandle &nethandle, NetLinkInfo &netLinkInfo)
-{
+int32_t NetConnClient::GetConnectionProperties(const NetHandle &nethandle, NetLinkInfo &netLinkInfo) {
     if (g_getNetProp != 0) {
         return g_getNetProp;
     }
