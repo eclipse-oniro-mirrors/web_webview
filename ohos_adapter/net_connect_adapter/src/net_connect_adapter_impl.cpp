@@ -114,8 +114,7 @@ int32_t NetConnectAdapterImpl::GetDefaultNetConnect(NetConnectType &type, NetCon
     return 0;
 }
 
-std::vector<std::string> NetConnectAdapterImpl::GetDnsServers()
-{
+std::vector<std::string> NetConnectAdapterImpl::GetDnsServers() {
     std::vector<std::string> servers;
     NetHandle netHandle;
     int32_t ret = NetConnClient::GetInstance().GetDefaultNet(netHandle);
@@ -136,7 +135,7 @@ std::vector<std::string> NetConnectAdapterImpl::GetDnsServers()
     for (const auto &dns : info.dnsList_) {
         servers.emplace_back(dns.address_);
     }
-    WVLOG_I("get dns servers success, net id = %{public}d, servers size = %{public}lu.",
+    WVLOG_I("get dns servers success, net id = %{public}d, servers size = %{public}d.",
         netHandle.GetNetId(), servers.size());
     return servers;
 }
