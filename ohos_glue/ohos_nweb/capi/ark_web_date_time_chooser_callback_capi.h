@@ -17,22 +17,22 @@
 #define ARK_WEB_DATE_TIME_CHOOSER_CALLBACK_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_date_time_chooser_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *continue0)(
-      struct _ark_web_date_time_chooser_callback_t *self, bool success,
-      const ArkWebDateTime *value);
+    void(ARK_WEB_CALLBACK* continue0)(
+        struct _ark_web_date_time_chooser_callback_t* self, bool success, const ArkWebDateTime* value);
 } ark_web_date_time_chooser_callback_t;
 
 #ifdef __cplusplus

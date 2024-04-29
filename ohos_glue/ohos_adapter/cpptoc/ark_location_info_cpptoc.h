@@ -17,20 +17,20 @@
 #define ARK_LOCATION_INFO_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_location_adapter_capi.h"
 #include "ohos_adapter/include/ark_location_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkLocationInfoCppToC
-    : public ArkWebCppToCRefCounted<ArkLocationInfoCppToC, ArkLocationInfo,
-                                    ark_location_info_t> {
+    : public ArkWebCppToCRefCounted<ArkLocationInfoCppToC, ArkLocationInfo, ark_location_info_t> {
 public:
-  ArkLocationInfoCppToC();
-  virtual ~ArkLocationInfoCppToC();
+    ArkLocationInfoCppToC();
+    virtual ~ArkLocationInfoCppToC();
 };
 
 } // namespace OHOS::ArkWeb

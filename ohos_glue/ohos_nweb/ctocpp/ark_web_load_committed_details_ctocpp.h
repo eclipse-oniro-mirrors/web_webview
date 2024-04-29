@@ -17,32 +17,31 @@
 #define ARK_WEB_LOAD_COMMITTED_DETAILS_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_load_committed_details_capi.h"
 #include "ohos_nweb/include/ark_web_load_committed_details.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebLoadCommittedDetailsCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebLoadCommittedDetailsCToCpp,
-                                    ArkWebLoadCommittedDetails,
-                                    ark_web_load_committed_details_t> {
+class ArkWebLoadCommittedDetailsCToCpp : public ArkWebCToCppRefCounted<ArkWebLoadCommittedDetailsCToCpp,
+                                             ArkWebLoadCommittedDetails, ark_web_load_committed_details_t> {
 public:
-  ArkWebLoadCommittedDetailsCToCpp();
-  virtual ~ArkWebLoadCommittedDetailsCToCpp();
+    ArkWebLoadCommittedDetailsCToCpp();
+    virtual ~ArkWebLoadCommittedDetailsCToCpp();
 
-  // ArkWebLoadCommittedDetails methods.
-  bool IsMainFrame() override;
+    // ArkWebLoadCommittedDetails methods.
+    bool IsMainFrame() override;
 
-  bool IsSameDocument() override;
+    bool IsSameDocument() override;
 
-  bool DidReplaceEntry() override;
+    bool DidReplaceEntry() override;
 
-  int GetNavigationType() override;
+    int GetNavigationType() override;
 
-  ArkWebString GetURL() override;
+    ArkWebString GetURL() override;
 };
 
 } // namespace OHOS::ArkWeb

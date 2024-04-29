@@ -15,9 +15,7 @@
 
 #ifndef ARK_RES_SCHED_CLIENT_ADAPTER_H
 #define ARK_RES_SCHED_CLIENT_ADAPTER_H
-
-#include <cstdint>
-#include <unistd.h>
+#pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
 
@@ -26,48 +24,40 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkResSchedClientAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkResSchedClientAdapter() = default;
+    /*--ark web()--*/
+    static bool ReportKeyThread(int32_t statusAdapter, pid_t pid, pid_t tid, int32_t roleAdapter);
 
-  /*--ark web()--*/
-  virtual ~ArkResSchedClientAdapter() = default;
+    /*--ark web()--*/
+    static bool ReportWindowStatus(int32_t statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId);
 
-  /*--ark web()--*/
-  static bool ReportKeyThread(int32_t statusAdapter, pid_t pid, pid_t tid,
-                              int32_t roleAdapter);
+    /*--ark web()--*/
+    static bool ReportScene(int32_t statusAdapter, int32_t sceneAdapter, int32_t nwebId);
 
-  /*--ark web()--*/
-  static bool ReportWindowStatus(int32_t statusAdapter, pid_t pid,
-                                 uint32_t windowId, int32_t nwebId);
+    /*--ark web()--*/
+    static bool ReportAudioData(int32_t statusAdapter, pid_t pid, pid_t tid);
 
-  /*--ark web()--*/
-  static bool ReportScene(int32_t statusAdapter, int32_t sceneAdapter,
-                          int32_t nwebId);
+    /*--ark web()--*/
+    static void ReportWindowId(int32_t windowId, int32_t nwebId);
 
-  /*--ark web()--*/
-  static bool ReportAudioData(int32_t statusAdapter, pid_t pid, pid_t tid);
+    /*--ark web()--*/
+    static void ReportNWebInit(int32_t statusAdapter, int32_t nweb_id);
 
-  /*--ark web()--*/
-  static void ReportWindowId(int32_t windowId, int32_t nwebId);
+    /*--ark web()--*/
+    static void ReportRenderProcessStatus(int32_t statusAdapter, pid_t pid);
 
-  /*--ark web()--*/
-  static void ReportNWebInit(int32_t statusAdapter, int32_t nweb_id);
+    /*--ark web()--*/
+    static bool ReportScreenCapture(int32_t statusAdapter, pid_t pid);
 
-  /*--ark web()--*/
-  static void ReportRenderProcessStatus(int32_t statusAdapter, pid_t pid);
+    /*--ark web()--*/
+    static bool ReportVideoPlaying(int32_t statusAdapter, pid_t pid);
 
-  /*--ark web()--*/
-  static bool ReportScreenCapture(int32_t statusAdapter, pid_t pid);
+    /*--ark web()--*/
+    static void ReportProcessInUse(pid_t pid);
 
-  /*--ark web()--*/
-  static bool ReportVideoPlaying(int32_t statusAdapter, pid_t pid);
-
-  /*--ark web()--*/
-  static void ReportProcessInUse(pid_t pid);
-
-  /*--ark web()--*/
-  static void ReportSiteIsolationMode(bool mode);
+    /*--ark web()--*/
+    static void ReportSiteIsolationMode(bool mode);
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_RES_SCHED_CLIENT_ADAPTER_H

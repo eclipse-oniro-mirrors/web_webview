@@ -24,16 +24,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_screen_capture_config_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_mode)(
-      struct _ark_web_screen_capture_config_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_mode)(struct _ark_web_screen_capture_config_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_source_id)(
-      struct _ark_web_screen_capture_config_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_source_id)(struct _ark_web_screen_capture_config_t* self);
 } ark_web_screen_capture_config_t;
 
 #ifdef __cplusplus

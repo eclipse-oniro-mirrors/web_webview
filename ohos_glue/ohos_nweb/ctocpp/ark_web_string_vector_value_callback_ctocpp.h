@@ -17,24 +17,24 @@
 #define ARK_WEB_STRING_VECTOR_VALUE_CALLBACK_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_string_vector_value_callback_capi.h"
 #include "ohos_nweb/include/ark_web_string_vector_value_callback.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebStringVectorValueCallbackCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebStringVectorValueCallbackCToCpp,
-                                    ArkWebStringVectorValueCallback,
-                                    ark_web_string_vector_value_callback_t> {
+    : public ArkWebCToCppRefCounted<ArkWebStringVectorValueCallbackCToCpp, ArkWebStringVectorValueCallback,
+          ark_web_string_vector_value_callback_t> {
 public:
-  ArkWebStringVectorValueCallbackCToCpp();
-  virtual ~ArkWebStringVectorValueCallbackCToCpp();
+    ArkWebStringVectorValueCallbackCToCpp();
+    virtual ~ArkWebStringVectorValueCallbackCToCpp();
 
-  // ArkWebStringVectorValueCallback methods.
-  void OnReceiveValue(const ArkWebStringVector &value) override;
+    // ArkWebStringVectorValueCallback methods.
+    void OnReceiveValue(const ArkWebStringVector& value) override;
 };
 
 } // namespace OHOS::ArkWeb

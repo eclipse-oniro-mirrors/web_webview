@@ -17,26 +17,25 @@
 #define ARK_WEB_APP_LINK_CALLBACK_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_applink_callback_capi.h"
 #include "ohos_nweb/include/ark_web_applink_callback.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebAppLinkCallbackCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebAppLinkCallbackCToCpp,
-                                    ArkWebAppLinkCallback,
-                                    ark_web_app_link_callback_t> {
+    : public ArkWebCToCppRefCounted<ArkWebAppLinkCallbackCToCpp, ArkWebAppLinkCallback, ark_web_app_link_callback_t> {
 public:
-  ArkWebAppLinkCallbackCToCpp();
-  virtual ~ArkWebAppLinkCallbackCToCpp();
+    ArkWebAppLinkCallbackCToCpp();
+    virtual ~ArkWebAppLinkCallbackCToCpp();
 
-  // ArkWebAppLinkCallback methods.
-  void ContinueLoad() override;
+    // ArkWebAppLinkCallback methods.
+    void ContinueLoad() override;
 
-  void CancelLoad() override;
+    void CancelLoad() override;
 };
 
 } // namespace OHOS::ArkWeb

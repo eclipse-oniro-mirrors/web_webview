@@ -25,65 +25,55 @@ extern "C" {
 #endif
 
 typedef struct _ark_display_listener_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_create)(
-      struct _ark_display_listener_adapter_t *self, uint64_t displayId);
+    void(ARK_WEB_CALLBACK* on_create)(struct _ark_display_listener_adapter_t* self, uint64_t displayId);
 
-  void(ARK_WEB_CALLBACK *on_destroy)(
-      struct _ark_display_listener_adapter_t *self, uint64_t displayId);
+    void(ARK_WEB_CALLBACK* on_destroy)(struct _ark_display_listener_adapter_t* self, uint64_t displayId);
 
-  void(ARK_WEB_CALLBACK *on_change)(
-      struct _ark_display_listener_adapter_t *self, uint64_t displayId);
+    void(ARK_WEB_CALLBACK* on_change)(struct _ark_display_listener_adapter_t* self, uint64_t displayId);
 } ark_display_listener_adapter_t;
 
 typedef struct _ark_display_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  uint64_t(ARK_WEB_CALLBACK *get_id)(struct _ark_display_adapter_t *self);
+    uint64_t(ARK_WEB_CALLBACK* get_id)(struct _ark_display_adapter_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_width)(struct _ark_display_adapter_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_width)(struct _ark_display_adapter_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_height)(struct _ark_display_adapter_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_height)(struct _ark_display_adapter_t* self);
 
-  float(ARK_WEB_CALLBACK *get_virtual_pixel_ratio)(
-      struct _ark_display_adapter_t *self);
+    float(ARK_WEB_CALLBACK* get_virtual_pixel_ratio)(struct _ark_display_adapter_t* self);
 
-  uint32_t(ARK_WEB_CALLBACK *get_rotation)(struct _ark_display_adapter_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_rotation)(struct _ark_display_adapter_t* self);
 
-  uint32_t(ARK_WEB_CALLBACK *get_orientation)(
-      struct _ark_display_adapter_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_orientation)(struct _ark_display_adapter_t* self);
 
-  int32_t(ARK_WEB_CALLBACK* get_dpi)(struct _ark_display_adapter_t* self);
+    int32_t(ARK_WEB_CALLBACK* get_dpi)(struct _ark_display_adapter_t* self);
 } ark_display_adapter_t;
 
 typedef struct _ark_display_manager_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  uint64_t(ARK_WEB_CALLBACK *get_default_display_id)(
-      struct _ark_display_manager_adapter_t *self);
+    uint64_t(ARK_WEB_CALLBACK* get_default_display_id)(struct _ark_display_manager_adapter_t* self);
 
-  ark_display_adapter_t *(ARK_WEB_CALLBACK *get_default_display)(
-      struct _ark_display_manager_adapter_t *self);
+    ark_display_adapter_t*(ARK_WEB_CALLBACK* get_default_display)(struct _ark_display_manager_adapter_t* self);
 
-  uint32_t(ARK_WEB_CALLBACK *register_display_listener)(
-      struct _ark_display_manager_adapter_t *self,
-      ark_display_listener_adapter_t *listener);
+    uint32_t(ARK_WEB_CALLBACK* register_display_listener)(
+        struct _ark_display_manager_adapter_t* self, ark_display_listener_adapter_t* listener);
 
-  bool(ARK_WEB_CALLBACK *unregister_display_listener)(
-      struct _ark_display_manager_adapter_t *self, uint32_t id);
+    bool(ARK_WEB_CALLBACK* unregister_display_listener)(struct _ark_display_manager_adapter_t* self, uint32_t id);
 
-  bool(ARK_WEB_CALLBACK *is_default_portrait)(
-      struct _ark_display_manager_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* is_default_portrait)(struct _ark_display_manager_adapter_t* self);
 } ark_display_manager_adapter_t;
 
 #ifdef __cplusplus

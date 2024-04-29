@@ -17,22 +17,21 @@
 #define ARK_WEB_WEB_STORAGE_ORIGIN_VECTOR_VALUE_CALLBACK_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_web_storage_origin_vector_value_callback_capi.h"
 #include "ohos_nweb/include/ark_web_web_storage_origin_vector_value_callback.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebWebStorageOriginVectorValueCallbackCppToC
-    : public ArkWebCppToCRefCounted<
-          ArkWebWebStorageOriginVectorValueCallbackCppToC,
-          ArkWebWebStorageOriginVectorValueCallback,
-          ark_web_web_storage_origin_vector_value_callback_t> {
+    : public ArkWebCppToCRefCounted<ArkWebWebStorageOriginVectorValueCallbackCppToC,
+          ArkWebWebStorageOriginVectorValueCallback, ark_web_web_storage_origin_vector_value_callback_t> {
 public:
-  ArkWebWebStorageOriginVectorValueCallbackCppToC();
-  virtual ~ArkWebWebStorageOriginVectorValueCallbackCppToC();
+    ArkWebWebStorageOriginVectorValueCallbackCppToC();
+    virtual ~ArkWebWebStorageOriginVectorValueCallbackCppToC();
 };
 
 } // namespace OHOS::ArkWeb

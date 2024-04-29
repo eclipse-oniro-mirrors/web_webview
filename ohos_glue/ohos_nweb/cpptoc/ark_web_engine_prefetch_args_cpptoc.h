@@ -17,21 +17,20 @@
 #define ARK_WEB_ENGINE_PREFETCH_ARGS_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_engine_prefetch_args_capi.h"
 #include "ohos_nweb/include/ark_web_engine_prefetch_args.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkWebEnginePrefetchArgsCppToC
-    : public ArkWebCppToCRefCounted<ArkWebEnginePrefetchArgsCppToC,
-                                    ArkWebEnginePrefetchArgs,
-                                    ark_web_engine_prefetch_args_t> {
+class ArkWebEnginePrefetchArgsCppToC : public ArkWebCppToCRefCounted<ArkWebEnginePrefetchArgsCppToC,
+                                           ArkWebEnginePrefetchArgs, ark_web_engine_prefetch_args_t> {
 public:
-  ArkWebEnginePrefetchArgsCppToC();
-  virtual ~ArkWebEnginePrefetchArgsCppToC();
+    ArkWebEnginePrefetchArgsCppToC();
+    virtual ~ArkWebEnginePrefetchArgsCppToC();
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,35 +17,34 @@
 #define ARK_WEB_LARGEST_CONTENTFUL_PAINT_DETAILS_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_largest_contentful_paint_details_capi.h"
 #include "ohos_nweb/include/ark_web_largest_contentful_paint_details.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebLargestContentfulPaintDetailsCToCpp
-    : public ArkWebCToCppRefCounted<
-          ArkWebLargestContentfulPaintDetailsCToCpp,
-          ArkWebLargestContentfulPaintDetails,
+    : public ArkWebCToCppRefCounted<ArkWebLargestContentfulPaintDetailsCToCpp, ArkWebLargestContentfulPaintDetails,
           ark_web_largest_contentful_paint_details_t> {
 public:
-  ArkWebLargestContentfulPaintDetailsCToCpp();
-  virtual ~ArkWebLargestContentfulPaintDetailsCToCpp();
+    ArkWebLargestContentfulPaintDetailsCToCpp();
+    virtual ~ArkWebLargestContentfulPaintDetailsCToCpp();
 
-  // ArkWebLargestContentfulPaintDetails methods.
-  int64_t GetNavigationStartTime() override;
+    // ArkWebLargestContentfulPaintDetails methods.
+    int64_t GetNavigationStartTime() override;
 
-  int64_t GetLargestImagePaintTime() override;
+    int64_t GetLargestImagePaintTime() override;
 
-  int64_t GetLargestTextPaintTime() override;
+    int64_t GetLargestTextPaintTime() override;
 
-  int64_t GetLargestImageLoadStartTime() override;
+    int64_t GetLargestImageLoadStartTime() override;
 
-  int64_t GetLargestImageLoadEndTime() override;
+    int64_t GetLargestImageLoadEndTime() override;
 
-  double_t GetImageBPP() override;
+    double_t GetImageBPP() override;
 };
 
 } // namespace OHOS::ArkWeb

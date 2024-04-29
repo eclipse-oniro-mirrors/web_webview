@@ -22,29 +22,24 @@
 
 #define ARK_WEB_CPPTOC_DV_LOG(fmt, ...) ARK_WEB_BASE_DV_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_CPPTOC_REF_LOG(fmt, ...)                                       \
-  ARK_WEB_BASE_REF_LOG(fmt, ##__VA_ARGS__)
+#define ARK_WEB_CPPTOC_REF_LOG(fmt, ...) ARK_WEB_BASE_REF_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_CPPTOC_DEBUG_LOG(fmt, ...)                                     \
-  ARK_WEB_BASE_DEBUG_LOG(fmt, ##__VA_ARGS__)
+#define ARK_WEB_CPPTOC_DEBUG_LOG(fmt, ...) ARK_WEB_BASE_DEBUG_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_CPPTOC_INFO_LOG(fmt, ...)                                      \
-  ARK_WEB_BASE_INFO_LOG(fmt, ##__VA_ARGS__)
+#define ARK_WEB_CPPTOC_INFO_LOG(fmt, ...) ARK_WEB_BASE_INFO_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_CPPTOC_WRAN_LOG(fmt, ...)                                      \
-  ARK_WEB_BASE_WARN_LOG(fmt, ##__VA_ARGS__)
+#define ARK_WEB_CPPTOC_WRAN_LOG(fmt, ...) ARK_WEB_BASE_WARN_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_CPPTOC_ERROR_LOG(fmt, ...)                                     \
-  ARK_WEB_BASE_ERROR_LOG(fmt, ##__VA_ARGS__)
+#define ARK_WEB_CPPTOC_ERROR_LOG(fmt, ...) ARK_WEB_BASE_ERROR_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_CPPTOC_CHECK_PARAM(param, result)                              \
-  {                                                                            \
-    ArkWebSetErrno(RESULT_OK);                                                 \
-    if (!(param)) {                                                            \
-      ArkWebSetErrno(RESULT_CPPTOC_ERROR);                                     \
-      ARK_WEB_CPPTOC_WRAN_LOG("param is null");                                \
-      return result;                                                           \
-    }                                                                          \
-  }
+#define ARK_WEB_CPPTOC_CHECK_PARAM(param, result)     \
+    {                                                 \
+        ArkWebSetErrno(RESULT_OK);                    \
+        if (!(param)) {                               \
+            ArkWebSetErrno(RESULT_CPPTOC_ERROR);      \
+            ARK_WEB_CPPTOC_WRAN_LOG("param is null"); \
+            return result;                            \
+        }                                             \
+    }
 
 #endif // ARK_WEB_CPPTOC_MACROS_H_

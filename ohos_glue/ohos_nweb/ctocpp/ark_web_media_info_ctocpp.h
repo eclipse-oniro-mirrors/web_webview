@@ -17,43 +17,43 @@
 #define ARK_WEB_MEDIA_INFO_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_media_info_capi.h"
 #include "ohos_nweb/include/ark_web_media_info.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebMediaInfoCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebMediaInfoCToCpp, ArkWebMediaInfo,
-                                    ark_web_media_info_t> {
+    : public ArkWebCToCppRefCounted<ArkWebMediaInfoCToCpp, ArkWebMediaInfo, ark_web_media_info_t> {
 public:
-  ArkWebMediaInfoCToCpp();
-  virtual ~ArkWebMediaInfoCToCpp();
+    ArkWebMediaInfoCToCpp();
+    virtual ~ArkWebMediaInfoCToCpp();
 
-  // ArkWebMediaInfo methods.
-  int GetPreload() override;
+    // ArkWebMediaInfo methods.
+    int GetPreload() override;
 
-  bool GetIsMuted() override;
+    bool GetIsMuted() override;
 
-  ArkWebString GetEmbedId() override;
+    ArkWebString GetEmbedId() override;
 
-  ArkWebString GetPosterUrl() override;
+    ArkWebString GetPosterUrl() override;
 
-  int GetMediaType() override;
+    int GetMediaType() override;
 
-  bool GetIsControlsShown() override;
+    bool GetIsControlsShown() override;
 
-  ArkWebStringVector GetControls() override;
+    ArkWebStringVector GetControls() override;
 
-  ArkWebStringMap GetHeaders() override;
+    ArkWebStringMap GetHeaders() override;
 
-  ArkWebStringMap GetAttributes() override;
+    ArkWebStringMap GetAttributes() override;
 
-  ArkWebMediaSourceInfoVector GetSourceInfos() override;
+    ArkWebMediaSourceInfoVector GetSourceInfos() override;
 
-  ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo> GetSurfaceInfo() override;
+    ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo> GetSurfaceInfo() override;
 };
 
 } // namespace OHOS::ArkWeb

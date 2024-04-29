@@ -17,27 +17,25 @@
 #define ARK_WEB_HISTORY_LIST_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/capi/ark_web_history_item_capi.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_history_list_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ark_web_history_item_t *(ARK_WEB_CALLBACK *get_item)(
-      struct _ark_web_history_list_t *self, int32_t index);
+    ark_web_history_item_t*(ARK_WEB_CALLBACK* get_item)(struct _ark_web_history_list_t* self, int32_t index);
 
-  int32_t(ARK_WEB_CALLBACK *get_list_size)(
-      struct _ark_web_history_list_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_list_size)(struct _ark_web_history_list_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_current_index)(
-      struct _ark_web_history_list_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_current_index)(struct _ark_web_history_list_t* self);
 } ark_web_history_list_t;
 
 #ifdef __cplusplus

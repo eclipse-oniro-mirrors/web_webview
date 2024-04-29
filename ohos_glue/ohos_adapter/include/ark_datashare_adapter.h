@@ -15,10 +15,7 @@
 
 #ifndef ARK_DATASHARE_ADAPTER_H
 #define ARK_DATASHARE_ADAPTER_H
-
 #pragma once
-
-#include <cstdint>
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -28,20 +25,14 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkDatashareAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkDatashareAdapter() = default;
+    /*--ark web()--*/
+    virtual int OpenDataShareUriForRead(const ArkWebString& uriStr) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkDatashareAdapter() = default;
+    /*--ark web()--*/
+    virtual ArkWebString GetFileDisplayName(const ArkWebString& uriStr) = 0;
 
-  /*--ark web()--*/
-  virtual int OpenDataShareUriForRead(const ArkWebString &uriStr) = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebString GetFileDisplayName(const ArkWebString &uriStr) = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebString GetRealPath(const ArkWebString &uriStr) = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetRealPath(const ArkWebString& uriStr) = 0;
 };
 
 } // namespace OHOS::ArkWeb

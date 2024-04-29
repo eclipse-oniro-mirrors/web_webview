@@ -24,11 +24,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebKeyEvent : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetAction() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetAction() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetKeyCode() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetKeyCode() = 0;
 };
 
 } // namespace OHOS::ArkWeb

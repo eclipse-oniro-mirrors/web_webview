@@ -17,14 +17,15 @@
 #define ARK_WEB_WEB_STORAGE_ORIGIN_VECTOR_H_
 #pragma once
 
-#include "base/include/ark_web_memory.h"
 #include "ohos_nweb/capi/ark_web_web_storage_origin_capi.h"
 
-typedef struct {
-  int size;
-  ark_web_web_storage_origin_t **value;
+#include "base/include/ark_web_memory.h"
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+typedef struct {
+    int size;
+    ark_web_web_storage_origin_t** value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebWebStorageOriginVector;
 
 const ArkWebWebStorageOriginVector ark_web_web_storage_origin_vector_default = {

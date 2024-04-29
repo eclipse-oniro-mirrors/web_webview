@@ -24,15 +24,13 @@ extern "C" {
 #endif
 
 typedef struct _ark_background_task_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 } ark_background_task_adapter_t;
 
-ARK_WEB_EXPORT bool
-ark_background_task_adapter_request_background_running(bool running,
-                                                       int32_t bgMode);
+ARK_WEB_EXPORT bool ark_background_task_adapter_request_background_running(bool running, int32_t bgMode);
 
 #ifdef __cplusplus
 }

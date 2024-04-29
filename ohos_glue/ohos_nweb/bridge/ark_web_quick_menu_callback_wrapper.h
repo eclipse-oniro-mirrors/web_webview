@@ -17,27 +17,26 @@
 #define ARK_WEB_QUICK_MENU_CALLBACK_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_context_menu_params.h"
 #include "ohos_nweb/include/ark_web_quick_menu_callback.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 using ArkWebMenuEventFlags = OHOS::NWeb::MenuEventFlags;
 
-class ArkWebQuickMenuCallbackWrapper
-    : public OHOS::NWeb::NWebQuickMenuCallback {
+class ArkWebQuickMenuCallbackWrapper : public OHOS::NWeb::NWebQuickMenuCallback {
 public:
-  ArkWebQuickMenuCallbackWrapper(
-      ArkWebRefPtr<ArkWebQuickMenuCallback> ark_web_quick_menu_callback);
-  ~ArkWebQuickMenuCallbackWrapper() = default;
+    ArkWebQuickMenuCallbackWrapper(ArkWebRefPtr<ArkWebQuickMenuCallback> ark_web_quick_menu_callback);
+    ~ArkWebQuickMenuCallbackWrapper() = default;
 
-  void Cancel() override;
+    void Cancel() override;
 
-  void Continue(int32_t command_id, ArkWebMenuEventFlags flag) override;
+    void Continue(int32_t command_id, ArkWebMenuEventFlags flag) override;
 
 private:
-  ArkWebRefPtr<ArkWebQuickMenuCallback> ark_web_quick_menu_callback_;
+    ArkWebRefPtr<ArkWebQuickMenuCallback> ark_web_quick_menu_callback_;
 };
 
 } // namespace OHOS::ArkWeb

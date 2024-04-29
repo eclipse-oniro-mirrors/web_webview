@@ -25,26 +25,22 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_web_storage_origin_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  long(ARK_WEB_CALLBACK *get_quota)(struct _ark_web_web_storage_origin_t *self);
+    long(ARK_WEB_CALLBACK* get_quota)(struct _ark_web_web_storage_origin_t* self);
 
-  void(ARK_WEB_CALLBACK *set_quota)(struct _ark_web_web_storage_origin_t *self,
-                                    long quota);
+    void(ARK_WEB_CALLBACK* set_quota)(struct _ark_web_web_storage_origin_t* self, long quota);
 
-  long(ARK_WEB_CALLBACK *get_usage)(struct _ark_web_web_storage_origin_t *self);
+    long(ARK_WEB_CALLBACK* get_usage)(struct _ark_web_web_storage_origin_t* self);
 
-  void(ARK_WEB_CALLBACK *set_usage)(struct _ark_web_web_storage_origin_t *self,
-                                    long usage);
+    void(ARK_WEB_CALLBACK* set_usage)(struct _ark_web_web_storage_origin_t* self, long usage);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_origin)(
-      struct _ark_web_web_storage_origin_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_origin)(struct _ark_web_web_storage_origin_t* self);
 
-  void(ARK_WEB_CALLBACK *set_origin)(struct _ark_web_web_storage_origin_t *self,
-                                     const ArkWebString *origin);
+    void(ARK_WEB_CALLBACK* set_origin)(struct _ark_web_web_storage_origin_t* self, const ArkWebString* origin);
 } ark_web_web_storage_origin_t;
 
 #ifdef __cplusplus

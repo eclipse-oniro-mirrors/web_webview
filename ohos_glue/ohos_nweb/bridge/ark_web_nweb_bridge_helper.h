@@ -23,16 +23,16 @@ namespace OHOS::ArkWeb {
 
 class ArkWebNWebBridgeHelper : public ArkWebBridgeHelper {
 public:
-  ~ArkWebNWebBridgeHelper() = default;
+    ~ArkWebNWebBridgeHelper() = default;
 
-  static ArkWebNWebBridgeHelper &GetInstance();
+    static ArkWebNWebBridgeHelper& GetInstance();
 
-  bool Init(bool runMode, const std::string &baseDir) override;
+    bool Init(bool runMode, const std::string& baseDir);
 
 private:
-  std::string GetDirPath(bool runMode, const std::string &baseDir);
+    std::string GetDirPath(bool runMode, const std::string& baseDir);
 
-  ArkWebNWebBridgeHelper() = default;
+    ArkWebNWebBridgeHelper() = default;
 };
 
 } // namespace OHOS::ArkWeb

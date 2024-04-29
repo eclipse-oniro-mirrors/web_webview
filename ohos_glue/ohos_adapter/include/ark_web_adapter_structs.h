@@ -15,6 +15,7 @@
 
 #ifndef ARK_WEB_ADAPTER_STRUCTS_H
 #define ARK_WEB_ADAPTER_STRUCTS_H
+#pragma once
 
 #include "print_manager_adapter.h"
 

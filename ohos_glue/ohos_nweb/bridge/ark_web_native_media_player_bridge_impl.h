@@ -23,37 +23,35 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebNativeMediaPlayerBridgeImpl : public ArkWebNativeMediaPlayerBridge {
-  IMPLEMENT_REFCOUNTING(ArkWebNativeMediaPlayerBridgeImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebNativeMediaPlayerBridgeImpl);
 
 public:
-  ArkWebNativeMediaPlayerBridgeImpl(
-      std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerBridge>
-          nweb_native_vide_player_bridge);
-  ~ArkWebNativeMediaPlayerBridgeImpl() = default;
+    ArkWebNativeMediaPlayerBridgeImpl(
+        std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerBridge> nweb_native_vide_player_bridge);
+    ~ArkWebNativeMediaPlayerBridgeImpl() = default;
 
-  void UpdateRect(double x, double y, double width, double height) override;
+    void UpdateRect(double x, double y, double width, double height) override;
 
-  void Play() override;
+    void Play() override;
 
-  void Pause() override;
+    void Pause() override;
 
-  void Seek(double time) override;
+    void Seek(double time) override;
 
-  void SetVolume(double volume) override;
+    void SetVolume(double volume) override;
 
-  void SetMuted(bool IsMuted) override;
+    void SetMuted(bool IsMuted) override;
 
-  void SetPlaybackRate(double playbackRate) override;
+    void SetPlaybackRate(double playbackRate) override;
 
-  void Release() override;
+    void Release() override;
 
-  void EnterFullScreen() override;
+    void EnterFullScreen() override;
 
-  void ExitFullScreen() override;
+    void ExitFullScreen() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerBridge>
-      nweb_native_vide_player_bridge_;
+    std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerBridge> nweb_native_vide_player_bridge_;
 };
 
 } // namespace OHOS::ArkWeb

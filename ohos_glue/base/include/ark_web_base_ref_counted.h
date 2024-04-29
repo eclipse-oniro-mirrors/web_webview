@@ -27,36 +27,38 @@ namespace OHOS::ArkWeb {
 ///
 class ArkWebRefCount {
 public:
-  ArkWebRefCount() : ref_count_(0) {
-  }
+    ArkWebRefCount() : ref_count_(0) {}
 
-  ArkWebRefCount(const ArkWebRefCount &) = delete;
-  ArkWebRefCount &operator=(const ArkWebRefCount &) = delete;
+    ArkWebRefCount(const ArkWebRefCount&) = delete;
+    ArkWebRefCount& operator=(const ArkWebRefCount&) = delete;
 
-  /**
-   * @brief The reference count increment 1.
-   */
-  void IncreRef() const {
-    ref_count_.fetch_add(1, std::memory_order_relaxed);
-  }
+    /**
+     * @brief The reference count increment 1.
+     */
+    void IncreRef() const
+    {
+        ref_count_.fetch_add(1, std::memory_order_relaxed);
+    }
 
-  /**
-   * @brief The reference count decrement 1 and returns true if the reference
-   *        count is 0.
-   */
-  bool DecreRef() const {
-    return ref_count_.fetch_sub(1, std::memory_order_acq_rel) == 1;
-  }
+    /**
+     * @brief The reference count decrement 1 and returns true if the reference
+     *        count is 0.
+     */
+    bool DecreRef() const
+    {
+        return ref_count_.fetch_sub(1, std::memory_order_acq_rel) == 1;
+    }
 
-  /**
-   * @brief Returns the reference count.
-   */
-  int GetRefCount() const {
-    return ref_count_.load(std::memory_order_acquire);
-  }
+    /**
+     * @brief Returns the reference count.
+     */
+    int GetRefCount() const
+    {
+        return ref_count_.load(std::memory_order_acquire);
+    }
 
 private:
-  mutable std::atomic_int ref_count_;
+    mutable std::atomic_int ref_count_;
 };
 
 ///
@@ -64,40 +66,41 @@ private:
 ///
 class ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief The reference count increment 1. Should be called for every new copy
-   *        of a pointer to a given object.
-   */
-  virtual void IncreRef() const = 0;
+    /**
+     * @brief The reference count increment 1. Should be called for every new copy
+     *        of a pointer to a given object.
+     */
+    virtual void IncreRef() const = 0;
 
-  /**
-   * @brief The reference count decrement 1 and delete the object when the
-   *        reference count is 0
-   */
-  virtual void DecreRef() const = 0;
+    /**
+     * @brief The reference count decrement 1 and delete the object when the
+     *        reference count is 0
+     */
+    virtual void DecreRef() const = 0;
 
 protected:
-  virtual ~ArkWebBaseRefCounted() {
-  }
+    virtual ~ArkWebBaseRefCounted() {}
 };
 
 ///
 /// Macro that provides a reference counting implementation for classes
 /// extending ArkWebBaseRefCounted.
 ///
-#define IMPLEMENT_REFCOUNTING(ClassName)                                       \
-public:                                                                        \
-  void IncreRef() const override {                                             \
-    ref_count_.IncreRef();                                                     \
-  }                                                                            \
-  void DecreRef() const override {                                             \
-    if (ref_count_.DecreRef()) {                                               \
-      delete static_cast<const ClassName *>(this);                             \
-    }                                                                          \
-  }                                                                            \
-                                                                               \
-private:                                                                       \
-  ArkWebRefCount ref_count_
+#define IMPLEMENT_REFCOUNTING(ClassName)                \
+public:                                                 \
+    void IncreRef() const override                      \
+    {                                                   \
+        ref_count_.IncreRef();                          \
+    }                                                   \
+    void DecreRef() const override                      \
+    {                                                   \
+        if (ref_count_.DecreRef()) {                    \
+            delete static_cast<const ClassName*>(this); \
+        }                                               \
+    }                                                   \
+                                                        \
+private:                                                \
+    ArkWebRefCount ref_count_
 
 } // namespace OHOS::ArkWeb
 

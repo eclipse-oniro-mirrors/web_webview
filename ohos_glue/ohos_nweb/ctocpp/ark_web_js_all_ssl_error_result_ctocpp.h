@@ -19,27 +19,25 @@
 
 #include "ohos_nweb/capi/ark_web_js_all_ssl_error_result_capi.h"
 #include "ohos_nweb/include/ark_web_js_all_ssl_error_result.h"
+
 #include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebJsAllSslErrorResultCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebJsAllSslErrorResultCToCpp,
-                                    ArkWebJsAllSslErrorResult,
-                                    ark_web_js_all_ssl_error_result_t> {
-  public:
+class ArkWebJsAllSslErrorResultCToCpp : public ArkWebCToCppRefCounted<ArkWebJsAllSslErrorResultCToCpp,
+                                            ArkWebJsAllSslErrorResult, ark_web_js_all_ssl_error_result_t> {
+public:
     ArkWebJsAllSslErrorResultCToCpp();
     virtual ~ArkWebJsAllSslErrorResultCToCpp();
 
-  // ArkWebJsAllSslErrorResult methods.
-  void HandleCancel() override;
+    // ArkWebJsAllSslErrorResult methods.
+    void HandleCancel() override;
 
-  void HandleConfirm() override;
+    void HandleConfirm() override;
 };
 
-} // OHOS::ArkWeb
-
+} // namespace OHOS::ArkWeb
 
 #endif // ARK_WEB_JS_ALL_SSL_ERROR_RESULT_CTOCPP_H_

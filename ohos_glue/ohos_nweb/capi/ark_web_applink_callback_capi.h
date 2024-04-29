@@ -25,16 +25,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_app_link_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *continue_load)(
-      struct _ark_web_app_link_callback_t *self);
+    void(ARK_WEB_CALLBACK* continue_load)(struct _ark_web_app_link_callback_t* self);
 
-  void(ARK_WEB_CALLBACK *cancel_load)(
-      struct _ark_web_app_link_callback_t *self);
+    void(ARK_WEB_CALLBACK* cancel_load)(struct _ark_web_app_link_callback_t* self);
 } ark_web_app_link_callback_t;
 
 #ifdef __cplusplus

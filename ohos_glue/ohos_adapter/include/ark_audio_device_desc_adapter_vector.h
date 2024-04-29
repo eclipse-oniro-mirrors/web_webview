@@ -22,10 +22,10 @@
 struct _ark_audio_device_desc_adapter_t;
 
 typedef struct {
-  int size;
-  struct _ark_audio_device_desc_adapter_t **value;
+    int size;
+    struct _ark_audio_device_desc_adapter_t** value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkAudioDeviceDescAdapterVector;
 
 #endif // ARK_AUDIO_DEVICE_DESC_ADAPTER_VECTOR_H

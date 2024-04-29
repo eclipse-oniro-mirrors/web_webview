@@ -24,14 +24,14 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebHistoryList : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkWebHistoryItem> GetItem(int32_t index) = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebHistoryItem> GetItem(int32_t index) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetListSize() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetListSize() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetCurrentIndex() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetCurrentIndex() = 0;
 };
 
 } // namespace OHOS::ArkWeb

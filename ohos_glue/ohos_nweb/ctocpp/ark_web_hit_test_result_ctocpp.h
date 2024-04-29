@@ -17,28 +17,27 @@
 #define ARK_WEB_HIT_TEST_RESULT_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_hit_test_result_capi.h"
 #include "ohos_nweb/include/ark_web_hit_test_result.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebHitTestResultCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebHitTestResultCToCpp,
-                                    ArkWebHitTestResult,
-                                    ark_web_hit_test_result_t> {
+    : public ArkWebCToCppRefCounted<ArkWebHitTestResultCToCpp, ArkWebHitTestResult, ark_web_hit_test_result_t> {
 public:
-  ArkWebHitTestResultCToCpp();
-  virtual ~ArkWebHitTestResultCToCpp();
+    ArkWebHitTestResultCToCpp();
+    virtual ~ArkWebHitTestResultCToCpp();
 
-  // ArkWebHitTestResult methods.
-  void SetType(int type) override;
+    // ArkWebHitTestResult methods.
+    void SetType(int type) override;
 
-  int GetType() override;
+    int GetType() override;
 
-  ArkWebString GetExtra() override;
+    ArkWebString GetExtra() override;
 };
 
 } // namespace OHOS::ArkWeb

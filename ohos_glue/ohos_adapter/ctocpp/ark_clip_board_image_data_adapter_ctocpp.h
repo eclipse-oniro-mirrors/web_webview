@@ -17,50 +17,49 @@
 #define ARK_CLIP_BOARD_IMAGE_DATA_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_pasteboard_client_adapter_capi.h"
 #include "ohos_adapter/include/ark_pasteboard_client_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkClipBoardImageDataAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkClipBoardImageDataAdapterCToCpp,
-                                    ArkClipBoardImageDataAdapter,
-                                    ark_clip_board_image_data_adapter_t> {
+class ArkClipBoardImageDataAdapterCToCpp : public ArkWebCToCppRefCounted<ArkClipBoardImageDataAdapterCToCpp,
+                                               ArkClipBoardImageDataAdapter, ark_clip_board_image_data_adapter_t> {
 public:
-  ArkClipBoardImageDataAdapterCToCpp();
-  virtual ~ArkClipBoardImageDataAdapterCToCpp();
+    ArkClipBoardImageDataAdapterCToCpp();
+    virtual ~ArkClipBoardImageDataAdapterCToCpp();
 
-  // ArkClipBoardImageDataAdapter methods.
-  int32_t GetColorType() override;
+    // ArkClipBoardImageDataAdapter methods.
+    int32_t GetColorType() override;
 
-  int32_t GetAlphaType() override;
+    int32_t GetAlphaType() override;
 
-  uint32_t *GetData() override;
+    uint32_t* GetData() override;
 
-  size_t GetDataSize() override;
+    size_t GetDataSize() override;
 
-  size_t GetRowBytes() override;
+    size_t GetRowBytes() override;
 
-  int32_t GetWidth() override;
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  void SetColorType(int32_t color) override;
+    void SetColorType(int32_t color) override;
 
-  void SetAlphaType(int32_t alpha) override;
+    void SetAlphaType(int32_t alpha) override;
 
-  void SetData(uint32_t *data) override;
+    void SetData(uint32_t* data) override;
 
-  void SetDataSize(size_t size) override;
+    void SetDataSize(size_t size) override;
 
-  void SetRowBytes(size_t rowBytes) override;
+    void SetRowBytes(size_t rowBytes) override;
 
-  void SetWidth(int32_t width) override;
+    void SetWidth(int32_t width) override;
 
-  void SetHeight(int32_t height) override;
+    void SetHeight(int32_t height) override;
 };
 
 } // namespace OHOS::ArkWeb

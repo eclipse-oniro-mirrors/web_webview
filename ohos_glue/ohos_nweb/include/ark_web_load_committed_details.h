@@ -25,46 +25,46 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebLoadCommittedDetails : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Check whether the request is for getting the main frame.
-   *
-   * @return Is main frame.
-   */
-  /*--ark web()--*/
-  virtual bool IsMainFrame() = 0;
+    /**
+     * @brief Check whether the request is for getting the main frame.
+     *
+     * @return Is main frame.
+     */
+    /*--ark web()--*/
+    virtual bool IsMainFrame() = 0;
 
-  /**
-   * @brief Check whether document and other documents have the same
-   * properties.
-   *
-   * @return Is the same document.
-   */
-  /*--ark web()--*/
-  virtual bool IsSameDocument() = 0;
+    /**
+     * @brief Check whether document and other documents have the same
+     * properties.
+     *
+     * @return Is the same document.
+     */
+    /*--ark web()--*/
+    virtual bool IsSameDocument() = 0;
 
-  /**
-   * @brief Check whether the entry is replaced.
-   *
-   * @return The entry is replaced.
-   */
-  /*--ark web()--*/
-  virtual bool DidReplaceEntry() = 0;
+    /**
+     * @brief Check whether the entry is replaced.
+     *
+     * @return The entry is replaced.
+     */
+    /*--ark web()--*/
+    virtual bool DidReplaceEntry() = 0;
 
-  /**
-   * @brief Get the value of the navigation type.
-   *
-   * @return The value of the navigation type.
-   */
-  /*--ark web()--*/
-  virtual int GetNavigationType() = 0;
+    /**
+     * @brief Get the value of the navigation type.
+     *
+     * @return The value of the navigation type.
+     */
+    /*--ark web()--*/
+    virtual int GetNavigationType() = 0;
 
-  /**
-   * @brief Gets the url of the current navigation.
-   *
-   * @return The url of the current navigation.
-   */
-  /*--ark web()--*/
-  virtual ArkWebString GetURL() = 0;
+    /**
+     * @brief Gets the url of the current navigation.
+     *
+     * @return The url of the current navigation.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetURL() = 0;
 };
 
 } // namespace OHOS::ArkWeb

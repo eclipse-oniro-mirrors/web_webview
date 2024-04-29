@@ -17,17 +17,17 @@
 #define ARK_WEB_WEB_STORAGE_ORIGIN_VECTOR_VALUE_CALLBACK_H_
 #pragma once
 
-#include "base/include/ark_web_base_ref_counted.h"
 #include "ohos_nweb/include/ark_web_web_storage_origin_vector.h"
+
+#include "base/include/ark_web_base_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
-class ArkWebWebStorageOriginVectorValueCallback
-    : public virtual ArkWebBaseRefCounted {
+class ArkWebWebStorageOriginVectorValueCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void OnReceiveValue(const ArkWebWebStorageOriginVector &value) = 0;
+    /*--ark web()--*/
+    virtual void OnReceiveValue(const ArkWebWebStorageOriginVector& value) = 0;
 };
 
 } // namespace OHOS::ArkWeb

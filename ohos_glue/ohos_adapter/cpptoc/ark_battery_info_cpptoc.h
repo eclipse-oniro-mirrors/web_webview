@@ -17,20 +17,19 @@
 #define ARK_BATTERY_INFO_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_battery_mgr_client_adapter_capi.h"
 #include "ohos_adapter/include/ark_battery_mgr_client_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkBatteryInfoCppToC
-    : public ArkWebCppToCRefCounted<ArkBatteryInfoCppToC, ArkBatteryInfo,
-                                    ark_battery_info_t> {
+class ArkBatteryInfoCppToC : public ArkWebCppToCRefCounted<ArkBatteryInfoCppToC, ArkBatteryInfo, ark_battery_info_t> {
 public:
-  ArkBatteryInfoCppToC();
-  virtual ~ArkBatteryInfoCppToC();
+    ArkBatteryInfoCppToC();
+    virtual ~ArkBatteryInfoCppToC();
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,11 +17,11 @@
 #define ARK_WEB_MACROS_H_
 #pragma once
 
-#define SAFE_FREE(ptr, func)                                                   \
-  if (ptr) {                                                                   \
-    func(ptr);                                                                 \
-    ptr = nullptr;                                                             \
-  }
+#define SAFE_FREE(ptr, func) \
+    if (ptr) {               \
+        func(ptr);           \
+        ptr = nullptr;       \
+    }
 
 #define ARK_WEB_EXPORT __attribute__((visibility("default")))
 

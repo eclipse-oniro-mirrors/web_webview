@@ -17,34 +17,33 @@
 #define ARK_AUDIO_CAPTURER_OPTIONS_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_audio_capturer_adapter_capi.h"
 #include "ohos_adapter/include/ark_audio_capturer_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkAudioCapturerOptionsAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkAudioCapturerOptionsAdapterCToCpp,
-                                    ArkAudioCapturerOptionsAdapter,
-                                    ark_audio_capturer_options_adapter_t> {
+class ArkAudioCapturerOptionsAdapterCToCpp : public ArkWebCToCppRefCounted<ArkAudioCapturerOptionsAdapterCToCpp,
+                                                 ArkAudioCapturerOptionsAdapter, ark_audio_capturer_options_adapter_t> {
 public:
-  ArkAudioCapturerOptionsAdapterCToCpp();
-  virtual ~ArkAudioCapturerOptionsAdapterCToCpp();
+    ArkAudioCapturerOptionsAdapterCToCpp();
+    virtual ~ArkAudioCapturerOptionsAdapterCToCpp();
 
-  // ArkAudioCapturerOptionsAdapter methods.
-  int32_t GetSamplingRate() override;
+    // ArkAudioCapturerOptionsAdapter methods.
+    int32_t GetSamplingRate() override;
 
-  int32_t GetEncoding() override;
+    int32_t GetEncoding() override;
 
-  int32_t GetSampleFormat() override;
+    int32_t GetSampleFormat() override;
 
-  int32_t GetChannels() override;
+    int32_t GetChannels() override;
 
-  int32_t GetSourceType() override;
+    int32_t GetSourceType() override;
 
-  int32_t GetCapturerFlags() override;
+    int32_t GetCapturerFlags() override;
 };
 
 } // namespace OHOS::ArkWeb

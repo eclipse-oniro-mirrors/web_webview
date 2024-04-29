@@ -25,34 +25,30 @@ extern "C" {
 #endif
 
 typedef struct _ark_edm_policy_changed_event_callback_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *changed)(
-      struct _ark_edm_policy_changed_event_callback_adapter_t *self);
+    void(ARK_WEB_CALLBACK* changed)(struct _ark_edm_policy_changed_event_callback_adapter_t* self);
 } ark_edm_policy_changed_event_callback_adapter_t;
 
 typedef struct _ark_enterprise_device_management_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_policies)(
-      struct _ark_enterprise_device_management_adapter_t *self,
-      ArkWebString *policies);
+    int32_t(ARK_WEB_CALLBACK* get_policies)(
+        struct _ark_enterprise_device_management_adapter_t* self, ArkWebString* policies);
 
-  void(ARK_WEB_CALLBACK *regist_policy_change_event_callback)(
-      struct _ark_enterprise_device_management_adapter_t *self,
-      ark_edm_policy_changed_event_callback_adapter_t *eventCallback);
+    void(ARK_WEB_CALLBACK* regist_policy_change_event_callback)(
+        struct _ark_enterprise_device_management_adapter_t* self,
+        ark_edm_policy_changed_event_callback_adapter_t* eventCallback);
 
-  bool(ARK_WEB_CALLBACK *start_observe_policy_change)(
-      struct _ark_enterprise_device_management_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* start_observe_policy_change)(struct _ark_enterprise_device_management_adapter_t* self);
 
-  bool(ARK_WEB_CALLBACK *stop_observe_policy_change)(
-      struct _ark_enterprise_device_management_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* stop_observe_policy_change)(struct _ark_enterprise_device_management_adapter_t* self);
 } ark_enterprise_device_management_adapter_t;
 
 #ifdef __cplusplus

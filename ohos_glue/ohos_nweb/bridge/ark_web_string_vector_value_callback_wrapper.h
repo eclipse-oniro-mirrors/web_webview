@@ -22,19 +22,16 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebStringVectorValueCallbackWrapper
-    : public OHOS::NWeb::NWebStringVectorValueCallback {
+class ArkWebStringVectorValueCallbackWrapper : public OHOS::NWeb::NWebStringVectorValueCallback {
 public:
-  ArkWebStringVectorValueCallbackWrapper(
-      ArkWebRefPtr<ArkWebStringVectorValueCallback>
-          ark_web_string_vector_value_callback);
-  ~ArkWebStringVectorValueCallbackWrapper() = default;
+    ArkWebStringVectorValueCallbackWrapper(
+        ArkWebRefPtr<ArkWebStringVectorValueCallback> ark_web_string_vector_value_callback);
+    ~ArkWebStringVectorValueCallbackWrapper() = default;
 
-  void OnReceiveValue(const std::vector<std::string> &value) override;
+    void OnReceiveValue(const std::vector<std::string>& value) override;
 
 private:
-  ArkWebRefPtr<ArkWebStringVectorValueCallback>
-      ark_web_string_vector_value_callback_;
+    ArkWebRefPtr<ArkWebStringVectorValueCallback> ark_web_string_vector_value_callback_;
 };
 
 } // namespace OHOS::ArkWeb

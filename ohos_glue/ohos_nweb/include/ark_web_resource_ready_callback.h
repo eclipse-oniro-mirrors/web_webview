@@ -24,11 +24,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebResourceReadyCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void Cancel() = 0;
+    /*--ark web()--*/
+    virtual void Cancel() = 0;
 
-  /*--ark web()--*/
-  virtual void Continue() = 0;
+    /*--ark web()--*/
+    virtual void Continue() = 0;
 };
 
 } // namespace OHOS::ArkWeb

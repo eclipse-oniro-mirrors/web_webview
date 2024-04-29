@@ -19,6 +19,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <unistd.h>
 
 #include "base/include/ark_web_macros.h"
 
@@ -30,34 +31,32 @@ extern "C" {
 // All ref-counted framework structures must include this structure first.
 ///
 typedef struct _ark_web_base_ref_counted_t {
-  /**
-   * @brief Size of the data structure.
-   */
-  size_t size;
+    /**
+     * @brief Size of the data structure.
+     */
+    size_t size;
 
-  /**
-   * @brief The reference count increment 1. Should be called for every new copy
-   *        of a pointer to a given object.
-   */
-  void(ARK_WEB_CALLBACK *incre_ref)(struct _ark_web_base_ref_counted_t *self);
+    /**
+     * @brief The reference count increment 1. Should be called for every new copy
+     *        of a pointer to a given object.
+     */
+    void(ARK_WEB_CALLBACK* incre_ref)(struct _ark_web_base_ref_counted_t* self);
 
-  /**
-   * @brief The reference count decrement 1 and delete the object when the
-   *        reference count is 0
-   */
-  void(ARK_WEB_CALLBACK *decre_ref)(struct _ark_web_base_ref_counted_t *self);
+    /**
+     * @brief The reference count decrement 1 and delete the object when the
+     *        reference count is 0
+     */
+    void(ARK_WEB_CALLBACK* decre_ref)(struct _ark_web_base_ref_counted_t* self);
 } ark_web_base_ref_counted_t;
 
 /**
  * @brief Check that the structure |s|, which is defined with a size_t member at
  *        the top, is large enough to contain the specified member |m|.
  */
-#define ARK_WEB_MEMBER_EXISTS(s, m)                                            \
-  ((intptr_t) & ((s)->m) - (intptr_t)(s) + sizeof((s)->m) <=                   \
-                    *reinterpret_cast<size_t *>(s))
+#define ARK_WEB_MEMBER_EXISTS(s, m) \
+    ((intptr_t) & ((s)->m) - (intptr_t)(s) + sizeof((s)->m) <= *reinterpret_cast<size_t*>(s))
 
-#define ARK_WEB_FUNC_MEMBER_MISSING(s, f)                                      \
-  (!ARK_WEB_MEMBER_EXISTS(s, f) || !((s)->f))
+#define ARK_WEB_FUNC_MEMBER_MISSING(s, f) (!ARK_WEB_MEMBER_EXISTS(s, f) || !((s)->f))
 
 #ifdef __cplusplus
 }

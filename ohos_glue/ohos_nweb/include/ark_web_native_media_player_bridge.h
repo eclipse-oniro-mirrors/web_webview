@@ -24,35 +24,35 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebNativeMediaPlayerBridge : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void UpdateRect(double x, double y, double width, double height) = 0;
+    /*--ark web()--*/
+    virtual void UpdateRect(double x, double y, double width, double height) = 0;
 
-  /*--ark web()--*/
-  virtual void Play() = 0;
+    /*--ark web()--*/
+    virtual void Play() = 0;
 
-  /*--ark web()--*/
-  virtual void Pause() = 0;
+    /*--ark web()--*/
+    virtual void Pause() = 0;
 
-  /*--ark web()--*/
-  virtual void Seek(double time) = 0;
+    /*--ark web()--*/
+    virtual void Seek(double time) = 0;
 
-  /*--ark web()--*/
-  virtual void SetVolume(double volume) = 0;
+    /*--ark web()--*/
+    virtual void SetVolume(double volume) = 0;
 
-  /*--ark web()--*/
-  virtual void SetMuted(bool isMuted) = 0;
+    /*--ark web()--*/
+    virtual void SetMuted(bool isMuted) = 0;
 
-  /*--ark web()--*/
-  virtual void SetPlaybackRate(double playbackRate) = 0;
+    /*--ark web()--*/
+    virtual void SetPlaybackRate(double playbackRate) = 0;
 
-  /*--ark web()--*/
-  virtual void Release() = 0;
+    /*--ark web()--*/
+    virtual void Release() = 0;
 
-  /*--ark web()--*/
-  virtual void EnterFullScreen() = 0;
+    /*--ark web()--*/
+    virtual void EnterFullScreen() = 0;
 
-  /*--ark web()--*/
-  virtual void ExitFullScreen() = 0;
+    /*--ark web()--*/
+    virtual void ExitFullScreen() = 0;
 };
 
 } // namespace OHOS::ArkWeb

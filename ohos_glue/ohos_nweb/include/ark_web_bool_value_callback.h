@@ -24,8 +24,8 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebBoolValueCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void OnReceiveValue(bool value) = 0;
+    /*--ark web()--*/
+    virtual void OnReceiveValue(bool value) = 0;
 };
 
 } // namespace OHOS::ArkWeb

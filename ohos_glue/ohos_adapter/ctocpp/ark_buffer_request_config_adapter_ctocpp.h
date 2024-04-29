@@ -17,38 +17,37 @@
 #define ARK_BUFFER_REQUEST_CONFIG_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_graphic_adapter_capi.h"
 #include "ohos_adapter/include/ark_graphic_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkBufferRequestConfigAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkBufferRequestConfigAdapterCToCpp,
-                                    ArkBufferRequestConfigAdapter,
-                                    ark_buffer_request_config_adapter_t> {
+class ArkBufferRequestConfigAdapterCToCpp : public ArkWebCToCppRefCounted<ArkBufferRequestConfigAdapterCToCpp,
+                                                ArkBufferRequestConfigAdapter, ark_buffer_request_config_adapter_t> {
 public:
-  ArkBufferRequestConfigAdapterCToCpp();
-  virtual ~ArkBufferRequestConfigAdapterCToCpp();
+    ArkBufferRequestConfigAdapterCToCpp();
+    virtual ~ArkBufferRequestConfigAdapterCToCpp();
 
-  // ArkBufferRequestConfigAdapter methods.
-  int32_t GetWidth() override;
+    // ArkBufferRequestConfigAdapter methods.
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  int32_t GetStrideAlignment() override;
+    int32_t GetStrideAlignment() override;
 
-  int32_t GetFormat() override;
+    int32_t GetFormat() override;
 
-  uint64_t GetUsage() override;
+    uint64_t GetUsage() override;
 
-  int32_t GetTimeout() override;
+    int32_t GetTimeout() override;
 
-  int32_t GetColorGamut() override;
+    int32_t GetColorGamut() override;
 
-  int32_t GetTransformType() override;
+    int32_t GetTransformType() override;
 };
 
 } // namespace OHOS::ArkWeb

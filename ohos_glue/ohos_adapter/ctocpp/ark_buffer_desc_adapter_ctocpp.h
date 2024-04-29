@@ -17,34 +17,33 @@
 #define ARK_BUFFER_DESC_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_audio_capturer_adapter_capi.h"
 #include "ohos_adapter/include/ark_audio_capturer_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkBufferDescAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkBufferDescAdapterCToCpp,
-                                    ArkBufferDescAdapter,
-                                    ark_buffer_desc_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkBufferDescAdapterCToCpp, ArkBufferDescAdapter, ark_buffer_desc_adapter_t> {
 public:
-  ArkBufferDescAdapterCToCpp();
-  virtual ~ArkBufferDescAdapterCToCpp();
+    ArkBufferDescAdapterCToCpp();
+    virtual ~ArkBufferDescAdapterCToCpp();
 
-  // ArkBufferDescAdapter methods.
-  uint8_t *GetBuffer() override;
+    // ArkBufferDescAdapter methods.
+    uint8_t* GetBuffer() override;
 
-  size_t GetBufLength() override;
+    size_t GetBufLength() override;
 
-  size_t GetDataLength() override;
+    size_t GetDataLength() override;
 
-  void SetBuffer(uint8_t *buffer) override;
+    void SetBuffer(uint8_t* buffer) override;
 
-  void SetBufLength(size_t bufLength) override;
+    void SetBufLength(size_t bufLength) override;
 
-  void SetDataLength(size_t dataLength) override;
+    void SetDataLength(size_t dataLength) override;
 };
 
 } // namespace OHOS::ArkWeb

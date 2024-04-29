@@ -17,28 +17,27 @@
 #define ARK_WEB_MEDIA_SOURCE_INFO_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_media_source_info_capi.h"
 #include "ohos_nweb/include/ark_web_media_source_info.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebMediaSourceInfoCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebMediaSourceInfoCToCpp,
-                                    ArkWebMediaSourceInfo,
-                                    ark_web_media_source_info_t> {
+    : public ArkWebCToCppRefCounted<ArkWebMediaSourceInfoCToCpp, ArkWebMediaSourceInfo, ark_web_media_source_info_t> {
 public:
-  ArkWebMediaSourceInfoCToCpp();
-  virtual ~ArkWebMediaSourceInfoCToCpp();
+    ArkWebMediaSourceInfoCToCpp();
+    virtual ~ArkWebMediaSourceInfoCToCpp();
 
-  // ArkWebMediaSourceInfo methods.
-  int GetType() override;
+    // ArkWebMediaSourceInfo methods.
+    int GetType() override;
 
-  ArkWebString GetFormat() override;
+    ArkWebString GetFormat() override;
 
-  ArkWebString GetSource() override;
+    ArkWebString GetSource() override;
 };
 
 } // namespace OHOS::ArkWeb

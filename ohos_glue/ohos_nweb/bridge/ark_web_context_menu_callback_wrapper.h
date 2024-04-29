@@ -17,27 +17,26 @@
 #define ARK_WEB_CONTEXT_MENU_CALLBACK_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_context_menu_params.h"
 #include "ohos_nweb/include/ark_web_context_menu_callback.h"
+
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 using ArkWebMenuEventFlags = OHOS::NWeb::MenuEventFlags;
 
-class ArkWebContextMenuCallbackWrapper
-    : public OHOS::NWeb::NWebContextMenuCallback {
+class ArkWebContextMenuCallbackWrapper : public OHOS::NWeb::NWebContextMenuCallback {
 public:
-  ArkWebContextMenuCallbackWrapper(
-      ArkWebRefPtr<ArkWebContextMenuCallback> ark_web_context_menu_callback);
-  ~ArkWebContextMenuCallbackWrapper() = default;
+    ArkWebContextMenuCallbackWrapper(ArkWebRefPtr<ArkWebContextMenuCallback> ark_web_context_menu_callback);
+    ~ArkWebContextMenuCallbackWrapper() = default;
 
-  void Cancel() override;
+    void Cancel() override;
 
-  void Continue(int32_t command_id, ArkWebMenuEventFlags flag) override;
+    void Continue(int32_t command_id, ArkWebMenuEventFlags flag) override;
 
 private:
-  ArkWebRefPtr<ArkWebContextMenuCallback> ark_web_context_menu_callback_;
+    ArkWebRefPtr<ArkWebContextMenuCallback> ark_web_context_menu_callback_;
 };
 
 } // namespace OHOS::ArkWeb

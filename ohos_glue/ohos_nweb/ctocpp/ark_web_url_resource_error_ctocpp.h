@@ -17,26 +17,25 @@
 #define ARK_WEB_URL_RESOURCE_ERROR_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_url_resource_error_capi.h"
 #include "ohos_nweb/include/ark_web_url_resource_error.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebUrlResourceErrorCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebUrlResourceErrorCToCpp,
-                                    ArkWebUrlResourceError,
-                                    ark_web_url_resource_error_t> {
+class ArkWebUrlResourceErrorCToCpp : public ArkWebCToCppRefCounted<ArkWebUrlResourceErrorCToCpp, ArkWebUrlResourceError,
+                                         ark_web_url_resource_error_t> {
 public:
-  ArkWebUrlResourceErrorCToCpp();
-  virtual ~ArkWebUrlResourceErrorCToCpp();
+    ArkWebUrlResourceErrorCToCpp();
+    virtual ~ArkWebUrlResourceErrorCToCpp();
 
-  // ArkWebUrlResourceError methods.
-  int ErrorCode() override;
+    // ArkWebUrlResourceError methods.
+    int ErrorCode() override;
 
-  ArkWebString ErrorInfo() override;
+    ArkWebString ErrorInfo() override;
 };
 
 } // namespace OHOS::ArkWeb

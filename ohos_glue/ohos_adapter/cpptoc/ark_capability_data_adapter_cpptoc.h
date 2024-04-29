@@ -17,21 +17,20 @@
 #define ARK_CAPABILITY_DATA_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_codec_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_codec_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkCapabilityDataAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkCapabilityDataAdapterCppToC,
-                                    ArkCapabilityDataAdapter,
-                                    ark_capability_data_adapter_t> {
+class ArkCapabilityDataAdapterCppToC : public ArkWebCppToCRefCounted<ArkCapabilityDataAdapterCppToC,
+                                           ArkCapabilityDataAdapter, ark_capability_data_adapter_t> {
 public:
-  ArkCapabilityDataAdapterCppToC();
-  virtual ~ArkCapabilityDataAdapterCppToC();
+    ArkCapabilityDataAdapterCppToC();
+    virtual ~ArkCapabilityDataAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb

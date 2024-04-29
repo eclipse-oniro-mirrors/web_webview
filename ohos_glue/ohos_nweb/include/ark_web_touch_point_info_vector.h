@@ -17,14 +17,15 @@
 #define ARK_WEB_TOUCH_POINT_INFO_VECTOR_H_
 #pragma once
 
-#include "base/include/ark_web_memory.h"
 #include "ohos_nweb/capi/ark_web_touch_point_info_capi.h"
 
-typedef struct {
-  int size;
-  ark_web_touch_point_info_t **value;
+#include "base/include/ark_web_memory.h"
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+typedef struct {
+    int size;
+    ark_web_touch_point_info_t** value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkWebTouchPointInfoVector;
 
 const ArkWebTouchPointInfoVector ark_web_touch_point_info_vector_default = {

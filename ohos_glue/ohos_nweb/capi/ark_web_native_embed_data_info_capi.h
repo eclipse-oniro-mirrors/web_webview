@@ -17,30 +17,28 @@
 #define ARK_WEB_NATIVE_EMBED_DATA_INFO_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/capi/ark_web_native_embed_info_capi.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_native_embed_data_info_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *get_status)(
-      struct _ark_web_native_embed_data_info_t *self);
+    int(ARK_WEB_CALLBACK* get_status)(struct _ark_web_native_embed_data_info_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_embed_id)(
-      struct _ark_web_native_embed_data_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_embed_id)(struct _ark_web_native_embed_data_info_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_surface_id)(
-      struct _ark_web_native_embed_data_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_surface_id)(struct _ark_web_native_embed_data_info_t* self);
 
-  ark_web_native_embed_info_t *(ARK_WEB_CALLBACK *get_native_embed_info)(
-      struct _ark_web_native_embed_data_info_t *self);
+    ark_web_native_embed_info_t*(ARK_WEB_CALLBACK* get_native_embed_info)(
+        struct _ark_web_native_embed_data_info_t* self);
 } ark_web_native_embed_data_info_t;
 
 #ifdef __cplusplus

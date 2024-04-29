@@ -24,17 +24,17 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebImageOptions : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual size_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual size_t GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual size_t GetHeight() = 0;
+    /*--ark web()--*/
+    virtual size_t GetHeight() = 0;
 
-  /*--ark web()--*/
-  virtual int GetAlphaType() = 0;
+    /*--ark web()--*/
+    virtual int GetAlphaType() = 0;
 
-  /*--ark web()--*/
-  virtual int GetColorType() = 0;
+    /*--ark web()--*/
+    virtual int GetColorType() = 0;
 };
 
 } // namespace OHOS::ArkWeb

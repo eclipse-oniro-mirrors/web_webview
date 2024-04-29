@@ -17,21 +17,20 @@
 #define ARK_WEB_FIND_CALLBACK_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_find_callback_capi.h"
 #include "ohos_nweb/include/ark_web_find_callback.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebFindCallbackCppToC
-    : public ArkWebCppToCRefCounted<ArkWebFindCallbackCppToC,
-                                    ArkWebFindCallback,
-                                    ark_web_find_callback_t> {
+    : public ArkWebCppToCRefCounted<ArkWebFindCallbackCppToC, ArkWebFindCallback, ark_web_find_callback_t> {
 public:
-  ArkWebFindCallbackCppToC();
-  virtual ~ArkWebFindCallbackCppToC();
+    ArkWebFindCallbackCppToC();
+    virtual ~ArkWebFindCallbackCppToC();
 };
 
 } // namespace OHOS::ArkWeb

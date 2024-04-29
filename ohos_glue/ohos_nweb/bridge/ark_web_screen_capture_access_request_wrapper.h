@@ -22,39 +22,35 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebScreenCaptureAccessRequestWrapper
-    : public OHOS::NWeb::NWebScreenCaptureAccessRequest {
+class ArkWebScreenCaptureAccessRequestWrapper : public OHOS::NWeb::NWebScreenCaptureAccessRequest {
 public:
-  ArkWebScreenCaptureAccessRequestWrapper(
-      ArkWebRefPtr<ArkWebScreenCaptureAccessRequest>
-          ark_web_screen_capture_access_request);
-  ~ArkWebScreenCaptureAccessRequestWrapper() = default;
+    ArkWebScreenCaptureAccessRequestWrapper(
+        ArkWebRefPtr<ArkWebScreenCaptureAccessRequest> ark_web_screen_capture_access_request);
+    ~ArkWebScreenCaptureAccessRequestWrapper() = default;
 
-  /**
-   * @brief Agree the origin to access the given resources. The granted access
-   *        is only valid for this WebView.
-   *
-   * @param config screen capture config.
-   */
-  void
-  Agree(std::shared_ptr<OHOS::NWeb::NWebScreenCaptureConfig> config) override;
+    /**
+     * @brief Agree the origin to access the given resources. The granted access
+     *        is only valid for this WebView.
+     *
+     * @param config screen capture config.
+     */
+    void Agree(std::shared_ptr<OHOS::NWeb::NWebScreenCaptureConfig> config) override;
 
-  /**
-   * @brief Refuse the request.
-   */
-  void Refuse() override;
+    /**
+     * @brief Refuse the request.
+     */
+    void Refuse() override;
 
-  /**
-   * @brief Get the origin of the web page which is trying to access the screen
-   *        capture resource.
-   *
-   * @return the origin of the web page which is trying to access the resource.
-   */
-  std::string Origin() override;
+    /**
+     * @brief Get the origin of the web page which is trying to access the screen
+     *        capture resource.
+     *
+     * @return the origin of the web page which is trying to access the resource.
+     */
+    std::string Origin() override;
 
 private:
-  ArkWebRefPtr<ArkWebScreenCaptureAccessRequest>
-      ark_web_screen_capture_access_request_;
+    ArkWebRefPtr<ArkWebScreenCaptureAccessRequest> ark_web_screen_capture_access_request_;
 };
 
 } // namespace OHOS::ArkWeb

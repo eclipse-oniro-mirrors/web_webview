@@ -25,15 +25,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_url_resource_error_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *error_code)(struct _ark_web_url_resource_error_t *self);
+    int(ARK_WEB_CALLBACK* error_code)(struct _ark_web_url_resource_error_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *error_info)(
-      struct _ark_web_url_resource_error_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* error_info)(struct _ark_web_url_resource_error_t* self);
 } ark_web_url_resource_error_t;
 
 #ifdef __cplusplus

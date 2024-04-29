@@ -20,9 +20,9 @@
 #include "include/nweb_web_message.h"
 
 typedef struct {
-  std::shared_ptr<OHOS::NWeb::NWebMessage> nweb_message;
+    std::shared_ptr<OHOS::NWeb::NWebMessage> nweb_message;
 } ArkWebMessage;
 
-const ArkWebMessage ark_web_message_default = {0};
+const ArkWebMessage ark_web_message_default = { 0 };
 
 #endif // ARK_WEB_MESSAGE_H_
