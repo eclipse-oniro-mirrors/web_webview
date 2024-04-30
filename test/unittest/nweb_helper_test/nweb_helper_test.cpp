@@ -425,5 +425,18 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
 }
+
+/**
+ * @tc.name: NWebHelper_GetPerfConfig_001
+ * @tc.desc: GetPerfConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetPerfConfig_001, TestSize.Level1)
+{
+    EXPECT_TRUE(NWebAdapterHelper::Instance().GetPerfConfig("test").empty());
+    NWebAdapterHelper::Instance().ltpoConfig_["test"] = {OHOS::NWeb::FrameRateSetting{0, 0, 0}};
+    EXPECT_FALSE(NWebAdapterHelper::Instance().GetPerfConfig("test").empty());
+}
 } // namespace OHOS::NWeb
 }
