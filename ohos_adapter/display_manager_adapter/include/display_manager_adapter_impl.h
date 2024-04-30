@@ -49,10 +49,12 @@ public:
     RotationType GetRotation() override;
     OrientationType GetOrientation() override;
     int32_t GetDpi() override;
+    DisplayOrientation GetDisplayOrientation() override;
 private:
     sptr<OHOS::Rosen::Display> display_;
     OHOS::NWeb::RotationType ConvertRotationType(OHOS::Rosen::Rotation type);
     OHOS::NWeb::OrientationType ConvertOrientationType(OHOS::Rosen::Orientation type);
+    OHOS::NWeb::DisplayOrientation ConvertDisplayOrientationType(OHOS::Rosen::DisplayOrientation type);
 };
 
 using ListenerMap =
