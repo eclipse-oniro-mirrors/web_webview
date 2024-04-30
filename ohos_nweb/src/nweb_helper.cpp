@@ -869,7 +869,7 @@ std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
         // load so
         const std::string& bundle_path = ctx->GetBundleCodeDir();
         SetBundlePath(bundle_path);
-        if (!Init(true)) {
+        if (!InitAndRun(true)) {
             WVLOG_E("GetCookieManager: Failed to init web engine due to NWebHelper failure.");
             return nullptr;
         }
