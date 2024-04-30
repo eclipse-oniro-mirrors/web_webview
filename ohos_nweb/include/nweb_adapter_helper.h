@@ -45,13 +45,13 @@ public:
     void ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     void ReadConfigIfNeeded();
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
-    void ParseNWebLTPOConfig(xmlNodePtr nodePtr);
     std::vector<FrameRateSetting> GetPerfConfig(const std::string& settingName);
 
 private:
     NWebAdapterHelper() = default;
     std::string GetConfigPath(const std::string &configFileName);
     void ParseConfig(std::shared_ptr<NWebCreateInfo> create_info);
+    void ParseNWebLTPOConfig(xmlNodePtr nodePtr);
     void ReadConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     xmlNodePtr GetChildrenNode(xmlNodePtr NodePtr, const std::string &childrenNodeName);
     void ParsePerfConfig(xmlNodePtr NodePtr);
