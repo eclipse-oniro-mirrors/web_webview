@@ -62,4 +62,19 @@ bool HiTraceAdapterImpl::IsHiTraceEnable()
     }
     return (tags & HITRACE_TAG_NWEB);
 }
+
+void HiTraceAdapterImpl::StartOHOSTrace(const std::string& value, float limit)
+{
+    ::StartTrace(HITRACE_TAG_OHOS, value, limit);
+}
+
+void HiTraceAdapterImpl::FinishOHOSTrace()
+{
+    ::FinishTrace(HITRACE_TAG_OHOS);
+}
+
+void HiTraceAdapterImpl::CountOHOSTrace(const std::string& name, int64_t count)
+{
+    ::CountTrace(HITRACE_TAG_OHOS, name, count);
+}
 } // namespace OHOS::NWeb
