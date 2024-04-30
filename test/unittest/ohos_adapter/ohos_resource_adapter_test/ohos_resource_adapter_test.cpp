@@ -305,5 +305,33 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetResourceMgr_005, Te
     result = adapterImpl.GetRawFileData(rawFile, len, &dest, false);
     EXPECT_FALSE(result);
 }
+
+/**
+ * @tc.name: OhosResourceAdapterTest_GetResourceString_006
+ * @tc.desc: GetResourceString.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetResourceString_006, TestSize.Level1)
+{
+    std::string hapPath = "";
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_1;
+    }
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    std::string res;
+
+    bool result = adapterImpl.GetResourceString("", "", 1, res);
+    EXPECT_FALSE(result);
+
+    result = adapterImpl.GetResourceString("test", "web", 1, res);
+    EXPECT_FALSE(result);
+
+    result = adapterImpl.GetResourceString("test", "web/webtest", 1, res);
+    EXPECT_FALSE(result);
+}
 }
 } // namespace NWeb
