@@ -40,6 +40,8 @@ public:
 
     int32_t GetDpi() override;
 
+    uint32_t GetDisplayOrientation() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::DisplayAdapter> real_;
 

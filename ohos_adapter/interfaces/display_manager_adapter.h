@@ -41,6 +41,14 @@ enum class OrientationType : uint32_t {
     BUTT,
 };
 
+enum class DisplayOrientation : uint32_t {
+    PORTRAIT = 0,
+    LANDSCAPE,
+    PORTRAIT_INVERTED,
+    LANDSCAPE_INVERTED,
+    UNKNOWN,
+};
+
 class DisplayListenerAdapter {
 public:
     DisplayListenerAdapter() = default;
@@ -73,6 +81,8 @@ public:
     virtual OrientationType GetOrientation() = 0;
 
     virtual int32_t GetDpi() = 0;
+
+    virtual DisplayOrientation GetDisplayOrientation() = 0;
 };
 
 class DisplayManagerAdapter {
