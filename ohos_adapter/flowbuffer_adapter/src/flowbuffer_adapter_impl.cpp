@@ -59,8 +59,6 @@ void FlowbufferAdapterImpl::StartPerformanceBoost()
     }
     OHOS::NWeb::ResSchedClientAdapter::ReportScene(
         OHOS::NWeb::ResSchedStatusAdapter::WEB_SCENE_ENTER, OHOS::NWeb::ResSchedSceneAdapter::KEY_TASK);
-    OHOS::NWeb::OhosAdapterHelper::GetInstance().CreateSocPerfClientAdapter()
-        ->ApplySocPerfConfigByIdEx(SocPerfClientAdapter::SOC_PERF_SLIDE_NORMAL_ID, true);
 }
 
 void* FlowbufferAdapterImpl::CreateAshmem(size_t size, int mapType, int& fd)
