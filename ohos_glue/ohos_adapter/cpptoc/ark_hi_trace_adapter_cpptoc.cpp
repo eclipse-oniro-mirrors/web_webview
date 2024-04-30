@@ -93,6 +93,42 @@ bool ARK_WEB_CALLBACK ark_hi_trace_adapter_is_hi_trace_enable(struct _ark_hi_tra
     return ArkHiTraceAdapterCppToC::Get(self)->IsHiTraceEnable();
 }
 
+void ARK_WEB_CALLBACK ark_hi_trace_adapter_start_ohos_trace(
+    struct _ark_hi_trace_adapter_t* self, const ArkWebString* value, float limit)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(value, );
+
+    // Execute
+    ArkHiTraceAdapterCppToC::Get(self)->StartOHOSTrace(*value, limit);
+}
+
+void ARK_WEB_CALLBACK ark_hi_trace_adapter_finish_ohos_trace(struct _ark_hi_trace_adapter_t* self)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+    // Execute
+    ArkHiTraceAdapterCppToC::Get(self)->FinishOHOSTrace();
+}
+
+void ARK_WEB_CALLBACK ark_hi_trace_adapter_count_ohos_trace(
+    struct _ark_hi_trace_adapter_t* self, const ArkWebString* name, int64_t count)
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(name, );
+
+    // Execute
+    ArkHiTraceAdapterCppToC::Get(self)->CountOHOSTrace(*name, count);
+}
+
 } // namespace
 
 ArkHiTraceAdapterCppToC::ArkHiTraceAdapterCppToC()
@@ -103,6 +139,9 @@ ArkHiTraceAdapterCppToC::ArkHiTraceAdapterCppToC()
     GetStruct()->finish_async_trace = ark_hi_trace_adapter_finish_async_trace;
     GetStruct()->count_trace = ark_hi_trace_adapter_count_trace;
     GetStruct()->is_hi_trace_enable = ark_hi_trace_adapter_is_hi_trace_enable;
+    GetStruct()->start_ohos_trace = ark_hi_trace_adapter_start_ohos_trace;
+    GetStruct()->finish_ohos_trace = ark_hi_trace_adapter_finish_ohos_trace;
+    GetStruct()->count_ohos_trace = ark_hi_trace_adapter_count_ohos_trace;
 }
 
 ArkHiTraceAdapterCppToC::~ArkHiTraceAdapterCppToC() {}

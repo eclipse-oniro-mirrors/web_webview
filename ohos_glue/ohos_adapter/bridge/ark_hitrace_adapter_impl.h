@@ -38,6 +38,12 @@ public:
 
     bool IsHiTraceEnable() override;
 
+    void StartOHOSTrace(const ArkWebString& value, float limit) override;
+
+    void FinishOHOSTrace() override;
+
+    void CountOHOSTrace(const ArkWebString& name, int64_t count) override;
+
 private:
     NWeb::HiTraceAdapter& real_;
 

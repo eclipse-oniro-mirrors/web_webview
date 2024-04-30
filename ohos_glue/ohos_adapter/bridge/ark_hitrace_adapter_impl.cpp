@@ -51,4 +51,19 @@ bool ArkHiTraceAdapterImpl::IsHiTraceEnable()
     return real_.IsHiTraceEnable();
 }
 
+void ArkHiTraceAdapterImpl::StartOHOSTrace(const ArkWebString& value, float limit)
+{
+    real_.StartOHOSTrace(ArkWebStringStructToClass(value), limit);
+}
+
+void ArkHiTraceAdapterImpl::FinishOHOSTrace()
+{
+    real_.FinishOHOSTrace();
+}
+
+void ArkHiTraceAdapterImpl::CountOHOSTrace(const ArkWebString& name, int64_t count)
+{
+    real_.CountOHOSTrace(ArkWebStringStructToClass(name), count);
+}
+
 } // namespace OHOS::ArkWeb

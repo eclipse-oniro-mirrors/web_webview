@@ -64,5 +64,8 @@ HWTEST(HiViewDFXAdapterTest, NormalScene, TestSize.Level1)
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishAsyncTrace("test", 0);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishTrace();
     HiTraceAdapterImpl::GetInstance().IsHiTraceEnable();
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartOHOSTrace("test");
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountOHOSTrace("test", 1);
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishOHOSTrace();
 }
 } // namespace OHOS::NWeb
