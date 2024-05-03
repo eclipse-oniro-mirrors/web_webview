@@ -400,6 +400,9 @@ typedef struct _ark_web_nweb_t {
         const ArkWebStringVector* method_list, const ArkWebStringVector* async_method_list, const int32_t object_id);
 
     void(ARK_WEB_CALLBACK* suggestion_selected)(struct _ark_web_nweb_t* self, int32_t index);
+
+    void(ARK_WEB_CALLBACK* send_touchpad_fling_event)(struct _ark_web_nweb_t* self,
+                                                      double x, double y, double vx, double vy);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus

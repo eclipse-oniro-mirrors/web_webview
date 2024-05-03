@@ -286,6 +286,8 @@ public:
     {
         return nullptr;
     }
+    void SendTouchpadFlingEvent(double x, double y, double vx, double vy) override
+    {}
 };
 }
 #endif

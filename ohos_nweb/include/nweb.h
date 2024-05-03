@@ -1264,6 +1264,16 @@ public:
      * @param index index value.
      */
     virtual void SuggestionSelected(int32_t index) = 0;
+
+    /**
+     * @brief Send touchpad fling event.
+     *
+     * @param x location of x.
+     * @param y location of y.
+     * @param vx velocity of x.
+     * @param vy velocity of y.
+     */
+    virtual void SendTouchpadFlingEvent(double x, double y, double vx, double vy) = 0;
 };
 }  // namespace OHOS::NWeb
 
