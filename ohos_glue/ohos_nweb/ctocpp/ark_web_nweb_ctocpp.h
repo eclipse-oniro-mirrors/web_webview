@@ -347,6 +347,8 @@ public:
         const ArkWebStringVector& async_method_list, const int32_t object_id) override;
 
     void SendTouchpadFlingEvent(double x, double y, double vx, double vy) override;
+
+    void SetFitContentMode(int32_t mode) override;
 };
 
 } // namespace OHOS::ArkWeb

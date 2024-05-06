@@ -1084,6 +1084,11 @@ public:
     /*--ark web()--*/
     void SendTouchpadFlingEvent(double x, double y, double vx, double vy) override;
 
+    /**
+     * @brief Set draw mode.
+     */
+    void SetFitContentMode(int32_t mode) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
