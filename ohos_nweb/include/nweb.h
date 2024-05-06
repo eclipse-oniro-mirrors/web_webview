@@ -1274,6 +1274,12 @@ public:
      * @param vy velocity of y.
      */
     virtual void SendTouchpadFlingEvent(double x, double y, double vx, double vy) = 0;
+
+    /**
+     * Set fit content mode.
+     *
+    */
+    virtual void SetFitContentMode(int32_t mode) = 0;
 };
 }  // namespace OHOS::NWeb
 
