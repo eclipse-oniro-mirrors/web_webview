@@ -1115,4 +1115,8 @@ void ArkWebNWebWrapper::RegisterArkJSfunction(const std::string& object_name,
     ArkWebStringVectorStructRelease(stAsyncMethods);
 }
 
+void ArkWebNWebWrapper::SetFitContentMode(int32_t mode)
+{
+    ark_web_nweb_->SetFitContentMode(mode);
+}
 } // namespace OHOS::ArkWeb

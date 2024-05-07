@@ -1225,6 +1225,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SendTouchpadFlingEvent(double x, double y, double vx, double vy) = 0;
+
+    /**
+     * @brief Set fit content mode.
+     */
+    /*--ark web()--*/
+    virtual void SetFitContentMode(int32_t mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb
