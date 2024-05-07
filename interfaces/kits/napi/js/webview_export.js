@@ -101,15 +101,17 @@ Object.defineProperty(webview.WebviewController.prototype, 'openAppLink', {
       let option = {
         appLinkingOnly: true
       };
+      console.log('begin openAppLink');
       abilityContext.openLink(callback.url, option, null)
         .then(() => {
-          console.log("applink success openLink");
+          console.log('applink success openLink');
           callback.result.cancelLoad();
         })
         .catch((error) => {
+          console.log(`applink openLink ErrorCode: ${error.code},  Message: ${error.message}`);
           callback.result.continueLoad();
         });
-    } catch(err) {
+    } catch (err) {
       console.log(`applink openLink ErrorCode: ${err.code},  Message: ${err.message}`);
       callback.result.continueLoad();
     }
