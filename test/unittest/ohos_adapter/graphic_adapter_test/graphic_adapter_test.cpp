@@ -74,5 +74,6 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
     adapter.SetFrameRateLinkerEnable(true);
     adapter.SetFramePreferredRate(60);
     adapter.vsyncHandler_ = nullptr;
+    adapter.SetOnVsyncCallback(nullptr);
 }
 } // namespace NWeb

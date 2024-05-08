@@ -41,4 +41,8 @@ void ArkVSyncAdapterImpl::SetFramePreferredRate(int32_t preferredRate)
     return real_.SetFramePreferredRate(preferredRate);
 }
 
+void ArkVSyncAdapterImpl::SetOnVsyncCallback(void (*callback)())
+{
+    return real_.SetOnVsyncCallback(callback);
+}
 } // namespace OHOS::ArkWeb
