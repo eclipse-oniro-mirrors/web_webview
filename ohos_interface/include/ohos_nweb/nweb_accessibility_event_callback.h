@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_MACROS_H_
-#define ARK_WEB_MACROS_H_
-#pragma once
+#ifndef NWEB_ACCESSIBILITY_EVENT_CALLBACK_H
+#define NWEB_ACCESSIBILITY_EVENT_CALLBACK_H
 
-#define SAFE_FREE(ptr, func) \
-    if (ptr) {               \
-        func(ptr);           \
-        ptr = nullptr;       \
-    }
+#include <string>
 
-#define ARK_WEB_EXPORT __attribute__((visibility("default")))
+#include "nweb_export.h"
 
-#define ARK_WEB_CALLBACK
+namespace OHOS::NWeb {
 
-#define ARK_WEB_RETURN_VOID
+class OHOS_NWEB_EXPORT NWebAccessibilityEventCallback {
+public:
+    NWebAccessibilityEventCallback() = default;
 
-#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
+    virtual ~NWebAccessibilityEventCallback() = default;
+    virtual void OnAccessibilityEvent(int64_t accessibilityId, uint32_t eventType) = 0;
+};
 
-#endif // ARK_WEB_MACROS_H_
+} // namespace OHOS::NWeb
+
+#endif // NWEB_ACCESSIBILITY_EVENT_CALLBACK_H

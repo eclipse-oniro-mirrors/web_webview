@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,17 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_MACROS_H_
-#define ARK_WEB_MACROS_H_
-#pragma once
+#ifndef OHOS_NWEB_EXPORT_H
+#define OHOS_NWEB_EXPORT_H
 
-#define SAFE_FREE(ptr, func) \
-    if (ptr) {               \
-        func(ptr);           \
-        ptr = nullptr;       \
-    }
+#if defined(OHOS_NWEB)
 
-#define ARK_WEB_EXPORT __attribute__((visibility("default")))
+#define OHOS_NWEB_EXPORT __attribute__((visibility("default")))
 
-#define ARK_WEB_CALLBACK
+#else
 
-#define ARK_WEB_RETURN_VOID
+#define OHOS_NWEB_EXPORT
 
-#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
+#endif
 
-#endif // ARK_WEB_MACROS_H_
+#endif // OHOS_NWEB_EXPORT_H
