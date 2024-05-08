@@ -349,6 +349,8 @@ public:
     void SendTouchpadFlingEvent(double x, double y, double vx, double vy) override;
 
     void SetFitContentMode(int32_t mode) override;
+
+    ArkWebString GetSelectInfo() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -1280,6 +1280,12 @@ public:
      *
     */
     virtual void SetFitContentMode(int32_t mode) = 0;
+
+    /**
+     * Get select info.
+     *
+    */
+    virtual std::string GetSelectInfo() = 0;
 };
 }  // namespace OHOS::NWeb
 
