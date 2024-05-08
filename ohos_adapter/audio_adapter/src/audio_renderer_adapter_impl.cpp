@@ -73,7 +73,7 @@ const std::unordered_map<AudioAdapterContentType, ContentType> CONTENT_TYPE_MAP 
 const std::unordered_map<AudioAdapterStreamUsage, StreamUsage> STREAM_USAGE_MAP = {
     { AudioAdapterStreamUsage::STREAM_USAGE_UNKNOWN, StreamUsage::STREAM_USAGE_UNKNOWN },
     { AudioAdapterStreamUsage::STREAM_USAGE_MEDIA, StreamUsage::STREAM_USAGE_MEDIA },
-    { AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION, StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION },
+    { AudioAdapterStreamUsage::STREAM_USAGE_VOICE_COMMUNICATION, StreamUsage::STREAM_USAGE_VIDEO_COMMUNICATION },
     { AudioAdapterStreamUsage::STREAM_USAGE_VOICE_ASSISTANT, StreamUsage::STREAM_USAGE_VOICE_ASSISTANT },
     { AudioAdapterStreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE, StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE },
 };
