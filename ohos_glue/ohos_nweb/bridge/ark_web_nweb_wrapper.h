@@ -1089,6 +1089,11 @@ public:
      */
     void SetFitContentMode(int32_t mode) override;
 
+    /**
+     * @brief Get select info.
+     */
+    std::string GetSelectInfo() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

@@ -1119,4 +1119,9 @@ void ArkWebNWebWrapper::SetFitContentMode(int32_t mode)
 {
     ark_web_nweb_->SetFitContentMode(mode);
 }
+
+std::string ArkWebNWebWrapper::GetSelectInfo()
+{
+    return ArkWebStringStructToClass(ark_web_nweb_->GetSelectInfo());
+}
 } // namespace OHOS::ArkWeb
