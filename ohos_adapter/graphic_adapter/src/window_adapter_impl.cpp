@@ -36,7 +36,8 @@ NWebNativeWindow WindowAdapterImpl::CreateNativeWindowFromSurface(void* pSurface
     if (!window) {
         return nullptr;
     }
-    window->config.usage = BUFFER_USAGE_MEM_DMA;
+    int32_t usage = BUFFER_USAGE_MEM_DMA;
+    NativeWindowHandleOpt(window, SET_USAGE, usage);
     return reinterpret_cast<NWebNativeWindow>(window);
 }
 
