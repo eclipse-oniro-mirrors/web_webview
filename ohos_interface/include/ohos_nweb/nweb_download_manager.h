@@ -13,22 +13,32 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_MACROS_H_
-#define ARK_WEB_MACROS_H_
-#pragma once
+#ifndef NWEB_DOWNLOAD_MANAGER_H
+#define NWEB_DOWNLOAD_MANAGER_H
 
-#define SAFE_FREE(ptr, func) \
-    if (ptr) {               \
-        func(ptr);           \
-        ptr = nullptr;       \
-    }
+#include <string>
 
-#define ARK_WEB_EXPORT __attribute__((visibility("default")))
+#include "nweb_export.h"
 
-#define ARK_WEB_CALLBACK
+namespace OHOS::NWeb {
 
-#define ARK_WEB_RETURN_VOID
+class OHOS_NWEB_EXPORT NWebDOHConfig {
+public:
+    virtual ~NWebDOHConfig() = default;
 
-#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
+    virtual int GetMode() = 0;
+    virtual std::string GetConfig() = 0;
+};
 
-#endif // ARK_WEB_MACROS_H_
+class OHOS_NWEB_EXPORT NWebDownloadManager {
+public:
+    virtual ~NWebDownloadManager() = default;
+
+    virtual void SetHttpDns(std::shared_ptr<NWebDOHConfig> config) = 0;
+
+    virtual void SetConnectionTimeout(const int& timeout) = 0;
+};
+
+} // namespace OHOS::NWeb
+
+#endif // NWEB_DOWNLOAD_MANAGER_H

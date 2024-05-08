@@ -17,9 +17,22 @@
 #define ARK_WEB_LOG_UTILS_H_
 #pragma once
 
+#if defined(OHOS_WEBCORE_GLUE)
+#include "src/nweb_hilog.h"
+
+#define LOG_FMT_PREFIX "[webcore]: "
+#elif defined(OHOS_WEBVIEW_GLUE)
 #include "include/nweb_log.h"
 
 #define LOG_FMT_PREFIX "[webview]: "
+#else
+#define LOG_FMT_PREFIX
+
+#define WVLOG_D(fmt, ...)
+#define WVLOG_I(fmt, ...)
+#define WVLOG_W(fmt, ...)
+#define WVLOG_E(fmt, ...)
+#endif
 
 #if defined(OHOS_GLUE_DEBUG)
 #define ARK_WEB_BASE_DV_LOG(fmt, ...) WVLOG_D(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)

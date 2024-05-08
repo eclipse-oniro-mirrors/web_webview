@@ -13,22 +13,20 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_MACROS_H_
-#define ARK_WEB_MACROS_H_
-#pragma once
+#ifndef NWEB_GESTURE_EVENT_RESULT_H
+#define NWEB_GESTURE_EVENT_RESULT_H
 
-#define SAFE_FREE(ptr, func) \
-    if (ptr) {               \
-        func(ptr);           \
-        ptr = nullptr;       \
-    }
+#include "nweb_export.h"
 
-#define ARK_WEB_EXPORT __attribute__((visibility("default")))
+namespace OHOS::NWeb {
 
-#define ARK_WEB_CALLBACK
+class OHOS_NWEB_EXPORT NWebGestureEventResult {
+public:
+    virtual ~NWebGestureEventResult() = default;
 
-#define ARK_WEB_RETURN_VOID
+    virtual void SetGestureEventResult(bool result) = 0;
+};
 
-#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
+} // namespace OHOS::NWeb
 
-#endif // ARK_WEB_MACROS_H_
+#endif // NWEB_GESTURE_EVENT_RESULT_H

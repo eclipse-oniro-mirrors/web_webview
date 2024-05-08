@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2023 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_MACROS_H_
-#define ARK_WEB_MACROS_H_
-#pragma once
+#ifndef HILOG_ADAPTER_H
+#define HILOG_ADAPTER_H
 
-#define SAFE_FREE(ptr, func) \
-    if (ptr) {               \
-        func(ptr);           \
-        ptr = nullptr;       \
-    }
+#include <cstdint>
 
-#define ARK_WEB_EXPORT __attribute__((visibility("default")))
+namespace OHOS::NWeb {
 
-#define ARK_WEB_CALLBACK
+enum class LogLevelAdapter : uint32_t {
+    DEBUG,
+    INFO,
+    WARN,
+    ERROR,
+    FATAL,
+    LEVEL_MAX,
+};
 
-#define ARK_WEB_RETURN_VOID
+class HiLogAdapter {
+public:
+    static int PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...);
+};
 
-#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
+} // namespace OHOS::NWeb
 
-#endif // ARK_WEB_MACROS_H_
+#endif // HILOG_ADAPTER_H
