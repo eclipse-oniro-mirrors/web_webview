@@ -53,6 +53,7 @@ ohos_shared_library("cj_webview_ffi") {
       "c_utils:utils",
       "common_event_service:cesfwk_innerkits",
       "hilog:libhilog",
+      "image_framework:cj_image_ffi",
       "image_framework:image",
       "image_framework:image_native",
       "init:libbegetutil",
