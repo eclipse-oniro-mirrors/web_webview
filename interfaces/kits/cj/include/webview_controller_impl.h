@@ -185,8 +185,8 @@ namespace OHOS::Webview {
 
     class __attribute__((visibility("default"))) WebHistoryListImpl : public OHOS::FFI::FFIData {
     public:
-        explicit WebHistoryListImpl(std::shared_ptr<NWeb::NWebHistoryList> sptrHistoryList) :
-            sptrHistoryList_(sptrHistoryList) {};
+        explicit WebHistoryListImpl(std::shared_ptr<NWeb::NWebHistoryList> sptrHistoryList)
+            :sptrHistoryList_(sptrHistoryList) {};
 
         int32_t GetCurrentIndex();
 

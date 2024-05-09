@@ -729,7 +729,7 @@ extern "C" {
         opt.pixelFormat = GetColorType(colorType);
         opt.alphaType = GetAlphaType(alphaType);
         opt.editable = true;
-        std::unique_ptr<Media::PixelMap> pixelMap = Media::PixelMapImpl::createPixelMap(opt);
+        std::unique_ptr<Media::PixelMap> pixelMap = Media::PixelMapImpl::CreatePixelMap(opt);
         if (pixelMap == nullptr) {
             return -1;
         }
