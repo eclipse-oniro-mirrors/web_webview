@@ -24,6 +24,7 @@
 #include "web_cookie_manager.h"
 #include "pixel_map.h"
 #include "cj_lambda.h"
+#include "pixel_map_impl.h"
 
 using namespace OHOS::FFI;
 using namespace OHOS::NWeb;
@@ -711,6 +712,35 @@ extern "C" {
         return alphaType;
     }
 
+    int64_t GetFavicon(std::shared_ptr<NWebHistoryItem> item)
+    {
+        void *data = nullptr;
+        int32_t width = 0;
+        int32_t height = 0;
+        ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
+        ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
+        bool isGetFavicon = item->GetFavicon(&data, width, height, colorType, alphaType);
+        if (!isGetFavicon) {
+            return -1;
+        }
+        OHOS::Media::InitializationOptions opt;
+        opt.size.width = width;
+        opt.size.height = height;
+        opt.pixelFormat = GetColorType(colorType);
+        opt.alphaType = GetAlphaType(alphaType);
+        opt.editable = true;
+        std::unique_ptr<Media::PixelMap> pixelMap = Media::PixelMapImpl::createPixelMap(opt);
+        if (pixelMap == nullptr) {
+            return -1;
+        }
+        uint64_t stride = static_cast<uint64_t>(width) << 2;
+        uint64_t bufferSize = stride * static_cast<uint64_t>(height);
+        pixelMap->WritePixels(static_cast<const uint8_t *>(data), bufferSize);
+        auto nativeImage = FFIData::Create<Media::PixelMapImpl>(move(pixelMap));
+        WEBVIEWLOGI("[PixelMap] create PixelMap success");
+        return nativeImage->GetID();
+    }
+
     CHistoryItem FfiOHOSGetItemAtIndex(int64_t id, int32_t index, int32_t *errCode)
     {
         CHistoryItem ret = {.icon = -1, .historyUrl = nullptr, .historyRawUrl = nullptr, .title = nullptr};
@@ -731,6 +761,7 @@ extern "C" {
         ret.historyUrl = MallocCString(item->GetHistoryUrl());
         ret.historyRawUrl = MallocCString(item->GetHistoryRawUrl());
         ret.title = MallocCString(item->GetHistoryTitle());
+        ret.icon = GetFavicon(item);
         *errCode = NWebError::NO_ERROR;
         return ret;
     }
