@@ -12,9 +12,12 @@
 # limitations under the License.
 
 import("//build/ohos.gni")
+import("../web_aafwk.gni")
 
 #################################################
 config("ohos_glue_config") {
+  defines = [ "OHOS_WEBVIEW_GLUE" ]
+
   include_dirs = [ "../ohos_glue" ]
 }
 
@@ -29,6 +32,8 @@ ohos_shared_library("ohos_base_glue_source") {
   } else if (target_cpu == "x86_64") {
     defines = [ "webview_x86_64" ]
   }
+
+  deps = [ "${webview_path}:webview_prepare" ]
 
   configs = [ ":ohos_glue_config" ]
   include_dirs = [ "../ohos_nweb" ]

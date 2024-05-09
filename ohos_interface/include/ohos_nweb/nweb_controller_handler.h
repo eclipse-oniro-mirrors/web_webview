@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,22 +13,28 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_MACROS_H_
-#define ARK_WEB_MACROS_H_
-#pragma once
+#ifndef NWEB_CONTROLLER_HANDLER_H
+#define NWEB_CONTROLLER_HANDLER_H
 
-#define SAFE_FREE(ptr, func) \
-    if (ptr) {               \
-        func(ptr);           \
-        ptr = nullptr;       \
-    }
+#include <string>
 
-#define ARK_WEB_EXPORT __attribute__((visibility("default")))
+#include "nweb_export.h"
 
-#define ARK_WEB_CALLBACK
+namespace OHOS::NWeb {
 
-#define ARK_WEB_RETURN_VOID
+class OHOS_NWEB_EXPORT NWebControllerHandler {
+public:
+    virtual ~NWebControllerHandler() = default;
 
-#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
+    virtual void SetNWebHandlerById(int32_t nwebId) = 0;
 
-#endif // ARK_WEB_MACROS_H_
+    virtual int32_t GetNWebHandlerId() = 0;
+
+    virtual bool IsFrist() = 0;
+
+    virtual int32_t GetId() = 0;
+};
+
+} // namespace OHOS::NWeb
+
+#endif
