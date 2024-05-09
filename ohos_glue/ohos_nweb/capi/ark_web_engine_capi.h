@@ -90,6 +90,8 @@ typedef struct _ark_web_engine_t {
         struct _ark_web_engine_t* self, const ArkWebString* hostName, const ArkWebString* address, int32_t aliveTime);
 
     void(ARK_WEB_CALLBACK* clear_host_ip)(struct _ark_web_engine_t* self, const ArkWebString* hostName);
+
+    void(ARK_WEB_CALLBACK* enable_whole_web_page_drawing)(struct _ark_web_engine_t* self);
 } ark_web_engine_t;
 
 ARK_WEB_EXPORT ark_web_engine_t* ark_web_engine_get_instance(void);

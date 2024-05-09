@@ -101,6 +101,9 @@ public:
 
     /*--ark web()--*/
     virtual void ClearHostIP(const ArkWebString& hostName) = 0;
+
+    /*--ark web()--*/
+    virtual void EnableWholeWebPageDrawing() = 0;
 };
 
 } // namespace OHOS::ArkWeb
