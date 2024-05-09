@@ -77,6 +77,8 @@ public:
     void SetHostIP(const ArkWebString& hostName, const ArkWebString& address, int32_t aliveTime) override;
 
     void ClearHostIP(const ArkWebString& hostName) override;
+
+    void EnableWholeWebPageDrawing() override;
 };
 
 } // namespace OHOS::ArkWeb

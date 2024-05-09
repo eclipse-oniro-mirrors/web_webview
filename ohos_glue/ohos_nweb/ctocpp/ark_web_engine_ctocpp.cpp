@@ -396,6 +396,20 @@ void ArkWebEngineCToCpp::ClearHostIP(const ArkWebString& hostName)
     _struct->clear_host_ip(_struct, &hostName);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebEngineCToCpp::EnableWholeWebPageDrawing()
+{
+    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+    ark_web_engine_t* _struct = GetStruct();
+    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, enable_whole_web_page_drawing, );
+
+    // Execute
+    _struct->enable_whole_web_page_drawing(_struct);
+}
+
 ArkWebEngineCToCpp::ArkWebEngineCToCpp() {}
 
 ArkWebEngineCToCpp::~ArkWebEngineCToCpp() {}

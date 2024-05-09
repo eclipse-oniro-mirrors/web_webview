@@ -423,6 +423,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("injectOfflineResources", NapiWebviewController::InjectOfflineResource),
         DECLARE_NAPI_STATIC_FUNCTION("setHostIP", NapiWebviewController::SetHostIP),
         DECLARE_NAPI_STATIC_FUNCTION("clearHostIP", NapiWebviewController::ClearHostIP),
+        DECLARE_NAPI_STATIC_FUNCTION("enableWholeWebPageDrawing", NapiWebviewController::EnableWholeWebPageDrawing),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5437,6 +5438,15 @@ napi_value NapiWebviewController::ClearHostIP(napi_env env, napi_callback_info i
     }
 
     NWebHelper::Instance().ClearHostIP(hostName);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::EnableWholeWebPageDrawing(
+    napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NWebHelper::Instance().EnableWholeWebPageDrawing();
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
