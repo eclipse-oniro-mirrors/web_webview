@@ -658,6 +658,14 @@ public:
      */
     /*--ark web()--*/
     virtual void OnRenderProcessResponding() = 0;
+
+    /**
+     * @brief Called when the viewport-fit meta is detected for web page.
+     *
+     * @param viewportFit The type of the viewport-fit.
+     */
+    /*--ark web()--*/
+    virtual void OnViewportFitChange(int viewportFit) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -74,6 +74,19 @@ enum class RenderProcessNotRespondingReason {
     NAVIGATION_COMMIT_TIMEOUT,
 };
 
+enum class ViewportFit {
+    // No effect - the whole web page is viewable(default)
+    AUTO,
+
+    // The initial layout viewport and the visual viewport are set to the
+    // largest rectangle which is inscribed in the display of the device.
+    CONTAIN,
+
+    // The initial layout viewport and the visual viewport are set to the
+    // circumscribed rectangle of the physical screen of the device.
+    COVER,
+};
+
 class NWebImageOptions {
 public:
     virtual ~NWebImageOptions() = default;
@@ -873,6 +886,13 @@ public:
      */
 
     virtual void OnRenderProcessResponding() {}
+
+    /**
+     * @brief Called when the viewport-fit meta is detected for web page.
+     *
+     * @param viewportFit The type of the viewport-fit.
+     */
+    virtual void OnViewportFitChange(ViewportFit viewportFit) {}
 };
 
 } // namespace OHOS::NWeb
