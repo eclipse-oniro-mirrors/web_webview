@@ -15,7 +15,11 @@
 
 let cert = requireInternal('security.cert');
 let webview = requireInternal('web.webview');
+let picker = requireNapi('file.picker');
+let cameraPicker = requireNapi('multimedia.cameraPicker');
+let camera = requireNapi('multimedia.camera');
 let accessControl = requireNapi('abilityAccessCtrl');
+let deviceinfo = requireInternal('deviceInfo');
 const PARAM_CHECK_ERROR = 401;
 
 const ERROR_MSG_INVALID_PARAM = 'Invalid input parameter';
@@ -49,6 +53,167 @@ function getCertificatePromise(certChainData) {
   return Promise.all(x509CertArray);
 }
 
+function takePhoto(param, selectResult) {
+  try {
+    let pickerProfileOptions = {
+      'cameraPosition': camera.CameraPosition.CAMERA_POSITION_BACK,
+    };
+    let acceptTypes = param.getAcceptType();
+    let mediaType = [];
+    if (isContainImageMimeType(acceptTypes) && !isContainVideoMimeType(acceptTypes)) {
+      mediaType.push(cameraPicker.PickerMediaType.PHOTO);
+    } else if (!isContainImageMimeType(acceptTypes) && isContainVideoMimeType(acceptTypes)) {
+      mediaType.push(cameraPicker.PickerMediaType.VIDEO);
+    } else {
+      mediaType.push(cameraPicker.PickerMediaType.PHOTO);
+      mediaType.push(cameraPicker.PickerMediaType.VIDEO);
+    }
+    cameraPicker.pick(getContext(this), mediaType, pickerProfileOptions)
+    .then((pickerResult) => {
+      if (pickerResult.resultCode === 0) {
+        selectResult.handleFileList([pickerResult.resultUri]);
+      }
+    }).catch((error) => {
+      console.log('selectFile error:' + JSON.stringify(error));
+    });
+
+  } catch (error) {
+    console.log('the pick call failed, error code' + JSON.stringify(error));
+  }
+}
+
+function needShowDialog(params) {
+  let result = false;
+  try {
+    let currentDevice = deviceinfo.deviceType.toLowerCase();
+    if (currentDevice !== 'phone') {
+      return false;
+    }
+    let acceptTypes = params.getAcceptType();
+    if (isContainImageMimeType(acceptTypes) || isContainVideoMimeType(acceptTypes)) {
+      result = true;
+    }
+  } catch (error) {
+    console.log('show dialog happend error:' + JSON.stringify(error));
+  }
+  return result;
+}
+
+function selectFile(param, result) {
+  try {
+    let documentSelectOptions = createDocumentSelectionOptions(param);
+    let documentPicker = new picker.DocumentViewPicker();
+    documentPicker.select(documentSelectOptions)
+      .then((documentSelectResult) => {
+        if (documentSelectResult && documentSelectResult.length > 0) {
+          let filePath = documentSelectResult;
+          result.handleFileList(filePath);
+        }
+      }).catch((error) => {
+        console.log('selectFile error: ' + JSON.stringify(error));
+      });
+  } catch (error) {
+    console.log('picker error: ' + JSON.stringify(error));
+  }
+}
+
+function createDocumentSelectionOptions(param) {
+  let documentSelectOptions = new picker.DocumentSelectOptions();
+  try {
+    let defaultSelectNumber = 500;
+    let defaultSelectMode = picker.DocumentSelectMode.MIXED;
+    documentSelectOptions.maxSelectNumber = defaultSelectNumber;
+    documentSelectOptions.selectMode = defaultSelectMode;
+    let mode = param.getMode();
+    switch (mode) {
+      case FileSelectorMode.FileOpenMode:
+        documentSelectOptions.maxSelectNumber = 1;
+        documentSelectOptions.selectMode = picker.DocumentSelectMode.FILE;
+        break;
+      case FileSelectorMode.FileOpenMultipleMode:
+        documentSelectOptions.selectMode = picker.DocumentSelectMode.FILE;
+        break;
+      case FileSelectorMode.FileOpenFolderMode:
+        documentSelectOptions.selectMode = picker.DocumentSelectMode.FOLDER;
+        break;
+      case FileSelectorMode.FileSaveMode:
+        break;
+      default:
+        break;
+    }
+    documentSelectOptions.fileSuffixFilters = [];
+    let suffix = param.getAcceptType().join(',');
+    if (suffix) {
+      documentSelectOptions.fileSuffixFilters.push(suffix);
+    }
+ } catch (error) {
+    console.log('selectFile error: ' + + JSON.stringify(error));
+    return documentSelectOptions;
+ }
+  return documentSelectOptions;
+}
+
+function isContainImageMimeType(acceptTypes) {
+  if (!(acceptTypes instanceof Array) || acceptTypes.length < 1) {
+    return false;
+  }
+
+  let imageTypes = ['tif', 'xbm', 'tiff', 'pjp', 'jfif', 'bmp', 'avif', 'apng', 'ico',
+                    'webp', 'svg', 'gif', 'svgz', 'jpg', 'jpeg', 'png', 'pjpeg'];
+  for (let i = 0; i < acceptTypes.length; i++) {
+    for (let j = 0; j < imageTypes.length; j++) {
+      if (acceptTypes[i].includes(imageTypes[j])) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function isContainVideoMimeType(acceptTypes) {
+  if (!(acceptTypes instanceof Array) || acceptTypes.length < 1) {
+    return false;
+  }
+
+  let videoTypes = ['ogm', 'ogv', 'mpg', 'mp4', 'mpeg', 'm4v', 'webm'];
+  for (let i = 0; i < acceptTypes.length; i++) {
+    for (let j = 0; j < videoTypes.length; j++) {
+      if (acceptTypes[i].includes(videoTypes[j])) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function selectPicture(param, selectResult) {
+  try {
+    let photoResultArray = [];
+    let photoSelectOptions = new picker.PhotoSelectOptions();
+    let acceptTypes = param.getAcceptType();
+    photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_VIDEO_TYPE;
+    if (isContainImageMimeType(acceptTypes) && !isContainVideoMimeType(acceptTypes)) {
+      photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_TYPE;
+    }
+    if (!isContainImageMimeType(acceptTypes) && isContainVideoMimeType(acceptTypes)) {
+      photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.VIDEO_TYPE;
+    }
+
+    let photoPicker = new picker.PhotoViewPicker();
+    photoPicker.select(photoSelectOptions).then((photoSelectResult) => {
+      if (photoSelectResult.photoUris.length <= 0) {
+        return;
+      }
+      for (let i = 0; i < photoSelectResult.photoUris.length; i++) {
+        photoResultArray.push(photoSelectResult.photoUris[i]);
+      }
+      selectResult.handleFileList(photoResultArray);
+    });
+  } catch (error) {
+    console.log('selectPicture error' + JSON.stringify(error));
+  }
+}
+
 Object.defineProperty(webview.WebviewController.prototype, 'getCertificate', {
   value: function (callback) {
     if (arguments.length !== 0 && arguments.length !== 1) {
@@ -69,6 +234,56 @@ Object.defineProperty(webview.WebviewController.prototype, 'getCertificate', {
       }).catch(error => {
         callback(error, undefined);
       });
+    }
+  }
+});
+
+Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFromUserWeb', {
+  value:  function (callback) {
+    if (needShowDialog(callback.fileparam)) {
+      ActionSheet.show({
+        title: '选择上传',
+        autoCancel: true,
+        confirm: {
+          defaultFocus: true,
+          value: '取消',
+          style: DialogButtonStyle.DEFAULT,
+          action: () => {
+            console.log('Get Alert Dialog handled');
+          }
+        },
+        cancel: () => {
+          console.log('actionSheet canceled');
+        },
+        alignment: DialogAlignment.Bottom,
+        offset: { dx: 0, dy: -10 },
+        sheets: [
+          {
+            icon: $r('sys.media.ohos_ic_public_albums'),
+            title: '图片',
+            action: () => {
+              selectPicture(callback.fileparam, callback.fileresult);
+            }
+          },
+          {
+            icon: $r('sys.media.ohos_ic_public_camera'),
+            title: '拍照',
+            action: () => {
+              takePhoto(callback.fileparam, callback.fileresult);
+             }
+          },
+          {
+            icon: $r('sys.media.ohos_ic_public_email'),
+            title: '文件',
+            action: () => {
+              selectFile(callback.fileparam, callback.fileresult);
+            }
+          }
+        ]
+      });
+    } else {
+      console.log('selectFile will be invoked by web');
+      selectFile(callback.fileparam, callback.fileresult);
     }
   }
 });
