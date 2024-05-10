@@ -38,6 +38,7 @@ public:
     void SetFrameRateLinkerEnable(bool enabled) override;
     void SetFramePreferredRate(int32_t preferredRate) override;
 
+    void SetOnVsyncCallback(void (*callback)()) override;
 private:
     static void OnVsync(int64_t timestamp, void* data);
     void VsyncCallbackInner(int64_t nanoTimestamp);
@@ -54,6 +55,7 @@ private:
         .callback_ = OnVsync,
     };
     std::shared_ptr<Rosen::RSFrameRateLinker> frameRateLinker_;
+    static void (*callback_)();
 };
 } // namespace OHOS::NWeb
 
