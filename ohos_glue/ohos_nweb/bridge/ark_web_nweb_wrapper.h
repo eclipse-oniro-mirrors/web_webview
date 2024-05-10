@@ -1094,6 +1094,11 @@ public:
      */
     std::string GetSelectInfo() override;
 
+    /**
+     * @brief Render process switch to foreground.
+     */
+    /*--ark web()--*/
+    void OnOnlineRenderToForeground() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
