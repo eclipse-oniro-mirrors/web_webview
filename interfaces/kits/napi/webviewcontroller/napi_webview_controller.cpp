@@ -5406,7 +5406,8 @@ napi_value NapiWebviewController::SetHostIP(napi_env env, napi_callback_info inf
 
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], hostName) ||
         !NapiParseUtils::ParseString(env, argv[INTEGER_ONE], address) ||
-        !NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], aliveTime)) {
+        !NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], aliveTime) ||
+        aliveTime <= 0) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
