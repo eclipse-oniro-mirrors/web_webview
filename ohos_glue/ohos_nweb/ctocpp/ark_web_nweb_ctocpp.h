@@ -351,6 +351,8 @@ public:
     void SetFitContentMode(int32_t mode) override;
 
     ArkWebString GetSelectInfo() override;
+
+    void OnOnlineRenderToForeground() override;
 };
 
 } // namespace OHOS::ArkWeb

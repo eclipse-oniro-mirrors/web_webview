@@ -1239,6 +1239,12 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetSelectInfo() = 0;
+
+    /**
+     * @brief None offline Render process switch to foreground.
+     */
+    /*--ark web()--*/
+    virtual void OnOnlineRenderToForeground() = 0;
 };
 
 } // namespace OHOS::ArkWeb
