@@ -409,6 +409,9 @@ typedef struct _ark_web_nweb_t {
     ArkWebString(ARK_WEB_CALLBACK* get_select_info)(struct _ark_web_nweb_t* self);
 
     void(ARK_WEB_CALLBACK* on_online_render_to_foreground)(struct _ark_web_nweb_t* self);
+
+    void(ARK_WEB_CALLBACK* on_safe_insets_change)(struct _ark_web_nweb_t* self,
+          int32_t left, int32_t top, int32_t right, int32_t bottom);
 } ark_web_nweb_t;
 
 #ifdef __cplusplus

@@ -1099,6 +1099,13 @@ public:
      */
     /*--ark web()--*/
     void OnOnlineRenderToForeground() override;
+
+    /**
+     * @brief Notify that safe insets changed.
+     */
+    /*--ark web()--*/
+    void OnSafeInsetsChange(int left, int top, int right, int bottom) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

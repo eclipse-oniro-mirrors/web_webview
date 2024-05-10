@@ -66,6 +66,7 @@ using ArkWebActivityType = OHOS::NWeb::ActivityType;
 using ArkWebRenderExitReason = OHOS::NWeb::RenderExitReason;
 using ArkWebDragOperation = OHOS::NWeb::NWebDragData::DragOperation;
 using ArkWebRenderProcessNotRespondingReason = OHOS::NWeb::RenderProcessNotRespondingReason;
+using ArkWebViewportFit = OHOS::NWeb::ViewportFit;
 
 ArkWebHandlerImpl::ArkWebHandlerImpl(std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler)
     : nweb_handler_(nweb_handler)
@@ -800,4 +801,10 @@ void ArkWebHandlerImpl::OnHideAutofillPopup()
 {
     nweb_handler_->OnHideAutofillPopup();
 }
+
+void ArkWebHandlerImpl::OnViewportFitChange(int viewportFit)
+{
+    nweb_handler_->OnViewportFitChange(static_cast<ArkWebViewportFit>(viewportFit));
+}
+
 } // namespace OHOS::ArkWeb
