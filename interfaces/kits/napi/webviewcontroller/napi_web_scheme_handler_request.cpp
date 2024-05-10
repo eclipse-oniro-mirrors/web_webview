@@ -50,6 +50,7 @@ void NapiWebSchemeHandlerRequest::ExportWebSchemeHandlerRequestClass(
         DECLARE_NAPI_FUNCTION("isMainFrame", JS_IsMainFrame),
         DECLARE_NAPI_FUNCTION("hasGesture", JS_HasGesture),
         DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_HttpBodyStream),
+        DECLARE_NAPI_FUNCTION("getRequestResourceType", JS_GetRequestResourceType),
     };
     napi_value webSchemeHandlerRequest = nullptr;
     napi_define_class(env, WEB_SCHEME_HANDLER_REQUEST.c_str(), WEB_SCHEME_HANDLER_REQUEST.length(),
@@ -71,6 +72,7 @@ napi_status NapiWebSchemeHandlerRequest::DefineProperties(
         DECLARE_NAPI_FUNCTION("isMainFrame", JS_IsMainFrame),
         DECLARE_NAPI_FUNCTION("hasGesture", JS_HasGesture),
         DECLARE_NAPI_FUNCTION("getHttpBodyStream", JS_HttpBodyStream),
+        DECLARE_NAPI_FUNCTION("getRequestResourceType", JS_GetRequestResourceType),
     };
     return napi_define_properties(env, *object, sizeof(properties) / sizeof(properties[0]), properties);
 }
@@ -285,6 +287,24 @@ napi_value NapiWebSchemeHandlerRequest::JS_HttpBodyStream(napi_env env, napi_cal
         nullptr, nullptr);
     NapiWebHttpBodyStream::DefineProperties(env, &httpBodyStreamObject);
     return httpBodyStreamObject;
+}
+
+napi_value NapiWebSchemeHandlerRequest::JS_GetRequestResourceType(napi_env env, napi_callback_info cbinfo)
+{
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    WebSchemeHandlerRequest *request = nullptr;
+    napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
+
+    napi_unwrap(env, thisVar, (void **)&request);
+    if (!request) {
+        WVLOG_E("NapiWebSchemeHandlerRequest::JS_GetRequestResourceType request is nullptr");
+        return nullptr;
+    }
+
+    napi_value value;
+    napi_create_int32(env, request->GetRequestResourceType(), &value);
+    return value;
 }
 
 napi_value NapiWebSchemeHandlerResponse::Init(napi_env env, napi_value exports)

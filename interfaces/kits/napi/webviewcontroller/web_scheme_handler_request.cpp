@@ -80,6 +80,7 @@ WebSchemeHandlerRequest::WebSchemeHandlerRequest(napi_env env,
     isMainFrame_ = OH_ArkWebResourceRequest_IsMainFrame(request);
     hasGesture_ = OH_ArkWebResourceRequest_HasGesture(request);
     OH_ArkWebResourceRequest_GetHttpBodyStream(request, &stream_);
+    requestResourceType_ = OH_ArkWebResourceRequest_GetResourceType(request);
 
     ArkWeb_RequestHeaderList* arkWebHeaderlist = nullptr;
     OH_ArkWebResourceRequest_GetRequestHeaders(request, &arkWebHeaderlist);
@@ -154,6 +155,11 @@ const WebHeaderList& WebSchemeHandlerRequest::GetHeader()
 ArkWeb_HttpBodyStream* WebSchemeHandlerRequest::GetHttpBodyStream()
 {
     return stream_;
+}
+
+int32_t WebSchemeHandlerRequest::GetRequestResourceType()
+{
+    return requestResourceType_;
 }
 
 WebSchemeHandlerResponse::WebSchemeHandlerResponse(napi_env env)
