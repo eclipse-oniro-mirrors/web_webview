@@ -246,7 +246,7 @@ bool WebviewJavaScriptResultCallBackImpl::ConstructArgv(void* ashmem,
     while (arg_index == curr_index) {
         argv.push_back(std::string(flowbuf_str));
         curr_index ++;
-        flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index , &arg_index, &str_len);
+        flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
         flowbuf_index++;
     }
 
@@ -257,8 +257,8 @@ bool WebviewJavaScriptResultCallBackImpl::ConstructArgv(void* ashmem,
             flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
             flowbuf_index++;
         }
-       argv.push_back(input->GetString());
-       curr_index++;
+        argv.push_back(input->GetString());
+        curr_index++;
     }
 
     while (arg_index == curr_index) {
@@ -299,7 +299,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
 std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultSelfFlowbuf(
     std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName, int fd,
     int32_t routingId, int32_t objectId)
-{	
+{
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
@@ -312,8 +312,8 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
     }
 
     std::vector<std::string> argv = {};
-    if(!ConstructArgv(ashmem, args, argv, jsObj, routingId)) {
-    	return ret;
+    if (!ConstructArgv(ashmem, args, argv, jsObj, routingId)) {
+        return ret;
     }
     close(fd);
 
@@ -332,7 +332,6 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
     if (!jsObj || jsObj->HasMethod(method) == -1) {
         return ret;
     }
-
     return GetJavaScriptResultSelfFlowbuf(args, method, objName,fd, routingId, objectId);
 }
 
