@@ -2241,6 +2241,20 @@ ArkWebString ArkWebNWebCToCpp::GetSelectInfo()
     return _struct->get_select_info(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::OnOnlineRenderToForeground()
+{
+    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+    ark_web_nweb_t *_struct = GetStruct();
+    ARK_WEB_CTOCPP_CHECK_PARAM(_struct,);
+
+    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_online_render_to_foreground,);
+
+    // Execute
+    _struct->on_online_render_to_foreground(_struct);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {}
 
 ArkWebNWebCToCpp::~ArkWebNWebCToCpp() {}
