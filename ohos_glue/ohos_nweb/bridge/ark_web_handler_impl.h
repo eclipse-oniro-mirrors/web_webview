@@ -536,6 +536,7 @@ public:
 
     void OnHideAutofillPopup() override;
 
+    void OnViewportFitChange(int viewportFit) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

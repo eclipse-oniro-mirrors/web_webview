@@ -353,6 +353,8 @@ public:
     ArkWebString GetSelectInfo() override;
 
     void OnOnlineRenderToForeground() override;
+
+    void OnSafeInsetsChange(int left, int top, int right, int bottom) override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -2255,6 +2255,20 @@ void ArkWebNWebCToCpp::OnOnlineRenderToForeground()
     _struct->on_online_render_to_foreground(_struct);
 }
 
+ARK_WEB_NO_SANITIZE
+void ArkWebNWebCToCpp::OnSafeInsetsChange(int left, int top, int right, int bottom)
+{
+    ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+    ark_web_nweb_t *_struct = GetStruct();
+    ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+    ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, on_safe_insets_change, );
+
+    // Execute
+    _struct->on_safe_insets_change(_struct, left, top, right, bottom);
+}
+
 ArkWebNWebCToCpp::ArkWebNWebCToCpp() {}
 
 ArkWebNWebCToCpp::~ArkWebNWebCToCpp() {}
