@@ -56,6 +56,7 @@ private:
     };
     std::shared_ptr<Rosen::RSFrameRateLinker> frameRateLinker_;
     static void (*callback_)();
+    bool frameRateLinkerEnable_ = false;
 };
 } // namespace OHOS::NWeb
 

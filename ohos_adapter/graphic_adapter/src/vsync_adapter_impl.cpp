@@ -150,8 +150,14 @@ int64_t VSyncAdapterImpl::GetVSyncPeriod()
     }
     return period;
 }
+
 void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
 {
+    WVLOG_I("NWebWindowAdapter SetFrameRateLinkerEnable enabled=%{public}d", enabled);
+    if (frameRateLinkerEnable_ == enabled) {
+        return;
+    }
+
     Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 120};
     if (frameRateLinker_) {
         if (!enabled) {
@@ -159,15 +165,16 @@ void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
         }
         frameRateLinker_->UpdateFrameRateRangeImme(range);
         frameRateLinker_->SetEnable(enabled);
+        frameRateLinkerEnable_ = enabled;
     }
 }
 
 void VSyncAdapterImpl::SetFramePreferredRate(int32_t preferredRate)
 {
     Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, preferredRate};
-    if (frameRateLinker_) {
+    if (frameRateLinker_ && frameRateLinker_->IsEnable()) {
+        WVLOG_D("NWebWindowAdapter SetFramePreferredRate preferredRate=%{public}d", preferredRate);
         frameRateLinker_->UpdateFrameRateRangeImme(range);
-        frameRateLinker_->SetEnable(true);
     }
 }
 

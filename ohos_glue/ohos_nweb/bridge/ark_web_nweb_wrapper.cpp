@@ -1124,4 +1124,9 @@ std::string ArkWebNWebWrapper::GetSelectInfo()
 {
     return ArkWebStringStructToClass(ark_web_nweb_->GetSelectInfo());
 }
+
+void ArkWebNWebWrapper::OnOnlineRenderToForeground()
+{
+    ark_web_nweb_->OnOnlineRenderToForeground();
+}
 } // namespace OHOS::ArkWeb
