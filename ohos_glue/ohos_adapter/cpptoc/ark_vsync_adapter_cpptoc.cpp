@@ -66,6 +66,17 @@ void ARK_WEB_CALLBACK ark_vsync_adapter_set_frame_preferred_rate(
     ArkVSyncAdapterCppToC::Get(self)->SetFramePreferredRate(preferredRate);
 }
 
+void ARK_WEB_CALLBACK ark_vsync_adapter_set_on_vsync_callback(
+    struct _ark_vsync_adapter_t* self, void (*callback)())
+{
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+    // Execute
+    ArkVSyncAdapterCppToC::Get(self)->SetOnVsyncCallback(callback);
+}
+
 } // namespace
 
 ArkVSyncAdapterCppToC::ArkVSyncAdapterCppToC()
@@ -74,6 +85,7 @@ ArkVSyncAdapterCppToC::ArkVSyncAdapterCppToC()
     GetStruct()->get_vsync_period = ark_vsync_adapter_get_vsync_period;
     GetStruct()->set_frame_rate_linker_enable = ark_vsync_adapter_set_frame_rate_linker_enable;
     GetStruct()->set_frame_preferred_rate = ark_vsync_adapter_set_frame_preferred_rate;
+    GetStruct()->set_on_vsync_callback = ark_vsync_adapter_set_on_vsync_callback;
 }
 
 ArkVSyncAdapterCppToC::~ArkVSyncAdapterCppToC() {}
