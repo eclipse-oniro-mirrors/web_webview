@@ -31,33 +31,11 @@ ArkWebStringMap ARK_WEB_CALLBACK ark_web_cache_options_get_response_headers(stru
     return ArkWebCacheOptionsCppToC::Get(self)->GetResponseHeaders();
 }
 
-bool ARK_WEB_CALLBACK ark_web_cache_options_is_module(struct _ark_web_cache_options_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
-
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
-
-    // Execute
-    return ArkWebCacheOptionsCppToC::Get(self)->IsModule();
-}
-
-bool ARK_WEB_CALLBACK ark_web_cache_options_is_top_level(struct _ark_web_cache_options_t* self)
-{
-    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
-
-    ARK_WEB_CPPTOC_CHECK_PARAM(self, false);
-
-    // Execute
-    return ArkWebCacheOptionsCppToC::Get(self)->IsTopLevel();
-}
-
 } // namespace
 
 ArkWebCacheOptionsCppToC::ArkWebCacheOptionsCppToC()
 {
     GetStruct()->get_response_headers = ark_web_cache_options_get_response_headers;
-    GetStruct()->is_module = ark_web_cache_options_is_module;
-    GetStruct()->is_top_level = ark_web_cache_options_is_top_level;
 }
 
 ArkWebCacheOptionsCppToC::~ArkWebCacheOptionsCppToC() {}

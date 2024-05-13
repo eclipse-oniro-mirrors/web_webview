@@ -197,8 +197,6 @@ public:
     virtual ~CacheOptions() = default;
 
     virtual std::map<std::string, std::string> GetResponseHeaders() = 0;
-    virtual bool IsModule() = 0;
-    virtual bool IsTopLevel() = 0;
 };
 
 typedef int64_t (*AccessibilityIdGenerateFunc)();
