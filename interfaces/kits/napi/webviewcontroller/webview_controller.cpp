@@ -1535,9 +1535,7 @@ bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::
 
 std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env, napi_value value) {
     std::map<std::string, std::string> responseHeaders;
-    bool isModule = false;
-    bool isTopLevel = false;
-    auto defaultCacheOptions = std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
+    auto defaultCacheOptions = std::make_shared<NWebCacheOptionsImpl>(responseHeaders);
 
     napi_value responseHeadersValue = nullptr;
     if (napi_get_named_property(env, value, "responseHeaders", &responseHeadersValue) != napi_ok) {
@@ -1550,7 +1548,7 @@ std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env,
         return defaultCacheOptions;
     }
 
-    return std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
+    return std::make_shared<NWebCacheOptionsImpl>(responseHeaders);
 }
 
 ErrCode WebviewController::PrecompileJavaScriptPromise(
