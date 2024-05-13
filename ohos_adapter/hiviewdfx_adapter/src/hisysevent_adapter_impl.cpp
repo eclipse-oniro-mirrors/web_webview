@@ -129,7 +129,7 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
 
     std::tuple<const std::string, const std::string, const std::string, const std::string,
         const std::string, const std::string> sysData = {
-        "SCENE_ID", "",
+        "SCENE_ID", "WEB_LIST_FLING",
         "ABILITY_NAME", elementName.GetAbilityName(),
         "PAGE_URL", ""
     };
