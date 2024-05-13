@@ -46,6 +46,7 @@ public:
     static napi_value JS_IsMainFrame(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_HasGesture(napi_env env, napi_callback_info cbinfo);
     static napi_value JS_HttpBodyStream(napi_env env, napi_callback_info cbinfo);
+    static napi_value JS_GetRequestResourceType(napi_env env, napi_callback_info cbinfo);
 };
 
 class NapiWebSchemeHandlerResponse {
