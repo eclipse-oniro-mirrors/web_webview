@@ -32,6 +32,7 @@ OhosImageDecoderAdapterImpl::OhosImageDecoderAdapterImpl() = default;
 
 OhosImageDecoderAdapterImpl::~OhosImageDecoderAdapterImpl() = default;
 
+// Dump decoded data as needed.
 void OhosImageDecoderAdapterImpl::SaveDataToFile(Media::PixelMap* pixelMap)
 {
     static const std::string SANDBOX = "/data/storage/el2/base/files/";
@@ -95,15 +96,14 @@ bool OhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t *data, uint32_t
    
     auto ret = imageSource->GetImageInfo(imageInfo_);
     if (ret != Media::SUCCESS) {
-       WVLOG_E("ImageDecode: ParseImageInfo GetImageInfo failed when decoding, errorCode %{public}d", ret);
+        WVLOG_E("ImageDecode: ParseImageInfo GetImageInfo failed when decoding, errorCode %{public}d", ret);
         return false;
     }
-   
-    bool useYuv = false;
-    Media::DecodeOptions decodeOptions; 
+
     // TODO: Support YUV format.
-    // decodeOptions.desiredPixelFormat = Media::PixelFormat::NV12;
-    decodeOptions.desiredPixelFormat = Media::PixelFormat::RGBA_8888;
+    bool useYuv = false;
+    Media::DecodeOptions decodeOptions;
+    decodeOptions.desiredPixelFormat = useYuv ? Media::PixelFormat::NV12 : Media::PixelFormat::RGBA_8888;
     decodeOptions.allocatorType = Media::AllocatorType::DMA_ALLOC;
     auto pixelMap = imageSource->CreatePixelMap(decodeOptions, errorCode);
     if (errorCode != Media::SUCCESS || pixelMap == nullptr) {
@@ -118,11 +118,6 @@ bool OhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t *data, uint32_t
             return false;
         }
 
-        //#if 0
-        // Dump decoded data as needed.
-        // SaveDataToFile(pixelMap.get());
-        //#endif
-        
         if (useYuv) {
             surfaceBuffer_->GetPlanesInfo((void **)&native_buffer_planes_);
             if (!native_buffer_planes_) {
