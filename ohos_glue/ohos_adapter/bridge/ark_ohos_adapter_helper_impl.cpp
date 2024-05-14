@@ -50,6 +50,7 @@
 #include "ohos_adapter/bridge/ark_net_connect_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_net_proxy_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_file_mapper_impl.h"
+#include "ohos_adapter/bridge/ark_ohos_image_decoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_init_web_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_resource_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_web_data_base_adapter_impl.h"
