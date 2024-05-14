@@ -50,6 +50,7 @@
 #include "ohos_adapter/bridge/ark_net_connect_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_net_proxy_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_file_mapper_impl.h"
+#include "ohos_adapter/bridge/ark_ohos_image_decoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_init_web_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_resource_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_web_data_base_adapter_impl.h"
@@ -361,6 +362,13 @@ ArkWebRefPtr<ArkMediaAVSessionAdapter> ArkOhosAdapterHelperImpl::CreateMediaAVSe
     std::unique_ptr<NWeb::MediaAVSessionAdapter> adapter = real_.CreateMediaAVSessionAdapter();
     std::shared_ptr<NWeb::MediaAVSessionAdapter> shared = std::move(adapter);
     return new ArkMediaAVSessionAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkOhosImageDecoderAdapter> ArkOhosAdapterHelperImpl::CreateOhosImageDecoderAdapter()
+{
+    std::unique_ptr<NWeb::OhosImageDecoderAdapter> adapter = real_.CreateOhosImageDecoderAdapter();
+    std::shared_ptr<NWeb::OhosImageDecoderAdapter> shared = std::move(adapter);
+    return new ArkOhosImageDecoderAdapterImpl(shared);
 }
 
 } // namespace OHOS::ArkWeb
