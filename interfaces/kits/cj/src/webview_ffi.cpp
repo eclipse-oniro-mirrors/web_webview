@@ -649,7 +649,6 @@ extern "C" {
     {
         auto nativeWebHistoryListImpl = FFIData::GetData<WebHistoryListImpl>(id);
         if (nativeWebHistoryListImpl == nullptr || !nativeWebHistoryListImpl) {
-            WEBVIEWLOGE("WebHistoryListImpl instance not exist %{public}lld", id);
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -661,7 +660,6 @@ extern "C" {
     {
         auto nativeWebHistoryListImpl = FFIData::GetData<WebHistoryListImpl>(id);
         if (nativeWebHistoryListImpl == nullptr || !nativeWebHistoryListImpl) {
-            WEBVIEWLOGE("WebHistoryListImpl instance not exist %{public}lld", id);
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
