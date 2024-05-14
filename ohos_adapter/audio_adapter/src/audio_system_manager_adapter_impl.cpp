@@ -56,6 +56,36 @@ const std::string DEVICE_TYPE_FILE_SINK = "device/file_sink";
 const std::string DEVICE_TYPE_FILE_SOURCE = "device/file_source";
 const std::string DEVICE_TYPE_MAX = "device/max";
 
+const std::string DEVICE_TYPE_NONE_ZH_CN = "无";
+const std::string DEVICE_TYPE_INVALID_ZH_CN = "未知设备";
+const std::string DEVICE_TYPE_EARPIECE_ZH_CN = "耳机";
+const std::string DEVICE_TYPE_SPEAKER_ZH_CN = "扬声器";
+const std::string DEVICE_TYPE_WIRED_HEADSET_ZH_CN = "有线耳麦";
+const std::string DEVICE_TYPE_WIRED_HEADPHONES_ZH_CN = "头戴式耳机";
+const std::string DEVICE_TYPE_BLUETOOTH_SCO_ZH_CN = "未知耳机";
+const std::string DEVICE_TYPE_BLUETOOTH_A2DP_ZH_CN = "未知耳机";
+const std::string DEVICE_TYPE_MIC_ZH_CN = "麦克风";
+const std::string DEVICE_TYPE_USB_HEADSET_ZH_CN = "USB 耳机";
+const std::string DEVICE_TYPE_FILE_SINK_ZH_CN = "device/file_sink";
+const std::string DEVICE_TYPE_FILE_SOURCE_ZH_CN = "device/file_source";
+const std::string DEVICE_TYPE_MAX_ZH_CN = "device/max";
+
+const std::unordered_map<DeviceType, std::string> DEVICE_TYPE_NAME_ZH_CN_MAP = {
+    { DeviceType::DEVICE_TYPE_NONE, DEVICE_TYPE_NONE_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_INVALID, DEVICE_TYPE_INVALID_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_EARPIECE, DEVICE_TYPE_EARPIECE_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_SPEAKER, DEVICE_TYPE_SPEAKER_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_WIRED_HEADSET, DEVICE_TYPE_WIRED_HEADSET_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_WIRED_HEADPHONES, DEVICE_TYPE_WIRED_HEADPHONES_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_BLUETOOTH_SCO, DEVICE_TYPE_BLUETOOTH_SCO_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_BLUETOOTH_A2DP, DEVICE_TYPE_BLUETOOTH_A2DP_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_MIC, DEVICE_TYPE_MIC_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_USB_HEADSET, DEVICE_TYPE_USB_HEADSET_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_FILE_SINK, DEVICE_TYPE_FILE_SINK_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_FILE_SOURCE, DEVICE_TYPE_FILE_SOURCE_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_MAX, DEVICE_TYPE_MAX_ZH_CN  },
+};
+
 const std::unordered_map<DeviceType, std::string> DEVICE_TYPE_MAP = {
     { DeviceType::DEVICE_TYPE_NONE, DEVICE_TYPE_NONE },
     { DeviceType::DEVICE_TYPE_INVALID, DEVICE_TYPE_INVALID },
@@ -203,6 +233,26 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return AUDIO_OK;
 }
 
+std::string AudioSystemManagerAdapterImpl::getDeviceName(DeviceType deviceType){
+    WVLOG_I("getDeviceName language: %{public}s", language_.c_str());
+    if(language_ == "zh")
+    {
+        auto deviceTypeKey = DEVICE_TYPE_NAME_ZH_CN_MAP.find(deviceType);
+        if(deviceTypeKey != DEVICE_TYPE_NAME_ZH_CN_MAP.end()){
+            return deviceTypeKey->second;
+        }
+        return DEVICE_TYPE_NONE_ZH_CN;
+    }
+    else
+    {
+        auto deviceTypeKey = DEVICE_TYPE_MAP.find(deviceType);
+        if(deviceTypeKey != DEVICE_TYPE_MAP.end()){
+            return deviceTypeKey->second;
+        }
+        return DEVICE_TYPE_NONE;
+    }
+}
+
 std::vector<std::shared_ptr<AudioDeviceDescAdapter>> AudioSystemManagerAdapterImpl::GetDevices(AdapterDeviceFlag flag)
 {
     bool isCallDevice = false;
@@ -232,10 +282,7 @@ std::vector<std::shared_ptr<AudioDeviceDescAdapter>> AudioSystemManagerAdapterIm
 
         desc->SetDeviceId(audioDevice->deviceId_);
         if (audioDevice->deviceName_.empty()) {
-            auto deviceTypeKey = DEVICE_TYPE_MAP.find(audioDevice->deviceType_);
-            if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
-                desc->SetDeviceName(deviceTypeKey->second);
-            }
+            desc->SetDeviceName(getDeviceName(audioDevice->deviceType));
         } else {
             desc->SetDeviceName(audioDevice->deviceName_);
         }
@@ -343,10 +390,7 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
 
     desc->SetDeviceId(defaultDevice->deviceId_);
     if (defaultDevice->deviceName_.empty()) {
-        auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultDevice->deviceType_);
-        if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
-            desc->SetDeviceName(deviceTypeKey->second);
-        }
+       desc->SetDeviceName(getDeviceName(defaultDevice->deviceType));
     } else {
         desc->SetDeviceName(defaultDevice->deviceName_);
     }
@@ -374,14 +418,20 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
 
     desc->SetDeviceId(defaultDevice->deviceId_);
     if (defaultDevice->deviceName_.empty()) {
-        auto deviceTypeKey = DEVICE_TYPE_MAP.find(defaultDevice->deviceType_);
-        if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
-            desc->SetDeviceName(deviceTypeKey->second);
-        }
+        desc->SetDeviceName(getDeviceName(defaultDevice->deviceType));
     } else {
         desc->SetDeviceName(defaultDevice->deviceName_);
     }
     return desc;
+}
+
+bool AudioSystemManagerAdapterImpl::SetLanguage(std::string language){
+    if(language.empty())
+    {
+        return false;
+    }
+    language_ = language;
+    return true;
 }
 
 int32_t AudioSystemManagerAdapterImpl::SetDeviceChangeCallback(

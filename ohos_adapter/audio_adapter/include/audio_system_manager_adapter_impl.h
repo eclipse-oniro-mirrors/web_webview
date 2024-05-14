@@ -83,6 +83,12 @@ public:
 
     std::shared_ptr<AudioDeviceDescAdapter> GetDefaultInputDevice() override;
 
+    bool SetLanguage(std::string language) override;
+
+    std::string getDeviceName(DeviceType deviceType);
+
+    std::string language_ = "zh";
+
 #if defined(NWEB_AUDIO_ENABLE)
     static AudioStreamType GetStreamType(AudioAdapterStreamType streamType);
 
