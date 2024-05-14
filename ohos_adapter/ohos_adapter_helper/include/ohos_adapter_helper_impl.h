@@ -108,6 +108,8 @@ public:
     std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() override;
 
     std::unique_ptr<MediaAVSessionAdapter> CreateMediaAVSessionAdapter() override;
+
+    std::unique_ptr<OhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() override;
 };
 } // namespace OHOS::NWeb
 
