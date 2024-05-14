@@ -13,27 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_OHOS_ADAPTER_HELPER_CPPTOC_H_
-#define ARK_OHOS_ADAPTER_HELPER_CPPTOC_H_
+#ifndef ARK_OHOS_IMAGE_DECODER_ADAPTER_CPPTOC_H_
+#define ARK_OHOS_IMAGE_DECODER_ADAPTER_CPPTOC_H_
 #pragma once
 
 #include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
-#include "ohos_adapter/capi/ark_ohos_adapter_helper_capi.h"
-#include "ohos_adapter/include/ark_ohos_adapter_helper.h"
+#include "ohos_adapter/capi/ark_ohos_image_decoder_adapter_capi.h"
+#include "ohos_adapter/include/ark_ohos_image_decoder_adapter.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
-class ArkOhosAdapterHelperCppToC
-    : public ArkWebCppToCRefCounted<ArkOhosAdapterHelperCppToC,
-                                    ArkOhosAdapterHelper,
-                                    ark_ohos_adapter_helper_t> {
+class ArkOhosImageDecoderAdapterCppToC
+    : public ArkWebCppToCRefCounted<ArkOhosImageDecoderAdapterCppToC,
+                                    ArkOhosImageDecoderAdapter,
+                                    ark_ohos_image_decoder_adapter_t> {
 public:
-  ArkOhosAdapterHelperCppToC();
-  virtual ~ArkOhosAdapterHelperCppToC();
+  ArkOhosImageDecoderAdapterCppToC();
+  virtual ~ArkOhosImageDecoderAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_OHOS_ADAPTER_HELPER_CPPTOC_H_
+#endif // ARK_OHOS_IMAGE_DECODER_ADAPTER_CPPTOC_H_
