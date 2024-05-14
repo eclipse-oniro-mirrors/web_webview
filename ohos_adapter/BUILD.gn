@@ -787,8 +787,5 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/ctocpp/ark_video_info_adapter_ctocpp.h",
   ]
 
-  deps = [
-    "../ohos_glue:ohos_base_glue_source",
-    "../ohos_nweb:libnweb",
-  ]
+  deps = [ "../ohos_glue:ohos_base_glue_source" ]
 }
