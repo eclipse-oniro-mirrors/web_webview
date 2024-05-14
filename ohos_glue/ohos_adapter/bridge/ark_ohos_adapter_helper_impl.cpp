@@ -363,4 +363,12 @@ ArkWebRefPtr<ArkMediaAVSessionAdapter> ArkOhosAdapterHelperImpl::CreateMediaAVSe
     return new ArkMediaAVSessionAdapterImpl(shared);
 }
 
+ArkWebRefPtr<ArkOhosImageDecoderAdapter> ArkOhosAdapterHelperImpl::CreateOhosImageDecoderAdapter()
+{
+    std::unique_ptr<NWeb::OhosImageDecoderAdapter> adapter = real_.CreateOhosImageDecoderAdapter();
+    std::shared_ptr<NWeb::OhosImageDecoderAdapter> shared = std::move(adapter);
+    return new ArkOhosImageDecoderAdapter(shared);
+}
+}
+
 } // namespace OHOS::ArkWeb
