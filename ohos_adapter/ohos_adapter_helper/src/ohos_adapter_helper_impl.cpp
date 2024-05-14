@@ -49,6 +49,7 @@
 #include "net_connect_adapter_impl.h"
 #endif
 #include "net_proxy_adapter_impl.h"
+#include "ohos_image_decoder_adapter_impl.h"
 #include "ohos_init_web_adapter_impl.h"
 #include "ohos_resource_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
@@ -316,5 +317,10 @@ std::unique_ptr<MediaAVSessionAdapter> OhosAdapterHelperImpl::CreateMediaAVSessi
 #else
     return nullptr;
 #endif
+}
+
+std::unique_ptr<OhosImageDecoderAdapter> OhosAdapterHelperImpl::CreateOhosImageDecoderAdapter()
+{
+    return std::make_unique<OhosImageDecoderAdapterImpl>();
 }
 } // namespace OHOS::NWeb

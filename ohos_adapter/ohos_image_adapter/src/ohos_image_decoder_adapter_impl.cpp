@@ -90,7 +90,7 @@ bool OhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t *data, uint32_t
     Media::SourceOptions sourceOptions;
     auto imageSource = Media::ImageSource::CreateImageSource(data, size, sourceOptions, errorCode);
     if (errorCode != Media::SUCCESS || imageSource == nullptr) {
-        WVLOG_I("ImageDecode: CreateImageSoruce failed, errorCode %{public}d", errorCode);
+        WVLOG_E("ImageDecode: CreateImageSoruce failed, errorCode %{public}d", errorCode);
         return false;
     }
    
@@ -171,7 +171,6 @@ void* OhosImageDecoderAdapterImpl::GetNativeWindowBuffer()
 {
     if (surfaceBuffer_) {
         if (auto* nativeWindowBuffer = CreateNativeWindowBufferFromSurfaceBuffer(&surfaceBuffer_)) {
-            WVLOG_I("ImageDecode: OhosImageDecoderAdapterImpl nativeWindowBuffer %{public}p", nativeWindowBuffer);
             return static_cast<void*>(nativeWindowBuffer);
         }
     }
