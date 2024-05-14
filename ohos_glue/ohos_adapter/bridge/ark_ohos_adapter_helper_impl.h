@@ -106,6 +106,8 @@ public:
 
     ArkWebRefPtr<ArkMediaAVSessionAdapter> CreateMediaAVSessionAdapter() override;
 
+    ArkWebRefPtr<ArkOhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() override;
+
 private:
     NWeb::OhosAdapterHelper& real_;
 
