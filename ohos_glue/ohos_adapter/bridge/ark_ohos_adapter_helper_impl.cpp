@@ -367,8 +367,7 @@ ArkWebRefPtr<ArkOhosImageDecoderAdapter> ArkOhosAdapterHelperImpl::CreateOhosIma
 {
     std::unique_ptr<NWeb::OhosImageDecoderAdapter> adapter = real_.CreateOhosImageDecoderAdapter();
     std::shared_ptr<NWeb::OhosImageDecoderAdapter> shared = std::move(adapter);
-    return new ArkOhosImageDecoderAdapter(shared);
-}
+    return new ArkOhosImageDecoderAdapterImpl(shared);
 }
 
 } // namespace OHOS::ArkWeb
