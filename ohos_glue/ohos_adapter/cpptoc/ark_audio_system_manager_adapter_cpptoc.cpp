@@ -170,6 +170,17 @@ ark_audio_device_desc_adapter_t* ARK_WEB_CALLBACK ark_audio_system_manager_adapt
     return ArkAudioDeviceDescAdapterCppToC::Invert(_retval);
 }
 
+ark_audio_device_desc_adapter_t *ARK_WEB_CALLBACK
+ark_audio_system_manager_adapter_set_language(
+    struct _ark_audio_system_manager_adapter_t *self, ArkWebString language) {
+  ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+  ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+
+  // Execute
+  return ArkAudioSystemManagerAdapterCppToC::Get(self)->SetLanguage(language);
+}
+
 } // namespace
 
 ArkAudioSystemManagerAdapterCppToC::ArkAudioSystemManagerAdapterCppToC()
@@ -188,6 +199,7 @@ ArkAudioSystemManagerAdapterCppToC::ArkAudioSystemManagerAdapterCppToC()
     GetStruct()->unset_device_change_callback = ark_audio_system_manager_adapter_unset_device_change_callback;
     GetStruct()->get_default_output_device = ark_audio_system_manager_adapter_get_default_output_device;
     GetStruct()->get_default_input_device = ark_audio_system_manager_adapter_get_default_input_device;
+    GetStruct()->set_language = ark_audio_system_manager_adapter_set_language;
 }
 
 ArkAudioSystemManagerAdapterCppToC::~ArkAudioSystemManagerAdapterCppToC() {}
