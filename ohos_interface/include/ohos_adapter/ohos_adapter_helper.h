@@ -44,6 +44,7 @@
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
 #include "net_proxy_adapter.h"
+#include "ohos_image_decoder_adapter.h"
 #include "ohos_init_web_adapter.h"
 #include "ohos_resource_adapter.h"
 #include "ohos_web_data_base_adapter.h"
@@ -55,7 +56,6 @@
 #include "system_properties_adapter.h"
 
 namespace OHOS::NWeb {
-
 class OhosAdapterHelper {
 public:
     static OhosAdapterHelper& GetInstance();
@@ -141,8 +141,9 @@ public:
     virtual std::unique_ptr<FlowbufferAdapter> CreateFlowbufferAdapter() = 0;
 
     virtual std::unique_ptr<MediaAVSessionAdapter> CreateMediaAVSessionAdapter() = 0;
-};
 
+    virtual std::unique_ptr<OhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() = 0;
+};
 } // namespace OHOS::NWeb
 
 #endif // OHOS_ADAPTER_HELPER_H
