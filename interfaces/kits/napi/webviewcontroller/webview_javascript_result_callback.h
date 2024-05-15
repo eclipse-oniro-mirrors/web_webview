@@ -516,7 +516,7 @@ private:
 
     std::shared_ptr<NWebValue> GetJavaScriptResultSelfFlowbuf(std::vector<std::shared_ptr<NWebValue>> args,
         const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId);
-    
+
     int32_t nwebId_ = -1;
 
     JavaScriptOb::ObjectID nextObjectId_ = 1;
