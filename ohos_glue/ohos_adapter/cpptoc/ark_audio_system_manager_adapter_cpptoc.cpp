@@ -170,8 +170,7 @@ ark_audio_device_desc_adapter_t* ARK_WEB_CALLBACK ark_audio_system_manager_adapt
     return ArkAudioDeviceDescAdapterCppToC::Invert(_retval);
 }
 
-ark_audio_device_desc_adapter_t *ARK_WEB_CALLBACK
-ark_audio_system_manager_adapter_set_language(
+bool ARK_WEB_CALLBACK ark_audio_system_manager_adapter_set_language(
     struct _ark_audio_system_manager_adapter_t *self, ArkWebString language) {
   ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
 
