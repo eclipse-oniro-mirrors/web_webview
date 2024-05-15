@@ -117,7 +117,7 @@ ArkWebRefPtr<ArkAudioDeviceDescAdapter> ArkAudioSystemManagerAdapterImpl::GetDef
 
 bool ArkAudioSystemManagerAdapterImpl::SetLanguage(ArkWebString language)
 {
-    return real_.SetLanguage(language);
+    return real_.SetLanguage(ArkWebStringStructToClass(language));
 }
 
 } // namespace OHOS::ArkWeb
