@@ -233,9 +233,9 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return AUDIO_OK;
 }
 
-std::string AudioSystemManagerAdapterImpl::getDeviceName(DeviceType deviceType)
+std::string AudioSystemManagerAdapterImpl::GetDeviceName(DeviceType deviceType)
 {
-    WVLOG_I("getDeviceName language: %{public}s", language_.c_str());
+    WVLOG_I("GetDeviceName language: %{public}s", language_.c_str());
     if (language_ == "zh") {
         auto deviceTypeKey = DEVICE_TYPE_NAME_ZH_CN_MAP.find(deviceType);
         if (deviceTypeKey != DEVICE_TYPE_NAME_ZH_CN_MAP.end()) {
@@ -280,7 +280,7 @@ std::vector<std::shared_ptr<AudioDeviceDescAdapter>> AudioSystemManagerAdapterIm
 
         desc->SetDeviceId(audioDevice->deviceId_);
         if (audioDevice->deviceName_.empty()) {
-            desc->SetDeviceName(getDeviceName(audioDevice->deviceType_));
+            desc->SetDeviceName(GetDeviceName(audioDevice->deviceType_));
         } else {
             desc->SetDeviceName(audioDevice->deviceName_);
         }
@@ -388,7 +388,7 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
 
     desc->SetDeviceId(defaultDevice->deviceId_);
     if (defaultDevice->deviceName_.empty()) {
-       desc->SetDeviceName(getDeviceName(defaultDevice->deviceType_));
+       desc->SetDeviceName(GetDeviceName(defaultDevice->deviceType_));
     } else {
         desc->SetDeviceName(defaultDevice->deviceName_);
     }
@@ -416,14 +416,14 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
 
     desc->SetDeviceId(defaultDevice->deviceId_);
     if (defaultDevice->deviceName_.empty()) {
-        desc->SetDeviceName(getDeviceName(defaultDevice->deviceType_));
+        desc->SetDeviceName(GetDeviceName(defaultDevice->deviceType_));
     } else {
         desc->SetDeviceName(defaultDevice->deviceName_);
     }
     return desc;
 }
 
-bool AudioSystemManagerAdapterImpl::SetLanguage(std::string language)
+bool AudioSystemManagerAdapterImpl::SetLanguage(const std::string language)
 {
     if (language.empty()) {
         WVLOG_E("SetLanguage language is nullptr");
