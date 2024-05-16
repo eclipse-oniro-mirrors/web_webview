@@ -83,9 +83,9 @@ public:
 
     std::shared_ptr<AudioDeviceDescAdapter> GetDefaultInputDevice() override;
 
-    bool SetLanguage(std::string language) override;
+    bool SetLanguage(const std::string language) override;
 
-    std::string getDeviceName(DeviceType deviceType);
+    std::string GetDeviceName(DeviceType deviceType);
 
     std::string language_ = "zh";
 
