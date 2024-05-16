@@ -71,19 +71,19 @@ const std::string DEVICE_TYPE_FILE_SOURCE_ZH_CN = "device/file_source";
 const std::string DEVICE_TYPE_MAX_ZH_CN = "device/max";
 
 const std::unordered_map<DeviceType, std::string> DEVICE_TYPE_NAME_ZH_CN_MAP = {
-    { DeviceType::DEVICE_TYPE_NONE, DEVICE_TYPE_NONE_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_INVALID, DEVICE_TYPE_INVALID_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_EARPIECE, DEVICE_TYPE_EARPIECE_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_SPEAKER, DEVICE_TYPE_SPEAKER_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_WIRED_HEADSET, DEVICE_TYPE_WIRED_HEADSET_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_WIRED_HEADPHONES, DEVICE_TYPE_WIRED_HEADPHONES_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_BLUETOOTH_SCO, DEVICE_TYPE_BLUETOOTH_SCO_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_BLUETOOTH_A2DP, DEVICE_TYPE_BLUETOOTH_A2DP_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_MIC, DEVICE_TYPE_MIC_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_USB_HEADSET, DEVICE_TYPE_USB_HEADSET_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_FILE_SINK, DEVICE_TYPE_FILE_SINK_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_FILE_SOURCE, DEVICE_TYPE_FILE_SOURCE_ZH_CN  },
-    { DeviceType::DEVICE_TYPE_MAX, DEVICE_TYPE_MAX_ZH_CN  },
+    { DeviceType::DEVICE_TYPE_NONE, DEVICE_TYPE_NONE_ZH_CN},
+    { DeviceType::DEVICE_TYPE_INVALID, DEVICE_TYPE_INVALID_ZH_CN},
+    { DeviceType::DEVICE_TYPE_EARPIECE, DEVICE_TYPE_EARPIECE_ZH_CN},
+    { DeviceType::DEVICE_TYPE_SPEAKER, DEVICE_TYPE_SPEAKER_ZH_CN},
+    { DeviceType::DEVICE_TYPE_WIRED_HEADSET, DEVICE_TYPE_WIRED_HEADSET_ZH_CN},
+    { DeviceType::DEVICE_TYPE_WIRED_HEADPHONES, DEVICE_TYPE_WIRED_HEADPHONES_ZH_CN},
+    { DeviceType::DEVICE_TYPE_BLUETOOTH_SCO, DEVICE_TYPE_BLUETOOTH_SCO_ZH_CN},
+    { DeviceType::DEVICE_TYPE_BLUETOOTH_A2DP, DEVICE_TYPE_BLUETOOTH_A2DP_ZH_CN},
+    { DeviceType::DEVICE_TYPE_MIC, DEVICE_TYPE_MIC_ZH_CN},
+    { DeviceType::DEVICE_TYPE_USB_HEADSET, DEVICE_TYPE_USB_HEADSET_ZH_CN},
+    { DeviceType::DEVICE_TYPE_FILE_SINK, DEVICE_TYPE_FILE_SINK_ZH_CN},
+    { DeviceType::DEVICE_TYPE_FILE_SOURCE, DEVICE_TYPE_FILE_SOURCE_ZH_CN},
+    { DeviceType::DEVICE_TYPE_MAX, DEVICE_TYPE_MAX_ZH_CN},
 };
 
 const std::unordered_map<DeviceType, std::string> DEVICE_TYPE_MAP = {
@@ -233,20 +233,18 @@ int32_t AudioSystemManagerAdapterImpl::UnsetAudioManagerInterruptCallback()
     return AUDIO_OK;
 }
 
-std::string AudioSystemManagerAdapterImpl::getDeviceName(DeviceType deviceType){
+std::string AudioSystemManagerAdapterImpl::getDeviceName(DeviceType deviceType)
+{
     WVLOG_I("getDeviceName language: %{public}s", language_.c_str());
-    if(language_ == "zh")
-    {
+    if (language_ == "zh") {
         auto deviceTypeKey = DEVICE_TYPE_NAME_ZH_CN_MAP.find(deviceType);
-        if(deviceTypeKey != DEVICE_TYPE_NAME_ZH_CN_MAP.end()){
+        if (deviceTypeKey != DEVICE_TYPE_NAME_ZH_CN_MAP.end()) {
             return deviceTypeKey->second;
         }
         return DEVICE_TYPE_NONE_ZH_CN;
-    }
-    else
-    {
+    } else {
         auto deviceTypeKey = DEVICE_TYPE_MAP.find(deviceType);
-        if(deviceTypeKey != DEVICE_TYPE_MAP.end()){
+        if (deviceTypeKey != DEVICE_TYPE_MAP.end()) {
             return deviceTypeKey->second;
         }
         return DEVICE_TYPE_NONE;
@@ -425,9 +423,10 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
     return desc;
 }
 
-bool AudioSystemManagerAdapterImpl::SetLanguage(std::string language){
-    if(language.empty())
-    {
+bool AudioSystemManagerAdapterImpl::SetLanguage(std::string language)
+{
+    if (language.empty()) {
+        WVLOG_E("SetLanguage language is nullptr");
         return false;
     }
     language_ = language;
