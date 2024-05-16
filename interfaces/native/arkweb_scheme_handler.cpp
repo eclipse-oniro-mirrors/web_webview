@@ -37,6 +37,7 @@ namespace {
     DO(OH_ArkWebResourceRequest_GetHttpBodyStream)     \
     DO(OH_ArkWebResourceRequest_DestroyHttpBodyStream) \
     DO(OH_ArkWebResourceRequest_GetResourceType)       \
+    DO(OH_ArkWebResourceRequest_GetFrameUrl)           \
     DO(OH_ArkWebHttpBodyStream_SetReadCallback)        \
     DO(OH_ArkWebHttpBodyStream_SetUserData)            \
     DO(OH_ArkWebHttpBodyStream_GetUserData)            \
@@ -223,6 +224,16 @@ int32_t OH_ArkWebResourceRequest_GetResourceType(const ArkWeb_ResourceRequest* r
     }
 
     return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetResourceType(resourceRequest);
+}
+
+void OH_ArkWebResourceRequest_GetFrameUrl(const ArkWeb_ResourceRequest* resourceRequest, char** frameUrl)
+{
+    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetFrameUrl) {
+        WVLOG_E("OH_ArkWebResourceRequest_GetFrameUrl not found.");
+        return;
+    }
+
+    return g_SchemeHandlerApi->impl_OH_ArkWebResourceRequest_GetFrameUrl(resourceRequest, frameUrl);
 }
 
 int32_t OH_ArkWebHttpBodyStream_SetUserData(ArkWeb_HttpBodyStream* httpBodyStream, void* userData)
