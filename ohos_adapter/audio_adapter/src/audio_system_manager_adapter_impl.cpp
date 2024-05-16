@@ -423,7 +423,7 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
     return desc;
 }
 
-bool AudioSystemManagerAdapterImpl::SetLanguage(const std::string language)
+bool AudioSystemManagerAdapterImpl::SetLanguage(const std::string& language)
 {
     if (language.empty()) {
         WVLOG_E("SetLanguage language is nullptr");

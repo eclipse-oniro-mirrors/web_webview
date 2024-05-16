@@ -83,7 +83,7 @@ public:
 
     std::shared_ptr<AudioDeviceDescAdapter> GetDefaultInputDevice() override;
 
-    bool SetLanguage(const std::string language) override;
+    bool SetLanguage(const std::string& language) override;
 
     std::string GetDeviceName(DeviceType deviceType);
 
