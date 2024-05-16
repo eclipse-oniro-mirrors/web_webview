@@ -283,7 +283,7 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
 
     MiscServices::InputAttribute inputAttribute = { .inputPattern = config->GetInputAttribute()->GetInputPattern(),
         .enterKeyType = config->GetInputAttribute()->GetEnterKeyType(),
-        .isTextPreviewSupported = false };
+        .isTextPreviewSupported = true };
 
     MiscServices::CursorInfo imfInfo = { .left = config->GetCursorInfo()->GetLeft(),
         .top = config->GetCursorInfo()->GetTop(),
