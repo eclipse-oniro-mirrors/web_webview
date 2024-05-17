@@ -1553,17 +1553,13 @@ std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env,
     return std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
 }
 
-ErrCode WebviewController::PrecompileJavaScriptPromise(
+void WebviewController::PrecompileJavaScriptPromise(
     napi_env env, napi_deferred deferred,
     const std::string &url, const std::string &script, std::shared_ptr<CacheOptions> cacheOptions)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
-    if (!nweb_ptr) {
-        return NWebError::INIT_ERROR;
-    }
-
-    if (!deferred) {
-        return NWebError::INIT_ERROR;
+    if (!nweb_ptr || !deferred) {
+        return;
     }
 
     auto callbackImpl = std::make_shared<OHOS::NWeb::NWebPrecompileCallback>();
@@ -1591,7 +1587,6 @@ ErrCode WebviewController::PrecompileJavaScriptPromise(
     });
 
     nweb_ptr->PrecompileJavaScript(url, script, cacheOptions, callbackImpl);
-    return NWebError::NO_ERROR;
 }
 
 bool WebviewController::ParseResponseHeaders(napi_env env,
