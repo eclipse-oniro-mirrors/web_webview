@@ -226,6 +226,18 @@ bool ParseHttpHeaders(napi_env env, napi_value headersArray, std::map<std::strin
     return true;
 }
 
+bool CheckCacheKey(napi_env env,const std::string& cacheKey)
+{
+    for (char c : cacheKey) {
+        if (!isalnum(c)) {
+            WVLOG_E("BusinessError: 401. The character of 'cacheKey' must be number or letters.");
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return false;
+        }
+    }
+    return true;
+}
+
 bool ParseCacheKeyList(napi_env env, napi_value cacheKeyArray, std::vector<std::string>* cacheKeyList)
 {
     bool isArray = false;
@@ -277,6 +289,7 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
     std::string method;
     napi_get_named_property(env, preArgs, "method", &methodObj);
     if (!ParsePrepareRequestMethod(env, methodObj, method)) {
+        WVLOG_E("BusinessError: 401. The type of 'method' must be string 'POST'.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -285,6 +298,7 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
     std::string formData;
     napi_get_named_property(env, preArgs, "formData", &formDataObj);
     if (!NapiParseUtils::ParseString(env, formDataObj, formData)) {
+        WVLOG_E("BusinessError: 401. The type of 'formData' must be string.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -4238,6 +4252,7 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc > INTEGER_FOUR || argc < INTEGER_ONE) {
+        WVLOG_E("BusinessError: 401. Arg count must between 1 and 4.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -4249,12 +4264,14 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
 
     std::map<std::string, std::string> additionalHttpHeaders;
     if (argc >= INTEGER_TWO && !ParseHttpHeaders(env, argv[INTEGER_ONE], &additionalHttpHeaders)) {
+        WVLOG_E("BusinessError: 401. The type of 'additionalHttpHeaders' must be Array of 'WebHeader'.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::string cacheKey;
     if ((argc >= INTEGER_THREE) && !NapiParseUtils::ParseString(env, argv[INTEGER_TWO], cacheKey)) {
+        WVLOG_E("BusinessError: 401.The type of 'cacheKey' must be string.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -4262,11 +4279,8 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
     if (cacheKey.empty()) {
         cacheKey = prefetchArgs->GetUrl();
     } else {
-        for (char c : cacheKey) {
-            if (!isalnum(c)) {
-                BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-                return nullptr;
-            }
+        if (!CheckCacheKey(env, cacheKey)) {
+            return nullptr;
         }
     }
 
@@ -4274,6 +4288,7 @@ napi_value NapiWebviewController::PrefetchResource(napi_env env, napi_callback_i
     if (argc >= INTEGER_FOUR) {
         if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_THREE], cacheValidTime) || cacheValidTime <= 0 ||
             cacheValidTime > INT_MAX) {
+            WVLOG_E("BusinessError: 401. The character of 'cacheValidTime' must be int32.");
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
             return nullptr;
         }
@@ -4293,12 +4308,14 @@ napi_value NapiWebviewController::ClearPrefetchedResource(napi_env env, napi_cal
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
+        WVLOG_E("BusinessError: 401. Arg count must be 1.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
 
     std::vector<std::string> cacheKeyList;
     if (!ParseCacheKeyList(env, argv[INTEGER_ZERO], &cacheKeyList)) {
+        WVLOG_E("BusinessError: 401. The type of 'cacheKeyList' must be Array of string.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -5206,7 +5223,7 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     napi_value argv[INTEGER_THREE] = {0};
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_THREE) {
-        WVLOG_E("PrecompileJavaScript: args count is not allowed.");
+        WVLOG_E("BusinessError: 401. Args count of 'PrecompileJavaScript' must be 3.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -5220,7 +5237,7 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
 
     std::string url;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], url) || url.empty()) {
-        WVLOG_E("PrecompileJavaScript: the given url is not allowed.");
+        WVLOG_E("BusinessError: 401. The type of 'url' must be string.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -5228,7 +5245,7 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     std::string script;
     bool parseResult = webviewController->ParseScriptContent(env, argv[INTEGER_ONE], script);
     if (!parseResult) {
-        WVLOG_E("PrecompileJavaScript: the given script is not allowed.");
+        WVLOG_E("BusinessError: 401. The type of 'script' must be string or Uint8Array.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -5239,13 +5256,8 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     napi_value promise = nullptr;
     napi_create_promise(env, &deferred, &promise);
     if (promise && deferred) {
-        ErrCode code = webviewController->PrecompileJavaScriptPromise(
-            env, deferred, url, script, cacheOptions);
-        if (code != NO_ERROR) {
-            WVLOG_E("PrecompileJavaScript: failed to compile javascript.");
-            BusinessError::ThrowErrorByErrcode(env, code);
-            return promise;
-        }
+        webviewController->PrecompileJavaScriptPromise(env, deferred, url, script, cacheOptions);
+        return promise;
     }
 
     return promise;
@@ -5282,7 +5294,7 @@ napi_value NapiWebviewController::InjectOfflineResource(napi_env env, napi_callb
     napi_value argv[INTEGER_ONE] = {0};
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("InjectOfflineResource: args count is not allowed.");
+        WVLOG_E("BusinessError: 401. Args count of 'InjectOfflineResource' must be 1.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -5291,7 +5303,7 @@ napi_value NapiWebviewController::InjectOfflineResource(napi_env env, napi_callb
     bool isArray = false;
     napi_is_array(env, resourcesList, &isArray);
     if (!isArray) {
-        WVLOG_E("InjectOfflineResource: param is not array.");
+        WVLOG_E("BusinessError: 401. The type of 'resourceMaps' must be Array");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
@@ -5308,7 +5320,8 @@ void NapiWebviewController::AddResourcesToMemoryCache(napi_env env,
     napi_get_array_length(env, resourcesList, &resourcesCount);
 
     if (resourcesCount > MAX_RESOURCES_COUNT || resourcesCount == 0) {
-        WVLOG_E("InjectOfflineResource: too many resources or empty resources.");
+        WVLOG_E("BusinessError: 401. The size of 'resourceMaps' must less than %{public}d and not 0",
+            MAX_RESOURCES_COUNT);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
@@ -5356,29 +5369,32 @@ void NapiWebviewController::AddResourceItemToMemoryCache(napi_env env,
     std::vector<std::string> urlList;
     ParseURLResult result = webviewController->ParseURLList(env, resourceValue.urlList, urlList);
     if (result != ParseURLResult::OK) {
-        WVLOG_E("InjectOfflineResource: parse url list failed.");
         auto errCode = result == ParseURLResult::FAILED ? PARAM_CHECK_ERROR : INVALID_URL;
+        if (errCode == PARAM_CHECK_ERROR) {
+            WVLOG_E("BusinessError: 401. The type of 'urlList' must be Array of string.");
+        }
         BusinessError::ThrowErrorByErrcode(env, errCode);
         return;
     }
 
     std::vector<uint8_t> resource = webviewController->ParseUint8Array(env, resourceValue.resource);
     if (resource.empty() || resource.size() > MAX_RESOURCE_SIZE) {
-        WVLOG_E("InjectOfflineResource: parse resource failed.");
+        WVLOG_E("BusinessError: 401. The type of 'resource' must be Uint8Array. "
+            "'resource' size must less than %{public}d and must not be empty.", MAX_RESOURCE_SIZE);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
 
     std::map<std::string, std::string> responseHeaders;
     if (!webviewController->ParseResponseHeaders(env, resourceValue.responseHeaders, responseHeaders)) {
-        WVLOG_E("InjectOfflineResource: parse response headers failed.");
+        WVLOG_E("BusinessError: 401. The type of 'responseHeaders' must be Array of 'WebHeader'.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
 
     uint32_t type = 0;
     if (!NapiParseUtils::ParseUint32(env, resourceValue.type, type)) {
-        WVLOG_E("InjectOfflineResource: parse type failed.");
+        WVLOG_E("BusinessError: 401. The type of 'type' must be one kind of 'OfflineResourceType'.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
