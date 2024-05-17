@@ -222,10 +222,12 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
         if (previewStyle == PREVIEW_TEXT_STYLE_UNDERLINE) {
             is_need_underline = true;
         }
+
+        if (listener_) {
+            listener_->SetNeedUnderLine(is_need_underline);
+        }
     }
-    if (listener_) {
-        listener_->SetNeedUnderLine(is_need_underline);
-    }
+    
     return 0;
 }
 
