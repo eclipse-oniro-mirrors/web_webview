@@ -130,6 +130,8 @@ public:
     virtual std::shared_ptr<AudioDeviceDescAdapter> GetDefaultOutputDevice() = 0;
 
     virtual std::shared_ptr<AudioDeviceDescAdapter> GetDefaultInputDevice() = 0;
+
+    virtual bool SetLanguage(const std::string& language) = 0;
 };
 
 } // namespace OHOS::NWeb
