@@ -17,17 +17,18 @@
 #define AAFWK_BROWSER_CLIENT_ADAPTER_H
 
 #include <cstdint>
+
 #include "res_sched_client_adapter.h"
 
-namespace OHOS::NWeb{
+namespace OHOS::NWeb {
 class AafwkBrowserClientAdapter {
 public:
     AafwkBrowserClientAdapter() = default;
     virtual ~AafwkBrowserClientAdapter() = default;
     virtual void* QueryRenderSurface(int32_t surface_id) = 0;
 
-    virtual void ReportThread(ResSchedStatusAdapter status, int32_t process_id, int32_t thread_id,
-                              ResSchedRoleAdapter role) = 0;
+    virtual void ReportThread(
+        ResSchedStatusAdapter status, int32_t process_id, int32_t thread_id, ResSchedRoleAdapter role) = 0;
 
     virtual void PassSurface(int64_t surface_id) = 0;
 
