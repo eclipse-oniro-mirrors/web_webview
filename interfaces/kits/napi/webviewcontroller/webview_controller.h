@@ -320,10 +320,10 @@ public:
 
     std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value);
 
-    ErrCode PrecompileJavaScriptPromise(napi_env env,
-                                        napi_deferred deferred,
-                                        const std::string &url, const std::string &script,
-                                        std::shared_ptr<CacheOptions> cacheOptions);
+    void PrecompileJavaScriptPromise(napi_env env,
+                                     napi_deferred deferred,
+                                     const std::string &url, const std::string &script,
+                                     std::shared_ptr<CacheOptions> cacheOptions);
 
     bool ParseResponseHeaders(napi_env env,
                               napi_value value,
