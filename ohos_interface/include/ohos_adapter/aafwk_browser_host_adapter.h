@@ -28,6 +28,6 @@ public:
 
     virtual void DestroySurfaceFromKernel(int32_t surface_id) = 0;
 };
-}
+} // namespace OHOS::NWeb
 
 #endif // AAFWK_BROWSER_HOST_ADAPTER_H

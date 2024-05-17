@@ -1235,7 +1235,7 @@ public:
     /**
      * @brief Notify that safe insets change.
      *
-    */
+     */
     virtual void OnSafeInsetsChange(int left, int top, int right, int bottom) = 0;
 };
 
