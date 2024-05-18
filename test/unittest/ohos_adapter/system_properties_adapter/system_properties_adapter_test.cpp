@@ -125,4 +125,26 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_OptSystemPrope
     bool result_third = observer->UpdateValue();
     EXPECT_FALSE(result_third);
 }
+
+/**
+ * @tc.name: SystemPropertiesAdapterTest_GetOOPGPUEnable_003
+ * @tc.desc: GetInstance unittest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetOOPGPUEnable_003, TestSize.Level1)
+{
+    system("param set web.oop.gpu None");
+    bool value = SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable();
+    EXPECT_FALSE(value);
+    SystemPropertiesAdapterImpl::GetInstance().SetOOPGPUDisable();
+    value = SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable();
+    EXPECT_FALSE(value);
+    system("param set web.oop.gpu false");
+    value = SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable();
+    EXPECT_FALSE(value);
+    system("param set web.oop.gpu true");
+    value = SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable();
+    EXPECT_TRUE(value);
+}
 } // namespace OHOS

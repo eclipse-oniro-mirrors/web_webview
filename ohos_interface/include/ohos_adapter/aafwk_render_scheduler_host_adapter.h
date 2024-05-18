@@ -17,6 +17,8 @@
 #define AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_H
 
 #include <cstdint>
+#include <memory>
+#include "aafwk_browser_client_adapter.h"
 
 namespace OHOS::NWeb {
 
@@ -27,6 +29,9 @@ public:
     virtual ~AafwkRenderSchedulerHostAdapter() = default;
 
     virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) = 0;
+
+    virtual void NotifyBrowser(int32_t ipcFd, int32_t sharedFd, int32_t crashFd,
+        std::shared_ptr<AafwkBrowserClientAdapter> adapter) = 0;
 };
 
 } // namespace OHOS::NWeb
