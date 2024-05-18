@@ -14,6 +14,7 @@
  */
 
 #include "ohos_adapter/ctocpp/ark_aafwk_render_scheduler_host_adapter_ctocpp.h"
+#include "ohos_adapter/cpptoc/ark_aafwk_browser_client_adapter_cpptoc.h"
 
 #include "base/ctocpp/ark_web_ctocpp_macros.h"
 
@@ -31,6 +32,22 @@ void ArkAafwkRenderSchedulerHostAdapterCToCpp::NotifyBrowserFd(int32_t ipcFd, in
 
     // Execute
     _struct->notify_browser_fd(_struct, ipcFd, sharedFd, crashFd);
+}
+
+ARK_WEB_NO_SANITIZE
+void ArkAafwkRenderSchedulerHostAdapterCToCpp::NotifyBrowser(
+    int32_t ipcFd, int32_t sharedFd, int32_t crashFd,
+    ArkWebRefPtr<ArkAafwkBrowserClientAdapter> adapter) {
+  ARK_WEB_CTOCPP_DV_LOG("capi struct is %{public}ld", (long)this);
+
+  ark_aafwk_render_scheduler_host_adapter_t *_struct = GetStruct();
+  ARK_WEB_CTOCPP_CHECK_PARAM(_struct, );
+
+  ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(_struct, notify_browser, );
+
+  // Execute
+  _struct->notify_browser(_struct, ipcFd, sharedFd, crashFd, 
+                             ArkAafwkBrowserClientAdapterCppToC::Invert(adapter));
 }
 
 ArkAafwkRenderSchedulerHostAdapterCToCpp::ArkAafwkRenderSchedulerHostAdapterCToCpp() {}

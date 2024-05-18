@@ -15,8 +15,10 @@
 
 #include "vsync_adapter_impl.h"
 
+#include "aafwk_browser_client_adapter_impl.h"
 #include "nweb_log.h"
 #include "res_sched_client_adapter.h"
+#include "system_properties_adapter_impl.h"
 #include "transaction/rs_interfaces.h"
 
 namespace OHOS::NWeb {
@@ -85,9 +87,15 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, NWebVSyncCb cb)
         // At this point, the threadId corresponding to eventrunner may not be available,
         // so need to confirm it several times
         if (runner && runner->GetKernelThreadId() != 0) {
-            ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+            if (!SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable()) {
+                ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
                 getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
-            hasReportedKeyThread_ = true;
+                hasReportedKeyThread_ = true;
+            } else {
+                AafwkBrowserClientAdapterImpl::GetInstance().ReportThread(ResSchedStatusAdapter::THREAD_CREATED,
+                getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+                hasReportedKeyThread_ = true;
+            }
         }
     }
 
