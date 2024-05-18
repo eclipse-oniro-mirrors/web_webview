@@ -25,6 +25,8 @@ ohos_shared_library("nweb_ohos_adapter") {
   defines = [ "HILOG_TAG=\"webadapter\"" ]
   sources = [
     "aafwk_adapter/src/aafwk_app_mgr_client_adapter_impl.cpp",
+    "aafwk_adapter/src/aafwk_browser_client_adapter_impl.cpp",
+    "aafwk_adapter/src/aafwk_browser_host_impl.cpp",
     "aafwk_adapter/src/aafwk_render_scheduler_impl.cpp",
     "access_token_adapter/src/access_token_adapter_impl.cpp",
     "background_task_adapter/src/background_task_impl.cpp",
@@ -296,6 +298,10 @@ ohos_shared_library("nweb_ohos_adapter") {
   sources += [
     "../ohos_glue/ohos_adapter/bridge/ark_aafwk_app_mgr_client_adapter_impl.cpp",
     "../ohos_glue/ohos_adapter/bridge/ark_aafwk_app_mgr_client_adapter_impl.h",
+    "../ohos_glue/ohos_adapter/bridge/ark_aafwk_browser_client_adapter_impl.cpp",
+    "../ohos_glue/ohos_adapter/bridge/ark_aafwk_browser_client_adapter_impl.h",
+    "../ohos_glue/ohos_adapter/bridge/ark_aafwk_browser_host_adapter_wrapper.cpp",
+    "../ohos_glue/ohos_adapter/bridge/ark_aafwk_browser_host_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/bridge/ark_aafwk_render_scheduler_host_adapter_wrapper.cpp",
     "../ohos_glue/ohos_adapter/bridge/ark_aafwk_render_scheduler_host_adapter_wrapper.h",
     "../ohos_glue/ohos_adapter/bridge/ark_access_token_adapter_impl.cpp",
@@ -537,6 +543,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/bridge/ark_window_adapter_impl.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_aafwk_app_mgr_client_adapter_cpptoc.cpp",
     "../ohos_glue/ohos_adapter/cpptoc/ark_aafwk_app_mgr_client_adapter_cpptoc.h",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_aafwk_browser_client_adapter_cpptoc.cpp",
+    "../ohos_glue/ohos_adapter/cpptoc/ark_aafwk_browser_client_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_access_token_adapter_cpptoc.cpp",
     "../ohos_glue/ohos_adapter/cpptoc/ark_access_token_adapter_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_ashmem_adapter_cpptoc.cpp",
@@ -687,6 +695,8 @@ ohos_shared_library("nweb_ohos_adapter") {
     "../ohos_glue/ohos_adapter/cpptoc/ark_web_timezone_info_cpptoc.h",
     "../ohos_glue/ohos_adapter/cpptoc/ark_window_adapter_cpptoc.cpp",
     "../ohos_glue/ohos_adapter/cpptoc/ark_window_adapter_cpptoc.h",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_aafwk_browser_host_adapter_ctocpp.cpp",
+    "../ohos_glue/ohos_adapter/ctocpp/ark_aafwk_browser_host_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_aafwk_render_scheduler_host_adapter_ctocpp.cpp",
     "../ohos_glue/ohos_adapter/ctocpp/ark_aafwk_render_scheduler_host_adapter_ctocpp.h",
     "../ohos_glue/ohos_adapter/ctocpp/ark_audio_capture_info_adapter_ctocpp.cpp",

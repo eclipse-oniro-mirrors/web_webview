@@ -16,6 +16,7 @@
 #include "ohos_adapter/cpptoc/ark_aafwk_app_mgr_client_adapter_cpptoc.h"
 
 #include "ohos_adapter/ctocpp/ark_aafwk_render_scheduler_host_adapter_ctocpp.h"
+#include "ohos_adapter/ctocpp/ark_aafwk_browser_host_adapter_ctocpp.h"
 
 #include "base/cpptoc/ark_web_cpptoc_macros.h"
 
@@ -65,6 +66,37 @@ int ARK_WEB_CALLBACK ark_aafwk_app_mgr_client_adapter_get_render_process_termina
     return ArkAafwkAppMgrClientAdapterCppToC::Get(self)->GetRenderProcessTerminationStatus(renderPid, *status);
 }
 
+int ARK_WEB_CALLBACK ark_aafwk_app_mgr_client_adapter_start_child_process(
+    struct _ark_aafwk_app_mgr_client_adapter_t *self,
+    const ArkWebString *renderParam, int32_t ipcFd, int32_t sharedFd,
+    int32_t crashFd, pid_t *renderPid, const ArkWebString* processType) {
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, 0);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(renderParam, 0);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(renderPid, 0);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(processType, 0);
+
+    // Execute
+    return ArkAafwkAppMgrClientAdapterCppToC::Get(self)->StartChildProcess(
+        *renderParam, ipcFd, sharedFd, crashFd, *renderPid, *processType);
+}
+
+void ARK_WEB_CALLBACK ark_aafwk_app_mgr_client_adapter_save_browser_connect(
+    struct _ark_aafwk_app_mgr_client_adapter_t *self,
+    ark_aafwk_browser_host_adapter_t *adapter) {
+    ARK_WEB_CPPTOC_DV_LOG("capi struct is %{public}ld", (long)self);
+
+    ARK_WEB_CPPTOC_CHECK_PARAM(self, );
+
+    // Execute
+    ArkAafwkAppMgrClientAdapterCppToC::Get(self)->SaveBrowserConnect(
+        ArkAafwkBrowserHostAdapterCToCpp::Invert(adapter));
+}
+
 } // namespace
 
 ArkAafwkAppMgrClientAdapterCppToC::ArkAafwkAppMgrClientAdapterCppToC()
@@ -73,6 +105,10 @@ ArkAafwkAppMgrClientAdapterCppToC::ArkAafwkAppMgrClientAdapterCppToC()
     GetStruct()->attach_render_process = ark_aafwk_app_mgr_client_adapter_attach_render_process;
     GetStruct()->get_render_process_termination_status =
         ark_aafwk_app_mgr_client_adapter_get_render_process_termination_status;
+    GetStruct()->start_child_process =
+        ark_aafwk_app_mgr_client_adapter_start_child_process;
+    GetStruct()->save_browser_connect =
+        ark_aafwk_app_mgr_client_adapter_save_browser_connect;
 }
 
 ArkAafwkAppMgrClientAdapterCppToC::~ArkAafwkAppMgrClientAdapterCppToC() {}

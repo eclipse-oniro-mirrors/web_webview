@@ -176,10 +176,13 @@ std::string SystemPropertiesAdapterImpl::GetSiteIsolationMode()
 
 bool SystemPropertiesAdapterImpl::GetOOPGPUEnable()
 {
-    if (OHOS::system::GetParameter("web.oop.gpu", "") == "false") {
+    if (GetDeviceInfoProductModel() == "emulator") {
         return false;
     }
-    return true;
+    if (OHOS::system::GetParameter("web.oop.gpu", "") == "true") {
+        return true;
+    }
+    return false;
 }
 
 void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
