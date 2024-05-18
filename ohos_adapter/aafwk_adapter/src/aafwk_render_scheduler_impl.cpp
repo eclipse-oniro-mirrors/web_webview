@@ -15,21 +15,33 @@
 
 #include "aafwk_render_scheduler_impl.h"
 
+#include "ibrowser.h"
 #include "nweb_log.h"
+#include "system_properties_adapter_impl.h"
 
 namespace OHOS::NWeb {
 AafwkRenderSchedulerImpl::AafwkRenderSchedulerImpl(std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter)
     : renderSchedulerHostAdapter_(adapter)
 {}
 
-void AafwkRenderSchedulerImpl::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd)
+void AafwkRenderSchedulerImpl::NotifyBrowserFd(
+    int32_t ipcFd, int32_t sharedFd, int32_t crashFd, sptr<IRemoteObject> browser)
 {
     WVLOG_D("received browser fd.");
     if (renderSchedulerHostAdapter_ == nullptr) {
         WVLOG_E("renderSchedulerHostAdapter_ is nullptr.");
         return;
     }
-
-    renderSchedulerHostAdapter_->NotifyBrowserFd(ipcFd, sharedFd, crashFd);
+    if (browser == nullptr) {
+        WVLOG_E("browser is nullptr!");
+    }
+    if (SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable()) {
+        sptr<IBrowser> browserHost = iface_cast<IBrowser>(browser);
+        browserClientAdapter_ = std::make_shared<AafwkBrowserClientAdapterImpl>();
+        AafwkBrowserClientAdapterImpl::GetInstance().browserHost_ = browserHost;
+        renderSchedulerHostAdapter_->NotifyBrowser(ipcFd, sharedFd, crashFd, browserClientAdapter_);
+    } else {
+        renderSchedulerHostAdapter_->NotifyBrowser(ipcFd, sharedFd, crashFd, nullptr);
+    }
 }
 } // namespace OHOS::NWeb

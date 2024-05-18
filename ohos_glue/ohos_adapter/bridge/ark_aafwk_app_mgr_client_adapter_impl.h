@@ -33,6 +33,12 @@ public:
 
     int GetRenderProcessTerminationStatus(pid_t renderPid, int& status) override;
 
+    int StartChildProcess(
+        const ArkWebString& renderParam, int32_t ipcFd, int32_t sharedFd,
+        int32_t crashFd, pid_t& renderPid, const ArkWebString& processType) override;
+
+    void SaveBrowserConnect(ArkWebRefPtr<ArkAafwkBrowserHostAdapter> adapter) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::AafwkAppMgrClientAdapter> real_;
 

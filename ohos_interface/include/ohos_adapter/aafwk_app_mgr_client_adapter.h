@@ -20,6 +20,7 @@
 #include <string>
 #include <sys/types.h>
 
+#include "aafwk_browser_host_adapter.h"
 #include "aafwk_render_scheduler_host_adapter.h"
 
 namespace OHOS::NWeb {
@@ -36,6 +37,12 @@ public:
     virtual void AttachRenderProcess(std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter) = 0;
 
     virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int& status) = 0;
+
+    virtual int StartChildProcess(
+        const std::string& renderParam, int32_t ipcFd, int32_t sharedFd,
+        int32_t crashFd, pid_t& renderPid, const std::string& processType) = 0;
+
+    virtual void SaveBrowserConnect(std::shared_ptr<AafwkBrowserHostAdapter> adapter) = 0;
 };
 
 } // namespace OHOS::NWeb
