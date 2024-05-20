@@ -922,4 +922,14 @@ void ArkWebHandlerWrapper::OnOverlayStateChanged(int offset_x, int offset_y, int
 {
     ark_web_handler_->OnOverlayStateChanged(offset_x, offset_y, rect_width, rect_height);
 }
+
+bool ArkWebHandlerWrapper::OnFocus(ArkWebFocusSource source)
+{
+    return ark_web_handler_->OnFocus(static_cast<int>(source));
+}
+
+bool ArkWebHandlerWrapper::OnOverScroll(float xOffset, float yOffset, float xVelocity, float yVelocity)
+{
+    return ark_web_handler_->OnOverScroll(xOffset, yOffset, xVelocity, yVelocity);
+}
 } // namespace OHOS::ArkWeb
