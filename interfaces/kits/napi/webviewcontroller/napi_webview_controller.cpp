@@ -5320,7 +5320,7 @@ void NapiWebviewController::AddResourcesToMemoryCache(napi_env env,
     napi_get_array_length(env, resourcesList, &resourcesCount);
 
     if (resourcesCount > MAX_RESOURCES_COUNT || resourcesCount == 0) {
-        WVLOG_E("BusinessError: 401. The size of 'resourceMaps' must less than %{public}d and not 0",
+        WVLOG_E("BusinessError: 401. The size of 'resourceMaps' must less than %{public}zu and not 0",
             MAX_RESOURCES_COUNT);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
@@ -5380,7 +5380,7 @@ void NapiWebviewController::AddResourceItemToMemoryCache(napi_env env,
     std::vector<uint8_t> resource = webviewController->ParseUint8Array(env, resourceValue.resource);
     if (resource.empty() || resource.size() > MAX_RESOURCE_SIZE) {
         WVLOG_E("BusinessError: 401. The type of 'resource' must be Uint8Array. "
-            "'resource' size must less than %{public}d and must not be empty.", MAX_RESOURCE_SIZE);
+            "'resource' size must less than %{public}zu and must not be empty.", MAX_RESOURCE_SIZE);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return;
     }
