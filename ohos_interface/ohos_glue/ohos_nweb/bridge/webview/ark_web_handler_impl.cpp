@@ -807,4 +807,16 @@ void ArkWebHandlerImpl::OnViewportFitChange(int viewportFit)
     nweb_handler_->OnViewportFitChange(static_cast<ArkWebViewportFit>(viewportFit));
 }
 
+void ArkWebHandlerImpl::CreateOverlay(void* data, size_t len, int width, int height, int offset_x, int offset_y,
+    int rect_width, int rect_height, int point_x, int point_y)
+{
+    nweb_handler_->CreateOverlay(
+        data, len, width, height, offset_x, offset_y, rect_width, rect_height, point_x, point_y);
+}
+
+void ArkWebHandlerImpl::OnOverlayStateChanged(int offset_x, int offset_y, int rect_width, int rect_height)
+{
+    nweb_handler_->OnOverlayStateChanged(offset_x, offset_y, rect_width, rect_height);
+}
+
 } // namespace OHOS::ArkWeb
