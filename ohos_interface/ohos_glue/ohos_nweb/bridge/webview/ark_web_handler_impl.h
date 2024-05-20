@@ -543,6 +543,10 @@ public:
 
     void OnOverlayStateChanged(int offset_x, int offset_y, int rect_width, int rect_height) override;
 
+    bool OnFocus(int source) override;
+
+    bool OnOverScroll(float xOffset, float yOffset, float xVelocity, float yVelocity) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
