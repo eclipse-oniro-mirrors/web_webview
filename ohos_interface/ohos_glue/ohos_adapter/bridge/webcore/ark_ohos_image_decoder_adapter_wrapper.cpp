@@ -28,10 +28,10 @@ bool ArkOhosImageDecoderAdapterWrapper::ParseImageInfo(const uint8_t* data, uint
 
 std::string ArkOhosImageDecoderAdapterWrapper::GetEncodedFormat()
 {
-    ArkWebString str = ArkWebStringClassToStruct(ctocpp_->GetEncodedFormat());
+    ArkWebString str = ctocpp_->GetEncodedFormat();
     std::string format = ArkWebStringStructToClass(str);
     ArkWebStringStructRelease(str);
-    return format
+    return format;
 }
 
 int32_t ArkOhosImageDecoderAdapterWrapper::GetImageWidth()

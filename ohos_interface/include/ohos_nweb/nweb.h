@@ -1237,6 +1237,12 @@ public:
      *
      */
     virtual void OnSafeInsetsChange(int left, int top, int right, int bottom) = 0;
+
+    /**
+     * @brief Called when text is selected in image.
+     */
+    /*--ark web()--*/
+    virtual void OnTextSelected() = 0;
 };
 
 } // namespace OHOS::NWeb

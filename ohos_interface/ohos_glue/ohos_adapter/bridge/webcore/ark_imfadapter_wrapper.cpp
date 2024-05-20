@@ -35,17 +35,17 @@ bool ArkIMFAdapterWrapper::Attach(std::shared_ptr<OHOS::NWeb::IMFTextListenerAda
 }
 
 bool ArkIMFAdapterWrapper::Attach(std::shared_ptr<OHOS::NWeb::IMFTextListenerAdapter> listener, bool isShowKeyboard,
-    const std::shared_ptr<OHOS::NWeb::IMFTextConfigAdapter> config)
+    const std::shared_ptr<OHOS::NWeb::IMFTextConfigAdapter> config, bool isResetListener)
 {
     if (!CHECK_SHARED_PTR_IS_NULL(listener) && !CHECK_SHARED_PTR_IS_NULL(config)) {
-        return ctocpp_->Attach(
-            new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard, new ArkIMFTextConfigAdapterImpl(config));
+        return ctocpp_->Attach(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard,
+            new ArkIMFTextConfigAdapterImpl(config), isResetListener);
     } else if (CHECK_SHARED_PTR_IS_NULL(listener) && CHECK_SHARED_PTR_IS_NULL(config)) {
-        return ctocpp_->Attach(nullptr, isShowKeyboard, nullptr);
+        return ctocpp_->Attach(nullptr, isShowKeyboard, nullptr, isResetListener);
     } else if (CHECK_SHARED_PTR_IS_NULL(listener)) {
-        return ctocpp_->Attach(nullptr, isShowKeyboard, new ArkIMFTextConfigAdapterImpl(config));
+        return ctocpp_->Attach(nullptr, isShowKeyboard, new ArkIMFTextConfigAdapterImpl(config), isResetListener);
     } else {
-        return ctocpp_->Attach(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard, nullptr);
+        return ctocpp_->Attach(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard, nullptr, isResetListener);
     }
 }
 

@@ -32,7 +32,6 @@ enum class NWebResponseDataType : int32_t {
     NWEB_STRING_TYPE,
     NWEB_FILE_TYPE,
     NWEB_RESOURCE_URL_TYPE,
-    NWEB_BUFFER_TYPE,
 };
 
 class NWebUrlResourceResponse {
