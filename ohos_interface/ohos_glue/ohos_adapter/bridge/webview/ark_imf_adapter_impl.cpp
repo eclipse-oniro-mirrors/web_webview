@@ -35,17 +35,22 @@ bool ArkIMFAdapterImpl::Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener,
 }
 
 bool ArkIMFAdapterImpl::Attach(
-    ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard, ArkWebRefPtr<ArkIMFTextConfigAdapter> config)
+    ArkWebRefPtr<ArkIMFTextListenerAdapter> listener,
+    bool isShowKeyboard,
+    ArkWebRefPtr<ArkIMFTextConfigAdapter> config,
+    bool isResetListener)
 {
     if (CHECK_REF_PTR_IS_NULL(listener) && CHECK_REF_PTR_IS_NULL(config)) {
-        return real_->Attach(nullptr, isShowKeyboard, nullptr);
+        return real_->Attach(nullptr, isShowKeyboard, nullptr, isResetListener);
     } else if (!CHECK_REF_PTR_IS_NULL(listener) && !CHECK_REF_PTR_IS_NULL(config)) {
         return real_->Attach(std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener), isShowKeyboard,
-            std::make_shared<ArkIMFTextConfigAdapterWrapper>(config));
+            std::make_shared<ArkIMFTextConfigAdapterWrapper>(config), isResetListener);
     } else if (CHECK_REF_PTR_IS_NULL(listener)) {
-        return real_->Attach(nullptr, isShowKeyboard, std::make_shared<ArkIMFTextConfigAdapterWrapper>(config));
+        return real_->Attach(nullptr, isShowKeyboard,
+            std::make_shared<ArkIMFTextConfigAdapterWrapper>(config), isResetListener);
     } else {
-        return real_->Attach(std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener), isShowKeyboard, nullptr);
+        return real_->Attach(std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener),
+            isShowKeyboard, nullptr, isResetListener);
     }
 }
 
