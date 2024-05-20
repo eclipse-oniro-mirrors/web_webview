@@ -1106,6 +1106,11 @@ public:
     /*--ark web()--*/
     void OnSafeInsetsChange(int left, int top, int right, int bottom) override;
 
+    /**
+     * @brief Called when text is selected in image.
+     */
+    void OnTextSelected() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

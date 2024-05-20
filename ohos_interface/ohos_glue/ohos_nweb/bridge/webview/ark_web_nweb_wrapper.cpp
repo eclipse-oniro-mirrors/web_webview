@@ -1136,4 +1136,9 @@ void ArkWebNWebWrapper::OnSafeInsetsChange(int left, int top, int right, int bot
     ark_web_nweb_->OnSafeInsetsChange(left, top, right, bottom);
 }
 
+void ArkWebNWebWrapper::OnTextSelected()
+{
+    ark_web_nweb_->OnTextSelected();
+}
+
 } // namespace OHOS::ArkWeb

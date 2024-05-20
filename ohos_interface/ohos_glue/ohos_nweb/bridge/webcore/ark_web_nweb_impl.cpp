@@ -974,4 +974,9 @@ void ArkWebNWebImpl::OnSafeInsetsChange(int left, int top, int right, int bottom
     nweb_nweb_->OnSafeInsetsChange(left, top, right, bottom);
 }
 
+void ArkWebNWebImpl::OnTextSelected()
+{
+    nweb_nweb_->OnTextSelected();
+}
+
 } // namespace OHOS::ArkWeb
