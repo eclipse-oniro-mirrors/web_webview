@@ -29,7 +29,7 @@ public:
     bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard) override;
 
     bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard,
-        ArkWebRefPtr<ArkIMFTextConfigAdapter> config) override;
+        ArkWebRefPtr<ArkIMFTextConfigAdapter> config, bool isResetListener) override;
 
     void ShowCurrentInput(const int32_t& inputType) override;
 
