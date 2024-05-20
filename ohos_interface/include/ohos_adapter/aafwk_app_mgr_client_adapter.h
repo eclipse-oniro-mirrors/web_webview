@@ -38,9 +38,8 @@ public:
 
     virtual int GetRenderProcessTerminationStatus(pid_t renderPid, int& status) = 0;
 
-    virtual int StartChildProcess(
-        const std::string& renderParam, int32_t ipcFd, int32_t sharedFd,
-        int32_t crashFd, pid_t& renderPid, const std::string& processType) = 0;
+    virtual int StartChildProcess(const std::string& renderParam, int32_t ipcFd, int32_t sharedFd, int32_t crashFd,
+        pid_t& renderPid, const std::string& processType) = 0;
 
     virtual void SaveBrowserConnect(std::shared_ptr<AafwkBrowserHostAdapter> adapter) = 0;
 };
