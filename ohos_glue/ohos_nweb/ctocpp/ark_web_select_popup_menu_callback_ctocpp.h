@@ -17,26 +17,25 @@
 #define ARK_WEB_SELECT_POPUP_MENU_CALLBACK_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_select_popup_menu_callback_capi.h"
 #include "ohos_nweb/include/ark_web_select_popup_menu_callback.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebSelectPopupMenuCallbackCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebSelectPopupMenuCallbackCToCpp,
-                                    ArkWebSelectPopupMenuCallback,
-                                    ark_web_select_popup_menu_callback_t> {
+class ArkWebSelectPopupMenuCallbackCToCpp : public ArkWebCToCppRefCounted<ArkWebSelectPopupMenuCallbackCToCpp,
+                                                ArkWebSelectPopupMenuCallback, ark_web_select_popup_menu_callback_t> {
 public:
-  ArkWebSelectPopupMenuCallbackCToCpp();
-  virtual ~ArkWebSelectPopupMenuCallbackCToCpp();
+    ArkWebSelectPopupMenuCallbackCToCpp();
+    virtual ~ArkWebSelectPopupMenuCallbackCToCpp();
 
-  // ArkWebSelectPopupMenuCallback methods.
-  void Cancel() override;
+    // ArkWebSelectPopupMenuCallback methods.
+    void Cancel() override;
 
-  void Continue(const ArkWebInt32Vector &indices) override;
+    void Continue(const ArkWebInt32Vector& indices) override;
 };
 
 } // namespace OHOS::ArkWeb

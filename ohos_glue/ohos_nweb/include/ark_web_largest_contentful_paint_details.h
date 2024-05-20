@@ -25,54 +25,54 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebLargestContentfulPaintDetails : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Get start time of navigation.
-   *
-   * @return Start time of navigation.
-   */
-  /*--ark web()--*/
-  virtual int64_t GetNavigationStartTime() = 0;
+    /**
+     * @brief Get start time of navigation.
+     *
+     * @return Start time of navigation.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetNavigationStartTime() = 0;
 
-  /**
-   * @brief Get paint time of largest image.
-   *
-   * @return Paint time of largest image..
-   */
-  /*--ark web()--*/
-  virtual int64_t GetLargestImagePaintTime() = 0;
+    /**
+     * @brief Get paint time of largest image.
+     *
+     * @return Paint time of largest image..
+     */
+    /*--ark web()--*/
+    virtual int64_t GetLargestImagePaintTime() = 0;
 
-  /**
-   * @brief Get paint time of largest text.
-   *
-   * @return Paint time of largest text.
-   */
-  /*--ark web()--*/
-  virtual int64_t GetLargestTextPaintTime() = 0;
+    /**
+     * @brief Get paint time of largest text.
+     *
+     * @return Paint time of largest text.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetLargestTextPaintTime() = 0;
 
-  /**
-   * @brief Get load start time of largest image.
-   *
-   * @return Load start time of largest image.
-   */
-  /*--ark web()--*/
-  virtual int64_t GetLargestImageLoadStartTime() = 0;
+    /**
+     * @brief Get load start time of largest image.
+     *
+     * @return Load start time of largest image.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetLargestImageLoadStartTime() = 0;
 
-  /**
-   * @brief Get load end time of largest image.
-   *
-   * @return Load end time of largest image.
-   */
-  /*--ark web()--*/
-  virtual int64_t GetLargestImageLoadEndTime() = 0;
+    /**
+     * @brief Get load end time of largest image.
+     *
+     * @return Load end time of largest image.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetLargestImageLoadEndTime() = 0;
 
-  /**
-   * @brief Get bits per pixel of image.
-   *
-   * @return Bits per pixel of image.
-   */
+    /**
+     * @brief Get bits per pixel of image.
+     *
+     * @return Bits per pixel of image.
+     */
 
-  /*--ark web(default_retval=0)--*/
-  virtual double_t GetImageBPP() = 0;
+    /*--ark web(default_retval=0)--*/
+    virtual double_t GetImageBPP() = 0;
 };
 
 } // namespace OHOS::ArkWeb

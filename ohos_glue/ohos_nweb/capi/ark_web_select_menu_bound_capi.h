@@ -24,18 +24,18 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_select_menu_bound_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *get_x)(struct _ark_web_select_menu_bound_t *self);
+    int(ARK_WEB_CALLBACK* get_x)(struct _ark_web_select_menu_bound_t* self);
 
-  int(ARK_WEB_CALLBACK *get_y)(struct _ark_web_select_menu_bound_t *self);
+    int(ARK_WEB_CALLBACK* get_y)(struct _ark_web_select_menu_bound_t* self);
 
-  int(ARK_WEB_CALLBACK *get_width)(struct _ark_web_select_menu_bound_t *self);
+    int(ARK_WEB_CALLBACK* get_width)(struct _ark_web_select_menu_bound_t* self);
 
-  int(ARK_WEB_CALLBACK *get_height)(struct _ark_web_select_menu_bound_t *self);
+    int(ARK_WEB_CALLBACK* get_height)(struct _ark_web_select_menu_bound_t* self);
 } ark_web_select_menu_bound_t;
 
 #ifdef __cplusplus

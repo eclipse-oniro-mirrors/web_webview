@@ -223,6 +223,7 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapter
         result = -1;
     }
     EXPECT_EQ(RESULT_OK, result);
+    pasterimpl->GetImgData(nullptr);
 }
 
 /**

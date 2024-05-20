@@ -25,17 +25,16 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_js_dialog_result_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *cancel)(struct _ark_web_js_dialog_result_t *self);
+    void(ARK_WEB_CALLBACK* cancel)(struct _ark_web_js_dialog_result_t* self);
 
-  void(ARK_WEB_CALLBACK *confirm1)(struct _ark_web_js_dialog_result_t *self);
+    void(ARK_WEB_CALLBACK* confirm1)(struct _ark_web_js_dialog_result_t* self);
 
-  void(ARK_WEB_CALLBACK *confirm2)(struct _ark_web_js_dialog_result_t *self,
-                                   const ArkWebString *message);
+    void(ARK_WEB_CALLBACK* confirm2)(struct _ark_web_js_dialog_result_t* self, const ArkWebString* message);
 } ark_web_js_dialog_result_t;
 
 #ifdef __cplusplus

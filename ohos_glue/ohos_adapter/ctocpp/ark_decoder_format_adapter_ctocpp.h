@@ -17,34 +17,33 @@
 #define ARK_DECODER_FORMAT_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_codec_decoder_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_codec_decoder_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkDecoderFormatAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkDecoderFormatAdapterCToCpp,
-                                    ArkDecoderFormatAdapter,
-                                    ark_decoder_format_adapter_t> {
+class ArkDecoderFormatAdapterCToCpp : public ArkWebCToCppRefCounted<ArkDecoderFormatAdapterCToCpp,
+                                          ArkDecoderFormatAdapter, ark_decoder_format_adapter_t> {
 public:
-  ArkDecoderFormatAdapterCToCpp();
-  virtual ~ArkDecoderFormatAdapterCToCpp();
+    ArkDecoderFormatAdapterCToCpp();
+    virtual ~ArkDecoderFormatAdapterCToCpp();
 
-  // ArkDecoderFormatAdapter methods.
-  int32_t GetWidth() override;
+    // ArkDecoderFormatAdapter methods.
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  double GetFrameRate() override;
+    double GetFrameRate() override;
 
-  void SetWidth(int32_t width) override;
+    void SetWidth(int32_t width) override;
 
-  void SetHeight(int32_t height) override;
+    void SetHeight(int32_t height) override;
 
-  void SetFrameRate(double frameRate) override;
+    void SetFrameRate(double frameRate) override;
 };
 
 } // namespace OHOS::ArkWeb

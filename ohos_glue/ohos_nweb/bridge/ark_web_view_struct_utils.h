@@ -22,14 +22,9 @@
 
 namespace OHOS::ArkWeb {
 
-ArkWebDateTime
-ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime &class_value);
+ArkWebDateTime ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime& class_value);
 
-OHOS::NWeb::DateTime
-ArkWebDateTimeStructToClass(const ArkWebDateTime &struct_value);
-
-OHOS::NWeb::NWebCursorInfo
-ArkWebCursorInfoStructToClass(const ArkWebCursorInfo &struct_value);
+OHOS::NWeb::DateTime ArkWebDateTimeStructToClass(const ArkWebDateTime& struct_value);
 
 } // namespace OHOS::ArkWeb
 

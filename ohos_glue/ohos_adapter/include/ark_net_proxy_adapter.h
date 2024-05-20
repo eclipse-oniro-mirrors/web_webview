@@ -15,8 +15,7 @@
 
 #ifndef ARK_NET_PROXY_ADAPTER_H
 #define ARK_NET_PROXY_ADAPTER_H
-
-#include <memory>
+#pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -26,34 +25,25 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkNetProxyEventCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkNetProxyEventCallbackAdapter() = default;
-  virtual ~ArkNetProxyEventCallbackAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void Changed(const ArkWebString &host, const uint16_t &port,
-                       const ArkWebString &pacUrl,
-                       const ArkWebStringVector &exclusionList) = 0;
+    /*--ark web()--*/
+    virtual void Changed(const ArkWebString& host, const uint16_t& port, const ArkWebString& pacUrl,
+        const ArkWebStringVector& exclusionList) = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkNetProxyAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkNetProxyAdapter() = default;
-  virtual ~ArkNetProxyAdapter() = default;
+    /*--ark web()--*/
+    virtual void RegNetProxyEvent(ArkWebRefPtr<ArkNetProxyEventCallbackAdapter> eventCallback) = 0;
 
-  /*--ark web()--*/
-  virtual void RegNetProxyEvent(
-      ArkWebRefPtr<ArkNetProxyEventCallbackAdapter> eventCallback) = 0;
+    /*--ark web()--*/
+    virtual bool StartListen() = 0;
 
-  /*--ark web()--*/
-  virtual bool StartListen() = 0;
+    /*--ark web()--*/
+    virtual void StopListen() = 0;
 
-  /*--ark web()--*/
-  virtual void StopListen() = 0;
-
-  /*--ark web()--*/
-  virtual void GetProperty(ArkWebString &host, uint16_t &port,
-                           ArkWebString &pacUrl, ArkWebString &exclusion) = 0;
+    /*--ark web()--*/
+    virtual void GetProperty(ArkWebString& host, uint16_t& port, ArkWebString& pacUrl, ArkWebString& exclusion) = 0;
 };
 
 } // namespace OHOS::ArkWeb

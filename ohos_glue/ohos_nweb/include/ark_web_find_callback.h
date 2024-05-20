@@ -24,21 +24,20 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebFindCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Notify the host application that OnFindResultReceived
-   *
-   * @param active_match_ordinal int: the zero-based ordinal of the currently
-   *        selected match
-   * @param number_of_matches int: how many matches have been found
-   * @param is_done_counting bool: whether the find operation has actually
-   *        completed. The listener may be notified multiple times while the
-   *        operation is underway, and the number_of_matches value should not be
-   *        considered final unless is_done_counting is true.
-   */
-  /*--ark web()--*/
-  virtual void OnFindResultReceived(const int active_match_ordinal,
-                                    const int number_of_matches,
-                                    const bool is_done_counting) = 0;
+    /**
+     * @brief Notify the host application that OnFindResultReceived
+     *
+     * @param active_match_ordinal int: the zero-based ordinal of the currently
+     *        selected match
+     * @param number_of_matches int: how many matches have been found
+     * @param is_done_counting bool: whether the find operation has actually
+     *        completed. The listener may be notified multiple times while the
+     *        operation is underway, and the number_of_matches value should not be
+     *        considered final unless is_done_counting is true.
+     */
+    /*--ark web()--*/
+    virtual void OnFindResultReceived(
+        const int active_match_ordinal, const int number_of_matches, const bool is_done_counting) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -22,59 +22,57 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebUrlResourceRequestWrapper
-    : public OHOS::NWeb::NWebUrlResourceRequest {
+class ArkWebUrlResourceRequestWrapper : public OHOS::NWeb::NWebUrlResourceRequest {
 public:
-  ArkWebUrlResourceRequestWrapper(
-      ArkWebRefPtr<ArkWebUrlResourceRequest> ark_web_url_resource_request);
-  ~ArkWebUrlResourceRequestWrapper() = default;
+    ArkWebUrlResourceRequestWrapper(ArkWebRefPtr<ArkWebUrlResourceRequest> ark_web_url_resource_request);
+    ~ArkWebUrlResourceRequestWrapper() = default;
 
-  /**
-   * @brief Gets the URL for which the resource request was made.
-   *
-   * @return URL url string
-   */
-  std::string Url() override;
+    /**
+     * @brief Gets the URL for which the resource request was made.
+     *
+     * @return URL url string
+     */
+    std::string Url() override;
 
-  /**
-   * @brief Gets the method associated with the request, for example "GET".
-   *
-   * @return method the method associated with the request.
-   */
-  std::string Method() override;
+    /**
+     * @brief Gets the method associated with the request, for example "GET".
+     *
+     * @return method the method associated with the request.
+     */
+    std::string Method() override;
 
-  /**
-   * @brief Gets whether a gesture (such as a click) was associated with the
-   *        request.
-   *
-   * @return gesture whether was associated with the request.
-   */
-  bool FromGesture() override;
+    /**
+     * @brief Gets whether a gesture (such as a click) was associated with the
+     *        request.
+     *
+     * @return gesture whether was associated with the request.
+     */
+    bool FromGesture() override;
 
-  /**
-   * @brief Gets the headers associated with the request.
-   *
-   * @return the headers associated with the request.
-   */
-  std::map<std::string, std::string> RequestHeaders() override;
+    /**
+     * @brief Gets the headers associated with the request.
+     *
+     * @return the headers associated with the request.
+     */
+    std::map<std::string, std::string> RequestHeaders() override;
 
-  /**
-   * @brief Gets whether the request was made in order to fetch the main frame's
-   *        document.
-   *
-   * @return Is main frame
-   */
-  bool IsAboutMainFrame() override;
+    /**
+     * @brief Gets whether the request was made in order to fetch the main frame's
+     *        document.
+     *
+     * @return Is main frame
+     */
+    bool IsAboutMainFrame() override;
 
-  /**
-   * @brief Gets whether the request was a result of a server-side redirect.
-   *
-   * @return is redirect
-   */
-  bool IsRequestRedirect() override;
+    /**
+     * @brief Gets whether the request was a result of a server-side redirect.
+     *
+     * @return is redirect
+     */
+    bool IsRequestRedirect() override;
 
 private:
-  ArkWebRefPtr<ArkWebUrlResourceRequest> ark_web_url_resource_request_;
+    ArkWebRefPtr<ArkWebUrlResourceRequest> ark_web_url_resource_request_;
 };
 
 } // namespace OHOS::ArkWeb

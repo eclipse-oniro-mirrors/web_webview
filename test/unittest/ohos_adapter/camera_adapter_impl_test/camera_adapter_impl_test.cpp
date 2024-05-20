@@ -316,6 +316,9 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetAdapterFocusMode_005, T
     EXPECT_EQ(focusMode, FocusModeAdapter::FOCUS_MODE_CONTINUOUS_AUTO);
     focusMode = adapter.GetAdapterFocusMode(static_cast<FocusMode>(-1));
     EXPECT_EQ(focusMode, FocusModeAdapter::FOCUS_MODE_MANUAL);
+    std::string errnoTypeString;
+    CameraManagerAdapterImpl::GetInstance().ErrorTypeToString(
+        static_cast<CameraErrorType>(-1), errnoTypeString);
 }
 
 /**

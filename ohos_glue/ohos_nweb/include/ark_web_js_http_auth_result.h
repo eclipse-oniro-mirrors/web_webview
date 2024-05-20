@@ -25,24 +25,23 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebJsHttpAuthResult : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Handle the result if the user cancelled the dialog.
-   */
-  /*--ark web()--*/
-  virtual void Cancel() = 0;
+    /**
+     * @brief Handle the result if the user cancelled the dialog.
+     */
+    /*--ark web()--*/
+    virtual void Cancel() = 0;
 
-  /**
-   * @brief Handle a confirmation response from the user.
-   */
-  /*--ark web()--*/
-  virtual bool Confirm(const ArkWebString &user_name,
-                       const ArkWebString &pwd) = 0;
+    /**
+     * @brief Handle a confirmation response from the user.
+     */
+    /*--ark web()--*/
+    virtual bool Confirm(const ArkWebString& user_name, const ArkWebString& pwd) = 0;
 
-  /**
-   * @brief Handle a IsHttpAuthInfoSaved response from the user.
-   */
-  /*--ark web()--*/
-  virtual bool IsHttpAuthInfoSaved() = 0;
+    /**
+     * @brief Handle a IsHttpAuthInfoSaved response from the user.
+     */
+    /*--ark web()--*/
+    virtual bool IsHttpAuthInfoSaved() = 0;
 };
 
 } // namespace OHOS::ArkWeb

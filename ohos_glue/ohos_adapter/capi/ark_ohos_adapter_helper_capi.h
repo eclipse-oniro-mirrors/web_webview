@@ -17,43 +17,42 @@
 #define ARK_OHOS_ADAPTER_HELPER_CAPI_H_
 #pragma once
 
-#include "ark_aafwk_app_mgr_client_adapter_capi.h"
-#include "ark_access_token_adapter_capi.h"
-#include "ark_audio_capturer_adapter_capi.h"
-#include "ark_audio_renderer_adapter_capi.h"
-#include "ark_audio_system_manager_adapter_capi.h"
-#include "ark_battery_mgr_client_adapter_capi.h"
-#include "ark_camera_manager_adapter_capi.h"
-#include "ark_cert_manager_adapter_capi.h"
-#include "ark_datashare_adapter_capi.h"
-#include "ark_date_time_format_adapter_capi.h"
-#include "ark_display_manager_adapter_capi.h"
-#include "ark_enterprise_device_management_adapter_capi.h"
-#include "ark_event_handler_adapter_capi.h"
-#include "ark_flowbuffer_adapter_capi.h"
-#include "ark_graphic_adapter_capi.h"
-#include "ark_hisysevent_adapter_capi.h"
-#include "ark_hitrace_adapter_capi.h"
-#include "ark_imf_adapter_capi.h"
-#include "ark_keystore_adapter_capi.h"
-#include "ark_media_adapter_capi.h"
-#include "ark_media_avsession_adapter_capi.h"
-#include "ark_media_codec_adapter_capi.h"
-#include "ark_media_codec_decoder_adapter_capi.h"
-#include "ark_mmi_adapter_capi.h"
-#include "ark_net_connect_adapter_capi.h"
-#include "ark_net_proxy_adapter_capi.h"
-#include "ark_ohos_init_web_adapter_capi.h"
-#include "ark_ohos_resource_adapter_capi.h"
-#include "ark_ohos_web_data_base_adapter_capi.h"
-#include "ark_pasteboard_client_adapter_capi.h"
-#include "ark_power_mgr_client_adapter_capi.h"
-#include "ark_print_manager_adapter_capi.h"
-#include "ark_screen_capture_adapter_capi.h"
-#include "ark_soc_perf_client_adapter_capi.h"
-#include "ark_system_properties_adapter_capi.h"
-#include "base/capi/ark_web_base_ref_counted_capi.h"
-#include "base/include/ark_web_types.h"
+#include "ohos_adapter/capi/ark_aafwk_app_mgr_client_adapter_capi.h"
+#include "ohos_adapter/capi/ark_access_token_adapter_capi.h"
+#include "ohos_adapter/capi/ark_audio_capturer_adapter_capi.h"
+#include "ohos_adapter/capi/ark_audio_renderer_adapter_capi.h"
+#include "ohos_adapter/capi/ark_audio_system_manager_adapter_capi.h"
+#include "ohos_adapter/capi/ark_battery_mgr_client_adapter_capi.h"
+#include "ohos_adapter/capi/ark_camera_manager_adapter_capi.h"
+#include "ohos_adapter/capi/ark_cert_manager_adapter_capi.h"
+#include "ohos_adapter/capi/ark_datashare_adapter_capi.h"
+#include "ohos_adapter/capi/ark_date_time_format_adapter_capi.h"
+#include "ohos_adapter/capi/ark_display_manager_adapter_capi.h"
+#include "ohos_adapter/capi/ark_enterprise_device_management_adapter_capi.h"
+#include "ohos_adapter/capi/ark_event_handler_adapter_capi.h"
+#include "ohos_adapter/capi/ark_flowbuffer_adapter_capi.h"
+#include "ohos_adapter/capi/ark_graphic_adapter_capi.h"
+#include "ohos_adapter/capi/ark_hisysevent_adapter_capi.h"
+#include "ohos_adapter/capi/ark_hitrace_adapter_capi.h"
+#include "ohos_adapter/capi/ark_imf_adapter_capi.h"
+#include "ohos_adapter/capi/ark_keystore_adapter_capi.h"
+#include "ohos_adapter/capi/ark_media_adapter_capi.h"
+#include "ohos_adapter/capi/ark_media_avsession_adapter_capi.h"
+#include "ohos_adapter/capi/ark_media_codec_adapter_capi.h"
+#include "ohos_adapter/capi/ark_media_codec_decoder_adapter_capi.h"
+#include "ohos_adapter/capi/ark_mmi_adapter_capi.h"
+#include "ohos_adapter/capi/ark_net_connect_adapter_capi.h"
+#include "ohos_adapter/capi/ark_net_proxy_adapter_capi.h"
+#include "ohos_adapter/capi/ark_ohos_image_decoder_adapter_capi.h"
+#include "ohos_adapter/capi/ark_ohos_init_web_adapter_capi.h"
+#include "ohos_adapter/capi/ark_ohos_resource_adapter_capi.h"
+#include "ohos_adapter/capi/ark_ohos_web_data_base_adapter_capi.h"
+#include "ohos_adapter/capi/ark_pasteboard_client_adapter_capi.h"
+#include "ohos_adapter/capi/ark_power_mgr_client_adapter_capi.h"
+#include "ohos_adapter/capi/ark_print_manager_adapter_capi.h"
+#include "ohos_adapter/capi/ark_screen_capture_adapter_capi.h"
+#include "ohos_adapter/capi/ark_soc_perf_client_adapter_capi.h"
+#include "ohos_adapter/capi/ark_system_properties_adapter_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -202,6 +201,10 @@ typedef struct _ark_ohos_adapter_helper_t {
 
   ark_media_avsession_adapter_t *(
       ARK_WEB_CALLBACK *create_media_avsession_adapter)(
+      struct _ark_ohos_adapter_helper_t *self);
+
+  ark_ohos_image_decoder_adapter_t *(
+      ARK_WEB_CALLBACK *create_ohos_image_decoder_adapter)(
       struct _ark_ohos_adapter_helper_t *self);
 } ark_ohos_adapter_helper_t;
 

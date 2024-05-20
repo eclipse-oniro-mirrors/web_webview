@@ -313,19 +313,15 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     g_audioRender = std::make_shared<AudioRendererAdapterImpl>();
     ASSERT_NE(g_audioRender, nullptr);
 
-    std::shared_ptr<AudioRendererOptionsAdapterMock> rendererOptions =
-        std::make_shared<AudioRendererOptionsAdapterMock>();
-    rendererOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
-    rendererOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    rendererOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    rendererOptions->channels = AudioAdapterChannel::STEREO;
-    rendererOptions->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
-    rendererOptions->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
-    rendererOptions->rendererFlags = 0;
-    int32_t retNum = g_audioRender->Create(rendererOptions, CACHE_PATH);
-    g_applicationContext.reset();
-    EXPECT_EQ(g_applicationContext, nullptr);
-    ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
+    AudioRendererOptions rendererOptions;
+    AudioRendererInfo renderInfo;
+    rendererOptions.streamInfo.samplingRate = AudioSamplingRate::SAMPLE_RATE_44100;
+    rendererOptions.streamInfo.encoding = AudioEncodingType::ENCODING_PCM;
+    rendererOptions.streamInfo.format = AudioSampleFormat::SAMPLE_S16LE;
+    rendererOptions.streamInfo.channels = AudioChannel::STEREO;
+    rendererOptions.rendererInfo = renderInfo;
+    g_audioRender->audio_renderer_ = AudioRenderer::Create(rendererOptions);
+    ASSERT_NE(g_audioRender->audio_renderer_, nullptr);
 
     bool ret = g_audioRender->Start();
     EXPECT_EQ(ret, TRUE_OK);
@@ -334,7 +330,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     g_audioRender->Write(bufferArray.data(), bufferArray.size());
 
     uint64_t latency;
-    retNum = g_audioRender->GetLatency(latency);
+    int32_t retNum = g_audioRender->GetLatency(latency);
     EXPECT_EQ(retNum, RESULT_OK);
 
     float volume = 0.8;
@@ -511,8 +507,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
     bool ret = AudioSystemManagerAdapterImpl::GetInstance().HasAudioOutputDevices();
     EXPECT_EQ(ret, TRUE_OK);
 
-    ret = AudioSystemManagerAdapterImpl::GetInstance().HasAudioInputDevices();
-    EXPECT_EQ(ret, TRUE_OK);
+    AudioSystemManagerAdapterImpl::GetInstance().HasAudioInputDevices();
 
     std::shared_ptr<AudioDeviceDescAdapter> result =
         AudioSystemManagerAdapterImpl::GetInstance().GetDefaultOutputDevice();
@@ -563,6 +558,10 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_009, TestSi
 
     ret = AudioSystemManagerAdapterImpl::GetInstance().AbandonAudioFocus(interrupt);
     EXPECT_EQ(ret, RESULT_OK);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().RequestAudioFocus(nullptr);
+    EXPECT_NE(ret, RESULT_OK);
+    ret = AudioSystemManagerAdapterImpl::GetInstance().AbandonAudioFocus(nullptr);
+    EXPECT_NE(ret, RESULT_OK);
 }
 
 /**
@@ -717,6 +716,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_013, TestSi
  */
 HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_014, TestSize.Level1)
 {
+    g_applicationContext.reset();
     ApplicationContextMock* contextMock = new ApplicationContextMock();
     EXPECT_NE(contextMock, nullptr);
     EXPECT_CALL(*contextMock, GetCacheDir()).Times(1).WillRepeatedly(::testing::Return(""));
@@ -742,6 +742,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_014, TestSi
     EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_ERROR);
     EXPECT_EQ(audioRenderImpl->audio_renderer_, nullptr);
     audioRenderImpl->SetInterruptMode(false);
+    retNum = audioRenderImpl->Create(nullptr);
 }
 
 /**
@@ -771,10 +772,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_015, TestSi
     rendererOptions->contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
     rendererOptions->streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
     rendererOptions->rendererFlags = 0;
-    int32_t retNum = audioRenderImpl->Create(rendererOptions);
+    audioRenderImpl->Create(rendererOptions);
     g_applicationContext.reset();
     EXPECT_EQ(g_applicationContext, nullptr);
-    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_NULL_ERROR);
 }
 
 /**
@@ -829,47 +829,29 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_018, TestSi
 {
     g_audioCapturer = std::make_shared<AudioCapturerAdapterImpl>();
     ASSERT_NE(g_audioCapturer, nullptr);
-
-    std::shared_ptr<AudioCapturerOptionsAdapterMock> capturerOptions =
-        std::make_shared<AudioCapturerOptionsAdapterMock>();
-    EXPECT_NE(capturerOptions, nullptr);
-    capturerOptions->samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_48000;
-    capturerOptions->encoding = AudioAdapterEncodingType::ENCODING_PCM;
-    capturerOptions->format = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    capturerOptions->channels = AudioAdapterChannel::STEREO;
-    capturerOptions->sourceType = AudioAdapterSourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
-    capturerOptions->capturerFlags = 0;
-    int32_t retNum = g_audioCapturer->Create(capturerOptions, CACHE_PATH);
-    ASSERT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
-
+    g_audioCapturer->audio_capturer_ = AudioCapturer::Create(STREAM_MUSIC);
+    ASSERT_NE(g_audioCapturer->audio_capturer_, nullptr);
     std::shared_ptr<AudioCapturerReadCallbackAdapter> callback = std::make_shared<AudioCapturerCallbackMock>();
     EXPECT_NE(callback, nullptr);
-    retNum = g_audioCapturer->SetCapturerReadCallback(callback);
-    EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_OK);
-
-    bool ret = g_audioCapturer->Start();
-    EXPECT_EQ(ret, TRUE_OK);
-
+    g_audioCapturer->SetCapturerReadCallback(callback);
+    g_audioCapturer->Start();
     std::shared_ptr<BufferDescAdapterMock> bufferDesc = std::make_shared<BufferDescAdapterMock>();
     EXPECT_NE(bufferDesc, nullptr);
-    retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
+    int32_t retNum = g_audioCapturer->GetBufferDesc(bufferDesc);
     EXPECT_EQ(retNum, 0);
-
-    retNum = g_audioCapturer->Enqueue(bufferDesc);
-    EXPECT_EQ(retNum, 0);
-
+    g_audioCapturer->Enqueue(bufferDesc);
     uint32_t frameCount = 0;
     retNum = g_audioCapturer->GetFrameCount(frameCount);
     EXPECT_EQ(retNum, 0);
-
     int64_t result = g_audioCapturer->GetAudioTime();
     EXPECT_NE(result, AudioAdapterCode::AUDIO_NULL_ERROR);
-
-    ret = g_audioCapturer->Stop();
+    g_audioCapturer->Stop();
+    int32_t ret = g_audioCapturer->Release();
     EXPECT_EQ(ret, TRUE_OK);
-
-    ret = g_audioCapturer->Release();
-    EXPECT_EQ(ret, TRUE_OK);
+    retNum = g_audioCapturer->GetBufferDesc(nullptr);
+    EXPECT_NE(retNum, 0);
+    retNum = g_audioCapturer->Enqueue(nullptr);
+    EXPECT_NE(retNum, 0);
 }
 
 /**

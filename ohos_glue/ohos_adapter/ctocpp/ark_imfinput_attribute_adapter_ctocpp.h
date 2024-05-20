@@ -17,26 +17,25 @@
 #define ARK_IMFINPUT_ATTRIBUTE_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_imf_adapter_capi.h"
 #include "ohos_adapter/include/ark_imf_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkIMFInputAttributeAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkIMFInputAttributeAdapterCToCpp,
-                                    ArkIMFInputAttributeAdapter,
-                                    ark_imfinput_attribute_adapter_t> {
+class ArkIMFInputAttributeAdapterCToCpp : public ArkWebCToCppRefCounted<ArkIMFInputAttributeAdapterCToCpp,
+                                              ArkIMFInputAttributeAdapter, ark_imfinput_attribute_adapter_t> {
 public:
-  ArkIMFInputAttributeAdapterCToCpp();
-  virtual ~ArkIMFInputAttributeAdapterCToCpp();
+    ArkIMFInputAttributeAdapterCToCpp();
+    virtual ~ArkIMFInputAttributeAdapterCToCpp();
 
-  // ArkIMFInputAttributeAdapter methods.
-  int32_t GetInputPattern() override;
+    // ArkIMFInputAttributeAdapter methods.
+    int32_t GetInputPattern() override;
 
-  int32_t GetEnterKeyType() override;
+    int32_t GetEnterKeyType() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -23,21 +23,16 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebCacheOptionsImpl : public ArkWebCacheOptions {
-  IMPLEMENT_REFCOUNTING(ArkWebCacheOptionsImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebCacheOptionsImpl);
 
 public:
-  ArkWebCacheOptionsImpl(
-      std::shared_ptr<OHOS::NWeb::CacheOptions> cacheOptions);
-  ~ArkWebCacheOptionsImpl() = default;
+    ArkWebCacheOptionsImpl(std::shared_ptr<OHOS::NWeb::CacheOptions> cacheOptions);
+    ~ArkWebCacheOptionsImpl() = default;
 
-  ArkWebStringMap GetResponseHeaders() override;
-
-  bool IsModule() override;
-
-  bool IsTopLevel() override;
+    ArkWebStringMap GetResponseHeaders() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::CacheOptions> cacheOptions_;
+    std::shared_ptr<OHOS::NWeb::CacheOptions> cacheOptions_;
 };
 
 } // namespace OHOS::ArkWeb

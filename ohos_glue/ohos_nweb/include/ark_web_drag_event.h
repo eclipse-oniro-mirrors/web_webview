@@ -24,14 +24,14 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebDragEvent : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual double GetX() = 0;
+    /*--ark web()--*/
+    virtual double GetX() = 0;
 
-  /*--ark web()--*/
-  virtual double GetY() = 0;
+    /*--ark web()--*/
+    virtual double GetY() = 0;
 
-  /*--ark web()--*/
-  virtual int GetAction() = 0;
+    /*--ark web()--*/
+    virtual int GetAction() = 0;
 };
 
 } // namespace OHOS::ArkWeb

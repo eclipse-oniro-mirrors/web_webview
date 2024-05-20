@@ -25,26 +25,26 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebNWebCreateInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual uint32_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual uint32_t GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t GetHeight() = 0;
+    /*--ark web()--*/
+    virtual uint32_t GetHeight() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsIncognitoMode() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsIncognitoMode() = 0;
 
-  /*--ark web()--*/
-  virtual void *GetProducerSurface() = 0;
+    /*--ark web()--*/
+    virtual void* GetProducerSurface() = 0;
 
-  /*--ark web()--*/
-  virtual void *GetEnhanceSurfaceInfo() = 0;
+    /*--ark web()--*/
+    virtual void* GetEnhanceSurfaceInfo() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkWebEngineInitArgs> GetEngineInitArgs() = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebEngineInitArgs> GetEngineInitArgs() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkWebOutputFrameCallback> GetOutputFrameCallback() = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebOutputFrameCallback> GetOutputFrameCallback() = 0;
 };
 
 } // namespace OHOS::ArkWeb

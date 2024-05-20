@@ -26,18 +26,17 @@ using ArkWebSourceType = OHOS::NWeb::SourceType;
 
 class ArkWebMediaSourceInfoWrapper : public OHOS::NWeb::NWebMediaSourceInfo {
 public:
-  ArkWebMediaSourceInfoWrapper(
-      ArkWebRefPtr<ArkWebMediaSourceInfo> ark_web_media_source_info);
-  ~ArkWebMediaSourceInfoWrapper() = default;
+    ArkWebMediaSourceInfoWrapper(ArkWebRefPtr<ArkWebMediaSourceInfo> ark_web_media_source_info);
+    ~ArkWebMediaSourceInfoWrapper() = default;
 
-  ArkWebSourceType GetType() override;
+    ArkWebSourceType GetType() override;
 
-  std::string GetFormat() override;
+    std::string GetFormat() override;
 
-  std::string GetSource() override;
+    std::string GetSource() override;
 
 private:
-  ArkWebRefPtr<ArkWebMediaSourceInfo> ark_web_media_source_info_;
+    ArkWebRefPtr<ArkWebMediaSourceInfo> ark_web_media_source_info_;
 };
 
 } // namespace OHOS::ArkWeb

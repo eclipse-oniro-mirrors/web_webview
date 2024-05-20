@@ -17,25 +17,23 @@
 #define ARK_WEB_DATE_TIME_CHOOSER_CALLBACK_WRAPPER_H_
 #pragma once
 
-#include "base/include/ark_web_types.h"
 #include "include/nweb_date_time_chooser.h"
 #include "ohos_nweb/include/ark_web_date_time_chooser_callback.h"
 
+#include "base/include/ark_web_types.h"
+
 namespace OHOS::ArkWeb {
 
-class ArkWebDateTimeChooserCallbackWrapper
-    : public OHOS::NWeb::NWebDateTimeChooserCallback {
+class ArkWebDateTimeChooserCallbackWrapper : public OHOS::NWeb::NWebDateTimeChooserCallback {
 public:
-  ArkWebDateTimeChooserCallbackWrapper(
-      ArkWebRefPtr<ArkWebDateTimeChooserCallback>
-          ark_web_date_time_chooser_callback);
-  ~ArkWebDateTimeChooserCallbackWrapper() = default;
+    ArkWebDateTimeChooserCallbackWrapper(
+        ArkWebRefPtr<ArkWebDateTimeChooserCallback> ark_web_date_time_chooser_callback);
+    ~ArkWebDateTimeChooserCallbackWrapper() = default;
 
-  void Continue(bool success, const OHOS::NWeb::DateTime &value) override;
+    void Continue(bool success, const OHOS::NWeb::DateTime& value) override;
 
 private:
-  ArkWebRefPtr<ArkWebDateTimeChooserCallback>
-      ark_web_date_time_chooser_callback_;
+    ArkWebRefPtr<ArkWebDateTimeChooserCallback> ark_web_date_time_chooser_callback_;
 };
 
 } // namespace OHOS::ArkWeb

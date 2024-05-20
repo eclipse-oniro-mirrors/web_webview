@@ -17,20 +17,20 @@
 #define ARK_OHOS_FILE_MAPPER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_ohos_resource_adapter_capi.h"
 #include "ohos_adapter/include/ark_ohos_resource_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkOhosFileMapperCppToC
-    : public ArkWebCppToCRefCounted<ArkOhosFileMapperCppToC, ArkOhosFileMapper,
-                                    ark_ohos_file_mapper_t> {
+    : public ArkWebCppToCRefCounted<ArkOhosFileMapperCppToC, ArkOhosFileMapper, ark_ohos_file_mapper_t> {
 public:
-  ArkOhosFileMapperCppToC();
-  virtual ~ArkOhosFileMapperCppToC();
+    ArkOhosFileMapperCppToC();
+    virtual ~ArkOhosFileMapperCppToC();
 };
 
 } // namespace OHOS::ArkWeb

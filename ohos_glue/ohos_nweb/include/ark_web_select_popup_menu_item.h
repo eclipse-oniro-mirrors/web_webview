@@ -25,29 +25,29 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebSelectPopupMenuItem : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int GetType() = 0;
+    /*--ark web()--*/
+    virtual int GetType() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetLabel() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetLabel() = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t GetAction() = 0;
+    /*--ark web()--*/
+    virtual uint32_t GetAction() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetToolTip() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetToolTip() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsChecked() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsChecked() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsEnabled() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsEnabled() = 0;
 
-  /*--ark web()--*/
-  virtual int GetTextDirection() = 0;
+    /*--ark web()--*/
+    virtual int GetTextDirection() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetHasTextDirectionOverride() = 0;
+    /*--ark web()--*/
+    virtual bool GetHasTextDirectionOverride() = 0;
 };
 
 } // namespace OHOS::ArkWeb

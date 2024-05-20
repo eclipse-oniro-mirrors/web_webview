@@ -95,6 +95,20 @@ enum class CoreSecurityLevel : int {
     DANGEROUS = 5,
     WARNING = 6
 };
+
+enum class OfflineResourceType : int {
+    IMAGE = 0,
+    CSS,
+    CLASSIC_JS,
+    MODULE_JS
+};
+
+enum class ParseURLResult : int {
+    OK = 0,
+    FAILED,
+    INVALID_URL
+};
+
 class WebPrintDocument;
 class WebviewController {
 public:
@@ -187,7 +201,9 @@ public:
     void SetNWebJavaScriptResultCallBack();
 
     void RegisterJavaScriptProxy(
-        napi_env env, napi_value obj, const std::string& objName, const std::vector<std::string>& methodList);
+        napi_env env, napi_value obj, const std::string& objName,
+        const std::vector<std::string>& methodList,
+        const std::vector<std::string>& asyncMethodList);
 
     ErrCode DeleteJavaScriptRegister(const std::string& objName,
         const std::vector<std::string>& methodList);
@@ -205,6 +221,8 @@ public:
     std::string GetUrl();
 
     std::string GetOriginalUrl();
+
+    bool TerminateRenderProcess();
 
     void PutNetworkAvailable(bool available);
 
@@ -302,9 +320,25 @@ public:
 
     std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value);
 
-    ErrCode PrecompileJavaScriptPromise(napi_env env, napi_deferred deferred,
-        const std::string &url, const std::string &script,
-        std::shared_ptr<CacheOptions> cacheOptions);
+    void PrecompileJavaScriptPromise(napi_env env,
+                                     napi_deferred deferred,
+                                     const std::string &url, const std::string &script,
+                                     std::shared_ptr<CacheOptions> cacheOptions);
+
+    bool ParseResponseHeaders(napi_env env,
+                              napi_value value,
+                              std::map<std::string, std::string> &responseHeaders);
+
+    ParseURLResult ParseURLList(napi_env env, napi_value value, std::vector<std::string>& urlList);
+
+    bool CheckURL(std::string& url);
+
+    std::vector<uint8_t> ParseUint8Array(napi_env env, napi_value value);
+
+    void InjectOfflineResource(const std::vector<std::string>& urlList,
+                               const std::vector<uint8_t>& resource,
+                               const std::map<std::string, std::string>& response_headers,
+                               const uint32_t type);
 
 private:
     int ConverToWebHitTestType(int hitType);
@@ -312,8 +346,9 @@ private:
     bool GetRawFileUrl(const std::string &fileName,
         const std::string& bundleName, const std::string& moduleName, std::string &result);
 
-    bool ParseResponseHeaders(napi_env env, napi_value value,
-        std::map<std::string, std::string> &responseHeaders);
+    bool ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result);
+
+    bool GetResourceUrl(napi_env env, napi_value urlObj, std::string& result);
 
 public:
     static std::string customeSchemeCmdLine_;

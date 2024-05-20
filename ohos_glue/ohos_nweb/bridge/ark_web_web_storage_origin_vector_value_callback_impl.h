@@ -22,21 +22,18 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebWebStorageOriginVectorValueCallbackImpl
-    : public ArkWebWebStorageOriginVectorValueCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebWebStorageOriginVectorValueCallbackImpl);
+class ArkWebWebStorageOriginVectorValueCallbackImpl : public ArkWebWebStorageOriginVectorValueCallback {
+    IMPLEMENT_REFCOUNTING(ArkWebWebStorageOriginVectorValueCallbackImpl);
 
 public:
-  ArkWebWebStorageOriginVectorValueCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebWebStorageOriginVectorValueCallback>
-          nweb_web_storage_origin_vector_value_callback);
-  ~ArkWebWebStorageOriginVectorValueCallbackImpl() = default;
+    ArkWebWebStorageOriginVectorValueCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebWebStorageOriginVectorValueCallback>
+            nweb_web_storage_origin_vector_value_callback);
+    ~ArkWebWebStorageOriginVectorValueCallbackImpl() = default;
 
-  void OnReceiveValue(const ArkWebWebStorageOriginVector &value) override;
+    void OnReceiveValue(const ArkWebWebStorageOriginVector& value) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebWebStorageOriginVectorValueCallback>
-      nweb_web_storage_origin_vector_value_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebWebStorageOriginVectorValueCallback> nweb_web_storage_origin_vector_value_callback_;
 };
 
 } // namespace OHOS::ArkWeb

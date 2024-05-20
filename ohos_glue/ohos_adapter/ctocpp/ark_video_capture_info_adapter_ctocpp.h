@@ -17,32 +17,31 @@
 #define ARK_VIDEO_CAPTURE_INFO_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_screen_capture_adapter_capi.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkVideoCaptureInfoAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkVideoCaptureInfoAdapterCToCpp,
-                                    ArkVideoCaptureInfoAdapter,
-                                    ark_video_capture_info_adapter_t> {
+class ArkVideoCaptureInfoAdapterCToCpp : public ArkWebCToCppRefCounted<ArkVideoCaptureInfoAdapterCToCpp,
+                                             ArkVideoCaptureInfoAdapter, ark_video_capture_info_adapter_t> {
 public:
-  ArkVideoCaptureInfoAdapterCToCpp();
-  virtual ~ArkVideoCaptureInfoAdapterCToCpp();
+    ArkVideoCaptureInfoAdapterCToCpp();
+    virtual ~ArkVideoCaptureInfoAdapterCToCpp();
 
-  // ArkVideoCaptureInfoAdapter methods.
-  uint64_t GetDisplayId() override;
+    // ArkVideoCaptureInfoAdapter methods.
+    uint64_t GetDisplayId() override;
 
-  ArkWebInt32List GetTaskIDs() override;
+    ArkWebInt32List GetTaskIDs() override;
 
-  int32_t GetVideoFrameWidth() override;
+    int32_t GetVideoFrameWidth() override;
 
-  int32_t GetVideoFrameHeight() override;
+    int32_t GetVideoFrameHeight() override;
 
-  int32_t GetVideoSourceType() override;
+    int32_t GetVideoSourceType() override;
 };
 
 } // namespace OHOS::ArkWeb

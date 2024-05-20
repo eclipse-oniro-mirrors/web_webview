@@ -25,14 +25,13 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_string_vector_value_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_receive_value)(
-      struct _ark_web_string_vector_value_callback_t *self,
-      const ArkWebStringVector *value);
+    void(ARK_WEB_CALLBACK* on_receive_value)(
+        struct _ark_web_string_vector_value_callback_t* self, const ArkWebStringVector* value);
 } ark_web_string_vector_value_callback_t;
 
 #ifdef __cplusplus

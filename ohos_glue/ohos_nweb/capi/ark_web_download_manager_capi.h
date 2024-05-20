@@ -17,24 +17,23 @@
 #define ARK_WEB_DOWNLOAD_MANAGER_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/capi/ark_web_doh_config_capi.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_download_manager_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *set_http_dns)(struct _ark_web_download_manager_t *self,
-                                       ark_web_doh_config_t *config);
+    void(ARK_WEB_CALLBACK* set_http_dns)(struct _ark_web_download_manager_t* self, ark_web_doh_config_t* config);
 
-  void(ARK_WEB_CALLBACK *set_connection_timeout)(
-      struct _ark_web_download_manager_t *self, const int *timeout);
+    void(ARK_WEB_CALLBACK* set_connection_timeout)(struct _ark_web_download_manager_t* self, const int* timeout);
 } ark_web_download_manager_t;
 
 #ifdef __cplusplus

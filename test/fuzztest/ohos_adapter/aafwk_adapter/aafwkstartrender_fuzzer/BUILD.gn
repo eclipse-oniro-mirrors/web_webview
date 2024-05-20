@@ -33,6 +33,12 @@ ohos_fuzztest("AafwkStartRenderFuzzTest") {
   external_deps = [
     "ability_runtime:app_manager",
     "c_utils:utils",
+    "graphic_2d:libcomposer",
+    "graphic_2d:libgraphic_utils",
+    "graphic_2d:libnative_image",
+    "graphic_2d:librender_service_client",
+    "graphic_surface:surface",
+    "ipc:ipc_core",
   ]
 }
 

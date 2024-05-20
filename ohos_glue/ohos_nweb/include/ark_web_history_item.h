@@ -25,18 +25,17 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebHistoryItem : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual bool GetFavicon(void **data, int &width, int &height, int &color_type,
-                          int &alpha_type) = 0;
+    /*--ark web()--*/
+    virtual bool GetFavicon(void** data, int& width, int& height, int& color_type, int& alpha_type) = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetHistoryUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetHistoryUrl() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetHistoryTitle() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetHistoryTitle() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetHistoryRawUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetHistoryRawUrl() = 0;
 };
 
 } // namespace OHOS::ArkWeb

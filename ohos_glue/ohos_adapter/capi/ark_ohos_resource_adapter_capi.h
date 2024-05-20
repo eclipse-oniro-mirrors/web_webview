@@ -25,53 +25,46 @@ extern "C" {
 #endif
 
 typedef struct _ark_ohos_file_mapper_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_fd)(struct _ark_ohos_file_mapper_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_fd)(struct _ark_ohos_file_mapper_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *get_offset)(struct _ark_ohos_file_mapper_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_offset)(struct _ark_ohos_file_mapper_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_file_name)(
-      struct _ark_ohos_file_mapper_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_file_name)(struct _ark_ohos_file_mapper_t* self);
 
-  bool(ARK_WEB_CALLBACK *is_compressed)(struct _ark_ohos_file_mapper_t *self);
+    bool(ARK_WEB_CALLBACK* is_compressed)(struct _ark_ohos_file_mapper_t* self);
 
-  void *(ARK_WEB_CALLBACK *get_data_ptr)(struct _ark_ohos_file_mapper_t *self);
+    void*(ARK_WEB_CALLBACK* get_data_ptr)(struct _ark_ohos_file_mapper_t* self);
 
-  size_t(ARK_WEB_CALLBACK *get_data_len)(struct _ark_ohos_file_mapper_t *self);
+    size_t(ARK_WEB_CALLBACK* get_data_len)(struct _ark_ohos_file_mapper_t* self);
 
-  bool(ARK_WEB_CALLBACK *unzip_data)(struct _ark_ohos_file_mapper_t *self,
-                                     uint8_t **dest, size_t *len);
+    bool(ARK_WEB_CALLBACK* unzip_data)(struct _ark_ohos_file_mapper_t* self, uint8_t** dest, size_t* len);
 } ark_ohos_file_mapper_t;
 
 typedef struct _ark_ohos_resource_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *get_raw_file_data)(
-      struct _ark_ohos_resource_adapter_t *self, const ArkWebString *rawFile,
-      size_t *len, uint8_t **dest, bool isSys);
+    bool(ARK_WEB_CALLBACK* get_raw_file_data)(struct _ark_ohos_resource_adapter_t* self, const ArkWebString* rawFile,
+        size_t* len, uint8_t** dest, bool isSys);
 
-  ark_ohos_file_mapper_t *(ARK_WEB_CALLBACK *get_raw_file_mapper)(
-      struct _ark_ohos_resource_adapter_t *self, const ArkWebString *rawFile,
-      bool isSys);
+    ark_ohos_file_mapper_t*(ARK_WEB_CALLBACK* get_raw_file_mapper)(
+        struct _ark_ohos_resource_adapter_t* self, const ArkWebString* rawFile, bool isSys);
 
-  bool(ARK_WEB_CALLBACK *is_raw_file_exist)(
-      struct _ark_ohos_resource_adapter_t *self, const ArkWebString *rawFile,
-      bool isSys);
+    bool(ARK_WEB_CALLBACK* is_raw_file_exist)(
+        struct _ark_ohos_resource_adapter_t* self, const ArkWebString* rawFile, bool isSys);
 
-  bool(ARK_WEB_CALLBACK *get_raw_file_last_mod_time1)(
-      struct _ark_ohos_resource_adapter_t *self, const ArkWebString *rawFile,
-      uint16_t *date, uint16_t *time, bool isSys);
+    bool(ARK_WEB_CALLBACK* get_raw_file_last_mod_time1)(struct _ark_ohos_resource_adapter_t* self,
+        const ArkWebString* rawFile, uint16_t* date, uint16_t* time, bool isSys);
 
-  bool(ARK_WEB_CALLBACK *get_raw_file_last_mod_time2)(
-      struct _ark_ohos_resource_adapter_t *self, const ArkWebString *rawFile,
-      time_t *time, bool isSys);
+    bool(ARK_WEB_CALLBACK* get_raw_file_last_mod_time2)(
+        struct _ark_ohos_resource_adapter_t* self, const ArkWebString* rawFile, time_t* time, bool isSys);
 } ark_ohos_resource_adapter_t;
 
 #ifdef __cplusplus

@@ -17,30 +17,29 @@
 #define ARK_IMFTEXT_CONFIG_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_imf_adapter_capi.h"
 #include "ohos_adapter/include/ark_imf_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkIMFTextConfigAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkIMFTextConfigAdapterCToCpp,
-                                    ArkIMFTextConfigAdapter,
-                                    ark_imftext_config_adapter_t> {
+class ArkIMFTextConfigAdapterCToCpp : public ArkWebCToCppRefCounted<ArkIMFTextConfigAdapterCToCpp,
+                                          ArkIMFTextConfigAdapter, ark_imftext_config_adapter_t> {
 public:
-  ArkIMFTextConfigAdapterCToCpp();
-  virtual ~ArkIMFTextConfigAdapterCToCpp();
+    ArkIMFTextConfigAdapterCToCpp();
+    virtual ~ArkIMFTextConfigAdapterCToCpp();
 
-  // ArkIMFTextConfigAdapter methods.
-  ArkWebRefPtr<ArkIMFInputAttributeAdapter> GetInputAttribute() override;
+    // ArkIMFTextConfigAdapter methods.
+    ArkWebRefPtr<ArkIMFInputAttributeAdapter> GetInputAttribute() override;
 
-  ArkWebRefPtr<ArkIMFCursorInfoAdapter> GetCursorInfo() override;
+    ArkWebRefPtr<ArkIMFCursorInfoAdapter> GetCursorInfo() override;
 
-  ArkWebRefPtr<ArkIMFSelectionRangeAdapter> GetSelectionRange() override;
+    ArkWebRefPtr<ArkIMFSelectionRangeAdapter> GetSelectionRange() override;
 
-  uint32_t GetWindowId() override;
+    uint32_t GetWindowId() override;
 };
 
 } // namespace OHOS::ArkWeb

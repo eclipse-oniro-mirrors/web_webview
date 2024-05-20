@@ -39,6 +39,8 @@ public:
 
     int32_t GetDefaultNetConnect(NetConnectType &type, NetConnectSubtype &netConnectSubtype) override;
 
+    std::vector<std::string> GetDnsServers() override;
+
 private:
     std::unordered_map<int32_t, sptr<NetConnectCallbackImpl>> netConnCallbackMap_;
 };

@@ -40,7 +40,7 @@ public:
 
     size_t GetDataLen() override;
 
-    bool UnzipData(uint8_t* &dest, size_t& len) override;
+    bool UnzipData(uint8_t** dest, size_t& len) override;
 
 private:
     std::shared_ptr<OHOS::AbilityBase::Extractor> extractor_ = nullptr;
@@ -55,7 +55,7 @@ public:
     ~OhosResourceAdapterImpl() override = default;
 
     bool GetRawFileData(const std::string& rawFile, size_t& len,
-        uint8_t* &dest, bool isSys = false) override;
+        uint8_t** dest, bool isSys = false) override;
 
     std::shared_ptr<OhosFileMapper> GetRawFileMapper(const std::string& rawFile,
         bool isSys = false) override;
@@ -66,6 +66,9 @@ public:
         uint16_t& date, uint16_t& time, bool isSys = false) override;
 
     bool GetRawFileLastModTime(const std::string& rawFile, time_t& time, bool isSys = false) override;
+
+    static bool GetResourceString(const std::string& bundleName, const std::string& moduleName,
+        const int32_t resId, std::string& result);
 
 private:
     void Init(const std::string& hapPath);

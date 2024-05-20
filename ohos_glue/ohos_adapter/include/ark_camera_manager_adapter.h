@@ -15,267 +15,223 @@
 
 #ifndef ARK_CAMERA_MANAGER_ADAPTER_H
 #define ARK_CAMERA_MANAGER_ADAPTER_H
+#pragma once
+
+#include "ohos_adapter/include/ark_format_adapter_vector.h"
+#include "ohos_adapter/include/ark_video_device_descriptor_adapter_vector.h"
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "include/ark_format_adapter_vector.h"
-#include "include/ark_video_device_descriptor_adapter_vector.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkVideoControlSupportAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkVideoControlSupportAdapter() = default;
+    /*--ark web()--*/
+    virtual bool GetPan() = 0;
 
-  virtual ~ArkVideoControlSupportAdapter() = default;
+    /*--ark web()--*/
+    virtual bool GetTilt() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetPan() = 0;
-
-  /*--ark web()--*/
-  virtual bool GetTilt() = 0;
-
-  /*--ark web()--*/
-  virtual bool GetZoom() = 0;
+    /*--ark web()--*/
+    virtual bool GetZoom() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkFormatAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkFormatAdapter() = default;
+    /*--ark web()--*/
+    virtual uint32_t GetWidth() = 0;
 
-  virtual ~ArkFormatAdapter() = default;
+    /*--ark web()--*/
+    virtual uint32_t GetHeight() = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual float GetFrameRate() = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t GetHeight() = 0;
-
-  /*--ark web()--*/
-  virtual float GetFrameRate() = 0;
-
-  /*--ark web()--*/
-  virtual int32_t GetPixelFormat() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetPixelFormat() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkVideoDeviceDescriptorAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkVideoDeviceDescriptorAdapter() = default;
+    /*--ark web()--*/
+    virtual ArkWebString GetDisplayName() = 0;
 
-  virtual ~ArkVideoDeviceDescriptorAdapter() = default;
+    /*--ark web()--*/
+    virtual ArkWebString GetDeviceId() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetDisplayName() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetModelId() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetDeviceId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkVideoControlSupportAdapter> GetControlSupport() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetModelId() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetTransportType() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkVideoControlSupportAdapter> GetControlSupport() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetFacingMode() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetTransportType() = 0;
-
-  /*--ark web()--*/
-  virtual int32_t GetFacingMode() = 0;
-
-  /*--ark web()--*/
-  virtual ArkFormatAdapterVector GetSupportCaptureFormats() = 0;
+    /*--ark web()--*/
+    virtual ArkFormatAdapterVector GetSupportCaptureFormats() = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkVideoCaptureParamsAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkVideoCaptureParamsAdapter() = default;
+    /*--ark web()--*/
+    virtual uint32_t GetWidth() = 0;
 
-  virtual ~ArkVideoCaptureParamsAdapter() = default;
+    /*--ark web()--*/
+    virtual uint32_t GetHeight() = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual float GetFrameRate() = 0;
 
-  /*--ark web()--*/
-  virtual uint32_t GetHeight() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetPixelFormat() = 0;
 
-  /*--ark web()--*/
-  virtual float GetFrameRate() = 0;
-
-  /*--ark web()--*/
-  virtual int32_t GetPixelFormat() = 0;
-
-  /*--ark web()--*/
-  virtual bool GetEnableFaceDetection() = 0;
+    /*--ark web()--*/
+    virtual bool GetEnableFaceDetection() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkVideoCaptureRangeAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkVideoCaptureRangeAdapter() = default;
+    /*--ark web()--*/
+    virtual double GetMin() = 0;
 
-  virtual ~ArkVideoCaptureRangeAdapter() = default;
+    /*--ark web()--*/
+    virtual double GetMax() = 0;
 
-  /*--ark web()--*/
-  virtual double GetMin() = 0;
+    /*--ark web()--*/
+    virtual double GetStep() = 0;
 
-  /*--ark web()--*/
-  virtual double GetMax() = 0;
-
-  /*--ark web()--*/
-  virtual double GetStep() = 0;
-
-  /*--ark web()--*/
-  virtual double GetCurrent() = 0;
+    /*--ark web()--*/
+    virtual double GetCurrent() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkCameraRotationInfoAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkCameraRotationInfoAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t GetRotation() = 0;
 
-  virtual ~ArkCameraRotationInfoAdapter() = default;
+    /*--ark web()--*/
+    virtual bool GetIsFlipX() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetRotation() = 0;
-
-  /*--ark web()--*/
-  virtual bool GetIsFlipX() = 0;
-
-  /*--ark web()--*/
-  virtual bool GetIsFlipY() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsFlipY() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkCameraSurfaceBufferAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkCameraSurfaceBufferAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t GetFileDescriptor() = 0;
 
-  virtual ~ArkCameraSurfaceBufferAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetFileDescriptor() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetHeight() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetWidth() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetStride() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetHeight() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetFormat() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetStride() = 0;
+    /*--ark web()--*/
+    virtual uint32_t GetSize() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetFormat() = 0;
-
-  /*--ark web()--*/
-  virtual uint32_t GetSize() = 0;
-
-  /*--ark web()--*/
-  virtual uint8_t *GetBufferAddr() = 0;
+    /*--ark web()--*/
+    virtual uint8_t* GetBufferAddr() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkCameraSurfaceAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkCameraSurfaceAdapter() = default;
-
-  virtual ~ArkCameraSurfaceAdapter() = default;
-
-  /*--ark web()--*/
-  virtual int32_t
-  ReleaseBuffer(ArkWebRefPtr<ArkCameraSurfaceBufferAdapter> buffer,
-                int32_t fence) = 0;
+    /*--ark web()--*/
+    virtual int32_t ReleaseBuffer(ArkWebRefPtr<ArkCameraSurfaceBufferAdapter> buffer, int32_t fence) = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkCameraBufferListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  virtual ~ArkCameraBufferListenerAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void OnBufferAvailable(
-      ArkWebRefPtr<ArkCameraSurfaceAdapter> surface,
-      ArkWebRefPtr<ArkCameraSurfaceBufferAdapter> buffer,
-      ArkWebRefPtr<ArkCameraRotationInfoAdapter> rotationInfo) = 0;
+    /*--ark web()--*/
+    virtual void OnBufferAvailable(ArkWebRefPtr<ArkCameraSurfaceAdapter> surface,
+        ArkWebRefPtr<ArkCameraSurfaceBufferAdapter> buffer,
+        ArkWebRefPtr<ArkCameraRotationInfoAdapter> rotationInfo) = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkCameraStatusCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  virtual ~ArkCameraStatusCallbackAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void OnCameraStatusChanged(int32_t cameraStatusAdapter,
-                                     const ArkWebString callBackDeviceId) = 0;
+    /*--ark web()--*/
+    virtual void OnCameraStatusChanged(int32_t cameraStatusAdapter, const ArkWebString callBackDeviceId) = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkCameraManagerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkCameraManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t Create(ArkWebRefPtr<ArkCameraStatusCallbackAdapter> cameraStatusCallback) = 0;
 
-  virtual ~ArkCameraManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual ArkVideoDeviceDescriptorAdapterVector GetDevicesInfo() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t
-  Create(ArkWebRefPtr<ArkCameraStatusCallbackAdapter> cameraStatusCallback) = 0;
+    /*--ark web()--*/
+    virtual int32_t ReleaseCameraManger() = 0;
 
-  /*--ark web()--*/
-  virtual ArkVideoDeviceDescriptorAdapterVector GetDevicesInfo() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetExposureModes(ArkWebInt32Vector& exposureModesAdapter) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t ReleaseCameraManger() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetCurrentExposureMode(int32_t& exposureModeAdapter) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetExposureModes(ArkWebInt32Vector &exposureModesAdapter) = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkVideoCaptureRangeAdapter> GetCaptionRangeById(int32_t rangeId) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetCurrentExposureMode(int32_t &exposureModeAdapter) = 0;
+    /*--ark web()--*/
+    virtual bool IsFocusModeSupported(int32_t focusMode) = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkVideoCaptureRangeAdapter>
-  GetCaptionRangeById(int32_t rangeId) = 0;
+    /*--ark web()--*/
+    virtual int32_t GetCurrentFocusMode() = 0;
 
-  /*--ark web()--*/
-  virtual bool IsFocusModeSupported(int32_t focusMode) = 0;
+    /*--ark web()--*/
+    virtual bool IsFlashModeSupported(int32_t flashMode) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetCurrentFocusMode() = 0;
+    /*--ark web()--*/
+    virtual int32_t RestartSession() = 0;
 
-  /*--ark web()--*/
-  virtual bool IsFlashModeSupported(int32_t flashMode) = 0;
+    /*--ark web()--*/
+    virtual int32_t StopSession(int32_t stopType) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t RestartSession() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetCameraStatus() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t StopSession(int32_t stopType) = 0;
+    /*--ark web()--*/
+    virtual bool IsExistCaptureTask() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetCameraStatus() = 0;
+    /*--ark web()--*/
+    virtual int32_t StartStream(const ArkWebString& deviceId,
+        const ArkWebRefPtr<ArkVideoCaptureParamsAdapter> captureParams,
+        ArkWebRefPtr<ArkCameraBufferListenerAdapter> listener) = 0;
 
-  /*--ark web()--*/
-  virtual bool IsExistCaptureTask() = 0;
+    /*--ark web()--*/
+    virtual void SetForegroundFlag(bool isForeground) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t
-  StartStream(const ArkWebString &deviceId,
-              const ArkWebRefPtr<ArkVideoCaptureParamsAdapter> captureParams,
-              ArkWebRefPtr<ArkCameraBufferListenerAdapter> listener) = 0;
+    /*--ark web()--*/
+    virtual void SetCameraStatus(int32_t status) = 0;
 
-  /*--ark web()--*/
-  virtual void SetForegroundFlag(bool isForeground) = 0;
-
-  /*--ark web()--*/
-  virtual void SetCameraStatus(int32_t status) = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebString GetCurrentDeviceId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetCurrentDeviceId() = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_CAMERA_MANAGER_ADAPTER_H

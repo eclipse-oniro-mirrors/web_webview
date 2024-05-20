@@ -17,7 +17,6 @@
 #define ARK_WEB_ENGINE_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/capi/ark_web_cookie_manager_capi.h"
 #include "ohos_nweb/capi/ark_web_data_base_capi.h"
 #include "ohos_nweb/capi/ark_web_download_manager_capi.h"
@@ -27,78 +26,73 @@
 #include "ohos_nweb/capi/ark_web_nweb_create_info_capi.h"
 #include "ohos_nweb/capi/ark_web_web_storage_capi.h"
 
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_engine_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ark_web_nweb_t *(ARK_WEB_CALLBACK *create_nweb)(
-      struct _ark_web_engine_t *self, ark_web_nweb_create_info_t *create_info);
+    ark_web_nweb_t*(ARK_WEB_CALLBACK* create_nweb)(
+        struct _ark_web_engine_t* self, ark_web_nweb_create_info_t* create_info);
 
-  ark_web_nweb_t *(ARK_WEB_CALLBACK *get_nweb)(struct _ark_web_engine_t *self,
-                                               int32_t nweb_id);
+    ark_web_nweb_t*(ARK_WEB_CALLBACK* get_nweb)(struct _ark_web_engine_t* self, int32_t nweb_id);
 
-  ark_web_data_base_t *(ARK_WEB_CALLBACK *get_data_base)(
-      struct _ark_web_engine_t *self);
+    ark_web_data_base_t*(ARK_WEB_CALLBACK* get_data_base)(struct _ark_web_engine_t* self);
 
-  ark_web_web_storage_t *(ARK_WEB_CALLBACK *get_web_storage)(
-      struct _ark_web_engine_t *self);
+    ark_web_web_storage_t*(ARK_WEB_CALLBACK* get_web_storage)(struct _ark_web_engine_t* self);
 
-  ark_web_cookie_manager_t *(ARK_WEB_CALLBACK *get_cookie_manager)(
-      struct _ark_web_engine_t *self);
+    ark_web_cookie_manager_t*(ARK_WEB_CALLBACK* get_cookie_manager)(struct _ark_web_engine_t* self);
 
-  ark_web_download_manager_t *(ARK_WEB_CALLBACK *get_download_manager)(
-      struct _ark_web_engine_t *self);
+    ark_web_download_manager_t*(ARK_WEB_CALLBACK* get_download_manager)(struct _ark_web_engine_t* self);
 
-  void(ARK_WEB_CALLBACK *set_web_tag)(struct _ark_web_engine_t *self,
-                                      int32_t nweb_id, const char *web_tag);
+    void(ARK_WEB_CALLBACK* set_web_tag)(struct _ark_web_engine_t* self, int32_t nweb_id, const char* web_tag);
 
-  void(ARK_WEB_CALLBACK *initialize_web_engine)(
-      struct _ark_web_engine_t *self, ark_web_engine_init_args_t *init_args);
+    void(ARK_WEB_CALLBACK* initialize_web_engine)(
+        struct _ark_web_engine_t* self, ark_web_engine_init_args_t* init_args);
 
-  void(ARK_WEB_CALLBACK *prepare_for_page_load)(struct _ark_web_engine_t *self,
-                                                const ArkWebString *url,
-                                                bool preconnectable,
-                                                int32_t num_sockets);
+    void(ARK_WEB_CALLBACK* prepare_for_page_load)(
+        struct _ark_web_engine_t* self, const ArkWebString* url, bool preconnectable, int32_t num_sockets);
 
-  void(ARK_WEB_CALLBACK *set_web_debugging_access)(
-      struct _ark_web_engine_t *self, bool isEnableDebug);
+    void(ARK_WEB_CALLBACK* set_web_debugging_access)(struct _ark_web_engine_t* self, bool isEnableDebug);
 
-  void(ARK_WEB_CALLBACK *add_intelligent_tracking_prevention_bypassing_list)(
-      struct _ark_web_engine_t *self, const ArkWebStringVector *hosts);
+    void(ARK_WEB_CALLBACK* add_intelligent_tracking_prevention_bypassing_list)(
+        struct _ark_web_engine_t* self, const ArkWebStringVector* hosts);
 
-  void(ARK_WEB_CALLBACK *remove_intelligent_tracking_prevention_bypassing_list)(
-      struct _ark_web_engine_t *self, const ArkWebStringVector *hosts);
+    void(ARK_WEB_CALLBACK* remove_intelligent_tracking_prevention_bypassing_list)(
+        struct _ark_web_engine_t* self, const ArkWebStringVector* hosts);
 
-  void(ARK_WEB_CALLBACK *clear_intelligent_tracking_prevention_bypassing_list)(
-      struct _ark_web_engine_t *self);
+    void(ARK_WEB_CALLBACK* clear_intelligent_tracking_prevention_bypassing_list)(struct _ark_web_engine_t* self);
 
-  void(ARK_WEB_CALLBACK *pause_all_timers)(struct _ark_web_engine_t *self);
+    void(ARK_WEB_CALLBACK* pause_all_timers)(struct _ark_web_engine_t* self);
 
-  void(ARK_WEB_CALLBACK *resume_all_timers)(struct _ark_web_engine_t *self);
+    void(ARK_WEB_CALLBACK* resume_all_timers)(struct _ark_web_engine_t* self);
 
-  void(ARK_WEB_CALLBACK *prefetch_resource)(
-      struct _ark_web_engine_t *self, ark_web_engine_prefetch_args_t **pre_args,
-      const ArkWebStringMap *additional_http_headers,
-      const ArkWebString *cache_key, const uint32_t *cache_valid_time);
-  void(ARK_WEB_CALLBACK *set_render_process_mode)(
-      struct _ark_web_engine_t *self, int32_t mode);
-  int32_t(ARK_WEB_CALLBACK *get_render_process_mode)(
-      struct _ark_web_engine_t *self);
+    void(ARK_WEB_CALLBACK* prefetch_resource)(struct _ark_web_engine_t* self, ark_web_engine_prefetch_args_t** pre_args,
+        const ArkWebStringMap* additional_http_headers, const ArkWebString* cache_key,
+        const uint32_t* cache_valid_time);
 
-  void(ARK_WEB_CALLBACK *clear_prefetched_resource)(
-      struct _ark_web_engine_t *self, const ArkWebStringVector *cache_key_list);
+    void(ARK_WEB_CALLBACK* set_render_process_mode)(struct _ark_web_engine_t* self, int32_t mode);
 
-  void(ARK_WEB_CALLBACK *warmup_service_worker)(struct _ark_web_engine_t *self,
-                                                const ArkWebString *url);
+    int32_t(ARK_WEB_CALLBACK* get_render_process_mode)(struct _ark_web_engine_t* self);
+
+    void(ARK_WEB_CALLBACK* clear_prefetched_resource)(
+        struct _ark_web_engine_t* self, const ArkWebStringVector* cache_key_list);
+
+    void(ARK_WEB_CALLBACK* warmup_service_worker)(struct _ark_web_engine_t* self, const ArkWebString* url);
+
+    void(ARK_WEB_CALLBACK* set_host_ip)(
+        struct _ark_web_engine_t* self, const ArkWebString* hostName, const ArkWebString* address, int32_t aliveTime);
+
+    void(ARK_WEB_CALLBACK* clear_host_ip)(struct _ark_web_engine_t* self, const ArkWebString* hostName);
 } ark_web_engine_t;
 
-ARK_WEB_EXPORT ark_web_engine_t *ark_web_engine_get_instance(void);
+ARK_WEB_EXPORT ark_web_engine_t* ark_web_engine_get_instance(void);
 
 #ifdef __cplusplus
 }

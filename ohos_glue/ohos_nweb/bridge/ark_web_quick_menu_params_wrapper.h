@@ -25,33 +25,31 @@ namespace OHOS::ArkWeb {
 
 class ArkWebQuickMenuParamsWrapper : public OHOS::NWeb::NWebQuickMenuParams {
 public:
-  ArkWebQuickMenuParamsWrapper(
-      ArkWebRefPtr<ArkWebQuickMenuParams> ark_web_quick_menu_params);
-  ~ArkWebQuickMenuParamsWrapper() = default;
+    ArkWebQuickMenuParamsWrapper(ArkWebRefPtr<ArkWebQuickMenuParams> ark_web_quick_menu_params);
+    ~ArkWebQuickMenuParamsWrapper() = default;
 
-  int32_t GetXCoord() override;
+    int32_t GetXCoord() override;
 
-  int32_t GetYCoord() override;
+    int32_t GetYCoord() override;
 
-  int32_t GetWidth() override;
+    int32_t GetWidth() override;
 
-  int32_t GetHeight() override;
+    int32_t GetHeight() override;
 
-  int32_t GetEditStateFlags() override;
+    int32_t GetEditStateFlags() override;
 
-  int32_t GetSelectX() override;
+    int32_t GetSelectX() override;
 
-  int32_t GetSelectY() override;
+    int32_t GetSelectY() override;
 
-  int32_t GetSelectWidth() override;
+    int32_t GetSelectWidth() override;
 
-  int32_t GetSelectXHeight() override;
+    int32_t GetSelectXHeight() override;
 
-  std::shared_ptr<OHOS::NWeb::NWebTouchHandleState>
-  GetTouchHandleState(ArkWebTouchHandleType type) override;
+    std::shared_ptr<OHOS::NWeb::NWebTouchHandleState> GetTouchHandleState(ArkWebTouchHandleType type) override;
 
 private:
-  ArkWebRefPtr<ArkWebQuickMenuParams> ark_web_quick_menu_params_;
+    ArkWebRefPtr<ArkWebQuickMenuParams> ark_web_quick_menu_params_;
 };
 
 } // namespace OHOS::ArkWeb

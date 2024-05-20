@@ -17,16 +17,17 @@
 #define ARK_WEB_DATE_TIME_CHOOSER_CALLBACK_H_
 #pragma once
 
-#include "base/include/ark_web_base_ref_counted.h"
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
+
+#include "base/include/ark_web_base_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkWebDateTimeChooserCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void Continue(bool success, const ArkWebDateTime &value) = 0;
+    /*--ark web()--*/
+    virtual void Continue(bool success, const ArkWebDateTime& value) = 0;
 };
 
 } // namespace OHOS::ArkWeb

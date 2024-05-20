@@ -24,17 +24,17 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebControllerHandler : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetId() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetId() = 0;
 
-  /*--ark web()--*/
-  virtual bool IsFrist() = 0;
+    /*--ark web()--*/
+    virtual bool IsFrist() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetNWebHandlerId() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetNWebHandlerId() = 0;
 
-  /*--ark web()--*/
-  virtual void SetNWebHandlerById(int32_t nweb_id) = 0;
+    /*--ark web()--*/
+    virtual void SetNWebHandlerById(int32_t nweb_id) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -25,55 +25,55 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebUrlResourceRequest : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Gets the URL for which the resource request was made.
-   *
-   * @return URL url string
-   */
-  /*--ark web()--*/
-  virtual ArkWebString Url() = 0;
+    /**
+     * @brief Gets the URL for which the resource request was made.
+     *
+     * @return URL url string
+     */
+    /*--ark web()--*/
+    virtual ArkWebString Url() = 0;
 
-  /**
-   * @brief Gets the method associated with the request, for example "GET".
-   *
-   * @return method the method associated with the request.
-   */
-  /*--ark web()--*/
-  virtual ArkWebString Method() = 0;
+    /**
+     * @brief Gets the method associated with the request, for example "GET".
+     *
+     * @return method the method associated with the request.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString Method() = 0;
 
-  /**
-   * @brief Gets whether a gesture (such as a click) was associated with the
-   *        request.
-   *
-   * @return gesture whether was associated with the request.
-   */
-  /*--ark web()--*/
-  virtual bool FromGesture() = 0;
+    /**
+     * @brief Gets whether a gesture (such as a click) was associated with the
+     *        request.
+     *
+     * @return gesture whether was associated with the request.
+     */
+    /*--ark web()--*/
+    virtual bool FromGesture() = 0;
 
-  /**
-   * @brief Gets the headers associated with the request.
-   *
-   * @return the headers associated with the request.
-   */
-  /*--ark web()--*/
-  virtual ArkWebStringMap RequestHeaders() = 0;
+    /**
+     * @brief Gets the headers associated with the request.
+     *
+     * @return the headers associated with the request.
+     */
+    /*--ark web()--*/
+    virtual ArkWebStringMap RequestHeaders() = 0;
 
-  /**
-   * @brief Gets whether the request was made in order to fetch the main frame's
-   *        document.
-   *
-   * @return Is main frame
-   */
-  /*--ark web()--*/
-  virtual bool IsAboutMainFrame() = 0;
+    /**
+     * @brief Gets whether the request was made in order to fetch the main frame's
+     *        document.
+     *
+     * @return Is main frame
+     */
+    /*--ark web()--*/
+    virtual bool IsAboutMainFrame() = 0;
 
-  /**
-   * @brief Gets whether the request was a result of a server-side redirect.
-   *
-   * @return is redirect
-   */
-  /*--ark web()--*/
-  virtual bool IsRequestRedirect() = 0;
+    /**
+     * @brief Gets whether the request was a result of a server-side redirect.
+     *
+     * @return is redirect
+     */
+    /*--ark web()--*/
+    virtual bool IsRequestRedirect() = 0;
 };
 
 } // namespace OHOS::ArkWeb

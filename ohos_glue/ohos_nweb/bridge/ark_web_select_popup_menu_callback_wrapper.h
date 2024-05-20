@@ -22,21 +22,18 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebSelectPopupMenuCallbackWrapper
-    : public OHOS::NWeb::NWebSelectPopupMenuCallback {
+class ArkWebSelectPopupMenuCallbackWrapper : public OHOS::NWeb::NWebSelectPopupMenuCallback {
 public:
-  ArkWebSelectPopupMenuCallbackWrapper(
-      ArkWebRefPtr<ArkWebSelectPopupMenuCallback>
-          ark_web_select_popup_menu_callback);
-  ~ArkWebSelectPopupMenuCallbackWrapper() = default;
+    ArkWebSelectPopupMenuCallbackWrapper(
+        ArkWebRefPtr<ArkWebSelectPopupMenuCallback> ark_web_select_popup_menu_callback);
+    ~ArkWebSelectPopupMenuCallbackWrapper() = default;
 
-  void Cancel() override;
+    void Cancel() override;
 
-  void Continue(const std::vector<int32_t> &indices) override;
+    void Continue(const std::vector<int32_t>& indices) override;
 
 private:
-  ArkWebRefPtr<ArkWebSelectPopupMenuCallback>
-      ark_web_select_popup_menu_callback_;
+    ArkWebRefPtr<ArkWebSelectPopupMenuCallback> ark_web_select_popup_menu_callback_;
 };
 
 } // namespace OHOS::ArkWeb

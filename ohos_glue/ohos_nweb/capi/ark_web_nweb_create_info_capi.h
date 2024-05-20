@@ -17,41 +17,35 @@
 #define ARK_WEB_NWEB_CREATE_INFO_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/capi/ark_web_engine_init_args_capi.h"
 #include "ohos_nweb/capi/ark_web_output_frame_callback_capi.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_nweb_create_info_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  uint32_t(ARK_WEB_CALLBACK *get_width)(
-      struct _ark_web_nweb_create_info_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_width)(struct _ark_web_nweb_create_info_t* self);
 
-  uint32_t(ARK_WEB_CALLBACK *get_height)(
-      struct _ark_web_nweb_create_info_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_height)(struct _ark_web_nweb_create_info_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_incognito_mode)(
-      struct _ark_web_nweb_create_info_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_incognito_mode)(struct _ark_web_nweb_create_info_t* self);
 
-  void *(ARK_WEB_CALLBACK *get_producer_surface)(
-      struct _ark_web_nweb_create_info_t *self);
+    void*(ARK_WEB_CALLBACK* get_producer_surface)(struct _ark_web_nweb_create_info_t* self);
 
-  void *(ARK_WEB_CALLBACK *get_enhance_surface_info)(
-      struct _ark_web_nweb_create_info_t *self);
+    void*(ARK_WEB_CALLBACK* get_enhance_surface_info)(struct _ark_web_nweb_create_info_t* self);
 
-  ark_web_engine_init_args_t *(ARK_WEB_CALLBACK *get_engine_init_args)(
-      struct _ark_web_nweb_create_info_t *self);
+    ark_web_engine_init_args_t*(ARK_WEB_CALLBACK* get_engine_init_args)(struct _ark_web_nweb_create_info_t* self);
 
-  ark_web_output_frame_callback_t *(
-      ARK_WEB_CALLBACK *get_output_frame_callback)(
-      struct _ark_web_nweb_create_info_t *self);
+    ark_web_output_frame_callback_t*(ARK_WEB_CALLBACK* get_output_frame_callback)(
+        struct _ark_web_nweb_create_info_t* self);
 } ark_web_nweb_create_info_t;
 
 #ifdef __cplusplus

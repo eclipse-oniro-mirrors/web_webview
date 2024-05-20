@@ -24,34 +24,29 @@ namespace OHOS::ArkWeb {
 
 class ArkWebWebStorageWrapper : public OHOS::NWeb::NWebWebStorage {
 public:
-  ArkWebWebStorageWrapper(ArkWebRefPtr<ArkWebWebStorage> ark_web_web_storage);
-  ~ArkWebWebStorageWrapper() = default;
+    ArkWebWebStorageWrapper(ArkWebRefPtr<ArkWebWebStorage> ark_web_web_storage);
+    ~ArkWebWebStorageWrapper() = default;
 
-  std::vector<std::shared_ptr<OHOS::NWeb::NWebWebStorageOrigin>>
-  GetOrigins() override;
+    std::vector<std::shared_ptr<OHOS::NWeb::NWebWebStorageOrigin>> GetOrigins() override;
 
-  void GetOrigins(
-      std::shared_ptr<OHOS::NWeb::NWebWebStorageOriginVectorValueCallback>
-          callback) override;
+    void GetOrigins(std::shared_ptr<OHOS::NWeb::NWebWebStorageOriginVectorValueCallback> callback) override;
 
-  long GetOriginQuota(const std::string &origin) override;
+    long GetOriginQuota(const std::string& origin) override;
 
-  void GetOriginQuota(
-      const std::string &origin,
-      std::shared_ptr<OHOS::NWeb::NWebLongValueCallback> callback) override;
+    void GetOriginQuota(
+        const std::string& origin, std::shared_ptr<OHOS::NWeb::NWebLongValueCallback> callback) override;
 
-  long GetOriginUsage(const std::string &origin) override;
+    long GetOriginUsage(const std::string& origin) override;
 
-  void GetOriginUsage(
-      const std::string &origin,
-      std::shared_ptr<OHOS::NWeb::NWebLongValueCallback> callback) override;
+    void GetOriginUsage(
+        const std::string& origin, std::shared_ptr<OHOS::NWeb::NWebLongValueCallback> callback) override;
 
-  int DeleteOrigin(const std::string &origin) override;
+    int DeleteOrigin(const std::string& origin) override;
 
-  void DeleteAllData(bool incognito_mode) override;
+    void DeleteAllData(bool incognito_mode) override;
 
 private:
-  ArkWebRefPtr<ArkWebWebStorage> ark_web_web_storage_;
+    ArkWebRefPtr<ArkWebWebStorage> ark_web_web_storage_;
 };
 
 } // namespace OHOS::ArkWeb

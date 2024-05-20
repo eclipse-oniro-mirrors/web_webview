@@ -24,14 +24,18 @@ extern "C" {
 #endif
 
 typedef struct _ark_aafwk_render_scheduler_host_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *notify_browser_fd)(
-      struct _ark_aafwk_render_scheduler_host_adapter_t *self, int32_t ipcFd,
-      int32_t sharedFd, int32_t crashFd);
+    void(ARK_WEB_CALLBACK* notify_browser_fd)(
+        struct _ark_aafwk_render_scheduler_host_adapter_t* self, int32_t ipcFd, int32_t sharedFd, int32_t crashFd);
+
+    void(ARK_WEB_CALLBACK *notify_browser)(
+        struct _ark_aafwk_render_scheduler_host_adapter_t *self, int32_t ipcFd,
+        int32_t sharedFd, int32_t crashFd,
+        struct _ark_aafwk_browser_client_adapter_t* adapter);
 } ark_aafwk_render_scheduler_host_adapter_t;
 
 #ifdef __cplusplus

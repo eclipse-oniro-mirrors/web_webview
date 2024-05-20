@@ -17,47 +17,40 @@
 #define ARK_WEB_WEB_STORAGE_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
-#include "base/include/ark_web_types.h"
 #include "ohos_nweb/capi/ark_web_long_value_callback_capi.h"
 #include "ohos_nweb/capi/ark_web_web_storage_origin_vector_value_callback_capi.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
+#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_web_storage_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  ArkWebWebStorageOriginVector(ARK_WEB_CALLBACK *get_origins1)(
-      struct _ark_web_web_storage_t *self);
+    ArkWebWebStorageOriginVector(ARK_WEB_CALLBACK* get_origins1)(struct _ark_web_web_storage_t* self);
 
-  void(ARK_WEB_CALLBACK *get_origins2)(
-      struct _ark_web_web_storage_t *self,
-      ark_web_web_storage_origin_vector_value_callback_t *callback);
+    void(ARK_WEB_CALLBACK* get_origins2)(
+        struct _ark_web_web_storage_t* self, ark_web_web_storage_origin_vector_value_callback_t* callback);
 
-  long(ARK_WEB_CALLBACK *get_origin_quota1)(struct _ark_web_web_storage_t *self,
-                                            const ArkWebString *origin);
+    long(ARK_WEB_CALLBACK* get_origin_quota1)(struct _ark_web_web_storage_t* self, const ArkWebString* origin);
 
-  void(ARK_WEB_CALLBACK *get_origin_quota2)(
-      struct _ark_web_web_storage_t *self, const ArkWebString *origin,
-      ark_web_long_value_callback_t *callback);
+    void(ARK_WEB_CALLBACK* get_origin_quota2)(
+        struct _ark_web_web_storage_t* self, const ArkWebString* origin, ark_web_long_value_callback_t* callback);
 
-  long(ARK_WEB_CALLBACK *get_origin_usage1)(struct _ark_web_web_storage_t *self,
-                                            const ArkWebString *origin);
+    long(ARK_WEB_CALLBACK* get_origin_usage1)(struct _ark_web_web_storage_t* self, const ArkWebString* origin);
 
-  void(ARK_WEB_CALLBACK *get_origin_usage2)(
-      struct _ark_web_web_storage_t *self, const ArkWebString *origin,
-      ark_web_long_value_callback_t *callback);
+    void(ARK_WEB_CALLBACK* get_origin_usage2)(
+        struct _ark_web_web_storage_t* self, const ArkWebString* origin, ark_web_long_value_callback_t* callback);
 
-  int(ARK_WEB_CALLBACK *delete_origin)(struct _ark_web_web_storage_t *self,
-                                       const ArkWebString *origin);
+    int(ARK_WEB_CALLBACK* delete_origin)(struct _ark_web_web_storage_t* self, const ArkWebString* origin);
 
-  void(ARK_WEB_CALLBACK *delete_all_data)(struct _ark_web_web_storage_t *self,
-                                          bool incognito_mode);
+    void(ARK_WEB_CALLBACK* delete_all_data)(struct _ark_web_web_storage_t* self, bool incognito_mode);
 } ark_web_web_storage_t;
 
 #ifdef __cplusplus

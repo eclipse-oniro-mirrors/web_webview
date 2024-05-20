@@ -15,129 +15,104 @@
 
 #ifndef ARK_AUDIO_SYSTEM_MANAGER_ADAPTER_H
 #define ARK_AUDIO_SYSTEM_MANAGER_ADAPTER_H
+#pragma once
+
+#include "ohos_adapter/include/ark_audio_device_desc_adapter_vector.h"
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
-#include "include/ark_audio_device_desc_adapter_vector.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkAudioInterruptAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkAudioInterruptAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t GetStreamUsage() = 0;
 
-  virtual ~ArkAudioInterruptAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t GetContentType() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetStreamUsage() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetStreamType() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetContentType() = 0;
+    /*--ark web()--*/
+    virtual uint32_t GetSessionID() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetStreamType() = 0;
-
-  /*--ark web()--*/
-  virtual uint32_t GetSessionID() = 0;
-
-  /*--ark web()--*/
-  virtual bool GetPauseWhenDucked() = 0;
+    /*--ark web()--*/
+    virtual bool GetPauseWhenDucked() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkAudioDeviceDescAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  ArkAudioDeviceDescAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t GetDeviceId() = 0;
 
-  virtual ~ArkAudioDeviceDescAdapter() = default;
-
-  /*--ark web()--*/
-  virtual int32_t GetDeviceId() = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebString GetDeviceName() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetDeviceName() = 0;
 };
 
 /*--ark web(source=web core)--*/
 class ArkAudioManagerCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkAudioManagerCallbackAdapter() = default;
+    /*--ark web()--*/
+    virtual void OnSuspend() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkAudioManagerCallbackAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void OnSuspend() = 0;
-
-  /*--ark web()--*/
-  virtual void OnResume() = 0;
+    /*--ark web()--*/
+    virtual void OnResume() = 0;
 };
 
 /*--ark web(source=web core)--*/
-class ArkAudioManagerDeviceChangeCallbackAdapter
-    : public virtual ArkWebBaseRefCounted {
+class ArkAudioManagerDeviceChangeCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkAudioManagerDeviceChangeCallbackAdapter() = default;
-
-  /*--ark web()--*/
-  virtual ~ArkAudioManagerDeviceChangeCallbackAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void OnDeviceChange() = 0;
+    /*--ark web()--*/
+    virtual void OnDeviceChange() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkAudioSystemManagerAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkAudioSystemManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual bool HasAudioOutputDevices() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkAudioSystemManagerAdapter() = default;
+    /*--ark web()--*/
+    virtual bool HasAudioInputDevices() = 0;
 
-  /*--ark web()--*/
-  virtual bool HasAudioOutputDevices() = 0;
+    /*--ark web()--*/
+    virtual int32_t RequestAudioFocus(const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt) = 0;
 
-  /*--ark web()--*/
-  virtual bool HasAudioInputDevices() = 0;
+    /*--ark web()--*/
+    virtual int32_t AbandonAudioFocus(const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t RequestAudioFocus(
-      const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt) = 0;
+    /*--ark web()--*/
+    virtual int32_t SetAudioManagerInterruptCallback(ArkWebRefPtr<ArkAudioManagerCallbackAdapter> callback) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t AbandonAudioFocus(
-      const ArkWebRefPtr<ArkAudioInterruptAdapter> audioInterrupt) = 0;
+    /*--ark web()--*/
+    virtual int32_t UnsetAudioManagerInterruptCallback() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t SetAudioManagerInterruptCallback(
-      ArkWebRefPtr<ArkAudioManagerCallbackAdapter> callback) = 0;
+    /*--ark web()--*/
+    virtual ArkAudioDeviceDescAdapterVector GetDevices(int32_t flag) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t UnsetAudioManagerInterruptCallback() = 0;
+    /*--ark web()--*/
+    virtual int32_t SelectAudioDeviceById(int32_t deviceId, bool isInput) = 0;
 
-  /*--ark web()--*/
-  virtual ArkAudioDeviceDescAdapterVector GetDevices(int32_t flag) = 0;
+    /*--ark web()--*/
+    virtual int32_t SetDeviceChangeCallback(ArkWebRefPtr<ArkAudioManagerDeviceChangeCallbackAdapter> callback) = 0;
 
-  /*--ark web()--*/
-  virtual int32_t SelectAudioDeviceById(int32_t deviceId, bool isInput) = 0;
+    /*--ark web()--*/
+    virtual int32_t UnsetDeviceChangeCallback() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t SetDeviceChangeCallback(
-      ArkWebRefPtr<ArkAudioManagerDeviceChangeCallbackAdapter> callback) = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkAudioDeviceDescAdapter> GetDefaultOutputDevice() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t UnsetDeviceChangeCallback() = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkAudioDeviceDescAdapter> GetDefaultInputDevice() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkAudioDeviceDescAdapter> GetDefaultOutputDevice() = 0;
-
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkAudioDeviceDescAdapter> GetDefaultInputDevice() = 0;
+    /*--ark web()--*/
+    virtual bool SetLanguage(ArkWebString language) = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_AUDIO_SYSTEM_MANAGER_ADAPTER_H

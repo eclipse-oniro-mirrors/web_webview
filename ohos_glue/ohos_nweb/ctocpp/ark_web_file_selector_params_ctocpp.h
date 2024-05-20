@@ -17,32 +17,31 @@
 #define ARK_WEB_FILE_SELECTOR_PARAMS_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_file_selector_params_capi.h"
 #include "ohos_nweb/include/ark_web_file_selector_params.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebFileSelectorParamsCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebFileSelectorParamsCToCpp,
-                                    ArkWebFileSelectorParams,
-                                    ark_web_file_selector_params_t> {
+class ArkWebFileSelectorParamsCToCpp : public ArkWebCToCppRefCounted<ArkWebFileSelectorParamsCToCpp,
+                                           ArkWebFileSelectorParams, ark_web_file_selector_params_t> {
 public:
-  ArkWebFileSelectorParamsCToCpp();
-  virtual ~ArkWebFileSelectorParamsCToCpp();
+    ArkWebFileSelectorParamsCToCpp();
+    virtual ~ArkWebFileSelectorParamsCToCpp();
 
-  // ArkWebFileSelectorParams methods.
-  int Mode() override;
+    // ArkWebFileSelectorParams methods.
+    int Mode() override;
 
-  const ArkWebString Title() override;
+    const ArkWebString Title() override;
 
-  bool IsCapture() override;
+    bool IsCapture() override;
 
-  const ArkWebStringVector AcceptType() override;
+    const ArkWebStringVector AcceptType() override;
 
-  const ArkWebString DefaultFilename() override;
+    const ArkWebString DefaultFilename() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -23,11 +23,9 @@
 namespace OHOS::ArkWeb {
 
 ArkWebJsProxyCallbackVector ArkWebJsProxyCallbackVectorClassToStruct(
-    const std::vector<std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback>>
-        &class_value);
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback>>& class_value);
 
-void ArkWebJsProxyCallbackVectorStructRelease(
-    ArkWebJsProxyCallbackVector &struct_value);
+void ArkWebJsProxyCallbackVectorStructRelease(ArkWebJsProxyCallbackVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

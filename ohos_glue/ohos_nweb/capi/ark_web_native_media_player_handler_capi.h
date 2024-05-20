@@ -25,58 +25,47 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_native_media_player_handler_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *handle_status_changed)(
-      struct _ark_web_native_media_player_handler_t *self, int status);
+    void(ARK_WEB_CALLBACK* handle_status_changed)(struct _ark_web_native_media_player_handler_t* self, int status);
 
-  void(ARK_WEB_CALLBACK *handle_volume_changed)(
-      struct _ark_web_native_media_player_handler_t *self, double volume);
+    void(ARK_WEB_CALLBACK* handle_volume_changed)(struct _ark_web_native_media_player_handler_t* self, double volume);
 
-  void(ARK_WEB_CALLBACK *handle_muted_changed)(
-      struct _ark_web_native_media_player_handler_t *self, bool isMuted);
+    void(ARK_WEB_CALLBACK* handle_muted_changed)(struct _ark_web_native_media_player_handler_t* self, bool isMuted);
 
-  void(ARK_WEB_CALLBACK *handle_playback_rate_changed)(
-      struct _ark_web_native_media_player_handler_t *self, double playbackRate);
+    void(ARK_WEB_CALLBACK* handle_playback_rate_changed)(
+        struct _ark_web_native_media_player_handler_t* self, double playbackRate);
 
-  void(ARK_WEB_CALLBACK *handle_duration_changed)(
-      struct _ark_web_native_media_player_handler_t *self, double duration);
+    void(ARK_WEB_CALLBACK* handle_duration_changed)(
+        struct _ark_web_native_media_player_handler_t* self, double duration);
 
-  void(ARK_WEB_CALLBACK *handle_time_update)(
-      struct _ark_web_native_media_player_handler_t *self, double playTime);
+    void(ARK_WEB_CALLBACK* handle_time_update)(struct _ark_web_native_media_player_handler_t* self, double playTime);
 
-  void(ARK_WEB_CALLBACK *handle_buffered_end_time_changed)(
-      struct _ark_web_native_media_player_handler_t *self,
-      double bufferedEndTime);
+    void(ARK_WEB_CALLBACK* handle_buffered_end_time_changed)(
+        struct _ark_web_native_media_player_handler_t* self, double bufferedEndTime);
 
-  void(ARK_WEB_CALLBACK *handle_ended)(
-      struct _ark_web_native_media_player_handler_t *self);
+    void(ARK_WEB_CALLBACK* handle_ended)(struct _ark_web_native_media_player_handler_t* self);
 
-  void(ARK_WEB_CALLBACK *handle_network_state_changed)(
-      struct _ark_web_native_media_player_handler_t *self, int state);
+    void(ARK_WEB_CALLBACK* handle_network_state_changed)(
+        struct _ark_web_native_media_player_handler_t* self, int state);
 
-  void(ARK_WEB_CALLBACK *handle_ready_state_changed)(
-      struct _ark_web_native_media_player_handler_t *self, int state);
+    void(ARK_WEB_CALLBACK* handle_ready_state_changed)(struct _ark_web_native_media_player_handler_t* self, int state);
 
-  void(ARK_WEB_CALLBACK *handle_full_screen_changed)(
-      struct _ark_web_native_media_player_handler_t *self, bool isFullScreen);
+    void(ARK_WEB_CALLBACK* handle_full_screen_changed)(
+        struct _ark_web_native_media_player_handler_t* self, bool isFullScreen);
 
-  void(ARK_WEB_CALLBACK *handle_seeking)(
-      struct _ark_web_native_media_player_handler_t *self);
+    void(ARK_WEB_CALLBACK* handle_seeking)(struct _ark_web_native_media_player_handler_t* self);
 
-  void(ARK_WEB_CALLBACK *handle_seek_finished)(
-      struct _ark_web_native_media_player_handler_t *self);
+    void(ARK_WEB_CALLBACK* handle_seek_finished)(struct _ark_web_native_media_player_handler_t* self);
 
-  void(ARK_WEB_CALLBACK *handle_error)(
-      struct _ark_web_native_media_player_handler_t *self, int error,
-      const ArkWebString *message);
+    void(ARK_WEB_CALLBACK* handle_error)(
+        struct _ark_web_native_media_player_handler_t* self, int error, const ArkWebString* message);
 
-  void(ARK_WEB_CALLBACK *handle_video_size_changed)(
-      struct _ark_web_native_media_player_handler_t *self, double width,
-      double height);
+    void(ARK_WEB_CALLBACK* handle_video_size_changed)(
+        struct _ark_web_native_media_player_handler_t* self, double width, double height);
 } ark_web_native_media_player_handler_t;
 
 #ifdef __cplusplus

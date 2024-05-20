@@ -17,26 +17,25 @@
 #define ARK_WEB_TOUCH_HANDLE_HOT_ZONE_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_touch_handle_hot_zone_capi.h"
 #include "ohos_nweb/include/ark_web_touch_handle_hot_zone.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebTouchHandleHotZoneCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebTouchHandleHotZoneCToCpp,
-                                    ArkWebTouchHandleHotZone,
-                                    ark_web_touch_handle_hot_zone_t> {
+class ArkWebTouchHandleHotZoneCToCpp : public ArkWebCToCppRefCounted<ArkWebTouchHandleHotZoneCToCpp,
+                                           ArkWebTouchHandleHotZone, ark_web_touch_handle_hot_zone_t> {
 public:
-  ArkWebTouchHandleHotZoneCToCpp();
-  virtual ~ArkWebTouchHandleHotZoneCToCpp();
+    ArkWebTouchHandleHotZoneCToCpp();
+    virtual ~ArkWebTouchHandleHotZoneCToCpp();
 
-  // ArkWebTouchHandleHotZone methods.
-  void SetWidth(double width) override;
+    // ArkWebTouchHandleHotZone methods.
+    void SetWidth(double width) override;
 
-  void SetHeight(double height) override;
+    void SetHeight(double height) override;
 };
 
 } // namespace OHOS::ArkWeb

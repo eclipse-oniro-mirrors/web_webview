@@ -24,11 +24,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebScreenCaptureConfig : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int32_t GetMode() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetMode() = 0;
 
-  /*--ark web()--*/
-  virtual int32_t GetSourceId() = 0;
+    /*--ark web()--*/
+    virtual int32_t GetSourceId() = 0;
 };
 
 } // namespace OHOS::ArkWeb

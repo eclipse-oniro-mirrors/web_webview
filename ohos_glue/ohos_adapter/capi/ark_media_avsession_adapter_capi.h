@@ -25,112 +25,85 @@ extern "C" {
 #endif
 
 typedef struct _ark_media_avsession_metadata_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *set_title)(
-      struct _ark_media_avsession_metadata_adapter_t *self,
-      const ArkWebString *title);
+    void(ARK_WEB_CALLBACK* set_title)(struct _ark_media_avsession_metadata_adapter_t* self, const ArkWebString* title);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_title)(
-      struct _ark_media_avsession_metadata_adapter_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_title)(struct _ark_media_avsession_metadata_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *set_artist)(
-      struct _ark_media_avsession_metadata_adapter_t *self,
-      const ArkWebString *artist);
+    void(ARK_WEB_CALLBACK* set_artist)(
+        struct _ark_media_avsession_metadata_adapter_t* self, const ArkWebString* artist);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_artist)(
-      struct _ark_media_avsession_metadata_adapter_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_artist)(struct _ark_media_avsession_metadata_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *set_album)(
-      struct _ark_media_avsession_metadata_adapter_t *self,
-      const ArkWebString *album);
+    void(ARK_WEB_CALLBACK* set_album)(struct _ark_media_avsession_metadata_adapter_t* self, const ArkWebString* album);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_album)(
-      struct _ark_media_avsession_metadata_adapter_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_album)(struct _ark_media_avsession_metadata_adapter_t* self);
 } ark_media_avsession_metadata_adapter_t;
 
 typedef struct _ark_media_avsession_position_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *set_duration)(
-      struct _ark_media_avsession_position_adapter_t *self, int64_t duration);
+    void(ARK_WEB_CALLBACK* set_duration)(struct _ark_media_avsession_position_adapter_t* self, int64_t duration);
 
-  int64_t(ARK_WEB_CALLBACK *get_duration)(
-      struct _ark_media_avsession_position_adapter_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_duration)(struct _ark_media_avsession_position_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *set_elapsed_time)(
-      struct _ark_media_avsession_position_adapter_t *self,
-      int64_t elapsedTime);
+    void(ARK_WEB_CALLBACK* set_elapsed_time)(struct _ark_media_avsession_position_adapter_t* self, int64_t elapsedTime);
 
-  int64_t(ARK_WEB_CALLBACK *get_elapsed_time)(
-      struct _ark_media_avsession_position_adapter_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_elapsed_time)(struct _ark_media_avsession_position_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *set_update_time)(
-      struct _ark_media_avsession_position_adapter_t *self, int64_t updateTime);
+    void(ARK_WEB_CALLBACK* set_update_time)(struct _ark_media_avsession_position_adapter_t* self, int64_t updateTime);
 
-  int64_t(ARK_WEB_CALLBACK *get_update_time)(
-      struct _ark_media_avsession_position_adapter_t *self);
+    int64_t(ARK_WEB_CALLBACK* get_update_time)(struct _ark_media_avsession_position_adapter_t* self);
 } ark_media_avsession_position_adapter_t;
 
 typedef struct _ark_media_avsession_callback_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *play)(
-      struct _ark_media_avsession_callback_adapter_t *self);
+    void(ARK_WEB_CALLBACK* play)(struct _ark_media_avsession_callback_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *pause)(
-      struct _ark_media_avsession_callback_adapter_t *self);
+    void(ARK_WEB_CALLBACK* pause)(struct _ark_media_avsession_callback_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *stop)(
-      struct _ark_media_avsession_callback_adapter_t *self);
+    void(ARK_WEB_CALLBACK* stop)(struct _ark_media_avsession_callback_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *seek_to)(
-      struct _ark_media_avsession_callback_adapter_t *self, int64_t millisTime);
+    void(ARK_WEB_CALLBACK* seek_to)(struct _ark_media_avsession_callback_adapter_t* self, int64_t millisTime);
 } ark_media_avsession_callback_adapter_t;
 
 typedef struct _ark_media_avsession_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *create_avsession)(
-      struct _ark_media_avsession_adapter_t *self, int32_t type);
+    bool(ARK_WEB_CALLBACK* create_avsession)(struct _ark_media_avsession_adapter_t* self, int32_t type);
 
-  void(ARK_WEB_CALLBACK *destroy_avsession)(
-      struct _ark_media_avsession_adapter_t *self);
+    void(ARK_WEB_CALLBACK* destroy_avsession)(struct _ark_media_avsession_adapter_t* self);
 
-  bool(ARK_WEB_CALLBACK *regist_callback)(
-      struct _ark_media_avsession_adapter_t *self,
-      ark_media_avsession_callback_adapter_t *callbackAdapter);
+    bool(ARK_WEB_CALLBACK* regist_callback)(
+        struct _ark_media_avsession_adapter_t* self, ark_media_avsession_callback_adapter_t* callbackAdapter);
 
-  bool(ARK_WEB_CALLBACK *is_activated)(
-      struct _ark_media_avsession_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* is_activated)(struct _ark_media_avsession_adapter_t* self);
 
-  bool(ARK_WEB_CALLBACK *activate)(struct _ark_media_avsession_adapter_t *self);
+    bool(ARK_WEB_CALLBACK* activate)(struct _ark_media_avsession_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *de_activate)(
-      struct _ark_media_avsession_adapter_t *self);
+    void(ARK_WEB_CALLBACK* de_activate)(struct _ark_media_avsession_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *set_metadata)(
-      struct _ark_media_avsession_adapter_t *self,
-      ark_media_avsession_metadata_adapter_t *metadata);
+    void(ARK_WEB_CALLBACK* set_metadata)(
+        struct _ark_media_avsession_adapter_t* self, ark_media_avsession_metadata_adapter_t* metadata);
 
-  void(ARK_WEB_CALLBACK *set_playback_state)(
-      struct _ark_media_avsession_adapter_t *self, int32_t state);
+    void(ARK_WEB_CALLBACK* set_playback_state)(struct _ark_media_avsession_adapter_t* self, int32_t state);
 
-  void(ARK_WEB_CALLBACK *set_playback_position)(
-      struct _ark_media_avsession_adapter_t *self,
-      ark_media_avsession_position_adapter_t *position);
+    void(ARK_WEB_CALLBACK* set_playback_position)(
+        struct _ark_media_avsession_adapter_t* self, ark_media_avsession_position_adapter_t* position);
 } ark_media_avsession_adapter_t;
 
 #ifdef __cplusplus

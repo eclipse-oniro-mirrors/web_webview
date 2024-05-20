@@ -15,33 +15,25 @@
 
 #ifndef ARK_FLOWBUFFER_ADAPTER_H
 #define ARK_FLOWBUFFER_ADAPTER_H
-
-#include <cstdint>
-#include <cstdio>
+#pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
-#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkFlowbufferAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkFlowbufferAdapter() = default;
+    /*--ark web()--*/
+    virtual void StartPerformanceBoost() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkFlowbufferAdapter() = default;
+    /*--ark web()--*/
+    virtual void* CreateAshmem(size_t size, int mapType, int& fd) = 0;
 
-  /*--ark web()--*/
-  virtual void StartPerformanceBoost() = 0;
-
-  /*--ark web()--*/
-  virtual void *CreateAshmem(size_t size, int mapType, int &fd) = 0;
-
-  /*--ark web()--*/
-  virtual void *CreateAshmemWithFd(const int fd, size_t size, int mapType) = 0;
+    /*--ark web()--*/
+    virtual void* CreateAshmemWithFd(const int fd, size_t size, int mapType) = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_FLOWBUFFER_ADAPTER_H

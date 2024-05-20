@@ -25,18 +25,16 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_hit_test_result_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *set_type)(struct _ark_web_hit_test_result_t *self,
-                                   int type);
+    void(ARK_WEB_CALLBACK* set_type)(struct _ark_web_hit_test_result_t* self, int type);
 
-  int(ARK_WEB_CALLBACK *get_type)(struct _ark_web_hit_test_result_t *self);
+    int(ARK_WEB_CALLBACK* get_type)(struct _ark_web_hit_test_result_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_extra)(
-      struct _ark_web_hit_test_result_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_extra)(struct _ark_web_hit_test_result_t* self);
 } ark_web_hit_test_result_t;
 
 #ifdef __cplusplus

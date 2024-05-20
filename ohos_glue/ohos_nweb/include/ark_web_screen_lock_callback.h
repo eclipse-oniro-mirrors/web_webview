@@ -24,8 +24,8 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebScreenLockCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void Handle(bool key) = 0;
+    /*--ark web()--*/
+    virtual void Handle(bool key) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,36 +17,29 @@
 #define ARK_WEB_BRIDGE_HELPER_H_
 #pragma once
 
+#include <dlfcn.h>
 #include <string>
 
 namespace OHOS::ArkWeb {
 
 class ArkWebBridgeHelper {
 public:
-  virtual ~ArkWebBridgeHelper();
+    virtual ~ArkWebBridgeHelper();
 
-  virtual bool Init(bool runMode, const std::string &baseDir) = 0;
-
-  void *LoadFuncSymbol(const std::string &funcName);
+    void* LoadFuncSymbol(const std::string& funcName, bool isPrintLog = true);
 
 protected:
-  ArkWebBridgeHelper() = default;
+    ArkWebBridgeHelper() = default;
 
-#ifdef __MUSL__
-  bool LoadLibFile(bool runMode, const std::string &libNsName,
-                   const std::string &libDirPath,
-                   const std::string &libFileName);
-#else
-  bool LoadLibFile(bool runMode, const std::string &libDirPath,
-                   const std::string &libFileName);
-#endif
+    bool LoadLibFile(int mode, const std::string& libFilePath, bool isPrintLog = true);
+
+    bool LoadLibFile(int mode, const std::string& libNsName, const std::string& libDirPath,
+        const std::string& libFileName, bool isPrintLog = true);
 
 private:
-  std::string GetDirPath(bool runMode, const std::string &baseDir);
+    void UnloadLibFile();
 
-  void UnloadLibFile();
-
-  void *libFileHandler_;
+    void* libFileHandler_ = nullptr;
 };
 
 } // namespace OHOS::ArkWeb

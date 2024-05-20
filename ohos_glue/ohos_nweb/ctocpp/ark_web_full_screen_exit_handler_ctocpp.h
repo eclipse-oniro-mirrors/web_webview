@@ -17,24 +17,23 @@
 #define ARK_WEB_FULL_SCREEN_EXIT_HANDLER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_full_screen_exit_handler_capi.h"
 #include "ohos_nweb/include/ark_web_full_screen_exit_handler.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebFullScreenExitHandlerCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebFullScreenExitHandlerCToCpp,
-                                    ArkWebFullScreenExitHandler,
-                                    ark_web_full_screen_exit_handler_t> {
+class ArkWebFullScreenExitHandlerCToCpp : public ArkWebCToCppRefCounted<ArkWebFullScreenExitHandlerCToCpp,
+                                              ArkWebFullScreenExitHandler, ark_web_full_screen_exit_handler_t> {
 public:
-  ArkWebFullScreenExitHandlerCToCpp();
-  virtual ~ArkWebFullScreenExitHandlerCToCpp();
+    ArkWebFullScreenExitHandlerCToCpp();
+    virtual ~ArkWebFullScreenExitHandlerCToCpp();
 
-  // ArkWebFullScreenExitHandler methods.
-  void ExitFullScreen() override;
+    // ArkWebFullScreenExitHandler methods.
+    void ExitFullScreen() override;
 };
 
 } // namespace OHOS::ArkWeb

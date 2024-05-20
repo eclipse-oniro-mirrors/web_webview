@@ -18,23 +18,20 @@
 #pragma once
 
 #include "base/capi/ark_web_base_ref_counted_capi.h"
-#include "base/include/ark_web_types.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_ohos_init_web_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void *(ARK_WEB_CALLBACK *get_run_web_inited_callback)(
-      struct _ark_ohos_init_web_adapter_t *self);
+    void*(ARK_WEB_CALLBACK* get_run_web_inited_callback)(struct _ark_ohos_init_web_adapter_t* self);
 
-  void(ARK_WEB_CALLBACK *set_run_web_inited_callback)(
-      struct _ark_ohos_init_web_adapter_t *self, void *callback);
+    void(ARK_WEB_CALLBACK* set_run_web_inited_callback)(struct _ark_ohos_init_web_adapter_t* self, void* callback);
 } ark_ohos_init_web_adapter_t;
 
 #ifdef __cplusplus

@@ -22,54 +22,51 @@
 
 namespace OHOS::ArkWeb {
 
-using ArkWebNavigationType =
-    OHOS::NWeb::NWebLoadCommittedDetails::NavigationType;
+using ArkWebNavigationType = OHOS::NWeb::NWebLoadCommittedDetails::NavigationType;
 
-class ArkWebLoadCommittedDetailsWrapper
-    : public OHOS::NWeb::NWebLoadCommittedDetails {
+class ArkWebLoadCommittedDetailsWrapper : public OHOS::NWeb::NWebLoadCommittedDetails {
 public:
-  ArkWebLoadCommittedDetailsWrapper(
-      ArkWebRefPtr<ArkWebLoadCommittedDetails> ark_web_load_committed_details);
-  ~ArkWebLoadCommittedDetailsWrapper() = default;
+    ArkWebLoadCommittedDetailsWrapper(ArkWebRefPtr<ArkWebLoadCommittedDetails> ark_web_load_committed_details);
+    ~ArkWebLoadCommittedDetailsWrapper() = default;
 
-  /**
-   * @brief Check whether the request is for getting the main frame.
-   *
-   * @return Is main frame.
-   */
-  bool IsMainFrame() override;
+    /**
+     * @brief Check whether the request is for getting the main frame.
+     *
+     * @return Is main frame.
+     */
+    bool IsMainFrame() override;
 
-  /**
-   * @brief Check whether document and other documents have the same
-   * properties.
-   *
-   * @return Is the same document.
-   */
-  bool IsSameDocument() override;
+    /**
+     * @brief Check whether document and other documents have the same
+     * properties.
+     *
+     * @return Is the same document.
+     */
+    bool IsSameDocument() override;
 
-  /**
-   * @brief Check whether the entry is replaced.
-   *
-   * @return The entry is replaced.
-   */
-  bool DidReplaceEntry() override;
+    /**
+     * @brief Check whether the entry is replaced.
+     *
+     * @return The entry is replaced.
+     */
+    bool DidReplaceEntry() override;
 
-  /**
-   * @brief Get the value of the navigation type.
-   *
-   * @return The value of the navigation type.
-   */
-  ArkWebNavigationType GetNavigationType() override;
+    /**
+     * @brief Get the value of the navigation type.
+     *
+     * @return The value of the navigation type.
+     */
+    ArkWebNavigationType GetNavigationType() override;
 
-  /**
-   * @brief Gets the url of the current navigation.
-   *
-   * @return The url of the current navigation.
-   */
-  std::string GetURL() override;
+    /**
+     * @brief Gets the url of the current navigation.
+     *
+     * @return The url of the current navigation.
+     */
+    std::string GetURL() override;
 
 private:
-  ArkWebRefPtr<ArkWebLoadCommittedDetails> ark_web_load_committed_details_;
+    ArkWebRefPtr<ArkWebLoadCommittedDetails> ark_web_load_committed_details_;
 };
 
 } // namespace OHOS::ArkWeb

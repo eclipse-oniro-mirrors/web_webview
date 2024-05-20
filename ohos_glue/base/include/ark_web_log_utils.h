@@ -17,31 +17,39 @@
 #define ARK_WEB_LOG_UTILS_H_
 #pragma once
 
+#if defined(OHOS_WEBCORE_GLUE)
+#include "src/nweb_hilog.h"
+
+#define LOG_FMT_PREFIX "[webcore]: "
+#elif defined(OHOS_WEBVIEW_GLUE)
 #include "include/nweb_log.h"
 
 #define LOG_FMT_PREFIX "[webview]: "
+#else
+#define LOG_FMT_PREFIX
+
+#define WVLOG_D(fmt, ...)
+#define WVLOG_I(fmt, ...)
+#define WVLOG_W(fmt, ...)
+#define WVLOG_E(fmt, ...)
+#endif
 
 #if defined(OHOS_GLUE_DEBUG)
 #define ARK_WEB_BASE_DV_LOG(fmt, ...) WVLOG_D(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_BASE_REF_LOG(fmt, ...)                                         \
-  WVLOG_D(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
+#define ARK_WEB_BASE_REF_LOG(fmt, ...) WVLOG_D(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
 #else
 #define ARK_WEB_BASE_DV_LOG(fmt, ...)
 
 #define ARK_WEB_BASE_REF_LOG(fmt, ...)
 #endif
 
-#define ARK_WEB_BASE_DEBUG_LOG(fmt, ...)                                       \
-  WVLOG_D(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
+#define ARK_WEB_BASE_DEBUG_LOG(fmt, ...) WVLOG_D(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_BASE_INFO_LOG(fmt, ...)                                        \
-  WVLOG_I(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
+#define ARK_WEB_BASE_INFO_LOG(fmt, ...) WVLOG_I(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_BASE_WARN_LOG(fmt, ...)                                        \
-  WVLOG_W(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
+#define ARK_WEB_BASE_WARN_LOG(fmt, ...) WVLOG_W(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_BASE_ERROR_LOG(fmt, ...)                                       \
-  WVLOG_E(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
+#define ARK_WEB_BASE_ERROR_LOG(fmt, ...) WVLOG_E(LOG_FMT_PREFIX fmt, ##__VA_ARGS__)
 
 #endif // ARK_WEB_LOG_UTILS_H_

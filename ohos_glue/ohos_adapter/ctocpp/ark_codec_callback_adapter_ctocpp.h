@@ -17,34 +17,30 @@
 #define ARK_CODEC_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_codec_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_codec_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkCodecCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkCodecCallbackAdapterCToCpp,
-                                    ArkCodecCallbackAdapter,
-                                    ark_codec_callback_adapter_t> {
+class ArkCodecCallbackAdapterCToCpp : public ArkWebCToCppRefCounted<ArkCodecCallbackAdapterCToCpp,
+                                          ArkCodecCallbackAdapter, ark_codec_callback_adapter_t> {
 public:
-  ArkCodecCallbackAdapterCToCpp();
-  virtual ~ArkCodecCallbackAdapterCToCpp();
+    ArkCodecCallbackAdapterCToCpp();
+    virtual ~ArkCodecCallbackAdapterCToCpp();
 
-  // ArkCodecCallbackAdapter methods.
-  void OnError(int32_t errorType, int32_t errorCode) override;
+    // ArkCodecCallbackAdapter methods.
+    void OnError(int32_t errorType, int32_t errorCode) override;
 
-  void
-  OnStreamChanged(const ArkWebRefPtr<ArkCodecFormatAdapter> format) override;
+    void OnStreamChanged(const ArkWebRefPtr<ArkCodecFormatAdapter> format) override;
 
-  void OnNeedInputData(uint32_t index,
-                       ArkWebRefPtr<ArkOhosBufferAdapter> buffer) override;
+    void OnNeedInputData(uint32_t index, ArkWebRefPtr<ArkOhosBufferAdapter> buffer) override;
 
-  void OnNeedOutputData(uint32_t index, ArkWebRefPtr<ArkBufferInfoAdapter> info,
-                        int32_t flag,
-                        ArkWebRefPtr<ArkOhosBufferAdapter> buffer) override;
+    void OnNeedOutputData(uint32_t index, ArkWebRefPtr<ArkBufferInfoAdapter> info, int32_t flag,
+        ArkWebRefPtr<ArkOhosBufferAdapter> buffer) override;
 };
 
 } // namespace OHOS::ArkWeb

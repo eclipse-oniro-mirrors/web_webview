@@ -17,16 +17,17 @@
 #define ARK_WEB_MESSAGE_VALUE_CALLBACK_H_
 #pragma once
 
-#include "base/include/ark_web_base_ref_counted.h"
 #include "ohos_nweb/include/ark_web_message.h"
+
+#include "base/include/ark_web_base_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=library)--*/
 class ArkWebMessageValueCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void OnReceiveValue(const ArkWebMessage &value) = 0;
+    /*--ark web()--*/
+    virtual void OnReceiveValue(const ArkWebMessage& value) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,26 +17,25 @@
 #define ARK_FRAME_AVAILABLE_LISTENER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_graphic_adapter_capi.h"
 #include "ohos_adapter/include/ark_graphic_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkFrameAvailableListenerCToCpp
-    : public ArkWebCToCppRefCounted<ArkFrameAvailableListenerCToCpp,
-                                    ArkFrameAvailableListener,
-                                    ark_frame_available_listener_t> {
+class ArkFrameAvailableListenerCToCpp : public ArkWebCToCppRefCounted<ArkFrameAvailableListenerCToCpp,
+                                            ArkFrameAvailableListener, ark_frame_available_listener_t> {
 public:
-  ArkFrameAvailableListenerCToCpp();
-  virtual ~ArkFrameAvailableListenerCToCpp();
+    ArkFrameAvailableListenerCToCpp();
+    virtual ~ArkFrameAvailableListenerCToCpp();
 
-  // ArkFrameAvailableListener methods.
-  void *GetContext() override;
+    // ArkFrameAvailableListener methods.
+    void* GetContext() override;
 
-  void *GetOnFrameAvailableCb() override;
+    void* GetOnFrameAvailableCb() override;
 };
 
 } // namespace OHOS::ArkWeb

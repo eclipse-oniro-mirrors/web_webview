@@ -22,113 +22,111 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebAccessibilityNodeInfoWrapper
-    : public OHOS::NWeb::NWebAccessibilityNodeInfo {
+class ArkWebAccessibilityNodeInfoWrapper : public OHOS::NWeb::NWebAccessibilityNodeInfo {
 public:
-  ArkWebAccessibilityNodeInfoWrapper(ArkWebRefPtr<ArkWebAccessibilityNodeInfo>
-                                         ark_web_accessibility_node_info);
-  ~ArkWebAccessibilityNodeInfoWrapper() = default;
+    ArkWebAccessibilityNodeInfoWrapper(ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ark_web_accessibility_node_info);
+    ~ArkWebAccessibilityNodeInfoWrapper() = default;
 
-  std::string GetHint() override;
+    std::string GetHint() override;
 
-  std::string GetError() override;
+    std::string GetError() override;
 
-  int32_t GetRectX() override;
+    int32_t GetRectX() override;
 
-  int32_t GetRectY() override;
+    int32_t GetRectY() override;
 
-  void SetPageId(int32_t page_id) override;
+    void SetPageId(int32_t page_id) override;
 
-  int32_t GetPageId() override;
+    int32_t GetPageId() override;
 
-  std::vector<uint32_t> GetActions() override;
+    std::vector<uint32_t> GetActions() override;
 
-  std::string GetContent() override;
+    std::string GetContent() override;
 
-  std::vector<int64_t> GetChildIds() override;
+    std::vector<int64_t> GetChildIds() override;
 
-  void SetParentId(int64_t parent_id) override;
+    void SetParentId(int64_t parent_id) override;
 
-  int64_t GetParentId() override;
+    int64_t GetParentId() override;
 
-  bool GetIsHeading() override;
+    bool GetIsHeading() override;
 
-  bool GetIsChecked() override;
+    bool GetIsChecked() override;
 
-  bool GetIsEnabled() override;
+    bool GetIsEnabled() override;
 
-  bool GetIsFocused() override;
+    bool GetIsFocused() override;
 
-  int32_t GetRectWidth() override;
+    int32_t GetRectWidth() override;
 
-  int32_t GetRectHeight() override;
+    int32_t GetRectHeight() override;
 
-  bool GetIsVisible() override;
+    bool GetIsVisible() override;
 
-  bool GetIsHinting() override;
+    bool GetIsHinting() override;
 
-  bool GetIsEditable() override;
+    bool GetIsEditable() override;
 
-  bool GetIsSelected() override;
+    bool GetIsSelected() override;
 
-  size_t GetItemCounts() override;
+    size_t GetItemCounts() override;
 
-  int32_t GetLiveRegion() override;
+    int32_t GetLiveRegion() override;
 
-  bool GetIsPassword() override;
+    bool GetIsPassword() override;
 
-  bool GetIsCheckable() override;
+    bool GetIsCheckable() override;
 
-  bool GetIsClickable() override;
+    bool GetIsClickable() override;
 
-  bool GetIsFocusable() override;
+    bool GetIsFocusable() override;
 
-  bool GetIsScrollable() override;
+    bool GetIsScrollable() override;
 
-  bool GetIsDeletable() override;
+    bool GetIsDeletable() override;
 
-  int64_t GetAccessibilityId() override;
+    int64_t GetAccessibilityId() override;
 
-  bool GetIsPopupSupported() override;
+    bool GetIsPopupSupported() override;
 
-  bool GetIsContentInvalid() override;
+    bool GetIsContentInvalid() override;
 
-  int32_t GetSelectionEnd() override;
+    int32_t GetSelectionEnd() override;
 
-  int32_t GetSelectionStart() override;
+    int32_t GetSelectionStart() override;
 
-  float GetRangeInfoMin() override;
+    float GetRangeInfoMin() override;
 
-  float GetRangeInfoMax() override;
+    float GetRangeInfoMax() override;
 
-  float GetRangeInfoCurrent() override;
+    float GetRangeInfoCurrent() override;
 
-  int32_t GetInputType() override;
+    int32_t GetInputType() override;
 
-  std::string GetComponentType() override;
+    std::string GetComponentType() override;
 
-  std::string GetDescriptionInfo() override;
+    std::string GetDescriptionInfo() override;
 
-  int32_t GetGridRows() override;
+    int32_t GetGridRows() override;
 
-  int32_t GetGridItemRow() override;
+    int32_t GetGridItemRow() override;
 
-  int32_t GetGridColumns() override;
+    int32_t GetGridColumns() override;
 
-  int32_t GetGridItemColumn() override;
+    int32_t GetGridItemColumn() override;
 
-  int32_t GetGridItemRowSpan() override;
+    int32_t GetGridItemRowSpan() override;
 
-  int32_t GetGridSelectedMode() override;
+    int32_t GetGridSelectedMode() override;
 
-  int32_t GetGridItemColumnSpan() override;
+    int32_t GetGridItemColumnSpan() override;
 
-  bool GetIsAccessibilityFocus() override;
+    bool GetIsAccessibilityFocus() override;
 
-  bool GetIsPluralLineSupported() override;
+    bool GetIsPluralLineSupported() override;
 
 private:
-  ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ark_web_accessibility_node_info_;
+    ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ark_web_accessibility_node_info_;
 };
 
 } // namespace OHOS::ArkWeb

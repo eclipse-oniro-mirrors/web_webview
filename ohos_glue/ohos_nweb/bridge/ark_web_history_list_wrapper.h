@@ -24,18 +24,17 @@ namespace OHOS::ArkWeb {
 
 class ArkWebHistoryListWrapper : public OHOS::NWeb::NWebHistoryList {
 public:
-  ArkWebHistoryListWrapper(
-      ArkWebRefPtr<ArkWebHistoryList> ark_web_history_list);
-  ~ArkWebHistoryListWrapper() = default;
+    ArkWebHistoryListWrapper(ArkWebRefPtr<ArkWebHistoryList> ark_web_history_list);
+    ~ArkWebHistoryListWrapper() = default;
 
-  std::shared_ptr<OHOS::NWeb::NWebHistoryItem> GetItem(int32_t index) override;
+    std::shared_ptr<OHOS::NWeb::NWebHistoryItem> GetItem(int32_t index) override;
 
-  int32_t GetListSize() override;
+    int32_t GetListSize() override;
 
-  int32_t GetCurrentIndex() override;
+    int32_t GetCurrentIndex() override;
 
 private:
-  ArkWebRefPtr<ArkWebHistoryList> ark_web_history_list_;
+    ArkWebRefPtr<ArkWebHistoryList> ark_web_history_list_;
 };
 
 } // namespace OHOS::ArkWeb

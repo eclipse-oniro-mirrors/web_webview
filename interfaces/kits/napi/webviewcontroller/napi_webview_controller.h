@@ -39,6 +39,7 @@ const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
 const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
 const std::string WEB_RENDER_PROCESS_MODE_ENUM_NAME = "RenderProcessMode";
+const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
 
 struct Scheme {
     std::string name;
@@ -49,7 +50,15 @@ struct Scheme {
     bool isDisplayIsolated;
     bool isSecure;
     bool isCspBypassing;
+    bool isCodeCacheSupported;
     int32_t option = 0;
+};
+
+struct OfflineResourceValue {
+    napi_value urlList;
+    napi_value resource;
+    napi_value responseHeaders;
+    napi_value type;
 };
 
 class NapiWebviewController {
@@ -173,6 +182,8 @@ private:
         bool extention, napi_value argv, napi_value result);
 
     static napi_value RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention);
+
+    static napi_value TerminateRenderProcess(napi_env env, napi_callback_info info);
 
     static napi_value GetUrl(napi_env env, napi_callback_info info);
 
@@ -305,6 +316,20 @@ private:
     static napi_value PrecompileJavaScript(napi_env env, napi_callback_info info);
 
     static napi_value WarmupServiceWorker(napi_env env, napi_callback_info info);
+
+    static napi_value InjectOfflineResource(napi_env env, napi_callback_info info);
+
+    static void AddResourcesToMemoryCache(napi_env env,
+                                          napi_callback_info info,
+                                          napi_value& resourcesList);
+
+    static void AddResourceItemToMemoryCache(napi_env env,
+                                             napi_callback_info info,
+                                             OfflineResourceValue resourceValue);
+
+    static napi_value SetHostIP(napi_env env, napi_callback_info info);
+
+    static napi_value ClearHostIP(napi_env env, napi_callback_info info);
 
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;

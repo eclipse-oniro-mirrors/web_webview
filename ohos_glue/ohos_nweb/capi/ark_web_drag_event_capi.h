@@ -24,16 +24,16 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_drag_event_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  double(ARK_WEB_CALLBACK *get_x)(struct _ark_web_drag_event_t *self);
+    double(ARK_WEB_CALLBACK* get_x)(struct _ark_web_drag_event_t* self);
 
-  double(ARK_WEB_CALLBACK *get_y)(struct _ark_web_drag_event_t *self);
+    double(ARK_WEB_CALLBACK* get_y)(struct _ark_web_drag_event_t* self);
 
-  int(ARK_WEB_CALLBACK *get_action)(struct _ark_web_drag_event_t *self);
+    int(ARK_WEB_CALLBACK* get_action)(struct _ark_web_drag_event_t* self);
 } ark_web_drag_event_t;
 
 #ifdef __cplusplus

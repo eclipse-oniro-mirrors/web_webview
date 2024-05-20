@@ -17,21 +17,21 @@
 #define ARK_WEB_ACCESSIBILITY_EVENT_CALLBACK_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_accessibility_event_callback_capi.h"
 #include "ohos_nweb/include/ark_web_accessibility_event_callback.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkWebAccessibilityEventCallbackCppToC
-    : public ArkWebCppToCRefCounted<ArkWebAccessibilityEventCallbackCppToC,
-                                    ArkWebAccessibilityEventCallback,
-                                    ark_web_accessibility_event_callback_t> {
+    : public ArkWebCppToCRefCounted<ArkWebAccessibilityEventCallbackCppToC, ArkWebAccessibilityEventCallback,
+          ark_web_accessibility_event_callback_t> {
 public:
-  ArkWebAccessibilityEventCallbackCppToC();
-  virtual ~ArkWebAccessibilityEventCallbackCppToC();
+    ArkWebAccessibilityEventCallbackCppToC();
+    virtual ~ArkWebAccessibilityEventCallbackCppToC();
 };
 
 } // namespace OHOS::ArkWeb

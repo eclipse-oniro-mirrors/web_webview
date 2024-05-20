@@ -21,28 +21,16 @@
 namespace OHOS::NWeb {
 class OHOS_NWEB_EXPORT NWebCacheOptionsImpl : public CacheOptions {
 public:
-    NWebCacheOptionsImpl(const std::map<std::string, std::string> &responseHeaders,
-                         const bool isModule,
-                         const bool isTopLevel) :
-        responseHeaders_(responseHeaders), isModule_(isModule), isTopLevel_(isTopLevel) {}
+    NWebCacheOptionsImpl(const std::map<std::string, std::string> &responseHeaders)
+        : responseHeaders_(responseHeaders) {}
     ~NWebCacheOptionsImpl() = default;
 
     std::map<std::string, std::string> GetResponseHeaders() override {
         return responseHeaders_;
     }
 
-    bool IsModule() override {
-        return isModule_;
-    }
-
-    bool IsTopLevel() override {
-        return isTopLevel_;
-    }
-
 private:
     std::map<std::string, std::string> responseHeaders_;
-    bool isModule_;
-    bool isTopLevel_;
 };
 }
 

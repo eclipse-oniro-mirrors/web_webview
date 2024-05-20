@@ -17,15 +17,17 @@
 #define ARK_WEB_MACROS_H_
 #pragma once
 
-#define SAFE_FREE(ptr, func)                                                   \
-  if (ptr) {                                                                   \
-    func(ptr);                                                                 \
-    ptr = nullptr;                                                             \
-  }
+#define SAFE_FREE(ptr, func) \
+    if (ptr) {               \
+        func(ptr);           \
+        ptr = nullptr;       \
+    }
 
 #define ARK_WEB_EXPORT __attribute__((visibility("default")))
 
 #define ARK_WEB_CALLBACK
+
+#define ARK_WEB_RETURN_VOID
 
 #define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
 

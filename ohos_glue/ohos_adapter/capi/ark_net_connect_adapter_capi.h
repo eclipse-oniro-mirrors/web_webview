@@ -25,40 +25,36 @@ extern "C" {
 #endif
 
 typedef struct _ark_net_conn_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *net_available)(
-      struct _ark_net_conn_callback_t *self);
+    int32_t(ARK_WEB_CALLBACK* net_available)(struct _ark_net_conn_callback_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *net_capabilities_change)(
-      struct _ark_net_conn_callback_t *self, const uint32_t *netConnectType,
-      const uint32_t *netConnectSubtype);
+    int32_t(ARK_WEB_CALLBACK* net_capabilities_change)(
+        struct _ark_net_conn_callback_t* self, const uint32_t* netConnectType, const uint32_t* netConnectSubtype);
 
-  int32_t(ARK_WEB_CALLBACK *net_connection_properties_change)(
-      struct _ark_net_conn_callback_t *self);
+    int32_t(ARK_WEB_CALLBACK* net_connection_properties_change)(struct _ark_net_conn_callback_t* self);
 
-  int32_t(ARK_WEB_CALLBACK *net_unavailable)(
-      struct _ark_net_conn_callback_t *self);
+    int32_t(ARK_WEB_CALLBACK* net_unavailable)(struct _ark_net_conn_callback_t* self);
 } ark_net_conn_callback_t;
 
 typedef struct _ark_net_connect_adapter_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *register_net_conn_callback)(
-      struct _ark_net_connect_adapter_t *self, ark_net_conn_callback_t *cb);
+    int32_t(ARK_WEB_CALLBACK* register_net_conn_callback)(
+        struct _ark_net_connect_adapter_t* self, ark_net_conn_callback_t* cb);
 
-  int32_t(ARK_WEB_CALLBACK *unregister_net_conn_callback)(
-      struct _ark_net_connect_adapter_t *self, int32_t id);
+    int32_t(ARK_WEB_CALLBACK* unregister_net_conn_callback)(struct _ark_net_connect_adapter_t* self, int32_t id);
 
-  int32_t(ARK_WEB_CALLBACK *get_default_net_connect)(
-      struct _ark_net_connect_adapter_t *self, uint32_t *type,
-      uint32_t *netConnectSubtype);
+    int32_t(ARK_WEB_CALLBACK* get_default_net_connect)(
+        struct _ark_net_connect_adapter_t* self, uint32_t* type, uint32_t* netConnectSubtype);
+
+    ArkWebStringVector(ARK_WEB_CALLBACK* get_dns_servers)(struct _ark_net_connect_adapter_t* self);
 } ark_net_connect_adapter_t;
 
 #ifdef __cplusplus

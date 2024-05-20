@@ -22,27 +22,24 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebNativeMediaPlayerSurfaceInfoWrapper
-    : public OHOS::NWeb::NWebNativeMediaPlayerSurfaceInfo {
+class ArkWebNativeMediaPlayerSurfaceInfoWrapper : public OHOS::NWeb::NWebNativeMediaPlayerSurfaceInfo {
 public:
-  ArkWebNativeMediaPlayerSurfaceInfoWrapper(
-      ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo>
-          ark_web_native_media_player_surface_info);
-  ~ArkWebNativeMediaPlayerSurfaceInfoWrapper() = default;
+    ArkWebNativeMediaPlayerSurfaceInfoWrapper(
+        ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo> ark_web_native_media_player_surface_info);
+    ~ArkWebNativeMediaPlayerSurfaceInfoWrapper() = default;
 
-  std::string GetId() override;
+    std::string GetId() override;
 
-  double GetX() override;
+    double GetX() override;
 
-  double GetY() override;
+    double GetY() override;
 
-  double GetWidth() override;
+    double GetWidth() override;
 
-  double GetHeight() override;
+    double GetHeight() override;
 
 private:
-  ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo>
-      ark_web_native_media_player_surface_info_;
+    ArkWebRefPtr<ArkWebNativeMediaPlayerSurfaceInfo> ark_web_native_media_player_surface_info_;
 };
 
 } // namespace OHOS::ArkWeb

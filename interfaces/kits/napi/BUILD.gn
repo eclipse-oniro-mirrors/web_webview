@@ -25,6 +25,7 @@ config("web_public_config") {
     "webviewcontroller",
     "$target_gen_dir/protos",
     "../../native",
+    "../../../ohos_adapter/ohos_resource_adapter/include",
   ]
 }
 
@@ -76,6 +77,7 @@ ohos_shared_library("webview_napi") {
   ]
 
   external_deps = [
+    "ability_base:extractortool",
     "ability_runtime:app_context",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",

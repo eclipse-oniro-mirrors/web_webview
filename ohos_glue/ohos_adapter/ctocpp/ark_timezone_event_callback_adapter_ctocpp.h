@@ -17,24 +17,24 @@
 #define ARK_TIMEZONE_EVENT_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_date_time_format_adapter_capi.h"
 #include "ohos_adapter/include/ark_date_time_format_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkTimezoneEventCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkTimezoneEventCallbackAdapterCToCpp,
-                                    ArkTimezoneEventCallbackAdapter,
-                                    ark_timezone_event_callback_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkTimezoneEventCallbackAdapterCToCpp, ArkTimezoneEventCallbackAdapter,
+          ark_timezone_event_callback_adapter_t> {
 public:
-  ArkTimezoneEventCallbackAdapterCToCpp();
-  virtual ~ArkTimezoneEventCallbackAdapterCToCpp();
+    ArkTimezoneEventCallbackAdapterCToCpp();
+    virtual ~ArkTimezoneEventCallbackAdapterCToCpp();
 
-  // ArkTimezoneEventCallbackAdapter methods.
-  void TimezoneChanged(ArkWebRefPtr<ArkWebTimezoneInfo> info) override;
+    // ArkTimezoneEventCallbackAdapter methods.
+    void TimezoneChanged(ArkWebRefPtr<ArkWebTimezoneInfo> info) override;
 };
 
 } // namespace OHOS::ArkWeb

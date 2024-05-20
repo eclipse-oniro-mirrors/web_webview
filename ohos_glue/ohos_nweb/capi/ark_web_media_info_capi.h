@@ -17,49 +17,42 @@
 #define ARK_WEB_MEDIA_INFO_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/capi/ark_web_native_media_player_surface_info_capi.h"
 #include "ohos_nweb/include/ark_web_media_source_info_vector.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_media_info_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *get_preload)(struct _ark_web_media_info_t *self);
+    int(ARK_WEB_CALLBACK* get_preload)(struct _ark_web_media_info_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_muted)(struct _ark_web_media_info_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_muted)(struct _ark_web_media_info_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_embed_id)(
-      struct _ark_web_media_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_embed_id)(struct _ark_web_media_info_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_poster_url)(
-      struct _ark_web_media_info_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_poster_url)(struct _ark_web_media_info_t* self);
 
-  int(ARK_WEB_CALLBACK *get_media_type)(struct _ark_web_media_info_t *self);
+    int(ARK_WEB_CALLBACK* get_media_type)(struct _ark_web_media_info_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_controls_shown)(
-      struct _ark_web_media_info_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_controls_shown)(struct _ark_web_media_info_t* self);
 
-  ArkWebStringVector(ARK_WEB_CALLBACK *get_controls)(
-      struct _ark_web_media_info_t *self);
+    ArkWebStringVector(ARK_WEB_CALLBACK* get_controls)(struct _ark_web_media_info_t* self);
 
-  ArkWebStringMap(ARK_WEB_CALLBACK *get_headers)(
-      struct _ark_web_media_info_t *self);
+    ArkWebStringMap(ARK_WEB_CALLBACK* get_headers)(struct _ark_web_media_info_t* self);
 
-  ArkWebStringMap(ARK_WEB_CALLBACK *get_attributes)(
-      struct _ark_web_media_info_t *self);
+    ArkWebStringMap(ARK_WEB_CALLBACK* get_attributes)(struct _ark_web_media_info_t* self);
 
-  ArkWebMediaSourceInfoVector(ARK_WEB_CALLBACK *get_source_infos)(
-      struct _ark_web_media_info_t *self);
+    ArkWebMediaSourceInfoVector(ARK_WEB_CALLBACK* get_source_infos)(struct _ark_web_media_info_t* self);
 
-  ark_web_native_media_player_surface_info_t *(
-      ARK_WEB_CALLBACK *get_surface_info)(struct _ark_web_media_info_t *self);
+    ark_web_native_media_player_surface_info_t*(ARK_WEB_CALLBACK* get_surface_info)(struct _ark_web_media_info_t* self);
 } ark_web_media_info_t;
 
 #ifdef __cplusplus

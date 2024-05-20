@@ -24,16 +24,15 @@ namespace OHOS::ArkWeb {
 
 class ArkWebDownloadManagerWrapper : public OHOS::NWeb::NWebDownloadManager {
 public:
-  ArkWebDownloadManagerWrapper(
-      ArkWebRefPtr<ArkWebDownloadManager> ark_web_download_manager);
-  ~ArkWebDownloadManagerWrapper() = default;
+    ArkWebDownloadManagerWrapper(ArkWebRefPtr<ArkWebDownloadManager> ark_web_download_manager);
+    ~ArkWebDownloadManagerWrapper() = default;
 
-  void SetHttpDns(std::shared_ptr<OHOS::NWeb::NWebDOHConfig> config) override;
+    void SetHttpDns(std::shared_ptr<OHOS::NWeb::NWebDOHConfig> config) override;
 
-  void SetConnectionTimeout(const int &timeout) override;
+    void SetConnectionTimeout(const int& timeout) override;
 
 private:
-  ArkWebRefPtr<ArkWebDownloadManager> ark_web_download_manager_;
+    ArkWebRefPtr<ArkWebDownloadManager> ark_web_download_manager_;
 };
 
 } // namespace OHOS::ArkWeb

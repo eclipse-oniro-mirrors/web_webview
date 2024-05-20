@@ -25,20 +25,20 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebNativeMediaPlayerSurfaceInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebString GetId() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetId() = 0;
 
-  /*--ark web()--*/
-  virtual double GetX() = 0;
+    /*--ark web()--*/
+    virtual double GetX() = 0;
 
-  /*--ark web()--*/
-  virtual double GetY() = 0;
+    /*--ark web()--*/
+    virtual double GetY() = 0;
 
-  /*--ark web()--*/
-  virtual double GetWidth() = 0;
+    /*--ark web()--*/
+    virtual double GetWidth() = 0;
 
-  /*--ark web()--*/
-  virtual double GetHeight() = 0;
+    /*--ark web()--*/
+    virtual double GetHeight() = 0;
 };
 
 } // namespace OHOS::ArkWeb

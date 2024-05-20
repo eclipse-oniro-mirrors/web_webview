@@ -22,22 +22,18 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebAccessibilityEventCallbackImpl
-    : public ArkWebAccessibilityEventCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebAccessibilityEventCallbackImpl);
+class ArkWebAccessibilityEventCallbackImpl : public ArkWebAccessibilityEventCallback {
+    IMPLEMENT_REFCOUNTING(ArkWebAccessibilityEventCallbackImpl);
 
 public:
-  ArkWebAccessibilityEventCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebAccessibilityEventCallback>
-          nweb_accessibility_event_callback);
-  ~ArkWebAccessibilityEventCallbackImpl() = default;
+    ArkWebAccessibilityEventCallbackImpl(
+        std::shared_ptr<OHOS::NWeb::NWebAccessibilityEventCallback> nweb_accessibility_event_callback);
+    ~ArkWebAccessibilityEventCallbackImpl() = default;
 
-  void OnAccessibilityEvent(int64_t accessibility_id,
-                            uint32_t event_type) override;
+    void OnAccessibilityEvent(int64_t accessibility_id, uint32_t event_type) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebAccessibilityEventCallback>
-      nweb_accessibility_event_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebAccessibilityEventCallback> nweb_accessibility_event_callback_;
 };
 
 } // namespace OHOS::ArkWeb

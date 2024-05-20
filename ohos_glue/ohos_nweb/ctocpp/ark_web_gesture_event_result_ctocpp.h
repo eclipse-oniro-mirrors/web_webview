@@ -13,31 +13,29 @@
  * limitations under the License.
  */
 
-
 #ifndef ARK_WEB_GESTURE_EVENT_RESULT_CTOCPP_H_
 #define ARK_WEB_GESTURE_EVENT_RESULT_CTOCPP_H_
 #pragma once
 
 #include "ohos_nweb/capi/ark_web_gesture_event_result_capi.h"
 #include "ohos_nweb/include/ark_web_gesture_event_result.h"
+
 #include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebGestureEventResultCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebGestureEventResultCToCpp,
-      ArkWebGestureEventResult, ark_web_gesture_event_result_t> {
-  public:
+class ArkWebGestureEventResultCToCpp : public ArkWebCToCppRefCounted<ArkWebGestureEventResultCToCpp,
+                                           ArkWebGestureEventResult, ark_web_gesture_event_result_t> {
+public:
     ArkWebGestureEventResultCToCpp();
     virtual ~ArkWebGestureEventResultCToCpp();
 
-  // ArkWebGestureEventResult methods.
-  void SetGestureEventResult(bool result) override;
+    // ArkWebGestureEventResult methods.
+    void SetGestureEventResult(bool result) override;
 };
 
-} // OHOS::ArkWeb
-
+} // namespace OHOS::ArkWeb
 
 #endif // ARK_WEB_GESTURE_EVENT_RESULT_CTOCPP_H_

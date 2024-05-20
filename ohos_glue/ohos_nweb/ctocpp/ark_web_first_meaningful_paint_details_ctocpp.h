@@ -17,26 +17,26 @@
 #define ARK_WEB_FIRST_MEANINGFUL_PAINT_DETAILS_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_first_meaningful_paint_details_capi.h"
 #include "ohos_nweb/include/ark_web_first_meaningful_paint_details.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebFirstMeaningfulPaintDetailsCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebFirstMeaningfulPaintDetailsCToCpp,
-                                    ArkWebFirstMeaningfulPaintDetails,
-                                    ark_web_first_meaningful_paint_details_t> {
+    : public ArkWebCToCppRefCounted<ArkWebFirstMeaningfulPaintDetailsCToCpp, ArkWebFirstMeaningfulPaintDetails,
+          ark_web_first_meaningful_paint_details_t> {
 public:
-  ArkWebFirstMeaningfulPaintDetailsCToCpp();
-  virtual ~ArkWebFirstMeaningfulPaintDetailsCToCpp();
+    ArkWebFirstMeaningfulPaintDetailsCToCpp();
+    virtual ~ArkWebFirstMeaningfulPaintDetailsCToCpp();
 
-  // ArkWebFirstMeaningfulPaintDetails methods.
-  int64_t GetNavigationStartTime() override;
+    // ArkWebFirstMeaningfulPaintDetails methods.
+    int64_t GetNavigationStartTime() override;
 
-  int64_t GetFirstMeaningfulPaintTime() override;
+    int64_t GetFirstMeaningfulPaintTime() override;
 };
 
 } // namespace OHOS::ArkWeb
