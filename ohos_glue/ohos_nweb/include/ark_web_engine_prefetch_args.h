@@ -25,14 +25,14 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebEnginePrefetchArgs : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual ArkWebString GetUrl() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetUrl() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetMethod() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetMethod() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetFormData() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetFormData() = 0;
 };
 
 } // namespace OHOS::ArkWeb

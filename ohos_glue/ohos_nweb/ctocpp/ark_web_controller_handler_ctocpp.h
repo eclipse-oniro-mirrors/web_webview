@@ -17,30 +17,29 @@
 #define ARK_WEB_CONTROLLER_HANDLER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_controller_handler_capi.h"
 #include "ohos_nweb/include/ark_web_controller_handler.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebControllerHandlerCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebControllerHandlerCToCpp,
-                                    ArkWebControllerHandler,
-                                    ark_web_controller_handler_t> {
+class ArkWebControllerHandlerCToCpp : public ArkWebCToCppRefCounted<ArkWebControllerHandlerCToCpp,
+                                          ArkWebControllerHandler, ark_web_controller_handler_t> {
 public:
-  ArkWebControllerHandlerCToCpp();
-  virtual ~ArkWebControllerHandlerCToCpp();
+    ArkWebControllerHandlerCToCpp();
+    virtual ~ArkWebControllerHandlerCToCpp();
 
-  // ArkWebControllerHandler methods.
-  int32_t GetId() override;
+    // ArkWebControllerHandler methods.
+    int32_t GetId() override;
 
-  bool IsFrist() override;
+    bool IsFrist() override;
 
-  int32_t GetNWebHandlerId() override;
+    int32_t GetNWebHandlerId() override;
 
-  void SetNWebHandlerById(int32_t nweb_id) override;
+    void SetNWebHandlerById(int32_t nweb_id) override;
 };
 
 } // namespace OHOS::ArkWeb

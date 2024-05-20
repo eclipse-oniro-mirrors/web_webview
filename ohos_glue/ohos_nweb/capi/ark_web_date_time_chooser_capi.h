@@ -17,37 +17,33 @@
 #define ARK_WEB_DATE_TIME_CHOOSER_CAPI_H_
 #pragma once
 
-#include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
+
+#include "base/capi/ark_web_base_ref_counted_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_date_time_chooser_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *get_type)(struct _ark_web_date_time_chooser_t *self);
+    int(ARK_WEB_CALLBACK* get_type)(struct _ark_web_date_time_chooser_t* self);
 
-  double(ARK_WEB_CALLBACK *get_step)(struct _ark_web_date_time_chooser_t *self);
+    double(ARK_WEB_CALLBACK* get_step)(struct _ark_web_date_time_chooser_t* self);
 
-  ArkWebDateTime(ARK_WEB_CALLBACK *get_minimum)(
-      struct _ark_web_date_time_chooser_t *self);
+    ArkWebDateTime(ARK_WEB_CALLBACK* get_minimum)(struct _ark_web_date_time_chooser_t* self);
 
-  ArkWebDateTime(ARK_WEB_CALLBACK *get_maximum)(
-      struct _ark_web_date_time_chooser_t *self);
+    ArkWebDateTime(ARK_WEB_CALLBACK* get_maximum)(struct _ark_web_date_time_chooser_t* self);
 
-  ArkWebDateTime(ARK_WEB_CALLBACK *get_dialog_value)(
-      struct _ark_web_date_time_chooser_t *self);
+    ArkWebDateTime(ARK_WEB_CALLBACK* get_dialog_value)(struct _ark_web_date_time_chooser_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_has_selected)(
-      struct _ark_web_date_time_chooser_t *self);
+    bool(ARK_WEB_CALLBACK* get_has_selected)(struct _ark_web_date_time_chooser_t* self);
 
-  size_t(ARK_WEB_CALLBACK *get_suggestion_index)(
-      struct _ark_web_date_time_chooser_t *self);
+    size_t(ARK_WEB_CALLBACK* get_suggestion_index)(struct _ark_web_date_time_chooser_t* self);
 } ark_web_date_time_chooser_t;
 
 #ifdef __cplusplus

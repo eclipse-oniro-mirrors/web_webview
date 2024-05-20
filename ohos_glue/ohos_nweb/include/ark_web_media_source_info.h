@@ -25,14 +25,14 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebMediaSourceInfo : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual int GetType() = 0;
+    /*--ark web()--*/
+    virtual int GetType() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetFormat() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetFormat() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetSource() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetSource() = 0;
 };
 
 } // namespace OHOS::ArkWeb

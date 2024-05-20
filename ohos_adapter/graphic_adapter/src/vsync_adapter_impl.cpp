@@ -15,14 +15,18 @@
 
 #include "vsync_adapter_impl.h"
 
+#include "aafwk_browser_client_adapter_impl.h"
 #include "nweb_log.h"
 #include "res_sched_client_adapter.h"
+#include "system_properties_adapter_impl.h"
 #include "transaction/rs_interfaces.h"
 
 namespace OHOS::NWeb {
 namespace {
 const std::string THREAD_NAME = "VSync-webview";
 }
+
+void (*VSyncAdapterImpl::callback_)() = nullptr;
 
 VSyncAdapterImpl::~VSyncAdapterImpl()
 {
@@ -83,9 +87,15 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, NWebVSyncCb cb)
         // At this point, the threadId corresponding to eventrunner may not be available,
         // so need to confirm it several times
         if (runner && runner->GetKernelThreadId() != 0) {
-            ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+            if (!SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable()) {
+                ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
                 getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
-            hasReportedKeyThread_ = true;
+                hasReportedKeyThread_ = true;
+            } else {
+                AafwkBrowserClientAdapterImpl::GetInstance().ReportThread(ResSchedStatusAdapter::THREAD_CREATED,
+                getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+                hasReportedKeyThread_ = true;
+            }
         }
     }
 
@@ -109,6 +119,9 @@ void VSyncAdapterImpl::OnVsync(int64_t timestamp, void* client)
 {
     auto vsyncClient = static_cast<VSyncAdapterImpl*>(client);
     if (vsyncClient) {
+        if (callback_) {
+            callback_();
+        }
         vsyncClient->VsyncCallbackInner(timestamp);
     } else {
         WVLOG_E("VsyncClient is null");
@@ -145,8 +158,14 @@ int64_t VSyncAdapterImpl::GetVSyncPeriod()
     }
     return period;
 }
+
 void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
 {
+    WVLOG_I("NWebWindowAdapter SetFrameRateLinkerEnable enabled=%{public}d", enabled);
+    if (frameRateLinkerEnable_ == enabled) {
+        return;
+    }
+
     Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 120};
     if (frameRateLinker_) {
         if (!enabled) {
@@ -154,15 +173,22 @@ void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
         }
         frameRateLinker_->UpdateFrameRateRangeImme(range);
         frameRateLinker_->SetEnable(enabled);
+        frameRateLinkerEnable_ = enabled;
     }
 }
 
 void VSyncAdapterImpl::SetFramePreferredRate(int32_t preferredRate)
 {
     Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, preferredRate};
-    if (frameRateLinker_) {
+    if (frameRateLinker_ && frameRateLinker_->IsEnable()) {
+        WVLOG_D("NWebWindowAdapter SetFramePreferredRate preferredRate=%{public}d", preferredRate);
         frameRateLinker_->UpdateFrameRateRangeImme(range);
-        frameRateLinker_->SetEnable(true);
     }
+}
+
+void VSyncAdapterImpl::SetOnVsyncCallback(void (*callback)())
+{
+    WVLOG_D("callback function: %{public}ld", (long)callback);
+    callback_ = callback;
 }
 } // namespace OHOS::NWeb

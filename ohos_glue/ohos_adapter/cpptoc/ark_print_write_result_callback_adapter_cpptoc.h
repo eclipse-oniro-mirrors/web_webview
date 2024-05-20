@@ -17,21 +17,21 @@
 #define ARK_PRINT_WRITE_RESULT_CALLBACK_ADAPTER_CPPTOC_H_
 #pragma once
 
-#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 #include "ohos_adapter/capi/ark_print_manager_adapter_capi.h"
 #include "ohos_adapter/include/ark_print_manager_adapter.h"
+
+#include "base/cpptoc/ark_web_cpptoc_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed DLL-side only.
 class ArkPrintWriteResultCallbackAdapterCppToC
-    : public ArkWebCppToCRefCounted<ArkPrintWriteResultCallbackAdapterCppToC,
-                                    ArkPrintWriteResultCallbackAdapter,
-                                    ark_print_write_result_callback_adapter_t> {
+    : public ArkWebCppToCRefCounted<ArkPrintWriteResultCallbackAdapterCppToC, ArkPrintWriteResultCallbackAdapter,
+          ark_print_write_result_callback_adapter_t> {
 public:
-  ArkPrintWriteResultCallbackAdapterCppToC();
-  virtual ~ArkPrintWriteResultCallbackAdapterCppToC();
+    ArkPrintWriteResultCallbackAdapterCppToC();
+    virtual ~ArkPrintWriteResultCallbackAdapterCppToC();
 };
 
 } // namespace OHOS::ArkWeb

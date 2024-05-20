@@ -15,16 +15,17 @@
 
 #ifndef ARK_PASTE_RECORD_VECTOR_H
 #define ARK_PASTE_RECORD_VECTOR_H
+#pragma once
 
 #include "base/include/ark_web_memory.h"
 
 struct _ark_paste_data_record_adapter_t;
 
 typedef struct {
-  int size;
-  struct _ark_paste_data_record_adapter_t **value;
+    int size;
+    struct _ark_paste_data_record_adapter_t** value;
 
-  ArkWebMemFreeFunc ark_web_mem_free_func;
+    ArkWebMemFreeFunc ark_web_mem_free_func;
 } ArkPasteRecordVector;
 
 #endif // ARK_PASTE_RECORD_VECTOR_H

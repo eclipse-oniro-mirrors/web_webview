@@ -25,34 +25,26 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_select_popup_menu_item_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int(ARK_WEB_CALLBACK *get_type)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    int(ARK_WEB_CALLBACK* get_type)(struct _ark_web_select_popup_menu_item_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_label)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_label)(struct _ark_web_select_popup_menu_item_t* self);
 
-  uint32_t(ARK_WEB_CALLBACK *get_action)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    uint32_t(ARK_WEB_CALLBACK* get_action)(struct _ark_web_select_popup_menu_item_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_tool_tip)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_tool_tip)(struct _ark_web_select_popup_menu_item_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_checked)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_checked)(struct _ark_web_select_popup_menu_item_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_is_enabled)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    bool(ARK_WEB_CALLBACK* get_is_enabled)(struct _ark_web_select_popup_menu_item_t* self);
 
-  int(ARK_WEB_CALLBACK *get_text_direction)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    int(ARK_WEB_CALLBACK* get_text_direction)(struct _ark_web_select_popup_menu_item_t* self);
 
-  bool(ARK_WEB_CALLBACK *get_has_text_direction_override)(
-      struct _ark_web_select_popup_menu_item_t *self);
+    bool(ARK_WEB_CALLBACK* get_has_text_direction_override)(struct _ark_web_select_popup_menu_item_t* self);
 } ark_web_select_popup_menu_item_t;
 
 #ifdef __cplusplus

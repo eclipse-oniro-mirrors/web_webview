@@ -17,30 +17,29 @@
 #define ARK_IMFCURSOR_INFO_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_imf_adapter_capi.h"
 #include "ohos_adapter/include/ark_imf_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkIMFCursorInfoAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkIMFCursorInfoAdapterCToCpp,
-                                    ArkIMFCursorInfoAdapter,
-                                    ark_imfcursor_info_adapter_t> {
+class ArkIMFCursorInfoAdapterCToCpp : public ArkWebCToCppRefCounted<ArkIMFCursorInfoAdapterCToCpp,
+                                          ArkIMFCursorInfoAdapter, ark_imfcursor_info_adapter_t> {
 public:
-  ArkIMFCursorInfoAdapterCToCpp();
-  virtual ~ArkIMFCursorInfoAdapterCToCpp();
+    ArkIMFCursorInfoAdapterCToCpp();
+    virtual ~ArkIMFCursorInfoAdapterCToCpp();
 
-  // ArkIMFCursorInfoAdapter methods.
-  double GetLeft() override;
+    // ArkIMFCursorInfoAdapter methods.
+    double GetLeft() override;
 
-  double GetTop() override;
+    double GetTop() override;
 
-  double GetWidth() override;
+    double GetWidth() override;
 
-  double GetHeight() override;
+    double GetHeight() override;
 };
 
 } // namespace OHOS::ArkWeb

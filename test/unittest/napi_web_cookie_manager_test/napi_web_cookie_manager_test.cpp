@@ -15,6 +15,7 @@
 
 #include <gtest/gtest.h>
 
+#define private public
 #include "nweb_adapter_helper.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_helper.h"
@@ -61,5 +62,6 @@ HWTEST_F(NapiWebCookieManagerTest, NapiWebCookieManagerTest_001, TestSize.Level1
     NWebAdapterHelper::Instance().Init(false);
     std::shared_ptr<NWebCookieManager> cookieManager = NWebHelper::Instance().GetCookieManager();
     EXPECT_NE(cookieManager, nullptr);
+    NWebHelper::Instance().libHandleWebEngine_ = nullptr;
 }
 } // namespace OHOS::NWeb

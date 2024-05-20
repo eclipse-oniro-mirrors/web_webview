@@ -869,7 +869,7 @@ std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
         // load so
         const std::string& bundle_path = ctx->GetBundleCodeDir();
         SetBundlePath(bundle_path);
-        if (!Init(true)) {
+        if (!InitAndRun(true)) {
             WVLOG_E("GetCookieManager: Failed to init web engine due to NWebHelper failure.");
             return nullptr;
         }
@@ -1070,6 +1070,26 @@ void NWebHelper::WarmupServiceWorker(const std::string &url)
     }
 
     nwebEngine_->WarmupServiceWorker(url);
+}
+
+void NWebHelper::SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->SetHostIP(hostName, address, aliveTime);
+}
+
+void NWebHelper::ClearHostIP(const std::string& hostName)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ClearHostIP(hostName);
 }
 
 NWebAdapterHelper &NWebAdapterHelper::Instance()

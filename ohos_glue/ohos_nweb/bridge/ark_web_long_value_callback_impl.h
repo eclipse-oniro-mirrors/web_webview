@@ -23,17 +23,16 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebLongValueCallbackImpl : public ArkWebLongValueCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebLongValueCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebLongValueCallbackImpl);
 
 public:
-  ArkWebLongValueCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebLongValueCallback>
-                                  nweb_long_value_callback);
-  ~ArkWebLongValueCallbackImpl() = default;
+    ArkWebLongValueCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebLongValueCallback> nweb_long_value_callback);
+    ~ArkWebLongValueCallbackImpl() = default;
 
-  void OnReceiveValue(long value) override;
+    void OnReceiveValue(long value) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebLongValueCallback> nweb_long_value_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebLongValueCallback> nweb_long_value_callback_;
 };
 
 } // namespace OHOS::ArkWeb

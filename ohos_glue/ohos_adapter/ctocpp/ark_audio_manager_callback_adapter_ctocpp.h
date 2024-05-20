@@ -17,26 +17,25 @@
 #define ARK_AUDIO_MANAGER_CALLBACK_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_audio_system_manager_adapter_capi.h"
 #include "ohos_adapter/include/ark_audio_system_manager_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkAudioManagerCallbackAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkAudioManagerCallbackAdapterCToCpp,
-                                    ArkAudioManagerCallbackAdapter,
-                                    ark_audio_manager_callback_adapter_t> {
+class ArkAudioManagerCallbackAdapterCToCpp : public ArkWebCToCppRefCounted<ArkAudioManagerCallbackAdapterCToCpp,
+                                                 ArkAudioManagerCallbackAdapter, ark_audio_manager_callback_adapter_t> {
 public:
-  ArkAudioManagerCallbackAdapterCToCpp();
-  virtual ~ArkAudioManagerCallbackAdapterCToCpp();
+    ArkAudioManagerCallbackAdapterCToCpp();
+    virtual ~ArkAudioManagerCallbackAdapterCToCpp();
 
-  // ArkAudioManagerCallbackAdapter methods.
-  void OnSuspend() override;
+    // ArkAudioManagerCallbackAdapter methods.
+    void OnSuspend() override;
 
-  void OnResume() override;
+    void OnResume() override;
 };
 
 } // namespace OHOS::ArkWeb

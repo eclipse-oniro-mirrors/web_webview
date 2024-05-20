@@ -23,8 +23,7 @@
 namespace OHOS::ArkWeb {
 
 std::vector<std::shared_ptr<OHOS::NWeb::NWebWebStorageOrigin>>
-    ARK_WEB_CALLBACK ArkWebWebStorageOriginVectorStructToClass(
-        const ArkWebWebStorageOriginVector &struct_value);
+    ARK_WEB_CALLBACK ArkWebWebStorageOriginVectorStructToClass(const ArkWebWebStorageOriginVector& struct_value);
 
 } // namespace OHOS::ArkWeb
 

@@ -25,21 +25,17 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_js_ssl_select_cert_result_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *cancel)(
-      struct _ark_web_js_ssl_select_cert_result_t *self);
+    void(ARK_WEB_CALLBACK* cancel)(struct _ark_web_js_ssl_select_cert_result_t* self);
 
-  void(ARK_WEB_CALLBACK *ignore)(
-      struct _ark_web_js_ssl_select_cert_result_t *self);
+    void(ARK_WEB_CALLBACK* ignore)(struct _ark_web_js_ssl_select_cert_result_t* self);
 
-  void(ARK_WEB_CALLBACK *confirm)(
-      struct _ark_web_js_ssl_select_cert_result_t *self,
-      const ArkWebString *private_key_file,
-      const ArkWebString *cert_chain_file);
+    void(ARK_WEB_CALLBACK* confirm)(struct _ark_web_js_ssl_select_cert_result_t* self,
+        const ArkWebString* private_key_file, const ArkWebString* cert_chain_file);
 } ark_web_js_ssl_select_cert_result_t;
 
 #ifdef __cplusplus

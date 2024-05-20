@@ -28,22 +28,20 @@ using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 
 class ArkWebHistoryItemWrapper : public OHOS::NWeb::NWebHistoryItem {
 public:
-  ArkWebHistoryItemWrapper(
-      ArkWebRefPtr<ArkWebHistoryItem> ark_web_history_item);
-  ~ArkWebHistoryItemWrapper() = default;
+    ArkWebHistoryItemWrapper(ArkWebRefPtr<ArkWebHistoryItem> ark_web_history_item);
+    ~ArkWebHistoryItemWrapper() = default;
 
-  bool GetFavicon(void **data, int &width, int &height,
-                  ArkWebImageColorType &color_type,
-                  ArkWebImageAlphaType &alpha_type) override;
+    bool GetFavicon(void** data, int& width, int& height, ArkWebImageColorType& color_type,
+        ArkWebImageAlphaType& alpha_type) override;
 
-  std::string GetHistoryUrl() override;
+    std::string GetHistoryUrl() override;
 
-  std::string GetHistoryTitle() override;
+    std::string GetHistoryTitle() override;
 
-  std::string GetHistoryRawUrl() override;
+    std::string GetHistoryRawUrl() override;
 
 private:
-  ArkWebRefPtr<ArkWebHistoryItem> ark_web_history_item_;
+    ArkWebRefPtr<ArkWebHistoryItem> ark_web_history_item_;
 };
 
 } // namespace OHOS::ArkWeb

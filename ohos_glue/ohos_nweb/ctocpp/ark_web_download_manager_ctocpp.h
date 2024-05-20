@@ -17,26 +17,25 @@
 #define ARK_WEB_DOWNLOAD_MANAGER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_download_manager_capi.h"
 #include "ohos_nweb/include/ark_web_download_manager.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebDownloadManagerCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebDownloadManagerCToCpp,
-                                    ArkWebDownloadManager,
-                                    ark_web_download_manager_t> {
+    : public ArkWebCToCppRefCounted<ArkWebDownloadManagerCToCpp, ArkWebDownloadManager, ark_web_download_manager_t> {
 public:
-  ArkWebDownloadManagerCToCpp();
-  virtual ~ArkWebDownloadManagerCToCpp();
+    ArkWebDownloadManagerCToCpp();
+    virtual ~ArkWebDownloadManagerCToCpp();
 
-  // ArkWebDownloadManager methods.
-  void SetHttpDns(ArkWebRefPtr<ArkWebDohConfig> config) override;
+    // ArkWebDownloadManager methods.
+    void SetHttpDns(ArkWebRefPtr<ArkWebDohConfig> config) override;
 
-  void SetConnectionTimeout(const int &timeout) override;
+    void SetConnectionTimeout(const int& timeout) override;
 };
 
 } // namespace OHOS::ArkWeb

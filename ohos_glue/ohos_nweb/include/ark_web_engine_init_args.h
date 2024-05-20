@@ -25,26 +25,26 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebEngineInitArgs : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual bool GetIsPopup() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsPopup() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebString GetDumpPath() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString GetDumpPath() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebStringList GetArgsToAdd() = 0;
+    /*--ark web()--*/
+    virtual ArkWebStringList GetArgsToAdd() = 0;
 
-  /*--ark web()--*/
-  virtual ArkWebStringList GetArgsToDelete() = 0;
+    /*--ark web()--*/
+    virtual ArkWebStringList GetArgsToDelete() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsFrameInfoDump() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsFrameInfoDump() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsEnhanceSurface() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsEnhanceSurface() = 0;
 
-  /*--ark web()--*/
-  virtual bool GetIsMultiRendererProcess() = 0;
+    /*--ark web()--*/
+    virtual bool GetIsMultiRendererProcess() = 0;
 };
 
 } // namespace OHOS::ArkWeb

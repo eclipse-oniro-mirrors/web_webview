@@ -17,34 +17,34 @@
 #define ARK_MEDIA_AVSESSION_METADATA_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_avsession_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_avsession_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkMediaAVSessionMetadataAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkMediaAVSessionMetadataAdapterCToCpp,
-                                    ArkMediaAVSessionMetadataAdapter,
-                                    ark_media_avsession_metadata_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkMediaAVSessionMetadataAdapterCToCpp, ArkMediaAVSessionMetadataAdapter,
+          ark_media_avsession_metadata_adapter_t> {
 public:
-  ArkMediaAVSessionMetadataAdapterCToCpp();
-  virtual ~ArkMediaAVSessionMetadataAdapterCToCpp();
+    ArkMediaAVSessionMetadataAdapterCToCpp();
+    virtual ~ArkMediaAVSessionMetadataAdapterCToCpp();
 
-  // ArkMediaAVSessionMetadataAdapter methods.
-  void SetTitle(const ArkWebString &title) override;
+    // ArkMediaAVSessionMetadataAdapter methods.
+    void SetTitle(const ArkWebString& title) override;
 
-  ArkWebString GetTitle() override;
+    ArkWebString GetTitle() override;
 
-  void SetArtist(const ArkWebString &artist) override;
+    void SetArtist(const ArkWebString& artist) override;
 
-  ArkWebString GetArtist() override;
+    ArkWebString GetArtist() override;
 
-  void SetAlbum(const ArkWebString &album) override;
+    void SetAlbum(const ArkWebString& album) override;
 
-  ArkWebString GetAlbum() override;
+    ArkWebString GetAlbum() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -17,30 +17,29 @@
 #define ARK_WEB_SELECT_MENU_BOUND_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_select_menu_bound_capi.h"
 #include "ohos_nweb/include/ark_web_select_menu_bound.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkWebSelectMenuBoundCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebSelectMenuBoundCToCpp,
-                                    ArkWebSelectMenuBound,
-                                    ark_web_select_menu_bound_t> {
+    : public ArkWebCToCppRefCounted<ArkWebSelectMenuBoundCToCpp, ArkWebSelectMenuBound, ark_web_select_menu_bound_t> {
 public:
-  ArkWebSelectMenuBoundCToCpp();
-  virtual ~ArkWebSelectMenuBoundCToCpp();
+    ArkWebSelectMenuBoundCToCpp();
+    virtual ~ArkWebSelectMenuBoundCToCpp();
 
-  // ArkWebSelectMenuBound methods.
-  int GetX() override;
+    // ArkWebSelectMenuBound methods.
+    int GetX() override;
 
-  int GetY() override;
+    int GetY() override;
 
-  int GetWidth() override;
+    int GetWidth() override;
 
-  int GetHeight() override;
+    int GetHeight() override;
 };
 
 } // namespace OHOS::ArkWeb

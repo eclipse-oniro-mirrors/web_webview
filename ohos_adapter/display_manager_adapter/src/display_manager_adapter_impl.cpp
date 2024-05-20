@@ -15,6 +15,7 @@
 
 #include "display_manager_adapter_impl.h"
 
+#include "display_info.h"
 #include "nweb_log.h"
 #include "syspara/parameters.h"
 
@@ -87,6 +88,22 @@ OHOS::NWeb::OrientationType DisplayAdapterImpl::ConvertOrientationType(OHOS::Ros
     }
 }
 
+OHOS::NWeb::DisplayOrientation DisplayAdapterImpl::ConvertDisplayOrientationType(OHOS::Rosen::DisplayOrientation type)
+{
+    switch (type) {
+        case OHOS::Rosen::DisplayOrientation::PORTRAIT:
+            return OHOS::NWeb::DisplayOrientation::PORTRAIT;
+        case OHOS::Rosen::DisplayOrientation::LANDSCAPE:
+            return OHOS::NWeb::DisplayOrientation::LANDSCAPE;
+        case OHOS::Rosen::DisplayOrientation::PORTRAIT_INVERTED:
+            return OHOS::NWeb::DisplayOrientation::PORTRAIT_INVERTED;
+        case OHOS::Rosen::DisplayOrientation::LANDSCAPE_INVERTED:
+            return OHOS::NWeb::DisplayOrientation::LANDSCAPE_INVERTED;
+        default:
+            return OHOS::NWeb::DisplayOrientation::UNKNOWN;
+    }
+}
+
 DisplayId DisplayAdapterImpl::GetId()
 {
     if (display_ != nullptr) {
@@ -141,6 +158,17 @@ int32_t DisplayAdapterImpl::GetDpi()
         return display_->GetDpi();
     }
     return -1;
+}
+
+DisplayOrientation DisplayAdapterImpl::GetDisplayOrientation()
+{
+    if (display_ != nullptr) {
+        auto displayInfo = display_->GetDisplayInfo();
+        if (displayInfo != nullptr) {
+            return ConvertDisplayOrientationType(displayInfo->GetDisplayOrientation());
+        }
+    }
+    return DisplayOrientation::UNKNOWN;
 }
 
 DisplayId DisplayManagerAdapterImpl::GetDefaultDisplayId()

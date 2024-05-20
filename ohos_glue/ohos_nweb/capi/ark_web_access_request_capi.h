@@ -25,21 +25,18 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_access_request_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *agree)(struct _ark_web_access_request_t *self,
-                                int resource_id);
+    void(ARK_WEB_CALLBACK* agree)(struct _ark_web_access_request_t* self, int resource_id);
 
-  ArkWebString(ARK_WEB_CALLBACK *origin)(
-      struct _ark_web_access_request_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* origin)(struct _ark_web_access_request_t* self);
 
-  void(ARK_WEB_CALLBACK *refuse)(struct _ark_web_access_request_t *self);
+    void(ARK_WEB_CALLBACK* refuse)(struct _ark_web_access_request_t* self);
 
-  int(ARK_WEB_CALLBACK *resource_access_id)(
-      struct _ark_web_access_request_t *self);
+    int(ARK_WEB_CALLBACK* resource_access_id)(struct _ark_web_access_request_t* self);
 } ark_web_access_request_t;
 
 #ifdef __cplusplus

@@ -19,10 +19,10 @@
 
 #include <stdlib.h>
 
-void ArkWebMemFree(void *mem);
+void ArkWebMemFree(void* mem);
 
-void *ArkWebMemMalloc(int size);
+void* ArkWebMemMalloc(int size);
 
-typedef void (*ArkWebMemFreeFunc)(void *);
+typedef void (*ArkWebMemFreeFunc)(void*);
 
 #endif // ARK_WEB_MEMORY_H_

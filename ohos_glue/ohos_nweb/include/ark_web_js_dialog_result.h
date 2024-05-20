@@ -25,25 +25,25 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebJsDialogResult : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Handle the result if the user cancelled the dialog.
-   */
-  /*--ark web()--*/
-  virtual void Cancel() = 0;
+    /**
+     * @brief Handle the result if the user cancelled the dialog.
+     */
+    /*--ark web()--*/
+    virtual void Cancel() = 0;
 
-  /**
-   * @brief Handle a confirmation response from the user.
-   */
-  /*--ark web()--*/
-  virtual void Confirm() = 0;
+    /**
+     * @brief Handle a confirmation response from the user.
+     */
+    /*--ark web()--*/
+    virtual void Confirm() = 0;
 
-  /**
-   * @brief Handle a confirmation response from the user with input message.
-   *
-   * @param message confirm message.
-   */
-  /*--ark web()--*/
-  virtual void Confirm(const ArkWebString &message) = 0;
+    /**
+     * @brief Handle a confirmation response from the user with input message.
+     *
+     * @param message confirm message.
+     */
+    /*--ark web()--*/
+    virtual void Confirm(const ArkWebString& message) = 0;
 };
 
 } // namespace OHOS::ArkWeb

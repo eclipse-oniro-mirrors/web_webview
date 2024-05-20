@@ -17,30 +17,29 @@
 #define ARK_WEB_NATIVE_EMBED_DATA_INFO_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_native_embed_data_info_capi.h"
 #include "ohos_nweb/include/ark_web_native_embed_data_info.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebNativeEmbedDataInfoCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebNativeEmbedDataInfoCToCpp,
-                                    ArkWebNativeEmbedDataInfo,
-                                    ark_web_native_embed_data_info_t> {
+class ArkWebNativeEmbedDataInfoCToCpp : public ArkWebCToCppRefCounted<ArkWebNativeEmbedDataInfoCToCpp,
+                                            ArkWebNativeEmbedDataInfo, ark_web_native_embed_data_info_t> {
 public:
-  ArkWebNativeEmbedDataInfoCToCpp();
-  virtual ~ArkWebNativeEmbedDataInfoCToCpp();
+    ArkWebNativeEmbedDataInfoCToCpp();
+    virtual ~ArkWebNativeEmbedDataInfoCToCpp();
 
-  // ArkWebNativeEmbedDataInfo methods.
-  int GetStatus() override;
+    // ArkWebNativeEmbedDataInfo methods.
+    int GetStatus() override;
 
-  ArkWebString GetEmbedId() override;
+    ArkWebString GetEmbedId() override;
 
-  ArkWebString GetSurfaceId() override;
+    ArkWebString GetSurfaceId() override;
 
-  ArkWebRefPtr<ArkWebNativeEmbedInfo> GetNativeEmbedInfo() override;
+    ArkWebRefPtr<ArkWebNativeEmbedInfo> GetNativeEmbedInfo() override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -23,21 +23,20 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebDragEventImpl : public ArkWebDragEvent {
-  IMPLEMENT_REFCOUNTING(ArkWebDragEventImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebDragEventImpl);
 
 public:
-  ArkWebDragEventImpl(
-      std::shared_ptr<OHOS::NWeb::NWebDragEvent> nweb_drag_event);
-  ~ArkWebDragEventImpl() = default;
+    ArkWebDragEventImpl(std::shared_ptr<OHOS::NWeb::NWebDragEvent> nweb_drag_event);
+    ~ArkWebDragEventImpl() = default;
 
-  double GetX() override;
+    double GetX() override;
 
-  double GetY() override;
+    double GetY() override;
 
-  int GetAction() override;
+    int GetAction() override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebDragEvent> nweb_drag_event_;
+    std::shared_ptr<OHOS::NWeb::NWebDragEvent> nweb_drag_event_;
 };
 
 } // namespace OHOS::ArkWeb

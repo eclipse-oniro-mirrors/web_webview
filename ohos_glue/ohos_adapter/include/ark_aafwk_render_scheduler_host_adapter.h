@@ -17,25 +17,25 @@
 #define ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_H
 #pragma once
 
-#include <cstdint>
-
+#include "ark_aafwk_browser_client_adapter.h"
 #include "base/include/ark_web_base_ref_counted.h"
+#include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
 /*--ark web(source=web core)--*/
 class ArkAafwkRenderSchedulerHostAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkAafwkRenderSchedulerHostAdapter() = default;
+    /*--ark web()--*/
+    virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkAafwkRenderSchedulerHostAdapter() = default;
-
-  /*--ark web()--*/
-  virtual void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd,
-                               int32_t crashFd) = 0;
+    /*--ark web()--*/
+    virtual void NotifyBrowser(int32_t ipcFd,
+                               int32_t sharedFd,
+                               int32_t crashFd,
+                               ArkWebRefPtr<ArkAafwkBrowserClientAdapter> adapter) = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_AAFWK_RENDER_SCHEDULER_HOST_ADAPTER_H

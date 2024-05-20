@@ -38,6 +38,7 @@ namespace {
     int32_t g_getDefaultNet = 0;
     int32_t g_getNetCap = 0;
     int32_t g_slotId = 0;
+    int32_t g_getNetProp = 0;
 }
 
 namespace NetManagerStandard {
@@ -58,6 +59,21 @@ int32_t NetConnClient::GetNetCapabilities(const NetHandle &nethamdle, NetAllCapa
     netAllCap.bearerTypes_.insert(NetBearType::BEARER_WIFI);
     netAllCap.bearerTypes_.insert(NetBearType::BEARER_CELLULAR);
     return g_getNetCap;
+}
+int32_t NetConnClient::GetConnectionProperties(const NetHandle &nethandle, NetLinkInfo &netLinkInfo)
+{
+    if (g_getNetProp != 0) {
+        return g_getNetProp;
+    }
+    INetAddr dns;
+    dns.type_ = INetAddr::IPV4;
+    dns.family_ = 0x10;
+    dns.prefixlen_ = 0x17;
+    dns.address_ = "192.168.2.1";
+    dns.netMask_ = "192.255.255.255";
+    dns.hostName_ = "netAddr";
+    netLinkInfo.dnsList_.push_back(dns);
+    return g_getNetProp;
 }
 }
 
@@ -159,6 +175,29 @@ HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_002, TestSize.Leve
     g_getDefaultNet = static_cast<int32_t>(NETMANAGER_SUCCESS);
     g_getNetCap = -1;
     EXPECT_EQ(netConnectAdapterImpl->GetDefaultNetConnect(type, subtype), -1);
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_003.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_003, TestSize.Level1)
+{
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    g_getDefaultNet = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_getNetProp = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    std::vector<std::string> dns_servers = netConnectAdapterImpl->GetDnsServers();
+    EXPECT_EQ(dns_servers.size(), 1);
+    std::string dns_ip_str("192.168.2.1");
+    EXPECT_EQ(dns_servers.front(), dns_ip_str);
+    g_getDefaultNet = -1;
+    dns_servers = netConnectAdapterImpl->GetDnsServers();
+    EXPECT_EQ(dns_servers.size(), 0);
+    g_getNetProp = -1;
+    dns_servers = netConnectAdapterImpl->GetDnsServers();
+    EXPECT_EQ(dns_servers.size(), 0);
 }
 }
 }

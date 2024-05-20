@@ -25,19 +25,17 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_js_http_auth_result_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *cancel)(struct _ark_web_js_http_auth_result_t *self);
+    void(ARK_WEB_CALLBACK* cancel)(struct _ark_web_js_http_auth_result_t* self);
 
-  bool(ARK_WEB_CALLBACK *confirm)(struct _ark_web_js_http_auth_result_t *self,
-                                  const ArkWebString *user_name,
-                                  const ArkWebString *pwd);
+    bool(ARK_WEB_CALLBACK* confirm)(
+        struct _ark_web_js_http_auth_result_t* self, const ArkWebString* user_name, const ArkWebString* pwd);
 
-  bool(ARK_WEB_CALLBACK *is_http_auth_info_saved)(
-      struct _ark_web_js_http_auth_result_t *self);
+    bool(ARK_WEB_CALLBACK* is_http_auth_info_saved)(struct _ark_web_js_http_auth_result_t* self);
 } ark_web_js_http_auth_result_t;
 
 #ifdef __cplusplus

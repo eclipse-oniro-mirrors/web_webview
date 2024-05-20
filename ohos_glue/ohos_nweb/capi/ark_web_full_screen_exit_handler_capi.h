@@ -24,13 +24,12 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_full_screen_exit_handler_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *exit_full_screen)(
-      struct _ark_web_full_screen_exit_handler_t *self);
+    void(ARK_WEB_CALLBACK* exit_full_screen)(struct _ark_web_full_screen_exit_handler_t* self);
 } ark_web_full_screen_exit_handler_t;
 
 #ifdef __cplusplus

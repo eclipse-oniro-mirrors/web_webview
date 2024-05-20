@@ -98,6 +98,7 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_001, TestS
     EXPECT_EQ(displayAdapterImpl->GetRotation(), RotationType::ROTATION_BUTT);
     EXPECT_EQ(displayAdapterImpl->GetOrientation(), OrientationType::BUTT);
     EXPECT_EQ(displayAdapterImpl->GetDpi(), -1);
+    EXPECT_EQ(displayAdapterImpl->GetDisplayOrientation(), DisplayOrientation::UNKNOWN);
 }
 
 /**
@@ -244,7 +245,8 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_006, TestS
     EXPECT_NE(displayAdapterImpl->GetHeight(), -1);
     EXPECT_NE(displayAdapterImpl->GetVirtualPixelRatio(), -1);
     EXPECT_NE(displayAdapterImpl->GetRotation(), RotationType::ROTATION_BUTT);
-    EXPECT_NE(displayAdapterImpl->GetOrientation(), OrientationType::BUTT);
+    EXPECT_NE(displayAdapterImpl->GetDpi(), -1);
+    EXPECT_NE(displayAdapterImpl->GetDisplayOrientation(), DisplayOrientation::UNKNOWN);
 }
 
 /**
@@ -265,6 +267,39 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_007, TestS
     } else {
         EXPECT_FALSE(result);
     }
+}
+
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_008.
+ * @tc.desc: test ConvertDisplayRotationType.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_008, TestSize.Level1)
+{
+    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = std::make_unique<DisplayAdapterImpl>(nullptr);
+    EXPECT_NE(displayAdapterImpl, nullptr);
+
+    OHOS::Rosen::DisplayOrientation type = OHOS::Rosen::DisplayOrientation::UNKNOWN;
+    OHOS::NWeb::DisplayOrientation retType;
+    retType = displayAdapterImpl->ConvertDisplayOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::DisplayOrientation::UNKNOWN);
+
+    type = OHOS::Rosen::DisplayOrientation::PORTRAIT;
+    retType = displayAdapterImpl->ConvertDisplayOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::DisplayOrientation::PORTRAIT);
+
+    type = OHOS::Rosen::DisplayOrientation::LANDSCAPE;
+    retType = displayAdapterImpl->ConvertDisplayOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::DisplayOrientation::LANDSCAPE);
+
+    type = OHOS::Rosen::DisplayOrientation::PORTRAIT_INVERTED;
+    retType = displayAdapterImpl->ConvertDisplayOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::DisplayOrientation::PORTRAIT_INVERTED);
+
+    type = OHOS::Rosen::DisplayOrientation::LANDSCAPE_INVERTED;
+    retType = displayAdapterImpl->ConvertDisplayOrientationType(type);
+    EXPECT_EQ(retType, OHOS::NWeb::DisplayOrientation::LANDSCAPE_INVERTED);
 }
 }
 }

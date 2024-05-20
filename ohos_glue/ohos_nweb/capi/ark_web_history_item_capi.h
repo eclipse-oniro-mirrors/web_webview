@@ -25,23 +25,19 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_history_item_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  bool(ARK_WEB_CALLBACK *get_favicon)(struct _ark_web_history_item_t *self,
-                                      void **data, int *width, int *height,
-                                      int *color_type, int *alpha_type);
+    bool(ARK_WEB_CALLBACK* get_favicon)(
+        struct _ark_web_history_item_t* self, void** data, int* width, int* height, int* color_type, int* alpha_type);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_history_url)(
-      struct _ark_web_history_item_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_history_url)(struct _ark_web_history_item_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_history_title)(
-      struct _ark_web_history_item_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_history_title)(struct _ark_web_history_item_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_history_raw_url)(
-      struct _ark_web_history_item_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_history_raw_url)(struct _ark_web_history_item_t* self);
 } ark_web_history_item_t;
 
 #ifdef __cplusplus

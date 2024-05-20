@@ -23,29 +23,26 @@
 namespace OHOS::ArkWeb {
 
 class ArkWebDownloadCallbackImpl : public ArkWebDownloadCallback {
-  IMPLEMENT_REFCOUNTING(ArkWebDownloadCallbackImpl);
+    IMPLEMENT_REFCOUNTING(ArkWebDownloadCallbackImpl);
 
 public:
-  ArkWebDownloadCallbackImpl(
-      std::shared_ptr<OHOS::NWeb::NWebDownloadCallback> nweb_download_callback);
-  ~ArkWebDownloadCallbackImpl() = default;
+    ArkWebDownloadCallbackImpl(std::shared_ptr<OHOS::NWeb::NWebDownloadCallback> nweb_download_callback);
+    ~ArkWebDownloadCallbackImpl() = default;
 
-  /**
-   * @brief Notify the host application that a file should be downloaded
-   *
-   * @param url The full url to the content that should be downloaded.
-   * @param user_agent The user agent to be used for the download.
-   * @param content_disposition Content-Disposition http header, if present.
-   * @param mime_type The mimetype of the content reported by the server.
-   * @param content_length The file size reported by the server.
-   */
-  void OnDownloadStart(const ArkWebString &url, const ArkWebString &user_agent,
-                       const ArkWebString &content_disposition,
-                       const ArkWebString &mime_type,
-                       long content_length) override;
+    /**
+     * @brief Notify the host application that a file should be downloaded
+     *
+     * @param url The full url to the content that should be downloaded.
+     * @param user_agent The user agent to be used for the download.
+     * @param content_disposition Content-Disposition http header, if present.
+     * @param mime_type The mimetype of the content reported by the server.
+     * @param content_length The file size reported by the server.
+     */
+    void OnDownloadStart(const ArkWebString& url, const ArkWebString& user_agent,
+        const ArkWebString& content_disposition, const ArkWebString& mime_type, long content_length) override;
 
 private:
-  std::shared_ptr<OHOS::NWeb::NWebDownloadCallback> nweb_download_callback_;
+    std::shared_ptr<OHOS::NWeb::NWebDownloadCallback> nweb_download_callback_;
 };
 
 } // namespace OHOS::ArkWeb

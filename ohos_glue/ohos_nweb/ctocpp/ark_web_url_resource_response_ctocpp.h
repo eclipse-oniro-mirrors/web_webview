@@ -17,65 +17,67 @@
 #define ARK_WEB_URL_RESOURCE_RESPONSE_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_url_resource_response_capi.h"
 #include "ohos_nweb/include/ark_web_url_resource_response.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebUrlResourceResponseCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebUrlResourceResponseCToCpp,
-                                    ArkWebUrlResourceResponse,
-                                    ark_web_url_resource_response_t> {
+class ArkWebUrlResourceResponseCToCpp : public ArkWebCToCppRefCounted<ArkWebUrlResourceResponseCToCpp,
+                                            ArkWebUrlResourceResponse, ark_web_url_resource_response_t> {
 public:
-  ArkWebUrlResourceResponseCToCpp();
-  virtual ~ArkWebUrlResourceResponseCToCpp();
+    ArkWebUrlResourceResponseCToCpp();
+    virtual ~ArkWebUrlResourceResponseCToCpp();
 
-  // ArkWebUrlResourceResponse methods.
-  ArkWebString ResponseData() override;
+    // ArkWebUrlResourceResponse methods.
+    ArkWebString ResponseData() override;
 
-  void PutResponseData(const ArkWebString &input_stream) override;
+    void PutResponseData(const ArkWebString& input_stream) override;
 
-  ArkWebString ResponseStatus() override;
+    ArkWebString ResponseStatus() override;
 
-  const ArkWebStringMap ResponseHeaders() override;
+    const ArkWebStringMap ResponseHeaders() override;
 
-  void PutResponseHeaders(const ArkWebStringMap &response_headers) override;
+    void PutResponseHeaders(const ArkWebStringMap& response_headers) override;
 
-  int32_t ResponseDataType() override;
+    int32_t ResponseDataType() override;
 
-  ArkWebString ResponseMimeType() override;
+    ArkWebString ResponseMimeType() override;
 
-  void PutResponseMimeType(const ArkWebString &mime_type) override;
+    void PutResponseMimeType(const ArkWebString& mime_type) override;
 
-  ArkWebString ResponseEncoding() override;
+    ArkWebString ResponseEncoding() override;
 
-  void PutResponseEncoding(const ArkWebString &encoding) override;
+    void PutResponseEncoding(const ArkWebString& encoding) override;
 
-  bool ResponseDataStatus() override;
+    bool ResponseDataStatus() override;
 
-  void PutResponseDataStatus(bool is_data_ready) override;
+    void PutResponseDataStatus(bool is_data_ready) override;
 
-  int ResponseStatusCode() override;
+    int ResponseStatusCode() override;
 
-  ArkWebString ResponseResourceUrl() override;
+    ArkWebString ResponseResourceUrl() override;
 
-  void PutResponseResourceUrl(const ArkWebString &url) override;
+    void PutResponseResourceUrl(const ArkWebString& url) override;
 
-  int ResponseFileHandle() override;
+    int ResponseFileHandle() override;
 
-  void PutResponseFileHandle(int fd) override;
+    void PutResponseFileHandle(int fd) override;
 
-  bool ResponseIsFileHandle() override;
+    bool ResponseIsFileHandle() override;
 
-  void
-  PutResponseStateAndStatuscode(int status_code,
-                                const ArkWebString &reason_phrase) override;
+    void PutResponseStateAndStatuscode(int status_code, const ArkWebString& reason_phrase) override;
 
-  void PutResponseReadyCallback(
-      ArkWebRefPtr<ArkWebResourceReadyCallback> callback) override;
+    void PutResponseReadyCallback(ArkWebRefPtr<ArkWebResourceReadyCallback> callback) override;
+
+    void PutResponseDataBuffer(char* buffer, size_t bufferSize) override;
+
+    char* GetResponseDataBuffer() override;
+
+    size_t GetResponseDataBufferSize() override;
 };
 
 } // namespace OHOS::ArkWeb

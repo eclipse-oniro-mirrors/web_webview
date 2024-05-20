@@ -17,29 +17,27 @@
 #define ARK_WEB_SCREEN_CAPTURE_ACCESS_REQUEST_CAPI_H_
 #pragma once
 
+#include "ohos_nweb/capi/ark_web_screen_capture_config_capi.h"
+
 #include "base/capi/ark_web_base_ref_counted_capi.h"
 #include "base/include/ark_web_types.h"
-#include "ohos_nweb/capi/ark_web_screen_capture_config_capi.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 typedef struct _ark_web_screen_capture_access_request_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *agree)(
-      struct _ark_web_screen_capture_access_request_t *self,
-      ark_web_screen_capture_config_t *config);
+    void(ARK_WEB_CALLBACK* agree)(
+        struct _ark_web_screen_capture_access_request_t* self, ark_web_screen_capture_config_t* config);
 
-  void(ARK_WEB_CALLBACK *refuse)(
-      struct _ark_web_screen_capture_access_request_t *self);
+    void(ARK_WEB_CALLBACK* refuse)(struct _ark_web_screen_capture_access_request_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *origin)(
-      struct _ark_web_screen_capture_access_request_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* origin)(struct _ark_web_screen_capture_access_request_t* self);
 } ark_web_screen_capture_access_request_t;
 
 #ifdef __cplusplus

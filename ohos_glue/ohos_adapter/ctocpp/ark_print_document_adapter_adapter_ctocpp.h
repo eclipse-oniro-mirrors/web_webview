@@ -17,29 +17,27 @@
 #define ARK_PRINT_DOCUMENT_ADAPTER_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_print_manager_adapter_capi.h"
 #include "ohos_adapter/include/ark_print_manager_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkPrintDocumentAdapterAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkPrintDocumentAdapterAdapterCToCpp,
-                                    ArkPrintDocumentAdapterAdapter,
-                                    ark_print_document_adapter_adapter_t> {
+class ArkPrintDocumentAdapterAdapterCToCpp : public ArkWebCToCppRefCounted<ArkPrintDocumentAdapterAdapterCToCpp,
+                                                 ArkPrintDocumentAdapterAdapter, ark_print_document_adapter_adapter_t> {
 public:
-  ArkPrintDocumentAdapterAdapterCToCpp();
-  virtual ~ArkPrintDocumentAdapterAdapterCToCpp();
+    ArkPrintDocumentAdapterAdapterCToCpp();
+    virtual ~ArkPrintDocumentAdapterAdapterCToCpp();
 
-  // ArkPrintDocumentAdapterAdapter methods.
-  void OnStartLayoutWrite(
-      const ArkWebString &jobId, const ArkPrintAttributesAdapter &oldAttrs,
-      const ArkPrintAttributesAdapter &newAttrs, uint32_t fd,
-      ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter> callback) override;
+    // ArkPrintDocumentAdapterAdapter methods.
+    void OnStartLayoutWrite(const ArkWebString& jobId, const ArkPrintAttributesAdapter& oldAttrs,
+        const ArkPrintAttributesAdapter& newAttrs, uint32_t fd,
+        ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter> callback) override;
 
-  void OnJobStateChanged(const ArkWebString &jobId, uint32_t state) override;
+    void OnJobStateChanged(const ArkWebString& jobId, uint32_t state) override;
 };
 
 } // namespace OHOS::ArkWeb

@@ -68,6 +68,76 @@ public:
     MOCK_CONST_METHOD0(GetBaseDir, std::string());
 };
 
+class MockNWebEngine : public OHOS::NWeb::NWebEngine {
+public:
+    std::shared_ptr<NWeb> CreateNWeb(std::shared_ptr<NWebCreateInfo> create_info)
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<NWeb> GetNWeb(int32_t nweb_id)
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<NWebDataBase> GetDataBase()
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<NWebWebStorage> GetWebStorage()
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<NWebCookieManager> GetCookieManager()
+    {
+        return nullptr;
+    }
+
+    std::shared_ptr<NWebDownloadManager> GetDownloadManager()
+    {
+        return nullptr;
+    }
+
+    void SetWebTag(int32_t nweb_id, const char* web_tag) {}
+
+    void InitializeWebEngine(std::shared_ptr<NWebEngineInitArgs> init_args) {}
+
+    void PrepareForPageLoad(const std::string& url, bool preconnectable, int32_t num_sockets) {}
+
+    void SetWebDebuggingAccess(bool isEnableDebug) {}
+
+    void AddIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts) {}
+
+    void RemoveIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts) {}
+    void ClearIntelligentTrackingPreventionBypassingList() {}
+
+    void PauseAllTimers() {}
+
+    void ResumeAllTimers() {}
+
+    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& pre_args,
+        const std::map<std::string, std::string>& additional_http_headers, const std::string& cache_key,
+        const uint32_t& cache_valid_time)
+    {}
+
+    void SetRenderProcessMode(RenderProcessMode mode) {}
+
+    RenderProcessMode GetRenderProcessMode()
+    {
+        return RenderProcessMode::SINGLE_MODE;
+    }
+
+    void ClearPrefetchedResource(const std::vector<std::string>& cache_key_list) {}
+
+    void WarmupServiceWorker(const std::string& url) {}
+
+    void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime) {}
+
+    void ClearHostIP(const std::string& hostName) {}
+};
+
 void NwebHelperTest::SetUpTestCase(void)
 {
     RSSurfaceNodeConfig config;
@@ -424,6 +494,68 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
+}
+
+/**
+ * @tc.name: NWebHelper_GetPerfConfig_001
+ * @tc.desc: GetPerfConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetPerfConfig_001, TestSize.Level1)
+{
+    EXPECT_TRUE(NWebAdapterHelper::Instance().GetPerfConfig("test").empty());
+    NWebAdapterHelper::Instance().ltpoConfig_["test"] = {OHOS::NWeb::FrameRateSetting{0, 0, 0}};
+    EXPECT_FALSE(NWebAdapterHelper::Instance().GetPerfConfig("test").empty());
+}
+
+/**
+ * @tc.name: NWebHelper_SetHostIP_001
+ * @tc.desc: SetHostIP.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_SetHostIP_001, TestSize.Level1)
+{
+    std::string hostName = "hello";
+    std::string address = "world";
+    int32_t aliveTime = 0;
+
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().SetHostIP(hostName, address, aliveTime);
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().SetHostIP(hostName, address, aliveTime);
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
+
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+}
+
+/**
+ * @tc.name: NWebHelper_ClearHostIP_001
+ * @tc.desc: ClearHostIP.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_ClearHostIP_001, TestSize.Level1)
+{
+    int32_t nweb_id = 1;
+    auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
+    EXPECT_EQ(nwebHelper, nullptr);
+
+    std::string hostName = "name";
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().ClearHostIP(hostName);
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+
+    auto nwebengineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebengineMock;
+    NWebHelper::Instance().ClearHostIP(hostName);
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
+
+    NWebHelper::Instance().nwebEngine_ = nullptr;
 }
 } // namespace OHOS::NWeb
 }

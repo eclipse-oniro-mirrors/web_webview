@@ -17,34 +17,34 @@
 #define ARK_MEDIA_AVSESSION_POSITION_ADAPTER_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_adapter/capi/ark_media_avsession_adapter_capi.h"
 #include "ohos_adapter/include/ark_media_avsession_adapter.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class ArkMediaAVSessionPositionAdapterCToCpp
-    : public ArkWebCToCppRefCounted<ArkMediaAVSessionPositionAdapterCToCpp,
-                                    ArkMediaAVSessionPositionAdapter,
-                                    ark_media_avsession_position_adapter_t> {
+    : public ArkWebCToCppRefCounted<ArkMediaAVSessionPositionAdapterCToCpp, ArkMediaAVSessionPositionAdapter,
+          ark_media_avsession_position_adapter_t> {
 public:
-  ArkMediaAVSessionPositionAdapterCToCpp();
-  virtual ~ArkMediaAVSessionPositionAdapterCToCpp();
+    ArkMediaAVSessionPositionAdapterCToCpp();
+    virtual ~ArkMediaAVSessionPositionAdapterCToCpp();
 
-  // ArkMediaAVSessionPositionAdapter methods.
-  void SetDuration(int64_t duration) override;
+    // ArkMediaAVSessionPositionAdapter methods.
+    void SetDuration(int64_t duration) override;
 
-  int64_t GetDuration() override;
+    int64_t GetDuration() override;
 
-  void SetElapsedTime(int64_t elapsedTime) override;
+    void SetElapsedTime(int64_t elapsedTime) override;
 
-  int64_t GetElapsedTime() override;
+    int64_t GetElapsedTime() override;
 
-  void SetUpdateTime(int64_t updateTime) override;
+    void SetUpdateTime(int64_t updateTime) override;
 
-  int64_t GetUpdateTime() override;
+    int64_t GetUpdateTime() override;
 };
 
 } // namespace OHOS::ArkWeb

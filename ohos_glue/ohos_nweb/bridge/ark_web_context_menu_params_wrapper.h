@@ -23,50 +23,46 @@
 namespace OHOS::ArkWeb {
 
 using ArkWebMediaType = OHOS::NWeb::NWebContextMenuParams::ContextMenuMediaType;
-using ArkWebSourceType =
-    OHOS::NWeb::NWebContextMenuParams::ContextMenuSourceType;
-using ArkWebInputFieldType =
-    OHOS::NWeb::NWebContextMenuParams::ContextMenuInputFieldType;
+using ArkWebSourceType = OHOS::NWeb::NWebContextMenuParams::ContextMenuSourceType;
+using ArkWebInputFieldType = OHOS::NWeb::NWebContextMenuParams::ContextMenuInputFieldType;
 
-class ArkWebContextMenuParamsWrapper
-    : public OHOS::NWeb::NWebContextMenuParams {
+class ArkWebContextMenuParamsWrapper : public OHOS::NWeb::NWebContextMenuParams {
 public:
-  ArkWebContextMenuParamsWrapper(
-      ArkWebRefPtr<ArkWebContextMenuParams> ark_web_context_menu_params);
-  ~ArkWebContextMenuParamsWrapper() = default;
+    ArkWebContextMenuParamsWrapper(ArkWebRefPtr<ArkWebContextMenuParams> ark_web_context_menu_params);
+    ~ArkWebContextMenuParamsWrapper() = default;
 
-  int32_t GetXCoord() override;
+    int32_t GetXCoord() override;
 
-  int32_t GetYCoord() override;
+    int32_t GetYCoord() override;
 
-  bool IsEditable() override;
+    bool IsEditable() override;
 
-  std::string GetLinkUrl() override;
+    std::string GetLinkUrl() override;
 
-  std::string GetPageUrl() override;
+    std::string GetPageUrl() override;
 
-  std::string GetSourceUrl() override;
+    std::string GetSourceUrl() override;
 
-  std::string GetTitleText() override;
+    std::string GetTitleText() override;
 
-  std::string GetSelectionText() override;
+    std::string GetSelectionText() override;
 
-  ArkWebMediaType GetMediaType() override;
+    ArkWebMediaType GetMediaType() override;
 
-  ArkWebSourceType GetSourceType() override;
+    ArkWebSourceType GetSourceType() override;
 
-  ArkWebInputFieldType GetInputFieldType() override;
+    ArkWebInputFieldType GetInputFieldType() override;
 
-  bool HasImageContents() override;
+    bool HasImageContents() override;
 
-  int32_t GetEditStateFlags() override;
+    int32_t GetEditStateFlags() override;
 
-  std::string GetUnfilteredLinkUrl() override;
+    std::string GetUnfilteredLinkUrl() override;
 
-  int32_t GetContextMenuTypeFlags() override;
+    int32_t GetContextMenuTypeFlags() override;
 
 private:
-  ArkWebRefPtr<ArkWebContextMenuParams> ark_web_context_menu_params_;
+    ArkWebRefPtr<ArkWebContextMenuParams> ark_web_context_menu_params_;
 };
 
 } // namespace OHOS::ArkWeb

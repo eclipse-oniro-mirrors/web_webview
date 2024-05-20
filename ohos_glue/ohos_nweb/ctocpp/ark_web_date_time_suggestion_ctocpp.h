@@ -17,28 +17,27 @@
 #define ARK_WEB_DATE_TIME_SUGGESTION_CTOCPP_H_
 #pragma once
 
-#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 #include "ohos_nweb/capi/ark_web_date_time_suggestion_capi.h"
 #include "ohos_nweb/include/ark_web_date_time_suggestion.h"
+
+#include "base/ctocpp/ark_web_ctocpp_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class ArkWebDateTimeSuggestionCToCpp
-    : public ArkWebCToCppRefCounted<ArkWebDateTimeSuggestionCToCpp,
-                                    ArkWebDateTimeSuggestion,
-                                    ark_web_date_time_suggestion_t> {
+class ArkWebDateTimeSuggestionCToCpp : public ArkWebCToCppRefCounted<ArkWebDateTimeSuggestionCToCpp,
+                                           ArkWebDateTimeSuggestion, ark_web_date_time_suggestion_t> {
 public:
-  ArkWebDateTimeSuggestionCToCpp();
-  virtual ~ArkWebDateTimeSuggestionCToCpp();
+    ArkWebDateTimeSuggestionCToCpp();
+    virtual ~ArkWebDateTimeSuggestionCToCpp();
 
-  // ArkWebDateTimeSuggestion methods.
-  ArkWebString GetLabel() override;
+    // ArkWebDateTimeSuggestion methods.
+    ArkWebString GetLabel() override;
 
-  ArkWebDateTime GetValue() override;
+    ArkWebDateTime GetValue() override;
 
-  ArkWebString GetLocalizedValue() override;
+    ArkWebString GetLocalizedValue() override;
 };
 
 } // namespace OHOS::ArkWeb

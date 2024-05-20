@@ -18,6 +18,7 @@
 #include "cellular_data_client.h"
 #include "core_service_client.h"
 #include "net_connect_utils.h"
+#include "net_link_info.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
@@ -111,5 +112,32 @@ int32_t NetConnectAdapterImpl::GetDefaultNetConnect(NetConnectType &type, NetCon
     }
     WVLOG_D("NetAllCapabilities dump, %{public}s.", netAllCap.ToString("").c_str());
     return 0;
+}
+
+std::vector<std::string> NetConnectAdapterImpl::GetDnsServers()
+{
+    std::vector<std::string> servers;
+    NetHandle netHandle;
+    int32_t ret = NetConnClient::GetInstance().GetDefaultNet(netHandle);
+    if (ret != NETMANAGER_SUCCESS) {
+        WVLOG_E("get default net for dns servers failed, ret = %{public}d.", ret);
+        return servers;
+    }
+
+    NetLinkInfo info;
+    ret = NetConnClient::GetInstance().GetConnectionProperties(netHandle, info);
+    if (ret != NETMANAGER_SUCCESS) {
+        WVLOG_E("get default net properties failed, ret = %{public}d.", ret);
+        return servers;
+    }
+    WVLOG_D("get default net properties for dns servers success, net id = %{public}d, "
+        "netinfo = %{public}s.", netHandle.GetNetId(), info.ToString(" ").c_str());
+
+    for (const auto &dns : info.dnsList_) {
+        servers.emplace_back(dns.address_);
+    }
+    WVLOG_I("get dns servers success, net id = %{public}d, servers size = %{public}d.",
+        netHandle.GetNetId(), static_cast<int32_t>(servers.size()));
+    return servers;
 }
 } // namespace OHOS::NWeb

@@ -25,15 +25,14 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_doh_config_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  int32_t(ARK_WEB_CALLBACK *get_mode)(struct _ark_web_doh_config_t *self);
+    int32_t(ARK_WEB_CALLBACK* get_mode)(struct _ark_web_doh_config_t* self);
 
-  ArkWebString(ARK_WEB_CALLBACK *get_config)(
-      struct _ark_web_doh_config_t *self);
+    ArkWebString(ARK_WEB_CALLBACK* get_config)(struct _ark_web_doh_config_t* self);
 } ark_web_doh_config_t;
 
 #ifdef __cplusplus

@@ -24,11 +24,11 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebContextMenuCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void Cancel() = 0;
+    /*--ark web()--*/
+    virtual void Cancel() = 0;
 
-  /*--ark web()--*/
-  virtual void Continue(int32_t command_id, int flag) = 0;
+    /*--ark web()--*/
+    virtual void Continue(int32_t command_id, int flag) = 0;
 };
 
 } // namespace OHOS::ArkWeb

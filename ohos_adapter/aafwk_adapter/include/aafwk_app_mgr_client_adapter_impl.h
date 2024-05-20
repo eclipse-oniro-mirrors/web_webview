@@ -37,6 +37,12 @@ public:
 
     int GetRenderProcessTerminationStatus(pid_t renderPid, int &status) override;
 
+    int StartChildProcess(
+        const std::string& renderParam, int32_t ipcFd, int32_t sharedFd, 
+        int32_t crashFd, pid_t& renderPid, const std::string& processType) override;
+
+    void SaveBrowserConnect(std::shared_ptr<AafwkBrowserHostAdapter> adapter) override;
+
 private:
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
 };

@@ -24,9 +24,8 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkWebAccessibilityEventCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void OnAccessibilityEvent(int64_t accessibility_id,
-                                    uint32_t event_type) = 0;
+    /*--ark web()--*/
+    virtual void OnAccessibilityEvent(int64_t accessibility_id, uint32_t event_type) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -22,27 +22,24 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebGeoLocationCallbackWrapper
-    : public OHOS::NWeb::NWebGeolocationCallbackInterface {
+class ArkWebGeoLocationCallbackWrapper : public OHOS::NWeb::NWebGeolocationCallbackInterface {
 public:
-  ArkWebGeoLocationCallbackWrapper(
-      ArkWebRefPtr<ArkWebGeoLocationCallback> ark_web_geo_location_callback);
-  ~ArkWebGeoLocationCallbackWrapper() = default;
+    ArkWebGeoLocationCallbackWrapper(ArkWebRefPtr<ArkWebGeoLocationCallback> ark_web_geo_location_callback);
+    ~ArkWebGeoLocationCallbackWrapper() = default;
 
-  /**
-   * @brief Report the geo location permission status from users.
-   *
-   * @param origin The origin that ask for the geo location permission.
-   * @param allow The geo location permission status.
-   * @param retain Whether to allow the geo location permission status to be
-   *        saved to the system.
-   * @param incognito true if web is in the incognito mode, flase otherwise.
-   */
-  void GeolocationCallbackInvoke(const std::string &origin, bool allow,
-                                 bool retain, bool incognito) override;
+    /**
+     * @brief Report the geo location permission status from users.
+     *
+     * @param origin The origin that ask for the geo location permission.
+     * @param allow The geo location permission status.
+     * @param retain Whether to allow the geo location permission status to be
+     *        saved to the system.
+     * @param incognito true if web is in the incognito mode, flase otherwise.
+     */
+    void GeolocationCallbackInvoke(const std::string& origin, bool allow, bool retain, bool incognito) override;
 
 private:
-  ArkWebRefPtr<ArkWebGeoLocationCallback> ark_web_geo_location_callback_;
+    ArkWebRefPtr<ArkWebGeoLocationCallback> ark_web_geo_location_callback_;
 };
 
 } // namespace OHOS::ArkWeb

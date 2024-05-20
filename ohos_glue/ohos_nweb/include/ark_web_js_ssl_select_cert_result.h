@@ -25,25 +25,24 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebJsSslSelectCertResult : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Cancel this certificate request.
-   */
-  /*--ark web()--*/
-  virtual void Cancel() = 0;
+    /**
+     * @brief Cancel this certificate request.
+     */
+    /*--ark web()--*/
+    virtual void Cancel() = 0;
 
-  /**
-   * @brief Ignore this certificate request temporarily.
-   */
-  /*--ark web()--*/
-  virtual void Ignore() = 0;
+    /**
+     * @brief Ignore this certificate request temporarily.
+     */
+    /*--ark web()--*/
+    virtual void Ignore() = 0;
 
-  /**
-   * @brief Confirm to use the specified private key and client certificate
-   *        chain.
-   */
-  /*--ark web()--*/
-  virtual void Confirm(const ArkWebString &private_key_file,
-                       const ArkWebString &cert_chain_file) = 0;
+    /**
+     * @brief Confirm to use the specified private key and client certificate
+     *        chain.
+     */
+    /*--ark web()--*/
+    virtual void Confirm(const ArkWebString& private_key_file, const ArkWebString& cert_chain_file) = 0;
 };
 
 } // namespace OHOS::ArkWeb

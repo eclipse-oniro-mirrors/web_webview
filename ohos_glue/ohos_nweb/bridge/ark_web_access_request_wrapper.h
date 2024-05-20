@@ -24,42 +24,41 @@ namespace OHOS::ArkWeb {
 
 class ArkWebAccessRequestWrapper : public OHOS::NWeb::NWebAccessRequest {
 public:
-  ArkWebAccessRequestWrapper(
-      ArkWebRefPtr<ArkWebAccessRequest> ark_web_access_request);
-  ~ArkWebAccessRequestWrapper() = default;
+    ArkWebAccessRequestWrapper(ArkWebRefPtr<ArkWebAccessRequest> ark_web_access_request);
+    ~ArkWebAccessRequestWrapper() = default;
 
-  /**
-   * @brief Agree the origin to access the given resources. The granted access
-   *        is only valid for this WebView.
-   *
-   * @param resource_id id of the resource agreed to be accessed by origin. It
-   *        must be equal to requested resource id returned by
-   *        {@link#GetResourceAccessId()}.
-   */
-  void Agree(int resource_id) override;
+    /**
+     * @brief Agree the origin to access the given resources. The granted access
+     *        is only valid for this WebView.
+     *
+     * @param resource_id id of the resource agreed to be accessed by origin. It
+     *        must be equal to requested resource id returned by
+     *        {@link#GetResourceAccessId()}.
+     */
+    void Agree(int resource_id) override;
 
-  /**
-   * @brief Get the origin of the web page which is trying to access the
-   *        resource.
-   *
-   * @return the origin of the web page which is trying to access the resource.
-   */
-  std::string Origin() override;
+    /**
+     * @brief Get the origin of the web page which is trying to access the
+     *        resource.
+     *
+     * @return the origin of the web page which is trying to access the resource.
+     */
+    std::string Origin() override;
 
-  /**
-   * @brief Refuse the request.
-   */
-  void Refuse() override;
+    /**
+     * @brief Refuse the request.
+     */
+    void Refuse() override;
 
-  /**
-   * @brief Get the resource id of the web page which is trying to access.
-   *
-   * @return the resource id of the web page which is trying to access.
-   */
-  int ResourceAcessId() override;
+    /**
+     * @brief Get the resource id of the web page which is trying to access.
+     *
+     * @return the resource id of the web page which is trying to access.
+     */
+    int ResourceAcessId() override;
 
 private:
-  ArkWebRefPtr<ArkWebAccessRequest> ark_web_access_request_;
+    ArkWebRefPtr<ArkWebAccessRequest> ark_web_access_request_;
 };
 
 } // namespace OHOS::ArkWeb

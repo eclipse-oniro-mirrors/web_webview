@@ -25,18 +25,17 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=web core)--*/
 class ArkWebGeoLocationCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /**
-   * @brief Report the geo location permission status from users.
-   *
-   * @param origin The origin that ask for the geo location permission.
-   * @param allow The geo location permission status.
-   * @param retain Whether to allow the geo location permission status to be
-   *        saved to the system.
-   * @param incognito true if web is in the incognito mode, flase otherwise.
-   */
-  /*--ark web()--*/
-  virtual void GeoLocationCallbackInvoke(const ArkWebString &origin, bool allow,
-                                         bool retain, bool incognito) = 0;
+    /**
+     * @brief Report the geo location permission status from users.
+     *
+     * @param origin The origin that ask for the geo location permission.
+     * @param allow The geo location permission status.
+     * @param retain Whether to allow the geo location permission status to be
+     *        saved to the system.
+     * @param incognito true if web is in the incognito mode, flase otherwise.
+     */
+    /*--ark web()--*/
+    virtual void GeoLocationCallbackInvoke(const ArkWebString& origin, bool allow, bool retain, bool incognito) = 0;
 };
 
 } // namespace OHOS::ArkWeb

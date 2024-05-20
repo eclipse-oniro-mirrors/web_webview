@@ -15,10 +15,7 @@
 
 #ifndef ARK_POWER_MGR_CLIENT_ADAPTER_H
 #define ARK_POWER_MGR_CLIENT_ADAPTER_H
-
 #pragma once
-
-#include <cstdint>
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -28,35 +25,23 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=library)--*/
 class ArkRunningLockAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkRunningLockAdapter() = default;
+    /*--ark web()--*/
+    virtual bool IsUsed() = 0;
 
-  /*--ark web()--*/
-  virtual ~ArkRunningLockAdapter() = default;
+    /*--ark web()--*/
+    virtual int32_t Lock(uint32_t timeOutMs) = 0;
 
-  /*--ark web()--*/
-  virtual bool IsUsed() = 0;
-
-  /*--ark web()--*/
-  virtual int32_t Lock(uint32_t timeOutMs) = 0;
-
-  /*--ark web()--*/
-  virtual int32_t UnLock() = 0;
+    /*--ark web()--*/
+    virtual int32_t UnLock() = 0;
 };
 
 /*--ark web(source=library)--*/
 class ArkPowerMgrClientAdapter : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  ArkPowerMgrClientAdapter() = default;
-
-  /*--ark web()--*/
-  virtual ~ArkPowerMgrClientAdapter() = default;
-
-  /*--ark web()--*/
-  virtual ArkWebRefPtr<ArkRunningLockAdapter>
-  CreateRunningLock(const ArkWebString &name, uint32_t type) = 0;
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkRunningLockAdapter> CreateRunningLock(const ArkWebString& name, uint32_t type) = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_POWER_MGR_CLIENT_ADAPTER_H

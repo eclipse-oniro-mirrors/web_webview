@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "include/ark_paste_record_vector.h"
+#include "ohos_adapter/include/ark_paste_record_vector.h"
 #include "pasteboard_client_adapter.h"
 
 namespace OHOS::ArkWeb {

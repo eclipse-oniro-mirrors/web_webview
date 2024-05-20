@@ -25,14 +25,13 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_geo_location_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *geo_location_callback_invoke)(
-      struct _ark_web_geo_location_callback_t *self, const ArkWebString *origin,
-      bool allow, bool retain, bool incognito);
+    void(ARK_WEB_CALLBACK* geo_location_callback_invoke)(struct _ark_web_geo_location_callback_t* self,
+        const ArkWebString* origin, bool allow, bool retain, bool incognito);
 } ark_web_geo_location_callback_t;
 
 #ifdef __cplusplus

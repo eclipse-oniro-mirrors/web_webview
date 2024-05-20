@@ -24,14 +24,13 @@ extern "C" {
 #endif
 
 typedef struct _ark_web_accessibility_event_callback_t {
-  /**
-   * @brief Base structure.
-   */
-  ark_web_base_ref_counted_t base;
+    /**
+     * @brief Base structure.
+     */
+    ark_web_base_ref_counted_t base;
 
-  void(ARK_WEB_CALLBACK *on_accessibility_event)(
-      struct _ark_web_accessibility_event_callback_t *self,
-      int64_t accessibility_id, uint32_t event_type);
+    void(ARK_WEB_CALLBACK* on_accessibility_event)(
+        struct _ark_web_accessibility_event_callback_t* self, int64_t accessibility_id, uint32_t event_type);
 } ark_web_accessibility_event_callback_t;
 
 #ifdef __cplusplus
