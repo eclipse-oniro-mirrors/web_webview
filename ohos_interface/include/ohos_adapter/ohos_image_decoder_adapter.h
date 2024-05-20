@@ -26,7 +26,7 @@ public:
 
     virtual ~OhosImageDecoderAdapter() = default;
 
-    virtual bool ParseImageInfo(const uint8_t *data, uint32_t size) = 0;
+    virtual bool ParseImageInfo(const uint8_t* data, uint32_t size) = 0;
 
     virtual std::string GetEncodedFormat() = 0;
 
@@ -34,7 +34,7 @@ public:
 
     virtual int32_t GetImageHeight() = 0;
 
-    virtual bool DecodeToPixelMap(const uint8_t *data, uint32_t size) = 0;
+    virtual bool DecodeToPixelMap(const uint8_t* data, uint32_t size) = 0;
 
     virtual int32_t GetFd() = 0;
 

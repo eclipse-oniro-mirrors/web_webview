@@ -1,0 +1,92 @@
+# Copyright (c) 2022 Huawei Device Co., Ltd.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import("../web_aafwk.gni")
+
+#################################################
+
+glue_script_gen_dir = rebase_path("${target_gen_dir}/../ohos_glue")
+
+action("webview_interface_prepare") {
+  script = "${webview_path}/copy_files.py"
+  depfile = "$target_gen_dir/$target_name.d"
+  output_file = "$target_out_dir/$target_name.out"
+  outputs = [ output_file ]
+
+  args = [
+    "--command-type",
+    "include",
+    "--ohos-glue-dir",
+    "${glue_script_gen_dir}",
+    "--depfile",
+    rebase_path(depfile, "${root_build_dir}"),
+    "--outfile",
+    rebase_path(output_file, "${root_build_dir}"),
+  ]
+}
+
+action("webview_glue_base_prepare") {
+  script = "${webview_path}/copy_files.py"
+  depfile = "$target_gen_dir/$target_name.d"
+  output_file = "$target_out_dir/$target_name.out"
+  outputs = [ output_file ]
+
+  args = [
+    "--command-type",
+    "base",
+    "--ohos-glue-dir",
+    "${glue_script_gen_dir}",
+    "--depfile",
+    rebase_path(depfile, "${root_build_dir}"),
+    "--outfile",
+    rebase_path(output_file, "${root_build_dir}"),
+  ]
+
+  deps = [ ":webview_interface_prepare" ]
+}
+
+action("webview_glue_nweb_prepare") {
+  script = "${webview_path}/copy_files.py"
+  depfile = "$target_gen_dir/$target_name.d"
+  output_file = "$target_out_dir/$target_name.out"
+  outputs = [ output_file ]
+
+  args = [
+    "--command-type",
+    "nweb",
+    "--ohos-glue-dir",
+    "${glue_script_gen_dir}",
+    "--depfile",
+    rebase_path(depfile, "${root_build_dir}"),
+    "--outfile",
+    rebase_path(output_file, "${root_build_dir}"),
+  ]
+}
+
+action("webview_glue_adapter_prepare") {
+  script = "${webview_path}/copy_files.py"
+  depfile = "$target_gen_dir/$target_name.d"
+  output_file = "$target_out_dir/$target_name.out"
+  outputs = [ output_file ]
+
+  args = [
+    "--command-type",
+    "adapter",
+    "--ohos-glue-dir",
+    "${glue_script_gen_dir}",
+    "--depfile",
+    rebase_path(depfile, "${root_build_dir}"),
+    "--outfile",
+    rebase_path(output_file, "${root_build_dir}"),
+  ]
+}

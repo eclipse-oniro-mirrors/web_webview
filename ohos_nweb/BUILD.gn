@@ -41,8 +41,8 @@ config("nweb_public_interface") {
 
 config("nweb_glue_interface") {
   include_dirs = [
-    "${webview_path}/ohos_glue",
-    "${webview_path}/ohos_glue/ohos_nweb/bridge",
+    "${target_gen_dir}/../ohos_glue",
+    "${target_gen_dir}/../ohos_glue/ohos_nweb/bridge",
   ]
 }
 
@@ -68,6 +68,7 @@ ohos_shared_library("libnweb") {
     ":web.para",
     ":web.para.dac",
     ":web_config",
+    "${webview_path}/ohos_glue:ohos_adapter_glue_source",
     "${webview_path}/ohos_glue:ohos_nweb_glue_source",
     "//third_party/libxml2:libxml2",
   ]
