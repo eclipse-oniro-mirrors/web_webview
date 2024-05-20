@@ -155,12 +155,27 @@ void WebviewController::InnerCompleteWindowNew(int32_t parentNwebId)
                 "javaScriptResultCb_ is null");
         return;
     }
-    auto objs = parentControl->javaScriptResultCb_->GetNamedObjects();
-    SetNWebJavaScriptResultCallBack();
-    for (auto it = objs.begin(); it != objs.end(); it++) {
-        if (it->second && IsInit()) {
-            RegisterJavaScriptProxy(
-                it->second->GetEnv(), it->second->GetValue(), it->first, it->second->GetMethodNames());
+    auto parNamedObjs = parentControl->javaScriptResultCb_->GetNamedObjects();
+
+    auto currentControl = FromID(nwebId_);
+    if (!currentControl || !(currentControl->javaScriptResultCb_)) {
+        WVLOG_E("WebviewController::InnerCompleteWindowNew currentControl or "
+                "javaScriptResultCb_ is null");
+        return;
+    }
+
+    std::unique_lock<std::mutex> lock(webMtx_);
+    {
+        auto curNamedObjs = currentControl->javaScriptResultCb_->GetNamedObjects();
+        SetNWebJavaScriptResultCallBack();
+        for (auto it = parNamedObjs.begin(); it != parNamedObjs.end(); it++) {
+            if (curNamedObjs.find(it->first) != curNamedObjs.end()) {
+                continue;
+            }
+            if (it->second && IsInit()) {
+                RegisterJavaScriptProxy(
+                    it->second->GetEnv(), it->second->GetValue(), it->first, it->second->GetMethodNames());
+            }
         }
     }
 }
