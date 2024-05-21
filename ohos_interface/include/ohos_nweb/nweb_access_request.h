@@ -35,6 +35,7 @@ public:
         PROTECTED_MEDIA_ID = 1 << 3,
         MIDI_SYSEX = 1 << 4,
         CLIPBOARD_READ_WRITE = 1 << 5,
+	CLIPBOARD_SANITIZED_WRITE = 1 << 6,
     };
 
     /**
