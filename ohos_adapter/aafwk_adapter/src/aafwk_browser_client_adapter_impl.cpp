@@ -193,7 +193,6 @@ void AafwkBrowserClientAdapterImpl::PassSurface(int64_t surface_id)
         return;
     }
     GetInstance().browserHost_->PassSurface(surface, surface_id);
-    WVLOG_D("Pass surface id = %{public}lld", surface_id);
     return;
 }
 

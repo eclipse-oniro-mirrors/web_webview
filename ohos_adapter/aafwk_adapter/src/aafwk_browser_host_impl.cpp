@@ -138,7 +138,6 @@ void AafwkBrowserHostImpl::PassSurface(sptr<Surface> surface, int64_t surface_id
         return;
     }
     utils->Add(surface_id, surface);
-    WVLOG_D("browser host impl padd surface id = %{public}lld", surface_id);
 }
 
 void AafwkBrowserHostImpl::DestroyRenderSurface(int32_t surface_id)
