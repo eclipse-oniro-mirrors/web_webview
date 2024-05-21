@@ -97,7 +97,7 @@ public:
     bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard) override;
 
     bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
-        const std::shared_ptr<IMFTextConfigAdapter> config) override;
+        const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener) override;
 
     void ShowCurrentInput(const IMFAdapterTextInputType& inputType) override;
 

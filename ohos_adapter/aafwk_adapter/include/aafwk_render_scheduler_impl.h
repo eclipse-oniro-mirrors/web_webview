@@ -17,6 +17,7 @@
 #define AAFWK_RENDER_SCHEDULER_IMPL_H
 
 #include <memory>
+#include "aafwk_browser_client_adapter_impl.h"
 #include "aafwk_render_scheduler_host_adapter.h"
 #include "render_scheduler_host.h"
 
@@ -27,10 +28,13 @@ public:
 
     ~AafwkRenderSchedulerImpl() override = default;
 
-    void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) override;
+    void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd,
+        sptr<IRemoteObject> browser) override;
 
 private:
     std::shared_ptr<AafwkRenderSchedulerHostAdapter> renderSchedulerHostAdapter_;
+
+    std::shared_ptr<AafwkBrowserClientAdapterImpl> browserClientAdapter_ = nullptr;
 };
 }  // namespace content
 

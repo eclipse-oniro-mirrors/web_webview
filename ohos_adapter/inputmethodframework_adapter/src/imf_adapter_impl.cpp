@@ -222,10 +222,12 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
         if (previewStyle == PREVIEW_TEXT_STYLE_UNDERLINE) {
             is_need_underline = true;
         }
+
+        if (listener_) {
+            listener_->SetNeedUnderLine(is_need_underline);
+        }
     }
-    if (listener_) {
-        listener_->SetNeedUnderLine(is_need_underline);
-    }
+    
     return 0;
 }
 
@@ -259,7 +261,7 @@ void ReportImfErrorEvent(int32_t ret, bool isShowKeyboard)
 }
 
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
-    const std::shared_ptr<IMFTextConfigAdapter> config)
+    const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener)
 {
     if (!listener) {
         WVLOG_E("the listener is nullptr");
@@ -270,6 +272,11 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
         WVLOG_E("the config is nullptr");
         ReportImfErrorEvent(IMF_TEXT_CONFIG_NULL_POINT, isShowKeyboard);
         return false;
+    }
+
+    if ((textListener_ != nullptr) && isResetListener) {
+        textListener_ = nullptr;
+        WVLOG_I("attach node is changed, need reset listener");
     }
 
     if (!textListener_) {

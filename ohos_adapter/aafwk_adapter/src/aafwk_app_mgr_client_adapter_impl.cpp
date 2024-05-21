@@ -18,6 +18,7 @@
 #include <chrono>
 #include <thread>
 
+#include "aafwk_browser_host_impl.h"
 #include "aafwk_render_scheduler_impl.h"
 #include "nweb_log.h"
 
@@ -29,6 +30,7 @@ constexpr int RET_ALREADY_EXIST_RENDER = 8454244; // copy from ability_runtime
 } // namespace
 
 namespace OHOS::NWeb {
+const std::string GPU_PROCESS_TYPE = "gpu-process";
 AafwkAppMgrClientAdapterImpl::AafwkAppMgrClientAdapterImpl()
     : appMgrClient_(std::make_unique<AppExecFwk::AppMgrClient>())
 {}
@@ -44,7 +46,7 @@ int AafwkAppMgrClientAdapterImpl::StartRenderProcess(
     int retryCnt = 0;
     int ret;
     do {
-        ret = appMgrClient_->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
+        ret = appMgrClient_->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid, false);
         if (ret == RET_ALREADY_EXIST_RENDER) {
             WVLOG_E("app mgr client start render process failed, render process already exist.");
             std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_FOR_MILLI_SECONDS_CNT));
@@ -107,5 +109,62 @@ int AafwkAppMgrClientAdapterImpl::GetRenderProcessTerminationStatus(pid_t render
     }
 
     return 0;
+}
+
+int AafwkAppMgrClientAdapterImpl::StartChildProcess(
+    const std::string& renderParam, int32_t ipcFd, int32_t sharedFd,
+    int32_t crashFd, pid_t& renderPid, const std::string& processType)
+{
+    if (appMgrClient_ == nullptr) {
+        WVLOG_E("app mgr client is nullptr.");
+        return -1;
+    }
+
+    bool isGPU = false;
+    if (processType == GPU_PROCESS_TYPE) {
+        isGPU = true;
+    }
+
+    int retryCnt = 0;
+    int ret;
+    do {
+        ret = appMgrClient_->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid, isGPU);
+        if (ret == RET_ALREADY_EXIST_RENDER) {
+            WVLOG_E("app mgr client start %{public}s process failed, process already exist.", processType.c_str());
+            std::this_thread::sleep_for(std::chrono::milliseconds(SLEEP_FOR_MILLI_SECONDS_CNT));
+            continue;
+        }
+        if (ret != 0) {
+            WVLOG_E("app mgr client start render process failed, ret = %{public}d.", ret);
+            return -1;
+        }
+    } while (++retryCnt < START_RENDER_PROCESS_MAX_CNT && ret != 0);
+
+    if (ret != 0) {
+        WVLOG_E("over max retry times, app mgr client start render process failed, ret = %{public}d.", ret);
+        return -1;
+    }
+
+    return 0;
+}
+
+void AafwkAppMgrClientAdapterImpl::SaveBrowserConnect(std::shared_ptr<AafwkBrowserHostAdapter> adapter)
+{
+    if (appMgrClient_ == nullptr) {
+        WVLOG_E("app mgr client is nullptr.");
+        return;
+    }
+
+    if (adapter == nullptr) {
+        WVLOG_E("browser connect is nullptr.");
+        return;
+    }
+
+    AafwkBrowserHostImpl *browser = new (std::nothrow) AafwkBrowserHostImpl(adapter);
+    if (browser == nullptr) {
+        WVLOG_E("create new AafwkBrowserHostImpl failed!");
+    }
+    WVLOG_E("AafwkAppMgrClientAdapterImpl SaveBrowserConnect success!");
+    appMgrClient_->SaveBrowserChannel(browser);
 }
 } // namespace OHOS::NWeb
