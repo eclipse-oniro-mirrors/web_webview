@@ -31,6 +31,8 @@ HWTEST(HiViewDFXAdapterTest, NormalScene, TestSize.Level1)
 {
     HiLogAdapter::PrintLog(LogLevelAdapter::INFO, "nwebTest", "nweb hilogAdapter PrintLog Test");
 
+    HiLogAdapter::PrintConsoleLog(LogLevelAdapter::INFO, "ARKWEB-CONSOLE", "nwe console log test");
+
     int ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
         "testEvent", HiSysEventAdapter::EventType::STATISTIC, { "testkey1", "0"});
     EXPECT_EQ(ret, 0);
