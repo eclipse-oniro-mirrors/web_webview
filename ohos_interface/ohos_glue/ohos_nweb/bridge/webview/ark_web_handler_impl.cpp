@@ -67,6 +67,7 @@ using ArkWebRenderExitReason = OHOS::NWeb::RenderExitReason;
 using ArkWebDragOperation = OHOS::NWeb::NWebDragData::DragOperation;
 using ArkWebRenderProcessNotRespondingReason = OHOS::NWeb::RenderProcessNotRespondingReason;
 using ArkWebViewportFit = OHOS::NWeb::ViewportFit;
+using ArkWebFocusSource = OHOS::NWeb::NWebFocusSource;
 
 ArkWebHandlerImpl::ArkWebHandlerImpl(std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler)
     : nweb_handler_(nweb_handler)
@@ -817,6 +818,16 @@ void ArkWebHandlerImpl::CreateOverlay(void* data, size_t len, int width, int hei
 void ArkWebHandlerImpl::OnOverlayStateChanged(int offset_x, int offset_y, int rect_width, int rect_height)
 {
     nweb_handler_->OnOverlayStateChanged(offset_x, offset_y, rect_width, rect_height);
+}
+
+bool ArkWebHandlerImpl::OnFocus(int source)
+{
+    return nweb_handler_->OnFocus(static_cast<ArkWebFocusSource>(source));
+}
+
+bool ArkWebHandlerImpl::OnOverScroll(float xOffset, float yOffset, float xVelocity, float yVelocity)
+{
+    return nweb_handler_->OnOverScroll(xOffset, yOffset, xVelocity, yVelocity);
 }
 
 } // namespace OHOS::ArkWeb
