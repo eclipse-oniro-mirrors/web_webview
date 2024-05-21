@@ -24,23 +24,23 @@ const std::string PARAM_CHECK_ERROR_MSG = "Invalid input parameter";
 const std::string INIT_ERROR_MSG = "Init error. The WebviewController must be associated with a Web component";
 const std::string INVALID_URL_MSG = "Invalid url";
 const std::string INVALID_RESOURCE_MSG = "Invalid resource path or file type";
-const std::string FUNCTION_NOT_ENABLE_MSG = "Function not enable";
+const std::string FUNCTION_NOT_ENABLE_MSG = "Function not enabled.";
 const std::string INVALID_COOKIE_VALUE_MSG = "Invalid cookie value";
-const std::string CAN_NOT_REGISTER_MESSAGE_EVENT_MSG = "Can not register message event using this port";
-const std::string CANNOT_DEL_JAVA_SCRIPT_PROXY_MSG = "Cannot delete JavaScriptProxy.";
-const std::string CAN_NOT_POST_MESSAGE_MSG = "Can not post message using this port";
+const std::string CAN_NOT_REGISTER_MESSAGE_EVENT_MSG = "Fail to register a message event for the port.";
+const std::string CANNOT_DEL_JAVA_SCRIPT_PROXY_MSG = "Failed to delete JavaScriptProxy because it does not exist.";
+const std::string CAN_NOT_POST_MESSAGE_MSG = "Failed to post messages through the port.";
 const std::string INVALID_ORIGIN_MSG = "Invalid origin";
 const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invalid web storage origin";
-const std::string INVALID_SOCKET_NUMBER_MSG = "The number of preconnect sockets is invalid.";
-const std::string TYPE_NOT_MATCH_WITCH_VALUE_MSG = "The type does not match with the value of the message";
-const std::string NEW_OOM_MSG = "New failed, out of memory";
-const std::string DOWNLOAD_NOT_PAUSED_MSG = "The download is not paused.";
+const std::string INVALID_SOCKET_NUMBER_MSG = "The number of sockets to be preconnected is invalid.";
+const std::string TYPE_NOT_MATCH_WITCH_VALUE_MSG = "The type and value of the message do not match.";
+const std::string NEW_OOM_MSG = "Memory allocation failed.";
+const std::string DOWNLOAD_NOT_PAUSED_MSG = "The download task is not paused.";
 const std::string NO_VALID_CONTROLLER_FOR_DOWNLOAD_MSG = "No valid WebviewController is associated.";
 const std::string NO_DOWNLOAD_DELEGATE_SET_MSG = "No valid WebviewController is associated.";
-const std::string DOWNLOAD_NOT_START_MSG = "The download has not been started yet.";
-const std::string REGISTER_CUSTOM_SCHEME_FAILED_MSG = "Register custom schemes failed.";
-const std::string HTTP_BODY_STREAN_INIT_FAILED_MSG = "The http body stream init failed";
-const std::string RESOURCE_HANDLER_INVALID_MSG = "Resource handler is invalid";
+const std::string DOWNLOAD_NOT_START_MSG = "The download task is not started yet.";
+const std::string REGISTER_CUSTOM_SCHEME_FAILED_MSG = "Failed to register custom schemes.";
+const std::string HTTP_BODY_STREAN_INIT_FAILED_MSG = "Failed to initialize the HTTP body stream.";
+const std::string RESOURCE_HANDLER_INVALID_MSG = "The resource handler is invalid.";
 }
 
 namespace OHOS {
