@@ -361,13 +361,13 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
  */
 HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_007, TestSize.Level1)
 {
-    bool result = g_imf->Attach(nullptr, true, nullptr);
+    bool result = g_imf->Attach(nullptr, true, nullptr, false);
     EXPECT_FALSE(result);
     auto listener = std::make_shared<IMFTextListenerTest>();
     EXPECT_NE(listener, nullptr);
-    result = g_imf->Attach(nullptr, true, nullptr);
+    result = g_imf->Attach(nullptr, true, nullptr, false);
     EXPECT_FALSE(result);
-    result = g_imf->Attach(nullptr, true, nullptr);
+    result = g_imf->Attach(nullptr, true, nullptr, false);
     EXPECT_FALSE(result);
 }
 

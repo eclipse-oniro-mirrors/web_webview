@@ -20,8 +20,11 @@
 #define private public
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "aafwk_render_scheduler_impl.h"
+#include "aafwk_browser_client_adapter_impl.h"
+#include "aafwk_browser_host_impl.h"
 #undef private
 
+#include "aafwk_render_scheduler_host_adapter.h"
 #include "app_mgr_client.h"
 #include "ohos_adapter_helper.h"
 
@@ -59,13 +62,15 @@ void NWebAafwkAdapterTest::TearDown(void)
 
 class MockAppMgrClient : public AppMgrClient {
 public:
-    MOCK_METHOD5(StartRenderProcess, int(const std::string&, int32_t, int32_t, int32_t, pid_t&));
+    MOCK_METHOD6(StartRenderProcess, int(const std::string&, int32_t, int32_t, int32_t, pid_t&, bool));
     MOCK_METHOD2(GetRenderProcessTerminationStatus, int(pid_t, int &));
 };
 
 class RenderScheduler : public AafwkRenderSchedulerHostAdapter {
 public:
     void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd);
+    void NotifyBrowser(int32_t ipcFd, int32_t sharedFd, int32_t crashFd,
+        std::shared_ptr<AafwkBrowserClientAdapter> adapter);
 };
 
 void RenderScheduler::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd)
@@ -73,6 +78,52 @@ void RenderScheduler::NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t c
     (void)ipcFd;
     (void)sharedFd;
     (void)crashFd;
+}
+
+void RenderScheduler::NotifyBrowser(int32_t ipcFd, int32_t sharedFd, int32_t crashFd,
+    std::shared_ptr<AafwkBrowserClientAdapter> adapter)
+{
+    (void)ipcFd;
+    (void)sharedFd;
+    (void)crashFd;
+    (void)adapter;
+}
+
+class MockBrowserClient : public BrowserClient {
+    MockBrowserClient(const sptr<IRemoteObject> &impl);
+
+    sptr<IRemoteObject> QueryRenderSurface(int32_t surface_id);
+
+    void ReportThread(int32_t status, int32_t process_id, int32_t thread_id, int32_t role);
+
+    void PassSurface(sptr<Surface>surface, int64_t surface_id);
+
+    void DestroyRenderSurface(int32_t surface_id);
+};
+
+sptr<IRemoteObject> MockBrowserClient::QueryRenderSurface(int32_t surface_id)
+{
+    (void)surface_id;
+    return nullptr;
+}
+
+void MockBrowserClient::ReportThread(int32_t status, int32_t process_id, int32_t thread_id, int32_t role)
+{
+    (void)status;
+    (void)process_id;
+    (void)thread_id;
+    (void)role;
+}
+
+void MockBrowserClient::PassSurface(sptr<Surface>surface, int64_t surface_id)
+{
+    (void)surface;
+    (void)surface_id;
+}
+
+void MockBrowserClient::DestroyRenderSurface(int32_t surface_id)
+{
+    (void)surface_id;
 }
 
 /**
@@ -101,7 +152,8 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_002, TestSize
 {
     MockAppMgrClient *mock = new MockAppMgrClient();
     g_adapter->appMgrClient_.reset((AppMgrClient *)mock);
-    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_, ::testing::_, ::testing::_))
+    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_,
+                                          ::testing::_, ::testing::_, ::testing::_))
         .Times(1)
         .WillRepeatedly(::testing::Return(0));
     std::string renderParam = "test";
@@ -123,7 +175,8 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartRenderProcess_003, TestSize
 {
     MockAppMgrClient *mock = new MockAppMgrClient();
     g_adapter->appMgrClient_.reset((AppMgrClient *)mock);
-    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_, ::testing::_, ::testing::_))
+    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_,
+                                          ::testing::_, ::testing::_, ::testing::_))
         .Times(1)
         .WillRepeatedly(::testing::Return(1));
     std::string renderParam = "test";
@@ -278,8 +331,8 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Le
     int32_t ipcFd = 1;
     int32_t sharedFd = 2;
     int32_t crashFd = 3;
-    render->NotifyBrowserFd(ipcFd, sharedFd, crashFd);
+    render->NotifyBrowserFd(ipcFd, sharedFd, crashFd, nullptr);
     render->renderSchedulerHostAdapter_ = nullptr;
-    render->NotifyBrowserFd(ipcFd, sharedFd, crashFd);
+    render->NotifyBrowserFd(ipcFd, sharedFd, crashFd, nullptr);
 }
 }

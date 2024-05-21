@@ -158,13 +158,29 @@ void WebviewController::InnerCompleteWindowNew(int32_t parentNwebId)
                 "javaScriptResultCb_ is null");
         return;
     }
-    auto objs = parentControl->javaScriptResultCb_->GetNamedObjects();
-    SetNWebJavaScriptResultCallBack();
-    for (auto it = objs.begin(); it != objs.end(); it++) {
-        if (it->second && IsInit()) {
-            RegisterJavaScriptProxy(
-                it->second->GetEnv(), it->second->GetValue(), it->first,
-                it->second->GetSyncMethodNames(), it->second->GetAsyncMethodNames());
+
+    auto parNamedObjs = parentControl->javaScriptResultCb_->GetNamedObjects();
+
+    auto currentControl = FromID(nwebId_);
+    if (!currentControl || !(currentControl->javaScriptResultCb_)) {
+        WVLOG_E("WebviewController::InnerCompleteWindowNew currentControl or "
+                "javaScriptResultCb_ is null");
+        return;
+    }
+
+    std::unique_lock<std::mutex> lock(webMtx_);
+    {
+        auto curNamedObjs = currentControl->javaScriptResultCb_->GetNamedObjects();
+        SetNWebJavaScriptResultCallBack();
+        for (auto it = parNamedObjs.begin(); it != parNamedObjs.end(); it++) {
+            if (curNamedObjs.find(it->first) != curNamedObjs.end()) {
+                continue;
+            }
+            if (it->second && IsInit()) {
+                RegisterJavaScriptProxy(
+                    it->second->GetEnv(), it->second->GetValue(), it->first,
+                    it->second->GetSyncMethodNames(), it->second->GetAsyncMethodNames());
+            }
         }
     }
 }
@@ -919,7 +935,7 @@ void WebviewController::RegisterJavaScriptProxy(
                std::back_inserter(allMethodList));
     objId = javaScriptResultCb_->RegisterJavaScriptProxy(env, obj, objName, allMethodList, asyncMethodList);
 
-    nweb_ptr->RegisterArkJSfunction(objName, syncMethodList, asyncMethodList, objId);
+    nweb_ptr->RegisterArkJSfunction(objName, syncMethodList, objId);
 }
 
 void WebviewController::RunJavaScriptCallback(
@@ -1535,9 +1551,7 @@ bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::
 
 std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env, napi_value value) {
     std::map<std::string, std::string> responseHeaders;
-    bool isModule = false;
-    bool isTopLevel = false;
-    auto defaultCacheOptions = std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
+    auto defaultCacheOptions = std::make_shared<NWebCacheOptionsImpl>(responseHeaders);
 
     napi_value responseHeadersValue = nullptr;
     if (napi_get_named_property(env, value, "responseHeaders", &responseHeadersValue) != napi_ok) {
@@ -1550,20 +1564,16 @@ std::shared_ptr<CacheOptions> WebviewController::ParseCacheOptions(napi_env env,
         return defaultCacheOptions;
     }
 
-    return std::make_shared<NWebCacheOptionsImpl>(responseHeaders, isModule, isTopLevel);
+    return std::make_shared<NWebCacheOptionsImpl>(responseHeaders);
 }
 
-ErrCode WebviewController::PrecompileJavaScriptPromise(
+void WebviewController::PrecompileJavaScriptPromise(
     napi_env env, napi_deferred deferred,
     const std::string &url, const std::string &script, std::shared_ptr<CacheOptions> cacheOptions)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
-    if (!nweb_ptr) {
-        return NWebError::INIT_ERROR;
-    }
-
-    if (!deferred) {
-        return NWebError::INIT_ERROR;
+    if (!nweb_ptr || !deferred) {
+        return;
     }
 
     auto callbackImpl = std::make_shared<OHOS::NWeb::NWebPrecompileCallback>();
@@ -1591,7 +1601,6 @@ ErrCode WebviewController::PrecompileJavaScriptPromise(
     });
 
     nweb_ptr->PrecompileJavaScript(url, script, cacheOptions, callbackImpl);
-    return NWebError::NO_ERROR;
 }
 
 bool WebviewController::ParseResponseHeaders(napi_env env,

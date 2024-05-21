@@ -45,7 +45,7 @@ namespace OHOS {
             return false;
         }
 
-        render.NotifyBrowserFd(ipcFd, sharedFd, crashFd);
+        render.NotifyBrowserFd(ipcFd, sharedFd, crashFd, nullptr);
         return true;
     }
 }
