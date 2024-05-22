@@ -24,6 +24,7 @@
 namespace OHOS::NWeb {
 namespace {
 const std::string THREAD_NAME = "VSync-webview";
+constexpr int32_t WEBVIEW_FRAME_RATE_TYPE = 4;
 }
 
 void (*VSyncAdapterImpl::callback_)() = nullptr;
@@ -166,10 +167,10 @@ void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
         return;
     }
 
-    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 120};
+    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 120, WEBVIEW_FRAME_RATE_TYPE};
     if (frameRateLinker_) {
         if (!enabled) {
-            range = {0, RANGE_MAX_REFRESHRATE, 0};
+            range = {0, RANGE_MAX_REFRESHRATE, 0, WEBVIEW_FRAME_RATE_TYPE};
         }
         frameRateLinker_->UpdateFrameRateRangeImme(range);
         frameRateLinker_->SetEnable(enabled);
@@ -179,7 +180,7 @@ void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
 
 void VSyncAdapterImpl::SetFramePreferredRate(int32_t preferredRate)
 {
-    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, preferredRate};
+    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, preferredRate, WEBVIEW_FRAME_RATE_TYPE};
     if (frameRateLinker_ && frameRateLinker_->IsEnable()) {
         WVLOG_D("NWebWindowAdapter SetFramePreferredRate preferredRate=%{public}d", preferredRate);
         frameRateLinker_->UpdateFrameRateRangeImme(range);
