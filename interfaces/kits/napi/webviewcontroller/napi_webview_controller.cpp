@@ -5015,13 +5015,15 @@ napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The number of params must be one.");
         return result;
     }
 
     bool enabled = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ZERO], enabled)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'enable' must be boolean.");
         return result;
     }
 
@@ -5055,7 +5057,8 @@ bool GetHostList(napi_env env, napi_value array, std::vector<std::string>& hosts
     uint32_t arrayLen = 0;
     napi_get_array_length(env, array, &arrayLen);
     if (arrayLen == 0) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The array length must be greater than 0.");
         return false;
     }
 
@@ -5093,14 +5096,16 @@ napi_value NapiWebviewController::AddIntelligentTrackingPreventionBypassingList(
     napi_value argv[INTEGER_ONE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The number of params must be one.");
         return result;
     }
 
     bool isArray = false;
     NAPI_CALL(env, napi_is_array(env, argv[INTEGER_ZERO], &isArray));
     if (!isArray) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'hostList' must be string array.");
         return result;
     }
 
@@ -5125,14 +5130,16 @@ napi_value NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingLi
     napi_value argv[INTEGER_ONE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The number of params must be one.");
         return result;
     }
 
     bool isArray = false;
     NAPI_CALL(env, napi_is_array(env, argv[INTEGER_ZERO], &isArray));
     if (!isArray) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'hostList' must be string array.");
         return result;
     }
 
@@ -5264,13 +5271,15 @@ napi_value NapiWebviewController::SetRenderProcessMode(
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The number of params must be one.");
         return result;
     }
 
     int32_t mode = 0;
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], mode)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'mode' must be int.");
         return result;
     }
 
