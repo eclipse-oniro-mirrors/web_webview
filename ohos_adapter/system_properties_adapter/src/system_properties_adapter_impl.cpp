@@ -185,6 +185,14 @@ bool SystemPropertiesAdapterImpl::GetOOPGPUEnable()
     return false;
 }
 
+std::string SystemPropertiesAdapterImpl::GetOOPGPUStatus()
+{
+    if (GetDeviceInfoProductModel() == "emulator") {
+        return "false";
+    }
+    return OHOS::system::GetParameter("web.oop.gpu", "");
+}
+
 void SystemPropertiesAdapterImpl::SetOOPGPUDisable()
 {
     if (OHOS::system::GetParameter("web.oop.gpu", "") == "None") {

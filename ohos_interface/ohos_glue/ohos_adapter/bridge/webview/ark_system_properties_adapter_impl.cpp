@@ -142,4 +142,10 @@ ArkFrameRateSettingAdapterVector ArkSystemPropertiesAdapterImpl::GetLTPOConfig(c
     return result;
 }
 
+ArkWebString ArkSystemPropertiesAdapterImpl::GetOOPGPUStatus()
+{
+    std::string str = real_.GetOOPGPUStatus();
+    return ArkWebStringClassToStruct(str);
+}
+
 } // namespace OHOS::ArkWeb
