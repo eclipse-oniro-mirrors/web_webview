@@ -86,6 +86,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkFrameRateSettingAdapterVector GetLTPOConfig(const ArkWebString& settingName) = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetOOPGPUStatus() = 0;
 };
 
 } // namespace OHOS::ArkWeb

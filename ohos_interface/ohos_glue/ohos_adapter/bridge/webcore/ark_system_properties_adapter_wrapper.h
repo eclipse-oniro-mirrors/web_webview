@@ -67,6 +67,8 @@ public:
 
     std::vector<NWeb::FrameRateSetting> GetLTPOConfig(const std::string& settingName) override;
 
+    std::string GetOOPGPUStatus() override;
+
 private:
     ArkWebRefPtr<ArkSystemPropertiesAdapter> ctocpp_;
 };
