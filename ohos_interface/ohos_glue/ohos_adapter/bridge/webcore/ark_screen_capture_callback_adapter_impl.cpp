@@ -37,4 +37,9 @@ void ArkScreenCaptureCallbackAdapterImpl::OnVideoBufferAvailable(bool isReady)
     real_->OnVideoBufferAvailable(isReady);
 }
 
+void ArkScreenCaptureCallbackAdapterImpl::OnStateChange(int32_t stateCode)
+{
+    real_->OnStateChange((OHOS::NWeb::ScreenCaptureStateCodeAdapter)stateCode);
+}
+
 } // namespace OHOS::ArkWeb
