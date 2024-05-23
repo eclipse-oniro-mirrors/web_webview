@@ -136,6 +136,8 @@ public:
     void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime) {}
 
     void ClearHostIP(const std::string& hostName) {}
+
+    void EnableWholeWebPageDrawing() {}
 };
 
 void NwebHelperTest::SetUpTestCase(void)
@@ -540,6 +542,31 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetHostIP_001, TestSize.Level1)
  * @tc.require:
  */
 HWTEST_F(NwebHelperTest, NWebHelper_ClearHostIP_001, TestSize.Level1)
+{
+    int32_t nweb_id = 1;
+    auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
+    EXPECT_EQ(nwebHelper, nullptr);
+
+    std::string hostName = "name";
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().ClearHostIP(hostName);
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+
+    auto nwebengineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebengineMock;
+    NWebHelper::Instance().ClearHostIP(hostName);
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
+
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+}
+
+/**
+ * @tc.name: NWebHelper_EnableWholeWebPageDrawing_001
+ * @tc.desc: EnableWholeWebPageDrawing.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_EnableWholeWebPageDrawing_001, TestSize.Level1)
 {
     int32_t nweb_id = 1;
     auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);

@@ -82,6 +82,8 @@ public:
     void SetHostIP(
         const std::string& hostName, const std::string& address, int32_t aliveTime);
     void ClearHostIP(const std::string& hostName);
+
+    void EnableWholeWebPageDrawing();
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);
