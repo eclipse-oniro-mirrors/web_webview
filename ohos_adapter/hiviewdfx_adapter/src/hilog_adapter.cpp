@@ -23,6 +23,7 @@ namespace {
 constexpr uint32_t BROWSER_UID_BASE = 20000000;
 constexpr uint32_t LOG_APP_DOMAIN = 0xD004500;
 constexpr uint32_t LOG_RENDER_DOMAIN = 0xD004501;
+constexpr uint32_t LOG_CONSOLE_DOMAIN = 0x001194;
 
 const ::LogLevel LOG_LEVELS[] = {
     LOG_DEBUG,
@@ -45,6 +46,11 @@ int HiLogAdapterPrintLog(uint32_t level, const char* tag, const char* fmt, va_li
     }
     return HiLogPrintArgs(LOG_CORE, LOG_LEVELS[level], domain, tag, fmt, ap);
 }
+
+int HiLogAdapterConsoleLog(uint32_t level, const char* tag, const char* fmt, va_list ap)
+{
+    return HiLogPrintArgs(LOG_APP, LOG_LEVELS[level], LOG_CONSOLE_DOMAIN, tag, fmt, ap);
+}
 }
 
 int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
@@ -53,6 +59,16 @@ int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* f
     va_list ap;
     va_start(ap, fmt);
     ret = HiLogAdapterPrintLog(static_cast<uint32_t>(level), tag, fmt, ap);
+    va_end(ap);
+    return ret;
+}
+
+int HiLogAdapter::PrintConsoleLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
+{
+    int ret;
+    va_list ap;
+    va_start(ap, fmt);
+    ret = HiLogAdapterConsoleLog(static_cast<uint32_t>(level), tag, fmt, ap);
     va_end(ap);
     return ret;
 }
