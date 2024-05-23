@@ -104,6 +104,31 @@ enum class ContainerFormatTypeAdapter : int32_t {
     CFT_BUTT,
 };
 
+enum class ScreenCaptureStateCodeAdapter : int32_t {
+    /* Screen capture state INVLID */
+    SCREEN_CAPTURE_STATE_INVLID = -1,
+    /* Screen capture state started by user */
+    SCREEN_CAPTURE_STATE_STARTED = 0,
+    /* Screen capture state canceled by user */
+    SCREEN_CAPTURE_STATE_CANCELED = 1,
+    /* ScreenCapture stopped by user */
+    SCREEN_CAPTURE_STATE_STOPPED_BY_USER = 2,
+    /* ScreenCapture interrupted by other screen capture */
+    SCREEN_CAPTURE_STATE_INTERRUPTED_BY_OTHER = 3,
+    /* ScreenCapture stopped by SIM call */
+    SCREEN_CAPTURE_STATE_STOPPED_BY_CALL = 4,
+    /* Microphone is temporarily unavailable */
+    SCREEN_CAPTURE_STATE_MIC_UNAVAILABLE = 5,
+    /* Microphone is muted by user */
+    SCREEN_CAPTURE_STATE_MIC_MUTED_BY_USER = 6,
+    /* Microphone is unmuted by user */
+    SCREEN_CAPTURE_STATE_MIC_UNMUTED_BY_USER = 7,
+    /* Current captured screen has private window */
+    SCREEN_CAPTURE_STATE_ENTER_PRIVATE_SCENE = 8,
+    /* Private window disappeared on current captured screen */
+    SCREEN_CAPTURE_STATE_EXIT_PRIVATE_SCENE = 9,
+};
+
 class AudioCaptureInfoAdapter {
 public:
     AudioCaptureInfoAdapter() = default;
@@ -241,6 +266,8 @@ public:
     virtual void OnAudioBufferAvailable(bool isReady, AudioCaptureSourceTypeAdapter type) = 0;
 
     virtual void OnVideoBufferAvailable(bool isReady) = 0;
+
+    virtual void OnStateChange(ScreenCaptureStateCodeAdapter stateCode) {}
 };
 
 class ScreenCaptureAdapter {

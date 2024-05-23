@@ -31,6 +31,8 @@ public:
 
     void OnVideoBufferAvailable(bool isReady) override;
 
+    void OnStateChange(OHOS::Media::AVScreenCaptureStateCode stateCode) override;
+
 private:
     std::shared_ptr<ScreenCaptureCallbackAdapter> callback_;
 };

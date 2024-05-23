@@ -197,6 +197,35 @@ OHOS::Media::AVScreenCaptureConfig ConvertScreenCaptureConfig(const std::shared_
 
     return avConfig;
 }
+
+ScreenCaptureStateCodeAdapter GetScreenCaptureStateCodeAdapter(const OHOS::Media::AVScreenCaptureStateCode& stateCode)
+{
+    switch (stateCode) {
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STARTED:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STARTED;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_CANCELED:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_CANCELED;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STOPPED_BY_USER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STOPPED_BY_USER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_INTERRUPTED_BY_OTHER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_INTERRUPTED_BY_OTHER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STOPPED_BY_CALL:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STOPPED_BY_CALL;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_UNAVAILABLE:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_UNAVAILABLE;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_MUTED_BY_USER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_MUTED_BY_USER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_UNMUTED_BY_USER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_UNMUTED_BY_USER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_ENTER_PRIVATE_SCENE:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_ENTER_PRIVATE_SCENE;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_EXIT_PRIVATE_SCENE:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_EXIT_PRIVATE_SCENE;
+        default:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_INVLID;
+    }
+    return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_INVLID;
+}
 } // namespace
 
 void OHScreenCaptureCallback::OnError(OHOS::Media::ScreenCaptureErrorType errorType, int32_t errorCode)
@@ -218,6 +247,14 @@ void OHScreenCaptureCallback::OnVideoBufferAvailable(bool isReady)
 {
     if (callback_) {
         callback_->OnVideoBufferAvailable(isReady);
+    }
+}
+
+void OHScreenCaptureCallback::OnStateChange(OHOS::Media::AVScreenCaptureStateCode stateCode)
+{
+    WVLOG_I("OnStateChange() is called, stateCode %{public}d", stateCode);
+    if (callback_) {
+        callback_->OnStateChange(GetScreenCaptureStateCodeAdapter(stateCode));
     }
 }
 
@@ -284,7 +321,11 @@ int32_t ScreenCaptureAdapterImpl::StartCapture()
         WVLOG_E("not init");
         return -1;
     }
-    int32_t ret = screenCapture_->StartScreenCapture();
+    int32_t ret = screenCapture_->SetPrivacyAuthorityEnabled();
+    if (ret != Media::MSERR_OK) {
+        WVLOG_E("start capture SetPrivacyAuthorityEnabled failed, ret = %{public}d", ret);
+    }
+    ret = screenCapture_->StartScreenCapture();
     if (ret != Media::MSERR_OK) {
         WVLOG_E("start capture failed, ret = %{public}d", ret);
         return -1;

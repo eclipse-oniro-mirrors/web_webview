@@ -32,6 +32,8 @@ public:
 
     void OnVideoBufferAvailable(bool isReady) override;
 
+    void OnStateChange(OHOS::NWeb::ScreenCaptureStateCodeAdapter stateCode) override;
+
 private:
     ArkWebRefPtr<ArkScreenCaptureCallbackAdapter> ctocpp_;
 };

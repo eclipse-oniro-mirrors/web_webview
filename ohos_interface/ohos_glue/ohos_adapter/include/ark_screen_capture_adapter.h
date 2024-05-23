@@ -138,6 +138,9 @@ public:
 
     /*--ark web()--*/
     virtual void OnVideoBufferAvailable(bool isReady) = 0;
+
+    /*--ark web()--*/
+    virtual void OnStateChange(int32_t stateCode) = 0;
 };
 
 /*--ark web(source=webview)--*/
