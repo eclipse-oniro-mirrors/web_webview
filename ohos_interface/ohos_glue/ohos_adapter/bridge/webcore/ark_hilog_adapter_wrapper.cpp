@@ -17,10 +17,10 @@
 #include "ohos_adapter/bridge/ark_web_adapter_bridge_helper.h"
 
 namespace OHOS::NWeb {
+using HiLogAdapterPrintLogFunc = int (*)(uint32_t level, const char* tag, const char* fmt, va_list ap);
 
 int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
 {
-    using HiLogAdapterPrintLogFunc = int (*)(uint32_t level, const char* tag, const char* fmt, va_list ap);
     static HiLogAdapterPrintLogFunc hi_log_adapter_print_log = reinterpret_cast<HiLogAdapterPrintLogFunc>(
         ArkWeb::ArkWebAdapterBridgeHelper::GetInstance(false).LoadFuncSymbol("HiLogAdapterPrintLog", false));
     if (!hi_log_adapter_print_log) {
@@ -35,4 +35,19 @@ int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* f
     return ret;
 }
 
+int HiLogAdapter::PrintConsoleLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
+{
+    static HiLogAdapterPrintLogFunc hi_log_adapter_console_log = reinterpret_cast<HiLogAdapterPrintLogFunc>(
+        ArkWeb::ArkWebAdapterBridgeHelper::GetInstance(false).LoadFuncSymbol("HiLogAdapterConsoleLog", false));
+    if (!hi_log_adapter_console_log) {
+        return -1;
+    }
+
+    int ret;
+    va_list ap;
+    va_start(ap, fmt);
+    ret = hi_log_adapter_console_log((uint32_t)level, tag, fmt, ap);
+    va_end(ap);
+    return ret;
+}
 } // namespace OHOS::NWeb

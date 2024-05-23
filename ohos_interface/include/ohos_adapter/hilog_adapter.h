@@ -32,6 +32,8 @@ enum class LogLevelAdapter : uint32_t {
 class HiLogAdapter {
 public:
     static int PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...);
+
+    static int PrintConsoleLog(LogLevelAdapter level, const char* tag, const char* fmt, ...);
 };
 
 } // namespace OHOS::NWeb
