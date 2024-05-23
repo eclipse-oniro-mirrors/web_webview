@@ -86,6 +86,8 @@ public:
     virtual bool GetBoolParameter(const std::string& key, bool defaultValue) = 0;
 
     virtual std::vector<FrameRateSetting> GetLTPOConfig(const std::string& settingName) = 0;
+
+    virtual std::string GetOOPGPUStatus() = 0;
 };
 
 } // namespace OHOS::NWeb
