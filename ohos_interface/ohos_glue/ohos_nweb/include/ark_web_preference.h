@@ -716,6 +716,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) = 0;
+
+    /**
+     * @brief Set whether the scollbar is displayed.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString PutOverlayScrollbarEnabled(bool enable) = 0;
 };
 
 } // namespace OHOS::ArkWeb

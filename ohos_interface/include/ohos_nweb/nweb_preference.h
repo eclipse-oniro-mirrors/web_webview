@@ -632,6 +632,11 @@ public:
      * @param shouldOverlay Native video player should overlay web page or not.
      */
     virtual void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) = 0;
+
+    /**
+     * Set whether the scrollbar is displayed.
+     */
+    virtual void PutOverlayScrollbarEnabled(bool enable) = 0;
 };
 
 } // namespace OHOS::NWeb
