@@ -936,6 +936,14 @@ public:
     {
         return false;
     }
+
+    /**
+     * @brief Called when the key board redispatch.
+     *
+     * @param event Key information.
+     * @param isUsed Whether the key is used by the kernel.
+     */
+    virtual void KeyboardReDispatch(std::shared_ptr<NWebKeyEvent> event, bool isUsed) {}
 };
 
 } // namespace OHOS::NWeb

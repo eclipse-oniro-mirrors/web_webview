@@ -979,4 +979,9 @@ void ArkWebNWebImpl::OnTextSelected()
     nweb_nweb_->OnTextSelected();
 }
 
+bool ArkWebNWebImpl::WebSendKeyEvent(int32_t key_code, int32_t key_action,
+                                     const ArkWebInt32Vector& pressedCodes)
+{
+    return nweb_nweb_->WebSendKeyEvent(key_code, key_action, pressedCodes);
+}
 } // namespace OHOS::ArkWeb
