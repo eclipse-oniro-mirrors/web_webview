@@ -66,6 +66,8 @@ public:
 
     ArkFrameRateSettingAdapterVector GetLTPOConfig(const ArkWebString& settingName) override;
 
+    ArkWebString GetOOPGPUStatus() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
