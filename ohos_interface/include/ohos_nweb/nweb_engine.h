@@ -75,6 +75,8 @@ public:
     virtual void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime) = 0;
 
     virtual void ClearHostIP(const std::string& hostName) = 0;
+
+    virtual void EnableWholeWebPageDrawing() = 0;
 };
 
 } // namespace OHOS::NWeb

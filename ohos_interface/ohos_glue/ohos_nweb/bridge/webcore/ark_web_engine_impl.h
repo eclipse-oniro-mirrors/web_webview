@@ -75,6 +75,7 @@ public:
 
     void ClearHostIP(const ArkWebString& hostName) override;
 
+    void EnableWholeWebPageDrawing() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };

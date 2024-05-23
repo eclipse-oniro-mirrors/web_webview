@@ -223,4 +223,9 @@ void ArkWebEngineWrapper::ClearHostIP(const std::string& hostName)
 {
     ark_web_engine_->ClearHostIP(ArkWebStringClassToStruct(hostName));
 }
+
+void ArkWebEngineWrapper::EnableWholeWebPageDrawing()
+{
+    ark_web_engine_->EnableWholeWebPageDrawing();
+}
 } // namespace OHOS::ArkWeb

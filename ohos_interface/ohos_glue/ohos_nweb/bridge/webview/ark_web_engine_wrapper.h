@@ -74,6 +74,7 @@ public:
 
     void ClearHostIP(const std::string& hostName) override;
 
+    void EnableWholeWebPageDrawing() override;
 private:
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };
