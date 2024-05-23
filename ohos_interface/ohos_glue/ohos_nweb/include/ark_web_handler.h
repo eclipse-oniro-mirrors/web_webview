@@ -716,6 +716,15 @@ public:
      */
     /*--ark web()--*/
     virtual bool OnOverScroll(float xOffset, float yOffset, float xVelocity, float yVelocity) = 0;
+
+    /**
+     * @brief Called when the key board redispatch.
+     *
+     * @param event Key information.
+     * @param isUsed Whether the key is used by the kernel.
+     */
+    /*--ark web()--*/
+    virtual void KeyboardReDispatch(ArkWebRefPtr<ArkWebKeyEvent> event, bool isUsed) = 0;
 };
 
 } // namespace OHOS::ArkWeb

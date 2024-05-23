@@ -1141,4 +1141,14 @@ void ArkWebNWebWrapper::OnTextSelected()
     ark_web_nweb_->OnTextSelected();
 }
 
+bool ArkWebNWebWrapper::WebSendKeyEvent(int32_t key_code, int32_t key_action,
+                                        const std::vector<int32_t>& pressedCodes)
+{
+    ArkWebInt32Vector pCodes = ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(pressedCodes);
+
+    bool result = ark_web_nweb_->WebSendKeyEvent(key_code, key_action, pCodes);
+
+    ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
+    return result;
+}
 } // namespace OHOS::ArkWeb
