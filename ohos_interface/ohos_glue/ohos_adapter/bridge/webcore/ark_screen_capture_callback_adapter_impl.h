@@ -32,6 +32,8 @@ public:
 
     void OnVideoBufferAvailable(bool isReady) override;
 
+    void OnStateChange(int32_t stateCode) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::ScreenCaptureCallbackAdapter> real_;
 
