@@ -32,6 +32,5 @@ action("proto_gen") {
     "$target_gen_dir/web_download.pb.cc",
     "$target_gen_dir/web_download.pb.h",
   ]
-
-  deps = [ "//third_party/protobuf:protoc($host_toolchain)" ]
+  external_deps = [ "protobuf:protoc($host_toolchain)",]
 }

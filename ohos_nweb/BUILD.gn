@@ -70,7 +70,6 @@ ohos_shared_library("libnweb") {
     ":web_config",
     "${webview_path}/ohos_glue:ohos_adapter_glue_source",
     "${webview_path}/ohos_glue:ohos_nweb_glue_source",
-    "//third_party/libxml2:libxml2",
   ]
 
   external_deps = [
@@ -90,6 +89,7 @@ ohos_shared_library("libnweb") {
     "input:libmmi-client",
     "ipc:ipc_core",
     "window_manager:libwm",
+    "libxml2:libxml2",
   ]
 
   innerapi_tags = [ "platformsdk" ]
