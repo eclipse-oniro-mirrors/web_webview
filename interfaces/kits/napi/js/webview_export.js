@@ -31,7 +31,7 @@ class BusinessError extends Error {
   constructor(code, errorMsg = "undefined") {
     if(errorMsg === "undefined") {
       let msg = errMsgMap.get(code);
-      super(msg);      
+      super(msg);
     }else{
       super(errorMsg);
     }
