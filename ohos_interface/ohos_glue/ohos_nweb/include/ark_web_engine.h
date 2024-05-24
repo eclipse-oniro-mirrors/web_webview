@@ -17,6 +17,7 @@
 #define ARK_WEB_ENGINE_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_adsblock_manager.h"
 #include "ohos_nweb/include/ark_web_cookie_manager.h"
 #include "ohos_nweb/include/ark_web_data_base.h"
 #include "ohos_nweb/include/ark_web_download_manager.h"
@@ -104,6 +105,9 @@ public:
 
     /*--ark web()--*/
     virtual void EnableWholeWebPageDrawing() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebAdsBlockManager> GetAdsBlockManager() = 0;
 };
 
 } // namespace OHOS::ArkWeb

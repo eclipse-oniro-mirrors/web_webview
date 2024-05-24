@@ -1102,6 +1102,35 @@ void NWebHelper::EnableWholeWebPageDrawing()
     nwebEngine_->EnableWholeWebPageDrawing();
 }
 
+std::shared_ptr<NWebAdsBlockManager> NWebHelper::GetAdsBlockManager()
+{
+    if (libHandleWebEngine_ == nullptr) {
+        WVLOG_I("GetAdsBlockManager: init web engine start.");
+        // obtain bundle path
+        std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+            AbilityRuntime::ApplicationContext::GetApplicationContext();
+        if (!ctx) {
+            WVLOG_E("GetAdsBlockManager: Failed to init web engine due to nil application context.");
+            return nullptr;
+        }
+        // load so
+        const std::string& bundle_path = ctx->GetBundleCodeDir();
+        SetBundlePath(bundle_path);
+        if (!Init(true)) {
+            WVLOG_E("GetAdsBlockManager: Failed to init web engine due to NWebHelper failure.");
+            return nullptr;
+        }
+        WVLOG_I("GetAdsBlockManager: init web engine success.");
+    }
+
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return nullptr;
+    }
+
+    return nwebEngine_->GetAdsBlockManager();
+}
+
 NWebAdapterHelper &NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;

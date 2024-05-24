@@ -332,6 +332,11 @@ private:
     static napi_value ClearHostIP(napi_env env, napi_callback_info info);
 
     static napi_value EnableWholeWebPageDrawing(napi_env env, napi_callback_info info);
+    static napi_value EnableAdsBlock(napi_env env, napi_callback_info info);
+
+    static napi_value IsAdsBlockEnabled(napi_env env, napi_callback_info info);
+
+    static napi_value IsAdsBlockEnabledForCurPage(napi_env env, napi_callback_info info);
 
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;

@@ -1275,6 +1275,24 @@ public:
     /*--ark web()--*/
     virtual void OnConfigurationUpdated(
         ArkWebRefPtr<ArkWebSystemConfiguration> configuration) = 0;
+
+    /**
+     * @brief Enable the ability to block Ads， default disabled.
+     */
+    /*--ark web()--*/
+    virtual void EnableAdsBlock(bool enable) = 0;
+
+    /**
+     * @brief Get whether Ads block is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool IsAdsBlockEnabled() = 0;
+
+    /**
+     * @brief Get whether Ads block is enabled for current Webpage.
+     */
+    /*--ark web()--*/
+    virtual bool IsAdsBlockEnabledForCurPage() = 0;
 };
 
 } // namespace OHOS::ArkWeb

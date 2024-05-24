@@ -965,4 +965,16 @@ void ArkWebHandlerWrapper::OnCustomKeyboardClose()
 {
     ark_web_handler_->OnCustomKeyboardClose();
 }
+
+void ArkWebHandlerWrapper::OnAdsBlocked(
+    const std::string& url,
+    const std::vector<std::string>& adsBlocked) {
+  ArkWebString stUrl = ArkWebStringClassToStruct(url);
+  ArkWebStringVector stAdsBlocked = ArkWebStringVectorClassToStruct(adsBlocked);
+
+  ark_web_handler_->OnAdsBlocked(stUrl, stAdsBlocked);
+
+  ArkWebStringVectorStructRelease(stAdsBlocked);
+  ArkWebStringStructRelease(stUrl);
+}
 } // namespace OHOS::ArkWeb

@@ -84,6 +84,8 @@ public:
     void ClearHostIP(const std::string& hostName);
 
     void EnableWholeWebPageDrawing();
+    std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager();
+
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);
