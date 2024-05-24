@@ -196,4 +196,9 @@ void ArkWebEngineImpl::ClearHostIP(const ArkWebString& hostName)
 {
     nweb_engine_->ClearHostIP(ArkWebStringStructToClass(hostName));
 }
+
+void ArkWebEngineImpl::EnableWholeWebPageDrawing()
+{
+    nweb_engine_->EnableWholeWebPageDrawing();
+}
 } // namespace OHOS::ArkWeb
