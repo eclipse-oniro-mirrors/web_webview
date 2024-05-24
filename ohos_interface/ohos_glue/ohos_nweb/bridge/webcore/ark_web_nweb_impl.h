@@ -1115,6 +1115,24 @@ public:
     void OnConfigurationUpdated(
         ArkWebRefPtr<ArkWebSystemConfiguration> configuration) override;
 
+    /**
+     * @brief Enable the ability to block Ads， default disabled.
+     */
+    /*--ark web()--*/
+    void EnableAdsBlock(bool enable) override;
+
+    /**
+     * @brief Get whether Ads block is enabled.
+     */
+    /*--ark web()--*/
+    bool IsAdsBlockEnabled() override;
+
+    /**
+     * @brief Get whether Ads block is enabled for current Webpage.
+     */
+    /*--ark web()--*/
+    bool IsAdsBlockEnabledForCurPage() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

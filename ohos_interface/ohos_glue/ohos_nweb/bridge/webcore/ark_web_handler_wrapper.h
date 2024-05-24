@@ -593,6 +593,7 @@ public:
 
     void OnCustomKeyboardClose() override;
 
+    void OnAdsBlocked(const std::string &url, const std::vector<std::string> &adsBlocked) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

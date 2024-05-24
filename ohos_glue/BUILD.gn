@@ -225,6 +225,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_web_storage_origin_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_web_storage_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_web_storage_wrapper.h",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_adsblock_manager_wrapper.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_adsblock_manager_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_accessibility_event_callback_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_accessibility_event_callback_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_bool_value_callback_cpptoc.cpp",
@@ -411,6 +413,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_web_storage_origin_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_web_storage_origin_vector_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_web_storage_origin_vector_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_ads_block_manager_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_ads_block_manager_ctocpp.h",
   ]
 
   deps = [

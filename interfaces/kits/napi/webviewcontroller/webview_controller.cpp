@@ -1537,7 +1537,7 @@ bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::
         script = str;
         return true;
     }
-    
+
     std::vector<uint8_t> vec = ParseUint8Array(env, value);
     if (!vec.size()) {
         WVLOG_E("PrecompileJavaScript: parse script text to Uint8Array failed.");
@@ -1716,5 +1716,34 @@ void WebviewController::InjectOfflineResource(const std::vector<std::string>& ur
         nweb_ptr->InjectOfflineResource(urlList[i], originUrl, resource, response_headers, type);
     }
 }
+
+void WebviewController::EnableAdsBlock(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->EnableAdsBlock(enable);
+    }
+}
+
+bool WebviewController::IsAdsBlockEnabled()
+{
+    bool enabled = false;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        enabled = nweb_ptr->IsAdsBlockEnabled();
+    }
+    return enabled;
+}
+
+bool WebviewController::IsAdsBlockEnabledForCurPage()
+{
+    bool enabled = false;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        enabled = nweb_ptr->IsAdsBlockEnabledForCurPage();
+    }
+    return enabled;
+}
+
 } // namespace NWeb
 } // namespace OHOS
