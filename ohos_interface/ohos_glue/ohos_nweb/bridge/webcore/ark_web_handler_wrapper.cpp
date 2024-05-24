@@ -937,6 +937,7 @@ void ArkWebHandlerWrapper::KeyboardReDispatch(std::shared_ptr<OHOS::NWeb::NWebKe
 {
     if (CHECK_SHARED_PTR_IS_NULL(event)) {
         ark_web_handler_->KeyboardReDispatch(nullptr, isUsed);
+        return;
     }
 
     ark_web_handler_->KeyboardReDispatch(new ArkWebKeyEventImpl(event), isUsed);
