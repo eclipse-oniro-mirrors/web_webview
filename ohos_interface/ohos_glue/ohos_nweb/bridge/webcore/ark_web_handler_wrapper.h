@@ -584,6 +584,8 @@ public:
 
     bool OnOverScroll(float xOffset, float yOffset, float xVelocity, float yVelocity) override;
 
+    void KeyboardReDispatch(std::shared_ptr<NWebKeyEvent> event, bool isUsed) override;
+
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

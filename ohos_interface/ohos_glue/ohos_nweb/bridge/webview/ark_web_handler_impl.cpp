@@ -830,4 +830,12 @@ bool ArkWebHandlerImpl::OnOverScroll(float xOffset, float yOffset, float xVeloci
     return nweb_handler_->OnOverScroll(xOffset, yOffset, xVelocity, yVelocity);
 }
 
+void ArkWebHandlerImpl::KeyboardReDispatch(ArkWebRefPtr<ArkWebKeyEvent> event, bool isUsed)
+{
+    if (CHECK_REF_PTR_IS_NULL(event)) {
+        nweb_handler_->KeyboardReDispatch(nullptr, isUsed);
+    }
+
+    nweb_handler_->KeyboardReDispatch(std::make_shared<ArkWebKeyEventWrapper>(event), isUsed);
+}
 } // namespace OHOS::ArkWeb

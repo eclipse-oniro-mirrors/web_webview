@@ -1243,6 +1243,15 @@ public:
      */
     /*--ark web()--*/
     virtual void OnTextSelected() = 0;
+
+    /**
+     * @brief web send key event.
+     */
+    /*--ark web()--*/
+    virtual bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
+                                 const std::vector<int32_t>& pressedCodes) {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

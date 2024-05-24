@@ -1099,6 +1099,12 @@ public:
     /*--ark web()--*/
     void OnTextSelected() override;
 
+    /**
+     * @brief web send key event.
+     */
+    /*--ark web()--*/
+    bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
+                         const ArkWebInt32Vector& pressedCodes) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

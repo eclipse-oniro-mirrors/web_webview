@@ -1111,6 +1111,12 @@ public:
      */
     void OnTextSelected() override;
 
+    /**
+     * @brief web send key event.
+     */
+    /*--ark web()--*/
+    bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
+                         const std::vector<int32_t>& pressedCodes) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
