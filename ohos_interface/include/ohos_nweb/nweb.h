@@ -1252,6 +1252,13 @@ public:
                                  const std::vector<int32_t>& pressedCodes) {
         return false;
     }
+
+    /**
+     * @brief Notify for next touch move event.
+     *
+     */
+    /*--ark web()--*/
+    virtual void NotifyForNextTouchMoveEvent() {}
 };
 
 } // namespace OHOS::NWeb

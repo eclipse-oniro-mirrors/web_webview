@@ -1117,6 +1117,12 @@ public:
     /*--ark web()--*/
     bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
                          const std::vector<int32_t>& pressedCodes) override;
+
+    /**
+     * @brief Notify for next touch move event.
+     */
+    /*--ark web()--*/
+    void NotifyForNextTouchMoveEvent() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

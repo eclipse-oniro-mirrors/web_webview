@@ -42,6 +42,8 @@ public:
     virtual void SetFramePreferredRate(int32_t preferredRate) = 0;
 
     virtual void SetOnVsyncCallback(void (*callback)()) = 0;
+
+    virtual void SetOnVsyncEndCallback(void (*onVsyncEndCallback)()) = 0;
 };
 
 // be consistent with rom/foundation/graphic/graphic_2d/interfaces/inner_api/common/graphic_common_c.h:GSError

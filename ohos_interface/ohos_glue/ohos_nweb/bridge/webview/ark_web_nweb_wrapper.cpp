@@ -1151,4 +1151,9 @@ bool ArkWebNWebWrapper::WebSendKeyEvent(int32_t key_code, int32_t key_action,
     ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
     return result;
 }
+
+void ArkWebNWebWrapper::NotifyForNextTouchMoveEvent()
+{
+    ark_web_nweb_->NotifyForNextTouchMoveEvent();
+}
 } // namespace OHOS::ArkWeb
