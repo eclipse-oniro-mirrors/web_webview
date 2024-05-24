@@ -706,28 +706,33 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_TWO) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
         return result;
     }
 
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], dohMode)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "secureDnsMode", "SecureDnsMode"));
         return result;
     }
 
     if (dohMode < static_cast<int>(SecureDnsModeType::OFF) ||
         dohMode > static_cast<int>(SecureDnsModeType::SECURE_ONLY)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "secureDnsMode"));
         return result;
     }
 
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], dohConfig)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "secureDnsConfig", "string"));
         return result;
     }
 
     if (dohConfig.rfind("https", 0) != 0 && dohConfig.rfind("HTTPS", 0) != 0) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                "BusinessError 401: Parameter error. Parameter secureDnsConfig must start with 'http' or 'https'.");
         return result;
     }
 
@@ -783,13 +788,15 @@ napi_value NapiWebviewController::EnableSafeBrowsing(napi_env env, napi_callback
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
 
     bool safe_browsing_enable = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], safe_browsing_enable)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
         return result;
     }
 
@@ -2411,24 +2418,28 @@ napi_value NapiWebviewController::StoreWebArchive(napi_env env, napi_callback_in
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
 
     if (argc != argcPromise && argc != argcCallback) {
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two", "three"));
         return result;
     }
     std::string baseName;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], baseName)) {
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "baseName", "string"));
         return result;
     }
 
     if (baseName.empty()) {
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NOT_NULL, "baseName"));
         return result;
     }
 
     bool autoName = false;
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ONE], autoName)) {
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "autoName", "boolean"));
         return result;
     }
 
@@ -2437,7 +2448,8 @@ napi_value NapiWebviewController::StoreWebArchive(napi_env env, napi_callback_in
         napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
         napi_typeof(env, argv[argcCallback - 1], &valueType);
         if (valueType != napi_function) {
-            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+            BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+                    NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function"));
             return result;
         }
     }
@@ -4173,15 +4185,15 @@ napi_value NapiWebviewController::SetAudioMuted(napi_env env, napi_callback_info
     napi_value argv[INTEGER_ONE] = { 0 };
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("SetAudioMuted failed due to wrong param quantity: %{public}zu", argc);
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
 
     bool muted = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], muted)) {
-        WVLOG_E("SetAudioMuted failed due to invalid argument value");
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mute", "boolean"));
         return result;
     }
 
@@ -4545,13 +4557,15 @@ napi_value NapiWebviewController::SetConnectionTimeout(napi_env env, napi_callba
     napi_value argv[INTEGER_ONE] = { nullptr };
     napi_get_cb_info(env, info, &argc, argv, nullptr, nullptr);
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
 
     int32_t timeout = 0;
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], timeout) || (timeout <= 0)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                "BusinessError: 401. Parameter error. The type of 'timeout' must be int and must be positive integer.");
         return result;
     }
 
