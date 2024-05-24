@@ -547,6 +547,8 @@ public:
 
     bool OnOverScroll(float xOffset, float yOffset, float xVelocity, float yVelocity) override;
 
+    void KeyboardReDispatch(ArkWebRefPtr<ArkWebKeyEvent> event, bool isUsed) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
