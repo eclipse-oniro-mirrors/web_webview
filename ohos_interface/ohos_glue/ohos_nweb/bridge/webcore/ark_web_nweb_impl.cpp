@@ -985,4 +985,9 @@ bool ArkWebNWebImpl::WebSendKeyEvent(int32_t key_code, int32_t key_action,
     return nweb_nweb_->WebSendKeyEvent(key_code, key_action,
         ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes));
 }
+
+void ArkWebNWebImpl::NotifyForNextTouchMoveEvent()
+{
+    nweb_nweb_->NotifyForNextTouchMoveEvent();
+}
 } // namespace OHOS::ArkWeb

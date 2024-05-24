@@ -1265,6 +1265,12 @@ public:
     /*--ark web()--*/
     virtual bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
                                  const ArkWebInt32Vector& pressedCodes) = 0;
+
+    /**
+     * @brief Notify for next touch move event.
+     */
+    /*--ark web()--*/
+    virtual void NotifyForNextTouchMoveEvent() = 0;
 };
 
 } // namespace OHOS::ArkWeb

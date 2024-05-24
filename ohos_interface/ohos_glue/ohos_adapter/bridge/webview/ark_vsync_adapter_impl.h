@@ -36,6 +36,7 @@ public:
 
     void SetOnVsyncCallback(OnVsyncCallback callback) override;
 
+    void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) override;
 private:
     NWeb::VSyncAdapter& real_;
 

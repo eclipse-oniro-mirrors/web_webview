@@ -35,6 +35,8 @@ public:
 
     void SetOnVsyncCallback(OnVsyncCallback callback) override;
 
+    void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) override;
+
 private:
     ArkWebRefPtr<ArkVSyncAdapter> ctocpp_;
 };
