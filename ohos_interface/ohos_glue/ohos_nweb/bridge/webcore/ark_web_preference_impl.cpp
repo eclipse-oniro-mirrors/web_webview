@@ -476,4 +476,9 @@ void ArkWebPreferenceImpl::SetNativeVideoPlayerConfig(bool enable, bool shouldOv
     }
 }
 
+void ArkWebPreferenceImpl::PutOverlayScrollbarEnabled(bool flag)
+{
+    nweb_preference_->PutOverlayScrollbarEnabled(flag);
+}
+
 } // namespace OHOS::ArkWeb
