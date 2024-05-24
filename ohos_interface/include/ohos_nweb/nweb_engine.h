@@ -76,7 +76,7 @@ public:
 
     virtual void ClearHostIP(const std::string& hostName) = 0;
 
-    virtual void EnableWholeWebPageDrawing() = 0;
+    virtual void EnableWholeWebPageDrawing() {};
 };
 
 } // namespace OHOS::NWeb
