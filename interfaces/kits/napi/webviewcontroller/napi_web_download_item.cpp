@@ -609,6 +609,8 @@ napi_value NapiWebDownloadItem::JS_Start(napi_env env, napi_callback_info cbinfo
     size_t jsStringLength = 0;
     napi_get_value_string_utf8(env, argv[0], stringValue, pathLen + 1, &jsStringLength);
     if (jsStringLength != pathLen) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                "BusinessError: 401. Parameter error. The type of 'downloadPath' must be a valid path string.");
         return nullptr;
     }
     webDownloadItem->downloadPath = std::string(stringValue);
@@ -687,7 +689,8 @@ napi_value NapiWebDownloadItem::JS_Deserialize(napi_env env, napi_callback_info 
     void *buf;
     napi_status status = napi_get_typedarray_info(env, argv[0], nullptr, &bufLen, &buf, &arraybuffer, nullptr);
     if (status != napi_ok) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                "BusinessError: 401. Parameter error. The type of 'serializedData' must be array.");
         return nullptr;
     }
 
