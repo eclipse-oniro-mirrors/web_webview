@@ -24,6 +24,7 @@
 #include "ohos_nweb/include/ark_web_context_menu_params.h"
 #include "ohos_nweb/include/ark_web_controller_handler.h"
 #include "ohos_nweb/include/ark_web_cursor_info.h"
+#include "ohos_nweb/include/ark_web_custom_keyboard_handler.h"
 #include "ohos_nweb/include/ark_web_data_resubmission_callback.h"
 #include "ohos_nweb/include/ark_web_date_time_chooser.h"
 #include "ohos_nweb/include/ark_web_date_time_chooser_callback.h"
@@ -725,6 +726,16 @@ public:
      */
     /*--ark web()--*/
     virtual void KeyboardReDispatch(ArkWebRefPtr<ArkWebKeyEvent> event, bool isUsed) = 0;
+
+    /*--ark web()--*/
+    virtual void OnInterceptKeyboardAttach(ArkWebRefPtr<ArkWebCustomKeyboardHandler> keyboardHandler,
+        const ArkWebStringMap &attributes, bool &useSystemKeyboard, int32_t &enterKeyType) = 0;
+
+    /*--ark web()--*/
+    virtual void OnCustomKeyboardAttach() = 0;
+
+    /*--ark web()--*/
+    virtual void OnCustomKeyboardClose() = 0;
 };
 
 } // namespace OHOS::ArkWeb
