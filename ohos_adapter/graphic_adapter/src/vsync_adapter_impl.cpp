@@ -87,15 +87,14 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, NWebVSyncCb cb)
         // At this point, the threadId corresponding to eventrunner may not be available,
         // so need to confirm it several times
         if (runner && runner->GetKernelThreadId() != 0) {
-            if (!SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable()) {
+            if (!isGPUProcess_) {
                 ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
                 getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
-                hasReportedKeyThread_ = true;
             } else {
                 AafwkBrowserClientAdapterImpl::GetInstance().ReportThread(ResSchedStatusAdapter::THREAD_CREATED,
                 getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
-                hasReportedKeyThread_ = true;
             }
+            hasReportedKeyThread_ = true;
         }
     }
 
@@ -190,5 +189,10 @@ void VSyncAdapterImpl::SetOnVsyncCallback(void (*callback)())
 {
     WVLOG_D("callback function: %{public}ld", (long)callback);
     callback_ = callback;
+}
+
+void VSyncAdapterImpl::SetIsGPUProcess(bool isGPU)
+{
+    isGPUProcess_ = isGPU;
 }
 } // namespace OHOS::NWeb

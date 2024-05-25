@@ -67,6 +67,7 @@ public:
 
     void DestroyRenderSurface(int32_t surface_id) override;
 private:
+    std::map<int64_t, sptr<Surface>> surface_map_;
     std::shared_ptr<AafwkBrowserHostAdapter> browserHostAdapter_;
 };
 } //namespace content
