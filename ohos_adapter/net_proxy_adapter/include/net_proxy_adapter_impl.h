@@ -42,7 +42,10 @@ public:
 
     void GetProperty(std::string& host, uint16_t& port, std::string& pacUrl, std::string& exclusion) override;
 
+    void Changed();
+
 private:
+    bool listen_ = false;
     std::shared_ptr<NetProxyEventCallbackAdapter> cb_ = nullptr;
     uint32_t appProxyCallbackId_ = 0;
     void StartListenAppProxy();

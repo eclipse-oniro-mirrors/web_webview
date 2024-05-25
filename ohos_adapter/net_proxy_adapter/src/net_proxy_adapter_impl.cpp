@@ -204,9 +204,28 @@ void NetProxyAdapterImpl::RegNetProxyEvent(std::shared_ptr<NetProxyEventCallback
     }
 }
 
+void NetProxyAdapterImpl::Changed()
+{
+    if (listen_) {
+        return;
+    }
+    WVLOG_I("start NetProxy changed");
+    listen_ = true;
+
+    std::string host;
+    uint16_t port;
+    std::string pacUrl;
+    std::vector<std::string> exclusionList;
+    std::string exclusion;
+
+    GetProperty(host, port, pacUrl, exclusion);
+    cb_->Changed(host, port, "", exclusionList);
+}
+
 bool NetProxyAdapterImpl::StartListen()
 {
     WVLOG_I("start netproxy listen");
+    Changed();
     EventFwk::MatchingSkills skill = EventFwk::MatchingSkills();
     skill.AddEvent(EventFwk::CommonEventSupport::COMMON_EVENT_HTTP_PROXY_CHANGE);
     EventFwk::CommonEventSubscribeInfo info(skill);
