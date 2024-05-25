@@ -39,6 +39,7 @@ public:
     void SetFramePreferredRate(int32_t preferredRate) override;
 
     void SetOnVsyncCallback(void (*callback)()) override;
+    void SetIsGPUProcess(bool isGPU);
 private:
     static void OnVsync(int64_t timestamp, void* data);
     void VsyncCallbackInner(int64_t nanoTimestamp);
@@ -57,6 +58,7 @@ private:
     std::shared_ptr<Rosen::RSFrameRateLinker> frameRateLinker_;
     static void (*callback_)();
     bool frameRateLinkerEnable_ = false;
+    bool isGPUProcess_ = false;
 };
 } // namespace OHOS::NWeb
 

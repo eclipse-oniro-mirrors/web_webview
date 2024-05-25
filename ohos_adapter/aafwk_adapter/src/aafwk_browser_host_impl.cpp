@@ -132,12 +132,14 @@ void AafwkBrowserHostImpl::ReportThread(int32_t status, int32_t process_id, int3
 
 void AafwkBrowserHostImpl::PassSurface(sptr<Surface> surface, int64_t surface_id)
 {
+    sptr<Surface> surfaceTmp = surface;
     SurfaceUtils* utils = SurfaceUtils::GetInstance();
     if (!utils) {
         WVLOG_E("get surfaceUtils failed.");
         return;
     }
-    utils->Add(surface_id, surface);
+    surface_map_.emplace(surface_id, surfaceTmp);
+    utils->Add(surface_id, surfaceTmp);
 }
 
 void AafwkBrowserHostImpl::DestroyRenderSurface(int32_t surface_id)
