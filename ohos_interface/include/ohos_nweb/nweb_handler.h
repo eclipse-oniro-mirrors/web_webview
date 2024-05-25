@@ -26,6 +26,7 @@
 #include "nweb_console_log.h"
 #include "nweb_context_menu_params.h"
 #include "nweb_controller_handler.h"
+#include "nweb_custom_keyboard_handler.h"
 #include "nweb_data_resubmission_callback.h"
 #include "nweb_date_time_chooser.h"
 #include "nweb_drag_data.h"
@@ -944,6 +945,17 @@ public:
      * @param isUsed Whether the key is used by the kernel.
      */
     virtual void KeyboardReDispatch(std::shared_ptr<NWebKeyEvent> event, bool isUsed) {}
+
+    virtual void OnInterceptKeyboardAttach(
+        const std::shared_ptr<NWebCustomKeyboardHandler> keyboardHandler,
+        const std::map<std::string, std::string> &attributes, bool &useSystemKeyboard, int32_t &enterKeyType) {
+        useSystemKeyboard = true;
+        enterKeyType = -1;
+    }
+
+    virtual void OnCustomKeyboardAttach() {}
+
+    virtual void OnCustomKeyboardClose() {}
 };
 
 } // namespace OHOS::NWeb
