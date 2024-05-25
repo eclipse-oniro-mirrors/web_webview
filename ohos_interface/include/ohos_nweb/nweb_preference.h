@@ -636,7 +636,7 @@ public:
     /**
      * Set whether the scrollbar is displayed.
      */
-    virtual void PutOverlayScrollbarEnabled(bool enable) = 0;
+    virtual void PutOverlayScrollbarEnabled(bool enable) {}
 };
 
 } // namespace OHOS::NWeb
