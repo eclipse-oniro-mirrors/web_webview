@@ -721,7 +721,7 @@ public:
      * @brief Set whether the scollbar is displayed.
      */
     /*--ark web()--*/
-    virtual ArkWebString PutOverlayScrollbarEnabled(bool enable) = 0;
+    virtual void PutOverlayScrollbarEnabled(bool enable) = 0;
 };
 
 } // namespace OHOS::ArkWeb
