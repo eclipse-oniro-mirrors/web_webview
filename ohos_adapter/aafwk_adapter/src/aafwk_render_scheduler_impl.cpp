@@ -18,6 +18,7 @@
 #include "ibrowser.h"
 #include "nweb_log.h"
 #include "system_properties_adapter_impl.h"
+#include "vsync_adapter_impl.h"
 
 namespace OHOS::NWeb {
 AafwkRenderSchedulerImpl::AafwkRenderSchedulerImpl(std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter)
@@ -34,14 +35,13 @@ void AafwkRenderSchedulerImpl::NotifyBrowserFd(
     }
     if (browser == nullptr) {
         WVLOG_E("browser is nullptr!");
-    }
-    if (SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable()) {
+        renderSchedulerHostAdapter_->NotifyBrowser(ipcFd, sharedFd, crashFd, nullptr);
+    } else {
         sptr<IBrowser> browserHost = iface_cast<IBrowser>(browser);
         browserClientAdapter_ = std::make_shared<AafwkBrowserClientAdapterImpl>();
         AafwkBrowserClientAdapterImpl::GetInstance().browserHost_ = browserHost;
         renderSchedulerHostAdapter_->NotifyBrowser(ipcFd, sharedFd, crashFd, browserClientAdapter_);
-    } else {
-        renderSchedulerHostAdapter_->NotifyBrowser(ipcFd, sharedFd, crashFd, nullptr);
+        VSyncAdapterImpl::GetInstance().SetIsGPUProcess(true);
     }
 }
 } // namespace OHOS::NWeb
