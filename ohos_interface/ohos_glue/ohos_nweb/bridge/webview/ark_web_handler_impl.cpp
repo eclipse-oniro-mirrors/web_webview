@@ -22,6 +22,7 @@
 #include "ohos_nweb/bridge/ark_web_context_menu_params_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_controller_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_cursor_info_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_custom_keyboard_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_data_resubmission_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_date_time_chooser_wrapper.h"
@@ -837,5 +838,28 @@ void ArkWebHandlerImpl::KeyboardReDispatch(ArkWebRefPtr<ArkWebKeyEvent> event, b
     }
 
     nweb_handler_->KeyboardReDispatch(std::make_shared<ArkWebKeyEventWrapper>(event), isUsed);
+}
+
+void ArkWebHandlerImpl::OnInterceptKeyboardAttach(ArkWebRefPtr<ArkWebCustomKeyboardHandler> keyboardHandler,
+    const ArkWebStringMap &attributes, bool &useSystemKeyboard, int32_t &enterKeyType)
+{
+    if (CHECK_REF_PTR_IS_NULL(keyboardHandler)) {
+        return nweb_handler_->OnInterceptKeyboardAttach(nullptr, ArkWebStringMapStructToClass(attributes),
+            useSystemKeyboard, enterKeyType);
+    }
+
+    nweb_handler_->OnInterceptKeyboardAttach(
+        std::make_shared<ArkWebCustomKeyboardHandlerWrapper>(keyboardHandler),
+        ArkWebStringMapStructToClass(attributes), useSystemKeyboard, enterKeyType);
+}
+
+void ArkWebHandlerImpl::OnCustomKeyboardAttach()
+{
+    nweb_handler_->OnCustomKeyboardAttach();
+}
+
+void ArkWebHandlerImpl::OnCustomKeyboardClose()
+{
+    nweb_handler_->OnCustomKeyboardClose();
 }
 } // namespace OHOS::ArkWeb
