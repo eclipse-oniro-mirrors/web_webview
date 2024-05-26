@@ -76,6 +76,12 @@ public:
             const std::string, const std::string, const std::string, const std::string, const std::string,
             const std::string, const std::string, const std::string, const std::string>& data) override;
 
+    int Write(const std::string& eventName, ArkEventType type,
+        const std::tuple<const std::string, const std::string, const std::string, const std::string, const std::string,
+            const std::string, const std::string, const std::string, const std::string,
+            const std::string, const std::string, const std::string, const std::string,
+            const std::string, const std::string, const std::string>& data) override;
+
 private:
     ArkWebRefPtr<ArkHiSysEventAdapter> ctocpp_;
 };
