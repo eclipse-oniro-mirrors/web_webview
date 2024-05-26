@@ -549,6 +549,13 @@ public:
 
     void KeyboardReDispatch(ArkWebRefPtr<ArkWebKeyEvent> event, bool isUsed) override;
 
+    void OnInterceptKeyboardAttach(ArkWebRefPtr<ArkWebCustomKeyboardHandler> keyboardHandler,
+        const ArkWebStringMap &attributes, bool &useSystemKeyboard, int32_t &enterKeyType) override;
+
+    void OnCustomKeyboardAttach() override;
+
+    void OnCustomKeyboardClose() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
