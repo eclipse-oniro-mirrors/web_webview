@@ -106,6 +106,9 @@ void IMFTextListenerAdapterImpl::SendFunctionKey(const MiscServices::FunctionKey
             case MiscServices::EnterKeyType::PREVIOUS:
                 adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::PREVIOUS);
                 break;
+            case MiscServices::EnterKeyType::NEW_LINE:
+                adapterFunction->SetEnterKeyType(IMFAdapterEnterKeyType::NEW_LINE);
+                break;
             default:
                 WVLOG_E("unknown functionKey");
                 break;
@@ -227,7 +230,7 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
             listener_->SetNeedUnderLine(is_need_underline);
         }
     }
-    
+
     return 0;
 }
 
