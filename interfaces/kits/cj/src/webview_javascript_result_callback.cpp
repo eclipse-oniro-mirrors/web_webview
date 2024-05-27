@@ -176,8 +176,12 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
     auto callback = jsObj->FindMethod(method);
     if (!callback) {
         WEBVIEWLOGE("WebviewJavaScriptResultCallBackImpl::ExecuteGetJavaScriptResult callback null");
+        return ret;
     }
     auto argCj = MallocCString(argv);
+    if (argCj == nullptr) {
+        return ret;
+    }
     char* cjRet = callback(argCj);
     std::string strVal = std::string(cjRet);
     free(cjRet);
@@ -280,6 +284,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
     auto callback = jsObj->FindMethod(method);
     if (!callback) {
         WEBVIEWLOGE("WebviewJavaScriptResultCallBack::ExecuteGetJavaScriptResult callback null");
+        return ret;
     }
     std::string arg;
     if (argv.size() == 0) {
@@ -288,6 +293,9 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
         arg = argv[0];
     }
     auto argCj = MallocCString(arg);
+    if (argCj == nullptr) {
+        return ret;
+    }
     char* cjRet = callback(argCj);
     std::string strVal = std::string(cjRet);
     free(cjRet);
