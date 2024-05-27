@@ -29,9 +29,24 @@ enum class IMFAdapterTextInputType : int32_t {
     EMAIL_ADDRESS,
     URL,
     VISIBLE_PASSWORD,
+    NUMBER_PASSWORD,
+    SCREEN_LOCK_PASSWORD,
+    USER_NAME,
+    NEW_PASSWORD,
+    NUMBER_DECIMAL,
 };
 
-enum class IMFAdapterEnterKeyType : int32_t { UNSPECIFIED = 0, NONE, GO, SEARCH, SEND, NEXT, DONE, PREVIOUS };
+enum class IMFAdapterEnterKeyType : int32_t {
+    UNSPECIFIED = 0,
+    NONE,
+    GO,
+    SEARCH,
+    SEND,
+    NEXT,
+    DONE,
+    PREVIOUS,
+    NEW_LINE,
+};
 
 enum class IMFAdapterDirection : int32_t {
     NONE = 0,
