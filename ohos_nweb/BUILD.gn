@@ -88,8 +88,8 @@ ohos_shared_library("libnweb") {
     "init:libbegetutil",
     "input:libmmi-client",
     "ipc:ipc_core",
-    "window_manager:libwm",
     "libxml2:libxml2",
+    "window_manager:libwm",
   ]
 
   innerapi_tags = [ "platformsdk" ]
