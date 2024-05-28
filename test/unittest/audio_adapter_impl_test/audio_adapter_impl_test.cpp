@@ -37,6 +37,9 @@ namespace OHOS {
 namespace {
 const int RESULT_OK = 0;
 const bool TRUE_OK = true;
+const std::string LANGUAGE_EN = "en";
+const std::string DEVICE_TYPE_NONE_TEST = "device/none";
+const std::string DEVICE_TYPE_NONE_ZH_CN_TEST = "无";
 const std::string CACHE_PATH = "/data/local/tmp";
 std::shared_ptr<NWeb::AudioRendererAdapterImpl> g_audioRender = nullptr;
 std::shared_ptr<NWeb::AudioCapturerAdapterImpl> g_audioCapturer = nullptr;
@@ -1074,6 +1077,22 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnDeviceChange_027, TestSize
     callbackAdapter->OnDeviceChange(deviceChangeAction);
     callbackAdapter->cb_ = nullptr;
     callbackAdapter->OnDeviceChange(deviceChangeAction);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_028.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:I5HRX9
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_028, TestSize.Level1)
+{
+    std::string deviceName = AudioSystemManagerAdapterImpl::GetInstance().GetDeviceName(DeviceType::DEVICE_TYPE_NONE);
+    EXPECT_EQ(deviceName, DEVICE_TYPE_NONE_ZH_CN_TEST);
+    bool ret = AudioSystemManagerAdapterImpl::GetInstance().SetLanguage(LANGUAGE_EN);
+    EXPECT_EQ(ret, TRUE_OK);
+    deviceName = AudioSystemManagerAdapterImpl::GetInstance().GetDeviceName(DeviceType::DEVICE_TYPE_NONE);
+    EXPECT_EQ(deviceName, DEVICE_TYPE_NONE_TEST);
 }
 } // namespace NWeb
 } // namespace OHOS
