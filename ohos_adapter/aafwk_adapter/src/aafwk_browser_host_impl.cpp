@@ -91,6 +91,10 @@ int BrowserHost::HandlePassSurface(MessageParcel &data, MessageParcel &reply)
 {
     sptr<IRemoteObject> surfaceObject = data.ReadRemoteObject();
     sptr<IBufferProducer> bufferProducer = iface_cast<IBufferProducer>(surfaceObject);
+    if (bufferProducer == nullptr) {
+        WVLOG_E("HandlePass buffer failed.");
+        return 0;
+    }
     sptr<Surface> surface = Surface::CreateSurfaceAsProducer(bufferProducer);
     int64_t surface_id = data.ReadInt64();
     PassSurface(surface, surface_id);
@@ -110,6 +114,9 @@ AafwkBrowserHostImpl::AafwkBrowserHostImpl(std::shared_ptr<AafwkBrowserHostAdapt
 sptr<IRemoteObject> AafwkBrowserHostImpl::QueryRenderSurface(int32_t surface_id)
 {
     WVLOG_D("browser host impl get request for window id = %{public}d", surface_id);
+    if (browserHostAdapter_ == nullptr) {
+        return nullptr;
+    }
     // send to kernel (Browser)
     void* window = browserHostAdapter_->GetSurfaceFromKernel(surface_id);
     if (window) {
@@ -144,6 +151,9 @@ void AafwkBrowserHostImpl::PassSurface(sptr<Surface> surface, int64_t surface_id
 
 void AafwkBrowserHostImpl::DestroyRenderSurface(int32_t surface_id)
 {
+    if (browserHostAdapter_ == nullptr) {
+        return;
+    }
     browserHostAdapter_->DestroySurfaceFromKernel(surface_id);
     WVLOG_D("Destroy render surface id is %{public}d", surface_id);
 }
