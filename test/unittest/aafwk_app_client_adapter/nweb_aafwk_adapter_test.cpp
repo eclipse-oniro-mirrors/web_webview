@@ -335,4 +335,313 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Le
     render->renderSchedulerHostAdapter_ = nullptr;
     render->NotifyBrowserFd(ipcFd, sharedFd, crashFd, nullptr);
 }
+
+/**
+ * @tc.name: NWebAafwkAdapter_StartChildProcess_010.
+ * @tc.desc: test start child process.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartChildProcess_010, TestSize.Level1)
+{
+    MockAppMgrClient *mock = new MockAppMgrClient();
+    g_adapter->appMgrClient_.reset((AppMgrClient *)mock);
+    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_,
+                                          ::testing::_, ::testing::_, ::testing::_))
+        .Times(1)
+        .WillRepeatedly(::testing::Return(0));
+    std::string renderParam = "test";
+    int32_t ipcFd = 0;
+    int32_t sharedFd = 0;
+    pid_t renderPid = 0;
+    int32_t crashFd = 0;
+    std::string processType = "gpu-process";
+    int result = g_adapter->StartChildProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid, processType);
+    EXPECT_EQ(RESULT_OK, result);
+    delete mock;
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_WriteInterfaceToken_011.
+ * @tc.desc: test write interface token.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_WriteInterfaceToken_011, TestSize.Level1)
+{
+    sptr<IRemoteObject> impl;
+    auto client = new BrowserClient(impl);
+    ASSERT_NE(client, nullptr);
+    MessageParcel data;
+    client->WriteInterfaceToken(data);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_QueryRenderSurface_012.
+ * @tc.desc: test query render surface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_QueryRenderSurface_012, TestSize.Level1)
+{
+    sptr<IRemoteObject> impl;
+    auto client = new BrowserClient(impl);
+    ASSERT_NE(client, nullptr);
+    int32_t surface_id = 0;
+    client->QueryRenderSurface(surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_ReportThread_013.
+ * @tc.desc: test report thread.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_ReportThread_013, TestSize.Level1)
+{
+    sptr<IRemoteObject> impl;
+    auto client = new BrowserClient(impl);
+    ASSERT_NE(client, nullptr);
+    int32_t status = 0;
+    int32_t process_id = 0;
+    int32_t thread_id = 0;
+    int32_t role = 0;
+    client->ReportThread(status, process_id, thread_id, role);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_PassSurface_014.
+ * @tc.desc: test pass surface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_PassSurface_014, TestSize.Level1)
+{
+    sptr<IRemoteObject> impl;
+    auto client = new BrowserClient(impl);
+    ASSERT_NE(client, nullptr);
+    sptr<Surface> surface;
+    int64_t surface_id = 0;
+    client->PassSurface(surface, surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_DestroyRenderSurface_015.
+ * @tc.desc: test destroy render surface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_DestroyRenderSurface_015, TestSize.Level1)
+{
+    sptr<IRemoteObject> impl;
+    auto client = new BrowserClient(impl);
+    ASSERT_NE(client, nullptr);
+    int32_t surface_id = 0;
+    client->DestroyRenderSurface(surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_QueryRenderSurface_016.
+ * @tc.desc: test query render surface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_QueryRenderSurface_016, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserClientAdapterImpl> clientAdapter = std::make_shared<AafwkBrowserClientAdapterImpl>();
+    ASSERT_NE(clientAdapter, nullptr);
+    int32_t surface_id = 0;
+    clientAdapter->QueryRenderSurface(surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_ReportThread_017.
+ * @tc.desc: test report thread.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_ReportThread_017, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserClientAdapterImpl> clientAdapter = std::make_shared<AafwkBrowserClientAdapterImpl>();
+    ASSERT_NE(clientAdapter, nullptr);
+    ResSchedStatusAdapter status = ResSchedStatusAdapter::THREAD_CREATED;
+    int32_t process_id = 0;
+    int32_t thread_id = 0;
+    ResSchedRoleAdapter role = ResSchedRoleAdapter::USER_INTERACT;
+    clientAdapter->ReportThread(status, process_id, thread_id, role);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_PassSurface_018.
+ * @tc.desc: test pass surface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_PassSurface_018, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserClientAdapterImpl> clientAdapter = std::make_shared<AafwkBrowserClientAdapterImpl>();
+    ASSERT_NE(clientAdapter, nullptr);
+    int64_t surface_id = 0;
+    clientAdapter->PassSurface(surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_DestroyRenderSurface_019.
+ * @tc.desc: test destroy render surface.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_DestroyRenderSurface_019, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserClientAdapterImpl> clientAdapter = std::make_shared<AafwkBrowserClientAdapterImpl>();
+    ASSERT_NE(clientAdapter, nullptr);
+    int32_t surface_id = 0;
+    clientAdapter->DestroyRenderSurface(surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_020.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_020, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    uint32_t code = 0;
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    host->OnRemoteRequest(code, data, reply, option);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_021.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_021, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    MessageParcel data;
+    MessageParcel reply;
+    host->HandleQueryRenderSurface(data, reply);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_022.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_022, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    MessageParcel data;
+    MessageParcel reply;
+    host->HandleReportThread(data, reply);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_023.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_023, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    MessageParcel data;
+    MessageParcel reply;
+    host->HandlePassSurface(data, reply);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_024.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_024, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    MessageParcel data;
+    MessageParcel reply;
+    host->HandleDestroyRenderSurface(data, reply);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_025.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_025, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    int32_t surface_id = 0;
+    host->QueryRenderSurface(surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_026.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_026, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    int32_t status = 0;
+    int32_t process_id = 0;
+    int32_t thread_id = 0;
+    int32_t role = 0;
+    host->ReportThread(status, process_id, thread_id, role);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_027.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_027, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    sptr<Surface> surface;
+    int64_t surface_id = 0;
+    host->PassSurface(surface, surface_id);
+}
+
+/**
+ * @tc.name: NWebAafwkAdapter_browserHost_028.
+ * @tc.desc: test browser host.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_028, TestSize.Level1)
+{
+    std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
+    auto host = new AafwkBrowserHostImpl(hostAdapter);
+    ASSERT_NE(host, nullptr);
+    int32_t surface_id = 0;
+    host->DestroyRenderSurface(surface_id);
+}
 }

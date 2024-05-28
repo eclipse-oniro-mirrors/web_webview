@@ -1279,7 +1279,7 @@ std::unordered_map<std::string_view, std::function<std::string(std::string&)>> G
             [](std::string& contentStr) {
                 return contentStr == "true" ? std::string("--ohos-enable-calc-tablet-mode") : std::string();
             } },
-        { "outOfProcessGPUConfig/enableOOPGPU",
+        { "outOfProcessGPUConfig/enableOopGpu",
             [](std::string& contentStr) {
                 return contentStr == "true" ? std::string("--in-process-gpu") : std::string();
             } }
