@@ -199,6 +199,18 @@ public:
     virtual std::map<std::string, std::string> GetResponseHeaders() = 0;
 };
 
+enum class SystemThemeFlags : uint8_t {
+    NONE = 0,
+    THEME_FONT = 1 << 0,
+};
+
+class NWebSystemConfiguration {
+    public:
+    virtual ~NWebSystemConfiguration() = default;
+
+    virtual uint8_t GetThemeFlags() = 0;
+};
+
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
@@ -1252,6 +1264,14 @@ public:
                                  const std::vector<int32_t>& pressedCodes) {
         return false;
     }
+
+    /**
+     * @brief Notify that system configuration change.
+     *
+     * @param configuration system configuration.
+    */
+    /*--ark web()--*/
+    virtual void OnConfigurationUpdated(std::shared_ptr<NWebSystemConfiguration> configuration) {}
 };
 
 } // namespace OHOS::NWeb
