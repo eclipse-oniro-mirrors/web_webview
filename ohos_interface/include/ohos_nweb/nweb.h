@@ -1258,7 +1258,7 @@ public:
      *
      */
     /*--ark web()--*/
-    virtual void NotifyForNextTouchMoveEvent() {}
+    virtual void NotifyForNextTouchEvent() {}
 };
 
 } // namespace OHOS::NWeb
