@@ -108,6 +108,7 @@ enum ArkWebBridgeType {
     ARK_WEB_CURSOR_INFO = 83,
     ARK_WEB_APP_LINK_CALLBACK = 84,
     ARK_WEB_CUSTOM_KEYBOARD_HANDLER = 85,
+    ARK_WEB_SYSTEM_CONFIGURATION = 86,
 
     /*Note: Adapter interface bridge type*/
     ARK_AAFWK_APP_MGR_CLIENT_ADAPTER = 10000,

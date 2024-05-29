@@ -35,6 +35,7 @@
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_screen_lock_callback.h"
 #include "ohos_nweb/include/ark_web_string_value_callback.h"
+#include "ohos_nweb/include/ark_web_system_configuration.h"
 #include "ohos_nweb/include/ark_web_touch_point_info_vector.h"
 
 namespace OHOS::ArkWeb {
@@ -1265,6 +1266,15 @@ public:
     /*--ark web()--*/
     virtual bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
                                  const ArkWebInt32Vector& pressedCodes) = 0;
+
+    /**
+     * @brief Notify that system configuration changed.
+     *
+     * @param configuration system configuration.
+     */
+    /*--ark web()--*/
+    virtual void OnConfigurationUpdated(
+        ArkWebRefPtr<ArkWebSystemConfiguration> configuration) = 0;
 };
 
 } // namespace OHOS::ArkWeb

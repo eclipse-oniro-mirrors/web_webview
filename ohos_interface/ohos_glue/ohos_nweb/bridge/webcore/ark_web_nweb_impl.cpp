@@ -34,6 +34,7 @@
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_string_value_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_system_configuration_wrapper.h"
 #include "ohos_nweb/ctocpp/ark_web_js_proxy_callback_vector_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_touch_point_info_vector_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_value_vector_ctocpp.h"
@@ -984,5 +985,16 @@ bool ArkWebNWebImpl::WebSendKeyEvent(int32_t key_code, int32_t key_action,
 {
     return nweb_nweb_->WebSendKeyEvent(key_code, key_action,
         ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes));
+}
+
+void ArkWebNWebWrapper::OnConfigurationUpdated(
+    ArkWebRefPtr<ArkWebSystemConfiguration> configuration)
+{
+    if (CHECK_REF_PTR_IS_NULL(configuration)) {
+        nweb_nweb_->OnConfigurationUpdated(nullptr);
+        return;
+    }
+    nweb_nweb_->OnConfigurationUpdated(
+        std::make_shared<ArkWebSystemConfigurationWrapper>(configuration));
 }
 } // namespace OHOS::ArkWeb
