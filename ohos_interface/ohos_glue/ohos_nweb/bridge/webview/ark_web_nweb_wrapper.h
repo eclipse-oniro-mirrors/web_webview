@@ -1117,6 +1117,15 @@ public:
     /*--ark web()--*/
     bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
                          const std::vector<int32_t>& pressedCodes) override;
+
+    /**
+     * @brief Notify that system configuration changed.
+     *
+     * @param configuration system configuration.
+     */
+    /*--ark web()--*/
+    void OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebSystemConfiguration> configuration) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
