@@ -1126,6 +1126,11 @@ public:
     /*--ark web()--*/
     void OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebSystemConfiguration> configuration) override;
 
+    /**
+     * @brief Notify for next touch move event.
+     */
+    /*--ark web()--*/
+    void NotifyForNextTouchEvent() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

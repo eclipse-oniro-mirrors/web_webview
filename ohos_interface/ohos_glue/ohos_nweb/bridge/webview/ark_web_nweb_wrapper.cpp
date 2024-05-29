@@ -1162,4 +1162,9 @@ void ArkWebNWebWrapper::OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebS
 
     ark_web_nweb_->OnConfigurationUpdated(new ArkWebSystemConfigurationImpl(configuration));
 }
+
+void ArkWebNWebWrapper::NotifyForNextTouchEvent()
+{
+    ark_web_nweb_->NotifyForNextTouchEvent();
+}
 } // namespace OHOS::ArkWeb

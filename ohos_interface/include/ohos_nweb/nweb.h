@@ -1272,6 +1272,13 @@ public:
     */
     /*--ark web()--*/
     virtual void OnConfigurationUpdated(std::shared_ptr<NWebSystemConfiguration> configuration) {}
+
+    /**
+     * @brief Notify for next touch move event.
+     *
+     */
+    /*--ark web()--*/
+    virtual void NotifyForNextTouchEvent() {}
 };
 
 } // namespace OHOS::NWeb

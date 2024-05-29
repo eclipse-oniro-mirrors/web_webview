@@ -45,4 +45,9 @@ void ArkVSyncAdapterImpl::SetOnVsyncCallback(OnVsyncCallback callback)
 {
     return real_.SetOnVsyncCallback(callback);
 }
+
+void ArkVSyncAdapterImpl::SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback)
+{
+    return real_.SetOnVsyncEndCallback(onVsyncEndCallback);
+}
 } // namespace OHOS::ArkWeb
