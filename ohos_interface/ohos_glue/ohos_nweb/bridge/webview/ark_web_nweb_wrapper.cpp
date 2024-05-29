@@ -1152,8 +1152,8 @@ bool ArkWebNWebWrapper::WebSendKeyEvent(int32_t key_code, int32_t key_action,
     return result;
 }
 
-void ArkWebNWebWrapper::NotifyForNextTouchMoveEvent()
+void ArkWebNWebWrapper::NotifyForNextTouchEvent()
 {
-    ark_web_nweb_->NotifyForNextTouchMoveEvent();
+    ark_web_nweb_->NotifyForNextTouchEvent();
 }
 } // namespace OHOS::ArkWeb

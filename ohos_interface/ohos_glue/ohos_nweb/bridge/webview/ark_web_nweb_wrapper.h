@@ -1122,7 +1122,7 @@ public:
      * @brief Notify for next touch move event.
      */
     /*--ark web()--*/
-    void NotifyForNextTouchMoveEvent() override;
+    void NotifyForNextTouchEvent() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

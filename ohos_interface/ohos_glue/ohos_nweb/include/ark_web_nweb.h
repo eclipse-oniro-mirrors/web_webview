@@ -1270,7 +1270,7 @@ public:
      * @brief Notify for next touch move event.
      */
     /*--ark web()--*/
-    virtual void NotifyForNextTouchMoveEvent() = 0;
+    virtual void NotifyForNextTouchEvent() = 0;
 };
 
 } // namespace OHOS::ArkWeb
