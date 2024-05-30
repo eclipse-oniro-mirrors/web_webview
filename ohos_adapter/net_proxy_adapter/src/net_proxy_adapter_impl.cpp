@@ -219,6 +219,7 @@ void NetProxyAdapterImpl::Changed()
     std::string exclusion;
 
     GetProperty(host, port, pacUrl, exclusion);
+    exclusionList.push_back(exclusion);
     cb_->Changed(host, port, "", exclusionList);
 }
 
