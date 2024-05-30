@@ -987,7 +987,7 @@ bool ArkWebNWebImpl::WebSendKeyEvent(int32_t key_code, int32_t key_action,
         ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes));
 }
 
-void ArkWebNWebWrapper::OnConfigurationUpdated(
+void ArkWebNWebImpl::OnConfigurationUpdated(
     ArkWebRefPtr<ArkWebSystemConfiguration> configuration)
 {
     if (CHECK_REF_PTR_IS_NULL(configuration)) {
