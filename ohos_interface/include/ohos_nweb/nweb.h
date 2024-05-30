@@ -1272,6 +1272,26 @@ public:
     */
     /*--ark web()--*/
     virtual void OnConfigurationUpdated(std::shared_ptr<NWebSystemConfiguration> configuration) {}
+
+    /**
+     * @brief Enable the ability to block Ads, default disabled.
+     */
+    virtual void EnableAdsBlock(bool enable) {}
+
+    /**
+     * @brief Get whether Ads block is enabled.
+     */
+    virtual bool IsAdsBlockEnabled() {
+        return false;
+    }
+
+    /**
+     * @brief Get whether Ads block is enabled for current Webpage.
+     */
+    virtual bool IsAdsBlockEnabledForCurPage() {
+        return false;
+    }
+
 };
 
 } // namespace OHOS::NWeb

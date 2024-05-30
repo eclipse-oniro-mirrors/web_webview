@@ -862,4 +862,9 @@ void ArkWebHandlerImpl::OnCustomKeyboardClose()
 {
     nweb_handler_->OnCustomKeyboardClose();
 }
+
+void ArkWebHandlerImpl::OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) {
+  nweb_handler_->OnAdsBlocked(ArkWebStringStructToClass(url),
+                              ArkWebStringVectorStructToClass(adsBlocked));
+}
 } // namespace OHOS::ArkWeb

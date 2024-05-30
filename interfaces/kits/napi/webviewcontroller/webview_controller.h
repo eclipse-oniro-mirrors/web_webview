@@ -340,6 +340,12 @@ public:
                                const std::map<std::string, std::string>& response_headers,
                                const uint32_t type);
 
+    void EnableAdsBlock(bool enable);
+
+    bool IsAdsBlockEnabled();
+
+    bool IsAdsBlockEnabledForCurPage();
+
 private:
     int ConverToWebHitTestType(int hitType);
 

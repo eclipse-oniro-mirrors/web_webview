@@ -138,6 +138,11 @@ public:
     void ClearHostIP(const std::string& hostName) {}
 
     void EnableWholeWebPageDrawing() {}
+
+    std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager()
+    {
+        return nullptr;
+    }
 };
 
 void NwebHelperTest::SetUpTestCase(void)

@@ -736,6 +736,14 @@ public:
 
     /*--ark web()--*/
     virtual void OnCustomKeyboardClose() = 0;
+    /**
+     * @brief Called when ads blocked.
+     *
+     * @param url the url of main frame.
+     * @param adsBlocked the url of ads.
+     */
+    /*--ark web()--*/
+    virtual void OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) = 0;
 };
 
 } // namespace OHOS::ArkWeb
