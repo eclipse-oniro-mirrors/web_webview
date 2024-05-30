@@ -41,6 +41,9 @@ public:
 
     /*--ark web()--*/
     virtual void SetOnVsyncCallback(OnVsyncCallback callback) = 0;
+
+    /*--ark web()--*/
+    virtual void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) = 0;
 };
 
 /*--ark web(source=webcore)--*/
