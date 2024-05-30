@@ -1292,6 +1292,12 @@ public:
         return false;
     }
 
+    /**
+     * @brief Notify for next touch move event.
+     *
+     */
+    /*--ark web()--*/
+    virtual void NotifyForNextTouchEvent() {}
 };
 
 } // namespace OHOS::NWeb
