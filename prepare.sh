@@ -24,7 +24,17 @@ INTERFACE_DIR=${WORK_SPACE}/ohos_interface
 INTERFACE_INCLUDE_DIR=${INTERFACE_DIR}/include
 INTERFACE_OHOS_GLUE_DIR=${INTERFACE_DIR}/ohos_glue
 
-CLANG_FORMAT_DIR=${WORK_SPACE}/../../../prebuilts/clang/ohos/linux-x86_64/llvm/bin
+os_type=$(uname)
+arch_type=$(uname -m)
+if [ "$os_type" == "Darwin" ]; then
+  if [ "$arch_type" == "x86_64" ]; then
+    CLANG_FORMAT_DIR=${WORK_SPACE}/../../../prebuilts/clang/ohos/darwin-x86_64/llvm/bin
+  else
+    CLANG_FORMAT_DIR=${WORK_SPACE}/../../../prebuilts/clang/ohos/darwin-arm64/llvm/bin
+  fi
+else
+  CLANG_FORMAT_DIR=${WORK_SPACE}/../../../prebuilts/clang/ohos/linux-x86_64/llvm/bin
+fi
 
 handle_copy_dir() {
   src_dir=$1
@@ -78,6 +88,36 @@ handle_copy_commond() {
   handle_copy_files adapter
 }
 
+handle_develop_commond() {
+  local ohos_glue_dir=${1}/${2}
+  rm -rf ${ohos_glue_dir} && mkdir -p ${ohos_glue_dir}
+
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/base ${ohos_glue_dir}/base
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/scripts ${ohos_glue_dir}/scripts
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_nweb/include ${ohos_glue_dir}/ohos_nweb/include
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_nweb/bridge/${2} ${ohos_glue_dir}/ohos_nweb/bridge
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_nweb/cpptoc/${2} ${ohos_glue_dir}/ohos_nweb/cpptoc
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_nweb/ctocpp/${2} ${ohos_glue_dir}/ohos_nweb/ctocpp
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_adapter/include ${ohos_glue_dir}/ohos_adapter/include
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_adapter/bridge/${2} ${ohos_glue_dir}/ohos_adapter/bridge
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_adapter/cpptoc/${2} ${ohos_glue_dir}/ohos_adapter/cpptoc
+  handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_adapter/ctocpp/${2} ${ohos_glue_dir}/ohos_adapter/ctocpp
+
+  file_list=`find ${ohos_glue_dir}/ohos_*/include -name "*.h"`
+  for file in $file_list
+  do
+    clang-format -style="{PointerAlignment: Right}" -i $file
+  done
+
+  python3 ${ohos_glue_dir}/scripts/translator.py ${2}
+
+  file_list=`find ${ohos_glue_dir} -type f \( -name "*.h" -o -name "*.cpp" \)`
+  for file in $file_list
+  do
+    clang-format -style=file -i $file
+  done
+}
+
 handle_translate_commond() {
   OHOS_GLUE_MODULE=$1
   if [ "${OHOS_GLUE_MODULE}" = "base" ]; then
@@ -108,6 +148,12 @@ handle_translate_commond() {
 case ${COMMOND_TYPE} in
   "copy")
     handle_copy_commond
+    ;;
+  "develop")
+    OHOS_GLUE_LOG_DIR=./
+    dir_name=$(date +"%Y%m%d%H%M%S")
+    handle_develop_commond ${dir_name} webcore
+    handle_develop_commond ${dir_name} webview
     ;;
   "translate")
     args=${@:4}

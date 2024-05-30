@@ -43,14 +43,11 @@ def verify_cpptoc_func_args(func, retval_default, macro_retval_default):
     arg_name = arg.get_type().get_name()
     comment = '\n  // Verify param: ' + arg_name + '; type: ' + arg_type
 
-    if arg_type == 'simple_byref' or arg_type == 'simple_byref_const' or \
-       arg_type == 'simple_byaddr' or arg_type == 'bool_byref' or arg_type == 'bool_byaddr' or \
-       arg_type == 'struct_byref_const' or arg_type == 'struct_byref' or \
+    if arg_type == 'bool_byref' or arg_type == 'bool_byref_const' or \
+       arg_type == 'simple_byref' or arg_type == 'simple_byref_const' or \
+       arg_type == 'struct_byref' or arg_type == 'struct_byref_const' or \
        arg_type == 'refptr_diff_byref':
-      if arg_name[0] == '*':
-        result += '\n  ARK_WEB_CPPTOC_CHECK_PARAM(' + arg_name[1:] + ', ' + macro_retval_default + ');'
-      else:
-        result += '\n  ARK_WEB_CPPTOC_CHECK_PARAM(' + arg_name + ', ' + macro_retval_default + ');'
+      result += '\n  ARK_WEB_CPPTOC_CHECK_PARAM(' + arg_name + ', ' + macro_retval_default + ');'
       if arg_type == 'struct_byref_const' or arg_type == 'struct_byref':
         result += '\n  if (!template_util::has_valid_size(' + arg_name + ')) {'\
                   '\n    return' + retval_default + ';'\
