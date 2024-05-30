@@ -74,13 +74,12 @@
                 "time_service",
                 "window_manager",
                 "netstack",
-                "protobuf"
+                "protobuf",
+                "libxml2"
             ],
             "third_party": [
                 "chromium",
-                "cef",
-                "libxml2"
-                
+                "cef" 
             ]
         },
         "build": {
