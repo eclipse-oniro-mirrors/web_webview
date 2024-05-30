@@ -1162,4 +1162,16 @@ void ArkWebNWebWrapper::OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebS
 
     ark_web_nweb_->OnConfigurationUpdated(new ArkWebSystemConfigurationImpl(configuration));
 }
+
+void ArkWebNWebWrapper::EnableAdsBlock(bool enable) {
+    ark_web_nweb_->EnableAdsBlock(enable);
+}
+
+bool ArkWebNWebWrapper::IsAdsBlockEnabled() {
+    return ark_web_nweb_->IsAdsBlockEnabled();
+}
+
+bool ArkWebNWebWrapper::IsAdsBlockEnabledForCurPage() {
+    return ark_web_nweb_->IsAdsBlockEnabledForCurPage();
+}
 } // namespace OHOS::ArkWeb

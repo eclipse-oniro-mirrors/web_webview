@@ -17,6 +17,7 @@ config("web_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "common",
+    "webadsblockmanager",
     "webasynccontroller",
     "webcookiemanager",
     "webdatabase",
@@ -42,6 +43,7 @@ ohos_shared_library("webview_napi") {
     "common/napi_parse_utils.cpp",
     "common/napi_webview_native_module.cpp",
     "common/web_errors.cpp",
+    "webadsblockmanager/napi_web_adsblock_manager.cpp",
     "webasynccontroller/napi_web_async_controller.cpp",
     "webcookiemanager/napi_web_cookie_manager.cpp",
     "webdatabase/napi_geolocation_permission.cpp",

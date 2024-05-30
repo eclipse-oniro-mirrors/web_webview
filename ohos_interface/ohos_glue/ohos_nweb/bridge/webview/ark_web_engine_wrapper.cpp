@@ -23,6 +23,7 @@
 #include "ohos_nweb/bridge/ark_web_nweb_create_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_nweb_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_web_storage_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_adsblock_manager_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
 
@@ -227,5 +228,16 @@ void ArkWebEngineWrapper::ClearHostIP(const std::string& hostName)
 void ArkWebEngineWrapper::EnableWholeWebPageDrawing()
 {
     ark_web_engine_->EnableWholeWebPageDrawing();
+}
+
+std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager>
+ArkWebEngineWrapper::GetAdsBlockManager() {
+  ArkWebRefPtr<ArkWebAdsBlockManager> ark_web_adsblock_manager =
+      ark_web_engine_->GetAdsBlockManager();
+  if (CHECK_REF_PTR_IS_NULL(ark_web_adsblock_manager)) {
+    return nullptr;
+  }
+
+  return std::make_shared<ArkWebAdsBlockManagerWrapper>(ark_web_adsblock_manager);
 }
 } // namespace OHOS::ArkWeb

@@ -956,6 +956,14 @@ public:
     virtual void OnCustomKeyboardAttach() {}
 
     virtual void OnCustomKeyboardClose() {}
+    /**
+     * @brief Called when received Ads blocked results.
+     *
+     * @param url The url of webpage.
+     * @param adsBlocked The ads' blocked urls.
+     *
+     */
+    virtual void OnAdsBlocked(const std::string& url, const std::vector<std::string>& adsBlocked) {}
 };
 
 } // namespace OHOS::NWeb

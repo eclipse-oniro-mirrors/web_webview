@@ -21,6 +21,7 @@
 #include "nweb_data_base.h"
 #include "nweb_download_manager.h"
 #include "nweb_web_storage.h"
+#include "nweb_adsblock_manager.h"
 
 namespace OHOS::NWeb {
 
@@ -77,6 +78,10 @@ public:
     virtual void ClearHostIP(const std::string& hostName) = 0;
 
     virtual void EnableWholeWebPageDrawing() {};
+
+    virtual std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager() {
+        return nullptr;
+    };
 };
 
 } // namespace OHOS::NWeb
