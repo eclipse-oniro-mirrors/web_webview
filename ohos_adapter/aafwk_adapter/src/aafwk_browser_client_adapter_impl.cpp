@@ -97,6 +97,9 @@ void BrowserClient::PassSurface(sptr<Surface> surface, int64_t surface_id)
     if (!WriteInterfaceToken(data)) {
         return;
     }
+    if (surface == nullptr) {
+        return;
+    }
     data.WriteRemoteObject(surface->GetProducer()->AsObject());
     data.WriteInt64(surface_id);
     sptr<IRemoteObject> remote = Remote();
