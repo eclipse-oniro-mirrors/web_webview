@@ -27,6 +27,7 @@ const std::string THREAD_NAME = "VSync-webview";
 }
 
 void (*VSyncAdapterImpl::callback_)() = nullptr;
+void (*VSyncAdapterImpl::onVsyncEndCallback_)() = nullptr;
 
 VSyncAdapterImpl::~VSyncAdapterImpl()
 {
@@ -122,6 +123,9 @@ void VSyncAdapterImpl::OnVsync(int64_t timestamp, void* client)
             callback_();
         }
         vsyncClient->VsyncCallbackInner(timestamp);
+        if (onVsyncEndCallback_) {
+            onVsyncEndCallback_();
+        }
     } else {
         WVLOG_E("VsyncClient is null");
     }
@@ -194,5 +198,11 @@ void VSyncAdapterImpl::SetOnVsyncCallback(void (*callback)())
 void VSyncAdapterImpl::SetIsGPUProcess(bool isGPU)
 {
     isGPUProcess_ = isGPU;
+}
+
+void VSyncAdapterImpl::SetOnVsyncEndCallback(void (*onVsyncEndCallback)())
+{
+    WVLOG_D("callback function: %{public}ld", (long)onVsyncEndCallback);
+    onVsyncEndCallback_ = onVsyncEndCallback;
 }
 } // namespace OHOS::NWeb

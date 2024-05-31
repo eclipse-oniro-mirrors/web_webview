@@ -1008,4 +1008,9 @@ bool ArkWebNWebImpl::IsAdsBlockEnabled() {
 bool ArkWebNWebImpl::IsAdsBlockEnabledForCurPage() {
     return nweb_nweb_->IsAdsBlockEnabledForCurPage();
 }
+
+void ArkWebNWebImpl::NotifyForNextTouchEvent()
+{
+    nweb_nweb_->NotifyForNextTouchEvent();
+}
 } // namespace OHOS::ArkWeb

@@ -1144,6 +1144,11 @@ public:
     /*--ark web()--*/
     bool IsAdsBlockEnabledForCurPage() override;
 
+    /**
+     * @brief Notify for next touch move event.
+     */
+    /*--ark web()--*/
+    void NotifyForNextTouchEvent() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

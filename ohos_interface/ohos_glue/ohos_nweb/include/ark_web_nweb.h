@@ -1293,6 +1293,12 @@ public:
      */
     /*--ark web()--*/
     virtual bool IsAdsBlockEnabledForCurPage() = 0;
+
+    /**
+     * @brief Notify for next touch move event.
+     */
+    /*--ark web()--*/
+    virtual void NotifyForNextTouchEvent() = 0;
 };
 
 } // namespace OHOS::ArkWeb
