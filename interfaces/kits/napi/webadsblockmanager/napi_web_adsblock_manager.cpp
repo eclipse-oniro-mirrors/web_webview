@@ -56,7 +56,7 @@ napi_value NapiWebAdsBlockManager::Init(napi_env env, napi_value exports)
     napi_define_class(env, WEB_ADSBLOCK_MANAGER_CLASS_NAME.c_str(), WEB_ADSBLOCK_MANAGER_CLASS_NAME.length(),
         JsConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties, &constructor);
     NAPI_ASSERT(env, constructor != nullptr, "NapiWebAdsBlockManager define js class failed");
-    napi_status status = napi_set_named_property(env, exports, "WebAdsBlockManager", constructor);
+    napi_status status = napi_set_named_property(env, exports, "AdsBlockManager", constructor);
     NAPI_ASSERT(env, status == napi_ok, "NapiWebAdsBlockManager set property failed");
     return exports;
 }
