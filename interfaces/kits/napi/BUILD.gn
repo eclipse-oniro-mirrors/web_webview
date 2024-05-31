@@ -90,6 +90,7 @@ ohos_shared_library("webview_napi") {
     "init:libbegetutil",
     "napi:ace_container_scope",
     "napi:ace_napi",
+    "protobuf:protobuf_lite",
   ]
 
   deps = [
@@ -98,7 +99,6 @@ ohos_shared_library("webview_napi") {
     "../../native:ohweb",
     "js:js_export",
     "protos:proto_gen",
-    "//third_party/protobuf:protobuf_lite",
   ]
 
   relative_install_dir = "module/web"
