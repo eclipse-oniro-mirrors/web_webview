@@ -166,7 +166,10 @@ public:
                isGetLeftTextOfCursor_ && isGetRightTextOfCursor_ && isSetPreviewText_ && isFinishTextPreview_ &&
                isSetNeedUnderLine_;
     }
-
+    bool VerifyFunctionKeySuccess()
+    {
+        return isSendFunctionKey_;
+    }
 private:
     bool isInsertText_ = false;
     bool isDeleteForward_ = false;
@@ -282,23 +285,7 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_005, TestSize.Lev
     listenerTest->SendKeyEventFromInputMethod(event);
     listenerTest->SendKeyboardStatus(MiscServices::KeyboardStatus::SHOW);
     listenerTest->SendFunctionKey(functionKey);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::UNSPECIFIED);
-    listenerTest->SendFunctionKey(functionKey);
     listenerTest->SetKeyboardStatus(true);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::NONE);
-    listenerTest->SendFunctionKey(functionKey);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::GO);
-    listenerTest->SendFunctionKey(functionKey);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::SEARCH);
-    listenerTest->SendFunctionKey(functionKey);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::SEND);
-    listenerTest->SendFunctionKey(functionKey);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::NEXT);
-    listenerTest->SendFunctionKey(functionKey);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::DONE);
-    listenerTest->SendFunctionKey(functionKey);
-    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::PREVIOUS);
-    listenerTest->SendFunctionKey(functionKey);
 
     listenerTest->MoveCursor(MiscServices::Direction::NONE);
     listenerTest->MoveCursor(MiscServices::Direction::UP);
@@ -320,12 +307,47 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_005, TestSize.Lev
 }
 
 /**
- * @tc.name: NWebIMFAdapterTest_InsertText_006.
+ * @tc.name: NWebIMFAdapterTest_IMFAdapterImpl_006.
  * @tc.desc: IMF adapter unittest.
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_006, TestSize.Level1)
+{
+    auto imf_adapter = OhosAdapterHelper::GetInstance().CreateMMIAdapter();
+    EXPECT_NE(imf_adapter, nullptr);
+    auto listener = std::make_shared<IMFTextListenerTest>();
+    auto listenerTest = std::make_shared<IMFTextListenerAdapterImpl>(listener);
+    MiscServices::FunctionKey functionKey;
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::UNSPECIFIED);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::NONE);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::GO);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::SEARCH);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::SEND);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::NEXT);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::DONE);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::PREVIOUS);
+    listenerTest->SendFunctionKey(functionKey);
+    functionKey.SetEnterKeyType(MiscServices::EnterKeyType::NEW_LINE);
+    listenerTest->SendFunctionKey(functionKey);
+    EXPECT_EQ(listener->VerifyFunctionKeySuccess(), true);
+}
+
+/**
+ * @tc.name: NWebIMFAdapterTest_InsertText_007.
+ * @tc.desc: IMF adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_007, TestSize.Level1)
 {
     auto listenerTest = std::make_shared<IMFTextListenerAdapterImpl>(nullptr);
     EXPECT_NE(listenerTest, nullptr);
@@ -354,12 +376,12 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_006, TestSize.Level1)
 }
 
 /**
- * @tc.name: NWebIMFAdapterTest_InsertText_007.
+ * @tc.name: NWebIMFAdapterTest_InsertText_008.
  * @tc.desc: IMF adapter unittest.
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_007, TestSize.Level1)
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_008, TestSize.Level1)
 {
     bool result = g_imf->Attach(nullptr, true, nullptr, false);
     EXPECT_FALSE(result);
@@ -372,12 +394,12 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_007, TestSize.Level1)
 }
 
 /**
- * @tc.name: NWebIMFAdapterTest_IMFAdapterImpl_008.
+ * @tc.name: NWebIMFAdapterTest_IMFAdapterImpl_009.
  * @tc.desc: IMF adapter unittest.
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_008, TestSize.Level1)
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_009, TestSize.Level1)
 {
     auto imf_adapter = OhosAdapterHelper::GetInstance().CreateMMIAdapter();
     EXPECT_NE(imf_adapter, nullptr);
