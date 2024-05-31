@@ -1745,5 +1745,18 @@ bool WebviewController::IsAdsBlockEnabledForCurPage()
     return enabled;
 }
 
+std::string WebviewController::GetSurfaceId()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return "";
+    }
+    std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+    if (!setting) {
+        return "";
+    }
+    return setting->GetSurfaceId();
+}
+
 } // namespace NWeb
 } // namespace OHOS

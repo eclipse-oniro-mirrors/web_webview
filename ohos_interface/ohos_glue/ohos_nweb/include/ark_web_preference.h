@@ -722,6 +722,18 @@ public:
      */
     /*--ark web()--*/
     virtual void PutOverlayScrollbarEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get surfaceId.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetSurfaceId() = 0;
+
+    /**
+     * @brief Set surfaceId.
+     */
+    /*--ark web()--*/
+    virtual void SetSurfaceId(const ArkWebString& surfaceId) = 0;
 };
 
 } // namespace OHOS::ArkWeb
