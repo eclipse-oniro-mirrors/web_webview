@@ -640,6 +640,18 @@ public:
      */
     void PutOverlayScrollbarEnabled(bool enable) override;
 
+    /**
+     * @brief Get surfaceId.
+     */
+    /*--ark web()--*/
+    ArkWebString GetSurfaceId() override;
+
+    /**
+     * @brief Set surfaceId.
+     */
+    /*--ark web()--*/
+    void SetSurfaceId(const ArkWebString& surfaceId) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;
 };

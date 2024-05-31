@@ -346,6 +346,8 @@ public:
 
     bool IsAdsBlockEnabledForCurPage();
 
+    std::string GetSurfaceId();
+
 private:
     int ConverToWebHitTestType(int hitType);
 
