@@ -1757,4 +1757,11 @@ void WebviewJavaScriptResultCallBack::CallH5FunctionInternal(
     WVLOG_D("WebviewJavaScriptResultCallBack::CallH5FunctionInternal end");
 }
 
+void WebviewJavaScriptResultCallBack::UpdateInstanceId(int32_t newId)
+{
+    for (const auto& [nwebId, obj] : objects_) {
+        obj->SetContainerScopeId(newId);
+    }
+}
+
 } // namespace OHOS::NWeb
