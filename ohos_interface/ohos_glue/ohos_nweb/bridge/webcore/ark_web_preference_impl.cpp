@@ -481,4 +481,14 @@ void ArkWebPreferenceImpl::PutOverlayScrollbarEnabled(bool flag)
     nweb_preference_->PutOverlayScrollbarEnabled(flag);
 }
 
+ArkWebString ArkWebPreferenceImpl::GetSurfaceId()
+{
+    return ArkWebStringClassToStruct(nweb_preference_->GetSurfaceId());
+}
+
+void ArkWebPreferenceImpl::SetSurfaceId(const ArkWebString& ua)
+{
+    nweb_preference_->SetSurfaceId(ArkWebStringStructToClass(ua));
+}
+
 } // namespace OHOS::ArkWeb

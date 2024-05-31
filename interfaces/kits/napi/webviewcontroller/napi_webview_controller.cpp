@@ -441,6 +441,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("enableAdsBlock", NapiWebviewController::EnableAdsBlock),
         DECLARE_NAPI_FUNCTION("isAdsBlockEnabled", NapiWebviewController::IsAdsBlockEnabled),
         DECLARE_NAPI_FUNCTION("isAdsBlockEnabledForCurPage", NapiWebviewController::IsAdsBlockEnabledForCurPage),
+        DECLARE_NAPI_FUNCTION("getSurfaceId", NapiWebviewController::GetSurfaceId),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5652,6 +5653,20 @@ napi_value NapiWebviewController::IsAdsBlockEnabledForCurPage(napi_env env, napi
 
     bool isAdsBlockEnabledForCurPage = webviewController->IsAdsBlockEnabledForCurPage();
     NAPI_CALL(env, napi_get_boolean(env, isAdsBlockEnabledForCurPage, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetSurfaceId(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    std::string surfaceId = webviewController->GetSurfaceId();
+    napi_create_string_utf8(env, surfaceId.c_str(), surfaceId.length(), &result);
+
     return result;
 }
 } // namespace NWeb

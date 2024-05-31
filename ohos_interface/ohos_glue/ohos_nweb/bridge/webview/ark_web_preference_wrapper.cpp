@@ -544,4 +544,22 @@ void ArkWebPreferenceWrapper::PutOverlayScrollbarEnabled(bool enable)
     ark_web_preference_->PutOverlayScrollbarEnabled(enable);
 }
 
+std::string ArkWebPreferenceWrapper::GetSurfaceId()
+{
+    ArkWebString stSurfaceId = ark_web_preference_->GetSurfaceId();
+
+    std::string surfaceId = ArkWebStringStructToClass(stSurfaceId);
+    ArkWebStringStructRelease(stSurfaceId);
+    return surfaceId;
+}
+
+void ArkWebPreferenceWrapper::SetSurfaceId(const std::string& surfaceId)
+{
+    ArkWebString stSurfaceId = ArkWebStringClassToStruct(surfaceId);
+
+    ark_web_preference_->SetSurfaceId(stSurfaceId);
+
+    ArkWebStringStructRelease(stSurfaceId);
+}
+
 } // namespace OHOS::ArkWeb

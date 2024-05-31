@@ -639,6 +639,16 @@ public:
      */
     void PutOverlayScrollbarEnabled(bool enable) override;
 
+    /**
+     * @brief Get surfaceId.
+     */
+    std::string GetSurfaceId() override;
+
+    /**
+     * @brief Set surfaceId.
+     */
+    void SetSurfaceId(const std::string& surfaceId) override;
+
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };
