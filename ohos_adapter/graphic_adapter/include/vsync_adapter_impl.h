@@ -40,6 +40,7 @@ public:
 
     void SetOnVsyncCallback(void (*callback)()) override;
     void SetIsGPUProcess(bool isGPU);
+    void SetOnVsyncEndCallback(void (*onVsyncEndCallback)()) override;
 private:
     static void OnVsync(int64_t timestamp, void* data);
     void VsyncCallbackInner(int64_t nanoTimestamp);
@@ -57,6 +58,7 @@ private:
     };
     std::shared_ptr<Rosen::RSFrameRateLinker> frameRateLinker_;
     static void (*callback_)();
+    static void (*onVsyncEndCallback_)();
     bool frameRateLinkerEnable_ = false;
     bool isGPUProcess_ = false;
 };

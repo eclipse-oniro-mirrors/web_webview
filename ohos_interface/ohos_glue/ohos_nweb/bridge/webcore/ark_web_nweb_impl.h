@@ -1133,6 +1133,11 @@ public:
     /*--ark web()--*/
     bool IsAdsBlockEnabledForCurPage() override;
 
+    /**
+     * @brief Notify for next touch move event.
+     */
+    /*--ark web()--*/
+    void NotifyForNextTouchEvent() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
