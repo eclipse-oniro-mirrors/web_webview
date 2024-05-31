@@ -637,6 +637,16 @@ public:
      * Set whether the scrollbar is displayed.
      */
     virtual void PutOverlayScrollbarEnabled(bool enable) {}
+
+    /**
+     * Get surfaceId.
+     */
+    virtual std::string GetSurfaceId() { return ""; }
+
+    /**
+     * Set surfaceId.
+     */
+    virtual void SetSurfaceId(const std::string& surfaceId) {}
 };
 
 } // namespace OHOS::NWeb
