@@ -15,6 +15,7 @@
 
 #include "napi_webview_controller.h"
 
+#include <arpa/inet.h>
 #include <cctype>
 #include <climits>
 #include <cstdint>
@@ -77,6 +78,30 @@ bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
     }
 
     WVLOG_E("Unable to parse type from url object.");
+    return false;
+}
+
+bool ParseIP(napi_env env, napi_value urlObj, std::string& ip)
+{
+    napi_valuetype valueType = napi_null;
+    napi_typeof(env, urlObj, &valueType);
+
+    if (valueType == napi_string) {
+        NapiParseUtils::ParseString(env, urlObj, ip);
+        if (ip == "") {
+            WVLOG_E("The IP is null");
+            return false;
+        }
+
+        unsigned char buf[sizeof(struct in6_addr)];
+        if ((inet_pton(AF_INET, ip.c_str(), buf) == 1) || (inet_pton(AF_INET6, ip.c_str(), buf) == 1)) {
+            return true;
+        }
+        WVLOG_E("IP error.");
+        return false;
+    }
+
+    WVLOG_E("Unable to parse type from ip object.");
     return false;
 }
 
@@ -5551,6 +5576,12 @@ napi_value NapiWebviewController::SetHostIP(napi_env env, napi_callback_info inf
         !NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], aliveTime) ||
         aliveTime <= 0) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,ParamCheckErrorMsgTemplate::PARAM_TYEPS_ERROR);
+        return result;
+    }
+
+    if (!ParseIP(env, argv[INTEGER_ONE], address)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: IP address error.");
         return result;
     }
 
