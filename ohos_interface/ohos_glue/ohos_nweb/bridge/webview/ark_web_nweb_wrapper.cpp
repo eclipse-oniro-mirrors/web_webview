@@ -1179,4 +1179,12 @@ void ArkWebNWebWrapper::NotifyForNextTouchEvent()
 {
     ark_web_nweb_->NotifyForNextTouchEvent();
 }
+
+int ArkWebNWebWrapper::SetUrlTrustList(const std::string& urlTrustList)
+{
+    ArkWebString stUrlTrustList = ArkWebStringClassToStruct(urlTrustList);
+    int res = ark_web_nweb_->SetUrlTrustList(stUrlTrustList);
+    ArkWebStringStructRelease(stUrlTrustList);
+    return res;
+}
 } // namespace OHOS::ArkWeb
