@@ -23,6 +23,7 @@
 #include "parameter.h"
 #include "parameters.h"
 #include "sysversion.h"
+#include "hitrace_adapter_impl.h"
 
 namespace OHOS::NWeb {
 const std::string FACTORY_CONFIG_VALUE = "factoryConfig";
@@ -41,6 +42,7 @@ const std::unordered_map<std::string, PropertiesKey> PROP_KEY_MAP = {
 
 void SystemPropertiesChangeCallback(const char* key, const char* value, void* context) {
     WVLOG_D("sys prop change key: %{public}s ,value : %{public}s ", key,  value);
+    HiTraceAdapterImpl::GetInstance().UpdateOHOSTraceTag(value);
     SystemPropertiesAdapterImpl::GetInstance().DispatchAllWatcherInfo(key, value);
 }
 
