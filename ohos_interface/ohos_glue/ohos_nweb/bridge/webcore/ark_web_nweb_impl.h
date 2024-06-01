@@ -1138,6 +1138,12 @@ public:
      */
     /*--ark web()--*/
     void NotifyForNextTouchEvent() override;
+
+    /**
+     * @brief Set url trust list.
+     */
+    /*--ark web()--*/
+    int SetUrlTrustList(const ArkWebString& urlTrustList) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

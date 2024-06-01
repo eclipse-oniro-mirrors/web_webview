@@ -1765,5 +1765,29 @@ void WebviewController::UpdateInstanceId(int32_t newId)
     }
 }
 
+ErrCode WebviewController::SetUrlTrustList(const std::string& urlTrustList)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+
+    int ret = NWebError::NO_ERROR;
+    switch (nweb_ptr->SetUrlTrustList(urlTrustList)) {
+        case static_cast<int>(UrlListSetResult::INIT_ERROR):
+            ret = NWebError::INIT_ERROR;
+            break;
+        case static_cast<int>(UrlListSetResult::PARAM_ERROR):
+            ret = NWebError::PARAM_CHECK_ERROR;
+            break;
+        case static_cast<int>(UrlListSetResult::SET_OK):
+            ret = NWebError::NO_ERROR;
+            break;
+        default:
+            ret = NWebError::PARAM_CHECK_ERROR;
+            break;
+    }
+    return ret;
+}
 } // namespace NWeb
 } // namespace OHOS

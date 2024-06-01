@@ -109,6 +109,12 @@ enum class ParseURLResult : int {
     INVALID_URL
 };
 
+enum class UrlListSetResult : int {
+    INIT_ERROR = -2,
+    PARAM_ERROR = -1,
+    SET_OK = 0,
+};
+
 class WebPrintDocument;
 class WebviewController {
 public:
@@ -339,6 +345,7 @@ public:
                                const std::vector<uint8_t>& resource,
                                const std::map<std::string, std::string>& response_headers,
                                const uint32_t type);
+    ErrCode SetUrlTrustList(const std::string& urlTrustList);
 
     void EnableAdsBlock(bool enable);
 
