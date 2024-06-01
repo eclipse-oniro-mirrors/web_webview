@@ -65,16 +65,35 @@ bool HiTraceAdapterImpl::IsHiTraceEnable()
 
 void HiTraceAdapterImpl::StartOHOSTrace(const std::string& value, float limit)
 {
-    ::StartTrace(HITRACE_TAG_OHOS, value, limit);
+    if (IsOHOSTraceEnable) {
+        ::StartTrace(HITRACE_TAG_ACE, value, limit);
+    } else if (IsNWEBTraceEnable){
+        ::StartTrace(HITRACE_TAG_NWEB, value, limit);
+    }
 }
 
 void HiTraceAdapterImpl::FinishOHOSTrace()
 {
-    ::FinishTrace(HITRACE_TAG_OHOS);
+    if (IsOHOSTraceEnable) {
+        ::FinishTrace(HITRACE_TAG_ACE);
+    } else if (IsNWEBTraceEnable){
+        ::FinishTrace(HITRACE_TAG_NWEB);
+    }
 }
 
 void HiTraceAdapterImpl::CountOHOSTrace(const std::string& name, int64_t count)
 {
-    ::CountTrace(HITRACE_TAG_OHOS, name, count);
+    if (IsOHOSTraceEnable) {
+        ::CountTrace(HITRACE_TAG_ACE, name, count);
+    } else if (IsNWEBTraceEnable){
+        ::CountTrace(HITRACE_TAG_NWEB, name, count);
+    }
+}
+
+void HiTraceAdapterImpl::UpdateOHOSTraceTag(const char* value)
+{
+    auto status = std::atol(value);
+    IsNWEBTraceEnable = status & HITRACE_TAG_NWEB;
+    IsOHOSTraceEnable = status & HITRACE_TAG_ACE;
 }
 } // namespace OHOS::NWeb
