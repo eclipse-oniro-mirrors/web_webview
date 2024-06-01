@@ -130,6 +130,11 @@ public:
         return env_;
     }
 
+    void SetContainerScopeId(int32_t newId)
+    {
+        containerScopeId_ = newId;
+    }
+
     int32_t GetContainerScopeId() const
     {
         return containerScopeId_;
@@ -490,6 +495,7 @@ public:
         return nwebId_;
     }
 
+    void UpdateInstanceId(int32_t newId);
 private:
     bool RemoveNamedObject(const std::string& name);
 

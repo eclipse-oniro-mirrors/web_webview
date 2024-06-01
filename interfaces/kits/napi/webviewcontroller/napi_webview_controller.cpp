@@ -442,6 +442,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("isAdsBlockEnabled", NapiWebviewController::IsAdsBlockEnabled),
         DECLARE_NAPI_FUNCTION("isAdsBlockEnabledForCurPage", NapiWebviewController::IsAdsBlockEnabledForCurPage),
         DECLARE_NAPI_FUNCTION("getSurfaceId", NapiWebviewController::GetSurfaceId),
+        DECLARE_NAPI_FUNCTION("updateInstanceId", NapiWebviewController::UpdateInstanceId),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5666,7 +5667,38 @@ napi_value NapiWebviewController::GetSurfaceId(napi_env env, napi_callback_info 
 
     std::string surfaceId = webviewController->GetSurfaceId();
     napi_create_string_utf8(env, surfaceId.c_str(), surfaceId.length(), &result);
+    return result;
+}
 
+napi_value NapiWebviewController::UpdateInstanceId(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("Instance changed");
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    int32_t newId = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], newId)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        return result;
+    }
+
+    webviewController->UpdateInstanceId(newId);
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace NWeb

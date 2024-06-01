@@ -1758,5 +1758,12 @@ std::string WebviewController::GetSurfaceId()
     return setting->GetSurfaceId();
 }
 
+void WebviewController::UpdateInstanceId(int32_t newId)
+{
+    if (javaScriptResultCb_) {
+        javaScriptResultCb_->UpdateInstanceId(newId);
+    }
+}
+
 } // namespace NWeb
 } // namespace OHOS

@@ -348,6 +348,8 @@ public:
 
     std::string GetSurfaceId();
 
+    void UpdateInstanceId(int32_t newId);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
