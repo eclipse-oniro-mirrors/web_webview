@@ -33,6 +33,7 @@
 #include "nweb_native_media_player.h"
 #include "nweb_preference.h"
 #include "nweb_release_surface_callback.h"
+#include "nweb_spanstring_convert_html_callback.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
 
@@ -1306,6 +1307,14 @@ public:
     virtual int SetUrlTrustList(const std::string& urlTrustList) {
         return 0;
     }
+
+    /**
+     * @brief Put the callback, convert sapnstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    virtual void PutSpanstringConvertHtmlCallback(
+        std::shared_ptr<NWebSpanstringConvertHtmlCallback> callback) {}
 };
 
 } // namespace OHOS::NWeb

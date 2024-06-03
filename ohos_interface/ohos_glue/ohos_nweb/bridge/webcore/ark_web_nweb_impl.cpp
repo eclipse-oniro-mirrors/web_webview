@@ -33,6 +33,7 @@
 #include "ohos_nweb/bridge/ark_web_preference_impl.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_spanstring_convert_html_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_string_value_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_wrapper.h"
 #include "ohos_nweb/ctocpp/ark_web_js_proxy_callback_vector_ctocpp.h"
@@ -1017,5 +1018,15 @@ void ArkWebNWebImpl::NotifyForNextTouchEvent()
 int ArkWebNWebImpl::SetUrlTrustList(const ArkWebString& urlTrustList)
 {
     return nweb_nweb_->SetUrlTrustList(ArkWebStringStructToClass(urlTrustList));
+}
+
+void ArkWebNWebImpl::PutSpanstringConvertHtmlCallback(
+    ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) {
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->PutSpanstringConvertHtmlCallback(nullptr);
+        return;
+    }
+    nweb_nweb_->PutSpanstringConvertHtmlCallback(
+        std::make_shared<ArkWebSpanstringConvertHtmlCallbackWrapper>(callback));
 }
 } // namespace OHOS::ArkWeb
