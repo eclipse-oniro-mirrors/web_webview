@@ -91,6 +91,7 @@ ohos_shared_library("webview_napi") {
     "napi:ace_container_scope",
     "napi:ace_napi",
     "protobuf:protobuf_lite",
+    "window_manager:libwm",
   ]
 
   deps = [
