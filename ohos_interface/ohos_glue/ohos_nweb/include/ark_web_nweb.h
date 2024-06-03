@@ -1299,6 +1299,13 @@ public:
      */
     /*--ark web()--*/
     virtual void NotifyForNextTouchEvent() = 0;
+
+    /**
+     * @brief Set url trust list.
+     *
+     */
+    /*--ark web()--*/
+    virtual int SetUrlTrustList(const ArkWebString& urlTrustList) = 0;
 };
 
 } // namespace OHOS::ArkWeb

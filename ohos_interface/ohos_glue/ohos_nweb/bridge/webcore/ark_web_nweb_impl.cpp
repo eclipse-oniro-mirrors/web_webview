@@ -1013,4 +1013,9 @@ void ArkWebNWebImpl::NotifyForNextTouchEvent()
 {
     nweb_nweb_->NotifyForNextTouchEvent();
 }
+
+int ArkWebNWebImpl::SetUrlTrustList(const ArkWebString& urlTrustList)
+{
+    return nweb_nweb_->SetUrlTrustList(ArkWebStringStructToClass(urlTrustList));
+}
 } // namespace OHOS::ArkWeb
