@@ -1155,6 +1155,15 @@ public:
      */
     /*--ark web()--*/
     int SetUrlTrustList(const std::string& urlTrustList) override;
+
+    /**
+     * @brief Put the callback for convert spanstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    /*--ark web()--*/
+    void PutSpanstringConvertHtmlCallback(
+        std::shared_ptr<OHOS::NWeb::NWebSpanstringConvertHtmlCallback> callback) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

@@ -34,6 +34,7 @@
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_screen_lock_callback.h"
+#include "ohos_nweb/include/ark_web_spanstring_convert_html_callback.h"
 #include "ohos_nweb/include/ark_web_string_value_callback.h"
 #include "ohos_nweb/include/ark_web_system_configuration.h"
 #include "ohos_nweb/include/ark_web_touch_point_info_vector.h"
@@ -1306,6 +1307,15 @@ public:
      */
     /*--ark web()--*/
     virtual int SetUrlTrustList(const ArkWebString& urlTrustList) = 0;
+
+    /**
+     * @brief Put the callback, convert sapnstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    /*--ark web()--*/
+    virtual void PutSpanstringConvertHtmlCallback(
+        ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb
