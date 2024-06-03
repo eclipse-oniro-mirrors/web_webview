@@ -1298,6 +1298,14 @@ public:
      */
     /*--ark web()--*/
     virtual void NotifyForNextTouchEvent() {}
+
+    /**
+     * @brief Set url trust list.
+     *
+     */
+    virtual int SetUrlTrustList(const std::string& urlTrustList) {
+        return 0;
+    }
 };
 
 } // namespace OHOS::NWeb
