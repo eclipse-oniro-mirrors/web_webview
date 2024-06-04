@@ -27,6 +27,7 @@ using ArkWebFocusReason = OHOS::NWeb::FocusReason;
 using ArkWebImageColorType = OHOS::NWeb::ImageColorType;
 using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 using ArkWebNestedScrollMode = OHOS::NWeb::NestedScrollMode;
+using ArkPixelUnit = OHOS::NWeb::PixelUnit;
 
 class ArkWebNWebWrapper : public OHOS::NWeb::NWeb {
 public:
@@ -1164,6 +1165,24 @@ public:
     /*--ark web()--*/
     void PutSpanstringConvertHtmlCallback(
         std::shared_ptr<OHOS::NWeb::NWebSpanstringConvertHtmlCallback> callback) override;
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param type Request snapshot pixel unit.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    bool WebPageSnapshot(const char* id,
+                         ArkPixelUnit type,
+                         int width,
+                         int height,
+                         const WebSnapshotCallback callback) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
