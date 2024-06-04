@@ -17,6 +17,7 @@
 #define ARK_WEB_NWEB_STRUCTS_H
 
 #include <stdint.h>
+#include <functional>
 
 typedef struct {
     int32_t year;
@@ -38,5 +39,7 @@ typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 
 typedef char* (*NativeArkWebOnJavaScriptProxyCallback)(const char**, int32_t);
+
+using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
 
 #endif // ARK_WEB_NWEB_STRUCTS_H

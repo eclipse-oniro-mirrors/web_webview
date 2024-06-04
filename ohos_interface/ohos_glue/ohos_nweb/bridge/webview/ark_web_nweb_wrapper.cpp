@@ -1199,4 +1199,12 @@ void ArkWebNWebWrapper::PutSpanstringConvertHtmlCallback(
     ark_web_nweb_->PutSpanstringConvertHtmlCallback(
         new ArkWebSpanstringConvertHtmlCallbackImpl(callback));
 }
+
+bool ArkWebNWebWrapper::WebPageSnapshot(const char* id,
+                                        ArkPixelUnit type,
+                                        int width,
+                                        int height,
+                                        const WebSnapshotCallback callback) {
+    return ark_web_nweb_->WebPageSnapshot(id, static_cast<int>(type), width, height, callback);
+}
 } // namespace OHOS::ArkWeb
