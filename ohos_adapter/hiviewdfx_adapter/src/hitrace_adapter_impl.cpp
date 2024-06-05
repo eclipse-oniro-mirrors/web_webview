@@ -92,7 +92,7 @@ void HiTraceAdapterImpl::CountOHOSTrace(const std::string& name, int64_t count)
 
 void HiTraceAdapterImpl::UpdateOHOSTraceTag(const char* value)
 {
-    auto status = std::atol(value);
+    auto status = std::stoul(value);
     IsNWEBTraceEnable = status & HITRACE_TAG_NWEB;
     IsOHOSTraceEnable = status & HITRACE_TAG_ACE;
 }
