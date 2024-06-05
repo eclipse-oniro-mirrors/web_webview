@@ -357,6 +357,17 @@ public:
 
     void UpdateInstanceId(int32_t newId);
 
+    bool ParseJsLengthToInt(napi_env env,
+                            napi_value jsLength,
+                            PixelUnit& type,
+                            int32_t& result);
+
+    ErrCode WebPageSnapshot(const char* id,
+                            PixelUnit type,
+                            int32_t width,
+                            int32_t height,
+                            const WebSnapshotCallback callback);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
@@ -366,6 +377,11 @@ private:
     bool ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result);
 
     bool GetResourceUrl(napi_env env, napi_value urlObj, std::string& result);
+
+    bool ParseJsLengthResourceToInt(napi_env env,
+                                    napi_value jsLength,
+                                    PixelUnit& type,
+                                    int32_t& result);
 
 public:
     static std::string customeSchemeCmdLine_;

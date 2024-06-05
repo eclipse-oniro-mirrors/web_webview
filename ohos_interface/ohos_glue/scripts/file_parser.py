@@ -427,6 +427,7 @@ _simpletypes = {
     'CefThreadId': ['cef_thread_id_t', 'TID_UI'],
     'CefTime': ['cef_time_t', 'CefTime()'],
     'CefWindowHandle': ['cef_window_handle_t', 'kNullWindowHandle'],
+    'WebSnapshotCallback':['WebSnapshotCallback', 'NULL'],
 }
 
 

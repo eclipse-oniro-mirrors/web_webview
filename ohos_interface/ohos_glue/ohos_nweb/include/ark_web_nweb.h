@@ -1316,6 +1316,23 @@ public:
     /*--ark web()--*/
     virtual void PutSpanstringConvertHtmlCallback(
         ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) = 0;
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param type Request snapshot pixel unit.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    virtual bool WebPageSnapshot(const char* id,
+                                 int type,
+                                 int width,
+                                 int height,
+                                 const WebSnapshotCallback callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

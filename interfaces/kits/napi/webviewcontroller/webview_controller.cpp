@@ -1789,5 +1789,105 @@ ErrCode WebviewController::SetUrlTrustList(const std::string& urlTrustList)
     }
     return ret;
 }
+bool WebviewController::ParseJsLengthResourceToInt(
+    napi_env env, napi_value jsLength, PixelUnit &type, int32_t &result)
+{
+    napi_value resIdObj = nullptr;
+    int32_t resId;
+
+    if ((napi_get_named_property(env, jsLength, "id", &resIdObj) != napi_ok)) {
+        return false;
+    }
+
+    if (!NapiParseUtils::ParseInt32(env, resIdObj, resId)) {
+        return false;
+    }
+
+    std::shared_ptr<AbilityRuntime::ApplicationContext> context =
+        AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (!context) {
+        WVLOG_E("WebPageSnapshot Failed to get application context.");
+        return false;
+    }
+    auto resourceManager = context->GetResourceManager();
+    if (!resourceManager) {
+        WVLOG_E("WebPageSnapshot Failed to get resource manager.");
+        return false;
+    }
+
+    napi_value jsResourceType = nullptr;
+    napi_valuetype resourceType = napi_null;
+    napi_get_named_property(env, jsLength, "type", &jsResourceType);
+    napi_typeof(env, jsResourceType, &resourceType);
+    if (resourceType == napi_number) {
+        int32_t resourceTypeNum;
+        NapiParseUtils::ParseInt32(env, jsResourceType, resourceTypeNum);
+        switch (resourceTypeNum) {
+            case static_cast<int>(ResourceType::INTEGER):
+                if (resourceManager->GetIntegerById(resId, result) == Global::Resource::SUCCESS) {
+                    type = PixelUnit::VP;
+                    return true;
+                }
+                break;
+            case static_cast<int>(ResourceType::STRING):
+                std::string resourceString;
+                if (resourceManager->GetStringById(resId, resourceString) == Global::Resource::SUCCESS) {
+                    return NapiParseUtils::ParseJsLengthStringToInt(resourceString, type, result);
+                }
+                break;
+        }
+        WVLOG_E("WebPageSnapshot resource type not support");
+        return false;
+    }
+    WVLOG_E("WebPageSnapshot resource type error");
+    return false;
+}
+
+bool WebviewController::ParseJsLengthToInt(
+    napi_env env, napi_value jsLength, PixelUnit &type, int32_t &result)
+{
+    napi_valuetype jsType = napi_null;
+    napi_typeof(env, jsLength, &jsType);
+    if ((jsType != napi_object) && (jsType != napi_string) && (jsType != napi_number)) {
+        WVLOG_E("WebPageSnapshot Unable to parse js length object.");
+        return false;
+    }
+
+    if (jsType == napi_number) {
+        NapiParseUtils::ParseInt32(env, jsLength, result);
+        type = PixelUnit::VP;
+        return true;
+    }
+
+    if (jsType == napi_string) {
+        std::string nativeString;
+        NapiParseUtils::ParseString(env, jsLength, nativeString);
+        if (!NapiParseUtils::ParseJsLengthStringToInt(nativeString, type, result)) {
+            return false;
+        }
+        return true;
+    }
+
+    if (jsType == napi_object) {
+        return ParseJsLengthResourceToInt(env, jsLength, type, result);
+    }
+    return false;
+}
+
+ErrCode WebviewController::WebPageSnapshot(
+    const char *id, PixelUnit type, int32_t width, int32_t height, const WebSnapshotCallback callback)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+
+    bool init = nweb_ptr->WebPageSnapshot(id, type, width, height, std::move(callback));
+    if (!init) {
+        return INIT_ERROR;
+    }
+
+    return NWebError::NO_ERROR;
+}
 } // namespace NWeb
 } // namespace OHOS
