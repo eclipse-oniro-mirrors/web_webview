@@ -23,14 +23,14 @@ ArkWebSpanstringConvertHtmlCallbackWrapper::ArkWebSpanstringConvertHtmlCallbackW
     : ark_web_spanstring_convert_html_callback_(ark_web_spanstring_convert_html_callback)
 {}
 
-std::string ArkWebSpanstringConvertHtmlCallbackWrapper::SpanstringConvertHtml(const std::vectod<uint8_t> &content>)
+std::string ArkWebSpanstringConvertHtmlCallbackWrapper::SpanstringConvertHtml(const std::vector<uint8_t> &content)
 {
     ArkWebUint8Vector stContent = ArkWebBasicVectorClassToStruct<uint8_t, ArkWebUint8Vector>(content);
     ArkWebString htmlArkString = ark_web_spanstring_convert_html_callback_->SpanstringConvertHtml(stContent);
 
     std::string htmlString = ArkWebStringStructToClass(htmlArkString);
     ArkWebBasicVectorStructRelease<ArkWebUint8Vector>(stContent);
-    ArkWebStringStructRelease(htmlString);
+    ArkWebStringStructRelease(htmlArkString);
     return htmlString;
 }
 
