@@ -220,7 +220,9 @@ void NetProxyAdapterImpl::Changed()
 
     GetProperty(host, port, pacUrl, exclusion);
     exclusionList.push_back(exclusion);
-    cb_->Changed(host, port, "", exclusionList);
+    if (cb_) {
+        cb_->Changed(host, port, "", exclusionList);
+    }
 }
 
 bool NetProxyAdapterImpl::StartListen()
