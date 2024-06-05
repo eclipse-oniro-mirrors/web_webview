@@ -1153,6 +1153,23 @@ public:
     /*--ark web()--*/
     void PutSpanstringConvertHtmlCallback(
         ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) override;
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param type Request snapshot pixel unit.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    bool WebPageSnapshot(const char* id,
+                         int type,
+                         int width,
+                         int height,
+                         const WebSnapshotCallback callback) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

@@ -344,6 +344,8 @@ private:
 
     static napi_value SetUrlTrustList(napi_env env, napi_callback_info info);
 
+    static napi_value WebPageSnapshot(napi_env env, napi_callback_info info);
+
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
     };
