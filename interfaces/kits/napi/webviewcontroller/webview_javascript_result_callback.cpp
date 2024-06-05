@@ -1706,9 +1706,9 @@ JavaScriptOb::ObjectID WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(
     JavaScriptOb::ObjectID objId = AddNamedObject(env, obj, objName);
     // set up named object method
     if (namedObjects_.find(objName) != namedObjects_.end() && objects_[namedObjects_[objName]]) {
-        std::shared_ptr<OHOS::NWeb::JavaScriptOb> obj = objects_[namedObjects_[objName]];
-        obj->SetMethods(allMethodList);
-        obj->SetAsyncMethods(asyncMethodList);
+        std::shared_ptr<OHOS::NWeb::JavaScriptOb> jsObj = objects_[namedObjects_[objName]];
+        jsObj->SetMethods(allMethodList);
+        jsObj->SetAsyncMethods(asyncMethodList);
     }
     for (auto& item : allMethodList) {
         WVLOG_D(
