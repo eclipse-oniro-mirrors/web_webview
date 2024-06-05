@@ -49,6 +49,7 @@ using ArkWebFocusReason = OHOS::NWeb::FocusReason;
 using ArkWebImageColorType = OHOS::NWeb::ImageColorType;
 using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 using ArkWebNestedScrollMode = OHOS::NWeb::NestedScrollMode;
+using ArkPixelUnit = OHOS::NWeb::PixelUnit;
 
 ArkWebNWebImpl::ArkWebNWebImpl(std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb) : nweb_nweb_(nweb_nweb) {}
 
@@ -1028,5 +1029,14 @@ void ArkWebNWebImpl::PutSpanstringConvertHtmlCallback(
     }
     nweb_nweb_->PutSpanstringConvertHtmlCallback(
         std::make_shared<ArkWebSpanstringConvertHtmlCallbackWrapper>(callback));
+}
+
+bool ArkWebNWebImpl::WebPageSnapshot(const char* id,
+                                     int type,
+                                     int width,
+                                     int height,
+                                     const WebSnapshotCallback callback) {
+    return nweb_nweb_->WebPageSnapshot(id, static_cast<ArkPixelUnit>(type), width,
+                                       height, callback);
 }
 } // namespace OHOS::ArkWeb

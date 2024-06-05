@@ -212,10 +212,18 @@ class NWebSystemConfiguration {
     virtual uint8_t GetThemeFlags() = 0;
 };
 
+enum class PixelUnit {
+    PX = 0,
+    VP = 1,
+    PERCENTAGE = 2,
+    NONE = 3,
+};
+
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
+using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -1315,6 +1323,24 @@ public:
      */
     virtual void PutSpanstringConvertHtmlCallback(
         std::shared_ptr<NWebSpanstringConvertHtmlCallback> callback) {}
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    virtual bool WebPageSnapshot(const char* id,
+                                 PixelUnit type,
+                                 int width,
+                                 int height,
+                                 const WebSnapshotCallback callback) {
+        return false;
+                                 };
 };
 
 } // namespace OHOS::NWeb
