@@ -54,6 +54,7 @@ constexpr uint32_t SOCKET_MAXIMUM = 6;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 constexpr size_t MAX_RESOURCES_COUNT = 30;
 constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
+constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024; // 10M
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
 
 bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
@@ -5734,14 +5735,19 @@ napi_value NapiWebviewController::SetUrlTrustList(napi_env env, napi_callback_in
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
 
     std::string urlTrustList;
     if (!NapiParseUtils::ParseString(env, argv[0], urlTrustList)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "urlTrustList", "string"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "urlTrustList", "string"));
+        return result;
+    }
+    if (urlTrustList.size() > MAX_URL_TRUST_LIST_STR_LEN) {
+        WVLOG_E("EnableAdsBlock: url trust list len is too large.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
 
