@@ -21,6 +21,6 @@
 
 using ArkPrintAttributesAdapter = OHOS::NWeb::PrintAttributesAdapter;
 
-typedef void (*OnVsyncCallback)();
+typedef void (*OnVsyncCallback)(void);
 
 #endif // ARK_WEB_ADAPTER_STRUCTS_H
