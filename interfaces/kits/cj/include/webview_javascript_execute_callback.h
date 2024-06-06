@@ -17,7 +17,6 @@
 #define WEBVIEW_JAVA_SCRIPT_EXECUTE_CALLBACK_H
 
 #include <string>
-#include <uv.h>
 
 #include "webview_ffi.h"
 #include "webview_controller_impl.h"
