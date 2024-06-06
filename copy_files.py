@@ -22,6 +22,8 @@ WORK_SPACE = os.path.dirname(os.path.abspath(__file__))
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.dirname(WORK_SPACE)))
 
 sys.path.append(os.path.join(PROJECT_DIR, 'build'))
+sys.path.append(os.path.join(PROJECT_DIR, 'build/hb'))
+from hb.util import log_util  # noqa: E402
 from scripts.util import file_utils  # noqa: E402
 from scripts.util import build_utils  # noqa: E402
 
@@ -30,6 +32,7 @@ INTERFACE_INCLUDE_DIR = os.path.join(INTERFACE_DIR, 'include')
 INTERFACE_OHOS_GLUE_DIR = os.path.join(INTERFACE_DIR, 'ohos_glue')
 
 def copy_dir(src_dir: str, dst_dir: str):
+    log_util.LogUtil.hb_info("begin to copy dir from '{}' to '{}'".format(src_dir, dst_dir))
     if os.path.isdir(dst_dir):
         shutil.rmtree(dst_dir)
 
@@ -43,6 +46,7 @@ def copy_dir(src_dir: str, dst_dir: str):
     return source_files
 
 def copy_files(src_dir: str, dst_dir: str):
+    log_util.LogUtil.hb_info("begin to copy files from '{}' to '{}'".format(src_dir, dst_dir))
     source_files = []
     for item in os.listdir(src_dir):
         src_file = os.path.join(src_dir, item)
@@ -53,6 +57,7 @@ def copy_files(src_dir: str, dst_dir: str):
     return source_files
 
 def copy_include():
+    log_util.LogUtil.hb_info("begin to copy include dir")
     nweb_include = os.path.join('ohos_nweb', 'include')
     include_source_files = copy_files(os.path.join(INTERFACE_INCLUDE_DIR, 'ohos_nweb'),
             os.path.join(WORK_SPACE, nweb_include))
@@ -63,6 +68,7 @@ def copy_include():
     return include_source_files
 
 def copy_glue_base(glue_dir: str):
+    log_util.LogUtil.hb_info("begin to copy glue base dir")
     base_dir = os.path.join(glue_dir, 'base')
     base_source_files = copy_dir(os.path.join(INTERFACE_OHOS_GLUE_DIR, 'base'), base_dir)
 
@@ -72,6 +78,7 @@ def copy_glue_base(glue_dir: str):
 
 def copy_glue_module(glue_dir: str, module_name: str):
     dir_name = 'ohos_' + module_name;
+    log_util.LogUtil.hb_info("begin to copy glue '{}' dir".format(dir_name))
     dst_dir = os.path.join(glue_dir, dir_name)
     if os.path.isdir(dst_dir):
         shutil.rmtree(dst_dir)
