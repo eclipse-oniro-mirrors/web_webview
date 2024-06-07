@@ -29,6 +29,7 @@
                 "ability_base",
                 "ability_runtime",
                 "access_token",
+                "ace_engine",
                 "app_file_service",
                 "audio_framework",
                 "av_codec",
@@ -76,6 +77,7 @@
                 "netstack",
                 "protobuf",
                 "libxml2"
+                
             ],
             "third_party": [
                 "chromium",
