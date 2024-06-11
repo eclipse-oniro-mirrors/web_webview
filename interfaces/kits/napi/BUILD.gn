@@ -91,6 +91,7 @@ ohos_shared_library("webview_napi") {
     "init:libbegetutil",
     "napi:ace_napi",
     "protobuf:protobuf_lite",
+    "window_manager:libwm",
   ]
 
   deps = [
