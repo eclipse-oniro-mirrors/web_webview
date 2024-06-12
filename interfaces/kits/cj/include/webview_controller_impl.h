@@ -51,6 +51,7 @@ namespace OHOS::Webview {
     };
 
     class __attribute__((visibility("default"))) WebviewControllerImpl : public OHOS::FFI::FFIData {
+        DECL_TYPE(WebviewControllerImpl, OHOS::FFI::FFIData)
     public:
         explicit WebviewControllerImpl() = default;
 
@@ -152,11 +153,6 @@ namespace OHOS::Webview {
 
         void Stop();
 
-        OHOS::FFI::RuntimeType* GetRuntimeType() override
-        {
-            return GetClassType();
-        }
-
     public:
         static std::string customeSchemeCmdLine_;
         static bool existNweb_;
@@ -164,16 +160,6 @@ namespace OHOS::Webview {
 
     private:
         int ConverToWebHitTestType(int hitType);
-        
-        friend class OHOS::FFI::RuntimeType;
-
-        friend class OHOS::FFI::TypeBase;
-
-        static OHOS::FFI::RuntimeType* GetClassType()
-        {
-            static OHOS::FFI::RuntimeType runtimeType = OHOS::FFI::RuntimeType::Create("WebviewControllerImpl");
-            return &runtimeType;
-        }
 
     private:
         std::mutex webMtx_;
@@ -184,6 +170,7 @@ namespace OHOS::Webview {
     };
 
     class __attribute__((visibility("default"))) WebHistoryListImpl : public OHOS::FFI::FFIData {
+        DECL_TYPE(WebHistoryListImpl, OHOS::FFI::FFIData)
     public:
         explicit WebHistoryListImpl(std::shared_ptr<NWeb::NWebHistoryList> sptrHistoryList)
             :sptrHistoryList_(sptrHistoryList) {};
@@ -193,22 +180,8 @@ namespace OHOS::Webview {
         std::shared_ptr<OHOS::NWeb::NWebHistoryItem> GetItem(int32_t index);
 
         int32_t GetListSize();
-
-        OHOS::FFI::RuntimeType* GetRuntimeType() override
-        {
-            return GetClassType();
-        }
     private:
         std::shared_ptr<OHOS::NWeb::NWebHistoryList> sptrHistoryList_ = nullptr;
-        friend class OHOS::FFI::RuntimeType;
-
-        friend class OHOS::FFI::TypeBase;
-
-        static OHOS::FFI::RuntimeType* GetClassType()
-        {
-            static OHOS::FFI::RuntimeType runtimeType = OHOS::FFI::RuntimeType::Create("WebHistoryListImpl");
-            return &runtimeType;
-        }
     };
 }
 #endif // WEBVIEW_CONTROLLER_IMPL_FFI_H
