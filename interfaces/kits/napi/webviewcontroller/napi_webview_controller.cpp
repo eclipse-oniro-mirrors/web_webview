@@ -5840,7 +5840,7 @@ WebSnapshotCallback CreateWebPageSnapshotResultCallback(
                 }
 
                 if (std::abs(returnJsHeight - inputHeight) < INTEGER_THREE) {
-                    returnJsWidth = inputHeight;
+                    returnJsHeight = inputHeight;
                 }
             }
             napi_value jsSizeObj = nullptr;
