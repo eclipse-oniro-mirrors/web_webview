@@ -27,7 +27,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAafwkBrowserHostAdapterWrapper : public OHOS::NWeb::AafwkBrowserHostAdapter {
 public:
-    ArkAafwkBrowserHostAdapterWrapper(ArkWebRefPtr<ArkAafwkBrowserHostAdapter>);
+    explicit ArkAafwkBrowserHostAdapterWrapper(ArkWebRefPtr<ArkAafwkBrowserHostAdapter>);
 
     void* GetSurfaceFromKernel(int32_t surface_id) override;
 
