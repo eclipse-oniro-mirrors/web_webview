@@ -21,6 +21,7 @@
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
+#include "nweb.h"
 #include "nweb_web_message.h"
 #include "web_errors.h"
 
@@ -55,6 +56,7 @@ public:
     static bool ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMessage> src, napi_value& dst);
     static ErrCode ConstructStringFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength);
     static ErrCode ConstructArrayBufFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength);
+    static bool ParseJsLengthStringToInt(const std::string& input, PixelUnit& type, int32_t& value);
 };
 } // namespace NWeb
 } // namespace OHOS

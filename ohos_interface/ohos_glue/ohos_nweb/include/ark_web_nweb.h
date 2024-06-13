@@ -34,6 +34,7 @@
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_screen_lock_callback.h"
+#include "ohos_nweb/include/ark_web_spanstring_convert_html_callback.h"
 #include "ohos_nweb/include/ark_web_string_value_callback.h"
 #include "ohos_nweb/include/ark_web_system_configuration.h"
 #include "ohos_nweb/include/ark_web_touch_point_info_vector.h"
@@ -1277,7 +1278,7 @@ public:
         ArkWebRefPtr<ArkWebSystemConfiguration> configuration) = 0;
 
     /**
-     * @brief Enable the ability to block Ads， default disabled.
+     * @brief Enable the ability to block Ads, default disabled.
      */
     /*--ark web()--*/
     virtual void EnableAdsBlock(bool enable) = 0;
@@ -1299,6 +1300,39 @@ public:
      */
     /*--ark web()--*/
     virtual void NotifyForNextTouchEvent() = 0;
+
+    /**
+     * @brief Set url trust list.
+     *
+     */
+    /*--ark web()--*/
+    virtual int SetUrlTrustList(const ArkWebString& urlTrustList) = 0;
+
+    /**
+     * @brief Put the callback, convert sapnstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    /*--ark web()--*/
+    virtual void PutSpanstringConvertHtmlCallback(
+        ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) = 0;
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param type Request snapshot pixel unit.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    virtual bool WebPageSnapshot(const char* id,
+                                 int type,
+                                 int width,
+                                 int height,
+                                 const WebSnapshotCallback callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

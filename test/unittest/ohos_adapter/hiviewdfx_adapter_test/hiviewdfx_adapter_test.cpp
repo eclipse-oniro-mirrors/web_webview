@@ -60,6 +60,18 @@ HWTEST(HiViewDFXAdapterTest, NormalScene, TestSize.Level1)
         { "testkey1", "0", "testkey2", "0", "testkey3", "0", "testkey4", "0", "testkey5", "0.0", "testkey6", "0.0" });
     EXPECT_EQ(ret, 0);
 
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
+        HiSysEventAdapter::EventType::STATISTIC,
+        { "testkey1", "0", "testkey2", "0", "testkey3", "0", "testkey4", "0", "testkey5", "0.0", "testkey6", "0.0",
+          "testkey7", "0.0" });
+    EXPECT_EQ(ret, 0);
+
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
+        HiSysEventAdapter::EventType::STATISTIC,
+        { "testkey1", "0", "testkey2", "0", "testkey3", "0", "testkey4", "0", "testkey5", "0.0", "testkey6", "0.0",
+          "testkey7", "0.0", "testkey8", "0.0" });
+    EXPECT_EQ(ret, 0);
+
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartTrace("test");
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartAsyncTrace("test", 0);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountTrace("test", 1);

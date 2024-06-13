@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_CUSTOM_KEYBOARD_HANDLER_H_
-#define ARK_WEB_CUSTOM_KEYBOARD_HANDLER_H_
+#ifndef ARK_WEB_SPANSTRING_CONVERT_HTML_CALLBACK_H_
+#define ARK_WEB_SPANSTRING_CONVERT_HTML_CALLBACK_H_
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
@@ -22,25 +22,13 @@
 
 namespace OHOS::ArkWeb {
 
-/*--ark web(source=webcore)--*/
-class ArkWebCustomKeyboardHandler : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=webview)--*/
+class ArkWebSpanstringConvertHtmlCallback : public virtual ArkWebBaseRefCounted {
 public:
-  /*--ark web()--*/
-  virtual void InsertText(const ArkWebString &text) = 0;
-
-  /*--ark web()--*/
-  virtual void DeleteForward(int32_t length) = 0;
-
-  /*--ark web()--*/
-  virtual void DeleteBackward(int32_t length) = 0;
-
-  /*--ark web()--*/
-  virtual void SendFunctionKey(int32_t key) = 0;
-
-  /*--ark web()--*/
-  virtual void Close() = 0;
+    /*--ark web()--*/
+    virtual ArkWebString SpanstringConvertHtml(const ArkWebUint8Vector &content) = 0;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_WEB_CUSTOM_KEYBOARD_HANDLER_H_
+#endif // ARK_WEB_SPANSTRING_CONVERT_HTML_CALLBACK_H_

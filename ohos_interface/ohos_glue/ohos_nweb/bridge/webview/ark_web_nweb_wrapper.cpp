@@ -32,6 +32,7 @@
 #include "ohos_nweb/bridge/ark_web_preference_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_spanstring_convert_html_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_string_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_impl.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
@@ -1178,5 +1179,32 @@ bool ArkWebNWebWrapper::IsAdsBlockEnabledForCurPage() {
 void ArkWebNWebWrapper::NotifyForNextTouchEvent()
 {
     ark_web_nweb_->NotifyForNextTouchEvent();
+}
+
+int ArkWebNWebWrapper::SetUrlTrustList(const std::string& urlTrustList)
+{
+    ArkWebString stUrlTrustList = ArkWebStringClassToStruct(urlTrustList);
+    int res = ark_web_nweb_->SetUrlTrustList(stUrlTrustList);
+    ArkWebStringStructRelease(stUrlTrustList);
+    return res;
+}
+
+void ArkWebNWebWrapper::PutSpanstringConvertHtmlCallback(
+    std::shared_ptr<OHOS::NWeb::NWebSpanstringConvertHtmlCallback> callback) {
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->PutSpanstringConvertHtmlCallback(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->PutSpanstringConvertHtmlCallback(
+        new ArkWebSpanstringConvertHtmlCallbackImpl(callback));
+}
+
+bool ArkWebNWebWrapper::WebPageSnapshot(const char* id,
+                                        ArkPixelUnit type,
+                                        int width,
+                                        int height,
+                                        const WebSnapshotCallback callback) {
+    return ark_web_nweb_->WebPageSnapshot(id, static_cast<int>(type), width, height, callback);
 }
 } // namespace OHOS::ArkWeb

@@ -288,6 +288,10 @@ public:
     }
     void SendTouchpadFlingEvent(double x, double y, double vx, double vy) override
     {}
+    int SetUrlTrustList(const std::string& urlTrustList) override
+    {
+        return 0;
+    }
 };
 }
 #endif

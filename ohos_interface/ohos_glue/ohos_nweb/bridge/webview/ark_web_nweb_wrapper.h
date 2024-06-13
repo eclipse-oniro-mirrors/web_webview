@@ -27,6 +27,7 @@ using ArkWebFocusReason = OHOS::NWeb::FocusReason;
 using ArkWebImageColorType = OHOS::NWeb::ImageColorType;
 using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 using ArkWebNestedScrollMode = OHOS::NWeb::NestedScrollMode;
+using ArkPixelUnit = OHOS::NWeb::PixelUnit;
 
 class ArkWebNWebWrapper : public OHOS::NWeb::NWeb {
 public:
@@ -1127,7 +1128,7 @@ public:
     void OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebSystemConfiguration> configuration) override;
 
     /**
-     * @brief Enable the ability to block Ads， default disabled.
+     * @brief Enable the ability to block Ads, default disabled.
      */
     /*--ark web()--*/
     void EnableAdsBlock(bool enable) override;
@@ -1149,6 +1150,39 @@ public:
      */
     /*--ark web()--*/
     void NotifyForNextTouchEvent() override;
+
+    /**
+     * @brief Set url trust list.
+     */
+    /*--ark web()--*/
+    int SetUrlTrustList(const std::string& urlTrustList) override;
+
+    /**
+     * @brief Put the callback for convert spanstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    /*--ark web()--*/
+    void PutSpanstringConvertHtmlCallback(
+        std::shared_ptr<OHOS::NWeb::NWebSpanstringConvertHtmlCallback> callback) override;
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param type Request snapshot pixel unit.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    bool WebPageSnapshot(const char* id,
+                         ArkPixelUnit type,
+                         int width,
+                         int height,
+                         const WebSnapshotCallback callback) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

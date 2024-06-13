@@ -33,6 +33,7 @@
 #include "nweb_native_media_player.h"
 #include "nweb_preference.h"
 #include "nweb_release_surface_callback.h"
+#include "nweb_spanstring_convert_html_callback.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
 
@@ -211,10 +212,18 @@ class NWebSystemConfiguration {
     virtual uint8_t GetThemeFlags() = 0;
 };
 
+enum class PixelUnit {
+    PX = 0,
+    VP = 1,
+    PERCENTAGE = 2,
+    NONE = 3,
+};
+
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
+using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -1298,6 +1307,40 @@ public:
      */
     /*--ark web()--*/
     virtual void NotifyForNextTouchEvent() {}
+
+    /**
+     * @brief Set url trust list.
+     *
+     */
+    virtual int SetUrlTrustList(const std::string& urlTrustList) {
+        return 0;
+    }
+
+    /**
+     * @brief Put the callback, convert sapnstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    virtual void PutSpanstringConvertHtmlCallback(
+        std::shared_ptr<NWebSpanstringConvertHtmlCallback> callback) {}
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    virtual bool WebPageSnapshot(const char* id,
+                                 PixelUnit type,
+                                 int width,
+                                 int height,
+                                 const WebSnapshotCallback callback) {
+        return false;
+                                 };
 };
 
 } // namespace OHOS::NWeb

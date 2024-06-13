@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2024 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -427,6 +430,7 @@ _simpletypes = {
     'CefThreadId': ['cef_thread_id_t', 'TID_UI'],
     'CefTime': ['cef_time_t', 'CefTime()'],
     'CefWindowHandle': ['cef_window_handle_t', 'kNullWindowHandle'],
+    'WebSnapshotCallback':['WebSnapshotCallback', 'NULL'],
 }
 
 

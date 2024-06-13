@@ -1116,7 +1116,7 @@ public:
         ArkWebRefPtr<ArkWebSystemConfiguration> configuration) override;
 
     /**
-     * @brief Enable the ability to block Ads， default disabled.
+     * @brief Enable the ability to block Ads, default disabled.
      */
     /*--ark web()--*/
     void EnableAdsBlock(bool enable) override;
@@ -1138,6 +1138,38 @@ public:
      */
     /*--ark web()--*/
     void NotifyForNextTouchEvent() override;
+
+    /**
+     * @brief Set url trust list.
+     */
+    /*--ark web()--*/
+    int SetUrlTrustList(const ArkWebString& urlTrustList) override;
+
+    /**
+     * @brief Put the callback for convert spanstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    /*--ark web()--*/
+    void PutSpanstringConvertHtmlCallback(
+        ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) override;
+
+    /**
+     * @brief Get Web page snapshot
+     *
+     * @param id Request id.
+     * @param type Request snapshot pixel unit.
+     * @param width Request SnapShot width.
+     * @param height Request SnapShot height.
+     * @param callback SnapShot result callback.
+     * @return ture if succuess request snapshot to renderer.
+     */
+    /*--ark web()--*/
+    bool WebPageSnapshot(const char* id,
+                         int type,
+                         int width,
+                         int height,
+                         const WebSnapshotCallback callback) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

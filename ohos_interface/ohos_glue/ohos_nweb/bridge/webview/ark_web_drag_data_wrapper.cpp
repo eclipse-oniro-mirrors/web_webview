@@ -103,7 +103,7 @@ bool ArkWebDragDataWrapper::SetFragmentHtml(const std::string& html)
 {
     ArkWebString stHtml = ArkWebStringClassToStruct(html);
 
-    bool flag = ark_web_drag_data_->SetFragmentText(stHtml);
+    bool flag = ark_web_drag_data_->SetFragmentHtml(stHtml);
 
     ArkWebStringStructRelease(stHtml);
     return flag;

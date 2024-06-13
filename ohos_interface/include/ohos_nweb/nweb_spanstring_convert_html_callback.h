@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,14 +13,23 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_ADAPTER_STRUCTS_H
-#define ARK_WEB_ADAPTER_STRUCTS_H
-#pragma once
+#ifndef NWEB_SPANSTRING_CONVERT_HTML_CALLBACK_H
+#define NWEB_SPANSTRING_CONVERT_HTML_CALLBACK_H
 
-#include "print_manager_adapter.h"
+#include <string>
 
-using ArkPrintAttributesAdapter = OHOS::NWeb::PrintAttributesAdapter;
+#include "nweb_export.h"
 
-typedef void (*OnVsyncCallback)(void);
+namespace OHOS::NWeb {
 
-#endif // ARK_WEB_ADAPTER_STRUCTS_H
+class OHOS_NWEB_EXPORT NWebSpanstringConvertHtmlCallback {
+public:
+    NWebSpanstringConvertHtmlCallback() = default;
+
+    virtual ~NWebSpanstringConvertHtmlCallback() = default;
+    virtual std::string SpanstringConvertHtml(const std::vector<uint8_t> &content) = 0;
+};
+
+} // namespace OHOS::NWeb
+
+#endif // NWEB_SPANSTRING_CONVERT_HTML_CALLBACK_H
