@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARk_WEB_CUSTOM_KEYBOARD_HANDLER_H_
-#define ARk_WEB_CUSTOM_KEYBOARD_HANDLER_H_
+#ifndef ARK_WEB_CUSTOM_KEYBOARD_HANDLER_H_
+#define ARK_WEB_CUSTOM_KEYBOARD_HANDLER_H_
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
@@ -43,4 +43,4 @@ public:
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARk_WEB_CUSTOM_KEYBOARD_HANDLER_H_
+#endif // ARK_WEB_CUSTOM_KEYBOARD_HANDLER_H_

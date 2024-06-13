@@ -550,8 +550,6 @@ std::shared_ptr<HitTestResult> WebviewController::GetHitTestValue()
         nwebResult = nweb_ptr->GetHitTestResult();
         if (nwebResult) {
             nwebResult->SetType(ConverToWebHitTestType(nwebResult->GetType()));
-        } else {
-            nwebResult->SetType(ConverToWebHitTestType(HitTestResult::UNKNOWN_TYPE));
         }
     }
     return nwebResult;

@@ -1128,7 +1128,7 @@ public:
     void OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebSystemConfiguration> configuration) override;
 
     /**
-     * @brief Enable the ability to block Ads， default disabled.
+     * @brief Enable the ability to block Ads, default disabled.
      */
     /*--ark web()--*/
     void EnableAdsBlock(bool enable) override;
