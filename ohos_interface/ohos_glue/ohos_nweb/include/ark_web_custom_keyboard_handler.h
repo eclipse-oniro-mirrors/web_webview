@@ -22,7 +22,7 @@
 
 namespace OHOS::ArkWeb {
 
-/*--ark web(source=web core)--*/
+/*--ark web(source=webcore)--*/
 class ArkWebCustomKeyboardHandler : public virtual ArkWebBaseRefCounted {
 public:
   /*--ark web()--*/
@@ -40,6 +40,7 @@ public:
   /*--ark web()--*/
   virtual void Close() = 0;
 };
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARk_WEB_CUSTOM_KEYBOARD_HANDLER_H_
