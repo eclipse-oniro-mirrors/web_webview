@@ -16,6 +16,7 @@
 #ifndef NWEB_WEBVIEW_CONTROLLER_H
 #define NWEB_WEBVIEW_CONTROLLER_H
 
+#include <filesystem>
 #include <memory>
 #include <string>
 #include <unordered_map>
@@ -367,6 +368,9 @@ public:
                             int32_t width,
                             int32_t height,
                             const WebSnapshotCallback callback);
+    
+    void SetPathAllowingUniversalAccess(const std::vector<std::string>& pathList,
+                                        std::string& errorPath);
 
 private:
     int ConverToWebHitTestType(int hitType);
@@ -382,6 +386,7 @@ private:
                                     napi_value jsLength,
                                     PixelUnit& type,
                                     int32_t& result);
+    bool GetHapModuleInfo();
 
 public:
     static std::string customeSchemeCmdLine_;
@@ -396,6 +401,7 @@ private:
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
     std::string hapPath_ = "";
     std::string webTag_ = "";
+    std::vector<std::string> moduleName_;
 };
 
 class WebMessagePort {
