@@ -160,5 +160,5 @@ case "${COMMOND_TYPE}" in
     handle_translate_commond $args
     ;;
   *)
-    echo "invalid commond ${COMMOND_TYPE}" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
+    echo "commond ${COMMOND_TYPE} is invalid" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
 esac
