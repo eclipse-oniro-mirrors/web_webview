@@ -217,9 +217,9 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
     const std::unordered_map<std::string, MiscServices::PrivateDataValue>& privateCommand)
 {
     WVLOG_I("ReceivePrivateCommand");
-    bool is_need_underline = false;
     auto item = privateCommand.find(PREVIEW_TEXT_STYLE_KEY);
     if (item != privateCommand.end()) {
+        bool is_need_underline = false;
         MiscServices::PrivateDataValue data = item->second;
         std::string previewStyle = std::get<std::string>(data);
         if (previewStyle == PREVIEW_TEXT_STYLE_UNDERLINE) {

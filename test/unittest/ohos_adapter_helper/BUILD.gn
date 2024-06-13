@@ -65,6 +65,7 @@ ohos_unittest("ohos_adapter_helper_test") {
     "safwk:system_ability_fwk",
     "samgr:samgr_proxy",
     "webview:libnweb",
+    "window_manager:libwm",
   ]
 }
 group("unittest") {

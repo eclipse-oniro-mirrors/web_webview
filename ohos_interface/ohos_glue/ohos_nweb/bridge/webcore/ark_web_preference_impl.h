@@ -636,11 +636,6 @@ public:
     void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) override;
 
     /**
-     * Set whether the scrollbar is displayed.
-     */
-    void PutOverlayScrollbarEnabled(bool enable) override;
-
-    /**
      * @brief Get surfaceId.
      */
     /*--ark web()--*/
@@ -651,6 +646,11 @@ public:
      */
     /*--ark web()--*/
     void SetSurfaceId(const ArkWebString& surfaceId) override;
+
+    /**
+     * Set whether the scrollbar is displayed.
+     */
+    void PutOverlayScrollbarEnabled(bool enable) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;

@@ -634,11 +634,6 @@ public:
     virtual void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) = 0;
 
     /**
-     * Set whether the scrollbar is displayed.
-     */
-    virtual void PutOverlayScrollbarEnabled(bool enable) {}
-
-    /**
      * Get surfaceId.
      */
     virtual std::string GetSurfaceId() { return ""; }
@@ -647,6 +642,11 @@ public:
      * Set surfaceId.
      */
     virtual void SetSurfaceId(const std::string& surfaceId) {}
+
+    /**
+     * Set whether the scrollbar is displayed.
+     */
+    virtual void PutOverlayScrollbarEnabled(bool enable) {}
 };
 
 } // namespace OHOS::NWeb

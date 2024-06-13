@@ -33,6 +33,7 @@
 #include "ohos_nweb/bridge/ark_web_preference_impl.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_spanstring_convert_html_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_string_value_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_wrapper.h"
 #include "ohos_nweb/ctocpp/ark_web_js_proxy_callback_vector_ctocpp.h"
@@ -48,6 +49,7 @@ using ArkWebFocusReason = OHOS::NWeb::FocusReason;
 using ArkWebImageColorType = OHOS::NWeb::ImageColorType;
 using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 using ArkWebNestedScrollMode = OHOS::NWeb::NestedScrollMode;
+using ArkPixelUnit = OHOS::NWeb::PixelUnit;
 
 ArkWebNWebImpl::ArkWebNWebImpl(std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb) : nweb_nweb_(nweb_nweb) {}
 
@@ -1012,5 +1014,29 @@ bool ArkWebNWebImpl::IsAdsBlockEnabledForCurPage() {
 void ArkWebNWebImpl::NotifyForNextTouchEvent()
 {
     nweb_nweb_->NotifyForNextTouchEvent();
+}
+
+int ArkWebNWebImpl::SetUrlTrustList(const ArkWebString& urlTrustList)
+{
+    return nweb_nweb_->SetUrlTrustList(ArkWebStringStructToClass(urlTrustList));
+}
+
+void ArkWebNWebImpl::PutSpanstringConvertHtmlCallback(
+    ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) {
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->PutSpanstringConvertHtmlCallback(nullptr);
+        return;
+    }
+    nweb_nweb_->PutSpanstringConvertHtmlCallback(
+        std::make_shared<ArkWebSpanstringConvertHtmlCallbackWrapper>(callback));
+}
+
+bool ArkWebNWebImpl::WebPageSnapshot(const char* id,
+                                     int type,
+                                     int width,
+                                     int height,
+                                     const WebSnapshotCallback callback) {
+    return nweb_nweb_->WebPageSnapshot(id, static_cast<ArkPixelUnit>(type), width,
+                                       height, callback);
 }
 } // namespace OHOS::ArkWeb

@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef overrideARK_MEDIA_CODEC_ENCODER_ADAPTER_WRAPPER_H
-#define overrideARK_MEDIA_CODEC_ENCODER_ADAPTER_WRAPPER_H
+#ifndef ARK_MEDIA_CODEC_ENCODER_ADAPTER_WRAPPER_H
+#define ARK_MEDIA_CODEC_ENCODER_ADAPTER_WRAPPER_H
 #pragma once
 
 #include "media_codec_adapter.h"
@@ -57,4 +57,4 @@ private:
 
 } // namespace OHOS::ArkWeb
 
-#endif // overrideARK_MEDIA_CODEC_ENCODER_ADAPTER_WRAPPER_H
+#endif // ARK_MEDIA_CODEC_ENCODER_ADAPTER_WRAPPER_H

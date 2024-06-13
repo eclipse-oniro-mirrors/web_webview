@@ -155,15 +155,18 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
     if (avSession_ && (type != avSessionKey_->GetType())) {
         DestroyAVSession();
     }
-    if (!avSession_) {
-        auto findIter = avSessionMap.find(avSessionKey_->ToString());
-        if (findIter != avSessionMap.end()) {
-            int32_t ret = findIter->second->Destroy();
-            if (ret != AVSession::AVSESSION_SUCCESS) {
-                WVLOG_E("media avsession adapter destroy previous avsession failed, ret: %{public}d", ret);
-            }
-            avSessionMap.erase(findIter);
+    using avSessionMapIterator = std::unordered_map<std::string, std::shared_ptr<AVSession::AVSession>>::iterator;
+    avSessionMapIterator findIter = avSessionMap.find(avSessionKey_->ToString());
+    auto destroyAndEraseSession = [](avSessionMapIterator& iter) {
+        int32_t ret = iter->second->Destroy();
+        if (ret != AVSession::AVSESSION_SUCCESS) {
+            WVLOG_E("media avsession adapter destroy previous avsession failed, ret: %{public}d", ret);
         }
+        iter->second.reset();
+        avSessionMap.erase(iter);
+    };
+
+    auto createNewSession = [this, &type]() -> bool {
         avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
                                 avSessionKey_->GetElement().GetBundleName(),
                                 static_cast<int32_t>(type),
@@ -174,9 +177,26 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
             return true;
         } else {
             WVLOG_E("media avsession adapter create avsession failed");
+            return false;
         }
+    };
+
+    if (!avSession_) {
+        if (findIter != avSessionMap.end()) {
+            destroyAndEraseSession(findIter);
+        }
+        return createNewSession();
+    } else {
+        if (findIter != avSessionMap.end()) {
+            if (findIter->second.get() != avSession_.get()) {
+                destroyAndEraseSession(findIter);
+                avSession_->Destroy();
+            } else {
+                return false;
+            }
+        }
+        return createNewSession();
     }
-    return false;
 }
 
 void MediaAVSessionAdapterImpl::DestroyAVSession() {
@@ -247,7 +267,8 @@ void MediaAVSessionAdapterImpl::DeActivate() {
 }
 
 void MediaAVSessionAdapterImpl::SetMetadata(const std::shared_ptr<MediaAVSessionMetadataAdapter> metadata) {
-    if (UpdateMetaDataCache(metadata) && avSession_) {
+    UpdateMetaDataCache(metadata);
+    if (avSession_) {
         Activate();
         auto avMetadata = avMetadata_.get();
         int32_t ret = avSession_->SetAVMetaData(*avMetadata);

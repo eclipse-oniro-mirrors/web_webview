@@ -81,6 +81,7 @@ ohos_shared_library("webview_napi") {
   external_deps = [
     "ability_base:extractortool",
     "ability_runtime:app_context",
+    "ace_engine:ace_container_scope",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
@@ -88,9 +89,9 @@ ohos_shared_library("webview_napi") {
     "image_framework:image",
     "image_framework:image_native",
     "init:libbegetutil",
-    "napi:ace_container_scope",
     "napi:ace_napi",
     "protobuf:protobuf_lite",
+    "window_manager:libwm",
   ]
 
   deps = [
@@ -118,10 +119,7 @@ ohos_shared_library("neterrorlist_napi") {
     "web_net_error_code/napi_web_net_errorcode_module.cpp",
   ]
 
-  external_deps = [
-    "napi:ace_container_scope",
-    "napi:ace_napi",
-  ]
+  external_deps = [ "napi:ace_napi" ]
 
   relative_install_dir = "module/web"
 

@@ -17,7 +17,9 @@
 
 #include <sys/mman.h>
 #include <unistd.h>
+#include <regex>
 
+#include "nweb.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
 #include "securec.h"
@@ -445,6 +447,62 @@ bool NapiParseUtils::ConvertNWebToNapiValue(napi_env env, std::shared_ptr<NWebMe
         return true;
     }
     return it->second(env, src, dst);
+}
+
+bool IsFormatStringOfLength(const std::string &str)
+{
+    std::regex pattern("^\\d+(px|vp|%)?$");
+    return std::regex_match(str, pattern);
+}
+
+bool IsNumberOfLength(const std::string &value)
+{
+    if (value.empty()) {
+        return false;
+    }
+    return std::all_of(value.begin(), value.end(), [](char i) { return isdigit(i); });
+}
+
+bool NapiParseUtils::ParseJsLengthStringToInt(const std::string &input, PixelUnit &type, int32_t &value)
+{
+    if (input.empty()) {
+        return false;
+    }
+    if (!IsFormatStringOfLength(input)) {
+        return false;
+    }
+    if (IsNumberOfLength(input)) {
+        value = std::stoi(input);
+        type = PixelUnit::VP;
+        return true;
+    }
+    if (input.back() == '%') {
+        std::string trans = input.substr(0, input.length() - 1);
+        if (IsNumberOfLength(trans)) {
+            value = std::stoi(trans);
+            type = PixelUnit::PERCENTAGE;
+            return true;
+        }
+        return false;
+    }
+    if (input.length() < INTEGER_THREE) {
+        return false;
+    }
+    std::string lastTwo = input.substr(input.length() - INTEGER_TWO);
+    std::string trans = input.substr(0, input.length() - INTEGER_TWO);
+    if (!IsNumberOfLength(trans)) {
+        return false;
+    }
+    if (lastTwo == "px") {
+        value = std::stoi(trans);
+        type = PixelUnit::PX;
+        return true;
+    } else if (lastTwo == "vp") {
+        value = std::stoi(trans);
+        type = PixelUnit::VP;
+        return true;
+    }
+    return false;
 }
 
 ErrCode NapiParseUtils::ConstructStringFlowbuf(napi_env env, napi_value argv, int& fd, size_t& scriptLength)

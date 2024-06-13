@@ -15,6 +15,7 @@
 
 #include "napi_webview_controller.h"
 
+#include <arpa/inet.h>
 #include <cctype>
 #include <climits>
 #include <cstdint>
@@ -54,6 +55,7 @@ constexpr uint32_t SOCKET_MAXIMUM = 6;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 constexpr size_t MAX_RESOURCES_COUNT = 30;
 constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
+constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024; // 10M
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
 
 bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
@@ -77,6 +79,30 @@ bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
     }
 
     WVLOG_E("Unable to parse type from url object.");
+    return false;
+}
+
+bool ParseIP(napi_env env, napi_value urlObj, std::string& ip)
+{
+    napi_valuetype valueType = napi_null;
+    napi_typeof(env, urlObj, &valueType);
+
+    if (valueType == napi_string) {
+        NapiParseUtils::ParseString(env, urlObj, ip);
+        if (ip == "") {
+            WVLOG_E("The IP is null");
+            return false;
+        }
+
+        unsigned char buf[sizeof(struct in6_addr)];
+        if ((inet_pton(AF_INET, ip.c_str(), buf) == 1) || (inet_pton(AF_INET6, ip.c_str(), buf) == 1)) {
+            return true;
+        }
+        WVLOG_E("IP error.");
+        return false;
+    }
+
+    WVLOG_E("Unable to parse type from ip object.");
     return false;
 }
 
@@ -306,10 +332,27 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
         url, method, formData);
     return prefetchArgs;
 }
+
+void JsErrorCallback(napi_env env, napi_ref jsCallback, int32_t err)
+{
+    napi_value jsError = nullptr;
+    napi_value jsResult = nullptr;
+
+    jsError = BusinessError::CreateError(env, err);
+    napi_get_undefined(env, &jsResult);
+    napi_value args[INTEGER_TWO] = {jsError, jsResult};
+
+    napi_value callback = nullptr;
+    napi_value callbackResult = nullptr;
+    napi_get_reference_value(env, jsCallback, &callback);
+    napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
+    napi_delete_reference(env, jsCallback);
+}
 } // namespace
 
 int32_t NapiWebviewController::maxFdNum_ = -1;
 std::atomic<int32_t> NapiWebviewController::usedFd_ {0};
+std::atomic<bool> g_inWebPageSnapshot {false};
 
 thread_local napi_ref g_classWebMsgPort;
 thread_local napi_ref g_historyListRef;
@@ -443,6 +486,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("isAdsBlockEnabledForCurPage", NapiWebviewController::IsAdsBlockEnabledForCurPage),
         DECLARE_NAPI_FUNCTION("getSurfaceId", NapiWebviewController::GetSurfaceId),
         DECLARE_NAPI_FUNCTION("updateInstanceId", NapiWebviewController::UpdateInstanceId),
+        DECLARE_NAPI_FUNCTION("setUrlTrustList", NapiWebviewController::SetUrlTrustList),
+        DECLARE_NAPI_FUNCTION("webPageSnapshot", NapiWebviewController::WebPageSnapshot),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5556,6 +5601,12 @@ napi_value NapiWebviewController::SetHostIP(napi_env env, napi_callback_info inf
         return result;
     }
 
+    if (!ParseIP(env, argv[INTEGER_ONE], address)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: IP address error.");
+        return result;
+    }
+
     NWebHelper::Instance().SetHostIP(hostName, address, aliveTime);
     NAPI_CALL(env, napi_get_undefined(env, &result));
 
@@ -5699,6 +5750,240 @@ napi_value NapiWebviewController::UpdateInstanceId(napi_env env, napi_callback_i
     webviewController->UpdateInstanceId(newId);
 
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SetUrlTrustList(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("SetUrlTrustList invoked");
+
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    std::string urlTrustList;
+    if (!NapiParseUtils::ParseString(env, argv[0], urlTrustList)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "urlTrustList", "string"));
+        return result;
+    }
+    if (urlTrustList.size() > MAX_URL_TRUST_LIST_STR_LEN) {
+        WVLOG_E("EnableAdsBlock: url trust list len is too large.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("webview controller is null or not init");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    ErrCode ret = webviewController->SetUrlTrustList(urlTrustList);
+    if (ret != NO_ERROR) {
+        WVLOG_E("SetUrlTrustList failed, error code: %{public}d", ret);
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+    return result;
+}
+
+WebSnapshotCallback CreateWebPageSnapshotResultCallback(
+    napi_env env, napi_ref jsCallback, bool check, int32_t inputWidth, int32_t inputHeight)
+{
+    return
+        [env, jCallback = std::move(jsCallback), check, inputWidth, inputHeight](
+            const char *returnId, bool returnStatus, float radio, void *returnData,
+            int returnWidth, int returnHeight) {
+            WVLOG_I("WebPageSnapshot return napi callback");
+            napi_value jsResult = nullptr;
+            napi_create_object(env, &jsResult);
+
+            napi_value jsPixelMap = nullptr;
+            Media::InitializationOptions opt;
+            opt.size.width = static_cast<int32_t>(returnWidth);
+            opt.size.height = static_cast<int32_t>(returnHeight);
+            opt.pixelFormat = Media::PixelFormat::RGBA_8888;
+            opt.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
+            opt.editable = true;
+            auto pixelMap = Media::PixelMap::Create(opt);
+            if (pixelMap != nullptr) {
+                uint64_t stride = static_cast<uint64_t>(returnWidth) << 2;
+                uint64_t bufferSize = stride * static_cast<uint64_t>(returnHeight);
+                pixelMap->WritePixels(static_cast<const uint8_t *>(returnData), bufferSize);
+                std::shared_ptr<Media::PixelMap> pixelMapToJs(pixelMap.release());
+                jsPixelMap = OHOS::Media::PixelMapNapi::CreatePixelMap(env, pixelMapToJs);
+            } else {
+                WVLOG_E("WebPageSnapshot create pixel map error");
+            }
+            napi_set_named_property(env, jsResult, "imagePixelMap", jsPixelMap);
+
+            int returnJsWidth = 0;
+            int returnJsHeight = 0;
+            if (radio > 0) {
+                returnJsWidth = returnWidth / radio;
+                returnJsHeight = returnHeight / radio;
+            }
+            if (check) {
+                if (std::abs(returnJsWidth - inputWidth) < INTEGER_THREE) {
+                    returnJsWidth = inputWidth;
+                }
+
+                if (std::abs(returnJsHeight - inputHeight) < INTEGER_THREE) {
+                    returnJsHeight = inputHeight;
+                }
+            }
+            napi_value jsSizeObj = nullptr;
+            napi_create_object(env, &jsSizeObj);
+            napi_value jsSize[2] = {0};
+            napi_create_int32(env, returnJsWidth, &jsSize[0]);
+            napi_create_int32(env, returnJsHeight, &jsSize[1]);
+            napi_set_named_property(env, jsSizeObj, "width", jsSize[0]);
+            napi_set_named_property(env, jsSizeObj, "height", jsSize[1]);
+            napi_set_named_property(env, jsResult, "size", jsSizeObj);
+
+            napi_value jsId = nullptr;
+            napi_create_string_utf8(env, returnId, strlen(returnId), &jsId);
+            napi_set_named_property(env, jsResult, "id", jsId);
+
+            napi_value jsStatus = nullptr;
+            napi_get_boolean(env, returnStatus, &jsStatus);
+            napi_set_named_property(env, jsResult, "status", jsStatus);
+
+            napi_value jsError = nullptr;
+            napi_get_undefined(env, &jsError);
+            napi_value args[INTEGER_TWO] = {jsError, jsResult};
+
+            napi_value callback = nullptr;
+            napi_value callbackResult = nullptr;
+            napi_get_reference_value(env, jCallback, &callback);
+
+            napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
+            napi_delete_reference(env, jCallback);
+            g_inWebPageSnapshot = false;
+        };
+}
+
+napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = {0};
+
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    if (argc != INTEGER_TWO) {
+        WVLOG_E("WebPageSnapshot: args count is not allowed.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    napi_ref callback = nullptr;
+    napi_create_reference(env, argv[INTEGER_ONE], INTEGER_ONE, &callback);
+    if (!callback) {
+        WVLOG_E("WebPageSnapshot failed to create reference for callback");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return result;
+    }
+
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("WebPageSnapshot init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    if (g_inWebPageSnapshot) {
+        JsErrorCallback(env, std::move(callback), FUNCTION_NOT_ENABLE);
+        return result;
+    }
+    g_inWebPageSnapshot = true;
+
+    napi_value snapshotId = nullptr;
+    napi_value snapshotSize = nullptr;
+    napi_value snapshotSizeWidth = nullptr;
+    napi_value snapshotSizeHeight = nullptr;
+
+    std::string nativeSnapshotId = "";
+    int32_t nativeSnapshotSizeWidth = 0;
+    int32_t nativeSnapshotSizeHeight = 0;
+    PixelUnit nativeSnapshotSizeWidthType = PixelUnit::NONE;
+    PixelUnit nativeSnapshotSizeHeightType = PixelUnit::NONE;
+    PixelUnit nativeSnapshotSizeType = PixelUnit::NONE;
+
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "id", &snapshotId) == napi_ok) {
+        NapiParseUtils::ParseString(env, snapshotId, nativeSnapshotId);
+    }
+
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &snapshotSize) == napi_ok) {
+        if (napi_get_named_property(env, snapshotSize, "width", &snapshotSizeWidth) == napi_ok) {
+            if (!webviewController->ParseJsLengthToInt(
+                    env, snapshotSizeWidth, nativeSnapshotSizeWidthType, nativeSnapshotSizeWidth)) {
+                JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
+                g_inWebPageSnapshot = false;
+                return result;
+            }
+        }
+        if (napi_get_named_property(env, snapshotSize, "height", &snapshotSizeHeight) == napi_ok) {
+            if (!webviewController->ParseJsLengthToInt(
+                    env, snapshotSizeHeight, nativeSnapshotSizeHeightType, nativeSnapshotSizeHeight)) {
+                JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
+                g_inWebPageSnapshot = false;
+                return result;
+            }
+        }
+    }
+
+    if (nativeSnapshotSizeWidthType != PixelUnit::NONE && nativeSnapshotSizeHeightType != PixelUnit::NONE &&
+        nativeSnapshotSizeWidthType != nativeSnapshotSizeHeightType) {
+        WVLOG_E("WebPageSnapshot input different pixel unit");
+        JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
+        g_inWebPageSnapshot = false;
+        return result;
+    }
+
+    if (nativeSnapshotSizeWidthType != PixelUnit::NONE) {
+        nativeSnapshotSizeType = nativeSnapshotSizeWidthType;
+    }
+    if (nativeSnapshotSizeHeightType != PixelUnit::NONE) {
+        nativeSnapshotSizeType = nativeSnapshotSizeHeightType;
+    }
+    if (nativeSnapshotSizeWidth < 0 || nativeSnapshotSizeHeight < 0) {
+        WVLOG_E("WebPageSnapshot input pixel length less than 0");
+        JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
+        g_inWebPageSnapshot = false;
+        return result;
+    }
+    bool pixelCheck = false;
+    if (nativeSnapshotSizeType == PixelUnit::VP) {
+        pixelCheck = true;
+    }
+    WVLOG_I("WebPageSnapshot pixel type :%{public}d", static_cast<int>(nativeSnapshotSizeType));
+
+    auto resultCallback = CreateWebPageSnapshotResultCallback(
+        env, std::move(callback), pixelCheck, nativeSnapshotSizeWidth, nativeSnapshotSizeHeight);
+
+    ErrCode ret = webviewController->WebPageSnapshot(nativeSnapshotId.c_str(),
+        nativeSnapshotSizeType,
+        nativeSnapshotSizeWidth,
+        nativeSnapshotSizeHeight,
+        std::move(resultCallback));
+    if (ret != NO_ERROR) {
+        g_inWebPageSnapshot = false;
+        BusinessError::ThrowErrorByErrcode(env, ret);
+    }
     return result;
 }
 } // namespace NWeb

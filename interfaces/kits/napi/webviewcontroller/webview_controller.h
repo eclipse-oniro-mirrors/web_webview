@@ -109,6 +109,12 @@ enum class ParseURLResult : int {
     INVALID_URL
 };
 
+enum class UrlListSetResult : int {
+    INIT_ERROR = -2,
+    PARAM_ERROR = -1,
+    SET_OK = 0,
+};
+
 class WebPrintDocument;
 class WebviewController {
 public:
@@ -202,7 +208,7 @@ public:
 
     void RegisterJavaScriptProxy(
         napi_env env, napi_value obj, const std::string& objName,
-        const std::vector<std::string>& methodList,
+        const std::vector<std::string>& syncMethodList,
         const std::vector<std::string>& asyncMethodList);
 
     ErrCode DeleteJavaScriptRegister(const std::string& objName,
@@ -339,6 +345,7 @@ public:
                                const std::vector<uint8_t>& resource,
                                const std::map<std::string, std::string>& response_headers,
                                const uint32_t type);
+    ErrCode SetUrlTrustList(const std::string& urlTrustList);
 
     void EnableAdsBlock(bool enable);
 
@@ -350,6 +357,17 @@ public:
 
     void UpdateInstanceId(int32_t newId);
 
+    bool ParseJsLengthToInt(napi_env env,
+                            napi_value jsLength,
+                            PixelUnit& type,
+                            int32_t& result);
+
+    ErrCode WebPageSnapshot(const char* id,
+                            PixelUnit type,
+                            int32_t width,
+                            int32_t height,
+                            const WebSnapshotCallback callback);
+
 private:
     int ConverToWebHitTestType(int hitType);
 
@@ -359,6 +377,11 @@ private:
     bool ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result);
 
     bool GetResourceUrl(napi_env env, napi_value urlObj, std::string& result);
+
+    bool ParseJsLengthResourceToInt(napi_env env,
+                                    napi_value jsLength,
+                                    PixelUnit& type,
+                                    int32_t& result);
 
 public:
     static std::string customeSchemeCmdLine_;

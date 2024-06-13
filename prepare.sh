@@ -14,7 +14,7 @@
 
 set -e
 
-WORK_SPACE=$(cd `dirname $0`; pwd)
+WORK_SPACE=$(cd $(dirname $0); pwd)
 
 COMMOND_TYPE=$1
 OHOS_GLUE_DIR=$2
@@ -37,11 +37,11 @@ else
 fi
 
 handle_copy_dir() {
-  src_dir=$1
-  dst_dir=$2
+  local src_dir=$1
+  local dst_dir=$2
 
-  parent_dir=$(dirname ${dst_dir})
-  rm -rf ${dst_dir} && mkdir -p ${parent_dir}
+  local parent_dir=$(dirname ${dst_dir})
+  [ -n "${dst_dir}" ] && rm -rf ${dst_dir} && mkdir -p ${parent_dir}
 
   if [ -d ${src_dir} ] && [ "$(ls -A ${src_dir})" ]; then
     cp -rf ${src_dir} ${dst_dir}
@@ -59,7 +59,7 @@ handle_copy_files() {
     return
   fi
 
-  dir_name=ohos_$1
+  local dir_name=ohos_$1
   rm -rf ${OHOS_GLUE_DIR}/${dir_name} && mkdir -p ${OHOS_GLUE_DIR}/${dir_name}
   handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/${dir_name}/include ${OHOS_GLUE_DIR}/${dir_name}/include
   handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/${dir_name}/bridge/webview ${OHOS_GLUE_DIR}/${dir_name}/bridge
@@ -76,7 +76,7 @@ handle_copy_include() {
 }
 
 handle_copy_commond() {
-  curr_time=$(date +"%Y-%m-%d %H:%M:%S")
+  local curr_time=$(date +"%Y-%m-%d %H:%M:%S")
   echo "start time is ${curr_time}" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
   echo "work space is ${WORK_SPACE}" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
   echo "ohos glue dir is ${OHOS_GLUE_DIR}" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
@@ -90,7 +90,7 @@ handle_copy_commond() {
 
 handle_develop_commond() {
   local ohos_glue_dir=${1}/${2}
-  rm -rf ${ohos_glue_dir} && mkdir -p ${ohos_glue_dir}
+  [ -n "${ohos_glue_dir}" ] && rm -rf ${ohos_glue_dir} && mkdir -p ${ohos_glue_dir}
 
   handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/base ${ohos_glue_dir}/base
   handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/scripts ${ohos_glue_dir}/scripts
@@ -103,7 +103,7 @@ handle_develop_commond() {
   handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_adapter/cpptoc/${2} ${ohos_glue_dir}/ohos_adapter/cpptoc
   handle_copy_dir ${INTERFACE_OHOS_GLUE_DIR}/ohos_adapter/ctocpp/${2} ${ohos_glue_dir}/ohos_adapter/ctocpp
 
-  file_list=`find ${ohos_glue_dir}/ohos_*/include -name "*.h"`
+  local file_list=$(find ${ohos_glue_dir}/ohos_*/include -name "*.h")
   for file in $file_list
   do
     clang-format -style="{PointerAlignment: Right}" -i $file
@@ -111,7 +111,7 @@ handle_develop_commond() {
 
   python3 ${ohos_glue_dir}/scripts/translator.py ${2}
 
-  file_list=`find ${ohos_glue_dir} -type f \( -name "*.h" -o -name "*.cpp" \)`
+  file_list=$(find ${ohos_glue_dir} -type f \( -name "*.h" -o -name "*.cpp" \))
   for file in $file_list
   do
     clang-format -style=file -i $file
@@ -124,12 +124,12 @@ handle_translate_commond() {
     return
   fi
 
-  curr_time=$(date +"%Y-%m-%d %H:%M:%S")
+  local curr_time=$(date +"%Y-%m-%d %H:%M:%S")
   echo "start time is ${curr_time}" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
   echo "begin to translate ohos glue file,module name is ${OHOS_GLUE_MODULE}" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
 
-  dir_name=ohos_${OHOS_GLUE_MODULE}
-  file_list=`find ${OHOS_GLUE_DIR}/${dir_name}/include -name "*.h"`
+  local dir_name=ohos_${OHOS_GLUE_MODULE}
+  local file_list=$(find ${OHOS_GLUE_DIR}/${dir_name}/include -name "*.h")
   for file in $file_list
   do
     ${CLANG_FORMAT_DIR}/clang-format -style="{PointerAlignment: Right}" -i $file
@@ -138,14 +138,14 @@ handle_translate_commond() {
   python3 ${OHOS_GLUE_DIR}/scripts/translator.py webview $dir_name >> ${OHOS_GLUE_LOG_DIR}/prepare.log
 
   cp ${WORK_SPACE}/.clang-format ${OHOS_GLUE_DIR}
-  file_list=`find ${OHOS_GLUE_DIR}/${dir_name} -type f \( -name "*.h" -o -name "*.cpp" \)`
+  file_list=$(find ${OHOS_GLUE_DIR}/${dir_name} -type f \( -name "*.h" -o -name "*.cpp" \))
   for file in $file_list
   do
     ${CLANG_FORMAT_DIR}/clang-format -style=file -i $file
   done
 }
 
-case ${COMMOND_TYPE} in
+case "${COMMOND_TYPE}" in
   "copy")
     handle_copy_commond
     ;;
@@ -160,5 +160,5 @@ case ${COMMOND_TYPE} in
     handle_translate_commond $args
     ;;
   *)
-    echo "invalid commond ${COMMOND_TYPE}" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
+    echo "commond ${COMMOND_TYPE} is invalid" >> ${OHOS_GLUE_LOG_DIR}/prepare.log
 esac
