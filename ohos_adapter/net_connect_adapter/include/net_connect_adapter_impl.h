@@ -41,7 +41,11 @@ public:
 
     std::vector<std::string> GetDnsServers() override;
 
+    std::vector<std::string> GetDnsServersByNetId(int32_t netId) override;
+
 private:
+    std::vector<std::string> GetDnsServersInternal(const NetHandle &netHandle);
+
     std::unordered_map<int32_t, sptr<NetConnectCallbackImpl>> netConnCallbackMap_;
 };
 }  // namespace OHOS::NWeb

@@ -35,6 +35,8 @@ public:
 
     std::vector<std::string> GetDnsServers() override;
 
+    std::vector<std::string> GetDnsServersByNetId(int32_t net_id) override;
+
 private:
     ArkWebRefPtr<ArkNetConnectAdapter> ctocpp_;
 };

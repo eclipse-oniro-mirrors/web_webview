@@ -55,4 +55,12 @@ std::vector<std::string> ArkNetConnectAdapterWrapper::GetDnsServers()
     ArkWebStringVectorStructRelease(ark_servers);
     return servers;
 }
+
+std::vector<std::string> ArkNetConnectAdapterWrapper::GetDnsServersByNetId(int32_t net_id)
+{
+    ArkWebStringVector ark_servers = ctocpp_->GetDnsServersByNetId(net_id);
+    std::vector<std::string> servers = ArkWebStringVectorStructToClass(ark_servers);
+    ArkWebStringVectorStructRelease(ark_servers);
+    return servers;
+}
 } // namespace OHOS::ArkWeb
