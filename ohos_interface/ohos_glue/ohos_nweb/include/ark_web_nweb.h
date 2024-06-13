@@ -1278,7 +1278,7 @@ public:
         ArkWebRefPtr<ArkWebSystemConfiguration> configuration) = 0;
 
     /**
-     * @brief Enable the ability to block Ads， default disabled.
+     * @brief Enable the ability to block Ads, default disabled.
      */
     /*--ark web()--*/
     virtual void EnableAdsBlock(bool enable) = 0;
