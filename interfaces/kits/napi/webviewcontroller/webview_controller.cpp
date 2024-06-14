@@ -14,6 +14,7 @@
  */
 
 #include "webview_controller.h"
+
 #include <memory>
 #include <unordered_map>
 #include <securec.h>
@@ -37,6 +38,11 @@
 
 #include "nweb_precompile_callback.h"
 #include "nweb_cache_options_impl.h"
+
+#include "bundle_mgr_proxy.h"
+#include "if_system_ability_manager.h"
+#include "iservice_registry.h"
+#include "system_ability_definition.h"
 
 namespace {
 constexpr int32_t PARAMZERO = 0;
@@ -1886,6 +1892,54 @@ ErrCode WebviewController::WebPageSnapshot(
     }
 
     return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetHapModuleInfo()
+{
+    sptr<ISystemAbilityManager> systemAbilityManager =
+    SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    if (systemAbilityManager == nullptr) {
+        WVLOG_E("get SystemAbilityManager failed");
+        return false;
+    }
+    sptr<IRemoteObject> remoteObject =
+        systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    if (remoteObject == nullptr) {
+        WVLOG_E("get Bundle Manager failed");
+        return false;
+    }
+    auto bundleMgr = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
+    if (bundleMgr == nullptr) {
+        WVLOG_E("get Bundle Manager failed");
+        return false;
+    }
+    AppExecFwk::BundleInfo bundleInfo;
+    if (bundleMgr->GetBundleInfoForSelf(
+        static_cast<int32_t>(AppExecFwk::GetBundleInfoFlag::GET_BUNDLE_INFO_WITH_HAP_MODULE),
+        bundleInfo) != 0) {
+        WVLOG_E("get bundle info failed");
+        return false;
+    }
+    moduleName_ = bundleInfo.moduleNames;
+    return true;
+}
+
+void WebviewController::SetPathAllowingUniversalAccess(
+    const std::vector<std::string>& pathList, std::string& errorPath)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return;
+    }
+    if (moduleName_.empty()) {
+        WVLOG_I("need to get module name for path");
+        if (!GetHapModuleInfo()) {
+            WVLOG_E("GetHapModuleInfo failed");
+            moduleName_.clear();
+            return;
+        }
+    }
+    nweb_ptr->SetPathAllowingUniversalAccess(pathList, moduleName_, errorPath);
 }
 } // namespace NWeb
 } // namespace OHOS

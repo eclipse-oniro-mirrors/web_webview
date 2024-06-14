@@ -1333,6 +1333,14 @@ public:
                                  int width,
                                  int height,
                                  const WebSnapshotCallback callback) = 0;
+    
+    /**
+     * @brief Set grant file access dirs.
+     */
+    /*--ark web()--*/
+    virtual void SetPathAllowingUniversalAccess(const ArkWebStringVector& dirs,
+                                                const ArkWebStringVector& moduleName,
+                                                ArkWebString& errorPath) = 0;
 };
 
 } // namespace OHOS::ArkWeb
