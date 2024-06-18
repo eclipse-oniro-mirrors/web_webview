@@ -488,6 +488,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("updateInstanceId", NapiWebviewController::UpdateInstanceId),
         DECLARE_NAPI_FUNCTION("setUrlTrustList", NapiWebviewController::SetUrlTrustList),
         DECLARE_NAPI_FUNCTION("webPageSnapshot", NapiWebviewController::WebPageSnapshot),
+        DECLARE_NAPI_FUNCTION("setPathAllowingUniversalAccess",
+            NapiWebviewController::SetPathAllowingUniversalAccess),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5983,6 +5985,54 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
     if (ret != NO_ERROR) {
         g_inWebPageSnapshot = false;
         BusinessError::ThrowErrorByErrcode(env, ret);
+    }
+    return result;
+}
+
+napi_value NapiWebviewController::SetPathAllowingUniversalAccess(
+    napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("SetPathAllowingUniversalAccess init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    bool isArray = false;
+    NAPI_CALL(env, napi_is_array(env, argv[INTEGER_ZERO], &isArray));
+    if (!isArray) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "pathList", "Array<string>"));
+        return result;
+    }
+    std::vector<std::string> pathList;
+    uint32_t pathCount = 0;
+    NAPI_CALL(env, napi_get_array_length(env, argv[INTEGER_ZERO], &pathCount));
+    for (uint32_t i = 0 ; i < pathCount ; i++) {
+        napi_value pathItem = nullptr;
+        napi_get_element(env, argv[INTEGER_ZERO], i, &pathItem);
+        std::string path;
+        if (!NapiParseUtils::ParseString(env, pathItem, path)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "pathList", "Array<string>"));
+            return result;
+        }
+        pathList.emplace_back(path);
+    }
+    std::string errorPath;
+    webviewController->SetPathAllowingUniversalAccess(pathList, errorPath);
+    if (!errorPath.empty()) {
+        WVLOG_E("%{public}s is invalid.", errorPath.c_str());
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString("BusinessError 401: Parameter error. Path: '%s' is invalid", errorPath.c_str()));
     }
     return result;
 }

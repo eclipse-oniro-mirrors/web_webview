@@ -1039,4 +1039,14 @@ bool ArkWebNWebImpl::WebPageSnapshot(const char* id,
     return nweb_nweb_->WebPageSnapshot(id, static_cast<ArkPixelUnit>(type), width,
                                        height, callback);
 }
+
+void ArkWebNWebImpl::SetPathAllowingUniversalAccess(const ArkWebStringVector& dirs,
+                                                    const ArkWebStringVector& moduleName,
+                                                    ArkWebString& errorPath)
+{
+    std::string errPath;
+    nweb_nweb_->SetPathAllowingUniversalAccess(ArkWebStringVectorStructToClass(dirs),
+        ArkWebStringVectorStructToClass(moduleName), errPath);
+    errorPath = ArkWebStringClassToStruct(errPath);
+}
 } // namespace OHOS::ArkWeb
