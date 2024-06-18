@@ -51,6 +51,9 @@ public:
 
     bool IsRendererStateRunning() override;
 
+    int32_t SetAudioOutputChangeCallback(
+        const std::shared_ptr<NWeb::AudioOutputChangeCallbackAdapter>& callback) override;
+
 private:
     ArkWebRefPtr<ArkAudioRendererAdapter> ctocpp_;
 };
