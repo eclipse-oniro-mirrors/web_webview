@@ -39,6 +39,18 @@ public:
 private:
     std::shared_ptr<AudioRendererCallbackAdapter> cb_ = nullptr;
 };
+class AudioOutputChangeCallbackImpl : public AudioRendererOutputDeviceChangeCallback {
+public:
+    AudioOutputChangeCallbackImpl(std::shared_ptr<AudioOutputChangeCallbackAdapter> cb);
+
+    ~AudioOutputChangeCallbackImpl() override = default;
+
+    void OnOutputDeviceChange(const DeviceInfo& deviceInfo, const AudioStreamDeviceChangeReason reason) override;
+
+private:
+    AudioAdapterDeviceChangeReason GetChangeReason(AudioStreamDeviceChangeReason reason);
+    std::shared_ptr<AudioOutputChangeCallbackAdapter> cb_ = nullptr;
+};
 #endif
 
 class AudioRendererAdapterImpl : public AudioRendererAdapter {
@@ -72,6 +84,7 @@ public:
 
     bool IsRendererStateRunning() override;
 
+    int32_t SetAudioOutputChangeCallback(const std::shared_ptr<AudioOutputChangeCallbackAdapter>& callback) override;
 #if defined(NWEB_AUDIO_ENABLE)
     static AudioSamplingRate GetAudioSamplingRate(AudioAdapterSamplingRate samplingRate);
 
@@ -91,6 +104,7 @@ public:
 private:
     std::unique_ptr<AudioRenderer> audio_renderer_;
     std::shared_ptr<AudioRendererCallbackImpl> callback_;
+    std::shared_ptr<AudioOutputChangeCallbackImpl> ouputChangeCallback_;
 #endif
 };
 } // namespace OHOS::NWeb

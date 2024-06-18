@@ -112,6 +112,22 @@ public:
     virtual void OnResume() = 0;
 };
 
+enum class AudioAdapterDeviceChangeReason : int32_t {
+    UNKNOWN = 0,
+    NEW_DEVICE_AVAILABLE = 1,
+    OLD_DEVICE_UNAVALIABLE = 2,
+    OVERRODE = 3
+};
+
+class AudioOutputChangeCallbackAdapter {
+public:
+    AudioOutputChangeCallbackAdapter() = default;
+
+    virtual ~AudioOutputChangeCallbackAdapter() = default;
+
+    virtual void OnOutputDeviceChange(int32_t reason) {}
+};
+
 class AudioRendererAdapter {
 public:
     AudioRendererAdapter() = default;
@@ -142,6 +158,8 @@ public:
     virtual void SetInterruptMode(bool audioExclusive) = 0;
 
     virtual bool IsRendererStateRunning() = 0;
+
+    virtual int32_t SetAudioOutputChangeCallback(const std::shared_ptr<AudioOutputChangeCallbackAdapter>& callback) = 0;
 };
 
 } // namespace OHOS::NWeb

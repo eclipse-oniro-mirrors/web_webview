@@ -57,6 +57,13 @@ public:
     virtual void OnResume() = 0;
 };
 
+/*--ark web(source=webcore)--*/
+class ArkAudioOutputChangeCallbackAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual void OnOutputDeviceChange(int32_t reason) = 0;
+};
+
 /*--ark web(source=webview)--*/
 class ArkAudioRendererAdapter : public virtual ArkWebBaseRefCounted {
 public:
@@ -95,6 +102,9 @@ public:
 
     /*--ark web()--*/
     virtual bool IsRendererStateRunning() = 0;
+
+    /*--ark web()--*/
+    virtual int32_t SetAudioOutputChangeCallback(const ArkWebRefPtr<ArkAudioOutputChangeCallbackAdapter> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb
