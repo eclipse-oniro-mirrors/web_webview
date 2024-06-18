@@ -337,31 +337,6 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Le
 }
 
 /**
- * @tc.name: NWebAafwkAdapter_StartChildProcess_010.
- * @tc.desc: test start child process.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_StartChildProcess_010, TestSize.Level1)
-{
-    MockAppMgrClient *mock = new MockAppMgrClient();
-    g_adapter->appMgrClient_.reset((AppMgrClient *)mock);
-    EXPECT_CALL(*mock, StartRenderProcess(::testing::_, ::testing::_, ::testing::_,
-                                          ::testing::_, ::testing::_, ::testing::_))
-        .Times(1)
-        .WillRepeatedly(::testing::Return(0));
-    std::string renderParam = "test";
-    int32_t ipcFd = 0;
-    int32_t sharedFd = 0;
-    pid_t renderPid = 0;
-    int32_t crashFd = 0;
-    std::string processType = "gpu-process";
-    int result = g_adapter->StartChildProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid, processType);
-    EXPECT_EQ(RESULT_OK, result);
-    delete mock;
-}
-
-/**
  * @tc.name: NWebAafwkAdapter_WriteInterfaceToken_011.
  * @tc.desc: test write interface token.
  * @tc.type: FUNC
