@@ -1170,6 +1170,13 @@ public:
                          int width,
                          int height,
                          const WebSnapshotCallback callback) override;
+    
+    /**
+     * @brief Set grant file access dirs.
+     */
+    /*--ark web()--*/
+    void SetPathAllowingUniversalAccess(const ArkWebStringVector& dirs,
+        const ArkWebStringVector& moduleName, ArkWebString& errorPath) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

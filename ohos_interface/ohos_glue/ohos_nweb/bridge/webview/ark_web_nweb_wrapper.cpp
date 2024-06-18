@@ -1207,4 +1207,21 @@ bool ArkWebNWebWrapper::WebPageSnapshot(const char* id,
                                         const WebSnapshotCallback callback) {
     return ark_web_nweb_->WebPageSnapshot(id, static_cast<int>(type), width, height, callback);
 }
+
+void ArkWebNWebWrapper::SetPathAllowingUniversalAccess(
+    const std::vector<std::string>& dirs,
+    const std::vector<std::string>& moduleName,
+    std::string& errorPath)
+{
+    ArkWebStringVector stDirs = ArkWebStringVectorClassToStruct(dirs);
+    ArkWebStringVector stModuleName = ArkWebStringVectorClassToStruct(moduleName);
+    ArkWebString stErrorPath = ark_web_string_default;
+
+    ark_web_nweb_->SetPathAllowingUniversalAccess(stDirs, stModuleName, stErrorPath);
+    
+    errorPath = ArkWebStringStructToClass(stErrorPath);
+    ArkWebStringVectorStructRelease(stDirs);
+    ArkWebStringVectorStructRelease(stModuleName);
+    ArkWebStringStructRelease(stErrorPath);
+}
 } // namespace OHOS::ArkWeb

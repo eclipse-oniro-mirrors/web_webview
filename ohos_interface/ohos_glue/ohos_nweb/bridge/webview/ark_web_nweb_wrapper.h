@@ -1183,6 +1183,12 @@ public:
                          int height,
                          const WebSnapshotCallback callback) override;
 
+    /**
+     * @brief Set grant file access dirs.
+     */
+    /*--ark web()--*/
+    void SetPathAllowingUniversalAccess(const std::vector<std::string>& dirs,
+        const std::vector<std::string>& moduleName, std::string& errorPath) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

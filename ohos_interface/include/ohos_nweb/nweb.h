@@ -1341,6 +1341,13 @@ public:
                                  const WebSnapshotCallback callback) {
         return false;
                                  };
+
+    /**
+     * Set grant file access dirs.
+     */
+    virtual void SetPathAllowingUniversalAccess(const std::vector<std::string>& dirList,
+                                                const std::vector<std::string>& moduleName,
+                                                std::string& errorPath) {}
 };
 
 } // namespace OHOS::NWeb
