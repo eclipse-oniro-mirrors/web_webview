@@ -46,8 +46,8 @@ public:
     void UpdateOHOSTraceTag(const char* value);
 
 private:
-    bool IsNWEBTraceEnable = false;
-    bool IsOHOSTraceEnable = false;
+    bool IsNWEBTraceEnable_ = false;
+    bool IsOHOSTraceEnable_ = false;
 };
 } // namespace OHOS::NWeb
 

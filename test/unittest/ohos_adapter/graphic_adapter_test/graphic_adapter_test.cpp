@@ -80,5 +80,6 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
     adapter.vsyncHandler_ = nullptr;
     adapter.SetOnVsyncCallback(nullptr);
     adapter.SetOnVsyncEndCallback(nullptr);
+    adapter.SetIsGPUProcess(false);
 }
 } // namespace NWeb
