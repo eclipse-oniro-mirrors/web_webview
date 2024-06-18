@@ -78,6 +78,12 @@ const std::unordered_map<AudioAdapterStreamUsage, StreamUsage> STREAM_USAGE_MAP 
     { AudioAdapterStreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE, StreamUsage::STREAM_USAGE_NOTIFICATION_RINGTONE },
 };
 
+const std::unordered_map<AudioStreamDeviceChangeReason, AudioAdapterDeviceChangeReason> CHANGE_REASON_MAP = {
+    { AudioStreamDeviceChangeReason::UNKNOWN, AudioAdapterDeviceChangeReason::UNKNOWN },
+    { AudioStreamDeviceChangeReason::NEW_DEVICE_AVAILABLE, AudioAdapterDeviceChangeReason::NEW_DEVICE_AVAILABLE },
+    { AudioStreamDeviceChangeReason::OLD_DEVICE_UNAVALIABLE, AudioAdapterDeviceChangeReason::OLD_DEVICE_UNAVALIABLE },
+    { AudioStreamDeviceChangeReason::OVERRODE, AudioAdapterDeviceChangeReason::OVERRODE },
+};
 AudioRendererCallbackImpl::AudioRendererCallbackImpl(std::shared_ptr<AudioRendererCallbackAdapter> cb) : cb_(cb) {};
 
 void AudioRendererCallbackImpl::OnInterrupt(const InterruptEvent& interruptEvent)
@@ -102,6 +108,28 @@ void AudioRendererCallbackImpl::OnInterrupt(const InterruptEvent& interruptEvent
 }
 
 void AudioRendererCallbackImpl::OnStateChange(const RendererState state, const StateChangeCmdType cmdType) {}
+AudioAdapterDeviceChangeReason AudioOutputChangeCallbackImpl::GetChangeReason(AudioStreamDeviceChangeReason reason)
+{
+    auto item = CHANGE_REASON_MAP.find(reason);
+    if (item == CHANGE_REASON_MAP.end()) {
+        WVLOG_E("device change reason not found");
+        return AudioAdapterDeviceChangeReason::UNKNOWN;
+    }
+    return item->second;
+}
+
+AudioOutputChangeCallbackImpl::AudioOutputChangeCallbackImpl(std::shared_ptr<AudioOutputChangeCallbackAdapter> cb)
+    : cb_(cb) {};
+void AudioOutputChangeCallbackImpl::OnOutputDeviceChange(
+    const DeviceInfo& deviceInfo, const AudioStreamDeviceChangeReason reason)
+{
+    if (!cb_) {
+        return;
+    }
+    AudioAdapterDeviceChangeReason reasonAdapter = GetChangeReason(reason);
+    WVLOG_I("OnOutputDeviceChange reason: %{public}d", (int32_t)reasonAdapter);
+    cb_->OnOutputDeviceChange((int32_t)reasonAdapter);
+}
 
 int32_t AudioRendererAdapterImpl::Create(
     const std::shared_ptr<AudioRendererOptionsAdapter> rendererOptions, std::string cachePath)
@@ -224,6 +252,27 @@ int32_t AudioRendererAdapterImpl::SetAudioRendererCallback(
     int32_t ret = audio_renderer_->SetRendererCallback(callback_);
     if (ret != AudioStandard::SUCCESS) {
         WVLOG_E("audio renderer set callback failed, code: %{public}d", ret);
+        return AUDIO_ERROR;
+    }
+    return AUDIO_OK;
+}
+
+int32_t AudioRendererAdapterImpl::SetAudioOutputChangeCallback(
+    const std::shared_ptr<AudioOutputChangeCallbackAdapter>& callback)
+{
+    WVLOG_I("AudioRendererAdapterImpl::SetAudioOutputChangeCallback");
+    if (callback == nullptr) {
+        WVLOG_E("set audio manager interrupt callback is nullptr");
+        return AUDIO_NULL_ERROR;
+    }
+    ouputChangeCallback_ = std::make_shared<AudioOutputChangeCallbackImpl>(callback);
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return AUDIO_NULL_ERROR;
+    }
+    int32_t ret = audio_renderer_->RegisterOutputDeviceChangeWithInfoCallback(ouputChangeCallback_);
+    if (ret != AudioStandard::SUCCESS) {
+        WVLOG_E("audio renderer set output device change callback failed, code: %{public}d", ret);
         return AUDIO_ERROR;
     }
     return AUDIO_OK;

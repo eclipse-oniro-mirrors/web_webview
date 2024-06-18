@@ -15,6 +15,7 @@
 
 #include "ohos_adapter/bridge/ark_audio_renderer_adapter_impl.h"
 
+#include "ohos_adapter/bridge/ark_audio_output_change_callback_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_audio_renderer_callback_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_audio_renderer_options_adapter_wrapper.h"
 
@@ -94,6 +95,16 @@ void ArkAudioRendererAdapterImpl::SetInterruptMode(bool audioExclusive)
 bool ArkAudioRendererAdapterImpl::IsRendererStateRunning()
 {
     return real_->IsRendererStateRunning();
+}
+
+int32_t ArkAudioRendererAdapterImpl::SetAudioOutputChangeCallback(
+    const ArkWebRefPtr<ArkAudioOutputChangeCallbackAdapter> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        return real_->SetAudioOutputChangeCallback(nullptr);
+    }
+
+    return real_->SetAudioOutputChangeCallback(std::make_shared<ArkAudioOutputChangeCallbackAdapterWrapper>(callback));
 }
 
 } // namespace OHOS::ArkWeb
