@@ -6025,6 +6025,11 @@ napi_value NapiWebviewController::SetPathAllowingUniversalAccess(
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "pathList", "Array<string>"));
             return result;
         }
+        if (path.empty()) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString("BusinessError 401: Parameter error. Path: '%s' is invalid", path.c_str()));
+            return result;
+        }
         pathList.emplace_back(path);
     }
     std::string errorPath;
