@@ -1049,4 +1049,10 @@ void ArkWebNWebImpl::SetPathAllowingUniversalAccess(const ArkWebStringVector& di
         ArkWebStringVectorStructToClass(moduleName), errPath);
     errorPath = ArkWebStringClassToStruct(errPath);
 }
+
+void ArkWebNWebImpl::performAction(int64_t accessibility_id, uint32_t action,
+    const ArkWebStringMap& actionArguments)
+{
+    nweb_nweb_->performAction(accessibility_id, action, ArkWebStringMapStructToClass(actionArguments));
+}
 } // namespace OHOS::ArkWeb
