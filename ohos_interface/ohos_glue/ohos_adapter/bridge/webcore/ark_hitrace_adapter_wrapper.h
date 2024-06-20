@@ -44,6 +44,8 @@ public:
 
     void CountOHOSTrace(const std::string& name, int64_t count) override;
 
+    bool IsACETraceEnable() override;
+
 private:
     ArkWebRefPtr<ArkHiTraceAdapter> ctocpp_;
 };

@@ -45,9 +45,12 @@ public:
 
     void UpdateOHOSTraceTag(const char* value);
 
+    bool IsACETraceEnable() override;
+
 private:
-    bool IsNWEBTraceEnable_ = false;
-    bool IsOHOSTraceEnable_ = false;
+    bool firstAceEnable_ = false;
+    bool isNWEBTraceEnable_ = false;
+    bool isOHOSTraceEnable_ = false;
 };
 } // namespace OHOS::NWeb
 

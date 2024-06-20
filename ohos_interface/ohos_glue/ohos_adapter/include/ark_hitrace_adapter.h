@@ -51,6 +51,9 @@ public:
 
     /*--ark web()--*/
     virtual void CountOHOSTrace(const ArkWebString& name, int64_t count) = 0;
+
+    /*--ark web()--*/
+    virtual bool IsACETraceEnable() = 0;
 };
 
 } // namespace OHOS::ArkWeb
