@@ -25,6 +25,9 @@ using namespace testing;
 using namespace testing::ext;
 
 namespace OHOS::NWeb {
+static void OnVsyncCallback()
+{}
+
 class GraphicAdapterTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -78,8 +81,9 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
     adapter.SetFrameRateLinkerEnable(true);
     adapter.SetFramePreferredRate(60);
     adapter.vsyncHandler_ = nullptr;
-    adapter.SetOnVsyncCallback(nullptr);
-    adapter.SetOnVsyncEndCallback(nullptr);
+    adapter.SetOnVsyncCallback(OnVsyncCallback);
+    adapter.SetOnVsyncEndCallback(OnVsyncCallback);
+    adapter.OnVsync(1, client);
     adapter.SetIsGPUProcess(false);
 }
 } // namespace NWeb
