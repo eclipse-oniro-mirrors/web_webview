@@ -40,6 +40,8 @@ public:
 
     virtual void CountOHOSTrace(const std::string& name, int64_t count) = 0;
 
+    virtual bool IsACETraceEnable() = 0;
+
 protected:
     HiTraceAdapter() = default;
 
