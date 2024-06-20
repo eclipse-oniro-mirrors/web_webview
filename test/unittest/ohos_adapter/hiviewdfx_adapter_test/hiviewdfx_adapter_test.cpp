@@ -78,6 +78,25 @@ HWTEST(HiViewDFXAdapterTest, NormalScene, TestSize.Level1)
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishAsyncTrace("test", 0);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishTrace();
     HiTraceAdapterImpl::GetInstance().IsHiTraceEnable();
+}
+
+/**
+ * @tc.name: NormalScene_01.
+ * @tc.desc: test normal scene of HiViewDFXAdapter.
+ * @tc.type: FUNC 01.
+ * @tc.require:
+ */
+HWTEST(HiViewDFXAdapterTest, NormalScene_01, TestSize.Level1)
+{
+    uint64_t val = (1ULL << 24);
+    std::string value = std::to_string(val);
+    HiTraceAdapterImpl::GetInstance().UpdateOHOSTraceTag(value.c_str());
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartOHOSTrace("test");
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountOHOSTrace("test", 1);
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishOHOSTrace();
+    val = (1ULL << 39);
+    value = std::to_string(val);
+    HiTraceAdapterImpl::GetInstance().UpdateOHOSTraceTag(value.c_str());
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartOHOSTrace("test");
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountOHOSTrace("test", 1);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishOHOSTrace();
