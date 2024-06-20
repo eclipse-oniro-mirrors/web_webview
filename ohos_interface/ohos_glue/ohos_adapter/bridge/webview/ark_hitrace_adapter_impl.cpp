@@ -66,4 +66,8 @@ void ArkHiTraceAdapterImpl::CountOHOSTrace(const ArkWebString& name, int64_t cou
     real_.CountOHOSTrace(ArkWebStringStructToClass(name), count);
 }
 
+bool ArkHiTraceAdapterImpl::IsACETraceEnable()
+{
+    return real_.IsACETraceEnable();
+}
 } // namespace OHOS::ArkWeb

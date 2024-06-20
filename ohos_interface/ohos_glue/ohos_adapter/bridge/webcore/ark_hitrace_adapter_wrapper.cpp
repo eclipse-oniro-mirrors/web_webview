@@ -108,4 +108,12 @@ void ArkHiTraceAdapterWrapper::CountOHOSTrace(const std::string& name, int64_t c
 
     ArkWebStringStructRelease(str);
 }
+
+bool ArkHiTraceAdapterWrapper::IsACETraceEnable()
+{
+    if (!ctocpp_) {
+        return false;
+    }
+    return ctocpp_->IsACETraceEnable();
+}
 } // namespace OHOS::ArkWeb
