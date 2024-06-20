@@ -60,32 +60,33 @@ bool HiTraceAdapterImpl::IsHiTraceEnable()
         WVLOG_D("HiTraceAdapterImpl GetUintParameter %{public}s error.", KEY_TRACE_TAG.c_str());
         return false;
     }
+    firstAceEnable_ = tags & HITRACE_TAG_ACE;
     return (tags & HITRACE_TAG_NWEB);
 }
 
 void HiTraceAdapterImpl::StartOHOSTrace(const std::string& value, float limit)
 {
-    if (IsOHOSTraceEnable_) {
+    if (isOHOSTraceEnable_) {
         ::StartTrace(HITRACE_TAG_ACE, value, limit);
-    } else if (IsNWEBTraceEnable_){
+    } else if (isNWEBTraceEnable_) {
         ::StartTrace(HITRACE_TAG_NWEB, value, limit);
     }
 }
 
 void HiTraceAdapterImpl::FinishOHOSTrace()
 {
-    if (IsOHOSTraceEnable_) {
+    if (isOHOSTraceEnable_) {
         ::FinishTrace(HITRACE_TAG_ACE);
-    } else if (IsNWEBTraceEnable_){
+    } else if (isNWEBTraceEnable_) {
         ::FinishTrace(HITRACE_TAG_NWEB);
     }
 }
 
 void HiTraceAdapterImpl::CountOHOSTrace(const std::string& name, int64_t count)
 {
-    if (IsOHOSTraceEnable_) {
+    if (isOHOSTraceEnable_) {
         ::CountTrace(HITRACE_TAG_ACE, name, count);
-    } else if (IsNWEBTraceEnable_){
+    } else if (isNWEBTraceEnable_) {
         ::CountTrace(HITRACE_TAG_NWEB, name, count);
     }
 }
@@ -93,7 +94,12 @@ void HiTraceAdapterImpl::CountOHOSTrace(const std::string& name, int64_t count)
 void HiTraceAdapterImpl::UpdateOHOSTraceTag(const char* value)
 {
     auto status = std::stoul(value);
-    IsNWEBTraceEnable_ = status & HITRACE_TAG_NWEB;
-    IsOHOSTraceEnable_ = status & HITRACE_TAG_ACE;
+    isNWEBTraceEnable_ = status & HITRACE_TAG_NWEB;
+    isOHOSTraceEnable_ = status & HITRACE_TAG_ACE;
+}
+
+bool HiTraceAdapterImpl::IsACETraceEnable()
+{
+    return firstAceEnable_;
 }
 } // namespace OHOS::NWeb

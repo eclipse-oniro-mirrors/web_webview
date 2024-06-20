@@ -44,6 +44,8 @@ public:
 
     void CountOHOSTrace(const ArkWebString& name, int64_t count) override;
 
+    bool IsACETraceEnable() override;
+
 private:
     NWeb::HiTraceAdapter& real_;
 
