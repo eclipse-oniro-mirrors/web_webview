@@ -1197,7 +1197,7 @@ public:
      * @param actionArguments Data related to the current action.
      */
     /*--ark web()--*/
-    void performAction(int64_t accessibilityId, uint32_t action,
+    void PerformAction(int64_t accessibilityId, uint32_t action,
         const std::map<std::string, std::string>& actionArguments) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;

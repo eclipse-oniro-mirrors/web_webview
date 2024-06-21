@@ -1354,7 +1354,7 @@ public:
      * @param action The action to be performed on the accessibility node.
      * @param actionArguments Data related to the current action.
      */
-    virtual void performAction(int64_t accessibilityId, uint32_t action,
+    virtual void PerformAction(int64_t accessibilityId, uint32_t action,
         const std::map<std::string, std::string>& actionArguments) {}
 };
 

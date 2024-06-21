@@ -1187,7 +1187,7 @@ public:
      * @param actionArguments Data related to the current action.
      */
     /*--ark web()--*/
-    void performAction(int64_t accessibility_id, uint32_t action,
+    void PerformAction(int64_t accessibility_id, uint32_t action,
         const ArkWebStringMap& actionArguments) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
