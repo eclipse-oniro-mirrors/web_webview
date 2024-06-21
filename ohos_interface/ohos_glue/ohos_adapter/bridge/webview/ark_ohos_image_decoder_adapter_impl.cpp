@@ -43,6 +43,11 @@ int32_t ArkOhosImageDecoderAdapterImpl::GetImageHeight()
     return real_->GetImageHeight();
 }
 
+bool ArkOhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data, uint32_t size)
+{
+    return real_->DecodeToPixelMap(data, size);
+}
+
 bool ArkOhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data,
                                                       uint32_t size,
                                                       uint32_t type,

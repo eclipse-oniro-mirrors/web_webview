@@ -30,6 +30,7 @@ public:
     ArkWebString GetEncodedFormat() override;
     int32_t GetImageWidth() override;
     int32_t GetImageHeight() override;
+    bool DecodeToPixelMap(const uint8_t* data, uint32_t size) override;
     bool DecodeToPixelMap(const uint8_t* data,
                           uint32_t size,
                           uint32_t type,

@@ -88,6 +88,11 @@ int32_t OhosImageDecoderAdapterImpl::GetImageHeight()
     return imageInfo_.size.height;
 }
 
+bool DecodeToPixelMap(const uint8_t* data, uint32_t size)
+{
+    return DecodeToPixelMap(data, size, AllocatorType::kDmaAlloc, false);
+}
+
 bool OhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data,
                                                    uint32_t size,
                                                    AllocatorType type,
