@@ -44,6 +44,11 @@ int32_t ArkOhosImageDecoderAdapterWrapper::GetImageHeight()
     return ctocpp_->GetImageHeight();
 }
 
+bool ArkOhosImageDecoderAdapterWrapper::DecodeToPixelMap(const uint8_t* data, uint32_t size)
+{
+    return ctocpp_->DecodeToPixelMap(data, size);
+}
+
 bool ArkOhosImageDecoderAdapterWrapper::DecodeToPixelMap(const uint8_t* data,
                                                          uint32_t size,
                                                          OHOS::NWeb::AllocatorType type,
