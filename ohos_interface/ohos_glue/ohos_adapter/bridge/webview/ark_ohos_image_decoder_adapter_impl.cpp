@@ -48,10 +48,10 @@ bool ArkOhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data, uint3
     return real_->DecodeToPixelMap(data, size);
 }
 
-bool ArkOhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data,
-                                                      uint32_t size,
-                                                      uint32_t type,
-                                                      bool useYuv)
+bool ArkOhosImageDecoderAdapterImpl::Decode(const uint8_t* data,
+                                            uint32_t size,
+                                            uint32_t type,
+                                            bool useYuv)
 {
     return real_->DecodeToPixelMap(data, size, (OHOS::NWeb::AllocatorType)type, useYuv);
 }
