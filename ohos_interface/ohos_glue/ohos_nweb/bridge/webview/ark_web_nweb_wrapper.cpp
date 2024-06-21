@@ -1224,4 +1224,13 @@ void ArkWebNWebWrapper::SetPathAllowingUniversalAccess(
     ArkWebStringVectorStructRelease(stModuleName);
     ArkWebStringStructRelease(stErrorPath);
 }
+
+void ArkWebNWebWrapper::performAction(int64_t accessibility_id, uint32_t action,
+    const std::map<std::string, std::string>& actionArguments)
+{
+    ArkWebStringMap stArguments = ArkWebStringMapClassToStruct(actionArguments);
+    ark_web_nweb_->performAction(accessibility_id, action, stArguments);
+
+    ArkWebStringMapStructRelease(stArguments);
+}
 } // namespace OHOS::ArkWeb
