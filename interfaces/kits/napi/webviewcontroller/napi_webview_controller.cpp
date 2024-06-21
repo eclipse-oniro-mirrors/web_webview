@@ -5662,20 +5662,23 @@ napi_value NapiWebviewController::EnableAdsBlock(
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
         WVLOG_E("EnableAdsBlock: args count is not allowed.");
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
 
     bool enabled = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ZERO], enabled)) {
         WVLOG_E("EnableAdsBlock: the given enabled is not allowed.");
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'enable' must be boolean.");
         return result;
     }
 
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("EnableAdsBlock: init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 

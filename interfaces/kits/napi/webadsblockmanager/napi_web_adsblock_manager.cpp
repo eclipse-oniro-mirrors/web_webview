@@ -80,7 +80,8 @@ napi_value NapiWebAdsBlockManager::JsSetAdsBlockRules(napi_env env, napi_callbac
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != INTEGER_TWO) {
         WVLOG_E("setAdsBlockRules failed: wrong param count");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two"));
         return nullptr;
     }
 
@@ -88,20 +89,23 @@ napi_value NapiWebAdsBlockManager::JsSetAdsBlockRules(napi_env env, napi_callbac
     std::string rulesFile;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], rulesFile)) {
         WVLOG_E("setAdsBlockRules failed: first param should be string");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of rulesFile must be string.");
         return result;
     }
 
     if (rulesFile.length() > MAX_URL_RULES_FILEPATH_LENGTH) {
         WVLOG_E("setAdsBlockRules failed: rulesFile path too long > %{public}d", MAX_URL_RULES_FILEPATH_LENGTH);
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. rulesFile path too long > 255.");
         return result;
     }
 
     bool replace = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ONE], replace)) {
         WVLOG_E("setAdsBlockRules failed: invalid replace value");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of replace must be boolean.");
         return result;
     }
 
@@ -124,7 +128,8 @@ napi_value NapiWebAdsBlockManager::JsAddAdsBlockDisallowedList(napi_env env, nap
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != INTEGER_ONE) {
         WVLOG_E("AddAdsBlockDisallowedList failed: wrong param count");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return nullptr;
     }
 
@@ -132,7 +137,8 @@ napi_value NapiWebAdsBlockManager::JsAddAdsBlockDisallowedList(napi_env env, nap
     std::vector<std::string> domainSuffixes;
     if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ZERO], domainSuffixes)) {
         WVLOG_E("AddAdsBlockDisallowedList failed: domainSuffixes should be an array of string");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of domainSuffixes must be an array of string.");
         return result;
     }
 
@@ -155,7 +161,8 @@ napi_value NapiWebAdsBlockManager::JsRemoveAdsBlockDisallowedList(napi_env env, 
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != INTEGER_ONE) {
         WVLOG_E("removeAdsBlockDisallowedList failed: wrong param count");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return nullptr;
     }
 
@@ -163,7 +170,8 @@ napi_value NapiWebAdsBlockManager::JsRemoveAdsBlockDisallowedList(napi_env env, 
     std::vector<std::string> domainSuffixes;
     if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ZERO], domainSuffixes)) {
         WVLOG_E("removeAdsBlockDisallowedList failed: domainSuffixes should be an array of string");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of domainSuffixes must be an array of string.");
         return result;
     }
 
@@ -200,7 +208,8 @@ napi_value NapiWebAdsBlockManager::JsAddAdsBlockAllowedList(napi_env env, napi_c
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != INTEGER_ONE) {
         WVLOG_E("AddAdsBlockAllowedList failed: wrong param count");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return nullptr;
     }
 
@@ -208,7 +217,8 @@ napi_value NapiWebAdsBlockManager::JsAddAdsBlockAllowedList(napi_env env, napi_c
     std::vector<std::string> domainSuffixes;
     if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ZERO], domainSuffixes)) {
         WVLOG_E("AddAdsBlockAllowedList failed: domainSuffixes should be an array of string");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of domainSuffixes must be an array of string.");
         return result;
     }
 
@@ -231,7 +241,8 @@ napi_value NapiWebAdsBlockManager::JsRemoveAdsBlockAllowedList(napi_env env, nap
     napi_get_cb_info(env, info, &argc, argv, &retValue, nullptr);
     if (argc != INTEGER_ONE) {
         WVLOG_E("removeAdsBlockAllowedList failed: wrong param count");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return nullptr;
     }
 
@@ -239,7 +250,8 @@ napi_value NapiWebAdsBlockManager::JsRemoveAdsBlockAllowedList(napi_env env, nap
     std::vector<std::string> domainSuffixes;
     if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ZERO], domainSuffixes)) {
         WVLOG_E("removeAdsBlockAllowedList failed: domainSuffixes should be an array of string");
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of domainSuffixes must be an array of string.");
         return result;
     }
 

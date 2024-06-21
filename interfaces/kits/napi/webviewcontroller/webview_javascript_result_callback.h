@@ -361,7 +361,7 @@ private:
     void Delete()
     {
         if (objRef_ && Release() == 0) {
-            WVLOG_E("JavaScriptOb delete called");
+            WVLOG_D("JavaScriptOb delete called");
             napi_delete_reference(env_, objRef_);
             objRef_ = nullptr;
         }
