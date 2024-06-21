@@ -49,10 +49,11 @@ bool ArkOhosImageDecoderAdapterWrapper::DecodeToPixelMap(const uint8_t* data, ui
     return ctocpp_->DecodeToPixelMap(data, size);
 }
 
-bool ArkOhosImageDecoderAdapterWrapper::DecodeToPixelMap(const uint8_t* data,
-                                                         uint32_t size,
-                                                         OHOS::NWeb::AllocatorType type,
-                                                         bool useYuv)
+
+bool ArkOhosImageDecoderAdapterWrapper::Decode(const uint8_t* data,
+                                               uint32_t size,
+                                               OHOS::NWeb::AllocatorType type,
+                                               bool useYuv)
 {
     return ctocpp_->DecodeToPixelMap(data, size, (uint32_t)type, useYuv);
 }

@@ -44,10 +44,10 @@ public:
 
     virtual bool DecodeToPixelMap(const uint8_t* data, uint32_t size) = 0;
 
-    virtual bool DecodeToPixelMap(const uint8_t* data,
-                                  uint32_t size,
-                                  AllocatorType type,
-                                  bool useYuv) = 0;
+    virtual bool Decode(const uint8_t* data,
+                              uint32_t size,
+                              AllocatorType type,
+                              bool useYuv) = 0;
 
     virtual int32_t GetFd() = 0;
 

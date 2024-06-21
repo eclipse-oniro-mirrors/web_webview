@@ -88,15 +88,15 @@ int32_t OhosImageDecoderAdapterImpl::GetImageHeight()
     return imageInfo_.size.height;
 }
 
-bool DecodeToPixelMap(const uint8_t* data, uint32_t size)
+bool OhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data, uint32_t size)
 {
-    return DecodeToPixelMap(data, size, AllocatorType::kDmaAlloc, false);
+    return Decode(data, size, AllocatorType::kDmaAlloc, false);
 }
 
-bool OhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data,
-                                                   uint32_t size,
-                                                   AllocatorType type,
-                                                   bool useYuv)
+bool OhosImageDecoderAdapterImpl::Decode(const uint8_t* data,
+                                         uint32_t size,
+                                         AllocatorType type,
+                                         bool useYuv)
 {
     // Manage lifecycle of pixelmap and native window buffer with map next.
     WVLOG_I("[HeifSupport] OhosImageDecoderAdapterImpl DecodeToPixelMap.");
