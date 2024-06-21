@@ -44,9 +44,12 @@ int32_t ArkOhosImageDecoderAdapterWrapper::GetImageHeight()
     return ctocpp_->GetImageHeight();
 }
 
-bool ArkOhosImageDecoderAdapterWrapper::DecodeToPixelMap(const uint8_t* data, uint32_t size)
+bool ArkOhosImageDecoderAdapterWrapper::DecodeToPixelMap(const uint8_t* data,
+                                                         uint32_t size,
+                                                         OHOS::NWeb::AllocatorType type,
+                                                         bool useYuv)
 {
-    return ctocpp_->DecodeToPixelMap(data, size);
+    return ctocpp_->DecodeToPixelMap(data, size, type, useYuv);
 }
 
 int32_t ArkOhosImageDecoderAdapterWrapper::GetFd()
@@ -77,6 +80,11 @@ void* ArkOhosImageDecoderAdapterWrapper::GetNativeWindowBuffer()
 int32_t ArkOhosImageDecoderAdapterWrapper::GetPlanesCount()
 {
     return ctocpp_->GetPlanesCount();
+}
+
+void ArkOhosImageDecoderAdapterWrapper::ReleasePixelMap()
+{
+    return ctocpp_->ReleasePixelMap();
 }
 
 } // namespace OHOS::ArkWeb
