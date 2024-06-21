@@ -93,6 +93,8 @@ bool OhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data,
                                                    AllocatorType type,
                                                    bool useYuv)
 {
+    // Manage lifecycle of pixelmap and native window buffer with map next.
+    WVLOG_I("[HeifSupport] OhosImageDecoderAdapterImpl DecodeToPixelMap.");
     auto imageSource = ParseRawData(data, size, imageInfo_);
     if (imageSource == nullptr) {
         WVLOG_E(
@@ -229,9 +231,9 @@ int32_t OhosImageDecoderAdapterImpl::GetPlanesCount()
 
 void OhosImageDecoderAdapterImpl::ReleasePixelMap()
 {
+    WVLOG_I("[HeifSupport] OhosImageDecoderAdapterImpl release pixelmap and native window buffer.");
     if (pixelMap_) {
-        WVLOG_E("[HeifSupport] OhosImageDecoderAdapterImpl release pixelmap.");
-        pixelMap_->FreePixelMap();
+        pixelMap_.reset();
         pixelMap_ = nullptr;
     }
     if (nativeWindowBuffer_) {
