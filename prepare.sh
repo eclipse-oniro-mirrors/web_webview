@@ -111,11 +111,11 @@ handle_develop_commond() {
 
   python3 ${ohos_glue_dir}/scripts/translator.py ${2}
 
-  file_list=$(find ${ohos_glue_dir} -type f \( -name "*.h" -o -name "*.cpp" \))
-  for file in $file_list
-  do
-    clang-format -style=file -i $file
-  done
+  #file_list=$(find ${ohos_glue_dir} -type f \( -name "*.h" -o -name "*.cpp" \))
+  #for file in $file_list
+  #do
+  #  clang-format -style=file -i $file
+  #done
 }
 
 handle_translate_commond() {
