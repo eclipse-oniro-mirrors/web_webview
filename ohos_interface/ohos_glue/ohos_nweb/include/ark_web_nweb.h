@@ -1349,7 +1349,7 @@ public:
      * @param actionArguments Data related to the current action.
      */
     /*--ark web()--*/
-    virtual void performAction(int64_t accessibilityId, uint32_t action,
+    virtual void PerformAction(int64_t accessibilityId, uint32_t action,
         const ArkWebStringMap& actionArguments) = 0;
 };
 
