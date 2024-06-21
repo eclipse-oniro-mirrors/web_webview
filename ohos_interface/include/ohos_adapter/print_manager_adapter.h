@@ -52,7 +52,8 @@ struct PrintAttributesAdapter {
     std::string option;
 };
 
-class PrintWriteResultCallbackAdapter {
+/*[clang::lto_visibility_public]:Prevent this class from being optimized away at compile time*/ 
+class [[clang::lto_visibility_public]] PrintWriteResultCallbackAdapter {
 public:
     PrintWriteResultCallbackAdapter() = default;
     virtual ~PrintWriteResultCallbackAdapter() = default;
