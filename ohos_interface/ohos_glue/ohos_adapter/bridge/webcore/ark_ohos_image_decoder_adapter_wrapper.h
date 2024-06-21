@@ -30,13 +30,17 @@ public:
     std::string GetEncodedFormat() override;
     int32_t GetImageWidth() override;
     int32_t GetImageHeight() override;
-    bool DecodeToPixelMap(const uint8_t* data, uint32_t size) override;
+    bool DecodeToPixelMap(const uint8_t* data,
+                          uint32_t size,
+                          OHOS::NWeb::AllocatorType type,
+                          bool useYuv) override;
     int32_t GetFd() override;
     int32_t GetStride() override;
     int32_t GetOffset() override;
     uint64_t GetSize() override;
     void* GetNativeWindowBuffer() override;
     int32_t GetPlanesCount() override;
+    void ReleasePixelMap() override;
 
 private:
     ArkWebRefPtr<ArkOhosImageDecoderAdapter> ctocpp_;
