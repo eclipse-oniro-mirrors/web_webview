@@ -55,7 +55,7 @@ bool ArkOhosImageDecoderAdapterWrapper::Decode(const uint8_t* data,
                                                OHOS::NWeb::AllocatorType type,
                                                bool useYuv)
 {
-    return ctocpp_->DecodeToPixelMap(data, size, (uint32_t)type, useYuv);
+    return ctocpp_->Decode(data, size, (uint32_t)type, useYuv);
 }
 
 int32_t ArkOhosImageDecoderAdapterWrapper::GetFd()
