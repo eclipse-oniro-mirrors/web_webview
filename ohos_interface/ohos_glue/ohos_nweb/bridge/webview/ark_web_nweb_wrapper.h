@@ -1189,6 +1189,16 @@ public:
     /*--ark web()--*/
     void SetPathAllowingUniversalAccess(const std::vector<std::string>& dirs,
         const std::vector<std::string>& moduleName, std::string& errorPath) override;
+    
+    /**
+     * Execute an accessibility action on an accessibility node in the browser.
+     * @param accessibilityId The id of the accessibility node.
+     * @param action The action to be performed on the accessibility node.
+     * @param actionArguments Data related to the current action.
+     */
+    /*--ark web()--*/
+    void performAction(int64_t accessibilityId, uint32_t action,
+        const std::map<std::string, std::string>& actionArguments) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
