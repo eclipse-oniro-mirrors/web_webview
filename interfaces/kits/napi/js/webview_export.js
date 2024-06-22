@@ -199,7 +199,7 @@ function selectPicture(param, selectResult) {
     let photoResultArray = [];
     let photoSelectOptions = new picker.PhotoSelectOptions();
     if (param.getMode() === FileSelectorMode.FileOpenMode) {
-      console.log('allow select single photo or video')
+      console.log('allow select single photo or video');
       photoSelectOptions.maxSelectNumber = 1;
     }
     let acceptTypes = param.getAcceptType();
@@ -296,7 +296,7 @@ Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFrom
         ]
       });
     } else if (callback.fileparam.isCapture()) {
-      console.log('take photo will be directly invoked due to the capture property')
+      console.log('take photo will be directly invoked due to the capture property');
       takePhoto(callback.fileparam, callback.fileresult);
     } else {
       console.log('selectFile will be invoked by web');
