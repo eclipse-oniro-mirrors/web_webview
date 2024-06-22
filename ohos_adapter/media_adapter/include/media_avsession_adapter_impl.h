@@ -92,6 +92,8 @@ private:
     bool UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionPositionAdapter> position);
     bool UpdatePlaybackStateCache(MediaAVSessionPlayState state);
     bool UpdatePlaybackStateCache(const std::shared_ptr<MediaAVSessionPositionAdapter> position);
+    void DestroyAndEraseSession();
+    bool CreateNewSession(const MediaAVSessionType& type);
 
     std::shared_ptr<MediaAVSessionKey> avSessionKey_;
     std::shared_ptr<AVSession::AVMetaData> avMetadata_;
