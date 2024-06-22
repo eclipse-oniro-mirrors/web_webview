@@ -17,9 +17,9 @@
 #define OHOS_IMAGE_DECODER_ADAPTER_IMPL
 
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer.h"
+#include "image_type.h"
 #include "ohos_image_decoder_adapter.h"
 #include "surface_buffer.h"
-#include "image_type.h"
 
 namespace OHOS {
 
@@ -34,26 +34,29 @@ public:
     OhosImageDecoderAdapterImpl();
     ~OhosImageDecoderAdapterImpl() override;
 
-   bool ParseImageInfo(const uint8_t *data, uint32_t size) override;
-   std::string GetEncodedFormat() override;
-   int32_t GetImageWidth() override;
-   int32_t GetImageHeight() override;
-   bool DecodeToPixelMap(const uint8_t *data, uint32_t size) override; 
-   int32_t GetFd() override;
-   int32_t GetStride() override;
-   int32_t GetOffset() override;
-   uint64_t GetSize() override;
-   void* GetNativeWindowBuffer() override;
-   int32_t GetPlanesCount() override;
-  
+    bool ParseImageInfo(const uint8_t* data, uint32_t size) override;
+    std::string GetEncodedFormat() override;
+    int32_t GetImageWidth() override;
+    int32_t GetImageHeight() override;
+    bool DecodeToPixelMap(const uint8_t* data, uint32_t size) override;
+    bool Decode(const uint8_t* data,
+                uint32_t size,
+                AllocatorType type,
+                bool useYuv) override;
+    int32_t GetFd() override;
+    int32_t GetStride() override;
+    int32_t GetOffset() override;
+    uint64_t GetSize() override;
+    void* GetNativeWindowBuffer() override;
+    int32_t GetPlanesCount() override;
+    void ReleasePixelMap() override;
+
 private:
-   void SaveDataToFile(Media::PixelMap* pixelMap);
-   sptr<SurfaceBuffer> surfaceBuffer_;
-   OH_NativeBuffer_Planes* native_buffer_planes_ = nullptr;
-   Media::ImageInfo imageInfo_;
+    Media::ImageInfo imageInfo_;
+    std::unique_ptr<Media::PixelMap> pixelMap_;
+    OHNativeWindowBuffer* nativeWindowBuffer_ = nullptr;
 };
 
-} // namespace NWEB
-} // namespace OHOS
-#endif // OHOS_IMAGE_DECODER_ADAPTER_IMPL
-
+}  // namespace NWeb
+}  // namespace OHOS
+#endif  // OHOS_IMAGE_DECODER_ADAPTER_IMPL

@@ -20,6 +20,14 @@
 
 namespace OHOS::NWeb {
 
+enum class AllocatorType : int32_t {
+    kDefault = 0,
+    kHeapAlloc = 1,
+    kShareMemAlloc = 2,
+    kCustomAlloc = 3,
+    kDmaAlloc = 4,
+};
+
 class OhosImageDecoderAdapter {
 public:
     OhosImageDecoderAdapter() = default;
@@ -47,8 +55,15 @@ public:
     virtual void* GetNativeWindowBuffer() = 0;
 
     virtual int32_t GetPlanesCount() = 0;
+
+    virtual void ReleasePixelMap() = 0;
+
+    virtual bool Decode(const uint8_t* data,
+                              uint32_t size,
+                              AllocatorType type,
+                              bool useYuv) = 0;
 };
 
-} // namespace OHOS::NWeb
+}  // namespace OHOS::NWeb
 
-#endif // OHOS_IMAGE_DECODER_ADAPTER_H
+#endif  // OHOS_IMAGE_DECODER_ADAPTER_H
