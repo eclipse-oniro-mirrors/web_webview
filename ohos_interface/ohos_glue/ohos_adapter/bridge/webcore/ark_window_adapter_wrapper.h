@@ -36,6 +36,7 @@ public:
 
     void NativeWindowSurfaceCleanCache(ArkWebNativeWindow window) override;
 
+    void NativeWindowSurfaceCleanCacheWithPara(ArkWebNativeWindow window, bool cleanAll) override;
 private:
     ArkWebRefPtr<ArkWindowAdapter> ctocpp_;
 };
