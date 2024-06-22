@@ -37,6 +37,7 @@ HWTEST(WindowAdapterImplTest, NormalTest, TestSize.Level1)
     EXPECT_EQ(OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSetBufferGeometry(
         window, 0, 0), OHOS::GSERROR_OK);
     OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSurfaceCleanCache(window);
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSurfaceCleanCacheWithPara(window, false);
     OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().DestroyNativeWindow(window);
 }
 

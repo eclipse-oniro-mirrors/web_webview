@@ -61,4 +61,21 @@ void WindowAdapterImpl::NativeWindowSurfaceCleanCache(NWebNativeWindow window)
     }
     nativeWindow->surface->CleanCache();
 }
+
+void WindowAdapterImpl::NativeWindowSurfaceCleanCacheWithPara(NWebNativeWindow window, bool cleanAll)
+{
+    WVLOG_D("WindowAdapterImpl::NativeWindowSurfaceCleanCacheWithPara");
+    auto nativeWindow = reinterpret_cast<OHNativeWindow*>(window);
+    if (!nativeWindow || !nativeWindow->surface) {
+        WVLOG_D("window or surface is null, no need to clean surface cache");
+        return;
+    }
+    
+    // eglDestroySurface has disconnected the surface link
+    GSError ret = nativeWindow->surface->Connect();
+    if (ret == (int32_t)GSERROR_OK) {
+        nativeWindow->surface->CleanCache(cleanAll);
+        nativeWindow->surface->Disconnect();
+    }
+}
 } // namespace OHOS::NWeb

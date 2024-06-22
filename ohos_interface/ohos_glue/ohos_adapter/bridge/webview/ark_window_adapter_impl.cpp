@@ -41,4 +41,9 @@ void ArkWindowAdapterImpl::NativeWindowSurfaceCleanCache(void* window)
     return real_.NativeWindowSurfaceCleanCache(window);
 }
 
+void ArkWindowAdapterImpl::NativeWindowSurfaceCleanCacheWithPara(void* window, bool cleanAll)
+{
+    return real_.NativeWindowSurfaceCleanCacheWithPara(window, cleanAll);
+}
+
 } // namespace OHOS::ArkWeb

@@ -32,6 +32,8 @@ public:
     int32_t NativeWindowSetBufferGeometry(NWebNativeWindow window, int32_t width, int32_t height) override;
 
     void NativeWindowSurfaceCleanCache(NWebNativeWindow window) override;
+
+    void NativeWindowSurfaceCleanCacheWithPara(NWebNativeWindow window, bool cleanAll) override;
 };
 } // namespace OHOS::NWeb
 
