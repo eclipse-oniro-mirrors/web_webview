@@ -15,6 +15,8 @@
 
 #include "ohos_adapter/bridge/ark_ohos_image_decoder_adapter_impl.h"
 
+#include "ohos_image_decoder_adapter.h"
+
 namespace OHOS::ArkWeb {
 
 ArkOhosImageDecoderAdapterImpl::ArkOhosImageDecoderAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosImageDecoderAdapter> ref)
@@ -46,6 +48,14 @@ bool ArkOhosImageDecoderAdapterImpl::DecodeToPixelMap(const uint8_t* data, uint3
     return real_->DecodeToPixelMap(data, size);
 }
 
+bool ArkOhosImageDecoderAdapterImpl::Decode(const uint8_t* data,
+                                            uint32_t size,
+                                            uint32_t type,
+                                            bool useYuv)
+{
+    return real_->Decode(data, size, (OHOS::NWeb::AllocatorType)type, useYuv);
+}
+
 int32_t ArkOhosImageDecoderAdapterImpl::GetFd()
 {
     return real_->GetFd();
@@ -74,6 +84,11 @@ void* ArkOhosImageDecoderAdapterImpl::GetNativeWindowBuffer()
 int32_t ArkOhosImageDecoderAdapterImpl::GetPlanesCount()
 {
     return real_->GetPlanesCount();
+}
+
+void ArkOhosImageDecoderAdapterImpl::ReleasePixelMap()
+{
+    return real_->ReleasePixelMap();
 }
 
 } // namespace OHOS::ArkWeb
