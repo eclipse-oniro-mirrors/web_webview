@@ -21,6 +21,7 @@
 #include <map>
 
 #include "aafwk_browser_host_adapter.h"
+#include <functional>
 #include "iremote_object.h"
 #include "iremote_stub.h"
 #include "iconsumer_surface.h"
@@ -46,7 +47,7 @@ private:
 
     int32_t HandleDestroyRenderSurface(MessageParcel &data, MessageParcel &reply);
 
-    using BrowserHostFunc = int32_t (BrowserHost::*)(MessageParcel &data, MessageParcel &reply);
+    using BrowserHostFunc = std::function<int32_t(BrowserHost*, MessageParcel &data, MessageParcel &reply)>;
 
     std::map<uint32_t, BrowserHostFunc> memberFuncMap_;
 
