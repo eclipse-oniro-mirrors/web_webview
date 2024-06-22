@@ -25,17 +25,26 @@
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 #include "foundation/graphic/graphic_surface/surface/include/native_window.h"
 
-namespace OHOS::NWeb{
+namespace OHOS::NWeb {
+
 BrowserHost::BrowserHost()
 {
     memberFuncMap_[static_cast<uint32_t>(IBrowser::Message::QUERY_RENDER_SURFACE)] =
-        &BrowserHost::HandleQueryRenderSurface;
+        [](BrowserHost* that, MessageParcel &data, MessageParcel &reply) {
+            return that->HandleQueryRenderSurface(data, reply);
+        };
     memberFuncMap_[static_cast<uint32_t>(IBrowser::Message::REPORT_THREAD)] =
-        &BrowserHost::HandleReportThread;
+        [](BrowserHost* that, MessageParcel &data, MessageParcel &reply) {
+            return that->HandleReportThread(data, reply);
+        };
     memberFuncMap_[static_cast<uint32_t>(IBrowser::Message::PASS_SURFACE)] =
-        &BrowserHost::HandlePassSurface;
+        [](BrowserHost* that, MessageParcel &data, MessageParcel &reply) {
+            return that->HandlePassSurface(data, reply);
+        };
     memberFuncMap_[static_cast<uint32_t>(IBrowser::Message::DESTROY_RENDER_SURFACE)] =
-        &BrowserHost::HandleDestroyRenderSurface;
+        [](BrowserHost* that, MessageParcel &data, MessageParcel &reply) {
+            return that->HandleDestroyRenderSurface(data, reply);
+        };
 }
 
 BrowserHost::~BrowserHost()
@@ -55,9 +64,9 @@ int BrowserHost::OnRemoteRequest(uint32_t code, MessageParcel &data,
     
     auto itFunc = memberFuncMap_.find(code);
     if (itFunc != memberFuncMap_.end()) {
-        auto memberFunc = itFunc->second;
-        if (memberFunc != nullptr) {
-            return (this->*memberFunc)(data, reply);
+        auto& memberFunc = itFunc->second;
+        if (memberFunc) {
+            return memberFunc(this, data, reply);
         }
     }
     return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
@@ -108,8 +117,8 @@ int BrowserHost::HandleDestroyRenderSurface(MessageParcel &data, MessageParcel &
     return 0;
 }
 
-AafwkBrowserHostImpl::AafwkBrowserHostImpl(std::shared_ptr<AafwkBrowserHostAdapter> adapter) :
-    browserHostAdapter_(adapter) {}
+AafwkBrowserHostImpl::AafwkBrowserHostImpl(std::shared_ptr<AafwkBrowserHostAdapter> adapter)
+    : browserHostAdapter_(adapter) {}
 
 sptr<IRemoteObject> AafwkBrowserHostImpl::QueryRenderSurface(int32_t surface_id)
 {
