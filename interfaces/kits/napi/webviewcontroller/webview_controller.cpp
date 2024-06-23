@@ -42,6 +42,7 @@
 #include "bundle_mgr_proxy.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
+#include "parameters.h"
 #include "system_ability_definition.h"
 
 namespace {
@@ -88,7 +89,7 @@ using namespace NWebError;
 std::unordered_map<int32_t, WebviewController*> g_webview_controller_map;
 std::string WebviewController::customeSchemeCmdLine_ = "";
 bool WebviewController::existNweb_ = false;
-bool WebviewController::webDebuggingAccess_ = false;
+bool WebviewController::webDebuggingAccess_ = OHOS::system::GetBoolParameter("web.debug.devtools", false);
 std::set<std::string> WebviewController::webTagSet_;
 int32_t WebviewController::webTagStrId_ = 0;
 
