@@ -717,7 +717,6 @@ napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info
         WVLOG_E("Wrap native webviewController failed.");
         return nullptr;
     }
-    WebviewController::webDebuggingAccess_ = OHOS::system::GetBoolParameter("web.debug.devtools", false);
     return thisVar;
 }
 
