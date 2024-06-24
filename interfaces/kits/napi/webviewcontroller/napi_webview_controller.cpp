@@ -3900,19 +3900,19 @@ bool CheckSchemeName(const std::string& schemeName)
 
 void SetCustomizeSchemeOption(Scheme& scheme)
 {
-    std::map<int, bool Scheme::*> schemeProperties = {
-        {0, &Scheme::isStandard},
-        {1, &Scheme::isLocal},
-        {2, &Scheme::isDisplayIsolated},
-        {3, &Scheme::isSecure},
-        {4, &Scheme::isSupportCORS},
-        {5, &Scheme::isCspBypassing},
-        {6, &Scheme::isSupportFetch},
-        {7, &Scheme::isCodeCacheSupported}
+    std::map<int, std::function<bool(const Scheme&)>> schemeProperties = {
+        {0, [](const Scheme& scheme) { return scheme.isStandard; }},
+        {1, [](const Scheme& scheme) { return scheme.isLocal; }},
+        {2, [](const Scheme& scheme) { return scheme.isDisplayIsolated; }},
+        {3, [](const Scheme& scheme) { return scheme.isSecure; }},
+        {4, [](const Scheme& scheme) { return scheme.isSupportCORS; }},
+        {5, [](const Scheme& scheme) { return scheme.isCspBypassing; }},
+        {6, [](const Scheme& scheme) { return scheme.isSupportFetch; }},
+        {7, [](const Scheme& scheme) { return scheme.isCodeCacheSupported; }}
     };
 
     for (const auto& property : schemeProperties) {
-        if (scheme.*(property.second)) {
+        if (property.second(scheme)) {
             scheme.option += 1 << property.first;
         }
     }
@@ -3920,22 +3920,23 @@ void SetCustomizeSchemeOption(Scheme& scheme)
 
 bool SetCustomizeScheme(napi_env env, napi_value obj, Scheme& scheme)
 {
-    std::map<std::string, bool Scheme::*> schemeBooleanProperties = {
-        {"isSupportCORS", &Scheme::isSupportCORS},
-        {"isSupportFetch", &Scheme::isSupportFetch},
-        {"isStandard", &Scheme::isStandard},
-        {"isLocal", &Scheme::isLocal},
-        {"isDisplayIsolated", &Scheme::isDisplayIsolated},
-        {"isSecure", &Scheme::isSecure},
-        {"isCspBypassing", &Scheme::isCspBypassing},
-        {"isCodeCacheSupported", &Scheme::isCodeCacheSupported}
+    std::map<std::string, std::function<bool(const Scheme&)>> schemeBooleanProperties = {
+        {"isSupportCORS", [](const Scheme& scheme) { return scheme.isSupportCORS; }},
+        {"isSupportFetch", [](const Scheme& scheme) { return scheme.isSupportFetch; }},
+        {"isStandard", [](const Scheme& scheme) { return scheme.isStandard; }},
+        {"isLocal", [](const Scheme& scheme) { return scheme.isLocal; }},
+        {"isDisplayIsolated", [](const Scheme& scheme) { return scheme.isDisplayIsolated; }},
+        {"isSecure", [](const Scheme& scheme) { return scheme.isSecure; }},
+        {"isCspBypassing", [](const Scheme& scheme) { return scheme.isCspBypassing; }},
+        {"isCodeCacheSupported", [](const Scheme& scheme) { return scheme.isCodeCacheSupported; }}
     };
 
     for (const auto& property : schemeBooleanProperties) {
         napi_value propertyObj = nullptr;
-        std::string property_name = property.first.c_str();
+        std::string property_name = property.first;
         napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
-        if (!NapiParseUtils::ParseBoolean(env, propertyObj, scheme.*(property.second))) {
+        bool schemeProperty = property.second(scheme);
+        if (!NapiParseUtils::ParseBoolean(env, propertyObj, schemeProperty)) {
             if (property_name == "isSupportCORS" || property_name == "isSupportFetch") {
                 return false;
             }
