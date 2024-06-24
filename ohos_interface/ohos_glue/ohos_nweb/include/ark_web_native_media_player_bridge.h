@@ -53,6 +53,12 @@ public:
 
     /*--ark web()--*/
     virtual void ExitFullScreen() = 0;
+
+    /*--ark web()--*/
+    virtual void ResumeMediaPlayer() = 0;
+
+    /*--ark web()--*/
+    virtual void SuspendMediaPlayer(int type) = 0;
 };
 
 } // namespace OHOS::ArkWeb

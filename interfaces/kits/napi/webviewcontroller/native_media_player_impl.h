@@ -46,6 +46,10 @@ public:
 
     void ExitFullScreen() override;
 
+    void ResumeMediaPlayer() override;
+
+    void SuspendMediaPlayer(SuspendType type) override;
+
 private:
     int32_t nwebId_ = -1;
     napi_env env_ = nullptr;
