@@ -74,4 +74,14 @@ void ArkWebNativeMediaPlayerBridgeWrapper::ExitFullScreen()
     ark_web_native_vide_player_bridge_->ExitFullScreen();
 }
 
+void ArkWebNativeMediaPlayerBridgeWrapper::ResumeMediaPlayer()
+{
+    ark_web_native_vide_player_bridge_->ResumeMediaPlayer();
+}
+
+void ArkWebNativeMediaPlayerBridgeWrapper::SuspendMediaPlayer(ArkWebSuspendType type)
+{
+    ark_web_native_vide_player_bridge_->SuspendMediaPlayer(static_cast<int>(type));
+}
+
 } // namespace OHOS::ArkWeb
