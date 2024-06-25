@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMediaAVSessionAdapterImpl : public ArkMediaAVSessionAdapter {
 public:
-    ArkMediaAVSessionAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaAVSessionAdapter>);
+    explicit ArkMediaAVSessionAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaAVSessionAdapter>);
 
     bool CreateAVSession(int32_t type) override;
 

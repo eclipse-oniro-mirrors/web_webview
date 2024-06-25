@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkHiSysEventAdapterImpl : public ArkHiSysEventAdapter {
 public:
-    ArkHiSysEventAdapterImpl(NWeb::HiSysEventAdapter&);
+    explicit ArkHiSysEventAdapterImpl(NWeb::HiSysEventAdapter&);
 
     int Write(
         const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const ArkWebString value1) override;

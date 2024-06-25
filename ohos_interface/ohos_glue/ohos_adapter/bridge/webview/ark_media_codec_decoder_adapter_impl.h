@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMediaCodecDecoderAdapterImpl : public ArkMediaCodecDecoderAdapter {
 public:
-    ArkMediaCodecDecoderAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaCodecDecoderAdapter>);
+    explicit ArkMediaCodecDecoderAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaCodecDecoderAdapter>);
 
     int32_t CreateVideoDecoderByMime(const ArkWebString& mimetype) override;
 

@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBufferDescAdapterImpl : public ArkBufferDescAdapter {
 public:
-    ArkBufferDescAdapterImpl(std::shared_ptr<OHOS::NWeb::BufferDescAdapter>);
+    explicit ArkBufferDescAdapterImpl(std::shared_ptr<OHOS::NWeb::BufferDescAdapter>);
 
     uint8_t* GetBuffer() override;
 

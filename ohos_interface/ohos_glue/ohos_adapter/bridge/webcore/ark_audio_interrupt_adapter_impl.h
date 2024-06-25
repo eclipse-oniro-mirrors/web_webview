@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioInterruptAdapterImpl : public ArkAudioInterruptAdapter {
 public:
-    ArkAudioInterruptAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioInterruptAdapter>);
+    explicit ArkAudioInterruptAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioInterruptAdapter>);
 
     int32_t GetStreamUsage() override;
 

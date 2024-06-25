@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNativeImageAdapterWrapper : public OHOS::NWeb::NativeImageAdapter {
 public:
-    ArkNativeImageAdapterWrapper(ArkWebRefPtr<ArkNativeImageAdapter>);
+    explicit ArkNativeImageAdapterWrapper(ArkWebRefPtr<ArkNativeImageAdapter>);
 
     void CreateNativeImage(uint32_t textureId, uint32_t textureTarget) override;
 

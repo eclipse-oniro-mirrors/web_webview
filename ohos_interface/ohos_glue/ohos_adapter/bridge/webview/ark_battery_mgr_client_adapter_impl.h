@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBatteryMgrClientAdapterImpl : public ArkBatteryMgrClientAdapter {
 public:
-    ArkBatteryMgrClientAdapterImpl(std::shared_ptr<OHOS::NWeb::BatteryMgrClientAdapter>);
+    explicit ArkBatteryMgrClientAdapterImpl(std::shared_ptr<OHOS::NWeb::BatteryMgrClientAdapter>);
 
     void RegBatteryEvent(const ArkWebRefPtr<ArkBatteryEventCallback> eventCallback) override;
 

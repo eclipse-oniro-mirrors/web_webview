@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDecoderCallbackAdapterImpl : public ArkDecoderCallbackAdapter {
 public:
-    ArkDecoderCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::DecoderCallbackAdapter>);
+    explicit ArkDecoderCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::DecoderCallbackAdapter>);
 
     void OnError(int32_t errorType, int32_t errorCode) override;
 

@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVSyncAdapterWrapper : public OHOS::NWeb::VSyncAdapter {
 public:
-    ArkVSyncAdapterWrapper(ArkWebRefPtr<ArkVSyncAdapter>);
+    explicit ArkVSyncAdapterWrapper(ArkWebRefPtr<ArkVSyncAdapter>);
 
     OHOS::NWeb::VSyncErrorCode RequestVsync(void* data, OHOS::NWeb::NWebVSyncCb cb) override;
 

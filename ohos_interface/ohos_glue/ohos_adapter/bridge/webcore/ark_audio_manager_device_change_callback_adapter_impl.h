@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioManagerDeviceChangeCallbackAdapterImpl : public ArkAudioManagerDeviceChangeCallbackAdapter {
 public:
-    ArkAudioManagerDeviceChangeCallbackAdapterImpl(
+    explicit ArkAudioManagerDeviceChangeCallbackAdapterImpl(
         std::shared_ptr<OHOS::NWeb::AudioManagerDeviceChangeCallbackAdapter>);
 
     void OnDeviceChange() override;

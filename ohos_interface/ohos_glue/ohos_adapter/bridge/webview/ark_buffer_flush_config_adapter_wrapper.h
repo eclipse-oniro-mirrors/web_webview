@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBufferFlushConfigAdapterWrapper : public NWeb::BufferFlushConfigAdapter {
 public:
-    ArkBufferFlushConfigAdapterWrapper(ArkWebRefPtr<ArkBufferFlushConfigAdapter>);
+    explicit ArkBufferFlushConfigAdapterWrapper(ArkWebRefPtr<ArkBufferFlushConfigAdapter>);
 
     int32_t GetX() override;
 

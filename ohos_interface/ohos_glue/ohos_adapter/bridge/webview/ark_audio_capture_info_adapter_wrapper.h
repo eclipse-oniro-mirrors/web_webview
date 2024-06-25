@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioCaptureInfoAdapterWrapper : public NWeb::AudioCaptureInfoAdapter {
 public:
-    ArkAudioCaptureInfoAdapterWrapper(ArkWebRefPtr<ArkAudioCaptureInfoAdapter>);
+    explicit ArkAudioCaptureInfoAdapterWrapper(ArkWebRefPtr<ArkAudioCaptureInfoAdapter>);
 
     int32_t GetAudioSampleRate() override;
 

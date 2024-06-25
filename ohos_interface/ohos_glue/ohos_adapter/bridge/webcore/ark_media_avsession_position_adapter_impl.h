@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMediaAVSessionPositionAdapterImpl : public ArkMediaAVSessionPositionAdapter {
 public:
-    ArkMediaAVSessionPositionAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaAVSessionPositionAdapter>);
+    explicit ArkMediaAVSessionPositionAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaAVSessionPositionAdapter>);
 
     void SetDuration(int64_t duration) override;
 

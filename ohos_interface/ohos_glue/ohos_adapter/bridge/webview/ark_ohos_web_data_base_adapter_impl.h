@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosWebDataBaseAdapterImpl : public ArkOhosWebDataBaseAdapter {
 public:
-    ArkOhosWebDataBaseAdapterImpl(NWeb::OhosWebDataBaseAdapter&);
+    explicit ArkOhosWebDataBaseAdapterImpl(NWeb::OhosWebDataBaseAdapter&);
 
     bool ExistHttpAuthCredentials() override;
 
@@ -44,7 +44,7 @@ private:
 
 class ArkOhosWebPermissionDataBaseAdapterImpl : public ArkOhosWebPermissionDataBaseAdapter {
 public:
-    ArkOhosWebPermissionDataBaseAdapterImpl(NWeb::OhosWebPermissionDataBaseAdapter&);
+    explicit ArkOhosWebPermissionDataBaseAdapterImpl(NWeb::OhosWebPermissionDataBaseAdapter&);
 
     bool ExistPermissionByOrigin(const ArkWebString& origin, const int32_t& key) override;
 

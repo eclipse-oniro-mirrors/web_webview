@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFAdapterWrapper : public OHOS::NWeb::IMFAdapter {
 public:
-    ArkIMFAdapterWrapper(ArkWebRefPtr<ArkIMFAdapter>);
+    explicit ArkIMFAdapterWrapper(ArkWebRefPtr<ArkIMFAdapter>);
 
     bool Attach(std::shared_ptr<OHOS::NWeb::IMFTextListenerAdapter> listener, bool isShowKeyboard) override;
 

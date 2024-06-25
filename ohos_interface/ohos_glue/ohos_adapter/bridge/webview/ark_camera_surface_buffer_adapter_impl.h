@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCameraSurfaceBufferAdapterImpl : public ArkCameraSurfaceBufferAdapter {
 public:
-    ArkCameraSurfaceBufferAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraSurfaceBufferAdapter>);
+    explicit ArkCameraSurfaceBufferAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraSurfaceBufferAdapter>);
 
     int32_t GetFileDescriptor() override;
 

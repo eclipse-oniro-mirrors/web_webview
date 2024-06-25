@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkClipBoardImageDataAdapterImpl : public ArkClipBoardImageDataAdapter {
 public:
-    ArkClipBoardImageDataAdapterImpl(std::shared_ptr<OHOS::NWeb::ClipBoardImageDataAdapter>);
+    explicit ArkClipBoardImageDataAdapterImpl(std::shared_ptr<OHOS::NWeb::ClipBoardImageDataAdapter>);
 
     virtual int32_t GetColorType() override;
 

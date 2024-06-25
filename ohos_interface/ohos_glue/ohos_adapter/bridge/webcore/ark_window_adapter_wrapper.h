@@ -26,7 +26,7 @@ using ArkWebNativeWindow = OHOS::NWeb::NWebNativeWindow;
 
 class ArkWindowAdapterWrapper : public OHOS::NWeb::WindowAdapter {
 public:
-    ArkWindowAdapterWrapper(ArkWebRefPtr<ArkWindowAdapter>);
+    explicit ArkWindowAdapterWrapper(ArkWebRefPtr<ArkWindowAdapter>);
 
     ArkWebNativeWindow CreateNativeWindowFromSurface(void* pSurface) override;
 

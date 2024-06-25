@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBatteryInfoImpl : public ArkBatteryInfo {
 public:
-    ArkBatteryInfoImpl(std::shared_ptr<OHOS::NWeb::WebBatteryInfo>);
+    explicit ArkBatteryInfoImpl(std::shared_ptr<OHOS::NWeb::WebBatteryInfo>);
 
     double GetLevel() override;
 

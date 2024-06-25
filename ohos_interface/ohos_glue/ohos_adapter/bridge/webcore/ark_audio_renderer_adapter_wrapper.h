@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioRendererAdapterWrapper : public OHOS::NWeb::AudioRendererAdapter {
 public:
-    ArkAudioRendererAdapterWrapper(ArkWebRefPtr<ArkAudioRendererAdapter>);
+    explicit ArkAudioRendererAdapterWrapper(ArkWebRefPtr<ArkAudioRendererAdapter>);
 
     int32_t Create(const std::shared_ptr<NWeb::AudioRendererOptionsAdapter> options,
         std::string cachePath = std::string()) override;

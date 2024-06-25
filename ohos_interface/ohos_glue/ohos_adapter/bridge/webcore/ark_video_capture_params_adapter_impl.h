@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoCaptureParamsAdapterImpl : public ArkVideoCaptureParamsAdapter {
 public:
-    ArkVideoCaptureParamsAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoCaptureParamsAdapter>);
+    explicit ArkVideoCaptureParamsAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoCaptureParamsAdapter>);
 
     uint32_t GetWidth() override;
 

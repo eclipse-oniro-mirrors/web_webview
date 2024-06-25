@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkEnterpriseDeviceManagementAdapterWrapper : public OHOS::NWeb::EnterpriseDeviceManagementAdapter {
 public:
-    ArkEnterpriseDeviceManagementAdapterWrapper(ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter>);
+    explicit ArkEnterpriseDeviceManagementAdapterWrapper(ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter>);
 
     int32_t GetPolicies(std::string& policies) override;
 

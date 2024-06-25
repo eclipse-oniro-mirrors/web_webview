@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFSelectionRangeAdapterWrapper : public NWeb::IMFSelectionRangeAdapter {
 public:
-    ArkIMFSelectionRangeAdapterWrapper(ArkWebRefPtr<ArkIMFSelectionRangeAdapter>);
+    explicit ArkIMFSelectionRangeAdapterWrapper(ArkWebRefPtr<ArkIMFSelectionRangeAdapter>);
 
     int32_t GetStart() override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPlayerCallbackAdapterImpl : public ArkPlayerCallbackAdapter {
 public:
-    ArkPlayerCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::PlayerCallbackAdapter>);
+    explicit ArkPlayerCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::PlayerCallbackAdapter>);
 
     void OnInfo(int32_t type, int32_t extra, int32_t value) override;
 

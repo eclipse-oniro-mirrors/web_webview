@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNetProxyEventCallbackAdapterImpl : public ArkNetProxyEventCallbackAdapter {
 public:
-    ArkNetProxyEventCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::NetProxyEventCallbackAdapter>);
+    explicit ArkNetProxyEventCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::NetProxyEventCallbackAdapter>);
 
     void Changed(const ArkWebString& host, const uint16_t& port, const ArkWebString& pacUrl,
         const ArkWebStringVector& exclusionList) override;

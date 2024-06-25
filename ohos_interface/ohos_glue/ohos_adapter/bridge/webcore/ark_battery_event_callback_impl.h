@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBatteryEventCallbackImpl : public ArkBatteryEventCallback {
 public:
-    ArkBatteryEventCallbackImpl(std::shared_ptr<OHOS::NWeb::WebBatteryEventCallback>);
+    explicit ArkBatteryEventCallbackImpl(std::shared_ptr<OHOS::NWeb::WebBatteryEventCallback>);
 
     void BatteryInfoChanged(ArkWebRefPtr<ArkBatteryInfo> info) override;
 

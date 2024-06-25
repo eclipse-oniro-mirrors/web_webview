@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFInputAttributeAdapterImpl : public ArkIMFInputAttributeAdapter {
 public:
-    ArkIMFInputAttributeAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFInputAttributeAdapter>);
+    explicit ArkIMFInputAttributeAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFInputAttributeAdapter>);
 
     int32_t GetInputPattern() override;
 
