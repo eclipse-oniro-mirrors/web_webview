@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkKeystoreAdapterWrapper : public OHOS::NWeb::KeystoreAdapter {
 public:
-    ArkKeystoreAdapterWrapper(ArkWebRefPtr<ArkKeystoreAdapter>);
+    explicit ArkKeystoreAdapterWrapper(ArkWebRefPtr<ArkKeystoreAdapter>);
 
     std::string EncryptKey(const std::string alias, const std::string plainData) override;
     std::string DecryptKey(const std::string alis, const std::string encryptedData) override;

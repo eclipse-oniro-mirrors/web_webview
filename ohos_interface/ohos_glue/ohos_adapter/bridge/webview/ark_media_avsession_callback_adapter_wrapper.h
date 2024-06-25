@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMediaAVSessionCallbackAdapterWrapper : public OHOS::NWeb::MediaAVSessionCallbackAdapter {
 public:
-    ArkMediaAVSessionCallbackAdapterWrapper(ArkWebRefPtr<ArkMediaAVSessionCallbackAdapter>);
+    explicit ArkMediaAVSessionCallbackAdapterWrapper(ArkWebRefPtr<ArkMediaAVSessionCallbackAdapter>);
 
     void Play() override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCapabilityDataAdapterImpl : public ArkCapabilityDataAdapter {
 public:
-    ArkCapabilityDataAdapterImpl(std::shared_ptr<OHOS::NWeb::CapabilityDataAdapter>);
+    explicit ArkCapabilityDataAdapterImpl(std::shared_ptr<OHOS::NWeb::CapabilityDataAdapter>);
 
     int32_t GetMaxWidth() override;
 

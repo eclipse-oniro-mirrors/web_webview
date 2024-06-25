@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCameraStatusCallbackAdapterImpl : public ArkCameraStatusCallbackAdapter {
 public:
-    ArkCameraStatusCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraStatusCallbackAdapter>);
+    explicit ArkCameraStatusCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraStatusCallbackAdapter>);
     void OnCameraStatusChanged(int32_t cameraStatusAdapter, const ArkWebString callBackDeviceId) override;
 
 private:

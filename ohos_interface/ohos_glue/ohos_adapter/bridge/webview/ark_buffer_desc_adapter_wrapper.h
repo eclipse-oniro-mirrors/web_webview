@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBufferDescAdapterWrapper : public NWeb::BufferDescAdapter {
 public:
-    ArkBufferDescAdapterWrapper(ArkWebRefPtr<ArkBufferDescAdapter>);
+    explicit ArkBufferDescAdapterWrapper(ArkWebRefPtr<ArkBufferDescAdapter>);
 
     uint8_t* GetBuffer() override;
 

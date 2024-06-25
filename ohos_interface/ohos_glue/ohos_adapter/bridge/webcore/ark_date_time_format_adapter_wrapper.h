@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDateTimeFormatAdapterWrapper : public OHOS::NWeb::DateTimeFormatAdapter {
 public:
-    ArkDateTimeFormatAdapterWrapper(ArkWebRefPtr<ArkDateTimeFormatAdapter>);
+    explicit ArkDateTimeFormatAdapterWrapper(ArkWebRefPtr<ArkDateTimeFormatAdapter>);
 
     void RegTimezoneEvent(std::shared_ptr<NWeb::TimezoneEventCallbackAdapter> eventCallback) override;
 

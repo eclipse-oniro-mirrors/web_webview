@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkTimezoneEventCallbackAdapterImpl : public ArkTimezoneEventCallbackAdapter {
 public:
-    ArkTimezoneEventCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::TimezoneEventCallbackAdapter>);
+    explicit ArkTimezoneEventCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::TimezoneEventCallbackAdapter>);
     void TimezoneChanged(ArkWebRefPtr<ArkWebTimezoneInfo> info) override;
 
 private:

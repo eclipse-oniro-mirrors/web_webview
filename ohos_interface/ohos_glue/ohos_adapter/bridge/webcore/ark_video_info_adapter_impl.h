@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkVideoInfoAdapterImpl : public ArkVideoInfoAdapter {
 public:
-    ArkVideoInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoInfoAdapter>);
+    explicit ArkVideoInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoInfoAdapter>);
 
     ArkWebRefPtr<ArkVideoCaptureInfoAdapter> GetVideoCapInfo() override;
 

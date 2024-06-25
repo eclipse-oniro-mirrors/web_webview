@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDisplayAdapterWrapper : public OHOS::NWeb::DisplayAdapter {
 public:
-    ArkDisplayAdapterWrapper(ArkWebRefPtr<ArkDisplayAdapter>);
+    explicit ArkDisplayAdapterWrapper(ArkWebRefPtr<ArkDisplayAdapter>);
 
     OHOS::NWeb::DisplayId GetId() override;
 

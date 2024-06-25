@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCameraRotationInfoAdapterWrapper : public NWeb::CameraRotationInfoAdapter {
 public:
-    ArkCameraRotationInfoAdapterWrapper(ArkWebRefPtr<ArkCameraRotationInfoAdapter>);
+    explicit ArkCameraRotationInfoAdapterWrapper(ArkWebRefPtr<ArkCameraRotationInfoAdapter>);
 
     int32_t GetRotation() override;
 

@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPrintDocumentAdapterAdapterImpl : public ArkPrintDocumentAdapterAdapter {
 public:
-    ArkPrintDocumentAdapterAdapterImpl(std::shared_ptr<OHOS::NWeb::PrintDocumentAdapterAdapter>);
+    explicit ArkPrintDocumentAdapterAdapterImpl(std::shared_ptr<OHOS::NWeb::PrintDocumentAdapterAdapter>);
 
     void OnStartLayoutWrite(const ArkWebString& jobId, const ArkPrintAttributesAdapter& oldAttrs,
         const ArkPrintAttributesAdapter& newAttrs, uint32_t fd,

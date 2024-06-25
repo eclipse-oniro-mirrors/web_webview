@@ -26,7 +26,7 @@ using ArkEventType = OHOS::NWeb::HiSysEventAdapter::EventType;
 
 class ArkHiSysEventAdapterWrapper : public OHOS::NWeb::HiSysEventAdapter {
 public:
-    ArkHiSysEventAdapterWrapper(ArkWebRefPtr<ArkHiSysEventAdapter>);
+    explicit ArkHiSysEventAdapterWrapper(ArkWebRefPtr<ArkHiSysEventAdapter>);
 
     int Write(const std::string& eventName, ArkEventType type,
         const std::tuple<const std::string, const std::string>& data) override;
@@ -78,9 +78,9 @@ public:
 
     int Write(const std::string& eventName, ArkEventType type,
         const std::tuple<const std::string, const std::string, const std::string, const std::string, const std::string,
-            const std::string, const std::string, const std::string, const std::string,
-            const std::string, const std::string, const std::string, const std::string,
-            const std::string, const std::string, const std::string>& data) override;
+            const std::string, const std::string, const std::string, const std::string, const std::string,
+            const std::string, const std::string, const std::string, const std::string, const std::string,
+            const std::string>& data) override;
 
 private:
     ArkWebRefPtr<ArkHiSysEventAdapter> ctocpp_;

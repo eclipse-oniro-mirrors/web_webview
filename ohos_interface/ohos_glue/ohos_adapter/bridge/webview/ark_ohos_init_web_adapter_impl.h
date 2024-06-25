@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosInitWebAdapterImpl : public ArkOhosInitWebAdapter {
 public:
-    ArkOhosInitWebAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter>);
+    explicit ArkOhosInitWebAdapterImpl(std::shared_ptr<OHOS::NWeb::OhosInitWebAdapter>);
 
     void* GetRunWebInitedCallback() override;
 

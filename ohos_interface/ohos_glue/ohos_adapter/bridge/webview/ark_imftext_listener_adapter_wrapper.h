@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFTextListenerAdapterWrapper : public OHOS::NWeb::IMFTextListenerAdapter {
 public:
-    ArkIMFTextListenerAdapterWrapper(ArkWebRefPtr<ArkIMFTextListenerAdapter>);
+    explicit ArkIMFTextListenerAdapterWrapper(ArkWebRefPtr<ArkIMFTextListenerAdapter>);
 
     void InsertText(const std::u16string& text) override;
 

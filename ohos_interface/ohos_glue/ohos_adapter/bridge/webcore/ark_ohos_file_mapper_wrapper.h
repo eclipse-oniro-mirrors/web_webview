@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosFileMapperWrapper : public OHOS::NWeb::OhosFileMapper {
 public:
-    ArkOhosFileMapperWrapper(ArkWebRefPtr<ArkOhosFileMapper>);
+    explicit ArkOhosFileMapperWrapper(ArkWebRefPtr<ArkOhosFileMapper>);
 
     int32_t GetFd() override;
 

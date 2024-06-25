@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPasteDataRecordAdapterWrapper : public NWeb::PasteDataRecordAdapter {
 public:
-    ArkPasteDataRecordAdapterWrapper(ArkWebRefPtr<ArkPasteDataRecordAdapter>);
+    explicit ArkPasteDataRecordAdapterWrapper(ArkWebRefPtr<ArkPasteDataRecordAdapter>);
 
     bool SetHtmlText(std::shared_ptr<std::string> htmlText) override;
 

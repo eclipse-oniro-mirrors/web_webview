@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkEdmPolicyChangedEventCallbackAdapterWrapper : public OHOS::NWeb::EdmPolicyChangedEventCallbackAdapter {
 public:
-    ArkEdmPolicyChangedEventCallbackAdapterWrapper(ArkWebRefPtr<ArkEdmPolicyChangedEventCallbackAdapter>);
+    explicit ArkEdmPolicyChangedEventCallbackAdapterWrapper(ArkWebRefPtr<ArkEdmPolicyChangedEventCallbackAdapter>);
 
     void Changed() override;
 

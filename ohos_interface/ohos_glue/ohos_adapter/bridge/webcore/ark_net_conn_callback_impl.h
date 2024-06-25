@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNetConnCallbackImpl : public ArkNetConnCallback {
 public:
-    ArkNetConnCallbackImpl(std::shared_ptr<OHOS::NWeb::NetConnCallback>);
+    explicit ArkNetConnCallbackImpl(std::shared_ptr<OHOS::NWeb::NetConnCallback>);
 
     int32_t NetAvailable() override;
 

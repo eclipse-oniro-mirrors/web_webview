@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNetProxyEventCallbackAdapterWrapper : public OHOS::NWeb::NetProxyEventCallbackAdapter {
 public:
-    ArkNetProxyEventCallbackAdapterWrapper(ArkWebRefPtr<ArkNetProxyEventCallbackAdapter>);
+    explicit ArkNetProxyEventCallbackAdapterWrapper(ArkWebRefPtr<ArkNetProxyEventCallbackAdapter>);
 
     void Changed(const std::string& host, const uint16_t& port, const std::string& pacUrl,
         const std::vector<std::string>& exclusionList) override;

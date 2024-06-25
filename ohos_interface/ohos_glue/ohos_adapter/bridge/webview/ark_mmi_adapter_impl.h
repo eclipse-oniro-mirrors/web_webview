@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMMIAdapterImpl : public ArkMMIAdapter {
 public:
-    ArkMMIAdapterImpl(std::shared_ptr<OHOS::NWeb::MMIAdapter>);
+    explicit ArkMMIAdapterImpl(std::shared_ptr<OHOS::NWeb::MMIAdapter>);
 
     char* KeyCodeToString(int32_t keyCode) override;
 

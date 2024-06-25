@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMediaAVSessionAdapterWrapper : public OHOS::NWeb::MediaAVSessionAdapter {
 public:
-    ArkMediaAVSessionAdapterWrapper(ArkWebRefPtr<ArkMediaAVSessionAdapter>);
+    explicit ArkMediaAVSessionAdapterWrapper(ArkWebRefPtr<ArkMediaAVSessionAdapter>);
 
     bool CreateAVSession(NWeb::MediaAVSessionType type) override;
 

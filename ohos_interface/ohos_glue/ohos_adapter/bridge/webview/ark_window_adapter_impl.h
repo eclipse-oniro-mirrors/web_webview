@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkWindowAdapterImpl : public ArkWindowAdapter {
 public:
-    ArkWindowAdapterImpl(NWeb::WindowAdapter&);
+    explicit ArkWindowAdapterImpl(NWeb::WindowAdapter&);
 
     void* CreateNativeWindowFromSurface(void* pSurface) override;
 
