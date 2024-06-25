@@ -155,47 +155,22 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
     if (avSession_ && (type != avSessionKey_->GetType())) {
         DestroyAVSession();
     }
-    using avSessionMapIterator = std::unordered_map<std::string, std::shared_ptr<AVSession::AVSession>>::iterator;
-    avSessionMapIterator findIter = avSessionMap.find(avSessionKey_->ToString());
-    auto destroyAndEraseSession = [](avSessionMapIterator& iter) {
-        int32_t ret = iter->second->Destroy();
-        if (ret != AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("media avsession adapter destroy previous avsession failed, ret: %{public}d", ret);
-        }
-        iter->second.reset();
-        avSessionMap.erase(iter);
-    };
-
-    auto createNewSession = [this, &type]() -> bool {
-        avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
-                                avSessionKey_->GetElement().GetBundleName(),
-                                static_cast<int32_t>(type),
-                                avSessionKey_->GetElement());
-        if (avSession_) {
-            avSessionKey_->SetType(type);
-            avSessionMap.insert(std::make_pair(avSessionKey_->ToString(), avSession_));
-            return true;
-        } else {
-            WVLOG_E("media avsession adapter create avsession failed");
-            return false;
-        }
-    };
-
+    auto findIter = avSessionMap.find(avSessionKey_->ToString());
     if (!avSession_) {
         if (findIter != avSessionMap.end()) {
-            destroyAndEraseSession(findIter);
+            DestroyAndEraseSession();
         }
-        return createNewSession();
+        return CreateNewSession(type);
     } else {
         if (findIter != avSessionMap.end()) {
             if (findIter->second.get() != avSession_.get()) {
-                destroyAndEraseSession(findIter);
-                avSession_->Destroy();
+                DestroyAndEraseSession();
+                DestroyAVSession();
             } else {
                 return false;
             }
         }
-        return createNewSession();
+        return CreateNewSession(type);
     }
 }
 
@@ -206,7 +181,10 @@ void MediaAVSessionAdapterImpl::DestroyAVSession() {
             WVLOG_E("media avsession adapter destroy avsession failed, ret: %{public}d", ret);
         }
         avSession_.reset();
-        avSessionMap.erase(avSessionKey_->ToString());
+    }
+    auto iter = avSessionMap.find(avSessionKey_->ToString());
+    if (iter != avSessionMap.end()) {
+        avSessionMap.erase(iter);
     }
 }
 
@@ -371,6 +349,40 @@ bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(
         updated = true;
     }
     return updated;
+}
+
+void MediaAVSessionAdapterImpl::DestroyAndEraseSession() {
+    auto iter = avSessionMap.find(avSessionKey_->ToString());
+    if (iter == avSessionMap.end()) {
+        WVLOG_E("media avsession adapter invalid iterator");
+        return;
+    }
+    if (!iter->second) {
+        WVLOG_E("media avsession adapter avsession is null pointer in map");
+        avSessionMap.erase(iter);
+        return;
+    }
+    int32_t ret = iter->second->Destroy();
+    if (ret != AVSession::AVSESSION_SUCCESS) {
+        WVLOG_E("media avsession adapter destroy previous avsession failed, ret: %{public}d", ret);
+    }
+    iter->second.reset();
+    avSessionMap.erase(iter);
+}
+
+bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type) {
+    avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
+                                avSessionKey_->GetElement().GetBundleName(),
+                                static_cast<int32_t>(type),
+                                avSessionKey_->GetElement());
+    if (avSession_) {
+        avSessionKey_->SetType(type);
+        avSessionMap.insert(std::make_pair(avSessionKey_->ToString(), avSession_));
+        return true;
+    } else {
+        WVLOG_E("media avsession adapter create avsession failed");
+        return false;
+    }
 }
 
 } // namespace OHOS::NWeb
