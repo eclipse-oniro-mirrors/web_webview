@@ -4484,7 +4484,7 @@ napi_value NapiWebviewController::ClearPrefetchedResource(napi_env env, napi_cal
 
 napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callback_info info)
 {
-    WVLOG_E("WebDownloader::JS_SetDownloadDelegate");
+    WVLOG_D("WebDownloader::JS_SetDownloadDelegate");
     NWebHelper::Instance().LoadNWebSDK();
     size_t argc = 1;
     napi_value argv[1] = {0};
@@ -4511,7 +4511,7 @@ napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callbac
 
 napi_value NapiWebviewController::StartDownload(napi_env env, napi_callback_info info)
 {
-    WVLOG_I("[DOWNLOAD] NapiWebviewController::StartDownload");
+    WVLOG_D("[DOWNLOAD] NapiWebviewController::StartDownload");
     size_t argc = 1;
     napi_value argv[1] = {0};
     napi_value thisVar = nullptr;

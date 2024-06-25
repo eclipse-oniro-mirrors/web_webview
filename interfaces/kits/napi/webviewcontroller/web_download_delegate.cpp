@@ -37,7 +37,7 @@ WebDownloadDelegate::WebDownloadDelegate(napi_env env)
 
 WebDownloadDelegate::~WebDownloadDelegate()
 {
-    WVLOG_I("[DOWNLOAD] WebDownloadDelegate::~WebDownloadDelegate");
+    WVLOG_D("[DOWNLOAD] WebDownloadDelegate::~WebDownloadDelegate");
     napi_delete_reference(env_, download_before_start_callback_);
     napi_delete_reference(env_, download_did_update_callback_);
     napi_delete_reference(env_, download_did_finish_callback_);
@@ -47,7 +47,7 @@ WebDownloadDelegate::~WebDownloadDelegate()
 
 void WebDownloadDelegate::DownloadBeforeStart(WebDownloadItem *webDownloadItem)
 {
-    WVLOG_I("[DOWNLOAD] WebDownloadDelegate::DownloadBeforeStart");
+    WVLOG_D("[DOWNLOAD] WebDownloadDelegate::DownloadBeforeStart");
     if (!env_) {
         WVLOG_E("[DOWNLOAD] WebDownloadDelegate::DownloadBeforeStart nil env");
         return;
@@ -86,7 +86,7 @@ void WebDownloadDelegate::DownloadBeforeStart(WebDownloadItem *webDownloadItem)
 }
 void WebDownloadDelegate::DownloadDidUpdate(WebDownloadItem *webDownloadItem)
 {
-    WVLOG_I("[DOWNLOAD] WebDownloadDelegate::DownloadDidUpdate");
+    WVLOG_D("[DOWNLOAD] WebDownloadDelegate::DownloadDidUpdate");
     if (!env_) {
         WVLOG_E("[DOWNLOAD] WebDownloadDelegate::DownloadDidUpdate nil env.");
         return;
@@ -215,7 +215,7 @@ void WebDownloadDelegate::PutDownloadBeforeStart(napi_env, napi_value callback)
 
 void WebDownloadDelegate::PutDownloadDidUpdate(napi_env, napi_value callback)
 {
-    WVLOG_I("[DOWNLOAD] WebDownloadDelegate::PutDownloadDidUpdate");
+    WVLOG_D("[DOWNLOAD] WebDownloadDelegate::PutDownloadDidUpdate");
     napi_status status = napi_create_reference(env_, callback, 1, &download_did_update_callback_);
     if (status != napi_status::napi_ok) {
         WVLOG_E("[DOWNLOAD] PutDownloadDidUpdate create reference failed.");
