@@ -66,7 +66,7 @@ void DownloadBeforeStart(NWebDownloadItem *downloadItem, WebBeforeDownloadCallba
 
 void DownloadDidUpdate(NWebDownloadItem *downloadItem, WebDownloadItemCallbackWrapper *wrapper)
 {
-    WVLOG_I("DownloadDidUpdate.");
+    WVLOG_D("DownloadDidUpdate.");
     if (wrapper == nullptr) {
         WVLOG_E("[DOWNLOAD] WebBeforeDownloadCallbackWrapper is null");
         return;
