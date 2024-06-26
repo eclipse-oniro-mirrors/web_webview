@@ -39,6 +39,8 @@ namespace {
     int32_t g_getNetCap = 0;
     int32_t g_slotId = 0;
     int32_t g_getNetProp = 0;
+    int32_t g_getAllNets = 0;
+    int32_t g_specified_net_id = 100;
 }
 
 namespace NetManagerStandard {
@@ -74,6 +76,17 @@ int32_t NetConnClient::GetConnectionProperties(const NetHandle &nethandle, NetLi
     dns.hostName_ = "netAddr";
     netLinkInfo.dnsList_.push_back(dns);
     return g_getNetProp;
+}
+int32_t NetConnClient::GetAllNets(std::list<sptr<NetHandle>> &netList)
+{
+    if (g_getAllNets != 0) {
+        return g_getAllNets;
+    }
+    sptr<NetManagerStandard::NetHandle> netHandle = std::make_unique<NetHandle>(g_specified_net_id).release();
+    if (netHandle != nullptr) {
+        netList.emplace_back(netHandle);
+    }
+    return g_getAllNets;
 }
 }
 
@@ -197,6 +210,35 @@ HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_003, TestSize.Leve
     EXPECT_EQ(dns_servers.size(), 0);
     g_getNetProp = -1;
     dns_servers = netConnectAdapterImpl->GetDnsServers();
+    EXPECT_EQ(dns_servers.size(), 0);
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_004.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_004, TestSize.Level1)
+{
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    g_getDefaultNet = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    g_getNetProp = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    std::vector<std::string> dns_servers = netConnectAdapterImpl->GetDnsServersByNetId(-1);
+    EXPECT_EQ(dns_servers.size(), 1);
+    std::string dns_ip_str("192.168.2.1");
+    EXPECT_EQ(dns_servers.front(), dns_ip_str);
+    g_getDefaultNet = -1;
+    dns_servers = netConnectAdapterImpl->GetDnsServersByNetId(-1);
+    EXPECT_EQ(dns_servers.size(), 0);
+    g_getAllNets = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    dns_servers = netConnectAdapterImpl->GetDnsServersByNetId(100);
+    EXPECT_EQ(dns_servers.size(), 1);
+    EXPECT_EQ(dns_servers.front(), dns_ip_str);
+    dns_servers = netConnectAdapterImpl->GetDnsServersByNetId(101);
+    EXPECT_EQ(dns_servers.size(), 0);
+    g_getNetProp = -1;
+    dns_servers = netConnectAdapterImpl->GetDnsServersByNetId(100);
     EXPECT_EQ(dns_servers.size(), 0);
 }
 }
