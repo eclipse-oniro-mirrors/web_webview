@@ -158,7 +158,6 @@ std::vector<std::string> NetConnectAdapterImpl::GetDnsServersByNetId(int32_t net
         WVLOG_E("get all nets by net id for dns servers failed, ret = %{public}d.", ret);
         return std::vector<std::string>();
     }
-    WVLOG_I("netHandleList size=%{public}d.", netHandleList.size());
 
     for (sptr<NetManagerStandard::NetHandle> netHandle : netHandleList) {
         if (netHandle->GetNetId() == netId) {
