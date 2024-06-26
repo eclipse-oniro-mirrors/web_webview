@@ -153,6 +153,8 @@ namespace OHOS::Webview {
 
         void Stop();
 
+        void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
+
     public:
         static std::string customeSchemeCmdLine_;
         static bool existNweb_;

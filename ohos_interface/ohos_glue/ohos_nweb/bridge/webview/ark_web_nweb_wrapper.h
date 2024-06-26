@@ -1199,6 +1199,12 @@ public:
     /*--ark web()--*/
     void PerformAction(int64_t accessibilityId, uint32_t action,
         const std::map<std::string, std::string>& actionArguments) override;
+
+    /**
+     * @brief set backforward cache options.
+     */
+    /*--ark web()--*/
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

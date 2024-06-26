@@ -1189,6 +1189,12 @@ public:
     /*--ark web()--*/
     void PerformAction(int64_t accessibility_id, uint32_t action,
         const ArkWebStringMap& actionArguments) override;
+
+    /**
+     * @brief set backforward cache options.
+     */
+    /*--ark web()--*/
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

@@ -1092,6 +1092,16 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
     nwebEngine_->ClearHostIP(hostName);
 }
 
+void NWebHelper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->EnableBackForwardCache(enableNativeEmbed, enableMediaIntercept);
+}
+
 void NWebHelper::EnableWholeWebPageDrawing()
 {
     if (nwebEngine_ == nullptr) {

@@ -82,6 +82,8 @@ public:
     virtual std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager() {
         return nullptr;
     };
+
+    virtual void EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept) {};
 };
 
 } // namespace OHOS::NWeb
