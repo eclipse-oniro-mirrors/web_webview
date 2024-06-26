@@ -34,6 +34,8 @@ public:
 
     ArkWebStringVector GetDnsServers() override;
 
+    ArkWebStringVector GetDnsServersByNetId(int32_t netId) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NetConnectAdapter> real_;
 

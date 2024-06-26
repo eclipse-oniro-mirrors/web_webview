@@ -52,6 +52,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebStringVector GetDnsServers() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebStringVector GetDnsServersByNetId(int32_t netId) = 0;
 };
 
 } // namespace OHOS::ArkWeb
