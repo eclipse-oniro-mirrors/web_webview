@@ -34,6 +34,7 @@ public:
 
     void NativeWindowSurfaceCleanCache(void* window) override;
 
+    void NativeWindowSurfaceCleanCacheWithPara(void* window, bool cleanAll) override;
 private:
     NWeb::WindowAdapter& real_;
 
