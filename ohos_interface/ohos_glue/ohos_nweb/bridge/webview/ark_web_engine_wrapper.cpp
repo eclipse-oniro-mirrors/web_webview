@@ -240,4 +240,8 @@ ArkWebEngineWrapper::GetAdsBlockManager() {
 
   return std::make_shared<ArkWebAdsBlockManagerWrapper>(ark_web_adsblock_manager);
 }
+
+void ArkWebEngineWrapper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept) {
+    ark_web_engine_->EnableBackForwardCache(enableNativeEmbed, enableMediaIntercept);
+}
 } // namespace OHOS::ArkWeb

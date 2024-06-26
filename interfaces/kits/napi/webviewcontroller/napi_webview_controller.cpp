@@ -490,6 +490,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("webPageSnapshot", NapiWebviewController::WebPageSnapshot),
         DECLARE_NAPI_FUNCTION("setPathAllowingUniversalAccess",
             NapiWebviewController::SetPathAllowingUniversalAccess),
+        DECLARE_NAPI_STATIC_FUNCTION("enableBackForwardCache", NapiWebviewController::EnableBackForwardCache),
+        DECLARE_NAPI_FUNCTION("setBackForwardCacheOptions", NapiWebviewController::SetBackForwardCacheOptions),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5437,6 +5439,111 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     }
 
     return promise;
+}
+
+bool ParseBackForwardCacheSupportedFeature(napi_env env, napi_value obj, BackForwardCacheSupportedFeature& feature)
+{
+    std::map<std::string, std::function<bool(const BackForwardCacheSupportedFeature&)>> featuresBooleanProperties = {
+        {"nativeEmbed", [](const BackForwardCacheSupportedFeature& feature) { return feature.nativeEmbed; }},
+        {"mediaIntercept", [](const BackForwardCacheSupportedFeature& feature) { return feature.mediaIntercept; }},
+    };
+
+    for (const auto& property : featuresBooleanProperties) {
+        napi_value propertyObj = nullptr;
+        napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
+        bool featureProperty = property.second(feature);
+        if (!NapiParseUtils::ParseBoolean(env, propertyObj, featureProperty)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    napi_value obj = argv[0];
+    BackForwardCacheSupportedFeature feature;
+    if (!ParseBackForwardCacheSupportedFeature(env, obj, feature)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                "BusinessError: 401. Parameter error. Wrong param of features.");
+        return result;
+    }
+
+    WVLOG_I("The value of supported ativeEmbed is: %{public}d", feature.nativeEmbed);
+    WVLOG_I("The value of supported mediaIntercept is: %{public}d", feature.mediaIntercept);
+
+    NWebHelper::Instance().EnableBackForwardCache(feature.nativeEmbed, feature.mediaIntercept);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+bool ParseBackForwardCacheOptions(napi_env env, napi_value obj, BackForwardCacheOptions& option)
+{
+    std::map<std::string, std::function<int32_t(const BackForwardCacheOptions&)>> optionsBooleanProperties = {
+        {"size", [](const BackForwardCacheOptions& option) { return option.size; }},
+        {"timeToLive", [](const BackForwardCacheOptions& option) { return option.timeToLive; }},
+    };
+
+    for (const auto& property : optionsBooleanProperties) {
+        napi_value propertyObj = nullptr;
+        napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
+        bool optionProperty = property.second(option);
+        if (!NapiParseUtils::ParseBoolean(env, propertyObj, optionProperty)) {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("InjectOfflineResource: init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    napi_value obj = argv[0];
+    BackForwardCacheOptions option;
+    if (!ParseBackForwardCacheOptions(env, obj, option)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                "BusinessError: 401. Parameter error. Wrong param of options.");
+        return result;
+    }
+
+    WVLOG_I("The value of backforward cache option size is: %{public}d", option.size);
+    WVLOG_I("The value of backforward cache option timeToLive is: %{public}d", option.timeToLive);
+
+    webviewController->SetBackForwardCacheOptions(option.size, option.timeToLive);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
 }
 
 napi_value NapiWebviewController::WarmupServiceWorker(napi_env env, napi_callback_info info)

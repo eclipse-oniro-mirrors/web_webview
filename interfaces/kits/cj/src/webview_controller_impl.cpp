@@ -609,4 +609,14 @@ namespace OHOS::Webview {
         }
         return;
     }
+
+    void WebviewControllerImpl::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            WEBVIEWLOGE("WebviewControllerImpl::void SetBackForwardCacheOptions nweb_ptr is null");
+            return;
+        }
+        nweb_ptr->SetBackForwardCacheOptions(size, timeToLive);
+    }
 }

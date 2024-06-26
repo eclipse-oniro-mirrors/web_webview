@@ -1351,6 +1351,12 @@ public:
     /*--ark web()--*/
     virtual void PerformAction(int64_t accessibilityId, uint32_t action,
         const ArkWebStringMap& actionArguments) = 0;
+
+    /**
+     * @brief set backforward cache options.
+     */
+    /*--ark web()--*/
+    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) = 0;
 };
 
 } // namespace OHOS::ArkWeb

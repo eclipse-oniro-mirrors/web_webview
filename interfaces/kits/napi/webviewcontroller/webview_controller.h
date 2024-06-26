@@ -372,6 +372,8 @@ public:
     void SetPathAllowingUniversalAccess(const std::vector<std::string>& pathList,
                                         std::string& errorPath);
 
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
+
 private:
     int ConverToWebHitTestType(int hitType);
 

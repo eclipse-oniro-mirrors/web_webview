@@ -1055,4 +1055,9 @@ void ArkWebNWebImpl::PerformAction(int64_t accessibility_id, uint32_t action,
 {
     nweb_nweb_->PerformAction(accessibility_id, action, ArkWebStringMapStructToClass(actionArguments));
 }
+
+void ArkWebNWebImpl::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
+{
+    nweb_nweb_->SetBackForwardCacheOptions(size, timeToLive);
+}
 } // namespace OHOS::ArkWeb

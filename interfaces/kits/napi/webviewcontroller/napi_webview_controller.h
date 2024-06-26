@@ -61,6 +61,16 @@ struct OfflineResourceValue {
     napi_value type;
 };
 
+struct BackForwardCacheSupportedFeature {
+    bool nativeEmbed = true;
+    bool mediaIntercept = true;
+};
+
+struct BackForwardCacheOptions {
+    int32_t size = 1;
+    int32_t timeToLive = 600;
+};
+
 class NapiWebviewController {
 public:
     NapiWebviewController() {}
@@ -347,6 +357,10 @@ private:
     static napi_value WebPageSnapshot(napi_env env, napi_callback_info info);
 
     static napi_value SetPathAllowingUniversalAccess(napi_env env, napi_callback_info info);
+
+    static napi_value EnableBackForwardCache(napi_env env, napi_callback_info info);
+
+    static napi_value SetBackForwardCacheOptions(napi_env env, napi_callback_info info);
 
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;

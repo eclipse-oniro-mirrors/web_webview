@@ -1356,6 +1356,12 @@ public:
      */
     virtual void PerformAction(int64_t accessibilityId, uint32_t action,
         const std::map<std::string, std::string>& actionArguments) {}
+
+    /**
+     * @brief Set backforward cache options.
+     */
+    /*--ark web()--*/
+    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }
 };
 
 } // namespace OHOS::NWeb
