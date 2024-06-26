@@ -364,7 +364,7 @@ bool WebviewJavaScriptResultCallBackImpl::HasJavaScriptObjectMethods(int32_t obj
     if (!jsObj) {
         return false;
     }
-    if (jsObj && jsObj->HasMethod(methodName) != -1) {
+    if (jsObj->HasMethod(methodName) != -1) {
         ret = true;
     } else {
         WEBVIEWLOGD("WebviewJavaScriptResultCallBackImpl::HasJavaScriptObjectMethods cannot find "
