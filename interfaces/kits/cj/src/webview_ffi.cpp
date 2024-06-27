@@ -116,7 +116,6 @@ extern "C" {
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
-        std::string webSrc = url;
 
         std::map<std::string, std::string> httpHeaders;
         uint32_t arrayLength = static_cast<uint32_t>(headers.size);
