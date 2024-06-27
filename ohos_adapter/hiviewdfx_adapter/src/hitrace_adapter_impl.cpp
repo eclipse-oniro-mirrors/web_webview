@@ -18,12 +18,18 @@
 #include "hitrace_meter.h"
 #include "nweb_log.h"
 #include "parameters.h"
+#include "param/sys_param.h"
 
 namespace OHOS::NWeb {
 HiTraceAdapterImpl& HiTraceAdapterImpl::GetInstance()
 {
     static HiTraceAdapterImpl instance;
     return instance;
+}
+
+int ConvertToInt(const char *originValue, int defaultValue)
+{
+    return originValue == nullptr ? defaultValue : std::atoi(originValue);
 }
 
 void HiTraceAdapterImpl::StartTrace(const std::string& value, float limit)
@@ -53,13 +59,10 @@ void HiTraceAdapterImpl::CountTrace(const std::string& name, int64_t count)
 
 bool HiTraceAdapterImpl::IsHiTraceEnable()
 {
-    const std::string KEY_TRACE_TAG = "debug.hitrace.tags.enableflags";
-
-    uint64_t tags = OHOS::system::GetUintParameter<uint64_t>(KEY_TRACE_TAG, 0);
-    if (tags == 0) {
-        WVLOG_D("HiTraceAdapterImpl GetUintParameter %{public}s error.", KEY_TRACE_TAG.c_str());
-        return false;
-    }
+    static CachedHandle g_Handle = CachedParameterCreate("debug.hitrace.tags.enableflags", "0");
+    int changed = 0;
+    const char *enable = CachedParameterGetChange(g_Handle, &changed);
+    auto tags = ConvertToInt(enable, 0);
     firstAceEnable_ = tags & HITRACE_TAG_ACE;
     return (tags & HITRACE_TAG_NWEB);
 }
