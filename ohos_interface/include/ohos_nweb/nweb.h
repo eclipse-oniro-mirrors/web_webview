@@ -1356,6 +1356,25 @@ public:
      */
     virtual void PerformAction(int64_t accessibilityId, uint32_t action,
         const std::map<std::string, std::string>& actionArguments) {}
+        
+    /**
+     * Scroll to the position.
+     *
+     * @param x horizontal coordinate.
+     * @param y vertical coordinate.
+     * @param duration: anime duration.
+     */
+    virtual void ScrollToWithAnime(float x, float y, int32_t duration) {}
+
+    /**
+     * Scroll by the delta distance.
+     *
+     * @param delta_x: horizontal offset.
+     * @param delta_y: vertical offset.
+     * @param duration: anime duration.
+     */
+    virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) {}
+
 };
 
 } // namespace OHOS::NWeb

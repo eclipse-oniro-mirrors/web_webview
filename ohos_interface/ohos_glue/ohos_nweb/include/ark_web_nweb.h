@@ -1351,6 +1351,26 @@ public:
     /*--ark web()--*/
     virtual void PerformAction(int64_t accessibilityId, uint32_t action,
         const ArkWebStringMap& actionArguments) = 0;
+
+    /**
+     * Scroll to the position.
+     *
+     * @param x horizontal coordinate.
+     * @param y vertical coordinate.
+     * @param duration: anime duration.
+     */
+    /*--ark web()--*/
+    virtual void ScrollToWithAnime(float x, float y, int32_t duration) = 0;
+ 
+    /**
+     * Scroll by the delta distance.
+     *
+     * @param delta_x: horizontal offset.
+     * @param delta_y: vertical offset.
+     * @param duration: anime duration.
+     */
+    /*--ark web()--*/
+    virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) = 0;
 };
 
 } // namespace OHOS::ArkWeb
