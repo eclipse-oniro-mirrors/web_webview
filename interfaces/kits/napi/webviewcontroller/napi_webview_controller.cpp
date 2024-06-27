@@ -4029,15 +4029,16 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_TWO;
-    napi_value argv[INTEGER_TWO] = { 0 };
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = { 0 };
     float x;
     float y;
+    int32_t duration;
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_TWO) {
+    if (argc != INTEGER_TWO && argc != INTEGER_THREE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two", "three"));
         return result;
     }
 
@@ -4053,13 +4054,25 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
         return result;
     }
 
+    if (argc == INTEGER_THREE) {
+        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
+            return result;
+        }   
+    }
+
     WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    webviewController->ScrollTo(x, y);
+    if(argc == INTEGER_THREE) {
+        webviewController->ScrollToWithAnime(x, y, duration);
+    } else {
+        webviewController->ScrollTo(x, y);
+    }   
     return result;
 }
 
@@ -4067,15 +4080,16 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_TWO;
-    napi_value argv[INTEGER_TWO] = { 0 };
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = { 0 };
     float deltaX;
     float deltaY;
+    int32_t duration = 0;
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_TWO) {
+    if (argc != INTEGER_TWO && argc != INTEGER_THREE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two", "three"));
         return result;
     }
 
@@ -4091,13 +4105,25 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
         return result;
     }
 
+    if (argc == INTEGER_THREE) {
+        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
+            return result;
+        }   
+    }
+
     WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    webviewController->ScrollBy(deltaX, deltaY);
+    if(argc == INTEGER_THREE) {
+        webviewController->ScrollByWithAnime(deltaX, deltaY, duration);
+    } else {
+        webviewController->ScrollBy(deltaX, deltaY);
+    }
     return result;
 }
 
