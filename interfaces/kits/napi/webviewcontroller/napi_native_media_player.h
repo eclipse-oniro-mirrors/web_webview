@@ -40,6 +40,8 @@ private:
 
     static napi_status ExportEnumReadyState(napi_env env, napi_value* value);
 
+    static napi_status ExportEnumSuspendType(napi_env env, napi_value* value);
+
     static napi_status ExportEnumNetworkState(napi_env env, napi_value* value);
 
     static napi_status ExportEnumPlaybackStatus(napi_env env, napi_value* value);

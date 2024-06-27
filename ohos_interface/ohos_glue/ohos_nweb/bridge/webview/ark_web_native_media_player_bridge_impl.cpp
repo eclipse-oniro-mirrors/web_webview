@@ -19,6 +19,8 @@
 
 namespace OHOS::ArkWeb {
 
+using ArkWebSuspendType = OHOS::NWeb::SuspendType;
+
 ArkWebNativeMediaPlayerBridgeImpl::ArkWebNativeMediaPlayerBridgeImpl(
     std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerBridge> nweb_native_vide_player_bridge)
     : nweb_native_vide_player_bridge_(nweb_native_vide_player_bridge)
@@ -72,6 +74,16 @@ void ArkWebNativeMediaPlayerBridgeImpl::EnterFullScreen()
 void ArkWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
 {
     nweb_native_vide_player_bridge_->ExitFullScreen();
+}
+
+void ArkWebNativeMediaPlayerBridgeImpl::ResumeMediaPlayer()
+{
+    nweb_native_vide_player_bridge_->ResumeMediaPlayer();
+}
+
+void ArkWebNativeMediaPlayerBridgeImpl::SuspendMediaPlayer(int type)
+{
+    nweb_native_vide_player_bridge_->SuspendMediaPlayer(static_cast<ArkWebSuspendType>(type));
 }
 
 } // namespace OHOS::ArkWeb

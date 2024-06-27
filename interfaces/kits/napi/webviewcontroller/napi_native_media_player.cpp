@@ -170,6 +170,27 @@ napi_status NapiNativeMediaPlayerHandler::ExportEnumReadyState(napi_env env, nap
     return napi_set_named_property(env, *value, NPI_READY_STATE_ENUM_NAME.c_str(), enumValue);
 }
 
+napi_status NapiNativeMediaPlayerHandler::ExportEnumSuspendType(napi_env env, napi_value* value)
+{
+    WVLOG_D("begin to export enum suspend type state");
+
+    const std::string NPI_SUSPEND_TYPE_ENUM_NAME = "SuspendType";
+    napi_property_descriptor properties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "EnterBFCache", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::EnterBFCache))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "EnterBackground", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::EnterBackground))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "PausedOverTime", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::PausedOverTime))),
+    };
+
+    napi_value enumValue = nullptr;
+    napi_define_class(env, NPI_SUSPEND_TYPE_ENUM_NAME.c_str(), NPI_SUSPEND_TYPE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(properties) / sizeof(properties[0]), properties,
+        &enumValue);
+    return napi_set_named_property(env, *value, NPI_SUSPEND_TYPE_ENUM_NAME.c_str(), enumValue);
+}
+
 napi_status NapiNativeMediaPlayerHandler::ExportEnumNetworkState(napi_env env, napi_value* value)
 {
     WVLOG_D("begin to export enum network state");
