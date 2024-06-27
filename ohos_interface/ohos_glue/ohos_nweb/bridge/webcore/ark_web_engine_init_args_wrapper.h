@@ -41,6 +41,8 @@ public:
 
     bool GetIsMultiRendererProcess() override;
 
+    std::string GetSharedRenderProcessToken() override;
+
 private:
     ArkWebRefPtr<ArkWebEngineInitArgs> ark_web_engine_init_args_;
 };
