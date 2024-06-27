@@ -84,6 +84,7 @@ public:
     virtual bool GetIsMultiRendererProcess() = 0;
     virtual bool GetIsEnhanceSurface() = 0;
     virtual bool GetIsPopup() = 0;
+    virtual std::string GetSharedRenderProcessToken() {return "";}
 };
 
 class OHOS_NWEB_EXPORT NWebOutputFrameCallback {

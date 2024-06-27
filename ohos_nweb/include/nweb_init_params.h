@@ -190,6 +190,16 @@ public:
     return argsToDelete_;
   }
 
+  void SetSharedRenderProcessToken(const std::string& sharedRenderProcessToken)
+  {
+      sharedRenderProcessToken_ = sharedRenderProcessToken;
+  }
+
+  std::string GetSharedRenderProcessToken() override
+  {
+      return sharedRenderProcessToken_;
+  }
+
 private:
   std::string dumpPath_;
 
@@ -200,6 +210,7 @@ private:
 
   std::list<std::string> argsToAdd_;
   std::list<std::string> argsToDelete_;
+  std::string sharedRenderProcessToken_;
 };
 
 class NWebEnginePrefetchArgsImpl : public NWebEnginePrefetchArgs {
