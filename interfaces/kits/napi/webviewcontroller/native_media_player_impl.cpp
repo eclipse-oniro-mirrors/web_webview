@@ -143,6 +143,29 @@ void NWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
     NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
 
+void NWebNativeMediaPlayerBridgeImpl::ResumeMediaPlayer()
+{
+    WVLOG_D("begin to resume media player,nweb id is %{public}d", nwebId_);
+
+    napi_value callback = nullptr;
+    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "resumePlayer", &callback));
+
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
+}
+
+void NWebNativeMediaPlayerBridgeImpl::SuspendMediaPlayer(SuspendType type)
+{
+    WVLOG_D("begin to suspend media player,nweb id is %{public}d", nwebId_);
+
+    napi_value callback = nullptr;
+    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "suspendPlayer", &callback));
+
+    napi_value argv[INTEGER_ONE] = { nullptr };
+    NAPI_CALL_RETURN_VOID(env_, napi_create_int32(env_, static_cast<int>(type), &argv[INTEGER_ZERO]));
+
+    NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
+}
+
 NapiNativeMediaPlayerHandlerImpl::NapiNativeMediaPlayerHandlerImpl(
     int32_t nwebId, std::shared_ptr<NWebNativeMediaPlayerHandler> handler)
     : nwebId_(nwebId), handler_(handler)

@@ -111,11 +111,11 @@ handle_develop_commond() {
 
   python3 ${ohos_glue_dir}/scripts/translator.py ${2}
 
-  #file_list=$(find ${ohos_glue_dir} -type f \( -name "*.h" -o -name "*.cpp" \))
-  #for file in $file_list
-  #do
-  #  clang-format -style=file -i $file
-  #done
+  file_list=$(find ${ohos_glue_dir} -type f \( -name "*.h" -o -name "*.cpp" \))
+  for file in $file_list
+  do
+    clang-format -style=file -i $file
+  done
 }
 
 handle_translate_commond() {
@@ -136,13 +136,6 @@ handle_translate_commond() {
   done
 
   python3 ${OHOS_GLUE_DIR}/scripts/translator.py webview $dir_name >> ${OHOS_GLUE_LOG_DIR}/prepare.log
-
-  cp ${WORK_SPACE}/.clang-format ${OHOS_GLUE_DIR}
-  file_list=$(find ${OHOS_GLUE_DIR}/${dir_name} -type f \( -name "*.h" -o -name "*.cpp" \))
-  for file in $file_list
-  do
-    ${CLANG_FORMAT_DIR}/clang-format -style=file -i $file
-  done
 }
 
 case "${COMMOND_TYPE}" in

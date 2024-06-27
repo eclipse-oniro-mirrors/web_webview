@@ -31,6 +31,8 @@ enum class MediaError { NETWORK_ERROR = 1, FORMAT_ERROR, DECODE_ERROR };
 
 enum class ReadyState { HAVE_NOTHING = 0, HAVE_METADATA, HAVE_CURRENT_DATA, HAVE_FUTURE_DATA, HAVE_ENOUGH_DATA };
 
+enum class SuspendType { EnterBFCache = 0, EnterBackground, PausedOverTime };
+
 enum class NetworkState { EMPTY = 0, IDLE, LOADING, NETWORK_ERROR };
 
 enum class PlaybackStatus { PAUSED = 0, PLAYING };
@@ -146,6 +148,10 @@ public:
     virtual void EnterFullScreen() = 0;
 
     virtual void ExitFullScreen() = 0;
+
+    virtual void ResumeMediaPlayer() = 0;
+
+    virtual void SuspendMediaPlayer(SuspendType type) = 0;
 };
 
 class NWebCreateNativeMediaPlayerCallback {
