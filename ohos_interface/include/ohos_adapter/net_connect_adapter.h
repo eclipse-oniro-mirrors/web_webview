@@ -96,6 +96,8 @@ public:
     virtual int32_t GetDefaultNetConnect(NetConnectType& type, NetConnectSubtype& netConnectSubtype) = 0;
 
     virtual std::vector<std::string> GetDnsServers() = 0;
+
+    virtual std::vector<std::string> GetDnsServersByNetId(int32_t netId) = 0;
 };
 
 } // namespace OHOS::NWeb

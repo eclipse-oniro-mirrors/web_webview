@@ -1943,6 +1943,24 @@ void WebviewController::SetPathAllowingUniversalAccess(
     nweb_ptr->SetPathAllowingUniversalAccess(pathList, moduleName_, errorPath);
 }
 
+void WebviewController::ScrollToWithAnime(float x, float y, int32_t duration)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->ScrollToWithAnime(x, y, duration);
+    }
+    return;
+}
+
+void WebviewController::ScrollByWithAnime(float deltaX, float deltaY, int32_t duration)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->ScrollByWithAnime(deltaX, deltaY, duration);
+    }
+    return;
+}
+
 void WebviewController::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);

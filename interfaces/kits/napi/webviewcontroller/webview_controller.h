@@ -21,6 +21,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "back_forward_cache_options.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -346,6 +347,7 @@ public:
                                const std::vector<uint8_t>& resource,
                                const std::map<std::string, std::string>& response_headers,
                                const uint32_t type);
+    
     ErrCode SetUrlTrustList(const std::string& urlTrustList);
 
     void EnableAdsBlock(bool enable);
@@ -371,9 +373,12 @@ public:
     
     void SetPathAllowingUniversalAccess(const std::vector<std::string>& pathList,
                                         std::string& errorPath);
+   
+    void ScrollToWithAnime(float x, float y, int32_t duration) ;
+  
+    void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration) ;
 
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
-
 private:
     int ConverToWebHitTestType(int hitType);
 

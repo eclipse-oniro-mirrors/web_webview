@@ -45,6 +45,9 @@ public:
 
     /*--ark web()--*/
     virtual bool GetIsMultiRendererProcess() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetSharedRenderProcessToken() = 0;
 };
 
 } // namespace OHOS::ArkWeb

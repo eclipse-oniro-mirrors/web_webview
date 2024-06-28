@@ -53,4 +53,10 @@ ArkWebStringVector ArkNetConnectAdapterImpl::GetDnsServers()
     return ArkWebStringVectorClassToStruct(servers);
 }
 
+ArkWebStringVector ArkNetConnectAdapterImpl::GetDnsServersByNetId(int32_t netId)
+{
+    std::vector<std::string> servers = real_->GetDnsServersByNetId(netId);
+    return ArkWebStringVectorClassToStruct(servers);
+}
+
 } // namespace OHOS::ArkWeb

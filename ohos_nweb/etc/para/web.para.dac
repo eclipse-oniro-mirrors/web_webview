@@ -14,3 +14,4 @@
 web.optimization = root:root:0644
 web.debug. = root:root:0775
 web.debug.trace = root:shell:0775
+web.PRPPreload.enable = root:root:0644

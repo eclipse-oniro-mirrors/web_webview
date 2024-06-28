@@ -35,16 +35,13 @@ const std::string FACTORY_LEVEL_PHONE = "2";
 const std::string FACTORY_LEVEL_DEFAULT = "1";
 
 const std::string PROP_RENDER_DUMP = "web.render.dump";
-const std::string PROP_HITRACE_ENABLEFLAGS = "debug.hitrace.tags.enableflags";
+const std::string PROP_DEBUG_TRACE = "web.debug.trace";
 const std::unordered_map<std::string, PropertiesKey> PROP_KEY_MAP = {
     {PROP_RENDER_DUMP, PropertiesKey::PROP_RENDER_DUMP},
-    {PROP_HITRACE_ENABLEFLAGS, PropertiesKey::PROP_HITRACE_ENABLEFLAGS}};
+    {PROP_DEBUG_TRACE, PropertiesKey::PROP_DEBUG_TRACE}};
 
 void SystemPropertiesChangeCallback(const char* key, const char* value, void* context) {
     WVLOG_D("sys prop change key: %{public}s ,value : %{public}s ", key,  value);
-    if (key == PROP_HITRACE_ENABLEFLAGS) {
-        HiTraceAdapterImpl::GetInstance().UpdateOHOSTraceTag(value);
-    }
     SystemPropertiesAdapterImpl::GetInstance().DispatchAllWatcherInfo(key, value);
 }
 

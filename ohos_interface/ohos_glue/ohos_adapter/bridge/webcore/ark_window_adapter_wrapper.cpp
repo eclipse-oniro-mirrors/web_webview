@@ -51,4 +51,11 @@ void ArkWindowAdapterWrapper::NativeWindowSurfaceCleanCache(ArkWebNativeWindow w
     ctocpp_->NativeWindowSurfaceCleanCache(window);
 }
 
+void ArkWindowAdapterWrapper::NativeWindowSurfaceCleanCacheWithPara(ArkWebNativeWindow window, bool cleanAll)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ctocpp_->NativeWindowSurfaceCleanCacheWithPara(window, cleanAll);
+}
 } // namespace OHOS::ArkWeb

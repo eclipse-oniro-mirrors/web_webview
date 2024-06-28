@@ -50,6 +50,10 @@ public:
 
     void ExitFullScreen() override;
 
+    void ResumeMediaPlayer() override;
+
+    void SuspendMediaPlayer(int type) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebNativeMediaPlayerBridge> nweb_native_vide_player_bridge_;
 };

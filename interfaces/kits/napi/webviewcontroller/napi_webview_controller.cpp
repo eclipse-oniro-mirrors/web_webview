@@ -44,6 +44,8 @@
 #include "arkweb_scheme_handler.h"
 #include "web_scheme_handler_request.h"
 
+#include "back_forward_cache_options.h"
+
 namespace OHOS {
 namespace NWeb {
 using namespace NWebError;
@@ -4031,15 +4033,16 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_TWO;
-    napi_value argv[INTEGER_TWO] = { 0 };
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = { 0 };
     float x;
     float y;
+    int32_t duration;
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_TWO) {
+    if (argc != INTEGER_TWO && argc != INTEGER_THREE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two", "three"));
         return result;
     }
 
@@ -4055,13 +4058,25 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
         return result;
     }
 
+    if (argc == INTEGER_THREE) {
+        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
+            return result;
+        }   
+    }
+
     WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    webviewController->ScrollTo(x, y);
+    if(argc == INTEGER_THREE) {
+        webviewController->ScrollToWithAnime(x, y, duration);
+    } else {
+        webviewController->ScrollTo(x, y);
+    }   
     return result;
 }
 
@@ -4069,15 +4084,16 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_TWO;
-    napi_value argv[INTEGER_TWO] = { 0 };
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = { 0 };
     float deltaX;
     float deltaY;
+    int32_t duration = 0;
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_TWO) {
+    if (argc != INTEGER_TWO && argc != INTEGER_THREE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two", "three"));
         return result;
     }
 
@@ -4093,13 +4109,25 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
         return result;
     }
 
+    if (argc == INTEGER_THREE) {
+        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
+            return result;
+        }   
+    }
+
     WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    webviewController->ScrollBy(deltaX, deltaY);
+    if(argc == INTEGER_THREE) {
+        webviewController->ScrollByWithAnime(deltaX, deltaY, duration);
+    } else {
+        webviewController->ScrollBy(deltaX, deltaY);
+    }
     return result;
 }
 
@@ -5441,25 +5469,6 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     return promise;
 }
 
-bool ParseBackForwardCacheSupportedFeature(napi_env env, napi_value obj, BackForwardCacheSupportedFeature& feature)
-{
-    std::map<std::string, std::function<bool(const BackForwardCacheSupportedFeature&)>> featuresBooleanProperties = {
-        {"nativeEmbed", [](const BackForwardCacheSupportedFeature& feature) { return feature.nativeEmbed; }},
-        {"mediaIntercept", [](const BackForwardCacheSupportedFeature& feature) { return feature.mediaIntercept; }},
-    };
-
-    for (const auto& property : featuresBooleanProperties) {
-        napi_value propertyObj = nullptr;
-        napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
-        bool featureProperty = property.second(feature);
-        if (!NapiParseUtils::ParseBoolean(env, propertyObj, featureProperty)) {
-            return false;
-        }
-    }
-
-    return true;
-}
-
 napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
@@ -5474,39 +5483,17 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
         return result;
     }
 
+    BackForwardCacheSupportFeatures* features = nullptr;
     napi_value obj = argv[0];
-    BackForwardCacheSupportedFeature feature;
-    if (!ParseBackForwardCacheSupportedFeature(env, obj, feature)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                "BusinessError: 401. Parameter error. Wrong param of features.");
-        return result;
-    }
+    napi_unwrap(env, obj, (void**)&features);
+    napi_create_reference(env, obj, 1, &features->delegate_);
 
-    WVLOG_I("The value of supported ativeEmbed is: %{public}d", feature.nativeEmbed);
-    WVLOG_I("The value of supported mediaIntercept is: %{public}d", feature.mediaIntercept);
+    WVLOG_I("The value of supported ativeEmbed is: %{public}d", feature.IsEnableNativeEmbed());
+    WVLOG_I("The value of supported mediaIntercept is: %{public}d", feature.IsEnableMediaIntercept());
 
-    NWebHelper::Instance().EnableBackForwardCache(feature.nativeEmbed, feature.mediaIntercept);
+    NWebHelper::Instance().EnableBackForwardCache(feature.IsEnableNativeEmbed(), feature.IsEnableMediaIntercept());
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
-}
-
-bool ParseBackForwardCacheOptions(napi_env env, napi_value obj, BackForwardCacheOptions& option)
-{
-    std::map<std::string, std::function<int32_t(const BackForwardCacheOptions&)>> optionsBooleanProperties = {
-        {"size", [](const BackForwardCacheOptions& option) { return option.size; }},
-        {"timeToLive", [](const BackForwardCacheOptions& option) { return option.timeToLive; }},
-    };
-
-    for (const auto& property : optionsBooleanProperties) {
-        napi_value propertyObj = nullptr;
-        napi_get_named_property(env, obj, property.first.c_str(), &propertyObj);
-        bool optionProperty = property.second(option);
-        if (!NapiParseUtils::ParseBoolean(env, propertyObj, optionProperty)) {
-            return false;
-        }
-    }
-
-    return true;
 }
 
 napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_callback_info info)
@@ -5530,16 +5517,13 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
         return result;
     }
 
+    BackForwardCacheOptions* options = nullptr;
     napi_value obj = argv[0];
-    BackForwardCacheOptions option;
-    if (!ParseBackForwardCacheOptions(env, obj, option)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                "BusinessError: 401. Parameter error. Wrong param of options.");
-        return result;
-    }
+    napi_unwrap(env, obj, (void**)&options);
+    napi_create_reference(env, obj, 1, &options->delegate_);
 
-    WVLOG_I("The value of backforward cache option size is: %{public}d", option.size);
-    WVLOG_I("The value of backforward cache option timeToLive is: %{public}d", option.timeToLive);
+    WVLOG_I("The value of backforward cache option size is: %{public}d", options.GetSize());
+    WVLOG_I("The value of backforward cache option timeToLive is: %{public}d", options.GetTimeToLive());
 
     webviewController->SetBackForwardCacheOptions(option.size, option.timeToLive);
     NAPI_CALL(env, napi_get_undefined(env, &result));
