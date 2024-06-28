@@ -24,6 +24,8 @@
 
 namespace OHOS::ArkWeb {
 
+using ArkWebSuspendType = OHOS::NWeb::SuspendType;
+
 class ArkWebNativeMediaPlayerBridgeWrapper : public OHOS::NWeb::NWebNativeMediaPlayerBridge {
 public:
     ArkWebNativeMediaPlayerBridgeWrapper(ArkWebRefPtr<ArkWebNativeMediaPlayerBridge> ark_web_native_vide_player_bridge);
@@ -48,6 +50,10 @@ public:
     void EnterFullScreen() override;
 
     void ExitFullScreen() override;
+
+    void ResumeMediaPlayer() override;
+
+    void SuspendMediaPlayer(ArkWebSuspendType type) override;
 
 private:
     ArkWebRefPtr<ArkWebNativeMediaPlayerBridge> ark_web_native_vide_player_bridge_;

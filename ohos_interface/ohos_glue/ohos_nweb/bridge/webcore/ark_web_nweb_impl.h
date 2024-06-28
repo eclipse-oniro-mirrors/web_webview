@@ -1191,6 +1191,26 @@ public:
         const ArkWebStringMap& actionArguments) override;
 
     /**
+     * Scroll to the position.
+     *
+     * @param x horizontal coordinate.
+     * @param y vertical coordinate.
+     * @param duration: anime duration.
+     */
+    /*--ark web()--*/
+    void ScrollToWithAnime(float x, float y, int32_t duration) override;
+
+    /**
+     * Scroll by the delta distance.
+     *
+     * @param delta_x: horizontal offset.
+     * @param delta_y: vertical offset.
+     * @param duration: anime duration.
+     */
+    /*--ark web()--*/
+    void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) override;
+
+    /**
      * @brief set backforward cache options.
      */
     /*--ark web()--*/

@@ -16,6 +16,7 @@
 #include "ohos_adapter/bridge/ark_web_adapter_bridge_helper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "base/check.h"
 
 namespace OHOS::ArkWeb {
 
@@ -30,7 +31,8 @@ const std::string LIB_DIR_PATH = "/system/lib";
 ArkWebAdapterBridgeHelper& ArkWebAdapterBridgeHelper::GetInstance(bool isPrintLog)
 {
     static ArkWebAdapterBridgeHelper helper;
-    helper.Init(isPrintLog);
+    CHECK(helper.Init(isPrintLog));
+
     return helper;
 }
 

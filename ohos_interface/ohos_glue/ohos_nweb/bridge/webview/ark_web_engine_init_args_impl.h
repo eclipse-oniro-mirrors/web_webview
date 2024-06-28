@@ -42,6 +42,7 @@ public:
     bool GetIsEnhanceSurface() override;
 
     bool GetIsMultiRendererProcess() override;
+    ArkWebString GetSharedRenderProcessToken() override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> nweb_engine_init_args_;

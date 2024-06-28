@@ -70,4 +70,11 @@ bool ArkWebEngineInitArgsWrapper::GetIsMultiRendererProcess()
     return ark_web_engine_init_args_->GetIsMultiRendererProcess();
 }
 
+std::string ArkWebEngineInitArgsWrapper::GetSharedRenderProcessToken()
+{
+    ArkWebString arkwebSharedRenderProcessToken = ark_web_engine_init_args_->GetSharedRenderProcessToken();
+    std::string sharedRenderProcessToken = ArkWebStringStructToClass(arkwebSharedRenderProcessToken);
+    ArkWebStringStructRelease(arkwebSharedRenderProcessToken);
+    return sharedRenderProcessToken;
+}
 } // namespace OHOS::ArkWeb

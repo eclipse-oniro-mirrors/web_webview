@@ -114,23 +114,15 @@ int32_t NetConnectAdapterImpl::GetDefaultNetConnect(NetConnectType &type, NetCon
     return 0;
 }
 
-std::vector<std::string> NetConnectAdapterImpl::GetDnsServers()
-{
+std::vector<std::string> NetConnectAdapterImpl::GetDnsServersInternal(const NetHandle &netHandle) {
     std::vector<std::string> servers;
-    NetHandle netHandle;
-    int32_t ret = NetConnClient::GetInstance().GetDefaultNet(netHandle);
-    if (ret != NETMANAGER_SUCCESS) {
-        WVLOG_E("get default net for dns servers failed, ret = %{public}d.", ret);
-        return servers;
-    }
-
     NetLinkInfo info;
-    ret = NetConnClient::GetInstance().GetConnectionProperties(netHandle, info);
+    int32_t ret = NetConnClient::GetInstance().GetConnectionProperties(netHandle, info);
     if (ret != NETMANAGER_SUCCESS) {
-        WVLOG_E("get default net properties failed, ret = %{public}d.", ret);
+        WVLOG_E("get net properties failed, ret = %{public}d.", ret);
         return servers;
     }
-    WVLOG_D("get default net properties for dns servers success, net id = %{public}d, "
+    WVLOG_D("get net properties for dns servers success, net id = %{public}d, "
         "netinfo = %{public}s.", netHandle.GetNetId(), info.ToString(" ").c_str());
 
     for (const auto &dns : info.dnsList_) {
@@ -139,5 +131,39 @@ std::vector<std::string> NetConnectAdapterImpl::GetDnsServers()
     WVLOG_I("get dns servers success, net id = %{public}d, servers size = %{public}d.",
         netHandle.GetNetId(), static_cast<int32_t>(servers.size()));
     return servers;
+}
+
+std::vector<std::string> NetConnectAdapterImpl::GetDnsServers()
+{
+    NetHandle netHandle;
+    int32_t ret = NetConnClient::GetInstance().GetDefaultNet(netHandle);
+    if (ret != NETMANAGER_SUCCESS) {
+        WVLOG_E("get default net for dns servers failed, ret = %{public}d.", ret);
+        return std::vector<std::string>();
+    }
+
+    return GetDnsServersInternal(netHandle);
+}
+
+std::vector<std::string> NetConnectAdapterImpl::GetDnsServersByNetId(int32_t netId)
+{
+    WVLOG_I("get dns servers by net id %{public}d.", netId);
+    if (netId == -1) {
+        return GetDnsServers();
+    }
+
+    std::list<sptr<NetManagerStandard::NetHandle>> netHandleList;
+    int32_t ret = NetConnClient::GetInstance().GetAllNets(netHandleList);
+    if (ret != NETMANAGER_SUCCESS) {
+        WVLOG_E("get all nets by net id for dns servers failed, ret = %{public}d.", ret);
+        return std::vector<std::string>();
+    }
+
+    for (sptr<NetManagerStandard::NetHandle> netHandle : netHandleList) {
+        if (netHandle->GetNetId() == netId) {
+            return GetDnsServersInternal(*netHandle);
+        }
+    }
+    return std::vector<std::string>();
 }
 } // namespace OHOS::NWeb
