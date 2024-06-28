@@ -235,7 +235,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebStorage_002, TestSize.Level1)
     EXPECT_EQ(RESULT_OK, result);
     std::string config = NWebAdapterHelper::Instance().ParsePerfConfig("web", "test");
     EXPECT_TRUE(config.empty());
-    NWebAdapterHelper::Instance().perfConfig_.emplace("web/test", "web_test");
+    NWebConfigHelper::Instance().perfConfig_.emplace("web/test", "web_test");
     config = NWebAdapterHelper::Instance().ParsePerfConfig("web", "test");
     EXPECT_FALSE(config.empty());
 }
@@ -314,7 +314,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_TryPreReadLib_004, TestSize.Level1)
 HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
 {
     std::string configFileName = "test";
-    std::string figPath = NWebAdapterHelper::Instance().GetConfigPath(configFileName);
+    std::string figPath = NWebConfigHelper::Instance().GetConfigPath(configFileName);
     EXPECT_FALSE(figPath.empty());
     std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
@@ -512,8 +512,9 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
 HWTEST_F(NwebHelperTest, NWebHelper_GetPerfConfig_001, TestSize.Level1)
 {
     EXPECT_TRUE(NWebAdapterHelper::Instance().GetPerfConfig("test").empty());
-    NWebAdapterHelper::Instance().ltpoConfig_["test"] = {OHOS::NWeb::FrameRateSetting{0, 0, 0}};
+    NWebConfigHelper::Instance().ltpoConfig_["test"] = {OHOS::NWeb::FrameRateSetting{0, 0, 0}};
     EXPECT_FALSE(NWebAdapterHelper::Instance().GetPerfConfig("test").empty());
+    NWebConfigHelper::Instance().ltpoConfig_.clear();
 }
 
 /**
