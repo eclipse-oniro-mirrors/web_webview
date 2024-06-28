@@ -59,4 +59,9 @@ bool ArkWebEngineInitArgsImpl::GetIsMultiRendererProcess()
     return nweb_engine_init_args_->GetIsMultiRendererProcess();
 }
 
+ArkWebString ArkWebEngineInitArgsImpl::GetSharedRenderProcessToken()
+{
+    return ArkWebStringClassToStruct(nweb_engine_init_args_->GetSharedRenderProcessToken());
+}
+
 } // namespace OHOS::ArkWeb
