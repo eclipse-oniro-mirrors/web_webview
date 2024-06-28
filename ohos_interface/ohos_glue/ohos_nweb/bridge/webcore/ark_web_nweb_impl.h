@@ -1209,6 +1209,32 @@ public:
      */
     /*--ark web()--*/
     void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) override;
+
+    /**
+     * @brief Send mouse wheel event.
+     */
+    /*--ark web()--*/
+    void WebSendMouseWheelEvent(double x,
+                                double y,
+                                double delta_x,
+                                double delta_y,
+                                const ArkWebInt32Vector& pressedCodes) override;
+
+    /**
+     * @brief Send touchpad fling event.
+     *
+     * @param x location of x.
+     * @param y location of y.
+     * @param vx velocity of x.
+     * @param vy velocity of y.
+     * @param pressedCodes pressed codes.
+     */
+    /*--ark web()--*/
+    void WebSendTouchpadFlingEvent(double x,
+                                   double y,
+                                   double vx,
+                                   double vy,
+                                   const ArkWebInt32Vector& pressedCodes) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

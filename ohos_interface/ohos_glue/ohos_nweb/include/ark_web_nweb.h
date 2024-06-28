@@ -1371,6 +1371,32 @@ public:
      */
     /*--ark web()--*/
     virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) = 0;
+
+    /**
+     * @brief Send mouse wheel event.
+     */
+    /*--ark web()--*/
+    virtual void WebSendMouseWheelEvent(double x,
+                                        double y,
+                                        double delta_x,
+                                        double delta_y,
+                                        const ArkWebInt32Vector& pressedCodes) = 0;
+
+    /**
+     * @brief Send touchpad fling event.
+     *
+     * @param x location of x.
+     * @param y location of y.
+     * @param vx velocity of x.
+     * @param vy velocity of y.
+     * @param pressedCodes pressed codes.
+     */
+    /*--ark web()--*/
+    virtual void WebSendTouchpadFlingEvent(double x,
+                                           double y,
+                                           double vx,
+                                           double vy,
+                                           const ArkWebInt32Vector& pressedCodes) = 0;
 };
 
 } // namespace OHOS::ArkWeb
