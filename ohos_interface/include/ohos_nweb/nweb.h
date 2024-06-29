@@ -1312,6 +1312,7 @@ public:
     /**
      * @brief Set url trust list.
      *
+     * @param urlTrustList The url Trust list.
      */
     virtual int SetUrlTrustList(const std::string& urlTrustList) {
         return 0;
@@ -1376,7 +1377,6 @@ public:
      */
     virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) {}
 
-
     /**
      * @brief Send mouse wheel event.
      */
@@ -1400,6 +1400,15 @@ public:
                                            double vx,
                                            double vy,
                                            const std::vector<int32_t>& pressedCodes) {}
+    /**
+     * @brief Set url trust list with error message.
+     *
+     * @param urlTrustList The url Trust list.
+     * @param detailErrMsg The url trust list detail message.
+     */
+    virtual int SetUrlTrustListWithErrMsg(const std::string& urlTrustList, std::string& detailErrMsg) {
+        return 0;
+    }
 };
 
 } // namespace OHOS::NWeb
