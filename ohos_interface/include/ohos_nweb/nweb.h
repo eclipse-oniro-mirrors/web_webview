@@ -1377,11 +1377,34 @@ public:
     virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) {}
 
     /**
+     * @brief Send mouse wheel event.
+     */
+    virtual void WebSendMouseWheelEvent(double x,
+                                        double y,
+                                        double delta_x,
+                                        double delta_y,
+                                        const std::vector<int32_t>& pressedCodes) {}
+
+    /**
+     * @brief Send touchpad fling event.
+     *
+     * @param x location of x.
+     * @param y location of y.
+     * @param vx velocity of x.
+     * @param vy velocity of y.
+     * @param pressedCodes pressed codes.
+     */
+    virtual void WebSendTouchpadFlingEvent(double x,
+                                           double y,
+                                           double vx,
+                                           double vy,
+                                           const std::vector<int32_t>& pressedCodes) {}
+
+    /**
      * @brief Set backforward cache options.
      */
     /*--ark web()--*/
-    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }
-
+    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }                                
 };
 
 } // namespace OHOS::NWeb
