@@ -32,6 +32,7 @@ namespace ParamCheckErrorMsgTemplate {
    extern const char* PARAM_NOT_NULL;
    extern const char* PARAM_NOT_NULL_TWO;
    extern const char* PARAM_TYPE_INVALID;
+   extern const char* PARAM_DETAIL_ERROR_MSG;
 }
 namespace NWebError {
 constexpr ErrCode NWEB_ERROR = -1;
