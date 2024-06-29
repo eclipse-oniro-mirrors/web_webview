@@ -56,11 +56,11 @@ ohos_shared_library("web_configs") {
     ":web_config",
   ]
 
-external_deps = [
-   "hilog:libhilog",
-   "config_policy:configpolicy_util",
-   "init:libbegetutil",
-   "libxml2:libxml2",
+  external_deps = [
+    "hilog:libhilog",
+    "config_policy:configpolicy_util",
+    "init:libbegetutil",
+    "libxml2:libxml2",
 ]
 
   part_name = "webview"
