@@ -209,13 +209,18 @@ char* WebviewJavaScriptResultCallBackImpl::FlowbufStrAtIndex(
 {
     int* header = static_cast<int*>(mem); // Cast the memory block to int* for easier access
     int offset = 0;
-
+    if (arg_index == nullptr) {
+        return nullptr;
+    }
     if (flowbuf_index >=  MAX_ENTRIES) {
         *arg_index = -1;
         return nullptr;
     }
 
     int* entry = header + (flowbuf_index * INDEX_SIZE);
+    if (entry == nullptr) {
+        return nullptr;
+    }
     if (*(entry + 1) == 0) { // Check if length is 0, indicating unused entry
         *arg_index = -1;
         return nullptr;
@@ -225,7 +230,9 @@ char* WebviewJavaScriptResultCallBackImpl::FlowbufStrAtIndex(
     for (i = 0; i < flowbuf_index; i++) {
         offset += *(header + (i * INDEX_SIZE) + 1);
     }
-    
+    if (str_len == nullptr) {
+        return nullptr;
+    }
     *str_len = *(header + (i * INDEX_SIZE) + 1) - 1;
 
     *arg_index = *entry;
