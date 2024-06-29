@@ -61,16 +61,6 @@ struct OfflineResourceValue {
     napi_value type;
 };
 
-struct BackForwardCacheSupportedFeature {
-    bool nativeEmbed = true;
-    bool mediaIntercept = true;
-};
-
-struct BackForwardCacheOptions {
-    int32_t size = 1;
-    int32_t timeToLive = 600;
-};
-
 class NapiWebviewController {
 public:
     NapiWebviewController() {}
