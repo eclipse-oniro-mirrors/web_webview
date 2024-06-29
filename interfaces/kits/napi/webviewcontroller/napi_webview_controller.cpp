@@ -5491,7 +5491,7 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     WVLOG_I("The value of supported ativeEmbed is: %{public}d", features->IsEnableNativeEmbed());
     WVLOG_I("The value of supported mediaIntercept is: %{public}d", features->IsEnableMediaIntercept());
 
-    NWebHelper::Instance().EnableBackForwardCache(feature->IsEnableNativeEmbed(), feature->IsEnableMediaIntercept());
+    NWebHelper::Instance().EnableBackForwardCache(features->IsEnableNativeEmbed(), features->IsEnableMediaIntercept());
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }

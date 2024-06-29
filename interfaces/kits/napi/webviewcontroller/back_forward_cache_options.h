@@ -27,7 +27,7 @@ namespace OHOS {
 namespace NWeb {
 class BackForwardCacheOptions {
 public:
-    explicit BackForwardCacheOptions(napi_env env);
+    BackForwardCacheOptions(napi_env env);
     BackForwardCacheOptions(napi_env env, int32_t size, int32_t timeToLive);
     int32_t GetSize();
     int32_t GetTimeToLive();
@@ -35,14 +35,13 @@ public:
     napi_ref delegate_ = nullptr;
 
 private:
-    napi_env env_;
     int32_t size_;
     int32_t timeToLive_;
 };
 
 class BackForwardCacheSupportFeatures {
 public:
-    explicit BackForwardCacheSupportFeatures(napi_env env);
+    BackForwardCacheSupportFeatures(napi_env env);
     BackForwardCacheSupportFeatures(napi_env env, bool nativeEmbed, bool mediaIntercept);
     bool IsEnableNativeEmbed();
     bool IsEnableMediaIntercept();
@@ -50,7 +49,6 @@ public:
     napi_ref delegate_ = nullptr;
 
 private:
-    napi_env env_;
     bool nativeEmbed_;
     bool mediaIntercept_;
 };
