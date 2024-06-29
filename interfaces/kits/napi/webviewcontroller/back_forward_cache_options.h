@@ -38,7 +38,7 @@ private:
     napi_env env_;
     int32_t size_;
     int32_t timeToLive_;
-}
+};
 
 class BackForwardCacheSupportFeatures {
 public:
@@ -53,7 +53,7 @@ private:
     napi_env env_;
     bool nativeEmbed_;
     bool mediaIntercept_;
-}
+};
 
 }
 }

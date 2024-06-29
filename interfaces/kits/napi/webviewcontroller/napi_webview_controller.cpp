@@ -5488,10 +5488,10 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     napi_unwrap(env, obj, (void**)&features);
     napi_create_reference(env, obj, 1, &features->delegate_);
 
-    WVLOG_I("The value of supported ativeEmbed is: %{public}d", feature.IsEnableNativeEmbed());
-    WVLOG_I("The value of supported mediaIntercept is: %{public}d", feature.IsEnableMediaIntercept());
+    WVLOG_I("The value of supported ativeEmbed is: %{public}d", features->IsEnableNativeEmbed());
+    WVLOG_I("The value of supported mediaIntercept is: %{public}d", features->IsEnableMediaIntercept());
 
-    NWebHelper::Instance().EnableBackForwardCache(feature.IsEnableNativeEmbed(), feature.IsEnableMediaIntercept());
+    NWebHelper::Instance().EnableBackForwardCache(feature->IsEnableNativeEmbed(), feature->IsEnableMediaIntercept());
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
@@ -5522,10 +5522,10 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     napi_unwrap(env, obj, (void**)&options);
     napi_create_reference(env, obj, 1, &options->delegate_);
 
-    WVLOG_I("The value of backforward cache option size is: %{public}d", options.GetSize());
-    WVLOG_I("The value of backforward cache option timeToLive is: %{public}d", options.GetTimeToLive());
+    WVLOG_I("The value of backforward cache option size is: %{public}d", options->GetSize());
+    WVLOG_I("The value of backforward cache option timeToLive is: %{public}d", options->GetTimeToLive());
 
-    webviewController->SetBackForwardCacheOptions(option.size, option.timeToLive);
+    webviewController->SetBackForwardCacheOptions(options->GetSize(), options->GetTimeToLive());
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
