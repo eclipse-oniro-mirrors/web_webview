@@ -1066,4 +1066,23 @@ void ArkWebNWebImpl::ScrollByWithAnime(float delta_x, float delta_y, int32_t dur
     nweb_nweb_->ScrollByWithAnime(delta_x, delta_y, duration);
 }
 
+void ArkWebNWebImpl::WebSendMouseWheelEvent(double x,
+                                            double y,
+                                            double delta_x,
+                                            double delta_y,
+                                            const ArkWebInt32Vector& pressedCodes)
+{
+    nweb_nweb_->WebSendMouseWheelEvent(x, y, delta_x, delta_y,
+        ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes));
+}
+
+void ArkWebNWebImpl::WebSendTouchpadFlingEvent(double x,
+                                               double y,
+                                               double vx,
+                                               double vy,
+                                               const ArkWebInt32Vector& pressedCodes)
+{
+    nweb_nweb_->WebSendTouchpadFlingEvent(x, y, vx, vy,
+        ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes));
+}
 } // namespace OHOS::ArkWeb
