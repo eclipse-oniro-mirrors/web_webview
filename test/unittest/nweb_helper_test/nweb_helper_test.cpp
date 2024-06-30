@@ -191,6 +191,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
     NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
+    NWebHelper::Instance().ReadConfigIfNeeded();
     result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
     ApplicationContextMock *contextMock = new ApplicationContextMock();
