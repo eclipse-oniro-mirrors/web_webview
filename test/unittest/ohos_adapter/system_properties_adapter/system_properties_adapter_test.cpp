@@ -84,6 +84,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     EXPECT_NE(result, -1);
     SystemPropertiesAdapterImpl::GetInstance().GetResourceUseHapPathEnable();
     SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
     bool value = SystemPropertiesAdapterImpl::GetInstance().GetWebOptimizationValue();
     EXPECT_TRUE(value);
     system("param set web.optimization false");
