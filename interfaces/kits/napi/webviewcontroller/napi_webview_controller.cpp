@@ -5484,9 +5484,11 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     }
 
     BackForwardCacheSupportFeatures* features = nullptr;
-    napi_value obj = argv[0];
-    napi_unwrap(env, obj, (void**)&features);
-    napi_create_reference(env, obj, 1, &features->delegate_);
+    napi_status status = napi_unwrap(env, argv[INTEGER_ZERO], (void**)&features)
+    if (status != napi_ok || features == nullptr) {
+        WVLOG_E("BACKFORWARDCACHE:: unwrap features failed.");
+        return result;
+    }
 
     WVLOG_I("The value of supported ativeEmbed is: %{public}d", features->IsEnableNativeEmbed());
     WVLOG_I("The value of supported mediaIntercept is: %{public}d", features->IsEnableMediaIntercept());
@@ -5518,9 +5520,11 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     }
 
     BackForwardCacheOptions* options = nullptr;
-    napi_value obj = argv[0];
-    napi_unwrap(env, obj, (void**)&options);
-    napi_create_reference(env, obj, 1, &options->delegate_);
+    napi_status status = napi_unwrap(env, argv[INTEGER_ZERO], (void**)&options)
+    if (status != napi_ok || options == nullptr) {
+        WVLOG_E("BACKFORWARDCACHE:: unwrap options failed.");
+        return result;
+    }
 
     WVLOG_I("The value of backforward cache option size is: %{public}d", options->GetSize());
     WVLOG_I("The value of backforward cache option timeToLive is: %{public}d", options->GetTimeToLive());
