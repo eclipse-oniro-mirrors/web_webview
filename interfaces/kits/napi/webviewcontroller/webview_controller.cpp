@@ -1770,7 +1770,7 @@ void WebviewController::UpdateInstanceId(int32_t newId)
     }
 }
 
-ErrCode WebviewController::SetUrlTrustList(const std::string& urlTrustList)
+ErrCode WebviewController::SetUrlTrustList(const std::string& urlTrustList, std::string& detailErrMsg)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -1778,7 +1778,7 @@ ErrCode WebviewController::SetUrlTrustList(const std::string& urlTrustList)
     }
 
     int ret = NWebError::NO_ERROR;
-    switch (nweb_ptr->SetUrlTrustList(urlTrustList)) {
+    switch (nweb_ptr->SetUrlTrustListWithErrMsg(urlTrustList, detailErrMsg)) {
         case static_cast<int>(UrlListSetResult::INIT_ERROR):
             ret = NWebError::INIT_ERROR;
             break;

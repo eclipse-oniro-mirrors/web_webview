@@ -1141,6 +1141,8 @@ public:
 
     /**
      * @brief Set url trust list.
+     *
+     * @param urlTrustList The url trust list.
      */
     /*--ark web()--*/
     int SetUrlTrustList(const ArkWebString& urlTrustList) override;
@@ -1211,6 +1213,12 @@ public:
     void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) override;
 
     /**
+     * @brief set backforward cache options.
+     */
+    /*--ark web()--*/
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
+
+    /**
      * @brief Send mouse wheel event.
      */
     /*--ark web()--*/
@@ -1235,6 +1243,14 @@ public:
                                    double vx,
                                    double vy,
                                    const ArkWebInt32Vector& pressedCodes) override;
+    /**
+     * @brief Set url trust list with error message.
+     *
+     * @param urlTrustList The url trust list.
+     * @param detailErrMsg The detail error message.
+     */
+    /*--ark web()--*/
+    int SetUrlTrustListWithErrMsg(const ArkWebString& urlTrustList, ArkWebString& detailErrMsg) override;
 
     /**
      * @brief set backforward cache options.
