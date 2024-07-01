@@ -46,6 +46,23 @@ config("nweb_glue_interface") {
   ]
 }
 
+ohos_shared_library("web_configs") {
+  include_dirs = [ "include" ]
+  sources = [ "src/nweb_config_helper.cpp" ]
+
+  deps = [ ":web_config" ]
+
+  external_deps = [
+    "config_policy:configpolicy_util",
+    "hilog:libhilog",
+    "init:libbegetutil",
+    "libxml2:libxml2",
+  ]
+
+  part_name = "webview"
+  subsystem_name = "web"
+}
+
 ohos_shared_library("libnweb") {
   branch_protector_ret = "pac_ret"
   branch_protector_frt = "bti"
@@ -68,6 +85,7 @@ ohos_shared_library("libnweb") {
     ":web.para",
     ":web.para.dac",
     ":web_config",
+    ":web_configs",
     "${webview_path}/ohos_glue:ohos_adapter_glue_source",
     "${webview_path}/ohos_glue:ohos_nweb_glue_source",
   ]

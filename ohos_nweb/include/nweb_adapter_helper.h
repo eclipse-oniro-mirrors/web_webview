@@ -21,6 +21,7 @@
 #include "libxml/tree.h"
 #include "nweb_helper.h"
 #include "nweb_init_params.h"
+#include "nweb_config_helper.h"
 
 namespace OHOS {
 class Surface;
@@ -49,17 +50,6 @@ public:
 
 private:
     NWebAdapterHelper() = default;
-    std::string GetConfigPath(const std::string &configFileName);
-    void ParseConfig(std::shared_ptr<NWebCreateInfo> create_info);
-    void ParseNWebLTPOConfig(xmlNodePtr nodePtr);
-    void ReadConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
-    xmlNodePtr GetChildrenNode(xmlNodePtr NodePtr, const std::string &childrenNodeName);
-    void ParsePerfConfig(xmlNodePtr NodePtr);
-    void ParseWebConfigXml(const std::string &configFilePath, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
-    void WriteConfigValueToSysPara(const std::string &configName, const std::string &value);
-    void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
-    std::map<std::string, std::string> perfConfig_;
-    std::map<std::string, std::vector<FrameRateSetting>> ltpoConfig_;
 };
 } // namespace OHOS
 
