@@ -17,6 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#define private public
 #include "nweb_log.h"
 #include "system_properties_adapter_impl.h"
 
