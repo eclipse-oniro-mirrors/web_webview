@@ -1245,6 +1245,15 @@ public:
                                    double vx,
                                    double vy,
                                    const std::vector<int32_t>& pressedCodes) override;
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     */
+    /*--ark web()--*/
+    void SendAccessibilityHoverEvent(int32_t x, int32_t y) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
