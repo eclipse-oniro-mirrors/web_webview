@@ -1397,6 +1397,15 @@ public:
                                            double vx,
                                            double vy,
                                            const ArkWebInt32Vector& pressedCodes) = 0;
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     */
+    /*--ark web()--*/
+    virtual void SendAccessibilityHoverEvent(int32_t x, int32_t y) = 0;
 };
 
 } // namespace OHOS::ArkWeb

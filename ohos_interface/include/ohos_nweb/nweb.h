@@ -1400,6 +1400,14 @@ public:
                                            double vx,
                                            double vy,
                                            const std::vector<int32_t>& pressedCodes) {}
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     */
+    virtual void SendAccessibilityHoverEvent(int32_t x, int32_t y) {}
 };
 
 } // namespace OHOS::NWeb
