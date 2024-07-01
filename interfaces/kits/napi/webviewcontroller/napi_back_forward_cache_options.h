@@ -28,8 +28,8 @@ const std::string BACK_FORWARD_CACHE_SUPPORT_FEATURES = "BackForwardCacheSupport
 
 class NapiBackForwardCacheOptions {
 public:
-    BackForwardCacheOptions() = default;
-    ~BackForwardCacheOptions() = default;
+    NapiBackForwardCacheOptions() = default;
+    ~NapiBackForwardCacheOptions() = default;
 
     static napi_value Init(napi_env env, napi_value exports);
     static napi_value JS_Constructor(napi_env env, napi_callback_info info);
@@ -39,8 +39,8 @@ public:
 
 class NapiBackForwardCacheSupportFeatures {
 public:
-    BackForwardCacheSupportFeatures() = default;
-    ~BackForwardCacheSupportFeatures() = default;
+    NapiBackForwardCacheSupportFeatures() = default;
+    ~NapiBackForwardCacheSupportFeatures() = default;
 
     static napi_value Init(napi_env env, napi_value exports);
     static napi_value JS_Constructor(napi_env env, napi_callback_info info);
@@ -50,3 +50,5 @@ public:
 
 }
 }
+
+#endif

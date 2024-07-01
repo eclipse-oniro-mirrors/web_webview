@@ -21,9 +21,11 @@
 #include <securec.h>
 #include <cstring>
 
+#include "back_forward_cache_options.h"
 #include "business_error.h"
 #include "nweb_log.h"
 #include "napi_parse_utils.h"
+#include "napi/native_node_api.h"
 #include "web_errors.h"
 
 using namespace OHOS::NWebError;
@@ -35,15 +37,43 @@ napi_value NapiBackForwardCacheOptions::JS_Constructor(napi_env env, napi_callba
     WVLOG_I("NapiBackForwardCacheOptions::JS_Constructor is called");
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
+    size_t argc = 2;
+    napi_value argv[2] = {0};
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
-    BackForwardCacheOptions *options = new BackForwardCacheOptions(env);
+    BackForwardCacheOptions *options = nullptr;
+    if (argc == 0)
+        options = new BackForwardCacheOptions();
+    else if (argc == 2) {
+        int32_t size = 0;
+        if (!NapiParseUtils::ParseInt32(env, argv[0], size) || (size <= 0 || size > 50)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                    "BusinessError: 401. Parameter error. The type of param 'size' must be integer and value between 1 and 50.");
+            return thisVar;
+        }
+
+        int32_t timeToLive = 0;
+        if (!NapiParseUtils::ParseInt32(env, argv[1], timeToLive)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                    "BusinessError: 401. Parameter error. The type of param 'timeToLive' must be integer.");
+            return thisVar;
+        }
+
+        options = new BackForwardCacheOptions(size, timeToLive);
+        napi_set_named_property(env, thisVar, "size_", argv[0]);
+        napi_set_named_property(env, thisVar, "timeToLive_", argv[1]);
+    } else {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "none", "two"));
+        return thisVar;
+    }
 
     napi_wrap(
         env, thisVar, options,
         [](napi_env /* env */, void *data, void * /* hint */) {
             BackForwardCacheOptions *options = (BackForwardCacheOptions *)data;
             delete options;
+            options = nullptr;
         },
         nullptr, nullptr);
 
@@ -55,15 +85,43 @@ napi_value NapiBackForwardCacheSupportFeatures::JS_Constructor(napi_env env, nap
     WVLOG_I("NapiBackForwardCacheSupportFeatures::JS_Constructor is called");
     napi_value thisVar = nullptr;
     void *data = nullptr;
-    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, &data);
+    size_t argc = 2;
+    napi_value argv[2] = {0};
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
-    BackForwardCacheSupportFeatures *features = new BackForwardCacheSupportFeatures(env);
+    BackForwardCacheSupportFeatures *features = nullptr;
+    if (argc == 0)
+        features = new BackForwardCacheSupportFeatures();
+    else if (argc == 2) {
+        bool nativeEmbed = true;
+        if (!NapiParseUtils::ParseBoolean(env, argv[0], nativeEmbed)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "nativeEmbed", "boolean"));
+            return thisVar;
+        }
+
+        bool mediaIntercept = true;
+        if (!NapiParseUtils::ParseBoolean(env, argv[1], mediaIntercept)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mediaIntercept", "boolean"));
+            return thisVar;
+        }
+
+        features = new BackForwardCacheSupportFeatures(nativeEmbed, mediaIntercept);
+        napi_set_named_property(env, thisVar, "nativeEmbed_", argv[0]);
+        napi_set_named_property(env, thisVar, "mediaIntercept_", argv[1]);
+    } else {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "none", "two"));
+        return thisVar;
+    }
 
     napi_wrap(
         env, thisVar, features,
         [](napi_env /* env */, void *data, void * /* hint */) {
             BackForwardCacheSupportFeatures *features = (BackForwardCacheSupportFeatures *)data;
             delete features;
+            features = nullptr;
         },
         nullptr, nullptr);
 
@@ -104,9 +162,9 @@ napi_value NapiBackForwardCacheOptions::Init(napi_env env, napi_value exports)
     napi_value backForwardCacheOptions = nullptr;
     napi_define_class(env, BACK_FORWARD_CACHE_OPTIONS.c_str(), BACK_FORWARD_CACHE_OPTIONS.length(),
         JS_Constructor, nullptr,
-        sizeof(properties) / sizeof(properties[0]), properties, &backForwardCacheOption);
+        sizeof(properties) / sizeof(properties[0]), properties, &backForwardCacheOptions);
     napi_set_named_property(env, exports, BACK_FORWARD_CACHE_OPTIONS.c_str(),
-        backForwardCacheOption);
+        backForwardCacheOptions);
     return exports;
 }
 
@@ -117,12 +175,12 @@ napi_value NapiBackForwardCacheSupportFeatures::Init(napi_env env, napi_value ex
         DECLARE_NAPI_FUNCTION("isEnableNativeEmbed", JS_IsEnableNativeEmbed),
         DECLARE_NAPI_FUNCTION("isEnableMediaIntercept", JS_IsEnableMediaIntercept),
     };
-    napi_value backForwardCacheSupportFeature = nullptr;
+    napi_value backForwardCacheSupportFeatures = nullptr;
     napi_define_class(env, BACK_FORWARD_CACHE_SUPPORT_FEATURES.c_str(), BACK_FORWARD_CACHE_SUPPORT_FEATURES.length(),
         JS_Constructor, nullptr,
-        sizeof(properties) / sizeof(properties[0]), properties, &backForwardCacheSupportFeature);
+        sizeof(properties) / sizeof(properties[0]), properties, &backForwardCacheSupportFeatures);
     napi_set_named_property(env, exports, BACK_FORWARD_CACHE_SUPPORT_FEATURES.c_str(),
-        backForwardCacheSupportFeature);
+        backForwardCacheSupportFeatures);
     return exports;
 }
 
