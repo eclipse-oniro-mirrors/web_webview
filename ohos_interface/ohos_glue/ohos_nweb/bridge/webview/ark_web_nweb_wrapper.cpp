@@ -1304,4 +1304,9 @@ void ArkWebNWebWrapper::RegisterArkJSfunction(const std::string& object_name,
     ArkWebStringVectorStructRelease(stAsyncMethods);
     ArkWebStringStructRelease(stPermission);
 }
+
+void ArkWebNWebWrapper::ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard)
+{
+    ark_web_nweb_->ResizeVisibleViewport(width, height, isKeyboard);
+}
 } // namespace OHOS::ArkWeb
