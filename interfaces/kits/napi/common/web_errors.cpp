@@ -57,6 +57,7 @@ namespace ParamCheckErrorMsgTemplate {
    const char* PARAM_NOT_NULL = "BusinessError 401: Parameter error. The type of '%s' can not be ignored.";
    const char* PARAM_NOT_NULL_TWO = "BusinessError 401: Parameter error. The type of '%s' and '%s' can not be ignored.";
    const char* PARAM_TYPE_INVALID = "BusinessError 401: Parameter error. The type of '%s' is invalid.";
+   const char* PARAM_DETAIL_ERROR_MSG = "BusinessError 401: Parameter error. detail: %s.";
 }
 namespace NWebError {
 std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {

@@ -348,7 +348,7 @@ public:
                                const std::map<std::string, std::string>& response_headers,
                                const uint32_t type);
     
-    ErrCode SetUrlTrustList(const std::string& urlTrustList);
+    ErrCode SetUrlTrustList(const std::string& urlTrustList, std::string& detailErrMsg);
 
     void EnableAdsBlock(bool enable);
 
