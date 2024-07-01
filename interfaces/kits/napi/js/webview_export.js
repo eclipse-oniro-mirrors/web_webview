@@ -93,6 +93,10 @@ function needShowDialog(params) {
     if (currentDevice !== 'phone') {
       return false;
     }
+    if (params.isCapture()) {
+      console.log('input element contain capture tag, not show dialog');
+      return false;
+    }
     let acceptTypes = params.getAcceptType();
     if (isContainImageMimeType(acceptTypes) || isContainVideoMimeType(acceptTypes)) {
       result = true;
@@ -194,6 +198,10 @@ function selectPicture(param, selectResult) {
   try {
     let photoResultArray = [];
     let photoSelectOptions = new picker.PhotoSelectOptions();
+    if (param.getMode() === FileSelectorMode.FileOpenMode) {
+      console.log('allow select single photo or video');
+      photoSelectOptions.maxSelectNumber = 1;
+    }
     let acceptTypes = param.getAcceptType();
     photoSelectOptions.MIMEType = picker.PhotoViewMIMETypes.IMAGE_VIDEO_TYPE;
     if (isContainImageMimeType(acceptTypes) && !isContainVideoMimeType(acceptTypes)) {
@@ -287,6 +295,9 @@ Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFrom
           }
         ]
       });
+    } else if (callback.fileparam.isCapture()) {
+      console.log('take photo will be directly invoked due to the capture property');
+      takePhoto(callback.fileparam, callback.fileresult);
     } else {
       console.log('selectFile will be invoked by web');
       selectFile(callback.fileparam, callback.fileresult);
