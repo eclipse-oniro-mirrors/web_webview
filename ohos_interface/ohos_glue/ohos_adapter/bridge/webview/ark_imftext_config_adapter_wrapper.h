@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFTextConfigAdapterWrapper : public NWeb::IMFTextConfigAdapter {
 public:
-    ArkIMFTextConfigAdapterWrapper(ArkWebRefPtr<ArkIMFTextConfigAdapter>);
+    explicit ArkIMFTextConfigAdapterWrapper(ArkWebRefPtr<ArkIMFTextConfigAdapter>);
 
     std::shared_ptr<NWeb::IMFInputAttributeAdapter> GetInputAttribute() override;
 

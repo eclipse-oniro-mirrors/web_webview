@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkScreenCaptureConfigAdapterWrapper : public NWeb::ScreenCaptureConfigAdapter {
 public:
-    ArkScreenCaptureConfigAdapterWrapper(ArkWebRefPtr<ArkScreenCaptureConfigAdapter>);
+    explicit ArkScreenCaptureConfigAdapterWrapper(ArkWebRefPtr<ArkScreenCaptureConfigAdapter>);
 
     NWeb::CaptureModeAdapter GetCaptureMode() override;
 

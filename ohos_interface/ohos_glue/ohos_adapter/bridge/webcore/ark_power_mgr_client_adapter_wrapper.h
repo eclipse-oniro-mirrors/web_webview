@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPowerMgrClientAdapterWrapper : public OHOS::NWeb::PowerMgrClientAdapter {
 public:
-    ArkPowerMgrClientAdapterWrapper(ArkWebRefPtr<ArkPowerMgrClientAdapter>);
+    explicit ArkPowerMgrClientAdapterWrapper(ArkWebRefPtr<ArkPowerMgrClientAdapter>);
 
     std::shared_ptr<OHOS::NWeb::RunningLockAdapter> CreateRunningLock(
         const std::string& name, OHOS::NWeb::RunningLockAdapterType type) override;

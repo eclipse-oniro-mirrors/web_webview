@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkProducerSurfaceAdapterImpl : public ArkProducerSurfaceAdapter {
 public:
-    ArkProducerSurfaceAdapterImpl(std::shared_ptr<OHOS::NWeb::ProducerSurfaceAdapter>);
+    explicit ArkProducerSurfaceAdapterImpl(std::shared_ptr<OHOS::NWeb::ProducerSurfaceAdapter>);
 
     ArkWebRefPtr<ArkSurfaceBufferAdapter> RequestBuffer(
         int32_t& fence, ArkWebRefPtr<ArkBufferRequestConfigAdapter> config) override;

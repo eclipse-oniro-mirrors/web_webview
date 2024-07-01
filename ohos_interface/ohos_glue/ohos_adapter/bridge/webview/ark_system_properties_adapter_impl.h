@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkSystemPropertiesAdapterImpl : public ArkSystemPropertiesAdapter {
 public:
-    ArkSystemPropertiesAdapterImpl(NWeb::SystemPropertiesAdapter&);
+    explicit ArkSystemPropertiesAdapterImpl(NWeb::SystemPropertiesAdapter&);
 
     bool GetResourceUseHapPathEnable() override;
 

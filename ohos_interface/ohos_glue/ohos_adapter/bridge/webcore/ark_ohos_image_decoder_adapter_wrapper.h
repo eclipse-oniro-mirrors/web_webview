@@ -24,17 +24,14 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosImageDecoderAdapterWrapper : public OHOS::NWeb::OhosImageDecoderAdapter {
 public:
-    ArkOhosImageDecoderAdapterWrapper(ArkWebRefPtr<ArkOhosImageDecoderAdapter>);
+    explicit ArkOhosImageDecoderAdapterWrapper(ArkWebRefPtr<ArkOhosImageDecoderAdapter>);
 
     bool ParseImageInfo(const uint8_t* data, uint32_t size) override;
     std::string GetEncodedFormat() override;
     int32_t GetImageWidth() override;
     int32_t GetImageHeight() override;
     bool DecodeToPixelMap(const uint8_t* data, uint32_t size) override;
-    bool Decode(const uint8_t* data,
-                uint32_t size,
-                OHOS::NWeb::AllocatorType type,
-                bool useYuv) override;
+    bool Decode(const uint8_t* data, uint32_t size, OHOS::NWeb::AllocatorType type, bool useYuv) override;
     int32_t GetFd() override;
     int32_t GetStride() override;
     int32_t GetOffset() override;

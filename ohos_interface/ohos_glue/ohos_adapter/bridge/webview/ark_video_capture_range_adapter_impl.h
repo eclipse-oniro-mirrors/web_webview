@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoCaptureRangeAdapterImpl : public ArkVideoCaptureRangeAdapter {
 public:
-    ArkVideoCaptureRangeAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoCaptureRangeAdapter>);
+    explicit ArkVideoCaptureRangeAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoCaptureRangeAdapter>);
 
     double GetMin() override;
 

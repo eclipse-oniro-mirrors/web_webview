@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkWebTimezoneInfoImpl : public ArkWebTimezoneInfo {
 public:
-    ArkWebTimezoneInfoImpl(std::shared_ptr<OHOS::NWeb::WebTimezoneInfo>);
+    explicit ArkWebTimezoneInfoImpl(std::shared_ptr<OHOS::NWeb::WebTimezoneInfo>);
 
     ArkWebString GetTzId() override;
 

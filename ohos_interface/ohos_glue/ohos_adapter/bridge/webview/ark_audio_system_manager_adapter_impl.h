@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioSystemManagerAdapterImpl : public ArkAudioSystemManagerAdapter {
 public:
-    ArkAudioSystemManagerAdapterImpl(NWeb::AudioSystemManagerAdapter&);
+    explicit ArkAudioSystemManagerAdapterImpl(NWeb::AudioSystemManagerAdapter&);
 
     bool HasAudioOutputDevices() override;
 

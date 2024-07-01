@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkRunningLockAdapterImpl : public ArkRunningLockAdapter {
 public:
-    ArkRunningLockAdapterImpl(std::shared_ptr<OHOS::NWeb::RunningLockAdapter>);
+    explicit ArkRunningLockAdapterImpl(std::shared_ptr<OHOS::NWeb::RunningLockAdapter>);
 
     bool IsUsed() override;
 

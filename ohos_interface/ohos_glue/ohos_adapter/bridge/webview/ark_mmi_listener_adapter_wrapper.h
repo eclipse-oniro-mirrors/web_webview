@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMMIListenerAdapterWrapper : public OHOS::NWeb::MMIListenerAdapter {
 public:
-    ArkMMIListenerAdapterWrapper(ArkWebRefPtr<ArkMMIListenerAdapter>);
+    explicit ArkMMIListenerAdapterWrapper(ArkWebRefPtr<ArkMMIListenerAdapter>);
 
     void OnDeviceAdded(int32_t deviceId, const std::string& type) override;
     void OnDeviceRemoved(int32_t deviceId, const std::string& type) override;

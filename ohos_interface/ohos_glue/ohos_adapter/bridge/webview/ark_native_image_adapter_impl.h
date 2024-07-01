@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNativeImageAdapterImpl : public ArkNativeImageAdapter {
 public:
-    ArkNativeImageAdapterImpl(std::shared_ptr<OHOS::NWeb::NativeImageAdapter>);
+    explicit ArkNativeImageAdapterImpl(std::shared_ptr<OHOS::NWeb::NativeImageAdapter>);
 
     void CreateNativeImage(uint32_t textureId, uint32_t textureTarget) override;
 

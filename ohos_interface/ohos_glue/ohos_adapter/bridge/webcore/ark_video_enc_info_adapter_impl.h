@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoEncInfoAdapterImpl : public ArkVideoEncInfoAdapter {
 public:
-    ArkVideoEncInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoEncInfoAdapter>);
+    explicit ArkVideoEncInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoEncInfoAdapter>);
 
     int32_t GetVideoCodecFormat() override;
 

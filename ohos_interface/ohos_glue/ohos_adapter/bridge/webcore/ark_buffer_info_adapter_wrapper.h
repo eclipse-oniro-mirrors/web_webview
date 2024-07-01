@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBufferInfoAdapterWrapper : public NWeb::BufferInfoAdapter {
 public:
-    ArkBufferInfoAdapterWrapper(ArkWebRefPtr<ArkBufferInfoAdapter>);
+    explicit ArkBufferInfoAdapterWrapper(ArkWebRefPtr<ArkBufferInfoAdapter>);
 
     int64_t GetPresentationTimeUs() override;
 

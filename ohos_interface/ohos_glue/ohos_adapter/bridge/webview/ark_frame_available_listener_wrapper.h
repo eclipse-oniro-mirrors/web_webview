@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkFrameAvailableListenerWrapper : public NWeb::FrameAvailableListener {
 public:
-    ArkFrameAvailableListenerWrapper(ArkWebRefPtr<ArkFrameAvailableListener>);
+    explicit ArkFrameAvailableListenerWrapper(ArkWebRefPtr<ArkFrameAvailableListener>);
 
     void* GetContext() override;
 

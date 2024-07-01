@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioInfoAdapterWrapper : public NWeb::AudioInfoAdapter {
 public:
-    ArkAudioInfoAdapterWrapper(ArkWebRefPtr<ArkAudioInfoAdapter>);
+    explicit ArkAudioInfoAdapterWrapper(ArkWebRefPtr<ArkAudioInfoAdapter>);
 
     std::shared_ptr<NWeb::AudioCaptureInfoAdapter> GetMicCapInfo() override;
 

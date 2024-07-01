@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioCapturerOptionsAdapterImpl : public ArkAudioCapturerOptionsAdapter {
 public:
-    ArkAudioCapturerOptionsAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioCapturerOptionsAdapter>);
+    explicit ArkAudioCapturerOptionsAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioCapturerOptionsAdapter>);
 
     int32_t GetSamplingRate() override;
 
