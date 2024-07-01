@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNetConnectAdapterWrapper : public OHOS::NWeb::NetConnectAdapter {
 public:
-    ArkNetConnectAdapterWrapper(ArkWebRefPtr<ArkNetConnectAdapter>);
+    explicit ArkNetConnectAdapterWrapper(ArkWebRefPtr<ArkNetConnectAdapter>);
 
     int32_t RegisterNetConnCallback(std::shared_ptr<OHOS::NWeb::NetConnCallback> cb) override;
 

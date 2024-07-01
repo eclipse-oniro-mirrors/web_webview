@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPasteBoardObserverAdapterImpl : public ArkPasteBoardObserverAdapter {
 public:
-    ArkPasteBoardObserverAdapterImpl(std::shared_ptr<OHOS::NWeb::PasteboardObserverAdapter>);
+    explicit ArkPasteBoardObserverAdapterImpl(std::shared_ptr<OHOS::NWeb::PasteboardObserverAdapter>);
 
     void OnPasteBoardChanged() override;
 

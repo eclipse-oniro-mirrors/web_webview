@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoEncInfoAdapterWrapper : public NWeb::VideoEncInfoAdapter {
 public:
-    ArkVideoEncInfoAdapterWrapper(ArkWebRefPtr<ArkVideoEncInfoAdapter>);
+    explicit ArkVideoEncInfoAdapterWrapper(ArkWebRefPtr<ArkVideoEncInfoAdapter>);
 
     NWeb::VideoCodecFormatAdapter GetVideoCodecFormat() override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkKeystoreAdapterImpl : public ArkKeystoreAdapter {
 public:
-    ArkKeystoreAdapterImpl(NWeb::KeystoreAdapter&);
+    explicit ArkKeystoreAdapterImpl(NWeb::KeystoreAdapter&);
 
     ArkWebString EncryptKey(const ArkWebString& alias, const ArkWebString& plainData) override;
 

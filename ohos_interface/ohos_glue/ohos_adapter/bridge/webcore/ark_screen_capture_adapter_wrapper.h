@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkScreenCaptureAdapterWrapper : public OHOS::NWeb::ScreenCaptureAdapter {
 public:
-    ArkScreenCaptureAdapterWrapper(ArkWebRefPtr<ArkScreenCaptureAdapter>);
+    explicit ArkScreenCaptureAdapterWrapper(ArkWebRefPtr<ArkScreenCaptureAdapter>);
 
     int32_t Init(const std::shared_ptr<NWeb::ScreenCaptureConfigAdapter> config) override;
 

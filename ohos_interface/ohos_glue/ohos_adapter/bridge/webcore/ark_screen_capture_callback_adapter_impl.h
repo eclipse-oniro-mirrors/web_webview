@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkScreenCaptureCallbackAdapterImpl : public ArkScreenCaptureCallbackAdapter {
 public:
-    ArkScreenCaptureCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::ScreenCaptureCallbackAdapter>);
+    explicit ArkScreenCaptureCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::ScreenCaptureCallbackAdapter>);
 
     void OnError(int32_t errorCode) override;
 

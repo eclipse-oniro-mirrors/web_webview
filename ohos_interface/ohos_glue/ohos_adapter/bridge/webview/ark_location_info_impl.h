@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkLocationInfoImpl : public ArkLocationInfo {
 public:
-    ArkLocationInfoImpl(std::shared_ptr<OHOS::NWeb::LocationInfo>);
+    explicit ArkLocationInfoImpl(std::shared_ptr<OHOS::NWeb::LocationInfo>);
 
     double GetLatitude() override;
 

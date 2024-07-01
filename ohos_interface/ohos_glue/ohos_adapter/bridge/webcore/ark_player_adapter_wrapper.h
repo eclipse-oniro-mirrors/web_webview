@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPlayerAdapterWrapper : public OHOS::NWeb::PlayerAdapter {
 public:
-    ArkPlayerAdapterWrapper(ArkWebRefPtr<ArkPlayerAdapter>);
+    explicit ArkPlayerAdapterWrapper(ArkWebRefPtr<ArkPlayerAdapter>);
 
     int32_t SetPlayerCallback(std::shared_ptr<OHOS::NWeb::PlayerCallbackAdapter> callbackAdapter) override;
 

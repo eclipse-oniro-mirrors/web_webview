@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkIMFAdapterFunctionKeyAdapterWrapper : public OHOS::NWeb::IMFAdapterFunctionKeyAdapter {
 public:
-    ArkIMFAdapterFunctionKeyAdapterWrapper(ArkWebRefPtr<ArkIMFAdapterFunctionKeyAdapter>);
+    explicit ArkIMFAdapterFunctionKeyAdapterWrapper(ArkWebRefPtr<ArkIMFAdapterFunctionKeyAdapter>);
 
     OHOS::NWeb::IMFAdapterEnterKeyType GetEnterKeyType() override;
 

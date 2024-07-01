@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkLocationCallbackAdapterWrapper : public OHOS::NWeb::LocationCallbackAdapter {
 public:
-    ArkLocationCallbackAdapterWrapper(ArkWebRefPtr<ArkLocationCallbackAdapter>);
+    explicit ArkLocationCallbackAdapterWrapper(ArkWebRefPtr<ArkLocationCallbackAdapter>);
 
     void OnLocationReport(const std::shared_ptr<OHOS::NWeb::LocationInfo> location) override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAccessTokenAdapterImpl : public ArkAccessTokenAdapter {
 public:
-    ArkAccessTokenAdapterImpl(NWeb::AccessTokenAdapter&);
+    explicit ArkAccessTokenAdapterImpl(NWeb::AccessTokenAdapter&);
 
     bool VerifyAccessToken(const ArkWebString& permissionName) override;
 

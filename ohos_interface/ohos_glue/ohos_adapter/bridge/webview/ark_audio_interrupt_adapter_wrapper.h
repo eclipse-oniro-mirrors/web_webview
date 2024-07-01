@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioInterruptAdapterWrapper : public NWeb::AudioInterruptAdapter {
 public:
-    ArkAudioInterruptAdapterWrapper(ArkWebRefPtr<ArkAudioInterruptAdapter>);
+    explicit ArkAudioInterruptAdapterWrapper(ArkWebRefPtr<ArkAudioInterruptAdapter>);
 
     NWeb::AudioAdapterStreamUsage GetStreamUsage() override;
 

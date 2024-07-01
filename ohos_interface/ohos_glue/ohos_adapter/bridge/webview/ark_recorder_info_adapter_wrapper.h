@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkRecorderInfoAdapterWrapper : public NWeb::RecorderInfoAdapter {
 public:
-    ArkRecorderInfoAdapterWrapper(ArkWebRefPtr<ArkRecorderInfoAdapter>);
+    explicit ArkRecorderInfoAdapterWrapper(ArkWebRefPtr<ArkRecorderInfoAdapter>);
 
     std::string GetUrl() override;
 

@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPasteBoardObserverAdapterWrapper : public NWeb::PasteboardObserverAdapter {
 public:
-    ArkPasteBoardObserverAdapterWrapper(ArkWebRefPtr<ArkPasteBoardObserverAdapter>);
+    explicit ArkPasteBoardObserverAdapterWrapper(ArkWebRefPtr<ArkPasteBoardObserverAdapter>);
 
     void OnPasteboardChanged() override;
 

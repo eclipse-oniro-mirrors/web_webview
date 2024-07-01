@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMediaCodecListAdapterWrapper : public OHOS::NWeb::MediaCodecListAdapter {
 public:
-    ArkMediaCodecListAdapterWrapper(ArkWebRefPtr<ArkMediaCodecListAdapter>);
+    explicit ArkMediaCodecListAdapterWrapper(ArkWebRefPtr<ArkMediaCodecListAdapter>);
 
     std::shared_ptr<OHOS::NWeb::CapabilityDataAdapter> GetCodecCapability(
         const std::string& mime, const bool isCodec) override;

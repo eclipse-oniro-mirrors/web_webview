@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNetProxyAdapterWrapper : public OHOS::NWeb::NetProxyAdapter {
 public:
-    ArkNetProxyAdapterWrapper(ArkWebRefPtr<ArkNetProxyAdapter>);
+    explicit ArkNetProxyAdapterWrapper(ArkWebRefPtr<ArkNetProxyAdapter>);
 
     void RegNetProxyEvent(std::shared_ptr<OHOS::NWeb::NetProxyEventCallbackAdapter> eventCallback) override;
 

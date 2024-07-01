@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkScreenCaptureCallbackAdapterWrapper : public OHOS::NWeb::ScreenCaptureCallbackAdapter {
 public:
-    ArkScreenCaptureCallbackAdapterWrapper(ArkWebRefPtr<ArkScreenCaptureCallbackAdapter>);
+    explicit ArkScreenCaptureCallbackAdapterWrapper(ArkWebRefPtr<ArkScreenCaptureCallbackAdapter>);
 
     void OnError(int32_t errorCode) override;
 

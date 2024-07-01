@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCodecFormatAdapterImpl : public ArkCodecFormatAdapter {
 public:
-    ArkCodecFormatAdapterImpl(std::shared_ptr<OHOS::NWeb::CodecFormatAdapter>);
+    explicit ArkCodecFormatAdapterImpl(std::shared_ptr<OHOS::NWeb::CodecFormatAdapter>);
 
     int32_t GetWidth() override;
 

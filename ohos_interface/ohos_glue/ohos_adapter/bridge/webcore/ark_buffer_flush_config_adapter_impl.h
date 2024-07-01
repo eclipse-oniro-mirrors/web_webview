@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBufferFlushConfigAdapterImpl : public ArkBufferFlushConfigAdapter {
 public:
-    ArkBufferFlushConfigAdapterImpl(std::shared_ptr<OHOS::NWeb::BufferFlushConfigAdapter>);
+    explicit ArkBufferFlushConfigAdapterImpl(std::shared_ptr<OHOS::NWeb::BufferFlushConfigAdapter>);
 
     int32_t GetX() override;
 

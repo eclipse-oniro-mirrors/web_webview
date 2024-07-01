@@ -26,7 +26,7 @@ namespace OHOS::ArkWeb {
 
 class ArkFlowbufferAdapterWrapper : public OHOS::NWeb::FlowbufferAdapter {
 public:
-    ArkFlowbufferAdapterWrapper(ArkWebRefPtr<ArkFlowbufferAdapter>);
+    explicit ArkFlowbufferAdapterWrapper(ArkWebRefPtr<ArkFlowbufferAdapter>);
 
     void StartPerformanceBoost() override;
 
