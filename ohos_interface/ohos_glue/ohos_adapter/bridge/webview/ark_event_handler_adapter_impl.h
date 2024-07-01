@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkEventHandlerAdapterImpl : public ArkEventHandlerAdapter {
 public:
-    ArkEventHandlerAdapterImpl(std::shared_ptr<OHOS::NWeb::EventHandlerAdapter>);
+    explicit ArkEventHandlerAdapterImpl(std::shared_ptr<OHOS::NWeb::EventHandlerAdapter>);
 
     bool AddFileDescriptorListener(int32_t fileDescriptor, uint32_t events,
         const ArkWebRefPtr<ArkEventHandlerFDListenerAdapter> listener) override;

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoControlSupportAdapterWrapper : public NWeb::VideoControlSupportAdapter {
 public:
-    ArkVideoControlSupportAdapterWrapper(ArkWebRefPtr<ArkVideoControlSupportAdapter>);
+    explicit ArkVideoControlSupportAdapterWrapper(ArkWebRefPtr<ArkVideoControlSupportAdapter>);
 
     bool GetPan() override;
 

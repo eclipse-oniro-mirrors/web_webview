@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIBufferConsumerListenerAdapterImpl : public ArkIBufferConsumerListenerAdapter {
 public:
-    ArkIBufferConsumerListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::IBufferConsumerListenerAdapter>);
+    explicit ArkIBufferConsumerListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::IBufferConsumerListenerAdapter>);
 
     void OnBufferAvailable(ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer) override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDatashareAdapterImpl : public ArkDatashareAdapter {
 public:
-    ArkDatashareAdapterImpl(NWeb::DatashareAdapter&);
+    explicit ArkDatashareAdapterImpl(NWeb::DatashareAdapter&);
 
     int OpenDataShareUriForRead(const ArkWebString& uriStr) override;
 

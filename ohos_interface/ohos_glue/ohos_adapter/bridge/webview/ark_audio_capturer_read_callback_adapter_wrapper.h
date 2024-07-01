@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioCapturerReadCallbackAdapterWrapper : public OHOS::NWeb::AudioCapturerReadCallbackAdapter {
 public:
-    ArkAudioCapturerReadCallbackAdapterWrapper(ArkWebRefPtr<ArkAudioCapturerReadCallbackAdapter>);
+    explicit ArkAudioCapturerReadCallbackAdapterWrapper(ArkWebRefPtr<ArkAudioCapturerReadCallbackAdapter>);
 
     void OnReadData(size_t length) override;
 

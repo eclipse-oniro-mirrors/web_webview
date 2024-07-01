@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkEventHandlerFDListenerAdapterImpl : public ArkEventHandlerFDListenerAdapter {
 public:
-    ArkEventHandlerFDListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::EventHandlerFDListenerAdapter>);
+    explicit ArkEventHandlerFDListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::EventHandlerFDListenerAdapter>);
 
     void OnReadable(int32_t fileDescriptor) override;
 

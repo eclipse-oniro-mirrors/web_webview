@@ -26,7 +26,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBatteryInfoWrapper : public OHOS::NWeb::WebBatteryInfo {
 public:
-    ArkBatteryInfoWrapper(ArkWebRefPtr<ArkBatteryInfo>);
+    explicit ArkBatteryInfoWrapper(ArkWebRefPtr<ArkBatteryInfo>);
 
     double GetLevel() override;
 

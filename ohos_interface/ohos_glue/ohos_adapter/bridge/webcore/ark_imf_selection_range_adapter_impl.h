@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFSelectionRangeAdapterImpl : public ArkIMFSelectionRangeAdapter {
 public:
-    ArkIMFSelectionRangeAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFSelectionRangeAdapter>);
+    explicit ArkIMFSelectionRangeAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFSelectionRangeAdapter>);
 
     int32_t GetStart() override;
 

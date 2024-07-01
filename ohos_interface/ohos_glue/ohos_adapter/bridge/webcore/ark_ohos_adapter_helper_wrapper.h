@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosAdapterHelperWrapper : public NWeb::OhosAdapterHelper {
 public:
-    ArkOhosAdapterHelperWrapper(ArkWebRefPtr<ArkOhosAdapterHelper>);
+    explicit ArkOhosAdapterHelperWrapper(ArkWebRefPtr<ArkOhosAdapterHelper>);
 
     std::unique_ptr<NWeb::AafwkAppMgrClientAdapter> CreateAafwkAdapter() override;
 

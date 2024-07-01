@@ -26,7 +26,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioEncInfoAdapterImpl : public ArkAudioEncInfoAdapter {
 public:
-    ArkAudioEncInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioEncInfoAdapter>);
+    explicit ArkAudioEncInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioEncInfoAdapter>);
 
     int32_t GetAudioBitrate() override;
 

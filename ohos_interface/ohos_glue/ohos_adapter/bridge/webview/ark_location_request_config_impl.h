@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkLocationRequestConfigImpl : public ArkLocationRequestConfig {
 public:
-    ArkLocationRequestConfigImpl(std::shared_ptr<OHOS::NWeb::LocationRequestConfig>);
+    explicit ArkLocationRequestConfigImpl(std::shared_ptr<OHOS::NWeb::LocationRequestConfig>);
 
     void SetScenario(int32_t scenario) override;
 

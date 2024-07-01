@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkHiTraceAdapterWrapper : public OHOS::NWeb::HiTraceAdapter {
 public:
-    ArkHiTraceAdapterWrapper(ArkWebRefPtr<ArkHiTraceAdapter>);
+    explicit ArkHiTraceAdapterWrapper(ArkWebRefPtr<ArkHiTraceAdapter>);
 
     void StartTrace(const std::string& value, float limit = -1) override;
 

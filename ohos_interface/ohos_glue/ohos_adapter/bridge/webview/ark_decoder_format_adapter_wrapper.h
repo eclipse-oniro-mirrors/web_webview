@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDecoderFormatAdapterWrapper : public NWeb::DecoderFormatAdapter {
 public:
-    ArkDecoderFormatAdapterWrapper(ArkWebRefPtr<ArkDecoderFormatAdapter>);
+    explicit ArkDecoderFormatAdapterWrapper(ArkWebRefPtr<ArkDecoderFormatAdapter>);
 
     int32_t GetWidth() override;
 

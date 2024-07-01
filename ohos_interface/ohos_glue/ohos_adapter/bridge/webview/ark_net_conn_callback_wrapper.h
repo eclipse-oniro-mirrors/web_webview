@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkNetConnCallbackWrapper : public OHOS::NWeb::NetConnCallback {
 public:
-    ArkNetConnCallbackWrapper(ArkWebRefPtr<ArkNetConnCallback>);
+  explicit  ArkNetConnCallbackWrapper(ArkWebRefPtr<ArkNetConnCallback>);
     int32_t NetAvailable() override;
     int32_t NetCapabilitiesChange(const OHOS::NWeb::NetConnectType& netConnectType,
         const OHOS::NWeb::NetConnectSubtype& netConnectSubtype) override;

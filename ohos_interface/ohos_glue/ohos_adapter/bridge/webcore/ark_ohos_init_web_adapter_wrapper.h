@@ -26,7 +26,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosInitWebAdapterWrapper : public OHOS::NWeb::OhosInitWebAdapter {
 public:
-    ArkOhosInitWebAdapterWrapper(ArkWebRefPtr<ArkOhosInitWebAdapter>);
+    explicit ArkOhosInitWebAdapterWrapper(ArkWebRefPtr<ArkOhosInitWebAdapter>);
 
     NWeb::WebRunInitedCallback* GetRunWebInitedCallback() override;
 

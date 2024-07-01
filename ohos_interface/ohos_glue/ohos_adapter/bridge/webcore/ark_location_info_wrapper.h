@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkLocationInfoWrapper : public OHOS::NWeb::LocationInfo {
 public:
-    ArkLocationInfoWrapper(ArkWebRefPtr<ArkLocationInfo>);
+    explicit ArkLocationInfoWrapper(ArkWebRefPtr<ArkLocationInfo>);
 
     double GetLatitude() override;
 

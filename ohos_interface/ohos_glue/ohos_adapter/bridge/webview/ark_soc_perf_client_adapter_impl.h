@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkSocPerfClientAdapterImpl : public ArkSocPerfClientAdapter {
 public:
-    ArkSocPerfClientAdapterImpl(std::shared_ptr<OHOS::NWeb::SocPerfClientAdapter>);
+    explicit ArkSocPerfClientAdapterImpl(std::shared_ptr<OHOS::NWeb::SocPerfClientAdapter>);
 
     void ApplySocPerfConfigById(int32_t id) override;
 

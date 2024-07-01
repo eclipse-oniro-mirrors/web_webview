@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkBufferRequestConfigAdapterWrapper : public NWeb::BufferRequestConfigAdapter {
 public:
-    ArkBufferRequestConfigAdapterWrapper(ArkWebRefPtr<ArkBufferRequestConfigAdapter>);
+    explicit ArkBufferRequestConfigAdapterWrapper(ArkWebRefPtr<ArkBufferRequestConfigAdapter>);
 
     int32_t GetWidth() override;
 

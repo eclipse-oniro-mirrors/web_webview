@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDisplayListenerAdapterWrapper : public OHOS::NWeb::DisplayListenerAdapter {
 public:
-    ArkDisplayListenerAdapterWrapper(ArkWebRefPtr<ArkDisplayListenerAdapter>);
+    explicit ArkDisplayListenerAdapterWrapper(ArkWebRefPtr<ArkDisplayListenerAdapter>);
 
     void OnCreate(OHOS::NWeb::DisplayId) override;
 

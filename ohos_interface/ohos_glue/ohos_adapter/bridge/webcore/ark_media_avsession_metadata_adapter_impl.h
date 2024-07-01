@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMediaAVSessionMetadataAdapterImpl : public ArkMediaAVSessionMetadataAdapter {
 public:
-    ArkMediaAVSessionMetadataAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaAVSessionMetadataAdapter>);
+    explicit ArkMediaAVSessionMetadataAdapterImpl(std::shared_ptr<OHOS::NWeb::MediaAVSessionMetadataAdapter>);
 
     void SetTitle(const ArkWebString& title) override;
 

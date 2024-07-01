@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCertManagerAdapterWrapper : public OHOS::NWeb::CertManagerAdapter {
 public:
-    ArkCertManagerAdapterWrapper(ArkWebRefPtr<ArkCertManagerAdapter>);
+    explicit ArkCertManagerAdapterWrapper(ArkWebRefPtr<ArkCertManagerAdapter>);
 
     uint32_t GetCertMaxSize() override;
 
