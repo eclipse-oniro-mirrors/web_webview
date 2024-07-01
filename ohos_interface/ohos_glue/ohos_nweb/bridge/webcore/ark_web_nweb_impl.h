@@ -1141,6 +1141,8 @@ public:
 
     /**
      * @brief Set url trust list.
+     *
+     * @param urlTrustList The url trust list.
      */
     /*--ark web()--*/
     int SetUrlTrustList(const ArkWebString& urlTrustList) override;
@@ -1235,6 +1237,14 @@ public:
                                    double vx,
                                    double vy,
                                    const ArkWebInt32Vector& pressedCodes) override;
+    /**
+     * @brief Set url trust list with error message.
+     *
+     * @param urlTrustList The url trust list.
+     * @param detailErrMsg The detail error message.
+     */
+    /*--ark web()--*/
+    int SetUrlTrustListWithErrMsg(const ArkWebString& urlTrustList, ArkWebString& detailErrMsg) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
