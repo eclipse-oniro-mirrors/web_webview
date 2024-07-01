@@ -1021,6 +1021,15 @@ int ArkWebNWebImpl::SetUrlTrustList(const ArkWebString& urlTrustList)
     return nweb_nweb_->SetUrlTrustList(ArkWebStringStructToClass(urlTrustList));
 }
 
+int ArkWebNWebImpl::SetUrlTrustListWithErrMsg(const ArkWebString& urlTrustList, ArkWebString& detailErrMsg)
+{
+    std::string detailMsg;
+    int res = nweb_nweb_->SetUrlTrustListWithErrMsg(ArkWebStringStructToClass(urlTrustList),
+        detailMsg);
+    detailErrMsg = ArkWebStringClassToStruct(detailMsg);
+    return res;
+}
+
 void ArkWebNWebImpl::PutSpanstringConvertHtmlCallback(
     ArkWebRefPtr<ArkWebSpanstringConvertHtmlCallback> callback) {
     if (CHECK_REF_PTR_IS_NULL(callback)) {
