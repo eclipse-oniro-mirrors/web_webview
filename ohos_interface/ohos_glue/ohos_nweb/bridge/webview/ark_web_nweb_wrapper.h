@@ -1245,6 +1245,7 @@ public:
                                    double vx,
                                    double vy,
                                    const std::vector<int32_t>& pressedCodes) override;
+
     /**
      * @brief Set url trust list with error message.
      */
@@ -1275,6 +1276,16 @@ public:
                                const std::vector<std::string>& async_method_list,
                                const int32_t object_id,
                                const std::string& permission) override;
+
+    /**
+     * @brief resize visual viewport.
+     *
+     * @param width width.
+     * @param height height.
+     * @param iskeyboard from keybord.
+     */
+    /*--ark web()--*/
+    void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
