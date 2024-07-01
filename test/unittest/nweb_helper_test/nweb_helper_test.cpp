@@ -589,5 +589,21 @@ HWTEST_F(NwebHelperTest, NWebHelper_EnableWholeWebPageDrawing_001, TestSize.Leve
 
     NWebHelper::Instance().nwebEngine_ = nullptr;
 }
+
+/**
+ * @tc.name: NWebHelper_GetAdsBlockManager_001
+ * @tc.desc: GetAdsBlockManager.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetAdsBlockManager_001, TestSize.Level1)
+{
+    auto manager = NWebHelper::Instance().GetAdsBlockManager();
+    bool result = false;
+    if (manager != nullptr) {
+        result = true;
+    }
+    EXPECT_EQ(RESULT_OK, result);
+}
 } // namespace OHOS::NWeb
 }
