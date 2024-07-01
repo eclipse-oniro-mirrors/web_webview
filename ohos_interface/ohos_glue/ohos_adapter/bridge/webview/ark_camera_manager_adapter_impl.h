@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCameraManagerAdapterImpl : public ArkCameraManagerAdapter {
 public:
-    ArkCameraManagerAdapterImpl(NWeb::CameraManagerAdapter&);
+    explicit ArkCameraManagerAdapterImpl(NWeb::CameraManagerAdapter&);
 
     int32_t Create(ArkWebRefPtr<ArkCameraStatusCallbackAdapter> cameraStatusCallback) override;
 

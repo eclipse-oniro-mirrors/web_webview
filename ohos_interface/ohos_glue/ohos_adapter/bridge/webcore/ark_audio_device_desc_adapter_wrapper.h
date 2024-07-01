@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkAudioDeviceDescAdapterWrapper : public OHOS::NWeb::AudioDeviceDescAdapter {
 public:
-    ArkAudioDeviceDescAdapterWrapper(ArkWebRefPtr<ArkAudioDeviceDescAdapter>);
+    explicit ArkAudioDeviceDescAdapterWrapper(ArkWebRefPtr<ArkAudioDeviceDescAdapter>);
 
     int32_t GetDeviceId() override;
 

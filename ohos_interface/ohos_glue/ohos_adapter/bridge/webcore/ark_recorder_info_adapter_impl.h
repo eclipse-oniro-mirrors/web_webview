@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkRecorderInfoAdapterImpl : public ArkRecorderInfoAdapter {
 public:
-    ArkRecorderInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::RecorderInfoAdapter>);
+    explicit ArkRecorderInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::RecorderInfoAdapter>);
 
     ArkWebString GetUrl() override;
 

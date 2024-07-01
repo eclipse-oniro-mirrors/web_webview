@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkClipBoardImageDataAdapterWrapper : public NWeb::ClipBoardImageDataAdapter {
 public:
-    ArkClipBoardImageDataAdapterWrapper(ArkWebRefPtr<ArkClipBoardImageDataAdapter>);
+    explicit ArkClipBoardImageDataAdapterWrapper(ArkWebRefPtr<ArkClipBoardImageDataAdapter>);
 
     NWeb::ClipBoardImageColorType GetColorType() override;
 

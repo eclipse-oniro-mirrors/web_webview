@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCameraSurfaceBufferAdapterWrapper : public OHOS::NWeb::CameraSurfaceBufferAdapter {
 public:
-    ArkCameraSurfaceBufferAdapterWrapper(ArkWebRefPtr<ArkCameraSurfaceBufferAdapter>);
+    explicit ArkCameraSurfaceBufferAdapterWrapper(ArkWebRefPtr<ArkCameraSurfaceBufferAdapter>);
 
     int32_t GetFileDescriptor() override;
 

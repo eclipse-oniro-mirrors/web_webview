@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkLocationInstanceWrapper : public NWeb::LocationInstance {
 public:
-    ArkLocationInstanceWrapper(ArkWebRefPtr<ArkLocationInstance>);
+    explicit ArkLocationInstanceWrapper(ArkWebRefPtr<ArkLocationInstance>);
 
     std::shared_ptr<NWeb::LocationProxyAdapter> CreateLocationProxyAdapter();
 

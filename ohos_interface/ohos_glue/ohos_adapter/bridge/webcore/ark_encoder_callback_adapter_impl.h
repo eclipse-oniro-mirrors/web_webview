@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkEncoderCallbackAdapterImpl : public ArkCodecCallbackAdapter {
 public:
-    ArkEncoderCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::CodecCallbackAdapter>);
+    explicit ArkEncoderCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::CodecCallbackAdapter>);
 
     void OnError(int32_t errorType, int32_t errorCode) override;
 

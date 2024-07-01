@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFCursorInfoAdapterImpl : public ArkIMFCursorInfoAdapter {
 public:
-    ArkIMFCursorInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFCursorInfoAdapter>);
+    explicit ArkIMFCursorInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFCursorInfoAdapter>);
 
     double GetLeft() override;
 

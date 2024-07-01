@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDisplayManagerAdapterImpl : public ArkDisplayManagerAdapter {
 public:
-    ArkDisplayManagerAdapterImpl(std::shared_ptr<OHOS::NWeb::DisplayManagerAdapter>);
+    explicit ArkDisplayManagerAdapterImpl(std::shared_ptr<OHOS::NWeb::DisplayManagerAdapter>);
 
     uint64_t GetDefaultDisplayId() override;
 

@@ -382,8 +382,6 @@ namespace OHOS::Webview {
             nwebResult = nweb_ptr->GetHitTestResult();
             if (nwebResult) {
                 nwebResult->SetType(ConverToWebHitTestType(nwebResult->GetType()));
-            } else {
-                nwebResult->SetType(ConverToWebHitTestType(NWeb::HitTestResult::UNKNOWN_TYPE));
             }
         }
         return nwebResult;

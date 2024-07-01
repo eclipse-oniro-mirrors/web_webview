@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCameraRotationInfoAdapterImpl : public ArkCameraRotationInfoAdapter {
 public:
-    ArkCameraRotationInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraRotationInfoAdapter>);
+    explicit ArkCameraRotationInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraRotationInfoAdapter>);
 
     int32_t GetRotation() override;
 

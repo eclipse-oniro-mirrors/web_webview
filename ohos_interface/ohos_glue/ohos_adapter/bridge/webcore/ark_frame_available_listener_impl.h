@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkFrameAvailableListenerImpl : public ArkFrameAvailableListener {
 public:
-    ArkFrameAvailableListenerImpl(std::shared_ptr<OHOS::NWeb::FrameAvailableListener>);
+    explicit ArkFrameAvailableListenerImpl(std::shared_ptr<OHOS::NWeb::FrameAvailableListener>);
 
     void* GetContext() override;
 

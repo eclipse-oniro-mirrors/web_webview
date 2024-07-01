@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkFormatAdapterImpl : public ArkFormatAdapter {
 public:
-    ArkFormatAdapterImpl(std::shared_ptr<OHOS::NWeb::FormatAdapter>);
+    explicit ArkFormatAdapterImpl(std::shared_ptr<OHOS::NWeb::FormatAdapter>);
 
     uint32_t GetWidth() override;
 

@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkLocationProxyAdapterWrapper : public OHOS::NWeb::LocationProxyAdapter {
 public:
-    ArkLocationProxyAdapterWrapper(ArkWebRefPtr<ArkLocationProxyAdapter>);
+    explicit ArkLocationProxyAdapterWrapper(ArkWebRefPtr<ArkLocationProxyAdapter>);
 
     int32_t StartLocating(std::shared_ptr<OHOS::NWeb::LocationRequestConfig> requestConfig,
         std::shared_ptr<OHOS::NWeb::LocationCallbackAdapter> callback) override;

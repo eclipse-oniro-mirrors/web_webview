@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosResourceAdapterWrapper : public OHOS::NWeb::OhosResourceAdapter {
 public:
-    ArkOhosResourceAdapterWrapper(ArkWebRefPtr<ArkOhosResourceAdapter>);
+    explicit ArkOhosResourceAdapterWrapper(ArkWebRefPtr<ArkOhosResourceAdapter>);
 
     bool GetRawFileData(const std::string& rawFile, size_t& len, uint8_t** dest, bool isSys = false) override;
 

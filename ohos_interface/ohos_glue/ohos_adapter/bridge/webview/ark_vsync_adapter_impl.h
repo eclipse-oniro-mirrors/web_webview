@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVSyncAdapterImpl : public ArkVSyncAdapter {
 public:
-    ArkVSyncAdapterImpl(NWeb::VSyncAdapter&);
+    explicit ArkVSyncAdapterImpl(NWeb::VSyncAdapter&);
 
     uint32_t RequestVsync(void* data, void* cb) override;
 
@@ -37,6 +37,7 @@ public:
     void SetOnVsyncCallback(OnVsyncCallback callback) override;
 
     void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) override;
+
 private:
     NWeb::VSyncAdapter& real_;
 

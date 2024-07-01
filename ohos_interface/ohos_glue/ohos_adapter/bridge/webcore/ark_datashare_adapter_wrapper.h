@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDatashareAdapterWrapper : public OHOS::NWeb::DatashareAdapter {
 public:
-    ArkDatashareAdapterWrapper(ArkWebRefPtr<ArkDatashareAdapter>);
+    explicit ArkDatashareAdapterWrapper(ArkWebRefPtr<ArkDatashareAdapter>);
 
     int OpenDataShareUriForRead(const std::string& uriStr) override;
     std::string GetFileDisplayName(const std::string& uriStr) override;

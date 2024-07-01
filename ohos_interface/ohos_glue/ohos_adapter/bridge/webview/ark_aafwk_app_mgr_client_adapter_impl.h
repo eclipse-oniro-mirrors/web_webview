@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAafwkAppMgrClientAdapterImpl : public ArkAafwkAppMgrClientAdapter {
 public:
-    ArkAafwkAppMgrClientAdapterImpl(std::shared_ptr<OHOS::NWeb::AafwkAppMgrClientAdapter>);
+    explicit ArkAafwkAppMgrClientAdapterImpl(std::shared_ptr<OHOS::NWeb::AafwkAppMgrClientAdapter>);
 
     int StartRenderProcess(
         const ArkWebString& renderParam, int32_t ipcFd, int32_t sharedFd, int32_t crashFd, pid_t& renderPid) override;

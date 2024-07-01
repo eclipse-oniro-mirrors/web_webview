@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioRendererAdapterImpl : public ArkAudioRendererAdapter {
 public:
-    ArkAudioRendererAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioRendererAdapter>);
+    explicit ArkAudioRendererAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioRendererAdapter>);
 
     int32_t Create(const ArkWebRefPtr<ArkAudioRendererOptionsAdapter> rendererOptions, ArkWebString& str) override;
 
