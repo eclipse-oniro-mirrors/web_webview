@@ -203,6 +203,8 @@ bool WebviewController::AccessForward()
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         access = nweb_ptr->IsNavigateForwardAllowed();
+    } else {
+        WVLOG_E("WebviewController::AccessForward nweb_ptr is null");
     }
     return access;
 }
