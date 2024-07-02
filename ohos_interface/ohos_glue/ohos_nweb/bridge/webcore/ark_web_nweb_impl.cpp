@@ -1094,4 +1094,9 @@ void ArkWebNWebImpl::WebSendTouchpadFlingEvent(double x,
     nweb_nweb_->WebSendTouchpadFlingEvent(x, y, vx, vy,
         ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes));
 }
+
+void ArkWebNWebImpl::SendAccessibilityHoverEvent(int32_t x, int32_t y)
+{
+    nweb_nweb_->SendAccessibilityHoverEvent(x, y);
+}
 } // namespace OHOS::ArkWeb
