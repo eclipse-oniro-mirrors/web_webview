@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPrintWriteResultCallbackAdapterWrapper : public NWeb::PrintWriteResultCallbackAdapter {
 public:
-    ArkPrintWriteResultCallbackAdapterWrapper(ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter>);
+    explicit ArkPrintWriteResultCallbackAdapterWrapper(ArkWebRefPtr<ArkPrintWriteResultCallbackAdapter>);
 
     void WriteResultCallback(std::string jobId, uint32_t code) override;
 

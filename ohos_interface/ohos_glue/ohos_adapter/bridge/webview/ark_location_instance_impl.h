@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkLocationInstanceImpl : public ArkLocationInstance {
 public:
-    ArkLocationInstanceImpl(NWeb::LocationInstance&);
+    explicit ArkLocationInstanceImpl(NWeb::LocationInstance&);
 
     ArkWebRefPtr<ArkLocationProxyAdapter> CreateLocationProxyAdapter() override;
 

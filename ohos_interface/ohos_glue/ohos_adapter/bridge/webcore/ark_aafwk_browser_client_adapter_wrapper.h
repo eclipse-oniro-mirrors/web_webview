@@ -22,7 +22,7 @@
 namespace OHOS::ArkWeb {
 class ArkAafwkBrowserClientAdapterWrapper : public OHOS::NWeb::AafwkBrowserClientAdapter {
 public:
-    ArkAafwkBrowserClientAdapterWrapper(ArkWebRefPtr<ArkAafwkBrowserClientAdapter>);
+    explicit ArkAafwkBrowserClientAdapterWrapper(ArkWebRefPtr<ArkAafwkBrowserClientAdapter>);
 
     void* QueryRenderSurface(int32_t surface_id) override;
 

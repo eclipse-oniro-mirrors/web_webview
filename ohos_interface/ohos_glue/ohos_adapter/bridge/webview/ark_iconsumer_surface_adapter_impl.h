@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIConsumerSurfaceAdapterImpl : public ArkIConsumerSurfaceAdapter {
 public:
-    ArkIConsumerSurfaceAdapterImpl(std::shared_ptr<OHOS::NWeb::IConsumerSurfaceAdapter>);
+    explicit ArkIConsumerSurfaceAdapterImpl(std::shared_ptr<OHOS::NWeb::IConsumerSurfaceAdapter>);
 
     int32_t RegisterConsumerListener(ArkWebRefPtr<ArkIBufferConsumerListenerAdapter> listener) override;
 

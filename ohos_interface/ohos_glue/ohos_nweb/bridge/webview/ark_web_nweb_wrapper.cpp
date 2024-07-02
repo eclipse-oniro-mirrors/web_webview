@@ -1189,6 +1189,18 @@ int ArkWebNWebWrapper::SetUrlTrustList(const std::string& urlTrustList)
     return res;
 }
 
+int ArkWebNWebWrapper::SetUrlTrustListWithErrMsg(
+    const std::string& urlTrustList, std::string& detailErrMsg)
+{
+    ArkWebString stUrlTrustList = ArkWebStringClassToStruct(urlTrustList);
+    ArkWebString stDetailErrMsg = ark_web_string_default;
+    int res = ark_web_nweb_->SetUrlTrustListWithErrMsg(stUrlTrustList, stDetailErrMsg);
+    detailErrMsg = ArkWebStringStructToClass(stDetailErrMsg);
+    ArkWebStringStructRelease(stUrlTrustList);
+    ArkWebStringStructRelease(stDetailErrMsg);
+    return res;
+}
+
 void ArkWebNWebWrapper::PutSpanstringConvertHtmlCallback(
     std::shared_ptr<OHOS::NWeb::NWebSpanstringConvertHtmlCallback> callback) {
     if (CHECK_SHARED_PTR_IS_NULL(callback)) {

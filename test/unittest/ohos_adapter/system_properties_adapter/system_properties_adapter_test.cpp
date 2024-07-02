@@ -17,6 +17,7 @@
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 
+#define private public
 #include "nweb_log.h"
 #include "system_properties_adapter_impl.h"
 
@@ -84,6 +85,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     EXPECT_NE(result, -1);
     SystemPropertiesAdapterImpl::GetInstance().GetResourceUseHapPathEnable();
     SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
     bool value = SystemPropertiesAdapterImpl::GetInstance().GetWebOptimizationValue();
     EXPECT_TRUE(value);
     system("param set web.optimization false");

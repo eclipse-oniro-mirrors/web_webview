@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMMIDeviceInfoAdapterImpl : public ArkMMIDeviceInfoAdapter {
 public:
-    ArkMMIDeviceInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::MMIDeviceInfoAdapter>);
+    explicit ArkMMIDeviceInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::MMIDeviceInfoAdapter>);
 
     int32_t GetId() override;
 

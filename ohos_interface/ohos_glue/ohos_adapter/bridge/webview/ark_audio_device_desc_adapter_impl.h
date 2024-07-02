@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioDeviceDescAdapterImpl : public ArkAudioDeviceDescAdapter {
 public:
-    ArkAudioDeviceDescAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioDeviceDescAdapter>);
+    explicit ArkAudioDeviceDescAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioDeviceDescAdapter>);
 
     int32_t GetDeviceId() override;
 

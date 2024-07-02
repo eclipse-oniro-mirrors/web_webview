@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMMIInputListenerAdapterImpl : public ArkMMIInputListenerAdapter {
 public:
-    ArkMMIInputListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::MMIInputListenerAdapter>);
+    explicit ArkMMIInputListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::MMIInputListenerAdapter>);
 
     void OnInputEvent(int32_t keyCode, int32_t keyAction) override;
 

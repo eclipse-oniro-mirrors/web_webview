@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkFlowbufferAdapterImpl : public ArkFlowbufferAdapter {
 public:
-    ArkFlowbufferAdapterImpl(std::shared_ptr<OHOS::NWeb::FlowbufferAdapter>);
+    explicit ArkFlowbufferAdapterImpl(std::shared_ptr<OHOS::NWeb::FlowbufferAdapter>);
 
     void StartPerformanceBoost() override;
 

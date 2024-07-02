@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioRendererCallbackAdapterWrapper : public OHOS::NWeb::AudioRendererCallbackAdapter {
 public:
-    ArkAudioRendererCallbackAdapterWrapper(ArkWebRefPtr<ArkAudioRendererCallbackAdapter>);
+    explicit ArkAudioRendererCallbackAdapterWrapper(ArkWebRefPtr<ArkAudioRendererCallbackAdapter>);
 
     void OnSuspend() override;
 

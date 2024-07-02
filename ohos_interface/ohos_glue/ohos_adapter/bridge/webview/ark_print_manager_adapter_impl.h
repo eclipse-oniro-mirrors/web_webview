@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPrintManagerAdapterImpl : public ArkPrintManagerAdapter {
 public:
-    ArkPrintManagerAdapterImpl(NWeb::PrintManagerAdapter&);
+    explicit ArkPrintManagerAdapterImpl(NWeb::PrintManagerAdapter&);
 
     int32_t StartPrint(
         const ArkWebStringVector& fileList, const ArkWebUint32Vector& fdList, ArkWebString& taskId) override;

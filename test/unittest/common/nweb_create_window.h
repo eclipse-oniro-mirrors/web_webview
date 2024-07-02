@@ -292,6 +292,10 @@ public:
     {
         return 0;
     }
+    int SetUrlTrustListWithErrMsg(const std::string& urlTrustList, std::string& detailErrMsg) override
+    {
+        return 0;
+    }
 };
 }
 #endif

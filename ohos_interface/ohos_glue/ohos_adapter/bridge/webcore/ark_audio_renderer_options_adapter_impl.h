@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioRendererOptionsAdapterImpl : public ArkAudioRendererOptionsAdapter {
 public:
-    ArkAudioRendererOptionsAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioRendererOptionsAdapter>);
+    explicit ArkAudioRendererOptionsAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioRendererOptionsAdapter>);
 
     int32_t GetSamplingRate() override;
 

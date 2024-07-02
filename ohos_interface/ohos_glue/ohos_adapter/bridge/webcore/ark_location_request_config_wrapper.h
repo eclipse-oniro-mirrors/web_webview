@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkLocationRequestConfigWrapper : public OHOS::NWeb::LocationRequestConfig {
 public:
-    ArkLocationRequestConfigWrapper(ArkWebRefPtr<ArkLocationRequestConfig>);
+    explicit ArkLocationRequestConfigWrapper(ArkWebRefPtr<ArkLocationRequestConfig>);
 
     void SetScenario(int32_t scenario) override;
 

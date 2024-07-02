@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDecoderCallbackAdapterWrapper : public NWeb::DecoderCallbackAdapter {
 public:
-    ArkDecoderCallbackAdapterWrapper(ArkWebRefPtr<ArkDecoderCallbackAdapter>);
+    explicit ArkDecoderCallbackAdapterWrapper(ArkWebRefPtr<ArkDecoderCallbackAdapter>);
 
     void OnError(OHOS::NWeb::ErrorType errorType, int32_t errorCode) override;
 

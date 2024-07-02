@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkCodecCallbackAdapterWapper : public NWeb::CodecCallbackAdapter {
 public:
-    ArkCodecCallbackAdapterWapper(ArkWebRefPtr<ArkCodecCallbackAdapter>);
+    explicit ArkCodecCallbackAdapterWapper(ArkWebRefPtr<ArkCodecCallbackAdapter>);
 
     void OnError(OHOS::NWeb::ErrorType errorType, int32_t errorCode) override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCameraBufferListenerAdapterImpl : public ArkCameraBufferListenerAdapter {
 public:
-    ArkCameraBufferListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraBufferListenerAdapter>);
+    explicit ArkCameraBufferListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::CameraBufferListenerAdapter>);
 
     void OnBufferAvailable(ArkWebRefPtr<ArkCameraSurfaceAdapter> surface,
         ArkWebRefPtr<ArkCameraSurfaceBufferAdapter> buffer,

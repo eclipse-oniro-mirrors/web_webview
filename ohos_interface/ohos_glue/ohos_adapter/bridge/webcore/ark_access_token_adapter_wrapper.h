@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkAccessTokenAdapterWrapper : public OHOS::NWeb::AccessTokenAdapter {
 public:
-    ArkAccessTokenAdapterWrapper(ArkWebRefPtr<ArkAccessTokenAdapter>);
+    explicit ArkAccessTokenAdapterWrapper(ArkWebRefPtr<ArkAccessTokenAdapter>);
 
     bool VerifyAccessToken(const std::string& permissionName) override;
 

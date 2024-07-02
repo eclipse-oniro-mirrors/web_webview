@@ -5820,10 +5820,12 @@ napi_value NapiWebviewController::SetUrlTrustList(napi_env env, napi_callback_in
         return result;
     }
 
-    ErrCode ret = webviewController->SetUrlTrustList(urlTrustList);
+    std::string detailMsg;
+    ErrCode ret = webviewController->SetUrlTrustList(urlTrustList, detailMsg);
     if (ret != NO_ERROR) {
         WVLOG_E("SetUrlTrustList failed, error code: %{public}d", ret);
-        BusinessError::ThrowErrorByErrcode(env, ret);
+        BusinessError::ThrowErrorByErrcode(env, ret,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_DETAIL_ERROR_MSG, detailMsg.c_str()));
         return result;
     }
     return result;
