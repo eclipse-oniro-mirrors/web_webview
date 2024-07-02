@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkMMIDeviceInfoAdapterWrapper : public NWeb::MMIDeviceInfoAdapter {
 public:
-    ArkMMIDeviceInfoAdapterWrapper(ArkWebRefPtr<ArkMMIDeviceInfoAdapter>);
+    explicit ArkMMIDeviceInfoAdapterWrapper(ArkWebRefPtr<ArkMMIDeviceInfoAdapter>);
 
     int32_t GetId() override;
 

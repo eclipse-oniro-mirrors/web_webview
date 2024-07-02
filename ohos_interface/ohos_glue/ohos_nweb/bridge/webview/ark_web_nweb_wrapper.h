@@ -1245,6 +1245,11 @@ public:
                                    double vx,
                                    double vy,
                                    const std::vector<int32_t>& pressedCodes) override;
+    /**
+     * @brief Set url trust list with error message.
+     */
+    /*--ark web()--*/
+    int SetUrlTrustListWithErrMsg(const std::string& urlTrustList, std::string& detailErrMsg) override;
 
     /**
      * @brief Send the accessibility hover event coordinate.

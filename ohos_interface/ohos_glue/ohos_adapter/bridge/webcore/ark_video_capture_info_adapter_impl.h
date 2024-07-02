@@ -22,7 +22,7 @@
 namespace OHOS::ArkWeb {
 class ArkVideoCaptureInfoAdapterImpl : public ArkVideoCaptureInfoAdapter {
 public:
-    ArkVideoCaptureInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoCaptureInfoAdapter>);
+    explicit ArkVideoCaptureInfoAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoCaptureInfoAdapter>);
 
     uint64_t GetDisplayId() override;
 

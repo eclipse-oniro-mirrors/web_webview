@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoDeviceDescriptorAdapterImpl : public ArkVideoDeviceDescriptorAdapter {
 public:
-    ArkVideoDeviceDescriptorAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoDeviceDescriptorAdapter>);
+    explicit ArkVideoDeviceDescriptorAdapterImpl(std::shared_ptr<OHOS::NWeb::VideoDeviceDescriptorAdapter>);
 
     ArkWebString GetDisplayName() override;
 

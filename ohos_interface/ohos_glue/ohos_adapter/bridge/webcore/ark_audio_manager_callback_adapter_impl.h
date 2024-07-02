@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioManagerCallbackAdapterImpl : public ArkAudioManagerCallbackAdapter {
 public:
-    ArkAudioManagerCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioManagerCallbackAdapter>);
+    explicit ArkAudioManagerCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioManagerCallbackAdapter>);
 
     void OnSuspend() override;
 

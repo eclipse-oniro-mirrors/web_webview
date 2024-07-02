@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosFileMapperImpl : public ArkOhosFileMapper {
 public:
-    ArkOhosFileMapperImpl(std::shared_ptr<OHOS::NWeb::OhosFileMapper>);
+    explicit ArkOhosFileMapperImpl(std::shared_ptr<OHOS::NWeb::OhosFileMapper>);
 
     int32_t GetFd() override;
 

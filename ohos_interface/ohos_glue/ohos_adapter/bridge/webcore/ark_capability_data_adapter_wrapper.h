@@ -23,7 +23,7 @@
 namespace OHOS::ArkWeb {
 class ArkCapabilityDataAdapterWrapper : public NWeb::CapabilityDataAdapter {
 public:
-    ArkCapabilityDataAdapterWrapper(ArkWebRefPtr<ArkCapabilityDataAdapter>);
+    explicit ArkCapabilityDataAdapterWrapper(ArkWebRefPtr<ArkCapabilityDataAdapter>);
 
     int32_t GetMaxWidth() override;
 

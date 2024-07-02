@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkCodecConfigParaAdapterWrapper : public NWeb::CodecConfigParaAdapter {
 public:
-    ArkCodecConfigParaAdapterWrapper(ArkWebRefPtr<ArkCodecConfigParaAdapter>);
+    explicit ArkCodecConfigParaAdapterWrapper(ArkWebRefPtr<ArkCodecConfigParaAdapter>);
 
     int32_t GetWidth() override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioRendererOptionsAdapterWrapper : public NWeb::AudioRendererOptionsAdapter {
 public:
-    ArkAudioRendererOptionsAdapterWrapper(ArkWebRefPtr<ArkAudioRendererOptionsAdapter>);
+    explicit ArkAudioRendererOptionsAdapterWrapper(ArkWebRefPtr<ArkAudioRendererOptionsAdapter>);
 
     NWeb::AudioAdapterSamplingRate GetSamplingRate() override;
 

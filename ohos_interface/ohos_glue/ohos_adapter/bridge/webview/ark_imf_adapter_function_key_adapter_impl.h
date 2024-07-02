@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkIMFAdapterFunctionKeyAdapterImpl : public ArkIMFAdapterFunctionKeyAdapter {
 public:
-    ArkIMFAdapterFunctionKeyAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFAdapterFunctionKeyAdapter>);
+    explicit ArkIMFAdapterFunctionKeyAdapterImpl(std::shared_ptr<OHOS::NWeb::IMFAdapterFunctionKeyAdapter>);
 
     int32_t GetEnterKeyType() override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoCaptureInfoAdapterWrapper : public NWeb::VideoCaptureInfoAdapter {
 public:
-    ArkVideoCaptureInfoAdapterWrapper(ArkWebRefPtr<ArkVideoCaptureInfoAdapter>);
+    explicit ArkVideoCaptureInfoAdapterWrapper(ArkWebRefPtr<ArkVideoCaptureInfoAdapter>);
 
     uint64_t GetDisplayId() override;
 

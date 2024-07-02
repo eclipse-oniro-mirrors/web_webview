@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkOhosBufferAdapterWrapper : public NWeb::OhosBufferAdapter {
 public:
-    ArkOhosBufferAdapterWrapper(ArkWebRefPtr<ArkOhosBufferAdapter>);
+    explicit ArkOhosBufferAdapterWrapper(ArkWebRefPtr<ArkOhosBufferAdapter>);
 
     uint8_t* GetAddr() override;
 

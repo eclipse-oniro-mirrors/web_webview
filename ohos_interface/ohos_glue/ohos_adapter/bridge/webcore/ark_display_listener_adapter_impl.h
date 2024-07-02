@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkDisplayListenerAdapterImpl : public ArkDisplayListenerAdapter {
 public:
-    ArkDisplayListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::DisplayListenerAdapter>);
+    explicit ArkDisplayListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::DisplayListenerAdapter>);
 
     void OnCreate(uint64_t displayId) override;
 

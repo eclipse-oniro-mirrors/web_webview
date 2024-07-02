@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioCapturerAdapterImpl : public ArkAudioCapturerAdapter {
 public:
-    ArkAudioCapturerAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioCapturerAdapter>);
+    explicit ArkAudioCapturerAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioCapturerAdapter>);
 
     int32_t Create(
         const ArkWebRefPtr<ArkAudioCapturerOptionsAdapter> capturerOptions, ArkWebString& cachePath) override;

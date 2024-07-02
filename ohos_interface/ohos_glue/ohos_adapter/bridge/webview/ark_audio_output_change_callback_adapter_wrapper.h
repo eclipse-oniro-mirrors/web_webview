@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioOutputChangeCallbackAdapterWrapper : public OHOS::NWeb::AudioOutputChangeCallbackAdapter {
 public:
-    ArkAudioOutputChangeCallbackAdapterWrapper(ArkWebRefPtr<ArkAudioOutputChangeCallbackAdapter>);
+    explicit ArkAudioOutputChangeCallbackAdapterWrapper(ArkWebRefPtr<ArkAudioOutputChangeCallbackAdapter>);
 
     void OnOutputDeviceChange(int32_t reason) override;
 

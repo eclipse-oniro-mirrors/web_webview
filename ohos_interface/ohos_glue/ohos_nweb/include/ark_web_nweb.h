@@ -1397,6 +1397,12 @@ public:
                                            double vx,
                                            double vy,
                                            const ArkWebInt32Vector& pressedCodes) = 0;
+    /**
+     * @brief Set url trust list with error message.
+     *
+     */
+    /*--ark web()--*/
+    virtual int SetUrlTrustListWithErrMsg(const ArkWebString& urlTrustList, ArkWebString& detailErrMsg) = 0;
 
     /**
      * @brief Send the accessibility hover event coordinate.

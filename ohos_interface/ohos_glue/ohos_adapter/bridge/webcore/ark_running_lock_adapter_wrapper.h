@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkRunningLockAdapterWrapper : public OHOS::NWeb::RunningLockAdapter {
 public:
-    ArkRunningLockAdapterWrapper(ArkWebRefPtr<ArkRunningLockAdapter>);
+    explicit ArkRunningLockAdapterWrapper(ArkWebRefPtr<ArkRunningLockAdapter>);
 
     bool IsUsed() override;
 

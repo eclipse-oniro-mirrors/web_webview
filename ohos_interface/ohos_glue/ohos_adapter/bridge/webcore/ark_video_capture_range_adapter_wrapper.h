@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkVideoCaptureRangeAdapterWrapper : public NWeb::VideoCaptureRangeAdapter {
 public:
-    ArkVideoCaptureRangeAdapterWrapper(ArkWebRefPtr<ArkVideoCaptureRangeAdapter>);
+    explicit ArkVideoCaptureRangeAdapterWrapper(ArkWebRefPtr<ArkVideoCaptureRangeAdapter>);
 
     double GetMin() override;
 

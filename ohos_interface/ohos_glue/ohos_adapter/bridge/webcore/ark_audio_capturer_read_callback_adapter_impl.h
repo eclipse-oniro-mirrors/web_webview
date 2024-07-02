@@ -23,7 +23,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAudioCapturerReadCallbackAdapterImpl : public ArkAudioCapturerReadCallbackAdapter {
 public:
-    ArkAudioCapturerReadCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioCapturerReadCallbackAdapter>);
+    explicit ArkAudioCapturerReadCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::AudioCapturerReadCallbackAdapter>);
 
     void OnReadData(size_t length) override;
 

@@ -24,7 +24,7 @@ namespace OHOS::ArkWeb {
 
 class ArkPasteBoardClientAdapterWrapper : public NWeb::PasteBoardClientAdapter {
 public:
-    ArkPasteBoardClientAdapterWrapper(ArkWebRefPtr<ArkPasteBoardClientAdapter>);
+    explicit ArkPasteBoardClientAdapterWrapper(ArkWebRefPtr<ArkPasteBoardClientAdapter>);
 
     bool GetPasteData(NWeb::PasteRecordVector& data) override;
 

@@ -26,7 +26,7 @@ namespace OHOS::ArkWeb {
 
 class ArkAafwkRenderSchedulerHostAdapterWrapper : public OHOS::NWeb::AafwkRenderSchedulerHostAdapter {
 public:
-    ArkAafwkRenderSchedulerHostAdapterWrapper(ArkWebRefPtr<ArkAafwkRenderSchedulerHostAdapter>);
+    explicit ArkAafwkRenderSchedulerHostAdapterWrapper(ArkWebRefPtr<ArkAafwkRenderSchedulerHostAdapter>);
 
     void NotifyBrowserFd(int32_t ipcFd, int32_t sharedFd, int32_t crashFd) override;
 
