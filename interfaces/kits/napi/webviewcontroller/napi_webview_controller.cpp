@@ -348,6 +348,41 @@ void JsErrorCallback(napi_env env, napi_ref jsCallback, int32_t err)
     napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
     napi_delete_reference(env, jsCallback);
 }
+
+bool ParseRegisterJavaScriptProxyParam(napi_env env, size_t argc, napi_value* argv,
+    RegisterJavaScriptProxyParam* param)
+{
+    std::string objName;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], objName)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "name", "string"));
+        return false;
+    }
+    std::vector<std::string> methodList;
+    if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_TWO], methodList)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "methodList", "array"));
+        return false;
+    }
+    std::vector<std::string> asyncMethodList;
+    if (argc == INTEGER_FOUR && !NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return false;
+    }
+    std::string permission;
+    if (argc == INTEGER_FIVE && !NapiParseUtils::ParseString(env, argv[INTEGER_FOUR], permission)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "permission", "string"));
+        return false;
+    }
+    param->env = env;
+    param->obj = argv[INTEGER_ZERO];
+    param->objName = objName;
+    param->syncMethodList = methodList;
+    param->asyncMethodList = asyncMethodList;
+    param->permission = permission;
+    return true;
+}
 } // namespace
 
 int32_t NapiWebviewController::maxFdNum_ = -1;
@@ -953,32 +988,27 @@ napi_value NapiWebviewController::InnerSetHapPath(napi_env env, napi_callback_in
 
 napi_value NapiWebviewController::InnerJsProxy(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiWebviewController::InnerJsProxy");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_FOUR;
-    napi_value argv[INTEGER_FOUR] = { 0 };
-
+    size_t argc = INTEGER_FIVE;
+    napi_value argv[INTEGER_FIVE] = { 0 };
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_FOUR) {
+    if (argc != INTEGER_FIVE) {
         WVLOG_E("Failed to run InnerJsProxy beacuse of wrong Param number.");
         return result;
     }
-
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[INTEGER_ZERO], &valueType);
     if (valueType != napi_object) {
         WVLOG_E("Failed to run InnerJsProxy beacuse of wrong Param type.");
         return result;
     }
-
     std::string objName;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], objName)) {
         WVLOG_E("Failed to run InnerJsProxy beacuse of wrong object name.");
         return result;
     }
-
     std::vector<std::string> methodList;
     bool hasSyncMethod = NapiParseUtils::ParseStringArray(env, argv[INTEGER_TWO], methodList);
     std::vector<std::string> asyncMethodList;
@@ -987,15 +1017,23 @@ napi_value NapiWebviewController::InnerJsProxy(napi_env env, napi_callback_info 
         WVLOG_E("Failed to run InnerJsProxy beacuse of empty method lists.");
         return result;
     }
-
-    WebviewController *controller = nullptr;
+    std::string permission = "";
+    NapiParseUtils::ParseString(env, argv[INTEGER_FOUR], permission);
+    WebviewController* controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller || !controller->IsInit()) {
         WVLOG_E("Failed to run InnerJsProxy. The WebviewController must be associted with a Web component.");
         return result;
     }
     controller->SetNWebJavaScriptResultCallBack();
-    controller->RegisterJavaScriptProxy(env, argv[INTEGER_ZERO], objName, methodList, asyncMethodList);
+    RegisterJavaScriptProxyParam param;
+    param.env = env;
+    param.obj = argv[INTEGER_ZERO];
+    param.objName = objName;
+    param.syncMethodList = methodList;
+    param.asyncMethodList = asyncMethodList;
+    param.permission = permission;
+    controller->RegisterJavaScriptProxy(param);
     return result;
 }
 
@@ -3002,20 +3040,17 @@ napi_value NapiWebviewController::InnerCompleteWindowNew(napi_env env, napi_call
 
 napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiWebviewController::RegisterJavaScriptProxy");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_FOUR;
-    napi_value argv[INTEGER_FOUR] = { 0 };
-
+    size_t argc = INTEGER_FIVE;
+    napi_value argv[INTEGER_FIVE] = { 0 };
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_THREE && argc != INTEGER_FOUR) {
+    if (argc != INTEGER_THREE && argc != INTEGER_FOUR && argc != INTEGER_FIVE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "three", "four"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_THREE, "three", "four", "five"));
         return result;
     }
-
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv[INTEGER_ZERO], &valueType);
     if (valueType != napi_object) {
@@ -3023,37 +3058,18 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
             NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "object", "object"));
         return result;
     }
-
-    std::string objName;
-    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], objName)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "name", "string"));
-        return result;
+    RegisterJavaScriptProxyParam param;
+    if (!ParseRegisterJavaScriptProxyParam(env, argc, argv, &param)) {
+      return result;
     }
-
-    std::vector<std::string> methodList;
-    if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_TWO], methodList)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "methodList", "array"));
-        return result;
-    }
-
-    std::vector<std::string> asyncMethodList;
-    if (argc == INTEGER_FOUR) {
-        if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-            return result;
-        }
-    }
-
-    WebviewController *controller = nullptr;
+    WebviewController* controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
     if (!controller || !controller->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     controller->SetNWebJavaScriptResultCallBack();
-    controller->RegisterJavaScriptProxy(env, argv[INTEGER_ZERO], objName, methodList, asyncMethodList);
+    controller->RegisterJavaScriptProxy(param);
     return result;
 }
 
@@ -4059,7 +4075,7 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
             return result;
-        }   
+        }
     }
 
     WebviewController *webviewController = nullptr;
@@ -4072,7 +4088,7 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
         webviewController->ScrollToWithAnime(x, y, duration);
     } else {
         webviewController->ScrollTo(x, y);
-    }   
+    }
     return result;
 }
 
@@ -4110,7 +4126,7 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
             return result;
-        }   
+        }
     }
 
     WebviewController *webviewController = nullptr;

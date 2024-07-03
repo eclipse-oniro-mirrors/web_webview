@@ -34,6 +34,14 @@
 #include "uv.h"
 
 namespace OHOS::NWeb {
+typedef struct RegisterJavaScriptProxyParam {
+    napi_env env;
+    napi_value obj;
+    std::string objName;
+    std::vector<std::string> syncMethodList;
+    std::vector<std::string> asyncMethodList;
+    std::string permission;
+} RegisterJavaScriptProxyParam;
 
 class JavaScriptOb {
 public:
@@ -233,6 +241,11 @@ public:
         return asyncMethods_;
     }
 
+    std::string GetPermission()
+    {
+        return permission_;
+    }
+
     bool HasMethod(const std::string& methodName)
     {
         if (methodName.empty()) {
@@ -348,6 +361,12 @@ public:
         asyncMethods_ = async_methods_name;
     }
 
+    void SetPermission(std::string permission)
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        permission_ = permission;
+    }
+
 private:
     static napi_status CreateNewWeakRef(napi_env env, napi_ref ref, napi_ref* new_ref)
     {
@@ -389,6 +408,10 @@ private:
     // methods_ contains sync methods and async methods.
     std::vector<std::string> methods_;
     std::vector<std::string> asyncMethods_;
+
+    // allow list
+    std::string permission_;
+
     // An object must be kept in retainedObjectSet_ either if it has
     // names or if it has a non-empty holders set.
     int namesCount_;
@@ -481,10 +504,7 @@ public:
 
     void SetUpAnnotateMethods(JavaScriptOb::ObjectID objId, std::vector<std::string>& methodNameList);
 
-    JavaScriptOb::ObjectID RegisterJavaScriptProxy(
-        napi_env env, napi_value obj, const std::string& objName,
-        const std::vector<std::string>& allMethodList,
-        const std::vector<std::string>& asyncMethodList = std::vector<std::string>());
+    JavaScriptOb::ObjectID RegisterJavaScriptProxy(RegisterJavaScriptProxyParam& param);
 
     bool DeleteJavaScriptRegister(const std::string& objName);
 

@@ -1333,7 +1333,7 @@ public:
                                  int width,
                                  int height,
                                  const WebSnapshotCallback callback) = 0;
-    
+
     /**
      * @brief Set grant file access dirs.
      */
@@ -1341,7 +1341,7 @@ public:
     virtual void SetPathAllowingUniversalAccess(const ArkWebStringVector& dirs,
                                                 const ArkWebStringVector& moduleName,
                                                 ArkWebString& errorPath) = 0;
-    
+
     /**
      * Execute an accessibility action on an accessibility node in the browser.
      * @param accessibilityId The id of the accessibility node.
@@ -1361,7 +1361,7 @@ public:
      */
     /*--ark web()--*/
     virtual void ScrollToWithAnime(float x, float y, int32_t duration) = 0;
- 
+
     /**
      * Scroll by the delta distance.
      *
@@ -1397,6 +1397,7 @@ public:
                                            double vx,
                                            double vy,
                                            const ArkWebInt32Vector& pressedCodes) = 0;
+
     /**
      * @brief Set url trust list with error message.
      *
@@ -1412,6 +1413,19 @@ public:
      */
     /*--ark web()--*/
     virtual void SendAccessibilityHoverEvent(int32_t x, int32_t y) = 0;
+
+    /**
+     * @brief RegisterArkJSfunction
+     *
+     * @param object_name  String: objector name
+     * @param method_list vector<String>: vector list, sync method list
+     * @param async_method_list vector<String>: vector list, async method list
+     * @param object_id int32_t: object id
+     * @param permission String: allow list
+     */
+    /*--ark web()--*/
+    virtual void RegisterArkJSfunction(const ArkWebString& object_name, const ArkWebStringVector& method_list,
+        const ArkWebStringVector& async_method_list, const int32_t object_id, const ArkWebString& permission) = 0;
 };
 
 } // namespace OHOS::ArkWeb

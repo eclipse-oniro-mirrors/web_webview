@@ -1230,7 +1230,7 @@ void ArkWebNWebWrapper::SetPathAllowingUniversalAccess(
     ArkWebString stErrorPath = ark_web_string_default;
 
     ark_web_nweb_->SetPathAllowingUniversalAccess(stDirs, stModuleName, stErrorPath);
-    
+
     errorPath = ArkWebStringStructToClass(stErrorPath);
     ArkWebStringVectorStructRelease(stDirs);
     ArkWebStringVectorStructRelease(stModuleName);
@@ -1285,5 +1285,23 @@ void ArkWebNWebWrapper::WebSendTouchpadFlingEvent(double x,
 void ArkWebNWebWrapper::SendAccessibilityHoverEvent(int32_t x, int32_t y)
 {
     ark_web_nweb_->SendAccessibilityHoverEvent(x, y);
+}
+
+void ArkWebNWebWrapper::RegisterArkJSfunction(const std::string& object_name,
+    const std::vector<std::string>& method_list, const std::vector<std::string>& async_method_list,
+    const int32_t object_id,
+    const std::string& permission)
+{
+    ArkWebString stName = ArkWebStringClassToStruct(object_name);
+    ArkWebStringVector stMethods = ArkWebStringVectorClassToStruct(method_list);
+    ArkWebStringVector stAsyncMethods = ArkWebStringVectorClassToStruct(async_method_list);
+    ArkWebString stPermission = ArkWebStringClassToStruct(permission);
+
+    ark_web_nweb_->RegisterArkJSfunction(stName, stMethods, stAsyncMethods, object_id, stPermission);
+
+    ArkWebStringStructRelease(stName);
+    ArkWebStringVectorStructRelease(stMethods);
+    ArkWebStringVectorStructRelease(stAsyncMethods);
+    ArkWebStringStructRelease(stPermission);
 }
 } // namespace OHOS::ArkWeb
