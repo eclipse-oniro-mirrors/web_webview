@@ -1189,7 +1189,7 @@ public:
     /*--ark web()--*/
     void SetPathAllowingUniversalAccess(const std::vector<std::string>& dirs,
         const std::vector<std::string>& moduleName, std::string& errorPath) override;
-    
+
     /**
      * Execute an accessibility action on an accessibility node in the browser.
      * @param accessibilityId The id of the accessibility node.
@@ -1251,12 +1251,36 @@ public:
                                    double vx,
                                    double vy,
                                    const std::vector<int32_t>& pressedCodes) override;
-
     /**
      * @brief Set url trust list with error message.
      */
     /*--ark web()--*/
     int SetUrlTrustListWithErrMsg(const std::string& urlTrustList, std::string& detailErrMsg) override;
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     */
+    /*--ark web()--*/
+    void SendAccessibilityHoverEvent(int32_t x, int32_t y) override;
+
+    /**
+     * @brief RegisterArkJSfunction
+     *
+     * @param object_name String: objector name
+     * @param method_list vector<String>: vector list, sync method list
+     * @param async_method_list vector<String>: vector list, async method list
+     * @param object_id int32_t: object id
+     * @param permission String: allow list
+     */
+    /*--ark web()--*/
+    void RegisterArkJSfunction(const std::string& object_name,
+                               const std::vector<std::string>& method_list,
+                               const std::vector<std::string>& async_method_list,
+                               const int32_t object_id,
+                               const std::string& permission) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

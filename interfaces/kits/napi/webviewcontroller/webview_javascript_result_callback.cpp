@@ -1699,22 +1699,21 @@ WebviewJavaScriptResultCallBack::ObjectMap WebviewJavaScriptResultCallBack::GetO
 }
 
 JavaScriptOb::ObjectID WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy(
-    napi_env env, napi_value obj, const std::string& objName,
-    const std::vector<std::string>& allMethodList,
-    const std::vector<std::string>& asyncMethodList)
+    RegisterJavaScriptProxyParam& param)
 {
-    JavaScriptOb::ObjectID objId = AddNamedObject(env, obj, objName);
+    JavaScriptOb::ObjectID objId = AddNamedObject(param.env, param.obj, param.objName);
     // set up named object method
-    if (namedObjects_.find(objName) != namedObjects_.end() && objects_[namedObjects_[objName]]) {
-        std::shared_ptr<OHOS::NWeb::JavaScriptOb> jsObj = objects_[namedObjects_[objName]];
-        jsObj->SetMethods(allMethodList);
-        jsObj->SetAsyncMethods(asyncMethodList);
+    if (namedObjects_.find(param.objName) != namedObjects_.end() && objects_[namedObjects_[param.objName]]) {
+        std::shared_ptr<OHOS::NWeb::JavaScriptOb> jsObj = objects_[namedObjects_[param.objName]];
+        jsObj->SetMethods(param.syncMethodList);
+        jsObj->SetAsyncMethods(param.asyncMethodList);
+        jsObj->SetPermission(param.permission);
     }
-    for (auto& item : allMethodList) {
+    for (auto& item : param.syncMethodList) {
         WVLOG_D(
             "WebviewJavaScriptResultCallBack::RegisterJavaScriptProxy called, "
             "objectId = %{public}d, objName = %{public}s, method = %{public}s",
-            static_cast<int32_t>(objId), objName.c_str(), item.c_str());
+            static_cast<int32_t>(objId), param.objName.c_str(), item.c_str());
     }
     return objId;
 }

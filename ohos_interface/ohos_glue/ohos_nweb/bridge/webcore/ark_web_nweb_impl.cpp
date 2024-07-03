@@ -1095,6 +1095,20 @@ void ArkWebNWebImpl::WebSendTouchpadFlingEvent(double x,
         ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes));
 }
 
+
+void ArkWebNWebImpl::SendAccessibilityHoverEvent(int32_t x, int32_t y)
+{
+    nweb_nweb_->SendAccessibilityHoverEvent(x, y);
+}
+
+void ArkWebNWebImpl::RegisterArkJSfunction(const ArkWebString& object_name, const ArkWebStringVector& method_list,
+    const ArkWebStringVector& async_method_list, const int32_t object_id, const ArkWebString& permission)
+{
+    nweb_nweb_->RegisterArkJSfunction(ArkWebStringStructToClass(object_name),
+        ArkWebStringVectorStructToClass(method_list), ArkWebStringVectorStructToClass(async_method_list), object_id,
+        ArkWebStringStructToClass(permission));
+}
+
 void ArkWebNWebImpl::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
 {
     nweb_nweb_->SetBackForwardCacheOptions(size, timeToLive);

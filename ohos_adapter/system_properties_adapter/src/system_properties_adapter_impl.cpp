@@ -18,7 +18,7 @@
 #include <securec.h>
 
 #include "init_param.h"
-#include "nweb_adapter_helper.h"
+#include "nweb_config_helper.h"
 #include "nweb_log.h"
 #include "parameter.h"
 #include "parameters.h"
@@ -126,6 +126,21 @@ ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
 
 ProductDeviceType SystemPropertiesAdapterImpl::AnalysisFromConfig()
 {
+    std::string factoryLevel = NWebConfigHelper::Instance()
+        .ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
+    if (factoryLevel.empty()) {
+        NWebConfigHelper::Instance().ReadConfigIfNeeded();
+        factoryLevel = NWebConfigHelper::Instance().
+            ParsePerfConfig(FACTORY_CONFIG_VALUE, FACTORY_LEVEL_VALUE);
+    }
+    WVLOG_D("read config factoryLevel: %{public}s ", factoryLevel.c_str());
+    if (factoryLevel == FACTORY_LEVEL_PHONE || factoryLevel == FACTORY_LEVEL_DEFAULT) {
+        return ProductDeviceType::DEVICE_TYPE_MOBILE;
+    } else if (factoryLevel == FACTORY_LEVEL_TABLET) {
+        return ProductDeviceType::DEVICE_TYPE_TABLET;
+    } else if (factoryLevel == FACTORY_LEVEL_PC) {
+        return ProductDeviceType::DEVICE_TYPE_2IN1;
+    }
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
 }
 
@@ -299,6 +314,6 @@ bool SystemPropertiesAdapterImpl::GetBoolParameter(const std::string& key, bool 
 
 std::vector<FrameRateSetting> SystemPropertiesAdapterImpl::GetLTPOConfig(const std::string& settingName)
 {
-    return std::vector<FrameRateSetting>();
+    return NWebConfigHelper::Instance().GetPerfConfig(settingName);
 }
 } // namespace OHOS::NWeb
