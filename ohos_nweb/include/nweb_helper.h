@@ -86,8 +86,6 @@ public:
     void EnableWholeWebPageDrawing();
     std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager();
 
-    void EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept);
-
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);

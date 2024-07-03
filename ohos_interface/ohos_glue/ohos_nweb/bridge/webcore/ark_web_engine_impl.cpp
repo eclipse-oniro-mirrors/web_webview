@@ -212,9 +212,4 @@ ArkWebRefPtr<ArkWebAdsBlockManager> ArkWebEngineImpl::GetAdsBlockManager()
   }
   return new ArkWebAdsBlockManagerImpl(nweb_adsBlock_manager);
 }
-
-void ArkWebEngineImpl::EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept)
-{
-    nweb_engine_->EnableBackForwardCache(enableNativeEmbed, enableMediaIntercept);
-}
 } // namespace OHOS::ArkWeb

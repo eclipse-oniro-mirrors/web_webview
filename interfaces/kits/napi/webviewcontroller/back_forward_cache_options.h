@@ -28,11 +28,8 @@ namespace NWeb {
 class BackForwardCacheOptions {
 public:
     BackForwardCacheOptions();
-    BackForwardCacheOptions(int32_t size, int32_t timeToLive);
     int32_t GetSize();
     int32_t GetTimeToLive();
-
-    napi_ref delegate_ = nullptr;
 
 private:
     int32_t size_ = 1;
@@ -42,11 +39,8 @@ private:
 class BackForwardCacheSupportFeatures {
 public:
     BackForwardCacheSupportFeatures();
-    BackForwardCacheSupportFeatures(bool nativeEmbed, bool mediaIntercept);
     bool IsEnableNativeEmbed();
     bool IsEnableMediaIntercept();
-
-    napi_ref delegate_ = nullptr;
 
 private:
     bool nativeEmbed_ = true;

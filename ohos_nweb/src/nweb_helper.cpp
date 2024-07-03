@@ -814,7 +814,7 @@ bool NWebHelper::InitAndRun(bool from_ark)
     if (backForwardCacheCmdLine_.size() != 0) {
         for (auto backForwardCacheCmdLine : backForwardCacheCmdLine_) {
             initArgs->AddArg(backForwardCacheCmdLine);
-            WVLOG_I("Add command line: %{public}s", backForwardCacheCmdLine.c_str());
+            WVLOG_I("Add command line when init web engine: %{public}s", backForwardCacheCmdLine.c_str());
         }
     }
 
@@ -1087,15 +1087,12 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
 void NWebHelper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept)
 {
     this->backForwardCacheCmdLine_.emplace_back("--enable-bfcache");
-    WVLOG_I("The value of backForwardCacheCmdLin_ size is %{public}d", this->backForwardCacheCmdLine_.size());
     if (enableNativeEmbed) {
         this->backForwardCacheCmdLine_.emplace_back("--enable-cache-native-embed");
-        WVLOG_I("The value of backForwardCacheCmdLin_ size is %{public}d", this->backForwardCacheCmdLine_.size());
     }
 
     if (enableNativeEmbed) {
         this->backForwardCacheCmdLine_.emplace_back("--enable-cache-media-intercept");
-        WVLOG_I("The value of backForwardCacheCmdLin_ size is %{public}d", this->backForwardCacheCmdLine_.size());
     }
 }
 

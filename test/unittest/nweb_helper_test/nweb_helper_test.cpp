@@ -143,6 +143,8 @@ public:
     {
         return nullptr;
     }
+
+    void EnableBackForwardCache(bool nativeEmbed, bool mediaTakeOver);
 };
 
 void NwebHelperTest::SetUpTestCase(void)
@@ -192,6 +194,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
     NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     NWebAdapterHelper::Instance().ReadConfigIfNeeded();
+    NWebHelper::Instance().EnableBackForwardCache(true, true);
     result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
     ApplicationContextMock *contextMock = new ApplicationContextMock();
