@@ -1172,14 +1172,14 @@ public:
                          int width,
                          int height,
                          const WebSnapshotCallback callback) override;
-    
+
     /**
      * @brief Set grant file access dirs.
      */
     /*--ark web()--*/
     void SetPathAllowingUniversalAccess(const ArkWebStringVector& dirs,
         const ArkWebStringVector& moduleName, ArkWebString& errorPath) override;
-    
+
     /**
      * @brief Execute an accessibility action on an accessibility node in the
      *        browser.
@@ -1253,10 +1253,25 @@ public:
     int SetUrlTrustListWithErrMsg(const ArkWebString& urlTrustList, ArkWebString& detailErrMsg) override;
 
     /**
-     * @brief set backforward cache options.
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
      */
     /*--ark web()--*/
-    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
+    void SendAccessibilityHoverEvent(int32_t x, int32_t y) override;
+
+    /**
+     * @brief RegisterArkJSfunction
+     *
+     * @param object_name  String: object name
+     * @param method_list vector<String>: vector list, method list
+     * @param async_method_list vector<String>: vector list, async method list
+     * @param object_id int32_t: object id
+     * @param permission String: allowlist
+     */
+    void RegisterArkJSfunction(const ArkWebString& object_name, const ArkWebStringVector& method_list,
+        const ArkWebStringVector& async_method_list, const int32_t object_id, const ArkWebString& permission) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

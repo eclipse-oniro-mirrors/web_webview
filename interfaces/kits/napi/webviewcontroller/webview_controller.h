@@ -208,10 +208,7 @@ public:
 
     void SetNWebJavaScriptResultCallBack();
 
-    void RegisterJavaScriptProxy(
-        napi_env env, napi_value obj, const std::string& objName,
-        const std::vector<std::string>& syncMethodList,
-        const std::vector<std::string>& asyncMethodList);
+    void RegisterJavaScriptProxy(RegisterJavaScriptProxyParam& param);
 
     ErrCode DeleteJavaScriptRegister(const std::string& objName,
         const std::vector<std::string>& methodList);
@@ -347,7 +344,7 @@ public:
                                const std::vector<uint8_t>& resource,
                                const std::map<std::string, std::string>& response_headers,
                                const uint32_t type);
-    
+
     ErrCode SetUrlTrustList(const std::string& urlTrustList, std::string& detailErrMsg);
 
     void EnableAdsBlock(bool enable);
@@ -370,12 +367,11 @@ public:
                             int32_t width,
                             int32_t height,
                             const WebSnapshotCallback callback);
-    
+
     void SetPathAllowingUniversalAccess(const std::vector<std::string>& pathList,
                                         std::string& errorPath);
-   
     void ScrollToWithAnime(float x, float y, int32_t duration) ;
-  
+
     void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration) ;
 
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);

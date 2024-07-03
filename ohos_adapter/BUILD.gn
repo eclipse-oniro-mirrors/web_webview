@@ -289,4 +289,6 @@ ohos_shared_library("nweb_ohos_adapter") {
   innerapi_tags = [ "platformsdk" ]
   part_name = "webview"
   subsystem_name = "web"
+
+  deps = [ "../ohos_nweb:web_configs" ]
 }

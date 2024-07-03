@@ -1358,7 +1358,7 @@ public:
      */
     virtual void PerformAction(int64_t accessibilityId, uint32_t action,
         const std::map<std::string, std::string>& actionArguments) {}
-        
+
     /**
      * Scroll to the position.
      *
@@ -1405,6 +1405,7 @@ public:
                                            double vx,
                                            double vy,
                                            const std::vector<int32_t>& pressedCodes) {}
+
     /**
      * @brief Set url trust list with error message.
      *
@@ -1414,6 +1415,26 @@ public:
     virtual int SetUrlTrustListWithErrMsg(const std::string& urlTrustList, std::string& detailErrMsg) {
         return 0;
     }
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     */
+    virtual void SendAccessibilityHoverEvent(int32_t x, int32_t y) {}
+
+    /**
+     * RegisterArkJSfunction
+     *
+     * @param object_name  String: object name
+     * @param method_list vector<String>: vector list, async method list
+     * @param method_list vector<String>: vector list, sync method list
+     * @param object_id int32_t: object id
+     * @param permission String: allow list
+     */
+    virtual void RegisterArkJSfunction(const std::string& object_name, const std::vector<std::string>& method_list,
+        const std::vector<std::string>& async_method_list, const int32_t object_id, const std::string& permission) {}
 };
 
 } // namespace OHOS::NWeb

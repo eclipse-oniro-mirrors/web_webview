@@ -27,6 +27,7 @@ ohos_unittest("nweb_helper_test") {
   include_dirs = [ "../common" ]
 
   deps = [
+    "$webview_path/ohos_nweb:web_configs",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
