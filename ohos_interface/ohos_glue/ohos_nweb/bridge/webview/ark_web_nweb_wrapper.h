@@ -1221,12 +1221,6 @@ public:
     void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) override;
 
     /**
-     * @brief set backforward cache options.
-     */
-    /*--ark web()--*/
-    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
-
-    /**
      * @brief Send mouse wheel event.
      */
     /*--ark web()--*/
@@ -1281,6 +1275,12 @@ public:
                                const std::vector<std::string>& async_method_list,
                                const int32_t object_id,
                                const std::string& permission) override;
+
+    /**
+     * @brief set backforward cache options.
+     */
+    /*--ark web()--*/
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

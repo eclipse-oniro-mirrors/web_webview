@@ -370,6 +370,7 @@ public:
 
     void SetPathAllowingUniversalAccess(const std::vector<std::string>& pathList,
                                         std::string& errorPath);
+
     void ScrollToWithAnime(float x, float y, int32_t duration) ;
 
     void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration) ;

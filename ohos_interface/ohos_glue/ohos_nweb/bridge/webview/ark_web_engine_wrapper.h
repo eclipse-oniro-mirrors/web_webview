@@ -76,8 +76,6 @@ public:
 
     void EnableWholeWebPageDrawing() override;
     std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager> GetAdsBlockManager() override;
-
-    void EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept) override;
 private:
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };

@@ -28,12 +28,6 @@ BackForwardCacheOptions::BackForwardCacheOptions()
     WVLOG_D("Created a BackForwardCacheOptions class.");
 }
 
-BackForwardCacheOptions::BackForwardCacheOptions(int32_t size, int32_t timeToLive)
-        :size_(size), timeToLive_(timeToLive)
-{
-    WVLOG_D("Created a BackForwardCacheOptions class. Value size: %{public}d timeToLive: %{public}d.", size_, timeToLive_);
-}
-
 int32_t BackForwardCacheOptions::GetSize() 
 {
     return size_;
@@ -47,12 +41,6 @@ int32_t BackForwardCacheOptions::GetTimeToLive()
 BackForwardCacheSupportFeatures::BackForwardCacheSupportFeatures()
 {
     WVLOG_D("Created a BackForwardCacheSupportFeatures class.");
-}
-
-BackForwardCacheSupportFeatures::BackForwardCacheSupportFeatures(bool nativeEmbed, bool mediaIntercept)
-        :nativeEmbed_(nativeEmbed), mediaIntercept_(mediaIntercept)
-{
-    WVLOG_D("Created a BackForwardCacheSupportFeatures class. Value nativeEmbed: %{public}d mediaIntercept: %{public}d.", nativeEmbed_, mediaIntercept_);
 }
 
 bool BackForwardCacheSupportFeatures::IsEnableNativeEmbed() 

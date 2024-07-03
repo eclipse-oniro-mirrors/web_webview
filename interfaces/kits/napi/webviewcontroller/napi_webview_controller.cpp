@@ -5510,7 +5510,7 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
 
     if (!NapiParseUtils::ParseBoolean(env, embedObj, nativeEmbed)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYEPS_ERROR, "nativeEmbed", "bool"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "nativeEmbed", "bool"));
         return result;
     }
 
@@ -5521,12 +5521,9 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
 
     if (!NapiParseUtils::ParseBoolean(env, mediaObj, mediaTakeOver)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYEPS_ERROR, "mediaTakeOver", "bool"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mediaTakeOver", "bool"));
         return result;
     }
-
-    WVLOG_I("The value of supported ativeEmbed is: %{public}d", nativeEmbed);
-    WVLOG_I("The value of supported mediaIntercept is: %{public}d", mediaTakeOver);
 
     NWebHelper::Instance().EnableBackForwardCache(nativeEmbed, mediaTakeOver);
     NAPI_CALL(env, napi_get_undefined(env, &result));
@@ -5558,7 +5555,7 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
 
     if (!NapiParseUtils::ParseInt32(env, sizeObj, size)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYEPS_ERROR, "size", "int"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "size", "int"));
         return result;
     }
     
@@ -5569,7 +5566,7 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
 
     if (!NapiParseUtils::ParseInt32(env, timeToLiveObj, timeToLive)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYEPS_ERROR, "timeToLive", "int"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "timeToLive", "int"));
         return result;
     }
 
@@ -5579,9 +5576,6 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-
-    WVLOG_I("The value of backforward cache option size is: %{public}d", size);
-    WVLOG_I("The value of backforward cache option timeToLive is: %{public}d", timeToLive);
 
     webviewController->SetBackForwardCacheOptions(size, timeToLive);
     NAPI_CALL(env, napi_get_undefined(env, &result));

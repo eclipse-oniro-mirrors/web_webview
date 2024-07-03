@@ -1378,11 +1378,6 @@ public:
     virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) {}
 
     /**
-     * @brief Set backforward cache options.
-     */
-    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }  
-
-    /**
      * @brief Send mouse wheel event.
      */
     virtual void WebSendMouseWheelEvent(double x,
@@ -1435,6 +1430,11 @@ public:
      */
     virtual void RegisterArkJSfunction(const std::string& object_name, const std::vector<std::string>& method_list,
         const std::vector<std::string>& async_method_list, const int32_t object_id, const std::string& permission) {}
+
+    /**
+     * @brief Set backforward cache options.
+     */
+    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }  
 };
 
 } // namespace OHOS::NWeb

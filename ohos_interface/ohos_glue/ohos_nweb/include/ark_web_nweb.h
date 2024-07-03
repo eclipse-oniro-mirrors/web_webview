@@ -1373,12 +1373,6 @@ public:
     virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) = 0;
 
     /**
-     * @brief set backforward cache options.
-     */
-    /*--ark web()--*/
-    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) = 0;
-
-    /**
      * @brief Send mouse wheel event.
      */
     /*--ark web()--*/
@@ -1432,6 +1426,12 @@ public:
     /*--ark web()--*/
     virtual void RegisterArkJSfunction(const ArkWebString& object_name, const ArkWebStringVector& method_list,
         const ArkWebStringVector& async_method_list, const int32_t object_id, const ArkWebString& permission) = 0;
+
+    /**
+     * @brief set backforward cache options.
+     */
+    /*--ark web()--*/
+    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) = 0;
 };
 
 } // namespace OHOS::ArkWeb

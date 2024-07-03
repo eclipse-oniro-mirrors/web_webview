@@ -41,32 +41,7 @@ napi_value NapiBackForwardCacheOptions::JS_Constructor(napi_env env, napi_callba
     napi_value argv[2] = {0};
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
-    BackForwardCacheOptions *options = nullptr;
-    if (argc == 0)
-        options = new BackForwardCacheOptions();
-    else if (argc == 2) {
-        int32_t size = 0;
-        if (!NapiParseUtils::ParseInt32(env, argv[0], size) || (size <= 0 || size > 50)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                    "BusinessError: 401. Parameter error. The type of param 'size' must be integer and value between 1 and 50.");
-            return thisVar;
-        }
-
-        int32_t timeToLive = 0;
-        if (!NapiParseUtils::ParseInt32(env, argv[1], timeToLive)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                    "BusinessError: 401. Parameter error. The type of param 'timeToLive' must be integer.");
-            return thisVar;
-        }
-
-        options = new BackForwardCacheOptions(size, timeToLive);
-        napi_set_named_property(env, thisVar, "size_", argv[0]);
-        napi_set_named_property(env, thisVar, "timeToLive_", argv[1]);
-    } else {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "none", "two"));
-        return thisVar;
-    }
+    BackForwardCacheOptions *options = new BackForwardCacheOptions();
 
     napi_wrap(
         env, thisVar, options,
@@ -89,32 +64,7 @@ napi_value NapiBackForwardCacheSupportFeatures::JS_Constructor(napi_env env, nap
     napi_value argv[2] = {0};
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
-    BackForwardCacheSupportFeatures *features = nullptr;
-    if (argc == 0)
-        features = new BackForwardCacheSupportFeatures();
-    else if (argc == 2) {
-        bool nativeEmbed = true;
-        if (!NapiParseUtils::ParseBoolean(env, argv[0], nativeEmbed)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "nativeEmbed", "boolean"));
-            return thisVar;
-        }
-
-        bool mediaIntercept = true;
-        if (!NapiParseUtils::ParseBoolean(env, argv[1], mediaIntercept)) {
-            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mediaIntercept", "boolean"));
-            return thisVar;
-        }
-
-        features = new BackForwardCacheSupportFeatures(nativeEmbed, mediaIntercept);
-        napi_set_named_property(env, thisVar, "nativeEmbed_", argv[0]);
-        napi_set_named_property(env, thisVar, "mediaIntercept_", argv[1]);
-    } else {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "none", "two"));
-        return thisVar;
-    }
+    BackForwardCacheSupportFeatures *features = new BackForwardCacheSupportFeatures();
 
     napi_wrap(
         env, thisVar, features,
@@ -173,7 +123,7 @@ napi_value NapiBackForwardCacheSupportFeatures::Init(napi_env env, napi_value ex
     WVLOG_D("NapiBackForwardCacheSupportFeatures::Init");
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_FUNCTION("isEnableNativeEmbed", JS_IsEnableNativeEmbed),
-        DECLARE_NAPI_FUNCTION("isEnableMediaIntercept", JS_IsEnableMediaIntercept),
+        DECLARE_NAPI_FUNCTION("isEnableMediaTakeOver", JS_IsEnableMediaTakeOver),
     };
     napi_value backForwardCacheSupportFeatures = nullptr;
     napi_define_class(env, BACK_FORWARD_CACHE_SUPPORT_FEATURES.c_str(), BACK_FORWARD_CACHE_SUPPORT_FEATURES.length(),
