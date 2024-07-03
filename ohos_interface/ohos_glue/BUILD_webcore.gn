@@ -17,7 +17,10 @@ import("//build/config/ohos/config.gni")
 #################################################
 
 config("ohos_glue_config") {
-  defines = [ "OHOS_NWEB" ]
+  defines = [
+    "OHOS_NWEB",
+    "OHOS_WEBCORE_GLUE",
+  ]
 
   include_dirs = [ "//ohos_glue" ]
 
