@@ -213,6 +213,8 @@ enum class NativeEmbedStatus {
     CREATE,
     UPDATE,
     DESTROY,
+    ENTER_BFCACHE,
+    LEAVE_BFCACHE,
 };
 
 enum class NWebFocusSource {
