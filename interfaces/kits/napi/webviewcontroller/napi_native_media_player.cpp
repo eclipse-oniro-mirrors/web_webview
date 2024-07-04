@@ -40,6 +40,8 @@ void NapiNativeMediaPlayerHandler::Init(napi_env env, napi_value value)
 
     NAPI_CALL_RETURN_VOID(env, ExportEnumReadyState(env, &value));
 
+    NAPI_CALL_RETURN_VOID(env, ExportEnumSuspendType(env, &value));
+
     NAPI_CALL_RETURN_VOID(env, ExportEnumNetworkState(env, &value));
 
     NAPI_CALL_RETURN_VOID(env, ExportEnumPlaybackStatus(env, &value));
@@ -172,16 +174,16 @@ napi_status NapiNativeMediaPlayerHandler::ExportEnumReadyState(napi_env env, nap
 
 napi_status NapiNativeMediaPlayerHandler::ExportEnumSuspendType(napi_env env, napi_value* value)
 {
-    WVLOG_D("begin to export enum suspend type state");
+    WVLOG_D("begin to export enum suspend type");
 
     const std::string NPI_SUSPEND_TYPE_ENUM_NAME = "SuspendType";
     napi_property_descriptor properties[] = {
-        DECLARE_NAPI_STATIC_PROPERTY(
-            "EnterBFCache", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::EnterBFCache))),
+        DECLARE_NAPI_STATIC_PROPERTY("EnterBackForwardCache",
+            NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::EnterBackForwardCache))),
         DECLARE_NAPI_STATIC_PROPERTY(
             "EnterBackground", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::EnterBackground))),
         DECLARE_NAPI_STATIC_PROPERTY(
-            "PausedOverTime", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::PausedOverTime))),
+            "AutoCleanup", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::AutoCleanup))),
     };
 
     napi_value enumValue = nullptr;
