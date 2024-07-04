@@ -68,7 +68,7 @@
 #include "ohos_adapter/bridge/ark_vsync_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_web_date_timezone_info_impl.h"
 #include "ohos_adapter/bridge/ark_window_adapter_impl.h"
-
+#include "ohos_adapter/bridge/ark_sensor_adapter_impl.h"
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -371,4 +371,10 @@ ArkWebRefPtr<ArkOhosImageDecoderAdapter> ArkOhosAdapterHelperImpl::CreateOhosIma
     return new ArkOhosImageDecoderAdapterImpl(shared);
 }
 
+ArkWebRefPtr<ArkSensorAdapter> ArkOhosAdapterHelperImpl::CreateSensorAdapter()
+{
+    std::unique_ptr<NWeb::SensorAdapter> adapter = real_.CreateSensorAdapter();
+    std::shared_ptr<NWeb::SensorAdapter> shared = std::move(adapter);
+    return new ArkSensorAdapterImpl(shared);
+}
 } // namespace OHOS::ArkWeb

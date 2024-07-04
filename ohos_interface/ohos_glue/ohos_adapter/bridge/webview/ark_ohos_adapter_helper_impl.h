@@ -108,6 +108,8 @@ public:
 
     ArkWebRefPtr<ArkOhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() override;
 
+    ArkWebRefPtr<ArkSensorAdapter> CreateSensorAdapter() override;
+
 private:
     NWeb::OhosAdapterHelper& real_;
 

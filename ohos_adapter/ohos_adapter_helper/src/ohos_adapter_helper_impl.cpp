@@ -70,6 +70,9 @@
 #include "system_properties_adapter_impl.h"
 #include "vsync_adapter_impl.h"
 #include "window_adapter_impl.h"
+#if defined(NWEB_SENSORS_SENSOR_ENABLE)
+#include "sensor_adapter_impl.h"
+#endif
 
 namespace OHOS::NWeb {
 // static
@@ -322,5 +325,14 @@ std::unique_ptr<MediaAVSessionAdapter> OhosAdapterHelperImpl::CreateMediaAVSessi
 std::unique_ptr<OhosImageDecoderAdapter> OhosAdapterHelperImpl::CreateOhosImageDecoderAdapter()
 {
     return std::make_unique<OhosImageDecoderAdapterImpl>();
+}
+
+std::unique_ptr<SensorAdapter> OhosAdapterHelperImpl::CreateSensorAdapter()
+{
+#if defined(NWEB_SENSORS_SENSOR_ENABLE)
+    return std::make_unique<SensorAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 } // namespace OHOS::NWeb
