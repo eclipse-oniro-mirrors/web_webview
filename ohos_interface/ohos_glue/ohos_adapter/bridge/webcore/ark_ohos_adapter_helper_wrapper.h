@@ -108,6 +108,8 @@ public:
 
     std::unique_ptr<NWeb::OhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() override;
 
+    std::unique_ptr<NWeb::SensorAdapter> CreateSensorAdapter() override;
+
 private:
     ArkWebRefPtr<ArkOhosAdapterHelper> ctocpp_;
 };
