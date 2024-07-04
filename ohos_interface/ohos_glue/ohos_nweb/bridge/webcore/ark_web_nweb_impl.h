@@ -1237,6 +1237,7 @@ public:
                                    double vx,
                                    double vy,
                                    const ArkWebInt32Vector& pressedCodes) override;
+
     /**
      * @brief Set url trust list with error message.
      *
@@ -1266,6 +1267,16 @@ public:
      */
     void RegisterArkJSfunction(const ArkWebString& object_name, const ArkWebStringVector& method_list,
         const ArkWebStringVector& async_method_list, const int32_t object_id, const ArkWebString& permission) override;
+
+    /**
+     * @brief resize visual viewport.
+     *
+     * @param width width.
+     * @param height height.
+     * @param iskeyboard from keybord.
+     */
+    /*--ark web()--*/
+    void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

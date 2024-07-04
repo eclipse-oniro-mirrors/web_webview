@@ -1426,6 +1426,16 @@ public:
     /*--ark web()--*/
     virtual void RegisterArkJSfunction(const ArkWebString& object_name, const ArkWebStringVector& method_list,
         const ArkWebStringVector& async_method_list, const int32_t object_id, const ArkWebString& permission) = 0;
+
+    /**
+     * @brief resize visual viewport.
+     *
+     * @param width width.
+     * @param height height.
+     * @param iskeyboard from keybord.
+     */
+    /*--ark web()--*/
+    virtual void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) = 0;
 };
 
 } // namespace OHOS::ArkWeb
