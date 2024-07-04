@@ -53,6 +53,7 @@
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
 #include "ohos_adapter/include/ark_soc_perf_client_adapter.h"
 #include "ohos_adapter/include/ark_system_properties_adapter.h"
+#include "ohos_adapter/include/ark_sensor_adapter.h"
 
 namespace OHOS::ArkWeb {
 
@@ -184,6 +185,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkOhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkSensorAdapter> CreateSensorAdapter() = 0;
 };
 
 } // namespace OHOS::ArkWeb

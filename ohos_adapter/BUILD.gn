@@ -102,6 +102,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "screen_capture_adapter/include",
     "soc_perf_adapter/include",
     "system_properties_adapter/include",
+    "sensor_adapter/include",
   ]
 
   public_configs = [ ":ohos_adapter_public_interface" ]
@@ -284,6 +285,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     sources += [ "media_adapter/src/media_avsession_adapter_impl.cpp" ]
     external_deps += [ "av_session:avsession_client" ]
     defines += [ "NWEB_MEDIA_AVSESSION_ENABLE" ]
+  }
+
+  if (webview_sensors_sensor_enable) {
+    sources += [ "sensor_adapter/src/sensor_adapter_impl.cpp" ]
+    external_deps += [ "sensor:sensor_interface_native" ]
+    defines += [ "NWEB_SENSORS_SENSOR_ENABLE" ]
   }
 
   innerapi_tags = [ "platformsdk" ]

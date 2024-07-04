@@ -71,6 +71,7 @@
                 "relational_store",
                 "resource_schedule_service",
                 "samgr",
+                "sensor",
                 "soc_perf",
                 "time_service",
                 "window_manager",

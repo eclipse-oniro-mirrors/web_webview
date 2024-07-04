@@ -54,6 +54,7 @@
 #include "screen_capture_adapter.h"
 #include "soc_perf_client_adapter.h"
 #include "system_properties_adapter.h"
+#include "sensor_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosAdapterHelper {
@@ -143,6 +144,8 @@ public:
     virtual std::unique_ptr<MediaAVSessionAdapter> CreateMediaAVSessionAdapter() = 0;
 
     virtual std::unique_ptr<OhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() = 0;
+
+    virtual std::unique_ptr<SensorAdapter> CreateSensorAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 
