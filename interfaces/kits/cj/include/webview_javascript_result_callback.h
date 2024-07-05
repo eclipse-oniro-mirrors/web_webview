@@ -170,7 +170,7 @@ private:
     bool ConstructArgv(void* ashmem, std::vector<std::shared_ptr<NWeb::NWebValue>> args,
     	std::vector<std::string>& argv, std::shared_ptr<JavaScriptOb> jsObj, int32_t routingId);
 
-    char* FlowbufStrAtIndex(void* mem, int flowbuf_index, int* arg_index, int* str_len);
+    char* FlowbufStrAtIndex(void* mem, int flowbufIndex, int* argIndex, int* strLen);
 
     std::shared_ptr<NWeb::NWebValue> GetJavaScriptResultSelfHelper(std::shared_ptr<JavaScriptOb> jsObj,
         const std::string& method, int32_t routingId, std::vector<std::string> argv);
