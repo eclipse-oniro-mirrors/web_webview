@@ -1436,6 +1436,20 @@ public:
      */
     /*--ark web()--*/
     virtual void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) = 0;
+
+    /**
+     * @brief set the callback of the autofill event.
+     * @param callback callback.
+     */
+    /*--ark web()--*/
+    virtual void SetAutofillCallback(ArkWebRefPtr<ArkWebMessageValueCallback> callback) = 0;
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    /*--ark web()--*/
+    virtual void FillAutofillData(const ArkWebMessage& data) = 0;
 };
 
 } // namespace OHOS::ArkWeb

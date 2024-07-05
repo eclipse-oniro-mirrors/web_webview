@@ -1439,6 +1439,18 @@ public:
      * @param iskeyboard from keybord.
      */
     virtual void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) {}
+
+    /**
+     * @brief set the callback of the autofill event.
+     * @param callback callback.
+     */
+    virtual void SetAutofillCallback(std::shared_ptr<NWebMessageValueCallback> callback) {}
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    virtual void FillAutofillData(std::shared_ptr<NWebMessage> data) {}
 };
 
 } // namespace OHOS::NWeb
