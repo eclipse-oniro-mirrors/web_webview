@@ -5494,8 +5494,8 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        NWebHelper::Instance().EnableBackForwardCache(false, false);
+        NAPI_CALL(env, napi_get_undefined(env, &result));
         return result;
     }
 
@@ -5503,26 +5503,16 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     bool mediaTakeOver = false;
     napi_value embedObj = nullptr;
     napi_value mediaObj = nullptr;
-    if (napi_get_named_property(env, argv[INTEGER_ZERO], "nativeEmbed", &embedObj) != napi_ok) {
-        WVLOG_E("Failed to get BackForwardCacheOptions nativeEmbed value.");
-        return result;
-    }
-
-    if (!NapiParseUtils::ParseBoolean(env, embedObj, nativeEmbed)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "nativeEmbed", "bool"));
-        return result;
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "nativeEmbed", &embedObj) == napi_ok) {
+        if (!NapiParseUtils::ParseBoolean(env, embedObj, nativeEmbed)) {
+            nativeEmbed = false;
+        }
     }
 
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "mediaTakeOver", &mediaObj) != napi_ok) {
-        WVLOG_E("Failed to get BackForwardCacheOptions mediaTakeOver value.");
-        return result;
-    }
-
-    if (!NapiParseUtils::ParseBoolean(env, mediaObj, mediaTakeOver)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mediaTakeOver", "bool"));
-        return result;
+        if (!NapiParseUtils::ParseBoolean(env, mediaObj, mediaTakeOver)) {
+            mediaTakeOver = false;
+        }
     }
 
     NWebHelper::Instance().EnableBackForwardCache(nativeEmbed, mediaTakeOver);
@@ -5538,9 +5528,17 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     napi_value argv[INTEGER_ONE] = { 0 };
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("InjectOfflineResource: init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
     if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        webviewController->SetBackForwardCacheOptions(
+            BackForwardCacheOptions::GetDefaultSize(), BackForwardCacheOptions::GetDefaultTimeToLive());
+        NAPI_CALL(env, napi_get_undefined(env, &result));
         return result;
     }
 
@@ -5548,33 +5546,16 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     int32_t timeToLive = 600;
     napi_value sizeObj = nullptr;
     napi_value timeToLiveObj = nullptr;
-    if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &sizeObj) != napi_ok) {
-        WVLOG_E("Failed to get BackForwardCacheOptions size value.");
-        return result;
-    }
-
-    if (!NapiParseUtils::ParseInt32(env, sizeObj, size)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "size", "int"));
-        return result;
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &sizeObj) == napi_ok) {
+        if (!NapiParseUtils::ParseInt32(env, sizeObj, size)) {
+            size = BackForwardCacheOptions::GetDefaultSize();
+        }
     }
     
-    if (napi_get_named_property(env, argv[INTEGER_ZERO], "timeToLive", &timeToLiveObj) != napi_ok) {
-        WVLOG_E("Failed to get BackForwardCacheOptions timeToLive value.");
-        return result;
-    }
-
-    if (!NapiParseUtils::ParseInt32(env, timeToLiveObj, timeToLive)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "timeToLive", "int"));
-        return result;
-    }
-
-    WebviewController* webviewController = GetWebviewController(env, info);
-    if (!webviewController) {
-        WVLOG_E("InjectOfflineResource: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
-        return result;
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "timeToLive", &timeToLiveObj) == napi_ok) {
+        if (!NapiParseUtils::ParseInt32(env, timeToLiveObj, timeToLive)) {
+            timeToLive = BackForwardCacheOptions::GetDefaultTimeToLive();
+        }
     }
 
     webviewController->SetBackForwardCacheOptions(size, timeToLive);

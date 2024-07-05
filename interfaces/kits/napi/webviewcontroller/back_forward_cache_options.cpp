@@ -38,6 +38,16 @@ int32_t BackForwardCacheOptions::GetTimeToLive()
     return timeToLive_;
 }
 
+static int32_t BackForwardCacheOptions::GetDefaultSize()
+{
+    return default_size_;
+}
+
+static int32_t BackForwardCacheOptions::GetDefaultTimeToLive()
+{
+    return default_time_to_live_;
+}
+
 BackForwardCacheSupportFeatures::BackForwardCacheSupportFeatures()
 {
     WVLOG_D("Created a BackForwardCacheSupportFeatures class.");
@@ -48,9 +58,9 @@ bool BackForwardCacheSupportFeatures::IsEnableNativeEmbed()
     return nativeEmbed_;
 }
 
-bool BackForwardCacheSupportFeatures::IsEnableMediaIntercept() 
+bool BackForwardCacheSupportFeatures::isEnableMediaTakeOver() 
 {
-    return mediaIntercept_;
+    return mediaTakeOver_;
 }
 
 }

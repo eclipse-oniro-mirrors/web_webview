@@ -45,7 +45,7 @@ public:
     static napi_value Init(napi_env env, napi_value exports);
     static napi_value JS_Constructor(napi_env env, napi_callback_info info);
     static napi_value JS_IsEnableNativeEmbed(napi_env env, napi_callback_info info);
-    static napi_value JS_IsEnableMediaIntercept(napi_env env, napi_callback_info info);
+    static napi_value JS_IsEnableMediaTakeOver(napi_env env, napi_callback_info info);
 };
 
 }

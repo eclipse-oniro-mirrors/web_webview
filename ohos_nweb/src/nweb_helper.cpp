@@ -811,11 +811,9 @@ bool NWebHelper::InitAndRun(bool from_ark)
     std::string simplifiedLocale = baseLanguage + "-" + systemRegion;
     initArgs->AddArg(std::string("--lang=").append(simplifiedLocale));
 
-    if (backForwardCacheCmdLine_.size() != 0) {
-        for (auto backForwardCacheCmdLine : backForwardCacheCmdLine_) {
-            initArgs->AddArg(backForwardCacheCmdLine);
-            WVLOG_I("Add command line when init web engine: %{public}s", backForwardCacheCmdLine.c_str());
-        }
+    for (auto backForwardCacheCmdLine : backForwardCacheCmdLine_) {
+        initArgs->AddArg(backForwardCacheCmdLine);
+        WVLOG_I("Add command line when init web engine: %{public}s", backForwardCacheCmdLine.c_str());
     }
 
     nwebEngine_->InitializeWebEngine(initArgs);
@@ -1084,7 +1082,7 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
     nwebEngine_->ClearHostIP(hostName);
 }
 
-void NWebHelper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaIntercept)
+void NWebHelper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaTakeOver)
 {
     this->backForwardCacheCmdLine_.emplace_back("--enable-bfcache");
     if (enableNativeEmbed) {
@@ -1092,7 +1090,7 @@ void NWebHelper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMedia
     }
 
     if (enableNativeEmbed) {
-        this->backForwardCacheCmdLine_.emplace_back("--enable-cache-media-intercept");
+        this->backForwardCacheCmdLine_.emplace_back("--enable-cache-media-take-over");
     }
 }
 
