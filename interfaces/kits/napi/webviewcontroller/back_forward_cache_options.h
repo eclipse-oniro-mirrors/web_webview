@@ -23,6 +23,9 @@
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 
+#define BFCACHE_DEFAULT_SIZE 1
+#define BFCACHE_DEFAULT_TIMETOLIVE 600
+
 namespace OHOS {
 namespace NWeb {
 class BackForwardCacheOptions {
@@ -30,21 +33,17 @@ public:
     BackForwardCacheOptions();
     int32_t GetSize();
     int32_t GetTimeToLive();
-    static int32_t GetDefaultSize();
-    static int32_t GetDefaultTimeToLive();
 
 private:
     int32_t size_ = 1;
     int32_t timeToLive_ = 600;
-    int32_t default_size_ = 1;
-    int32_t default_time_to_live_ = 600;
 };
 
-class BackForwardCacheSupportFeatures {
+class BackForwardCacheSupportedFeatures {
 public:
-    BackForwardCacheSupportFeatures();
+    BackForwardCacheSupportedFeatures();
     bool IsEnableNativeEmbed();
-    bool isEnableMediaTakeOver();
+    bool IsEnableMediaTakeOver();
 
 private:
     bool nativeEmbed_ = false;

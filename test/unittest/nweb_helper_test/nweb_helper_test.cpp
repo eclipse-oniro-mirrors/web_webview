@@ -144,7 +144,7 @@ public:
         return nullptr;
     }
 
-    void EnableBackForwardCache(bool nativeEmbed, bool mediaTakeOver);
+    void EnableBackForwardCache(bool nativeEmbed, bool mediaTakeOver) {}
 };
 
 void NwebHelperTest::SetUpTestCase(void)
@@ -328,6 +328,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
     NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     NWebHelper::Instance().bundlePath_.clear();
+    NWebHelper::Instance().EnableBackForwardCache(true, true);
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
     NWebHelper::Instance().SetConnectionTimeout(1);
