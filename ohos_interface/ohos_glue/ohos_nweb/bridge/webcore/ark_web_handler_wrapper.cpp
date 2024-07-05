@@ -977,4 +977,9 @@ void ArkWebHandlerWrapper::OnAdsBlocked(
   ArkWebStringVectorStructRelease(stAdsBlocked);
   ArkWebStringStructRelease(stUrl);
 }
+
+void ArkWebHandlerWrapper::OnCursorUpdate(double x, double y, double width, double height)
+{
+    ark_web_handler_->OnCursorUpdate(x, y, width, height);
+}
 } // namespace OHOS::ArkWeb
