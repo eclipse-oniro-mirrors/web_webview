@@ -1309,4 +1309,20 @@ void ArkWebNWebWrapper::ResizeVisibleViewport(uint32_t width, uint32_t height, b
 {
     ark_web_nweb_->ResizeVisibleViewport(width, height, isKeyboard);
 }
+
+void ArkWebNWebWrapper::SetAutofillCallback(std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->SetAutofillCallback(nullptr);
+    } else {
+        ark_web_nweb_->SetAutofillCallback(new ArkWebMessageValueCallbackImpl(callback));
+    }
+}
+
+void ArkWebNWebWrapper::FillAutofillData(std::shared_ptr<OHOS::NWeb::NWebMessage> data)
+{
+    ArkWebMessage ark_web_message;
+    ark_web_message.nweb_message = data;
+    ark_web_nweb_->FillAutofillData(ark_web_message);
+}
 } // namespace OHOS::ArkWeb
