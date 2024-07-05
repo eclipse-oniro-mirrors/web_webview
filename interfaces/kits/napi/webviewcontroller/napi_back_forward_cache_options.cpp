@@ -80,25 +80,25 @@ napi_value NapiBackForwardCacheSupportFeatures::JS_Constructor(napi_env env, nap
 
 napi_value NapiBackForwardCacheOptions::JS_GetSize(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiBackForwardCacheOptions::JS_GetSize");
+    WVLOG_D("NapiBackForwardCacheOptions::JS_GetSize.");
     return nullptr;
 }
 
 napi_value NapiBackForwardCacheOptions::JS_GetTimeToLive(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiBackForwardCacheOptions::JS_GetTimeToLive");
+    WVLOG_D("NapiBackForwardCacheOptions::JS_GetTimeToLive.");
     return nullptr;
 }
 
 napi_value NapiBackForwardCacheSupportFeatures::JS_IsEnableNativeEmbed(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiBackForwardCacheSupportFeatures::JS_IsEnableNativeEmbed");
+    WVLOG_D("NapiBackForwardCacheSupportFeatures::JS_IsEnableNativeEmbed.");
     return nullptr;
 }
 
-napi_value NapiBackForwardCacheSupportFeatures::JS_IsEnableMediaIntercept(napi_env env, napi_callback_info info)
+napi_value NapiBackForwardCacheSupportFeatures::JS_IsEnableMediaTakeOver(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("NapiBackForwardCacheSupportFeatures::JS_IsEnableMediaIntercept");
+    WVLOG_D("NapiBackForwardCacheSupportFeatures::JS_IsEnableMediaTakeOver.");
     return nullptr;
 }
 
