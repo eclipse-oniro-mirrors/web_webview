@@ -13,37 +13,28 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_BRIDGE_HELPER_H_
-#define ARK_WEB_BRIDGE_HELPER_H_
+#ifndef ARK_SENSOR_CALLBACK_ADAPTER_IMPL_H
+#define ARK_SENSOR_CALLBACK_ADAPTER_IMPL_H
 #pragma once
 
-#include <dlfcn.h>
-#include <string>
+#include "sensor_adapter.h"
+#include "ohos_adapter/include/ark_sensor_adapter.h"
 
 namespace OHOS::ArkWeb {
 
-class ArkWebBridgeHelper {
+class ArkSensorCallbackAdapterImpl : public ArkSensorCallbackAdapter {
 public:
-    virtual ~ArkWebBridgeHelper();
+    ArkSensorCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::SensorCallbackAdapter>);
 
-    void* LoadFuncSymbol(const std::string& funcName, bool isPrintLog = true);
-
-protected:
-    ArkWebBridgeHelper() = default;
-
-    bool LoadLibFile(int mode, const std::string& libFilePath, bool isPrintLog = true);
-
-#if !defined(OHOS_WEBCORE_GLUE)
-    bool LoadLibFile(int mode, const std::string& libNsName, const std::string& libDirPath,
-        const std::string& libFileName, bool isPrintLog = true);
-#endif
+    void UpdateOhosSensorData(double timestamp,
+        double value1, double value2, double value3, double value4) override;
 
 private:
-    void UnloadLibFile();
+    std::shared_ptr<OHOS::NWeb::SensorCallbackAdapter> real_;
 
-    void* libFileHandler_ = nullptr;
+    IMPLEMENT_REFCOUNTING(ArkSensorCallbackAdapterImpl);
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_WEB_BRIDGE_HELPER_H_
+#endif // ARK_SENSOR_CALLBACK_ADAPTER_IMPL_H

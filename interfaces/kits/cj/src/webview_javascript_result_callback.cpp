@@ -205,37 +205,37 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
 }
 
 char* WebviewJavaScriptResultCallBackImpl::FlowbufStrAtIndex(
-    void* mem, int flowbuf_index, int* arg_index, int* str_len)
+    void* mem, int flowbufIndex, int* argIndex, int* strLen)
 {
     int* header = static_cast<int*>(mem); // Cast the memory block to int* for easier access
     int offset = 0;
-    if (arg_index == nullptr) {
+    if (argIndex == nullptr) {
         return nullptr;
     }
-    if (flowbuf_index >=  MAX_ENTRIES) {
-        *arg_index = -1;
+    if (flowbufIndex >=  MAX_ENTRIES) {
+        *argIndex = -1;
         return nullptr;
     }
 
-    int* entry = header + (flowbuf_index * INDEX_SIZE);
+    int* entry = header + (flowbufIndex * INDEX_SIZE);
     if (entry == nullptr) {
         return nullptr;
     }
     if (*(entry + 1) == 0) { // Check if length is 0, indicating unused entry
-        *arg_index = -1;
+        *argIndex = -1;
         return nullptr;
     }
 
     int i = 0;
-    for (i = 0; i < flowbuf_index; i++) {
+    for (i = 0; i < flowbufIndex; i++) {
         offset += *(header + (i * INDEX_SIZE) + 1);
     }
-    if (str_len == nullptr) {
+    if (strLen == nullptr) {
         return nullptr;
     }
-    *str_len = *(header + (i * INDEX_SIZE) + 1) - 1;
+    *strLen = *(header + (i * INDEX_SIZE) + 1) - 1;
 
-    *arg_index = *entry;
+    *argIndex = *entry;
 
     char* dataSegment = static_cast<char*>(mem) + HEADER_SIZE;
     char* currentString = dataSegment + offset;
@@ -248,35 +248,35 @@ bool WebviewJavaScriptResultCallBackImpl::ConstructArgv(void* ashmem,
     std::shared_ptr<JavaScriptOb> jsObj,
     int32_t routingId)
 {
-    int arg_index = -1;
-    int curr_index = 0;
-    int flowbuf_index = 0;
-    int str_len = 0;
-    char* flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
-    flowbuf_index++;
-    while (arg_index == curr_index) {
-        argv.push_back(std::string(flowbuf_str));
-        curr_index ++;
-        flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
-        flowbuf_index++;
+    int argIndex = -1;
+    int currIndex = 0;
+    int flowbufIndex = 0;
+    int strLen = 0;
+    char* flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+    flowbufIndex++;
+    while (argIndex == currIndex) {
+        argv.push_back(std::string(flowbufStr));
+        currIndex ++;
+        flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+        flowbufIndex++;
     }
 
     for (std::shared_ptr<NWebValue> input : args) {
-        while (arg_index == curr_index) {
-            argv.push_back(std::string(flowbuf_str));
-            curr_index ++;
-            flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
-            flowbuf_index++;
+        while (argIndex == currIndex) {
+            argv.push_back(std::string(flowbufStr));
+            currIndex ++;
+            flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+            flowbufIndex++;
         }
         argv.push_back(input->GetString());
-        curr_index++;
+        currIndex++;
     }
 
-    while (arg_index == curr_index) {
-        argv.push_back(std::string(flowbuf_str));
-        curr_index ++;
-        flowbuf_str = FlowbufStrAtIndex(ashmem, flowbuf_index, &arg_index, &str_len);
-        flowbuf_index++;
+    while (argIndex == currIndex) {
+        argv.push_back(std::string(flowbufStr));
+        currIndex ++;
+        flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+        flowbufIndex++;
     }
     return true;
 }

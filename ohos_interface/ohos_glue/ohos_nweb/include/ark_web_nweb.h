@@ -1428,7 +1428,19 @@ public:
         const ArkWebStringVector& async_method_list, const int32_t object_id, const ArkWebString& permission) = 0;
 
     /**
+     * @brief resize visual viewport.
+     *
+     * @param width width.
+     * @param height height.
+     * @param iskeyboard from keybord.
+     */
+    /*--ark web()--*/
+    virtual void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) = 0;
+
+    /**
      * @brief set backforward cache options.
+     * @param size The size of the back forward cache could saved.
+     * @param timeToLive The time of the back forward cache page could stay.
      */
     /*--ark web()--*/
     virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) = 0;

@@ -1432,9 +1432,21 @@ public:
         const std::vector<std::string>& async_method_list, const int32_t object_id, const std::string& permission) {}
 
     /**
-     * @brief Set backforward cache options.
+     * @brief resize visual viewport.
+     *
+     * @param width width.
+     * @param height height.
+     * @param iskeyboard from keybord.
      */
-    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }  
+    virtual void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) {}
+
+    /**
+     * @brief Set backforward cache options.
+     *
+     * @param size The size of the back forward cache could saved.
+     * @param timeToLive The time of the back forward cache page could stay.
+     */
+    virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }
 };
 
 } // namespace OHOS::NWeb

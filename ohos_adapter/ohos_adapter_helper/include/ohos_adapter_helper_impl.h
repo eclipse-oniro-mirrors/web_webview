@@ -110,6 +110,8 @@ public:
     std::unique_ptr<MediaAVSessionAdapter> CreateMediaAVSessionAdapter() override;
 
     std::unique_ptr<OhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() override;
+
+    std::unique_ptr<SensorAdapter> CreateSensorAdapter() override;
 };
 } // namespace OHOS::NWeb
 

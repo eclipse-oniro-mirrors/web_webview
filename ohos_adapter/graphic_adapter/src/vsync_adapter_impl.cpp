@@ -170,12 +170,11 @@ void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
         return;
     }
 
-    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 120, WEBVIEW_FRAME_RATE_TYPE};
     if (frameRateLinker_) {
         if (!enabled) {
-            range = {0, RANGE_MAX_REFRESHRATE, 0, WEBVIEW_FRAME_RATE_TYPE};
+            Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 0, WEBVIEW_FRAME_RATE_TYPE};
+            frameRateLinker_->UpdateFrameRateRangeImme(range);
         }
-        frameRateLinker_->UpdateFrameRateRangeImme(range);
         frameRateLinker_->SetEnable(enabled);
         frameRateLinkerEnable_ = enabled;
     }

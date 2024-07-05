@@ -1245,6 +1245,7 @@ public:
                                    double vx,
                                    double vy,
                                    const std::vector<int32_t>& pressedCodes) override;
+
     /**
      * @brief Set url trust list with error message.
      */
@@ -1277,7 +1278,19 @@ public:
                                const std::string& permission) override;
 
     /**
+     * @brief resize visual viewport.
+     *
+     * @param width width.
+     * @param height height.
+     * @param iskeyboard from keybord.
+     */
+    /*--ark web()--*/
+    void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) override;
+
+    /**
      * @brief set backforward cache options.
+     * @param size The size of the back forward cache could saved.
+     * @param timeToLive The time of the back forward cache page could stay.
      */
     /*--ark web()--*/
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;

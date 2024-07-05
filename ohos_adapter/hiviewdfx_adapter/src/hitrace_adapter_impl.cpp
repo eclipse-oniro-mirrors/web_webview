@@ -62,7 +62,7 @@ bool HiTraceAdapterImpl::IsHiTraceEnable()
     static CachedHandle g_Handle = CachedParameterCreate("debug.hitrace.tags.enableflags", "0");
     int changed = 0;
     const char *enable = CachedParameterGetChanged(g_Handle, &changed);
-    auto tags = ConvertToInt(enable, 0);
+    uint64_t tags = static_cast<uint64_t>(ConvertToInt(enable, 0));
     firstAceEnable_ = tags & HITRACE_TAG_ACE;
     return (tags & HITRACE_TAG_NWEB);
 }
