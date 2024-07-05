@@ -24,7 +24,7 @@ namespace OHOS {
 namespace NWeb {
 
 const std::string BACK_FORWARD_CACHE_OPTIONS = "BackForwardCacheOptions";
-const std::string BACK_FORWARD_CACHE_SUPPORT_FEATURES = "BackForwardCacheSupportFeatures";
+const std::string BACK_FORWARD_CACHE_SUPPORTED_FEATURES = "BackForwardCacheSupportedFeatures";
 
 class NapiBackForwardCacheOptions {
 public:
@@ -33,19 +33,15 @@ public:
 
     static napi_value Init(napi_env env, napi_value exports);
     static napi_value JS_Constructor(napi_env env, napi_callback_info info);
-    static napi_value JS_GetSize(napi_env env, napi_callback_info info);
-    static napi_value JS_GetTimeToLive(napi_env env, napi_callback_info info);
 };
 
-class NapiBackForwardCacheSupportFeatures {
+class NapiBackForwardCacheSupportedFeatures {
 public:
-    NapiBackForwardCacheSupportFeatures() = default;
-    ~NapiBackForwardCacheSupportFeatures() = default;
+    NapiBackForwardCacheSupportedFeatures() = default;
+    ~NapiBackForwardCacheSupportedFeatures() = default;
 
     static napi_value Init(napi_env env, napi_value exports);
     static napi_value JS_Constructor(napi_env env, napi_callback_info info);
-    static napi_value JS_IsEnableNativeEmbed(napi_env env, napi_callback_info info);
-    static napi_value JS_IsEnableMediaTakeOver(napi_env env, napi_callback_info info);
 };
 
 }

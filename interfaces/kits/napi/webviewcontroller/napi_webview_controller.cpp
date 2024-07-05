@@ -5494,6 +5494,7 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
+        WVLOG_E("SetBackForwardCacheOptions: wrong number of params.");
         NWebHelper::Instance().EnableBackForwardCache(false, false);
         NAPI_CALL(env, napi_get_undefined(env, &result));
         return result;
@@ -5530,14 +5531,15 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
-        WVLOG_E("InjectOfflineResource: init webview controller error.");
+        WVLOG_E("SetBackForwardCacheOptions: Init webview controller error.");
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
     if (argc != INTEGER_ONE) {
+        WVLOG_E("SetBackForwardCacheOptions: wrong number of params.");
         webviewController->SetBackForwardCacheOptions(
-            BackForwardCacheOptions::GetDefaultSize(), BackForwardCacheOptions::GetDefaultTimeToLive());
+            BFCACHE_DEFAULT_SIZE, BFCACHE_DEFAULT_TIMETOLIVE);
         NAPI_CALL(env, napi_get_undefined(env, &result));
         return result;
     }
@@ -5548,13 +5550,13 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     napi_value timeToLiveObj = nullptr;
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &sizeObj) == napi_ok) {
         if (!NapiParseUtils::ParseInt32(env, sizeObj, size)) {
-            size = BackForwardCacheOptions::GetDefaultSize();
+            size = BFCACHE_DEFAULT_SIZE;
         }
     }
     
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "timeToLive", &timeToLiveObj) == napi_ok) {
         if (!NapiParseUtils::ParseInt32(env, timeToLiveObj, timeToLive)) {
-            timeToLive = BackForwardCacheOptions::GetDefaultTimeToLive();
+            timeToLive = BFCACHE_DEFAULT_TIMETOLIVE;
         }
     }
 

@@ -53,7 +53,7 @@ static napi_value WebViewExport(napi_env env, napi_value exports)
     WebFunctionInit(env, exports);
     NapiNativeMediaPlayerHandler::Init(env, exports);
     NapiBackForwardCacheOptions::Init(env, exports);
-    NapiBackForwardCacheSupportFeatures::Init(env, exports);
+    NapiBackForwardCacheSupportedFeatures::Init(env, exports);
     return exports;
 }
 EXTERN_C_END

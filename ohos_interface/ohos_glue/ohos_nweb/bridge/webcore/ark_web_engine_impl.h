@@ -79,8 +79,6 @@ public:
 
     ArkWebRefPtr<ArkWebAdsBlockManager> GetAdsBlockManager() override;
 
-    void EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaTakeOver) override;
-
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };

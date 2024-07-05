@@ -55,21 +55,21 @@ napi_value NapiBackForwardCacheOptions::JS_Constructor(napi_env env, napi_callba
     return thisVar;
 }
 
-napi_value NapiBackForwardCacheSupportFeatures::JS_Constructor(napi_env env, napi_callback_info info)
+napi_value NapiBackForwardCacheSupportedFeatures::JS_Constructor(napi_env env, napi_callback_info info)
 {
-    WVLOG_I("NapiBackForwardCacheSupportFeatures::JS_Constructor is called");
+    WVLOG_I("NapiBackForwardCacheSupportedFeatures::JS_Constructor is called");
     napi_value thisVar = nullptr;
     void *data = nullptr;
     size_t argc = 2;
     napi_value argv[2] = {0};
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
 
-    BackForwardCacheSupportFeatures *features = new BackForwardCacheSupportFeatures();
+    BackForwardCacheSupportedFeatures *features = new BackForwardCacheSupportedFeatures();
 
     napi_wrap(
         env, thisVar, features,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            BackForwardCacheSupportFeatures *features = (BackForwardCacheSupportFeatures *)data;
+            BackForwardCacheSupportedFeatures *features = (BackForwardCacheSupportedFeatures *)data;
             delete features;
             features = nullptr;
         },
@@ -78,59 +78,27 @@ napi_value NapiBackForwardCacheSupportFeatures::JS_Constructor(napi_env env, nap
     return thisVar;
 }
 
-napi_value NapiBackForwardCacheOptions::JS_GetSize(napi_env env, napi_callback_info info)
-{
-    WVLOG_D("NapiBackForwardCacheOptions::JS_GetSize.");
-    return nullptr;
-}
-
-napi_value NapiBackForwardCacheOptions::JS_GetTimeToLive(napi_env env, napi_callback_info info)
-{
-    WVLOG_D("NapiBackForwardCacheOptions::JS_GetTimeToLive.");
-    return nullptr;
-}
-
-napi_value NapiBackForwardCacheSupportFeatures::JS_IsEnableNativeEmbed(napi_env env, napi_callback_info info)
-{
-    WVLOG_D("NapiBackForwardCacheSupportFeatures::JS_IsEnableNativeEmbed.");
-    return nullptr;
-}
-
-napi_value NapiBackForwardCacheSupportFeatures::JS_IsEnableMediaTakeOver(napi_env env, napi_callback_info info)
-{
-    WVLOG_D("NapiBackForwardCacheSupportFeatures::JS_IsEnableMediaTakeOver.");
-    return nullptr;
-}
-
 napi_value NapiBackForwardCacheOptions::Init(napi_env env, napi_value exports)
 {
     WVLOG_D("NapiBackForwardCacheOptions::Init");
-    napi_property_descriptor properties[] = {
-        DECLARE_NAPI_FUNCTION("getSize", JS_GetSize),
-        DECLARE_NAPI_FUNCTION("getTimeToLive", JS_GetTimeToLive),
-    };
     napi_value backForwardCacheOptions = nullptr;
-    napi_define_class(env, BACK_FORWARD_CACHE_OPTIONS.c_str(), BACK_FORWARD_CACHE_OPTIONS.length(),
-        JS_Constructor, nullptr,
-        sizeof(properties) / sizeof(properties[0]), properties, &backForwardCacheOptions);
+    napi_define_class(env, BACK_FORWARD_CACHE_OPTIONS.c_str(),
+        BACK_FORWARD_CACHE_OPTIONS.length(),
+        JS_Constructor, nullptr, 0, nullptr, &backForwardCacheOptions);
     napi_set_named_property(env, exports, BACK_FORWARD_CACHE_OPTIONS.c_str(),
         backForwardCacheOptions);
     return exports;
 }
 
-napi_value NapiBackForwardCacheSupportFeatures::Init(napi_env env, napi_value exports)
+napi_value NapiBackForwardCacheSupportedFeatures::Init(napi_env env, napi_value exports)
 {
-    WVLOG_D("NapiBackForwardCacheSupportFeatures::Init");
-    napi_property_descriptor properties[] = {
-        DECLARE_NAPI_FUNCTION("isEnableNativeEmbed", JS_IsEnableNativeEmbed),
-        DECLARE_NAPI_FUNCTION("isEnableMediaTakeOver", JS_IsEnableMediaTakeOver),
-    };
-    napi_value backForwardCacheSupportFeatures = nullptr;
-    napi_define_class(env, BACK_FORWARD_CACHE_SUPPORT_FEATURES.c_str(), BACK_FORWARD_CACHE_SUPPORT_FEATURES.length(),
-        JS_Constructor, nullptr,
-        sizeof(properties) / sizeof(properties[0]), properties, &backForwardCacheSupportFeatures);
-    napi_set_named_property(env, exports, BACK_FORWARD_CACHE_SUPPORT_FEATURES.c_str(),
-        backForwardCacheSupportFeatures);
+    WVLOG_D("NapiBackForwardCacheSupportedFeatures::Init");
+    napi_value backForwardCacheSupportedFeatures = nullptr;
+    napi_define_class(env, BACK_FORWARD_CACHE_SUPPORTED_FEATURES.c_str(),
+        BACK_FORWARD_CACHE_SUPPORTED_FEATURES.length(),
+        JS_Constructor, nullptr, 0, nullptr, &backForwardCacheSupportedFeatures);
+    napi_set_named_property(env, exports, BACK_FORWARD_CACHE_SUPPORTED_FEATURES.c_str(),
+        backForwardCacheSupportedFeatures);
     return exports;
 }
 

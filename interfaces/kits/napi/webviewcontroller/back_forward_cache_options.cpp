@@ -38,27 +38,17 @@ int32_t BackForwardCacheOptions::GetTimeToLive()
     return timeToLive_;
 }
 
-static int32_t BackForwardCacheOptions::GetDefaultSize()
+BackForwardCacheSupportedFeatures::BackForwardCacheSupportedFeatures()
 {
-    return default_size_;
+    WVLOG_D("Created a BackForwardCacheSupportedFeatures class.");
 }
 
-static int32_t BackForwardCacheOptions::GetDefaultTimeToLive()
-{
-    return default_time_to_live_;
-}
-
-BackForwardCacheSupportFeatures::BackForwardCacheSupportFeatures()
-{
-    WVLOG_D("Created a BackForwardCacheSupportFeatures class.");
-}
-
-bool BackForwardCacheSupportFeatures::IsEnableNativeEmbed() 
+bool BackForwardCacheSupportedFeatures::IsEnableNativeEmbed() 
 {
     return nativeEmbed_;
 }
 
-bool BackForwardCacheSupportFeatures::isEnableMediaTakeOver() 
+bool BackForwardCacheSupportedFeatures::IsEnableMediaTakeOver() 
 {
     return mediaTakeOver_;
 }
