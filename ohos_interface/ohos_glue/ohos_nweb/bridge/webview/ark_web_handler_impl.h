@@ -557,6 +557,9 @@ public:
     void OnCustomKeyboardClose() override;
 
     void OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) override;
+
+    void OnCursorUpdate(double x, double y, double width, double height) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

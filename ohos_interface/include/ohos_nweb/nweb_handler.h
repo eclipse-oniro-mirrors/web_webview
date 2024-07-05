@@ -966,6 +966,14 @@ public:
      *
      */
     virtual void OnAdsBlocked(const std::string& url, const std::vector<std::string>& adsBlocked) {}
+
+    /**
+     * @brief called when the cursor info is updated.
+     * 
+     * @param x, y relative coordinates within web components of the cursor
+     * @param width, height width and height of the cursor
+     */
+    virtual void OnCursorUpdate(double x, double y, double width, double height) {}
 };
 
 } // namespace OHOS::NWeb

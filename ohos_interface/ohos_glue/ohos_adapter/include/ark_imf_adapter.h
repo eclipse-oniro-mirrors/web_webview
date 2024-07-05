@@ -72,6 +72,12 @@ public:
 
     /*--ark web()--*/
     virtual uint32_t GetWindowId() = 0;
+
+    /*--ark web()--*/
+    virtual double GetPositionY() = 0;
+
+    /*--ark web()--*/
+    virtual double GetHeight() = 0;
 };
 
 /*--ark web(source=webview)--*/

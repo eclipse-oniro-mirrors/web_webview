@@ -300,9 +300,13 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
         .width = config->GetCursorInfo()->GetWidth(),
         .height = config->GetCursorInfo()->GetHeight() };
 
-    MiscServices::TextConfig textConfig = {
-        .inputAttribute = inputAttribute, .cursorInfo = imfInfo, .windowId = config->GetWindowId()
-    };
+    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute,
+        .cursorInfo = imfInfo,
+        .windowId = config->GetWindowId(),
+        .positionY = config->GetPositionY(),
+        .height = config->GetHeight() };
+    WVLOG_I("web inputmethod attach, isShowKeyboard=%{public}d, textConfig=%{public}s", isShowKeyboard,
+        textConfig.ToString().c_str());
     int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
