@@ -57,6 +57,7 @@
 #include "ohos_adapter/bridge/ark_print_manager_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_running_lock_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_screen_capture_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_sensor_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_soc_perf_client_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_surface_buffer_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_system_properties_adapter_wrapper.h"
@@ -448,4 +449,14 @@ std::unique_ptr<NWeb::OhosImageDecoderAdapter> ArkOhosAdapterHelperWrapper::Crea
     return std::make_unique<ArkOhosImageDecoderAdapterWrapper>(adapter);
 }
 
+std::unique_ptr<NWeb::SensorAdapter> ArkOhosAdapterHelperWrapper::CreateSensorAdapter()
+{
+    ArkWebRefPtr<ArkSensorAdapter> adapter = ctocpp_->CreateSensorAdapter();
+
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return std::make_unique<ArkSensorAdapterWrapper>(adapter);
+}
 } // namespace OHOS::ArkWeb
