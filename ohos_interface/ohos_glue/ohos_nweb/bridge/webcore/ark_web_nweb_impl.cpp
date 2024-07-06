@@ -1112,4 +1112,9 @@ void ArkWebNWebImpl::ResizeVisibleViewport(uint32_t width, uint32_t height, bool
 {
     nweb_nweb_->ResizeVisibleViewport(width, height, isKeyboard);
 }
+
+void ArkWebNWebImpl::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
+{
+    nweb_nweb_->SetBackForwardCacheOptions(size, timeToLive);
+}
 } // namespace OHOS::ArkWeb
