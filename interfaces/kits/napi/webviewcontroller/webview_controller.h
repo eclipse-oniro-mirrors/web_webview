@@ -21,6 +21,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "back_forward_cache_options.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -373,6 +374,8 @@ public:
     void ScrollToWithAnime(float x, float y, int32_t duration) ;
 
     void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration) ;
+
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
 private:
     int ConverToWebHitTestType(int hitType);
 

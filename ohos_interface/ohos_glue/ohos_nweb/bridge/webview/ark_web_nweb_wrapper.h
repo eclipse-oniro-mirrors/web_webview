@@ -1286,6 +1286,14 @@ public:
      */
     /*--ark web()--*/
     void ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard) override;
+
+    /**
+     * @brief set backforward cache options.
+     * @param size The size of the back forward cache could saved.
+     * @param timeToLive The time of the back forward cache page could stay.
+     */
+    /*--ark web()--*/
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

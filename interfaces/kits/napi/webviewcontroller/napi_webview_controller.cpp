@@ -44,6 +44,8 @@
 #include "arkweb_scheme_handler.h"
 #include "web_scheme_handler_request.h"
 
+#include "back_forward_cache_options.h"
+
 namespace OHOS {
 namespace NWeb {
 using namespace NWebError;
@@ -525,6 +527,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("webPageSnapshot", NapiWebviewController::WebPageSnapshot),
         DECLARE_NAPI_FUNCTION("setPathAllowingUniversalAccess",
             NapiWebviewController::SetPathAllowingUniversalAccess),
+        DECLARE_NAPI_STATIC_FUNCTION("enableBackForwardCache", NapiWebviewController::EnableBackForwardCache),
+        DECLARE_NAPI_FUNCTION("setBackForwardCacheOptions", NapiWebviewController::SetBackForwardCacheOptions),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -5479,6 +5483,86 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     }
 
     return promise;
+}
+
+napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("SetBackForwardCacheOptions: wrong number of params.");
+        NWebHelper::Instance().EnableBackForwardCache(false, false);
+        NAPI_CALL(env, napi_get_undefined(env, &result));
+        return result;
+    }
+
+    bool nativeEmbed = false;
+    bool mediaTakeOver = false;
+    napi_value embedObj = nullptr;
+    napi_value mediaObj = nullptr;
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "nativeEmbed", &embedObj) == napi_ok) {
+        if (!NapiParseUtils::ParseBoolean(env, embedObj, nativeEmbed)) {
+            nativeEmbed = false;
+        }
+    }
+
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "mediaTakeOver", &mediaObj) != napi_ok) {
+        if (!NapiParseUtils::ParseBoolean(env, mediaObj, mediaTakeOver)) {
+            mediaTakeOver = false;
+        }
+    }
+
+    NWebHelper::Instance().EnableBackForwardCache(nativeEmbed, mediaTakeOver);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        WVLOG_E("SetBackForwardCacheOptions: Init webview controller error.");
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("SetBackForwardCacheOptions: wrong number of params.");
+        webviewController->SetBackForwardCacheOptions(
+            BFCACHE_DEFAULT_SIZE, BFCACHE_DEFAULT_TIMETOLIVE);
+        NAPI_CALL(env, napi_get_undefined(env, &result));
+        return result;
+    }
+
+    int32_t size = 1;
+    int32_t timeToLive = 600;
+    napi_value sizeObj = nullptr;
+    napi_value timeToLiveObj = nullptr;
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &sizeObj) == napi_ok) {
+        if (!NapiParseUtils::ParseInt32(env, sizeObj, size)) {
+            size = BFCACHE_DEFAULT_SIZE;
+        }
+    }
+    
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "timeToLive", &timeToLiveObj) == napi_ok) {
+        if (!NapiParseUtils::ParseInt32(env, timeToLiveObj, timeToLive)) {
+            timeToLive = BFCACHE_DEFAULT_TIMETOLIVE;
+        }
+    }
+
+    webviewController->SetBackForwardCacheOptions(size, timeToLive);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
 }
 
 napi_value NapiWebviewController::WarmupServiceWorker(napi_env env, napi_callback_info info)
