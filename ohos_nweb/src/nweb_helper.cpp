@@ -811,6 +811,11 @@ bool NWebHelper::InitAndRun(bool from_ark)
     std::string simplifiedLocale = baseLanguage + "-" + systemRegion;
     initArgs->AddArg(std::string("--lang=").append(simplifiedLocale));
 
+    for (auto backForwardCacheCmdLine : backForwardCacheCmdLine_) {
+        initArgs->AddArg(backForwardCacheCmdLine);
+        WVLOG_I("Add command line when init web engine: %{public}s", backForwardCacheCmdLine.c_str());
+    }
+
     nwebEngine_->InitializeWebEngine(initArgs);
     return true;
 }
@@ -1075,6 +1080,18 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
     }
 
     nwebEngine_->ClearHostIP(hostName);
+}
+
+void NWebHelper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaTakeOver)
+{
+    this->backForwardCacheCmdLine_.emplace_back("--enable-bfcache");
+    if (enableNativeEmbed) {
+        this->backForwardCacheCmdLine_.emplace_back("--enable-cache-native-embed");
+    }
+
+    if (enableNativeEmbed) {
+        this->backForwardCacheCmdLine_.emplace_back("--enable-cache-media-take-over");
+    }
 }
 
 void NWebHelper::EnableWholeWebPageDrawing()

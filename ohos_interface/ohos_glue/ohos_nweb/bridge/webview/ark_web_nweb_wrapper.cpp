@@ -1310,6 +1310,11 @@ void ArkWebNWebWrapper::ResizeVisibleViewport(uint32_t width, uint32_t height, b
     ark_web_nweb_->ResizeVisibleViewport(width, height, isKeyboard);
 }
 
+void ArkWebNWebWrapper::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
+{
+    ark_web_nweb_->SetBackForwardCacheOptions(size, timeToLive);
+}
+
 void ArkWebNWebWrapper::SetAutofillCallback(std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback)
 {
     if (CHECK_SHARED_PTR_IS_NULL(callback)) {

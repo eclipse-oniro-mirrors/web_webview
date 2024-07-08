@@ -33,6 +33,8 @@ const std::string NWEB_AUTOFILL_EVENT_UPDATE = "update";
 const std::string NWEB_AUTOFILL_EVENT_CLOSE = "close";
 
 const std::string NWEB_AUTOFILL_NAME = "name";
+const std::string NWEB_AUTOFILL_FAMILY_NAME = "family-name";
+const std::string NWEB_AUTOFILL_GIVEN_NAME = "given-name";
 const std::string NWEB_AUTOFILL_NICKNAME = "nickname";
 const std::string NWEB_AUTOFILL_EMAIL = "email";
 const std::string NWEB_AUTOFILL_STREET_ADDRESS = "street-address";
@@ -46,7 +48,6 @@ enum NWebAutofillEvent {
     UPDATE,
     CLOSE,
 };
-
 
 } // namespace OHOS::NWeb
 
