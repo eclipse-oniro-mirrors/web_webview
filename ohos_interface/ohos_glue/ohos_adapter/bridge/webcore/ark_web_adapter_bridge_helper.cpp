@@ -22,12 +22,6 @@ namespace OHOS::ArkWeb {
 
 const std::string LIB_FILE_NAME = "libohos_adapter_glue_source.z.so";
 
-#if defined(__aarch64__) || defined(__x86_64__)
-const std::string LIB_DIR_PATH = "/system/lib64";
-#else
-const std::string LIB_DIR_PATH = "/system/lib";
-#endif
-
 ArkWebAdapterBridgeHelper& ArkWebAdapterBridgeHelper::GetInstance(bool isPrintLog)
 {
     static ArkWebAdapterBridgeHelper helper;
@@ -38,7 +32,7 @@ ArkWebAdapterBridgeHelper& ArkWebAdapterBridgeHelper::GetInstance(bool isPrintLo
 
 bool ArkWebAdapterBridgeHelper::Init(bool isPrintLog)
 {
-    return LoadLibFile(RTLD_LAZY, LIB_DIR_PATH + "/" + LIB_FILE_NAME, isPrintLog);
+    return LoadLibFile(RTLD_LAZY, LIB_FILE_NAME, isPrintLog);
 }
 
 } // namespace OHOS::ArkWeb

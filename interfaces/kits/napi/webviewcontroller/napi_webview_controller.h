@@ -348,6 +348,10 @@ private:
 
     static napi_value SetPathAllowingUniversalAccess(napi_env env, napi_callback_info info);
 
+    static napi_value EnableBackForwardCache(napi_env env, napi_callback_info info);
+
+    static napi_value SetBackForwardCacheOptions(napi_env env, napi_callback_info info);
+
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
     };

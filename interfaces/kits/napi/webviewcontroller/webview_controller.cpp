@@ -1973,5 +1973,15 @@ void WebviewController::ScrollByWithAnime(float deltaX, float deltaY, int32_t du
     }
     return;
 }
+
+void WebviewController::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return;
+    }
+
+    nweb_ptr->SetBackForwardCacheOptions(size, timeToLive);
+}
 } // namespace NWeb
 } // namespace OHOS

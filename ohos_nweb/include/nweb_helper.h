@@ -86,6 +86,8 @@ public:
     void EnableWholeWebPageDrawing();
     std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager();
 
+    void EnableBackForwardCache(bool enableNativeEmbed, bool enableMediaTakeOver);
+
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);
@@ -97,6 +99,7 @@ private:
     std::string bundlePath_;
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::string customSchemeCmdLine_;
+    std::vector<std::string> backForwardCacheCmdLine_;
 };
 } // namespace OHOS::NWeb
 
