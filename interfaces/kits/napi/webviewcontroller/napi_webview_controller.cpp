@@ -1152,11 +1152,12 @@ napi_value NapiWebviewController::OnActive(napi_env env, napi_callback_info info
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
+        WVLOG_E("NapiWebviewController::OnActive get controller failed");
         return nullptr;
     }
 
     webviewController->OnActive();
-    WVLOG_D("The web component has been successfully activated");
+    WVLOG_I("The web component has been successfully activated");
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
@@ -1166,11 +1167,12 @@ napi_value NapiWebviewController::OnInactive(napi_env env, napi_callback_info in
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
+        WVLOG_E("NapiWebviewController::OnInactive get controller failed");
         return nullptr;
     }
 
     webviewController->OnInactive();
-    WVLOG_D("The web component has been successfully inactivated");
+    WVLOG_I("The web component has been successfully inactivated");
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
