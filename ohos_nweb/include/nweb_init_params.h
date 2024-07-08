@@ -22,201 +22,235 @@ namespace OHOS::NWeb {
 
 class NWebDOHConfigImpl : public NWebDOHConfig {
 public:
-  NWebDOHConfigImpl() = default;
-  ~NWebDOHConfigImpl() = default;
+    NWebDOHConfigImpl() = default;
+    ~NWebDOHConfigImpl() = default;
 
-  void SetMode(int mode) {
-    mode_ = mode;
-  }
+    void SetMode(int mode)
+    {
+        mode_ = mode;
+    }
 
-  int GetMode() override {
-    return mode_;
-  }
+    int GetMode() override
+    {
+        return mode_;
+    }
 
-  void SetConfig(const std::string &config) {
-    config_ = config;
-  }
+    void SetConfig(const std::string& config)
+    {
+        config_ = config;
+    }
 
-  std::string GetConfig() override {
-    return config_;
-  }
+    std::string GetConfig() override
+    {
+        return config_;
+    }
 
 private:
-  int mode_ = -1;
-  std::string config_;
+    int mode_ = -1;
+    std::string config_;
 };
 
 class NWebCreateInfoImpl : public NWebCreateInfo {
 public:
-  NWebCreateInfoImpl() = default;
-  ~NWebCreateInfoImpl() = default;
+    NWebCreateInfoImpl() = default;
+    ~NWebCreateInfoImpl() = default;
 
-  void SetWidth(uint32_t width) {
-    width_ = width;
-  }
+    void SetWidth(uint32_t width)
+    {
+        width_ = width;
+    }
 
-  uint32_t GetWidth() override {
-    return width_;
-  }
+    uint32_t GetWidth() override
+    {
+        return width_;
+    }
 
-  void SetHeight(uint32_t height) {
-    height_ = height;
-  }
+    void SetHeight(uint32_t height)
+    {
+        height_ = height;
+    }
 
-  uint32_t GetHeight() override {
-    return height_;
-  }
+    uint32_t GetHeight() override
+    {
+        return height_;
+    }
 
-  void SetIsIncognitoMode(bool isIncognitoMode) {
-    isIncognitoMode_ = isIncognitoMode;
-  }
+    void SetIsIncognitoMode(bool isIncognitoMode)
+    {
+        isIncognitoMode_ = isIncognitoMode;
+    }
 
-  bool GetIsIncognitoMode() override {
-    return isIncognitoMode_;
-  }
+    bool GetIsIncognitoMode() override
+    {
+        return isIncognitoMode_;
+    }
 
-  void SetProducerSurface(void *producerSurface) {
-    producerSurface_ = producerSurface;
-  }
+    void SetProducerSurface(void* producerSurface)
+    {
+        producerSurface_ = producerSurface;
+    }
 
-  void *GetProducerSurface() override {
-    return producerSurface_;
-  }
+    void* GetProducerSurface() override
+    {
+        return producerSurface_;
+    }
 
-  void SetEnhanceSurfaceInfo(void *enhanceSurfaceInfo) {
-    enhanceSurfaceInfo_ = enhanceSurfaceInfo;
-  }
+    void SetEnhanceSurfaceInfo(void* enhanceSurfaceInfo)
+    {
+        enhanceSurfaceInfo_ = enhanceSurfaceInfo;
+    }
 
-  void *GetEnhanceSurfaceInfo() override {
-    return enhanceSurfaceInfo_;
-  }
+    void* GetEnhanceSurfaceInfo() override
+    {
+        return enhanceSurfaceInfo_;
+    }
 
-  void SetEngineInitArgs(std::shared_ptr<NWebEngineInitArgs> initArgs) {
-    initArgs_ = initArgs;
-  }
+    void SetEngineInitArgs(std::shared_ptr<NWebEngineInitArgs> initArgs)
+    {
+        initArgs_ = initArgs;
+    }
 
-  std::shared_ptr<NWebEngineInitArgs> GetEngineInitArgs() override {
-    return initArgs_;
-  }
+    std::shared_ptr<NWebEngineInitArgs> GetEngineInitArgs() override
+    {
+        return initArgs_;
+    }
 
-  void SetOutputFrameCallback(
-      std::shared_ptr<NWebOutputFrameCallback> outputFrameCallback) {
-    outputFrameCallback_ = outputFrameCallback;
-  }
+    void SetOutputFrameCallback(std::shared_ptr<NWebOutputFrameCallback> outputFrameCallback)
+    {
+        outputFrameCallback_ = outputFrameCallback;
+    }
 
-  std::shared_ptr<NWebOutputFrameCallback> GetOutputFrameCallback() override {
-    return outputFrameCallback_;
-  }
+    std::shared_ptr<NWebOutputFrameCallback> GetOutputFrameCallback() override
+    {
+        return outputFrameCallback_;
+    }
 
 private:
-  uint32_t width_ = 0;
-  uint32_t height_ = 0;
+    uint32_t width_ = 0;
+    uint32_t height_ = 0;
 
-  bool isIncognitoMode_ = false;
+    bool isIncognitoMode_ = false;
 
-  void *producerSurface_ = nullptr;
-  void *enhanceSurfaceInfo_ = nullptr;
+    void* producerSurface_ = nullptr;
+    void* enhanceSurfaceInfo_ = nullptr;
 
-  std::shared_ptr<NWebEngineInitArgs> initArgs_ = nullptr;
-  std::shared_ptr<NWebOutputFrameCallback> outputFrameCallback_ = nullptr;
+    std::shared_ptr<NWebEngineInitArgs> initArgs_ = nullptr;
+    std::shared_ptr<NWebOutputFrameCallback> outputFrameCallback_ = nullptr;
 };
 
 class NWebEngineInitArgsImpl : public NWebEngineInitArgs {
 public:
-  NWebEngineInitArgsImpl() = default;
-  ~NWebEngineInitArgsImpl() = default;
+    NWebEngineInitArgsImpl() = default;
+    ~NWebEngineInitArgsImpl() = default;
 
-  void AddArg(const std::string &arg) {
-    argsToAdd_.emplace_back(arg);
-  }
+    void AddArg(const std::string& arg)
+    {
+        argsToAdd_.emplace_back(arg);
+    }
 
-  void AddDeleteArg(const std::string &arg) {
-    argsToDelete_.emplace_back(arg);
-  }
+    void AddDeleteArg(const std::string& arg)
+    {
+        argsToDelete_.emplace_back(arg);
+    }
 
-  void SetDumpPath(const std::string &dumpPath) {
-    dumpPath_ = dumpPath;
-  }
+    void SetDumpPath(const std::string& dumpPath)
+    {
+        dumpPath_ = dumpPath;
+    }
 
-  std::string GetDumpPath() override {
-    return dumpPath_;
-  }
+    std::string GetDumpPath() override
+    {
+        return dumpPath_;
+    }
 
-  void SetIsPopup(bool isPopup) {
-    isPopup_ = isPopup;
-  }
+    void SetIsPopup(bool isPopup)
+    {
+        isPopup_ = isPopup;
+    }
 
-  bool GetIsPopup() override {
-    return isPopup_;
-  }
+    bool GetIsPopup() override
+    {
+        return isPopup_;
+    }
 
-  void SetIsFrameInfoDump(bool isFrameInfoDump) {
-    isFrameInfoDump_ = isFrameInfoDump;
-  }
+    void SetIsFrameInfoDump(bool isFrameInfoDump)
+    {
+        isFrameInfoDump_ = isFrameInfoDump;
+    }
 
-  bool GetIsFrameInfoDump() override {
-    return isFrameInfoDump_;
-  }
+    bool GetIsFrameInfoDump() override
+    {
+        return isFrameInfoDump_;
+    }
 
-  void SetIsEnhanceSurface(bool isEnhanceSurface) {
-    isEnhanceSurface_ = isEnhanceSurface;
-  }
+    void SetIsEnhanceSurface(bool isEnhanceSurface)
+    {
+        isEnhanceSurface_ = isEnhanceSurface;
+    }
 
-  bool GetIsEnhanceSurface() override {
-    return isEnhanceSurface_;
-  }
+    bool GetIsEnhanceSurface() override
+    {
+        return isEnhanceSurface_;
+    }
 
-  void SetIsMultiRendererProcess(bool isMultiRendererProcess) {
-    isMultiRendererProcess_ = isMultiRendererProcess;
-  }
+    void SetIsMultiRendererProcess(bool isMultiRendererProcess)
+    {
+        isMultiRendererProcess_ = isMultiRendererProcess;
+    }
 
-  bool GetIsMultiRendererProcess() override {
-    return isMultiRendererProcess_;
-  }
+    bool GetIsMultiRendererProcess() override
+    {
+        return isMultiRendererProcess_;
+    }
 
-  void SetArgsToAdd(const std::list<std::string> &argsToAdd) {
-    argsToAdd_ = argsToAdd;
-  }
+    void SetArgsToAdd(const std::list<std::string>& argsToAdd)
+    {
+        argsToAdd_ = argsToAdd;
+    }
 
-  std::list<std::string> GetArgsToAdd() override {
-    return argsToAdd_;
-  }
+    std::list<std::string> GetArgsToAdd() override
+    {
+        return argsToAdd_;
+    }
 
-  void SetArgsToDelete(const std::list<std::string> &argsToDelete) {
-    argsToDelete_ = argsToDelete;
-  }
+    void SetArgsToDelete(const std::list<std::string>& argsToDelete)
+    {
+        argsToDelete_ = argsToDelete;
+    }
 
-  std::list<std::string> GetArgsToDelete() override {
-    return argsToDelete_;
-  }
+    std::list<std::string> GetArgsToDelete() override
+    {
+        return argsToDelete_;
+    }
 
-  void SetSharedRenderProcessToken(const std::string& sharedRenderProcessToken)
-  {
-      sharedRenderProcessToken_ = sharedRenderProcessToken;
-  }
+    void SetSharedRenderProcessToken(const std::string& sharedRenderProcessToken)
+    {
+        sharedRenderProcessToken_ = sharedRenderProcessToken;
+    }
 
-  std::string GetSharedRenderProcessToken() override
-  {
-      return sharedRenderProcessToken_;
-  }
+    std::string GetSharedRenderProcessToken() override
+    {
+        return sharedRenderProcessToken_;
+    }
 
 private:
-  std::string dumpPath_;
+    std::string dumpPath_;
 
-  bool isPopup_ = false;
-  bool isFrameInfoDump_ = false;
-  bool isEnhanceSurface_ = false;
-  bool isMultiRendererProcess_ = false;
+    bool isPopup_ = false;
+    bool isFrameInfoDump_ = false;
+    bool isEnhanceSurface_ = false;
+    bool isMultiRendererProcess_ = false;
 
-  std::list<std::string> argsToAdd_;
-  std::list<std::string> argsToDelete_;
-  std::string sharedRenderProcessToken_;
+    std::list<std::string> argsToAdd_;
+    std::list<std::string> argsToDelete_;
+    std::string sharedRenderProcessToken_;
 };
 
 class NWebEnginePrefetchArgsImpl : public NWebEnginePrefetchArgs {
 public:
-    NWebEnginePrefetchArgsImpl(const std::string &url, const std::string &method, const std::string &formData)
-        : url_(url), method_(method), form_data_(formData) {}
+    NWebEnginePrefetchArgsImpl(const std::string& url, const std::string& method, const std::string& formData)
+        : url_(url), method_(method), form_data_(formData)
+    {}
 
     ~NWebEnginePrefetchArgsImpl() = default;
 
