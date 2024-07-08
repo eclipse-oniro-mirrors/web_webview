@@ -24,6 +24,9 @@
 #include "webview_log.h"
 #include "webview_utils.h"
 #include "nweb_store_web_archive_callback.h"
+#include <nweb_helper.h>
+#include "web_errors.h"
+
 
 namespace OHOS::Webview {
     std::unordered_map<int32_t, WebviewControllerImpl*> g_webview_controller_map;
@@ -108,12 +111,43 @@ namespace OHOS::Webview {
         return nweb_ptr->LoadWithDataAndBaseUrl(baseUrl, data, mimeType, encoding, historyUrl);
     }
 
+    int32_t WebviewControllerImpl::PreFetchPage(std::string url)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if(!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        std::map<std::string, std::string> httpHeaders;
+        nweb_ptr->PrefetchPage(url, httpHeaders);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t WebviewControllerImpl::PreFetchPage(std::string url, std::map<std::string, std::string> httpHeaders)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if(!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        nweb_ptr->PrefetchPage(url, httpHeaders);
+        return NWebError::NO_ERROR;
+    }
+
     void WebviewControllerImpl::Refresh()
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
         if (nweb_ptr) {
             nweb_ptr->Reload();
         }
+    }
+
+    int32_t WebviewControllerImpl::SetAudioMuted(bool mute)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if(!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        nweb_ptr->SetAudioMuted(mute);
+        return NWebError::NO_ERROR;
     }
 
     std::string WebviewControllerImpl::GetUserAgent()
@@ -326,6 +360,17 @@ namespace OHOS::Webview {
         ErrCode result = NWebError::NO_ERROR;
         result = nweb_ptr->ZoomOut();
 
+        return result;
+    }
+
+    int32_t WebviewControllerImpl::RequestFocus()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        nweb_ptr->OnFocus();
+        ErrCode result = NWebError::NO_ERROR;
         return result;
     }
 
@@ -619,6 +664,85 @@ namespace OHOS::Webview {
             return;
         }
         nweb_ptr->SetBackForwardCacheOptions(size, timeToLive);
+    }
+
+    void WebviewControllerImpl::SlideScroll(float vx, float vy)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->SlideScroll(vx, vy);
+        }
+        return;  
+    }
+
+    void WebviewControllerImpl::PutNetworkAvailable(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->PutNetworkAvailable(enable);
+        }
+        return;  
+    }
+
+    void WebviewControllerImpl::ClearClientAuthenticationCache()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->ClearClientAuthenticationCache();
+        }
+        return;  
+    }
+
+    void WebviewControllerImpl::ClearSslCache()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->ClearSslCache();
+        }
+        return;  
+    }
+
+    void WebviewControllerImpl::SearchNext(bool forward)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->FindNext(forward);
+        }
+        return;  
+    }
+
+    void WebviewControllerImpl::ClearMatches()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->ClearMatches();
+        }
+        return;  
+    }
+
+    void WebviewControllerImpl::SearchAllAsync(std::string str)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->FindAllAsync(str);
+        }
+        return;  
+    }
+
+    ErrCode WebviewControllerImpl::DeleteJavaScriptRegister(const std::string& objName,
+    const std::vector<std::string>& methodList)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->UnregisterArkJSfunction(objName, methodList);
+        }
+        if(javaScriptResultCb_) {
+            bool ret = javaScriptResultCb_->DeleteJavaScriptRegister(objName);
+            if(!ret) {
+                return NWebError::CANNOT_DEL_JAVA_SCRIPT_PROXY;
+            }
+        }
+        return NWebError::NO_ERROR;     
     }
 
     int32_t WebviewControllerImpl::PostUrl(std::string& url, std::vector<char>& postData)
