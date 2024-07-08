@@ -77,6 +77,29 @@ namespace OHOS::Webview {
         ErrCode LoadData(std::string data, std::string mimeType, std::string encoding, std::string baseUrl,
             std::string historyUrl);
 
+        int32_t PreFetchPage(std::string url);
+
+        int32_t PreFetchPage(std::string url, std::map<std::string, std::string> headers);
+
+        int32_t SetAudioMuted(bool mute);
+
+        void SlideScroll(float vx, float vy);
+
+        void PutNetworkAvailable(bool enable);
+
+        void ClearClientAuthenticationCache();
+
+        void ClearSslCache();
+
+        void SearchNext(bool forward);
+
+        void ClearMatches();
+
+        void SearchAllAsync(std::string str);
+
+        ErrCode DeleteJavaScriptRegister(const std::string& objName,
+            const std::vector<std::string>& methodList);
+
         void Refresh();
 
         std::string GetUserAgent();
@@ -118,6 +141,8 @@ namespace OHOS::Webview {
         int32_t ZoomIn();
 
         int32_t ZoomOut();
+
+        int32_t RequestFocus();
 
         void ClearHistory();
 
