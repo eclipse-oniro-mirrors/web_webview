@@ -117,6 +117,11 @@ enum class UrlListSetResult : int {
     SET_OK = 0,
 };
 
+enum class PressureLevel : int {
+    MEMORY_PRESSURE_LEVEL_MODERATE = 1,
+    MEMORY_PRESSURE_LEVEL_CRITICAL = 2,
+};
+
 class WebPrintDocument;
 class WebviewController {
 public:
