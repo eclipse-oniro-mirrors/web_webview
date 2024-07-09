@@ -744,6 +744,14 @@ public:
      */
     /*--ark web()--*/
     virtual void OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) = 0;
+
+    /**
+     * @brief Report dynamic frame loss event.
+     *
+     * @param isStart true if is start.
+     */
+    /*--ark web()--*/
+    virtual void ReportDynamicFrameLossEvent(const ArkWebString& sceneId, bool isStart) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -867,4 +867,9 @@ void ArkWebHandlerImpl::OnAdsBlocked(const ArkWebString &url, const ArkWebString
   nweb_handler_->OnAdsBlocked(ArkWebStringStructToClass(url),
                               ArkWebStringVectorStructToClass(adsBlocked));
 }
+
+void ArkWebHandlerImpl::ReportDynamicFrameLossEvent(const ArkWebString& sceneId, bool isStart)
+{
+    nweb_handler_->ReportDynamicFrameLossEvent(ArkWebStringStructToClass(sceneId), isStart);
+}
 } // namespace OHOS::ArkWeb

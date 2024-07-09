@@ -557,6 +557,8 @@ public:
     void OnCustomKeyboardClose() override;
 
     void OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) override;
+
+    void ReportDynamicFrameLossEvent(const ArkWebString& sceneId, bool isStart) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
