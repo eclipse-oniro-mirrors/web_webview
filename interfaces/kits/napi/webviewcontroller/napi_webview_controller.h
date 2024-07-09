@@ -40,6 +40,7 @@ const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
 const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
 const std::string WEB_RENDER_PROCESS_MODE_ENUM_NAME = "RenderProcessMode";
 const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
+const std::string WEB_PRESSURE_LEVEL_ENUM_NAME = "PressureLevel";
 
 struct Scheme {
     std::string name;
@@ -351,6 +352,8 @@ private:
     static napi_value EnableBackForwardCache(napi_env env, napi_callback_info info);
 
     static napi_value SetBackForwardCacheOptions(napi_env env, napi_callback_info info);
+
+    static napi_value TrimMemoryByPressureLevel(napi_env env, napi_callback_info info);
 
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
