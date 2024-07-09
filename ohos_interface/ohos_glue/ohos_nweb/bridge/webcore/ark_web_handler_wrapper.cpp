@@ -977,4 +977,9 @@ void ArkWebHandlerWrapper::OnAdsBlocked(
   ArkWebStringVectorStructRelease(stAdsBlocked);
   ArkWebStringStructRelease(stUrl);
 }
+
+void ArkWebHandlerWrapper::ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart)
+{
+    ark_web_handler_->ReportDynamicFrameLossEvent(ArkWebStringClassToStruct(sceneId), isStart);
+}
 } // namespace OHOS::ArkWeb

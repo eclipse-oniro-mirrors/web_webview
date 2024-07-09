@@ -966,6 +966,8 @@ public:
      *
      */
     virtual void OnAdsBlocked(const std::string& url, const std::vector<std::string>& adsBlocked) {}
+
+    virtual void ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart) {}
 };
 
 } // namespace OHOS::NWeb
