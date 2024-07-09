@@ -178,12 +178,12 @@ napi_status NapiNativeMediaPlayerHandler::ExportEnumSuspendType(napi_env env, na
 
     const std::string NPI_SUSPEND_TYPE_ENUM_NAME = "SuspendType";
     napi_property_descriptor properties[] = {
-        DECLARE_NAPI_STATIC_PROPERTY("EnterBackForwardCache",
-            NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::EnterBackForwardCache))),
+        DECLARE_NAPI_STATIC_PROPERTY("ENTER_BACK_FORWARD_CACHE",
+            NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::ENTER_BACK_FORWARD_CACHE))),
         DECLARE_NAPI_STATIC_PROPERTY(
-            "EnterBackground", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::EnterBackground))),
+            "ENTER_BACKGROUND", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::ENTER_BACKGROUND))),
         DECLARE_NAPI_STATIC_PROPERTY(
-            "AutoCleanup", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::AutoCleanup))),
+            "AUTO_CLEANUP", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(SuspendType::AUTO_CLEANUP))),
     };
 
     napi_value enumValue = nullptr;
