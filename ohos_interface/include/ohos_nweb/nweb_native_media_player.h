@@ -31,14 +31,7 @@ enum class MediaError { NETWORK_ERROR = 1, FORMAT_ERROR, DECODE_ERROR };
 
 enum class ReadyState { HAVE_NOTHING = 0, HAVE_METADATA, HAVE_CURRENT_DATA, HAVE_FUTURE_DATA, HAVE_ENOUGH_DATA };
 
-enum class SuspendType {
-    ENTER_BACK_FORWARD_CACHE = 0,
-    ENTER_BACKGROUND,
-    AUTO_CLEANUP,
-    EnterBackForwardCache = 0,
-    EnterBackground,
-    AutoCleanup
-};
+enum class SuspendType { ENTER_BACK_FORWARD_CACHE = 0, ENTER_BACKGROUND, AUTO_CLEANUP };
 
 enum class NetworkState { EMPTY = 0, IDLE, LOADING, NETWORK_ERROR };
 
