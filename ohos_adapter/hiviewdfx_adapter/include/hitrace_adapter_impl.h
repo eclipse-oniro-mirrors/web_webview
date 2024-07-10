@@ -43,14 +43,7 @@ public:
 
     void CountOHOSTrace(const std::string& name, int64_t count) override;
 
-    void UpdateOHOSTraceTag(const char* value);
-
     bool IsACETraceEnable() override;
-
-private:
-    bool firstAceEnable_ = false;
-    bool isNWEBTraceEnable_ = false;
-    bool isOHOSTraceEnable_ = false;
 };
 } // namespace OHOS::NWeb
 
