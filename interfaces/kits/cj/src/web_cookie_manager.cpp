@@ -31,7 +31,7 @@ std::string WebCookieManager::CjGetCookie(const std::string &url, bool incognito
     }
     if (cookieContent == "" && !isValid) {
         errCode = NWebError::INVALID_URL;
-        return nullptr;
+        return "";
     }
     errCode = NWebError::NO_ERROR;
     return cookieContent;
