@@ -34,6 +34,10 @@ public:
 
     uint32_t GetWindowId() override;
 
+    double GetPositionY() override;
+
+    double GetHeight() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::IMFTextConfigAdapter> real_;
 

@@ -744,6 +744,15 @@ public:
      */
     /*--ark web()--*/
     virtual void OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) = 0;
+
+    /**
+     * @brief called when the cursor info is updated.
+     * 
+     * @param x, y relative coordinates within web components of the cursor
+     * @param width, height width and height of the cursor
+     */
+    /*--ark web()--*/
+    virtual void OnCursorUpdate(double x, double y, double width, double height) = 0;
 };
 
 } // namespace OHOS::ArkWeb

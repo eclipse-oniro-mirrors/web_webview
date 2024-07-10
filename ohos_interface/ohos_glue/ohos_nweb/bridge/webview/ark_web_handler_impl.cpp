@@ -867,4 +867,9 @@ void ArkWebHandlerImpl::OnAdsBlocked(const ArkWebString &url, const ArkWebString
   nweb_handler_->OnAdsBlocked(ArkWebStringStructToClass(url),
                               ArkWebStringVectorStructToClass(adsBlocked));
 }
+
+void ArkWebHandlerImpl::OnCursorUpdate(double x, double y, double width, double height)
+{
+    nweb_handler_->OnCursorUpdate(x, y, width, height);
+}
 } // namespace OHOS::ArkWeb

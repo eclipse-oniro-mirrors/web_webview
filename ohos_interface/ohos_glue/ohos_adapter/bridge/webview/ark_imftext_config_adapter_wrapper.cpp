@@ -58,4 +58,13 @@ uint32_t ArkIMFTextConfigAdapterWrapper::GetWindowId()
     return ctocpp_->GetWindowId();
 }
 
+double ArkIMFTextConfigAdapterWrapper::GetPositionY()
+{
+    return ctocpp_->GetPositionY();
+}
+
+double ArkIMFTextConfigAdapterWrapper::GetHeight()
+{
+    return ctocpp_->GetHeight();
+}
 } // namespace OHOS::ArkWeb
