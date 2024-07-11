@@ -513,8 +513,8 @@ napi_value NapiWebDownloadItem::JS_Pause(napi_env env, napi_callback_info cbinfo
         WVLOG_E("[DOWNLOAD] unwrap webDownloadItem failed");
         return nullptr;
     }
-    NWebDownloadItemState state = WebDownload_GetItemState(
-        webDownloadItem->nwebId, webDownloadItem->webDownloadId);
+    NWebDownloadItemState state = WebDownload_GetItemStateByGuid(webDownloadItem->guid);
+    WVLOG_D("[DOWNLOAD] pause state %{public}d", static_cast<int>(state));
     if (state != NWebDownloadItemState::IN_PROGRESS &&
             state != NWebDownloadItemState::PENDING) {
         BusinessError::ThrowErrorByErrcode(env, DOWNLOAD_NOT_START);
@@ -545,8 +545,8 @@ napi_value NapiWebDownloadItem::JS_Resume(napi_env env, napi_callback_info cbinf
         return nullptr;
     }
 
-    NWebDownloadItemState state = WebDownload_GetItemState(
-        webDownloadItem->nwebId, webDownloadItem->webDownloadId);
+    NWebDownloadItemState state = WebDownload_GetItemStateByGuid(webDownloadItem->guid);
+    WVLOG_D("[DOWNLOAD] resume state %{public}d", static_cast<int>(state));
     if (state != NWebDownloadItemState::PAUSED) {
         BusinessError::ThrowErrorByErrcode(env, DOWNLOAD_NOT_PAUSED);
         return nullptr;
@@ -614,6 +614,7 @@ napi_value NapiWebDownloadItem::JS_Start(napi_env env, napi_callback_info cbinfo
         return nullptr;
     }
     webDownloadItem->downloadPath = std::string(stringValue);
+    WVLOG_D("NapiWebDownloadItem::JS_Start, download_path: %s", webDownloadItem->downloadPath.c_str());
     WebDownload_Continue(webDownloadItem->before_download_callback, webDownloadItem->downloadPath.c_str());
     return nullptr;
 }
