@@ -75,6 +75,8 @@ NWEB_EXPORT void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrappe
 
 NWEB_EXPORT NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long downloadItemId);
 
+NWEB_EXPORT NWebDownloadItemState WebDownload_GetItemStateByGuid(const std::string& guid);
+
 NWEB_EXPORT void WebDownloadItem_CreateWebDownloadItem(NWebDownloadItem **downloadItem);
 
 NWEB_EXPORT void WebDownloadItem_Destroy(NWebDownloadItem *downloadItem);
