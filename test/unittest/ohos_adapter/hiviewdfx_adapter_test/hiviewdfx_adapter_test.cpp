@@ -18,6 +18,9 @@
 #include "ohos_adapter_helper.h"
 #include "hitrace_adapter_impl.h"
 
+#include "parameters.h"
+using namespace OHOS;
+
 using testing::ext::TestSize;
 
 namespace OHOS::NWeb {
@@ -88,15 +91,12 @@ HWTEST(HiViewDFXAdapterTest, NormalScene, TestSize.Level1)
  */
 HWTEST(HiViewDFXAdapterTest, NormalScene_01, TestSize.Level1)
 {
-    uint64_t val = (1ULL << 24);
-    std::string value = std::to_string(val);
-    HiTraceAdapterImpl::GetInstance().UpdateOHOSTraceTag(value.c_str());
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartOHOSTrace("test");
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountOHOSTrace("test", 1);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishOHOSTrace();
-    val = (1ULL << 39);
-    value = std::to_string(val);
-    HiTraceAdapterImpl::GetInstance().UpdateOHOSTraceTag(value.c_str());
+    uint64_t val = (1ULL << 24);
+    std::string value = std::to_string(val);
+    OHOS::system::SetParameter("debug.hitrace.tags.enableflags", value);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartOHOSTrace("test");
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountOHOSTrace("test", 1);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishOHOSTrace();
