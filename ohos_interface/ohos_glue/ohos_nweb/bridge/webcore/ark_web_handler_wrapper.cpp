@@ -978,8 +978,15 @@ void ArkWebHandlerWrapper::OnAdsBlocked(
   ArkWebStringStructRelease(stUrl);
 }
 
+void ArkWebHandlerWrapper::OnCursorUpdate(double x, double y, double width, double height)
+{
+    ark_web_handler_->OnCursorUpdate(x, y, width, height);
+}
+
 void ArkWebHandlerWrapper::ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart)
 {
-    ark_web_handler_->ReportDynamicFrameLossEvent(ArkWebStringClassToStruct(sceneId), isStart);
+    ArkWebString stSceneId = ArkWebStringClassToStruct(sceneId);
+    ark_web_handler_->ReportDynamicFrameLossEvent(stSceneId, isStart);
+    ArkWebStringStructRelease(stSceneId);
 }
 } // namespace OHOS::ArkWeb

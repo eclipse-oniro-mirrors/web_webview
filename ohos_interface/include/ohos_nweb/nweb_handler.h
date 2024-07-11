@@ -967,6 +967,20 @@ public:
      */
     virtual void OnAdsBlocked(const std::string& url, const std::vector<std::string>& adsBlocked) {}
 
+    /**
+     * @brief called when the cursor info is updated.
+     * 
+     * @param x, y relative coordinates within web components of the cursor
+     * @param width, height width and height of the cursor
+     */
+    virtual void OnCursorUpdate(double x, double y, double width, double height) {}
+
+    /**
+     * @brief Called when web occurs frame loss event.
+     *
+     * @param sceneId The id of event scene.
+     * @param isStart True if is start.
+     */
     virtual void ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart) {}
 };
 
