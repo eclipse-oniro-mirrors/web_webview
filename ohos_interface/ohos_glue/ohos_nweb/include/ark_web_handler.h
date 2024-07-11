@@ -746,9 +746,19 @@ public:
     virtual void OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) = 0;
 
     /**
-     * @brief Report dynamic frame loss event.
+     * @brief called when the cursor info is updated.
+     * 
+     * @param x, y relative coordinates within web components of the cursor
+     * @param width, height width and height of the cursor
+     */
+    /*--ark web()--*/
+    virtual void OnCursorUpdate(double x, double y, double width, double height) = 0;
+
+    /**
+     * @brief Called when web occurs frame loss event.
      *
-     * @param isStart true if is start.
+     * @param sceneId The id of event scene.
+     * @param isStart True if is start.
      */
     /*--ark web()--*/
     virtual void ReportDynamicFrameLossEvent(const ArkWebString& sceneId, bool isStart) = 0;

@@ -490,6 +490,8 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_browserHost_020, TestSize.Level1
     MessageParcel reply;
     MessageOption option;
     host->OnRemoteRequest(code, data, reply, option);
+    code = 100;
+    host->OnRemoteRequest(code, data, reply, option);
 }
 
 /**

@@ -73,6 +73,7 @@ static bool g_isFirstTimeStartUp = false;
     DO(WebDownload_Pause)                            \
     DO(WebDownload_Resume)                           \
     DO(WebDownload_GetItemState)                     \
+    DO(WebDownload_GetItemStateByGuid)               \
     DO(WebDownloadItem_Guid)                         \
     DO(WebDownloadItem_GetDownloadItemId)            \
     DO(WebDownloadItem_GetState)                     \
@@ -279,10 +280,18 @@ extern "C" void WebDownload_Resume(const WebDownloadItemCallbackWrapper *wrapper
 
 extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long downloadItemId)
 {
-    if (!g_nwebCApi->impl_WebDownload_GetItemState) {
+    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemState) {
         return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
     }
     return g_nwebCApi->impl_WebDownload_GetItemState(nwebId, downloadItemId);
+}
+
+extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuid(const std::string& guid)
+{
+    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
+        return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+    }
+    return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
 }
 
 extern "C" char *WebDownloadItem_Guid(const NWebDownloadItem *downloadItem)
@@ -1131,6 +1140,16 @@ std::shared_ptr<NWebAdsBlockManager> NWebHelper::GetAdsBlockManager()
     }
 
     return nwebEngine_->GetAdsBlockManager();
+}
+
+void NWebHelper::TrimMemoryByPressureLevel(int32_t memoryLevel)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->TrimMemoryByPressureLevel(memoryLevel);
 }
 
 NWebAdapterHelper &NWebAdapterHelper::Instance()

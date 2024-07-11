@@ -106,6 +106,16 @@ public:
     virtual std::shared_ptr<IMFSelectionRangeAdapter> GetSelectionRange() = 0;
 
     virtual uint32_t GetWindowId() = 0;
+
+    virtual double GetPositionY()
+    {
+        return 0.0;
+    }
+
+    virtual double GetHeight()
+    {
+        return 0.0;
+    }
 };
 
 enum class IMFAdapterKeyboardStatus : int32_t { NONE = 0, HIDE, SHOW };

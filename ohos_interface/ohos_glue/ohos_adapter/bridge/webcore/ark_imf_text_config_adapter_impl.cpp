@@ -59,4 +59,13 @@ uint32_t ArkIMFTextConfigAdapterImpl::GetWindowId()
     return real_->GetWindowId();
 }
 
+double ArkIMFTextConfigAdapterImpl::GetPositionY()
+{
+    return real_->GetPositionY();
+}
+
+double ArkIMFTextConfigAdapterImpl::GetHeight()
+{
+    return real_->GetHeight();
+}
 } // namespace OHOS::ArkWeb

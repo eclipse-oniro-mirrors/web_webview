@@ -34,7 +34,7 @@ void AafwkRenderSchedulerImpl::NotifyBrowserFd(
         return;
     }
     if (browser == nullptr) {
-        WVLOG_E("browser is nullptr!");
+        WVLOG_D("NotifyBrowserFd for render process.");
         renderSchedulerHostAdapter_->NotifyBrowser(ipcFd, sharedFd, crashFd, nullptr);
     } else {
         sptr<IBrowser> browserHost = iface_cast<IBrowser>(browser);

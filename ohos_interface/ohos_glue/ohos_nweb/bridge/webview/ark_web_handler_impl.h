@@ -558,7 +558,10 @@ public:
 
     void OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) override;
 
+    void OnCursorUpdate(double x, double y, double width, double height) override;
+
     void ReportDynamicFrameLossEvent(const ArkWebString& sceneId, bool isStart) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
