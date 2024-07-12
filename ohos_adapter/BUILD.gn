@@ -143,13 +143,13 @@ ohos_shared_library("nweb_ohos_adapter") {
     "napi:ace_napi",
     "netmanager_base:net_conn_manager_if",
     "netstack:net_ssl",
+    "openssl:libssl_shared",
     "pasteboard:pasteboard_client",
     "relational_store:native_rdb",
     "resource_schedule_service:ressched_client",
     "samgr:samgr_proxy",
     "time_service:time_client",
     "window_manager:libdm",
-    "openssl:libssl_shared",
   ]
 
   if (webview_soc_perf_enable) {
