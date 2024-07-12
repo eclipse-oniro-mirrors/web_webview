@@ -597,6 +597,8 @@ public:
 
     void OnCursorUpdate(double x, double y, double width, double height) override;
 
+    void ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart) override;
+
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };
