@@ -77,8 +77,8 @@
                 "window_manager",
                 "netstack",
                 "protobuf",
-                "libxml2"
-                
+                "libxml2",
+                "openssl"
             ],
             "third_party": [
                 "chromium",
