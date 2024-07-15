@@ -262,6 +262,7 @@
                 "//base/web/webview/test/unittest/ohos_adapter/res_sched_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/web_data_base_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/ohos_resource_adapter_test:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter/ohos_image_adapter:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/graphic_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/datashare_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/ohos_init_web_adapter:unittest",
