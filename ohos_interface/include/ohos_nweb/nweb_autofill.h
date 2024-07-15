@@ -26,20 +26,28 @@ const std::string NWEB_VIEW_DATA_KEY_RECT_Y = "y";
 const std::string NWEB_VIEW_DATA_KEY_RECT_W = "width";
 const std::string NWEB_VIEW_DATA_KEY_RECT_H = "height";
 const std::string NWEB_VIEW_DATA_KEY_VALUE = "value";
+const std::string NWEB_VIEW_DATA_KEY_PLACEHOLDER = "placeholder";
 
 const std::string NWEB_AUTOFILL_EVENT_SAVE = "save";
 const std::string NWEB_AUTOFILL_EVENT_FILL = "fill";
 const std::string NWEB_AUTOFILL_EVENT_UPDATE = "update";
 const std::string NWEB_AUTOFILL_EVENT_CLOSE = "close";
 
+const std::string NWEB_AUTOFILL_STREET_ADDRESS = "street-address";
+const std::string NWEB_AUTOFILL_ADDRESS_LEVEL_3 = "address-level3";
+const std::string NWEB_AUTOFILL_ADDRESS_LEVEL_2 = "address-level2";
+const std::string NWEB_AUTOFILL_ADDRESS_LEVEL_1 = "address-level1";
+const std::string NWEB_AUTOFILL_COUNTRY = "country";
 const std::string NWEB_AUTOFILL_NAME = "name";
 const std::string NWEB_AUTOFILL_FAMILY_NAME = "family-name";
 const std::string NWEB_AUTOFILL_GIVEN_NAME = "given-name";
-const std::string NWEB_AUTOFILL_NICKNAME = "nickname";
-const std::string NWEB_AUTOFILL_EMAIL = "email";
-const std::string NWEB_AUTOFILL_STREET_ADDRESS = "street-address";
-const std::string NWEB_AUTOFILL_ID_CARD_NUMBER = "id-card-number";
 const std::string NWEB_AUTOFILL_TEL_NATIONAL = "tel-national";
+const std::string NWEB_AUTOFILL_TEL = "tel";
+const std::string NWEB_AUTOFILL_TEL_COUNTRY_CODE = "tel-country-code";
+const std::string NWEB_AUTOFILL_EMAIL = "email";
+const std::string NWEB_AUTOFILL_CC_NUMBER = "cc-number";
+const std::string NWEB_AUTOFILL_ID_CARD_NUMBER = "id-card-number";
+const std::string NWEB_AUTOFILL_NICKNAME = "nickname";
 
 enum NWebAutofillEvent {
     UNKNOWN = 0,
