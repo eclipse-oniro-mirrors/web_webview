@@ -475,6 +475,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
     EXPECT_EQ(nweb, nullptr);
     std::shared_ptr<NWebCookieManager> cook = NWebHelper::Instance().GetCookieManager();
     EXPECT_EQ(cook, nullptr);
+    auto manager = NWebHelper::Instance().GetAdsBlockManager();
+    EXPECT_EQ(manager, nullptr);
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
@@ -497,6 +499,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngineHandler_008, TestSize.Level1)
     EXPECT_TRUE(result);
     cook = NWebHelper::Instance().GetCookieManager();
     EXPECT_NE(cook, nullptr);
+    manager = NWebHelper::Instance().GetAdsBlockManager();
+    EXPECT_NE(manager, nullptr);
     NWebHelper::Instance().SetWebTag(1, "webtag");
 
     NWebHelper::Instance().libHandleWebEngine_ = nullptr;
@@ -604,12 +608,14 @@ HWTEST_F(NwebHelperTest, NWebHelper_EnableWholeWebPageDrawing_001, TestSize.Leve
  */
 HWTEST_F(NwebHelperTest, NWebHelper_GetAdsBlockManager_001, TestSize.Level1)
 {
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
+    std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
+    EXPECT_EQ(nweb, nullptr);
+    nweb = NWebHelper::Instance().GetNWeb(1);
+    EXPECT_EQ(nweb, nullptr);
     auto manager = NWebHelper::Instance().GetAdsBlockManager();
-    bool result = false;
-    if (manager != nullptr) {
-        result = true;
-    }
-    EXPECT_EQ(RESULT_OK, result);
+    EXPECT_EQ(manager, nullptr);
 }
 } // namespace OHOS::NWeb
 }
