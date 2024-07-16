@@ -291,7 +291,7 @@ HWTEST_F(OhosImageAdapterTest, OhosImageAdapterTest_GetFd_006, TestSize.Level1)
     fd = imageDecoderAdapterImpl.GetFd();
     EXPECT_NE(fd, -1);
 
-    auto* pixelMap = imageDecoderAdapterImpl.getPixelMap();
+    auto* pixelMap = imageDecoderAdapterImpl.GetPixelMap();
     pixelMap->FreePixelMap();
     fd = imageDecoderAdapterImpl.GetFd();
     EXPECT_EQ(fd, -1);
@@ -321,7 +321,7 @@ HWTEST_F(OhosImageAdapterTest, OhosImageAdapterTest_GetStride_007, TestSize.Leve
     stride = imageDecoderAdapterImpl.GetStride();
     EXPECT_NE(stride, 0);
 
-    auto* pixelMap = imageDecoderAdapterImpl.getPixelMap();
+    auto* pixelMap = imageDecoderAdapterImpl.GetPixelMap();
     pixelMap->FreePixelMap();
     stride = imageDecoderAdapterImpl.GetStride();
     EXPECT_EQ(stride, 0);
@@ -351,7 +351,7 @@ HWTEST_F(OhosImageAdapterTest, OhosImageAdapterTest_GetOffset_008, TestSize.Leve
     offset = imageDecoderAdapterImpl.GetOffset();
     EXPECT_EQ(offset, 0);
 
-    auto* pixelMap = imageDecoderAdapterImpl.getPixelMap();
+    auto* pixelMap = imageDecoderAdapterImpl.GetPixelMap();
     pixelMap->FreePixelMap();
     offset = imageDecoderAdapterImpl.GetOffset();
     EXPECT_EQ(offset, 0);
@@ -381,7 +381,7 @@ HWTEST_F(OhosImageAdapterTest, OhosImageAdapterTest_GetSize_009, TestSize.Level1
     size = imageDecoderAdapterImpl.GetSize();
     EXPECT_NE(size, 0);
 
-    auto* pixelMap = imageDecoderAdapterImpl.getPixelMap();
+    auto* pixelMap = imageDecoderAdapterImpl.GetPixelMap();
     pixelMap->FreePixelMap();
     size = imageDecoderAdapterImpl.GetSize();
     EXPECT_EQ(size, 0);
@@ -402,19 +402,19 @@ HWTEST_F(OhosImageAdapterTest, OhosImageAdapterTest_GetNativeWindowBuffer_010, T
     uint8_t *buffer = nullptr;
     OhosImageDecoderAdapterImpl imageDecoderAdapterImpl;
 
-    void* offset = imageDecoderAdapterImpl.GetNativeWindowBuffer();
-    EXPECT_EQ(offset, nullptr);
+    void* windowBuffer = imageDecoderAdapterImpl.GetNativeWindowBuffer();
+    EXPECT_EQ(windowBuffer, nullptr);
 
     bool ret = TestDecodeImage(imageDecoderAdapterImpl, buffer);
     EXPECT_TRUE(ret);
 
-    offset = imageDecoderAdapterImpl.GetNativeWindowBuffer();
-    EXPECT_NE(offset, nullptr);
+    windowBuffer = imageDecoderAdapterImpl.GetNativeWindowBuffer();
+    EXPECT_NE(windowBuffer, nullptr);
 
-    auto* pixelMap = imageDecoderAdapterImpl.getPixelMap();
+    auto* pixelMap = imageDecoderAdapterImpl.GetPixelMap();
     pixelMap->FreePixelMap();
-    offset = imageDecoderAdapterImpl.GetNativeWindowBuffer();
-    EXPECT_NE(offset, nullptr);
+    windowBuffer = imageDecoderAdapterImpl.GetNativeWindowBuffer();
+    EXPECT_NE(windowBuffer, nullptr);
 
     free(buffer);
 
@@ -442,7 +442,7 @@ HWTEST_F(OhosImageAdapterTest, OhosImageAdapterTest_GetPlanesCount_011, TestSize
     planesCount = imageDecoderAdapterImpl.GetPlanesCount();
     EXPECT_EQ(planesCount, 0);
 
-    auto* pixelMap = imageDecoderAdapterImpl.getPixelMap();
+    auto* pixelMap = imageDecoderAdapterImpl.GetPixelMap();
     pixelMap->FreePixelMap();
     planesCount = imageDecoderAdapterImpl.GetPlanesCount();
     EXPECT_EQ(planesCount, 0);
