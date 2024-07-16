@@ -1098,7 +1098,7 @@ void NWebHelper::EnableBackForwardCache(bool enableNativeEmbed, bool enableMedia
         this->backForwardCacheCmdLine_.emplace_back("--enable-cache-native-embed");
     }
 
-    if (enableNativeEmbed) {
+    if (enableMediaTakeOver) {
         this->backForwardCacheCmdLine_.emplace_back("--enable-cache-media-take-over");
     }
 }
