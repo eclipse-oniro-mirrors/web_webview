@@ -1117,4 +1117,19 @@ void ArkWebNWebImpl::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive
 {
     nweb_nweb_->SetBackForwardCacheOptions(size, timeToLive);
 }
+
+void ArkWebNWebImpl::SetAutofillCallback(ArkWebRefPtr<ArkWebMessageValueCallback> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        nweb_nweb_->SetAutofillCallback(nullptr);
+        return;
+    }
+
+    nweb_nweb_->SetAutofillCallback(std::make_shared<ArkWebMessageValueCallbackWrapper>(callback));
+}
+
+void ArkWebNWebImpl::FillAutofillData(const ArkWebMessage& data)
+{
+    nweb_nweb_->FillAutofillData(data.nweb_message);
+}
 } // namespace OHOS::ArkWeb
