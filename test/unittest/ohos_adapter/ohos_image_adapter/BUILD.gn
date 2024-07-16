@@ -18,7 +18,10 @@ module_output_path = "web/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [ "../../../../ohos_adapter/ohos_image_adapter/include" ]
+  include_dirs = [
+    "../../../../ohos_adapter/ohos_image_adapter/include",
+    "../../../../ohos_interface/include/ohos_adpter/ohos_image_decoder_adapter.h",
+  ]
 }
 
 ohos_unittest("ohos_image_decoder_adapter_test") {
