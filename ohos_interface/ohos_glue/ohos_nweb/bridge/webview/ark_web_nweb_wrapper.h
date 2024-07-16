@@ -1294,6 +1294,20 @@ public:
      */
     /*--ark web()--*/
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) override;
+
+    /**
+     * @brief set the callback of the autofill event.
+     * @param callback callback.
+     */
+    /*--ark web()--*/
+    void SetAutofillCallback(std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback) override;
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    /*--ark web()--*/
+    void FillAutofillData(std::shared_ptr<OHOS::NWeb::NWebMessage> data) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

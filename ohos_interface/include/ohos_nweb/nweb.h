@@ -1447,6 +1447,18 @@ public:
      * @param timeToLive The time of the back forward cache page could stay.
      */
     virtual void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive) { return; }
+
+    /**
+     * @brief set the callback of the autofill event.
+     * @param callback callback.
+     */
+    virtual void SetAutofillCallback(std::shared_ptr<NWebMessageValueCallback> callback) {}
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    virtual void FillAutofillData(std::shared_ptr<NWebMessage> data) {}
 };
 
 } // namespace OHOS::NWeb
