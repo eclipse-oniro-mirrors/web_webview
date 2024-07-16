@@ -50,6 +50,7 @@ public:
     void* GetNativeWindowBuffer() override;
     int32_t GetPlanesCount() override;
     void ReleasePixelMap() override;
+    Media::PixelMap* getPixelMap() { return pixelMap_.get(); };
 
 private:
     Media::ImageInfo imageInfo_;
