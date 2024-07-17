@@ -29,6 +29,7 @@
 #include "webview_log.h"
 #include "parameters.h"
 #include "web_cookie_manager.h"
+#include "web_data_base.h"
 #include "pixel_map.h"
 #include "cj_lambda.h"
 #include "pixel_map_impl.h"
@@ -1087,6 +1088,47 @@ extern "C" {
         std::string str = name;
         ret = nativeWebviewCtl->DeleteJavaScriptRegister(str, {});
         return ret;
+    }
+
+    // web data base;
+    RetDataCArrString FfiOHOSDBGetHttpAuthCredentials(const char *host, const char *realm)
+    {
+        std::string host_s = std::string(host);
+        std::string realm_s = std::string(realm);
+
+        CArrString result = OHOS::NWeb::WebDataBase::CJGetHttpAuthCredentials(host_s, realm_s);
+        RetDataCArrString ret;
+
+        if (result.size == -1) {
+            ret.code = NWebError::HTTP_AUTH_MALLOC_FAILED;
+        }
+        else {
+            ret.code = NWebError::NO_ERROR;
+        }
+
+        ret.data = result;
+        return ret;
+    }
+
+    void FfiOHOSDBSaveHttpAuthCredentials(const char *host, const char *realm,
+        const char *username, const char *password)
+    {
+        std::string host_s = std::string(host);
+        std::string realm_s = std::string(realm);
+        std::string username_s = std::string(username);
+        std::string password_s = std::string(password);
+
+        OHOS::NWeb::WebDataBase::CJSaveHttpAuthCredentials(host_s, realm_s, username_s, password_s);
+    }
+
+    bool FfiOHOSDBExistHttpAuthCredentials()
+    {
+        return OHOS::NWeb::WebDataBase::CJExistHttpAuthCredentials();
+    }
+
+    void FfiOHOSDBDeleteHttpAuthCredentials()
+    {
+        OHOS::NWeb::WebDataBase::CJDeleteHttpAuthCredentials();
     }
 
     // WebDownloadItemImpl
