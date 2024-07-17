@@ -78,7 +78,7 @@ int32_t NetConnectCallbackImpl::NetCapabilitiesChange(sptr<NetHandle> &netHandle
 int32_t NetConnectCallbackImpl::NetConnectionPropertiesChange(sptr<NetHandle> &netHandle, const sptr<NetLinkInfo> &info)
 {
     if (netHandle == nullptr || info == nullptr) {
-        WVLOG_E("NetConnCallback enter, NetCapabilitiesChange, netHandle or info is nullptr.");
+        WVLOG_E("NetConnCallback enter, NetConnectionPropertiesChange, netHandle or info is nullptr.");
         return 0;
     }
 

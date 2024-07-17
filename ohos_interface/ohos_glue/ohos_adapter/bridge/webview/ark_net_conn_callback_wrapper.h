@@ -30,6 +30,10 @@ public:
         const OHOS::NWeb::NetConnectSubtype& netConnectSubtype) override;
     int32_t NetConnectionPropertiesChange() override;
     int32_t NetUnavailable() override;
+    int32_t OnNetCapabilitiesChanged(
+        const std::shared_ptr<NWeb::NetCapabilitiesAdapter> capabilities) override;
+    int32_t OnNetConnectionPropertiesChanged(
+        const std::shared_ptr<NWeb::NetConnectionPropertiesAdapter> properties) override;
 
 private:
     ArkWebRefPtr<ArkNetConnCallback> ctocpp_;
