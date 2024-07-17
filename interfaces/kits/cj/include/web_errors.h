@@ -47,6 +47,8 @@ constexpr ErrCode REGISTER_CUSTOM_SCHEME_FAILED = 17100020;
 constexpr ErrCode RESOURCE_HANDLER_INVALID = 17100021;
 constexpr ErrCode HTTP_BODY_STREAN_INIT_FAILED = 17100022;
 
+constexpr ErrCode HTTP_AUTH_MALLOC_FAILED = 17100023;
+
 std::string GetErrMsgByErrCode(ErrCode code);
 }
 }

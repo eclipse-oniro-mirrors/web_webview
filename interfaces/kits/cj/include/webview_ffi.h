@@ -32,7 +32,8 @@ extern "C" {
     FFI_EXPORT int32_t FfiOHOSWebviewCtlLoadData(int64_t id, OHOS::Webview::LoadDatas loadDatas);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlRefresh(int64_t id);
     FFI_EXPORT int32_t FFiOHOSWebviewCtlPreFetchPage(int64_t id, char* url);
-    FFI_EXPORT int32_t FFiOHOSWebviewCtlPreFetchPageWithHeaders(int64_t id, char* url, OHOS::Webview::ArrWebHeader headers);
+    FFI_EXPORT int32_t FFiOHOSWebviewCtlPreFetchPageWithHeaders(int64_t id, char* url,
+        OHOS::Webview::ArrWebHeader headers);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlSetAudioMuted(int64_t id, bool mute);
     FFI_EXPORT char *FfiOHOSWebviewCtlGetUserAgent(int64_t id, int32_t *errCode);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlSetConnectionTimeout(int32_t timeout);
@@ -101,6 +102,13 @@ extern "C" {
     FFI_EXPORT bool FfiOHOSCookieMgrExistCookie(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearAllCookiesSync(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearSessionCookieSync();
+    
+    // data_base
+    FFI_EXPORT RetDataCArrString FfiOHOSDBGetHttpAuthCredentials(const char *host,
+        const char *realm);
+    FFI_EXPORT void FfiOHOSDBSaveHttpAuthCredentials(const char *host, const char *realm, const char *username, const char *password);
+    FFI_EXPORT bool FfiOHOSDBExistHttpAuthCredentials();
+    FFI_EXPORT void FfiOHOSDBDeleteHttpAuthCredentials();
 }
 
 #endif // WEBVIEW_FFI_H

@@ -730,7 +730,7 @@ namespace OHOS::Webview {
     }
 
     ErrCode WebviewControllerImpl::DeleteJavaScriptRegister(const std::string& objName,
-    const std::vector<std::string>& methodList)
+        const std::vector<std::string>& methodList)
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
         if (nweb_ptr) {
