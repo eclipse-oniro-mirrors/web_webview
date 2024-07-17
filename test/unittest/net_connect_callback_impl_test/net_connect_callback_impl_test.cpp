@@ -81,6 +81,16 @@ public:
     {
         return 0;
     }
+    int32_t OnNetCapabilitiesChanged(
+        const std::shared_ptr<NetCapabilitiesAdapter> capabilities) override
+    {
+        return 0;
+    }
+    int32_t OnNetConnectionPropertiesChanged(
+        const std::shared_ptr<NetConnectionPropertiesAdapter> properties) override
+    {
+        return 0;
+    }
 };
 
 /**
