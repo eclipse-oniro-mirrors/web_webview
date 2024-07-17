@@ -34,6 +34,7 @@ ohos_shared_library("cj_webview_ffi") {
   if (product_name != "ohos-sdk") {
     sources = [
       "src/web_cookie_manager.cpp",
+      "src/web_data_base.cpp",
       "src/webview_controller_impl.cpp",
       "src/webview_ffi.cpp",
       "src/webview_javascript_execute_callback.cpp",
