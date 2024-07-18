@@ -23,6 +23,8 @@ config("module_private_config") {
     "../../../../ohos_adapter/media_adapter/include",
     "../../../../ohos_adapter/graphic_adapter/include",
   ]
+  cflags_cc = [ "--coverage" ]
+  ldflags = [ "--coverage" ]
 }
 
 ohos_unittest("nweb_media_adapter_test") {
