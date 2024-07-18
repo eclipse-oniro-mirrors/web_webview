@@ -442,7 +442,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     WebDownloadItem_SetReceivedBytes(downloadItem, 1);
     WebDownloadItem_SetTotalBytes(downloadItem, 1);
     WebDownloadItem_SetReceivedSlices(downloadItem, "test_web");
-
     char* guid = WebDownloadItem_Guid(downloadItem);
     EXPECT_NE(guid, nullptr);
     int64_t totalBytes = WebDownloadItem_TotalBytes(downloadItem);
@@ -457,6 +456,10 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     EXPECT_NE(eTag, nullptr);
     char* mimeType = WebDownloadItem_MimeType(downloadItem);
     EXPECT_NE(mimeType, nullptr);
+    long itemId = WebDownloadItem_GetDownloadItemId(downloadItem);
+    auto state1 = WebDownload_GetItemState(nWebId, itemId);
+    auto state2 = WebDownload_GetItemStateByGuid("test_web");
+    EXPECT_EQ(state1, state2);
 }
 
 /**
