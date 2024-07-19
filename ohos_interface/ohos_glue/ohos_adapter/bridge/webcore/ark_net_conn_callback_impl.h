@@ -34,6 +34,12 @@ public:
 
     int32_t NetUnavailable() override;
 
+    int32_t OnNetCapabilitiesChanged(
+        const ArkWebRefPtr<ArkNetCapabilitiesAdapter> capabilites) override;
+
+    int32_t OnNetConnectionPropertiesChanged(
+        const ArkWebRefPtr<ArkNetConnectionPropertiesAdapter> properties) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NetConnCallback> real_;
 
