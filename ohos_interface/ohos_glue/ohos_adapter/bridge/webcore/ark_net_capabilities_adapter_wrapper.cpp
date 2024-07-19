@@ -25,14 +25,14 @@ int32_t ArkNetCapabilitiesAdapterWrapper::GetNetId()
     return ctocpp_->GetNetId();
 }
 
-OHOS::NWeb::ConnectType ArkNetCapabilitiesAdapterWrapper::GetConnectType()
+OHOS::NWeb::NetConnectType ArkNetCapabilitiesAdapterWrapper::GetConnectType()
 {
-    return static_cast<OHOS::NWeb::ConnectType>(ctocpp_->GetConnectType());
+    return static_cast<OHOS::NWeb::NetConnectType>(ctocpp_->GetConnectType());
 }
 
-OHOS::NWeb::ConnectSubtype ArkNetCapabilitiesAdapterWrapper::GetConnectSubtype()
+OHOS::NWeb::NetConnectSubtype ArkNetCapabilitiesAdapterWrapper::GetConnectSubtype()
 {
-    return static_cast<OHOS::NWeb::ConnectSubtype>(ctocpp_->GetConnectSubtype());
+    return static_cast<OHOS::NWeb::NetConnectSubtype>(ctocpp_->GetConnectSubtype());
 }
 
 } // namespace OHOS::ArkWeb
