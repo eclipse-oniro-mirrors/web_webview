@@ -1342,7 +1342,7 @@ public:
                                  int height,
                                  const WebSnapshotCallback callback) {
         return false;
-                                 };
+    }
 
     /**
      * Set grant file access dirs.
