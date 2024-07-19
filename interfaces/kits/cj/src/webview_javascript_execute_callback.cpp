@@ -34,6 +34,9 @@ void WebviewJavaScriptExecuteCallback::OnReceiveValue(std::shared_ptr<NWebMessag
     }
     ret.code = NWebError::NO_ERROR;
     ret.data = MallocCString(result->GetString());
+    if (ret.data == nullptr) {
+        ret.code = NWebError::NEW_OOM;
+    }
     callbackRef_(ret);
 }
 

@@ -101,13 +101,7 @@ extern "C" {
         }
         std::string webSrc = url;
 
-        int32_t ret = nativeWebviewCtl->LoadUrl(webSrc);
-        if (ret != NWebError::NO_ERROR) {
-            if (ret == NWebError::NWEB_ERROR) {
-                return ret;
-            }
-        }
-        return ret;
+        return nativeWebviewCtl->LoadUrl(webSrc);
     }
 
     int32_t FfiOHOSWebviewCtlLoadUrlWithHeaders(int64_t id, char *url, ArrWebHeader headers)
@@ -125,14 +119,7 @@ extern "C" {
             httpHeaders[key] = value;
         }
 
-        int32_t ret = nativeWebviewCtl->LoadUrl(url, httpHeaders);
-        if (ret != NWebError::NO_ERROR) {
-            if (ret == NWebError::NWEB_ERROR) {
-                WEBVIEWLOGE("LoadUrl failed.");
-                return ret;
-            }
-        }
-        return ret;
+        return nativeWebviewCtl->LoadUrl(url, httpHeaders);
     }
 
     int32_t FfiOHOSWebviewCtlLoadData(int64_t id, LoadDatas loadDatas)
@@ -146,14 +133,7 @@ extern "C" {
         std::string encoding = loadDatas.cEncoding;
         std::string baseUrl = loadDatas.cBaseUrl;
         std::string historyUrl = loadDatas.cHistoryUrl;
-        ErrCode ret = nativeWebviewCtl->LoadData(data, mimeType, encoding, baseUrl, historyUrl);
-        if (ret != NWebError::NO_ERROR) {
-            if (ret == NWebError::NWEB_ERROR) {
-                WEBVIEWLOGE("LoadData failed.");
-                return ret;
-            }
-        }
-        return ret;
+        return nativeWebviewCtl->LoadData(data, mimeType, encoding, baseUrl, historyUrl);
     }
 
     int32_t FfiOHOSWebviewCtlRefresh(int64_t id)
@@ -173,8 +153,7 @@ extern "C" {
             *errCode = NWebError::INIT_ERROR;
             return nullptr;
         }
-        std::string userAgent = "";
-        userAgent = nativeWebviewCtl->GetUserAgent();
+        std::string userAgent = nativeWebviewCtl->GetUserAgent();
         *errCode = NWebError::NO_ERROR;
         return MallocCString(userAgent);
     }
@@ -326,8 +305,7 @@ extern "C" {
     {
         std::string curl = url;
         std::string cvalue = value;
-        int32_t errCode = OHOS::NWeb::WebCookieManager::CjSetCookie(curl, cvalue, incognitoMode);
-        return errCode;
+        return OHOS::NWeb::WebCookieManager::CjSetCookie(curl, cvalue, incognitoMode);
     }
 
     void FfiOHOSCookieMgrPutAcceptCookieEnabled(bool accept)
@@ -734,6 +712,9 @@ extern "C" {
         uint64_t bufferSize = stride * static_cast<uint64_t>(height);
         pixelMap->WritePixels(static_cast<const uint8_t *>(data), bufferSize);
         auto nativeImage = FFIData::Create<Media::PixelMapImpl>(move(pixelMap));
+        if (nativeImage == nullptr) {
+            return -1;
+        }
         WEBVIEWLOGI("[PixelMap] create PixelMap success");
         return nativeImage->GetID();
     }
