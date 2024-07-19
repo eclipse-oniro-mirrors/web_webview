@@ -18,7 +18,7 @@
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
-ArkNetCapabilitiesAdapterImpl::ArkNetCapabilitiesAdapterImpl(std::shared_ptr<OHOS::NWeb::NetCapabilitiesAdapter> ref) 
+ArkNetCapabilitiesAdapterImpl::ArkNetCapabilitiesAdapterImpl(std::shared_ptr<OHOS::NWeb::NetCapabilitiesAdapter> ref)
     : real_(ref) {}
 
 int32_t ArkNetCapabilitiesAdapterImpl::GetNetId()
