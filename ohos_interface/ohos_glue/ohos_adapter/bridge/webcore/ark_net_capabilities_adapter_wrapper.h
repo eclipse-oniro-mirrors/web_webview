@@ -28,9 +28,9 @@ public:
 
     int32_t GetNetId() override;
 
-    OHOS::NWeb::ConnectType GetConnectType() override;
+    OHOS::NWeb::NetConnectType GetConnectType() override;
 
-    OHOS::NWeb::ConnectSubtype GetConnectSubtype() override;
+    OHOS::NWeb::NetConnectSubtype GetConnectSubtype() override;
 
 private:
     ArkWebRefPtr<ArkNetCapabilitiesAdapter> ctocpp_;
