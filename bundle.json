@@ -244,6 +244,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/cert_mgr_adapter/getcertmaxsize_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/cert_mgr_adapter/getusercertdata_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ashmemcreate_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/systemproperties_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/loadlib_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/getcookiemanager_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/getnweb_fuzzer:fuzztest",
