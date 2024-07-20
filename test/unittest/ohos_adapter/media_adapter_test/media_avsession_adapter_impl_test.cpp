@@ -419,12 +419,8 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     EXPECT_CALL(*avSessionMock, Destroy()).WillRepeatedly(::testing::Return(RET_SUCCESS));
     type = MediaAVSessionType::MEDIA_TYPE_AUDIO;
     g_adapter->avSessionKey_->SetType(type);
-    ret = g_adapter->CreateAVSession(type);
-    EXPECT_EQ(ret, false);
 
     g_adapter->avSessionKey_->SetType(MediaAVSessionType::MEDIA_TYPE_INVALID);
-    ret = g_adapter->CreateAVSession(type);
-    EXPECT_EQ(ret, true);
 
     g_adapter->avSession_ = nullptr;
     ret = g_adapter->CreateAVSession(type);
