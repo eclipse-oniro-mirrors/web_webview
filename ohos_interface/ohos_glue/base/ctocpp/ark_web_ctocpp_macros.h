@@ -42,14 +42,14 @@
         }                                             \
     }
 
-#define ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(struct, function, result) \
-    {                                                              \
-        ArkWebSetErrno(RESULT_OK);                                 \
-        if (ARK_WEB_FUNC_MEMBER_MISSING(struct, function)) {       \
-            ArkWebSetErrno(RESULT_NOT_IMPL);                       \
-            ARK_WEB_CTOCPP_INFO_LOG("function isn't existing");    \
-            return result;                                         \
-        }                                                          \
+#define ARK_WEB_CTOCPP_CHECK_FUNC_MEMBER(struct, function, result)                       \
+    {                                                                                    \
+        ArkWebSetErrno(RESULT_OK);                                                       \
+        if (ARK_WEB_FUNC_MEMBER_MISSING(struct, function)) {                             \
+            ArkWebSetErrno(RESULT_NOT_IMPL);                                             \
+            ARK_WEB_CTOCPP_INFO_LOG("function %{public}s isn't existing", __FUNCTION__); \
+            return result;                                                               \
+        }                                                                                \
     }
 
 #endif // ARK_WEB_CTOCPP_MACROS_H_
