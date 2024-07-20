@@ -21,10 +21,6 @@ using namespace OHOS::NWeb;
 namespace OHOS {  
     bool AccessTokenAdapterFuzzTest(const uint8_t* data, size_t size)  
     {  
-        if ((data == nullptr) || (size == 0)) {  
-            return false;  
-        }  
-
         std::string permissionName(reinterpret_cast<const char*>(data), size);  
 
         auto& instance = AccessTokenAdapterImpl::GetInstance();  
