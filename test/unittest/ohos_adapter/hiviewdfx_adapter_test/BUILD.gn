@@ -43,6 +43,7 @@ ohos_unittest("nweb_hiviewdfx_adapter_test") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "init:libbegetutil",
+    "webview:libnweb",
   ]
 }
 
