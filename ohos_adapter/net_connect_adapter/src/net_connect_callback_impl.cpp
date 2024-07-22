@@ -17,7 +17,9 @@
 
 #include "cellular_data_client.h"
 #include "core_service_client.h"
+#include "net_capabilities_adapter_impl.h"
 #include "net_connect_utils.h"
+#include "net_connection_properties_adapter_impl.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {
@@ -68,7 +70,11 @@ int32_t NetConnectCallbackImpl::NetCapabilitiesChange(sptr<NetHandle> &netHandle
         NetConnectType type = NetConnectUtils::ConvertToConnectType(bearerTypes, radioTech);
         WVLOG_I("net connect type = %{public}s.", NetConnectUtils::ConnectTypeToString(type).c_str());
         if (cb_ != nullptr) {
-            return cb_->NetCapabilitiesChange(type, subtype);
+            auto capabilites = std::make_shared<NetCapabilitiesAdapterImpl>();
+            capabilites->SetNetId(netHandle->GetNetId());
+            capabilites->SetConnectType(type);
+            capabilites->SetConnectSubtype(subtype);
+            return cb_->OnNetCapabilitiesChanged(capabilites);
         }
     }
 
@@ -78,14 +84,16 @@ int32_t NetConnectCallbackImpl::NetCapabilitiesChange(sptr<NetHandle> &netHandle
 int32_t NetConnectCallbackImpl::NetConnectionPropertiesChange(sptr<NetHandle> &netHandle, const sptr<NetLinkInfo> &info)
 {
     if (netHandle == nullptr || info == nullptr) {
-        WVLOG_E("NetConnCallback enter, NetCapabilitiesChange, netHandle or info is nullptr.");
+        WVLOG_E("NetConnCallback enter, NetConnectionPropertiesChange, netHandle or info is nullptr.");
         return 0;
     }
 
     WVLOG_I("NetConnCallback enter, NetConnectionPropertiesChange, net id = %{public}d.", netHandle->GetNetId());
     WVLOG_D("%{public}s.", info->ToString("").c_str());
     if (cb_ != nullptr) {
-        return cb_->NetConnectionPropertiesChange();
+        auto properties = std::make_shared<NetConnectionPropertiesAdapterImpl>();
+        properties->SetNetId(netHandle->GetNetId());
+        return cb_->OnNetConnectionPropertiesChanged(properties);
     }
 
     return 0;
