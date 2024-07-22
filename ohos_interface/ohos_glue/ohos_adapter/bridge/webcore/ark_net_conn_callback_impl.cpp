@@ -13,7 +13,11 @@
  * limitations under the License.
  */
 
+#include "ohos_adapter/bridge/ark_net_capabilities_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_net_conn_callback_impl.h"
+#include "ohos_adapter/bridge/ark_net_connection_properties_adapter_wrapper.h"
+
+#include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -38,6 +42,28 @@ int32_t ArkNetConnCallbackImpl::NetConnectionPropertiesChange()
 int32_t ArkNetConnCallbackImpl::NetUnavailable()
 {
     return real_->NetUnavailable();
+}
+
+int32_t ArkNetConnCallbackImpl::OnNetCapabilitiesChanged(
+    const ArkWebRefPtr<ArkNetCapabilitiesAdapter> capabilites)
+{
+    if (CHECK_REF_PTR_IS_NULL(capabilites)) {
+        return real_->OnNetCapabilitiesChanged(nullptr);
+    }
+
+    return real_->OnNetCapabilitiesChanged(
+        std::make_shared<ArkNetCapabilitiesAdapterWrapper>(capabilites));
+}
+
+int32_t ArkNetConnCallbackImpl::OnNetConnectionPropertiesChanged(
+    const ArkWebRefPtr<ArkNetConnectionPropertiesAdapter> properties)
+{
+    if (CHECK_REF_PTR_IS_NULL(properties)) {
+        return real_->OnNetConnectionPropertiesChanged(nullptr);
+    }
+
+    return real_->OnNetConnectionPropertiesChanged(
+        std::make_shared<ArkNetConnectionPropertiesAdapterWrapper>(properties));
 }
 
 } // namespace OHOS::ArkWeb

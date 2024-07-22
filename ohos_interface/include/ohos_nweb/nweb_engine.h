@@ -77,13 +77,13 @@ public:
 
     virtual void ClearHostIP(const std::string& hostName) = 0;
 
-    virtual void EnableWholeWebPageDrawing() {};
+    virtual void EnableWholeWebPageDrawing() {}
 
     virtual std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager() {
         return nullptr;
-    };
+    }
 
-    virtual void TrimMemoryByPressureLevel(int32_t memoryLevel) {};
+    virtual void TrimMemoryByPressureLevel(int32_t memoryLevel) {}
 };
 
 } // namespace OHOS::NWeb

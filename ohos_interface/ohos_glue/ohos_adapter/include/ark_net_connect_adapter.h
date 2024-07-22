@@ -22,6 +22,26 @@
 
 namespace OHOS::ArkWeb {
 
+/*--ark web(source=webview)--*/
+class ArkNetCapabilitiesAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual int32_t GetNetId() = 0;
+
+    /*--ark web()--*/
+    virtual uint32_t GetConnectType() = 0;
+
+    /*--ark web()--*/
+    virtual uint32_t GetConnectSubtype() = 0;
+};
+
+/*--ark web(source=webview)--*/
+class ArkNetConnectionPropertiesAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual int32_t GetNetId() = 0;
+};
+
 /*--ark web(source=webcore)--*/
 class ArkNetConnCallback : public virtual ArkWebBaseRefCounted {
 public:
@@ -36,6 +56,14 @@ public:
 
     /*--ark web()--*/
     virtual int32_t NetUnavailable() = 0;
+
+    /*--ark web()--*/
+    virtual int32_t OnNetCapabilitiesChanged(
+        const ArkWebRefPtr<ArkNetCapabilitiesAdapter> capabilites) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t OnNetConnectionPropertiesChanged(
+        const ArkWebRefPtr<ArkNetConnectionPropertiesAdapter> properties) = 0;
 };
 
 /*--ark web(source=webview)--*/

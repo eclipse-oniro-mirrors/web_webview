@@ -71,6 +71,24 @@ enum class NetConnectSubtype : uint32_t {
     SUBTYPE_LAST = SUBTYPE_WIFI_AD
 };
 
+class NetCapabilitiesAdapter {
+public:
+    NetCapabilitiesAdapter() = default;
+    virtual ~NetCapabilitiesAdapter() = default;
+
+    virtual int32_t GetNetId() = 0;
+    virtual NetConnectType GetConnectType() = 0;
+    virtual NetConnectSubtype GetConnectSubtype() = 0;
+};
+
+class NetConnectionPropertiesAdapter {
+public:
+    NetConnectionPropertiesAdapter() = default;
+    virtual ~NetConnectionPropertiesAdapter() = default;
+
+    virtual int32_t GetNetId() = 0;
+};
+
 class NetConnCallback {
 public:
     NetConnCallback() = default;
@@ -81,6 +99,10 @@ public:
         const NetConnectType& netConnectType, const NetConnectSubtype& netConnectSubtype) = 0;
     virtual int32_t NetConnectionPropertiesChange() = 0;
     virtual int32_t NetUnavailable() = 0;
+    virtual int32_t OnNetCapabilitiesChanged(
+        const std::shared_ptr<NetCapabilitiesAdapter> capabilities) { return 0; }
+    virtual int32_t OnNetConnectionPropertiesChanged(
+        const std::shared_ptr<NetConnectionPropertiesAdapter> properties) { return 0; }
 };
 
 class NetConnectAdapter {

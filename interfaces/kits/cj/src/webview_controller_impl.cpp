@@ -446,6 +446,9 @@ namespace OHOS::Webview {
             }
             ret.code = NWebError::NO_ERROR;
             ret.data = MallocCString(result);
+            if (ret.data == nullptr) {
+                ret.code = NWebError::NEW_OOM;
+            }
             cjCallback(ret);
         });
         nweb_ptr->StoreWebArchive(baseName, autoName, callbackImpl);
