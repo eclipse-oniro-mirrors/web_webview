@@ -255,6 +255,15 @@ public:
     void OnResume() override {};
 };
 
+class AudioOutputChangeCallbackMock : public AudioOutputChangeCallbackAdapter {
+public:
+    AudioOutputChangeCallbackMock() = default;
+
+    virtual ~AudioOutputChangeCallbackMock() = default;
+
+    void OnOutputDeviceChange(int32_t reason) override {};
+};
+
 class AudioCapturerCallbackMock : public AudioCapturerReadCallbackAdapter {
 public:
     AudioCapturerCallbackMock() = default;
@@ -1094,5 +1103,99 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_028, TestSi
     deviceName = AudioSystemManagerAdapterImpl::GetInstance().GetDeviceName(DeviceType::DEVICE_TYPE_NONE);
     EXPECT_EQ(deviceName, DEVICE_TYPE_NONE_TEST);
 }
+
+/**
+ * @tc.name: NWebAudioAdapterTest_AudioAdapterImpl_029.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:I5HRX9
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_GetChangeReason_029, TestSize.Level1)
+{
+    std::array<AudioStreamDeviceChangeReason, 5> reasonArray = {
+        AudioStreamDeviceChangeReason::UNKNOWN,
+        AudioStreamDeviceChangeReason::NEW_DEVICE_AVAILABLE,
+        AudioStreamDeviceChangeReason::OLD_DEVICE_UNAVALIABLE,
+        AudioStreamDeviceChangeReason::OVERRODE,
+    };
+   
+    std::shared_ptr<AudioOutputChangeCallbackAdapter> cb = std::make_shared<AudioOutputChangeCallbackMock>();
+    EXPECT_NE(cb, nullptr);
+    auto callBack = std::make_shared<AudioOutputChangeCallbackImpl>(cb);
+    EXPECT_NE(callBack, nullptr);
+
+    for (auto& reason : reasonArray)
+        callBack->GetChangeReason(reason);
+    
+    AudioAdapterDeviceChangeReason testReason = callBack->GetChangeReason(static_cast<AudioStreamDeviceChangeReason>(-1));
+    EXPECT_EQ(testReason, AudioAdapterDeviceChangeReason::UNKNOWN);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_GetChangeReason_030.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:I5HRX9
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnOutputDeviceChange_030, TestSize.Level1)
+{
+    std::shared_ptr<AudioOutputChangeCallbackAdapter> cb = std::make_shared<AudioOutputChangeCallbackMock>();
+    EXPECT_NE(cb, nullptr);
+    auto callBack = std::make_shared<AudioOutputChangeCallbackImpl>(cb);
+    ASSERT_NE(callBack, nullptr);
+    
+    DeviceInfo deviceInfo;
+
+    AudioStreamDeviceChangeReason reason = AudioStreamDeviceChangeReason::UNKNOWN;
+    callBack->OnOutputDeviceChange(deviceInfo, reason);
+
+    reason = AudioStreamDeviceChangeReason::NEW_DEVICE_AVAILABLE;
+    callBack->OnOutputDeviceChange(deviceInfo, reason);
+
+    reason = AudioStreamDeviceChangeReason::OLD_DEVICE_UNAVALIABLE;
+    callBack->OnOutputDeviceChange(deviceInfo, reason);
+
+    reason = AudioStreamDeviceChangeReason::OVERRODE;
+    callBack->OnOutputDeviceChange(deviceInfo, reason);
+
+    reason = static_cast<AudioStreamDeviceChangeReason>(-1);
+    callBack->OnOutputDeviceChange(deviceInfo, reason);
+
+    callBack->cb_ = nullptr;
+    callBack->OnOutputDeviceChange(deviceInfo, reason);
+}
+
+/**
+ * @tc.name: NWebAudioAdapterTest_SetAudioOutputChangeCallback_031.
+ * @tc.desc: Audio adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:I5HRX9
+ */
+HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_SetAudioOutputChangeCallback_031, TestSize.Level1)
+{
+    auto audioOutputChange = std::make_shared<AudioRendererAdapterImpl>();
+    ASSERT_NE(audioOutputChange, nullptr);
+    int32_t retNum = audioOutputChange->SetAudioOutputChangeCallback(nullptr);
+    EXPECT_NE(retNum, 0);
+    
+    std::shared_ptr<AudioOutputChangeCallbackAdapter> callback = std::make_shared<AudioOutputChangeCallbackMock>();
+    ASSERT_NE(callback, nullptr);
+    retNum = audioOutputChange->SetAudioOutputChangeCallback(callback);
+    EXPECT_NE(retNum, 0);
+
+    AudioRendererOptions rendererOptions;
+    AudioRendererInfo renderInfo;
+    rendererOptions.streamInfo.samplingRate = AudioSamplingRate::SAMPLE_RATE_44100;
+    rendererOptions.streamInfo.encoding = AudioEncodingType::ENCODING_PCM;
+    rendererOptions.streamInfo.format = AudioSampleFormat::SAMPLE_S16LE;
+    rendererOptions.streamInfo.channels = AudioChannel::STEREO;
+    rendererOptions.rendererInfo = renderInfo;
+    audioOutputChange->audio_renderer_ = AudioRenderer::Create(rendererOptions);
+    ASSERT_NE(audioOutputChange->audio_renderer_, nullptr);
+
+    retNum = audioOutputChange->SetAudioOutputChangeCallback(callback);
+    EXPECT_EQ(retNum, 0);
+}
+
 } // namespace NWeb
 } // namespace OHOS
