@@ -1127,7 +1127,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_GetChangeReason_029, TestSiz
     for (auto& reason : reasonArray)
         callBack->GetChangeReason(reason);
     
-    AudioAdapterDeviceChangeReason testReason = callBack->GetChangeReason(static_cast<AudioStreamDeviceChangeReason>(-1));
+    AudioAdapterDeviceChangeReason testReason = callBack->GetChangeReason(
+        static_cast<AudioStreamDeviceChangeReason>(-1)
+    );
     EXPECT_EQ(testReason, AudioAdapterDeviceChangeReason::UNKNOWN);
 }
 
