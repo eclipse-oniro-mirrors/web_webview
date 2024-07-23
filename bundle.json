@@ -171,6 +171,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkattachrender_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/accesstoken_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/audio_adapter:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/resschedadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/backgroundtask_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/datashareadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/datatimeformat_fuzzer:fuzztest",
