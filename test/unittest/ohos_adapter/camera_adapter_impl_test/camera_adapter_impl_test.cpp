@@ -536,6 +536,8 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_InitCameraInput_010, TestS
     adapter.isCapturing_ = true;
     bool isExist = adapter.IsExistCaptureTask();
     EXPECT_TRUE(isExist);
+    result = adapter.StartStream(deviceId, nullptr, nullptr);
+    EXPECT_NE(result, 0);
     result = adapter.StartStream(deviceId, captureParams, nullptr);
     EXPECT_NE(result, 0);
     adapter.status_ = CameraStatusAdapter::AVAILABLE;
@@ -591,4 +593,20 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraManagerAdapterCallba
     adapter.statusCallback_ = nullptr;
     adapter.OnCameraStatusChanged(cameraStatusInfo);
 }
+
+/**
+ * @tc.name: CameraAdapterImplTest_CameraStatus_012
+ * @tc.desc: CameraManagerAdapterCallback.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraStatus_012, TestSize.Level1)
+{
+    auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
+    CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
+    CameraStatusAdapter status = adapter.GetCameraStatus();
+
+    adapter.SetCameraStatus(status);
+}
+
 } // namespace OHOS::NWeb

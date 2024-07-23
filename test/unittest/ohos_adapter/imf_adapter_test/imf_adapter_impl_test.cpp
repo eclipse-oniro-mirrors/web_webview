@@ -65,6 +65,82 @@ public:
     }
 };
 
+class IMFInputAttributeAdapterMock : public IMFInputAttributeAdapter {
+public:
+    IMFInputAttributeAdapterMock() = default;
+
+    ~IMFInputAttributeAdapterMock() override = default;
+
+    int32_t GetInputPattern() override
+    {
+        return 0;
+    }
+
+    int32_t GetEnterKeyType() override
+    {
+        return 0;
+    }
+};
+
+class IMFSelectionRangeAdapterMock : public IMFSelectionRangeAdapter {
+public:
+    IMFSelectionRangeAdapterMock() = default;
+
+    ~IMFSelectionRangeAdapterMock() override = default;
+
+    int32_t GetStart() override
+    {
+        return 0;
+    }
+
+    int32_t GetEnd() override
+    {
+        return 0;
+    }
+};
+
+class IMFTextConfigTest : public IMFTextConfigAdapter {
+public:
+    IMFTextConfigTest() = default;
+    ~IMFTextConfigTest() override = default;
+
+    std::shared_ptr<IMFInputAttributeAdapter> GetInputAttribute()
+    {
+        auto mock = std::make_shared<IMFInputAttributeAdapterMock>();
+        return mock;
+    }
+
+    std::shared_ptr<IMFCursorInfoAdapter> GetCursorInfo()
+    {
+        auto mock = std::make_shared<IMFCursorInfoAdapterMock>();
+        return mock;
+    }
+
+    std::shared_ptr<IMFSelectionRangeAdapter> GetSelectionRange()
+    {
+        auto mock = std::make_shared<IMFSelectionRangeAdapterMock>();
+        return mock;
+    }
+
+    uint32_t GetWindowId()
+    {
+        WVLOG_I("test GetWindowId");
+        return 0;
+    }
+
+    double GetPositionY()
+    {
+        WVLOG_I("test GetPositionY");
+        return 0.0;
+    }
+
+    double GetHeight()
+    {
+        WVLOG_I("test GetHeight");
+        return 0.0;
+    }
+};
+
 class IMFTextListenerTest : public IMFTextListenerAdapter {
 public:
     IMFTextListenerTest() = default;
@@ -410,4 +486,24 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_009, TestSize.Lev
     privateCommand = { { "previewTextStyle", "underline" } };
     listenerTest->ReceivePrivateCommand(privateCommand);
 }
+
+/**
+ * @tc.name: NWebIMFAdapterTest_InsertText_010.
+ * @tc.desc: IMF adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_010, TestSize.Level1)
+{
+    auto listener = std::make_shared<IMFTextListenerTest>();
+    auto config = std::make_shared<IMFTextConfigTest>();
+    bool result = g_imf->Attach(listener, true, nullptr, false);
+    EXPECT_FALSE(result);
+
+    result = g_imf->Attach(listener, true, config, false);
+    EXPECT_FALSE(result);
+    EXPECT_NE(g_imf->textListener_, nullptr);
+    g_imf->HideTextInput();
+}
+
 } // namespace OHOS::NWeb
