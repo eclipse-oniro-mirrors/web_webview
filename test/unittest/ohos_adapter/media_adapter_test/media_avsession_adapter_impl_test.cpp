@@ -167,6 +167,15 @@ public:
     MOCK_CONST_METHOD0(GetState, int32_t());
 };
 
+class MediaAVSessionKeyMock : public MediaAVSessionKey {
+public:
+    MediaAVSessionKeyMock() = default;
+
+    ~MediaAVSessionKeyMock() = default;
+
+    MOCK_METHOD0(GetElement, std::shared_ptr<AppExecFwk::ElementName>());
+};
+
 class MediaAVSessionCallbackImplTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -406,23 +415,50 @@ HWTEST_F(MediaAVSessionKeyTest, NWebMediaAdapterTest_MediaAVSessionKey_006, Test
  */
 HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapterImpl_001, TestSize.Level1)
 {
+    auto type = MediaAVSessionType::MEDIA_TYPE_INVALID;
     auto avSessionKey = std::make_shared<MediaAVSessionKey>();
     g_adapter->avSessionKey_ = avSessionKey;
     g_adapter->avSessionKey_->Init();
     auto avSessionMock = std::make_shared<AVSessionMock>();
-    g_adapter->avSession_ = nullptr;
-    auto type = MediaAVSessionType::MEDIA_TYPE_INVALID;
+    auto avSessionMock_dummy = std::make_shared<AVSessionMock>();
+    g_adapter->avSession_ = avSessionMock;
+    g_adapter->avSessionMap.insert(
+        std::make_pair(g_adapter->avSessionKey_->ToString(),
+                       g_adapter->avSession_));
+
     bool ret = g_adapter->CreateAVSession(type);
     EXPECT_EQ(ret, false);
 
-    g_adapter->avSession_ = avSessionMock;
-    EXPECT_CALL(*avSessionMock, Destroy()).WillRepeatedly(::testing::Return(RET_SUCCESS));
     type = MediaAVSessionType::MEDIA_TYPE_AUDIO;
-    g_adapter->avSessionKey_->SetType(type);
-
-    g_adapter->avSessionKey_->SetType(MediaAVSessionType::MEDIA_TYPE_INVALID);
+    g_adapter->avSessionKey_->SetType(MediaAVSessionType::MEDIA_TYPE_VIDEO);
+    ret = g_adapter->CreateAVSession(type);
 
     g_adapter->avSession_ = nullptr;
+    ret = g_adapter->CreateAVSession(type);
+    EXPECT_EQ(ret, true);
+
+    g_adapter->avSession_ = avSessionMock;
+    type = MediaAVSessionType::MEDIA_TYPE_VIDEO;
+    g_adapter->avSessionMap.clear();
+    ret = g_adapter->CreateAVSession(type);
+    EXPECT_EQ(ret, true);
+
+    g_adapter->avSession_ = avSessionMock;
+    g_adapter->avSessionMap.insert(
+        std::make_pair(g_adapter->avSessionKey_->ToString(),
+                       avSessionMock_dummy));
+    ret = g_adapter->CreateAVSession(type);
+    EXPECT_EQ(ret, true);
+
+    g_adapter->avSessionMap.insert(
+        std::make_pair(g_adapter->avSessionKey_->ToString(),
+                       g_adapter->avSession_));
+    ret = g_adapter->CreateAVSession(type);
+    EXPECT_EQ(ret, false);
+
+    g_adapter->avSession_ = avSessionMock;
+    g_adapter->avSessionMap.clear();
+    type = MediaAVSessionType::MEDIA_TYPE_VIDEO;
     ret = g_adapter->CreateAVSession(type);
     EXPECT_EQ(ret, true);
 }
@@ -449,6 +485,15 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     EXPECT_CALL(*avSessionMock, Destroy()).WillOnce(::testing::Return(RET_SUCCESS));
     g_adapter->DestroyAVSession();
     EXPECT_EQ(g_adapter->avSession_, nullptr);
+
+    g_adapter->avSession_ = nullptr;
+    g_adapter->avSessionMap.insert(
+        std::make_pair(g_adapter->avSessionKey_->ToString(),
+                       g_adapter->avSession_));
+    g_adapter->DestroyAVSession();
+
+    g_adapter->avSessionMap.clear();
+    g_adapter->DestroyAVSession();
 }
 
 /**
@@ -610,48 +655,20 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
  */
 HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapterImpl_007, TestSize.Level1)
 {
-    std::string str1 = "q";
-    std::string str2 = "w";
-    auto metadataMock = std::make_shared<MetaDataMock>();
-    auto avmetadata = std::make_shared<AVSession::AVMetaData>();
-    g_adapter->avSession_ = nullptr;
-    g_adapter->avMetadata_ = avmetadata;
-    g_adapter->avMetadata_->SetTitle(str1);
-    g_adapter->avMetadata_->SetArtist(str1);
-    g_adapter->avMetadata_->SetAlbum(str1);
-
-    EXPECT_CALL(*metadataMock, GetTitle()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*metadataMock, GetArtist()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*metadataMock, GetAlbum()).WillRepeatedly(::testing::Return(str1));
-    g_adapter->SetMetadata(metadataMock);
-    EXPECT_EQ(g_adapter->avSession_, nullptr);
-
     auto avSessionMock = std::make_shared<AVSessionMock>();
+    auto metadataMock = std::make_shared<MetaDataMock>();
     g_adapter->avSession_ = avSessionMock;
-    g_adapter->avMetadata_->SetTitle(str1);
-    EXPECT_CALL(*avSessionMock, IsActive()).WillRepeatedly(::testing::Return(true));
-    EXPECT_CALL(*metadataMock, GetTitle()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*metadataMock, GetArtist()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*metadataMock, GetAlbum()).WillRepeatedly(::testing::Return(str1));
-    g_adapter->SetMetadata(metadataMock);
-    EXPECT_NE(g_adapter->avSession_, nullptr);
 
-    g_adapter->avMetadata_->SetTitle(str1);
-    EXPECT_CALL(*metadataMock, GetTitle()).WillRepeatedly(::testing::Return(str2));
-    EXPECT_CALL(*metadataMock, GetArtist()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*metadataMock, GetAlbum()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*avSessionMock, SetAVMetaData(_)).WillOnce(::testing::Return(RET_SUCCESS));
+    EXPECT_CALL(*avSessionMock, SetAVMetaData(_)).WillOnce(
+        ::testing::Return(RET_ERROR));
     g_adapter->SetMetadata(metadataMock);
-    EXPECT_NE(g_adapter->avSession_, nullptr);
 
-    g_adapter->avMetadata_->SetTitle(str1);
-    EXPECT_CALL(*metadataMock, GetTitle()).WillRepeatedly(::testing::Return(str2));
-    EXPECT_CALL(*metadataMock, GetArtist()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*metadataMock, GetAlbum()).WillRepeatedly(::testing::Return(str1));
-    EXPECT_CALL(*avSessionMock, SetAVMetaData(_)).WillOnce(::testing::Return(RET_ERROR));
+    EXPECT_CALL(*avSessionMock, SetAVMetaData(_)).WillOnce(
+        ::testing::Return(RET_SUCCESS));
     g_adapter->SetMetadata(metadataMock);
-    EXPECT_NE(g_adapter->avSession_, nullptr);
+
     g_adapter->avSession_ = nullptr;
+    g_adapter->SetMetadata(metadataMock);
 }
 
 /**
@@ -693,7 +710,7 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
 
 /**
  * @tc.name: MediaAVSessionAdapterImplTest_MediaAVSessionAdapterImpl_009.
- * @tc.desc: test of MediaAVSessionAdapterImpl :: SetPlaybackPosition()
+ * @tc.desc: test of MediaAVSessionAdapterImpl :: SetPlaybackPosition()_1
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -716,17 +733,52 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     g_adapter->SetPlaybackPosition(positionMock);
     EXPECT_EQ(g_adapter->avSession_, nullptr);
 
+    g_adapter->avSession_ = nullptr;
+    g_adapter->avMetadata_->SetDuration(temp2);
+    EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(
+        ::testing::Return(temp2));
+    g_adapter->SetPlaybackPosition(positionMock);
+
     auto avSessionMock = std::make_shared<AVSessionMock>();
     g_adapter->avSession_ = avSessionMock;
     g_adapter->avMetadata_->SetDuration(temp1);
     g_adapter->avPlaybackState_->SetDuration(temp1);
     g_adapter->avPlaybackState_->SetPosition({ temp1, temp1 });
-    EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(::testing::Return(temp1));
-    EXPECT_CALL(*positionMock, GetElapsedTime()).WillRepeatedly(::testing::Return(temp1));
-    EXPECT_CALL(*positionMock, GetUpdateTime()).WillRepeatedly(::testing::Return(temp1));
+    EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(
+        ::testing::Return(temp1));
+    EXPECT_CALL(*positionMock, GetElapsedTime()).WillRepeatedly(
+        ::testing::Return(temp1));
+    EXPECT_CALL(*positionMock, GetUpdateTime()).WillRepeatedly(
+        ::testing::Return(temp1));
     g_adapter->SetPlaybackPosition(positionMock);
     EXPECT_NE(g_adapter->avSession_, nullptr);
 
+    g_adapter->avSession_ = avSessionMock;
+    g_adapter->avMetadata_->SetDuration(temp1);
+    EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(
+        ::testing::Return(temp2));
+    g_adapter->SetPlaybackPosition(positionMock);
+}
+
+/**
+ * @tc.name: MediaAVSessionAdapterImplTest_MediaAVSessionAdapterImpl_016.
+ * @tc.desc: test of MediaAVSessionAdapterImpl :: SetPlaybackPosition()_2
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapterImpl_016, TestSize.Level1)
+{
+    int64_t temp1 = 1;
+    int64_t temp2 = 2;
+    auto positionMock = std::make_shared<PositionMock>();
+    auto avPlaybackState = std::make_shared<AVSession::AVPlaybackState>();
+    auto avmetadata = std::make_shared<AVSession::AVMetaData>();
+    g_adapter->avMetadata_ = avmetadata;
+    g_adapter->avPlaybackState_ = avPlaybackState;
+    auto avSessionMock = std::make_shared<AVSessionMock>();
+
+    g_adapter->avMetadata_->SetDuration(temp1);
+    g_adapter->avSession_ = avSessionMock;
     EXPECT_CALL(*avSessionMock, IsActive()).WillRepeatedly(::testing::Return(true));
     EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(::testing::Return(temp2));
     EXPECT_CALL(*positionMock, GetElapsedTime()).WillRepeatedly(::testing::Return(temp2));
@@ -739,6 +791,7 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     g_adapter->avMetadata_->SetDuration(temp1);
     g_adapter->avPlaybackState_->SetDuration(temp1);
     g_adapter->avPlaybackState_->SetPosition({ temp1, temp1 });
+    g_adapter->avSession_ = avSessionMock;
     EXPECT_CALL(*avSessionMock, IsActive()).WillRepeatedly(::testing::Return(true));
     EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(::testing::Return(temp2));
     EXPECT_CALL(*positionMock, GetElapsedTime()).WillRepeatedly(::testing::Return(temp2));
@@ -896,5 +949,77 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     EXPECT_CALL(*positionMock, GetUpdateTime()).WillRepeatedly(::testing::Return(temp1));
     ret = g_adapter->UpdatePlaybackStateCache(positionMock);
     EXPECT_EQ(ret, true);
+
+    g_adapter->avPlaybackState_->SetDuration(temp1);
+    g_adapter->avPlaybackState_->SetPosition({ temp1, temp1 });
+    EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(
+        ::testing::Return(temp1));
+    EXPECT_CALL(*positionMock, GetElapsedTime()).WillRepeatedly(
+        ::testing::Return(temp1));
+    EXPECT_CALL(*positionMock, GetUpdateTime()).WillRepeatedly(
+        ::testing::Return(temp2));
+    ret = g_adapter->UpdatePlaybackStateCache(positionMock);
+    EXPECT_EQ(ret, true);
+}
+
+/**
+ * @tc.name: MediaAVSessionAdapterImplTest_MediaAVSessionAdapterImpl_0014.
+ * @tc.desc: test of MediaAVSessionAdapterImpl :: DestroyAndEraseSession();
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(MediaAVSessionAdapterImplTest,
+         NWebMediaAdapterTest_MediaAVSessionAdapterImpl_0014,
+         TestSize.Level1)
+{
+    auto avSessionKey = std::make_shared<MediaAVSessionKey>();
+    g_adapter->avSessionKey_ = avSessionKey;
+    g_adapter->avSessionKey_->Init();
+    auto avSessionMock = std::make_shared<AVSessionMock>();
+    g_adapter->avSession_ = avSessionMock;
+
+    g_adapter->avSessionMap.clear();
+    g_adapter->DestroyAndEraseSession();
+
+    g_adapter->avSessionMap.insert(
+        std::make_pair(g_adapter->avSessionKey_->ToString(),
+                       nullptr));
+    g_adapter->DestroyAndEraseSession();
+
+    g_adapter->avSessionMap.insert(
+        std::make_pair(g_adapter->avSessionKey_->ToString(),
+                       g_adapter->avSession_));
+    g_adapter->DestroyAndEraseSession();
+
+    g_adapter->avSessionMap.insert(
+        std::make_pair(g_adapter->avSessionKey_->ToString(),
+                       g_adapter->avSession_));
+    EXPECT_CALL(*avSessionMock, Destroy()).WillRepeatedly(
+        ::testing::Return(RET_ERROR));
+    g_adapter->DestroyAndEraseSession();
+}
+
+/**
+ * @tc.name: MediaAVSessionAdapterImplTest_MediaAVSessionAdapterImpl_0015.
+ * @tc.desc: test of MediaAVSessionAdapterImpl :: CreateNewSession();
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(MediaAVSessionAdapterImplTest,
+        NWebMediaAdapterTest_MediaAVSessionAdapterImpl_0015,
+        TestSize.Level1)
+{
+    auto avSessionKeyMock = std::make_shared<MediaAVSessionKeyMock>();
+    g_adapter->avSessionKey_ = avSessionKeyMock;
+    g_adapter->avSessionKey_->Init();
+    auto type = MediaAVSessionType::MEDIA_TYPE_AUDIO;
+
+    bool ret = g_adapter->CreateNewSession(type);
+    EXPECT_EQ(ret, true);
+
+    EXPECT_CALL(*avSessionKeyMock, GetElement()).WillRepeatedly(
+        ::testing::Return(nullptr));
+    ret = g_adapter->CreateNewSession(type);
+    EXPECT_EQ(ret, false);
 }
 } // namespace OHOS::NWeb
