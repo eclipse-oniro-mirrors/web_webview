@@ -5526,7 +5526,7 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
         }
     }
 
-    if (napi_get_named_property(env, argv[INTEGER_ZERO], "mediaTakeOver", &mediaObj) != napi_ok) {
+    if (napi_get_named_property(env, argv[INTEGER_ZERO], "mediaTakeOver", &mediaObj) == napi_ok) {
         if (!NapiParseUtils::ParseBoolean(env, mediaObj, mediaTakeOver)) {
             mediaTakeOver = false;
         }
