@@ -188,6 +188,21 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
     return true;
 }
 
+bool IsSameSourceWebSiteActive(ResSchedStatusAdapter statusAdapter)
+{
+    g_pidNwebMap[pid][nwebId] = statusAdapter;
+    if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
+        auto nwebMap = g_pidNwebMap[pid];
+        for (auto it : nwebMap) {
+            if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
+                return true;
+            }
+        }
+        g_pidNwebMap.erase(pid);
+    }
+    return false;
+}
+
 void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
 {
     static uint32_t serialNum = 0;
@@ -205,15 +220,8 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t w
     }
 
     if (g_processInUse.count(pid)) {
-        g_pidNwebMap[pid][nwebId] = statusAdapter;
-        if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
-            auto nwebMap = g_pidNwebMap[pid];
-            for (auto it : nwebMap) {
-                if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
-                    return;
-                }
-            }
-            g_pidNwebMap.erase(pid);
+        if (IsSameSourceWebSiteActive(statusAdapter)) {
+            return;
         }
     }
 
