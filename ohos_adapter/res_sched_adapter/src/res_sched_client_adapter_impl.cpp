@@ -188,7 +188,7 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
     return true;
 }
 
-bool IsSameSourceWebSiteActive(ResSchedStatusAdapter statusAdapter)
+bool IsSameSourceWebSiteActive(ResSchedStatusAdapter statusAdapter, pid_t pid, int32_t nwebId)
 {
     g_pidNwebMap[pid][nwebId] = statusAdapter;
     if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
@@ -220,7 +220,7 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t w
     }
 
     if (g_processInUse.count(pid)) {
-        if (IsSameSourceWebSiteActive(statusAdapter)) {
+        if (IsSameSourceWebSiteActive(statusAdapter, pid, nwebId)) {
             return;
         }
     }
