@@ -19,6 +19,7 @@
 #include <string>
 #include <unistd.h>
 #include <vector>
+#include <unordered_set>
 
 #include "app_mgr_constants.h"
 #include "app_mgr_client.h"
@@ -93,6 +94,7 @@ constexpr char STATE[] = "state";
 std::set<int32_t> g_nwebSet;
 std::unordered_map<pid_t, std::unordered_map<int32_t, ResSchedStatusAdapter>> g_pidNwebMap;
 std::unordered_map<int32_t, std::vector<pid_t>> g_nwebProcessMap;
+std::unordered_set<pid_t> g_processInUse;
 std::mutex g_windowIdMutex {};
 int32_t g_windowId = INVALID_NUMBER;
 int32_t g_nwebId = INVALID_NUMBER;
@@ -202,15 +204,17 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t w
         return;
     }
 
-    g_pidNwebMap[pid][nwebId] = statusAdapter;
-    if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
-        auto nwebMap = g_pidNwebMap[pid];
-        for (auto it : nwebMap) {
-            if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
-                return;
+    if (g_processInUse.count(pid)) {
+        g_pidNwebMap[pid][nwebId] = statusAdapter;
+        if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
+            auto nwebMap = g_pidNwebMap[pid];
+            for (auto it : nwebMap) {
+                if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
+                    return;
+                }
             }
+            g_pidNwebMap.erase(pid);
         }
-        g_pidNwebMap.erase(pid);
     }
 
     if (pid == g_lastPid && status == g_lastStatus) {
@@ -266,9 +270,13 @@ bool ResSchedClientAdapter::ReportKeyThread(
     WVLOG_D("ReportKeyThread status: %{public}d, uid: %{public}s, pid: %{public}d, tid:%{public}d, role: %{public}d",
         static_cast<int32_t>(status), GetUidString().c_str(), pid, tid, static_cast<int32_t>(role));
 
-    if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER && !g_siteIsolationMode) {
+    if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER) {
         std::lock_guard<std::mutex> lock(g_windowIdMutex);
         ReportStatusData(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId);
+    }
+
+    if (pid == tid && statusAdapter == ResSchedStatusAdapter::THREAD_DESTROYED) {
+        g_processInUse.erase(pid);
     }
 
     // Load url may create new render process, repeat report load url event when
@@ -304,6 +312,8 @@ void ResSchedClientAdapter::ReportProcessInUse(pid_t pid)
     if (g_pidNwebMap.count(pid)) {
         nwebId = g_pidNwebMap[pid].begin()->first;
     }
+
+    g_processInUse.insert(pid);
 
     if (nwebId != INVALID_NUMBER) {
         g_nwebProcessMap[nwebId].push_back(pid);
