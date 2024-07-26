@@ -599,6 +599,8 @@ public:
 
     void ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart) override;
 
+    void HideHandleAndQuickMenuIfNecessary(bool hide) override;
+
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };
