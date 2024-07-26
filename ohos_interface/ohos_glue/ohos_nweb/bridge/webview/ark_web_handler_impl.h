@@ -562,6 +562,8 @@ public:
 
     void ReportDynamicFrameLossEvent(const ArkWebString& sceneId, bool isStart) override;
 
+    void HideHandleAndQuickMenuIfNecessary(bool hide) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
