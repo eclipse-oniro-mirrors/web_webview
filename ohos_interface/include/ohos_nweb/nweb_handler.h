@@ -982,6 +982,13 @@ public:
      * @param isStart True if is start.
      */
     virtual void ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart) {}
+
+    /**
+     * @brief Called when you need to temporarily hide/restore the handle menu.
+     *
+     * @param hide hide.
+     */
+    virtual void HideHandleAndQuickMenuIfNecessary(bool hide) {}
 };
 
 } // namespace OHOS::NWeb
