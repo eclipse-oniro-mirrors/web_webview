@@ -989,4 +989,9 @@ void ArkWebHandlerWrapper::ReportDynamicFrameLossEvent(const std::string& sceneI
     ark_web_handler_->ReportDynamicFrameLossEvent(stSceneId, isStart);
     ArkWebStringStructRelease(stSceneId);
 }
+
+void ArkWebHandlerWrapper::HideHandleAndQuickMenuIfNecessary(bool hide)
+{
+    ark_web_handler_->HideHandleAndQuickMenuIfNecessary(hide);
+}
 } // namespace OHOS::ArkWeb

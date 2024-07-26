@@ -762,6 +762,14 @@ public:
      */
     /*--ark web()--*/
     virtual void ReportDynamicFrameLossEvent(const ArkWebString& sceneId, bool isStart) = 0;
+
+    /**
+     * @brief Called when you need to temporarily hide/restore the handle menu.
+     *
+     * @param hide hide.
+     */
+    /*--ark web()--*/
+    virtual void HideHandleAndQuickMenuIfNecessary(bool hide) = 0;
 };
 
 } // namespace OHOS::ArkWeb
