@@ -15,6 +15,7 @@
 
 #include "native_media_player_impl.h"
 
+#include "napi_common_macros.h"
 #include "napi_native_media_player.h"
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
@@ -30,7 +31,7 @@ void NWebNativeMediaPlayerBridgeImpl::UpdateRect(double x, double y, double widt
     WVLOG_D("begin to update rect,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "updateRect", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "updateRect", callback);
 
     napi_value argv[INTEGER_FOUR] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, x, &argv[INTEGER_ZERO]));
@@ -46,7 +47,7 @@ void NWebNativeMediaPlayerBridgeImpl::Play()
     WVLOG_D("begin to play,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "play", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "play", callback);
 
     NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
@@ -56,7 +57,7 @@ void NWebNativeMediaPlayerBridgeImpl::Pause()
     WVLOG_D("begin to pause,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "pause", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "pause", callback);
 
     NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
@@ -66,7 +67,7 @@ void NWebNativeMediaPlayerBridgeImpl::Seek(double time)
     WVLOG_D("begin to seek,nweb id is %{public}d,time is %{public}f", nwebId_, time);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "seek", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "seek", callback);
 
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, time, &argv[INTEGER_ZERO]));
@@ -79,7 +80,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetVolume(double volume)
     WVLOG_D("begin to set volume,nweb id is %{public}d,volume is %{public}f", nwebId_, volume);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "setVolume", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "setVolume", callback);
 
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, volume, &argv[INTEGER_ZERO]));
@@ -92,7 +93,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetMuted(bool isMuted)
     WVLOG_D("begin to set muted,nweb id is %{public}d,muted flag is %{public}d", nwebId_, isMuted);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "setMuted", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "setMuted", callback);
 
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_get_boolean(env_, isMuted, &argv[INTEGER_ZERO]));
@@ -105,7 +106,7 @@ void NWebNativeMediaPlayerBridgeImpl::SetPlaybackRate(double playbackRate)
     WVLOG_D("begin to set playback rate,nweb id is %{public}d,playback rate is %{public}f", nwebId_, playbackRate);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "setPlaybackRate", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "setPlaybackRate", callback);
 
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_double(env_, playbackRate, &argv[INTEGER_ZERO]));
@@ -118,7 +119,7 @@ void NWebNativeMediaPlayerBridgeImpl::Release()
     WVLOG_D("begin to release,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "release", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "release", callback);
 
     NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
@@ -128,7 +129,7 @@ void NWebNativeMediaPlayerBridgeImpl::EnterFullScreen()
     WVLOG_D("begin to enter full screen,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "enterFullscreen", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "enterFullscreen", callback);
 
     NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
@@ -138,7 +139,7 @@ void NWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
     WVLOG_D("begin to exit full screen,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "exitFullscreen", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "exitFullscreen", callback);
 
     NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
@@ -148,7 +149,7 @@ void NWebNativeMediaPlayerBridgeImpl::ResumeMediaPlayer()
     WVLOG_D("begin to resume media player,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "resumePlayer", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "resumePlayer", callback);
 
     NAPI_CALL_RETURN_VOID(env_, napi_call_function(env_, value_, callback, INTEGER_ZERO, nullptr, nullptr));
 }
@@ -158,7 +159,7 @@ void NWebNativeMediaPlayerBridgeImpl::SuspendMediaPlayer(SuspendType type)
     WVLOG_D("begin to suspend media player,nweb id is %{public}d", nwebId_);
 
     napi_value callback = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_get_named_property(env_, value_, "suspendPlayer", &callback));
+    NAPI_GET_CALLBACK_RETURN_VOID(env_, value_, "suspendPlayer", callback);
 
     napi_value argv[INTEGER_ONE] = { nullptr };
     NAPI_CALL_RETURN_VOID(env_, napi_create_int32(env_, static_cast<int>(type), &argv[INTEGER_ZERO]));
