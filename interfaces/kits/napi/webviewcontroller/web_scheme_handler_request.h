@@ -114,6 +114,7 @@ private:
     typedef struct RequestStopParam {
         napi_env env_;
         napi_ref callbackRef_;
+        napi_ref requestValueRef_;
         WebSchemeHandlerRequest* request_;
         const ArkWeb_ResourceRequest* arkWebRequest_;
     } RequestStopParam;
@@ -125,6 +126,7 @@ private:
     ArkWeb_OnRequestStop onRequestStop_ = nullptr;
     napi_ref request_start_callback_ = nullptr;
     napi_ref request_stop_callback_ = nullptr;
+    napi_ref request_value_ref_ = nullptr;
 };
 
 class WebResourceHandler {
