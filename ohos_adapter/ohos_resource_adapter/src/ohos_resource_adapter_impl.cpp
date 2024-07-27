@@ -25,14 +25,17 @@
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
 #include "nweb_log.h"
-#include "system_ability_definition.h"
 #include "ohos_adapter_helper.h"
+#include "parameter.h"
+#include "parameters.h"
+#include "system_ability_definition.h"
 
 using namespace OHOS::AbilityBase;
 
 namespace {
 const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
 const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
+const std::string NWEB_HAP_PATH_MODULE_UPDATE = "/module_update/ArkWebCore/app/com.ohos.nweb/NWeb.hap";
 const std::string NWEB_BUNDLE_NAME = "com.ohos.nweb";
 const std::string NWEB_PACKAGE = "entry";
 const std::string RAWFILE_PREFIX = "resources/rawfile/";
@@ -145,6 +148,16 @@ std::string GetNWebHapPath()
     if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
         WVLOG_D("eixt NWEB_HAP_PATH_1");
         return NWEB_HAP_PATH_1;
+    }
+    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
+        WVLOG_D("eixt NWEB_HAP_PATH_MODULE_UPDATE");
+        return NWEB_HAP_PATH_MODULE_UPDATE;
+    }
+    std::string install_path =
+        OHOS::system::GetParameter("persist.arkwebcore.install_path", NWEB_HAP_PATH_MODULE_UPDATE);
+    if (access(install_path.c_str(), F_OK) == 0) {
+        WVLOG_D("eixt install_path");
+        return install_path;
     }
     WVLOG_E("get nweb hap path failed.");
     return "";
