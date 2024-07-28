@@ -24,6 +24,7 @@
 #include "napi/native_node_api.h"
 
 #include "arkweb_scheme_handler.h"
+#include "refbase.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -126,10 +127,9 @@ private:
     ArkWeb_OnRequestStop onRequestStop_ = nullptr;
     napi_ref request_start_callback_ = nullptr;
     napi_ref request_stop_callback_ = nullptr;
-    napi_ref request_value_ref_ = nullptr;
 };
 
-class WebResourceHandler {
+class WebResourceHandler : public RefBase {
 public:
     explicit WebResourceHandler(napi_env env);
     WebResourceHandler(napi_env env, const ArkWeb_ResourceHandler* handler);
