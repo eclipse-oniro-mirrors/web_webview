@@ -378,14 +378,16 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
         WVLOG_E("RequestStart, new schemeHandlerRequest failed");
         return;
     }
-    WebResourceHandler* resourceHandler = new (std::nothrow) WebResourceHandler(env_, ArkWeb_ResourceHandler);
+    sptr<WebResourceHandler> resourceHandler = new (std::nothrow) WebResourceHandler(env_, ArkWeb_ResourceHandler);
     if (resourceHandler == nullptr) {
         WVLOG_E("RequestStart, new resourceHandler failed");
         delete schemeHandlerRequest;
         return;
     }
-    if (OH_ArkWebResourceRequest_SetUserData(request, resourceHandler) != 0) {
+    if (OH_ArkWebResourceRequest_SetUserData(request, resourceHandler.GetRefPtr()) != 0) {
         WVLOG_W("OH_ArkWebResourceRequest_SetUserData failed");
+    } else {
+        resourceHandler->IncStrongRef(nullptr);
     }
     napi_wrap(
         env_, requestValue[0], schemeHandlerRequest,
@@ -395,12 +397,12 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
         }, nullptr, nullptr);
     NapiWebSchemeHandlerRequest::DefineProperties(env_, &requestValue[0]);
     napi_wrap(
-        env_, requestValue[1], resourceHandler,
+        env_, requestValue[1], resourceHandler.GetRefPtr(),
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebResourceHandler *resourceHandler = (WebResourceHandler *)data;
-            delete resourceHandler;
-        }, nullptr, &request_value_ref_);
+            static_cast<WebResourceHandler*>(data)->DecStrongRef(data);
+        }, nullptr, nullptr);
     NapiWebResourceHandler::DefineProperties(env_, &requestValue[1]);
+    resourceHandler->IncStrongRef(nullptr);
     napi_value result = nullptr;
     status = napi_call_function(
         env_, nullptr, callbackFunc, paramCount, requestValue, &result);
@@ -413,7 +415,7 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
     }
     if (!*intercept) {
         resourceHandler->SetFinishFlag();
-        napi_delete_reference(env_, request_value_ref_);
+        resourceHandler->DecStrongRef(resourceHandler);
     }
     napi_close_handle_scope(env_, scope);
 }
@@ -476,7 +478,7 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
             OH_ArkWebResourceRequest_GetUserData(param->arkWebRequest_));
     if (resourceHandler) {
         resourceHandler->SetFinishFlag();
-        napi_delete_reference(param->env_, param->requestValueRef_);
+        resourceHandler->DecStrongRef(resourceHandler);
     }
     napi_close_handle_scope(param->env_, scope);
     delete param;
@@ -505,7 +507,6 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
     }
     param->env_ = env_;
     param->callbackRef_ = request_stop_callback_;
-    param->requestValueRef_ = request_value_ref_;
     param->request_ = new (std::nothrow) WebSchemeHandlerRequest(param->env_, resourceRequest);
     if (param->request_ == nullptr) {
         delete work;
