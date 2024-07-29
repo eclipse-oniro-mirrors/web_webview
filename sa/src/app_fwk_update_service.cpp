@@ -33,7 +33,8 @@
 namespace OHOS::NWeb {
 
 const std::string PACKAGE_CHANGE_EVENT = "usual.event.PACKAGE_CHANGED";
-const std::string ARK_WEB_BUNDLE_NAME = "com.ohos.nweb";
+const std::string ARK_WEB_DEFAULT_BUNDLE_NAME = "com.ohos.nweb";
+const int RETRY_COUNT = 2;
 REGISTER_SYSTEM_ABILITY_BY_ID(AppFwkUpdateService, SUBSYS_WEBVIEW_SYS_UPDATE_SERVICE_ID, false);
 
 constexpr int32_t TASK_DELAY_TIME = 60000; // 1min = 1*60*1000
@@ -52,7 +53,9 @@ void PackageChangedReceiver::OnReceiveEvent(const EventFwk::CommonEventData& dat
         return;
     }
     std::string bundleName = data.GetWant().GetBundle();
-    if (bundleName != ARK_WEB_BUNDLE_NAME) {
+    std::string package_name =
+        OHOS::system::GetParameter("persist.arkwebcore.package_name", ARK_WEB_DEFAULT_BUNDLE_NAME);
+    if (bundleName != package_name) {
         WVLOG_I("Bundle name is not nweb.");
         return;
     }
@@ -125,7 +128,9 @@ bool AppFwkUpdateService::Init(const SystemAbilityOnDemandReason& startReason)
             }
         }
     }
-    if (bundleName != ARK_WEB_BUNDLE_NAME) {
+    std::string package_name =
+        OHOS::system::GetParameter("persist.arkwebcore.package_name", ARK_WEB_DEFAULT_BUNDLE_NAME);
+    if (bundleName != package_name) {
         WVLOG_I("Bundle name is not nweb.");
         return false;
     }
@@ -155,22 +160,23 @@ void AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName)
 {
     WVLOG_I("Send appspawn message start,uid = %{public}d.", getuid());
     int ret = 0;
+    int retryCount = 0;
     AppSpawnClientHandle clientHandle = nullptr;
     AppSpawnReqMsgHandle reqHandle = 0;
     do {
         ret = AppSpawnClientInit(APPSPAWN_SERVER_NAME, &clientHandle);
         if (ret != 0) {
-            WVLOG_I("Failed to create reqMgr.");
-            break;
+            WVLOG_I("Failed to create reqMgr,retry count = %{public}d.", retryCount);
+            continue;
         }
         ret = AppSpawnReqMsgCreate(MSG_UPDATE_MOUNT_POINTS, bundleName.c_str(), &reqHandle);
         if (ret != 0) {
-            WVLOG_I("Failed to create req.");
-            return;
+            WVLOG_I("Failed to create req,retry count = %{public}d.", retryCount);
+            continue;
         }
         AppSpawnResult result = {};
         ret = AppSpawnClientSendMsg(clientHandle, reqHandle, &result);
-    } while (0);
+    } while (++retryCount < RETRY_COUNT && ret != 0);
     AppSpawnClientDestroy(clientHandle);
     WVLOG_I("Send appspawn message success.");
 }
@@ -179,22 +185,23 @@ void AppFwkUpdateService::SendNWebSpawnMesage(const std::string& bundleName)
 {
     WVLOG_I("Send nweb spawn messagestart,uid = %{public}d.", getuid());
     int ret = 0;
+    int retryCount = 0;
     AppSpawnClientHandle clientHandle = nullptr;
     AppSpawnReqMsgHandle reqHandle = 0;
     do {
         ret = AppSpawnClientInit(NWEBSPAWN_SERVER_NAME, &clientHandle);
         if (ret != 0) {
-            WVLOG_I("Failed to create reqMgr.");
-            break;
+            WVLOG_I("Failed to create reqMgr,retry count = %{public}d.", retryCount);
+            continue;
         }
         ret = AppSpawnReqMsgCreate(MSG_RESTART_SPAWNER, bundleName.c_str(), &reqHandle);
         if (ret != 0) {
-            WVLOG_I("Failed to create req.");
-            return;
+            WVLOG_I("Failed to create req,retry count = %{public}d.", retryCount);
+            continue;
         }
         AppSpawnResult result = {};
         ret = AppSpawnClientSendMsg(clientHandle, reqHandle, &result);
-    } while (0);
+    } while (++retryCount < RETRY_COUNT && ret != 0);
     AppSpawnClientDestroy(clientHandle);
     WVLOG_I("Send nweb spawn message success.");
 }
