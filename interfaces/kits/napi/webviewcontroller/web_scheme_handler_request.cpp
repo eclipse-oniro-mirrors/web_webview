@@ -741,11 +741,11 @@ void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, vo
 {
     WVLOG_D("WebHttpBodyStream::ExecuteInitComplete");
     InitParam* param = static_cast<InitParam*>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
     if (!param) {
         return;
     }
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(env, &scope);
     if (!scope) {
         delete param;
         return;
@@ -778,11 +778,11 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
 {
     WVLOG_D("WebHttpBodyStream::ExecuteReadComplete");
     ReadParam* param = static_cast<ReadParam*>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
     if (!param) {
         return;
     } 
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(env, &scope);
     if (!scope) {
         delete param;
         return;
