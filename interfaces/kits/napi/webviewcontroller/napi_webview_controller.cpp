@@ -27,6 +27,7 @@
 #include "application_context.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
+#include "native_engine/native_engine.h"
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_helper.h"
@@ -2180,12 +2181,36 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
     napi_close_handle_scope(data->env_, scope);
 }
 
+static void InvokeWebMessageCallback(NapiWebMessagePort::WebMsgPortParam *data)
+{
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(data->env_, &scope);
+    if (scope == nullptr) {
+        WVLOG_E("scope is null");
+        return;
+    }
+    napi_value result[INTEGER_ONE] = {0};
+    if (!UvWebMsgOnReceiveCbDataHandler(data, result[INTEGER_ZERO])) {
+        WVLOG_E("get result failed");
+        napi_close_handle_scope(data->env_, scope);
+        return;
+    }
+
+    napi_value onMsgEventFunc = nullptr;
+    napi_get_reference_value(data->env_, data->callback_, &onMsgEventFunc);
+    napi_value placeHodler = nullptr;
+    napi_call_function(data->env_, nullptr, onMsgEventFunc, INTEGER_ONE, &result[INTEGER_ZERO], &placeHodler);
+
+    napi_close_handle_scope(data->env_, scope);
+}
+
 void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
 {
     WVLOG_D("message port received msg");
     uv_loop_s *loop = nullptr;
     uv_work_t *work = nullptr;
     napi_get_uv_event_loop(env_, &loop);
+    auto engine = reinterpret_cast<NativeEngine*>(env_);
     if (loop == nullptr) {
         WVLOG_E("get uv event loop failed");
         return;
@@ -2205,14 +2230,19 @@ void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
     param->callback_ = callback_;
     param->msg_ = result;
     param->extention_ = extention_;
-    work->data = reinterpret_cast<void*>(param);
-    uv_queue_work_with_qos(
-        loop, work, [](uv_work_t* work) {}, UvWebMessageOnReceiveValueCallback, uv_qos_user_initiated);
+    if (pthread_self() == engine->GetTid()) {
+        InvokeWebMessageCallback(param);
+    } else {
+        work->data = reinterpret_cast<void*>(param);
+        uv_queue_work_with_qos(
+            loop, work, [](uv_work_t* work) {}, UvWebMessageOnReceiveValueCallback, uv_qos_user_initiated);
 
-    {
-        std::unique_lock<std::mutex> lock(param->mutex_);
-        param->condition_.wait(lock, [&param] { return param->ready_; });
+        {
+            std::unique_lock<std::mutex> lock(param->mutex_);
+            param->condition_.wait(lock, [&param] { return param->ready_; });
+        }
     }
+
     if (param != nullptr) {
         delete param;
         param = nullptr;
