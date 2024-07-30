@@ -45,6 +45,7 @@ ohos_unittest("ohos_image_decoder_adapter_test") {
     "image_framework:image_native",
     "image_framework:image_utils",
   ]
+  resource_config_file = "../../../resource/image/ohos_test.xml"
 }
 
 group("unittest") {
