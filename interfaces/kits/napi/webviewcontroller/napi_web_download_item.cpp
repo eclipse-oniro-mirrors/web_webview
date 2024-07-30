@@ -245,6 +245,10 @@ napi_value NapiWebDownloadItem::JS_GetUrl(napi_env env, napi_callback_info cbinf
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetUrl webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value urlValue;
     napi_status status = napi_create_string_utf8(env, webDownloadItem->url.c_str(), NAPI_AUTO_LENGTH, &urlValue);
@@ -266,6 +270,10 @@ napi_value NapiWebDownloadItem::JS_GetSuggestedFileName(napi_env env, napi_callb
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetSuggestedFileName webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value fileNameValue;
     napi_status status =
@@ -288,6 +296,10 @@ napi_value NapiWebDownloadItem::JS_GetCurrentSpeed(napi_env env, napi_callback_i
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetCurrentSpeed webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value currentSpeed;
     napi_status status = napi_create_int64(env, webDownloadItem->currentSpeed, &currentSpeed);
@@ -309,6 +321,10 @@ napi_value NapiWebDownloadItem::JS_GetPercentComplete(napi_env env, napi_callbac
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetPercentComplete webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value percentComplete;
     napi_status status = napi_create_int64(env, webDownloadItem->percentComplete, &percentComplete);
@@ -330,6 +346,10 @@ napi_value NapiWebDownloadItem::JS_GetTotalBytes(napi_env env, napi_callback_inf
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetTotalBytes webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value totalBytes;
     napi_status status = napi_create_int64(env, webDownloadItem->totalBytes, &totalBytes);
@@ -351,6 +371,10 @@ napi_value NapiWebDownloadItem::JS_GetReceivedBytes(napi_env env, napi_callback_
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetReceivedBytes webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value receivedBytes;
     napi_status status = napi_create_int64(env, webDownloadItem->receivedBytes, &receivedBytes);
@@ -619,16 +643,8 @@ napi_value NapiWebDownloadItem::JS_Start(napi_env env, napi_callback_info cbinfo
     return nullptr;
 }
 
-napi_value NapiWebDownloadItem::JS_Serialize(napi_env env, napi_callback_info cbinfo)
+void SetWebDownloadPb(browser_service::WebDownload &webDownloadPb, const WebDownloadItem *webDownloadItem)
 {
-    napi_value thisVar = nullptr;
-    void *data = nullptr;
-    napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
-
-    WebDownloadItem *webDownloadItem = nullptr;
-    napi_unwrap(env, thisVar, (void **)&webDownloadItem);
-
-    browser_service::WebDownload webDownloadPb;
     webDownloadPb.set_web_download_id(webDownloadItem->webDownloadId);
     webDownloadPb.set_current_speed(webDownloadItem->currentSpeed);
     webDownloadPb.set_percent_complete(webDownloadItem->percentComplete);
@@ -648,6 +664,23 @@ napi_value NapiWebDownloadItem::JS_Serialize(napi_env env, napi_callback_info cb
     webDownloadPb.set_last_error_code(webDownloadItem->lastErrorCode);
     webDownloadPb.set_received_slices(webDownloadItem->receivedSlices);
     webDownloadPb.set_download_path(webDownloadItem->downloadPath);
+}
+
+napi_value NapiWebDownloadItem::JS_Serialize(napi_env env, napi_callback_info cbinfo)
+{
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
+
+    WebDownloadItem *webDownloadItem = nullptr;
+    napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if(!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_Serialize webDownloadItem is null");
+        return nullptr;
+    }
+
+    browser_service::WebDownload webDownloadPb;
+    SetWebDownloadPb(webDownloadPb, webDownloadItem);
 
     std::string webDownloadValue;
     webDownloadPb.SerializeToString(&webDownloadValue);
@@ -655,21 +688,22 @@ napi_value NapiWebDownloadItem::JS_Serialize(napi_env env, napi_callback_info cb
     void *bufferData = nullptr;
 
     napi_status status = napi_create_arraybuffer(env, webDownloadValue.length(), (void **)&bufferData, &arraybuffer);
+    if (status != napi_ok) {
+        WVLOG_E("[DOWNLOAD] create array buffer failed, status: %{public}d", status);
+        return nullptr;
+    }
     if (memcpy_s(bufferData, webDownloadValue.length(), webDownloadValue.c_str(), webDownloadValue.length()) != 0) {
-        WVLOG_D("[DOWNLOAD] memcpy failed");
+        WVLOG_E("[DOWNLOAD] memcpy failed");
         return nullptr;
     }
     napi_ref arraybufferRef;
     napi_create_reference(env, arraybuffer, 1, &arraybufferRef);
-    if (status != napi_ok) {
-        WVLOG_D("[DOWNLOAD] create array buffer failed, status: %{public}d", status);
-        return nullptr;
-    }
     napi_value typedArray;
     status = napi_create_typedarray(env, napi_typedarray_type::napi_uint8_array, webDownloadValue.length(), arraybuffer,
         0, &typedArray);
     if (status != napi_ok) {
-        WVLOG_D("[DOWNLOAD] create typed array failed, status: %{public}d", status);
+        WVLOG_E("[DOWNLOAD] create typed array failed, status: %{public}d", status);
+        napi_delete_reference(env, arraybufferRef);
         return nullptr;
     }
     return typedArray;

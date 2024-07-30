@@ -49,6 +49,10 @@ napi_value NapiWebDownloadManager::JS_SetDownloadDelegate(napi_env env, napi_cal
 
     WebDownloadDelegate *delegate = nullptr;
     napi_unwrap(env, obj, (void **)&delegate);
+    if (!delegate) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadManager::JS_SetDownloadDelegate delegate is null");
+        return nullptr;
+    }
     napi_create_reference(env, obj, 1, &delegate->delegate_);
     WebDownloadManager::SetDownloadDelegate(delegate);
     return nullptr;
