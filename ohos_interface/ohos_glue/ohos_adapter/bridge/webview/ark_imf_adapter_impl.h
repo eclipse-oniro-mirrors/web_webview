@@ -41,6 +41,8 @@ public:
 
     void OnSelectionChange(ArkWebU16String& text, int start, int end) override;
 
+    bool SendPrivateCommand(const ArkWebString& commandKey, const ArkWebString& commandValue) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::IMFAdapter> real_;
 
