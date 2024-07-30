@@ -1458,6 +1458,13 @@ public:
      */
     /*--ark web()--*/
     virtual void FillAutofillData(const ArkWebMessage& data) = 0;
+
+    /**
+     * @brief on autofill cancel.
+     * @param fillContent fillContent
+     */
+    /*--ark web()--*/
+    virtual void OnAutofillCancel(const ArkWebString& fillContent) = 0;
 };
 
 } // namespace OHOS::ArkWeb

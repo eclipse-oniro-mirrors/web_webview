@@ -168,6 +168,9 @@ public:
     virtual void FinishTextPreview() = 0;
 
     virtual void SetNeedUnderLine(bool isNeedUnderline) = 0;
+
+    virtual void AutoFillWithIMFEvent(bool isUsername, bool isOtherAccount, bool isNewPassword,
+        const std::string& content) {}
 };
 
 class IMFAdapter {
@@ -190,6 +193,11 @@ public:
     virtual void OnCursorUpdate(const std::shared_ptr<IMFCursorInfoAdapter> cursorInfo) = 0;
 
     virtual void OnSelectionChange(std::u16string text, int start, int end) = 0;
+
+    virtual bool SendPrivateCommand(const std::string& commandKey, const std::string& commandValue)
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

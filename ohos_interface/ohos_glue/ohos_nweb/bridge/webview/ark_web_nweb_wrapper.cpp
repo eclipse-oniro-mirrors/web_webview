@@ -1330,4 +1330,13 @@ void ArkWebNWebWrapper::FillAutofillData(std::shared_ptr<OHOS::NWeb::NWebMessage
     ark_web_message.nweb_message = data;
     ark_web_nweb_->FillAutofillData(ark_web_message);
 }
+
+void ArkWebNWebWrapper::OnAutofillCancel(const std::string& fillContent)
+{
+    ArkWebString stFillContent = ArkWebStringClassToStruct(fillContent);
+
+    ark_web_nweb_->OnAutofillCancel(stFillContent);
+
+    ArkWebStringStructRelease(stFillContent);
+}
 } // namespace OHOS::ArkWeb

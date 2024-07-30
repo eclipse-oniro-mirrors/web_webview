@@ -80,4 +80,16 @@ void ArkIMFAdapterWrapper::OnSelectionChange(std::u16string text, int start, int
     ArkWebU16StringStructRelease(str);
 }
 
+bool ArkIMFAdapterWrapper::SendPrivateCommand(const std::string& commandKey, const std::string& commandValue)
+{
+    ArkWebString keyStr = ArkWebStringClassToStruct(commandKey);
+    ArkWebString valueStr = ArkWebStringClassToStruct(commandValue);
+    auto result = ctocpp_->SendPrivateCommand(keyStr, valueStr);
+
+    ArkWebStringStructRelease(keyStr);
+    ArkWebStringStructRelease(valueStr);
+
+    return result;
+}
+
 } // namespace OHOS::ArkWeb

@@ -41,6 +41,8 @@ public:
 
     void OnSelectionChange(std::u16string text, int start, int end) override;
 
+    bool SendPrivateCommand(const std::string& commandKey, const std::string& commandValue) override;
+
 private:
     ArkWebRefPtr<ArkIMFAdapter> ctocpp_;
 };
