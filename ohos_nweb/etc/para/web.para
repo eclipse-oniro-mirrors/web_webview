@@ -15,6 +15,6 @@ web.optimization=true
 web.debug.devtools = false
 web.debug.netlog = None
 web.debug.trace = false
-web.debug.strictsiteIsolation.enable = none
+web.debug.strictsiteIsolation.enable = false
 web.oop.gpu = None
 web.PRPPreload.enable = true
