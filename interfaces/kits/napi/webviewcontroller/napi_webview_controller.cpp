@@ -4587,6 +4587,10 @@ napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callbac
     WebDownloadDelegate* delegate = nullptr;
     napi_value obj = argv[0];
     napi_unwrap(env, obj, (void**)&delegate);
+    if (!delegate) {
+        WVLOG_E("[DOWNLOAD] WebDownloader::JS_SetDownloadDelegate delegate is null");
+        return nullptr;
+    }
     napi_create_reference(env, obj, 1, &delegate->delegate_);
 
     WebviewController *webviewController = nullptr;
@@ -5122,6 +5126,10 @@ napi_value NapiWebviewController::SetWebSchemeHandler(napi_env env, napi_callbac
     WebSchemeHandler* handler = nullptr;
     napi_value obj = argv[1];
     napi_unwrap(env, obj, (void**)&handler);
+    if (!handler) {
+        WVLOG_E("NapiWebviewController::SetWebSchemeHandler handler is null");
+        return nullptr;
+    }
     napi_create_reference(env, obj, 1, &handler->delegate_);
 
     if (!webviewController->SetWebSchemeHandler(scheme.c_str(), handler)) {
@@ -5166,6 +5174,10 @@ napi_value NapiWebviewController::SetServiceWorkerWebSchemeHandler(
     WebSchemeHandler* handler = nullptr;
     napi_value obj = argv[1];
     napi_unwrap(env, obj, (void**)&handler);
+    if (!handler) {
+        WVLOG_E("NapiWebviewController::SetServiceWorkerWebSchemeHandler handler is null");
+        return nullptr;
+    }
     napi_create_reference(env, obj, 1, &handler->delegate_);
 
     if (!WebviewController::SetWebServiveWorkerSchemeHandler(
