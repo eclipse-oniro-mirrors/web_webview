@@ -21,6 +21,7 @@
 #include "nweb_log.h"
 #include "napi_web_download_item.h"
 #include "web_download_manager.h"
+#include "nweb_napi_scope.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -38,10 +39,18 @@ WebDownloadDelegate::WebDownloadDelegate(napi_env env)
 WebDownloadDelegate::~WebDownloadDelegate()
 {
     WVLOG_D("[DOWNLOAD] WebDownloadDelegate::~WebDownloadDelegate");
-    napi_delete_reference(env_, download_before_start_callback_);
-    napi_delete_reference(env_, download_did_update_callback_);
-    napi_delete_reference(env_, download_did_finish_callback_);
-    napi_delete_reference(env_, download_did_fail_callback_);
+    if (download_before_start_callback_) {
+        napi_delete_reference(env_, download_before_start_callback_);
+    }
+    if (download_did_update_callback_) {
+        napi_delete_reference(env_, download_did_update_callback_);
+    }
+    if (download_did_finish_callback_) {
+        napi_delete_reference(env_, download_did_finish_callback_);
+    }
+    if (download_did_fail_callback_) {
+        napi_delete_reference(env_, download_did_fail_callback_);
+    }
     WebDownloadManager::RemoveDownloadDelegate(this);
 }
 
@@ -53,6 +62,8 @@ void WebDownloadDelegate::DownloadBeforeStart(WebDownloadItem *webDownloadItem)
         return;
     }
     size_t paramCount = 1;
+
+    OHOS::NApiScope scope(env_);
 
     napi_value callbackFunc = nullptr;
     napi_status status;
@@ -92,6 +103,8 @@ void WebDownloadDelegate::DownloadDidUpdate(WebDownloadItem *webDownloadItem)
         return;
     }
     size_t paramCount = 1;
+
+    OHOS::NApiScope scope(env_);
 
     napi_value callbackFunc = nullptr;
     napi_status status;
@@ -133,6 +146,8 @@ void WebDownloadDelegate::DownloadDidFail(WebDownloadItem *webDownloadItem)
     }
     size_t paramCount = 1;
 
+    OHOS::NApiScope scope(env_);
+
     napi_value callbackFunc = nullptr;
     napi_status status;
 
@@ -172,6 +187,8 @@ void WebDownloadDelegate::DownloadDidFinish(WebDownloadItem *webDownloadItem)
         return;
     }
     size_t paramCount = 1;
+
+    OHOS::NApiScope scope(env_);
 
     napi_value callbackFunc = nullptr;
     napi_status status;
