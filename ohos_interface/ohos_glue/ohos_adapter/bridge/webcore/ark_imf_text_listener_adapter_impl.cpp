@@ -117,4 +117,10 @@ void ArkIMFTextListenerAdapterImpl::SetNeedUnderLine(bool isNeedUnderline)
 {
     real_->SetNeedUnderLine(isNeedUnderline);
 }
+
+void ArkIMFTextListenerAdapterImpl::AutoFillWithIMFEvent(bool isUsername, bool isOtherAccount, bool isNewPassword,
+    const ArkWebString& content)
+{
+    real_->AutoFillWithIMFEvent(isUsername, isOtherAccount, isNewPassword, ArkWebStringStructToClass(content));
+}
 } // namespace OHOS::ArkWeb

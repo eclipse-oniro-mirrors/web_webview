@@ -1459,6 +1459,12 @@ public:
      * @param data data.
      */
     virtual void FillAutofillData(std::shared_ptr<NWebMessage> data) {}
+
+    /**
+     * @brief on autofill cancel.
+     * @param fillContent fillContent
+     */
+    virtual void OnAutofillCancel(const std::string& fillContent) {}
 };
 
 } // namespace OHOS::NWeb

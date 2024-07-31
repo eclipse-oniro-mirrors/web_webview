@@ -18,6 +18,7 @@
 #include "hisysevent_adapter.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
+#include "third_party/cJSON/cJSON.h"
 
 namespace OHOS::NWeb {
 constexpr char INPUT_METHOD[] = "INPUT_METHOD";
@@ -25,6 +26,7 @@ constexpr char ATTACH_CODE[] = "ATTACH_CODE";
 constexpr char IS_SHOW_KEY_BOARD[] = "IS_SHOW_KEY_BOARD";
 constexpr int32_t IMF_LISTENER_NULL_POINT = 1;
 constexpr int32_t IMF_TEXT_CONFIG_NULL_POINT = 2;
+const std::string AUTO_FILL_CANCEL_PRIVATE_COMMAND = "autofill.cancel";
 
 IMFTextListenerAdapterImpl::IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener)
     : listener_(listener) {};
@@ -231,6 +233,30 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
         }
     }
 
+    item = privateCommand.find(AUTO_FILL_PARAMS_USERNAME);
+    if (item != privateCommand.end()) {
+        if (listener_) {
+            std::string content = std::get<std::string>(item->second);
+            listener_->AutoFillWithIMFEvent(true, false, false, content);
+        }
+    }
+
+    item = privateCommand.find(AUTO_FILL_PARAMS_NEWPASSWORD);
+    if (item != privateCommand.end()) {
+        if (listener_) {
+            std::string content = std::get<std::string>(item->second);
+            listener_->AutoFillWithIMFEvent(false, false, true, content);
+        }
+    }
+
+    item = privateCommand.find(AUTO_FILL_PARAMS_OTHERACCOUNT);
+    if (item != privateCommand.end()) {
+        if (listener_) {
+            std::string content = std::string("");
+            listener_->AutoFillWithIMFEvent(false, true, false, content);
+        }
+    }
+
     return 0;
 }
 
@@ -357,5 +383,51 @@ void IMFAdapterImpl::OnCursorUpdate(const std::shared_ptr<IMFCursorInfoAdapter> 
 void IMFAdapterImpl::OnSelectionChange(std::u16string text, int start, int end)
 {
     MiscServices::InputMethodController::GetInstance()->OnSelectionChange(text, start, end);
+}
+
+bool IMFAdapterImpl::SendPrivateCommand(const std::string& commandKey, const std::string& commandValue)
+{
+    if (commandKey == AUTO_FILL_CANCEL_PRIVATE_COMMAND) {
+        std::unordered_map<std::string, MiscServices::PrivateDataValue> privateCommand;
+        ParseFillContentJsonValue(commandValue, privateCommand);
+        int32_t ret = MiscServices::InputMethodController::GetInstance()->SendPrivateCommand(privateCommand);
+        if (ret != 0) {
+            WVLOG_E("inputmethod SendPrivateCommand failed, errcode=%{public}d", ret);
+            return false;
+        }
+        WVLOG_I("inputmethod  SendPrivateCommand success");
+        return true;
+    }
+    return false;
+}
+
+bool IMFAdapterImpl::ParseFillContentJsonValue(const std::string& commandValue,
+    std::unordered_map<std::string, std::variant<std::string, bool, int32_t>>& map)
+{
+    cJSON* sourceJson = cJSON_Parse(commandValue.c_str());
+    if (sourceJson == nullptr || cJSON_IsNull(sourceJson)) {
+        cJSON_Delete(sourceJson);
+        return false;
+    }
+    if (cJSON_HasObjectItem(sourceJson, "userName")) {
+        cJSON* userName = cJSON_GetObjectItem(sourceJson, "userName");
+        if (userName != nullptr && cJSON_IsString(userName) && userName->valuestring != nullptr) {
+            map.insert(std::make_pair("userName", userName->valuestring));
+        }
+    }
+    if (cJSON_HasObjectItem(sourceJson, "newPassword")) {
+        cJSON* newPassword = cJSON_GetObjectItem(sourceJson, "newPassword");
+        if (newPassword != nullptr && cJSON_IsString(newPassword) && newPassword->valuestring != nullptr) {
+            map.insert(std::make_pair("newPassword", newPassword->valuestring));
+        }
+    }
+    if (cJSON_HasObjectItem(sourceJson, "hasAccount")) {
+        cJSON* hasAccount = cJSON_GetObjectItem(sourceJson, "hasAccount");
+        if (hasAccount != nullptr && cJSON_IsString(hasAccount) && hasAccount->valuestring != nullptr) {
+            map.insert(std::make_pair("hasAccount", hasAccount->valuestring));
+        }
+    }
+    cJSON_Delete(sourceJson);
+    return true;
 }
 } // namespace OHOS::NWeb
