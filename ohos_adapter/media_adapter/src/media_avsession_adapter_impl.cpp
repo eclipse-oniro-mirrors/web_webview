@@ -107,13 +107,18 @@ void MediaAVSessionCallbackImpl::OnCastDisplayChange(
 }
 
 void MediaAVSessionKey::Init() {
+    WVLOG_I("media avsession adapter Init in");
     pid_ = getprocpid();
     element_ = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+    WVLOG_I("media avsession adapter Init AAFwk BundleName=%{public}s, AbilityName=%{public}s",
+            element_.GetBundleName().c_str(), element_.GetAbilityName().c_str());
     auto context = AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (context) {
         element_.SetBundleName(context->GetBundleName());
+        WVLOG_I("media avsession adapter Init context BundleName()=%{public}s", context->GetBundleName().c_str());
     }
     type_ = MediaAVSessionType::MEDIA_TYPE_INVALID;
+    WVLOG_I("media avsession adapter Init out");
 }
 
 int32_t MediaAVSessionKey::GetPID() {
@@ -149,7 +154,9 @@ MediaAVSessionAdapterImpl::~MediaAVSessionAdapterImpl() {
 }
 
 bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
+    WVLOG_I("media avsession adapter CreateAVSession in, type=%{public}d", int32_t(type));
     if (MediaAVSessionType::MEDIA_TYPE_INVALID == type) {
+        WVLOG_E("media avsession adapter CreateAVSession, type invalid return false");
         return false;
     }
     if (avSession_ && (type != avSessionKey_->GetType())) {
@@ -167,6 +174,7 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
                 DestroyAndEraseSession();
                 DestroyAVSession();
             } else {
+                WVLOG_E("media avsession adapter CreateAVSession, return false");
                 return false;
             }
         }
@@ -175,10 +183,13 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
 }
 
 void MediaAVSessionAdapterImpl::DestroyAVSession() {
+    WVLOG_I("media avsession adapter DestroyAVSession in");
     if (avSession_) {
         int32_t ret = avSession_->Destroy();
         if (ret != AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("media avsession adapter destroy avsession failed, ret: %{public}d", ret);
+            WVLOG_E("media avsession adapter DestroyAVSession Destroy() failed, ret: %{public}d", ret);
+        } else {
+            WVLOG_I("media avsession adapter DestroyAVSession Destroy() success, ret: %{public}d", ret);
         }
         avSession_.reset();
     }
@@ -186,15 +197,17 @@ void MediaAVSessionAdapterImpl::DestroyAVSession() {
     if (iter != avSessionMap.end()) {
         avSessionMap.erase(iter);
     }
+    WVLOG_I("media avsession adapter DestroyAVSession out");
 }
 
 bool MediaAVSessionAdapterImpl::RegistCallback(
     std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter) {
+    WVLOG_I("media avsession adapter RegistCallback in");
     if (avSession_ && Activate()) {
         auto callback = std::make_shared<MediaAVSessionCallbackImpl>(callbackAdapter);
         int32_t ret = avSession_->RegisterCallback(callback);
         if (ret != AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("media avsession adapter register callback failed, ret: %{public}d", ret);
+            WVLOG_E("media avsession adapter RegistCallback RegisterCallback() failed, ret: %{public}d", ret);
             return false;
         }
         static const std::vector<int32_t> commands = {
@@ -206,32 +219,43 @@ bool MediaAVSessionAdapterImpl::RegistCallback(
         for (auto command : commands) {
             ret = avSession_->AddSupportCommand(command);
             if (ret != AVSession::AVSESSION_SUCCESS) {
-                WVLOG_E("media avsession adapter add command '%{public}d' failed, ret: %{public}d", command, ret);
+                WVLOG_E("media avsession adapter RegistCallback AddSupportCommand() '%{public}d' failed", command);
+            } else {
+                WVLOG_I("media avsession adapter RegistCallback AddSupportCommand() '%{public}d' success", command);
             }
         }
+        WVLOG_I("media avsession adapter RegistCallback out return true");
         return true;
     }
+    WVLOG_I("media avsession adapter RegistCallback out return false");
     return false;
 }
 
 bool MediaAVSessionAdapterImpl::IsActivated() {
+    WVLOG_I("media avsession adapter IsActivated in");
     if (avSession_) {
-        return avSession_->IsActive();
+        bool ret = avSession_->IsActive();
+        WVLOG_I("media avsession adapter IsActive out ret: %{public}d", ret);
+        return ret;
     }
+    WVLOG_E("media avsession adapter IsActivated out avSession is null, return false");
     return false;
 }
 
 bool MediaAVSessionAdapterImpl::Activate() {
     if (!avSession_) {
+        WVLOG_E("media avsession adapter Activate avSession_ is null, return false");
         return false;
     } else if (avSession_->IsActive()) {
+        WVLOG_I("media avsession adapter Activate IsActive() is true, return true");
         return true;
     }
     int32_t ret = avSession_->Activate();
     if (ret != AVSession::AVSESSION_SUCCESS) {
-        WVLOG_E("media avsession adapter activate avsession failed, ret: %{public}d", ret);
+        WVLOG_E("media avsession adapter Activate Activate() failed, ret: %{public}d", ret);
         return false;
     }
+    WVLOG_I("media avsession adapter Activate return true");
     return true;
 }
 
@@ -251,7 +275,9 @@ void MediaAVSessionAdapterImpl::SetMetadata(const std::shared_ptr<MediaAVSession
         auto avMetadata = avMetadata_.get();
         int32_t ret = avSession_->SetAVMetaData(*avMetadata);
         if (ret != AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("media avsession adapter update metadata info failed, ret: %{public}d", ret);
+            WVLOG_E("media avsession adapter SetMetadata SetAVMetaData() failed, ret: %{public}d", ret);
+        } else {
+            WVLOG_I("media avsession adapter SetMetadata SetAVMetaData() success, ret: %{public}d", ret);
         }
     }
 }
@@ -262,7 +288,9 @@ void MediaAVSessionAdapterImpl::SetPlaybackState(MediaAVSessionPlayState state) 
         auto avPlaybackState = avPlaybackState_.get();
         int32_t ret = avSession_->SetAVPlaybackState(*avPlaybackState);
         if (ret != AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("media avsession adapter update playback state failed, ret: %{public}d", ret);
+            WVLOG_E("media avsession adapter SetPlaybackState SetAVPlaybackState() failed, ret: %{public}d", ret);
+        } else {
+            WVLOG_I("media avsession adapter SetPlaybackState SetAVPlaybackState() success, ret: %{public}d", ret);
         }
     }
 }
@@ -273,7 +301,9 @@ void MediaAVSessionAdapterImpl::SetPlaybackPosition(const std::shared_ptr<MediaA
         auto avMetadata = avMetadata_.get();
         int32_t ret = avSession_->SetAVMetaData(*avMetadata);
         if (ret != AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("media avsession adapter update metadata duration failed, ret: %{public}d", ret);
+            WVLOG_E("media avsession adapter SetPlaybackPosition SetAVMetaData() failed, ret: %{public}d", ret);
+        } else {
+            WVLOG_I("media avsession adapter SetPlaybackPosition SetAVMetaData() success, ret: %{public}d", ret);
         }
     }
     if (UpdatePlaybackStateCache(position) && avSession_) {
@@ -281,7 +311,9 @@ void MediaAVSessionAdapterImpl::SetPlaybackPosition(const std::shared_ptr<MediaA
         auto avPlaybackState = avPlaybackState_.get();
         int32_t ret = avSession_->SetAVPlaybackState(*avPlaybackState);
         if (ret != AVSession::AVSESSION_SUCCESS) {
-            WVLOG_E("media avsession adapter update playback position failed, ret: %{public}d", ret);
+            WVLOG_E("media avsession adapter SetPlaybackPosition SetAVPlaybackState() failed, ret: %{public}d", ret);
+        } else {
+            WVLOG_I("media avsession adapter SetPlaybackPosition SetAVPlaybackState() success, ret: %{public}d", ret);
         }
     }
 }
@@ -300,14 +332,17 @@ bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaA
         avMetadata_->SetAlbum(metadata->GetAlbum());
         updated = true;
     }
+    WVLOG_I("media avsession adapter UpdateMetaDataCache return updated: %{public}d", updated);
     return updated;
 }
 
 bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionPositionAdapter> position) {
     if (avMetadata_->GetDuration() != position->GetDuration()) {
         avMetadata_->SetDuration(position->GetDuration());
+        WVLOG_I("media avsession adapter UpdateMetaDataCache return true");
         return true;
     }
+    WVLOG_E("media avsession adapter UpdateMetaDataCache return false");
     return false;
 }
 
@@ -327,8 +362,10 @@ bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(MediaAVSessionPlayState
     }
     if (avPlaybackState_->GetState() != currentState) {
         avPlaybackState_->SetState(currentState);
+        WVLOG_I("media avsession adapter UpdatePlaybackStateCache return true");
         return true;
     }
+    WVLOG_E("media avsession adapter UpdatePlaybackStateCache return false");
     return false;
 }
 
@@ -348,39 +385,44 @@ bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(
         avPlaybackState_->SetPosition(avPosition);
         updated = true;
     }
+    WVLOG_I("media avsession adapter UpdatePlaybackStateCache return updated: %{public}d", updated);
     return updated;
 }
 
 void MediaAVSessionAdapterImpl::DestroyAndEraseSession() {
+    WVLOG_I("media avsession adapter DestroyAndEraseSession in");
     auto iter = avSessionMap.find(avSessionKey_->ToString());
     if (iter == avSessionMap.end()) {
-        WVLOG_E("media avsession adapter invalid iterator");
+        WVLOG_E("media avsession adapter DestroyAndEraseSession invalid iterator return");
         return;
     }
     if (!iter->second) {
-        WVLOG_E("media avsession adapter avsession is null pointer in map");
         avSessionMap.erase(iter);
+        WVLOG_E("media avsession adapter DestroyAndEraseSession avsession is null pointer return");
         return;
     }
     int32_t ret = iter->second->Destroy();
     if (ret != AVSession::AVSESSION_SUCCESS) {
-        WVLOG_E("media avsession adapter destroy previous avsession failed, ret: %{public}d", ret);
+        WVLOG_E("media avsession adapter DestroyAndEraseSession Destroy failed, ret: %{public}d", ret);
+    } else {
+        WVLOG_I("media avsession adapter DestroyAndEraseSession Destroy success, ret: %{public}d", ret);
     }
     iter->second.reset();
     avSessionMap.erase(iter);
+    WVLOG_I("media avsession adapter DestroyAndEraseSession out");
 }
 
 bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type) {
+    WVLOG_I("media avsession adapter CreateNewSession in");
     avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
-                                avSessionKey_->GetElement().GetBundleName(),
-                                static_cast<int32_t>(type),
-                                avSessionKey_->GetElement());
+        avSessionKey_->GetElement().GetBundleName(), static_cast<int32_t>(type), avSessionKey_->GetElement());
     if (avSession_) {
         avSessionKey_->SetType(type);
-        avSessionMap.insert(std::make_pair(avSessionKey_->ToString(), avSession_));
+        avSessionMap.insert(
+            std::pair<std::string, std::shared_ptr<AVSession::AVSession>>(avSessionKey_->ToString(), avSession_));
         return true;
     } else {
-        WVLOG_E("media avsession adapter create avsession failed");
+        WVLOG_E("media avsession adapter CreateNewSession Fail, out return false");
         return false;
     }
 }
