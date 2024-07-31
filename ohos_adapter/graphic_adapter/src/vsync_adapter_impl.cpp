@@ -165,7 +165,7 @@ int64_t VSyncAdapterImpl::GetVSyncPeriod()
 
 void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
 {
-    WVLOG_I("NWebWindowAdapter SetFrameRateLinkerEnable enabled=%{public}d", enabled);
+    WVLOG_D("NWebWindowAdapter SetFrameRateLinkerEnable enabled=%{public}d", enabled);
     if (frameRateLinkerEnable_ == enabled) {
         return;
     }
