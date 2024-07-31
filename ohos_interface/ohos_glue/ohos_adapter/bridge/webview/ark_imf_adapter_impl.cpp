@@ -79,4 +79,12 @@ void ArkIMFAdapterImpl::OnSelectionChange(ArkWebU16String& text, int start, int 
     real_->OnSelectionChange(ArkWebU16StringStructToClass(text), start, end);
 }
 
+bool ArkIMFAdapterImpl::SendPrivateCommand(const ArkWebString& commandKey, const ArkWebString& commandValue)
+{
+    std::string key = ArkWebStringStructToClass(commandKey);
+    std::string value = ArkWebStringStructToClass(commandValue);
+
+    return real_->SendPrivateCommand(key, value);
+}
+
 } // namespace OHOS::ArkWeb

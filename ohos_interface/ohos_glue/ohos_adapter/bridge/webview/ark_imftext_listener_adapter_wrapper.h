@@ -60,6 +60,9 @@ public:
 
     void SetNeedUnderLine(bool isNeedUnderline) override;
 
+    void AutoFillWithIMFEvent(bool isUsername, bool isOtherAccount, bool isNewPassword,
+        const std::string& content) override;
+
 private:
     ArkWebRefPtr<ArkIMFTextListenerAdapter> ctocpp_;
 };

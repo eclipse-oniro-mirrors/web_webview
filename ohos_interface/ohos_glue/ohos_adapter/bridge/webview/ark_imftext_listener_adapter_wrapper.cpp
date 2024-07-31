@@ -129,4 +129,13 @@ void ArkIMFTextListenerAdapterWrapper::SetNeedUnderLine(bool isNeedUnderline)
     ctocpp_->SetNeedUnderLine(isNeedUnderline);
 }
 
+void ArkIMFTextListenerAdapterWrapper::AutoFillWithIMFEvent(bool isUsername, bool isOtherAccount, bool isNewPassword,
+    const std::string& content)
+{
+    ArkWebString str = ArkWebStringClassToStruct(content);
+    ctocpp_->AutoFillWithIMFEvent(isUsername, isOtherAccount, isNewPassword, str);
+
+    ArkWebStringStructRelease(str);
+}
+
 } // namespace OHOS::ArkWeb

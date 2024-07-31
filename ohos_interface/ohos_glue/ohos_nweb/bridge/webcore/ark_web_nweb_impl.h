@@ -1299,6 +1299,13 @@ public:
      */
     /*--ark web()--*/
     void FillAutofillData(const ArkWebMessage& data) override;
+
+    /**
+     * @brief on autofill cancel.
+     * @param fillContent fillContent
+     */
+    /*--ark web()--*/
+    void OnAutofillCancel(const ArkWebString& fillContent) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

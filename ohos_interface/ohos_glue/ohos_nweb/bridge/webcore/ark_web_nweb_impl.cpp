@@ -1132,4 +1132,9 @@ void ArkWebNWebImpl::FillAutofillData(const ArkWebMessage& data)
 {
     nweb_nweb_->FillAutofillData(data.nweb_message);
 }
+
+void ArkWebNWebImpl::OnAutofillCancel(const ArkWebString& fillContent)
+{
+    nweb_nweb_->OnAutofillCancel(ArkWebStringStructToClass(fillContent));
+}
 } // namespace OHOS::ArkWeb
