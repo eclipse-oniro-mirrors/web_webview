@@ -2095,6 +2095,7 @@ napi_value NapiWebMessagePort::OnMessageEventExt(napi_env env, napi_callback_inf
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&msgPort));
     if (msgPort == nullptr) {
         WVLOG_E("set message event callback failed, napi unwrap msg port failed");
+        napi_delete_reference(env, onMsgEventFunc);
         return nullptr;
     }
     ErrCode ret = msgPort->SetPortMessageCallback(callbackImpl);
@@ -5511,7 +5512,6 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("PrecompileJavaScript: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5590,7 +5590,6 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("SetBackForwardCacheOptions: Init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5722,7 +5721,6 @@ void NapiWebviewController::AddResourceItemToMemoryCache(napi_env env,
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("InjectOfflineResource: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return;
     }
 
@@ -5862,7 +5860,6 @@ napi_value NapiWebviewController::EnableAdsBlock(
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("EnableAdsBlock: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5974,7 +5971,6 @@ napi_value NapiWebviewController::SetUrlTrustList(napi_env env, napi_callback_in
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("webview controller is null or not init");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -6092,12 +6088,13 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("WebPageSnapshot init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        napi_delete_reference(env, callback);
         return result;
     }
 
     if (g_inWebPageSnapshot) {
         JsErrorCallback(env, std::move(callback), FUNCTION_NOT_ENABLE);
+        napi_delete_reference(env, callback);
         return result;
     }
     g_inWebPageSnapshot = true;
@@ -6124,6 +6121,7 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
                     env, snapshotSizeWidth, nativeSnapshotSizeWidthType, nativeSnapshotSizeWidth)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
+                napi_delete_reference(env, callback);
                 return result;
             }
         }
@@ -6132,6 +6130,7 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
                     env, snapshotSizeHeight, nativeSnapshotSizeHeightType, nativeSnapshotSizeHeight)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
+                napi_delete_reference(env, callback);
                 return result;
             }
         }
@@ -6142,6 +6141,7 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
         WVLOG_E("WebPageSnapshot input different pixel unit");
         JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
         g_inWebPageSnapshot = false;
+        napi_delete_reference(env, callback);
         return result;
     }
 
@@ -6155,6 +6155,7 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
         WVLOG_E("WebPageSnapshot input pixel length less than 0");
         JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
         g_inWebPageSnapshot = false;
+        napi_delete_reference(env, callback);
         return result;
     }
     bool pixelCheck = false;
@@ -6192,7 +6193,6 @@ napi_value NapiWebviewController::SetPathAllowingUniversalAccess(
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("SetPathAllowingUniversalAccess init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     bool isArray = false;
