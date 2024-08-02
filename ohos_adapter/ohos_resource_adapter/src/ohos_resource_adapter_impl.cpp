@@ -18,6 +18,8 @@
 #include <ctime>
 #include <securec.h>
 #include <sstream>
+#include <cerrno>
+#include <cstring>
 #include <unistd.h>
 
 #include "application_context.h"
@@ -145,21 +147,24 @@ std::string GetNWebHapPath()
         WVLOG_D("eixt NWEB_HAP_PATH");
         return NWEB_HAP_PATH;
     }
+    WVLOG_W("access ohos nweb hap path failed, errno(%{public}d): %{public}s", errno, strerror(errno));
     if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
         WVLOG_D("eixt NWEB_HAP_PATH_1");
         return NWEB_HAP_PATH_1;
     }
+    WVLOG_W("access nweb hap path failed, errno(%{public}d): %{public}s", errno, strerror(errno));
     if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
         WVLOG_D("eixt NWEB_HAP_PATH_MODULE_UPDATE");
         return NWEB_HAP_PATH_MODULE_UPDATE;
     }
+    WVLOG_W("access nweb hap module update path failed, errno(%{public}d): %{public}s", errno, strerror(errno));
     std::string install_path =
         OHOS::system::GetParameter("persist.arkwebcore.install_path", NWEB_HAP_PATH_MODULE_UPDATE);
     if (access(install_path.c_str(), F_OK) == 0) {
         WVLOG_D("eixt install_path");
         return install_path;
     }
-    WVLOG_E("get nweb hap path failed.");
+    WVLOG_E("access nweb install path failed, errno(%{public}d): %{public}s", errno, strerror(errno));
     return "";
 }
 } // namespace
