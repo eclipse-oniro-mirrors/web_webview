@@ -17,9 +17,9 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AafwkRenderSchedulerFuzzTest") {
+ohos_fuzztest("AafwkBrowserHostFuzzTest") {
   module_out_path = webview_fuzz_test_path
-  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkrenderscheduler_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkbrowserhost_fuzzer"
 
   include_dirs = [ "$webview_path/ohos_adapter/aafwk_adapter/include" ]
   cflags = [
@@ -28,20 +28,16 @@ ohos_fuzztest("AafwkRenderSchedulerFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "aafwkrenderscheduler_fuzzer.cpp" ]
+  sources = [ "aafwkbrowserhost_fuzzer.cpp" ]
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
-
   external_deps = [
-    "ability_base:want",
     "ability_runtime:app_manager",
-    "bundle_framework:appexecfwk_base",
     "c_utils:utils",
     "graphic_2d:libcomposer",
     "graphic_2d:libgraphic_utils",
     "graphic_2d:libnative_image",
     "graphic_2d:librender_service_client",
     "graphic_surface:surface",
-    "hilog:libhilog",
     "ipc:ipc_core",
   ]
 }
@@ -52,7 +48,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":AafwkRenderSchedulerFuzzTest",
+    ":AafwkBrowserHostFuzzTest",
   ]
 }
 ###############################################################################
