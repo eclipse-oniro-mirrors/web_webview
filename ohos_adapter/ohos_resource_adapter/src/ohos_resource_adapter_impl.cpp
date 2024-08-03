@@ -37,7 +37,12 @@ using namespace OHOS::AbilityBase;
 namespace {
 const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
 const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
+const std::string ARKWEBCORE_HAP_SANDBOX_PATH = "/data/storage/el1/bundle/nweb/entry.hap";
+const std::string PERSIST_ARKWEBCORE_INSTALL_PATH = "persist.arkwebcore.install_path";
 const std::string NWEB_HAP_PATH_MODULE_UPDATE = "/module_update/ArkWebCore/app/com.ohos.nweb/NWeb.hap";
+const std::string HAP_REAL_PATH_PREFIX = "/data/app/el1/bundle/public/";
+const std::string HAP_SANDBOX_PATH_PREFIX = "/data/storage/el1/bundle/nweb/";
+
 const std::string NWEB_BUNDLE_NAME = "com.ohos.nweb";
 const std::string NWEB_PACKAGE = "entry";
 const std::string RAWFILE_PREFIX = "resources/rawfile/";
@@ -52,22 +57,6 @@ constexpr uint32_t START_YEAR = 1900;
 
 namespace OHOS::NWeb {
 namespace {
-sptr<OHOS::AppExecFwk::BundleMgrProxy> GetBundleMgrProxy()
-{
-    auto systemAbilityMgr = OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (!systemAbilityMgr) {
-        WVLOG_E("fail to get system ability mgr.");
-        return nullptr;
-    }
-    auto remoteObject = systemAbilityMgr->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    if (!remoteObject) {
-        WVLOG_E("fail to get bundle manager proxy.");
-        return nullptr;
-    }
-    WVLOG_D("get bundle manager proxy success.");
-    return iface_cast<OHOS::AppExecFwk::BundleMgrProxy>(remoteObject);
-}
-
 std::shared_ptr<Global::Resource::ResourceManager> GetResourceMgr(
     const std::string& bundleName, const std::string& moduleName)
 {
@@ -130,19 +119,39 @@ bool ParseRawFile(const std::string& rawFile,
     return true;
 }
 
-std::string GetNWebHapPath()
+std::string convertToSandboxPath(const std::string& installPath)
 {
-    auto iBundleMgr = GetBundleMgrProxy();
-    if (iBundleMgr) {
-        OHOS::AppExecFwk::AbilityInfo abilityInfo;
-        OHOS::AppExecFwk::HapModuleInfo hapModuleInfo;
-        abilityInfo.bundleName = NWEB_BUNDLE_NAME;
-        abilityInfo.package = NWEB_PACKAGE;
-        if (iBundleMgr->GetHapModuleInfo(abilityInfo, hapModuleInfo)) {
-            WVLOG_D("get hap module info success. %{public}s", hapModuleInfo.hapPath.c_str());
-            return hapModuleInfo.hapPath;
+    if (installPath.empty()) {
+        return "";
+    }
+    size_t result = installPath.find(HAP_REAL_PATH_PREFIX);
+    if (result != std::string::npos) {
+        size_t pos = installPath.find_last_of('/');
+        if (pos != std::string::npos && pos != installPath.size() - 1) {
+            return HAP_SANDBOX_PATH_PREFIX + installPath.substr(pos + 1);
         }
     }
+    return installPath;
+}
+
+std::string GetNWebHapPath(const std::string& arkWebCoreHapPathOverride)
+{
+    if (access(arkWebCoreHapPathOverride.c_str(), F_OK) == 0) {
+        WVLOG_D("eixt HAP_arkWebCoreHapPathOverride");
+        return convertToSandboxPath(arkWebCoreHapPathOverride);
+    }
+
+    std::string installPath = convertToSandboxPath(OHOS::system::GetParameter(PERSIST_ARKWEBCORE_INSTALL_PATH, ""));
+    WVLOG_D("install_path,%{public}s", installPath.c_str());
+    if (access(installPath.c_str(), F_OK) == 0) {
+        return installPath;
+    }
+
+    if (access(ARKWEBCORE_HAP_SANDBOX_PATH.c_str(), F_OK) == 0) {
+        WVLOG_D("eixt ARKWEBCORE_HAP_SANDBOX_PATH");
+        return ARKWEBCORE_HAP_SANDBOX_PATH;
+    }
+
     if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
         WVLOG_D("eixt NWEB_HAP_PATH");
         return NWEB_HAP_PATH;
@@ -158,13 +167,6 @@ std::string GetNWebHapPath()
         return NWEB_HAP_PATH_MODULE_UPDATE;
     }
     WVLOG_W("access nweb hap module update path failed, errno(%{public}d): %{public}s", errno, strerror(errno));
-    std::string install_path =
-        OHOS::system::GetParameter("persist.arkwebcore.install_path", NWEB_HAP_PATH_MODULE_UPDATE);
-    if (access(install_path.c_str(), F_OK) == 0) {
-        WVLOG_D("eixt install_path");
-        return install_path;
-    }
-    WVLOG_E("access nweb install path failed, errno(%{public}d): %{public}s", errno, strerror(errno));
     return "";
 }
 } // namespace
@@ -217,6 +219,7 @@ bool OhosFileMapperImpl::UnzipData(uint8_t** dest, size_t& len)
     return false;
 }
 
+std::string OhosResourceAdapterImpl::arkWebCoreHapPathOverride_ = "";
 OhosResourceAdapterImpl::OhosResourceAdapterImpl(const std::string& hapPath)
 {
     Init(hapPath);
@@ -225,7 +228,7 @@ OhosResourceAdapterImpl::OhosResourceAdapterImpl(const std::string& hapPath)
 void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 {
     bool newCreate = false;
-    std::string nwebHapPath = GetNWebHapPath();
+    std::string nwebHapPath = GetNWebHapPath(arkWebCoreHapPathOverride_);
     if (!nwebHapPath.empty()) {
         sysExtractor_ = ExtractorUtil::GetExtractor(nwebHapPath, newCreate);
         if (!sysExtractor_) {
@@ -444,4 +447,10 @@ std::shared_ptr<OhosFileMapper> OhosResourceAdapterImpl::GetRawFileMapper(
     bool isCompressed = fileMap->IsCompressed();
     return std::make_shared<OhosFileMapperImpl>(std::move(fileMap), isCompressed ? manager: nullptr);
 }
+
+void OhosResourceAdapterImpl::SetArkWebCoreHapPathOverride(const std::string& hapPath)
+{
+    arkWebCoreHapPathOverride_ = hapPath;
+}
+
 }  // namespace OHOS::NWeb
