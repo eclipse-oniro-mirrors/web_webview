@@ -12,9 +12,4 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#ifndef TEST_FUZZTEST_AAFWK_ATTACH_RENDER_FUZZER_H
-#define TEST_FUZZTEST_AAFWK_ATTACH_RENDER_FUZZER_H
-
-#define FUZZ_PROJECT_NAME "aafwkattachrender_fuzzer"
-#endif /* TEST_FUZZTEST_AAFWK_ATTACH_RENDER_FUZZER_H */
+FUZZ
