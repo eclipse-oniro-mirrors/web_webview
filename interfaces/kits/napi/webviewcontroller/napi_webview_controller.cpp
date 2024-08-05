@@ -909,7 +909,10 @@ napi_value NapiWebviewController::EnableSafeBrowsing(napi_env env, napi_callback
 
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
-    if (!controller || !controller->IsInit()) {
+    if (!controller) {
+        return result;
+    }
+    if (!controller->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
