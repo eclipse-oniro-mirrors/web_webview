@@ -36,6 +36,7 @@ const std::string PERFORMANCE_CONFIG = "performanceConfig";
 // The config used in base/web/webview
 const std::string BASE_WEB_CONFIG = "baseWebConfig";
 const std::string WEB_ANIMATION_DYNAMIC_SETTING_CONFIG = "property_animation_dynamic_settings";
+const std::string WEB_ANIMATION_DYNAMIC_APP = "DYNAMIC_APPS";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
@@ -296,6 +297,10 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
             continue;
         }
         std::string settingName = (char *)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        if (settingName == WEB_ANIMATION_DYNAMIC_APP) {
+            ParseNWebLTPOApp(curNodePtr);
+            continue;
+        }
         std::vector<FrameRateSetting> frameRateSetting;
         for (xmlNodePtr curDynamicNodePtr = curNodePtr->xmlChildrenNode; curDynamicNodePtr;
             curDynamicNodePtr = curDynamicNodePtr->next) {
@@ -314,6 +319,25 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
         }
         ltpoConfig_[settingName] = frameRateSetting;
     }
+}
+
+void NWebConfigHelper::ParseNWebLTPOApp(xmlNodePtr nodePtr)
+{
+    for (xmlNodePtr curDynamicNodePtr = nodePtr->xmlChildrenNode; curDynamicNodePtr;
+        curDynamicNodePtr = curDynamicNodePtr->next) {
+        if (curDynamicNodePtr->name == nullptr || curDynamicNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string bundleName = (char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_NAME));
+        ltpoAllowedApps_.emplace(bundleName);
+        WVLOG_D("ltpo dynamic app: %{public}s", bundleName.c_str());
+    }
+}
+
+bool NWebConfigHelper::IsLTPODynamicApp(const std::string& bundleName)
+{
+    return ltpoAllowedApps_.find(bundleName) != ltpoAllowedApps_.end();
 }
 
 std::vector<FrameRateSetting> NWebConfigHelper::GetPerfConfig(const std::string& settingName)

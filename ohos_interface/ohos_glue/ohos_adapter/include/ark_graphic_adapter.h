@@ -44,6 +44,9 @@ public:
 
     /*--ark web()--*/
     virtual void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) = 0;
+
+    /*--ark web()--*/
+    virtual void SetScene(const ArkWebString& sceneName, uint32_t state) = 0;
 };
 
 /*--ark web(source=webcore)--*/
@@ -225,7 +228,6 @@ public:
     virtual int32_t FlushBuffer(ArkWebRefPtr<ArkSurfaceBufferAdapter> buffer, int32_t fence,
         ArkWebRefPtr<ArkBufferFlushConfigAdapter> config) = 0;
 };
-
 } // namespace OHOS::ArkWeb
 
 #endif // Ark_GRAPHIC_ADAPTER_H
