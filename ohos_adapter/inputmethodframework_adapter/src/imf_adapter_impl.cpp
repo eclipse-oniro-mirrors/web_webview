@@ -241,14 +241,6 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
         }
     }
 
-    item = privateCommand.find(AUTO_FILL_PARAMS_NEWPASSWORD);
-    if (item != privateCommand.end()) {
-        if (listener_) {
-            std::string content = std::get<std::string>(item->second);
-            listener_->AutoFillWithIMFEvent(false, false, true, content);
-        }
-    }
-
     item = privateCommand.find(AUTO_FILL_PARAMS_OTHERACCOUNT);
     if (item != privateCommand.end()) {
         if (listener_) {
@@ -413,12 +405,6 @@ bool IMFAdapterImpl::ParseFillContentJsonValue(const std::string& commandValue,
         cJSON* userName = cJSON_GetObjectItem(sourceJson, "userName");
         if (userName != nullptr && cJSON_IsString(userName) && userName->valuestring != nullptr) {
             map.insert(std::make_pair("userName", userName->valuestring));
-        }
-    }
-    if (cJSON_HasObjectItem(sourceJson, "newPassword")) {
-        cJSON* newPassword = cJSON_GetObjectItem(sourceJson, "newPassword");
-        if (newPassword != nullptr && cJSON_IsString(newPassword) && newPassword->valuestring != nullptr) {
-            map.insert(std::make_pair("newPassword", newPassword->valuestring));
         }
     }
     if (cJSON_HasObjectItem(sourceJson, "hasAccount")) {
