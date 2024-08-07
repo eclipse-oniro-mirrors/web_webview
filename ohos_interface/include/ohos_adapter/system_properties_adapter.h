@@ -88,6 +88,8 @@ public:
     virtual std::vector<FrameRateSetting> GetLTPOConfig(const std::string& settingName) = 0;
 
     virtual std::string GetOOPGPUStatus() = 0;
+
+    virtual bool IsLTPODynamicApp(const std::string& bundleName) = 0;
 };
 
 } // namespace OHOS::NWeb

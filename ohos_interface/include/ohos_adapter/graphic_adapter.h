@@ -44,6 +44,8 @@ public:
     virtual void SetOnVsyncCallback(void (*callback)()) = 0;
 
     virtual void SetOnVsyncEndCallback(void (*onVsyncEndCallback)()) {}
+
+    virtual void SetScene(const std::string& sceneName, uint32_t state) = 0;
 };
 
 // be consistent with rom/foundation/graphic/graphic_2d/interfaces/inner_api/common/graphic_common_c.h:GSError
@@ -288,7 +290,6 @@ public:
     virtual int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> buffer, int32_t fence,
         std::shared_ptr<BufferFlushConfigAdapter> config) = 0;
 };
-
 } // namespace OHOS::NWeb
 
 #endif // GRAPHIC_ADAPTER_H

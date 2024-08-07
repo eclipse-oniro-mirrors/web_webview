@@ -89,6 +89,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetOOPGPUStatus() = 0;
+
+    /*--ark web()--*/
+    virtual bool IsLTPODynamicApp(ArkWebString bundleName) = 0;
 };
 
 } // namespace OHOS::ArkWeb
