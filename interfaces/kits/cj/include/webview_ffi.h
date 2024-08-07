@@ -69,6 +69,9 @@ extern "C" {
     FFI_EXPORT int32_t FfiOHOSWebviewCtlRemoveCache(int64_t id, bool clearRom);
     FFI_EXPORT int64_t FfiOHOSWebviewCtlGetBackForwardEntries(int64_t id, int32_t *errCode);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlStop(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlPostUrl(int64_t id, char *url, CArrUI8 buffer);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSetDownloadDelegate(int64_t id, int64_t delegateId);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlStartDownload(int64_t id, char *url);
 
     // BackForwardList
     FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t *errCode);
@@ -85,6 +88,38 @@ extern "C" {
     FFI_EXPORT bool FfiOHOSCookieMgrExistCookie(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearAllCookiesSync(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearSessionCookieSync();
+
+    // WebDownloadItemImpl
+    FFI_EXPORT int64_t FfiOHOSWebDownloadItemImplConstructor();
+    FFI_EXPORT RetDataCString FfiOHOSWebDownloadItemImplGetGuid(int64_t id);
+    FFI_EXPORT int64_t FfiOHOSWebDownloadItemImplGetCurrentSpeed(int64_t id, int32_t *errCode);
+    FFI_EXPORT int64_t FfiOHOSWebDownloadItemImplGetPercentComplete(int64_t id, int32_t *errCode);
+    FFI_EXPORT int64_t FfiOHOSWebDownloadItemImplGetTotalBytes(int64_t id, int32_t *errCode);
+    FFI_EXPORT int64_t FfiOHOSWebDownloadItemImplGetReceivedBytes(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebDownloadItemImplGetState(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebDownloadItemImplGetLastErrorCode(int64_t id, int32_t *errCode);
+    FFI_EXPORT RetDataCString FfiOHOSWebDownloadItemImplGetMethod(int64_t id);
+    FFI_EXPORT RetDataCString FfiOHOSWebDownloadItemImplGetMimeType(int64_t id);
+    FFI_EXPORT RetDataCString FfiOHOSWebDownloadItemImplGetUrl(int64_t id);
+    FFI_EXPORT RetDataCString FfiOHOSWebDownloadItemImplGetSuggestedFileName(int64_t id);
+    FFI_EXPORT RetDataCString FfiOHOSWebDownloadItemImplGetFullPath(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebDownloadItemImplStart(int64_t id, char *downloadPath);
+    FFI_EXPORT int32_t FfiOHOSWebDownloadItemImplCancel(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebDownloadItemImplPause(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebDownloadItemImplResume(int64_t id);
+    FFI_EXPORT CArrUI8 FfiOHOSWebDownloadItemImplSerialize(int64_t id, int32_t *errCode);
+    FFI_EXPORT int64_t FfiOHOSWebDownloadItemImplDeserialize(CArrUI8 serializedData, int32_t *errCode);
+    
+    // WebDownloadDelegateImpl
+    FFI_EXPORT int64_t FfiOHOSWebDownloadDelegateImplConstructor();
+    FFI_EXPORT void FfiOHOSWebDownloadDelegateImplOnBeforeDownload(int64_t id, void (*callback)(int64_t));
+    FFI_EXPORT void FfiOHOSWebDownloadDelegateImplOnDownloadUpdated(int64_t id, void (*callback)(int64_t));
+    FFI_EXPORT void FfiOHOSWebDownloadDelegateImplOnDownloadFinish(int64_t id, void (*callback)(int64_t));
+    FFI_EXPORT void FfiOHOSWebDownloadDelegateImplOnDownloadFailed(int64_t id, void (*callback)(int64_t));
+
+    // WebDownloadManagerImpl
+    FFI_EXPORT void FfiOHOSWebDownloadManagerImplSetDownloadDelegate(int64_t delegateId);
+    FFI_EXPORT int32_t FfiOHOSWebDownloadManagerImplResumeDownload(int64_t itemId);
 }
 
 #endif // WEBVIEW_FFI_H
