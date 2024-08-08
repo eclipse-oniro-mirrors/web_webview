@@ -35,10 +35,10 @@ namespace Webview {
 
     uint8_t* MallocUInt8(const std::string& origin)
     {
-        if (origin.empty()) {
+        auto len = origin.length();
+        if (len <= 0) {
             return nullptr;
         }
-        auto len = origin.length();
         char* res = static_cast<char*>(malloc(sizeof(char) * len));
         if (res == nullptr) {
             return nullptr;

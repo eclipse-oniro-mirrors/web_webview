@@ -974,7 +974,8 @@ extern "C" {
             return NWebError::INIT_ERROR;
         }
         nativeWebDownloadItemImpl->downloadPath = sDownloadPath;
-        WebDownload_Continue(nativeWebDownloadItemImpl->before_download_callback, nativeWebDownloadItemImpl->downloadPath.c_str());
+        WebDownload_Continue(nativeWebDownloadItemImpl->before_download_callback,
+            nativeWebDownloadItemImpl->downloadPath.c_str());
         return NWebError::NO_ERROR;
     }
 
@@ -1061,7 +1062,8 @@ extern "C" {
         webDownloadPb.set_content_disposition(nativeWebDownloadItemImpl->contentDisposition);
         webDownloadPb.set_mime_type(nativeWebDownloadItemImpl->mimeType);
         webDownloadPb.set_last_modified(nativeWebDownloadItemImpl->lastModified);
-        webDownloadPb.set_state(static_cast<browser_service::WebDownload::WebDownloadState>(nativeWebDownloadItemImpl->state));
+        webDownloadPb.set_state(
+            static_cast<browser_service::WebDownload::WebDownloadState>(nativeWebDownloadItemImpl->state));
         webDownloadPb.set_method(nativeWebDownloadItemImpl->method);
         webDownloadPb.set_last_error_code(nativeWebDownloadItemImpl->lastErrorCode);
         webDownloadPb.set_received_slices(nativeWebDownloadItemImpl->receivedSlices);
