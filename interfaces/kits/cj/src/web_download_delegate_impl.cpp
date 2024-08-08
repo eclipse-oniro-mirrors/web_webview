@@ -65,7 +65,6 @@ namespace OHOS::Webview {
             return;
         }
         download_did_fail_callback_(webDownloadItemImpl->GetID());
-        
     }
 
     void WebDownloadDelegateImpl::DownloadDidFinish(WebDownloadItemImpl *webDownloadItemImpl)
@@ -76,7 +75,6 @@ namespace OHOS::Webview {
             return;
         }
         download_did_finish_callback_(webDownloadItemImpl->GetID());
-       
     }
 
     void WebDownloadDelegateImpl::PutDownloadBeforeStart(std::function<void(int64_t)> callback)
