@@ -316,4 +316,9 @@ std::vector<FrameRateSetting> SystemPropertiesAdapterImpl::GetLTPOConfig(const s
 {
     return NWebConfigHelper::Instance().GetPerfConfig(settingName);
 }
+
+bool SystemPropertiesAdapterImpl::IsLTPODynamicApp(const std::string& bundleName)
+{
+    return NWebConfigHelper::Instance().IsLTPODynamicApp(bundleName);
+}
 } // namespace OHOS::NWeb
