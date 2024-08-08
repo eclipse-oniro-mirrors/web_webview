@@ -41,6 +41,8 @@ public:
     void SetOnVsyncCallback(void (*callback)()) override;
     void SetIsGPUProcess(bool isGPU);
     void SetOnVsyncEndCallback(void (*onVsyncEndCallback)()) override;
+
+    void SetScene(const std::string& sceneName, uint32_t state) override;
 private:
     static void OnVsync(int64_t timestamp, void* data);
     void VsyncCallbackInner(int64_t nanoTimestamp);
@@ -61,6 +63,8 @@ private:
     static void (*onVsyncEndCallback_)();
     bool frameRateLinkerEnable_ = false;
     bool isGPUProcess_ = false;
+
+    std::string pkgName_ {""};
 };
 } // namespace OHOS::NWeb
 

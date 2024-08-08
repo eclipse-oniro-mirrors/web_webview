@@ -16,6 +16,10 @@
 #include "vsync_adapter_impl.h"
 
 #include "aafwk_browser_client_adapter_impl.h"
+#include "application_context.h"
+#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
+#include "aps_manager.h"
+#endif
 #include "nweb_log.h"
 #include "res_sched_client_adapter.h"
 #include "system_properties_adapter_impl.h"
@@ -25,6 +29,9 @@ namespace OHOS::NWeb {
 namespace {
 const std::string THREAD_NAME = "VSync-webview";
 constexpr int32_t WEBVIEW_FRAME_RATE_TYPE = 4;
+#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
+constexpr int32_t APS_MANAGER_CLOSE_ALL = 2;
+#endif
 }
 
 void (*VSyncAdapterImpl::callback_)() = nullptr;
@@ -43,6 +50,9 @@ VSyncAdapterImpl::~VSyncAdapterImpl()
         vsyncHandler_ = nullptr;
     }
     hasReportedKeyThread_ = false;
+#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
+    Rosen::ApsManager::GetInstance().SetScene(pkgName_, "WEB_LIST_FLING", APS_MANAGER_CLOSE_ALL);
+#endif
 }
 
 VSyncAdapterImpl& VSyncAdapterImpl::GetInstance()
@@ -204,5 +214,18 @@ void VSyncAdapterImpl::SetOnVsyncEndCallback(void (*onVsyncEndCallback)())
 {
     WVLOG_D("callback function: %{public}ld", (long)onVsyncEndCallback);
     onVsyncEndCallback_ = onVsyncEndCallback;
+}
+
+void VSyncAdapterImpl::SetScene(const std::string& sceneName, uint32_t state) {
+    WVLOG_D("APSManagerAdapterImpl SetScene sceneName=%{public}s state=%{public}u", sceneName.c_str(), state);
+#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
+    if (pkgName_.empty()) {
+        auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+        if (appInfo != nullptr) {
+            pkgName_ = appInfo->bundleName.c_str();
+        }
+    }
+    Rosen::ApsManager::GetInstance().SetScene(pkgName_, sceneName, state);
+#endif
 }
 } // namespace OHOS::NWeb

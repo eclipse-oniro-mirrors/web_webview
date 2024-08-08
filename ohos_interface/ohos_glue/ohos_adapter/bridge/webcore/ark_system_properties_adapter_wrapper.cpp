@@ -211,4 +211,12 @@ std::string ArkSystemPropertiesAdapterWrapper::GetOOPGPUStatus()
     ArkWebStringStructRelease(str);
     return result;
 }
+
+bool ArkSystemPropertiesAdapterWrapper::IsLTPODynamicApp(const std::string& bundleName)
+{
+    ArkWebString ark_bundle_name = ArkWebStringClassToStruct(bundleName);
+    bool result = ctocpp_->IsLTPODynamicApp(ark_bundle_name);
+    ArkWebStringStructRelease(ark_bundle_name);
+    return result;
+}
 } // namespace OHOS::ArkWeb

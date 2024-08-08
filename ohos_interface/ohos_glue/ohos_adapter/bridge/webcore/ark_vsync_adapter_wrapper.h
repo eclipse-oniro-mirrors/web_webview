@@ -37,9 +37,20 @@ public:
 
     void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) override;
 
+    void SetScene(const std::string& sceneName, uint32_t state) override;
 private:
     ArkWebRefPtr<ArkVSyncAdapter> ctocpp_;
 };
+
+void ArkVSyncAdapterWrapper::SetScene(const std::string& sceneName, uint32_t state)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ArkWebString ark_value = ArkWebStringClassToStruct(sceneName);
+    ctocpp_->SetScene(ark_value, state);
+    ArkWebStringStructRelease(ark_value);
+}
 
 } // namespace OHOS::ArkWeb
 

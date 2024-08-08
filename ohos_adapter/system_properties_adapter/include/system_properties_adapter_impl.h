@@ -73,6 +73,8 @@ public:
     std::vector<FrameRateSetting> GetLTPOConfig(const std::string& settingName) override;
 
     std::string GetOOPGPUStatus() override;
+
+    bool IsLTPODynamicApp(const std::string& bundleName) override;
 private:
     SystemPropertiesAdapterImpl();
 

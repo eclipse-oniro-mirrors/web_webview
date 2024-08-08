@@ -84,7 +84,7 @@
             ],
             "third_party": [
                 "chromium",
-                "cef" 
+                "cef"
             ]
         },
         "build": {

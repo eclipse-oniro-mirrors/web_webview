@@ -1253,4 +1253,9 @@ std::string NWebAdapterHelper::ParsePerfConfig(const std::string &configNodeName
     std::string config = NWebConfigHelper::Instance().ParsePerfConfig(configNodeName, argsNodeName);
     return config;
 }
+
+bool NWebAdapterHelper::IsLTPODynamicApp(const std::string& bundleName)
+{
+    return NWebConfigHelper::Instance().IsLTPODynamicApp(bundleName);
+}
 } // namespace OHOS::NWeb
