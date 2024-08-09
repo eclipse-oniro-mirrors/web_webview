@@ -1323,6 +1323,16 @@ public:
      */
     /*--ark web()--*/
     void GetScrollOffset(float* offset_x, float* offset_y) override;
+
+    /**
+     * @brief ExecuteCreatePDF
+     *
+     * @param pdfConfig The current configuration when creating pdf.
+     * @param callback NWebArrayBufferValueCallback: CreatePDF running result.
+     */
+    /*--ark web()--*/
+    void ExecuteCreatePDFExt(std::shared_ptr<OHOS::NWeb::NWebPDFConfigArgs> pdfConfig,
+        std::shared_ptr<OHOS::NWeb::NWebArrayBufferValueCallback> callback) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
