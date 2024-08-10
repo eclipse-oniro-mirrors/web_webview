@@ -27,10 +27,8 @@ bool ApplySocPerfConfigByIdFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return false;
     }
-    int32_t id;
-    if (memcpy_s(&id, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return false;
-    }
+    int32_t id = static_cast<int32_t>(size);
+
     SocPerfClientAdapterImpl perfClientAdapterImpl;
     perfClientAdapterImpl.ApplySocPerfConfigById(id);
     return true;

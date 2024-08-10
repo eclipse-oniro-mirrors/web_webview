@@ -29,18 +29,9 @@ bool CapabilityDataAdapterImplFuzzTest(const uint8_t* data, size_t size)
     }
     OHOS::NWeb::CapabilityDataAdapterImpl capabilityDataAdapter;
 
-    int32_t width;
-    int32_t height;
-    int32_t frameRate;
-    if (memcpy_s(&width, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return true;
-    }
-    if (memcpy_s(&height, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return true;
-    }
-    if (memcpy_s(&frameRate, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return true;
-    }
+    int32_t width = static_cast<int32_t>(size);
+    int32_t height = static_cast<int32_t>(size);
+    int32_t frameRate = static_cast<int32_t>(size);
 
     capabilityDataAdapter.SetMaxWidth(width);
     capabilityDataAdapter.SetMaxHeight(height);

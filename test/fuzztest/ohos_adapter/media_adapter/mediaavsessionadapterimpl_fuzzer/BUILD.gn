@@ -17,7 +17,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("MediaAVSessionCallbackImplFuzzTest") {
+ohos_fuzztest("MediaAVSessionAdapterImplFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/media_adapter/mediaavsessionadapterimpl_fuzzer"
   include_dirs = [
@@ -59,7 +59,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":MediaAVSessionCallbackImplFuzzTest",
+    ":MediaAVSessionAdapterImplFuzzTest",
   ]
 }
 ###############################################################################

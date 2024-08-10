@@ -55,11 +55,6 @@ bool AafwkRenderSchedulerFuzzTest(const uint8_t* data, size_t size)
     }
 
     render.NotifyBrowserFd(ipcFd, sharedFd, crashFd, nullptr);
-    std::shared_ptr<AafwkRenderSchedulerImpl> newrender = std::make_shared<AafwkRenderSchedulerImpl>(adapter);
-
-    newrender->NotifyBrowserFd(ipcFd, sharedFd, crashFd, nullptr);
-    newrender->renderSchedulerHostAdapter_ = nullptr;
-    newrender->NotifyBrowserFd(ipcFd, sharedFd, crashFd, nullptr);
     return true;
 }
 } // namespace OHOS

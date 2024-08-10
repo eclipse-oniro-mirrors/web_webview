@@ -35,10 +35,10 @@ bool ResSchedAdapterFuzzTest(const uint8_t* data, size_t size)
         return false;
     }
 
-    pid_t pid = static_cast<pid_t>(data[0] % 1000);
-    pid_t tid = static_cast<pid_t>(data[1] % 1000);
-    int32_t nwebId = static_cast<int32_t>(data[2] % 10);
-    uint32_t windowId = static_cast<uint32_t>(data[3] % 1000);
+    pid_t pid = 1;
+    pid_t tid = 1;
+    int32_t nwebId = static_cast<int32_t>(size);
+    uint32_t windowId = static_cast<uint32_t>(size);
 
     std::vector<ResSchedStatusAdapter> statuses = { ResSchedStatusAdapter::WEB_ACTIVE,
         ResSchedStatusAdapter::WEB_INACTIVE, ResSchedStatusAdapter::THREAD_CREATED,

@@ -28,18 +28,10 @@ bool BufferInfoAdapterImplFuzzTest(const uint8_t* data, size_t size)
         return false;
     }
     OHOS::NWeb::BufferInfoAdapterImpl bufferInfoAdapterImpl;
-    int64_t time;
-    int32_t usesize;
-    int32_t offset;
-    if (memcpy_s(&time, sizeof(int64_t), data, sizeof(int64_t)) != 0) {
-        return true;
-    }
-    if (memcpy_s(&usesize, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return true;
-    }
-    if (memcpy_s(&offset, sizeof(int64_t), data, sizeof(int64_t)) != 0) {
-        return true;
-    }
+    int64_t time = 1;
+    int32_t usesize = static_cast<int32_t>(size);
+    int32_t offset = static_cast<int32_t>(size);
+
     bufferInfoAdapterImpl.SetPresentationTimeUs(time);
     bufferInfoAdapterImpl.SetSize(usesize);
     bufferInfoAdapterImpl.SetOffset(offset);

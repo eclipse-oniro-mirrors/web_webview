@@ -16,5 +16,5 @@
 #ifndef TEST_FUZZTEST_ADDHTMLRECORD_FUZZER_H
 #define TEST_FUZZTEST_ADDHTMLRECORD_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "codecformatadapterimpl_fuzzer"
+#define FUZZ_PROJECT_NAME "mediaavsessionadapterimpl_fuzzer"
 #endif /* TEST_FUZZTEST_ADDHTMLRECORD_FUZZER_H */
