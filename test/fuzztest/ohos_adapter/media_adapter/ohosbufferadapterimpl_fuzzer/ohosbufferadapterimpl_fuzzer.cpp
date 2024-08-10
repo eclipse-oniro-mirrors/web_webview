@@ -30,11 +30,7 @@ bool OhosBufferAdapterImplFuzzTest(const uint8_t* data, size_t size)
     OHOS::NWeb::OhosBufferAdapterImpl ohosBufferAdapterImpl;
 
     uint8_t* addr = const_cast<uint8_t*>(data);
-    uint32_t bufferSize;
-
-    if (memcpy_s(&bufferSize, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return true;
-    }
+    uint32_t bufferSize = static_cast<uint32_t>(size);
 
     ohosBufferAdapterImpl.SetAddr(addr);
 

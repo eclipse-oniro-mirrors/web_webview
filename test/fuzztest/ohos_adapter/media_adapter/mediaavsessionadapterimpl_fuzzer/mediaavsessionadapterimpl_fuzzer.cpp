@@ -35,7 +35,7 @@ public:
     void SeekTo(int64_t millisTime) {};
 };
 
-bool MediaAVSessionCallbackImplFuzzTest(const uint8_t* data, size_t size)
+bool MediaAVSessionAdapterImplFuzzTest(const uint8_t* data, size_t size)
 {
     std::shared_ptr<MediaAVSessionCallbackAdapterMock> mediaAvSessionCB;
     std::shared_ptr<MediaAVSessionCallbackImpl> callbackImpl =
@@ -80,6 +80,6 @@ bool MediaAVSessionCallbackImplFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::MediaAVSessionCallbackImplFuzzTest(data, size);
+    OHOS::MediaAVSessionAdapterImplFuzzTest(data, size);
     return 0;
 }

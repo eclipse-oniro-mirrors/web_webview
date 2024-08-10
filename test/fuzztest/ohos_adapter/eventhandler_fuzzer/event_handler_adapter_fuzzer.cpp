@@ -31,8 +31,8 @@ public:
 
 bool EventHandlerAdapterFuzzTest(const uint8_t* data, size_t size)
 {
-    int32_t fileDescriptor = *reinterpret_cast<const int32_t*>(data);
-    uint32_t events = *reinterpret_cast<const uint32_t*>(data + sizeof(int32_t));
+    int32_t fileDescriptor = static_cast<int32_t>(size);
+    uint32_t events = static_cast<uint32_t>(size);
 
     std::shared_ptr<EventHandlerFDListenerAdapter> listener = std::make_shared<EventHandlerFDListenerAdapterTest>();
 
