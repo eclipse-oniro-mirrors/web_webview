@@ -29,7 +29,8 @@ bool AudioGetContentFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    std::array<AudioAdapterContentType, 6> contentArray = {
+    int typenums = 6;
+    std::array<AudioAdapterContentType, typenums> contentArray = {
         AudioAdapterContentType::CONTENT_TYPE_UNKNOWN,
         AudioAdapterContentType::CONTENT_TYPE_SPEECH,
         AudioAdapterContentType::CONTENT_TYPE_MUSIC,
