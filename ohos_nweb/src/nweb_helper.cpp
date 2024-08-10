@@ -139,7 +139,7 @@ void LoadNWebCApi(void *handle, NWebCApi *api)
 bool LoadNWebSDK(void *handle)
 {
     if (g_nwebCApi) {
-        WVLOG_E("LoadNWebSDK had loaded.");
+        WVLOG_I("LoadNWebSDK had loaded.");
         return true;
     }
 
