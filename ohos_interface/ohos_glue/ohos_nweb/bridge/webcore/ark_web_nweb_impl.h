@@ -1324,6 +1324,16 @@ public:
     /*--ark web()--*/
     void ExecuteCreatePDFExt(
         ArkWebRefPtr<ArkWebPDFConfigArgs> pdfConfig, ArkWebRefPtr<ArkWebArrayBufferValueCallback> callback) override;
+
+    /**
+     * Scroll by the delta distance if web is not foucsed.
+     *
+     * @param delta_x horizontal offset.
+     * @param delta_y vertical offset.
+     * @return false if web is focused.
+    */
+    /*--ark web()--*/
+    bool ScrollByWithResult(float delta_x, float delta_y) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

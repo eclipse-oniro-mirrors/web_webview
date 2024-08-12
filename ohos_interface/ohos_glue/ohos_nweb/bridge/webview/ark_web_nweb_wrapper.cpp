@@ -1359,4 +1359,9 @@ void ArkWebNWebWrapper::ExecuteCreatePDFExt(std::shared_ptr<OHOS::NWeb::NWebPDFC
             new ArkWebArrayBufferValueCallbackImpl(callback));
     }
 }
+
+bool ArkWebNWebWrapper::ScrollByWithResult(float delta_x, float delta_y)
+{
+    return ark_web_nweb_->ScrollByWithResult(delta_x, delta_y);
+}
 } // namespace OHOS::ArkWeb

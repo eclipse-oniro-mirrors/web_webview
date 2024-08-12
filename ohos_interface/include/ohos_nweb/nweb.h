@@ -1495,6 +1495,17 @@ public:
      */
     virtual void ExecuteCreatePDFExt(std::shared_ptr<NWebPDFConfigArgs> pdfConfig,
         std::shared_ptr<NWebArrayBufferValueCallback> callback) {}
+
+    /**
+     * Scroll by the delta distance if web is not foucsed.
+     *
+     * @param delta_x horizontal offset.
+     * @param delta_y vertical offset.
+     * @return false if web is focused.
+    */
+    virtual bool ScrollByWithResult(float delta_x, float delta_y) {
+        return false;
+    };
 };
 
 } // namespace OHOS::NWeb

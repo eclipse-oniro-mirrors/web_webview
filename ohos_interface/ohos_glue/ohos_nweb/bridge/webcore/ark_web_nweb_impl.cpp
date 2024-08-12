@@ -1159,4 +1159,9 @@ void ArkWebNWebImpl::ExecuteCreatePDFExt(
         std::make_shared<ArkWebPDFConfigArgsWrapper>(CHECK_REF_PTR_IS_NULL(pdfConfig) ? nullptr : pdfConfig),
         std::make_shared<ArkWebArrayBufferValueCallbackWrapper>(callback));
 }
+
+bool ArkWebNWebImpl::ScrollByWithResult(float delta_x, float delta_y)
+{
+    return nweb_nweb_->ScrollByWithResult(delta_x, delta_y);
+}
 } // namespace OHOS::ArkWeb
