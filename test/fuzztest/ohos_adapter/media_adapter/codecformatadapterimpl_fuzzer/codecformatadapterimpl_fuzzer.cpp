@@ -28,14 +28,9 @@ bool CreateLocationProxyAdapterFuzzTest(const uint8_t* data, size_t size)
         return false;
     }
     OHOS::NWeb::CodecFormatAdapterImpl codecFormatAdapter;
-    int32_t width;
-    int32_t height;
-    if (memcpy_s(&width, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return true;
-    }
-    if (memcpy_s(&height, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return true;
-    }
+    int32_t width = static_cast<int32_t>(size);
+    int32_t height = static_cast<int32_t>(size);
+
     codecFormatAdapter.SetWidth(width);
     codecFormatAdapter.SetHeight(height);
 

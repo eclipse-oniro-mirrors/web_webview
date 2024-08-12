@@ -13,27 +13,37 @@
  * limitations under the License.
  */
 
-#include "getkeyboardtype_fuzzer.h"
+#include "flowbufferadapter_fuzzer.h"
 
 #include <securec.h>
+#include <sys/mman.h>
 
-#include "mmi_adapter_impl.h"
+#include "ohos_adapter_helper.h"
+#define private public
+#include "flowbuffer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-bool GetKeyboardTypeFuzzTest(const uint8_t* data, size_t size)
+bool FlowBufferAdapterFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return false;
     }
-    std::shared_ptr<MMIAdapterImpl> AdapterImpl = std::make_shared<MMIAdapterImpl>();
-    int32_t deviceId;
-    if (memcpy_s(&deviceId, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return false;
-    }
-    int32_t type;
-    AdapterImpl->GetKeyboardType(deviceId, type);
+    auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+    int fd = 0;
+    size_t scriptLength = 10;
+    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
+    (void)ashmem;
+    flowbufferAdapter->StartPerformanceBoost();
+
+    auto flowbufferAdapter1 = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+    int fd1;
+    size_t scriptLength1 = 10;
+    flowbufferAdapter1->CreateAshmem(scriptLength1, PROT_READ | PROT_WRITE, fd1);
+    auto ashmem1 = flowbufferAdapter->CreateAshmemWithFd(fd1, scriptLength1, PROT_READ);
+    (void)ashmem1;
+    flowbufferAdapter1->StartPerformanceBoost();
     return true;
 }
 } // namespace OHOS
@@ -42,6 +52,6 @@ bool GetKeyboardTypeFuzzTest(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::GetKeyboardTypeFuzzTest(data, size);
+    OHOS::FlowBufferAdapterFuzzTest(data, size);
     return 0;
 }

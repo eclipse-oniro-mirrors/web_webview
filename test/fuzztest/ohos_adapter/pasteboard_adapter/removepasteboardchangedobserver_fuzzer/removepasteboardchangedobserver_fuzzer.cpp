@@ -30,7 +30,8 @@ bool RemovePasteboardChangedObserverFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(-1);
+    int32_t callbackId = static_cast<int32_t>(size);
+    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(callbackId);
     return true;
 }
 } // namespace OHOS

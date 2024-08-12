@@ -18,7 +18,7 @@ import("//build/test.gni")
 import("$webview_path/config.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("FlowBufferAdapterImplFuzzTest") {
+ohos_fuzztest("FlowBufferAdapterFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file =
       "$webview_path/test/fuzztest/ohos_adapter/flowbufferadapter_fuzzer"
@@ -33,7 +33,7 @@ ohos_fuzztest("FlowBufferAdapterImplFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "flowbufferadapterimpl_fuzzer.cpp" ]
+  sources = [ "flowbufferadapter_fuzzer.cpp" ]
   deps = [
     "$webview_path/ohos_adapter:nweb_ohos_adapter",
     "$webview_path/ohos_nweb:libnweb",
@@ -51,7 +51,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":FlowBufferAdapterImplFuzzTest",
+    ":FlowBufferAdapterFuzzTest",
   ]
 }
 ###############################################################################
