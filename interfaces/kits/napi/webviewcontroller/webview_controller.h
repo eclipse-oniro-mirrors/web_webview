@@ -383,6 +383,12 @@ public:
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
 
     void GetScrollOffset(float* offset_x, float* offset_y);
+
+    void CreatePDFCallbackExt(
+        napi_env env, std::shared_ptr<NWebPDFConfigArgs> pdfConfig, napi_ref pdfCallback);
+
+    void CreatePDFPromiseExt(
+        napi_env env, std::shared_ptr<NWebPDFConfigArgs> pdfConfig, napi_deferred deferred);
 private:
     int ConverToWebHitTestType(int hitType);
 

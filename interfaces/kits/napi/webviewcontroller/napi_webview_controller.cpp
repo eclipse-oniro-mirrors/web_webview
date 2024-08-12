@@ -39,6 +39,7 @@
 #include "pixel_map_napi.h"
 #include "web_errors.h"
 #include "webview_javascript_execute_callback.h"
+#include "webview_createpdf_execute_callback.h"
 
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
@@ -59,6 +60,11 @@ constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 constexpr size_t MAX_RESOURCES_COUNT = 30;
 constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
 constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024; // 10M
+constexpr double A4_WIDTH = 8.5;
+constexpr double A4_HEIGHT = 11.0;
+constexpr double SCALE_MIN = 0.1;
+constexpr double SCALE_MAX = 2.0;
+constexpr double HALF = 2.0;
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
 
 bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
@@ -336,6 +342,58 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
     return prefetchArgs;
 }
 
+std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value preArgs)
+{
+    napi_value widthObj = nullptr;
+    double width = A4_WIDTH;
+    napi_get_named_property(env, preArgs, "width", &widthObj);
+    NapiParseUtils::ParseDouble(env, widthObj, width);
+
+    napi_value heightObj = nullptr;
+    double height = A4_HEIGHT;
+    napi_get_named_property(env, preArgs, "height", &heightObj);
+    NapiParseUtils::ParseDouble(env, heightObj, height);
+
+    napi_value scaleObj = nullptr;
+    double scale = 1.0;
+    napi_get_named_property(env, preArgs, "scale", &scaleObj);
+    NapiParseUtils::ParseDouble(env, scaleObj, scale);
+    scale = scale > SCALE_MAX ? SCALE_MAX : scale < SCALE_MIN ? SCALE_MIN : scale;
+
+    napi_value marginTopObj = nullptr;
+    double marginTop = 0.0;
+    napi_get_named_property(env, preArgs, "marginTop", &marginTopObj);
+    NapiParseUtils::ParseDouble(env, marginTopObj, marginTop);
+    marginTop = marginTop >= height / HALF ? 0.0 : marginTop;
+
+    napi_value marginBottomObj = nullptr;
+    double marginBottom = 0.0;
+    napi_get_named_property(env, preArgs, "marginBottom", &marginBottomObj);
+    NapiParseUtils::ParseDouble(env, marginBottomObj, marginBottom);
+    marginBottom = marginBottom >= height / HALF ? 0.0 : marginBottom;
+
+    napi_value marginRightObj = nullptr;
+    double marginRight = 0.0;
+    napi_get_named_property(env, preArgs, "marginRight", &marginRightObj);
+    NapiParseUtils::ParseDouble(env, marginRightObj, marginRight);
+    marginRight = marginRight >= width / HALF ? 0.0 : marginRight;
+
+    napi_value marginLeftObj = nullptr;
+    double marginLeft = 0.0;
+    napi_get_named_property(env, preArgs, "marginLeft", &marginLeftObj);
+    NapiParseUtils::ParseDouble(env, marginLeftObj, marginLeft);
+    marginLeft = marginLeft >= width / HALF ? 0.0 : marginLeft;
+
+    napi_value shouldPrintBackgroundObj = nullptr;
+    bool shouldPrintBackground = false;
+    napi_get_named_property(env, preArgs, "shouldPrintBackground", &shouldPrintBackgroundObj);
+    NapiParseUtils::ParseBoolean(env, shouldPrintBackgroundObj, shouldPrintBackground);
+
+    std::shared_ptr<NWebPDFConfigArgs> pdfConfig = std::make_shared<NWebPDFConfigArgsImpl>(
+        width, height, scale, marginTop, marginBottom, marginRight, marginLeft, shouldPrintBackground);
+    return pdfConfig;
+}
+
 void JsErrorCallback(napi_env env, napi_ref jsCallback, int32_t err)
 {
     napi_value jsError = nullptr;
@@ -449,6 +507,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("deleteJavaScriptRegister", NapiWebviewController::DeleteJavaScriptRegister),
         DECLARE_NAPI_FUNCTION("runJavaScript", NapiWebviewController::RunJavaScript),
         DECLARE_NAPI_FUNCTION("runJavaScriptExt", NapiWebviewController::RunJavaScriptExt),
+        DECLARE_NAPI_FUNCTION("createPdf", NapiWebviewController::RunCreatePDFExt),
         DECLARE_NAPI_FUNCTION("getUrl", NapiWebviewController::GetUrl),
         DECLARE_NAPI_FUNCTION("terminateRenderProcess", NapiWebviewController::TerminateRenderProcess),
         DECLARE_NAPI_FUNCTION("getOriginalUrl", NapiWebviewController::GetOriginalUrl),
@@ -730,6 +789,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
     napi_set_named_property(env, exports, WEB_PRESSURE_LEVEL_ENUM_NAME.c_str(), pressureLevelEnum);
 
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
+    WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
     return exports;
 }
 
@@ -3225,6 +3285,53 @@ napi_value NapiWebviewController::RunJS(napi_env env, napi_callback_info info, b
         return result;
     }
     return RunJavaScriptInternal(env, info, script, extention);
+}
+
+napi_value NapiWebviewController::RunCreatePDFExt(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    size_t argcPromise = INTEGER_ONE;
+    size_t argcCallback = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    WebviewController* webviewController = nullptr;
+    napi_unwrap(env, thisVar, (void**)&webviewController);
+
+    if (!webviewController || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    std::shared_ptr<NWebPDFConfigArgs> pdfConfig = ParsePDFConfigArgs(env, argv[INTEGER_ZERO]);
+    if (pdfConfig == nullptr) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    if (argc == argcCallback) {
+        napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+        napi_ref jsCallback = nullptr;
+        napi_create_reference(env, argv[argcCallback - 1], 1, &jsCallback);
+
+        if (jsCallback) {
+            webviewController->CreatePDFCallbackExt(env, pdfConfig, std::move(jsCallback));
+        }
+        return result;
+    } else if (argc == argcPromise) {
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
+        napi_create_promise(env, &deferred, &promise);
+        if (promise && deferred) {
+            webviewController->CreatePDFPromiseExt(env, pdfConfig, deferred);
+        }
+        return promise;
+    }
+    return result;
 }
 
 napi_value NapiWebviewController::RunJavaScriptInternal(napi_env env, napi_callback_info info,
