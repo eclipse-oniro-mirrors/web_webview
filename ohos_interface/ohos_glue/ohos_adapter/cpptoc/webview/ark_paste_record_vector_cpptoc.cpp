@@ -26,7 +26,13 @@ ArkPasteRecordVector ArkPasteRecordVectorClassToStruct(const NWeb::PasteRecordVe
     if (struct_value.size > 0) {
         struct_value.value = (ark_paste_data_record_adapter_t**)ArkWebMemMalloc(
             sizeof(ark_paste_data_record_adapter_t*) * struct_value.size);
-        int count = 0;
+	if (struct_value.value == nullptr) {
+            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkPasteRecordVector");
+            struct_value.size = 0;
+            struct_value.ark_web_mem_free_func = nullptr;
+            return struct_value;
+        }
+	int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             ArkWebRefPtr<ArkPasteDataRecordAdapter> adapter = new ArkPasteDataRecordAdapterImpl(*it);
             struct_value.value[count] = ArkPasteDataRecordAdapterCppToC::Invert(adapter);

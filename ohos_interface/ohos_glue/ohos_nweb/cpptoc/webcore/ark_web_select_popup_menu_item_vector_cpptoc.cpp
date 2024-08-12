@@ -29,6 +29,13 @@ ArkWebSelectPopupMenuItemVector ArkWebSelectPopupMenuItemVectorClassToStruct(
         struct_value.value = (ark_web_select_popup_menu_item_t**)ArkWebMemMalloc(
             sizeof(ark_web_select_popup_menu_item_t*) * struct_value.size);
 
+        if (struct_value.value == nullptr) {
+            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebSelectPopupMenuItemVector");
+            struct_value.size = 0;
+            struct_value.ark_web_mem_free_func = nullptr;
+            return struct_value;
+        }
+
         int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             ArkWebRefPtr<ArkWebSelectPopupMenuItem> ark_web_select_popup_menu_item =
