@@ -28,7 +28,14 @@ ArkWebWebStorageOriginVector ArkWebWebStorageOriginVectorClassToStruct(
         struct_value.value =
             (ark_web_web_storage_origin_t**)ArkWebMemMalloc(sizeof(ark_web_web_storage_origin_t*) * struct_value.size);
 
-        int count = 0;
+        if (struct_value.value == nullptr) {
+            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebWebStorageOriginVector");
+            struct_value.size = 0;
+            struct_value.ark_web_mem_free_func = nullptr;
+            return struct_value;
+        }
+
+	int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             ArkWebRefPtr<ArkWebWebStorageOrigin> ark_web_web_storage_origin = new ArkWebWebStorageOriginImpl(*it);
             struct_value.value[count] = ArkWebWebStorageOriginCppToC::Invert(ark_web_web_storage_origin);

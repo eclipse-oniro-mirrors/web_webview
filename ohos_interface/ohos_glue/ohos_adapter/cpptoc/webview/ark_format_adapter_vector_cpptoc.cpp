@@ -27,7 +27,13 @@ ArkFormatAdapterVector ArkFormatAdapterVectorClassToStruct(
     if (struct_value.size > 0) {
         struct_value.value =
             (_ark_format_adapter_t**)ArkWebMemMalloc(sizeof(_ark_format_adapter_t*) * struct_value.size);
-        int count = 0;
+        if (struct_value.value == nullptr) {
+            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkFormatAdapterVector");
+            struct_value.size = 0;
+            struct_value.ark_web_mem_free_func = nullptr;
+            return struct_value;
+        }
+	int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             if (!(*it)) {
                 continue;

@@ -28,7 +28,14 @@ ArkWebTouchPointInfoVector ArkWebTouchPointInfoVectorClassToStruct(
         struct_value.value =
             (ark_web_touch_point_info_t**)ArkWebMemMalloc(sizeof(ark_web_touch_point_info_t*) * struct_value.size);
 
-        int count = 0;
+        if (struct_value.value == nullptr) {
+            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebTouchPointInfoVector");
+            struct_value.size = 0;
+            struct_value.ark_web_mem_free_func = nullptr;
+            return struct_value;
+        }
+
+	int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             ArkWebRefPtr<ArkWebTouchPointInfo> ark_web_touch_point_info = new ArkWebTouchPointInfoImpl(*it);
             struct_value.value[count] = ArkWebTouchPointInfoCppToC::Invert(ark_web_touch_point_info);

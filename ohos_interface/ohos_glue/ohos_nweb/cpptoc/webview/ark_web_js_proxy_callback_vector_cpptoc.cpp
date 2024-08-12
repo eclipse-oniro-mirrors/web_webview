@@ -28,7 +28,14 @@ ArkWebJsProxyCallbackVector ArkWebJsProxyCallbackVectorClassToStruct(
         struct_value.value =
             (ark_web_js_proxy_callback_t**)ArkWebMemMalloc(sizeof(ark_web_js_proxy_callback_t*) * struct_value.size);
 
-        int count = 0;
+        if (struct_value.value == nullptr) {
+            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebJsProxyCallbackVector");
+            struct_value.size = 0;
+            struct_value.ark_web_mem_free_func = nullptr;
+            return struct_value;
+        }
+
+	int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             ArkWebRefPtr<ArkWebJsProxyCallback> ark_web_js_proxy_callback = new ArkWebJsProxyCallbackImpl(*it);
             struct_value.value[count] = ArkWebJsProxyCallbackCppToC::Invert(ark_web_js_proxy_callback);
