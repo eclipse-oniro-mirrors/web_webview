@@ -25,10 +25,8 @@ using namespace OHOS::NWeb;
 namespace OHOS {
 bool GetNwebFuzzTest(const uint8_t* data, size_t size)
 {
-    int32_t nweb_id;
-    if (memcpy_s(&nweb_id, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return false;
-    }
+    int32_t nweb_id = static_cast<int32_t>(size);
+
     NWebHelper::Instance().GetNWeb(nweb_id);
 
     NWebHelper::Instance().SetWebTag(nweb_id, "NWeb");

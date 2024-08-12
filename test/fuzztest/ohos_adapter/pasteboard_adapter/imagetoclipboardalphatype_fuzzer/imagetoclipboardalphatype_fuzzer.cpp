@@ -19,6 +19,7 @@
 #undef private
 
 using namespace OHOS::NWeb;
+using namespace OHOS::Media;
 
 namespace OHOS {
 bool ImageToClipboardAlphaTypeFuzzTest(const uint8_t* data, size_t size)
@@ -29,6 +30,13 @@ bool ImageToClipboardAlphaTypeFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
         std::make_shared<PasteDataRecordAdapterImpl>("pixelMap");
     Media::ImageInfo imgInfo;
+    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
+    dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
+    dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
+    dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
     dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
     return true;
 }

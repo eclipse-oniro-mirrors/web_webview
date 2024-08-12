@@ -47,15 +47,8 @@ bool AafwkBrowserHostFuzzTest(const uint8_t* data, size_t size)
     host->HandleReportThread(newdata, reply);
     host->HandlePassSurface(newdata, reply);
     host->HandleDestroyRenderSurface(newdata, reply);
-    host->QueryRenderSurface(surface_id);
-    int32_t status = 0;
-    int32_t process_id = 0;
-    int32_t thread_id = 0;
-    int32_t role = 0;
     sptr<Surface> surface;
-    host->ReportThread(status, process_id, thread_id, role);
     host->PassSurface(surface, surface_id);
-    host->DestroyRenderSurface(surface_id);
     return true;
 }
 } // namespace OHOS
