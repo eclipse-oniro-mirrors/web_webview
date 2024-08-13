@@ -155,6 +155,8 @@ namespace OHOS::Webview {
 
         void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
 
+        int32_t PostUrl(std::string& url, std::vector<char>& postData);
+
     public:
         static std::string customeSchemeCmdLine_;
         static bool existNweb_;

@@ -17,6 +17,7 @@ config("cj_web_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "include",
+    "$target_gen_dir/../napi/protos",
     "../../native",
   ]
 }
@@ -33,7 +34,12 @@ ohos_shared_library("cj_webview_ffi") {
 
   if (product_name != "ohos-sdk") {
     sources = [
+      "$target_gen_dir/../napi/protos/web_download.pb.cc",
+      "$target_gen_dir/../napi/protos/web_download.pb.h",
       "src/web_cookie_manager.cpp",
+      "src/web_download_delegate_impl.cpp",
+      "src/web_download_item_impl.cpp",
+      "src/web_download_manager_impl.cpp",
       "src/webview_controller_impl.cpp",
       "src/webview_ffi.cpp",
       "src/webview_javascript_execute_callback.cpp",
@@ -45,6 +51,7 @@ ohos_shared_library("cj_webview_ffi") {
       "../../../ohos_adapter:nweb_ohos_adapter",
       "../../../ohos_nweb:libnweb",
       "../../native:ohweb",
+      "../napi/protos:proto_gen",
     ]
 
     external_deps = [
@@ -60,6 +67,7 @@ ohos_shared_library("cj_webview_ffi") {
       "napi:ace_napi",
       "napi:cj_bind_ffi",
       "napi:cj_bind_native",
+      "protobuf:protobuf_lite",
     ]
   } else {
     defines += [ "PREVIEWER" ]
