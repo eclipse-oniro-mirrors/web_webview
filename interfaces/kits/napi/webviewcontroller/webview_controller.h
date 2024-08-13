@@ -389,6 +389,8 @@ public:
 
     void CreatePDFPromiseExt(
         napi_env env, std::shared_ptr<NWebPDFConfigArgs> pdfConfig, napi_deferred deferred);
+
+    bool ScrollByWithResult(float deltaX, float deltaY);
 private:
     int ConverToWebHitTestType(int hitType);
 
