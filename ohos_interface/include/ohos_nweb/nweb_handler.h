@@ -989,6 +989,12 @@ public:
      * @param hide hide.
      */
     virtual void HideHandleAndQuickMenuIfNecessary(bool hide) {}
+
+    /**
+     * @brief Called When you click on the selected area.
+     *
+     */
+    virtual void ChangeVisibilityOfQuickMenu() {}
 };
 
 } // namespace OHOS::NWeb
