@@ -215,6 +215,8 @@ enum class NativeEmbedStatus {
     DESTROY,
     ENTER_BFCACHE,
     LEAVE_BFCACHE,
+    VISIBLE,
+    HIDDEN,
 };
 
 enum class NWebFocusSource {
