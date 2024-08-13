@@ -601,6 +601,8 @@ public:
 
     void HideHandleAndQuickMenuIfNecessary(bool hide) override;
 
+    void ChangeVisibilityOfQuickMenu() override;
+
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

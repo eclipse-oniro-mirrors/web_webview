@@ -994,4 +994,9 @@ void ArkWebHandlerWrapper::HideHandleAndQuickMenuIfNecessary(bool hide)
 {
     ark_web_handler_->HideHandleAndQuickMenuIfNecessary(hide);
 }
+
+void ArkWebHandlerWrapper::ChangeVisibilityOfQuickMenu()
+{
+    ark_web_handler_->ChangeVisibilityOfQuickMenu();
+}
 } // namespace OHOS::ArkWeb

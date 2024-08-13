@@ -564,6 +564,8 @@ public:
 
     void HideHandleAndQuickMenuIfNecessary(bool hide) override;
 
+    void ChangeVisibilityOfQuickMenu() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
