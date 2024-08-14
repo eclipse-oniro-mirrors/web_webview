@@ -235,7 +235,7 @@ napi_status NapiNativeMediaPlayerHandler::ExportEnumPlaybackStatus(napi_env env,
     return napi_set_named_property(env, *value, NPI_PLAYBACK_STATUS_ENUM_NAME.c_str(), enumValue);
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleStatusChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleStatusChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_status_changed is called");
 
@@ -246,34 +246,34 @@ napi_value NapiNativeMediaPlayerHandler::HandleStatusChanged(napi_env env, napi_
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     int status = -1;
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], status)) {
         WVLOG_E("failed to parse status");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if ((status < static_cast<int>(PlaybackStatus::PAUSED)) || (status > static_cast<int>(PlaybackStatus::PLAYING))) {
         WVLOG_E("status is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::TYPE_NOT_MATCH_WITCH_VALUE);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleStatusChanged(static_cast<PlaybackStatus>(status));
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleVolumeChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleVolumeChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_volume_changed is called");
 
@@ -284,34 +284,34 @@ napi_value NapiNativeMediaPlayerHandler::HandleVolumeChanged(napi_env env, napi_
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     double volume = 0.0;
     if (!NapiParseUtils::ParseDouble(env, argv[INTEGER_ZERO], volume)) {
         WVLOG_E("failed to parse volume");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if ((volume < 0.0) || (volume > MAX_VOLUME)) {
         WVLOG_E("volume is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleVolumeChanged(volume);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleMutedChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleMutedChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_muted_changed is called");
 
@@ -322,28 +322,28 @@ napi_value NapiNativeMediaPlayerHandler::HandleMutedChanged(napi_env env, napi_c
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     bool flag = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ZERO], flag)) {
         WVLOG_E("failed to parse flag");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleMutedChanged(flag);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandlePlaybackRateChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandlePlaybackRateChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_playback_rate_changed is called");
 
@@ -354,34 +354,34 @@ napi_value NapiNativeMediaPlayerHandler::HandlePlaybackRateChanged(napi_env env,
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     double rate = 0.0;
     if (!NapiParseUtils::ParseDouble(env, argv[INTEGER_ZERO], rate)) {
         WVLOG_E("failed to parse rate");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if ((rate < 0.0) || (rate > MAX_PLAYBACK_RATE)) {
         WVLOG_E("rate is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandlePlaybackRateChanged(rate);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleDurationChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleDurationChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_duration_changed is called");
 
@@ -392,34 +392,34 @@ napi_value NapiNativeMediaPlayerHandler::HandleDurationChanged(napi_env env, nap
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     double duration = 0.0;
     if (!NapiParseUtils::ParseDouble(env, argv[INTEGER_ZERO], duration)) {
         WVLOG_E("failed to parse duration");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if (duration < 0.0) {
         WVLOG_E("duration is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleDurationChanged(duration);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleTimeUpdate(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleTimeUpdate(napi_env env, napi_callback_info info)
 {
     size_t argc = INTEGER_ONE;
     napi_value value = nullptr;
@@ -428,34 +428,34 @@ napi_value NapiNativeMediaPlayerHandler::HandleTimeUpdate(napi_env env, napi_cal
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     double time = 0.0;
     if (!NapiParseUtils::ParseDouble(env, argv[INTEGER_ZERO], time)) {
         WVLOG_E("failed to parse time");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if (time < 0.0) {
         WVLOG_E("time is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleTimeUpdate(time);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleBufferedEndTimeChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleBufferedEndTimeChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_buffered_end_time_changed is called");
 
@@ -466,34 +466,34 @@ napi_value NapiNativeMediaPlayerHandler::HandleBufferedEndTimeChanged(napi_env e
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     double time = 0.0;
     if (!NapiParseUtils::ParseDouble(env, argv[INTEGER_ZERO], time)) {
         WVLOG_E("failed to parse time");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if (time < 0.0) {
         WVLOG_E("time is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleBufferedEndTimeChanged(time);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleEnded(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleEnded(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_ended is called");
 
@@ -504,14 +504,14 @@ napi_value NapiNativeMediaPlayerHandler::HandleEnded(napi_env env, napi_callback
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleEnded();
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleNetworkStateChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleNetworkStateChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_network_state_changed is called");
 
@@ -522,34 +522,34 @@ napi_value NapiNativeMediaPlayerHandler::HandleNetworkStateChanged(napi_env env,
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     int state = -1;
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], state)) {
         WVLOG_E("failed to parse state");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if ((state < static_cast<int>(NetworkState::EMPTY)) || (state > static_cast<int>(NetworkState::NETWORK_ERROR))) {
         WVLOG_E("state is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::TYPE_NOT_MATCH_WITCH_VALUE);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleNetworkStateChanged(static_cast<NetworkState>(state));
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleReadyStateChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleReadyStateChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_ready_state_changed is called");
 
@@ -560,35 +560,35 @@ napi_value NapiNativeMediaPlayerHandler::HandleReadyStateChanged(napi_env env, n
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     int state = -1;
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], state)) {
         WVLOG_E("failed to parse state");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if ((state < static_cast<int>(ReadyState::HAVE_NOTHING)) ||
         (state > static_cast<int>(ReadyState::HAVE_ENOUGH_DATA))) {
         WVLOG_E("state is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::TYPE_NOT_MATCH_WITCH_VALUE);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleReadyStateChanged(static_cast<ReadyState>(state));
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleFullScreenChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleFullScreenChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_full_screen_changed is called");
 
@@ -599,28 +599,28 @@ napi_value NapiNativeMediaPlayerHandler::HandleFullScreenChanged(napi_env env, n
     if (argc != INTEGER_ONE) {
         WVLOG_E("arg count %{public}zu is not equal to 1", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     bool flag = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ZERO], flag)) {
         WVLOG_E("failed to parse flag");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleFullScreenChanged(flag);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleSeeking(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleSeeking(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_seeking is called");
 
@@ -631,14 +631,14 @@ napi_value NapiNativeMediaPlayerHandler::HandleSeeking(napi_env env, napi_callba
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleSeeking();
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleSeekFinished(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleSeekFinished(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_seek_finished is called");
 
@@ -649,14 +649,14 @@ napi_value NapiNativeMediaPlayerHandler::HandleSeekFinished(napi_env env, napi_c
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleSeekFinished();
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleError(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleError(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_error is called");
 
@@ -667,41 +667,41 @@ napi_value NapiNativeMediaPlayerHandler::HandleError(napi_env env, napi_callback
     if (argc != INTEGER_TWO) {
         WVLOG_E("arg count %{public}zu is not equal to 2", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     int error = -1;
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], error)) {
         WVLOG_E("failed to parse error");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     if ((error < static_cast<int>(MediaError::NETWORK_ERROR)) || (error > static_cast<int>(MediaError::DECODE_ERROR))) {
         WVLOG_E("error is invalid");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::TYPE_NOT_MATCH_WITCH_VALUE);
-        return nullptr;
+        return;
     }
 
     std::string message;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], message)) {
         WVLOG_E("failed to parse message");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleError(static_cast<MediaError>(error), message);
-    return nullptr;
+    return;
 }
 
-napi_value NapiNativeMediaPlayerHandler::HandleVideoSizeChanged(napi_env env, napi_callback_info info)
+void NapiNativeMediaPlayerHandler::HandleVideoSizeChanged(napi_env env, napi_callback_info info)
 {
     WVLOG_D("handle_video_size_changed is called");
 
@@ -712,32 +712,32 @@ napi_value NapiNativeMediaPlayerHandler::HandleVideoSizeChanged(napi_env env, na
     if (argc != INTEGER_TWO) {
         WVLOG_E("arg count %{public}zu is not equal to 2", argc);
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     double width = 0.0;
     if (!NapiParseUtils::ParseDouble(env, argv[INTEGER_ZERO], width)) {
         WVLOG_E("failed to parse width");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     double height = 0.0;
     if (!NapiParseUtils::ParseDouble(env, argv[INTEGER_ONE], height)) {
         WVLOG_E("failed to parse height");
         NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR);
-        return nullptr;
+        return;
     }
 
     NapiNativeMediaPlayerHandlerImpl* handler = nullptr;
     napi_unwrap(env, value, (void**)&handler);
     if (!handler) {
         WVLOG_E("native media player handler is null");
-        return nullptr;
+        return;
     }
 
     handler->HandleVideoSizeChanged(width, height);
-    return nullptr;
+    return;
 }
 
 } // namespace OHOS::NWeb
