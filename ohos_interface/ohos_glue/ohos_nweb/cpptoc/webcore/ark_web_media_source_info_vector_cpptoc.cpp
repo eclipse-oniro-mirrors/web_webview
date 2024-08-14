@@ -27,15 +27,12 @@ ArkWebMediaSourceInfoVector ArkWebMediaSourceInfoVectorClassToStruct(
     if (struct_value.size > 0) {
         struct_value.value =
             (ark_web_media_source_info_t**)ArkWebMemMalloc(sizeof(ark_web_media_source_info_t*) * struct_value.size);
-
         if (struct_value.value == nullptr) {
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebMediaSourceInfoVector");
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
             return struct_value;
         }
 
-	int count = 0;
+        int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             ArkWebRefPtr<ArkWebMediaSourceInfo> ark_web_media_source_info = new ArkWebMediaSourceInfoImpl(*it);
             struct_value.value[count] = ArkWebMediaSourceInfoCppToC::Invert(ark_web_media_source_info);

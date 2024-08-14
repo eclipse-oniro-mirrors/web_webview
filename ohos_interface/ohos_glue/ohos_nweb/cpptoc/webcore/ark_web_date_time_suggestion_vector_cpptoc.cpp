@@ -28,11 +28,8 @@ ArkWebDateTimeSuggestionVector ArkWebDateTimeSuggestionVectorClassToStruct(
     if (struct_value.size > 0) {
         struct_value.value = (ark_web_date_time_suggestion_t**)ArkWebMemMalloc(
             sizeof(ark_web_date_time_suggestion_t*) * struct_value.size);
-
         if (struct_value.value == nullptr) {
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebDateTimeSuggestionVector");
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
             return struct_value;
         }
 

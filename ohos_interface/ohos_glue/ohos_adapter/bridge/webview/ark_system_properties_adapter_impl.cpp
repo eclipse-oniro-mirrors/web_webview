@@ -131,11 +131,8 @@ ArkFrameRateSettingAdapterVector ArkSystemPropertiesAdapterImpl::GetLTPOConfig(c
         .ark_web_mem_free_func = ArkWebMemFree };
     if (result.size > 0) {
         result.value = (ArkFrameRateSettingAdapter*)ArkWebMemMalloc(sizeof(ArkFrameRateSettingAdapter) * result.size);
-
         if (result.value == nullptr) {
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkFrameRateSettingAdapterVector");
             result.size = 0;
-            result.ark_web_mem_free_func = nullptr;
             return result;
         }
 
