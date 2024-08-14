@@ -66,6 +66,8 @@ private:
     void SetWebCorePackageName(const std::string& packageName);
     void SendAppSpawnMessage(const std::string& packageName);
     void SendNWebSpawnMesage(const std::string& packageName);
+    void UpdatePersistParamIfNeed();
+
     std::shared_ptr<AppExecFwk::EventHandler> unloadHandler_;
     std::shared_ptr<AppExecFwk::EventRunner> runner_;
     bool registerToService_ = false;
