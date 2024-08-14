@@ -19,6 +19,7 @@
 #include "web_errors.h"
 #include "webview_utils.h"
 #include "webview_log.h"
+#include "securec.h"
 #include <cstring>
 
 namespace OHOS {
