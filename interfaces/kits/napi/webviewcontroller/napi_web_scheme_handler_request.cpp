@@ -1210,7 +1210,7 @@ napi_value NapiWebHttpBodyStream::JS_Initialize(napi_env env, napi_callback_info
     return result;
 }
 
-bool checkReadParamsNumber(napi_env env, const size_t argc) {
+bool CheckReadParamsNumber(napi_env env, const size_t argc) {
     size_t argcPromise = INTEGER_ONE;
     size_t argcCallback = INTEGER_TWO;
     if (argc != argcPromise && argc != argcCallback) {
@@ -1249,7 +1249,7 @@ napi_value NapiWebHttpBodyStream::JS_Read(napi_env env, napi_callback_info info)
         WVLOG_E("NapiWebHttpBodyStream::JS_Initialize stream is nullptr");
         return nullptr;
     }
-    if (!checkReadParamsNumber(env, argc)) {
+    if (!CheckReadParamsNumber(env, argc)) {
         return nullptr;
     }
 
