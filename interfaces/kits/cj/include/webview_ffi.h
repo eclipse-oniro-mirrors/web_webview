@@ -109,7 +109,8 @@ extern "C" {
     // data_base
     FFI_EXPORT RetDataCArrString FfiOHOSDBGetHttpAuthCredentials(const char *host,
         const char *realm);
-    FFI_EXPORT void FfiOHOSDBSaveHttpAuthCredentials(const char *host, const char *realm, const char *username, const char *password);
+    FFI_EXPORT void FfiOHOSDBSaveHttpAuthCredentials(const char *host, const char *realm,
+        const char *username, const char *password);
     FFI_EXPORT bool FfiOHOSDBExistHttpAuthCredentials();
     FFI_EXPORT void FfiOHOSDBDeleteHttpAuthCredentials();
 
