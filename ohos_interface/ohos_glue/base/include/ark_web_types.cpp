@@ -22,15 +22,12 @@ ArkWebU16String ArkWebU16StringClassToStruct(const std::u16string& class_value)
     ArkWebU16String struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (char16_t*)ArkWebMemMalloc((struct_value.size + 1) * sizeof(char16_t));
-
         if (struct_value.value == nullptr) {
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebU16String");
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
             return struct_value;
         }
 
-	memcpy((char*)struct_value.value, (char*)class_value.c_str(), struct_value.size * sizeof(char16_t));
+        memcpy((char*)struct_value.value, (char*)class_value.c_str(), struct_value.size * sizeof(char16_t));
         struct_value.value[struct_value.size] = 0;
     }
 
@@ -56,15 +53,12 @@ ArkWebString ArkWebStringClassToStruct(const std::string& class_value)
     ArkWebString struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (char*)ArkWebMemMalloc(struct_value.size + 1);
-
         if (struct_value.value == nullptr) {
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebString");
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
             return struct_value;
         }
 
-	memcpy(struct_value.value, class_value.c_str(), struct_value.size);
+        memcpy(struct_value.value, class_value.c_str(), struct_value.size);
         struct_value.value[struct_value.size] = 0;
     }
 
@@ -103,17 +97,10 @@ ArkWebStringMap ArkWebStringMapClassToStruct(const std::map<std::string, std::st
     if (struct_value.size > 0) {
         struct_value.key = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
         struct_value.value = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
-
         if (struct_value.key == nullptr || struct_value.value == nullptr) {
-            if (struct_value.key != nullptr) {
-                ArkWebMemFree(struct_value.key);
-            }
-            if (struct_value.value != nullptr) {
-                ArkWebMemFree(struct_value.value);
-            }
+            ArkWebMemFree(struct_value.key);
+            ArkWebMemFree(struct_value.value);
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebStringMap");
             return struct_value;
         }
 
@@ -156,15 +143,12 @@ ArkWebStringList ArkWebStringListClassToStruct(const std::list<std::string>& cla
     ArkWebStringList struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
-
         if (struct_value.value == nullptr) {
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebStringList");
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
             return struct_value;
         }
 
-	int count = 0;
+        int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             struct_value.value[count] = ArkWebStringClassToStruct(*it);
             count++;
@@ -199,15 +183,12 @@ ArkWebStringVector ArkWebStringVectorClassToStruct(const std::vector<std::string
     ArkWebStringVector struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
-
         if (struct_value.value == nullptr) {
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebStringVector");
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
             return struct_value;
         }
 
-	int count = 0;
+        int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             struct_value.value[count] = ArkWebStringClassToStruct(*it);
             count++;
@@ -244,17 +225,10 @@ ArkWebStringVectorMap ArkWebStringVectorMapClassToStruct(
     if (struct_value.size > 0) {
         struct_value.key = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
         struct_value.value = (ArkWebStringVector*)ArkWebMemMalloc(sizeof(ArkWebStringVector) * struct_value.size);
-
         if (struct_value.key == nullptr || struct_value.value == nullptr) {
-            if (struct_value.key != nullptr) {
-                ArkWebMemFree(struct_value.key);
-            }
-            if (struct_value.value != nullptr) {
-                ArkWebMemFree(struct_value.value);
-            }
+            ArkWebMemFree(struct_value.key);
+            ArkWebMemFree(struct_value.value);
             struct_value.size = 0;
-            struct_value.ark_web_mem_free_func = nullptr;
-            ARK_WEB_BASE_DV_LOG("Memory allocation failed for ArkWebStringVectorMap");
             return struct_value;
         }
 
