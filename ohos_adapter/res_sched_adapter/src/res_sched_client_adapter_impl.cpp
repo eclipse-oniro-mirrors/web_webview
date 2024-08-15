@@ -205,7 +205,8 @@ bool IsSameSourceWebSiteActive(ResSchedStatusAdapter statusAdapter, pid_t pid, i
     return false;
 }
 
-void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId, bool isSiteManage)
+void ReportStatusData(ResSchedStatusAdapter statusAdapter,
+                      pid_t pid, uint32_t windowId, int32_t nwebId, bool isSiteManage)
 {
     static uint32_t serialNum = 0;
     static constexpr uint32_t serialNumMax = 10000;
