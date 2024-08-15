@@ -87,6 +87,7 @@ bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleN
 }
 }
 using namespace NWebError;
+std::mutex g_objectMtx;
 std::unordered_map<int32_t, WebviewController*> g_webview_controller_map;
 std::string WebviewController::customeSchemeCmdLine_ = "";
 bool WebviewController::existNweb_ = false;
@@ -97,7 +98,7 @@ int32_t WebviewController::webTagStrId_ = 0;
 WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
 {
     if (IsInit()) {
-        std::unique_lock<std::mutex> lk(webMtx_);
+        std::unique_lock<std::mutex> lk(g_objectMtx);
         g_webview_controller_map.emplace(nwebId, this);
     }
 }
@@ -109,14 +110,14 @@ WebviewController::WebviewController(const std::string& webTag) : webTag_(webTag
 
 WebviewController::~WebviewController()
 {
-    std::unique_lock<std::mutex> lk(webMtx_);
+    std::unique_lock<std::mutex> lk(g_objectMtx);
     g_webview_controller_map.erase(nwebId_);
 }
 
 void WebviewController::SetWebId(int32_t nwebId)
 {
     nwebId_ = nwebId;
-    std::unique_lock<std::mutex> lk(webMtx_);
+    std::unique_lock<std::mutex> lk(g_objectMtx);
     g_webview_controller_map.emplace(nwebId, this);
 
     if (webTag_.empty()) {
@@ -141,7 +142,7 @@ void WebviewController::SetWebId(int32_t nwebId)
 
 WebviewController* WebviewController::FromID(int32_t nwebId)
 {
-    std::unique_lock<std::mutex> lk(webMtx_);
+    std::unique_lock<std::mutex> lk(g_objectMtx);
     if (auto it = g_webview_controller_map.find(nwebId); it != g_webview_controller_map.end()) {
         auto control = it->second;
         return control;
@@ -2026,6 +2027,7 @@ void WebviewController::SetBackForwardCacheOptions(int32_t size, int32_t timeToL
     nweb_ptr->SetBackForwardCacheOptions(size, timeToLive);
 }
 
+<<<<<<< Updated upstream
 void WebviewController::GetScrollOffset(float* offset_x, float* offset_y)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -2043,5 +2045,87 @@ bool WebviewController::ScrollByWithResult(float deltaX, float deltaY)
     }
     return enabled;
 }
+=======
+void WebMessageExt::SetType(int type)
+{
+    type_ = type;
+    WebMessageType jsType = static_cast<WebMessageType>(type);
+    NWebValue::Type nwebType = NWebValue::Type::NONE;
+    switch (jsType) {
+        case WebMessageType::STRING: {
+            nwebType = NWebValue::Type::STRING;
+            break;
+        }
+        case WebMessageType::NUMBER: {
+            nwebType = NWebValue::Type::DOUBLE;
+            break;
+        }
+        case WebMessageType::BOOLEAN: {
+            nwebType = NWebValue::Type::BOOLEAN;
+            break;
+        }
+        case WebMessageType::ARRAYBUFFER: {
+            nwebType = NWebValue::Type::BINARY;
+            break;
+        }
+        case WebMessageType::ARRAY: {
+            nwebType = NWebValue::Type::STRINGARRAY;
+            break;
+        }
+        case WebMessageType::ERROR: {
+            nwebType = NWebValue::Type::ERROR;
+            break;
+        }
+        default: {
+            nwebType = NWebValue::Type::NONE;
+            break;
+        }
+    }
+    if (data_) {
+        data_->SetType(nwebType);
+    }
+}
+
+int WebMessageExt::ConvertNwebType2JsType(NWebValue::Type type)
+{
+    WebMessageType jsType = WebMessageType::NOTSUPPORT;
+    switch (type) {
+        case NWebValue::Type::STRING: {
+            jsType = WebMessageType::STRING;
+            break;
+        }
+        case NWebValue::Type::DOUBLE:
+        case NWebValue::Type::INTEGER: {
+            jsType = WebMessageType::NUMBER;
+            break;
+        }
+        case NWebValue::Type::BOOLEAN: {
+            jsType = WebMessageType::BOOLEAN;
+            break;
+        }
+        case NWebValue::Type::STRINGARRAY:
+        case NWebValue::Type::DOUBLEARRAY:
+        case NWebValue::Type::INT64ARRAY:
+        case NWebValue::Type::BOOLEANARRAY: {
+            jsType = WebMessageType::ARRAY;
+            break;
+        }
+        case NWebValue::Type::BINARY: {
+            jsType = WebMessageType::ARRAYBUFFER;
+            break;
+        }
+        case NWebValue::Type::ERROR: {
+            jsType = WebMessageType::ERROR;
+            break;
+        }
+        default: {
+            jsType = WebMessageType::NOTSUPPORT;
+            break;
+        }
+    }
+    return static_cast<int>(jsType);
+}
+
+>>>>>>> Stashed changes
 } // namespace NWeb
 } // namespace OHOS
