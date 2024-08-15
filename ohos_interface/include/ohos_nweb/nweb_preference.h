@@ -651,7 +651,7 @@ public:
     /**
      * Set whether the scroll is enabled.
      */
-    virtual void SetScrollable(bool enable, int32_t scrollType) = 0;
+    virtual void SetScrollable(bool enable, int32_t scrollType) {}
 };
 
 } // namespace OHOS::NWeb
