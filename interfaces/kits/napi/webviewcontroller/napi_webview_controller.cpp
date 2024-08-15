@@ -1287,7 +1287,9 @@ napi_value NapiWebMessageExt::JsConstructor(napi_env env, napi_callback_info inf
     NAPI_CALL(env, napi_wrap(env, thisVar, webMessageExt,
         [](napi_env env, void *data, void *hint) {
             WebMessageExt *webMessageExt = static_cast<WebMessageExt *>(data);
-            delete webMessageExt;
+            if (webMessageExt) {
+                delete webMessageExt;
+            }
         },
         nullptr, nullptr));
     return thisVar;
