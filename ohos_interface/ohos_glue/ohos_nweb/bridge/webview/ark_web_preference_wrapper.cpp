@@ -516,6 +516,11 @@ void ArkWebPreferenceWrapper::SetScrollable(bool enable)
     ark_web_preference_->SetScrollable(enable);
 }
 
+void ArkWebPreferenceWrapper::SetScrollable(bool enable, int32_t scrollType)
+{
+    ark_web_preference_->SetScrollable(enable, scrollType);
+}
+
 bool ArkWebPreferenceWrapper::GetScrollable()
 {
     return ark_web_preference_->GetScrollable();

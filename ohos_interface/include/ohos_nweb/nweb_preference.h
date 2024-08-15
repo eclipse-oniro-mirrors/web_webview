@@ -611,6 +611,11 @@ public:
     virtual void SetScrollable(bool enable) = 0;
 
     /**
+     * Set whether the scroll is enabled.
+     */
+    virtual void SetScrollable(bool enable, int32_t scrollType) = 0;
+
+    /**
      * Get whether the scroll is enabled.
      */
     virtual bool GetScrollable() = 0;

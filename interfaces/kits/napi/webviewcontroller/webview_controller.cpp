@@ -1300,6 +1300,19 @@ void WebviewController::SetScrollable(bool enable)
     return setting->SetScrollable(enable);
 }
 
+void WebviewController::SetScrollable(bool enable, int32_t scrollType)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return;
+    }
+    std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+    if (!setting) {
+        return;
+    }
+    return setting->SetScrollable(enable, scrollType);
+}
+
 bool WebviewController::GetScrollable()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
