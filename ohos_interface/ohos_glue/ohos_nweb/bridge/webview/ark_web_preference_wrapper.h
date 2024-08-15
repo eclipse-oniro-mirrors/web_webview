@@ -615,11 +615,6 @@ public:
     void SetScrollable(bool enable) override;
 
     /**
-     * @brief Set whether the scroll is enabled.
-     */
-    void SetScrollable(bool enable, int32_t scrollType) override;
-
-    /**
      * @brief Get whether the scroll is enabled.
      */
     bool GetScrollable() override;
@@ -654,6 +649,11 @@ public:
      */
     void PutOverlayScrollbarEnabled(bool enable) override;
 
+    /**
+     * @brief Set whether the scroll is enabled.
+     */
+    void SetScrollable(bool enable, int32_t scrollType) override;
+    
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };

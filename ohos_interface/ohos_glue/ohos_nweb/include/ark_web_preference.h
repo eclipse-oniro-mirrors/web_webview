@@ -694,12 +694,6 @@ public:
     virtual void SetScrollable(bool enable) = 0;
 
     /**
-     * @brief Set whether the scroll is enabled.
-     */
-    /*--ark web()--*/
-    virtual void SetScrollable(bool enable, int32_t scrollType) = 0;
-
-    /**
      * @brief Get whether the scroll is enabled.
      */
     /*--ark web()--*/
@@ -740,6 +734,12 @@ public:
      */
     /*--ark web()--*/
     virtual void PutOverlayScrollbarEnabled(bool enable) = 0;
+
+    /**
+     * @brief Set whether the scroll is enabled.
+     */
+    /*--ark web()--*/
+    virtual void SetScrollable(bool enable, int32_t scrollType) = 0;
 };
 
 } // namespace OHOS::ArkWeb
