@@ -23,6 +23,7 @@
 #include "webview_javascript_result_callback.h"
 #include "nweb.h"
 #include "nweb_helper.h"
+#include "nweb_web_message.h"
 
 namespace OHOS::Webview {
     enum class WebHitTestType : int {
@@ -48,6 +49,16 @@ namespace OHOS::Webview {
         SECURE = 3,
         WARNING = 6,
         DANGEROUS = 5
+    };
+
+    enum class WebMessageType : int {
+        NOTSUPPORT = 0,
+        STRING,
+        NUMBER,
+        BOOLEAN,
+        ARRAYBUFFER,
+        ARRAY,
+        ERROR
     };
 
     class __attribute__((visibility("default"))) WebviewControllerImpl : public OHOS::FFI::FFIData {
@@ -182,6 +193,10 @@ namespace OHOS::Webview {
 
         int32_t PostUrl(std::string& url, std::vector<char>& postData);
 
+        std::vector<std::string> CreateWebMessagePorts();
+
+        ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
+
     public:
         static std::string customeSchemeCmdLine_;
         static bool existNweb_;
@@ -211,6 +226,233 @@ namespace OHOS::Webview {
         int32_t GetListSize();
     private:
         std::shared_ptr<OHOS::NWeb::NWebHistoryList> sptrHistoryList_ = nullptr;
+    };
+
+    class WebMessagePortImpl : public OHOS::FFI::FFIData {
+        DECL_TYPE(WebMessagePortImpl, OHOS::FFI::FFIData)
+    public:
+        WebMessagePortImpl(int32_t nwebId, std::string port, bool isExtentionType);
+
+        ~WebMessagePortImpl() = default;
+
+        ErrCode ClosePort();
+
+        ErrCode PostPortMessage(std::shared_ptr<NWeb::NWebMessage> data);
+
+        ErrCode SetPortMessageCallback(std::shared_ptr<NWeb::NWebMessageValueCallback> callback);
+
+        std::string GetPortHandle() const;
+
+        bool IsExtentionType()
+        {
+            return isExtentionType_;
+        }
+
+    private:
+        int32_t nwebId_ = -1;
+        std::string portHandle_;
+        bool isExtentionType_;
+    };
+
+    class WebMessageExtImpl : public OHOS::FFI::FFIData {
+        DECL_TYPE(WebMessageExtImpl, OHOS::FFI::FFIData)
+    public:
+        explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> data) : data_(data) {};
+        ~WebMessageExtImpl() = default;
+
+        void SetType(int type)
+        {
+            type_ = type;
+            WebMessageType jsType = static_cast<WebMessageType>(type);
+            NWeb::NWebValue::Type nwebType = NWeb::NWebValue::Type::NONE;
+            switch (jsType) {
+                case WebMessageType::STRING: {
+                    nwebType = NWeb::NWebValue::Type::STRING;
+                    break;
+                }
+                case WebMessageType::NUMBER: {
+                    nwebType = NWeb::NWebValue::Type::DOUBLE;
+                    break;
+                }
+                case WebMessageType::BOOLEAN: {
+                    nwebType = NWeb::NWebValue::Type::BOOLEAN;
+                    break;
+                }
+                case WebMessageType::ARRAYBUFFER: {
+                    nwebType = NWeb::NWebValue::Type::BINARY;
+                    break;
+                }
+                case WebMessageType::ARRAY: {
+                    nwebType = NWeb::NWebValue::Type::STRINGARRAY;
+                    break;
+                }
+                case WebMessageType::ERROR: {
+                    nwebType = NWeb::NWebValue::Type::ERROR;
+                    break;
+                }
+                default: {
+                    nwebType = NWeb::NWebValue::Type::NONE;
+                    break;
+                }
+            }
+            if (data_) {
+                data_->SetType(nwebType);
+            }
+        }
+
+        int ConvertNwebType2JsType(NWeb::NWebValue::Type type)
+        {
+            WebMessageType jsType = WebMessageType::NOTSUPPORT;
+            switch (type) {
+                case NWeb::NWebValue::Type::STRING: {
+                    jsType = WebMessageType::STRING;
+                    break;
+                }
+                case NWeb::NWebValue::Type::DOUBLE:
+                case NWeb::NWebValue::Type::INTEGER: {
+                    jsType = WebMessageType::NUMBER;
+                    break;
+                }
+                case NWeb::NWebValue::Type::BOOLEAN: {
+                    jsType = WebMessageType::BOOLEAN;
+                    break;
+                }
+                case NWeb::NWebValue::Type::STRINGARRAY:
+                case NWeb::NWebValue::Type::DOUBLEARRAY:
+                case NWeb::NWebValue::Type::INT64ARRAY:
+                case NWeb::NWebValue::Type::BOOLEANARRAY: {
+                    jsType = WebMessageType::ARRAY;
+                    break;
+                }
+                case NWeb::NWebValue::Type::BINARY: {
+                    jsType = WebMessageType::ARRAYBUFFER;
+                    break;
+                }
+                case NWeb::NWebValue::Type::ERROR: {
+                    jsType = WebMessageType::ERROR;
+                    break;
+                }
+                default: {
+                    jsType = WebMessageType::NOTSUPPORT;
+                    break;
+                }
+            }
+            return static_cast<int>(jsType);
+        }
+
+        int GetType()
+        {
+            if (data_) {
+                return ConvertNwebType2JsType(data_->GetType());
+            }
+            return static_cast<int>(WebMessageType::NOTSUPPORT);
+        }
+
+        void SetString(std::string value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::STRING);
+                data_->SetString(value);
+            }
+        }
+
+        void SetNumber(double value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::DOUBLE);
+                data_->SetDouble(value);
+            }
+        }
+
+        void SetBoolean(bool value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::BOOLEAN);
+                data_->SetBoolean(value);
+            }
+        }
+
+        void SetArrayBuffer(std::vector<uint8_t>& value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::BINARY);
+                data_->SetBinary(value);
+            }
+        }
+
+        void SetStringArray(std::vector<std::string> value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::STRINGARRAY);
+                data_->SetStringArray(value);
+            }
+        }
+
+        void SetDoubleArray(std::vector<double> value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::DOUBLEARRAY);
+                data_->SetDoubleArray(value);
+            }
+        }
+
+        void SetInt64Array(std::vector<int64_t> value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::INT64ARRAY);
+                data_->SetInt64Array(value);
+            }
+        }
+
+        void SetBooleanArray(std::vector<bool> value)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::BOOLEANARRAY);
+                data_->SetBooleanArray(value);
+            }
+        }
+
+        void SetError(std::string name, std::string message)
+        {
+            if (data_) {
+                data_->SetType(NWeb::NWebValue::Type::ERROR);
+                data_->SetErrName(name);
+                data_->SetErrMsg(message);
+            }
+        }
+
+        std::shared_ptr<NWeb::NWebMessage> GetData()
+        {
+            return data_;
+        }
+
+    private:
+        int type_ = 0;
+        std::shared_ptr<NWeb::NWebMessage> data_;
+    };
+
+    class NWebMessageCallbackImpl : public NWeb::NWebMessageValueCallback {
+    public:
+        NWebMessageCallbackImpl(std::function<void(RetWebMessage)> callback)
+            : callback_(callback)
+        {}
+        ~NWebMessageCallbackImpl() = default;
+        void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+
+    private:
+        std::function<void(RetWebMessage)> callback_;
+    };
+
+    class NWebWebMessageExtCallbackImpl : public NWeb::NWebMessageValueCallback {
+    public:
+        NWebWebMessageExtCallbackImpl(std::function<void(int64_t)> callback)
+            : callback_(callback)
+        {}
+        ~NWebWebMessageExtCallbackImpl() = default;
+        void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+
+    private:
+        std::function<void(int64_t)> callback_;
     };
 }
 #endif // WEBVIEW_CONTROLLER_IMPL_FFI_H
