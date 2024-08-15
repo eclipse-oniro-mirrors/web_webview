@@ -26,13 +26,99 @@
 #include "nweb_store_web_archive_callback.h"
 #include <nweb_helper.h>
 #include "web_errors.h"
-
+#include "ffi_remote_data.h"
 
 namespace OHOS::Webview {
     std::unordered_map<int32_t, WebviewControllerImpl*> g_webview_controller_map;
     std::string WebviewControllerImpl::customeSchemeCmdLine_ = "";
     bool WebviewControllerImpl::existNweb_ = false;
     bool WebviewControllerImpl::webDebuggingAccess_ = false;
+
+    // WebMessagePortImpl
+    WebMessagePortImpl::WebMessagePortImpl(int32_t nwebId, std::string port, bool isExtentionType)
+        : nwebId_(nwebId), portHandle_(port), isExtentionType_(isExtentionType)
+    {}
+
+    ErrCode WebMessagePortImpl::ClosePort()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+
+        nweb_ptr->ClosePort(portHandle_);
+        portHandle_.clear();
+        return NWebError::NO_ERROR;
+    }
+
+    ErrCode WebMessagePortImpl::PostPortMessage(std::shared_ptr<NWeb::NWebMessage> data)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+
+        if (portHandle_.empty()) {
+            WEBVIEWLOGE("can't post message, message port already closed");
+            return NWebError::CAN_NOT_POST_MESSAGE;
+        }
+        nweb_ptr->PostPortMessage(portHandle_, data);
+        return NWebError::NO_ERROR;
+    }
+
+    ErrCode WebMessagePortImpl::SetPortMessageCallback(
+        std::shared_ptr<NWeb::NWebMessageValueCallback> callback)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+
+        if (portHandle_.empty()) {
+            WEBVIEWLOGE("can't register message port callback event, message port already closed");
+            return NWebError::CAN_NOT_REGISTER_MESSAGE_EVENT;
+        }
+        nweb_ptr->SetPortMessageCallback(portHandle_, callback);
+        return NWebError::NO_ERROR;
+    }
+
+    std::string WebMessagePortImpl::GetPortHandle() const
+    {
+        return portHandle_;
+    }
+
+    void NWebMessageCallbackImpl::OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result)
+    {
+        WEBVIEWLOGD("message port received msg");
+        NWeb::NWebValue::Type type = result->GetType();
+        if (type == NWeb::NWebValue::Type::STRING) {
+            std::string msgStr = result->GetString();
+            char* message = MallocCString(msgStr);
+            RetWebMessage ret = {.messageStr = message, .messageArr = {.head = nullptr, .size = 0}};
+            callback_(ret);
+            free(message);
+        } else if (type == NWeb::NWebValue::Type::BINARY) {
+            std::vector<uint8_t> msgArr = result->GetBinary();
+            uint8_t* result = VectorToCArrUI8(msgArr);
+            if (result == nullptr) {
+                return;
+            }
+            RetWebMessage ret = {.messageStr = nullptr, .messageArr = CArrUI8{result, msgArr.size()}};
+            callback_(ret);
+            free(result);
+        }
+    }
+
+    void NWebWebMessageExtCallbackImpl::OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result)
+    {
+        WEBVIEWLOGD("message port received msg");
+        WebMessageExtImpl *webMessageExt = OHOS::FFI::FFIData::Create<WebMessageExtImpl>(result);
+        if (webMessageExt == nullptr) {
+            WEBVIEWLOGE("new WebMessageExt failed.");
+            return;
+        }
+        callback_(webMessageExt->GetID());
+    }
 
     WebviewControllerImpl::WebviewControllerImpl(int32_t nwebId) : nwebId_(nwebId)
     {
@@ -752,5 +838,27 @@ namespace OHOS::Webview {
             return NWebError::INIT_ERROR;
         }
         return nweb_ptr->PostUrl(url, postData);
+    }
+
+    std::vector<std::string> WebviewControllerImpl::CreateWebMessagePorts()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            std::vector<std::string> empty;
+            return empty;
+        }
+        return nweb_ptr->CreateWebMessagePorts();
+    }
+
+    ErrCode WebviewControllerImpl::PostWebMessage(std::string& message,
+        std::vector<std::string>& ports, std::string& targetUrl)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+
+        nweb_ptr->PostWebMessage(message, ports, targetUrl);
+        return NWebError::NO_ERROR;
     }
 }
