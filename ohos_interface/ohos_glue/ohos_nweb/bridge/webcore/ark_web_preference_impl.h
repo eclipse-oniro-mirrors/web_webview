@@ -613,7 +613,6 @@ public:
      */
     void SetScrollable(bool enable) override;
 
-
     /**
      * @brief Set whether the scroll is enabled.
      */
