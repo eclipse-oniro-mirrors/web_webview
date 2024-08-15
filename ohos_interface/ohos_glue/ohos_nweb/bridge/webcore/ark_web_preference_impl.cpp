@@ -452,11 +452,6 @@ void ArkWebPreferenceImpl::SetScrollable(bool enable)
     nweb_preference_->SetScrollable(enable);
 }
 
-void ArkWebPreferenceImpl::SetScrollable(bool enable, int32_t scrollType)
-{
-    nweb_preference_->SetScrollable(enable, scrollType);
-}
-
 bool ArkWebPreferenceImpl::GetScrollable()
 {
     return nweb_preference_->GetScrollable();
@@ -494,6 +489,11 @@ ArkWebString ArkWebPreferenceImpl::GetSurfaceId()
 void ArkWebPreferenceImpl::SetSurfaceId(const ArkWebString& ua)
 {
     nweb_preference_->SetSurfaceId(ArkWebStringStructToClass(ua));
+}
+
+void ArkWebPreferenceImpl::SetScrollable(bool enable, int32_t scrollType)
+{
+    nweb_preference_->SetScrollable(enable, scrollType);
 }
 
 } // namespace OHOS::ArkWeb
