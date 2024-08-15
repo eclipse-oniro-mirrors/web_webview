@@ -699,7 +699,6 @@ public:
     /*--ark web()--*/
     virtual void SetScrollable(bool enable, int32_t scrollType) = 0;
 
-
     /**
      * @brief Get whether the scroll is enabled.
      */
