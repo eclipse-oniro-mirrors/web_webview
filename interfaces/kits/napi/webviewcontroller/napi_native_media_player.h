@@ -46,35 +46,35 @@ private:
 
     static napi_status ExportEnumPlaybackStatus(napi_env env, napi_value* value);
 
-    static void HandleStatusChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleStatusChanged(napi_env env, napi_callback_info info);
 
-    static void HandleVolumeChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleVolumeChanged(napi_env env, napi_callback_info info);
 
-    static void HandleMutedChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleMutedChanged(napi_env env, napi_callback_info info);
 
-    static void HandlePlaybackRateChanged(napi_env env, napi_callback_info info);
+    static napi_value HandlePlaybackRateChanged(napi_env env, napi_callback_info info);
 
-    static void HandleDurationChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleDurationChanged(napi_env env, napi_callback_info info);
 
-    static void HandleTimeUpdate(napi_env env, napi_callback_info info);
+    static napi_value HandleTimeUpdate(napi_env env, napi_callback_info info);
 
-    static void HandleBufferedEndTimeChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleBufferedEndTimeChanged(napi_env env, napi_callback_info info);
 
-    static void HandleEnded(napi_env env, napi_callback_info info);
+    static napi_value HandleEnded(napi_env env, napi_callback_info info);
 
-    static void HandleNetworkStateChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleNetworkStateChanged(napi_env env, napi_callback_info info);
 
-    static void HandleReadyStateChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleReadyStateChanged(napi_env env, napi_callback_info info);
 
-    static void HandleFullScreenChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleFullScreenChanged(napi_env env, napi_callback_info info);
 
-    static void HandleSeeking(napi_env env, napi_callback_info info);
+    static napi_value HandleSeeking(napi_env env, napi_callback_info info);
 
-    static void HandleSeekFinished(napi_env env, napi_callback_info info);
+    static napi_value HandleSeekFinished(napi_env env, napi_callback_info info);
 
-    static void HandleError(napi_env env, napi_callback_info info);
+    static napi_value HandleError(napi_env env, napi_callback_info info);
 
-    static void HandleVideoSizeChanged(napi_env env, napi_callback_info info);
+    static napi_value HandleVideoSizeChanged(napi_env env, napi_callback_info info);
 };
 
 } // namespace OHOS::NWeb
