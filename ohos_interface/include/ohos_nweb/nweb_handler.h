@@ -971,7 +971,7 @@ public:
 
     /**
      * @brief called when the cursor info is updated.
-     * 
+     *
      * @param x, y relative coordinates within web components of the cursor
      * @param width, height width and height of the cursor
      */
@@ -997,6 +997,11 @@ public:
      *
      */
     virtual void ChangeVisibilityOfQuickMenu() {}
+
+    /**
+     * @brief Called when you need to start vibrator.
+     */
+    virtual void StartVibraFeedback(const std::string& vibratorType) {}
 };
 
 } // namespace OHOS::NWeb
