@@ -195,16 +195,18 @@ static bool LoadCookieManagerAPI()
         return false;
     }
     g_CookieManagerImpl->size = sizeof(ArkWeb_CookieManagerAPI);
- 
-    void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler();
+
+    void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler(true);
     if (!webEngineHandle) {
         WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
         return false;
     }
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(webEngineHandle, #ndkFn, &(g_CookieManagerImpl->fn));
+
+    g_webEngineHandle = webEngineHandle;
+#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(webEngineHandle, #ndkFn, &(g_CookieManagerImpl->fn))
     ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR)
 #undef ARKWEB_NATIVE_LOAD_FN_PTR
- 
+
     return true;
 }
 
