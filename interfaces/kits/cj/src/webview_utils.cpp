@@ -22,12 +22,28 @@ namespace OHOS {
 namespace Webview {
     char* MallocCString(const std::string& origin)
     {
+        if (origin.empty()) {
+            return nullptr;
+        }
         auto len = origin.length() + 1;
         char* res = static_cast<char*>(malloc(sizeof(char) * len));
         if (res == nullptr) {
             return nullptr;
         }
         return std::char_traits<char>::copy(res, origin.c_str(), len);
+    }
+
+    uint8_t* MallocUInt8(const std::string& origin)
+    {
+        auto len = origin.length();
+        if (len <= 0) {
+            return nullptr;
+        }
+        char* res = static_cast<char*>(malloc(sizeof(char) * len));
+        if (res == nullptr) {
+            return nullptr;
+        }
+        return reinterpret_cast<uint8_t*>(std::char_traits<char>::copy(res, origin.c_str(), len));
     }
 }
 }

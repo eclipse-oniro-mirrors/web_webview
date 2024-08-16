@@ -620,4 +620,13 @@ namespace OHOS::Webview {
         }
         nweb_ptr->SetBackForwardCacheOptions(size, timeToLive);
     }
+
+    int32_t WebviewControllerImpl::PostUrl(std::string& url, std::vector<char>& postData)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        return nweb_ptr->PostUrl(url, postData);
+    }
 }

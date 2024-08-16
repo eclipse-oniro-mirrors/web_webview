@@ -89,12 +89,11 @@
         },
         "build": {
             "sub_component": [
-                "//base/web/webview/interfaces/inner_api:web_inner_kit",
                 "//base/web/webview/interfaces/kits/cj:cj_webview_ffi",
                 "//base/web/webview/interfaces/kits/napi:webview_napi",
                 "//base/web/webview/interfaces/kits/napi:neterrorlist_napi",
                 "//base/web/webview/interfaces/native:webview_ndk",
-		"//base/web/webview/ohos_nweb:chrome_crashpad_handler",
+                "//base/web/webview/ohos_nweb:chrome_crashpad_handler",
                 "//base/web/webview/ohos_nweb:libnweb",
                 "//base/web/webview/ohos_nweb:nweb_hap",
                 "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
@@ -122,15 +121,6 @@
                         "header_base": "//base/web/webview/ohos_nweb/include"
                     },
                     "name": "//base/web/webview/ohos_nweb:libnweb"
-                },
-                {
-                    "header": {
-                        "header_files": [
-                            "web_clipboard_controller.h"
-                        ],
-                        "header_base": "//base/web/webview/interfaces/inner_api/include"
-                    },
-                    "name": "//base/web/webview/interfaces/inner_api:web_inner_kit"
                 },
                 {
                     "header": {
@@ -325,8 +315,7 @@
                 "//base/web/webview/test/unittest/ohos_adapter/imf_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/media_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/flowbuffer_adapter_impl_test:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/sensor_adapter_impl_test:unittest",
-                "//base/web/webview/test/unittest/inner_api_test/clipboard_controller_test:unittest"
+                "//base/web/webview/test/unittest/ohos_adapter/sensor_adapter_impl_test:unittest"
             ]
         }
     }

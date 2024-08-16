@@ -215,6 +215,8 @@ enum class NativeEmbedStatus {
     DESTROY,
     ENTER_BFCACHE,
     LEAVE_BFCACHE,
+    VISIBLE,
+    HIDDEN,
 };
 
 enum class NWebFocusSource {
@@ -989,6 +991,12 @@ public:
      * @param hide hide.
      */
     virtual void HideHandleAndQuickMenuIfNecessary(bool hide) {}
+
+    /**
+     * @brief Called When you click on the selected area.
+     *
+     */
+    virtual void ChangeVisibilityOfQuickMenu() {}
 };
 
 } // namespace OHOS::NWeb

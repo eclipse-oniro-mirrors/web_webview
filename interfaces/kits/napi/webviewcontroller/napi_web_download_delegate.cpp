@@ -141,6 +141,7 @@ napi_value NapiWebDownloadDelegate::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("onDownloadFinish", JS_DownloadDidFinish),
         DECLARE_NAPI_FUNCTION("onDownloadFailed", JS_DownloadDidFail),
     };
+    const std::string WEB_DOWNLOAD_DELEGATE = "WebDownloadDelegate";
     napi_value webDownloadDelegateClass = nullptr;
     napi_define_class(env, WEB_DOWNLOAD_DELEGATE.c_str(), WEB_DOWNLOAD_DELEGATE.length(), JS_Constructor, nullptr,
         sizeof(properties) / sizeof(properties[0]), properties, &webDownloadDelegateClass);
