@@ -20,6 +20,7 @@
 #include "arkweb_type.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
+#include "arkweb_error_code.h"
 
 namespace {
 #define ARKWEB_NATIVE_FOR_EACH_COMPONENT_API_FN(DO)           \
@@ -51,10 +52,18 @@ namespace {
     DO(setData, OH_WebMessage_SetData);                     \
     DO(getData, OH_WebMessage_GetData)
 
+#define ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(DO)               \
+    DO(fetchCookieSync, OH_CookieManager_FetchCookieSync)                \
+    DO(configCookieSync, OH_CookieManager_ConfigCookieSync)              \
+    DO(existCookies, OH_CookieManager_ExistCookies)                      \
+    DO(clearAllCookiesSync, OH_CookieManager_ClearAllCookiesSync)        \
+    DO(clearSessionCookiesSync, OH_CookieManager_ClearSessionCookiesSync)
+
 ArkWeb_ComponentAPI* g_ComponentImpl = nullptr;
 ArkWeb_ControllerAPI* g_ControllerImpl = nullptr;
 ArkWeb_WebMessagePortAPI* g_WebMessagePortImpl = nullptr;
 ArkWeb_WebMessageAPI* g_WebMessageImpl = nullptr;
+ArkWeb_CookieManagerAPI* g_CookieManagerImpl = nullptr;
 
 void* g_webEngineHandle = nullptr;
 
@@ -174,6 +183,31 @@ static bool LoadWebMessageAPI()
     return true;
 }
 
+static bool LoadCookieManagerAPI()
+{
+    if (g_CookieManagerImpl) {
+        WVLOG_I("NativeArkWeb cookie manager api already loaded");
+        return true;
+    }
+    g_CookieManagerImpl = new ArkWeb_CookieManagerAPI();
+    if (!g_CookieManagerImpl) {
+        WVLOG_E("NativeArkWeb cookie manager api is nullptr");
+        return false;
+    }
+    g_CookieManagerImpl->size = sizeof(ArkWeb_CookieManagerAPI);
+ 
+    void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler();
+    if (!webEngineHandle) {
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        return false;
+    }
+#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(webEngineHandle, #ndkFn, &(g_CookieManagerImpl->fn));
+    ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR)
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+ 
+    return true;
+}
+
 ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type)
 {
     switch (type) {
@@ -200,6 +234,12 @@ ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type)
                 return nullptr;
             }
             return reinterpret_cast<ArkWeb_AnyNativeAPI*>(g_WebMessageImpl);
+        }
+        case ARKWEB_NATIVE_COOKIE_MANAGER: {
+            if (!LoadCookieManagerAPI()) {
+                return nullptr;
+            }
+            return reinterpret_cast<ArkWeb_AnyNativeAPI*>(g_CookieManagerImpl);
         }
         default: {
             WVLOG_E("fail to get %{public}d arkweb api family", type);

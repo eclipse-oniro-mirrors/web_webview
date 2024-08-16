@@ -24,6 +24,7 @@
  * @file arkweb_type.h
  *
  * @brief Defines the common types for the native ArkWeb.
+ * @kit ArkWeb
  * @library libohweb.so
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
