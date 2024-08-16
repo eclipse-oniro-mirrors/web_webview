@@ -207,7 +207,7 @@ typedef struct {
      * @param name Name of the message to be sent.
      * @param size The quantity of message ports.
      * @param url Indicates the URI for receiving the message.
-     * @return Web message result code
+     * @return Post web message result code.
      *         {@link ARKWEB_SUCCESS} post web message success.
      *         {@link ARKWEB_INVALID_PARAM} the parameter verification fails.
      *         {@link ARKWEB_INIT_ERROR} no web associated with this webTag.
@@ -251,7 +251,7 @@ typedef struct {
      * @param webMessagePort The ArkWeb_WebMessagePort.
      * @param webTag The name of the web component.
      * @param webMessage The ArkWeb_WebMessage to send.
-     * @return Web message result code
+     * @return Post message result code.
      *         {@link ARKWEB_SUCCESS} post message success.
      *         {@link ARKWEB_INVALID_PARAM} the parameter verification fails.
      *         {@link ARKWEB_INIT_ERROR} no web associated with this webTag.
@@ -351,42 +351,48 @@ typedef struct {
      * @param url URL to which the cookie to be obtained belongs. A complete URL is recommended.
      * @param incognito True indicates that the memory cookies of the webview in privacy mode are obtained,
      *                  and false indicates that cookies in non-privacy mode are obtained.
+     * @param includeHttpOnly If true HTTP-only cookies will also be included in the cookieValue.
      * @param cookieValue Get the cookie value corresponding to the URL.
      * @return Fetch cookie result code.
      *         {@link ARKWEB_SUCCESS} fetch cookie success.
      *         {@link ARKWEB_INVALID_URL} invalid url.
      *         {@link ARKWEB_INVALID_PARAM} cookieValue is nullptr.
      */
-    ArkWeb_ErrorCode (*fetchCookieSync)(const char* url, bool incognito, char** cookieValue);
- 
+    ArkWeb_ErrorCode (*fetchCookieSync)(const char* url, bool incognito, bool includeHttpOnly, char** cookieValue);
+
     /**
      * @brief Sets the cookie value for a specified URL.
      *
      * @param url Specifies the URL to which the cookie belongs. A complete URL is recommended.
      * @param cookieValue The value of the cookie to be set.
-     * @param incognito True indicates that cookies of the corresponding URL are set in privacy mode, and false indicates that cookies of the corresponding URL are set in normal non-privacy mode.
+     * @param incognito True indicates that cookies of the corresponding URL are set in privacy mode,
+     *                  and false indicates that cookies of the corresponding URL are set in non-privacy mode.
+     * @param includeHttpOnly If true, HTTP-only cookies can also be overwritten.
      * @return Config cookie result code.
      *         {@link ARKWEB_SUCCESS} config cookie success.
      *         {@link ARKWEB_INVALID_URL} invalid url.
      *         {@link ARKWEB_INVALID_COOKIE_VALUE} invalid cookie value.
      */
-    ArkWeb_ErrorCode (*configCookieSync)(const char* url, const char* cookieValue, bool incognito);
- 
+    ArkWeb_ErrorCode (*configCookieSync)(const char* url,
+        const char* cookieValue, bool incognito, bool includeHttpOnly);
+
     /**
      * @brief Check whether cookies exist.
      *
-     * @param incognito True indicates whether cookies exist in privacy mode, and false indicates whether cookies exist in non-privacy mode.
+     * @param incognito True indicates whether cookies exist in privacy mode,
+     *                  and false indicates whether cookies exist in non-privacy mode.
      * @return True indicates that the cookie exists, and false indicates that the cookie does not exist.
      */
     bool (*existCookies)(bool incognito);
- 
+
     /**
      * @brief Clear all cookies.
      *
-     * @param incognito True indicates that all memory cookies of the webview are cleared in privacy mode, and false indicates that persistent cookies in non-privacy mode are cleared.
+     * @param incognito True indicates that all memory cookies of the webview are cleared in privacy mode,
+     *                  and false indicates that persistent cookies in non-privacy mode are cleared.
      */
     void (*clearAllCookiesSync)(bool incognito);
- 
+
     /**
      * @brief Clear all session cookies.
      */
