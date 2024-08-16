@@ -25,14 +25,15 @@
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
 
-#define MAX_FLOWBUF_DATA_SIZE 52428800 /* 50MB*/
-#define MAX_ENTRIES 10
-#define HEADER_SIZE (MAX_ENTRIES * 8)  /* 10 * (int position + int length) */
-#define INDEX_SIZE 2
-
 namespace OHOS::NWeb {
 namespace {
 #define JS_BRIDGE_BINARY_ARGS_COUNT 2
+
+const int MAX_FLOWBUF_DATA_SIZE = 52428800; /* 50MB*/
+const int MAX_ENTRIES = 10;
+const int HEADER_SIZE = (MAX_ENTRIES * 8);  /* 10 * (int position + int length) */
+const int INDEX_SIZE = 2;
+
 // For the sake of the storage API, make this quite large.
 const uint32_t MAX_RECURSION_DEPTH = 11;
 const uint32_t MAX_DATA_LENGTH = 10000;

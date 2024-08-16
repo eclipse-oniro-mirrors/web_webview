@@ -202,6 +202,10 @@ napi_value NapiWebDownloadItem::JS_GetMethod(napi_env env, napi_callback_info cb
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetMethod webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value methodValue;
     napi_status status = napi_create_string_utf8(env, webDownloadItem->method.c_str(), NAPI_AUTO_LENGTH, &methodValue);
@@ -223,6 +227,10 @@ napi_value NapiWebDownloadItem::JS_GetMimeType(napi_env env, napi_callback_info 
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetMimeType webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value mimeTypeValue;
     napi_status status =
