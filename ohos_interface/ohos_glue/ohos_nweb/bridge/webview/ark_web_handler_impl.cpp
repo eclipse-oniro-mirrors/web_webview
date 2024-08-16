@@ -887,4 +887,9 @@ void ArkWebHandlerImpl::ChangeVisibilityOfQuickMenu()
 {
     nweb_handler_->ChangeVisibilityOfQuickMenu();
 }
+
+void ArkWebHandlerImpl::StartVibraFeedback(const ArkWebString& vibratorType)
+{
+    nweb_handler_->StartVibraFeedback(ArkWebStringStructToClass(vibratorType));
+}
 } // namespace OHOS::ArkWeb
