@@ -696,7 +696,7 @@ void ArkWebHandlerImpl::OnSafeBrowsingCheckResult(int threat_type)
 void ArkWebHandlerImpl::OnFirstMeaningfulPaint(ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details)
 {
     if (CHECK_REF_PTR_IS_NULL(details)) {
-        ARK_WEB_IMPL_WRAN_LOG("firstMeaningfulPaint details is null");
+        ARK_WEB_IMPL_WARN_LOG("firstMeaningfulPaint details is null");
         return;
     }
 
@@ -706,7 +706,7 @@ void ArkWebHandlerImpl::OnFirstMeaningfulPaint(ArkWebRefPtr<ArkWebFirstMeaningfu
 void ArkWebHandlerImpl::OnLargestContentfulPaint(ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details)
 {
     if (CHECK_REF_PTR_IS_NULL(details)) {
-        ARK_WEB_IMPL_WRAN_LOG("largestContentfulPaint details is null");
+        ARK_WEB_IMPL_WARN_LOG("largestContentfulPaint details is null");
         return;
     }
 
