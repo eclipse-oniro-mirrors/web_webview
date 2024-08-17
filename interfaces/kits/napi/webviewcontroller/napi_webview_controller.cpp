@@ -4349,30 +4349,40 @@ napi_value NapiWebviewController::SetScrollable(napi_env env, napi_callback_info
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE] = { 0 };
-    bool isEnableScroll;
+    size_t argc = INTEGER_TWO;
+    size_t argcForOld = INTEGER_ONE;
+    napi_value argv[INTEGER_TWO] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+    if (argc != INTEGER_TWO && argc != argcForOld) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "one", "two"));
         return result;
     }
-
+    bool isEnableScroll;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], isEnableScroll)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
             NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
         return result;
     }
 
-    WebviewController *webviewController = nullptr;
-    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    int32_t scrollType = -1;
+    if (argc == INTEGER_TWO) {
+        if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], scrollType) || scrollType <= 0 ||
+            scrollType > INT_MAX) {
+            WVLOG_E("BusinessError: 401. The character of 'scrollType' must be int32.");
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return result;
+        }
+    }
+
+    WebviewController* webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void**)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    webviewController->SetScrollable(isEnableScroll);
+    webviewController->SetScrollable(isEnableScroll, scrollType);
     return result;
 }
 
