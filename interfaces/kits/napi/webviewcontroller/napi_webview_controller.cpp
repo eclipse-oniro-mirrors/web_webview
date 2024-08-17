@@ -4369,7 +4369,7 @@ napi_value NapiWebviewController::SetScrollable(napi_env env, napi_callback_info
     int32_t scrollType = -1;
     if (argc == INTEGER_TWO) {
         if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], scrollType) || scrollType < 0 ||
-            scrollType > INT_MAX) {
+            scrollType >= INTEGER_TWO) {
             WVLOG_E("BusinessError: 401. The character of 'scrollType' must be int32.");
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
             return result;
