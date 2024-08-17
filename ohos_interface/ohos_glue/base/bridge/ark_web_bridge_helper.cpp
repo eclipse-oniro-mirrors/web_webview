@@ -33,10 +33,14 @@ bool ArkWebBridgeHelper::LoadLibFile(int mode, const std::string& libFilePath, b
     void* libFileHandler = ::dlopen(libFilePath.c_str(), mode);
     if (!libFileHandler) {
         if (isPrintLog) {
-            ARK_WEB_WRAPPER_ERROR_LOG("failed to load lib file,lib file path is %{public}s", libFilePath.c_str());
+            ARK_WEB_WRAPPER_ERROR_LOG("failed to load lib file %{public}s", libFilePath.c_str());
         }
 
         return false;
+    }
+
+    if (isPrintLog) {
+        ARK_WEB_WRAPPER_INFO_LOG("succeed to load lib file %{public}s", libFilePath.c_str());
     }
 
     libFileHandler_ = libFileHandler;
@@ -53,18 +57,21 @@ bool ArkWebBridgeHelper::LoadLibFile(int mode, const std::string& libNsName, con
 
     Dl_namespace dlns;
     dlns_init(&dlns, libNsName.c_str());
-
     dlns_create(&dlns, libDirPath.c_str());
 
     void* libFileHandler = dlopen_ns(&dlns, libFileName.c_str(), mode);
     if (!libFileHandler) {
         if (isPrintLog) {
-            ARK_WEB_WRAPPER_ERROR_LOG("failed to load lib file,lib file name is "
-                                      "%{public}s,lib dir name is %{public}s",
-                libFileName.c_str(), libDirPath.c_str());
+            ARK_WEB_WRAPPER_ERROR_LOG(
+                "failed to load lib file %{public}s/%{public}s", libDirPath.c_str(), libFileName.c_str());
         }
 
         return false;
+    }
+
+    if (isPrintLog) {
+        ARK_WEB_WRAPPER_INFO_LOG(
+            "succeed to load lib file %{public}s/%{public}s", libDirPath.c_str(), libFileName.c_str());
     }
 
     libFileHandler_ = libFileHandler;

@@ -183,7 +183,7 @@ def load_ctocpp_static_func(dir_name, clsname, name, func, suffix):
     result += 'ArkWebAdapterBridgeHelper'
   result += '::GetInstance().LoadFuncSymbol("' + static_var_name + '_static"));'\
             '\n    if(!' + static_var_name + ') {'\
-            '\n      ARK_WEB_CTOCPP_WRAN_LOG("failed to get static function symbol");'\
+            '\n      ARK_WEB_CTOCPP_WARN_LOG("failed to get static function symbol");'\
             '\n      return ' + retval_default + ';'\
             '\n    }\n  }\n'
   return result
