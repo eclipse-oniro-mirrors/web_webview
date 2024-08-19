@@ -892,4 +892,14 @@ void ArkWebHandlerImpl::StartVibraFeedback(const ArkWebString& vibratorType)
 {
     nweb_handler_->StartVibraFeedback(ArkWebStringStructToClass(vibratorType));
 }
+
+void ArkWebHandlerImpl::OnPopupSize(int x, int y, int width, int height)
+{
+    nweb_handler_->OnPopupSize(x, y, width, height);
+}
+
+void ArkWebHandlerImpl::OnPopupShow(bool show)
+{
+    nweb_handler_->OnPopupShow(show);
+}
 } // namespace OHOS::ArkWeb
