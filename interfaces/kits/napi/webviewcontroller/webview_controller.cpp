@@ -618,7 +618,7 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
         }
         result += fileName;
     }
-    WVLOG_D("The parsed url is: %{public}s", result.c_str());
+    WVLOG_D("The parsed url is: %{private}s", result.c_str());
     return true;
 }
 
@@ -632,7 +632,7 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
     }
     if (valueType == napi_string) {
         NapiParseUtils::ParseString(env, urlObj, result);
-        WVLOG_D("The parsed url is: %{public}s", result.c_str());
+        WVLOG_D("The parsed url is: %{private}s", result.c_str());
         return true;
     }
     napi_value type = nullptr;
@@ -1719,12 +1719,12 @@ ParseURLResult WebviewController::ParseURLList(napi_env env, napi_value value, s
 bool WebviewController::CheckURL(std::string& url)
 {
     if (url.size() > URL_MAXIMUM) {
-        WVLOG_E("The URL exceeds the maximum length of %{public}d. URL: %{public}s", URL_MAXIMUM, url.c_str());
+        WVLOG_E("The URL exceeds the maximum length of %{public}d. URL: %{private}s", URL_MAXIMUM, url.c_str());
         return false;
     }
 
     if (!regex_match(url, std::regex("^http(s)?:\\/\\/.+", std::regex_constants::icase))) {
-        WVLOG_E("The Parse URL error. URL: %{public}s", url.c_str());
+        WVLOG_E("The Parse URL error. URL: %{private}s", url.c_str());
         return false;
     }
 
@@ -2027,7 +2027,6 @@ void WebviewController::SetBackForwardCacheOptions(int32_t size, int32_t timeToL
     nweb_ptr->SetBackForwardCacheOptions(size, timeToLive);
 }
 
-<<<<<<< Updated upstream
 void WebviewController::GetScrollOffset(float* offset_x, float* offset_y)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -2045,7 +2044,20 @@ bool WebviewController::ScrollByWithResult(float deltaX, float deltaY)
     }
     return enabled;
 }
-=======
+
+void WebviewController::SetScrollable(bool enable, int32_t scrollType)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return;
+    }
+    std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+    if (!setting) {
+        return;
+    }
+    return setting->SetScrollable(enable, scrollType);
+}
+
 void WebMessageExt::SetType(int type)
 {
     type_ = type;
@@ -2126,6 +2138,5 @@ int WebMessageExt::ConvertNwebType2JsType(NWebValue::Type type)
     return static_cast<int>(jsType);
 }
 
->>>>>>> Stashed changes
 } // namespace NWeb
 } // namespace OHOS

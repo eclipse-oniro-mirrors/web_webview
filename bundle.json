@@ -93,7 +93,7 @@
                 "//base/web/webview/interfaces/kits/napi:webview_napi",
                 "//base/web/webview/interfaces/kits/napi:neterrorlist_napi",
                 "//base/web/webview/interfaces/native:webview_ndk",
-		"//base/web/webview/ohos_nweb:chrome_crashpad_handler",
+                "//base/web/webview/ohos_nweb:chrome_crashpad_handler",
                 "//base/web/webview/ohos_nweb:libnweb",
                 "//base/web/webview/ohos_nweb:nweb_hap",
                 "//base/web/webview/ohos_adapter:nweb_ohos_adapter",

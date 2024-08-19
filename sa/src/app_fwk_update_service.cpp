@@ -32,13 +32,19 @@
 
 namespace OHOS::NWeb {
 
+namespace {
 const std::string PACKAGE_CHANGE_EVENT = "usual.event.PACKAGE_CHANGED";
-const std::string ARK_WEB_DEFAULT_BUNDLE_NAME = "com.ohos.nweb";
+const std::string ARK_WEB_BUNDLE_NAME = "com.ohos.nweb";
 const int RETRY_COUNT = 2;
 REGISTER_SYSTEM_ABILITY_BY_ID(AppFwkUpdateService, SUBSYS_WEBVIEW_SYS_UPDATE_SERVICE_ID, false);
 
 constexpr int32_t TASK_DELAY_TIME = 60000; // 1min = 1*60*1000
 const std::string TASK_ID = "unload";
+const std::string PERSIST_ARKWEBCORE_PACKAGE_NAME = "persist.arkwebcore.package_name";
+const std::set<std::string> ARK_WEB_DEFAULT_BUNDLE_NAME_SET = { "com.ohos.nweb", "com.ohos.arkwebcore" };
+const std::string NWEB_HAP_PATH_MODULE_UPDATE = "/module_update/ArkWebCore/app/com.ohos.nweb/NWeb.hap";
+} // namespace
+
 PackageChangedReceiver::PackageChangedReceiver(
     const EventFwk::CommonEventSubscribeInfo& subscribeInfo, const PackageCommonEventCallback& callback)
     : EventFwk::CommonEventSubscriber(subscribeInfo), callback_(callback)
@@ -52,13 +58,13 @@ void PackageChangedReceiver::OnReceiveEvent(const EventFwk::CommonEventData& dat
         WVLOG_I("action is empty");
         return;
     }
+
     std::string bundleName = data.GetWant().GetBundle();
-    std::string package_name =
-        OHOS::system::GetParameter("persist.arkwebcore.package_name", ARK_WEB_DEFAULT_BUNDLE_NAME);
-    if (bundleName != package_name) {
+    if (!ARK_WEB_DEFAULT_BUNDLE_NAME_SET.count(bundleName)) {
         WVLOG_I("Bundle name is not nweb.");
         return;
     }
+
     WVLOG_I("packagechangeReceiver OnReceiveEvent, ret = %{public}s.", action.c_str());
     if (action == EventFwk::CommonEventSupport::COMMON_EVENT_PACKAGE_CHANGED) {
         std::string hapPath;
@@ -104,6 +110,7 @@ void AppFwkUpdateService::OnStart(const SystemAbilityOnDemandReason& startReason
 
 bool AppFwkUpdateService::Init(const SystemAbilityOnDemandReason& startReason)
 {
+    UpdatePersistParamIfNeed();
     std::string reasonName = startReason.GetName();
     std::string reasonValue = startReason.GetValue();
     WVLOG_I("AppFwkUpdateService reasonName: %{public}s", reasonName.c_str());
@@ -128,9 +135,7 @@ bool AppFwkUpdateService::Init(const SystemAbilityOnDemandReason& startReason)
             }
         }
     }
-    std::string package_name =
-        OHOS::system::GetParameter("persist.arkwebcore.package_name", ARK_WEB_DEFAULT_BUNDLE_NAME);
-    if (bundleName != package_name) {
+    if (!ARK_WEB_DEFAULT_BUNDLE_NAME_SET.count(bundleName)) {
         WVLOG_I("Bundle name is not nweb.");
         return false;
     }
@@ -302,5 +307,17 @@ void AppFwkUpdateService::PostDelayUnloadTask()
     };
     unloadHandler_->RemoveTask(TASK_ID);
     unloadHandler_->PostTask(task, TASK_ID, TASK_DELAY_TIME);
+}
+
+void AppFwkUpdateService::UpdatePersistParamIfNeed()
+{
+    // Temp code, delte it when bms use idl to notify install web result.
+    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) != 0)
+        return;
+    if (OHOS::system::GetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, "") == ARK_WEB_BUNDLE_NAME)
+        return;
+    SetWebInstallPath(NWEB_HAP_PATH_MODULE_UPDATE);
+    SetWebCorePackageName(ARK_WEB_BUNDLE_NAME);
+    WVLOG_I("Update arkWeb persist param.");
 }
 } // namespace OHOS::NWeb
