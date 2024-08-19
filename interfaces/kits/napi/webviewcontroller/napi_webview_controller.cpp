@@ -789,6 +789,18 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         sizeof(pressureLevelProperties[0]), pressureLevelProperties, &pressureLevelEnum);
     napi_set_named_property(env, exports, WEB_PRESSURE_LEVEL_ENUM_NAME.c_str(), pressureLevelEnum);
 
+    napi_value scrollTypeEnum = nullptr;
+    napi_property_descriptor scrollTypeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("EVENT", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(ScrollType::EVENT))),
+        DECLARE_NAPI_STATIC_PROPERTY("POSITION", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(ScrollType::POSITION))),
+    };
+    napi_define_class(env, WEB_SCROLL_TYPE_ENUM_NAME.c_str(), WEB_SCROLL_TYPE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(scrollTypeProperties) /
+        sizeof(scrollTypeProperties[0]), scrollTypeProperties, &scrollTypeEnum);
+    napi_set_named_property(env, exports, WEB_SCROLL_TYPE_ENUM_NAME.c_str(), scrollTypeEnum);
+
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
     return exports;
