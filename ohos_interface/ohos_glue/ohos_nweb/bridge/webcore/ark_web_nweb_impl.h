@@ -1334,6 +1334,13 @@ public:
     */
     /*--ark web()--*/
     bool ScrollByWithResult(float delta_x, float delta_y) override;
+
+    /**
+     * @brief set a popupSurface to draw popup content
+     * @param popupSurface popupSurface.
+     */
+    /*--ark web()--*/
+    void SetPopupSurface(void* popupSurface) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

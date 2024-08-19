@@ -1495,6 +1495,13 @@ public:
      */
     /*--ark web()--*/
     virtual bool ScrollByWithResult(float delta_x, float delta_y) = 0;
+
+    /**
+     * @brief set a popupSurface to draw popup content
+     * @param popupSurface popupSurface.
+     */
+    /*--ark web()--*/
+    virtual void SetPopupSurface(void* popupSurface) = 0;
 };
 
 } // namespace OHOS::ArkWeb
