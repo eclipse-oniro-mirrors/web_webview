@@ -747,7 +747,7 @@ public:
 
     /**
      * @brief called when the cursor info is updated.
-     * 
+     *
      * @param x, y relative coordinates within web components of the cursor
      * @param width, height width and height of the cursor
      */
@@ -777,6 +777,12 @@ public:
      */
     /*--ark web()--*/
     virtual void ChangeVisibilityOfQuickMenu() = 0;
+
+    /**
+     * @brief Called when you need to start vibrator.
+     */
+    /*--ark web()--*/
+    virtual void StartVibraFeedback(const ArkWebString& vibratorType) = 0;
 };
 
 } // namespace OHOS::ArkWeb

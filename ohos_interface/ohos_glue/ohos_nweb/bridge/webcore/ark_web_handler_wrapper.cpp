@@ -999,4 +999,13 @@ void ArkWebHandlerWrapper::ChangeVisibilityOfQuickMenu()
 {
     ark_web_handler_->ChangeVisibilityOfQuickMenu();
 }
+
+void ArkWebHandlerWrapper::StartVibraFeedback(const std::string& vibratorType)
+{
+    ArkWebString stVibratorType = ArkWebStringClassToStruct(vibratorType);
+
+    ark_web_handler_->StartVibraFeedback(stVibratorType);
+
+    ArkWebStringStructRelease(stVibratorType);
+}
 } // namespace OHOS::ArkWeb
