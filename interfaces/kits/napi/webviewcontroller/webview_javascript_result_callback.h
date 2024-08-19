@@ -64,7 +64,6 @@ public:
     {
         *this = job;
     }
-    
 
     JavaScriptOb(JavaScriptOb&& job)
     {

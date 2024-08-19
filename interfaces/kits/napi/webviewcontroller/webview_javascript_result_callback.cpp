@@ -46,39 +46,6 @@ std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value& valu
 std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value* value,
     std::shared_ptr<NWebValue> nwebValue, bool* isObject);
 
-static std::shared_ptr<JavaScriptOb> JavaScriptOb::CreateNamed(
-    napi_env env, int32_t containerScopeId, napi_value value, size_t refCount = 1)
-{
-    return std::make_shared<JavaScriptOb>(env, containerScopeId, value, refCount);
-}
-static std::shared_ptr<JavaScriptOb> JavaScriptOb::CreateTransient(
-    napi_env env, int32_t containerScopeId, napi_value value, int32_t holder, size_t refCount = 1)
-{
-    std::set<int32_t> holders;
-    holders.insert(holder);
-    return std::make_shared<JavaScriptOb>(env, containerScopeId, value, holders, refCount);
-}
-
-JavaScriptOb::JavaScriptOb(napi_env env, int32_t containerScopeId, napi_value value, size_t refCount = 1)
-    : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(1)
-{
-    napi_status s = napi_create_reference(env, value, refCount, &objRef_);
-    if (s != napi_ok) {
-        WVLOG_E("create javascript obj fail");
-    }
-}
-
-JavaScriptOb::JavaScriptOb(
-    napi_env env, int32_t containerScopeId, napi_value value, std::set<int32_t> holders, size_t refCount = 1)
-    : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(0), holders_(holders)
-{
-    std::unique_lock<std::mutex> lock(mutex_);
-    napi_status s = napi_create_reference(env, value, refCount, &objRef_);
-    if (s != napi_ok) {
-        WVLOG_E("create javascript obj fail");
-    }
-}
-
 class ValueConvertState {
 public:
     // Level scope which updates the current depth of some ValueConvertState.
@@ -832,6 +799,39 @@ std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value* valu
     return methodNameList;
 }
 } // namespace
+
+std::shared_ptr<JavaScriptOb> JavaScriptOb::CreateNamed(
+    napi_env env, int32_t containerScopeId, napi_value value, size_t refCount)
+{
+    return std::make_shared<JavaScriptOb>(env, containerScopeId, value, refCount);
+}
+std::shared_ptr<JavaScriptOb> JavaScriptOb::CreateTransient(
+    napi_env env, int32_t containerScopeId, napi_value value, int32_t holder, size_t refCount)
+{
+    std::set<int32_t> holders;
+    holders.insert(holder);
+    return std::make_shared<JavaScriptOb>(env, containerScopeId, value, holders, refCount);
+}
+
+JavaScriptOb::JavaScriptOb(napi_env env, int32_t containerScopeId, napi_value value, size_t refCount)
+    : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(1)
+{
+    napi_status s = napi_create_reference(env, value, refCount, &objRef_);
+    if (s != napi_ok) {
+        WVLOG_E("create javascript obj fail");
+    }
+}
+
+JavaScriptOb::JavaScriptOb(
+    napi_env env, int32_t containerScopeId, napi_value value, std::set<int32_t> holders, size_t refCount)
+    : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(0), holders_(holders)
+{
+    std::unique_lock<std::mutex> lock(mutex_);
+    napi_status s = napi_create_reference(env, value, refCount, &objRef_);
+    if (s != napi_ok) {
+        WVLOG_E("create javascript obj fail");
+    }
+}
 
 WebviewJavaScriptResultCallBack::WebviewJavaScriptResultCallBack(int32_t nwebId)
     : nwebId_(nwebId)
