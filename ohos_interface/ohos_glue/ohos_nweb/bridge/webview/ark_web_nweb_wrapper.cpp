@@ -1364,4 +1364,9 @@ bool ArkWebNWebWrapper::ScrollByWithResult(float delta_x, float delta_y)
 {
     return ark_web_nweb_->ScrollByWithResult(delta_x, delta_y);
 }
+
+void ArkWebNWebWrapper::SetPopupSurface(void* popupSurface)
+{
+    ark_web_nweb_->SetPopupSurface(popupSurface);
+}
 } // namespace OHOS::ArkWeb

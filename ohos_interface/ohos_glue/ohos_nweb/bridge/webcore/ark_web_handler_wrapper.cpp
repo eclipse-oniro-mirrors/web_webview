@@ -1008,4 +1008,12 @@ void ArkWebHandlerWrapper::StartVibraFeedback(const std::string& vibratorType)
 
     ArkWebStringStructRelease(stVibratorType);
 }
+
+void ArkWebHandlerWrapper::OnPopupSize(int x, int y, int width, int height) {
+    ark_web_handler_->OnPopupSize(x, y, width, height);
+}
+
+void ArkWebHandlerWrapper::OnPopupShow(bool show) {
+    ark_web_handler_->OnPopupShow(show);
+}
 } // namespace OHOS::ArkWeb
