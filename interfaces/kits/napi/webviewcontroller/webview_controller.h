@@ -256,7 +256,7 @@ public:
 
     std::vector<uint8_t> SerializeWebState();
 
-    bool RestoreWebState(const std::vector<uint8_t> &state);
+    bool RestoreWebState(const std::vector<uint8_t> &state) const;
 
     void ScrollPageDown(bool bottom);
 
