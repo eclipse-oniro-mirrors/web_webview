@@ -1506,6 +1506,12 @@ public:
     virtual bool ScrollByWithResult(float delta_x, float delta_y) {
         return false;
     };
+
+    /**
+     * @brief set a popupSurface to draw popup content
+     * @param popupSurface  popupSurface.
+     */
+    virtual void SetPopupSurface(void* popupSurface) {}
 };
 
 } // namespace OHOS::NWeb
