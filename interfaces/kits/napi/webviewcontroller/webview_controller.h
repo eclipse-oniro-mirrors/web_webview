@@ -241,7 +241,7 @@ public:
 
     void PutNetworkAvailable(bool available);
 
-    bool HasImage(std::shared_ptr<NWebBoolValueCallback> callback) const;
+    bool HasImage(std::shared_ptr<NWebBoolValueCallback> callback);
 
     ErrCode HasImagesCallback(napi_env env, napi_ref jsCallback);
 
