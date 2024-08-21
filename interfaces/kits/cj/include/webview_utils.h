@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <memory>
 #include <string>
+#include "cj_common_ffi.h"
 
 namespace OHOS {
 namespace Webview {
@@ -47,8 +48,25 @@ namespace Webview {
         const char* cHistoryUrl;
     };
 
+    struct RetWebMessage {
+        char* messageStr;
+        CArrUI8 messageArr;
+    };
+
+    struct CError {
+        char *errorName;
+        char *errorMsg;
+    };
+
+    struct RetNumber {
+        int64_t numberInt;
+        double numberDouble;
+    };
+
     char* MallocCString(const std::string& origin);
     uint8_t* MallocUInt8(const std::string& origin);
+    char** VectorToCArrString(const std::vector<std::string>& vec);
+    uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec);
 }
 }
 
