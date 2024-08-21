@@ -44,6 +44,10 @@ extern "C" {
     FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetCustomUserAgent(int64_t id);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlRunJavaScript(int64_t id, char* cScript,
         void (*callbackRef)(RetDataCString infoRef));
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlRunJavaScriptExt(int64_t id, char* cScript,
+        void (*callbackRef)(RetDataI64));
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlRunJavaScriptExtArr(int64_t id, CArrUI8 cScript,
+        void (*callbackRef)(RetDataI64));
     FFI_EXPORT int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxy(int64_t id,
         CArrI64 cFuncIds,  const char* cName, CArrString cMethodList);
     FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetUrl(int64_t id);
@@ -181,6 +185,13 @@ extern "C" {
     FFI_EXPORT void FfiOHOSWebMessageExtImplSetArrayBuffer(int64_t msgExtId, CArrUI8 value, int32_t *errCode);
     FFI_EXPORT void FfiOHOSWebMessageExtImplSetError(int64_t msgExtId,
         OHOS::Webview::CError value, int32_t *errCode);
+
+    // WebJsMessageExtImpl
+    FFI_EXPORT int32_t FfiOHOSJsMessageExtImplGetType(int64_t jsExtId, int32_t *errCode);
+    FFI_EXPORT char* FfiOHOSJsMessageExtImplGetString(int64_t jsExtId, int32_t *errCode);
+    FFI_EXPORT OHOS::Webview::RetNumber FfiOHOSJsMessageExtImplGetNumber(int64_t jsExtId, int32_t *errCode);
+    FFI_EXPORT bool FfiOHOSJsMessageExtImplGetBoolean(int64_t jsExtId, int32_t *errCode);
+    FFI_EXPORT CArrUI8 FfiOHOSJsMessageExtImplGetArrayBuffer(int64_t jsExtId, int32_t *errCode);
 }
 
 #endif // WEBVIEW_FFI_H

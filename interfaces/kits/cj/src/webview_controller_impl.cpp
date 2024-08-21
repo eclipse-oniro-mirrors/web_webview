@@ -309,6 +309,19 @@ namespace OHOS::Webview {
         nweb_ptr->ExecuteJavaScript(script, callbackImpl, false);
     }
 
+    void WebviewControllerImpl::RunJavaScriptExt(std::string script,
+        const std::function<void(RetDataI64)>& callbackRef)
+    {
+        RetDataI64 ret = { .code = NWebError::INIT_ERROR, .data = 0 };
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            callbackRef(ret);
+            return;
+        }
+        auto callbackImpl = std::make_shared<WebviewJavaScriptExtExecuteCallback>(callbackRef);
+        nweb_ptr->ExecuteJavaScript(script, callbackImpl, true);
+    }
+
     std::string WebviewControllerImpl::GetUrl()
     {
         std::string url = "";
