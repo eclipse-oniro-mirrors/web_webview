@@ -206,7 +206,7 @@ int32_t WebSchemeHandlerResponse::SetUrl(const char* url)
     return OH_ArkWebResponse_SetUrl(response_, url);
 }
 
-int32_t WebSchemeHandlerResponse::GetStatus()
+int32_t WebSchemeHandlerResponse::GetStatus() const
 {
     return OH_ArkWebResponse_GetStatus(response_);
 }
@@ -248,7 +248,7 @@ int32_t WebSchemeHandlerResponse::SetMimeType(const char* mimeType)
     return OH_ArkWebResponse_SetMimeType(response_, mimeType);
 }
 
-char* WebSchemeHandlerResponse::GetEncoding()
+char* WebSchemeHandlerResponse::GetEncoding() const
 {
     if (!response_) {
         WVLOG_E("WebSchemeHandlerResponse is nullptr");
