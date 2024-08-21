@@ -122,6 +122,11 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
     napi_create_array(env, &result);
     size_t headerSize = list.size();
     for (size_t index = 0; index < headerSize; index++) {
+        napi_handle_scope scope = nullptr;
+        napi_open_handle_scope(env, &scope);
+        if (scope == nullptr) {
+            return;
+        }
         napi_value webHeaderObj = nullptr;
         napi_value headerKey = nullptr;
         napi_value headerValue = nullptr;
