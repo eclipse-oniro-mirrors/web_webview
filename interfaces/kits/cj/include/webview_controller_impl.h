@@ -125,6 +125,8 @@ namespace OHOS::Webview {
 
         void RunJavaScript(std::string script, const std::function<void(RetDataCString)>& callbackRef);
 
+        void RunJavaScriptExt(std::string script, const std::function<void(RetDataI64)>& callbackRef);
+
         std::string GetUrl();
 
         std::string GetOriginalUrl();

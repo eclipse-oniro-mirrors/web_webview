@@ -22,6 +22,7 @@
 #include "web_download_delegate_impl.h"
 #include "web_download_manager_impl.h"
 #include "webview_utils.h"
+#include "webview_javascript_execute_callback.h"
 #include "nweb_helper.h"
 #include "nweb_init_params.h"
 #include "web_errors.h"
@@ -322,6 +323,32 @@ extern "C" {
             return NWebError::INIT_ERROR;
         }
         nativeWebviewCtl->RunJavaScript(script, onChange);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlRunJavaScriptExt(int64_t id, char* cScript,
+        void (*callbackRef)(RetDataI64))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        std::string script = std::string(cScript);
+        auto onChange = CJLambda::Create(callbackRef);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->RunJavaScriptExt(script, onChange);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlRunJavaScriptExtArr(int64_t id, CArrUI8 cScript,
+        void (*callbackRef)(RetDataI64))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        std::string script = std::string(reinterpret_cast<char*>(cScript.head), cScript.size);
+        auto onChange = CJLambda::Create(callbackRef);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->RunJavaScriptExt(script, onChange);
         return NWebError::NO_ERROR;
     }
 
@@ -2011,6 +2038,131 @@ extern "C" {
         *errCode = NWebError::NO_ERROR;
         webMessageExt->SetError(nameVal, msgVal);
         return;
+    }
+
+    // WebJsMessageExtImpl
+    int32_t FfiOHOSJsMessageExtImplGetType(int64_t jsExtId, int32_t *errCode)
+    {
+        WEBVIEWLOGD("FfiOHOSJsMessageExtImplGetType::GetType start");
+        WebJsMessageExtImpl* webJsMessageExt = FFIData::GetData<WebJsMessageExtImpl>(jsExtId);
+        if (webJsMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetType::GetType error");
+            *errCode = NWebError::PARAM_CHECK_ERROR;
+            return -1;
+        }
+        int32_t type = webJsMessageExt->GetType();
+        *errCode = NWebError::NO_ERROR;
+        return type;
+    }
+
+    char* FfiOHOSJsMessageExtImplGetString(int64_t jsExtId, int32_t *errCode)
+    {
+        WEBVIEWLOGD("FfiOHOSJsMessageExtImplGetString::GetString start");
+        WebJsMessageExtImpl* webJsMessageExt = FFIData::GetData<WebJsMessageExtImpl>(jsExtId);
+        if (webJsMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetString::GetString error");
+            *errCode = NWebError::INIT_ERROR;
+            return nullptr;
+        }
+
+        if (webJsMessageExt->GetType() != static_cast<int32_t>(JsMessageType::STRING)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return nullptr;
+        }
+        auto data = webJsMessageExt->GetJsMsgResult();
+        if (data == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetString::GetString error");
+            *errCode = NWebError::INIT_ERROR;
+            return nullptr;
+        }
+        std::string msgStr = data->GetString();
+        *errCode = NWebError::NO_ERROR;
+        return MallocCString(msgStr);
+    }
+
+    RetNumber FfiOHOSJsMessageExtImplGetNumber(int64_t jsExtId, int32_t *errCode)
+    {
+        WEBVIEWLOGD("FfiOHOSJsMessageExtImplGetNumber::GetNumber start");
+        WebJsMessageExtImpl* webJsMessageExt = FFIData::GetData<WebJsMessageExtImpl>(jsExtId);
+        RetNumber ret = { .numberInt = 0, .numberDouble = 0.0 };
+        if (webJsMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetNumber::GetNumber error");
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
+
+        if (webJsMessageExt->GetType() != static_cast<int32_t>(JsMessageType::NUMBER)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return ret;
+        }
+        auto data = webJsMessageExt->GetJsMsgResult();
+        if (data == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetNumber::GetNumber error");
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
+        if (data->GetType() == NWebValue::Type::INTEGER) {
+            ret.numberInt = data->GetInt64();
+        } else {
+            ret.numberDouble = data->GetDouble();
+        }
+        return ret;
+    }
+
+    bool FfiOHOSJsMessageExtImplGetBoolean(int64_t jsExtId, int32_t *errCode)
+    {
+        WEBVIEWLOGD("FfiOHOSJsMessageExtImplGetBoolean::GetBoolean start");
+        WebJsMessageExtImpl* webJsMessageExt = FFIData::GetData<WebJsMessageExtImpl>(jsExtId);
+        if (webJsMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetBoolean::GetBoolean error");
+            *errCode = NWebError::INIT_ERROR;
+            return false;
+        }
+
+        if (webJsMessageExt->GetType() != static_cast<int32_t>(JsMessageType::BOOLEAN)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return false;
+        }
+        auto data = webJsMessageExt->GetJsMsgResult();
+        if (data == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetBoolean::GetBoolean error");
+            *errCode = NWebError::INIT_ERROR;
+            return false;
+        }
+        double boolean = data->GetBoolean();
+        *errCode = NWebError::NO_ERROR;
+        return boolean;
+    }
+
+    CArrUI8 FfiOHOSJsMessageExtImplGetArrayBuffer(int64_t jsExtId, int32_t *errCode)
+    {
+        WEBVIEWLOGD("FfiOHOSJsMessageExtImplGetArrayBuffer::GetArrayBuffer start");
+        WebJsMessageExtImpl* webJsMessageExt = FFIData::GetData<WebJsMessageExtImpl>(jsExtId);
+        if (webJsMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetArrayBuffer::GetArrayBuffer error");
+            *errCode = NWebError::INIT_ERROR;
+            return CArrUI8{nullptr, 0};
+        }
+
+        if (webJsMessageExt->GetType() != static_cast<int32_t>(JsMessageType::ARRAYBUFFER)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return CArrUI8{nullptr, 0};
+        }
+        auto data = webJsMessageExt->GetJsMsgResult();
+        if (data == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetArrayBuffer::GetArrayBuffer error");
+            *errCode = NWebError::INIT_ERROR;
+            return CArrUI8{nullptr, 0};
+        }
+        std::vector<uint8_t> msgArr = data->GetBinary();
+        uint8_t* result = VectorToCArrUI8(msgArr);
+        if (result == nullptr) {
+            WEBVIEWLOGE("FfiOHOSJsMessageExtImplGetArrayBuffer malloc failed");
+            *errCode = NWebError::NEW_OOM;
+            return CArrUI8{nullptr, 0};
+        }
+        *errCode = NWebError::NO_ERROR;
+        return CArrUI8{result, msgArr.size()};
     }
 }
 }
