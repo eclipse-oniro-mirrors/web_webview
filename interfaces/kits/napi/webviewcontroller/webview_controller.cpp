@@ -198,12 +198,12 @@ void WebviewController::InnerCompleteWindowNew(int32_t parentNwebId)
     }
 }
 
-bool WebviewController::IsInit()
+bool WebviewController::IsInit() const
 {
     return NWebHelper::Instance().GetNWeb(nwebId_) ? true : false;
 }
 
-bool WebviewController::AccessForward()
+bool WebviewController::AccessForward() const
 {
     bool access = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -215,7 +215,7 @@ bool WebviewController::AccessForward()
     return access;
 }
 
-bool WebviewController::AccessBackward()
+bool WebviewController::AccessBackward() const
 {
     bool access = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -225,7 +225,7 @@ bool WebviewController::AccessBackward()
     return access;
 }
 
-bool WebviewController::AccessStep(int32_t step)
+bool WebviewController::AccessStep(int32_t step) const
 {
     bool access = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -589,7 +589,7 @@ std::string WebviewController::GenerateWebTag()
 }
 
 bool WebviewController::GetRawFileUrl(const std::string &fileName,
-    const std::string& bundleName, const std::string& moduleName, std::string &result)
+    const std::string& bundleName, const std::string& moduleName, std::string &result) const
 {
     if (fileName.empty()) {
         WVLOG_E("File name is empty.");
@@ -621,7 +621,7 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
     return true;
 }
 
-bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& result)
+bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& result) const
 {
     napi_valuetype valueType = napi_null;
     napi_typeof(env, urlObj, &valueType);
@@ -657,7 +657,7 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
     return false;
 }
 
-bool WebviewController::ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result)
+bool WebviewController::ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result) const
 {
     napi_value paraArray = nullptr;
     napi_get_named_property(env, urlObj, "params", &paraArray);
@@ -682,7 +682,7 @@ bool WebviewController::ParseRawFileUrl(napi_env env, napi_value urlObj, std::st
     return GetRawFileUrl(fileName, bundleName, moduleName, result);
 }
 
-bool WebviewController::GetResourceUrl(napi_env env, napi_value urlObj, std::string& result)
+bool WebviewController::GetResourceUrl(napi_env env, napi_value urlObj, std::string& result) const
 {
     napi_value resIdObj = nullptr;
     napi_value bundleNameObj = nullptr;
@@ -830,7 +830,7 @@ void WebviewController::EnableSafeBrowsing(bool enable)
     }
 }
 
-bool WebviewController::IsSafeBrowsingEnabled()
+bool WebviewController::IsSafeBrowsingEnabled() const
 {
     bool isSafeBrowsingEnabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1112,7 +1112,7 @@ std::string WebviewController::GetOriginalUrl()
     return url;
 }
 
-bool WebviewController::TerminateRenderProcess()
+bool WebviewController::TerminateRenderProcess() const
 {
     bool ret = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1212,7 +1212,7 @@ int32_t WebHistoryList::GetListSize()
 }
 
 bool WebviewController::GetFavicon(
-    const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType)
+    const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType) const
 {
     bool isGetFavicon = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1232,7 +1232,7 @@ std::vector<uint8_t> WebviewController::SerializeWebState()
     return empty;
 }
 
-bool WebviewController::RestoreWebState(const std::vector<uint8_t> &state)
+bool WebviewController::RestoreWebState(const std::vector<uint8_t> &state) const
 {
     bool isRestored = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1300,7 +1300,7 @@ void WebviewController::SetScrollable(bool enable)
     return setting->SetScrollable(enable);
 }
 
-bool WebviewController::GetScrollable()
+bool WebviewController::GetScrollable() const
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -1318,7 +1318,7 @@ void WebviewController::InnerSetHapPath(const std::string &hapPath)
     hapPath_ = hapPath;
 }
 
-bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainDerData)
+bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainDerData) const
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -1448,7 +1448,7 @@ int WebviewController::GetSecurityLevel()
     return static_cast<int>(securityLevel);
 }
 
-bool WebviewController::IsIncognitoMode()
+bool WebviewController::IsIncognitoMode() const
 {
     bool incognitoMode = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1466,7 +1466,7 @@ void WebviewController::SetPrintBackground(bool enable)
     }
 }
 
-bool  WebviewController::GetPrintBackground()
+bool  WebviewController::GetPrintBackground() const
 {
     bool printBackgroundEnabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1485,7 +1485,7 @@ void WebviewController::EnableIntelligentTrackingPrevention(bool enable)
     }
 }
 
-bool WebviewController::IsIntelligentTrackingPreventionEnabled()
+bool WebviewController::IsIntelligentTrackingPreventionEnabled() const
 {
     bool enabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1500,7 +1500,7 @@ void WebPrintWriteResultCallbackAdapter::WriteResultCallback(std::string jobId, 
     cb_(jobId, code);
 }
 
-bool WebviewController::SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler)
+bool WebviewController::SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler) const
 {
     if (!handler || !scheme) {
         WVLOG_E("WebviewController::SetWebSchemeHandler handler or scheme is nullptr");
@@ -1665,7 +1665,7 @@ void WebviewController::PrecompileJavaScriptPromise(
 
 bool WebviewController::ParseResponseHeaders(napi_env env,
                                              napi_value value,
-                                             std::map<std::string, std::string> &responseHeaders)
+                                             std::map<std::string, std::string> &responseHeaders) const
 {
     bool isArray = false;
     napi_is_array(env, value, &isArray);
@@ -1715,7 +1715,7 @@ ParseURLResult WebviewController::ParseURLList(napi_env env, napi_value value, s
     return ParseURLResult::OK;
 }
 
-bool WebviewController::CheckURL(std::string& url)
+bool WebviewController::CheckURL(std::string& url) const
 {
     if (url.size() > URL_MAXIMUM) {
         WVLOG_E("The URL exceeds the maximum length of %{public}d. URL: %{private}s", URL_MAXIMUM, url.c_str());
@@ -1785,7 +1785,7 @@ void WebviewController::EnableAdsBlock(bool enable)
     }
 }
 
-bool WebviewController::IsAdsBlockEnabled()
+bool WebviewController::IsAdsBlockEnabled() const
 {
     bool enabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1795,7 +1795,7 @@ bool WebviewController::IsAdsBlockEnabled()
     return enabled;
 }
 
-bool WebviewController::IsAdsBlockEnabledForCurPage()
+bool WebviewController::IsAdsBlockEnabledForCurPage() const
 {
     bool enabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1850,7 +1850,7 @@ ErrCode WebviewController::SetUrlTrustList(const std::string& urlTrustList, std:
     return ret;
 }
 bool WebviewController::ParseJsLengthResourceToInt(
-    napi_env env, napi_value jsLength, PixelUnit &type, int32_t &result)
+    napi_env env, napi_value jsLength, PixelUnit &type, int32_t &result) const
 {
     napi_value resIdObj = nullptr;
     int32_t resId;
@@ -1904,7 +1904,7 @@ bool WebviewController::ParseJsLengthResourceToInt(
 }
 
 bool WebviewController::ParseJsLengthToInt(
-    napi_env env, napi_value jsLength, PixelUnit &type, int32_t &result)
+    napi_env env, napi_value jsLength, PixelUnit &type, int32_t &result) const
 {
     napi_valuetype jsType = napi_null;
     napi_typeof(env, jsLength, &jsType);
@@ -2034,7 +2034,7 @@ void WebviewController::GetScrollOffset(float* offset_x, float* offset_y)
     }
 }
 
-bool WebviewController::ScrollByWithResult(float deltaX, float deltaY)
+bool WebviewController::ScrollByWithResult(float deltaX, float deltaY) const
 {
     bool enabled = false;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
