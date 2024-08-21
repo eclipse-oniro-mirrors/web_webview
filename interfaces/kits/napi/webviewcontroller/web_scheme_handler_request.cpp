@@ -835,17 +835,17 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
         napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
 }
 
-uint64_t WebHttpBodyStream::GetPostion()
+uint64_t WebHttpBodyStream::GetPostion() const
 {
     return OH_ArkWebHttpBodyStream_GetPosition(stream_);
 }
 
-uint64_t WebHttpBodyStream::GetSize()
+uint64_t WebHttpBodyStream::GetSize() const
 {
     return OH_ArkWebHttpBodyStream_GetSize(stream_);
 }
 
-bool WebHttpBodyStream::IsChunked()
+bool WebHttpBodyStream::IsChunked() const
 {
     return OH_ArkWebHttpBodyStream_IsChunked(stream_);
 }
