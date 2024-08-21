@@ -1517,7 +1517,7 @@ int32_t WebviewController::ClearWebSchemeHandler()
 }
 
 bool WebviewController::SetWebServiveWorkerSchemeHandler(
-    const char* scheme, WebSchemeHandler* handler) const
+    const char* scheme, WebSchemeHandler* handler)
 {
     ArkWeb_SchemeHandler* schemeHandler =
         const_cast<ArkWeb_SchemeHandler*>(WebSchemeHandler::GetArkWebSchemeHandler(handler));
