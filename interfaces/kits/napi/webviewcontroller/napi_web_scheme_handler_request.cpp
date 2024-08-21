@@ -92,10 +92,10 @@ napi_value NapiWebSchemeHandlerRequest::JS_Constructor(napi_env env, napi_callba
     napi_wrap(
         env, thisVar, request,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebSchemeHandlerRequest *request = dynamic_cast<WebSchemeHandlerRequest *>(data);
+            WebSchemeHandlerRequest *request = static_cast<WebSchemeHandlerRequest *>(data);
             if (!request) {
                 WVLOG_E("NapiWebSchemeHandlerRequest::JS_Constructor request is nullptr");
-                return nullptr;
+                return;
             }
             delete request;
         },
@@ -125,7 +125,7 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
         napi_handle_scope scope = nullptr;
         napi_open_handle_scope(env, &scope);
         if (scope == nullptr) {
-            return;
+            return nullptr;
         }
         napi_value webHeaderObj = nullptr;
         napi_value headerKey = nullptr;
@@ -293,10 +293,10 @@ napi_value NapiWebSchemeHandlerRequest::JS_HttpBodyStream(napi_env env, napi_cal
     napi_wrap(
         env, httpBodyStreamObject, stream,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebHttpBodyStream *stream = dynamic_cast<WebHttpBodyStream *>(data);
+            WebHttpBodyStream *stream = static_cast<WebHttpBodyStream *>(data);
             if (!stream) {
                 WVLOG_E("NapiWebSchemeHandlerRequest::JS_HttpBodyStream stream is nullptr");
-                return nullptr;
+                return;
             }
             delete stream;
         },
