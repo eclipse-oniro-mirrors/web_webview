@@ -333,7 +333,7 @@ public:
 
     void OnCreateNativeMediaPlayer(napi_env env, napi_ref callback);
 
-    bool ParseScriptContent(napi_env env, napi_value value, std::string &script) const;
+    bool ParseScriptContent(napi_env env, napi_value value, std::string &script);
 
     std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value);
 
@@ -412,7 +412,7 @@ private:
                                     napi_value jsLength,
                                     PixelUnit& type,
                                     int32_t& result) const;
-    bool GetHapModuleInfo() const;
+    bool GetHapModuleInfo();
 
 public:
     static std::string customeSchemeCmdLine_;
