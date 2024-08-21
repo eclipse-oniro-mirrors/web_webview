@@ -1583,7 +1583,7 @@ void WebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_ref callbac
     nweb_ptr->OnCreateNativeMediaPlayer(callbackImpl);
 }
 
-bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::string &script) const
+bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::string &script)
 {
     napi_valuetype valueType;
     napi_typeof(env, value, &valueType);
@@ -1950,7 +1950,7 @@ ErrCode WebviewController::WebPageSnapshot(
     return NWebError::NO_ERROR;
 }
 
-bool WebviewController::GetHapModuleInfo() const
+bool WebviewController::GetHapModuleInfo()
 {
     sptr<ISystemAbilityManager> systemAbilityManager =
     SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
