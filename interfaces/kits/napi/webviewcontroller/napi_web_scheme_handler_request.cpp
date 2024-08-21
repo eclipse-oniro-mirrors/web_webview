@@ -92,7 +92,11 @@ napi_value NapiWebSchemeHandlerRequest::JS_Constructor(napi_env env, napi_callba
     napi_wrap(
         env, thisVar, request,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebSchemeHandlerRequest *request = (WebSchemeHandlerRequest *)data;
+            WebSchemeHandlerRequest *request = dynamic_cast<WebSchemeHandlerRequest *>data;
+            if (!request) {
+                WVLOG_E("NapiWebSchemeHandlerRequest::JS_Constructor request is nullptr");
+                return nullptr;
+            }
             delete request;
         },
         nullptr, nullptr);
@@ -284,7 +288,11 @@ napi_value NapiWebSchemeHandlerRequest::JS_HttpBodyStream(napi_env env, napi_cal
     napi_wrap(
         env, httpBodyStreamObject, stream,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebHttpBodyStream *stream = (WebHttpBodyStream *)data;
+            WebHttpBodyStream *stream = dynamic_cast<WebHttpBodyStream *>data;
+            if (!stream) {
+                WVLOG_E("NapiWebSchemeHandlerRequest::JS_HttpBodyStream stream is nullptr");
+                return nullptr;
+            }
             delete stream;
         },
         nullptr, nullptr);
