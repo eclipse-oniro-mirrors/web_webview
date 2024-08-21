@@ -45,5 +45,29 @@ namespace Webview {
         }
         return reinterpret_cast<uint8_t*>(std::char_traits<char>::copy(res, origin.c_str(), len));
     }
+
+    char** VectorToCArrString(const std::vector<std::string>& vec)
+    {
+        char** result = static_cast<char**>(malloc(sizeof(char*) * vec.size()));
+        if (result == nullptr) {
+            return nullptr;
+        }
+        for (size_t i = 0; i < vec.size(); i++) {
+            result[i] = MallocCString(vec[i]);
+        }
+        return result;
+    }
+
+    uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec)
+    {
+        uint8_t* result = static_cast<uint8_t*>(malloc(sizeof(uint8_t) * vec.size()));
+        if (result == nullptr) {
+            return nullptr;
+        }
+        for (size_t i = 0; i < vec.size(); i++) {
+            result[i] = vec[i];
+        }
+        return result;
+    }
 }
 }
