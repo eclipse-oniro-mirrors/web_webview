@@ -793,8 +793,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
     napi_property_descriptor scrollTypeProperties[] = {
         DECLARE_NAPI_STATIC_PROPERTY("EVENT", NapiParseUtils::ToInt32Value(env,
             static_cast<int32_t>(ScrollType::EVENT))),
-        DECLARE_NAPI_STATIC_PROPERTY("POSITION", NapiParseUtils::ToInt32Value(env,
-            static_cast<int32_t>(ScrollType::POSITION))),
     };
     napi_define_class(env, WEB_SCROLL_TYPE_ENUM_NAME.c_str(), WEB_SCROLL_TYPE_ENUM_NAME.length(),
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(scrollTypeProperties) /
@@ -4383,7 +4381,7 @@ napi_value NapiWebviewController::SetScrollable(napi_env env, napi_callback_info
     int32_t scrollType = -1;
     if (argc == INTEGER_TWO) {
         if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], scrollType) || scrollType < 0 ||
-            scrollType >= INTEGER_TWO) {
+            scrollType >= INTEGER_ONE) {
             WVLOG_E("BusinessError: 401. The character of 'scrollType' must be int32.");
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
             return result;
