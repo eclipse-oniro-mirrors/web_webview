@@ -618,7 +618,7 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
         }
         result += fileName;
     }
-    WVLOG_D("The parsed url is: %{private}s", result.c_str());
+    WVLOG_D("The parsed url is: ***");
     return true;
 }
 
@@ -632,7 +632,7 @@ bool WebviewController::ParseUrl(napi_env env, napi_value urlObj, std::string& r
     }
     if (valueType == napi_string) {
         NapiParseUtils::ParseString(env, urlObj, result);
-        WVLOG_D("The parsed url is: %{private}s", result.c_str());
+        WVLOG_D("The parsed url is: ***");
         return true;
     }
     napi_value type = nullptr;
