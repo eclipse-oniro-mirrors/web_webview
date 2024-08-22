@@ -87,12 +87,15 @@ napi_value NapiWebSchemeHandlerRequest::JS_Constructor(napi_env env, napi_callba
     void *data = nullptr;
     napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
 
-    WebSchemeHandlerRequest *request = new WebSchemeHandlerRequest(env);
+    WebSchemeHandlerRequest *request = new (std::nothrow) WebSchemeHandlerRequest(env);
+    if (request == nullptr) {
+        return nullptr;
+    }
 
     napi_wrap(
         env, thisVar, request,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebSchemeHandlerRequest *request = static_cast<WebSchemeHandlerRequest *>(data);
+            WebSchemeHandlerRequest *request = reinterpret_cast<WebSchemeHandlerRequest *>(data);
             if (!request) {
                 WVLOG_E("NapiWebSchemeHandlerRequest::JS_Constructor request is nullptr");
                 return;
@@ -122,10 +125,10 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
     napi_create_array(env, &result);
     size_t headerSize = list.size();
     for (size_t index = 0; index < headerSize; index++) {
-        napi_handle_scope scope = nullptr;
-        napi_open_handle_scope(env, &scope);
-        if (scope == nullptr) {
-            return nullptr;
+        napi_handle_scope scope;
+        napi_status status = napi_open_handle_scope(env, &scope);
+        if (status != napi_ok) {
+            break;
         }
         napi_value webHeaderObj = nullptr;
         napi_value headerKey = nullptr;
@@ -136,6 +139,10 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
         napi_set_named_property(env, webHeaderObj, "headerKey", headerKey);
         napi_set_named_property(env, webHeaderObj, "headerValue", headerValue);
         napi_set_element(env, result, index, webHeaderObj);
+        status = napi_close_handle_scope(env, scope);
+        if (status != napi_ok) {
+            break;
+        }
     }
     return result;
 }
@@ -293,7 +300,7 @@ napi_value NapiWebSchemeHandlerRequest::JS_HttpBodyStream(napi_env env, napi_cal
     napi_wrap(
         env, httpBodyStreamObject, stream,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebHttpBodyStream *stream = static_cast<WebHttpBodyStream *>(data);
+            WebHttpBodyStream *stream = reinterpret_cast<WebHttpBodyStream *>(data);
             if (!stream) {
                 WVLOG_E("NapiWebSchemeHandlerRequest::JS_HttpBodyStream stream is nullptr");
                 return;
