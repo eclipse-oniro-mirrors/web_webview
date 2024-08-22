@@ -971,7 +971,7 @@ public:
 
     /**
      * @brief called when the cursor info is updated.
-     * 
+     *
      * @param x, y relative coordinates within web components of the cursor
      * @param width, height width and height of the cursor
      */
@@ -997,6 +997,30 @@ public:
      *
      */
     virtual void ChangeVisibilityOfQuickMenu() {}
+
+    /**
+     * @brief Called when you need to start vibrator.
+     */
+    virtual void StartVibraFeedback(const std::string& vibratorType) {}
+
+    /**
+     * @brief Called when a popup is shown with the given size.
+     *
+     * @param x The offset of the popup on the x coordinate axis.
+     * @param y The offset of the popup on the y coordinate axis.
+	 * @param width The width of the popup.
+     * @param height The height of the popup.
+     *
+     */
+    virtual void OnPopupSize(int x, int y, int width, int height) {}
+
+    /**
+     * @brief Called when the popup is shown or hidden.
+     *
+     * @param show Whether the popup is shown or hidden.
+     *
+     */
+    virtual void OnPopupShow(bool show) {}
 };
 
 } // namespace OHOS::NWeb

@@ -52,11 +52,11 @@ namespace {
     DO(setData, OH_WebMessage_SetData);                     \
     DO(getData, OH_WebMessage_GetData)
 
-#define ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(DO)               \
-    DO(fetchCookieSync, OH_CookieManager_FetchCookieSync)                \
-    DO(configCookieSync, OH_CookieManager_ConfigCookieSync)              \
-    DO(existCookies, OH_CookieManager_ExistCookies)                      \
-    DO(clearAllCookiesSync, OH_CookieManager_ClearAllCookiesSync)        \
+#define ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(DO)                \
+    DO(fetchCookieSync, OH_CookieManager_FetchCookieSync);                \
+    DO(configCookieSync, OH_CookieManager_ConfigCookieSync);              \
+    DO(existCookies, OH_CookieManager_ExistCookies);                      \
+    DO(clearAllCookiesSync, OH_CookieManager_ClearAllCookiesSync);        \
     DO(clearSessionCookiesSync, OH_CookieManager_ClearSessionCookiesSync)
 
 ArkWeb_ComponentAPI* g_ComponentImpl = nullptr;
@@ -189,22 +189,25 @@ static bool LoadCookieManagerAPI()
         WVLOG_I("NativeArkWeb cookie manager api already loaded");
         return true;
     }
+
     g_CookieManagerImpl = new ArkWeb_CookieManagerAPI();
     if (!g_CookieManagerImpl) {
         WVLOG_E("NativeArkWeb cookie manager api is nullptr");
         return false;
     }
+
     g_CookieManagerImpl->size = sizeof(ArkWeb_CookieManagerAPI);
 
-    void* webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler(true);
-    if (!webEngineHandle) {
-        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
-        return false;
+    if (g_webEngineHandle == nullptr) {
+        g_webEngineHandle = OHOS::NWeb::NWebHelper::Instance().GetWebEngineHandler(true);
+        if (!g_webEngineHandle) {
+            WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+            return false;
+        }
     }
 
-    g_webEngineHandle = webEngineHandle;
-#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(webEngineHandle, #ndkFn, &(g_CookieManagerImpl->fn))
-    ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR)
+#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(g_webEngineHandle, #ndkFn, &(g_CookieManagerImpl->fn))
+    ARKWEB_NATIVE_FOR_EACH_WEBCOOKIEMANAGER_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
 #undef ARKWEB_NATIVE_LOAD_FN_PTR
 
     return true;

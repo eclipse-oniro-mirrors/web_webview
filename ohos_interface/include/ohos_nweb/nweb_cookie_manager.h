@@ -178,8 +178,8 @@ public:
      * @param cookieValue Get the cookie value corresponding to the URL.
      * @return the cookie value for given URL.
      */
-    virtual std::string ReturnCookie(
-        const std::string& url, bool& is_valid, bool incognito_mode, bool includeHttpOnly) = 0;
+    virtual std::string ReturnCookieWithHttpOnly(
+        const std::string& url, bool& is_valid, bool incognito_mode, bool includeHttpOnly) { return ""; }
 
     /**
      * @brief Sets a single cookie (key-value pair) for the given URL sync.
@@ -191,8 +191,8 @@ public:
      * @param includeHttpOnly If true, HTTP-only cookies can also be overwritten.
      * @return 0 if set cookie success else return error id.
      */
-    virtual int SetCookie(
-        const std::string& url, const std::string& value, bool incognito_mode, bool includeHttpOnly) = 0;
+    virtual int SetCookieWithHttpOnly(
+        const std::string& url, const std::string& value, bool incognito_mode, bool includeHttpOnly) { return 0; }
 };
 
 } // namespace OHOS::NWeb

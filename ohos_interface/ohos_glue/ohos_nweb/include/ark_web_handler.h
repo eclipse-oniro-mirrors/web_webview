@@ -747,7 +747,7 @@ public:
 
     /**
      * @brief called when the cursor info is updated.
-     * 
+     *
      * @param x, y relative coordinates within web components of the cursor
      * @param width, height width and height of the cursor
      */
@@ -777,6 +777,33 @@ public:
      */
     /*--ark web()--*/
     virtual void ChangeVisibilityOfQuickMenu() = 0;
+
+    /**
+     * @brief Called when you need to start vibrator.
+     */
+    /*--ark web()--*/
+    virtual void StartVibraFeedback(const ArkWebString& vibratorType) = 0;
+
+    /**
+     * @brief Called when a popup is shown with the given size.
+     *
+     * @param x The offset of the popup on the x coordinate axis.
+     * @param y The offset of the popup on the y coordinate axis.
+	 * @param width The width of the popup.
+     * @param height The height of the popup.
+     *
+     */
+    /*--ark web()--*/
+    virtual void OnPopupSize(int x, int y, int width, int height) = 0;
+
+    /**
+     * @brief Called when the popup is shown or hidden.
+     *
+     * @param show Whether the popup is shown or hidden.
+     *
+     */
+    /*--ark web()--*/
+    virtual void OnPopupShow(bool show) = 0;
 };
 
 } // namespace OHOS::ArkWeb

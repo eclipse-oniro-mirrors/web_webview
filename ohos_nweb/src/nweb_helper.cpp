@@ -608,6 +608,7 @@ bool NWebHelper::LoadLib(bool from_ark)
         return true;
     }
     if (bundlePath_.empty()) {
+        WVLOG_E("load lib failed, because bundle path is empty");
         return false;
     }
     std::string loadLibPath;
@@ -737,7 +738,7 @@ static void DoPreReadLib(const std::string &bundlePath)
     if (realpath(libPathWebEngine.c_str(), tempPath) == nullptr) {
         libPathWebEngine = bundlePath + "/" + RELATIVE_PATH_FOR_BUNDLE + "/" + LIB_NAME_WEB_ENGINE;
         if (realpath(libPathWebEngine.c_str(), tempPath) == nullptr) {
-            WVLOG_E("path to realpath error");
+            WVLOG_E("path to realpath error, errno(%{public}d):%{public}s", errno, strerror(errno));
             return;
         }
     }
@@ -745,7 +746,7 @@ static void DoPreReadLib(const std::string &bundlePath)
     struct stat stats;
     int ret = stat(tempPath, &stats);
     if (ret < 0) {
-        WVLOG_E("stat web engine library failed, ret = %{public}d", ret);
+        WVLOG_E("stat web engine library failed, errno(%{public}d):%{public}s", errno, strerror(errno));
         return;
     }
 
@@ -758,7 +759,7 @@ static void DoPreReadLib(const std::string &bundlePath)
 
     int fd = open(tempPath, O_RDONLY);
     if (fd <= 0) {
-        WVLOG_E("open web engine library failed");
+        WVLOG_E("open web engine library failed, errno(%{public}d):%{public}s", errno, strerror(errno));
         delete[] buf;
         return;
     }
