@@ -75,9 +75,11 @@ ArkWebCppToCRefCounted<ClassName, BaseName, StructName>::ArkWebCppToCRefCounted(
     memset(GetStruct(), 0, sizeof(StructName));
 
     ark_web_base_ref_counted_t* base = reinterpret_cast<ark_web_base_ref_counted_t*>(GetStruct());
-    base->size = sizeof(StructName);
-    base->incre_ref = StructIncreRef;
-    base->decre_ref = StructDecreRef;
+    if (base) {
+        base->size = sizeof(StructName);
+        base->incre_ref = StructIncreRef;
+        base->decre_ref = StructDecreRef;
+    }
 }
 
 template<class ClassName, class BaseName, class StructName>
@@ -101,6 +103,10 @@ StructName* ArkWebCppToCRefCounted<ClassName, BaseName, StructName>::Invert(ArkW
     }
 
     ClassName* bridge = new ClassName();
+    if (!bridge) {
+        ARK_WEB_CPPTOC_WARN_LOG("failed to new class,bridge type is %{public}d", kBridgeType);
+        return nullptr;
+    }
     StructName* capi_struct = bridge->GetStruct();
 
     ARK_WEB_CPPTOC_DV_LOG("bridge type is %{public}d,this is %{public}ld,capi "

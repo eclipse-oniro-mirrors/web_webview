@@ -566,6 +566,12 @@ public:
 
     void ChangeVisibilityOfQuickMenu() override;
 
+    void StartVibraFeedback(const ArkWebString& vibratorType) override;
+
+    void OnPopupSize(int x, int y, int width, int height) override;
+
+    void OnPopupShow(bool show) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

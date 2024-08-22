@@ -33,17 +33,16 @@ bool FlowBufferAdapterFuzzTest(const uint8_t* data, size_t size)
     auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
     int fd = 0;
     size_t scriptLength = 10;
-    auto ashmem = flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
-    (void)ashmem;
+    flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
     flowbufferAdapter->StartPerformanceBoost();
+    close(fd);
 
     auto flowbufferAdapter1 = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
-    int fd1;
+    int fd1 = 1;
     size_t scriptLength1 = 10;
-    flowbufferAdapter1->CreateAshmem(scriptLength1, PROT_READ | PROT_WRITE, fd1);
-    auto ashmem1 = flowbufferAdapter->CreateAshmemWithFd(fd1, scriptLength1, PROT_READ);
-    (void)ashmem1;
+    flowbufferAdapter1->CreateAshmemWithFd(fd1, scriptLength1, PROT_READ);
     flowbufferAdapter1->StartPerformanceBoost();
+    close(fd1);
     return true;
 }
 } // namespace OHOS

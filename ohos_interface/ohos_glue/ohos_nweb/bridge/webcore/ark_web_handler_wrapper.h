@@ -603,6 +603,12 @@ public:
 
     void ChangeVisibilityOfQuickMenu() override;
 
+    void StartVibraFeedback(const std::string& vibratorType) override;
+
+    void OnPopupSize(int x, int y, int width, int height) override;
+
+    void OnPopupShow(bool show) override;
+
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

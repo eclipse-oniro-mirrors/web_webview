@@ -29,7 +29,7 @@
 
 #define ARK_WEB_IMPL_INFO_LOG(fmt, ...) ARK_WEB_BASE_INFO_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_IMPL_WRAN_LOG(fmt, ...) ARK_WEB_BASE_WARN_LOG(fmt, ##__VA_ARGS__)
+#define ARK_WEB_IMPL_WARN_LOG(fmt, ...) ARK_WEB_BASE_WARN_LOG(fmt, ##__VA_ARGS__)
 
 #define ARK_WEB_IMPL_ERROR_LOG(fmt, ...) ARK_WEB_BASE_ERROR_LOG(fmt, ##__VA_ARGS__)
 
@@ -39,7 +39,7 @@
 
 #define ARK_WEB_WRAPPER_INFO_LOG(fmt, ...) ARK_WEB_BASE_INFO_LOG(fmt, ##__VA_ARGS__)
 
-#define ARK_WEB_WRAPPER_WRAN_LOG(fmt, ...) ARK_WEB_BASE_WARN_LOG(fmt, ##__VA_ARGS__)
+#define ARK_WEB_WRAPPER_WARN_LOG(fmt, ...) ARK_WEB_BASE_WARN_LOG(fmt, ##__VA_ARGS__)
 
 #define ARK_WEB_WRAPPER_ERROR_LOG(fmt, ...) ARK_WEB_BASE_ERROR_LOG(fmt, ##__VA_ARGS__)
 

@@ -999,4 +999,21 @@ void ArkWebHandlerWrapper::ChangeVisibilityOfQuickMenu()
 {
     ark_web_handler_->ChangeVisibilityOfQuickMenu();
 }
+
+void ArkWebHandlerWrapper::StartVibraFeedback(const std::string& vibratorType)
+{
+    ArkWebString stVibratorType = ArkWebStringClassToStruct(vibratorType);
+
+    ark_web_handler_->StartVibraFeedback(stVibratorType);
+
+    ArkWebStringStructRelease(stVibratorType);
+}
+
+void ArkWebHandlerWrapper::OnPopupSize(int x, int y, int width, int height) {
+    ark_web_handler_->OnPopupSize(x, y, width, height);
+}
+
+void ArkWebHandlerWrapper::OnPopupShow(bool show) {
+    ark_web_handler_->OnPopupShow(show);
+}
 } // namespace OHOS::ArkWeb

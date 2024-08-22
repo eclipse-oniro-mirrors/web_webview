@@ -36,7 +36,9 @@ ohos_shared_library("cj_webview_ffi") {
     sources = [
       "$target_gen_dir/../napi/protos/web_download.pb.cc",
       "$target_gen_dir/../napi/protos/web_download.pb.h",
+      "src/geolocation_permission.cpp",
       "src/web_cookie_manager.cpp",
+      "src/web_data_base.cpp",
       "src/web_download_delegate_impl.cpp",
       "src/web_download_item_impl.cpp",
       "src/web_download_manager_impl.cpp",

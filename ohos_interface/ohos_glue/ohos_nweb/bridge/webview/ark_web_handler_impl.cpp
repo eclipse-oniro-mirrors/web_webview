@@ -696,7 +696,7 @@ void ArkWebHandlerImpl::OnSafeBrowsingCheckResult(int threat_type)
 void ArkWebHandlerImpl::OnFirstMeaningfulPaint(ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details)
 {
     if (CHECK_REF_PTR_IS_NULL(details)) {
-        ARK_WEB_IMPL_WRAN_LOG("firstMeaningfulPaint details is null");
+        ARK_WEB_IMPL_WARN_LOG("firstMeaningfulPaint details is null");
         return;
     }
 
@@ -706,7 +706,7 @@ void ArkWebHandlerImpl::OnFirstMeaningfulPaint(ArkWebRefPtr<ArkWebFirstMeaningfu
 void ArkWebHandlerImpl::OnLargestContentfulPaint(ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details)
 {
     if (CHECK_REF_PTR_IS_NULL(details)) {
-        ARK_WEB_IMPL_WRAN_LOG("largestContentfulPaint details is null");
+        ARK_WEB_IMPL_WARN_LOG("largestContentfulPaint details is null");
         return;
     }
 
@@ -886,5 +886,20 @@ void ArkWebHandlerImpl::HideHandleAndQuickMenuIfNecessary(bool hide)
 void ArkWebHandlerImpl::ChangeVisibilityOfQuickMenu()
 {
     nweb_handler_->ChangeVisibilityOfQuickMenu();
+}
+
+void ArkWebHandlerImpl::StartVibraFeedback(const ArkWebString& vibratorType)
+{
+    nweb_handler_->StartVibraFeedback(ArkWebStringStructToClass(vibratorType));
+}
+
+void ArkWebHandlerImpl::OnPopupSize(int x, int y, int width, int height)
+{
+    nweb_handler_->OnPopupSize(x, y, width, height);
+}
+
+void ArkWebHandlerImpl::OnPopupShow(bool show)
+{
+    nweb_handler_->OnPopupShow(show);
 }
 } // namespace OHOS::ArkWeb
