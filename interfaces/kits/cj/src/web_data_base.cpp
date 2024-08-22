@@ -81,7 +81,7 @@ CArrString WebDataBase::CJGetHttpAuthCredentials(const std::string &host, const 
 }
 
 void WebDataBase::CJSaveHttpAuthCredentials(const std::string &host, const std::string &realm,
-    const std::string &username, const std::string &password) 
+    const std::string &username, const std::string &password)
 {
     // get web database instance;
     std::shared_ptr<NWebDataBase> database = NWebHelper::Instance().GetDataBase();
@@ -90,7 +90,7 @@ void WebDataBase::CJSaveHttpAuthCredentials(const std::string &host, const std::
     }
 }
 
-bool WebDataBase::CJExistHttpAuthCredentials() 
+bool WebDataBase::CJExistHttpAuthCredentials()
 {
     bool isExist = false;
     // get web database instance;

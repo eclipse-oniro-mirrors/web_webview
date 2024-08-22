@@ -159,12 +159,12 @@ extern "C" {
             return NWebError::INIT_ERROR;
         }
         std::string webSrc = url;
-        if(webSrc.size() > URL_MAXIMUM) {
+        if (webSrc.size() > URL_MAXIMUM) {
             WEBVIEWLOGE("The URL exceeds the maximum length of %{public}d", URL_MAXIMUM);
             return NWebError::PARAM_CHECK_ERROR;
         }
 
-        if(!regex_match(webSrc, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
+        if (!regex_match(webSrc, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
             WEBVIEWLOGE("ParsePrepareUrl error");
             return NWebError::PARAM_CHECK_ERROR;
         }
@@ -184,18 +184,18 @@ extern "C" {
             return NWebError::INIT_ERROR;
         }
         std::string webSrc = url;
-        if(webSrc.size() > URL_MAXIMUM) {
+        if (webSrc.size() > URL_MAXIMUM) {
             WEBVIEWLOGE("The URL exceeds the maximum length of %{public}d", URL_MAXIMUM);
             return NWebError::PARAM_CHECK_ERROR;
         }
-        
-        if(!regex_match(webSrc, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
+
+        if (!regex_match(webSrc, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
             WEBVIEWLOGE("ParsePrepareUrl error");
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::map<std::string, std::string> httpHeaders;
         uint32_t arrayLength = static_cast<uint32_t>(headers.size);
-        for(uint32_t i = 0; i < arrayLength; ++i) {
+        for (uint32_t i = 0; i < arrayLength; ++i) {
             std::string key = headers.head[i].headerKey;
             std::string value = headers.head[i].headerValue;
             httpHeaders[key] = value;
@@ -532,7 +532,7 @@ extern "C" {
         int32_t ret = nativeWebviewCtl->Zoom(factor);
         return ret;
     }
-    
+
     int32_t FfiOHOSWebviewCtlZoomIn(int64_t id)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
@@ -616,7 +616,7 @@ extern "C" {
         *errCode = NWebError::NO_ERROR;
         return type;
     }
-    
+
     RetDataCString FfiOHOSWebviewCtlGetHitTestValue(int64_t id, int32_t *errCode)
     {
         RetDataCString ret = { .code = NWeb::HitTestResult::UNKNOWN_TYPE, .data = nullptr };
@@ -978,28 +978,28 @@ extern "C" {
             return ret;
         }
         std::shared_ptr<NWebHistoryList> list = nativeWebviewCtl->GetHistoryList();
-        if(!list) {
+        if (!list) {
             *errCode = NWebError::INIT_ERROR;
             return ret;
         }
         auto nativeWebHistoryListImpl = FFIData::Create<WebHistoryListImpl>(list);
-        if(nativeWebHistoryListImpl == nullptr) {
+        if (nativeWebHistoryListImpl == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             WEBVIEWLOGE("new WebHistoryListImpl failed");
             return ret;
         }
         int32_t index = nativeWebHistoryListImpl->GetCurrentIndex();
-        if(index >= nativeWebHistoryListImpl->GetListSize() || index < 0) {
+        if (index >= nativeWebHistoryListImpl->GetListSize() || index < 0) {
             *errCode = NWebError::PARAM_CHECK_ERROR;
             return ret;
         }
         std::shared_ptr<NWebHistoryItem> item = nativeWebHistoryListImpl->GetItem(index);
-        if(!item) {
+        if (!item) {
             *errCode = NWebError::NWEB_ERROR;
             return ret;
         }
         ret = GetFavicon(item);
-        if(!ret){
+        if (!ret) {
             *errCode = NWebError::NWEB_ERROR;
             return ret;
         }
@@ -1036,18 +1036,17 @@ extern "C" {
     {
         int32_t ret = -1;
         std::string webSrc = url;
-        if(webSrc.size() > URL_MAXIMUM) {
+        if (webSrc.size() > URL_MAXIMUM) {
             WEBVIEWLOGE("The URL exceeds the maximum length of %{public}d", URL_MAXIMUM);
             return NWebError::PARAM_CHECK_ERROR;
         }
-        
-        if(!regex_match(webSrc, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
+
+        if (!regex_match(webSrc, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
             WEBVIEWLOGE("ParsePrepareUrl error");
             return NWebError::PARAM_CHECK_ERROR;
         }
-        
-        if(numSockets <= 0 || static_cast<uint32_t>(numSockets) > SOCKET_MAXIMUM)
-        {
+
+        if (numSockets <= 0 || static_cast<uint32_t>(numSockets) > SOCKET_MAXIMUM) {
             return NWebError::PARAM_CHECK_ERROR;
         }
         NWeb::NWebHelper::Instance().PrepareForPageLoad(webSrc, preconnectable, numSockets);
@@ -1058,7 +1057,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlSetConnectionTimeout(int32_t timeout)
     {
         int32_t ret = -1;
-        if(timeout <= 0){
+        if (timeout <= 0) {
             return NWebError::PARAM_CHECK_ERROR;
         }
         NWeb::NWebHelper::Instance().SetConnectionTimeout(timeout);
@@ -1070,7 +1069,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1083,7 +1082,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1096,7 +1095,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1109,7 +1108,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1122,7 +1121,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1135,7 +1134,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1148,7 +1147,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1162,7 +1161,7 @@ extern "C" {
     {
         int32_t ret = -1;
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if(nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             ret = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1182,8 +1181,7 @@ extern "C" {
 
         if (result.size == -1) {
             ret.code = NWebError::HTTP_AUTH_MALLOC_FAILED;
-        }
-        else {
+        } else {
             ret.code = NWebError::NO_ERROR;
         }
 
@@ -1843,7 +1841,7 @@ extern "C" {
         }
         double boolean = data->GetBoolean();
         *errCode = NWebError::NO_ERROR;
-        return boolean;        
+        return boolean;
     }
 
     CArrUI8 FfiOHOSWebMessageExtImplGetArrayBuffer(int64_t msgExtId, int32_t *errCode)
@@ -1874,7 +1872,7 @@ extern "C" {
             return CArrUI8{nullptr, 0};
         }
         *errCode = NWebError::NO_ERROR;
-        return CArrUI8{result, msgArr.size()};   
+        return CArrUI8{result, msgArr.size()};
     }
 
     CError FfiOHOSWebMessageExtImplGetError(int64_t msgExtId, int32_t *errCode)
@@ -1902,7 +1900,7 @@ extern "C" {
         std::string errorMsg = data->GetErrName() + ": " + data->GetErrMsg();
         err.errorName = MallocCString(errorName);
         err.errorMsg = MallocCString(errorMsg);
-        return err;   
+        return err;
     }
 
     void FfiOHOSWebMessageExtImplSetType(int64_t msgExtId, int32_t type, int32_t *errCode)
@@ -1973,7 +1971,7 @@ extern "C" {
         }
         webMessageExt->SetBoolean(value);
         *errCode = NWebError::NO_ERROR;
-        return;        
+        return;
     }
 
     void FfiOHOSWebMessageExtImplSetArrayBuffer(int64_t msgExtId, CArrUI8 value, int32_t *errCode)
@@ -1993,7 +1991,7 @@ extern "C" {
         std::vector<uint8_t> vecData(arrBuf, arrBuf + byteLength);
         webMessageExt->SetArrayBuffer(vecData);
         *errCode = NWebError::NO_ERROR;
-        return;   
+        return;
     }
 
     void FfiOHOSWebMessageExtImplSetError(int64_t msgExtId, OHOS::Webview::CError value, int32_t *errCode)
@@ -2012,8 +2010,8 @@ extern "C" {
         std::string msgVal = std::string(value.errorMsg);
         *errCode = NWebError::NO_ERROR;
         webMessageExt->SetError(nameVal, msgVal);
-        return; 
-    } 
+        return;
+    }
 }
 }
 }
