@@ -124,7 +124,6 @@ enum class PressureLevel : int {
 
 enum class ScrollType : int {
     EVENT = 0,
-    POSITION = 1,
 };
 
 class WebPrintDocument;
