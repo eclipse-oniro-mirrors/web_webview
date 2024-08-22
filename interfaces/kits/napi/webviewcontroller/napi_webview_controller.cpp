@@ -1136,7 +1136,7 @@ napi_value NapiWebviewController::InnerGetCustomeSchemeCmdLine(napi_env env, nap
 {
     WebviewController::existNweb_ = true;
     napi_value result = nullptr;
-    std::string cmdLine = WebviewController::customeSchemeCmdLine_;
+    const std::string& cmdLine = WebviewController::customeSchemeCmdLine_;
     napi_create_string_utf8(env, cmdLine.c_str(), cmdLine.length(), &result);
     return result;
 }
