@@ -200,7 +200,7 @@ namespace OHOS::Webview {
     int32_t WebviewControllerImpl::PreFetchPage(std::string url)
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
-        if(!nweb_ptr) {
+        if (!nweb_ptr) {
             return NWebError::INIT_ERROR;
         }
         std::map<std::string, std::string> httpHeaders;
@@ -211,7 +211,7 @@ namespace OHOS::Webview {
     int32_t WebviewControllerImpl::PreFetchPage(std::string url, std::map<std::string, std::string> httpHeaders)
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
-        if(!nweb_ptr) {
+        if (!nweb_ptr) {
             return NWebError::INIT_ERROR;
         }
         nweb_ptr->PrefetchPage(url, httpHeaders);
@@ -229,7 +229,7 @@ namespace OHOS::Webview {
     int32_t WebviewControllerImpl::SetAudioMuted(bool mute)
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
-        if(!nweb_ptr) {
+        if (!nweb_ptr) {
             return NWebError::INIT_ERROR;
         }
         nweb_ptr->SetAudioMuted(mute);
@@ -758,7 +758,7 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             return nweb_ptr->SlideScroll(vx, vy);
         }
-        return;  
+        return;
     }
 
     void WebviewControllerImpl::PutNetworkAvailable(bool enable)
@@ -767,7 +767,7 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             return nweb_ptr->PutNetworkAvailable(enable);
         }
-        return;  
+        return;
     }
 
     void WebviewControllerImpl::ClearClientAuthenticationCache()
@@ -776,7 +776,7 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             return nweb_ptr->ClearClientAuthenticationCache();
         }
-        return;  
+        return;
     }
 
     void WebviewControllerImpl::ClearSslCache()
@@ -785,7 +785,7 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             return nweb_ptr->ClearSslCache();
         }
-        return;  
+        return;
     }
 
     void WebviewControllerImpl::SearchNext(bool forward)
@@ -794,7 +794,7 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             return nweb_ptr->FindNext(forward);
         }
-        return;  
+        return;
     }
 
     void WebviewControllerImpl::ClearMatches()
@@ -803,7 +803,7 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             return nweb_ptr->ClearMatches();
         }
-        return;  
+        return;
     }
 
     void WebviewControllerImpl::SearchAllAsync(std::string str)
@@ -812,7 +812,7 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             return nweb_ptr->FindAllAsync(str);
         }
-        return;  
+        return;
     }
 
     ErrCode WebviewControllerImpl::DeleteJavaScriptRegister(const std::string& objName,
@@ -822,13 +822,13 @@ namespace OHOS::Webview {
         if (nweb_ptr) {
             nweb_ptr->UnregisterArkJSfunction(objName, methodList);
         }
-        if(javaScriptResultCb_) {
+        if (javaScriptResultCb_) {
             bool ret = javaScriptResultCb_->DeleteJavaScriptRegister(objName);
-            if(!ret) {
+            if (!ret) {
                 return NWebError::CANNOT_DEL_JAVA_SCRIPT_PROXY;
             }
         }
-        return NWebError::NO_ERROR;     
+        return NWebError::NO_ERROR;
     }
 
     int32_t WebviewControllerImpl::PostUrl(std::string& url, std::vector<char>& postData)
