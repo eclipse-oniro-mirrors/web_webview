@@ -72,6 +72,8 @@ public:
 
     static void SetArkWebCoreHapPathOverride(const std::string& hapPath);
 
+    std::string GetSystemLanguage() override;
+
 private:
     void Init(const std::string& hapPath);
 
