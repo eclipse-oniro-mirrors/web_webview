@@ -1512,6 +1512,11 @@ public:
      * @param popupSurface  popupSurface.
      */
     virtual void SetPopupSurface(void* popupSurface) {}
+
+    /**
+     * @brief Called when image analyzer is destory.
+     */
+    virtual void OnDestroyImageAnalyzerOverlay() {}
 };
 
 } // namespace OHOS::NWeb
