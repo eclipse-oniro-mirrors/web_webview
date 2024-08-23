@@ -77,7 +77,7 @@ static bool LoadComponentAPI()
         WVLOG_I("NativeArkWeb component api already loaded");
         return true;
     }
-    g_ComponentImpl = new ArkWeb_ComponentAPI();
+    g_ComponentImpl = new (std::nothrow) ArkWeb_ComponentAPI();
     if (!g_ComponentImpl) {
         WVLOG_E("NativeArkWeb component api is nullptr");
         return false;
@@ -103,7 +103,7 @@ static bool LoadControllerAPI()
         WVLOG_I("NativeArkWeb controller api already loaded");
         return true;
     }
-    g_ControllerImpl = new ArkWeb_ControllerAPI();
+    g_ControllerImpl = new (std::nothrow) ArkWeb_ControllerAPI();
     if (!g_ControllerImpl) {
         WVLOG_E("NativeArkWeb controller api is nullptr");
         return false;
@@ -129,7 +129,7 @@ static bool LoadWebMessagePortAPI()
         WVLOG_I("NativeArkWeb web message port api already loaded");
         return true;
     }
-    g_WebMessagePortImpl = new ArkWeb_WebMessagePortAPI();
+    g_WebMessagePortImpl = new (std::nothrow) ArkWeb_WebMessagePortAPI();
     if (!g_WebMessagePortImpl) {
         WVLOG_E("NativeArkWeb web message port api is nullptr");
         return false;
@@ -155,7 +155,7 @@ static bool LoadWebMessageAPI()
         WVLOG_I("NativeArkWeb web message api already loaded");
         return true;
     }
-    g_WebMessageImpl = new ArkWeb_WebMessageAPI();
+    g_WebMessageImpl = new (std::nothrow) ArkWeb_WebMessageAPI();
     if (!g_WebMessageImpl) {
         WVLOG_E("NativeArkWeb web message api is nullptr");
         return false;
