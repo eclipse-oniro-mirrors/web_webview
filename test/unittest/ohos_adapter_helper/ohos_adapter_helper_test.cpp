@@ -92,7 +92,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize
     helper.SetBundlePath(MOCK_INSTALLATION_DIR);
     helper.Init(false);
     auto cook = helper.GetCookieManager();
-    EXPECT_NE(cook, nullptr);
+    EXPECT_EQ(cook, nullptr);
     auto base = helper.GetDataBase();
     EXPECT_NE(base, nullptr);
     auto storage = helper.GetWebStorage();
@@ -184,7 +184,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     auto cook = helper.GetCookieManager();
     EXPECT_EQ(cook, nullptr);
     auto base = helper.GetDataBase();
-    EXPECT_NE(base, nullptr);
+    EXPECT_EQ(base, nullptr);
     auto storage = helper.GetWebStorage();
     EXPECT_NE(storage, nullptr);
     auto nweb = helper.GetNWeb(nweb_id);

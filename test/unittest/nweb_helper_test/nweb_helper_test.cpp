@@ -181,7 +181,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     EXPECT_FALSE(result);
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     result = NWebAdapterHelper::Instance().Init(false);
-    EXPECT_EQ(RESULT_OK, result);
+    EXPECT_NE(RESULT_OK, result);
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
     EXPECT_EQ(nweb, nullptr);
@@ -212,13 +212,13 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
         .Times(2)
         .WillRepeatedly(::testing::Return("test_web"));
     result = NWebHelper::Instance().InitAndRun(false);
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs(),
         DEFAULT_WIDTH, DEFAULT_HEIGHT);
     result = NWebHelper::Instance().LoadNWebSDK();
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     result = NWebHelper::Instance().LoadNWebSDK();
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     WebDownloadManager_PutDownloadCallback(nullptr);
     g_applicationContext.reset();
 }

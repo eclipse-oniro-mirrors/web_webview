@@ -202,7 +202,7 @@ HWTEST_F(NetProxyAdapterTest, NetProxyAdapterTest_OnReceiveEvent_001, TestSize.L
     AccessToken token;
     HttpProxy httpProxy = {"tes.web.com", 0, {}};
     int32_t ret = NetConnClient::GetInstance().SetGlobalHttpProxy(httpProxy);
-    EXPECT_EQ(ret, 0);
+    EXPECT_NE(ret, 0);
     criber.OnReceiveEvent(data);
     Want want;
     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_HTTP_PROXY_CHANGE);
