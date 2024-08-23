@@ -1169,4 +1169,9 @@ void ArkWebNWebImpl::SetPopupSurface(void* popupSurface)
 {
     nweb_nweb_->SetPopupSurface(popupSurface);
 }
+
+void ArkWebNWebImpl::OnDestroyImageAnalyzerOverlay()
+{
+    nweb_nweb_->OnDestroyImageAnalyzerOverlay();
+}
 } // namespace OHOS::ArkWeb
