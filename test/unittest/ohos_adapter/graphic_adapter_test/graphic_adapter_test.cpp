@@ -85,5 +85,10 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
     adapter.SetOnVsyncEndCallback(OnVsyncCallback);
     adapter.OnVsync(1, client);
     adapter.SetIsGPUProcess(false);
+
+    adapter.pkgName_ = "";
+    adapter.SetScene("", 0);
+    adapter.pkgName_ = "test";
+    adapter.SetScene("", 0);
 }
 } // namespace NWeb
