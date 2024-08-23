@@ -235,7 +235,7 @@ std::map<T1, T2> ArkWebBasicMapStructToClass(const P& struct_value)
 }
 
 template<typename P>
-void ArkWebBasicMapStructRelease(P& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebBasicMapStructRelease(P& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.key, struct_value.ark_web_mem_free_func);
@@ -277,7 +277,7 @@ std::list<T> ArkWebBasicListStructToClass(const P& struct_value)
 }
 
 template<typename P>
-void ArkWebBasicListStructRelease(P& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebBasicListStructRelease(P& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
@@ -318,7 +318,7 @@ std::vector<T> ArkWebBasicVectorStructToClass(const P& struct_value)
 }
 
 template<typename P>
-void ArkWebBasicVectorStructRelease(P& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebBasicVectorStructRelease(P& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
