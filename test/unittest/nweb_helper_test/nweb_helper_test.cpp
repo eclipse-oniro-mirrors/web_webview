@@ -645,5 +645,21 @@ HWTEST_F(NwebHelperTest, NWebHelper_TrimMemoryByPressureLevel_001, TestSize.Leve
 
     NWebHelper::Instance().nwebEngine_ = nullptr;
 }
+
+/**
+ * @tc.name: NWebHelper_ParseNWebLTPOApp_001
+ * @tc.desc: ParseNWebLTPOApp.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_ParseNWebLTPOApp_001, TestSize.Level1)
+{
+    EXPECT_TRUE(NWebConfigHelper::Instance().ltpoAllowedApps_.empty());
+    EXPECT_FALSE(NWebConfigHelper::Instance().IsLTPODynamicApp(""));
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    NWebAdapterHelper::Instance().ParseConfig(initArgs);
+    EXPECT_TRUE(NWebConfigHelper::Instance().ltpoAllowedApps_.empty());
+    EXPECT_FALSE(NWebConfigHelper::Instance().IsLTPODynamicApp(""));
+}
 } // namespace OHOS::NWeb
 }
