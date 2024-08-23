@@ -1502,6 +1502,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SetPopupSurface(void* popupSurface) = 0;
+
+    /**
+     * @brief Called when image analyzer is destory.
+     */
+    /*--ark web()--*/
+    virtual void OnDestroyImageAnalyzerOverlay() = 0;
 };
 
 } // namespace OHOS::ArkWeb
