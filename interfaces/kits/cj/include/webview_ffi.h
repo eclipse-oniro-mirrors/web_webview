@@ -168,6 +168,10 @@ extern "C" {
     FFI_EXPORT bool FfiOHOSGeolocationGetAccessibleGeolocation(char* origin, bool incognito, int32_t *errCode);
     FFI_EXPORT CArrString FfiOHOSGeolocationGetStoredGeolocation(bool incognito, int32_t *errCode);
     FFI_EXPORT void FfiOHOSGeolocationDeleteAllGeolocation(bool incognito, int32_t *errCode);
+
+    // web_storage
+    FFI_EXPORT int32_t FfiOHOSWebStorageDeleteOrigin(char *corigin);
+    FFI_EXPORT void FfiOHOSWebStorageDeleteAllData(bool incognito = false);
 }
 
 #endif // WEBVIEW_FFI_H

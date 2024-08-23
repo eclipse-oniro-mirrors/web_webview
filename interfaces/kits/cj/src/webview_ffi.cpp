@@ -28,6 +28,7 @@
 #include "nweb_init_params.h"
 #include "web_errors.h"
 #include "web_download.pb.h"
+#include "web_storage.h"
 #include "application_context.h"
 #include "webview_log.h"
 #include "parameters.h"
@@ -1756,6 +1757,18 @@ extern "C" {
     void FfiOHOSGeolocationDeleteAllGeolocation(bool incognito, int32_t *errCode)
     {
         return GeolocationPermission::CjDeleteAllGeolocation(incognito, errCode);
+    }
+
+    // web_storage
+    int32_t FfiOHOSWebStorageDeleteOrigin(char *corigin)
+    {
+        std::string origin(corigin);
+        return OHOS::NWeb::WebStorage::CJdeleteOrigin(origin);
+    }
+
+    void FfiOHOSWebStorageDeleteAllData(bool incognito)
+    {
+        OHOS::NWeb::WebStorage::CJdeleteAllData(incognito);
     }
 }
 }
