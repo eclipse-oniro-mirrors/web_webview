@@ -94,7 +94,6 @@ namespace {
             case NWebDownloadItemState::PENDING:
                 //  When in PENDING state, chromium call downloadDidUpdate
                 //  while file path is temporary file, just stop calling ui.
-                delete webDownloadItem;
                 webDownloadItem = nullptr;
                 break;
             case NWebDownloadItemState::IN_PROGRESS:
@@ -110,7 +109,6 @@ namespace {
                 break;
             case NWebDownloadItemState::MAX_DOWNLOAD_STATE:
             default:
-                delete webDownloadItem;
                 webDownloadItem = nullptr;
                 break;
         }

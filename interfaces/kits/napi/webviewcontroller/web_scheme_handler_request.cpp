@@ -206,7 +206,7 @@ int32_t WebSchemeHandlerResponse::SetUrl(const char* url)
     return OH_ArkWebResponse_SetUrl(response_, url);
 }
 
-int32_t WebSchemeHandlerResponse::GetStatus()
+int32_t WebSchemeHandlerResponse::GetStatus() const
 {
     return OH_ArkWebResponse_GetStatus(response_);
 }
@@ -248,7 +248,7 @@ int32_t WebSchemeHandlerResponse::SetMimeType(const char* mimeType)
     return OH_ArkWebResponse_SetMimeType(response_, mimeType);
 }
 
-char* WebSchemeHandlerResponse::GetEncoding()
+char* WebSchemeHandlerResponse::GetEncoding() const
 {
     if (!response_) {
         WVLOG_E("WebSchemeHandlerResponse is nullptr");
@@ -835,17 +835,17 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
         napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
 }
 
-uint64_t WebHttpBodyStream::GetPostion()
+uint64_t WebHttpBodyStream::GetPostion() const
 {
     return OH_ArkWebHttpBodyStream_GetPosition(stream_);
 }
 
-uint64_t WebHttpBodyStream::GetSize()
+uint64_t WebHttpBodyStream::GetSize() const
 {
     return OH_ArkWebHttpBodyStream_GetSize(stream_);
 }
 
-bool WebHttpBodyStream::IsChunked()
+bool WebHttpBodyStream::IsChunked() const
 {
     return OH_ArkWebHttpBodyStream_IsChunked(stream_);
 }

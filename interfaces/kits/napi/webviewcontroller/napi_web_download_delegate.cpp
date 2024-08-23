@@ -15,11 +15,11 @@
 
 #include "napi_web_download_delegate.h"
 
+#include <cstring>
 #include <js_native_api.h>
 #include <js_native_api_types.h>
 #include <napi/native_api.h>
 #include <securec.h>
-#include <cstring>
 
 #include "nweb_log.h"
 #include "web_download_delegate.h"

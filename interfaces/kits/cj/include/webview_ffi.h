@@ -31,7 +31,13 @@ extern "C" {
     FFI_EXPORT int32_t FfiOHOSWebviewCtlLoadUrlWithHeaders(int64_t id, char *url, OHOS::Webview::ArrWebHeader headers);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlLoadData(int64_t id, OHOS::Webview::LoadDatas loadDatas);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlRefresh(int64_t id);
+    FFI_EXPORT int32_t FFiOHOSWebviewCtlPreFetchPage(int64_t id, char* url);
+    FFI_EXPORT int32_t FFiOHOSWebviewCtlPreFetchPageWithHeaders(int64_t id, char* url,
+        OHOS::Webview::ArrWebHeader headers);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSetAudioMuted(int64_t id, bool mute);
     FFI_EXPORT char *FfiOHOSWebviewCtlGetUserAgent(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSetConnectionTimeout(int32_t timeout);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlGetWebId(int64_t id, int32_t *errCode);
     FFI_EXPORT bool FfiOHOSWebviewCtlAccessForward(int64_t id, int32_t *errCode);
     FFI_EXPORT bool FfiOHOSWebviewCtlAccessBackward(int64_t id, int32_t *errCode);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlSetCustomUserAgent(int64_t id, char *cUserAgent);
@@ -54,6 +60,7 @@ extern "C" {
     FFI_EXPORT int32_t FfiOHOSWebviewCtlZoom(int64_t id, float factor);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlZoomIn(int64_t id);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlZoomOut(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlRequestFocus(int64_t id);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlClearHistory(int64_t id);
     FFI_EXPORT bool FfiOHOSWebviewCtlAccessStep(int64_t id, int32_t *errCode, int32_t step);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlOnActive(int64_t id);
@@ -69,9 +76,21 @@ extern "C" {
     FFI_EXPORT int32_t FfiOHOSWebviewCtlRemoveCache(int64_t id, bool clearRom);
     FFI_EXPORT int64_t FfiOHOSWebviewCtlGetBackForwardEntries(int64_t id, int32_t *errCode);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlStop(int64_t id);
+    FFI_EXPORT int64_t FfiOHOSWebviewCtlGetFavicon(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlPrepareForPageLoad(char *url, bool preconnectable, int32_t numSockets);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSlideScroll(int64_t id, float vx, float vy);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSetNetworkAvailable(int64_t id, bool enable);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlClearClientAuthenticationCache(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlClearSslChache(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSearchNext(int64_t id, bool forward);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlClearMatches(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSearchAllAsync(int64_t id, char *searchString);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlDeleteJavaScriptRegister(int64_t id, char *name);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlPostUrl(int64_t id, char *url, CArrUI8 buffer);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlSetDownloadDelegate(int64_t id, int64_t delegateId);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlStartDownload(int64_t id, char *url);
+    FFI_EXPORT CArrI64 FfiOHOSWebviewCtlCreateWebMessagePorts(int64_t id, bool isExtentionType, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlPostMessage(int64_t id, char* name, CArrI64 ports, char* uri);
 
     // BackForwardList
     FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t *errCode);
@@ -88,6 +107,14 @@ extern "C" {
     FFI_EXPORT bool FfiOHOSCookieMgrExistCookie(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearAllCookiesSync(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearSessionCookieSync();
+    
+    // data_base
+    FFI_EXPORT RetDataCArrString FfiOHOSDBGetHttpAuthCredentials(const char *host,
+        const char *realm);
+    FFI_EXPORT void FfiOHOSDBSaveHttpAuthCredentials(const char *host, const char *realm,
+        const char *username, const char *password);
+    FFI_EXPORT bool FfiOHOSDBExistHttpAuthCredentials();
+    FFI_EXPORT void FfiOHOSDBDeleteHttpAuthCredentials();
 
     // WebDownloadItemImpl
     FFI_EXPORT int64_t FfiOHOSWebDownloadItemImplConstructor();
@@ -120,6 +147,40 @@ extern "C" {
     // WebDownloadManagerImpl
     FFI_EXPORT void FfiOHOSWebDownloadManagerImplSetDownloadDelegate(int64_t delegateId);
     FFI_EXPORT int32_t FfiOHOSWebDownloadManagerImplResumeDownload(int64_t itemId);
+
+    // GeolocationPermissions
+    FFI_EXPORT void FfiOHOSGeolocationAllowGeolocation(char* origin, bool incognito, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSGeolocationDeleteGeolocation(char* origin, bool incognito, int32_t *errCode);
+    FFI_EXPORT bool FfiOHOSGeolocationGetAccessibleGeolocation(char* origin, bool incognito, int32_t *errCode);
+    FFI_EXPORT CArrString FfiOHOSGeolocationGetStoredGeolocation(bool incognito, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSGeolocationDeleteAllGeolocation(bool incognito, int32_t *errCode);
+
+    // WebMessagePort
+    FFI_EXPORT void FfiOHOSWebMessagePortPostMessageEvent(int64_t msgPortId, char* stringValue, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessagePortPostMessageEventArr(int64_t msgPortId, CArrUI8 arrBuf, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessagePortPostMessageEventExt(int64_t msgPortId, int64_t msgExtId, int32_t *errCode);
+    FFI_EXPORT bool FfiOHOSWebMessagePortIsExtentionType(int64_t msgPortId);
+    FFI_EXPORT void FfiOHOSWebMessagePortOnMessageEvent(int64_t msgPortId,
+        void (*callback)(OHOS::Webview::RetWebMessage), int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessagePortOnMessageEventExt(int64_t msgPortId,
+        void (*callback)(int64_t), int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessagePortClose(int64_t msgPortId, int32_t *errCode);
+
+    // WebMessageExt
+    FFI_EXPORT int64_t FfiOHOSWebMessageExtImplConstructor();
+    FFI_EXPORT int32_t FfiOHOSWebMessageExtImplGetType(int64_t msgExtId, int32_t *errCode);
+    FFI_EXPORT char* FfiOHOSWebMessageExtImplGetString(int64_t msgExtId, int32_t *errCode);
+    FFI_EXPORT OHOS::Webview::RetNumber FfiOHOSWebMessageExtImplGetNumber(int64_t msgExtId, int32_t *errCode);
+    FFI_EXPORT bool FfiOHOSWebMessageExtImplGetBoolean(int64_t msgExtId, int32_t *errCode);
+    FFI_EXPORT CArrUI8 FfiOHOSWebMessageExtImplGetArrayBuffer(int64_t msgExtId, int32_t *errCode);
+    FFI_EXPORT OHOS::Webview::CError FfiOHOSWebMessageExtImplGetError(int64_t msgExtId, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessageExtImplSetType(int64_t msgExtId, int32_t type, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessageExtImplSetString(int64_t msgExtId, char* message, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessageExtImplSetNumber(int64_t msgExtId, double value, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessageExtImplSetBoolean(int64_t msgExtId, bool value, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessageExtImplSetArrayBuffer(int64_t msgExtId, CArrUI8 value, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebMessageExtImplSetError(int64_t msgExtId,
+        OHOS::Webview::CError value, int32_t *errCode);
 }
 
 #endif // WEBVIEW_FFI_H
