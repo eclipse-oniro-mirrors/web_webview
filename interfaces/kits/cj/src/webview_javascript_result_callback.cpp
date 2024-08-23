@@ -380,6 +380,11 @@ bool WebviewJavaScriptResultCallBackImpl::HasJavaScriptObjectMethods(int32_t obj
     return ret;
 }
 
+bool WebviewJavaScriptResultCallBackImpl::DeleteJavaScriptRegister(const std::string &objName)
+{
+    return RemoveNamedObject(objName);
+}
+
 void WebviewJavaScriptResultCallBackImpl::RemoveJavaScriptObjectHolder(int32_t holder, JavaScriptOb::ObjectID objectId)
 {}
 
