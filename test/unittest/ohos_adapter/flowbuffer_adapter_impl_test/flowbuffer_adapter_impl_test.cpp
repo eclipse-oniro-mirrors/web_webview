@@ -20,12 +20,17 @@
 
 #define private public
 #include "flowbuffer_adapter_impl.h"
+#include <chrono>
+#include <thread>
 
 using namespace testing;
 using namespace testing::ext;
 
 namespace OHOS {
 namespace NWeb {
+namespace {
+    const int64_t PERFORMANCE_PERIOD_MS = 300;
+}
 class FlowbufferAdapterImplTest : public testing::Test {
 public:
     static void SetUpTestCase();
