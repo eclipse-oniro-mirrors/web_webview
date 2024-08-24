@@ -182,6 +182,7 @@ bool ArkSystemPropertiesAdapterWrapper::GetBoolParameter(const std::string& key,
     return result;
 }
 
+ARK_WEB_NO_SANITIZE
 std::vector<FrameRateSetting> ArkSystemPropertiesAdapterWrapper::GetLTPOConfig(const std::string& settingName)
 {
     if (!ctocpp_) {
