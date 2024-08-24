@@ -48,6 +48,9 @@ namespace Webview {
 
     char** VectorToCArrString(const std::vector<std::string>& vec)
     {
+        if (vec.size() == 0) {
+            return nullptr;
+        }
         char** result = static_cast<char**>(malloc(sizeof(char*) * vec.size()));
         if (result == nullptr) {
             return nullptr;
@@ -60,6 +63,9 @@ namespace Webview {
 
     uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec)
     {
+        if (vec.size() == 0) {
+            return nullptr;
+        }
         uint8_t* result = static_cast<uint8_t*>(malloc(sizeof(uint8_t) * vec.size()));
         if (result == nullptr) {
             return nullptr;

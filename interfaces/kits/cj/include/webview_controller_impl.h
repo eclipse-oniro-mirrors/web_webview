@@ -199,6 +199,14 @@ namespace OHOS::Webview {
 
         ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
 
+        std::vector<uint8_t> SerializeWebState();
+
+        bool RestoreWebState(const std::vector<uint8_t> &state) const;
+
+        bool GetCertChainDerData(std::vector<std::string> &certChainDerData) const;
+
+        ErrCode HasImagesCallback(const std::function<void(RetDataBool)>& callbackRef);
+
     public:
         static std::string customeSchemeCmdLine_;
         static bool existNweb_;

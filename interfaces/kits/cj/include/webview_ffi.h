@@ -22,6 +22,9 @@
 #include "cj_common_ffi.h"
 
 extern "C" {
+    FFI_EXPORT int32_t FfiOHOSWebviewOnce(char* type, void (*callbackRef)(void));
+
+    // WebMessagePortImpl
     FFI_EXPORT int64_t FfiOHOSWebviewCtlConstructor();
     FFI_EXPORT int64_t FfiOHOSWebviewCtlConstructorWithWebTag(char *webTag);
     FFI_EXPORT void FfiOHOSWebviewCtlInitializeWebEngine();
@@ -95,6 +98,10 @@ extern "C" {
     FFI_EXPORT int32_t FfiOHOSWebviewCtlStartDownload(int64_t id, char *url);
     FFI_EXPORT CArrI64 FfiOHOSWebviewCtlCreateWebMessagePorts(int64_t id, bool isExtentionType, int32_t *errCode);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlPostMessage(int64_t id, char* name, CArrI64 ports, char* uri);
+    FFI_EXPORT CArrUI8 FfiOHOSWebviewCtlSerializeWebState(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlRestoreWebState(int64_t id, CArrUI8 cState);
+    FFI_EXPORT CArrString FfiOHOSWebviewCtlGetCertificate(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlHasImage(int64_t id, void (*callbackRef)(RetDataBool));
 
     // BackForwardList
     FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t *errCode);
@@ -111,6 +118,7 @@ extern "C" {
     FFI_EXPORT bool FfiOHOSCookieMgrExistCookie(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearAllCookiesSync(bool incognitoMode);
     FFI_EXPORT void FfiOHOSCookieMgrClearSessionCookieSync();
+    FFI_EXPORT void FfiOHOSCookieMgrSaveCookieAsync(void (*callbackRef)(void));
     
     // data_base
     FFI_EXPORT RetDataCArrString FfiOHOSDBGetHttpAuthCredentials(const char *host,
