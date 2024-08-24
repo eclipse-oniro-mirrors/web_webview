@@ -138,7 +138,6 @@ HWTEST_F(FlowbufferAdapterImplTest, FlowbufferAdapterImplTest_005, TestSize.Leve
  */
 HWTEST_F(FlowbufferAdapterImplTest, FlowbufferAdapterImplTest_006, TestSize.Level1)
 {
-    
     int fd = -1;
     size_t scriptLength = 10;
     auto flowbufferAdapter = std::make_shared<FlowbufferAdapterImpl>();
@@ -158,7 +157,6 @@ HWTEST_F(FlowbufferAdapterImplTest, FlowbufferAdapterImplTest_006, TestSize.Leve
  */
 HWTEST_F(FlowbufferAdapterImplTest, FlowbufferAdapterImplTest_007, TestSize.Level1)
 {
-    
     int fd = -1;
     size_t scriptLength = 10;
     auto flowbufferAdapter = std::make_shared<FlowbufferAdapterImpl>();
