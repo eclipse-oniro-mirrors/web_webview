@@ -18,6 +18,7 @@
 #include <regex>
 
 #include "webview_controller_impl.h"
+#include "webview_function.h"
 #include "web_download_item_impl.h"
 #include "web_download_delegate_impl.h"
 #include "web_download_manager_impl.h"
@@ -50,6 +51,11 @@ constexpr int INTEGER_TWO = 2;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 
 extern "C" {
+    int32_t FfiOHOSWebviewOnce(char* type, void (*callbackRef)(void))
+    {
+        return FfiOnce(type, callbackRef);
+    }
+
     int64_t FfiOHOSWebviewCtlConstructor()
     {
         auto nativeWebviewCtl = FFIData::Create<WebviewControllerImpl>();
@@ -475,6 +481,11 @@ extern "C" {
         return OHOS::NWeb::WebCookieManager::CjDeleteSessionCookie();
     }
 
+    void FfiOHOSCookieMgrSaveCookieAsync(void (*callbackRef)(void))
+    {
+        return OHOS::NWeb::WebCookieManager::CjSaveCookie(callbackRef);
+    }
+
     int32_t FfiOHOSWebviewCtlScrollTo(int64_t id, float x, float y)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
@@ -896,6 +907,68 @@ extern "C" {
         }
         nativeWebviewCtl->PostWebMessage(portName, sendPorts, urlStr);
         return NWebError::NO_ERROR;
+    }
+
+    CArrUI8 FfiOHOSWebviewCtlSerializeWebState(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return CArrUI8{nullptr, 0};
+        }
+        std::vector<uint8_t> webState = nativeWebviewCtl->SerializeWebState();
+        uint8_t* result = VectorToCArrUI8(webState);
+        if (result == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebviewCtlSerializeWebStatee malloc failed");
+            *errCode = NWebError::NEW_OOM;
+            return CArrUI8{nullptr, 0};
+        }
+        *errCode = NWebError::NO_ERROR;
+        return CArrUI8{result, webState.size()};
+    }
+
+    int32_t FfiOHOSWebviewCtlRestoreWebState(int64_t id, CArrUI8 cState)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        std::vector<uint8_t> state(cState.head, cState.head + cState.size);
+        nativeWebviewCtl->RestoreWebState(state);
+        return NWebError::NO_ERROR;
+    }
+
+    CArrString FfiOHOSWebviewCtlGetCertificate(int64_t id, int32_t *errCode)
+    {
+        CArrString arrCertificate = {.head = nullptr, .size = 0};
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return arrCertificate;
+        }
+        std::vector<std::string> certChainDerData;
+        bool ans = nativeWebviewCtl->GetCertChainDerData(certChainDerData);
+        if (!ans) {
+            WEBVIEWLOGE("get cert chain data failed");
+            return arrCertificate;
+        }
+        if (certChainDerData.size() > UINT8_MAX) {
+            WEBVIEWLOGE("error, cert chain data array reach max");
+            return arrCertificate;
+        }
+        *errCode = NWebError::NO_ERROR;
+        arrCertificate.size = static_cast<int64_t>(certChainDerData.size());
+        arrCertificate.head = OHOS::Webview::VectorToCArrString(certChainDerData);
+        return arrCertificate;
+    }
+
+    int32_t FfiOHOSWebviewCtlHasImage(int64_t id, void (*callbackRef)(RetDataBool))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        return nativeWebviewCtl->HasImagesCallback(CJLambda::Create(callbackRef));
     }
 
     // BackForwardList
@@ -1647,7 +1720,7 @@ extern "C" {
         if (errCode && *errCode != 0) {
             return arrOrigins;
         }
-        arrOrigins.size = (int64_t)origins.size();
+        arrOrigins.size = static_cast<int64_t>(origins.size());
         arrOrigins.head = OHOS::Webview::VectorToCArrString(origins);
         return arrOrigins;
     }

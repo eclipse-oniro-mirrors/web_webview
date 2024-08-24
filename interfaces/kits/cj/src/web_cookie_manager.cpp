@@ -17,6 +17,8 @@
 #include "nweb_cookie_manager.h"
 #include "nweb_helper.h"
 #include "web_errors.h"
+#include "cj_lambda.h"
+#include "webview_log.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -107,6 +109,24 @@ void WebCookieManager::CjDeleteSessionCookie()
     if (cookieManager != nullptr) {
         cookieManager->DeleteSessionCookies(nullptr);
     }
+}
+
+void WebCookieManager::CjSaveCookie(void (*callbackRef)(void))
+{
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager == nullptr) {
+        return;
+    } else {
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(CJLambda::Create(callbackRef));
+        cookieManager->Store(callbackImpl);
+    }
+}
+
+void NWebSaveCookieCallbackImpl::OnReceiveValue(bool result)
+{
+    WEBVIEWLOGD("save cookie received result, result = %{public}d", result);
+    callback_();
 }
 }
 }
