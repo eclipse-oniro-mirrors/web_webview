@@ -56,12 +56,7 @@ void WindowAdapterImpl::NativeWindowSurfaceCleanCache(NWebNativeWindow window)
     WVLOG_D("WindowAdapterImpl::NativeWindowSurfaceCleanCache");
     auto nativeWindow = reinterpret_cast<OHNativeWindow *>(window);
     if (!nativeWindow || !nativeWindow->surface) {
-        if (!nativeWindow) {
-            WVLOG_E("window is null, no need to clean surface cache");
-        }
-        if (!nativeWindow->surface) {
-            WVLOG_E("surface is null, no need to clean surface cache");
-        }
+        WVLOG_D("window or surface is null, no need to clean surface cache");
         return;
     }
     nativeWindow->surface->CleanCache();
