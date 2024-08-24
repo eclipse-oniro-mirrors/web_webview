@@ -79,7 +79,7 @@ std::string ArkWebStringStructToClass(const ArkWebString& struct_value)
     return class_value;
 }
 
-void ArkWebStringStructRelease(ArkWebString& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringStructRelease(ArkWebString& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
@@ -126,7 +126,7 @@ std::map<std::string, std::string> ArkWebStringMapStructToClass(const ArkWebStri
     return class_value;
 }
 
-void ArkWebStringMapStructRelease(ArkWebStringMap& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringMapStructRelease(ArkWebStringMap& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.key[count]);
@@ -158,7 +158,7 @@ ArkWebStringList ArkWebStringListClassToStruct(const std::list<std::string>& cla
     return struct_value;
 }
 
-std::list<std::string> ArkWebStringListStructToClass(const ArkWebStringList& struct_value)
+ARK_WEB_NO_SANITIZE std::list<std::string> ArkWebStringListStructToClass(const ArkWebStringList& struct_value)
 {
     std::list<std::string> class_value;
     for (int count = 0; count < struct_value.size; count++) {
@@ -208,7 +208,7 @@ std::vector<std::string> ArkWebStringVectorStructToClass(const ArkWebStringVecto
     return class_value;
 }
 
-void ArkWebStringVectorStructRelease(ArkWebStringVector& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringVectorStructRelease(ArkWebStringVector& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.value[count]);
@@ -256,7 +256,7 @@ std::map<std::string, std::vector<std::string>> ArkWebStringVectorMapStructToCla
     return class_value;
 }
 
-void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.key[count]);

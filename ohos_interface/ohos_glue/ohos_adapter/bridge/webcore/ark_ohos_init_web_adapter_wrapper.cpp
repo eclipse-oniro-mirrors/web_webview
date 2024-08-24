@@ -24,7 +24,7 @@ NWeb::WebRunInitedCallback* ArkOhosInitWebAdapterWrapper::GetRunWebInitedCallbac
     return (NWeb::WebRunInitedCallback*)ctocpp_->GetRunWebInitedCallback();
 }
 
-void ArkOhosInitWebAdapterWrapper::SetRunWebInitedCallback(NWeb::WebRunInitedCallback* callback)
+ARK_WEB_NO_SANITIZE void ArkOhosInitWebAdapterWrapper::SetRunWebInitedCallback(NWeb::WebRunInitedCallback* callback)
 {
     ctocpp_->SetRunWebInitedCallback((void*)callback);
 }

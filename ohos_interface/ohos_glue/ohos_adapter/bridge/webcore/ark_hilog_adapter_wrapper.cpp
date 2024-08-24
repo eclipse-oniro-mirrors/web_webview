@@ -19,7 +19,7 @@
 namespace OHOS::NWeb {
 using HiLogAdapterPrintLogFunc = int (*)(uint32_t level, const char* tag, const char* fmt, va_list ap);
 
-int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
+ARK_WEB_NO_SANITIZE int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
 {
     static HiLogAdapterPrintLogFunc hi_log_adapter_print_log = reinterpret_cast<HiLogAdapterPrintLogFunc>(
         ArkWeb::ArkWebAdapterBridgeHelper::GetInstance(false).LoadFuncSymbol("HiLogAdapterPrintLog", false));
@@ -35,7 +35,7 @@ int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* f
     return ret;
 }
 
-int HiLogAdapter::PrintConsoleLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
+ARK_WEB_NO_SANITIZE int HiLogAdapter::PrintConsoleLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
 {
     static HiLogAdapterPrintLogFunc hi_log_adapter_console_log = reinterpret_cast<HiLogAdapterPrintLogFunc>(
         ArkWeb::ArkWebAdapterBridgeHelper::GetInstance(false).LoadFuncSymbol("HiLogAdapterConsoleLog", false));
