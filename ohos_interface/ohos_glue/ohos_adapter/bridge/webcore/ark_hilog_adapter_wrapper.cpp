@@ -14,6 +14,7 @@
  */
 
 #include "hilog_adapter.h"
+#include "base/include/ark_web_macros.h"
 #include "ohos_adapter/bridge/ark_web_adapter_bridge_helper.h"
 
 namespace OHOS::NWeb {
