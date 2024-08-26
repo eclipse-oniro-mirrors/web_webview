@@ -63,6 +63,24 @@ namespace Webview {
         double numberDouble;
     };
 
+    struct CArrDouble {
+        double *head;
+        int64_t size;
+    };
+
+    struct CArrBool {
+        bool *head;
+        int64_t size;
+    };
+
+    struct CArrValue {
+        char** strHead;
+        int64_t* intHead;
+        double* doubleHead;
+        bool* boolHead;
+        int64_t size;
+    };
+
     char* MallocCString(const std::string& origin);
     uint8_t* MallocUInt8(const std::string& origin);
     char** VectorToCArrString(const std::vector<std::string>& vec);

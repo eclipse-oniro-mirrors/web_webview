@@ -139,6 +139,10 @@ namespace OHOS::Webview {
 
         void ScrollBy(float deltaX, float deltaY);
 
+        void ScrollToWithAnime(float x, float y, int32_t duration);
+
+        void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration);
+
         void Forward();
 
         void Backward();
