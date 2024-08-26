@@ -31,6 +31,7 @@ namespace NWeb {
 namespace {
     const int64_t PERFORMANCE_PERIOD_MS = 300;
 }
+
 class FlowbufferAdapterImplTest : public testing::Test {
 public:
     static void SetUpTestCase();
