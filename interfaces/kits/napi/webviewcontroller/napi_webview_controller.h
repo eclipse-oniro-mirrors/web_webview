@@ -63,6 +63,13 @@ struct OfflineResourceValue {
     napi_value type;
 };
 
+struct PDFMarginConfig {
+    double top;
+    double bottom;
+    double right;
+    double left;
+};
+
 class NapiWebviewController {
 public:
     NapiWebviewController() {}
