@@ -126,6 +126,7 @@ HWTEST_F(FlowbufferAdapterImplTest, FlowbufferAdapterImplTest_005, TestSize.Leve
 {
     auto flowbufferAdapter = std::make_shared<FlowbufferAdapterImpl>();
     bool needReportScene  = flowbufferAdapter->NeedReportScene();
+    flowbufferAdapter->StartPerformanceBoost();
     std::this_thread::sleep_for(std::chrono::milliseconds(PERFORMANCE_PERIOD_MS));
     flowbufferAdapter->StartPerformanceBoost();
     EXPECT_FALSE(needReportScene);
@@ -151,7 +152,7 @@ HWTEST_F(FlowbufferAdapterImplTest, FlowbufferAdapterImplTest_006, TestSize.Leve
 }
 
 /**
- * @tc.name: FlowbufferAdapterImplTest_006.
+ * @tc.name: FlowbufferAdapterImplTest_007.
  * @tc.desc: test FlowbufferAdapterImpl CreateAshmemWithFd.
  * @tc.type: FUNC.
  * @tc.require:
