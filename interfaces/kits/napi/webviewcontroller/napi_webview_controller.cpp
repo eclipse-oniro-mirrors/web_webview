@@ -60,8 +60,8 @@ constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 constexpr size_t MAX_RESOURCES_COUNT = 30;
 constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
 constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024; // 10M
-constexpr double A4_WIDTH = 8.5;
-constexpr double A4_HEIGHT = 11.0;
+constexpr double A4_WIDTH = 8.27;
+constexpr double A4_HEIGHT = 11.69;
 constexpr double SCALE_MIN = 0.1;
 constexpr double SCALE_MAX = 2.0;
 constexpr double HALF = 2.0;
@@ -342,24 +342,8 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
     return prefetchArgs;
 }
 
-std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value preArgs)
+PDFMarginConfig ParsePDFMarginConfigArgs(napi_env env, napi_value preArgs, double width, double height)
 {
-    napi_value widthObj = nullptr;
-    double width = A4_WIDTH;
-    napi_get_named_property(env, preArgs, "width", &widthObj);
-    NapiParseUtils::ParseDouble(env, widthObj, width);
-
-    napi_value heightObj = nullptr;
-    double height = A4_HEIGHT;
-    napi_get_named_property(env, preArgs, "height", &heightObj);
-    NapiParseUtils::ParseDouble(env, heightObj, height);
-
-    napi_value scaleObj = nullptr;
-    double scale = 1.0;
-    napi_get_named_property(env, preArgs, "scale", &scaleObj);
-    NapiParseUtils::ParseDouble(env, scaleObj, scale);
-    scale = scale > SCALE_MAX ? SCALE_MAX : scale < SCALE_MIN ? SCALE_MIN : scale;
-
     napi_value marginTopObj = nullptr;
     double marginTop = 0.0;
     napi_get_named_property(env, preArgs, "marginTop", &marginTopObj);
@@ -384,13 +368,36 @@ std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value p
     NapiParseUtils::ParseDouble(env, marginLeftObj, marginLeft);
     marginLeft = marginLeft >= width / HALF ? 0.0 : marginLeft;
 
+    return { marginTop, marginBottom, marginRight, marginLeft };
+}
+
+std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value preArgs)
+{
+    napi_value widthObj = nullptr;
+    double width = A4_WIDTH;
+    napi_get_named_property(env, preArgs, "width", &widthObj);
+    NapiParseUtils::ParseDouble(env, widthObj, width);
+
+    napi_value heightObj = nullptr;
+    double height = A4_HEIGHT;
+    napi_get_named_property(env, preArgs, "height", &heightObj);
+    NapiParseUtils::ParseDouble(env, heightObj, height);
+
+    napi_value scaleObj = nullptr;
+    double scale = 1.0;
+    napi_get_named_property(env, preArgs, "scale", &scaleObj);
+    NapiParseUtils::ParseDouble(env, scaleObj, scale);
+    scale = scale > SCALE_MAX ? SCALE_MAX : scale < SCALE_MIN ? SCALE_MIN : scale;
+
+    auto margin = ParsePDFMarginConfigArgs(env, preArgs, width, height);
+
     napi_value shouldPrintBackgroundObj = nullptr;
     bool shouldPrintBackground = false;
     napi_get_named_property(env, preArgs, "shouldPrintBackground", &shouldPrintBackgroundObj);
     NapiParseUtils::ParseBoolean(env, shouldPrintBackgroundObj, shouldPrintBackground);
 
     std::shared_ptr<NWebPDFConfigArgs> pdfConfig = std::make_shared<NWebPDFConfigArgsImpl>(
-        width, height, scale, marginTop, marginBottom, marginRight, marginLeft, shouldPrintBackground);
+        width, height, scale, margin.top, margin.bottom, margin.right, margin.left, shouldPrintBackground);
     return pdfConfig;
 }
 
