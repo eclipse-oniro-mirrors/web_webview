@@ -486,23 +486,31 @@ extern "C" {
         return OHOS::NWeb::WebCookieManager::CjSaveCookie(callbackRef);
     }
 
-    int32_t FfiOHOSWebviewCtlScrollTo(int64_t id, float x, float y)
+    int32_t FfiOHOSWebviewCtlScrollTo(int64_t id, float x, float y, int32_t duration)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
-        nativeWebviewCtl->ScrollTo(x, y);
+        if (duration > 0) {
+            nativeWebviewCtl->ScrollToWithAnime(x, y, duration);
+        } else {
+            nativeWebviewCtl->ScrollTo(x, y);
+        }
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSWebviewCtlScrollBy(int64_t id, float deltaX, float deltaY)
+    int32_t FfiOHOSWebviewCtlScrollBy(int64_t id, float deltaX, float deltaY, int32_t duration)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
-        nativeWebviewCtl->ScrollBy(deltaX, deltaY);
+        if (duration > 0) {
+            nativeWebviewCtl->ScrollByWithAnime(deltaX, deltaY, duration);
+        } else {
+            nativeWebviewCtl->ScrollBy(deltaX, deltaY);
+        }
         return NWebError::NO_ERROR;
     }
 
@@ -1975,6 +1983,75 @@ extern "C" {
         return CArrUI8{result, msgArr.size()};
     }
 
+    CArrValue ConvertToCArr(std::shared_ptr<NWebMessage> data, int32_t *errCode)
+    {
+        CArrValue ret = { .strHead = nullptr, .intHead = nullptr, .doubleHead = nullptr,
+            .boolHead = nullptr, .size = 0 };
+        if (data->GetType() == NWebValue::Type::STRINGARRAY) {
+            std::vector<std::string> values = data->GetStringArray();
+            ret.size = static_cast<int64_t>(values.size());
+            ret.strHead = OHOS::Webview::VectorToCArrString(values);
+        } else if (data->GetType() == NWebValue::Type::BOOLEANARRAY) {
+            std::vector<bool> values = data->GetBooleanArray();
+            auto arr = static_cast<bool*>(malloc(sizeof(bool) * values.size()));
+            if (!arr) {
+                *errCode = NWebError::NEW_OOM;
+                return ret;
+            }
+            for (uint32_t i = 0; i < values.size(); i++) {
+                arr[i] = values[i];
+            }
+            ret.boolHead = arr;
+            ret.size = static_cast<int64_t>(values.size());
+        } else if (data->GetType() == NWebValue::Type::DOUBLEARRAY) {
+            std::vector<double> values = data->GetDoubleArray();
+            auto arr = static_cast<double*>(malloc(sizeof(double) * values.size()));
+            if (!arr) {
+                *errCode = NWebError::NEW_OOM;
+                return ret;
+            }
+            for (uint32_t i = 0; i < values.size(); i++) {
+                arr[i] = values[i];
+            }
+            ret.doubleHead = arr;
+            ret.size = static_cast<int64_t>(values.size());
+        } else {
+            std::vector<int64_t> values = data->GetInt64Array();
+            auto arr = static_cast<int64_t*>(malloc(sizeof(int64_t) * values.size()));
+            if (!arr) {
+                *errCode = NWebError::NEW_OOM;
+                return ret;
+            }
+            for (uint32_t i = 0; i < values.size(); i++) {
+                arr[i] = values[i];
+            }
+            ret.intHead = arr;
+            ret.size = static_cast<int64_t>(values.size());
+        }
+        return ret;
+    }
+
+    CArrValue FfiOHOSWebMessageExtImplGetArray(int64_t msgExtId, int32_t *errCode)
+    {
+        CArrValue ret = { .strHead = nullptr, .intHead = nullptr, .doubleHead = nullptr,
+            .boolHead = nullptr, .size = 0 };
+        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
+        if (webMessageExt == nullptr) {
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
+        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ARRAY)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return ret;
+        }
+        auto data = webMessageExt->GetData();
+        if (data == nullptr) {
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
+        return ConvertToCArr(data, errCode);
+    }
+
     CError FfiOHOSWebMessageExtImplGetError(int64_t msgExtId, int32_t *errCode)
     {
         WEBVIEWLOGD("FfiOHOSWebMessageExtImplGetError::GetError start");
@@ -2090,6 +2167,90 @@ extern "C" {
         size_t byteLength = value.size;
         std::vector<uint8_t> vecData(arrBuf, arrBuf + byteLength);
         webMessageExt->SetArrayBuffer(vecData);
+        *errCode = NWebError::NO_ERROR;
+        return;
+    }
+
+    void FfiOHOSWebMessageExtImplSetArrayString(int64_t msgExtId, CArrString value, int32_t *errCode)
+    {
+        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
+        if (webMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetArrayString error");
+            *errCode = NWebError::PARAM_CHECK_ERROR;
+            return;
+        }
+        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ARRAY)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return;
+        }
+        std::vector<std::string> outValue;
+        for (int64_t i = 0; i < value.size; i++) {
+            outValue.push_back(std::string(value.head[i]));
+        }
+        webMessageExt->SetStringArray(outValue);
+        *errCode = NWebError::NO_ERROR;
+        return;
+    }
+
+    void FfiOHOSWebMessageExtImplSetArrayInt(int64_t msgExtId, CArrI64 value, int32_t *errCode)
+    {
+        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
+        if (webMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetArrayInt error");
+            *errCode = NWebError::PARAM_CHECK_ERROR;
+            return;
+        }
+        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ARRAY)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return;
+        }
+        std::vector<int64_t> outValue;
+        for (int64_t i = 0; i < value.size; i++) {
+            outValue.push_back(value.head[i]);
+        }
+        webMessageExt->SetInt64Array(outValue);
+        *errCode = NWebError::NO_ERROR;
+        return;
+    }
+
+    void FfiOHOSWebMessageExtImplSetArrayDouble(int64_t msgExtId, OHOS::Webview::CArrDouble value, int32_t *errCode)
+    {
+        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
+        if (webMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetArrayDouble error");
+            *errCode = NWebError::PARAM_CHECK_ERROR;
+            return;
+        }
+        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ARRAY)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return;
+        }
+        std::vector<double> outValue;
+        for (int64_t i = 0; i < value.size; i++) {
+            outValue.push_back(value.head[i]);
+        }
+        webMessageExt->SetDoubleArray(outValue);
+        *errCode = NWebError::NO_ERROR;
+        return;
+    }
+
+    void FfiOHOSWebMessageExtImplSetArrayBoolean(int64_t msgExtId, OHOS::Webview::CArrBool value, int32_t *errCode)
+    {
+        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
+        if (webMessageExt == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetArrayBoolean error");
+            *errCode = NWebError::PARAM_CHECK_ERROR;
+            return;
+        }
+        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ARRAY)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return;
+        }
+        std::vector<bool> outValue;
+        for (int64_t i = 0; i < value.size; i++) {
+            outValue.push_back(value.head[i]);
+        }
+        webMessageExt->SetBooleanArray(outValue);
         *errCode = NWebError::NO_ERROR;
         return;
     }
@@ -2236,6 +2397,27 @@ extern "C" {
         }
         *errCode = NWebError::NO_ERROR;
         return CArrUI8{result, msgArr.size()};
+    }
+
+    CArrValue FfiOHOSJsMessageExtImplGetArray(int64_t jsExtId, int32_t *errCode)
+    {
+        CArrValue ret = { .strHead = nullptr, .intHead = nullptr, .doubleHead = nullptr,
+            .boolHead = nullptr, .size = 0 };
+        WebJsMessageExtImpl* webJsMessageExt = FFIData::GetData<WebJsMessageExtImpl>(jsExtId);
+        if (webJsMessageExt == nullptr) {
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
+        if (webJsMessageExt->GetType() != static_cast<int32_t>(JsMessageType::ARRAY)) {
+            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
+            return ret;
+        }
+        auto data = webJsMessageExt->GetJsMsgResult();
+        if (data == nullptr) {
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
+        return ConvertToCArr(data, errCode);
     }
 }
 }

@@ -382,6 +382,24 @@ namespace OHOS::Webview {
         return;
     }
 
+    void WebviewControllerImpl::ScrollToWithAnime(float x, float y, int32_t duration)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->ScrollToWithAnime(x, y, duration);
+        }
+        return;
+    }
+
+    void WebviewControllerImpl::ScrollByWithAnime(float deltaX, float deltaY, int32_t duration)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->ScrollByWithAnime(deltaX, deltaY, duration);
+        }
+        return;
+    }
+
     void WebviewControllerImpl::Forward()
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
