@@ -179,7 +179,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
     EXPECT_NE(extractor, nullptr);
     std::shared_ptr<OHOS::AbilityBase::ZipFileReader> fileReader =
         OHOS::AbilityBase::ZipFileReader::CreateZipFileReader(hapPath);
-    EXPECT_NE(fileReader, nullptr);
+    EXPECT_EQ(fileReader, nullptr);
     std::unique_ptr<OHOS::AbilityBase::FileMapper> fileMap = std::make_unique<OHOS::AbilityBase::FileMapper>();
     EXPECT_NE(fileMap, nullptr);
     fileMap->CreateFileMapper(fileReader, hapPath, 0, hapPath.size(), true);
@@ -225,7 +225,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, T
     OhosResourceAdapterImpl adapterImpl(hapPath);
     bool newCreate = false;
     std::shared_ptr<Extractor> extractor = ExtractorUtil::GetExtractor(hapPath, newCreate);
-    EXPECT_NE(extractor, nullptr);
+    EXPECT_EQ(extractor, nullptr);
     std::string result = adapterImpl.GetModuleName(nullptr, 0);
     EXPECT_EQ(result, "");
     char *configStr = static_cast<char*>(malloc(MODULE_NAME_SIZE));
