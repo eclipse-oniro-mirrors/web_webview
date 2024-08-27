@@ -125,6 +125,8 @@ namespace OHOS::Webview {
 
         void RunJavaScript(std::string script, const std::function<void(RetDataCString)>& callbackRef);
 
+        void RunJavaScriptExt(std::string script, const std::function<void(RetDataI64)>& callbackRef);
+
         std::string GetUrl();
 
         std::string GetOriginalUrl();
@@ -136,6 +138,10 @@ namespace OHOS::Webview {
         void ScrollTo(float x, float y);
 
         void ScrollBy(float deltaX, float deltaY);
+
+        void ScrollToWithAnime(float x, float y, int32_t duration);
+
+        void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration);
 
         void Forward();
 
@@ -196,6 +202,14 @@ namespace OHOS::Webview {
         std::vector<std::string> CreateWebMessagePorts();
 
         ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
+
+        std::vector<uint8_t> SerializeWebState();
+
+        bool RestoreWebState(const std::vector<uint8_t> &state) const;
+
+        bool GetCertChainDerData(std::vector<std::string> &certChainDerData) const;
+
+        ErrCode HasImagesCallback(const std::function<void(RetDataBool)>& callbackRef);
 
     public:
         static std::string customeSchemeCmdLine_;

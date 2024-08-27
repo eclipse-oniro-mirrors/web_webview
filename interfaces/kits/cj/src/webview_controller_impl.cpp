@@ -17,6 +17,7 @@
 #include "webview_controller_impl.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_javascript_result_callback.h"
+#include "webview_hasimage_callback.h"
 #include "native_arkweb_utils.h"
 #include "native_interface_arkweb.h"
 #include "cj_common_ffi.h"
@@ -90,6 +91,9 @@ namespace OHOS::Webview {
     void NWebMessageCallbackImpl::OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result)
     {
         WEBVIEWLOGD("message port received msg");
+        if (result == nullptr) {
+            return;
+        }
         NWeb::NWebValue::Type type = result->GetType();
         if (type == NWeb::NWebValue::Type::STRING) {
             std::string msgStr = result->GetString();
@@ -309,6 +313,19 @@ namespace OHOS::Webview {
         nweb_ptr->ExecuteJavaScript(script, callbackImpl, false);
     }
 
+    void WebviewControllerImpl::RunJavaScriptExt(std::string script,
+        const std::function<void(RetDataI64)>& callbackRef)
+    {
+        RetDataI64 ret = { .code = NWebError::INIT_ERROR, .data = 0 };
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            callbackRef(ret);
+            return;
+        }
+        auto callbackImpl = std::make_shared<WebviewJavaScriptExtExecuteCallback>(callbackRef);
+        nweb_ptr->ExecuteJavaScript(script, callbackImpl, true);
+    }
+
     std::string WebviewControllerImpl::GetUrl()
     {
         std::string url = "";
@@ -361,6 +378,24 @@ namespace OHOS::Webview {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
         if (nweb_ptr) {
             nweb_ptr->ScrollBy(deltaX, deltaY);
+        }
+        return;
+    }
+
+    void WebviewControllerImpl::ScrollToWithAnime(float x, float y, int32_t duration)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->ScrollToWithAnime(x, y, duration);
+        }
+        return;
+    }
+
+    void WebviewControllerImpl::ScrollByWithAnime(float deltaX, float deltaY, int32_t duration)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->ScrollByWithAnime(deltaX, deltaY, duration);
         }
         return;
     }
@@ -859,6 +894,51 @@ namespace OHOS::Webview {
         }
 
         nweb_ptr->PostWebMessage(message, ports, targetUrl);
+        return NWebError::NO_ERROR;
+    }
+
+    std::vector<uint8_t> WebviewControllerImpl::SerializeWebState()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            return nweb_ptr->SerializeWebState();
+        }
+        std::vector<uint8_t> empty;
+        return empty;
+    }
+
+    bool WebviewControllerImpl::RestoreWebState(const std::vector<uint8_t> &state) const
+    {
+        bool isRestored = false;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            isRestored = nweb_ptr->RestoreWebState(state);
+        }
+        return isRestored;
+    }
+
+    bool WebviewControllerImpl::GetCertChainDerData(std::vector<std::string> &certChainDerData) const
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            WEBVIEWLOGE("GetCertChainDerData failed, nweb ptr is null");
+            return false;
+        }
+
+        return nweb_ptr->GetCertChainDerData(certChainDerData, true);
+    }
+
+    ErrCode WebviewControllerImpl::HasImagesCallback(const std::function<void(RetDataBool)>& callbackRef)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        if (callbackRef == nullptr) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        auto callbackImpl = std::make_shared<WebviewHasImageCallback>(callbackRef);
+        nweb_ptr->HasImages(callbackImpl);
         return NWebError::NO_ERROR;
     }
 }

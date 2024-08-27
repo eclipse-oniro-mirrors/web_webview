@@ -25,6 +25,15 @@
 
 namespace OHOS::Webview {
 
+enum class JsMessageType : int {
+    NOTSUPPORT = 0,
+    STRING,
+    NUMBER,
+    BOOLEAN,
+    ARRAYBUFFER,
+    ARRAY
+};
+
 class WebviewJavaScriptExecuteCallback :
     public OHOS::NWeb::NWebMessageValueCallback {
 public:
@@ -36,6 +45,39 @@ public:
 
 private:
     std::function<void(RetDataCString)> callbackRef_ = nullptr;
+};
+
+class WebJsMessageExtImpl : public OHOS::FFI::FFIData {
+    DECL_TYPE(WebJsMessageExtImpl, OHOS::FFI::FFIData)
+public:
+    explicit WebJsMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> value) : value_(value) {};
+    ~WebJsMessageExtImpl() = default;
+
+    int32_t ConvertToJsType(NWeb::NWebValue::Type type);
+    int32_t GetType();
+    std::string GetString();
+    double GetNumber();
+    bool GetBoolean();
+    std::shared_ptr<NWeb::NWebMessage> GetJsMsgResult()
+    {
+        return value_;
+    }
+
+private:
+    std::shared_ptr<NWeb::NWebMessage> value_ = nullptr;
+};
+
+class WebviewJavaScriptExtExecuteCallback :
+    public OHOS::NWeb::NWebMessageValueCallback {
+public:
+    explicit WebviewJavaScriptExtExecuteCallback(std::function<void(RetDataI64)> callbackRef)
+        : callbackRef_(callbackRef)
+    {}
+    ~WebviewJavaScriptExtExecuteCallback() = default;
+    void OnReceiveValue(std::shared_ptr<OHOS::NWeb::NWebMessage> result) override;
+
+private:
+    std::function<void(RetDataI64)> callbackRef_ = nullptr;
 };
 
 } // namespace OHOS::Webview
