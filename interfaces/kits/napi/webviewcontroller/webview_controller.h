@@ -21,7 +21,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "back_forward_cache_options.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"

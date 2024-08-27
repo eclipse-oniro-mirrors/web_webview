@@ -46,8 +46,6 @@
 #include "arkweb_scheme_handler.h"
 #include "web_scheme_handler_request.h"
 
-#include "back_forward_cache_options.h"
-
 namespace OHOS {
 namespace NWeb {
 using namespace NWebError;
@@ -65,6 +63,8 @@ constexpr double A4_HEIGHT = 11.0;
 constexpr double SCALE_MIN = 0.1;
 constexpr double SCALE_MAX = 2.0;
 constexpr double HALF = 2.0;
+constexpr size_t BFCACHE_DEFAULT_SIZE = 1;
+constexpr size_t BFCACHE_DEFAULT_TIMETOLIVE = 600;
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
 
 bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
@@ -5687,7 +5687,7 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("SetBackForwardCacheOptions: wrong number of params.");
+        WVLOG_E("EnalbeBackForwardCache: wrong number of params.");
         NWebHelper::Instance().EnableBackForwardCache(false, false);
         NAPI_CALL(env, napi_get_undefined(env, &result));
         return result;
@@ -5736,8 +5736,8 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
         return result;
     }
 
-    int32_t size = 1;
-    int32_t timeToLive = 600;
+    int32_t size = BFCACHE_DEFAULT_SIZE;
+    int32_t timeToLive = BFCACHE_DEFAULT_TIMETOLIVE;
     napi_value sizeObj = nullptr;
     napi_value timeToLiveObj = nullptr;
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &sizeObj) == napi_ok) {
