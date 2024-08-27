@@ -321,4 +321,9 @@ bool SystemPropertiesAdapterImpl::IsLTPODynamicApp(const std::string& bundleName
 {
     return NWebConfigHelper::Instance().IsLTPODynamicApp(bundleName);
 }
+
+int32_t SystemPropertiesAdapterImpl::GetLTPOStrategy()
+{
+    return NWebConfigHelper::Instance().GetLTPOStrategy();
+}
 } // namespace OHOS::NWeb

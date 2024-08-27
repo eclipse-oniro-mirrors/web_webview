@@ -156,4 +156,9 @@ bool ArkSystemPropertiesAdapterImpl::IsLTPODynamicApp(const ArkWebString& bundle
 {
     return real_.IsLTPODynamicApp(ArkWebStringStructToClass(bundleName));
 }
+
+int32_t ArkSystemPropertiesAdapterImpl::GetLTPOStrategy()
+{
+    return real_.GetLTPOStrategy();
+}
 } // namespace OHOS::ArkWeb

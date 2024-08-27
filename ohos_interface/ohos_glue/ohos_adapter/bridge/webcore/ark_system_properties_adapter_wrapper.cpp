@@ -220,4 +220,10 @@ bool ArkSystemPropertiesAdapterWrapper::IsLTPODynamicApp(const std::string& bund
     ArkWebStringStructRelease(ark_bundle_name);
     return result;
 }
+
+int32_t ArkSystemPropertiesAdapterWrapper::GetLTPOStrategy()
+{
+    int32_t result = ctocpp_->GetLTPOStrategy();
+    return result;
+}
 } // namespace OHOS::ArkWeb

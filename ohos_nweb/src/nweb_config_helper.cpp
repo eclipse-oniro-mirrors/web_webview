@@ -36,7 +36,8 @@ const std::string PERFORMANCE_CONFIG = "performanceConfig";
 // The config used in base/web/webview
 const std::string BASE_WEB_CONFIG = "baseWebConfig";
 const std::string WEB_ANIMATION_DYNAMIC_SETTING_CONFIG = "property_animation_dynamic_settings";
-const std::string WEB_ANIMATION_DYNAMIC_APP = "DYNAMIC_APPS";
+const std::string WEB_ANIMATION_DYNAMIC_APP = "dynamic_apps";
+const std::string WEB_LTPO_STRATEGY = "ltpo_strategy";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
@@ -275,7 +276,7 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
         }
     }
 
-    if (ltpoConfig_.empty()) {
+    if (ltpoConfig_.empty() && ltpoStrategy_ == 0) {
         xmlNodePtr ltpoConfigNodePtr = GetChildrenNode(rootPtr, WEB_ANIMATION_DYNAMIC_SETTING_CONFIG);
         if (ltpoConfigNodePtr != nullptr) {
             ParseNWebLTPOConfig(ltpoConfigNodePtr);
@@ -299,6 +300,10 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
         std::string settingName = (char *)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
         if (settingName == WEB_ANIMATION_DYNAMIC_APP) {
             ParseNWebLTPOApp(curNodePtr);
+            continue;
+        }
+        if (settingName == WEB_LTPO_STRATEGY) {
+            ParseNWebLTPOStrategy(curNodePtr);
             continue;
         }
         std::vector<FrameRateSetting> frameRateSetting;
@@ -335,9 +340,20 @@ void NWebConfigHelper::ParseNWebLTPOApp(xmlNodePtr nodePtr)
     }
 }
 
+void NWebConfigHelper::ParseNWebLTPOStrategy(xmlNodePtr nodePtr)
+{
+    ltpoStrategy_ = atoi((char *)xmlNodeGetContent(nodePtr));
+    WVLOG_D("ltpo strategy is: %{public}d", ltpoStrategy_);
+}
+
 bool NWebConfigHelper::IsLTPODynamicApp(const std::string& bundleName)
 {
     return ltpoAllowedApps_.find(bundleName) != ltpoAllowedApps_.end();
+}
+
+int32_t NWebConfigHelper::GetLTPOStrategy()
+{
+    return ltpoStrategy_;
 }
 
 std::vector<FrameRateSetting> NWebConfigHelper::GetPerfConfig(const std::string& settingName)
