@@ -69,8 +69,7 @@ void WindowAdapterImpl::NativeWindowSurfaceCleanCacheWithPara(NWebNativeWindow w
         WVLOG_D("window or surface is null, no need to clean surface cache");
         return;
     }
-    WVLOG_D("NativeWindowSurfaceCleanCacheWithPara, surface uniqueID: %{public}llu",
-                nativeWindow->surface->GetUniqueId());
+    WVLOG_D("NativeWindowSurfaceCleanCacheWithPara");
 
     // eglDestroySurface has disconnected the surface link
     GSError ret = nativeWindow->surface->Connect();
