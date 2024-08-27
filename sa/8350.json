@@ -8,7 +8,6 @@
             "auto-restart": true,
             "distributed": false,
             "dump-level": 1,
-            "recycle-strategy": "low-memory",
             "start-on-demand": {
                 "commonevent": [{
                     "name": "usual.event.PACKAGE_CHANGED"
