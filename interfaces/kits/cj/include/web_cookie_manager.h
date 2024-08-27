@@ -17,6 +17,7 @@
 #define WEB_COOKIE_MANAGER_H
 
 #include <string>
+#include "nweb_value_callback.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -34,6 +35,17 @@ public:
     static bool CjExistCookie(bool incognitoMode);
     static void CjDeleteEntireCookie(bool incognitoMode);
     static void CjDeleteSessionCookie();
+    static void CjSaveCookie(void (*callbackRef)(void));
+};
+
+class NWebSaveCookieCallbackImpl : public NWebBoolValueCallback {
+public:
+    NWebSaveCookieCallbackImpl(std::function<void(void)> callback) : callback_(callback) {}
+    ~NWebSaveCookieCallbackImpl() = default;
+
+    void OnReceiveValue(bool result) override;
+private:
+    std::function<void(void)> callback_;
 };
 }
 }

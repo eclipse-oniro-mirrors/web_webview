@@ -18,10 +18,12 @@
 #include <regex>
 
 #include "webview_controller_impl.h"
+#include "webview_function.h"
 #include "web_download_item_impl.h"
 #include "web_download_delegate_impl.h"
 #include "web_download_manager_impl.h"
 #include "webview_utils.h"
+#include "webview_javascript_execute_callback.h"
 #include "nweb_helper.h"
 #include "nweb_init_params.h"
 #include "web_errors.h"
@@ -49,6 +51,11 @@ constexpr int INTEGER_TWO = 2;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 
 extern "C" {
+    int32_t FfiOHOSWebviewOnce(char* type, void (*callbackRef)(void))
+    {
+        return FfiOnce(type, callbackRef);
+    }
+
     int64_t FfiOHOSWebviewCtlConstructor()
     {
         auto nativeWebviewCtl = FFIData::Create<WebviewControllerImpl>();
@@ -325,6 +332,32 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
+    int32_t FfiOHOSWebviewCtlRunJavaScriptExt(int64_t id, char* cScript,
+        void (*callbackRef)(RetDataI64))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        std::string script = std::string(cScript);
+        auto onChange = CJLambda::Create(callbackRef);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->RunJavaScriptExt(script, onChange);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlRunJavaScriptExtArr(int64_t id, CArrUI8 cScript,
+        void (*callbackRef)(RetDataI64))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        std::string script = std::string(reinterpret_cast<char*>(cScript.head), cScript.size);
+        auto onChange = CJLambda::Create(callbackRef);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->RunJavaScriptExt(script, onChange);
+        return NWebError::NO_ERROR;
+    }
+
     int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxy(int64_t id,
         CArrI64 cFuncIds,  const char* cName, CArrString cMethodList)
     {
@@ -448,6 +481,11 @@ extern "C" {
         return OHOS::NWeb::WebCookieManager::CjDeleteSessionCookie();
     }
 
+    void FfiOHOSCookieMgrSaveCookieAsync(void (*callbackRef)(void))
+    {
+        return OHOS::NWeb::WebCookieManager::CjSaveCookie(callbackRef);
+    }
+
     int32_t FfiOHOSWebviewCtlScrollTo(int64_t id, float x, float y)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
@@ -465,6 +503,34 @@ extern "C" {
             return NWebError::INIT_ERROR;
         }
         nativeWebviewCtl->ScrollBy(deltaX, deltaY);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlScrollToWithAnime(int64_t id, float x, float y, int32_t duration)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        if (duration > 0) {
+            nativeWebviewCtl->ScrollToWithAnime(x, y, duration);
+        } else {
+            nativeWebviewCtl->ScrollTo(x, y);
+        }
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlScrollByWithAnime(int64_t id, float deltaX, float deltaY, int32_t duration)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        if (duration > 0) {
+            nativeWebviewCtl->ScrollByWithAnime(deltaX, deltaY, duration);
+        } else {
+            nativeWebviewCtl->ScrollBy(deltaX, deltaY);
+        }
         return NWebError::NO_ERROR;
     }
 
@@ -869,6 +935,68 @@ extern "C" {
         }
         nativeWebviewCtl->PostWebMessage(portName, sendPorts, urlStr);
         return NWebError::NO_ERROR;
+    }
+
+    CArrUI8 FfiOHOSWebviewCtlSerializeWebState(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return CArrUI8{nullptr, 0};
+        }
+        std::vector<uint8_t> webState = nativeWebviewCtl->SerializeWebState();
+        uint8_t* result = VectorToCArrUI8(webState);
+        if (result == nullptr) {
+            WEBVIEWLOGE("FfiOHOSWebviewCtlSerializeWebStatee malloc failed");
+            *errCode = NWebError::NEW_OOM;
+            return CArrUI8{nullptr, 0};
+        }
+        *errCode = NWebError::NO_ERROR;
+        return CArrUI8{result, webState.size()};
+    }
+
+    int32_t FfiOHOSWebviewCtlRestoreWebState(int64_t id, CArrUI8 cState)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        std::vector<uint8_t> state(cState.head, cState.head + cState.size);
+        nativeWebviewCtl->RestoreWebState(state);
+        return NWebError::NO_ERROR;
+    }
+
+    CArrString FfiOHOSWebviewCtlGetCertificate(int64_t id, int32_t *errCode)
+    {
+        CArrString arrCertificate = {.head = nullptr, .size = 0};
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return arrCertificate;
+        }
+        std::vector<std::string> certChainDerData;
+        bool ans = nativeWebviewCtl->GetCertChainDerData(certChainDerData);
+        if (!ans) {
+            WEBVIEWLOGE("get cert chain data failed");
+            return arrCertificate;
+        }
+        if (certChainDerData.size() > UINT8_MAX) {
+            WEBVIEWLOGE("error, cert chain data array reach max");
+            return arrCertificate;
+        }
+        *errCode = NWebError::NO_ERROR;
+        arrCertificate.size = static_cast<int64_t>(certChainDerData.size());
+        arrCertificate.head = OHOS::Webview::VectorToCArrString(certChainDerData);
+        return arrCertificate;
+    }
+
+    int32_t FfiOHOSWebviewCtlHasImage(int64_t id, void (*callbackRef)(RetDataBool))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        return nativeWebviewCtl->HasImagesCallback(CJLambda::Create(callbackRef));
     }
 
     // BackForwardList
@@ -1620,7 +1748,7 @@ extern "C" {
         if (errCode && *errCode != 0) {
             return arrOrigins;
         }
-        arrOrigins.size = (int64_t)origins.size();
+        arrOrigins.size = static_cast<int64_t>(origins.size());
         arrOrigins.head = OHOS::Webview::VectorToCArrString(origins);
         return arrOrigins;
     }
@@ -1628,389 +1756,6 @@ extern "C" {
     void FfiOHOSGeolocationDeleteAllGeolocation(bool incognito, int32_t *errCode)
     {
         return GeolocationPermission::CjDeleteAllGeolocation(incognito, errCode);
-    }
-
-    // WebMessagePort
-    void FfiOHOSWebMessagePortPostMessageEvent(int64_t msgPortId, char* stringValue, int32_t *errCode)
-    {
-        WEBVIEWLOGD("message port post message");
-        auto webMsg = std::make_shared<OHOS::NWeb::NWebMessage>(NWebValue::Type::NONE);
-        std::string message(stringValue);
-        webMsg->SetType(NWebValue::Type::STRING);
-        webMsg->SetString(message);
-        WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(msgPortId);
-        if (msgPort == nullptr) {
-            WEBVIEWLOGE("post message failed, ffi unwrap msg port failed");
-            *errCode = NWebError::CAN_NOT_POST_MESSAGE;
-            return;
-        }
-        *errCode = msgPort->PostPortMessage(webMsg);
-        return;
-    }
-
-    void FfiOHOSWebMessagePortPostMessageEventArr(int64_t msgPortId, CArrUI8 arrBuf, int32_t *errCode)
-    {
-        WEBVIEWLOGD("message port post message");
-        auto webMsg = std::make_shared<OHOS::NWeb::NWebMessage>(NWebValue::Type::NONE);
-        std::vector<uint8_t> vecData(arrBuf.head, arrBuf.head + arrBuf.size);
-        webMsg->SetType(NWebValue::Type::BINARY);
-        webMsg->SetBinary(vecData);
-        WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(msgPortId);
-        if (msgPort == nullptr) {
-            WEBVIEWLOGE("post message failed, ffi unwrap msg port failed");
-            *errCode = NWebError::CAN_NOT_POST_MESSAGE;
-            return;
-        }
-        *errCode = msgPort->PostPortMessage(webMsg);
-        return;
-    }
-
-    void FfiOHOSWebMessagePortPostMessageEventExt(int64_t msgPortId, int64_t msgExtId, int32_t *errCode)
-    {
-        WEBVIEWLOGD("message PostMessageEventExt start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessagePortPostMessageEventExt error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(msgPortId);
-        if (msgPort == nullptr) {
-            WEBVIEWLOGE("post message failed, ffi unwrap msg port failed");
-            *errCode = NWebError::CAN_NOT_POST_MESSAGE;
-            return;
-        }
-        if (!msgPort->IsExtentionType()) {
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        *errCode = msgPort->PostPortMessage(webMessageExt->GetData());
-        return;
-    }
-
-    bool FfiOHOSWebMessagePortIsExtentionType(int64_t msgPortId)
-    {
-        WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(msgPortId);
-        if (msgPort == nullptr) {
-            WEBVIEWLOGE("post message failed, ffi unwrap msg port failed");
-            return false;
-        }
-        return msgPort->IsExtentionType();
-    }
-
-    void FfiOHOSWebMessagePortOnMessageEvent(int64_t msgPortId, void (*callback)(RetWebMessage), int32_t *errCode)
-    {
-        WEBVIEWLOGD("message port set OnMessageEvent callback");
-        std::function<void(RetWebMessage)> onMsgEventFunc = CJLambda::Create(callback);
-        auto callbackImpl = std::make_shared<NWebMessageCallbackImpl>(onMsgEventFunc);
-        WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(msgPortId);
-        if (msgPort == nullptr) {
-            WEBVIEWLOGE("post message failed, ffi unwrap msg port failed");
-            *errCode = NWebError::CAN_NOT_REGISTER_MESSAGE_EVENT;
-            return;
-        }
-        *errCode = msgPort->SetPortMessageCallback(callbackImpl);
-        return;
-    }
-
-    void FfiOHOSWebMessagePortOnMessageEventExt(int64_t msgPortId, void (*callback)(int64_t), int32_t *errCode)
-    {
-        WEBVIEWLOGD("message port set OnMessageEventExt callback");
-        std::function<void(int64_t)> onMsgEventFunc = CJLambda::Create(callback);
-        auto callbackImpl = std::make_shared<NWebWebMessageExtCallbackImpl>(onMsgEventFunc);
-        WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(msgPortId);
-        if (msgPort == nullptr) {
-            WEBVIEWLOGE("post message failed, ffi unwrap msg port failed");
-            *errCode = NWebError::CAN_NOT_REGISTER_MESSAGE_EVENT;
-            return;
-        }
-        *errCode = msgPort->SetPortMessageCallback(callbackImpl);
-        return;
-    }
-
-    void FfiOHOSWebMessagePortClose(int64_t msgPortId, int32_t *errCode)
-    {
-        WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(msgPortId);
-        if (msgPort == nullptr) {
-            WEBVIEWLOGE("close message failed, ffi unwrap msg port failed");
-            return;
-        }
-        *errCode = msgPort->ClosePort();
-        return;
-    }
-
-    // WebMessageExt
-    int64_t FfiOHOSWebMessageExtImplConstructor()
-    {
-        auto webMsg = std::make_shared<OHOS::NWeb::NWebMessage>(NWebValue::Type::NONE);
-        WebMessageExtImpl* nativeWebMessageExtImpl = FFIData::Create<WebMessageExtImpl>(webMsg);
-        if (nativeWebMessageExtImpl == nullptr) {
-            WEBVIEWLOGE("new webMessageExt failed");
-            return -1;
-        }
-        return nativeWebMessageExtImpl->GetID();
-    }
-
-    int32_t FfiOHOSWebMessageExtImplGetType(int64_t msgExtId, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplGetType::GetType start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetType::GetType error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return -1;
-        }
-        int32_t type = webMessageExt->GetType();
-        *errCode = NWebError::NO_ERROR;
-        return type;
-    }
-
-    char* FfiOHOSWebMessageExtImplGetString(int64_t msgExtId, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplGetString::GetString start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetString::GetString error");
-            *errCode = NWebError::INIT_ERROR;
-            return nullptr;
-        }
-
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::STRING)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return nullptr;
-        }
-        auto data = webMessageExt->GetData();
-        if (data == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetString::GetString error");
-            *errCode = NWebError::INIT_ERROR;
-            return nullptr;
-        }
-        std::string msgStr = data->GetString();
-        *errCode = NWebError::NO_ERROR;
-        return MallocCString(msgStr);
-    }
-
-    RetNumber FfiOHOSWebMessageExtImplGetNumber(int64_t msgExtId, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplGetNumber::GetNumber start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        RetNumber ret = { .numberInt = 0, .numberDouble = 0.0 };
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetNumber::GetNumber error");
-            *errCode = NWebError::INIT_ERROR;
-            return ret;
-        }
-
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::NUMBER)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return ret;
-        }
-        auto data = webMessageExt->GetData();
-        if (data == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetNumber::GetNumber error");
-            *errCode = NWebError::INIT_ERROR;
-            return ret;
-        }
-        if (data->GetType() == NWebValue::Type::INTEGER) {
-            ret.numberInt = data->GetInt64();
-        } else {
-            ret.numberDouble = data->GetDouble();
-        }
-        return ret;
-    }
-
-    bool FfiOHOSWebMessageExtImplGetBoolean(int64_t msgExtId, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplGetBoolean::GetBoolean start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetBoolean::GetBoolean error");
-            *errCode = NWebError::INIT_ERROR;
-            return false;
-        }
-
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::BOOLEAN)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return false;
-        }
-        auto data = webMessageExt->GetData();
-        if (data == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetBoolean::GetBoolean error");
-            *errCode = NWebError::INIT_ERROR;
-            return false;
-        }
-        double boolean = data->GetBoolean();
-        *errCode = NWebError::NO_ERROR;
-        return boolean;
-    }
-
-    CArrUI8 FfiOHOSWebMessageExtImplGetArrayBuffer(int64_t msgExtId, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplGetArrayBuffer::GetArrayBuffer start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetArrayBuffer::GetArrayBuffer error");
-            *errCode = NWebError::INIT_ERROR;
-            return CArrUI8{nullptr, 0};
-        }
-
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ARRAYBUFFER)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return CArrUI8{nullptr, 0};
-        }
-        auto data = webMessageExt->GetData();
-        if (data == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetArrayBuffer::GetArrayBuffer error");
-            *errCode = NWebError::INIT_ERROR;
-            return CArrUI8{nullptr, 0};
-        }
-        std::vector<uint8_t> msgArr = data->GetBinary();
-        uint8_t* result = VectorToCArrUI8(msgArr);
-        if (result == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetArrayBuffer malloc failed");
-            *errCode = NWebError::NEW_OOM;
-            return CArrUI8{nullptr, 0};
-        }
-        *errCode = NWebError::NO_ERROR;
-        return CArrUI8{result, msgArr.size()};
-    }
-
-    CError FfiOHOSWebMessageExtImplGetError(int64_t msgExtId, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplGetError::GetError start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        auto err = CError{.errorName = nullptr, .errorMsg = nullptr};
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetError::GetError error");
-            *errCode = NWebError::INIT_ERROR;
-            return err;
-        }
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ERROR)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return err;
-        }
-        auto data = webMessageExt->GetData();
-        if (data == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetError::GetError error");
-            *errCode = NWebError::INIT_ERROR;
-            return err;
-        }
-        *errCode = NWebError::NO_ERROR;
-        std::string errorName = data->GetErrName();
-        std::string errorMsg = data->GetErrName() + ": " + data->GetErrMsg();
-        err.errorName = MallocCString(errorName);
-        err.errorMsg = MallocCString(errorMsg);
-        return err;
-    }
-
-    void FfiOHOSWebMessageExtImplSetType(int64_t msgExtId, int32_t type, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplSetType::SetType");
-        if (type <= static_cast<int>(WebMessageType::NOTSUPPORT) || type > static_cast<int>(WebMessageType::ERROR)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return;
-        }
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetArrayBuffer::GetArrayBuffer error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        webMessageExt->SetType(type);
-        *errCode = NWebError::NO_ERROR;
-        return;
-    }
-
-    void FfiOHOSWebMessageExtImplSetString(int64_t msgExtId, char* message, int32_t *errCode)
-    {
-        WEBVIEWLOGD("FfiOHOSWebMessageExtImplSetString::SetString start");
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetString::SetString error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::STRING)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return ;
-        }
-        std::string value = std::string(message);
-        webMessageExt->SetString(value);
-        *errCode = NWebError::NO_ERROR;
-        return;
-    }
-
-    void FfiOHOSWebMessageExtImplSetNumber(int64_t msgExtId, double value, int32_t *errCode)
-    {
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetNumber::SetNumber error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::NUMBER)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return;
-        }
-        webMessageExt->SetNumber(value);
-        *errCode = NWebError::NO_ERROR;
-        return;
-    }
-
-    void FfiOHOSWebMessageExtImplSetBoolean(int64_t msgExtId, bool value, int32_t *errCode)
-    {
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetBoolean::SetBoolean error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::BOOLEAN)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return;
-        }
-        webMessageExt->SetBoolean(value);
-        *errCode = NWebError::NO_ERROR;
-        return;
-    }
-
-    void FfiOHOSWebMessageExtImplSetArrayBuffer(int64_t msgExtId, CArrUI8 value, int32_t *errCode)
-    {
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplSetArrayBuffer::SetArrayBuffer error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ARRAYBUFFER)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return;
-        }
-        uint8_t *arrBuf = value.head;
-        size_t byteLength = value.size;
-        std::vector<uint8_t> vecData(arrBuf, arrBuf + byteLength);
-        webMessageExt->SetArrayBuffer(vecData);
-        *errCode = NWebError::NO_ERROR;
-        return;
-    }
-
-    void FfiOHOSWebMessageExtImplSetError(int64_t msgExtId, OHOS::Webview::CError value, int32_t *errCode)
-    {
-        WebMessageExtImpl* webMessageExt = FFIData::GetData<WebMessageExtImpl>(msgExtId);
-        if (webMessageExt == nullptr) {
-            WEBVIEWLOGE("FfiOHOSWebMessageExtImplGetError::GetError error");
-            *errCode = NWebError::PARAM_CHECK_ERROR;
-            return;
-        }
-        if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::ERROR)) {
-            *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return;
-        }
-        std::string nameVal = std::string(value.errorName);
-        std::string msgVal = std::string(value.errorMsg);
-        *errCode = NWebError::NO_ERROR;
-        webMessageExt->SetError(nameVal, msgVal);
-        return;
     }
 }
 }

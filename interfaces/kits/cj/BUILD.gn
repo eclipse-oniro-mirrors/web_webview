@@ -44,8 +44,11 @@ ohos_shared_library("cj_webview_ffi") {
       "src/web_download_manager_impl.cpp",
       "src/webview_controller_impl.cpp",
       "src/webview_ffi.cpp",
+      "src/webview_function.cpp",
+      "src/webview_hasimage_callback.cpp",
       "src/webview_javascript_execute_callback.cpp",
       "src/webview_javascript_result_callback.cpp",
+      "src/webview_message_ffi.cpp",
       "src/webview_utils.cpp",
     ]
 
