@@ -350,5 +350,29 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetResourceString_006,
     result = adapterImpl.GetResourceString("test", "web/webtest", 1, res);
     EXPECT_FALSE(result);
 }
+
+/**
+ * @tc.name: OhosResourceAdapterTest_GetSystemLanguage_007
+ * @tc.desc: GetSystemLanguage.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetSystemLanguage_007, TestSize.Level1)
+{
+    std::string hapPath = "";
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_1;
+    }
+    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_MODULE_UPDATE;
+    }
+
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    std::string res = adapterImpl.GetSystemLanguage();
+    EXPECT_FALSE(res.empty());
+}
 }
 } // namespace NWeb
