@@ -70,6 +70,8 @@ public:
     std::string GetOOPGPUStatus() override;
 
     bool IsLTPODynamicApp(const std::string& bundleName) override;
+
+    int32_t GetLTPOStrategy() override;
 private:
     ArkWebRefPtr<ArkSystemPropertiesAdapter> ctocpp_;
 };
