@@ -95,6 +95,12 @@ public:
 
     /*--ark web()--*/
     virtual int32_t GetLTPOStrategy() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetUserAgentOSVersion() = 0;
+    
+    /*--ark web()--*/
+    virtual ArkWebString GetUserAgentBaseOSName() = 0;
 };
 
 } // namespace OHOS::ArkWeb
