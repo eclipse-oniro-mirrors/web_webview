@@ -101,6 +101,12 @@ HWTEST(HiViewDFXAdapterTest, NormalScene_01, TestSize.Level1)
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartOHOSTrace("test");
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountOHOSTrace("test", 1);
     OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishOHOSTrace();
+    val = (1ULL << 39);
+    value = std::to_string(val);
+    OHOS::system::SetParameter("debug.hitrace.tags.enableflags", value);
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().StartOHOSTrace("test");
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().CountOHOSTrace("test", 1);
+    OhosAdapterHelper::GetInstance().GetHiTraceAdapterInstance().FinishOHOSTrace();
     HiTraceAdapterImpl::GetInstance().IsACETraceEnable();
     EventReport::ReportCreateWebInstanceTime(1, 1);
 }
