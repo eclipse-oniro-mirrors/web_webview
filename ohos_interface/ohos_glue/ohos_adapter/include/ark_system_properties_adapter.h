@@ -92,6 +92,9 @@ public:
 
     /*--ark web()--*/
     virtual bool IsLTPODynamicApp(const ArkWebString& bundleName) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetLTPOStrategy() = 0;
 };
 
 } // namespace OHOS::ArkWeb
