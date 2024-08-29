@@ -18,8 +18,13 @@
 #include "nweb_helper.h"
 #include "nweb_web_storage.h"
 
+using namespace OHOS::Webview;
+
 namespace OHOS {
 namespace NWeb {
+constexpr int32_t INTERFACE_ERROR = -1;
+constexpr int32_t INTERFACE_OK = 0;
+
 int32_t WebStorage::CJdeleteOrigin(const std::string &origin)
 {
     int32_t errCode = NWebError::NO_ERROR;
@@ -40,6 +45,64 @@ void WebStorage::CJdeleteAllData(bool incognito)
     if (web_storage) {
         web_storage->DeleteAllData(incognito);
     }
+}
+
+int64_t WebStorage::CjGetOriginUsageOrQuota(const std::string &origin, int32_t *errCode, bool isQuata)
+{
+    std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
+    if (!web_storage) {
+        *errCode = INTERFACE_ERROR;
+        return 0;
+    }
+    if (isQuata) {
+        auto ret = static_cast<uint32_t>(web_storage->GetOriginQuota(origin));
+        if (ret != INTERFACE_ERROR && ret != NWebError::INVALID_ORIGIN) {
+            *errCode = INTERFACE_OK;
+        } else {
+            *errCode = ret;
+        }
+        return ret;
+    } else {
+        auto ret = static_cast<uint32_t>(web_storage->GetOriginUsage(origin));
+        if (ret != INTERFACE_ERROR && ret != NWebError::INVALID_ORIGIN) {
+            *errCode = INTERFACE_OK;
+        } else {
+            *errCode = ret;
+        }
+        return ret;
+    }
+}
+
+CArrWebStorageOrigin WebStorage::CjGetOrigins(int32_t *errCode)
+{
+    auto ret = CArrWebStorageOrigin { .cWebStorageOrigin = nullptr, .size = 0 };
+    std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
+    if (!web_storage) {
+        *errCode = INTERFACE_ERROR;
+        return ret;
+    }
+    std::vector<std::shared_ptr<NWebWebStorageOrigin>> origins = web_storage->GetOrigins();
+    if (origins.empty()) {
+        *errCode = NWebError::NO_WEBSTORAGE_ORIGIN;
+        return ret;
+    }
+    CWebStorageOrigin* head = static_cast<CWebStorageOrigin*>(malloc(sizeof(CWebStorageOrigin) * origins.size()));
+    if (head == nullptr) {
+        *errCode = NWebError::NEW_OOM;
+        return ret;
+    }
+    int32_t i = 0;
+    for (auto origin : origins) {
+        Webview::CWebStorageOrigin ffiOrigin;
+        ffiOrigin.origin = MallocCString(origin->GetOrigin());
+        ffiOrigin.quota = static_cast<uint32_t>(origin->GetQuota());
+        ffiOrigin.usage = static_cast<uint32_t>(origin->GetUsage());
+        head[i] = ffiOrigin;
+        i++;
+    }
+    ret.cWebStorageOrigin = head;
+    ret.size = origins.size();
+    return ret;
 }
 }
 }

@@ -104,6 +104,7 @@ extern "C" {
     FFI_EXPORT int32_t FfiOHOSWebviewCtlRestoreWebState(int64_t id, CArrUI8 cState);
     FFI_EXPORT CArrString FfiOHOSWebviewCtlGetCertificate(int64_t id, int32_t *errCode);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlHasImage(int64_t id, void (*callbackRef)(RetDataBool));
+    FFI_EXPORT int32_t FfiWebviewCtlCustomizeSchemes(OHOS::Webview::CArrScheme schemes);
 
     // BackForwardList
     FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t *errCode);
@@ -170,8 +171,11 @@ extern "C" {
     FFI_EXPORT void FfiOHOSGeolocationDeleteAllGeolocation(bool incognito, int32_t *errCode);
 
     // web_storage
-    FFI_EXPORT int32_t FfiOHOSWebStorageDeleteOrigin(char *corigin);
-    FFI_EXPORT void FfiOHOSWebStorageDeleteAllData(bool incognito = false);
+    FFI_EXPORT int32_t FfiWebStorageDeleteOrigin(char* corigin);
+    FFI_EXPORT void FfiWebStorageDeleteAllData(bool incognito = false);
+    FFI_EXPORT int64_t FfiWebStorageGetOriginQuota(char* corigin, int32_t *errCode);
+    FFI_EXPORT int64_t FfiWebStorageGetOriginUsage(char* corigin, int32_t *errCode);
+    FFI_EXPORT OHOS::Webview::CArrWebStorageOrigin FfiWebStorageGetOrigins(int32_t *errCode);
 }
 
 #endif // WEBVIEW_FFI_H
