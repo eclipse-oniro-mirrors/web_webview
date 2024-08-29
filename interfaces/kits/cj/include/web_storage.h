@@ -17,16 +17,19 @@
 #define WEB_STORAGE_H
 
 #include <string>
+#include "webview_utils.h"
 
 namespace OHOS {
 namespace NWeb {
 
 class WebStorage {
-    public:
-        WebStorage() {}
-        ~WebStorage() = default;
-        static int32_t CJdeleteOrigin(const std::string &origin);
-        static void CJdeleteAllData(bool incognito = false);
+public:
+    WebStorage() {}
+    ~WebStorage() = default;
+    static int32_t CJdeleteOrigin(const std::string &origin);
+    static void CJdeleteAllData(bool incognito = false);
+    static int64_t CjGetOriginUsageOrQuota(const std::string &origin, int32_t *errCode, bool isQuata);
+    static Webview::CArrWebStorageOrigin CjGetOrigins(int32_t *errCode);
 };
 }
 }

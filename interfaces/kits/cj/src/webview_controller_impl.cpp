@@ -28,8 +28,11 @@
 #include <nweb_helper.h>
 #include "web_errors.h"
 #include "ffi_remote_data.h"
+#include "arkweb_scheme_handler.h"
 
 namespace OHOS::Webview {
+    constexpr int MAX_CUSTOM_SCHEME_SIZE = 10;
+    constexpr int MAX_CUSTOM_SCHEME_NAME_LENGTH = 32;
     std::unordered_map<int32_t, WebviewControllerImpl*> g_webview_controller_map;
     std::string WebviewControllerImpl::customeSchemeCmdLine_ = "";
     bool WebviewControllerImpl::existNweb_ = false;
@@ -939,6 +942,86 @@ namespace OHOS::Webview {
         }
         auto callbackImpl = std::make_shared<WebviewHasImageCallback>(callbackRef);
         nweb_ptr->HasImages(callbackImpl);
+        return NWebError::NO_ERROR;
+    }
+
+    bool CheckSchemeName(const std::string& schemeName)
+    {
+        if (schemeName.empty() || schemeName.size() > MAX_CUSTOM_SCHEME_NAME_LENGTH) {
+            WEBVIEWLOGE("Invalid scheme name length");
+            return false;
+        }
+        for (auto it = schemeName.begin(); it != schemeName.end(); it++) {
+            char chr = *it;
+            if (!((chr >= 'a' && chr <= 'z') || (chr >= '0' && chr <= '9') ||
+                (chr == '.') || (chr == '+') || (chr == '-'))) {
+                WEBVIEWLOGE("invalid character %{public}c", chr);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    void SetCustomizeSchemeOption(Scheme& scheme)
+    {
+        std::map<int, std::function<bool(const Scheme&)>> schemeProperties = {
+            {0, [](const Scheme& scheme) { return scheme.isStandard; }},
+            {1, [](const Scheme& scheme) { return scheme.isLocal; }},
+            {2, [](const Scheme& scheme) { return scheme.isDisplayIsolated; }},
+            {3, [](const Scheme& scheme) { return scheme.isSecure; }},
+            {4, [](const Scheme& scheme) { return scheme.isSupportCORS; }},
+            {5, [](const Scheme& scheme) { return scheme.isCspBypassing; }},
+            {6, [](const Scheme& scheme) { return scheme.isSupportFetch; }},
+            {7, [](const Scheme& scheme) { return scheme.isCodeCacheSupported; }}
+        };
+
+        for (const auto& property : schemeProperties) {
+            if (property.second(scheme)) {
+                scheme.option += 1 << property.first;
+            }
+        }
+    }
+    
+    bool SetCustomizeScheme(CScheme cscheme, Scheme& scheme)
+    {
+        scheme.isSupportCORS = cscheme.isSupportCORS;
+        scheme.isSupportFetch = cscheme.isSupportFetch;
+        scheme.isStandard = cscheme.isStandard;
+        scheme.isLocal = cscheme.isLocal;
+        scheme.isDisplayIsolated = cscheme.isDisplayIsolated;
+        scheme.isSecure = cscheme.isSecure;
+        scheme.isCspBypassing = cscheme.isCspBypassing;
+        scheme.isCodeCacheSupported = cscheme.isCodeCacheSupported;
+        scheme.name = std::string(cscheme.name);
+        if (!CheckSchemeName(scheme.name)) {
+            return false;
+        }
+        SetCustomizeSchemeOption(scheme);
+        return true;
+    }
+    
+    int32_t WebviewControllerImpl::CustomizeSchemesArrayDataHandler(CArrScheme schemes)
+    {
+        uint32_t arrayLength = schemes.size;
+        if (arrayLength > MAX_CUSTOM_SCHEME_SIZE) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        std::vector<Scheme> schemeVector;
+        for (uint32_t i = 0; i < arrayLength; ++i) {
+            Scheme scheme;
+            bool result = SetCustomizeScheme(schemes.cScheme[i], scheme);
+            if (!result) {
+                return NWebError::PARAM_CHECK_ERROR;
+            }
+            schemeVector.push_back(scheme);
+        }
+        int32_t registerResult;
+        for (auto it = schemeVector.begin(); it != schemeVector.end(); ++it) {
+            registerResult = OH_ArkWeb_RegisterCustomSchemes(it->name.c_str(), it->option);
+            if (registerResult != NO_ERROR) {
+                return registerResult;
+            }
+        }
         return NWebError::NO_ERROR;
     }
 }

@@ -1000,6 +1000,11 @@ extern "C" {
         return nativeWebviewCtl->HasImagesCallback(CJLambda::Create(callbackRef));
     }
 
+    int32_t FfiWebviewCtlCustomizeSchemes(OHOS::Webview::CArrScheme schemes)
+    {
+        return WebviewControllerImpl::CustomizeSchemesArrayDataHandler(schemes);
+    }
+
     // BackForwardList
     int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t *errCode)
     {
@@ -1611,7 +1616,7 @@ extern "C" {
 
     int64_t FfiOHOSWebDownloadItemImplDeserialize(CArrUI8 serializedData, int32_t *errCode)
     {
-        char *buffer = (char *)serializedData.head;
+        char *buffer = reinterpret_cast<char*>(serializedData.head);
         browser_service::WebDownload webDownloadPb;
         bool result = webDownloadPb.ParseFromArray(buffer, serializedData.size);
         if (!result) {
@@ -1760,15 +1765,32 @@ extern "C" {
     }
 
     // web_storage
-    int32_t FfiOHOSWebStorageDeleteOrigin(char *corigin)
+    int32_t FfiWebStorageDeleteOrigin(char *corigin)
     {
         std::string origin(corigin);
         return OHOS::NWeb::WebStorage::CJdeleteOrigin(origin);
     }
 
-    void FfiOHOSWebStorageDeleteAllData(bool incognito)
+    void FfiWebStorageDeleteAllData(bool incognito)
     {
         OHOS::NWeb::WebStorage::CJdeleteAllData(incognito);
+    }
+
+    int64_t FfiWebStorageGetOriginQuota(char* corigin, int32_t *errCode)
+    {
+        std::string origin(corigin);
+        return OHOS::NWeb::WebStorage::CjGetOriginUsageOrQuota(origin, errCode, true);
+    }
+
+    int64_t FfiWebStorageGetOriginUsage(char* corigin, int32_t *errCode)
+    {
+        std::string origin(corigin);
+        return OHOS::NWeb::WebStorage::CjGetOriginUsageOrQuota(origin, errCode, false);
+    }
+
+    CArrWebStorageOrigin FfiWebStorageGetOrigins(int32_t *errCode)
+    {
+        return OHOS::NWeb::WebStorage::CjGetOrigins(errCode);
     }
 }
 }

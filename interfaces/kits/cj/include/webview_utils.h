@@ -81,6 +81,47 @@ namespace Webview {
         int64_t size;
     };
 
+    struct CWebStorageOrigin {
+        char* origin;
+        int64_t quota;
+        int64_t usage;
+    };
+
+    struct CArrWebStorageOrigin {
+        CWebStorageOrigin* cWebStorageOrigin;
+        int64_t size;
+    };
+
+    struct CScheme {
+        char* name;
+        bool isSupportCORS;
+        bool isSupportFetch;
+        bool isStandard;
+        bool isLocal;
+        bool isDisplayIsolated;
+        bool isSecure;
+        bool isCspBypassing;
+        bool isCodeCacheSupported;
+    };
+
+    struct Scheme {
+        std::string name;
+        bool isSupportCORS;
+        bool isSupportFetch;
+        bool isStandard;
+        bool isLocal;
+        bool isDisplayIsolated;
+        bool isSecure;
+        bool isCspBypassing;
+        bool isCodeCacheSupported;
+        int32_t option = 0;
+    };
+
+    struct CArrScheme {
+        CScheme* cScheme;
+        int64_t size;
+    };
+
     char* MallocCString(const std::string& origin);
     uint8_t* MallocUInt8(const std::string& origin);
     char** VectorToCArrString(const std::vector<std::string>& vec);

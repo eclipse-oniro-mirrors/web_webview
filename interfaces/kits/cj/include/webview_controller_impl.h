@@ -19,6 +19,7 @@
 #include <cstdint>
 #include <map>
 #include "ffi_remote_data.h"
+#include "webview_utils.h"
 #include "web_errors.h"
 #include "webview_javascript_result_callback.h"
 #include "nweb.h"
@@ -210,6 +211,8 @@ namespace OHOS::Webview {
         bool GetCertChainDerData(std::vector<std::string> &certChainDerData) const;
 
         ErrCode HasImagesCallback(const std::function<void(RetDataBool)>& callbackRef);
+
+        static int32_t CustomizeSchemesArrayDataHandler(CArrScheme schemes);
 
     public:
         static std::string customeSchemeCmdLine_;
