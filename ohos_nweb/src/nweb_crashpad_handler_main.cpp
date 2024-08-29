@@ -58,10 +58,5 @@ int main(int argc, char* argv[])
     }
 
     WVLOG_I("crashpad, success to dlopen and dlsym, enter CrashpadHandlerMain");
-    int ret = crashpadHandlerFunc(argc, argv);
-    if (ret != 0) {
-        WVLOG_E("crashped, crashpadHandlerFunc failed, ret=%{public}d", ret);
-    }
-    static_cast<void>(dlclose(handle));
-    return ret;
+    return crashpadHandlerFunc(argc, argv);
 }
