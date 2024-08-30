@@ -69,6 +69,8 @@ public:
     ArkWebString GetOOPGPUStatus() override;
 
     bool IsLTPODynamicApp(const ArkWebString& settingName) override;
+
+    int32_t GetLTPOStrategy() override;
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

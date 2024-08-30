@@ -32,6 +32,7 @@ public:
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
     std::vector<FrameRateSetting> GetPerfConfig(const std::string& settingName);
     bool IsLTPODynamicApp(const std::string& bundleName);
+    int32_t GetLTPOStrategy();
 
 private:
     NWebConfigHelper() = default;
@@ -44,10 +45,12 @@ private:
     void WriteConfigValueToSysPara(const std::string &configName, const std::string &value);
     void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     void ParseNWebLTPOApp(xmlNodePtr nodePtr);
+    void ParseNWebLTPOStrategy(xmlNodePtr nodePtr);
 
     std::map<std::string, std::string> perfConfig_;
     std::map<std::string, std::vector<FrameRateSetting>> ltpoConfig_;
     std::set<std::string> ltpoAllowedApps_ {};
+    int32_t ltpoStrategy_ {0};
 };
 } // namespace OHOS
 
