@@ -90,6 +90,8 @@ public:
     virtual std::string GetOOPGPUStatus() = 0;
 
     virtual bool IsLTPODynamicApp(const std::string& bundleName) = 0;
+
+    virtual int32_t GetLTPOStrategy() = 0;
 };
 
 } // namespace OHOS::NWeb
