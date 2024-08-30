@@ -84,7 +84,7 @@ void WebDownloadDelegate::DownloadBeforeStart(WebDownloadItem *webDownloadItem)
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
             if (data) {
-                WebDownloadItem *downloadItem = (WebDownloadItem *)data;
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
                 delete downloadItem;
             }
         },
@@ -127,7 +127,7 @@ void WebDownloadDelegate::DownloadDidUpdate(WebDownloadItem *webDownloadItem)
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
             if (data) {
-                WebDownloadItem *downloadItem = (WebDownloadItem *)data;
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
                 delete downloadItem;
             }
         },
@@ -171,7 +171,7 @@ void WebDownloadDelegate::DownloadDidFail(WebDownloadItem *webDownloadItem)
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
             if (data) {
-                WebDownloadItem *downloadItem = (WebDownloadItem *)data;
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
                 delete downloadItem;
             }
         },
@@ -215,7 +215,7 @@ void WebDownloadDelegate::DownloadDidFinish(WebDownloadItem *webDownloadItem)
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
             if (data) {
-                WebDownloadItem *downloadItem = (WebDownloadItem *)data;
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
                 delete downloadItem;
             }
         },
