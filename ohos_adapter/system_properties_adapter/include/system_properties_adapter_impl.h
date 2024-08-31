@@ -46,6 +46,10 @@ public:
 
     std::string GetUserAgentOSName() override;
 
+    std::string GetUserAgentOSVersion() override;
+
+    std::string GetUserAgentBaseOSName() override;
+
     int32_t GetSoftwareMajorVersion() override;
 
     int32_t GetSoftwareSeniorVersion() override;
@@ -89,8 +93,9 @@ private:
     void RemoveAllSysPropWatchers();
 
     ProductDeviceType AnalysisFromConfig();
-    int softwareMajorVersion_ = 4;
-    int softwareSeniorVersion_ = 1;
+    int softwareMajorVersion_ = -1;
+    int softwareSeniorVersion_ = -1;
+    std::string baseOsName_ ;
 
     std::unordered_map<PropertiesKey, std::vector<SystemPropertiesObserver*>> sysPropObserver_;
     std::unordered_map<PropertiesKey, std::shared_mutex> sysPropMutex_;
