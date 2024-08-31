@@ -92,6 +92,10 @@ public:
     virtual bool IsLTPODynamicApp(const std::string& bundleName) = 0;
 
     virtual int32_t GetLTPOStrategy() = 0;
+
+    virtual std::string GetUserAgentBaseOSName() = 0;
+
+    virtual std::string GetUserAgentOSVersion() = 0;
 };
 
 } // namespace OHOS::NWeb
