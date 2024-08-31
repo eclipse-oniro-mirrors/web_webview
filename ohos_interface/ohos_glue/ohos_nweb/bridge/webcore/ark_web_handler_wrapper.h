@@ -609,6 +609,8 @@ public:
 
     void OnPopupShow(bool show) override;
 
+    void OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) override;
+
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

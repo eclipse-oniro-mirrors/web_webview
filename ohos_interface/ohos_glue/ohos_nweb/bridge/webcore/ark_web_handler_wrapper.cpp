@@ -1016,4 +1016,12 @@ void ArkWebHandlerWrapper::OnPopupSize(int x, int y, int width, int height) {
 void ArkWebHandlerWrapper::OnPopupShow(bool show) {
     ark_web_handler_->OnPopupShow(show);
 }
+
+void ArkWebHandlerWrapper::OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) 
+{
+    ArkWebString stEmbedId = ArkWebStringClassToStruct(embed_id);
+    ark_web_handler_->OnNativeEmbedVisibilityChange(stEmbedId, visibility);
+    ArkWebStringStructRelease(stEmbedId);
+}
+
 } // namespace OHOS::ArkWeb

@@ -804,6 +804,9 @@ public:
      */
     /*--ark web()--*/
     virtual void OnPopupShow(bool show) = 0;
+
+    /*--ark web()--*/
+    virtual void OnNativeEmbedVisibilityChange(const ArkWebString& embed_id, bool visibility) = 0;
 };
 
 } // namespace OHOS::ArkWeb

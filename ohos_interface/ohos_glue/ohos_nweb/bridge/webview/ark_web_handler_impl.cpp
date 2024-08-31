@@ -902,4 +902,9 @@ void ArkWebHandlerImpl::OnPopupShow(bool show)
 {
     nweb_handler_->OnPopupShow(show);
 }
+
+void ArkWebHandlerImpl::OnNativeEmbedVisibilityChange(const ArkWebString& embed_id, bool visibility)
+{
+    nweb_handler_->OnNativeEmbedVisibilityChange(ArkWebStringStructToClass(embed_id), visibility);
+}
 } // namespace OHOS::ArkWeb
