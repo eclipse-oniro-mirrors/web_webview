@@ -111,4 +111,8 @@ FFI_EXPORT int FfiOHOSWebDownloadDelegateImplOnDownloadFailed = 0;
 // WebDownloadManagerImpl
 FFI_EXPORT int FfiOHOSWebDownloadManagerImplSetDownloadDelegate = 0;
 FFI_EXPORT int FfiOHOSWebDownloadManagerImplResumeDownload = 0;
+
+// webStorage
+FFI_EXPORT int FfiOHOSWebStorageDeleteOrigin = 0;
+FFI_EXPORT int FfiOHOSWebStorageDeleteAllData = 0;
 }
