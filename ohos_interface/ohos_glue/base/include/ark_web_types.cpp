@@ -85,7 +85,7 @@ ARK_WEB_NO_SANITIZE void ArkWebStringStructRelease(ArkWebString& struct_value)
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
 }
 
-void ArkWebU16StringStructRelease(ArkWebU16String& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebU16StringStructRelease(ArkWebU16String& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
@@ -168,7 +168,7 @@ ARK_WEB_NO_SANITIZE std::list<std::string> ArkWebStringListStructToClass(const A
     return class_value;
 }
 
-void ArkWebStringListStructRelease(ArkWebStringList& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringListStructRelease(ArkWebStringList& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.value[count]);
