@@ -62,7 +62,7 @@ public:
     OrientationType GetOrientation() override;
     int32_t GetDpi() override;
     DisplayOrientation GetDisplayOrientation() override;
-    DisplayOrientation GetFoldStatus() override;
+    FoldStatus GetFoldStatus() override;
 private:
     sptr<OHOS::Rosen::Display> display_;
     OHOS::NWeb::RotationType ConvertRotationType(OHOS::Rosen::Rotation type);
