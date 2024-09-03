@@ -25,7 +25,7 @@ namespace OHOS::ArkWeb {
     {}
 
 void ArkFoldStatusListenerAdapterWrapper::OnFoldStatusChanged(OHOS::NWeb::FoldStatus foldstatus) {
-    ctocpp_->OnFoldStatusChanged((uint32_t)foldstatus)
+    ctocpp_->OnFoldStatusChanged((uint32_t)foldstatus);
 }
 
 } // namespace OHOS::ArkWeb
