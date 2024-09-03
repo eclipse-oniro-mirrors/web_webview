@@ -42,7 +42,7 @@ class FoldStatusListenerAdapterImpl
 public: 
     explicit FoldStatusListenerAdapterImpl(std::shared_ptr<FoldStatusListenerAdapter> listener);
     ~FoldStatusListenerAdapterImpl() override = default;
-    void OnFoldStatusChanged(FoldStatus foldstatus) override;
+    void OnFoldStatusChanged(OHOS::Rosen::FoldStatus foldstatus) override;
 private:
     OHOS::NWeb::FoldStatus ConvertFoldStatus(OHOS::Rosen::FoldStatus foldstatus);
     std::shared_ptr<FoldStatusListenerAdapter> listener_;

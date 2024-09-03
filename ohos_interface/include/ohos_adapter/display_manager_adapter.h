@@ -54,7 +54,7 @@ enum class DisplayOrientation : uint32_t {
 enum class FoldStatus : uint32_t {
     UNKNOWN = 0,
     EXPAND = 1,
-    FOLDEN = 2,
+    FOLDED = 2,
     HALF_FOLD = 3,
 };
 
