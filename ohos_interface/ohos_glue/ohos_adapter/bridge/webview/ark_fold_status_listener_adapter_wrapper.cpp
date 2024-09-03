@@ -20,8 +20,8 @@
 #include "ark_fold_status_listener_adapter_wrapper.h"
 
 namespace OHOS::ArkWeb {
-    ArkFoldStatusListenerAdapterWrapper::ArkFoldStatusListenerAdapterWrapper(
-    ArkWebRefPtr<ArkFoldStatusListenerAdapter> ref) : ctocpp_(ref)
+    ArkFoldStatusListenerAdapterWrapper
+    ::ArkFoldStatusListenerAdapterWrapper(ArkWebRefPtr<ArkFoldStatusListenerAdapter> ref) : ctocpp_(ref)
     {}
 
 void ArkFoldStatusListenerAdapterWrapper::OnFoldStatusChanged(OHOS::NWeb::FoldStatus foldstatus) {
