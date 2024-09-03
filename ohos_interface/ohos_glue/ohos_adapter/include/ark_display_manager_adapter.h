@@ -39,7 +39,7 @@ public:
 class ArkFoldStatusListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
     /*--ark web()--*/
-    virtual void OnFoldStatusChanged(uint32_t foldstatus) {};
+    virtual void OnFoldStatusChanged(uint32_t foldstatus) = 0;
 };
 
 /*--ark web(source=webview)--*/
@@ -70,9 +70,7 @@ public:
     virtual uint32_t GetDisplayOrientation() = 0;
 
     /*--ark web()--*/
-    virtual uint32_t GetFoldStatus() {
-        return -1;
-    };
+    virtual uint32_t GetFoldStatus() = 0;
 };
 
 /*--ark web(source=webview)--*/
@@ -94,14 +92,10 @@ public:
     virtual bool IsDefaultPortrait() = 0;
 
     /*--ark web()--*/
-    virtual uint32_t RegisterFoldStatusListener(ArkWebRefPtr<ArkFoldStatusListenerAdapter> listener) {
-        return -1;
-    };
+    virtual uint32_t RegisterFoldStatusListener(ArkWebRefPtr<ArkFoldStatusListenerAdapter> listener) = 0;
 
     /*--ark web()--*/
-    virtual bool UnregisterFoldStatusListener(uint32_t id) {
-        return false;
-    };
+    virtual bool UnregisterFoldStatusListener(uint32_t id) = 0;
 };
 
 } // namespace OHOS::ArkWeb
