@@ -42,6 +42,8 @@ public:
 
     uint32_t GetDisplayOrientation() override;
 
+    uint32_t GetFoldStatus() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::DisplayAdapter> real_;
 

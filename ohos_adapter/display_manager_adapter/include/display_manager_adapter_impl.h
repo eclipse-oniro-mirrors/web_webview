@@ -37,6 +37,18 @@ private:
     std::shared_ptr<DisplayListenerAdapter> listener_;
 };
 
+class FoldStatusListenerAdapterImpl
+    : public OHOS::Rosen::DisplayManager::IFoldStatusListener {
+public: 
+    explicit FoldStatusListenerAdapterImpl(std::shared_ptr<FoldStatusListenerAdapter> listener);
+    ~FoldStatusListenerAdapterImpl() override = default;
+    void OnFoldStatusChanged(FoldStatus foldstatus) override;
+private:
+    OHOS::NWeb::FoldStatus ConvertFoldStatus(OHOS::Rosen::FoldStatus foldstatus);
+    std::shared_ptr<FoldStatusListenerAdapter> listener_;
+};
+
+
 class DisplayAdapterImpl : public DisplayAdapter {
 public:
     DisplayAdapterImpl() = delete;
@@ -55,10 +67,13 @@ private:
     OHOS::NWeb::RotationType ConvertRotationType(OHOS::Rosen::Rotation type);
     OHOS::NWeb::OrientationType ConvertOrientationType(OHOS::Rosen::Orientation type);
     OHOS::NWeb::DisplayOrientation ConvertDisplayOrientationType(OHOS::Rosen::DisplayOrientation type);
+    OHOS::NWeb::FoldStatus ConvertFoldStatus(OHOS::Rosen::FoldStatus foldstatus);
 };
 
 using ListenerMap =
     std::map<int32_t, sptr<DisplayListenerAdapterImpl>>;
+using FoldStatusListenerMap =
+    std::map<int32_t, sptr<FoldStatusListenerAdapterImpl>>;
 class DisplayManagerAdapterImpl : public DisplayManagerAdapter {
 public:
     DisplayManagerAdapterImpl() = default;
@@ -68,8 +83,11 @@ public:
     uint32_t RegisterDisplayListener(std::shared_ptr<DisplayListenerAdapter> listener) override;
     bool UnregisterDisplayListener(uint32_t id) override;
     bool IsDefaultPortrait() override;
+    uint32_t RegisterFoldStatusListener(std::shared_ptr<FoldStatusListenerAdapter> listener) override;
+    bool UnregisterFoldStatusListener(uint32_t id) override;
 private:
     ListenerMap reg_;
+    FoldStatusListenerMap foldStatusReg_;
 };
 }
 
