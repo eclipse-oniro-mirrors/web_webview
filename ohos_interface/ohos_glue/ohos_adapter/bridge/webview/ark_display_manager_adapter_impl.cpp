@@ -17,6 +17,7 @@
 
 #include "ohos_adapter/bridge/ark_display_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_display_listener_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_fold_status_listener_adapter_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
 #include "ark_display_manager_adapter_impl.h"
@@ -69,7 +70,7 @@ uint32_t ArkDisplayManagerAdapterImpl::RegisterFoldStatusListener(ArkWebRefPtr<A
 
     return real_->RegisterFoldStatusListener(std::make_shared<ArkFoldStatusListenerAdapterWrapper>(listener));
 }
-bool ArkDisplayManagerAdapterImpl::UnregisterFoldSListener(uint32_t id)
+bool ArkDisplayManagerAdapterImpl::UnregisterFoldStatusListener(uint32_t id)
 {
     return real_->UnregisterDisplayListener(id);
 }
