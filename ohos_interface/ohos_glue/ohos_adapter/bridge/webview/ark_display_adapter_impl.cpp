@@ -16,6 +16,7 @@
 #include "ohos_adapter/bridge/ark_display_adapter_impl.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "ark_display_adapter_impl.h"
 
 namespace OHOS::ArkWeb {
 
@@ -60,4 +61,10 @@ uint32_t ArkDisplayAdapterImpl::GetDisplayOrientation()
 {
     return (uint32_t)real_->GetDisplayOrientation();
 }
+
+uint32_t OHOS::ArkWeb::ArkDisplayAdapterImpl::GetFoldStatus()
+{
+    return (uint32_t)real_->GetFoldStatus();
+}
+
 } // namespace OHOS::ArkWeb

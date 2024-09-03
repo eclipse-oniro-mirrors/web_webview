@@ -45,6 +45,30 @@ void DisplayListenerAdapterImpl::OnChange(DisplayId id)
     }
 }
 
+FoldStatusListenerAdapterImpl::FoldStatusListenerAdapterImpl(
+    std::shared_ptr<FoldStatusListenerAdapter> listener) : listener_(listener) {}
+
+OHOS::NWeb::FoldStatus FoldStatusListenerAdapterImpl::ConvertFoldStatus(OHOS::Rosen::FoldStatus foldstatus)
+{
+    switch (foldstatus) {
+        case OHOS::Rosen::FoldStatus::EXPAND:
+            return OHOS::NWeb::FoldStatus::EXPAND;
+        case OHOS::Rosen::FoldStatus::FOLDEN:
+            return OHOS::NWeb::FoldStatus::FOLDEN;
+        case OHOS::Rosen::FoldStatus::HALF_FOLD:
+            return OHOS::NWeb::FoldStatus::HALF_FOLD;
+        default:
+            return OHOS::NWeb::FoldStatus::UNKNOWN;
+    }
+}
+
+void FoldStatusListenerAdapterImpl::OnFoldStatusChanged(OHOS::Rosen::FoldStatus foldstatus)
+{
+    if (listener_ != nullptr) {
+        listener_->OnFoldStatusChanged(ConvertFoldStatus(foldstatus));
+    }
+}
+
 DisplayAdapterImpl::DisplayAdapterImpl(sptr<OHOS::Rosen::Display> display)
     : display_(display) {}
 
@@ -101,6 +125,21 @@ OHOS::NWeb::DisplayOrientation DisplayAdapterImpl::ConvertDisplayOrientationType
             return OHOS::NWeb::DisplayOrientation::LANDSCAPE_INVERTED;
         default:
             return OHOS::NWeb::DisplayOrientation::UNKNOWN;
+    }
+}
+
+
+OHOS::NWeb::FoldStatus DisplayAdapterImpl::ConvertFoldStatus(OHOS::Rosen::FoldStatus foldstatus)
+{
+    switch (foldstatus) {
+        case OHOS::Rosen::FoldStatus::EXPAND:
+            return OHOS::NWeb::FoldStatus::EXPAND;
+        case OHOS::Rosen::FoldStatus::FOLDEN:
+            return OHOS::NWeb::FoldStatus::FOLDEN;
+        case OHOS::Rosen::FoldStatus::HALF_FOLD:
+            return OHOS::NWeb::FoldStatus::HALF_FOLD;
+        default:
+            return OHOS::NWeb::FoldStatus::UNKNOWN;
     }
 }
 
@@ -171,6 +210,12 @@ DisplayOrientation DisplayAdapterImpl::GetDisplayOrientation()
     return DisplayOrientation::UNKNOWN;
 }
 
+FoldStatus DisplayAdapterImpl::GetFoldStatus()
+{
+    return ConvertFoldStatus(DisplayManager::GetInstance().GetFoldStatus());
+}
+
+
 DisplayId DisplayManagerAdapterImpl::GetDefaultDisplayId()
 {
     return DisplayManager::GetInstance().GetDefaultDisplayId();
@@ -222,5 +267,41 @@ bool DisplayManagerAdapterImpl::IsDefaultPortrait()
 {
     std::string deviceType = OHOS::system::GetDeviceType();
     return deviceType == "phone" || deviceType == "default";
+}
+
+uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
+    std::shared_ptr<FoldStatusListenerAdapter> listener)
+{
+    static uint32_t count = 1;
+    sptr<FoldStatusListenerAdapterImpl> reg =
+        new (std::nothrow) FoldStatusListenerAdapterImpl(listener);
+    if (reg == nullptr) {
+        return false;
+    }
+
+    uint32_t id = count++;
+    if (count == 0) {
+        count++;
+    }
+
+    foldStatusReg_.emplace(std::make_pair(id, reg));
+    if (DisplayManager::GetInstance().RegisterFoldStatusListener(reg) == DMError::DM_OK) {
+        return id;
+    } else {
+        return 0;
+    }
+}
+
+bool DisplayManagerAdapterImpl::UnregisterFoldStatusListener(uint32_t id)
+{
+    FoldStatusListenerMap::iterator iter = foldStatusReg_.find(id);
+    if (iter == foldStatusReg_.end()) {
+        return false;
+    }
+    if (DisplayManager::GetInstance().UnregisterFoldStatusListener(iter->second) == DMError::DM_OK) {
+        foldStatusReg_.erase(iter);
+        return true;
+    }
+    return false;
 }
 }

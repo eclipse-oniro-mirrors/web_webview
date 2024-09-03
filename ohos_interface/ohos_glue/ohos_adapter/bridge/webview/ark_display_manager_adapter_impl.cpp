@@ -19,6 +19,7 @@
 #include "ohos_adapter/bridge/ark_display_listener_adapter_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "ark_display_manager_adapter_impl.h"
 
 namespace OHOS::ArkWeb {
 
@@ -60,4 +61,16 @@ bool ArkDisplayManagerAdapterImpl::IsDefaultPortrait()
     return real_->IsDefaultPortrait();
 }
 
+uint32_t ArkDisplayManagerAdapterImpl::RegisterFoldStatusListener(ArkWebRefPtr<ArkFoldStatusListenerAdapter> listener)
+{
+    if (CHECK_REF_PTR_IS_NULL(listener)) {
+        return real_->RegisterFoldStatusListener(nullptr);
+    }
+
+    return real_->RegisterFoldStatusListener(std::make_shared<ArkFoldStatusListenerAdapterWrapper>(listener));
+}
+bool ArkDisplayManagerAdapterImpl::UnregisterFoldSListener(uint32_t id)
+{
+    return real_->UnregisterDisplayListener(id);
+}
 } // namespace OHOS::ArkWeb

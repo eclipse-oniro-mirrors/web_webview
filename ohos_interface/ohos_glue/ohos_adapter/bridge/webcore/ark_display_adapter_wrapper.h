@@ -42,6 +42,8 @@ public:
 
     OHOS::NWeb::DisplayOrientation GetDisplayOrientation() override;
 
+    OHOS::NWeb::FoldStatus GetFoldStatus() override;
+
 private:
     ArkWebRefPtr<ArkDisplayAdapter> ctocpp_;
 };
