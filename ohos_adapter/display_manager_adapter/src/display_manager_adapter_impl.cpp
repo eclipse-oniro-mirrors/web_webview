@@ -280,10 +280,6 @@ uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
     }
 
     uint32_t id = count++;
-    if (count == 0) {
-        count++;
-    }
-
     foldStatusReg_.emplace(std::make_pair(id, reg));
     if (DisplayManager::GetInstance().RegisterFoldStatusListener(reg) == DMError::DM_OK) {
         return id;
