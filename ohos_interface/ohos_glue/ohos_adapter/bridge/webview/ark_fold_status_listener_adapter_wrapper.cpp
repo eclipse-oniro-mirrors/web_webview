@@ -22,7 +22,7 @@
 namespace OHOS::ArkWeb {
     ArkFoldStatusListenerAdapterWrapper::ArkFoldStatusListenerAdapterWrapper(
     ArkWebRefPtr<ArkFoldStatusListenerAdapter> ref) : ctocpp_(ref)
-{}
+    {}
 
 void ArkFoldStatusListenerAdapterWrapper::OnFoldStatusChanged(OHOS::NWeb::FoldStatus foldstatus) {
     ctocpp_->OnFoldStatusChanged((uint32_t)foldstatus)

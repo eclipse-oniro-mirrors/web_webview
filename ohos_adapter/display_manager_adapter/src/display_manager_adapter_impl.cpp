@@ -53,8 +53,8 @@ OHOS::NWeb::FoldStatus FoldStatusListenerAdapterImpl::ConvertFoldStatus(OHOS::Ro
     switch (foldstatus) {
         case OHOS::Rosen::FoldStatus::EXPAND:
             return OHOS::NWeb::FoldStatus::EXPAND;
-        case OHOS::Rosen::FoldStatus::FOLDEN:
-            return OHOS::NWeb::FoldStatus::FOLDEN;
+        case OHOS::Rosen::FoldStatus::FOLDED:
+            return OHOS::NWeb::FoldStatus::FOLDED;
         case OHOS::Rosen::FoldStatus::HALF_FOLD:
             return OHOS::NWeb::FoldStatus::HALF_FOLD;
         default:
@@ -134,8 +134,8 @@ OHOS::NWeb::FoldStatus DisplayAdapterImpl::ConvertFoldStatus(OHOS::Rosen::FoldSt
     switch (foldstatus) {
         case OHOS::Rosen::FoldStatus::EXPAND:
             return OHOS::NWeb::FoldStatus::EXPAND;
-        case OHOS::Rosen::FoldStatus::FOLDEN:
-            return OHOS::NWeb::FoldStatus::FOLDEN;
+        case OHOS::Rosen::FoldStatus::FOLDED:
+            return OHOS::NWeb::FoldStatus::FOLDED;
         case OHOS::Rosen::FoldStatus::HALF_FOLD:
             return OHOS::NWeb::FoldStatus::HALF_FOLD;
         default:
