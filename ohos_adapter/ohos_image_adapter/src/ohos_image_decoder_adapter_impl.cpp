@@ -16,13 +16,9 @@
 #include "ohos_image_decoder_adapter_impl.h"
 
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
-#include "fstream"
 #include "image_source.h"
-#include "istream"
 #include "media_errors.h"
 #include "nweb_log.h"
-#include "sstream"
-#include "string"
 
 namespace OHOS {
 namespace NWeb {
