@@ -21,7 +21,7 @@ ArkFoldStatusListenerAdapterImpl
     {}
 
 void ArkFoldStatusListenerAdapterImpl::OnFoldStatusChanged(uint32_t foldstatus) {
-    real_->OnFoldStatusChanged((OHOS::NWeb::FoldStatus)foldstatus);
+    real_->OnFoldStatusChanged(static_cast<OHOS::NWeb::FoldStatus>(foldstatus));
 }
 
 } // namespace OHOS::ArkWeb

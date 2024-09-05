@@ -66,6 +66,6 @@ OHOS::NWeb::DisplayOrientation ArkDisplayAdapterWrapper::GetDisplayOrientation()
 OHOS::NWeb::FoldStatus ArkDisplayAdapterWrapper::GetFoldStatus()
 {
     uint32_t foldstatus = ctocpp_->GetFoldStatus();
-    return (OHOS::NWeb::FoldStatus)foldstatus;
+    return static_cast<OHOS::NWeb::FoldStatus>(foldstatus);
 }
 } // namespace OHOS::ArkWeb
