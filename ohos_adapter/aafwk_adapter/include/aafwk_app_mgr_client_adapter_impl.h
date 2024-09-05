@@ -20,6 +20,7 @@
 #include <string>
 #include <sys/types.h>
 #include "aafwk_app_mgr_client_adapter.h"
+#include "aafwk_browser_host_impl.h"
 #include "aafwk_render_scheduler_host_adapter.h"
 #include "app_mgr_client.h"
 
@@ -45,6 +46,7 @@ public:
 
 private:
     std::unique_ptr<AppExecFwk::AppMgrClient> appMgrClient_;
+    sptr<AafwkBrowserHostImpl> aafwkBrowserHostImpl_ = nullptr;
 };
 }  // namespace OHOS::NWeb
 
