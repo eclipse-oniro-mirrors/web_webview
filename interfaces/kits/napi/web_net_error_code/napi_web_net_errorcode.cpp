@@ -15,13 +15,18 @@
 #include "napi_web_net_errorcode.h"
 
 #include "arkweb_net_error_list.h"
+#include "nweb_log.h"
 
 namespace OHOS::NWeb {
 namespace {
 napi_value ToInt32Value(napi_env env, int32_t number)
 {
     napi_value result = nullptr;
-    napi_create_int32(env, number, &result);
+    napi_status status = napi_create_int32(env, number, &result);
+    if (status != napi_status::napi_ok){
+        WVLOG_E("napi_create_int32 failed.");
+        return result;
+    }
     return result;
 }
 

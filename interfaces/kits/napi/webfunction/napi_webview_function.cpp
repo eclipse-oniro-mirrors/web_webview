@@ -64,8 +64,13 @@ napi_value JsOnce(napi_env env, napi_callback_info info)
     }
     napi_ref callback = nullptr;
     napi_create_reference(env, argv[INTEGER_ONE], 1, &callback);
-    onceType.find(type)->second(env, callback);
-
+    auto foundCallback = onceType.find(type);
+    if (foundCallback != onceType.end()) {
+        foundCallback->second(env, callback);
+    } else {
+        BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
+        return result;
+    }
     return result;
 }
 
