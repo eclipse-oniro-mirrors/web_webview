@@ -157,7 +157,7 @@ void* AafwkBrowserClientAdapterImpl::QueryRenderSurface(int32_t surface_id)
         sptr<Surface> surface = Surface::CreateSurfaceAsProducer(bufferProducer);
         OHNativeWindow* window = ::CreateNativeWindowFromSurface(&surface);
         if (!window) {
-            WVLOG_E("create the native window from surface failed.");
+            WVLOG_E("create the native window failed.");
             return nullptr;
         }
         window_map_.emplace(surface_id, window);
