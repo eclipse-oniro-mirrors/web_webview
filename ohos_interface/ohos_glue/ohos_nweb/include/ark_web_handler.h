@@ -807,6 +807,9 @@ public:
 
     /*--ark web()--*/
     virtual void OnNativeEmbedVisibilityChange(const ArkWebString& embed_id, bool visibility) = 0;
+
+    /*--ark web()--*/
+    virtual bool CloseImageOverlaySelection() = 0;
 };
 
 } // namespace OHOS::ArkWeb

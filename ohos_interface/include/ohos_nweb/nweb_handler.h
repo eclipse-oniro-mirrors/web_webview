@@ -1023,6 +1023,8 @@ public:
     virtual void OnPopupShow(bool show) {}
 
     virtual void OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) {}
+
+    virtual bool CloseImageOverlaySelection() { return false; }
 };
 
 } // namespace OHOS::NWeb
