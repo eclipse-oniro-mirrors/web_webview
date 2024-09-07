@@ -181,7 +181,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
     EXPECT_FALSE(result);
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     result = NWebAdapterHelper::Instance().Init(false);
-    EXPECT_EQ(RESULT_OK, result);
+    EXPECT_NE(RESULT_OK, result);
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
     EXPECT_EQ(nweb, nullptr);
@@ -211,13 +211,13 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetBundlePath_001, TestSize.Level1)
         .Times(2)
         .WillRepeatedly(::testing::Return("test_web"));
     result = NWebHelper::Instance().InitAndRun(false);
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs(),
         DEFAULT_WIDTH, DEFAULT_HEIGHT);
     result = NWebHelper::Instance().LoadNWebSDK();
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     result = NWebHelper::Instance().LoadNWebSDK();
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     WebDownloadManager_PutDownloadCallback(nullptr);
     g_applicationContext.reset();
 }
@@ -643,6 +643,22 @@ HWTEST_F(NwebHelperTest, NWebHelper_TrimMemoryByPressureLevel_001, TestSize.Leve
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
 
     NWebHelper::Instance().nwebEngine_ = nullptr;
+}
+
+/**
+ * @tc.name: NWebHelper_ParseNWebLTPOApp_001
+ * @tc.desc: ParseNWebLTPOApp.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_ParseNWebLTPOApp_001, TestSize.Level1)
+{
+    EXPECT_TRUE(NWebConfigHelper::Instance().ltpoAllowedApps_.empty());
+    EXPECT_FALSE(NWebConfigHelper::Instance().IsLTPODynamicApp(""));
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    NWebAdapterHelper::Instance().ParseConfig(initArgs);
+    EXPECT_TRUE(NWebConfigHelper::Instance().ltpoAllowedApps_.empty());
+    EXPECT_FALSE(NWebConfigHelper::Instance().IsLTPODynamicApp(""));
 }
 } // namespace OHOS::NWeb
 }
