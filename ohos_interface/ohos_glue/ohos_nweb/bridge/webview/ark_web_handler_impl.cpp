@@ -907,4 +907,9 @@ void ArkWebHandlerImpl::OnNativeEmbedVisibilityChange(const ArkWebString& embed_
 {
     nweb_handler_->OnNativeEmbedVisibilityChange(ArkWebStringStructToClass(embed_id), visibility);
 }
+
+bool ArkWebHandlerImpl::CloseImageOverlaySelection()
+{
+    return nweb_handler_->CloseImageOverlaySelection();
+}
 } // namespace OHOS::ArkWeb

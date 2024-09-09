@@ -1024,4 +1024,8 @@ void ArkWebHandlerWrapper::OnNativeEmbedVisibilityChange(const std::string& embe
     ArkWebStringStructRelease(stEmbedId);
 }
 
+bool ArkWebHandlerWrapper::CloseImageOverlaySelection()
+{
+    return ark_web_handler_->CloseImageOverlaySelection();
+}
 } // namespace OHOS::ArkWeb
