@@ -454,7 +454,7 @@ bool ParseRegisterJavaScriptProxyParam(napi_env env, size_t argc, napi_value* ar
 
 napi_value RemoveDownloadDelegateRef(napi_env env, napi_value thisVar)
 {
-    WebviewController* webviewController = nullptr;
+    WebviewController *webviewController = nullptr;
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
     if (webviewController == nullptr || !webviewController->IsInit()) {
         WVLOG_E("create message port failed, napi unwrap webviewController failed");
@@ -593,7 +593,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
         DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
         DECLARE_NAPI_FUNCTION("precompileJavaScript", NapiWebviewController::PrecompileJavaScript),
-        DECLARE_NAPI_FUNCTION("injectOfflineResources", NapiWebviewController::InjectOfflineResource),
+        DECLARE_NAPI_FUNCTION("injectOfflineResources", NapiWebviewController::InjectOfflineResources),
         DECLARE_NAPI_STATIC_FUNCTION("setHostIP", NapiWebviewController::SetHostIP),
         DECLARE_NAPI_STATIC_FUNCTION("clearHostIP", NapiWebviewController::ClearHostIP),
         DECLARE_NAPI_STATIC_FUNCTION("warmupServiceWorker", NapiWebviewController::WarmupServiceWorker),
@@ -967,7 +967,7 @@ napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callb
     bool webDebuggingAccess = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], webDebuggingAccess)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "webDebuggingAccess","boolean"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "webDebuggingAccess", "boolean"));
         return result;
     }
     WebviewController::webDebuggingAccess_ = webDebuggingAccess;
@@ -4268,7 +4268,7 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
     }
 
     if (argc == INTEGER_THREE) {
-        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+        if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
             return result;
@@ -4281,7 +4281,7 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    if(argc == INTEGER_THREE) {
+    if (argc == INTEGER_THREE) {
         webviewController->ScrollToWithAnime(x, y, duration);
     } else {
         webviewController->ScrollTo(x, y);
@@ -4319,7 +4319,7 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
     }
 
     if (argc == INTEGER_THREE) {
-        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+        if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
             return result;
@@ -4332,7 +4332,7 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    if(argc == INTEGER_THREE) {
+    if (argc == INTEGER_THREE) {
         webviewController->ScrollByWithAnime(deltaX, deltaY, duration);
     } else {
         webviewController->ScrollBy(deltaX, deltaY);
@@ -5802,7 +5802,7 @@ napi_value NapiWebviewController::WarmupServiceWorker(napi_env env, napi_callbac
     return result;
 }
 
-napi_value NapiWebviewController::InjectOfflineResource(napi_env env, napi_callback_info info)
+napi_value NapiWebviewController::InjectOfflineResources(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -5857,7 +5857,7 @@ void NapiWebviewController::AddResourcesToMemoryCache(napi_env env,
             (napi_get_named_property(env, obj, "resource", &resourceObj) != napi_ok) ||
             (napi_get_named_property(env, obj, "responseHeaders", &headersObj) != napi_ok) ||
             (napi_get_named_property(env, obj, "type", &typeObj) != napi_ok)) {
-            WVLOG_E("InjectOfflineResource: parse params from resource map failed.");
+            WVLOG_E("InjectOfflineResources: parse params from resource map failed.");
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
             continue;
         }
@@ -6274,8 +6274,9 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
 
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &snapshotSize) == napi_ok) {
         if (napi_get_named_property(env, snapshotSize, "width", &snapshotSizeWidth) == napi_ok) {
-            if (!webviewController->ParseJsLengthToInt(
-                    env, snapshotSizeWidth, nativeSnapshotSizeWidthType, nativeSnapshotSizeWidth)) {
+            if (!webviewController->ParseJsLengthToInt(env, snapshotSizeWidth,
+                                                       nativeSnapshotSizeWidthType,
+                                                       nativeSnapshotSizeWidth)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
                 napi_delete_reference(env, callback);
@@ -6283,8 +6284,9 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
             }
         }
         if (napi_get_named_property(env, snapshotSize, "height", &snapshotSizeHeight) == napi_ok) {
-            if (!webviewController->ParseJsLengthToInt(
-                    env, snapshotSizeHeight, nativeSnapshotSizeHeightType, nativeSnapshotSizeHeight)) {
+            if (!webviewController->ParseJsLengthToInt(env, snapshotSizeHeight,
+                                                       nativeSnapshotSizeHeightType,
+                                                       nativeSnapshotSizeHeight)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
                 napi_delete_reference(env, callback);
@@ -6343,10 +6345,8 @@ napi_value NapiWebviewController::SetPathAllowingUniversalAccess(
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
-
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("SetPathAllowingUniversalAccess init webview controller error.");
