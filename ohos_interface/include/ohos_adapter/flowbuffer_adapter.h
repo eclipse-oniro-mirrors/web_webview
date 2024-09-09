@@ -36,7 +36,7 @@ public:
     /**
      * @brief Start temporary performance boost when some key tasks are running
      */
-    virtual void StartPerformanceBoost();
+    virtual void StartPerformanceBoost() = 0;
 
     /**
      * @brief Create ashmem
@@ -46,7 +46,7 @@ public:
      * @param fd fd of the ashmem to be created
      * @return the address of the created ashmem
      */
-    virtual void* CreateAshmem(size_t size, int mapType, int& fd);
+    virtual void* CreateAshmem(size_t size, int mapType, int& fd) = 0;
 
     /**
      * @brief Create ashmem with fd
@@ -56,7 +56,7 @@ public:
      * @param mapType mapType of the ashmem to be created
      * @return the address of the created ashmem
      */
-    virtual void* CreateAshmemWithFd(const int fd, size_t size, int mapType);
+    virtual void* CreateAshmemWithFd(const int fd, size_t size, int mapType) = 0;
 };
 
 } // namespace OHOS::NWeb
