@@ -37,7 +37,7 @@ const std::string WEB_HITTESTTYPE_ENUM_NAME = "WebHitTestType";
 const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
 const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
-const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
+const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "WebSecurityLevel";
 const std::string WEB_RENDER_PROCESS_MODE_ENUM_NAME = "RenderProcessMode";
 const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
 const std::string WEB_PRESSURE_LEVEL_ENUM_NAME = "PressureLevel";
@@ -249,15 +249,15 @@ private:
 
     static napi_value PrepareForPageLoad(napi_env env, napi_callback_info info);
 
+    static napi_value CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info);
+
+    static napi_value PostUrl(napi_env env, napi_callback_info info);
+
     static napi_value SetDownloadDelegate(napi_env env, napi_callback_info info);
 
     static napi_value StartDownload(napi_env env, napi_callback_info info);
 
     static napi_value SetConnectionTimeout(napi_env env, napi_callback_info info);
-
-    static napi_value CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info);
-
-    static napi_value PostUrl(napi_env env, napi_callback_info info);
 
     static napi_value GetSecurityLevel(napi_env env, napi_callback_info info);
 
@@ -314,6 +314,8 @@ private:
 
     static napi_value GetMediaPlaybackState(napi_env env, napi_callback_info info);
 
+    static napi_value PrefetchResource(napi_env env, napi_callback_info info);
+
     static napi_value ClearPrefetchedResource(napi_env env, napi_callback_info info);
 
     static napi_value OnCreateNativeMediaPlayer(napi_env env, napi_callback_info info);
@@ -324,7 +326,7 @@ private:
 
     static napi_value PrecompileJavaScript(napi_env env, napi_callback_info info);
 
-    static napi_value InjectOfflineResource(napi_env env, napi_callback_info info);
+    static napi_value InjectOfflineResources(napi_env env, napi_callback_info info);
 
     static void AddResourcesToMemoryCache(napi_env env,
                                           napi_callback_info info,
@@ -364,14 +366,12 @@ private:
 
     static napi_value ScrollByWithResult(napi_env env, napi_callback_info info);
 
-    static napi_value PrefetchResource(napi_env env, napi_callback_info info);
-
     static napi_value TrimMemoryByPressureLevel(napi_env env, napi_callback_info info);
 
     static napi_value GetScrollOffset(napi_env env, napi_callback_info info);
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
-    };
+};
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {
 public:
