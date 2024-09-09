@@ -63,6 +63,7 @@ constexpr double A4_HEIGHT = 11.69;
 constexpr double SCALE_MIN = 0.1;
 constexpr double SCALE_MAX = 2.0;
 constexpr double HALF = 2.0;
+constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 constexpr size_t BFCACHE_DEFAULT_SIZE = 1;
 constexpr size_t BFCACHE_DEFAULT_TIMETOLIVE = 600;
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
@@ -345,28 +346,44 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
 PDFMarginConfig ParsePDFMarginConfigArgs(napi_env env, napi_value preArgs, double width, double height)
 {
     napi_value marginTopObj = nullptr;
-    double marginTop = 0.0;
+    double marginTop = TEN_MILLIMETER_TO_INCH;
     napi_get_named_property(env, preArgs, "marginTop", &marginTopObj);
-    NapiParseUtils::ParseDouble(env, marginTopObj, marginTop);
-    marginTop = marginTop >= height / HALF ? 0.0 : marginTop;
+    if (!NapiParseUtils::ParseDouble(env, marginTopObj, marginTop)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginTop", "number"));
+        return PDFMarginConfig();
+    }
+    marginTop = (marginTop >= height / HALF || marginTop <= 0.0) ? 0.0 : marginTop;
 
     napi_value marginBottomObj = nullptr;
-    double marginBottom = 0.0;
+    double marginBottom = TEN_MILLIMETER_TO_INCH;
     napi_get_named_property(env, preArgs, "marginBottom", &marginBottomObj);
-    NapiParseUtils::ParseDouble(env, marginBottomObj, marginBottom);
-    marginBottom = marginBottom >= height / HALF ? 0.0 : marginBottom;
+    if (!NapiParseUtils::ParseDouble(env, marginBottomObj, marginBottom)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginBottom", "number"));
+        return PDFMarginConfig();
+    }
+    marginBottom = (marginBottom >= height / HALF || marginBottom <= 0.0) ? 0.0 : marginBottom;
 
     napi_value marginRightObj = nullptr;
-    double marginRight = 0.0;
+    double marginRight = TEN_MILLIMETER_TO_INCH;
     napi_get_named_property(env, preArgs, "marginRight", &marginRightObj);
-    NapiParseUtils::ParseDouble(env, marginRightObj, marginRight);
-    marginRight = marginRight >= width / HALF ? 0.0 : marginRight;
+    if (!NapiParseUtils::ParseDouble(env, marginRightObj, marginRight)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginRight", "number"));
+        return PDFMarginConfig();
+    }
+    marginRight = (marginRight >= width / HALF || marginRight <= 0.0) ? 0.0 : marginRight;
 
     napi_value marginLeftObj = nullptr;
-    double marginLeft = 0.0;
+    double marginLeft = TEN_MILLIMETER_TO_INCH;
     napi_get_named_property(env, preArgs, "marginLeft", &marginLeftObj);
-    NapiParseUtils::ParseDouble(env, marginLeftObj, marginLeft);
-    marginLeft = marginLeft >= width / HALF ? 0.0 : marginLeft;
+    if (!NapiParseUtils::ParseDouble(env, marginLeftObj, marginLeft)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginLeft", "number"));
+        return PDFMarginConfig();
+    }
+    marginLeft = (marginLeft >= width / HALF || marginLeft <= 0.0) ? 0.0 : marginLeft;
 
     return { marginTop, marginBottom, marginRight, marginLeft };
 }
@@ -376,17 +393,29 @@ std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value p
     napi_value widthObj = nullptr;
     double width = A4_WIDTH;
     napi_get_named_property(env, preArgs, "width", &widthObj);
-    NapiParseUtils::ParseDouble(env, widthObj, width);
+    if (!NapiParseUtils::ParseDouble(env, widthObj, width)) {
+        BusinessError::ThrowErrorByErrcode(
+            env, PARAM_CHECK_ERROR, NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "width", "number"));
+        return nullptr;
+    }
 
     napi_value heightObj = nullptr;
     double height = A4_HEIGHT;
     napi_get_named_property(env, preArgs, "height", &heightObj);
-    NapiParseUtils::ParseDouble(env, heightObj, height);
+    if (!NapiParseUtils::ParseDouble(env, heightObj, height)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "height", "number"));
+        return nullptr;
+    }
 
     napi_value scaleObj = nullptr;
     double scale = 1.0;
     napi_get_named_property(env, preArgs, "scale", &scaleObj);
-    NapiParseUtils::ParseDouble(env, scaleObj, scale);
+    if (!NapiParseUtils::ParseDouble(env, scaleObj, scale)) {
+        BusinessError::ThrowErrorByErrcode(
+            env, PARAM_CHECK_ERROR, NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "scale", "number"));
+        return nullptr;
+    }
     scale = scale > SCALE_MAX ? SCALE_MAX : scale < SCALE_MIN ? SCALE_MIN : scale;
 
     auto margin = ParsePDFMarginConfigArgs(env, preArgs, width, height);
@@ -394,7 +423,11 @@ std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value p
     napi_value shouldPrintBackgroundObj = nullptr;
     bool shouldPrintBackground = false;
     napi_get_named_property(env, preArgs, "shouldPrintBackground", &shouldPrintBackgroundObj);
-    NapiParseUtils::ParseBoolean(env, shouldPrintBackgroundObj, shouldPrintBackground);
+    if (!NapiParseUtils::ParseBoolean(env, shouldPrintBackgroundObj, shouldPrintBackground)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "shouldPrintBackground", "boolean"));
+        return nullptr;
+    }
 
     std::shared_ptr<NWebPDFConfigArgs> pdfConfig = std::make_shared<NWebPDFConfigArgsImpl>(
         width, height, scale, margin.top, margin.bottom, margin.right, margin.left, shouldPrintBackground);
