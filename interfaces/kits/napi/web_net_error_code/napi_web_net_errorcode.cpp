@@ -22,9 +22,6 @@ napi_value ToInt32Value(napi_env env, int32_t number)
 {
     napi_value result = nullptr;
     napi_status status = napi_create_int32(env, number, &result);
-    if (status != napi_status::napi_ok){
-        return result;
-    }
     return result;
 }
 
