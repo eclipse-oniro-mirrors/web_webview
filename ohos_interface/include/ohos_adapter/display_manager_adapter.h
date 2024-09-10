@@ -108,7 +108,7 @@ public:
         return FoldStatus::UNKNOWN;
     };
 
-    virtual bool IsFoldAble(){
+    virtual bool IsFoldable(){
         return false;
     };
 };
