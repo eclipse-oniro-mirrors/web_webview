@@ -17,6 +17,8 @@
 #define DISPLAY_MANAGER_ADAPTER_IMPL_H
 
 #include <map>
+#include <window_manager/oh_display_manager.h>
+#include <window_manager/oh_display_info.h>
 
 #include "display_manager_adapter.h"
 

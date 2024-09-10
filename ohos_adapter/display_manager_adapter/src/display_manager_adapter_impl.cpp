@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 #include <window_manager/oh_display_manager.h>
+#include <window_manager/oh_display_info.h>
 #include "display_manager_adapter_impl.h"
 
 #include "display_info.h"
@@ -50,14 +51,14 @@ FoldStatusListenerAdapterImpl::FoldStatusListenerAdapterImpl(
 
 OHOS::NWeb::FoldStatus FoldStatusListenerAdapterImpl::ConvertFoldStatus(NativeDisplayManager_FoldDisplayMode displayMode)
 {
-    switch (foldstatus) {
+    switch (displayMode) {
         case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL:
             return OHOS::NWeb::FoldStatus::FULL;
         case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN:
             return OHOS::NWeb::FoldStatus::MAIN;
         case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB:
             return OHOS::NWeb::FoldStatus::SUB;
-        case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION
+        case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION:
             return OHOS::NWeb::FoldStatus::COORDINATION;
         default:
             return OHOS::NWeb::FoldStatus::UNKNOWN;
@@ -134,14 +135,14 @@ OHOS::NWeb::DisplayOrientation DisplayAdapterImpl::ConvertDisplayOrientationType
 
 OHOS::NWeb::FoldStatus DisplayAdapterImpl::ConvertFoldStatus(NativeDisplayManager_FoldDisplayMode displayMode)
 {
-    switch (foldstatus) {
+    switch (displayMode) {
         case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL:
             return OHOS::NWeb::FoldStatus::FULL;
         case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN:
             return OHOS::NWeb::FoldStatus::MAIN;
         case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB:
             return OHOS::NWeb::FoldStatus::SUB;
-        case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION
+        case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION:
             return OHOS::NWeb::FoldStatus::COORDINATION;
         default:
             return OHOS::NWeb::FoldStatus::UNKNOWN;
@@ -234,7 +235,7 @@ DisplayId DisplayManagerAdapterImpl::GetDefaultDisplayId()
 
 std::shared_ptr<DisplayAdapter> DisplayManagerAdapterImpl::GetDefaultDisplay()
 {
-    sptr<Display> display = DisplayManager::GetInstance().GetD efaultDisplay();
+    sptr<Display> display = DisplayManager::GetInstance().GetDefaultDisplay();
     return std::make_shared<DisplayAdapterImpl>(display);
 }
 
@@ -283,10 +284,10 @@ bool DisplayManagerAdapterImpl::IsDefaultPortrait()
 FoldStatusListenerMap DisplayManagerAdapterImpl::foldStatusReg_;
 
 void FoldChangeCallBack(NativeDisplayManager_FoldDisplayMode displayMode){
-    for(auto& iter::foldStatusReg_){
+    for(auto& iter : DisplayManagerAdapterImpl::foldStatusReg_){
         iter.second->OnFoldStatusChanged(displayMode);
     }
-}
+};
 
 uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
     std::shared_ptr<FoldStatusListenerAdapter> listener)
