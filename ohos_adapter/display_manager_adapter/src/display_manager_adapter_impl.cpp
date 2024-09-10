@@ -69,7 +69,7 @@ OHOS::NWeb::FoldStatus FoldStatusListenerAdapterImpl::ConvertFoldStatus(NativeDi
 void FoldStatusListenerAdapterImpl::OnFoldStatusChanged(NativeDisplayManager_FoldDisplayMode displayMode)
 {
     if (listener_ != nullptr) {
-        listener_->OnFoldStatusChanged(ConvertFoldStatus(foldstatus));
+        listener_->OnFoldStatusChanged(ConvertFoldStatus(displayMode));
     }
 }
 
