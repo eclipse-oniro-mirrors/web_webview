@@ -71,6 +71,9 @@ public:
 
     /*--ark web()--*/
     virtual uint32_t GetFoldStatus() = 0;
+
+    /*--ark web()--*/
+    virtual bool IsFoldable() = 0;
 };
 
 /*--ark web(source=webview)--*/

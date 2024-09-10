@@ -68,4 +68,9 @@ OHOS::NWeb::FoldStatus ArkDisplayAdapterWrapper::GetFoldStatus()
     uint32_t foldstatus = ctocpp_->GetFoldStatus();
     return static_cast<OHOS::NWeb::FoldStatus>(foldstatus);
 }
+
+bool ArkDisplayAdapterWrapper::IsFoldable()
+{
+    return ctocpp_->IsFoldable();
+}
 } // namespace OHOS::ArkWeb

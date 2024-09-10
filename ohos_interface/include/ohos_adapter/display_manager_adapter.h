@@ -53,9 +53,10 @@ enum class DisplayOrientation : uint32_t {
 
 enum class FoldStatus : uint32_t {
     UNKNOWN = 0,
-    EXPAND = 1,
-    FOLDED = 2,
-    HALF_FOLD = 3,
+    FULL = 1,
+    MAIN = 2,
+    SUB = 3,
+    COORDINATION = 4,
 };
 
 
@@ -105,6 +106,10 @@ public:
 
     virtual FoldStatus GetFoldStatus() {
         return FoldStatus::UNKNOWN;
+    };
+
+    virtual bool IsFoldAble(){
+        return false;
     };
 };
 
