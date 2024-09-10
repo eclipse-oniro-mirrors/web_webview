@@ -38,13 +38,13 @@ private:
 };
 
 class FoldStatusListenerAdapterImpl
-    : public OHOS::Rosen::DisplayManager::IFoldStatusListener {
+    : public virtual RefBase {
 public: 
     explicit FoldStatusListenerAdapterImpl(std::shared_ptr<FoldStatusListenerAdapter> listener);
-    ~FoldStatusListenerAdapterImpl() override = default;
-    void OnFoldStatusChanged(OHOS::Rosen::FoldStatus foldstatus) override;
+    ~FoldStatusListenerAdapterImpl() = default;
+    void OnFoldStatusChanged(NativeDisplayManager_FoldDisplayMode displayMode) ;
 private:
-    OHOS::NWeb::FoldStatus ConvertFoldStatus(OHOS::Rosen::FoldStatus foldstatus);
+    OHOS::NWeb::FoldStatus ConvertFoldStatus(NativeDisplayManager_FoldDisplayMode displayMode);
     std::shared_ptr<FoldStatusListenerAdapter> listener_;
 };
 
@@ -63,12 +63,13 @@ public:
     int32_t GetDpi() override;
     DisplayOrientation GetDisplayOrientation() override;
     FoldStatus GetFoldStatus() override;
+    bool IsFoldable() override;
 private:
     sptr<OHOS::Rosen::Display> display_;
     OHOS::NWeb::RotationType ConvertRotationType(OHOS::Rosen::Rotation type);
     OHOS::NWeb::OrientationType ConvertOrientationType(OHOS::Rosen::Orientation type);
     OHOS::NWeb::DisplayOrientation ConvertDisplayOrientationType(OHOS::Rosen::DisplayOrientation type);
-    OHOS::NWeb::FoldStatus ConvertFoldStatus(OHOS::Rosen::FoldStatus foldstatus);
+    OHOS::NWeb::FoldStatus ConvertFoldStatus(NativeDisplayManager_FoldDisplayMode displayMode);
 };
 
 using ListenerMap =
@@ -86,9 +87,9 @@ public:
     bool IsDefaultPortrait() override;
     uint32_t RegisterFoldStatusListener(std::shared_ptr<FoldStatusListenerAdapter> listener) override;
     bool UnregisterFoldStatusListener(uint32_t id) override;
+    static FoldStatusListenerMap foldStatusReg_;
 private:
     ListenerMap reg_;
-    FoldStatusListenerMap foldStatusReg_;
 };
 }
 
