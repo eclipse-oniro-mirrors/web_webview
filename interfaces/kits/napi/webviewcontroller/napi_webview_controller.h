@@ -42,6 +42,7 @@ const std::string WEB_RENDER_PROCESS_MODE_ENUM_NAME = "RenderProcessMode";
 const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
 const std::string WEB_PRESSURE_LEVEL_ENUM_NAME = "PressureLevel";
 const std::string WEB_SCROLL_TYPE_ENUM_NAME = "ScrollType";
+constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 
 struct Scheme {
     std::string name;
@@ -64,10 +65,10 @@ struct OfflineResourceValue {
 };
 
 struct PDFMarginConfig {
-    double top;
-    double bottom;
-    double right;
-    double left;
+    double top = TEN_MILLIMETER_TO_INCH;
+    double bottom = TEN_MILLIMETER_TO_INCH;
+    double right = TEN_MILLIMETER_TO_INCH;
+    double left = TEN_MILLIMETER_TO_INCH;
 };
 
 class NapiWebviewController {
