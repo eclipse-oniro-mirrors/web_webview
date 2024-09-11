@@ -411,11 +411,7 @@ std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value p
     napi_value scaleObj = nullptr;
     double scale = 1.0;
     napi_get_named_property(env, preArgs, "scale", &scaleObj);
-    if (!NapiParseUtils::ParseDouble(env, scaleObj, scale)) {
-        BusinessError::ThrowErrorByErrcode(
-            env, PARAM_CHECK_ERROR, NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "scale", "number"));
-        return nullptr;
-    }
+    NapiParseUtils::ParseDouble(env, scaleObj, scale);
     scale = scale > SCALE_MAX ? SCALE_MAX : scale < SCALE_MIN ? SCALE_MIN : scale;
 
     auto margin = ParsePDFMarginConfigArgs(env, preArgs, width, height);
@@ -423,11 +419,7 @@ std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value p
     napi_value shouldPrintBackgroundObj = nullptr;
     bool shouldPrintBackground = false;
     napi_get_named_property(env, preArgs, "shouldPrintBackground", &shouldPrintBackgroundObj);
-    if (!NapiParseUtils::ParseBoolean(env, shouldPrintBackgroundObj, shouldPrintBackground)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "shouldPrintBackground", "boolean"));
-        return nullptr;
-    }
+    NapiParseUtils::ParseBoolean(env, shouldPrintBackgroundObj, shouldPrintBackground);
 
     std::shared_ptr<NWebPDFConfigArgs> pdfConfig = std::make_shared<NWebPDFConfigArgsImpl>(
         width, height, scale, margin.top, margin.bottom, margin.right, margin.left, shouldPrintBackground);
