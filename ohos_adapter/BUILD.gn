@@ -24,10 +24,6 @@ ohos_shared_library("nweb_ohos_adapter") {
     branch_protector_frt = "bti"
   }
 
-  libs = [
-    "//prebuilts/ohos-sdk/linux/12/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_display_manager.so",
-  ]
-
   defines = [
     "HILOG_TAG=\"webadapter\"",
     "WEBVIEW_PACKAGE_NAME=\"${webview_package_name}\"",
@@ -122,7 +118,6 @@ ohos_shared_library("nweb_ohos_adapter") {
     "soc_perf_adapter/include",
     "system_properties_adapter/include",
     "sensor_adapter/include",
-    "ndk/include",
   ]
 
   public_configs = [ ":ohos_adapter_public_interface" ]
@@ -171,6 +166,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "samgr:samgr_proxy",
     "time_service:time_client",
     "window_manager:libdm",
+    "window_manager:libdm_ndk",
   ]
   public_external_deps = [ "ability_base:want" ]
 
