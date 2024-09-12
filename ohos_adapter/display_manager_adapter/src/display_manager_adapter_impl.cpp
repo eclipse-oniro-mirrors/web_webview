@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include <window_manager/oh_display_manager.h>
-#include <window_manager/oh_display_info.h>
 #include "display_manager_adapter_impl.h"
 
 #include "display_info.h"
 #include "nweb_log.h"
 #include "syspara/parameters.h"
+#include "oh_display_manager.h"
+#include "oh_display_info.h"
 
 using namespace OHOS::Rosen;
 using namespace OHOS::NWeb;
