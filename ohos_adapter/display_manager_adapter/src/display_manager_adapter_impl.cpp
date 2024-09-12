@@ -49,7 +49,8 @@ void DisplayListenerAdapterImpl::OnChange(DisplayId id)
 FoldStatusListenerAdapterImpl::FoldStatusListenerAdapterImpl(
     std::shared_ptr<FoldStatusListenerAdapter> listener) : listener_(listener) {}
 
-OHOS::NWeb::FoldStatus FoldStatusListenerAdapterImpl::ConvertFoldStatus(NativeDisplayManager_FoldDisplayMode displayMode)
+OHOS::NWeb::FoldStatus FoldStatusListenerAdapterImpl::ConvertFoldStatus(
+    NativeDisplayManager_FoldDisplayMode displayMode)
 {
     switch (displayMode) {
         case DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL:
@@ -218,7 +219,8 @@ DisplayOrientation DisplayAdapterImpl::GetDisplayOrientation()
 
 FoldStatus DisplayAdapterImpl::GetFoldStatus()
 {
-    NativeDisplayManager_FoldDisplayMode displayMode = NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_UNKNOWN; 
+    NativeDisplayManager_FoldDisplayMode displayMode = 
+        NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_UNKNOWN; 
     OH_NativeDisplayManager_GetFoldDisplayMode(&displayMode);
     return ConvertFoldStatus(displayMode);
 } 
@@ -300,8 +302,9 @@ uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
     }
 
     uint32_t id = count++;
-    foldStatusReg_.emplace(std::make_pair(id, reg));
-    if (OH_NativeDisplayManager_RegisterFoldDisplayModeChangeListener(FoldChangeCallBack, &id) == NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
+    if (OH_NativeDisplayManager_RegisterFoldDisplayModeChangeListener(
+        FoldChangeCallBack, &id) == NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
+        foldStatusReg_.emplace(std::make_pair(id, reg));
         return id;
     } else {
         return 0;
@@ -314,7 +317,8 @@ bool DisplayManagerAdapterImpl::UnregisterFoldStatusListener(uint32_t id)
     if (iter == foldStatusReg_.end()) {
         return false;
     }
-    if (OH_NativeDisplayManager_UnregisterFoldDisplayModeChangeListener(id) == NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
+    if (OH_NativeDisplayManager_UnregisterFoldDisplayModeChangeListener(
+            id) == NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
         foldStatusReg_.erase(iter);
         return true;
     }
