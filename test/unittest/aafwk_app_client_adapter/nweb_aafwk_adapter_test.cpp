@@ -93,7 +93,7 @@ void RenderScheduler::NotifyBrowser(int32_t ipcFd, int32_t sharedFd, int32_t cra
 
 class MockBrowserClient : public BrowserClient {
 public:
-    MockBrowserClient(const sptr<IRemoteObject> &impl);
+    explicit MockBrowserClient(const sptr<IRemoteObject> &impl);
 
     sptr<IRemoteObject> QueryRenderSurface(int32_t surface_id);
 
@@ -198,7 +198,7 @@ class MockIBrowser : public IBrowser {
 public:
     MOCK_METHOD(sptr<IRemoteObject>, QueryRenderSurface, (int32_t surface_id), (override));
 
-    MOCK_METHOD(void, ReportThread, (int32_t status, int32_t process_id, 
+    MOCK_METHOD(void, ReportThread, (int32_t status, int32_t process_id,
         int32_t thread_id, int32_t role), (override));
 
     MOCK_METHOD(void, PassSurface, (sptr<Surface> surface, int64_t surface_id), (override));
