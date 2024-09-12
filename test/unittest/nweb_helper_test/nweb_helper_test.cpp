@@ -589,14 +589,9 @@ HWTEST_F(NwebHelperTest, NWebHelper_EnableWholeWebPageDrawing_001, TestSize.Leve
     auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
     EXPECT_EQ(nwebHelper, nullptr);
 
-    std::string hostName = "name";
-    NWebHelper::Instance().nwebEngine_ = nullptr;
-    NWebHelper::Instance().ClearHostIP(hostName);
-    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
-
     auto nwebengineMock = std::make_shared<MockNWebEngine>();
     NWebHelper::Instance().nwebEngine_ = nwebengineMock;
-    NWebHelper::Instance().ClearHostIP(hostName);
+    NWebHelper::Instance().EnableWholeWebPageDrawing();
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
 
     NWebHelper::Instance().nwebEngine_ = nullptr;
