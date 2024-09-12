@@ -25,12 +25,12 @@ ohos_shared_library("nweb_ohos_adapter") {
   }
 
   libs = [
-    "file prebuilts/ohos-sdk/linux/12/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_display_manager.so",
+    "//prebuilts/ohos-sdk/linux/12/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_display_manager.so",
   ]
 
   defines = [
     "HILOG_TAG=\"webadapter\"",
-    "WEBVIEW_PACKAGE_NAME=\"${webview_package_name}\"", 
+    "WEBVIEW_PACKAGE_NAME=\"${webview_package_name}\"",
     "WEBVIEW_SANDBOX_LIB_PATH=\"${webview_sandbox_lib_path}\"",
     "WEBVIEW_CRASHPAD_HANDLER_SO=\"${webview_crashpad_handler_so}\"",
     "WEBVIEW_SANDBOX_RELATIVE_LIB_PATH=\"${webview_sandbox_relative_lib_path}\"",
