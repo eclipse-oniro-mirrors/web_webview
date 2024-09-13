@@ -176,7 +176,7 @@ int32_t DisplayAdapterImpl::GetHeight()
 
 float DisplayAdapterImpl::GetVirtualPixelRatio()
 {
-    if (display_ != nullptr) { 
+    if (display_ != nullptr) {
         return display_->GetVirtualPixelRatio();
     }
     return -1;
