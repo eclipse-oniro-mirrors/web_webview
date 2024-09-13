@@ -48,6 +48,18 @@ public:
 
     void DestroyNativeImage() override;
 
+    void OhosImageReader_newNativeImage() override;
+
+    int32_t OhosImageReader_acquireNativeWindowBuffer(
+        void** windowBuffer,
+        int* acquireFenceFd) override;
+
+    int32_t OhosImage_getNativeBuffer(
+        void* windowBuffer,
+        void** nativeBuffer) override;
+
+    void OhosImage_delete(void* windowBuffer, int fenceFd) override;
+
 private:
     ArkWebRefPtr<ArkNativeImageAdapter> ctocpp_;
 };

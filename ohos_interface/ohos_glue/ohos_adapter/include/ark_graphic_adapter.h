@@ -215,6 +215,22 @@ public:
 
     /*--ark web()--*/
     virtual void DestroyNativeImage() = 0;
+
+    /*--ark web()--*/
+    virtual void OhosImageReader_newNativeImage() = 0;
+
+    /*--ark web()--*/
+    virtual int32_t OhosImageReader_acquireNativeWindowBuffer(
+        void** windowBuffer,
+        int* acquireFenceFd) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t OhosImage_getNativeBuffer(
+        void* windowBuffer,
+        void** nativeBuffer) = 0;
+
+    /*--ark web()--*/
+    virtual void OhosImage_delete(void* windowBuffer, int fenceFd) = 0;
 };
 
 /*--ark web(source=webview)--*/
