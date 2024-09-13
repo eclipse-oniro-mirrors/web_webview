@@ -294,14 +294,13 @@ void FoldChangeCallBack(NativeDisplayManager_FoldDisplayMode displayMode){
 uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
     std::shared_ptr<FoldStatusListenerAdapter> listener)
 {
-    static uint32_t count = 1;
     sptr<FoldStatusListenerAdapterImpl> reg =
         new (std::nothrow) FoldStatusListenerAdapterImpl(listener);
     if (reg == nullptr) {
         return false;
     }
 
-    uint32_t id = count++;
+    uint32_t id = 1;
     if (OH_NativeDisplayManager_RegisterFoldDisplayModeChangeListener(
         FoldChangeCallBack, &id) == NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
         foldStatusReg_.emplace(std::make_pair(id, reg));
