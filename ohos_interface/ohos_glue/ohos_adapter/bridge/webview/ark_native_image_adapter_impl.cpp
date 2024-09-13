@@ -80,4 +80,28 @@ void ArkNativeImageAdapterImpl::DestroyNativeImage()
     return real_->DestroyNativeImage();
 }
 
+void ArkNativeImageAdapterImpl::OhosImageReader_newNativeImage()
+{
+    return real_->OhosImageReader_newNativeImage();
+}
+
+int32_t ArkNativeImageAdapterImpl::OhosImageReader_acquireNativeWindowBuffer(
+    void** windowBuffer,
+    int* acquireFenceFd)
+{
+    return real_->OhosImageReader_acquireNativeWindowBuffer(windowBuffer, acquireFenceFd);
+}
+
+int32_t ArkNativeImageAdapterImpl::OhosImage_getNativeBuffer(
+    void* windowBuffer,
+    void** nativeBuffer)
+{
+    return real_->OhosImage_getNativeBuffer(windowBuffer, nativeBuffer);
+}
+
+void ArkNativeImageAdapterImpl::OhosImage_delete(void* windowBuffer, int fenceFd)
+{
+    return real_->OhosImage_delete(windowBuffer, fenceFd);
+}
+
 } // namespace OHOS::ArkWeb

@@ -113,4 +113,34 @@ void NativeImageAdapterImpl::DestroyNativeImage()
     OH_NativeImage_Destroy(&ohNativeImage_);
     ohNativeImage_ = nullptr;
 }
+
+void NativeImageAdapterImpl::OhosImageReader_newNativeImage()
+{
+    ohNativeImage_ = OH_ConsumerSurface_Create();
+}
+
+int32_t NativeImageAdapterImpl::OhosImageReader_acquireNativeWindowBuffer(
+    void** windowBuffer,
+    int* acquireFenceFd)
+{
+    if (ohNativeImage_ == nullptr) {
+        return SURFACE_ERROR_ERROR;
+    }
+    return OH_NativeImage_AcquireNativeWindowBuffer(ohNativeImage_, windowBuffer, acquireFenceFd);
+}
+
+int32_t NativeImageAdapterImpl::OhosImage_getNativeBuffer(
+    void* windowBuffer,
+    void** nativeBuffer)
+{
+    return OH_NativeBuffer_FromNativeWindowBuffer(static_cast<OHNativeWindowBuffer*>(windowBuffer), nativeBuffer);
+}
+
+void NativeImageAdapterImpl::OhosImage_delete(void* windowBuffer, int fenceFd)
+{
+    if (ohNativeImage_ == nullptr) {
+        return SURFACE_ERROR_ERROR;
+    }
+    return OH_NativeImage_ReleaseNativeWindowBuffer(ohNativeImage_, static_cast<OHNativeWindowBuffer*>(windowBuffer), fenceFd);
+}
 }
