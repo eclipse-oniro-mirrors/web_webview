@@ -165,6 +165,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "samgr:samgr_proxy",
     "time_service:time_client",
     "window_manager:libdm",
+    "window_manager:libdm_ndk",
   ]
   public_external_deps = [ "ability_base:want" ]
 
