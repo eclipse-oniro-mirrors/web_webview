@@ -14,7 +14,6 @@
  */
 
 #include "ohos_adapter/bridge/ark_display_adapter_wrapper.h"
-#include "ark_display_adapter_wrapper.h"
 
 namespace OHOS::ArkWeb {
 
