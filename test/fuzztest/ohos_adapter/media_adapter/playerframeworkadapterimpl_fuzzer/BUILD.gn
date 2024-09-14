@@ -17,7 +17,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("PlayerFrameworkAdapterImpl_fuzzerFuzzTest") {
+ohos_fuzztest("PlayerFrameworkAdapterImplFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/media_adapter/playerframeworkadapterimpl_fuzzer"
   include_dirs = [
@@ -54,7 +54,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":PlayerFrameworkAdapterImpl_fuzzerFuzzTest",
+    ":PlayerFrameworkAdapterImplFuzzTest",
   ]
 }
 ###############################################################################

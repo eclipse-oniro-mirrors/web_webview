@@ -20,7 +20,7 @@ import("$webview_path/config.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("AudioRendererAdapterFuzzTest") {
   module_out_path = webview_fuzz_test_path
-  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/audio_adapter/audiorenderadapter_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/audio_adapter/audiorendereradapter_fuzzer"
   configs = [ "../:audio_adapter_fuzztest_config" ]
 
   include_dirs = [
