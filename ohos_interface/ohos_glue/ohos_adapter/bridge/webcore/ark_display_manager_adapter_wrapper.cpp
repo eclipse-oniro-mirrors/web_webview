@@ -19,7 +19,6 @@
 #include "ohos_adapter/bridge/ark_display_listener_adapter_impl.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
-#include "ark_display_manager_adapter_wrapper.h"
 
 namespace OHOS::ArkWeb {
 
