@@ -120,7 +120,7 @@ function selectFile(param, result) {
         }
       }).catch((error) => {
         console.log('selectFile error: ' + JSON.stringify(error));
-
+      });
   } catch (error) {
     console.log('picker error: ' + JSON.stringify(error));
   }
