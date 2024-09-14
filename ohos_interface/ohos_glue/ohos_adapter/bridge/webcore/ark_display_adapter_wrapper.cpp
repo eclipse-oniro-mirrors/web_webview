@@ -14,6 +14,7 @@
  */
 
 #include "ohos_adapter/bridge/ark_display_adapter_wrapper.h"
+#include "ark_display_adapter_wrapper.h"
 
 namespace OHOS::ArkWeb {
 
@@ -60,5 +61,16 @@ OHOS::NWeb::DisplayOrientation ArkDisplayAdapterWrapper::GetDisplayOrientation()
 {
     uint32_t type = ctocpp_->GetDisplayOrientation();
     return (OHOS::NWeb::DisplayOrientation)type;
+}
+
+OHOS::NWeb::FoldStatus ArkDisplayAdapterWrapper::GetFoldStatus()
+{
+    uint32_t foldstatus = ctocpp_->GetFoldStatus();
+    return static_cast<OHOS::NWeb::FoldStatus>(foldstatus);
+}
+
+bool ArkDisplayAdapterWrapper::IsFoldable()
+{
+    return ctocpp_->IsFoldable();
 }
 } // namespace OHOS::ArkWeb

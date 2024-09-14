@@ -51,6 +51,15 @@ enum class DisplayOrientation : uint32_t {
     UNKNOWN,
 };
 
+enum class FoldStatus : uint32_t {
+    UNKNOWN = 0,
+    FULL = 1,
+    MAIN = 2,
+    SUB = 3,
+    COORDINATION = 4,
+};
+
+
 class DisplayListenerAdapter {
 public:
     DisplayListenerAdapter() = default;
@@ -62,6 +71,15 @@ public:
     virtual void OnDestroy(DisplayId) = 0;
 
     virtual void OnChange(DisplayId) = 0;
+};
+
+class FoldStatusListenerAdapter {
+public:
+    FoldStatusListenerAdapter() = default;
+
+    virtual ~FoldStatusListenerAdapter() = default;
+
+    virtual void OnFoldStatusChanged(FoldStatus foldstatus) {};
 };
 
 class DisplayAdapter {
@@ -85,6 +103,14 @@ public:
     virtual int32_t GetDpi() = 0;
 
     virtual DisplayOrientation GetDisplayOrientation() = 0;
+
+    virtual FoldStatus GetFoldStatus() {
+        return FoldStatus::UNKNOWN;
+    };
+
+    virtual bool IsFoldable(){
+        return false;
+    };
 };
 
 class DisplayManagerAdapter {
@@ -102,6 +128,14 @@ public:
     virtual bool UnregisterDisplayListener(ListenerId id) = 0;
 
     virtual bool IsDefaultPortrait() = 0;
+    
+    virtual uint32_t RegisterFoldStatusListener(std::shared_ptr<FoldStatusListenerAdapter> listener) {
+        return -1;
+    };
+
+    virtual bool UnregisterFoldStatusListener(uint32_t id) {
+        return false;
+    };
 };
 
 } // namespace OHOS::NWeb

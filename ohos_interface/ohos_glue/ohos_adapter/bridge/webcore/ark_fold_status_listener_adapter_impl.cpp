@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,20 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-#include "ohos_adapter/bridge/ark_event_handler_fdlistener_adapter_wrapper.h"
-
-#include "base/bridge/ark_web_bridge_macros.h"
+#include "ohos_adapter/bridge/ark_fold_status_listener_adapter_impl.h"
 
 namespace OHOS::ArkWeb {
 
-ArkEventHandlerFDListenerAdapterWrapper
-    ::ArkEventHandlerFDListenerAdapterWrapper(ArkWebRefPtr<ArkEventHandlerFDListenerAdapter> ref) : ctocpp_(ref)
+ArkFoldStatusListenerAdapterImpl
+    ::ArkFoldStatusListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::FoldStatusListenerAdapter> ref) : real_(ref)
     {}
 
-void ArkEventHandlerFDListenerAdapterWrapper::OnReadable(int32_t fileDescriptor)
-{
-    ctocpp_->OnReadable(fileDescriptor);
+void ArkFoldStatusListenerAdapterImpl::OnFoldStatusChanged(uint32_t foldstatus) {
+    real_->OnFoldStatusChanged(static_cast<OHOS::NWeb::FoldStatus>(foldstatus));
 }
 
 } // namespace OHOS::ArkWeb

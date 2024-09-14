@@ -35,6 +35,13 @@ public:
     virtual void OnChange(uint64_t displayId) = 0;
 };
 
+/*--ark web(source=webcore)--*/
+class ArkFoldStatusListenerAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual void OnFoldStatusChanged(uint32_t foldstatus) = 0;
+};
+
 /*--ark web(source=webview)--*/
 class ArkDisplayAdapter : public virtual ArkWebBaseRefCounted {
 public:
@@ -61,6 +68,12 @@ public:
 
     /*--ark web()--*/
     virtual uint32_t GetDisplayOrientation() = 0;
+
+    /*--ark web()--*/
+    virtual uint32_t GetFoldStatus() = 0;
+
+    /*--ark web()--*/
+    virtual bool IsFoldable() = 0;
 };
 
 /*--ark web(source=webview)--*/
@@ -80,6 +93,12 @@ public:
 
     /*--ark web()--*/
     virtual bool IsDefaultPortrait() = 0;
+
+    /*--ark web()--*/
+    virtual uint32_t RegisterFoldStatusListener(ArkWebRefPtr<ArkFoldStatusListenerAdapter> listener) = 0;
+
+    /*--ark web()--*/
+    virtual bool UnregisterFoldStatusListener(uint32_t id) = 0;
 };
 
 } // namespace OHOS::ArkWeb
