@@ -102,7 +102,6 @@ public:
     virtual bool UnregisterDisplayListener(ListenerId id) = 0;
 
     virtual bool IsDefaultPortrait() = 0;
-
 };
 
 } // namespace OHOS::NWeb
