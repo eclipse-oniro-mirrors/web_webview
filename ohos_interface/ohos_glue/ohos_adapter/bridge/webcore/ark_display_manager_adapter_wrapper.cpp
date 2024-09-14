@@ -62,18 +62,4 @@ bool ArkDisplayManagerAdapterWrapper::IsDefaultPortrait()
     return ctocpp_->IsDefaultPortrait();
 }
 
-uint32_t ArkDisplayManagerAdapterWrapper::RegisterFoldStatusListener(
-    std::shared_ptr<OHOS::NWeb::FoldStatusListenerAdapter> listener)
-{
-    if (CHECK_SHARED_PTR_IS_NULL(listener)) {
-        return ctocpp_->RegisterFoldStatusListener(nullptr);
-    }
-
-    return ctocpp_->RegisterFoldStatusListener(new ArkFoldStatusListenerAdapterImpl(listener));
-}
-
-bool ArkDisplayManagerAdapterWrapper::UnregisterFoldStatusListener(uint32_t id)
-{
-    return ctocpp_->UnregisterFoldStatusListener(id);
-}
 } // namespace OHOS::ArkWeb
