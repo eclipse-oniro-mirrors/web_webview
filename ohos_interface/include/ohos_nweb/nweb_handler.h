@@ -23,6 +23,7 @@
 #include "nweb.h"
 #include "nweb_access_request.h"
 #include "nweb_app_link_callback.h"
+#include "nweb_color_chooser_callback.h"
 #include "nweb_console_log.h"
 #include "nweb_context_menu_params.h"
 #include "nweb_controller_handler.h"
@@ -1264,6 +1265,11 @@ public:
      * @param height The height of the blankless frame.
      */
     virtual void OnInsertBlanklessFrameWithSize(const std::string& pathToFrame, uint32_t width, uint32_t height) {}
+
+    virtual bool OnColorChooserShow(uint32_t initialColor, std::shared_ptr<NWebColorChooserCallback> callback)
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb
