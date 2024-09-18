@@ -17,6 +17,7 @@
 
 #include "ohos_nweb/bridge/ark_web_access_request_impl.h"
 #include "ohos_nweb/bridge/ark_web_applink_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_color_chooser_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_console_log_impl.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_params_impl.h"
@@ -1270,5 +1271,19 @@ void ArkWebHandlerWrapper::OnInsertBlanklessFrameWithSize(const std::string& pat
     ArkWebString pathToFrame_ = ArkWebStringClassToStruct(pathToFrame);
     ark_web_handler_->OnInsertBlanklessFrameWithSize(pathToFrame_, width, height);
     ArkWebStringStructRelease(pathToFrame_);
+}
+
+bool ArkWebHandlerWrapper::OnColorChooserShow(
+    uint32_t initialColor, std::shared_ptr<OHOS::NWeb::NWebColorChooserCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        return false;
+    }
+    ArkWebRefPtr<ArkWebColorChooserCallback> ark_web_color_chooser_callback = nullptr;
+    if (!CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_color_chooser_callback = new ArkWebColorChooserCallbackImpl(callback);
+    }
+
+    return ark_web_handler_->OnColorChooserShow(initialColor, ark_web_color_chooser_callback);
 }
 } // namespace OHOS::ArkWeb

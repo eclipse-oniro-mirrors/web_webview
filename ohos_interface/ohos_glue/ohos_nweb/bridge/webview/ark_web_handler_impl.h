@@ -708,6 +708,8 @@ public:
     void OnInsertBlanklessFrameWithSize(const ArkWebString& pathToFrame,
                                         uint32_t width,
                                         uint32_t height) override;
+
+    bool OnColorChooserShow(uint32_t initialColor, ArkWebRefPtr<ArkWebColorChooserCallback> callback) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
