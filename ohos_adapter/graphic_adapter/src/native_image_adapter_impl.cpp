@@ -17,6 +17,7 @@
 
 #include "graphic_common_c.h"
 #include "iconsumer_surface.h"
+#include "nweb_log.h"
 
 namespace OHOS::NWeb {
 
