@@ -114,6 +114,7 @@ void NativeImageAdapterImpl::DestroyNativeImage()
     ohNativeImage_ = nullptr;
 }
 
+
 void NativeImageAdapterImpl::OhosImageReader_newNativeImage()
 {
     ohNativeImage_ = OH_ConsumerSurface_Create();
@@ -124,19 +125,37 @@ int32_t NativeImageAdapterImpl::OhosImageReader_acquireNativeWindowBuffer(
     int* acquireFenceFd)
 {
     if (ohNativeImage_ == nullptr) {
+        WVLOG_E("native image is null.");
         return SURFACE_ERROR_ERROR;
     }
-    return OH_NativeImage_AcquireNativeWindowBuffer(ohNativeImage_, windowBuffer, acquireFenceFd);
+
+    OHNativeWindowBuffer* buffer = nullptr;
+    int32_t ret = OH_NativeImage_AcquireNativeWindowBuffer(ohNativeImage_, &buffer, acquireFenceFd);
+    if (ret != SURFACE_ERROR_OK || !buffer) {
+        WVLOG_E("acquireNativeWindowBuffer fail. ret = %{public}d or buffer is nullptr", ret);
+        return SURFACE_ERROR_ERROR;
+    }
+    *windowBuffer = buffer;
+    return SURFACE_ERROR_OK;
 }
 
 int32_t NativeImageAdapterImpl::OhosImage_getNativeBuffer(
     void* windowBuffer,
     void** nativeBuffer)
 {
-    return OH_NativeBuffer_FromNativeWindowBuffer(static_cast<OHNativeWindowBuffer*>(windowBuffer), nativeBuffer);
+    OH_NativeBuffer* buffer = nullptr;
+    int32_t ret = OH_NativeBuffer_FromNativeWindowBuffer(static_cast<OHNativeWindowBuffer*>(windowBuffer), &buffer);
+    if (ret != SURFACE_ERROR_OK || !buffer) {
+        WVLOG_E("getNativeBuffer fail. ret = %{public}d or buffer is nullptr", ret);
+        return SURFACE_ERROR_ERROR;
+    }
+
+    *nativeBuffer = buffer;
+    return SURFACE_ERROR_OK;
+
 }
 
-void NativeImageAdapterImpl::OhosImage_delete(void* windowBuffer, int fenceFd)
+int32_t NativeImageAdapterImpl::OhosImage_delete(void* windowBuffer, int fenceFd)
 {
     if (ohNativeImage_ == nullptr) {
         return SURFACE_ERROR_ERROR;

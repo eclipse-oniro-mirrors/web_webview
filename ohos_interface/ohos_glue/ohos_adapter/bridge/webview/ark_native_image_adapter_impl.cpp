@@ -99,7 +99,7 @@ int32_t ArkNativeImageAdapterImpl::OhosImage_getNativeBuffer(
     return real_->OhosImage_getNativeBuffer(windowBuffer, nativeBuffer);
 }
 
-void ArkNativeImageAdapterImpl::OhosImage_delete(void* windowBuffer, int fenceFd)
+int32_t ArkNativeImageAdapterImpl::OhosImage_delete(void* windowBuffer, int fenceFd)
 {
     return real_->OhosImage_delete(windowBuffer, fenceFd);
 }
