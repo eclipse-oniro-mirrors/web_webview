@@ -101,7 +101,7 @@ int32_t ArkNativeImageAdapterWrapper::OhosImage_getNativeBuffer(
     return ctocpp_->OhosImage_getNativeBuffer(windowBuffer, nativeBuffer);
 }
 
-void ArkNativeImageAdapterWrapper::OhosImage_delete(void* windowBuffer, int fenceFd)
+int32_t ArkNativeImageAdapterWrapper::OhosImage_delete(void* windowBuffer, int fenceFd)
 {
     return ctocpp_->OhosImage_delete(windowBuffer, fenceFd);
 }

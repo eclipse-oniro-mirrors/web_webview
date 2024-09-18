@@ -230,7 +230,7 @@ public:
         void** nativeBuffer) = 0;
 
     /*--ark web()--*/
-    virtual void OhosImage_delete(void* windowBuffer, int fenceFd) = 0;
+    virtual int32_t OhosImage_delete(void* windowBuffer, int fenceFd) = 0;
 };
 
 /*--ark web(source=webview)--*/

@@ -287,7 +287,7 @@ public:
         void* windowBuffer,
         void** nativeBuffer) = 0;
 
-    virtual void OhosImage_delete(void* windowBuffer, int fenceFd) = 0;
+    virtual int32_t OhosImage_delete(void* windowBuffer, int fenceFd) = 0;
 };
 
 class ProducerSurfaceAdapter {
