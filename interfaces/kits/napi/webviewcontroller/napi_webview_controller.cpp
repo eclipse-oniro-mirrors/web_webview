@@ -6461,8 +6461,8 @@ napi_value NapiWebviewController::GetScrollOffset(napi_env env,
     napi_create_object(env, &result);
     napi_create_double(env, static_cast<double>(offsetX), &horizontal);
     napi_create_double(env, static_cast<double>(offsetY), &vertical);
-    napi_set_named_property(env, result, "horizontal", horizontal);
-    napi_set_named_property(env, result, "vertical", vertical);
+    napi_set_named_property(env, result, "x", horizontal);
+    napi_set_named_property(env, result, "y", vertical);
     return result;
 }
 
