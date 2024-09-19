@@ -181,75 +181,75 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_DestroyNativeIma
 }
 
 /**
- * @tc.name: NativeImageAdapterImplTest_OhosImageReader_newNativeImage001
- * @tc.desc:OhosImageReader_newNativeImage.
+ * @tc.name: NativeImageAdapterImplTest_NewNativeImage001
+ * @tc.desc:NewNativeImage.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_OhosImageReader_newNativeImage_001, TestSize.Level1)
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_NewNativeImage_001, TestSize.Level1)
 {
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
-    imagerAdapter->OhosImageReader_newNativeImage();
+    imagerAdapter->NewNativeImage();
     EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
 }
 
 /**
- * @tc.name: NativeImageAdapterImplTest_OhosImageReader_acquireNativeWindowBuffer001
- * @tc.desc:OhosImageReader_acquireNativeWindowBuffer.
+ * @tc.name: NativeImageAdapterImplTest_AcquireNativeWindowBuffer001
+ * @tc.desc:AcquireNativeWindowBuffer.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_OhosImageReader_acquireNativeWindowBuffer_001, TestSize.Level1)
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_AcquireNativeWindowBuffer_001, TestSize.Level1)
 {
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
 
     void* windowBuffer = nullptr;
     int fenceId = -1;
-    int32_t ret = imagerAdapter->OhosImageReader_acquireNativeWindowBuffer(&windowBuffer, &fenceId);
+    int32_t ret = imagerAdapter->AcquireNativeWindowBuffer(&windowBuffer, &fenceId);
     EXPECT_EQ(ret, SURFACE_ERROR_ERROR);
 
-    imagerAdapter->OhosImageReader_newNativeImage();
+    imagerAdapter->NewNativeImage();
     EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
-    ret = imagerAdapter->OhosImageReader_acquireNativeWindowBuffer(&windowBuffer, &fenceId);
+    ret = imagerAdapter->AcquireNativeWindowBuffer(&windowBuffer, &fenceId);
     EXPECT_EQ(ret, GSERROR_INTERNAL);
 }
 
 /**
- * @tc.name: NativeImageAdapterImplTest_OhosImage_getNativeBuffer001
- * @tc.desc:OhosImage_getNativeBuffer.
+ * @tc.name: NativeImageAdapterImplTest_GetNativeBuffer001
+ * @tc.desc:GetNativeBuffer.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_OhosImage_getNativeBuffer_001, TestSize.Level1)
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeBuffer_001, TestSize.Level1)
 {
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
 
     void* windowBuffer = nullptr;
     void* nativeBuffer = nullptr;
-    imagerAdapter->OhosImage_getNativeBuffer(windowBuffer, &nativeBuffer);
+    imagerAdapter->GetNativeBuffer(windowBuffer, &nativeBuffer);
 }
 
 /**
- * @tc.name: NativeImageAdapterImplTest_OhosImage_delete001
- * @tc.desc:OhosImage_delete.
+ * @tc.name: NativeImageAdapterImplTest_ReleaseNativeWindowBuffer001
+ * @tc.desc:ReleaseNativeWindowBuffer.
  * @tc.type: FUNC
  * @tc.require:
  */
-HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_OhosImage_delete_001, TestSize.Level1)
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_ReleaseNativeWindowBuffer_001, TestSize.Level1)
 {
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
 
     void* windowBuffer = nullptr;
     int fenceId = -1;
-    int32_t ret = imagerAdapter->OhosImage_delete(windowBuffer, fenceId);
+    int32_t ret = imagerAdapter->ReleaseNativeWindowBuffer(windowBuffer, fenceId);
     EXPECT_EQ(ret, SURFACE_ERROR_ERROR);
 
-    imagerAdapter->OhosImageReader_newNativeImage();
+    imagerAdapter->NewNativeImage();
     EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
-    imagerAdapter->OhosImage_delete(windowBuffer, fenceId);
+    imagerAdapter->ReleaseNativeWindowBuffer(windowBuffer, fenceId);
 }
 } // namespace OHOS::NWeb

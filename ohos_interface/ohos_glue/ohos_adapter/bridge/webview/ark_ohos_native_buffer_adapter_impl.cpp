@@ -44,37 +44,10 @@ void ArkOhosNativeBufferAdapterImpl::Describe(const void* buffer, void* outDesc)
     return real_.Describe(typedBuffer, typedOutDesc);
 }
 
-int ArkOhosNativeBufferAdapterImpl::Lock(void* buffer,
-    uint64_t usage, int32_t fence, const void* rect, void** out_virtual_address)
-{
-    NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(buffer);
-    const ARect* typedRect = static_cast<const ARect*>(rect);
-    void** typedOutVirtualAddress = reinterpret_cast<void**>(out_virtual_address);
-    return real_.Lock(typedBuffer, usage, fence, typedRect, typedOutVirtualAddress);
-}
-
-int ArkOhosNativeBufferAdapterImpl::RecvHandleFromUnixSocket(int socketFd, void** outBuffer)
-{
-    NativeBuffer** typedOutBuffer = reinterpret_cast<NativeBuffer**>(outBuffer);
-    return real_.RecvHandleFromUnixSocket(socketFd, typedOutBuffer);
-}
-
 void ArkOhosNativeBufferAdapterImpl::Release(void* buffer)
 {
     NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(buffer);
     return real_.Release(typedBuffer);
-}
-
-int32_t ArkOhosNativeBufferAdapterImpl::SendHandleToUnixSocket(const void* buffer, int socketFd)
-{
-    const NativeBuffer* typedBuffer = static_cast<const NativeBuffer*>(buffer);
-    return real_.SendHandleToUnixSocket(typedBuffer, socketFd);
-}
-
-int ArkOhosNativeBufferAdapterImpl::Unlock(void* buffer, int32_t* fence)
-{
-    NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(buffer);
-    return real_.Unlock(typedBuffer, fence);
 }
 
 int ArkOhosNativeBufferAdapterImpl::GetEGLBuffer(void* buffer, void** eglBuffer)

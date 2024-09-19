@@ -30,12 +30,7 @@ public:
     void Allocate(const NativeBufferDesc* desc, NativeBuffer** outBuffer) override;
     void AcquireBuffer(NativeBuffer* buffer) override;
     void Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc) override;
-    int Lock(NativeBuffer* buffer,
-        uint64_t usage, int32_t fence, const ARect* rect, void** out_virtual_address) override;
-    int RecvHandleFromUnixSocket(int socketFd, NativeBuffer** outBuffer) override;
     void Release(NativeBuffer* buffer) override;
-    int SendHandleToUnixSocket(const NativeBuffer* buffer, int socketFd) override;
-    int Unlock(NativeBuffer* buffer, int32_t* fence) override;
     int GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer) override;
     int FreeEGLBuffer(void* eglBuffer) override;
     int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) override;
