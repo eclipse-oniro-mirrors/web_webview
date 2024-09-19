@@ -277,17 +277,17 @@ public:
 
     virtual void DestroyNativeImage() = 0;
 
-    virtual void OhosImageReader_newNativeImage() = 0;
+    virtual void NewNativeImage() = 0;
 
-    virtual int32_t OhosImageReader_acquireNativeWindowBuffer(
+    virtual int32_t AcquireNativeWindowBuffer(
         void** windowBuffer,
         int* acquireFenceFd) = 0;
 
-    virtual int32_t OhosImage_getNativeBuffer(
+    virtual int32_t GetNativeBuffer(
         void* windowBuffer,
         void** nativeBuffer) = 0;
 
-    virtual int32_t OhosImage_delete(void* windowBuffer, int fenceFd) = 0;
+    virtual int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) = 0;
 };
 
 class ProducerSurfaceAdapter {

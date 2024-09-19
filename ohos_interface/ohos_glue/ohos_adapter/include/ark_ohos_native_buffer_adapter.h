@@ -41,20 +41,7 @@ public:
     virtual void Describe(const void* buffer, void* outDesc) = 0;
 
     /*--ark web()--*/
-    virtual int Lock(void* buffer,
-        uint64_t usage, int32_t fence, const void* rect, void** out_virtual_address) = 0;
-
-    /*--ark web()--*/
     virtual void Release(void* buffer) = 0;
-
-    /*--ark web()--*/
-    virtual int RecvHandleFromUnixSocket(int socketFd, void** outBuffer) = 0;
-
-    /*--ark web()--*/
-    virtual int SendHandleToUnixSocket(const void* buffer, int socketFd) = 0;
-
-    /*--ark web()--*/
-    virtual int Unlock(void* buffer, int32_t* fence) = 0;
 
     /*--ark web()--*/
     virtual int GetEGLBuffer(void* buffer, void** eglBuffer) = 0;

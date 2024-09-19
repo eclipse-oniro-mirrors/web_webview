@@ -116,12 +116,12 @@ void NativeImageAdapterImpl::DestroyNativeImage()
 }
 
 
-void NativeImageAdapterImpl::OhosImageReader_newNativeImage()
+void NativeImageAdapterImpl::NewNativeImage()
 {
     ohNativeImage_ = OH_ConsumerSurface_Create();
 }
 
-int32_t NativeImageAdapterImpl::OhosImageReader_acquireNativeWindowBuffer(
+int32_t NativeImageAdapterImpl::AcquireNativeWindowBuffer(
     void** windowBuffer,
     int* acquireFenceFd)
 {
@@ -140,7 +140,7 @@ int32_t NativeImageAdapterImpl::OhosImageReader_acquireNativeWindowBuffer(
     return SURFACE_ERROR_OK;
 }
 
-int32_t NativeImageAdapterImpl::OhosImage_getNativeBuffer(
+int32_t NativeImageAdapterImpl::GetNativeBuffer(
     void* windowBuffer,
     void** nativeBuffer)
 {
@@ -155,12 +155,12 @@ int32_t NativeImageAdapterImpl::OhosImage_getNativeBuffer(
     return SURFACE_ERROR_OK;
 }
 
-int32_t NativeImageAdapterImpl::OhosImage_delete(void* windowBuffer, int fenceFd)
+int32_t NativeImageAdapterImpl::ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd)
 {
     if (ohNativeImage_ == nullptr) {
         return SURFACE_ERROR_ERROR;
     }
-    return OH_NativeImage_ReleaseNativeWindowBuffer(ohNativeImage_, 
+    return OH_NativeImage_ReleaseNativeWindowBuffer(ohNativeImage_,
         static_cast<OHNativeWindowBuffer*>(windowBuffer), fenceFd);
 }
 }

@@ -32,16 +32,7 @@ public:
 
     void Describe(const void* buffer, void* outDesc) override;
 
-    int Lock(void* buffer,
-        uint64_t usage, int32_t fence, const void* rect, void** out_virtual_address) override;
-
-    int RecvHandleFromUnixSocket(int socketFd, void** outBuffer) override;
-
     void Release(void* buffer) override;
-
-    int SendHandleToUnixSocket(const void* buffer, int socketFd) override;
-
-    int Unlock(void* buffer, int32_t* fence) override;
 
     int GetEGLBuffer(void* buffer, void** eglBuffer) override;
 

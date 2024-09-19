@@ -55,16 +55,7 @@ public:
 
     virtual void Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc) = 0;
 
-    virtual int Lock(NativeBuffer* buffer,
-        uint64_t usage, int32_t fence, const ARect* rect, void** out_virtual_address) = 0;
-    
-    virtual int RecvHandleFromUnixSocket(int socketFd, NativeBuffer** outBuffer) = 0;
-
     virtual void Release(NativeBuffer* buffer) = 0;
-
-    virtual int SendHandleToUnixSocket(const NativeBuffer* buffer, int socketFd) = 0;
-
-    virtual int Unlock(NativeBuffer* buffer, int32_t* fence) = 0;
 
     virtual int GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer) = 0;
 

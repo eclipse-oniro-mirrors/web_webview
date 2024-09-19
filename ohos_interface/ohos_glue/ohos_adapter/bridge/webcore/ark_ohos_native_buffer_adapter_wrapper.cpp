@@ -38,30 +38,9 @@ void ArkOhosNativeBufferAdapterWrapper::Describe(const NativeBuffer* buffer, Nat
     ctocpp_->Describe(buffer, outDesc);
 }
 
-int ArkOhosNativeBufferAdapterWrapper::Lock(NativeBuffer* buffer,
-    uint64_t usage, int32_t fence, const ARect* rect, void** out_virtual_address)
-{
-    return ctocpp_->Lock(buffer, usage, fence, rect, out_virtual_address);
-}
-
-int ArkOhosNativeBufferAdapterWrapper::RecvHandleFromUnixSocket(int socketFd, NativeBuffer** outBuffer)
-{
-    return ctocpp_->RecvHandleFromUnixSocket(socketFd, reinterpret_cast<void**>(outBuffer));
-}
-
 void ArkOhosNativeBufferAdapterWrapper::Release(NativeBuffer* buffer)
 {
     ctocpp_->Release(static_cast<void*>(buffer));
-}
-
-int ArkOhosNativeBufferAdapterWrapper::SendHandleToUnixSocket(const NativeBuffer* buffer, int socketFd)
-{
-    return ctocpp_->SendHandleToUnixSocket(buffer, socketFd);
-}
-
-int ArkOhosNativeBufferAdapterWrapper::Unlock(NativeBuffer* buffer, int32_t* fence)
-{
-    return ctocpp_->Unlock(buffer, fence);
 }
 
 int ArkOhosNativeBufferAdapterWrapper::GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer)

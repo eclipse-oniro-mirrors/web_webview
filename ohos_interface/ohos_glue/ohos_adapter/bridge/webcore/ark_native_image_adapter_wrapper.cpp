@@ -82,27 +82,27 @@ void ArkNativeImageAdapterWrapper::DestroyNativeImage()
     return ctocpp_->DestroyNativeImage();
 }
 
-void ArkNativeImageAdapterWrapper::OhosImageReader_newNativeImage()
+void ArkNativeImageAdapterWrapper::NewNativeImage()
 {
-    return ctocpp_->OhosImageReader_newNativeImage();
+    return ctocpp_->NewNativeImage();
 }
 
-int32_t ArkNativeImageAdapterWrapper::OhosImageReader_acquireNativeWindowBuffer(
+int32_t ArkNativeImageAdapterWrapper::AcquireNativeWindowBuffer(
     void** windowBuffer,
     int* acquireFenceFd)
 {
-    return ctocpp_->OhosImageReader_acquireNativeWindowBuffer(windowBuffer, acquireFenceFd);
+    return ctocpp_->AcquireNativeWindowBuffer(windowBuffer, acquireFenceFd);
 }
 
-int32_t ArkNativeImageAdapterWrapper::OhosImage_getNativeBuffer(
+int32_t ArkNativeImageAdapterWrapper::GetNativeBuffer(
     void* windowBuffer,
     void** nativeBuffer)
 {
-    return ctocpp_->OhosImage_getNativeBuffer(windowBuffer, nativeBuffer);
+    return ctocpp_->GetNativeBuffer(windowBuffer, nativeBuffer);
 }
 
-int32_t ArkNativeImageAdapterWrapper::OhosImage_delete(void* windowBuffer, int fenceFd)
+int32_t ArkNativeImageAdapterWrapper::ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd)
 {
-    return ctocpp_->OhosImage_delete(windowBuffer, fenceFd);
+    return ctocpp_->ReleaseNativeWindowBuffer(windowBuffer, fenceFd);
 }
 } // namespace OHOS::ArkWeb

@@ -40,16 +40,7 @@ public:
 
     void Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc) override;
 
-    int Lock(NativeBuffer* buffer,
-        uint64_t usage, int32_t fence, const ARect* rect, void** out_virtual_address) override;
-    
-    int RecvHandleFromUnixSocket(int socketFd, NativeBuffer** outBuffer) override;
-
     void Release(NativeBuffer* buffer) override;
-
-    int SendHandleToUnixSocket(const NativeBuffer* buffer, int socketFd) override;
-
-    int Unlock(NativeBuffer* buffer, int32_t* fence) override;
 
     int GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer) override;
 
@@ -60,11 +51,7 @@ public:
     int FreeNativeBuffer(void* nativeBuffer) override;
 
 private:
-    std::shared_ptr<std::mutex> mutex_;
-    std::unordered_map<OH_NativeBuffer*, bool> lockedBuffers_;
     std::unordered_map<OH_NativeBuffer*, const NativeBufferDesc*> configDescriptors_;
-
-    bool IsBufferLocked(OH_NativeBuffer* buffer) const;
 };
 
 } // namespace OHOS::NWeb
