@@ -217,25 +217,40 @@ public:
     virtual void DestroyNativeImage() = 0;
 
     /**
-     * @Description: 函数简短的功能描述
-     * @Input {param_name}: 输入参数说明，包括含义，单位等，如有需要，说明如何释放内存
-     * @Output {param_name}: 输出参数说明，包括含义，单位等
-     * @Return：返回值说明，包括含义，单位等
-     * @Since {api_level}
-     */
+     * @Description: Create a <b>OH_NativeImage</b> as surface consumer.
+     * @Since {12004}
+     */
     virtual void NewNativeImage() = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Acquire an <b>OHNativeWindowBuffer</b> for content consumer.
+     * @Output {windowBuffer}: Indicates the pointer to an <b>OHNativeWindowBuffer</b> point.
+	 * @Output {acquireFenceFd}: Indicates the pointer to a file descriptor handle.
+     * @Return：Returns an error code, 0 is sucess, otherwise, failed.
+     * @Since {12004}
+     */
     virtual int32_t AcquireNativeWindowBuffer(
         void** windowBuffer,
         int* acquireFenceFd) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Converts an <b>OHNativeWindowBuffer</b> instance to an <b>OH_NativeBuffer</b>.
+     * @Input {windowBuffer}: Indicates the pointer to a <b>OHNativeWindowBuffer</b> instance.
+     * @Output {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
+     * @Return：Returns an error code, 0 is sucess, otherwise, failed.
+     * @Since {12004}
+     */
     virtual int32_t GetNativeBuffer(
         void* windowBuffer,
         void** nativeBuffer) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Release the <b>OHNativeWindowBuffer</b> to the buffer queue for reuse.
+     * @Input {windowBuffer}: Indicates the pointer to an <b>OHNativeWindowBuffer</b> instance.
+     * @Input {fenceFd}: Indicates a file descriptor handle, which is used for timing synchronization.
+     * @Return：Returns an error code, 0 is sucess, otherwise, failed.
+     * @Since {12004}
+     */
     virtual int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) = 0;
 };
 
