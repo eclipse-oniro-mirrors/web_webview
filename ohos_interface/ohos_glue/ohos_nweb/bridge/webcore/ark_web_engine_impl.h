@@ -81,6 +81,10 @@ public:
 
     void TrimMemoryByPressureLevel(int32_t memoryLevel) override;
 
+    void SetArkWebRomApiLevel(int apiLevel) override;
+
+    int GetArkWebCoreApiLevel() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };
