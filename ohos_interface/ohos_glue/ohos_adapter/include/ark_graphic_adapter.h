@@ -216,7 +216,13 @@ public:
     /*--ark web()--*/
     virtual void DestroyNativeImage() = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: 函数简短的功能描述
+     * @Input {param_name}: 输入参数说明，包括含义，单位等，如有需要，说明如何释放内存
+     * @Output {param_name}: 输出参数说明，包括含义，单位等
+     * @Return：返回值说明，包括含义，单位等
+     * @Since {api_level}
+     */
     virtual void NewNativeImage() = 0;
 
     /*--ark web()--*/
