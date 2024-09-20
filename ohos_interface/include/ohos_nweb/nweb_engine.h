@@ -17,11 +17,11 @@
 #define NWEB_ENGINE_H
 
 #include "nweb.h"
+#include "nweb_adsblock_manager.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_data_base.h"
 #include "nweb_download_manager.h"
 #include "nweb_web_storage.h"
-#include "nweb_adsblock_manager.h"
 
 namespace OHOS::NWeb {
 
@@ -79,11 +79,19 @@ public:
 
     virtual void EnableWholeWebPageDrawing() {}
 
-    virtual std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager() {
+    virtual std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager()
+    {
         return nullptr;
     }
 
     virtual void TrimMemoryByPressureLevel(int32_t memoryLevel) {}
+
+    virtual void SetArkWebRomApiLevel(int apiLevel) {}
+
+    virtual int GetArkWebCoreApiLevel()
+    {
+        return 0;
+    }
 };
 
 } // namespace OHOS::NWeb

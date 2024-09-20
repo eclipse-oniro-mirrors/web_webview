@@ -25,12 +25,6 @@ namespace OHOS::ArkWeb {
 class ArkAafwkBrowserHostAdapter : public virtual ArkWebBaseRefCounted {
 public:
     /*--ark web()--*/
-    ArkAafwkBrowserHostAdapter() = default;
-
-    /*--ark web()--*/
-    virtual ~ArkAafwkBrowserHostAdapter() = default;
-
-    /*--ark web()--*/
     virtual void* GetSurfaceFromKernel(int32_t surface_id) = 0;
 
     /*--ark web()--*/

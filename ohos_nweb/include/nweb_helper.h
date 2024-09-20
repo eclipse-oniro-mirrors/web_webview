@@ -90,6 +90,8 @@ public:
 
     void TrimMemoryByPressureLevel(int32_t memoryLevel);
 
+    bool CheckArkWebCoreApiLevel(int apiLevel);
+
 private:
     NWebHelper() = default;
     bool LoadLib(bool from_ark);
@@ -97,6 +99,7 @@ private:
     bool LoadEngine();
 
 private:
+    int coreApiLevel_ = 0;
     void *libHandleWebEngine_ = nullptr;
     std::string bundlePath_;
     std::string customSchemeCmdLine_;
