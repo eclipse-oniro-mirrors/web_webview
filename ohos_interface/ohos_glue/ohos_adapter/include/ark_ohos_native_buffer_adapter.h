@@ -31,28 +31,71 @@ public:
     /*--ark web()--*/
     virtual ~ArkOhosNativeBufferAdapter() = default;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Adds the reference count of a OH_NativeBuffer.
+     * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Since {12004}
+     */
     virtual void AcquireBuffer(void* buffer) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Alloc a <b>OH_NativeBuffer</b> that matches the passed NativeBufferDesc.
+     * @Input {desc}: Indicates the pointer to a <b>NativeBufferDesc</b> instance.
+     * @Output {outBuffer}: Indicates the pointer to the <b>OH_NativeBuffer</b> instance created if the operation is successful, \n
+     *                      returns <b>NULL</b> otherwise.
+     * @Since {12004}
+     */
     virtual void Allocate(const void* desc, void** outBuffer) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Get the description of an <b>OH_NativeBuffer</b> instance.
+     * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Output {outDesc}: Indicates the pointer to a <b>NativeBufferDesc</b> pointer.
+     * @Since {12004}
+     */
     virtual void Describe(const void* buffer, void* outDesc) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Decreases the reference count of a OH_NativeBuffer and, when the reference count reaches 0, \n
+     *               destroys this OH_NativeBuffer.
+     * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Since {12004}
+     */
     virtual void Release(void* buffer) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Get the egl buffer from the <b>OH_NativeBuffer</b> instance.
+     * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Output {eglBuffer}: Indicates the pointer to a egl buffer pointer.
+     * @Return：Returns an error code, 0 is sucess, otherwise, failed.
+     * @Since {12004}
+     */
     virtual int GetEGLBuffer(void* buffer, void** eglBuffer) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Free egl buffer.
+     * @Input {eglBuffer}: Indicates the pointer to an egl buffer.
+     * @Return：Returns an error code, 0 is sucess, otherwise, failed.
+     * @Since {12004}
+     */
     virtual int FreeEGLBuffer(void* eglBuffer) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Converts an <b>OHNativeWindowBuffer</b> instance to an <b>OH_NativeBuffer</b>.
+     * @Input {nativeWindowBuffer}: Indicates the pointer to a <b>OHNativeWindowBuffer</b> instance.
+     * @Output {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
+     * @Return：Returns an error code, 0 is sucess, otherwise, failed.
+     * @Since {12004}
+     */
     virtual int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Decreases the reference count of a OH_NativeBuffer and, when the reference count reaches 0, \n
+     *               destroys this OH_NativeBuffer.
+     * @Input {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Return：Returns an error code, 0 is sucess, otherwise, failed.
+     * @Since {12004}
+     */
     virtual int FreeNativeBuffer(void* nativeBuffer) = 0;
 };
 
