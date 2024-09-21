@@ -341,6 +341,7 @@ _simpletypes = {
     'int64_t': ['int64_t', '0'],
     'uint64_t': ['uint64_t', '0'],
     'uint64_t*': ['uint64_t*', 'NULL'],
+    'double_t': ['double_t', '0'],
     'double': ['double', '0'],
     'float': ['float', '0'],
     'long': ['long', '0'],

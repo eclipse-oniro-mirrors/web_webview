@@ -75,9 +75,15 @@ public:
     void ClearHostIP(const std::string& hostName) override;
 
     void EnableWholeWebPageDrawing() override;
+
     std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager> GetAdsBlockManager() override;
 
     void TrimMemoryByPressureLevel(int32_t memoryLevel) override;
+
+    void SetArkWebRomApiLevel(int apiLevel) override;
+
+    int GetArkWebCoreApiLevel() override;
+
 private:
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };

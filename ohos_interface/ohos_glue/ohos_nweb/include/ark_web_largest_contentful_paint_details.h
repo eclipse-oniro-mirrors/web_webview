@@ -70,8 +70,7 @@ public:
      *
      * @return Bits per pixel of image.
      */
-
-    /*--ark web(default_retval=0)--*/
+    /*--ark web()--*/
     virtual double_t GetImageBPP() = 0;
 };
 
