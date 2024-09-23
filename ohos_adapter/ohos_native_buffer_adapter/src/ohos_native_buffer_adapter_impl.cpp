@@ -14,6 +14,7 @@
  */
 
 #include "ohos_native_buffer_adapter_impl.h"
+#include "surface_buffer_impl.h"
 #include "nweb_log.h"
 
 #include <EGL/egl.h>
@@ -187,5 +188,15 @@ int OhosNativeBufferAdapterImpl::FreeNativeBuffer(void* nativeBuffer)
     WVLOG_D("native buffer FreeNativeBuffer freeing: %{public}p.", nativeBuffer);
     OH_NativeBuffer_Unreference(static_cast<OH_NativeBuffer*>(nativeBuffer));
     return 0;
+}
+
+uint32_t OhosNativeBufferAdapterImpl::GetSeqNum(NativeBuffer* nativeBuffer)
+{
+    if (nativeBuffer == nullptr || nativeBuffer->rawbuffer == nullptr) {
+        WVLOG_E("native buffer GetSeqNum, nativeBuffer or rawbuffer is null.");
+        return 0;
+    }
+    SurfaceBufferImpl* buffer = reinterpret_cast<SurfaceBufferImpl *>(nativeBuffer->rawbuffer);
+    return buffer->GetSeqNum();
 }
 } // namespace OHOS::NWeb
