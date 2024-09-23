@@ -64,6 +64,8 @@ public:
     virtual int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) = 0;
 
     virtual int FreeNativeBuffer(void* nativeBuffer) = 0;
+
+    virtual uint32_t GetSeqNum(NativeBuffer* nativeBuffer) = 0;
 };
 
 } // namespace OHOS::NWeb
