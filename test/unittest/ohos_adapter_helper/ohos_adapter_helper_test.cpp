@@ -33,7 +33,7 @@ using namespace OHOS::Rosen;
 namespace OHOS::NWeb {
 namespace {
 sptr<Surface> g_surface = nullptr;
-const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
+const std::string MOCK_NWEB_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
 #if defined(NWEB_PRINT_ENABLE)
 const std::string PRINT_FILE_DIR = "/data/storage/el2/base/print.png";
 const std::string PRINT_JOB_NAME = "webPrintTestJob";
@@ -87,12 +87,16 @@ void OhosAdapterHelperTest::TearDown(void) {}
  */
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize.Level1)
 {
+    std::string hapPath = "";
+    if (access(MOCK_NWEB_INSTALLATION_DIR.c_str(), F_OK) == 0) {
+        hapPath = MOCK_NWEB_INSTALLATION_DIR;
+    }
     int32_t nweb_id = 1;
     NWebHelper& helper = NWebHelper::Instance();
-    helper.SetBundlePath(MOCK_INSTALLATION_DIR);
+    helper.SetBundlePath(hapPath);
     helper.Init(false);
     auto cook = helper.GetCookieManager();
-    EXPECT_EQ(cook, nullptr);
+    EXPECT_NE(cook, nullptr);
     auto base = helper.GetDataBase();
     EXPECT_NE(base, nullptr);
     auto storage = helper.GetWebStorage();
@@ -184,7 +188,7 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     auto cook = helper.GetCookieManager();
     EXPECT_EQ(cook, nullptr);
     auto base = helper.GetDataBase();
-    EXPECT_EQ(base, nullptr);
+    EXPECT_NE(base, nullptr);
     auto storage = helper.GetWebStorage();
     EXPECT_NE(storage, nullptr);
     auto nweb = helper.GetNWeb(nweb_id);
