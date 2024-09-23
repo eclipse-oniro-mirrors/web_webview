@@ -41,8 +41,8 @@ public:
     /**
      * @Description: Alloc a <b>OH_NativeBuffer</b> that matches the passed NativeBufferDesc.
      * @Input {desc}: Indicates the pointer to a <b>NativeBufferDesc</b> instance.
-     * @Output {outBuffer}: Indicates the pointer to the <b>OH_NativeBuffer</b> instance created if the operation is successful, \n
-     *                      returns <b>NULL</b> otherwise.
+     * @Output {outBuffer}: Indicates the pointer to the <b>OH_NativeBuffer</b> instance created \n
+     *                      if the operation is successful, returns <b>NULL</b> otherwise.               
      * @Since {12004}
      */
     virtual void Allocate(const void* desc, void** outBuffer) = 0;
