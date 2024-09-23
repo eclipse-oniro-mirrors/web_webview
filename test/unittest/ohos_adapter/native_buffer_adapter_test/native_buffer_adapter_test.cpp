@@ -243,5 +243,31 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_008, TestSize.
     ret = nativebufferAdapter->FreeNativeBuffer(nativeBuffer);
     EXPECT_EQ(ret, 0);
 }
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_009.
+ * @tc.desc: test FlowbufferAdapterImpl GetSeqNum.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_009, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    NativeBuffer* buffer = nullptr;
+    int seqnum = nativebufferAdapter->GetSeqNum(buffer);
+    EXPECT_EQ(seqnum, 0);
+
+    NativeBufferDesc desc;
+    NativeBuffer* nativeBuffer = nullptr;
+    desc.height = 10;
+    desc.width = 10;
+    desc.usage = 1;
+    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
+    EXPECT_NE(nativeBuffer, nullptr);
+    seqnum = nativebufferAdapter->GetSeqNum(nativeBuffer);
+    EXPECT_NE(seqnum, 0);
+}
 } // namespace NWeb
 } // namespace OHOS
