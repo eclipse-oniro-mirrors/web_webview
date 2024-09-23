@@ -193,7 +193,11 @@ public:
     /*--ark web()--*/
     virtual void SetArkWebCoreHapPathOverride(const ArkWebString& hapPath) = 0;
 
-    /*--ark web()--*/
+    /**
+     * @Description: Get OhosNativeBufferAdapter.
+     * @Return：Returns the pointer to a ArkOhosNativeBufferAdapter instance.
+     * @Since {12004}
+     */
     virtual ArkWebRefPtr<ArkOhosNativeBufferAdapter> GetOhosNativeBufferAdapter() = 0;
 };
 
