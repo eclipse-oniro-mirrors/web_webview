@@ -48,3 +48,4 @@ group("unittest") {
   testonly = true
   deps = [ ":native_buffer_adapter_test" ]
 }
+
