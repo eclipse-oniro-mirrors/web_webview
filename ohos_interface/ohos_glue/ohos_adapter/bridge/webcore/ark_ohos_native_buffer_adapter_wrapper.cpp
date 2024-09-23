@@ -63,4 +63,8 @@ int ArkOhosNativeBufferAdapterWrapper::FreeNativeBuffer(void* nativeBuffer)
     return ctocpp_->FreeNativeBuffer(nativeBuffer);
 }
 
+uint32_t ArkOhosNativeBufferAdapterWrapper::GetSeqNum(NativeBuffer* nativeBuffer)
+{
+    return ctocpp_->GetSeqNum(nativeBuffer);
+}
 } // namespace OHOS::ArkWeb
