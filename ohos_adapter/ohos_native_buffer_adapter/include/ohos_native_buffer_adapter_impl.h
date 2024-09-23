@@ -50,6 +50,8 @@ public:
 
     int FreeNativeBuffer(void* nativeBuffer) override;
 
+    uint32_t GetSeqNum(NativeBuffer* nativeBuffer) override;
+
 private:
     std::unordered_map<OH_NativeBuffer*, const NativeBufferDesc*> configDescriptors_;
 };
