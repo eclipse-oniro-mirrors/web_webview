@@ -115,7 +115,7 @@ public:
     /**
      * @Description: set api level of rom to core
      * @Input apiLevel: api level
-     * @Since: 13001
+     * @Since: 12005
      */
     /*--ark web()--*/
     virtual void SetArkWebRomApiLevel(int apiLevel) = 0;
@@ -123,7 +123,7 @@ public:
     /**
      * @Description: get api level of core
      * @Return: api level of core
-     * @Since: 13001
+     * @Since: 12005
      */
     /*--ark web()--*/
     virtual int GetArkWebCoreApiLevel() = 0;
