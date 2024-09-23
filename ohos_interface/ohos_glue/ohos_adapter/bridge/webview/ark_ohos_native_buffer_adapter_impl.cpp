@@ -71,4 +71,9 @@ int ArkOhosNativeBufferAdapterImpl::FreeNativeBuffer(void* nativeBuffer)
     return real_.FreeNativeBuffer(nativeBuffer);
 }
 
+uint32_t ArkOhosNativeBufferAdapterImpl::GetSeqNum(void* nativeBuffer)
+{
+    NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(nativeBuffer);
+    return real_.GetSeqNum(typedBuffer);
+}
 } // namespace OHOS::ArkWeb
