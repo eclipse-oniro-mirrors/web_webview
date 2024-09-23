@@ -35,6 +35,7 @@ public:
     int FreeEGLBuffer(void* eglBuffer) override;
     int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) override;
     int FreeNativeBuffer(void* nativeBuffer) override;
+    uint32_t GetSeqNum(NativeBuffer* nativeBuffer) override;
 
 private:
     ArkWebRefPtr<ArkOhosNativeBufferAdapter> ctocpp_;
