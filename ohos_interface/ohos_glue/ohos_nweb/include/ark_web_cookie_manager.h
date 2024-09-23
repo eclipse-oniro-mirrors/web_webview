@@ -204,7 +204,7 @@ public:
      * @Input url: the URL for which the cookies are requested.
      * @Input incognitoMode: true if web is in the incognito mode, false otherwise.
      * @Input callback: a callback which is executed when the cookies have been gotten.
-     * @Since: 13001
+     * @Since: 12005
      */
     /*--ark web()--*/
     virtual void GetCookieAsync(
@@ -218,7 +218,7 @@ public:
      * @Input incognitoMode: true if web is in the incognito mode, false otherwise.
      * @Input includeHttpOnly: If true, HTTP-only cookies can also be overwritten.
      * @return: 0 if set cookie success else return error id.
-     * @Since: 13001
+     * @Since: 12005
      */
     /*--ark web()--*/
     virtual int SetCookieSync(
@@ -232,7 +232,7 @@ public:
      * @Input incognitoMode: true if web is in the incognito mode, false otherwise.
      * @Input includeHttpOnly: If true, HTTP-only cookies can also be overwritten.
      * @Input callback: a callback to be executed when the cookie has been set.
-     * @Since: 13001
+     * @Since: 12005
      */
     /*--ark web()--*/
     virtual void SetCookieAsync(const ArkWebString& url, const ArkWebString& value, bool incognitoMode,
