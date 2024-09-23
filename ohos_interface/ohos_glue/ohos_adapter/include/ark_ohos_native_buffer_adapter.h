@@ -97,6 +97,14 @@ public:
      * @Since {12004}
      */
     virtual int FreeNativeBuffer(void* nativeBuffer) = 0;
+
+    /**
+     * @Description: Get the sequence number of native buffer .
+     * @Input {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Return：Returns a sequence number.
+     * @Since {12004}
+     */
+    virtual uint32_t GetSeqNum(void* nativeBuffer) = 0;
 };
 
 } // namespace OHOS::ArkWeb
