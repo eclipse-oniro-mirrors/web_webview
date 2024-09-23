@@ -42,6 +42,8 @@ public:
 
     int FreeNativeBuffer(void* nativeBuffer) override;
 
+    uint32_t GetSeqNum(void* nativeBuffer) override;
+
 private:
     OHOS::NWeb::OhosNativeBufferAdapter& real_;
 
