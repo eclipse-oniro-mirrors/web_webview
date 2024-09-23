@@ -42,7 +42,8 @@ OhosNativeBufferAdapterImpl::~OhosNativeBufferAdapterImpl()
 
 void OhosNativeBufferAdapterImpl::Allocate(const NativeBufferDesc* desc, NativeBuffer** outBuffer)
 {
-    if (desc == nullptr) {
+    if (desc == nullptr || outBuffer == nullptr) {
+        WVLOG_E("native buffer Allocate, desc or outBuffer is null.");
         return;
     }
     WVLOG_D("native buffer allocate, %{public}d * %{public}d, format: %{public}d",
