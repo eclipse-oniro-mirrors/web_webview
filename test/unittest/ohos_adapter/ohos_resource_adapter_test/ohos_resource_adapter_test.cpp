@@ -35,7 +35,7 @@ using namespace OHOS::AbilityRuntime;
 namespace OHOS {
 namespace {
 constexpr uint32_t MODULE_NAME_SIZE = 32;
-const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
+const std::string NWEB_HAP_PATH = "/system/app/com.ohos.arkwebcore/ArkWebCore.hap";
 const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
 const std::string NWEB_HAP_PATH_MODULE_UPDATE = "/module_update/ArkWebCore/app/com.ohos.nweb/NWeb.hap";
 
@@ -179,7 +179,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
     EXPECT_NE(extractor, nullptr);
     std::shared_ptr<OHOS::AbilityBase::ZipFileReader> fileReader =
         OHOS::AbilityBase::ZipFileReader::CreateZipFileReader(hapPath);
-    EXPECT_EQ(fileReader, nullptr);
+    EXPECT_NE(fileReader, nullptr);
     std::unique_ptr<OHOS::AbilityBase::FileMapper> fileMap = std::make_unique<OHOS::AbilityBase::FileMapper>();
     EXPECT_NE(fileMap, nullptr);
     fileMap->CreateFileMapper(fileReader, hapPath, 0, hapPath.size(), true);
@@ -225,7 +225,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, T
     OhosResourceAdapterImpl adapterImpl(hapPath);
     bool newCreate = false;
     std::shared_ptr<Extractor> extractor = ExtractorUtil::GetExtractor(hapPath, newCreate);
-    EXPECT_EQ(extractor, nullptr);
+    EXPECT_NE(extractor, nullptr);
     std::string result = adapterImpl.GetModuleName(nullptr, 0);
     EXPECT_EQ(result, "");
     char *configStr = static_cast<char*>(malloc(MODULE_NAME_SIZE));
