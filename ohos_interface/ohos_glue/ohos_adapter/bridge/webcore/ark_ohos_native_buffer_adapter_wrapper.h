@@ -27,15 +27,12 @@ class ArkOhosNativeBufferAdapterWrapper : public OHOS::NWeb::OhosNativeBufferAda
 public:
     ArkOhosNativeBufferAdapterWrapper(ArkWebRefPtr<ArkOhosNativeBufferAdapter>);
 
-    void Allocate(const NativeBufferDesc* desc, NativeBuffer** outBuffer) override;
-    void AcquireBuffer(NativeBuffer* buffer) override;
-    void Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc) override;
-    void Release(NativeBuffer* buffer) override;
-    int GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer) override;
+    void AcquireBuffer(void* buffer) override;
+    void Release(void* buffer) override;
+    int GetEGLBuffer(void* buffer, void** eglBuffer) override;
     int FreeEGLBuffer(void* eglBuffer) override;
     int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) override;
-    int FreeNativeBuffer(void* nativeBuffer) override;
-    uint32_t GetSeqNum(NativeBuffer* nativeBuffer) override;
+    uint32_t GetSeqNum(void* nativeBuffer) override;
 
 private:
     ArkWebRefPtr<ArkOhosNativeBufferAdapter> ctocpp_;
