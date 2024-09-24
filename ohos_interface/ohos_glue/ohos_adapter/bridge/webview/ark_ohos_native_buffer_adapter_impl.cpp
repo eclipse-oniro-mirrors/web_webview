@@ -24,36 +24,19 @@ using namespace OHOS::NWeb;
 ArkOhosNativeBufferAdapterImpl::ArkOhosNativeBufferAdapterImpl(NWeb::OhosNativeBufferAdapter& ref)
     : real_(ref) {}
 
-void ArkOhosNativeBufferAdapterImpl::Allocate(const void* desc, void** outBuffer)
-{
-    const NativeBufferDesc* typedDesc = static_cast<const NativeBufferDesc*>(desc);
-    NativeBuffer** typedOutBuffer = reinterpret_cast<NativeBuffer**>(outBuffer);
-    return real_.Allocate(typedDesc, typedOutBuffer);
-}
-
 void ArkOhosNativeBufferAdapterImpl::AcquireBuffer(void* buffer)
 {
-    NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(buffer);
-    return real_.AcquireBuffer(typedBuffer);
-}
-
-void ArkOhosNativeBufferAdapterImpl::Describe(const void* buffer, void* outDesc)
-{
-    const NativeBuffer* typedBuffer = static_cast<const NativeBuffer*>(buffer);
-    NativeBufferDesc* typedOutDesc = static_cast<NativeBufferDesc*>(outDesc);
-    return real_.Describe(typedBuffer, typedOutDesc);
+    return real_.AcquireBuffer(buffer);
 }
 
 void ArkOhosNativeBufferAdapterImpl::Release(void* buffer)
 {
-    NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(buffer);
-    return real_.Release(typedBuffer);
+    return real_.Release(buffer);
 }
 
 int ArkOhosNativeBufferAdapterImpl::GetEGLBuffer(void* buffer, void** eglBuffer)
 {
-    NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(buffer);
-    return real_.GetEGLBuffer(typedBuffer, eglBuffer);
+    return real_.GetEGLBuffer(buffer, eglBuffer);
 }
 
 int ArkOhosNativeBufferAdapterImpl::FreeEGLBuffer(void* eglBuffer)
@@ -66,14 +49,8 @@ int ArkOhosNativeBufferAdapterImpl::NativeBufferFromNativeWindowBuffer(void* nat
     return real_.NativeBufferFromNativeWindowBuffer(nativeWindowBuffer, nativeBuffer);
 }
 
-int ArkOhosNativeBufferAdapterImpl::FreeNativeBuffer(void* nativeBuffer)
-{
-    return real_.FreeNativeBuffer(nativeBuffer);
-}
-
 uint32_t ArkOhosNativeBufferAdapterImpl::GetSeqNum(void* nativeBuffer)
 {
-    NativeBuffer* typedBuffer = static_cast<NativeBuffer*>(nativeBuffer);
-    return real_.GetSeqNum(typedBuffer);
+    return real_.GetSeqNum(nativeBuffer);
 }
 } // namespace OHOS::ArkWeb

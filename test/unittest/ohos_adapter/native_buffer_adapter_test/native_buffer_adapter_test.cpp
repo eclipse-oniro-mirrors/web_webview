@@ -47,27 +47,6 @@ void NativeBufferAdapterImplTest::TearDown() {}
 
 /**
  * @tc.name: NativeBufferAdapterImplTest_001.
- * @tc.desc: test FlowbufferAdapterImpl Allocate.
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_001, TestSize.Level1)
-{
-    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
-    EXPECT_TRUE(nativebufferAdapter != nullptr);
-
-    NativeBufferDesc desc;
-    NativeBuffer* outBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &outBuffer);
-    EXPECT_NE(outBuffer, nullptr);
-    EXPECT_NE(outBuffer->rawbuffer, nullptr);
-}
-
-/**
- * @tc.name: NativeBufferAdapterImplTest_002.
  * @tc.desc: test FlowbufferAdapterImpl AcquireBuffer.
  * @tc.type: FUNC.
  * @tc.require:

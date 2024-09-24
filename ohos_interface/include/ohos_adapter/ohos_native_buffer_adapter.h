@@ -19,53 +19,23 @@
 #include <string>
 
 namespace OHOS::NWeb {
-
-class NativeBuffer {
-public:
-    void* rawbuffer = nullptr;
-    void* internalBuffer = nullptr;
-
-    NativeBuffer() = default;
-    NativeBuffer(const NativeBuffer* buffer) {
-        rawbuffer = buffer->rawbuffer;
-        internalBuffer = buffer->internalBuffer;
-    }
-};
-
-class NativeBufferDesc {
-public:
-    int width;
-    int height;
-    int format;
-    int usage;
-};
-
-class ARect {
-};
-
 class OhosNativeBufferAdapter {
 public:
     OhosNativeBufferAdapter() = default;
 
     virtual ~OhosNativeBufferAdapter() = default;
 
-    virtual void Allocate(const NativeBufferDesc* desc, NativeBuffer** outBuffer) = 0;
+    virtual void AcquireBuffer(void* buffer) = 0;
 
-    virtual void AcquireBuffer(NativeBuffer* buffer) = 0;
+    virtual void Release(void* buffer) = 0;
 
-    virtual void Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc) = 0;
-
-    virtual void Release(NativeBuffer* buffer) = 0;
-
-    virtual int GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer) = 0;
+    virtual int GetEGLBuffer(void* buffer, void** eglBuffer) = 0;
 
     virtual int FreeEGLBuffer(void* eglBuffer) = 0;
 
     virtual int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) = 0;
 
-    virtual int FreeNativeBuffer(void* nativeBuffer) = 0;
-
-    virtual uint32_t GetSeqNum(NativeBuffer* nativeBuffer) = 0;
+    virtual uint32_t GetSeqNum(void* nativeBuffer) = 0;
 };
 
 } // namespace OHOS::NWeb

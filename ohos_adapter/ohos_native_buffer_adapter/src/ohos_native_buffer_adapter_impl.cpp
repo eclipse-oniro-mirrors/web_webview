@@ -40,108 +40,39 @@ OhosNativeBufferAdapterImpl::~OhosNativeBufferAdapterImpl()
     WVLOG_D("Native buffer adapter impl destructor.");
 }
 
-void OhosNativeBufferAdapterImpl::Allocate(const NativeBufferDesc* desc, NativeBuffer** outBuffer)
+void OhosNativeBufferAdapterImpl::AcquireBuffer(void* buffer)
 {
-    if (desc == nullptr || outBuffer == nullptr) {
-        WVLOG_E("native buffer Allocate, desc or outBuffer is null.");
+    if (buffer == nullptr) {
+        WVLOG_E("native buffer acquire, buffer is null.");
         return;
     }
-    WVLOG_D("native buffer allocate, %{public}d * %{public}d, format: %{public}d",
-            desc->width, desc->height, desc->format);
-
-    OH_NativeBuffer_Config config = {
-        .width = desc->width,
-        .height = desc->height,
-        .format = OH_NativeBuffer_Format::NATIVEBUFFER_PIXEL_FMT_RGBA_8888,
-        .usage = desc->usage,
-    };
-
-    NativeBufferDesc* storedDesc = new NativeBufferDesc();
-    storedDesc->width = desc->width;
-    storedDesc->height = desc->height;
-    storedDesc->format = OH_NativeBuffer_Format::NATIVEBUFFER_PIXEL_FMT_RGBA_8888;
-    storedDesc->usage = desc->usage;
-
-    // create a new OH_NativeBuffer using the OHOS native buffer allocation function
-    // The plan here is that the actual buffer holder will be held onto by chromium.
-    OH_NativeBuffer* buffer = OH_NativeBuffer_Alloc(&config);
-    if (buffer != nullptr) {
-        WVLOG_D("native buffer allocate success, rawbuffer stored %{public}p", buffer);
-        *outBuffer = new NativeBuffer;
-        (*outBuffer)->rawbuffer = buffer;
-        configDescriptors_[static_cast<OH_NativeBuffer*>((*outBuffer)->rawbuffer)] = storedDesc;
-    } else {
-        WVLOG_E("native buffer allocate failed.");
-        *outBuffer = nullptr;
-    }
+    WVLOG_D("native buffer acquired buffer %{public}p.", buffer);
+    OH_NativeBuffer_Reference(static_cast<OH_NativeBuffer*>(buffer));
 }
 
-void OhosNativeBufferAdapterImpl::AcquireBuffer(NativeBuffer* buffer)
+void OhosNativeBufferAdapterImpl::Release(void* buffer)
 {
-    if (buffer == nullptr || buffer->rawbuffer == nullptr) {
-        WVLOG_E("native buffer acquire, buffer or rawbuffer is null.");
-        return;
-    }
-    WVLOG_D("native buffer acquired buffer %{public}p.", buffer->rawbuffer);
-    OH_NativeBuffer_Reference(static_cast<OH_NativeBuffer*>(buffer->rawbuffer));
-}
-
-void OhosNativeBufferAdapterImpl::Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc)
-{
-    if (buffer == nullptr || outDesc == nullptr || buffer->rawbuffer == nullptr) {
-        WVLOG_E("native buffer describe, buffer or rawbuffer or outDesc is null.");
-        return;
-    }
-    WVLOG_D("native buffer describe buffer %{public}p.", buffer->rawbuffer);
-
-    auto it = configDescriptors_.find(static_cast<OH_NativeBuffer*>(buffer->rawbuffer));
-    if (it != configDescriptors_.end()) {
-        *outDesc = *it->second;
-    } else {
-        WVLOG_E("native buffer describe cannot find.");
-        outDesc->width = 0;
-        outDesc->height = 0;
-        outDesc->format = 0;
-        outDesc->usage = 0;
-    }
-}
-
-void OhosNativeBufferAdapterImpl::Release(NativeBuffer* buffer)
-{
-    if (buffer == nullptr || buffer->rawbuffer == nullptr) {
-        WVLOG_E("native buffer release, buffer or rawbuffer is null.");
+    if (buffer == nullptr) {
+        WVLOG_E("native buffer release, buffer is null.");
         return;
     }
 
-    WVLOG_D("native buffer release buffer %{public}p.", buffer->rawbuffer);
-    OHOS::SurfaceBuffer *sfBuffer = reinterpret_cast<SurfaceBuffer*>(buffer->rawbuffer);
-    int refCount = sfBuffer->GetSptrRefCount();
-    if (OH_NativeBuffer_Unreference(static_cast<OH_NativeBuffer*>(buffer->rawbuffer)) == 0) {
+    WVLOG_D("native buffer release buffer %{public}p.", buffer);
+    if (OH_NativeBuffer_Unreference(static_cast<OH_NativeBuffer*>(buffer)) == 0) {
         WVLOG_D("native buffer release, unreference buffer.");
     }
-
-    if (refCount == 1) {
-        auto it = configDescriptors_.find(static_cast<OH_NativeBuffer*>(buffer->rawbuffer));
-        if (it != configDescriptors_.end()) {
-            WVLOG_E("native buffer release find in descriptors, for raw buffer: %{public}p.", buffer->rawbuffer);
-            delete it->second;
-            configDescriptors_.erase(static_cast<OH_NativeBuffer*>(buffer->rawbuffer));
-        }
-    }
-
-    delete buffer;
 }
 
-int OhosNativeBufferAdapterImpl::GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer)
+int OhosNativeBufferAdapterImpl::GetEGLBuffer(void* buffer, void** eglBuffer)
 {
-    if (buffer == nullptr || buffer->rawbuffer == nullptr) {
-        WVLOG_E("native buffer get egl buffer, buffer or rawbuffer is null.");
+    if (buffer == nullptr) {
+        WVLOG_E("native buffer get egl buffer, buffer is null.");
         return -1;
     }
-    WVLOG_D("native buffer GetEGLBuffer %{public}p.", buffer->rawbuffer);
+    WVLOG_D("native buffer GetEGLBuffer %{public}p.", buffer);
 
     OHNativeWindowBuffer* nativeWindowBuffer =
-        OH_NativeWindow_CreateNativeWindowBufferFromNativeBuffer(static_cast<OH_NativeBuffer*>(buffer->rawbuffer));
+        OH_NativeWindow_CreateNativeWindowBufferFromNativeBuffer(static_cast<OH_NativeBuffer*>(buffer));
     if (nativeWindowBuffer == nullptr) {
         WVLOG_E("native buffer failed to create native window buffer from native buffer.");
         return -1;
@@ -180,24 +111,13 @@ int OhosNativeBufferAdapterImpl::NativeBufferFromNativeWindowBuffer(void* native
     return 0;
 }
 
-int OhosNativeBufferAdapterImpl::FreeNativeBuffer(void* nativeBuffer)
+uint32_t OhosNativeBufferAdapterImpl::GetSeqNum(void* nativeBuffer)
 {
     if (nativeBuffer == nullptr) {
-        WVLOG_E("native buffer FreeNativeBuffer, native buffer is null.");
-        return -1;
-    }
-    WVLOG_D("native buffer FreeNativeBuffer freeing: %{public}p.", nativeBuffer);
-    OH_NativeBuffer_Unreference(static_cast<OH_NativeBuffer*>(nativeBuffer));
-    return 0;
-}
-
-uint32_t OhosNativeBufferAdapterImpl::GetSeqNum(NativeBuffer* nativeBuffer)
-{
-    if (nativeBuffer == nullptr || nativeBuffer->rawbuffer == nullptr) {
-        WVLOG_E("native buffer GetSeqNum, nativeBuffer or rawbuffer is null.");
+        WVLOG_E("native buffer GetSeqNum, nativeBuffer is null.");
         return 0;
     }
-    SurfaceBufferImpl* buffer = reinterpret_cast<SurfaceBufferImpl *>(nativeBuffer->rawbuffer);
+    SurfaceBufferImpl* buffer = reinterpret_cast<SurfaceBufferImpl *>(nativeBuffer);
     return buffer->GetSeqNum();
 }
 } // namespace OHOS::NWeb

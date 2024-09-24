@@ -23,27 +23,18 @@ namespace OHOS::ArkWeb {
 ArkOhosNativeBufferAdapterWrapper::ArkOhosNativeBufferAdapterWrapper(ArkWebRefPtr<ArkOhosNativeBufferAdapter> ref)
     : ctocpp_(ref) {}
 
-void ArkOhosNativeBufferAdapterWrapper::Allocate(const NativeBufferDesc* desc, NativeBuffer** outBuffer)
-{
-    ctocpp_->Allocate(desc, reinterpret_cast<void**>(outBuffer));
-}
 
-void ArkOhosNativeBufferAdapterWrapper::AcquireBuffer(NativeBuffer* buffer)
+void ArkOhosNativeBufferAdapterWrapper::AcquireBuffer(void* buffer)
 {
     ctocpp_->AcquireBuffer(buffer);
 }
 
-void ArkOhosNativeBufferAdapterWrapper::Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc)
+void ArkOhosNativeBufferAdapterWrapper::Release(void* buffer)
 {
-    ctocpp_->Describe(buffer, outDesc);
+    ctocpp_->Release(buffer);
 }
 
-void ArkOhosNativeBufferAdapterWrapper::Release(NativeBuffer* buffer)
-{
-    ctocpp_->Release(static_cast<void*>(buffer));
-}
-
-int ArkOhosNativeBufferAdapterWrapper::GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer)
+int ArkOhosNativeBufferAdapterWrapper::GetEGLBuffer(void* buffer, void** eglBuffer)
 {
     return ctocpp_->GetEGLBuffer(buffer, eglBuffer);
 }
@@ -58,12 +49,7 @@ int ArkOhosNativeBufferAdapterWrapper::NativeBufferFromNativeWindowBuffer(void* 
     return ctocpp_->NativeBufferFromNativeWindowBuffer(nativeWindowBuffer, nativeBuffer);
 }
 
-int ArkOhosNativeBufferAdapterWrapper::FreeNativeBuffer(void* nativeBuffer)
-{
-    return ctocpp_->FreeNativeBuffer(nativeBuffer);
-}
-
-uint32_t ArkOhosNativeBufferAdapterWrapper::GetSeqNum(NativeBuffer* nativeBuffer)
+uint32_t ArkOhosNativeBufferAdapterWrapper::GetSeqNum(void* nativeBuffer)
 {
     return ctocpp_->GetSeqNum(nativeBuffer);
 }

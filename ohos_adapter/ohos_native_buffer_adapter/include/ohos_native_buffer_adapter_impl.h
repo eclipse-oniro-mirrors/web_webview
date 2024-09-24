@@ -34,15 +34,11 @@ public:
 
     ~OhosNativeBufferAdapterImpl() override;
 
-    void Allocate(const NativeBufferDesc* desc, NativeBuffer** outBuffer) override;
+    void AcquireBuffer(void* buffer) override;
 
-    void AcquireBuffer(NativeBuffer* buffer) override;
+    void Release(void* buffer) override;
 
-    void Describe(const NativeBuffer* buffer, NativeBufferDesc* outDesc) override;
-
-    void Release(NativeBuffer* buffer) override;
-
-    int GetEGLBuffer(NativeBuffer* buffer, void** eglBuffer) override;
+    int GetEGLBuffer(void* buffer, void** eglBuffer) override;
 
     int FreeEGLBuffer(void* eglBuffer) override;
 
@@ -50,10 +46,7 @@ public:
 
     int FreeNativeBuffer(void* nativeBuffer) override;
 
-    uint32_t GetSeqNum(NativeBuffer* nativeBuffer) override;
-
-private:
-    std::unordered_map<OH_NativeBuffer*, const NativeBufferDesc*> configDescriptors_;
+    uint32_t GetSeqNum(void* nativeBuffer) override;
 };
 
 } // namespace OHOS::NWeb
