@@ -520,7 +520,6 @@ std::shared_ptr<OhosFileMapper> OhosResourceAdapterImpl::GetRawFileMapper(
 std::string OhosResourceAdapterImpl::GetArkWebVersion()
 {
     const std::string hapPaths[] = {
-        "/module_update/ArkWebCore/app/com.huawei.hmos.arkwebcore/ArkWebCore.hap",
         "/system/app/com.ohos.arkwebcore/ArkWebCore.hap"
     };
     const std::string packInfoPath = "pack.info";
