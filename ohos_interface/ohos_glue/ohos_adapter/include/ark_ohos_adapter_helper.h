@@ -196,8 +196,9 @@ public:
     /**
      * @Description: Get OhosNativeBufferAdapter.
      * @Return：Returns the pointer to a ArkOhosNativeBufferAdapter instance.
-     * @Since {12005}
+     * @Since 12005
      */
+    /*--ark web()--*/
     virtual ArkWebRefPtr<ArkOhosNativeBufferAdapter> GetOhosNativeBufferAdapter() = 0;
 };
 
