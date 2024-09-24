@@ -218,7 +218,7 @@ public:
 
     /**
      * @Description: Create a <b>OH_NativeImage</b> as surface consumer.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual void NewNativeImage() = 0;
 
@@ -227,7 +227,7 @@ public:
      * @Output {windowBuffer}: Indicates the pointer to an <b>OHNativeWindowBuffer</b> point.
 	 * @Output {acquireFenceFd}: Indicates the pointer to a file descriptor handle.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual int32_t AcquireNativeWindowBuffer(
         void** windowBuffer,
@@ -238,7 +238,7 @@ public:
      * @Input {windowBuffer}: Indicates the pointer to a <b>OHNativeWindowBuffer</b> instance.
      * @Output {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual int32_t GetNativeBuffer(
         void* windowBuffer,
@@ -249,7 +249,7 @@ public:
      * @Input {windowBuffer}: Indicates the pointer to an <b>OHNativeWindowBuffer</b> instance.
      * @Input {fenceFd}: Indicates a file descriptor handle, which is used for timing synchronization.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) = 0;
 };
