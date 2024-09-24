@@ -34,7 +34,7 @@ public:
     /**
      * @Description: Adds the reference count of a OH_NativeBuffer.
      * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual void AcquireBuffer(void* buffer) = 0;
 
@@ -43,7 +43,7 @@ public:
      * @Input {desc}: Indicates the pointer to a <b>NativeBufferDesc</b> instance.
      * @Output {outBuffer}: Indicates the pointer to the <b>OH_NativeBuffer</b> instance created \n
      *                      if the operation is successful, returns <b>NULL</b> otherwise.               
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual void Allocate(const void* desc, void** outBuffer) = 0;
 
@@ -51,7 +51,7 @@ public:
      * @Description: Get the description of an <b>OH_NativeBuffer</b> instance.
      * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
      * @Output {outDesc}: Indicates the pointer to a <b>NativeBufferDesc</b> pointer.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual void Describe(const void* buffer, void* outDesc) = 0;
 
@@ -59,7 +59,7 @@ public:
      * @Description: Decreases the reference count of a OH_NativeBuffer and, when the reference count reaches 0, \n
      *               destroys this OH_NativeBuffer.
      * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual void Release(void* buffer) = 0;
 
@@ -68,7 +68,7 @@ public:
      * @Input {buffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
      * @Output {eglBuffer}: Indicates the pointer to a egl buffer pointer.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual int GetEGLBuffer(void* buffer, void** eglBuffer) = 0;
 
@@ -76,7 +76,7 @@ public:
      * @Description: Free egl buffer.
      * @Input {eglBuffer}: Indicates the pointer to an egl buffer.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual int FreeEGLBuffer(void* eglBuffer) = 0;
 
@@ -85,7 +85,7 @@ public:
      * @Input {nativeWindowBuffer}: Indicates the pointer to a <b>OHNativeWindowBuffer</b> instance.
      * @Output {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) = 0;
 
@@ -94,7 +94,7 @@ public:
      *               destroys this OH_NativeBuffer.
      * @Input {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual int FreeNativeBuffer(void* nativeBuffer) = 0;
 
@@ -102,7 +102,7 @@ public:
      * @Description: Get the sequence number of native buffer .
      * @Input {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
      * @Return：Returns a sequence number.
-     * @Since {12004}
+     * @Since {12005}
      */
     virtual uint32_t GetSeqNum(void* nativeBuffer) = 0;
 };
