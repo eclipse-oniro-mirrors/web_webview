@@ -220,6 +220,7 @@ public:
      * @Description: Create a <b>OH_NativeImage</b> as surface consumer.
      * @Since {12005}
      */
+    /*--ark web()--*/
     virtual void NewNativeImage() = 0;
 
     /**
@@ -229,6 +230,7 @@ public:
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
      * @Since {12005}
      */
+    /*--ark web()--*/
     virtual int32_t AcquireNativeWindowBuffer(
         void** windowBuffer,
         int* acquireFenceFd) = 0;
@@ -240,6 +242,7 @@ public:
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
      * @Since {12005}
      */
+    /*--ark web()--*/
     virtual int32_t GetNativeBuffer(
         void* windowBuffer,
         void** nativeBuffer) = 0;
@@ -251,6 +254,7 @@ public:
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
      * @Since {12005}
      */
+    /*--ark web()--*/
     virtual int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) = 0;
 };
 
