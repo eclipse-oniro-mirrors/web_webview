@@ -26,11 +26,7 @@ class ArkOhosNativeBufferAdapterImpl : public ArkOhosNativeBufferAdapter {
 public:
     ArkOhosNativeBufferAdapterImpl(NWeb::OhosNativeBufferAdapter&);
 
-    void Allocate(const void* desc, void** outBuffer) override;
-
     void AcquireBuffer(void* buffer) override;
-
-    void Describe(const void* buffer, void* outDesc) override;
 
     void Release(void* buffer) override;
 

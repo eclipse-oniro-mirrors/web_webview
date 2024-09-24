@@ -44,8 +44,6 @@ public:
 
     int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) override;
 
-    int FreeNativeBuffer(void* nativeBuffer) override;
-
     uint32_t GetSeqNum(void* nativeBuffer) override;
 };
 
