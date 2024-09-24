@@ -218,17 +218,17 @@ public:
 
     /**
      * @Description: Create a <b>OH_NativeImage</b> as surface consumer.
-     * @Since {12005}
+     * @Since 12005
      */
     /*--ark web()--*/
     virtual void NewNativeImage() = 0;
 
     /**
      * @Description: Acquire an <b>OHNativeWindowBuffer</b> for content consumer.
-     * @Output {windowBuffer}: Indicates the pointer to an <b>OHNativeWindowBuffer</b> point.
-	 * @Output {acquireFenceFd}: Indicates the pointer to a file descriptor handle.
+     * @Output windowBuffer: Indicates the pointer to an <b>OHNativeWindowBuffer</b> point.
+	 * @Output acquireFenceFd: Indicates the pointer to a file descriptor handle.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12005}
+     * @Since 12005
      */
     /*--ark web()--*/
     virtual int32_t AcquireNativeWindowBuffer(
@@ -237,10 +237,10 @@ public:
 
     /**
      * @Description: Converts an <b>OHNativeWindowBuffer</b> instance to an <b>OH_NativeBuffer</b>.
-     * @Input {windowBuffer}: Indicates the pointer to a <b>OHNativeWindowBuffer</b> instance.
-     * @Output {nativeBuffer}: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
+     * @Input windowBuffer: Indicates the pointer to a <b>OHNativeWindowBuffer</b> instance.
+     * @Output nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12005}
+     * @Since 12005
      */
     /*--ark web()--*/
     virtual int32_t GetNativeBuffer(
@@ -249,10 +249,10 @@ public:
 
     /**
      * @Description: Release the <b>OHNativeWindowBuffer</b> to the buffer queue for reuse.
-     * @Input {windowBuffer}: Indicates the pointer to an <b>OHNativeWindowBuffer</b> instance.
-     * @Input {fenceFd}: Indicates a file descriptor handle, which is used for timing synchronization.
+     * @Input windowBuffer: Indicates the pointer to an <b>OHNativeWindowBuffer</b> instance.
+     * @Input fenceFd: Indicates a file descriptor handle, which is used for timing synchronization.
      * @Return：Returns an error code, 0 is sucess, otherwise, failed.
-     * @Since {12005}
+     * @Since 12005
      */
     /*--ark web()--*/
     virtual int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) = 0;
