@@ -45,9 +45,48 @@ void NativeBufferAdapterImplTest::SetUp() {}
 
 void NativeBufferAdapterImplTest::TearDown() {}
 
+
+void TestAllocate(void** outBuffer)
+{
+    OH_NativeBuffer_Config config = {
+        .width = 10,
+        .height = 10,
+        .format = OH_NativeBuffer_Format::NATIVEBUFFER_PIXEL_FMT_RGBA_8888,
+        .usage = 1,
+    };
+
+    OH_NativeBuffer* buffer = OH_NativeBuffer_Alloc(&config);
+    if (buffer != nullptr) {
+        *outBuffer = buffer;
+    } else {
+        *outBuffer = nullptr;
+    }
+}
+
 /**
  * @tc.name: NativeBufferAdapterImplTest_001.
  * @tc.desc: test FlowbufferAdapterImpl AcquireBuffer.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_001, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* buffer = nullptr;
+    nativebufferAdapter->AcquireBuffer(buffer);
+
+    void* nativeBuffer = nullptr;
+    TestAllocate(&nativeBuffer);
+    EXPECT_NE(nativeBuffer, nullptr);
+    nativebufferAdapter->AcquireBuffer(nativeBuffer);
+}
+
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_002.
+ * @tc.desc: test FlowbufferAdapterImpl Release.
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -56,23 +95,19 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_002, TestSize.
     std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
     EXPECT_TRUE(nativebufferAdapter != nullptr);
 
-    NativeBuffer buffer;
-    nativebufferAdapter->AcquireBuffer(&buffer);
+    void* buffer = nullptr;
+    nativebufferAdapter->Release(buffer);
 
-    NativeBufferDesc desc;
-    NativeBuffer* nativeBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
+    void* nativeBuffer = nullptr;
+    TestAllocate(&nativeBuffer);
     EXPECT_NE(nativeBuffer, nullptr);
-    nativebufferAdapter->AcquireBuffer(nativeBuffer);
-    int ret = nativebufferAdapter->FreeNativeBuffer(nativeBuffer);
-    EXPECT_EQ(ret, 0);}
+    nativebufferAdapter->Release(nativeBuffer);
+}
+
 
 /**
  * @tc.name: NativeBufferAdapterImplTest_003.
- * @tc.desc: test FlowbufferAdapterImpl Describe.
+ * @tc.desc: test FlowbufferAdapterImpl GetEGLBuffer.
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -81,70 +116,13 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_003, TestSize.
     std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
     EXPECT_TRUE(nativebufferAdapter != nullptr);
 
-    NativeBuffer buffer;
-    NativeBufferDesc outDesc;
-    nativebufferAdapter->Describe(&buffer, &outDesc);
-
-    NativeBufferDesc desc;
-    NativeBuffer* nativeBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
-    EXPECT_NE(nativeBuffer, nullptr);
-    nativebufferAdapter->Describe(nativeBuffer, &outDesc);
-    EXPECT_EQ(outDesc.height, 10);
-    EXPECT_EQ(outDesc.width, 10);
-    EXPECT_EQ(outDesc.usage, 1);
-}
-
-/**
- * @tc.name: NativeBufferAdapterImplTest_004.
- * @tc.desc: test FlowbufferAdapterImpl Release.
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_004, TestSize.Level1)
-{
-    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
-    EXPECT_TRUE(nativebufferAdapter != nullptr);
-
-    NativeBuffer buffer;
-    nativebufferAdapter->Release(&buffer);
-
-    NativeBufferDesc desc;
-    NativeBuffer* nativeBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
-    EXPECT_NE(nativeBuffer, nullptr);
-    nativebufferAdapter->Release(nativeBuffer);
-}
-
-
-/**
- * @tc.name: NativeBufferAdapterImplTest_005.
- * @tc.desc: test FlowbufferAdapterImpl GetEGLBuffer.
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_005, TestSize.Level1)
-{
-    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
-    EXPECT_TRUE(nativebufferAdapter != nullptr);
-
-    NativeBuffer buffer;
+    void* buffer = nullptr;
     void* eglBuffer = nullptr;
-    int ret = nativebufferAdapter->GetEGLBuffer(&buffer, &eglBuffer);
+    int ret = nativebufferAdapter->GetEGLBuffer(buffer, &eglBuffer);
     EXPECT_EQ(ret, -1);
 
-    NativeBufferDesc desc;
-    NativeBuffer* nativeBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
+    void* nativeBuffer = nullptr;
+    TestAllocate(&nativeBuffer);
     EXPECT_NE(nativeBuffer, nullptr);
     ret = nativebufferAdapter->GetEGLBuffer(nativeBuffer, &eglBuffer);
     EXPECT_NE(eglBuffer, nullptr);
@@ -154,12 +132,12 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_005, TestSize.
 }
 
 /**
- * @tc.name: NativeBufferAdapterImplTest_006.
+ * @tc.name: NativeBufferAdapterImplTest_004.
  * @tc.desc: test FlowbufferAdapterImpl FreeEGLBuffer.
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_006, TestSize.Level1)
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_004, TestSize.Level1)
 {
     std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
     EXPECT_TRUE(nativebufferAdapter != nullptr);
@@ -168,12 +146,8 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_006, TestSize.
     int ret = nativebufferAdapter->FreeEGLBuffer(eglBuffer);
     EXPECT_EQ(ret, -1);
 
-    NativeBufferDesc desc;
-    NativeBuffer* nativeBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
+    void* nativeBuffer = nullptr;
+    TestAllocate(&nativeBuffer);
     EXPECT_NE(nativeBuffer, nullptr);
     nativebufferAdapter->GetEGLBuffer(nativeBuffer, &eglBuffer);
     ret = nativebufferAdapter->FreeEGLBuffer(eglBuffer);
@@ -181,12 +155,12 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_006, TestSize.
 }
 
 /**
- * @tc.name: NativeBufferAdapterImplTest_007.
+ * @tc.name: NativeBufferAdapterImplTest_005.
  * @tc.desc: test FlowbufferAdapterImpl NativeBufferFromNativeWindowBuffer.
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_007, TestSize.Level1)
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_005, TestSize.Level1)
 {
     std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
     EXPECT_TRUE(nativebufferAdapter != nullptr);
@@ -198,52 +172,22 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_007, TestSize.
 }
 
 /**
- * @tc.name: NativeBufferAdapterImplTest_008.
- * @tc.desc: test FlowbufferAdapterImpl FreeNativeBuffer.
+ * @tc.name: NativeBufferAdapterImplTest_006.
+ * @tc.desc: test FlowbufferAdapterImpl GetSeqNum.
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_008, TestSize.Level1)
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_006, TestSize.Level1)
 {
     std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
     EXPECT_TRUE(nativebufferAdapter != nullptr);
 
     void* buffer = nullptr;
-    int ret = nativebufferAdapter->FreeNativeBuffer(buffer);
-    EXPECT_EQ(ret, -1);
-
-    NativeBufferDesc desc;
-    NativeBuffer* nativeBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
-    EXPECT_NE(nativeBuffer, nullptr);
-    ret = nativebufferAdapter->FreeNativeBuffer(nativeBuffer);
-    EXPECT_EQ(ret, 0);
-}
-
-/**
- * @tc.name: NativeBufferAdapterImplTest_009.
- * @tc.desc: test FlowbufferAdapterImpl GetSeqNum.
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_009, TestSize.Level1)
-{
-    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
-    EXPECT_TRUE(nativebufferAdapter != nullptr);
-
-    NativeBuffer* buffer = nullptr;
     int seqnum = nativebufferAdapter->GetSeqNum(buffer);
     EXPECT_EQ(seqnum, 0);
 
-    NativeBufferDesc desc;
-    NativeBuffer* nativeBuffer = nullptr;
-    desc.height = 10;
-    desc.width = 10;
-    desc.usage = 1;
-    nativebufferAdapter->Allocate(&desc, &nativeBuffer);
+    void* nativeBuffer = nullptr;
+    TestAllocate(&nativeBuffer);
     EXPECT_NE(nativeBuffer, nullptr);
     seqnum = nativebufferAdapter->GetSeqNum(nativeBuffer);
     EXPECT_NE(seqnum, 0);
