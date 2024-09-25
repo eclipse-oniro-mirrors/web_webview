@@ -25,10 +25,8 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=webview)--*/
 class ArkOhosNativeBufferAdapter : public virtual ArkWebBaseRefCounted {
 public:
-    /*--ark web()--*/
     ArkOhosNativeBufferAdapter() = default;
 
-    /*--ark web()--*/
     virtual ~ArkOhosNativeBufferAdapter() = default;
 
     /**
