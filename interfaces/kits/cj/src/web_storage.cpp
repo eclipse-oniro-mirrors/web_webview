@@ -56,18 +56,22 @@ int64_t WebStorage::CjGetOriginUsageOrQuota(const std::string &origin, int32_t *
     }
     if (isQuata) {
         auto ret = static_cast<uint32_t>(web_storage->GetOriginQuota(origin));
-        if (ret != INTERFACE_ERROR && ret != NWebError::INVALID_ORIGIN) {
-            *errCode = INTERFACE_OK;
+        if (ret == INTERFACE_ERROR) {
+            *errCode = INTERFACE_ERROR;
+        } else if (ret == NWebError::INVALID_ORIGIN) {
+            *errCode = NWebError::INVALID_ORIGIN;
         } else {
-            *errCode = ret;
+            *errCode = INTERFACE_OK;
         }
         return ret;
     } else {
         auto ret = static_cast<uint32_t>(web_storage->GetOriginUsage(origin));
-        if (ret != INTERFACE_ERROR && ret != NWebError::INVALID_ORIGIN) {
-            *errCode = INTERFACE_OK;
+        if (ret == INTERFACE_ERROR) {
+            *errCode = INTERFACE_ERROR;
+        } else if (ret == NWebError::INVALID_ORIGIN) {
+            *errCode = NWebError::INVALID_ORIGIN;
         } else {
-            *errCode = ret;
+            *errCode = INTERFACE_OK;
         }
         return ret;
     }
@@ -101,7 +105,7 @@ CArrWebStorageOrigin WebStorage::CjGetOrigins(int32_t *errCode)
         i++;
     }
     ret.cWebStorageOrigin = head;
-    ret.size = origins.size();
+    ret.size = static_cast<int64_t>(origins.size());
     return ret;
 }
 }
