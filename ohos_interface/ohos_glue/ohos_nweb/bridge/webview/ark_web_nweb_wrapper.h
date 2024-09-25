@@ -1359,6 +1359,13 @@ public:
     /*--ark web()--*/
     void SetPopupSurface(void* popupSurface) override;
 
+    /**
+     * @Description: Sends mouse events to the web kernel.
+     * @Input mouseEvent: Basic information about mouse events.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    void WebSendMouseEvent(const std::shared_ptr<OHOS::NWeb::NWebMouseEvent>& mouseEvent) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

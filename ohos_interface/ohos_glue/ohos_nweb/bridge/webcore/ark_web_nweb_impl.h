@@ -1347,6 +1347,14 @@ public:
      */
     /*--ark web()--*/
     void OnDestroyImageAnalyzerOverlay() override;
+
+    /**
+     * @Description: Sends mouse events to the web kernel.
+     * @Input mouseEvent: Basic information about mouse events.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    void WebSendMouseEvent(ArkWebRefPtr<ArkWebMouseEvent> mouseEvent) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
