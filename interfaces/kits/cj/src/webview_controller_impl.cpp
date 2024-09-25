@@ -1002,12 +1002,12 @@ namespace OHOS::Webview {
     
     int32_t WebviewControllerImpl::CustomizeSchemesArrayDataHandler(CArrScheme schemes)
     {
-        uint32_t arrayLength = schemes.size;
+        int64_t arrayLength = schemes.size;
         if (arrayLength > MAX_CUSTOM_SCHEME_SIZE) {
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::vector<Scheme> schemeVector;
-        for (uint32_t i = 0; i < arrayLength; ++i) {
+        for (int64_t i = 0; i < arrayLength; ++i) {
             Scheme scheme;
             bool result = SetCustomizeScheme(schemes.cScheme[i], scheme);
             if (!result) {
