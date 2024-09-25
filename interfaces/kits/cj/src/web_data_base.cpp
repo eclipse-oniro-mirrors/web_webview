@@ -32,6 +32,15 @@ CArrString WebDataBase::CJGetHttpAuthCredentials(const std::string &host, const 
     CArrString ret = {nullptr, HTTP_AUTH_INIT_LENGTH};
     std::string username_s;
     char password[MAX_PWD_LENGTH + 1] = {0};
+    std::shared_ptr<NWebDataBase> database = NWebHelper::Instance().GetDataBase();
+    if (database != nullptr) {
+        database->GetHttpAuthCredentials(host, realm, username_s, password, MAX_PWD_LENGTH + 1);
+    }
+
+    if (username_s.empty() || strlen(password) == 0) {
+        ret.size = 0;
+        return ret;
+    }
 
     char** result = static_cast<char**>(malloc(sizeof(char*) * DEFAULT_AUTH_LENGTH));
     if (result == nullptr) {
@@ -39,9 +48,9 @@ CArrString WebDataBase::CJGetHttpAuthCredentials(const std::string &host, const 
         return ret;
     }
 
-    result[0] = static_cast<char*>(malloc(sizeof(char) * (MAX_STRING_LENGTH + 1)));
+    result[0] = OHOS::Webview::MallocCString(username_s);
     if (result[0] == nullptr) {
-        WEBVIEWLOGI("Webdatabase getHttpAuthCredentials malloc username failed!");
+        WEBVIEWLOGI("Webdatabase getHttpAuthCredentials transfer username_s failed!");
         free(result);
         return ret;
     }
@@ -53,26 +62,6 @@ CArrString WebDataBase::CJGetHttpAuthCredentials(const std::string &host, const 
         free(result);
         return ret;
     }
-
-    std::shared_ptr<NWebDataBase> database = NWebHelper::Instance().GetDataBase();
-    if (database != nullptr) {
-        database->GetHttpAuthCredentials(host, realm, username_s, password, MAX_PWD_LENGTH + 1);
-    }
-
-    if (username_s.empty() || strlen(password) == 0) {
-        ret.size = 0;
-        return ret;
-    }
-
-    result[0] = OHOS::Webview::MallocCString(username_s);
-    if (result[0] == nullptr) {
-        WEBVIEWLOGI("Webdatabase getHttpAuthCredentials transfer username_s failed!");
-        for (int i = 0; i < DEFAULT_AUTH_LENGTH; i++)
-            free(result[i]);
-        free(result);
-        return ret;
-    }
-
     result[1] = std::char_traits<char>::copy(result[1], password, MAX_PWD_LENGTH);
     (void)memset_s(password, MAX_PWD_LENGTH + 1, 0, MAX_PWD_LENGTH + 1);
     ret.head = result;
