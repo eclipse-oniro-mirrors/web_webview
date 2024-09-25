@@ -30,6 +30,7 @@
 #include "ohos_nweb/bridge/ark_web_hit_test_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_mouse_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_pdfconfig_args_impl.h"
 #include "ohos_nweb/bridge/ark_web_preference_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_impl.h"
@@ -1379,4 +1380,13 @@ void ArkWebNWebWrapper::SetPopupSurface(void* popupSurface)
     ark_web_nweb_->SetPopupSurface(popupSurface);
 }
 
+void ArkWebNWebWrapper::WebSendMouseEvent(const std::shared_ptr<OHOS::NWeb::NWebMouseEvent>& mouseEvent)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(mouseEvent)) {
+        ark_web_nweb_->WebSendMouseEvent(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->WebSendMouseEvent(new ArkWebMouseEventImpl(mouseEvent));
+}
 } // namespace OHOS::ArkWeb
