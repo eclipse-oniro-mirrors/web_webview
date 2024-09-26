@@ -32,6 +32,7 @@
 #include "ohos_nweb/bridge/ark_web_hit_test_result_impl.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_mouse_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_preference_impl.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_wrapper.h"
@@ -1173,5 +1174,15 @@ void ArkWebNWebImpl::SetPopupSurface(void* popupSurface)
 void ArkWebNWebImpl::OnDestroyImageAnalyzerOverlay()
 {
     nweb_nweb_->OnDestroyImageAnalyzerOverlay();
+}
+
+void ArkWebNWebImpl::WebSendMouseEvent(ArkWebRefPtr<ArkWebMouseEvent> mouseEvent)
+{
+    if (CHECK_REF_PTR_IS_NULL(mouseEvent)) {
+        nweb_nweb_->WebSendMouseEvent(nullptr);
+        return;
+    }
+
+    nweb_nweb_->WebSendMouseEvent(std::make_shared<ArkWebMouseEventWrapper>(mouseEvent));
 }
 } // namespace OHOS::ArkWeb

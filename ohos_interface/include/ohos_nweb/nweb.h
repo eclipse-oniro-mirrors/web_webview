@@ -236,6 +236,23 @@ enum class PixelUnit {
     NONE = 3,
 };
 
+class OHOS_NWEB_EXPORT NWebMouseEvent {
+public:
+    virtual ~NWebMouseEvent() = default;
+
+    virtual int32_t GetX() = 0;
+
+    virtual int32_t GetY() = 0;
+
+    virtual int32_t GetButton() = 0;
+
+    virtual int32_t GetAction() = 0;
+    
+    virtual int32_t GetClickNum() = 0;
+
+    virtual std::vector<int32_t> GetPressKeyCodes() = 0;
+};
+
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
@@ -1519,6 +1536,14 @@ public:
      * @brief Called when image analyzer is destory.
      */
     virtual void OnDestroyImageAnalyzerOverlay() {}
+
+    /**
+     * @Description: Sends mouse events to the web kernel.
+     * @Input mouseEvent: Basic information about mouse events.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual void WebSendMouseEvent(const std::shared_ptr<OHOS::NWeb::NWebMouseEvent>& mouseEvent) {}
 };
 
 } // namespace OHOS::NWeb

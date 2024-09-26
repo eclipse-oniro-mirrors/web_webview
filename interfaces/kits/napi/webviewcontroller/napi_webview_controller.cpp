@@ -4919,14 +4919,12 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
             NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
-
     std::string jobName;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], jobName)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
             NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "jopName", "string"));
         return result;
     }
-
     WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
@@ -4938,7 +4936,11 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(env, &scope);
+    if (scope == nullptr) {
+        return result;
+    }
     napi_value webPrintDoc = nullptr;
     NAPI_CALL(env, napi_get_reference_value(env, g_webPrintDocClassRef, &webPrintDoc));
     napi_value consParam[INTEGER_ONE] = {0};
@@ -4947,9 +4949,11 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
     napi_value proxy = nullptr;
     status = napi_new_instance(env, webPrintDoc, INTEGER_ONE, &consParam[INTEGER_ZERO], &proxy);
     if (status!= napi_ok) {
+        napi_close_handle_scope(env, scope);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
+    napi_close_handle_scope(env, scope);
     return proxy;
 }
 
