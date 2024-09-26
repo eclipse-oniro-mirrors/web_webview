@@ -32,6 +32,7 @@
 #include "ohos_nweb/include/ark_web_js_proxy_callback_vector.h"
 #include "ohos_nweb/include/ark_web_js_result_callback.h"
 #include "ohos_nweb/include/ark_web_message_value_callback.h"
+#include "ohos_nweb/include/ark_web_mouse_event.h"
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
@@ -1508,6 +1509,14 @@ public:
      */
     /*--ark web()--*/
     virtual void OnDestroyImageAnalyzerOverlay() = 0;
+
+    /**
+     * @Description: Sends mouse events to the web kernel.
+     * @Input mouseEvent: Basic information about mouse events.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual void WebSendMouseEvent(ArkWebRefPtr<ArkWebMouseEvent> mouseEvent) = 0;
 };
 
 } // namespace OHOS::ArkWeb
