@@ -23,8 +23,6 @@ namespace OHOS::ArkWeb {
 /*--ark web(source=webcore)--*/
 class ArkWebGestureEventResult : public virtual ArkWebBaseRefCounted {
 public:
-    virtual ~ArkWebGestureEventResult() = default;
-
     /*--ark web()--*/
     virtual void SetGestureEventResult(bool result) = 0;
 };

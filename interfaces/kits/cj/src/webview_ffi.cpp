@@ -900,7 +900,7 @@ extern "C" {
 
     int32_t GetSendPorts(CArrI64 ports, std::vector<std::string>& sendPorts)
     {
-        uint32_t arrayLen = ports.size;
+        int64_t arrayLen = ports.size;
         if (arrayLen == 0) {
             return NWebError::PARAM_CHECK_ERROR;
         }
@@ -908,7 +908,7 @@ extern "C" {
         if (!portsId) {
             return NWebError::PARAM_CHECK_ERROR;
         }
-        for (uint32_t i = 0; i < arrayLen; i++) {
+        for (int64_t i = 0; i < arrayLen; i++) {
             WebMessagePortImpl *msgPort = FFIData::GetData<WebMessagePortImpl>(portsId[i]);
             if ((!msgPort)) {
                 return NWebError::PARAM_CHECK_ERROR;

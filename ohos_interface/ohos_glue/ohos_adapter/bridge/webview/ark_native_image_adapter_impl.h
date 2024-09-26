@@ -48,6 +48,18 @@ public:
 
     void DestroyNativeImage() override;
 
+    void NewNativeImage() override;
+
+    int32_t AcquireNativeWindowBuffer(
+        void** windowBuffer,
+        int* acquireFenceFd) override;
+
+    int32_t GetNativeBuffer(
+        void* windowBuffer,
+        void** nativeBuffer) override;
+
+    int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NativeImageAdapter> real_;
 

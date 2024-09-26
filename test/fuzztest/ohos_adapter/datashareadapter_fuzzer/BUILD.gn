@@ -17,7 +17,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("DataShareAdapterFuzzer") {
+ohos_fuzztest("DataShareAdapterFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file =
       "$webview_path/test/fuzztest/ohos_adapter/datashareadapter_fuzzer"
@@ -49,7 +49,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":DataShareAdapterFuzzer",
+    ":DataShareAdapterFuzzTest",
   ]
 }
 ###############################################################################

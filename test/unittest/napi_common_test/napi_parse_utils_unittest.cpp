@@ -61,21 +61,24 @@ namespace NWeb {
         std::string str = "str";
         bool result = false;
         result = IsFormatStringOfLength(str);
+        EXPECT_EQ(result, false);
     }
 
     TEST_F(NapiParseUtilsTest, IsNumberOfLength)
     {
-        std::string str = "str";
+        std::string str = "10";
         bool result = false;
         result = IsNumberOfLength(str);
+        EXPECT_EQ(result, true);
     }
 
     TEST_F(NapiParseUtilsTest, ParseJsLengthStringToInt)
     {
-        std::string input = "input";
+        std::string input = "10";
         int32_t value = 32;
         PixelUnit type = PixelUnit::PX;
         g_utils->ParseJsLengthStringToInt(input, type, value);
+        EXPECT_EQ(value, 10);
     }
 } // namespace NWeb
 } // namespace OHOS
