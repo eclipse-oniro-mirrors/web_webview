@@ -32,6 +32,7 @@
 #include "config_policy_utils.h"
 #include "locale_config.h"
 #include "nweb_adapter_helper.h"
+#include "nweb_api_level.h"
 #include "nweb_c_api.h"
 #include "nweb_enhance_surface_adapter.h"
 #include "nweb_hisysevent.h"
@@ -723,6 +724,10 @@ bool NWebHelper::LoadEngine()
 
     nwebEngine_ = NWebEngine::GetInstance();
     if (nwebEngine_) {
+        coreApiLevel_ = nwebEngine_->GetArkWebCoreApiLevel();
+        WVLOG_E("api level of core is %{public}d", coreApiLevel_);
+
+        nwebEngine_->SetArkWebRomApiLevel(ARKWEB_CORE_API_LEVEL);
         return true;
     }
 
@@ -1196,6 +1201,10 @@ void NWebHelper::TrimMemoryByPressureLevel(int32_t memoryLevel)
     }
 
     nwebEngine_->TrimMemoryByPressureLevel(memoryLevel);
+}
+
+bool NWebHelper::CheckArkWebCoreApiLevel(int apiLevel) {
+    return coreApiLevel_ >= apiLevel;
 }
 
 NWebAdapterHelper &NWebAdapterHelper::Instance()

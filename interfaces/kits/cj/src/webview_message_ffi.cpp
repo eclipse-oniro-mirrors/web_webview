@@ -459,7 +459,7 @@ extern "C" {
             return;
         }
         uint8_t *arrBuf = value.head;
-        size_t byteLength = value.size;
+        size_t byteLength = static_cast<size_t>(value.size);
         std::vector<uint8_t> vecData(arrBuf, arrBuf + byteLength);
         webMessageExt->SetArrayBuffer(vecData);
         *errCode = NWebError::NO_ERROR;

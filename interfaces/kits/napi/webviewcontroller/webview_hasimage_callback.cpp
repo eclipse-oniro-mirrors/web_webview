@@ -18,6 +18,7 @@
 #include "business_error.h"
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
+#include "nweb_napi_scope.h"
 #include "web_errors.h"
 
 namespace OHOS::NWeb {
@@ -97,6 +98,7 @@ void WebviewHasImageCallback::UvAfterWorkCb(uv_work_t* work, int status)
 void WebviewHasImageCallback::UvAfterWorkCbAsync(napi_env env, napi_ref callbackRef,
     bool result)
 {
+    OHOS::NApiScope scope(env);
     napi_value setResult[INTEGER_TWO] = {0};
     napi_get_undefined(env, &setResult[INTEGER_ZERO]);
     napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[INTEGER_ONE]);
