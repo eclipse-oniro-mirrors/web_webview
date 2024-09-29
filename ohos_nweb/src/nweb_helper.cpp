@@ -853,7 +853,7 @@ bool NWebHelper::InitAndRun(bool from_ark)
     initArgs->AddArg(std::string("--bundle-installation-dir=").append(bundlePath_));
     std::string arkWebInstallPath = OHOS::system::GetParameter("persist.arkwebcore.install_path", "");
     if (!arkWebInstallPath.empty()) {
-        initArgs->AddArg(std::string("--arkwebcore-installation-dir=").append(arkWebInstallPath));
+        initArgs->AddArg(std::string("--arkwebcore-install-path=").append(arkWebInstallPath));
     } else {
         WVLOG_I("Get arkWebInstallPath from CCM failed");
     }
