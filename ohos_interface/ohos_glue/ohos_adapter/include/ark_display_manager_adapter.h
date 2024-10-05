@@ -38,6 +38,11 @@ public:
 /*--ark web(source=webcore)--*/
 class ArkFoldStatusListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
+    /**
+     * @Description: Folding state change.
+     * @Input: folding status.
+     * @Since: 12005
+     */
     /*--ark web()--*/
     virtual void OnFoldStatusChanged(uint32_t foldstatus) = 0;
 };
@@ -69,9 +74,19 @@ public:
     /*--ark web()--*/
     virtual uint32_t GetDisplayOrientation() = 0;
 
+    /**
+     * @Description: Get folding status.
+     * @Return: folding status.
+     * @Since: 12005
+     */
     /*--ark web()--*/
     virtual uint32_t GetFoldStatus() = 0;
 
+    /**
+     * @Description: Does the device support folding.
+     * @Return: Does it support folding.
+     * @Since: 12005
+     */
     /*--ark web()--*/
     virtual bool IsFoldable() = 0;
 };
@@ -94,9 +109,21 @@ public:
     /*--ark web()--*/
     virtual bool IsDefaultPortrait() = 0;
 
+    /**
+     * @Description: Regist Fold Status Listener.
+     * @Input: ArkFoldStatusListenerAdapter.
+     * @Return: return Listener ID.
+     * @Since: 12005
+     */
     /*--ark web()--*/
     virtual uint32_t RegisterFoldStatusListener(ArkWebRefPtr<ArkFoldStatusListenerAdapter> listener) = 0;
 
+    /**
+     * @Description: Unregist Fold Status Listener.
+     * @Input: Listener ID.
+     * @Return: return is or not success.
+     * @Since: 12005
+     */
     /*--ark web()--*/
     virtual bool UnregisterFoldStatusListener(uint32_t id) = 0;
 };
