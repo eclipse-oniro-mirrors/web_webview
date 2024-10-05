@@ -49,7 +49,6 @@ private:
     std::shared_ptr<FoldStatusListenerAdapter> listener_;
 };
 
-
 class DisplayAdapterImpl : public DisplayAdapter {
 public:
     DisplayAdapterImpl() = delete;
