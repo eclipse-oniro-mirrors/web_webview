@@ -138,7 +138,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetOutputSurface(void* window)
         WVLOG_E("Window is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
-    int32_t usage = BUFFER_USAGE_MEM_DMA;
+    uint64_t usage = BUFFER_USAGE_MEM_DMA;
     NativeWindowHandleOpt(window_, SET_USAGE, usage);
     WVLOG_I("MediaCodecDecoder default to opening Hebc.");
 
