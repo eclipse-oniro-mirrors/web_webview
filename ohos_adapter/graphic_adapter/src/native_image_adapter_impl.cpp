@@ -163,4 +163,16 @@ int32_t NativeImageAdapterImpl::ReleaseNativeWindowBuffer(void* windowBuffer, in
     return OH_NativeImage_ReleaseNativeWindowBuffer(ohNativeImage_,
         static_cast<OHNativeWindowBuffer*>(windowBuffer), fenceFd);
 }
+
+void NativeImageAdapterImpl::GetNativeWindowBufferSize(void* windowBuffer, uint32_t* width, uint32_t* height)
+{
+    if (windowBuffer == nullptr || width == nullptr || height == nullptr) {
+        return;
+    }
+    BufferHandle *handle = OH_NativeWindow_GetBufferHandleFromNative(static_cast<OHNativeWindowBuffer*>(windowBuffer));
+    if (handle) {
+        *height = handle->height;
+        *width = handle->width;
+    }
+}
 }

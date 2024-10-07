@@ -252,4 +252,28 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_ReleaseNativeWin
     EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
     imagerAdapter->ReleaseNativeWindowBuffer(windowBuffer, fenceId);
 }
+
+/**
+ * @tc.name: NativeImageAdapterImplTest_GetNativeWindowBufferSize001
+ * @tc.desc:GetNativeWindowBufferSize.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeWindowBufferSize_001, TestSize.Level1)
+{
+    std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
+    EXPECT_NE(imagerAdapter, nullptr);
+
+    void* windowBuffer = nullptr;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
+    EXPECT_EQ(width, 0);
+    EXPECT_EQ(height, 0);
+
+    void* windowBuffer = malloc(10);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
+    free(windowBuffer);
+    windowBuffer = nullptr;
+}
 } // namespace OHOS::NWeb

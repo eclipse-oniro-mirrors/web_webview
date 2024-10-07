@@ -105,4 +105,13 @@ int32_t ArkNativeImageAdapterWrapper::ReleaseNativeWindowBuffer(void* windowBuff
 {
     return ctocpp_->ReleaseNativeWindowBuffer(windowBuffer, fenceFd);
 }
+
+void ArkNativeImageAdapterWrapper::GetNativeWindowBufferSize(
+    void* windowBuffer,
+    uint32_t* width,
+    uint32_t* height)
+{
+    return ctocpp_->GetNativeWindowBufferSize(windowBuffer, width, height);
+}
+
 } // namespace OHOS::ArkWeb

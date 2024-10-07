@@ -60,6 +60,11 @@ public:
 
     int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) override;
 
+    void GetNativeWindowBufferSize(
+        void* windowBuffer,
+        uint32_t* width,
+        uint32_t* height) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NativeImageAdapter> real_;
 
