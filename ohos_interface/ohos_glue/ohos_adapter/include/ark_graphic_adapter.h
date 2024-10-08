@@ -256,6 +256,19 @@ public:
      */
     /*--ark web()--*/
     virtual int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) = 0;
+
+    /**
+     * @Description: Get the size of the <b>OHNativeWindowBuffer</b>.
+     * @Input windowBuffer: Indicates the pointer to an <b>OHNativeWindowBuffer</b> instance.
+     * @Output width: Indicates the width of the window buffer size.
+     * @Output height: Indicates the height of the window buffer size.
+     * @Since 12005
+     */
+    /*--ark web()--*/
+    virtual void GetNativeWindowBufferSize(
+        void* windowBuffer,
+        uint32_t* width,
+        uint32_t* height) = 0;
 };
 
 /*--ark web(source=webview)--*/
