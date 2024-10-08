@@ -271,7 +271,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeWindowB
     EXPECT_EQ(width, 0);
     EXPECT_EQ(height, 0);
 
-    void* windowBuffer = malloc(10);
+    windowBuffer = malloc(10);
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
     free(windowBuffer);
     windowBuffer = nullptr;
