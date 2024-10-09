@@ -114,6 +114,24 @@ public:
      */
     /*--ark web()--*/
     virtual void GetDragStartPosition(int& x, int& y) = 0;
+
+    /**
+     * @brief get the image representation data that is beging dragged.
+     */
+    /*--ark web()--*/
+    virtual bool GetPixelMapSettingNewStyle(const void** data, size_t& len, int& width, int& height) = 0;
+
+    /**
+     * @brief is drag new style.
+     */
+    /*--ark web()--*/
+    virtual bool IsDragNewStyle() = 0;
+
+    /**
+     * @brief get the positon point that is beging dragged.
+     */
+    /*--ark web()--*/
+    virtual void GetDragStartPositionNewStyle(int& x, int& y) = 0;
 };
 
 } // namespace OHOS::ArkWeb
