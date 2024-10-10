@@ -50,9 +50,6 @@ VSyncAdapterImpl::~VSyncAdapterImpl()
         vsyncHandler_ = nullptr;
     }
     hasReportedKeyThread_ = false;
-#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
-    Rosen::ApsManager::GetInstance().SetScene(pkgName_, "WEB_LIST_FLING", APS_MANAGER_CLOSE_ALL);
-#endif
 }
 
 VSyncAdapterImpl& VSyncAdapterImpl::GetInstance()
