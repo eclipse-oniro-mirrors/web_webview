@@ -79,7 +79,7 @@ public:
      * @Since: 12005
      */
     /*--ark web()--*/
-    virtual void GetImageRect(int& x, int& y, int& w, int& h) {};
+    virtual void GetImageRect(int& x, int& y, int& w, int& h) = 0;
 };
 
 } // namespace OHOS::ArkWeb
