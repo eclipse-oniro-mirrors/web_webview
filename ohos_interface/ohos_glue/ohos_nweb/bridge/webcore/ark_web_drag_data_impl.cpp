@@ -98,19 +98,9 @@ void ArkWebDragDataImpl::GetDragStartPosition(int& x, int& y)
     nweb_drag_data_->GetDragStartPosition(x, y);
 }
 
-bool ArkWebDragDataImpl::GetPixelMapSettingNewStyle(const void** data, size_t& len, int& width, int& height)
-{
-    return nweb_drag_data_->GetPixelMapSettingNewStyle(data, len, width, height);
-}
-
 bool ArkWebDragDataImpl::IsDragNewStyle()
 {
     return nweb_drag_data_->IsDragNewStyle();
-}
-
-void ArkWebDragDataImpl::GetDragStartPositionNewStyle(int& x, int& y)
-{
-    nweb_drag_data_->GetDragStartPositionNewStyle(x, y);
 }
 
 } // namespace OHOS::ArkWeb

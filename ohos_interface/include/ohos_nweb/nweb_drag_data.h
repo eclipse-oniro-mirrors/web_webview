@@ -88,18 +88,10 @@ public:
     // clear the exist iamge file names.
     virtual void ClearImageFileNames() = 0;
 
-    // get the image representation of drag data.
-    virtual bool GetPixelMapSettingNewStyle(const void** data, size_t& len, int& width, int& height) {
-        return false;
-    }
-
     // is drag new style.
     virtual bool IsDragNewStyle() {
         return false;
     }
-
-    // get the positon of the drag point.
-    virtual void GetDragStartPositionNewStyle(int& x, int& y) {}
 };
 
 } // namespace OHOS::NWeb
