@@ -184,7 +184,7 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
     }
 
     auto& systemPropertiesAdapter = OhosAdapterHelper::GetInstance().GetSystemPropertiesInstance();
-    auto deviceType = systemPropertiesAdapter.GetDeviceType();
+    auto deviceType = systemPropertiesAdapter.GetProductDeviceType();
     if (deviceType == ProductDeviceType::DEVICE_TYPE_2IN1 && sceneId == WEBVIEW_DESTROY_ORIGIN) {
         sceneId = WEBVIEW_DESTROY;
     }
