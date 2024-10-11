@@ -92,6 +92,10 @@ public:
     {
         return 0;
     }
+
+    virtual std::string GetDefaultUserAgent() {
+        return "";
+    }
 };
 
 } // namespace OHOS::NWeb
