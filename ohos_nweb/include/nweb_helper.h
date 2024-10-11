@@ -71,6 +71,8 @@ public:
         const std::map<std::string, std::string>& additional_http_headers, const std::string& cache_key,
         const uint32_t& cache_valid_time);
 
+    std::string GetDefaultUserAgent();
+
     void ClearPrefetchedResource(const std::vector<std::string>& cache_key_list);
 
     void SetRenderProcessMode(RenderProcessMode mode);
