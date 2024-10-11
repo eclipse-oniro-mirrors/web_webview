@@ -103,19 +103,9 @@ public:
     void GetDragStartPosition(int& x, int& y) override;
 
     /**
-     * @brief get the image representation data that is beging dragged.
-     */
-    bool GetPixelMapSettingNewStyle(const void** data, size_t& len, int& width, int& height) override;
-
-    /**
      * @brief is drag new style.
      */
     bool IsDragNewStyle() override;
-
-    /**
-     * @brief get the positon point that is beging dragged.
-     */
-    void GetDragStartPositionNewStyle(int& x, int& y) override;
 
 private:
     ArkWebRefPtr<ArkWebDragData> ark_web_drag_data_;
