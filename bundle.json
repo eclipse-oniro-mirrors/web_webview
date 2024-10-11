@@ -180,6 +180,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/accesstoken_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/audio_adapter:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/resschedadapter_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/sensoradapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/backgroundtaskimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/datashareadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/datetimeformatadapter_fuzzer:fuzztest",
