@@ -31,7 +31,7 @@ ohos_fuzztest("DataShareAdapterFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "datashare_adapter_impl_fuzzer.cpp" ]
+  sources = [ "datashareadapter_fuzzer.cpp" ]
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
