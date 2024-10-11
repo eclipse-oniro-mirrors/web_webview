@@ -96,7 +96,7 @@ public:
 
     virtual std::string GetSelectionText() = 0;
 
-    virtual void GetImageRect(int& x, int& y, int& w, int& h);
+    virtual void GetImageRect(int& x, int& y, int& w, int& h) {}
 };
 
 class OHOS_NWEB_EXPORT NWebQuickMenuParams {
