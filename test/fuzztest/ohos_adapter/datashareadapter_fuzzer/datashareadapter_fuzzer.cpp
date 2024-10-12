@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "datashare_adapter_impl_fuzzer.h"
+#include "datashareadapter_fuzzer.h"
 
 #include <cstdint>
 #include <memory>
