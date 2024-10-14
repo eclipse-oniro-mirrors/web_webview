@@ -612,6 +612,9 @@ public:
     void OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) override;
 
     bool CloseImageOverlaySelection() override;
+
+    bool OnSslErrorRequestByJSV2(std::shared_ptr<OHOS::NWeb::NWebJSSslErrorResult> result, ArkWebSslError error,
+        const std::vector<std::string>& certChainData) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };
