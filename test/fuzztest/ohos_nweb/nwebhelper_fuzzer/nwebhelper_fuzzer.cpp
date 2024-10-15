@@ -225,7 +225,6 @@ bool NWebHelperFuzzTest_003(const uint8_t* data, size_t size)
     }
     (void)result;
 
-    NWebHelper::Instance().libHandleWebEngine_ = nullptr;
     std::shared_ptr<NWebCookieManager> cook = NWebHelper::Instance().GetCookieManager();
     (void)cook;
 
