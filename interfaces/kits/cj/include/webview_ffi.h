@@ -105,6 +105,26 @@ extern "C" {
     FFI_EXPORT CArrString FfiOHOSWebviewCtlGetCertificate(int64_t id, int32_t *errCode);
     FFI_EXPORT int32_t FfiOHOSWebviewCtlHasImage(int64_t id, void (*callbackRef)(RetDataBool));
     FFI_EXPORT int32_t FfiWebviewCtlCustomizeSchemes(OHOS::Webview::CArrScheme schemes);
+    FFI_EXPORT bool FfiOHOSWebviewCtlTerminateRenderProcess(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlCloseAllMediaPresentations(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlPauseAllMedia(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlResumeAllMedia(int64_t id);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlStopAllMedia(int64_t id);
+    FFI_EXPORT void FfiOHOSWebviewCtlResumeAllTimers();
+    FFI_EXPORT void FfiOHOSWebviewCtlPauseAllTimers();
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSetPrintBackground(int64_t id, bool enable);
+    FFI_EXPORT bool FfiOHOSWebviewCtlGetPrintBackground(int64_t id, int32_t *errCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlSetScrollable(int64_t id, bool enable);
+    FFI_EXPORT bool FfiOHOSWebviewCtlGetScrollable(int64_t id, int32_t *errCode);
+    FFI_EXPORT void FfiOHOSWebviewCtlEnableAdsBlock(int64_t id, bool enable);
+    FFI_EXPORT bool FfiOHOSWebviewCtlIsAdsBlockEnabled(int64_t id);
+    FFI_EXPORT bool FfiOHOSWebviewCtlIsAdsBlockEnabledForCurPage(int64_t id);
+    FFI_EXPORT bool FfiOHOSWebviewCtlIsIntelligentTrackingPreventionEnabled(int64_t id, int32_t *errorCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlEnableIntelligentTrackingPrevention(int64_t id, bool enable);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlGetMediaPlaybackState(int64_t id, int32_t *errorCode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlGetRenderProcessMode();
+    FFI_EXPORT void FfiOHOSWebviewCtlSetRenderProcessMode(int32_t mode);
+    FFI_EXPORT int32_t FfiOHOSWebviewCtlWarmupServiceWorker(char* url);
 
     // BackForwardList
     FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t *errCode);
