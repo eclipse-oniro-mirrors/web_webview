@@ -16,6 +16,7 @@
 #include "webview_ffi.h"
 
 #include <regex>
+#include<arpa/inet.h>
 
 #include "webview_controller_impl.h"
 #include "webview_function.h"
@@ -38,7 +39,8 @@
 #include "cj_lambda.h"
 #include "pixel_map_impl.h"
 #include "geolocation_permission.h"
-#include <regex>
+#include "nweb_cache_options_impl.h"
+#include "webview_utils.h"
 
 using namespace OHOS::FFI;
 using namespace OHOS::NWeb;
@@ -1003,6 +1005,193 @@ extern "C" {
     int32_t FfiWebviewCtlCustomizeSchemes(OHOS::Webview::CArrScheme schemes)
     {
         return WebviewControllerImpl::CustomizeSchemesArrayDataHandler(schemes);
+    }
+
+    bool FfiOHOSWebviewCtlTerminateRenderProcess(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return false;
+        }
+        bool terminate = nativeWebviewCtl->TerminateRenderProcess();
+        *errCode = NWebError::NO_ERROR;
+        return terminate;
+    }
+
+    int32_t FfiOHOSWebviewCtlCloseAllMediaPresentations(int64_t id)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->CloseAllMediaPresentations();
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlPauseAllMedia(int64_t id)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->PauseAllMedia();
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlResumeAllMedia(int64_t id)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->ResumeAllMedia();
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlStopAllMedia(int64_t id)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->StopAllMedia();
+        return NWebError::NO_ERROR;
+    }
+
+    void FfiOHOSWebviewCtlResumeAllTimers()
+    {
+        NWeb::NWebHelper::Instance().ResumeAllTimers();
+    }
+
+    void FfiOHOSWebviewCtlPauseAllTimers()
+    {
+        NWeb::NWebHelper::Instance().PauseAllTimers();
+    }
+
+    int32_t FfiOHOSWebviewCtlSetPrintBackground(int64_t id, bool enable)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->SetPrintBackground(enable);
+        return NWebError::NO_ERROR;
+    }
+
+    bool FfiOHOSWebviewCtlGetPrintBackground(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return false;
+        }
+        bool printBackground = nativeWebviewCtl->GetPrintBackground();
+        *errCode = NWebError::NO_ERROR;
+        return printBackground;
+    }
+
+    int32_t FfiOHOSWebviewCtlSetScrollable(int64_t id, bool enable)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->SetScrollable(enable);
+        return NWebError::NO_ERROR;
+    }
+
+    bool FfiOHOSWebviewCtlGetScrollable(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return false;
+        }
+        bool scrollable = nativeWebviewCtl->GetScrollable();
+        *errCode = NWebError::NO_ERROR;
+        return scrollable;
+    }
+
+    void FfiOHOSWebviewCtlEnableAdsBlock(int64_t id, bool enable)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        nativeWebviewCtl->EnableAdsBlock(enable);
+    }
+
+    bool FfiOHOSWebviewCtlIsAdsBlockEnabled(int64_t id)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            return false;
+        }
+        return nativeWebviewCtl->IsAdsBlockEnabled();
+    }
+
+    bool FfiOHOSWebviewCtlIsAdsBlockEnabledForCurPage(int64_t id)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            return false;
+        }
+        return nativeWebviewCtl->IsAdsBlockEnabledForCurPage();
+    }
+
+    bool FfiOHOSWebviewCtlIsIntelligentTrackingPreventionEnabled(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return false;
+        }
+        bool isIntelligentTrackingPreventionEnabled = nativeWebviewCtl->IsIntelligentTrackingPreventionEnabled();
+        *errCode = NWebError::NO_ERROR;
+        return isIntelligentTrackingPreventionEnabled;
+    }
+
+    int32_t FfiOHOSWebviewCtlEnableIntelligentTrackingPrevention(int64_t id, bool enable)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->EnableIntelligentTrackingPrevention(enable);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlGetMediaPlaybackState(int64_t id, int32_t *errorCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+            *errorCode = NWebError::INIT_ERROR;
+        }
+        *errorCode = NWebError::NO_ERROR;
+        return nativeWebviewCtl->GetMediaPlaybackState();
+    }
+
+    int32_t FfiOHOSWebviewCtlGetRenderProcessMode()
+    {
+        WEBVIEWLOGI("get render process mode.");
+        int32_t mode = static_cast<int32_t>(NWebHelper::Instance().GetRenderProcessMode());
+        return mode;
+    }
+
+    void FfiOHOSWebviewCtlSetRenderProcessMode(int32_t mode)
+    {
+        WEBVIEWLOGI("set render process mode.");
+        NWebHelper::Instance().SetRenderProcessMode(
+            static_cast<NWeb::RenderProcessMode>(mode)
+        );
+    }
+
+    int32_t FfiOHOSWebviewCtlWarmupServiceWorker(char* url)
+    {
+        size_t size = strlen(url);
+        if (size > URL_MAXIMUM || !regex_match(url, std::regex(URL_REGEXPR, std::regex_constants::icase))) {
+            return NWebError::INVALID_URL;
+        }
+        NWeb::NWebHelper::Instance().WarmupServiceWorker(url);
+        return NWebError::NO_ERROR;
     }
 
     // BackForwardList
