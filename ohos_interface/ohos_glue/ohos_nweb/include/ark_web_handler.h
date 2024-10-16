@@ -810,6 +810,18 @@ public:
 
     /*--ark web()--*/
     virtual bool CloseImageOverlaySelection() = 0;
+    
+    /**
+     * @Description: Called when web occurs ssl error event.
+     * @Input result: handler of result.
+     * @Input error: error code.
+     * @Input certChainData: cert chain data.
+     * @Return: true/false
+     * @Since 14001
+     */
+    /*--ark web()--*/
+    virtual bool OnSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsSslErrorResult> result, int error,
+        const ArkWebStringVector& certChainData) = 0;
 };
 
 } // namespace OHOS::ArkWeb
