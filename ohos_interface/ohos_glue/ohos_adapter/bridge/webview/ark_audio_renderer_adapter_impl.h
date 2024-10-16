@@ -48,6 +48,8 @@ public:
 
     void SetInterruptMode(bool audioExclusive) override;
 
+    void SetAudioSilentMode(bool isSilentMode) override;
+
     bool IsRendererStateRunning() override;
 
     int32_t SetAudioOutputChangeCallback(const ArkWebRefPtr<ArkAudioOutputChangeCallbackAdapter> callback) override;
