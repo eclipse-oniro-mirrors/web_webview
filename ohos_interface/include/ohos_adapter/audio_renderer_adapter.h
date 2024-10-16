@@ -157,6 +157,8 @@ public:
 
     virtual void SetInterruptMode(bool audioExclusive) = 0;
 
+    virtual void SetAudioSilentMode(bool isSilentMode) = 0;
+
     virtual bool IsRendererStateRunning() = 0;
 
     virtual int32_t SetAudioOutputChangeCallback(const std::shared_ptr<AudioOutputChangeCallbackAdapter>& callback) = 0;
