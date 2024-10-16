@@ -92,6 +92,11 @@ void ArkAudioRendererAdapterImpl::SetInterruptMode(bool audioExclusive)
     real_->SetInterruptMode(audioExclusive);
 }
 
+void ArkAudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
+{
+    real_->SetAudioSilentMode(isSilentMode);
+}
+
 bool ArkAudioRendererAdapterImpl::IsRendererStateRunning()
 {
     return real_->IsRendererStateRunning();

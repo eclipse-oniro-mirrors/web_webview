@@ -101,6 +101,9 @@ public:
     virtual void SetInterruptMode(bool audioExclusive) = 0;
 
     /*--ark web()--*/
+    virtual void SetAudioSilentMode(bool isSilentMode) = 0;
+
+    /*--ark web()--*/
     virtual bool IsRendererStateRunning() = 0;
 
     /*--ark web()--*/
