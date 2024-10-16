@@ -1025,6 +1025,12 @@ public:
     virtual void OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) {}
 
     virtual bool CloseImageOverlaySelection() { return false; }
+    
+    virtual bool OnSslErrorRequestByJSV2(std::shared_ptr<NWebJSSslErrorResult> result, SslError error,
+        const std::vector<std::string>& certChainData)
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb
