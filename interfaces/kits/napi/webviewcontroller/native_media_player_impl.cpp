@@ -19,7 +19,6 @@
 #include "napi_native_media_player.h"
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
-#include "nweb_napi_scope.h"
 
 namespace OHOS::NWeb {
 
@@ -331,7 +330,6 @@ std::shared_ptr<NWebNativeMediaPlayerBridge> NWebCreateNativeMediaPlayerCallback
         return nullptr;
     }
 
-    OHOS::NApiScope scope(env_);
     napi_value callback = nullptr;
     napi_get_reference_value(env_, callback_, &callback);
     if (callback == nullptr) {
