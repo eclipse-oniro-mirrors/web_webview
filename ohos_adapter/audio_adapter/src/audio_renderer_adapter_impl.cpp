@@ -289,7 +289,7 @@ void AudioRendererAdapterImpl::SetInterruptMode(bool audioExclusive)
     audio_renderer_->SetInterruptMode(interruptMode);
 }
 
-void AudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode) override
+void AudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
 {
     if (audio_renderer_ == nullptr) {
         WVLOG_E("audio rendderer is nullptr");
