@@ -92,11 +92,6 @@ void ArkAudioRendererAdapterImpl::SetInterruptMode(bool audioExclusive)
     real_->SetInterruptMode(audioExclusive);
 }
 
-void ArkAudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
-{
-    real_->SetAudioSilentMode(isSilentMode);
-}
-
 bool ArkAudioRendererAdapterImpl::IsRendererStateRunning()
 {
     return real_->IsRendererStateRunning();
@@ -110,6 +105,11 @@ int32_t ArkAudioRendererAdapterImpl::SetAudioOutputChangeCallback(
     }
 
     return real_->SetAudioOutputChangeCallback(std::make_shared<ArkAudioOutputChangeCallbackAdapterWrapper>(callback));
+}
+
+void ArkAudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
+{
+    real_->SetAudioSilentMode(isSilentMode);
 }
 
 } // namespace OHOS::ArkWeb
