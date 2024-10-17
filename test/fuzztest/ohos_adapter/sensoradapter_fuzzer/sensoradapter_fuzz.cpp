@@ -58,14 +58,14 @@ bool SensorAdapterFuzzTest(const uint8_t* data, size_t size)
         sensorAdapterImpl.RegistOhosSensorCallback(sensorTypeId, callbackAdapter);
         SensorEvent event;
         event.sensorTypeId = sensorTypeId;
-        uint8_t *sensorData = new uint8_t[10];
+        uint8_t *sensorData = 0;
         event.data = sensorData;
         sensorAdapterImpl.OhosSensorCallback(&event);
         sensorAdapterImpl.UnsubscribeOhosSensor(sensorTypeId);
         delete[] sensorData;
     }
     SensorEvent event;
-    uint8_t *sensorData = new uint8_t[10];
+    uint8_t *sensorData = 0;
     event.data = sensorData;
     sensorAdapterImpl.handleAccelerometerData(callback, &event);
     sensorAdapterImpl.handleLinearAccelerometerData(callback, &event);
