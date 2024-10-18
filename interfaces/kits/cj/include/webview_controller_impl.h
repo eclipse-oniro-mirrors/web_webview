@@ -189,6 +189,9 @@ namespace OHOS::Webview {
 
         std::shared_ptr<OHOS::NWeb::NWebHistoryList> GetHistoryList();
 
+        bool GetFavicon(const void **data, size_t &width, size_t &height,
+            NWeb::ImageColorType &colorType, NWeb::ImageAlphaType &alphaType) const;
+
         void SetNWebJavaScriptResultCallBack();
 
         void RegisterJavaScriptProxy(const std::vector<std::function<char*(const char*)>>& cjFuncs,
