@@ -701,6 +701,17 @@ namespace OHOS::Webview {
         return nweb_ptr->GetHistoryList();
     }
 
+    bool WebviewControllerImpl::GetFavicon(const void **data, size_t &width, size_t &height,
+        NWeb::ImageColorType &colorType, NWeb::ImageAlphaType &alphaType) const
+    {
+        bool isGetFavicon = false;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            isGetFavicon = nweb_ptr->GetFavicon(data, width, height, colorType, alphaType);
+        }
+        return isGetFavicon;
+    }
+
     int32_t WebHistoryListImpl::GetListSize()
     {
         int32_t listSize = 0;

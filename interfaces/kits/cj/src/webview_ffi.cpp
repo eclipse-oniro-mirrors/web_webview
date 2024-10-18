@@ -1111,34 +1111,33 @@ extern "C" {
             *errCode = NWebError::INIT_ERROR;
             return ret;
         }
-        std::shared_ptr<NWebHistoryList> list = nativeWebviewCtl->GetHistoryList();
-        if (!list) {
-            *errCode = NWebError::INIT_ERROR;
+        const void *data = nullptr;
+        size_t width = 0;
+        size_t height = 0;
+        ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
+        ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
+        bool isGetFavicon = nativeWebviewCtl->GetFavicon(&data, width, height, colorType, alphaType);
+        if (!isGetFavicon) {
             return ret;
         }
-        auto nativeWebHistoryListImpl = FFIData::Create<WebHistoryListImpl>(list);
-        if (nativeWebHistoryListImpl == nullptr) {
-            *errCode = NWebError::INIT_ERROR;
-            WEBVIEWLOGE("new WebHistoryListImpl failed");
+        OHOS::Media::InitializationOptions opt;
+        opt.size.width = static_cast<int32_t>(width);
+        opt.size.height = static_cast<int32_t>(height);
+        opt.pixelFormat = GetColorType(colorType);
+        opt.alphaType = GetAlphaType(alphaType);
+        opt.editable = true;
+        auto pixelMap = Media::PixelMap::Create(opt);
+        if (pixelMap == nullptr) {
             return ret;
         }
-        int32_t index = nativeWebHistoryListImpl->GetCurrentIndex();
-        if (index >= nativeWebHistoryListImpl->GetListSize() || index < 0) {
-            *errCode = NWebError::PARAM_CHECK_ERROR;
+        uint64_t stride = static_cast<uint64_t>(width) << 2;
+        uint64_t bufferSize = stride * static_cast<uint64_t>(height);
+        pixelMap->WritePixels(static_cast<const uint8_t *>(data), bufferSize);
+        auto nativeImage = FFIData::Create<Media::PixelMapImpl>(move(pixelMap));
+        if (nativeImage == nullptr) {
             return ret;
         }
-        std::shared_ptr<NWebHistoryItem> item = nativeWebHistoryListImpl->GetItem(index);
-        if (!item) {
-            *errCode = NWebError::NWEB_ERROR;
-            return ret;
-        }
-        ret = GetFavicon(item);
-        if (!ret) {
-            *errCode = NWebError::NWEB_ERROR;
-            return ret;
-        }
-        *errCode = NWebError::NO_ERROR;
-        return ret;
+        return nativeImage->GetID();
     }
 
     CHistoryItem FfiOHOSGetItemAtIndex(int64_t id, int32_t index, int32_t *errCode)
