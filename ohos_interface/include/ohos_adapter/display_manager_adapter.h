@@ -129,7 +129,7 @@ public:
     virtual bool IsDefaultPortrait() = 0;
     
     virtual uint32_t RegisterFoldStatusListener(std::shared_ptr<FoldStatusListenerAdapter> listener) {
-        return -1;
+        return 0;
     }
 
     virtual bool UnregisterFoldStatusListener(uint32_t id) {
