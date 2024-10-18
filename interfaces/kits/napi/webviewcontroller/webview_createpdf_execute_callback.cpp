@@ -39,6 +39,23 @@ void WebviewCreatePDFExecuteCallback::InitJSExcute(napi_env env, napi_value expo
     napi_set_named_property(env, exports, JS_EXT_ARR_CLASS_NAME.c_str(), jsArrExtClass);
 }
 
+void WebviewCreatePDFExecuteCallback::ReleaseArrayBufferExecuteParamAndUvWork(
+    ArrayBufferExecuteParam* param, uv_work_t* work)
+{
+    if (param != nullptr) {
+        if (param->result_ != nullptr) {
+            delete param->result_;
+            param->result_ = nullptr;
+        }
+        delete param;
+        param = nullptr;
+    }
+    if (work != nullptr) {
+        delete work;
+        work = nullptr;
+    }
+}
+
 void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* result, const long size)
 {
     uv_loop_s* loop = nullptr;
@@ -62,14 +79,14 @@ void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* result, const l
     param->callbackRef_ = callbackRef_;
     param->deferred_ = deferred_;
     param->result_ = new (std::nothrow) char[size + 1];
+    if(param->result_ == nullptr){
+        WVLOG_E("new char failed");
+        ReleaseArrayBufferExecuteParamAndUvWork(param, work);
+        return;
+    }
     if (memcpy_s(param->result_, size, result, size) != 0) {
         WVLOG_E("[CreatePDF] memcpy failed");
-        delete param->result_;
-        param->result_ = nullptr;
-        delete param;
-        param = nullptr;
-        delete work;
-        work = nullptr;
+        ReleaseArrayBufferExecuteParamAndUvWork(param, work);
         return;
     }
     param->size_ = size;
@@ -79,16 +96,8 @@ void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* result, const l
     int ret = uv_queue_work_with_qos(
         loop, work, [](uv_work_t* work) {}, UvAfterWorkCb, uv_qos_user_initiated);
     if (ret != 0) {
-        if (param != nullptr) {
-            delete param->result_;
-            param->result_ = nullptr;
-            delete param;
-            param = nullptr;
-        }
-        if (work != nullptr) {
-            delete work;
-            work = nullptr;
-        }
+        WVLOG_E("[CreatePDF] queue work failed");
+        ReleaseArrayBufferExecuteParamAndUvWork(param, work);
     }
 }
 
@@ -100,23 +109,15 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCb(uv_work_t* work, int status)
     }
     ArrayBufferExecuteParam* param = reinterpret_cast<ArrayBufferExecuteParam*>(work->data);
     if (!param) {
-        delete work;
-        work = nullptr;
-        delete param->result_;
-        param->result_ = nullptr;
-        delete param;
-        param = nullptr;
+        WVLOG_E("[CreatePDF] param is null");
+        ReleaseArrayBufferExecuteParamAndUvWork(param, work);
         return;
     }
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(param->env_, &scope);
     if (scope == nullptr) {
-        delete work;
-        work = nullptr;
-        delete param->result_;
-        param->result_ = nullptr;
-        delete param;
-        param = nullptr;
+        WVLOG_E("[CreatePDF] scope is null");
+        ReleaseArrayBufferExecuteParamAndUvWork(param, work);
         return;
     }
     if (param->callbackRef_) {
@@ -126,12 +127,7 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCb(uv_work_t* work, int status)
     }
 
     napi_close_handle_scope(param->env_, scope);
-    delete param->result_;
-    param->result_ = nullptr;
-    delete param;
-    param = nullptr;
-    delete work;
-    work = nullptr;
+    ReleaseArrayBufferExecuteParamAndUvWork(param, work);
 }
 
 void WebviewCreatePDFExecuteCallback::UvAfterWorkCbAsync(
