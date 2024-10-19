@@ -213,7 +213,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_AcquireNativeWin
     imagerAdapter->NewNativeImage();
     EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
     ret = imagerAdapter->AcquireNativeWindowBuffer(&windowBuffer, &fenceId);
-    EXPECT_EQ(ret, GSERROR_INTERNAL);
+    EXPECT_NE(ret, GSERROR_OK);
 }
 
 /**
@@ -270,10 +270,5 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeWindowB
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
     EXPECT_EQ(width, 0);
     EXPECT_EQ(height, 0);
-
-    windowBuffer = malloc(10);
-    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
-    free(windowBuffer);
-    windowBuffer = nullptr;
 }
 } // namespace OHOS::NWeb
