@@ -46,7 +46,7 @@ public:
      * 2 stands for using the home screen,
      * 3 stands for the use of the secondary screen,
      * 4 represents simultaneous use,
-     * @Since: 12005
+     * @Since: 14001
      */
     /*--ark web()--*/
     virtual void OnFoldStatusChanged(uint32_t foldstatus) = 0;
@@ -86,7 +86,7 @@ public:
      * 2 stands for using the home screen,
      * 3 stands for the use of the secondary screen,
      * 4 represents simultaneous use,
-     * @Since: 12005
+     * @Since: 14001
      */
     /*--ark web()--*/
     virtual uint32_t GetFoldStatus() = 0;
@@ -94,7 +94,7 @@ public:
     /**
      * @Description: Does the device support folding.
      * @Return: Does it support folding.
-     * @Since: 12005
+     * @Since: 14001
      */
     /*--ark web()--*/
     virtual bool IsFoldable() = 0;
@@ -126,7 +126,7 @@ public:
      * 2 stands for using the home screen,
      * 3 stands for the use of the secondary screen,
      * 4 represents simultaneous use,
-     * @Since: 12005
+     * @Since: 14001
      */
     /*--ark web()--*/
     virtual uint32_t RegisterFoldStatusListener(ArkWebRefPtr<ArkFoldStatusListenerAdapter> listener) = 0;
@@ -135,7 +135,7 @@ public:
      * @Description: Unregist Fold Status Listener.
      * @Input: Listener ID.
      * @Return: return is or not success.
-     * @Since: 12005
+     * @Since: 14001
      */
     /*--ark web()--*/
     virtual bool UnregisterFoldStatusListener(uint32_t id) = 0;
