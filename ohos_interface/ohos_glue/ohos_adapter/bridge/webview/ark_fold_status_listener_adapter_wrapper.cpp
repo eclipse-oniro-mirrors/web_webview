@@ -17,11 +17,13 @@
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
-    ArkFoldStatusListenerAdapterWrapper
-    ::ArkFoldStatusListenerAdapterWrapper(ArkWebRefPtr<ArkFoldStatusListenerAdapter> ref) : ctocpp_(ref)
-    {}
+ArkFoldStatusListenerAdapterWrapper ::ArkFoldStatusListenerAdapterWrapper(
+    ArkWebRefPtr<ArkFoldStatusListenerAdapter> ref)
+    : ctocpp_(ref)
+{}
 
-void ArkFoldStatusListenerAdapterWrapper::OnFoldStatusChanged(OHOS::NWeb::FoldStatus foldstatus) {
+void ArkFoldStatusListenerAdapterWrapper::OnFoldStatusChanged(OHOS::NWeb::FoldStatus foldstatus)
+{
     ctocpp_->OnFoldStatusChanged(static_cast<uint32_t>(foldstatus));
 }
 

@@ -285,8 +285,9 @@ bool DisplayManagerAdapterImpl::IsDefaultPortrait()
 
 FoldStatusListenerMap DisplayManagerAdapterImpl::foldStatusReg_;
 
-void FoldChangeCallBack(NativeDisplayManager_FoldDisplayMode displayMode){
-    for(auto& iter : DisplayManagerAdapterImpl::foldStatusReg_){
+void FoldChangeCallBack(NativeDisplayManager_FoldDisplayMode displayMode)
+{
+    for (auto& iter : DisplayManagerAdapterImpl::foldStatusReg_) {
         iter.second->OnFoldStatusChanged(displayMode);
     }
 }
