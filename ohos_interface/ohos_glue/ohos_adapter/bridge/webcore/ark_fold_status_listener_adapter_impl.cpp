@@ -16,11 +16,13 @@
 
 namespace OHOS::ArkWeb {
 
-ArkFoldStatusListenerAdapterImpl
-    ::ArkFoldStatusListenerAdapterImpl(std::shared_ptr<OHOS::NWeb::FoldStatusListenerAdapter> ref) : real_(ref)
-    {}
+ArkFoldStatusListenerAdapterImpl ::ArkFoldStatusListenerAdapterImpl(
+    std::shared_ptr<OHOS::NWeb::FoldStatusListenerAdapter> ref)
+    : real_(ref)
+{}
 
-void ArkFoldStatusListenerAdapterImpl::OnFoldStatusChanged(uint32_t foldstatus) {
+void ArkFoldStatusListenerAdapterImpl::OnFoldStatusChanged(uint32_t foldstatus)
+{
     real_->OnFoldStatusChanged(static_cast<OHOS::NWeb::FoldStatus>(foldstatus));
 }
 

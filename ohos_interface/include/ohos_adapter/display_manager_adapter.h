@@ -103,11 +103,13 @@ public:
 
     virtual DisplayOrientation GetDisplayOrientation() = 0;
 
-    virtual FoldStatus GetFoldStatus() {
+    virtual FoldStatus GetFoldStatus()
+    {
         return FoldStatus::UNKNOWN;
     }
 
-    virtual bool IsFoldable(){
+    virtual bool IsFoldable()
+    {
         return false;
     }
 };
@@ -127,12 +129,14 @@ public:
     virtual bool UnregisterDisplayListener(ListenerId id) = 0;
 
     virtual bool IsDefaultPortrait() = 0;
-    
-    virtual uint32_t RegisterFoldStatusListener(std::shared_ptr<FoldStatusListenerAdapter> listener) {
+
+    virtual uint32_t RegisterFoldStatusListener(std::shared_ptr<FoldStatusListenerAdapter> listener)
+    {
         return 0;
     }
 
-    virtual bool UnregisterFoldStatusListener(uint32_t id) {
+    virtual bool UnregisterFoldStatusListener(uint32_t id)
+    {
         return false;
     }
 };
