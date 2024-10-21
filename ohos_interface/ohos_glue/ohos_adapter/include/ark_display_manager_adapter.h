@@ -40,12 +40,12 @@ class ArkFoldStatusListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
     /**
      * @Description: Folding state change.
-     * @Input: folding status.
-     * @Input: 0 represents an unknown screen state,
-     * @Input: 1 represents fully expanded,
-     * @Input: 2 stands for using the home screen,
-     * @Input: 3 stands for the use of the secondary screen,
-     * @Input: 4 represents simultaneous use,
+     * @Input: foldstatus.
+     * 0 represents an unknown screen state,
+     * 1 represents fully expanded,
+     * 2 stands for using the home screen,
+     * 3 stands for the use of the secondary screen,
+     * 4 represents simultaneous use,
      * @Since: 12005
      */
     /*--ark web()--*/
@@ -81,12 +81,11 @@ public:
 
     /**
      * @Description: Get folding status.
-     * @Return: folding status
      * @Return: 0 represents an unknown screen state,
-     * @Return: 1 represents fully expanded,
-     * @Return: 2 stands for using the home screen,
-     * @Return: 3 stands for the use of the secondary screen,
-     * @Return: 4 represents simultaneous use,
+     * 1 represents fully expanded,
+     * 2 stands for using the home screen,
+     * 3 stands for the use of the secondary screen,
+     * 4 represents simultaneous use,
      * @Since: 12005
      */
     /*--ark web()--*/
@@ -122,12 +121,11 @@ public:
     /**
      * @Description: Regist Fold Status Listener.
      * @Input: ArkFoldStatusListenerAdapter object.
-     * @Return: folding status
      * @Return: 0 represents an unknown screen state,
-     * @Return: 1 represents fully expanded,
-     * @Return: 2 stands for using the home screen,
-     * @Return: 3 stands for the use of the secondary screen,
-     * @Return: 4 represents simultaneous use,
+     * 1 represents fully expanded,
+     * 2 stands for using the home screen,
+     * 3 stands for the use of the secondary screen,
+     * 4 represents simultaneous use,
      * @Since: 12005
      */
     /*--ark web()--*/
