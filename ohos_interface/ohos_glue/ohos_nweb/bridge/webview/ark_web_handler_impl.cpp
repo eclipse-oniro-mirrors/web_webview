@@ -696,7 +696,6 @@ void ArkWebHandlerImpl::OnSafeBrowsingCheckResult(int threat_type)
 void ArkWebHandlerImpl::OnFirstMeaningfulPaint(ArkWebRefPtr<ArkWebFirstMeaningfulPaintDetails> details)
 {
     if (CHECK_REF_PTR_IS_NULL(details)) {
-        ARK_WEB_IMPL_WARN_LOG("firstMeaningfulPaint details is null");
         return;
     }
 
@@ -706,7 +705,6 @@ void ArkWebHandlerImpl::OnFirstMeaningfulPaint(ArkWebRefPtr<ArkWebFirstMeaningfu
 void ArkWebHandlerImpl::OnLargestContentfulPaint(ArkWebRefPtr<ArkWebLargestContentfulPaintDetails> details)
 {
     if (CHECK_REF_PTR_IS_NULL(details)) {
-        ARK_WEB_IMPL_WARN_LOG("largestContentfulPaint details is null");
         return;
     }
 
@@ -841,15 +839,14 @@ void ArkWebHandlerImpl::KeyboardReDispatch(ArkWebRefPtr<ArkWebKeyEvent> event, b
 }
 
 void ArkWebHandlerImpl::OnInterceptKeyboardAttach(ArkWebRefPtr<ArkWebCustomKeyboardHandler> keyboardHandler,
-    const ArkWebStringMap &attributes, bool &useSystemKeyboard, int32_t &enterKeyType)
+    const ArkWebStringMap& attributes, bool& useSystemKeyboard, int32_t& enterKeyType)
 {
     if (CHECK_REF_PTR_IS_NULL(keyboardHandler)) {
-        return nweb_handler_->OnInterceptKeyboardAttach(nullptr, ArkWebStringMapStructToClass(attributes),
-            useSystemKeyboard, enterKeyType);
+        return nweb_handler_->OnInterceptKeyboardAttach(
+            nullptr, ArkWebStringMapStructToClass(attributes), useSystemKeyboard, enterKeyType);
     }
 
-    nweb_handler_->OnInterceptKeyboardAttach(
-        std::make_shared<ArkWebCustomKeyboardHandlerWrapper>(keyboardHandler),
+    nweb_handler_->OnInterceptKeyboardAttach(std::make_shared<ArkWebCustomKeyboardHandlerWrapper>(keyboardHandler),
         ArkWebStringMapStructToClass(attributes), useSystemKeyboard, enterKeyType);
 }
 
@@ -863,9 +860,9 @@ void ArkWebHandlerImpl::OnCustomKeyboardClose()
     nweb_handler_->OnCustomKeyboardClose();
 }
 
-void ArkWebHandlerImpl::OnAdsBlocked(const ArkWebString &url, const ArkWebStringVector &adsBlocked) {
-  nweb_handler_->OnAdsBlocked(ArkWebStringStructToClass(url),
-                              ArkWebStringVectorStructToClass(adsBlocked));
+void ArkWebHandlerImpl::OnAdsBlocked(const ArkWebString& url, const ArkWebStringVector& adsBlocked)
+{
+    nweb_handler_->OnAdsBlocked(ArkWebStringStructToClass(url), ArkWebStringVectorStructToClass(adsBlocked));
 }
 
 void ArkWebHandlerImpl::OnCursorUpdate(double x, double y, double width, double height)
