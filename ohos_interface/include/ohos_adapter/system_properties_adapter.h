@@ -96,6 +96,8 @@ public:
     virtual std::string GetUserAgentBaseOSName() = 0;
 
     virtual std::string GetUserAgentOSVersion() = 0;
+
+    virtual std::string GetVulkanStatus() = 0;
 };
 
 } // namespace OHOS::NWeb

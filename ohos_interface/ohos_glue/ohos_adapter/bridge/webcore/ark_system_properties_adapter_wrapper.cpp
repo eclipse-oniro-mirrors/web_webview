@@ -248,4 +248,15 @@ int32_t ArkSystemPropertiesAdapterWrapper::GetLTPOStrategy()
     int32_t result = ctocpp_->GetLTPOStrategy();
     return result;
 }
+
+std::string ArkSystemPropertiesAdapterWrapper::GetVulkanStatus()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetVulkanStatus();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
 } // namespace OHOS::ArkWeb

@@ -19,6 +19,33 @@
 #include <string>
 
 namespace OHOS::NWeb {
+class NativeBufferConfigAdapter {
+public:
+    NativeBufferConfigAdapter() = default;
+
+    virtual ~NativeBufferConfigAdapter() = default;
+
+    virtual int GetBufferWidth() = 0;
+
+    virtual int GetBufferHeight() = 0;
+
+    virtual int GetBufferFormat() = 0;
+
+    virtual int GetBufferUsage() = 0;
+
+    virtual int GetBufferStride() = 0;
+
+    virtual void SetBufferWidth(int width) = 0;
+
+    virtual void SetBufferHeight(int height) = 0;
+
+    virtual void SetBufferFormat(int format) = 0;
+
+    virtual void SetBufferUsage(int usage) = 0;
+
+    virtual void SetBufferStride(int stride) = 0;
+};
+
 class OhosNativeBufferAdapter {
 public:
     OhosNativeBufferAdapter() = default;
@@ -36,6 +63,21 @@ public:
     virtual int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) = 0;
 
     virtual uint32_t GetSeqNum(void* nativeBuffer) = 0;
+
+    virtual void Allocate(const std::shared_ptr<NativeBufferConfigAdapter>& bufferConfig, void** outBuffer) = 0;
+
+    virtual void Describe(std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void* buffer) = 0;
+
+    virtual int Lock(void* buffer,
+        uint64_t usage, int32_t fence, void** out_virtual_address) = 0;
+    
+    virtual int RecvHandleFromUnixSocket(int socketFd, void** outBuffer) = 0;
+
+    virtual int SendHandleToUnixSocket(const void* buffer, int socketFd) = 0;
+
+    virtual int Unlock(void* buffer, int32_t* fence) = 0;
+
+    virtual int FreeNativeBuffer(void* nativeBuffer) = 0;
 };
 
 } // namespace OHOS::NWeb

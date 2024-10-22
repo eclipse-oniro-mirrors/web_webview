@@ -14,7 +14,7 @@
  */
 
 #include "ohos_adapter/bridge/ark_ohos_native_buffer_adapter_impl.h"
-
+#include "ohos_adapter/bridge/ark_native_buffer_config_adapter_wrapper.h"
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -52,5 +52,49 @@ int ArkOhosNativeBufferAdapterImpl::NativeBufferFromNativeWindowBuffer(void* nat
 uint32_t ArkOhosNativeBufferAdapterImpl::GetSeqNum(void* nativeBuffer)
 {
     return real_.GetSeqNum(nativeBuffer);
+}
+
+void ArkOhosNativeBufferAdapterImpl::Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter>& bufferConfig, void** outBuffer)
+{
+    if (CHECK_REF_PTR_IS_NULL(bufferConfig)) {
+        real_.Allocate(nullptr, outBuffer);
+        return;
+    }
+    real_.Allocate(std::make_shared<ArkNativeBufferConfigAdapterWrapper>(bufferConfig), outBuffer);
+}
+
+void ArkOhosNativeBufferAdapterImpl::Describe(ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void* buffer)
+{
+    if (CHECK_REF_PTR_IS_NULL(bufferConfig)) {
+        real_.Describe(nullptr, buffer);
+        return;
+    }
+    real_.Describe(std::make_shared<ArkNativeBufferConfigAdapterWrapper>(bufferConfig), buffer);
+}
+
+int ArkOhosNativeBufferAdapterImpl::Lock(void* buffer,
+    uint64_t usage, int32_t fence, void** out_virtual_address)
+{
+    return real_.Lock(buffer, usage, fence, out_virtual_address);
+}
+
+int ArkOhosNativeBufferAdapterImpl::RecvHandleFromUnixSocket(int socketFd, void** outBuffer)
+{
+    return real_.RecvHandleFromUnixSocket(socketFd, outBuffer);
+}
+
+int32_t ArkOhosNativeBufferAdapterImpl::SendHandleToUnixSocket(const void* buffer, int socketFd)
+{
+    return real_.SendHandleToUnixSocket(buffer, socketFd);
+}
+
+int ArkOhosNativeBufferAdapterImpl::Unlock(void* buffer, int32_t* fence)
+{
+    return real_.Unlock(buffer, fence);
+}
+
+int ArkOhosNativeBufferAdapterImpl::FreeNativeBuffer(void* nativeBuffer)
+{
+    return real_.FreeNativeBuffer(nativeBuffer);
 }
 } // namespace OHOS::ArkWeb

@@ -345,4 +345,12 @@ int32_t SystemPropertiesAdapterImpl::GetLTPOStrategy()
 {
     return NWebConfigHelper::Instance().GetLTPOStrategy();
 }
+
+std::string SystemPropertiesAdapterImpl::GetVulkanStatus()
+{
+    if (GetDeviceInfoProductModel() == "emulator") {
+        return "false";
+    }
+    return OHOS::system::GetParameter("web.ohos.vulkan", "");
+}
 } // namespace OHOS::NWeb
