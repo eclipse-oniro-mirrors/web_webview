@@ -17,7 +17,7 @@
 #define OHOS_NATIVE_BUFFER_ADAPTER_IMPL_H
 
 #include "ohos_native_buffer_adapter.h"
-
+// #include "native_buffer_config_adapter_impl.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/external_window.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer_inner.h"
@@ -25,7 +25,6 @@
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 
 namespace OHOS::NWeb {
-
 class OhosNativeBufferAdapterImpl : public OhosNativeBufferAdapter {
 public:
     static OhosNativeBufferAdapter& GetInstance();
@@ -45,6 +44,26 @@ public:
     int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) override;
 
     uint32_t GetSeqNum(void* nativeBuffer) override;
+
+    void Allocate(const std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void** outBuffer) override;
+
+    void Describe(std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void* buffer) override;
+
+    int Lock(void* buffer, uint64_t usage, int32_t fence, void** out_virtual_address) override;
+
+    int RecvHandleFromUnixSocket(int socketFd, void** outBuffer) override;
+
+    int SendHandleToUnixSocket(const void* buffer, int socketFd) override;
+
+    int Unlock(void* buffer, int32_t* fence) override;
+
+    int FreeNativeBuffer(void* nativeBuffer) override;
+
+private:
+    bool IsBufferLocked(OH_NativeBuffer* buffer) const;
+
+    std::shared_ptr<std::mutex> mutex_;
+    std::unordered_map<OH_NativeBuffer*, bool> lockedBuffers_;
 };
 
 } // namespace OHOS::NWeb

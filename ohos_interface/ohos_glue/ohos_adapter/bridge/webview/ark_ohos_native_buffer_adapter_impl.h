@@ -38,6 +38,21 @@ public:
 
     uint32_t GetSeqNum(void* nativeBuffer) override;
 
+    void Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter>& bufferConfig, void** outBuffer) override;
+
+    void Describe(ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void* buffer) override;
+
+    int Lock(void* buffer,
+        uint64_t usage, int32_t fence, void** out_virtual_address) override;
+
+    int RecvHandleFromUnixSocket(int socketFd, void** outBuffer) override;
+
+    int SendHandleToUnixSocket(const void* buffer, int socketFd) override;
+
+    int Unlock(void* buffer, int32_t* fence) override;
+
+    int FreeNativeBuffer(void* nativeBuffer) override;
+
 private:
     OHOS::NWeb::OhosNativeBufferAdapter& real_;
 

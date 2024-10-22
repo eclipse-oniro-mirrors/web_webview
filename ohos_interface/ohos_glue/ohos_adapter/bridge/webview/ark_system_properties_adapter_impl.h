@@ -75,6 +75,8 @@ public:
     bool IsLTPODynamicApp(const ArkWebString& settingName) override;
 
     int32_t GetLTPOStrategy() override;
+
+    ArkWebString GetVulkanStatus() override;
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

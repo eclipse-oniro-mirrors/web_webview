@@ -40,6 +40,17 @@ OhosNativeBufferAdapterImpl::~OhosNativeBufferAdapterImpl()
     WVLOG_D("Native buffer adapter impl destructor.");
 }
 
+bool OhosNativeBufferAdapterImpl::IsBufferLocked(OH_NativeBuffer* buffer) const
+{
+    if (buffer == nullptr) {
+        return false;
+    }
+    auto it = lockedBuffers_.find(buffer);
+    bool result = (it != lockedBuffers_.end() && it->second);
+    WVLOG_D("Native buffer is locked: %{public}s", result ? "yes" : "no");
+    return result;
+}
+
 void OhosNativeBufferAdapterImpl::AcquireBuffer(void* buffer)
 {
     if (buffer == nullptr) {
@@ -61,6 +72,8 @@ void OhosNativeBufferAdapterImpl::Release(void* buffer)
     if (OH_NativeBuffer_Unreference(static_cast<OH_NativeBuffer*>(buffer)) == 0) {
         WVLOG_D("native buffer release, unreference buffer.");
     }
+
+    buffer = nullptr;
 }
 
 int OhosNativeBufferAdapterImpl::GetEGLBuffer(void* buffer, void** eglBuffer)
@@ -119,5 +132,117 @@ uint32_t OhosNativeBufferAdapterImpl::GetSeqNum(void* nativeBuffer)
     }
     SurfaceBufferImpl* buffer = reinterpret_cast<SurfaceBufferImpl *>(nativeBuffer);
     return buffer->GetSeqNum();
+}
+
+void OhosNativeBufferAdapterImpl::Allocate(const std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void** outBuffer)
+{
+    if (bufferConfig == nullptr) {
+        return;
+    }
+    int width = bufferConfig->GetBufferWidth();
+    int height = bufferConfig->GetBufferHeight();
+    int usage = bufferConfig->GetBufferUsage();
+    OH_NativeBuffer_Config config = {
+        .width = width,
+        .height = height,
+        .format = OH_NativeBuffer_Format::NATIVEBUFFER_PIXEL_FMT_RGBA_8888,
+        .usage = usage,
+    };
+
+    // create a new OH_NativeBuffer using the OHOS native buffer allocation function
+    // The plan here is that the actual buffer holder will be held onto by chromium.
+    OH_NativeBuffer* buffer = OH_NativeBuffer_Alloc(&config);
+    if (buffer != nullptr) {
+        WVLOG_D("native buffer allocate success, rawbuffer stored %{public}p", buffer);
+        *outBuffer = buffer;
+    } else {
+        WVLOG_E("native buffer allocate failed.");
+        *outBuffer = nullptr;
+    }
+}
+
+void OhosNativeBufferAdapterImpl::Describe(std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void* buffer)
+{
+    if (buffer == nullptr) {
+        WVLOG_E("native buffer describe, buffer is null.");
+        return;
+    }
+    WVLOG_D("native buffer describe buffer %{public}p.", buffer);
+    // std::shared_ptr<NativeBufferConfigAdapterImpl> configAdapter = std::make_shared<NativeBufferConfigAdapterImpl>();
+    OH_NativeBuffer_Config config = {};
+    OH_NativeBuffer_GetConfig(static_cast<OH_NativeBuffer*>(buffer), &config);    
+
+    bufferConfig->SetBufferWidth(config.width);
+    bufferConfig->SetBufferHeight(config.height);
+    bufferConfig->SetBufferFormat(config.format);
+    bufferConfig->SetBufferUsage(config.usage);
+    bufferConfig->SetBufferStride(config.stride);
+
+    return;
+}
+
+int OhosNativeBufferAdapterImpl::Lock(void* buffer, uint64_t usage, int32_t fence, void** out_virtual_address)
+{
+    WVLOG_D("native buffer waiting for lock.");
+    if (buffer == nullptr) {
+        WVLOG_E("native buffer lock, buffer is null.");
+        return -1;
+    }
+
+    if (IsBufferLocked(static_cast<OH_NativeBuffer*>(buffer))) {
+        WVLOG_D("native buffer lock - buffer already locked.");
+        return -1;
+    }
+
+    lockedBuffers_[static_cast<OH_NativeBuffer*>(buffer)] = true;
+
+    return OH_NativeBuffer_Map(static_cast<OH_NativeBuffer*>(buffer), out_virtual_address);
+}
+
+int OhosNativeBufferAdapterImpl::RecvHandleFromUnixSocket(int socketFd, void** outBuffer)
+{
+    WVLOG_D("native buffer receive handle from unix socket.");
+    return 0;
+}
+
+int OhosNativeBufferAdapterImpl::SendHandleToUnixSocket(const void* buffer, int socketFd)
+{
+    WVLOG_D("native buffer send handle to unix socket.");
+
+    if (buffer == nullptr) {
+        WVLOG_E("native buffer SendHandleToUnixSocket, buffer is null.");
+        return -1;
+    }
+
+    return 0;
+}
+
+int OhosNativeBufferAdapterImpl::Unlock(void* buffer, int32_t* fence)
+{
+    WVLOG_D("native buffer waiting for unlock.");
+    if (buffer == nullptr) {
+        WVLOG_E("native buffer lock, buffer is null.");
+        return -1;
+    }
+
+    if (!IsBufferLocked(static_cast<OH_NativeBuffer*>(buffer))) {
+        WVLOG_D("native buffer unlock - buffer is already unlocked.");
+        return -1;
+    }
+
+    int result = OH_NativeBuffer_Unmap(static_cast<OH_NativeBuffer*>(buffer));
+    lockedBuffers_.erase(static_cast<OH_NativeBuffer*>(buffer));
+    return result;
+}
+
+int OhosNativeBufferAdapterImpl::FreeNativeBuffer(void* nativeBuffer)
+{
+    if (nativeBuffer == nullptr) {
+        WVLOG_E("native buffer FreeNativeBuffer, native buffer is null.");
+        return -1;
+    }
+    WVLOG_D("native buffer FreeNativeBuffer freeing: %{public}p.", nativeBuffer);
+    OH_NativeBuffer_Unreference(static_cast<OH_NativeBuffer*>(nativeBuffer));
+    return 0;
 }
 } // namespace OHOS::NWeb
