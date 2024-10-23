@@ -17,7 +17,6 @@
 #define OHOS_NATIVE_BUFFER_ADAPTER_IMPL_H
 
 #include "ohos_native_buffer_adapter.h"
-// #include "native_buffer_config_adapter_impl.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/external_window.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer_inner.h"

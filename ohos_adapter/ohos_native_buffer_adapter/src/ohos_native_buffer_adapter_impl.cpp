@@ -134,7 +134,8 @@ uint32_t OhosNativeBufferAdapterImpl::GetSeqNum(void* nativeBuffer)
     return buffer->GetSeqNum();
 }
 
-void OhosNativeBufferAdapterImpl::Allocate(const std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void** outBuffer)
+void OhosNativeBufferAdapterImpl::Allocate(
+    const std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void** outBuffer)
 {
     if (bufferConfig == nullptr) {
         return;
@@ -168,7 +169,7 @@ void OhosNativeBufferAdapterImpl::Describe(std::shared_ptr<NativeBufferConfigAda
         return;
     }
     WVLOG_D("native buffer describe buffer %{public}p.", buffer);
-    // std::shared_ptr<NativeBufferConfigAdapterImpl> configAdapter = std::make_shared<NativeBufferConfigAdapterImpl>();
+
     OH_NativeBuffer_Config config = {};
     OH_NativeBuffer_GetConfig(static_cast<OH_NativeBuffer*>(buffer), &config);    
 
@@ -178,6 +179,10 @@ void OhosNativeBufferAdapterImpl::Describe(std::shared_ptr<NativeBufferConfigAda
     bufferConfig->SetBufferUsage(config.usage);
     bufferConfig->SetBufferStride(config.stride);
 
+    WVLOG_D("native buffer describe OH_NativeBuffer config, width: %{public}d, height: %{public}d,
+        format:: %{public}d, usage: %{public}d, stride:: %{public}d.",bufferConfig->GetBufferWidth(),
+        bufferConfig->GetBufferHeight(),bufferConfig->GetBufferFormat(),bufferConfig->GetBufferUsage(),
+        bufferConfig->GetBufferStride());
     return;
 }
 
