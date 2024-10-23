@@ -42,6 +42,7 @@ const bool RESULT_OK = true;
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 const int32_t NWEB_MAX_WIDTH = 7681;
+const int32_t LTPO_STRATEGY = 1;
 const std::string MOCK_NWEB_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
@@ -667,6 +668,10 @@ HWTEST_F(NwebHelperTest, NWebHelper_ParseNWebLTPOApp_001, TestSize.Level1)
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     EXPECT_TRUE(NWebConfigHelper::Instance().ltpoAllowedApps_.empty());
     EXPECT_FALSE(NWebConfigHelper::Instance().IsLTPODynamicApp(""));
+
+    NWebConfigHelper::Instance().ltpoStrategy_ = LTPO_STRATEGY;
+    NWebAdapterHelper::Instance().ParseConfig(initArgs);
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOStrategy(), LTPO_STRATEGY);
 }
 } // namespace OHOS::NWeb
 }
