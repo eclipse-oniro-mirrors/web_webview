@@ -179,10 +179,7 @@ void OhosNativeBufferAdapterImpl::Describe(std::shared_ptr<NativeBufferConfigAda
     bufferConfig->SetBufferUsage(config.usage);
     bufferConfig->SetBufferStride(config.stride);
 
-    WVLOG_D("native buffer describe OH_NativeBuffer config, width: %{public}d, height: %{public}d,
-        format:: %{public}d, usage: %{public}d, stride:: %{public}d.",bufferConfig->GetBufferWidth(),
-        bufferConfig->GetBufferHeight(),bufferConfig->GetBufferFormat(),bufferConfig->GetBufferUsage(),
-        bufferConfig->GetBufferStride());
+    WVLOG_D("native buffer describe buffer success.");
     return;
 }
 
