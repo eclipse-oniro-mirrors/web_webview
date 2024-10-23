@@ -125,7 +125,7 @@ public:
      * @Since 12005
      */
     /*--ark web()--*/
-    virtual void Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter>& bufferConfig, void** outBuffer) = 0;
+    virtual void Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void** outBuffer) = 0;
 
     /**
      * @Description: revise NativeBufferConfigAdapter describing the given buffer.

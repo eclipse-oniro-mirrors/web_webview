@@ -54,7 +54,8 @@ uint32_t ArkOhosNativeBufferAdapterImpl::GetSeqNum(void* nativeBuffer)
     return real_.GetSeqNum(nativeBuffer);
 }
 
-void ArkOhosNativeBufferAdapterImpl::Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter>& bufferConfig, void** outBuffer)
+void ArkOhosNativeBufferAdapterImpl::Allocate(
+    const ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void** outBuffer)
 {
     if (CHECK_REF_PTR_IS_NULL(bufferConfig)) {
         real_.Allocate(nullptr, outBuffer);

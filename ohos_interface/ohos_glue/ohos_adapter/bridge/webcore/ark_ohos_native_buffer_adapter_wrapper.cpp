@@ -55,7 +55,7 @@ uint32_t ArkOhosNativeBufferAdapterWrapper::GetSeqNum(void* nativeBuffer)
     return ctocpp_->GetSeqNum(nativeBuffer);
 }
 
-void ArkOhosNativeBufferAdapterWrapper::Allocate(const std::shared_ptr<NativeBufferConfigAdapter>& bufferConfig,
+void ArkOhosNativeBufferAdapterWrapper::Allocate(const std::shared_ptr<NativeBufferConfigAdapter> bufferConfig,
     void** outBuffer)
 {
     if (CHECK_SHARED_PTR_IS_NULL(bufferConfig)) {
@@ -65,7 +65,9 @@ void ArkOhosNativeBufferAdapterWrapper::Allocate(const std::shared_ptr<NativeBuf
     }
 }
 
-void ArkOhosNativeBufferAdapterWrapper::Describe(std::shared_ptr<OHOS::NWeb::NativeBufferConfigAdapter> bufferConfig, void* buffer)
+void ArkOhosNativeBufferAdapterWrapper::Describe(
+    std::shared_ptr<OHOS::NWeb::NativeBufferConfigAdapter> bufferConfig,
+    void* buffer)
 {
     if (CHECK_SHARED_PTR_IS_NULL(bufferConfig)) {
         result = ctocpp_->Describe(nullptr, buffer);

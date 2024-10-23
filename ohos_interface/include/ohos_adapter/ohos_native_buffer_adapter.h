@@ -64,7 +64,7 @@ public:
 
     virtual uint32_t GetSeqNum(void* nativeBuffer) = 0;
 
-    virtual void Allocate(const std::shared_ptr<NativeBufferConfigAdapter>& bufferConfig, void** outBuffer) = 0;
+    virtual void Allocate(const std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void** outBuffer) = 0;
 
     virtual void Describe(std::shared_ptr<NativeBufferConfigAdapter> bufferConfig, void* buffer) = 0;
 

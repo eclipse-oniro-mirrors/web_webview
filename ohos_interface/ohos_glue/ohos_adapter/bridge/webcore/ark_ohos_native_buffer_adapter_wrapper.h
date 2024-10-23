@@ -33,7 +33,7 @@ public:
     int FreeEGLBuffer(void* eglBuffer) override;
     int NativeBufferFromNativeWindowBuffer(void* nativeWindowBuffer, void** nativeBuffer) override;
     uint32_t GetSeqNum(void* nativeBuffer) override;
-    void Allocate(const std::shared_ptr<OHOS::NWeb::NativeBufferConfigAdapter>& bufferConfig,
+    void Allocate(const std::shared_ptr<OHOS::NWeb::NativeBufferConfigAdapter> bufferConfig,
         void** outBuffer) override;
     void Describe(std::shared_ptr<OHOS::NWeb::NativeBufferConfigAdapter> bufferConfig, void* buffer) override;
     int Lock(void* buffer,

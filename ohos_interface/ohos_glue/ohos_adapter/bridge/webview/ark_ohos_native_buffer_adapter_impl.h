@@ -38,7 +38,7 @@ public:
 
     uint32_t GetSeqNum(void* nativeBuffer) override;
 
-    void Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter>& bufferConfig, void** outBuffer) override;
+    void Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void** outBuffer) override;
 
     void Describe(ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void* buffer) override;
 
