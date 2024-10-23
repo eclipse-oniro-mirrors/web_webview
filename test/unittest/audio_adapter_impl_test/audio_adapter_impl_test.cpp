@@ -539,7 +539,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
     type = AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<AudioAdapterStreamType>(-2));
     EXPECT_EQ(type, AudioStreamType::STREAM_DEFAULT);
 
-    std::vector<sptr<AudioDeviceDescriptor>> device;
+    std::vector<std::shared_ptr<AudioDeviceDescriptor>> device;
     int32_t select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(false, device);
     EXPECT_NE(select, 0);
     select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(true, device);
