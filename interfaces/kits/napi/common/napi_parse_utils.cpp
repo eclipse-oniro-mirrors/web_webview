@@ -40,8 +40,8 @@ bool ConvertToNapiHandlerOfBinary(napi_env env, std::shared_ptr<NWebMessage> src
 {
     std::vector<uint8_t> msgArr = src->GetBinary();
     void *arrayData = nullptr;
-    napi_create_arraybuffer(env, msgArr.size(), &arrayData, &dst);
-    if (arrayData == nullptr) {
+    napi_status status = napi_create_arraybuffer(env, msgArr.size(), &arrayData, &dst);
+    if (status != napi_ok) {
         WVLOG_E("Create arraybuffer failed");
         return false;
     }
