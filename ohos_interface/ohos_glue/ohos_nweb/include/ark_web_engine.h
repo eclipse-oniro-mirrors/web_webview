@@ -127,6 +127,14 @@ public:
      */
     /*--ark web()--*/
     virtual int GetArkWebCoreApiLevel() = 0;
+    
+    /**
+     * @Description: get the default user agent
+     * @Return: the default user agent
+     * @Since: 14001
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetDefaultUserAgent() = 0;
 };
 
 } // namespace OHOS::ArkWeb
