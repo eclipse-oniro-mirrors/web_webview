@@ -119,26 +119,28 @@ public:
 
     /**
      * @Description: allocate a native buffer and match with outbuffer.
-     * @Input nativeBuffer: Indicates the pointer to a ArkNativeBufferConfigAdapter instance.
-     * @Output nativeBuffer: Indicates the pointer to a OH_NativeBuffer pointer.
-     * @Return：Returns a sequence number.
-     * @Since 12005
+     * @Input bufferConfig: Indicates the pointer to a ArkNativeBufferConfigAdapter instance.
+     * @Output nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
+     * @Since 14001
      */
     /*--ark web()--*/
     virtual void Allocate(const ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void** outBuffer) = 0;
 
     /**
      * @Description: revise NativeBufferConfigAdapter describing the given buffer.
-     * @Input nativeBuffer: Indicates the pointer to a OH_NativeBuffer instance.
-     * @Output nativeBuffer: Indicates the pointer to a ArkNativeBufferConfigAdapter instance.
+     * @Input nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Output bufferConfig: Indicates the pointer to a ArkNativeBufferConfigAdapter instance.
      * @Since 14001
      */
     /*--ark web()--*/
     virtual void Describe(ArkWebRefPtr<ArkNativeBufferConfigAdapter> bufferConfig, void* buffer) = 0;
 
     /**
-     * @Description: Locks the specified OH_NativeBuffer for access.
-     * @Input nativeBuffer: Indicates the pointer to a OH_NativeBuffer instance.
+     * @Description: Locks the specified <b>OH_NativeBuffer</b> for access.
+     * @Input nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Input usage: Indicates usage of buffer.
+     * @Input fence: Indicates gpu handle.
+     * @Input out_virtual_address: Indicates the address of the <b>OH_NativeBuffer</b> in virtual memory;
      * @Return：Returns 0 on success, or -1 if the buffer is null or already locked.
      * @Since 14001
      */
@@ -147,8 +149,9 @@ public:
         uint64_t usage, int32_t fence, void** out_virtual_address) = 0;
     
     /**
-     * @Description: Receives a OH_NativeBuffer handle from a Unix socket.
+     * @Description: Receives a <b>OH_NativeBuffer</b> handle from a Unix socket.
      * @Input socketFd: The file descriptor of the Unix socket.
+     * @Output nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> pointer.
      * @Return：Always returns 0, indicating success or no operation performed.
      * @Since 14001
      */
@@ -156,8 +159,9 @@ public:
     virtual int RecvHandleFromUnixSocket(int socketFd, void** outBuffer) = 0;
 
     /**
-     * @Description: Sends a OH_NativeBuffer handle to a Unix socket.
-     * @Input nativeBuffer: Indicates the pointer to a OH_NativeBuffer instance.
+     * @Description: Sends a <b>OH_NativeBuffer</b> handle to a Unix socket.
+     * @Input nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Input socketFd: The file descriptor of the Unix socket.
      * @Return：Returns 0 if the buffer is valid, or -1 if the buffer is null.
      * @Since 14001
      */
@@ -165,8 +169,9 @@ public:
     virtual int SendHandleToUnixSocket(const void* buffer, int socketFd) = 0;
 
     /**
-     * @Description: Unlocks the specified OH_NativeBuffer.
-     * @Input nativeBuffer: Indicates the pointer to a OH_NativeBuffer instance.
+     * @Description: Unlocks the specified <b>OH_NativeBuffer</b>.
+     * @Input nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
+     * @Input fence: Indicates gpu handle.
      * @Return：Returns 0 on success, or -1 if the buffer is null or not locked.
      * @Since 14001
      */
@@ -175,7 +180,7 @@ public:
 
     /**
      * @Description: Frees the specified native buffer by unreferencing it.
-     * @Input nativeBuffer: Indicates the pointer to a OH_NativeBuffer instance.
+     * @Input nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
      * @Return：Returns 0 on success, or -1 if the native buffer is null.
      * @Since 14001
      */
