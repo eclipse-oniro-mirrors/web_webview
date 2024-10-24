@@ -140,7 +140,7 @@ public:
      * @Input nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
      * @Input usage: Indicates usage of buffer.
      * @Input fence: Indicates gpu handle.
-     * @Input out_virtual_address: Indicates the address of the <b>OH_NativeBuffer</b> in virtual memory;
+     * @Output out_virtual_address: Indicates the address of the <b>OH_NativeBuffer</b> in virtual memory;
      * @Return：Returns 0 on success, or -1 if the buffer is null or already locked.
      * @Since 14001
      */
