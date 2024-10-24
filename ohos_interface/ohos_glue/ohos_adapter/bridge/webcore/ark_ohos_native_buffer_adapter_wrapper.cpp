@@ -59,7 +59,7 @@ void ArkOhosNativeBufferAdapterWrapper::Allocate(const std::shared_ptr<NativeBuf
     void** outBuffer)
 {
     if (CHECK_SHARED_PTR_IS_NULL(bufferConfig)) {
-        ctocpp_->Allocate(bufferConfig, outBuffer);
+        ctocpp_->Allocate(nullptr, outBuffer);
     } else {
         ctocpp_->Allocate(new ArkNativeBufferConfigAdapterImpl(bufferConfig), outBuffer);
     }
@@ -70,9 +70,9 @@ void ArkOhosNativeBufferAdapterWrapper::Describe(
     void* buffer)
 {
     if (CHECK_SHARED_PTR_IS_NULL(bufferConfig)) {
-        result = ctocpp_->Describe(nullptr, buffer);
+        ctocpp_->Describe(nullptr, buffer);
     } else {
-        result = ctocpp_->Describe(new ArkNativeBufferConfigAdapterImpl(bufferConfig), buffer);
+        ctocpp_->Describe(new ArkNativeBufferConfigAdapterImpl(bufferConfig), buffer);
     }
 }
 
