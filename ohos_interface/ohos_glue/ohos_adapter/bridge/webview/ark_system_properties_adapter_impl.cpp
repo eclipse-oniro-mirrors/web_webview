@@ -173,4 +173,10 @@ int32_t ArkSystemPropertiesAdapterImpl::GetLTPOStrategy()
 {
     return real_.GetLTPOStrategy();
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetVulkanStatus()
+{
+    std::string str = real_.GetVulkanStatus();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb

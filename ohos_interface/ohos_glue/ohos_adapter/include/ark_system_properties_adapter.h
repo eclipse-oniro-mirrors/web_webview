@@ -101,6 +101,14 @@ public:
     
     /*--ark web()--*/
     virtual ArkWebString GetUserAgentBaseOSName() = 0;
+
+    /**
+     * @Description: return VulkanStatus.
+     * @Return：return ArkWebString to describe VulkanStatus.
+     * @Since 14001
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetVulkanStatus() = 0;
 };
 
 } // namespace OHOS::ArkWeb
