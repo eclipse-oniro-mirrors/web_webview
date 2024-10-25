@@ -15,7 +15,8 @@
 
 #include "base/include/ark_web_log_utils.h"
 #include "ohos_adapter/bridge/ark_ohos_native_buffer_adapter_wrapper.h"
-
+#include "ohos_adapter/bridge/ark_native_buffer_config_adapter_impl.h"
+#include "base/bridge/ark_web_bridge_macros.h"
 #define HILOG_TAG "NATIVE_BUFFER_ADAPTER"
 
 namespace OHOS::ArkWeb {
@@ -52,5 +53,52 @@ int ArkOhosNativeBufferAdapterWrapper::NativeBufferFromNativeWindowBuffer(void* 
 uint32_t ArkOhosNativeBufferAdapterWrapper::GetSeqNum(void* nativeBuffer)
 {
     return ctocpp_->GetSeqNum(nativeBuffer);
+}
+
+void ArkOhosNativeBufferAdapterWrapper::Allocate(const std::shared_ptr<NativeBufferConfigAdapter> bufferConfig,
+    void** outBuffer)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(bufferConfig)) {
+        ctocpp_->Allocate(nullptr, outBuffer);
+    } else {
+        ctocpp_->Allocate(new ArkNativeBufferConfigAdapterImpl(bufferConfig), outBuffer);
+    }
+}
+
+void ArkOhosNativeBufferAdapterWrapper::Describe(
+    std::shared_ptr<OHOS::NWeb::NativeBufferConfigAdapter> bufferConfig,
+    void* buffer)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(bufferConfig)) {
+        ctocpp_->Describe(nullptr, buffer);
+    } else {
+        ctocpp_->Describe(new ArkNativeBufferConfigAdapterImpl(bufferConfig), buffer);
+    }
+}
+
+int ArkOhosNativeBufferAdapterWrapper::Lock(void* buffer,
+    uint64_t usage, int32_t fence, void** out_virtual_address)
+{
+    return ctocpp_->Lock(buffer, usage, fence, out_virtual_address);
+}
+
+int ArkOhosNativeBufferAdapterWrapper::RecvHandleFromUnixSocket(int socketFd, void** outBuffer)
+{
+    return ctocpp_->RecvHandleFromUnixSocket(socketFd, outBuffer);
+}
+
+int ArkOhosNativeBufferAdapterWrapper::SendHandleToUnixSocket(const void* buffer, int socketFd)
+{
+    return ctocpp_->SendHandleToUnixSocket(buffer, socketFd);
+}
+
+int ArkOhosNativeBufferAdapterWrapper::Unlock(void* buffer, int32_t* fence)
+{
+    return ctocpp_->Unlock(buffer, fence);
+}
+
+int ArkOhosNativeBufferAdapterWrapper::FreeNativeBuffer(void* nativeBuffer)
+{
+    return ctocpp_->FreeNativeBuffer(nativeBuffer);
 }
 } // namespace OHOS::ArkWeb

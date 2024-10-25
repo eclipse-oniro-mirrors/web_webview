@@ -132,7 +132,9 @@ sptr<IRemoteObject> AafwkBrowserHostImpl::QueryRenderSurface(int32_t surface_id)
         OHNativeWindow* ohNativeWindow = reinterpret_cast<OHNativeWindow*>(window);
         sptr<Surface> surface = ohNativeWindow->surface;
         WVLOG_D("browser host impl get request window");
-        return surface->GetProducer()->AsObject();
+        if (surface != nullptr) {
+            return surface->GetProducer()->AsObject();
+        }
     }
     WVLOG_E("browser host impl get surface from kernel failed");
     return nullptr;
