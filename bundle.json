@@ -83,8 +83,7 @@
                 "openssl"
             ],
             "third_party": [
-                "chromium",
-                "cef"
+                "chromium"
             ]
         },
         "build": {
