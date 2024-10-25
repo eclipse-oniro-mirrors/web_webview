@@ -302,7 +302,8 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
             WVLOG_E("invalid name!");
             continue;
         }
-        std::string settingName = (char *)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        std::string settingName(namePtr);
+        xmlFree(namePtr);
         if (settingName == WEB_ANIMATION_DYNAMIC_APP) {
             ParseNWebLTPOApp(curNodePtr);
             continue;
@@ -319,9 +320,10 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
                 continue;
             }
             FrameRateSetting setting;
-            setting.min_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_MIN)));
-            setting.max_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_MAX)));
-            setting.preferredFrameRate_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_FPS)));
+            int defaultValue = 0;
+            setting.min_ = safeGetPropAsInt(curDynamicNodePtr, BAD_CAST(XML_ATTR_MIN), defaultValue);
+            setting.max_ = safeGetPropAsInt(curDynamicNodePtr, BAD_CAST(XML_ATTR_MAX), defaultValue);
+            setting.preferredFrameRate_ = safeGetPropAsInt(curDynamicNodePtr, BAD_CAST(XML_ATTR_FPS), defaultValue);
             if ((setting.max_ >= 0 && setting.min_ >= setting.max_) || setting.preferredFrameRate_ <= 0) {
                 continue;
             }
@@ -452,6 +454,14 @@ void NWebConfigHelper::ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_
             }
         }
     }
+}
+
+int NWebConfigHelper::safeGetPropAsInt(xmlNode* node, const xmlChar* propName, int defaultValue)
+{
+    xmlChar* propValue = xmlGetProp(node, propName);
+    int value = (propValue) ? atoi((const char*)propValue) : defaultValue;
+    xmlFree(propValue);
+    return value;
 }
 
 } // namespace OHOS::NWeb
