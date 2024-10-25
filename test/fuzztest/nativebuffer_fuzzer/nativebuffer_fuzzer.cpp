@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,32 +22,23 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return true;
         }
-        
+
         OhosNativeBufferAdapter &adapter = OhosNativeBufferAdapterImpl::GetInstance();
-        adapter.AcquireBuffer((void*)data);
 
-        uint8_t **eglBuffer = nullptr;
-        int ret = adapter.GetEGLBuffer((void*)data,(void**)eglBuffer);
-        if(-1 == ret) {
-            return false;
-        }
+        void* buffer = nullptr;
+        void* eglBuffer = nullptr;
+        adapter.AcquireBuffer(buffer);
+        adapter.GetEGLBuffer(buffer, &eglBuffer);
 
-        ret = adapter.NativeBufferFromNativeWindowBuffer((void*)data,(void**)eglBuffer);
-        if(-1 == ret) {
-            return false;
-        }
+        void* nativeBuffer = nullptr;
+        void* nativeWindowBuffer = nullptr;
+        adapter.NativeBufferFromNativeWindowBuffer(nativeWindowBuffer, &nativeBuffer);
 
-        uint32_t num = adapter.GetSeqNum((void*)data);
-        if(0 == num) {
-            return false;
-        }
+        adapter.GetSeqNum(nativeBuffer);
 
-        ret = adapter.FreeEGLBuffer(*eglBuffer);
-        if(-1 == ret) {
-            return false;
-        }
+        adapter.FreeEGLBuffer(buffer);
 
-        adapter.Release((void*)data);
+        adapter.Release(eglBuffer);
 
         return true;
     }
