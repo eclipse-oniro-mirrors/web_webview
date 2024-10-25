@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,6 +15,8 @@
 #include "nativebuffer_fuzzer.h"
 #include "ohos_native_buffer_adapter_impl.h"
 
+#include <securec.h>
+
 using namespace OHOS::NWeb;
 namespace OHOS {
     bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
@@ -22,34 +24,35 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return true;
         }
-        
+
         OhosNativeBufferAdapter &adapter = OhosNativeBufferAdapterImpl::GetInstance();
-        adapter.AcquireBuffer((void*)data);
 
-        uint8_t **eglBuffer = nullptr;
-        int ret = adapter.GetEGLBuffer((void*)data,(void**)eglBuffer);
-        if(-1 == ret) {
+        if(size > 0) {
+            void* buffer = malloc(size);
+            if(buffer == nullptr) {
+                return false;
+            }
+
+            errno_t ret = memcpy_s(buffer, size, data, size);
+            if (ret != 0) {
+                return false;
+            }
+
+            adapter.AcquireBuffer(buffer);
+
+            void* eglBuffer = nullptr;   
+            adapter.GetEGLBuffer(buffer, &eglBuffer);
+
+            void* nativeBuffer = nullptr;
+            adapter.NativeBufferFromNativeWindowBuffer(buffer, &nativeBuffer);
+            adapter.GetSeqNum(nativeBuffer);
+            adapter.FreeEGLBuffer(buffer);
+            adapter.Release(eglBuffer);
+
+            return true;
+        } else {
             return false;
-        }
-
-        ret = adapter.NativeBufferFromNativeWindowBuffer((void*)data,(void**)eglBuffer);
-        if(-1 == ret) {
-            return false;
-        }
-
-        uint32_t num = adapter.GetSeqNum((void*)data);
-        if(0 == num) {
-            return false;
-        }
-
-        ret = adapter.FreeEGLBuffer(*eglBuffer);
-        if(-1 == ret) {
-            return false;
-        }
-
-        adapter.Release((void*)data);
-
-        return true;
+        }    
     }
 }
 
