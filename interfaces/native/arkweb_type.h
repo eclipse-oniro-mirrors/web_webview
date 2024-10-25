@@ -219,7 +219,6 @@ typedef struct {
      * @brief Get the url of the last frame that calls the JavaScriptProxy.
      *        This should be call on the thread which JavaScriptProxy called.
      *
-     * @param webTag The name of the web component.
      * @return The url of the last frame that calls the JavaScriptProxy.
      * @since 14
      */
