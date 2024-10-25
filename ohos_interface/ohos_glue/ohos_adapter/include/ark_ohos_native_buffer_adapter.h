@@ -171,7 +171,7 @@ public:
     /**
      * @Description: Unlocks the specified <b>OH_NativeBuffer</b>.
      * @Input nativeBuffer: Indicates the pointer to a <b>OH_NativeBuffer</b> instance.
-     * @Input fence: Indicates gpu handle.
+     * @Output fence: Indicates gpu handle.
      * @Return：Returns 0 on success, or -1 if the buffer is null or not locked.
      * @Since 14001
      */
