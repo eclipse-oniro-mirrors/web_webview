@@ -14,8 +14,6 @@
  */
 
 #include <cstring>
-#include <gmock/gmock.h>
-#include <gtest/gtest.h>
 #include <securec.h>
 #include <ui/rs_surface_node.h>
 #include <unordered_map>
@@ -30,8 +28,6 @@
 #include "nweb_init_params.h"
 #include "nweb_log.h"
 
-using namespace testing;
-using namespace testing::ext;
 using namespace OHOS;
 using namespace OHOS::Rosen;
 using namespace OHOS::AbilityRuntime;
@@ -42,7 +38,7 @@ sptr<Surface> g_surface = nullptr;
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 const int32_t NWEB_MAX_WIDTH = 7681;
-const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
+const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
 
@@ -54,115 +50,6 @@ std::shared_ptr<ApplicationContext> Context::GetApplicationContext()
 } // namespace AbilityRuntime
 
 namespace NWeb {
-
-class NwebHelperTest : public testing::Test {
-public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
-    void SetUp();
-    void TearDown();
-};
-
-class ApplicationContextMock : public ApplicationContext {
-public:
-    MOCK_CONST_METHOD0(GetBaseDir, std::string());
-};
-
-class MockNWebEngine : public OHOS::NWeb::NWebEngine {
-public:
-    std::shared_ptr<NWeb> CreateNWeb(std::shared_ptr<NWebCreateInfo> create_info)
-    {
-        return nullptr;
-    }
-
-    std::shared_ptr<NWeb> GetNWeb(int32_t nweb_id)
-    {
-        return nullptr;
-    }
-
-    std::shared_ptr<NWebDataBase> GetDataBase()
-    {
-        return nullptr;
-    }
-
-    std::shared_ptr<NWebWebStorage> GetWebStorage()
-    {
-        return nullptr;
-    }
-
-    std::shared_ptr<NWebCookieManager> GetCookieManager()
-    {
-        return nullptr;
-    }
-
-    std::shared_ptr<NWebDownloadManager> GetDownloadManager()
-    {
-        return nullptr;
-    }
-
-    void SetWebTag(int32_t nweb_id, const char* web_tag) {}
-
-    void InitializeWebEngine(std::shared_ptr<NWebEngineInitArgs> init_args) {}
-
-    void PrepareForPageLoad(const std::string& url, bool preconnectable, int32_t num_sockets) {}
-
-    void SetWebDebuggingAccess(bool isEnableDebug) {}
-
-    void AddIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts) {}
-
-    void RemoveIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts) {}
-    void ClearIntelligentTrackingPreventionBypassingList() {}
-
-    std::string GetDefaultUserAgent()
-    {
-        return "";
-    }
-
-    void PauseAllTimers() {}
-
-    void ResumeAllTimers() {}
-
-    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& pre_args,
-        const std::map<std::string, std::string>& additional_http_headers, const std::string& cache_key,
-        const uint32_t& cache_valid_time)
-    {}
-
-    void SetRenderProcessMode(RenderProcessMode mode) {}
-
-    RenderProcessMode GetRenderProcessMode()
-    {
-        return RenderProcessMode::SINGLE_MODE;
-    }
-
-    void ClearPrefetchedResource(const std::vector<std::string>& cache_key_list) {}
-
-    void WarmupServiceWorker(const std::string& url) {}
-
-    void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime) {}
-
-    void ClearHostIP(const std::string& hostName) {}
-
-    std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager()
-    {
-        return nullptr;
-    }
-
-    void EnableBackForwardCache(bool nativeEmbed, bool mediaTakeOver) {}
-};
-
-void NwebHelperTest::SetUpTestCase(void)
-{
-    RSSurfaceNodeConfig config;
-    config.SurfaceNodeName = "webTestSurfaceName";
-    auto surfaceNode = RSSurfaceNode::Create(config, false);
-    g_surface = surfaceNode->GetSurface();
-}
-
-void NwebHelperTest::TearDownTestCase(void) {}
-
-void NwebHelperTest::SetUp(void) {}
-
-void NwebHelperTest::TearDown(void) {}
 
 std::unordered_map<std::string, std::string> g_argsMap;
 
@@ -178,7 +65,6 @@ bool NWebHelperFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
     (void)nweb;
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
-    NWebHelper::Instance().SetHttpDns(config);
     auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
     (void)nwebHelper;
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
@@ -188,8 +74,7 @@ bool NWebHelperFuzzTest(const uint8_t* data, size_t size)
     NWebAdapterHelper::Instance().ReadConfigIfNeeded();
     result = NWebHelper::Instance().InitAndRun(false);
     (void)result;
-    ApplicationContextMock* contextMock = new ApplicationContextMock();
-    g_applicationContext.reset(contextMock);
+
     result = NWebHelper::Instance().InitAndRun(false);
     (void)result;
     NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -201,7 +86,6 @@ bool NWebHelperFuzzTest(const uint8_t* data, size_t size)
     result = NWebHelper::Instance().LoadNWebSDK();
     (void)result;
     WebDownloadManager_PutDownloadCallback(nullptr);
-    g_applicationContext.reset();
     return true;
 }
 
