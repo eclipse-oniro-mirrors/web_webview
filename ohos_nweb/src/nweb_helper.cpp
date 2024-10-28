@@ -665,6 +665,11 @@ bool NWebHelper::GetWebEngine(bool fromArk)
 
 bool NWebHelper::InitWebEngine()
 {
+    if (initFlag_) {
+        WVLOG_I("web engine has been initialized");
+        return true;
+    }
+
     auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (!ctx) {
         WVLOG_E("failed to get application context");
@@ -709,6 +714,7 @@ bool NWebHelper::InitWebEngine()
     }
 
     nwebEngine_->InitializeWebEngine(initArgs);
+    initFlag_ = true;
 
     WVLOG_I("succeed to init web engine");
     return true;
@@ -716,10 +722,6 @@ bool NWebHelper::InitWebEngine()
 
 bool NWebHelper::LoadWebEngine(bool fromArk, bool runFlag)
 {
-    if (nwebEngine_) {
-        return true;
-    }
-
     if (!GetWebEngine(fromArk)) {
         return false;
     }
@@ -885,7 +887,7 @@ std::string NWebHelper::GetDefaultUserAgent()
         WVLOG_E("failed to load web engine");
         return "";
     }
-    
+
     return nwebEngine_->GetDefaultUserAgent();
 }
 
