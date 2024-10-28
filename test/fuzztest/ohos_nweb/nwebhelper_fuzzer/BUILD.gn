@@ -43,8 +43,6 @@ ohos_fuzztest("NWebHelperFuzzTest") {
   deps = [
     "$graphic2d_path/rosen/modules/render_service_client:librender_service_client",
     "$webview_path/ohos_nweb:web_configs",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
   ]
 
   external_deps = [
