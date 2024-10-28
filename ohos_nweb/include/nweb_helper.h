@@ -97,6 +97,7 @@ private:
 
 private:
     int coreApiLevel_ = 0;
+    bool initFlag_ = false;
     std::string bundlePath_;
     std::string customSchemeCmdLine_;
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
