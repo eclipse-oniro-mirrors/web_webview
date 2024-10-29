@@ -38,6 +38,12 @@ namespace {
     DO(postWebMessage, OH_ArkWeb_PostWebMessage);                             \
     DO(getLastJavascriptProxyCallingFrameUrl, OH_ArkWeb_GetLastJavascriptProxyCallingFrameUrl)
 
+#define ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN_2(DO)                        \
+    DO(registerJavaScriptProxyEx,                                             \
+        OH_ArkWeb_RegisterJavaScriptProxyEx);                                 \
+    DO(registerAsyncJavaScriptProxyEx,                                        \
+        OH_ArkWeb_RegisterAsyncJavaScriptProxyEx)
+
 #define ARKWEB_NATIVE_FOR_EACH_WEBMESSAGEPORT_API_FN(DO) \
     DO(postMessage, OH_WebMessage_PostMessage);          \
     DO(close, OH_WebMessage_Close);                      \
@@ -58,11 +64,15 @@ namespace {
     DO(clearAllCookiesSync, OH_CookieManager_ClearAllCookiesSync);        \
     DO(clearSessionCookiesSync, OH_CookieManager_ClearSessionCookiesSync)
 
+#define ARKWEB_NATIVE_FOR_EACH_JAVASCRIPTVALUE_API_FN(DO)             \
+    DO(createJavaScriptValue, OH_JavaScript_CreateJavaScriptValue)
+
 ArkWeb_ComponentAPI* g_ComponentImpl = nullptr;
 ArkWeb_ControllerAPI* g_ControllerImpl = nullptr;
 ArkWeb_WebMessagePortAPI* g_WebMessagePortImpl = nullptr;
 ArkWeb_WebMessageAPI* g_WebMessageImpl = nullptr;
 ArkWeb_CookieManagerAPI* g_CookieManagerImpl = nullptr;
+ArkWeb_JavaScriptValueAPI* g_JavaScriptValueImpl = nullptr;
 
 } // namespace
 
@@ -120,6 +130,10 @@ static bool LoadControllerAPI()
     }
 #define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(g_ControllerImpl->fn))
     ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(g_ControllerImpl->fn))
+    ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN_2(ARKWEB_NATIVE_LOAD_FN_PTR);
 #undef ARKWEB_NATIVE_LOAD_FN_PTR
 
     return true;
@@ -198,6 +212,31 @@ static bool LoadCookieManagerAPI()
     return true;
 }
 
+static bool LoadJavaScriptValueAPI()
+{
+    if (g_JavaScriptValueImpl) {
+        WVLOG_I("NativeArkWeb javaScript value api already loaded");
+        return true;
+    }
+
+    g_JavaScriptValueImpl = new (std::nothrow) ArkWeb_JavaScriptValueAPI();
+    if (!g_JavaScriptValueImpl) {
+        WVLOG_E("NativeArkWeb javaScript value api is nullptr");
+        return false;
+    }
+    g_JavaScriptValueImpl->size = sizeof(ArkWeb_JavaScriptValueAPI);
+
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        return false;
+    }
+#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(g_JavaScriptValueImpl->fn))
+    ARKWEB_NATIVE_FOR_EACH_JAVASCRIPTVALUE_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+
+    return true;
+}
+
 ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type)
 {
     switch (type) {
@@ -230,6 +269,12 @@ ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type)
                 return nullptr;
             }
             return reinterpret_cast<ArkWeb_AnyNativeAPI*>(g_CookieManagerImpl);
+        }
+        case ARKWEB_NATIVE_JAVASCRIPT_VALUE: {
+            if (!LoadJavaScriptValueAPI()) {
+                return nullptr;
+            }
+            return reinterpret_cast<ArkWeb_AnyNativeAPI*>(g_JavaScriptValueImpl);
         }
         default: {
             WVLOG_E("fail to get %{public}d arkweb api family", type);

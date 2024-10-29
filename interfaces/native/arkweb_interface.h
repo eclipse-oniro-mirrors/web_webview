@@ -65,12 +65,19 @@ typedef enum {
     ARKWEB_NATIVE_WEB_MESSAGE,
     /** API type related to ArkWeb cookie manager. */
     ARKWEB_NATIVE_COOKIE_MANAGER,
+    /**
+     * @brief API type related to ArkWeb JavaScript value.
+     *
+     * @since 14
+     */
+    ARKWEB_NATIVE_JAVASCRIPT_VALUE,
 } ArkWeb_NativeAPIVariantKind;
 
 /*
  * @brief Obtains the native API set of a specified type.
  * @param type Indicates the type of the native API set provided by ArkWeb.
  * @return Return the pointer to the native API abstract object that carries the size.
+ *         If the type is incorrect, a null pointer is returned.
  *
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
