@@ -458,7 +458,7 @@ bool ParseRegisterJavaScriptProxyParam(napi_env env, size_t argc, napi_value* ar
         return false;
     }
     std::vector<std::string> asyncMethodList;
-    if (argc == INTEGER_FOUR && !NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList)) {
+    if (argc >= INTEGER_FOUR && !NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return false;
     }
@@ -5809,7 +5809,7 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
             size = BFCACHE_DEFAULT_SIZE;
         }
     }
-    
+
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "timeToLive", &timeToLiveObj) == napi_ok) {
         if (!NapiParseUtils::ParseInt32(env, timeToLiveObj, timeToLive)) {
             timeToLive = BFCACHE_DEFAULT_TIMETOLIVE;
