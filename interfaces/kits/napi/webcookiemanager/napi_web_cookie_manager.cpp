@@ -344,7 +344,7 @@ napi_value ConfigCookieAsyncPromise(
 }
 
 bool NapiWebCookieManager::GetStringParaAndEmitError(napi_env env, napi_value argv, 
-                                                     std::string parav, 
+                                                     const std::string& parav, 
                                                      std::string& value)
 {
     if (!GetStringPara(env, argv, value)) {
@@ -356,7 +356,7 @@ bool NapiWebCookieManager::GetStringParaAndEmitError(napi_env env, napi_value ar
 }
 
 bool NapiWebCookieManager::GetBooleanParaAndEmitError(napi_env env, napi_value argv, 
-                                                      std::string parav, 
+                                                      const std::string& parav, 
                                                       bool& value)
 {
     if (!GetBooleanPara(env, argv, value)) {

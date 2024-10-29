@@ -87,10 +87,10 @@ private:
     static napi_value JsFetchCookieAsync(napi_env env, napi_callback_info info);
 
     static bool GetStringParaAndEmitError(napi_env env, napi_value argv,
-                                          std::string parav, std::string& value);
+                                          const std::string& parav, std::string& value);
 
     static bool GetBooleanParaAndEmitError(napi_env env, napi_value argv,
-                                           std::string parav, bool& value);
+                                           const std::string& parav, bool& value);
 
     static napi_value JsConfigCookieAsync(napi_env env, napi_callback_info info);
 
