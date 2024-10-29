@@ -35,6 +35,7 @@ ohos_unittest("display_manager_adapter_impl_test") {
   ]
   external_deps = [
     "c_utils:utils",
+    "graphic_2d:librender_service_base",
     "image_framework:image_native",
     "init:libbegetutil",
     "window_manager:libdm",
