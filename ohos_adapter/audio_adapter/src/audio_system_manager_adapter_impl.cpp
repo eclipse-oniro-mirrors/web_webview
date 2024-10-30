@@ -349,8 +349,7 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDeviceById(int32_t deviceId, b
     }
     for (auto& device : audioDeviceList) {
         if (device->deviceId_ == deviceId) {
-            std::vector<std::shared_ptr<AudioDeviceDescriptor>> selectedAudioDevice;
-            selectedAudioDevice.push_back(device);
+            std::vector<std::shared_ptr<AudioDeviceDescriptor>> selectedAudioDevice { device };
             return isInput ? AudioSystemManager::GetInstance()->SelectInputDevice(selectedAudioDevice)
                            : SelectAudioOutputDevice(isCallDevice, selectedAudioDevice);
         }
