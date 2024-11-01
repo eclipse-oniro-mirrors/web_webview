@@ -15,6 +15,7 @@
 
 #include "base/bridge/ark_web_bridge_helper.h"
 
+#include <dlfcn.h>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -67,7 +68,7 @@ bool ArkWebBridgeHelper::LoadLibFile(int openMode, const std::string& libNsName,
 
     Dl_namespace ndkns;
     dln_get("ndkns", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs")
+    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
 
     void* libFileHandler = dlopen_ns(&dlns, libFileName.c_str(), openMode);
     if (!libFileHandler) {
