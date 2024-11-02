@@ -1517,6 +1517,15 @@ public:
      */
     /*--ark web()--*/
     virtual void WebSendMouseEvent(ArkWebRefPtr<ArkWebMouseEvent> mouseEvent) = 0;
+
+    /**
+     * @Description: Get the accessibility visibility of the accessibility node by its accessibility id in the browser.
+     * @Input accessibility_id: The accessibility id of the accessibility node.
+     * @Return: The accessibility visibility of the accessibility node.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual bool GetAccessibilityVisible(int64_t accessibility_id) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -1185,4 +1185,9 @@ void ArkWebNWebImpl::WebSendMouseEvent(ArkWebRefPtr<ArkWebMouseEvent> mouseEvent
 
     nweb_nweb_->WebSendMouseEvent(std::make_shared<ArkWebMouseEventWrapper>(mouseEvent));
 }
+
+bool ArkWebNWebImpl::GetAccessibilityVisible(int64_t accessibility_id)
+{
+    return nweb_nweb_->GetAccessibilityVisible(accessibility_id);
+}
 } // namespace OHOS::ArkWeb
