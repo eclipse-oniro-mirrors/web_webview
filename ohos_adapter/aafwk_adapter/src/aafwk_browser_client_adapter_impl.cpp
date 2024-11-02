@@ -156,6 +156,8 @@ void* AafwkBrowserClientAdapterImpl::QueryRenderSurface(int32_t surface_id)
         sptr<IBufferProducer> bufferProducer = iface_cast<IBufferProducer>(surfaceObject);
         sptr<Surface> surface = Surface::CreateSurfaceAsProducer(bufferProducer);
         OHNativeWindow* window = ::CreateNativeWindowFromSurface(&surface);
+        uint64_t usage = BUFFER_USAGE_MEM_DMA;
+        NativeWindowHandleOpt(window, SET_USAGE, usage);
         if (!window) {
             WVLOG_E("create the native window failed.");
             return nullptr;
