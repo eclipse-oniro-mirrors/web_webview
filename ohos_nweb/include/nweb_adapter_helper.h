@@ -16,7 +16,7 @@
 #ifndef NWEB_ADAPTER_HELPER_H
 #define NWEB_ADAPTER_HELPER_H
 
-#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
+#include "wm/window.h"
 #include "libxml/parser.h"
 #include "libxml/tree.h"
 #include "nweb_helper.h"
