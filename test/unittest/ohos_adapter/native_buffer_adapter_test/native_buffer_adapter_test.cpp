@@ -192,5 +192,151 @@ HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_006, TestSize.
     seqnum = nativebufferAdapter->GetSeqNum(nativeBuffer);
     EXPECT_NE(seqnum, 0);
 }
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_007.
+ * @tc.desc: test FlowbufferAdapterImpl Allocate.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_007, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* outBuffer = nullptr;
+    nativebufferAdapter->Allocate(nullptr, &outBuffer);
+    EXPECT_EQ(outBuffer, nullptr);
+}
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_008.
+ * @tc.desc: test FlowbufferAdapterImpl Describe.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_008, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* buffer = nullptr;
+    std::shared_ptr<NativeBufferConfigAdapter> bufferConfig = nullptr;
+    nativebufferAdapter->Describe(bufferConfig, buffer);
+    EXPECT_EQ(bufferConfig, nullptr);
+}
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_009.
+ * @tc.desc: test FlowbufferAdapterImpl Lock.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_009, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* buffer = nullptr;
+    void* out_virtual_address = nullptr;
+    int ret = nativebufferAdapter->Lock(buffer, 0, 0, &out_virtual_address);
+    EXPECT_EQ(ret, -1);
+
+    OH_NativeBuffer_Config config = {
+        .width = 1920,
+        .height = 1080,
+        .format = OH_NativeBuffer_Format::NATIVEBUFFER_PIXEL_FMT_RGBA_8888,
+        .usage = OH_NativeBuffer_Usage::NATIVEBUFFER_USAGE_HW_RENDER,
+    };
+    buffer = OH_NativeBuffer_Alloc(&config);
+    ret = nativebufferAdapter->Lock(buffer, 0, 0, &out_virtual_address);
+    EXPECT_EQ(ret, 0);
+}
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_010.
+ * @tc.desc: test FlowbufferAdapterImpl RecvHandleFromUnixSocket.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_010, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* outBuffer = nullptr;
+    int ret = nativebufferAdapter->RecvHandleFromUnixSocket(-1, &outBuffer);
+    EXPECT_EQ(outBuffer, nullptr);
+    EXPECT_EQ(ret, 0);
+}
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_011.
+ * @tc.desc: test FlowbufferAdapterImpl SendHandleToUnixSocket.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_011, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* buffer = nullptr;
+    int ret = nativebufferAdapter->SendHandleToUnixSocket(buffer, -1);
+    EXPECT_EQ(ret, -1);
+}
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_012.
+ * @tc.desc: test FlowbufferAdapterImpl Unlock.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_012, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* buffer = nullptr;
+    int ret = nativebufferAdapter->SendHandleToUnixSocket(buffer, -1);
+    EXPECT_EQ(ret, -1);
+
+    OH_NativeBuffer_Config config = {
+        .width = 1920,
+        .height = 1080,
+        .format = OH_NativeBuffer_Format::NATIVEBUFFER_PIXEL_FMT_RGBA_8888,
+        .usage = OH_NativeBuffer_Usage::NATIVEBUFFER_USAGE_HW_RENDER,
+    };
+    buffer = OH_NativeBuffer_Alloc(&config);
+    int* fence = new int(-1);
+    ret = nativebufferAdapter->Unlock(buffer, fence);
+    EXPECT_EQ(ret, -1);
+}
+
+/**
+ * @tc.name: NativeBufferAdapterImplTest_013.
+ * @tc.desc: test FlowbufferAdapterImpl FreeNativeBuffer.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NativeBufferAdapterImplTest, NativeBufferAdapterImplTest_013, TestSize.Level1)
+{
+    std::shared_ptr<OhosNativeBufferAdapterImpl> nativebufferAdapter = std::make_shared<OhosNativeBufferAdapterImpl>();
+    EXPECT_TRUE(nativebufferAdapter != nullptr);
+
+    void* nativeBuffer = nullptr;
+    int ret = nativebufferAdapter->FreeNativeBuffer(nativeBuffer);
+    EXPECT_EQ(ret, -1);
+
+    OH_NativeBuffer_Config config = {
+        .width = 1920,
+        .height = 1080,
+        .format = OH_NativeBuffer_Format::NATIVEBUFFER_PIXEL_FMT_RGBA_8888,
+        .usage = OH_NativeBuffer_Usage::NATIVEBUFFER_USAGE_HW_RENDER,
+    };
+    nativeBuffer = OH_NativeBuffer_Alloc(&config);
+    ret = nativebufferAdapter->FreeNativeBuffer(nativeBuffer);
+    EXPECT_EQ(ret, 0);
+}
 } // namespace NWeb
 } // namespace OHOS
