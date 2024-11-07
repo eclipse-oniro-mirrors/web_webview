@@ -17,7 +17,7 @@
 #define ARK_WEB_LOG_UTILS_H_
 #pragma once
 
-#if defined(OHOS_WEBCORE_GLUE)
+#if defined(OHOS_WEBCORE_GLUE_LOG)
 #include "src/nweb_hilog.h"
 
 #define LOG_FMT_PREFIX "[webcore]: "
