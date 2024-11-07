@@ -578,6 +578,8 @@ public:
 
     bool OnSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsSslErrorResult> result, int error,
         const ArkWebStringVector& certChainData) override;
+    
+    void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
