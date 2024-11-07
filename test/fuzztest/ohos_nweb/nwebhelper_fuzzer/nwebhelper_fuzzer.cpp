@@ -15,11 +15,9 @@
 
 #include <cstring>
 #include <securec.h>
-#include <ui/rs_surface_node.h>
 #include <unordered_map>
 
 #define private public
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_c_api.h"
@@ -39,15 +37,7 @@ const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 const int32_t NWEB_MAX_WIDTH = 7681;
 const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
-std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
-
-namespace AbilityRuntime {
-std::shared_ptr<ApplicationContext> Context::GetApplicationContext()
-{
-    return g_applicationContext;
-}
-} // namespace AbilityRuntime
 
 namespace NWeb {
 
@@ -85,7 +75,6 @@ bool NWebHelperFuzzTest(const uint8_t* data, size_t size)
     (void)result;
     result = NWebHelper::Instance().LoadNWebSDK();
     (void)result;
-    WebDownloadManager_PutDownloadCallback(nullptr);
     return true;
 }
 
