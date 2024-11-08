@@ -68,11 +68,11 @@ bool DisplayListenerAdapterImpl::CheckOnlyRefreshRateDecreased(DisplayId id)
         return false;
     }
     auto nwebDisplayInfo =  ConvertDisplayInfo(*displayInfo);
-    std::unique_lock<std::mutex> lock(mutex_);
     if (nwebDisplayInfo == cachedDisplayedInfo_ &&
         nwebDisplayInfo.refreshRate_ != cachedDisplayedInfo_.refreshRate_) {
         WVLOG_I("refresh rate change is intercepted, previous refresh rate: %{public}u, after: %{public}u",
             cachedDisplayedInfo_.refreshRate_, nwebDisplayInfo.refreshRate_);
+        cachedDisplayedInfo_ = nwebDisplayInfo;
         return true;
     }
     cachedDisplayedInfo_ = nwebDisplayInfo;
