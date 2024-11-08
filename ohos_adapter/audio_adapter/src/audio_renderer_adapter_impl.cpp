@@ -295,7 +295,6 @@ void AudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
         WVLOG_E("audio rendderer is nullptr");
         return;
     }
-    audio_renderer_->SetSilentModeAndMixWithOthers(isSilentMode);
     WVLOG_D("AudioRendererAdapterImpl::SetAudioSilentMode isSilentMode: %{public}d", isSilentMode);
 }
 
