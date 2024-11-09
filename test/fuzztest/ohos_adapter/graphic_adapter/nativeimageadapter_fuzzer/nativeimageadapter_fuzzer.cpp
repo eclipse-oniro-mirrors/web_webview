@@ -32,7 +32,7 @@ bool NativeImageAdapterFuzzTest(const uint8_t* data, size_t size)
     }
     NativeImageAdapterImpl adapter;
 
-    void** windowBuffer == nullptr;
+    void** windowBuffer = nullptr;
     int* acquireFenceFd = nullptr;
     uint32_t textureId = 0;
     uint32_t textureTarget = 0;
@@ -42,7 +42,7 @@ bool NativeImageAdapterFuzzTest(const uint8_t* data, size_t size)
     uint32_t* height = nullptr;
     uint64_t* surfaceId = nullptr;
     float matrix[16] = {0};
-    std::share_ptr<FrameAvailableListener> listener = nullptr;
+    std::shared_ptr<FrameAvailableListener> listener = nullptr;
     int fenceFd = 0;
 
     adapter.AcquireNativeWindowBuffer(windowBuffer, acquireFenceFd);
