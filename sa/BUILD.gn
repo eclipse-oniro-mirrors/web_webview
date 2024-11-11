@@ -22,7 +22,10 @@ group("app_fwk_update") {
 }
 
 config("web_sa_interface") {
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "include",
+    "${target_gen_dir}",
+  ]
 }
 
 idl_interface_sources = [
