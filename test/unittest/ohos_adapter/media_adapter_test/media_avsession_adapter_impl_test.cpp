@@ -870,6 +870,17 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(::testing::Return(2));
     ret = g_adapter->UpdateMetaDataCache(positionMock);
     EXPECT_EQ(ret, true);
+    g_adapter->avMetadata_ = nullptr;
+
+    g_adapter->avMetadata_ = avmetadata;
+    g_adapter->avMetadata_->SetDuration(3);
+    EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(::testing::Return(INT64_MAX));
+    ret = g_adapter->UpdateMetaDataCache(positionMock);
+    EXPECT_EQ(ret, true);
+
+    std::shared_ptr<MediaAVSessionPositionAdapter> p_null = std::shared_ptr<MediaAVSessionPositionAdapter>();
+    ret = g_adapter->UpdateMetaDataCache(p_null);
+    EXPECT_EQ(ret, false);
 }
 
 /**
