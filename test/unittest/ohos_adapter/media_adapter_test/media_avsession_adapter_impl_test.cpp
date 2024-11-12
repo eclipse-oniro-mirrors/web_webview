@@ -872,9 +872,9 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     EXPECT_EQ(ret, true);
     g_adapter->avMetadata_ = nullptr;
 
-    positionMock->SetDuration(INT64_MAX);
     g_adapter->avMetadata_ = avmetadata;
-    g_adapter->avMetadata_->SetDuration(1);
+    g_adapter->avMetadata_->SetDuration(3);
+    EXPECT_CALL(*positionMock, GetDuration()).WillRepeatedly(::testing::Return(INT64_MAX));
     ret = g_adapter->UpdateMetaDataCache(positionMock);
     EXPECT_EQ(ret, true);
 
