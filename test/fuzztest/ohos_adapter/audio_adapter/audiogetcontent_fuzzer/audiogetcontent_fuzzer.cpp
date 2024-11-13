@@ -18,12 +18,15 @@
 #include <cstring>
 #include <securec.h>
 #include <array>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "audio_renderer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool AudioGetContentFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -41,7 +44,9 @@ bool AudioGetContentFuzzTest(const uint8_t* data, size_t size)
     for (auto& content : contentArray)
         AudioRendererAdapterImpl::GetAudioContentType(content);
 
-    AudioRendererAdapterImpl::GetAudioContentType(static_cast<AudioAdapterContentType>(-1));
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t ContentType = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    AudioRendererAdapterImpl::GetAudioContentType(static_cast<AudioAdapterContentType>(ContentType));
     return true;
 }
 } // namespace OHOS

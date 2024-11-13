@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "display_manager_adapter_impl.h"
 
@@ -24,6 +25,7 @@ using namespace OHOS::NWeb;
 using namespace OHOS::Rosen;
 
 namespace OHOS {
+constexpr DisplayId MAX_DISPLAY_ID = 1000;
 bool DisplayCreateFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -31,7 +33,9 @@ bool DisplayCreateFuzzTest(const uint8_t* data, size_t size)
     }
     std::shared_ptr<DisplayListenerAdapter> listener = nullptr;
     DisplayListenerAdapterImpl display(listener);
-    display.OnCreate(static_cast<DisplayId>(1));
+    FuzzedDataProvider fuzzedData(data, size);
+    DisplayId randmoId = fuzzedData.ConsumeIntegralInRange<DisplayId>(0, MAX_DISPLAY_ID);
+    display.OnCreate(randmoId);
     return true;
 }
 } // namespace OHOS

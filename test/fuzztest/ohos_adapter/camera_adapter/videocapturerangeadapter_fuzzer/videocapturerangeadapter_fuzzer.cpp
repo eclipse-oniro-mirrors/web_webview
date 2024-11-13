@@ -14,6 +14,7 @@
  */
 
 #include "videocapturerangeadapter_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "camera_manager_adapter_impl.h"
@@ -23,15 +24,18 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr float MAX_FLOAT_VALUE = 1000.0;
 
 bool VideoCaptureRangeAdapterFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    float volume = dataProvider.ConsumeFloatingPointInRange<float>(0, MAX_FLOAT_VALUE);
     OHOS::NWeb::VideoCaptureRangeAdapterImpl adapter;
     adapter.SetMin(0.0);
-    adapter.SetMax(1.0);
+    adapter.SetMax(volume);
     adapter.SetStep(1.0);
     adapter.SetCurrent(0.0);
 

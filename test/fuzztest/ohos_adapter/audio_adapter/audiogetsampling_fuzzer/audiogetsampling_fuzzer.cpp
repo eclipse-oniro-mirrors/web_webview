@@ -17,22 +17,27 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "audio_renderer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool AudioGetSamplingFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        AudioRendererAdapterImpl adapter;
-        adapter.GetAudioSamplingRate(static_cast<AudioAdapterSamplingRate>(0));
-        return true;
+constexpr uint32_t MAX_STRING_LENGTH = 10000;
+bool AudioGetSamplingFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    FuzzedDataProvider fuzzedData(data, size);
+    AudioRendererAdapterImpl adapter;
+    uint32_t samplingRateValue = fuzzedData.ConsumeIntegralInRange<uint32_t>(0, MAX_STRING_LENGTH);
+    AudioAdapterSamplingRate samplingRate = static_cast<AudioAdapterSamplingRate>(samplingRateValue);
+    adapter.GetAudioSamplingRate(samplingRate);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
