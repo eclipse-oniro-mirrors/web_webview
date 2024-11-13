@@ -18,19 +18,22 @@
 #include <cstring>
 #include <securec.h>
 
+#include <fuzzer/FuzzedDataProvider.h>
 #include "nweb_adapter_helper.h"
 #include "nweb_helper.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
 bool LoadLibFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
 
-    const std::string path("/data/app/el1/bundle/public/com.ohos.nweb");
+    FuzzedDataProvider dataProvider(data, size);
+    std::string path = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     NWebHelper::Instance().SetBundlePath(path);
 
     NWebAdapterHelper::Instance().Init(true);
