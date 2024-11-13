@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "ohos_web_data_base_adapter_impl.h"
 #include "rdb_sql_utils.h"
@@ -25,12 +26,15 @@ using namespace OHOS::NWeb;
 using namespace OHOS::NativeRdb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
 bool DatabaseOnCreateFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    std::string name = "web_test.db";
+    FuzzedDataProvider dataProvider(data, size);
+    std::string name = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     std::string bundleName = "com.example";
     std::string databaseDir = "/data";
     int32_t errorCode = E_OK;

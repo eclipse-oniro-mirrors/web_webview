@@ -24,18 +24,25 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool AudioDeviceChangeFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> cb = nullptr;
+bool AudioDeviceChangeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; i++) {
+        std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> cb;
         AudioManagerDeviceChangeCallbackAdapterImpl adapter(cb);
         DeviceChangeAction deviceChangeAction;
         adapter.OnDeviceChange(deviceChangeAction);
-        return true;
     }
+    std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> cb;
+    AudioManagerDeviceChangeCallbackAdapterImpl adapter(cb);
+    DeviceChangeAction deviceChangeAction;
+    adapter.OnDeviceChange(deviceChangeAction);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
