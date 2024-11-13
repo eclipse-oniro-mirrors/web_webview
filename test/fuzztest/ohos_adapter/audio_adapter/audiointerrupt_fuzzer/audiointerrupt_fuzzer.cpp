@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
@@ -24,6 +25,8 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool AudioInterruptFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -39,6 +42,10 @@ bool AudioInterruptFuzzTest(const uint8_t* data, size_t size)
     interruptAction.interruptHint = InterruptHint::INTERRUPT_HINT_RESUME;
     adapter.OnInterrupt(interruptAction);
     interruptAction.interruptHint = static_cast<InterruptHint>(-1);
+    adapter.OnInterrupt(interruptAction);
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t InterruptHintValue = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    interruptAction.interruptHint = static_cast<InterruptHint>(InterruptHintValue);
     adapter.OnInterrupt(interruptAction);
     return true;
 }

@@ -23,20 +23,25 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool IsChargingFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        double level = 0;
-        bool isCharging = 0;
-        int disChargingTime = 0;
-        int chargingTime = 0;
+bool IsChargingFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
+    double level = 0;
+    bool isCharging = 0;
+    int disChargingTime = 0;
+    int chargingTime = 0;
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
         WebBatteryInfoImpl batter(level, isCharging, disChargingTime, chargingTime);
         batter.IsCharging();
-        return true;
     }
+    WebBatteryInfoImpl batter(level, isCharging, disChargingTime, chargingTime);
+    batter.IsCharging();
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

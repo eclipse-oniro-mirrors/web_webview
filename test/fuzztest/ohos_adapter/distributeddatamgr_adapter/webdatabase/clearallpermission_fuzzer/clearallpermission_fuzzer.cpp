@@ -29,7 +29,10 @@ bool ClearAllPermissionFuzzTest(const uint8_t* data, size_t size)
         return false;
     }
     WebPermissionType key = WebPermissionType::GEOLOCATION;
-    OhosWebPermissionDataBaseAdapterImpl::GetInstance().ClearAllPermission(key);
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
+        OhosWebPermissionDataBaseAdapterImpl::GetInstance().ClearAllPermission(key);
+    }
     return true;
 }
 } // namespace OHOS
