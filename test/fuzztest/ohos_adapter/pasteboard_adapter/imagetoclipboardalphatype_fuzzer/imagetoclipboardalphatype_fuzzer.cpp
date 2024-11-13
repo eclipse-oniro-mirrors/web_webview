@@ -30,14 +30,17 @@ bool ImageToClipboardAlphaTypeFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
         std::make_shared<PasteDataRecordAdapterImpl>("pixelMap");
     Media::ImageInfo imgInfo;
-    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
-    dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
-    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
-    dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
-    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
-    dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
-    imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
-    dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
+        imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNKNOWN;
+        dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+        imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
+        dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+        imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_PREMUL;
+        dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+        imgInfo.alphaType = Media::AlphaType::IMAGE_ALPHA_TYPE_UNPREMUL;
+        dataRecordAdapterImpl->ImageToClipboardAlphaType(imgInfo);
+    }
     return true;
 }
 } // namespace OHOS

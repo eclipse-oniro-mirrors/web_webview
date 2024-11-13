@@ -20,10 +20,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "print_manager_adapter_impl.h"
 
 namespace OHOS::NWeb {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
@@ -33,7 +35,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 
     std::vector<std::string> fileList = { "/data/storage/el2/base/print.png" };
     std::vector<uint32_t> fdList = { 1 };
-    std::string taskId;
+    FuzzedDataProvider dataProvider(data, size);
+    std::string taskId = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     PrintManagerAdapterImpl::GetInstance().StartPrint(fileList, fdList, taskId);
     std::shared_ptr<PrintDocumentAdapterAdapter> printDocumentAdapterImpl;
     PrintAttributesAdapter printAttributesAdapter;
@@ -41,7 +44,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     void* token = nullptr;
     PrintManagerAdapterImpl::GetInstance().Print("webPrintTestJob", printDocumentAdapterImpl,
         printAttributesAdapter, token);
-
     return 0;
 }
 

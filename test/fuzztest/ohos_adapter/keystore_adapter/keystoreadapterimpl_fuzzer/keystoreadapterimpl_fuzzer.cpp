@@ -16,12 +16,15 @@
 #include "keystoreadapterimpl_fuzzer.h"
 
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "keystore_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
 bool ApplyKeystoreAdapterImplFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t))) {
@@ -39,8 +42,10 @@ bool ApplyKeystoreAdapterImplFuzzTest(const uint8_t* data, size_t size)
         KeystoreAdapterImpl::GetInstance().InitParamSet(&paramSet, nullptr, sizeof(decryptParams) / sizeof(HksParam));
     result = KeystoreAdapterImpl::GetInstance().InitParamSet(
         &paramSet, decryptParams, sizeof(decryptParams) / sizeof(HksParam));
-    std::string alias = "test";
-    std::string plainData = "web_test";
+
+    FuzzedDataProvider dataProvider(data, size);
+    std::string alias = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    std::string plainData = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     std::string encryptString = KeystoreAdapterImpl::GetInstance().EncryptKey(alias, plainData);
     std::string DecryptString = KeystoreAdapterImpl::GetInstance().DecryptKey(alias, encryptString);
     return true;

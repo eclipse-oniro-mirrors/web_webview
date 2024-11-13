@@ -16,6 +16,7 @@
 #include "sensoradapter_fuzz.h"
 
 #include <vector>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "sensor_adapter_impl.h"
@@ -23,6 +24,7 @@
 
 namespace OHOS {
 namespace NWeb {
+constexpr int MAX_SET_NUMBER = 1000;
 
 class SensorCallbackAdapterMock : public SensorCallbackAdapter {
 public:
@@ -46,8 +48,10 @@ bool SensorAdapterFuzzTest(const uint8_t* data, size_t size)
     callback->UpdateOhosSensorData(timestamp, value1, value2, value3, value4);
     NWeb::SensorAdapterImpl sensorAdapterImpl;
     std::vector<int32_t> sensorTypes = { 2, 3, 4, 5, 6, 8, 9, 11 };
+
+    FuzzedDataProvider dataProvider(data, size);
     for (int32_t sensorTypeId : sensorTypes) {
-        int64_t samplingInterval = 1000;
+        int64_t samplingInterval = dataProvider.ConsumeIntegralInRange<int64_t>(0, MAX_SET_NUMBER);
         sensorAdapterImpl.IsOhosSensorSupported(sensorTypeId);
         sensorAdapterImpl.GetOhosSensorReportingMode(sensorTypeId);
         sensorAdapterImpl.GetOhosSensorDefaultSupportedFrequency(sensorTypeId);
