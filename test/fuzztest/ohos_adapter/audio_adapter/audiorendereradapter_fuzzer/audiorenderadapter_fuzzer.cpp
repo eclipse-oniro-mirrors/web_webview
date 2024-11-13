@@ -17,17 +17,23 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "audio_renderer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool AudioRendererAdapterFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
+constexpr int MAX_SET_NUMBER = 1000;
+
+bool AudioRendererAdapterFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t channelValue = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+
     AudioRendererAdapterImpl audioRendererAdapterImpl;
     uint8_t buffer[100];
     size_t bufferSize = sizeof(buffer);
@@ -35,7 +41,7 @@ namespace OHOS {
     AudioAdapterSamplingRate samplingRate = AudioAdapterSamplingRate::SAMPLE_RATE_44100;
     AudioAdapterEncodingType encodingType = AudioAdapterEncodingType::ENCODING_PCM;
     AudioAdapterSampleFormat sampleFormat = AudioAdapterSampleFormat::SAMPLE_S16LE;
-    AudioAdapterChannel channel = AudioAdapterChannel::STEREO;
+    AudioAdapterChannel channel = static_cast<NWeb::AudioAdapterChannel>(channelValue);
     AudioAdapterContentType contentType = AudioAdapterContentType::CONTENT_TYPE_MUSIC;
     AudioAdapterStreamUsage streamUsage = AudioAdapterStreamUsage::STREAM_USAGE_MEDIA;
     audioRendererAdapterImpl.Create(nullptr, "");

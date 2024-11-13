@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "aafwk_app_mgr_client_adapter_impl.h"
 #include "aafwk_render_scheduler_impl.h"
@@ -25,6 +26,8 @@ using namespace OHOS::NWeb;
 using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
 bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -34,7 +37,9 @@ bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter = nullptr;
     render.AttachRenderProcess(adapter);
     std::shared_ptr<AafwkAppMgrClientAdapterImpl> newadapter = std::make_shared<AafwkAppMgrClientAdapterImpl>();
-    std::string renderParam = "test";
+
+    FuzzedDataProvider dataProvider(data, size);
+    std::string renderParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     int32_t ipcFd = 0;
     int32_t sharedFd = 0;
     int32_t crashFd = 0;

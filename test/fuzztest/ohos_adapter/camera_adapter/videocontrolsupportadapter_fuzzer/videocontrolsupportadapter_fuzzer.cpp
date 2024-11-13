@@ -33,14 +33,16 @@ bool VideoControlSupportAdapterFuzzTest(const uint8_t* data, size_t size)
         return false;
     }
     OHOS::NWeb::VideoControlSupportAdapterImpl adapter;
-    adapter.SetPan(true);
-    adapter.SetTilt(true);
-    adapter.SetZoom(true);
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
+        adapter.SetPan(true);
+        adapter.SetTilt(true);
+        adapter.SetZoom(true);
 
-    // 获取adapter的值并忽略它们
-    adapter.GetPan();
-    adapter.GetTilt();
-    adapter.GetZoom();
+        adapter.GetPan();
+        adapter.GetTilt();
+        adapter.GetZoom();
+    }
     return true;
 }
 } // namespace OHOS

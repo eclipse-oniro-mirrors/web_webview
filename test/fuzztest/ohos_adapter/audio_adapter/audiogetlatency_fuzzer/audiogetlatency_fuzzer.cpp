@@ -29,6 +29,11 @@ bool AudioGetLatencyFuzzTest(const uint8_t* data, size_t size)
         return false;
     }
     std::shared_ptr<NWeb::AudioRendererAdapterImpl> adapter = std::make_shared<AudioRendererAdapterImpl>();
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; i++) {
+        uint64_t latency = 0;
+        adapter->GetLatency(latency);
+    }
     uint64_t latency = 0;
     adapter->GetLatency(latency);
     return true;

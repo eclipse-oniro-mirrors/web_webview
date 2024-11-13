@@ -31,6 +31,10 @@ bool GetOrientationFuzzTest(const uint8_t* data, size_t size)
     }
     sptr<Display> listener = nullptr;
     DisplayAdapterImpl display(listener);
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; i++) {
+        display.GetOrientation();
+    }
     display.GetOrientation();
     return true;
 }
