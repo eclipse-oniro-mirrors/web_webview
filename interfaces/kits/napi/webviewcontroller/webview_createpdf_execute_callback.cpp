@@ -159,6 +159,10 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCbAsync(
             },
             nullptr, nullptr);
         if (status != napi_status::napi_ok) {
+            if (webArrayBufferExt) {
+                delete webArrayBufferExt;
+                webArrayBufferExt = nullptr;
+            }
             WVLOG_E("napi_wrap failed");
             return;
         }
@@ -204,6 +208,10 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCbPromise(
         },
         nullptr, nullptr);
     if (status != napi_status::napi_ok) {
+        if (webArrayBufferExt) {
+            delete webArrayBufferExt;
+            webArrayBufferExt = nullptr;
+        }
         WVLOG_E("napi_wrap failed.");
         return;
     }
