@@ -1383,6 +1383,12 @@ public:
      */
     /*--ark web()--*/
     void SetTransformHint(uint32_t rotation) override;
+
+    /**
+     * @brief Web components blur when the keyboard is hidden by gesture back.
+     */
+    /*--ark web()--*/
+    void WebComponentsBlur() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
