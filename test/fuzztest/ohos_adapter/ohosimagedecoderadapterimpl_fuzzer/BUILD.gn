@@ -20,8 +20,7 @@ import("$webview_path/config.gni")
 ##############################fuzztest##########################################
 ohos_fuzztest("OhosImageDecoderAdapterImplFuzzTest") {
   module_out_path = webview_fuzz_test_path
-  fuzz_config_file =
-      "$webview_path/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer"
   include_dirs = [
     "$webview_path/ohos_adapter/interfaces",
     "$webview_path/ohos_adapter/ohos_image_adapter/include",

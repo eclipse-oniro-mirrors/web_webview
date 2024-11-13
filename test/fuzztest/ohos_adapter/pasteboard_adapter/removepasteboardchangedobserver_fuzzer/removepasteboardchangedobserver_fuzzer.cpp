@@ -15,11 +15,14 @@
 
 #include "removepasteboardchangedobserver_fuzzer.h"
 
+#include <fuzzer/FuzzedDataProvider.h>
+
 #include "pasteboard_client_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 using namespace OHOS::MiscServices;
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
 class MockPasteboardObserver : public PasteboardObserverAdapter {
 public:
     MockPasteboardObserver() = default;
@@ -30,7 +33,9 @@ bool RemovePasteboardChangedObserverFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    int32_t callbackId = static_cast<int32_t>(size);
+
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t callbackId = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
     PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(callbackId);
     return true;
 }

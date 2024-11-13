@@ -17,11 +17,12 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("SetAndGetRunWebInitCallbackFuzzTest") {
+ohos_fuzztest("NativeImageAdapterImplFuzzTest") {
   module_out_path = webview_fuzz_test_path
-  fuzz_config_file = "$webview_path/test/fuzztest/ohos_adapter/setandgetrunwebinitcallback_fuzzer"
+  fuzz_config_file =
+      "$webview_path/test/fuzztest/ohos_adapter/nativeImage_fuzzer"
   include_dirs = [
-    "$webview_path/ohos_adapter/ohos_init_web_adapter/include",
+    "$webview_path/ohos_adapter/graphic_adapter/include",
     "$webview_path/test/fuzztest",
   ]
   cflags = [
@@ -30,7 +31,7 @@ ohos_fuzztest("SetAndGetRunWebInitCallbackFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "setandgetrunwebinitcallback_fuzzer.cpp" ]
+  sources = [ "nativeImageadapter_fuzzer.cpp" ]
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
@@ -48,6 +49,6 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":SetAndGetRunWebInitCallbackFuzzTest",
+    ":NativeImageAdapterImplFuzzTest",
   ]
 }

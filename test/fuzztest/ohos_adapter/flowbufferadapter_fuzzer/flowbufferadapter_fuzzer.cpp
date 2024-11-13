@@ -17,6 +17,7 @@
 
 #include <securec.h>
 #include <sys/mman.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "ohos_adapter_helper.h"
 #define private public
@@ -25,6 +26,8 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool FlowBufferAdapterFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t))) {
@@ -32,7 +35,8 @@ bool FlowBufferAdapterFuzzTest(const uint8_t* data, size_t size)
     }
     auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
     int fd = 0;
-    size_t scriptLength = 10;
+    FuzzedDataProvider dataProvider(data, size);
+    size_t scriptLength = dataProvider.ConsumeIntegralInRange<size_t>(0, MAX_SET_NUMBER);
     flowbufferAdapter->CreateAshmem(scriptLength, PROT_READ | PROT_WRITE, fd);
     flowbufferAdapter->StartPerformanceBoost();
     close(fd);
