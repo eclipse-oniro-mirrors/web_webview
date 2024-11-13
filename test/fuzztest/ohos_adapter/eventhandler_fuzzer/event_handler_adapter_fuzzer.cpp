@@ -18,12 +18,15 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "event_handler_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 class EventHandlerFDListenerAdapterTest : public EventHandlerFDListenerAdapter {
 public:
     void OnReadable(int32_t fileDescriptor) override {}
@@ -31,8 +34,9 @@ public:
 
 bool EventHandlerAdapterFuzzTest(const uint8_t* data, size_t size)
 {
-    int32_t fileDescriptor = static_cast<int32_t>(size);
-    uint32_t events = static_cast<uint32_t>(size);
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t fileDescriptor = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    uint32_t events = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
 
     std::shared_ptr<EventHandlerFDListenerAdapter> listener = std::make_shared<EventHandlerFDListenerAdapterTest>();
 

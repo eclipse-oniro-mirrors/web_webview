@@ -16,12 +16,15 @@
 #include "capabilitydataadapterimpl_fuzzer.h"
 
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "capability_data_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool CapabilityDataAdapterImplFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -29,9 +32,10 @@ bool CapabilityDataAdapterImplFuzzTest(const uint8_t* data, size_t size)
     }
     OHOS::NWeb::CapabilityDataAdapterImpl capabilityDataAdapter;
 
-    int32_t width = static_cast<int32_t>(size);
-    int32_t height = static_cast<int32_t>(size);
-    int32_t frameRate = static_cast<int32_t>(size);
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t width = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    int32_t height = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    int32_t frameRate = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
 
     capabilityDataAdapter.SetMaxWidth(width);
     capabilityDataAdapter.SetMaxHeight(height);

@@ -49,7 +49,7 @@ bool NWebHelperFuzzTest(const uint8_t* data, size_t size)
     bool result = NWebHelper::Instance().LoadNWebSDK();
     (void)result;
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
-    result = NWebAdapterHelper::Instance().Init(false);
+    result = NWebAdapterHelper::Instance().Init(true);
     (void)result;
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);

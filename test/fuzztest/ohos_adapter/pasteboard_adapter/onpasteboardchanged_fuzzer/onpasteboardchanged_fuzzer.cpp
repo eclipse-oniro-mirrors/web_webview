@@ -32,6 +32,10 @@ bool OnPasteboardChangedFuzzTest(const uint8_t* data, size_t size)
     }
     std::shared_ptr<PasteboardObserverAdapter> observer = std::make_shared<MockPasteboardObserver>();
     PasteboardObserverAdapterImpl observerImpl(observer);
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; i++) {
+        observerImpl.OnPasteboardChanged();
+    }
     observerImpl.OnPasteboardChanged();
     return true;
 }

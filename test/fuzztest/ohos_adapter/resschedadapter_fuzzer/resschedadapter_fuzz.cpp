@@ -21,6 +21,7 @@
 #include <securec.h>
 #include <unordered_map>
 #include <vector>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "res_sched_client_adapter.h"
 
@@ -28,6 +29,7 @@ using namespace OHOS::NWeb;
 
 namespace OHOS {
 namespace NWeb {
+constexpr int MAX_SET_NUMBER = 1000;
 
 bool ResSchedAdapterFuzzTest(const uint8_t* data, size_t size)
 {
@@ -35,10 +37,12 @@ bool ResSchedAdapterFuzzTest(const uint8_t* data, size_t size)
         return false;
     }
 
+    FuzzedDataProvider dataProvider(data, size);
+
     pid_t pid = 1;
     pid_t tid = 1;
-    int32_t nwebId = static_cast<int32_t>(size);
-    uint32_t windowId = static_cast<uint32_t>(size);
+    int32_t nwebId = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    uint32_t windowId = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
 
     std::vector<ResSchedStatusAdapter> statuses = { ResSchedStatusAdapter::WEB_ACTIVE,
         ResSchedStatusAdapter::WEB_INACTIVE, ResSchedStatusAdapter::THREAD_CREATED,
