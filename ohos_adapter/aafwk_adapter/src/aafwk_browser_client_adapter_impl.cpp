@@ -160,6 +160,8 @@ void* AafwkBrowserClientAdapterImpl::QueryRenderSurface(int32_t surface_id)
             WVLOG_E("create the native window failed.");
             return nullptr;
         }
+        uint64_t usage = BUFFER_USAGE_MEM_DMA;
+        NativeWindowHandleOpt(window, SET_USAGE, usage);
         window_map_.emplace(surface_id, window);
         void* newNativeWindow = reinterpret_cast<NWebNativeWindow>(window);
         WVLOG_D("receive surface num = %{public}d", surface_id);

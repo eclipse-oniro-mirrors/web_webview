@@ -30,7 +30,10 @@ bool UnLockFuzzTest(const uint8_t* data, size_t size)
     }
     std::shared_ptr<OHOS::PowerMgr::RunningLock> lock;
     RunningLockAdapterImpl runningLockAdapter(lock);
-    runningLockAdapter.UnLock();
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
+        runningLockAdapter.UnLock();
+    }
     return true;
 }
 } // namespace OHOS

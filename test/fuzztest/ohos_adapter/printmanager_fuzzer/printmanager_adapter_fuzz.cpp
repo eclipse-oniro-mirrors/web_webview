@@ -20,52 +20,12 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "print_manager_adapter_impl.h"
 
 namespace OHOS::NWeb {
-
-const size_t MAX_LEN_STRING = 256;
-const size_t MAX_FD_LIST_SIZE = 10;
-
-bool StartPrintFuzzTest(PrintManagerAdapterImpl& adapter, const uint8_t* data, size_t size)
-{
-    std::vector<std::string> fileList;
-    std::vector<uint32_t> fdList;
-
-    for (size_t i = 0; i < (size % MAX_FD_LIST_SIZE + 1); ++i) {
-        std::string fileName(reinterpret_cast<const char*>(data), std::min(size, MAX_LEN_STRING - 1));
-        fileList.push_back(fileName);
-        fdList.push_back(i);
-    }
-
-    std::string taskId;
-
-    adapter.StartPrint(fileList, fdList, taskId);
-    return true;
-}
-
-bool PrintFuzzTest(PrintManagerAdapterImpl& adapter, const uint8_t* data, size_t size)
-{
-    std::string printJobName(reinterpret_cast<const char*>(data), std::min(size, MAX_LEN_STRING - 1));
-    std::shared_ptr<PrintDocumentAdapterAdapter> listener = nullptr;
-    PrintAttributesAdapter printAttributes;
-
-    adapter.Print(printJobName, listener, printAttributes);
-    return true;
-}
-
-bool PrintWithContextFuzzTest(PrintManagerAdapterImpl& adapter, const uint8_t* data, size_t size)
-{
-    std::string printJobName(reinterpret_cast<const char*>(data), std::min(size, MAX_LEN_STRING - 1));
-    std::shared_ptr<PrintDocumentAdapterAdapter> listener = nullptr;
-    PrintAttributesAdapter printAttributes;
-    void* contextToken = nullptr;
-
-    adapter.Print(printJobName, listener, printAttributes, contextToken);
-
-    return true;
-}
+constexpr uint8_t MAX_STRING_LENGTH = 255;
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
@@ -73,23 +33,17 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    PrintManagerAdapterImpl& adapter = PrintManagerAdapterImpl::GetInstance();
-
-    enum PrintFuzzOperation { START_PRINT, PRINT, PRINT_WITH_CONTEXT, MAX_PRINT_OPERATION };
-
-    PrintFuzzOperation operation = static_cast<PrintFuzzOperation>(data[0] % MAX_PRINT_OPERATION);
-
-    switch (operation) {
-        case START_PRINT:
-            return StartPrintFuzzTest(adapter, data + 1, size - 1);
-        case PRINT:
-            return PrintFuzzTest(adapter, data + 1, size - 1);
-        case PRINT_WITH_CONTEXT:
-            return PrintWithContextFuzzTest(adapter, data + 1, size - 1);
-        default:
-            return 0;
-    }
-
+    std::vector<std::string> fileList = { "/data/storage/el2/base/print.png" };
+    std::vector<uint32_t> fdList = { 1 };
+    FuzzedDataProvider dataProvider(data, size);
+    std::string taskId = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    PrintManagerAdapterImpl::GetInstance().StartPrint(fileList, fdList, taskId);
+    std::shared_ptr<PrintDocumentAdapterAdapter> printDocumentAdapterImpl;
+    PrintAttributesAdapter printAttributesAdapter;
+    PrintManagerAdapterImpl::GetInstance().Print("webPrintTestJob", printDocumentAdapterImpl, printAttributesAdapter);
+    void* token = nullptr;
+    PrintManagerAdapterImpl::GetInstance().Print("webPrintTestJob", printDocumentAdapterImpl,
+        printAttributesAdapter, token);
     return 0;
 }
 

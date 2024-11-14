@@ -956,6 +956,149 @@ namespace OHOS::Webview {
         return NWebError::NO_ERROR;
     }
 
+    bool WebviewControllerImpl::TerminateRenderProcess()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->TerminateRenderProcess();
+    }
+
+    void WebviewControllerImpl::CloseAllMediaPresentations()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->CloseAllMediaPresentations();
+    }
+
+    void WebviewControllerImpl::PauseAllMedia()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->PauseAllMedia();
+    }
+
+    void WebviewControllerImpl::ResumeAllMedia()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->ResumeAllMedia();
+    }
+
+    void WebviewControllerImpl::StopAllMedia()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->StopAllMedia();
+    }
+
+    void WebviewControllerImpl::SetPrintBackground(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->SetPrintBackground(enable);
+    }
+
+    bool WebviewControllerImpl::GetPrintBackground()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->GetPrintBackground();
+    }
+
+    bool WebviewControllerImpl::GetScrollable()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return true;
+        }
+        std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+        if(!setting) {
+            return true;
+        }
+        return setting->GetScrollable();
+    }
+
+    void WebviewControllerImpl::SetScrollable(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+        if(!setting) {
+            return;
+        }
+        setting->SetScrollable(enable);
+    }
+
+    void WebviewControllerImpl::EnableAdsBlock(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->EnableAdsBlock(enable);
+    }
+
+    bool WebviewControllerImpl::IsAdsBlockEnabled()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->IsAdsBlockEnabled();
+    }
+
+    bool WebviewControllerImpl::IsAdsBlockEnabledForCurPage()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->IsAdsBlockEnabledForCurPage();
+    }
+
+    bool WebviewControllerImpl::IsIntelligentTrackingPreventionEnabled()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->IsIntelligentTrackingPreventionEnabled();
+    }
+
+    void WebviewControllerImpl::EnableIntelligentTrackingPrevention(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->EnableIntelligentTrackingPrevention(enable);
+        }
+        return;
+    }
+
+    int32_t WebviewControllerImpl::GetMediaPlaybackState()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return static_cast<int32_t>(MediaPlaybackState::NONE);
+        }
+        return nweb_ptr->GetMediaPlaybackState();
+    }
+
     bool CheckSchemeName(const std::string& schemeName)
     {
         if (schemeName.empty() || schemeName.size() > MAX_CUSTOM_SCHEME_NAME_LENGTH) {

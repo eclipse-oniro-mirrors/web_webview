@@ -27,7 +27,6 @@ using namespace OHOS::NWeb;
 const std::string DEFAULT_MOUSE_DRAG_IMAGE { "/system/etc/device_status/drag_icon/Copy_Drag.svg" };
 
 namespace OHOS {
-
 bool ValidateInput(const uint8_t* data, size_t size)
 {
     return (data != nullptr) && (size >= sizeof(int32_t));
@@ -78,14 +77,16 @@ bool ApplyOhosImageDecoderAdapterFuzzTest(const uint8_t* data, size_t size)
     if (!ValidateInput(data, size)) {
         return false;
     }
-
-    auto adapter = CreateDecoderAdapter();
-    if (!adapter) {
-        return false;
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
+        auto adapter = CreateDecoderAdapter();
+        if (!adapter) {
+            return false;
+        }
+        HandleAbnormalCase(adapter);
+        return ProcessImageSource(adapter);
     }
-
-    HandleAbnormalCase(adapter);
-    return ProcessImageSource(adapter);
+    return true;
 }
 
 } // namespace OHOS

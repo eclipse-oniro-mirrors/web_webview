@@ -81,6 +81,8 @@ public:
     bool IsLTPODynamicApp(const std::string& bundleName) override;
 
     int32_t GetLTPOStrategy() override;
+
+    std::string GetVulkanStatus() override;
 private:
     SystemPropertiesAdapterImpl();
 

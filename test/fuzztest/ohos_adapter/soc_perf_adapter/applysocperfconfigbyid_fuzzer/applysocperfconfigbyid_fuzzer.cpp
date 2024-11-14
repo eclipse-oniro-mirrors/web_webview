@@ -16,18 +16,22 @@
 #include "applysocperfconfigbyid_fuzzer.h"
 
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "soc_perf_client_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool ApplySocPerfConfigByIdFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int32_t))) {
         return false;
     }
-    int32_t id = static_cast<int32_t>(size);
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t id = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
 
     SocPerfClientAdapterImpl perfClientAdapterImpl;
     perfClientAdapterImpl.ApplySocPerfConfigById(id);

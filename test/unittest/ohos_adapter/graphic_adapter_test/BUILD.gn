@@ -46,6 +46,7 @@ ohos_unittest("graphic_adapter_test") {
     "ability_runtime:app_manager",
     "c_utils:utils",
     "graphic_2d:libcomposer",
+    "graphic_2d:librender_service_base",
     "graphic_surface:surface",
     "hilog:libhilog",
     "relational_store:native_rdb",

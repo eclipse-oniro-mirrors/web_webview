@@ -922,4 +922,9 @@ bool ArkWebHandlerImpl::OnSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsSslErrorRes
         std::make_shared<ArkWebJsSslErrorResultWrapper>(result), static_cast<ArkWebSslError>(error),
             ArkWebStringVectorStructToClass(certChainData));
 }
+
+void ArkWebHandlerImpl::OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType)
+{
+    nweb_handler_->OnAccessibilityEvent(accessibilityId, eventType);
+}
 } // namespace OHOS::ArkWeb

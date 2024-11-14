@@ -17,15 +17,19 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "nweb_helper.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool GetNwebFuzzTest(const uint8_t* data, size_t size)
 {
-    int32_t nweb_id = static_cast<int32_t>(size);
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t nweb_id = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
 
     NWebHelper::Instance().GetNWeb(nweb_id);
 

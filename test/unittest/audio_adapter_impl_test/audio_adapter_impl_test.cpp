@@ -1121,7 +1121,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_GetChangeReason_029, TestSiz
         AudioStreamDeviceChangeReason::OLD_DEVICE_UNAVALIABLE,
         AudioStreamDeviceChangeReason::OVERRODE,
     };
-   
+
     std::shared_ptr<AudioOutputChangeCallbackAdapter> cb = std::make_shared<AudioOutputChangeCallbackMock>();
     EXPECT_NE(cb, nullptr);
     auto callBack = std::make_shared<AudioOutputChangeCallbackImpl>(cb);
@@ -1129,7 +1129,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_GetChangeReason_029, TestSiz
 
     for (auto& reason : reasonArray)
         callBack->GetChangeReason(reason);
-    
+
     AudioAdapterDeviceChangeReason testReason = callBack->GetChangeReason(
         static_cast<AudioStreamDeviceChangeReason>(-1)
     );
@@ -1148,8 +1148,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnOutputDeviceChange_030, Te
     EXPECT_NE(cb, nullptr);
     auto callBack = std::make_shared<AudioOutputChangeCallbackImpl>(cb);
     ASSERT_NE(callBack, nullptr);
-    
-    DeviceInfo deviceInfo;
+
+    AudioDeviceDescriptor deviceInfo(AudioDeviceDescriptor::DEVICE_INFO);
 
     AudioStreamDeviceChangeReason reason = AudioStreamDeviceChangeReason::UNKNOWN;
     callBack->OnOutputDeviceChange(deviceInfo, reason);
@@ -1182,7 +1182,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_SetAudioOutputChangeCallback
     ASSERT_NE(audioOutputChange, nullptr);
     int32_t retNum = audioOutputChange->SetAudioOutputChangeCallback(nullptr);
     EXPECT_NE(retNum, 0);
-    
+
     std::shared_ptr<AudioOutputChangeCallbackAdapter> callback = std::make_shared<AudioOutputChangeCallbackMock>();
     ASSERT_NE(callback, nullptr);
     retNum = audioOutputChange->SetAudioOutputChangeCallback(callback);
