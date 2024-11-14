@@ -1563,6 +1563,11 @@ public:
      */
     /*--ark web()--*/
     virtual void SetTransformHint(uint32_t rotation) {}
+
+    /**
+     * @brief Web components blur when the keyboard is hidden by gesture back.
+     */
+    virtual void WebComponentsBlur() {}
 };
 
 } // namespace OHOS::NWeb
