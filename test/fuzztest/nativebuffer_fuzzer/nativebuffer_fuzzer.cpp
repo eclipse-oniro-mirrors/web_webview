@@ -15,6 +15,8 @@
 #include "nativebuffer_fuzzer.h"
 #include "ohos_native_buffer_adapter_impl.h"
 
+#include <securec.h>
+
 using namespace OHOS::NWeb;
 namespace OHOS {
     bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
@@ -25,22 +27,32 @@ namespace OHOS {
 
         OhosNativeBufferAdapter &adapter = OhosNativeBufferAdapterImpl::GetInstance();
 
-        void* buffer = nullptr;
-        void* eglBuffer = nullptr;
-        adapter.AcquireBuffer(buffer);
-        adapter.GetEGLBuffer(buffer, &eglBuffer);
+        if(size > 0) {
+            void* buffer = malloc(size);
+            if(buffer == nullptr) {
+                return false;
+            }
 
-        void* nativeBuffer = nullptr;
-        void* nativeWindowBuffer = nullptr;
-        adapter.NativeBufferFromNativeWindowBuffer(nativeWindowBuffer, &nativeBuffer);
+            errno_t ret = memcpy_s(buffer, size, data, size);
+            if (ret != 0) {
+                return false;
+            }
 
-        adapter.GetSeqNum(nativeBuffer);
+            adapter.AcquireBuffer(buffer);
 
-        adapter.FreeEGLBuffer(buffer);
+            void* eglBuffer = nullptr;   
+            adapter.GetEGLBuffer(buffer, &eglBuffer);
 
-        adapter.Release(eglBuffer);
+            void* nativeBuffer = nullptr;
+            adapter.NativeBufferFromNativeWindowBuffer(buffer, &nativeBuffer);
+            adapter.GetSeqNum(nativeBuffer);
+            adapter.FreeEGLBuffer(buffer);
+            adapter.Release(eglBuffer);
 
-        return true;
+            return true;
+        } else {
+            return false;
+        }    
     }
 }
 
