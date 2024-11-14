@@ -1195,4 +1195,9 @@ void ArkWebNWebImpl::SetTransformHint(uint32_t rotation)
 {
     nweb_nweb_->SetTransformHint(rotation);
 }
+
+void ArkWebNWebImpl::WebComponentsBlur()
+{
+    nweb_nweb_->WebComponentsBlur();
+}
 } // namespace OHOS::ArkWeb
