@@ -121,7 +121,7 @@ AudioAdapterDeviceChangeReason AudioOutputChangeCallbackImpl::GetChangeReason(Au
 AudioOutputChangeCallbackImpl::AudioOutputChangeCallbackImpl(std::shared_ptr<AudioOutputChangeCallbackAdapter> cb)
     : cb_(cb) {};
 void AudioOutputChangeCallbackImpl::OnOutputDeviceChange(
-    const DeviceInfo& deviceInfo, const AudioStreamDeviceChangeReason reason)
+    const AudioDeviceDescriptor& deviceInfo, const AudioStreamDeviceChangeReason reason)
 {
     if (!cb_) {
         return;
@@ -295,7 +295,6 @@ void AudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
         WVLOG_E("audio rendderer is nullptr");
         return;
     }
-    audio_renderer_->SetSilentModeAndMixWithOthers(isSilentMode);
     WVLOG_D("AudioRendererAdapterImpl::SetAudioSilentMode isSilentMode: %{public}d", isSilentMode);
 }
 

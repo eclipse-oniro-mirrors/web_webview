@@ -28,6 +28,12 @@ bool IsUsedFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; i++) {
+        std::shared_ptr<OHOS::PowerMgr::RunningLock> lock;
+        RunningLockAdapterImpl runningLockAdapter(lock);
+        runningLockAdapter.IsUsed();
+    }
     std::shared_ptr<OHOS::PowerMgr::RunningLock> lock;
     RunningLockAdapterImpl runningLockAdapter(lock);
     runningLockAdapter.IsUsed();

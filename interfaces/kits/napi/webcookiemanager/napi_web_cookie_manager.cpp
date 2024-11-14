@@ -343,6 +343,30 @@ napi_value ConfigCookieAsyncPromise(
     return promise;
 }
 
+bool NapiWebCookieManager::GetStringParaAndEmitError(napi_env env, napi_value argv, 
+                                                     const std::string& parav, 
+                                                     std::string& value)
+{
+    if (!GetStringPara(env, argv, value)) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, parav.c_str(), "string"));
+        return false;
+    }
+    return true;
+}
+
+bool NapiWebCookieManager::GetBooleanParaAndEmitError(napi_env env, napi_value argv, 
+                                                      const std::string& parav, 
+                                                      bool& value)
+{
+    if (!GetBooleanPara(env, argv, value)) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, parav.c_str(), "boolean"));
+        return false;
+    }
+    return true;
+}
+
 napi_value NapiWebCookieManager::JsConfigCookieAsync(napi_env env, napi_callback_info info)
 {
     size_t argc = INTEGER_FOUR;
@@ -359,15 +383,8 @@ napi_value NapiWebCookieManager::JsConfigCookieAsync(napi_env env, napi_callback
 
     std::string url;
     std::string value;
-    if (!GetStringPara(env, argv[INTEGER_ZERO], url)) {
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "url", "string"));
-        return nullptr;
-    }
-
-    if (!GetStringPara(env, argv[INTEGER_ONE], value)) {
-        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "value", "string"));
+    if (!GetStringParaAndEmitError(env, argv[INTEGER_ZERO], "url", url)
+        || !GetStringParaAndEmitError(env, argv[INTEGER_ONE], "value", value)) {
         return nullptr;
     }
 
@@ -395,15 +412,8 @@ napi_value NapiWebCookieManager::JsConfigCookieAsync(napi_env env, napi_callback
     bool includeHttpOnly = false;
 
     if (argc == INTEGER_FOUR) {
-        if (!GetBooleanPara(env, argv[INTEGER_TWO], incognitoMode)) {
-            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "incognito", "boolean"));
-            return nullptr;
-        }
-
-        if (!GetBooleanPara(env, argv[INTEGER_THREE], includeHttpOnly)) {
-            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "includeHttpOnly", "boolean"));
+        if (!GetBooleanParaAndEmitError(env, argv[INTEGER_TWO], "incognito", incognitoMode)
+            || !GetBooleanParaAndEmitError(env, argv[INTEGER_THREE], "includeHttpOnly", includeHttpOnly)) {
             return nullptr;
         }
     }

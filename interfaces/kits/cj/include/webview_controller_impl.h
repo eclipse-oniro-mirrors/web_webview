@@ -62,6 +62,18 @@ namespace OHOS::Webview {
         ERROR
     };
 
+    enum class MediaPlaybackState: int {
+        NONE = 0,
+        PLAYING = 1,
+        PAUSED = 2,
+        STOPPED = 3
+    };
+
+    enum class RenderProcessMode: int {
+        SINGLE = 0,
+        MULTIPLE = 1
+    };
+
     class __attribute__((visibility("default"))) WebviewControllerImpl : public OHOS::FFI::FFIData {
         DECL_TYPE(WebviewControllerImpl, OHOS::FFI::FFIData)
     public:
@@ -217,6 +229,36 @@ namespace OHOS::Webview {
 
         static int32_t CustomizeSchemesArrayDataHandler(CArrScheme schemes);
 
+        bool TerminateRenderProcess();
+
+        void CloseAllMediaPresentations();
+
+        void PauseAllMedia();
+
+        void ResumeAllMedia();
+
+        void StopAllMedia();
+
+        void SetPrintBackground(bool enable);
+
+        bool GetPrintBackground();
+
+        bool GetScrollable();
+
+        void SetScrollable(bool enable);
+
+        void EnableAdsBlock(bool enable);
+
+        bool IsAdsBlockEnabled();
+
+        bool IsAdsBlockEnabledForCurPage();
+
+        bool IsIntelligentTrackingPreventionEnabled();
+
+        void EnableIntelligentTrackingPrevention(bool enable);
+
+        int32_t GetMediaPlaybackState();
+        
     public:
         static std::string customeSchemeCmdLine_;
         static bool existNweb_;

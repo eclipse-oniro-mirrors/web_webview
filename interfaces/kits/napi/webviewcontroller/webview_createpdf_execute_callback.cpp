@@ -44,7 +44,7 @@ void WebviewCreatePDFExecuteCallback::ReleaseArrayBufferExecuteParamAndUvWork(
 {
     if (param != nullptr) {
         if (param->result_ != nullptr) {
-            delete param->result_;
+            delete[] param->result_;
             param->result_ = nullptr;
         }
         delete param;
@@ -56,7 +56,7 @@ void WebviewCreatePDFExecuteCallback::ReleaseArrayBufferExecuteParamAndUvWork(
     }
 }
 
-void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* result, const long size)
+void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* value, const long size)
 {
     uv_loop_s* loop = nullptr;
     uv_work_t* work = nullptr;
@@ -79,12 +79,12 @@ void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* result, const l
     param->callbackRef_ = callbackRef_;
     param->deferred_ = deferred_;
     param->result_ = new (std::nothrow) char[size + 1];
-    if(param->result_ == nullptr){
+    if (param->result_ == nullptr) {
         WVLOG_E("new char failed");
         ReleaseArrayBufferExecuteParamAndUvWork(param, work);
         return;
     }
-    if (memcpy_s(param->result_, size, result, size) != 0) {
+    if (memcpy_s(param->result_, size, value, size) != 0) {
         WVLOG_E("[CreatePDF] memcpy failed");
         ReleaseArrayBufferExecuteParamAndUvWork(param, work);
         return;
@@ -159,6 +159,10 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCbAsync(
             },
             nullptr, nullptr);
         if (status != napi_status::napi_ok) {
+            if (webArrayBufferExt) {
+                delete webArrayBufferExt;
+                webArrayBufferExt = nullptr;
+            }
             WVLOG_E("napi_wrap failed");
             return;
         }
@@ -204,6 +208,10 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCbPromise(
         },
         nullptr, nullptr);
     if (status != napi_status::napi_ok) {
+        if (webArrayBufferExt) {
+            delete webArrayBufferExt;
+            webArrayBufferExt = nullptr;
+        }
         WVLOG_E("napi_wrap failed.");
         return;
     }

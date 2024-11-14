@@ -1366,6 +1366,23 @@ public:
      */
     /*--ark web()--*/
     void WebSendMouseEvent(const std::shared_ptr<OHOS::NWeb::NWebMouseEvent>& mouseEvent) override;
+
+    /**
+     * @Description: Get the accessibility visibility of the accessibility node by its accessibility id in the browser.
+     * @Input accessibility_id: The accessibility id of the accessibility node.
+     * @Return: The accessibility visibility of the accessibility node.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    bool GetAccessibilityVisible(int64_t accessibility_id) override;
+
+    /**
+     * @Description: Set the rotation to psurface.
+     * @Input rotation: The rotation of buffer.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    void SetTransformHint(uint32_t rotation) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

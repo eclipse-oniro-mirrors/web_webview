@@ -83,8 +83,7 @@
                 "openssl"
             ],
             "third_party": [
-                "chromium",
-                "cef"
+                "chromium"
             ]
         },
         "build": {
@@ -233,6 +232,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/location_adapter/createlocationproxyadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/graphic_adapter/vsyncadapter_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/graphic_adapter/nativeimageadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/flowbufferadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/multimodalinput_adapter/getdeviceids_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/multimodalinput_adapter/getkeyboardtype_fuzzer:fuzztest",

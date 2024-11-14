@@ -61,6 +61,15 @@ public:
     void OnChange(DisplayId) override {}
 };
 
+class FoldStatusListenerAdapterTest : public FoldStatusListenerAdapter {
+public:
+    FoldStatusListenerAdapterTest() = default;
+
+    virtual ~FoldStatusListenerAdapterTest() = default;
+
+    void OnFoldStatusChanged(FoldStatus foldstatus) override {}
+};
+
 class DisplayManagerAdapterImplTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -99,6 +108,8 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_001, TestS
     EXPECT_EQ(displayAdapterImpl->GetOrientation(), OrientationType::BUTT);
     EXPECT_EQ(displayAdapterImpl->GetDisplayOrientation(), DisplayOrientation::UNKNOWN);
     EXPECT_EQ(displayAdapterImpl->GetDpi(), -1);
+    EXPECT_EQ(displayAdapterImpl->GetFoldStatus(), FoldStatus::UNKNOWN);
+    EXPECT_EQ(displayAdapterImpl->IsFoldable(), false);
 }
 
 /**
@@ -223,6 +234,11 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_005, TestS
     EXPECT_EQ(displayManagerAdapterImpl->RegisterDisplayListener(listener), 1);
     EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(1));
     EXPECT_FALSE(displayManagerAdapterImpl->UnregisterDisplayListener(2));
+
+    std::shared_ptr<FoldStatusListenerAdapter> foldListener = std::make_shared<FoldStatusListenerAdapterTest>();
+    EXPECT_EQ(displayManagerAdapterImpl->RegisterFoldStatusListener(foldListener), 0);
+    EXPECT_EQ(displayManagerAdapterImpl->UnregisterFoldStatusListener(1), false);
+    EXPECT_EQ(displayManagerAdapterImpl->UnregisterFoldStatusListener(2), false);
     g_unregister = DMError::DM_OK;
 }
 
@@ -248,6 +264,8 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_006, TestS
     EXPECT_NE(displayAdapterImpl->GetOrientation(), OrientationType::BUTT);
     EXPECT_NE(displayAdapterImpl->GetDisplayOrientation(), DisplayOrientation::UNKNOWN);
     EXPECT_NE(displayAdapterImpl->GetDpi(), -1);
+    EXPECT_EQ(displayAdapterImpl->GetFoldStatus(), FoldStatus::UNKNOWN);
+    EXPECT_EQ(displayAdapterImpl->IsFoldable(), false);
 }
 
 /**
@@ -301,6 +319,71 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_008, TestS
     type = OHOS::Rosen::DisplayOrientation::LANDSCAPE_INVERTED;
     retType = displayAdapterImpl->ConvertDisplayOrientationType(type);
     EXPECT_EQ(retType, OHOS::NWeb::DisplayOrientation::LANDSCAPE_INVERTED);
+}
+
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_009.
+ * @tc.desc: test fold change.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_009, TestSize.Level1)
+{
+    std::shared_ptr<FoldStatusListenerAdapter> listener = std::make_shared<FoldStatusListenerAdapterTest>();
+    std::unique_ptr<FoldStatusListenerAdapterImpl> foldStatusListenerAdapterImpl =
+        std::make_unique<FoldStatusListenerAdapterImpl>(listener);
+    foldStatusListenerAdapterImpl->OnFoldStatusChanged(
+        NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL);
+    EXPECT_NE(foldStatusListenerAdapterImpl, nullptr);
+    std::unique_ptr<FoldStatusListenerAdapterImpl> foldStatusListenerAdapterImpl2 =
+        std::make_unique<FoldStatusListenerAdapterImpl>(nullptr);
+    foldStatusListenerAdapterImpl->OnFoldStatusChanged(
+        NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL);
+}
+
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_010.
+ * @tc.desc: test ConvertRotationType.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_010, TestSize.Level1)
+{
+    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = std::make_unique<DisplayAdapterImpl>(nullptr);
+    EXPECT_NE(displayAdapterImpl, nullptr);
+
+    NativeDisplayManager_FoldDisplayMode type =
+        NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL;
+    OHOS::NWeb::FoldStatus retType;
+    retType = displayAdapterImpl->ConvertFoldStatus(type);
+    EXPECT_EQ(retType, OHOS::NWeb::FoldStatus::FULL);
+    
+    type = NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN;
+    retType = displayAdapterImpl->ConvertFoldStatus(type);
+    EXPECT_EQ(retType, OHOS::NWeb::FoldStatus::MAIN);
+    
+    type = NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB;
+    retType = displayAdapterImpl->ConvertFoldStatus(type);
+    EXPECT_EQ(retType, OHOS::NWeb::FoldStatus::SUB);
+    
+    type = NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION;
+    retType = displayAdapterImpl->ConvertFoldStatus(type);
+    EXPECT_EQ(retType, OHOS::NWeb::FoldStatus::COORDINATION);
+}
+
+/**
+ * @tc.name: GetDpi_001.
+ * @tc.desc: test GetDpi.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, GetDpi_001, TestSize.Level1)
+{
+    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = std::make_unique<DisplayAdapterImpl>(nullptr);
+    EXPECT_NE(displayAdapterImpl, nullptr);
+
+    displayAdapterImpl->display_ = nullptr;
+    EXPECT_EQ(displayAdapterImpl->GetDpi(), -1);
 }
 }
 }
