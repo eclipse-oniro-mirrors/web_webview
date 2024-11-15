@@ -1026,7 +1026,7 @@ namespace OHOS::Webview {
             return true;
         }
         std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
-        if(!setting) {
+        if (!setting) {
             return true;
         }
         return setting->GetScrollable();
@@ -1039,7 +1039,7 @@ namespace OHOS::Webview {
             return;
         }
         std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
-        if(!setting) {
+        if (!setting) {
             return;
         }
         setting->SetScrollable(enable);
