@@ -37,14 +37,19 @@ ohos_shared_library("cj_webview_ffi") {
       "$target_gen_dir/../napi/protos/web_download.pb.cc",
       "$target_gen_dir/../napi/protos/web_download.pb.h",
       "src/geolocation_permission.cpp",
+      "src/geolocation_permission_ffi.cpp",
       "src/web_cookie_manager.cpp",
+      "src/web_cookie_manager_ffi.cpp",
       "src/web_data_base.cpp",
+      "src/web_data_base_ffi.cpp",
       "src/web_download_delegate_impl.cpp",
+      "src/web_download_ffi.cpp",
       "src/web_download_item_impl.cpp",
       "src/web_download_manager_impl.cpp",
       "src/web_scheme_handler_response_ffi.cpp",
       "src/web_scheme_handler_response_impl.cpp",
       "src/web_storage.cpp",
+      "src/web_storage_ffi.cpp",
       "src/webview_controller_impl.cpp",
       "src/webview_ffi.cpp",
       "src/webview_function.cpp",
@@ -63,6 +68,7 @@ ohos_shared_library("cj_webview_ffi") {
     ]
 
     external_deps = [
+      "ability_base:extractortool",
       "ability_runtime:app_context",
       "bundle_framework:appexecfwk_core",
       "c_utils:utils",
@@ -72,10 +78,12 @@ ohos_shared_library("cj_webview_ffi") {
       "image_framework:image",
       "image_framework:image_native",
       "init:libbegetutil",
+      "ipc:ipc_core",
       "napi:ace_napi",
       "napi:cj_bind_ffi",
       "napi:cj_bind_native",
       "protobuf:protobuf_lite",
+      "samgr:samgr_proxy",
     ]
   } else {
     defines += [ "PREVIEWER" ]

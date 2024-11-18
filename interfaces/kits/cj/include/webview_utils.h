@@ -17,116 +17,141 @@
 #define WEBVIEW_UTILS_H
 
 #include <cstdint>
+#include <map>
 #include <memory>
 #include <string>
+
 #include "cj_common_ffi.h"
 
 namespace OHOS {
 namespace Webview {
-    struct RetWebHeader {
-        char *headerKey;
-        char *headerValue;
-    };
+struct RetWebHeader {
+    char* headerKey;
+    char* headerValue;
+};
 
-    struct ArrWebHeader {
-        RetWebHeader *head;
-        int64_t size;
-    };
+struct ArrWebHeader {
+    RetWebHeader* head;
+    int64_t size;
+};
 
-    struct CHistoryItem {
-        int64_t icon;
-        char* historyUrl;
-        char* historyRawUrl;
-        char* title;
-    };
+struct CHistoryItem {
+    int64_t icon;
+    char* historyUrl;
+    char* historyRawUrl;
+    char* title;
+};
 
-    struct LoadDatas {
-        const char* cData;
-        const char* cMimeType;
-        const char* cEncoding;
-        const char* cBaseUrl;
-        const char* cHistoryUrl;
-    };
+struct LoadDatas {
+    const char* cData;
+    const char* cMimeType;
+    const char* cEncoding;
+    const char* cBaseUrl;
+    const char* cHistoryUrl;
+};
 
-    struct RetWebMessage {
-        char* messageStr;
-        CArrUI8 messageArr;
-    };
+struct RetWebMessage {
+    char* messageStr;
+    CArrUI8 messageArr;
+};
 
-    struct CError {
-        char *errorName;
-        char *errorMsg;
-    };
+struct CError {
+    char* errorName;
+    char* errorMsg;
+};
 
-    struct RetNumber {
-        int64_t numberInt;
-        double numberDouble;
-    };
+struct RetNumber {
+    int64_t numberInt;
+    double numberDouble;
+};
 
-    struct CArrDouble {
-        double *head;
-        int64_t size;
-    };
+struct CArrDouble {
+    double* head;
+    int64_t size;
+};
 
-    struct CArrBool {
-        bool *head;
-        int64_t size;
-    };
+struct CArrBool {
+    bool* head;
+    int64_t size;
+};
 
-    struct CArrValue {
-        char** strHead;
-        int64_t* intHead;
-        double* doubleHead;
-        bool* boolHead;
-        int64_t size;
-    };
+struct CArrValue {
+    char** strHead;
+    int64_t* intHead;
+    double* doubleHead;
+    bool* boolHead;
+    int64_t size;
+};
 
-    struct CWebStorageOrigin {
-        char* origin;
-        int64_t quota;
-        int64_t usage;
-    };
+struct CWebStorageOrigin {
+    char* origin;
+    int64_t quota;
+    int64_t usage;
+};
 
-    struct CArrWebStorageOrigin {
-        CWebStorageOrigin* cWebStorageOrigin;
-        int64_t size;
-    };
+struct CArrWebStorageOrigin {
+    CWebStorageOrigin* cWebStorageOrigin;
+    int64_t size;
+};
 
-    struct CScheme {
-        char* name;
-        bool isSupportCORS;
-        bool isSupportFetch;
-        bool isStandard;
-        bool isLocal;
-        bool isDisplayIsolated;
-        bool isSecure;
-        bool isCspBypassing;
-        bool isCodeCacheSupported;
-    };
+struct CScheme {
+    char* name;
+    bool isSupportCORS;
+    bool isSupportFetch;
+    bool isStandard;
+    bool isLocal;
+    bool isDisplayIsolated;
+    bool isSecure;
+    bool isCspBypassing;
+    bool isCodeCacheSupported;
+};
 
-    struct Scheme {
-        std::string name;
-        bool isSupportCORS;
-        bool isSupportFetch;
-        bool isStandard;
-        bool isLocal;
-        bool isDisplayIsolated;
-        bool isSecure;
-        bool isCspBypassing;
-        bool isCodeCacheSupported;
-        int32_t option = 0;
-    };
+struct Scheme {
+    std::string name;
+    bool isSupportCORS;
+    bool isSupportFetch;
+    bool isStandard;
+    bool isLocal;
+    bool isDisplayIsolated;
+    bool isSecure;
+    bool isCspBypassing;
+    bool isCodeCacheSupported;
+    int32_t option = 0;
+};
 
-    struct CArrScheme {
-        CScheme* cScheme;
-        int64_t size;
-    };
+struct CArrScheme {
+    CScheme* cScheme;
+    int64_t size;
+};
 
-    char* MallocCString(const std::string& origin);
-    uint8_t* MallocUInt8(const std::string& origin);
-    char** VectorToCArrString(const std::vector<std::string>& vec);
-    uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec);
-}
-}
+struct CacheOptions {
+    ArrWebHeader* arrHead;
+};
+
+struct COfflineResourceMap {
+    CArrString urlList;
+    uint8_t* resource;
+    int64_t resourceCSize;
+    ArrWebHeader responseHeaders;
+    int32_t type;
+};
+
+struct CArrOfflineResourceMap {
+    COfflineResourceMap* head;
+    int64_t size;
+};
+
+struct CRequestInfo {
+    char* url;
+    char* method;
+    char* formData;
+};
+
+char* MallocCString(const std::string& origin);
+uint8_t* MallocUInt8(const std::string& origin);
+char** VectorToCArrString(const std::vector<std::string>& vec);
+uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec);
+} // namespace Webview
+} // namespace OHOS
 
 #endif // WEBVIEW_UTILS_H

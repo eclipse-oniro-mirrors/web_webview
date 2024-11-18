@@ -13,22 +13,30 @@
  * limitations under the License.
  */
 
-#include <cstdint>
 #include "webview_controller_impl.h"
-#include "webview_javascript_execute_callback.h"
-#include "webview_javascript_result_callback.h"
-#include "webview_hasimage_callback.h"
+
+#include <cstdint>
+#include <nweb_helper.h>
+
+#include "application_context.h"
+#include "arkweb_scheme_handler.h"
+#include "bundle_mgr_proxy.h"
+#include "cj_common_ffi.h"
+#include "ffi_remote_data.h"
+#include "if_system_ability_manager.h"
+#include "iservice_registry.h"
 #include "native_arkweb_utils.h"
 #include "native_interface_arkweb.h"
-#include "cj_common_ffi.h"
-#include "application_context.h"
+#include "nweb_precompile_callback.h"
+#include "nweb_store_web_archive_callback.h"
+#include "parameters.h"
+#include "system_ability_definition.h"
+#include "web_errors.h"
+#include "webview_hasimage_callback.h"
+#include "webview_javascript_execute_callback.h"
+#include "webview_javascript_result_callback.h"
 #include "webview_log.h"
 #include "webview_utils.h"
-#include "nweb_store_web_archive_callback.h"
-#include <nweb_helper.h>
-#include "web_errors.h"
-#include "ffi_remote_data.h"
-#include "arkweb_scheme_handler.h"
 
 namespace OHOS::Webview {
     constexpr int MAX_CUSTOM_SCHEME_SIZE = 10;
@@ -1097,6 +1105,149 @@ namespace OHOS::Webview {
             return static_cast<int32_t>(MediaPlaybackState::NONE);
         }
         return nweb_ptr->GetMediaPlaybackState();
+    }
+
+    std::string WebviewControllerImpl::GetLastJavascriptProxyCallingFrameUrl()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return "";
+        }
+        return nweb_ptr->GetLastJavascriptProxyCallingFrameUrl();
+    }
+
+    void WebviewControllerImpl::StartCamera()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->StartCamera();
+    }
+
+    void WebviewControllerImpl::StopCamera()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->StopCamera();
+    }
+
+    void WebviewControllerImpl::CloseCamera()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        nweb_ptr->CloseCamera();
+    }
+
+    std::string WebviewControllerImpl::GetSurfaceId()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return "";
+        }
+        std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+        if (!setting) {
+            return "";
+        }
+        return setting->GetSurfaceId();
+    }
+
+    void WebviewControllerImpl::InjectOfflineResources(const std::vector<std::string>& urlList,
+        const std::vector<uint8_t>& resource, const std::map<std::string, std::string>& response_headers,
+        const uint32_t type)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        if (urlList.size() == 0) {
+            return;
+        }
+        std::string originUrl = urlList[0];
+        if (urlList.size() == 1) {
+            nweb_ptr->InjectOfflineResource(originUrl, originUrl, resource, response_headers, type);
+            return;
+        }
+
+        for (size_t i = 1; i < urlList.size(); i++) {
+            nweb_ptr->InjectOfflineResource(urlList[i], originUrl, resource, response_headers, type);
+        }
+    }
+
+    int32_t WebviewControllerImpl::SetUrlTrustList(const std::string& urlTrustList, std::string& detailErrMsg)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+
+        int ret = NWebError::NO_ERROR;
+        switch (nweb_ptr->SetUrlTrustListWithErrMsg(urlTrustList, detailErrMsg)) {
+            case static_cast<int>(UrlListSetResult::INIT_ERROR):
+                ret = NWebError::INIT_ERROR;
+                break;
+            case static_cast<int>(UrlListSetResult::PARAM_ERROR):
+                ret = NWebError::PARAM_CHECK_ERROR;
+                break;
+            case static_cast<int>(UrlListSetResult::SET_OK):
+                ret = NWebError::NO_ERROR;
+                break;
+            default:
+                ret = NWebError::PARAM_CHECK_ERROR;
+                break;
+        }
+        return ret;
+    }
+
+    void WebviewControllerImpl::SetPathAllowingUniversalAccess(
+        const std::vector<std::string>& pathList, std::string& errorPath)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        if (moduleName_.empty()) {
+            WEBVIEWLOGD("need to get module nme for path");
+            if (!GetHapModuleInfo()) {
+                WEBVIEWLOGE("GetHapModuleInfo failed")
+                moduleName_.clear();
+                return;
+            }
+        }
+        nweb_ptr->SetPathAllowingUniversalAccess(pathList, moduleName_, errorPath);
+    }
+
+    bool WebviewControllerImpl::GetHapModuleInfo()
+    {
+        sptr<ISystemAbilityManager> systemAbilityManager =
+            SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+        if (systemAbilityManager == nullptr) {
+            WEBVIEWLOGE("get SystemAbilityManager failed");
+            return false;
+        }
+        sptr<IRemoteObject> remoteObject = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+        if (remoteObject == nullptr) {
+            WEBVIEWLOGE("get Bundle Manager failed");
+            return false;
+        }
+        auto bundleMgr = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
+        if (bundleMgr == nullptr) {
+            WEBVIEWLOGE("get Bundle Manager failed");
+            return false;
+        }
+        AppExecFwk::BundleInfo bundleInfo;
+        if (bundleMgr->GetBundleInfoForSelf(
+                static_cast<int32_t>(AppExecFwk::GetBundleInfoFlag::GET_BUNDLE_INFO_WITH_HAP_MODULE),
+                bundleInfo) != 0) {
+            WEBVIEWLOGE("get bundle info failed");
+            return false;
+        }
+        moduleName_ = bundleInfo.moduleNames;
+        return true;
     }
 
     bool CheckSchemeName(const std::string& schemeName)
