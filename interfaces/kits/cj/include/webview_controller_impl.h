@@ -27,494 +27,522 @@
 #include "nweb_web_message.h"
 
 namespace OHOS::Webview {
-    enum class WebHitTestType : int {
-        EDIT = 0,
-        EMAIL,
-        HTTP,
-        HTTP_IMG,
-        IMG,
-        MAP,
-        PHONE,
-        UNKNOWN
+enum class WebHitTestType : int {
+    EDIT = 0,
+    EMAIL,
+    HTTP,
+    HTTP_IMG,
+    IMG,
+    MAP,
+    PHONE,
+    UNKNOWN
+};
+
+enum class SecurityLevel : int {
+    NONE = 0,
+    SECURE,
+    WARNING,
+    DANGEROUS
+};
+
+enum class CoreSecurityLevel : int {
+    NONE = 0,
+    SECURE = 3,
+    WARNING = 6,
+    DANGEROUS = 5
+};
+
+enum class WebMessageType : int {
+    NOTSUPPORT = 0,
+    STRING,
+    NUMBER,
+    BOOLEAN,
+    ARRAYBUFFER,
+    ARRAY,
+    ERROR
+};
+
+enum class MediaPlaybackState: int {
+    NONE = 0,
+    PLAYING = 1,
+    PAUSED = 2,
+    STOPPED = 3
+};
+
+enum class RenderProcessMode: int {
+    SINGLE = 0,
+    MULTIPLE = 1
+};
+
+enum class OfflineResourceType : int {
+    IMAGE = 0,
+    CSS,
+    CLASSIC_JS,
+    MODULE_JS
+};
+
+enum class UrlListSetResult : int {
+    INIT_ERROR = -2,
+    PARAM_ERROR = -1,
+    SET_OK = 0
+};
+
+class __attribute__((visibility("default"))) WebviewControllerImpl : public OHOS::FFI::FFIData {
+    DECL_TYPE(WebviewControllerImpl, OHOS::FFI::FFIData)
+public:
+    explicit WebviewControllerImpl() = default;
+
+    explicit WebviewControllerImpl(int32_t nwebId);
+
+    explicit WebviewControllerImpl(const std::string& webTag) : webTag_(webTag)
+    {
+        NWeb::NWebHelper::Instance().SetWebTag(-1, webTag_.c_str());
     };
 
-    enum class SecurityLevel : int {
-        NONE = 0,
-        SECURE,
-        WARNING,
-        DANGEROUS
-    };
+    bool IsInit();
 
-    enum class CoreSecurityLevel : int {
-        NONE = 0,
-        SECURE = 3,
-        WARNING = 6,
-        DANGEROUS = 5
-    };
+    void SetWebId(int32_t nwebId);
 
-    enum class WebMessageType : int {
-        NOTSUPPORT = 0,
-        STRING,
-        NUMBER,
-        BOOLEAN,
-        ARRAYBUFFER,
-        ARRAY,
-        ERROR
-    };
+    void InnerSetHapPath(const std::string& hapPath);
 
-    enum class MediaPlaybackState: int {
-        NONE = 0,
-        PLAYING = 1,
-        PAUSED = 2,
-        STOPPED = 3
-    };
+    int32_t GetWebId() const;
 
-    enum class RenderProcessMode: int {
-        SINGLE = 0,
-        MULTIPLE = 1
-    };
+    int32_t LoadUrl(std::string url);
 
-    class __attribute__((visibility("default"))) WebviewControllerImpl : public OHOS::FFI::FFIData {
-        DECL_TYPE(WebviewControllerImpl, OHOS::FFI::FFIData)
-    public:
-        explicit WebviewControllerImpl() = default;
+    int32_t LoadUrl(std::string url, std::map<std::string, std::string> headers);
 
-        explicit WebviewControllerImpl(int32_t nwebId);
+    ErrCode LoadData(
+        std::string data, std::string mimeType, std::string encoding, std::string baseUrl, std::string historyUrl);
 
-        explicit WebviewControllerImpl(const std::string& webTag) : webTag_(webTag)
-        {
-            NWeb::NWebHelper::Instance().SetWebTag(-1, webTag_.c_str());
-        };
+    int32_t PreFetchPage(std::string url);
 
-        bool IsInit();
+    int32_t PreFetchPage(std::string url, std::map<std::string, std::string> headers);
 
-        void SetWebId(int32_t nwebId);
+    int32_t SetAudioMuted(bool mute);
 
-        void InnerSetHapPath(const std::string &hapPath);
+    void SlideScroll(float vx, float vy);
 
-        int32_t GetWebId() const;
+    void PutNetworkAvailable(bool enable);
 
-        int32_t LoadUrl(std::string url);
+    void ClearClientAuthenticationCache();
 
-        int32_t LoadUrl(std::string url, std::map<std::string, std::string> headers);
+    void ClearSslCache();
 
-        ErrCode LoadData(std::string data, std::string mimeType, std::string encoding, std::string baseUrl,
-            std::string historyUrl);
+    void SearchNext(bool forward);
 
-        int32_t PreFetchPage(std::string url);
+    void ClearMatches();
 
-        int32_t PreFetchPage(std::string url, std::map<std::string, std::string> headers);
+    void SearchAllAsync(std::string str);
 
-        int32_t SetAudioMuted(bool mute);
+    ErrCode DeleteJavaScriptRegister(const std::string& objName, const std::vector<std::string>& methodList);
 
-        void SlideScroll(float vx, float vy);
+    void Refresh();
 
-        void PutNetworkAvailable(bool enable);
+    std::string GetUserAgent();
 
-        void ClearClientAuthenticationCache();
+    bool AccessForward();
 
-        void ClearSslCache();
+    bool AccessBackward();
 
-        void SearchNext(bool forward);
+    int32_t SetCustomUserAgent(const std::string& userAgent);
 
-        void ClearMatches();
+    std::string GetCustomUserAgent() const;
 
-        void SearchAllAsync(std::string str);
+    void RunJavaScript(std::string script, const std::function<void(RetDataCString)>& callbackRef);
 
-        ErrCode DeleteJavaScriptRegister(const std::string& objName,
-            const std::vector<std::string>& methodList);
+    void RunJavaScriptExt(std::string script, const std::function<void(RetDataI64)>& callbackRef);
 
-        void Refresh();
+    std::string GetUrl();
 
-        std::string GetUserAgent();
+    std::string GetOriginalUrl();
 
-        bool AccessForward();
+    void ScrollPageUp(bool top);
 
-        bool AccessBackward();
+    void ScrollPageDown(bool bottom);
 
-        int32_t SetCustomUserAgent(const std::string& userAgent);
+    void ScrollTo(float x, float y);
 
-        std::string GetCustomUserAgent() const;
+    void ScrollBy(float deltaX, float deltaY);
 
-        void RunJavaScript(std::string script, const std::function<void(RetDataCString)>& callbackRef);
+    void ScrollToWithAnime(float x, float y, int32_t duration);
 
-        void RunJavaScriptExt(std::string script, const std::function<void(RetDataI64)>& callbackRef);
+    void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration);
 
-        std::string GetUrl();
+    void Forward();
 
-        std::string GetOriginalUrl();
+    void Backward();
 
-        void ScrollPageUp(bool top);
+    int32_t BackOrForward(int32_t step);
 
-        void ScrollPageDown(bool bottom);
+    int32_t GetPageHeight();
 
-        void ScrollTo(float x, float y);
+    std::string GetTitle();
 
-        void ScrollBy(float deltaX, float deltaY);
+    int32_t Zoom(float factor);
 
-        void ScrollToWithAnime(float x, float y, int32_t duration);
+    int32_t ZoomIn();
 
-        void ScrollByWithAnime(float deltaX, float deltaY, int32_t duration);
+    int32_t ZoomOut();
 
-        void Forward();
+    int32_t RequestFocus();
 
-        void Backward();
+    void ClearHistory();
 
-        int32_t BackOrForward(int32_t step);
+    bool AccessStep(int32_t step);
 
-        int32_t GetPageHeight();
+    void OnActive();
 
-        std::string GetTitle();
+    void OnInactive();
 
-        int32_t Zoom(float factor);
-        
-        int32_t ZoomIn();
+    int32_t GetHitTest();
 
-        int32_t ZoomOut();
+    std::shared_ptr<NWeb::HitTestResult> GetHitTestValue();
 
-        int32_t RequestFocus();
+    void StoreWebArchiveCallback(
+        std::string baseName, bool autoName, const std::function<void(RetDataCString)>& callbackRef);
 
-        void ClearHistory();
+    void EnableSafeBrowsing(bool enable);
 
-        bool AccessStep(int32_t step);
+    bool IsSafeBrowsingEnabled();
 
-        void OnActive();
+    int32_t GetSecurityLevel();
 
-        void OnInactive();
+    bool IsIncognitoMode();
 
-        int32_t GetHitTest();
-        
-        std::shared_ptr<NWeb::HitTestResult> GetHitTestValue();
+    void RemoveCache(bool includeDiskFiles);
 
-        void StoreWebArchiveCallback(std::string baseName, bool autoName,
-            const std::function<void(RetDataCString)>& callbackRef);
+    std::shared_ptr<OHOS::NWeb::NWebHistoryList> GetHistoryList();
 
-        void EnableSafeBrowsing(bool enable);
+    bool GetFavicon(const void **data, size_t &width, size_t &height,
+        NWeb::ImageColorType &colorType, NWeb::ImageAlphaType &alphaType) const;
 
-        bool IsSafeBrowsingEnabled();
+    void SetNWebJavaScriptResultCallBack();
 
-        int32_t GetSecurityLevel();
+    void RegisterJavaScriptProxy(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::string& objName, const std::vector<std::string>& methodList);
 
-        bool IsIncognitoMode();
+    void Stop();
 
-        void RemoveCache(bool includeDiskFiles);
+    void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
 
-        std::shared_ptr<OHOS::NWeb::NWebHistoryList> GetHistoryList();
+    int32_t PostUrl(std::string& url, std::vector<char>& postData);
 
-        bool GetFavicon(const void **data, size_t &width, size_t &height,
-            NWeb::ImageColorType &colorType, NWeb::ImageAlphaType &alphaType) const;
+    std::vector<std::string> CreateWebMessagePorts();
 
-        void SetNWebJavaScriptResultCallBack();
+    ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
 
-        void RegisterJavaScriptProxy(const std::vector<std::function<char*(const char*)>>& cjFuncs,
-            const std::string& objName, const std::vector<std::string>& methodList);
+    std::vector<uint8_t> SerializeWebState();
 
-        void Stop();
+    bool RestoreWebState(const std::vector<uint8_t>& state) const;
 
-        void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
+    bool GetCertChainDerData(std::vector<std::string>& certChainDerData) const;
 
-        int32_t PostUrl(std::string& url, std::vector<char>& postData);
+    ErrCode HasImagesCallback(const std::function<void(RetDataBool)>& callbackRef);
 
-        std::vector<std::string> CreateWebMessagePorts();
+    static int32_t CustomizeSchemesArrayDataHandler(CArrScheme schemes);
 
-        ErrCode PostWebMessage(std::string& message, std::vector<std::string>& ports, std::string& targetUrl);
+    bool TerminateRenderProcess();
 
-        std::vector<uint8_t> SerializeWebState();
+    void CloseAllMediaPresentations();
 
-        bool RestoreWebState(const std::vector<uint8_t> &state) const;
+    void PauseAllMedia();
 
-        bool GetCertChainDerData(std::vector<std::string> &certChainDerData) const;
+    void ResumeAllMedia();
 
-        ErrCode HasImagesCallback(const std::function<void(RetDataBool)>& callbackRef);
+    void StopAllMedia();
 
-        static int32_t CustomizeSchemesArrayDataHandler(CArrScheme schemes);
+    void SetPrintBackground(bool enable);
 
-        bool TerminateRenderProcess();
+    bool GetPrintBackground();
 
-        void CloseAllMediaPresentations();
+    bool GetScrollable();
 
-        void PauseAllMedia();
+    void SetScrollable(bool enable);
 
-        void ResumeAllMedia();
+    void EnableAdsBlock(bool enable);
 
-        void StopAllMedia();
+    bool IsAdsBlockEnabled();
 
-        void SetPrintBackground(bool enable);
+    bool IsAdsBlockEnabledForCurPage();
 
-        bool GetPrintBackground();
+    bool IsIntelligentTrackingPreventionEnabled();
 
-        bool GetScrollable();
+    void EnableIntelligentTrackingPrevention(bool enable);
 
-        void SetScrollable(bool enable);
+    int32_t GetMediaPlaybackState();
 
-        void EnableAdsBlock(bool enable);
+    std::string GetLastJavascriptProxyCallingFrameUrl();
 
-        bool IsAdsBlockEnabled();
+    void StartCamera();
 
-        bool IsAdsBlockEnabledForCurPage();
+    void StopCamera();
 
-        bool IsIntelligentTrackingPreventionEnabled();
+    void CloseCamera();
 
-        void EnableIntelligentTrackingPrevention(bool enable);
+    std::string GetSurfaceId();
 
-        int32_t GetMediaPlaybackState();
-        
-    public:
-        static std::string customeSchemeCmdLine_;
-        static bool existNweb_;
-        static bool webDebuggingAccess_;
+    void InjectOfflineResources(const std::vector<std::string>& urlList, const std::vector<uint8_t>& resource,
+        const std::map<std::string, std::string>& response_headers, const uint32_t type);
 
-    private:
-        int ConverToWebHitTestType(int hitType);
+    int32_t SetUrlTrustList(const std::string& urlTrustList, std::string& detailErrMsg);
 
-    private:
-        std::mutex webMtx_;
-        int32_t nwebId_ = -1;
-        std::shared_ptr<WebviewJavaScriptResultCallBackImpl> javaScriptResultCb_ = nullptr;
-        std::string hapPath_ = "";
-        std::string webTag_ = "";
-    };
+    void SetPathAllowingUniversalAccess(const std::vector<std::string>& pathList, std::string& errorPath);
 
-    class __attribute__((visibility("default"))) WebHistoryListImpl : public OHOS::FFI::FFIData {
-        DECL_TYPE(WebHistoryListImpl, OHOS::FFI::FFIData)
-    public:
-        explicit WebHistoryListImpl(std::shared_ptr<NWeb::NWebHistoryList> sptrHistoryList)
-            :sptrHistoryList_(sptrHistoryList) {};
+public:
+    static std::string customeSchemeCmdLine_;
+    static bool existNweb_;
+    static bool webDebuggingAccess_;
 
-        int32_t GetCurrentIndex();
+private:
+    int ConverToWebHitTestType(int hitType);
+    bool GetHapModuleInfo();
 
-        std::shared_ptr<OHOS::NWeb::NWebHistoryItem> GetItem(int32_t index);
+private:
+    std::mutex webMtx_;
+    int32_t nwebId_ = -1;
+    std::shared_ptr<WebviewJavaScriptResultCallBackImpl> javaScriptResultCb_ = nullptr;
+    std::string hapPath_ = "";
+    std::string webTag_ = "";
+    std::vector<std::string> moduleName_;
+};
 
-        int32_t GetListSize();
-    private:
-        std::shared_ptr<OHOS::NWeb::NWebHistoryList> sptrHistoryList_ = nullptr;
-    };
+class __attribute__((visibility("default"))) WebHistoryListImpl : public OHOS::FFI::FFIData {
+    DECL_TYPE(WebHistoryListImpl, OHOS::FFI::FFIData)
+public:
+    explicit WebHistoryListImpl(std::shared_ptr<NWeb::NWebHistoryList> sptrHistoryList)
+        : sptrHistoryList_(sptrHistoryList) {};
 
-    class WebMessagePortImpl : public OHOS::FFI::FFIData {
-        DECL_TYPE(WebMessagePortImpl, OHOS::FFI::FFIData)
-    public:
-        WebMessagePortImpl(int32_t nwebId, std::string port, bool isExtentionType);
+    int32_t GetCurrentIndex();
 
-        ~WebMessagePortImpl() = default;
+    std::shared_ptr<OHOS::NWeb::NWebHistoryItem> GetItem(int32_t index);
 
-        ErrCode ClosePort();
+    int32_t GetListSize();
 
-        ErrCode PostPortMessage(std::shared_ptr<NWeb::NWebMessage> data);
+private:
+    std::shared_ptr<OHOS::NWeb::NWebHistoryList> sptrHistoryList_ = nullptr;
+};
 
-        ErrCode SetPortMessageCallback(std::shared_ptr<NWeb::NWebMessageValueCallback> callback);
+class WebMessagePortImpl : public OHOS::FFI::FFIData {
+    DECL_TYPE(WebMessagePortImpl, OHOS::FFI::FFIData)
+public:
+    WebMessagePortImpl(int32_t nwebId, std::string port, bool isExtentionType);
 
-        std::string GetPortHandle() const;
+    ~WebMessagePortImpl() = default;
 
-        bool IsExtentionType()
-        {
-            return isExtentionType_;
-        }
+    ErrCode ClosePort();
 
-    private:
-        int32_t nwebId_ = -1;
-        std::string portHandle_;
-        bool isExtentionType_;
-    };
+    ErrCode PostPortMessage(std::shared_ptr<NWeb::NWebMessage> data);
 
-    class WebMessageExtImpl : public OHOS::FFI::FFIData {
-        DECL_TYPE(WebMessageExtImpl, OHOS::FFI::FFIData)
-    public:
-        explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> data) : data_(data) {};
-        ~WebMessageExtImpl() = default;
+    ErrCode SetPortMessageCallback(std::shared_ptr<NWeb::NWebMessageValueCallback> callback);
 
-        void SetType(int type)
-        {
-            type_ = type;
-            WebMessageType jsType = static_cast<WebMessageType>(type);
-            NWeb::NWebValue::Type nwebType = NWeb::NWebValue::Type::NONE;
-            switch (jsType) {
-                case WebMessageType::STRING: {
-                    nwebType = NWeb::NWebValue::Type::STRING;
-                    break;
-                }
-                case WebMessageType::NUMBER: {
-                    nwebType = NWeb::NWebValue::Type::DOUBLE;
-                    break;
-                }
-                case WebMessageType::BOOLEAN: {
-                    nwebType = NWeb::NWebValue::Type::BOOLEAN;
-                    break;
-                }
-                case WebMessageType::ARRAYBUFFER: {
-                    nwebType = NWeb::NWebValue::Type::BINARY;
-                    break;
-                }
-                case WebMessageType::ARRAY: {
-                    nwebType = NWeb::NWebValue::Type::STRINGARRAY;
-                    break;
-                }
-                case WebMessageType::ERROR: {
-                    nwebType = NWeb::NWebValue::Type::ERROR;
-                    break;
-                }
-                default: {
-                    nwebType = NWeb::NWebValue::Type::NONE;
-                    break;
-                }
+    std::string GetPortHandle() const;
+
+    bool IsExtentionType()
+    {
+        return isExtentionType_;
+    }
+
+private:
+    int32_t nwebId_ = -1;
+    std::string portHandle_;
+    bool isExtentionType_;
+};
+
+class WebMessageExtImpl : public OHOS::FFI::FFIData {
+    DECL_TYPE(WebMessageExtImpl, OHOS::FFI::FFIData)
+public:
+    explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> data) : data_(data) {};
+    ~WebMessageExtImpl() = default;
+
+    void SetType(int type)
+    {
+        type_ = type;
+        WebMessageType jsType = static_cast<WebMessageType>(type);
+        NWeb::NWebValue::Type nwebType = NWeb::NWebValue::Type::NONE;
+        switch (jsType) {
+            case WebMessageType::STRING: {
+                nwebType = NWeb::NWebValue::Type::STRING;
+                break;
             }
-            if (data_) {
-                data_->SetType(nwebType);
+            case WebMessageType::NUMBER: {
+                nwebType = NWeb::NWebValue::Type::DOUBLE;
+                break;
+            }
+            case WebMessageType::BOOLEAN: {
+                nwebType = NWeb::NWebValue::Type::BOOLEAN;
+                break;
+            }
+            case WebMessageType::ARRAYBUFFER: {
+                nwebType = NWeb::NWebValue::Type::BINARY;
+                break;
+            }
+            case WebMessageType::ARRAY: {
+                nwebType = NWeb::NWebValue::Type::STRINGARRAY;
+                break;
+            }
+            case WebMessageType::ERROR: {
+                nwebType = NWeb::NWebValue::Type::ERROR;
+                break;
+            }
+            default: {
+                nwebType = NWeb::NWebValue::Type::NONE;
+                break;
             }
         }
-
-        int ConvertNwebType2JsType(NWeb::NWebValue::Type type)
-        {
-            WebMessageType jsType = WebMessageType::NOTSUPPORT;
-            switch (type) {
-                case NWeb::NWebValue::Type::STRING: {
-                    jsType = WebMessageType::STRING;
-                    break;
-                }
-                case NWeb::NWebValue::Type::DOUBLE:
-                case NWeb::NWebValue::Type::INTEGER: {
-                    jsType = WebMessageType::NUMBER;
-                    break;
-                }
-                case NWeb::NWebValue::Type::BOOLEAN: {
-                    jsType = WebMessageType::BOOLEAN;
-                    break;
-                }
-                case NWeb::NWebValue::Type::STRINGARRAY:
-                case NWeb::NWebValue::Type::DOUBLEARRAY:
-                case NWeb::NWebValue::Type::INT64ARRAY:
-                case NWeb::NWebValue::Type::BOOLEANARRAY: {
-                    jsType = WebMessageType::ARRAY;
-                    break;
-                }
-                case NWeb::NWebValue::Type::BINARY: {
-                    jsType = WebMessageType::ARRAYBUFFER;
-                    break;
-                }
-                case NWeb::NWebValue::Type::ERROR: {
-                    jsType = WebMessageType::ERROR;
-                    break;
-                }
-                default: {
-                    jsType = WebMessageType::NOTSUPPORT;
-                    break;
-                }
-            }
-            return static_cast<int>(jsType);
+        if (data_) {
+            data_->SetType(nwebType);
         }
+    }
 
-        int GetType()
-        {
-            if (data_) {
-                return ConvertNwebType2JsType(data_->GetType());
+    int ConvertNwebType2JsType(NWeb::NWebValue::Type type)
+    {
+        WebMessageType jsType = WebMessageType::NOTSUPPORT;
+        switch (type) {
+            case NWeb::NWebValue::Type::STRING: {
+                jsType = WebMessageType::STRING;
+                break;
             }
-            return static_cast<int>(WebMessageType::NOTSUPPORT);
-        }
-
-        void SetString(std::string value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::STRING);
-                data_->SetString(value);
+            case NWeb::NWebValue::Type::DOUBLE:
+            case NWeb::NWebValue::Type::INTEGER: {
+                jsType = WebMessageType::NUMBER;
+                break;
+            }
+            case NWeb::NWebValue::Type::BOOLEAN: {
+                jsType = WebMessageType::BOOLEAN;
+                break;
+            }
+            case NWeb::NWebValue::Type::STRINGARRAY:
+            case NWeb::NWebValue::Type::DOUBLEARRAY:
+            case NWeb::NWebValue::Type::INT64ARRAY:
+            case NWeb::NWebValue::Type::BOOLEANARRAY: {
+                jsType = WebMessageType::ARRAY;
+                break;
+            }
+            case NWeb::NWebValue::Type::BINARY: {
+                jsType = WebMessageType::ARRAYBUFFER;
+                break;
+            }
+            case NWeb::NWebValue::Type::ERROR: {
+                jsType = WebMessageType::ERROR;
+                break;
+            }
+            default: {
+                jsType = WebMessageType::NOTSUPPORT;
+                break;
             }
         }
+        return static_cast<int>(jsType);
+    }
 
-        void SetNumber(double value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::DOUBLE);
-                data_->SetDouble(value);
-            }
+    int GetType()
+    {
+        if (data_) {
+            return ConvertNwebType2JsType(data_->GetType());
         }
+        return static_cast<int>(WebMessageType::NOTSUPPORT);
+    }
 
-        void SetBoolean(bool value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::BOOLEAN);
-                data_->SetBoolean(value);
-            }
+    void SetString(std::string value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::STRING);
+            data_->SetString(value);
         }
+    }
 
-        void SetArrayBuffer(std::vector<uint8_t>& value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::BINARY);
-                data_->SetBinary(value);
-            }
+    void SetNumber(double value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::DOUBLE);
+            data_->SetDouble(value);
         }
+    }
 
-        void SetStringArray(std::vector<std::string> value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::STRINGARRAY);
-                data_->SetStringArray(value);
-            }
+    void SetBoolean(bool value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::BOOLEAN);
+            data_->SetBoolean(value);
         }
+    }
 
-        void SetDoubleArray(std::vector<double> value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::DOUBLEARRAY);
-                data_->SetDoubleArray(value);
-            }
+    void SetArrayBuffer(std::vector<uint8_t>& value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::BINARY);
+            data_->SetBinary(value);
         }
+    }
 
-        void SetInt64Array(std::vector<int64_t> value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::INT64ARRAY);
-                data_->SetInt64Array(value);
-            }
+    void SetStringArray(std::vector<std::string> value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::STRINGARRAY);
+            data_->SetStringArray(value);
         }
+    }
 
-        void SetBooleanArray(std::vector<bool> value)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::BOOLEANARRAY);
-                data_->SetBooleanArray(value);
-            }
+    void SetDoubleArray(std::vector<double> value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::DOUBLEARRAY);
+            data_->SetDoubleArray(value);
         }
+    }
 
-        void SetError(std::string name, std::string message)
-        {
-            if (data_) {
-                data_->SetType(NWeb::NWebValue::Type::ERROR);
-                data_->SetErrName(name);
-                data_->SetErrMsg(message);
-            }
+    void SetInt64Array(std::vector<int64_t> value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::INT64ARRAY);
+            data_->SetInt64Array(value);
         }
+    }
 
-        std::shared_ptr<NWeb::NWebMessage> GetData()
-        {
-            return data_;
+    void SetBooleanArray(std::vector<bool> value)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::BOOLEANARRAY);
+            data_->SetBooleanArray(value);
         }
+    }
 
-    private:
-        int type_ = 0;
-        std::shared_ptr<NWeb::NWebMessage> data_;
-    };
+    void SetError(std::string name, std::string message)
+    {
+        if (data_) {
+            data_->SetType(NWeb::NWebValue::Type::ERROR);
+            data_->SetErrName(name);
+            data_->SetErrMsg(message);
+        }
+    }
 
-    class NWebMessageCallbackImpl : public NWeb::NWebMessageValueCallback {
-    public:
-        NWebMessageCallbackImpl(std::function<void(RetWebMessage)> callback)
-            : callback_(callback)
-        {}
-        ~NWebMessageCallbackImpl() = default;
-        void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+    std::shared_ptr<NWeb::NWebMessage> GetData()
+    {
+        return data_;
+    }
 
-    private:
-        std::function<void(RetWebMessage)> callback_;
-    };
+private:
+    int type_ = 0;
+    std::shared_ptr<NWeb::NWebMessage> data_;
+};
 
-    class NWebWebMessageExtCallbackImpl : public NWeb::NWebMessageValueCallback {
-    public:
-        NWebWebMessageExtCallbackImpl(std::function<void(int64_t)> callback)
-            : callback_(callback)
-        {}
-        ~NWebWebMessageExtCallbackImpl() = default;
-        void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+class NWebMessageCallbackImpl : public NWeb::NWebMessageValueCallback {
+public:
+    NWebMessageCallbackImpl(std::function<void(RetWebMessage)> callback) : callback_(callback) {}
+    ~NWebMessageCallbackImpl() = default;
+    void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
 
-    private:
-        std::function<void(int64_t)> callback_;
-    };
-}
+private:
+    std::function<void(RetWebMessage)> callback_;
+};
+
+class NWebWebMessageExtCallbackImpl : public NWeb::NWebMessageValueCallback {
+public:
+    NWebWebMessageExtCallbackImpl(std::function<void(int64_t)> callback) : callback_(callback) {}
+    ~NWebWebMessageExtCallbackImpl() = default;
+    void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+
+private:
+    std::function<void(int64_t)> callback_;
+};
+} // namespace OHOS::Webview
 #endif // WEBVIEW_CONTROLLER_IMPL_FFI_H
