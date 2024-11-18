@@ -348,9 +348,11 @@ int32_t SystemPropertiesAdapterImpl::GetLTPOStrategy()
 
 std::string SystemPropertiesAdapterImpl::GetVulkanStatus()
 {
-    if (GetDeviceInfoProductModel() == "emulator") {
+    if((OHOS::system::GetParameter("const.gpu.vendor","0").compare("higpu.v200") == 0)
+        || (OHOS::system::GetParameter("const.gpu.vendor","0").compare("higpu.v210") == 0)) {
+        return OHOS::system::GetParameter("web.ohos.vulkan", "");
+    } else {
         return "false";
     }
-    return OHOS::system::GetParameter("web.ohos.vulkan", "");
 }
 } // namespace OHOS::NWeb
