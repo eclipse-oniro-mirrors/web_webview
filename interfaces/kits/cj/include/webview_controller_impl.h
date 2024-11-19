@@ -25,6 +25,7 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_web_message.h"
+#include "web_scheme_handler_request.h"
 
 namespace OHOS::Webview {
     enum class WebHitTestType : int {
@@ -72,6 +73,20 @@ namespace OHOS::Webview {
     enum class RenderProcessMode: int {
         SINGLE = 0,
         MULTIPLE = 1
+    };
+
+    enum class OfflineResourceType : int {
+        IMGAE = 0,
+        CSS,
+        CLASSIC_JS,
+        MODULE_JS
+    };
+
+    struct COfflineResourceMap {
+        CArrString urlList;
+        uint8_t* resource;
+        ArrWebHeader* responseHeaders;
+        int32_t type;
     };
 
     class __attribute__((visibility("default"))) WebviewControllerImpl : public OHOS::FFI::FFIData {
