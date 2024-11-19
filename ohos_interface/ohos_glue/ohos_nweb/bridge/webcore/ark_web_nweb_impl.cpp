@@ -1200,4 +1200,9 @@ void ArkWebNWebImpl::WebComponentsBlur()
 {
     nweb_nweb_->WebComponentsBlur();
 }
+
+float ArkWebNWebImpl::DumpGpuInfo()
+{
+    return nweb_nweb_->DumpGpuInfo();
+}
 } // namespace OHOS::ArkWeb

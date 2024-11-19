@@ -1568,6 +1568,14 @@ public:
      * @brief Web components blur when the keyboard is hidden by gesture back.
      */
     virtual void WebComponentsBlur() {}
+
+    /**
+     * @Description: Get the GPU memory size used by web.
+     * @Return: Total size of web GPU.
+     */
+    virtual float DumpGpuInfo() {
+        return 0;
+    };
 };
 
 } // namespace OHOS::NWeb

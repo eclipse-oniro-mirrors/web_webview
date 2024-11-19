@@ -1377,6 +1377,13 @@ public:
      * @brief Web components blur when the keyboard is hidden by gesture back.
      */
     void WebComponentsBlur() override;
+
+    /**
+     * @Description: Get the GPU memory size used by web.
+     * @Return: Total size of web GPU.
+     */
+    /*--ark web()--*/
+    float DumpGpuInfo() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
