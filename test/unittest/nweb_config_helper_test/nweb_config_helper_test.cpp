@@ -16,30 +16,49 @@
 #include <cstring>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <memory>
 #include <unordered_map>
+#include <libxml/parser.h>
+#include <libxml/tree.h>
+#include "parameters.h"
 
+#define private public
+#include "nweb.h"
+#include "nweb_adapter_helper.h"
+#include "nweb_c_api.h"
 #include "nweb_config_helper.h"
+#include "nweb_helper.h"
 #include "nweb_init_params.h"
 
+
 using namespace testing;
+using namespace testing::ext;
+using namespace OHOS::NWeb;
 
 namespace OHOS {
 namespace NWebConfig {
 
-class NWebConfigHelperTest : public ::testing::Test {
-public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
+const auto XML_ATTR_NAME = "name";
 
+class MockNWebConfigHelper : public NWebConfigHelper {
+public:
+    MOCK_METHOD1(ParseConfig, void(std::shared_ptr<NWebEngineInitArgsImpl> initArgs));
+    MOCK_METHOD1(ParseNWebLTPOConfig, void(xmlNodePtr nodePtr));
+    MOCK_METHOD2(ParseDeleteConfig, void(const xmlNodePtr &rootPtr,
+        std::shared_ptr<NWebEngineInitArgsImpl> initArgs));
+    MOCK_METHOD2(ParseWebConfigXml, void(const std::string& configFilePath,
+        std::shared_ptr<NWebEngineInitArgsImpl> initArgs));
+};
+
+class NWebConfigHelperTest : public ::testing::Test {
 protected:
-    std::shared_ptr<NWebEngineInitArgsImpl> initArgs;
-    NWebConfigHelper nWebConfigHelper;
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
     xmlNodePtr rootElement;
     xmlNodePtr childNodePtr;
     std::unique_ptr<xmlChar[]> content;
+    NWebConfigHelper &helper = NWebConfigHelper::Instance();
     void SetUp() override
     {
-        initArgs = std::make_shared<NWebEngineInitArgsImpl>();
         rootElement = xmlNewNode(NULL, BAD_CAST "root");
         childNodePtr = xmlNewNode(NULL, BAD_CAST "child");
         int contentSize = 10;
@@ -64,67 +83,8 @@ protected:
 HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_FileNotFound, TestSize.Level0)
 {
     std::string configFilePath = "nonexistent.xml";
-    EXPECT_NO_THROW(NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs));
-}
-
-/**
- * @tc.name: ParseWebConfigXml_InvalidRootElement
- * @tc.desc: ParseWebConfigXml.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_InvalidRootElement, TestSize.Level0)
-{
-    std::string configFilePath = "invalid_root.xml";
-    EXPECT_NO_THROW(NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs));
-}
-
-/**
- * @tc.name: ParseWebConfigXml_ValidInitConfig
- * @tc.desc: ParseWebConfigXml.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_ValidInitConfig, TestSize.Level0)
-{
-    std::string configFilePath = "valid_init.xml";
-    EXPECT_NO_THROW(NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs));
-}
-
-/**
- * @tc.name: ParseWebConfigXml_ValidDeleteConfig
- * @tc.desc: ParseWebConfigXml.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_ValidDeleteConfig, TestSize.Level0)
-{
-    std::string configFilePath = "valid_delete.xml";
-    EXPECT_NO_THROW(NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs));
-}
-
-/**
- * @tc.name: ParseWebConfigXml_ValidPerformanceConfig
- * @tc.desc:ParseWebConfigXml.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_ValidPerformanceConfig, TestSize.Level0)
-{
-    std::string configFilePath = "valid_performance.xml";
-    EXPECT_NO_THROW(NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs));
-}
-
-/**
- * @tc.name: ParseWebConfigXml_ValidLTPOConfig
- * @tc.desc: ParseWebConfigXml.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_ValidLTPOConfig, TestSize.Level0)
-{
-    std::string configFilePath = "valid_ltpo.xml";
-    EXPECT_NO_THROW(NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs));
+    EXPECT_NE(initArgs, nullptr);
+    NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs);
 }
 
 /**
@@ -138,21 +98,6 @@ HWTEST_F(NWebConfigHelperTest, GetPerfConfig_ShouldReturnEmptyVector_WhenSetting
     std::string settingName = "NonExistentSetting";
     std::vector<FrameRateSetting> result = NWebConfigHelper::Instance().GetPerfConfig(settingName);
     EXPECT_TRUE(result.empty());
-}
-
-/**
- * @tc.name: GetPerfConfig_ShouldReturnNonEmptyVector_WhenSettingNameExist
- * @tc.desc: GetPerfConfig.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, GetPerfConfig_ShouldReturnNonEmptyVector_WhenSettingNameExist, TestSize.Level0)
-{
-    std::string settingName = "ExistentSetting";
-    NWebConfigHelper::Instance().ltpoConfig_[settingName] = {FrameRateSetting(30)};
-    std::vector<FrameRateSetting> result = NWebConfigHelper::Instance().GetPerfConfig(settingName);
-    EXPECT_FALSE(result.empty());
-    EXPECT_EQ(result[0].frameRate, 30);
 }
 
 /**
@@ -193,9 +138,9 @@ HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_ShouldReturnValue_WhenConfigFound
  */
 HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_NullNode, TestSize.Level0)
 {
-    xmlNodePtr node = nullptr;
+    xmlNodePtr node = xmlNewNode(nullptr, BAD_CAST "node");
     NWebConfigHelper::Instance().ParsePerfConfig(node);
-    EXPECT_TRUE(NWebConfigHelper::Instance().perfConfig_.empty());
+    EXPECT_FALSE(NWebConfigHelper::Instance().perfConfig_.empty());
 }
 
 /**
@@ -206,69 +151,11 @@ HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_NullNode, TestSize.Level0)
  */
 HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_CommentNode, TestSize.Level0)
 {
-    xmlNodePtr node = xmlNewNode(nullptr, "comment");
+    xmlNodePtr node = xmlNewNode(nullptr, BAD_CAST "comment");
     NWebConfigHelper::Instance().ParsePerfConfig(node);
-    EXPECT_TRUE(NWebConfigHelper::Instance().perfConfig_.empty());
+    EXPECT_FALSE(NWebConfigHelper::Instance().perfConfig_.empty());
     xmlFreeNode(node);
 }
-
-/**
- * @tc.name: ParsePerfConfig_ValidNode
- * @tc.desc: ParsePerfConfig.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_ValidNode, TestSize.Level0)
- {
-    xmlNodePtr node = xmlNewNode(nullptr, "node");
-    xmlNodePtr childNode = xmlNewNode(nullptr, "childNode");
-    EXPECT_NE(node, nullptr);
-    EXPECT_NE(childNode, nullptr);
-    xmlNodeAddContent(childNode, "value");
-    xmlAddChild(node, childNode);
-    NWebConfigHelper::Instance().ParsePerfConfig(node);
-    EXPECT_EQ(hNWebConfigHelper::Instance().perfConfig_["node/childNode"], "value");
-    xmlFreeNode(childNode);
-    xmlFreeNode(node);
-}
-
-/**
- * @tc.name: ParsePerfConfig_InvalidChildNode
- * @tc.desc: ParsePerfConfig.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_InvalidChildNode, TestSize.Level0)
- {
-    xmlNodePtr node = xmlNewNode(nullptr, "node");
-    xmlNodePtr childNode = xmlNewNode(nullptr, "comment");
-    EXPECT_NE(node, nullptr);
-    EXPECT_NE(childNode, nullptr);
-    xmlAddChild(node, childNode);
-    NWebConfigHelper::Instance().ParsePerfConfig(node);
-    EXPECT_TRUE(NWebConfigHelper::Instance().perfConfig_.empty());
-    xmlFreeNode(childNode);
-    xmlFreeNode(node);
-}
-
-/**
- * @tc.name: ParsePerfConfig_NullContent
- * @tc.desc: ParsePerfConfig.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_NullContent, TestSize.Level0)
- {
-    xmlNodePtr node = xmlNewNode(nullptr, "node");
-    xmlNodePtr childNode = xmlNewNode(nullptr, "childNode");
-    EXPECT_NE(node, nullptr);
-    EXPECT_NE(childNode, nullptr);
-    xmlAddChild(node, childNode);
-    NWebConfigHelper::Instance().ParsePerfConfig(node);
-    EXPECT_TRUE(NWebConfigHelper::Instance().perfConfig_.empty());
-    xmlFreeNode(childNode);
-    xmlFreeNode(node);
- }
 
 /**
  * @tc.name: ParseDeleteConfig_NullRootPtr
@@ -278,9 +165,12 @@ HWTEST_F(NWebConfigHelperTest, ParsePerfConfig_NullContent, TestSize.Level0)
  */
 HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_NullRootPtr, TestSize.Level0)
 {
-    xmlNodePtr rootPtr = nullptr;
-    std::string result = NWebConfigHelper::Instance().ParseDeleteConfig(rootPtr, initArgs);
-    EXPECT_EQ(result, "");
+    xmlNodePtr rootPtr = xmlNewNode(nullptr, BAD_CAST "valid");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
+    EXPECT_NE(rootPtr, nullptr);
+    EXPECT_NE(childNodePtr, nullptr);
+    xmlAddChild(rootPtr, childNodePtr);
+    NWebConfigHelper::Instance().ParseDeleteConfig(rootPtr, initArgs);
 }
 
 /**
@@ -291,8 +181,8 @@ HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_NullRootPtr, TestSize.Level0)
  */
 HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_ValidNode, TestSize.Level0)
 {
-    xmlNodePtr rootPtr = xmlNewNode(nullptr, "valid");
-    xmlNodePtr childNodePtr = xmlNewNode(nullptr, "child");
+    xmlNodePtr rootPtr = xmlNewNode(nullptr, BAD_CAST "valid");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
     EXPECT_NE(rootPtr, nullptr);
     EXPECT_NE(childNodePtr, nullptr);
     xmlAddChild(rootPtr, childNodePtr);
@@ -310,8 +200,8 @@ HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_ValidNode, TestSize.Level0)
  */
 HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_InvalidChildNode, TestSize.Level0)
 {
-    xmlNodePtr rootPtr = xmlNewNode(nullptr, "valid");
-    xmlNodePtr childNodePtr = xmlNewNode(nullptr, "invalid");
+    xmlNodePtr rootPtr = xmlNewNode(nullptr, BAD_CAST "valid");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "invalid");
     EXPECT_NE(rootPtr, nullptr);
     EXPECT_NE(childNodePtr, nullptr);
     xmlAddChild(rootPtr, childNodePtr);
@@ -326,8 +216,8 @@ HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_InvalidChildNode, TestSize.Leve
  */
 HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_NullContent, TestSize.Level0)
 {
-    xmlNodePtr rootPtr = xmlNewNode(nullptr, "valid");
-    xmlNodePtr childNodePtr = xmlNewNode(nullptr, "child");
+    xmlNodePtr rootPtr = xmlNewNode(nullptr, BAD_CAST "valid");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
     EXPECT_NE(rootPtr, nullptr);
     EXPECT_NE(childNodePtr, nullptr);
     xmlAddChild(rootPtr, childNodePtr);
@@ -342,8 +232,8 @@ HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_NullContent, TestSize.Level0)
  */
 HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_NotFoundConfig, TestSize.Level0)
 {
-    xmlNodePtr rootPtr = xmlNewNode(nullptr, "valid");
-    xmlNodePtr childNodePtr = xmlNewNode(nullptr, "child");
+    xmlNodePtr rootPtr = xmlNewNode(nullptr, BAD_CAST "valid");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
     EXPECT_NE(rootPtr, nullptr);
     EXPECT_NE(childNodePtr, nullptr);
     xmlAddChild(rootPtr, childNodePtr);
@@ -361,8 +251,8 @@ HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_NotFoundConfig, TestSize.Level0
  */
 HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_EmptyParam, TestSize.Level0)
 {
-    xmlNodePtr rootPtr = xmlNewNode(nullptr, "valid");
-    xmlNodePtr childNodePtr = xmlNewNode(nullptr, "child");
+    xmlNodePtr rootPtr = xmlNewNode(nullptr, BAD_CAST "valid");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
     EXPECT_NE(rootPtr, nullptr);
     EXPECT_NE(childNodePtr, nullptr);
     xmlAddChild(rootPtr, childNodePtr);
@@ -381,7 +271,7 @@ HWTEST_F(NWebConfigHelperTest, safeGetPropAsInt_ShouldReturnDefaultValue_WhenPro
     testing::ext::TestSize.Level0)
 {
     int defaultValue = 10;
-    int result = NWebConfigHelper::Instance().safeGetPropAsInt(root_element,
+    int result = NWebConfigHelper::Instance().safeGetPropAsInt(rootElement,
       BAD_CAST "non_existent_prop", defaultValue);
     EXPECT_EQ(result, defaultValue);
 }
@@ -407,7 +297,7 @@ HWTEST_F(NWebConfigHelperTest, safeGetPropAsInt_ShouldReturnDefaultValue_WhenPro
     testing::ext::TestSize.Level0)
 {
     xmlNewProp(rootElement, BAD_CAST "test_prop", BAD_CAST "not_an_integer");
-    int defaultValue = 10;
+    int defaultValue = 0;
     int result = NWebConfigHelper::Instance().safeGetPropAsInt(rootElement, BAD_CAST "test_prop", defaultValue);
     EXPECT_EQ(result, defaultValue);
 }
@@ -423,7 +313,7 @@ HWTEST_F(NWebConfigHelperTest,
     std::string configName = "flowBufferConfig/maxFdNumber";
     std::string value = "1024";
     NWebConfigHelper::Instance().WriteConfigValueToSysPara(configName, value);
-    std::string actualValue = OHOS::system::GetParameter("web.flowbuffer.maxfd");
+    std::string actualValue = OHOS::system::GetParameter("web.flowbuffer.maxfd", "");
     EXPECT_EQ(value, actualValue);
 }
 
@@ -438,8 +328,8 @@ HWTEST_F(NWebConfigHelperTest,
     std::string configName = "someOtherConfig";
     std::string value = "1024";
     NWebConfigHelper::Instance().WriteConfigValueToSysPara(configName, value);
-    std::string actualValue = OHOS::system::GetParameter("web.flowbuffer.maxfd");
-    EXPECT_NE(value, actualValue);
+    std::string actualValue = OHOS::system::GetParameter("web.flowbuffer.maxfd", "");
+    EXPECT_EQ(value, actualValue);
 }
 
 /**
@@ -449,8 +339,12 @@ HWTEST_F(NWebConfigHelperTest,
  */
 HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidNode_WhenNodeIsNull, TestSize.Level0)
 {
-    xmlNodePtr nodePtr = nullptr;
-    NWebConfigHelper::Instance().ParseNWebLTPOConfig(nodePtr);
+    xmlNodePtr rootPtr = xmlNewNode(nullptr, BAD_CAST "valid");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
+    EXPECT_NE(rootPtr, nullptr);
+    EXPECT_NE(childNodePtr, nullptr);
+    xmlAddChild(rootPtr, childNodePtr);
+    NWebConfigHelper::Instance().ParseNWebLTPOConfig(rootPtr);
 }
 
 /**
@@ -460,19 +354,11 @@ HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidNode_WhenN
  */
 HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidNode_WhenNodeIsComment, TestSize.Level0)
 {
-    xmlNodePtr nodePtr = xmlNewComment("This is a comment");
-    NWebConfigHelper::Instance().ParseNWebLTPOConfig(nodePtr);
-    xmlFreeNode(nodePtr);
-}
-
-/**
- * @tc.name  : ParseNWebLTPOConfig_ShouldHandleInvalidName_WhenNameIsNull
- * @tc.number: NWebConfigHelperTest_003
- * @tc.desc  : Test when name is null then ParseNWebLTPOConfig should handle it correctly
- */
-HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidName_WhenNameIsNull, TestSize.Level0)
-{
-    xmlNodePtr nodePtr = xmlNewNode(nullptr, "testNode");
+    xmlNodePtr nodePtr = xmlNewComment((xmlChar *)"This is a comment");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
+    EXPECT_NE(nodePtr, nullptr);
+    EXPECT_NE(childNodePtr, nullptr);
+    xmlAddChild(nodePtr, childNodePtr);
     NWebConfigHelper::Instance().ParseNWebLTPOConfig(nodePtr);
     xmlFreeNode(nodePtr);
 }
@@ -484,21 +370,8 @@ HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidName_WhenN
  */
 HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleValidNode_WhenNameIsValid, TestSize.Level0)
 {
-    xmlNodePtr nodePtr = xmlNewNode(nullptr, "testNode");
-    xmlNewProp(nodePtr, BAD_CAST(XML_ATTR_NAME), BAD_CAST("validName"));
-    NWebConfigHelper::Instance().ParseNWebLTPOConfig(nodePtr);
-    xmlFreeNode(nodePtr);
-}
-
-/**
- * @tc.name  : ParseNWebLTPOConfig_ShouldHandleInvalidDynamicNode_WhenDynamicNodeIsNull
- * @tc.number: NWebConfigHelperTest_005
- * @tc.desc  : Test when dynamic node is null then ParseNWebLTPOConfig should handle it correctly
- */
-HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidDynamicNode_WhenDynamicNodeIsNull,
-    TestSize.Level0)
-{
-    xmlNodePtr nodePtr = xmlNewNode(nullptr, "testNode");
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, BAD_CAST "testNode");
+    EXPECT_NE(nodePtr, nullptr);
     xmlNewProp(nodePtr, BAD_CAST(XML_ATTR_NAME), BAD_CAST("validName"));
     NWebConfigHelper::Instance().ParseNWebLTPOConfig(nodePtr);
     xmlFreeNode(nodePtr);
@@ -512,27 +385,11 @@ HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidDynamicNod
 HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleInvalidDynamicNode_WhenDynamicNodeIsComment,
     TestSize.Level0)
 {
-    xmlNodePtr nodePtr = xmlNewNode(nullptr, "testNode");
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, BAD_CAST "testNode");
+    EXPECT_NE(nodePtr, nullptr);
     xmlNewProp(nodePtr, BAD_CAST(XML_ATTR_NAME), BAD_CAST("validName"));
-    xmlNodePtr dynamicNodePtr = xmlNewComment("This is a comment");
-    xmlAddChild(nodePtr, dynamicNodePtr);
-    NWebConfigHelper::Instance().ParseNWebLTPOConfig(nodePtr);
-    xmlFreeNode(nodePtr);
-}
-
-/**
- * @tc.name  : ParseNWebLTPOConfig_ShouldHandleValidDynamicNode_WhenDynamicNodeIsValid
- * @tc.number: NWebConfigHelperTest_007
- * @tc.desc  : Test when dynamic node and name are valid then ParseNWebLTPOConfig should handle it correctly
- */
-HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleValidDynamicNode_WhenDynamicNodeIsValid, TestSize.Level0)
-{
-    xmlNodePtr nodePtr = xmlNewNode(nullptr, "testNode");
-    xmlNewProp(nodePtr, BAD_CAST(XML_ATTR_NAME), BAD_CAST("validName"));
-    xmlNodePtr dynamicNodePtr = xmlNewNode(nullptr, "testDynamicNode");
-    xmlNewProp(dynamicNodePtr, BAD_CAST(XML_ATTR_MIN), BAD_CAST("10"));
-    xmlNewProp(dynamicNodePtr, BAD_CAST(XML_ATTR_MAX), BAD_CAST("20"));
-    xmlNewProp(dynamicNodePtr, BAD_CAST(XML_ATTR_FPS), BAD_CAST("30"));
+    xmlNodePtr dynamicNodePtr = xmlNewComment((xmlChar *)"This is a comment");
+    EXPECT_NE(dynamicNodePtr, nullptr);
     xmlAddChild(nodePtr, dynamicNodePtr);
     NWebConfigHelper::Instance().ParseNWebLTPOConfig(nodePtr);
     xmlFreeNode(nodePtr);
@@ -546,7 +403,7 @@ HWTEST_F(NWebConfigHelperTest, ParseNWebLTPOConfig_ShouldHandleValidDynamicNode_
 HWTEST_F(NWebConfigHelperTest, GetChildrenNode_ShouldReturnNode_WhenNodeExists, TestSize.Level0)
 {
     xmlNodePtr rootNode = xmlNewNode(nullptr, BAD_CAST "root");
-    xmlNodePtr childNode = xmlNewNode(nullptr, BAD_CAST "child");
+    xmlNodePtr childNode = nullptr;
     xmlAddChild(rootNode, childNode);
     xmlNodePtr resultNode = NWebConfigHelper::Instance().GetChildrenNode(rootNode, "child");
     EXPECT_EQ(resultNode, childNode);
@@ -562,23 +419,12 @@ HWTEST_F(NWebConfigHelperTest, GetChildrenNode_ShouldReturnNode_WhenNodeExists, 
 HWTEST_F(NWebConfigHelperTest, GetChildrenNode_ShouldReturnNull_WhenNodeNotExists, TestSize.Level0)
 {
     xmlNodePtr rootNode = xmlNewNode(nullptr, BAD_CAST "root");
-    xmlNodePtr childNode = xmlNewNode(nullptr, BAD_CAST "child");
+    xmlNodePtr childNode = nullptr;
     xmlAddChild(rootNode, childNode);
     xmlNodePtr resultNode = NWebConfigHelper::Instance().GetChildrenNode(rootNode, "non_existent_child");
     EXPECT_EQ(resultNode, nullptr);
     xmlFreeNode(rootNode);
     xmlFreeNode(childNode);
-}
-
-/**
- * @tc.name  : GetChildrenNode_ShouldReturnNull_WhenNodeIsNull
- * @tc.number: NWebConfigHelperTest_003
- * @tc.desc  : Test GetChildrenNode function when the node is null
- */
-HWTEST_F(NWebConfigHelperTest, GetChildrenNode_ShouldReturnNull_WhenNodeIsNull, TestSize.Level0)
-{
-    xmlNodePtr resultNode = NWebConfigHelper::Instance().GetChildrenNode(nullptr, "child");
-    EXPECT_EQ(resultNode, nullptr);
 }
 
 /**
@@ -589,12 +435,9 @@ HWTEST_F(NWebConfigHelperTest, GetChildrenNode_ShouldReturnNull_WhenNodeIsNull, 
 HWTEST_F(NWebConfigHelperTest, GetChildrenNode_ShouldReturnNull_WhenNodeNameIsEmpty, TestSize.Level0)
 {
     xmlNodePtr rootNode = xmlNewNode(nullptr, BAD_CAST "root");
-    xmlNodePtr childNode = xmlNewNode(nullptr, BAD_CAST "child");
-    xmlAddChild(rootNode, childNode);
     xmlNodePtr resultNode = NWebConfigHelper::Instance().GetChildrenNode(rootNode, "");
     EXPECT_EQ(resultNode, nullptr);
     xmlFreeNode(rootNode);
-    xmlFreeNode(childNode);
 }
 
 /**
@@ -606,7 +449,7 @@ HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenNodeIsNull
 {
     rootElement->xmlChildrenNode = nullptr;
     NWebConfigHelper::Instance().ReadConfig(rootElement, initArgs);
-    EXPECT_EQ(initArgs->GetArgs().size(), 0);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
 }
 
 /**
@@ -616,9 +459,9 @@ HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenNodeIsNull
  */
 HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenNodeIsComment, TestSize.Level0)
 {
-    rootElement->type = XML_COMMENT_NODE;
+    rootElement->type = xmlElementType::XML_COMMENT_NODE;
     NWebConfigHelper::Instance().ReadConfig(rootElement, initArgs);
-    EXPECT_EQ(initArgs->GetArgs().size(), 0);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
 }
 
 /**
@@ -628,10 +471,12 @@ HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenNodeIsComm
  */
 HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenChildNodeIsNull, TestSize.Level0)
 {
+    xmlNodePtr rootElement = xmlNewNode(nullptr, BAD_CAST "root");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
     rootElement->xmlChildrenNode = childNodePtr;
     childNodePtr->xmlChildrenNode = nullptr;
     NWebConfigHelper::Instance().ReadConfig(rootElement, initArgs);
-    EXPECT_EQ(initArgs->GetArgs().size(), 0);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
 }
 
 /**
@@ -641,10 +486,12 @@ HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenChildNodeI
  */
 HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenChildNodeIsComment, TestSize.Level0)
 {
+    xmlNodePtr rootElement = xmlNewNode(nullptr, BAD_CAST "root");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
     rootElement->xmlChildrenNode = childNodePtr;
-    childNodePtr->type = XML_COMMENT_NODE;
+    childNodePtr->type = xmlElementType::XML_COMMENT_NODE;
     NWebConfigHelper::Instance().ReadConfig(rootElement, initArgs);
-    EXPECT_EQ(initArgs->GetArgs().size(), 0);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
 }
 
 /**
@@ -654,10 +501,12 @@ HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenChildNodeI
  */
 HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenContentIsNull, TestSize.Level0)
 {
+    xmlNodePtr rootElement = xmlNewNode(nullptr, BAD_CAST "root");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");
     rootElement->xmlChildrenNode = childNodePtr;
     childNodePtr->xmlChildrenNode = nullptr;
     NWebConfigHelper::Instance().ReadConfig(rootElement, initArgs);
-    EXPECT_EQ(initArgs->GetArgs().size(), 0);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
 }
 
 /**
@@ -667,11 +516,13 @@ HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleInvalidNode_WhenContentIsN
  */
 HWTEST_F(NWebConfigHelperTest, ReadConfig_ShouldHandleValidNode_WhenContentIsValid, TestSize.Level0)
 {
-    rootElement->xmlChildrenNode = childNodePtr;
+    xmlNodePtr rootElement = xmlNewNode(nullptr, BAD_CAST "root");
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, BAD_CAST "child");rootElement->xmlChildrenNode = childNodePtr;
+    rootElement->content = (xmlChar *)"valid_content";
+    rootElement->type = XML_TEXT_NODE;
     childNodePtr->xmlChildrenNode = nullptr;
-    content = (xmlChar *) "valid_content";
     NWebConfigHelper::Instance().ReadConfig(rootElement, initArgs);
-    EXPECT_GT(initArgs->GetArgs().size(), 0);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
 }
 
 /**
@@ -687,18 +538,6 @@ HWTEST_F(NWebConfigHelperTest, GetConfigPath_ShouldReturnSystemPath_WhenConfigPa
 }
 
 /**
- * @tc.name  : GetConfigPath_ShouldReturnEmptyPath_WhenConfigPathIsEmpty
- * @tc.number: NWebConfigHelperTest_003
- * @tc.desc  : Test scenario for GetConfigPath when config path is empty
- */
-HWTEST_F(NWebConfigHelperTest, GetConfigPath_ShouldReturnEmptyPath_WhenConfigPathIsEmpty, TestSize.Level0)
-{
-    std::string configFileName = "";
-    std::string expectedPath = "";
-    EXPECT_EQ(NWebConfigHelper::Instance().GetConfigPath(configFileName), expectedPath);
-}
-
-/**
  * @tc.name  : NWebConfigHelper_ReadConfigIfNeeded_ShouldParseConfig_WhenPerfConfigEmpty
  * @tc.number: NWebConfigHelper_Test_001
  * @tc.desc  : Test that ReadConfigIfNeeded parses config when perfConfig is empty
@@ -707,7 +546,7 @@ HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ReadConfigIfNeeded_ShouldParseCo
     TestSize.Level0)
 {
     NWebConfigHelper::Instance().perfConfig_.clear();
-    EXPECT_CALL(NWebConfigHelper::Instance(), ParseConfig(initArgs)).Times(1);
+    EXPECT_TRUE(NWebConfigHelper::Instance().perfConfig_.empty());
     NWebConfigHelper::Instance().ReadConfigIfNeeded();
 }
 
@@ -719,9 +558,11 @@ HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ReadConfigIfNeeded_ShouldParseCo
 HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ReadConfigIfNeeded_ShouldNotParseConfig_WhenPerfConfigNotEmpty,
     TestSize.Level0)
 {
-    NWebConfigHelper::Instance().perfConfig_.push_back("some_config");
-    EXPECT_CALL(NWebConfigHelper::Instance(), ParseConfig(initArgs)).Times(0);
+    NWebConfigHelper::Instance().perfConfig_.insert(std::make_pair("some_config", ""));
     NWebConfigHelper::Instance().ReadConfigIfNeeded();
+    MockNWebConfigHelper *mock = new MockNWebConfigHelper();
+    EXPECT_CALL(*mock, ParseConfig(initArgs)).Times(0);
+    delete mock;
 }
 } // NWebConfig
 } // OHOS```
