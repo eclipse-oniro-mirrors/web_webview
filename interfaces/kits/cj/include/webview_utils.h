@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <memory>
+#include <map>
 #include <string>
 #include "cj_common_ffi.h"
 
@@ -46,6 +47,59 @@ namespace Webview {
         const char* cEncoding;
         const char* cBaseUrl;
         const char* cHistoryUrl;
+    };
+
+    struct CacheOptions{
+        ArrWebHeader *arrHead;
+    };
+
+    struct CMediaSourceInfo
+    {
+        const char* format;
+        const char* source;
+        int32_t type;
+    };
+
+    struct CArrMediaSourceInfo {
+        CMediaSourceInfo* head;
+        int64_t size;
+    };
+
+    struct MapItem {
+        char* key;
+        char* value;
+    };
+
+    struct ArrMapItem {
+        MapItem* head;
+        int64_t size;
+    };
+
+    struct CRectEvent {
+        double x;
+        double y;
+        double width;
+        double height;
+    };
+
+    struct CNativeMediaPlayerSurfaceInfo {
+        CRectEvent rect;
+        const char* id;
+    };
+
+    struct CMediaInfo
+    {
+        const char* embedID;
+        int32_t mediaType;
+        CArrMediaSourceInfo mediaSrcList;
+        CNativeMediaPlayerSurfaceInfo surfaceInfo;
+        bool controlsShown;
+        CArrString controlList;
+        bool muted;
+        const char* posterUrl;
+        int32_t preload;
+        ArrMapItem headers;
+        ArrMapItem attributes;
     };
 
     struct RetWebMessage {
@@ -126,6 +180,7 @@ namespace Webview {
     uint8_t* MallocUInt8(const std::string& origin);
     char** VectorToCArrString(const std::vector<std::string>& vec);
     uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec);
+    std::vector<std::string> CArrStringToVector(CArrString cArrStr);
 }
 }
 

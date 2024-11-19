@@ -75,5 +75,18 @@ namespace Webview {
         }
         return result;
     }
+
+    std::vector<std::string> CArrStringToVector(CArrString cArrStr) {
+        std::vector<std::string> vec;
+        if (cArrStr.head == nullptr || cArrStr.size <= 0) {
+            return vec;
+        }
+        for (size_t i = 0; i < cArrStr.size; i++) {
+            if (cArrStr.head[i] != nullptr) {
+                vec.emplace_back(cArrStr.head[i]);
+            }
+        }
+        return vec;
+    }
 }
 }
