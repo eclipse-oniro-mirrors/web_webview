@@ -1540,6 +1540,13 @@ public:
      */
     /*--ark web()--*/
     virtual void WebComponentsBlur() = 0;
+
+    /**
+     * @Description: Get the GPU memory size used by web.
+     * @Return: Total size of web GPU.
+     */
+    /*--ark web()--*/
+    virtual float DumpGpuInfo() = 0;
 };
 
 } // namespace OHOS::ArkWeb

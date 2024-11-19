@@ -1389,6 +1389,13 @@ public:
      */
     /*--ark web()--*/
     void WebComponentsBlur() override;
+
+    /**
+     * @Description: Get the GPU memory size used by web.
+     * @Return: Total size of web GPU.
+     */
+    /*--ark web()--*/
+    float DumpGpuInfo() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

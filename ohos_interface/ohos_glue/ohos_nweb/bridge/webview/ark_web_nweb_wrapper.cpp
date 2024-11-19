@@ -1404,4 +1404,9 @@ void ArkWebNWebWrapper::WebComponentsBlur()
 {
     ark_web_nweb_->WebComponentsBlur();
 }
+
+float ArkWebNWebWrapper::DumpGpuInfo()
+{
+    return ark_web_nweb_->DumpGpuInfo();
+}
 } // namespace OHOS::ArkWeb
