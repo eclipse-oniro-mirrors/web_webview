@@ -17,171 +17,191 @@
 #define WEBVIEW_UTILS_H
 
 #include <cstdint>
-#include <memory>
 #include <map>
+#include <memory>
 #include <string>
+
 #include "cj_common_ffi.h"
 
 namespace OHOS {
 namespace Webview {
-    struct RetWebHeader {
-        char *headerKey;
-        char *headerValue;
-    };
+struct RetWebHeader {
+    char* headerKey;
+    char* headerValue;
+};
 
-    struct ArrWebHeader {
-        RetWebHeader *head;
-        int64_t size;
-    };
+struct ArrWebHeader {
+    RetWebHeader* head;
+    int64_t size;
+};
 
-    struct CHistoryItem {
-        int64_t icon;
-        char* historyUrl;
-        char* historyRawUrl;
-        char* title;
-    };
+struct CHistoryItem {
+    int64_t icon;
+    char* historyUrl;
+    char* historyRawUrl;
+    char* title;
+};
 
-    struct LoadDatas {
-        const char* cData;
-        const char* cMimeType;
-        const char* cEncoding;
-        const char* cBaseUrl;
-        const char* cHistoryUrl;
-    };
+struct LoadDatas {
+    const char* cData;
+    const char* cMimeType;
+    const char* cEncoding;
+    const char* cBaseUrl;
+    const char* cHistoryUrl;
+};
 
-    struct CacheOptions{
-        ArrWebHeader *arrHead;
-    };
+struct RetWebMessage {
+    char* messageStr;
+    CArrUI8 messageArr;
+};
 
-    struct CMediaSourceInfo
-    {
-        const char* format;
-        const char* source;
-        int32_t type;
-    };
+struct CError {
+    char* errorName;
+    char* errorMsg;
+};
 
-    struct CArrMediaSourceInfo {
-        CMediaSourceInfo* head;
-        int64_t size;
-    };
+struct RetNumber {
+    int64_t numberInt;
+    double numberDouble;
+};
 
-    struct MapItem {
-        char* key;
-        char* value;
-    };
+struct CArrDouble {
+    double* head;
+    int64_t size;
+};
 
-    struct ArrMapItem {
-        MapItem* head;
-        int64_t size;
-    };
+struct CArrBool {
+    bool* head;
+    int64_t size;
+};
 
-    struct CRectEvent {
-        double x;
-        double y;
-        double width;
-        double height;
-    };
+struct CArrValue {
+    char** strHead;
+    int64_t* intHead;
+    double* doubleHead;
+    bool* boolHead;
+    int64_t size;
+};
 
-    struct CNativeMediaPlayerSurfaceInfo {
-        CRectEvent rect;
-        const char* id;
-    };
+struct CWebStorageOrigin {
+    char* origin;
+    int64_t quota;
+    int64_t usage;
+};
 
-    struct CMediaInfo
-    {
-        const char* embedID;
-        int32_t mediaType;
-        CArrMediaSourceInfo mediaSrcList;
-        CNativeMediaPlayerSurfaceInfo surfaceInfo;
-        bool controlsShown;
-        CArrString controlList;
-        bool muted;
-        const char* posterUrl;
-        int32_t preload;
-        ArrMapItem headers;
-        ArrMapItem attributes;
-    };
+struct CArrWebStorageOrigin {
+    CWebStorageOrigin* cWebStorageOrigin;
+    int64_t size;
+};
 
-    struct RetWebMessage {
-        char* messageStr;
-        CArrUI8 messageArr;
-    };
+struct CScheme {
+    char* name;
+    bool isSupportCORS;
+    bool isSupportFetch;
+    bool isStandard;
+    bool isLocal;
+    bool isDisplayIsolated;
+    bool isSecure;
+    bool isCspBypassing;
+    bool isCodeCacheSupported;
+};
 
-    struct CError {
-        char *errorName;
-        char *errorMsg;
-    };
+struct Scheme {
+    std::string name;
+    bool isSupportCORS;
+    bool isSupportFetch;
+    bool isStandard;
+    bool isLocal;
+    bool isDisplayIsolated;
+    bool isSecure;
+    bool isCspBypassing;
+    bool isCodeCacheSupported;
+    int32_t option = 0;
+};
 
-    struct RetNumber {
-        int64_t numberInt;
-        double numberDouble;
-    };
+struct CArrScheme {
+    CScheme* cScheme;
+    int64_t size;
+};
 
-    struct CArrDouble {
-        double *head;
-        int64_t size;
-    };
+struct CacheOptions {
+    ArrWebHeader* arrHead;
+};
 
-    struct CArrBool {
-        bool *head;
-        int64_t size;
-    };
+struct COfflineResourceMap {
+    CArrString urlList;
+    uint8_t* resource;
+    int64_t resourceCSize;
+    ArrWebHeader responseHeaders;
+    int32_t type;
+};
 
-    struct CArrValue {
-        char** strHead;
-        int64_t* intHead;
-        double* doubleHead;
-        bool* boolHead;
-        int64_t size;
-    };
+struct CArrOfflineResourceMap {
+    COfflineResourceMap* head;
+    int64_t size;
+};
 
-    struct CWebStorageOrigin {
-        char* origin;
-        int64_t quota;
-        int64_t usage;
-    };
+struct CRequestInfo {
+    char* url;
+    char* method;
+    char* formData;
+};
 
-    struct CArrWebStorageOrigin {
-        CWebStorageOrigin* cWebStorageOrigin;
-        int64_t size;
-    };
+struct CMediaSourceInfo
+{
+    const char* format;
+    const char* source;
+    int32_t type;
+};
 
-    struct CScheme {
-        char* name;
-        bool isSupportCORS;
-        bool isSupportFetch;
-        bool isStandard;
-        bool isLocal;
-        bool isDisplayIsolated;
-        bool isSecure;
-        bool isCspBypassing;
-        bool isCodeCacheSupported;
-    };
+struct CArrMediaSourceInfo {
+    CMediaSourceInfo* head;
+    int64_t size;
+};
 
-    struct Scheme {
-        std::string name;
-        bool isSupportCORS;
-        bool isSupportFetch;
-        bool isStandard;
-        bool isLocal;
-        bool isDisplayIsolated;
-        bool isSecure;
-        bool isCspBypassing;
-        bool isCodeCacheSupported;
-        int32_t option = 0;
-    };
+struct MapItem {
+    char* key;
+    char* value;
+};
 
-    struct CArrScheme {
-        CScheme* cScheme;
-        int64_t size;
-    };
+struct ArrMapItem {
+    MapItem* head;
+    int64_t size;
+};
 
-    char* MallocCString(const std::string& origin);
-    uint8_t* MallocUInt8(const std::string& origin);
-    char** VectorToCArrString(const std::vector<std::string>& vec);
-    uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec);
-    std::vector<std::string> CArrStringToVector(CArrString cArrStr);
-}
-}
+struct CRectEvent {
+    double x;
+    double y;
+    double width;
+    double height;
+};
+
+struct CNativeMediaPlayerSurfaceInfo {
+    CRectEvent rect;
+    const char* id;
+};
+
+struct CMediaInfo
+{
+    const char* embedID;
+    int32_t mediaType;
+    CArrMediaSourceInfo mediaSrcList;
+    CNativeMediaPlayerSurfaceInfo surfaceInfo;
+    bool controlsShown;
+    CArrString controlList;
+    bool muted;
+    const char* posterUrl;
+    int32_t preload;
+    ArrMapItem headers;
+    ArrMapItem attributes;
+};
+
+char* MallocCString(const std::string& origin);
+uint8_t* MallocUInt8(const std::string& origin);
+char** VectorToCArrString(const std::vector<std::string>& vec);
+uint8_t* VectorToCArrUI8(const std::vector<uint8_t> vec);
+std::vector<std::string> CArrStringToVector(CArrString cArrStr);
+} // namespace Webview
+} // namespace OHOS
 
 #endif // WEBVIEW_UTILS_H
