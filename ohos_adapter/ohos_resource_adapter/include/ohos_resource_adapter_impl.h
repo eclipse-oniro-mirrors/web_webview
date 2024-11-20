@@ -72,6 +72,8 @@ public:
 
     static std::string GetArkWebVersion();
 
+    static std::string ConvertToSandboxPath(const std::string& installPath, const std::string& prefixPath);
+
     static void SetArkWebCoreHapPathOverride(const std::string& hapPath);
 
     std::string GetSystemLanguage() override;
@@ -82,8 +84,6 @@ private:
     static std::string GetModuleName(const char *configStr, size_t len);
 
     static std::string ParseModuleName(const std::shared_ptr<OHOS::AbilityBase::Extractor> &manager);
-
-    static std::string ConvertToSandboxPath(const std::string& installPath, const std::string& prefixPath);
 
     static bool GetRawFileData(const std::shared_ptr<OHOS::AbilityBase::Extractor>& manager,
         const std::string& rawFile, size_t& len, std::unique_ptr<uint8_t[]>& dest);
