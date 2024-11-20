@@ -145,6 +145,16 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlSetPathAllowingUniversalAccess(int64_t id, C
 FFI_EXPORT int32_t FfiOHOSWebviewCtlSetUrlTrustList(int64_t id, char* cUrl);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlPrefetchResource(OHOS::Webview::CRequestInfo request,
     OHOS::Webview::ArrWebHeader additionalHttpHeaders, char* cKey, int32_t cacheValidTime);
+FFI_EXPORT void FfiOHOSWebviewCtlSetWebSchemeHandler(int64_t id, char* cScheme, int64_t classId, int32_t *errCode);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlClearWebSchemeHandler(int64_t id);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlSetServiceWorkerWebSchemeHandler(char* cScheme, int64_t classId);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlClearServiceWorkerWebSchemeHandler();
+FFI_EXPORT void FfiOHOSWebviewCtlOnCreateNativeMediaPlayer(int64_t id,
+    int64_t (* callback)(int64_t, OHOS::Webview::CMediaInfo));
+FFI_EXPORT int32_t FfiOHOSWebviewCtlPrecompileJavaScript(int64_t id,
+    char* url, char* script, OHOS::Webview::CacheOptions cacheOptions);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlWebPageSnapshot(int64_t id, OHOS::Webview::CSnapshotInfo snapshot,
+    void (*callbackRef)(OHOS::Webview::RetDataCSnapshotResult infoRef));
 
     // BackForwardList
 FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t* errCode);

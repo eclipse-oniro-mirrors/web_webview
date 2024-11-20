@@ -25,6 +25,7 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_web_message.h"
+#include "web_scheme_handler_request.h"
 
 namespace OHOS::Webview {
 enum class WebHitTestType : int {
@@ -287,6 +288,22 @@ public:
     int32_t SetUrlTrustList(const std::string& urlTrustList, std::string& detailErrMsg);
 
     void SetPathAllowingUniversalAccess(const std::vector<std::string>& pathList, std::string& errorPath);
+
+    bool SetWebSchemeHandler(const char* scheme, WebSchemeHandlerImpl* handler);
+
+    int32_t ClearWebSchemeHandler();
+
+    static bool SetWebServiceWorkerSchemeHandler(const char* scheme, WebSchemeHandlerImpl* handler);
+
+    static int32_t ClearWebServiceWorkerSchemeHandler();
+
+    void OnCreateNativeMediaPlayer(std::function<int64_t(int64_t, CMediaInfo)> callback);
+
+    int32_t PrecompileJavaScript(std::string url, std::string script,
+        std::shared_ptr<OHOS::NWeb::CacheOptions> cacheOptions);
+
+    int32_t WebPageSnapshot(const char* id, NWeb::PixelUnit type, int32_t width, int32_t height,
+        const NWeb::WebSnapshotCallback callback);
 
 public:
     static std::string customeSchemeCmdLine_;
