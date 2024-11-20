@@ -190,52 +190,6 @@ std::string GetNWebHapPath(const std::string& arkWebCoreHapPathOverride)
     if (!arkWebHapPath.empty()) {
         return arkWebHapPath;
     }
-
-    std::string prefixPath = HAP_SANDBOX_PATH_PREFIX;
-    if (access(arkWebCoreHapPathOverride.c_str(), F_OK) == 0) {
-        WVLOG_D("eixt HAP_arkWebCoreHapPathOverride");
-        std::string sandboxPath = convertToSandboxPath(arkWebCoreHapPathOverride, prefixPath);
-        WVLOG_D("sandboxPath,%{public}s", sandboxPath.c_str());
-        if (access(sandboxPath.c_str(), F_OK) == 0) {
-            return sandboxPath;
-        }
-    }
-    errorMessage.emplace_back("access arkWebCoreHapPathOverride path failed", errno);
-
-    std::string installPath = convertToSandboxPath(
-        OHOS::system::GetParameter(PERSIST_ARKWEBCORE_INSTALL_PATH, ""), prefixPath);
-    WVLOG_D("install_path,%{public}s", installPath.c_str());
-    if (access(installPath.c_str(), F_OK) == 0) {
-        return installPath;
-    }
-    errorMessage.emplace_back("access nweb install path failed", errno);
-
-    if (access(ARKWEBCORE_HAP_SANDBOX_PATH.c_str(), F_OK) == 0) {
-        WVLOG_D("eixt ARKWEBCORE_HAP_SANDBOX_PATH");
-        return ARKWEBCORE_HAP_SANDBOX_PATH;
-    }
-    errorMessage.emplace_back("access arkwebcore hap sandbox path failed", errno);
-
-    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
-        WVLOG_D("eixt NWEB_HAP_PATH");
-        return NWEB_HAP_PATH;
-    }
-    errorMessage.emplace_back("access ohos nweb hap path failed", errno);
-
-    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
-        WVLOG_D("eixt NWEB_HAP_PATH_1");
-        return NWEB_HAP_PATH_1;
-    }
-    errorMessage.emplace_back("access nweb hap path failed", errno);
-
-    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
-        WVLOG_D("eixt NWEB_HAP_PATH_MODULE_UPDATE");
-        return NWEB_HAP_PATH_MODULE_UPDATE;
-    }
-    errorMessage.emplace_back("access nweb module update path failed", errno);
-    for (const auto& err : errorMessage) {
-        WVLOG_E("%{public}s, errno(%{public}d): %{public}s", err.first.c_str(), err.second, strerror(err.second));
-    }
     return "";
 }
 } // namespace
