@@ -124,20 +124,6 @@ bool ParseRawFile(const std::string& rawFile,
     return true;
 }
 
-std::string OhosResourceAdapterImpl::ConvertToSandboxPath(const std::string& installPath, const std::string& prefixPath)
-{
-    if (installPath.empty()) {
-        return "";
-    }
-    size_t result = installPath.find(HAP_REAL_PATH_PREFIX);
-    if (result != std::string::npos) {
-        size_t pos = installPath.find_last_of('/');
-        if (pos != std::string::npos && pos != installPath.size() - 1) {
-            return prefixPath + installPath.substr(pos + 1);
-        }
-    }
-    return installPath;
-}
 
 std::string GetArkWebHapPath(const std::string& arkWebCoreHapPathOverride,
                              std::vector<std::pair<std::string, int>>& errorMessage)
@@ -243,6 +229,21 @@ bool OhosFileMapperImpl::UnzipData(uint8_t** dest, size_t& len)
 }
 
 std::string OhosResourceAdapterImpl::arkWebCoreHapPathOverride_ = "";
+std::string OhosResourceAdapterImpl::ConvertToSandboxPath(const std::string& installPath, const std::string& prefixPath)
+{
+    if (installPath.empty()) {
+        return "";
+    }
+    size_t result = installPath.find(HAP_REAL_PATH_PREFIX);
+    if (result != std::string::npos) {
+        size_t pos = installPath.find_last_of('/');
+        if (pos != std::string::npos && pos != installPath.size() - 1) {
+            return prefixPath + installPath.substr(pos + 1);
+        }
+    }
+    return installPath;
+}
+
 OhosResourceAdapterImpl::OhosResourceAdapterImpl(const std::string& hapPath)
 {
     Init(hapPath);
