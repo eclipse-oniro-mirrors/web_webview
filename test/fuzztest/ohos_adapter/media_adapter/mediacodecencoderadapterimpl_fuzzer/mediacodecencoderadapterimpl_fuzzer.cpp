@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#include <fuzzer/FuzzedDataProvider.h>
 #include "mediacodecencoderadapterimpl_fuzzer.h"
 
 #include "avsharedmemory.h"
@@ -22,6 +22,8 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
 class EncoderCallbackAdapterMock : public CodecCallbackAdapter {
 public:
     EncoderCallbackAdapterMock() = default;
@@ -75,7 +77,9 @@ bool CreateLocationProxyAdapterFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<NWeb::CodecCallbackAdapter> callbackImpl = std::make_shared<EncoderCallbackAdapterMock>();
     std::shared_ptr<NWeb::CodecConfigParaAdapter> config = std::make_shared<CodecConfigParaAdapterMock>();
 
-    mediaCodecEncoderAdapterImpl.CreateVideoCodecByMime("video/avc");
+    FuzzedDataProvider dataProvider(data, size);
+    std::string mimeParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    mediaCodecEncoderAdapterImpl.CreateVideoCodecByMime(mimeParam);
     mediaCodecEncoderAdapterImpl.SetCodecCallback(nullptr);
     mediaCodecEncoderAdapterImpl.SetCodecCallback(callbackImpl);
     mediaCodecEncoderAdapterImpl.Configure(nullptr);

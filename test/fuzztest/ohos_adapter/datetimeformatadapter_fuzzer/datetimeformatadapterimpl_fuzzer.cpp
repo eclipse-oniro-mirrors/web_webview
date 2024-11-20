@@ -14,6 +14,7 @@
  */
 
 #include "datetimeformatadapterimpl_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "common_event_data.h"
@@ -29,6 +30,7 @@ namespace {
 bool g_commonEvent = false;
 bool g_unCommonEvent = false;
 using Want = OHOS::AAFwk::Want;
+constexpr uint8_t MAX_STRING_LENGTH = 255;
 } // namespace
 namespace EventFwk {
 bool CommonEventManager::SubscribeCommonEvent(const std::shared_ptr<CommonEventSubscriber>& subscriber)
@@ -50,11 +52,13 @@ public:
 
 bool DateTimeFormatAdapterFuzzTest(const uint8_t* data, size_t size)
 {
+    FuzzedDataProvider dataProvider(data, size);
+    std::string stringParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     EventFwk::CommonEventSubscribeInfo in;
     std::shared_ptr<TimezoneEventCallbackAdapter> cb = std::make_shared<MockTimezoneEventCallbackAdapter>();
     auto adapter = std::make_shared<NWebTimeZoneEventSubscriber>(in, cb);
     Want want;
-    want.SetAction("test");
+    want.SetAction(stringParam);
     EventFwk::CommonEventData newdata(want);
     adapter->OnReceiveEvent(newdata);
     want.SetAction(EventFwk::CommonEventSupport::COMMON_EVENT_TIMEZONE_CHANGED);

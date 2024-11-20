@@ -16,6 +16,7 @@
 #include <cstring>
 #include <securec.h>
 #include <unordered_map>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "nweb.h"
@@ -40,12 +41,14 @@ const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.
 } // namespace
 
 namespace NWeb {
-
+constexpr int MAX_SET_NUMBER = 1000;
+constexpr uint8_t MAX_STRING_LENGTH = 255;
 std::unordered_map<std::string, std::string> g_argsMap;
 
 bool NWebHelperFuzzTest(const uint8_t* data, size_t size)
 {
-    int32_t nweb_id = 1;
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t nweb_id = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
     bool result = NWebHelper::Instance().LoadNWebSDK();
     (void)result;
     NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
@@ -85,11 +88,13 @@ bool NWebHelperFuzzTest_002(const uint8_t* data, size_t size)
     if (web_storage != nullptr) {
         result = true;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string stringParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     (void)result;
-    std::string config = NWebAdapterHelper::Instance().ParsePerfConfig("web", "test");
+    std::string config = NWebAdapterHelper::Instance().ParsePerfConfig(stringParam, "test");
     (void)config;
     NWebConfigHelper::Instance().perfConfig_.emplace("web/test", "web_test");
-    config = NWebAdapterHelper::Instance().ParsePerfConfig("web", "test");
+    config = NWebAdapterHelper::Instance().ParsePerfConfig(stringParam, "test");
     (void)config;
     return true;
 }
@@ -107,9 +112,12 @@ bool NWebHelperFuzzTest_003(const uint8_t* data, size_t size)
     (void)cook;
 
     void* enhanceSurfaceInfo = nullptr;
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t randomWidth = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    int32_t randomHeight = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
     int32_t temp = 1;
     std::shared_ptr<NWeb> nweb =
-        NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(), randomWidth, randomHeight);
     (void)nweb;
     enhanceSurfaceInfo = static_cast<void*>(&temp);
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
