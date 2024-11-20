@@ -399,5 +399,30 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ConvertToSandboxPath_0
     EXPECT_FALSE(res.empty());
 }
 
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_SetArkWebCoreHapPathOverride_009, TestSize.Level1)
+{
+    std::string hapPath = "";
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_1;
+    }
+    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_MODULE_UPDATE;
+    }
+
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    adapterImpl.arkWebCoreHapPathOverride_ = "";
+    std::string inputStr = "";
+    adapterImpl.SetArkWebCoreHapPathOverride("");
+    EXPECT_EQ(adapterImpl.arkWebCoreHapPathOverride_, "");
+    inputStr = NWEB_HAP_PATH;
+    adapterImpl.SetArkWebCoreHapPathOverride(inputStr);
+    EXPECT_EQ(adapterImpl.arkWebCoreHapPathOverride_, NWEB_HAP_PATH);
+    adapterImpl.arkWebCoreHapPathOverride_ = "";
+}
+
+
 }
 } // namespace NWeb
