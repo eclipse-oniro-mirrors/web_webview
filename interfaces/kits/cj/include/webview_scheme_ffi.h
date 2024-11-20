@@ -41,7 +41,7 @@ extern "C" {
     FFI_EXPORT RetDataCString FfiWebSchemeHandlerRequestGetMethod(int64_t id);
     FFI_EXPORT RetDataCString FfiWebSchemeHandlerRequestGetReferrer(int64_t id);
     FFI_EXPORT RetDataCString FfiWebSchemeHandlerRequestGetFrameUrl(int64_t id);
-    FFI_EXPORT const OHOS::Webview::ArrWebHeader* FfiWebSchemeHandlerRequestGetHeader(int64_t id, int32_t *errCode);
+    FFI_EXPORT OHOS::Webview::ArrWebHeader FfiWebSchemeHandlerRequestGetHeader(int64_t id, int32_t *errCode);
     FFI_EXPORT int64_t FfiWebSchemeHandlerRequestGetHttpBodyStream(int64_t id, int32_t *errCode);
 
     // WebResourceHandler
@@ -54,7 +54,7 @@ extern "C" {
 
     // WebSchemeHandler
     FFI_EXPORT int64_t FfiWebSchemeHandlerConstructor();
-    FFI_EXPORT void FfiWebSchemeHandlerOnRequestStart(int64_t id, void (*callback)(int64_t, int64_t));
+    FFI_EXPORT void FfiWebSchemeHandlerOnRequestStart(int64_t id, bool (*callback)(int64_t, int64_t));
     FFI_EXPORT void FfiWebSchemeHandlerOnRequestStop(int64_t id, void (*callback)(int64_t));
 }
 
