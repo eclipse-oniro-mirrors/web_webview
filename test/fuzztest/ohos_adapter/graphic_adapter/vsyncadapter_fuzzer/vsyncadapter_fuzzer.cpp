@@ -16,6 +16,7 @@
 #include "vsyncadapter_fuzzer.h"
 
 #include <cstring>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "vsync_adapter_impl.h"
@@ -25,6 +26,7 @@ using namespace OHOS::NWeb;
 
 namespace OHOS {
 static void OnVsyncCallback() {}
+constexpr int MAX_SET_NUMBER = 1000;
 
 bool CameraManagerAdapterFuzzTest(const uint8_t* data, size_t size)
 {
@@ -34,9 +36,11 @@ bool CameraManagerAdapterFuzzTest(const uint8_t* data, size_t size)
 
     VSyncAdapterImpl vsyncAdapter;
     void* client = nullptr;
-    adapter.OnVsync(1, client);
+    FuzzedDataProvider dataProvider(data, size);
+    int64_t timestamp = dataProvider.ConsumeIntegralInRange<int64_t>(0, MAX_SET_NUMBER);
+    adapter.OnVsync(timestamp, client);
     client = &vsyncAdapter;
-    adapter.OnVsync(1, client);
+    adapter.OnVsync(timestamp, client);
     adapter.VsyncCallbackInner(1);
     adapter.GetVSyncPeriod();
     adapter.SetFrameRateLinkerEnable(true);

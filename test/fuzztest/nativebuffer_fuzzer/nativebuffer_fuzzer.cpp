@@ -19,42 +19,33 @@
 
 using namespace OHOS::NWeb;
 namespace OHOS {
-    bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return true;
-        }
-
-        OhosNativeBufferAdapter &adapter = OhosNativeBufferAdapterImpl::GetInstance();
-
-        if(size > 0) {
-            void* buffer = malloc(size);
-            if(buffer == nullptr) {
-                return false;
-            }
-
-            errno_t ret = memcpy_s(buffer, size, data, size);
-            if (ret != 0) {
-                return false;
-            }
-
-            adapter.AcquireBuffer(buffer);
-
-            void* eglBuffer = nullptr;   
-            adapter.GetEGLBuffer(buffer, &eglBuffer);
-
-            void* nativeBuffer = nullptr;
-            adapter.NativeBufferFromNativeWindowBuffer(buffer, &nativeBuffer);
-            adapter.GetSeqNum(nativeBuffer);
-            adapter.FreeEGLBuffer(buffer);
-            adapter.Release(eglBuffer);
-
-            return true;
-        } else {
-            return false;
-        }    
+bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return true;
     }
+
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
+        OhosNativeBufferAdapter &adapter = OhosNativeBufferAdapterImpl::GetInstance();
+        void* buffer = nullptr;
+        void* eglBuffer = nullptr;
+
+        adapter.AcquireBuffer(buffer);
+        adapter.GetEGLBuffer(buffer, &eglBuffer);
+
+        void* nativeBuffer = nullptr;
+        void* nativeWindowBuff = nullptr;
+    
+        adapter.NativeBufferFromNativeWindowBuffer(nativeWindowBuff, &nativeBuffer);
+        adapter.GetSeqNum(nativeBuffer);
+        adapter.FreeEGLBuffer(buffer);
+        adapter.Release(eglBuffer);
+    }
+    return true;
 }
+} // namespace OHOS
+
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

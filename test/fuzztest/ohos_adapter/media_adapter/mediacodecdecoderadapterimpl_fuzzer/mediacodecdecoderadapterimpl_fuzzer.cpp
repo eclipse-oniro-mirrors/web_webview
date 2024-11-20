@@ -16,6 +16,7 @@
 #include "mediacodecdecoderadapterimpl_fuzzer.h"
 
 #include <cstring>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "avsharedmemory.h"
 #include "avsharedmemorybase.h"
@@ -24,6 +25,8 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
 class DecoderCallbackAdapterMock : public DecoderCallbackAdapter {
 public:
     DecoderCallbackAdapterMock() = default;
@@ -84,7 +87,9 @@ bool MediaCodecDecoderAdapterImplFuzzTest(const uint8_t* data, size_t size)
     NWeb::DecoderAdapterCode code = mediaCodecDecoderAdapterImpl.CreateVideoDecoderByMime("testmimeType");
     std::shared_ptr<NWeb::DecoderFormatAdapter> format = std::make_unique<DecoderFormatAdapterMock>();
     AVCodecBufferInfo info;
-    code = mediaCodecDecoderAdapterImpl.CreateVideoDecoderByName("testname");
+    FuzzedDataProvider dataProvider(data, size);
+    std::string stringParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    code = mediaCodecDecoderAdapterImpl.CreateVideoDecoderByName(stringParam);
     code = mediaCodecDecoderAdapterImpl.ConfigureDecoder(format);
     code = mediaCodecDecoderAdapterImpl.SetParameterDecoder(format);
 

@@ -17,6 +17,7 @@
 
 #include <securec.h>
 #include <sys/mman.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "image_source.h"
 #include "image_type.h"
@@ -27,28 +28,26 @@ using namespace OHOS::NWeb;
 const std::string DEFAULT_MOUSE_DRAG_IMAGE { "/system/etc/device_status/drag_icon/Copy_Drag.svg" };
 
 namespace OHOS {
-bool ValidateInput(const uint8_t* data, size_t size)
-{
-    return (data != nullptr) && (size >= sizeof(int32_t));
-}
-
+constexpr int MAX_SET_NUMBER = 1000;
 std::shared_ptr<OhosImageDecoderAdapter> CreateDecoderAdapter()
 {
     return OhosAdapterHelper::GetInstance().CreateOhosImageDecoderAdapter();
 }
 
-void HandleAbnormalCase(const std::shared_ptr<OhosImageDecoderAdapter>& adapter)
+void HandleAbnormalCase(const std::shared_ptr<OhosImageDecoderAdapter>& adapter, const uint8_t* data, size_t size)
 {
-    size_t len = 0;
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t len = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
     std::unique_ptr<uint8_t[]> rawData;
 
     adapter->ParseImageInfo(rawData.get(), len);
     adapter->DecodeToPixelMap(rawData.get(), len);
 }
 
-bool ProcessImageSource(std::shared_ptr<OhosImageDecoderAdapter>& adapter)
+bool ProcessImageSource(std::shared_ptr<OhosImageDecoderAdapter>& adapter, const uint8_t* data, size_t size)
 {
-    uint32_t errorCode = 0;
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t errorCode = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
     OHOS::Media::SourceOptions opts;
     auto imageSource = OHOS::Media::ImageSource::CreateImageSource(DEFAULT_MOUSE_DRAG_IMAGE, opts, errorCode);
     if (!imageSource || errorCode != Media::SUCCESS) {
@@ -74,8 +73,8 @@ bool ProcessImageSource(std::shared_ptr<OhosImageDecoderAdapter>& adapter)
 
 bool ApplyOhosImageDecoderAdapterFuzzTest(const uint8_t* data, size_t size)
 {
-    if (!ValidateInput(data, size)) {
-        return false;
+    if ((data == nullptr) || (size == 0)) {
+        return true;
     }
     size_t callCount = data[0] % 10;
     for (size_t i = 0; i < callCount; ++i) {
@@ -83,8 +82,8 @@ bool ApplyOhosImageDecoderAdapterFuzzTest(const uint8_t* data, size_t size)
         if (!adapter) {
             return false;
         }
-        HandleAbnormalCase(adapter);
-        return ProcessImageSource(adapter);
+        HandleAbnormalCase(adapter, data, size);
+        return ProcessImageSource(adapter, data, size);
     }
     return true;
 }
