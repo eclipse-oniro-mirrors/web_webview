@@ -207,7 +207,7 @@ namespace OHOS::Webview {
         handler->RequestStart(resourceRequest, resourceHandler,
             intercept);
     }
-    
+
     void OnRequestStop(
         const ArkWeb_SchemeHandler* schemeHandler,const ArkWeb_ResourceRequest* resourceRequest)
     {
@@ -286,12 +286,12 @@ namespace OHOS::Webview {
             WEBVIEWLOGE("[SchemeHandler] :RequestStart not exists.");
             return;
         }
-        WebSchemeHandlerRequestImpl* schemeHandlerRequest = new (std::nothrow) WebSchemeHandlerRequestImpl(request);
+        sptr<WebSchemeHandlerRequestImpl> schemeHandlerRequest = FFIData::Create<WebSchemeHandlerRequestImpl>(request);
         if (schemeHandlerRequest == nullptr) {
             WEBVIEWLOGD("RequestStart, new schemeHandlerRequest failed");
             return;
         }
-        WebResourceHandlerImpl* resourceHandler = new (std::nothrow) WebResourceHandlerImpl(ArkWeb_ResourceHandler);
+        sptr<WebResourceHandlerImpl> resourceHandler = FFIData::Create<WebResourceHandlerImpl>(ArkWeb_ResourceHandler);
         if (resourceHandler == nullptr) {
             WEBVIEWLOGD("RequestStart, new resourceHandler failed");
             delete schemeHandlerRequest;
@@ -299,10 +299,13 @@ namespace OHOS::Webview {
         }
         if (OH_ArkWebResourceRequest_SetUserData(request, resourceHandler) != 0) {
             WEBVIEWLOGD("OH_ArkWebResourceRequest_SetUserData failed");
+        } else {
+            resourceHandler->IncStrongRef(nullptr);
         }
-        request_start_callback_(schemeHandlerRequest->GetID(), resourceHandler->GetID());
+        *intercept = request_start_callback_(schemeHandlerRequest->GetID(), resourceHandler->GetID());
         if (!*intercept) {
             resourceHandler->SetFinishFlag();
+            resourceHandler->DecStrongRef(nullptr);
         }
     }
 
@@ -333,7 +336,7 @@ namespace OHOS::Webview {
             return;
         }
         param->callbackRef_ = request_stop_callback_;
-        param->request_ = new (std::nothrow) WebSchemeHandlerRequestImpl(resourceRequest);
+        param->request_ = FFIData::Create<WebSchemeHandlerRequestImpl>(resourceRequest);
         if (param->request_ == nullptr) {
             delete param;
             return;
@@ -344,7 +347,7 @@ namespace OHOS::Webview {
         }).detach();
     }
 
-    void WebSchemeHandlerImpl::PutRequestStart(std::function<void(int64_t, int64_t)> callback)
+    void WebSchemeHandlerImpl::PutRequestStart(std::function<bool(int64_t, int64_t)> callback)
     {
         WEBVIEWLOGI("[SchemeHandler] WebSchemeHandlerImpl::PutRequestStart");
         request_start_callback_ = callback;

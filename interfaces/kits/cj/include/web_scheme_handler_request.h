@@ -162,7 +162,7 @@ namespace OHOS::Webview {
                         bool* intercept);
         void RequestStop(const ArkWeb_ResourceRequest* resourceRequest);
 
-        void PutRequestStart(std::function<void(int64_t, int64_t)> callback);
+        void PutRequestStart(std::function<bool(int64_t, int64_t)> callback);
         void PutRequestStop(std::function<void(int64_t)> callback);
 
         static std::unordered_map<WebSchemeHandlerImpl*, const ArkWeb_SchemeHandler*>
@@ -181,7 +181,7 @@ namespace OHOS::Webview {
         ArkWeb_OnRequestStart onRequestStart_ = nullptr;
         ArkWeb_OnRequestStop onRequestStop_ = nullptr;
 
-        std::function<void(int64_t, int64_t)> request_start_callback_ = nullptr;
+        std::function<bool(int64_t, int64_t)> request_start_callback_ = nullptr;
         std::function<void(int64_t)> request_stop_callback_ = nullptr;
     };
 

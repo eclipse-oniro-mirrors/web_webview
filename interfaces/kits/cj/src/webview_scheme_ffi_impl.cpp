@@ -31,6 +31,7 @@ using namespace OHOS::NWeb;
 
 namespace OHOS {
 namespace Webview {
+const int32_t MAX_HEADER_SIZE = 200;
 extern "C" {
     //WebHttpBodyStream
     int64_t FfiWebHttpBodyStreamConstructor()
@@ -237,25 +238,25 @@ extern "C" {
         return ret;
     }
 
-    const ArrWebHeader* FfiWebSchemeHandlerRequestGetHeader(int64_t id, int32_t *errCode)
+    ArrWebHeader FfiWebSchemeHandlerRequestGetHeader(int64_t id, int32_t *errCode)
     {
+        ArrWebHeader ret = { nullptr, 0 };
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
         if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
             *errCode = NWebError::INIT_ERROR;
-            return nullptr;
+            return ret;
         }
-        ArrWebHeader* ret = new ArrWebHeader;
         std::vector<std::pair<std::string, std::string>> header = nativeWebSchemeHandlerRequest->GetHeader();
         *errCode = NWebError::NO_ERROR;
         size_t headerSize = header.size();
-        if (headerSize < 0) {
-            return nullptr;
+        if (header.empty() || headerSize > MAX_HEADER_SIZE) {
+            return ret;
         }
-        ret->size = headerSize;
-        ret->head = new RetWebHeader[headerSize];
+        ret.size = headerSize;
+        ret.head = new RetWebHeader[headerSize];
         for (size_t index = 0; index < headerSize; index++) {
-            ret->head[index].headerKey = MallocCString(header[index].first.c_str());
-            ret->head[index].headerValue = MallocCString(header[index].second.c_str());
+            ret.head[index].headerKey = MallocCString(header[index].first.c_str());
+            ret.head[index].headerValue = MallocCString(header[index].second.c_str());
         }
         return ret;
     }
@@ -369,7 +370,7 @@ extern "C" {
         return nativeWebSchemeHandler->GetID();
     }
 
-    void FfiWebSchemeHandlerOnRequestStart(int64_t id, void (*callback)(int64_t, int64_t))
+    void FfiWebSchemeHandlerOnRequestStart(int64_t id, bool (*callback)(int64_t, int64_t))
     {
         auto nativeWebSchemeHandlerImpl = FFIData::GetData<WebSchemeHandlerImpl>(id);
         if (!nativeWebSchemeHandlerImpl) {
