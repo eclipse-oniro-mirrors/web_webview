@@ -91,4 +91,21 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
     adapter.pkgName_ = "test";
     adapter.SetScene("", 0);
 }
+
+/**
+ * @tc.name: GraphicAdapterTest_RequestVsync_002
+ * @tc.desc: RequestVsync.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_002, TestSize.Level1)
+{
+    VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
+    adapter.SetScene("", 1);
+    adapter.hasReportedKeyThread_ = true;
+    adapter.hasRequestedVsync_ = true;
+    EXPECT_EQ(VSyncErrorCode::SUCCESS, adapter.RequestVsync(nullptr, nullptr));
+    adapter.hasRequestedVsync_ = false;
+    EXPECT_EQ(VSyncErrorCode::SUCCESS, adapter.RequestVsync(nullptr, nullptr));
+}
 } // namespace NWeb
