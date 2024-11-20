@@ -675,10 +675,12 @@ HWTEST_F(NwebHelperTest, NWebHelper_ParseNWebLTPOApp_001, TestSize.Level1)
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     EXPECT_TRUE(NWebConfigHelper::Instance().ltpoAllowedApps_.empty());
     EXPECT_FALSE(NWebConfigHelper::Instance().IsLTPODynamicApp(""));
+    EXPECT_FALSE(NWebAdapterHelper::Instance().IsLTPODynamicApp(""));
 
     NWebConfigHelper::Instance().ltpoStrategy_ = LTPO_STRATEGY;
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOStrategy(), LTPO_STRATEGY);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOStrategy(), LTPO_STRATEGY);
 }
 } // namespace OHOS::NWeb
 }
