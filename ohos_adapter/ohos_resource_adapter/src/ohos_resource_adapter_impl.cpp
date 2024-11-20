@@ -130,7 +130,7 @@ std::string GetArkWebHapPath(const std::string& arkWebCoreHapPathOverride,
 {
     std::string prefixPath = WEBVIEW_SANDBOX_PATH;
     if (access(arkWebCoreHapPathOverride.c_str(), F_OK) == 0) {
-        std::string sandboxPath = ConvertToSandboxPath(arkWebCoreHapPathOverride, prefixPath);
+        std::string sandboxPath = OhosResourceAdapterImpl::ConvertToSandboxPath(arkWebCoreHapPathOverride, prefixPath);
         if (access(sandboxPath.c_str(), F_OK) == 0) {
             WVLOG_D("eixt HAP_arkWebCoreHapPathOverride");
             return sandboxPath;
@@ -138,7 +138,7 @@ std::string GetArkWebHapPath(const std::string& arkWebCoreHapPathOverride,
     }
     errorMessage.emplace_back("access arkWebCoreHapPathOverride path failed", errno);
 
-    std::string installPath = ConvertToSandboxPath(
+    std::string installPath = OhosResourceAdapterImpl::ConvertToSandboxPath(
         OHOS::system::GetParameter(PERSIST_ARKWEBCORE_INSTALL_PATH, ""), prefixPath);
     if (access(installPath.c_str(), F_OK) == 0) {
         WVLOG_D("exit install_path,%{public}s", installPath.c_str());
