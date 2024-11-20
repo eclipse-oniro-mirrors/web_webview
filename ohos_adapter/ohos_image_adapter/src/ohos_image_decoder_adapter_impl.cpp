@@ -19,6 +19,7 @@
 #include "image_source.h"
 #include "media_errors.h"
 #include "nweb_log.h"
+#include "pixel_map.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -139,6 +140,10 @@ int32_t OhosImageDecoderAdapterImpl::GetStride()
             "[HeifSupport] OhosImageDecoderAdapterImpl::GetStride. PixelMap is null.");
         return 0;
     }
+    if (pixelMap_->GetAllocatorType() == Media::AllocatorType::SHARE_MEM_ALLOC) {
+        WVLOG_D("[HeifSupport] OhosImageDecoderAdapterImpl::GetStride. share mem get row stride.");
+        return pixelMap_->GetRowStride();
+    }
     if (auto* surfaceBuffer = SurfaceBufferFromPixelMap(pixelMap_.get())) {
         // Pixmap row stride is suface buffer stride as We only support DMA_ALLOC now.
         return surfaceBuffer->GetStride();
@@ -241,6 +246,15 @@ void OhosImageDecoderAdapterImpl::ReleasePixelMap()
         DestroyNativeWindowBuffer(nativeWindowBuffer_);
         nativeWindowBuffer_ = nullptr;
     }
+}
+
+void* OhosImageDecoderAdapterImpl::GetDecodeData()
+{
+    if (!pixelMap_) {
+        WVLOG_E("[HeifSupport] OhosImageDecoderAdapterImpl::GetDecodeData. PixelMap is null.");
+        return nullptr;
+    }
+    return pixelMap_->GetWritablePixels();
 }
 
 }  // namespace NWeb
