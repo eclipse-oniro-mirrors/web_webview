@@ -21,6 +21,7 @@
 #undef private
 
 #include "syspara/parameters.h"
+#include "display_info.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -384,6 +385,32 @@ HWTEST_F(DisplayManagerAdapterImplTest, GetDpi_001, TestSize.Level1)
 
     displayAdapterImpl->display_ = nullptr;
     EXPECT_EQ(displayAdapterImpl->GetDpi(), -1);
+}
+
+/**
+ * @tc.name: OnChange_001.
+ * @tc.desc: test OnChange.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, OnChange_001, TestSize.Level1)
+{
+    std::unique_ptr<DisplayListenerAdapterImpl> displayListenerAdapterImpl =
+        std::make_unique<DisplayListenerAdapterImpl>(nullptr);
+    EXPECT_FALSE(displayListenerAdapterImpl->CheckOnlyRefreshRateDecreased(static_cast<DisplayId>(1)));
+    DisplayId id = DisplayManager::GetInstance().GetDefaultDisplayId();
+    auto displayPtr = DisplayManager::GetInstance().GetDefaultDisplay();
+    ASSERT_NE(displayPtr, nullptr);
+    auto displayInfo = displayPtr->GetDisplayInfo();
+    ASSERT_NE(displayInfo, nullptr);
+    EXPECT_EQ(id, DisplayManager::GetInstance().GetDefaultDisplayId());
+    EXPECT_FALSE(displayListenerAdapterImpl->CheckOnlyRefreshRateDecreased(
+        DisplayManager::GetInstance().GetDefaultDisplayId()));
+    auto nwebDisplayInfo =  displayListenerAdapterImpl->ConvertDisplayInfo(*displayInfo);
+    displayListenerAdapterImpl->cachedDisplayedInfo_ = nwebDisplayInfo;
+    displayListenerAdapterImpl->cachedDisplayedInfo_.refreshRate_ = 100;
+    EXPECT_TRUE(displayListenerAdapterImpl->CheckOnlyRefreshRateDecreased(
+        DisplayManager::GetInstance().GetDefaultDisplayId()));
 }
 }
 }
