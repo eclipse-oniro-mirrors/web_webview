@@ -125,7 +125,7 @@ struct CArrScheme {
 };
 
 struct CacheOptions {
-    ArrWebHeader* arrHead;
+    ArrWebHeader arrHead;
 };
 
 struct COfflineResourceMap {
@@ -194,6 +194,29 @@ struct CMediaInfo
     int32_t preload;
     ArrMapItem headers;
     ArrMapItem attributes;
+};
+
+struct CSnapshotInfo {
+    char* id;
+    int32_t width;
+    int32_t height;
+    int32_t widthType;
+    int32_t heightType;
+};
+
+struct CSnapshotResult {
+    char* id;
+    int64_t imageId;
+    bool status;
+    int32_t width;
+    int32_t height;
+    int32_t widthType;
+    int32_t heightType;
+};
+
+struct RetDataCSnapshotResult {
+    int32_t code;
+    CSnapshotResult data;
 };
 
 char* MallocCString(const std::string& origin);

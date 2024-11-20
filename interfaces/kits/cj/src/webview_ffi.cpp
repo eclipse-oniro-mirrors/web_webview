@@ -34,6 +34,7 @@
 #include "web_download_item_impl.h"
 #include "web_download_manager_impl.h"
 #include "web_errors.h"
+#include "web_scheme_handler_request.h"
 #include "web_scheme_handler_response_impl.h"
 #include "web_storage.h"
 #include "webview_controller_impl.h"
@@ -52,9 +53,10 @@ namespace Webview {
 constexpr uint32_t SOCKET_MAXIMUM = 6;
 constexpr uint32_t URL_MAXIMUM = 2048;
 constexpr int INTEGER_TWO = 2;
+constexpr int INTEGER_THREE = 3;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
-
 constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024;
+std::atomic<bool> g_inWebPageSnapshot {false};
 
 bool CheckUrl(std::string url)
 {
@@ -69,6 +71,59 @@ bool CheckUrl(std::string url)
     }
 
     return true;
+}
+
+NWeb::WebSnapshotCallback CreateWebPageSnapshotResultCallback(bool check, int32_t inputWidth, int32_t inputHeight,
+    int32_t inputSizeType, const std::function<void(RetDataCSnapshotResult)>& callbackRef)
+{
+    return 
+        [check, inputWidth, inputHeight, inputSizeType, callbackRef](
+            const char* returnId, bool returnStatus, float radio, void* returnData,
+            int returnWidth, int returnHeight) {
+            RetDataCSnapshotResult ret = { .code = NWebError::INIT_ERROR, .data = { .id = nullptr, .imageId = 0,
+                .status = true, .width = 0, .height = 0, .widthType = 1, .heightType = 1 } };
+            OHOS::Media::InitializationOptions opt;
+            opt.size.width = static_cast<int32_t>(returnWidth);
+            opt.size.height = static_cast<int32_t>(returnHeight);
+            opt.pixelFormat = OHOS::Media::PixelFormat::RGBA_8888;
+            opt.alphaType = OHOS::Media::AlphaType::IMAGE_ALPHA_TYPE_OPAQUE;
+            opt.editable = true;
+            std::unique_ptr<Media::PixelMap> pixelMap = Media::PixelMapImpl::CreatePixelMap(opt);
+            if (pixelMap != nullptr) {
+                uint64_t stride = static_cast<uint64_t>(returnWidth) << 2;
+                uint64_t bufferSize = stride * static_cast<uint64_t>(returnHeight);
+                pixelMap->WritePixels(static_cast<const uint8_t*>(returnData), bufferSize);
+            } else {
+                WEBVIEWLOGE("WebPageSnapshot create pixel map error");
+            }
+            int returnJsWidth = 0;
+            int returnJsHeight = 0;
+            if (radio > 0) {
+                returnJsWidth = returnWidth / radio;
+                returnJsHeight = returnHeight / radio;
+            }
+            if (check) {
+                if (std::abs(returnJsWidth - inputWidth) < INTEGER_THREE) {
+                    returnJsWidth = inputWidth;
+                }
+                if (std::abs(returnJsHeight - inputHeight) < INTEGER_THREE) {
+                    returnJsHeight = inputHeight;
+                }
+            }
+            ret.code = NWebError::NO_ERROR;
+            ret.data.status = check;
+            ret.data.width = returnJsWidth;
+            ret.data.height = returnJsHeight;
+            ret.data.widthType = inputSizeType;
+            ret.data.heightType = inputSizeType;
+            ret.data.id = MallocCString(returnId);
+            auto nativeImage = FFIData::Create<Media::PixelMapImpl>(move(pixelMap));
+            if (nativeImage != nullptr) {
+                ret.data.imageId = nativeImage->GetID();
+            }
+            callbackRef(ret);
+            g_inWebPageSnapshot = false;
+        };
 }
 
 extern "C" {
@@ -1701,6 +1756,138 @@ extern "C" {
         }
         std::string str = name;
         ret = nativeWebviewCtl->DeleteJavaScriptRegister(str, {});
+        return ret;
+    }
+
+    void FfiOHOSWebviewCtlSetWebSchemeHandler(int64_t id, char* cScheme, int64_t classId, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+        }
+        WebSchemeHandlerImpl* nativeWebSchemeHandler = FFIData::GetData<WebSchemeHandlerImpl>(classId);
+        if (!nativeWebSchemeHandler) {
+            WEBVIEWLOGE("set WebSchemeHandler is null");
+            *errCode = NWebError::INIT_ERROR;
+        }
+        bool ret = nativeWebviewCtl->SetWebSchemeHandler(cScheme, nativeWebSchemeHandler);
+        if (!ret) {
+            WEBVIEWLOGE("FfiOHOSWebviewCtlSetWebSchemeHandler failed");
+        }
+        *errCode = NWebError::NO_ERROR;
+        return;
+    }
+
+    int32_t FfiOHOSWebviewCtlClearWebSchemeHandler(int64_t id)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        int32_t ret = nativeWebviewCtl->ClearWebSchemeHandler();
+        if (ret != NWebError::NO_ERROR) {
+            WEBVIEWLOGE("FfiOHOSWebviewCtlClearWebSchemeHandler failed");
+        }
+        return ret;
+    }
+
+    int32_t FfiOHOSWebviewCtlSetServiceWorkerWebSchemeHandler(char* cScheme, int64_t classId)
+    {
+        auto nativeWebSchemeHandler = FFIData::GetData<WebSchemeHandlerImpl>(classId);
+        if (!nativeWebSchemeHandler) {
+            return NWebError::INIT_ERROR;
+        }
+        std::string scheme = cScheme;
+        bool ret = WebviewControllerImpl::SetWebServiceWorkerSchemeHandler(scheme.c_str(), nativeWebSchemeHandler);
+        if (!ret) {
+            WEBVIEWLOGE("SetServiceWorkerWebSchemeHandler failed")
+        }
+        return ret;
+    }
+
+    int32_t FfiOHOSWebviewCtlClearServiceWorkerWebSchemeHandler()
+    {
+        int32_t ret = WebviewControllerImpl::ClearWebServiceWorkerSchemeHandler();
+        if (ret != 0) {
+            WEBVIEWLOGE("FfiOHOSWebviewCtlClearServiceWorkerWebSchemeHandler ret=%{public}d", ret)
+        }
+        return ret;
+    }
+
+    void FfiOHOSWebviewCtlOnCreateNativeMediaPlayer(int64_t id,
+        int64_t (* callback)(int64_t, OHOS::Webview::CMediaInfo))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            WEBVIEWLOGE("Webview controller is null or not init ");
+        }
+        nativeWebviewCtl->OnCreateNativeMediaPlayer(CJLambda::Create(callback));
+    }
+
+    int32_t FfiOHOSWebviewCtlPrecompileJavaScript(int64_t id,
+        char* url, char* script, OHOS::Webview::CacheOptions cacheOptions)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        ArrWebHeader headers = cacheOptions.arrHead;
+        uint32_t arrayLength = static_cast<uint32_t>(headers.size);
+        std::map<std::string, std::string> responseHeaders;
+        for (uint32_t i = 0; i < arrayLength; ++i) {
+            std::string key = headers.head[i].headerKey;
+            std::string value = headers.head[i].headerValue;
+            responseHeaders[key] = value;
+        }
+        auto cache = std::make_shared<NWebCacheOptionsImpl>(responseHeaders);
+        std::string str = std::string(script);
+        return nativeWebviewCtl->PrecompileJavaScript(url, str, cache);
+    }
+
+    int32_t FfiOHOSWebviewCtlWebPageSnapshot(
+        int64_t id, CSnapshotInfo snapshot, void (*callbackRef)(RetDataCSnapshotResult infoRef))
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        if (g_inWebPageSnapshot) {
+            return NWebError::FUNCTION_NOT_ENABLE;
+        }
+        g_inWebPageSnapshot = true;
+        std::string nativeSnapshotId = snapshot.id;
+        int32_t nativeSnapshotSizeWidth = snapshot.width;
+        int32_t nativeSnapshotSizeHeight = snapshot.height;
+        int32_t nativeSnapshotSizeHeightType = snapshot.widthType;
+        int32_t nativeSnapshotSizeWidthType = snapshot.heightType;
+        NWeb::PixelUnit nativeSnapshotSizeType = NWeb::PixelUnit::NONE;
+
+        if (nativeSnapshotSizeHeightType != nativeSnapshotSizeWidthType) {
+            WEBVIEWLOGE("WebPageSnapshot input different pixel unit");
+            g_inWebPageSnapshot = false;
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        if (NWeb::PixelUnit(nativeSnapshotSizeHeightType) != NWeb::PixelUnit::NONE) {
+            nativeSnapshotSizeType = NWeb::PixelUnit(nativeSnapshotSizeHeightType);
+        }
+        if (nativeSnapshotSizeWidth < 0 || nativeSnapshotSizeHeight < 0) {
+            WEBVIEWLOGE("WebPageSnapshot input pixel length less than 0");
+            g_inWebPageSnapshot = false;
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        bool pixelCheck = false;
+        if (nativeSnapshotSizeType != NWeb::PixelUnit::VP) {
+            pixelCheck = true;
+        }
+        auto onChange = CJLambda::Create(callbackRef);
+        auto resultCallback = CreateWebPageSnapshotResultCallback(
+            pixelCheck, nativeSnapshotSizeWidth, nativeSnapshotSizeHeight,
+            static_cast<int32_t>(nativeSnapshotSizeType), onChange);
+        int32_t ret = nativeWebviewCtl->WebPageSnapshot(nativeSnapshotId.c_str(),
+            nativeSnapshotSizeType, nativeSnapshotSizeWidth, nativeSnapshotSizeHeight, std::move(resultCallback));
+        if (ret != NO_ERROR) {
+            g_inWebPageSnapshot = false;
+        }
         return ret;
     }
 }

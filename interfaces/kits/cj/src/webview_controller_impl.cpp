@@ -32,6 +32,7 @@
 #include "parameters.h"
 #include "system_ability_definition.h"
 #include "web_errors.h"
+#include "web_native_media_player.h"
 #include "webview_hasimage_callback.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_javascript_result_callback.h"
@@ -1241,13 +1242,83 @@ namespace OHOS::Webview {
         }
         AppExecFwk::BundleInfo bundleInfo;
         if (bundleMgr->GetBundleInfoForSelf(
-                static_cast<int32_t>(AppExecFwk::GetBundleInfoFlag::GET_BUNDLE_INFO_WITH_HAP_MODULE),
-                bundleInfo) != 0) {
+            static_cast<int32_t>(AppExecFwk::GetBundleInfoFlag::GET_BUNDLE_INFO_WITH_HAP_MODULE), bundleInfo) != 0) {
             WEBVIEWLOGE("get bundle info failed");
             return false;
         }
         moduleName_ = bundleInfo.moduleNames;
         return true;
+    }
+
+    bool WebviewControllerImpl::SetWebSchemeHandler(const char* scheme, WebSchemeHandlerImpl* handler)
+    {
+        if (!handler || !scheme) {
+            WEBVIEWLOGE("WebviewControllerImpl::SetWebSchemeHandler schemeHandler or scheme is nullptr");
+            return false;
+        }
+        ArkWeb_SchemeHandler* schemeHandler = 
+            const_cast<ArkWeb_SchemeHandler*>(WebSchemeHandlerImpl::GetArkWebSchemeHandler(handler));
+        if (schemeHandler == nullptr) {
+            WEBVIEWLOGE("schemeHandler is nullptr");
+        }
+        return OH_ArkWeb_SetSchemeHandler(scheme, webTag_.c_str(), schemeHandler);
+    }
+
+    int32_t WebviewControllerImpl::ClearWebSchemeHandler()
+    {
+        return OH_ArkWeb_ClearSchemeHandlers(webTag_.c_str());
+    }
+
+    bool WebviewControllerImpl::SetWebServiceWorkerSchemeHandler(const char* scheme, WebSchemeHandlerImpl* handler)
+    {
+        ArkWeb_SchemeHandler* schemeHandler = 
+            const_cast<ArkWeb_SchemeHandler*>(WebSchemeHandlerImpl::GetArkWebSchemeHandler(handler));
+        return OH_ArkWebServiceWorker_SetSchemeHandler(scheme, schemeHandler);
+    }
+
+    int32_t WebviewControllerImpl::ClearWebServiceWorkerSchemeHandler()
+    {
+        return OH_ArkWebServiceWorker_ClearSchemeHandlers();
+    }
+
+    void WebviewControllerImpl::OnCreateNativeMediaPlayer(std::function<int64_t(int64_t, CMediaInfo)> callback)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        auto callbackImpl = std::make_shared<NWebCreateNativeMediaPlayerCallbackImpl>(nwebId_, callback);
+        nweb_ptr->OnCreateNativeMediaPlayer(callbackImpl);
+    }
+
+    int32_t WebviewControllerImpl::PrecompileJavaScript(std::string url, std::string script,
+        std::shared_ptr<OHOS::NWeb::CacheOptions> cacheOptions)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebPrecompileCallback>();
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        if (url.empty() || script.empty()) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        nweb_ptr->PrecompileJavaScript(url, script, cacheOptions, callbackImpl);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t WebviewControllerImpl::WebPageSnapshot(const char* id, NWeb::PixelUnit type,
+        int32_t width, int32_t height, const NWeb::WebSnapshotCallback callback)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+
+        bool init = nweb_ptr->WebPageSnapshot(id, type, width, height, std::move(callback));
+        if (!init) {
+            return NWebError::INIT_ERROR;
+        }
+        return NWebError::NO_ERROR;
     }
 
     bool CheckSchemeName(const std::string& schemeName)
