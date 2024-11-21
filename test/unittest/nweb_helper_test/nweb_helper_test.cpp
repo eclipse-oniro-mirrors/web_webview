@@ -340,6 +340,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
     NWebHelper::Instance().bundlePath_.clear();
     NWebHelper::Instance().EnableBackForwardCache(true, true);
+    NWebHelper::Instance().SetCustomSchemeCmdLine("single-process");
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_TRUE(result);
     NWebHelper::Instance().SetConnectionTimeout(1);
@@ -687,5 +688,27 @@ HWTEST_F(NwebHelperTest, NWebHelper_ParseNWebLTPOApp_001, TestSize.Level1)
     EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOStrategy(), LTPO_STRATEGY);
     EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOStrategy(), LTPO_STRATEGY);
 }
+
+/**
+ * @tc.name: NWebHelper_GetWebEngine_001
+ * @tc.desc: GetWebEngine.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngine_001, TestSize.Level1)
+{
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().bundlePath_ = "";
+    g_applicationContext.reset();
+    bool result = NWebHelper::Instance().GetWebEngine(true);
+    EXPECT_FALSE(result);
+    ApplicationContextMock *contextMock = new ApplicationContextMock();
+    ASSERT_NE(contextMock, nullptr);
+    g_applicationContext.reset(contextMock);
+    result = NWebHelper::Instance().GetWebEngine(true);
+    EXPECT_FALSE(result);
+}
+
+
 } // namespace OHOS::NWeb
 }

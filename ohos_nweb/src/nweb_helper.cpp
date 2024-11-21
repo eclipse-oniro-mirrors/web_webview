@@ -690,8 +690,6 @@ bool NWebHelper::InitWebEngine()
     std::string arkWebInstallPath = OHOS::system::GetParameter("persist.arkwebcore.install_path", "");
     if (!arkWebInstallPath.empty()) {
         initArgs->AddArg(std::string("--arkwebcore-install-path=").append(arkWebInstallPath));
-    } else {
-        WVLOG_I("Get arkWebInstallPath from CCM failed");
     }
 
     if (!customSchemeCmdLine_.empty()) {
