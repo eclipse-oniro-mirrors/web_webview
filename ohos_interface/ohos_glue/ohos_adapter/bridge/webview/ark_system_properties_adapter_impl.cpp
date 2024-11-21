@@ -179,4 +179,10 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetVulkanStatus()
     std::string str = real_.GetVulkanStatus();
     return ArkWebStringClassToStruct(str);
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetCompatibleDeviceType()
+{
+    std::string str = real_.GetCompatibleDeviceType();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb
