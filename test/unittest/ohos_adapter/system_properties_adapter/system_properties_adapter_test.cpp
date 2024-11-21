@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 
 #define private public
+#include "nweb_config_helper.h"
 #include "nweb_log.h"
 #include "system_properties_adapter_impl.h"
 
@@ -85,7 +86,6 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     EXPECT_NE(result, -1);
     SystemPropertiesAdapterImpl::GetInstance().GetResourceUseHapPathEnable();
     SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
-    SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
     bool value = SystemPropertiesAdapterImpl::GetInstance().GetWebOptimizationValue();
     EXPECT_TRUE(value);
     system("param set web.optimization false");
@@ -167,5 +167,57 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetVulkanEnabl
     system("param set web.ohos.vulkan true");
     value = SystemPropertiesAdapterImpl::GetInstance().GetVulkanStatus();
     EXPECT_EQ(value, "true");
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnMobile_WhenFactoryLevelIsPhone
+ * @tc.number: SystemPropertiesAdapterImplTest_001
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is phone.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnMobile_WhenFactoryLevelIsPhone, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "2");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_MOBILE);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnTablet_WhenFactoryLevelIsTablet
+ * @tc.number: SystemPropertiesAdapterImplTest_002
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is tablet.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnTablet_WhenFactoryLevelIsTablet, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "4");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_TABLET);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturn2In1_WhenFactoryLevelIsPC
+ * @tc.number: SystemPropertiesAdapterImplTest_003
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is PC.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturn2In1_WhenFactoryLevelIsPC, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "8");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_2IN1);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnUnknown_WhenFactoryLevelIsUnknown
+ * @tc.number: SystemPropertiesAdapterImplTest_004
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is unknown.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnUnknown_WhenFactoryLevelIsUnknown, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "16");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_UNKNOWN);
+    NWebConfigHelper::Instance().perfConfig_.clear();
 }
 } // namespace OHOS

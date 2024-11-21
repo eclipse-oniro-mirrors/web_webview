@@ -33,6 +33,7 @@ ohos_unittest("system_properties_adapter_test") {
 
   deps = [
     "../../../../ohos_adapter:nweb_ohos_adapter",
+    "../../../../ohos_nweb:web_configs",
     "//third_party/googletest:gmock_main",
     "//third_party/googletest:gtest_main",
   ]
@@ -40,6 +41,7 @@ ohos_unittest("system_properties_adapter_test") {
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
+    "webview:libnweb",
   ]
 }
 
