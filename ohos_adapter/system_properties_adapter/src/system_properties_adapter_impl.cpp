@@ -16,6 +16,7 @@
 #include "system_properties_adapter_impl.h"
 
 #include <securec.h>
+#include <native_interface_bundle.h>
 
 #include "init_param.h"
 #include "nweb_config_helper.h"
@@ -354,5 +355,19 @@ std::string SystemPropertiesAdapterImpl::GetVulkanStatus()
     } else {
         return "false";
     }
+}
+
+std::string SystemPropertiesAdapterImpl::GetCompatibleDeviceType()
+{
+    char* compatibleDeviceType = OH_NativeBundle_GetCompatibleDeviceType();
+    if (compatibleDeviceType == nullptr) {
+        WVLOG_E("failed get compatible device type.");
+        return "";
+    }
+
+    std::string deviceType(compatibleDeviceType);
+    free(compatibleDeviceType);
+    
+    return deviceType;
 }
 } // namespace OHOS::NWeb

@@ -78,6 +78,8 @@ public:
     int32_t GetLTPOStrategy() override;
 
     std::string GetVulkanStatus() override;
+
+    std::string GetCompatibleDeviceType() override;
 private:
     ArkWebRefPtr<ArkSystemPropertiesAdapter> ctocpp_;
 };

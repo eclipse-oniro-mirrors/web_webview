@@ -109,6 +109,13 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetVulkanStatus() = 0;
+
+    /**
+     * @Description: return GetCompatibleDeviceType.
+     * @Return：return ArkWebString to describe GetCompatibleDeviceType.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetCompatibleDeviceType() = 0;
 };
 
 } // namespace OHOS::ArkWeb
