@@ -15,6 +15,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "aafwk_app_mgr_client_adapter_impl.h"
@@ -35,6 +36,8 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 class MockBrowserClient : public BrowserClient {
     explicit MockBrowserClient(const sptr<IRemoteObject>& impl);
 
@@ -81,7 +84,9 @@ bool AafwkBrowserClientAdapterFuzzTest(const uint8_t* data, size_t size)
     int32_t status = 0;
     int32_t process_id = 0;
     int32_t thread_id = 0;
-    int32_t role = 0;
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t role = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+
     sptr<Surface> surface;
     client->ReportThread(status, process_id, thread_id, role);
     client->PassSurface(surface, surface_id);

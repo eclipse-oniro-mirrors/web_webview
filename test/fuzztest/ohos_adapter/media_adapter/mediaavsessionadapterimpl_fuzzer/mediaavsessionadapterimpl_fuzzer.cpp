@@ -19,6 +19,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "media_avsession_adapter.h"
 #include "media_avsession_adapter_impl.h"
@@ -26,6 +27,8 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 class MediaAVSessionCallbackAdapterMock : public MediaAVSessionCallbackAdapter {
 public:
     MediaAVSessionCallbackAdapterMock() = default;
@@ -41,7 +44,8 @@ bool MediaAVSessionAdapterImplFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<MediaAVSessionCallbackImpl> callbackImpl =
         std::make_shared<MediaAVSessionCallbackImpl>(mediaAvSessionCB);
 
-    int64_t time = 100;
+    FuzzedDataProvider dataProvider(data, size);
+    int64_t time = dataProvider.ConsumeIntegralInRange<int64_t>(0, MAX_SET_NUMBER);
 
     callbackImpl->OnPlay();
     callbackImpl->OnPause();

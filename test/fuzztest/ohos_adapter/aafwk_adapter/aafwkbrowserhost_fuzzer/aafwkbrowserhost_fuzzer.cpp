@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "aafwk_app_mgr_client_adapter_impl.h"
@@ -31,11 +32,14 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool AafwkBrowserHostFuzzTest(const uint8_t* data, size_t size)
 {
     std::shared_ptr<AafwkBrowserHostAdapter> hostAdapter = nullptr;
     auto host = new AafwkBrowserHostImpl(hostAdapter);
-    uint32_t code = 0;
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t code = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
     int32_t surface_id = 0;
     MessageParcel newdata;
     MessageParcel reply;

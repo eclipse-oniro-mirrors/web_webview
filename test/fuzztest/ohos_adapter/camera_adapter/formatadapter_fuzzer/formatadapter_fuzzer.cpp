@@ -14,6 +14,8 @@
  */
 
 #include "formatadapter_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
+
 #define FORMAT_ADAPTER_IMPL
 #define private public
 #include "camera_manager_adapter_impl.h"
@@ -24,13 +26,16 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
 
 bool FormatAdapterFuzzTest(const uint8_t* data, size_t size)
 {
     OHOS::NWeb::FormatAdapterImpl adapter;
-    adapter.SetWidth(1);
-    adapter.SetHeight(1);
-    adapter.SetFrameRate(1);
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t randomNum = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    adapter.SetWidth(randomNum);
+    adapter.SetHeight(randomNum);
+    adapter.SetFrameRate(randomNum);
     adapter.SetPixelFormat(VideoPixelFormatAdapter::FORMAT_UNKNOWN);
 
     adapter.GetWidth();
