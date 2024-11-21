@@ -209,7 +209,7 @@ namespace OHOS::Webview {
     }
 
     void OnRequestStop(
-        const ArkWeb_SchemeHandler* schemeHandler,const ArkWeb_ResourceRequest* resourceRequest)
+        const ArkWeb_SchemeHandler* schemeHandler, const ArkWeb_ResourceRequest* resourceRequest)
     {
         WEBVIEWLOGD("SchemeHandler OnRequestStop");
         if (!schemeHandler) {

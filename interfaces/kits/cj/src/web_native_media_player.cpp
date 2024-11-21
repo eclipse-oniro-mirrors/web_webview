@@ -30,24 +30,23 @@
 
 namespace OHOS::Webview {
 
-NativeMediaPlayerHandlerImpl :: NativeMediaPlayerHandlerImpl(
+NativeMediaPlayerHandlerImpl::NativeMediaPlayerHandlerImpl(
     int32_t nwebId, std::shared_ptr<NWeb::NWebNativeMediaPlayerHandler> handler)
-    : nwebId_(nwebId), handler_(handler)
-    {}
+    : nwebId_(nwebId), handler_(handler) {}
 
-void NativeMediaPlayerHandlerImpl::HandleVideoSizeChanged(double width,double height)
+void NativeMediaPlayerHandlerImpl::HandleVideoSizeChanged(double width, double height)
 {
     if (handler_) {
-        handler_->HandleVideoSizeChanged(width,height);
+        handler_->HandleVideoSizeChanged(width, height);
     } else {
         WEBVIEWLOGE("NativeMediaPlayerHandlerImpl::HandleVideoSizeChanged is null");
     }
 }
 
-void NativeMediaPlayerHandlerImpl::HandleError(NWeb::MediaError error,const char* errorMessage)
+void NativeMediaPlayerHandlerImpl::HandleError(NWeb::MediaError error, const char* errorMessage)
 {
     if (handler_) {
-        handler_->HandleError(error,errorMessage);
+        handler_->HandleError(error, errorMessage);
     } else {
         WEBVIEWLOGE("NativeMediaPlayerHandlerImpl::HandleError is null");
     }
@@ -161,7 +160,8 @@ void NativeMediaPlayerHandlerImpl::HandleVolumeChanged(double volume)
     }
 }
 
-void NativeMediaPlayerHandlerImpl::HandleStatusChanged(NWeb::PlaybackStatus status){
+void NativeMediaPlayerHandlerImpl::HandleStatusChanged(NWeb::PlaybackStatus status)
+{
     if (handler_) {
         handler_->HandleStatusChanged(status);
     } else {
@@ -278,7 +278,7 @@ void RemoteMediaPlayer::ResumeMediaPlayer(int64_t id)
         WEBVIEWLOGE("RemoteMediaPlayer::ResumeMediaPlayer is empty.");
         return;
     }
-    resumePlayer(id); 
+    resumePlayer(id);
 }
 
 void RemoteMediaPlayer::SuspendMediaPlayer(int64_t id, NWeb::SuspendType type)
@@ -292,9 +292,8 @@ void RemoteMediaPlayer::SuspendMediaPlayer(int64_t id, NWeb::SuspendType type)
 }
 
 //NWebNativeMediaPlayerBridgeImpl
-NWebNativeMediaPlayerBridgeImpl::NWebNativeMediaPlayerBridgeImpl(int64_t nwebId, 
-    sptr<RemoteMediaPlayer> remoteMediaPlayer) : 
-    nwebId_(nwebId), remoteMediaPlayer_(remoteMediaPlayer) {}
+NWebNativeMediaPlayerBridgeImpl::NWebNativeMediaPlayerBridgeImpl(int64_t nwebId,
+    sptr<RemoteMediaPlayer> remoteMediaPlayer) : nwebId_(nwebId), remoteMediaPlayer_(remoteMediaPlayer) {}
 
 void NWebNativeMediaPlayerBridgeImpl::ExitFullScreen()
 {
@@ -448,7 +447,7 @@ CArrString NWebCreateNativeMediaPlayerCallbackImpl::ConstructControlList(
     if (result == nullptr) {
         return {};
     }
-    for(size_t i = 0; i < controlList_.size(); i++) {
+    for (size_t i = 0; i < controlList_.size(); i++) {
         result[i] = MallocCString(controlList_[i]);
     }
     CArrString controlList = {result, controlList_.size()};
@@ -475,7 +474,7 @@ std::shared_ptr<NWeb::NWebNativeMediaPlayerBridge> NWebCreateNativeMediaPlayerCa
     std::shared_ptr<NWeb::NWebNativeMediaPlayerHandler> handler, std::shared_ptr<NWeb::NWebMediaInfo> mediaInfo)
 {
     WEBVIEWLOGD("begin to create native media player,nweb id is %{public}d", nwebId_);
-    if(!callback_){
+    if (!callback_) {
         WEBVIEWLOGE("callback is null,nweb id is %{public}d", nwebId_);
         return nullptr;
     }
@@ -498,7 +497,7 @@ std::shared_ptr<NWeb::NWebNativeMediaPlayerBridge> NWebCreateNativeMediaPlayerCa
     int32_t preload = static_cast<int32_t>(mediaInfo->GetPreload());
     ArrMapItem headers = ConstructMap(mediaInfo->GetHeaders());
     ArrMapItem attributes = ConstructMap(mediaInfo->GetAttributes());
-    CMediaInfo cMediaInfo = {embedID, mediaType, mediaSrcList, surfaceInfo, 
+    CMediaInfo cMediaInfo = {embedID, mediaType, mediaSrcList, surfaceInfo,
         controlsShown, controlList, muted, posterUrl, preload, headers, attributes};
     int64_t nativeMediaPlayerBridgeId = callback_(handlerId, cMediaInfo);
     auto remoteMediaPlayer = OHOS::FFI::RemoteData::Create<OHOS::Webview::RemoteMediaPlayer>(nativeMediaPlayerBridgeId);

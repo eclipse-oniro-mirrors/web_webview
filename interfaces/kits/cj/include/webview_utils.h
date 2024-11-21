@@ -147,8 +147,7 @@ struct CRequestInfo {
     char* formData;
 };
 
-struct CMediaSourceInfo
-{
+struct CMediaSourceInfo {
     const char* format;
     const char* source;
     int32_t type;
@@ -181,8 +180,7 @@ struct CNativeMediaPlayerSurfaceInfo {
     const char* id;
 };
 
-struct CMediaInfo
-{
+struct CMediaInfo {
     const char* embedID;
     int32_t mediaType;
     CArrMediaSourceInfo mediaSrcList;
