@@ -259,7 +259,7 @@ std::vector<std::shared_ptr<AudioDeviceDescAdapter>> AudioSystemManagerAdapterIm
         audioScene == AudioStandard::AudioScene::AUDIO_SCENE_PHONE_CHAT) {
         isCallDevice = true;
     }
-    std::vector<std::unique_ptr<AudioDeviceDescriptor>> audioDeviceList;
+    std::vector<std::shared_ptr<AudioDeviceDescriptor>> audioDeviceList;
     if (flag == AdapterDeviceFlag::OUTPUT_DEVICES_FLAG) {
         audioDeviceList = AudioRoutingManager::GetInstance()->GetAvailableDevices(
             isCallDevice ? AudioDeviceUsage::CALL_OUTPUT_DEVICES : AudioDeviceUsage::MEDIA_OUTPUT_DEVICES);
@@ -290,7 +290,7 @@ std::vector<std::shared_ptr<AudioDeviceDescAdapter>> AudioSystemManagerAdapterIm
 }
 
 int32_t AudioSystemManagerAdapterImpl::SelectAudioOutputDevice(
-    bool isCallDevice, const std::vector<sptr<AudioDeviceDescriptor>>& device) const
+    bool isCallDevice, const std::vector<std::shared_ptr<AudioDeviceDescriptor>>& device) const
 {
     if (isCallDevice) {
         sptr<AudioRendererFilter> filter = new (std::nothrow) AudioRendererFilter;
@@ -325,7 +325,7 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDeviceById(int32_t deviceId, b
         rendererInfo.streamUsage =
             isCallDevice ? StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION : StreamUsage::STREAM_USAGE_MUSIC;
         rendererInfo.rendererFlags = 0;
-        std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
+        std::vector<std::shared_ptr<AudioDeviceDescriptor>> defaultOutputDevice;
         AudioRoutingManager::GetInstance()->GetPreferredOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
         return SelectAudioOutputDevice(isCallDevice, defaultOutputDevice);
     }
@@ -334,12 +334,12 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDeviceById(int32_t deviceId, b
         AudioCapturerInfo capturerInfo;
         capturerInfo.sourceType = AudioStandard::SourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
         capturerInfo.capturerFlags = 0;
-        std::vector<sptr<AudioDeviceDescriptor>> defaultInputDevice;
+        std::vector<std::shared_ptr<AudioDeviceDescriptor>> defaultInputDevice;
         AudioRoutingManager::GetInstance()->GetPreferredInputDeviceForCapturerInfo(capturerInfo, defaultInputDevice);
         return AudioSystemManager::GetInstance()->SelectInputDevice(defaultInputDevice);
     }
 
-    std::vector<std::unique_ptr<AudioDeviceDescriptor>> audioDeviceList;
+    std::vector<std::shared_ptr<AudioDeviceDescriptor>> audioDeviceList;
     if (isCallDevice) {
         audioDeviceList = AudioRoutingManager::GetInstance()->GetAvailableDevices(
             isInput ? AudioDeviceUsage::CALL_INPUT_DEVICES : AudioDeviceUsage::CALL_OUTPUT_DEVICES);
@@ -349,7 +349,7 @@ int32_t AudioSystemManagerAdapterImpl::SelectAudioDeviceById(int32_t deviceId, b
     }
     for (auto& device : audioDeviceList) {
         if (device->deviceId_ == deviceId) {
-            std::vector<sptr<AudioDeviceDescriptor>> selectedAudioDevice { device.release() };
+            std::vector<std::shared_ptr<AudioDeviceDescriptor>> selectedAudioDevice { device };
             return isInput ? AudioSystemManager::GetInstance()->SelectInputDevice(selectedAudioDevice)
                            : SelectAudioOutputDevice(isCallDevice, selectedAudioDevice);
         }
@@ -371,7 +371,7 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
     rendererInfo.streamUsage =
         isCallDevice ? StreamUsage::STREAM_USAGE_VOICE_COMMUNICATION : StreamUsage::STREAM_USAGE_MUSIC;
     rendererInfo.rendererFlags = 0;
-    std::vector<sptr<AudioDeviceDescriptor>> defaultOutputDevice;
+    std::vector<std::shared_ptr<AudioDeviceDescriptor>> defaultOutputDevice;
     AudioRoutingManager::GetInstance()->GetPreferredOutputDeviceForRendererInfo(rendererInfo, defaultOutputDevice);
 
     if (defaultOutputDevice.empty() || !defaultOutputDevice[0]) {
@@ -400,7 +400,7 @@ std::shared_ptr<AudioDeviceDescAdapter> AudioSystemManagerAdapterImpl::GetDefaul
     AudioCapturerInfo capturerInfo;
     capturerInfo.sourceType = AudioStandard::SourceType::SOURCE_TYPE_VOICE_COMMUNICATION;
     capturerInfo.capturerFlags = 0;
-    std::vector<sptr<AudioDeviceDescriptor>> defaultInputDevice;
+    std::vector<std::shared_ptr<AudioDeviceDescriptor>> defaultInputDevice;
     AudioRoutingManager::GetInstance()->GetPreferredInputDeviceForCapturerInfo(capturerInfo, defaultInputDevice);
     if (defaultInputDevice.empty() || !defaultInputDevice[0]) {
         WVLOG_E("AudioSystemManagerAdapterImpl::GetDefaultInputDevice failed.");
