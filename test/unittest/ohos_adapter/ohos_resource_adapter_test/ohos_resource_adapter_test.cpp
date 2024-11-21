@@ -422,7 +422,5 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_SetArkWebCoreHapPathOv
     EXPECT_EQ(adapterImpl.arkWebCoreHapPathOverride_, NWEB_HAP_PATH);
     adapterImpl.arkWebCoreHapPathOverride_ = "";
 }
-
-
 }
 } // namespace NWeb
