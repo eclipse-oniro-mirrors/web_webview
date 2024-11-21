@@ -169,15 +169,6 @@ std::string GetArkWebHapPath(const std::string& arkWebCoreHapPathOverride,
     return "";
 }
 
-std::string GetNWebHapPath(const std::string& arkWebCoreHapPathOverride)
-{
-    std::vector<std::pair<std::string, int>> errorMessage;
-    std::string arkWebHapPath = GetArkWebHapPath(arkWebCoreHapPathOverride, errorMessage);
-    if (!arkWebHapPath.empty()) {
-        return arkWebHapPath;
-    }
-    return "";
-}
 } // namespace
 
 OhosFileMapperImpl::OhosFileMapperImpl(std::unique_ptr<OHOS::AbilityBase::FileMapper> fileMap,
@@ -252,12 +243,16 @@ OhosResourceAdapterImpl::OhosResourceAdapterImpl(const std::string& hapPath)
 void OhosResourceAdapterImpl::Init(const std::string& hapPath)
 {
     bool newCreate = false;
-    std::string nwebHapPath = GetNWebHapPath(arkWebCoreHapPathOverride_);
-    if (!nwebHapPath.empty()) {
-        sysExtractor_ = ExtractorUtil::GetExtractor(nwebHapPath, newCreate);
+    std::vector<std::pair<std::string, int>> errorMessage;
+    std::string arkWebHapPath = GetArkWebHapPath(arkWebCoreHapPathOverride_, errorMessage);
+    if (!arkWebHapPath.empty()) {
+        sysExtractor_ = ExtractorUtil::GetExtractor(arkWebHapPath, newCreate);
         if (!sysExtractor_) {
-            WVLOG_E("RuntimeExtractor create failed for %{public}s", nwebHapPath.c_str());
+            WVLOG_E("RuntimeExtractor create failed for %{public}s", arkWebHapPath.c_str());
         }
+    }
+    for (const auto& err : errorMessage) {
+        WVLOG_E("%{public}s, errno(%{public}d): %{public}s", err.first.c_str(), err.second, strerror(err.second));
     }
     if (hapPath.empty()) {
         return;
