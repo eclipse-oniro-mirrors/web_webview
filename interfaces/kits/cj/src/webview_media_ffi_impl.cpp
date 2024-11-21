@@ -73,7 +73,7 @@ extern "C" {
 
     int32_t FfiOHOSNmphhandleSeekFinished(int64_t id)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
