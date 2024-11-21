@@ -269,7 +269,7 @@ extern "C" {
             return -1;
         }
         ArkWeb_HttpBodyStream* arkWebPostStream = nativeWebSchemeHandlerRequest->GetHttpBodyStream();
-        if (!arkWebPostStream){
+        if (!arkWebPostStream) {
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -323,7 +323,7 @@ extern "C" {
             return;
         }
         int32_t ret = nativeWebResourceHandler->DidReceiveResponseBody(
-        buffer.head, static_cast<int64_t>(buflen));
+            buffer.head, static_cast<int64_t>(buflen));
         if (ret != 0) {
             *errCode = NWebError::RESOURCE_HANDLER_INVALID;
         }

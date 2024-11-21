@@ -44,30 +44,30 @@ extern "C" {
     // NativeMediaPlayerHandler
     int64_t FfiOHOSNmphConstructor()
     {
-        auto Nmph=FFIData::Create<NativeMediaPlayerHandlerImpl>();
+        auto Nmph = FFIData::Create<NativeMediaPlayerHandlerImpl>();
         if (Nmph == nullptr) {
             return -1;
         }
         return Nmph->GetID();
     }
 
-    int32_t FfiOHOSNmphhandleVideoSizeChanged(int64_t id,double width,double height)
+    int32_t FfiOHOSNmphhandleVideoSizeChanged(int64_t id, double width, double height)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
-        Nmph->HandleVideoSizeChanged(width,height);
+        Nmph->HandleVideoSizeChanged(width, height);
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleError(int64_t id,int32_t error,const char* errorMessage)
+    int32_t FfiOHOSNmphhandleError(int64_t id, int32_t error, const char* errorMessage)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
-        Nmph->HandleError(static_cast<NWeb::MediaError>(error),errorMessage);
+        Nmph->HandleError(static_cast<NWeb::MediaError>(error), errorMessage);
         return NWebError::NO_ERROR;
     }
 
@@ -83,7 +83,7 @@ extern "C" {
 
     int32_t FfiOHOSNmphhandleSeeking(int64_t id)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -91,9 +91,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleFullscreenChanged(int64_t id,bool fullscreen)
+    int32_t FfiOHOSNmphhandleFullscreenChanged(int64_t id, bool fullscreen)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -101,9 +101,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleReadyStateChanged(int64_t id,int32_t state)
+    int32_t FfiOHOSNmphhandleReadyStateChanged(int64_t id, int32_t state)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -111,9 +111,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleNetworkStateChanged(int64_t id,int32_t state)
+    int32_t FfiOHOSNmphhandleNetworkStateChanged(int64_t id, int32_t state)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -123,7 +123,7 @@ extern "C" {
 
     int32_t FfiOHOSNmphhandleEnded(int64_t id)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -131,9 +131,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleBufferedEndTimeChanged(int64_t id,double bufferedEndTime)
+    int32_t FfiOHOSNmphhandleBufferedEndTimeChanged(int64_t id, double bufferedEndTime)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -141,9 +141,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleTimeUpdate(int64_t id,double currentPlayTime)
+    int32_t FfiOHOSNmphhandleTimeUpdate(int64_t id, double currentPlayTime)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -151,9 +151,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleDurationChanged(int64_t id,double duration)
+    int32_t FfiOHOSNmphhandleDurationChanged(int64_t id, double duration)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -161,9 +161,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandlePlaybackRateChanged(int64_t id,double playbackRate)
+    int32_t FfiOHOSNmphhandlePlaybackRateChanged(int64_t id, double playbackRate)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -171,9 +171,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleMutedChanged(int64_t id,bool muted)
+    int32_t FfiOHOSNmphhandleMutedChanged(int64_t id, bool muted)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -181,9 +181,9 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleVolumeChanged(int64_t id,double volume)
+    int32_t FfiOHOSNmphhandleVolumeChanged(int64_t id, double volume)
     {
-        auto Nmph=FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
+        auto Nmph = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
         if (Nmph == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -191,14 +191,15 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSNmphhandleStatusChanged(int64_t id, int32_t status){
-        if(status < static_cast<int32_t>(NWeb::PlaybackStatus::PAUSED)
+    int32_t FfiOHOSNmphhandleStatusChanged(int64_t id, int32_t status)
+    {
+        if (status < static_cast<int32_t>(NWeb::PlaybackStatus::PAUSED)
         || status > static_cast<int32_t>(NWeb::PlaybackStatus::PLAYING)) {
             return NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
         }
 
         auto nativeMediaPlayerHandlerImpl = FFIData::GetData<NativeMediaPlayerHandlerImpl>(id);
-        if(nativeMediaPlayerHandlerImpl == nullptr){
+        if (nativeMediaPlayerHandlerImpl == nullptr) {
             return NWebError::INIT_ERROR;
         }
         nativeMediaPlayerHandlerImpl->HandleStatusChanged(static_cast<NWeb::PlaybackStatus>(status));
