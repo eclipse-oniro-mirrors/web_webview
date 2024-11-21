@@ -41,20 +41,20 @@ extern "C" {
 
     // NativeMediaPlayerHandler
     FFI_EXPORT int64_t FfiOHOSNmphConstructor();
-    FFI_EXPORT int32_t FfiOHOSNmphhandleVideoSizeChanged(int64_t id,double width,double height);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleError(int64_t id,int32_t error,const char* errorMessage);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleVideoSizeChanged(int64_t id, double width, double height);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleError(int64_t id, int32_t error, const char* errorMessage);
     FFI_EXPORT int32_t FfiOHOSNmphhandleSeekFinished(int64_t id);
     FFI_EXPORT int32_t FfiOHOSNmphhandleSeeking(int64_t id);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleFullscreenChanged(int64_t id,bool fullscreen);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleReadyStateChanged(int64_t id,int32_t state);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleNetworkStateChanged(int64_t id,int32_t state);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleFullscreenChanged(int64_t id, bool fullscreen);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleReadyStateChanged(int64_t id, int32_t state);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleNetworkStateChanged(int64_t id, int32_t state);
     FFI_EXPORT int32_t FfiOHOSNmphhandleEnded(int64_t id);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleBufferedEndTimeChanged(int64_t id,double bufferedEndTime);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleTimeUpdate(int64_t id,double currentPlayTime);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleDurationChanged(int64_t id,double duration);
-    FFI_EXPORT int32_t FfiOHOSNmphhandlePlaybackRateChanged(int64_t id,double playbackRate);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleMutedChanged(int64_t id,bool muted);
-    FFI_EXPORT int32_t FfiOHOSNmphhandleVolumeChanged(int64_t id,double volume);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleBufferedEndTimeChanged(int64_t id, double bufferedEndTime);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleTimeUpdate(int64_t id, double currentPlayTime);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleDurationChanged(int64_t id, double duration);
+    FFI_EXPORT int32_t FfiOHOSNmphhandlePlaybackRateChanged(int64_t id, double playbackRate);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleMutedChanged(int64_t id, bool muted);
+    FFI_EXPORT int32_t FfiOHOSNmphhandleVolumeChanged(int64_t id, double volume);
     FFI_EXPORT int32_t FfiOHOSNmphhandleStatusChanged(int64_t id, int32_t status);
 }
 

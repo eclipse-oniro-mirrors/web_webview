@@ -76,7 +76,8 @@ namespace Webview {
         return result;
     }
 
-    std::vector<std::string> CArrStringToVector(CArrString cArrStr) {
+    std::vector<std::string> CArrStringToVector(CArrString cArrStr)
+    {
         std::vector<std::string> vec;
         if (cArrStr.head == nullptr || cArrStr.size <= 0) {
             return vec;

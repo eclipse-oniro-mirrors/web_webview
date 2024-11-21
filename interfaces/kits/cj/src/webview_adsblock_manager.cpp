@@ -27,7 +27,7 @@ namespace OHOS {
 namespace Webview {
     constexpr int MAX_URL_RULES_FILEPATH_LENGTH = 255;
 
-    int32_t AdsBlockManagerImpl::SetAdsBlockRules(const char *rulesFile, bool replace) 
+    int32_t AdsBlockManagerImpl::SetAdsBlockRules(const char *rulesFile, bool replace)
     {
         if (rulesFile == nullptr) {
             WEBVIEWLOGE("AdsBlockManagerImpl::SetAdsBlockRules failed: rulesFile is null.");
@@ -35,8 +35,7 @@ namespace Webview {
         }
         std::string rulesFileStr(rulesFile);
         if (rulesFileStr.length() > MAX_URL_RULES_FILEPATH_LENGTH) {
-            WEBVIEWLOGE("AdsBlockManagerImpl::SetAdsBlockRules failed: rulesFile path too long > %d", 
-            MAX_URL_RULES_FILEPATH_LENGTH);
+            WEBVIEWLOGE("AdsBlockManagerImpl::SetAdsBlockRules failed: rulesFile path too long");
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
@@ -44,7 +43,7 @@ namespace Webview {
         return NWebError::NO_ERROR;
     }
 
-    int32_t AdsBlockManagerImpl::AddAdsBlockDisallowedList(CArrString domainSuffixes) 
+    int32_t AdsBlockManagerImpl::AddAdsBlockDisallowedList(CArrString domainSuffixes)
     {
         if (domainSuffixes.size <= 0 || domainSuffixes.head == nullptr) {
             WEBVIEWLOGE("AdsBlockManagerImpl::AddAdsBlockDisallowedList failed: domainSuffixes is null.");
@@ -55,7 +54,7 @@ namespace Webview {
         return NWebError::NO_ERROR;
     }
 
-    int32_t AdsBlockManagerImpl::RemoveAdsBlockDisallowedList(CArrString domainSuffixes) 
+    int32_t AdsBlockManagerImpl::RemoveAdsBlockDisallowedList(CArrString domainSuffixes)
     {
         if (domainSuffixes.size <= 0 || domainSuffixes.head == nullptr) {
             WEBVIEWLOGE("AdsBlockManagerImpl::RemoveAdsBlockDisallowedList failed: domainSuffixes is null.");
@@ -66,7 +65,7 @@ namespace Webview {
         return NWebError::NO_ERROR;
     }
 
-    int32_t AdsBlockManagerImpl::AddAdsBlockAllowedList(CArrString domainSuffixes) 
+    int32_t AdsBlockManagerImpl::AddAdsBlockAllowedList(CArrString domainSuffixes)
     {
         if (domainSuffixes.size <= 0 || domainSuffixes.head == nullptr) {
             WEBVIEWLOGE("AdsBlockManagerImpl::AddAdsBlockAllowedList failed: domainSuffixes is null.");
@@ -77,7 +76,7 @@ namespace Webview {
         return NWebError::NO_ERROR;
     }
 
-    int32_t AdsBlockManagerImpl::RemoveAdsBlockAllowedList(CArrString domainSuffixes) 
+    int32_t AdsBlockManagerImpl::RemoveAdsBlockAllowedList(CArrString domainSuffixes)
     {
         if (domainSuffixes.size <= 0 || domainSuffixes.head == nullptr) {
             WEBVIEWLOGE("AdsBlockManagerImpl::RemoveAdsBlockAllowedList failed: domainSuffixes is null.");
@@ -88,16 +87,16 @@ namespace Webview {
         return NWebError::NO_ERROR;
     }
 
-    void AdsBlockManagerImpl::ClearAdsBlockAllowedList() 
+    void AdsBlockManagerImpl::ClearAdsBlockAllowedList()
     {
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
         adsBlockManager->ClearAdsBlockAllowedList();
     }
 
-    void AdsBlockManagerImpl::ClearAdsBlockDisallowedList() 
+    void AdsBlockManagerImpl::ClearAdsBlockDisallowedList()
     {
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
         adsBlockManager->ClearAdsBlockDisallowedList();
     }
-} 
+}
 }

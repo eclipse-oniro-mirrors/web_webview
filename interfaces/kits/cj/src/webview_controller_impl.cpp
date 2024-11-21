@@ -1256,7 +1256,7 @@ namespace OHOS::Webview {
             WEBVIEWLOGE("WebviewControllerImpl::SetWebSchemeHandler schemeHandler or scheme is nullptr");
             return false;
         }
-        ArkWeb_SchemeHandler* schemeHandler = 
+        ArkWeb_SchemeHandler* schemeHandler =
             const_cast<ArkWeb_SchemeHandler*>(WebSchemeHandlerImpl::GetArkWebSchemeHandler(handler));
         if (schemeHandler == nullptr) {
             WEBVIEWLOGE("schemeHandler is nullptr");
@@ -1271,7 +1271,7 @@ namespace OHOS::Webview {
 
     bool WebviewControllerImpl::SetWebServiceWorkerSchemeHandler(const char* scheme, WebSchemeHandlerImpl* handler)
     {
-        ArkWeb_SchemeHandler* schemeHandler = 
+        ArkWeb_SchemeHandler* schemeHandler =
             const_cast<ArkWeb_SchemeHandler*>(WebSchemeHandlerImpl::GetArkWebSchemeHandler(handler));
         return OH_ArkWebServiceWorker_SetSchemeHandler(scheme, schemeHandler);
     }
@@ -1357,7 +1357,7 @@ namespace OHOS::Webview {
             }
         }
     }
-    
+
     bool SetCustomizeScheme(CScheme cscheme, Scheme& scheme)
     {
         scheme.isSupportCORS = cscheme.isSupportCORS;
@@ -1375,7 +1375,7 @@ namespace OHOS::Webview {
         SetCustomizeSchemeOption(scheme);
         return true;
     }
-    
+
     int32_t WebviewControllerImpl::CustomizeSchemesArrayDataHandler(CArrScheme schemes)
     {
         int64_t arrayLength = schemes.size;

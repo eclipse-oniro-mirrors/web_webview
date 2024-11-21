@@ -90,16 +90,16 @@ namespace OHOS::Webview {
         sptr<RemoteMediaPlayer> remoteMediaPlayer_;
     };
 
-    class NWebCreateNativeMediaPlayerCallbackImpl : 
+    class NWebCreateNativeMediaPlayerCallbackImpl :
     public NWeb::NWebCreateNativeMediaPlayerCallback, public OHOS::FFI::FFIData {
         DECL_TYPE(NWebCreateNativeMediaPlayerCallbackImpl, OHOS::FFI::FFIData)
         public:
-            explicit NWebCreateNativeMediaPlayerCallbackImpl(int32_t nwebId, 
+            explicit NWebCreateNativeMediaPlayerCallbackImpl(int32_t nwebId,
                 std::function<int64_t(int64_t, CMediaInfo)> callback);
             ~NWebCreateNativeMediaPlayerCallbackImpl() = default;
 
             std::shared_ptr<NWeb::NWebNativeMediaPlayerBridge> OnCreate(
-                std::shared_ptr<NWeb::NWebNativeMediaPlayerHandler> handler, 
+                std::shared_ptr<NWeb::NWebNativeMediaPlayerHandler> handler,
                 std::shared_ptr<NWeb::NWebMediaInfo> mediaInfo) override;
             CNativeMediaPlayerSurfaceInfo ConstructSurfaceInfo(
                 std::shared_ptr<NWeb::NWebNativeMediaPlayerSurfaceInfo> surfaceInfo_);
