@@ -190,7 +190,8 @@ namespace OHOS::Webview {
         DECL_TYPE(WebResourceHandlerImpl, OHOS::FFI::FFIData)
     public:
         explicit WebResourceHandlerImpl() = default;
-        WebResourceHandlerImpl(const ArkWeb_ResourceHandler* handler){
+        WebResourceHandlerImpl(const ArkWeb_ResourceHandler* handler)
+        {
             handler_ = const_cast<ArkWeb_ResourceHandler*>(handler);
         };
         ~WebResourceHandlerImpl() = default;

@@ -76,8 +76,7 @@ bool CheckUrl(std::string url)
 NWeb::WebSnapshotCallback CreateWebPageSnapshotResultCallback(bool check, int32_t inputWidth, int32_t inputHeight,
     int32_t inputSizeType, const std::function<void(RetDataCSnapshotResult)>& callbackRef)
 {
-    return 
-        [check, inputWidth, inputHeight, inputSizeType, callbackRef](
+    return [check, inputWidth, inputHeight, inputSizeType, callbackRef](
             const char* returnId, bool returnStatus, float radio, void* returnData,
             int returnWidth, int returnHeight) {
             RetDataCSnapshotResult ret = { .code = NWebError::INIT_ERROR, .data = { .id = nullptr, .imageId = 0,
