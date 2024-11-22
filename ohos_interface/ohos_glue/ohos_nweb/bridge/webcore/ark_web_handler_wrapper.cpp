@@ -1050,4 +1050,8 @@ bool ArkWebHandlerWrapper::OnSslErrorRequestByJSV2(
 void ArkWebHandlerWrapper::OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) {
     ark_web_handler_->OnAccessibilityEvent(accessibilityId, eventType);
 }
+
+bool ArkWebHandlerWrapper::IsCurrentFocus() {
+    return ark_web_handler_->IsCurrentFocus();
+}
 } // namespace OHOS::ArkWeb

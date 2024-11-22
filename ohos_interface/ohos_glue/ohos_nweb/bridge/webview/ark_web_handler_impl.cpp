@@ -927,4 +927,9 @@ void ArkWebHandlerImpl::OnAccessibilityEvent(int64_t accessibilityId, int32_t ev
 {
     nweb_handler_->OnAccessibilityEvent(accessibilityId, eventType);
 }
+
+bool ArkWebHandlerImpl::IsCurrentFocus()
+{
+    return nweb_handler_->IsCurrentFocus();
+}
 } // namespace OHOS::ArkWeb
