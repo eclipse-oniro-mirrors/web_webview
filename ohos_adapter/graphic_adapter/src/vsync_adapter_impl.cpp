@@ -15,11 +15,10 @@
 
 #include "vsync_adapter_impl.h"
 
+#include <dlfcn.h>
+
 #include "aafwk_browser_client_adapter_impl.h"
 #include "application_context.h"
-#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
-#include "aps_manager.h"
-#endif
 #include "nweb_log.h"
 #include "res_sched_client_adapter.h"
 #include "system_properties_adapter_impl.h"
@@ -29,6 +28,7 @@ namespace OHOS::NWeb {
 namespace {
 const std::string THREAD_NAME = "VSync-webview";
 constexpr int32_t WEBVIEW_FRAME_RATE_TYPE = 4;
+const std::string APS_CLIENT_SO = "/system/lib64/libaps_client.z.so";
 #if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
 constexpr int32_t APS_MANAGER_CLOSE_ALL = 2;
 #endif
@@ -40,6 +40,7 @@ void (*VSyncAdapterImpl::onVsyncEndCallback_)() = nullptr;
 VSyncAdapterImpl::~VSyncAdapterImpl()
 {
     if (vsyncHandler_) {
+        UninitAPSClient();
         vsyncHandler_->RemoveAllEvents();
         auto runner = vsyncHandler_->GetEventRunner();
         if (runner) {
@@ -215,14 +216,40 @@ void VSyncAdapterImpl::SetOnVsyncEndCallback(void (*onVsyncEndCallback)())
 
 void VSyncAdapterImpl::SetScene(const std::string& sceneName, uint32_t state) {
     WVLOG_D("APSManagerAdapterImpl SetScene sceneName=%{public}s state=%{public}u", sceneName.c_str(), state);
-#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
+    if (!apsClientHandler_) {
+        InitAPSClient();
+    }
     if (pkgName_.empty()) {
         auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
         if (appInfo != nullptr) {
             pkgName_ = appInfo->bundleName.c_str();
         }
     }
-    Rosen::ApsManager::GetInstance().SetScene(pkgName_, sceneName, state);
-#endif
+    if (setApsSceneFunc_) {
+        setApsSceneFunc_(pkgName_, sceneName, state);
+    }
+}
+
+void VSyncAdapterImpl::InitAPSClient()
+{
+    apsClientHandler_ = dlopen(APS_CLIENT_SO.c_str(), RTLD_NOW);
+    if (!apsClientHandler_) {
+        WVLOG_D("APSManagerClient not found");
+        return;
+    }
+    setApsSceneFunc_ = reinterpret_cast<SetApsSceneFuncType>(dlsym(apsClientHandler_, "SetApsScene"));
+    if (!setApsSceneFunc_) {
+        WVLOG_D("APSManagerClient not found");
+        dlclose(apsClientHandler_);
+    }
+}
+
+void VSyncAdapterImpl::UninitAPSClient()
+{
+    if (setApsSceneFunc_) {
+        dlclose(apsClientHandler_);
+        setApsSceneFunc_ = nullptr;
+        apsClientHandler_ = nullptr;
+    }
 }
 } // namespace OHOS::NWeb
