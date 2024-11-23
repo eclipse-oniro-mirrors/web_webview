@@ -108,4 +108,24 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_002, TestSize.Level
     adapter.hasRequestedVsync_ = false;
     EXPECT_EQ(VSyncErrorCode::SUCCESS, adapter.RequestVsync(nullptr, nullptr));
 }
+
+
+/**
+ * @tc.name: GraphicAdapterTest_SetScene_001
+ * @tc.desc: RequestVsync.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_SetScene_001, TestSize.Level1)
+{
+    VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
+    adapter.InitAPSClient();
+    EXPECT_EQ(adapter.pkgName_, "");
+    adapter.SetScene("WEB_LIST_FLING", 0);
+    adapter.SetScene("WEB_LIST_FLING", 1);
+    adapter.SetScene("WEB_LIST_FLING", 0);
+    adapter.UninitAPSClient();
+    EXPECT_EQ(adapter.setApsSceneFunc_, nullptr);
+    EXPECT_EQ(adapter.apsClientHandler_, nullptr);
+}
 } // namespace NWeb
