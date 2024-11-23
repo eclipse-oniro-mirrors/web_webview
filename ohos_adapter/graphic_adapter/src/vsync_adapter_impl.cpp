@@ -234,12 +234,12 @@ void VSyncAdapterImpl::InitAPSClient()
 {
     apsClientHandler_ = dlopen(APS_CLIENT_SO.c_str(), RTLD_NOW);
     if (!apsClientHandler_) {
-        WVLOG_D("APSManagerClient not found");
+        WVLOG_E("APSManagerClient not found");
         return;
     }
     setApsSceneFunc_ = reinterpret_cast<SetApsSceneFuncType>(dlsym(apsClientHandler_, "SetApsScene"));
     if (!setApsSceneFunc_) {
-        WVLOG_D("APSManagerClient not found");
+        WVLOG_E("APSManagerClient not found");
         dlclose(apsClientHandler_);
     }
 }
