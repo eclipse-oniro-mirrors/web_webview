@@ -25,6 +25,8 @@
 #include "foundation/graphic/graphic_2d/rosen/modules/render_service_client/core/ui/rs_frame_rate_linker.h"
 
 namespace OHOS::NWeb {
+using SetApsSceneFuncType = bool(*)(
+    std::string, std::string, uint32_t);
 class VSyncAdapterImpl : public VSyncAdapter {
 public:
     VSyncAdapterImpl() = default;
@@ -47,6 +49,8 @@ private:
     static void OnVsync(int64_t timestamp, void* data);
     void VsyncCallbackInner(int64_t nanoTimestamp);
     VSyncErrorCode Init();
+    void InitAPSClient();
+    void UninitAPSClient();
 
     std::mutex mtx_;
     bool hasRequestedVsync_ = false;
@@ -63,8 +67,9 @@ private:
     static void (*onVsyncEndCallback_)();
     bool frameRateLinkerEnable_ = false;
     bool isGPUProcess_ = false;
-
     std::string pkgName_ {""};
+    void* apsClientHandler_ {nullptr};
+    SetApsSceneFuncType setApsSceneFunc_ {nullptr};
 };
 } // namespace OHOS::NWeb
 
