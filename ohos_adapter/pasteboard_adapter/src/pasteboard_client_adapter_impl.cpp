@@ -493,6 +493,7 @@ void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordVector& data, Co
     pData.SetTag(webviewPasteDataTag_);
     auto shareOption = TransitionCopyOption(copyOption);
     pData.SetShareOption(shareOption);
+    
     int32_t ret = PasteboardClient::GetInstance()->SetPasteData(pData);
     if (ret != static_cast<int32_t>(PasteboardError::E_OK)) {
         WVLOG_E("set paste data to clipboard failed");
