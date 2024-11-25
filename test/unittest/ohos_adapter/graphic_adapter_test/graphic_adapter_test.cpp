@@ -51,6 +51,45 @@ void GraphicAdapterTest::TearDown(void)
 void MockNWebVSyncCb(int64_t, void*)
 {}
 
+class MockEventRunner {
+public:
+    MockEventRunner() = default;
+    ~MockEventRunner() = default;
+
+    static std::shared_ptr<MockEventRunner> Create(const std::string &threadName)
+    {
+        return std::make_shared<MockEventRunner>();
+    }
+
+    uint64_t GetKernelThreadId() {
+        return 1;
+    }
+};
+
+class MockEventHandler : public OHOS::AppExecFwk::EventHandler {
+public:
+    explicit MockEventHandler(const std::shared_ptr<MockEventRunner> &runner = nullptr);
+    std::shared_ptr<MockEventRunner> &GetEventRunner()
+    {
+        return eventRunner_;
+    }
+private:
+    std::shared_ptr<MockEventRunner> eventRunner_;
+};
+
+MockEventHandler::MockEventHandler(const std::shared_ptr<MockEventRunner> &runner) : eventRunner_(runner)
+{}
+
+class MockVSyncAdapterImpl : public VSyncAdapterImpl {
+public:
+    MockVSyncAdapterImpl() = default;
+    ~MockVSyncAdapterImpl() override = default;
+    static std::shared_ptr<MockVSyncAdapterImpl> GetInstance() {
+        static std::shared_ptr<MockVSyncAdapterImpl> instance = std::make_shared<MockVSyncAdapterImpl>();
+        return instance;
+    }
+};
+
 /**
  * @tc.name: GraphicAdapterTest_RequestVsync_001
  * @tc.desc: RequestVsync.
@@ -107,5 +146,14 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_002, TestSize.Level
     EXPECT_EQ(VSyncErrorCode::SUCCESS, adapter.RequestVsync(nullptr, nullptr));
     adapter.hasRequestedVsync_ = false;
     EXPECT_EQ(VSyncErrorCode::SUCCESS, adapter.RequestVsync(nullptr, nullptr));
+
+    auto mockAdapter = MockVSyncAdapterImpl::GetInstance();
+    mockAdapter->hasReportedKeyThread_ = false;
+    mockAdapter->SetIsGPUProcess(false);
+    EXPECT_EQ(VSyncErrorCode::SUCCESS, mockAdapter->RequestVsync(nullptr, nullptr));
+
+    mockAdapter->hasReportedKeyThread_ = false;
+    mockAdapter->SetIsGPUProcess(true);
+    EXPECT_EQ(VSyncErrorCode::SUCCESS, mockAdapter->RequestVsync(nullptr, nullptr));
 }
 } // namespace NWeb
