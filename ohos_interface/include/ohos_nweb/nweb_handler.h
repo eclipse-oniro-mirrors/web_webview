@@ -1033,6 +1033,8 @@ public:
     }
 
     virtual void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) {}
+
+    virtual bool IsCurrentFocus() { return false; }
 };
 
 } // namespace OHOS::NWeb
