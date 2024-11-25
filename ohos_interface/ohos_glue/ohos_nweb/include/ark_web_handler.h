@@ -830,6 +830,13 @@ public:
      */
     /*--ark web()--*/
     virtual void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) = 0;
+
+    /**
+     * @Description: Web gets focus on the framework.
+     * @Return: true/false
+     */
+    /*--ark web()--*/
+    virtual bool IsCurrentFocus() = 0;
 };
 
 } // namespace OHOS::ArkWeb

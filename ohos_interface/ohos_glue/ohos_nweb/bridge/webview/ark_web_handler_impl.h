@@ -580,6 +580,8 @@ public:
         const ArkWebStringVector& certChainData) override;
     
     void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) override;
+
+    bool IsCurrentFocus() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
