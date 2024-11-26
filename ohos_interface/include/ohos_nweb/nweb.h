@@ -229,6 +229,21 @@ class NWebSystemConfiguration {
     virtual uint8_t GetThemeFlags() = 0;
 };
 
+class OHOS_NWEB_EXPORT NWebKeyboardEvent {
+public:
+    virtual ~NWebKeyboardEvent() = default;
+
+    virtual int32_t GetKeyCode() = 0;
+
+    virtual int32_t GetAction() = 0;
+
+    virtual int32_t GetUnicode() = 0;
+
+    virtual bool IsEnableCapsLock() = 0;
+
+    virtual std::vector<int32_t> GetPressKeyCodes() = 0;
+};
+
 enum class PixelUnit {
     PX = 0,
     VP = 1,
@@ -1576,6 +1591,17 @@ public:
     virtual float DumpGpuInfo() {
         return 0;
     };
+
+    /**
+     * @Description: Sends key events to the web kernel.
+     * @Input keyEvent: Basic information about key events.
+     * @Return: Whether the keyboard event is successful sent.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual bool SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent) {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb
