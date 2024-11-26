@@ -1409,4 +1409,13 @@ float ArkWebNWebWrapper::DumpGpuInfo()
 {
     return ark_web_nweb_->DumpGpuInfo();
 }
+
+int ArkWebNWebWrapper::ScaleGestureChangeV2(int type,
+                                            double scale,
+                                            double originScale,
+                                            double centerX,
+                                            double centerY)
+{
+    return ark_web_nweb_->ScaleGestureChangeV2(type, scale, originScale, centerX, centerY);
+}
 } // namespace OHOS::ArkWeb
