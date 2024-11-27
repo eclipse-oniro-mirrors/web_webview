@@ -34,7 +34,7 @@ std::unique_ptr<Media::ImageSource> ParseRawData(const uint8_t* data,
     Media::SourceOptions sourceOptions;
     auto imageSource = Media::ImageSource::CreateImageSource(
         data, size, sourceOptions, errorCode);
-    if (errorCode != Media::SUCCESS) {
+    if (imageSource == nullptr || errorCode != Media::SUCCESS) {
         WVLOG_E("[HeifSupport] ParseRawData failed, errorCode %{public}d", errorCode);
         return nullptr;
     }
