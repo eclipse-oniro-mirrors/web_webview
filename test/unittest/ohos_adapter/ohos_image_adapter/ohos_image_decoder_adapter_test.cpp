@@ -335,7 +335,7 @@ HWTEST_F(OhosImageAdapterTest, OhosImageAdapterTest_GetStride_007, TestSize.Leve
 
     imageDecoderAdapterImpl.ReleasePixelMap();
 
-    bool ret = TestDecodeImage(imageDecoderAdapterImpl, buffer, AllocatorType::kShareMemAlloc);
+    ret = TestDecodeImage(imageDecoderAdapterImpl, buffer, AllocatorType::kShareMemAlloc);
     EXPECT_TRUE(ret);
 
     stride = imageDecoderAdapterImpl.GetStride();
