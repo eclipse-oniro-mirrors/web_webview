@@ -1547,6 +1547,24 @@ public:
      */
     /*--ark web()--*/
     virtual float DumpGpuInfo() = 0;
+
+    /**
+     * @Description: Set the params when the scale of WebView changed by pinch gestrue.
+     *
+     * @Input type: gesture status
+     * @Input scale: the scale factor to apply. The scale will be
+     *        clamped to the pinch limits. This value must be in the range
+     *        0.01 to 8.0 inclusive.
+     * @Input originScale: the origin scale factor to apply. The scale will be
+     *        clamped to the pinch limits. This value must be in the range
+     *        0.01 to 8.0 inclusive.
+     * @Input centerX: X-coordinate of the pinch center
+     * @Input centerY: Y-coordinate of the pinch center
+     *
+     * @Return: the error id.
+     */
+    /*--ark web()--*/
+    virtual int ScaleGestureChangeV2(int type, double scale, double originScale, double centerX, double centerY) = 0;
 };
 
 } // namespace OHOS::ArkWeb
