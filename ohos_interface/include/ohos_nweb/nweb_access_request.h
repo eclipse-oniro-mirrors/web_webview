@@ -37,6 +37,7 @@ public:
         CLIPBOARD_READ_WRITE = 1 << 5,
         CLIPBOARD_SANITIZED_WRITE = 1 << 6,
         SENSORS = 1 << 7,
+        NOTIFICATION = 1 << 8,
     };
 
     /**
