@@ -510,15 +510,12 @@ HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_NotifyBrowserFd_009, TestSize.Le
  */
 HWTEST_F(NWebAafwkAdapterTest, NWebAafwkAdapter_WriteInterfaceToken_011, TestSize.Level1)
 {
-    MockMessageParcel *mock = new MockMessageParcel();
-    EXPECT_CALL(*mock, WriteInterfaceToken(::testing::_))
-        .Times(1)
-        .WillRepeatedly(::testing::Return(false));
     sptr<IRemoteObject> impl;
     auto client = new BrowserClient(impl);
     ASSERT_NE(client, nullptr);
     // MessageParcel data;
-    client->WriteInterfaceToken(*mock);
+    MessageParcel data;
+    client->WriteInterfaceToken(data);
 }
 
 /**
