@@ -657,7 +657,7 @@ public:
      * Set whether to support the blur when the keyboard is hidden by manual.
      * @param enable set whether blur is allowed.
      */
-    virtual void SetBlurOnKeyboardHideMode(int enable) {};
+    virtual void SetBlurOnKeyboardHideMode(int enable) {}
 };
 
 } // namespace OHOS::NWeb
