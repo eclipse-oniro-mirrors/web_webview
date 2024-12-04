@@ -1615,7 +1615,6 @@ public:
      * @Description: Sends key events to the web kernel.
      * @Input keyEvent: Basic information about key events.
      * @Return: Whether the keyboard event is successful sent.
-     * @Since: 12005
      */
     /*--ark web()--*/
     virtual bool SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent) {
