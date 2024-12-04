@@ -66,7 +66,7 @@ bool ArkWebBridgeHelper::LoadLibFile(int openMode, const std::string& libNsName,
     dlns_create(&dlns, libDirPath.c_str());
 
     Dl_namespace ndkns;
-    dlns_get("ndkns", &ndkns);
+    dlns_get("ndk", &ndkns);
     dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
 
     void* libFileHandler = dlopen_ns(&dlns, libFileName.c_str(), openMode);
@@ -195,7 +195,8 @@ void ArkWebBridgeHelper::RegisterFuncMember(
     ARK_WEB_BRIDGE_DV_LOG("func member map is registered and bridge type is %{public}d", bridgeType);
 }
 
-void* ArkWebBridgeHelper::CheckFuncMemberForCalled(ArkWebBridgeType bridgeType, const std::string& funcName)
+ARK_WEB_NO_SANITIZE void* ArkWebBridgeHelper::CheckFuncMemberForCalled(
+    ArkWebBridgeType bridgeType, const std::string& funcName)
 {
     if (funcName.empty()) {
         ARK_WEB_BRIDGE_INFO_LOG("func name is empty,bridge ype is %{public}d", bridgeType);
@@ -219,7 +220,8 @@ void* ArkWebBridgeHelper::CheckFuncMemberForCalled(ArkWebBridgeType bridgeType, 
     return itor1->second;
 }
 
-void* ArkWebBridgeHelper::CheckFuncMemberForCaller(ArkWebBridgeType bridgeType, const std::string& funcName)
+ARK_WEB_NO_SANITIZE void* ArkWebBridgeHelper::CheckFuncMemberForCaller(
+    ArkWebBridgeType bridgeType, const std::string& funcName)
 {
     if (!memberCheckFunc_) {
         return ARK_WEB_INIT_ADDR;

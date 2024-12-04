@@ -1411,6 +1411,15 @@ float ArkWebNWebWrapper::DumpGpuInfo()
     return ark_web_nweb_->DumpGpuInfo();
 }
 
+int ArkWebNWebWrapper::ScaleGestureChangeV2(int type,
+                                            double scale,
+                                            double originScale,
+                                            double centerX,
+                                            double centerY)
+{
+    return ark_web_nweb_->ScaleGestureChangeV2(type, scale, originScale, centerX, centerY);
+}
+
 bool ArkWebNWebWrapper::SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent)
 {
     if (CHECK_SHARED_PTR_IS_NULL(keyboardEvent)) {
