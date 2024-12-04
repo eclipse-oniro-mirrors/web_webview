@@ -1405,7 +1405,6 @@ public:
     /**
      * @Description: Sends key events to the web kernel.
      * @Input mouseEvent: Basic information about key events.
-     * @Since: 12005
      */
     /*--ark web()--*/
     bool SendKeyboardEvent(ArkWebRefPtr<ArkWebKeyboardEvent> keyboardEvent) override;
