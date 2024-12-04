@@ -24,7 +24,7 @@
 
 #include "singleton.h"
 
-#include "base/web/webview/sa/iapp_fwk_update_service.h"
+#include "iapp_fwk_update_service.h"
 
 namespace OHOS::NWeb {
 class AppFwkUpdateClient {
