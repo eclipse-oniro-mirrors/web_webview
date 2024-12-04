@@ -1413,6 +1413,13 @@ public:
      * @return the error id.
      */
     int ScaleGestureChangeV2(int type, double scale, double originScale, double centerX, double centerY) override;
+
+    /**
+     * @Description: Sends key events to the web kernel.
+     * @Input mouseEvent: Basic information about key events.
+     */
+    /*--ark web()--*/
+    bool SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
