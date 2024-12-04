@@ -1429,4 +1429,14 @@ bool ArkWebNWebWrapper::SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWeb
 
     return ark_web_nweb_->SendKeyboardEvent(new ArkWebKeyboardEventImpl(keyboardEvent));
 }
+
+bool ArkWebNWebWrapper::PerformActionV2(int64_t accessibility_id, uint32_t action,
+    const std::map<std::string, std::string>& actionArguments)
+{
+    ArkWebStringMap stArguments = ArkWebStringMapClassToStruct(actionArguments);
+    bool res = ark_web_nweb_->PerformActionV2(accessibility_id, action, stArguments);
+
+    ArkWebStringMapStructRelease(stArguments);
+    return res;
+}
 } // namespace OHOS::ArkWeb

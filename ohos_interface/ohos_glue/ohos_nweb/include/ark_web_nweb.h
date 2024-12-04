@@ -1573,6 +1573,17 @@ public:
      */
     /*--ark web()--*/
     virtual bool SendKeyboardEvent(ArkWebRefPtr<ArkWebKeyboardEvent> keyboardEvent) = 0;
+
+    /**
+     * @Description: Execute an accessibility action on an accessibility node in the browser.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Input action: The action to be performed on the accessibility node.
+     * @Input actionArguments: Data related to the current action.
+     * @Return: Whether the action is performed successfully.
+     */
+    /*--ark web()--*/
+    virtual bool PerformActionV2(int64_t accessibilityId, uint32_t action,
+        const ArkWebStringMap& actionArguments) = 0;
 };
 
 } // namespace OHOS::ArkWeb
