@@ -29,6 +29,7 @@
 #include "ohos_nweb/bridge/ark_web_history_list_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_hit_test_result_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_keyboard_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_mouse_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_pdfconfig_args_impl.h"
@@ -1417,5 +1418,15 @@ int ArkWebNWebWrapper::ScaleGestureChangeV2(int type,
                                             double centerY)
 {
     return ark_web_nweb_->ScaleGestureChangeV2(type, scale, originScale, centerX, centerY);
+}
+
+bool ArkWebNWebWrapper::SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(keyboardEvent)) {
+        ark_web_nweb_->SendKeyboardEvent(nullptr);
+        return false;
+    }
+
+    return ark_web_nweb_->SendKeyboardEvent(new ArkWebKeyboardEventImpl(keyboardEvent));
 }
 } // namespace OHOS::ArkWeb
