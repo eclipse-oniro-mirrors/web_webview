@@ -95,6 +95,8 @@ public:
 
     virtual std::string GetUserAgentBaseOSName() = 0;
 
+    virtual std::string GetDeviceInfoApiVersion() = 0;
+
     virtual std::string GetUserAgentOSVersion() = 0;
 
     virtual std::string GetVulkanStatus() = 0;
