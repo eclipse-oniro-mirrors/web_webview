@@ -43,6 +43,8 @@ public:
     ArkWebString GetUserAgentOSName() override;
 
     ArkWebString GetUserAgentOSVersion() override;
+
+    ArkWebString GetDeviceInfoApiVersion() override;
     
     ArkWebString GetUserAgentBaseOSName() override;
 
