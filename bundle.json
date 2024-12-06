@@ -283,7 +283,7 @@
                 "//base/web/webview/test/fuzztest/ohos_nweb/initandrun_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/nwebhelper_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/hisysevent_fuzzer:fuzztest",
-                "//base/web/webview/test/fuzztest/nativebuffer_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/nativebufferadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/unittest/nweb_value_test:unittest",
                 "//base/web/webview/test/unittest/display_manager_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_adapter_test:unittest",

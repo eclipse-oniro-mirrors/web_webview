@@ -16,5 +16,5 @@
 #ifndef NATIVE_BUFFER_FUZZER_H
 #define NATIVE_BUFFER_FUZZER_H
 
-#define FUZZ_PROJECT_NAME "nativebuffer_fuzzer"
+#define FUZZ_PROJECT_NAME "nativebufferadapter_fuzzer"
 #endif /* NATIVE_BUFFER_FUZZER_H */
