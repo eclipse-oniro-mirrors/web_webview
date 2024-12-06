@@ -20,7 +20,7 @@
 
 namespace OHOS::ArkWeb {
 
-const std::string ADAPTER_LIB_FILE_NAME = "libohos_adapter_glue_source.z.so";
+const char kAdapterLibFileName[] = "libohos_adapter_glue_source.z.so";
 
 ArkWebAdapterWebcoreBridgeHelper::ArkWebAdapterWebcoreBridgeHelper()
 {
@@ -31,7 +31,7 @@ ArkWebAdapterWebcoreBridgeHelper::ArkWebAdapterWebcoreBridgeHelper()
 
 void ArkWebAdapterWebcoreBridgeHelper::Init()
 {
-    CHECK(LoadLibFile(RTLD_LAZY, ADAPTER_LIB_FILE_NAME, false));
+    CHECK(LoadLibFile(RTLD_LAZY, kAdapterLibFileName, false));
 
     memberCheckFunc_ =
         reinterpret_cast<ArkWebMemberCheckFunc>(LoadFuncSymbol("ark_web_adapter_webview_check_func_static", false));
