@@ -45,8 +45,6 @@ public:
 
     std::string GetUserAgentOSVersion() override;
 
-    std::string GetDeviceInfoApiVersion() override;
-
     std::string GetUserAgentBaseOSName() override;
 
     int32_t GetSoftwareMajorVersion() override;
@@ -82,6 +80,8 @@ public:
     std::string GetVulkanStatus() override;
 
     std::string GetCompatibleDeviceType() override;
+
+    std::string GetDeviceInfoApiVersion() override;
 private:
     ArkWebRefPtr<ArkSystemPropertiesAdapter> ctocpp_;
 };
