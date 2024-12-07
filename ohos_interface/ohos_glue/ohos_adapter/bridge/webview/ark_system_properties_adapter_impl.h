@@ -43,8 +43,6 @@ public:
     ArkWebString GetUserAgentOSName() override;
 
     ArkWebString GetUserAgentOSVersion() override;
-
-    ArkWebString GetDeviceInfoApiVersion() override;
     
     ArkWebString GetUserAgentBaseOSName() override;
 
@@ -81,6 +79,8 @@ public:
     ArkWebString GetVulkanStatus() override;
 
     ArkWebString GetCompatibleDeviceType() override;
+
+    ArkWebString GetDeviceInfoApiVersion() override;
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
