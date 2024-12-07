@@ -98,9 +98,6 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetUserAgentOSVersion() = 0;
-
-    /*--ark web()--*/
-    virtual ArkWebString GetDeviceInfoApiVersion() = 0;
     
     /*--ark web()--*/
     virtual ArkWebString GetUserAgentBaseOSName() = 0;
@@ -119,6 +116,9 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetCompatibleDeviceType() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetDeviceInfoApiVersion() = 0;
 };
 
 } // namespace OHOS::ArkWeb
