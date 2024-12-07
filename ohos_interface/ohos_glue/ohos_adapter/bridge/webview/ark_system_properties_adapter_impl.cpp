@@ -72,12 +72,6 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentOSVersion()
     return ArkWebStringClassToStruct(str);
 }
 
-ArkWebString ArkSystemPropertiesAdapterImpl::GetDeviceInfoApiVersion()
-{
-    std::string str = real_.GetDeviceInfoApiVersion();
-    return ArkWebStringClassToStruct(str);
-}
-
 ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentBaseOSName()
 {
     std::string str = real_.GetUserAgentBaseOSName();
@@ -189,6 +183,12 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetVulkanStatus()
 ArkWebString ArkSystemPropertiesAdapterImpl::GetCompatibleDeviceType()
 {
     std::string str = real_.GetCompatibleDeviceType();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetDeviceInfoApiVersion()
+{
+    std::string str = real_.GetDeviceInfoApiVersion();
     return ArkWebStringClassToStruct(str);
 }
 } // namespace OHOS::ArkWeb
