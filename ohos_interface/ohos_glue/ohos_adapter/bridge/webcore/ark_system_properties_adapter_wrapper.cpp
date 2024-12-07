@@ -106,17 +106,6 @@ std::string ArkSystemPropertiesAdapterWrapper::GetUserAgentOSVersion()
     return result;
 }
 
-std::string ArkSystemPropertiesAdapterWrapper::GetDeviceInfoApiVersion()
-{
-    if (!ctocpp_) {
-        return "";
-    }
-    ArkWebString str = ctocpp_->GetDeviceInfoApiVersion();
-    std::string result = ArkWebStringStructToClass(str);
-    ArkWebStringStructRelease(str);
-    return result;
-}
-
 std::string ArkSystemPropertiesAdapterWrapper::GetUserAgentBaseOSName()
 {
     if (!ctocpp_) {
@@ -277,6 +266,17 @@ std::string ArkSystemPropertiesAdapterWrapper::GetCompatibleDeviceType()
         return "";
     }
     ArkWebString str = ctocpp_->GetCompatibleDeviceType();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetDeviceInfoApiVersion()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetDeviceInfoApiVersion();
     std::string result = ArkWebStringStructToClass(str);
     ArkWebStringStructRelease(str);
     return result;
