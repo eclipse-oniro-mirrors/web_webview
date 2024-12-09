@@ -116,6 +116,9 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetCompatibleDeviceType() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetDeviceInfoApiVersion() = 0;
 };
 
 } // namespace OHOS::ArkWeb

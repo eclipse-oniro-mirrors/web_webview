@@ -185,4 +185,10 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetCompatibleDeviceType()
     std::string str = real_.GetCompatibleDeviceType();
     return ArkWebStringClassToStruct(str);
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetDeviceInfoApiVersion()
+{
+    std::string str = real_.GetDeviceInfoApiVersion();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb
