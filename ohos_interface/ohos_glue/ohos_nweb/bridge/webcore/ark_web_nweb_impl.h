@@ -1408,6 +1408,17 @@ public:
      */
     /*--ark web()--*/
     bool SendKeyboardEvent(ArkWebRefPtr<ArkWebKeyboardEvent> keyboardEvent) override;
+
+    /**
+     * @Description: Execute an accessibility action on an accessibility node in the browser.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Input action: The action to be performed on the accessibility node.
+     * @Input actionArguments: Data related to the current action.
+     * @Return: Whether the action is performed successfully.
+     */
+    /*--ark web()--*/
+    bool PerformActionV2(int64_t accessibility_id, uint32_t action,
+        const ArkWebStringMap& actionArguments) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
