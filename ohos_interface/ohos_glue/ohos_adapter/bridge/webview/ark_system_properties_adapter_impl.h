@@ -79,6 +79,8 @@ public:
     ArkWebString GetVulkanStatus() override;
 
     ArkWebString GetCompatibleDeviceType() override;
+
+    ArkWebString GetDeviceInfoApiVersion() override;
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

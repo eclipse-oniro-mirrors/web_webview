@@ -370,4 +370,9 @@ std::string SystemPropertiesAdapterImpl::GetCompatibleDeviceType()
     
     return deviceType;
 }
+
+std::string SystemPropertiesAdapterImpl::GetDeviceInfoApiVersion()
+{
+    return OHOS::system::GetParameter("const.product.os.dist.apiversion", "");
+}
 } // namespace OHOS::NWeb

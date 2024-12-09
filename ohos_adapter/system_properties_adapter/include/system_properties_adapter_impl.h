@@ -85,6 +85,8 @@ public:
     std::string GetVulkanStatus() override;
 
     std::string GetCompatibleDeviceType() override;
+
+    std::string GetDeviceInfoApiVersion() override;
 private:
     SystemPropertiesAdapterImpl();
 
