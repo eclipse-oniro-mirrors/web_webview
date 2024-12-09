@@ -1221,4 +1221,10 @@ bool ArkWebNWebImpl::SendKeyboardEvent(ArkWebRefPtr<ArkWebKeyboardEvent> keyboar
 
     return nweb_nweb_->SendKeyboardEvent(std::make_shared<ArkWebKeyboardEventWrapper>(keyboardEvent));
 }
+
+bool ArkWebNWebImpl::PerformActionV2(int64_t accessibility_id, uint32_t action,
+    const ArkWebStringMap& actionArguments)
+{
+    return nweb_nweb_->PerformActionV2(accessibility_id, action, ArkWebStringMapStructToClass(actionArguments));
+}
 } // namespace OHOS::ArkWeb

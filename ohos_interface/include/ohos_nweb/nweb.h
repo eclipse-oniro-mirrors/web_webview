@@ -1620,6 +1620,18 @@ public:
     virtual bool SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent) {
         return false;
     }
+
+    /**
+     * @Description: Execute an accessibility action on an accessibility node in the browser.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Input action: The action to be performed on the accessibility node.
+     * @Input actionArguments: Data related to the current action.
+     * @Return: Whether the action is performed successfully.
+     */
+    virtual bool PerformActionV2(int64_t accessibilityId, uint32_t action,
+        const std::map<std::string, std::string>& actionArguments) {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb
