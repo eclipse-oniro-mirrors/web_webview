@@ -12,8 +12,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
- 
-#include "nativebuffer_fuzzer.h"
+
+#include "nativebufferadapter_fuzzer.h"
 #include "ohos_native_buffer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
@@ -28,16 +28,12 @@ namespace OHOS {
         for (size_t i = 0; i<callCount; ++i) {
             OhosNativeBufferAdapter &adapter = OhosNativeBufferAdapterImpl::GetInstance();
 
-            adapter.AcquireBuffer(buffer);
-
-            void* eglBuffer = nullptr;   
             void* buffer = nullptr;
             void* eglBuffer = nullptr;
             adapter.AcquireBuffer(buffer);  
             adapter.GetEGLBuffer(buffer, &eglBuffer);
 
             void* nativeBuffer = nullptr;
-            adapter.NativeBufferFromNativeWindowBuffer(buffer, &nativeBuffer);
             void* nativeWindowBuffer = nullptr;
             adapter.NativeBufferFromNativeWindowBuffer(nativeWindowBuffer, &nativeBuffer);
             adapter.GetSeqNum(nativeBuffer);
