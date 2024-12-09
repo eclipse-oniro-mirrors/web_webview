@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef NATIVE_BUFFER_FUZZER_H
-#define NATIVE_BUFFER_FUZZER_H
+#ifndef NATIVE_BUFFER_ADAPTER_FUZZER_H
+#define NATIVE_BUFFER_ADAPTER_FUZZER_H
 
 #define FUZZ_PROJECT_NAME "nativebufferadapter_fuzzer"
-#endif /* NATIVE_BUFFER_FUZZER_H */
+#endif /* NATIVE_BUFFER_ADAPTER_FUZZER_H */
