@@ -12,17 +12,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#include "nativebuffer_fuzzer.h"
-#include "ohos_native_buffer_adapter_impl.h"
 
-#include <securec.h>
+#include "nativebufferadapter_fuzzer.h"
+#include "ohos_native_buffer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 namespace OHOS {
 bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
-        return true;
+        return false;
     }
 
     size_t callCount = data[0] % 10;

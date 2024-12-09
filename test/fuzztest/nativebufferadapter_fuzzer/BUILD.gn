@@ -17,9 +17,9 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("FuzzTestNativeBufferAdapter") {
+ohos_fuzztest("NativeBufferAdapterFuzzTest") {
   module_out_path = webview_fuzz_test_path
-  fuzz_config_file = "$webview_path/test/fuzztest/nativebuffer_fuzzer"
+  fuzz_config_file = "$webview_path/test/fuzztest/nativebufferadapter_fuzzer"
 
   include_dirs = [
     "$webview_path/ohos_nweb/include",
@@ -32,7 +32,7 @@ ohos_fuzztest("FuzzTestNativeBufferAdapter") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "nativebuffer_fuzzer.cpp" ]
+  sources = [ "nativebufferadapter_fuzzer.cpp" ]
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
   external_deps = [
     "ability_runtime:app_manager",
@@ -50,7 +50,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":FuzzTestNativeBufferAdapter",
+    ":NativeBufferAdapterFuzzTest",
   ]
 }
 ###############################################################################
