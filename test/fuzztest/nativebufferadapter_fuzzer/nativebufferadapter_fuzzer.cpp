@@ -21,7 +21,7 @@ namespace OHOS {
 bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
-        return true;
+        return false;
     }
 
     size_t callCount = data[0] % 10;
