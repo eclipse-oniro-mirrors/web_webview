@@ -18,7 +18,7 @@
 
 using namespace OHOS::NWeb;
 namespace OHOS {
-bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
+bool NativeBufferAdapterFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
         return false;
@@ -50,6 +50,6 @@ bool FuzzTestNativeBufferAdapter(const uint8_t* data, size_t size)
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
-    OHOS::FuzzTestNativeBufferAdapter(data, size);
+    OHOS::NativeBufferAdapterFuzzTest(data, size);
     return 0;
 }
