@@ -11,6 +11,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
 import("../../../config.gni")
 
@@ -32,12 +33,10 @@ ohos_unittest("power_mgr_client_adapter_impl_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
   external_deps = [
     "ability_runtime:app_manager",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "input:libmmi-client",
     "webview:libnweb",
