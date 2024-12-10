@@ -21,10 +21,9 @@ ohos_unittest("napi_web_cookie_manager_test") {
 
   sources = [ "napi_web_cookie_manager_test.cpp" ]
 
-  deps = [ "//third_party/googletest:gtest_main" ]
-
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",
