@@ -32,13 +32,11 @@ ohos_unittest("nweb_hiviewdfx_adapter_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "../../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",

@@ -20,10 +20,9 @@ ohos_unittest("nweb_value_test") {
 
   sources = [ "nweb_value_test.cpp" ]
 
-  deps = [ "//third_party/googletest:gtest_main" ]
-
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "webview:libnweb",
   ]
