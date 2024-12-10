@@ -39,14 +39,12 @@ ohos_unittest("nweb_media_adapter_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "../../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "graphic_surface:surface",
     "hilog:libhilog",
   ]
