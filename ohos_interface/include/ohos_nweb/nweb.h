@@ -266,6 +266,11 @@ public:
     virtual int32_t GetClickNum() = 0;
 
     virtual std::vector<int32_t> GetPressKeyCodes() = 0;
+
+    virtual int32_t GetRawX() { return 0; };
+
+    virtual int32_t GetRawY() { return 0; };
+
 };
 
 typedef int64_t (*AccessibilityIdGenerateFunc)();

@@ -41,6 +41,10 @@ public:
 
     std::vector<int32_t> GetPressKeyCodes() override;
 
+    int32_t GetRawX() override;
+
+    int32_t GetRawY() override;
+
 private:
     ArkWebRefPtr<ArkWebMouseEvent> mouseEvent_;
 };
