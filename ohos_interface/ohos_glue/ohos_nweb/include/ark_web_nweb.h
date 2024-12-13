@@ -1584,6 +1584,21 @@ public:
     /*--ark web()--*/
     virtual bool PerformActionV2(int64_t accessibilityId, uint32_t action,
         const ArkWebStringMap& actionArguments) = 0;
+
+    /**
+     * @brief Inject the JavaScript before WebView load the DOM tree.
+     */
+    /*--ark web()--*/
+    virtual void JavaScriptOnDocumentStartByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) = 0;
+
+    /**
+     * @brief Inject the JavaScript after WebView loads the DOM tree and run
+     *        JavaScripts.
+     */
+    /*--ark web()--*/
+    virtual void JavaScriptOnDocumentEndByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) = 0;
 };
 
 } // namespace OHOS::ArkWeb

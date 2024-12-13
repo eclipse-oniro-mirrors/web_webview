@@ -689,6 +689,20 @@ void ArkWebNWebImpl::JavaScriptOnDocumentStart(const ArkWebStringVectorMap& scri
     nweb_nweb_->JavaScriptOnDocumentStart(ArkWebStringVectorMapStructToClass(script_items));
 }
 
+void ArkWebNWebImpl::JavaScriptOnDocumentStartByOrder(const ArkWebStringVectorMap& script_items,
+    const ArkWebStringVector& script_items_by_order)
+{
+    nweb_nweb_->JavaScriptOnDocumentStartByOrder(ArkWebStringVectorMapStructToClass(script_items),
+        ArkWebStringVectorStructToClass(script_items_by_order));
+}
+
+void ArkWebNWebImpl::JavaScriptOnDocumentEndByOrder(const ArkWebStringVectorMap& script_items,
+    const ArkWebStringVector& script_items_by_order)
+{
+    nweb_nweb_->JavaScriptOnDocumentEndByOrder(ArkWebStringVectorMapStructToClass(script_items),
+        ArkWebStringVectorStructToClass(script_items_by_order));
+}
+
 void ArkWebNWebImpl::ExecuteAction(int64_t accessibility_id, uint32_t action)
 {
     nweb_nweb_->ExecuteAction(accessibility_id, action);
