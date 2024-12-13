@@ -262,7 +262,7 @@ public:
     virtual int32_t GetButton() = 0;
 
     virtual int32_t GetAction() = 0;
-    
+
     virtual int32_t GetClickNum() = 0;
 
     virtual std::vector<int32_t> GetPressKeyCodes() = 0;
@@ -272,6 +272,7 @@ typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
+using ScriptItemsByOrder = std::vector<std::string>;
 using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
@@ -1632,6 +1633,18 @@ public:
         const std::map<std::string, std::string>& actionArguments) {
         return false;
     }
+
+    /**
+     * Inject the JavaScript before WebView load the DOM tree.
+     */
+    virtual void JavaScriptOnDocumentStartByOrder(const ScriptItems& scriptItems,
+        const ScriptItemsByOrder& scriptItemsByOrder) {}
+
+    /**
+     * Inject the JavaScript after WebView load the DOM tree.
+     */
+    virtual void JavaScriptOnDocumentEndByOrder(const ScriptItems& scriptItems,
+        const ScriptItemsByOrder& scriptItemsByOrder) {}
 };
 
 } // namespace OHOS::NWeb
