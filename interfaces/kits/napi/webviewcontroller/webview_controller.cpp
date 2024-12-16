@@ -1883,6 +1883,7 @@ bool WebviewController::ParseJsLengthResourceToInt(
     if (resourceType == napi_number) {
         int32_t resourceTypeNum;
         NapiParseUtils::ParseInt32(env, jsResourceType, resourceTypeNum);
+        std::string resourceString;
         switch (resourceTypeNum) {
             case static_cast<int>(ResourceType::INTEGER):
                 if (resourceManager->GetIntegerById(resId, result) == Global::Resource::SUCCESS) {
@@ -1891,13 +1892,14 @@ bool WebviewController::ParseJsLengthResourceToInt(
                 }
                 break;
             case static_cast<int>(ResourceType::STRING):
-                std::string resourceString;
                 if (resourceManager->GetStringById(resId, resourceString) == Global::Resource::SUCCESS) {
                     return NapiParseUtils::ParseJsLengthStringToInt(resourceString, type, result);
                 }
                 break;
+            default:
+                WVLOG_E("WebPageSnapshot resource type not support");
+                break;
         }
-        WVLOG_E("WebPageSnapshot resource type not support");
         return false;
     }
     WVLOG_E("WebPageSnapshot resource type error");
