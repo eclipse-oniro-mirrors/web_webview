@@ -27,6 +27,8 @@ enum class ProductDeviceType : int32_t {
     DEVICE_TYPE_MOBILE,
     DEVICE_TYPE_TABLET,
     DEVICE_TYPE_2IN1,
+    DEVICE_TYPE_WEARABLE,
+    DEVICE_TYPE_TV,
     DEVICE_TYPE_UNKNOWN
 };
 

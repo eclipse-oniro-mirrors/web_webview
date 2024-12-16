@@ -29,6 +29,7 @@
 namespace OHOS::NWeb {
 const std::string FACTORY_CONFIG_VALUE = "factoryConfig";
 const std::string FACTORY_LEVEL_VALUE = "factoryLevel";
+const std::string FACTORY_LEVEL_TV = "32";
 const std::string FACTORY_LEVEL_WATCH = "16";
 const std::string FACTORY_LEVEL_PC = "8";
 const std::string FACTORY_LEVEL_TABLET = "4";
@@ -128,6 +129,10 @@ ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
         return ProductDeviceType::DEVICE_TYPE_TABLET;
     } else if (deviceType == "2in1") {
         return ProductDeviceType::DEVICE_TYPE_2IN1;
+    } else if (deviceType == "wearable") {
+        return ProductDeviceType::DEVICE_TYPE_WEARABLE;
+    } else if (deviceType == "tv") {
+        return ProductDeviceType::DEVICE_TYPE_TV;
     }
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
 }
@@ -148,6 +153,10 @@ ProductDeviceType SystemPropertiesAdapterImpl::AnalysisFromConfig()
         return ProductDeviceType::DEVICE_TYPE_TABLET;
     } else if (factoryLevel == FACTORY_LEVEL_PC) {
         return ProductDeviceType::DEVICE_TYPE_2IN1;
+    } else if (factoryLevel == FACTORY_LEVEL_WATCH) {
+        return ProductDeviceType::DEVICE_TYPE_WEARABLE;
+    } else if (factoryLevel == FACTORY_LEVEL_TV) {
+        return ProductDeviceType::DEVICE_TYPE_TV;
     }
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
 }
