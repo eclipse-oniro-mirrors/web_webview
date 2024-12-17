@@ -1431,6 +1431,19 @@ public:
     /*--ark web()--*/
     bool PerformActionV2(int64_t accessibilityId, uint32_t action,
         const std::map<std::string, std::string>& actionArguments) override;
+
+    /**
+     * @brief Inject the JavaScript before WebView load the DOM tree.
+     */
+    void JavaScriptOnDocumentStartByOrder(const std::map<std::string, std::vector<std::string>>& script_items,
+        const std::vector<std::string>& script_items_by_order) override;
+
+    /**
+     * @brief Inject the JavaScript after WebView loads the DOM tree and run
+     *        JavaScripts.
+     */
+    void JavaScriptOnDocumentEndByOrder(const std::map<std::string, std::vector<std::string>>& script_items,
+        const std::vector<std::string>& script_items_by_order) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

@@ -1419,6 +1419,19 @@ public:
     /*--ark web()--*/
     bool PerformActionV2(int64_t accessibility_id, uint32_t action,
         const ArkWebStringMap& actionArguments) override;
+
+    /**
+     * @brief Inject the JavaScript before WebView load the DOM tree.
+     */
+    void JavaScriptOnDocumentStartByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) override;
+
+    /**
+     * @brief Inject the JavaScript after WebView loads the DOM tree and run
+     *        JavaScripts.
+     */
+    void JavaScriptOnDocumentEndByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
