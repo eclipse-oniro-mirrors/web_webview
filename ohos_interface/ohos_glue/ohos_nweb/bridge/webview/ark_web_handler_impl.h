@@ -582,6 +582,8 @@ public:
     void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) override;
 
     bool IsCurrentFocus() override;
+
+    void GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
