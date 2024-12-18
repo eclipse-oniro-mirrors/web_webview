@@ -294,7 +294,6 @@ namespace OHOS::Webview {
         sptr<WebResourceHandlerImpl> resourceHandler = FFIData::Create<WebResourceHandlerImpl>(ArkWeb_ResourceHandler);
         if (resourceHandler == nullptr) {
             WEBVIEWLOGD("RequestStart, new resourceHandler failed");
-            delete schemeHandlerRequest;
             return;
         }
         if (OH_ArkWebResourceRequest_SetUserData(request, resourceHandler) != 0) {

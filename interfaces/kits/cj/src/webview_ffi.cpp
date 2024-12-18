@@ -61,7 +61,7 @@ std::atomic<bool> g_inWebPageSnapshot {false};
 bool CheckUrl(std::string url)
 {
     if (url.size() > URL_MAXIMUM) {
-        WEBVIEWLOGE("The URL exceeds the maximum length of %{public}d. URL: %{praivate}s", URL_MAXIMUM, url.c_str());
+        WEBVIEWLOGE("The URL exceeds the maximum length of %{public}d.", URL_MAXIMUM);
         return false;
     }
 
