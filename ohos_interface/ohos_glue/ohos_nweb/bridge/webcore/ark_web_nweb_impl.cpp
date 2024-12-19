@@ -1241,4 +1241,9 @@ bool ArkWebNWebImpl::PerformActionV2(int64_t accessibility_id, uint32_t action,
 {
     return nweb_nweb_->PerformActionV2(accessibility_id, action, ArkWebStringMapStructToClass(actionArguments));
 }
+
+bool ArkWebNWebImpl::IsActivePolicyDisable()
+{
+    return nweb_nweb_->IsActivePolicyDisable();
+}
 } // namespace OHOS::ArkWeb

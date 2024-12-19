@@ -1444,6 +1444,13 @@ public:
      */
     void JavaScriptOnDocumentEndByOrder(const std::map<std::string, std::vector<std::string>>& script_items,
         const std::vector<std::string>& script_items_by_order) override;
+
+    /**
+     * @Description: Check web component active policy disable, default: false
+     * @Return: Whether the policy is disable.
+     */
+    /*--ark web()--*/
+    virtual bool IsActivePolicyDisable() override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

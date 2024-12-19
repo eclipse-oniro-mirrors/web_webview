@@ -1645,6 +1645,16 @@ public:
      */
     virtual void JavaScriptOnDocumentEndByOrder(const ScriptItems& scriptItems,
         const ScriptItemsByOrder& scriptItemsByOrder) {}
+
+    /**
+     * @Description: Check web component active policy disable, default: false
+     * @Return: Whether the policy is disable.
+     */
+    /*--ark web()--*/
+    virtual bool IsActivePolicyDisable()
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb
