@@ -459,6 +459,7 @@ ArrMapItem NWebCreateNativeMediaPlayerCallbackImpl::ConstructMap(
 {
     MapItem* result3 = static_cast<MapItem*>(malloc(sizeof(MapItem) * headers_.size()));
     if (result3 == nullptr) {
+        return {};
     }
     size_t i = 0;
     for (const auto& pair : headers_) {
