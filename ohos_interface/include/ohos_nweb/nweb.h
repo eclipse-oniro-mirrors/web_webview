@@ -1668,6 +1668,12 @@ public:
      */
     virtual void JavaScriptOnHeadReadyByOrder(const ScriptItems& scriptItems,
         const ScriptItemsByOrder& scriptItemsByOrder) {}
+
+    /**
+     * @Description: Optimize HTML parser budget to reduce FCP time.
+     * @Input enable: Set whether to use optimized parser budget.
+     */
+    virtual void PutOptimizeParserBudgetEnabled(bool enable) {};
 };
 
 } // namespace OHOS::NWeb
