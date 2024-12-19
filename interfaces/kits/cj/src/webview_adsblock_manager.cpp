@@ -39,7 +39,9 @@ namespace Webview {
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
-        adsBlockManager->SetAdsBlockRules(rulesFile, replace);
+        if (adsBlockManager != nullptr) {
+            adsBlockManager->SetAdsBlockRules(rulesFile, replace);
+        }
         return NWebError::NO_ERROR;
     }
 
@@ -50,7 +52,9 @@ namespace Webview {
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
-        adsBlockManager->AddAdsBlockDisallowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        if (adsBlockManager != nullptr) {
+            adsBlockManager->AddAdsBlockDisallowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        }
         return NWebError::NO_ERROR;
     }
 
@@ -61,7 +65,9 @@ namespace Webview {
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
-        adsBlockManager->RemoveAdsBlockDisallowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        if (adsBlockManager != nullptr) {
+            adsBlockManager->RemoveAdsBlockDisallowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        }
         return NWebError::NO_ERROR;
     }
 
@@ -72,7 +78,9 @@ namespace Webview {
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
-        adsBlockManager->AddAdsBlockAllowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        if (adsBlockManager != nullptr) {
+            adsBlockManager->AddAdsBlockAllowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        }
         return NWebError::NO_ERROR;
     }
 
@@ -83,20 +91,26 @@ namespace Webview {
             return NWebError::PARAM_CHECK_ERROR;
         }
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
-        adsBlockManager->RemoveAdsBlockAllowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        if (adsBlockManager != nullptr) {
+            adsBlockManager->RemoveAdsBlockAllowedList(OHOS::Webview::CArrStringToVector(domainSuffixes));
+        }
         return NWebError::NO_ERROR;
     }
 
     void AdsBlockManagerImpl::ClearAdsBlockAllowedList()
     {
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
-        adsBlockManager->ClearAdsBlockAllowedList();
+        if (adsBlockManager != nullptr) {
+            adsBlockManager->ClearAdsBlockAllowedList();
+        }
     }
 
     void AdsBlockManagerImpl::ClearAdsBlockDisallowedList()
     {
         std::shared_ptr<NWebAdsBlockManager> adsBlockManager = NWebHelper::Instance().GetAdsBlockManager();
-        adsBlockManager->ClearAdsBlockDisallowedList();
+        if (adsBlockManager != nullptr) {
+            adsBlockManager->ClearAdsBlockDisallowedList();
+        }
     }
 }
 }
