@@ -53,4 +53,14 @@ ArkWebInt32Vector ArkWebMouseEventImpl::GetPressKeyCodes()
     return ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(mouseEvent_->GetPressKeyCodes());
 }
 
+int32_t ArkWebMouseEventImpl::GetRawX()
+{
+    return mouseEvent_->GetRawX();
+}
+
+int32_t ArkWebMouseEventImpl::GetRawY()
+{
+    return mouseEvent_->GetRawY();
+}
+
 } // namespace OHOS::ArkWeb
