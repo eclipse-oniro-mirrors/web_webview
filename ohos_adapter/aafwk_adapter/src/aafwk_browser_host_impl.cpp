@@ -150,7 +150,7 @@ void AafwkBrowserHostImpl::ReportThread(int32_t status, int32_t process_id, int3
 
 void AafwkBrowserHostImpl::PassSurface(sptr<Surface> surface, int64_t surface_id)
 {
-    std::unique_lock<std::mutex> surface_map_lock(surface_map_mutex_);
+    std::unique_lock<std::mutex> map_lock(surface_map_mutex_);
     sptr<Surface> surfaceTmp = surface;
     SurfaceUtils* utils = SurfaceUtils::GetInstance();
     if (!utils) {
