@@ -73,6 +73,20 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebInt32Vector GetPressKeyCodes() = 0;
+
+    /**
+     * @Description: Get raw mouse x coordinate.
+     * @Return: return raw x coordinate.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetRawX() = 0;
+
+    /**
+     * @Description: Get raw mouse y coordinate.
+     * @Return: return raw y coordinate.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetRawY() = 0;
 };
 
 } // namespace OHOS::ArkWeb

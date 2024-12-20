@@ -41,6 +41,10 @@ public:
 
     ArkWebInt32Vector GetPressKeyCodes() override;
 
+    int32_t GetRawX() override;
+
+    int32_t GetRawY() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebMouseEvent> mouseEvent_;
 };

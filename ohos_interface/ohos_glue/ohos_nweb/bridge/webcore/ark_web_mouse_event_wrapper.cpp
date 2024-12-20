@@ -59,4 +59,14 @@ std::vector<int32_t> ArkWebMouseEventWrapper::GetPressKeyCodes()
     return result;
 }
 
+int32_t ArkWebMouseEventWrapper::GetRawX()
+{
+    return mouseEvent_->GetRawX();
+}
+
+int32_t ArkWebMouseEventWrapper::GetRawY()
+{
+    return mouseEvent_->GetRawY();
+}
+
 } // namespace OHOS::ArkWeb

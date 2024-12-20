@@ -164,6 +164,8 @@ enum class CursorType : int32_t {
     CT_DND_MOVE,
     CT_DND_COPY,
     CT_DND_LINK,
+    CT_LOCK,
+    CT_UNLOCK,
     CT_MAX_VALUE,
 };
 
