@@ -70,7 +70,7 @@ public:
 private:
     std::map<int64_t, sptr<Surface>> surface_map_;
     std::shared_ptr<AafwkBrowserHostAdapter> browserHostAdapter_;
-    std::mutex surface_map_mutex_;
+    std::mutex map_mutex_;
 };
 } //namespace content
 
