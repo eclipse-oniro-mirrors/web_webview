@@ -1037,6 +1037,11 @@ public:
     virtual void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) {}
 
     virtual bool IsCurrentFocus() { return false; }
+
+    /**
+     * @brief Get the visible area relative to the web.
+     */
+    virtual void GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight) {}
 };
 
 } // namespace OHOS::NWeb

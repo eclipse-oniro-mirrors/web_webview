@@ -1054,4 +1054,9 @@ void ArkWebHandlerWrapper::OnAccessibilityEvent(int64_t accessibilityId, int32_t
 bool ArkWebHandlerWrapper::IsCurrentFocus() {
     return ark_web_handler_->IsCurrentFocus();
 }
+
+void ArkWebHandlerWrapper::GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight)
+{
+    ark_web_handler_->GetVisibleRectToWeb(visibleX, visibleY, visibleWidth, visibleHeight);
+}
 } // namespace OHOS::ArkWeb

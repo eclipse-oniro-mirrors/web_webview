@@ -932,4 +932,9 @@ bool ArkWebHandlerImpl::IsCurrentFocus()
 {
     return nweb_handler_->IsCurrentFocus();
 }
+
+void ArkWebHandlerImpl::GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight)
+{
+    nweb_handler_->GetVisibleRectToWeb(visibleX, visibleY, visibleWidth, visibleHeight);
+}
 } // namespace OHOS::ArkWeb
