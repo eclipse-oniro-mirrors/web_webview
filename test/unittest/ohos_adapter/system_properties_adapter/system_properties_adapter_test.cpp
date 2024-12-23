@@ -209,13 +209,40 @@ HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturn2In1_WhenFa
 }
 
 /**
- * @tc.name  : AnalysisFromConfig_ShouldReturnUnknown_WhenFactoryLevelIsUnknown
+ * @tc.name  : AnalysisFromConfig_ShouldReturnWearable_WhenFactoryLevelIsWearable
  * @tc.number: SystemPropertiesAdapterImplTest_004
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is Wearable.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnWearable_WhenFactoryLevelIsWearable,
+         TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "16");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_WEARABLE);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnWearable_WhenFactoryLevelIsWearable
+ * @tc.number: SystemPropertiesAdapterImplTest_005
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is TV.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnTV_WhenFactoryLevelIsTV, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "32");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_TV);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnUnknown_WhenFactoryLevelIsUnknown
+ * @tc.number: SystemPropertiesAdapterImplTest_006
  * @tc.desc  : Test AnalysisFromConfig function when factory level is unknown.
  */
 HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnUnknown_WhenFactoryLevelIsUnknown, TestSize.Level0)
 {
-    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "16");
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "64");
     ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
     EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_UNKNOWN);
     NWebConfigHelper::Instance().perfConfig_.clear();
