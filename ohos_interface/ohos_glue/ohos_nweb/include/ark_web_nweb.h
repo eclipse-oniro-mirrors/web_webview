@@ -1599,6 +1599,13 @@ public:
     /*--ark web()--*/
     virtual void JavaScriptOnDocumentEndByOrder(const ArkWebStringVectorMap& script_items,
         const ArkWebStringVector& script_items_by_order) = 0;
+
+    /**
+     * @Description: Check web component active policy disable, default: false
+     * @Return: Whether the policy is disable.
+     */
+    /*--ark web()--*/
+    virtual bool IsActivePolicyDisable() = 0;
 };
 
 } // namespace OHOS::ArkWeb

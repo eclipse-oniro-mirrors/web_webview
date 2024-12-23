@@ -1465,4 +1465,9 @@ bool ArkWebNWebWrapper::PerformActionV2(int64_t accessibility_id, uint32_t actio
     ArkWebStringMapStructRelease(stArguments);
     return res;
 }
+
+bool ArkWebNWebWrapper::IsActivePolicyDisable()
+{
+    return ark_web_nweb_->IsActivePolicyDisable();
+}
 } // namespace OHOS::ArkWeb
