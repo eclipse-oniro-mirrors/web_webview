@@ -17,8 +17,6 @@
 #define NWEB_ADAPTER_HELPER_H
 
 #include "wm/window.h"
-#include "libxml/parser.h"
-#include "libxml/tree.h"
 #include "nweb_helper.h"
 #include "nweb_init_params.h"
 #include "nweb_config_helper.h"
