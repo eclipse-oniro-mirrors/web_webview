@@ -1180,6 +1180,7 @@ extern "C" {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
             *errorCode = NWebError::INIT_ERROR;
+            return -1;
         }
         *errorCode = NWebError::NO_ERROR;
         return nativeWebviewCtl->GetMediaPlaybackState();
@@ -1763,11 +1764,13 @@ extern "C" {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             *errCode = NWebError::INIT_ERROR;
+            return;
         }
         WebSchemeHandlerImpl* nativeWebSchemeHandler = FFIData::GetData<WebSchemeHandlerImpl>(classId);
         if (!nativeWebSchemeHandler) {
             WEBVIEWLOGE("set WebSchemeHandler is null");
             *errCode = NWebError::INIT_ERROR;
+            return;
         }
         bool ret = nativeWebviewCtl->SetWebSchemeHandler(cScheme, nativeWebSchemeHandler);
         if (!ret) {
@@ -1819,6 +1822,7 @@ extern "C" {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             WEBVIEWLOGE("Webview controller is null or not init ");
+            return;
         }
         nativeWebviewCtl->OnCreateNativeMediaPlayer(CJLambda::Create(callback));
     }
