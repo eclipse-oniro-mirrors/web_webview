@@ -22,6 +22,7 @@ config("module_private_config") {
   include_dirs = [
     "../../../../ohos_adapter/media_adapter/include",
     "../../../../ohos_adapter/graphic_adapter/include",
+    "../../../../ohos_adapter/ndk/include",
   ]
   cflags_cc = [ "--coverage" ]
   ldflags = [ "--coverage" ]
@@ -35,6 +36,7 @@ ohos_unittest("nweb_media_adapter_test") {
     "media_codec_decoder_adapter_impl_test.cpp",
     "media_codec_encoder_adapter_impl_test.cpp",
     "player_framework_adapter_impl_test.cpp",
+    "drm_adapter_impl_test.cpp"
   ]
 
   configs = [ ":module_private_config" ]
@@ -69,6 +71,12 @@ ohos_unittest("nweb_media_adapter_test") {
       "input:libmmi-client",
     ]
   }
+}
+
+if (webview_drm_enable) {
+  public_external_deps = [
+    "drm_framework:native_drm",
+  ]
 }
 
 group("unittest") {
