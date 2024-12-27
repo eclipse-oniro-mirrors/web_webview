@@ -104,6 +104,8 @@ public:
     virtual std::string GetCompatibleDeviceType() = 0;
 
     virtual std::string GetDeviceInfoApiVersion() = 0;
+
+    virtual std::string GetPRPPreloadMode() = 0;
 };
 
 } // namespace OHOS::NWeb
