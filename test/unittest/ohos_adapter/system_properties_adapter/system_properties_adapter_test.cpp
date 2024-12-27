@@ -247,4 +247,23 @@ HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnUnknown_Whe
     EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_UNKNOWN);
     NWebConfigHelper::Instance().perfConfig_.clear();
 }
+
+/**
+ * @tc.name: SystemPropertiesAdapterTest_GetPRPPreloadMode_007
+ * @tc.desc: GetInstance unittest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetPRPPreloadMode_007, TestSize.Level1)
+{
+    system("param set web.prppreload.mode none");
+    string value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
+    EXPECT_EQ(value, "none");
+    system("param set web.prppreload.mode preconnect");
+    value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
+    EXPECT_EQ(value, "preconnect");
+    system("param set web.prppreload.mode preload");
+    value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
+    EXPECT_EQ(value, "preload");
+}
 } // namespace OHOS

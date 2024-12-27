@@ -81,6 +81,8 @@ public:
     ArkWebString GetCompatibleDeviceType() override;
 
     ArkWebString GetDeviceInfoApiVersion() override;
+
+    ArkWebString GetPRPPreloadMode() override;
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
