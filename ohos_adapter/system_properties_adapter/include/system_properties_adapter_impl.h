@@ -87,6 +87,8 @@ public:
     std::string GetCompatibleDeviceType() override;
 
     std::string GetDeviceInfoApiVersion() override;
+
+    std::string GetPRPPreloadMode() override;
 private:
     SystemPropertiesAdapterImpl();
 
