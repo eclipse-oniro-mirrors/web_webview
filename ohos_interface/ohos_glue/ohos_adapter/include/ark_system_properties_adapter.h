@@ -119,6 +119,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetDeviceInfoApiVersion() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetPRPPreloadMode() = 0;
 };
 
 } // namespace OHOS::ArkWeb
