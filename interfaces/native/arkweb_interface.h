@@ -68,7 +68,7 @@ typedef enum {
     /**
      * @brief API type related to ArkWeb JavaScript value.
      *
-     * @since 14
+     * @since 16
      */
     ARKWEB_NATIVE_JAVASCRIPT_VALUE,
 } ArkWeb_NativeAPIVariantKind;
