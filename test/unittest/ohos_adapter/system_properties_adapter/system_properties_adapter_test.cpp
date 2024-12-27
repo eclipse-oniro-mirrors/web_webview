@@ -262,7 +262,7 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetPRPPreloadM
     system("param set web.prppreload.mode preconnect");
     value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
     EXPECT_EQ(value, "preconnect");
-    system("param set web..prppreload.mode preload");
+    system("param set web.prppreload.mode preload");
     value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
     EXPECT_EQ(value, "preload");
 }
