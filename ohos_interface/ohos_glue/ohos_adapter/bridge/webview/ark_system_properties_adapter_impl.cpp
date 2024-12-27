@@ -191,4 +191,10 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetDeviceInfoApiVersion()
     std::string str = real_.GetDeviceInfoApiVersion();
     return ArkWebStringClassToStruct(str);
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetPRPPreloadMode()
+{
+    std::string str = real_.GetPRPPreloadMode();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb
