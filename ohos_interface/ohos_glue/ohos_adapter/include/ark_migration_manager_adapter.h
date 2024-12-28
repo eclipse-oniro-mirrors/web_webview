@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2022 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_KEYSTORE_ADAPTER_H
-#define ARK_KEYSTORE_ADAPTER_H
+#ifndef ARK_MIGRATION_MANAGER_ADAPTER_H
+#define ARK_MIGRATION_MANAGER_ADAPTER_H
 #pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
@@ -22,19 +22,27 @@
 
 namespace OHOS::ArkWeb {
 
-/*--ark web(source=webview)--*/
-class ArkKeystoreAdapter : public virtual ArkWebBaseRefCounted {
+/*--ark web(source=webcore)--*/
+class ArkMigrationListenerAdapter : public virtual ArkWebBaseRefCounted {
 public:
     /*--ark web()--*/
-    virtual ArkWebString EncryptKey(const ArkWebString& alias, const ArkWebString& plainData) = 0;
+    virtual void OnMigrationReply(int32_t errorCode, int32_t succussCount, ArkWebInt32Vector& errorIndex) = 0;
+};
+
+/*--ark web(source=webview)--*/
+class ArkMigrationManagerAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual void SetMigrationParam(
+        const ArkWebString& bundleName, const ArkWebString& abilityName, const ArkWebString& token) = 0;
 
     /*--ark web()--*/
-    virtual ArkWebString DecryptKey(const ArkWebString& alis, const ArkWebString& encryptedData) = 0;
+    virtual bool SendMigrationRequest(void* jsonData) = 0;
 
     /*--ark web()--*/
-    virtual ArkWebString AssetQuery(const ArkWebString& assetHandle) = 0;
+    virtual uint32_t RegisterMigrationListener(ArkWebRefPtr<ArkMigrationListenerAdapter> listener) = 0;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_KEYSTORE_ADAPTER_H
+#endif // ARK_MIGRATION_MANAGER_ADAPTER_H
