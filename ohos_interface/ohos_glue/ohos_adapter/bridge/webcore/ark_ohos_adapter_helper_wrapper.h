@@ -114,8 +114,6 @@ public:
 
     NWeb::OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() override;
 
-    std::unique_ptr<NWeb::MigrationManagerAdapter> CreateMigrationMgrAdapter() override;
-
 private:
     ArkWebRefPtr<ArkOhosAdapterHelper> ctocpp_;
 };

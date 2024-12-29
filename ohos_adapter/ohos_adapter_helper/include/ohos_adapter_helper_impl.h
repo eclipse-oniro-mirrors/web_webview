@@ -116,8 +116,6 @@ public:
     void SetArkWebCoreHapPathOverride(const std::string& hapPath) override;
 
     OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() override;
-
-    std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() override;
 };
 } // namespace OHOS::NWeb
 

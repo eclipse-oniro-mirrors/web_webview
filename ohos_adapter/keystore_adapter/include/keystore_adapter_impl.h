@@ -35,7 +35,6 @@ public:
         struct HksParamSet **paramSet,
         const struct HksParam *params,
         uint32_t paramCount);
-    std::string AssetQuery(const std::string assetHandle) override;
 
 private:
     KeystoreAdapterImpl() = default;

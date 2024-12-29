@@ -45,7 +45,6 @@
 #include "ohos_adapter/bridge/ark_media_avsession_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_media_codec_decoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_media_codec_encoder_adapter_impl.h"
-#include "ohos_adapter/bridge/ark_migration_manager_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_mmi_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_native_image_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_net_connect_adapter_impl.h"
@@ -64,14 +63,13 @@
 #include "ohos_adapter/bridge/ark_print_manager_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_running_lock_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_screen_capture_adapter_impl.h"
-#include "ohos_adapter/bridge/ark_sensor_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_soc_perf_client_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_surface_buffer_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_system_properties_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_vsync_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_web_date_timezone_info_impl.h"
 #include "ohos_adapter/bridge/ark_window_adapter_impl.h"
-
+#include "ohos_adapter/bridge/ark_sensor_adapter_impl.h"
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -391,13 +389,6 @@ ArkWebRefPtr<ArkOhosNativeBufferAdapter> ArkOhosAdapterHelperImpl::GetOhosNative
     static NWeb::OhosNativeBufferAdapter& instance = real_.GetOhosNativeBufferAdapter();
     static ArkWebRefPtr<ArkOhosNativeBufferAdapter> impl = new ArkOhosNativeBufferAdapterImpl(instance);
     return impl;
-}
-
-ArkWebRefPtr<ArkMigrationManagerAdapter> ArkOhosAdapterHelperImpl::CreateMigrationMgrAdapter()
-{
-    std::unique_ptr<NWeb::MigrationManagerAdapter> adapter = real_.CreateMigrationMgrAdapter();
-    std::shared_ptr<NWeb::MigrationManagerAdapter> shared = std::move(adapter);
-    return new ArkMigrationManagerAdapterImpl(shared);
 }
 
 } // namespace OHOS::ArkWeb
