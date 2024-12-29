@@ -40,7 +40,6 @@
 #include "ohos_adapter/include/ark_media_avsession_adapter.h"
 #include "ohos_adapter/include/ark_media_codec_adapter.h"
 #include "ohos_adapter/include/ark_media_codec_decoder_adapter.h"
-#include "ohos_adapter/include/ark_migration_manager_adapter.h"
 #include "ohos_adapter/include/ark_mmi_adapter.h"
 #include "ohos_adapter/include/ark_net_connect_adapter.h"
 #include "ohos_adapter/include/ark_net_proxy_adapter.h"
@@ -53,9 +52,9 @@
 #include "ohos_adapter/include/ark_power_mgr_client_adapter.h"
 #include "ohos_adapter/include/ark_print_manager_adapter.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
-#include "ohos_adapter/include/ark_sensor_adapter.h"
 #include "ohos_adapter/include/ark_soc_perf_client_adapter.h"
 #include "ohos_adapter/include/ark_system_properties_adapter.h"
+#include "ohos_adapter/include/ark_sensor_adapter.h"
 
 namespace OHOS::ArkWeb {
 
@@ -201,9 +200,6 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkOhosNativeBufferAdapter> GetOhosNativeBufferAdapter() = 0;
-
-    /*--ark web()--*/
-    virtual ArkWebRefPtr<ArkMigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
 };
 
 } // namespace OHOS::ArkWeb

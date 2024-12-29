@@ -30,9 +30,6 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString DecryptKey(const ArkWebString& alis, const ArkWebString& encryptedData) = 0;
-
-    /*--ark web()--*/
-    virtual ArkWebString AssetQuery(const ArkWebString& assetHandle) = 0;
 };
 
 } // namespace OHOS::ArkWeb
