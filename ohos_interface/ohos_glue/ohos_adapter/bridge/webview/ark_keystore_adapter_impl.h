@@ -30,8 +30,6 @@ public:
 
     ArkWebString DecryptKey(const ArkWebString& alis, const ArkWebString& encryptedData) override;
 
-    ArkWebString AssetQuery(const ArkWebString& assetHandle) override;
-
 private:
     NWeb::KeystoreAdapter& real_;
 

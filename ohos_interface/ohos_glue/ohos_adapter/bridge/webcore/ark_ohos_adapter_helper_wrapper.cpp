@@ -42,7 +42,6 @@
 #include "ohos_adapter/bridge/ark_media_codec_decoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_encoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_list_adapter_wrapper.h"
-#include "ohos_adapter/bridge/ark_migration_manager_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_mmi_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_native_image_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_net_connect_adapter_wrapper.h"
@@ -473,17 +472,6 @@ NWeb::OhosNativeBufferAdapter& ArkOhosAdapterHelperWrapper::GetOhosNativeBufferA
 {
     static ArkOhosNativeBufferAdapterWrapper instance(ctocpp_->GetOhosNativeBufferAdapter());
     return instance;
-}
-
-std::unique_ptr<NWeb::MigrationManagerAdapter> ArkOhosAdapterHelperWrapper::CreateMigrationMgrAdapter()
-{
-    ArkWebRefPtr<ArkMigrationManagerAdapter> adapter = ctocpp_->CreateMigrationMgrAdapter();
-
-    if (CHECK_REF_PTR_IS_NULL(adapter)) {
-        return nullptr;
-    }
-
-    return std::make_unique<ArkMigrationManagerAdapterWrapper>(adapter);
 }
 
 } // namespace OHOS::ArkWeb
