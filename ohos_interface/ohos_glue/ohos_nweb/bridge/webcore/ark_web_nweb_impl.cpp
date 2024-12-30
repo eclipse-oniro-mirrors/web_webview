@@ -703,6 +703,13 @@ void ArkWebNWebImpl::JavaScriptOnDocumentEndByOrder(const ArkWebStringVectorMap&
         ArkWebStringVectorStructToClass(script_items_by_order));
 }
 
+void ArkWebNWebImpl::JavaScriptOnHeadReadyByOrder(const ArkWebStringVectorMap& script_items,
+    const ArkWebStringVector& script_items_by_order)
+{
+    nweb_nweb_->JavaScriptOnHeadReadyByOrder(ArkWebStringVectorMapStructToClass(script_items),
+        ArkWebStringVectorStructToClass(script_items_by_order));
+}
+
 void ArkWebNWebImpl::ExecuteAction(int64_t accessibility_id, uint32_t action)
 {
     nweb_nweb_->ExecuteAction(accessibility_id, action);
