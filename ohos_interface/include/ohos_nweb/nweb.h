@@ -1660,6 +1660,14 @@ public:
     {
         return false;
     }
+
+    /**
+     * @Description: Inject the JavaScript when the head element has been created.
+     * @Input scriptItems: The injected JavaScript code is stored in lexicographical order.
+     * @Input scriptItemsByOrder: The injected JavaScript code is stored in the order of the injection array.
+     */
+    virtual void JavaScriptOnHeadReadyByOrder(const ScriptItems& scriptItems,
+        const ScriptItemsByOrder& scriptItemsByOrder) {}
 };
 
 } // namespace OHOS::NWeb

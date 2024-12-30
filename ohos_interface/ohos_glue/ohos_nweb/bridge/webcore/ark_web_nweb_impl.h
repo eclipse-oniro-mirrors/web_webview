@@ -1439,6 +1439,14 @@ public:
      */
     /*--ark web()--*/
     virtual bool IsActivePolicyDisable() override;
+
+    /**
+     * @Description: Inject the JavaScript when the head element has been created.
+     * @Input scriptItems: The injected JavaScript code is stored in lexicographical order.
+     * @Input scriptItemsByOrder: The injected JavaScript code is stored in the order of the injection array..
+     */
+    void JavaScriptOnHeadReadyByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
