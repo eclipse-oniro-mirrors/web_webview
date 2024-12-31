@@ -36,7 +36,16 @@ int main(int argc, char* argv[])
 {
     const std::string libCrashpadHandler = std::string(WEBVIEW_SANDBOX_LIB_PATH) + "/"
                                             + std::string(WEBVIEW_CRASHPAD_HANDLER_SO);
-    void *handle = dlopen(libCrashpadHandler.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    Dl_namespace dlns;
+    dlns_init(&dlns, "nweb_ns");
+    dlns_create(&dlns, std::string(WEBVIEW_SANDBOX_LIB_PATH).c_str());
+
+    Dl_namespace ndkns;
+    dlns_get("ndk", &ndkns);
+    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
+
+    void *handle = dlopen_ns(&dlns, libCrashpadHandler.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    
     if (handle == nullptr) {
         const std::string libCrashpadHandler2 = CRASHPAD_HANDLER_PATH + "/" + LIB_CRASHPAD_HANDLER;
         handle = dlopen(libCrashpadHandler2.c_str(), RTLD_NOW | RTLD_GLOBAL);
