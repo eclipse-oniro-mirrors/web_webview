@@ -36,6 +36,18 @@
 
 namespace OHOS::NWeb {
 
+enum class AudioMimeType {
+    MIMETYPE_UNKNOW = 0,
+    MIMETYPE_AUDIO_AAC = 1, // "audio/mp4a-latm"
+    MIMETYPE_AUDIO_FLAC = 2, // "audio/flac"
+    MIMETYPE_AUDIO_VORBIS = 3, // "audio/vorbis"
+    MIMETYPE_AUDIO_MPEG = 4, // "audio/mpeg"
+    MIMETYPE_AUDIO_AMR_NB = 5, // "audio/3gpp"
+    MIMETYPE_AUDIO_AMR_WB = 6, // "audio/amr-wb"
+    MIMETYPE_AUDIO_G711MU = 7, // "audio/g711mu"
+    MIMETYPE_AUDIO_APE = 8 // "audio/x-ape"
+};
+
 class AudioDecoderFormatAdapterImpl : public AudioDecoderFormatAdapter {
 public:
     AudioDecoderFormatAdapterImpl() = default;
@@ -180,7 +192,10 @@ private:
 
     AudioDecoderAdapterCode SetBufferCencInfo(uint32_t index, std::shared_ptr<AudioCencInfoAdapter> cencInfo);
 
-    OH_AVCodec *decoder_;
+    void GetMimeType();
+
+    AudioMimeType mimeType_ = AudioMimeType::MIMETYPE_UNKNOW;
+    OH_AVCodec *decoder_  = nullptr;
     std::shared_ptr<AudioDecoderCallbackAdapterImpl> callback_ = nullptr;
     std::mutex inMutex_;
     std::mutex outMutex_;
