@@ -791,9 +791,11 @@ void AudioCodecDecoderAdapterImpl::SetParamToAVFormat(
                 OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUDIO_SAMPLE_FORMAT, format->GetAudioSampleFormat());
                 OH_AVFormat_SetLongValue(avFormat, OH_MD_KEY_BITRATE, format->GetBitRate());
                 if (format->GetCodecConfig() != nullptr && format->GetCodecConfigSize() > 0) {
-                    OH_AVFormat_SetBuffer(avFormat, OH_MD_KEY_CODEC_CONFIG, format->GetCodecConfig(), format->GetCodecConfigSize());
+                    OH_AVFormat_SetBuffer(
+                        avFormat, OH_MD_KEY_CODEC_CONFIG, format->GetCodecConfig(), format->GetCodecConfigSize());
                 } else {
-                    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_IDENTIFICATION_HEADER, format->GetIdentificationHeader());
+                    OH_AVFormat_SetIntValue(
+                        avFormat, OH_MD_KEY_IDENTIFICATION_HEADER, format->GetIdentificationHeader());
                     OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_SETUP_HEADER, format->GetSetupHeader());
                 }
             }
