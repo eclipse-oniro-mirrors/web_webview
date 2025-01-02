@@ -27,6 +27,9 @@ namespace {
     DO(onPageEnd, OH_ArkWeb_OnPageEnd);                       \
     DO(onDestroy, OH_ArkWeb_OnDestroy)
 
+#define ARKWEB_NATIVE_FOR_EACH_COMPONENT_GLOBAL_API_FN(DO)    \
+    DO(onScroll, OH_ArkWeb_OnScroll)
+
 #define ARKWEB_NATIVE_FOR_EACH_CONTROLLER_API_FN(DO)                          \
     DO(runJavaScript, OH_ArkWeb_RunJavaScript);                               \
     DO(registerJavaScriptProxy, OH_ArkWeb_RegisterJavaScriptProxy);           \
@@ -74,6 +77,15 @@ ArkWeb_WebMessageAPI* g_WebMessageImpl = nullptr;
 ArkWeb_CookieManagerAPI* g_CookieManagerImpl = nullptr;
 ArkWeb_JavaScriptValueAPI* g_JavaScriptValueImpl = nullptr;
 
+typedef struct {
+    /** The ArkWeb_ComponentGlobalAPI struct size. */
+    size_t size;
+    /** Register the onScroll callback. */
+    bool (*onScroll)(const char* webTag, ArkWeb_OnScrollCallback callback, void* userData);
+} ArkWeb_ComponentGlobalAPI;
+
+ArkWeb_ComponentGlobalAPI* g_ComponentGlobalImpl = nullptr;
+
 } // namespace
 
 template<typename Fn>
@@ -106,6 +118,32 @@ static bool LoadComponentAPI()
     }
 #define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(g_ComponentImpl->fn))
     ARKWEB_NATIVE_FOR_EACH_COMPONENT_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+
+    return true;
+}
+
+static bool LoadComponentGlobalAPI()
+{
+    if (g_ComponentGlobalImpl) {
+        WVLOG_I("NativeArkWeb component api already loaded");
+        return true;
+    }
+
+    g_ComponentGlobalImpl = new (std::nothrow) ArkWeb_ComponentGlobalAPI();
+    if (!g_ComponentGlobalImpl) {
+        WVLOG_E("NativeArkWeb component global api is nullptr");
+        return false;
+    }
+    g_ComponentGlobalImpl->size = sizeof(ArkWeb_ComponentGlobalAPI);
+
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        return false;
+    }
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(fn, ndkFn) LoadFunction(#ndkFn, &(g_ComponentGlobalImpl->fn))
+    ARKWEB_NATIVE_FOR_EACH_COMPONENT_GLOBAL_API_FN(ARKWEB_NATIVE_LOAD_FN_PTR);
 #undef ARKWEB_NATIVE_LOAD_FN_PTR
 
     return true;
@@ -281,4 +319,16 @@ ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type)
             return nullptr;
         }
     }
+}
+
+bool OH_ArkWeb_RegisterScrollCallback(
+    const char* webTag, ArkWeb_OnScrollCallback callback, void* userData)
+{
+    if (!LoadComponentGlobalAPI()) {
+        return false;
+    }
+    if (!g_ComponentGlobalImpl->onScroll) {
+        return false;
+    }
+    return g_ComponentGlobalImpl->onScroll(webTag, callback, userData);
 }
