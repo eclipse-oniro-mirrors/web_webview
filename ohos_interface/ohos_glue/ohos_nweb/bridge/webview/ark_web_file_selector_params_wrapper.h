@@ -39,6 +39,8 @@ public:
 
     const std::string DefaultFilename() override;
 
+    const std::vector<std::string> MimeType() override;
+
 private:
     ArkWebRefPtr<ArkWebFileSelectorParams> ark_web_file_selector_params_;
 };
