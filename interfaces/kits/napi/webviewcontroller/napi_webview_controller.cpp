@@ -6295,7 +6295,6 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
 
     if (g_inWebPageSnapshot) {
         JsErrorCallback(env, std::move(callback), FUNCTION_NOT_ENABLE);
-        napi_delete_reference(env, callback);
         return result;
     }
     g_inWebPageSnapshot = true;
@@ -6323,7 +6322,6 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
                                                        nativeSnapshotSizeWidth)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
-                napi_delete_reference(env, callback);
                 return result;
             }
         }
@@ -6333,7 +6331,6 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
                                                        nativeSnapshotSizeHeight)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
-                napi_delete_reference(env, callback);
                 return result;
             }
         }
@@ -6344,7 +6341,6 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
         WVLOG_E("WebPageSnapshot input different pixel unit");
         JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
         g_inWebPageSnapshot = false;
-        napi_delete_reference(env, callback);
         return result;
     }
 
@@ -6358,7 +6354,6 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
         WVLOG_E("WebPageSnapshot input pixel length less than 0");
         JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
         g_inWebPageSnapshot = false;
-        napi_delete_reference(env, callback);
         return result;
     }
     bool pixelCheck = false;
