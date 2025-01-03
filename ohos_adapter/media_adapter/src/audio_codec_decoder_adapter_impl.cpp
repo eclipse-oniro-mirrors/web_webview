@@ -546,7 +546,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::QueueInputBufferDec(uint32
     uint8_t *bufferData, int32_t bufferSize, std::shared_ptr<AudioCencInfoAdapter> cencInfo,
     bool isEncrypted, BufferFlag flag)
 {
-    WVLOG_I("AudioCodecDecoder[%{public}u] %{public}s,  buffer size[%{public}d], isEncrypted[%{public}d],"
+    WVLOG_D("AudioCodecDecoder[%{public}u] %{public}s,  buffer size[%{public}d], isEncrypted[%{public}d],"
         "flag[%{public}d].", index, __FUNCTION__,  bufferSize, int(isEncrypted), int(flag));
     if (decoder_ == nullptr) {
         WVLOG_E("AudioCodecDecoder decoder_ is nullptr.");
@@ -723,7 +723,6 @@ void AudioCodecDecoderAdapterImpl::GetParamFromAVFormat(
         return;
     }
 
-    bool ret = false;
     int32_t sampleRate = 0;
     int32_t channels = 0;
     int32_t maxInputSize = 0;
@@ -734,18 +733,16 @@ void AudioCodecDecoderAdapterImpl::GetParamFromAVFormat(
     int32_t setupHeader = 0;
     uint8_t *codecConfig = nullptr;
     size_t codecConfigSize = 0;
-    ret  = ret && (OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AUD_SAMPLE_RATE, &sampleRate));
-    ret  = ret && (OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AUD_CHANNEL_COUNT, &channels));
-    ret  = ret && (OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_MAX_INPUT_SIZE, &maxInputSize));
-    ret  = ret && (OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AAC_IS_ADTS, &aacIsAdts));
-    ret  = ret && (OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AUDIO_SAMPLE_FORMAT, &sampleFormat));
-    ret  = ret && (OH_AVFormat_GetLongValue(avFormat, OH_MD_KEY_BITRATE, &bitRate));
-    ret  = ret && (OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_IDENTIFICATION_HEADER, &idHeader));
-    ret  = ret && (OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_SETUP_HEADER, &setupHeader));
-    ret  = ret && (OH_AVFormat_GetBuffer(avFormat, OH_MD_KEY_CODEC_CONFIG, &codecConfig, &codecConfigSize));
-    if (!ret) {
-        WVLOG_I("AudioCodecDecoder get avFormat error.");
-    }
+    OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AUD_SAMPLE_RATE, &sampleRate);
+    OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AUD_CHANNEL_COUNT, &channels);
+    OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_MAX_INPUT_SIZE, &maxInputSize);
+    OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AAC_IS_ADTS, &aacIsAdts);
+    OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_AUDIO_SAMPLE_FORMAT, &sampleFormat);
+    OH_AVFormat_GetLongValue(avFormat, OH_MD_KEY_BITRATE, &bitRate);
+    OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_IDENTIFICATION_HEADER, &idHeader);
+    OH_AVFormat_GetIntValue(avFormat, OH_MD_KEY_SETUP_HEADER, &setupHeader);
+    OH_AVFormat_GetBuffer(avFormat, OH_MD_KEY_CODEC_CONFIG, &codecConfig, &codecConfigSize);
+
     format->SetSampleRate(sampleRate);
     format->SetChannelCount(channels);
     format->SetMaxInputSize(maxInputSize);
