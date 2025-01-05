@@ -43,7 +43,10 @@ public:
 
     virtual bool IsCapture() = 0;
 
-    virtual const MimeTypeList MimeType() = 0;
+    virtual const MimeTypeList MimeType() {
+        std::vector<std::string> result;
+        return result;
+    }
 };
 
 } // namespace OHOS::NWeb
