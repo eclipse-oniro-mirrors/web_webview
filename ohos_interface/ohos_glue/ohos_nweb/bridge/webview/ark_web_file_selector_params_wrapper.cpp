@@ -61,4 +61,13 @@ const std::string ArkWebFileSelectorParamsWrapper::DefaultFilename()
     return objName;
 }
 
+const std::vector<std::string> ArkWebFileSelectorParamsWrapper::MimeType()
+{
+    ArkWebStringVector stType = ark_web_file_selector_params_->MimeType();
+
+    std::vector<std::string> objType = ArkWebStringVectorStructToClass(stType);
+    ArkWebStringVectorStructRelease(stType);
+    return objType;
+}
+
 } // namespace OHOS::ArkWeb

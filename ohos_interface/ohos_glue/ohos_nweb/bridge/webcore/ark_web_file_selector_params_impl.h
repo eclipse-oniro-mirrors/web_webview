@@ -39,6 +39,8 @@ public:
 
     const ArkWebString DefaultFilename() override;
 
+    const ArkWebStringVector MimeType() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebFileSelectorParams> nweb_file_selector_params_;
 };
