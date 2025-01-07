@@ -50,6 +50,8 @@ public:
 
     int32_t SetPlaybackSpeed(OHOS::NWeb::PlaybackRateMode mode) override;
 
+    int32_t SetVideoSurfaceNew(void* native_window) override;
+
 private:
     ArkWebRefPtr<ArkPlayerAdapter> ctocpp_;
 };
