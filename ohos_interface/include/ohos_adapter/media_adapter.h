@@ -104,6 +104,8 @@ public:
     virtual int32_t GetDuration(int32_t& duration) = 0;
 
     virtual int32_t SetPlaybackSpeed(PlaybackRateMode mode) = 0;
+
+    virtual int32_t SetVideoSurfaceNew(void* native_window) = 0;
 };
 
 } // namespace OHOS::NWeb

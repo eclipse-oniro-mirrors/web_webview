@@ -64,6 +64,8 @@ public:
 
     int32_t SetPlaybackSpeed(PlaybackRateMode mode) override;
 
+    int32_t SetVideoSurfaceNew(void* native_window) override;
+
 private:
     std::shared_ptr<Media::Player> player_ = nullptr;
 };
