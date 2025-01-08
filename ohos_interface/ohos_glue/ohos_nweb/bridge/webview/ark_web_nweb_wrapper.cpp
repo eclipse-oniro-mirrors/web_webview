@@ -1488,4 +1488,14 @@ void ArkWebNWebWrapper::PutOptimizeParserBudgetEnabled(bool enable)
 {
     ark_web_nweb_->PutOptimizeParserBudgetEnabled(enable);
 }
+
+std::shared_ptr<OHOS::NWeb::HitTestResult> ArkWebNWebWrapper::GetLastHitTestResult()
+{
+    ArkWebRefPtr<ArkWebHitTestResult> ark_web_last_hit_test_result = ark_web_nweb_->GetLastHitTestResult();
+    if (CHECK_REF_PTR_IS_NULL(ark_web_last_hit_test_result)) {
+        return nullptr;
+    }
+
+    return std::make_shared<ArkWebHitTestResultWrapper>(ark_web_last_hit_test_result);
+}
 } // namespace OHOS::ArkWeb

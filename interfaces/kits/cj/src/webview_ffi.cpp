@@ -1893,6 +1893,22 @@ extern "C" {
         }
         return ret;
     }
+
+    RetDataCString FfiOHOSWebviewCtlGetLastHitTest(int64_t id, int32_t *errCode)
+    {
+        RetDataCString ret = { .code = NWeb::HitTestResult::UNKNOWN_TYPE, .data = nullptr };
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
+        std::shared_ptr<NWeb::HitTestResult> nwebResult = nativeWebviewCtl->GetLastHitTest();
+        *errCode = NWebError::NO_ERROR;
+        ret.code = nwebResult->GetType();
+        ret.data = MallocCString(nwebResult->GetExtra());
+        return ret;
+    }
+
 }
 }
 }

@@ -1622,6 +1622,14 @@ public:
      */
     /*--ark web()--*/
     virtual void PutOptimizeParserBudgetEnabled(bool enable) = 0;
+
+    /**
+     * @brief Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebHitTestResult> GetLastHitTestResult() = 0;
 };
 
 } // namespace OHOS::ArkWeb

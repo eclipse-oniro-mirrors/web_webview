@@ -1674,6 +1674,14 @@ public:
      * @Input enable: Set whether to use optimized parser budget.
      */
     virtual void PutOptimizeParserBudgetEnabled(bool enable) {};
+
+    /**
+     * Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    /*--ark web()--*/
+    virtual std::shared_ptr<HitTestResult> GetLastHitTestResult() = 0;
 };
 
 } // namespace OHOS::NWeb
