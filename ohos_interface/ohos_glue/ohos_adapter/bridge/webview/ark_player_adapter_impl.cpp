@@ -90,4 +90,9 @@ int32_t ArkPlayerAdapterImpl::SetPlaybackSpeed(int32_t mode)
     return real_->SetPlaybackSpeed((OHOS::NWeb::PlaybackRateMode)mode);
 }
 
+int32_t ArkPlayerAdapterImpl::SetVideoSurfaceNew(void* native_window)
+{
+    return real_->SetVideoSurfaceNew(native_window);
+}
+
 } // namespace OHOS::ArkWeb
