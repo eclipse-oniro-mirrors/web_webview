@@ -1483,4 +1483,9 @@ bool ArkWebNWebWrapper::IsActivePolicyDisable()
 {
     return ark_web_nweb_->IsActivePolicyDisable();
 }
+
+void ArkWebNWebWrapper::PutOptimizeParserBudgetEnabled(bool enable)
+{
+    ark_web_nweb_->PutOptimizeParserBudgetEnabled(enable);
+}
 } // namespace OHOS::ArkWeb
