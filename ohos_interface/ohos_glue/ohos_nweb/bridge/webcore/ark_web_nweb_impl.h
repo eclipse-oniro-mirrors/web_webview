@@ -1447,6 +1447,12 @@ public:
      */
     void JavaScriptOnHeadReadyByOrder(const ArkWebStringVectorMap& script_items,
         const ArkWebStringVector& script_items_by_order) override;
+
+    /**
+     * @Description: Optimize HTML parser budget to reduce FCP time.
+     * @Input enable: Set whether to use optimized parser budget.
+     */
+    void PutOptimizeParserBudgetEnabled(bool enable) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
