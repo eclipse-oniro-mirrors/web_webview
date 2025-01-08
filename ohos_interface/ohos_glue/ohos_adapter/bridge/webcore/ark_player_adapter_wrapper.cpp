@@ -20,8 +20,6 @@
 
 #include "base/bridge/ark_web_bridge_macros.h"
 
-#include "nweb_log.h"
-
 namespace OHOS::ArkWeb {
 
 ArkPlayerAdapterWrapper::ArkPlayerAdapterWrapper(ArkWebRefPtr<ArkPlayerAdapter> ref) : ctocpp_(ref) {}
@@ -95,7 +93,6 @@ int32_t ArkPlayerAdapterWrapper::SetPlaybackSpeed(OHOS::NWeb::PlaybackRateMode m
 
 int32_t ArkPlayerAdapterWrapper::SetVideoSurfaceNew(void* native_window)
 {
-    WVLOG_I("ArkPlayerAdapterWrapper::SetVideoSurfaceNew(%{public}p)", native_window);
     return ctocpp_->SetVideoSurfaceNew(native_window);
 }
 
