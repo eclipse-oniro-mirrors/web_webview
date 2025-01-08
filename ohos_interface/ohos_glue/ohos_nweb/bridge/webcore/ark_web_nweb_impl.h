@@ -1453,6 +1453,13 @@ public:
      * @Input enable: Set whether to use optimized parser budget.
      */
     void PutOptimizeParserBudgetEnabled(bool enable) override;
+
+    /**
+     * @brief Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    ArkWebRefPtr<ArkWebHitTestResult> GetLastHitTestResult() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
