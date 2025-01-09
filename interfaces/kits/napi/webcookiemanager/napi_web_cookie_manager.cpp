@@ -730,7 +730,7 @@ napi_value NapiWebCookieManager::JsSaveCookieSync(napi_env env, napi_callback_in
         return result;
     }
 
-    bool storeResult = cookieManager->Store();
+    cookieManager->Store();
     napi_value result = nullptr;
     return result;
 }
