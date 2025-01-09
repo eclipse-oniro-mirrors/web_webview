@@ -114,6 +114,9 @@ ArkWebRefPtr<ArkBatteryMgrClientAdapter> ArkOhosAdapterHelperImpl::CreateBattery
 ArkWebRefPtr<ArkNetConnectAdapter> ArkOhosAdapterHelperImpl::CreateNetConnectAdapter()
 {
     std::unique_ptr<NWeb::NetConnectAdapter> adapter = real_.CreateNetConnectAdapter();
+    if (adapter == nullptr) {
+        return nullptr;
+    }
     std::shared_ptr<NWeb::NetConnectAdapter> shared = std::move(adapter);
     return new ArkNetConnectAdapterImpl(shared);
 }

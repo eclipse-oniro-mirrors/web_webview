@@ -29,10 +29,6 @@ int32_t ArkNetConnectAdapterImpl::RegisterNetConnCallback(ArkWebRefPtr<ArkNetCon
         return real_->RegisterNetConnCallback(nullptr);
     }
 
-    if (CHECK_SHARED_PTR_IS_NULL(real_)) {
-        return -1;
-    }
-
     return real_->RegisterNetConnCallback(std::make_shared<ArkNetConnCallbackWrapper>(cb));
 }
 
