@@ -1453,6 +1453,20 @@ public:
      * @Input enable: Set whether to use optimized parser budget.
      */
     void PutOptimizeParserBudgetEnabled(bool enable) override;
+
+    /**
+     * @Description: Get the bounding rectangle of the accessibility node of the given id.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Output width: The width of the rectangle.
+     * @Output height: The height of the rectangle.
+     * @Output offsetX: The X-coordinate offset of the rectangle.
+     * @Output offsetY: The Y-coordinate offset of the rectangle.
+     * @Return: Whether the bounding rectangle is obtained successfully.
+     */
+    /*--ark web()--*/
+    bool GetAccessibilityNodeRectById(
+        int64_t accessibilityId, int32_t* width, int32_t* height, int32_t* offsetX, int32_t* offsetY) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
