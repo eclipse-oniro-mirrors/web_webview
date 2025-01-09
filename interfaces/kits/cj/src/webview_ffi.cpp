@@ -1908,7 +1908,6 @@ extern "C" {
         ret.data = MallocCString(nwebResult->GetExtra());
         return ret;
     }
-
 }
 }
 }
