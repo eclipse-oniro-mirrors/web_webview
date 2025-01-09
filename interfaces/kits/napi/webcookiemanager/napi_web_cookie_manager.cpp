@@ -732,11 +732,6 @@ napi_value NapiWebCookieManager::JsSaveCookieSync(napi_env env, napi_callback_in
 
     bool storeResult = cookieManager->Store();
     napi_value result = nullptr;
-    if (storeResult) {
-        napi_get_null(env, &result);
-    } else {
-        napi_get_undefined(env, &result);
-    }
     return result;
 }
 
