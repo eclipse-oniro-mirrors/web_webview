@@ -560,6 +560,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("innerGetWebId", NapiWebviewController::InnerGetWebId),
         DECLARE_NAPI_FUNCTION("hasImage", NapiWebviewController::HasImage),
         DECLARE_NAPI_FUNCTION("removeCache", NapiWebviewController::RemoveCache),
+        DECLARE_NAPI_STATIC_FUNCTION("removeAllCache", NapiWebviewController::RemoveAllCache),
         DECLARE_NAPI_FUNCTION("getFavicon", NapiWebviewController::GetFavicon),
         DECLARE_NAPI_FUNCTION("getBackForwardEntries", NapiWebviewController::getBackForwardEntries),
         DECLARE_NAPI_FUNCTION("serializeWebState", NapiWebviewController::SerializeWebState),
@@ -6516,6 +6517,32 @@ napi_value NapiWebviewController::ScrollByWithResult(napi_env env, napi_callback
    bool scrollByWithResult = webviewController->ScrollByWithResult(deltaX, deltaY);
    NAPI_CALL(env, napi_get_boolean(env, scrollByWithResult, &result));
    return result;
+}
+
+napi_value NapiWebviewController::RemoveAllCache(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    bool includeDiskFiles;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], includeDiskFiles)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "clearRom", "boolean"));
+        return result;
+    }
+
+    NWebHelper::Instance().RemoveAllCache(includeDiskFiles);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
 }
 } // namespace NWeb
 } // namespace OHOS

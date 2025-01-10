@@ -264,4 +264,9 @@ int ArkWebEngineWrapper::GetArkWebCoreApiLevel()
     return ark_web_engine_->GetArkWebCoreApiLevel();
 }
 
+void ArkWebEngineWrapper::RemoveAllCache(bool include_disk_files)
+{
+    ark_web_engine_->RemoveAllCache(include_disk_files);
+}
+
 } // namespace OHOS::ArkWeb
