@@ -96,6 +96,8 @@ public:
     virtual std::string GetDefaultUserAgent() {
         return "";
     }
+
+    virtual void RemoveAllCache(bool include_disk_files) {}
 };
 
 } // namespace OHOS::NWeb

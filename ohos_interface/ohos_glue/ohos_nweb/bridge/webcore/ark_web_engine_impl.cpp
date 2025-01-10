@@ -232,4 +232,9 @@ int ArkWebEngineImpl::GetArkWebCoreApiLevel()
     return nweb_engine_->GetArkWebCoreApiLevel();
 }
 
+void ArkWebEngineImpl::RemoveAllCache(bool include_disk_files)
+{
+    nweb_engine_->RemoveAllCache(include_disk_files);
+}
+
 } // namespace OHOS::ArkWeb

@@ -135,6 +135,9 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetDefaultUserAgent() = 0;
+
+    /*--ark web()--*/
+    virtual void RemoveAllCache(bool include_disk_files) = 0;
 };
 
 } // namespace OHOS::ArkWeb
