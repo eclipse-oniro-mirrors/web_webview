@@ -114,6 +114,8 @@ public:
 
     ArkWebRefPtr<ArkOhosNativeBufferAdapter> GetOhosNativeBufferAdapter() override;
 
+    ArkWebRefPtr<ArkMigrationManagerAdapter> CreateMigrationMgrAdapter() override;
+
 private:
     NWeb::OhosAdapterHelper& real_;
 
