@@ -1259,6 +1259,12 @@ void ArkWebNWebImpl::PutOptimizeParserBudgetEnabled(bool enable)
     nweb_nweb_->PutOptimizeParserBudgetEnabled(enable);
 }
 
+bool ArkWebNWebImpl::GetAccessibilityNodeRectById(
+    int64_t accessibilityId, int32_t* width, int32_t* height, int32_t* offsetX, int32_t* offsetY)
+{
+    return nweb_nweb_->GetAccessibilityNodeRectById(accessibilityId, width, height, offsetX, offsetY);
+}
+
 ArkWebRefPtr<ArkWebHitTestResult> ArkWebNWebImpl::GetLastHitTestResult()
 {
     std::shared_ptr<OHOS::NWeb::HitTestResult> nweb_last_hit_test_result = nweb_nweb_->GetLastHitTestResult();
