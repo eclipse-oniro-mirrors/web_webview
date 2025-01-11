@@ -38,6 +38,9 @@ public:
 
     ArkWebString GetAlbum() override;
 
+    void SetImageUrl(const ArkWebString& imageUrl) override;
+
+    ArkWebString GetImageUrl() override;
 private:
     std::shared_ptr<OHOS::NWeb::MediaAVSessionMetadataAdapter> real_;
 
