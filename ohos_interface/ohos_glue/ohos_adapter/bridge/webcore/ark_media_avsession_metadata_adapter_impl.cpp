@@ -54,4 +54,15 @@ ArkWebString ArkMediaAVSessionMetadataAdapterImpl::GetAlbum()
     std::string str = real_->GetAlbum();
     return ArkWebStringClassToStruct(str);
 }
+
+void ArkMediaAVSessionMetadataAdapterImpl::SetImageUrl(const ArkWebString& imageUrl)
+{
+    real_->SetImageUrl(ArkWebStringStructToClass(imageUrl));
+}
+
+ArkWebString ArkMediaAVSessionMetadataAdapterImpl::GetImageUrl()
+{
+    std::string str = real_->GetImageUrl();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb

@@ -747,6 +747,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SetBlurOnKeyboardHideMode(int enable) = 0;
+
+    /**
+     * @brief Set whether to connect to media avsession.
+     */
+    /*--ark web()--*/
+    virtual void PutWebMediaAVSessionEnabled(bool enable) = 0;
 };
 
 } // namespace OHOS::ArkWeb

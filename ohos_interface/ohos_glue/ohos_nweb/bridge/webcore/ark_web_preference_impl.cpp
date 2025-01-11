@@ -501,4 +501,8 @@ void ArkWebPreferenceImpl::SetBlurOnKeyboardHideMode(int enable)
     nweb_preference_->SetBlurOnKeyboardHideMode(enable);
 }
 
+void ArkWebPreferenceImpl::PutWebMediaAVSessionEnabled(bool enable)
+{
+    nweb_preference_->PutWebMediaAVSessionEnabled(enable);
+}
 } // namespace OHOS::ArkWeb
