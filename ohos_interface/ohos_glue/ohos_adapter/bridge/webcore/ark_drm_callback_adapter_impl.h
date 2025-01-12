@@ -26,7 +26,7 @@ class ArkDrmCallbackAdapterImpl : public ArkDrmCallbackAdapter {
 public:
     ArkDrmCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::DrmCallbackAdapter>);
 
-    void OnSessionMessage(const ArkWebString& sessionId, int32_t& type, ArkWebUint8Vector message) override;
+    void OnSessionMessage(const ArkWebString& sessionId, int32_t& type, const ArkWebUint8Vector& message) override;
 
     void OnProvisionRequest(const ArkWebString& defaultUrl, const ArkWebString& requestData) override;
 
@@ -49,8 +49,8 @@ public:
 
     void OnStorageProvisioned() override;
 
-    void OnStorageSaveInfo(ArkWebUint8Vector ketSetId, const ArkWebString& mimeType, const ArkWebString& sessionId,
-        int32_t keyType) override;
+    void OnStorageSaveInfo(const ArkWebUint8Vector& ketSetId, const ArkWebString& mimeType,
+        const ArkWebString& sessionId, int32_t keyType) override;
 
     void OnStorageLoadInfo(const ArkWebString& sessionId) override;
 

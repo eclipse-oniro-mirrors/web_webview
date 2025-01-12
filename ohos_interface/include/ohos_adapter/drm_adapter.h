@@ -86,7 +86,7 @@ public:
 
     virtual int32_t ReleaseMediaKeySession() = 0;
 
-    virtual int32_t CreateKeySystem(const std::string& name, int32_t securityLevel) = 0;
+    virtual int32_t CreateKeySystem(const std::string& name, const std::string& origin, int32_t securityLevel) = 0;
 
     virtual int32_t SetConfigurationString(const std::string& configName, const std::string& value) = 0;
 
