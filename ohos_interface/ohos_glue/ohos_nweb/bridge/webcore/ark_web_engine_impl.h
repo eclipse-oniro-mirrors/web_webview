@@ -87,6 +87,8 @@ public:
 
     int GetArkWebCoreApiLevel() override;
 
+    void RemoveAllCache(bool include_disk_files) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };

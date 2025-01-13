@@ -151,6 +151,8 @@ public:
     }
 
     void EnableBackForwardCache(bool nativeEmbed, bool mediaTakeOver) {}
+
+    void RemoveAllCache(bool include_disk_files) {}
 };
 
 void NwebHelperTest::SetUpTestCase(void)
