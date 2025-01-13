@@ -466,14 +466,13 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::FlushDecoder()
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    // 刷新解码器
     OH_AVErrCode errCode = OH_AudioCodec_Flush(decoder_);
     if (errCode != AV_ERR_OK) {
         WVLOG_E("AudioCodecDecoder flush decoder fail, errCode = %{public}u.", uint32_t(errCode));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    // 清理输入输出buffer
+    // clear input and output buffers
     {
         std::unique_lock<std::mutex> lock(inMutex_);
         inputBuffers_.clear();
@@ -499,7 +498,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ResetDecoder()
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    // 清理输入输出buffer
+    // clear input and output buffers
     {
         std::unique_lock<std::mutex> lock(inMutex_);
         inputBuffers_.clear();
@@ -527,7 +526,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ReleaseDecoder()
     }
     decoder_ = nullptr;
 
-    // 清理输入输出buffer
+    // clear input and output buffers
     {
         std::unique_lock<std::mutex> lock(inMutex_);
         inputBuffers_.clear();
@@ -594,9 +593,17 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetBufferCencInfo(
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    SetAVCencInfo(avCencInfo, cencInfo);
-    // 将CencInfo设置到AVBuffer中
-    OH_AVErrCode errNo = OH_AVCencInfo_SetAVBuffer(avCencInfo, inputBuffers_[index]);
+    AudioDecoderAdapterCode ret = SetAVCencInfo(avCencInfo, cencInfo);
+    if (ret != AudioDecoderAdapterCode::DECODER_OK) {
+        return ret;
+    }
+    // set CencInfo to AVBuffer
+    OH_AVBuffer *avBuffer = GetInputBuffer(index);
+    if (avBuffer == nullptr) {
+        WVLOG_E("AudioCodecDecoder set AVCencInfo fail, not find inputbuffererr[%{public}u]", index);
+        return AudioDecoderAdapterCode::DECODER_ERROR;
+    }
+    OH_AVErrCode errNo = OH_AVCencInfo_SetAVBuffer(avCencInfo, avBuffer);
     if (errNo != AV_ERR_OK) {
         WVLOG_E("AudioCodecDecoder set AVCencInfo fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
         return AudioDecoderAdapterCode::DECODER_ERROR;
@@ -613,32 +620,39 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::QueueInputBufferDec(uint32
     uint8_t *bufferData, int32_t bufferSize, std::shared_ptr<AudioCencInfoAdapter> cencInfo,
     bool isEncrypted, BufferFlag flag)
 {
-    WVLOG_D("AudioCodecDecoder[%{public}u] %{public}s,  buffer size[%{public}d], isEncrypted[%{public}d],"
-        "flag[%{public}d].", index, __FUNCTION__,  bufferSize, int(isEncrypted), int(flag));
+    WVLOG_I("AudioCodecDecoder index[%{public}u] %{public}s,  buffer size[%{public}d], isEncrypted[%{public}d],"
+        "flag[%{public}d].", index, __FUNCTION__,  bufferSize, static_cast<uint32_t>(isEncrypted),
+        static_cast<uint32_t>(flag));
+
     if (decoder_ == nullptr) {
         WVLOG_E("AudioCodecDecoder decoder_ is nullptr.");
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
-    if (bufferData == nullptr) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] bufferData is nullptr.", index);
-        return AudioDecoderAdapterCode::DECODER_ERROR;
-    }
-    if (inputBuffers_.find(index) == inputBuffers_.end()) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] not find buffer index.", index);
-        return AudioDecoderAdapterCode::DECODER_ERROR;
-    }
+
     if (isEncrypted && SetBufferCencInfo(index, cencInfo) != AudioDecoderAdapterCode::DECODER_OK) {
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    uint8_t *addr = OH_AVBuffer_GetAddr(inputBuffers_[index]);
-    if (memcpy_s(addr, bufferSize, bufferData, bufferSize) != EOK) {
-        WVLOG_E(" AudioCodecDecoder[%{public}u] memcpy_s buffer fail.", index);
+    OH_AVBuffer *avBuffer = GetInputBuffer(index);
+    if (avBuffer == nullptr) {
+        WVLOG_E("AudioCodecDecoder QueueInputBufferDec fail, inputbuffer[%{public}u] not find.", index);
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
+    uint8_t *addr = OH_AVBuffer_GetAddr(avBuffer);
+    if (flag != GetBufferFlag(OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS)) {
+        if (bufferData == nullptr) {
+            WVLOG_E("AudioCodecDecoder index[%{public}u] bufferData is nullptr.", index);
+            return AudioDecoderAdapterCode::DECODER_ERROR;
+        }
+        if (memcpy_s(addr, bufferSize, bufferData, bufferSize) != EOK) {
+            WVLOG_E(" AudioCodecDecoder index[%{public}u] memcpy_s buffer fail.", index);
+            return AudioDecoderAdapterCode::DECODER_ERROR;
+        }
+    }
 
-    // size是待解码数据的每帧帧长度。pts是每帧的时间戳，用于指示音频应该何时被播放。
-    // size和pts的获取来源：音视频资源文件或者待解码的数据流
+    // The size is the length of each frame of data to be decoded. The pts is the timestamp for
+    // each frame, indicating when the audio should be played. The values of size and pts are
+    // obtained from the audio/video resource file or the data stream to be decoded.
     OH_AVCodecBufferAttr attr = {0};
     if (flag == GetBufferFlag(OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS)) {
         attr.size = 0;
@@ -978,7 +992,7 @@ void AudioDecoderCallbackManager::OnOutputBufferAvailable(
         WVLOG_E(" AudioCodecDecoder memcpy_s buffer fail.");
         return;
     }
-    // 从data中复制buffer数据
+    // Copy the buffer data from the data.
     impl->GetAudioDecoderCallBack()->OnOutputBufferAvailable(
         index, bufferData, attr.size, attr.pts, attr.offset, attr.flags);
 }
