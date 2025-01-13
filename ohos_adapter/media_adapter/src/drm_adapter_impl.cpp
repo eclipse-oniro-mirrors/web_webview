@@ -482,9 +482,6 @@ void DrmAdapterImpl::GetKeyRequest(MediaKeySession* drmKeySessoin, uint8_t* info
         WVLOG_E("[DRM]DrmAdapterImpl::GetKeyRequest error, drmKeySessoin is nullptr.");
         return;
     }
-    if (info == nullptr || infoLen <= 0) {
-        WVLOG_E("[DRM]DrmAdapterImpl::GetKeyRequest error, info is nullptr.");
-    }
     std::shared_ptr<DrmCallbackImpl> callback = nullptr;
     {
         std::lock_guard<std::mutex> lock(mediaKeySessionCallbackMutex_);
