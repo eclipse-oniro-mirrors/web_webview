@@ -20,7 +20,8 @@ namespace OHOS::ArkWeb {
 ArkDrmCallbackAdapterImpl::ArkDrmCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::DrmCallbackAdapter> ref) : real_(ref)
 {}
 
-void ArkDrmCallbackAdapterImpl::OnSessionMessage(const ArkWebString& sessionId, int32_t& type, ArkWebUint8Vector msg)
+void ArkDrmCallbackAdapterImpl::OnSessionMessage(
+    const ArkWebString& sessionId, int32_t& type, const ArkWebUint8Vector& msg)
 {
     real_->OnSessionMessage(
         ArkWebStringStructToClass(sessionId), type, ArkWebBasicVectorStructToClass<uint8_t, ArkWebUint8Vector>(msg));
@@ -79,7 +80,7 @@ void ArkDrmCallbackAdapterImpl::OnStorageProvisioned()
 }
 
 void ArkDrmCallbackAdapterImpl::OnStorageSaveInfo(
-    ArkWebUint8Vector ketSetId, const ArkWebString& mimeType, const ArkWebString& sessionId, int32_t keyType)
+    const ArkWebUint8Vector& ketSetId, const ArkWebString& mimeType, const ArkWebString& sessionId, int32_t keyType)
 {
     real_->OnStorageSaveInfo(ArkWebBasicVectorStructToClass<uint8_t, ArkWebUint8Vector>(ketSetId),
         ArkWebStringStructToClass(mimeType), ArkWebStringStructToClass(sessionId), keyType);

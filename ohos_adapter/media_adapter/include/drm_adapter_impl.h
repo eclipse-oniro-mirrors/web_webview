@@ -16,6 +16,7 @@
 #ifndef DRM_ADAPTER_IMPL_H
 #define DRM_ADAPTER_IMPL_H
 
+#include <mutex>
 #include <pthread.h>
 #include <securec.h>
 
@@ -26,49 +27,61 @@
 
 namespace OHOS::NWeb {
 
-#define MAX_KEY_SET_ID_LEN 64
+const std::string SECURITY_LEVEL = "securityLevel";
+const std::string SERVER_CERTIFICATE = "serviceCertificate";
+const std::string ORIGIN = "origin";
+const std::string PRIVACY_MODE = "privacyMode";
+const std::string SESSION_SHARING = "sessionSharing";
+const std::string ENABLE = "enable";
+const std::string WIDEVINE_NAME = "com.widevine.alpha";
 
-typedef enum NWEB_MediaKeyType {
-    NWEB_MEDIA_KEY_TYPE_OFFLINE = 0,
-    NWEB_MEDIA_KEY_TYPE_ONLINE,
-    NWEB_MEDIA_KEY_TYPE_RELEASE,
-} NWEB_MediaKeyType;
+constexpr int32_t SECURITY_LEVEL_1 = 1;
+constexpr int32_t SECURITY_LEVEL_3 = 3;
+constexpr int32_t SECURITY_LEVEL_UNKNOWN = 0;
+constexpr int32_t INFO_SIZE = 8;
+constexpr int32_t MAX_URL_LENGTH = 2048;
+constexpr int32_t MAX_REQUEST_LENGTH = 12288;
+constexpr int32_t HEX_OFFSET = 4;
+constexpr int32_t MAX_KEY_SET_ID_LEN = 128;
+constexpr uint64_t MILLISECOND_IN_SECOND = 1000;
+constexpr int32_t MILLISECOND_DIGITS = 3;
 
-typedef enum NWEB_ClearInfoType {
-    OHOS_KEY_RELEASE = 0,
-    OHOS_LOAD_FAIL,
-} NWEB_ClearInfoType;
+enum class MediaKeyType : int32_t {
+    MEDIA_KEY_TYPE_OFFLINE = 0,
+    MEDIA_KEY_TYPE_ONLINE,
+    MEDIA_KEY_TYPE_RELEASE,
+};
 
-typedef enum NWEB_KeyStatus {
-    NWEB_KEY_STATUS_USABLE = 0,
-    NWEB_KEY_STATUS_EXPIRED = 1,
-    NWEB_KEY_STATUS_OUTPUT_NOT_ALLOWED = 2,
-    NWEB_KEY_STATUS_PENDING = 3,
-    NWEB_KEY_STATUS_INTERNAL_ERROR = 4,
-    NWEB_KEY_STATUS_USABLE_IN_FUTURE = 5,
-} NWEB_KeyStatus;
+enum class ClearInfoType : int32_t {
+    KEY_RELEASE = 0,
+    LOAD_FAIL,
+};
 
-typedef enum NWEB_DrmResult {
-    OHOS_DRM_RESULT_ERROR = -1,
-    OHOS_DRM_RESULT_OK = 0,
-} NWEB_DrmResult;
+enum class KeyStatus : uint32_t {
+    KEY_STATUS_USABLE = 0,
+    KEY_STATUS_EXPIRED = 1,
+    KEY_STATUS_OUTPUT_NOT_ALLOWED = 2,
+    KEY_STATUS_PENDING = 3,
+    KEY_STATUS_INTERNAL_ERROR = 4,
+    KEY_STATUS_USABLE_IN_FUTURE = 5,
+};
+
+enum class DrmResult : int32_t {
+    DRM_RESULT_ERROR = -1,
+    DRM_RESULT_OK = 0,
+};
 
 class SessionId {
 public:
-    static std::shared_ptr<SessionId> createPersistentSessionId(const std::string& sessionId)
+    static std::shared_ptr<SessionId> CreateSessionId(const std::string& emeId)
     {
-        return std::make_shared<SessionId>(sessionId, nullptr, 0);
-    }
-
-    static std::shared_ptr<SessionId> createTemporarySessionId(const std::string& sessionId)
-    {
-        return std::make_shared<SessionId>(sessionId, nullptr, 0);
+        return std::make_shared<SessionId>(emeId, nullptr, 0);
     }
 
     SessionId(std::string emeId, const uint8_t* keySetId, int32_t keySetIdLen)
         : emeId_(emeId), keySetIdLen_(keySetIdLen)
     {
-        if (keySetId != nullptr && keySetIdLen > 0) {
+        if (keySetId != nullptr && keySetIdLen > 0 && keySetIdLen <= MAX_KEY_SET_ID_LEN) {
             if (memcpy_s(keySetId_, sizeof(keySetId_), keySetId, keySetIdLen) != 0) {
                 WVLOG_E("memcpy_s failed!");
             }
@@ -80,7 +93,7 @@ public:
         return emeId_;
     }
 
-    unsigned char* KeySetId()
+    uint8_t* KeySetId()
     {
         return keySetId_;
     }
@@ -90,10 +103,11 @@ public:
         return keySetIdLen_;
     }
 
-    void SetKeySetId(unsigned char* keySetId, int32_t keySetIdLen)
+    void SetKeySetId(uint8_t* keySetId, int32_t keySetIdLen)
     {
         if (keySetIdLen > MAX_KEY_SET_ID_LEN) {
             WVLOG_E("keySetIdLen error!");
+            return;
         }
         if (keySetId == nullptr || keySetIdLen <= 0) {
             (void)memset_s(keySetId_, sizeof(keySetId_), 0, sizeof(keySetId_));
@@ -156,12 +170,9 @@ public:
     void OnPromiseResolved(uint32_t promiseId);
     void OnPromiseResolvedWithSession(uint32_t promiseId, const std::string& sessionId);
     void OnSessionClosed(const std::string& sessionId);
-
     void OnSessionKeysChange(const std::string& sessionId, const std::vector<std::string>& keyIdArray,
         const std::vector<uint32_t>& statusArray, bool hasAdditionalUsableKey, bool isKeyRelease);
-
     void OnSessionExpirationUpdate(const std::string& sessionId, uint64_t expirationTime);
-
     void OnStorageProvisioned();
     void OnStorageSaveInfo(const std::vector<uint8_t>& ketSetId, const std::string& mimeType,
         const std::string& sessionId, int32_t keyType);
@@ -169,13 +180,20 @@ public:
     void OnStorageClearInfoForKeyRelease(const std::string& sessionId);
     void OnStorageClearInfoForLoadFail(const std::string& sessionId);
 
-    void AddEmeId(const std::string& emeId, bool isRelease);
-    void RemoveEmeId(const std::string& emeId);
-    std::unordered_map<std::string, bool> EmeIdStatusMap();
+    void UpdateEmeId(const std::string& emeId, bool isRelease);
+    void UpdateMimeType(const std::string& mimeType, int32_t type);
+
+    std::string EmeId();
+    std::string MimeType();
+    bool IsRelease();
+    int32_t Type();
 
 private:
     std::shared_ptr<DrmCallbackAdapter> callbackAdapter_;
-    std::unordered_map<std::string, bool> emeIdStatusMap_;
+    std::string emeId_ = "";
+    std::string mimeType_ = "";
+    bool isRelease_ = false;
+    int32_t type_ = -1;
 };
 
 class DrmAdapterImpl : public DrmAdapter {
@@ -189,7 +207,6 @@ public:
         MediaKeySession* mediaKeySessoin, DRM_EventType eventType, uint8_t* info, int32_t infoLen, char* extra);
     static Drm_ErrCode SessoinKeyChangeCallBackWithObj(
         MediaKeySession* mediaKeySessoin, DRM_KeysInfo* keysInfo, bool newKeysAvailable);
-    static Drm_ErrCode SystemCallBack(DRM_EventType eventType, uint8_t* info, int32_t infoLen, char* extra);
 
     bool IsSupported(const std::string& name) override;
     bool IsSupported2(const std::string& name, const std::string& mimeType) override;
@@ -199,10 +216,9 @@ public:
     void StorageSaveInfoResult(bool result, int32_t type) override;
     void StorageLoadInfoResult(const std::string& sessionId, const std::vector<uint8_t>& keySetId,
         const std::string& mimeType, uint32_t keyType) override;
-
     void StorageClearInfoResult(bool result, int32_t type) override;
 
-    int32_t CreateKeySystem(const std::string& name, int32_t securityLevel) override;
+    int32_t CreateKeySystem(const std::string& name, const std::string& origin, int32_t securityLevel) override;
     int32_t ProcessKeySystemResponse(const std::string& response, bool isResponseReceived) override;
     int32_t GenerateMediaKeyRequest(const std::string& sessionId, int32_t type, int32_t initDataLen,
         const std::vector<uint8_t>& initData, const std::string& mimeType, uint32_t promiseId) override;
@@ -232,10 +248,10 @@ private:
     void LoadSessionInfo(const std::string& emeId);
     void LoadSessionWithLoadedStorage(std::shared_ptr<SessionId> sessionId, uint32_t promiseId);
     void UpdateSessionResult(
-        bool isKeyRelease, std::shared_ptr<SessionId> sessionId, unsigned char* mediaKeyId, int32_t mediaKeyIdLen);
+        bool isKeyRelease, std::shared_ptr<SessionId> sessionId, uint8_t* mediaKeyId, int32_t mediaKeyIdLen);
 
     void SetKeyType(std::shared_ptr<SessionId> sessionId, int32_t keyType);
-    void SetKeySetId(std::shared_ptr<SessionId> sessionId, unsigned char* mediaKeyId, int32_t mediaKeyIdLen);
+    void SetKeySetId(std::shared_ptr<SessionId> sessionId, uint8_t* mediaKeyId, int32_t mediaKeyIdLen);
 
     std::shared_ptr<SessionId> GetSessionIdByEmeId(const std::string& emeId);
 
@@ -245,10 +261,13 @@ private:
     void HandleKeyUpdatedCallback(uint32_t promiseId, bool result);
 
     static void OnSessionExpirationUpdate(MediaKeySession* drmKeySessoin, uint8_t* info, int32_t infoLen);
+    static void GetKeyRequest(MediaKeySession* drmKeySessoin, uint8_t* info, int32_t infoLen);
 
 private:
     static std::unordered_map<MediaKeySystem*, std::shared_ptr<DrmCallbackImpl>> mediaKeySystemCallbackMap_;
     static std::unordered_map<MediaKeySession*, std::shared_ptr<DrmCallbackImpl>> mediaKeySessionCallbackMap_;
+    static std::mutex mediaKeySystemCallbackMapMutex_;
+    static std::mutex mediaKeySessionCallbackMutex_;
 
     MediaKeySystem* drmKeySystem_ = nullptr;
     MediaKeySession* drmKeySessoin_ = nullptr;
