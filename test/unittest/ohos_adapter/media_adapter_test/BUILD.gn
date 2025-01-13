@@ -23,6 +23,7 @@ config("module_private_config") {
     "../../../../ohos_adapter/media_adapter/include",
     "../../../../ohos_adapter/graphic_adapter/include",
     "../../../../ohos_adapter/ndk/include",
+    "../../../../ohos_nweb/include",
   ]
   cflags_cc = [ "--coverage" ]
   ldflags = [ "--coverage" ]
