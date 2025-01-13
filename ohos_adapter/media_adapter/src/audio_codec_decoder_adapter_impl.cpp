@@ -758,10 +758,10 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetCallbackDec(
         &AudioDecoderCallbackManager::OnOutputFormatChanged, &AudioDecoderCallbackManager::OnInputBufferAvailable,
         &AudioDecoderCallbackManager::OnOutputBufferAvailable};
 
-    // 不使用媒体框架推荐的ADecBufferSignal结构体做buffer轮转，而是在内核中实现，减少webview层的业务逻辑
+    // Instead of using the ADecBufferSignal structure recommended by the media framework for buffer rotation,
+    // implement it in the chromium kernel to reduce the business logic at the webview layer.
     OH_AVErrCode errCode = OH_AudioCodec_RegisterCallback(decoder_, cb, nullptr);
     if (errCode != AV_ERR_OK) {
-        // 异常处理
         WVLOG_E("AudioCodecDecoder register callback fail, errCode = %{public}u.", uint32_t(errCode));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
@@ -771,12 +771,13 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetCallbackDec(
 
 AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetDecryptionConfig(void *session, bool secureAudio)
 {
-    WVLOG_I("AudioCodecDecoder %{public}s, secureAudio[%{public}d].", __FUNCTION__, int(secureAudio));
+    WVLOG_I("AudioCodecDecoder %{public}s, secureAudio[%{public}d].", __FUNCTION__, static_cast<uint32_t>(secureAudio));
     if (session == nullptr) {
         WVLOG_E("AudioCodecDecoder session is nullptr.");
         return AudioDecoderAdapterCode::DECODER_OK;
     }
-    // 媒体音频编解码模块目前只支持非安全解码模式
+
+    // The media audio codec module currently only supports non-secure decoding mode.
     secureAudio = false;
 
     MediaKeySession *mediaKeySession = static_cast<MediaKeySession*>(session);
