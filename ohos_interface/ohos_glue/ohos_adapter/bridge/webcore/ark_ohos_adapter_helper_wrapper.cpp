@@ -30,6 +30,7 @@
 #include "ohos_adapter/bridge/ark_date_time_format_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_display_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_display_manager_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_drm_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_enterprise_device_management_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_event_handler_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_flowbuffer_adapter_wrapper.h"
@@ -40,6 +41,7 @@
 #include "ohos_adapter/bridge/ark_keystore_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_avsession_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_decoder_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_audio_codec_decoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_encoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_list_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_migration_manager_adapter_wrapper.h"
@@ -484,6 +486,28 @@ std::unique_ptr<NWeb::MigrationManagerAdapter> ArkOhosAdapterHelperWrapper::Crea
     }
 
     return std::make_unique<ArkMigrationManagerAdapterWrapper>(adapter);
+}
+
+std::unique_ptr<NWeb::AudioCodecDecoderAdapter> ArkOhosAdapterHelperWrapper::CreateAudioCodecDecoderAdapter()
+{
+    ArkWebRefPtr<ArkAudioCodecDecoderAdapter> adapter = ctocpp_->CreateAudioCodecDecoderAdapter();
+
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return std::make_unique<ArkAudioCodecDecoderAdapterWrapper>(adapter);
+}
+
+std::unique_ptr<NWeb::DrmAdapter> ArkOhosAdapterHelperWrapper::CreateDrmAdapter()
+{
+    ArkWebRefPtr<ArkDrmAdapter> adapter = ctocpp_->CreateDrmAdapter();
+
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return std::make_unique<ArkDrmAdapterWrapper>(adapter);
 }
 
 } // namespace OHOS::ArkWeb

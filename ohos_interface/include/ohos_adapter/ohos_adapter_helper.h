@@ -29,6 +29,7 @@
 #include "datashare_adapter.h"
 #include "date_time_format_adapter.h"
 #include "display_manager_adapter.h"
+#include "drm_adapter.h"
 #include "enterprise_device_management_adapter.h"
 #include "event_handler_adapter.h"
 #include "flowbuffer_adapter.h"
@@ -42,6 +43,7 @@
 #include "media_codec_adapter.h"
 #include "media_codec_decoder_adapter.h"
 #include "migration_manager_adapter.h"
+#include "audio_codec_decoder_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
 #include "net_proxy_adapter.h"
@@ -154,6 +156,10 @@ public:
     virtual OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() = 0;
 
     virtual std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
+
+    virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
+
+    virtual std::unique_ptr<DrmAdapter> CreateDrmAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 
