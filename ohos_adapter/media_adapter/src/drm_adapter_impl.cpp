@@ -1190,7 +1190,7 @@ int32_t DrmAdapterImpl::GenerateMediaKeyRequest(const std::string& emeId, int32_
     int32_t iRet = CreateMediaKeySession();
     if (iRet != 0) {
         WVLOG_E("[DRM]OH_MediaKeySystem_CreateMediaKeySession failed.");
-        return static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR); 
+        return static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR);
     }
     Drm_ErrCode ret = OH_MediaKeySession_GenerateMediaKeyRequest(drmKeySessoin_, &info, &mediaKeyRequest);
     WVLOG_I("[DRM]DrmAdapterImpl::OH_MediaKeySession_GenerateMediaKeyRequest, ret = %{public}d", ret);
