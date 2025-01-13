@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -29,7 +29,6 @@
 #include "native_cencinfo.h"
 #include "native_avformat.h"
 #include "avcodec_common.h"
-#include "nweb_log.h"
 
 #include "audio_codec_decoder_adapter.h"
 #include "audio_cenc_info_adapter.h"
@@ -94,15 +93,7 @@ public:
 
     void SetCodecConfigSize(uint32_t size) override;
 
-    static void PrintFormatData(std::shared_ptr<AudioDecoderFormatAdapter> format)
-    {
-        WVLOG_I("AudioCodecDecoder PrintFormatData:SampleRate[%{public}d], ChannelCount[%{public}d],"
-                "MaxInputSize[%{public}d], AACIsAdts[%{public}d], AudioSampleFormat[%{public}d],"
-                "BitRate[%{public}ld], IDHeader[%{public}d], SetupHeader[%{public}d],",
-                format->GetSampleRate(), format->GetChannelCount(), format->GetMaxInputSize(),
-                int(format->GetAACIsAdts()), format->GetAudioSampleFormat(), format->GetBitRate(),
-                format->GetIdentificationHeader(), format->GetSetupHeader());
-    }
+    static void PrintFormatData(std::shared_ptr<AudioDecoderFormatAdapter> format);
 
 private:
     int32_t sampleRate_ = 0;
@@ -138,7 +129,7 @@ private:
 
 class AudioCodecDecoderAdapterImpl : public AudioCodecDecoderAdapter {
 public:
-    AudioCodecDecoderAdapterImpl() = default;
+    AudioCodecDecoderAdapterImpl();
 
     ~AudioCodecDecoderAdapterImpl() override;
 
@@ -177,30 +168,38 @@ public:
 
     OH_AVCodec* GetAVCodec();
 
-    std::shared_ptr<AudioDecoderCallbackAdapterImpl> GetAudioDecoderCallBack();
+    AudioDecoderCallbackAdapterImpl* GetAudioDecoderCallBack();
 
-    void SetInputBuffer(int index, OH_AVBuffer *buffer);
+    void SetInputBuffer(uint32_t index, OH_AVBuffer *buffer);
 
-    void SetOutputBuffer(int index, OH_AVBuffer *buffer);
+    void SetOutputBuffer(uint32_t index, OH_AVBuffer *buffer);
 
     static BufferFlag GetBufferFlag(OHOS::MediaAVCodec::AVCodecBufferFlag codecBufferFlag);
 
-private:
-    void GetParamFromAVFormat(OH_AVFormat *avFormat, std::shared_ptr<AudioDecoderFormatAdapter> format);
+    static std::mutex& GetDecoderMutex();
 
-    void SetParamToAVFormat(OH_AVFormat *avFormat, std::shared_ptr<AudioDecoderFormatAdapter> format);
+private:
+
+    void GetParamFromAVFormat(OH_AVFormat *avFormat, std::shared_ptr<AudioDecoderFormatAdapter> format);
 
     AudioDecoderAdapterCode SetBufferCencInfo(uint32_t index, std::shared_ptr<AudioCencInfoAdapter> cencInfo);
 
     void GetMimeType();
+
+    AudioDecoderAdapterCode SetAVCencInfo(OH_AVCencInfo *avCencInfo, std::shared_ptr<AudioCencInfoAdapter> cencInfo);
+
+    OH_AVBuffer* GetInputBuffer(uint32_t index);
+
+    OH_AVBuffer* GetOutputBuffer(uint32_t index);
 
     AudioMimeType mimeType_ = AudioMimeType::MIMETYPE_UNKNOW;
     OH_AVCodec *decoder_  = nullptr;
     std::shared_ptr<AudioDecoderCallbackAdapterImpl> callback_ = nullptr;
     std::mutex inMutex_;
     std::mutex outMutex_;
-    std::map<int, OH_AVBuffer *> inputBuffers_;
-    std::map<int, OH_AVBuffer *> outputBuffers_;
+    std::map<uint32_t, OH_AVBuffer *> inputBuffers_;
+    std::map<uint32_t, OH_AVBuffer *> outputBuffers_;
+    static std::mutex decoderMutex_;
 };
 
 class AudioDecoderCallbackManager {
@@ -213,14 +212,16 @@ public:
 
     static void OnOutputBufferAvailable(OH_AVCodec *codec, uint32_t index, OH_AVBuffer *data, void *userData);
 
-    static std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> FindAudioDecoder(OH_AVCodec *decoder);
+    static OHOS::NWeb::AudioCodecDecoderAdapterImpl *FindAudioDecoder(OH_AVCodec *decoder);
 
     static void DeleteAudioDecoder(OH_AVCodec *decoder);
 
-    static void AddAudioDecoder(std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> decoder);
+    static void AddAudioDecoder(OHOS::NWeb::AudioCodecDecoderAdapterImpl *decoder);
 
 private:
-    static std::map<OH_AVCodec *, std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl>> decoders_;
+    static std::map<OH_AVCodec *, OHOS::NWeb::AudioCodecDecoderAdapterImpl *> decoders_;
+
+    static std::mutex decodersMapMutex_;
 };
 } // namespace OHOS::NWeb
 
