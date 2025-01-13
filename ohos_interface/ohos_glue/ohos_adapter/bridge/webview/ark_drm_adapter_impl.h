@@ -37,12 +37,12 @@ public:
 
     void StorageSaveInfoResult(bool result, int32_t type) override;
 
-    void StorageLoadInfoResult(const ArkWebString& sessionId, ArkWebUint8Vector keySetId, const ArkWebString& mimeType,
-        uint32_t keyType) override;
+    void StorageLoadInfoResult(const ArkWebString& sessionId, const ArkWebUint8Vector& keySetId,
+        const ArkWebString& mimeType, uint32_t keyType) override;
 
     void StorageClearInfoResult(bool result, int32_t type) override;
 
-    int32_t CreateKeySystem(const ArkWebString& name, int32_t securityLevel) override;
+    int32_t CreateKeySystem(const ArkWebString& name, const ArkWebString& origin, int32_t securityLevel) override;
 
     int32_t ReleaseMediaKeySystem() override;
 
@@ -79,7 +79,7 @@ public:
     int32_t RequireSecureDecoderModule(const ArkWebString& mimeType, bool& status) override;
 
     int32_t GenerateMediaKeyRequest(const ArkWebString& sessionId, int32_t type, int32_t initDataLen,
-        ArkWebUint8Vector initData, const ArkWebString& mimeType, uint32_t promiseId) override;
+        const ArkWebUint8Vector& initData, const ArkWebString& mimeType, uint32_t promiseId) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::DrmAdapter> real_;

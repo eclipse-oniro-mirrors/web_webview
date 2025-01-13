@@ -26,7 +26,7 @@ namespace OHOS::ArkWeb {
 class ArkDrmCallbackAdapter : public virtual ArkWebBaseRefCounted {
 public:
     /*--ark web()--*/
-    virtual void OnSessionMessage(const ArkWebString& sessionId, int32_t& type, ArkWebUint8Vector message) = 0;
+    virtual void OnSessionMessage(const ArkWebString& sessionId, int32_t& type, const ArkWebUint8Vector& message) = 0;
 
     /*--ark web()--*/
     virtual void OnProvisionRequest(const ArkWebString& defaultUrl, const ArkWebString& requestData) = 0;
@@ -60,8 +60,8 @@ public:
     virtual void OnStorageProvisioned() = 0;
 
     /*--ark web()--*/
-    virtual void OnStorageSaveInfo(
-        ArkWebUint8Vector ketSetId, const ArkWebString& mimeType, const ArkWebString& sessionId, int32_t keyType) = 0;
+    virtual void OnStorageSaveInfo(const ArkWebUint8Vector& ketSetId, const ArkWebString& mimeType,
+        const ArkWebString& sessionId, int32_t keyType) = 0;
 
     /*--ark web()--*/
     virtual void OnStorageLoadInfo(const ArkWebString& sessionId) = 0;
@@ -95,8 +95,8 @@ public:
     virtual void StorageSaveInfoResult(bool result, int32_t type) = 0;
 
     /*--ark web()--*/
-    virtual void StorageLoadInfoResult(
-        const ArkWebString& sessionId, ArkWebUint8Vector keySetId, const ArkWebString& mimeType, uint32_t keyType) = 0;
+    virtual void StorageLoadInfoResult(const ArkWebString& sessionId, const ArkWebUint8Vector& keySetId,
+        const ArkWebString& mimeType, uint32_t keyType) = 0;
 
     /*--ark web()--*/
     virtual void StorageClearInfoResult(bool result, int32_t type) = 0;
@@ -108,7 +108,7 @@ public:
     virtual int32_t ReleaseMediaKeySession() = 0;
 
     /*--ark web()--*/
-    virtual int32_t CreateKeySystem(const ArkWebString& name, int32_t securityLevel) = 0;
+    virtual int32_t CreateKeySystem(const ArkWebString& name, const ArkWebString& origin, int32_t securityLevel) = 0;
 
     /*--ark web()--*/
     virtual int32_t SetConfigurationString(const ArkWebString& configName, const ArkWebString& value) = 0;
@@ -158,7 +158,7 @@ public:
 
     /*--ark web()--*/
     virtual int32_t GenerateMediaKeyRequest(const ArkWebString& sessionId, int32_t type, int32_t initDataLen,
-        ArkWebUint8Vector initData, const ArkWebString& mimeType, uint32_t promiseId) = 0;
+        const ArkWebUint8Vector& initData, const ArkWebString& mimeType, uint32_t promiseId) = 0;
 };
 } // namespace OHOS::ArkWeb
 
