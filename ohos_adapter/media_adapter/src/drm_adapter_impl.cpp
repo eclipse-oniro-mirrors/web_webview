@@ -479,11 +479,11 @@ void DrmAdapterImpl::GetKeyRequest(MediaKeySession* drmKeySessoin, uint8_t* info
 {
     WVLOG_I("[DRM]DrmAdapterImpl::GetKeyRequest enter.");
     if (drmKeySessoin == nullptr) {
-        WVLOG_W("[DRM]DrmAdapterImpl::GetKeyRequest error, drmKeySessoin is nullptr.");
+        WVLOG_E("[DRM]DrmAdapterImpl::GetKeyRequest error, drmKeySessoin is nullptr.");
+        return;
     }
     if (info == nullptr || infoLen <= 0) {
         WVLOG_E("[DRM]DrmAdapterImpl::GetKeyRequest error, info is nullptr.");
-        return;
     }
     std::shared_ptr<DrmCallbackImpl> callback = nullptr;
     {
@@ -1188,9 +1188,9 @@ int32_t DrmAdapterImpl::GenerateMediaKeyRequest(const std::string& emeId, int32_
     }
 
     int32_t iRet = CreateMediaKeySession();
-    if (iRet) {
-       WVLOG_E("[DRM]OH_MediaKeySession_CreateMediaKeySession FAILED.");
-       return static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR); 
+    if (iRet != 0) {
+        WVLOG_E("[DRM]OH_MediaKeySystem_CreateMediaKeySession failed.");
+        return static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR); 
     }
     Drm_ErrCode ret = OH_MediaKeySession_GenerateMediaKeyRequest(drmKeySessoin_, &info, &mediaKeyRequest);
     WVLOG_I("[DRM]DrmAdapterImpl::OH_MediaKeySession_GenerateMediaKeyRequest, ret = %{public}d", ret);
