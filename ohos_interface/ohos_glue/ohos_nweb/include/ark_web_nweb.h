@@ -1635,6 +1635,14 @@ public:
     /*--ark web()--*/
     virtual bool GetAccessibilityNodeRectById(
         int64_t accessibilityId, int32_t* width, int32_t* height, int32_t* offsetX, int32_t* offsetY) = 0;
+
+    /**
+     * @brief Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebHitTestResult> GetLastHitTestResult() = 0;
 };
 
 } // namespace OHOS::ArkWeb

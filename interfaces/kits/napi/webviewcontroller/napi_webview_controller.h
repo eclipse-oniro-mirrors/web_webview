@@ -376,6 +376,7 @@ private:
     static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
+    static napi_value GetLastHitTest(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {

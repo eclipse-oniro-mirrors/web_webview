@@ -642,6 +642,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getScrollOffset",
             NapiWebviewController::GetScrollOffset),
         DECLARE_NAPI_FUNCTION("createPdf", NapiWebviewController::RunCreatePDFExt),
+        DECLARE_NAPI_FUNCTION("getLastHitTest", NapiWebviewController::GetLastHitTest),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -6542,6 +6543,36 @@ napi_value NapiWebviewController::RemoveAllCache(napi_env env, napi_callback_inf
 
     NWebHelper::Instance().RemoveAllCache(includeDiskFiles);
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetLastHitTest(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    std::shared_ptr<HitTestResult> nwebResult = webviewController->GetLastHitTest();
+
+    napi_create_object(env, &result);
+
+    napi_value type;
+    if (nwebResult) {
+        napi_create_uint32(env, nwebResult->GetType(), &type);
+    } else {
+        napi_create_uint32(env, HitTestResult::UNKNOWN_TYPE, &type);
+    }
+    napi_set_named_property(env, result, "type", type);
+
+    napi_value extra;
+    if (nwebResult) {
+        napi_create_string_utf8(env, nwebResult->GetExtra().c_str(), NAPI_AUTO_LENGTH, &extra);
+    } else {
+        napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &extra);
+    }
+    napi_set_named_property(env, result, "extra", extra);
     return result;
 }
 } // namespace NWeb

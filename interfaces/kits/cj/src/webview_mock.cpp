@@ -115,4 +115,5 @@ FFI_EXPORT int FfiOHOSWebDownloadManagerImplResumeDownload = 0;
 // webStorage
 FFI_EXPORT int FfiOHOSWebStorageDeleteOrigin = 0;
 FFI_EXPORT int FfiOHOSWebStorageDeleteAllData = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlGetLastHitTest = 0;
 }
