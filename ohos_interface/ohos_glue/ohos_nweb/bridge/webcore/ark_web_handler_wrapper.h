@@ -541,7 +541,8 @@ public:
     void ReleaseResizeHold() override;
 
     void OnShowAutofillPopup(
-        const float offsetX, const float offsetY, const std::vector<std::string>& menu_items) override;
+        const float offsetX, const float offsetY, const float height, const float width,
+        const std::vector<std::string>& menu_items) override;
 
     void OnHideAutofillPopup() override;
 
