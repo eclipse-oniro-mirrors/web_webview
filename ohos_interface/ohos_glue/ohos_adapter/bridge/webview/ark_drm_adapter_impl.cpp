@@ -62,7 +62,7 @@ void ArkDrmAdapterImpl::StorageSaveInfoResult(bool result, int32_t type)
 }
 
 void ArkDrmAdapterImpl::StorageLoadInfoResult(
-    const ArkWebString& sessionId, ArkWebUint8Vector keySetId, const ArkWebString& mimeType, uint32_t keyType)
+    const ArkWebString& sessionId, const ArkWebUint8Vector& keySetId, const ArkWebString& mimeType, uint32_t keyType)
 {
     real_->StorageLoadInfoResult(ArkWebStringStructToClass(sessionId),
         ArkWebBasicVectorStructToClass<uint8_t, ArkWebUint8Vector>(keySetId), ArkWebStringStructToClass(mimeType),
@@ -74,9 +74,9 @@ void ArkDrmAdapterImpl::StorageClearInfoResult(bool result, int32_t type)
     real_->StorageClearInfoResult(result, type);
 }
 
-int32_t ArkDrmAdapterImpl::CreateKeySystem(const ArkWebString& name, int32_t securityLevel)
+int32_t ArkDrmAdapterImpl::CreateKeySystem(const ArkWebString& name, const ArkWebString& origin, int32_t securityLevel)
 {
-    return real_->CreateKeySystem(ArkWebStringStructToClass(name), securityLevel);
+    return real_->CreateKeySystem(ArkWebStringStructToClass(name), ArkWebStringStructToClass(origin), securityLevel);
 }
 
 int32_t ArkDrmAdapterImpl::ReleaseMediaKeySystem()
@@ -170,7 +170,7 @@ int32_t ArkDrmAdapterImpl::RequireSecureDecoderModule(const ArkWebString& mimeTy
 }
 
 int32_t ArkDrmAdapterImpl::GenerateMediaKeyRequest(const ArkWebString& sessionId, int32_t type, int32_t initDataLen,
-    ArkWebUint8Vector initData, const ArkWebString& mimeType, uint32_t promiseId)
+    const ArkWebUint8Vector& initData, const ArkWebString& mimeType, uint32_t promiseId)
 {
     return real_->GenerateMediaKeyRequest(ArkWebStringStructToClass(sessionId), type, initDataLen,
         ArkWebBasicVectorStructToClass<uint8_t, ArkWebUint8Vector>(initData), ArkWebStringStructToClass(mimeType),

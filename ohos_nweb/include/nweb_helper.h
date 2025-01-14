@@ -90,6 +90,8 @@ public:
 
     void TrimMemoryByPressureLevel(int32_t memoryLevel);
 
+    void RemoveAllCache(bool includeDiskFiles);
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);

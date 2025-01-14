@@ -937,4 +937,9 @@ void ArkWebHandlerImpl::GetVisibleRectToWeb(int& visibleX, int& visibleY, int& v
 {
     nweb_handler_->GetVisibleRectToWeb(visibleX, visibleY, visibleWidth, visibleHeight);
 }
+
+void ArkWebHandlerImpl::OnScrollStart(const float x, const float y)
+{
+    nweb_handler_->OnScrollStart(x, y);
+}
 } // namespace OHOS::ArkWeb

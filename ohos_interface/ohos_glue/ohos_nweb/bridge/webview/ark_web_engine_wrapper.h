@@ -86,6 +86,8 @@ public:
 
     int GetArkWebCoreApiLevel() override;
 
+    void RemoveAllCache(bool include_disk_files) override;
+
 private:
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };
