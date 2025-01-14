@@ -1467,6 +1467,13 @@ public:
     bool GetAccessibilityNodeRectById(
         int64_t accessibilityId, int32_t* width, int32_t* height, int32_t* offsetX, int32_t* offsetY) override;
 
+    /**
+     * @brief Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    ArkWebRefPtr<ArkWebHitTestResult> GetLastHitTestResult() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

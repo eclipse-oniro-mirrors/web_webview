@@ -305,6 +305,8 @@ public:
     int32_t WebPageSnapshot(const char* id, NWeb::PixelUnit type, int32_t width, int32_t height,
         const NWeb::WebSnapshotCallback callback);
 
+    std::shared_ptr<NWeb::HitTestResult> GetLastHitTest();
+
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;

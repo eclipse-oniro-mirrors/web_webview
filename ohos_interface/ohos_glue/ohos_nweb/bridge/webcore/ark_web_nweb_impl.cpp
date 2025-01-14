@@ -1264,4 +1264,14 @@ bool ArkWebNWebImpl::GetAccessibilityNodeRectById(
 {
     return nweb_nweb_->GetAccessibilityNodeRectById(accessibilityId, width, height, offsetX, offsetY);
 }
+
+ArkWebRefPtr<ArkWebHitTestResult> ArkWebNWebImpl::GetLastHitTestResult()
+{
+    std::shared_ptr<OHOS::NWeb::HitTestResult> nweb_last_hit_test_result = nweb_nweb_->GetLastHitTestResult();
+    if (CHECK_SHARED_PTR_IS_NULL(nweb_last_hit_test_result)) {
+        return nullptr;
+    }
+
+    return new ArkWebHitTestResultImpl(nweb_last_hit_test_result);
+}
 } // namespace OHOS::ArkWeb

@@ -1400,4 +1400,17 @@ namespace OHOS::Webview {
         }
         return NWebError::NO_ERROR;
     }
+
+    std::shared_ptr<NWeb::HitTestResult> WebviewControllerImpl::GetLastHitTest()
+    {
+        std::shared_ptr<NWeb::HitTestResult> nwebResult;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nwebResult = nweb_ptr->GetLastHitTestResult();
+            if (nwebResult) {
+                nwebResult->SetType(ConverToWebHitTestType(nwebResult->GetType()));
+            }
+        }
+        return nwebResult;
+    }
 }

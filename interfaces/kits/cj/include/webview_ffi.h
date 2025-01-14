@@ -160,6 +160,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlWebPageSnapshot(int64_t id, OHOS::Webview::C
 FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSBackForwardListSize(int64_t id, int32_t* errCode);
 FFI_EXPORT OHOS::Webview::CHistoryItem FfiOHOSGetItemAtIndex(int64_t id, int32_t index, int32_t* errCode);
+FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetLastHitTest(int64_t id, int32_t* errCode);
 }
 
 #endif // WEBVIEW_FFI_H

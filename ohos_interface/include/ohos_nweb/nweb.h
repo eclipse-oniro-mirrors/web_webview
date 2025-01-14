@@ -1689,6 +1689,17 @@ public:
     {
         return false;
     }
+
+    /**
+     * Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    /*--ark web()--*/
+    virtual std::shared_ptr<HitTestResult> GetLastHitTestResult()
+    {
+        return std::shared_ptr<HitTestResult>();
+    };
 };
 
 } // namespace OHOS::NWeb
