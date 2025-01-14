@@ -80,7 +80,8 @@
                 "netstack",
                 "protobuf",
                 "libxml2",
-                "openssl"
+                "openssl",
+                "drm_framework"
             ],
             "third_party": [
                 "chromium"

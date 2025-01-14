@@ -482,10 +482,6 @@ void DrmAdapterImpl::GetKeyRequest(MediaKeySession* drmKeySessoin, uint8_t* info
         WVLOG_E("[DRM]DrmAdapterImpl::GetKeyRequest error, drmKeySessoin is nullptr.");
         return;
     }
-    if (info == nullptr || infoLen <= 0) {
-        WVLOG_E("[DRM]DrmAdapterImpl::GetKeyRequest error, info is nullptr.");
-        return;
-    }
     std::shared_ptr<DrmCallbackImpl> callback = nullptr;
     {
         std::lock_guard<std::mutex> lock(mediaKeySessionCallbackMutex_);
@@ -511,11 +507,14 @@ void DrmAdapterImpl::GetKeyRequest(MediaKeySession* drmKeySessoin, uint8_t* info
         WVLOG_E("[DRM]memcpy_s failed with error.");
         return;
     }
-    retCopy = memcpy_s(reqInfo.initData, MAX_INIT_DATA_LEN, info, infoLen);
-    if (retCopy != 0) {
-        WVLOG_E("[DRM]memcpy_s failed with error.");
-        return;
+    if (infoLen > 0) {
+        retCopy = memcpy_s(reqInfo.initData, MAX_INIT_DATA_LEN, info, infoLen);
+        if (retCopy != 0) {
+            WVLOG_E("[DRM]memcpy_s failed with error.");
+            return;
+        }
     }
+
     Drm_ErrCode ret = OH_MediaKeySession_GenerateMediaKeyRequest(drmKeySessoin, &reqInfo, &mediaKeyRequest);
     WVLOG_I("[DRM]DrmAdapterImpl::OH_MediaKeySession_GenerateMediaKeyRequest, ret = %{public}d", ret);
     if (ret != DRM_ERR_OK) {
@@ -642,7 +641,7 @@ int32_t DrmAdapterImpl::CreateMediaKeySession()
     }
     if (drmKeySessoin_ != nullptr) {
         WVLOG_E("[DRM]DrmAdapterImpl::CreateMediaKeySession drmKeySessoin_ already exist.");
-        return static_cast<int32_t>(DrmResult::DRM_RESULT_OK);
+        ReleaseMediaKeySession();
     }
     Drm_ErrCode ret = DRM_ERR_OK;
     ret = OH_MediaKeySystem_CreateMediaKeySession(drmKeySystem_, &contentProtectionLevel_, &drmKeySessoin_);
@@ -1183,6 +1182,12 @@ int32_t DrmAdapterImpl::GenerateMediaKeyRequest(const std::string& emeId, int32_
     }
     if (callback_) {
         callback_->UpdateMimeType(mimeType, type);
+    }
+
+    int32_t iRet = CreateMediaKeySession();
+    if (iRet != 0) {
+        WVLOG_E("[DRM]OH_MediaKeySystem_CreateMediaKeySession failed.");
+        return static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR);
     }
     Drm_ErrCode ret = OH_MediaKeySession_GenerateMediaKeyRequest(drmKeySessoin_, &info, &mediaKeyRequest);
     WVLOG_I("[DRM]DrmAdapterImpl::OH_MediaKeySession_GenerateMediaKeyRequest, ret = %{public}d", ret);

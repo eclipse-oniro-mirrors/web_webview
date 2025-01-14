@@ -27,6 +27,7 @@ declare_args() {
   webview_sensors_sensor_enable = true
   webview_graphic_2d_ext_enable = true
   webview_enable_heif_decoder = false
+  webview_drm_enable = true
 
   if (defined(global_parts_info) &&
       !defined(global_parts_info.resourceschedule_soc_perf)) {
@@ -89,6 +90,10 @@ declare_args() {
   if (defined(global_parts_info) &&
       !defined(global_parts_info.hdf_drivers_interface_display)) {
     webview_enable_heif_decoder = false
+  }
+  if (defined(global_parts_info) &&
+      !defined(global_parts_info.multimedia_drm_framework)) {
+    webview_drm_enable = false
   }
 }
 

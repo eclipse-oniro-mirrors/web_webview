@@ -75,6 +75,10 @@
 #if defined(NWEB_SENSORS_SENSOR_ENABLE)
 #include "sensor_adapter_impl.h"
 #endif
+#if defined(NWEB_AUDIO_DRM_ENABLE)
+#include "audio_codec_decoder_adapter_impl.h"
+#include "drm_adapter_impl.h"
+#endif
 
 namespace OHOS::NWeb {
 // static
@@ -351,6 +355,24 @@ OhosNativeBufferAdapter& OhosAdapterHelperImpl::GetOhosNativeBufferAdapter()
 std::unique_ptr<MigrationManagerAdapter> OhosAdapterHelperImpl::CreateMigrationMgrAdapter()
 {
     return std::make_unique<MigrationManagerAdapterImpl>();
+}
+
+std::unique_ptr<AudioCodecDecoderAdapter> OhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
+{
+#if defined(NWEB_AUDIO_DRM_ENABLE)
+    return std::make_unique<AudioCodecDecoderAdapterImpl>();
+#else
+    return nullptr;
+#endif
+}
+
+std::unique_ptr<DrmAdapter> OhosAdapterHelperImpl::CreateDrmAdapter()
+{
+#if defined(NWEB_AUDIO_DRM_ENABLE)
+    return std::make_unique<DrmAdapterImpl>();
+#else
+    return nullptr;
+#endif
 }
 
 } // namespace OHOS::NWeb
