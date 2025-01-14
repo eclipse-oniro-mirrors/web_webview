@@ -95,10 +95,13 @@ public:
 private:
     int32_t SelectAudioOutputDevice(
         bool isCallDevice, const std::vector<std::shared_ptr<AudioDeviceDescriptor>>& device) const;
+    bool GetDeviceIdByDescriptor(AudioDeviceDescriptor *audioDeviceDescriptor, int32_t &deviceId);
+    int32_t SelectDefaultAudioDevice(bool isCallDevice);
 
 private:
     std::shared_ptr<AudioManagerCallbackAdapterImpl> callback_;
     std::shared_ptr<AudioManagerDeviceChangeCallbackAdapterImpl> deviceChangeCallback_ = nullptr;
+    std::map<int32_t, AudioDeviceDescriptor> audioOutputDeviceInfo_;
 #endif
 };
 } // namespace OHOS::NWeb
