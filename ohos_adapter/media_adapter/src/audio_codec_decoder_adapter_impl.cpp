@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -18,12 +18,13 @@
 #include "native_avcodec_audiocodec.h"
 #include "native_avcapability.h"
 #include "native_avbuffer.h"
-#include "nweb_log.h"
 #include <multimedia/native_audio_channel_layout.h>
 #include "native_drm_err.h"
 #include "native_mediakeysession.h"
 
 #include "audio_cenc_info_adapter_impl.h"
+
+#define MIME_SIZE 256
 
 namespace OHOS::NWeb {
 
@@ -148,6 +149,16 @@ void AudioDecoderFormatAdapterImpl::SetCodecConfigSize(uint32_t size)
     codecConfigSize_ = size;
 }
 
+void AudioDecoderFormatAdapterImpl::PrintFormatData(std::shared_ptr<AudioDecoderFormatAdapter> format)
+{
+    WVLOG_I("AudioCodecDecoder PrintFormatData:SampleRate[%{public}d], ChannelCount[%{public}d],"
+            "MaxInputSize[%{public}d], AACIsAdts[%{public}d], AudioSampleFormat[%{public}d],"
+            "BitRate[%{public}lld], IDHeader[%{public}d], SetupHeader[%{public}d],",
+            format->GetSampleRate(), format->GetChannelCount(), format->GetMaxInputSize(),
+            static_cast<int32_t>(format->GetAACIsAdts()), format->GetAudioSampleFormat(),
+            format->GetBitRate(), format->GetIdentificationHeader(), format->GetSetupHeader());
+}
+
 AudioDecoderCallbackAdapterImpl::AudioDecoderCallbackAdapterImpl(
     std::shared_ptr<OHOS::NWeb::AudioDecoderCallbackAdapter> cb) :cb_(cb) {};
 
@@ -185,8 +196,8 @@ void AudioDecoderCallbackAdapterImpl::OnInputBufferAvailable(uint32_t index)
 void AudioDecoderCallbackAdapterImpl::OnOutputBufferAvailable(
     uint32_t index, uint8_t *bufferData, int32_t size, int64_t pts, int32_t offset, uint32_t flags)
 {
-    WVLOG_I("AudioCodecDecoder outputBuffer[%{public}u] available, buffer size[%{public}d], pts[%{public}ld],"
-        "offset[%{public}d], flags[%{public}d].", index, size, pts, offset, flags);
+    WVLOG_I("AudioCodecDecoder outputBuffer[%{public}u] available, buffer size[%{public}d], pts[%{public}lld],"
+        "offset[%{public}d], flags[%{public}u].", index, size, pts, offset, flags);
     if (!cb_) {
         WVLOG_E("callback is NULL.");
         return;
@@ -195,10 +206,22 @@ void AudioDecoderCallbackAdapterImpl::OnOutputBufferAvailable(
     cb_->OnOutputBufferAvailable(index, bufferData, size, pts, offset, flags);
 }
 
+std::mutex AudioCodecDecoderAdapterImpl::decoderMutex_;
+
+std::mutex& AudioCodecDecoderAdapterImpl::GetDecoderMutex()
+{
+    return decoderMutex_;
+}
+
+AudioCodecDecoderAdapterImpl::AudioCodecDecoderAdapterImpl() {}
+
 AudioCodecDecoderAdapterImpl::~AudioCodecDecoderAdapterImpl()
 {
+    std::unique_lock<std::mutex> lock(decoderMutex_);
+    WVLOG_D("AudioCodecDecoder ~AudioCodecDecoderAdapterImpl enter.");
     callback_ = nullptr;
     if (decoder_ != nullptr) {
+        AudioDecoderCallbackManager::DeleteAudioDecoder(decoder_);
         OH_AVErrCode errCode = OH_AudioCodec_Destroy(decoder_);
         if (errCode != AV_ERR_OK) {
             WVLOG_E("AudioCodecDecoder destroy decoder_ fail, errCode = %{public}u.", uint32_t(errCode));
@@ -212,25 +235,52 @@ OH_AVCodec* AudioCodecDecoderAdapterImpl::GetAVCodec()
     return decoder_;
 }
 
-std::shared_ptr<AudioDecoderCallbackAdapterImpl> AudioCodecDecoderAdapterImpl::GetAudioDecoderCallBack()
+AudioDecoderCallbackAdapterImpl* AudioCodecDecoderAdapterImpl::GetAudioDecoderCallBack()
 {
-    return callback_;
+    return callback_.get();
 }
 
-void AudioCodecDecoderAdapterImpl::SetInputBuffer(int index, OH_AVBuffer *buffer)
+void AudioCodecDecoderAdapterImpl::SetInputBuffer(uint32_t index, OH_AVBuffer *buffer)
 {
+    WVLOG_D("AudioCodecDecoderAdapterImpl %{public}s[%{public}u].",  __FUNCTION__,index);
     std::unique_lock<std::mutex> lock(inMutex_);
+    if (inputBuffers_.find(index) != inputBuffers_.end()) {
+        WVLOG_I("AudioCodecDecoderAdapterImpl %{public}s[%{public}u].",  __FUNCTION__,index);
+        return;
+    }
     inputBuffers_.insert(std::make_pair(index, buffer));
 }
 
-void AudioCodecDecoderAdapterImpl::SetOutputBuffer(int index, OH_AVBuffer *buffer)
+void AudioCodecDecoderAdapterImpl::SetOutputBuffer(uint32_t index, OH_AVBuffer *buffer)
 {
     std::unique_lock<std::mutex> lock(outMutex_);
+    if (outputBuffers_.find(index) != outputBuffers_.end()) {
+        return;
+    }
     outputBuffers_.insert(std::make_pair(index, buffer));
+}
+
+OH_AVBuffer* AudioCodecDecoderAdapterImpl::GetInputBuffer(uint32_t index)
+{
+    std::unique_lock<std::mutex> lock(inMutex_);
+    if (inputBuffers_.find(index) == inputBuffers_.end()) {
+        return nullptr;
+    }
+    return inputBuffers_.at(index);
+}
+
+OH_AVBuffer* AudioCodecDecoderAdapterImpl::GetOutputBuffer(uint32_t index)
+{
+    std::unique_lock<std::mutex> lock(outMutex_);
+    if (outputBuffers_.find(index) == outputBuffers_.end()) {
+        return nullptr;
+    }
+    return outputBuffers_.at(index);
 }
 
 void AudioCodecDecoderAdapterImpl::GetMimeType()
 {
+    WVLOG_D("AudioCodecDecoder GetMimeType.");
     if (decoder_ == nullptr) {
         return;
     }
@@ -239,8 +289,14 @@ void AudioCodecDecoderAdapterImpl::GetMimeType()
     if (avFormat == nullptr) {
         return;
     }
-    const char *mime = nullptr;
-    OH_AVFormat_GetStringValue(avFormat, OH_MD_KEY_CODEC_MIME, &mime);
+
+    char mimeArray[MIME_SIZE] = {0};
+    const char *mime = mimeArray;
+    bool ret = OH_AVFormat_GetStringValue(avFormat, OH_MD_KEY_CODEC_MIME, &mime);
+    if (!ret) {
+        WVLOG_E("AudioCodecDecoder Fail to get mimetype");
+        return;
+    }
     OH_AVFormat_Destroy(avFormat);
     mimeType_ = AudioMimeType::MIMETYPE_UNKNOW;
     for (auto it = MIME_TYPE_MAP.begin(); it != MIME_TYPE_MAP.end(); it++) {
@@ -262,9 +318,14 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::CreateAudioDecoderByMime(c
         WVLOG_E("AudioCodecDecoder create decoder by mine[%{public}s] failed.", mimetype.c_str());
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
+    mimeType_ = AudioMimeType::MIMETYPE_UNKNOW;
+    for (auto it = MIME_TYPE_MAP.begin(); it != MIME_TYPE_MAP.end(); it++) {
+        if (strcmp(it->first, mimetype.c_str()) == 0) {
+            mimeType_ = it->second;
+        }
+    }
 
-    GetMimeType();
-    AudioDecoderCallbackManager::AddAudioDecoder(std::shared_ptr<AudioCodecDecoderAdapterImpl>(this));
+    AudioDecoderCallbackManager::AddAudioDecoder(this);
     return AudioDecoderAdapterCode::DECODER_OK;
 }
 
@@ -282,7 +343,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::CreateAudioDecoderByName(c
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
     GetMimeType();
-    AudioDecoderCallbackManager::AddAudioDecoder(std::shared_ptr<AudioCodecDecoderAdapterImpl>(this));
+    AudioDecoderCallbackManager::AddAudioDecoder(this);
     return AudioDecoderAdapterCode::DECODER_OK;
 }
 
@@ -305,7 +366,9 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ConfigureDecoder(
         WVLOG_E("AudioCodecDecoder create avformat fail.");
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
-    SetParamToAVFormat(avFormat, format);
+
+    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUD_SAMPLE_RATE, format->GetSampleRate());
+    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUD_CHANNEL_COUNT, format->GetChannelCount());
     OH_AVErrCode errCode = OH_AudioCodec_Configure(decoder_, avFormat);
     OH_AVFormat_Destroy(avFormat);
     avFormat = nullptr;
@@ -334,7 +397,9 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetParameterDecoder(
         WVLOG_E("AudioCodecDecoder create avformat fail.");
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
-    SetParamToAVFormat(avFormat, format);
+
+    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUD_SAMPLE_RATE, format->GetSampleRate());
+    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUD_CHANNEL_COUNT, format->GetChannelCount());
     OH_AVErrCode errCode = OH_AudioCodec_SetParameter(decoder_, avFormat);
     OH_AVFormat_Destroy(avFormat);
     avFormat = nullptr;
@@ -401,14 +466,13 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::FlushDecoder()
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    // 刷新解码器
     OH_AVErrCode errCode = OH_AudioCodec_Flush(decoder_);
     if (errCode != AV_ERR_OK) {
         WVLOG_E("AudioCodecDecoder flush decoder fail, errCode = %{public}u.", uint32_t(errCode));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    // 清理输入输出buffer
+    // clear input and output buffers
     {
         std::unique_lock<std::mutex> lock(inMutex_);
         inputBuffers_.clear();
@@ -434,7 +498,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ResetDecoder()
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    // 清理输入输出buffer
+    // clear input and output buffers
     {
         std::unique_lock<std::mutex> lock(inMutex_);
         inputBuffers_.clear();
@@ -462,7 +526,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ReleaseDecoder()
     }
     decoder_ = nullptr;
 
-    // 清理输入输出buffer
+    // clear input and output buffers
     {
         std::unique_lock<std::mutex> lock(inMutex_);
         inputBuffers_.clear();
@@ -475,7 +539,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ReleaseDecoder()
     return AudioDecoderAdapterCode::DECODER_OK;
 }
 
-void AudioCodecDecoderAdapterImpl::SetAVCencInfo(
+AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetAVCencInfo(
     OH_AVCencInfo *avCencInfo, std::shared_ptr<AudioCencInfoAdapter> cencInfo)
 {
     OH_AVErrCode errNo = OH_AVCencInfo_SetAlgorithm(avCencInfo, static_cast<DrmCencAlgorithm>(cencInfo->GetAlgo()));
@@ -487,7 +551,8 @@ void AudioCodecDecoderAdapterImpl::SetAVCencInfo(
     errNo = OH_AVCencInfo_SetKeyIdAndIv(
         avCencInfo, cencInfo->GetKeyId(), cencInfo->GetKeyIdLen(), cencInfo->GetIv(), cencInfo->GetIvLen());
     if (errNo != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder set AVCencInfo keyid and iv fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
+        WVLOG_E("AudioCodecDecoder set AVCencInfo keyid and iv fail, errNo = %{public}u",
+            static_cast<uint32_t>(errNo));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -510,6 +575,7 @@ void AudioCodecDecoderAdapterImpl::SetAVCencInfo(
         WVLOG_E("AudioCodecDecoder set AVCencInfo mode fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
+    return AudioDecoderAdapterCode::DECODER_OK;
 }
 
 AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetBufferCencInfo(
@@ -527,9 +593,17 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetBufferCencInfo(
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    SetAVCencInfo(avCencInfo, cencInfo);
-    // 将CencInfo设置到AVBuffer中
-    OH_AVErrCode errNo = OH_AVCencInfo_SetAVBuffer(avCencInfo, inputBuffers_[index]);
+    AudioDecoderAdapterCode ret = SetAVCencInfo(avCencInfo, cencInfo);
+    if (ret != AudioDecoderAdapterCode::DECODER_OK) {
+        return ret;
+    }
+    // set CencInfo to AVBuffer
+    OH_AVBuffer *avBuffer = GetInputBuffer(index);
+    if (avBuffer == nullptr) {
+        WVLOG_E("AudioCodecDecoder set AVCencInfo fail, not find inputbuffererr[%{public}u]", index);
+        return AudioDecoderAdapterCode::DECODER_ERROR;
+    }
+    OH_AVErrCode errNo = OH_AVCencInfo_SetAVBuffer(avCencInfo, avBuffer);
     if (errNo != AV_ERR_OK) {
         WVLOG_E("AudioCodecDecoder set AVCencInfo fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
         return AudioDecoderAdapterCode::DECODER_ERROR;
@@ -546,32 +620,39 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::QueueInputBufferDec(uint32
     uint8_t *bufferData, int32_t bufferSize, std::shared_ptr<AudioCencInfoAdapter> cencInfo,
     bool isEncrypted, BufferFlag flag)
 {
-    WVLOG_D("AudioCodecDecoder[%{public}u] %{public}s,  buffer size[%{public}d], isEncrypted[%{public}d],"
-        "flag[%{public}d].", index, __FUNCTION__,  bufferSize, int(isEncrypted), int(flag));
+    WVLOG_I("AudioCodecDecoder index[%{public}u] %{public}s,  buffer size[%{public}d], isEncrypted[%{public}d],"
+        "flag[%{public}d].", index, __FUNCTION__,  bufferSize, static_cast<uint32_t>(isEncrypted),
+        static_cast<uint32_t>(flag));
+
     if (decoder_ == nullptr) {
         WVLOG_E("AudioCodecDecoder decoder_ is nullptr.");
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
-    if (bufferData == nullptr) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] bufferData is nullptr.", index);
-        return AudioDecoderAdapterCode::DECODER_ERROR;
-    }
-    if (inputBuffers_.find(index) == inputBuffers_.end()) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] not find buffer index.", index);
-        return AudioDecoderAdapterCode::DECODER_ERROR;
-    }
+
     if (isEncrypted && SetBufferCencInfo(index, cencInfo) != AudioDecoderAdapterCode::DECODER_OK) {
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    uint8_t *addr = OH_AVBuffer_GetAddr(inputBuffers_[index]);
-    if (memcpy_s(addr, bufferSize, bufferData, bufferSize) != EOK) {
-        WVLOG_E(" AudioCodecDecoder[%{public}u] memcpy_s buffer fail.", index);
+    OH_AVBuffer *avBuffer = GetInputBuffer(index);
+    if (avBuffer == nullptr) {
+        WVLOG_E("AudioCodecDecoder QueueInputBufferDec fail, inputbuffer[%{public}u] not find.", index);
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
+    uint8_t *addr = OH_AVBuffer_GetAddr(avBuffer);
+    if (flag != GetBufferFlag(OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS)) {
+        if (bufferData == nullptr) {
+            WVLOG_E("AudioCodecDecoder index[%{public}u] bufferData is nullptr.", index);
+            return AudioDecoderAdapterCode::DECODER_ERROR;
+        }
+        if (memcpy_s(addr, bufferSize, bufferData, bufferSize) != EOK) {
+            WVLOG_E(" AudioCodecDecoder index[%{public}u] memcpy_s buffer fail.", index);
+            return AudioDecoderAdapterCode::DECODER_ERROR;
+        }
+    }
 
-    // size是待解码数据的每帧帧长度。pts是每帧的时间戳，用于指示音频应该何时被播放。
-    // size和pts的获取来源：音视频资源文件或者待解码的数据流
+    // The size is the length of each frame of data to be decoded. The pts is the timestamp for
+    // each frame, indicating when the audio should be played. The values of size and pts are
+    // obtained from the audio/video resource file or the data stream to be decoded.
     OH_AVCodecBufferAttr attr = {0};
     if (flag == GetBufferFlag(OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS)) {
         attr.size = 0;
@@ -581,10 +662,10 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::QueueInputBufferDec(uint32
         attr.flags = OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_NONE;
     }
     attr.pts = presentationTimeUs;
-    OH_AVBuffer_SetBufferAttr(inputBuffers_[index], &attr);
+    OH_AVBuffer_SetBufferAttr(avBuffer, &attr);
     OH_AVErrCode errCode = OH_AudioCodec_PushInputBuffer(decoder_, index);
     if (errCode != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] push input buffer fail, errCode = %{public}u.",
+        WVLOG_E("AudioCodecDecoder index[%{public}u] push input buffer fail, errCode = %{public}u.",
             index, uint32_t(errCode));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
@@ -617,28 +698,29 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::GetOutputFormatDec(
 
 AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ReleaseOutputBufferDec(uint32_t index)
 {
-    WVLOG_I("AudioCodecDecoder[%{public}u] %{public}s.", index, __FUNCTION__);
+    WVLOG_I("AudioCodecDecoder index[%{public}u] %{public}s.", index, __FUNCTION__);
     if (decoder_ == nullptr) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] is nullptr.", index);
+        WVLOG_E("AudioCodecDecoder index[%{public}u] is nullptr.", index);
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
-    if (outputBuffers_.find(index) == outputBuffers_.end()) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] not find buffer index.", index);
+    OH_AVBuffer *avBuffer = GetOutputBuffer(index);
+    if (avBuffer == nullptr) {
+        WVLOG_E("AudioCodecDecoder ReleaseOutputBufferDec fail, outputbuffer[%{public}u] not find.", index);
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
     OH_AVCodecBufferAttr attr = {0};
-    OH_AVErrCode errCode = OH_AVBuffer_GetBufferAttr(outputBuffers_[index], &attr);
+    OH_AVErrCode errCode = OH_AVBuffer_GetBufferAttr(avBuffer, &attr);
     if (errCode != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] get output buffer attr fail, errCode = %{public}u.",
+        WVLOG_E("AudioCodecDecoder index[%{public}u] get output buffer attr fail, errCode = %{public}u.",
             index, uint32_t(errCode));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
     errCode = OH_AudioCodec_FreeOutputBuffer(decoder_, index);
     if (errCode != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder[%{public}u] free output buffer fail, errCode = %{public}u.",
+        WVLOG_E("AudioCodecDecoder index[%{public}u] free output buffer fail, errCode = %{public}u.",
             index, uint32_t(errCode));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
@@ -648,7 +730,7 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::ReleaseOutputBufferDec(uin
     }
 
     if (attr.flags == OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS) {
-        WVLOG_I("AudioCodecDecoder[%{public}u] free output buffer, buffer flag is eos.", index);
+        WVLOG_I("AudioCodecDecoder index[%{public}u] free output buffer, buffer flag is eos.", index);
     }
     return AudioDecoderAdapterCode::DECODER_OK;
 }
@@ -658,7 +740,11 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetCallbackDec(
 {
     WVLOG_I("AudioCodecDecoder %{public}s.", __FUNCTION__);
     if (decoder_ == nullptr) {
-        WVLOG_E("AudioCodecDecoder is nullptr.");
+        WVLOG_E("AudioCodecDecoder decoder is nullptr.");
+        return AudioDecoderAdapterCode::DECODER_ERROR;
+    }
+    if (callback == nullptr) {
+        WVLOG_E("AudioCodecDecoder calllback is nullptr.");
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -672,10 +758,10 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetCallbackDec(
         &AudioDecoderCallbackManager::OnOutputFormatChanged, &AudioDecoderCallbackManager::OnInputBufferAvailable,
         &AudioDecoderCallbackManager::OnOutputBufferAvailable};
 
-    // 不使用媒体框架推荐的ADecBufferSignal结构体做buffer轮转，而是在内核中实现，减少webview层的业务逻辑
+    // Instead of using the ADecBufferSignal structure recommended by the media framework for buffer rotation,
+    // implement it in the chromium kernel to reduce the business logic at the webview layer.
     OH_AVErrCode errCode = OH_AudioCodec_RegisterCallback(decoder_, cb, nullptr);
     if (errCode != AV_ERR_OK) {
-        // 异常处理
         WVLOG_E("AudioCodecDecoder register callback fail, errCode = %{public}u.", uint32_t(errCode));
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
@@ -685,12 +771,13 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetCallbackDec(
 
 AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::SetDecryptionConfig(void *session, bool secureAudio)
 {
-    WVLOG_I("AudioCodecDecoder %{public}s, secureAudio[%{public}d].", __FUNCTION__, int(secureAudio));
+    WVLOG_I("AudioCodecDecoder %{public}s, secureAudio[%{public}d].", __FUNCTION__, static_cast<uint32_t>(secureAudio));
     if (session == nullptr) {
         WVLOG_E("AudioCodecDecoder session is nullptr.");
         return AudioDecoderAdapterCode::DECODER_OK;
     }
-    // 媒体音频编解码模块目前只支持非安全解码模式
+
+    // The media audio codec module currently only supports non-secure decoding mode.
     secureAudio = false;
 
     MediaKeySession *mediaKeySession = static_cast<MediaKeySession*>(session);
@@ -760,69 +847,26 @@ void AudioCodecDecoderAdapterImpl::GetParamFromAVFormat(
     AudioDecoderFormatAdapterImpl::PrintFormatData(format);
 }
 
-void AudioCodecDecoderAdapterImpl::SetParamToAVFormat(
-    OH_AVFormat *avFormat, std::shared_ptr<AudioDecoderFormatAdapter> format)
-{
-    AudioDecoderFormatAdapterImpl::PrintFormatData(format);
-    if (avFormat == nullptr || format == nullptr) {
-        WVLOG_E("AudioCodecDecoder avFormat or format is nullptr, avFormat is %{public}d, format is. %{public}d",
-            int32_t(avFormat == nullptr), int32_t(format == nullptr));
-        return;
-    }
+std::map<OH_AVCodec*, OHOS::NWeb::AudioCodecDecoderAdapterImpl *> AudioDecoderCallbackManager::decoders_;
 
-    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUD_SAMPLE_RATE, format->GetSampleRate());
-    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUD_CHANNEL_COUNT, format->GetChannelCount());
-    switch(mimeType_) {
-        case AudioMimeType::MIMETYPE_AUDIO_AAC:
-            OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_MAX_INPUT_SIZE, format->GetMaxInputSize());
-            OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AAC_IS_ADTS, int32_t(format->GetAACIsAdts()));
-            OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUDIO_SAMPLE_FORMAT, format->GetAudioSampleFormat());
-            OH_AVFormat_SetLongValue(avFormat, OH_MD_KEY_BITRATE, format->GetBitRate());
-            break;
-        case AudioMimeType::MIMETYPE_AUDIO_FLAC:
-            OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_MAX_INPUT_SIZE, format->GetMaxInputSize());
-            OH_AVFormat_SetLongValue(avFormat, OH_MD_KEY_BITRATE, format->GetBitRate());
-            break;
-        case AudioMimeType::MIMETYPE_AUDIO_VORBIS: {
-                OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_MAX_INPUT_SIZE, format->GetMaxInputSize());
-                OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUDIO_SAMPLE_FORMAT, format->GetAudioSampleFormat());
-                OH_AVFormat_SetLongValue(avFormat, OH_MD_KEY_BITRATE, format->GetBitRate());
-                if (format->GetCodecConfig() != nullptr && format->GetCodecConfigSize() > 0) {
-                    OH_AVFormat_SetBuffer(
-                        avFormat, OH_MD_KEY_CODEC_CONFIG, format->GetCodecConfig(), format->GetCodecConfigSize());
-                } else {
-                    OH_AVFormat_SetIntValue(
-                        avFormat, OH_MD_KEY_IDENTIFICATION_HEADER, format->GetIdentificationHeader());
-                    OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_SETUP_HEADER, format->GetSetupHeader());
-                }
-            }
-        case AudioMimeType::MIMETYPE_AUDIO_MPEG:
-        case AudioMimeType::MIMETYPE_AUDIO_AMR_NB:
-        case AudioMimeType::MIMETYPE_AUDIO_AMR_WB:
-        case AudioMimeType::MIMETYPE_AUDIO_G711MU:
-        case AudioMimeType::MIMETYPE_AUDIO_APE:
-            OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_MAX_INPUT_SIZE, format->GetMaxInputSize());
-            OH_AVFormat_SetIntValue(avFormat, OH_MD_KEY_AUDIO_SAMPLE_FORMAT, format->GetAudioSampleFormat());
-            OH_AVFormat_SetLongValue(avFormat, OH_MD_KEY_BITRATE, format->GetBitRate());
-            break;
-        default:
-            break;
-    }
-}
+std::mutex AudioDecoderCallbackManager::decodersMapMutex_;
 
-std::map<OH_AVCodec*, std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl>> AudioDecoderCallbackManager::decoders_;
-
-std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> AudioDecoderCallbackManager::FindAudioDecoder(
+OHOS::NWeb::AudioCodecDecoderAdapterImpl *AudioDecoderCallbackManager::FindAudioDecoder(
     OH_AVCodec *codec)
 {
+    std::unique_lock<std::mutex> lock(decodersMapMutex_);
     if (decoders_.find(codec) != decoders_.end()) {
-        return decoders_[codec];
+        return decoders_.at(codec);
     }
     return nullptr;
 }
 
-void AudioDecoderCallbackManager::AddAudioDecoder(std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> decoder)
+void AudioDecoderCallbackManager::AddAudioDecoder(OHOS::NWeb::AudioCodecDecoderAdapterImpl *decoder)
 {
+    if (decoder == nullptr || decoder->GetAVCodec() == nullptr) {
+        return;
+    }
+    std::unique_lock<std::mutex> lock(decodersMapMutex_);
     if (decoders_.find(decoder->GetAVCodec()) != decoders_.end()) {
         return;
     }
@@ -831,7 +875,12 @@ void AudioDecoderCallbackManager::AddAudioDecoder(std::shared_ptr<OHOS::NWeb::Au
 
 void AudioDecoderCallbackManager::DeleteAudioDecoder(OH_AVCodec *codec)
 {
-    if (decoders_.find(codec) != decoders_.end()) {
+    if (codec == nullptr) {
+        return;
+    }
+    std::unique_lock<std::mutex> lock(decodersMapMutex_);
+    auto it = decoders_.find(codec);
+    if (it != decoders_.end()) {
         decoders_.erase(codec);
     }
 }
@@ -845,7 +894,8 @@ void AudioDecoderCallbackManager::OnError(OH_AVCodec *codec, int32_t errorCode, 
         return;
     }
 
-    std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> impl = FindAudioDecoder(codec);
+    std::unique_lock<std::mutex> lock(AudioCodecDecoderAdapterImpl::GetDecoderMutex());
+    OHOS::NWeb::AudioCodecDecoderAdapterImpl *impl = FindAudioDecoder(codec);
     if (impl == nullptr) {
         WVLOG_E("AudioDecoderCallbackManager not find decoder.");
         return;
@@ -865,8 +915,8 @@ void AudioDecoderCallbackManager::OnOutputFormatChanged(OH_AVCodec *codec, OH_AV
         WVLOG_E("AudioDecoderCallbackManager avcodec is nullptr.");
         return;
     }
-
-    std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> impl = FindAudioDecoder(codec);
+    std::unique_lock<std::mutex> lock(AudioCodecDecoderAdapterImpl::GetDecoderMutex());
+    OHOS::NWeb::AudioCodecDecoderAdapterImpl *impl = FindAudioDecoder(codec);
     if (impl == nullptr) {
         WVLOG_E("AudioDecoderCallbackManager not find decoder.");
         return;
@@ -877,26 +927,31 @@ void AudioDecoderCallbackManager::OnOutputFormatChanged(OH_AVCodec *codec, OH_AV
     }
     std::shared_ptr<OHOS::NWeb::AudioDecoderFormatAdapterImpl> audioFormat =
         std::make_shared<AudioDecoderFormatAdapterImpl>();
-    // audioFormat->set....
     impl->GetAudioDecoderCallBack()->OnOutputFormatChanged();
 }
 
 void AudioDecoderCallbackManager::OnInputBufferAvailable(
     OH_AVCodec *codec, uint32_t index, OH_AVBuffer *data, void *userData)
 {
-    WVLOG_I("AudioDecoderCallbackManager %{public}s.", __FUNCTION__);
+    WVLOG_D("AudioDecoderCallbackManager %{public}s[%{public}u].", __FUNCTION__, index);
     if (codec == nullptr) {
-        WVLOG_E("AudioDecoderCallbackManager avcodec is nullptr.");
+        WVLOG_E("AudioDecoderCallbackManager::OnInputBufferAvailable avcodec is nullptr.");
         return;
     }
 
-    std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> impl = FindAudioDecoder(codec);
+    if (data == nullptr) {
+        WVLOG_E("AudioDecoderCallbackManager::OnInputBufferAvailable avbuffer is nullptr.");
+        return;
+    }
+
+    std::unique_lock<std::mutex> lock(AudioCodecDecoderAdapterImpl::GetDecoderMutex());
+    OHOS::NWeb::AudioCodecDecoderAdapterImpl *impl = FindAudioDecoder(codec);
     if (impl == nullptr) {
-        WVLOG_E("AudioDecoderCallbackManager not find decoder.");
+        WVLOG_E("AudioDecoderCallbackManager::OnInputBufferAvailable not find decoder.");
         return;
     }
     if (impl->GetAudioDecoderCallBack() == nullptr) {
-        WVLOG_E("audio decoder callback is nullptr.");
+        WVLOG_E("AudioDecoderCallbackManager::OnInputBufferAvailable audio decoder callback is nullptr.");
         return;
     }
     impl->SetInputBuffer(index, data);
@@ -913,7 +968,8 @@ void AudioDecoderCallbackManager::OnOutputBufferAvailable(
         return;
     }
 
-    std::shared_ptr<OHOS::NWeb::AudioCodecDecoderAdapterImpl> impl = FindAudioDecoder(codec);
+    std::unique_lock<std::mutex> lock(AudioCodecDecoderAdapterImpl::GetDecoderMutex());
+    OHOS::NWeb::AudioCodecDecoderAdapterImpl *impl = FindAudioDecoder(codec);
     if (impl == nullptr) {
         WVLOG_E("AudioDecoderCallbackManager not find decoder.");
         return;
@@ -937,7 +993,7 @@ void AudioDecoderCallbackManager::OnOutputBufferAvailable(
         WVLOG_E(" AudioCodecDecoder memcpy_s buffer fail.");
         return;
     }
-    // 从data中复制buffer数据
+    // Copy the buffer data from the data.
     impl->GetAudioDecoderCallBack()->OnOutputBufferAvailable(
         index, bufferData, attr.size, attr.pts, attr.offset, attr.flags);
 }

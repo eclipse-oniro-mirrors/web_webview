@@ -28,6 +28,7 @@
 #include "ohos_adapter/include/ark_datashare_adapter.h"
 #include "ohos_adapter/include/ark_date_time_format_adapter.h"
 #include "ohos_adapter/include/ark_display_manager_adapter.h"
+#include "ohos_adapter/include/ark_drm_adapter.h"
 #include "ohos_adapter/include/ark_enterprise_device_management_adapter.h"
 #include "ohos_adapter/include/ark_event_handler_adapter.h"
 #include "ohos_adapter/include/ark_flowbuffer_adapter.h"
@@ -41,6 +42,7 @@
 #include "ohos_adapter/include/ark_media_codec_adapter.h"
 #include "ohos_adapter/include/ark_media_codec_decoder_adapter.h"
 #include "ohos_adapter/include/ark_migration_manager_adapter.h"
+#include "ohos_adapter/include/ark_audio_codec_decoder_adapter.h"
 #include "ohos_adapter/include/ark_mmi_adapter.h"
 #include "ohos_adapter/include/ark_net_connect_adapter.h"
 #include "ohos_adapter/include/ark_net_proxy_adapter.h"
@@ -204,6 +206,12 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkMigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkAudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() = 0;
 };
 
 } // namespace OHOS::ArkWeb

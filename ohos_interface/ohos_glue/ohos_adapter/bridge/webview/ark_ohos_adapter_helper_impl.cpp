@@ -30,6 +30,7 @@
 #include "ohos_adapter/bridge/ark_date_time_format_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_display_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_display_manager_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_drm_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_enterprise_device_management_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_event_handler_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_flowbuffer_adapter_impl.h"
@@ -44,6 +45,7 @@
 #include "ohos_adapter/bridge/ark_location_request_config_impl.h"
 #include "ohos_adapter/bridge/ark_media_avsession_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_media_codec_decoder_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_audio_codec_decoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_media_codec_encoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_migration_manager_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_mmi_adapter_impl.h"
@@ -401,6 +403,20 @@ ArkWebRefPtr<ArkMigrationManagerAdapter> ArkOhosAdapterHelperImpl::CreateMigrati
     std::unique_ptr<NWeb::MigrationManagerAdapter> adapter = real_.CreateMigrationMgrAdapter();
     std::shared_ptr<NWeb::MigrationManagerAdapter> shared = std::move(adapter);
     return new ArkMigrationManagerAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkAudioCodecDecoderAdapter> ArkOhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
+{
+    std::unique_ptr<NWeb::AudioCodecDecoderAdapter> adapter = real_.CreateAudioCodecDecoderAdapter();
+    std::shared_ptr<NWeb::AudioCodecDecoderAdapter> shared = std::move(adapter);
+    return new ArkAudioCodecDecoderAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkDrmAdapter> ArkOhosAdapterHelperImpl::CreateDrmAdapter()
+{
+    std::unique_ptr<NWeb::DrmAdapter> adapter = real_.CreateDrmAdapter();
+    std::shared_ptr<NWeb::DrmAdapter> shared = std::move(adapter);
+    return new ArkDrmAdapterImpl(shared);
 }
 
 } // namespace OHOS::ArkWeb
