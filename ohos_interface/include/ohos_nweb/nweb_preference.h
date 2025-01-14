@@ -658,6 +658,11 @@ public:
      * @param enable set whether blur is allowed.
      */
     virtual void SetBlurOnKeyboardHideMode(int enable) {}
+
+    /**
+     * Set whether to connect to media avsession.
+     */
+    virtual void PutWebMediaAVSessionEnabled(bool enable) {}
 };
 
 } // namespace OHOS::NWeb

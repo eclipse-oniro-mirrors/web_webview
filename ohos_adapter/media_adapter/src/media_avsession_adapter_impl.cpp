@@ -376,6 +376,10 @@ bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaA
         avMetadata_->SetAlbum(metadata->GetAlbum());
         updated = true;
     }
+    if (avMetadata_->GetMediaImageUri() != metadata->GetImageUrl()) {
+        avMetadata_->SetMediaImageUri(metadata->GetImageUrl());
+        updated = true;
+    }
     WVLOG_I("media avsession adapter UpdateMetaDataCache return updated: %{public}d", updated);
     return updated;
 }

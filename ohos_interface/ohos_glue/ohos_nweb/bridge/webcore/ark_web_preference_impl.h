@@ -662,6 +662,11 @@ public:
      */
     void SetBlurOnKeyboardHideMode(int enable) override;
 
+    /**
+     * Set whether to connect to media avsession.
+     */
+    void PutWebMediaAVSessionEnabled(bool enable) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;
 };

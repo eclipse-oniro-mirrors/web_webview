@@ -41,6 +41,10 @@ public:
     virtual void SetAlbum(const std::string& album) = 0;
 
     virtual std::string GetAlbum() = 0;
+
+    virtual void SetImageUrl(const std::string& imageUrl) {}
+
+    virtual std::string GetImageUrl() { return ""; }
 };
 
 struct MediaAVSessionPositionAdapter {
