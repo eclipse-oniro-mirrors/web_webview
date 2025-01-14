@@ -91,7 +91,7 @@ const std::unordered_map<AudioAdapterConcurrencyMode, AudioConcurrencyMode> AUDI
     { AudioAdapterConcurrencyMode::MIX_WITH_OTHERS, AudioConcurrencyMode::MIX_WITH_OTHERS },
     { AudioAdapterConcurrencyMode::DUCK_OTHERS, AudioConcurrencyMode::DUCK_OTHERS },
     { AudioAdapterConcurrencyMode::PAUSE_OTHERS, AudioConcurrencyMode::PAUSE_OTHERS },
-    { AudioAdapterConcurrencyMode::SLIENT, AudioConcurrencyMode::SLIENT },
+    { AudioAdapterConcurrencyMode::SILENT, AudioConcurrencyMode::SILENT },
 };
 
 AudioRendererCallbackImpl::AudioRendererCallbackImpl(std::shared_ptr<AudioRendererCallbackAdapter> cb) : cb_(cb) {};
