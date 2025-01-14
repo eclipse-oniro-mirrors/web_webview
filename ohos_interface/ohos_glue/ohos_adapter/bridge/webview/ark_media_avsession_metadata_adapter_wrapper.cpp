@@ -69,4 +69,18 @@ std::string ArkMediaAVSessionMetadataAdapterWrapper::GetAlbum()
     return result;
 }
 
+void ArkMediaAVSessionMetadataAdapterWrapper::SetImageUrl(const std::string& imageUrl)
+{
+    ArkWebString str = ArkWebStringClassToStruct(imageUrl);
+    ctocpp_->SetImageUrl(str);
+    ArkWebStringStructRelease(str);
+}
+
+std::string ArkMediaAVSessionMetadataAdapterWrapper::GetImageUrl()
+{
+    ArkWebString imageUrl = ctocpp_->GetImageUrl();
+    std::string result = ArkWebStringStructToClass(imageUrl);
+    ArkWebStringStructRelease(imageUrl);
+    return result;
+}
 } // namespace OHOS::ArkWeb

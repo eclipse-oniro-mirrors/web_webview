@@ -42,6 +42,12 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetAlbum() = 0;
+
+    /*--ark web()--*/
+    virtual void SetImageUrl(const ArkWebString& imageUrl) = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetImageUrl() = 0;
 };
 
 /*--ark web(source=webcore)--*/

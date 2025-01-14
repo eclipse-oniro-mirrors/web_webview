@@ -574,4 +574,9 @@ void ArkWebPreferenceWrapper::SetBlurOnKeyboardHideMode(int enable)
     }
 }
 
+void ArkWebPreferenceWrapper::PutWebMediaAVSessionEnabled(bool enable)
+{
+    ark_web_preference_->PutWebMediaAVSessionEnabled(enable);
+}
+
 } // namespace OHOS::ArkWeb

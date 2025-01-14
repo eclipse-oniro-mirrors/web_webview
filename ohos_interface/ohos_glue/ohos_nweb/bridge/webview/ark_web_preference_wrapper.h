@@ -659,6 +659,11 @@ public:
      */
     void SetBlurOnKeyboardHideMode(int enable) override;
 
+    /**
+     * @brief Set whether to connect to media avsession.
+     */
+    void PutWebMediaAVSessionEnabled(bool enable) override;
+
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };
