@@ -43,7 +43,7 @@ public:
 
     void StorageClearInfoResult(bool result, int32_t type) override;
 
-    int32_t CreateKeySystem(const std::string& name, int32_t securityLevel) override;
+    int32_t CreateKeySystem(const std::string& name, const std::string& origin, int32_t securityLevel) override;
 
     int32_t ReleaseMediaKeySystem() override;
 

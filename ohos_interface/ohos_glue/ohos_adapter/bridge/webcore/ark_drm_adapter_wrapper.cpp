@@ -90,11 +90,13 @@ void ArkDrmAdapterWrapper::StorageClearInfoResult(bool result, int32_t type)
     ctocpp_->StorageClearInfoResult(result, type);
 }
 
-int32_t ArkDrmAdapterWrapper::CreateKeySystem(const std::string& name, int32_t securityLevel)
+int32_t ArkDrmAdapterWrapper::CreateKeySystem(const std::string& name, const std::string& origin, int32_t securityLevel)
 {
     ArkWebString ark_name = ArkWebStringClassToStruct(name);
-    int32_t ret = ctocpp_->CreateKeySystem(ark_name, securityLevel);
+    ArkWebString ark_origin = ArkWebStringClassToStruct(origin);
+    int32_t ret = ctocpp_->CreateKeySystem(ark_name, ark_origin, securityLevel);
     ArkWebStringStructRelease(ark_name);
+    ArkWebStringStructRelease(ark_origin);
     return ret;
 }
 

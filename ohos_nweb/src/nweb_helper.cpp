@@ -1023,6 +1023,16 @@ void NWebHelper::TrimMemoryByPressureLevel(int32_t memoryLevel)
     nwebEngine_->TrimMemoryByPressureLevel(memoryLevel);
 }
 
+void NWebHelper::RemoveAllCache(bool includeDiskFiles)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("nweb engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->RemoveAllCache(includeDiskFiles);
+}
+
 NWebAdapterHelper& NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;

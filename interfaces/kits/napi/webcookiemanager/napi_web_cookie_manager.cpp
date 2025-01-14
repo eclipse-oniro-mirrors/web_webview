@@ -725,6 +725,7 @@ napi_value NapiWebCookieManager::JsSaveCookieSync(napi_env env, napi_callback_in
     std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
         OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
+        WVLOG_E("cookieManager is nullptr)");
         napi_value result = nullptr;
         napi_get_undefined(env, &result);
         return result;
