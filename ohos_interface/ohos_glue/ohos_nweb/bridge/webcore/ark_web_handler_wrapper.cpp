@@ -858,10 +858,11 @@ void ArkWebHandlerWrapper::ReleaseResizeHold()
 }
 
 void ArkWebHandlerWrapper::OnShowAutofillPopup(
-    const float offsetX, const float offsetY, const std::vector<std::string>& menu_items)
+    const float offsetX, const float offsetY, const float height, const float width,
+    const std::vector<std::string>& menu_items)
 {
     ArkWebStringVector stMenuItems = ArkWebStringVectorClassToStruct(menu_items);
-    ark_web_handler_->OnShowAutofillPopup(offsetX, offsetY, stMenuItems);
+    ark_web_handler_->OnShowAutofillPopup(offsetX, offsetY, height, width, stMenuItems);
 }
 
 void ArkWebHandlerWrapper::OnHideAutofillPopup()

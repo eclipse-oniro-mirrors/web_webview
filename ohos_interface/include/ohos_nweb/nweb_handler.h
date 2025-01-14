@@ -857,7 +857,8 @@ public:
     virtual void ReleaseResizeHold() {}
 
     virtual void OnShowAutofillPopup(
-        const float offsetX, const float offsetY, const std::vector<std::string>& menu_items)
+        const float offsetX, const float offsetY, const float height, const float width,
+        const std::vector<std::string>& menu_items)
     {}
 
     virtual void OnHideAutofillPopup() {}

@@ -792,9 +792,10 @@ void ArkWebHandlerImpl::OnRenderProcessResponding()
 }
 
 void ArkWebHandlerImpl::OnShowAutofillPopup(
-    const float offsetX, const float offsetY, const ArkWebStringVector& menu_items)
+    const float offsetX, const float offsetY, const float height, const float width,
+    const ArkWebStringVector& menu_items)
 {
-    nweb_handler_->OnShowAutofillPopup(offsetX, offsetY, ArkWebStringVectorStructToClass(menu_items));
+    nweb_handler_->OnShowAutofillPopup(offsetX, offsetY, height, width, ArkWebStringVectorStructToClass(menu_items));
 }
 
 void ArkWebHandlerImpl::OnHideAutofillPopup()

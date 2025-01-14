@@ -532,7 +532,8 @@ public:
     void OnRenderProcessNotResponding(const ArkWebString& js_stack, int pid, int reason) override;
     void OnRenderProcessResponding() override;
 
-    void OnShowAutofillPopup(const float offsetX, const float offsetY, const ArkWebStringVector& menu_items) override;
+    void OnShowAutofillPopup(const float offsetX, const float offsetY, const float height, const float width,
+        const ArkWebStringVector& menu_items) override;
 
     void OnHideAutofillPopup() override;
 
