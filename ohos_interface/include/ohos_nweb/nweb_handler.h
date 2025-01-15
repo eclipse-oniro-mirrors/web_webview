@@ -1044,6 +1044,11 @@ public:
     virtual void GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight) {}
 
     virtual void OnScrollStart(const float x, const float y) {}
+
+    virtual void OnShowAutofillPopupV2(
+        const float offsetX, const float offsetY, const float height, const float width,
+        const std::vector<std::string>& menu_items)
+    {}
 };
 
 } // namespace OHOS::NWeb

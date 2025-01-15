@@ -1064,4 +1064,13 @@ void ArkWebHandlerWrapper::OnScrollStart(const float x, const float y)
 {
     ark_web_handler_->OnScrollStart(x, y);
 }
+
+void ArkWebHandlerWrapper::OnShowAutofillPopupV2(
+    const float offsetX, const float offsetY, const float height, const float width,
+    const std::vector<std::string>& menu_items)
+{
+    ArkWebStringVector stMenuItems = ArkWebStringVectorClassToStruct(menu_items);
+    ark_web_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, stMenuItems);
+    ArkWebStringVectorStructRelease(stMenuItems);
+}
 } // namespace OHOS::ArkWeb

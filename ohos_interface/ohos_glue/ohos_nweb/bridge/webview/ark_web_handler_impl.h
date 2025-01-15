@@ -586,6 +586,9 @@ public:
     void GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight) override;
 
     void OnScrollStart(const float x, const float y) override;
+
+    void OnShowAutofillPopupV2(const float offsetX, const float offsetY, const float height, const float width,
+        const ArkWebStringVector& menu_items) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
