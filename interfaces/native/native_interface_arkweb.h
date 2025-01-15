@@ -166,6 +166,9 @@ NativeArkWeb_OnDestroyCallback OH_NativeArkWeb_GetDestroyCallback(const char* we
  *         {@link ARKWEB_SUCCESS} load data success.
  *         {@link ARKWEB_INVALID_PARAM} Mandatory parameters are left unspecified or
  *                                      Incorrect parameter types or Parameter verification failed.
+ *         {@link ARKWEB_INIT_ERROR} Initialization error, can't get a valid Web for the webTag.
+ *         {@link ARKWEB_LIBRARY_OPEN_FAILURE} Failed to open the library.
+ *         {@link ARKWEB_LIBRARY_SYMBOL_NOT_FOUND} The required symbol was not found in the library.
  *
  * @syscap SystemCapability.Web.Webview.Core
  * @since 16
