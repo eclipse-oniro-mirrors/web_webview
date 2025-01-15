@@ -942,4 +942,11 @@ void ArkWebHandlerImpl::OnScrollStart(const float x, const float y)
 {
     nweb_handler_->OnScrollStart(x, y);
 }
+
+void ArkWebHandlerImpl::OnShowAutofillPopupV2(
+    const float offsetX, const float offsetY, const float height, const float width,
+    const ArkWebStringVector& menu_items)
+{
+    nweb_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, ArkWebStringVectorStructToClass(menu_items));
+}
 } // namespace OHOS::ArkWeb
