@@ -628,8 +628,7 @@ public:
 
     /*--ark web()--*/
     virtual void OnShowAutofillPopup(
-        const float offsetX, const float offsetY, const float height, const float width,
-        const ArkWebStringVector& menu_items) = 0;
+        const float offsetX, const float offsetY, const ArkWebStringVector& menu_items) = 0;
 
     /*--ark web()--*/
     virtual void OnHideAutofillPopup() = 0;
@@ -847,6 +846,11 @@ public:
 
     /*--ark web()--*/
     virtual void OnScrollStart(const float x, const float y) = 0;
+
+    /*--ark web()--*/
+    virtual void OnShowAutofillPopupV2(
+        const float offsetX, const float offsetY, const float height, const float width,
+        const ArkWebStringVector& menu_items) = 0;
 };
 
 } // namespace OHOS::ArkWeb
