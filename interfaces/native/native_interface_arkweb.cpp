@@ -178,7 +178,7 @@ ArkWeb_ErrorCode OH_NativeArkWeb_LoadData(const char* webTag,
     WVLOG_I("native OH_NativeArkWeb_LoadData, webTag: %{public}s", webTag);
     if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
         WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
-        return ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN;
+        return ArkWeb_ErrorCode::ARKWEB_LIBRARY_OPEN_FAILURE;
     }
 
     ArkWeb_ErrorCode (*loadData)(const char* webTag,
@@ -193,7 +193,7 @@ ArkWeb_ErrorCode OH_NativeArkWeb_LoadData(const char* webTag,
 #undef ARKWEB_NATIVE_LOAD_FN_PTR
     if (!loadData) {
         WVLOG_E("OH_NativeArkWeb_LoadData failed to load function loadData");
-        return ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN;
+        return ArkWeb_ErrorCode::ARKWEB_LIBRARY_SYMBOL_NOT_FOUND;
     }
     return loadData(webTag, data, mimeType, encoding, baseUrl, historyUrl);
 }
