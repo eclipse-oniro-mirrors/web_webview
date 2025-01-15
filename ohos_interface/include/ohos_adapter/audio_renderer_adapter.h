@@ -80,7 +80,7 @@ enum class AudioAdapterConcurrencyMode : int32_t {
     MIX_WITH_OTHERS = 1,
     DUCK_OTHERS = 2,
     PAUSE_OTHERS = 3,
-    SLIENT = 4,
+    SILENT = 4,
 };
 
 class AudioRendererOptionsAdapter {
