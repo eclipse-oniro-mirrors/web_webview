@@ -792,10 +792,9 @@ void ArkWebHandlerImpl::OnRenderProcessResponding()
 }
 
 void ArkWebHandlerImpl::OnShowAutofillPopup(
-    const float offsetX, const float offsetY, const float height, const float width,
-    const ArkWebStringVector& menu_items)
+    const float offsetX, const float offsetY, const ArkWebStringVector& menu_items)
 {
-    nweb_handler_->OnShowAutofillPopup(offsetX, offsetY, height, width, ArkWebStringVectorStructToClass(menu_items));
+    nweb_handler_->OnShowAutofillPopup(offsetX, offsetY, ArkWebStringVectorStructToClass(menu_items));
 }
 
 void ArkWebHandlerImpl::OnHideAutofillPopup()
@@ -942,5 +941,12 @@ void ArkWebHandlerImpl::GetVisibleRectToWeb(int& visibleX, int& visibleY, int& v
 void ArkWebHandlerImpl::OnScrollStart(const float x, const float y)
 {
     nweb_handler_->OnScrollStart(x, y);
+}
+
+void ArkWebHandlerImpl::OnShowAutofillPopupV2(
+    const float offsetX, const float offsetY, const float height, const float width,
+    const ArkWebStringVector& menu_items)
+{
+    nweb_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, ArkWebStringVectorStructToClass(menu_items));
 }
 } // namespace OHOS::ArkWeb
