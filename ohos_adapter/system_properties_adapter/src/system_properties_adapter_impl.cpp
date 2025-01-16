@@ -390,4 +390,14 @@ std::string SystemPropertiesAdapterImpl::GetPRPPreloadMode()
 {
     return OHOS::system::GetParameter("web.prppreload.mode", "none");
 }
+
+std::string SystemPropertiesAdapterImpl::GetScrollVelocityScale()
+{
+    return OHOS::system::GetParameter("persist.scrollable.velocityScale", "");
+}
+
+std::string SystemPropertiesAdapterImpl::GetScrollFriction()
+{
+    return OHOS::system::GetParameter("persist.scrollable.friction", "");
+}
 } // namespace OHOS::NWeb

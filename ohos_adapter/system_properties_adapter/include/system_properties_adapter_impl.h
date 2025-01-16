@@ -89,6 +89,11 @@ public:
     std::string GetDeviceInfoApiVersion() override;
 
     std::string GetPRPPreloadMode() override;
+
+    std::string GetScrollVelocityScale() override;
+
+    std::string GetScrollFriction() override;
+
 private:
     SystemPropertiesAdapterImpl();
 

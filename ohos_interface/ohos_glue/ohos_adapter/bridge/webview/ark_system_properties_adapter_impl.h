@@ -83,6 +83,11 @@ public:
     ArkWebString GetDeviceInfoApiVersion() override;
 
     ArkWebString GetPRPPreloadMode() override;
+
+    ArkWebString GetScrollVelocityScale() override;
+
+    ArkWebString GetScrollFriction() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
