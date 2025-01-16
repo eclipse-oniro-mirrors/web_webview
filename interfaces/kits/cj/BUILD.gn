@@ -24,7 +24,6 @@ config("cj_web_public_config") {
 
 ohos_shared_library("cj_webview_ffi") {
   branch_protector_ret = "pac_ret"
-  branch_protector_frt = "bti"
 
   public_configs = [ ":cj_web_public_config" ]
 
