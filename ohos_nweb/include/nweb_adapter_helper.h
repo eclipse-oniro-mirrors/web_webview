@@ -19,7 +19,6 @@
 #include "wm/window.h"
 #include "nweb_helper.h"
 #include "nweb_init_params.h"
-#include "nweb_config_helper.h"
 
 namespace OHOS {
 class Surface;
