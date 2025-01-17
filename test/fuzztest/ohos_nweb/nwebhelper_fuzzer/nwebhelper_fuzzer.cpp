@@ -20,6 +20,7 @@
 
 #define private public
 #include "nweb.h"
+#include "nweb_config_helper.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_c_api.h"
 #include "nweb_create_window.h"

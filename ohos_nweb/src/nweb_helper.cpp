@@ -25,6 +25,7 @@
 #include "ark_web_nweb_webview_bridge_helper.h"
 #include "config_policy_utils.h"
 #include "locale_config.h"
+#include "nweb_config_helper.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_api_level.h"
 #include "nweb_c_api.h"
