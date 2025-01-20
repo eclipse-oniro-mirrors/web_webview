@@ -35,7 +35,7 @@ int ArkOhosDrawingTextFontAdapterImpl::GetFontDescriptorByFullName(void* drawing
 }
 
 int ArkOhosDrawingTextFontAdapterImpl::GetSystemFontFullNameByIndex(void* drawingArray,
-                                                                    int32_t indexOfFullName, const void* drawingString)
+                                                                    int32_t indexOfFullName, const void** drawingString)
 {
     return real_.GetSystemFontFullNameByIndex(drawingArray, indexOfFullName, drawingString);
 }
@@ -64,8 +64,8 @@ int ArkOhosDrawingTextTypographyAdapterImpl::GetDrawingArraySize(void* drawingAr
     return real_.GetDrawingArraySize(drawingArray, sizeOfArray);
 }
 
-void ArkOhosDrawingTextTypographyAdapterImpl::DestroySystemConfigInfo(void* fontConfigInfo)
+void ArkOhosDrawingTextTypographyAdapterImpl::DestroySystemFontConfigInfo(void* fontConfigInfo)
 {
-    real_.DestroySystemConfigInfo(fontConfigInfo);
+    real_.DestroySystemFontConfigInfo(fontConfigInfo);
 }
 } // namespace OHOS::ArkWeb

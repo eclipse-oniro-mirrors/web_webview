@@ -91,9 +91,9 @@ typedef enum {
     /** System generic font type */
     GENERIC = 1 << 1,
     /**Stylist font type */
-    STYLIST = 1 << 2,
+    STYLISH = 1 << 2,
     /**Installed font types */
-    INSTALLED = 1 << 3;
+    INSTALLED = 1 << 3,
 } ArkWeb_Drawing_SystemFontType;
 
 typedef struct {

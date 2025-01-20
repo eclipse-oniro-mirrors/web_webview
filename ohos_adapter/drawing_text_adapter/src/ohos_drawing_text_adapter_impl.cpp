@@ -35,7 +35,7 @@ OhosDrawingTextFontAdapterImpl::~OhosDrawingTextFontAdapterImpl()
 
 int OhosDrawingTextFontAdapterImpl::GetSystemFontFullNamesByType(int32_t systemFontType, void** drawingArray)
 {
-    *drawingArray = OHOS_Drawing_GetSystemFontFullNamesByType(static_cast<OH_Drawing_SystemFontType>(systemFontType));
+    *drawingArray = OH_Drawing_GetSystemFontFullNamesByType(static_cast<OH_Drawing_SystemFontType>(systemFontType));
     if (*drawingArray == nullptr) {
         WVLOG_E("drawingArray GetSystemFontFullNamesByType, drawingArray is null.");
         return -1;
@@ -119,7 +119,7 @@ int OhosDrawingTextTypographyAdapterImpl::GetDrawingArraySize(void* drawingArray
     return 0;
 }
 
-void OhosDrawingTextTypographyAdapterImpl::DestroySystemConfigInfo(void* fontConfigInfo)
+void OhosDrawingTextTypographyAdapterImpl::DestroySystemFontConfigInfo(void* fontConfigInfo)
 {
     OH_Drawing_DestroySystemFontConfigInfo(static_cast<OH_Drawing_FontConfigInfo*>(fontConfigInfo));
     WVLOG_D("DestroySystemFontConfigInfo");
