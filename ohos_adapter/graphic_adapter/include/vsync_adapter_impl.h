@@ -22,7 +22,7 @@
 #include "event_handler.h"
 #include "graphic_adapter.h"
 #include "vsync_receiver.h"
-#include "foundation/graphic/graphic_2d/rosen/modules/render_service_client/core/ui/rs_frame_rate_linker.h"
+#include "render_service_client/core/feature/hyper_graphic_manager/rs_frame_rate_linker.h"
 
 namespace OHOS::NWeb {
 using SetApsSceneFuncType = bool(*)(
