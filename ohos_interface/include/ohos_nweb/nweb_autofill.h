@@ -71,7 +71,7 @@ const std::string NWEB_AUTOFILL_LICENSE_NUMBER = "license-number";
 const std::string NWEB_AUTOFILL_LICENSE_FILE_NUMBER = "license-file-number";
 const std::string NWEB_AUTOFILL_LICENSE_PLATE = "license-plate";
 const std::string NWEB_AUTOFILL_ENGINE_NUMBER = "engine-number";
-const std::string NWEB_AUTOFILL_LICENSE_CHASSIS_NUMBER = "license-chassis-num";
+const std::string NWEB_AUTOFILL_LICENSE_CHASSIS_NUMBER = "license-chassis-number";
 
 enum NWebAutofillEvent {
     UNKNOWN = 0,
