@@ -1026,6 +1026,10 @@ void NWebHelper::TrimMemoryByPressureLevel(int32_t memoryLevel)
 
 void NWebHelper::RemoveAllCache(bool includeDiskFiles)
 {
+    if (!LoadWebEngine(true, true)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
     if (nwebEngine_ == nullptr) {
         WVLOG_E("nweb engine is nullptr");
         return;
