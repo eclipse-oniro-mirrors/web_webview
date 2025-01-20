@@ -11,11 +11,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-##################hydra-fuzz############################
+#####################hydra-fuzz#####################
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
-###################fuzztest#############################
+
+##########################fuzztest###########################
 ohos_fuzztest("DrawingTextAdapterFuzzTest") {
     module_out_path = webview_fuzz_test_path
     fuzz_config_file = "$webview_path/test/fuzztest/drawingtextadapter_fuzzer"
@@ -43,7 +44,7 @@ ohos_fuzztest("DrawingTextAdapterFuzzTest") {
     ]
 }
 
-#########################################
+#################################################################
 group("fuzztest") {
     testonly = true
     deps = []
@@ -52,4 +53,4 @@ group("fuzztest") {
         ":DrawingTextAdapterFuzzTest",
     ]
 }
-########################################
+#################################################################
