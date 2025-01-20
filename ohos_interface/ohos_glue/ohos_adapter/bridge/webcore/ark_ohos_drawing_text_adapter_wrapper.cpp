@@ -55,7 +55,7 @@ ArkOhosDrawingTextTypographyAdapterWrapper::ArkOhosDrawingTextTypographyAdapterW
 
 
 int ArkOhosDrawingTextTypographyAdapterWrapper::GetSystemFontConfigInfo(void* fontConfigInfoErrorCode,
-                                                              void** fontConfigInfo)
+                                                                        void** fontConfigInfo)
 {
     return ctocpp_->GetSystemFontConfigInfo(fontConfigInfoErrorCode, fontConfigInfo);
 }
