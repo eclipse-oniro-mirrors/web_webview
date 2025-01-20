@@ -121,7 +121,7 @@ public:
 
     OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() override;
 
-    OhosDrawingTextTypographyAdapter& OhosDrawingTextTypographyAdapter() override;
+    OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() override;
 
     std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
 
