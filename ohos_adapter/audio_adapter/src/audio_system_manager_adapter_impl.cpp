@@ -153,6 +153,9 @@ bool AudioSystemManagerAdapterImpl::GetDeviceIdByDescriptor(
     if (audioDeviceDescriptor == nullptr) {
         return false;
     }
+    WVLOG_I("GetDeviceIdByDescriptor: deviceId: %{public}d", deviceId);
+    WVLOG_I("GetDeviceIdByDescriptor: deviceType: %{public}d", audioDeviceDescriptor->deviceType_);
+    WVLOG_I("GetDeviceIdByDescriptor: macAddress_: %{public}s", audioDeviceDescriptor->macAddress_.c_str());
     if (audioOutputDeviceInfo_.empty()) {
         deviceId = 1;
         AudioDeviceDescriptor newDevice(*audioDeviceDescriptor);
@@ -365,7 +368,8 @@ int32_t AudioSystemManagerAdapterImpl::SelectDefaultAudioDevice(bool isCallDevic
 
 int32_t AudioSystemManagerAdapterImpl::SelectAudioDeviceById(int32_t deviceId, bool isInput)
 {
-    WVLOG_I("AudioSystemManagerAdapterImpl::SelectAudioDevice isInput: %{public}s", isInput ? "true" : "false");
+    WVLOG_I("AudioSystemManagerAdapterImpl::SelectAudioDevice deviceId: %{public}d, isInput: %{public}s", deviceId,
+        isInput ? "true" : "false");
     if (deviceId == ADAPTER_AUDIO_UNDEFINED_DEVICE_ID) {
         WVLOG_E("Cannot select undefined audio device.");
         return AUDIO_ERROR;
