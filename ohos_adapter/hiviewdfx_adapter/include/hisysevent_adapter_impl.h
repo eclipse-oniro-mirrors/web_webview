@@ -15,7 +15,7 @@
 
 #ifndef HISYSEVENT_ADAPTER_IMPL_H
 #define HISYSEVENT_ADAPTER_IMPL_H
-
+#include <vector>
 #include "hisysevent_adapter.h"
 
 namespace OHOS::NWeb {

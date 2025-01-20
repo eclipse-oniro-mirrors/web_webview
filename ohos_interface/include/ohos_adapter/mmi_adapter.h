@@ -17,6 +17,7 @@
 #define MMI_ADAPTER_H
 
 #include <string>
+#include <vector>
 
 namespace OHOS::NWeb {
 

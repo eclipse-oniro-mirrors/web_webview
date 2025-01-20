@@ -21,6 +21,7 @@
 #include <securec.h>
 #include <sys/time.h>
 #include <unistd.h>
+#include <vector>
 
 #include "camera_manager_adapter.h"
 
