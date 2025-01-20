@@ -61,17 +61,17 @@ const std::string NWEB_AUTOFILL_USERNAME = "username";
 const std::string NWEB_AUTOFILL_PASSWORD = "password";
 const std::string NWEB_AUTOFILL_NEW_PASSWORD = "new-password";
 const std::string NWEB_AUTOFILL_PASSPORT_NUMBER = "passport-number";
-const std::string NWEB_AUTOFILL_PASSPORT_VALIDITY = "passport-validity";
-const std::string NWEB_AUTOFILL_PASSPORT_ISSUE_AT = "passport-issue-at";
+const std::string NWEB_AUTOFILL_VALIDITY = "validity";
+const std::string NWEB_AUTOFILL_ISSUE_AT = "issue-at";
 const std::string NWEB_AUTOFILL_ORGANIZATION = "organization";
 const std::string NWEB_AUTOFILL_TAX_ID = "tax-id";
 const std::string NWEB_AUTOFILL_ADDRESS_CITY_AND_STATE = "address-city-and-state";
 const std::string NWEB_AUTOFILL_FLIGHT_NUMBER = "flight-number";
-const std::string NWEB_AUTOFILL_LICENCE_NUMBER = "licence-number";
-const std::string NWEB_AUTOFILL_LICENCE_FILE_NUMBER = "licence-file-number";
-const std::string NWEB_AUTOFILL_LICENCE_PLATE = "licence-plate";
+const std::string NWEB_AUTOFILL_LICENSE_NUMBER = "license-number";
+const std::string NWEB_AUTOFILL_LICENSE_FILE_NUMBER = "license-file-number";
+const std::string NWEB_AUTOFILL_LICENSE_PLATE = "license-plate";
 const std::string NWEB_AUTOFILL_ENGINE_NUMBER = "engine-number";
-const std::string NWEB_AUTOFILL_LICENCE_CHASSIS_NUM = "licence-chassis-num";
+const std::string NWEB_AUTOFILL_LICENSE_CHASSIS_NUMBER = "license-chassis-num";
 
 enum NWebAutofillEvent {
     UNKNOWN = 0,
