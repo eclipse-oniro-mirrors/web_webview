@@ -42,6 +42,7 @@ ohos_fuzztest("VsyncAdapterFuzzTest") {
     "c_utils:utils",
     "graphic_2d:libcomposer",
     "graphic_2d:librender_service_base",
+    "graphic_2d:librender_service_client",
     "graphic_surface:surface",
     "hilog:libhilog",
     "relational_store:native_rdb",
