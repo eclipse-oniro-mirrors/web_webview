@@ -17,6 +17,7 @@
 #define NET_PROXY_ADAPTER_H
 
 #include <memory>
+#include <vector>
 
 namespace OHOS::NWeb {
 
