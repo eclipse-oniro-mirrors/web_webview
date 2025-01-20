@@ -27,16 +27,19 @@ ohos_shared_library("nweb_ohos_adapter") {
     libs = [
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/arm-linux-ohos/libbundle_ndk.z.so",
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/arm-linux-ohos/libasset_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/arm-linux-ohos/libnative_drawing.so",
     ]
   } else if (target_cpu == "arm64") {
     libs = [
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/aarch64-linux-ohos/libbundle_ndk.z.so",
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/aarch64-linux-ohos/libasset_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_drawing.so",
     ]
   } else if (target_cpu == "x86_64") {
     libs = [
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/x86_64-linux-ohos/libbundle_ndk.z.so",
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/x86_64-linux-ohos/libasset_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_drawing.so",
     ]
   }
 
@@ -67,6 +70,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "display_manager_adapter/src/display_manager_adapter_impl.cpp",
     "distributeddatamgr_adapter/webdatabase/src/ohos_web_data_base_adapter_impl.cpp",
     "distributeddatamgr_adapter/webdatabase/src/ohos_web_permission_data_base_adapter_impl.cpp",
+    "drawing_text_adapter/src/ohos_drawing_text_adapter_impl.cpp",
     "enterprise_device_management_adapter/src/enterprise_device_management_adapter_impl.cpp",
     "event_handler_adapter/src/event_handler_adapter_impl.cpp",
     "flowbuffer_adapter/src/flowbuffer_adapter_impl.cpp",
@@ -114,6 +118,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "display_manager_adapter/include",
     "migration_manager_adapter/include",
     "distributeddatamgr_adapter/webdatabase/include",
+    "drawing_text_adapter/include",
     "enterprise_device_management_adapter/include",
     "event_handler_adapter/include",
     "flowbuffer_adapter/include",
@@ -144,6 +149,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     include_dirs += [
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/include/bundle",
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/include/asset",
+      "//prebuilts/ohos-sdk/linux/14/native/sysroot/usr/include/native_drawing",
     ]
   }
 

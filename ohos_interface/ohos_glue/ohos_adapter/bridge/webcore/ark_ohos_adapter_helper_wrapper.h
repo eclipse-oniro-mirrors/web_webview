@@ -120,6 +120,10 @@ public:
 
     std::unique_ptr<NWeb::DrmAdapter> CreateDrmAdapter() override;
 
+    NWeb::OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() override;
+
+    NWeb::OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() override;
+
 private:
     ArkWebRefPtr<ArkOhosAdapterHelper> ctocpp_;
 };

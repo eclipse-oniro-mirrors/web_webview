@@ -50,6 +50,7 @@
 #include "net_connect_adapter_impl.h"
 #endif
 #include "net_proxy_adapter_impl.h"
+#include "ohos_drawing_text_adapter_impl.h"
 #include "ohos_image_decoder_adapter_impl.h"
 #include "ohos_init_web_adapter_impl.h"
 #include "ohos_native_buffer_adapter_impl.h"
@@ -373,6 +374,16 @@ std::unique_ptr<DrmAdapter> OhosAdapterHelperImpl::CreateDrmAdapter()
 #else
     return nullptr;
 #endif
+}
+
+OhosDrawingTextFontAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
+{
+    return OhosDrawingTextFontAdapterImpl::GetInstance();
+}
+
+OhosDrawingTextTypographyAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
+{
+    return OhosDrawingTextTypographyAdapterImpl::GetInstance();
 }
 
 } // namespace OHOS::NWeb
