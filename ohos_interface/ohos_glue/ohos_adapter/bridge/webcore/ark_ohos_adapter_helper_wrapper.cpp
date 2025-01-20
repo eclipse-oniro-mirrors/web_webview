@@ -49,6 +49,7 @@
 #include "ohos_adapter/bridge/ark_native_image_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_net_connect_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_net_proxy_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_ohos_drawing_text_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_file_mapper_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_image_decoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_init_web_adapter_wrapper.h"
@@ -508,6 +509,18 @@ std::unique_ptr<NWeb::DrmAdapter> ArkOhosAdapterHelperWrapper::CreateDrmAdapter(
     }
 
     return std::make_unique<ArkDrmAdapterWrapper>(adapter);
+}
+
+NWeb::OhosDrawingTextFontAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextFontAdapter()
+{
+    static ArkOhosDrawingTextFontAdapterWrapper instance(ctocpp_->GetOhosDrawingTextFontAdapter());
+    return instance;
+}
+
+NWeb::OhosDrawingTextTypographyAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextTypographyAdapter()
+{
+    static ArkOhosDrawingTextTypographyAdapterWrapper instance(ctocpp_->GetOhosDrawingTextTypographyAdapter());
+    return instance;
 }
 
 } // namespace OHOS::ArkWeb

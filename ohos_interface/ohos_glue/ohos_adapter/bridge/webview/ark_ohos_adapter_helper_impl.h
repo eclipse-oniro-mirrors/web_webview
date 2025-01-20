@@ -120,6 +120,10 @@ public:
 
     ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() override;
 
+    ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> GetOhosDrawingTextFontAdapter() override;
+
+    ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> GetOhosDrawingTextTypographyAdapter() override;
+
 private:
     NWeb::OhosAdapterHelper& real_;
 

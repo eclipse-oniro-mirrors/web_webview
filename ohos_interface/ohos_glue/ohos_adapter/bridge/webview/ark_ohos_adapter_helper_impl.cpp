@@ -52,6 +52,7 @@
 #include "ohos_adapter/bridge/ark_native_image_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_net_connect_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_net_proxy_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_ohos_drawing_text_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_file_mapper_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_image_decoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_init_web_adapter_impl.h"
@@ -417,6 +418,21 @@ ArkWebRefPtr<ArkDrmAdapter> ArkOhosAdapterHelperImpl::CreateDrmAdapter()
     std::unique_ptr<NWeb::DrmAdapter> adapter = real_.CreateDrmAdapter();
     std::shared_ptr<NWeb::DrmAdapter> shared = std::move(adapter);
     return new ArkDrmAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
+{
+    static NWeb::OhosDrawingTextFontAdapter& instance = real_.GetOhosDrawingTextFontAdapter();
+    static ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> impl = new ArkOhosDrawingTextFontAdapterImpl(instance);
+    return impl;
+}
+
+ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
+{
+    static NWeb::OhosDrawingTextTypographyAdapter& instance = real_.GetOhosDrawingTextTypographyAdapter();
+    static ArkWebRefPtr<OhosDrawingTextTypographyAdapter> impl =
+        new ArkOhosDrawingTextTypographyAdapterImpl(instance);
+    return impl;
 }
 
 } // namespace OHOS::ArkWeb
