@@ -30,7 +30,7 @@ public:
 
    int GetFontDescriptorByFullName(void* drawingString, int32_t systemFontType, void** drawingFontDescriptor) override;
 
-   int GetSystemFontFullNameByIndex(void* drawingArray, int32_t indexOfFullName, const void* drawingString) override;
+   int GetSystemFontFullNameByIndex(void* drawingArray, int32_t indexOfFullName, const void** drawingString) override;
 
    void DestroySystemFontFullNames(void* drawingArray) override;
 
@@ -50,7 +50,7 @@ public:
 
     int GetDrawingArraySize(void* drawingArray, int32_t& sizeOfArray) override;
 
-    void DestroySystemConfigInfo(void* fontConfigInfo) override;
+    void DestroySystemFontConfigInfo(void* fontConfigInfo) override;
 
 private:
     OHOS::NWeb::OhosDrawingTextTypographyAdapter& real_;

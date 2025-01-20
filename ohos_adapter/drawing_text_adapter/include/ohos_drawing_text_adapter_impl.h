@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
- #ifndef OHOS_DRAWING_TEXT_ADAPTER_IMPL_H
- #define OHOS_DRAWING_TEXT_ADAPTER_IMPL_H
+#ifndef OHOS_DRAWING_TEXT_ADAPTER_IMPL_H
+#define OHOS_DRAWING_TEXT_ADAPTER_IMPL_H
 
- #include "ohos_drawing_text_adapter.h"
+#include "ohos_drawing_text_adapter.h"
 
 namespace OHOS::NWeb {
 class OhosDrawingTextFontAdapterImpl : public OhosDrawingTextFontAdapter {
@@ -47,7 +47,7 @@ public:
      * @param drawingString Indicates the full name object <b>OH_Drawing_String</b>
      * @param systemFontType Indicates enumerates of system font type object <b>OH_Drawing_SystemFontType</b>
      * @param drawingFontDescriptor the pointer to a font descriptor object <b>OH_Drawing_FontDescriptor</b>
-     * @param ErrCode, -1 mean fail and the other mean sucess
+     * @return ErrCode, -1 mean fail and the other mean sucess
      */
     int GetFontDescriptorByFullName(void* drawingString, int32_t systemFontType, void** drawingFontDescriptor) override;
 
@@ -92,13 +92,13 @@ public:
     /**
      * @brief get OH_Drawing_FontConfigInfo by OH_Drawing_GetSystemFontConfigInfo.
      * 
-     * @param fontConfigInfoErrCode Indicates error code returned, based on the error code to
+     * @param fontConfigInfoErrorCode Indicates error code returned, based on the error code to
      * release the memory of system font configuration information.
      * @param fontConfigInfo The pointer to system font configuration information.
      * Indicates the pointer to an <b>OH_Drawing_FontConfigInfo<b> object.
      * @return ErrCode, -1 mean fail and the other mean success
      */
-    int GetSystemFontConfigInfo(void* fontConfigInfoErrCode, void** fontConfigInfo) override;
+    int GetSystemFontConfigInfo(void* fontConfigInfoErrorCode, void** fontConfigInfo) override;
 
     /**
      * @brief get size of Array by OH_Drawing_GetDrawingArraySize
@@ -114,7 +114,7 @@ public:
      * 
      * @param fontConfigInfo Indicates the pointer to an <b>OH_Drawing_FontConfigInfo</b> object.
      */
-    void DestroySystemConfigInfo(void* fontConfigInfo) override;
+    void DestroySystemFontConfigInfo(void* fontConfigInfo) override;
 };
 } // namespace OHOS::NWeb
 

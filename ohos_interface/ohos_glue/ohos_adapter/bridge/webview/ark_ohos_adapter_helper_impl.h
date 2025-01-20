@@ -116,13 +116,13 @@ public:
 
     ArkWebRefPtr<ArkMigrationManagerAdapter> CreateMigrationMgrAdapter() override;
 
-    ArkWebRefPtr<ArkAudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
-
-    ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() override;
-
     ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> GetOhosDrawingTextFontAdapter() override;
 
     ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> GetOhosDrawingTextTypographyAdapter() override;
+
+    ArkWebRefPtr<ArkAudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
+
+    ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() override;
 
 private:
     NWeb::OhosAdapterHelper& real_;

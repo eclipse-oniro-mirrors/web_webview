@@ -119,13 +119,13 @@ public:
 
     std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() override;
 
+    OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() override;
+
+    OhosDrawingTextTypographyAdapter& OhosDrawingTextTypographyAdapter() override;
+
     std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
 
     std::unique_ptr<DrmAdapter> CreateDrmAdapter() override;
-
-    OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() override;
-
-    OhosDrawingTextTypographyAdapter& GetOhosDrawingTextFontAdapter() override;
 };
 } // namespace OHOS::NWeb
 
