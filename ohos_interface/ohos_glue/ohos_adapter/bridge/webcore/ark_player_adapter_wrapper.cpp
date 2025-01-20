@@ -101,7 +101,10 @@ int32_t ArkPlayerAdapterWrapper::SetMediaSourceHeader(const std::string& url,
 {
     ArkWebString surl = ArkWebStringClassToStruct(url);
     ArkWebStringMap sheader = ArkWebStringMapClassToStruct(header);
-    return ctocpp_->SetMediaSourceHeader(surl, sheader);
+    int32_t result = ctocpp_->SetMediaSourceHeader(surl, sheader);
+    ArkWebStringStructRelease(surl);
+    ArkWebStringMapStructRelease(sheader);
+    return result;
 }
 
 } // namespace OHOS::ArkWeb
