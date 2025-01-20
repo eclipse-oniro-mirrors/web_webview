@@ -62,6 +62,7 @@
 #include "sensor_adapter.h"
 
 namespace OHOS::NWeb {
+
 class OhosAdapterHelper {
 public:
     static OhosAdapterHelper& GetInstance();
@@ -158,13 +159,13 @@ public:
 
     virtual std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
 
-    virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
-
-    virtual std::unique_ptr<DrmAdapter> CreateDrmAdapter() = 0;
-
     virtual OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() = 0;
 
     virtual OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() = 0;
+
+    virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
+
+    virtual std::unique_ptr<DrmAdapter> CreateDrmAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 

@@ -406,20 +406,6 @@ ArkWebRefPtr<ArkMigrationManagerAdapter> ArkOhosAdapterHelperImpl::CreateMigrati
     return new ArkMigrationManagerAdapterImpl(shared);
 }
 
-ArkWebRefPtr<ArkAudioCodecDecoderAdapter> ArkOhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
-{
-    std::unique_ptr<NWeb::AudioCodecDecoderAdapter> adapter = real_.CreateAudioCodecDecoderAdapter();
-    std::shared_ptr<NWeb::AudioCodecDecoderAdapter> shared = std::move(adapter);
-    return new ArkAudioCodecDecoderAdapterImpl(shared);
-}
-
-ArkWebRefPtr<ArkDrmAdapter> ArkOhosAdapterHelperImpl::CreateDrmAdapter()
-{
-    std::unique_ptr<NWeb::DrmAdapter> adapter = real_.CreateDrmAdapter();
-    std::shared_ptr<NWeb::DrmAdapter> shared = std::move(adapter);
-    return new ArkDrmAdapterImpl(shared);
-}
-
 ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
 {
     static NWeb::OhosDrawingTextFontAdapter& instance = real_.GetOhosDrawingTextFontAdapter();
@@ -433,6 +419,20 @@ ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> ArkOhosAdapterHelperImpl::GetO
     static ArkWebRefPtr<OhosDrawingTextTypographyAdapter> impl =
         new ArkOhosDrawingTextTypographyAdapterImpl(instance);
     return impl;
+}
+
+ArkWebRefPtr<ArkAudioCodecDecoderAdapter> ArkOhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
+{
+    std::unique_ptr<NWeb::AudioCodecDecoderAdapter> adapter = real_.CreateAudioCodecDecoderAdapter();
+    std::shared_ptr<NWeb::AudioCodecDecoderAdapter> shared = std::move(adapter);
+    return new ArkAudioCodecDecoderAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkDrmAdapter> ArkOhosAdapterHelperImpl::CreateDrmAdapter()
+{
+    std::unique_ptr<NWeb::DrmAdapter> adapter = real_.CreateDrmAdapter();
+    std::shared_ptr<NWeb::DrmAdapter> shared = std::move(adapter);
+    return new ArkDrmAdapterImpl(shared);
 }
 
 } // namespace OHOS::ArkWeb

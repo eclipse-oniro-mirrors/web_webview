@@ -15,7 +15,7 @@
 
 #ifndef ARK_OHOS_DRAWING_TEXT_ADAPTER_WRAPPER_H
 #define ARK_OHOS_DRAWING_TEXT_ADAPTER_WRAPPER_H
-#param once
+#pragma once
 
 #include "ohos_adapter/include/ark_ohos_drawing_text_adapter.h"
 #include "ohos_drawing_text_adapter.h"
@@ -41,9 +41,9 @@ private:
     ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> ctocpp_;
 };
 
-class OhosDrawingTextTypographyAdapter : public OHOS::NWeb::OhosDrawingTextTypographyAdapter {
+class ArkOhosDrawingTextTypographyAdapterWrapper : public OHOS::NWeb::OhosDrawingTextTypographyAdapter {
 public:
-    ArkOhosDrawingTextTypographyAdapter(ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter>);
+    ArkOhosDrawingTextTypographyAdapterWrapper(ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter>);
 
     int GetSystemFontConfigInfo(void* fontConfigInfoErrorCode, void** fontConfigInfo) override;
 

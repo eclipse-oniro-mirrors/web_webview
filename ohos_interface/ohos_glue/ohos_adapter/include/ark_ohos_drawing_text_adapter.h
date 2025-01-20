@@ -15,7 +15,7 @@
 
 #ifndef ARK_OHOS_DRAWING_TEXT_ADAPTER_H
 #define ARK_OHOS_DRAWING_TEXT_ADAPTER_H
-#param once
+#pragma once
 
 #include "base/include/ark_web_base_ref_counted.h"
 #include "base/include/ark_web_types.h"
@@ -38,7 +38,7 @@ public:
     
     /*--ark web()--*/
     virtual int GetSystemFontFullNameByIndex(void* drawingArray,
-                                             int32_t indexOfFullName, const void* drawingString) = 0;
+                                             int32_t indexOfFullName, const void** drawingString) = 0;
     
     /*--ark web()--*/
     virtual void DestroySystemFontFullNames(void* drawingArray) = 0;
@@ -61,7 +61,7 @@ public:
     virtual int GetDrawingArraySize(void* drawingArray, int32_t& sizeOfArray) = 0;
 
     /*--ark web()--*/
-    virtual void DestroySystemConfigInfo(void* fontConfigInfo) = 0;
+    virtual void DestroySystemFontConfigInfo(void* fontConfigInfo) = 0;
 };
 
 } // namespace OHOS::ArkWeb

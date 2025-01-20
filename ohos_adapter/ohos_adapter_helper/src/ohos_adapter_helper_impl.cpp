@@ -358,6 +358,16 @@ std::unique_ptr<MigrationManagerAdapter> OhosAdapterHelperImpl::CreateMigrationM
     return std::make_unique<MigrationManagerAdapterImpl>();
 }
 
+OhosDrawingTextFontAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
+{
+    return OhosDrawingTextFontAdapterImpl::GetInstance();
+}
+
+OhosDrawingTextTypographyAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
+{
+    return OhosDrawingTextTypographyAdapterImpl::GetInstance();
+}
+
 std::unique_ptr<AudioCodecDecoderAdapter> OhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
 {
 #if defined(NWEB_AUDIO_DRM_ENABLE)
@@ -375,15 +385,4 @@ std::unique_ptr<DrmAdapter> OhosAdapterHelperImpl::CreateDrmAdapter()
     return nullptr;
 #endif
 }
-
-OhosDrawingTextFontAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
-{
-    return OhosDrawingTextFontAdapterImpl::GetInstance();
-}
-
-OhosDrawingTextTypographyAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
-{
-    return OhosDrawingTextTypographyAdapterImpl::GetInstance();
-}
-
 } // namespace OHOS::NWeb

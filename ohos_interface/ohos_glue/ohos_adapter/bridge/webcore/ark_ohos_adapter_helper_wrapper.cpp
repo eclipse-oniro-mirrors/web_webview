@@ -489,6 +489,18 @@ std::unique_ptr<NWeb::MigrationManagerAdapter> ArkOhosAdapterHelperWrapper::Crea
     return std::make_unique<ArkMigrationManagerAdapterWrapper>(adapter);
 }
 
+NWeb::OhosDrawingTextFontAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextFontAdapter()
+{
+    static ArkOhosDrawingTextFontAdapterWrapper instance(ctocpp_->GetOhosDrawingTextFontAdapter());
+    return instance;
+}
+
+NWeb::OhosDrawingTextTypographyAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextTypographyAdapter()
+{
+    static ArkOhosDrawingTextTypographyAdapterWrapper instance(ctocpp_->GetOhosDrawingTextTypographyAdapter());
+    return instance;
+}
+
 std::unique_ptr<NWeb::AudioCodecDecoderAdapter> ArkOhosAdapterHelperWrapper::CreateAudioCodecDecoderAdapter()
 {
     ArkWebRefPtr<ArkAudioCodecDecoderAdapter> adapter = ctocpp_->CreateAudioCodecDecoderAdapter();
@@ -509,18 +521,6 @@ std::unique_ptr<NWeb::DrmAdapter> ArkOhosAdapterHelperWrapper::CreateDrmAdapter(
     }
 
     return std::make_unique<ArkDrmAdapterWrapper>(adapter);
-}
-
-NWeb::OhosDrawingTextFontAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextFontAdapter()
-{
-    static ArkOhosDrawingTextFontAdapterWrapper instance(ctocpp_->GetOhosDrawingTextFontAdapter());
-    return instance;
-}
-
-NWeb::OhosDrawingTextTypographyAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextTypographyAdapter()
-{
-    static ArkOhosDrawingTextTypographyAdapterWrapper instance(ctocpp_->GetOhosDrawingTextTypographyAdapter());
-    return instance;
 }
 
 } // namespace OHOS::ArkWeb

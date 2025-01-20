@@ -64,7 +64,7 @@ bool DrawingTextTypographyAdapterFuzzTest(const uint8_t* data, size_t size)
 } // namespace OHOS
 
 /* Fuzzer entry point */
-extern "C" int LLVMFuzzerTextOneInput(const uint8_t* data, size_t size)
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data*/
     OHOS::DrawingTextFontAdapterFuzzTest(data, size);
