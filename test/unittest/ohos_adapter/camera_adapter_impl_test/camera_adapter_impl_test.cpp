@@ -319,6 +319,14 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetAdapterFocusMode_005, T
     std::string errnoTypeString;
     CameraManagerAdapterImpl::GetInstance().ErrorTypeToString(
         static_cast<CameraErrorType>(-1), errnoTypeString);
+    std::string displayName = adapter.GetCameraDisplayName("Camera01", CAMERA_POSITION_FRONT);
+    EXPECT_EQ(displayName, "Camera01, facing front");
+    displayName = adapter.GetCameraDisplayName("Camera02", CAMERA_POSITION_BACK);
+    EXPECT_EQ(displayName, "Camera02, facing back");
+    displayName = adapter.GetCameraDisplayName("Camera03", CAMERA_POSITION_FOLD_INNER);
+    EXPECT_EQ(displayName, "Camera03, facing fold inner");
+    displayName = adapter.GetCameraDisplayName("Camera04", static_cast<CameraPosition>(999));
+    EXPECT_EQ(displayName, "Camera04");
 }
 
 /**
