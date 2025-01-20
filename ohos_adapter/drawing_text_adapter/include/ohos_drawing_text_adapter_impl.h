@@ -92,13 +92,13 @@ public:
     /**
      * @brief get OH_Drawing_FontConfigInfo by OH_Drawing_GetSystemFontConfigInfo.
      * 
-     * @param fontConfigInfoErrCode Indicates error code returned, based on the error code to
+     * @param fontConfigInfoErrorCode Indicates error code returned, based on the error code to
      * release the memory of system font configuration information.
      * @param fontConfigInfo The pointer to system font configuration information.
      * Indicates the pointer to an <b>OH_Drawing_FontConfigInfo<b> object.
      * @return ErrCode, -1 mean fail and the other mean success
      */
-    int GetSystemFontConfigInfo(void* fontConfigInfoErrCode, void** fontConfigInfo) override;
+    int GetSystemFontConfigInfo(void* fontConfigInfoErrorCode, void** fontConfigInfo) override;
 
     /**
      * @brief get size of Array by OH_Drawing_GetDrawingArraySize
@@ -114,7 +114,7 @@ public:
      * 
      * @param fontConfigInfo Indicates the pointer to an <b>OH_Drawing_FontConfigInfo</b> object.
      */
-    void DestroySystemConfigInfo(void* fontConfigInfo) override;
+    void DestroySystemFontConfigInfo(void* fontConfigInfo) override;
 };
 } // namespace OHOS::NWeb
 
