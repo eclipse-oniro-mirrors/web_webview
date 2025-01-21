@@ -1,4 +1,4 @@
-# Copyright (c) 2025 Huawei Device Co., Ltd.
+# Copyright (c) 2021 Huawei Device Co., Ltd.
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -15,41 +15,44 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
-##########################fuzztest###########################
-ohos_fuzztest("DrawingTextAdapterFuzzTest") {
-    module_out_path = webview_fuzz_test_path
-    fuzz_config_file = "$webview_path/test/fuzztest/drawingtextadapter_fuzzer"
 
-    include_dirs = [
-        "$webview_path/ohos_nweb/include",
-        "$webview_path/test/fuzztest",
-        "$webview_path/ohos_adapter/drawing_text_adapter/include",
-    ]
-    cflags = [
-        "-g",
-        "-O0",
-        "-Wno-unused-variable",
-        "-fno-omit-frame-pointer",
-    ]
-    sources = [ "drawingtextadapter_fuzzer.cpp" ]
-    deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
-    external_deps = [
-        "ability_runtime:app_manager",
-        "c_utils:utils",
-        "graphic_2d:libcomposer",
-        "graphic_surface:surface",
-        "hilog:libhilog",
-        "relational_store:native_rdb", 
-    ]
+##############################fuzztest##########################################
+ohos_fuzztest("DrawingTextAdapterFuzzTest") {
+  module_out_path = webview_fuzz_test_path
+  fuzz_config_file =
+      "$webview_path/test/fuzztest/drawingtextadapter_fuzzer"
+  include_dirs = [
+    "$webview_path/ohos_nweb/include",
+    "$webview_path/test/fuzztest",
+    "$webview_path/ohos_adapter/drawing_text_adapter/include",
+  ]
+  cflags = [
+    "-g",
+    "-O0",
+    "-Wno-unused-variable",
+    "-fno-omit-frame-pointer",
+  ]
+  sources = [
+    "drawingtextadapter_fuzzer.cpp",
+  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
+  external_deps = [
+    "ability_runtime:app_manager",
+    "c_utils:utils",
+    "graphic_2d:libcomposer",
+    "graphic_surface:surface",
+    "hilog:libhilog",
+    "relational_store:native_rdb",
+  ]
 }
 
 ###############################################################################
 group("fuzztest") {
-    testonly = true
-    deps = []
-    deps += [
-        # deps file
-        ":DrawingTextAdapterFuzzTest",
-    ]
+  testonly = true
+  deps = []
+  deps += [
+    # deps file
+    ":DrawingTextAdapterFuzzTest",
+  ]
 }
 ###############################################################################
