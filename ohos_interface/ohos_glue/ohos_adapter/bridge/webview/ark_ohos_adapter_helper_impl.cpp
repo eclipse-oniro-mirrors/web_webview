@@ -409,18 +409,18 @@ ArkWebRefPtr<ArkMigrationManagerAdapter> ArkOhosAdapterHelperImpl::CreateMigrati
 ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
 {
     static NWeb::OhosDrawingTextFontAdapter& instance = real_.GetOhosDrawingTextFontAdapter();
-    static ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> impl = new ArkOhosDrawingTextFontAdapterImpl(instance);
+    static ArkWebRefPtr<NWeb::ArkOhosDrawingTextFontAdapter> impl = new ArkOhosDrawingTextFontAdapterImpl(instance);
     return impl;
 }
 
 ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
 {
     static NWeb::OhosDrawingTextTypographyAdapter& instance = real_.GetOhosDrawingTextTypographyAdapter();
-    static ArkWebRefPtr<OhosDrawingTextTypographyAdapter> impl =
+    static ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> impl =
         new ArkOhosDrawingTextTypographyAdapterImpl(instance);
     return impl;
 }
-
+    
 ArkWebRefPtr<ArkAudioCodecDecoderAdapter> ArkOhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
 {
     std::unique_ptr<NWeb::AudioCodecDecoderAdapter> adapter = real_.CreateAudioCodecDecoderAdapter();
