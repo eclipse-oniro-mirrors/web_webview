@@ -15,7 +15,6 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
-
 ##########################fuzztest###########################
 ohos_fuzztest("DrawingTextAdapterFuzzTest") {
     module_out_path = webview_fuzz_test_path
@@ -32,8 +31,8 @@ ohos_fuzztest("DrawingTextAdapterFuzzTest") {
         "-Wno-unused-variable",
         "-fno-omit-frame-pointer",
     ]
-    sources = ["drawingtextadapter_fuzzer.cpp"]
-    deps = ["$webview_path/ohos_adapter:nweb_ohos_adapter"]
+    sources = [ "drawingtextadapter_fuzzer.cpp" ]
+    deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
     external_deps = [
         "ability_runtime:app_manager",
         "c_utils:utils",

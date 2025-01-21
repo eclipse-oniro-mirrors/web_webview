@@ -81,7 +81,7 @@ void OhosDrawingTextFontAdapterImpl::DestroySystemFontFullNames(void* drawingArr
 void OhosDrawingTextFontAdapterImpl::DestroyFontDescriptor(void* descriptor)
 {
     OH_Drawing_DestroyFontDescriptor(static_cast<OH_Drawing_FontDescriptor*>(descriptor));
-    WVLOG("DestroySystemFontDescriptor");
+    WVLOG_D("DestroySystemFontDescriptor");
 }
 
 OhosDrawingTextTypographyAdapter& OhosDrawingTextTypographyAdapterImpl::GetInstance()
