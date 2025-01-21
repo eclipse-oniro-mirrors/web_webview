@@ -96,4 +96,15 @@ int32_t ArkPlayerAdapterWrapper::SetVideoSurfaceNew(void* native_window)
     return ctocpp_->SetVideoSurfaceNew(native_window);
 }
 
+int32_t ArkPlayerAdapterWrapper::SetMediaSourceHeader(const std::string& url,
+    const std::map<std::string, std::string>& header)
+{
+    ArkWebString surl = ArkWebStringClassToStruct(url);
+    ArkWebStringMap sheader = ArkWebStringMapClassToStruct(header);
+    int32_t result = ctocpp_->SetMediaSourceHeader(surl, sheader);
+    ArkWebStringStructRelease(surl);
+    ArkWebStringMapStructRelease(sheader);
+    return result;
+}
+
 } // namespace OHOS::ArkWeb
