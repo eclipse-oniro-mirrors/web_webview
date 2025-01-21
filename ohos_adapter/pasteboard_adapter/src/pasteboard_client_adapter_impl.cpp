@@ -112,10 +112,6 @@ bool PasteDataRecordAdapterImpl::SetHtmlText(
     }
     auto utdId = UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::HTML);
     auto object = std::make_shared<Object>();
-    if (!object) {
-        WVLOG_E("udmf object create failed");
-        return false;
-    }
     object->value_[UDMF::UNIFORM_DATA_TYPE] = utdId;
     object->value_[UDMF::HTML_CONTENT] = *htmlText;
     if (plainText) {
@@ -136,10 +132,6 @@ bool PasteDataRecordAdapterImpl::SetPlainText(std::shared_ptr<std::string> plain
     }
     auto utdId = UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::PLAIN_TEXT);
     auto object = std::make_shared<Object>();
-    if (!object) {
-        WVLOG_E("udmf object create failed");
-        return false;
-    }
     object->value_[UDMF::UNIFORM_DATA_TYPE] = utdId;
     object->value_[UDMF::CONTENT] = *plainText;
     record_->AddEntry(utdId, std::make_shared<PasteDataEntry>(utdId, object));
@@ -258,10 +250,6 @@ bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageDataAd
     }
     auto utdId = UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::SYSTEM_DEFINED_PIXEL_MAP);
     auto object = std::make_shared<Object>();
-    if (!object) {
-        WVLOG_E("udmf object create failed");
-        return false;
-    }
     object->value_[UDMF::UNIFORM_DATA_TYPE] = utdId;
     object->value_[UDMF::PIXEL_MAP] = pixelMapIn;
     record_->AddEntry(utdId, std::make_shared<PasteDataEntry>(utdId, object));
@@ -399,10 +387,6 @@ std::shared_ptr<PasteCustomData> PasteDataRecordAdapterImpl::GetCustomData()
         return nullptr;
     }
     auto customData = std::make_shared<PasteCustomData>();
-    if (customData == nullptr) {
-        WVLOG_E("customData create failed");
-        return nullptr;
-    }
     for (auto type : { SPAN_STRING_TAG, CUSTOM_DATA_TAG, CUSTOM_DATA_TAG2 }) {
         auto entry = record_->GetEntry(type);
         if (!entry) {
