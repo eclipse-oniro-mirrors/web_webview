@@ -41,8 +41,8 @@ namespace OHOS {
 namespace Media {
 class ScreenCaptureImplMock : public ScreenCapture {
 public:
-    MOCK_METHOD0(Init, int32_t());
     MOCK_METHOD1(Init, int32_t(AVScreenCaptureConfig));
+    MOCK_METHOD1(Init, int32_t(OHOS::AudioStandard::AppInfo&));
     MOCK_METHOD1(SetMicrophoneEnabled, int32_t(bool));
     MOCK_METHOD1(SetCanvasRotation, int32_t(bool));
 	MOCK_METHOD1(ShowCursor, int32_t(bool));
