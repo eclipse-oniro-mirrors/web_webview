@@ -409,7 +409,7 @@ ArkWebRefPtr<ArkMigrationManagerAdapter> ArkOhosAdapterHelperImpl::CreateMigrati
 ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
 {
     static NWeb::OhosDrawingTextFontAdapter& instance = real_.GetOhosDrawingTextFontAdapter();
-    static ArkWebRefPtr<NWeb::ArkOhosDrawingTextFontAdapter> impl = new ArkOhosDrawingTextFontAdapterImpl(instance);
+    static ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> impl = new ArkOhosDrawingTextFontAdapterImpl(instance);
     return impl;
 }
 
