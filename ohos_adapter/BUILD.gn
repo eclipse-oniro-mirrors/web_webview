@@ -27,19 +27,19 @@ ohos_shared_library("nweb_ohos_adapter") {
     libs = [
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/arm-linux-ohos/libbundle_ndk.z.so",
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/arm-linux-ohos/libasset_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/arm-linux-ohos/libnative_drawing.so",
+      "//prebuilts/ohos-sdk/linux/14/native/sysroot/usr/lib/arm-linux-ohos/libnative_drawing.so",
     ]
   } else if (target_cpu == "arm64") {
     libs = [
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/aarch64-linux-ohos/libbundle_ndk.z.so",
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/aarch64-linux-ohos/libasset_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_drawing.so",
+      "//prebuilts/ohos-sdk/linux/14/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_drawing.so",
     ]
   } else if (target_cpu == "x86_64") {
     libs = [
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/x86_64-linux-ohos/libbundle_ndk.z.so",
       "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/x86_64-linux-ohos/libasset_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/16/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_drawing.so",
+      "//prebuilts/ohos-sdk/linux/14/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_drawing.so",
     ]
   }
 
