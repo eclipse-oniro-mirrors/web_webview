@@ -38,6 +38,7 @@ ohos_unittest("nweb_media_adapter_test") {
   ]
 
   configs = [ ":module_private_config" ]
+  include_dirs = [ "../../../../ohos_nweb/include" ]
 
   deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
@@ -68,6 +69,10 @@ ohos_unittest("nweb_media_adapter_test") {
       "av_session:avsession_client",
       "input:libmmi-client",
     ]
+  }
+
+  if (webview_drm_enable) {
+    sources += [ "audio_codec_decoder_adapter_impl_test.cpp" ]
   }
 }
 
