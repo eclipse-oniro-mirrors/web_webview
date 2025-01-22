@@ -31,6 +31,7 @@ public:
 
     static void PreloadLibFile(bool runMode, const std::string& bundlePath);
 
+    void PreDlopenLibFile(const std::string& bundlePath);
 private:
     ArkWebNWebWebviewBridgeHelper();
 };
