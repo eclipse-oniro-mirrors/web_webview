@@ -209,16 +209,16 @@ public:
     virtual ArkWebRefPtr<ArkMigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
 
     /*--ark web()--*/
-    virtual ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> GetOhosDrawingTextFontAdapter() = 0;
-
-    /*--ark web()--*/
-    virtual ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> GetOhosDrawingTextTypographyAdapter() = 0;
-
-    /*--ark web()--*/
     virtual ArkWebRefPtr<ArkAudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
 
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> GetOhosDrawingTextFontAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> GetOhosDrawingTextTypographyAdapter() = 0;
 };
 
 } // namespace OHOS::ArkWeb
