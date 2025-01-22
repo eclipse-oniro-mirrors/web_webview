@@ -594,7 +594,7 @@ void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string& bu
         return;
     }
 
-    ArkWeb::ArkWebNWebWebviewBridgeHelper::PreloadLibFile(true, bundlePath);
+    ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().PreDlopenLibFile(bundlePath);
 }
 
 static void TryPreReadLibForFirstlyAppStartUp(const std::string& bundlePath)

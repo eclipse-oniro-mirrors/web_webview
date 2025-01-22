@@ -69,6 +69,16 @@ void ArkWebNWebWebviewBridgeHelper::PreloadLibFile(bool runMode, const std::stri
     ArkWebBridgeHelper::PrereadLibFile(libFilePath);
 }
 
+void ArkWebNWebWebviewBridgeHelper::PreDlopenLibFile(const std::string& bundlePath)
+{
+    std::string libDirPath = bundlePath + "/" + WEBVIEW_RELATIVE_PATH_FOR_BUNDLE;
+#ifdef __MUSL__
+    LoadLibFile(RTLD_NOW | RTLD_GLOBAL, "nweb_ns", libDirPath, NWEB_LIB_FILE_NAME);
+#else
+    LoadLibFile(RTLD_NOW, libDirPath + "/" + NWEB_LIB_FILE_NAME);
+#endif
+}
+
 } // namespace OHOS::ArkWeb
 
 #ifdef __cplusplus
