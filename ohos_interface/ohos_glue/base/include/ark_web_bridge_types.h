@@ -266,6 +266,7 @@ enum ArkWebBridgeType {
     ARK_AUDIO_CENC_INFO_ADAPTER = 10142,
     ARK_DRM_ADAPTER = 10143,
     ARK_DRM_CALLBACK_ADAPTER = 10144,
+    ARK_AUDIO_BUFFER_ADAPTER = 10145,
     /*Note: The end of adapter interface bridge type*/
     ARK_WEB_ADAPTER_INTERFACE_BUTT,
 };
