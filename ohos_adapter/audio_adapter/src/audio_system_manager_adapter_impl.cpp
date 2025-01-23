@@ -164,7 +164,7 @@ bool AudioSystemManagerAdapterImpl::GetDeviceIdByDescriptor(
     }
 
     auto it = audioOutputDeviceInfo_.begin();
-    int32_t newDeviceId;
+    int32_t newDeviceId = 0;
     while (it != audioOutputDeviceInfo_.end()) {
         if (audioDeviceDescriptor->IsSameDeviceDesc(it->second)) {
             deviceId = it->first;
