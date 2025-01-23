@@ -116,6 +116,10 @@ public:
 
     ArkWebRefPtr<ArkMigrationManagerAdapter> CreateMigrationMgrAdapter() override;
 
+    ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> GetOhosDrawingTextFontAdapter() override;
+
+    ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> GetOhosDrawingTextTypographyAdapter() override;
+
     ArkWebRefPtr<ArkAudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
 
     ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() override;

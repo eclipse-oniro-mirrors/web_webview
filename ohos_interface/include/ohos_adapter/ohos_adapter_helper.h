@@ -47,6 +47,7 @@
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
 #include "net_proxy_adapter.h"
+#include "ohos_drawing_text_adapter.h"
 #include "ohos_image_decoder_adapter.h"
 #include "ohos_init_web_adapter.h"
 #include "ohos_native_buffer_adapter.h"
@@ -61,6 +62,7 @@
 #include "sensor_adapter.h"
 
 namespace OHOS::NWeb {
+
 class OhosAdapterHelper {
 public:
     static OhosAdapterHelper& GetInstance();
@@ -156,6 +158,10 @@ public:
     virtual OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() = 0;
 
     virtual std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
+
+    virtual OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() = 0;
+
+    virtual OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() = 0;
 
     virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
 

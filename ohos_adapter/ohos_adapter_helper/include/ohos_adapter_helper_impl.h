@@ -119,6 +119,10 @@ public:
 
     std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() override;
 
+    OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() override;
+
+    OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() override;
+
     std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
 
     std::unique_ptr<DrmAdapter> CreateDrmAdapter() override;
