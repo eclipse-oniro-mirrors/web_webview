@@ -199,6 +199,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     external_deps += [
       "audio_framework:audio_capturer",
       "audio_framework:audio_client",
+      "audio_framework:audio_foundation",
       "audio_framework:audio_renderer",
     ]
     defines += [ "NWEB_AUDIO_ENABLE" ]
