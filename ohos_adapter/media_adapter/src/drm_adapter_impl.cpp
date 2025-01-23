@@ -615,6 +615,10 @@ int32_t DrmAdapterImpl::CreateKeySystem(const std::string& name, const std::stri
     if (name == WIDEVINE_NAME) {
         SetConfigurationString(PRIVACY_MODE, ENABLE);
         SetConfigurationString(SESSION_SHARING, ENABLE);
+        int32_t configRet = SetConfigurationString(ORIGIN, origin);
+        if (configRet != static_cast<int32_t>(DrmResult::DRM_RESULT_OK)) {
+            WVLOG_E("[DRM]DrmAdapterImpl::CreateKeySystem ORIGIN set failed.");
+        }
     }
 
     ret = OH_MediaKeySystem_SetCallback(drmKeySystem_, SystemCallBackWithObj);
