@@ -19,6 +19,7 @@
 
 #include "include/nweb_engine.h"
 #include "ohos_nweb/include/ark_web_engine.h"
+#include "ohos_nweb/include/ark_web_proxy_changed_callback.h"
 
 namespace OHOS::ArkWeb {
 
@@ -88,6 +89,14 @@ public:
     int GetArkWebCoreApiLevel() override;
 
     void RemoveAllCache(bool include_disk_files) override;
+
+    void SetProxyOverride(const ArkWebStringVector& proxyUrls,
+                          const ArkWebStringVector& proxySchemeFilters,
+                          const ArkWebStringVector& bypassRules,
+                          const bool& reverseBypass,
+                          ArkWebRefPtr<ArkWebProxyChangedCallback> callback) override;
+
+    void RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallback> callback) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
