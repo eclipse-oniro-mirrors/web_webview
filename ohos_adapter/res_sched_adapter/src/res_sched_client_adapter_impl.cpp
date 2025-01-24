@@ -224,7 +224,6 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter,
 
     static std::mutex initMutex;
     std::lock_guard<std::mutex> lock(initMutex);
-
     if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
         WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
         return;
