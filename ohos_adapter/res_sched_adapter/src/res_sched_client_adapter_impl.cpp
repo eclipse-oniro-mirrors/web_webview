@@ -199,6 +199,8 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
 
 bool IsSameSourceWebSiteActive(ResSchedStatusAdapter statusAdapter, pid_t pid, int32_t nwebId)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     g_pidNwebMap[pid][nwebId] = statusAdapter;
     if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
         auto nwebMap = g_pidNwebMap[pid];
@@ -219,6 +221,9 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter,
 {
     static uint32_t serialNum = 0;
     static constexpr uint32_t serialNumMax = 10000;
+
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
 
     if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
         WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
@@ -264,6 +269,8 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter,
 bool ResSchedClientAdapter::ReportKeyThread(
     ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid, ResSchedRoleAdapter roleAdapter)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     int64_t status;
     bool ret = ConvertStatus(statusAdapter, status);
     if (!ret) {
@@ -329,6 +336,8 @@ bool ResSchedClientAdapter::ReportAudioData(ResSchedStatusAdapter statusAdapter,
 
 void ResSchedClientAdapter::ReportProcessInUse(pid_t pid)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     int32_t nwebId = g_nwebId;
     if (g_pidNwebMap.count(pid)) {
         nwebId = g_pidNwebMap[pid].begin()->first;
@@ -355,6 +364,8 @@ void ResSchedClientAdapter::ReportSiteIsolationMode(bool mode)
 bool ResSchedClientAdapter::ReportWindowStatus(
     ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
         WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
         return false;
@@ -386,6 +397,8 @@ bool ResSchedClientAdapter::ReportWindowStatus(
 bool ResSchedClientAdapter::ReportScene(
     ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter, int32_t nwebId)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     if (nwebId == -1) {
         return ReportSceneInternal(statusAdapter, sceneAdapter);
     }
