@@ -166,6 +166,9 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
 {
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    if (!jsObj) {
+        return ret;
+    }
     WEBVIEWLOGI("WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultSelf");
     std::string argv;
     if (args.size() == 0) {
