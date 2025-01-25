@@ -54,18 +54,23 @@ int main(int argc, char* argv[])
             return -1;
         }
     }
-
+    int ret = 0;
     using FuncType = int (*)(int argc, char* argv[]);
     FuncType crashpadHandlerFunc = reinterpret_cast<FuncType>(dlsym(handle, "CrashpadHandlerMain"));
     if (crashpadHandlerFunc == nullptr) {
         WVLOG_E("crashpad, fail to dlsym CrashpadHandlerMain, errmsg=%{public}s", dlerror());
-        int ret = dlclose(handle);
+        ret = dlclose(handle);
         if (ret != 0) {
-            WVLOG_E("crashped, fail to dlclose, errmsg=%{public}s", dlerror());
+            WVLOG_E("crashpad, fail to dlclose, errmsg=%{public}s", dlerror());
         }
         return -1;
     }
 
     WVLOG_I("crashpad, success to dlopen and dlsym, enter CrashpadHandlerMain");
-    return crashpadHandlerFunc(argc, argv);
+    ret = crashpadHandlerFunc(argc, argv);
+    if (ret != 0) {
+        WVLOG_E("crashpad dump failed, CrashpadHandlerMain return: %{public}d", ret);
+        _exit(1);
+    }
+    _exit(0);
 }
