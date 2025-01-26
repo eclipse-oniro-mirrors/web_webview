@@ -388,6 +388,10 @@ AudioSessionStrategy AudioRendererAdapterImpl::GetAudioAudioStrategy(AudioAdapte
         return strategy;
     }
     strategy.concurrencyMode = item->second;
+    if (strategy.concurrencyMode == AudioConcurrencyMode::PAUSE_OTHERS) {
+        strategy.concurrencyMode = AudioConcurrencyMode::INVALID;
+    }
+    WVLOG_I("get audio strategy concurrencyMode: %{public}d.", strategy.concurrencyMode);
     return strategy;
 }
 
