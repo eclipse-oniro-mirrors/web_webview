@@ -434,7 +434,7 @@ int32_t ScreenCaptureAdapterImpl::AcquireAudioBuffer(
     audiobuffer->SetLength(avBuffer->length);
     audiobuffer->SetTimestamp(avBuffer->timestamp);
     audiobuffer->SetSourcetype(GetAudioCaptureSourceTypeAdapter(avBuffer->sourcetype));
-    avBuffer->buffer == nullptr;
+    avBuffer->buffer = nullptr;
     
     return 0;
 }
