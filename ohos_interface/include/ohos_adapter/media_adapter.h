@@ -108,7 +108,10 @@ public:
 
     virtual int32_t SetVideoSurfaceNew(void* native_window) = 0;
 
-    virtual int32_t SetMediaSourceHeader(const std::string& url, const std::map<std::string, std::string>& header) = 0;
+    virtual int32_t SetMediaSourceHeader(const std::string& url, const std::map<std::string, std::string>& header)
+    {
+        return -1;
+    }
 };
 
 } // namespace OHOS::NWeb
