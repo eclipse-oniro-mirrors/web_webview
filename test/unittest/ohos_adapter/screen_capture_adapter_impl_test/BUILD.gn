@@ -49,6 +49,7 @@ ohos_unittest("screen_capture_adapter_impl_test") {
   if (webview_media_player_enable) {
     sources += [ "screen_capture_adapter_impl_test.cpp" ]
     external_deps += [
+      "audio_framework:audio_client",
       "av_codec:av_codec_client",
       "player_framework:media_client",
       "window_manager:libwm",
