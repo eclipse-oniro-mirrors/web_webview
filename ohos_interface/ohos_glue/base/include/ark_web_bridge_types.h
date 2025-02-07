@@ -114,6 +114,7 @@ enum ArkWebBridgeType {
     ARK_WEB_PDFCONFIG_ARGS = 90,
     ARK_WEB_MOUSE_EVENT = 91,
     ARK_WEB_KEYBOARD_EVENT = 92,
+    ARK_WEB_PROXY_CHANGED_CALLBACK = 93,
 
     /*Note: The end of nweb interface bridge type*/
     ARK_WEB_NWEB_INTERFACE_BUTT,
@@ -269,7 +270,6 @@ enum ArkWebBridgeType {
     ARK_OHOS_DRAWING_TEXT_FONT_ADAPTER = 10145,
     ARK_OHOS_DRAWING_TEXT_TYPOGRAPHY_ADAPTER = 10146,
     ARK_AUDIO_BUFFER_ADAPTER = 10147,
-    ARK_WEB_PROXY_CHANGED_CALLBACK = 10148,
     /*Note: The end of adapter interface bridge type*/
     ARK_WEB_ADAPTER_INTERFACE_BUTT,
 };
