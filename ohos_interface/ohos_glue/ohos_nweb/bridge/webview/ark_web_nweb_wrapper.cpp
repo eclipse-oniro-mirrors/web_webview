@@ -1504,4 +1504,9 @@ std::shared_ptr<OHOS::NWeb::HitTestResult> ArkWebNWebWrapper::GetLastHitTestResu
 
     return std::make_shared<ArkWebHitTestResultWrapper>(ark_web_last_hit_test_result);
 }
+
+std::string ArkWebNWebWrapper::GetCurrentLanguage()
+{
+    return ArkWebStringStructToClass(ark_web_nweb_->GetCurrentLanguage());
+}
 } // namespace OHOS::ArkWeb
