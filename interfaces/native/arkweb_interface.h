@@ -73,7 +73,7 @@ typedef enum {
     ARKWEB_NATIVE_JAVASCRIPT_VALUE,
 } ArkWeb_NativeAPIVariantKind;
 
-/*
+/**
  * @brief Obtains the native API set of a specified type.
  * @param type Indicates the type of the native API set provided by ArkWeb.
  * @return Return the pointer to the native API abstract object that carries the size.

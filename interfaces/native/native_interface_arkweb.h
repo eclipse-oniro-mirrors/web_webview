@@ -128,7 +128,7 @@ void OH_NativeArkWeb_SetJavaScriptProxyValidCallback(const char* webTag, NativeA
  */
 NativeArkWeb_OnValidCallback OH_NativeArkWeb_GetJavaScriptProxyValidCallback(const char* webTag);
 
-/*
+/**
  * @brief Registers the destroy callback.
  *
  * @param webTag The name of the web component.
@@ -139,7 +139,7 @@ NativeArkWeb_OnValidCallback OH_NativeArkWeb_GetJavaScriptProxyValidCallback(con
  */
 void OH_NativeArkWeb_SetDestroyCallback(const char* webTag, NativeArkWeb_OnDestroyCallback callback);
 
-/*
+/**
  * @brief Get the destroy callback.
  *
  * @param webTag The name of the web component.
