@@ -1487,6 +1487,12 @@ public:
      */
     std::shared_ptr<OHOS::NWeb::HitTestResult> GetLastHitTestResult() override;
 
+    /**
+     * @Description: Get the current language in the webview.
+     * @Return: The current language in the webview.
+     */
+    std::string GetCurrentLanguage() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
