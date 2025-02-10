@@ -1700,6 +1700,16 @@ public:
     {
         return std::shared_ptr<HitTestResult>();
     };
+
+    /**
+     * @Description: Get the current language in the webview.
+     * @Return: The current language in the webview.
+     */
+    /*--ark web()--*/
+    virtual std::string GetCurrentLanguage()
+    {
+        return "";
+    }
 };
 
 } // namespace OHOS::NWeb
