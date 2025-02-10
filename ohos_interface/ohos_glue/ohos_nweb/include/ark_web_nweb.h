@@ -1643,6 +1643,13 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkWebHitTestResult> GetLastHitTestResult() = 0;
+
+    /**
+     * @Description: Get the current language in the webview.
+     * @Return: The current language in the webview.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetCurrentLanguage() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -1274,4 +1274,9 @@ ArkWebRefPtr<ArkWebHitTestResult> ArkWebNWebImpl::GetLastHitTestResult()
 
     return new ArkWebHitTestResultImpl(nweb_last_hit_test_result);
 }
+
+ArkWebString ArkWebNWebImpl::GetCurrentLanguage()
+{
+    return ArkWebStringClassToStruct(nweb_nweb_->GetCurrentLanguage());
+}
 } // namespace OHOS::ArkWeb
