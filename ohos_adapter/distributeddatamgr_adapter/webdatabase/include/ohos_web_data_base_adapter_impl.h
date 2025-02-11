@@ -39,6 +39,8 @@ class OhosWebDataBaseAdapterImpl : public OhosWebDataBaseAdapter {
 public:
     static OhosWebDataBaseAdapterImpl& GetInstance();
 
+    explicit OhosWebDataBaseAdapterImpl(std::shared_ptr<OHOS::NativeRdb::RdbStore> rdbStore);
+
     ~OhosWebDataBaseAdapterImpl() override = default;
 
     bool ExistHttpAuthCredentials() override;
