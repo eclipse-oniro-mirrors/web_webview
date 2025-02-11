@@ -175,6 +175,18 @@ public:
     virtual void KeyboardUpperRightCornerHide() {}
 };
 
+enum class IMFRequestKeyboardReasonAdapter : int32_t {
+    NONE = 0,
+    MOUSE = 1,
+    TOUCH = 2,
+    TOUCH_PAD = 3,
+    KEYBOARD = 4,
+    JOYSTICK = 5,
+    CROWN = 6,
+    TOUCH_PEN = 7,
+    OTHER
+};
+
 class IMFAdapter {
 public:
     IMFAdapter() = default;
@@ -185,6 +197,9 @@ public:
 
     virtual bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
         const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener) = 0;
+
+    virtual bool AttachWithRequestKeyboardReason(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
+        const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener, int32_t requestKeyboardReason) = 0;
 
     virtual void ShowCurrentInput(const IMFAdapterTextInputType& inputType) = 0;
 
