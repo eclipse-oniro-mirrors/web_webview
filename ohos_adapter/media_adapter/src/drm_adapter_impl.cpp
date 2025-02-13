@@ -908,7 +908,7 @@ int32_t DrmAdapterImpl::ProcessKeySystemResponse(const std::string& response, bo
 
     bool success = true;
     if (isResponseReceived) {
-        int32_t responseLen = response.size() / sizeof(uint8_t);
+        int32_t responseLen = static_cast<int32_t>(response.size());
         std::vector<uint8_t> vec(responseLen);
         errno_t retCopy = memcpy_s(vec.data(), responseLen, response.data(), response.size());
         if (retCopy != 0) {
