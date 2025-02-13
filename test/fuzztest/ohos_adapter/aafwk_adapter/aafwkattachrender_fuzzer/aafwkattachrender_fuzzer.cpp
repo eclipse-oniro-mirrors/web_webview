@@ -33,10 +33,10 @@ bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    AafwkAppMgrClientAdapterImpl render;
+    static AafwkAppMgrClientAdapterImpl render;
     std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter = nullptr;
     render.AttachRenderProcess(adapter);
-    std::shared_ptr<AafwkAppMgrClientAdapterImpl> newadapter = std::make_shared<AafwkAppMgrClientAdapterImpl>();
+    static AafwkAppMgrClientAdapterImpl newadapter;
 
     FuzzedDataProvider dataProvider(data, size);
     std::string renderParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
@@ -44,10 +44,10 @@ bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
     int32_t sharedFd = 0;
     int32_t crashFd = 0;
     pid_t renderPid = 0;
-    newadapter->StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
+    newadapter.StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
     pid_t red = 1;
     int statused = 1;
-    newadapter->GetRenderProcessTerminationStatus(red, statused);
+    newadapter.GetRenderProcessTerminationStatus(red, statused);
     return true;
 }
 } // namespace OHOS
