@@ -1279,4 +1279,9 @@ ArkWebString ArkWebNWebImpl::GetCurrentLanguage()
 {
     return ArkWebStringClassToStruct(nweb_nweb_->GetCurrentLanguage());
 }
+
+void ArkWebNWebImpl::SetEnableHalfFrameRate(bool enabled)
+{
+    nweb_nweb_->SetEnableHalfFrameRate(enabled);
+}
 } // namespace OHOS::ArkWeb
