@@ -1710,6 +1710,12 @@ public:
     {
         return "";
     }
+
+    /**
+     * Set enable half frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enabled) = 0;
 };
 
 } // namespace OHOS::NWeb
