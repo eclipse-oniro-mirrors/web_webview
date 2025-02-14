@@ -1480,6 +1480,11 @@ public:
      */
     ArkWebString GetCurrentLanguage() override;
 
+    /**
+     * @brief Set enable half the frame rate.
+     */
+    void SetEnableHalfFrameRate(bool enabled) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
