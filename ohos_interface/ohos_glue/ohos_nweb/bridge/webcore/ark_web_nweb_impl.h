@@ -1483,6 +1483,7 @@ public:
     /**
      * @brief Set enable half the frame rate.
      */
+    /*--ark web()--*/
     void SetEnableHalfFrameRate(bool enabled) override;
 
 private:
