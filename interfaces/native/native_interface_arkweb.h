@@ -171,7 +171,7 @@ NativeArkWeb_OnDestroyCallback OH_NativeArkWeb_GetDestroyCallback(const char* we
  *         {@link ARKWEB_LIBRARY_SYMBOL_NOT_FOUND} The required symbol was not found in the library.
  *
  * @syscap SystemCapability.Web.Webview.Core
- * @since 16
+ * @since 15
  */
 ArkWeb_ErrorCode OH_NativeArkWeb_LoadData(const char* webTag,
                                           const char* data,
