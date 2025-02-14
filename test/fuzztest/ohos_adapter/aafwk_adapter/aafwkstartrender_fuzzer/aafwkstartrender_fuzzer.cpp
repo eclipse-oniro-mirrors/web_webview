@@ -30,7 +30,7 @@ bool AafwkStartRenderFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < fdNum * sizeof(int32_t))) {
         return false;
     }
-    AafwkAppMgrClientAdapterImpl render;
+    static AafwkAppMgrClientAdapterImpl render;
     int32_t ipcFd;
     int32_t sharedFd = 0;
     int32_t crashFd;
