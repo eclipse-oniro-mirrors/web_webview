@@ -1650,6 +1650,12 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetCurrentLanguage() = 0;
+
+    /**
+     * @brief Set enable half frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enabled) = 0;
 };
 
 } // namespace OHOS::ArkWeb
