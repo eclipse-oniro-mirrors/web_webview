@@ -1509,4 +1509,9 @@ std::string ArkWebNWebWrapper::GetCurrentLanguage()
 {
     return ArkWebStringStructToClass(ark_web_nweb_->GetCurrentLanguage());
 }
+
+void ArkWebNWebWrapper::SetEnableHalfFrameRate(bool enabled)
+{
+    ark_web_nweb_->SetEnableHalfFrameRate(enabled);
+}
 } // namespace OHOS::ArkWeb
