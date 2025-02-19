@@ -1509,4 +1509,17 @@ std::string ArkWebNWebWrapper::GetCurrentLanguage()
 {
     return ArkWebStringStructToClass(ark_web_nweb_->GetCurrentLanguage());
 }
+void ArkWebNWebWrapper::WebSendMouseWheelEventV2(double x,
+                                                 double y,
+                                                 double delta_x,
+                                                 double delta_y,
+                                                 const std::vector<int32_t>& pressedCodes,
+                                                 int32_t source)
+{
+    ArkWebInt32Vector pCodes = ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(pressedCodes);
+
+    ark_web_nweb_->WebSendMouseWheelEventV2(x, y, delta_x, delta_y, pCodes, source);
+
+    ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
+}
 } // namespace OHOS::ArkWeb
