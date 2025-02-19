@@ -44,7 +44,7 @@ std::vector<unsigned char> fromHexString(const std::string& hexString)
     return data;
 }
 
-static const char* GetUuid()
+static const std::string GetKeySystemName()
 {
     if (OH_MediaKeySystem_IsSupported("com.clearplay.drm")) {
         return "com.clearplay.drm";
@@ -65,10 +65,12 @@ public:
     MOCK_METHOD(void, OnPromiseResolved, (uint32_t), (override));
     MOCK_METHOD(void, OnPromiseResolvedWithSession, (uint32_t, const std::string&), (override));
     MOCK_METHOD(void, OnStorageProvisioned, (), (override));
-    MOCK_METHOD(void, OnStorageSaveInfo, (const std::vector<uint8_t>&, const std::string&, const std::string&, int32_t), (override));
+    MOCK_METHOD(void, OnStorageSaveInfo, (const std::vector<uint8_t>&, const std::string&, const std::string&, int32_t),
+        (override));
     MOCK_METHOD(void, OnSessionClosed, (const std::string&), (override));
     MOCK_METHOD(void, OnStorageLoadInfo, (const std::string&), (override));
-    MOCK_METHOD(void, OnSessionKeysChange, (const std::string&, const std::vector<std::string>&, const std::vector<uint32_t>&, bool, bool), (override));
+    MOCK_METHOD(void, OnSessionKeysChange,
+        (const std::string&, const std::vector<std::string>&, const std::vector<uint32_t>&, bool, bool), (override));
     MOCK_METHOD(void, OnSessionExpirationUpdate, (const std::string&, uint64_t), (override));
     MOCK_METHOD(void, OnStorageClearInfoForKeyRelease, (const std::string&), (override));
     MOCK_METHOD(void, OnStorageClearInfoForLoadFail, (const std::string&), (override));
@@ -82,23 +84,7 @@ public:
     void TearDown();
 };
 
-class PersistentInfoTest : public testing::Test {
-public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
-    void SetUp();
-    void TearDown();
-};
-
 class SessionInfoTest : public testing::Test {
-public:
-    static void SetUpTestCase(void);
-    static void TearDownTestCase(void);
-    void SetUp();
-    void TearDown();
-};
-
-class DrmStatisticsAdapterImplTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
     static void TearDownTestCase(void);
@@ -203,7 +189,8 @@ void SessionInfoTest::SetUp(void)
     unsigned char keySetId[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
     auto sessionId = SessionId::CreateSessionId("session123");
     sessionId->SetKeySetId(keySetId, 8);
-    g_sessioninfo = std::make_shared<SessionInfo>(sessionId, "video/mp4", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+    g_sessioninfo = std::make_shared<SessionInfo>(
+        sessionId, "video/mp4", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
 }
 
 void SessionInfoTest::TearDown(void)
@@ -366,23 +353,73 @@ HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_008, TestSize.
 
 /**
  * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_009.
- * @tc.desc: test of DrmCallbackImpl :: OnStorageProvisioned
+ * @tc.desc: test of DrmCallbackImpl :: OnSessionClosed
  * @tc.type: FUNC.
  * @tc.require:
  */
 HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_009, TestSize.Level1)
+{
+    std::string testSessionId = "sessionId";
+
+    EXPECT_CALL(*mockCallback_, OnSessionClosed(testSessionId)).Times(1);
+    g_callback->OnSessionClosed(testSessionId);
+}
+
+/**
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_010.
+ * @tc.desc: test of DrmCallbackImpl :: OnSessionKeysChange
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_010, TestSize.Level1)
+{
+    std::string testSessionId = "sessionId";
+    std::vector<std::string> dummyKeyId;
+    std::vector<uint32_t> dummyStatus;
+    dummyKeyId.push_back("");
+    dummyStatus.push_back(static_cast<uint32_t>(KeyStatus::KEY_STATUS_INTERNAL_ERROR));
+    bool hasAdditionalUsableKey = false;
+    bool isKeyRelease = true;
+
+    EXPECT_CALL(*mockCallback_,
+        OnSessionKeysChange(testSessionId, dummyKeyId, dummyStatus, hasAdditionalUsableKey, isKeyRelease))
+        .Times(1);
+    g_callback->OnSessionKeysChange(testSessionId, dummyKeyId, dummyStatus, hasAdditionalUsableKey, isKeyRelease);
+}
+
+/**
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_011.
+ * @tc.desc: test of DrmCallbackImpl :: OnSessionExpirationUpdate
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_011, TestSize.Level1)
+{
+    std::string testSessionId = "sessionId";
+    uint64_t expirationTime = 1234567890;
+    EXPECT_CALL(*mockCallback_, OnSessionExpirationUpdate(testSessionId, expirationTime)).Times(1);
+    g_callback->OnSessionExpirationUpdate(testSessionId, expirationTime);
+}
+
+/**
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_012.
+ * @tc.desc: test of DrmCallbackImpl :: OnStorageProvisioned
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_012, TestSize.Level1)
 {
     EXPECT_CALL(*mockCallback_, OnStorageProvisioned()).Times(1);
     g_callback->OnStorageProvisioned();
 }
 
 /**
- * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_010.
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_013.
  * @tc.desc: test of DrmCallbackImpl :: OnStorageSaveInfo
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_010, TestSize.Level1)
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_013, TestSize.Level1)
 {
     std::vector<uint8_t> ketSetId = { 0x01, 0x02 };
     std::string mimeType = "video/mp4";
@@ -394,31 +431,76 @@ HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_010, TestSize.
 }
 
 /**
- * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_011.
- * @tc.desc: test of DrmCallbackImpl :: OnSessionClosed
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_011, TestSize.Level1)
-{
-    std::string testSessionId = "sessionId";
-
-    EXPECT_CALL(*mockCallback_, OnSessionClosed(testSessionId)).Times(1);
-    g_callback->OnSessionClosed(testSessionId);
-}
-
-/**
- * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_012.
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_014.
  * @tc.desc: test of DrmCallbackImpl :: OnStorageLoadInfo
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_012, TestSize.Level1)
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_014, TestSize.Level1)
 {
     std::string sessionId = "sessionId";
 
     EXPECT_CALL(*mockCallback_, OnStorageLoadInfo(sessionId)).Times(1);
     g_callback->OnStorageLoadInfo(sessionId);
+}
+
+/**
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_015.
+ * @tc.desc: test of DrmCallbackImpl :: OnStorageLoadInfo
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_015, TestSize.Level1)
+{
+    std::string sessionId = "sessionId";
+
+    EXPECT_CALL(*mockCallback_, OnStorageClearInfoForKeyRelease(sessionId)).Times(1);
+    g_callback->OnStorageClearInfoForKeyRelease(sessionId);
+}
+
+/**
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_016.
+ * @tc.desc: test of DrmCallbackImpl :: OnStorageLoadInfo
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_016, TestSize.Level1)
+{
+    std::string sessionId = "sessionId";
+
+    EXPECT_CALL(*mockCallback_, OnStorageClearInfoForLoadFail(sessionId)).Times(1);
+    g_callback->OnStorageClearInfoForLoadFail(sessionId);
+}
+
+/**
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_017.
+ * @tc.desc: test of DrmCallbackImpl :: OnStorageLoadInfo
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_017, TestSize.Level1)
+{
+    std::string emeId = "emeId";
+    bool isRelease = true;
+    g_callback->UpdateEmeId(emeId, isRelease);
+    EXPECT_EQ(emeId, g_callback->EmeId());
+    EXPECT_EQ(isRelease, g_callback->IsRelease());
+}
+
+/**
+ * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_018.
+ * @tc.desc: test of DrmCallbackImpl :: OnStorageLoadInfo
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_018, TestSize.Level1)
+{
+    std::string mimeType = "video/mp4";
+    int32_t type = 0;
+
+    g_callback->UpdateMimeType(mimeType, type);
+    EXPECT_EQ(mimeType, g_callback->MimeType());
+    EXPECT_EQ(type, g_callback->Type());
 }
 
 void DrmAdapterImplTest::SetUpTestCase(void) {}
@@ -445,7 +527,7 @@ void DrmAdapterImplTest::TearDown(void)
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_001, TestSize.Level1)
 {
     EXPECT_FALSE(g_adapter->IsSupported(""));
-    EXPECT_TRUE(g_adapter->IsSupported(GetUuid()));
+    EXPECT_TRUE(g_adapter->IsSupported(GetKeySystemName()));
 }
 
 /**
@@ -459,7 +541,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_002, TestSize.Lev
     EXPECT_FALSE(g_adapter->IsSupported2("", ""));
     EXPECT_FALSE(g_adapter->IsSupported2("example", ""));
 
-    bool isSupported = g_adapter->IsSupported2(GetUuid(), "video/mp4");
+    bool isSupported = g_adapter->IsSupported2(GetKeySystemName(), "video/mp4");
     EXPECT_EQ(isSupported, true);
 }
 
@@ -474,7 +556,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_003, TestSize.Lev
     EXPECT_FALSE(g_adapter->IsSupported3("", "", CONTENT_PROTECTION_LEVEL_HW_CRYPTO));
     EXPECT_FALSE(g_adapter->IsSupported3("example", "", CONTENT_PROTECTION_LEVEL_HW_CRYPTO));
 
-    bool isSupported = g_adapter->IsSupported3(GetUuid(), "video/mp4", CONTENT_PROTECTION_LEVEL_HW_CRYPTO);
+    bool isSupported = g_adapter->IsSupported3(GetKeySystemName(), "video/mp4", CONTENT_PROTECTION_LEVEL_HW_CRYPTO);
     EXPECT_EQ(isSupported, true);
 }
 
@@ -487,8 +569,10 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_003, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_004, TestSize.Level1)
 {
     g_adapter->RegistDrmCallback(mockCallback_);
-    EXPECT_EQ(g_adapter->CreateKeySystem("", "", CONTENT_PROTECTION_LEVEL_SW_CRYPTO), DRM_ERR_INVALID_VAL);
-    EXPECT_EQ(g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO), DRM_ERR_OK);
+    EXPECT_EQ(g_adapter->CreateKeySystem("", "", CONTENT_PROTECTION_LEVEL_SW_CRYPTO),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     EXPECT_CALL(*mockCallback_, OnMediaKeySessionReady(testing::_)).Times(AnyNumber());
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
@@ -503,13 +587,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_004, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_005, TestSize.Level1)
 {
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->ReleaseMediaKeySession();
     int32_t result = g_adapter->ReleaseMediaKeySystem();
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
     result = g_adapter->ReleaseMediaKeySystem();
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 }
 
 /**
@@ -523,7 +607,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_006, TestSize.Lev
     g_adapter->RegistDrmCallback(mockCallback_);
     EXPECT_EQ(g_adapter->CreateMediaKeySession(), -1);
 
-    int32_t result = g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    int32_t result = g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     EXPECT_EQ(result, 0);
     EXPECT_EQ(g_adapter->CreateMediaKeySession(), 0);
     g_adapter->ReleaseMediaKeySession();
@@ -539,38 +623,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_006, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_007, TestSize.Level1)
 {
     int32_t result = g_adapter->ReleaseMediaKeySession();
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     result = g_adapter->ReleaseMediaKeySession();
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySystem();
 }
-
-// /**
-//  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_008.
-//  * @tc.desc: test of DrmAdapterImpl :: GenerateKeySystemRequest
-//  * @tc.type: FUNC.
-//  * @tc.require:
-//  */
-// HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_008, TestSize.Level1)
-// {
-//     unsigned char request[12288] = { 0x00 };
-//     int32_t requestLen = 12288;
-//     char defaultUrl[2048] = { 0x00 };
-//     int32_t defaultUrlLen = 2048;
-//     EXPECT_EQ(
-//         g_adapter->GenerateKeySystemRequest(nullptr, &requestLen, defaultUrl, defaultUrlLen), DRM_ERR_INVALID_VAL);
-//     EXPECT_EQ(g_adapter->GenerateKeySystemRequest(request, nullptr, defaultUrl, defaultUrlLen), DRM_ERR_INVALID_VAL);
-//     EXPECT_EQ(g_adapter->GenerateKeySystemRequest(request, &requestLen, nullptr, 0), DRM_ERR_INVALID_VAL);
-//     EXPECT_EQ(
-//         g_adapter->GenerateKeySystemRequest(request, &requestLen, defaultUrl, defaultUrlLen), DRM_ERR_INVALID_VAL);
-//     //     g_adapter->RegistDrmCallback(mockCallback_);
-//     //     g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-//     //     EXPECT_EQ(g_adapter->GenerateKeySystemRequest(request, &requestLen, defaultUrl, defaultUrlLen), DRM_ERR_OK);
-//     //     g_adapter->ReleaseMediaKeySession();
-//     //     g_adapter->ReleaseMediaKeySystem();
-// }
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_009.
@@ -581,17 +640,17 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_007, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_009, TestSize.Level1)
 {
     int32_t result = g_adapter->SetConfigurationString("", "");
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 
     result = g_adapter->SetConfigurationString("version", "");
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 
     result = g_adapter->SetConfigurationString("version", "2.0");
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     result = g_adapter->SetConfigurationString("version", "2.0");
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -609,18 +668,18 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_010, TestSize.Lev
     int32_t result;
 
     result = g_adapter->GetConfigurationString("", value, valueLen);
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 
     result = g_adapter->GetConfigurationString("version", nullptr, valueLen);
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 
     result = g_adapter->GetConfigurationString("version", value, valueLen);
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->SetConfigurationString("version", "2.0");
     result = g_adapter->GetConfigurationString("version", value, valueLen);
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -636,12 +695,16 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_011, TestSize.Lev
     uint8_t description[4] = { 0x00, 0x00, 0x00, 0x00 };
     int32_t valueLen = sizeof(description);
 
-    EXPECT_EQ(g_adapter->SetConfigurationByteArray("", description, valueLen), DRM_ERR_INVALID_VAL);
-    EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", nullptr, valueLen), DRM_ERR_INVALID_VAL);
-    EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", description, valueLen), DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(g_adapter->SetConfigurationByteArray("", description, valueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", nullptr, valueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", description, valueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", description, valueLen), DRM_ERR_OK);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", description, valueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -659,15 +722,19 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_012, TestSize.Lev
     uint8_t descriptionValue[32];
     int32_t descriptionValueLen = 32;
 
-    EXPECT_EQ(g_adapter->GetConfigurationByteArray("", description, &descriptionValueLen), DRM_ERR_INVALID_VAL);
-    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", nullptr, &descriptionValueLen), DRM_ERR_INVALID_VAL);
-    EXPECT_EQ(
-        g_adapter->GetConfigurationByteArray("description", description, &descriptionValueLen), DRM_ERR_INVALID_VAL);
-    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", description, nullptr), DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(g_adapter->GetConfigurationByteArray("", description, &descriptionValueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", nullptr, &descriptionValueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", description, &descriptionValueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", description, nullptr),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->SetConfigurationByteArray("description", description, valueLen);
-    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", descriptionValue, &descriptionValueLen), DRM_ERR_OK);
+    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", descriptionValue, &descriptionValueLen),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -682,10 +749,10 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_013, TestSize.Lev
 {
     int32_t level = 0;
 
-    EXPECT_EQ(g_adapter->GetMaxContentProtectionLevel(level), DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(g_adapter->GetMaxContentProtectionLevel(level), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    EXPECT_EQ(g_adapter->GetMaxContentProtectionLevel(level), DRM_ERR_OK);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    EXPECT_EQ(g_adapter->GetMaxContentProtectionLevel(level), static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     EXPECT_NE(level, CONTENT_PROTECTION_LEVEL_UNKNOWN);
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
@@ -699,15 +766,17 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_013, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_014, TestSize.Level1)
 {
-    // unsigned char KeySystemResponse[12288] = { 0x00 };
-    EXPECT_EQ(g_adapter->ProcessKeySystemResponse(nullptr, 0), DRM_ERR_INVALID_VAL);
-    // EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, 0), DRM_ERR_INVALID_VAL);
-    //  EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, sizeof(KeySystemResponse)),
-    //  DRM_ERR_INVALID_VAL);
-    // g_adapter->RegistDrmCallback(mockCallback_);
-    //  g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    //  EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, sizeof(KeySystemResponse)), DRM_ERR_OK);
-    //  g_adapter->ReleaseMediaKeySystem();
+    std::string KeySystemResponse = "response";
+    EXPECT_EQ(g_adapter->ProcessKeySystemResponse(nullptr, 0), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    EXPECT_EQ(
+        g_adapter->ProcessKeySystemResponse(KeySystemResponse, 0), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+
+    g_adapter->RegistDrmCallback(mockCallback_);
+    EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, sizeof(KeySystemResponse)),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+
+    g_adapter->ReleaseMediaKeySystem();
 }
 
 /**
@@ -724,28 +793,17 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_015, TestSize.Lev
     std::vector<uint8_t> initData;
     initData.resize(128);
     uint32_t optionsCount = 1;
-    // int32_t result = g_adapter->GenerateMediaKeyRequest(emeId, type, initDataLen, initData, "video/avc",
-    // optionsCount); EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
-    g_adapter->RegistDrmCallback(mockCallback_);
     int32_t result = g_adapter->GenerateMediaKeyRequest(emeId, type, initDataLen, initData, "video/avc", optionsCount);
-    EXPECT_EQ(result, -1);
-    // g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    // result = g_adapter->GenerateMediaKeyRequest(emeId, type, initDataLen, initData, "video/avc", optionsCount);
-    // EXPECT_EQ(result, DRM_ERR_OK);
-    // g_adapter->ReleaseMediaKeySession();
-    // g_adapter->ReleaseMediaKeySystem();
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    g_adapter->RegistDrmCallback(mockCallback_);
+    result = g_adapter->GenerateMediaKeyRequest(emeId, type, initDataLen, initData, "video/avc", optionsCount);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    result = g_adapter->GenerateMediaKeyRequest(emeId, type, initDataLen, initData, "video/avc", optionsCount);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    g_adapter->ReleaseMediaKeySession();
+    g_adapter->ReleaseMediaKeySystem();
 }
-
-// /**
-//  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_016.
-//  * @tc.desc: test of DrmAdapterImpl :: CheckMediaKeyStatus
-//  * @tc.type: FUNC.
-//  * @tc.require:
-//  */
-// HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_016, TestSize.Level1)
-// {
-//     EXPECT_EQ(g_adapter->CheckMediaKeyStatus(), DRM_ERR_OK);
-// }
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_017.
@@ -755,27 +813,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_015, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_017, TestSize.Level1)
 {
-    EXPECT_EQ(g_adapter->ClearMediaKeys(), DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(g_adapter->ClearMediaKeys(), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    EXPECT_EQ(g_adapter->ClearMediaKeys(), DRM_ERR_OK);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    EXPECT_EQ(g_adapter->ClearMediaKeys(), static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
-
-// /**
-//  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_018.
-//  * @tc.desc: test of DrmAdapterImpl :: GetContentProtectionLevelFromSecurityLevel
-//  * @tc.type: FUNC.
-//  * @tc.require:
-//  */
-// HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_018, TestSize.Level1)
-// {
-//     EXPECT_EQ(g_adapter->GetContentProtectionLevelFromSecurityLevel(0), CONTENT_PROTECTION_LEVEL_UNKNOWN);
-//     EXPECT_EQ(g_adapter->GetContentProtectionLevelFromSecurityLevel(1), CONTENT_PROTECTION_LEVEL_HW_CRYPTO);
-//     EXPECT_EQ(g_adapter->GetContentProtectionLevelFromSecurityLevel(3), CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-//     EXPECT_EQ(g_adapter->GetContentProtectionLevelFromSecurityLevel(2), CONTENT_PROTECTION_LEVEL_UNKNOWN);
-// }
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_019.
@@ -787,11 +831,11 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_019, TestSize.Lev
 {
     int32_t certStatus;
     int32_t result = g_adapter->GetCertificateStatus(certStatus);
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     result = g_adapter->GetCertificateStatus(certStatus);
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -817,29 +861,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_020, TestSize.Lev
     ASSERT_NE(sessionInfo, nullptr);
 }
 
-// /**
-//  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_021.
-//  * @tc.desc: test of DrmAdapterImpl :: SetSystemCallback
-//  * @tc.type: FUNC.
-//  * @tc.require:
-//  */
-// HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_021, TestSize.Level1)
-// {
-//     uint8_t info[10] = { 0 };
-//     char extra[10] = "extra";
-//     int32_t eventType = 1; // Valid eventType
-//     EXPECT_EQ(g_adapter->SetSystemCallback(eventType, nullptr, 0, extra), DRM_ERR_INVALID_VAL);
-//     EXPECT_EQ(g_adapter->SetSystemCallback(eventType, info, sizeof(info), nullptr), DRM_ERR_INVALID_VAL);
-//     EXPECT_EQ(g_adapter->SetSystemCallback(eventType, info, sizeof(info), extra), DRM_ERR_INVALID_VAL);
-//     g_adapter->RegistDrmCallback(mockCallback_);
-//     g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-
-//     int32_t result = g_adapter->SetSystemCallback(eventType, info, sizeof(info), extra);
-//     EXPECT_EQ(result, DRM_ERR_OK);
-//     g_adapter->ReleaseMediaKeySession();
-//     g_adapter->ReleaseMediaKeySystem();
-// }
-
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_022.
  * @tc.desc: test of DrmAdapterImpl :: RegistDrmCallback
@@ -849,9 +870,9 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_020, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_022, TestSize.Level1)
 {
     int32_t result = g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
 
-    EXPECT_EQ(result, DRM_ERR_OK); // Check that the return value is as expected
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK)); // Check that the return value is as expected
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -928,15 +949,18 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_025, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_026, TestSize.Level1)
 {
-    auto sessionId = std::make_shared<SessionId>("sessionId", nullptr, 0);
-    auto sessionInfo = std::make_shared<SessionInfo>(sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+    std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
+    auto sessionId = std::make_shared<SessionId>("sessionId", keySetId.data(), keySetId.size());
+    auto sessionInfo = std::make_shared<SessionInfo>(
+        sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
     g_adapter->SetKeyType(nullptr, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->PutSessionInfo(sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+    EXPECT_CALL(*mockCallback_, OnStorageSaveInfo(_, _, _, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE)))
+        .Times(1);
     g_adapter->SetKeyType(sessionId, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
-    EXPECT_CALL(*mockCallback_, OnStorageSaveInfo(_, _, _, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE))).Times(1);
     g_adapter->RemoveSessionInfo(sessionId);
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
@@ -954,11 +978,12 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_027, TestSize.Lev
     unsigned char mediaKeyId[] = { 0x01, 0x02, 0x03 };
     g_adapter->SetKeySetId(sessionId, mediaKeyId, sizeof(mediaKeyId));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->PutSessionInfo(sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+    EXPECT_CALL(*mockCallback_, OnStorageSaveInfo(_, _, _, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE)))
+        .Times(1);
     g_adapter->SetKeySetId(sessionId, mediaKeyId, sizeof(mediaKeyId));
-    EXPECT_CALL(*mockCallback_, OnStorageSaveInfo(_, _, _, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE))).Times(1);
     g_adapter->RemoveSessionInfo(sessionId);
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
@@ -985,15 +1010,15 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_028, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_029, TestSize.Level1)
 {
-    auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0); // Assume this constructor exists
+    auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0);
     std::string mimeType = "video/mp4";
     uint32_t promiseId = 1; // Example promiseId
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
-    g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
     EXPECT_CALL(*mockCallback_, OnPromiseResolvedWithSession(_, _)).Times(1);
+    g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
     g_adapter->RemoveSessionInfo(validSessionId);
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
@@ -1011,7 +1036,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_030, TestSize.Lev
     std::string mimeType = "video/mp4";
     uint32_t promiseId = 1; // Example promiseId
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_ONLINE));
 
@@ -1034,7 +1059,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_031, TestSize.Lev
     std::string mimeType = "video/mp4";
     uint32_t promiseId = 1; // Example promiseId
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
     g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
@@ -1052,15 +1077,15 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_031, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_032, TestSize.Level1)
 {
-    auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0); // Assume this constructor exists
+    auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0);
     std::string mimeType = "video/mp4";
     uint32_t promiseId = 1; // Example promiseId
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
     g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
-    EXPECT_CALL(*mockCallback_, OnPromiseResolvedWithSession(_, "sessionId")).Times(1);
+    EXPECT_CALL(*mockCallback_, OnStorageClearInfoForLoadFail(_)).Times(1);
     g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
@@ -1077,7 +1102,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_033, TestSize.Lev
     uint32_t promiseId = 2;
     EXPECT_CALL(*mockCallback_, OnPromiseResolved(_)).Times(1);
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->HandleKeyUpdatedCallback(promiseId, true);
 
     EXPECT_CALL(*mockCallback_, OnPromiseRejected(_, _)).Times(1);
@@ -1087,7 +1112,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_033, TestSize.Lev
     g_adapter->ReleaseMediaKeySystem();
 }
 
-
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_035.
  * @tc.desc: test of DrmAdapterImpl :: ProcessKeySystemResponse
@@ -1096,19 +1120,15 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_033, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_035, TestSize.Level1)
 {
-#if 0
     std::string response = "valid_response";
     int32_t result = g_adapter->ProcessKeySystemResponse(response, true);
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
-    g_adapter->RegistDrmCallback(mockCallback_); 
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    g_adapter->RegistDrmCallback(mockCallback_);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     result = g_adapter->ProcessKeySystemResponse(response, false);
-    EXPECT_EQ(result, -1);
-    result = g_adapter->ProcessKeySystemResponse(response, true);
-    EXPECT_EQ(result, 0);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
-#endif
 }
 
 /**
@@ -1140,14 +1160,19 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_040, TestSize.Lev
 {
     uint8_t info[10] = { 0 };
     char extra[10] = "extra";
-    DRM_EventType eventType = EVENT_DRM_BASE; // Valid eventType
+    DRM_EventType eventType = EVENT_PROVISION_REQUIRED;
+    if (GetKeySystemName() == "com.clearplay.drm") {
+        eventType = EVENT_DRM_BASE;
+    } else {
+        eventType = EVENT_PROVISION_REQUIRED;
+    }
     int32_t infoLen = sizeof(info);
-
-    EXPECT_CALL(*mockCallback_, OnProvisionRequest(testing::_, testing::_)).Times(1);
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->SystemCallBackWithObj(g_adapter->drmKeySystem_, eventType, info, infoLen, extra);
+    EXPECT_NE(g_adapter->drmKeySystem_, nullptr);
+    Drm_ErrCode ret = g_adapter->SystemCallBackWithObj(g_adapter->drmKeySystem_, eventType, info, infoLen, extra);
+    EXPECT_EQ(ret, DRM_ERR_OK);
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1170,7 +1195,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_041, TestSize.Lev
     Drm_ErrCode result = g_adapter->SessoinEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
 
     // Assert
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 }
 
 /**
@@ -1185,11 +1210,9 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_042, TestSize.Lev
     DRM_KeysInfo keysInfo;
     MediaKeySession* mediaKeySession = nullptr;
 
-    // Act
     Drm_ErrCode result = g_adapter->SessoinKeyChangeCallBackWithObj(mediaKeySession, &keysInfo, newKeysAvailable);
 
-    // Assert
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
 }
 
 /**
@@ -1202,7 +1225,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_043, TestSize.Lev
 {
     EXPECT_EQ(g_adapter->GetSecurityLevel(), -1);
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     EXPECT_NE(g_adapter->GetSecurityLevel(), -1);
 
     g_adapter->ReleaseMediaKeySession();
@@ -1220,13 +1243,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_044, TestSize.Lev
     std::string mimeType = "video/avc";
     bool status = false;
     int32_t result = g_adapter->RequireSecureDecoderModule(mimeType, status);
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     result = g_adapter->RequireSecureDecoderModule("", status);
-    EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     result = g_adapter->RequireSecureDecoderModule(mimeType, status);
-    EXPECT_EQ(result, DRM_ERR_OK);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1239,9 +1262,9 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_044, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_045, TestSize.Level1)
 {
-    std::string name = "com.clearplay.drm"; // Assuming this is a valid name
+    std::string name = GetKeySystemName();
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     auto result = g_adapter->GetUUID(name);
     ASSERT_FALSE(result.empty());
     g_adapter->ReleaseMediaKeySession();
@@ -1258,13 +1281,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_046, TestSize.Lev
 {
     g_adapter->StorageProvisionedResult(false);
     EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->RegistDrmCallback(mockCallback_);
-    // g_adapter->contentProtectionLevel_ = CONTENT_PROTECTION_LEVEL_SW_CRYPTO;
-    // g_adapter->StorageProvisionedResult(true);
-
-    // EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
-    // g_adapter->StorageProvisionedResult(true);
-    // g_adapter->ReleaseMediaKeySession();
+    g_adapter->contentProtectionLevel_ = CONTENT_PROTECTION_LEVEL_SW_CRYPTO;
+    g_adapter->StorageProvisionedResult(true);
+    EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+    g_adapter->ReleaseMediaKeySession();
+    g_adapter->ReleaseMediaKeySystem();
 }
 
 /**
@@ -1290,7 +1313,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_048, TestSize.Lev
 {
     EXPECT_CALL(*mockCallback_, OnPromiseRejected(_, _)).Times(1);
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
 
     g_adapter->StorageSaveInfoResult(false, 1);
     g_adapter->ReleaseMediaKeySession();
@@ -1326,7 +1349,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_050, TestSize.Lev
     std::string mimeType = "testMimeType";
     uint32_t keyType = 1;
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
 
     EXPECT_NO_THROW(g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType));
     g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType);
@@ -1348,7 +1371,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_051, TestSize.Lev
     std::string mimeType = "testMimeType";
     uint32_t keyType = 1;
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
 
     g_adapter->PutSessionInfo(std::make_shared<SessionId>(emeId, keySetId.data(), keySetId.size()), mimeType, keyType);
     EXPECT_NO_THROW(g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType));
@@ -1357,24 +1380,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_051, TestSize.Lev
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
-
-// /**
-//  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_052.
-//  * @tc.desc: test of DrmAdapterImpl :: GetSecurityLevelFromContentProtectionLevel
-//  * @tc.type: FUNC.
-//  * @tc.require:
-//  */
-// HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_052, TestSize.Level1)
-// {
-//     int32_t result = g_adapter->GetSecurityLevelFromContentProtectionLevel(CONTENT_PROTECTION_LEVEL_UNKNOWN);
-//     EXPECT_EQ(result, 0);
-//     result = g_adapter->GetSecurityLevelFromContentProtectionLevel(CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-//     EXPECT_EQ(result, 3);
-//     result = g_adapter->GetSecurityLevelFromContentProtectionLevel(CONTENT_PROTECTION_LEVEL_HW_CRYPTO);
-//     EXPECT_EQ(result, 1);
-//     result = g_adapter->GetSecurityLevelFromContentProtectionLevel(CONTENT_PROTECTION_LEVEL_MAX);
-//     EXPECT_EQ(result, -1);
-// }
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_055.
@@ -1390,17 +1395,17 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_055, TestSize.Lev
     g_adapter->RegistDrmCallback(mockCallback_);
     int32_t result = g_adapter->CloseSession(promiseId, emeId);
     EXPECT_EQ(result, -1);
-    // g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    // result = g_adapter->CloseSession(promiseId, emeId);
-    // EXPECT_EQ(result, -1);
-    // std::string mimeType = "video/mp4";
-    // int32_t sessionType = 1; // Assume valid session type
-    // g_adapter->PutSessionInfo(validSessionId, mimeType, sessionType);
-    // result = g_adapter->CloseSession(promiseId, emeId);
-    // EXPECT_EQ(result, 0);
-    // g_adapter->RemoveSessionInfo(validSessionId);
-    // g_adapter->ReleaseMediaKeySession();
-    // g_adapter->ReleaseMediaKeySystem();
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    result = g_adapter->CloseSession(promiseId, emeId);
+    EXPECT_EQ(result, -1);
+    std::string mimeType = "video/mp4";
+    int32_t sessionType = 1; // Assume valid session type
+    g_adapter->PutSessionInfo(validSessionId, mimeType, sessionType);
+    result = g_adapter->CloseSession(promiseId, emeId);
+    EXPECT_EQ(result, 0);
+    g_adapter->RemoveSessionInfo(validSessionId);
+    g_adapter->ReleaseMediaKeySession();
+    g_adapter->ReleaseMediaKeySystem();
 }
 
 /**
@@ -1416,12 +1421,12 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_056, TestSize.Lev
     uint32_t promiseId = 1;
     std::string emeId = "test_eme_id";
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->PutSessionInfo(validSessionId, mimeType, MEDIA_KEY_TYPE_ONLINE);
     int32_t result = g_adapter->RemoveSession(promiseId, "invalid_eme_id");
     EXPECT_EQ(result, -1);
 
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
     result = g_adapter->RemoveSession(promiseId, emeId);
     EXPECT_EQ(result, 0);
@@ -1440,13 +1445,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_057, TestSize.Lev
     uint32_t promiseId = 1;
     std::string sessionId = "sessionId";
     int32_t result = g_adapter->LoadSession(promiseId, sessionId);
-    EXPECT_EQ(result, -1);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
 
     result = g_adapter->LoadSession(promiseId, sessionId);
-    EXPECT_EQ(result, -1);
+    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1466,14 +1471,14 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_058, TestSize.Lev
     std::string mimeType = "video/mp4";
     int32_t result = g_adapter->UpdateSession(promiseId, emeId, response);
     EXPECT_EQ(result, -1);
-    // g_adapter->RegistDrmCallback(mockCallback_);
-    // g_adapter->CreateKeySystem("com.clearplay.drm", "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
+    g_adapter->RegistDrmCallback(mockCallback_);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
 
-    // g_adapter->PutSessionInfo(validSessionId, mimeType, NWEB_MEDIA_KEY_TYPE_RELEASE);
-    // result = g_adapter->UpdateSession(promiseId, emeId, response);
-    // EXPECT_EQ(result, 0);
-    // g_adapter->RemoveSessionInfo(validSessionId);
-    // g_adapter->ReleaseMediaKeySession();
-    // g_adapter->ReleaseMediaKeySystem();
+    g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
+    result = g_adapter->UpdateSession(promiseId, emeId, response);
+    EXPECT_EQ(result, 0);
+    g_adapter->RemoveSessionInfo(validSessionId);
+    g_adapter->ReleaseMediaKeySession();
+    g_adapter->ReleaseMediaKeySystem();
 }
 } // namespace OHOS::NWeb
