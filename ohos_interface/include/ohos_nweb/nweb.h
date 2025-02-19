@@ -1711,6 +1711,16 @@ public:
         return "";
     }
 
+    /** 
+     * @brief Send mouse wheel event with sourceTool info.
+     */
+    virtual void WebSendMouseWheelEventV2(double x,
+                                          double y,
+                                          double delta_x,
+                                          double delta_y,
+                                          const std::vector<int32_t>& pressedCodes,
+                                          int32_t source) {}
+
     /**
      * Set enable half frame rate.
      */

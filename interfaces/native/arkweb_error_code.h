@@ -93,7 +93,7 @@ ARKWEB_INVALID_COOKIE_VALUE = 17100104,
  * @brief Failed to open the library.
  *
  * @syscap SystemCapability.Web.Webview.Core
- * @since 16
+ * @since 15
  */
 ARKWEB_LIBRARY_OPEN_FAILURE = 17100105,
 
@@ -101,7 +101,7 @@ ARKWEB_LIBRARY_OPEN_FAILURE = 17100105,
  * @brief The required symbol was not found in the library.
  *
  * @syscap SystemCapability.Web.Webview.Core
- * @since 16
+ * @since 15
  */
 ARKWEB_LIBRARY_SYMBOL_NOT_FOUND = 17100106,
 } ArkWeb_ErrorCode;

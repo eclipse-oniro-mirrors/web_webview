@@ -1652,6 +1652,17 @@ public:
     virtual ArkWebString GetCurrentLanguage() = 0;
 
     /**
+     * @brief Send mouse wheel event with sourceTool info.
+     */
+    /*--ark web()--*/
+    virtual void WebSendMouseWheelEventV2(double x,
+                                          double y,
+                                          double delta_x,
+                                          double delta_y,
+                                          const ArkWebInt32Vector& pressedCodes,
+                                          int32_t source)  = 0;
+
+    /**
      * @brief Set enable half frame rate.
      */
     /*--ark web()--*/
