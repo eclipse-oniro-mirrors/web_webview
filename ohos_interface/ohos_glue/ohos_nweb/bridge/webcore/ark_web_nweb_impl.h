@@ -1491,6 +1491,11 @@ public:
                                   const ArkWebInt32Vector& pressedCodes,
                                   int32_t source) override;
 
+    /**
+     * @brief Set enable half the frame rate.
+     */
+    void SetEnableHalfFrameRate(bool enabled) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
