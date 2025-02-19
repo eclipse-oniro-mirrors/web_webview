@@ -56,4 +56,9 @@ void ArkVSyncAdapterImpl::SetScene(const ArkWebString& sceneName, uint32_t state
     std::string sceneNameStr = ArkWebStringStructToClass(sceneName);
     return real_.SetScene(sceneNameStr, state);
 }
+
+void ArkVSyncAdapterImpl::SetDVSyncSwitch(bool dvsyncSwitch)
+{
+    return real_.SetDVSyncSwitch(dvsyncSwitch);
+}
 } // namespace OHOS::ArkWeb
