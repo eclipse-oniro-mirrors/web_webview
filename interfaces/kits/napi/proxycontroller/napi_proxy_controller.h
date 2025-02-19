@@ -39,12 +39,7 @@ private:
     static napi_value JS_Constructor(napi_env env, napi_callback_info info);
     static napi_value JS_ApplyProxyOverride(napi_env env, napi_callback_info info);
     static napi_value JS_RemoveProxyOverride(napi_env env, napi_callback_info info);
-    static void InnerApplyProxyOverride(ProxyConfig *proxyConfig);
-
-    static std::vector<std::string> proxyUrls_;
-    static std::vector<std::string> proxySchemeFilters_;
-    static std::vector<std::string> bypassRules_;
-    static bool reverseBypass_;
+    static void InnerApplyProxyOverride(ProxyConfig *proxyConfig, napi_env env, napi_ref jsCallback);
 };
 
 class ProxyChangedCallbackImpl : public NWebProxyChangedCallback {

@@ -33,11 +33,6 @@
 namespace OHOS {
 namespace NWeb {
 
-std::vector<std::string> NapiProxyController::proxyUrls_ = {};
-std::vector<std::string> NapiProxyController::proxySchemeFilters_ = {};
-std::vector<std::string> NapiProxyController::bypassRules_ = {};
-bool NapiProxyController::reverseBypass_ = false;
-
 napi_value NapiProxyController::JS_Constructor(napi_env env, napi_callback_info info)
 {
     WVLOG_I("[PROXYCONTROLLER] NapiProxyController::JS_Constructor");
@@ -66,12 +61,16 @@ napi_value NapiProxyController::Init(napi_env env, napi_value exports)
     return exports;
 }
 
-void NapiProxyController::InnerApplyProxyOverride(ProxyConfig *proxyConfig)
+void NapiProxyController::InnerApplyProxyOverride(ProxyConfig *proxyConfig, napi_env env, napi_ref jsCallback)
 {
+    std::vector<std::string> proxyUrls;
+    std::vector<std::string> proxySchemeFilters;
+    std::vector<std::string> bypassRules;
+    bool reverseBypass;
     for (auto proxyRule : proxyConfig->GetProxyRules()) {
         WVLOG_I("[PROXYCONTROLLER] add proxy rule %{public}s : %{public}d",
                 proxyRule.GetUrl().c_str(), proxyRule.GetSchemeFilter());
-        proxyUrls_.push_back(proxyRule.GetUrl());
+        proxyUrls.push_back(proxyRule.GetUrl());
         std::string proxySchemeFilter = "*";
         switch (proxyRule.GetSchemeFilter()) {
             case static_cast<int32_t>(ProxySchemeFilter::MATCH_ALL_SCHEMES):
@@ -83,14 +82,18 @@ void NapiProxyController::InnerApplyProxyOverride(ProxyConfig *proxyConfig)
                 proxySchemeFilter = "https";
                 break;
         }
-        proxySchemeFilters_.push_back(proxySchemeFilter);
+        proxySchemeFilters.push_back(proxySchemeFilter);
     }
-    reverseBypass_ = proxyConfig->IsReverseBypassEnabled();
-    WVLOG_I("[PROXYCONTROLLER] reverse bypass  %{public}d", reverseBypass_);
+    reverseBypass = proxyConfig->IsReverseBypassEnabled();
+    WVLOG_I("[PROXYCONTROLLER] reverse bypass  %{public}d", reverseBypass);
     for (auto bypassRule :proxyConfig->GetBypassRules()) {
         WVLOG_I("[PROXYCONTROLLER] add bypass rule %{public}s", bypassRule.c_str());
-        bypassRules_.push_back(bypassRule);
+        bypassRules.push_back(bypassRule);
     }
+
+    auto resultCallback = std::make_shared<ProxyChangedCallbackImpl>(env, jsCallback);
+    NWebHelper::Instance().SetProxyOverride(proxyUrls, proxySchemeFilters, bypassRules,
+                                            reverseBypass, resultCallback);
 }
 
 void ProxyChangedCallbackImpl::OnChanged()
@@ -143,11 +146,7 @@ napi_value NapiProxyController::JS_ApplyProxyOverride(napi_env env, napi_callbac
         return nullptr;
     }
 
-    InnerApplyProxyOverride(proxyConfig);
-
-    auto resultCallback = std::make_shared<ProxyChangedCallbackImpl>(env, jsCallback);
-    NWebHelper::Instance().SetProxyOverride(proxyUrls_, proxySchemeFilters_, bypassRules_,
-                                            reverseBypass_, resultCallback);
+    InnerApplyProxyOverride(proxyConfig, env, jsCallback);
 
     return nullptr;
 }
