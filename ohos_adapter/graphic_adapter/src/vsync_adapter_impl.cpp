@@ -259,6 +259,7 @@ void VSyncAdapterImpl::SetDVSyncSwitch(bool dvsyncSwitch)
 {
     if (Init() != VSyncErrorCode::SUCCESS) {
         WVLOG_E("NWebWindowAdatrper init fail!");
+        return;
     }
 
     if (!receiver_) {
