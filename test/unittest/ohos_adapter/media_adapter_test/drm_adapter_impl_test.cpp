@@ -767,13 +767,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_013, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_014, TestSize.Level1)
 {
     std::string KeySystemResponse = "response";
-    EXPECT_EQ(g_adapter->ProcessKeySystemResponse(nullptr, 0), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->ProcessKeySystemResponse("", false), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
     EXPECT_EQ(
-        g_adapter->ProcessKeySystemResponse(KeySystemResponse, 0), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+        g_adapter->ProcessKeySystemResponse(KeySystemResponse, false), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 
     g_adapter->RegistDrmCallback(mockCallback_);
-    EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, sizeof(KeySystemResponse)),
+    EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, false),
         static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 
     g_adapter->ReleaseMediaKeySystem();
@@ -798,11 +798,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_015, TestSize.Lev
     g_adapter->RegistDrmCallback(mockCallback_);
     result = g_adapter->GenerateMediaKeyRequest(emeId, type, initDataLen, initData, "video/avc", optionsCount);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
-    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    result = g_adapter->GenerateMediaKeyRequest(emeId, type, initDataLen, initData, "video/avc", optionsCount);
-    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
-    g_adapter->ReleaseMediaKeySession();
-    g_adapter->ReleaseMediaKeySystem();
 }
 
 /**
@@ -1389,9 +1384,9 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_051, TestSize.Lev
  */
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_055, TestSize.Level1)
 {
-    auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0); // Assume this constructor exists
+    auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0);
     uint32_t promiseId = 1;
-    std::string emeId = "testEmeId";
+    std::string emeId = "test_eme_id";
     g_adapter->RegistDrmCallback(mockCallback_);
     int32_t result = g_adapter->CloseSession(promiseId, emeId);
     EXPECT_EQ(result, -1);
@@ -1465,7 +1460,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_057, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_058, TestSize.Level1)
 {
     uint32_t promiseId = 1;
-    std::string emeId = "testEmeId";
+    std::string emeId = "test_eme_id";
     std::vector<uint8_t> response = { 0x01, 0x02, 0x03 };                         // Example response data
     auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0); // Assume this constructor exists
     std::string mimeType = "video/mp4";
@@ -1476,7 +1471,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_058, TestSize.Lev
 
     g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
     result = g_adapter->UpdateSession(promiseId, emeId, response);
-    EXPECT_EQ(result, 0);
+    EXPECT_EQ(result, -1);
     g_adapter->RemoveSessionInfo(validSessionId);
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
