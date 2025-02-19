@@ -33,17 +33,6 @@ std::shared_ptr<DrmCallbackImpl> g_callback;
 std::shared_ptr<DrmAdapterImpl> g_adapter;
 } // namespace
 
-std::vector<unsigned char> fromHexString(const std::string& hexString)
-{
-    std::vector<unsigned char> data;
-    for (size_t i = 0; i < hexString.length(); i += 2) {
-        std::string byteString = hexString.substr(i, 2);
-        unsigned char byte = static_cast<unsigned char>(strtol(byteString.c_str(), nullptr, 16));
-        data.push_back(byte);
-    }
-    return data;
-}
-
 static const std::string GetKeySystemName()
 {
     if (OH_MediaKeySystem_IsSupported("com.clearplay.drm")) {
@@ -188,7 +177,7 @@ void SessionInfoTest::SetUp(void)
 {
     unsigned char keySetId[8] = { 1, 2, 3, 4, 5, 6, 7, 8 };
     auto sessionId = SessionId::CreateSessionId("session123");
-    sessionId->SetKeySetId(keySetId, 8);
+    sessionId->SetKeySetId(keySetId, sizeof(keySetId));
     g_sessioninfo = std::make_shared<SessionInfo>(
         sessionId, "video/mp4", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
 }
@@ -769,8 +758,8 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_014, TestSize.Lev
     std::string KeySystemResponse = "response";
     EXPECT_EQ(g_adapter->ProcessKeySystemResponse("", false), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    EXPECT_EQ(
-        g_adapter->ProcessKeySystemResponse(KeySystemResponse, false), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
+    EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, false),
+        static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
 
     g_adapter->RegistDrmCallback(mockCallback_);
     EXPECT_EQ(g_adapter->ProcessKeySystemResponse(KeySystemResponse, false),
