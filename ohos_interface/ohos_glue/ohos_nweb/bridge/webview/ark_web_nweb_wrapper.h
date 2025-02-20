@@ -1504,11 +1504,6 @@ public:
                                   const std::vector<int32_t>& pressedCodes,
                                   int32_t source) override;
 
-    /**
-     * @brief Set enable Half the frame rate.
-     */
-    void SetEnableHalfFrameRate(bool enabled) override;
-
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

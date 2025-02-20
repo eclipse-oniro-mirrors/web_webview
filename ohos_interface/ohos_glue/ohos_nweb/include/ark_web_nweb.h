@@ -1661,12 +1661,6 @@ public:
                                           double delta_y,
                                           const ArkWebInt32Vector& pressedCodes,
                                           int32_t source)  = 0;
-
-    /**
-     * @brief Set enable half frame rate.
-     */
-    /*--ark web()--*/
-    virtual void SetEnableHalfFrameRate(bool enabled) = 0;
 };
 
 } // namespace OHOS::ArkWeb
