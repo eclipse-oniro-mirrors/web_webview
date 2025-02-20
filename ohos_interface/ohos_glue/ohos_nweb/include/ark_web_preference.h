@@ -753,6 +753,12 @@ public:
      */
     /*--ark web()--*/
     virtual void PutWebMediaAVSessionEnabled(bool enable) = 0;
+
+    /**
+     * @brief Set the scale of the font-weight.The default is 1.0f.
+     */
+    /*--ark web()--*/
+    virtual void SetFontWeightScale(float scale) = 0;
 };
 
 } // namespace OHOS::ArkWeb

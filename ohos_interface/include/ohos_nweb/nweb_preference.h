@@ -663,6 +663,11 @@ public:
      * Set whether to connect to media avsession.
      */
     virtual void PutWebMediaAVSessionEnabled(bool enable) {}
+
+    /**
+     * Set the scale of the font-weight.The default is 1.0f.
+     */
+    virtual void SetFontWeightScale(float scale) {};
 };
 
 } // namespace OHOS::NWeb
