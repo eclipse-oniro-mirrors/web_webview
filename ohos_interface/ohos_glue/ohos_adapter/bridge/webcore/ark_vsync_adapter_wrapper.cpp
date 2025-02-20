@@ -77,4 +77,12 @@ void ArkVSyncAdapterWrapper::SetScene(const std::string& sceneName, uint32_t sta
     ctocpp_->SetScene(ark_value, state);
     ArkWebStringStructRelease(ark_value);
 }
+
+void ArkVSyncAdapterWrapper::SetDVSyncSwitch(bool dvsyncSwitch)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    return ctocpp_->SetDVSyncSwitch(dvsyncSwitch);
+}
 } // namespace OHOS::ArkWeb
