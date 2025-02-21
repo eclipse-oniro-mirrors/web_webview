@@ -59,6 +59,7 @@
     <performanceConfig>
         <LowerFrameRateConfig>
             <visibleAreaRatio>0.1</visibleAreaRatio>
+            <visibleAreaRatioV2>0.3</visibleAreaRatioV2>
         </LowerFrameRateConfig>
         <flowBufferConfig>
             <maxFdNumber>0</maxFdNumber>
