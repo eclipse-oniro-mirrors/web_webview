@@ -1522,4 +1522,9 @@ void ArkWebNWebWrapper::WebSendMouseWheelEventV2(double x,
 
     ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
 }
+
+void ArkWebNWebWrapper::SetEnableHalfFrameRate(bool enabled)
+{
+    ark_web_nweb_->SetEnableHalfFrameRate(enabled);
+}
 } // namespace OHOS::ArkWeb
