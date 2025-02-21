@@ -1289,4 +1289,9 @@ void ArkWebNWebImpl::WebSendMouseWheelEventV2(double x,
     nweb_nweb_->WebSendMouseWheelEventV2(x, y, delta_x, delta_y,
     ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes), source);
 }
+
+void ArkWebNWebImpl::OnDragAttach()
+{
+    nweb_nweb_->OnDragAttach();
+}
 } // namespace OHOS::ArkWeb

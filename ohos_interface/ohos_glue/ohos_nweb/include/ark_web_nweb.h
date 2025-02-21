@@ -1661,6 +1661,12 @@ public:
                                           double delta_y,
                                           const ArkWebInt32Vector& pressedCodes,
                                           int32_t source)  = 0;
+
+    /*
+     * @brief Try to attach web inputmethod after drag.
+     */
+    /*--ark web()--*/
+    virtual void OnDragAttach()  = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -1522,4 +1522,9 @@ void ArkWebNWebWrapper::WebSendMouseWheelEventV2(double x,
 
     ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
 }
+
+void ArkWebNWebWrapper::OnDragAttach()
+{
+    ark_web_nweb_->OnDragAttach();
+}
 } // namespace OHOS::ArkWeb

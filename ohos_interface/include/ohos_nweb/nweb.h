@@ -1720,6 +1720,11 @@ public:
                                           double delta_y,
                                           const std::vector<int32_t>& pressedCodes,
                                           int32_t source) {}
+    
+    /** 
+     * @brief Try to attach web inputmethod after drag.
+     */
+    virtual void OnDragAttach() {}
 };
 
 } // namespace OHOS::NWeb
