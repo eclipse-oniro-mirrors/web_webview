@@ -1720,6 +1720,11 @@ public:
                                           double delta_y,
                                           const std::vector<int32_t>& pressedCodes,
                                           int32_t source) {}
+    /**
+     * Set enable half the frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enable) {}
 };
 
 } // namespace OHOS::NWeb
