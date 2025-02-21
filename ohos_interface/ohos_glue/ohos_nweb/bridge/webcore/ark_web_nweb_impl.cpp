@@ -1289,4 +1289,9 @@ void ArkWebNWebImpl::WebSendMouseWheelEventV2(double x,
     nweb_nweb_->WebSendMouseWheelEventV2(x, y, delta_x, delta_y,
     ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes), source);
 }
+
+bool ArkWebNWebImpl::IsNWebEx()
+{
+    return nweb_nweb_->IsNWebEx();
+}
 } // namespace OHOS::ArkWeb

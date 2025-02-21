@@ -1504,6 +1504,11 @@ public:
                                   const std::vector<int32_t>& pressedCodes,
                                   int32_t source) override;
 
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    bool IsNWebEx() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
