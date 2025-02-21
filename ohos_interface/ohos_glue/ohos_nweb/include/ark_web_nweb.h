@@ -1661,6 +1661,12 @@ public:
                                           double delta_y,
                                           const ArkWebInt32Vector& pressedCodes,
                                           int32_t source)  = 0;
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    /*--ark web()--*/
+    virtual bool IsNWebEx() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -1491,6 +1491,11 @@ public:
                                   const ArkWebInt32Vector& pressedCodes,
                                   int32_t source) override;
 
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    bool IsNWebEx() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
