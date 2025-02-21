@@ -1505,7 +1505,7 @@ public:
                                   int32_t source) override;
 
     /**
-     * @brief Set enable lower the frame rate.
+     * @brief Set enable Half the frame rate.
      */
     void SetEnableHalfFrameRate(bool enabled) override;
 
