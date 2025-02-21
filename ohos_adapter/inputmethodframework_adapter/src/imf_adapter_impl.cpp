@@ -281,8 +281,55 @@ void ReportImfErrorEvent(int32_t ret, bool isShowKeyboard)
 bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
     const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener)
 {
-    return AttachWithRequestKeyboardReason(
-        listener, isShowKeyboard, config, isResetListener, static_cast<int32_t>(IMFRequestKeyboardReasonAdapter::NONE));
+    if (!listener) {
+        WVLOG_E("the listener is nullptr");
+        ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
+        return false;
+    }
+    if (!config || !(config->GetInputAttribute()) || !(config->GetCursorInfo())) {
+        WVLOG_E("the config is nullptr");
+        ReportImfErrorEvent(IMF_TEXT_CONFIG_NULL_POINT, isShowKeyboard);
+        return false;
+    }
+
+    if ((textListener_ != nullptr) && isResetListener) {
+        textListener_ = nullptr;
+        WVLOG_I("attach node is changed, need reset listener");
+    }
+
+    if (!textListener_) {
+        textListener_ = new (std::nothrow) IMFTextListenerAdapterImpl(listener);
+        if (!textListener_) {
+            WVLOG_E("new textListener failed");
+            ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
+            return false;
+        }
+    }
+    MiscServices::InputAttribute inputAttribute = { .inputPattern = config->GetInputAttribute()->GetInputPattern(),
+        .enterKeyType = config->GetInputAttribute()->GetEnterKeyType(),
+        .isTextPreviewSupported = true };
+
+    MiscServices::CursorInfo imfInfo = { .left = config->GetCursorInfo()->GetLeft(),
+        .top = config->GetCursorInfo()->GetTop(),
+        .width = config->GetCursorInfo()->GetWidth(),
+        .height = config->GetCursorInfo()->GetHeight() };
+
+    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute,
+        .cursorInfo = imfInfo,
+        .windowId = config->GetWindowId(),
+        .positionY = config->GetPositionY(),
+        .height = config->GetHeight() };
+    WVLOG_I(
+        "web inputmethod attach, isShowKeyboard=%{public}d, textConfig=%{public}s",
+        isShowKeyboard,
+        textConfig.ToString().c_str());
+    int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
+    if (ret != 0) {
+        WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
+        ReportImfErrorEvent(ret, isShowKeyboard);
+        return false;
+    }
+    return true;
 }
 
 bool IMFAdapterImpl::AttachWithRequestKeyboardReason(std::shared_ptr<IMFTextListenerAdapter> listener,

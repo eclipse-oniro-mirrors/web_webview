@@ -175,18 +175,6 @@ public:
     virtual void KeyboardUpperRightCornerHide() {}
 };
 
-enum class IMFRequestKeyboardReasonAdapter : int32_t {
-    NONE = 0,
-    MOUSE = 1,
-    TOUCH = 2,
-    TOUCH_PAD = 3,
-    KEYBOARD = 4,
-    JOYSTICK = 5,
-    CROWN = 6,
-    TOUCH_PEN = 7,
-    OTHER
-};
-
 class IMFAdapter {
 public:
     IMFAdapter() = default;
