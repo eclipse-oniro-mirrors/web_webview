@@ -1504,6 +1504,12 @@ public:
                                   const std::vector<int32_t>& pressedCodes,
                                   int32_t source) override;
 
+    /*
+     * @brief Try to attach web inputmethod after drag.
+     */
+    /*--ark web()--*/
+    void OnDragAttach() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
