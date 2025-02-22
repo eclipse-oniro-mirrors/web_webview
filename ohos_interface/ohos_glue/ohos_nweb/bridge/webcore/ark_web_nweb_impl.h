@@ -1501,6 +1501,12 @@ public:
      */
     void SetEnableHalfFrameRate(bool enabled) override;
 
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    void MaximizeResize() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
