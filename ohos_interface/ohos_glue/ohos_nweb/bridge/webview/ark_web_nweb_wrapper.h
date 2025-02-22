@@ -1514,6 +1514,12 @@ public:
      */
     void SetEnableHalfFrameRate(bool enabled) override;
 
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    void MaximizeResize() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
