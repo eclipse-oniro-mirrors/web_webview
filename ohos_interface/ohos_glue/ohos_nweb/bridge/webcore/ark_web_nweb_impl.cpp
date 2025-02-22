@@ -1290,6 +1290,11 @@ void ArkWebNWebImpl::WebSendMouseWheelEventV2(double x,
     ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes), source);
 }
 
+bool ArkWebNWebImpl::IsNWebEx()
+{
+    return nweb_nweb_->IsNWebEx();
+}
+
 void ArkWebNWebImpl::OnDragAttach()
 {
     nweb_nweb_->OnDragAttach();
