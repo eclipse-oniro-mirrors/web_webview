@@ -1735,6 +1735,12 @@ public:
     /*--ark web()--*/
     virtual void SetEnableHalfFrameRate(bool enable) {}
 
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void MaximizeResize() {}
+
     /** 
      * @brief Try to attach web inputmethod after drag.
      */
