@@ -1304,4 +1304,9 @@ void ArkWebNWebImpl::MaximizeResize()
 {
     nweb_nweb_->MaximizeResize();
 }
+
+void ArkWebNWebImpl::OnDragAttach()
+{
+    nweb_nweb_->OnDragAttach();
+}
 } // namespace OHOS::ArkWeb
