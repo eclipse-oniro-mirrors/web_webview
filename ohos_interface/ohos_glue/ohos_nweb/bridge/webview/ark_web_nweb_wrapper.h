@@ -1520,6 +1520,11 @@ public:
     /*--ark web()--*/
     void MaximizeResize() override;
 
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
+    void OnDragAttach() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

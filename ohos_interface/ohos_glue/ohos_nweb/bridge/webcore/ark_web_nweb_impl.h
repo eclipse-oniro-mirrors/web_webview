@@ -1507,6 +1507,11 @@ public:
     /*--ark web()--*/
     void MaximizeResize() override;
 
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
+    void OnDragAttach() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

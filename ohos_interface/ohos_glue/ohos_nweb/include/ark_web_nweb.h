@@ -1679,6 +1679,12 @@ public:
      */
     /*--ark web()--*/
     virtual void MaximizeResize() = 0;
+
+    /*
+     * @brief Try to attach web inputmethod after drag.
+     */
+    /*--ark web()--*/
+    virtual void OnDragAttach()  = 0;
 };
 
 } // namespace OHOS::ArkWeb
