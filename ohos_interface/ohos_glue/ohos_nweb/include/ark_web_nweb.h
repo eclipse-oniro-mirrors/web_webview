@@ -1663,6 +1663,12 @@ public:
                                           int32_t source)  = 0;
 
     /**
+     * @brief judge if browser use drag resize.
+     */
+    /*--ark web()--*/
+    virtual bool IsNWebEx() = 0;
+
+    /**
      * @brief Set enable half the frame rate.
      */
     /*--ark web()--*/

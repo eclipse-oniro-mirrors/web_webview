@@ -1720,6 +1720,15 @@ public:
                                           double delta_y,
                                           const std::vector<int32_t>& pressedCodes,
                                           int32_t source) {}
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    virtual bool IsNWebEx()
+    {
+        return false;
+    }
+
     /**
      * Set enable half the frame rate.
      */
