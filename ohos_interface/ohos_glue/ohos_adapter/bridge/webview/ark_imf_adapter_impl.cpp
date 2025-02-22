@@ -37,11 +37,18 @@ bool ArkIMFAdapterImpl::Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener,
 bool ArkIMFAdapterImpl::Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard,
     ArkWebRefPtr<ArkIMFTextConfigAdapter> config, bool isResetListener)
 {
-    return AttachWithRequestKeyboardReason(listener,
-        isShowKeyboard,
-        config,
-        isResetListener,
-        static_cast<int32_t>(OHOS::NWeb::IMFRequestKeyboardReasonAdapter::NONE));
+    if (CHECK_REF_PTR_IS_NULL(listener) && CHECK_REF_PTR_IS_NULL(config)) {
+        return real_->Attach(nullptr, isShowKeyboard, nullptr, isResetListener);
+    } else if (!CHECK_REF_PTR_IS_NULL(listener) && !CHECK_REF_PTR_IS_NULL(config)) {
+        return real_->Attach(std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener), isShowKeyboard,
+            std::make_shared<ArkIMFTextConfigAdapterWrapper>(config), isResetListener);
+    } else if (CHECK_REF_PTR_IS_NULL(listener)) {
+        return real_->Attach(
+            nullptr, isShowKeyboard, std::make_shared<ArkIMFTextConfigAdapterWrapper>(config), isResetListener);
+    } else {
+        return real_->Attach(
+            std::make_shared<ArkIMFTextListenerAdapterWrapper>(listener), isShowKeyboard, nullptr, isResetListener);
+    }
 }
 
 bool ArkIMFAdapterImpl::AttachWithRequestKeyboardReason(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener,
