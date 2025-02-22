@@ -1504,6 +1504,11 @@ public:
                                   const std::vector<int32_t>& pressedCodes,
                                   int32_t source) override;
 
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    bool IsNWebEx() override;
+
     /*
      * @brief Try to attach web inputmethod after drag.
      */

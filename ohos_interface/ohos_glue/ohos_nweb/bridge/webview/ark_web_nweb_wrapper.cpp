@@ -1523,6 +1523,11 @@ void ArkWebNWebWrapper::WebSendMouseWheelEventV2(double x,
     ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
 }
 
+bool ArkWebNWebWrapper::IsNWebEx()
+{
+    return ark_web_nweb_->IsNWebEx();
+}
+
 void ArkWebNWebWrapper::OnDragAttach()
 {
     ark_web_nweb_->OnDragAttach();

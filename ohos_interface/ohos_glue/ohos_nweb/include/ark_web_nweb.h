@@ -1662,6 +1662,12 @@ public:
                                           const ArkWebInt32Vector& pressedCodes,
                                           int32_t source)  = 0;
 
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    /*--ark web()--*/
+    virtual bool IsNWebEx() = 0;
+
     /*
      * @brief Try to attach web inputmethod after drag.
      */
