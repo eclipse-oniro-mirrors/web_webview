@@ -1295,6 +1295,11 @@ bool ArkWebNWebImpl::IsNWebEx()
     return nweb_nweb_->IsNWebEx();
 }
 
+void ArkWebNWebImpl::SetEnableHalfFrameRate(bool enabled)
+{
+    nweb_nweb_->SetEnableHalfFrameRate(enabled);
+}
+
 void ArkWebNWebImpl::OnDragAttach()
 {
     nweb_nweb_->OnDragAttach();
