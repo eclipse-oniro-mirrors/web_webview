@@ -1509,6 +1509,11 @@ public:
      */
     bool IsNWebEx() override;
 
+    /**
+     * @brief Set enable Half the frame rate.
+     */
+    void SetEnableHalfFrameRate(bool enabled) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
