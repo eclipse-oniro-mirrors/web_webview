@@ -1300,6 +1300,11 @@ void ArkWebNWebImpl::SetEnableHalfFrameRate(bool enabled)
     nweb_nweb_->SetEnableHalfFrameRate(enabled);
 }
 
+void ArkWebNWebImpl::MaximizeResize()
+{
+    nweb_nweb_->MaximizeResize();
+}
+
 void ArkWebNWebImpl::OnDragAttach()
 {
     nweb_nweb_->OnDragAttach();

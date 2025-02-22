@@ -1073,4 +1073,9 @@ void ArkWebHandlerWrapper::OnShowAutofillPopupV2(
     ark_web_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, stMenuItems);
     ArkWebStringVectorStructRelease(stMenuItems);
 }
+
+void ArkWebHandlerWrapper::RestoreRenderFit()
+{
+    ark_web_handler_->RestoreRenderFit();
+}
 } // namespace OHOS::ArkWeb

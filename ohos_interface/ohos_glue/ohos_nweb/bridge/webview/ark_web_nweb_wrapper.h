@@ -1514,10 +1514,15 @@ public:
      */
     void SetEnableHalfFrameRate(bool enabled) override;
 
-    /*
-     * @brief Try to attach web inputmethod after drag.
+    /**
+     * @brief Web maximize resize optimize.
      */
     /*--ark web()--*/
+    void MaximizeResize() override;
+
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
     void OnDragAttach() override;
 
 private:
