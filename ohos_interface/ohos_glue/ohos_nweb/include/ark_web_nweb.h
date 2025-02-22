@@ -1667,6 +1667,12 @@ public:
      */
     /*--ark web()--*/
     virtual bool IsNWebEx() = 0;
+
+    /**
+     * @brief Set enable half the frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enabled) = 0;
 };
 
 } // namespace OHOS::ArkWeb
