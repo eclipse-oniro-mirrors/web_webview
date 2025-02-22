@@ -1673,6 +1673,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SetEnableHalfFrameRate(bool enabled) = 0;
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void MaximizeResize() = 0;
 };
 
 } // namespace OHOS::ArkWeb

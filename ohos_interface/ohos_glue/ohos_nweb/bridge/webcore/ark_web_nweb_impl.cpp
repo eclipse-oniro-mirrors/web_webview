@@ -1299,4 +1299,9 @@ void ArkWebNWebImpl::SetEnableHalfFrameRate(bool enabled)
 {
     nweb_nweb_->SetEnableHalfFrameRate(enabled);
 }
+
+void ArkWebNWebImpl::MaximizeResize()
+{
+    nweb_nweb_->MaximizeResize();
+}
 } // namespace OHOS::ArkWeb
