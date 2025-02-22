@@ -90,7 +90,7 @@
         "build": {
             "sub_component": [
                 "//base/web/webview/interfaces/kits/cj:cj_webview_ffi",
-                "//base/web/webview/interfaces/kits/napi:webview_napi",
+                "//base/web/webview/interfaces/kits/napi:webview_napi_native",
                 "//base/web/webview/interfaces/kits/napi:neterrorlist_napi",
                 "//base/web/webview/interfaces/native:webview_ndk",
                 "//base/web/webview/ohos_nweb:chrome_crashpad_handler",
@@ -98,7 +98,8 @@
                 "//base/web/webview/ohos_nweb:nweb_hap",
                 "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
                 "//base/web/webview/ohos_wrapper:nweb_ohos_wrapper",
-                "//base/web/webview/sa:app_fwk_update_service"
+                "//base/web/webview/sa:app_fwk_update_service",
+                "//base/web/webview/interfaces/kits/napi/js:webview_napi"
             ],
             "inner_kits": [
                 {
