@@ -1729,6 +1729,12 @@ public:
         return false;
     }
 
+    /**
+     * Set enable half the frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enable) {}
+
     /** 
      * @brief Try to attach web inputmethod after drag.
      */

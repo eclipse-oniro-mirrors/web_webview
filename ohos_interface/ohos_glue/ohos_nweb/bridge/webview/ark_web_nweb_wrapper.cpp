@@ -1528,6 +1528,11 @@ bool ArkWebNWebWrapper::IsNWebEx()
     return ark_web_nweb_->IsNWebEx();
 }
 
+void ArkWebNWebWrapper::SetEnableHalfFrameRate(bool enabled)
+{
+    ark_web_nweb_->SetEnableHalfFrameRate(enabled);
+}
+
 void ArkWebNWebWrapper::OnDragAttach()
 {
     ark_web_nweb_->OnDragAttach();

@@ -1496,6 +1496,11 @@ public:
      */
     bool IsNWebEx() override;
 
+    /**
+     * @brief Set enable Half the frame rate.
+     */
+    void SetEnableHalfFrameRate(bool enabled) override;
+
     /*
      * @brief Try to attach web inputmethod after drag.
      */
