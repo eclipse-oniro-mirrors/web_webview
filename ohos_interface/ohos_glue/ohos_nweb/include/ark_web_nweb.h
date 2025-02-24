@@ -1650,6 +1650,41 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetCurrentLanguage() = 0;
+
+    /**
+     * @brief Send mouse wheel event with sourceTool info.
+     */
+    /*--ark web()--*/
+    virtual void WebSendMouseWheelEventV2(double x,
+                                          double y,
+                                          double delta_x,
+                                          double delta_y,
+                                          const ArkWebInt32Vector& pressedCodes,
+                                          int32_t source)  = 0;
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    /*--ark web()--*/
+    virtual bool IsNWebEx() = 0;
+
+    /**
+     * @brief Set enable half the frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enabled) = 0;
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void MaximizeResize() = 0;
+
+    /*
+     * @brief Try to attach web inputmethod after drag.
+     */
+    /*--ark web()--*/
+    virtual void OnDragAttach()  = 0;
 };
 
 } // namespace OHOS::ArkWeb

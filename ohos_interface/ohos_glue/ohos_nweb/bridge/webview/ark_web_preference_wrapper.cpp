@@ -579,4 +579,10 @@ void ArkWebPreferenceWrapper::PutWebMediaAVSessionEnabled(bool enable)
     ark_web_preference_->PutWebMediaAVSessionEnabled(enable);
 }
 
+void ArkWebPreferenceWrapper::SetFontWeightScale(float scale)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->SetFontWeightScale(scale);
+    }
+}
 } // namespace OHOS::ArkWeb

@@ -851,6 +851,12 @@ public:
     virtual void OnShowAutofillPopupV2(
         const float offsetX, const float offsetY, const float height, const float width,
         const ArkWebStringVector& menu_items) = 0;
+
+    /**
+     * @brief Restore web component renderfit.
+     */
+    /*--ark web()--*/
+    virtual void RestoreRenderFit() = 0;
 };
 
 } // namespace OHOS::ArkWeb

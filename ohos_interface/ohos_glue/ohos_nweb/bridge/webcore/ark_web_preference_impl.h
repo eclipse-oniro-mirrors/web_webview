@@ -667,6 +667,11 @@ public:
      */
     void PutWebMediaAVSessionEnabled(bool enable) override;
 
+    /**
+     * @brief Set the scale of the font-weight.The default is 1.0f.
+     */
+    void SetFontWeightScale(float scale) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;
 };

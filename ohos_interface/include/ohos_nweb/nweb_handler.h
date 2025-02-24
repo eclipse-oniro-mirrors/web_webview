@@ -1049,6 +1049,11 @@ public:
         const float offsetX, const float offsetY, const float height, const float width,
         const std::vector<std::string>& menu_items)
     {}
+
+    /**
+     * @brief Restore web component renderfit.
+     */
+    virtual void RestoreRenderFit() {}
 };
 
 } // namespace OHOS::NWeb

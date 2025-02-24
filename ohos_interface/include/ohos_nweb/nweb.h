@@ -1710,6 +1710,41 @@ public:
     {
         return "";
     }
+
+    /** 
+     * @brief Send mouse wheel event with sourceTool info.
+     */
+    virtual void WebSendMouseWheelEventV2(double x,
+                                          double y,
+                                          double delta_x,
+                                          double delta_y,
+                                          const std::vector<int32_t>& pressedCodes,
+                                          int32_t source) {}
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    virtual bool IsNWebEx()
+    {
+        return false;
+    }
+
+    /**
+     * Set enable half the frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enable) {}
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void MaximizeResize() {}
+
+    /** 
+     * @brief Try to attach web inputmethod after drag.
+     */
+    virtual void OnDragAttach() {}
 };
 
 } // namespace OHOS::NWeb

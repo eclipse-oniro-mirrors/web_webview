@@ -627,6 +627,8 @@ public:
     void OnShowAutofillPopupV2(
         const float offsetX, const float offsetY, const float height, const float width,
         const std::vector<std::string>& menu_items) override;
+
+    void RestoreRenderFit() override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };
