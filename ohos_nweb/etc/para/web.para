@@ -25,3 +25,4 @@ persist.arkwebcore.install_path = /system/app/com.ohos.arkwebcore/ArkWebCore.hap
 persist.arkwebcore.package_name = com.ohos.arkwebcore
 web.ohos.vulkan = None
 web.prppreload.mode = preload
+web.ohos.dvsync = false

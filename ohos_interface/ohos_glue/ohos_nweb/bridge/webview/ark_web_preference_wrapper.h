@@ -664,6 +664,11 @@ public:
      */
     void PutWebMediaAVSessionEnabled(bool enable) override;
 
+    /**
+     * @brief Set the scale of the font-weight.The default is 1.0f.
+     */
+    void SetFontWeightScale(float scale) override;
+
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };

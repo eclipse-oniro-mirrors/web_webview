@@ -254,4 +254,26 @@ void VSyncAdapterImpl::UninitAPSClient()
         apsClientHandler_ = nullptr;
     }
 }
+
+void VSyncAdapterImpl::SetDVSyncSwitch(bool dvsyncSwitch)
+{
+    if (Init() != VSyncErrorCode::SUCCESS) {
+        WVLOG_E("NWebWindowAdatrper init fail!");
+        return;
+    }
+
+    if (!receiver_) {
+        WVLOG_E("NWebWindowAdatrper SetDVSyncSwitch: receiver_ is nullptr!");
+        return;
+    } else if (OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.ohos.dvsync", false)) {
+        WVLOG_D("NWebWindowAdatrper SetDVSyncSwitch: dvsyncSwitch = %{public}d", dvsyncSwitch);
+        VsyncError ret = receiver_->SetNativeDVSyncSwitch(dvsyncSwitch);
+        if (ret != VsyncError::GSERROR_OK) {
+            WVLOG_E("SetNativeDVSyncSwitch failed, ret = %{public}d", ret);
+            return;
+        }
+    } else {
+        WVLOG_D("NWebWindowAdatrper SetDVSyncSwitch Disabled!");
+    }
+}
 } // namespace OHOS::NWeb

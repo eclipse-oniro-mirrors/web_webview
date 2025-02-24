@@ -45,6 +45,7 @@ public:
     void SetOnVsyncEndCallback(void (*onVsyncEndCallback)()) override;
 
     void SetScene(const std::string& sceneName, uint32_t state) override;
+    void SetDVSyncSwitch(bool dvsyncSwitch) override;
 private:
     static void OnVsync(int64_t timestamp, void* data);
     void VsyncCallbackInner(int64_t nanoTimestamp);

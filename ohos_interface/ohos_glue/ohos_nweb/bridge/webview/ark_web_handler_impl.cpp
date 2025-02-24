@@ -949,4 +949,9 @@ void ArkWebHandlerImpl::OnShowAutofillPopupV2(
 {
     nweb_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, ArkWebStringVectorStructToClass(menu_items));
 }
+
+void ArkWebHandlerImpl::RestoreRenderFit()
+{
+    nweb_handler_->RestoreRenderFit();
+}
 } // namespace OHOS::ArkWeb

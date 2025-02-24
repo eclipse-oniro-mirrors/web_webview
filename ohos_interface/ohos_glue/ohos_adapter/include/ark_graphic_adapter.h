@@ -47,6 +47,9 @@ public:
 
     /*--ark web()--*/
     virtual void SetScene(const ArkWebString& sceneName, uint32_t state) = 0;
+
+    /*--ark web()--*/
+    virtual void SetDVSyncSwitch(bool dvsyncSwitch) = 0;
 };
 
 /*--ark web(source=webcore)--*/

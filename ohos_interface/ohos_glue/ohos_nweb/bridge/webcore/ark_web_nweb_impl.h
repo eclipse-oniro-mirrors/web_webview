@@ -1480,6 +1480,38 @@ public:
      */
     ArkWebString GetCurrentLanguage() override;
 
+    /*
+     * @brief Send mouse wheel event with sourceTool info.
+     */
+    /*--ark web()--*/
+    void WebSendMouseWheelEventV2(double x,
+                                  double y,
+                                  double delta_x,
+                                  double delta_y,
+                                  const ArkWebInt32Vector& pressedCodes,
+                                  int32_t source) override;
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    bool IsNWebEx() override;
+
+    /**
+     * @brief Set enable Half the frame rate.
+     */
+    void SetEnableHalfFrameRate(bool enabled) override;
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    void MaximizeResize() override;
+
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
+    void OnDragAttach() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
