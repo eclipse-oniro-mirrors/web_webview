@@ -1904,8 +1904,10 @@ extern "C" {
         }
         std::shared_ptr<NWeb::HitTestResult> nwebResult = nativeWebviewCtl->GetLastHitTest();
         *errCode = NWebError::NO_ERROR;
-        ret.code = nwebResult->GetType();
-        ret.data = MallocCString(nwebResult->GetExtra());
+        if (nwebResult) {
+            ret.code = nwebResult->GetType();
+            ret.data = MallocCString(nwebResult->GetExtra());
+        }
         return ret;
     }
 }
