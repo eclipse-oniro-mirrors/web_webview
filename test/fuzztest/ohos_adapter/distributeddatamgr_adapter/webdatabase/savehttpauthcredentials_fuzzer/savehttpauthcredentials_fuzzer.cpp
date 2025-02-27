@@ -19,6 +19,7 @@
 #include <securec.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <algorithm>
 
 #include "ohos_web_data_base_adapter_impl.h"
 
@@ -238,7 +239,7 @@ bool GetHttpAuthCredentialsFuzzTest(const uint8_t* data, size_t size)
     char password[maxLen + 1] = { 0 };
     std::shared_ptr<MockRdbStore>mockRdbStore=std::make_shared<MockRdbStore>();
     OhosWebDataBaseAdapterImpl(mockRdbStore).GetHttpAuthCredentials(host, realm, username, password, maxLen + 1);
-    (void)memset_s(password, maxLen + 1, 0, maxLen + 1);
+    std::fill(password, password + maxLen + 1, 0);
     return true;
 }
 } // namespace OHOS
