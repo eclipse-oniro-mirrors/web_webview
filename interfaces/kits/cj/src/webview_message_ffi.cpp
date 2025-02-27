@@ -404,7 +404,7 @@ extern "C" {
         }
         if (webMessageExt->GetType() != static_cast<int32_t>(WebMessageType::STRING)) {
             *errCode = NWebError::TYPE_NOT_MATCH_WITCH_VALUE;
-            return ;
+            return;
         }
         std::string value = std::string(message);
         webMessageExt->SetString(value);

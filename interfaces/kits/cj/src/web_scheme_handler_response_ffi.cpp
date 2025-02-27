@@ -44,7 +44,7 @@ RetDataCString FfiWebSchemeHandlerResponseGetUrl(int64_t id)
 {
     RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return ret;
     }
     char* url = nativeWebSchemeHandlerResponse->GetUrl();
@@ -58,7 +58,7 @@ RetDataCString FfiWebSchemeHandlerResponseGetStatusText(int64_t id)
 {
     RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return ret;
     }
     char* statusText = nativeWebSchemeHandlerResponse->GetStatusText();
@@ -72,7 +72,7 @@ RetDataCString FfiWebSchemeHandlerResponseGetMimeType(int64_t id)
 {
     RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return ret;
     }
     char* mimeType = nativeWebSchemeHandlerResponse->GetMimeType();
@@ -86,7 +86,7 @@ RetDataCString FfiWebSchemeHandlerResponseGetEncoding(int64_t id)
 {
     RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return ret;
     }
     char* encoding = nativeWebSchemeHandlerResponse->GetEncoding();
@@ -101,7 +101,7 @@ RetDataCString FfiWebSchemeHandlerResponseGetHeaderByName(int64_t id, const char
     std::string cname = name;
     RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return ret;
     }
     char* header = nativeWebSchemeHandlerResponse->GetHeaderByName(cname.c_str());
@@ -114,7 +114,7 @@ RetDataCString FfiWebSchemeHandlerResponseGetHeaderByName(int64_t id, const char
 int32_t FfiWebSchemeHandlerResponseGetNetErrorCode(int64_t id, int32_t* errCode)
 {
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         *errCode = NWebError::INIT_ERROR;
         return -1;
     }
@@ -126,7 +126,7 @@ int32_t FfiWebSchemeHandlerResponseGetNetErrorCode(int64_t id, int32_t* errCode)
 int32_t FfiWebSchemeHandlerResponseGetStatus(int64_t id, int32_t* errCode)
 {
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         *errCode = NWebError::INIT_ERROR;
         return -1;
     }
@@ -138,7 +138,7 @@ int32_t FfiWebSchemeHandlerResponseGetStatus(int64_t id, int32_t* errCode)
 int32_t FfiWebSchemeHandlerResponseSetStatus(int64_t id, int32_t status)
 {
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return NWebError::INIT_ERROR;
     }
     if (!status) {
@@ -151,7 +151,7 @@ int32_t FfiWebSchemeHandlerResponseSetStatusText(int64_t id, const char* statusT
 {
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
     std::string cstatusText = statusText;
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return NWebError::INIT_ERROR;
     }
     if (cstatusText.length() == 0) {
@@ -167,7 +167,7 @@ int32_t FfiWebSchemeHandlerResponseSetUrl(int64_t id, const char* url)
         return NWebError::PARAM_CHECK_ERROR;
     }
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return NWebError::INIT_ERROR;
     }
     return nativeWebSchemeHandlerResponse->SetUrl(curl.c_str());
@@ -177,7 +177,7 @@ int32_t FfiWebSchemeHandlerResponseSetMimeType(int64_t id, const char* mimeType)
 {
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
     std::string cmimeType = mimeType;
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return NWebError::INIT_ERROR;
     }
     if (cmimeType.length() == 0) {
@@ -190,7 +190,7 @@ int32_t FfiWebSchemeHandlerResponseSetEncoding(int64_t id, const char* encoding)
 {
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
     std::string cencoding = encoding;
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return NWebError::INIT_ERROR;
     }
     if (cencoding.length() == 0) {
@@ -204,7 +204,7 @@ int32_t FfiWebSchemeHandlerResponseSetHeaderByName(int64_t id, const char* name,
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
     std::string cname = name;
     std::string cvalue = value;
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return NWebError::INIT_ERROR;
     }
     if (cname.length() == 0 || cvalue.length() == 0) {
@@ -216,7 +216,7 @@ int32_t FfiWebSchemeHandlerResponseSetHeaderByName(int64_t id, const char* name,
 int32_t FfiWebSchemeHandlerResponseSetErrorCode(int64_t id, int32_t code)
 {
     auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(id);
-    if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+    if (nativeWebSchemeHandlerResponse == nullptr) {
         return NWebError::INIT_ERROR;
     }
     return nativeWebSchemeHandlerResponse->SetErrorCode(code);
