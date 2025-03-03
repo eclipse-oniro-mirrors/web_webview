@@ -426,6 +426,10 @@ Drm_ErrCode DrmAdapterImpl::SystemCallBackWithObj(
             OH_MediaKeySystem_GenerateKeySystemRequest(mediaKeySystem, request, &requestLen, defaultUrl, defaultUrlLen);
         WVLOG_I("[DRM]DrmAdapterImpl::OH_MediaKeySystem_GenerateKeySystemRequest, ret = %{public}d.", ret);
         if (ret == DRM_ERR_OK) {
+            if (requestLen > MAX_REQUEST_LENGTH) {
+                WVLOG_E("[DRM]OH_MediaKeySystem_GenerateKeySystemRequest error, invalid requestLen.");
+                return DRM_ERR_INVALID_VAL;
+            }
             std::vector<uint8_t> requestData;
             std::string requestString;
             requestData.insert(requestData.begin(), request, request + requestLen);
@@ -843,6 +847,10 @@ void DrmAdapterImpl::StorageSaveInfoResult(bool result, int32_t type)
             callback_->OnPromiseRejected(removeSessionPromiseId_, "Fail to generate key release request");
         }
         WVLOG_I("[DRM]DrmAdapterImpl::StorageSaveInfoResult ret = %{public}d: ", ret);
+        return;
+    }
+    if (releaseRequestLen > MAX_MEDIA_KEY_REQUEST_DATA_LEN) {
+        WVLOG_E("[DRM]OH_MediaKeySession_GenerateOfflineReleaseRequest error, invalid releaseRequestLen.");
         return;
     }
     if (callback_) {
