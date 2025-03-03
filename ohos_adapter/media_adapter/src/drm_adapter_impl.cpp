@@ -853,16 +853,12 @@ void DrmAdapterImpl::StorageSaveInfoResult(bool result, int32_t type)
         WVLOG_E("[DRM]OH_MediaKeySession_GenerateOfflineReleaseRequest error, invalid releaseRequestLen.");
         return;
     }
-    if (callback_) {
-        callback_->OnPromiseResolved(removeSessionPromiseId_);
-    }
     std::vector<uint8_t> requestData;
     requestData.insert(requestData.begin(), releaseRequest, releaseRequest + releaseRequestLen);
     int32_t requestType = static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE);
     if (callback_) {
+        callback_->OnPromiseResolved(removeSessionPromiseId_);
         callback_->UpdateEmeId(sessionId->EmeId(), true);
-    }
-    if (callback_) {
         callback_->OnSessionMessage(releaseEmeId_, requestType, requestData);
     }
     return;
