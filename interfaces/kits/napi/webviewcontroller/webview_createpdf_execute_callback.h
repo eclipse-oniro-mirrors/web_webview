@@ -96,7 +96,6 @@ private:
     napi_ref callbackRef_ = nullptr;
     napi_deferred deferred_ = nullptr;
 
-    static void UvAfterWorkCb(uv_work_t* work, int status);
     static void UvAfterWorkCbAsync(napi_env env, napi_ref callbackRef, const char* result, const long size);
     static void UvAfterWorkCbPromise(napi_env env, napi_deferred deferred, const char* result, const long size);
     static void ReleaseArrayBufferExecuteParamAndUvWork(ArrayBufferExecuteParam* param, uv_work_t* work);
