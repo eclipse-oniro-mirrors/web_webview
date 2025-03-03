@@ -400,4 +400,9 @@ std::string SystemPropertiesAdapterImpl::GetScrollFriction()
 {
     return OHOS::system::GetParameter("persist.scrollable.friction", "");
 }
+
+std::string SystemPropertiesAdapterImpl::GetBundleName()
+{
+    return NWebConfigHelper::Instance().GetBundleName();
+}
 } // namespace OHOS::NWeb

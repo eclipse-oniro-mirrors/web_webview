@@ -209,4 +209,10 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetScrollFriction()
     std::string str = real_.GetScrollFriction();
     return ArkWebStringClassToStruct(str);
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetBundleName()
+{
+    std::string str = real_.GetBundleName();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb
