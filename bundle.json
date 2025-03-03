@@ -61,6 +61,7 @@
                 "init",
                 "input",
                 "ipc",
+                "jsoncpp",
                 "location",
                 "napi",
                 "media_foundation",
@@ -125,8 +126,7 @@
                 },
                 {
                     "header": {
-                        "header_files": [
-                        ],
+                        "header_files": [],
                         "header_base": "//base/web/webview/ohos_adapter"
                     },
                     "name": "//base/web/webview/ohos_adapter:nweb_ohos_adapter"
@@ -328,7 +328,7 @@
                 "//base/web/webview/test/unittest/ohos_adapter/hiviewdfx_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/imf_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/media_adapter_test:unittest",
-		"//base/web/webview/test/unittest/ohos_adapter/migration_manager_adapter_test:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter/migration_manager_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/flowbuffer_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/sensor_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/napi_common_test:unittest",
