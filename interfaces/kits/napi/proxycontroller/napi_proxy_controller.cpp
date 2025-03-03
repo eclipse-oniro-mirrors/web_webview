@@ -94,6 +94,8 @@ void NapiProxyController::InnerApplyProxyOverride(ProxyConfig *proxyConfig, napi
     auto resultCallback = std::make_shared<ProxyChangedCallbackImpl>(env, jsCallback);
     NWebHelper::Instance().SetProxyOverride(proxyUrls, proxySchemeFilters, bypassRules,
                                             reverseBypass, resultCallback);
+    
+    napi_delete_reference(env, jsCallback);
 }
 
 void ProxyChangedCallbackImpl::OnChanged()
@@ -143,6 +145,7 @@ napi_value NapiProxyController::JS_ApplyProxyOverride(napi_env env, napi_callbac
  
     if (!proxyConfig) {
         WVLOG_E("[PROXYCONTROLLER] unwrap ProxyConfig failed.");
+        napi_delete_reference(env, jsCallback);
         return nullptr;
     }
 
