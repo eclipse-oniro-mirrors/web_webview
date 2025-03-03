@@ -464,4 +464,14 @@ int NWebConfigHelper::safeGetPropAsInt(xmlNode* node, const xmlChar* propName, i
     return value;
 }
 
+void NWebConfigHelper::SetBundleName(const std::string& bundleName)
+{
+    bundleName_ = bundleName;
+}
+
+std::string NWebConfigHelper::GetBundleName()
+{
+    return bundleName_;
+}
+
 } // namespace OHOS::NWeb
