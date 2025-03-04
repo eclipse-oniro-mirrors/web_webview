@@ -1110,7 +1110,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlSetScrollable(int64_t id, bool enable)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || nativeWebviewCtl->IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
         nativeWebviewCtl->SetScrollable(enable);
