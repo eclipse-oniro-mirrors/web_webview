@@ -106,6 +106,8 @@ ohos_shared_library("nweb_ohos_adapter") {
   ]
 
   include_dirs = [
+    "../ohos_interface/include/ohos_adapter",
+    "../ohos_interface/include/ohos_nweb",
     "../ohos_nweb/include",
     "aafwk_adapter/include",
     "access_token_adapter/include",
