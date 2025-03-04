@@ -1110,6 +1110,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (ctx) {
         std::string bundleName = ctx->GetBundleName();
+        NWebConfigHelper::Instance().SetBundleName(bundleName);
         initArgs->AddArg(std::string("--bundle-name=").append(bundleName));
     }
 
@@ -1172,5 +1173,10 @@ bool NWebAdapterHelper::IsLTPODynamicApp(const std::string& bundleName)
 int32_t NWebAdapterHelper::GetLTPOStrategy()
 {
     return NWebConfigHelper::Instance().GetLTPOStrategy();
+}
+
+std::string NWebAdapterHelper::GetBundleName()
+{
+    return NWebConfigHelper::Instance().GetBundleName();
 }
 } // namespace OHOS::NWeb

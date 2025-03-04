@@ -128,6 +128,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetScrollFriction() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetBundleName() = 0;
 };
 
 } // namespace OHOS::ArkWeb

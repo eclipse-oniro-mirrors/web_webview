@@ -314,4 +314,15 @@ std::string ArkSystemPropertiesAdapterWrapper::GetScrollFriction()
     ArkWebStringStructRelease(str);
     return result;
 }
+
+std::string ArkSystemPropertiesAdapterWrapper::GetBundleName()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetBundleName();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
 } // namespace OHOS::ArkWeb
