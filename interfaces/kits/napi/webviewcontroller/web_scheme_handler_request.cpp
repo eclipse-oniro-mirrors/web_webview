@@ -784,6 +784,9 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(env, &scope);
     if (!scope) {
+        if (param->buffer) {
+            delete param->buffer;
+        }
         delete param;
         return;
     }
