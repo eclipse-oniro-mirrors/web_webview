@@ -426,6 +426,10 @@ Drm_ErrCode DrmAdapterImpl::SystemCallBackWithObj(
             OH_MediaKeySystem_GenerateKeySystemRequest(mediaKeySystem, request, &requestLen, defaultUrl, defaultUrlLen);
         WVLOG_I("[DRM]DrmAdapterImpl::OH_MediaKeySystem_GenerateKeySystemRequest, ret = %{public}d.", ret);
         if (ret == DRM_ERR_OK) {
+            if (requestLen > MAX_REQUEST_LENGTH) {
+                WVLOG_E("[DRM]OH_MediaKeySystem_GenerateKeySystemRequest error, invalid requestLen.");
+                return DRM_ERR_INVALID_VAL;
+            }
             std::vector<uint8_t> requestData;
             std::string requestString;
             requestData.insert(requestData.begin(), request, request + requestLen);
@@ -845,16 +849,16 @@ void DrmAdapterImpl::StorageSaveInfoResult(bool result, int32_t type)
         WVLOG_I("[DRM]DrmAdapterImpl::StorageSaveInfoResult ret = %{public}d: ", ret);
         return;
     }
-    if (callback_) {
-        callback_->OnPromiseResolved(removeSessionPromiseId_);
+    if (releaseRequestLen > MAX_MEDIA_KEY_REQUEST_DATA_LEN) {
+        WVLOG_E("[DRM]OH_MediaKeySession_GenerateOfflineReleaseRequest error, invalid releaseRequestLen.");
+        return;
     }
     std::vector<uint8_t> requestData;
     requestData.insert(requestData.begin(), releaseRequest, releaseRequest + releaseRequestLen);
     int32_t requestType = static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE);
     if (callback_) {
+        callback_->OnPromiseResolved(removeSessionPromiseId_);
         callback_->UpdateEmeId(sessionId->EmeId(), true);
-    }
-    if (callback_) {
         callback_->OnSessionMessage(releaseEmeId_, requestType, requestData);
     }
     return;
