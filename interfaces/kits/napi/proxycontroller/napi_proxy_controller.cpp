@@ -143,6 +143,7 @@ napi_value NapiProxyController::JS_ApplyProxyOverride(napi_env env, napi_callbac
  
     if (!proxyConfig) {
         WVLOG_E("[PROXYCONTROLLER] unwrap ProxyConfig failed.");
+        napi_delete_reference(env, jsCallback);
         return nullptr;
     }
 
