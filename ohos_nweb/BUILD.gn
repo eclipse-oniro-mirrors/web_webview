@@ -57,7 +57,10 @@ config("nweb_glue_interface") {
 }
 
 ohos_shared_library("web_configs") {
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "../ohos_interface/include/ohos_nweb",
+    "include",
+  ]
   sources = [ "src/nweb_config_helper.cpp" ]
 
   deps = [ ":web_config" ]
