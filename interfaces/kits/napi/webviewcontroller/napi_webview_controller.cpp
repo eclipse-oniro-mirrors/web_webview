@@ -3487,9 +3487,9 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
     int fd;
     size_t scriptLength;
     ErrCode constructResult = ConstructFlowbuf(env, argv[INTEGER_ZERO], fd, scriptLength);
-    if (constructResult != NO_ERROR) {
+    if (constructResult != NO_ERROR)
         return RunJSBackToOriginal(env, info, extention, argv[INTEGER_ZERO], result);
-    }
+
     usedFd_++;
 
     WebviewController *webviewController = nullptr;
@@ -3510,6 +3510,8 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
         if (jsCallback) {
             // RunJavaScriptCallbackExt will close fd after IPC
             webviewController->RunJavaScriptCallbackExt(fd, scriptLength, env, std::move(jsCallback), extention);
+        } else {
+            close(fd);
         }
         usedFd_--;
         return result;
@@ -3520,6 +3522,8 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
         if (promise && deferred) {
             // RunJavaScriptCallbackExt will close fd after IPC
             webviewController->RunJavaScriptPromiseExt(fd, scriptLength, env, deferred, extention);
+        } else {
+            close(fd);
         }
         usedFd_--;
         return promise;
