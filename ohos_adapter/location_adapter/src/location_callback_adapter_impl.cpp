@@ -39,7 +39,7 @@ int LocationCallbackImpl::OnRemoteRequest(uint32_t code,
     switch (code) {
         case RECEIVE_LOCATION_INFO_EVENT: {
             std::unique_ptr<OHOS::Location::Location> location =
-                OHOS::Location::Location::Unmarshalling(data);
+                OHOS::Location::Location::UnmarshallingMakeUnique(data);
             OnLocationReport(location);
             break;
         }
