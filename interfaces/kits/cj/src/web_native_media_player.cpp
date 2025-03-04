@@ -484,6 +484,10 @@ std::shared_ptr<NWeb::NWebNativeMediaPlayerBridge> NWebCreateNativeMediaPlayerCa
         return nullptr;
     }
     auto handlerImpl = FFIData::Create<NativeMediaPlayerHandlerImpl>(nwebId_, handler);
+    if (!handlerImpl) {
+        WEBVIEWLOGE("Create handlerImpl failed, nweb id is %{public}d", nwebId_);
+        return nullptr;
+    }
     int64_t handlerId = handlerImpl->GetID();
     std::string embedID_ = mediaInfo->GetEmbedId();
     const char* embedID = MallocCString(embedID_);

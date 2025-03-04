@@ -57,7 +57,7 @@ extern "C" {
     int32_t FfiWebHttpBodyStreamRead(int32_t bufLen, int64_t id)
     {
         auto nativeWebHttpBodyStream = FFIData::GetData<WebHttpBodyStreamImpl>(id);
-        if (nativeWebHttpBodyStream == nullptr || !nativeWebHttpBodyStream) {
+        if (nativeWebHttpBodyStream == nullptr) {
             return NWebError::INIT_ERROR;
         }
         if (bufLen <= 0) {
@@ -70,7 +70,7 @@ extern "C" {
     bool FfiWebHttpBodyStreamIsChunked(int64_t id, int32_t *errCode)
     {
         auto nativeWebHttpBodyStream = FFIData::GetData<WebHttpBodyStreamImpl>(id);
-        if (nativeWebHttpBodyStream == nullptr || !nativeWebHttpBodyStream) {
+        if (nativeWebHttpBodyStream == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -82,7 +82,7 @@ extern "C" {
     bool FfiWebHttpBodyStreamIsEof(int64_t id, int32_t *errCode)
     {
         auto nativeWebHttpBodyStream = FFIData::GetData<WebHttpBodyStreamImpl>(id);
-        if (nativeWebHttpBodyStream == nullptr || !nativeWebHttpBodyStream) {
+        if (nativeWebHttpBodyStream == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -94,7 +94,7 @@ extern "C" {
     bool FfiWebHttpBodyStreamIsInMemory(int64_t id, int32_t *errCode)
     {
         auto nativeWebHttpBodyStream = FFIData::GetData<WebHttpBodyStreamImpl>(id);
-        if (nativeWebHttpBodyStream == nullptr || !nativeWebHttpBodyStream) {
+        if (nativeWebHttpBodyStream == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -106,7 +106,7 @@ extern "C" {
     uint64_t FfiWebHttpBodyStreamGetPostion(int64_t id, int32_t *errCode)
     {
         auto nativeWebHttpBodyStream = FFIData::GetData<WebHttpBodyStreamImpl>(id);
-        if (nativeWebHttpBodyStream == nullptr || !nativeWebHttpBodyStream) {
+        if (nativeWebHttpBodyStream == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -118,7 +118,7 @@ extern "C" {
     uint64_t FfiWebHttpBodyStreamGetSize(int64_t id, int32_t *errCode)
     {
         auto nativeWebHttpBodyStream = FFIData::GetData<WebHttpBodyStreamImpl>(id);
-        if (nativeWebHttpBodyStream == nullptr || !nativeWebHttpBodyStream) {
+        if (nativeWebHttpBodyStream == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -141,7 +141,7 @@ extern "C" {
     int32_t FfiWebSchemeHandlerRequestGetRequestResourceType(int64_t id, int32_t *errCode)
     {
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -153,7 +153,7 @@ extern "C" {
     bool FfiWebSchemeHandlerRequestHasGesture(int64_t id, int32_t *errCode)
     {
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -165,7 +165,7 @@ extern "C" {
     bool FfiWebSchemeHandlerRequestIsMainFrame(int64_t id, int32_t *errCode)
     {
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -177,7 +177,7 @@ extern "C" {
     bool FfiWebSchemeHandlerRequestIsRedirect(int64_t id, int32_t *errCode)
     {
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -190,7 +190,7 @@ extern "C" {
     {
         RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             return ret;
         }
         std::string requestUrl = nativeWebSchemeHandlerRequest->GetRequestUrl();
@@ -203,7 +203,7 @@ extern "C" {
     {
         RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             return ret;
         }
         std::string method = nativeWebSchemeHandlerRequest->GetMethod();
@@ -216,7 +216,7 @@ extern "C" {
     {
         RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             return ret;
         }
         std::string referrer = nativeWebSchemeHandlerRequest->GetReferrer();
@@ -229,7 +229,7 @@ extern "C" {
     {
         RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             return ret;
         }
         std::string frameUrl = nativeWebSchemeHandlerRequest->GetFrameUrl();
@@ -242,7 +242,7 @@ extern "C" {
     {
         ArrWebHeader ret = { nullptr, 0 };
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return ret;
         }
@@ -264,7 +264,7 @@ extern "C" {
     int64_t FfiWebSchemeHandlerRequestGetHttpBodyStream(int64_t id, int32_t *errCode)
     {
         auto nativeWebSchemeHandlerRequest = FFIData::GetData<WebSchemeHandlerRequestImpl>(id);
-        if (nativeWebSchemeHandlerRequest == nullptr || !nativeWebSchemeHandlerRequest) {
+        if (nativeWebSchemeHandlerRequest == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -297,12 +297,12 @@ extern "C" {
     void FfiWebResourceHandlerDidReceiveResponse(int64_t id, int32_t *errCode, int64_t responceid)
     {
         auto nativeWebResourceHandler = FFIData::GetData<WebResourceHandlerImpl>(id);
-        if (nativeWebResourceHandler == nullptr || !nativeWebResourceHandler) {
+        if (nativeWebResourceHandler == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return;
         }
         auto nativeWebSchemeHandlerResponse = FFIData::GetData<WebSchemeHandlerResponseImpl>(responceid);
-        if (nativeWebSchemeHandlerResponse == nullptr || !nativeWebSchemeHandlerResponse) {
+        if (nativeWebSchemeHandlerResponse == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return;
         }
@@ -318,7 +318,7 @@ extern "C" {
         int64_t id, int32_t *errCode, CArrUI8 buffer, int64_t buflen)
     {
         auto nativeWebResourceHandler = FFIData::GetData<WebResourceHandlerImpl>(id);
-        if (nativeWebResourceHandler == nullptr || !nativeWebResourceHandler) {
+        if (nativeWebResourceHandler == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return;
         }
@@ -333,7 +333,7 @@ extern "C" {
     void FfiWebResourceHandlerDidFinish(int64_t id, int32_t *errCode)
     {
         auto nativeWebResourceHandler = FFIData::GetData<WebResourceHandlerImpl>(id);
-        if (nativeWebResourceHandler == nullptr || !nativeWebResourceHandler) {
+        if (nativeWebResourceHandler == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return;
         }
@@ -347,7 +347,7 @@ extern "C" {
     void FfiWebResourceHandlerDidFail(int64_t id, int32_t *errCode, int32_t errorcode)
     {
         auto nativeWebResourceHandler = FFIData::GetData<WebResourceHandlerImpl>(id);
-        if (nativeWebResourceHandler == nullptr || !nativeWebResourceHandler) {
+        if (nativeWebResourceHandler == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return;
         }
