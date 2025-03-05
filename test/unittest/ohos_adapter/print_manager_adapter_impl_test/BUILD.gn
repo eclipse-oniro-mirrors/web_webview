@@ -44,6 +44,7 @@ ohos_unittest("print_manager_adapter_impl_test") {
 
   if (webview_print_enable) {
     external_deps += [
+      "jsoncpp:jsoncpp",
       "print_fwk:print_client",
       "print_fwk:print_helper",
       "print_fwk:print_models",
