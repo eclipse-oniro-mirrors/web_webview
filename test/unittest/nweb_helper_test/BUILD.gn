@@ -21,7 +21,7 @@ ohos_unittest("nweb_helper_test") {
 
   sources = [
     "../common/nweb_create_window.cpp",
-    "nweb_helper_test.cpp",
+    "nweb_helper_ex_test.cpp",
   ]
 
   include_dirs = [ "../common" ]
