@@ -20,6 +20,8 @@ config("module_private_config") {
 
   include_dirs = [
     "../../../../ohos_adapter/ohos_init_web_adapter/include",
+    "../../../../ohos_interface/include/ohos_adapter",
+    "../../../../ohos_interface/include/ohos_nweb",
     "../../../../interfaces/kits/napi/webfunction",
   ]
 }
