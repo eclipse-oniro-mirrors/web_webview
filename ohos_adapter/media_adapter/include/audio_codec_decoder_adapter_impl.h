@@ -168,7 +168,7 @@ public:
 
     OH_AVCodec* GetAVCodec();
 
-    std::weak_ptr<AudioDecoderCallbackAdapterImpl> GetAudioDecoderCallBack();
+    AudioDecoderCallbackAdapterImpl* GetAudioDecoderCallBack();
 
     void SetInputBuffer(uint32_t index, OH_AVBuffer *buffer);
 
