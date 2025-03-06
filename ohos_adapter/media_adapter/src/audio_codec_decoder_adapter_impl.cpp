@@ -235,9 +235,9 @@ OH_AVCodec* AudioCodecDecoderAdapterImpl::GetAVCodec()
     return decoder_;
 }
 
-std::weak_ptr<AudioDecoderCallbackAdapterImpl> AudioCodecDecoderAdapterImpl::GetAudioDecoderCallBack()
+AudioDecoderCallbackAdapterImpl* AudioCodecDecoderAdapterImpl::GetAudioDecoderCallBack()
 {
-    return std::weak_ptr<AudioDecoderCallbackAdapterImpl>(callback_);
+    return callback_.get();
 }
 
 void AudioCodecDecoderAdapterImpl::SetInputBuffer(uint32_t index, OH_AVBuffer *buffer)
@@ -875,13 +875,12 @@ void AudioDecoderCallbackManager::OnError(OH_AVCodec *codec, int32_t errorCode, 
         WVLOG_E("AudioDecoderCallbackManager not find decoder.");
         return;
     }
-    auto callbackImpl = impl->GetAudioDecoderCallBack().lock();
-    if (!callbackImpl) {
+    if (impl->GetAudioDecoderCallBack() == nullptr) {
         WVLOG_E("audio decoder callback is nullptr.");
         return;
     }
 
-    callbackImpl->OnError(errorCode);
+    impl->GetAudioDecoderCallBack()->OnError(errorCode);
 }
 
 void AudioDecoderCallbackManager::OnOutputFormatChanged(OH_AVCodec *codec, OH_AVFormat *format, void *userData)
@@ -897,13 +896,12 @@ void AudioDecoderCallbackManager::OnOutputFormatChanged(OH_AVCodec *codec, OH_AV
         WVLOG_E("AudioDecoderCallbackManager not find decoder.");
         return;
     }
-    auto callbackImpl = impl->GetAudioDecoderCallBack().lock();
-    if (!callbackImpl) {
+    if (impl->GetAudioDecoderCallBack() == nullptr) {
         WVLOG_E("audio decoder callback is nullptr.");
         return;
     }
 
-    callbackImpl->OnOutputFormatChanged();
+    impl->GetAudioDecoderCallBack()->OnOutputFormatChanged();
 }
 
 void AudioDecoderCallbackManager::OnInputBufferAvailable(
@@ -926,13 +924,12 @@ void AudioDecoderCallbackManager::OnInputBufferAvailable(
         WVLOG_E("AudioDecoderCallbackManager::OnInputBufferAvailable not find decoder.");
         return;
     }
-    auto callbackImpl = impl->GetAudioDecoderCallBack().lock();
-    if (!callbackImpl) {
-        WVLOG_E("audio decoder callback is nullptr.");
+    if (impl->GetAudioDecoderCallBack() == nullptr) {
+        WVLOG_E("AudioDecoderCallbackManager::OnInputBufferAvailable audio decoder callback is nullptr.");
         return;
     }
     impl->SetInputBuffer(index, data);
-    callbackImpl->OnInputBufferAvailable(index);
+    impl->GetAudioDecoderCallBack()->OnInputBufferAvailable(index);
 }
 
 void AudioDecoderCallbackManager::OnOutputBufferAvailable(
@@ -951,8 +948,7 @@ void AudioDecoderCallbackManager::OnOutputBufferAvailable(
         WVLOG_E("AudioDecoderCallbackManager not find decoder.");
         return;
     }
-    auto callbackImpl = impl->GetAudioDecoderCallBack().lock();
-    if (!callbackImpl) {
+    if (impl->GetAudioDecoderCallBack() == nullptr) {
         WVLOG_E("audio decoder callback is nullptr.");
         return;
     }
@@ -972,7 +968,7 @@ void AudioDecoderCallbackManager::OnOutputBufferAvailable(
         return;
     }
     // Copy the buffer data from the data.
-    callbackImpl->OnOutputBufferAvailable(
+    impl->GetAudioDecoderCallBack()->OnOutputBufferAvailable(
         index, bufferData, attr.size, attr.pts, attr.offset, attr.flags);
 }
 
