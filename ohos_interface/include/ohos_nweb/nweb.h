@@ -1745,6 +1745,17 @@ public:
      * @brief Try to attach web inputmethod after drag.
      */
     virtual void OnDragAttach() {}
+
+    /**
+     * Set focus by position
+     * 
+     * @Return: if hit node editable.
+     */
+    /*--ark web()--*/
+    virtual bool SetFocusByPosition(float x, float y)
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

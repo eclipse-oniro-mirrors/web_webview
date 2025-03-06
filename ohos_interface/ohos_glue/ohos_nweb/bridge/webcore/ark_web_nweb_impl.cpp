@@ -1309,4 +1309,9 @@ void ArkWebNWebImpl::OnDragAttach()
 {
     nweb_nweb_->OnDragAttach();
 }
+
+bool ArkWebNWebImpl::SetFocusByPosition(float x, float y)
+{
+    return nweb_nweb_->SetFocusByPosition(x, y);
+}
 } // namespace OHOS::ArkWeb

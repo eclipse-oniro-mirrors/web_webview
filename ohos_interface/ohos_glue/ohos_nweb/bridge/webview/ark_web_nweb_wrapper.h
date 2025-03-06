@@ -1525,6 +1525,13 @@ public:
      */
     void OnDragAttach() override;
 
+    /**
+     * Set focus by position
+     * 
+     * @Return: if hit node editable.
+     */
+    bool SetFocusByPosition(float x, float y) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

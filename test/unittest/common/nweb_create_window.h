@@ -294,6 +294,10 @@ public:
     {
         return 0;
     }
+    bool SetFocusByPosition(float x, float y) override
+    {
+        return false;
+    }
 };
 }
 #endif
