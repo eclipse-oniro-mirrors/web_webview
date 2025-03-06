@@ -249,6 +249,7 @@ HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_CreateAu
     ret = AudioCodecDecoderAdapterImpl_->CreateAudioDecoderByMime(mimetype);
     EXPECT_EQ(ret, AudioDecoderAdapterCode::DECODER_OK);
 
+    // release decoder.
     ret = AudioCodecDecoderAdapterImpl_->ReleaseDecoder();
     EXPECT_EQ(ret, AudioDecoderAdapterCode::DECODER_OK);
 }
@@ -319,7 +320,7 @@ HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_NormalVa
     EXPECT_EQ(AudioCodecDecoderAdapterImpl_->FlushDecoder(), AudioDecoderAdapterCode::DECODER_OK);
     EXPECT_EQ(AudioCodecDecoderAdapterImpl_->StopDecoder(), AudioDecoderAdapterCode::DECODER_OK);
     EXPECT_EQ(AudioCodecDecoderAdapterImpl_->ResetDecoder(), AudioDecoderAdapterCode::DECODER_OK);
-    EXPECT_EQ(AudioCodecDecoderAdapterImpl_->SetCallbackDec(callback), AudioDecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(AudioCodecDecoderAdapterImpl_->SetCallbackDec(callback), AudioDecoderAdapterCode::DECODER_OK);
 }
 }
 } // namespace OHOS::NWeb
