@@ -1054,6 +1054,8 @@ public:
      * @brief Restore web component renderfit.
      */
     virtual void RestoreRenderFit() {}
+
+    virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) {}
 };
 
 } // namespace OHOS::NWeb
