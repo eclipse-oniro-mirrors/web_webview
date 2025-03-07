@@ -147,7 +147,7 @@ public:
 
     void ClearHostIP(const std::string& hostName) {}
 
-    void SetWholeWebDrawing() {}
+    void EnableWholeWebPageDrawing() {}
 
     std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager()
     {
@@ -558,7 +558,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_EnableWholeWebPageDrawing_001, TestSize.Leve
 
     auto nwebengineMock = std::make_shared<MockNWebEngine>();
     NWebHelper::Instance().nwebEngine_ = nwebengineMock;
-    NWebHelper::Instance().SetWholeWebDrawing();
+    NWebHelper::Instance().EnableWholeWebPageDrawing();
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
 
     NWebHelper::Instance().nwebEngine_ = nullptr;
