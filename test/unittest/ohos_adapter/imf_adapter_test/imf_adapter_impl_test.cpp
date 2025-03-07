@@ -528,6 +528,8 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_011, TestSize.Level1)
     std::string commandKey = "autofill.cancel";
     std::string commandValue = "{\"userName\":\"test\",\"hasAccount\":\"test\"}";
     g_imf->SendPrivateCommand(commandKey, commandValue);
+    std::string commandValueEmpty = "";
+    g_imf->SendPrivateCommand(commandKey, commandValueEmpty);
     commandKey = "test";
     g_imf->SendPrivateCommand(commandKey, commandValue);
 }
@@ -549,6 +551,35 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_012, TestSize.Level1)
     EXPECT_FALSE(result);
     result = g_imf->AttachWithRequestKeyboardReason(nullptr, true, nullptr, false, requestKeyboardReasonNone);
     EXPECT_FALSE(result);
+    auto config = std::make_shared<IMFTextConfigTest>();
+    result = g_imf->AttachWithRequestKeyboardReason(listener, true, nullptr, false, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+    result = g_imf->AttachWithRequestKeyboardReason(listener, true, config, false, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+    result = g_imf->AttachWithRequestKeyboardReason(listener, true, config, true, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+}
+
+/**
+@tc.name: NWebIMFAdapterTest_IMFAdapterImpl_013.
+@tc.desc: IMF adapter unittest.
+@tc.type: FUNC.
+@tc.require:
+*/
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_013, TestSize.Level1)
+{
+    auto imf_adapter = OhosAdapterHelper::GetInstance().CreateMMIAdapter();
+    EXPECT_NE(imf_adapter, nullptr);
+    auto listener = std::make_shared<IMFTextListenerTest>();
+    auto listenerTest = std::make_shared<IMFTextListenerAdapterImpl>(listener);
+    MiscServices::PanelStatusInfo info;
+    const MiscServices::PanelStatusInfo info1 = info;
+    listenerTest->NotifyPanelStatusInfo(info1);
+    info.trigger = MiscServices::Trigger::IME_APP;
+    const MiscServices::PanelStatusInfo info2 = info;
+    listenerTest->NotifyPanelStatusInfo(info2);
+    auto listenerTest2 = std::make_shared<IMFTextListenerAdapterImpl>(nullptr);
+    listenerTest2->NotifyPanelStatusInfo(info2);
 }
 
 } // namespace OHOS::NWeb
