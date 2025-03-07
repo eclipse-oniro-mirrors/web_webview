@@ -32,9 +32,14 @@ ohos_unittest("nweb_media_adapter_test") {
   module_out_path = module_output_path
 
   sources = [
+    "audio_cenc_info_adapter_impl_test.cpp",
+    "buffer_info_adapter_impl_test.cpp",
+    "capability_data_adapter_impl_test.cpp",
+    "codec_format_adapter_impl_test.cpp",
     "media_avsession_adapter_impl_test.cpp",
     "media_codec_decoder_adapter_impl_test.cpp",
     "media_codec_encoder_adapter_impl_test.cpp",
+    "ohos_buffer_adapter_impl_test.cpp",
     "player_framework_adapter_impl_test.cpp",
   ]
 
