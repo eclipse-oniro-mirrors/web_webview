@@ -23,4 +23,3 @@ ohos_abc("webview_abc") {
   part_name = "webview"
   subsystem_name = "web"
 }
-
