@@ -1685,6 +1685,14 @@ public:
      */
     /*--ark web()--*/
     virtual void OnDragAttach()  = 0;
+
+    /**
+     * Set focus by position
+     * 
+     * @Return: if hit node editable.
+     */
+    /*--ark web()--*/
+    virtual bool SetFocusByPosition(float x, float y) = 0;
 };
 
 } // namespace OHOS::ArkWeb

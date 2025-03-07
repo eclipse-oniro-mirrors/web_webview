@@ -1512,6 +1512,13 @@ public:
      */
     void OnDragAttach() override;
 
+    /**
+     * Set focus by position
+     * 
+     * @Return: if hit node editable.
+     */
+    bool SetFocusByPosition(float x, float y) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
