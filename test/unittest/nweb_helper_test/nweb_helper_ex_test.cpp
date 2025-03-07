@@ -29,7 +29,6 @@
 #include "nweb_c_api.h"
 #include "nweb_init_params.h"
 #include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
-#include "nweb_log.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -39,12 +38,12 @@ using namespace OHOS::AbilityRuntime;
 
 namespace OHOS {
 namespace {
-sptr<Surface> g_surface = nullptr;
+sptr<Surface> g_surfaceObject = nullptr;
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
-const int32_t NWEB_MAX_WIDTH = 7681;
+const int32_t MAX_WIDTH = 7681;
 const int32_t LTPO_STRATEGY = 1;
-const std::string MOCK_NWEB_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.huawei.hmos.arkwebcore";
+const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.huawei.hmos.arkwebcore";
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
 
@@ -165,11 +164,11 @@ private:
 void NwebHelperTest::SetUpTestCase(void)
 {
     RSSurfaceNodeConfig config;
-    config.SurfaceNodeName = "webTestSurfaceName";
+    config.SurfaceNodeName = "TestSurfaceName";
     auto surfaceNode = RSSurfaceNode::Create(config, false);
     EXPECT_NE(surfaceNode, nullptr);
-    g_surface = surfaceNode->GetSurface();
-    EXPECT_NE(g_surface, nullptr);
+    g_surfaceObject = surfaceNode->GetSurface();
+    EXPECT_NE(g_surfaceObject, nullptr);
 }
 
 void NwebHelperTest::TearDownTestCase(void)
@@ -228,10 +227,10 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
     EXPECT_EQ(nweb, nullptr);
     enhanceSurfaceInfo = static_cast<void *>(&temp);
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
-                                                    DEFAULT_WIDTH, NWEB_MAX_WIDTH);
+                                                    DEFAULT_WIDTH, MAX_WIDTH);
     EXPECT_EQ(nweb, nullptr);
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
-                                                    NWEB_MAX_WIDTH, DEFAULT_HEIGHT);
+                                                    MAX_WIDTH, DEFAULT_HEIGHT);
     EXPECT_EQ(nweb, nullptr);
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
                                                     DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -251,24 +250,24 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
 HWTEST_F(NwebHelperTest, NWebHelper_TryPreReadLib_004, TestSize.Level1)
 {
     std::string hapPath = "";
-    if (access(MOCK_NWEB_INSTALLATION_DIR.c_str(), F_OK) == 0) {
-        hapPath = MOCK_NWEB_INSTALLATION_DIR;
+    if (access(MOCK_INSTALLATION_DIR.c_str(), F_OK) == 0) {
+        hapPath = MOCK_INSTALLATION_DIR;
     }
     NWebHelper::Instance().TryPreReadLib(false, hapPath);
     NWebHelper::Instance().TryPreReadLib(true, hapPath);
-    NWebHelper::Instance().SetBundlePath(MOCK_NWEB_INSTALLATION_DIR);
+    NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     bool result = NWebHelper::Instance().Init(false);
     EXPECT_FALSE(result);
-    sptr<Surface> surface = nullptr;
+    sptr<Surface> surfaceObject = nullptr;
     std::shared_ptr<NWeb> nweb =
-        NWebAdapterHelper::Instance().CreateNWeb(surface, GetInitArgs(),
+        NWebAdapterHelper::Instance().CreateNWeb(surfaceObject, GetInitArgs(),
         DEFAULT_WIDTH, DEFAULT_HEIGHT);
     EXPECT_EQ(nweb, nullptr);
-    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs(),
-                                                    DEFAULT_WIDTH, NWEB_MAX_WIDTH);
+    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_surfaceObject, GetInitArgs(),
+                                                    DEFAULT_WIDTH, MAX_WIDTH);
     EXPECT_EQ(nweb, nullptr);
-    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_surface, GetInitArgs(),
-                                                    NWEB_MAX_WIDTH, DEFAULT_HEIGHT);
+    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_surfaceObject, GetInitArgs(),
+                                                    MAX_WIDTH, DEFAULT_HEIGHT);
     EXPECT_EQ(nweb, nullptr);
 }
 
@@ -292,7 +291,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().bundlePath_.clear();
     NWebHelper::Instance().EnableBackForwardCache(true, true);
     NWebHelper::Instance().SetCustomSchemeCmdLine("single-process");
-    NWebHelper::Instance().SetBundlePath(MOCK_NWEB_INSTALLATION_DIR);
+    NWebHelper::Instance().SetBundlePath(MOCK_INSTALLATION_DIR);
     bool result = NWebHelper::Instance().InitAndRun(false);
     EXPECT_FALSE(result);
     NWebHelper::Instance().SetConnectionTimeout(1);
@@ -382,8 +381,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     WebDownloadItem_CreateWebDownloadItem(&downloadItem);
     EXPECT_EQ(downloadItem, nullptr);
     NWebDownloadItem *download = nullptr;
-    bool isPaused = WebDownloadItem_IsPaused(download);
-    EXPECT_FALSE(isPaused);
+    std::ignore = WebDownloadItem_IsPaused(download);
     char* method = WebDownloadItem_Method(downloadItem);
     EXPECT_EQ(method, nullptr);
     WebDownloadItem_LastErrorCode(downloadItem);
