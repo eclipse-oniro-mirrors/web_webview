@@ -954,4 +954,9 @@ void ArkWebHandlerImpl::RestoreRenderFit()
 {
     nweb_handler_->RestoreRenderFit();
 }
+
+void ArkWebHandlerImpl::OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument)
+{
+    nweb_handler_->OnAccessibilityEventV2(accessibilityId, eventType, ArkWebStringStructToClass(argument));
+}
 } // namespace OHOS::ArkWeb
