@@ -33,11 +33,10 @@ std::atomic<bool> MigrationManagerAdapterImpl::isConnectSystemUI_(false);
 void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::OnMigrationReply(int32_t errorCode,
     int32_t succussCount, const std::vector<int32_t>& errorIndex, const std::vector<int32_t>& codeList)
 {
-    if (!listener_) {
-        WVLOG_W("callback_ is not initialize");
+    if (listener_) {
+        WVLOG_I("on migration replay will be invoked");
+        listener_->OnMigrationReply(errorCode, succussCount, errorIndex, codeList);
     }
-    WVLOG_I("on migration replay will be invoked");
-    listener_->OnMigrationReply(errorCode, succussCount, errorIndex, codeList);
 }
 
 void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::OnAbilityConnectDone(
