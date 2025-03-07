@@ -184,8 +184,6 @@ private:
 
     AudioDecoderAdapterCode SetBufferCencInfo(uint32_t index, std::shared_ptr<AudioCencInfoAdapter> cencInfo);
 
-    void GetMimeType();
-
     AudioDecoderAdapterCode SetAVCencInfo(OH_AVCencInfo *avCencInfo, std::shared_ptr<AudioCencInfoAdapter> cencInfo);
 
     OH_AVBuffer* GetInputBuffer(uint32_t index);
