@@ -118,7 +118,6 @@ ohos_shared_library("webview_napi") {
     "../../../ohos_adapter:nweb_ohos_adapter",
     "../../../ohos_nweb:libnweb",
     "../../native:ohweb",
-    "js:js_export",
     "protos:proto_gen",
   ]
 
