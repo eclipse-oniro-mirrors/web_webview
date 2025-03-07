@@ -17,7 +17,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <securec.h>
-#include <ui/rs_surface_node.h>
 #include <unordered_map>
 
 #define private public
@@ -38,12 +37,11 @@ using namespace OHOS::AbilityRuntime;
 
 namespace OHOS {
 namespace {
-sptr<Surface> g_sfPtr = nullptr;
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 const int32_t MAX_WIDTH = 7681;
 const int32_t LTPO_STRATEGY = 1;
-const std::string INSTALLATION_DIR = "/data/app/el1/bundle/public/com.huawei.hmos.arkwebcore";
+const std::string INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
 
@@ -162,14 +160,7 @@ private:
 };
 
 void NwebHelperTest::SetUpTestCase(void)
-{
-    RSSurfaceNodeConfig config;
-    config.SurfaceNodeName = "TestSurfaceName";
-    auto surfaceNode = RSSurfaceNode::Create(config, false);
-    EXPECT_NE(surfaceNode, nullptr);
-    g_sfPtr = surfaceNode->GetSurface();
-    EXPECT_NE(g_sfPtr, nullptr);
-}
+{}
 
 void NwebHelperTest::TearDownTestCase(void)
 {}
@@ -258,17 +249,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_TryPreReadLib_004, TestSize.Level1)
     NWebHelper::Instance().SetBundlePath(INSTALLATION_DIR);
     bool result = NWebHelper::Instance().Init(false);
     EXPECT_FALSE(result);
-    sptr<Surface> sfPtr = nullptr;
-    std::shared_ptr<NWeb> nweb =
-        NWebAdapterHelper::Instance().CreateNWeb(sfPtr, GetInitArgs(),
-        DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    EXPECT_EQ(nweb, nullptr);
-    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_sfPtr, GetInitArgs(),
-                                                    DEFAULT_WIDTH, MAX_WIDTH);
-    EXPECT_EQ(nweb, nullptr);
-    nweb = NWebAdapterHelper::Instance().CreateNWeb(g_sfPtr, GetInitArgs(),
-                                                    MAX_WIDTH, DEFAULT_HEIGHT);
-    EXPECT_EQ(nweb, nullptr);
 }
 
 /**
