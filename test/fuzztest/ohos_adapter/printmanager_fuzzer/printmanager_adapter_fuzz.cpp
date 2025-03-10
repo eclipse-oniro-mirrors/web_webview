@@ -28,7 +28,7 @@
 
 namespace OHOS::NWeb {
 constexpr uint8_t MAX_STRING_LENGTH = 255;
-const char *TESTFILE_PATH = "/data/test/fuzz_testfile"
+const char *TESTFILE_PATH = "/data/test/fuzz_testfile";
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
