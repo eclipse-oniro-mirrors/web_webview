@@ -147,7 +147,8 @@
  
      void* fontConfigInfoErrorCode = nullptr;
      void* fontConfigInfo = nullptr;
-     int32_t errorCode = drawingTextTypographyAdapter->GetSystemFontConfigInfo(fontConfigInfoErrorCode, &fontConfigInfo);
+     int32_t errorCode = drawingTextTypographyAdapter->GetSystemFontConfigInfo(fontConfigInfoErrorCode,
+                        &fontConfigInfo);
  
      EXPECT_EQ(errorCode, RESULT_OK);
      EXPECT_NE(fontConfigInfo, nullptr);

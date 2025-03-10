@@ -18,8 +18,7 @@ module_output_path = "web/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs =
-      [ "../../../../ohos_adapter/drawing_text_adapter/include" ]
+  include_dirs = [ "../../../../ohos_adapter/drawing_text_adapter/include" ]
 }
 
 ohos_unittest("drawing_text_adapter_test") {
@@ -41,5 +40,5 @@ ohos_unittest("drawing_text_adapter_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":drawing_text_adapter" ]
+  deps = [ ":drawing_text_adapter_test" ]
 }
