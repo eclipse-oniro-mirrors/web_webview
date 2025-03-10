@@ -21,11 +21,14 @@
 #include <string>
 #include <vector>
 #include <fuzzer/FuzzedDataProvider.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #include "print_manager_adapter_impl.h"
 
 namespace OHOS::NWeb {
 constexpr uint8_t MAX_STRING_LENGTH = 255;
+const char *TESTFILE_PATH = "/data/test/fuzz_testfile"
 
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
@@ -33,8 +36,14 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
         return 0;
     }
 
-    std::vector<std::string> fileList = { "/data/storage/el2/base/print.png" };
-    std::vector<uint32_t> fdList = { 1 };
+    std::vector<std::string> fileList = { TESTFILE_PATH };
+    int32_t fd = open(TESTFILE_PATH, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (fd < 0) {
+        return 0;
+    }
+    (void)write(fd, data, size);
+
+    std::vector<uint32_t> fdList = { fd };
     FuzzedDataProvider dataProvider(data, size);
     std::string taskId = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     PrintManagerAdapterImpl::GetInstance().StartPrint(fileList, fdList, taskId);
@@ -44,6 +53,8 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     void* token = nullptr;
     PrintManagerAdapterImpl::GetInstance().Print("webPrintTestJob", printDocumentAdapterImpl,
         printAttributesAdapter, token);
+
+    close(fd);
     return 0;
 }
 
