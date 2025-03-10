@@ -18,7 +18,7 @@
 
 using namespace OHOS::NWeb;
 namespace OHOS {
-bool DrawingTextFontAdapterFuzzTest(const uint8_t* data, size_t)
+bool DrawingTextFontAdapterFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
         return false;
