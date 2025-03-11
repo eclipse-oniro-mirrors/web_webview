@@ -44,5 +44,8 @@ ohos_unittest("nweb_helper_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":nweb_helper_test" ]
+  deps = [
+    ":nweb_helper_test",
+    "../interface_native_test:unittest",
+  ]
 }
