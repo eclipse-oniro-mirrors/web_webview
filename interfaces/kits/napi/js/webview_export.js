@@ -14,7 +14,7 @@
  */
 
 let cert = requireInternal('security.cert');
-let webview = requireNapi('web.webview_napi');
+let webview = requireNapi('web.webview_napi_back');
 let picker = requireNapi('file.picker');
 let photoAccessHelper = requireNapi('file.photoAccessHelper');
 let cameraPicker = requireNapi('multimedia.cameraPicker');
