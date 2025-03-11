@@ -181,10 +181,12 @@ std::unordered_map<std::string, std::string> g_argsMap;
  */
 HWTEST_F(NwebHelperTest, NWebHelper_GetWebStorage_002, TestSize.Level1)
 {
-    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
-    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
     auto web_storage = NWebHelper::Instance().GetWebStorage();
     EXPECT_EQ(web_storage, nullptr);
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    auto web_storage1 = NWebHelper::Instance().GetWebStorage();
+    EXPECT_EQ(web_storage1, nullptr);
     NWebAdapterHelper::Instance().ReadConfigIfNeeded();
     std::string config = NWebAdapterHelper::Instance().ParsePerfConfig("web", "test");
     EXPECT_TRUE(config.empty());
@@ -208,6 +210,9 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
 
     std::shared_ptr<NWebCookieManager> cook = NWebHelper::Instance().GetCookieManager();
     EXPECT_EQ(cook, nullptr);
+    NWebHelper::Instance().initFlag_ = true;
+    EXPECT_EQ(NWebHelper::Instance().GetCookieManager(), nullptr);
+    NWebHelper::Instance().initFlag_ = false;
     
     // Test NWebAdapterHelper::CreateNWeb
     void *enhanceSurfaceInfo = nullptr;
@@ -230,6 +235,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetDataBase_003, TestSize.Level1)
     nweb = NWebAdapterHelper::Instance().CreateNWeb(enhanceSurfaceInfo, GetInitArgs(),
                                                     DEFAULT_WIDTH, DEFAULT_HEIGHT);
     EXPECT_EQ(nweb, nullptr);
+    EXPECT_EQ(NWebHelper::Instance().GetDataBase(), nullptr);
 }
 
 /**
@@ -247,7 +253,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_TryPreReadLib_004, TestSize.Level1)
     NWebHelper::Instance().TryPreReadLib(false, hapPath);
     NWebHelper::Instance().TryPreReadLib(true, hapPath);
     NWebHelper::Instance().SetBundlePath(INSTALLATION_DIR);
-    bool result = NWebHelper::Instance().Init(false);
+    bool result = NWebAdapterHelper::Instance().Init(false);
     EXPECT_FALSE(result);
 }
 
@@ -277,9 +283,11 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetConfigPath_005, TestSize.Level1)
     NWebHelper::Instance().SetConnectionTimeout(1);
     NWebHelper::Instance().LoadWebEngine(true, false);
 
-    // To test SetRenderProcessMode and GetRenderProcessMode.
     auto nwebEngineMock = std::make_shared<MockNWebEngine>();
     NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().PrefetchResource(nullptr, {}, "web_test", 0);
+    NWebHelper::Instance().ClearPrefetchedResource({"web_test"});
+    // To test SetRenderProcessMode and GetRenderProcessMode.
     NWebHelper::Instance().SetRenderProcessMode(RenderProcessMode::SINGLE_MODE);
     RenderProcessMode render_process_mode =
         NWebHelper::Instance().GetRenderProcessMode();
@@ -417,15 +425,24 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     EXPECT_EQ(nweb, nullptr);
     nweb = NWebHelper::Instance().GetNWeb(1);
     EXPECT_EQ(nweb, nullptr);
+    NWebHelper::Instance().SetWebTag(1, "webtag");
+    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
+    NWebHelper::Instance().SetHttpDns(config);
+    std::vector<std::string> hosts;
+    NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
+    NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
+    NWebHelper::Instance().GetDefaultUserAgent();
+    NWebHelper::Instance().PauseAllTimers();
+    NWebHelper::Instance().ResumeAllTimers();
+
     auto nwebEngineMock = std::make_shared<MockNWebEngine>();
     NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
-    std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     NWebHelper::Instance().PrepareForPageLoad("web_test", true, 0);
     NWebHelper::Instance().WarmupServiceWorker("web_test");
     NWebHelper::Instance().GetDataBase();
     NWebHelper::Instance().SetConnectionTimeout(1);
-    std::vector<std::string> hosts;
     NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
     NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
@@ -437,12 +454,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     bool result = NWebHelper::Instance().GetWebEngine(true);
     EXPECT_TRUE(result);
     NWebHelper::Instance().SetWebTag(1, "webtag");
-    NWebHelper::Instance().AddIntelligentTrackingPreventionBypassingList(hosts);
-    NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
-    NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
-    NWebHelper::Instance().GetDefaultUserAgent();
-    NWebHelper::Instance().PauseAllTimers();
-    NWebHelper::Instance().ResumeAllTimers();
 }
 
 /**
@@ -540,6 +551,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_EnableWholeWebPageDrawing_001, TestSize.Leve
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
 
     NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().EnableWholeWebPageDrawing();
 }
 
 /**
@@ -559,6 +571,11 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetAdsBlockManager_001, TestSize.Level1)
     EXPECT_EQ(nweb, nullptr);
     auto manager = NWebHelper::Instance().GetAdsBlockManager();
     EXPECT_EQ(manager, nullptr);
+    auto nwebengineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebengineMock;
+    auto manager1 = NWebHelper::Instance().GetAdsBlockManager();
+    EXPECT_EQ(manager1, nullptr);
+    NWebHelper::Instance().nwebEngine_ = nullptr;
 }
 
 /**
@@ -580,6 +597,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_TrimMemoryByPressureLevel_001, TestSize.Leve
 
     auto nwebengineMock = std::make_shared<MockNWebEngine>();
     NWebHelper::Instance().nwebEngine_ = nwebengineMock;
+    EXPECT_EQ(NWebHelper::Instance().GetNWeb(nweb_id), nullptr);
     NWebHelper::Instance().TrimMemoryByPressureLevel(memoryLevel);
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
 
@@ -626,6 +644,67 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngine_001, TestSize.Level1)
     g_applicationContext.reset(contextMock);
     result = NWebHelper::Instance().GetWebEngine(true);
     EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: NWebHelper_InitWebEngine
+ * @tc.desc: InitWebEngine.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_InitWebEngine, TestSize.Level1)
+{
+    NWebHelper::Instance().initFlag_ = true;
+    bool resultBool = NWebHelper::Instance().InitWebEngine();
+    EXPECT_TRUE(resultBool);
+    NWebHelper::Instance().initFlag_ = false;
+    resultBool = NWebHelper::Instance().InitWebEngine();
+    EXPECT_FALSE(resultBool);
+    ApplicationContextMock *contextMock = new ApplicationContextMock();
+    ASSERT_NE(contextMock, nullptr);
+    g_applicationContext.reset(contextMock);
+    resultBool = NWebHelper::Instance().InitWebEngine();
+    EXPECT_FALSE(resultBool);
+}
+
+/**
+ * @tc.name: NWebHelper_SetProxyOverride
+ * @tc.desc: SetProxyOverride.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_SetProxyOverride, TestSize.Level1)
+{
+    std::vector<std::string> proxyUrls = {"http://127.0.0.1:8080"};
+    std::vector<std::string> proxySchemeFilters = {"http", "https"};
+    std::vector<std::string> bypassRules = {"localhost", "127.0.0.1"};
+    bool reverseBypass = false;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().bundlePath_ = "";
+    NWebHelper::Instance().SetProxyOverride(proxyUrls, proxySchemeFilters, bypassRules, reverseBypass, nullptr);
+    NWebHelper::Instance().RemoveProxyOverride(nullptr);
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = true;
+    NWebHelper::Instance().RemoveProxyOverride(nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_RemoveAllCache
+ * @tc.desc: RemoveAllCache.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_RemoveAllCache, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initFlag_ = true;
+    bool includeDiskFiles = true;
+    NWebHelper::Instance().RemoveAllCache(includeDiskFiles);
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    NWebHelper::Instance().bundlePath_ = "";
+    NWebHelper::Instance().RemoveAllCache(includeDiskFiles);
 }
 } // namespace OHOS::NWeb
 }
