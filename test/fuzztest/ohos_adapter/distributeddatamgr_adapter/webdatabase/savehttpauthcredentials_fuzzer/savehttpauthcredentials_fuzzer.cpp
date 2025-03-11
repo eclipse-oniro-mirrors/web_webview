@@ -221,7 +221,9 @@ bool SaveHttpAuthCredentialsFuzzTest(const uint8_t* data, size_t size)
     std::string host((const char*)data, size);
     std::string realm((const char*)data, size);
     std::string name((const char*)data, size);
-    const char* str = (char*)data;
+    std::vector<char> tempBuf(data, data + size);
+    tempBuf.push_back('\0');
+    const char* str = tempBuf.data();
     if (str == nullptr || str[0] == '\0') {
         return false;
     }
