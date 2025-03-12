@@ -332,3 +332,41 @@ bool OH_ArkWeb_RegisterScrollCallback(
     }
     return g_ComponentGlobalImpl->onScroll(webTag, callback, userData);
 }
+
+[[maybe_unused]] void OH_ArkWeb_DestroyGlobalPointersForTest(void)
+{
+    if (g_ComponentImpl != nullptr) {
+        delete g_ComponentImpl;
+        g_ComponentImpl = nullptr;
+    }
+
+    if (g_ControllerImpl != nullptr) {
+        delete g_ControllerImpl;
+        g_ControllerImpl = nullptr;
+    }
+
+    if (g_WebMessagePortImpl != nullptr) {
+        delete g_WebMessagePortImpl;
+        g_WebMessagePortImpl = nullptr;
+    }
+
+    if (g_WebMessageImpl != nullptr) {
+        delete g_WebMessageImpl;
+        g_WebMessageImpl = nullptr;
+    }
+
+    if (g_CookieManagerImpl != nullptr) {
+        delete g_CookieManagerImpl;
+        g_CookieManagerImpl = nullptr;
+    }
+
+    if (g_JavaScriptValueImpl != nullptr) {
+        delete g_JavaScriptValueImpl;
+        g_JavaScriptValueImpl = nullptr;
+    }
+
+    if (g_ComponentGlobalImpl != nullptr) {
+        delete g_ComponentGlobalImpl;
+        g_ComponentGlobalImpl = nullptr;
+    }
+}
