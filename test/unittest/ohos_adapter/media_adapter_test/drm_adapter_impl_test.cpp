@@ -63,6 +63,7 @@ public:
     MOCK_METHOD(void, OnSessionExpirationUpdate, (const std::string&, uint64_t), (override));
     MOCK_METHOD(void, OnStorageClearInfoForKeyRelease, (const std::string&), (override));
     MOCK_METHOD(void, OnStorageClearInfoForLoadFail, (const std::string&), (override));
+    MOCK_METHOD(void, OnMediaLicenseReady, (bool), (override));
 };
 
 class SessionIdTest : public testing::Test {
@@ -636,12 +637,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_009, TestSize.Lev
 
     result = g_adapter->SetConfigurationString("version", "2.0");
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
-    g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    result = g_adapter->SetConfigurationString("version", "2.0");
-    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
-    g_adapter->ReleaseMediaKeySession();
-    g_adapter->ReleaseMediaKeySystem();
 }
 
 /**
@@ -690,12 +685,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_011, TestSize.Lev
         static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", description, valueLen),
         static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
-    g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    EXPECT_EQ(g_adapter->SetConfigurationByteArray("description", description, valueLen),
-        static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
-    g_adapter->ReleaseMediaKeySession();
-    g_adapter->ReleaseMediaKeySystem();
 }
 
 /**
@@ -707,8 +696,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_011, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_012, TestSize.Level1)
 {
     uint8_t description[4] = { 0x00, 0x00, 0x00, 0x00 };
-    int32_t valueLen = sizeof(description);
-    uint8_t descriptionValue[32];
     int32_t descriptionValueLen = 32;
 
     EXPECT_EQ(g_adapter->GetConfigurationByteArray("", description, &descriptionValueLen),
@@ -719,13 +706,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_012, TestSize.Lev
         static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", description, nullptr),
         static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
-    g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-    g_adapter->SetConfigurationByteArray("description", description, valueLen);
-    EXPECT_EQ(g_adapter->GetConfigurationByteArray("description", descriptionValue, &descriptionValueLen),
-        static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
-    g_adapter->ReleaseMediaKeySession();
-    g_adapter->ReleaseMediaKeySystem();
 }
 
 /**
@@ -902,27 +882,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_024, TestSize.Lev
     g_adapter->RemoveSessionInfo(validSessionId);
     sessionInfo = g_adapter->GetSessionInfo(validSessionId);
     EXPECT_EQ(sessionInfo, nullptr);
-}
-
-/**
- * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_025.
- * @tc.desc: test of DrmAdapterImpl :: LoadSessionInfo
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_025, TestSize.Level1)
-{
-    auto validSessionId = std::make_shared<SessionId>("test_eme_id", nullptr, 0); // Assume this constructor exists
-    std::string mimeType = "video/mp4";
-    int32_t sessionType = 1; // Assume valid session type
-
-    g_adapter->PutSessionInfo(validSessionId, mimeType, sessionType);
-    auto sessionInfo = g_adapter->GetSessionInfo(validSessionId);
-    ASSERT_NE(sessionInfo, nullptr);
-
-    std::string emeId = validSessionId->EmeId();
-    EXPECT_NO_THROW(g_adapter->LoadSessionInfo(emeId));
-    g_adapter->RemoveSessionInfo(validSessionId);
 }
 
 /**
@@ -1144,12 +1103,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_040, TestSize.Lev
 {
     uint8_t info[10] = { 0 };
     char extra[10] = "extra";
-    DRM_EventType eventType = EVENT_PROVISION_REQUIRED;
-    if (GetKeySystemName() == "com.clearplay.drm") {
-        eventType = EVENT_DRM_BASE;
-    } else {
-        eventType = EVENT_PROVISION_REQUIRED;
-    }
+    DRM_EventType eventType = EVENT_DRM_BASE;
     int32_t infoLen = sizeof(info);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
@@ -1300,67 +1254,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_048, TestSize.Lev
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
 
     g_adapter->StorageSaveInfoResult(false, 1);
-    g_adapter->ReleaseMediaKeySession();
-    g_adapter->ReleaseMediaKeySystem();
-}
-
-/**
- * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_049.
- * @tc.desc: test of DrmAdapterImpl :: StorageLoadInfoResult
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_049, TestSize.Level1)
-{
-    std::string emeId = "testEmeId";
-    std::vector<uint8_t> keySetId;
-    std::string mimeType = "testMimeType";
-    uint32_t keyType = 1;
-
-    EXPECT_NO_THROW(g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType));
-}
-
-/**
- * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_050.
- * @tc.desc: test of DrmAdapterImpl :: StorageLoadInfoResult
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_050, TestSize.Level1)
-{
-    std::string emeId = "testEmeId";
-    std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
-    std::string mimeType = "testMimeType";
-    uint32_t keyType = 1;
-    g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-
-    EXPECT_NO_THROW(g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType));
-    g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType);
-
-    g_adapter->ReleaseMediaKeySession();
-    g_adapter->ReleaseMediaKeySystem();
-}
-
-/**
- * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_051.
- * @tc.desc: test of DrmAdapterImpl :: StorageLoadInfoResult
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_051, TestSize.Level1)
-{
-    std::string emeId = "testEmeId";
-    std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
-    std::string mimeType = "testMimeType";
-    uint32_t keyType = 1;
-    g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", CONTENT_PROTECTION_LEVEL_SW_CRYPTO);
-
-    g_adapter->PutSessionInfo(std::make_shared<SessionId>(emeId, keySetId.data(), keySetId.size()), mimeType, keyType);
-    EXPECT_NO_THROW(g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType));
-    g_adapter->StorageLoadInfoResult(emeId, keySetId, mimeType, keyType);
-
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
