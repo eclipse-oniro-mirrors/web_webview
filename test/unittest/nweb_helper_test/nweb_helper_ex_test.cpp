@@ -706,5 +706,20 @@ HWTEST_F(NwebHelperTest, NWebHelper_RemoveAllCache, TestSize.Level1)
     NWebHelper::Instance().bundlePath_ = "";
     NWebHelper::Instance().RemoveAllCache(includeDiskFiles);
 }
+
+/**
+ * @tc.name: NWebHelper_GetBundleName_001
+ * @tc.desc: GetBundleName.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetBundleName_001, TestSize.Level1)
+{
+    std::string bundleName = NWebAdapterHelper::Instance().GetBundleName();
+    EXPECT_TRUE(bundleName.empty());
+    NWebConfigHelper::Instance().SetBundleName("testBundleName");
+    bundleName = NWebAdapterHelper::Instance().GetBundleName();
+    EXPECT_FALSE(bundleName.empty());
+}
 } // namespace OHOS::NWeb
 }
