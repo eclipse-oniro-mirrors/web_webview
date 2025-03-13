@@ -712,6 +712,22 @@ HWTEST_F(NwebHelperTest, NWebHelper_GetWebEngine_001, TestSize.Level1)
     EXPECT_FALSE(result);
 }
 
+/**
+ * @tc.name: NWebHelper_RemoveAllCache
+ * @tc.desc: RemoveAllCache.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_RemoveAllCache_001, TestSize.Level1)
+{
+    bool result = NWebAdapterHelper::Instance().Init(false);
+    EXPECT_TRUE(result);
+    NWebHelper::Instance().LoadWebEngine(true, false);
+    bool ret = NWebHelper::Instance().GetWebEngine(true);
+    EXPECT_TRUE(ret);
+
+    NWebHelper::Instance().RemoveAllCache(true);
+}
 
 } // namespace OHOS::NWeb
 }
