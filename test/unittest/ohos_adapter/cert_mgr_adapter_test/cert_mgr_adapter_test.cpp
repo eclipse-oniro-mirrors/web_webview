@@ -284,7 +284,6 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetCertMaxSize_001, TestSize.Lev
     g_appMaxSize = adapter.GetAppCertMaxSize();
     EXPECT_NE(g_appMaxSize, TEST_FAILURE);
     g_certSum = adapter.GetSytemRootCertSum();
-    std::string deviceType = OHOS::system::GetDeviceType();
     EXPECT_EQ(g_certSum, TEST_OK);
 }
 
@@ -300,7 +299,6 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetAppCert_002, TestSize.Level1)
     uint8_t* certData = static_cast<uint8_t *>(malloc(g_cerSize));
     EXPECT_NE(certData, nullptr);
     int32_t result = adapter.GetSytemRootCertData(0, certData);
-    std::string deviceType = OHOS::system::GetDeviceType();
     EXPECT_EQ(result, -1);
     free(certData);
     certData = nullptr;
@@ -377,7 +375,6 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_Sign_006, TestSize.Level1)
     uint8_t signData[DEFAULT_SIGNATURE_LEN] = {0};
     result = adapter.Sign(uriData, messageData, sizeof(messageData),
                                   signData, sizeof(signData));
-    std::string deviceType = OHOS::system::GetDeviceType();
     EXPECT_EQ(result, -1);
     result = adapter.Sign(uriData, messageData, sizeof(messageData), nullptr, 0);
     EXPECT_EQ(result, -1);

@@ -30,7 +30,7 @@ ohos_unittest("net_proxy_adapter_test") {
 
   sources = [
     "net_conn_client_test_mock.cpp",
-    "net_conn_client_test_mock.h"
+    "net_conn_client_test_mock.h",
   ]
 
   sources += [ "net_proxy_adapter_test.cpp" ]
