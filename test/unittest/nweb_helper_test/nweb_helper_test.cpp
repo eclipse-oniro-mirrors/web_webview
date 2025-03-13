@@ -120,6 +120,14 @@ public:
         return "";
     }
 
+    void SetProxyOverride(const std::vector<std::string>& proxyUrls,
+                          const std::vector<std::string>& proxySchemeFilters,
+                          const std::vector<std::string>& bypassRules,
+                          const bool& reverseBypass,
+                          std::shared_ptr<NWebProxyChangedCallback> callback) {}
+
+    void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback) {}
+
     void PauseAllTimers() {}
 
     void ResumeAllTimers() {}
@@ -528,6 +536,15 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().GetDefaultUserAgent();
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
+
+    std::shared_ptr<NWebProxyChangedCallback> proxyChangedCallback;
+    std::vector<std::string> proxyUrls = {"https://proxynj.huawei.com"};
+    std::vector<std::string> proxySchemeFilters = {"http"};
+    std::vector<std::string> bypassRules = {"*.example.com"};
+    bool reverseBypass = false;
+    NWebHelper::Instance().SetProxyOverride(proxyUrls, proxySchemeFilters, bypassRules,
+                                            reverseBypass, proxyChangedCallback);
+    NWebHelper::Instance().RemoveProxyOverride(proxyChangedCallback);
 }
 
 /**
