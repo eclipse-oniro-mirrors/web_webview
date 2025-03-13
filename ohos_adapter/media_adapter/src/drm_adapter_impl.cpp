@@ -1020,10 +1020,7 @@ int32_t DrmAdapterImpl::UpdateSession(uint32_t promiseId, const std::string& eme
         WVLOG_E("[DRM]DrmAdapterImpl::UpdateSession, info is nullprt, emeId: %{public}s", emeId.c_str());
         return static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR);
     }
-    bool isKeyRelease = false;
-    if (info->KeyType() == static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE)) {
-        isKeyRelease = true;
-    }
+    bool isKeyRelease = info->KeyType() == static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE);
     int32_t mediaKeyIdLen = MAX_KEY_SET_ID_LEN;
     uint8_t mediaKeyId[MAX_KEY_SET_ID_LEN] = { 0x00 };
     if (isKeyRelease) {
