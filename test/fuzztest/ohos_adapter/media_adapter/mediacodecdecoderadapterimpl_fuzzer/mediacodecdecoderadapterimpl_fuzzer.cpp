@@ -86,7 +86,6 @@ bool MediaCodecDecoderAdapterImplFuzzTest(const uint8_t* data, size_t size)
     NWeb::MediaCodecDecoderAdapterImpl mediaCodecDecoderAdapterImpl;
     NWeb::DecoderAdapterCode code = mediaCodecDecoderAdapterImpl.CreateVideoDecoderByMime("testmimeType");
     std::shared_ptr<NWeb::DecoderFormatAdapter> format = std::make_unique<DecoderFormatAdapterMock>();
-    AVCodecBufferInfo info;
     FuzzedDataProvider dataProvider(data, size);
     std::string stringParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     code = mediaCodecDecoderAdapterImpl.CreateVideoDecoderByName(stringParam);
@@ -102,29 +101,17 @@ bool MediaCodecDecoderAdapterImplFuzzTest(const uint8_t* data, size_t size)
     code = mediaCodecDecoderAdapterImpl.ResetDecoder();
     code = mediaCodecDecoderAdapterImpl.ReleaseDecoder();
 
-    code = mediaCodecDecoderAdapterImpl.QueueInputBufferDec(0, 0, 0, 0, BufferFlag::CODEC_BUFFER_FLAG_NONE);
-
+    int32_t intParam = dataProvider.ConsumeIntegralInRange<int32_t>(0, 10000);
+    uint32_t uintParam = dataProvider.ConsumeIntegralInRange<uint32_t>(0, 10000);
+    code = mediaCodecDecoderAdapterImpl.QueueInputBufferDec(
+        uintParam, 0, intParam, intParam, BufferFlag::CODEC_BUFFER_FLAG_NONE);
     code = mediaCodecDecoderAdapterImpl.GetOutputFormatDec(format);
+    code = mediaCodecDecoderAdapterImpl.ReleaseOutputBufferDec(uintParam, true);
 
-    code = mediaCodecDecoderAdapterImpl.ReleaseOutputBufferDec(0, true);
-
-    std::shared_ptr<NWeb::DecoderCallbackImpl> decoderCallback = std::make_shared<NWeb::DecoderCallbackImpl>(nullptr);
-
-    decoderCallback->OnError(OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_INTERNAL, 0);
-    decoderCallback->OnOutputFormatChanged(OHOS::MediaAVCodec::Format());
-    decoderCallback->OnInputBufferAvailable(0, nullptr);
-    decoderCallback->OnOutputBufferAvailable(0, OHOS::MediaAVCodec::AVCodecBufferInfo(),
-        OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_NONE, nullptr);
-
-    std::shared_ptr<NWeb::DecoderCallbackAdapter> callback = std::make_shared<DecoderCallbackAdapterMock>();
-    std::shared_ptr<NWeb::DecoderCallbackImpl> decoderCallbackNoNull =
-        std::make_shared<NWeb::DecoderCallbackImpl>(callback);
-    decoderCallbackNoNull->OnError(OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_INTERNAL, 0);
-    decoderCallbackNoNull->OnOutputFormatChanged(OHOS::MediaAVCodec::Format());
-    decoderCallbackNoNull->OnOutputBufferAvailable(
-        0, info, OHOS::MediaAVCodec::AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_NONE, nullptr);
-    std::shared_ptr<Media::AVSharedMemory> memory = std::make_shared<Media::AVSharedMemoryBase>(1, 1.0, "test");
-    decoderCallbackNoNull->OnInputBufferAvailable(1, memory);
+    mediaCodecDecoderAdapterImpl.OnError(uintParam);
+    mediaCodecDecoderAdapterImpl.OnOutputFormatChanged(nullptr);
+    mediaCodecDecoderAdapterImpl.OnInputBufferAvailable(uintParam, nullptr);
+    mediaCodecDecoderAdapterImpl.OnOutputBufferAvailable(uintParam, nullptr);
     return true;
 }
 } // namespace OHOS
