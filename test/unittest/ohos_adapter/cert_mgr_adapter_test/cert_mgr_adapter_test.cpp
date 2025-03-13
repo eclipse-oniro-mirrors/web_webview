@@ -285,11 +285,7 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetCertMaxSize_001, TestSize.Lev
     EXPECT_NE(g_appMaxSize, TEST_FAILURE);
     g_certSum = adapter.GetSytemRootCertSum();
     std::string deviceType = OHOS::system::GetDeviceType();
-    if (deviceType == "phone" || deviceType == "default") {
-        EXPECT_NE(g_certSum, TEST_OK);
-    } else {
-        EXPECT_EQ(g_certSum, TEST_OK);
-    }
+    EXPECT_EQ(g_certSum, TEST_OK);
 }
 
 /**
@@ -305,11 +301,7 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetAppCert_002, TestSize.Level1)
     EXPECT_NE(certData, nullptr);
     int32_t result = adapter.GetSytemRootCertData(0, certData);
     std::string deviceType = OHOS::system::GetDeviceType();
-    if (deviceType == "phone" || deviceType == "default") {
-        EXPECT_NE(result, -1);
-    } else {
-        EXPECT_EQ(result, -1);
-    }
+    EXPECT_EQ(result, -1);
     free(certData);
     certData = nullptr;
 }
@@ -386,11 +378,7 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_Sign_006, TestSize.Level1)
     result = adapter.Sign(uriData, messageData, sizeof(messageData),
                                   signData, sizeof(signData));
     std::string deviceType = OHOS::system::GetDeviceType();
-    if (deviceType == "phone" || deviceType == "default") {
-        EXPECT_NE(result, -1);
-    } else {
-        EXPECT_EQ(result, -1);
-    }
+    EXPECT_EQ(result, -1);
     result = adapter.Sign(uriData, messageData, sizeof(messageData), nullptr, 0);
     EXPECT_EQ(result, -1);
     result = adapter.Sign(uriData, nullptr, 0, signData, sizeof(signData));
