@@ -16,6 +16,32 @@ import("../../../web_aafwk.gni")
 
 module_output_path = "web/webview"
 
+ohos_unittest("arkweb_scheme_handler_test") {
+  module_out_path = module_output_path
+
+  sources = [ "arkweb_scheme_handler_test.cpp" ]
+
+  include_dirs = [ "../common" ]
+
+  deps = [
+    "$webview_path/interfaces/native:ohweb",
+    "$webview_path/ohos_nweb:web_configs",
+  ]
+
+  external_deps = [
+    "ability_runtime:app_context",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
+    "graphic_2d:librender_service_client",
+    "hilog:libhilog",
+    "webview:libnweb",
+    "window_manager:libwm",
+  ]
+}
+
 ohos_unittest("arkweb_interface_test") {
   module_out_path = module_output_path
 
@@ -44,5 +70,8 @@ ohos_unittest("arkweb_interface_test") {
 
 group("unittest") {
   testonly = true
-  deps = [ ":arkweb_interface_test" ]
+  deps = [
+    ":arkweb_interface_test",
+    ":arkweb_scheme_handler_test",
+  ]
 }
