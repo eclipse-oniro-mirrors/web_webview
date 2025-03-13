@@ -28,7 +28,10 @@ config("module_private_config") {
 ohos_unittest("net_proxy_adapter_test") {
   module_out_path = module_output_path
 
-  sources = [ "net_conn_client_test_mock.cpp", "net_conn_client_test_mock.h" ]
+  sources = [
+    "net_conn_client_test_mock.cpp",
+    "net_conn_client_test_mock.h"
+  ]
 
   sources += [ "net_proxy_adapter_test.cpp" ]
 
