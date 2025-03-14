@@ -64,34 +64,18 @@ MediaCodecDecoderAdapterImpl::~MediaCodecDecoderAdapterImpl()
 
 DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByMime(const std::string& mimetype)
 {
-    std::string decoderName = mimetype;
-    if (mediaKeySession_ != nullptr) {
-        bool requireSecureDecoder = false;
-        Drm_ErrCode ret = OH_MediaKeySession_RequireSecureDecoderModule(mediaKeySession_, mimetype.c_str(),
-            &requireSecureDecoder);
-        if (ret != DRM_ERR_OK) {
-            WVLOG_E("MediaCodecDecoder create failed, require secure fail.");
-            return DecoderAdapterCode::DECODER_ERROR;
-        }
-        if (requireSecureDecoder != isSecure_) {
-            WVLOG_E("MediaCodecDecoder create failed, secure state error.");
-            return DecoderAdapterCode::DECODER_ERROR;
-        }
+    WVLOG_I("MediaCodecDecoder create decoder %{public}s, isSecure_ is %{public}d, mediaKeySession_ is %{public}d",
+        mimetype.c_str(), isSecure_ ? 1 : 0, mediaKeySession_ ? 1 : 0);
+    avCap_ = OH_AVCodec_GetCapability(mimetype.c_str(), false);
+    if (avCap_ == nullptr) {
+        WVLOG_E("MediaCodecDecoder create failed, get capability error.");
+        return DecoderAdapterCode::DECODER_ERROR;
     }
     if (isSecure_) {
-        OH_AVCapability *avCap = OH_AVCodec_GetCapability(mimetype.c_str(), false);
-        if (avCap != nullptr) {
-            decoderName = std::string(OH_AVCapability_GetName(avCap)) + ".secure";
-            decoder_ = OH_VideoDecoder_CreateByName(decoderName.c_str());
-        } else {
-            WVLOG_E("MediaCodecDecoder create failed, get capability error.");
-            return DecoderAdapterCode::DECODER_ERROR;
-        }
+        return CreateVideoDecoderByName(OH_AVCapability_GetName(avCap_));
     }
 
-    WVLOG_I("MediaCodecDecoder create decoder %{public}s, isSecure_ is %{public}d, mediaKeySession_ is %{public}d",
-        decoderName.c_str(), isSecure_ ? 1 : 0, mediaKeySession_ ? 1 : 0);
-    decoder_ = OH_VideoDecoder_CreateByMime(decoderName.c_str());
+    decoder_ = OH_VideoDecoder_CreateByMime(mimetype.c_str());
     if (decoder_ == nullptr) {
         WVLOG_E("MediaCodecDecoder create decoder failed.");
         return DecoderAdapterCode::DECODER_ERROR;
@@ -102,10 +86,14 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByMime(const 
 
 DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByName(const std::string& name)
 {
-    WVLOG_D("MediaCodecDecoder CreateVideoDecoderByName");
-    OH_AVCapability *capability = OH_AVCodec_GetCapabilityByCategory(name.c_str(), false, HARDWARE);
-    if (capability != nullptr) {
-        decoder_ = OH_VideoDecoder_CreateByName(name.c_str());
+    WVLOG_I("MediaCodecDecoder create decoder %{public}s, isSecure_ is %{public}d, mediaKeySession_ is %{public}d",
+        mimetype.c_str(), isSecure_ ? 1 : 0, mediaKeySession_ ? 1 : 0);
+    std::string decoderName = name;
+    avCap_ = OH_AVCodec_GetCapabilityByCategory(name.c_str(), false, HARDWARE);
+    if (avCap_ != nullptr) {
+        if (isSecure_)
+            decoderName = std::string(OH_AVCapability_GetName(avCap_)) + ".secure";
+        decoder_ = OH_VideoDecoder_CreateByName(decoderName.c_str());
         if (decoder_ != nullptr) {
             isHardwareDecode_ = true;
             WVLOG_I("MediaCodecDecoder create hardware decoder.");
@@ -113,9 +101,11 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByName(const 
         }
     }
 
-    capability = OH_AVCodec_GetCapabilityByCategory(name.c_str(), false, SOFTWARE);
-    if (capability != nullptr) {
-        decoder_ = OH_VideoDecoder_CreateByName(name.c_str());
+    avCap_ = OH_AVCodec_GetCapabilityByCategory(name.c_str(), false, SOFTWARE);
+    if (avCap_ != nullptr) {
+        if (isSecure_)
+            decoderName = std::string(OH_AVCapability_GetName(avCap_)) + ".secure";
+        decoder_ = OH_VideoDecoder_CreateByName(decoderName.c_str());
         if (decoder_ != nullptr) {
             isHardwareDecode_ = false;
             WVLOG_I("MediaCodecDecoder create software decoder.");
@@ -137,6 +127,11 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const std::sha
 
     if (format == nullptr) {
         WVLOG_E("format is nullptr.");
+        return DecoderAdapterCode::DECODER_ERROR;
+    }
+
+    if (avCap_ != nullptr && !OH_AVCapability_IsVideoSizeSupported(avCap_, format->GetWidth(), format->GetHeight())) {
+        WVLOG_E("width or height not support.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -257,6 +252,9 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::StopDecoder()
         WVLOG_E("OH_VideoDecoder_Stop fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
+
+    std::unique_lock<std::mutex> lock(bufferMutex_);
+    bufferMap_.clear();
     return DecoderAdapterCode::DECODER_OK;
 }
 
@@ -272,6 +270,8 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::FlushDecoder()
         WVLOG_E("OH_VideoDecoder_Flush fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
+    std::unique_lock<std::mutex> lock(bufferMutex_);
+    bufferMap_.clear();
     return DecoderAdapterCode::DECODER_OK;
 }
 
@@ -287,6 +287,8 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ResetDecoder()
         WVLOG_E("OH_VideoDecoder_Reset fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
+    std::unique_lock<std::mutex> lock(bufferMutex_);
+    bufferMap_.clear();
     return DecoderAdapterCode::DECODER_OK;
 }
 
@@ -303,6 +305,8 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ReleaseDecoder()
         WVLOG_E("OH_VideoDecoder_Destroy fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
+    std::unique_lock<std::mutex> lock(bufferMutex_);
+    bufferMap_.clear();
     return DecoderAdapterCode::DECODER_OK;
 }
 
@@ -315,18 +319,23 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::QueueInputBufferDec(
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
-    if (bufferMap_.find(index) == bufferMap_.end()) {
-        WVLOG_E("MediaCodecDecoder QueueInputBufferDec not find index.");
-        return DecoderAdapterCode::DECODER_ERROR;
-    }
-
+    OH_AVErrCode ret;
     OH_AVCodecBufferAttr attr;
     attr.pts = presentationTimeUs;
     attr.size = size;
     attr.offset = offset;
     attr.flags = MediaCodecDecoderAdapterImpl::GetAVBufferFlag(flag);
 
-    OH_AVErrCode ret = OH_AVBuffer_SetBufferAttr(bufferMap_[index], &attr);
+    {
+        std::unique_lock<std::mutex> lock(bufferMutex_);
+        if (bufferMap_.find(index) == bufferMap_.end()) {
+            WVLOG_E("MediaCodecDecoder QueueInputBufferDec not find index.");
+            return DecoderAdapterCode::DECODER_ERROR;
+        }
+
+        ret = OH_AVBuffer_SetBufferAttr(bufferMap_[index], &attr);
+    }
+
     if (ret != OH_AVErrCode::AV_ERR_OK) {
         WVLOG_E("OH_AVBuffer_SetBufferAttr fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
@@ -385,6 +394,8 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ReleaseOutputBufferDec(uint32_t
     if (ret != OH_AVErrCode::AV_ERR_OK) {
         return DecoderAdapterCode::DECODER_ERROR;
     }
+    std::unique_lock<std::mutex> lock(bufferMutex_);
+    bufferMap_.erase(index);
     return DecoderAdapterCode::DECODER_OK;
 }
 
@@ -507,7 +518,10 @@ void MediaCodecDecoderAdapterImpl::OnInputBufferAvailable(uint32_t index, OH_AVB
         return;
     }
 
-    bufferMap_[index] = buffer;
+    {
+        std::unique_lock<std::mutex> lock(bufferMutex_);
+        bufferMap_[index] = buffer;
+    }
 
     ohosBuffer->SetAddr(OH_AVBuffer_GetAddr(buffer));
     ohosBuffer->SetBufferSize(OH_AVBuffer_GetCapacity(buffer));
@@ -602,11 +616,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetAVCencInfo(
     uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo)
 {
     WVLOG_I("%{public}s.", __FUNCTION__);
-    if (bufferMap_.find(index) == bufferMap_.end()) {
-        WVLOG_E("MediaCodecDecoder QueueInputBufferDec not find index.");
-        return DecoderAdapterCode::DECODER_ERROR;
-    }
-
+    OH_AVErrCode ret;
     OH_AVCencInfo *avCencInfo = OH_AVCencInfo_Create();
     if (avCencInfo == nullptr) {
         WVLOG_E("creat avCencInfo fail.");
@@ -616,7 +626,16 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetAVCencInfo(
     if (SetAVCencInfoStruct(avCencInfo, cencInfo) != DecoderAdapterCode::DECODER_OK) {
         return DecoderAdapterCode::DECODER_ERROR;
     }
-    OH_AVErrCode ret = OH_AVCencInfo_SetAVBuffer(avCencInfo, bufferMap_[index]);
+
+    {
+        std::unique_lock<std::mutex> lock(bufferMutex_);
+        if (bufferMap_.find(index) == bufferMap_.end()) {
+            WVLOG_E("MediaCodecDecoder QueueInputBufferDec not find index.");
+            return DecoderAdapterCode::DECODER_ERROR;
+        }
+        ret = OH_AVCencInfo_SetAVBuffer(avCencInfo, bufferMap_[index]);
+    }
+
     if (ret != AV_ERR_OK) {
         WVLOG_E("OH_AVCencInfo_SetAVBuffer fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
