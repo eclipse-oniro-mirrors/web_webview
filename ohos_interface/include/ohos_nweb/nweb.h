@@ -1755,6 +1755,12 @@ public:
     {
         return false;
     }
+
+    /**
+     * @brief set DPI when DPI changes.
+     * @param density The new density value.
+     */
+    virtual void SetSurfaceDensity(const double& density) {}
 };
 
 } // namespace OHOS::NWeb

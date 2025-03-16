@@ -1544,4 +1544,9 @@ bool ArkWebNWebWrapper::SetFocusByPosition(float x, float y)
 {
     return ark_web_nweb_->SetFocusByPosition(x, y);
 }
+
+void ArkWebNWebWrapper::SetSurfaceDensity(const double& density)
+{
+    ark_web_nweb_->SetSurfaceDensity(density);
+}
 } // namespace OHOS::ArkWeb
