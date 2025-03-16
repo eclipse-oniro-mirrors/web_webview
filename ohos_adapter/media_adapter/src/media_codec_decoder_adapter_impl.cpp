@@ -64,8 +64,8 @@ MediaCodecDecoderAdapterImpl::~MediaCodecDecoderAdapterImpl()
 
 DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByMime(const std::string& mimetype)
 {
-    WVLOG_I("MediaCodecDecoder create decoder %{public}s, isSecure_ is %{public}d, mediaKeySession_ is %{public}d",
-        mimetype.c_str(), isSecure_ ? 1 : 0, mediaKeySession_ ? 1 : 0);
+    WVLOG_I("MediaCodecDecoder create decoder by mime[%{public}s], isSecure_ = %{public}d",
+        mimetype.c_str(), static_cast<int32_t>(isSecure_));
     avCap_ = OH_AVCodec_GetCapability(mimetype.c_str(), false);
     if (avCap_ == nullptr) {
         WVLOG_E("MediaCodecDecoder create failed, get capability error.");
@@ -86,13 +86,15 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByMime(const 
 
 DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByName(const std::string& name)
 {
-    WVLOG_I("MediaCodecDecoder create decoder %{public}s, isSecure_ is %{public}d, mediaKeySession_ is %{public}d",
-        mimetype.c_str(), isSecure_ ? 1 : 0, mediaKeySession_ ? 1 : 0);
+    WVLOG_I("MediaCodecDecoder create decoder by name[%{public}s], isSecure_ = %{public}d",
+        name.c_str(), static_cast<int32_t>(isSecure_));
     std::string decoderName = name;
     avCap_ = OH_AVCodec_GetCapabilityByCategory(name.c_str(), false, HARDWARE);
     if (avCap_ != nullptr) {
-        if (isSecure_)
-            decoderName = std::string(OH_AVCapability_GetName(avCap_)) + ".secure";
+        decoderName = std::string(OH_AVCapability_GetName(avCap_));
+        if (isSecure_) {
+            decoderName += ".secure";
+        }
         decoder_ = OH_VideoDecoder_CreateByName(decoderName.c_str());
         if (decoder_ != nullptr) {
             isHardwareDecode_ = true;
@@ -103,8 +105,10 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByName(const 
 
     avCap_ = OH_AVCodec_GetCapabilityByCategory(name.c_str(), false, SOFTWARE);
     if (avCap_ != nullptr) {
-        if (isSecure_)
-            decoderName = std::string(OH_AVCapability_GetName(avCap_)) + ".secure";
+        decoderName = std::string(OH_AVCapability_GetName(avCap_));
+        if (isSecure_) {
+            decoderName += ".secure";
+        }
         decoder_ = OH_VideoDecoder_CreateByName(decoderName.c_str());
         if (decoder_ != nullptr) {
             isHardwareDecode_ = false;
@@ -121,7 +125,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const std::sha
 {
     WVLOG_D("MediaCodecDecoder ConfigureDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -131,7 +135,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const std::sha
     }
 
     if (avCap_ != nullptr && !OH_AVCapability_IsVideoSizeSupported(avCap_, format->GetWidth(), format->GetHeight())) {
-        WVLOG_E("width or height not support.");
+        WVLOG_E("video size not support.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -146,7 +150,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ConfigureDecoder(const std::sha
     OH_AVErrCode ret = OH_VideoDecoder_Configure(decoder_, codecFormat);
     OH_AVFormat_Destroy(codecFormat);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_Configure fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_Configure fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     return DecoderAdapterCode::DECODER_OK;
@@ -156,7 +160,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetParameterDecoder(const std::
 {
     WVLOG_D("MediaCodecDecoder SetParameterDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -176,7 +180,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetParameterDecoder(const std::
     OH_AVErrCode ret = OH_VideoDecoder_SetParameter(decoder_, codecFormat);
     OH_AVFormat_Destroy(codecFormat);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_SetParameter fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_SetParameter fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     return DecoderAdapterCode::DECODER_OK;
@@ -186,7 +190,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetOutputSurface(void* window)
 {
     WVLOG_D("MediaCodecDecoder SetOutputSurface");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -203,7 +207,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetOutputSurface(void* window)
     }
     OH_AVErrCode ret = OH_VideoDecoder_SetSurface(decoder_, window_);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_SetSurface fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_SetSurface fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     return DecoderAdapterCode::DECODER_OK;
@@ -213,13 +217,13 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::PrepareDecoder()
 {
     WVLOG_D("MediaCodecDecoder PrepareDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
     OH_AVErrCode ret = OH_VideoDecoder_Prepare(decoder_);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_Prepare fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_Prepare fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     return DecoderAdapterCode::DECODER_OK;
@@ -229,12 +233,12 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::StartDecoder()
 {
     WVLOG_D("MediaCodecDecoder StartDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
     OH_AVErrCode ret = OH_VideoDecoder_Start(decoder_);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_Start fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_Start fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     return DecoderAdapterCode::DECODER_OK;
@@ -244,12 +248,12 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::StopDecoder()
 {
     WVLOG_D("MediaCodecDecoder StopDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
     OH_AVErrCode ret = OH_VideoDecoder_Stop(decoder_);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_Stop fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_Stop fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -262,12 +266,12 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::FlushDecoder()
 {
     WVLOG_D("MediaCodecDecoder FlushDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
     OH_AVErrCode ret = OH_VideoDecoder_Flush(decoder_);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_Flush fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_Flush fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     std::unique_lock<std::mutex> lock(bufferMutex_);
@@ -279,7 +283,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ResetDecoder()
 {
     WVLOG_D("MediaCodecDecoder ResetDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
     OH_AVErrCode ret = OH_VideoDecoder_Reset(decoder_);
@@ -296,13 +300,13 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ReleaseDecoder()
 {
     WVLOG_D("MediaCodecDecoder ReleaseDecoder");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
     OH_AVErrCode ret = OH_VideoDecoder_Destroy(decoder_);
     decoder_ = nullptr;
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_Destroy fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_Destroy fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     std::unique_lock<std::mutex> lock(bufferMutex_);
@@ -315,7 +319,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::QueueInputBufferDec(
 {
     WVLOG_D("MediaCodecDecoder QueueInputBufferDec");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -332,17 +336,16 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::QueueInputBufferDec(
             WVLOG_E("MediaCodecDecoder QueueInputBufferDec not find index.");
             return DecoderAdapterCode::DECODER_ERROR;
         }
-
         ret = OH_AVBuffer_SetBufferAttr(bufferMap_[index], &attr);
     }
 
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_AVBuffer_SetBufferAttr fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_AVBuffer_SetBufferAttr fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     ret = OH_VideoDecoder_PushInputBuffer(decoder_, index);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
-        WVLOG_E("OH_VideoDecoder_PushInputBuffer fail, ret=%{public}u.", static_cast<uint32_t>(ret));
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_PushInputBuffer fail, ret=%{public}u.", static_cast<uint32_t>(ret));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     return DecoderAdapterCode::DECODER_OK;
@@ -352,7 +355,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::GetOutputFormatDec(std::shared_
 {
     WVLOG_D("MediaCodecDecoder GetOutputFormatDec");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -381,14 +384,16 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ReleaseOutputBufferDec(uint32_t
 {
     WVLOG_D("MediaCodecDecoder ReleaseOutputBufferDec, isRender = %{public}d", isRender);
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
     OH_AVErrCode ret;
     if (isRender) {
+        // Display the buffer data and release the buffer.
         ret = OH_VideoDecoder_RenderOutputBuffer(decoder_, index);
     } else {
+        // Only release the buffer.
         ret = OH_VideoDecoder_FreeOutputBuffer(decoder_, index);
     }
     if (ret != OH_AVErrCode::AV_ERR_OK) {
@@ -403,7 +408,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetCallbackDec(const std::share
 {
     WVLOG_D("MediaCodecDecoder SetCallbackDec");
     if (decoder_ == nullptr) {
-        WVLOG_E("MediaCodecDecoder is nullptr.");
+        WVLOG_E("MediaCodecDecoder decoder_ is nullptr.");
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
@@ -439,16 +444,6 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetCallbackDec(const std::share
     OH_AVErrCode ret = OH_VideoDecoder_RegisterCallback(decoder_, cb, this);
     if (ret != OH_AVErrCode::AV_ERR_OK) {
         return DecoderAdapterCode::DECODER_ERROR;
-    }
-
-    if (mediaKeySession_ != nullptr) {
-        OH_AVErrCode errCode = OH_VideoDecoder_SetDecryptionConfig(decoder_, mediaKeySession_, isSecure_);
-        WVLOG_D("MediaCodecDecoder SetDecryptionConfig, errCode = %{public}u, isSecure_ = %{public}u",
-            static_cast<uint32_t>(errCode), static_cast<uint32_t>(isSecure_));
-        if (errCode != AV_ERR_OK) {
-            WVLOG_E("set decryption config fail, errCode = %{public}u.", uint32_t(errCode));
-            return DecoderAdapterCode::DECODER_ERROR;
-        }
     }
 
     return DecoderAdapterCode::DECODER_OK;
@@ -563,14 +558,14 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetAVCencInfoStruct(
 {
     OH_AVErrCode errNo = OH_AVCencInfo_SetAlgorithm(avCencInfo, static_cast<DrmCencAlgorithm>(cencInfo->GetAlgo()));
     if (errNo != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder set AVCencInfo Algorithm fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
+        WVLOG_E("MediaCodecDecoder set AVCencInfo Algorithm fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
     errNo = OH_AVCencInfo_SetKeyIdAndIv(
         avCencInfo, cencInfo->GetKeyId(), cencInfo->GetKeyIdLen(), cencInfo->GetIv(), cencInfo->GetIvLen());
     if (errNo != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder set AVCencInfo keyid and iv fail, errNo = %{public}u",
+        WVLOG_E("MediaCodecDecoder set AVCencInfo keyid and iv fail, errNo = %{public}u",
             static_cast<uint32_t>(errNo));
         return DecoderAdapterCode::DECODER_ERROR;
     }
@@ -584,14 +579,14 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetAVCencInfoStruct(
         avCencInfo, cencInfo->GetEncryptedBlockCount(), cencInfo->GetSkippedBlockCount(),
         cencInfo->GetFirstEncryptedOffset(), cencInfo->GetClearHeaderLens().size(), subSamples);
     if (errNo != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder set AVCencInfo subsampleInfo fail, errNo = %{public}u",
+        WVLOG_E("MediaCodecDecoder set AVCencInfo subsampleInfo fail, errNo = %{public}u",
             static_cast<uint32_t>(errNo));
         return DecoderAdapterCode::DECODER_ERROR;
     }
 
     errNo = OH_AVCencInfo_SetMode(avCencInfo, DRM_CENC_INFO_KEY_IV_SUBSAMPLES_SET);
     if (errNo != AV_ERR_OK) {
-        WVLOG_E("AudioCodecDecoder set AVCencInfo mode fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
+        WVLOG_E("MediaCodecDecoder set AVCencInfo mode fail, errNo = %{public}u", static_cast<uint32_t>(errNo));
         return DecoderAdapterCode::DECODER_ERROR;
     }
     return DecoderAdapterCode::DECODER_OK;
@@ -599,23 +594,28 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetAVCencInfoStruct(
 
 DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetDecryptionConfig(void *session, bool isSecure)
 {
-    WVLOG_D("%{public}s, secureAudio = %{public}u, session = %{public}d.",
+    WVLOG_I("%{public}s, isSecure = %{public}u, session = %{public}d.",
         __FUNCTION__, static_cast<uint32_t>(isSecure), session ? 1 : 0);
-
+    isSecure_ = isSecure;
     if (session == nullptr) {
-        WVLOG_E("session is nullptr.");
+        return DecoderAdapterCode::DECODER_OK;
+    }
+    OH_AVErrCode errCode = OH_VideoDecoder_SetDecryptionConfig(
+        decoder_, static_cast<MediaKeySession *>(session), isSecure_);
+    if (errCode != AV_ERR_OK) {
+        WVLOG_E("MediaCodecDecoder OH_VideoDecoder_SetDecryptionConfig fail, errCode = %{public}u.", uint32_t(errCode));
         return DecoderAdapterCode::DECODER_ERROR;
     }
-    mediaKeySession_ = static_cast<MediaKeySession*>(session);
-    isSecure_ = isSecure;
-
     return DecoderAdapterCode::DECODER_OK;
 }
 
 DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetAVCencInfo(
     uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo)
 {
-    WVLOG_I("%{public}s.", __FUNCTION__);
+    if (cencInfo == nullptr) {
+        WVLOG_E("cencInfo is nullptr.");
+        return DecoderAdapterCode::DECODER_ERROR;
+    }
     OH_AVErrCode ret;
     OH_AVCencInfo *avCencInfo = OH_AVCencInfo_Create();
     if (avCencInfo == nullptr) {

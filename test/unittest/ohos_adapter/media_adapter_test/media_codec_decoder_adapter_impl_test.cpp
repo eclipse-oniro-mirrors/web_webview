@@ -23,6 +23,8 @@
 #include "avsharedmemorybase.h"
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
 #include "native_window.h"
+#include "native_avformat.h"
+#include "native_avbuffer.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -168,9 +170,7 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_InvalidV
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->ReleaseDecoder(), DecoderAdapterCode::DECODER_ERROR);
     std::shared_ptr<DecoderCallbackAdapter> callback = std::make_shared<DecoderCallbackAdapterMock>();
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetCallbackDec(callback), DecoderAdapterCode::DECODER_ERROR);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetDecryptionConfig(nullptr, true), DecoderAdapterCode::DECODER_ERROR);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(1, nullptr), DecoderAdapterCode::DECODER_ERROR);
-	EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetDecryptionConfig(nullptr, true), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetDecryptionConfig(nullptr, true), DecoderAdapterCode::DECODER_OK);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(1, nullptr), DecoderAdapterCode::DECODER_ERROR);
 }
 
@@ -262,10 +262,20 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_OnError_
     mediaCodecDecoderAdapterImpl_->SetCallbackDec(callback);
 
     mediaCodecDecoderAdapterImpl_->OnError(100);
-    mediaCodecDecoderAdapterImpl_->OnError(1);
     mediaCodecDecoderAdapterImpl_->OnOutputFormatChanged(nullptr);
     mediaCodecDecoderAdapterImpl_->OnInputBufferAvailable(1, nullptr);
     mediaCodecDecoderAdapterImpl_->OnOutputBufferAvailable(1, nullptr);
-}
+
+    constexpr int32_t MEMSIZE = 1024 * 1024;
+    OH_AVFormat* codecFormat = OH_AVFormat_Create();
+    OH_AVBuffer* buffer = OH_AVBuffer_Create(MEMSIZE);
+    mediaCodecDecoderAdapterImpl_->OnError(1);
+    mediaCodecDecoderAdapterImpl_->OnOutputFormatChanged(codecFormat);
+    mediaCodecDecoderAdapterImpl_->OnInputBufferAvailable(1, buffer);
+    mediaCodecDecoderAdapterImpl_->OnOutputBufferAvailable(1, buffer);
+    OH_AVFormat_Destroy(codecFormat);
+    OH_AVBuffer_Destroy(buffer);
+    codecFormat = nullptr;
+    buffer = nullptr;
 }
 } // namespace OHOS::NWeb

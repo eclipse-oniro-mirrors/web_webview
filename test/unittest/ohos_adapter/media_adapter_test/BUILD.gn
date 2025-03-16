@@ -64,6 +64,7 @@ ohos_unittest("nweb_media_adapter_test") {
     external_deps += [
       "av_codec:av_codec_client",
       "media_foundation:media_foundation",
+      "media_foundation:native_media_core",
     ]
   }
 

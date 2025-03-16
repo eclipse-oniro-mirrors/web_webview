@@ -93,7 +93,6 @@ private:
     std::map<uint32_t, OH_AVBuffer*> bufferMap_;
     std::mutex bufferMutex_;
     bool isHardwareDecode_ = true;
-    MediaKeySession *mediaKeySession_ = nullptr;
     bool isSecure_ = false;
     OH_AVCapability *avCap_ = nullptr;
 };
