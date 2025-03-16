@@ -137,11 +137,12 @@ void MediaCodecDecoderAdapterImplTest::TearDown(void) {}
  */
 HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_CreateVideoDecoderByName_001, TestSize.Level1)
 {
-    constexpr std::string errorMimetype = "testmimeType";
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->CreateVideoDecoderByMime(errorMimetype), DecoderAdapterCode::DECODER_ERROR);
-    constexpr std::string errorName = "testname";
+    const std::string errorMimetype = "testmimeType";
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->CreateVideoDecoderByMime(
+	    errorMimetype), DecoderAdapterCode::DECODER_ERROR);
+    const std::string errorName = "testname";
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->CreateVideoDecoderByName(errorName), DecoderAdapterCode::DECODER_ERROR);
-    constexpr std::string validMimetype = "video/avc";
+    const std::string validMimetype = "video/avc";
     DecoderAdapterCode ret = mediaCodecDecoderAdapterImpl_->CreateVideoDecoderByMime(validMimetype);
     EXPECT_EQ(ret, DecoderAdapterCode::DECODER_OK);
 }
@@ -239,7 +240,7 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_GetTypeO
     BufferFlag testBufferFlag = static_cast<BufferFlag>(100);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->GetAVBufferFlag(testBufferFlag),
         OH_AVCodecBufferFlags::AVCODEC_BUFFER_FLAGS_NONE);
-	constexpr std::string codecName = "video/avc";
+	const std::string codecName = "video/avc";
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->CreateVideoDecoderByName(codecName), DecoderAdapterCode::DECODER_OK);
     EXPECT_EQ(mediaCodecDecoderAdapterImpl_->ConfigureDecoder(format_), DecoderAdapterCode::DECODER_OK);
 }
