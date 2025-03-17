@@ -88,6 +88,10 @@ public:
 
     DecoderAdapterCode SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter> callback) override;
 
+    DecoderAdapterCode SetDecryptionConfig(void *session, bool isSecure) override;
+
+    DecoderAdapterCode SetAVCencInfo(uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo) override;
+
     static ErrorType GetErrorType(MediaAVCodec::AVCodecErrorType codecErrorType);
 
     static BufferFlag GetBufferFlag(MediaAVCodec::AVCodecBufferFlag codecBufferFlag);
