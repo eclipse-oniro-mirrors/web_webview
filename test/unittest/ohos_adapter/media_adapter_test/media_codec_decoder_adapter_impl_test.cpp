@@ -279,4 +279,5 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_OnError_
     codecFormat = nullptr;
     buffer = nullptr;
 }
+}
 } // namespace OHOS::NWeb
