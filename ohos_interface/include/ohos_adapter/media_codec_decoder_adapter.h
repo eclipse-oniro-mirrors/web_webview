@@ -102,9 +102,9 @@ public:
 
     virtual DecoderAdapterCode SetCallbackDec(const std::shared_ptr<DecoderCallbackAdapter> callback) = 0;
 
-    virtual DecoderAdapterCode SetDecryptionConfig(void *session, bool isSecure) = 0;
+    virtual DecoderAdapterCode SetDecryptionConfig(void *session, bool isSecure) {}
 
-    virtual DecoderAdapterCode SetAVCencInfo(uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo) = 0;
+    virtual DecoderAdapterCode SetAVCencInfo(uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo) {};
 };
 
 } // namespace OHOS::NWeb
