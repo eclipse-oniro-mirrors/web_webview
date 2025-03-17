@@ -156,7 +156,7 @@ OHOS::NWeb::DecoderAdapterCode ArkMediaCodecDecoderAdapterWrapper::SetDecryption
 }
 
 OHOS::NWeb::DecoderAdapterCode ArkMediaCodecDecoderAdapterWrapper::SetAVCencInfo(
-    uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo)
+    uint32_t index, const std::shared_ptr<NWeb::AudioCencInfoAdapter> cencInfo)
 {
     int32_t result;
     if (CHECK_SHARED_PTR_IS_NULL(cencInfo)) {
