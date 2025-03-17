@@ -65,7 +65,7 @@ public:
     OHOS::NWeb::DecoderAdapterCode SetDecryptionConfig(void *session, bool isSecure) override;
 
     OHOS::NWeb::DecoderAdapterCode SetAVCencInfo(
-        uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo) override;
+        uint32_t index, const std::shared_ptr<NWeb::AudioCencInfoAdapter> cencInfo) override;
 
 private:
     ArkWebRefPtr<ArkMediaCodecDecoderAdapter> ctocpp_;
