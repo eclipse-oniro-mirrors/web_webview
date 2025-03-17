@@ -454,3 +454,21 @@ void DecoderCallbackImpl::OnOutputBufferAvailable(
     flag_ = MediaCodecDecoderAdapterImpl::GetBufferFlag(flag);
     cb_->OnNeedOutputData(index, info_, flag_);
 }
+
+DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetDecryptionConfig(void *session, bool isSecure)
+{
+    WVLOG_I("%{public}s, isSecure = %{public}u, session = %{public}d.",
+        __FUNCTION__, static_cast<uint32_t>(isSecure), session ? 1 : 0);
+    return DecoderAdapterCode::DECODER_OK;
+}
+
+DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetAVCencInfo(
+    uint32_t index, const std::shared_ptr<AudioCencInfoAdapter> cencInfo)
+{
+    if (cencInfo == nullptr) {
+        WVLOG_E("cencInfo is nullptr.");
+        return DecoderAdapterCode::DECODER_ERROR;
+    }
+
+    return DecoderAdapterCode::DECODER_OK;
+}
