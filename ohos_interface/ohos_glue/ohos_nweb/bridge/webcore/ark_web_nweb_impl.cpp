@@ -1310,4 +1310,9 @@ bool ArkWebNWebImpl::SetFocusByPosition(float x, float y)
 {
     return nweb_nweb_->SetFocusByPosition(x, y);
 }
+
+void ArkWebNWebImpl::SetSurfaceDensity(const double& density)
+{
+    nweb_nweb_->SetSurfaceDensity(density);
+}
 } // namespace OHOS::ArkWeb
