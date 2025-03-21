@@ -205,7 +205,7 @@ function fileSelectorListItem(callback, sysResource, text, func) {
   let rowWidth = deviceinfo.deviceType.toLowerCase() === '2in1' ? 312 : 240;
   ListItem.create();
   Row.create();
-  SymbolGlyph.create({ "id": -1, "type": -1, params: [sysResource], "bundleName": "com.example.selectdialog", "moduleName": "entry" });
+  SymbolGlyph.create({ 'id': -1, 'type': -1, params: [sysResource], 'bundleName': 'com.example.selectdialog', 'moduleName': 'entry' });
   SymbolGlyph.width(24);
   SymbolGlyph.height(24);
   SymbolGlyph.fontSize(24);
@@ -254,7 +254,7 @@ function fileSelectorDialog(callback) {
   Text.pop();
   Row.pop();
   List.create();
-  List.width("100%");
+  List.width('100%');
   fileSelectorListItem(callback, 'sys.symbol.picture', '照片', selectPicture);
   fileSelectorListItem(callback, 'sys.symbol.camera', '拍照', takePhoto);
   fileSelectorListItem(callback, 'sys.symbol.doc_text', '文件', selectFile);
