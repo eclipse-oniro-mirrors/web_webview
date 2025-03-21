@@ -201,8 +201,8 @@ function isContainVideoMimeType(acceptTypes) {
   return false;
 }
 
-function FileSelectorListItem(callback, sysResource, text, func) {
-  let rowWidth = deviceinfo.deviceType.toLowerCase() === "2in1" ? 312 : 240;
+function fileSelectorListItem(callback, sysResource, text, func) {
+  let rowWidth = deviceinfo.deviceType.toLowerCase() === '2in1' ? 312 : 240;
   ListItem.create();
   Row.create();
   SymbolGlyph.create({ "id": -1, "type": -1, params: [sysResource], "bundleName": "com.example.selectdialog", "moduleName": "entry" });
@@ -214,7 +214,7 @@ function FileSelectorListItem(callback, sysResource, text, func) {
   });
   Row.create();
   Row.width(rowWidth);
-  Row.border({ width: { bottom: 0.5 }, color: "#33000000" });
+  Row.border({ width: { bottom: 0.5 }, color: '#33000000' });
   Text.create(text);
   Text.fontSize(16);
   Text.fontWeight(FontWeight.Medium);
@@ -238,7 +238,7 @@ function FileSelectorListItem(callback, sysResource, text, func) {
   ListItem.pop();
 }
 
-function FileSelectorDialog(callback) {
+function fileSelectorDialog(callback) {
   Row.create();
   Row.height(56);
   Text.create('选择上传');
@@ -255,17 +255,17 @@ function FileSelectorDialog(callback) {
   Row.pop();
   List.create();
   List.width("100%");
-  FileSelectorListItem(callback, "sys.symbol.picture", "照片", selectPicture);
-  FileSelectorListItem(callback, "sys.symbol.camera", "拍照", takePhoto);
-  FileSelectorListItem(callback, "sys.symbol.doc_text", "文件", selectFile);
+  fileSelectorListItem(callback, 'sys.symbol.picture', '照片', selectPicture);
+  fileSelectorListItem(callback, 'sys.symbol.camera', '拍照', takePhoto);
+  fileSelectorListItem(callback, 'sys.symbol.doc_text', '文件', selectFile);
   List.pop();
 }
 
-function FileSelectorDialogForPC(callback) {
+function fileSelectorDialogForPC(callback) {
   Column.create();
   Column.height(272);
   Column.width(400);
-  FileSelectorDialog(callback);
+  fileSelectorDialog(callback);
   Row.create();
   Row.onClick(() => {
     try {
@@ -282,11 +282,11 @@ function FileSelectorDialogForPC(callback) {
   Row.height(40);
   Row.margin(16);
   Row.borderRadius(5);
-  Row.backgroundColor("#ededed");
+  Row.backgroundColor('#ededed');
   Row.justifyContent(FlexAlign.Center);
-  Text.create("取消");
+  Text.create('取消');
   Text.fontSize(16);
-  Text.fontColor("#FF0A59F7");
+  Text.fontColor('#FF0A59F7');
   Text.fontWeight(FontWeight.Medium);
   Text.margin({
     top: 10,
@@ -299,11 +299,11 @@ function FileSelectorDialogForPC(callback) {
   Column.pop();
 }
 
-function FileSelectorDialogForPhone(callback) {
+function fileSelectorDialogForPhone(callback) {
   Column.create();
   Column.height(264);
   Column.width(328);
-  FileSelectorDialog(callback);
+  fileSelectorDialog(callback);
   Row.create();
   Row.onClick(() => {
     try {
@@ -326,9 +326,9 @@ function FileSelectorDialogForPhone(callback) {
   });
   Row.borderRadius(5);
   Row.justifyContent(FlexAlign.Center);
-  Text.create("取消");
+  Text.create('取消');
   Text.fontSize(16);
-  Text.fontColor("#FF0A59F7");
+  Text.fontColor('#FF0A59F7');
   Text.fontWeight(FontWeight.Medium);
   Text.margin({
     top: 10,
@@ -405,19 +405,19 @@ Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFrom
     if (needShowDialog(callback.fileparam)) {
       promptAction.openCustomDialog({
         builder: () => {
-          if (currentDevice == "2in1") {
-            FileSelectorDialogForPC(callback);
+          if (currentDevice === '2in1') {
+            fileSelectorDialogForPC(callback);
           } else {
-            FileSelectorDialogForPhone(callback);
+            fileSelectorDialogForPhone(callback);
           }
         },
         onWillDismiss: (dismissDialogAction) => {
-          console.info("reason" + JSON.stringify(dismissDialogAction.reason));
-          console.log("dialog onWillDismiss");
-          if (dismissDialogAction.reason == DismissReason.PRESS_BACK) {
+          console.info('reason' + JSON.stringify(dismissDialogAction.reason));
+          console.log('dialog onWillDismiss');
+          if (dismissDialogAction.reason === DismissReason.PRESS_BACK) {
             dismissDialogAction.dismiss();
           }
-          if (dismissDialogAction.reason == DismissReason.TOUCH_OUTSIDE) {
+          if (dismissDialogAction.reason === DismissReason.TOUCH_OUTSIDE) {
             dismissDialogAction.dismiss();
           }
         }
