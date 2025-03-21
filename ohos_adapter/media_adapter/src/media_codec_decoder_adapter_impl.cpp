@@ -72,7 +72,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::CreateVideoDecoderByMime(const 
         return DecoderAdapterCode::DECODER_ERROR;
     }
     if (isSecure_) {
-        return CreateVideoDecoderByName(OH_AVCapability_GetName(avCap_));
+        return CreateVideoDecoderByName(mimetype);
     }
 
     decoder_ = OH_VideoDecoder_CreateByMime(mimetype.c_str());
@@ -397,6 +397,7 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::ReleaseOutputBufferDec(uint32_t
         ret = OH_VideoDecoder_FreeOutputBuffer(decoder_, index);
     }
     if (ret != OH_AVErrCode::AV_ERR_OK) {
+        WVLOG_E("MediaCodecDecoder release buffer[%{public}u] fail.", index);
         return DecoderAdapterCode::DECODER_ERROR;
     }
     std::unique_lock<std::mutex> lock(bufferMutex_);
@@ -418,11 +419,6 @@ DecoderAdapterCode MediaCodecDecoderAdapterImpl::SetCallbackDec(const std::share
     }
 
     callback_ = callback;
-    if (callback_ == nullptr) {
-        WVLOG_E("Create Callback failed.");
-        return DecoderAdapterCode::DECODER_ERROR;
-    }
-
     struct OH_AVCodecCallback cb;
     cb.onError = [] (OH_AVCodec *codec, int32_t errorCode, void *userData) {
         (void)codec;
