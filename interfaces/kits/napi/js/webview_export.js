@@ -21,12 +21,14 @@ let cameraPicker = requireNapi('multimedia.cameraPicker');
 let camera = requireNapi('multimedia.camera');
 let accessControl = requireNapi('abilityAccessCtrl');
 let deviceinfo = requireInternal('deviceInfo');
+let promptAction = requireNapi('promptAction');
 const PARAM_CHECK_ERROR = 401;
 
 const ERROR_MSG_INVALID_PARAM = 'Invalid input parameter';
 
 let errMsgMap = new Map();
 errMsgMap.set(PARAM_CHECK_ERROR, ERROR_MSG_INVALID_PARAM);
+let customDialogComponentId = 0;
 
 class BusinessError extends Error {
   constructor(code, errorMsg = 'undefined') {
@@ -65,22 +67,20 @@ function takePhoto(param, selectResult) {
     };
     let acceptTypes = param.getAcceptType();
     let mediaType = [];
-    if (isContainImageMimeType(acceptTypes) && !isContainVideoMimeType(acceptTypes)) {
+    if (isContainImageMimeType(acceptTypes)) {
       mediaType.push(cameraPicker.PickerMediaType.PHOTO);
-    } else if (!isContainImageMimeType(acceptTypes) && isContainVideoMimeType(acceptTypes)) {
-      mediaType.push(cameraPicker.PickerMediaType.VIDEO);
-    } else {
-      mediaType.push(cameraPicker.PickerMediaType.PHOTO);
+    }
+    if (isContainVideoMimeType(acceptTypes)) {
       mediaType.push(cameraPicker.PickerMediaType.VIDEO);
     }
     cameraPicker.pick(getContext(this), mediaType, pickerProfileOptions)
-    .then((pickerResult) => {
-      if (pickerResult.resultCode === 0) {
-        selectResult.handleFileList([pickerResult.resultUri]);
-      }
-    }).catch((error) => {
-      console.log('selectFile error:' + JSON.stringify(error));
-    });
+      .then((pickerResult) => {
+        if (pickerResult.resultCode === 0) {
+          selectResult.handleFileList([pickerResult.resultUri]);
+        }
+      }).catch((error) => {
+        console.log('selectFile error:' + JSON.stringify(error));
+      });
 
   } catch (error) {
     console.log('the pick call failed, error code' + JSON.stringify(error));
@@ -90,15 +90,11 @@ function takePhoto(param, selectResult) {
 function needShowDialog(params) {
   let result = false;
   try {
-    let currentDevice = deviceinfo.deviceType.toLowerCase();
-    if (currentDevice !== 'phone') {
-      return false;
-    }
+    let acceptTypes = params.getAcceptType();
     if (params.isCapture()) {
       console.log('input element contain capture tag, not show dialog');
       return false;
     }
-    let acceptTypes = params.getAcceptType();
     if (isContainImageMimeType(acceptTypes) || isContainVideoMimeType(acceptTypes)) {
       result = true;
     }
@@ -157,22 +153,25 @@ function createDocumentSelectionOptions(param) {
       documentSelectOptions.fileSuffixFilters.push(suffix);
     }
     if (currentDevice !== 'phone') {
-    documentSelectOptions.fileSuffixFilters.push('.*');
+      documentSelectOptions.fileSuffixFilters.push('.*');
     }
- } catch (error) {
+  } catch (error) {
     console.log('selectFile error: ' + + JSON.stringify(error));
     return documentSelectOptions;
- }
+  }
   return documentSelectOptions;
 }
 
 function isContainImageMimeType(acceptTypes) {
-  if (!(acceptTypes instanceof Array) || acceptTypes.length < 1) {
+  if (!(acceptTypes instanceof Array)) {
     return false;
+  }
+  if (acceptTypes.length < 1) {
+    return true;
   }
 
   let imageTypes = ['tif', 'xbm', 'tiff', 'pjp', 'jfif', 'bmp', 'avif', 'apng', 'ico',
-                    'webp', 'svg', 'gif', 'svgz', 'jpg', 'jpeg', 'png', 'pjpeg'];
+    'webp', 'svg', 'gif', 'svgz', 'jpg', 'jpeg', 'png', 'pjpeg'];
   for (let i = 0; i < acceptTypes.length; i++) {
     for (let j = 0; j < imageTypes.length; j++) {
       if (acceptTypes[i].includes(imageTypes[j])) {
@@ -184,8 +183,11 @@ function isContainImageMimeType(acceptTypes) {
 }
 
 function isContainVideoMimeType(acceptTypes) {
-  if (!(acceptTypes instanceof Array) || acceptTypes.length < 1) {
+  if (!(acceptTypes instanceof Array)) {
     return false;
+  }
+  if (acceptTypes.length < 1) {
+    return true;
   }
 
   let videoTypes = ['ogm', 'ogv', 'mpg', 'mp4', 'mpeg', 'm4v', 'webm'];
@@ -197,6 +199,146 @@ function isContainVideoMimeType(acceptTypes) {
     }
   }
   return false;
+}
+
+function FileSelectorListItem(callback, sysResource, text, func) {
+  let rowWidth = deviceinfo.deviceType.toLowerCase() === "2in1" ? 312 : 240;
+  ListItem.create();
+  Row.create();
+  SymbolGlyph.create({ "id": -1, "type": -1, params: [sysResource], "bundleName": "com.example.selectdialog", "moduleName": "entry" });
+  SymbolGlyph.width(24);
+  SymbolGlyph.height(24);
+  SymbolGlyph.fontSize(24);
+  SymbolGlyph.margin({
+    right: 16
+  });
+  Row.create();
+  Row.width(rowWidth);
+  Row.border({ width: { bottom: 0.5 }, color: "#33000000" });
+  Text.create(text);
+  Text.fontSize(16);
+  Text.fontWeight(FontWeight.Medium);
+  Text.lineHeight(19);
+  Text.margin({
+    top: 13,
+    bottom: 13
+  });
+  Text.pop();
+  Row.pop();
+  Row.pop();
+  ListItem.onClick(() => {
+    promptAction.closeCustomDialog(customDialogComponentId);
+    func(callback.fileparam, callback.fileresult);
+  });
+  ListItem.height(48);
+  ListItem.padding({
+    left: 24,
+    right: 24
+  });
+  ListItem.pop();
+}
+
+function FileSelectorDialog(callback) {
+  Row.create();
+  Row.height(56);
+  Text.create('选择上传');
+  Text.fontSize(20);
+  Text.fontWeight(FontWeight.Bold);
+  Text.lineHeight(23);
+  Text.margin({
+    top: 15,
+    bottom: 15,
+    left: 24,
+    right: 24,
+  });
+  Text.pop();
+  Row.pop();
+  List.create();
+  List.width("100%");
+  FileSelectorListItem(callback, "sys.symbol.picture", "照片", selectPicture);
+  FileSelectorListItem(callback, "sys.symbol.camera", "拍照", takePhoto);
+  FileSelectorListItem(callback, "sys.symbol.doc_text", "文件", selectFile);
+  List.pop();
+}
+
+function FileSelectorDialogForPC(callback) {
+  Column.create();
+  Column.height(272);
+  Column.width(400);
+  FileSelectorDialog(callback);
+  Row.create();
+  Row.onClick(() => {
+    try {
+      console.log('Get Alert Dialog handled');
+      promptAction.closeCustomDialog(customDialogComponentId);
+    }
+    catch (error) {
+      let message = error.message;
+      let code = error.code;
+      console.error(`closeCustomDialog error code is ${code}, message is ${message}`);
+    }
+  });
+  Row.width(368);
+  Row.height(40);
+  Row.margin(16);
+  Row.borderRadius(5);
+  Row.backgroundColor("#ededed");
+  Row.justifyContent(FlexAlign.Center);
+  Text.create("取消");
+  Text.fontSize(16);
+  Text.fontColor("#FF0A59F7");
+  Text.fontWeight(FontWeight.Medium);
+  Text.margin({
+    top: 10,
+    bottom: 10,
+    left: 16,
+    right: 16
+  });
+  Text.pop();
+  Row.pop();
+  Column.pop();
+}
+
+function FileSelectorDialogForPhone(callback) {
+  Column.create();
+  Column.height(264);
+  Column.width(328);
+  FileSelectorDialog(callback);
+  Row.create();
+  Row.onClick(() => {
+    try {
+      console.log('Get Alert Dialog handled');
+      promptAction.closeCustomDialog(customDialogComponentId);
+    }
+    catch (error) {
+      let message = error.message;
+      let code = error.code;
+      console.error(`closeCustomDialog error code is ${code}, message is ${message}`);
+    }
+  });
+  Row.width(296);
+  Row.height(40);
+  Row.margin({
+    top: 8,
+    bottom: 16,
+    left: 16,
+    right: 16
+  });
+  Row.borderRadius(5);
+  Row.justifyContent(FlexAlign.Center);
+  Text.create("取消");
+  Text.fontSize(16);
+  Text.fontColor("#FF0A59F7");
+  Text.fontWeight(FontWeight.Medium);
+  Text.margin({
+    top: 10,
+    bottom: 10,
+    left: 104,
+    right: 104
+  });
+  Text.pop();
+  Row.pop();
+  Column.pop();
 }
 
 function selectPicture(param, selectResult) {
@@ -246,7 +388,7 @@ Object.defineProperty(webview.WebviewController.prototype, 'getCertificate', {
       console.log('get certificate async callback');
       if (typeof callback !== 'function') {
         throw new BusinessError(PARAM_CHECK_ERROR,
-          'BusinessError 401: Parameter error. The type of "callback" must be function.' );
+          'BusinessError 401: Parameter error. The type of "callback" must be function.');
       }
       return getCertificatePromise(certChainData).then(x509CertArray => {
         callback(undefined, x509CertArray);
@@ -258,50 +400,35 @@ Object.defineProperty(webview.WebviewController.prototype, 'getCertificate', {
 });
 
 Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFromUserWeb', {
-  value:  function (callback) {
+  value: function (callback) {
     let currentDevice = deviceinfo.deviceType.toLowerCase();
     if (needShowDialog(callback.fileparam)) {
-      ActionSheet.show({
-        title: '选择上传',
-        autoCancel: true,
-        confirm: {
-          defaultFocus: true,
-          value: '取消',
-          style: DialogButtonStyle.DEFAULT,
-          action: () => {
-            console.log('Get Alert Dialog handled');
+      promptAction.openCustomDialog({
+        builder: () => {
+          if (currentDevice == "2in1") {
+            FileSelectorDialogForPC(callback);
+          } else {
+            FileSelectorDialogForPhone(callback);
           }
         },
-        cancel: () => {
-          console.log('actionSheet canceled');
-        },
-        alignment: DialogAlignment.Bottom,
-        offset: { dx: 0, dy: -10 },
-        sheets: [
-          {
-            icon: $r('sys.media.ohos_ic_public_albums'),
-            title: '图片',
-            action: () => {
-              selectPicture(callback.fileparam, callback.fileresult);
-            }
-          },
-          {
-            icon: $r('sys.media.ohos_ic_public_camera'),
-            title: '拍照',
-            action: () => {
-              takePhoto(callback.fileparam, callback.fileresult);
-             }
-          },
-          {
-            icon: $r('sys.media.ohos_ic_public_email'),
-            title: '文件',
-            action: () => {
-              selectFile(callback.fileparam, callback.fileresult);
-            }
+        onWillDismiss: (dismissDialogAction) => {
+          console.info("reason" + JSON.stringify(dismissDialogAction.reason));
+          console.log("dialog onWillDismiss");
+          if (dismissDialogAction.reason == DismissReason.PRESS_BACK) {
+            dismissDialogAction.dismiss();
           }
-        ]
-      });
-    } else if (currentDevice === 'phone' && callback.fileparam.isCapture()) {
+          if (dismissDialogAction.reason == DismissReason.TOUCH_OUTSIDE) {
+            dismissDialogAction.dismiss();
+          }
+        }
+      }).then((dialogId) => {
+        customDialogComponentId = dialogId;
+      })
+        .catch((error) => {
+          console.error(`openCustomDialog error code is ${error.code}, message is ${error.message}`);
+        });
+    } else if (callback.fileparam.isCapture() &&
+        (isContainImageMimeType(callback.fileparam.getAcceptType()) || isContainVideoMimeType(callback.fileparam.getAcceptType()))) {
       console.log('take photo will be directly invoked due to the capture property');
       takePhoto(callback.fileparam, callback.fileresult);
     } else {
@@ -312,7 +439,7 @@ Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFrom
 });
 
 Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFromUserWeb', {
-  value:  function (callback) {
+  value: function (callback) {
     let accessManger = accessControl.createAtManager();
     let abilityContext = getContext(this);
     accessManger.requestPermissionsFromUser(abilityContext, ['ohos.permission.READ_PASTEBOARD'])
@@ -333,7 +460,7 @@ Object.defineProperty(webview.WebviewController.prototype, 'requestPermissionsFr
 });
 
 Object.defineProperty(webview.WebviewController.prototype, 'openAppLink', {
-  value:  function (callback) {
+  value: function (callback) {
     let abilityContext = getContext(this);
     try {
       let option = {
