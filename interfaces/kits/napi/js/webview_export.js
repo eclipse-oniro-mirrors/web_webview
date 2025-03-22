@@ -90,11 +90,11 @@ function takePhoto(param, selectResult) {
 function needShowDialog(params) {
   let result = false;
   try {
-    let acceptTypes = params.getAcceptType();
     if (params.isCapture()) {
       console.log('input element contain capture tag, not show dialog');
       return false;
     }
+    let acceptTypes = params.getAcceptType();
     if (isContainImageMimeType(acceptTypes) || isContainVideoMimeType(acceptTypes)) {
       result = true;
     }
