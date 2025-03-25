@@ -43,10 +43,6 @@ ohos_unittest("nweb_media_adapter_test") {
     "player_framework_adapter_impl_test.cpp",
   ]
 
-  if (webview_drm_enable) {
-    sources += [ "drm_adapter_impl_test.cpp" ]
-  }
-
   configs = [ ":module_private_config" ]
   include_dirs = [ "../../../../ohos_nweb/include" ]
 
@@ -59,6 +55,12 @@ ohos_unittest("nweb_media_adapter_test") {
     "graphic_surface:surface",
     "hilog:libhilog",
   ]
+
+  if (webview_drm_enable) {
+    external_deps += [ "drm_framework:native_drm" ]
+    sources += [ "drm_adapter_impl_test.cpp" ]
+    sources += [ "audio_codec_decoder_adapter_impl_test.cpp" ]
+  }
 
   if (webview_avcodec_enable) {
     external_deps += [
@@ -80,10 +82,6 @@ ohos_unittest("nweb_media_adapter_test") {
       "av_session:avsession_client",
       "input:libmmi-client",
     ]
-  }
-
-  if (webview_drm_enable) {
-    sources += [ "audio_codec_decoder_adapter_impl_test.cpp" ]
   }
 }
 
