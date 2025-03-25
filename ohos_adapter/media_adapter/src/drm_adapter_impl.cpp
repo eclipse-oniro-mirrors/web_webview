@@ -969,8 +969,7 @@ int32_t DrmAdapterImpl::RegistDrmCallback(std::shared_ptr<DrmCallbackAdapter> ca
 void DrmAdapterImpl::UpdateSessionResult(
     bool isKeyRelease, std::shared_ptr<SessionId> sessionId, uint8_t* mediaKeyId, int32_t mediaKeyIdLen)
 {
-    WVLOG_I("[DRM]DrmAdapterImpl::UpdateSessionResult enter, emeId: %{public}s,  mediaKeyIdLen = %{public}d",
-        sessionId->EmeId().c_str(), mediaKeyIdLen);
+    WVLOG_I("[DRM]DrmAdapterImpl::UpdateSessionResult enter.");
     if (sessionId == nullptr) {
         return;
     }

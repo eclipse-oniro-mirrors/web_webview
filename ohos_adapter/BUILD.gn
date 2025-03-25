@@ -292,7 +292,7 @@ ohos_shared_library("nweb_ohos_adapter") {
         "media_adapter/src/audio_codec_decoder_adapter_impl.cpp",
         "media_adapter/src/drm_adapter_impl.cpp",
       ]
-      public_external_deps += [ "drm_framework:native_drm" ]
+      external_deps += [ "drm_framework:native_drm" ]
       if (target_cpu == "arm") {
         libs += [
           "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_acodec.so",
