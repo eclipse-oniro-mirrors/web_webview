@@ -711,8 +711,15 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_007, TestSize.Lev
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
+
+    int32_t certStatus = -1;
+    g_adapter->GetCertificateStatus(certStatus);
     result = g_adapter->ReleaseMediaKeySession();
-    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    if (certStatus == 0) {
+        EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    } else {
+        EXPECT_NE(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    }
     g_adapter->ReleaseMediaKeySystem();
 }
 
@@ -911,7 +918,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_017, TestSize.Lev
     EXPECT_EQ(g_adapter->ClearMediaKeys(), static_cast<int32_t>(DrmResult::DRM_RESULT_ERROR));
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
-    EXPECT_EQ(g_adapter->ClearMediaKeys(), static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    int32_t certStatus = -1;
+    g_adapter->GetCertificateStatus(certStatus);
+    if (certStatus == 0) {
+        EXPECT_EQ(g_adapter->ClearMediaKeys(), static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    } else {
+        EXPECT_NE(g_adapter->ClearMediaKeys(), static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    }
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1157,10 +1170,17 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_032, TestSize.Lev
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
-    g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
-    EXPECT_CALL(*mockCallback_, OnStorageClearInfoForLoadFail(_)).Times(1);
-    g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
+    int32_t certStatus = -1;
+    g_adapter->GetCertificateStatus(certStatus);
+    if (certStatus == 0) {
+        g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+        g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
+        EXPECT_CALL(*mockCallback_, OnStorageClearInfoForLoadFail(_)).Times(1);
+        g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
+        EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+    } else {
+        EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+    }
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1296,8 +1316,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_043, TestSize.Lev
     EXPECT_EQ(g_adapter->GetSecurityLevel(), -1);
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
-    EXPECT_NE(g_adapter->GetSecurityLevel(), -1);
-
+    int32_t certStatus = -1;
+    g_adapter->GetCertificateStatus(certStatus);
+    if (certStatus == 0) {
+        EXPECT_NE(g_adapter->GetSecurityLevel(), -1);
+    } else {
+        EXPECT_EQ(g_adapter->GetSecurityLevel(), -1);
+    }
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1319,7 +1344,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_044, TestSize.Lev
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
     result = g_adapter->RequireSecureDecoderModule(mimeType, status);
-    EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    int32_t certStatus = -1;
+    g_adapter->GetCertificateStatus(certStatus);
+    if (certStatus == 0) {
+        EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    } else {
+        EXPECT_NE(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+    }
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1753,8 +1784,16 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_067, TestSize.Lev
 
     g_adapter->RegistDrmCallback(mockCallback_);
     EXPECT_NE(g_adapter->callback_, nullptr);
-    EXPECT_CALL(*mockCallback_, OnPromiseRejected(_, _)).Times(1);
-    g_adapter->StorageSaveInfoResult(true, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
+
+    int32_t certStatus = -1;
+    g_adapter->GetCertificateStatus(certStatus);
+    if (certStatus == 0) {
+        EXPECT_CALL(*mockCallback_, OnPromiseRejected(_, _)).Times(1);
+        g_adapter->StorageSaveInfoResult(true, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
+        EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+    } else {
+        EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+    }
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
