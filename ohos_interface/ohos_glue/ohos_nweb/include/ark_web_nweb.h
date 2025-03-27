@@ -1696,6 +1696,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SetSurfaceDensity(const double& density) = 0;
+
+    /**
+     * @brief Set the native inner web
+     */
+    /*--ark web()--*/
+    virtual void SetNativeInnerWeb(bool isInnerWeb) = 0;
 };
 
 } // namespace OHOS::ArkWeb
