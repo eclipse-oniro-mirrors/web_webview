@@ -17,6 +17,7 @@
 #define AUDIO_CODEC_DECODER_ADAPTER_H
 
 #include <vector>
+#include <memory>
 #include <cstdint>
 #include <string>
 #include "media_codec_adapter.h"
