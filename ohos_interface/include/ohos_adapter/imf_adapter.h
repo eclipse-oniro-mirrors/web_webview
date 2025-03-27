@@ -16,6 +16,7 @@
 #ifndef IMF_ADAPTER_H
 #define IMF_ADAPTER_H
 
+#include <memory>
 #include <string>
 
 namespace OHOS::NWeb {
