@@ -483,7 +483,7 @@ HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_NormalVa
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioDecoderFormatAdapterImpl_AudioDecoderFormatAdapterImpl_005, TestSize.Level1)
+HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioDecoderFormatAdapterImpl_005, TestSize.Level1)
 {
     constexpr int32_t DEFAULT_SAMPLERATE = 44100;
     constexpr int64_t DEFAULT_BITRATE = 32000;
