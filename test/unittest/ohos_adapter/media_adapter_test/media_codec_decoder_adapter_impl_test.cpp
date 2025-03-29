@@ -383,23 +383,24 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_SetAVCen
     EXPECT_EQ(ret, DecoderAdapterCode::DECODER_OK);
 
     std::shared_ptr<AudioCencInfoAdapter> cencInfo = std::make_shared<AudioCencInfoAdapterImpl>();
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
+
     const uint32_t ERR_ALGO = 10000;
     cencInfo->SetAlgo(ERR_ALGO);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
     cencInfo->SetAlgo(0);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
     SetCencInfoAboutKeyIdIvAlgo(cencInfo);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
     SetCencInfoAboutClearHeaderAndPayLoadLens(cencInfo);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
     cencInfo->SetEncryptedBlockCount(0);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
     const uint32_t ERR_MODE = 10000;
     cencInfo->SetMode(ERR_MODE);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
     cencInfo->SetMode(0);
-    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, nullptr), DecoderAdapterCode::DECODER_ERROR);
+    EXPECT_EQ(mediaCodecDecoderAdapterImpl_->SetAVCencInfo(0, cencInfo), DecoderAdapterCode::DECODER_ERROR);
     constexpr int32_t MEMSIZE = 1024 * 1024;
     OH_AVBuffer* buffer = OH_AVBuffer_Create(MEMSIZE);
     mediaCodecDecoderAdapterImpl_->OnInputBufferAvailable(0, buffer);
