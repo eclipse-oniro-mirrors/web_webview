@@ -1535,6 +1535,11 @@ public:
     /*--ark web()--*/
     void SetSurfaceDensity(const double& density) override;
 
+    /**
+     * @brief Set the native inner web
+     */
+    void SetNativeInnerWeb(bool isInnerWeb) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
