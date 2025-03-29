@@ -17,6 +17,7 @@
 #define GRAPHIC_ADAPTER_H
 
 #include <functional>
+#include <memory>
 
 namespace OHOS::NWeb {
 
