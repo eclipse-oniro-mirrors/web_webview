@@ -369,7 +369,7 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_OnError_
 }
 
 /**
- * @tc.name: MediaCodecDecoderAdapterImpl_OnError_006.
+ * @tc.name: MediaCodecDecoderAdapterImpl_SetAVCencInfo_007.
  * @tc.desc: test of MediaCodecDecoderAdapterImpl::SetAVCencInfo()
  * OnOutputBufferAvailable()
  * @tc.type: FUNC.

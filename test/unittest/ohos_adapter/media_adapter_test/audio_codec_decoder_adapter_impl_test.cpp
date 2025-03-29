@@ -373,7 +373,7 @@ HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_InvalidV
 }
 
 /**
- * @tc.name: AudioCodecDecoderAdapterImpl_InvalidValueTest_002.
+ * @tc.name: AudioCodecDecoderAdapterImpl_QueueInputBufferDec_003.
  * @tc.desc: test of InvalidValueScene in AudioCodecDecoderAdapterImpl
  * @tc.type: FUNC.
  * @tc.require:
@@ -432,7 +432,7 @@ HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_QueueInp
 }
 
 /**
- * @tc.name: AudioCodecDecoderAdapterImpl_NormalValueTest_003.
+ * @tc.name: AudioCodecDecoderAdapterImpl_NormalValueTest_004.
  * @tc.desc: test of NormalScene in AudioCodecDecoderAdapterImpl
  * @tc.type: FUNC.
  * @tc.require:
@@ -478,12 +478,12 @@ HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_NormalVa
 }
 
 /**
- * @tc.name: AudioCodecDecoderAdapterImpl_NormalValueTest_003.
+ * @tc.name: AudioCodecDecoderAdapterImpl_NormalValueTest_005.
  * @tc.desc: test of NormalScene in AudioCodecDecoderAdapterImpl
  * @tc.type: FUNC.
  * @tc.require:
  */
-HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioDecoderFormatAdapterImpl_005, TestSize.Level1)
+HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_NormalValueTest_005, TestSize.Level1)
 {
     constexpr int32_t DEFAULT_SAMPLERATE = 44100;
     constexpr int64_t DEFAULT_BITRATE = 32000;
