@@ -14,7 +14,6 @@
  */
 
 #include "onerror_fuzzer.h"
-
 #include <securec.h>
 #include <sys/mman.h>
 #include <fuzzer/FuzzedDataProvider.h>
