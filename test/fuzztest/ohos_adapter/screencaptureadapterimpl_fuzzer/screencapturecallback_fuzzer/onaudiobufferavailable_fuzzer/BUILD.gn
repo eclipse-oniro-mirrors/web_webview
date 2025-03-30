@@ -34,7 +34,7 @@ ohos_fuzztest("OnAudioBufferAvailableFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
 
-  sources = [ "onerror_fuzzer.cpp" ]
+  sources = [ "onaudiobufferavailable_fuzzer.cpp" ]
   deps = [
     "$webview_path/ohos_adapter:nweb_ohos_adapter",
     "$webview_path/ohos_nweb:libnweb",
