@@ -140,7 +140,6 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
 HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_002, TestSize.Level1)
 {
     VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
-    adapter.SetScene("", 1);
     adapter.hasReportedKeyThread_ = true;
     adapter.hasRequestedVsync_ = true;
     EXPECT_EQ(VSyncErrorCode::SUCCESS, adapter.RequestVsync(nullptr, nullptr));
