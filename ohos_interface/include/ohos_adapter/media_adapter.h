@@ -38,6 +38,7 @@ enum class PlayerOnInfoType : int32_t {
     INFO_TYPE_POSITION_UPDATE,
     INFO_TYPE_MESSAGE,
     INFO_TYPE_INTERRUPT_EVENT,
+    INFO_TYPE_RESOLUTION_CHANGE,
 };
 
 enum class PlayerSeekMode : int32_t {
