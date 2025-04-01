@@ -1554,4 +1554,9 @@ void ArkWebNWebWrapper::SetNativeInnerWeb(bool isInnerWeb)
 {
     ark_web_nweb_->SetNativeInnerWeb(isInnerWeb);
 }
+
+void ArkWebNWebWrapper::SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter)
+{
+    ark_web_nweb_->SendAccessibilityHoverEventV2(x, y, isHoverEnter);
+}
 } // namespace OHOS::ArkWeb
