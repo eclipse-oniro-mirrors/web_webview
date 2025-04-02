@@ -80,10 +80,12 @@ function takePhoto(param, selectResult) {
         }
       }).catch((error) => {
         console.log('selectFile error:' + JSON.stringify(error));
+        promptAction.showToast({ message: '无法打开拍照功能，请检查是否具备拍照功能' });
       });
 
   } catch (error) {
     console.log('the pick call failed, error code' + JSON.stringify(error));
+    promptAction.showToast({ message: '无法打开拍照功能，请检查是否具备拍照功能' });
   }
 }
 
@@ -116,9 +118,11 @@ function selectFile(param, result) {
         }
       }).catch((error) => {
         console.log('selectFile error: ' + JSON.stringify(error));
+        promptAction.showToast({ message: '无法打开文件功能，请检查是否具备文件功能' });
       });
   } catch (error) {
     console.log('picker error: ' + JSON.stringify(error));
+    promptAction.showToast({ message: '无法打开文件功能，请检查是否具备文件功能' });
   }
 }
 
@@ -370,6 +374,7 @@ function selectPicture(param, selectResult) {
     });
   } catch (error) {
     console.log('selectPicture error' + JSON.stringify(error));
+    promptAction.showToast({ message: '无法打开图片功能，请检查是否具备图片功能' });
   }
 }
 
