@@ -16,6 +16,7 @@
 #ifndef VALUE_CALLBACK_H
 #define VALUE_CALLBACK_H
 
+#include <memory>
 #include <string>
 
 #include "nweb_export.h"
