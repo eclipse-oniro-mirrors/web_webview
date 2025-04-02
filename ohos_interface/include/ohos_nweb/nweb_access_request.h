@@ -16,6 +16,7 @@
 #ifndef NWEB_ACCESS_REQUEST_H
 #define NWEB_ACCESS_REQUEST_H
 
+#include <memory>
 #include <string>
 
 #include "nweb_export.h"

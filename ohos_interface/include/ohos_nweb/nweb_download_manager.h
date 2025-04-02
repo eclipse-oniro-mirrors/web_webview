@@ -16,6 +16,7 @@
 #ifndef NWEB_DOWNLOAD_MANAGER_H
 #define NWEB_DOWNLOAD_MANAGER_H
 
+#include <memory>
 #include <string>
 
 #include "nweb_export.h"

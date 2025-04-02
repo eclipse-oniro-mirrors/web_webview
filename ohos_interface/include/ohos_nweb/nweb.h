@@ -16,6 +16,7 @@
 #ifndef NWEB_H
 #define NWEB_H
 
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -1711,7 +1712,7 @@ public:
         return "";
     }
 
-    /** 
+    /**
      * @brief Send mouse wheel event with sourceTool info.
      */
     virtual bool WebSendMouseWheelEventV2(
@@ -1740,14 +1741,14 @@ public:
     /*--ark web()--*/
     virtual void MaximizeResize() {}
 
-    /** 
+    /**
      * @brief Try to attach web inputmethod after drag.
      */
     virtual void OnDragAttach() {}
 
     /**
      * Set focus by position
-     * 
+     *
      * @Return: if hit node editable.
      */
     /*--ark web()--*/
