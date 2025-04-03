@@ -40,20 +40,24 @@ typedef void (*TYPE_OH_ArkWebResourceRequest_GetHttpBodyStream)(
     const ArkWeb_ResourceRequest* resourceRequest, ArkWeb_HttpBodyStream** httpBodyStream);
 typedef void (*TYPE_OH_ArkWebResourceRequest_DestroyHttpBodyStream)(ArkWeb_HttpBodyStream* httpBodyStream);
 typedef int32_t (*TYPE_OH_ArkWebResourceRequest_GetResourceType)(const ArkWeb_ResourceRequest* resourceRequest);
-typedef void (*TYPE_OH_ArkWebResourceRequest_GetFrameUrl)(const ArkWeb_ResourceRequest* resourceRequest, char** frameUrl);
+typedef void (*TYPE_OH_ArkWebResourceRequest_GetFrameUrl)(
+    const ArkWeb_ResourceRequest* resourceRequest, char** frameUrl);
 typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_SetUserData)(ArkWeb_HttpBodyStream* httpBodyStream, void* userData);
 typedef void* (*TYPE_OH_ArkWebHttpBodyStream_GetUserData)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_SetReadCallback)(
     ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamReadCallback readCallback);
-typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_Init)(ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamInitCallback initCallback);
-typedef void (*TYPE_OH_ArkWebHttpBodyStream_Read)(const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bufLen);
+typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_Init)(
+    ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamInitCallback initCallback);
+typedef void (*TYPE_OH_ArkWebHttpBodyStream_Read)(
+    const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bufLen);
 typedef uint64_t (*TYPE_OH_ArkWebHttpBodyStream_GetSize)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef uint64_t (*TYPE_OH_ArkWebHttpBodyStream_GetPosition)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef bool (*TYPE_OH_ArkWebHttpBodyStream_IsChunked)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef bool (*TYPE_OH_ArkWebHttpBodyStream_IsEof)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef bool (*TYPE_OH_ArkWebHttpBodyStream_IsInMemory)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef int32_t (*TYPE_OH_ArkWebResourceRequest_Destroy)(const ArkWeb_ResourceRequest* resourceRequest);
-typedef void (*TYPE_OH_ArkWebResourceRequest_GetReferrer)(const ArkWeb_ResourceRequest* resourceRequest, char** referrer);
+typedef void (*TYPE_OH_ArkWebResourceRequest_GetReferrer)(
+    const ArkWeb_ResourceRequest* resourceRequest, char** referrer);
 typedef void (*TYPE_OH_ArkWebResourceRequest_GetRequestHeaders)(
     const ArkWeb_ResourceRequest* resourceRequest, ArkWeb_RequestHeaderList** requestHeaderList);
 typedef int32_t (*TYPE_OH_ArkWebResourceRequest_SetUserData)(ArkWeb_ResourceRequest* resourceRequest, void* userData);
@@ -62,7 +66,8 @@ typedef bool (*TYPE_OH_ArkWebResourceRequest_IsRedirect)(const ArkWeb_ResourceRe
 typedef bool (*TYPE_OH_ArkWebResourceRequest_IsMainFrame)(const ArkWeb_ResourceRequest* resourceRequest);
 typedef bool (*TYPE_OH_ArkWebResourceRequest_HasGesture)(const ArkWeb_ResourceRequest* resourceRequest);
 typedef int32_t (*TYPE_OH_ArkWeb_RegisterCustomSchemes)(const char* scheme, int32_t option);
-typedef bool (*TYPE_OH_ArkWeb_SetSchemeHandler)(const char* scheme, const char* webTag, ArkWeb_SchemeHandler* schemeHandler);
+typedef bool (*TYPE_OH_ArkWeb_SetSchemeHandler)(
+    const char* scheme, const char* webTag, ArkWeb_SchemeHandler* schemeHandler);
 typedef bool (*TYPE_OH_ArkWebServiceWorker_SetSchemeHandler)(const char* scheme, ArkWeb_SchemeHandler* schemeHandler);
 typedef int32_t (*TYPE_OH_ArkWeb_ClearSchemeHandlers)(const char* webTag);
 typedef int32_t (*TYPE_OH_ArkWebServiceWorker_ClearSchemeHandlers)();
@@ -70,8 +75,10 @@ typedef void (*TYPE_OH_ArkWeb_CreateSchemeHandler)(ArkWeb_SchemeHandler** scheme
 typedef void (*TYPE_OH_ArkWeb_DestroySchemeHandler)(ArkWeb_SchemeHandler* schemeHandler);
 typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetUserData)(ArkWeb_SchemeHandler* schemeHandler, void* userData);
 typedef void* (*TYPE_OH_ArkWebSchemeHandler_GetUserData)(const ArkWeb_SchemeHandler* schemeHandler);
-typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetOnRequestStart)(ArkWeb_SchemeHandler* schemeHandler, ArkWeb_OnRequestStart onRequestStart);
-typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetOnRequestStop)(ArkWeb_SchemeHandler* schemeHandler, ArkWeb_OnRequestStop onRequestStop);
+typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetOnRequestStart)(
+    ArkWeb_SchemeHandler* schemeHandler, ArkWeb_OnRequestStart onRequestStart);
+typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetOnRequestStop)(
+    ArkWeb_SchemeHandler* schemeHandler, ArkWeb_OnRequestStop onRequestStop);
 typedef void (*TYPE_OH_ArkWeb_CreateResponse)(ArkWeb_Response** response);
 typedef void (*TYPE_OH_ArkWeb_DestroyResponse)(ArkWeb_Response* response);
 typedef int32_t (*TYPE_OH_ArkWebResponse_SetUrl)(ArkWeb_Response* response, const char* url);
@@ -86,13 +93,17 @@ typedef int32_t (*TYPE_OH_ArkWebResponse_SetMimeType)(ArkWeb_Response* response,
 typedef void (*TYPE_OH_ArkWebResponse_GetMimeType)(const ArkWeb_Response* response, char** mimeType);
 typedef int32_t (*TYPE_OH_ArkWebResponse_SetCharset)(ArkWeb_Response* response, const char* charset);
 typedef void (*TYPE_OH_ArkWebResponse_GetCharset)(const ArkWeb_Response* response, char** charset);
-typedef int32_t (*TYPE_OH_ArkWebResponse_SetHeaderByName)(ArkWeb_Response* response, const char* name, const char* value, bool ow);
+typedef int32_t (*TYPE_OH_ArkWebResponse_SetHeaderByName)(
+    ArkWeb_Response* response, const char* name, const char* value, bool ow);
 typedef void (*TYPE_OH_ArkWebResponse_GetHeaderByName)(const ArkWeb_Response* response, const char* name, char** value);
 typedef int32_t (*TYPE_OH_ArkWebResourceHandler_Destroy)(const ArkWeb_ResourceHandler* resourceHandler);
-typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidReceiveResponse)(const ArkWeb_ResourceHandler* resourceHandler, const ArkWeb_Response* response);
-typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidReceiveData)(const ArkWeb_ResourceHandler* resourceHandler, const uint8_t* buffer, int64_t bufLen);
+typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidReceiveResponse)(
+    const ArkWeb_ResourceHandler* resourceHandler, const ArkWeb_Response* response);
+typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidReceiveData)(
+    const ArkWeb_ResourceHandler* resourceHandler, const uint8_t* buffer, int64_t bufLen);
 typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFinish)(const ArkWeb_ResourceHandler* resourceHandler);
-typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFailWithError)(const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode);
+typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFailWithError)(
+    const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode);
 typedef void (*TYPE_OH_ArkWeb_ReleaseString)(char* string);
 typedef void (*TYPE_OH_ArkWeb_ReleaseByteArray)(uint8_t* byteArray);
 typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetFromEts)(ArkWeb_SchemeHandler* schemeHandler, bool fromEts);
@@ -1129,12 +1140,6 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     char* url1 = nullptr;
     OH_ArkWebResponse_GetUrl(response, &url1);
 
-    ArkWeb_NetError errorCode = ARKWEB_NET_OK;
-    EXPECT_EQ(OH_ArkWebResponse_SetError(response, errorCode), 0);
-    EXPECT_EQ(OH_ArkWebResponse_GetError(response), ARKWEB_NET_OK);
-    EXPECT_EQ(OH_ArkWebResponse_SetStatus(response, -1), 0);
-    EXPECT_EQ(OH_ArkWebResponse_GetStatus(response), 0);
-
     const char* statusText = "Test Status Text";
     EXPECT_EQ(OH_ArkWebResponse_SetStatusText(response, statusText), 0);
     char* statusTextGet = nullptr;
@@ -1189,6 +1194,11 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     OH_ArkWeb_CreateSchemeHandler(&schemeHandler);
     ArkWeb_Response* response1 = nullptr;
     OH_ArkWeb_CreateResponse(&response1);
+
+    EXPECT_EQ(OH_ArkWebResponse_SetError(response1, errorCode), 0);
+    EXPECT_EQ(OH_ArkWebResponse_GetError(response1), ARKWEB_NET_OK);
+    EXPECT_EQ(OH_ArkWebResponse_SetStatus(response1, -1), 0);
+    EXPECT_EQ(OH_ArkWebResponse_GetStatus(response1), 0);
 
     SetSchemeHandlerApiForTest(nullptr);
 }
