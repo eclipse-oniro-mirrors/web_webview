@@ -32,7 +32,9 @@ HWTEST(WindowAdapterImplTest, NormalTest, TestSize.Level1)
     auto cSurface = IConsumerSurface::Create("test");
     auto producer = cSurface->GetProducer();
     auto pSurface = Surface::CreateSurfaceAsProducer(producer);
-    auto window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(&pSurface);
+    auto window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(nullptr);
+    EXPECT_EQ(window, nullptr);
+    window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(&pSurface);
     EXPECT_NE(window, nullptr);
     EXPECT_EQ(OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSetBufferGeometry(
         window, 0, 0), OHOS::GSERROR_OK);

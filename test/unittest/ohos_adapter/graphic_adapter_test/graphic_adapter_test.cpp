@@ -175,4 +175,19 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_002, TestSize.Level
     EXPECT_EQ(adapter.setApsSceneFunc_, nullptr);
     EXPECT_EQ(adapter.apsClientHandler_, nullptr);
 }
+
+/**
+ * @tc.name: GraphicAdapterTest_SetDVSyncSwitch_001
+ * @tc.desc: SetDVSyncSwitch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_SetDVSyncSwitch_001, TestSize.Level1)
+{
+    VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
+    bool dvsyncSwitch = false;
+    adapter.SetDVSyncSwitch(dvsyncSwitch);
+    dvsyncSwitch = true;
+    adapter.SetDVSyncSwitch(dvsyncSwitch);
+}
 } // namespace NWeb
