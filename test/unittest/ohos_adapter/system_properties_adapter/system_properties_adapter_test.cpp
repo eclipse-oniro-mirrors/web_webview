@@ -260,4 +260,33 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetPRPPreloadM
     value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
     EXPECT_EQ(value, "preload");
 }
+
+/**
+ * @tc.name: SystemPropertiesAdapterTest_GetPRPPreloadMode_008
+ * @tc.desc: GetInstance unittest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetPRPPreloadMode_008, TestSize.Level1)
+ {
+     SystemPropertiesAdapterImpl::GetInstance().GetUserAgentOSName();
+     SystemPropertiesAdapterImpl::GetInstance().GetUserAgentOSVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetUserAgentBaseOSName();
+     SystemPropertiesAdapterImpl::GetInstance().GetSoftwareMajorVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetSoftwareSeniorVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetTraceDebugEnable();
+     SystemPropertiesAdapterImpl::GetInstance().GetFlowBufMaxFd();
+     SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("", false);
+     SystemPropertiesAdapterImpl::GetInstance().GetLTPOConfig("");
+     SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUStatus();
+     SystemPropertiesAdapterImpl::GetInstance().IsLTPODynamicApp("");
+     SystemPropertiesAdapterImpl::GetInstance().GetLTPOStrategy();
+     SystemPropertiesAdapterImpl::GetInstance().GetCompatibleDeviceType();
+     SystemPropertiesAdapterImpl::GetInstance().GetDeviceInfoApiVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetScrollVelocityScale();
+     SystemPropertiesAdapterImpl::GetInstance().GetScrollFriction();
+     SystemPropertiesAdapterImpl::GetInstance().GetBundleName();
+ }
+
+
 } // namespace OHOS
