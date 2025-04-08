@@ -39,6 +39,7 @@ ohos_unittest("nweb_helper_test") {
     "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",
+    "libxml2:libxml2"
   ]
 }
 
