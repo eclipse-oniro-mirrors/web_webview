@@ -960,6 +960,11 @@ void ArkWebHandlerImpl::OnAccessibilityEventV2(int64_t accessibilityId, int32_t 
     nweb_handler_->OnAccessibilityEventV2(accessibilityId, eventType, ArkWebStringStructToClass(argument));
 }
 
+bool ArkWebHandlerImpl::OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable)
+{
+    return nweb_handler_->OnNestedScroll(x, y, xVelocity, yVelocity, isAvailable);
+}
+
 void ArkWebHandlerImpl::EnableSecurityLayer(bool isNeedSecurityLayer)
 {
     nweb_handler_->EnableSecurityLayer(isNeedSecurityLayer);
@@ -1007,5 +1012,4 @@ void ArkWebHandlerImpl::OnLoadFinished(const ArkWebString& url)
 {
     nweb_handler_->OnLoadFinished(ArkWebStringStructToClass(url));
 }
-
 } // namespace OHOS::ArkWeb
