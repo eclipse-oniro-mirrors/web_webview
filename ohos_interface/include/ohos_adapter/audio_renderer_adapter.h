@@ -173,6 +173,8 @@ public:
     virtual int32_t SetAudioOutputChangeCallback(const std::shared_ptr<AudioOutputChangeCallbackAdapter>& callback) = 0;
 
     virtual void SetAudioSilentMode(bool isSilentMode) = 0;
+
+    virtual bool Flush() = 0;
 };
 
 } // namespace OHOS::NWeb
