@@ -309,6 +309,15 @@ void AudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
     WVLOG_D("AudioRendererAdapterImpl::SetAudioSilentMode isSilentMode: %{public}d", isSilentMode);
 }
 
+bool AudioRendererAdapterImpl::Flush()
+{
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return false;
+    }
+    return audio_renderer_->Flush();
+}
+
 bool AudioRendererAdapterImpl::IsRendererStateRunning()
 {
     if (audio_renderer_ == nullptr) {
