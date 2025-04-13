@@ -114,6 +114,9 @@ public:
     */
     /*--ark web()--*/
     virtual void SetAudioSilentMode(bool isSilentMode) = 0;
+
+    /*--ark web()--*/
+    virtual bool Flush() = 0;
 };
 
 } // namespace OHOS::ArkWeb
