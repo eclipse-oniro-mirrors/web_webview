@@ -54,6 +54,8 @@ public:
 
     void SetAudioSilentMode(bool isSilentMode) override;
 
+    bool Flush() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::AudioRendererAdapter> real_;
 
