@@ -116,4 +116,9 @@ int32_t ArkAudioRendererAdapterWrapper::SetAudioOutputChangeCallback(
     return ctocpp_->SetAudioOutputChangeCallback(new ArkAudioOutputChangeCallbackAdapterImpl(callback));
 }
 
+bool ArkAudioRendererAdapterWrapper::Flush()
+{
+    return ctocpp_->Flush();
+}
+
 } // namespace OHOS::ArkWeb

@@ -112,4 +112,9 @@ void ArkAudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
     real_->SetAudioSilentMode(isSilentMode);
 }
 
+bool ArkAudioRendererAdapterImpl::Flush()
+{
+    return real_->Flush();
+}
+
 } // namespace OHOS::ArkWeb
