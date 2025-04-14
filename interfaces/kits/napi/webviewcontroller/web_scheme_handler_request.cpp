@@ -747,11 +747,20 @@ void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
         return;
     }
     napi_value resourceName = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL_RETURN_VOID(env_, napi_create_async_work(env_, nullptr, resourceName,
+    if (napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName) != napi_status::napi_ok) {
+        delete param;
+        return;
+    }
+    if (napi_create_async_work(env_, nullptr, resourceName,
         [](napi_env env, void *data) {},
-        ExecuteInitComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL_RETURN_VOID(env_, napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
+        ExecuteInitComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
+        delete param;
+        return;
+    }
+    if (napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated) != napi_status::napi_ok) {
+        napi_delete_async_work(env_, param->asyncWork);
+        delete param;
+    }
 }
 
 void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, void* data)
@@ -843,12 +852,20 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
         return;
     }
     napi_value resourceName = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL_RETURN_VOID(env_, napi_create_async_work(env_, nullptr, resourceName,
+    if (napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName) != napi_status::napi_ok) {
+        delete param;
+        return;
+    }
+    if (napi_create_async_work(env_, nullptr, resourceName,
         [](napi_env env, void *data) {},
-        ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL_RETURN_VOID(env_, 
-        napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
+        ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
+        delete param;
+        return;
+    }
+    if (napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated) != napi_status::napi_ok) {
+        napi_delete_async_work(env_, param->asyncWork);
+        delete param;
+    }
 }
 
 uint64_t WebHttpBodyStream::GetPostion() const
