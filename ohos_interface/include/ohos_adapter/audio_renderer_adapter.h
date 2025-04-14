@@ -174,7 +174,10 @@ public:
 
     virtual void SetAudioSilentMode(bool isSilentMode) = 0;
 
-    virtual bool Flush() = 0;
+    virtual bool Flush()
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb
