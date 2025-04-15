@@ -761,8 +761,12 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
         WVLOG_E("web engine is nullptr");
         return nullptr;
     }
-
-    return nwebEngine_->CreateNWeb(create_info);
+    std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
+    if (!webApplicationStateCallback_->nweb_) {
+        webApplicationStateCallback_->nweb_ = nweb;
+    }
+    WVLOG_I("NWebHelper::Nweb is created.");
+    return nweb;
 }
 
 std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
@@ -1068,6 +1072,26 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     }
 
     nwebEngine_->RemoveAllCache(includeDiskFiles);
+}
+
+void WebApplicationStateChangeCallback::NotifyApplicationForeground()
+{
+    WVLOG_I("WebApplicationStateChangeCallback::NotifyApplicationForeground is called.");
+    if (!nweb_) {
+        WVLOG_E("WebApplicationStateChangeCallback::nweb is nullptr.");
+        return;
+    }
+    nweb_->OnBrowserForeground();
+}
+
+void WebApplicationStateChangeCallback::NotifyApplicationBackground()
+{
+    WVLOG_I("WebApplicationStateChangeCallback::NotifyApplicationBackground is called.");
+    if (!nweb_) {
+        WVLOG_E("WebApplicationStateChangeCallback::nweb is nullptr.");
+        return;
+    }
+    nweb_->OnBrowserBackground();
 }
 
 NWebAdapterHelper& NWebAdapterHelper::Instance()
