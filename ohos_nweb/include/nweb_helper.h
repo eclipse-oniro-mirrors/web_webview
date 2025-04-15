@@ -45,7 +45,7 @@ public:
     void NotifyApplicationForeground() override;
     void NotifyApplicationBackground() override;
     std::shared_ptr<NWeb> nweb_ = nullptr;
-}
+};
 
 class OHOS_NWEB_EXPORT NWebHelper {
 public:
