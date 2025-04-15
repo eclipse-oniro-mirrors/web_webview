@@ -1722,6 +1722,7 @@ public:
     /**
      * @brief Notify browser is background.
      */
+    /*--ark web()--*/
     virtual void OnBrowserBackground() = 0;
 };
 
