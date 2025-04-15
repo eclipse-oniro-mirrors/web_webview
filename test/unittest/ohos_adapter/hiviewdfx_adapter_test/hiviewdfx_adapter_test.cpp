@@ -110,4 +110,50 @@ HWTEST(HiViewDFXAdapterTest, NormalScene_01, TestSize.Level1)
     HiTraceAdapterImpl::GetInstance().IsACETraceEnable();
     EventReport::ReportCreateWebInstanceTime(1, 1);
 }
+
+/**
+ * @tc.name: NormalScene_02.
+ * @tc.desc: test normal scene of HiViewDFXAdapter.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST(HiViewDFXAdapterTest, NormalScene_02, TestSize.Level1)
+{
+    const std::tuple<const std::string, const int64_t, const std::string, const int,
+        const std::string, const std::vector<uint16_t>, const std::string,
+        const int> data ("testkey1", 0, "testkey2", 0, "testkey3", {0}, "testkey4", 0);
+    int ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "testEvent", HiSysEventAdapter::EventType::STATISTIC, data);
+
+    const std::tuple<const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int, const std::string, const int,
+    const std::string, const int64_t, const std::string, const int> data1 (
+        "testkey1", 0, "testkey2", 0, "testkey3", 0, "testkey4", 0, "testkey5", 0, "testkey6", 0);
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "testEvent", HiSysEventAdapter::EventType::STATISTIC, data1);
+
+    const std::tuple<const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const uint32_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t,
+    const std::string, const int64_t, const std::string, const int64_t> data2 (
+    "testkey1", 0, "testkey2", 0, "testkey3", 0, "testkey4", 0, "testkey5", 0, "testkey6", 0,
+    "testkey7", 0, "testkey8", 0, "testkey9", 0, "testkey10", 0, "testkey11", 0, "testkey12", 0,
+    "testkey13", 0, "testkey14", 0, "testkey15", 0, "testkey16", 0, "testkey17", 0, "testkey18", 0,
+    "testkey19", 0, "testkey20", 0, "testkey21", 0, "testkey22", 0, "testkey23", 0);
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "testEvent", HiSysEventAdapter::EventType::STATISTIC, data2);
+
+    const std::tuple<const std::string, const uint32_t,
+        const std::string, const uint64_t> data3 ("testkey1", 0, "testkey2", 0);
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
+        HiSysEventAdapter::EventType::STATISTIC, data3);
+}
 } // namespace OHOS::NWeb
