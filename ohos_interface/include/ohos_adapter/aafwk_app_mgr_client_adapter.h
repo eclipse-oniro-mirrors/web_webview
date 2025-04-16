@@ -17,6 +17,7 @@
 #define AAFWK_APP_MGR_CLIENT_ADAPTER_H
 
 #include <cstdint>
+#include <memory>
 #include <string>
 #include <sys/types.h>
 
