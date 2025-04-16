@@ -765,7 +765,7 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
         return nullptr;
     }
     std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
-    if (!webApplicationStateCallback_->nweb_) {
+    if (webApplicationStateCallback_ && (!webApplicationStateCallback_->nweb_) {
         webApplicationStateCallback_->nweb_ = nweb;
     }
     WVLOG_I("NWebHelper::Nweb is created.");
