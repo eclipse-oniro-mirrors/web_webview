@@ -724,6 +724,9 @@ bool NWebHelper::InitWebEngine()
     initFlag_ = true;
 
     WVLOG_I("succeed to init web engine");
+
+    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
+    ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
     return true;
 }
 
