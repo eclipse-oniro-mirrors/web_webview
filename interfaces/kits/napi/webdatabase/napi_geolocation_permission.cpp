@@ -496,6 +496,8 @@ napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env,
     napi_value promise = nullptr;
     napi_create_promise(env, &deferred, &promise);
 
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     GetPermissionOriginsParam *param = new (std::nothrow) GetPermissionOriginsParam {
         .env = env,
         .asyncWork = nullptr,
@@ -506,8 +508,6 @@ napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env,
     if (param == nullptr) {
         return nullptr;
     }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOrigins,
         GetOriginsPromiseComplete, static_cast<void *>(param), &param->asyncWork));
     NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
