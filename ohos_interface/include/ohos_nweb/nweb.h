@@ -1811,6 +1811,11 @@ public:
         std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
         bool isAsync,
         const std::string& permission) {}
+
+    /**
+     * @brief Set the window id.
+     */
+    virtual void SetFocusWindowId(uint32_t focus_window_id) {}
 };
 
 } // namespace OHOS::NWeb

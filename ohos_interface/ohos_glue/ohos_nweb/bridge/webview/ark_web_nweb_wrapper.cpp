@@ -1597,4 +1597,9 @@ void ArkWebNWebWrapper::RegisterNativeJavaScriptProxy(const std::string& objName
     ArkWebStringVectorStructRelease(stMethodName);
     ArkWebStringStructRelease(stPermission);
 }
+
+void ArkWebNWebWrapper::SetFocusWindowId(uint32_t focus_window_id)
+{
+    ark_web_nweb_->SetFocusWindowId(focus_window_id);
+}
 } // namespace OHOS::ArkWeb
