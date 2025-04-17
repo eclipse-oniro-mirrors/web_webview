@@ -515,33 +515,14 @@ HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_016, TestSize.
 
 /**
  * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_017.
- * @tc.desc: test of DrmCallbackImpl :: OnStorageLoadInfo
+ * @tc.desc: test of DrmCallbackImpl::GetMediaKeySessionInfo
  * @tc.type: FUNC.
  * @tc.require:
  */
 HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_017, TestSize.Level1)
 {
-    std::string emeId = "emeId";
-    bool isRelease = true;
-    g_callback->UpdateEmeId(emeId, isRelease);
-    EXPECT_EQ(emeId, g_callback->EmeId());
-    EXPECT_EQ(isRelease, g_callback->IsRelease());
-}
-
-/**
- * @tc.name: DrmCallbackImplTest_DrmCallbackImpl_018.
- * @tc.desc: test of DrmCallbackImpl :: OnStorageLoadInfo
- * @tc.type: FUNC.
- * @tc.require:
- */
-HWTEST_F(DrmCallbackImplTest, DrmCallbackImplTest_DrmCallbackImpl_018, TestSize.Level1)
-{
-    std::string mimeType = "video/mp4";
-    int32_t type = 0;
-
-    g_callback->UpdateMimeType(mimeType, type);
-    EXPECT_EQ(mimeType, g_callback->MimeType());
-    EXPECT_EQ(type, g_callback->Type());
+    auto sessionInfo = g_callback->GetMediaKeySessionInfo(nullptr);
+    EXPECT_EQ(sessionInfo, nullptr);
 }
 
 /**
@@ -719,7 +700,15 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_006, TestSize.Lev
         if (certStatus == 0) {
             EXPECT_EQ(g_adapter->CreateMediaKeySession(), 0);
             g_adapter->ReleaseMediaKeySession();
-            g_adapter->ReleaseMediaKeySystem();
+
+            EXPECT_EQ(g_adapter->CreateMediaKeySession("emeId_006"), 0);
+            g_adapter->ReleaseMediaKeySession(g_adapter->GetMediaKeySession("emeId_006"));
+
+            g_adapter->keySystemType_ = KeySystemType::WIDEVINE;
+            EXPECT_EQ(g_adapter->GetMediaKeySession(""), nullptr);
+
+            EXPECT_EQ(g_adapter->CreateMediaKeySession("emeId_006"), 0);
+            g_adapter->ReleaseMediaKeySession(g_adapter->GetMediaKeySession("emeId_006"));
         } else {
             EXPECT_NE(g_adapter->CreateMediaKeySession(), 0);
         }
@@ -750,6 +739,16 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_007, TestSize.Lev
             EXPECT_NE(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
         }
         g_adapter->ReleaseMediaKeySystem();
+
+        g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
+        result = g_adapter->ReleaseMediaKeySession(nullptr);
+        EXPECT_NE(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+        result = g_adapter->ReleaseMediaKeySession(g_adapter->drmKeySession_);
+        if (certStatus == 0) {
+            EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+        } else {
+            EXPECT_NE(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+        }
     } else {
         result = g_adapter->ReleaseMediaKeySession();
         EXPECT_NE(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
@@ -770,6 +769,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_008, TestSize.Lev
     g_adapter->GetCertificateStatus(certStatus);
     if (certStatus == 0) {
         EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+        g_adapter->keySystemType_ = KeySystemType::WIDEVINE;
     } else {
         EXPECT_NE(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
     }
@@ -1144,8 +1144,8 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_027, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_028, TestSize.Level1)
 {
     g_adapter->LoadSessionWithLoadedStorage(nullptr, 1);
-    auto sessionId = std::make_shared<SessionId>("sessionId", nullptr, 0);
-    EXPECT_CALL(*mockCallback_, OnPromiseResolvedWithSession(_, "sessionId")).Times(0);
+    auto sessionId = std::make_shared<SessionId>("sessionId_028", nullptr, 0);
+    EXPECT_CALL(*mockCallback_, OnPromiseResolvedWithSession(_, _)).Times(0);
     g_adapter->LoadSessionWithLoadedStorage(sessionId, 1);
 }
 
@@ -1209,10 +1209,16 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_031, TestSize.Lev
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
     g_adapter->RegistDrmCallback(mockCallback_);
-    g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
-    g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
-    EXPECT_CALL(*mockCallback_, OnPromiseResolvedWithSession(_, "sessionId")).Times(0);
-    g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
+    int32_t certStatus = -1;
+    g_adapter->GetCertificateStatus(certStatus);
+    if (certStatus == 0) {
+        g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+        g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
+        g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
+        EXPECT_NE(g_adapter->drmKeySession_, nullptr);
+    } else {
+        EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
+    }
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
 }
@@ -1236,11 +1242,10 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_032, TestSize.Lev
     if (certStatus == 0) {
         g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
         g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
-        EXPECT_CALL(*mockCallback_, OnStorageClearInfoForLoadFail(_)).Times(1);
         g_adapter->LoadSessionWithLoadedStorage(validSessionId, promiseId);
-        EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+        EXPECT_NE(g_adapter->drmKeySession_, nullptr);
     } else {
-        EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+        EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
     }
     g_adapter->ReleaseMediaKeySession();
     g_adapter->ReleaseMediaKeySystem();
@@ -1333,7 +1338,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_040, TestSize.Lev
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_041.
- * @tc.desc: test of DrmAdapterImpl :: SessoinEventCallBackWithObj
+ * @tc.desc: test of DrmAdapterImpl :: SessionEventCallBackWithObj
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -1345,13 +1350,13 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_041, TestSize.Lev
     char extra[] = "extra";
     MediaKeySession* mediaKeySession = nullptr;
 
-    Drm_ErrCode result = g_adapter->SessoinEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
+    Drm_ErrCode result = g_adapter->SessionEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 }
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_042.
- * @tc.desc: test of DrmAdapterImpl :: SessoinKeyChangeCallBackWithObj
+ * @tc.desc: test of DrmAdapterImpl :: SessionKeyChangeCallBackWithObj
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -1361,7 +1366,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_042, TestSize.Lev
     DRM_KeysInfo keysInfo;
     MediaKeySession* mediaKeySession = nullptr;
 
-    Drm_ErrCode result = g_adapter->SessoinKeyChangeCallBackWithObj(mediaKeySession, &keysInfo, newKeysAvailable);
+    Drm_ErrCode result = g_adapter->SessionKeyChangeCallBackWithObj(mediaKeySession, &keysInfo, newKeysAvailable);
 
     EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
 }
@@ -1451,7 +1456,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_045, TestSize.Lev
 HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_046, TestSize.Level1)
 {
     g_adapter->StorageProvisionedResult(false);
-    EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+    EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
 
     if (g_isSupportDrm) {
         g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
@@ -1465,7 +1470,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_046, TestSize.Lev
             g_adapter->StorageProvisionedResult(true);
             g_adapter->ReleaseMediaKeySession();
             g_adapter->StorageProvisionedResult(true);
-            EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
         }
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
@@ -1524,6 +1529,11 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_055, TestSize.Lev
         result = g_adapter->CloseSession(promiseId, emeId);
         EXPECT_EQ(result, 0);
         g_adapter->RemoveSessionInfo(validSessionId);
+
+        g_adapter->PutSessionInfo(validSessionId, mimeType, sessionType);
+        g_adapter->keySystemType_ = KeySystemType::WIDEVINE;
+        result = g_adapter->CloseSession(promiseId, emeId);
+        EXPECT_NE(result, 0);
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
     }
@@ -1600,9 +1610,11 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_058, TestSize.Lev
     std::string mimeType = "video/mp4";
     int32_t result = g_adapter->UpdateSession(promiseId, emeId, response);
     EXPECT_EQ(result, -1);
-    g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
+    result = g_adapter->UpdateSession(promiseId, emeId, response);
+    EXPECT_EQ(result, -1);
 
+    g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->PutSessionInfo(validSessionId, mimeType, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_ONLINE));
     result = g_adapter->UpdateSession(promiseId, emeId, response);
     EXPECT_EQ(result, -1);
@@ -1631,7 +1643,9 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_059, TestSize.Lev
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
     if (g_isSupportDrm) {
         EXPECT_NE(g_adapter->drmKeySystem_, nullptr);
-        g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, nullptr, 0);
+        g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, nullptr, 0);
+        g_adapter->mediaKeySessionCallbackMap_.clear();
+        g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, nullptr, 0);
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
         g_adapter->RegistDrmCallback(mockCallback_);
@@ -1641,16 +1655,25 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_059, TestSize.Lev
         int32_t result = g_adapter->GetCertificateStatus(certStatus);
         EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
         if (certStatus == 0) {
-            EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
             EXPECT_CALL(*mockCallback_, OnSessionExpirationUpdate(_, _)).Times(1);
             std::string infoString = "123456ms";
             uint32_t infoSize = infoString.size();
             uint8_t info[32] = { 0 };
             errno_t ret = memcpy_s(info, infoSize, infoString.data(), infoSize);
             EXPECT_EQ(ret, EOK);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, info, infoSize);
+
+            std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
+            auto sessionId = std::make_shared<SessionId>("sessionId", keySetId.data(), keySetId.size());
+            auto sessionInfo = std::make_shared<SessionInfo>(
+                sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+            g_adapter->callback_->UpdateMediaKeySessionInfoMap(g_adapter->drmKeySession_, sessionInfo);
+
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoSize);
+
+            g_adapter->callback_->RemoveMediaKeySessionInfo(g_adapter->drmKeySession_);
         } else {
-            EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
         }
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
@@ -1680,17 +1703,22 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_060, TestSize.Lev
         EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
         if (certStatus == 0 && g_isWisePlay) {
-            EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
-            g_adapter->GetKeyRequest(g_adapter->drmKeySessoin_, info, infoLen);
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
+            g_adapter->GetKeyRequest(g_adapter->drmKeySession_, info, infoLen);
             
-            g_adapter->callback_->mimeType_ = "test_mime_type_longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx";
-            g_adapter->GetKeyRequest(g_adapter->drmKeySessoin_, info, infoLen);
+            std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
+            auto sessionId = std::make_shared<SessionId>("sessionId", keySetId.data(), keySetId.size());
+            auto sessionInfo = std::make_shared<SessionInfo>(
+                sessionId, "test_mime_type_longxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+                static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+            g_adapter->callback_->UpdateMediaKeySessionInfoMap(g_adapter->drmKeySession_, sessionInfo);
+            g_adapter->GetKeyRequest(g_adapter->drmKeySession_, info, infoLen);
 
             g_adapter->mediaKeySessionCallbackMap_.clear();
-            g_adapter->GetKeyRequest(g_adapter->drmKeySessoin_, info, infoLen);
+            g_adapter->GetKeyRequest(g_adapter->drmKeySession_, info, infoLen);
 
-            g_adapter->mediaKeySessionCallbackMap_[g_adapter->drmKeySessoin_] = nullptr;
-            g_adapter->GetKeyRequest(g_adapter->drmKeySessoin_, info, infoLen);
+            g_adapter->mediaKeySessionCallbackMap_[g_adapter->drmKeySession_] = nullptr;
+            g_adapter->GetKeyRequest(g_adapter->drmKeySession_, info, infoLen);
         }
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
@@ -1701,7 +1729,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_060, TestSize.Lev
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_061.
- * @tc.desc: test of DrmAdapterImpl :: SessoinEventCallBackWithObj
+ * @tc.desc: test of DrmAdapterImpl :: SessionEventCallBackWithObj
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -1713,33 +1741,33 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_061, TestSize.Lev
     char extra[] = "extra";
     MediaKeySession* mediaKeySession = nullptr;
 
-    Drm_ErrCode result = g_adapter->SessoinEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
+    Drm_ErrCode result = g_adapter->SessionEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
     eventType = EVENT_EXPIRATION_UPDATE;
-    result = g_adapter->SessoinEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
+    result = g_adapter->SessionEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
     eventType = EVENT_PROVISION_REQUIRED;
-    result = g_adapter->SessoinEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
+    result = g_adapter->SessionEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
     eventType = EVENT_KEY_EXPIRED;
-    result = g_adapter->SessoinEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
+    result = g_adapter->SessionEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
     eventType = EVENT_VENDOR_DEFINED;
-    result = g_adapter->SessoinEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
+    result = g_adapter->SessionEventCallBackWithObj(mediaKeySession, eventType, info, infoLen, extra);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
     result =
-        g_adapter->SessoinEventCallBackWithObj(mediaKeySession, static_cast<DRM_EventType>(0), info, infoLen, extra);
+        g_adapter->SessionEventCallBackWithObj(mediaKeySession, static_cast<DRM_EventType>(0), info, infoLen, extra);
     EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 }
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_062.
- * @tc.desc: test of DrmAdapterImpl :: SessoinKeyChangeCallBackWithObj
+ * @tc.desc: test of DrmAdapterImpl :: SessionKeyChangeCallBackWithObj
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -1750,7 +1778,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_062, TestSize.Lev
     keysInfo.keysInfoCount = 0;
 
     Drm_ErrCode result =
-        g_adapter->SessoinKeyChangeCallBackWithObj(g_adapter->drmKeySessoin_, nullptr, newKeysAvailable);
+        g_adapter->SessionKeyChangeCallBackWithObj(g_adapter->drmKeySession_, nullptr, newKeysAvailable);
     EXPECT_EQ(result, DRM_ERR_INVALID_VAL);
 
     if (g_isSupportDrm) {
@@ -1762,9 +1790,9 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_062, TestSize.Lev
         EXPECT_EQ(certResult, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
         if (certStatus == 0) {
-            EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
             g_adapter->RegistDrmCallback(mockCallback_);
-            result = g_adapter->SessoinKeyChangeCallBackWithObj(g_adapter->drmKeySessoin_, &keysInfo, newKeysAvailable);
+            result = g_adapter->SessionKeyChangeCallBackWithObj(g_adapter->drmKeySession_, &keysInfo, newKeysAvailable);
             EXPECT_EQ(result, DRM_ERR_OK);
         }
         g_adapter->ReleaseMediaKeySession();
@@ -1846,7 +1874,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_065, TestSize.Lev
 
 /**
  * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_066.
- * @tc.desc: test of DrmAdapterImpl :: SessoinKeyChangeCallBackWithObj
+ * @tc.desc: test of DrmAdapterImpl :: SessionKeyChangeCallBackWithObj
  * @tc.type: FUNC.
  * @tc.require:
  */
@@ -1879,9 +1907,26 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_066, TestSize.Lev
         EXPECT_EQ(certResult, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
 
         if (certStatus == 0) {
-            EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
             auto result =
-                g_adapter->SessoinKeyChangeCallBackWithObj(g_adapter->drmKeySessoin_, &keysInfo, newKeysAvailable);
+                g_adapter->SessionKeyChangeCallBackWithObj(g_adapter->drmKeySession_, &keysInfo, newKeysAvailable);
+            EXPECT_EQ(result, DRM_ERR_OK);
+
+            std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
+            auto sessionId = std::make_shared<SessionId>("sessionId", keySetId.data(), keySetId.size());
+            auto sessionInfo = std::make_shared<SessionInfo>(
+                sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+            g_adapter->callback_->UpdateMediaKeySessionInfoMap(g_adapter->drmKeySession_, sessionInfo);
+
+            result =
+                g_adapter->SessionKeyChangeCallBackWithObj(g_adapter->drmKeySession_, &keysInfo, newKeysAvailable);
+            EXPECT_EQ(result, DRM_ERR_OK);
+
+            auto sessionInfo2 = std::make_shared<SessionInfo>(
+                nullptr, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+            g_adapter->callback_->UpdateMediaKeySessionInfoMap(g_adapter->drmKeySession_, sessionInfo2);
+            result =
+                g_adapter->SessionKeyChangeCallBackWithObj(g_adapter->drmKeySession_, &keysInfo, newKeysAvailable);
             EXPECT_EQ(result, DRM_ERR_OK);
         }
         g_adapter->ReleaseMediaKeySession();
@@ -1902,7 +1947,7 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_067, TestSize.Lev
     g_adapter->callback_ = nullptr;
     g_adapter->StorageSaveInfoResult(true, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
     EXPECT_EQ(g_adapter->drmKeySystem_, nullptr);
-    EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+    EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
 
     g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
     if (g_isSupportDrm) {
@@ -1918,13 +1963,17 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_067, TestSize.Lev
         if (certStatus == 0) {
             EXPECT_CALL(*mockCallback_, OnPromiseRejected(_, _)).Times(1);
             g_adapter->StorageSaveInfoResult(true, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
-            EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
 
+            auto sessionId = SessionId::CreateSessionId("tempSessionId067");
+            std::string mimeType = "video/mp4";
+            int32_t sessionType = 1;
+            g_adapter->PutSessionInfo(sessionId, mimeType, sessionType);
+            g_adapter->releaseEmeId_ = "tempSessionId067";
             g_adapter->ReleaseMediaKeySession();
             g_adapter->StorageSaveInfoResult(true, static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
-            EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
         } else {
-            EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
         }
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
@@ -1957,7 +2006,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_068, TestSize.Lev
     EXPECT_CALL(*mockCallback_, OnPromiseResolved(_)).Times(1);
     g_adapter->UpdateSessionResult(false, sessionId, nullptr, 0);
     EXPECT_NE(g_adapter->callback_, nullptr);
-    EXPECT_EQ(g_adapter->callback_->EmeId(), "tempSessionId068");
 }
 
 /**
@@ -1975,41 +2023,34 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_069, TestSize.Lev
         int32_t result = g_adapter->GetCertificateStatus(certStatus);
         EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
         if (certStatus == 0) {
-            EXPECT_NE(g_adapter->drmKeySessoin_, nullptr);
-            EXPECT_CALL(*mockCallback_, OnSessionExpirationUpdate(_, _)).Times(7);
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
+
+            std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
+            auto sessionId = std::make_shared<SessionId>("sessionId", keySetId.data(), keySetId.size());
+            auto sessionInfo = std::make_shared<SessionInfo>(
+                sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+            g_adapter->callback_->UpdateMediaKeySessionInfoMap(g_adapter->drmKeySession_, sessionInfo);
+
+            EXPECT_CALL(*mockCallback_, OnSessionExpirationUpdate(_, _)).Times(4);
             std::string infoString = "123456ms";
             uint8_t info[32] = { 0 };
             errno_t ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
             EXPECT_EQ(ret, EOK);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, info, 0);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, nullptr, 0);
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, 0);
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, nullptr, 0);
             infoString = "12ms";
             (void)memset_s(info, 32, 0x00, 32);
             ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
             EXPECT_EQ(ret, EOK);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, info, infoString.size());
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoString.size());
             infoString = "1";
             (void)memset_s(info, 32, 0x00, 32);
             ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
             EXPECT_EQ(ret, EOK);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, info, infoString.size());
-            infoString = "abcdms";
-            (void)memset_s(info, 32, 0x00, 32);
-            ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
-            EXPECT_EQ(ret, EOK);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, info, infoString.size());
-            infoString = "123456";
-            (void)memset_s(info, 32, 0x00, 32);
-            ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
-            EXPECT_EQ(ret, EOK);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, info, infoString.size());
-            infoString = "123456789123456789123456789ms";
-            (void)memset_s(info, 32, 0x00, 32);
-            ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
-            EXPECT_EQ(ret, EOK);
-            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySessoin_, info, infoString.size());
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoString.size());
+            g_adapter->callback_->RemoveMediaKeySessionInfo(g_adapter->drmKeySession_);
         } else {
-            EXPECT_EQ(g_adapter->drmKeySessoin_, nullptr);
+            EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
         }
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
@@ -2059,7 +2100,6 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_071, TestSize.Lev
     g_adapter->RegistDrmCallback(mockCallback_);
     g_adapter->UpdateSessionResult(false, sessionId, mediaKeyId, mediaKeyIdLen);
     EXPECT_NE(g_adapter->callback_, nullptr);
-    EXPECT_EQ(g_adapter->callback_->EmeId(), "tempSessionId071");
 }
 
 /**
@@ -2085,8 +2125,71 @@ HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_072, TestSize.Lev
         result = g_adapter->CloseSession(promiseId, emeId);
         EXPECT_EQ(result, 0);
         g_adapter->RemoveSessionInfo(validSessionId);
+
+        g_adapter->PutSessionInfo(validSessionId, mimeType, sessionType);
+        g_adapter->keySystemType_ = KeySystemType::WIDEVINE;
+        result = g_adapter->CloseSession(promiseId, emeId);
+        EXPECT_NE(result, 0);
         g_adapter->ReleaseMediaKeySession();
         g_adapter->ReleaseMediaKeySystem();
+    }
+}
+
+/**
+ * @tc.name: DrmAdapterImplTest_DrmAdapterImpl_073.
+ * @tc.desc: test of DrmAdapterImpl::OnSessionExpirationUpdate
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(DrmAdapterImplTest, DrmAdapterImplTest_DrmAdapterImpl_073, TestSize.Level1)
+{
+    g_adapter->RegistDrmCallback(mockCallback_);
+    g_adapter->CreateKeySystem(GetKeySystemName(), "origin_id", SECURITY_LEVEL_3);
+    if (g_isSupportDrm) {
+        int32_t certStatus = -1;
+        int32_t result = g_adapter->GetCertificateStatus(certStatus);
+        EXPECT_EQ(result, static_cast<int32_t>(DrmResult::DRM_RESULT_OK));
+        if (certStatus == 0) {
+            EXPECT_NE(g_adapter->drmKeySession_, nullptr);
+
+            std::vector<uint8_t> keySetId = { 0x01, 0x02, 0x03 };
+            auto sessionId = std::make_shared<SessionId>("sessionId", keySetId.data(), keySetId.size());
+            auto sessionInfo = std::make_shared<SessionInfo>(
+                sessionId, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+            g_adapter->callback_->UpdateMediaKeySessionInfoMap(g_adapter->drmKeySession_, sessionInfo);
+
+            EXPECT_CALL(*mockCallback_, OnSessionExpirationUpdate(_, _)).Times(3);
+            std::string infoString = "abcdms";
+            uint8_t info[32] = { 0 };
+            errno_t ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
+            EXPECT_EQ(ret, EOK);
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoString.size());
+            infoString = "123456";
+            (void)memset_s(info, 32, 0x00, 32);
+            ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
+            EXPECT_EQ(ret, EOK);
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoString.size());
+            infoString = "123456789123456789123456789ms";
+            (void)memset_s(info, 32, 0x00, 32);
+            ret = memcpy_s(info, infoString.size(), infoString.data(), infoString.size());
+            EXPECT_EQ(ret, EOK);
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoString.size());
+
+            g_adapter->callback_->RemoveMediaKeySessionInfo(g_adapter->drmKeySession_);
+            auto sessionInfo2 = std::make_shared<SessionInfo>(
+                nullptr, "mimeType", static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_OFFLINE));
+            g_adapter->callback_->UpdateMediaKeySessionInfoMap(g_adapter->drmKeySession_, sessionInfo2);
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoString.size());
+
+            g_adapter->callback_->RemoveMediaKeySessionInfo(g_adapter->drmKeySession_);
+            g_adapter->OnSessionExpirationUpdate(g_adapter->drmKeySession_, info, infoString.size());
+        } else {
+            EXPECT_EQ(g_adapter->drmKeySession_, nullptr);
+        }
+        g_adapter->ReleaseMediaKeySession();
+        g_adapter->ReleaseMediaKeySystem();
+    } else {
+        EXPECT_EQ(g_adapter->drmKeySystem_, nullptr);
     }
 }
 } // namespace OHOS::NWeb
