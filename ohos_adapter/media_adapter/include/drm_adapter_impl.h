@@ -74,6 +74,12 @@ enum class DrmResult : int32_t {
     DRM_RESULT_OK = 0,
 };
 
+enum class KeySystemType : int32_t {
+    NONE = 0,
+    WIDEVINE,
+    WISEPLAY
+};
+
 class SessionId {
 public:
     static std::shared_ptr<SessionId> CreateSessionId(const std::string& emeId)
@@ -145,6 +151,11 @@ public:
         return keyType_;
     }
 
+    bool IsRelease()
+    {
+        return (keyType_ == static_cast<int32_t>(MediaKeyType::MEDIA_KEY_TYPE_RELEASE));
+    }
+
     void SetKeyType(int32_t keyType)
     {
         keyType_ = keyType;
@@ -185,20 +196,15 @@ public:
     void OnStorageClearInfoForLoadFail(const std::string& sessionId);
     void OnMediaLicenseReady(bool success);
 
-    void UpdateEmeId(const std::string& emeId, bool isRelease);
-    void UpdateMimeType(const std::string& mimeType, int32_t type);
-
-    std::string EmeId();
-    std::string MimeType();
-    bool IsRelease();
-    int32_t Type();
+    void UpdateMediaKeySessionInfoMap(MediaKeySession* keySession, std::shared_ptr<SessionInfo> sessionInfo);
+    std::shared_ptr<SessionInfo> GetMediaKeySessionInfo(MediaKeySession* keySession);
+    void RemoveMediaKeySessionInfo(MediaKeySession* keySession);
+    void ClearMediaKeySessionInfo();
 
 private:
     std::shared_ptr<DrmCallbackAdapter> callbackAdapter_;
-    std::string emeId_ = "";
-    std::string mimeType_ = "";
-    bool isRelease_ = false;
-    int32_t type_ = -1;
+    std::unordered_map<MediaKeySession*, std::shared_ptr<SessionInfo>> mediaKeySessionInfoMap_;
+    std::mutex mediaKeySessionInfoMutex_;
 };
 
 class DrmAdapterImpl : public DrmAdapter {
@@ -208,10 +214,10 @@ public:
 
     static Drm_ErrCode SystemCallBackWithObj(
         MediaKeySystem* mediaKeySystem, DRM_EventType eventType, uint8_t* info, int32_t infoLen, char* extra);
-    static Drm_ErrCode SessoinEventCallBackWithObj(
-        MediaKeySession* mediaKeySessoin, DRM_EventType eventType, uint8_t* info, int32_t infoLen, char* extra);
-    static Drm_ErrCode SessoinKeyChangeCallBackWithObj(
-        MediaKeySession* mediaKeySessoin, DRM_KeysInfo* keysInfo, bool newKeysAvailable);
+    static Drm_ErrCode SessionEventCallBackWithObj(
+        MediaKeySession* mediaKeySession, DRM_EventType eventType, uint8_t* info, int32_t infoLen, char* extra);
+    static Drm_ErrCode SessionKeyChangeCallBackWithObj(
+        MediaKeySession* mediaKeySession, DRM_KeysInfo* keysInfo, bool newKeysAvailable);
 
     bool IsSupported(const std::string& name) override;
     bool IsSupported2(const std::string& name, const std::string& mimeType) override;
@@ -246,7 +252,10 @@ public:
     int32_t RequireSecureDecoderModule(const std::string& mimeType, bool& status) override;
 
 private:
-    int32_t CreateMediaKeySession();
+    int32_t CreateMediaKeySession(std::string emeId = "");
+    int32_t ReleaseMediaKeySession(MediaKeySession* drmKeySession);
+    MediaKeySession* GetMediaKeySession(std::string emeId);
+
     void PutSessionInfo(std::shared_ptr<SessionId> sessionId, const std::string& mimeType, int32_t type);
     std::shared_ptr<SessionInfo> GetSessionInfo(std::shared_ptr<SessionId> sessionId);
     void RemoveSessionInfo(std::shared_ptr<SessionId> sessionId);
@@ -265,8 +274,8 @@ private:
 
     void HandleKeyUpdatedCallback(uint32_t promiseId, bool result);
 
-    static void OnSessionExpirationUpdate(MediaKeySession* drmKeySessoin, uint8_t* info, int32_t infoLen);
-    static void GetKeyRequest(MediaKeySession* drmKeySessoin, uint8_t* info, int32_t infoLen);
+    static void OnSessionExpirationUpdate(MediaKeySession* drmKeySession, uint8_t* info, int32_t infoLen);
+    static void GetKeyRequest(MediaKeySession* drmKeySession, uint8_t* info, int32_t infoLen);
 
 private:
     static std::unordered_map<MediaKeySystem*, std::shared_ptr<DrmCallbackImpl>> mediaKeySystemCallbackMap_;
@@ -275,16 +284,19 @@ private:
     static std::mutex mediaKeySessionCallbackMutex_;
 
     MediaKeySystem* drmKeySystem_ = nullptr;
-    MediaKeySession* drmKeySessoin_ = nullptr;
+    MediaKeySession* drmKeySession_ = nullptr;
     DRM_ContentProtectionLevel contentProtectionLevel_ = CONTENT_PROTECTION_LEVEL_UNKNOWN;
     std::shared_ptr<DrmCallbackImpl> callback_ = nullptr;
 
     std::unordered_map<std::string, std::shared_ptr<SessionInfo>> emeSessionInfoMap_;
+    std::unordered_map<std::string, MediaKeySession*> emeMediaKeySessionMap_;
+    std::mutex mediaKeySessionMutex_;
+
     uint32_t removeSessionPromiseId_ = 0;
     uint32_t updateSessionPromiseId_ = 0;
     uint32_t loadSessionPromiseId_ = 0;
     std::string releaseEmeId_ = "";
-    bool isWiseplay_ = false;
+    KeySystemType keySystemType_ = KeySystemType::NONE;
 };
 } // namespace OHOS::NWeb
 #endif // DRM_ADAPTER_IMPL_H

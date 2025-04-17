@@ -17,6 +17,7 @@
 #define NWEB_NATIVE_VIDEO_PLAYER_H
 
 #include <map>
+#include <memory>
 #include <string>
 
 namespace OHOS::NWeb {
