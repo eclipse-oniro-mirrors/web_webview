@@ -198,6 +198,7 @@ HWTEST_F(AudioDecoderCallbackImplTest, AudioDecoderCallbackImpl_NormalTest_001, 
     AudioDecoderCallbackManager::OnOutputBufferAvailable(decoder->GetAVCodec(), 0, buffer, nullptr);
     AudioDecoderCallbackManager::OnOutputBufferAvailable(
         decoder->GetAVCodec(), 0, buffer, nullptr);
+
     EXPECT_EQ(decoder->SetCallbackDec(nullptr), AudioDecoderAdapterCode::DECODER_ERROR);
 
     std::shared_ptr<AudioDecoderCallbackAdapter> callback = std::make_shared<AudioDecoderCallbackAdapterMock>();
@@ -210,6 +211,7 @@ HWTEST_F(AudioDecoderCallbackImplTest, AudioDecoderCallbackImpl_NormalTest_001, 
         decoder->GetAVCodec(), 0, buffer, nullptr);
     OH_AVBuffer_Destroy(buffer);
     buffer = nullptr;
+
     std::shared_ptr<AudioDecoderCallbackAdapterImpl> errCallbackImpl =
         std::make_shared<AudioDecoderCallbackAdapterImpl>(nullptr);
     errCallbackImpl->OnError(0);
