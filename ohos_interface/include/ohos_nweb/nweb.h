@@ -1776,6 +1776,16 @@ public:
      * @param isHoverEnter whether the accessibility hover event is a hover enter event.
      */
     virtual void SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter) {}
+
+    /**
+     * @brief Notify browser is foreground.
+     */
+    virtual void OnBrowserForeground() {}
+
+    /**
+     * @brief Notify browser is background.
+     */
+    virtual void OnBrowserBackground() {}
 };
 
 } // namespace OHOS::NWeb

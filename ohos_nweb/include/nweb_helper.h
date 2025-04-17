@@ -28,12 +28,23 @@
 #include "nweb_export.h"
 #include "nweb_web_storage.h"
 #include "nweb_proxy_changed_callback.h"
+#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_state_change_callback.h"
 
 namespace OHOS::NWeb {
 struct FrameRateSetting {
     int32_t min_ { 0 };
     int32_t max_ { 0 };
     int32_t preferredFrameRate_ { 0 };
+};
+
+class WebApplicationStateChangeCallback : public AbilityRuntime::ApplicationStateChangeCallback {
+public:
+    WebApplicationStateChangeCallback() = default;
+    WebApplicationStateChangeCallback(const WebApplicationStateChangeCallback&) = default;
+    ~WebApplicationStateChangeCallback() = default;
+    void NotifyApplicationForeground() override;
+    void NotifyApplicationBackground() override;
+    std::shared_ptr<NWeb> nweb_ = nullptr;
 };
 
 class OHOS_NWEB_EXPORT NWebHelper {
@@ -113,6 +124,7 @@ private:
     std::string customSchemeCmdLine_;
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::vector<std::string> backForwardCacheCmdLine_;
+    std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_;
 };
 } // namespace OHOS::NWeb
 
