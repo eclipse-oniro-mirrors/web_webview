@@ -210,6 +210,18 @@ HWTEST_F(AudioDecoderCallbackImplTest, AudioDecoderCallbackImpl_NormalTest_001, 
         decoder->GetAVCodec(), 0, buffer, nullptr);
     OH_AVBuffer_Destroy(buffer);
     buffer = nullptr;
+    std::shared_ptr<AudioDecoderCallbackAdapterImpl> errCallbackImpl =
+        std::make_shared<AudioDecoderCallbackAdapterImpl>(nullptr);
+    errCallbackImpl->OnError(0);
+    errCallbackImpl->OnOutputFormatChanged();
+    errCallbackImpl->OnInputBufferAvailable(0);
+    errCallbackImpl->OnOutputBufferAvailable(0, nullptr, 0, 0, 0, 0);
+    std::shared_ptr<AudioDecoderCallbackAdapterImpl> callbackImpl =
+        std::make_shared<AudioDecoderCallbackAdapterImpl>(callback);
+    callbackImpl->OnError(0);
+    callbackImpl->OnOutputFormatChanged();
+    callbackImpl->OnInputBufferAvailable(0);
+    callbackImpl->OnOutputBufferAvailable(0, nullptr, 0, 0, 0, 0);
 }
 
 /**
@@ -266,19 +278,6 @@ HWTEST_F(AudioDecoderCallbackImplTest, AudioDecoderCallbackImpl_NormalTest_002, 
         decoder->GetAVCodec(), 0, buffer, nullptr);
     OH_AVBuffer_Destroy(buffer);
     buffer = nullptr;
-
-    std::shared_ptr<AudioDecoderCallbackAdapterImpl> errCallbackImpl =
-        std::make_shared<AudioDecoderCallbackAdapterImpl>(nullptr);
-    errCallbackImpl->OnError(0);
-    errCallbackImpl->OnOutputFormatChanged();
-    errCallbackImpl->OnInputBufferAvailable(0);
-    errCallbackImpl->OnOutputBufferAvailable(0, nullptr, 0, 0, 0, 0);
-    std::shared_ptr<AudioDecoderCallbackAdapterImpl> callbackImpl =
-        std::make_shared<AudioDecoderCallbackAdapterImpl>(callback);
-    callbackImpl->OnError(0);
-    callbackImpl->OnOutputFormatChanged();
-    callbackImpl->OnInputBufferAvailable(0);
-    callbackImpl->OnOutputBufferAvailable(0, nullptr, 0, 0, 0, 0);
 }
 
 class AudioCodecDecoderAdapterImplTest : public testing::Test {
