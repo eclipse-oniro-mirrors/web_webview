@@ -1741,6 +1741,12 @@ public:
         ArkWebRefPtr<ArkWebJsProxyMethod> data,
         bool isAsync,
         const ArkWebString& permission) = 0;
+
+    /**
+     * @brief Set the window id.
+     */
+    /*--ark web()--*/
+    virtual void SetFocusWindowId(uint32_t focus_window_id) = 0;
 };
 
 } // namespace OHOS::ArkWeb
