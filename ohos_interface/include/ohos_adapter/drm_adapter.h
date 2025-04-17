@@ -16,6 +16,7 @@
 #ifndef DRM_ADAPTER_H
 #define DRM_ADAPTER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
