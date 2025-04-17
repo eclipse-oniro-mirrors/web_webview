@@ -1537,6 +1537,16 @@ public:
     /*--ark web()--*/
     void SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter) override;
 
+    /**
+     * @brief Notify browser is foreground.
+     */
+    void OnBrowserForeground() override;
+
+    /**
+     * @brief Notify browser is background.
+     */
+    void OnBrowserBackground() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

@@ -1712,6 +1712,18 @@ public:
      */
     /*--ark web()--*/
     virtual void SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter) = 0;
+
+    /**
+     * @brief Notify browser is foreground.
+     */
+    /*--ark web()--*/
+    virtual void OnBrowserForeground() = 0;
+
+    /**
+     * @brief Notify browser is background.
+     */
+    /*--ark web()--*/
+    virtual void OnBrowserBackground() = 0;
 };
 
 } // namespace OHOS::ArkWeb

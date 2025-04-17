@@ -1559,4 +1559,14 @@ void ArkWebNWebWrapper::SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool
 {
     ark_web_nweb_->SendAccessibilityHoverEventV2(x, y, isHoverEnter);
 }
+
+void ArkWebNWebWrapper::OnBrowserForeground()
+{
+    ark_web_nweb_->OnBrowserForeground();
+}
+
+void ArkWebNWebWrapper::OnBrowserBackground()
+{
+    ark_web_nweb_->OnBrowserBackground();
+}
 } // namespace OHOS::ArkWeb

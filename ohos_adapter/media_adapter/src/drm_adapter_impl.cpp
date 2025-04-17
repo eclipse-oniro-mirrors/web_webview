@@ -522,7 +522,6 @@ void DrmAdapterImpl::GetKeyRequest(MediaKeySession* drmKeySession, uint8_t* info
         std::lock_guard<std::mutex> lock(mediaKeySessionCallbackMutex_);
         auto iter = mediaKeySessionCallbackMap_.find(drmKeySession);
         if (iter == mediaKeySessionCallbackMap_.end()) {
-            WVLOG_E("[DRM]DrmAdapterImpl::GetKeyRequest error, mediaKeySession not found.");
             return;
         }
         callback = iter->second;
