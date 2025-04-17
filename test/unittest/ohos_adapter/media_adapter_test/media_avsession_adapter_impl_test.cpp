@@ -292,6 +292,18 @@ HWTEST_F(MediaAVSessionCallbackImplTest, NWebMediaAdapterTest_MediaAVSessionCall
 {
     g_callback->callbackAdapter_ = nullptr;
     g_callback->OnStop();
+    g_callback->OnPlayNext();
+    g_callback->OnPlayPrevious();
+    g_callback->OnFastForward(0);
+    g_callback->OnRewind(0);
+    g_callback->OnSetSpeed(0);
+    g_callback->OnSetLoopMode(0);
+    g_callback->OnToggleFavorite("");
+    g_callback->OnSkipToQueueItem(0);
+    g_callback->OnAVCallAnswer();
+    g_callback->OnAVCallHangUp();
+    g_callback->OnAVCallToggleCallMute();
+    g_callback->OnPlayFromAssetId(0);
     EXPECT_EQ(g_callback->callbackAdapter_, nullptr);
 
     auto callbackMock = std::make_shared<MediaAVSessionCallbackAdapterMock>();
