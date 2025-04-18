@@ -164,7 +164,7 @@ void* ArkWebBridgeHelper::LoadFuncSymbol(const char* funcName, bool isPrintLog)
     }
 
     if (isPrintLog) {
-        ARK_WEB_BRIDGE_INFO_LOG("load func %{public}s", funcName);
+        ARK_WEB_BRIDGE_DEBUG_LOG("load func %{public}s", funcName);
     }
 
     return dlsym(libFileHandler_, funcName);
