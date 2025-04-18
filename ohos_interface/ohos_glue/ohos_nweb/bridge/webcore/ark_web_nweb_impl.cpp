@@ -30,6 +30,7 @@
 #include "ohos_nweb/bridge/ark_web_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_history_list_impl.h"
 #include "ohos_nweb/bridge/ark_web_hit_test_result_impl.h"
+#include "ohos_nweb/bridge/ark_web_js_proxy_method_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_keyboard_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_wrapper.h"
@@ -1334,5 +1335,24 @@ void ArkWebNWebImpl::OnBrowserForeground()
 void ArkWebNWebImpl::OnBrowserBackground()
 {
     nweb_nweb_->OnBrowserBackground();
+}
+
+void ArkWebNWebImpl::RegisterNativeJavaScriptProxy(const ArkWebString& objName,
+    const ArkWebStringVector& methodName, ArkWebRefPtr<ArkWebJsProxyMethod> data,
+    bool isAsync, const ArkWebString& permission)
+{
+    if (CHECK_REF_PTR_IS_NULL(data)) {
+        nweb_nweb_->RegisterNativeJavaScriptProxy(ArkWebStringStructToClass(objName),
+                                                  ArkWebStringVectorStructToClass(methodName),
+                                                  nullptr,
+                                                  isAsync,
+                                                  ArkWebStringStructToClass(permission));
+        return;
+    }
+    nweb_nweb_->RegisterNativeJavaScriptProxy(ArkWebStringStructToClass(objName),
+                                              ArkWebStringVectorStructToClass(methodName),
+                                              std::make_shared<ArkWebJsProxyMethodWrapper>(data),
+                                              isAsync,
+                                              ArkWebStringStructToClass(permission));
 }
 } // namespace OHOS::ArkWeb
