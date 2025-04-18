@@ -220,9 +220,13 @@ ArkWebRefPtr<ArkKeystoreAdapter> ArkOhosAdapterHelperImpl::GetKeystoreAdapterIns
 
 ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> ArkOhosAdapterHelperImpl::GetEnterpriseDeviceManagementInstance()
 {
-    static NWeb::EnterpriseDeviceManagementAdapter& instance = real_.GetEnterpriseDeviceManagementInstance();
-    static ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> impl =
-        new ArkEnterpriseDeviceManagementAdapterImpl(instance);
+    static std::once_flag flag;
+    static ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> impl;
+    std::call_once(flag, [this] {
+        static NWeb::EnterpriseDeviceManagementAdapter& instance =
+            real_.GetEnterpriseDeviceManagementInstance();
+        impl = new ArkEnterpriseDeviceManagementAdapterImpl(instance);
+    });
     return impl;
 }
 
