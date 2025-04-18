@@ -1560,6 +1560,20 @@ public:
      */
     void OnBrowserBackground() override;
 
+    /**
+     * @brief: register native javaScriptProxy.
+     *
+     * @param objName object name.
+     * @param methodName methodName list
+     * @param data The ptr of NWebJsProxyMethod.
+     * @param isAsync True mean.
+     * @param permission permission.
+     */
+    virtual void RegisterNativeJavaScriptProxy(const std::string& objName,
+        const std::vector<std::string>& methodName,
+        std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+        bool isAsync,
+        const std::string& permission) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
