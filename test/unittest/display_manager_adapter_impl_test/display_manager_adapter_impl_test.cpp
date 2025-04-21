@@ -602,7 +602,8 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_017, TestS
  */
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_018, TestSize.Level1)
 {
-    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = std::make_unique<DisplayAdapterImpl>(nullptr);
+    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = 
+                std::make_unique<DisplayAdapterImpl>(nullptr);
     EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL), 
                 OHOS::NWeb::FoldStatus::FULL);
     EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN), 
