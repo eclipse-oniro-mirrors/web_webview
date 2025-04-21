@@ -584,9 +584,12 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_017, TestS
 {
     std::unique_ptr<FoldStatusListenerAdapterImpl> displayAdapterImpl = 
             std::make_unique<FoldStatusListenerAdapterImpl>(nullptr);
-    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL), OHOS::NWeb::FoldStatus::FULL);
-    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN), OHOS::NWeb::FoldStatus::MAIN);
-    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB), OHOS::NWeb::FoldStatus::SUB);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL), 
+                OHOS::NWeb::FoldStatus::FULL);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN), 
+                OHOS::NWeb::FoldStatus::MAIN);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB), 
+                OHOS::NWeb::FoldStatus::SUB);
     EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(
         DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION), OHOS::NWeb::FoldStatus::COORDINATION);
 }
