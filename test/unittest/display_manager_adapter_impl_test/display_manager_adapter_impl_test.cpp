@@ -573,5 +573,98 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_016, TestS
     auto allDisplays = displayManagerAdapterImpl->GetAllDisplays();
     EXPECT_EQ(allDisplays.size(), allDisplaysBase.size());
 }
+
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_017.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_017, TestSize.Level1)
+{
+    std::unique_ptr<FoldStatusListenerAdapterImpl> displayAdapterImpl = 
+            std::make_unique<FoldStatusListenerAdapterImpl>(nullptr);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL), 
+                OHOS::NWeb::FoldStatus::FULL);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN), 
+                OHOS::NWeb::FoldStatus::MAIN);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB), 
+                OHOS::NWeb::FoldStatus::SUB);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(
+        DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION), OHOS::NWeb::FoldStatus::COORDINATION);
+}
+ 
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_018.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_018, TestSize.Level1)
+{
+    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = 
+                std::make_unique<DisplayAdapterImpl>(nullptr);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_FULL), 
+                OHOS::NWeb::FoldStatus::FULL);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_MAIN), 
+                OHOS::NWeb::FoldStatus::MAIN);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_SUB), 
+                OHOS::NWeb::FoldStatus::SUB);
+    EXPECT_EQ(displayAdapterImpl->ConvertFoldStatus(DISPLAY_MANAGER_FOLD_DISPLAY_MODE_COORDINATION), 
+                OHOS::NWeb::FoldStatus::COORDINATION);
+}
+ 
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_019.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_019, TestSize.Level1)
+{
+    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = std::make_unique<DisplayAdapterImpl>(nullptr);
+    EXPECT_FALSE(displayAdapterImpl->IsFoldable());
+}
+ 
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_020.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_020, TestSize.Level1)
+{
+    std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = std::make_unique<DisplayAdapterImpl>(nullptr);
+    EXPECT_NE(displayAdapterImpl->GetFoldStatus(), OHOS::NWeb::FoldStatus::FULL);
+}
+ 
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_021.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_021, TestSize.Level1)
+{
+    std::shared_ptr<DisplayManagerAdapterImpl> displayManagerAdapterImpl =
+    std::make_shared<DisplayManagerAdapterImpl>();
+    ASSERT_NE(displayManagerAdapterImpl, nullptr);
+    int32_t id = 0;
+    EXPECT_FALSE(displayManagerAdapterImpl->UnregisterFoldStatusListener(id));
+}
+ 
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_022.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_022, TestSize.Level1)
+{
+    std::shared_ptr<DisplayManagerAdapterImpl> displayManagerAdapterImpl =
+    std::make_shared<DisplayManagerAdapterImpl>();
+    ASSERT_NE(displayManagerAdapterImpl, nullptr);
+    EXPECT_GE(displayManagerAdapterImpl->RegisterFoldStatusListener(nullptr), 0);
+}
 }
 }

@@ -214,5 +214,48 @@
      drawingTextFontAdapter->DestroyFontDescriptor(drawingFontDescriptor);
      drawingFontDescriptor = nullptr;
  }
+
+  /**
+* @tc.name  : DrawingTextAdapterImplTest_009
+* @tc.number: Test GetSystemFontFullNamesByType function when drawingArray is nullptr
+* @tc.desc  : FUNC.
+*/
+HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_009, TestSize.Level1)
+{
+    std::shared_ptr<OhosDrawingTextFontAdapterImpl> drawingTextFontAdapter =
+    std::make_shared<OhosDrawingTextFontAdapterImpl>();
+    int32_t systemFontType = -1;
+    void* drawingArray = nullptr;
+    EXPECT_EQ(-1, drawingTextFontAdapter->GetSystemFontFullNamesByType(systemFontType, &drawingArray));
+}
+ 
+/**
+* @tc.name  : DrawingTextAdapterImplTest_010
+* @tc.number: Test if GetInstance() returns the same instance when called multiple times.
+* @tc.desc  : FUNC
+*/
+HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_010, TestSize.Level1)
+{
+    std::shared_ptr<OhosDrawingTextFontAdapterImpl> drawingTextFontAdapter =
+    std::make_shared<OhosDrawingTextFontAdapterImpl>();
+    auto& instance1 = drawingTextFontAdapter->GetInstance();
+    auto& instance2 = drawingTextFontAdapter->GetInstance();
+    EXPECT_EQ(&instance1, &instance2);
+}
+ 
+/**
+* @tc.name  : DrawingTextAdapterImplTest_011
+* @tc.number: Test GetInstance function to ensure it returns the same instance on multiple calls
+* @tc.desc  : FUNC
+*/
+HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_011, TestSize.Level1)
+{
+    std::shared_ptr<OhosDrawingTextTypographyAdapterImpl> drawingTextFontAdapter =
+    std::make_shared<OhosDrawingTextTypographyAdapterImpl>();
+    // Call GetInstance multiple times and check if the returned instances are the same
+    auto& instance1 = drawingTextFontAdapter->GetInstance();
+    auto& instance2 = drawingTextFontAdapter->GetInstance();
+    EXPECT_EQ(&instance1, &instance2);
+}
  } // namespace NWeb
  } // namespace OHOS
