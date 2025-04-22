@@ -23,16 +23,16 @@ namespace {
 // error message
 const std::string PARAM_CHECK_ERROR_MSG = "Invalid input parameter";
 const std::string CAPABILITY_NOT_SUPPORTED_ERROR_MSG = "Capability not supported";
-const std::string INIT_ERROR_MSG = "Init error. The WebviewController must be associated with a Web component";
+const std::string INIT_ERROR_MSG = "Init error. The WebviewController must be associated with a Web component.";
 const std::string INVALID_URL_MSG = "URL error.Possible causes:1.No valid cookie found for the specified URL. 2. The webpage corresponding to the URL is invalid, or the URL length exceeds 2048.";
-const std::string INVALID_RESOURCE_MSG = "Invalid resource path or file type";
+const std::string INVALID_RESOURCE_MSG = "Invalid resource path or file type.";
 const std::string FUNCTION_NOT_ENABLE_MSG = "Function not enabled.";
-const std::string INVALID_COOKIE_VALUE_MSG = "Invalid cookie value.The cookie format must follow defined in RFC 6265";
+const std::string INVALID_COOKIE_VALUE_MSG = "Invalid cookie value.The cookie format must follow defined in RFC 6265.";
 const std::string CAN_NOT_REGISTER_MESSAGE_EVENT_MSG = "Fail to register a message event for the port.";
 const std::string CANNOT_DEL_JAVA_SCRIPT_PROXY_MSG = "Failed to delete JavaScriptProxy because it does not exist.";
 const std::string CAN_NOT_POST_MESSAGE_MSG = "Failed to post messages through the port.";
-const std::string INVALID_ORIGIN_MSG = "Invalid origin";
-const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invalid web storage origin";
+const std::string INVALID_ORIGIN_MSG = "Invalid origin.";
+const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invalid web storage origin.";
 const std::string INVALID_SOCKET_NUMBER_MSG = "The number of sockets to be preconnected is invalid.";
 const std::string TYPE_NOT_MATCH_WITCH_VALUE_MSG = "The type and value of the message do not match.";
 const std::string NEW_OOM_MSG = "Memory allocation failed.";
