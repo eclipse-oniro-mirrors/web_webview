@@ -22,7 +22,7 @@ namespace {
 // error message
 const std::string PARAM_CHECK_ERROR_MSG = "Invalid input parameter";
 const std::string INIT_ERROR_MSG = "Init error. The WebviewController must be associated with a Web component";
-const std::string INVALID_URL_MSG = "URL error.Possible causes:1.The URL webpage was not accessed by default before acquisition. 2. The webpage corresponding to the URL is invalid, or the URL length exceeds 2048.";
+const std::string INVALID_URL_MSG = "URL error.Possible causes:1.No valid cookie found for the specified URL. 2. The webpage corresponding to the URL is invalid, or the URL length exceeds 2048.";
 const std::string INVALID_RESOURCE_MSG = "Invalid resource path or file type";
 const std::string FUNCTION_NOT_ENABLE_MSG = "Function not enabled.";
 const std::string INVALID_COOKIE_VALUE_MSG = "Invalid cookie value.The cookie format must follow defined in RFC 6265";
