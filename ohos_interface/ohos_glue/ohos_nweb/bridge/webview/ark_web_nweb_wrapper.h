@@ -1574,6 +1574,12 @@ public:
         std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
         bool isAsync,
         const std::string& permission) override;
+
+    /**
+     * @brief Set the window id.
+     */
+    void SetFocusWindowId(uint32_t focus_window_id) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

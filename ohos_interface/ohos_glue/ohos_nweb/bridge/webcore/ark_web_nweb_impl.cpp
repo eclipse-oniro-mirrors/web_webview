@@ -1355,4 +1355,9 @@ void ArkWebNWebImpl::RegisterNativeJavaScriptProxy(const ArkWebString& objName,
                                               isAsync,
                                               ArkWebStringStructToClass(permission));
 }
+
+void ArkWebNWebImpl::SetFocusWindowId(uint32_t focus_window_id)
+{
+    nweb_nweb_->SetFocusWindowId(focus_window_id);
+}
 } // namespace OHOS::ArkWeb
