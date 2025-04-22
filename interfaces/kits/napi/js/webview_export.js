@@ -483,7 +483,9 @@ Object.defineProperty(webview.WebviewController.prototype, 'openAppLink', {
         });
     } catch (err) {
       console.log(`applink openLink ErrorCode: ${err.code},  Message: ${err.message}`);
-      callback.result.continueLoad();
+      setTimeout(() => {
+        callback.result.continueLoad();
+      }, 1);
     }
   }
 });
