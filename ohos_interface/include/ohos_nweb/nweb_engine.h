@@ -109,6 +109,10 @@ public:
                                   std::shared_ptr<NWebProxyChangedCallback> callback) {}
 
     virtual void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback) {}
+
+    virtual void SetAppCustomUserAgent(const std::string& userAgent) {}
+
+    virtual void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
 };
 
 } // namespace OHOS::NWeb
