@@ -161,6 +161,12 @@ public:
      */
     /*--ark web()--*/
     virtual void RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallback> callback) = 0;
+
+    /*--ark web()--*/
+    virtual void SetAppCustomUserAgent(const ArkWebString& userAgent) = 0;
+
+    /*--ark web()--*/
+    virtual void SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts) = 0;
 };
 
 } // namespace OHOS::ArkWeb
