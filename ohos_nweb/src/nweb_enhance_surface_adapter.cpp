@@ -15,7 +15,6 @@
 
 #include "nweb_enhance_surface_adapter.h"
 
-#include <display_type.h>
 #include <securec.h>
 #include <sync_fence.h>
 
