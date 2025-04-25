@@ -15,7 +15,6 @@
 
 #include "nweb_surface_adapter.h"
 
-#include <display_type.h>
 #include <securec.h>
 #include <sync_fence.h>
 
@@ -103,7 +102,7 @@ sptr<SurfaceBuffer> NWebSurfaceAdapter::RequestBuffer(sptr<Surface> surface, uin
         .width = width,
         .height = height,
         .strideAlignment = sizeof(void *),
-        .format = PIXEL_FMT_RGBA_8888,
+        .format = GRAPHIC_PIXEL_FMT_RGBA_8888,
         .usage = BUFFER_USAGE_CPU_READ | BUFFER_USAGE_CPU_WRITE | BUFFER_USAGE_MEM_DMA,
         .timeout = 0,
     };
