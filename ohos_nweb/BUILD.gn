@@ -70,6 +70,7 @@ ohos_shared_library("web_configs") {
     "hilog:libhilog",
     "init:libbegetutil",
     "libxml2:libxml2",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 
   part_name = "webview"

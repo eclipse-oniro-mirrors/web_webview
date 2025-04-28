@@ -27,6 +27,7 @@ ohos_unittest("napi_web_cookie_manager_test") {
     "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 }
 
