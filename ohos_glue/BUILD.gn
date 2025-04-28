@@ -1100,7 +1100,10 @@ ohos_shared_library("ohos_nweb_glue_source") {
     ":ohos_glue_nweb_prepare",
   ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "hilog:libhilog",
+    "ability_runtime:ability_connect_callback_stub",
+  ]
 
   part_name = "webview"
   subsystem_name = "web"
@@ -1119,7 +1122,10 @@ ohos_shared_library("ohos_adapter_glue_source") {
     "../ohos_adapter:nweb_ohos_adapter",
   ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "hilog:libhilog",
+    "ability_runtime:ability_connect_callback_stub",
+  ]
 
   part_name = "webview"
   subsystem_name = "web"

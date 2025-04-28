@@ -51,6 +51,7 @@ ohos_shared_library("ohweb") {
     "c_utils:utils",
     "hilog:libhilog",
     "napi:ace_napi",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 
   deps = [ "../../ohos_nweb:libnweb" ]
