@@ -28,7 +28,7 @@
 #include "nweb_export.h"
 #include "nweb_web_storage.h"
 #include "nweb_proxy_changed_callback.h"
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_state_change_callback.h"
+#include "application_state_change_callback.h"
 
 namespace OHOS::NWeb {
 struct FrameRateSetting {
