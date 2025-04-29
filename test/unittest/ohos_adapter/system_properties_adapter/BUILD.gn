@@ -42,6 +42,7 @@ ohos_unittest("system_properties_adapter_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "webview:libnweb",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 }
 
