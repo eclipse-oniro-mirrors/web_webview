@@ -30,6 +30,7 @@
 #include "ohos_adapter/bridge/ark_date_time_format_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_display_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_display_manager_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_drm_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_enterprise_device_management_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_event_handler_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_flowbuffer_adapter_impl.h"
@@ -44,14 +45,18 @@
 #include "ohos_adapter/bridge/ark_location_request_config_impl.h"
 #include "ohos_adapter/bridge/ark_media_avsession_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_media_codec_decoder_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_audio_codec_decoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_media_codec_encoder_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_migration_manager_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_mmi_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_native_image_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_net_connect_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_net_proxy_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_ohos_drawing_text_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_file_mapper_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_image_decoder_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_init_web_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_ohos_native_buffer_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_resource_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_ohos_web_data_base_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_paste_board_client_adapter_impl.h"
@@ -62,13 +67,14 @@
 #include "ohos_adapter/bridge/ark_print_manager_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_running_lock_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_screen_capture_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_sensor_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_soc_perf_client_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_surface_buffer_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_system_properties_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_vsync_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_web_date_timezone_info_impl.h"
 #include "ohos_adapter/bridge/ark_window_adapter_impl.h"
-#include "ohos_adapter/bridge/ark_sensor_adapter_impl.h"
+
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -113,6 +119,9 @@ ArkWebRefPtr<ArkBatteryMgrClientAdapter> ArkOhosAdapterHelperImpl::CreateBattery
 ArkWebRefPtr<ArkNetConnectAdapter> ArkOhosAdapterHelperImpl::CreateNetConnectAdapter()
 {
     std::unique_ptr<NWeb::NetConnectAdapter> adapter = real_.CreateNetConnectAdapter();
+    if (adapter == nullptr) {
+        return nullptr;
+    }
     std::shared_ptr<NWeb::NetConnectAdapter> shared = std::move(adapter);
     return new ArkNetConnectAdapterImpl(shared);
 }
@@ -211,9 +220,13 @@ ArkWebRefPtr<ArkKeystoreAdapter> ArkOhosAdapterHelperImpl::GetKeystoreAdapterIns
 
 ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> ArkOhosAdapterHelperImpl::GetEnterpriseDeviceManagementInstance()
 {
-    static NWeb::EnterpriseDeviceManagementAdapter& instance = real_.GetEnterpriseDeviceManagementInstance();
-    static ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> impl =
-        new ArkEnterpriseDeviceManagementAdapterImpl(instance);
+    static std::once_flag flag;
+    static ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> impl;
+    std::call_once(flag, [this] {
+        static NWeb::EnterpriseDeviceManagementAdapter& instance =
+            real_.GetEnterpriseDeviceManagementInstance();
+        impl = new ArkEnterpriseDeviceManagementAdapterImpl(instance);
+    });
     return impl;
 }
 
@@ -377,4 +390,53 @@ ArkWebRefPtr<ArkSensorAdapter> ArkOhosAdapterHelperImpl::CreateSensorAdapter()
     std::shared_ptr<NWeb::SensorAdapter> shared = std::move(adapter);
     return new ArkSensorAdapterImpl(shared);
 }
+
+void ArkOhosAdapterHelperImpl::SetArkWebCoreHapPathOverride(const ArkWebString& hapPath)
+{
+    real_.SetArkWebCoreHapPathOverride(ArkWebStringStructToClass(hapPath));
+}
+
+ArkWebRefPtr<ArkOhosNativeBufferAdapter> ArkOhosAdapterHelperImpl::GetOhosNativeBufferAdapter()
+{
+    static NWeb::OhosNativeBufferAdapter& instance = real_.GetOhosNativeBufferAdapter();
+    static ArkWebRefPtr<ArkOhosNativeBufferAdapter> impl = new ArkOhosNativeBufferAdapterImpl(instance);
+    return impl;
+}
+
+ArkWebRefPtr<ArkMigrationManagerAdapter> ArkOhosAdapterHelperImpl::CreateMigrationMgrAdapter()
+{
+    std::unique_ptr<NWeb::MigrationManagerAdapter> adapter = real_.CreateMigrationMgrAdapter();
+    std::shared_ptr<NWeb::MigrationManagerAdapter> shared = std::move(adapter);
+    return new ArkMigrationManagerAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
+{
+    static NWeb::OhosDrawingTextFontAdapter& instance = real_.GetOhosDrawingTextFontAdapter();
+    static ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> impl = new ArkOhosDrawingTextFontAdapterImpl(instance);
+    return impl;
+}
+
+ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> ArkOhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
+{
+    static NWeb::OhosDrawingTextTypographyAdapter& instance = real_.GetOhosDrawingTextTypographyAdapter();
+    static ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> impl =
+        new ArkOhosDrawingTextTypographyAdapterImpl(instance);
+    return impl;
+}
+    
+ArkWebRefPtr<ArkAudioCodecDecoderAdapter> ArkOhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
+{
+    std::unique_ptr<NWeb::AudioCodecDecoderAdapter> adapter = real_.CreateAudioCodecDecoderAdapter();
+    std::shared_ptr<NWeb::AudioCodecDecoderAdapter> shared = std::move(adapter);
+    return new ArkAudioCodecDecoderAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkDrmAdapter> ArkOhosAdapterHelperImpl::CreateDrmAdapter()
+{
+    std::unique_ptr<NWeb::DrmAdapter> adapter = real_.CreateDrmAdapter();
+    std::shared_ptr<NWeb::DrmAdapter> shared = std::move(adapter);
+    return new ArkDrmAdapterImpl(shared);
+}
+
 } // namespace OHOS::ArkWeb

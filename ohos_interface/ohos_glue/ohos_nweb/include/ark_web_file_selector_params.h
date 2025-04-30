@@ -39,6 +39,9 @@ public:
 
     /*--ark web()--*/
     virtual const ArkWebString DefaultFilename() = 0;
+
+    /*--ark web()--*/
+    virtual const ArkWebStringVector MimeType() = 0;
 };
 
 } // namespace OHOS::ArkWeb

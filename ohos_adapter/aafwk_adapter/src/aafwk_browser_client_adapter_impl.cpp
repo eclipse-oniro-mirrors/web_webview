@@ -139,9 +139,9 @@ void BrowserClient::DestroyRenderSurface(int32_t surface_id)
     return;
 }
 
-AafwkBrowserClientAdapterImpl::AafwkBrowserClientAdapterImpl(){}
-AafwkBrowserClientAdapterImpl&
-AafwkBrowserClientAdapterImpl::GetInstance()
+AafwkBrowserClientAdapterImpl::AafwkBrowserClientAdapterImpl() {}
+
+AafwkBrowserClientAdapterImpl& AafwkBrowserClientAdapterImpl::GetInstance()
 {
     static AafwkBrowserClientAdapterImpl instance;
     return instance;
@@ -156,6 +156,12 @@ void* AafwkBrowserClientAdapterImpl::QueryRenderSurface(int32_t surface_id)
         sptr<IBufferProducer> bufferProducer = iface_cast<IBufferProducer>(surfaceObject);
         sptr<Surface> surface = Surface::CreateSurfaceAsProducer(bufferProducer);
         OHNativeWindow* window = ::CreateNativeWindowFromSurface(&surface);
+        if (!window) {
+            WVLOG_E("create the native window failed.");
+            return nullptr;
+        }
+        uint64_t usage = BUFFER_USAGE_MEM_DMA;
+        NativeWindowHandleOpt(window, SET_USAGE, usage);
         window_map_.emplace(surface_id, window);
         void* newNativeWindow = reinterpret_cast<NWebNativeWindow>(window);
         WVLOG_D("receive surface num = %{public}d", surface_id);
@@ -210,6 +216,11 @@ void AafwkBrowserClientAdapterImpl::DestroyRenderSurface(int32_t surface_id)
     if (window_map_.find(surface_id) != window_map_.end()) {
         OHNativeWindow* window = window_map_[surface_id];
         ::DestoryNativeWindow(window);
+        if (!window) {
+            WVLOG_D("window has been destroyed successfully.");
+        } else {
+            WVLOG_E("failed to destroy the window, there may be some leak.");
+        }
         window_map_.erase(surface_id);
     }
     GetInstance().browserHost_->DestroyRenderSurface(surface_id);

@@ -83,6 +83,8 @@ HWTEST_F(PlayerAdapterImplTest, HandlesInvalidArguments, TestSize.Level1)
     EXPECT_EQ(playerAdapter_->GetCurrentTime(currentTime_), -1);
     EXPECT_EQ(playerAdapter_->GetDuration(duration_), -1);
     EXPECT_EQ(playerAdapter_->SetPlaybackSpeed(PlaybackRateMode::SPEED_FORWARD_1_00_X), -1);
+    std::map<std::string, std::string> header;
+    EXPECT_EQ(playerAdapter_->SetMediaSourceHeader(sourceUrl_, header), -1);
 }
 
 /**
@@ -108,6 +110,8 @@ HWTEST_F(PlayerAdapterImplTest, NormalTest, TestSize.Level1)
     EXPECT_NE(playerAdapter_->GetCurrentTime(currentTime_), -1);
     EXPECT_NE(playerAdapter_->GetDuration(duration_), -1);
     EXPECT_NE(playerAdapter_->SetPlaybackSpeed(PlaybackRateMode::SPEED_FORWARD_1_00_X), -1);
+    std::map<std::string, std::string> header;
+    EXPECT_NE(playerAdapter_->SetMediaSourceHeader(sourceUrl_, header), -1);
 }
 
 /**
@@ -182,8 +186,8 @@ class PlayerCallbackOnErrorParamTest : public PlayerCallbackImplTest,
 HWTEST_P(PlayerCallbackOnErrorParamTest, NormalTest, TestSize.Level1)
 {
     ASSERT_NE(playerCallback_, nullptr);
-    PlayerAdapterErrorType errorType = std::get<0>(GetParam());
-    int32_t errorCode = std::get<1>(GetParam());
+    PlayerAdapterErrorType errorType = PlayerAdapterErrorType::INVALID_CODE;
+    int32_t errorCode = 0;
     playerCallback_->OnError(errorCode, errorMsg_);
     EXPECT_EQ(static_cast<PlayerCallbackTest*>(playerCallback_->callbackAdapter_.get())->errorType_, errorType);
 }

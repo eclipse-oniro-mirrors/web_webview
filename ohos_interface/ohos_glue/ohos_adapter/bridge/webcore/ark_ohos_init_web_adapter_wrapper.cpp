@@ -19,12 +19,12 @@ namespace OHOS::ArkWeb {
 
 ArkOhosInitWebAdapterWrapper::ArkOhosInitWebAdapterWrapper(ArkWebRefPtr<ArkOhosInitWebAdapter> ref) : ctocpp_(ref) {}
 
-NWeb::WebRunInitedCallback* ArkOhosInitWebAdapterWrapper::GetRunWebInitedCallback()
+ARK_WEB_NO_SANITIZE NWeb::WebRunInitedCallback* ArkOhosInitWebAdapterWrapper::GetRunWebInitedCallback()
 {
     return (NWeb::WebRunInitedCallback*)ctocpp_->GetRunWebInitedCallback();
 }
 
-void ArkOhosInitWebAdapterWrapper::SetRunWebInitedCallback(NWeb::WebRunInitedCallback* callback)
+ARK_WEB_NO_SANITIZE void ArkOhosInitWebAdapterWrapper::SetRunWebInitedCallback(NWeb::WebRunInitedCallback* callback)
 {
     ctocpp_->SetRunWebInitedCallback((void*)callback);
 }

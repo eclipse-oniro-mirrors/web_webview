@@ -22,6 +22,11 @@ ArkWebU16String ArkWebU16StringClassToStruct(const std::u16string& class_value)
     ArkWebU16String struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (char16_t*)ArkWebMemMalloc((struct_value.size + 1) * sizeof(char16_t));
+        if (struct_value.value == nullptr) {
+            struct_value.size = 0;
+            return struct_value;
+        }
+
         memcpy((char*)struct_value.value, (char*)class_value.c_str(), struct_value.size * sizeof(char16_t));
         struct_value.value[struct_value.size] = 0;
     }
@@ -48,6 +53,11 @@ ArkWebString ArkWebStringClassToStruct(const std::string& class_value)
     ArkWebString struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (char*)ArkWebMemMalloc(struct_value.size + 1);
+        if (struct_value.value == nullptr) {
+            struct_value.size = 0;
+            return struct_value;
+        }
+
         memcpy(struct_value.value, class_value.c_str(), struct_value.size);
         struct_value.value[struct_value.size] = 0;
     }
@@ -69,13 +79,13 @@ std::string ArkWebStringStructToClass(const ArkWebString& struct_value)
     return class_value;
 }
 
-void ArkWebStringStructRelease(ArkWebString& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringStructRelease(ArkWebString& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
 }
 
-void ArkWebU16StringStructRelease(ArkWebU16String& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebU16StringStructRelease(ArkWebU16String& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
@@ -87,6 +97,12 @@ ArkWebStringMap ArkWebStringMapClassToStruct(const std::map<std::string, std::st
     if (struct_value.size > 0) {
         struct_value.key = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
         struct_value.value = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
+        if (struct_value.key == nullptr || struct_value.value == nullptr) {
+            ArkWebMemFree(struct_value.key);
+            ArkWebMemFree(struct_value.value);
+            struct_value.size = 0;
+            return struct_value;
+        }
 
         int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
@@ -110,7 +126,7 @@ std::map<std::string, std::string> ArkWebStringMapStructToClass(const ArkWebStri
     return class_value;
 }
 
-void ArkWebStringMapStructRelease(ArkWebStringMap& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringMapStructRelease(ArkWebStringMap& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.key[count]);
@@ -127,6 +143,10 @@ ArkWebStringList ArkWebStringListClassToStruct(const std::list<std::string>& cla
     ArkWebStringList struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
+        if (struct_value.value == nullptr) {
+            struct_value.size = 0;
+            return struct_value;
+        }
 
         int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
@@ -138,7 +158,7 @@ ArkWebStringList ArkWebStringListClassToStruct(const std::list<std::string>& cla
     return struct_value;
 }
 
-std::list<std::string> ArkWebStringListStructToClass(const ArkWebStringList& struct_value)
+ARK_WEB_NO_SANITIZE std::list<std::string> ArkWebStringListStructToClass(const ArkWebStringList& struct_value)
 {
     std::list<std::string> class_value;
     for (int count = 0; count < struct_value.size; count++) {
@@ -148,7 +168,7 @@ std::list<std::string> ArkWebStringListStructToClass(const ArkWebStringList& str
     return class_value;
 }
 
-void ArkWebStringListStructRelease(ArkWebStringList& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringListStructRelease(ArkWebStringList& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.value[count]);
@@ -163,6 +183,10 @@ ArkWebStringVector ArkWebStringVectorClassToStruct(const std::vector<std::string
     ArkWebStringVector struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
         struct_value.value = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
+        if (struct_value.value == nullptr) {
+            struct_value.size = 0;
+            return struct_value;
+        }
 
         int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
@@ -184,7 +208,7 @@ std::vector<std::string> ArkWebStringVectorStructToClass(const ArkWebStringVecto
     return class_value;
 }
 
-void ArkWebStringVectorStructRelease(ArkWebStringVector& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringVectorStructRelease(ArkWebStringVector& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.value[count]);
@@ -201,6 +225,12 @@ ArkWebStringVectorMap ArkWebStringVectorMapClassToStruct(
     if (struct_value.size > 0) {
         struct_value.key = (ArkWebString*)ArkWebMemMalloc(sizeof(ArkWebString) * struct_value.size);
         struct_value.value = (ArkWebStringVector*)ArkWebMemMalloc(sizeof(ArkWebStringVector) * struct_value.size);
+        if (struct_value.key == nullptr || struct_value.value == nullptr) {
+            ArkWebMemFree(struct_value.key);
+            ArkWebMemFree(struct_value.value);
+            struct_value.size = 0;
+            return struct_value;
+        }
 
         int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
@@ -226,7 +256,7 @@ std::map<std::string, std::vector<std::string>> ArkWebStringVectorMapStructToCla
     return class_value;
 }
 
-void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap& struct_value)
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.key[count]);

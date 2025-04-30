@@ -13,52 +13,48 @@
  * limitations under the License.
  */
 
-#include "event_handler_adapter_fuzzer.h"  
-#include "event_handler_adapter_impl.h"  
-#include <cstddef>  
-#include <cstdint>  
-#include <memory>  
+#include "event_handler_adapter_fuzzer.h"
 
-using namespace OHOS::NWeb;  
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <fuzzer/FuzzedDataProvider.h>
 
-namespace OHOS {  
+#include "event_handler_adapter_impl.h"
 
-class EventHandlerFDListenerAdapterTest : public EventHandlerFDListenerAdapter {  
-public:  
-    void OnReadable(int32_t fileDescriptor) override {  
-        // 测试用的空实现  
-    }  
-};  
+using namespace OHOS::NWeb;
 
-bool EventHandlerAdapterFuzzTest(const uint8_t* data, size_t size)  
-{  
-    if (size < sizeof(int32_t) + sizeof(uint32_t)) {  
-        return false;  
-    }  
+namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
 
-    int32_t fileDescriptor = static_cast<int32_t>(data[0]);  
-    uint32_t events = static_cast<uint32_t>(data[1]);  
+class EventHandlerFDListenerAdapterTest : public EventHandlerFDListenerAdapter {
+public:
+    void OnReadable(int32_t fileDescriptor) override {}
+};
 
-    // 创建 EventHandlerFDListenerAdapterTest 的实例  
-    std::shared_ptr<EventHandlerFDListenerAdapter> listener = std::make_shared<EventHandlerFDListenerAdapterTest>();  
+bool EventHandlerAdapterFuzzTest(const uint8_t* data, size_t size)
+{
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t fileDescriptor = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    uint32_t events = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
 
-    // 创建 EventHandlerAdapterImpl 的实例  
-    std::shared_ptr<EventHandlerAdapterImpl> eventHandlerAdapter = std::make_shared<EventHandlerAdapterImpl>();  
+    std::shared_ptr<EventHandlerFDListenerAdapter> listener = std::make_shared<EventHandlerFDListenerAdapterTest>();
 
-    // 测试 AddFileDescriptorListener  
-    eventHandlerAdapter->AddFileDescriptorListener(fileDescriptor, events, listener);  
+    std::shared_ptr<EventHandlerAdapterImpl> eventHandlerAdapter = std::make_shared<EventHandlerAdapterImpl>();
 
-    // 测试 RemoveFileDescriptorListener  
-    eventHandlerAdapter->RemoveFileDescriptorListener(fileDescriptor);  
+    eventHandlerAdapter->AddFileDescriptorListener(fileDescriptor, events, listener);
 
-    return true;  
-}  
+    auto fdListenerImpl = std::make_shared<EventHandlerFDListenerAdapterImpl>(listener);
+    fdListenerImpl->OnReadable(fileDescriptor);
 
-}  
+    eventHandlerAdapter->RemoveFileDescriptorListener(fileDescriptor);
 
-/* Fuzzer 入口点 */  
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)  
-{  
-    OHOS::EventHandlerAdapterFuzzTest(data, size);  
-    return 0;  
+    return true;
+}
+} // namespace OHOS
+
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+{
+    OHOS::EventHandlerAdapterFuzzTest(data, size);
+    return 0;
 }

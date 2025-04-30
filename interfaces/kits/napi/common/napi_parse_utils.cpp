@@ -40,8 +40,8 @@ bool ConvertToNapiHandlerOfBinary(napi_env env, std::shared_ptr<NWebMessage> src
 {
     std::vector<uint8_t> msgArr = src->GetBinary();
     void *arrayData = nullptr;
-    napi_create_arraybuffer(env, msgArr.size(), &arrayData, &dst);
-    if (arrayData == nullptr) {
+    napi_status status = napi_create_arraybuffer(env, msgArr.size(), &arrayData, &dst);
+    if (status != napi_ok) {
         WVLOG_E("Create arraybuffer failed");
         return false;
     }
@@ -465,21 +465,31 @@ bool IsNumberOfLength(const std::string &value)
 
 bool NapiParseUtils::ParseJsLengthStringToInt(const std::string &input, PixelUnit &type, int32_t &value)
 {
-    if (input.empty()) {
+    if (input.empty() || input.size() >= MAX_STRING_TO_INT32_LENGTH) {
         return false;
     }
     if (!IsFormatStringOfLength(input)) {
         return false;
     }
     if (IsNumberOfLength(input)) {
-        value = std::stoi(input);
+        try {
+            value = std::stoi(input);
+        } catch (std::out_of_range&) {
+            WVLOG_E("input trans failed: out of range");
+            value = 0;
+        }
         type = PixelUnit::VP;
         return true;
     }
     if (input.back() == '%') {
         std::string trans = input.substr(0, input.length() - 1);
         if (IsNumberOfLength(trans)) {
-            value = std::stoi(trans);
+            try {
+                value = std::stoi(trans);
+            } catch (std::out_of_range&) {
+                WVLOG_E("input trans failed: out of range");
+                value = 0;
+            }
             type = PixelUnit::PERCENTAGE;
             return true;
         }
@@ -494,11 +504,21 @@ bool NapiParseUtils::ParseJsLengthStringToInt(const std::string &input, PixelUni
         return false;
     }
     if (lastTwo == "px") {
-        value = std::stoi(trans);
+        try {
+            value = std::stoi(trans);
+        } catch (std::out_of_range&) {
+            WVLOG_E("input trans failed: out of range");
+            value = 0;
+        }
         type = PixelUnit::PX;
         return true;
     } else if (lastTwo == "vp") {
-        value = std::stoi(trans);
+        try {
+            value = std::stoi(trans);
+        } catch (std::out_of_range&) {
+            WVLOG_E("input trans failed: out of range");
+            value = 0;
+        }
         type = PixelUnit::VP;
         return true;
     }

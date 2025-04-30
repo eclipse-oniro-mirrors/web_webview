@@ -382,9 +382,9 @@ int ArkHiSysEventAdapterWrapper::Write(const std::string& eventName, ArkEventTyp
 
 int ArkHiSysEventAdapterWrapper::Write(const std::string& eventName, ArkEventType type,
     const std::tuple<const std::string, const std::string, const std::string, const std::string, const std::string,
-        const std::string, const std::string, const std::string, const std::string,
-        const std::string, const std::string, const std::string, const std::string,
-        const std::string, const std::string, const std::string>& data)
+        const std::string, const std::string, const std::string, const std::string, const std::string,
+        const std::string, const std::string, const std::string, const std::string, const std::string,
+        const std::string>& data)
 {
     if (!ctocpp_) {
         return -1;
@@ -407,9 +407,9 @@ int ArkHiSysEventAdapterWrapper::Write(const std::string& eventName, ArkEventTyp
     ArkWebString ark_key8 = ArkWebStringClassToStruct(std::get<14>(data));
     ArkWebString ark_value8 = ArkWebStringClassToStruct(std::get<15>(data));
 
-    int result = ctocpp_->Write(ark_event_name, (uint32_t)type, ark_key1, ark_value1, ark_key2, ark_value2,
-        ark_key3, ark_value3, ark_key4, ark_value4, ark_key5, ark_value5,
-        ark_key6, ark_value6, ark_key7, ark_value7, ark_key8, ark_value8);
+    int result = ctocpp_->Write(ark_event_name, (uint32_t)type, ark_key1, ark_value1, ark_key2, ark_value2, ark_key3,
+        ark_value3, ark_key4, ark_value4, ark_key5, ark_value5, ark_key6, ark_value6, ark_key7, ark_value7, ark_key8,
+        ark_value8);
 
     ArkWebStringStructRelease(ark_event_name);
     ArkWebStringStructRelease(ark_key1);
@@ -428,6 +428,26 @@ int ArkHiSysEventAdapterWrapper::Write(const std::string& eventName, ArkEventTyp
     ArkWebStringStructRelease(ark_value7);
     ArkWebStringStructRelease(ark_key8);
     ArkWebStringStructRelease(ark_value8);
+
+    return result;
+}
+
+int ArkHiSysEventAdapterWrapper::Write(const std::string& eventName, ArkEventType type,
+    const std::tuple<const std::string, const uint32_t, const std::string, const uint64_t>& data)
+{
+    if (!ctocpp_) {
+        return -1;
+    }
+    ArkWebString ark_event_name = ArkWebStringClassToStruct(eventName);
+    ArkWebString ark_key1 = ArkWebStringClassToStruct(std::get<0>(data));
+    ArkWebString ark_key2 = ArkWebStringClassToStruct(std::get<2>(data));
+
+    int result = ctocpp_->Write(
+        ark_event_name, (uint32_t)type, ark_key1, std::get<1>(data), ark_key2, std::get<3>(data));
+
+    ArkWebStringStructRelease(ark_event_name);
+    ArkWebStringStructRelease(ark_key1);
+    ArkWebStringStructRelease(ark_key2);
 
     return result;
 }

@@ -24,17 +24,21 @@ using namespace OHOS::NWeb;
 using namespace OHOS::Rosen;
 
 namespace OHOS {
-    bool GetOrientationFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        sptr<Display> listener =nullptr;
-        DisplayAdapterImpl display(listener);
-        display.GetOrientation();
-        return true;
+bool GetOrientationFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    sptr<Display> listener = nullptr;
+    DisplayAdapterImpl display(listener);
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; i++) {
+        display.GetOrientation();
+    }
+    display.GetOrientation();
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

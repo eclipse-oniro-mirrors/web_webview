@@ -16,6 +16,7 @@
 #ifndef NWEB_ACCESS_REQUEST_H
 #define NWEB_ACCESS_REQUEST_H
 
+#include <memory>
 #include <string>
 
 #include "nweb_export.h"
@@ -37,6 +38,7 @@ public:
         CLIPBOARD_READ_WRITE = 1 << 5,
         CLIPBOARD_SANITIZED_WRITE = 1 << 6,
         SENSORS = 1 << 7,
+        NOTIFICATION = 1 << 8,
     };
 
     /**

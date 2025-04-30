@@ -74,6 +74,15 @@ enum class AudioAdapterStreamUsage : int32_t {
     STREAM_USAGE_NOTIFICATION_RINGTONE = 6
 };
 
+enum class AudioAdapterConcurrencyMode : int32_t {
+    INVALID = -1,
+    DEFAULT = 0,
+    MIX_WITH_OTHERS = 1,
+    DUCK_OTHERS = 2,
+    PAUSE_OTHERS = 3,
+    SILENT = 4,
+};
+
 class AudioRendererOptionsAdapter {
 public:
     AudioRendererOptionsAdapter() = default;
@@ -93,6 +102,8 @@ public:
     virtual AudioAdapterStreamUsage GetStreamUsage() = 0;
 
     virtual int32_t GetRenderFlags() = 0;
+
+    virtual AudioAdapterConcurrencyMode GetConcurrencyMode() { return AudioAdapterConcurrencyMode::INVALID; }
 };
 
 enum AudioAdapterCode : int32_t {
@@ -160,6 +171,13 @@ public:
     virtual bool IsRendererStateRunning() = 0;
 
     virtual int32_t SetAudioOutputChangeCallback(const std::shared_ptr<AudioOutputChangeCallbackAdapter>& callback) = 0;
+
+    virtual void SetAudioSilentMode(bool isSilentMode) = 0;
+
+    virtual bool Flush()
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
@@ -24,15 +25,19 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool AudioSetStreamtypeFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(AudioAdapterStreamType::STREAM_TTS);
-        return true;
+constexpr int MAX_SET_NUMBER = 1000;
+
+bool AudioSetStreamtypeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t Adapter = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<NWeb::AudioAdapterStreamType>(Adapter));
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

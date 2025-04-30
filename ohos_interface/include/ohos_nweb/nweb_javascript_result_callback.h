@@ -16,6 +16,7 @@
 #ifndef NWEB_JAVASCRIPT_RESULT_CALLBACK_H
 #define NWEB_JAVASCRIPT_RESULT_CALLBACK_H
 
+#include <memory>
 #include <string>
 #include <vector>
 

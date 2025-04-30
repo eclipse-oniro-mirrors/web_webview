@@ -17,22 +17,39 @@
 
 #include <cstring>
 #include <securec.h>
+#include <array>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "audio_renderer_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool AudioGetContentFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        AudioRendererAdapterImpl adapter;
-        adapter.GetAudioContentType(AudioAdapterContentType::CONTENT_TYPE_SPEECH);
-        return true;
+constexpr int MAX_SET_NUMBER = 1000;
+
+bool AudioGetContentFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    constexpr int typenums = 6;
+    std::array<AudioAdapterContentType, typenums> contentArray = {
+        AudioAdapterContentType::CONTENT_TYPE_UNKNOWN,
+        AudioAdapterContentType::CONTENT_TYPE_SPEECH,
+        AudioAdapterContentType::CONTENT_TYPE_MUSIC,
+        AudioAdapterContentType::CONTENT_TYPE_MOVIE,
+        AudioAdapterContentType::CONTENT_TYPE_SONIFICATION,
+        AudioAdapterContentType::CONTENT_TYPE_RINGTONE,
+    };
+    for (auto& content : contentArray)
+        AudioRendererAdapterImpl::GetAudioContentType(content);
+
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t ContentType = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    AudioRendererAdapterImpl::GetAudioContentType(static_cast<AudioAdapterContentType>(ContentType));
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

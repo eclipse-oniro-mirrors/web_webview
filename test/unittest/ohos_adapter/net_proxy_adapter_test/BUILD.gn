@@ -13,13 +13,14 @@
 
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
     "../../../../ohos_adapter/net_proxy_adapter/include",
+    "../../../../ohos_interface/include/ohos_adapter",
     "../../../../ohos_nweb/include",
   ]
 }
@@ -27,15 +28,16 @@ config("module_private_config") {
 ohos_unittest("net_proxy_adapter_test") {
   module_out_path = module_output_path
 
-  sources = [ "net_proxy_adapter_test.cpp" ]
+  sources = [
+    "net_conn_client_test_mock.cpp",
+    "net_conn_client_test_mock.h",
+  ]
+
+  sources += [ "net_proxy_adapter_test.cpp" ]
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "../../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "ability_base:want",
@@ -44,6 +46,8 @@ ohos_unittest("net_proxy_adapter_test") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "common_event_service:cesfwk_innerkits",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "netmanager_base:net_conn_manager_if",
   ]

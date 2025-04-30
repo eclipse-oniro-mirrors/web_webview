@@ -18,6 +18,7 @@
 
 #include <cstdint>
 #include <string>
+#include <vector>
 
 namespace OHOS::NWeb {
 
@@ -27,6 +28,8 @@ enum class ProductDeviceType : int32_t {
     DEVICE_TYPE_MOBILE,
     DEVICE_TYPE_TABLET,
     DEVICE_TYPE_2IN1,
+    DEVICE_TYPE_WEARABLE,
+    DEVICE_TYPE_TV,
     DEVICE_TYPE_UNKNOWN
 };
 
@@ -88,6 +91,28 @@ public:
     virtual std::vector<FrameRateSetting> GetLTPOConfig(const std::string& settingName) = 0;
 
     virtual std::string GetOOPGPUStatus() = 0;
+
+    virtual bool IsLTPODynamicApp(const std::string& bundleName) = 0;
+
+    virtual int32_t GetLTPOStrategy() = 0;
+
+    virtual std::string GetUserAgentBaseOSName() = 0;
+
+    virtual std::string GetUserAgentOSVersion() = 0;
+
+    virtual std::string GetVulkanStatus() = 0;
+
+    virtual std::string GetCompatibleDeviceType() = 0;
+
+    virtual std::string GetDeviceInfoApiVersion() = 0;
+
+    virtual std::string GetPRPPreloadMode() = 0;
+
+    virtual std::string GetScrollVelocityScale() = 0;
+
+    virtual std::string GetScrollFriction() = 0;
+
+    virtual std::string GetBundleName() = 0;
 };
 
 } // namespace OHOS::NWeb

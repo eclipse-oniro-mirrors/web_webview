@@ -17,6 +17,7 @@
 #define NWEB_URL_RESOURCE_RESPONSE_H
 
 #include <map>
+#include <memory>
 #include <string>
 
 namespace OHOS::NWeb {

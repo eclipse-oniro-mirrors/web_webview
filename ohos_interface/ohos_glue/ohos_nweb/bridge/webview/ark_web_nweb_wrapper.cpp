@@ -17,6 +17,7 @@
 
 #include "ohos_nweb/bridge/ark_web_accessibility_event_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_accessibility_node_info_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_array_buffer_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_bool_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_cache_options_impl.h"
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_impl.h"
@@ -27,8 +28,12 @@
 #include "ohos_nweb/bridge/ark_web_handler_impl.h"
 #include "ohos_nweb/bridge/ark_web_history_list_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_hit_test_result_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_js_proxy_method_impl.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_keyboard_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_mouse_event_impl.h"
+#include "ohos_nweb/bridge/ark_web_pdfconfig_args_impl.h"
 #include "ohos_nweb/bridge/ark_web_preference_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_impl.h"
@@ -811,6 +816,45 @@ void ArkWebNWebWrapper::JavaScriptOnDocumentStart(const std::map<std::string, st
     ArkWebStringVectorMapStructRelease(stScriptItems);
 }
 
+void ArkWebNWebWrapper::JavaScriptOnDocumentStartByOrder(
+    const std::map<std::string, std::vector<std::string>>& script_items,
+    const std::vector<std::string>& script_items_by_order)
+{
+    ArkWebStringVectorMap stScriptItems = ArkWebStringVectorMapClassToStruct(script_items);
+    ArkWebStringVector stscript_items_by_order = ArkWebStringVectorClassToStruct(script_items_by_order);
+
+    ark_web_nweb_->JavaScriptOnDocumentStartByOrder(stScriptItems, stscript_items_by_order);
+
+    ArkWebStringVectorMapStructRelease(stScriptItems);
+    ArkWebStringVectorStructRelease(stscript_items_by_order);
+}
+
+void ArkWebNWebWrapper::JavaScriptOnDocumentEndByOrder(
+    const std::map<std::string, std::vector<std::string>>& script_items,
+    const std::vector<std::string>& script_items_by_order)
+{
+    ArkWebStringVectorMap stScriptItems = ArkWebStringVectorMapClassToStruct(script_items);
+    ArkWebStringVector stscript_items_by_order = ArkWebStringVectorClassToStruct(script_items_by_order);
+
+    ark_web_nweb_->JavaScriptOnDocumentEndByOrder(stScriptItems, stscript_items_by_order);
+
+    ArkWebStringVectorMapStructRelease(stScriptItems);
+    ArkWebStringVectorStructRelease(stscript_items_by_order);
+}
+
+void ArkWebNWebWrapper::JavaScriptOnHeadReadyByOrder(
+    const std::map<std::string, std::vector<std::string>>& script_items,
+    const std::vector<std::string>& script_items_by_order)
+{
+    ArkWebStringVectorMap stScriptItems = ArkWebStringVectorMapClassToStruct(script_items);
+    ArkWebStringVector stscript_items_by_order = ArkWebStringVectorClassToStruct(script_items_by_order);
+
+    ark_web_nweb_->JavaScriptOnHeadReadyByOrder(stScriptItems, stscript_items_by_order);
+
+    ArkWebStringVectorMapStructRelease(stScriptItems);
+    ArkWebStringVectorStructRelease(stscript_items_by_order);
+}
+
 void ArkWebNWebWrapper::ExecuteAction(int64_t accessibility_id, uint32_t action)
 {
     ark_web_nweb_->ExecuteAction(accessibility_id, action);
@@ -1055,6 +1099,11 @@ void ArkWebNWebWrapper::OnCreateNativeMediaPlayer(
     ark_web_nweb_->OnCreateNativeMediaPlayer(new ArkWebCreateNativeMediaPlayerCallbackImpl(callback));
 }
 
+void ArkWebNWebWrapper::SendTouchpadFlingEvent(double x, double y, double vx, double vy)
+{
+    ark_web_nweb_->SendTouchpadFlingEvent(x, y, vx, vy);
+}
+
 void ArkWebNWebWrapper::DragResize(uint32_t width, uint32_t height, uint32_t pre_height, uint32_t pre_width)
 {
     ark_web_nweb_->DragResize(width, height, pre_height, pre_width);
@@ -1063,11 +1112,6 @@ void ArkWebNWebWrapper::DragResize(uint32_t width, uint32_t height, uint32_t pre
 void ArkWebNWebWrapper::OnTouchCancelById(int32_t id, double x, double y, bool from_overlay)
 {
     ark_web_nweb_->OnTouchCancelById(id, x, y, from_overlay);
-}
-
-int ArkWebNWebWrapper::ScaleGestureChange(double scale, double centerX, double centerY)
-{
-    return ark_web_nweb_->ScaleGestureChange(scale, centerX, centerY);
 }
 
 void ArkWebNWebWrapper::InjectOfflineResource(const std::string& url, const std::string& origin,
@@ -1086,21 +1130,6 @@ void ArkWebNWebWrapper::InjectOfflineResource(const std::string& url, const std:
     ArkWebStringStructRelease(arkOrigin);
     ArkWebBasicVectorStructRelease<ArkWebUint8Vector>(arkResource);
     ArkWebStringMapStructRelease(responseHeadersMap);
-}
-
-void ArkWebNWebWrapper::SuggestionSelected(int32_t index)
-{
-    ark_web_nweb_->SuggestionSelected(index);
-}
-
-void ArkWebNWebWrapper::SendTouchpadFlingEvent(double x, double y, double vx, double vy)
-{
-    ark_web_nweb_->SendTouchpadFlingEvent(x, y, vx, vy);
-}
-
-bool ArkWebNWebWrapper::TerminateRenderProcess()
-{
-    return ark_web_nweb_->TerminateRenderProcess();
 }
 
 void ArkWebNWebWrapper::RegisterArkJSfunction(const std::string& object_name,
@@ -1123,6 +1152,11 @@ void ArkWebNWebWrapper::SetFitContentMode(int32_t mode)
     ark_web_nweb_->SetFitContentMode(mode);
 }
 
+bool ArkWebNWebWrapper::TerminateRenderProcess()
+{
+    return ark_web_nweb_->TerminateRenderProcess();
+}
+
 std::string ArkWebNWebWrapper::GetSelectInfo()
 {
     return ArkWebStringStructToClass(ark_web_nweb_->GetSelectInfo());
@@ -1131,6 +1165,16 @@ std::string ArkWebNWebWrapper::GetSelectInfo()
 void ArkWebNWebWrapper::OnOnlineRenderToForeground()
 {
     ark_web_nweb_->OnOnlineRenderToForeground();
+}
+
+int ArkWebNWebWrapper::ScaleGestureChange(double scale, double centerX, double centerY)
+{
+    return ark_web_nweb_->ScaleGestureChange(scale, centerX, centerY);
+}
+
+void ArkWebNWebWrapper::SuggestionSelected(int32_t index)
+{
+    ark_web_nweb_->SuggestionSelected(index);
 }
 
 void ArkWebNWebWrapper::OnSafeInsetsChange(int left, int top, int right, int bottom)
@@ -1143,15 +1187,33 @@ void ArkWebNWebWrapper::OnTextSelected()
     ark_web_nweb_->OnTextSelected();
 }
 
-bool ArkWebNWebWrapper::WebSendKeyEvent(int32_t key_code, int32_t key_action,
-                                        const std::vector<int32_t>& pressedCodes)
+void ArkWebNWebWrapper::NotifyForNextTouchEvent()
 {
-    ArkWebInt32Vector pCodes = ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(pressedCodes);
+    ark_web_nweb_->NotifyForNextTouchEvent();
+}
 
-    bool result = ark_web_nweb_->WebSendKeyEvent(key_code, key_action, pCodes);
+void ArkWebNWebWrapper::EnableAdsBlock(bool enable)
+{
+    ark_web_nweb_->EnableAdsBlock(enable);
+}
 
-    ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
-    return result;
+bool ArkWebNWebWrapper::IsAdsBlockEnabled()
+{
+    return ark_web_nweb_->IsAdsBlockEnabled();
+}
+
+bool ArkWebNWebWrapper::IsAdsBlockEnabledForCurPage()
+{
+    return ark_web_nweb_->IsAdsBlockEnabledForCurPage();
+}
+
+bool ArkWebNWebWrapper::WebPageSnapshot(const char* id,
+                                        ArkPixelUnit type,
+                                        int width,
+                                        int height,
+                                        const WebSnapshotCallback callback)
+{
+    return ark_web_nweb_->WebPageSnapshot(id, static_cast<int>(type), width, height, callback);
 }
 
 void ArkWebNWebWrapper::OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebSystemConfiguration> configuration)
@@ -1162,31 +1224,6 @@ void ArkWebNWebWrapper::OnConfigurationUpdated(std::shared_ptr<OHOS::NWeb::NWebS
     }
 
     ark_web_nweb_->OnConfigurationUpdated(new ArkWebSystemConfigurationImpl(configuration));
-}
-
-void ArkWebNWebWrapper::EnableAdsBlock(bool enable) {
-    ark_web_nweb_->EnableAdsBlock(enable);
-}
-
-bool ArkWebNWebWrapper::IsAdsBlockEnabled() {
-    return ark_web_nweb_->IsAdsBlockEnabled();
-}
-
-bool ArkWebNWebWrapper::IsAdsBlockEnabledForCurPage() {
-    return ark_web_nweb_->IsAdsBlockEnabledForCurPage();
-}
-
-void ArkWebNWebWrapper::NotifyForNextTouchEvent()
-{
-    ark_web_nweb_->NotifyForNextTouchEvent();
-}
-
-int ArkWebNWebWrapper::SetUrlTrustList(const std::string& urlTrustList)
-{
-    ArkWebString stUrlTrustList = ArkWebStringClassToStruct(urlTrustList);
-    int res = ark_web_nweb_->SetUrlTrustList(stUrlTrustList);
-    ArkWebStringStructRelease(stUrlTrustList);
-    return res;
 }
 
 int ArkWebNWebWrapper::SetUrlTrustListWithErrMsg(
@@ -1202,7 +1239,8 @@ int ArkWebNWebWrapper::SetUrlTrustListWithErrMsg(
 }
 
 void ArkWebNWebWrapper::PutSpanstringConvertHtmlCallback(
-    std::shared_ptr<OHOS::NWeb::NWebSpanstringConvertHtmlCallback> callback) {
+    std::shared_ptr<OHOS::NWeb::NWebSpanstringConvertHtmlCallback> callback)
+{
     if (CHECK_SHARED_PTR_IS_NULL(callback)) {
         ark_web_nweb_->PutSpanstringConvertHtmlCallback(nullptr);
         return;
@@ -1212,12 +1250,22 @@ void ArkWebNWebWrapper::PutSpanstringConvertHtmlCallback(
         new ArkWebSpanstringConvertHtmlCallbackImpl(callback));
 }
 
-bool ArkWebNWebWrapper::WebPageSnapshot(const char* id,
-                                        ArkPixelUnit type,
-                                        int width,
-                                        int height,
-                                        const WebSnapshotCallback callback) {
-    return ark_web_nweb_->WebPageSnapshot(id, static_cast<int>(type), width, height, callback);
+int ArkWebNWebWrapper::SetUrlTrustList(const std::string& urlTrustList)
+{
+    ArkWebString stUrlTrustList = ArkWebStringClassToStruct(urlTrustList);
+    int res = ark_web_nweb_->SetUrlTrustList(stUrlTrustList);
+    ArkWebStringStructRelease(stUrlTrustList);
+    return res;
+}
+
+bool ArkWebNWebWrapper::WebSendKeyEvent(int32_t key_code, int32_t key_action, const std::vector<int32_t>& pressedCodes)
+{
+    ArkWebInt32Vector pCodes = ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(pressedCodes);
+
+    bool result = ark_web_nweb_->WebSendKeyEvent(key_code, key_action, pCodes);
+
+    ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
+    return result;
 }
 
 void ArkWebNWebWrapper::SetPathAllowingUniversalAccess(
@@ -1235,25 +1283,6 @@ void ArkWebNWebWrapper::SetPathAllowingUniversalAccess(
     ArkWebStringVectorStructRelease(stDirs);
     ArkWebStringVectorStructRelease(stModuleName);
     ArkWebStringStructRelease(stErrorPath);
-}
-
-void ArkWebNWebWrapper::PerformAction(int64_t accessibility_id, uint32_t action,
-    const std::map<std::string, std::string>& actionArguments)
-{
-    ArkWebStringMap stArguments = ArkWebStringMapClassToStruct(actionArguments);
-    ark_web_nweb_->PerformAction(accessibility_id, action, stArguments);
-
-    ArkWebStringMapStructRelease(stArguments);
-}
-
-void ArkWebNWebWrapper::ScrollToWithAnime(float x, float y, int32_t duration)
-{
-    ark_web_nweb_->ScrollToWithAnime(x, y, duration);
-}
-
-void ArkWebNWebWrapper::ScrollByWithAnime(float delta_x, float delta_y, int32_t duration)
-{
-    ark_web_nweb_->ScrollByWithAnime(delta_x, delta_y, duration);
 }
 
 void ArkWebNWebWrapper::WebSendMouseWheelEvent(double x,
@@ -1282,9 +1311,14 @@ void ArkWebNWebWrapper::WebSendTouchpadFlingEvent(double x,
     ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
 }
 
-void ArkWebNWebWrapper::SendAccessibilityHoverEvent(int32_t x, int32_t y)
+void ArkWebNWebWrapper::ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard)
 {
-    ark_web_nweb_->SendAccessibilityHoverEvent(x, y);
+    ark_web_nweb_->ResizeVisibleViewport(width, height, isKeyboard);
+}
+
+void ArkWebNWebWrapper::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
+{
+    ark_web_nweb_->SetBackForwardCacheOptions(size, timeToLive);
 }
 
 void ArkWebNWebWrapper::RegisterArkJSfunction(const std::string& object_name,
@@ -1305,16 +1339,6 @@ void ArkWebNWebWrapper::RegisterArkJSfunction(const std::string& object_name,
     ArkWebStringStructRelease(stPermission);
 }
 
-void ArkWebNWebWrapper::ResizeVisibleViewport(uint32_t width, uint32_t height, bool isKeyboard)
-{
-    ark_web_nweb_->ResizeVisibleViewport(width, height, isKeyboard);
-}
-
-void ArkWebNWebWrapper::SetBackForwardCacheOptions(int32_t size, int32_t timeToLive)
-{
-    ark_web_nweb_->SetBackForwardCacheOptions(size, timeToLive);
-}
-
 void ArkWebNWebWrapper::SetAutofillCallback(std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback)
 {
     if (CHECK_SHARED_PTR_IS_NULL(callback)) {
@@ -1329,5 +1353,253 @@ void ArkWebNWebWrapper::FillAutofillData(std::shared_ptr<OHOS::NWeb::NWebMessage
     ArkWebMessage ark_web_message;
     ark_web_message.nweb_message = data;
     ark_web_nweb_->FillAutofillData(ark_web_message);
+}
+
+void ArkWebNWebWrapper::OnAutofillCancel(const std::string& fillContent)
+{
+    ArkWebString stFillContent = ArkWebStringClassToStruct(fillContent);
+
+    ark_web_nweb_->OnAutofillCancel(stFillContent);
+
+    ArkWebStringStructRelease(stFillContent);
+}
+
+void ArkWebNWebWrapper::PerformAction(int64_t accessibility_id, uint32_t action,
+    const std::map<std::string, std::string>& actionArguments)
+{
+    ArkWebStringMap stArguments = ArkWebStringMapClassToStruct(actionArguments);
+    ark_web_nweb_->PerformAction(accessibility_id, action, stArguments);
+
+    ArkWebStringMapStructRelease(stArguments);
+}
+
+void ArkWebNWebWrapper::SendAccessibilityHoverEvent(int32_t x, int32_t y)
+{
+    ark_web_nweb_->SendAccessibilityHoverEvent(x, y);
+}
+
+void ArkWebNWebWrapper::GetScrollOffset(float* offset_x, float* offset_y)
+{
+    ark_web_nweb_->GetScrollOffset(offset_x, offset_y);
+}
+
+void ArkWebNWebWrapper::ExecuteCreatePDFExt(std::shared_ptr<OHOS::NWeb::NWebPDFConfigArgs> pdfConfig,
+    std::shared_ptr<OHOS::NWeb::NWebArrayBufferValueCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->ExecuteCreatePDFExt(
+            new ArkWebPDFConfigArgsImpl(CHECK_SHARED_PTR_IS_NULL(pdfConfig) ? nullptr : pdfConfig), nullptr);
+    } else {
+        ark_web_nweb_->ExecuteCreatePDFExt(
+            new ArkWebPDFConfigArgsImpl(CHECK_SHARED_PTR_IS_NULL(pdfConfig) ? nullptr : pdfConfig),
+            new ArkWebArrayBufferValueCallbackImpl(callback));
+    }
+}
+
+bool ArkWebNWebWrapper::ScrollByWithResult(float delta_x, float delta_y)
+{
+    return ark_web_nweb_->ScrollByWithResult(delta_x, delta_y);
+}
+
+void ArkWebNWebWrapper::OnDestroyImageAnalyzerOverlay()
+{
+    ark_web_nweb_->OnDestroyImageAnalyzerOverlay();
+}
+
+void ArkWebNWebWrapper::ScrollToWithAnime(float x, float y, int32_t duration)
+{
+    ark_web_nweb_->ScrollToWithAnime(x, y, duration);
+}
+
+void ArkWebNWebWrapper::ScrollByWithAnime(float delta_x, float delta_y, int32_t duration)
+{
+    ark_web_nweb_->ScrollByWithAnime(delta_x, delta_y, duration);
+}
+
+void ArkWebNWebWrapper::SetPopupSurface(void* popupSurface)
+{
+    ark_web_nweb_->SetPopupSurface(popupSurface);
+}
+
+void ArkWebNWebWrapper::WebSendMouseEvent(const std::shared_ptr<OHOS::NWeb::NWebMouseEvent>& mouseEvent)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(mouseEvent)) {
+        ark_web_nweb_->WebSendMouseEvent(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->WebSendMouseEvent(new ArkWebMouseEventImpl(mouseEvent));
+}
+
+bool ArkWebNWebWrapper::GetAccessibilityVisible(int64_t accessibility_id)
+{
+    return ark_web_nweb_->GetAccessibilityVisible(accessibility_id);
+}
+
+void ArkWebNWebWrapper::SetTransformHint(uint32_t rotation)
+{
+    return ark_web_nweb_->SetTransformHint(rotation);
+}
+
+void ArkWebNWebWrapper::WebComponentsBlur()
+{
+    ark_web_nweb_->WebComponentsBlur();
+}
+
+float ArkWebNWebWrapper::DumpGpuInfo()
+{
+    return ark_web_nweb_->DumpGpuInfo();
+}
+
+int ArkWebNWebWrapper::ScaleGestureChangeV2(int type,
+                                            double scale,
+                                            double originScale,
+                                            double centerX,
+                                            double centerY)
+{
+    return ark_web_nweb_->ScaleGestureChangeV2(type, scale, originScale, centerX, centerY);
+}
+
+bool ArkWebNWebWrapper::SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(keyboardEvent)) {
+        ark_web_nweb_->SendKeyboardEvent(nullptr);
+        return false;
+    }
+
+    return ark_web_nweb_->SendKeyboardEvent(new ArkWebKeyboardEventImpl(keyboardEvent));
+}
+
+bool ArkWebNWebWrapper::PerformActionV2(int64_t accessibility_id, uint32_t action,
+    const std::map<std::string, std::string>& actionArguments)
+{
+    ArkWebStringMap stArguments = ArkWebStringMapClassToStruct(actionArguments);
+    bool res = ark_web_nweb_->PerformActionV2(accessibility_id, action, stArguments);
+
+    ArkWebStringMapStructRelease(stArguments);
+    return res;
+}
+
+bool ArkWebNWebWrapper::IsActivePolicyDisable()
+{
+    return ark_web_nweb_->IsActivePolicyDisable();
+}
+
+void ArkWebNWebWrapper::PutOptimizeParserBudgetEnabled(bool enable)
+{
+    ark_web_nweb_->PutOptimizeParserBudgetEnabled(enable);
+}
+
+bool ArkWebNWebWrapper::GetAccessibilityNodeRectById(
+    int64_t accessibilityId, int32_t* width, int32_t* height, int32_t* offsetX, int32_t* offsetY)
+{
+    return ark_web_nweb_->GetAccessibilityNodeRectById(accessibilityId, width, height, offsetX, offsetY);
+}
+
+std::shared_ptr<OHOS::NWeb::HitTestResult> ArkWebNWebWrapper::GetLastHitTestResult()
+{
+    ArkWebRefPtr<ArkWebHitTestResult> ark_web_last_hit_test_result = ark_web_nweb_->GetLastHitTestResult();
+    if (CHECK_REF_PTR_IS_NULL(ark_web_last_hit_test_result)) {
+        return nullptr;
+    }
+
+    return std::make_shared<ArkWebHitTestResultWrapper>(ark_web_last_hit_test_result);
+}
+
+std::string ArkWebNWebWrapper::GetCurrentLanguage()
+{
+    return ArkWebStringStructToClass(ark_web_nweb_->GetCurrentLanguage());
+}
+bool ArkWebNWebWrapper::WebSendMouseWheelEventV2(
+        double x, double y, double delta_x, double delta_y, const std::vector<int32_t> &pressedCodes, int32_t source)
+{
+    ArkWebInt32Vector pCodes = ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(pressedCodes);
+
+    bool result = ark_web_nweb_->WebSendMouseWheelEventV2(x, y, delta_x, delta_y, pCodes, source);
+
+    ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
+    return result;
+}
+
+bool ArkWebNWebWrapper::IsNWebEx()
+{
+    return ark_web_nweb_->IsNWebEx();
+}
+
+void ArkWebNWebWrapper::SetEnableHalfFrameRate(bool enabled)
+{
+    ark_web_nweb_->SetEnableHalfFrameRate(enabled);
+}
+
+void ArkWebNWebWrapper::MaximizeResize()
+{
+    ark_web_nweb_->MaximizeResize();
+}
+
+void ArkWebNWebWrapper::OnDragAttach()
+{
+    ark_web_nweb_->OnDragAttach();
+}
+
+bool ArkWebNWebWrapper::SetFocusByPosition(float x, float y)
+{
+    return ark_web_nweb_->SetFocusByPosition(x, y);
+}
+
+void ArkWebNWebWrapper::SetSurfaceDensity(const double& density)
+{
+    ark_web_nweb_->SetSurfaceDensity(density);
+}
+
+void ArkWebNWebWrapper::SetNativeInnerWeb(bool isInnerWeb)
+{
+    ark_web_nweb_->SetNativeInnerWeb(isInnerWeb);
+}
+
+void ArkWebNWebWrapper::SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter)
+{
+    ark_web_nweb_->SendAccessibilityHoverEventV2(x, y, isHoverEnter);
+}
+
+void ArkWebNWebWrapper::OnBrowserForeground()
+{
+    ark_web_nweb_->OnBrowserForeground();
+}
+
+void ArkWebNWebWrapper::OnBrowserBackground()
+{
+    ark_web_nweb_->OnBrowserBackground();
+}
+
+void ArkWebNWebWrapper::RegisterNativeJavaScriptProxy(const std::string& objName,
+    const std::vector<std::string>& methodName, std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+    bool isAsync, const std::string& permission)
+{
+    ArkWebString stObjName = ArkWebStringClassToStruct(objName);
+    ArkWebStringVector stMethodName = ArkWebStringVectorClassToStruct(methodName);
+    ArkWebString stPermission = ArkWebStringClassToStruct(permission);
+
+    if (CHECK_SHARED_PTR_IS_NULL(data)) {
+        ark_web_nweb_->RegisterNativeJavaScriptProxy(stObjName,
+                                                     stMethodName,
+                                                     nullptr,
+                                                     isAsync,
+                                                     stPermission);
+    } else {
+        ark_web_nweb_->RegisterNativeJavaScriptProxy(stObjName,
+                                                     stMethodName,
+                                                     new ArkWebJsProxyMethodImpl(data),
+                                                     isAsync,
+                                                     stPermission);
+    }
+
+    ArkWebStringStructRelease(stObjName);
+    ArkWebStringVectorStructRelease(stMethodName);
+    ArkWebStringStructRelease(stPermission);
+}
+
+void ArkWebNWebWrapper::SetFocusWindowId(uint32_t focus_window_id)
+{
+    ark_web_nweb_->SetFocusWindowId(focus_window_id);
 }
 } // namespace OHOS::ArkWeb

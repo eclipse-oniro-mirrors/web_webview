@@ -16,13 +16,10 @@
 #include "ohos_image_decoder_adapter_impl.h"
 
 #include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
-#include "fstream"
 #include "image_source.h"
-#include "istream"
 #include "media_errors.h"
 #include "nweb_log.h"
-#include "sstream"
-#include "string"
+#include "pixel_map.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -37,7 +34,7 @@ std::unique_ptr<Media::ImageSource> ParseRawData(const uint8_t* data,
     Media::SourceOptions sourceOptions;
     auto imageSource = Media::ImageSource::CreateImageSource(
         data, size, sourceOptions, errorCode);
-    if (errorCode != Media::SUCCESS) {
+    if (imageSource == nullptr || errorCode != Media::SUCCESS) {
         WVLOG_E("[HeifSupport] ParseRawData failed, errorCode %{public}d", errorCode);
         return nullptr;
     }
@@ -112,6 +109,7 @@ bool OhosImageDecoderAdapterImpl::Decode(const uint8_t* data,
     decodeOptions.desiredPixelFormat =
         useYuv ? Media::PixelFormat::NV12 : Media::PixelFormat::RGBA_8888;
     decodeOptions.allocatorType = static_cast<Media::AllocatorType>(type);
+    decodeOptions.isAppUseAllocator = true;
     pixelMap_ = imageSource->CreatePixelMap(decodeOptions, errorCode);
     if (errorCode != Media::SUCCESS) {
         WVLOG_E("[HeifSupport] CreatePixelMap failed, errorCode %{public}d", errorCode);
@@ -142,6 +140,10 @@ int32_t OhosImageDecoderAdapterImpl::GetStride()
         WVLOG_E(
             "[HeifSupport] OhosImageDecoderAdapterImpl::GetStride. PixelMap is null.");
         return 0;
+    }
+    if (pixelMap_->GetAllocatorType() == Media::AllocatorType::SHARE_MEM_ALLOC) {
+        WVLOG_D("[HeifSupport] OhosImageDecoderAdapterImpl::GetStride. share mem get row stride.");
+        return pixelMap_->GetRowStride();
     }
     if (auto* surfaceBuffer = SurfaceBufferFromPixelMap(pixelMap_.get())) {
         // Pixmap row stride is suface buffer stride as We only support DMA_ALLOC now.
@@ -245,6 +247,15 @@ void OhosImageDecoderAdapterImpl::ReleasePixelMap()
         DestroyNativeWindowBuffer(nativeWindowBuffer_);
         nativeWindowBuffer_ = nullptr;
     }
+}
+
+void* OhosImageDecoderAdapterImpl::GetDecodeData()
+{
+    if (!pixelMap_) {
+        WVLOG_E("[HeifSupport] OhosImageDecoderAdapterImpl::GetDecodeData. PixelMap is null.");
+        return nullptr;
+    }
+    return pixelMap_->GetWritablePixels();
 }
 
 }  // namespace NWeb

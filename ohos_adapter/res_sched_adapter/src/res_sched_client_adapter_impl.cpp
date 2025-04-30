@@ -26,11 +26,13 @@
 #include "bundle_mgr_interface.h"
 #include "iservice_registry.h"
 #include "nweb_log.h"
+#include "ohos_adapter_helper.h"
 #include "res_sched_client.h"
 #include "res_sched_client_adapter.h"
 #include "res_type.h"
 #include "singleton.h"
 #include "system_ability_definition.h"
+#include "system_properties_adapter_impl.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::ResourceSchedule;
@@ -79,6 +81,8 @@ const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
     { ResSchedSceneAdapter::IMAGE_DECODE, ResType::WebScene::WEB_SCENE_IMAGE_DECODE },
 };
 
+const int32_t WEBVIEW_DESTROY = 1010;
+const int32_t WEBVIEW_DESTROY_ORIGIN = 1007;
 const int32_t INVALID_NUMBER = -1;
 const int64_t INVALID_NUMBER_INT64 = -1;
 const int64_t SLIDE_PERIOD_MS = 300;
@@ -180,6 +184,11 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
         sceneId = it->second;
     }
 
+    auto& systemPropertiesAdapter = OhosAdapterHelper::GetInstance().GetSystemPropertiesInstance();
+    auto deviceType = systemPropertiesAdapter.GetProductDeviceType();
+    if (deviceType == ProductDeviceType::DEVICE_TYPE_2IN1 && sceneId == WEBVIEW_DESTROY_ORIGIN) {
+        sceneId = WEBVIEW_DESTROY;
+    }
     std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() },
         { SCENE_ID, std::to_string(sceneId) } };
     ResSchedClient::GetInstance().ReportData(ResType::RES_TYPE_REPORT_SCENE_SCHED, status, mapPayload);
@@ -190,11 +199,15 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
 
 bool IsSameSourceWebSiteActive(ResSchedStatusAdapter statusAdapter, pid_t pid, int32_t nwebId)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     g_pidNwebMap[pid][nwebId] = statusAdapter;
     if (statusAdapter == ResSchedStatusAdapter::WEB_INACTIVE) {
         auto nwebMap = g_pidNwebMap[pid];
         for (auto it : nwebMap) {
             if (it.second == ResSchedStatusAdapter::WEB_ACTIVE) {
+                WVLOG_D("IsSameSourceWebSiteActive, current nwebId: %{public}d, active nwebId: %{public}d, "
+                        "pid: %{public}d", nwebId, it.first, pid);
                 return true;
             }
         }
@@ -203,11 +216,14 @@ bool IsSameSourceWebSiteActive(ResSchedStatusAdapter statusAdapter, pid_t pid, i
     return false;
 }
 
-void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
+void ReportStatusData(ResSchedStatusAdapter statusAdapter,
+                      pid_t pid, uint32_t windowId, int32_t nwebId, bool isSiteManage)
 {
     static uint32_t serialNum = 0;
     static constexpr uint32_t serialNumMax = 10000;
 
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
         WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
         return;
@@ -219,8 +235,9 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t w
         return;
     }
 
-    if (g_processInUse.count(pid)) {
-        if (IsSameSourceWebSiteActive(statusAdapter, pid, nwebId)) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType == ProductDeviceType::DEVICE_TYPE_MOBILE || g_processInUse.count(pid)) {
+        if (isSiteManage && IsSameSourceWebSiteActive(statusAdapter, pid, nwebId)) {
             return;
         }
     }
@@ -251,6 +268,8 @@ void ReportStatusData(ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t w
 bool ResSchedClientAdapter::ReportKeyThread(
     ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid, ResSchedRoleAdapter roleAdapter)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     int64_t status;
     bool ret = ConvertStatus(statusAdapter, status);
     if (!ret) {
@@ -280,7 +299,7 @@ bool ResSchedClientAdapter::ReportKeyThread(
 
     if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER) {
         std::lock_guard<std::mutex> lock(g_windowIdMutex);
-        ReportStatusData(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId);
+        ReportStatusData(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, g_nwebId, false);
     }
 
     if (pid == tid && statusAdapter == ResSchedStatusAdapter::THREAD_DESTROYED) {
@@ -316,6 +335,8 @@ bool ResSchedClientAdapter::ReportAudioData(ResSchedStatusAdapter statusAdapter,
 
 void ResSchedClientAdapter::ReportProcessInUse(pid_t pid)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     int32_t nwebId = g_nwebId;
     if (g_pidNwebMap.count(pid)) {
         nwebId = g_pidNwebMap[pid].begin()->first;
@@ -328,7 +349,7 @@ void ResSchedClientAdapter::ReportProcessInUse(pid_t pid)
         WVLOG_D("ReportProcessInUse nwebId: %{public}d, pid: %{public}d", nwebId, pid);
 
         if (g_siteIsolationMode) {
-            ReportStatusData(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, nwebId);
+            ReportStatusData(ResSchedStatusAdapter::WEB_ACTIVE, pid, g_windowId, nwebId, true);
         }
     }
 }
@@ -342,6 +363,8 @@ void ResSchedClientAdapter::ReportSiteIsolationMode(bool mode)
 bool ResSchedClientAdapter::ReportWindowStatus(
     ResSchedStatusAdapter statusAdapter, pid_t pid, uint32_t windowId, int32_t nwebId)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     if (g_nwebSet.find(nwebId) == g_nwebSet.end() || pid == 0) {
         WVLOG_D("Don't report window status, nwebId: %{public}d, pid: %{public}d", nwebId, pid);
         return false;
@@ -355,12 +378,16 @@ bool ResSchedClientAdapter::ReportWindowStatus(
         ReportWindowId(windowId, nwebId);
     }
 
-    ReportStatusData(statusAdapter, pid, windowId, nwebId);
-    for (auto pidInNweb : g_nwebProcessMap[nwebId]) {
-        if (pidInNweb == pid) {
-            continue;
+    ReportStatusData(statusAdapter, pid, windowId, nwebId, true);
+
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType == ProductDeviceType::DEVICE_TYPE_TABLET || deviceType == ProductDeviceType::DEVICE_TYPE_2IN1) {
+        for (auto pidInNweb : g_nwebProcessMap[nwebId]) {
+            if (pidInNweb == pid) {
+                continue;
+            }
+            ReportStatusData(statusAdapter, pidInNweb, windowId, nwebId, true);
         }
-        ReportStatusData(statusAdapter, pidInNweb, windowId, nwebId);
     }
 
     return true;
@@ -369,6 +396,8 @@ bool ResSchedClientAdapter::ReportWindowStatus(
 bool ResSchedClientAdapter::ReportScene(
     ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapter sceneAdapter, int32_t nwebId)
 {
+    static std::mutex initMutex;
+    std::lock_guard<std::mutex> lock(initMutex);
     if (nwebId == -1) {
         return ReportSceneInternal(statusAdapter, sceneAdapter);
     }

@@ -43,9 +43,11 @@ public:
     void PutDownloadDidFinish(napi_env, napi_value callback);
     void PutDownloadDidFail(napi_env, napi_value callback);
 
-    int32_t GetNWebId();
+    int32_t GetNWebId() const;
     void SetNWebId(int32_t nwebId);
     napi_env GetEnv();
+
+    void RemoveSelfRef();
 
     //  create this reference to make web download delegate not be deleted by gc.
     napi_ref delegate_;

@@ -21,7 +21,6 @@
 #include <string>
 #include <unordered_map>
 
-#include "back_forward_cache_options.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -122,6 +121,10 @@ enum class PressureLevel : int {
     MEMORY_PRESSURE_LEVEL_CRITICAL = 2,
 };
 
+enum class ScrollType : int {
+    EVENT = 0,
+};
+
 class WebPrintDocument;
 class WebviewController {
 public:
@@ -130,17 +133,17 @@ public:
     explicit WebviewController(const std::string& webTag);
     ~WebviewController();
 
-    bool IsInit();
+    bool IsInit() const;
 
     void SetWebId(int32_t nwebId);
 
     WebviewController* FromID(int32_t nwebId);
 
-    bool AccessForward();
+    bool AccessForward() const;
 
-    bool AccessBackward();
+    bool AccessBackward() const;
 
-    bool AccessStep(int32_t step);
+    bool AccessStep(int32_t step) const;
 
     void ClearHistory();
 
@@ -184,7 +187,7 @@ public:
 
     void RequestFocus();
 
-    bool ParseUrl(napi_env env, napi_value urlObj, std::string& result);
+    bool ParseUrl(napi_env env, napi_value urlObj, std::string& result) const;
 
     ErrCode LoadUrl(std::string url);
 
@@ -232,7 +235,7 @@ public:
 
     std::string GetOriginalUrl();
 
-    bool TerminateRenderProcess();
+    bool TerminateRenderProcess() const;
 
     void PutNetworkAvailable(bool available);
 
@@ -247,11 +250,11 @@ public:
     std::shared_ptr<NWebHistoryList> GetHistoryList();
 
     bool GetFavicon(
-        const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType);
+        const void **data, size_t &width, size_t &height, ImageColorType &colorType, ImageAlphaType &alphaType) const;
 
     std::vector<uint8_t> SerializeWebState();
 
-    bool RestoreWebState(const std::vector<uint8_t> &state);
+    bool RestoreWebState(const std::vector<uint8_t> &state) const;
 
     void ScrollPageDown(bool bottom);
 
@@ -265,11 +268,13 @@ public:
 
     void SetScrollable(bool enable);
 
-    bool GetScrollable();
+    void SetScrollable(bool enable, int32_t scrollType);
+
+    bool GetScrollable() const;
 
     void InnerSetHapPath(const std::string &hapPath);
 
-    bool GetCertChainDerData(std::vector<std::string> &certChainDerData);
+    bool GetCertChainDerData(std::vector<std::string> &certChainDerData) const;
 
     ErrCode SetAudioMuted(bool muted);
 
@@ -283,19 +288,19 @@ public:
 
     void EnableSafeBrowsing(bool enable);
 
-    bool IsSafeBrowsingEnabled();
+    bool IsSafeBrowsingEnabled() const;
 
-    bool IsIncognitoMode();
+    bool IsIncognitoMode() const;
 
     void SetPrintBackground(bool enable);
 
-    bool GetPrintBackground();
+    bool GetPrintBackground() const;
 
     std::string GetLastJavascriptProxyCallingFrameUrl();
 
     static std::string GenerateWebTag();
 
-    bool SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler);
+    bool SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler) const;
 
     int32_t ClearWebSchemeHandler();
 
@@ -316,7 +321,7 @@ public:
 
     void EnableIntelligentTrackingPrevention(bool enable);
 
-    bool IsIntelligentTrackingPreventionEnabled();
+    bool IsIntelligentTrackingPreventionEnabled() const;
 
     ErrCode StartCamera();
 
@@ -337,11 +342,11 @@ public:
 
     bool ParseResponseHeaders(napi_env env,
                               napi_value value,
-                              std::map<std::string, std::string> &responseHeaders);
+                              std::map<std::string, std::string> &responseHeaders) const;
 
     ParseURLResult ParseURLList(napi_env env, napi_value value, std::vector<std::string>& urlList);
 
-    bool CheckURL(std::string& url);
+    bool CheckURL(std::string& url) const;
 
     std::vector<uint8_t> ParseUint8Array(napi_env env, napi_value value);
 
@@ -354,9 +359,9 @@ public:
 
     void EnableAdsBlock(bool enable);
 
-    bool IsAdsBlockEnabled();
+    bool IsAdsBlockEnabled() const;
 
-    bool IsAdsBlockEnabledForCurPage();
+    bool IsAdsBlockEnabledForCurPage() const;
 
     std::string GetSurfaceId();
 
@@ -365,7 +370,7 @@ public:
     bool ParseJsLengthToInt(napi_env env,
                             napi_value jsLength,
                             PixelUnit& type,
-                            int32_t& result);
+                            int32_t& result) const;
 
     ErrCode WebPageSnapshot(const char* id,
                             PixelUnit type,
@@ -382,6 +387,18 @@ public:
 
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
 
+    void GetScrollOffset(float* offset_x, float* offset_y);
+
+    void CreatePDFCallbackExt(
+        napi_env env, std::shared_ptr<NWebPDFConfigArgs> pdfConfig, napi_ref pdfCallback);
+
+    void CreatePDFPromiseExt(
+        napi_env env, std::shared_ptr<NWebPDFConfigArgs> pdfConfig, napi_deferred deferred);
+
+    bool ScrollByWithResult(float deltaX, float deltaY) const;
+
+    std::shared_ptr<HitTestResult> GetLastHitTest();
+
     void SaveWebSchemeHandler(const char* scheme, WebSchemeHandler* handler);
 
     static void SaveWebServiceWorkerSchemeHandler(const char* scheme, WebSchemeHandler* handler);
@@ -389,16 +406,16 @@ private:
     int ConverToWebHitTestType(int hitType);
 
     bool GetRawFileUrl(const std::string &fileName,
-        const std::string& bundleName, const std::string& moduleName, std::string &result);
+        const std::string& bundleName, const std::string& moduleName, std::string &result) const;
 
-    bool ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result);
+    bool ParseRawFileUrl(napi_env env, napi_value urlObj, std::string& result) const;
 
-    bool GetResourceUrl(napi_env env, napi_value urlObj, std::string& result);
+    bool GetResourceUrl(napi_env env, napi_value urlObj, std::string& result) const;
 
     bool ParseJsLengthResourceToInt(napi_env env,
                                     napi_value jsLength,
                                     PixelUnit& type,
-                                    int32_t& result);
+                                    int32_t& result) const;
     bool GetHapModuleInfo();
 
     void DeleteWebSchemeHandler();
@@ -453,85 +470,9 @@ public:
     explicit WebMessageExt(std::shared_ptr<NWebMessage> data) : data_(data) {};
     ~WebMessageExt() = default;
 
-    void SetType(int type)
-    {
-        type_ = type;
-        WebMessageType jsType = static_cast<WebMessageType>(type);
-        NWebValue::Type nwebType = NWebValue::Type::NONE;
-        switch (jsType) {
-            case WebMessageType::STRING: {
-                nwebType = NWebValue::Type::STRING;
-                break;
-            }
-            case WebMessageType::NUMBER: {
-                nwebType = NWebValue::Type::DOUBLE;
-                break;
-            }
-            case WebMessageType::BOOLEAN: {
-                nwebType = NWebValue::Type::BOOLEAN;
-                break;
-            }
-            case WebMessageType::ARRAYBUFFER: {
-                nwebType = NWebValue::Type::BINARY;
-                break;
-            }
-            case WebMessageType::ARRAY: {
-                nwebType = NWebValue::Type::STRINGARRAY;
-                break;
-            }
-            case WebMessageType::ERROR: {
-                nwebType = NWebValue::Type::ERROR;
-                break;
-            }
-            default: {
-                nwebType = NWebValue::Type::NONE;
-                break;
-            }
-        }
-        if (data_) {
-            data_->SetType(nwebType);
-        }
-    }
+    void SetType(int type);
 
-    int ConvertNwebType2JsType(NWebValue::Type type)
-    {
-        WebMessageType jsType = WebMessageType::NOTSUPPORT;
-        switch (type) {
-            case NWebValue::Type::STRING: {
-                jsType = WebMessageType::STRING;
-                break;
-            }
-            case NWebValue::Type::DOUBLE:
-            case NWebValue::Type::INTEGER: {
-                jsType = WebMessageType::NUMBER;
-                break;
-            }
-            case NWebValue::Type::BOOLEAN: {
-                jsType = WebMessageType::BOOLEAN;
-                break;
-            }
-            case NWebValue::Type::STRINGARRAY:
-            case NWebValue::Type::DOUBLEARRAY:
-            case NWebValue::Type::INT64ARRAY:
-            case NWebValue::Type::BOOLEANARRAY: {
-                jsType = WebMessageType::ARRAY;
-                break;
-            }
-            case NWebValue::Type::BINARY: {
-                jsType = WebMessageType::ARRAYBUFFER;
-                break;
-            }
-            case NWebValue::Type::ERROR: {
-                jsType = WebMessageType::ERROR;
-                break;
-            }
-            default: {
-                jsType = WebMessageType::NOTSUPPORT;
-                break;
-            }
-        }
-        return static_cast<int>(jsType);
-    }
+    int ConvertNwebType2JsType(NWebValue::Type type);
 
     int GetType()
     {
@@ -614,7 +555,7 @@ public:
         }
     }
 
-    std::shared_ptr<NWebMessage> GetData()
+    std::shared_ptr<NWebMessage> GetData() const
     {
         return data_;
     }

@@ -33,11 +33,11 @@ public:
     ~WebDownloadItem();
 
     long webDownloadId;
-    int currentSpeed;
-    int percentComplete;
+    int32_t currentSpeed;
+    int32_t percentComplete;
     int64_t totalBytes;
     int64_t receivedBytes;
-    int lastErrorCode;
+    int32_t lastErrorCode;
 
     std::string guid;
     std::string fullPath;
@@ -58,6 +58,7 @@ public:
     WebDownloadItemCallbackWrapper *download_item_callback;
 
     int32_t nwebId;
+    bool hasStarted{false};
 
 private:
     napi_env env_;

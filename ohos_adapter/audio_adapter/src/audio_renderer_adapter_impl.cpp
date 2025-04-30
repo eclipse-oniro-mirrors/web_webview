@@ -84,6 +84,16 @@ const std::unordered_map<AudioStreamDeviceChangeReason, AudioAdapterDeviceChange
     { AudioStreamDeviceChangeReason::OLD_DEVICE_UNAVALIABLE, AudioAdapterDeviceChangeReason::OLD_DEVICE_UNAVALIABLE },
     { AudioStreamDeviceChangeReason::OVERRODE, AudioAdapterDeviceChangeReason::OVERRODE },
 };
+
+const std::unordered_map<AudioAdapterConcurrencyMode, AudioConcurrencyMode> AUDIO_CONCURRENCY_MAP = {
+    { AudioAdapterConcurrencyMode::INVALID, AudioConcurrencyMode::INVALID },
+    { AudioAdapterConcurrencyMode::DEFAULT, AudioConcurrencyMode::DEFAULT },
+    { AudioAdapterConcurrencyMode::MIX_WITH_OTHERS, AudioConcurrencyMode::MIX_WITH_OTHERS },
+    { AudioAdapterConcurrencyMode::DUCK_OTHERS, AudioConcurrencyMode::DUCK_OTHERS },
+    { AudioAdapterConcurrencyMode::PAUSE_OTHERS, AudioConcurrencyMode::PAUSE_OTHERS },
+    { AudioAdapterConcurrencyMode::SILENT, AudioConcurrencyMode::SILENT },
+};
+
 AudioRendererCallbackImpl::AudioRendererCallbackImpl(std::shared_ptr<AudioRendererCallbackAdapter> cb) : cb_(cb) {};
 
 void AudioRendererCallbackImpl::OnInterrupt(const InterruptEvent& interruptEvent)
@@ -121,7 +131,7 @@ AudioAdapterDeviceChangeReason AudioOutputChangeCallbackImpl::GetChangeReason(Au
 AudioOutputChangeCallbackImpl::AudioOutputChangeCallbackImpl(std::shared_ptr<AudioOutputChangeCallbackAdapter> cb)
     : cb_(cb) {};
 void AudioOutputChangeCallbackImpl::OnOutputDeviceChange(
-    const DeviceInfo& deviceInfo, const AudioStreamDeviceChangeReason reason)
+    const AudioDeviceDescriptor& deviceInfo, const AudioStreamDeviceChangeReason reason)
 {
     if (!cb_) {
         return;
@@ -289,8 +299,31 @@ void AudioRendererAdapterImpl::SetInterruptMode(bool audioExclusive)
     audio_renderer_->SetInterruptMode(interruptMode);
 }
 
+void AudioRendererAdapterImpl::SetAudioSilentMode(bool isSilentMode)
+{
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return;
+    }
+    audio_renderer_->SetSilentModeAndMixWithOthers(isSilentMode);
+    WVLOG_D("AudioRendererAdapterImpl::SetAudioSilentMode isSilentMode: %{public}d", isSilentMode);
+}
+
+bool AudioRendererAdapterImpl::Flush()
+{
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return false;
+    }
+    return audio_renderer_->Flush();
+}
+
 bool AudioRendererAdapterImpl::IsRendererStateRunning()
 {
+    if (audio_renderer_ == nullptr) {
+        WVLOG_E("audio rendderer is nullptr");
+        return false;
+    }
     return audio_renderer_->GetStatus() == OHOS::AudioStandard::RendererState::RENDERER_RUNNING;
 }
 
@@ -354,6 +387,23 @@ StreamUsage AudioRendererAdapterImpl::GetAudioStreamUsage(AudioAdapterStreamUsag
     return item->second;
 }
 
+AudioSessionStrategy AudioRendererAdapterImpl::GetAudioAudioStrategy(AudioAdapterConcurrencyMode concurrencyMode)
+{
+    struct AudioSessionStrategy strategy;
+    auto item = AUDIO_CONCURRENCY_MAP.find(concurrencyMode);
+    if (item == AUDIO_CONCURRENCY_MAP.end()) {
+        WVLOG_E("audio concurrency mode not found");
+        strategy.concurrencyMode = AudioConcurrencyMode::INVALID;
+        return strategy;
+    }
+    strategy.concurrencyMode = item->second;
+    if (strategy.concurrencyMode == AudioConcurrencyMode::PAUSE_OTHERS) {
+        strategy.concurrencyMode = AudioConcurrencyMode::INVALID;
+    }
+    WVLOG_I("get audio strategy concurrencyMode: %{public}d.", strategy.concurrencyMode);
+    return strategy;
+}
+
 void AudioRendererAdapterImpl::TransformToAudioRendererOptions(
     AudioRendererOptions& out, const std::shared_ptr<AudioRendererOptionsAdapter>& in)
 {
@@ -364,6 +414,7 @@ void AudioRendererAdapterImpl::TransformToAudioRendererOptions(
     out.rendererInfo.contentType = GetAudioContentType(in->GetContentType());
     out.rendererInfo.streamUsage = GetAudioStreamUsage(in->GetStreamUsage());
     out.rendererInfo.rendererFlags = in->GetRenderFlags();
+    out.strategy = GetAudioAudioStrategy(in->GetConcurrencyMode());
 }
 
 } // namespace OHOS::NWeb

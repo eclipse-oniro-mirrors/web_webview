@@ -1,2 +1,9 @@
-[Interfaces source]
-ohos_interface/ @zhangyanchuan @templingfeng
+[api files]
+ohos_interface/include/ @zhangyanchuan @defeng2020 @fredranking @leezheng_hz @yjone @liuyaoming
+
+[glue files]
+ohos_interface/ohos_glue/ @zhangyanchuan @defeng2020 @fredranking @leezheng_hz @yjone @liuyaoming
+
+[config files]
+ohos_interface/BUILD.gn @zhangyanchuan
+ohos_interface/.gitignore @zhangyanchuan

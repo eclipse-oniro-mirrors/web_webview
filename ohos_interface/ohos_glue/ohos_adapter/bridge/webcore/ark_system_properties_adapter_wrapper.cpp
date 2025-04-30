@@ -95,6 +95,28 @@ std::string ArkSystemPropertiesAdapterWrapper::GetUserAgentOSName()
     return result;
 }
 
+std::string ArkSystemPropertiesAdapterWrapper::GetUserAgentOSVersion()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetUserAgentOSVersion();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetUserAgentBaseOSName()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetUserAgentBaseOSName();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
 int32_t ArkSystemPropertiesAdapterWrapper::GetSoftwareMajorVersion()
 {
     if (!ctocpp_) {
@@ -182,6 +204,7 @@ bool ArkSystemPropertiesAdapterWrapper::GetBoolParameter(const std::string& key,
     return result;
 }
 
+ARK_WEB_NO_SANITIZE
 std::vector<FrameRateSetting> ArkSystemPropertiesAdapterWrapper::GetLTPOConfig(const std::string& settingName)
 {
     if (!ctocpp_) {
@@ -207,6 +230,97 @@ std::string ArkSystemPropertiesAdapterWrapper::GetOOPGPUStatus()
         return "";
     }
     ArkWebString str = ctocpp_->GetOOPGPUStatus();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+bool ArkSystemPropertiesAdapterWrapper::IsLTPODynamicApp(const std::string& bundleName)
+{
+    ArkWebString ark_bundle_name = ArkWebStringClassToStruct(bundleName);
+    bool result = ctocpp_->IsLTPODynamicApp(ark_bundle_name);
+    ArkWebStringStructRelease(ark_bundle_name);
+    return result;
+}
+
+int32_t ArkSystemPropertiesAdapterWrapper::GetLTPOStrategy()
+{
+    int32_t result = ctocpp_->GetLTPOStrategy();
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetVulkanStatus()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetVulkanStatus();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetCompatibleDeviceType()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetCompatibleDeviceType();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetDeviceInfoApiVersion()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetDeviceInfoApiVersion();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetPRPPreloadMode()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetPRPPreloadMode();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetScrollVelocityScale()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetScrollVelocityScale();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetScrollFriction()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetScrollFriction();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetBundleName()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetBundleName();
     std::string result = ArkWebStringStructToClass(str);
     ArkWebStringStructRelease(str);
     return result;

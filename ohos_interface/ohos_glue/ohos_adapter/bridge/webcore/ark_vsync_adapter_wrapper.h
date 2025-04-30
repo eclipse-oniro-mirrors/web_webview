@@ -37,10 +37,12 @@ public:
 
     void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) override;
 
+    void SetScene(const std::string& sceneName, uint32_t state) override;
+
+    void SetDVSyncSwitch(bool dvsyncSwitch) override;
 private:
     ArkWebRefPtr<ArkVSyncAdapter> ctocpp_;
 };
-
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_VSYNC_ADAPTER_WRAPPER_H

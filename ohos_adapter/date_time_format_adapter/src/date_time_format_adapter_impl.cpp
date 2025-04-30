@@ -90,7 +90,7 @@ void DateTimeFormatAdapterImpl::StopListen()
 std::string DateTimeFormatAdapterImpl::GetTimezone()
 {
     std::string ret = OHOS::MiscServices::TimeServiceClient::GetInstance()->GetTimeZone();
-    if (ret == "") {
+    if (ret.empty()) {
         WVLOG_E("GetTimezone failed, return NULL.");
     }
     return ret;

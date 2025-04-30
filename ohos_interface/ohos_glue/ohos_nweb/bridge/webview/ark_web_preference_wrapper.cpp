@@ -539,11 +539,6 @@ void ArkWebPreferenceWrapper::SetNativeVideoPlayerConfig(bool enable, bool shoul
     ark_web_preference_->SetNativeVideoPlayerConfig(enable, shouldOverlay);
 }
 
-void ArkWebPreferenceWrapper::PutOverlayScrollbarEnabled(bool enable)
-{
-    ark_web_preference_->PutOverlayScrollbarEnabled(enable);
-}
-
 std::string ArkWebPreferenceWrapper::GetSurfaceId()
 {
     ArkWebString stSurfaceId = ark_web_preference_->GetSurfaceId();
@@ -562,4 +557,38 @@ void ArkWebPreferenceWrapper::SetSurfaceId(const std::string& surfaceId)
     ArkWebStringStructRelease(stSurfaceId);
 }
 
+void ArkWebPreferenceWrapper::PutOverlayScrollbarEnabled(bool enable)
+{
+    ark_web_preference_->PutOverlayScrollbarEnabled(enable);
+}
+
+void ArkWebPreferenceWrapper::SetScrollable(bool enable, int32_t scrollType)
+{
+    ark_web_preference_->SetScrollable(enable, scrollType);
+}
+
+void ArkWebPreferenceWrapper::SetBlurOnKeyboardHideMode(int enable)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->SetBlurOnKeyboardHideMode(enable);
+    }
+}
+
+void ArkWebPreferenceWrapper::PutWebMediaAVSessionEnabled(bool enable)
+{
+    ark_web_preference_->PutWebMediaAVSessionEnabled(enable);
+}
+
+void ArkWebPreferenceWrapper::SetFontWeightScale(float scale)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->SetFontWeightScale(scale);
+    }
+}
+void ArkWebPreferenceWrapper::SetIntrinsicSizeEnable(bool enable)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->SetIntrinsicSizeEnable(enable);
+    }
+}
 } // namespace OHOS::ArkWeb

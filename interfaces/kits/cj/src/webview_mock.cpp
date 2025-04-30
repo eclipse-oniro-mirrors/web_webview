@@ -60,6 +60,9 @@ FFI_EXPORT int FfiOHOSWebviewCtlIsIncognitoMode = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlRemoveCache = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlGetBackForwardEntries = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlStop = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlPostUrl = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlSetDownloadDelegate = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlStartDownload = 0;
 
 // webCookieView
 FFI_EXPORT int FfiOHOSCookieMgrClearSessionCookieSync = 0;
@@ -76,4 +79,41 @@ FFI_EXPORT int FfiOHOSCookieMgrFetchCookieSync = 0;
 FFI_EXPORT int FfiOHOSBackForwardListCurrentIndex = 0;
 FFI_EXPORT int FfiOHOSBackForwardListSize = 0;
 FFI_EXPORT int FfiOHOSGetItemAtIndex = 0;
+
+// WebDownloadItemImpl
+FFI_EXPORT int FfiOHOSWebDownloadItemImplConstructor = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetGuid = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetCurrentSpeed = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetPercentComplete = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetTotalBytes = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetReceivedBytes = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetState = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetLastErrorCode = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetMethod = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetMimeType = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetUrl = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetSuggestedFileName = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplGetFullPath = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplStart = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplCancel = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplPause = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplResume = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplSerialize = 0;
+FFI_EXPORT int FfiOHOSWebDownloadItemImplDeserialize = 0;
+
+// WebDownloadDelegateImpl
+FFI_EXPORT int FfiOHOSWebDownloadDelegateImplConstructor = 0;
+FFI_EXPORT int FfiOHOSWebDownloadDelegateImplOnBeforeDownload = 0;
+FFI_EXPORT int FfiOHOSWebDownloadDelegateImplOnDownloadUpdated = 0;
+FFI_EXPORT int FfiOHOSWebDownloadDelegateImplOnDownloadFinish = 0;
+FFI_EXPORT int FfiOHOSWebDownloadDelegateImplOnDownloadFailed = 0;
+
+// WebDownloadManagerImpl
+FFI_EXPORT int FfiOHOSWebDownloadManagerImplSetDownloadDelegate = 0;
+FFI_EXPORT int FfiOHOSWebDownloadManagerImplResumeDownload = 0;
+
+// webStorage
+FFI_EXPORT int FfiOHOSWebStorageDeleteOrigin = 0;
+FFI_EXPORT int FfiOHOSWebStorageDeleteAllData = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlGetLastHitTest = 0;
 }

@@ -18,13 +18,13 @@
 #include <mutex>
 #include <securec.h>
 
+#include "application_context.h"
 #include "hisysevent_adapter.h"
 #include "media_errors.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
+#include "pasteboard_error.h"
 #include "remote_uri.h"
-
-#define SET_PASTE_DATA_SUCCESS 77987840
 
 using namespace OHOS::MiscServices;
 using namespace OHOS::DistributedFS::ModuleRemoteUri;
@@ -36,6 +36,9 @@ constexpr char RECORD_SIZE[] = "RECORD_SIZE";
 constexpr char DATA_TYPE[] = "DATA_TYPE";
 constexpr char MIMETYPE_HYBRID[] = "hybrid";
 constexpr char MIMETYPE_NULL[] = "null";
+constexpr char SPAN_STRING_TAG[] = "openharmony.styled-string";
+constexpr char CUSTOM_DATA_TAG[] = "openharmony.arkweb.custom-data";
+constexpr char CUSTOM_DATA_TAG2[] = "ohos/custom-data";
 
 PasteboardObserverAdapterImpl::PasteboardObserverAdapterImpl(
     std::shared_ptr<PasteboardObserverAdapter> observer)
@@ -46,6 +49,11 @@ void PasteboardObserverAdapterImpl::OnPasteboardChanged()
     if (observer_) {
         observer_->OnPasteboardChanged();
     }
+}
+
+PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl()
+{
+    record_ = std::make_shared<PasteDataRecord>();
 }
 
 PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
@@ -76,7 +84,9 @@ PasteDataRecordAdapterImpl::PasteDataRecordAdapterImpl(
 std::shared_ptr<PasteDataRecordAdapter> PasteDataRecordAdapter::NewRecord(
     const std::string& mimeType)
 {
-    return std::make_shared<PasteDataRecordAdapterImpl>(mimeType);
+    // To adapt to multiple entries, the mime type of the record will be specified when writing the first data.
+    (void)mimeType;
+    return std::make_shared<PasteDataRecordAdapterImpl>();
 }
 
 std::shared_ptr<PasteDataRecordAdapter> PasteDataRecordAdapter::NewRecord(
@@ -91,47 +101,64 @@ std::shared_ptr<PasteDataRecordAdapter> PasteDataRecordAdapter::NewRecord(
 
 bool PasteDataRecordAdapterImpl::SetHtmlText(std::shared_ptr<std::string> htmlText)
 {
-    if (builder_) {
-        record_ = builder_->SetHtmlText(htmlText).Build();
-        return true;
+    return SetHtmlText(htmlText, nullptr);
+}
+
+bool PasteDataRecordAdapterImpl::SetHtmlText(
+    std::shared_ptr<std::string> htmlText, std::shared_ptr<std::string> plainText)
+{
+    if (!record_ || !htmlText) {
+        WVLOG_E("record_ or htmlText is null");
+        return false;
     }
-    WVLOG_E("record_ is null");
-    return false;
+    auto utdId = UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::HTML);
+    auto object = std::make_shared<Object>();
+    object->value_[UDMF::UNIFORM_DATA_TYPE] = utdId;
+    object->value_[UDMF::HTML_CONTENT] = *htmlText;
+    if (plainText) {
+        object->value_[UDMF::PLAIN_CONTENT] = *plainText;
+    }
+    record_->AddEntry(utdId, std::make_shared<PasteDataEntry>(utdId, object));
+    return true;
 }
 
 bool PasteDataRecordAdapterImpl::SetPlainText(std::shared_ptr<std::string> plainText)
 {
-    if (builder_) {
-        record_ = builder_->SetPlainText(plainText).Build();
-        return true;
+    if (!record_ || !plainText) {
+        WVLOG_E("record_ or plainText is null");
+        return false;
     }
-    WVLOG_E("record_ is null");
-    return false;
+    if (auto htmlText = record_->GetHtmlText(); htmlText && !htmlText->empty()) {
+        SetHtmlText(htmlText, plainText);
+    }
+    auto utdId = UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::PLAIN_TEXT);
+    auto object = std::make_shared<Object>();
+    object->value_[UDMF::UNIFORM_DATA_TYPE] = utdId;
+    object->value_[UDMF::CONTENT] = *plainText;
+    record_->AddEntry(utdId, std::make_shared<PasteDataEntry>(utdId, object));
+    return true;
 }
 
 bool PasteDataRecordAdapterImpl::SetUri(const std::string& uriString)
 {
-    if (uriString.empty() || !builder_) {
+    if (!record_ || uriString.empty()) {
         WVLOG_E("record_ or uriString is null");
         return false;
     }
-    std::shared_ptr<OHOS::Uri> uri = std::make_shared<OHOS::Uri>(uriString);
-    record_ = builder_->SetUri(uri).Build();
+    auto utdId = UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::FILE_URI);
+    record_->AddEntry(utdId, std::make_shared<PasteDataEntry>(utdId, uriString));
     return true;
 }
 
 bool PasteDataRecordAdapterImpl::SetCustomData(PasteCustomData& data)
 {
-    if (data.empty() || !builder_) {
-        WVLOG_E("custom data is empty or builder_ is null");
+    if (!record_ || data.empty()) {
+        WVLOG_E("custom data is empty or record_ is null");
         return false;
     }
-    std::shared_ptr<MineCustomData> customData =
-        std::make_shared<MineCustomData>();
     for (PasteCustomData::iterator iter = data.begin(); iter != data.end(); ++iter) {
-        customData->AddItemData(iter->first, iter->second);
+        record_->AddEntry(iter->first, std::make_shared<PasteDataEntry>(iter->first, iter->second));
     }
-    record_ = builder_->SetCustomData(customData).Build();
     return true;
 }
 
@@ -218,11 +245,15 @@ bool PasteDataRecordAdapterImpl::SetImgData(std::shared_ptr<ClipBoardImageDataAd
 
     std::shared_ptr<Media::PixelMap> pixelMapIn = move(pixelMap);
 
-    if (!builder_) {
+    if (!record_) {
         WVLOG_E("record_ is null");
         return false;
     }
-    record_ = builder_->SetPixelMap(pixelMapIn).Build();
+    auto utdId = UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::SYSTEM_DEFINED_PIXEL_MAP);
+    auto object = std::make_shared<Object>();
+    object->value_[UDMF::UNIFORM_DATA_TYPE] = utdId;
+    object->value_[UDMF::PIXEL_MAP] = pixelMapIn;
+    record_->AddEntry(utdId, std::make_shared<PasteDataEntry>(utdId, object));
     return true;
 }
 
@@ -233,12 +264,51 @@ std::string PasteDataRecordAdapterImpl::GetMimeType()
 
 std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetHtmlText()
 {
-    return (record_ != nullptr) ? record_->GetHtmlText() : nullptr;
+    if (!record_) {
+        WVLOG_E("record_ is null");
+        return nullptr;
+    }
+    auto entry = record_->GetEntry(UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::HTML));
+    return (entry ? entry->ConvertToHtml() : nullptr);
 }
 
 std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetPlainText()
 {
-    return (record_ != nullptr) ? record_->GetPlainText() : nullptr;
+    if (!record_) {
+        WVLOG_E("record_ is null");
+        return nullptr;
+    }
+    auto entry = record_->GetEntry(UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::PLAIN_TEXT));
+    if (entry) {
+        return entry->ConvertToPlainText();
+    }
+    auto tempPlainText = record_->GetPlainText();
+    if (tempPlainText && !tempPlainText->empty()) {
+        WVLOG_I("Compatibility adaptation with old versions of read plainText");
+        return tempPlainText;
+    }
+    return nullptr;
+}
+
+std::shared_ptr<Media::PixelMap> PasteDataRecordAdapterImpl::GetPixelMap()
+{
+    if (record_ == nullptr) {
+        WVLOG_E("record_ is null");
+        return nullptr;
+    }
+
+    std::shared_ptr<Media::PixelMap> pixelMap = nullptr;
+    auto entry = record_->GetEntry(UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::SYSTEM_DEFINED_PIXEL_MAP));
+    if (entry) {
+        pixelMap = entry->ConvertToPixelMap();
+    }
+    if (pixelMap == nullptr) {
+        pixelMap = record_->GetPixelMap();
+        if (pixelMap) {
+            WVLOG_I("Compatibility adaptation with old versions of read pixelMap");
+        }
+    }
+    return pixelMap;
 }
 
 bool PasteDataRecordAdapterImpl::GetImgData(std::shared_ptr<ClipBoardImageDataAdapter> imageData)
@@ -253,9 +323,9 @@ bool PasteDataRecordAdapterImpl::GetImgData(std::shared_ptr<ClipBoardImageDataAd
         return false;
     }
 
-    std::shared_ptr<Media::PixelMap> pixelMap = record_->GetPixelMap();
+    std::shared_ptr<Media::PixelMap> pixelMap = GetPixelMap();
     if (pixelMap == nullptr) {
-        WVLOG_E("pixelMap is null");
+        WVLOG_D("no pixelMap in record");
         return false;
     }
 
@@ -297,9 +367,14 @@ bool PasteDataRecordAdapterImpl::GetImgData(std::shared_ptr<ClipBoardImageDataAd
 std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetUri()
 {
     if (record_ == nullptr) {
+        WVLOG_E("record_ is null");
         return nullptr;
     }
-    auto uri = record_->GetUri();
+    auto entry = record_->GetEntry(UDMF::UtdUtils::GetUtdIdFromUtdEnum(UDMF::FILE_URI));
+    if (entry == nullptr) {
+        return nullptr;
+    }
+    auto uri = entry->ConvertToUri();
     if (uri == nullptr) {
         return nullptr;
     }
@@ -309,13 +384,31 @@ std::shared_ptr<std::string> PasteDataRecordAdapterImpl::GetUri()
 std::shared_ptr<PasteCustomData> PasteDataRecordAdapterImpl::GetCustomData()
 {
     if (record_ == nullptr) {
+        WVLOG_E("record_ is null");
         return nullptr;
     }
-    auto customData = record_->GetCustomData();
-    if (customData == nullptr) {
-        return nullptr;
+    auto customData = std::make_shared<PasteCustomData>();
+    for (auto type : { SPAN_STRING_TAG, CUSTOM_DATA_TAG, CUSTOM_DATA_TAG2 }) {
+        auto entry = record_->GetEntry(type);
+        if (!entry) {
+            continue;
+        }
+        auto data = entry->ConvertToCustomData();
+        if (!data) {
+            continue;
+        }
+        for (const auto& [key, value] : data->GetItemData()) {
+            customData->emplace(key, value);
+        }
     }
-    return std::make_shared<PasteCustomData>(customData->GetItemData());
+    // Compatibility adaptation with old versions of read customData
+    if (record_->GetCustomData()) {
+        for (const auto& [key, value] : record_->GetCustomData()->GetItemData()) {
+            customData->emplace(key, value);
+        }
+    }
+
+    return (customData->empty() ? nullptr : customData);
 }
 
 void PasteDataRecordAdapterImpl::ClearImgBuffer()
@@ -455,15 +548,46 @@ std::string GetPasteMimeTypeExtention(const PasteRecordVector& data)
     return primaryMimeType;
 }
 
+std::string PasteBoardClientAdapterImpl::GetDistributedFilesDirOfApplicationContext()
+{
+    const auto appContext = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (appContext == nullptr) {
+        WVLOG_E("application context is null.");
+        return MEDIA;
+    }
+    const std::string distributedFilesDir = appContext->GetDistributedFilesDir();
+    if (distributedFilesDir.empty()) {
+        WVLOG_E("application context distributedFilesdir is empty.");
+        return MEDIA;
+    }
+    return distributedFilesDir;
+}
+
 bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordVector& data)
 {
     PasteData pData;
-    if (!PasteboardClient::GetInstance()->HasPasteData() ||
-        !PasteboardClient::GetInstance()->GetPasteData(pData)) {
-        ReportPasteboardErrorEvent(PasteboardClient::GetInstance()->GetPasteData(pData),
-            pData.AllRecords().size(), GetPasteMimeTypeExtention(data));
+    if (!PasteboardClient::GetInstance()->HasPasteData()) {
+        WVLOG_I("there is no data in clipboard");
         isLocalPaste_ = false;
         tokenId_ = 0;
+        return false;
+    }
+    std::shared_ptr<GetDataParams> params = std::make_shared<GetDataParams>();
+    params->destUri = GetDistributedFilesDirOfApplicationContext();
+    params->fileConflictOption = FILE_OVERWRITE;
+    params->progressIndicator = DEFAULT_PROGRESS_INDICATOR;
+    params->info = new (std::nothrow) ProgressInfo();
+
+    int32_t result = PasteboardClient::GetInstance()->GetDataWithProgress(pData, params);
+    if (result != static_cast<int32_t>(PasteboardError::E_OK)) {
+        WVLOG_E("get data from clipboard failed, errcode=%{public}d", result);
+        ReportPasteboardErrorEvent(result, pData.AllRecords().size(), GetPasteMimeTypeExtention(data));
+        isLocalPaste_ = false;
+        tokenId_ = 0;
+        if (params->info != nullptr) {
+            delete params->info;
+            params->info = nullptr;
+        }
         return false;
     }
     for (auto& record: pData.AllRecords()) {
@@ -471,6 +595,10 @@ bool PasteBoardClientAdapterImpl::GetPasteData(PasteRecordVector& data)
     }
     tokenId_ = pData.GetTokenId();
     isLocalPaste_ = pData.IsLocalPaste();
+    if (params->info != nullptr) {
+        delete params->info;
+        params->info = nullptr;
+    }
     return true;
 }
 
@@ -490,11 +618,12 @@ void PasteBoardClientAdapterImpl::SetPasteData(const PasteRecordVector& data, Co
         recordList.push_back(rawRecord->GetRecord());
     }
     PasteData pData(recordList);
-    pData.SetTag(webviewPasteDataTag_);
     auto shareOption = TransitionCopyOption(copyOption);
     pData.SetShareOption(shareOption);
+    
     int32_t ret = PasteboardClient::GetInstance()->SetPasteData(pData);
-    if (ret != SET_PASTE_DATA_SUCCESS) {
+    if (ret != static_cast<int32_t>(PasteboardError::E_OK)) {
+        WVLOG_E("set paste data to clipboard failed");
         ReportPasteboardErrorEvent(ret, pData.AllRecords().size(), GetPasteMimeTypeExtention(data));
     }
 }

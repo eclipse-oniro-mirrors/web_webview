@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
 #include "display_manager_adapter_impl.h"
@@ -25,17 +26,21 @@ using namespace OHOS::NWeb;
 using namespace OHOS::Rosen;
 
 namespace OHOS {
-    bool ConvertOrientationFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        sptr<Display> listener =nullptr;
-        DisplayAdapterImpl display(listener);
-        display.ConvertOrientationType(Orientation::UNSPECIFIED);
-        return true;
+constexpr int MAX_SET_NUMBER = 1000;
+
+bool ConvertOrientationFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    sptr<Display> listener = nullptr;
+    DisplayAdapterImpl display(listener);
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t Adapter = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    display.ConvertOrientationType(static_cast<Orientation>(Adapter));
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

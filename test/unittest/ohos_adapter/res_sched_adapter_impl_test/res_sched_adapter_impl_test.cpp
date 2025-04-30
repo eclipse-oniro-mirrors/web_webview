@@ -91,6 +91,17 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportKeyThread_001, T
     result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
         1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
     EXPECT_TRUE(result);
+    resAdapter->ReportWindowId(1, 1);
+    result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+        1, 1, ResSchedRoleAdapter::IMPORTANT_AUDIO);
+    EXPECT_TRUE(result);
+    result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_DESTROYED,
+        1, 1, ResSchedRoleAdapter::IMPORTANT_AUDIO);
+    EXPECT_TRUE(result);
+    resAdapter->ReportWindowId(2, 2);
+    result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+        0, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
+    EXPECT_TRUE(result);
 }
 
 /**
@@ -214,6 +225,28 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportProcessInUse_007
     bool result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, 1);
     EXPECT_TRUE(result);
     resAdapter->ReportProcessInUse(1);
+
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, 1);
+    EXPECT_TRUE(result);
+    resAdapter->ReportProcessInUse(1);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_EXIT, 1);
+
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 1);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 2);
+    resAdapter->ReportProcessInUse(1);
+    resAdapter->ReportProcessInUse(2);
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, 1);
+    EXPECT_TRUE(result);
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_INACTIVE, 1, 1, 2);
+    EXPECT_TRUE(result);
+
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 3);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 4);
+    resAdapter->ReportProcessInUse(3);
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_INACTIVE, 3, 3, 3);
+    EXPECT_TRUE(result);
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_INACTIVE, 3, 3, 4);
+    EXPECT_TRUE(result);
 }
 }
 } // namespace NWeb

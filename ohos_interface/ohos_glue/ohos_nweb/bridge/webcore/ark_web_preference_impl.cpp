@@ -491,4 +491,28 @@ void ArkWebPreferenceImpl::SetSurfaceId(const ArkWebString& ua)
     nweb_preference_->SetSurfaceId(ArkWebStringStructToClass(ua));
 }
 
+void ArkWebPreferenceImpl::SetScrollable(bool enable, int32_t scrollType)
+{
+    nweb_preference_->SetScrollable(enable, scrollType);
+}
+
+void ArkWebPreferenceImpl::SetBlurOnKeyboardHideMode(int enable)
+{
+    nweb_preference_->SetBlurOnKeyboardHideMode(enable);
+}
+
+void ArkWebPreferenceImpl::PutWebMediaAVSessionEnabled(bool enable)
+{
+    nweb_preference_->PutWebMediaAVSessionEnabled(enable);
+}
+
+void ArkWebPreferenceImpl::SetFontWeightScale(float scale)
+{
+    nweb_preference_->SetFontWeightScale(scale);
+}
+
+void ArkWebPreferenceImpl::SetIntrinsicSizeEnable(bool enable)
+{
+    nweb_preference_->SetIntrinsicSizeEnable(enable);
+}
 } // namespace OHOS::ArkWeb

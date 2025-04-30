@@ -41,11 +41,33 @@ bool ArkIMFAdapterWrapper::Attach(std::shared_ptr<OHOS::NWeb::IMFTextListenerAda
         return ctocpp_->Attach(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard,
             new ArkIMFTextConfigAdapterImpl(config), isResetListener);
     } else if (CHECK_SHARED_PTR_IS_NULL(listener) && CHECK_SHARED_PTR_IS_NULL(config)) {
-        return ctocpp_->Attach(nullptr, isShowKeyboard, nullptr, isResetListener);
+        return ctocpp_->Attach(
+            nullptr, isShowKeyboard, nullptr, isResetListener);
     } else if (CHECK_SHARED_PTR_IS_NULL(listener)) {
-        return ctocpp_->Attach(nullptr, isShowKeyboard, new ArkIMFTextConfigAdapterImpl(config), isResetListener);
+        return ctocpp_->Attach(
+            nullptr, isShowKeyboard, new ArkIMFTextConfigAdapterImpl(config), isResetListener);
     } else {
-        return ctocpp_->Attach(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard, nullptr, isResetListener);
+        return ctocpp_->Attach(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard,
+            nullptr, isResetListener);
+    }
+}
+
+bool ArkIMFAdapterWrapper::AttachWithRequestKeyboardReason(std::shared_ptr<OHOS::NWeb::IMFTextListenerAdapter> listener,
+    bool isShowKeyboard, const std::shared_ptr<OHOS::NWeb::IMFTextConfigAdapter> config, bool isResetListener,
+    int32_t requestKeyboardReason)
+{
+    if (!CHECK_SHARED_PTR_IS_NULL(listener) && !CHECK_SHARED_PTR_IS_NULL(config)) {
+        return ctocpp_->AttachWithRequestKeyboardReason(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard,
+            new ArkIMFTextConfigAdapterImpl(config), isResetListener, requestKeyboardReason);
+    } else if (CHECK_SHARED_PTR_IS_NULL(listener) && CHECK_SHARED_PTR_IS_NULL(config)) {
+        return ctocpp_->AttachWithRequestKeyboardReason(
+            nullptr, isShowKeyboard, nullptr, isResetListener, requestKeyboardReason);
+    } else if (CHECK_SHARED_PTR_IS_NULL(listener)) {
+        return ctocpp_->AttachWithRequestKeyboardReason(
+            nullptr, isShowKeyboard, new ArkIMFTextConfigAdapterImpl(config), isResetListener, requestKeyboardReason);
+    } else {
+        return ctocpp_->AttachWithRequestKeyboardReason(new ArkIMFTextListenerAdapterImpl(listener), isShowKeyboard,
+            nullptr, isResetListener, requestKeyboardReason);
     }
 }
 
@@ -78,6 +100,18 @@ void ArkIMFAdapterWrapper::OnSelectionChange(std::u16string text, int start, int
     ctocpp_->OnSelectionChange(str, start, end);
 
     ArkWebU16StringStructRelease(str);
+}
+
+bool ArkIMFAdapterWrapper::SendPrivateCommand(const std::string& commandKey, const std::string& commandValue)
+{
+    ArkWebString keyStr = ArkWebStringClassToStruct(commandKey);
+    ArkWebString valueStr = ArkWebStringClassToStruct(commandValue);
+    auto result = ctocpp_->SendPrivateCommand(keyStr, valueStr);
+
+    ArkWebStringStructRelease(keyStr);
+    ArkWebStringStructRelease(valueStr);
+
+    return result;
 }
 
 } // namespace OHOS::ArkWeb

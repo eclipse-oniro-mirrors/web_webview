@@ -69,6 +69,12 @@ public:
 
     /*--ark web()--*/
     virtual int32_t SetPlaybackSpeed(int32_t mode) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t SetVideoSurfaceNew(void* native_window) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t SetMediaSourceHeader(const ArkWebString& url, const ArkWebStringMap& header) = 0;
 };
 
 } // namespace OHOS::ArkWeb

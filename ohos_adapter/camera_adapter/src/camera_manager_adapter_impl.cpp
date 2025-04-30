@@ -18,10 +18,13 @@
 #include <unordered_map>
 
 #include "camera_rotation_info_adapter_impl.h"
+#include "display.h"
+#include "display_manager.h"
 #include "format_adapter_impl.h"
 #include "hisysevent_adapter.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
+#include "syspara/parameters.h"
 #include "video_capture_range_adapter_impl.h"
 #include "video_control_support_adapter_impl.h"
 #include "video_device_descriptor_adapter_impl.h"
@@ -289,7 +292,8 @@ std::vector<std::shared_ptr<VideoDeviceDescriptorAdapter>> CameraManagerAdapterI
             return devicesDiscriptor;
         }
 
-        deviceDisc->SetDisplayName(cameraObj->GetID());
+        std::string displayName = GetCameraDisplayName(cameraObj->GetID(), cameraObj->GetPosition());
+        deviceDisc->SetDisplayName(displayName);
         deviceDisc->SetDeviceId(cameraObj->GetID());
         deviceDisc->SetModelId(cameraObj->GetID());
 
@@ -400,6 +404,7 @@ int32_t CameraManagerAdapterImpl::InitPreviewOutput(const std::shared_ptr<VideoC
         }
         previewSize.width = captureParams->GetWidth();
         previewSize.height = captureParams->GetHeight();
+        previewSurface_->SetDefaultUsage(BUFFER_USAGE_CPU_READ);
         previewSurface_->SetDefaultWidthAndHeight(previewSize.width, previewSize.height);
         previewSurface_->SetUserData(
             CameraManager::surfaceFormat, std::to_string(TransToOriCameraFormat(captureParams->GetPixelFormat())));
@@ -603,7 +608,7 @@ int32_t CameraManagerAdapterImpl::CreateAndStartSession()
 
 int32_t CameraManagerAdapterImpl::RestartSession()
 {
-    std::lock_guard<std::mutex> lock(restart_mutex_);
+    std::lock_guard<std::mutex> lock(mutex_);
     WVLOG_I("RestartSession %{public}s", deviceId_.c_str());
     if (!isCapturing_) {
         WVLOG_E("this web tab is not capturing");
@@ -632,7 +637,7 @@ int32_t CameraManagerAdapterImpl::RestartSession()
     captureSession_ = nullptr;
     status_ = CameraStatusAdapter::AVAILABLE;
 
-    if (StartStream(deviceId_, captureParams_, listener_) != CAMERA_OK) {
+    if (StartStreamInner(deviceId_, captureParams_, listener_) != CAMERA_OK) {
         WVLOG_E("restart stream failed");
         ReleaseSessionResource(deviceId_);
         ReleaseSession();
@@ -746,6 +751,13 @@ int32_t CameraManagerAdapterImpl::StartStream(const std::string& deviceId,
     std::shared_ptr<CameraBufferListenerAdapter> listener)
 {
     std::lock_guard<std::mutex> lock(mutex_);
+    return StartStreamInner(deviceId, captureParams, listener);
+}
+
+int32_t CameraManagerAdapterImpl::StartStreamInner(const std::string& deviceId,
+    const std::shared_ptr<VideoCaptureParamsAdapter> captureParams,
+    std::shared_ptr<CameraBufferListenerAdapter> listener)
+{
     wantedDeviceId_ = deviceId;
     if ((cameraManager_ == nullptr) || (listener == nullptr)) {
         WVLOG_E("cameraManager or listener is null when start session");
@@ -776,6 +788,27 @@ int32_t CameraManagerAdapterImpl::StartStream(const std::string& deviceId,
     }
 
     return CAMERA_OK;
+}
+
+std::string CameraManagerAdapterImpl::GetCameraDisplayName(const std::string& cameraId, const CameraPosition& position)
+{
+    std::string displayName;
+    switch (position) {
+        case CAMERA_POSITION_FRONT:
+            displayName = cameraId + ", facing front";
+            break;
+        case CAMERA_POSITION_BACK:
+            displayName = cameraId + ", facing back";
+            break;
+        case CAMERA_POSITION_FOLD_INNER:
+            displayName = cameraId + ", facing fold inner";
+            break;
+        default:
+            displayName = cameraId;
+    }
+
+    std::replace(displayName.begin(), displayName.end(), '/', ' ');
+    return displayName;
 }
 
 CameraSurfaceBufferAdapterImpl::CameraSurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer) : buffer_(buffer) {}
@@ -853,8 +886,73 @@ CameraSurfaceListener::CameraSurfaceListener(
     : surfaceType_(type), surface_(surface), listener_(listener)
 {}
 
-std::shared_ptr<CameraRotationInfoAdapter> CameraSurfaceListener::FillRotationInfo(
-    int roration, bool isFlipX, bool isFlipY)
+int32_t CameraSurfaceListener::GetScreenRotation()
+{
+    sptr<OHOS::Rosen::Display> display = OHOS::Rosen::DisplayManager::GetInstance().GetDefaultDisplaySync();
+    if (display == nullptr) {
+        WVLOG_E("Get display manager failed, rotation maybe incorrect.");
+        return 0;
+    }
+    auto displayRotation = display->GetRotation();
+    int32_t screenRotation = 0;
+    switch (displayRotation) {
+        case OHOS::Rosen::Rotation::ROTATION_0:
+            screenRotation = ROTATION_0;
+            break;
+        case OHOS::Rosen::Rotation::ROTATION_90:
+            screenRotation = ROTATION_90;
+            break;
+        case OHOS::Rosen::Rotation::ROTATION_180:
+            screenRotation = ROTATION_180;
+            break;
+        case OHOS::Rosen::Rotation::ROTATION_270:
+            screenRotation = ROTATION_270;
+            break;
+        default:
+            WVLOG_E("Get invalid displayRotation");
+            break;
+    }
+    // current tablet screen rotation is different from of other devices.
+    // when display framework modify this problem, we need to delete this transform
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "tablet") {
+        screenRotation = (screenRotation + ROTATION_270) % ROTATION_MAX;
+    }
+    return screenRotation;
+}
+
+int32_t CameraSurfaceListener::GetPictureRotation()
+{
+    int32_t screenRotation = GetScreenRotation();
+    std::string currentDeviceId = CameraManagerAdapterImpl::GetInstance().GetCurrentDeviceId();
+    sptr<CameraDevice> cameraObj = CameraManager::GetInstance()->GetCameraDeviceFromId(currentDeviceId);
+    if (cameraObj == nullptr) {
+        WVLOG_E("cameraObj is nullptr");
+        return screenRotation;
+    }
+    int32_t cameraOrientation = static_cast<int32_t>(cameraObj->GetCameraOrientation());
+    auto cameraPosition = cameraObj->GetPosition(); // 1: back, 2: front
+
+    int32_t pictureRotation = 0;
+    if (cameraPosition == OHOS::CameraStandard::CameraPosition::CAMERA_POSITION_FRONT) {
+        pictureRotation = (cameraOrientation - screenRotation) % ROTATION_MAX;
+    } else {
+        pictureRotation = (cameraOrientation + screenRotation) % ROTATION_MAX;
+    }
+
+    WVLOG_D("GetPictureRotation, cameraOrientation:%{public}d, screenRotation:%{public}d, pictureRotation:%{public}d",
+        cameraOrientation, screenRotation, pictureRotation);
+    return pictureRotation;
+}
+
+bool CameraSurfaceListener::IsNeedCorrectRotation()
+{
+    std::string deviceType = OHOS::system::GetDeviceType();
+    return (deviceType == "phone" || deviceType == "tablet");
+}
+
+std::shared_ptr<CameraRotationInfoAdapter> CameraSurfaceListener::FillRotationInfo(int32_t rotation,
+    bool isFlipX, bool isFlipY)
 {
     std::shared_ptr<CameraRotationInfoAdapterImpl> rotationInfo = std::make_shared<CameraRotationInfoAdapterImpl>();
     if (!rotationInfo) {
@@ -862,7 +960,10 @@ std::shared_ptr<CameraRotationInfoAdapter> CameraSurfaceListener::FillRotationIn
         return nullptr;
     }
 
-    rotationInfo->SetRotation(roration);
+    if (IsNeedCorrectRotation()) {
+        rotation = GetPictureRotation();
+    }
+    rotationInfo->SetRotation(rotation);
     rotationInfo->SetIsFlipX(isFlipX);
     rotationInfo->SetIsFlipY(isFlipY);
     return rotationInfo;

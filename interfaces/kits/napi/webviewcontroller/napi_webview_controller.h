@@ -37,10 +37,12 @@ const std::string WEB_HITTESTTYPE_ENUM_NAME = "WebHitTestType";
 const std::string WEB_HISTORY_LIST_CLASS_NAME = "WebHistoryList";
 const std::string WEB_SECURE_DNS_MODE_ENUM_NAME = "SecureDnsMode";
 const std::string WEB_PRINT_DOCUMENT_CLASS_NAME = "WebPrintDocument";
-const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "SecurityLevel";
+const std::string WEB_SECURITY_LEVEL_ENUM_NAME = "WebSecurityLevel";
 const std::string WEB_RENDER_PROCESS_MODE_ENUM_NAME = "RenderProcessMode";
 const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
 const std::string WEB_PRESSURE_LEVEL_ENUM_NAME = "PressureLevel";
+const std::string WEB_SCROLL_TYPE_ENUM_NAME = "ScrollType";
+constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 
 struct Scheme {
     std::string name;
@@ -60,6 +62,13 @@ struct OfflineResourceValue {
     napi_value resource;
     napi_value responseHeaders;
     napi_value type;
+};
+
+struct PDFMarginConfig {
+    double top = TEN_MILLIMETER_TO_INCH;
+    double bottom = TEN_MILLIMETER_TO_INCH;
+    double right = TEN_MILLIMETER_TO_INCH;
+    double left = TEN_MILLIMETER_TO_INCH;
 };
 
 class NapiWebviewController {
@@ -184,6 +193,8 @@ private:
 
     static napi_value RunJavaScriptInternalExt(napi_env env, napi_callback_info info, bool extention);
 
+    static napi_value RunCreatePDFExt(napi_env env, napi_callback_info info);
+
     static napi_value TerminateRenderProcess(napi_env env, napi_callback_info info);
 
     static napi_value GetUrl(napi_env env, napi_callback_info info);
@@ -239,15 +250,15 @@ private:
 
     static napi_value PrepareForPageLoad(napi_env env, napi_callback_info info);
 
+    static napi_value CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info);
+
+    static napi_value PostUrl(napi_env env, napi_callback_info info);
+
     static napi_value SetDownloadDelegate(napi_env env, napi_callback_info info);
 
     static napi_value StartDownload(napi_env env, napi_callback_info info);
 
     static napi_value SetConnectionTimeout(napi_env env, napi_callback_info info);
-
-    static napi_value CreateWebPrintDocumentAdapter(napi_env env, napi_callback_info info);
-
-    static napi_value PostUrl(napi_env env, napi_callback_info info);
 
     static napi_value GetSecurityLevel(napi_env env, napi_callback_info info);
 
@@ -267,16 +278,6 @@ private:
     static napi_value ClearServiceWorkerWebSchemeHandler(
         napi_env env, napi_callback_info info);
 
-    static napi_value CloseAllMediaPresentations(napi_env env, napi_callback_info info);
-
-    static napi_value StopAllMedia(napi_env env, napi_callback_info info);
-
-    static napi_value ResumeAllMedia(napi_env env, napi_callback_info info);
-
-    static napi_value PauseAllMedia(napi_env env, napi_callback_info info);
-
-    static napi_value GetMediaPlaybackState(napi_env env, napi_callback_info info);
-
     static napi_value EnableIntelligentTrackingPrevention(
         napi_env env, napi_callback_info info);
 
@@ -292,6 +293,10 @@ private:
     static napi_value ClearIntelligentTrackingPreventionBypassingList(
         napi_env env, napi_callback_info info);
 
+    static napi_value GetDefaultUserAgent(napi_env env, napi_callback_info info);
+
+    static napi_value GetLastJavascriptProxyCallingFrameUrl(napi_env env, napi_callback_info info);
+
     static napi_value PauseAllTimers(napi_env env, napi_callback_info info);
 
     static napi_value ResumeAllTimers(napi_env env, napi_callback_info info);
@@ -302,7 +307,15 @@ private:
 
     static napi_value CloseCamera(napi_env env, napi_callback_info info);
 
-    static napi_value GetLastJavascriptProxyCallingFrameUrl(napi_env env, napi_callback_info info);
+    static napi_value CloseAllMediaPresentations(napi_env env, napi_callback_info info);
+
+    static napi_value StopAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value ResumeAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value PauseAllMedia(napi_env env, napi_callback_info info);
+
+    static napi_value GetMediaPlaybackState(napi_env env, napi_callback_info info);
 
     static napi_value PrefetchResource(napi_env env, napi_callback_info info);
 
@@ -316,9 +329,7 @@ private:
 
     static napi_value PrecompileJavaScript(napi_env env, napi_callback_info info);
 
-    static napi_value WarmupServiceWorker(napi_env env, napi_callback_info info);
-
-    static napi_value InjectOfflineResource(napi_env env, napi_callback_info info);
+    static napi_value InjectOfflineResources(napi_env env, napi_callback_info info);
 
     static void AddResourcesToMemoryCache(napi_env env,
                                           napi_callback_info info,
@@ -332,20 +343,27 @@ private:
 
     static napi_value ClearHostIP(napi_env env, napi_callback_info info);
 
+    static napi_value SetAppCustomUserAgent(napi_env env, napi_callback_info info);
+
+    static napi_value SetUserAgentForHosts(napi_env env, napi_callback_info info);
+
+    static napi_value WarmupServiceWorker(napi_env env, napi_callback_info info);
+
+    static napi_value GetSurfaceId(napi_env env, napi_callback_info info);
+
     static napi_value EnableWholeWebPageDrawing(napi_env env, napi_callback_info info);
+
     static napi_value EnableAdsBlock(napi_env env, napi_callback_info info);
 
     static napi_value IsAdsBlockEnabled(napi_env env, napi_callback_info info);
 
     static napi_value IsAdsBlockEnabledForCurPage(napi_env env, napi_callback_info info);
 
-    static napi_value GetSurfaceId(napi_env env, napi_callback_info info);
-
-    static napi_value UpdateInstanceId(napi_env env, napi_callback_info info);
+    static napi_value WebPageSnapshot(napi_env env, napi_callback_info info);
 
     static napi_value SetUrlTrustList(napi_env env, napi_callback_info info);
 
-    static napi_value WebPageSnapshot(napi_env env, napi_callback_info info);
+    static napi_value UpdateInstanceId(napi_env env, napi_callback_info info);
 
     static napi_value SetPathAllowingUniversalAccess(napi_env env, napi_callback_info info);
 
@@ -353,11 +371,17 @@ private:
 
     static napi_value SetBackForwardCacheOptions(napi_env env, napi_callback_info info);
 
+    static napi_value ScrollByWithResult(napi_env env, napi_callback_info info);
+
     static napi_value TrimMemoryByPressureLevel(napi_env env, napi_callback_info info);
 
+    static napi_value GetScrollOffset(napi_env env, napi_callback_info info);
+
+    static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
-    };
+    static napi_value GetLastHitTest(napi_env env, napi_callback_info info);
+};
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {
 public:

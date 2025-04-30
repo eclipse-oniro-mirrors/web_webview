@@ -17,6 +17,7 @@
 
 #include "ohos_adapter/bridge/ark_video_device_descriptor_adapter_wrapper.h"
 #include "ohos_adapter/ctocpp/ark_video_device_descriptor_adapter_ctocpp.h"
+#include "base/include/ark_web_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -36,6 +37,7 @@ std::vector<std::shared_ptr<NWeb::VideoDeviceDescriptorAdapter>> ArkVideoDeviceD
     return class_value;
 }
 
+ARK_WEB_NO_SANITIZE
 void ArkVideoDeviceDescriptorAdapterVectorStructRelease(ArkVideoDeviceDescriptorAdapterVector& struct_value)
 {
     struct_value.size = 0;

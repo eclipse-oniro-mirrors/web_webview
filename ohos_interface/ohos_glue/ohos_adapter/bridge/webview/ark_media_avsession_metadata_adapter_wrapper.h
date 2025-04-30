@@ -38,6 +38,9 @@ public:
 
     std::string GetAlbum() override;
 
+    void SetImageUrl(const std::string& imageUrl) override;
+
+    std::string GetImageUrl() override;
 private:
     ArkWebRefPtr<ArkMediaAVSessionMetadataAdapter> ctocpp_;
 };

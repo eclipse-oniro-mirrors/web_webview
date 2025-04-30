@@ -34,20 +34,43 @@ const std::string LIB_CRASHPAD_HANDLER = "libchrome_crashpad_handler.so";
 
 int main(int argc, char* argv[])
 {
-    const std::string libCrashpadHandler = CRASHPAD_HANDLER_PATH + "/" + LIB_CRASHPAD_HANDLER;
-    void *handle = dlopen(libCrashpadHandler.c_str(), RTLD_NOW | RTLD_GLOBAL);
-    if (handle == nullptr) {
-        WVLOG_E("crashpad, fail to dlopen %{public}s, errmsg=%{public}s", libCrashpadHandler.c_str(), dlerror());
-        return -1;
-    }
+    const std::string libCrashpadHandler = std::string(WEBVIEW_SANDBOX_LIB_PATH) + "/"
+                                            + std::string(WEBVIEW_CRASHPAD_HANDLER_SO);
+    Dl_namespace dlns;
+    dlns_init(&dlns, "nweb_ns");
+    dlns_create(&dlns, std::string(WEBVIEW_SANDBOX_LIB_PATH).c_str());
 
+    Dl_namespace ndkns;
+    dlns_get("ndk", &ndkns);
+    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
+
+    void *handle = dlopen_ns(&dlns, libCrashpadHandler.c_str(), RTLD_NOW | RTLD_GLOBAL);
+    
+    if (handle == nullptr) {
+        const std::string libCrashpadHandler2 = CRASHPAD_HANDLER_PATH + "/" + LIB_CRASHPAD_HANDLER;
+        handle = dlopen(libCrashpadHandler2.c_str(), RTLD_NOW | RTLD_GLOBAL);
+        if (handle == nullptr) {
+            WVLOG_E("crashpad, fail to dlopen %{public}s, errmsg=%{public}s", libCrashpadHandler2.c_str(), dlerror());
+            return -1;
+        }
+    }
+    int ret = 0;
     using FuncType = int (*)(int argc, char* argv[]);
     FuncType crashpadHandlerFunc = reinterpret_cast<FuncType>(dlsym(handle, "CrashpadHandlerMain"));
     if (crashpadHandlerFunc == nullptr) {
         WVLOG_E("crashpad, fail to dlsym CrashpadHandlerMain, errmsg=%{public}s", dlerror());
+        ret = dlclose(handle);
+        if (ret != 0) {
+            WVLOG_E("crashpad, fail to dlclose, errmsg=%{public}s", dlerror());
+        }
         return -1;
     }
 
     WVLOG_I("crashpad, success to dlopen and dlsym, enter CrashpadHandlerMain");
-    return crashpadHandlerFunc(argc, argv);
+    ret = crashpadHandlerFunc(argc, argv);
+    if (ret != 0) {
+        WVLOG_E("crashpad dump failed, CrashpadHandlerMain return: %{public}d", ret);
+        _exit(1);
+    }
+    _exit(0);
 }

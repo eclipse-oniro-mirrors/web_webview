@@ -46,6 +46,10 @@ public:
 
     std::string GetUserAgentOSName() override;
 
+    std::string GetUserAgentOSVersion() override;
+
+    std::string GetUserAgentBaseOSName() override;
+
     int32_t GetSoftwareMajorVersion() override;
 
     int32_t GetSoftwareSeniorVersion() override;
@@ -73,6 +77,25 @@ public:
     std::vector<FrameRateSetting> GetLTPOConfig(const std::string& settingName) override;
 
     std::string GetOOPGPUStatus() override;
+
+    bool IsLTPODynamicApp(const std::string& bundleName) override;
+
+    int32_t GetLTPOStrategy() override;
+
+    std::string GetVulkanStatus() override;
+
+    std::string GetCompatibleDeviceType() override;
+
+    std::string GetDeviceInfoApiVersion() override;
+
+    std::string GetPRPPreloadMode() override;
+
+    std::string GetScrollVelocityScale() override;
+
+    std::string GetScrollFriction() override;
+
+    std::string GetBundleName() override;
+
 private:
     SystemPropertiesAdapterImpl();
 
@@ -85,8 +108,9 @@ private:
     void RemoveAllSysPropWatchers();
 
     ProductDeviceType AnalysisFromConfig();
-    int softwareMajorVersion_ = 4;
-    int softwareSeniorVersion_ = 1;
+    int softwareMajorVersion_ = -1;
+    int softwareSeniorVersion_ = -1;
+    std::string baseOsName_ ;
 
     std::unordered_map<PropertiesKey, std::vector<SystemPropertiesObserver*>> sysPropObserver_;
     std::unordered_map<PropertiesKey, std::shared_mutex> sysPropMutex_;

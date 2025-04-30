@@ -13,12 +13,15 @@
 
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [ "../../../../ohos_adapter/cert_mgr_adapter/include" ]
+  include_dirs = [
+    "../../../../ohos_adapter/cert_mgr_adapter/include",
+    "../../../../ohos_interface/include/ohos_adapter",
+  ]
 }
 
 ohos_unittest("cert_mgr_adapter_test") {
@@ -28,11 +31,7 @@ ohos_unittest("cert_mgr_adapter_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "../../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "access_token:libaccesstoken_sdk",
@@ -40,6 +39,8 @@ ohos_unittest("cert_mgr_adapter_test") {
     "access_token:libtoken_setproc",
     "c_utils:utils",
     "certificate_manager:cert_manager_sdk",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "init:libbegetutil",
     "netstack:net_ssl",

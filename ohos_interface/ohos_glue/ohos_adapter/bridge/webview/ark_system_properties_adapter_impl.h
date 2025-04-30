@@ -42,6 +42,10 @@ public:
 
     ArkWebString GetUserAgentOSName() override;
 
+    ArkWebString GetUserAgentOSVersion() override;
+    
+    ArkWebString GetUserAgentBaseOSName() override;
+
     int32_t GetSoftwareMajorVersion() override;
 
     int32_t GetSoftwareSeniorVersion() override;
@@ -67,6 +71,24 @@ public:
     ArkFrameRateSettingAdapterVector GetLTPOConfig(const ArkWebString& settingName) override;
 
     ArkWebString GetOOPGPUStatus() override;
+
+    bool IsLTPODynamicApp(const ArkWebString& settingName) override;
+
+    int32_t GetLTPOStrategy() override;
+
+    ArkWebString GetVulkanStatus() override;
+
+    ArkWebString GetCompatibleDeviceType() override;
+
+    ArkWebString GetDeviceInfoApiVersion() override;
+
+    ArkWebString GetPRPPreloadMode() override;
+
+    ArkWebString GetScrollVelocityScale() override;
+
+    ArkWebString GetScrollFriction() override;
+
+    ArkWebString GetBundleName() override;
 
 private:
     NWeb::SystemPropertiesAdapter& real_;

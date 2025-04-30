@@ -22,6 +22,7 @@
 #include <cstring>
 
 #include "business_error.h"
+#include "nweb_napi_scope.h"
 #include "web_scheme_handler_request.h"
 #include "nweb_log.h"
 #include "napi_parse_utils.h"
@@ -87,12 +88,15 @@ napi_value NapiWebSchemeHandlerRequest::JS_Constructor(napi_env env, napi_callba
     void *data = nullptr;
     napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
 
-    WebSchemeHandlerRequest *request = new WebSchemeHandlerRequest(env);
+    WebSchemeHandlerRequest *request = new (std::nothrow) WebSchemeHandlerRequest(env);
+    if (request == nullptr) {
+        return nullptr;
+    }
 
     napi_wrap(
         env, thisVar, request,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebSchemeHandlerRequest *request = (WebSchemeHandlerRequest *)data;
+            WebSchemeHandlerRequest *request = reinterpret_cast<WebSchemeHandlerRequest *>(data);
             delete request;
         },
         nullptr, nullptr);
@@ -118,6 +122,10 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
     napi_create_array(env, &result);
     size_t headerSize = list.size();
     for (size_t index = 0; index < headerSize; index++) {
+        NApiScope scope(env);
+        if (!scope.IsVaild()) {
+            break;
+        }
         napi_value webHeaderObj = nullptr;
         napi_value headerKey = nullptr;
         napi_value headerValue = nullptr;
@@ -284,7 +292,7 @@ napi_value NapiWebSchemeHandlerRequest::JS_HttpBodyStream(napi_env env, napi_cal
     napi_wrap(
         env, httpBodyStreamObject, stream,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebHttpBodyStream *stream = (WebHttpBodyStream *)data;
+            WebHttpBodyStream *stream = reinterpret_cast<WebHttpBodyStream *>(data);
             delete stream;
         },
         nullptr, nullptr);
@@ -333,7 +341,8 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetFrameUrl(napi_env env, napi_callba
     return value;
 }
 
-napi_status NapiWebSchemeHandlerRequest::ExportEnumWebResourceType(napi_env env, napi_value* value) {
+napi_status NapiWebSchemeHandlerRequest::ExportEnumWebResourceType(napi_env env, napi_value* value)
+{
     WVLOG_D("begin to export enum web resource type");
 
     const std::string NPI_WEB_RESOURCE_TYPE_ENUM_NAME = "WebResourceType";
@@ -1210,7 +1219,8 @@ napi_value NapiWebHttpBodyStream::JS_Initialize(napi_env env, napi_callback_info
     return result;
 }
 
-bool checkReadParamsNumber(napi_env env, const size_t argc) {
+bool CheckReadParamsNumber(napi_env env, const size_t argc)
+{
     size_t argcPromise = INTEGER_ONE;
     size_t argcCallback = INTEGER_TWO;
     if (argc != argcPromise && argc != argcCallback) {
@@ -1222,7 +1232,8 @@ bool checkReadParamsNumber(napi_env env, const size_t argc) {
     return true;
 }
 
-bool checkReadBufLen(napi_env env, const int32_t bufLen) {
+bool checkReadBufLen(napi_env env, const int32_t bufLen)
+{
     if (bufLen <= 0) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
             "BusinessError 401: Parameter error. The value of size must be a number greater than 0.");
@@ -1249,7 +1260,7 @@ napi_value NapiWebHttpBodyStream::JS_Read(napi_env env, napi_callback_info info)
         WVLOG_E("NapiWebHttpBodyStream::JS_Initialize stream is nullptr");
         return nullptr;
     }
-    if (!checkReadParamsNumber(env, argc)) {
+    if (!CheckReadParamsNumber(env, argc)) {
         return nullptr;
     }
 

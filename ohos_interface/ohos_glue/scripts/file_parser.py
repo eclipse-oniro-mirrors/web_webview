@@ -341,6 +341,7 @@ _simpletypes = {
     'int64_t': ['int64_t', '0'],
     'uint64_t': ['uint64_t', '0'],
     'uint64_t*': ['uint64_t*', 'NULL'],
+    'double_t': ['double_t', '0'],
     'double': ['double', '0'],
     'float': ['float', '0'],
     'long': ['long', '0'],
@@ -431,6 +432,7 @@ _simpletypes = {
     'CefTime': ['cef_time_t', 'CefTime()'],
     'CefWindowHandle': ['cef_window_handle_t', 'kNullWindowHandle'],
     'WebSnapshotCallback':['WebSnapshotCallback', 'NULL'],
+    'ArkDisplayAdapterVector': ['ArkDisplayAdapterVector', '{0}'],
 }
 
 
@@ -1379,6 +1381,17 @@ class obj_argument:
     name = self.type.get_type()
     if not name in list:
       list[name] = self.type
+
+  def get_raw_type(self):
+    result = ''
+    if self.type.is_const():
+      result += 'const '
+    result += self.type.get_type()
+    if self.type.is_byref():
+      result += '&'
+    elif self.type.is_byaddr():
+      result += '*'
+    return result
 
   def needs_attrib_count_func(self):
     """ Returns true if this argument requires a 'count_func' attribute. """

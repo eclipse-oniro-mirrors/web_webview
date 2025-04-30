@@ -24,7 +24,9 @@ class OHOS_NWEB_EXPORT NWebGestureEventResult {
 public:
     virtual ~NWebGestureEventResult() = default;
 
-    virtual void SetGestureEventResult(bool result) = 0;
+    virtual void SetGestureEventResult(bool result) {}
+
+    virtual void SetGestureEventResultV2(bool result, bool stopPropagation) {}
 };
 
 } // namespace OHOS::NWeb

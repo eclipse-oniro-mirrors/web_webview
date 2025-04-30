@@ -49,4 +49,9 @@ const ArkWebString ArkWebFileSelectorParamsImpl::DefaultFilename()
     return ArkWebStringClassToStruct(nweb_file_selector_params_->DefaultFilename());
 }
 
+const ArkWebStringVector ArkWebFileSelectorParamsImpl::MimeType()
+{
+    return ArkWebStringVectorClassToStruct(nweb_file_selector_params_->MimeType());
+}
+
 } // namespace OHOS::ArkWeb

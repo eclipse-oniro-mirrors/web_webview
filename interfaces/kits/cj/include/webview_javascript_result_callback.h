@@ -153,6 +153,8 @@ public:
 
     void RemoveTransientJavaScriptObject() override;
 
+    bool DeleteJavaScriptRegister(const std::string &objName);
+
     int32_t GetNWebId()
     {
         return nwebId_;

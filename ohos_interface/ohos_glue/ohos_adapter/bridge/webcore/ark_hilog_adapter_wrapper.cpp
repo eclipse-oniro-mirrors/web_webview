@@ -14,15 +14,17 @@
  */
 
 #include "hilog_adapter.h"
-#include "ohos_adapter/bridge/ark_web_adapter_bridge_helper.h"
+#include "ohos_adapter/bridge/ark_web_adapter_webcore_bridge_helper.h"
+
+#include "base/include/ark_web_macros.h"
 
 namespace OHOS::NWeb {
 using HiLogAdapterPrintLogFunc = int (*)(uint32_t level, const char* tag, const char* fmt, va_list ap);
 
-int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
+ARK_WEB_NO_SANITIZE int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
 {
     static HiLogAdapterPrintLogFunc hi_log_adapter_print_log = reinterpret_cast<HiLogAdapterPrintLogFunc>(
-        ArkWeb::ArkWebAdapterBridgeHelper::GetInstance(false).LoadFuncSymbol("HiLogAdapterPrintLog", false));
+        ArkWeb::ArkWebAdapterWebcoreBridgeHelper::GetInstance().LoadFuncSymbol("HiLogAdapterPrintLog", false));
     if (!hi_log_adapter_print_log) {
         return -1;
     }
@@ -35,10 +37,10 @@ int HiLogAdapter::PrintLog(LogLevelAdapter level, const char* tag, const char* f
     return ret;
 }
 
-int HiLogAdapter::PrintConsoleLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
+ARK_WEB_NO_SANITIZE int HiLogAdapter::PrintConsoleLog(LogLevelAdapter level, const char* tag, const char* fmt, ...)
 {
     static HiLogAdapterPrintLogFunc hi_log_adapter_console_log = reinterpret_cast<HiLogAdapterPrintLogFunc>(
-        ArkWeb::ArkWebAdapterBridgeHelper::GetInstance(false).LoadFuncSymbol("HiLogAdapterConsoleLog", false));
+        ArkWeb::ArkWebAdapterWebcoreBridgeHelper::GetInstance().LoadFuncSymbol("HiLogAdapterConsoleLog", false));
     if (!hi_log_adapter_console_log) {
         return -1;
     }

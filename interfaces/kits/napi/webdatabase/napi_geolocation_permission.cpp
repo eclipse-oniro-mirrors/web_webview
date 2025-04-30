@@ -19,6 +19,7 @@
 #include <vector>
 
 #include "business_error.h"
+#include "nweb_napi_scope.h"
 #include "napi/native_common.h"
 #include "nweb_data_base.h"
 #include "nweb_helper.h"
@@ -207,9 +208,8 @@ napi_value NapiGeolocationPermission::JsDeleteAllGeolocation(napi_env env, napi_
 void NapiGeolocationPermission::GetPermissionStateComplete(napi_env env, napi_status status, void *data)
 {
     GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
@@ -228,7 +228,6 @@ void NapiGeolocationPermission::GetPermissionStateComplete(napi_env env, napi_st
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_reference(env, param->callbackRef);
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
     param = nullptr;
 }
@@ -236,9 +235,8 @@ void NapiGeolocationPermission::GetPermissionStateComplete(napi_env env, napi_st
 void NapiGeolocationPermission::GetPermissionStatePromiseComplete(napi_env env, napi_status status, void *data)
 {
     GetOriginPermissionStateParam *param = static_cast<GetOriginPermissionStateParam *>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
@@ -252,7 +250,6 @@ void NapiGeolocationPermission::GetPermissionStatePromiseComplete(napi_env env, 
     }
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
     param = nullptr;
 }
@@ -394,9 +391,8 @@ napi_value NapiGeolocationPermission::JsGetAccessibleGeolocation(napi_env env, n
 void NapiGeolocationPermission::GetOriginComplete(napi_env env, napi_status status, void *data)
 {
     GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
@@ -420,7 +416,6 @@ void NapiGeolocationPermission::GetOriginComplete(napi_env env, napi_status stat
     napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &returnVal);
     napi_delete_reference(env, param->callbackRef);
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
     param = nullptr;
 }
@@ -428,9 +423,8 @@ void NapiGeolocationPermission::GetOriginComplete(napi_env env, napi_status stat
 void NapiGeolocationPermission::GetOriginsPromiseComplete(napi_env env, napi_status status, void *data)
 {
     GetPermissionOriginsParam *param = static_cast<GetPermissionOriginsParam *>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         delete param;
         return;
     }
@@ -450,7 +444,6 @@ void NapiGeolocationPermission::GetOriginsPromiseComplete(napi_env env, napi_sta
         napi_reject_deferred(env, param->deferred, args[0]);
     }
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
     param = nullptr;
 }
@@ -503,6 +496,8 @@ napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env,
     napi_value promise = nullptr;
     napi_create_promise(env, &deferred, &promise);
 
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     GetPermissionOriginsParam *param = new (std::nothrow) GetPermissionOriginsParam {
         .env = env,
         .asyncWork = nullptr,
@@ -513,8 +508,6 @@ napi_value NapiGeolocationPermission::GetOriginsPromise(napi_env env,
     if (param == nullptr) {
         return nullptr;
     }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOrigins,
         GetOriginsPromiseComplete, static_cast<void *>(param), &param->asyncWork));
     NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));

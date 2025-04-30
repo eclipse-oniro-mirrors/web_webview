@@ -994,4 +994,96 @@ void ArkWebHandlerWrapper::HideHandleAndQuickMenuIfNecessary(bool hide)
 {
     ark_web_handler_->HideHandleAndQuickMenuIfNecessary(hide);
 }
+
+void ArkWebHandlerWrapper::ChangeVisibilityOfQuickMenu()
+{
+    ark_web_handler_->ChangeVisibilityOfQuickMenu();
+}
+
+void ArkWebHandlerWrapper::StartVibraFeedback(const std::string& vibratorType)
+{
+    ArkWebString stVibratorType = ArkWebStringClassToStruct(vibratorType);
+
+    ark_web_handler_->StartVibraFeedback(stVibratorType);
+
+    ArkWebStringStructRelease(stVibratorType);
+}
+
+void ArkWebHandlerWrapper::OnPopupSize(int x, int y, int width, int height) {
+    ark_web_handler_->OnPopupSize(x, y, width, height);
+}
+
+void ArkWebHandlerWrapper::OnPopupShow(bool show) {
+    ark_web_handler_->OnPopupShow(show);
+}
+
+void ArkWebHandlerWrapper::OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) 
+{
+    ArkWebString stEmbedId = ArkWebStringClassToStruct(embed_id);
+    ark_web_handler_->OnNativeEmbedVisibilityChange(stEmbedId, visibility);
+    ArkWebStringStructRelease(stEmbedId);
+}
+
+bool ArkWebHandlerWrapper::CloseImageOverlaySelection()
+{
+    return ark_web_handler_->CloseImageOverlaySelection();
+}
+
+bool ArkWebHandlerWrapper::OnSslErrorRequestByJSV2(
+    std::shared_ptr<OHOS::NWeb::NWebJSSslErrorResult> result, ArkWebSslError error,
+    const std::vector<std::string>& certChainData)
+{
+    ArkWebStringVector stCertChainData = ArkWebStringVectorClassToStruct(certChainData);
+    
+    bool flag = false;
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        flag = ark_web_handler_->OnSslErrorRequestByJSV2(nullptr, static_cast<int>(error), stCertChainData);
+    } else {
+        flag = ark_web_handler_->OnSslErrorRequestByJSV2(
+            new ArkWebJsSslErrorResultImpl(result), static_cast<int>(error), stCertChainData);
+    }
+
+    ArkWebStringVectorStructRelease(stCertChainData);
+    return flag;
+}
+
+void ArkWebHandlerWrapper::OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) {
+    ark_web_handler_->OnAccessibilityEvent(accessibilityId, eventType);
+}
+
+bool ArkWebHandlerWrapper::IsCurrentFocus() {
+    return ark_web_handler_->IsCurrentFocus();
+}
+
+void ArkWebHandlerWrapper::GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight)
+{
+    ark_web_handler_->GetVisibleRectToWeb(visibleX, visibleY, visibleWidth, visibleHeight);
+}
+
+void ArkWebHandlerWrapper::OnScrollStart(const float x, const float y)
+{
+    ark_web_handler_->OnScrollStart(x, y);
+}
+
+void ArkWebHandlerWrapper::OnShowAutofillPopupV2(
+    const float offsetX, const float offsetY, const float height, const float width,
+    const std::vector<std::string>& menu_items)
+{
+    ArkWebStringVector stMenuItems = ArkWebStringVectorClassToStruct(menu_items);
+    ark_web_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, stMenuItems);
+    ArkWebStringVectorStructRelease(stMenuItems);
+}
+
+void ArkWebHandlerWrapper::RestoreRenderFit()
+{
+    ark_web_handler_->RestoreRenderFit();
+}
+
+void ArkWebHandlerWrapper::OnAccessibilityEventV2(
+    int64_t accessibilityId, int32_t eventType, const std::string& argument)
+{
+    ArkWebString stArgument = ArkWebStringClassToStruct(argument);
+    ark_web_handler_->OnAccessibilityEventV2(accessibilityId, eventType, stArgument);
+    ArkWebStringStructRelease(stArgument);
+}
 } // namespace OHOS::ArkWeb

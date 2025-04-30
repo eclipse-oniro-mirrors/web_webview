@@ -23,6 +23,8 @@
 namespace OHOS::NWeb {
 
 std::unordered_map<int32_t, std::shared_ptr<SensorCallbackImpl>> SensorAdapterImpl::sensorCallbackMap;
+std::mutex SensorAdapterImpl::sensorCallbackMapMutex_;
+
 constexpr double NANOSECONDS_IN_SECOND = 1000000000.0;
 constexpr double DEFAULT_SAMPLE_PERIOD = 200000000.0;
 
@@ -299,12 +301,19 @@ void SensorAdapterImpl::handleGameRotationVectorData(std::shared_ptr<OHOS::NWeb:
 
 void SensorAdapterImpl::OhosSensorCallback(SensorEvent* event)
 {
-    std::shared_ptr<OHOS::NWeb::SensorCallbackImpl> callback = nullptr;
-    auto findIter = sensorCallbackMap.find(event->sensorTypeId);
-    if (findIter != sensorCallbackMap.end()) {
-        callback = findIter->second;
+    if (event == nullptr) {
+        WVLOG_E("SensorEvent Error.");
+        return;
     }
-    if ((event == nullptr) || (callback == nullptr)) {
+    std::shared_ptr<OHOS::NWeb::SensorCallbackImpl> callback = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(sensorCallbackMapMutex_);
+        auto findIter = sensorCallbackMap.find(event->sensorTypeId);
+        if (findIter != sensorCallbackMap.end()) {
+            callback = findIter->second;
+        }
+    }
+    if (callback == nullptr) {
         WVLOG_E("OhosSensorCallback Error.");
         return;
     }
@@ -354,7 +363,7 @@ int32_t SensorAdapterImpl::SubscribeOhosSensor(int32_t sensorTypeId, int64_t sam
     std::string userName = SensorTypeToSensorUserName(sensorTypeId);
     (void)strcpy_s(mSensorUser.name, sizeof(mSensorUser.name), userName.c_str());
     mSensorUser.userData = nullptr;
-    mSensorUser.callback = OhosSensorCallback;
+    mSensorUser.callback = &OhosSensorCallback;
     int32_t ret = SENSOR_SUCCESS;
     ret = SubscribeSensor(ohosSensorTypeId, &mSensorUser);
     if (ret != SENSOR_SUCCESS) {
@@ -385,6 +394,7 @@ int32_t SensorAdapterImpl::RegistOhosSensorCallback(int32_t sensorTypeId,
     int32_t ohosSensorTypeId = SensorTypeToOhosSensorType(sensorTypeId);
     if (ohosSensorTypeId != SENSOR_TYPE_ID_NONE) {
         auto callback = std::make_shared<SensorCallbackImpl>(callbackAdapter);
+        std::lock_guard<std::mutex> lock(sensorCallbackMapMutex_);
         sensorCallbackMap[ohosSensorTypeId] = callback;
         return SENSOR_SUCCESS;
     }
@@ -397,7 +407,6 @@ int32_t SensorAdapterImpl::UnsubscribeOhosSensor(int32_t sensorTypeId)
     WVLOG_I("UnsubscribeOhosSensor sensorTypeId: %{public}d.", sensorTypeId);
     int32_t ohosSensorTypeId = SensorTypeToOhosSensorType(sensorTypeId);
     if (ohosSensorTypeId != SENSOR_TYPE_ID_NONE) {
-        sensorCallbackMap.erase(ohosSensorTypeId);
         int32_t ret = DeactivateSensor(ohosSensorTypeId, &mSensorUser);
         if (ret != SENSOR_SUCCESS) {
             WVLOG_E("UnsubscribeOhosSensor error, call DeactivateSensor ret = %{public}d.", ret);
@@ -408,6 +417,8 @@ int32_t SensorAdapterImpl::UnsubscribeOhosSensor(int32_t sensorTypeId)
             WVLOG_E("UnsubscribeOhosSensor error, call UnsubscribeSensor ret = %{public}d.", ret);
             return ret;
         }
+        std::lock_guard<std::mutex> lock(sensorCallbackMapMutex_);
+        sensorCallbackMap.erase(ohosSensorTypeId);
         return SENSOR_SUCCESS;
     }
     WVLOG_E("UnsubscribeOhosSensor error, sensorTypeId is invalid.");

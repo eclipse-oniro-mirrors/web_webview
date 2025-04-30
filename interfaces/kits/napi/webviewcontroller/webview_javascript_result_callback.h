@@ -51,37 +51,14 @@ public:
     typedef int32_t ObjectID;
 
     static std::shared_ptr<JavaScriptOb> CreateNamed(
-        napi_env env, int32_t containerScopeId, napi_value value, size_t refCount = 1)
-    {
-        return std::make_shared<JavaScriptOb>(env, containerScopeId, value, refCount);
-    }
+        napi_env env, int32_t containerScopeId, napi_value value, size_t refCount = 1);
     static std::shared_ptr<JavaScriptOb> CreateTransient(
-        napi_env env, int32_t containerScopeId, napi_value value, int32_t holder, size_t refCount = 1)
-    {
-        std::set<int32_t> holders;
-        holders.insert(holder);
-        return std::make_shared<JavaScriptOb>(env, containerScopeId, value, holders, refCount);
-    }
+        napi_env env, int32_t containerScopeId, napi_value value, int32_t holder, size_t refCount = 1);
 
-    JavaScriptOb(napi_env env, int32_t containerScopeId, napi_value value, size_t refCount = 1)
-        : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(1)
-    {
-        napi_status s = napi_create_reference(env, value, refCount, &objRef_);
-        if (s != napi_ok) {
-            WVLOG_E("create javascript obj fail");
-        }
-    }
+    JavaScriptOb(napi_env env, int32_t containerScopeId, napi_value value, size_t refCount = 1);
 
     JavaScriptOb(
-        napi_env env, int32_t containerScopeId, napi_value value, std::set<int32_t> holders, size_t refCount = 1)
-        : env_(env), containerScopeId_(containerScopeId), isStrongRef_(refCount != 0), namesCount_(0), holders_(holders)
-    {
-        std::unique_lock<std::mutex> lock(mutex_);
-        napi_status s = napi_create_reference(env, value, refCount, &objRef_);
-        if (s != napi_ok) {
-            WVLOG_E("create javascript obj fail");
-        }
-    }
+        napi_env env, int32_t containerScopeId, napi_value value, std::set<int32_t> holders, size_t refCount = 1);
 
     JavaScriptOb(const JavaScriptOb& job)
     {
@@ -183,7 +160,7 @@ public:
         }
     }
 
-    bool IsNamed()
+    bool IsNamed() const
     {
         return namesCount_ > 0;
     }
@@ -266,10 +243,6 @@ public:
 
     napi_value FindMethod(const std::string& methodName)
     {
-        if (!isMethodsSetup_) {
-            SetUpMethods();
-        }
-
         if (HasMethod(methodName)) {
             bool hasFunc = false;
             napi_value result = nullptr;
@@ -306,6 +279,10 @@ public:
 
     void SetUpMethods()
     {
+        std::unique_lock<std::mutex> lock(mutex_);
+        if (isMethodsSetup_) {
+            return;
+        }
         napi_value propertyNames;
         napi_value obj = GetValue();
         napi_status s = napi_get_all_property_names(env_, obj, napi_key_include_prototypes, napi_key_all_properties,
@@ -340,11 +317,9 @@ public:
             }
             std::string methodName;
             if (NapiParseUtils::ParseString(env_, napiKeyTmp, methodName)) {
-                std::unique_lock<std::mutex> lock(mutex_);
                 methods_.push_back(methodName);
             }
         }
-        std::unique_lock<std::mutex> lock(mutex_);
         isMethodsSetup_ = true;
     }
 
@@ -538,7 +513,7 @@ private:
     std::shared_ptr<NWebValue> GetJavaScriptResultSelfHelper(std::shared_ptr<JavaScriptOb> jsObj,
         const std::string& method, int32_t routingId, napi_handle_scope scope, std::vector<napi_value> argv);
 
-    char* FlowbufStrAtIndex(void* mem, int flowbuf_index, int* arg_index, int* str_len);
+    char* FlowbufStrAtIndex(void* mem, int flowbufIndex, int* argIndex, int* strLen);
 
     std::shared_ptr<NWebValue> GetJavaScriptResultSelfFlowbuf(std::vector<std::shared_ptr<NWebValue>> args,
         const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId);

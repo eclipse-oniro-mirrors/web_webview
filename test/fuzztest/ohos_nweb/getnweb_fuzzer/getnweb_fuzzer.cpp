@@ -17,25 +17,28 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "nweb_helper.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr int MAX_SET_NUMBER = 1000;
+
 bool GetNwebFuzzTest(const uint8_t* data, size_t size)
 {
-    if ((data == nullptr) || (size < sizeof(int32_t))) {
-        return false;
-    }
-    int32_t nweb_id;
-    if (memcpy_s(&nweb_id, sizeof(int32_t), data, sizeof(int32_t)) != 0) {
-        return false;
-    }
+    FuzzedDataProvider dataProvider(data, size);
+    int32_t nweb_id = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+
     NWebHelper::Instance().GetNWeb(nweb_id);
+
+    NWebHelper::Instance().SetWebTag(nweb_id, "NWeb");
+
+    NWebHelper::Instance().PrepareForPageLoad("", true, size);
     return true;
 }
-}
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

@@ -28,6 +28,7 @@
 #include "ohos_adapter/include/ark_datashare_adapter.h"
 #include "ohos_adapter/include/ark_date_time_format_adapter.h"
 #include "ohos_adapter/include/ark_display_manager_adapter.h"
+#include "ohos_adapter/include/ark_drm_adapter.h"
 #include "ohos_adapter/include/ark_enterprise_device_management_adapter.h"
 #include "ohos_adapter/include/ark_event_handler_adapter.h"
 #include "ohos_adapter/include/ark_flowbuffer_adapter.h"
@@ -40,20 +41,24 @@
 #include "ohos_adapter/include/ark_media_avsession_adapter.h"
 #include "ohos_adapter/include/ark_media_codec_adapter.h"
 #include "ohos_adapter/include/ark_media_codec_decoder_adapter.h"
+#include "ohos_adapter/include/ark_migration_manager_adapter.h"
+#include "ohos_adapter/include/ark_audio_codec_decoder_adapter.h"
 #include "ohos_adapter/include/ark_mmi_adapter.h"
 #include "ohos_adapter/include/ark_net_connect_adapter.h"
 #include "ohos_adapter/include/ark_net_proxy_adapter.h"
+#include "ohos_adapter/include/ark_ohos_drawing_text_adapter.h"
 #include "ohos_adapter/include/ark_ohos_image_decoder_adapter.h"
 #include "ohos_adapter/include/ark_ohos_init_web_adapter.h"
+#include "ohos_adapter/include/ark_ohos_native_buffer_adapter.h"
 #include "ohos_adapter/include/ark_ohos_resource_adapter.h"
 #include "ohos_adapter/include/ark_ohos_web_data_base_adapter.h"
 #include "ohos_adapter/include/ark_pasteboard_client_adapter.h"
 #include "ohos_adapter/include/ark_power_mgr_client_adapter.h"
 #include "ohos_adapter/include/ark_print_manager_adapter.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+#include "ohos_adapter/include/ark_sensor_adapter.h"
 #include "ohos_adapter/include/ark_soc_perf_client_adapter.h"
 #include "ohos_adapter/include/ark_system_properties_adapter.h"
-#include "ohos_adapter/include/ark_sensor_adapter.h"
 
 namespace OHOS::ArkWeb {
 
@@ -188,6 +193,32 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkSensorAdapter> CreateSensorAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual void SetArkWebCoreHapPathOverride(const ArkWebString& hapPath) = 0;
+
+    /**
+     * @Description: Get OhosNativeBufferAdapter.
+     * @Return：Returns the pointer to a ArkOhosNativeBufferAdapter instance.
+     * @Since 12005
+     */
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkOhosNativeBufferAdapter> GetOhosNativeBufferAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkMigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkAudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkOhosDrawingTextFontAdapter> GetOhosDrawingTextFontAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> GetOhosDrawingTextTypographyAdapter() = 0;
 };
 
 } // namespace OHOS::ArkWeb

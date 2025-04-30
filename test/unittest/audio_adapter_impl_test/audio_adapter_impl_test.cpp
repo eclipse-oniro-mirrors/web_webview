@@ -102,6 +102,11 @@ public:
         return rendererFlags;
     }
 
+    AudioAdapterConcurrencyMode GetConcurrencyMode() override 
+    {
+        return concurrency_mode;
+    }
+
     AudioAdapterSamplingRate samplingRate;
     AudioAdapterEncodingType encoding;
     AudioAdapterSampleFormat format;
@@ -109,6 +114,7 @@ public:
     AudioAdapterContentType contentType;
     AudioAdapterStreamUsage streamUsage;
     int32_t rendererFlags;
+    AudioAdapterConcurrencyMode concurrency_mode;
 };
 
 class AudioInterruptAdapterMock : public AudioInterruptAdapter {
@@ -359,6 +365,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     EXPECT_EQ(retNum, 0);
     g_audioRender->SetInterruptMode(true);
     g_audioRender->SetInterruptMode(false);
+    g_audioRender->SetAudioSilentMode(true);
+    g_audioRender->SetAudioSilentMode(false);
     ret = g_audioRender->IsRendererStateRunning();
     EXPECT_EQ(ret, TRUE_OK);
     ret = g_audioRender->Pause();
@@ -537,7 +545,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_008, TestSi
     type = AudioSystemManagerAdapterImpl::GetInstance().GetStreamType(static_cast<AudioAdapterStreamType>(-2));
     EXPECT_EQ(type, AudioStreamType::STREAM_DEFAULT);
 
-    std::vector<sptr<AudioDeviceDescriptor>> device;
+    std::vector<std::shared_ptr<AudioDeviceDescriptor>> device;
     int32_t select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(false, device);
     EXPECT_NE(select, 0);
     select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(true, device);
@@ -754,6 +762,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_014, TestSi
     EXPECT_EQ(retNum, AudioAdapterCode::AUDIO_ERROR);
     EXPECT_EQ(audioRenderImpl->audio_renderer_, nullptr);
     audioRenderImpl->SetInterruptMode(false);
+    audioRenderImpl->SetAudioSilentMode(false);
     retNum = audioRenderImpl->Create(nullptr);
 }
 
@@ -1118,7 +1127,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_GetChangeReason_029, TestSiz
         AudioStreamDeviceChangeReason::OLD_DEVICE_UNAVALIABLE,
         AudioStreamDeviceChangeReason::OVERRODE,
     };
-   
+
     std::shared_ptr<AudioOutputChangeCallbackAdapter> cb = std::make_shared<AudioOutputChangeCallbackMock>();
     EXPECT_NE(cb, nullptr);
     auto callBack = std::make_shared<AudioOutputChangeCallbackImpl>(cb);
@@ -1126,7 +1135,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_GetChangeReason_029, TestSiz
 
     for (auto& reason : reasonArray)
         callBack->GetChangeReason(reason);
-    
+
     AudioAdapterDeviceChangeReason testReason = callBack->GetChangeReason(
         static_cast<AudioStreamDeviceChangeReason>(-1)
     );
@@ -1145,8 +1154,8 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnOutputDeviceChange_030, Te
     EXPECT_NE(cb, nullptr);
     auto callBack = std::make_shared<AudioOutputChangeCallbackImpl>(cb);
     ASSERT_NE(callBack, nullptr);
-    
-    DeviceInfo deviceInfo;
+
+    AudioDeviceDescriptor deviceInfo(AudioDeviceDescriptor::DEVICE_INFO);
 
     AudioStreamDeviceChangeReason reason = AudioStreamDeviceChangeReason::UNKNOWN;
     callBack->OnOutputDeviceChange(deviceInfo, reason);
@@ -1179,7 +1188,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_SetAudioOutputChangeCallback
     ASSERT_NE(audioOutputChange, nullptr);
     int32_t retNum = audioOutputChange->SetAudioOutputChangeCallback(nullptr);
     EXPECT_NE(retNum, 0);
-    
+
     std::shared_ptr<AudioOutputChangeCallbackAdapter> callback = std::make_shared<AudioOutputChangeCallbackMock>();
     ASSERT_NE(callback, nullptr);
     retNum = audioOutputChange->SetAudioOutputChangeCallback(callback);

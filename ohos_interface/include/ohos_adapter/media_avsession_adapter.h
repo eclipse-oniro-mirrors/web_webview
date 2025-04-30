@@ -17,6 +17,7 @@
 #define MEDIA_AVSESSION_ADAPTER_H
 
 #include <string>
+#include <memory>
 
 namespace OHOS::NWeb {
 
@@ -41,6 +42,10 @@ public:
     virtual void SetAlbum(const std::string& album) = 0;
 
     virtual std::string GetAlbum() = 0;
+
+    virtual void SetImageUrl(const std::string& imageUrl) {}
+
+    virtual std::string GetImageUrl() { return ""; }
 };
 
 struct MediaAVSessionPositionAdapter {

@@ -24,6 +24,7 @@
  * @file arkweb_interface.h
  *
  * @brief Provides a unified entry for the native ArkWeb.
+ * @kit ArkWeb
  * @library libohweb.so
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
@@ -58,17 +59,44 @@ typedef enum {
     ARKWEB_NATIVE_COMPONENT,
     /** API type related to ArkWeb controller. */
     ARKWEB_NATIVE_CONTROLLER,
+    /** API type related to ArkWeb WebMessagePort. */
+    ARKWEB_NATIVE_WEB_MESSAGE_PORT,
+    /** API type related to ArkWeb WebMessage. */
+    ARKWEB_NATIVE_WEB_MESSAGE,
+    /** API type related to ArkWeb cookie manager. */
+    ARKWEB_NATIVE_COOKIE_MANAGER,
+    /**
+     * @brief API type related to ArkWeb JavaScript value.
+     *
+     * @since 16
+     */
+    ARKWEB_NATIVE_JAVASCRIPT_VALUE,
 } ArkWeb_NativeAPIVariantKind;
 
-/*
+/**
  * @brief Obtains the native API set of a specified type.
  * @param type Indicates the type of the native API set provided by ArkWeb.
- * @return Returns the pointer to the native API abstract object that carries the size.
+ * @return Return the pointer to the native API abstract object that carries the size.
+ *         If the type is incorrect, a null pointer is returned.
  *
  * @syscap SystemCapability.Web.Webview.Core
  * @since 12
  */
 ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type);
+
+/*
+ * @brief Register a scrolling event callback.
+ * @param webTag The name of the web component.
+ * @param callback The ArkWeb scrolling callback.
+ * @param userData The data set by user.
+ * @return Return whether the registration was successful, false indicates failure.
+ *
+ * @syscap SystemCapability.Web.Webview.Core
+ * @since 16
+ */
+bool OH_ArkWeb_RegisterScrollCallback(const char* webTag, ArkWeb_OnScrollCallback callback, void* userData);
+
+void OH_ArkWeb_DestroyGlobalPointersForTest(void);
 
 #ifdef __cplusplus
 };

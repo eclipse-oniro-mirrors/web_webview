@@ -32,13 +32,26 @@ HWTEST(WindowAdapterImplTest, NormalTest, TestSize.Level1)
     auto cSurface = IConsumerSurface::Create("test");
     auto producer = cSurface->GetProducer();
     auto pSurface = Surface::CreateSurfaceAsProducer(producer);
-    auto window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(&pSurface);
+    auto window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(nullptr);
+    EXPECT_EQ(window, nullptr);
+    window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(&pSurface);
     EXPECT_NE(window, nullptr);
     EXPECT_EQ(OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSetBufferGeometry(
         window, 0, 0), OHOS::GSERROR_OK);
     OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSurfaceCleanCache(window);
     OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSurfaceCleanCacheWithPara(window, false);
     OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().DestroyNativeWindow(window);
+    window = nullptr;
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowSurfaceCleanCacheWithPara(window, false);
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().AddNativeWindowRef(window);
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowUnRef(window);
+    cSurface = IConsumerSurface::Create("test1");
+    producer = cSurface->GetProducer();
+    pSurface = Surface::CreateSurfaceAsProducer(producer);
+    window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(&pSurface);
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().AddNativeWindowRef(window);
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().NativeWindowUnRef(window);
+    window = nullptr;
 }
 
 /**
@@ -51,5 +64,31 @@ HWTEST(AshmemAdapterImplTest, NormalTest, TestSize.Level1)
 {
     size_t size = 1024;
     EXPECT_GE(AshmemAdapter::AshmemCreate("test", size), 0);
+}
+
+/**
+ * @tc.name: WindowAdapterImplTest_001
+ * @tc.desc: test WindowAdapterImpl class function.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST(WindowAdapterImplTest, WindowAdapterImplTest_001, TestSize.Level1)
+{
+    auto cSurface = IConsumerSurface::Create("test");
+    auto producer = cSurface->GetProducer();
+    auto pSurface = Surface::CreateSurfaceAsProducer(producer);
+    auto window = OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().CreateNativeWindowFromSurface(&pSurface);
+    uint32_t angle = 0;
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().SetTransformHint(angle, window);
+    angle = 90;
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().SetTransformHint(angle, window);
+    angle = 180;
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().SetTransformHint(angle, window);
+    angle = 270;
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().SetTransformHint(angle, window);
+    angle = 300;
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().SetTransformHint(angle, window);
+    window = nullptr;
+    OhosAdapterHelper::GetInstance().GetWindowAdapterInstance().SetTransformHint(angle, window);
 }
 } // namespace OHOS::NWeb

@@ -17,6 +17,7 @@
 
 #include "ohos_adapter/bridge/ark_audio_device_desc_adapter_wrapper.h"
 #include "ohos_adapter/ctocpp/ark_audio_device_desc_adapter_ctocpp.h"
+#include "base/include/ark_web_macros.h"
 
 namespace OHOS::ArkWeb {
 
@@ -35,7 +36,7 @@ std::vector<std::shared_ptr<NWeb::AudioDeviceDescAdapter>> ArkAudioDeviceDescAda
     return class_value;
 }
 
-void ArkAudioDeviceDescAdapterVectorStructRelease(ArkAudioDeviceDescAdapterVector& struct_value)
+ARK_WEB_NO_SANITIZE void ArkAudioDeviceDescAdapterVectorStructRelease(ArkAudioDeviceDescAdapterVector& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);

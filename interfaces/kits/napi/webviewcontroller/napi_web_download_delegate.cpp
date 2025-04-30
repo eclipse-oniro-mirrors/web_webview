@@ -15,11 +15,11 @@
 
 #include "napi_web_download_delegate.h"
 
+#include <cstring>
 #include <js_native_api.h>
 #include <js_native_api_types.h>
 #include <napi/native_api.h>
 #include <securec.h>
-#include <cstring>
 
 #include "nweb_log.h"
 #include "web_download_delegate.h"
@@ -124,7 +124,7 @@ napi_value NapiWebDownloadDelegate::JS_Constructor(napi_env env, napi_callback_i
     napi_wrap(
         env, thisVar, delegate,
         [](napi_env /* env */, void *data, void * /* hint */) {
-            WebDownloadDelegate *delegate = (WebDownloadDelegate *)data;
+            WebDownloadDelegate *delegate = static_cast<WebDownloadDelegate *>(data);
             delete delegate;
         },
         nullptr, nullptr);
@@ -141,6 +141,7 @@ napi_value NapiWebDownloadDelegate::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("onDownloadFinish", JS_DownloadDidFinish),
         DECLARE_NAPI_FUNCTION("onDownloadFailed", JS_DownloadDidFail),
     };
+    const std::string WEB_DOWNLOAD_DELEGATE = "WebDownloadDelegate";
     napi_value webDownloadDelegateClass = nullptr;
     napi_define_class(env, WEB_DOWNLOAD_DELEGATE.c_str(), WEB_DOWNLOAD_DELEGATE.length(), JS_Constructor, nullptr,
         sizeof(properties) / sizeof(properties[0]), properties, &webDownloadDelegateClass);

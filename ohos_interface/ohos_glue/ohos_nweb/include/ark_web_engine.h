@@ -26,6 +26,7 @@
 #include "ohos_nweb/include/ark_web_nweb.h"
 #include "ohos_nweb/include/ark_web_nweb_create_info.h"
 #include "ohos_nweb/include/ark_web_web_storage.h"
+#include "ohos_nweb/include/ark_web_proxy_changed_callback.h"
 
 namespace OHOS::ArkWeb {
 
@@ -111,6 +112,61 @@ public:
 
     /*--ark web()--*/
     virtual void TrimMemoryByPressureLevel(int32_t memoryLevel) = 0;
+
+    /**
+     * @Description: set api level of rom to core
+     * @Input apiLevel: api level
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual void SetArkWebRomApiLevel(int apiLevel) = 0;
+
+    /**
+     * @Description: get api level of core
+     * @Return: api level of core
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual int GetArkWebCoreApiLevel() = 0;
+    
+    /**
+     * @Description: get the default user agent
+     * @Return: the default user agent
+     * @Since: 14001
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetDefaultUserAgent() = 0;
+
+    /*--ark web()--*/
+    virtual void RemoveAllCache(bool include_disk_files) = 0;
+
+    /**
+     * @Description: Set the proxy config used by arkweb.
+     * @Input proxy_urls: The proxy urls for construct proxy rule.
+     * @Input proxy_scheme_filters: The proxy scheme filters for construct proxy rule.
+     * @Input proxy_bypass_rules: The bypass rules.
+     * @Input reverse_bypass: Indicates whether reverse the bypass rules.
+     * @Since: 16001
+     */
+    /*--ark web()--*/
+    virtual void SetProxyOverride(const ArkWebStringVector& proxy_urls,
+                                  const ArkWebStringVector& proxy_scheme_filters,
+                                  const ArkWebStringVector& proxy_bypass_rules,
+                                  const bool& reverse_bypass,
+                                  ArkWebRefPtr<ArkWebProxyChangedCallback> callback) = 0;
+
+    /**
+     * @Description: Clear the proxy config used by arkweb.
+     * @Since: 16001
+     */
+    /*--ark web()--*/
+    virtual void RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallback> callback) = 0;
+
+    /*--ark web()--*/
+    virtual void SetAppCustomUserAgent(const ArkWebString& userAgent) = 0;
+
+    /*--ark web()--*/
+    virtual void SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts) = 0;
 };
 
 } // namespace OHOS::ArkWeb

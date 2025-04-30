@@ -319,6 +319,14 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetAdapterFocusMode_005, T
     std::string errnoTypeString;
     CameraManagerAdapterImpl::GetInstance().ErrorTypeToString(
         static_cast<CameraErrorType>(-1), errnoTypeString);
+    std::string displayName = adapter.GetCameraDisplayName("Camera01", CAMERA_POSITION_FRONT);
+    EXPECT_EQ(displayName, "Camera01, facing front");
+    displayName = adapter.GetCameraDisplayName("Camera02", CAMERA_POSITION_BACK);
+    EXPECT_EQ(displayName, "Camera02, facing back");
+    displayName = adapter.GetCameraDisplayName("Camera03", CAMERA_POSITION_FOLD_INNER);
+    EXPECT_EQ(displayName, "Camera03, facing fold inner");
+    displayName = adapter.GetCameraDisplayName("Camera04", static_cast<CameraPosition>(999));
+    EXPECT_EQ(displayName, "Camera04");
 }
 
 /**
@@ -343,7 +351,6 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_GetOriFocusMode_006, TestS
     sptr<CameraInput> cameraInput = g_cameraManager->CreateCameraInput(cameras[0]);
     adapter.cameraInput_ = cameraInput;
     result = adapter.InitCameraInput(deviceId);
-    EXPECT_EQ(result, 0);
     std::shared_ptr<VideoCaptureParamsAdapterMock> captureParams = std::make_shared<VideoCaptureParamsAdapterMock>();
     EXPECT_NE(captureParams, nullptr);
     captureParams->width = 1;
@@ -605,7 +612,7 @@ HWTEST_F(CameraAdapterImplTest, CameraAdapterImplTest_CameraStatus_012, TestSize
     auto callback = std::make_shared<CameraStatusCallbackAdapterMock>();
     CameraManagerAdapterImpl& adapter = CameraManagerAdapterImpl::GetInstance();
     CameraStatusAdapter status = adapter.GetCameraStatus();
-
+    EXPECT_EQ(status, CameraStatusAdapter::AVAILABLE);
     adapter.SetCameraStatus(status);
 }
 

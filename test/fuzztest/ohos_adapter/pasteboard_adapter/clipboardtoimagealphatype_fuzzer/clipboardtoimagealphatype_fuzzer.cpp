@@ -14,6 +14,8 @@
  */
 
 #include "clipboardtoimagealphatype_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
+
 #define private public
 #include "pasteboard_client_adapter_impl.h"
 #undef private
@@ -21,18 +23,22 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool ClipboardToImageAlphaTypeFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
-        std::make_shared<PasteDataRecordAdapterImpl>("pixelMap");
-        ClipBoardImageAlphaType alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
-        dataRecordAdapterImpl->ClipboardToImageAlphaType(alphaType);
-        return true;
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
+bool ClipboardToImageAlphaTypeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string stringParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
+        std::make_shared<PasteDataRecordAdapterImpl>(stringParam);
+    ClipBoardImageAlphaType alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
+    dataRecordAdapterImpl->ClipboardToImageAlphaType(alphaType);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

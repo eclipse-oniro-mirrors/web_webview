@@ -27,6 +27,7 @@
 #include "application_context.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
+#include "nweb_napi_scope.h"
 #include "native_engine/native_engine.h"
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
@@ -39,13 +40,13 @@
 #include "pixel_map_napi.h"
 #include "web_errors.h"
 #include "webview_javascript_execute_callback.h"
+#include "webview_createpdf_execute_callback.h"
 
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
 #include "arkweb_scheme_handler.h"
 #include "web_scheme_handler_request.h"
-
-#include "back_forward_cache_options.h"
+#include "system_properties_adapter_impl.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -59,6 +60,14 @@ constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 constexpr size_t MAX_RESOURCES_COUNT = 30;
 constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
 constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024; // 10M
+constexpr double A4_WIDTH = 8.27;
+constexpr double A4_HEIGHT = 11.69;
+constexpr double SCALE_MIN = 0.1;
+constexpr double SCALE_MAX = 2.0;
+constexpr double HALF = 2.0;
+constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
+constexpr size_t BFCACHE_DEFAULT_SIZE = 1;
+constexpr size_t BFCACHE_DEFAULT_TIMETOLIVE = 600;
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
 
 bool ParsePrepareUrl(napi_env env, napi_value urlObj, std::string& url)
@@ -255,7 +264,7 @@ bool ParseHttpHeaders(napi_env env, napi_value headersArray, std::map<std::strin
     return true;
 }
 
-bool CheckCacheKey(napi_env env,const std::string& cacheKey)
+bool CheckCacheKey(napi_env env, const std::string& cacheKey)
 {
     for (char c : cacheKey) {
         if (!isalnum(c)) {
@@ -336,6 +345,89 @@ std::shared_ptr<NWebEnginePrefetchArgs> ParsePrefetchArgs(napi_env env, napi_val
     return prefetchArgs;
 }
 
+PDFMarginConfig ParsePDFMarginConfigArgs(napi_env env, napi_value preArgs, double width, double height)
+{
+    napi_value marginTopObj = nullptr;
+    double marginTop = TEN_MILLIMETER_TO_INCH;
+    napi_get_named_property(env, preArgs, "marginTop", &marginTopObj);
+    if (!NapiParseUtils::ParseDouble(env, marginTopObj, marginTop)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginTop", "number"));
+        return PDFMarginConfig();
+    }
+    marginTop = (marginTop >= height / HALF || marginTop <= 0.0) ? 0.0 : marginTop;
+
+    napi_value marginBottomObj = nullptr;
+    double marginBottom = TEN_MILLIMETER_TO_INCH;
+    napi_get_named_property(env, preArgs, "marginBottom", &marginBottomObj);
+    if (!NapiParseUtils::ParseDouble(env, marginBottomObj, marginBottom)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginBottom", "number"));
+        return PDFMarginConfig();
+    }
+    marginBottom = (marginBottom >= height / HALF || marginBottom <= 0.0) ? 0.0 : marginBottom;
+
+    napi_value marginRightObj = nullptr;
+    double marginRight = TEN_MILLIMETER_TO_INCH;
+    napi_get_named_property(env, preArgs, "marginRight", &marginRightObj);
+    if (!NapiParseUtils::ParseDouble(env, marginRightObj, marginRight)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginRight", "number"));
+        return PDFMarginConfig();
+    }
+    marginRight = (marginRight >= width / HALF || marginRight <= 0.0) ? 0.0 : marginRight;
+
+    napi_value marginLeftObj = nullptr;
+    double marginLeft = TEN_MILLIMETER_TO_INCH;
+    napi_get_named_property(env, preArgs, "marginLeft", &marginLeftObj);
+    if (!NapiParseUtils::ParseDouble(env, marginLeftObj, marginLeft)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "marginLeft", "number"));
+        return PDFMarginConfig();
+    }
+    marginLeft = (marginLeft >= width / HALF || marginLeft <= 0.0) ? 0.0 : marginLeft;
+
+    return { marginTop, marginBottom, marginRight, marginLeft };
+}
+
+std::shared_ptr<NWebPDFConfigArgs> ParsePDFConfigArgs(napi_env env, napi_value preArgs)
+{
+    napi_value widthObj = nullptr;
+    double width = A4_WIDTH;
+    napi_get_named_property(env, preArgs, "width", &widthObj);
+    if (!NapiParseUtils::ParseDouble(env, widthObj, width)) {
+        BusinessError::ThrowErrorByErrcode(
+            env, PARAM_CHECK_ERROR, NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "width", "number"));
+        return nullptr;
+    }
+
+    napi_value heightObj = nullptr;
+    double height = A4_HEIGHT;
+    napi_get_named_property(env, preArgs, "height", &heightObj);
+    if (!NapiParseUtils::ParseDouble(env, heightObj, height)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "height", "number"));
+        return nullptr;
+    }
+
+    napi_value scaleObj = nullptr;
+    double scale = 1.0;
+    napi_get_named_property(env, preArgs, "scale", &scaleObj);
+    NapiParseUtils::ParseDouble(env, scaleObj, scale);
+    scale = scale > SCALE_MAX ? SCALE_MAX : scale < SCALE_MIN ? SCALE_MIN : scale;
+
+    auto margin = ParsePDFMarginConfigArgs(env, preArgs, width, height);
+
+    napi_value shouldPrintBackgroundObj = nullptr;
+    bool shouldPrintBackground = false;
+    napi_get_named_property(env, preArgs, "shouldPrintBackground", &shouldPrintBackgroundObj);
+    NapiParseUtils::ParseBoolean(env, shouldPrintBackgroundObj, shouldPrintBackground);
+
+    std::shared_ptr<NWebPDFConfigArgs> pdfConfig = std::make_shared<NWebPDFConfigArgsImpl>(
+        width, height, scale, margin.top, margin.bottom, margin.right, margin.left, shouldPrintBackground);
+    return pdfConfig;
+}
+
 void JsErrorCallback(napi_env env, napi_ref jsCallback, int32_t err)
 {
     napi_value jsError = nullptr;
@@ -368,7 +460,7 @@ bool ParseRegisterJavaScriptProxyParam(napi_env env, size_t argc, napi_value* ar
         return false;
     }
     std::vector<std::string> asyncMethodList;
-    if (argc == INTEGER_FOUR && !NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList)) {
+    if (argc >= INTEGER_FOUR && !NapiParseUtils::ParseStringArray(env, argv[INTEGER_THREE], asyncMethodList)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return false;
     }
@@ -386,6 +478,20 @@ bool ParseRegisterJavaScriptProxyParam(napi_env env, size_t argc, napi_value* ar
     param->permission = permission;
     return true;
 }
+
+napi_value RemoveDownloadDelegateRef(napi_env env, napi_value thisVar)
+{
+    WebviewController *webviewController = nullptr;
+    NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&webviewController));
+    if (webviewController == nullptr || !webviewController->IsInit()) {
+        WVLOG_E("create message port failed, napi unwrap webviewController failed");
+        return nullptr;
+    }
+
+    WebDownloadManager::RemoveDownloadDelegateRef(webviewController->GetWebId());
+    return nullptr;
+}
+
 } // namespace
 
 int32_t NapiWebviewController::maxFdNum_ = -1;
@@ -456,6 +562,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("innerGetWebId", NapiWebviewController::InnerGetWebId),
         DECLARE_NAPI_FUNCTION("hasImage", NapiWebviewController::HasImage),
         DECLARE_NAPI_FUNCTION("removeCache", NapiWebviewController::RemoveCache),
+        DECLARE_NAPI_STATIC_FUNCTION("removeAllCache", NapiWebviewController::RemoveAllCache),
         DECLARE_NAPI_FUNCTION("getFavicon", NapiWebviewController::GetFavicon),
         DECLARE_NAPI_FUNCTION("getBackForwardEntries", NapiWebviewController::getBackForwardEntries),
         DECLARE_NAPI_FUNCTION("serializeWebState", NapiWebviewController::SerializeWebState),
@@ -476,21 +583,16 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setDownloadDelegate", NapiWebviewController::SetDownloadDelegate),
         DECLARE_NAPI_FUNCTION("startDownload", NapiWebviewController::StartDownload),
         DECLARE_NAPI_STATIC_FUNCTION("prepareForPageLoad", NapiWebviewController::PrepareForPageLoad),
-        DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
         DECLARE_NAPI_FUNCTION("createWebPrintDocumentAdapter", NapiWebviewController::CreateWebPrintDocumentAdapter),
-        DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
+        DECLARE_NAPI_STATIC_FUNCTION("setConnectionTimeout", NapiWebviewController::SetConnectionTimeout),
         DECLARE_NAPI_FUNCTION("enableSafeBrowsing", NapiWebviewController::EnableSafeBrowsing),
         DECLARE_NAPI_FUNCTION("isSafeBrowsingEnabled", NapiWebviewController::IsSafeBrowsingEnabled),
+        DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
         DECLARE_NAPI_FUNCTION("isIncognitoMode", NapiWebviewController::IsIncognitoMode),
         DECLARE_NAPI_FUNCTION("setPrintBackground", NapiWebviewController::SetPrintBackground),
         DECLARE_NAPI_FUNCTION("getPrintBackground", NapiWebviewController::GetPrintBackground),
         DECLARE_NAPI_FUNCTION("setWebSchemeHandler", NapiWebviewController::SetWebSchemeHandler),
         DECLARE_NAPI_FUNCTION("clearWebSchemeHandler", NapiWebviewController::ClearWebSchemeHandler),
-        DECLARE_NAPI_FUNCTION("closeAllMediaPresentations", NapiWebviewController::CloseAllMediaPresentations),
-        DECLARE_NAPI_FUNCTION("stopAllMedia", NapiWebviewController::StopAllMedia),
-        DECLARE_NAPI_FUNCTION("resumeAllMedia", NapiWebviewController::ResumeAllMedia),
-        DECLARE_NAPI_FUNCTION("pauseAllMedia", NapiWebviewController::PauseAllMedia),
-        DECLARE_NAPI_FUNCTION("getMediaPlaybackState", NapiWebviewController::GetMediaPlaybackState),
         DECLARE_NAPI_FUNCTION("enableIntelligentTrackingPrevention",
             NapiWebviewController::EnableIntelligentTrackingPrevention),
         DECLARE_NAPI_FUNCTION("isIntelligentTrackingPreventionEnabled",
@@ -501,37 +603,50 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingList),
         DECLARE_NAPI_STATIC_FUNCTION("clearIntelligentTrackingPreventionBypassingList",
             NapiWebviewController::ClearIntelligentTrackingPreventionBypassingList),
+        DECLARE_NAPI_FUNCTION("getLastJavascriptProxyCallingFrameUrl",
+            NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl),
+        DECLARE_NAPI_STATIC_FUNCTION("getDefaultUserAgent", NapiWebviewController::GetDefaultUserAgent),
         DECLARE_NAPI_STATIC_FUNCTION("pauseAllTimers", NapiWebviewController::PauseAllTimers),
         DECLARE_NAPI_STATIC_FUNCTION("resumeAllTimers", NapiWebviewController::ResumeAllTimers),
         DECLARE_NAPI_FUNCTION("startCamera", NapiWebviewController::StartCamera),
         DECLARE_NAPI_FUNCTION("stopCamera", NapiWebviewController::StopCamera),
         DECLARE_NAPI_FUNCTION("closeCamera", NapiWebviewController::CloseCamera),
-        DECLARE_NAPI_FUNCTION("getLastJavascriptProxyCallingFrameUrl",
-            NapiWebviewController::GetLastJavascriptProxyCallingFrameUrl),
+        DECLARE_NAPI_FUNCTION("closeAllMediaPresentations", NapiWebviewController::CloseAllMediaPresentations),
+        DECLARE_NAPI_FUNCTION("stopAllMedia", NapiWebviewController::StopAllMedia),
+        DECLARE_NAPI_FUNCTION("resumeAllMedia", NapiWebviewController::ResumeAllMedia),
+        DECLARE_NAPI_FUNCTION("pauseAllMedia", NapiWebviewController::PauseAllMedia),
+        DECLARE_NAPI_FUNCTION("getMediaPlaybackState", NapiWebviewController::GetMediaPlaybackState),
         DECLARE_NAPI_FUNCTION("onCreateNativeMediaPlayer", NapiWebviewController::OnCreateNativeMediaPlayer),
         DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
         DECLARE_NAPI_STATIC_FUNCTION("clearPrefetchedResource", NapiWebviewController::ClearPrefetchedResource),
         DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
         DECLARE_NAPI_STATIC_FUNCTION("getRenderProcessMode", NapiWebviewController::GetRenderProcessMode),
         DECLARE_NAPI_FUNCTION("precompileJavaScript", NapiWebviewController::PrecompileJavaScript),
-        DECLARE_NAPI_STATIC_FUNCTION("warmupServiceWorker", NapiWebviewController::WarmupServiceWorker),
-        DECLARE_NAPI_FUNCTION("injectOfflineResources", NapiWebviewController::InjectOfflineResource),
+        DECLARE_NAPI_FUNCTION("injectOfflineResources", NapiWebviewController::InjectOfflineResources),
         DECLARE_NAPI_STATIC_FUNCTION("setHostIP", NapiWebviewController::SetHostIP),
         DECLARE_NAPI_STATIC_FUNCTION("clearHostIP", NapiWebviewController::ClearHostIP),
+        DECLARE_NAPI_STATIC_FUNCTION("setAppCustomUserAgent", NapiWebviewController::SetAppCustomUserAgent),
+        DECLARE_NAPI_STATIC_FUNCTION("setUserAgentForHosts", NapiWebviewController::SetUserAgentForHosts),
+        DECLARE_NAPI_STATIC_FUNCTION("warmupServiceWorker", NapiWebviewController::WarmupServiceWorker),
+        DECLARE_NAPI_FUNCTION("getSurfaceId", NapiWebviewController::GetSurfaceId),
         DECLARE_NAPI_STATIC_FUNCTION("enableWholeWebPageDrawing", NapiWebviewController::EnableWholeWebPageDrawing),
         DECLARE_NAPI_FUNCTION("enableAdsBlock", NapiWebviewController::EnableAdsBlock),
         DECLARE_NAPI_FUNCTION("isAdsBlockEnabled", NapiWebviewController::IsAdsBlockEnabled),
         DECLARE_NAPI_FUNCTION("isAdsBlockEnabledForCurPage", NapiWebviewController::IsAdsBlockEnabledForCurPage),
-        DECLARE_NAPI_FUNCTION("getSurfaceId", NapiWebviewController::GetSurfaceId),
-        DECLARE_NAPI_FUNCTION("updateInstanceId", NapiWebviewController::UpdateInstanceId),
-        DECLARE_NAPI_FUNCTION("setUrlTrustList", NapiWebviewController::SetUrlTrustList),
         DECLARE_NAPI_FUNCTION("webPageSnapshot", NapiWebviewController::WebPageSnapshot),
+        DECLARE_NAPI_FUNCTION("setUrlTrustList", NapiWebviewController::SetUrlTrustList),
         DECLARE_NAPI_FUNCTION("setPathAllowingUniversalAccess",
             NapiWebviewController::SetPathAllowingUniversalAccess),
         DECLARE_NAPI_STATIC_FUNCTION("enableBackForwardCache", NapiWebviewController::EnableBackForwardCache),
         DECLARE_NAPI_FUNCTION("setBackForwardCacheOptions", NapiWebviewController::SetBackForwardCacheOptions),
+        DECLARE_NAPI_FUNCTION("scrollByWithResult", NapiWebviewController::ScrollByWithResult),
+        DECLARE_NAPI_FUNCTION("updateInstanceId", NapiWebviewController::UpdateInstanceId),
         DECLARE_NAPI_STATIC_FUNCTION("trimMemoryByPressureLevel",
             NapiWebviewController::TrimMemoryByPressureLevel),
+        DECLARE_NAPI_FUNCTION("getScrollOffset",
+            NapiWebviewController::GetScrollOffset),
+        DECLARE_NAPI_FUNCTION("createPdf", NapiWebviewController::RunCreatePDFExt),
+        DECLARE_NAPI_FUNCTION("getLastHitTest", NapiWebviewController::GetLastHitTest),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -727,7 +842,18 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         sizeof(pressureLevelProperties[0]), pressureLevelProperties, &pressureLevelEnum);
     napi_set_named_property(env, exports, WEB_PRESSURE_LEVEL_ENUM_NAME.c_str(), pressureLevelEnum);
 
+    napi_value scrollTypeEnum = nullptr;
+    napi_property_descriptor scrollTypeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("EVENT", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(ScrollType::EVENT))),
+    };
+    napi_define_class(env, WEB_SCROLL_TYPE_ENUM_NAME.c_str(), WEB_SCROLL_TYPE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(scrollTypeProperties) /
+        sizeof(scrollTypeProperties[0]), scrollTypeProperties, &scrollTypeEnum);
+    napi_set_named_property(env, exports, WEB_SCROLL_TYPE_ENUM_NAME.c_str(), scrollTypeEnum);
+
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
+    WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
     return exports;
 }
 
@@ -769,6 +895,8 @@ napi_value NapiWebviewController::JsConstructor(napi_env env, napi_callback_info
         nullptr, nullptr);
     if (status != napi_ok) {
         WVLOG_E("Wrap native webviewController failed.");
+        delete webviewController;
+        webviewController = nullptr;
         return nullptr;
     }
     return thisVar;
@@ -812,32 +940,32 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_TWO) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
         return result;
     }
 
     if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], dohMode)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "secureDnsMode", "SecureDnsMode"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "secureDnsMode", "SecureDnsMode"));
         return result;
     }
 
     if (dohMode < static_cast<int>(SecureDnsModeType::OFF) ||
         dohMode > static_cast<int>(SecureDnsModeType::SECURE_ONLY)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "secureDnsMode"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "secureDnsMode"));
         return result;
     }
 
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], dohConfig)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "secureDnsConfig", "string"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "secureDnsConfig", "string"));
         return result;
     }
 
     if (dohConfig.rfind("https", 0) != 0 && dohConfig.rfind("HTTPS", 0) != 0) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                "BusinessError 401: Parameter error. Parameter secureDnsConfig must start with 'http' or 'https'.");
+            "BusinessError 401: Parameter error. Parameter secureDnsConfig must start with 'http' or 'https'.");
         return result;
     }
 
@@ -873,7 +1001,7 @@ napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callb
     bool webDebuggingAccess = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], webDebuggingAccess)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "webDebuggingAccess","boolean"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "webDebuggingAccess", "boolean"));
         return result;
     }
     WebviewController::webDebuggingAccess_ = webDebuggingAccess;
@@ -894,24 +1022,27 @@ napi_value NapiWebviewController::EnableSafeBrowsing(napi_env env, napi_callback
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
 
-    bool safe_browsing_enable = false;
-    if (!NapiParseUtils::ParseBoolean(env, argv[0], safe_browsing_enable)) {
+    bool safeBrowsingEnable = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], safeBrowsingEnable)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
         return result;
     }
 
     WebviewController *controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
-    if (!controller || !controller->IsInit()) {
+    if (!controller) {
+        return result;
+    }
+    if (!controller->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-    controller->EnableSafeBrowsing(safe_browsing_enable);
+    controller->EnableSafeBrowsing(safeBrowsingEnable);
     return result;
 }
 
@@ -924,8 +1055,8 @@ napi_value NapiWebviewController::IsSafeBrowsingEnabled(napi_env env, napi_callb
         return nullptr;
     }
 
-    bool is_safe_browsing_enabled = webviewController->IsSafeBrowsingEnabled();
-    NAPI_CALL(env, napi_get_boolean(env, is_safe_browsing_enabled, &result));
+    bool isSafeBrowsingEnabled = webviewController->IsSafeBrowsingEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, isSafeBrowsingEnabled, &result));
     return result;
 }
 
@@ -1060,7 +1191,7 @@ napi_value NapiWebviewController::InnerGetCustomeSchemeCmdLine(napi_env env, nap
 {
     WebviewController::existNweb_ = true;
     napi_value result = nullptr;
-    std::string cmdLine = WebviewController::customeSchemeCmdLine_;
+    const std::string& cmdLine = WebviewController::customeSchemeCmdLine_;
     napi_create_string_utf8(env, cmdLine.c_str(), cmdLine.length(), &result);
     return result;
 }
@@ -1221,7 +1352,9 @@ napi_value NapiWebMessageExt::JsConstructor(napi_env env, napi_callback_info inf
     NAPI_CALL(env, napi_wrap(env, thisVar, webMessageExt,
         [](napi_env env, void *data, void *hint) {
             WebMessageExt *webMessageExt = static_cast<WebMessageExt *>(data);
-            delete webMessageExt;
+            if (webMessageExt) {
+                delete webMessageExt;
+            }
         },
         nullptr, nullptr));
     return thisVar;
@@ -1603,7 +1736,7 @@ napi_value NapiWebMessageExt::SetArrayBuffer(napi_env env, napi_callback_info in
     napi_status status = napi_unwrap(env, thisVar, (void **)&webMessageExt);
     if ((!webMessageExt) || (status != napi_ok)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-             NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "message"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "message"));
         return result;
     }
 
@@ -1985,7 +2118,7 @@ napi_value NapiWebMessagePort::PostMessageEvent(napi_env env, napi_callback_info
     NAPI_CALL(env, napi_is_arraybuffer(env, argv[INTEGER_ZERO], &isArrayBuffer));
     if (valueType != napi_string && !isArrayBuffer) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-          NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "message"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "message"));
         return result;
     }
 
@@ -2050,7 +2183,7 @@ napi_value NapiWebMessagePort::PostMessageEventExt(napi_env env, napi_callback_i
 
     if (!msgPort->IsExtentionType()) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-             NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "message"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "message"));
         return result;
     }
 
@@ -2082,7 +2215,7 @@ napi_value NapiWebMessagePort::OnMessageEventExt(napi_env env, napi_callback_inf
     napi_typeof(env, argv[INTEGER_ZERO], &valueType);
     if (valueType != napi_function) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback","function"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function"));
         return result;
     }
 
@@ -2095,6 +2228,7 @@ napi_value NapiWebMessagePort::OnMessageEventExt(napi_env env, napi_callback_inf
     NAPI_CALL(env, napi_unwrap(env, thisVar, (void **)&msgPort));
     if (msgPort == nullptr) {
         WVLOG_E("set message event callback failed, napi unwrap msg port failed");
+        napi_delete_reference(env, onMsgEventFunc);
         return nullptr;
     }
     ErrCode ret = msgPort->SetPortMessageCallback(callbackImpl);
@@ -2155,9 +2289,8 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
         work = nullptr;
         return;
     }
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(data->env_, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(data->env_);
+    if (!scope.IsVaild()) {
         delete work;
         work = nullptr;
         return;
@@ -2166,7 +2299,6 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
     if (!UvWebMsgOnReceiveCbDataHandler(data, result[INTEGER_ZERO])) {
         delete work;
         work = nullptr;
-        napi_close_handle_scope(data->env_, scope);
         return;
     }
 
@@ -2178,21 +2310,18 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
     std::unique_lock<std::mutex> lock(data->mutex_);
     data->ready_ = true;
     data->condition_.notify_all();
-    napi_close_handle_scope(data->env_, scope);
 }
 
 static void InvokeWebMessageCallback(NapiWebMessagePort::WebMsgPortParam *data)
 {
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(data->env_, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(data->env_);
+    if (!scope.IsVaild()) {
         WVLOG_E("scope is null");
         return;
     }
     napi_value result[INTEGER_ONE] = {0};
     if (!UvWebMsgOnReceiveCbDataHandler(data, result[INTEGER_ZERO])) {
         WVLOG_E("get result failed");
-        napi_close_handle_scope(data->env_, scope);
         return;
     }
 
@@ -2200,8 +2329,6 @@ static void InvokeWebMessageCallback(NapiWebMessagePort::WebMsgPortParam *data)
     napi_get_reference_value(data->env_, data->callback_, &onMsgEventFunc);
     napi_value placeHodler = nullptr;
     napi_call_function(data->env_, nullptr, onMsgEventFunc, INTEGER_ONE, &result[INTEGER_ZERO], &placeHodler);
-
-    napi_close_handle_scope(data->env_, scope);
 }
 
 void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
@@ -2328,7 +2455,7 @@ napi_value NapiWebMessagePort::OnMessageEvent(napi_env env, napi_callback_info i
     napi_typeof(env, argv[INTEGER_ZERO], &valueType);
     if (valueType != napi_function) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback","function"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function"));
         return result;
     }
 
@@ -2558,19 +2685,19 @@ napi_value NapiWebviewController::StoreWebArchive(napi_env env, napi_callback_in
 
     if (argc != argcPromise && argc != argcCallback) {
         BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two", "three"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "two", "three"));
         return result;
     }
     std::string baseName;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], baseName)) {
         BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "baseName", "string"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "baseName", "string"));
         return result;
     }
 
     if (baseName.empty()) {
         BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NOT_NULL, "baseName"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NOT_NULL, "baseName"));
         return result;
     }
 
@@ -2578,7 +2705,7 @@ napi_value NapiWebviewController::StoreWebArchive(napi_env env, napi_callback_in
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ONE], autoName)) {
         BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "autoName", "boolean"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "autoName", "boolean"));
         return result;
     }
 
@@ -2588,7 +2715,7 @@ napi_value NapiWebviewController::StoreWebArchive(napi_env env, napi_callback_in
         napi_typeof(env, argv[argcCallback - 1], &valueType);
         if (valueType != napi_function) {
             BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
-                    NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function"));
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function"));
             return result;
         }
     }
@@ -3110,7 +3237,7 @@ napi_value NapiWebviewController::RegisterJavaScriptProxy(napi_env env, napi_cal
     }
     RegisterJavaScriptProxyParam param;
     if (!ParseRegisterJavaScriptProxyParam(env, argc, argv, &param)) {
-      return result;
+        return result;
     }
     WebviewController* controller = nullptr;
     napi_unwrap(env, thisVar, (void **)&controller);
@@ -3194,7 +3321,7 @@ napi_value NapiWebviewController::RunJS(napi_env env, napi_callback_info info, b
         napi_typeof(env, argv[argcCallback - 1], &valueType);
         if (valueType != napi_function) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback","function"));
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function"));
             return result;
         }
     }
@@ -3219,6 +3346,53 @@ napi_value NapiWebviewController::RunJS(napi_env env, napi_callback_info info, b
         return result;
     }
     return RunJavaScriptInternal(env, info, script, extention);
+}
+
+napi_value NapiWebviewController::RunCreatePDFExt(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    size_t argcPromise = INTEGER_ONE;
+    size_t argcCallback = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    WebviewController* webviewController = nullptr;
+    napi_unwrap(env, thisVar, (void**)&webviewController);
+
+    if (!webviewController || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    std::shared_ptr<NWebPDFConfigArgs> pdfConfig = ParsePDFConfigArgs(env, argv[INTEGER_ZERO]);
+    if (pdfConfig == nullptr) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    if (argc == argcCallback) {
+        napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+        napi_ref jsCallback = nullptr;
+        napi_create_reference(env, argv[argcCallback - 1], 1, &jsCallback);
+
+        if (jsCallback) {
+            webviewController->CreatePDFCallbackExt(env, pdfConfig, std::move(jsCallback));
+        }
+        return result;
+    } else if (argc == argcPromise) {
+        napi_deferred deferred = nullptr;
+        napi_value promise = nullptr;
+        napi_create_promise(env, &deferred, &promise);
+        if (promise && deferred) {
+            webviewController->CreatePDFPromiseExt(env, pdfConfig, deferred);
+        }
+        return promise;
+    }
+    return result;
 }
 
 napi_value NapiWebviewController::RunJavaScriptInternal(napi_env env, napi_callback_info info,
@@ -3310,9 +3484,9 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
     int fd;
     size_t scriptLength;
     ErrCode constructResult = ConstructFlowbuf(env, argv[INTEGER_ZERO], fd, scriptLength);
-    if (constructResult != NO_ERROR) {
+    if (constructResult != NO_ERROR)
         return RunJSBackToOriginal(env, info, extention, argv[INTEGER_ZERO], result);
-    }
+
     usedFd_++;
 
     WebviewController *webviewController = nullptr;
@@ -3333,6 +3507,8 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
         if (jsCallback) {
             // RunJavaScriptCallbackExt will close fd after IPC
             webviewController->RunJavaScriptCallbackExt(fd, scriptLength, env, std::move(jsCallback), extention);
+        } else {
+            close(fd);
         }
         usedFd_--;
         return result;
@@ -3343,6 +3519,8 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
         if (promise && deferred) {
             // RunJavaScriptCallbackExt will close fd after IPC
             webviewController->RunJavaScriptPromiseExt(fd, scriptLength, env, deferred, extention);
+        } else {
+            close(fd);
         }
         usedFd_--;
         return promise;
@@ -3733,11 +3911,6 @@ napi_value NapiWebviewController::getBackForwardEntries(napi_env env, napi_callb
         return result;
     }
 
-    WebHistoryList *webHistoryList = new (std::nothrow) WebHistoryList(list);
-    if (webHistoryList == nullptr) {
-        return result;
-    }
-
     int32_t currentIndex = list->GetCurrentIndex();
     int32_t size = list->GetListSize();
 
@@ -3752,6 +3925,12 @@ napi_value NapiWebviewController::getBackForwardEntries(napi_env env, napi_callb
     napi_value js_size;
     napi_create_int32(env, size, &js_size);
     napi_set_named_property(env, result, "size", js_size);
+
+    WebHistoryList *webHistoryList = new (std::nothrow) WebHistoryList(list);
+    if (webHistoryList == nullptr) {
+        return result;
+    }
+
     NAPI_CALL(env, napi_wrap(env, result, webHistoryList,
         [](napi_env env, void *data, void *hint) {
             WebHistoryList *webHistoryList = static_cast<WebHistoryList *>(data);
@@ -4121,7 +4300,7 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
     }
 
     if (argc == INTEGER_THREE) {
-        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+        if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
             return result;
@@ -4134,7 +4313,7 @@ napi_value NapiWebviewController::ScrollTo(napi_env env, napi_callback_info info
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    if(argc == INTEGER_THREE) {
+    if (argc == INTEGER_THREE) {
         webviewController->ScrollToWithAnime(x, y, duration);
     } else {
         webviewController->ScrollTo(x, y);
@@ -4167,12 +4346,12 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
 
     if (!NapiParseUtils::ParseFloat(env, argv[INTEGER_ONE], deltaY)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-             NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "deltaY", "number"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "deltaY", "number"));
         return result;
     }
 
     if (argc == INTEGER_THREE) {
-        if(!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
+        if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], duration)) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "duration", "number"));
             return result;
@@ -4185,7 +4364,7 @@ napi_value NapiWebviewController::ScrollBy(napi_env env, napi_callback_info info
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    if(argc == INTEGER_THREE) {
+    if (argc == INTEGER_THREE) {
         webviewController->ScrollByWithAnime(deltaX, deltaY, duration);
     } else {
         webviewController->ScrollBy(deltaX, deltaY);
@@ -4235,30 +4414,40 @@ napi_value NapiWebviewController::SetScrollable(napi_env env, napi_callback_info
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE] = { 0 };
-    bool isEnableScroll;
+    size_t argc = INTEGER_TWO;
+    size_t argcForOld = INTEGER_ONE;
+    napi_value argv[INTEGER_TWO] = { 0 };
 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+    if (argc != INTEGER_TWO && argc != argcForOld) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "one", "two"));
         return result;
     }
-
+    bool isEnableScroll;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], isEnableScroll)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
             NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
         return result;
     }
 
-    WebviewController *webviewController = nullptr;
-    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    int32_t scrollType = -1;
+    if (argc == INTEGER_TWO) {
+        if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], scrollType) || scrollType < 0 ||
+            scrollType >= INTEGER_ONE) {
+            WVLOG_E("BusinessError: 401. The character of 'scrollType' must be int32.");
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+            return result;
+        }
+    }
+
+    WebviewController* webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void**)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    webviewController->SetScrollable(isEnableScroll);
+    webviewController->SetScrollable(isEnableScroll, scrollType);
     return result;
 }
 
@@ -4330,14 +4519,14 @@ napi_value NapiWebviewController::SetAudioMuted(napi_env env, napi_callback_info
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
 
     bool muted = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], muted)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mute", "boolean"));
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mute", "boolean"));
         return result;
     }
 
@@ -4589,6 +4778,7 @@ napi_value NapiWebviewController::SetDownloadDelegate(napi_env env, napi_callbac
     napi_unwrap(env, obj, (void**)&delegate);
     if (!delegate) {
         WVLOG_E("[DOWNLOAD] WebDownloader::JS_SetDownloadDelegate delegate is null");
+        (void)RemoveDownloadDelegateRef(env, thisVar);
         return nullptr;
     }
     napi_create_reference(env, obj, 1, &delegate->delegate_);
@@ -4736,14 +4926,12 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
             NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
         return result;
     }
-
     std::string jobName;
     if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], jobName)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
             NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "jopName", "string"));
         return result;
     }
-
     WebviewController *webviewController = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
     if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
@@ -4755,7 +4943,10 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
+        return result;
+    }
     napi_value webPrintDoc = nullptr;
     NAPI_CALL(env, napi_get_reference_value(env, g_webPrintDocClassRef, &webPrintDoc));
     napi_value consParam[INTEGER_ONE] = {0};
@@ -4876,9 +5067,8 @@ WebPrintWriteResultCallback ParseWebPrintWriteResultCallback(napi_env env, napi_
             if (!env) {
                 return;
             }
-            napi_handle_scope scope = nullptr;
-            napi_open_handle_scope(env, &scope);
-            if (scope == nullptr) {
+            NApiScope scope(env);
+            if (!scope.IsVaild()) {
                 return;
             }
             napi_value setResult[INTEGER_TWO] = {0};
@@ -4890,7 +5080,6 @@ WebPrintWriteResultCallback ParseWebPrintWriteResultCallback(napi_env env, napi_
             napi_value callbackResult = nullptr;
             napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
             napi_delete_reference(env, jCallback);
-            napi_close_handle_scope(env, scope);
         };
         return callbackImpl;
     }
@@ -5209,6 +5398,11 @@ napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
 {
     WVLOG_I("enable/disable intelligent tracking prevention.");
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("EnableIntelligentTrackingPrevention: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -5241,6 +5435,11 @@ napi_value NapiWebviewController::IsIntelligentTrackingPreventionEnabled(
 {
     WVLOG_I("get intelligent tracking prevention enabled value.");
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("IsIntelligentTrackingPreventionEnabled: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     WebviewController *webviewController = GetWebviewController(env, info);
 
     if (!webviewController) {
@@ -5292,6 +5491,11 @@ napi_value NapiWebviewController::AddIntelligentTrackingPreventionBypassingList(
 {
     WVLOG_I("Add intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("AddIntelligentTrackingPreventionBypassingList: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -5326,6 +5530,11 @@ napi_value NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingLi
 {
     WVLOG_I("Remove intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("RemoveIntelligentTrackingPreventionBypassingList: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -5360,8 +5569,23 @@ napi_value NapiWebviewController::ClearIntelligentTrackingPreventionBypassingLis
 {
     napi_value result = nullptr;
     WVLOG_I("Clear intelligent tracking prevention bypassing list.");
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("ClearIntelligentTrackingPreventionBypassingList: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetDefaultUserAgent(napi_env env, napi_callback_info info)
+{
+    WVLOG_I("Get the default user agent.");
+    napi_value result = nullptr;
+
+    std::string userAgent = NWebHelper::Instance().GetDefaultUserAgent();
+    NAPI_CALL(env, napi_create_string_utf8(env, userAgent.c_str(), userAgent.length(), &result));
     return result;
 }
 
@@ -5453,6 +5677,7 @@ napi_value NapiWebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_c
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController || !webviewController->IsInit()) {
         WVLOG_E("webview controller is null or not init");
+        napi_delete_reference(env, callback);
         return nullptr;
     }
 
@@ -5517,7 +5742,6 @@ napi_value NapiWebviewController::PrecompileJavaScript(napi_env env, napi_callba
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("PrecompileJavaScript: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5558,7 +5782,7 @@ napi_value NapiWebviewController::EnableBackForwardCache(napi_env env, napi_call
     napi_get_undefined(env, &result);
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
     if (argc != INTEGER_ONE) {
-        WVLOG_E("SetBackForwardCacheOptions: wrong number of params.");
+        WVLOG_E("EnalbeBackForwardCache: wrong number of params.");
         NWebHelper::Instance().EnableBackForwardCache(false, false);
         NAPI_CALL(env, napi_get_undefined(env, &result));
         return result;
@@ -5596,7 +5820,6 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("SetBackForwardCacheOptions: Init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5608,8 +5831,8 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
         return result;
     }
 
-    int32_t size = 1;
-    int32_t timeToLive = 600;
+    int32_t size = BFCACHE_DEFAULT_SIZE;
+    int32_t timeToLive = BFCACHE_DEFAULT_TIMETOLIVE;
     napi_value sizeObj = nullptr;
     napi_value timeToLiveObj = nullptr;
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &sizeObj) == napi_ok) {
@@ -5617,7 +5840,7 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
             size = BFCACHE_DEFAULT_SIZE;
         }
     }
-    
+
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "timeToLive", &timeToLiveObj) == napi_ok) {
         if (!NapiParseUtils::ParseInt32(env, timeToLiveObj, timeToLive)) {
             timeToLive = BFCACHE_DEFAULT_TIMETOLIVE;
@@ -5626,6 +5849,64 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
 
     webviewController->SetBackForwardCacheOptions(size, timeToLive);
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SetAppCustomUserAgent(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("Set App custom user agent.");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    std::string userAgent;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], userAgent)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "userAgent", "string"));
+        return result;
+    }
+
+    NWebHelper::Instance().SetAppCustomUserAgent(userAgent);
+    return result;
+}
+
+napi_value NapiWebviewController::SetUserAgentForHosts(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("Set User Agent For Hosts.");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+        return result;
+    }
+    std::string userAgent;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], userAgent)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "userAgent", "string"));
+        return result;
+    }
+
+    std::vector<std::string> hosts;
+    if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ONE], hosts)) {
+        BusinessError::ThrowErrorByErrcode(
+            env, PARAM_CHECK_ERROR, NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "hosts", "array"));
+        return result;
+    }
+
+    NWebHelper::Instance().SetUserAgentForHosts(userAgent, hosts);
     return result;
 }
 
@@ -5652,7 +5933,7 @@ napi_value NapiWebviewController::WarmupServiceWorker(napi_env env, napi_callbac
     return result;
 }
 
-napi_value NapiWebviewController::InjectOfflineResource(napi_env env, napi_callback_info info)
+napi_value NapiWebviewController::InjectOfflineResources(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -5707,7 +5988,7 @@ void NapiWebviewController::AddResourcesToMemoryCache(napi_env env,
             (napi_get_named_property(env, obj, "resource", &resourceObj) != napi_ok) ||
             (napi_get_named_property(env, obj, "responseHeaders", &headersObj) != napi_ok) ||
             (napi_get_named_property(env, obj, "type", &typeObj) != napi_ok)) {
-            WVLOG_E("InjectOfflineResource: parse params from resource map failed.");
+            WVLOG_E("InjectOfflineResources: parse params from resource map failed.");
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
             continue;
         }
@@ -5728,7 +6009,6 @@ void NapiWebviewController::AddResourceItemToMemoryCache(napi_env env,
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("InjectOfflineResource: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return;
     }
 
@@ -5789,7 +6069,7 @@ napi_value NapiWebviewController::SetHostIP(napi_env env, napi_callback_info inf
         !NapiParseUtils::ParseString(env, argv[INTEGER_ONE], address) ||
         !NapiParseUtils::ParseInt32(env, argv[INTEGER_TWO], aliveTime) ||
         aliveTime <= 0) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,ParamCheckErrorMsgTemplate::PARAM_TYEPS_ERROR);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR, ParamCheckErrorMsgTemplate::PARAM_TYEPS_ERROR);
         return result;
     }
 
@@ -5844,6 +6124,11 @@ napi_value NapiWebviewController::EnableAdsBlock(
     napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("EnableAdsBlock: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -5868,7 +6153,6 @@ napi_value NapiWebviewController::EnableAdsBlock(
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("EnableAdsBlock: init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -5880,6 +6164,11 @@ napi_value NapiWebviewController::EnableAdsBlock(
 napi_value NapiWebviewController::IsAdsBlockEnabled(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("IsAdsBlockEnabled: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         return nullptr;
@@ -5893,6 +6182,11 @@ napi_value NapiWebviewController::IsAdsBlockEnabled(napi_env env, napi_callback_
 napi_value NapiWebviewController::IsAdsBlockEnabledForCurPage(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("IsAdsBlockEnabledForCurPage: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         return nullptr;
@@ -5980,7 +6274,6 @@ napi_value NapiWebviewController::SetUrlTrustList(napi_env env, napi_callback_in
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("webview controller is null or not init");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
 
@@ -6098,7 +6391,7 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("WebPageSnapshot init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        napi_delete_reference(env, callback);
         return result;
     }
 
@@ -6126,16 +6419,18 @@ napi_value NapiWebviewController::WebPageSnapshot(napi_env env, napi_callback_in
 
     if (napi_get_named_property(env, argv[INTEGER_ZERO], "size", &snapshotSize) == napi_ok) {
         if (napi_get_named_property(env, snapshotSize, "width", &snapshotSizeWidth) == napi_ok) {
-            if (!webviewController->ParseJsLengthToInt(
-                    env, snapshotSizeWidth, nativeSnapshotSizeWidthType, nativeSnapshotSizeWidth)) {
+            if (!webviewController->ParseJsLengthToInt(env, snapshotSizeWidth,
+                                                       nativeSnapshotSizeWidthType,
+                                                       nativeSnapshotSizeWidth)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
                 return result;
             }
         }
         if (napi_get_named_property(env, snapshotSize, "height", &snapshotSizeHeight) == napi_ok) {
-            if (!webviewController->ParseJsLengthToInt(
-                    env, snapshotSizeHeight, nativeSnapshotSizeHeightType, nativeSnapshotSizeHeight)) {
+            if (!webviewController->ParseJsLengthToInt(env, snapshotSizeHeight,
+                                                       nativeSnapshotSizeHeightType,
+                                                       nativeSnapshotSizeHeight)) {
                 JsErrorCallback(env, std::move(callback), PARAM_CHECK_ERROR);
                 g_inWebPageSnapshot = false;
                 return result;
@@ -6191,14 +6486,11 @@ napi_value NapiWebviewController::SetPathAllowingUniversalAccess(
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
-
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         WVLOG_E("SetPathAllowingUniversalAccess init webview controller error.");
-        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
     bool isArray = false;
@@ -6263,6 +6555,124 @@ napi_value NapiWebviewController::TrimMemoryByPressureLevel(napi_env env,
     memoryLevel = memoryLevel == 1 ? 0 : memoryLevel;
     NWebHelper::Instance().TrimMemoryByPressureLevel(memoryLevel);
     NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetScrollOffset(napi_env env,
+    napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_value horizontal;
+    napi_value vertical;
+    float offsetX = 0;
+    float offsetY = 0;
+
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    webviewController->GetScrollOffset(&offsetX, &offsetY);
+
+    napi_create_object(env, &result);
+    napi_create_double(env, static_cast<double>(offsetX), &horizontal);
+    napi_create_double(env, static_cast<double>(offsetY), &vertical);
+    napi_set_named_property(env, result, "x", horizontal);
+    napi_set_named_property(env, result, "y", vertical);
+    return result;
+}
+
+napi_value NapiWebviewController::ScrollByWithResult(napi_env env, napi_callback_info info)
+{
+   napi_value thisVar = nullptr;
+   napi_value result = nullptr;
+   size_t argc = INTEGER_TWO;
+   napi_value argv[INTEGER_TWO] = { 0 };
+   float deltaX;
+   float deltaY;
+
+   napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+   if (argc != INTEGER_TWO) {
+       BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+           NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+       return result;
+   }
+
+   if (!NapiParseUtils::ParseFloat(env, argv[INTEGER_ZERO], deltaX)) {
+       BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+           NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "deltaX", "number"));
+       return result;
+   }
+
+   if (!NapiParseUtils::ParseFloat(env, argv[INTEGER_ONE], deltaY)) {
+       BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+           NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "deltaY", "number"));
+       return result;
+   }
+
+   WebviewController *webviewController = GetWebviewController(env, info);
+   if (!webviewController) {
+       return nullptr;
+   }
+
+   bool scrollByWithResult = webviewController->ScrollByWithResult(deltaX, deltaY);
+   NAPI_CALL(env, napi_get_boolean(env, scrollByWithResult, &result));
+   return result;
+}
+
+napi_value NapiWebviewController::RemoveAllCache(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    bool includeDiskFiles;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], includeDiskFiles)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "clearRom", "boolean"));
+        return result;
+    }
+
+    NWebHelper::Instance().RemoveAllCache(includeDiskFiles);
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetLastHitTest(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    std::shared_ptr<HitTestResult> nwebResult = webviewController->GetLastHitTest();
+
+    napi_create_object(env, &result);
+
+    napi_value type;
+    if (nwebResult) {
+        napi_create_uint32(env, nwebResult->GetType(), &type);
+    } else {
+        napi_create_uint32(env, HitTestResult::UNKNOWN_TYPE, &type);
+    }
+    napi_set_named_property(env, result, "type", type);
+
+    napi_value extra;
+    if (nwebResult) {
+        napi_create_string_utf8(env, nwebResult->GetExtra().c_str(), NAPI_AUTO_LENGTH, &extra);
+    } else {
+        napi_create_string_utf8(env, "", NAPI_AUTO_LENGTH, &extra);
+    }
+    napi_set_named_property(env, result, "extra", extra);
     return result;
 }
 } // namespace NWeb

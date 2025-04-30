@@ -93,7 +93,12 @@ int32_t ArkAudioRendererAdapterWrapper::SetAudioRendererCallback(
 
 void ArkAudioRendererAdapterWrapper::SetInterruptMode(bool audioExclusive)
 {
-    return ctocpp_->SetInterruptMode(audioExclusive);
+    ctocpp_->SetInterruptMode(audioExclusive);
+}
+
+void ArkAudioRendererAdapterWrapper::SetAudioSilentMode(bool isSilentMode)
+{
+    ctocpp_->SetAudioSilentMode(isSilentMode);
 }
 
 bool ArkAudioRendererAdapterWrapper::IsRendererStateRunning()
@@ -109,6 +114,11 @@ int32_t ArkAudioRendererAdapterWrapper::SetAudioOutputChangeCallback(
     }
 
     return ctocpp_->SetAudioOutputChangeCallback(new ArkAudioOutputChangeCallbackAdapterImpl(callback));
+}
+
+bool ArkAudioRendererAdapterWrapper::Flush()
+{
+    return ctocpp_->Flush();
 }
 
 } // namespace OHOS::ArkWeb

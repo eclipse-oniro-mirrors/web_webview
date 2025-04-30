@@ -19,6 +19,7 @@
 
 #include "include/nweb_engine.h"
 #include "ohos_nweb/include/ark_web_engine.h"
+#include "ohos_nweb/include/ark_web_proxy_changed_callback.h"
 
 namespace OHOS::ArkWeb {
 
@@ -55,6 +56,8 @@ public:
 
     void ClearIntelligentTrackingPreventionBypassingList() override;
 
+    ArkWebString GetDefaultUserAgent() override;
+
     void PauseAllTimers() override;
 
     void ResumeAllTimers() override;
@@ -75,11 +78,29 @@ public:
 
     void ClearHostIP(const ArkWebString& hostName) override;
 
+    void SetAppCustomUserAgent(const ArkWebString& userAgent) override;
+
+    void SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts) override;
+
     void EnableWholeWebPageDrawing() override;
 
     ArkWebRefPtr<ArkWebAdsBlockManager> GetAdsBlockManager() override;
 
     void TrimMemoryByPressureLevel(int32_t memoryLevel) override;
+
+    void SetArkWebRomApiLevel(int apiLevel) override;
+
+    int GetArkWebCoreApiLevel() override;
+
+    void RemoveAllCache(bool include_disk_files) override;
+
+    void SetProxyOverride(const ArkWebStringVector& proxyUrls,
+                          const ArkWebStringVector& proxySchemeFilters,
+                          const ArkWebStringVector& bypassRules,
+                          const bool& reverseBypass,
+                          ArkWebRefPtr<ArkWebProxyChangedCallback> callback) override;
+
+    void RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallback> callback) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;

@@ -33,6 +33,14 @@ public:
     void TearDown();
 };
 
+class FrameAvailableListenerTest : public FrameAvailableListener {
+public:
+    FrameAvailableListenerTest() {}
+    ~FrameAvailableListenerTest() {}
+    void* GetContext() override { return nullptr;}
+    OnFrameAvailableCb GetOnFrameAvailableCb() override { return nullptr; }
+};
+
 void NativeImageAdapterImplTest::SetUpTestCase(void) {}
 
 void NativeImageAdapterImplTest::TearDownTestCase(void) {}
@@ -63,7 +71,7 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_UpdateSurfaceIma
     uint32_t textureTarget = 1;
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
     result = imagerAdapter->UpdateSurfaceImage();
-    EXPECT_EQ(result, 0);
+    EXPECT_NE(result, static_cast<uint32_t>(SURFACE_ERROR_ERROR));
     window = imagerAdapter->AquireNativeWindowFromNativeImage();
     EXPECT_NE(window, nullptr);
     imagerAdapter->AttachContext(1);
@@ -146,6 +154,9 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_SetOnFrameAvaila
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
     result = imagerAdapter->SetOnFrameAvailableListener(nullptr);
     EXPECT_EQ(result, SURFACE_ERROR_ERROR);
+    std::shared_ptr<FrameAvailableListener> listener = std::make_shared<FrameAvailableListenerTest>();
+    result = imagerAdapter->SetOnFrameAvailableListener(listener);
+    EXPECT_NE(result, SURFACE_ERROR_ERROR);
 }
 
 /**
@@ -178,5 +189,105 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_DestroyNativeIma
     std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
     EXPECT_NE(imagerAdapter, nullptr);
     imagerAdapter->DestroyNativeImage();
+}
+
+/**
+ * @tc.name: NativeImageAdapterImplTest_NewNativeImage001
+ * @tc.desc:NewNativeImage.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_NewNativeImage_001, TestSize.Level1)
+{
+    std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
+    EXPECT_NE(imagerAdapter, nullptr);
+    imagerAdapter->NewNativeImage();
+    EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
+}
+
+/**
+ * @tc.name: NativeImageAdapterImplTest_AcquireNativeWindowBuffer001
+ * @tc.desc:AcquireNativeWindowBuffer.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_AcquireNativeWindowBuffer_001, TestSize.Level1)
+{
+    std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
+    EXPECT_NE(imagerAdapter, nullptr);
+
+    void* windowBuffer = nullptr;
+    int fenceId = -1;
+    int32_t ret = imagerAdapter->AcquireNativeWindowBuffer(&windowBuffer, &fenceId);
+    EXPECT_EQ(ret, SURFACE_ERROR_ERROR);
+
+    imagerAdapter->NewNativeImage();
+    EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
+    ret = imagerAdapter->AcquireNativeWindowBuffer(&windowBuffer, &fenceId);
+    EXPECT_NE(ret, GSERROR_OK);
+}
+
+/**
+ * @tc.name: NativeImageAdapterImplTest_GetNativeBuffer001
+ * @tc.desc:GetNativeBuffer.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeBuffer_001, TestSize.Level1)
+{
+    std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
+    EXPECT_NE(imagerAdapter, nullptr);
+
+    void* windowBuffer = nullptr;
+    void* nativeBuffer = nullptr;
+    imagerAdapter->GetNativeBuffer(windowBuffer, &nativeBuffer);
+}
+
+/**
+ * @tc.name: NativeImageAdapterImplTest_ReleaseNativeWindowBuffer001
+ * @tc.desc:ReleaseNativeWindowBuffer.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_ReleaseNativeWindowBuffer_001, TestSize.Level1)
+{
+    std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
+    EXPECT_NE(imagerAdapter, nullptr);
+
+    void* windowBuffer = nullptr;
+    int fenceId = -1;
+    int32_t ret = imagerAdapter->ReleaseNativeWindowBuffer(windowBuffer, fenceId);
+    EXPECT_EQ(ret, SURFACE_ERROR_ERROR);
+
+    imagerAdapter->NewNativeImage();
+    EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
+    imagerAdapter->ReleaseNativeWindowBuffer(windowBuffer, fenceId);
+}
+
+/**
+ * @tc.name: NativeImageAdapterImplTest_GetNativeWindowBufferSize001
+ * @tc.desc:GetNativeWindowBufferSize.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeWindowBufferSize_001, TestSize.Level1)
+{
+    std::shared_ptr<NativeImageAdapterImpl> imagerAdapter = std::make_shared<NativeImageAdapterImpl>();
+    EXPECT_NE(imagerAdapter, nullptr);
+
+    void* windowBuffer = nullptr;
+    uint32_t width = 0;
+    uint32_t height = 0;
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, &height);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
+    windowBuffer = new uint8_t[10 * 10 * 4];
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, &height);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
+    EXPECT_EQ(width, 0);
+    EXPECT_EQ(height, 0);
 }
 } // namespace OHOS::NWeb

@@ -35,6 +35,13 @@ public:
     void NativeWindowSurfaceCleanCache(void* window) override;
 
     void NativeWindowSurfaceCleanCacheWithPara(void* window, bool cleanAll) override;
+
+    void SetTransformHint(uint32_t rotation, void* window) override;
+
+    void AddNativeWindowRef(void* window) override;
+
+    void NativeWindowUnRef(void* window) override;
+
 private:
     NWeb::WindowAdapter& real_;
 

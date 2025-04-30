@@ -13,12 +13,15 @@
 
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [ "../../../../ohos_adapter/access_token_adapter/include" ]
+  include_dirs = [
+    "../../../../ohos_adapter/access_token_adapter/include",
+    "../../../../ohos_interface/include/ohos_adapter",
+  ]
 }
 
 ohos_unittest("nweb_access_token_adapter_test") {
@@ -28,13 +31,11 @@ ohos_unittest("nweb_access_token_adapter_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "../../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
   ]
 }

@@ -17,6 +17,7 @@
 #define AUDIO_SYSTEM_MANAGER_ADAPTER_H
 
 #include <vector>
+#include <memory>
 
 #include "audio_renderer_adapter.h"
 
