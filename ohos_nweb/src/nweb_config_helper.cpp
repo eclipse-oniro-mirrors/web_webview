@@ -135,6 +135,70 @@ const std::unordered_map<std::string_view, std::function<std::string(std::string
 } // namespace
 
 namespace OHOS::NWeb {
+NWebConfigHelper::NWebConfigHelper()
+{
+    auto saManager = OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    bool hasPlayGround = false;
+    bool isDebugApp = false;
+    bool isDeveloperMode = IsDeveloperModeEnabled();
+    if (saManager == nullptr) {
+        WVLOG_E("webPlayGround get saManager fail");
+        return;
+    }
+
+    sptr<IRemoteObject> remoteObject =
+        saManager->GetSystemAbility(OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    sptr<OHOS::AppExecFwk::IBundleMgr> bundleMgrProxy =
+        OHOS::iface_cast<OHOS::AppExecFwk::IBundleMgr>(remoteObject);
+    if (bundleMgrProxy == nullptr) {
+        WVLOG_E("webPlayGround get bundleMgrProxy fail");
+        return;
+    }
+
+    OHOS::AppExecFwk::BundleInfo bundleInfo;
+    bundleMgrProxy->GetBundleInfoForSelf(
+        OHOS::AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo);
+    isDebugApp = (bundleInfo.applicationInfo.appProvisionType ==
+                    AppExecFwk::Constants::APP_PROVISION_TYPE_DEBUG);
+    for (auto appEnv : bundleInfo.applicationInfo.appEnvironments) {
+        if (appEnv.name == PLAYGROUND && appEnv.value == "true") {
+            hasPlayGround = true;
+            break;
+        }
+    }
+    web_play_ground_enabled_ = isDebugApp && hasPlayGround && isDeveloperMode;
+
+    if (web_play_ground_enabled_) {
+        WVLOG_I("webPlayGround opened");
+    } else {
+        if (hasPlayGround) {
+            WVLOG_I("webPlayGround not opened for isDebugApp %{public}d"
+                    " hasPlayGround %{public}d isDeveloperMode %{public}d",
+                    isDebugApp, hasPlayGround, isDeveloperMode);
+        }
+    }
+}
+
+bool NWebConfigHelper::IsWebPlayGroundEnable()
+{
+    return web_play_ground_enabled_;
+}
+
+const std::string& NWebConfigHelper::GetWebPlayGroundInitArg()
+{
+    return web_play_ground_enabled_ ? SINGLE_PROCESS : NULL_STR;
+}
+
+const std::string& NWebConfigHelper::GetWebPlayGroundHapPath()
+{
+    return web_play_ground_enabled_ ? PLAY_GROUND_HAP_PATH : NULL_STR;
+}
+
+bool NWebConfigHelper::IsDeveloperModeEnabled()
+{
+    return OHOS::system::GetBoolParameter("const.security.developermode.state", false);
+}
+
 NWebConfigHelper &NWebConfigHelper::Instance()
 {
     static NWebConfigHelper helper;
