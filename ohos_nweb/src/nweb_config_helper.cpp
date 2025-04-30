@@ -36,6 +36,8 @@ const std::string PERFORMANCE_CONFIG = "performanceConfig";
 // The config used in base/web/webview
 const std::string BASE_WEB_CONFIG = "baseWebConfig";
 const std::string WEB_ANIMATION_DYNAMIC_SETTING_CONFIG = "property_animation_dynamic_settings";
+const std::string WEB_ANIMATION_DYNAMIC_APP = "dynamic_apps";
+const std::string WEB_LTPO_STRATEGY = "ltpo_strategy";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
@@ -122,7 +124,13 @@ const std::unordered_map<std::string_view, std::function<std::string(std::string
             return contentStr == "true" ? std::string("--ohos-enable-calc-tablet-mode") : std::string();
         } },
     { "outOfProcessGPUConfig/enableOopGpu",
-        [](std::string& contentStr) { return contentStr == "true" ? std::string("--in-process-gpu") : std::string(); } }
+        [](std::string& contentStr) {
+            return contentStr == "true" ? std::string("--in-process-gpu") : std::string(); 
+        } },
+    { "enableVulkanConfig/enableVulkan",
+        [](std::string& contentStr) {
+            return contentStr == "true" ? std::string("--ohos-enable-vulkan") : std::string(); 
+        } }
 };
 } // namespace
 
@@ -146,8 +154,7 @@ std::string NWebConfigHelper::GetConfigPath(const std::string &configFileName)
     char buf[PATH_MAX + 1];
     char *configPath = GetOneCfgFile(configFileName.c_str(), buf, PATH_MAX + 1);
     char tmpPath[PATH_MAX + 1] = { 0 };
-    if (!configPath || strlen(configPath) == 0 || strlen(configPath) > PATH_MAX || !realpath(configPath, tmpPath))
-     {
+    if (!configPath || strlen(configPath) == 0 || strlen(configPath) > PATH_MAX || !realpath(configPath, tmpPath)) {
         WVLOG_I("can not get customization config file");
         return "/system/" + configFileName;
     }
@@ -274,7 +281,7 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
         }
     }
 
-    if (ltpoConfig_.empty()) {
+    if (ltpoConfig_.empty() && ltpoStrategy_ == 0) {
         xmlNodePtr ltpoConfigNodePtr = GetChildrenNode(rootPtr, WEB_ANIMATION_DYNAMIC_SETTING_CONFIG);
         if (ltpoConfigNodePtr != nullptr) {
             ParseNWebLTPOConfig(ltpoConfigNodePtr);
@@ -295,7 +302,16 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
             WVLOG_E("invalid name!");
             continue;
         }
-        std::string settingName = (char *)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        std::string settingName(namePtr);
+        xmlFree(namePtr);
+        if (settingName == WEB_ANIMATION_DYNAMIC_APP) {
+            ParseNWebLTPOApp(curNodePtr);
+            continue;
+        }
+        if (settingName == WEB_LTPO_STRATEGY) {
+            ParseNWebLTPOStrategy(curNodePtr);
+            continue;
+        }
         std::vector<FrameRateSetting> frameRateSetting;
         for (xmlNodePtr curDynamicNodePtr = curNodePtr->xmlChildrenNode; curDynamicNodePtr;
             curDynamicNodePtr = curDynamicNodePtr->next) {
@@ -304,9 +320,10 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
                 continue;
             }
             FrameRateSetting setting;
-            setting.min_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_MIN)));
-            setting.max_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_MAX)));
-            setting.preferredFrameRate_ = atoi((char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_FPS)));
+            int defaultValue = 0;
+            setting.min_ = safeGetPropAsInt(curDynamicNodePtr, BAD_CAST(XML_ATTR_MIN), defaultValue);
+            setting.max_ = safeGetPropAsInt(curDynamicNodePtr, BAD_CAST(XML_ATTR_MAX), defaultValue);
+            setting.preferredFrameRate_ = safeGetPropAsInt(curDynamicNodePtr, BAD_CAST(XML_ATTR_FPS), defaultValue);
             if ((setting.max_ >= 0 && setting.min_ >= setting.max_) || setting.preferredFrameRate_ <= 0) {
                 continue;
             }
@@ -314,6 +331,36 @@ void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
         }
         ltpoConfig_[settingName] = frameRateSetting;
     }
+}
+
+void NWebConfigHelper::ParseNWebLTPOApp(xmlNodePtr nodePtr)
+{
+    for (xmlNodePtr curDynamicNodePtr = nodePtr->xmlChildrenNode; curDynamicNodePtr;
+        curDynamicNodePtr = curDynamicNodePtr->next) {
+        if (curDynamicNodePtr->name == nullptr || curDynamicNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string bundleName = (char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_NAME));
+        ltpoAllowedApps_.emplace(bundleName);
+        WVLOG_D("ltpo dynamic app: %{public}s", bundleName.c_str());
+    }
+}
+
+void NWebConfigHelper::ParseNWebLTPOStrategy(xmlNodePtr nodePtr)
+{
+    ltpoStrategy_ = atoi((char *)xmlNodeGetContent(nodePtr));
+    WVLOG_D("ltpo strategy is: %{public}d", ltpoStrategy_);
+}
+
+bool NWebConfigHelper::IsLTPODynamicApp(const std::string& bundleName)
+{
+    return ltpoAllowedApps_.find(bundleName) != ltpoAllowedApps_.end();
+}
+
+int32_t NWebConfigHelper::GetLTPOStrategy()
+{
+    return ltpoStrategy_;
 }
 
 std::vector<FrameRateSetting> NWebConfigHelper::GetPerfConfig(const std::string& settingName)
@@ -407,6 +454,24 @@ void NWebConfigHelper::ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_
             }
         }
     }
+}
+
+int NWebConfigHelper::safeGetPropAsInt(xmlNode* node, const xmlChar* propName, int defaultValue)
+{
+    xmlChar* propValue = xmlGetProp(node, propName);
+    int value = (propValue) ? atoi((const char*)propValue) : defaultValue;
+    xmlFree(propValue);
+    return value;
+}
+
+void NWebConfigHelper::SetBundleName(const std::string& bundleName)
+{
+    bundleName_ = bundleName;
+}
+
+std::string NWebConfigHelper::GetBundleName()
+{
+    return bundleName_;
 }
 
 } // namespace OHOS::NWeb

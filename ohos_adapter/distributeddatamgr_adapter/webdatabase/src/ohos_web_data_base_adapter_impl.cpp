@@ -68,6 +68,11 @@ OhosWebDataBaseAdapterImpl& OhosWebDataBaseAdapterImpl::GetInstance()
     return instance;
 }
 
+OhosWebDataBaseAdapterImpl::OhosWebDataBaseAdapterImpl(std::shared_ptr<OHOS::NativeRdb::RdbStore> rdbStore)
+{
+    rdbStore_ = rdbStore;
+}
+
 OhosWebDataBaseAdapterImpl::OhosWebDataBaseAdapterImpl()
 {
     WVLOG_I("webdatabase create rdb store");

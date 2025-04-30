@@ -29,6 +29,7 @@
 #include "datashare_adapter.h"
 #include "date_time_format_adapter.h"
 #include "display_manager_adapter.h"
+#include "drm_adapter.h"
 #include "enterprise_device_management_adapter.h"
 #include "event_handler_adapter.h"
 #include "flowbuffer_adapter.h"
@@ -41,11 +42,15 @@
 #include "media_avsession_adapter.h"
 #include "media_codec_adapter.h"
 #include "media_codec_decoder_adapter.h"
+#include "migration_manager_adapter.h"
+#include "audio_codec_decoder_adapter.h"
 #include "mmi_adapter.h"
 #include "net_connect_adapter.h"
 #include "net_proxy_adapter.h"
+#include "ohos_drawing_text_adapter.h"
 #include "ohos_image_decoder_adapter.h"
 #include "ohos_init_web_adapter.h"
+#include "ohos_native_buffer_adapter.h"
 #include "ohos_resource_adapter.h"
 #include "ohos_web_data_base_adapter.h"
 #include "pasteboard_client_adapter.h"
@@ -57,6 +62,7 @@
 #include "sensor_adapter.h"
 
 namespace OHOS::NWeb {
+
 class OhosAdapterHelper {
 public:
     static OhosAdapterHelper& GetInstance();
@@ -146,6 +152,20 @@ public:
     virtual std::unique_ptr<OhosImageDecoderAdapter> CreateOhosImageDecoderAdapter() = 0;
 
     virtual std::unique_ptr<SensorAdapter> CreateSensorAdapter() = 0;
+
+    virtual void SetArkWebCoreHapPathOverride(const std::string& hapPath) = 0;
+
+    virtual OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() = 0;
+
+    virtual std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
+
+    virtual OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() = 0;
+
+    virtual OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() = 0;
+
+    virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
+
+    virtual std::unique_ptr<DrmAdapter> CreateDrmAdapter() = 0;
 };
 } // namespace OHOS::NWeb
 

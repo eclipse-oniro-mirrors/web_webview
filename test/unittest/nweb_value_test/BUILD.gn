@@ -13,17 +13,16 @@
 
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 ohos_unittest("nweb_value_test") {
   module_out_path = module_output_path
 
   sources = [ "nweb_value_test.cpp" ]
 
-  deps = [ "//third_party/googletest:gtest_main" ]
-
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "webview:libnweb",
   ]

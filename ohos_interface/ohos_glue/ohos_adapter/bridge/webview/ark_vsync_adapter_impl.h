@@ -38,6 +38,9 @@ public:
 
     void SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCallback) override;
 
+    void SetScene(const ArkWebString& sceneName, uint32_t state) override;
+
+    void SetDVSyncSwitch(bool dvsyncSwitch) override;
 private:
     NWeb::VSyncAdapter& real_;
 

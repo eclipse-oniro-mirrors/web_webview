@@ -33,6 +33,13 @@ const std::string NWEB_AUTOFILL_EVENT_FILL = "fill";
 const std::string NWEB_AUTOFILL_EVENT_UPDATE = "update";
 const std::string NWEB_AUTOFILL_EVENT_CLOSE = "close";
 
+const std::string NWEB_AUTOFILL_EVENT_TYPE = "event";
+const std::string NWEB_AUTOFILL_PAGE_URL = "pageUrl";
+const std::string NWEB_AUTOFILL_IS_USER_SELECTED = "isUserSelected";
+const std::string NWEB_AUTOFILL_IS_OTHER_ACCOUNT = "isOtherAccount";
+const std::string NWEB_AUTOFILL_EVENT_SOURCE = "source";
+const std::string NWEB_AUTOFILL_FOR_LOGIN = "login";
+
 const std::string NWEB_AUTOFILL_STREET_ADDRESS = "street-address";
 const std::string NWEB_AUTOFILL_ADDRESS_LEVEL_3 = "address-level3";
 const std::string NWEB_AUTOFILL_ADDRESS_LEVEL_2 = "address-level2";
@@ -47,7 +54,24 @@ const std::string NWEB_AUTOFILL_TEL_COUNTRY_CODE = "tel-country-code";
 const std::string NWEB_AUTOFILL_EMAIL = "email";
 const std::string NWEB_AUTOFILL_CC_NUMBER = "cc-number";
 const std::string NWEB_AUTOFILL_ID_CARD_NUMBER = "id-card-number";
+const std::string NWEB_AUTOFILL_DETAIL_INFO_WITHOUT_STREET = "detail-info-without-street";
+const std::string NWEB_AUTOFILL_FORMAT_ADDRESS = "format-address";
 const std::string NWEB_AUTOFILL_NICKNAME = "nickname";
+const std::string NWEB_AUTOFILL_USERNAME = "username";
+const std::string NWEB_AUTOFILL_PASSWORD = "password";
+const std::string NWEB_AUTOFILL_NEW_PASSWORD = "new-password";
+const std::string NWEB_AUTOFILL_PASSPORT_NUMBER = "passport-number";
+const std::string NWEB_AUTOFILL_VALIDITY = "validity";
+const std::string NWEB_AUTOFILL_ISSUE_AT = "issue-at";
+const std::string NWEB_AUTOFILL_ORGANIZATION = "organization";
+const std::string NWEB_AUTOFILL_TAX_ID = "tax-id";
+const std::string NWEB_AUTOFILL_ADDRESS_CITY_AND_STATE = "address-city-and-state";
+const std::string NWEB_AUTOFILL_FLIGHT_NUMBER = "flight-number";
+const std::string NWEB_AUTOFILL_LICENSE_NUMBER = "license-number";
+const std::string NWEB_AUTOFILL_LICENSE_FILE_NUMBER = "license-file-number";
+const std::string NWEB_AUTOFILL_LICENSE_PLATE = "license-plate";
+const std::string NWEB_AUTOFILL_ENGINE_NUMBER = "engine-number";
+const std::string NWEB_AUTOFILL_LICENSE_CHASSIS_NUMBER = "license-chassis-number";
 
 enum NWebAutofillEvent {
     UNKNOWN = 0,

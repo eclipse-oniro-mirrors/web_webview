@@ -16,6 +16,7 @@
 #include "system_properties_adapter_impl.h"
 
 #include <securec.h>
+#include <native_interface_bundle.h>
 
 #include "init_param.h"
 #include "nweb_config_helper.h"
@@ -28,6 +29,7 @@
 namespace OHOS::NWeb {
 const std::string FACTORY_CONFIG_VALUE = "factoryConfig";
 const std::string FACTORY_LEVEL_VALUE = "factoryLevel";
+const std::string FACTORY_LEVEL_TV = "32";
 const std::string FACTORY_LEVEL_WATCH = "16";
 const std::string FACTORY_LEVEL_PC = "8";
 const std::string FACTORY_LEVEL_TABLET = "4";
@@ -60,6 +62,12 @@ SystemPropertiesAdapterImpl::SystemPropertiesAdapterImpl()
         WVLOG_E("get os full name failed");
         return;
     }
+    size_t index = osFullName.find('-');
+    if (index == std::string::npos) {
+        return;
+    }
+    std::string baseOsNameTmp = osFullName.substr(0, index);
+
     int versionPartOne;
     int versionPartTwo;
     int versionPartThree;
@@ -77,6 +85,7 @@ SystemPropertiesAdapterImpl::SystemPropertiesAdapterImpl()
     }
     softwareMajorVersion_ = versionPartOne;
     softwareSeniorVersion_ = versionPartTwo;
+    baseOsName_ = baseOsNameTmp;
     AddAllSysPropWatchers();
 }
 
@@ -120,6 +129,10 @@ ProductDeviceType SystemPropertiesAdapterImpl::GetProductDeviceType()
         return ProductDeviceType::DEVICE_TYPE_TABLET;
     } else if (deviceType == "2in1") {
         return ProductDeviceType::DEVICE_TYPE_2IN1;
+    } else if (deviceType == "wearable") {
+        return ProductDeviceType::DEVICE_TYPE_WEARABLE;
+    } else if (deviceType == "tv") {
+        return ProductDeviceType::DEVICE_TYPE_TV;
     }
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
 }
@@ -140,6 +153,10 @@ ProductDeviceType SystemPropertiesAdapterImpl::AnalysisFromConfig()
         return ProductDeviceType::DEVICE_TYPE_TABLET;
     } else if (factoryLevel == FACTORY_LEVEL_PC) {
         return ProductDeviceType::DEVICE_TYPE_2IN1;
+    } else if (factoryLevel == FACTORY_LEVEL_WATCH) {
+        return ProductDeviceType::DEVICE_TYPE_WEARABLE;
+    } else if (factoryLevel == FACTORY_LEVEL_TV) {
+        return ProductDeviceType::DEVICE_TYPE_TV;
     }
     return ProductDeviceType::DEVICE_TYPE_UNKNOWN;
 }
@@ -163,6 +180,18 @@ bool SystemPropertiesAdapterImpl::IsAdvancedSecurityMode()
 std::string SystemPropertiesAdapterImpl::GetUserAgentOSName()
 {
     return OHOS::system::GetParameter("const.product.os.dist.name", "");
+}
+
+std::string SystemPropertiesAdapterImpl::GetUserAgentOSVersion()
+{
+    return OHOS::system::GetParameter("const.product.os.dist.apiname", "").empty() ?
+        OHOS::system::GetParameter("const.product.os.dist.version", "") :
+        OHOS::system::GetParameter("const.product.os.dist.apiname", "");
+}
+
+std::string SystemPropertiesAdapterImpl::GetUserAgentBaseOSName()
+{
+    return baseOsName_;
 }
 
 int32_t SystemPropertiesAdapterImpl::GetSoftwareMajorVersion()
@@ -230,7 +259,7 @@ void SystemPropertiesAdapterImpl::AddAllSysPropWatchers()
             sysPropObserver_[item.second];
             sysPropMutex_[item.second];
         } else {
-            WVLOG_E("add watch error result: %{public}d", errNo);
+            WVLOG_I("add watch error result: %{public}d", errNo);
         }
     }
 }
@@ -240,7 +269,7 @@ void SystemPropertiesAdapterImpl::RemoveAllSysPropWatchers()
     for (auto &item : PROP_KEY_MAP) {
         auto errNo = RemoveParameterWatcher(item.first.c_str(), nullptr, nullptr);
         if (errNo != 0) {
-            WVLOG_E("remove watch error result: %{public}d", errNo);
+            WVLOG_I("remove watch error result: %{public}d", errNo);
         }
     }
 }
@@ -249,7 +278,7 @@ void SystemPropertiesAdapterImpl::DispatchAllWatcherInfo(const char* key, const 
 {
     auto propKeyIt = PROP_KEY_MAP.find(key);
     if (propKeyIt == PROP_KEY_MAP.end()) {
-        WVLOG_E("sys prop change key is invalid: %{public}s", key);
+        WVLOG_I("sys prop change key is invalid: %{public}s", key);
         return;
     }
 
@@ -257,7 +286,7 @@ void SystemPropertiesAdapterImpl::DispatchAllWatcherInfo(const char* key, const 
     auto& keyObservers = sysPropObserver_[propkey];
 
     if (keyObservers.size() == 0) {
-        WVLOG_E("no observers in this key: %{public}s", key);
+        WVLOG_I("no observers in this key: %{public}s", key);
         return;
     }
 
@@ -271,12 +300,12 @@ void SystemPropertiesAdapterImpl::AttachSysPropObserver(PropertiesKey key, Syste
 {
     auto observerIt = sysPropObserver_.find(key);
     if (observerIt == sysPropObserver_.end()) {
-        WVLOG_E("properties key invalid in attach");
+        WVLOG_I("properties key invalid in attach");
         return;
     }
 
     if (observer == nullptr) {
-        WVLOG_E("properties key observer invalid in attach");
+        WVLOG_I("properties key observer invalid in attach");
         return;
     }
 
@@ -289,12 +318,12 @@ void SystemPropertiesAdapterImpl::DetachSysPropObserver(PropertiesKey key, Syste
 {
     auto observerIt = sysPropObserver_.find(key);
     if (observerIt == sysPropObserver_.end()) {
-        WVLOG_E("properties key invalid in detach");
+        WVLOG_I("properties key invalid in detach");
         return;
     }
 
     if (observer == nullptr) {
-        WVLOG_E("properties key observer invalid in detach");
+        WVLOG_I("properties key observer invalid in detach");
         return;
     }
 
@@ -315,5 +344,65 @@ bool SystemPropertiesAdapterImpl::GetBoolParameter(const std::string& key, bool 
 std::vector<FrameRateSetting> SystemPropertiesAdapterImpl::GetLTPOConfig(const std::string& settingName)
 {
     return NWebConfigHelper::Instance().GetPerfConfig(settingName);
+}
+
+bool SystemPropertiesAdapterImpl::IsLTPODynamicApp(const std::string& bundleName)
+{
+    return NWebConfigHelper::Instance().IsLTPODynamicApp(bundleName);
+}
+
+int32_t SystemPropertiesAdapterImpl::GetLTPOStrategy()
+{
+    return NWebConfigHelper::Instance().GetLTPOStrategy();
+}
+
+std::string SystemPropertiesAdapterImpl::GetVulkanStatus()
+{
+    if ((OHOS::system::GetParameter("const.gpu.vendor", "0").compare("higpu.v200") == 0)
+        || (OHOS::system::GetParameter("const.gpu.vendor", "0").compare("higpu.v210") == 0)
+        || (OHOS::system::GetParameter("const.gpu.vendor", "0").compare("higpu.v300") == 0)) {
+        return OHOS::system::GetParameter("web.ohos.vulkan", "");
+    } else {
+        return "false";
+    }
+}
+
+std::string SystemPropertiesAdapterImpl::GetCompatibleDeviceType()
+{
+    char* compatibleDeviceType = OH_NativeBundle_GetCompatibleDeviceType();
+    if (compatibleDeviceType == nullptr) {
+        WVLOG_E("failed get compatible device type.");
+        return "";
+    }
+
+    std::string deviceType(compatibleDeviceType);
+    free(compatibleDeviceType);
+    
+    return deviceType;
+}
+
+std::string SystemPropertiesAdapterImpl::GetDeviceInfoApiVersion()
+{
+    return OHOS::system::GetParameter("const.product.os.dist.apiversion", "");
+}
+
+std::string SystemPropertiesAdapterImpl::GetPRPPreloadMode()
+{
+    return OHOS::system::GetParameter("web.prppreload.mode", "none");
+}
+
+std::string SystemPropertiesAdapterImpl::GetScrollVelocityScale()
+{
+    return OHOS::system::GetParameter("persist.scrollable.velocityScale", "");
+}
+
+std::string SystemPropertiesAdapterImpl::GetScrollFriction()
+{
+    return OHOS::system::GetParameter("persist.scrollable.friction", "");
+}
+
+std::string SystemPropertiesAdapterImpl::GetBundleName()
+{
+    return NWebConfigHelper::Instance().GetBundleName();
 }
 } // namespace OHOS::NWeb

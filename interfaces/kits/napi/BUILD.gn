@@ -17,6 +17,7 @@ config("web_public_config") {
   visibility = [ ":*" ]
   include_dirs = [
     "common",
+    "proxycontroller",
     "webadsblockmanager",
     "webasynccontroller",
     "webcookiemanager",
@@ -27,12 +28,14 @@ config("web_public_config") {
     "$target_gen_dir/protos",
     "../../native",
     "../../../ohos_adapter/ohos_resource_adapter/include",
+    "../../../ohos_adapter/system_properties_adapter/include",
   ]
 }
 
-ohos_shared_library("webview_napi") {
-  branch_protector_ret = "pac_ret"
-  branch_protector_frt = "bti"
+ohos_shared_library("webview_napi_back") {
+  if (target_cpu == "arm64") {
+    branch_protector_ret = "pac_ret"
+  }
 
   public_configs = [ ":web_public_config" ]
 
@@ -43,6 +46,16 @@ ohos_shared_library("webview_napi") {
     "common/napi_parse_utils.cpp",
     "common/napi_webview_native_module.cpp",
     "common/web_errors.cpp",
+    "proxycontroller/napi_proxy_config.cpp",
+    "proxycontroller/napi_proxy_config.h",
+    "proxycontroller/napi_proxy_controller.cpp",
+    "proxycontroller/napi_proxy_controller.h",
+    "proxycontroller/napi_proxy_rule.cpp",
+    "proxycontroller/napi_proxy_rule.h",
+    "proxycontroller/proxy_config.cpp",
+    "proxycontroller/proxy_config.h",
+    "proxycontroller/proxy_rule.cpp",
+    "proxycontroller/proxy_rule.h",
     "webadsblockmanager/napi_web_adsblock_manager.cpp",
     "webasynccontroller/napi_web_async_controller.cpp",
     "webcookiemanager/napi_web_cookie_manager.cpp",
@@ -51,8 +64,6 @@ ohos_shared_library("webview_napi") {
     "webfunction/napi_webview_function.cpp",
     "webfunction/webview_web_inited_callback.cpp",
     "webstorage/napi_web_storage.cpp",
-    "webviewcontroller/back_forward_cache_options.cpp",
-    "webviewcontroller/back_forward_cache_options.h",
     "webviewcontroller/napi_back_forward_cache_options.cpp",
     "webviewcontroller/napi_back_forward_cache_options.h",
     "webviewcontroller/napi_native_media_player.cpp",
@@ -77,10 +88,13 @@ ohos_shared_library("webview_napi") {
     "webviewcontroller/web_scheme_handler_request.cpp",
     "webviewcontroller/web_scheme_handler_request.h",
     "webviewcontroller/webview_controller.cpp",
+    "webviewcontroller/webview_createpdf_execute_callback.cpp",
     "webviewcontroller/webview_hasimage_callback.cpp",
     "webviewcontroller/webview_javascript_execute_callback.cpp",
     "webviewcontroller/webview_javascript_result_callback.cpp",
   ]
+
+  use_exceptions = true
 
   external_deps = [
     "ability_base:extractortool",
@@ -105,7 +119,6 @@ ohos_shared_library("webview_napi") {
     "../../../ohos_adapter:nweb_ohos_adapter",
     "../../../ohos_nweb:libnweb",
     "../../native:ohweb",
-    "js:js_export",
     "protos:proto_gen",
   ]
 
@@ -116,8 +129,9 @@ ohos_shared_library("webview_napi") {
 }
 
 ohos_shared_library("neterrorlist_napi") {
-  branch_protector_ret = "pac_ret"
-  branch_protector_frt = "bti"
+  if (target_cpu == "arm64") {
+    branch_protector_ret = "pac_ret"
+  }
 
   public_configs = [ ":web_public_config" ]
 

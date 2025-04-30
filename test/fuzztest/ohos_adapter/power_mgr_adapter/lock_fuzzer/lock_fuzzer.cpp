@@ -17,24 +17,30 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "power_mgr_client_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool LockFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        uint32_t timeOutMs = static_cast<uint32_t>(size);
-        std::shared_ptr<OHOS::PowerMgr::RunningLock> lock;
-        RunningLockAdapterImpl runningLockAdapter(lock);
-        runningLockAdapter.Lock(timeOutMs);
-        return true;
+constexpr int MAX_SET_NUMBER = 1000;
+
+bool LockFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t timeOutMs = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+
+    std::shared_ptr<OHOS::PowerMgr::RunningLock> lock;
+    RunningLockAdapterImpl runningLockAdapter(lock);
+    runningLockAdapter.Lock(timeOutMs);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

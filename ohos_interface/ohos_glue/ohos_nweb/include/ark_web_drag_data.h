@@ -114,6 +114,13 @@ public:
      */
     /*--ark web()--*/
     virtual void GetDragStartPosition(int& x, int& y) = 0;
+
+    /**
+     * @Description: Obtains whether the drag style is new.
+     * @Return: Returns an drag style, true is drag a new style, otherwise, drag a old style.
+     */
+    /*--ark web()--*/
+    virtual bool IsDragNewStyle() = 0;
 };
 
 } // namespace OHOS::ArkWeb

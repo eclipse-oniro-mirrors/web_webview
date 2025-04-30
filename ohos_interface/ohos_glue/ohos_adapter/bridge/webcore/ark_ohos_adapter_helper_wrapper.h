@@ -110,6 +110,20 @@ public:
 
     std::unique_ptr<NWeb::SensorAdapter> CreateSensorAdapter() override;
 
+    void SetArkWebCoreHapPathOverride(const std::string& hapPath) override;
+
+    NWeb::OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() override;
+
+    std::unique_ptr<NWeb::MigrationManagerAdapter> CreateMigrationMgrAdapter() override;
+
+    NWeb::OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() override;
+
+    NWeb::OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() override;
+
+    std::unique_ptr<NWeb::AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
+
+    std::unique_ptr<NWeb::DrmAdapter> CreateDrmAdapter() override;
+
 private:
     ArkWebRefPtr<ArkOhosAdapterHelper> ctocpp_;
 };

@@ -14,20 +14,20 @@
 import("//build/test.gni")
 import("../../../web_aafwk.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 ohos_unittest("napi_web_cookie_manager_test") {
   module_out_path = module_output_path
 
   sources = [ "napi_web_cookie_manager_test.cpp" ]
 
-  deps = [ "//third_party/googletest:gtest_main" ]
-
   external_deps = [
     "c_utils:utils",
+    "googletest:gtest_main",
     "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 }
 

@@ -90,4 +90,17 @@ int32_t ArkPlayerAdapterImpl::SetPlaybackSpeed(int32_t mode)
     return real_->SetPlaybackSpeed((OHOS::NWeb::PlaybackRateMode)mode);
 }
 
+int32_t ArkPlayerAdapterImpl::SetVideoSurfaceNew(void* native_window)
+{
+    return real_->SetVideoSurfaceNew(native_window);
+}
+
+int32_t ArkPlayerAdapterImpl::SetMediaSourceHeader(const ArkWebString& url,
+    const ArkWebStringMap& header)
+{
+    std::string surl = ArkWebStringStructToClass(url);
+    std::map<std::string, std::string> sheader = ArkWebStringMapStructToClass(header);
+    return real_->SetMediaSourceHeader(surl, sheader);
+}
+
 } // namespace OHOS::ArkWeb

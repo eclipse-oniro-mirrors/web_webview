@@ -234,13 +234,18 @@ public:
         WVLOG_I("test SetNeedUnderLine");
         isSetNeedUnderLine_ = true;
     }
+    void KeyboardUpperRightCornerHide() override
+    {
+        WVLOG_I("test KeyboardUpperRightCornerHide");
+        isKeyboardUpperRightCornerHide_ = true;
+    }
     bool VerifyAllSuccess()
     {
         return isInsertText_ && isDeleteForward_ && isDeleteBackward_ && isSendKeyEventFromInputMethod_ &&
                isSendKeyboardStatus_ && isSendFunctionKey_ && isSetKeyboardStatus_ && isMoveCursor_ &&
                isHandleSetSelection_ && isHandleExtendAction_ && isHandleSelect_ && isGetTextIndexAtCursor_ &&
                isGetLeftTextOfCursor_ && isGetRightTextOfCursor_ && isSetPreviewText_ && isFinishTextPreview_ &&
-               isSetNeedUnderLine_;
+               isSetNeedUnderLine_ && isKeyboardUpperRightCornerHide_;
     }
     bool VerifyFunctionKeySuccess()
     {
@@ -264,6 +269,7 @@ private:
     bool isSetPreviewText_ = false;
     bool isFinishTextPreview_ = false;
     bool isSetNeedUnderLine_ = false;
+    bool isKeyboardUpperRightCornerHide_ = false;
 };
 
 void NWebIMFAdapterTest::SetUpTestCase(void)
@@ -485,6 +491,10 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_009, TestSize.Lev
     listenerTest->ReceivePrivateCommand(privateCommand);
     privateCommand = { { "previewTextStyle", "underline" } };
     listenerTest->ReceivePrivateCommand(privateCommand);
+    privateCommand = { { "com.autofill.params.userName", "test" } };
+    listenerTest->ReceivePrivateCommand(privateCommand);
+    privateCommand = { { "com.autofill.params.otherAccount", true } };
+    listenerTest->ReceivePrivateCommand(privateCommand);
 }
 
 /**
@@ -504,6 +514,72 @@ HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_010, TestSize.Level1)
     EXPECT_FALSE(result);
     EXPECT_NE(g_imf->textListener_, nullptr);
     g_imf->HideTextInput();
+}
+
+/**
+ * @tc.name: NWebIMFAdapterTest_InsertText_011.
+ * @tc.desc: IMF adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_011, TestSize.Level1)
+{
+    EXPECT_NE(g_imf, nullptr);
+    std::string commandKey = "autofill.cancel";
+    std::string commandValue = "{\"userName\":\"test\",\"hasAccount\":\"test\"}";
+    g_imf->SendPrivateCommand(commandKey, commandValue);
+    std::string commandValueEmpty = "";
+    g_imf->SendPrivateCommand(commandKey, commandValueEmpty);
+    commandKey = "test";
+    g_imf->SendPrivateCommand(commandKey, commandValue);
+}
+
+/**
+ * @tc.name: NWebIMFAdapterTest_InsertText_012.
+ * @tc.desc: IMF adapter unittest.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_InsertText_012, TestSize.Level1)
+{
+    int32_t requestKeyboardReasonNone = 0;
+    bool result = g_imf->AttachWithRequestKeyboardReason(nullptr, true, nullptr, false, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+    auto listener = std::make_shared<IMFTextListenerTest>();
+    EXPECT_NE(listener, nullptr);
+    result = g_imf->AttachWithRequestKeyboardReason(nullptr, true, nullptr, false, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+    result = g_imf->AttachWithRequestKeyboardReason(nullptr, true, nullptr, false, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+    auto config = std::make_shared<IMFTextConfigTest>();
+    result = g_imf->AttachWithRequestKeyboardReason(listener, true, nullptr, false, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+    result = g_imf->AttachWithRequestKeyboardReason(listener, true, config, false, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+    result = g_imf->AttachWithRequestKeyboardReason(listener, true, config, true, requestKeyboardReasonNone);
+    EXPECT_FALSE(result);
+}
+
+/**
+@tc.name: NWebIMFAdapterTest_IMFAdapterImpl_013.
+@tc.desc: IMF adapter unittest.
+@tc.type: FUNC.
+@tc.require:
+*/
+HWTEST_F(NWebIMFAdapterTest, NWebIMFAdapterTest_IMFAdapterImpl_013, TestSize.Level1)
+{
+    auto imf_adapter = OhosAdapterHelper::GetInstance().CreateMMIAdapter();
+    EXPECT_NE(imf_adapter, nullptr);
+    auto listener = std::make_shared<IMFTextListenerTest>();
+    auto listenerTest = std::make_shared<IMFTextListenerAdapterImpl>(listener);
+    MiscServices::PanelStatusInfo info;
+    const MiscServices::PanelStatusInfo info1 = info;
+    listenerTest->NotifyPanelStatusInfo(info1);
+    info.trigger = MiscServices::Trigger::IME_APP;
+    const MiscServices::PanelStatusInfo info2 = info;
+    listenerTest->NotifyPanelStatusInfo(info2);
+    auto listenerTest2 = std::make_shared<IMFTextListenerAdapterImpl>(nullptr);
+    listenerTest2->NotifyPanelStatusInfo(info2);
 }
 
 } // namespace OHOS::NWeb

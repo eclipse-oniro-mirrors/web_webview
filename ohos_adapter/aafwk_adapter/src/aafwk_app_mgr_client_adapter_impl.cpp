@@ -18,7 +18,6 @@
 #include <chrono>
 #include <thread>
 
-#include "aafwk_browser_host_impl.h"
 #include "aafwk_render_scheduler_impl.h"
 #include "nweb_log.h"
 
@@ -160,11 +159,11 @@ void AafwkAppMgrClientAdapterImpl::SaveBrowserConnect(std::shared_ptr<AafwkBrows
         return;
     }
 
-    AafwkBrowserHostImpl *browser = new (std::nothrow) AafwkBrowserHostImpl(adapter);
-    if (browser == nullptr) {
+    aafwkBrowserHostImpl_ = new (std::nothrow) AafwkBrowserHostImpl(adapter);
+    if (aafwkBrowserHostImpl_ == nullptr) {
         WVLOG_E("create new AafwkBrowserHostImpl failed!");
     }
-    WVLOG_E("AafwkAppMgrClientAdapterImpl SaveBrowserConnect success!");
-    appMgrClient_->SaveBrowserChannel(browser);
+    WVLOG_I("AafwkAppMgrClientAdapterImpl SaveBrowserConnect success!");
+    appMgrClient_->SaveBrowserChannel(aafwkBrowserHostImpl_);
 }
 } // namespace OHOS::NWeb

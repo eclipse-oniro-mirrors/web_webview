@@ -67,4 +67,22 @@ void ArkVSyncAdapterWrapper::SetOnVsyncEndCallback(OnVsyncCallback onVsyncEndCal
     }
     return ctocpp_->SetOnVsyncEndCallback(onVsyncEndCallback);
 }
+
+void ArkVSyncAdapterWrapper::SetScene(const std::string& sceneName, uint32_t state)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ArkWebString ark_value = ArkWebStringClassToStruct(sceneName);
+    ctocpp_->SetScene(ark_value, state);
+    ArkWebStringStructRelease(ark_value);
+}
+
+void ArkVSyncAdapterWrapper::SetDVSyncSwitch(bool dvsyncSwitch)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    return ctocpp_->SetDVSyncSwitch(dvsyncSwitch);
+}
 } // namespace OHOS::ArkWeb

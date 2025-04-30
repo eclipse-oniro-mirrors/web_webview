@@ -22,6 +22,10 @@ using namespace OHOS;
 using namespace OHOS::NWeb;
 
 namespace OHOS::NWeb {
+namespace {
+    const uint32_t SOC_PERF_ID = UINT32_MAX;
+}
+
 class SocPerfAdapterTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -57,5 +61,35 @@ HWTEST_F(SocPerfAdapterTest, SocPerfAdapterTest_001, TestSize.Level1)
     socPerfClient->ApplySocPerfConfigById(0);
     socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_CONFIG_ID, true);
     socPerfClient->ApplySocPerfConfigByIdEx(0, true);
+}
+
+/**
+ * @tc.name: SocPerfAdapterTest_002.
+ * @tc.desc: test apply socperf ConfigById
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SocPerfAdapterTest, SocPerfAdapterTest_002, TestSize.Level1)
+{
+    auto  socPerfClient = std::make_shared<SocPerfClientAdapterImpl>();
+    EXPECT_NE(socPerfClient, nullptr);
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigById(0);
+}
+
+/**
+ * @tc.name: SocPerfAdapterTest_003.
+ * @tc.desc: test apply socperf ConfigByIdEx
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SocPerfAdapterTest, SocPerfAdapterTest_003, TestSize.Level1)
+{
+    auto  socPerfClient = std::make_shared<SocPerfClientAdapterImpl>();
+    EXPECT_NE(socPerfClient, nullptr);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
+    socPerfClient->ApplySocPerfConfigByIdEx(0, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(0, false);
 }
 } // namespace NWeb

@@ -17,6 +17,8 @@
 #define MEDIA_ADAPTER_H
 
 #include <string>
+#include <map>
+#include <memory>
 
 #include "graphic_adapter.h"
 
@@ -36,6 +38,7 @@ enum class PlayerOnInfoType : int32_t {
     INFO_TYPE_POSITION_UPDATE,
     INFO_TYPE_MESSAGE,
     INFO_TYPE_INTERRUPT_EVENT,
+    INFO_TYPE_RESOLUTION_CHANGE,
 };
 
 enum class PlayerSeekMode : int32_t {
@@ -104,6 +107,13 @@ public:
     virtual int32_t GetDuration(int32_t& duration) = 0;
 
     virtual int32_t SetPlaybackSpeed(PlaybackRateMode mode) = 0;
+
+    virtual int32_t SetVideoSurfaceNew(void* native_window) = 0;
+
+    virtual int32_t SetMediaSourceHeader(const std::string& url, const std::map<std::string, std::string>& header)
+    {
+        return -1;
+    }
 };
 
 } // namespace OHOS::NWeb

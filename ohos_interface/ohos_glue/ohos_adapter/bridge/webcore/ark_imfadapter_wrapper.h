@@ -31,6 +31,10 @@ public:
     bool Attach(std::shared_ptr<OHOS::NWeb::IMFTextListenerAdapter> listener, bool isShowKeyboard,
         const std::shared_ptr<OHOS::NWeb::IMFTextConfigAdapter> config, bool isResetListener) override;
 
+    bool AttachWithRequestKeyboardReason(std::shared_ptr<OHOS::NWeb::IMFTextListenerAdapter> listener,
+        bool isShowKeyboard, const std::shared_ptr<OHOS::NWeb::IMFTextConfigAdapter> config, bool isResetListener,
+        int32_t requestKeyboardReason) override;
+
     void ShowCurrentInput(const OHOS::NWeb::IMFAdapterTextInputType& inputType) override;
 
     void HideTextInput() override;
@@ -40,6 +44,8 @@ public:
     void OnCursorUpdate(const std::shared_ptr<OHOS::NWeb::IMFCursorInfoAdapter> cursorInfo) override;
 
     void OnSelectionChange(std::u16string text, int start, int end) override;
+
+    bool SendPrivateCommand(const std::string& commandKey, const std::string& commandValue) override;
 
 private:
     ArkWebRefPtr<ArkIMFAdapter> ctocpp_;

@@ -16,12 +16,15 @@
 #ifndef NWEB_ENGINE_H
 #define NWEB_ENGINE_H
 
+#include <memory>
+
 #include "nweb.h"
+#include "nweb_adsblock_manager.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_data_base.h"
 #include "nweb_download_manager.h"
 #include "nweb_web_storage.h"
-#include "nweb_adsblock_manager.h"
+#include "nweb_proxy_changed_callback.h"
 
 namespace OHOS::NWeb {
 
@@ -79,11 +82,37 @@ public:
 
     virtual void EnableWholeWebPageDrawing() {}
 
-    virtual std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager() {
+    virtual std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager()
+    {
         return nullptr;
     }
 
     virtual void TrimMemoryByPressureLevel(int32_t memoryLevel) {}
+
+    virtual void SetArkWebRomApiLevel(int apiLevel) {}
+
+    virtual int GetArkWebCoreApiLevel()
+    {
+        return 0;
+    }
+
+    virtual std::string GetDefaultUserAgent() {
+        return "";
+    }
+
+    virtual void RemoveAllCache(bool include_disk_files) {}
+
+    virtual void SetProxyOverride(const std::vector<std::string>& proxyUrls,
+                                  const std::vector<std::string>& proxySchemeFilters,
+                                  const std::vector<std::string>& bypassRules,
+                                  const bool& reverseBypass,
+                                  std::shared_ptr<NWebProxyChangedCallback> callback) {}
+
+    virtual void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback) {}
+
+    virtual void SetAppCustomUserAgent(const std::string& userAgent) {}
+
+    virtual void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
 };
 
 } // namespace OHOS::NWeb

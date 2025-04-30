@@ -18,6 +18,7 @@
 #include <gtest/gtest.h>
 
 #define private public
+#include "nweb_config_helper.h"
 #include "nweb_log.h"
 #include "system_properties_adapter_impl.h"
 
@@ -85,7 +86,6 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetDeviceInfoB
     EXPECT_NE(result, -1);
     SystemPropertiesAdapterImpl::GetInstance().GetResourceUseHapPathEnable();
     SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
-    SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
     bool value = SystemPropertiesAdapterImpl::GetInstance().GetWebOptimizationValue();
     EXPECT_TRUE(value);
     system("param set web.optimization false");
@@ -149,4 +149,144 @@ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetOOPGPUEnabl
     value = SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUEnable();
     EXPECT_TRUE(value);
 }
+
+/**
+ * @tc.name: SystemPropertiesAdapterTest_GetVulkanEnable_004
+ * @tc.desc: GetInstance unittest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetVulkanEnable_004, TestSize.Level1)
+{
+    system("param set web.ohos.vulkan false");
+    string value = SystemPropertiesAdapterImpl::GetInstance().GetVulkanStatus();
+    EXPECT_EQ(value, "false");
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnMobile_WhenFactoryLevelIsPhone
+ * @tc.number: SystemPropertiesAdapterImplTest_001
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is phone.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnMobile_WhenFactoryLevelIsPhone, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "2");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_MOBILE);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnTablet_WhenFactoryLevelIsTablet
+ * @tc.number: SystemPropertiesAdapterImplTest_002
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is tablet.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnTablet_WhenFactoryLevelIsTablet, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "4");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_TABLET);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturn2In1_WhenFactoryLevelIsPC
+ * @tc.number: SystemPropertiesAdapterImplTest_003
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is PC.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturn2In1_WhenFactoryLevelIsPC, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "8");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_2IN1);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnWearable_WhenFactoryLevelIsWearable
+ * @tc.number: SystemPropertiesAdapterImplTest_004
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is Wearable.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnWearable_WhenFactoryLevelIsWearable,
+         TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "16");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_WEARABLE);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnWearable_WhenFactoryLevelIsWearable
+ * @tc.number: SystemPropertiesAdapterImplTest_005
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is TV.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnTV_WhenFactoryLevelIsTV, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "32");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_TV);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name  : AnalysisFromConfig_ShouldReturnUnknown_WhenFactoryLevelIsUnknown
+ * @tc.number: SystemPropertiesAdapterImplTest_006
+ * @tc.desc  : Test AnalysisFromConfig function when factory level is unknown.
+ */
+HWTEST_F(SystemPropertiesAdapterTest, AnalysisFromConfig_ShouldReturnUnknown_WhenFactoryLevelIsUnknown, TestSize.Level0)
+{
+    NWebConfigHelper::Instance().perfConfig_.emplace("factoryConfig/factoryLevel", "64");
+    ProductDeviceType result = SystemPropertiesAdapterImpl::GetInstance().AnalysisFromConfig();
+    EXPECT_EQ(result, ProductDeviceType::DEVICE_TYPE_UNKNOWN);
+    NWebConfigHelper::Instance().perfConfig_.clear();
+}
+
+/**
+ * @tc.name: SystemPropertiesAdapterTest_GetPRPPreloadMode_007
+ * @tc.desc: GetInstance unittest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetPRPPreloadMode_007, TestSize.Level1)
+{
+    system("param set web.prppreload.mode none");
+    string value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
+    EXPECT_EQ(value, "none");
+    system("param set web.prppreload.mode preconnect");
+    value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
+    EXPECT_EQ(value, "preconnect");
+    system("param set web.prppreload.mode preload");
+    value = SystemPropertiesAdapterImpl::GetInstance().GetPRPPreloadMode();
+    EXPECT_EQ(value, "preload");
+}
+
+/**
+ * @tc.name: SystemPropertiesAdapterTest_GetPRPPreloadMode_008
+ * @tc.desc: GetInstance unittest.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+ HWTEST_F(SystemPropertiesAdapterTest, SystemPropertiesAdapterTest_GetPRPPreloadMode_008, TestSize.Level1)
+ {
+     SystemPropertiesAdapterImpl::GetInstance().GetUserAgentOSName();
+     SystemPropertiesAdapterImpl::GetInstance().GetUserAgentOSVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetUserAgentBaseOSName();
+     SystemPropertiesAdapterImpl::GetInstance().GetSoftwareMajorVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetSoftwareSeniorVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetTraceDebugEnable();
+     SystemPropertiesAdapterImpl::GetInstance().GetFlowBufMaxFd();
+     SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("", false);
+     SystemPropertiesAdapterImpl::GetInstance().GetLTPOConfig("");
+     SystemPropertiesAdapterImpl::GetInstance().GetOOPGPUStatus();
+     SystemPropertiesAdapterImpl::GetInstance().IsLTPODynamicApp("");
+     SystemPropertiesAdapterImpl::GetInstance().GetLTPOStrategy();
+     SystemPropertiesAdapterImpl::GetInstance().GetCompatibleDeviceType();
+     SystemPropertiesAdapterImpl::GetInstance().GetDeviceInfoApiVersion();
+     SystemPropertiesAdapterImpl::GetInstance().GetScrollVelocityScale();
+     SystemPropertiesAdapterImpl::GetInstance().GetScrollFriction();
+     SystemPropertiesAdapterImpl::GetInstance().GetBundleName();
+ }
+
+
 } // namespace OHOS

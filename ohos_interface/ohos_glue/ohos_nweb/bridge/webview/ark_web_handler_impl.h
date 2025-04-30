@@ -564,6 +564,35 @@ public:
 
     void HideHandleAndQuickMenuIfNecessary(bool hide) override;
 
+    void ChangeVisibilityOfQuickMenu() override;
+
+    void StartVibraFeedback(const ArkWebString& vibratorType) override;
+
+    void OnPopupSize(int x, int y, int width, int height) override;
+
+    void OnPopupShow(bool show) override;
+
+    void OnNativeEmbedVisibilityChange(const ArkWebString& embed_id, bool visibility) override;
+
+    bool CloseImageOverlaySelection() override;
+
+    bool OnSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsSslErrorResult> result, int error,
+        const ArkWebStringVector& certChainData) override;
+    
+    void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) override;
+
+    bool IsCurrentFocus() override;
+
+    void GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight) override;
+
+    void OnScrollStart(const float x, const float y) override;
+
+    void OnShowAutofillPopupV2(const float offsetX, const float offsetY, const float height, const float width,
+        const ArkWebStringVector& menu_items) override;
+
+    void RestoreRenderFit() override;
+
+    void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

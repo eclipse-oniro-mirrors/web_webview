@@ -17,7 +17,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("DataShareAdapterFuzzer") {
+ohos_fuzztest("DataShareAdapterFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file =
       "$webview_path/test/fuzztest/ohos_adapter/datashareadapter_fuzzer"
@@ -31,7 +31,7 @@ ohos_fuzztest("DataShareAdapterFuzzer") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "datashare_adapter_impl_fuzzer.cpp" ]
+  sources = [ "datashareadapter_fuzzer.cpp" ]
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
@@ -49,7 +49,7 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":DataShareAdapterFuzzer",
+    ":DataShareAdapterFuzzTest",
   ]
 }
 ###############################################################################

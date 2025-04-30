@@ -16,12 +16,9 @@
 #ifndef NWEB_ADAPTER_HELPER_H
 #define NWEB_ADAPTER_HELPER_H
 
-#include "foundation/window/window_manager/interfaces/innerkits/wm/window.h"
-#include "libxml/parser.h"
-#include "libxml/tree.h"
+#include "wm/window.h"
 #include "nweb_helper.h"
 #include "nweb_init_params.h"
-#include "nweb_config_helper.h"
 
 namespace OHOS {
 class Surface;
@@ -47,7 +44,9 @@ public:
     void ReadConfigIfNeeded();
     std::string ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName);
     std::vector<FrameRateSetting> GetPerfConfig(const std::string& settingName);
-
+    bool IsLTPODynamicApp(const std::string& bundleName);
+    int32_t GetLTPOStrategy();
+    std::string GetBundleName();
 private:
     NWebAdapterHelper() = default;
 };

@@ -89,6 +89,48 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetOOPGPUStatus() = 0;
+
+    /*--ark web()--*/
+    virtual bool IsLTPODynamicApp(const ArkWebString& bundleName) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetLTPOStrategy() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetUserAgentOSVersion() = 0;
+    
+    /*--ark web()--*/
+    virtual ArkWebString GetUserAgentBaseOSName() = 0;
+
+    /**
+     * @Description: return VulkanStatus.
+     * @Return：return ArkWebString to describe VulkanStatus.
+     * @Since 14001
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetVulkanStatus() = 0;
+
+    /**
+     * @Description: return GetCompatibleDeviceType.
+     * @Return：return ArkWebString to describe GetCompatibleDeviceType.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetCompatibleDeviceType() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetDeviceInfoApiVersion() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetPRPPreloadMode() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetScrollVelocityScale() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetScrollFriction() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetBundleName() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -140,6 +140,13 @@ public:
 
     /*--ark web()--*/
     virtual void SetNeedUnderLine(bool isNeedUnderline) = 0;
+
+    /*--ark web()--*/
+    virtual void AutoFillWithIMFEvent(bool isUsername, bool isOtherAccount, bool isNewPassword,
+        const ArkWebString& content) = 0;
+        
+    /*--ark web()--*/
+    virtual void KeyboardUpperRightCornerHide() = 0;
 };
 
 /*--ark web(source=webview)--*/
@@ -151,6 +158,10 @@ public:
     /*--ark web()--*/
     virtual bool Attach(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard,
         ArkWebRefPtr<ArkIMFTextConfigAdapter> config, bool isResetListener) = 0;
+
+    /*--ark web()--*/
+    virtual bool AttachWithRequestKeyboardReason(ArkWebRefPtr<ArkIMFTextListenerAdapter> listener, bool isShowKeyboard,
+        ArkWebRefPtr<ArkIMFTextConfigAdapter> config, bool isResetListener, int32_t requestKeyboardReason) = 0;
 
     /*--ark web()--*/
     virtual void ShowCurrentInput(const int32_t& inputType) = 0;
@@ -166,6 +177,9 @@ public:
 
     /*--ark web()--*/
     virtual void OnSelectionChange(ArkWebU16String& text, int start, int end) = 0;
+
+    /*--ark web()--*/
+    virtual bool SendPrivateCommand(const ArkWebString& commandKey, const ArkWebString& commandValue) = 0;
 };
 
 } // namespace OHOS::ArkWeb

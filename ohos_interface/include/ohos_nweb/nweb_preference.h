@@ -647,6 +647,33 @@ public:
      * Set whether the scrollbar is displayed.
      */
     virtual void PutOverlayScrollbarEnabled(bool enable) {}
+
+    /**
+     * Set whether the scroll is enabled.
+     */
+    virtual void SetScrollable(bool enable, int32_t scrollType) {}
+
+    /**
+     * Set whether to support the blur when the keyboard is hidden by manual.
+     * @param enable set whether blur is allowed.
+     */
+    virtual void SetBlurOnKeyboardHideMode(int enable) {}
+
+    /**
+     * Set whether to connect to media avsession.
+     */
+    virtual void PutWebMediaAVSessionEnabled(bool enable) {}
+
+    /**
+     * Set the scale of the font-weight.The default is 1.0f.
+     */
+    virtual void SetFontWeightScale(float scale) {};
+
+    /**
+     * Set whether to use the intrinsic size. The default is false.
+     */
+    virtual void SetIntrinsicSizeEnable(bool enable) {};
+    
 };
 
 } // namespace OHOS::NWeb

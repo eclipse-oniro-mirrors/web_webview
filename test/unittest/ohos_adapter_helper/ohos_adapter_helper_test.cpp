@@ -33,7 +33,7 @@ using namespace OHOS::Rosen;
 namespace OHOS::NWeb {
 namespace {
 sptr<Surface> g_surface = nullptr;
-const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.nweb";
+const std::string MOCK_NWEB_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
 #if defined(NWEB_PRINT_ENABLE)
 const std::string PRINT_FILE_DIR = "/data/storage/el2/base/print.png";
 const std::string PRINT_JOB_NAME = "webPrintTestJob";
@@ -87,12 +87,16 @@ void OhosAdapterHelperTest::TearDown(void) {}
  */
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize.Level1)
 {
+    std::string hapPath = "";
+    if (access(MOCK_NWEB_INSTALLATION_DIR.c_str(), F_OK) == 0) {
+        hapPath = MOCK_NWEB_INSTALLATION_DIR;
+    }
     int32_t nweb_id = 1;
     NWebHelper& helper = NWebHelper::Instance();
-    helper.SetBundlePath(MOCK_INSTALLATION_DIR);
+    helper.SetBundlePath(hapPath);
     helper.Init(false);
     auto cook = helper.GetCookieManager();
-    EXPECT_NE(cook, nullptr);
+    EXPECT_EQ(cook, nullptr);
     auto base = helper.GetDataBase();
     EXPECT_NE(base, nullptr);
     auto storage = helper.GetWebStorage();
@@ -149,6 +153,8 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     void* token = nullptr;
     EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter, token), -1);
 #endif
+    std::unique_ptr<MigrationManagerAdapter> migration = helper.CreateMigrationMgrAdapter();
+    EXPECT_NE(migration, nullptr);
     sptr<Surface> surface = nullptr;
     std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
     uint32_t width = 1;
@@ -168,15 +174,6 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     int32_t nweb_id = 1;
     NWebHelper& helper = NWebHelper::Instance();
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
-    helper.LoadLib(true);
-    helper.libHandleWebEngine_ = nullptr;
-    helper.LoadLib(true);
-    helper.bundlePath_ = "";
-    helper.LoadLib(true);
-    helper.libHandleWebEngine_ = nullptr;
-    helper.LoadLib(true);
-    helper.LoadLib(true);
-    helper.libHandleWebEngine_ = nullptr;
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     NWebHelper::Instance().SetHttpDns(config);
     auto webview = helper.CreateNWeb(create_info);
@@ -189,7 +186,6 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Leve
     EXPECT_NE(storage, nullptr);
     auto nweb = helper.GetNWeb(nweb_id);
     EXPECT_EQ(nweb, nullptr);
-    helper.UnloadLib();
 }
 
 /**

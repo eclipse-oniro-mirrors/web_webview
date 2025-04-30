@@ -25,15 +25,18 @@ using namespace OHOS::NWeb;
 using namespace OHOS::NativeRdb;
 
 namespace OHOS {
-    bool PmsDatabaseOnCreateFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        std::string name = "web_test.db";
+
+bool PmsDatabaseOnCreateFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
         std::string bundleName = "com.example";
         std::string databaseDir = "/data";
         int32_t errorCode = E_OK;
+        std::string name = "default_name";
         std::string realPath = RdbSqlUtils::GetDefaultDatabasePath(databaseDir, name, errorCode);
         RdbStoreConfig config("");
         config.SetPath(std::move(realPath));
@@ -44,9 +47,10 @@ namespace OHOS {
         PermissionDataBaseRdbOpenCallBack callBack;
         auto rdbStore = NativeRdb::RdbHelper::GetRdbStore(config, 1, callBack, errorCode);
         callBack.OnCreate(*(rdbStore.get()));
-        return true;
     }
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

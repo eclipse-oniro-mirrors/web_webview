@@ -164,6 +164,8 @@ enum class CursorType : int32_t {
     CT_DND_MOVE,
     CT_DND_COPY,
     CT_DND_LINK,
+    CT_LOCK,
+    CT_UNLOCK,
     CT_MAX_VALUE,
 };
 
@@ -215,6 +217,8 @@ enum class NativeEmbedStatus {
     DESTROY,
     ENTER_BFCACHE,
     LEAVE_BFCACHE,
+    VISIBLE,
+    HIDDEN,
 };
 
 enum class NWebFocusSource {
@@ -969,7 +973,7 @@ public:
 
     /**
      * @brief called when the cursor info is updated.
-     * 
+     *
      * @param x, y relative coordinates within web components of the cursor
      * @param width, height width and height of the cursor
      */
@@ -989,6 +993,69 @@ public:
      * @param hide hide.
      */
     virtual void HideHandleAndQuickMenuIfNecessary(bool hide) {}
+
+    /**
+     * @brief Called When you click on the selected area.
+     *
+     */
+    virtual void ChangeVisibilityOfQuickMenu() {}
+
+    /**
+     * @brief Called when you need to start vibrator.
+     */
+    virtual void StartVibraFeedback(const std::string& vibratorType) {}
+
+    /**
+     * @brief Called when a popup is shown with the given size.
+     *
+     * @param x The offset of the popup on the x coordinate axis.
+     * @param y The offset of the popup on the y coordinate axis.
+	 * @param width The width of the popup.
+     * @param height The height of the popup.
+     *
+     */
+    virtual void OnPopupSize(int x, int y, int width, int height) {}
+
+    /**
+     * @brief Called when the popup is shown or hidden.
+     *
+     * @param show Whether the popup is shown or hidden.
+     *
+     */
+    virtual void OnPopupShow(bool show) {}
+
+    virtual void OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) {}
+
+    virtual bool CloseImageOverlaySelection() { return false; }
+    
+    virtual bool OnSslErrorRequestByJSV2(std::shared_ptr<NWebJSSslErrorResult> result, SslError error,
+        const std::vector<std::string>& certChainData)
+    {
+        return false;
+    }
+
+    virtual void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) {}
+
+    virtual bool IsCurrentFocus() { return false; }
+
+    /**
+     * @brief Get the visible area relative to the web.
+     */
+    virtual void GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight) {}
+
+    virtual void OnScrollStart(const float x, const float y) {}
+
+    virtual void OnShowAutofillPopupV2(
+        const float offsetX, const float offsetY, const float height, const float width,
+        const std::vector<std::string>& menu_items)
+    {}
+
+    /**
+     * @brief Restore web component renderfit.
+     */
+    virtual void RestoreRenderFit() {}
+
+    virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) {}
 };
 
 } // namespace OHOS::NWeb

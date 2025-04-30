@@ -70,7 +70,7 @@ int32_t ArkCertManagerAdapterImpl::GetCertDataBySubject(const char* subjectName,
 
 int ArkCertManagerAdapterImpl::VerifyCertFromNetSsl(uint8_t* certData, uint32_t certSize)
 {
-    return real_->VerifyCertFromNetSsl(certData, certSize);
+    return 0;
 }
 
 bool ArkCertManagerAdapterImpl::GetTrustAnchorsForHostName(const ArkWebString& hostname, ArkWebStringVector& certs)

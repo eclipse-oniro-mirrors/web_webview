@@ -16,6 +16,7 @@
 #ifndef IMF_ADAPTER_H
 #define IMF_ADAPTER_H
 
+#include <memory>
 #include <string>
 
 namespace OHOS::NWeb {
@@ -168,6 +169,11 @@ public:
     virtual void FinishTextPreview() = 0;
 
     virtual void SetNeedUnderLine(bool isNeedUnderline) = 0;
+
+    virtual void AutoFillWithIMFEvent(bool isUsername, bool isOtherAccount, bool isNewPassword,
+        const std::string& content) {}
+
+    virtual void KeyboardUpperRightCornerHide() {}
 };
 
 class IMFAdapter {
@@ -181,6 +187,9 @@ public:
     virtual bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
         const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener) = 0;
 
+    virtual bool AttachWithRequestKeyboardReason(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
+        const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener, int32_t requestKeyboardReason) = 0;
+
     virtual void ShowCurrentInput(const IMFAdapterTextInputType& inputType) = 0;
 
     virtual void HideTextInput() = 0;
@@ -190,6 +199,11 @@ public:
     virtual void OnCursorUpdate(const std::shared_ptr<IMFCursorInfoAdapter> cursorInfo) = 0;
 
     virtual void OnSelectionChange(std::u16string text, int start, int end) = 0;
+
+    virtual bool SendPrivateCommand(const std::string& commandKey, const std::string& commandValue)
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

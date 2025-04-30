@@ -45,7 +45,8 @@ public:
 
     ~AudioOutputChangeCallbackImpl() override = default;
 
-    void OnOutputDeviceChange(const DeviceInfo& deviceInfo, const AudioStreamDeviceChangeReason reason) override;
+    void OnOutputDeviceChange(const AudioDeviceDescriptor& deviceInfo,
+        const AudioStreamDeviceChangeReason reason) override;
 
 private:
     AudioAdapterDeviceChangeReason GetChangeReason(AudioStreamDeviceChangeReason reason);
@@ -85,6 +86,11 @@ public:
     bool IsRendererStateRunning() override;
 
     int32_t SetAudioOutputChangeCallback(const std::shared_ptr<AudioOutputChangeCallbackAdapter>& callback) override;
+
+    void SetAudioSilentMode(bool isSilentMode) override;
+
+    bool Flush() override;
+
 #if defined(NWEB_AUDIO_ENABLE)
     static AudioSamplingRate GetAudioSamplingRate(AudioAdapterSamplingRate samplingRate);
 
@@ -100,6 +106,8 @@ public:
 
     static void TransformToAudioRendererOptions(
         AudioRendererOptions& out, const std::shared_ptr<AudioRendererOptionsAdapter>& in);
+
+    static AudioSessionStrategy GetAudioAudioStrategy(AudioAdapterConcurrencyMode concurrencyMode);
 
 private:
     std::unique_ptr<AudioRenderer> audio_renderer_;

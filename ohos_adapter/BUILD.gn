@@ -19,10 +19,44 @@ config("ohos_adapter_public_interface") {
 }
 
 ohos_shared_library("nweb_ohos_adapter") {
-  branch_protector_ret = "pac_ret"
-  branch_protector_frt = "bti"
+  if (target_cpu == "arm64") {
+    branch_protector_ret = "pac_ret"
+  }
 
-  defines = [ "HILOG_TAG=\"webadapter\"" ]
+  if (target_cpu == "arm") {
+    libs = [
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libbundle_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libasset_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_drawing.so",
+    ]
+  } else if (target_cpu == "arm64") {
+    libs = [
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libbundle_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libasset_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_drawing.so",
+    ]
+  } else if (target_cpu == "x86_64") {
+    libs = [
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libbundle_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libasset_ndk.z.so",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_drawing.so",
+    ]
+  }
+
+  defines = [
+    "HILOG_TAG=\"webadapter\"",
+    "WEBVIEW_PACKAGE_NAME=\"${webview_package_name}\"",
+    "WEBVIEW_SANDBOX_LIB_PATH=\"${webview_sandbox_lib_path}\"",
+    "WEBVIEW_CRASHPAD_HANDLER_SO=\"${webview_crashpad_handler_so}\"",
+    "WEBVIEW_SANDBOX_RELATIVE_LIB_PATH=\"${webview_sandbox_relative_lib_path}\"",
+    "WEBVIEW_ENGINE_SO=\"${webview_engine_so}\"",
+    "WEBVIEW_SANDBOX_HAP_PATH=\"${webview_sandbox_hap_path}\"",
+    "WEBVIEW_APP_HAP_PATH=\"${webview_app_hap_path}\"",
+    "WEBVIEW_APP_HAP_PATH2=\"${webview_app_hap_path2}\"",
+    "WEBVIEW_HAP_PATH=\"${webview_hap_path}\"",
+    "WEBVIEW_SANDBOX_PATH=\"${webview_sandbox_path}\"",
+  ]
+
   sources = [
     "aafwk_adapter/src/aafwk_app_mgr_client_adapter_impl.cpp",
     "aafwk_adapter/src/aafwk_browser_client_adapter_impl.cpp",
@@ -36,6 +70,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "display_manager_adapter/src/display_manager_adapter_impl.cpp",
     "distributeddatamgr_adapter/webdatabase/src/ohos_web_data_base_adapter_impl.cpp",
     "distributeddatamgr_adapter/webdatabase/src/ohos_web_permission_data_base_adapter_impl.cpp",
+    "drawing_text_adapter/src/ohos_drawing_text_adapter_impl.cpp",
     "enterprise_device_management_adapter/src/enterprise_device_management_adapter_impl.cpp",
     "event_handler_adapter/src/event_handler_adapter_impl.cpp",
     "flowbuffer_adapter/src/flowbuffer_adapter_impl.cpp",
@@ -49,11 +84,13 @@ ohos_shared_library("nweb_ohos_adapter") {
     "hiviewdfx_adapter/src/hitrace_adapter_impl.cpp",
     "inputmethodframework_adapter/src/imf_adapter_impl.cpp",
     "keystore_adapter/src/keystore_adapter_impl.cpp",
+    "migration_manager_adapter/src/migration_manager_adapter_impl.cpp",
     "multimodalinput_adapter/src/mmi_adapter_impl.cpp",
     "net_proxy_adapter/src/net_proxy_adapter_impl.cpp",
     "ohos_adapter_helper/src/ohos_adapter_helper_impl.cpp",
     "ohos_image_adapter/src/ohos_image_decoder_adapter_impl.cpp",
     "ohos_init_web_adapter/src/ohos_init_web_adapter_impl.cpp",
+    "ohos_native_buffer_adapter/src/ohos_native_buffer_adapter_impl.cpp",
     "ohos_resource_adapter/src/ohos_resource_adapter_impl.cpp",
     "pasteboard_adapter/src/pasteboard_client_adapter_impl.cpp",
     "print_manager_adapter/src/print_manager_adapter_impl.cpp",
@@ -69,6 +106,8 @@ ohos_shared_library("nweb_ohos_adapter") {
   ]
 
   include_dirs = [
+    "../ohos_interface/include/ohos_adapter",
+    "../ohos_interface/include/ohos_nweb",
     "../ohos_nweb/include",
     "aafwk_adapter/include",
     "access_token_adapter/include",
@@ -79,7 +118,9 @@ ohos_shared_library("nweb_ohos_adapter") {
     "datashare_adapter/include",
     "date_time_format_adapter/include",
     "display_manager_adapter/include",
+    "migration_manager_adapter/include",
     "distributeddatamgr_adapter/webdatabase/include",
+    "drawing_text_adapter/include",
     "enterprise_device_management_adapter/include",
     "event_handler_adapter/include",
     "flowbuffer_adapter/include",
@@ -95,6 +136,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ohos_adapter_helper/include",
     "ohos_image_adapter/include",
     "ohos_init_web_adapter/include",
+    "ohos_native_buffer_adapter/include",
     "ohos_resource_adapter/include",
     "pasteboard_adapter/include",
     "power_mgr_adapter/include",
@@ -104,6 +146,14 @@ ohos_shared_library("nweb_ohos_adapter") {
     "system_properties_adapter/include",
     "sensor_adapter/include",
   ]
+
+  if (target_cpu == "arm" || target_cpu == "arm64" || target_cpu == "x86_64") {
+    include_dirs += [
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/include/bundle",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/include/asset",
+      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/include/native_drawing",
+    ]
+  }
 
   public_configs = [ ":ohos_adapter_public_interface" ]
 
@@ -134,6 +184,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "hisysevent:libhisysevent",
     "hitrace:hitrace_meter",
     "huks:libhukssdk",
+    "i18n:intl_util",
     "image_framework:image_native",
     "imf:inputmethod_client",
     "init:libbeget_proxy",
@@ -142,14 +193,15 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ipc:ipc_core",
     "napi:ace_napi",
     "netmanager_base:net_conn_manager_if",
-    "netstack:net_ssl",
     "openssl:libssl_shared",
     "pasteboard:pasteboard_client",
     "relational_store:native_rdb",
     "resource_schedule_service:ressched_client",
     "samgr:samgr_proxy",
     "time_service:time_client",
+    "udmf:udmf_client",
     "window_manager:libdm",
+    "window_manager:libdm_ndk",
   ]
   public_external_deps = [ "ability_base:want" ]
 
@@ -168,6 +220,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     external_deps += [
       "audio_framework:audio_capturer",
       "audio_framework:audio_client",
+      "audio_framework:audio_foundation",
       "audio_framework:audio_renderer",
     ]
     defines += [ "NWEB_AUDIO_ENABLE" ]
@@ -205,10 +258,60 @@ ohos_shared_library("nweb_ohos_adapter") {
       "media_adapter/src/media_codec_list_adapter_impl.cpp",
       "media_adapter/src/ohos_buffer_adapter_impl.cpp",
     ]
+    if (target_cpu == "arm") {
+      libs += [
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_vdec.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_codecbase.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_buffer.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_core.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_window.so",
+      ]
+    } else if (target_cpu == "arm64") {
+      libs += [
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_vdec.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_codecbase.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_buffer.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_core.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_window.so",
+      ]
+    } else if (target_cpu == "x86_64") {
+      libs += [
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_vdec.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_codecbase.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_buffer.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_core.so",
+        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_window.so",
+      ]
+    }
     external_deps += [
       "av_codec:av_codec_client",
       "media_foundation:media_foundation",
     ]
+    if (webview_drm_enable) {
+      sources += [
+        "media_adapter/src/audio_cenc_info_adapter_impl.cpp",
+        "media_adapter/src/audio_codec_decoder_adapter_impl.cpp",
+        "media_adapter/src/drm_adapter_impl.cpp",
+      ]
+      external_deps += [ "drm_framework:native_drm" ]
+      if (target_cpu == "arm") {
+        libs += [
+          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_acodec.so",
+          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_avcencinfo.so",
+        ]
+      } else if (target_cpu == "arm64") {
+        libs += [
+          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_acodec.so",
+          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_avcencinfo.so",
+        ]
+      } else if (target_cpu == "x86_64") {
+        libs += [
+          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_acodec.so",
+          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_avcencinfo.so",
+        ]
+      }
+      defines += [ "NWEB_AUDIO_DRM_ENABLE" ]
+    }
     defines += [ "NWEB_MEDIA_AVCODEC_ENABLE" ]
   } else {
     sources += [ "media_adapter/src/media_codec_list_adapter_mock.cpp" ]
@@ -301,4 +404,9 @@ ohos_shared_library("nweb_ohos_adapter") {
   subsystem_name = "web"
 
   deps = [ "../ohos_nweb:web_configs" ]
+
+  if (webview_graphic_2d_ext_enable) {
+    external_deps += [ "graphic_2d_ext:libaps_client" ]
+    defines += [ "NWEB_GRAPHIC_2D_EXT_ENABLE" ]
+  }
 }

@@ -17,24 +17,40 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
-#include "aafwk_render_scheduler_impl.h"
 #include "aafwk_app_mgr_client_adapter_impl.h"
+#include "aafwk_render_scheduler_impl.h"
 
 using namespace OHOS::NWeb;
+using namespace OHOS::AppExecFwk;
 
 namespace OHOS {
-    bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        AafwkAppMgrClientAdapterImpl render;
-        std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter = nullptr;
-        render.AttachRenderProcess(adapter);
-        return true;
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
+bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    static AafwkAppMgrClientAdapterImpl render;
+    std::shared_ptr<AafwkRenderSchedulerHostAdapter> adapter = nullptr;
+    render.AttachRenderProcess(adapter);
+    static AafwkAppMgrClientAdapterImpl newadapter;
+
+    FuzzedDataProvider dataProvider(data, size);
+    std::string renderParam = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    int32_t ipcFd = 0;
+    int32_t sharedFd = 0;
+    int32_t crashFd = 0;
+    pid_t renderPid = 0;
+    newadapter.StartRenderProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid);
+    pid_t red = 1;
+    int statused = 1;
+    newadapter.GetRenderProcessTerminationStatus(red, statused);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

@@ -58,4 +58,28 @@ void ArkWindowAdapterWrapper::NativeWindowSurfaceCleanCacheWithPara(ArkWebNative
     }
     ctocpp_->NativeWindowSurfaceCleanCacheWithPara(window, cleanAll);
 }
+
+void ArkWindowAdapterWrapper::SetTransformHint(uint32_t rotation, ArkWebNativeWindow window)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ctocpp_->SetTransformHint(rotation, window);
+}
+
+void ArkWindowAdapterWrapper::AddNativeWindowRef(ArkWebNativeWindow window)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ctocpp_->AddNativeWindowRef(window);
+}
+
+void ArkWindowAdapterWrapper::NativeWindowUnRef(ArkWebNativeWindow window)
+{
+    if (!ctocpp_) {
+        return;
+    }
+    ctocpp_->NativeWindowUnRef(window);
+}
 } // namespace OHOS::ArkWeb

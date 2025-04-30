@@ -17,7 +17,7 @@
 #define AUDIO_SYSTEM_MANAGER_ADAPTER_IMPL_H
 
 #include "audio_system_manager_adapter.h"
-
+#include <vector>
 #if defined(NWEB_AUDIO_ENABLE)
 #include "audio_system_manager.h"
 #endif
@@ -93,11 +93,15 @@ public:
     static AudioStreamType GetStreamType(AudioAdapterStreamType streamType);
 
 private:
-    int32_t SelectAudioOutputDevice(bool isCallDevice, const std::vector<sptr<AudioDeviceDescriptor>>& device) const;
+    int32_t SelectAudioOutputDevice(
+        bool isCallDevice, const std::vector<std::shared_ptr<AudioDeviceDescriptor>>& device) const;
+    bool GetDeviceIdByDescriptor(AudioDeviceDescriptor *audioDeviceDescriptor, int32_t &deviceId);
+    int32_t SelectDefaultAudioDevice(bool isCallDevice);
 
 private:
     std::shared_ptr<AudioManagerCallbackAdapterImpl> callback_;
     std::shared_ptr<AudioManagerDeviceChangeCallbackAdapterImpl> deviceChangeCallback_ = nullptr;
+    std::map<int32_t, AudioDeviceDescriptor> audioOutputDeviceInfo_;
 #endif
 };
 } // namespace OHOS::NWeb

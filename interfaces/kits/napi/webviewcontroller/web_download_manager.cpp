@@ -126,7 +126,7 @@ void WebDownloadManager::RegisterDownloadCallback()
         WebDownloader_SetDownloadDidUpdate(g_download_callback, &DownloadDidUpdate);
         WebDownloadManager_PutDownloadCallback(g_download_callback);
     } else {
-        WVLOG_E("[DOWNLOAD] had RegisterDownloadCallback.");
+        WVLOG_I("[DOWNLOAD] had RegisterDownloadCallback.");
     }
 }
 
@@ -149,6 +149,15 @@ void WebDownloadManager::AddDownloadDelegateForWeb(int32_t nwebId, WebDownloadDe
     NWebHelper::Instance().LoadNWebSDK();
     g_web_download_delegate_map.insert_or_assign(nwebId, delegate);
     RegisterDownloadCallback();
+}
+
+// static
+void WebDownloadManager::RemoveDownloadDelegateRef(int32_t nwebId)
+{
+    auto iter = g_web_download_delegate_map.find(nwebId);
+    if (iter != g_web_download_delegate_map.end()) {
+        iter->second->RemoveSelfRef();
+    }
 }
 
 // static

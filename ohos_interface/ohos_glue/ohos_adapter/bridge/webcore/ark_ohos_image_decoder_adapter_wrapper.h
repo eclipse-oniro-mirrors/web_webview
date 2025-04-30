@@ -20,6 +20,8 @@
 #include "ohos_adapter/include/ark_ohos_image_decoder_adapter.h"
 #include "ohos_image_decoder_adapter.h"
 
+#include "base/include/ark_web_types.h"
+
 namespace OHOS::ArkWeb {
 
 class ArkOhosImageDecoderAdapterWrapper : public OHOS::NWeb::OhosImageDecoderAdapter {
@@ -39,6 +41,7 @@ public:
     void* GetNativeWindowBuffer() override;
     int32_t GetPlanesCount() override;
     void ReleasePixelMap() override;
+    void* GetDecodeData() override;
 
 private:
     ArkWebRefPtr<ArkOhosImageDecoderAdapter> ctocpp_;

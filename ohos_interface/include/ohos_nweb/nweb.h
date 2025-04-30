@@ -16,6 +16,7 @@
 #ifndef NWEB_H
 #define NWEB_H
 
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -137,7 +138,9 @@ public:
 enum class BlurReason : int32_t {
     FOCUS_SWITCH = 0,
     WINDOW_BLUR = 1,
-    FRAME_DESTROY = 2,
+    FRAME_DESTROY = 2, // frame node detached from main tree
+    VIEW_SWITCH = 3,
+    CLEAR_FOCUS = 4, // User api clearFocus triggered
 };
 
 enum class FocusReason : int32_t {
@@ -192,6 +195,20 @@ public:
     virtual std::string GetFormData() = 0;
 };
 
+class OHOS_NWEB_EXPORT NWebPDFConfigArgs {
+public:
+    virtual ~NWebPDFConfigArgs() = default;
+
+    virtual double GetWidth() = 0;
+    virtual double GetHeight() = 0;
+    virtual double GetScale() = 0;
+    virtual double GetMarginTop() = 0;
+    virtual double GetMarginBottom() = 0;
+    virtual double GetMarginRight() = 0;
+    virtual double GetMarginLeft() = 0;
+    virtual bool GetShouldPrintBackground() = 0;
+};
+
 enum class PrecompileError : int32_t { OK = 0, INTERNAL_ERROR = -1 };
 
 class OHOS_NWEB_EXPORT CacheOptions {
@@ -213,6 +230,21 @@ class NWebSystemConfiguration {
     virtual uint8_t GetThemeFlags() = 0;
 };
 
+class OHOS_NWEB_EXPORT NWebKeyboardEvent {
+public:
+    virtual ~NWebKeyboardEvent() = default;
+
+    virtual int32_t GetKeyCode() = 0;
+
+    virtual int32_t GetAction() = 0;
+
+    virtual int32_t GetUnicode() = 0;
+
+    virtual bool IsEnableCapsLock() = 0;
+
+    virtual std::vector<int32_t> GetPressKeyCodes() = 0;
+};
+
 enum class PixelUnit {
     PX = 0,
     VP = 1,
@@ -220,11 +252,44 @@ enum class PixelUnit {
     NONE = 3,
 };
 
+class OHOS_NWEB_EXPORT NWebMouseEvent {
+public:
+    virtual ~NWebMouseEvent() = default;
+
+    virtual int32_t GetX() = 0;
+
+    virtual int32_t GetY() = 0;
+
+    virtual int32_t GetButton() = 0;
+
+    virtual int32_t GetAction() = 0;
+
+    virtual int32_t GetClickNum() = 0;
+
+    virtual std::vector<int32_t> GetPressKeyCodes() = 0;
+
+    virtual int32_t GetRawX() { return 0; };
+
+    virtual int32_t GetRawY() { return 0; };
+
+};
+
 typedef int64_t (*AccessibilityIdGenerateFunc)();
 typedef void (*NativeArkWebOnValidCallback)(const char*);
 typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
+using ScriptItemsByOrder = std::vector<std::string>;
 using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
+
+class OHOS_NWEB_EXPORT NWebJsProxyMethod {
+    public:
+        virtual ~NWebJsProxyMethod() = default;
+    
+        virtual int32_t GetSize() = 0;
+    
+        virtual void OnHandle(int32_t number, const std::vector<std::string>& param) = 0;
+    };
+    
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -1459,6 +1524,298 @@ public:
      * @param data data.
      */
     virtual void FillAutofillData(std::shared_ptr<NWebMessage> data) {}
+
+    /**
+     * @brief on autofill cancel.
+     * @param fillContent fillContent
+     */
+    virtual void OnAutofillCancel(const std::string& fillContent) {}
+
+    /**
+     * @brief Get the current scroll offset of the webpage.
+     * @param offset_x The current horizontal scroll offset of the webpage.
+     * @param offset_y The current vertical scroll offset of the webpage.
+     */
+    virtual void GetScrollOffset(float* offset_x, float* offset_y) {}
+
+    /**
+     * @brief ExecuteCreatePDFExt
+     *
+     * @param pdfConfig The current configuration when creating pdf.
+     * @param callback NWebArrayBufferValueCallback: CreatePDF running result.
+     */
+    virtual void ExecuteCreatePDFExt(std::shared_ptr<NWebPDFConfigArgs> pdfConfig,
+        std::shared_ptr<NWebArrayBufferValueCallback> callback) {}
+
+    /**
+     * Scroll by the delta distance if web is not foucsed.
+     *
+     * @param delta_x horizontal offset.
+     * @param delta_y vertical offset.
+     * @return false if web is focused.
+     */
+    virtual bool ScrollByWithResult(float delta_x, float delta_y) {
+        return false;
+    }
+
+    /**
+     * @brief set a popupSurface to draw popup content
+     * @param popupSurface  popupSurface.
+     */
+    virtual void SetPopupSurface(void* popupSurface) {}
+
+    /**
+     * @brief Called when image analyzer is destory.
+     */
+    virtual void OnDestroyImageAnalyzerOverlay() {}
+
+    /**
+     * @Description: Sends mouse events to the web kernel.
+     * @Input mouseEvent: Basic information about mouse events.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual void WebSendMouseEvent(const std::shared_ptr<OHOS::NWeb::NWebMouseEvent>& mouseEvent) {}
+
+    /**
+     * @Description: Get the accessibility visibility of the accessibility node by its accessibility id in the browser.
+     * @Input accessibility_id: The accessibility id of the accessibility node.
+     * @Return: The accessibility visibility of the accessibility node.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual bool GetAccessibilityVisible(int64_t accessibility_id) {
+        return true;
+    }
+
+    /**
+     * @Description: Set the rotation to psurface.
+     * @Input rotation: The rotation of buffer.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    virtual void SetTransformHint(uint32_t rotation) {}
+
+    /**
+     * @brief Web components blur when the keyboard is hidden by gesture back.
+     */
+    virtual void WebComponentsBlur() {}
+
+    /**
+     * @Description: Get the GPU memory size used by web.
+     * @Return: Total size of web GPU.
+     */
+    virtual float DumpGpuInfo() {
+        return 0;
+    };
+
+    /**
+     * @brief Set the params when the scale of WebView changed by pinch gesture.
+     *
+     * @param type: gesture status
+     * @param scale: the scale factor to apply. The scale will be
+     *        clamped to the pinch limits. This value must be in the range
+     *        0.01 to 8.0 inclusive.
+     * @param originScale: the origin scale factor to apply. The scale will be
+     *        clamped to the pinch limits. This value must be in the range
+     *        0.01 to 8.0 inclusive.
+     * @param centerX: X-coordinate of the pinch center
+     * @param centerX: Y-coordinate of the pinch center
+     *
+     * @return the error id.
+     */
+    virtual int ScaleGestureChangeV2(int type, double scale, double originScale, double centerX, double centerY) {
+        return 0;
+    }
+
+    /**
+     * @Description: Sends key events to the web kernel.
+     * @Input keyEvent: Basic information about key events.
+     * @Return: Whether the keyboard event is successful sent.
+     */
+    /*--ark web()--*/
+    virtual bool SendKeyboardEvent(const std::shared_ptr<OHOS::NWeb::NWebKeyboardEvent>& keyboardEvent) {
+        return false;
+    }
+
+    /**
+     * @Description: Execute an accessibility action on an accessibility node in the browser.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Input action: The action to be performed on the accessibility node.
+     * @Input actionArguments: Data related to the current action.
+     * @Return: Whether the action is performed successfully.
+     */
+    virtual bool PerformActionV2(int64_t accessibilityId, uint32_t action,
+        const std::map<std::string, std::string>& actionArguments) {
+        return false;
+    }
+
+    /**
+     * Inject the JavaScript before WebView load the DOM tree.
+     */
+    virtual void JavaScriptOnDocumentStartByOrder(const ScriptItems& scriptItems,
+        const ScriptItemsByOrder& scriptItemsByOrder) {}
+
+    /**
+     * Inject the JavaScript after WebView load the DOM tree.
+     */
+    virtual void JavaScriptOnDocumentEndByOrder(const ScriptItems& scriptItems,
+        const ScriptItemsByOrder& scriptItemsByOrder) {}
+
+    /**
+     * @Description: Check web component active policy disable, default: false
+     * @Return: Whether the policy is disable.
+     */
+    /*--ark web()--*/
+    virtual bool IsActivePolicyDisable()
+    {
+        return false;
+    }
+
+    /**
+     * @Description: Inject the JavaScript when the head element has been created.
+     * @Input scriptItems: The injected JavaScript code is stored in lexicographical order.
+     * @Input scriptItemsByOrder: The injected JavaScript code is stored in the order of the injection array.
+     */
+    virtual void JavaScriptOnHeadReadyByOrder(const ScriptItems& scriptItems,
+        const ScriptItemsByOrder& scriptItemsByOrder) {}
+
+    /**
+     * @Description: Optimize HTML parser budget to reduce FCP time.
+     * @Input enable: Set whether to use optimized parser budget.
+     */
+    virtual void PutOptimizeParserBudgetEnabled(bool enable) {};
+
+    /**
+     * @Description: Get the bounding rectangle of the accessibility node of the given id.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Output width: The width of the rectangle.
+     * @Output height: The height of the rectangle.
+     * @Output offsetX: The X-coordinate offset of the rectangle.
+     * @Output offsetY: The Y-coordinate offset of the rectangle.
+     * @Return: Whether the bounding rectangle is obtained successfully.
+     */
+    virtual bool GetAccessibilityNodeRectById(
+        int64_t accessibilityId, int32_t* width, int32_t* height, int32_t* offsetX, int32_t* offsetY)
+    {
+        return false;
+    }
+
+    /**
+     * Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    /*--ark web()--*/
+    virtual std::shared_ptr<HitTestResult> GetLastHitTestResult()
+    {
+        return std::shared_ptr<HitTestResult>();
+    };
+
+    /**
+     * @Description: Get the current language in the webview.
+     * @Return: The current language in the webview.
+     */
+    /*--ark web()--*/
+    virtual std::string GetCurrentLanguage()
+    {
+        return "";
+    }
+
+    /**
+     * @brief Send mouse wheel event with sourceTool info.
+     */
+    virtual bool WebSendMouseWheelEventV2(
+        double x, double y, double delta_x, double delta_y, const std::vector<int32_t> &pressedCodes, int32_t source)
+    {
+        return false;
+    }
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    virtual bool IsNWebEx()
+    {
+        return false;
+    }
+
+    /**
+     * Set enable half the frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enable) {}
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void MaximizeResize() {}
+
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
+    virtual void OnDragAttach() {}
+
+    /**
+     * Set focus by position
+     *
+     * @Return: if hit node editable.
+     */
+    /*--ark web()--*/
+    virtual bool SetFocusByPosition(float x, float y)
+    {
+        return false;
+    }
+
+    /**
+     * @brief set DPI when DPI changes.
+     * @param density The new density value.
+     */
+    virtual void SetSurfaceDensity(const double& density) {}
+
+    /**
+     * @brief Set the native inner web
+     */
+    virtual void SetNativeInnerWeb(bool isInnerWeb) {}
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     * @param isHoverEnter whether the accessibility hover event is a hover enter event.
+     */
+    virtual void SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter) {}
+
+    /**
+     * @brief Notify browser is foreground.
+     */
+    virtual void OnBrowserForeground() {}
+
+    /**
+     * @brief Notify browser is background.
+     */
+    virtual void OnBrowserBackground() {}
+
+    /**
+     * @brief: register native javaScriptProxy.
+     *
+     * @param objName  String: object name.
+     * @param methodName std::vector<std::string>: methodName list
+     * @param data std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod>: The ptr of NWebJsProxyMethod.
+     * @param isAsync bool: True mean.
+     * @param permission string: permission.
+     */
+    virtual void RegisterNativeJavaScriptProxy(const std::string& objName,
+        const std::vector<std::string>& methodName,
+        std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+        bool isAsync,
+        const std::string& permission) {}
+
+    /**
+     * @brief Set the window id.
+     */
+    virtual void SetFocusWindowId(uint32_t focus_window_id) {}
 };
 
 } // namespace OHOS::NWeb

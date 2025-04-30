@@ -28,7 +28,7 @@
 #define ARK_WEB_CALLBACK
 
 #define ARK_WEB_RETURN_VOID
-
-#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall")))
+ 
+#define ARK_WEB_NO_SANITIZE __attribute__((no_sanitize("cfi-icall", "cfi")))
 
 #endif // ARK_WEB_MACROS_H_

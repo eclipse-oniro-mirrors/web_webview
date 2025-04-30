@@ -14,37 +14,39 @@
 import("//build/test.gni")
 import("../../../web_aafwk.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 ohos_unittest("nweb_helper_test") {
   module_out_path = module_output_path
 
   sources = [
     "../common/nweb_create_window.cpp",
-    "nweb_helper_test.cpp",
+    "nweb_helper_ex_test.cpp",
   ]
 
   include_dirs = [ "../common" ]
 
-  deps = [
-    "$webview_path/ohos_nweb:web_configs",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "$webview_path/ohos_nweb:web_configs" ]
 
   external_deps = [
     "ability_runtime:app_context",
     "bundle_framework:appexecfwk_base",
     "bundle_framework:appexecfwk_core",
     "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",
+    "libxml2:libxml2"
   ]
 }
 
 group("unittest") {
   testonly = true
-  deps = [ ":nweb_helper_test" ]
+  deps = [
+    ":nweb_helper_test",
+    "../interface_native_test:unittest",
+  ]
 }

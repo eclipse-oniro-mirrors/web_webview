@@ -652,6 +652,30 @@ public:
      */
     void PutOverlayScrollbarEnabled(bool enable) override;
 
+    /**
+     * @brief Set whether the scroll is enabled.
+     */
+    void SetScrollable(bool enable, int32_t scrollType) override;
+
+    /**
+     * @brief Set whether to support the blur when the keyboard is hidden by manual.
+     */
+    void SetBlurOnKeyboardHideMode(int enable) override;
+
+    /**
+     * Set whether to connect to media avsession.
+     */
+    void PutWebMediaAVSessionEnabled(bool enable) override;
+
+    /**
+     * @brief Set the scale of the font-weight.The default is 1.0f.
+     */
+    void SetFontWeightScale(float scale) override;
+
+    /**
+     * @brief Set whether to use the intrinsic size. The default is false.
+     */
+    void SetIntrinsicSizeEnable(bool enable) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;
 };

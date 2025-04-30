@@ -18,6 +18,7 @@
 #include "hisysevent_adapter.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
+#include "third_party/cJSON/cJSON.h"
 
 namespace OHOS::NWeb {
 constexpr char INPUT_METHOD[] = "INPUT_METHOD";
@@ -25,14 +26,12 @@ constexpr char ATTACH_CODE[] = "ATTACH_CODE";
 constexpr char IS_SHOW_KEY_BOARD[] = "IS_SHOW_KEY_BOARD";
 constexpr int32_t IMF_LISTENER_NULL_POINT = 1;
 constexpr int32_t IMF_TEXT_CONFIG_NULL_POINT = 2;
+const std::string AUTO_FILL_CANCEL_PRIVATE_COMMAND = "autofill.cancel";
 
 IMFTextListenerAdapterImpl::IMFTextListenerAdapterImpl(const std::shared_ptr<IMFTextListenerAdapter>& listener)
     : listener_(listener) {};
 
-IMFTextListenerAdapterImpl::~IMFTextListenerAdapterImpl()
-{
-    listener_ = nullptr;
-}
+IMFTextListenerAdapterImpl::~IMFTextListenerAdapterImpl() = default;
 
 void IMFTextListenerAdapterImpl::InsertText(const std::u16string& text)
 {
@@ -231,6 +230,22 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
         }
     }
 
+    item = privateCommand.find(AUTO_FILL_PARAMS_USERNAME);
+    if (item != privateCommand.end()) {
+        if (listener_) {
+            std::string content = std::get<std::string>(item->second);
+            listener_->AutoFillWithIMFEvent(true, false, false, content);
+        }
+    }
+
+    item = privateCommand.find(AUTO_FILL_PARAMS_OTHERACCOUNT);
+    if (item != privateCommand.end()) {
+        if (listener_) {
+            std::string content = std::string("");
+            listener_->AutoFillWithIMFEvent(false, true, false, content);
+        }
+    }
+
     return 0;
 }
 
@@ -290,6 +305,40 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
             return false;
         }
     }
+    MiscServices::InputAttribute inputAttribute = { .inputPattern = config->GetInputAttribute()->GetInputPattern(),
+        .enterKeyType = config->GetInputAttribute()->GetEnterKeyType(),
+        .isTextPreviewSupported = true };
+
+    MiscServices::CursorInfo imfInfo = { .left = config->GetCursorInfo()->GetLeft(),
+        .top = config->GetCursorInfo()->GetTop(),
+        .width = config->GetCursorInfo()->GetWidth(),
+        .height = config->GetCursorInfo()->GetHeight() };
+
+    MiscServices::TextConfig textConfig = { .inputAttribute = inputAttribute,
+        .cursorInfo = imfInfo,
+        .windowId = config->GetWindowId(),
+        .positionY = config->GetPositionY(),
+        .height = config->GetHeight() };
+    WVLOG_I(
+        "web inputmethod attach, isShowKeyboard=%{public}d, textConfig=%{public}s",
+        isShowKeyboard,
+        textConfig.ToString().c_str());
+    int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
+    if (ret != 0) {
+        WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
+        ReportImfErrorEvent(ret, isShowKeyboard);
+        return false;
+    }
+    return true;
+}
+
+bool IMFAdapterImpl::AttachWithRequestKeyboardReason(std::shared_ptr<IMFTextListenerAdapter> listener,
+    bool isShowKeyboard, const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener,
+    int32_t requestKeyboardReason)
+{
+    if (!AttachParamsCheck(listener, isShowKeyboard, config, isResetListener)) {
+        return false;
+    }
 
     MiscServices::InputAttribute inputAttribute = { .inputPattern = config->GetInputAttribute()->GetInputPattern(),
         .enterKeyType = config->GetInputAttribute()->GetEnterKeyType(),
@@ -305,9 +354,15 @@ bool IMFAdapterImpl::Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bo
         .windowId = config->GetWindowId(),
         .positionY = config->GetPositionY(),
         .height = config->GetHeight() };
-    WVLOG_I("web inputmethod attach, isShowKeyboard=%{public}d, textConfig=%{public}s", isShowKeyboard,
+    OHOS::MiscServices::AttachOptions attachOptions;
+    attachOptions.isShowKeyboard = isShowKeyboard;
+    attachOptions.requestKeyboardReason = static_cast<OHOS::MiscServices::RequestKeyboardReason>(requestKeyboardReason);
+    WVLOG_I(
+        "web inputmethod attach, isShowKeyboard=%{public}d, requestKeyboardReason=%{public}d, textConfig=%{public}s",
+        isShowKeyboard,
+        requestKeyboardReason,
         textConfig.ToString().c_str());
-    int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, isShowKeyboard, textConfig);
+    int32_t ret = MiscServices::InputMethodController::GetInstance()->Attach(textListener_, attachOptions, textConfig);
     if (ret != 0) {
         WVLOG_E("inputmethod attach failed, errcode=%{public}d", ret);
         ReportImfErrorEvent(ret, isShowKeyboard);
@@ -357,5 +412,84 @@ void IMFAdapterImpl::OnCursorUpdate(const std::shared_ptr<IMFCursorInfoAdapter> 
 void IMFAdapterImpl::OnSelectionChange(std::u16string text, int start, int end)
 {
     MiscServices::InputMethodController::GetInstance()->OnSelectionChange(text, start, end);
+}
+
+bool IMFAdapterImpl::SendPrivateCommand(const std::string& commandKey, const std::string& commandValue)
+{
+    if (commandKey == AUTO_FILL_CANCEL_PRIVATE_COMMAND) {
+        std::unordered_map<std::string, MiscServices::PrivateDataValue> privateCommand;
+        ParseFillContentJsonValue(commandValue, privateCommand);
+        int32_t ret = MiscServices::InputMethodController::GetInstance()->SendPrivateCommand(privateCommand);
+        if (ret != 0) {
+            WVLOG_E("inputmethod SendPrivateCommand failed, errcode=%{public}d", ret);
+            return false;
+        }
+        WVLOG_I("inputmethod  SendPrivateCommand success");
+        return true;
+    }
+    return false;
+}
+
+bool IMFAdapterImpl::ParseFillContentJsonValue(const std::string& commandValue,
+    std::unordered_map<std::string, std::variant<std::string, bool, int32_t>>& map)
+{
+    cJSON* sourceJson = cJSON_Parse(commandValue.c_str());
+    if (sourceJson == nullptr || cJSON_IsNull(sourceJson)) {
+        cJSON_Delete(sourceJson);
+        return false;
+    }
+    if (cJSON_HasObjectItem(sourceJson, "userName")) {
+        cJSON* userName = cJSON_GetObjectItem(sourceJson, "userName");
+        if (userName != nullptr && cJSON_IsString(userName) && userName->valuestring != nullptr) {
+            map.insert(std::make_pair("userName", userName->valuestring));
+        }
+    }
+    if (cJSON_HasObjectItem(sourceJson, "hasAccount")) {
+        cJSON* hasAccount = cJSON_GetObjectItem(sourceJson, "hasAccount");
+        if (hasAccount != nullptr && cJSON_IsString(hasAccount) && hasAccount->valuestring != nullptr) {
+            map.insert(std::make_pair("hasAccount", hasAccount->valuestring));
+        }
+    }
+    cJSON_Delete(sourceJson);
+    return true;
+}
+
+bool IMFAdapterImpl::AttachParamsCheck(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
+    const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener)
+{
+    if (!listener) {
+        WVLOG_E("the listener is nullptr");
+        ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
+        return false;
+    }
+    if (!config || !(config->GetInputAttribute()) || !(config->GetCursorInfo())) {
+        WVLOG_E("the config is nullptr");
+        ReportImfErrorEvent(IMF_TEXT_CONFIG_NULL_POINT, isShowKeyboard);
+        return false;
+    }
+
+    if ((textListener_ != nullptr) && isResetListener) {
+        textListener_ = nullptr;
+        WVLOG_I("attach node is changed, need reset listener");
+    }
+
+    if (!textListener_) {
+        textListener_ = new (std::nothrow) IMFTextListenerAdapterImpl(listener);
+        if (!textListener_) {
+            WVLOG_E("new textListener failed");
+            ReportImfErrorEvent(IMF_LISTENER_NULL_POINT, isShowKeyboard);
+            return false;
+        }
+    }
+    return true;
+}
+
+void IMFTextListenerAdapterImpl::NotifyPanelStatusInfo(const MiscServices::PanelStatusInfo& info)
+{
+    MiscServices::Trigger triggerFrom = info.trigger;
+    if (listener_ && (triggerFrom == MiscServices::Trigger::IME_APP)) {
+        WVLOG_I("IMFTextListenerAdapterImpl::NotifyPanelStatusInfo, info.IME_APP");
+        listener_->KeyboardUpperRightCornerHide();
+    }
 }
 } // namespace OHOS::NWeb

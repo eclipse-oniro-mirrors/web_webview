@@ -1299,6 +1299,274 @@ public:
      */
     /*--ark web()--*/
     void FillAutofillData(const ArkWebMessage& data) override;
+
+    /**
+     * @brief on autofill cancel.
+     * @param fillContent fillContent
+     */
+    /*--ark web()--*/
+    void OnAutofillCancel(const ArkWebString& fillContent) override;
+
+    /**
+     * @brief Get the current scroll offset of the webpage.
+     * @param offset_x The current horizontal scroll offset of the webpage.
+     * @param offset_y The current vertical scroll offset of the webpage.
+     */
+    /*--ark web()--*/
+    void GetScrollOffset(float* offset_x, float* offset_y) override;
+
+    /**
+     * @brief ExecuteCreatePDF
+     *
+     * @param pdfConfig The current configuration when creating pdf.
+     * @param callback NWebArrayBufferValueCallback: CreatePDF running result.
+     */
+    /*--ark web()--*/
+    void ExecuteCreatePDFExt(
+        ArkWebRefPtr<ArkWebPDFConfigArgs> pdfConfig, ArkWebRefPtr<ArkWebArrayBufferValueCallback> callback) override;
+
+    /**
+     * Scroll by the delta distance if web is not foucsed.
+     *
+     * @param delta_x horizontal offset.
+     * @param delta_y vertical offset.
+     * @return false if web is focused.
+    */
+    /*--ark web()--*/
+    bool ScrollByWithResult(float delta_x, float delta_y) override;
+
+    /**
+     * @brief set a popupSurface to draw popup content
+     * @param popupSurface popupSurface.
+     */
+    /*--ark web()--*/
+    void SetPopupSurface(void* popupSurface) override;
+
+    /**
+     * @brief Called when image analyzer is destory.
+     */
+    /*--ark web()--*/
+    void OnDestroyImageAnalyzerOverlay() override;
+
+    /**
+     * @Description: Sends mouse events to the web kernel.
+     * @Input mouseEvent: Basic information about mouse events.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    void WebSendMouseEvent(ArkWebRefPtr<ArkWebMouseEvent> mouseEvent) override;
+
+    /**
+     * @Description: Get the accessibility visibility of the accessibility node by its accessibility id in the browser.
+     * @Input accessibility_id: The accessibility id of the accessibility node.
+     * @Return: The accessibility visibility of the accessibility node.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    bool GetAccessibilityVisible(int64_t accessibility_id) override;
+
+    /**
+     * @Description: Set the rotation to psurface.
+     * @Input rotation: The rotation of buffer.
+     * @Since: 12005
+     */
+    /*--ark web()--*/
+    void SetTransformHint(uint32_t rotation) override;
+
+    /**
+     * @brief Web components blur when the keyboard is hidden by gesture back.
+     */
+    void WebComponentsBlur() override;
+
+    /**
+     * @Description: Get the GPU memory size used by web.
+     * @Return: Total size of web GPU.
+     */
+    /*--ark web()--*/
+    float DumpGpuInfo() override;
+
+    /**
+     * @brief Set the params when the scale of WebView changed by pinch gestrue.
+     *
+     * @param type: gesture status
+     * @param scale: the scale factor to apply. The scale will be
+     *        clamped to the pinch limits. This value must be in the range
+     *        0.01 to 8.0 inclusive.
+     * @param originScale: the origin scale factor to apply. The scale will be
+     *        clamped to the pinch limits. This value must be in the range
+     *        0.01 to 8.0 inclusive.
+     * @param centerX: X-coordinate of the pinch center
+     * @param centerX: Y-coordinate of the pinch center
+     *
+     * @return the error id.
+     */
+    int ScaleGestureChangeV2(int type, double scale, double originScale, double centerX, double centerY) override;
+
+    /**
+     * @Description: Sends key events to the web kernel.
+     * @Input mouseEvent: Basic information about key events.
+     */
+    /*--ark web()--*/
+    bool SendKeyboardEvent(ArkWebRefPtr<ArkWebKeyboardEvent> keyboardEvent) override;
+
+    /**
+     * @Description: Execute an accessibility action on an accessibility node in the browser.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Input action: The action to be performed on the accessibility node.
+     * @Input actionArguments: Data related to the current action.
+     * @Return: Whether the action is performed successfully.
+     */
+    /*--ark web()--*/
+    bool PerformActionV2(int64_t accessibility_id, uint32_t action,
+        const ArkWebStringMap& actionArguments) override;
+
+    /**
+     * @brief Inject the JavaScript before WebView load the DOM tree.
+     */
+    void JavaScriptOnDocumentStartByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) override;
+
+    /**
+     * @brief Inject the JavaScript after WebView loads the DOM tree and run
+     *        JavaScripts.
+     */
+    void JavaScriptOnDocumentEndByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) override;
+
+    /**
+     * @Description: Check web component active policy disable, default: false
+     * @Return: Whether the policy is disable.
+     */
+    /*--ark web()--*/
+    virtual bool IsActivePolicyDisable() override;
+
+    /**
+     * @Description: Inject the JavaScript when the head element has been created.
+     * @Input scriptItems: The injected JavaScript code is stored in lexicographical order.
+     * @Input scriptItemsByOrder: The injected JavaScript code is stored in the order of the injection array..
+     */
+    void JavaScriptOnHeadReadyByOrder(const ArkWebStringVectorMap& script_items,
+        const ArkWebStringVector& script_items_by_order) override;
+
+    /**
+     * @Description: Optimize HTML parser budget to reduce FCP time.
+     * @Input enable: Set whether to use optimized parser budget.
+     */
+    void PutOptimizeParserBudgetEnabled(bool enable) override;
+
+    /**
+     * @Description: Get the bounding rectangle of the accessibility node of the given id.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Output width: The width of the rectangle.
+     * @Output height: The height of the rectangle.
+     * @Output offsetX: The X-coordinate offset of the rectangle.
+     * @Output offsetY: The Y-coordinate offset of the rectangle.
+     * @Return: Whether the bounding rectangle is obtained successfully.
+     */
+    /*--ark web()--*/
+    bool GetAccessibilityNodeRectById(
+        int64_t accessibilityId, int32_t* width, int32_t* height, int32_t* offsetX, int32_t* offsetY) override;
+
+    /**
+     * @brief Gets the last hit test result.
+     *
+     * @return the last HitTestResult
+     */
+    ArkWebRefPtr<ArkWebHitTestResult> GetLastHitTestResult() override;
+
+    /**
+     * @Description: Get the current language in the webview.
+     * @Return: The current language in the webview.
+     */
+    ArkWebString GetCurrentLanguage() override;
+
+    /*
+     * @brief Send mouse wheel event with sourceTool info.
+     */
+    /*--ark web()--*/
+    bool WebSendMouseWheelEventV2(double x, double y, double delta_x, double delta_y,
+        const ArkWebInt32Vector &pressedCodes, int32_t source) override;
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    bool IsNWebEx() override;
+
+    /**
+     * @brief Set enable Half the frame rate.
+     */
+    void SetEnableHalfFrameRate(bool enabled) override;
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    void MaximizeResize() override;
+
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
+    void OnDragAttach() override;
+
+    /**
+     * Set focus by position
+     * 
+     * @Return: if hit node editable.
+     */
+    bool SetFocusByPosition(float x, float y) override;
+
+    /**
+     * @brief set DPI when DPI changes.
+     * @param density The new density value.
+     */
+    /*--ark web()--*/
+    void SetSurfaceDensity(const double& density) override;
+
+    /**
+     * @brief Set the native inner web
+     */
+    void SetNativeInnerWeb(bool isInnerWeb) override;
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     * @param isHoverEnter whether the accessibility hover event is a hover enter event.
+     */
+    /*--ark web()--*/
+    void SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter) override;
+
+    /**
+     * @brief Notify browser is foreground.
+     */
+    void OnBrowserForeground() override;
+
+    /**
+     * @brief Notify browser is background.
+     */
+    void OnBrowserBackground() override;
+
+    /**
+     * @brief RegisterNativeJavaScriptProxy.
+     *
+     * @param objName object name.
+     * @param methodName methodName list
+     * @param data The ptr of NWebJsProxyMethod.
+     * @param isAsync True mean Async.
+     * @param permission permission.
+     */
+    void RegisterNativeJavaScriptProxy(const ArkWebString& objName,
+        const ArkWebStringVector& methodName,
+        ArkWebRefPtr<ArkWebJsProxyMethod> data,
+        bool isAsync,
+        const ArkWebString& permission) override;
+
+    /**
+     * @brief Set the window id.
+     */
+    void SetFocusWindowId(uint32_t focus_window_id) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

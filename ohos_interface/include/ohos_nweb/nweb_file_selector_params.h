@@ -24,6 +24,7 @@
 namespace OHOS::NWeb {
 
 using AcceptTypeList = std::vector<std::string>;
+using MimeTypeList = std::vector<std::string>;
 class OHOS_NWEB_EXPORT NWebFileSelectorParams {
 public:
     enum FileSelectorMode { FILE_OPEN_MODE = 0, FILE_OPEN_MULTIPLE_MODE, FILE_OPEN_FOLDER_MODE, FILE_SAVE_MODE };
@@ -41,6 +42,11 @@ public:
     virtual const AcceptTypeList AcceptType() = 0;
 
     virtual bool IsCapture() = 0;
+
+    virtual const MimeTypeList MimeType() {
+        std::vector<std::string> result;
+        return result;
+    }
 };
 
 } // namespace OHOS::NWeb

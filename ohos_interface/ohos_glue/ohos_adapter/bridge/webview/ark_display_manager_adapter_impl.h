@@ -36,6 +36,14 @@ public:
 
     bool IsDefaultPortrait() override;
 
+    uint32_t RegisterFoldStatusListener(ArkWebRefPtr<ArkFoldStatusListenerAdapter> listener) override;
+
+    bool UnregisterFoldStatusListener(uint32_t id) override;
+
+    ArkWebRefPtr<ArkDisplayAdapter> GetPrimaryDisplay() override;
+
+    ArkDisplayAdapterVector GetAllDisplays() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::DisplayManagerAdapter> real_;
 

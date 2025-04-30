@@ -17,6 +17,7 @@
 #define GRAPHIC_ADAPTER_H
 
 #include <functional>
+#include <memory>
 
 namespace OHOS::NWeb {
 
@@ -44,6 +45,10 @@ public:
     virtual void SetOnVsyncCallback(void (*callback)()) = 0;
 
     virtual void SetOnVsyncEndCallback(void (*onVsyncEndCallback)()) {}
+
+    virtual void SetScene(const std::string& sceneName, uint32_t state) = 0;
+
+    virtual void SetDVSyncSwitch(bool dvsyncSwitch) = 0;
 };
 
 // be consistent with rom/foundation/graphic/graphic_2d/interfaces/inner_api/common/graphic_common_c.h:GSError
@@ -227,6 +232,12 @@ public:
     virtual void NativeWindowSurfaceCleanCache(NWebNativeWindow window) = 0;
 
     virtual void NativeWindowSurfaceCleanCacheWithPara(NWebNativeWindow window, bool cleanAll) = 0;
+
+    virtual void SetTransformHint(uint32_t rotation, NWebNativeWindow window) = 0;
+
+    virtual void AddNativeWindowRef(NWebNativeWindow window) = 0;
+
+    virtual void NativeWindowUnRef(NWebNativeWindow window) = 0;
 };
 
 class AshmemAdapter {
@@ -274,6 +285,23 @@ public:
     virtual int32_t UnsetOnFrameAvailableListener() = 0;
 
     virtual void DestroyNativeImage() = 0;
+
+    virtual void NewNativeImage() = 0;
+
+    virtual int32_t AcquireNativeWindowBuffer(
+        void** windowBuffer,
+        int* acquireFenceFd) = 0;
+
+    virtual int32_t GetNativeBuffer(
+        void* windowBuffer,
+        void** nativeBuffer) = 0;
+
+    virtual int32_t ReleaseNativeWindowBuffer(void* windowBuffer, int fenceFd) = 0;
+
+    virtual void GetNativeWindowBufferSize(
+        void* windowBuffer,
+        uint32_t* width,
+        uint32_t* height) = 0;
 };
 
 class ProducerSurfaceAdapter {
@@ -288,7 +316,6 @@ public:
     virtual int32_t FlushBuffer(std::shared_ptr<SurfaceBufferAdapter> buffer, int32_t fence,
         std::shared_ptr<BufferFlushConfigAdapter> config) = 0;
 };
-
 } // namespace OHOS::NWeb
 
 #endif // GRAPHIC_ADAPTER_H

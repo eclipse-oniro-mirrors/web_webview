@@ -30,6 +30,7 @@
 #include "ohos_adapter/bridge/ark_date_time_format_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_display_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_display_manager_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_drm_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_enterprise_device_management_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_event_handler_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_flowbuffer_adapter_wrapper.h"
@@ -40,15 +41,19 @@
 #include "ohos_adapter/bridge/ark_keystore_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_avsession_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_decoder_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_audio_codec_decoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_encoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_media_codec_list_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_migration_manager_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_mmi_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_native_image_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_net_connect_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_net_proxy_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_ohos_drawing_text_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_file_mapper_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_image_decoder_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_init_web_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_ohos_native_buffer_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_resource_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_ohos_web_data_base_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_paste_board_client_adapter_wrapper.h"
@@ -459,4 +464,63 @@ std::unique_ptr<NWeb::SensorAdapter> ArkOhosAdapterHelperWrapper::CreateSensorAd
 
     return std::make_unique<ArkSensorAdapterWrapper>(adapter);
 }
+
+void ArkOhosAdapterHelperWrapper::SetArkWebCoreHapPathOverride(const std::string& hapPath)
+{
+    ArkWebString str = ArkWebStringClassToStruct(hapPath);
+    ctocpp_->SetArkWebCoreHapPathOverride(str);
+    ArkWebStringStructRelease(str);
+}
+
+NWeb::OhosNativeBufferAdapter& ArkOhosAdapterHelperWrapper::GetOhosNativeBufferAdapter()
+{
+    static ArkOhosNativeBufferAdapterWrapper instance(ctocpp_->GetOhosNativeBufferAdapter());
+    return instance;
+}
+
+std::unique_ptr<NWeb::MigrationManagerAdapter> ArkOhosAdapterHelperWrapper::CreateMigrationMgrAdapter()
+{
+    ArkWebRefPtr<ArkMigrationManagerAdapter> adapter = ctocpp_->CreateMigrationMgrAdapter();
+
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return std::make_unique<ArkMigrationManagerAdapterWrapper>(adapter);
+}
+
+NWeb::OhosDrawingTextFontAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextFontAdapter()
+{
+    static ArkOhosDrawingTextFontAdapterWrapper instance(ctocpp_->GetOhosDrawingTextFontAdapter());
+    return instance;
+}
+
+NWeb::OhosDrawingTextTypographyAdapter& ArkOhosAdapterHelperWrapper::GetOhosDrawingTextTypographyAdapter()
+{
+    static ArkOhosDrawingTextTypographyAdapterWrapper instance(ctocpp_->GetOhosDrawingTextTypographyAdapter());
+    return instance;
+}
+
+std::unique_ptr<NWeb::AudioCodecDecoderAdapter> ArkOhosAdapterHelperWrapper::CreateAudioCodecDecoderAdapter()
+{
+    ArkWebRefPtr<ArkAudioCodecDecoderAdapter> adapter = ctocpp_->CreateAudioCodecDecoderAdapter();
+
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return std::make_unique<ArkAudioCodecDecoderAdapterWrapper>(adapter);
+}
+
+std::unique_ptr<NWeb::DrmAdapter> ArkOhosAdapterHelperWrapper::CreateDrmAdapter()
+{
+    ArkWebRefPtr<ArkDrmAdapter> adapter = ctocpp_->CreateDrmAdapter();
+
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return std::make_unique<ArkDrmAdapterWrapper>(adapter);
+}
+
 } // namespace OHOS::ArkWeb

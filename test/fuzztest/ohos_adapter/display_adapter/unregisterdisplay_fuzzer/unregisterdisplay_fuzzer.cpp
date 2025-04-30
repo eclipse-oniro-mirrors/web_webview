@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "display_manager_adapter_impl.h"
 
@@ -24,16 +25,18 @@ using namespace OHOS::NWeb;
 using namespace OHOS::Rosen;
 
 namespace OHOS {
-    bool UnregisterDisplayFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        DisplayManagerAdapterImpl display;
-        display.UnregisterDisplayListener(0);
-        return true;
+bool UnregisterDisplayFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    FuzzedDataProvider fuzzedData(data, size);
+    int id = fuzzedData.ConsumeIntegral<int>();
+    DisplayManagerAdapterImpl display;
+    display.UnregisterDisplayListener(id);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

@@ -24,16 +24,20 @@ using namespace OHOS::NWeb;
 using namespace OHOS::Rosen;
 
 namespace OHOS {
-    bool GetDisplayIdFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        DisplayManagerAdapterImpl display;
-        display.GetDefaultDisplayId();
-        return true;
+bool GetDisplayIdFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    DisplayManagerAdapterImpl display;
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; i++) {
+        display.GetDefaultDisplayId();
+    }
+    display.GetDefaultDisplayId();
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

@@ -1,46 +1,61 @@
-/*  
- * Copyright (c) 2024 Huawei Device Co., Ltd.  
- * Licensed under the Apache License, Version 2.0 (the "License");  
- * you may not use this file except in compliance with the License.  
- * You may obtain a copy of the License at  
- *  
- *     http://www.apache.org/licenses/LICENSE-2.0  
- *  
- * Unless required by applicable law or agreed to in writing, software  
- * distributed under the License is distributed on an "AS IS" BASIS,  
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  
- * See the License for the specific language governing permissions and  
- * limitations under the License.  
- */  
+/*
+ * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-#include "printmanager_adapter_fuzz.h"  
-#include "print_manager_adapter_impl.h"  
+#include "printmanager_adapter_fuzz.h"
 
-namespace OHOS::NWeb {  
+#include <cstdint>
+#include <cstring>
+#include <memory>
+#include <string>
+#include <vector>
+#include <fuzzer/FuzzedDataProvider.h>
+#include <fcntl.h>
+#include <unistd.h>
 
-bool PrintManagerAdapterFuzzTest(const uint8_t* data, size_t size) {  
-    // Fuzzing logic for PrintManagerAdapterImpl  
-    // Parse input data and test class functions  
+#include "print_manager_adapter_impl.h"
 
-    // Example: Parse input data  
-    std::string input(reinterpret_cast<const char*>(data), size);  
+namespace OHOS::NWeb {
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+const char *TESTFILE_PATH = "/data/test/fuzz_testfile";
 
-    // Example: Call a function of PrintManagerAdapterImpl with input  
-    std::vector<std::string> fileList = {input};  
-    std::vector<uint32_t> fdList = {0};  // Example file descriptor list  
-    std::string taskId;  
-    PrintManagerAdapterImpl::GetInstance().StartPrint(fileList, fdList, taskId);  
+extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
+{
+    if (size == 0) {
+        return 0;
+    }
 
-    // Return true if the fuzz test passes  
-    return true;  
-}  
+    std::vector<std::string> fileList = { TESTFILE_PATH };
+    int32_t fd = open(TESTFILE_PATH, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (fd < 0) {
+        return 0;
+    }
+    (void)write(fd, data, size);
 
-/* Fuzzer entry point */  
-extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)  
-{  
-    // Run your code on data  
-    OHOS::NWeb::PrintManagerAdapterFuzzTest(data, size);  
-    return 0;  
+    std::vector<uint32_t> fdList = { fd };
+    FuzzedDataProvider dataProvider(data, size);
+    std::string taskId = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    PrintManagerAdapterImpl::GetInstance().StartPrint(fileList, fdList, taskId);
+    std::shared_ptr<PrintDocumentAdapterAdapter> printDocumentAdapterImpl;
+    PrintAttributesAdapter printAttributesAdapter;
+    PrintManagerAdapterImpl::GetInstance().Print("webPrintTestJob", printDocumentAdapterImpl, printAttributesAdapter);
+    void* token = nullptr;
+    PrintManagerAdapterImpl::GetInstance().Print("webPrintTestJob", printDocumentAdapterImpl,
+        printAttributesAdapter, token);
+
+    close(fd);
+    return 0;
 }
 
 } // namespace OHOS::NWeb

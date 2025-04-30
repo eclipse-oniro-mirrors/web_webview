@@ -17,7 +17,7 @@ import("//build/config/features.gni")
 import("//build/test.gni")
 
 ##############################fuzztest##########################################
-ohos_fuzztest("AccessTokenFuzzerTest") {
+ohos_fuzztest("AccessTokenFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file =
       "$webview_path/test/fuzztest/ohos_adapter/accesstoken_fuzzer"
@@ -49,6 +49,6 @@ group("fuzztest") {
   deps = []
   deps += [
     # deps file
-    ":AccessTokenFuzzerTest",
+    ":AccessTokenFuzzTest",
   ]
 }

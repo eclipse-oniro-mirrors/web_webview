@@ -15,6 +15,7 @@
 
 #include "ohos_nweb/bridge/ark_web_engine_wrapper.h"
 
+#include "ohos_nweb/bridge/ark_web_adsblock_manager_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_cookie_manager_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_data_base_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_download_manager_wrapper.h"
@@ -23,7 +24,7 @@
 #include "ohos_nweb/bridge/ark_web_nweb_create_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_nweb_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_web_storage_wrapper.h"
-#include "ohos_nweb/bridge/ark_web_adsblock_manager_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_proxy_changed_callback_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
 
@@ -164,6 +165,15 @@ void ArkWebEngineWrapper::ClearIntelligentTrackingPreventionBypassingList()
     ark_web_engine_->ClearIntelligentTrackingPreventionBypassingList();
 }
 
+std::string ArkWebEngineWrapper::GetDefaultUserAgent()
+{
+    ArkWebString stUA = ark_web_engine_->GetDefaultUserAgent();
+
+    std::string objUA = ArkWebStringStructToClass(stUA);
+    ArkWebStringStructRelease(stUA);
+    return objUA;
+}
+
 void ArkWebEngineWrapper::PauseAllTimers()
 {
     ark_web_engine_->PauseAllTimers();
@@ -225,24 +235,75 @@ void ArkWebEngineWrapper::ClearHostIP(const std::string& hostName)
     ark_web_engine_->ClearHostIP(ArkWebStringClassToStruct(hostName));
 }
 
+void ArkWebEngineWrapper::SetAppCustomUserAgent(const std::string& userAgent)
+{
+    ark_web_engine_->SetAppCustomUserAgent(ArkWebStringClassToStruct(userAgent));
+}
+
+void ArkWebEngineWrapper::SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts)
+{
+    ark_web_engine_->SetUserAgentForHosts(ArkWebStringClassToStruct(userAgent), ArkWebStringVectorClassToStruct(hosts));
+}
+
 void ArkWebEngineWrapper::EnableWholeWebPageDrawing()
 {
     ark_web_engine_->EnableWholeWebPageDrawing();
 }
 
-std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager>
-ArkWebEngineWrapper::GetAdsBlockManager() {
-  ArkWebRefPtr<ArkWebAdsBlockManager> ark_web_adsblock_manager =
-      ark_web_engine_->GetAdsBlockManager();
-  if (CHECK_REF_PTR_IS_NULL(ark_web_adsblock_manager)) {
-    return nullptr;
-  }
+std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager> ArkWebEngineWrapper::GetAdsBlockManager()
+{
+    ArkWebRefPtr<ArkWebAdsBlockManager> ark_web_adsblock_manager = ark_web_engine_->GetAdsBlockManager();
+    if (CHECK_REF_PTR_IS_NULL(ark_web_adsblock_manager)) {
+        return nullptr;
+    }
 
-  return std::make_shared<ArkWebAdsBlockManagerWrapper>(ark_web_adsblock_manager);
+    return std::make_shared<ArkWebAdsBlockManagerWrapper>(ark_web_adsblock_manager);
 }
 
 void ArkWebEngineWrapper::TrimMemoryByPressureLevel(int32_t memoryLevel)
 {
     ark_web_engine_->TrimMemoryByPressureLevel(memoryLevel);
 }
+
+void ArkWebEngineWrapper::SetArkWebRomApiLevel(int apiLevel)
+{
+    ark_web_engine_->SetArkWebRomApiLevel(apiLevel);
+}
+
+int ArkWebEngineWrapper::GetArkWebCoreApiLevel()
+{
+    return ark_web_engine_->GetArkWebCoreApiLevel();
+}
+
+void ArkWebEngineWrapper::RemoveAllCache(bool include_disk_files)
+{
+    ark_web_engine_->RemoveAllCache(include_disk_files);
+}
+
+void ArkWebEngineWrapper::SetProxyOverride(
+    const std::vector<std::string>& proxyUrls,
+    const std::vector<std::string>& proxySchemeFilters,
+    const std::vector<std::string>& bypassRules,
+    const bool& reverseBypass,
+    std::shared_ptr<OHOS::NWeb::NWebProxyChangedCallback> callback)
+{
+    ArkWebStringVector stProxyRules = ArkWebStringVectorClassToStruct(proxyUrls);
+    ArkWebStringVector stProxySchemeFilters = ArkWebStringVectorClassToStruct(proxySchemeFilters);
+    ArkWebStringVector stBypassRules = ArkWebStringVectorClassToStruct(bypassRules);
+    ArkWebRefPtr<ArkWebProxyChangedCallback> ark_web_proxy_callback = new ArkWebProxyChangedCallbackWrapper(callback);
+
+    ark_web_engine_->SetProxyOverride(stProxyRules, stProxySchemeFilters, stBypassRules,
+                                      reverseBypass, ark_web_proxy_callback);
+
+    ArkWebStringVectorStructRelease(stProxyRules);
+    ArkWebStringVectorStructRelease(stProxySchemeFilters);
+    ArkWebStringVectorStructRelease(stBypassRules);
+}
+
+void ArkWebEngineWrapper::RemoveProxyOverride(std::shared_ptr<OHOS::NWeb::NWebProxyChangedCallback> callback)
+{
+    ArkWebRefPtr<ArkWebProxyChangedCallback> ark_web_proxy_callback = new ArkWebProxyChangedCallbackWrapper(callback);
+    ark_web_engine_->RemoveProxyOverride(ark_web_proxy_callback);
+}
+
 } // namespace OHOS::ArkWeb

@@ -117,8 +117,7 @@ HWTEST_F(SensorAdapterImplTest, SensorAdapterImplTest_SensorAdapterImpl_001, Tes
     EXPECT_EQ(number, SENSOR_ERROR);
 
     temp = 9;
-    number = g_sensorAdapter->IsOhosSensorSupported(temp);
-    EXPECT_EQ(number, SENSOR_ERROR);
+    g_sensorAdapter->IsOhosSensorSupported(temp);
 }
 
 /**

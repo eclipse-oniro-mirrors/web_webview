@@ -31,9 +31,14 @@ void* ArkWebMemMalloc(int size)
     void* mem = nullptr;
     if (size > 0) {
         mem = malloc(size);
+        if (mem == nullptr) {
+            ARK_WEB_BASE_DV_LOG("failed to malloc memery,size is %{public}d", size);
+        } else {
+            ARK_WEB_BASE_DV_LOG("address is %{public}ld, size is %{public}d", reinterpret_cast<long>(mem), size);
+        }
+    } else {
+        ARK_WEB_BASE_DV_LOG("size %{public}d is invalid", size);
     }
-
-    ARK_WEB_BASE_DV_LOG("address is %{public}ld,size is %{public}d", reinterpret_cast<long>(mem), size);
 
     return mem;
 }

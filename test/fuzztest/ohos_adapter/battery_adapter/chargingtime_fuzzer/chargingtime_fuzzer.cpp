@@ -17,26 +17,31 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "battery_mgr_client_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool ChargingTimeFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        double level = 0;
-        bool isCharging = 0;
-        int disChargingTime = 0;
-        int chargingTime = 0;
-        WebBatteryInfoImpl batter(level, isCharging, disChargingTime, chargingTime);
-        batter.ChargingTime();
-        return true;
+constexpr int MAX_SET_NUMBER = 1000;
+
+bool ChargingTimeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    double level = 0;
+    bool isCharging = 0;
+    int disChargingTime = dataProvider.ConsumeIntegralInRange<int>(0, MAX_SET_NUMBER);
+    int chargingTime  = dataProvider.ConsumeIntegralInRange<int>(0, MAX_SET_NUMBER);
+
+    WebBatteryInfoImpl batter(level, isCharging, disChargingTime, chargingTime);
+    batter.ChargingTime();
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

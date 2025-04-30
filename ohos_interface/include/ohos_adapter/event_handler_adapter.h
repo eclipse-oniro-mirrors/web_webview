@@ -16,6 +16,7 @@
 #ifndef EVENT_HANDLER_ADAPTER_H
 #define EVENT_HANDLER_ADAPTER_H
 
+#include <memory>
 #include <string>
 
 namespace OHOS::NWeb {

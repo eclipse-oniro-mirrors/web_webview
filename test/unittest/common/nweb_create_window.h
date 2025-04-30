@@ -52,8 +52,6 @@ public:
     {}
     void OnTouchCancel() override
     {}
-    void OnTouchCancelById(int32_t id, double x, double y, bool fromOverlay) override
-    {}
     void OnNavigateBack() override
     {}
     bool SendKeyEvent(int32_t keyCode, int32_t keyAction) override
@@ -295,6 +293,10 @@ public:
     int SetUrlTrustListWithErrMsg(const std::string& urlTrustList, std::string& detailErrMsg) override
     {
         return 0;
+    }
+    bool SetFocusByPosition(float x, float y) override
+    {
+        return false;
     }
 };
 }

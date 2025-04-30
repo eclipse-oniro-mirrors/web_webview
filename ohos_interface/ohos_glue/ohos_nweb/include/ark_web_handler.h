@@ -747,7 +747,7 @@ public:
 
     /**
      * @brief called when the cursor info is updated.
-     * 
+     *
      * @param x, y relative coordinates within web components of the cursor
      * @param width, height width and height of the cursor
      */
@@ -770,6 +770,101 @@ public:
      */
     /*--ark web()--*/
     virtual void HideHandleAndQuickMenuIfNecessary(bool hide) = 0;
+
+    /**
+     * @brief Called When you click on the selected area.
+     *
+     */
+    /*--ark web()--*/
+    virtual void ChangeVisibilityOfQuickMenu() = 0;
+
+    /**
+     * @brief Called when you need to start vibrator.
+     */
+    /*--ark web()--*/
+    virtual void StartVibraFeedback(const ArkWebString& vibratorType) = 0;
+
+    /**
+     * @brief Called when a popup is shown with the given size.
+     *
+     * @param x The offset of the popup on the x coordinate axis.
+     * @param y The offset of the popup on the y coordinate axis.
+	 * @param width The width of the popup.
+     * @param height The height of the popup.
+     *
+     */
+    /*--ark web()--*/
+    virtual void OnPopupSize(int x, int y, int width, int height) = 0;
+
+    /**
+     * @brief Called when the popup is shown or hidden.
+     *
+     * @param show Whether the popup is shown or hidden.
+     *
+     */
+    /*--ark web()--*/
+    virtual void OnPopupShow(bool show) = 0;
+
+    /*--ark web()--*/
+    virtual void OnNativeEmbedVisibilityChange(const ArkWebString& embed_id, bool visibility) = 0;
+
+    /*--ark web()--*/
+    virtual bool CloseImageOverlaySelection() = 0;
+    
+    /**
+     * @Description: Called when web occurs ssl error event.
+     * @Input result: handler of result.
+     * @Input error: error code.
+     * @Input certChainData: cert chain data.
+     * @Return: true/false
+     */
+    /*--ark web()--*/
+    virtual bool OnSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsSslErrorResult> result, int error,
+        const ArkWebStringVector& certChainData) = 0;
+    
+    /**
+     * @Description: Called when an accessibility event occurs.
+     * @Input accessibilityId: the accessibility id of the accessibility node of the accessibility event.
+     * @Input eventType: the event type of the accessibility event.
+     */
+    /*--ark web()--*/
+    virtual void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) = 0;
+
+    /**
+     * @Description: Web gets focus on the framework.
+     * @Return: true/false
+     */
+    /*--ark web()--*/
+    virtual bool IsCurrentFocus() = 0;
+
+    /**
+     * @brief Get the visible area relative to the web.
+     */
+    /*--ark web()--*/
+    virtual void GetVisibleRectToWeb(int& visibleX, int& visibleY, int& visibleWidth, int& visibleHeight) = 0;
+
+    /*--ark web()--*/
+    virtual void OnScrollStart(const float x, const float y) = 0;
+
+    /*--ark web()--*/
+    virtual void OnShowAutofillPopupV2(
+        const float offsetX, const float offsetY, const float height, const float width,
+        const ArkWebStringVector& menu_items) = 0;
+
+    /**
+     * @brief Restore web component renderfit.
+     */
+    /*--ark web()--*/
+    virtual void RestoreRenderFit() = 0;
+
+    /**
+     * @Description: Called when an accessibility event occurs.
+     * @Input accessibilityId: the accessibility id of the accessibility node of the accessibility event.
+     * @Input eventType: the event type of the accessibility event.
+     * @Input argument: the argument of the accessibility event.
+     */
+    /*--ark web()--*/
+    virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) = 0;
 };
 
 } // namespace OHOS::ArkWeb

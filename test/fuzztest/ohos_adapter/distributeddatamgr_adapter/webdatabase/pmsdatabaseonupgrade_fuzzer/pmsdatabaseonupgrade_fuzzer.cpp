@@ -17,27 +17,31 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "ohos_web_permission_data_base_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool PmsDatabaseOnUpgradeFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        NativeRdb::RdbStoreConfig config("");
-        int32_t errorCode = NativeRdb::E_OK;
-        PermissionDataBaseRdbOpenCallBack callBack;
-        auto rdbStore = NativeRdb::RdbHelper::GetRdbStore(config, 1, callBack, errorCode);
-        int32_t currentVersion = static_cast<int32_t>(size);
-        int32_t targetVersion = static_cast<int32_t>(size);
-        callBack.OnUpgrade(*(rdbStore.get()), currentVersion, targetVersion);
-        return true;
+constexpr int MAX_SET_NUMBER = 1000;
+
+bool PmsDatabaseOnUpgradeFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    NativeRdb::RdbStoreConfig config("");
+    int32_t errorCode = NativeRdb::E_OK;
+    PermissionDataBaseRdbOpenCallBack callBack;
+    auto rdbStore = NativeRdb::RdbHelper::GetRdbStore(config, 1, callBack, errorCode);
+    int32_t currentVersion = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    int32_t targetVersion = dataProvider.ConsumeIntegralInRange<int32_t>(0, MAX_SET_NUMBER);
+    callBack.OnUpgrade(*(rdbStore.get()), currentVersion, targetVersion);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

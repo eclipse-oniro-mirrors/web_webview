@@ -70,6 +70,14 @@ public:
     static bool GetResourceString(const std::string& bundleName, const std::string& moduleName,
         const int32_t resId, std::string& result);
 
+    static std::string GetArkWebVersion();
+
+    static std::string ConvertToSandboxPath(const std::string& installPath, const std::string& prefixPath);
+
+    static void SetArkWebCoreHapPathOverride(const std::string& hapPath);
+
+    std::string GetSystemLanguage() override;
+
 private:
     void Init(const std::string& hapPath);
 
@@ -92,6 +100,7 @@ private:
 
     std::shared_ptr<OHOS::AbilityBase::Extractor> sysExtractor_;
     std::shared_ptr<OHOS::AbilityBase::Extractor> extractor_;
+    static std::string arkWebCoreHapPathOverride_;
 };
 }  // namespace OHOS::NWeb
 

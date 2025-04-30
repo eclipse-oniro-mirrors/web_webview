@@ -179,7 +179,11 @@ namespace {
 napi_value ToInt32Value(napi_env env, int32_t number)
 {
     napi_value result = nullptr;
-    napi_create_int32(env, number, &result);
+    napi_status status = napi_create_int32(env, number, &result);
+    if (status != napi_ok) {
+        WVLOG_E("napi_create_int32 failed.");
+        return nullptr;
+    }
     return result;
 }
 
@@ -202,6 +206,10 @@ napi_value NapiWebDownloadItem::JS_GetMethod(napi_env env, napi_callback_info cb
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetMethod webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value methodValue;
     napi_status status = napi_create_string_utf8(env, webDownloadItem->method.c_str(), NAPI_AUTO_LENGTH, &methodValue);
@@ -223,6 +231,10 @@ napi_value NapiWebDownloadItem::JS_GetMimeType(napi_env env, napi_callback_info 
     napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
 
     napi_unwrap(env, thisVar, (void **)&webDownloadItem);
+    if (!webDownloadItem) {
+        WVLOG_E("[DOWNLOAD] NapiWebDownloadItem::JS_GetMimeType webDownloadItem is null");
+        return nullptr;
+    }
 
     napi_value mimeTypeValue;
     napi_status status =
@@ -402,7 +414,11 @@ napi_value NapiWebDownloadItem::JS_GetState(napi_env env, napi_callback_info cbi
     }
 
     napi_value state;
-    napi_create_int32(env, static_cast<int32_t>(webDownloadItem->state), &state);
+    napi_status status = napi_create_int32(env, static_cast<int32_t>(webDownloadItem->state), &state);
+    if (status != napi_ok) {
+        WVLOG_E("napi_create_int32 failed.");
+        return nullptr;
+    }
     return state;
 }
 
@@ -424,7 +440,11 @@ napi_value NapiWebDownloadItem::JS_GetLastErrorCode(napi_env env, napi_callback_
     }
 
     napi_value errorCode;
-    napi_create_int32(env, static_cast<int32_t>(webDownloadItem->lastErrorCode), &errorCode);
+    napi_status status = napi_create_int32(env, static_cast<int32_t>(webDownloadItem->lastErrorCode), &errorCode);
+    if (status != napi_ok) {
+        WVLOG_E("napi_create_int32 failed.");
+        return nullptr;
+    }
     return errorCode;
 }
 
@@ -637,6 +657,7 @@ napi_value NapiWebDownloadItem::JS_Start(napi_env env, napi_callback_info cbinfo
                 "BusinessError: 401. Parameter error. The type of 'downloadPath' must be a valid path string.");
         return nullptr;
     }
+    webDownloadItem->hasStarted = true;
     webDownloadItem->downloadPath = std::string(stringValue);
     WVLOG_D("NapiWebDownloadItem::JS_Start, download_path: %s", webDownloadItem->downloadPath.c_str());
     WebDownload_Continue(webDownloadItem->before_download_callback, webDownloadItem->downloadPath.c_str());

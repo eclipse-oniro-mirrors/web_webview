@@ -82,10 +82,14 @@ public:
     int32_t ReceivePrivateCommand(
         const std::unordered_map<std::string, MiscServices::PrivateDataValue>& privateCommand) override;
 
+    void NotifyPanelStatusInfo(const MiscServices::PanelStatusInfo& info) override;
+
 private:
     std::shared_ptr<IMFTextListenerAdapter> listener_ = nullptr;
     const std::string PREVIEW_TEXT_STYLE_KEY = "previewTextStyle";
     const std::string PREVIEW_TEXT_STYLE_UNDERLINE = "underline";
+    const std::string AUTO_FILL_PARAMS_USERNAME = "com.autofill.params.userName";
+    const std::string AUTO_FILL_PARAMS_OTHERACCOUNT = "com.autofill.params.otherAccount";
 };
 
 class IMFAdapterImpl : public IMFAdapter {
@@ -99,6 +103,10 @@ public:
     bool Attach(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
         const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener) override;
 
+    bool AttachWithRequestKeyboardReason(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
+        const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener,
+        int32_t requestKeyboardReason) override;
+
     void ShowCurrentInput(const IMFAdapterTextInputType& inputType) override;
 
     void HideTextInput() override;
@@ -109,8 +117,16 @@ public:
 
     void OnSelectionChange(std::u16string text, int start, int end) override;
 
+    bool SendPrivateCommand(const std::string& commandKey, const std::string& commandValue) override;
+
 private:
     sptr<MiscServices::OnTextChangedListener> textListener_ = nullptr;
+
+    bool ParseFillContentJsonValue(const std::string& jsonStr,
+        std::unordered_map<std::string, std::variant<std::string, bool, int32_t>>& map);
+
+    bool AttachParamsCheck(std::shared_ptr<IMFTextListenerAdapter> listener, bool isShowKeyboard,
+        const std::shared_ptr<IMFTextConfigAdapter> config, bool isResetListener);
 };
 } // namespace OHOS::NWeb
 

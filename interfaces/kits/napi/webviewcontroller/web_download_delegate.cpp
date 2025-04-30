@@ -54,6 +54,14 @@ WebDownloadDelegate::~WebDownloadDelegate()
     WebDownloadManager::RemoveDownloadDelegate(this);
 }
 
+void WebDownloadDelegate::RemoveSelfRef()
+{
+    if (delegate_) {
+        napi_delete_reference(env_, delegate_);
+        delegate_ = nullptr;
+    }
+}
+
 void WebDownloadDelegate::DownloadBeforeStart(WebDownloadItem *webDownloadItem)
 {
     WVLOG_D("[DOWNLOAD] WebDownloadDelegate::DownloadBeforeStart");
@@ -83,8 +91,17 @@ void WebDownloadDelegate::DownloadBeforeStart(WebDownloadItem *webDownloadItem)
     napi_wrap(
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
-            WebDownloadItem *downloadItem = (WebDownloadItem *)data;
-            delete downloadItem;
+            if (data) {
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
+                if (!downloadItem->download_item_callback &&
+                    !downloadItem->hasStarted &&
+                    downloadItem->before_download_callback) {
+                        WVLOG_I("[DOWNLOAD] downloadBeforeStart cancel guid: %s.",
+                                downloadItem->guid.c_str());
+                        WebDownload_CancelBeforeDownload(downloadItem->before_download_callback);
+                    }
+                delete downloadItem;
+            }
         },
         nullptr, nullptr);
     NapiWebDownloadItem::DefineProperties(env_, &webDownloadItemValue);
@@ -124,8 +141,10 @@ void WebDownloadDelegate::DownloadDidUpdate(WebDownloadItem *webDownloadItem)
     napi_wrap(
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
-            WebDownloadItem *downloadItem = (WebDownloadItem *)data;
-            delete downloadItem;
+            if (data) {
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
+                delete downloadItem;
+            }
         },
         nullptr, nullptr);
     NapiWebDownloadItem::DefineProperties(env_, &webDownloadItemValue);
@@ -166,8 +185,10 @@ void WebDownloadDelegate::DownloadDidFail(WebDownloadItem *webDownloadItem)
     napi_wrap(
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
-            WebDownloadItem *downloadItem = (WebDownloadItem *)data;
-            delete downloadItem;
+            if (data) {
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
+                delete downloadItem;
+            }
         },
         nullptr, nullptr);
     NapiWebDownloadItem::DefineProperties(env_, &webDownloadItemValue);
@@ -208,8 +229,10 @@ void WebDownloadDelegate::DownloadDidFinish(WebDownloadItem *webDownloadItem)
     napi_wrap(
         env_, webDownloadItemValue, webDownloadItem,
         [](napi_env                             /* env */, void *data, void * /* hint */) {
-            WebDownloadItem *downloadItem = (WebDownloadItem *)data;
-            delete downloadItem;
+            if (data) {
+                WebDownloadItem *downloadItem = static_cast<WebDownloadItem *>(data);
+                delete downloadItem;
+            }
         },
         nullptr, nullptr);
     NapiWebDownloadItem::DefineProperties(env_, &webDownloadItemValue);
@@ -257,7 +280,7 @@ void WebDownloadDelegate::PutDownloadDidFail(napi_env, napi_value callback)
     }
 }
 
-int32_t WebDownloadDelegate::GetNWebId()
+int32_t WebDownloadDelegate::GetNWebId() const
 {
     return nwebId_;
 }

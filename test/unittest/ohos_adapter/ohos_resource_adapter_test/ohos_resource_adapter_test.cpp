@@ -35,7 +35,7 @@ using namespace OHOS::AbilityRuntime;
 namespace OHOS {
 namespace {
 constexpr uint32_t MODULE_NAME_SIZE = 32;
-const std::string NWEB_HAP_PATH = "/system/app/com.ohos.nweb/NWeb.hap";
+const std::string NWEB_HAP_PATH = "/system/app/com.ohos.arkwebcore/ArkWebCore.hap";
 const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
 const std::string NWEB_HAP_PATH_MODULE_UPDATE = "/module_update/ArkWebCore/app/com.ohos.nweb/NWeb.hap";
 
@@ -349,6 +349,78 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetResourceString_006,
 
     result = adapterImpl.GetResourceString("test", "web/webtest", 1, res);
     EXPECT_FALSE(result);
+}
+
+/**
+ * @tc.name: OhosResourceAdapterTest_GetSystemLanguage_007
+ * @tc.desc: GetSystemLanguage.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetSystemLanguage_007, TestSize.Level1)
+{
+    std::string hapPath = "";
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_1;
+    }
+    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_MODULE_UPDATE;
+    }
+
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    std::string res = adapterImpl.GetSystemLanguage();
+    EXPECT_FALSE(res.empty());
+}
+
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ConvertToSandboxPath_008, TestSize.Level1)
+{
+    std::string hapPath = "";
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_1;
+    }
+    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_MODULE_UPDATE;
+    }
+
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    std::string inputStr = "";
+    std::string prefixPath = "";
+    std::string res = adapterImpl.ConvertToSandboxPath(inputStr, prefixPath);
+    EXPECT_EQ(res, "");
+    inputStr = NWEB_HAP_PATH;
+    prefixPath = "/data/app/el1/bundle/public/";
+    res = adapterImpl.ConvertToSandboxPath(inputStr, prefixPath);
+    EXPECT_FALSE(res.empty());
+}
+
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_SetArkWebCoreHapPathOverride_009, TestSize.Level1)
+{
+    std::string hapPath = "";
+    if (access(NWEB_HAP_PATH.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH;
+    }
+    if (access(NWEB_HAP_PATH_1.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_1;
+    }
+    if (access(NWEB_HAP_PATH_MODULE_UPDATE.c_str(), F_OK) == 0) {
+        hapPath = NWEB_HAP_PATH_MODULE_UPDATE;
+    }
+
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    adapterImpl.arkWebCoreHapPathOverride_ = "";
+    std::string inputStr = "";
+    adapterImpl.SetArkWebCoreHapPathOverride("");
+    EXPECT_EQ(adapterImpl.arkWebCoreHapPathOverride_, "");
+    inputStr = NWEB_HAP_PATH;
+    adapterImpl.SetArkWebCoreHapPathOverride(inputStr);
+    EXPECT_EQ(adapterImpl.arkWebCoreHapPathOverride_, NWEB_HAP_PATH);
+    adapterImpl.arkWebCoreHapPathOverride_ = "";
 }
 }
 } // namespace NWeb

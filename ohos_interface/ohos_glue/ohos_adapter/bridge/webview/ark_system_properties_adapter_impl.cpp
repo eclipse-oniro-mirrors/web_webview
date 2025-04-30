@@ -66,6 +66,18 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentOSName()
     return ArkWebStringClassToStruct(str);
 }
 
+ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentOSVersion()
+{
+    std::string str = real_.GetUserAgentOSVersion();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetUserAgentBaseOSName()
+{
+    std::string str = real_.GetUserAgentBaseOSName();
+    return ArkWebStringClassToStruct(str);
+}
+
 int32_t ArkSystemPropertiesAdapterImpl::GetSoftwareMajorVersion()
 {
     return real_.GetSoftwareMajorVersion();
@@ -131,6 +143,10 @@ ArkFrameRateSettingAdapterVector ArkSystemPropertiesAdapterImpl::GetLTPOConfig(c
         .ark_web_mem_free_func = ArkWebMemFree };
     if (result.size > 0) {
         result.value = (ArkFrameRateSettingAdapter*)ArkWebMemMalloc(sizeof(ArkFrameRateSettingAdapter) * result.size);
+        if (result.value == nullptr) {
+            result.size = 0;
+            return result;
+        }
 
         int count = 0;
         for (auto it = frameRateSettingVector.begin(); it != frameRateSettingVector.end(); it++) {
@@ -148,4 +164,55 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetOOPGPUStatus()
     return ArkWebStringClassToStruct(str);
 }
 
+bool ArkSystemPropertiesAdapterImpl::IsLTPODynamicApp(const ArkWebString& bundleName)
+{
+    return real_.IsLTPODynamicApp(ArkWebStringStructToClass(bundleName));
+}
+
+int32_t ArkSystemPropertiesAdapterImpl::GetLTPOStrategy()
+{
+    return real_.GetLTPOStrategy();
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetVulkanStatus()
+{
+    std::string str = real_.GetVulkanStatus();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetCompatibleDeviceType()
+{
+    std::string str = real_.GetCompatibleDeviceType();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetDeviceInfoApiVersion()
+{
+    std::string str = real_.GetDeviceInfoApiVersion();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetPRPPreloadMode()
+{
+    std::string str = real_.GetPRPPreloadMode();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetScrollVelocityScale()
+{
+    std::string str = real_.GetScrollVelocityScale();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetScrollFriction()
+{
+    std::string str = real_.GetScrollFriction();
+    return ArkWebStringClassToStruct(str);
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetBundleName()
+{
+    std::string str = real_.GetBundleName();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb

@@ -14,7 +14,7 @@
 import("//build/test.gni")
 import("../../../../config.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -22,6 +22,7 @@ config("module_private_config") {
   include_dirs = [
     "../../../../ohos_adapter/media_adapter/include",
     "../../../../ohos_adapter/graphic_adapter/include",
+    "../../../../ohos_nweb/include",
   ]
   cflags_cc = [ "--coverage" ]
   ldflags = [ "--coverage" ]
@@ -31,30 +32,42 @@ ohos_unittest("nweb_media_adapter_test") {
   module_out_path = module_output_path
 
   sources = [
+    "audio_cenc_info_adapter_impl_test.cpp",
+    "buffer_info_adapter_impl_test.cpp",
+    "capability_data_adapter_impl_test.cpp",
+    "codec_format_adapter_impl_test.cpp",
     "media_avsession_adapter_impl_test.cpp",
     "media_codec_decoder_adapter_impl_test.cpp",
     "media_codec_encoder_adapter_impl_test.cpp",
+    "ohos_buffer_adapter_impl_test.cpp",
     "player_framework_adapter_impl_test.cpp",
   ]
 
   configs = [ ":module_private_config" ]
+  include_dirs = [ "../../../../ohos_nweb/include" ]
 
-  deps = [
-    "../../../../ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "graphic_surface:surface",
     "hilog:libhilog",
   ]
 
+  if (webview_drm_enable) {
+    external_deps += [ "drm_framework:native_drm" ]
+    sources += [ "drm_adapter_impl_test.cpp" ]
+    sources += [ "audio_codec_decoder_adapter_impl_test.cpp" ]
+  }
+
   if (webview_avcodec_enable) {
     external_deps += [
       "av_codec:av_codec_client",
+      "av_codec:native_media_codecbase",
       "media_foundation:media_foundation",
+      "media_foundation:native_media_core",
     ]
   }
 

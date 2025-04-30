@@ -18,6 +18,7 @@
 #include "business_error.h"
 #include "napi_parse_utils.h"
 #include "nweb_log.h"
+#include "nweb_napi_scope.h"
 #include "web_errors.h"
 
 namespace OHOS::NWeb {
@@ -40,6 +41,7 @@ void WebviewHasImageCallback::OnReceiveValue(bool result)
     HasImageParam *param = new (std::nothrow) HasImageParam();
     if (param == nullptr) {
         delete work;
+        work = nullptr;
         return;
     }
     param->env_ = env_;
@@ -74,9 +76,8 @@ void WebviewHasImageCallback::UvAfterWorkCb(uv_work_t* work, int status)
         work = nullptr;
         return;
     }
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(param->env_, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(param->env_);
+    if (!scope.IsVaild()) {
         return;
     }
 
@@ -86,7 +87,6 @@ void WebviewHasImageCallback::UvAfterWorkCb(uv_work_t* work, int status)
         UvAfterWorkCbPromise(param->env_, param->deferred_, param->result_);
     }
 
-    napi_close_handle_scope(param->env_, scope);
     delete param;
     param = nullptr;
     delete work;
@@ -96,6 +96,7 @@ void WebviewHasImageCallback::UvAfterWorkCb(uv_work_t* work, int status)
 void WebviewHasImageCallback::UvAfterWorkCbAsync(napi_env env, napi_ref callbackRef,
     bool result)
 {
+    OHOS::NApiScope scope(env);
     napi_value setResult[INTEGER_TWO] = {0};
     napi_get_undefined(env, &setResult[INTEGER_ZERO]);
     napi_status getBooleanResult = napi_get_boolean(env, result, &setResult[INTEGER_ONE]);

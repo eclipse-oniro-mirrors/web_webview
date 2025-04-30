@@ -20,39 +20,53 @@
 #include <memory>
 #include <string>
 #include <vector>
+
 #include "nweb.h"
 #include "nweb_cookie_manager.h"
 #include "nweb_data_base.h"
 #include "nweb_engine.h"
 #include "nweb_export.h"
 #include "nweb_web_storage.h"
+#include "nweb_proxy_changed_callback.h"
+#include "application_state_change_callback.h"
 
 namespace OHOS::NWeb {
 struct FrameRateSetting {
-    int32_t min_ {0};
-    int32_t max_ {0};
-    int32_t preferredFrameRate_ {0};
+    int32_t min_ { 0 };
+    int32_t max_ { 0 };
+    int32_t preferredFrameRate_ { 0 };
+};
+
+class WebApplicationStateChangeCallback : public AbilityRuntime::ApplicationStateChangeCallback {
+public:
+    WebApplicationStateChangeCallback() = default;
+    WebApplicationStateChangeCallback(const WebApplicationStateChangeCallback&) = default;
+    ~WebApplicationStateChangeCallback() = default;
+    void NotifyApplicationForeground() override;
+    void NotifyApplicationBackground() override;
+    std::shared_ptr<NWeb> nweb_ = nullptr;
 };
 
 class OHOS_NWEB_EXPORT NWebHelper {
 public:
-    static NWebHelper &Instance();
-    ~NWebHelper();
+    static NWebHelper& Instance();
+    ~NWebHelper() = default;
     bool Init(bool from_ark = true);
     bool InitAndRun(bool from_ark = true);
-    static void TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string &bundlePath);
+    bool LoadWebEngine(bool fromArk, bool runFlag);
+    void* LoadFuncSymbol(const char* funcName);
+    static void TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string& bundlePath);
 
     std::shared_ptr<NWeb> CreateNWeb(std::shared_ptr<NWebCreateInfo> create_info);
     std::shared_ptr<NWebCookieManager> GetCookieManager();
     std::shared_ptr<NWebDataBase> GetDataBase();
     std::shared_ptr<NWebWebStorage> GetWebStorage();
     std::shared_ptr<NWeb> GetNWeb(int32_t nweb_id);
-    void SetBundlePath(const std::string &path);
+    void SetBundlePath(const std::string& path);
     void SetHttpDns(std::shared_ptr<NWebDOHConfig> config);
     void SetWebTag(int32_t nwebId, const char* webTag);
     void PrepareForPageLoad(std::string url, bool preconnectable, int32_t numSockets);
     bool LoadNWebSDK();
-    void* GetWebEngineHandler();
     void SetConnectionTimeout(const int32_t& timeout);
     void SetCustomSchemeCmdLine(const std::string& cmd)
     {
@@ -61,27 +75,29 @@ public:
     void PauseAllTimers();
     void ResumeAllTimers();
 
-    void AddIntelligentTrackingPreventionBypassingList(
-        const std::vector<std::string>& hosts);
-    void RemoveIntelligentTrackingPreventionBypassingList(
-        const std::vector<std::string>& hosts);
+    void AddIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts);
+    void RemoveIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts);
     void ClearIntelligentTrackingPreventionBypassingList();
 
-    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs> &pre_args,
-                          const std::map<std::string, std::string> &additional_http_headers,
-                          const std::string &cache_key,
-                          const uint32_t &cache_valid_time);
+    void PrefetchResource(const std::shared_ptr<NWebEnginePrefetchArgs>& pre_args,
+        const std::map<std::string, std::string>& additional_http_headers, const std::string& cache_key,
+        const uint32_t& cache_valid_time);
+
+    std::string GetDefaultUserAgent();
 
     void ClearPrefetchedResource(const std::vector<std::string>& cache_key_list);
 
     void SetRenderProcessMode(RenderProcessMode mode);
     RenderProcessMode GetRenderProcessMode();
 
-    void WarmupServiceWorker(const std::string &url);
-
-    void SetHostIP(
-        const std::string& hostName, const std::string& address, int32_t aliveTime);
+    void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime);
     void ClearHostIP(const std::string& hostName);
+
+    void SetAppCustomUserAgent(const std::string& userAgent);
+
+    void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts);
+
+    void WarmupServiceWorker(const std::string& url);
 
     void EnableWholeWebPageDrawing();
     std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager();
@@ -90,18 +106,29 @@ public:
 
     void TrimMemoryByPressureLevel(int32_t memoryLevel);
 
-private:
-    NWebHelper() = default;
-    bool LoadLib(bool from_ark);
-    void UnloadLib();
-    bool LoadEngine();
+    void RemoveAllCache(bool includeDiskFiles);
+
+    void SetProxyOverride(const std::vector<std::string>& proxyUrls,
+                          const std::vector<std::string>& proxySchemeFilters,
+                          const std::vector<std::string>& bypassRules,
+                          const bool& reverseBypass,
+                          std::shared_ptr<NWebProxyChangedCallback> callback);
+
+    void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback);
 
 private:
-    void *libHandleWebEngine_ = nullptr;
+    NWebHelper() = default;
+    bool GetWebEngine(bool fromArk);
+    bool InitWebEngine();
+
+private:
+    int coreApiLevel_ = 0;
+    bool initFlag_ = false;
     std::string bundlePath_;
-    std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::string customSchemeCmdLine_;
+    std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::vector<std::string> backForwardCacheCmdLine_;
+    std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_;
 };
 } // namespace OHOS::NWeb
 

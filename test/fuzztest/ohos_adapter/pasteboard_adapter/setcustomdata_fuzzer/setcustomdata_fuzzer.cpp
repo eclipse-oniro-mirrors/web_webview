@@ -14,23 +14,29 @@
  */
 
 #include "setcustomdata_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
+
 #include "pasteboard_client_adapter_impl.h"
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool SetCustomDataFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
-        std::make_shared<PasteDataRecordAdapterImpl>("pixelMap");
-        PasteCustomData testData;
-        dataRecordAdapterImpl->SetCustomData(testData);
-        return true;
+constexpr uint8_t MAX_STRING_LENGTH = 255;
+
+bool SetCustomDataFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string name = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
+        std::make_shared<PasteDataRecordAdapterImpl>("name");
+    PasteCustomData testData;
+    dataRecordAdapterImpl->SetCustomData(testData);
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

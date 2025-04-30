@@ -15,6 +15,7 @@
 
 #include "ohos_nweb/bridge/ark_web_engine_impl.h"
 
+#include "ohos_nweb/bridge/ark_web_adsblock_manager_impl.h"
 #include "ohos_nweb/bridge/ark_web_cookie_manager_impl.h"
 #include "ohos_nweb/bridge/ark_web_data_base_impl.h"
 #include "ohos_nweb/bridge/ark_web_download_manager_impl.h"
@@ -23,7 +24,7 @@
 #include "ohos_nweb/bridge/ark_web_nweb_create_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_nweb_impl.h"
 #include "ohos_nweb/bridge/ark_web_web_storage_impl.h"
-#include "ohos_nweb/bridge/ark_web_adsblock_manager_impl.h"
+#include "ohos_nweb/bridge/ark_web_proxy_changed_callback_impl.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
 
@@ -149,6 +150,11 @@ void ArkWebEngineImpl::ClearIntelligentTrackingPreventionBypassingList()
     nweb_engine_->ClearIntelligentTrackingPreventionBypassingList();
 }
 
+ArkWebString ArkWebEngineImpl::GetDefaultUserAgent()
+{
+    return ArkWebStringClassToStruct(nweb_engine_->GetDefaultUserAgent());
+}
+
 void ArkWebEngineImpl::PauseAllTimers()
 {
     nweb_engine_->PauseAllTimers();
@@ -198,6 +204,16 @@ void ArkWebEngineImpl::ClearHostIP(const ArkWebString& hostName)
     nweb_engine_->ClearHostIP(ArkWebStringStructToClass(hostName));
 }
 
+void ArkWebEngineImpl::SetAppCustomUserAgent(const ArkWebString& userAgent)
+{
+    nweb_engine_->SetAppCustomUserAgent(ArkWebStringStructToClass(userAgent));
+}
+
+void ArkWebEngineImpl::SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts)
+{
+    nweb_engine_->SetUserAgentForHosts(ArkWebStringStructToClass(userAgent), ArkWebStringVectorStructToClass(hosts));
+}
+
 void ArkWebEngineImpl::EnableWholeWebPageDrawing()
 {
     nweb_engine_->EnableWholeWebPageDrawing();
@@ -205,16 +221,53 @@ void ArkWebEngineImpl::EnableWholeWebPageDrawing()
 
 ArkWebRefPtr<ArkWebAdsBlockManager> ArkWebEngineImpl::GetAdsBlockManager()
 {
-  std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager> nweb_adsBlock_manager =
-      nweb_engine_->GetAdsBlockManager();
-  if (CHECK_SHARED_PTR_IS_NULL(nweb_adsBlock_manager)) {
-    return nullptr;
-  }
-  return new ArkWebAdsBlockManagerImpl(nweb_adsBlock_manager);
+    std::shared_ptr<OHOS::NWeb::NWebAdsBlockManager> nweb_adsBlock_manager = nweb_engine_->GetAdsBlockManager();
+    if (CHECK_SHARED_PTR_IS_NULL(nweb_adsBlock_manager)) {
+        return nullptr;
+    }
+    return new ArkWebAdsBlockManagerImpl(nweb_adsBlock_manager);
 }
 
 void ArkWebEngineImpl::TrimMemoryByPressureLevel(int32_t memoryLevel)
 {
     nweb_engine_->TrimMemoryByPressureLevel(memoryLevel);
 }
+
+void ArkWebEngineImpl::SetArkWebRomApiLevel(int apiLevel)
+{
+    nweb_engine_->SetArkWebRomApiLevel(apiLevel);
+}
+
+int ArkWebEngineImpl::GetArkWebCoreApiLevel()
+{
+    return nweb_engine_->GetArkWebCoreApiLevel();
+}
+
+void ArkWebEngineImpl::RemoveAllCache(bool include_disk_files)
+{
+    nweb_engine_->RemoveAllCache(include_disk_files);
+}
+
+void ArkWebEngineImpl::SetProxyOverride(const ArkWebStringVector& proxyUrls,
+                                        const ArkWebStringVector& proxySchemeFilters,
+                                        const ArkWebStringVector& bypassRules,
+                                        const bool& reverseBypass,
+                                        ArkWebRefPtr<ArkWebProxyChangedCallback> callback)
+{
+    std::shared_ptr<OHOS::NWeb::NWebProxyChangedCallback> nweb_proxy_callback =
+        std::make_shared<ArkWebProxyChangedCallbackImpl>(callback);
+    nweb_engine_->SetProxyOverride(ArkWebStringVectorStructToClass(proxyUrls),
+                                   ArkWebStringVectorStructToClass(proxySchemeFilters),
+                                   ArkWebStringVectorStructToClass(bypassRules),
+                                   reverseBypass,
+                                   nweb_proxy_callback);
+}
+
+void ArkWebEngineImpl::RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallback> callback)
+{
+    std::shared_ptr<OHOS::NWeb::NWebProxyChangedCallback> nweb_proxy_callback =
+        std::make_shared<ArkWebProxyChangedCallbackImpl>(callback);
+    nweb_engine_->RemoveProxyOverride(nweb_proxy_callback);
+}
+
 } // namespace OHOS::ArkWeb

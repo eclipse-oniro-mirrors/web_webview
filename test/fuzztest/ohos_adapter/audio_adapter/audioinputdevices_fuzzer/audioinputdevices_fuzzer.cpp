@@ -24,15 +24,18 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
-    bool AudioInputDevicesFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return false;
-        }
-        AudioSystemManagerAdapterImpl::GetInstance().HasAudioInputDevices();
-        return true;
+bool AudioInputDevicesFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
     }
+    size_t callCount = data[0] % 10;
+    for (size_t i = 0; i < callCount; ++i) {
+        AudioSystemManagerAdapterImpl::GetInstance().HasAudioInputDevices();
+    }
+    return true;
 }
+} // namespace OHOS
 
 /* Fuzzer entry point */
 extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)

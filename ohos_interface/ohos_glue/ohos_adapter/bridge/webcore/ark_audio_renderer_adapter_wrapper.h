@@ -54,6 +54,9 @@ public:
     int32_t SetAudioOutputChangeCallback(
         const std::shared_ptr<NWeb::AudioOutputChangeCallbackAdapter>& callback) override;
 
+    void SetAudioSilentMode(bool isSilentMode) override;
+
+    bool Flush() override;
 private:
     ArkWebRefPtr<ArkAudioRendererAdapter> ctocpp_;
 };

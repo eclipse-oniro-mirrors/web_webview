@@ -15,7 +15,10 @@
 
 #include "vsync_adapter_impl.h"
 
+#include <dlfcn.h>
+
 #include "aafwk_browser_client_adapter_impl.h"
+#include "application_context.h"
 #include "nweb_log.h"
 #include "res_sched_client_adapter.h"
 #include "system_properties_adapter_impl.h"
@@ -25,6 +28,10 @@ namespace OHOS::NWeb {
 namespace {
 const std::string THREAD_NAME = "VSync-webview";
 constexpr int32_t WEBVIEW_FRAME_RATE_TYPE = 4;
+const std::string APS_CLIENT_SO = "/system/lib64/libaps_client.z.so";
+#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
+constexpr int32_t APS_MANAGER_CLOSE_ALL = 2;
+#endif
 }
 
 void (*VSyncAdapterImpl::callback_)() = nullptr;
@@ -33,6 +40,7 @@ void (*VSyncAdapterImpl::onVsyncEndCallback_)() = nullptr;
 VSyncAdapterImpl::~VSyncAdapterImpl()
 {
     if (vsyncHandler_) {
+        UninitAPSClient();
         vsyncHandler_->RemoveAllEvents();
         auto runner = vsyncHandler_->GetEventRunner();
         if (runner) {
@@ -165,14 +173,15 @@ int64_t VSyncAdapterImpl::GetVSyncPeriod()
 
 void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
 {
-    WVLOG_I("NWebWindowAdapter SetFrameRateLinkerEnable enabled=%{public}d", enabled);
+    WVLOG_D("NWebWindowAdapter SetFrameRateLinkerEnable enabled=%{public}d", enabled);
     if (frameRateLinkerEnable_ == enabled) {
         return;
     }
 
     if (frameRateLinker_) {
         if (!enabled) {
-            Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 0, WEBVIEW_FRAME_RATE_TYPE};
+            Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, 0, WEBVIEW_FRAME_RATE_TYPE,
+                Rosen::ComponentScene::WEBVIEW};
             frameRateLinker_->UpdateFrameRateRangeImme(range);
         }
         frameRateLinker_->SetEnable(enabled);
@@ -182,7 +191,8 @@ void VSyncAdapterImpl::SetFrameRateLinkerEnable(bool enabled)
 
 void VSyncAdapterImpl::SetFramePreferredRate(int32_t preferredRate)
 {
-    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, preferredRate, WEBVIEW_FRAME_RATE_TYPE};
+    Rosen::FrameRateRange range = {0, RANGE_MAX_REFRESHRATE, preferredRate, WEBVIEW_FRAME_RATE_TYPE,
+        Rosen::ComponentScene::WEBVIEW};
     if (frameRateLinker_ && frameRateLinker_->IsEnable()) {
         WVLOG_D("NWebWindowAdapter SetFramePreferredRate preferredRate=%{public}d", preferredRate);
         frameRateLinker_->UpdateFrameRateRangeImme(range);
@@ -204,5 +214,66 @@ void VSyncAdapterImpl::SetOnVsyncEndCallback(void (*onVsyncEndCallback)())
 {
     WVLOG_D("callback function: %{public}ld", (long)onVsyncEndCallback);
     onVsyncEndCallback_ = onVsyncEndCallback;
+}
+
+void VSyncAdapterImpl::SetScene(const std::string& sceneName, uint32_t state) {
+    WVLOG_D("APSManagerAdapterImpl SetScene sceneName=%{public}s state=%{public}u", sceneName.c_str(), state);
+    if (!apsClientHandler_) {
+        InitAPSClient();
+    }
+    if (pkgName_.empty()) {
+        auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+        if (appInfo != nullptr) {
+            pkgName_ = appInfo->bundleName.c_str();
+        }
+    }
+    if (setApsSceneFunc_) {
+        setApsSceneFunc_(pkgName_, sceneName, state);
+    }
+}
+
+void VSyncAdapterImpl::InitAPSClient()
+{
+    apsClientHandler_ = dlopen(APS_CLIENT_SO.c_str(), RTLD_NOW);
+    if (!apsClientHandler_) {
+        WVLOG_E("APSManagerClient not found");
+        return;
+    }
+    setApsSceneFunc_ = reinterpret_cast<SetApsSceneFuncType>(dlsym(apsClientHandler_, "SetApsScene"));
+    if (!setApsSceneFunc_) {
+        WVLOG_E("APSManagerClient not found");
+        dlclose(apsClientHandler_);
+    }
+}
+
+void VSyncAdapterImpl::UninitAPSClient()
+{
+    if (setApsSceneFunc_) {
+        dlclose(apsClientHandler_);
+        setApsSceneFunc_ = nullptr;
+        apsClientHandler_ = nullptr;
+    }
+}
+
+void VSyncAdapterImpl::SetDVSyncSwitch(bool dvsyncSwitch)
+{
+    if (Init() != VSyncErrorCode::SUCCESS) {
+        WVLOG_E("NWebWindowAdatrper init fail!");
+        return;
+    }
+
+    if (!receiver_) {
+        WVLOG_E("NWebWindowAdatrper SetDVSyncSwitch: receiver_ is nullptr!");
+        return;
+    } else if (OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.ohos.dvsync", false)) {
+        WVLOG_D("NWebWindowAdatrper SetDVSyncSwitch: dvsyncSwitch = %{public}d", dvsyncSwitch);
+        VsyncError ret = receiver_->SetNativeDVSyncSwitch(dvsyncSwitch);
+        if (ret != VsyncError::GSERROR_OK) {
+            WVLOG_E("SetNativeDVSyncSwitch failed, ret = %{public}d", ret);
+            return;
+        }
+    } else {
+        WVLOG_D("NWebWindowAdatrper SetDVSyncSwitch Disabled!");
+    }
 }
 } // namespace OHOS::NWeb

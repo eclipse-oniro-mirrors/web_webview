@@ -18,6 +18,8 @@
 #include "foundation/multimedia/player_framework/interfaces/inner_api/native/media_errors.h"
 #include "nweb_log.h"
 #include "surface_adapter_impl.h"
+#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
+#include "foundation/graphic/graphic_surface/surface/include/native_window.h"
 
 namespace OHOS::NWeb {
 namespace {
@@ -56,6 +58,7 @@ bool IsFatalError(int32_t errorCode)
         case Media::MSERR_AUD_DEC_FAILED:
         case Media::MSERR_VID_DEC_FAILED:
         case Media::MSERR_FILE_ACCESS_FAILED:
+        case Media::MSERR_DATA_SOURCE_IO_ERROR:
             return true;
         default:
             return false;
@@ -83,6 +86,9 @@ NWeb::PlayerOnInfoType ConvertInfoType(Media::PlayerOnInfoType infoType)
             break;
         case Media::INFO_TYPE_INTERRUPT_EVENT:
             ret = NWeb::PlayerOnInfoType::INFO_TYPE_INTERRUPT_EVENT;
+            break;
+        case Media::INFO_TYPE_RESOLUTION_CHANGE:
+            ret = NWeb::PlayerOnInfoType::INFO_TYPE_RESOLUTION_CHANGE;
             break;
         default:
             break;
@@ -147,6 +153,10 @@ void PlayerCallbackImpl::OnInfo(Media::PlayerOnInfoType type, int32_t extra, con
     int32_t hintValue = -1;
     if (type == Media::INFO_TYPE_INTERRUPT_EVENT) {
         infoBody.GetIntValue(OHOS::Media::PlayerKeys::AUDIO_INTERRUPT_HINT, hintValue);
+    }
+    if (type == Media::INFO_TYPE_RESOLUTION_CHANGE) {
+        infoBody.GetIntValue(OHOS::Media::PlayerKeys::PLAYER_WIDTH, extra);
+        infoBody.GetIntValue(OHOS::Media::PlayerKeys::PLAYER_HEIGHT, hintValue);
     }
     if (callbackAdapter_) {
         callbackAdapter_->OnInfo(ConvertInfoType(type), extra, hintValue);
@@ -293,4 +303,28 @@ int32_t PlayerAdapterImpl::SetPlaybackSpeed(PlaybackRateMode mode)
     }
     return player_->SetPlaybackSpeed(ConvertRateMode(mode));
 }
+
+int32_t PlayerAdapterImpl::SetVideoSurfaceNew(void* native_window)
+{
+    WVLOG_I("PlayerAdapterImpl::SetVideoSurfaceNew");
+    if (!player_) {
+        WVLOG_E("player_ is nullptr");
+        return -1;
+    }
+    OHNativeWindow* ohNativeWindow = reinterpret_cast<OHNativeWindow*>(native_window);
+    return player_->SetVideoSurface(ohNativeWindow->surface);
+}
+
+int32_t PlayerAdapterImpl::SetMediaSourceHeader(const std::string& url,
+    const std::map<std::string, std::string>& header)
+{
+    if (!player_) {
+        WVLOG_E("player_ is nullptr");
+        return -1;
+    }
+    std::shared_ptr<Media::AVMediaSource> mediaSource = std::make_shared<Media::AVMediaSource>(url, header);
+    Media::AVPlayStrategy strategy;
+    return player_->SetMediaSource(mediaSource, strategy);
+}
+
 } // namespace OHOS::NWeb

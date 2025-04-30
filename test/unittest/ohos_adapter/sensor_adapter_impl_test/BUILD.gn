@@ -15,7 +15,7 @@ import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
 import("../../../../config.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -32,14 +32,12 @@ ohos_unittest("sensor_adapter_impl_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [
-    "$webview_path/ohos_adapter:nweb_ohos_adapter",
-    "//third_party/googletest:gmock_main",
-    "//third_party/googletest:gtest_main",
-  ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
     "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
     "graphic_surface:surface",
     "hilog:libhilog",
   ]

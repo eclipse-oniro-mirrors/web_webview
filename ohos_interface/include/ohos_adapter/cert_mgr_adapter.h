@@ -18,6 +18,7 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 
 namespace OHOS::NWeb {
 
@@ -44,8 +45,6 @@ public:
         const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen, uint8_t* signData, uint32_t signDataLen) = 0;
 
     virtual int32_t GetCertDataBySubject(const char* subjectName, uint8_t* certData, int32_t certType) = 0;
-
-    virtual int VerifyCertFromNetSsl(uint8_t* certData, uint32_t certSize) = 0;
 
     virtual bool GetTrustAnchorsForHostName(const std::string& hostname, std::vector<std::string>& certs) = 0;
 

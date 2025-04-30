@@ -43,14 +43,17 @@
 #include "media_codec_decoder_adapter_impl.h"
 #include "media_codec_encoder_adapter_impl.h"
 #endif
+#include "migration_manager_adapter_impl.h"
 #include "mmi_adapter_impl.h"
 #include "native_image_adapter_impl.h"
 #if defined(NWEB_TEL_ENABLE)
 #include "net_connect_adapter_impl.h"
 #endif
 #include "net_proxy_adapter_impl.h"
+#include "ohos_drawing_text_adapter_impl.h"
 #include "ohos_image_decoder_adapter_impl.h"
 #include "ohos_init_web_adapter_impl.h"
+#include "ohos_native_buffer_adapter_impl.h"
 #include "ohos_resource_adapter_impl.h"
 #include "ohos_web_data_base_adapter_impl.h"
 #include "ohos_web_permission_data_base_adapter_impl.h"
@@ -72,6 +75,10 @@
 #include "window_adapter_impl.h"
 #if defined(NWEB_SENSORS_SENSOR_ENABLE)
 #include "sensor_adapter_impl.h"
+#endif
+#if defined(NWEB_AUDIO_DRM_ENABLE)
+#include "audio_codec_decoder_adapter_impl.h"
+#include "drm_adapter_impl.h"
 #endif
 
 namespace OHOS::NWeb {
@@ -331,6 +338,49 @@ std::unique_ptr<SensorAdapter> OhosAdapterHelperImpl::CreateSensorAdapter()
 {
 #if defined(NWEB_SENSORS_SENSOR_ENABLE)
     return std::make_unique<SensorAdapterImpl>();
+#else
+    return nullptr;
+#endif
+}
+
+void OhosAdapterHelperImpl::SetArkWebCoreHapPathOverride(const std::string& hapPath)
+{
+    OhosResourceAdapterImpl::SetArkWebCoreHapPathOverride(hapPath);
+}
+
+OhosNativeBufferAdapter& OhosAdapterHelperImpl::GetOhosNativeBufferAdapter()
+{
+    return OhosNativeBufferAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<MigrationManagerAdapter> OhosAdapterHelperImpl::CreateMigrationMgrAdapter()
+{
+    return std::make_unique<MigrationManagerAdapterImpl>();
+}
+
+OhosDrawingTextFontAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
+{
+    return OhosDrawingTextFontAdapterImpl::GetInstance();
+}
+
+OhosDrawingTextTypographyAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
+{
+    return OhosDrawingTextTypographyAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<AudioCodecDecoderAdapter> OhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
+{
+#if defined(NWEB_AUDIO_DRM_ENABLE)
+    return std::make_unique<AudioCodecDecoderAdapterImpl>();
+#else
+    return nullptr;
+#endif
+}
+
+std::unique_ptr<DrmAdapter> OhosAdapterHelperImpl::CreateDrmAdapter()
+{
+#if defined(NWEB_AUDIO_DRM_ENABLE)
+    return std::make_unique<DrmAdapterImpl>();
 #else
     return nullptr;
 #endif
