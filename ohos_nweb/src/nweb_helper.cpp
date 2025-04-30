@@ -639,7 +639,7 @@ bool NWebHelper::GetWebEngine(bool fromArk)
     }
 
     TryPreReadLibForFirstlyAppStartUp(bundlePath_);
-
+    fromArk = fromArk && !NWebConfigHelper::Instance().IsWebPlayGroundEnable();
     if (!ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().Init(fromArk, bundlePath_)) {
         WVLOG_E("failed to init arkweb nweb bridge helper");
         return false;
@@ -1149,6 +1149,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height, incognitoMode);
     NWebConfigHelper::Instance().ParseConfig(initArgs);
 
@@ -1183,6 +1184,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void* enhanceSurfaceInfo,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo =
         NWebEnhanceSurfaceAdapter::Instance().GetCreateInfo(enhanceSurfaceInfo, initArgs, width, height, incognitoMode);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
