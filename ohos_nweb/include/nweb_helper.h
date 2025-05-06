@@ -31,6 +31,13 @@
 #include "application_state_change_callback.h"
 
 namespace OHOS::NWeb {
+struct NwebScheme {
+    const std::string name;
+    int32_t option = 0;
+};
+
+typedef int32_t (*RegisterCustomSchemesCallback)(const char* scheme, int32_t option);
+
 struct FrameRateSetting {
     int32_t min_ { 0 };
     int32_t max_ { 0 };
@@ -116,6 +123,12 @@ public:
 
     void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback);
 
+    void SetRegisterCustomSchemesCallback(RegisterCustomSchemesCallback registerCustomSchemesCallback);
+
+    bool HasLoadWebEngine();
+
+    void SaveSchemeVector(const char* name, int32_t option);
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);
@@ -127,6 +140,8 @@ private:
     std::string bundlePath_;
     std::string customSchemeCmdLine_;
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
+    std::vector<NwebScheme> schemeVector_;
+    RegisterCustomSchemesCallback registerCustomSchemesCallback_ = nullptr;
     std::vector<std::string> backForwardCacheCmdLine_;
     std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_;
 };
