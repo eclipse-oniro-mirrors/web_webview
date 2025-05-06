@@ -1551,6 +1551,13 @@ void ArkWebNWebWrapper::SetSurfaceDensity(const double& density)
     ark_web_nweb_->SetSurfaceDensity(density);
 }
 
+void ArkWebNWebWrapper::SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight,
+    double borderRadiusBottomLeft, double borderRadiusBottomRight)
+{
+    ark_web_nweb_->SetBorderRadiusFromWeb(
+        borderRadiusTopLeft, borderRadiusTopRight, borderRadiusBottomLeft, borderRadiusBottomRight);
+}
+
 void ArkWebNWebWrapper::SetNativeInnerWeb(bool isInnerWeb)
 {
     ark_web_nweb_->SetNativeInnerWeb(isInnerWeb);
