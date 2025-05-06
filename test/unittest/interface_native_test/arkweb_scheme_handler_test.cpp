@@ -832,7 +832,7 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_WebEngineHandleIsN
     const char* webTag = "webTag";
     ArkWeb_SchemeHandler* schemeHandler = nullptr;
 
-    EXPECT_EQ(OH_ArkWeb_RegisterCustomSchemes(scheme, option), ARKWEB_ERROR_UNKNOWN);
+    EXPECT_EQ(OH_ArkWeb_RegisterCustomSchemes(scheme, option), ARKWEB_SUCCESS);
     EXPECT_FALSE(OH_ArkWeb_SetSchemeHandler(scheme, webTag, schemeHandler));
     EXPECT_FALSE(OH_ArkWebServiceWorker_SetSchemeHandler(scheme, schemeHandler));
     OH_ArkWeb_CreateSchemeHandler(&schemeHandler);
