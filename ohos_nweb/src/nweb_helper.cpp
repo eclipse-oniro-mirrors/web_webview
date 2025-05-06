@@ -618,6 +618,22 @@ bool NWebHelper::InitAndRun(bool from_ark)
     return LoadWebEngine(from_ark, true);
 }
 
+void NWebHelper::SetRegisterCustomSchemesCallback(RegisterCustomSchemesCallback registerCustomSchemesCallback)
+{
+    registerCustomSchemesCallback_ = registerCustomSchemesCallback;
+}
+
+bool NWebHelper::HasLoadWebEngine()
+{
+    return nwebEngine_ != nullptr;
+}
+
+void NWebHelper::SaveSchemeVector(const char* name, int32_t option)
+{
+    struct NwebScheme scheme = {.name = std::string(name), .option = option};
+    schemeVector_.push_back(scheme);
+}
+
 bool NWebHelper::GetWebEngine(bool fromArk)
 {
     if (nwebEngine_) {
@@ -655,6 +671,17 @@ bool NWebHelper::GetWebEngine(bool fromArk)
     if (nwebEngine_ == nullptr) {
         WVLOG_E("failed to get web engine instance");
         return false;
+    }
+
+    if (registerCustomSchemesCallback_) {
+        int32_t registerResult;
+        for (auto it = schemeVector_.begin(); it != schemeVector_.end(); ++it) {
+            registerResult = registerCustomSchemesCallback_(it->name.c_str(), it->option);
+            if (registerResult != NO_ERROR) {
+                WVLOG_E("register custom schemes fails, registerResult = %{public}d", registerResult);
+                return false;
+            }
+        }
     }
 
     coreApiLevel_ = nwebEngine_->GetArkWebCoreApiLevel();
