@@ -5398,7 +5398,9 @@ napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
 {
     WVLOG_I("enable/disable intelligent tracking prevention.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("EnableIntelligentTrackingPrevention: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5435,7 +5437,9 @@ napi_value NapiWebviewController::IsIntelligentTrackingPreventionEnabled(
 {
     WVLOG_I("get intelligent tracking prevention enabled value.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("IsIntelligentTrackingPreventionEnabled: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5491,7 +5495,9 @@ napi_value NapiWebviewController::AddIntelligentTrackingPreventionBypassingList(
 {
     WVLOG_I("Add intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("AddIntelligentTrackingPreventionBypassingList: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5530,7 +5536,9 @@ napi_value NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingLi
 {
     WVLOG_I("Remove intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("RemoveIntelligentTrackingPreventionBypassingList: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5569,7 +5577,9 @@ napi_value NapiWebviewController::ClearIntelligentTrackingPreventionBypassingLis
 {
     napi_value result = nullptr;
     WVLOG_I("Clear intelligent tracking prevention bypassing list.");
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("ClearIntelligentTrackingPreventionBypassingList: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
