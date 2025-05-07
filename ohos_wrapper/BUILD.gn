@@ -26,14 +26,16 @@ ohos_shared_library("nweb_ohos_wrapper") {
     "-Werror",
   ]
 
-  include_dirs = [ "../ohos_nweb/include" ]
+  include_dirs = [ "${target_gen_dir}/../ohos_nweb/include" ]
 
   external_deps = [
     "c_utils:utils",
     "hilog:libhilog",
     "ipc:ipc_core",
   ]
-
+  deps = [
+    "../ohos_interface:webview_interface_prepare",
+  ]
   if (webview_location_enable) {
     sources += [ "src/nweb_location_wrapper.cpp" ]
     external_deps += [

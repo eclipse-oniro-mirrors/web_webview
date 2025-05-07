@@ -1064,8 +1064,9 @@ config("ohos_glue_config") {
   }
 
   include_dirs = [
-    "../ohos_nweb",
     "${target_gen_dir}",
+    "${target_gen_dir}/../ohos_nweb/include",
+    "${target_gen_dir}/../ohos_nweb",
   ]
 }
 
