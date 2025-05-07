@@ -147,4 +147,10 @@ int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, std::shared_ptr<MMIDevic
     }
     return ret;
 }
+
+int32_t MMIAdapterImpl::GetMaxTouchPoints()
+{
+    WVLOG_D("MMIAdapterImpl::GetMaxTouchPoints");
+    return 0;
+}
 } // namespace OHOS::NWeb
