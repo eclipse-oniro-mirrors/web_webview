@@ -426,12 +426,6 @@ bool OH_ArkWebResourceRequest_HasGesture(const ArkWeb_ResourceRequest* resourceR
 
 int32_t OH_ArkWeb_RegisterCustomSchemes(const char* scheme, int32_t option)
 {
-    if (OHOS::NWeb::NWebHelper::Instance().HasLoadWebEngine() == false) {
-        OHOS::NWeb::NWebHelper::Instance().SaveSchemeVector(scheme, option);
-        OHOS::NWeb::NWebHelper::Instance().SetRegisterCustomSchemesCallback(OH_ArkWeb_RegisterCustomSchemes);
-        return ARKWEB_SUCCESS;
-    }
-
     if (OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
         if (!EnsureSdkLoaded()) {
             WVLOG_E("OH_ArkWeb_RegisterCustomSchemes sdk not loaded.");

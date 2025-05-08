@@ -36,8 +36,6 @@ struct NwebScheme {
     int32_t option = 0;
 };
 
-typedef int32_t (*RegisterCustomSchemesCallback)(const char* scheme, int32_t option);
-
 struct FrameRateSetting {
     int32_t min_ { 0 };
     int32_t max_ { 0 };
@@ -123,11 +121,11 @@ public:
 
     void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback);
 
-    void SetRegisterCustomSchemesCallback(RegisterCustomSchemesCallback registerCustomSchemesCallback);
-
     bool HasLoadWebEngine();
 
     void SaveSchemeVector(const char* name, int32_t option);
+
+    bool RegisterCustomSchemes();
 
 private:
     NWebHelper() = default;
@@ -141,7 +139,6 @@ private:
     std::string customSchemeCmdLine_;
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::vector<NwebScheme> schemeVector_;
-    RegisterCustomSchemesCallback registerCustomSchemesCallback_ = nullptr;
     std::vector<std::string> backForwardCacheCmdLine_;
     std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_;
 };

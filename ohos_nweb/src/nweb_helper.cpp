@@ -618,11 +618,6 @@ bool NWebHelper::InitAndRun(bool from_ark)
     return LoadWebEngine(from_ark, true);
 }
 
-void NWebHelper::SetRegisterCustomSchemesCallback(RegisterCustomSchemesCallback registerCustomSchemesCallback)
-{
-    registerCustomSchemesCallback_ = registerCustomSchemesCallback;
-}
-
 bool NWebHelper::HasLoadWebEngine()
 {
     return nwebEngine_ != nullptr;
@@ -632,6 +627,29 @@ void NWebHelper::SaveSchemeVector(const char* name, int32_t option)
 {
     struct NwebScheme scheme = {.name = std::string(name), .option = option};
     schemeVector_.push_back(scheme);
+}
+
+bool NWebHelper::RegisterCustomSchemes()
+{
+    int32_t (*registerCustomSchemes)(const char* scheme, int32_t option) = nullptr;
+
+#define LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImlp, &(apiMember))
+    LOAD_FN_PTR(registerCustomSchemes, OH_ArkWeb_RegisterCustomSchemes);
+#undef LOAD_FN_PTR
+    if (!registerCustomSchemes) {
+        WVLOG_E("OH_ArkWeb_RegisterCustomSchemes failed to load function registerCustomSchemes");
+        return false;
+    }
+
+    int32_t registerResult;
+    for (auto it = schemeVector_.begin(); it != schemeVector_.end(); ++it) {
+        registerResult = registerCustomSchemes(it->name.c_str(), it->option);
+        if (registerResult != NO_ERROR) {
+            WVLOG_E("register custom schemes fails, registerResult = %{public}d", registerResult);
+            return false;
+        }
+    }
+    return true;
 }
 
 bool NWebHelper::GetWebEngine(bool fromArk)
@@ -673,15 +691,8 @@ bool NWebHelper::GetWebEngine(bool fromArk)
         return false;
     }
 
-    if (registerCustomSchemesCallback_) {
-        int32_t registerResult;
-        for (auto it = schemeVector_.begin(); it != schemeVector_.end(); ++it) {
-            registerResult = registerCustomSchemesCallback_(it->name.c_str(), it->option);
-            if (registerResult != NO_ERROR) {
-                WVLOG_E("register custom schemes fails, registerResult = %{public}d", registerResult);
-                return false;
-            }
-        }
+    if (RegisterCustomSchemes() == false) {
+        return false;
     }
 
     coreApiLevel_ = nwebEngine_->GetArkWebCoreApiLevel();
