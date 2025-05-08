@@ -21,7 +21,7 @@
 #include <multimedia/native_audio_channel_layout.h>
 #include "native_drm_err.h"
 #include "native_mediakeysession.h"
-
+#include <cinttypes>
 #include "audio_cenc_info_adapter_impl.h"
 
 #define MIME_SIZE 256
@@ -153,7 +153,7 @@ void AudioDecoderFormatAdapterImpl::PrintFormatData(std::shared_ptr<AudioDecoder
 {
     WVLOG_I("PrintFormatData:SampleRate[%{public}d], ChannelCount[%{public}d],"
             "MaxInputSize[%{public}d], AACIsAdts[%{public}d], AudioSampleFormat[%{public}d],"
-            "BitRate[%{public}lld], IDHeader[%{public}d], SetupHeader[%{public}d],",
+            "BitRate[%{public}" PRId64 "], IDHeader[%{public}d], SetupHeader[%{public}d],",
             format->GetSampleRate(), format->GetChannelCount(), format->GetMaxInputSize(),
             static_cast<int32_t>(format->GetAACIsAdts()), format->GetAudioSampleFormat(),
             format->GetBitRate(), format->GetIdentificationHeader(), format->GetSetupHeader());
@@ -606,8 +606,8 @@ AudioDecoderAdapterCode AudioCodecDecoderAdapterImpl::QueueInputBufferDec(uint32
 
     OH_AVBuffer *avBuffer = GetInputBuffer(index);
     int32_t bufferCapacity = OH_AVBuffer_GetCapacity(avBuffer);
-    if (avBuffer == nullptr || bufferCapacity < 0) {
-        WVLOG_E("QueueInputBufferDec fail, inputbuffer[%{public}u] not find or cap size error.", index);
+    if (avBuffer == nullptr || bufferCapacity < bufferSize) {
+        WVLOG_E("QueueInputBufferDec fail, inputbuffer[%{public}u] not find or cap size less than buffer size.", index);
         return AudioDecoderAdapterCode::DECODER_ERROR;
     }
     uint8_t *addr = OH_AVBuffer_GetAddr(avBuffer);
