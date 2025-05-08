@@ -1054,6 +1054,29 @@ namespace OHOS::Webview {
         setting->SetScrollable(enable);
     }
 
+    void WebviewControllerImpl::SetScrollable(bool enable, int32_t scrollType)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+        if (!setting) {
+            return;
+        }
+        return setting->SetScrollable(enable, scrollType);
+    }
+
+    bool ScrollByWithResult(float deltaX, float deltaY) const
+    {
+        bool enabled = false;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            enabled = nweb_ptr->ScrollByWithResult(deltaX, deltaY);
+        }
+        return enabled;
+    }
+
     void WebviewControllerImpl::EnableAdsBlock(bool enable)
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1412,5 +1435,22 @@ namespace OHOS::Webview {
             }
         }
         return nwebResult;
+    }
+
+    void* WebviewControllerImpl::CreateWebPrintDocumentAdapter(const std::string &jobName)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return nullptr;
+        }
+        return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
+    }
+
+    void WebviewControllerImpl::GetScrollOffset(float* offset_x, float* offset_y)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->GetScrollOffset(offset_x, offset_y);
+        }
     }
 }

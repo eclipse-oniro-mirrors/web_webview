@@ -155,6 +155,10 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlPrecompileJavaScript(int64_t id,
     char* url, char* script, OHOS::Webview::CacheOptions cacheOptions);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlWebPageSnapshot(int64_t id, OHOS::Webview::CSnapshotInfo snapshot,
     void (*callbackRef)(OHOS::Webview::RetDataCSnapshotResult infoRef));
+FFI_EXPORT int32_t FfiOHOSWebviewCtlCreateWebPrintDocumentAdapter(int64_t id, char* cJobName);
+FFI_EXPORT OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlgetScrollOffset(int64_t id, int32_t* errorCode);
+// FFI_EXPORT int32_t FfiOHOSWebviewCtlSetScrollable(int64_t id, bool enable, int32_t scrollType);
+FFI_EXPORT bool FfiOHOSWebviewCtlScrollByWithResult(int64_t id, float deltaX, float deltaY, int32_t* errorCode);
 
     // BackForwardList
 FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t* errCode);
