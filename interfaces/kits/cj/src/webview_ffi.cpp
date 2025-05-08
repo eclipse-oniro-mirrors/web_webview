@@ -1121,6 +1121,16 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
+    int32_t FfiOHOSWebviewCtlSetScrollable(int64_t id, bool enable, int32_t scrollType)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->SetScrollable(enable, scrollType);
+        return NWebError::NO_ERROR;
+    }
+
     bool FfiOHOSWebviewCtlGetScrollable(int64_t id, int32_t *errCode)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
@@ -1659,6 +1669,38 @@ extern "C" {
         NWeb::NWebHelper::Instance().SetConnectionTimeout(timeout);
         ret = NWebError::NO_ERROR;
         return ret;
+    }
+
+    int32_t FfiOHOSWebviewCtlCreateWebPrintDocumentAdapter(int64_t id, char *cJobName) {
+        int32_t ret = -1;
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            ret = NWebError::INIT_ERROR;
+            return ret;
+        }
+        std::string jobName = cJobName;
+        void* webPrintDocument = nativeWebviewCtl->CreateWebPrintDocumentAdapter(jobName);
+        if (!webPrintDocument) {
+            ret = NWebError::PARAM_CHECK_ERROR;
+            return ret;
+        }
+        
+
+
+        ret = NWebError::NO_ERROR;
+        return ret;
+    }
+
+    OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlGetScrollOffset(int64_t id, int32_t* errorCode) {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errorCode = NWebError::INIT_ERROR;
+            return {.x=0, .y=0};
+        }
+        float offset_x = 0;
+        float offset_y = 0;
+        nativeWebviewCtl->GetScrollOffset(&offset_x, &offset_y);
+        return {.x=offset_x, .y=offset_y};
     }
 
     int32_t FfiOHOSWebviewCtlSlideScroll(int64_t id, float vx, float vy)

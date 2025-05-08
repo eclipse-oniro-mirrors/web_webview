@@ -260,6 +260,8 @@ public:
 
     void SetScrollable(bool enable);
 
+    void SetScrollable(bool enable, int32_t scrollType);
+
     void EnableAdsBlock(bool enable);
 
     bool IsAdsBlockEnabled();
@@ -307,6 +309,12 @@ public:
 
     std::shared_ptr<NWeb::HitTestResult> GetLastHitTest();
 
+    void* CreateWebPrintDocumentAdapter(const std::string &jobName);
+
+    void GetScrollOffset(float* offset_x, float* offset_y);
+
+    bool ScrollByWithResult(float deltaX, float deltaY) const;
+    
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;
