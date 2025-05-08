@@ -766,7 +766,9 @@ void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
         delete param;
         return;
     }
-    if (sendInitEvent(env_, static_cast<void *>(param), napi_eprio_immediate) != napi_status::napi_ok) {
+    if (napi_create_async_work(env_, nullptr, resourceName,
+        [](napi_env env, void *data) {},
+        ExecuteInitComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
         delete param;
         return;
     }
@@ -809,84 +811,6 @@ void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, vo
     }
     napi_delete_async_work(env, param->asyncWork);
     delete param;
-}
-
-napi_status WebHttpBodyStream::sendInitEvent(napi_env env, void *data, napi_event_priority prio)
-{
-    auto task = [env, data]() {
-        WVLOG_D("WebHttpBodyStream::sendInitEvent Complete");
-        InitParam* param = static_cast<InitParam*>(data);
-        if (!param) {
-            return;
-        }
-        NApiScope scope(env);
-        if (!scope.IsVaild()) {
-            delete param;
-            return;
-        }
-        napi_value result[INTEGER_ONE] = {0};
-        if (param->result != 0) {
-            result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(
-                env, NWebError::HTTP_BODY_STREAN_INIT_FAILED);
-        } else {
-            napi_get_null(env, &result[INTEGER_ZERO]);
-        }
-        if (param->callbackRef) {
-            napi_value callback = nullptr;
-            napi_get_reference_value(env, param->callbackRef, &callback);
-            napi_call_function(env, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
-            napi_delete_reference(env, param->callbackRef);
-        } else if (param->deferred) {
-            if (param->result != 0) {
-                napi_reject_deferred(env, param->deferred, result[INTEGER_ZERO]);
-            } else {
-                napi_resolve_deferred(env, param->deferred, result[INTEGER_ZERO]);
-            }
-        }
-        delete param;
-    };
-
-    return napi_send_event(env, task, prio);
-}
-
-napi_status WebHttpBodyStream::sendReadEvent(napi_env env, void *data, napi_event_priority prio)
-{
-    auto task = [env, data]() {
-        WVLOG_D("WebHttpBodyStream::sendReadEvent Complete");
-        ReadParam* param = static_cast<ReadParam*>(data);
-        if (!param) {
-            return;
-        } 
-        NApiScope scope(env);
-        if (!scope.IsVaild()) {
-            if (param->buffer) {
-                delete param->buffer;
-            }
-            delete param;
-            return;
-        }
-        napi_value result[INTEGER_ONE] = {0};
-        void *bufferData = nullptr;
-        napi_create_arraybuffer(env, param->bytesRead, &bufferData, &result[INTEGER_ZERO]);
-        if (memcpy_s(bufferData, param->bytesRead, param->buffer, param->bytesRead) != 0 &&
-            param->bytesRead > 0) {
-            WVLOG_W("WebHttpBodyStream::ExecuteRead memcpy failed");
-        }
-        if (param->buffer) {
-            delete param->buffer;
-        }
-        if (param->callbackRef) {
-            napi_value callback = nullptr;
-            napi_get_reference_value(env, param->callbackRef, &callback);
-            napi_call_function(env, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
-            napi_delete_reference(env, param->callbackRef);
-        } else if (param->deferred) {
-            napi_resolve_deferred(env, param->deferred, result[INTEGER_ZERO]);
-        }
-        delete param;
-    };
-
-    return napi_send_event(env, task, prio);
 }
 
 void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, void* data)
@@ -947,7 +871,9 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
         delete param;
         return;
     }
-    if (sendReadEvent(env_, static_cast<void *>(param), napi_eprio_immediate) != napi_status::napi_ok) {
+    if (napi_create_async_work(env_, nullptr, resourceName,
+        [](napi_env env, void *data) {},
+        ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
         delete param;
         return;
     }
