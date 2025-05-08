@@ -692,7 +692,7 @@ bool NWebHelper::GetWebEngine(bool fromArk)
     }
 
     if (RegisterCustomSchemes() == false) {
-        return false;
+        WVLOG_E("register custom schemes failed");
     }
 
     coreApiLevel_ = nwebEngine_->GetArkWebCoreApiLevel();
