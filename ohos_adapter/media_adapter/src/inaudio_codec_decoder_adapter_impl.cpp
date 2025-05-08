@@ -21,7 +21,7 @@
 #include <multimedia/native_audio_channel_layout.h>
 #include "native_drm_err.h"
 #include "native_mediakeysession.h"
-
+#include <cinttypes>
 #include "audio_cenc_info_adapter_impl.h"
 
 #define MIME_SIZE 256
