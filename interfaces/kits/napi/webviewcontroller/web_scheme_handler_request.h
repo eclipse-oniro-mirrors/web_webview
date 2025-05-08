@@ -165,9 +165,6 @@ public:
 
     void ExecuteInit(ArkWeb_NetError result);
     void ExecuteRead(uint8_t* buffer, int bytesRead);
-
-    napi_status sendInitEvent(napi_env env, void *data, napi_event_priority prio);
-    napi_status sendReadEvent(napi_env env, void *data, napi_event_priority prio);
 private:
     struct InitParam {
         napi_env env;
