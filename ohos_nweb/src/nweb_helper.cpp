@@ -633,7 +633,7 @@ bool NWebHelper::RegisterCustomSchemes()
 {
     int32_t (*registerCustomSchemes)(const char* scheme, int32_t option) = nullptr;
 
-#define LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImlp, &(apiMember))
+#define LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
     LOAD_FN_PTR(registerCustomSchemes, OH_ArkWeb_RegisterCustomSchemes);
 #undef LOAD_FN_PTR
     if (!registerCustomSchemes) {
