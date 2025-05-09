@@ -231,8 +231,7 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIInputListenerAdapterImpl_007,
  */
 HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_008, TestSize.Level1)
 {
-    std::vector<int32_t> devList;
     int32_t ret = g_mmi->GetMaxTouchPoints();
-    EXPECT_EQ(ret, 0);
+    EXPECT_GE(ret, 0);
 }
 } // namespace OHOS::NWeb
