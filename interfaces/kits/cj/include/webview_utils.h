@@ -120,7 +120,7 @@ struct Scheme {
 };
 
 struct CArrScheme {
-    CScheme* cScheme;
+    CScheme* head;
     int64_t size;
 };
 
@@ -220,12 +220,6 @@ struct CScrollOffset{
     int32_t x;
     int32_t y;
 };
-
-struct CSrollOffsetResult{
-    int32_t code;
-    CScrollOffset offsetData;
-};
-
 
 char* MallocCString(const std::string& origin);
 uint8_t* MallocUInt8(const std::string& origin);

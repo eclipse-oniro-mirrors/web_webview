@@ -1067,7 +1067,7 @@ namespace OHOS::Webview {
         return setting->SetScrollable(enable, scrollType);
     }
 
-    bool ScrollByWithResult(float deltaX, float deltaY) const
+    bool WebviewControllerImpl::ScrollByWithResult(float deltaX, float deltaY) const
     {
         bool enabled = false;
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1408,7 +1408,7 @@ namespace OHOS::Webview {
         std::vector<Scheme> schemeVector;
         for (int64_t i = 0; i < arrayLength; ++i) {
             Scheme scheme;
-            bool result = SetCustomizeScheme(schemes.cScheme[i], scheme);
+            bool result = SetCustomizeScheme(schemes.head[i], scheme);
             if (!result) {
                 return NWebError::PARAM_CHECK_ERROR;
             }
