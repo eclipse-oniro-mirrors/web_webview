@@ -1661,7 +1661,7 @@ extern "C" {
         return ret;
     }
 
-    int32_t FfiOHOSWebviewCtlSetScrollableV2(int64_t id, bool enable, int32_t scrollType)
+    int32_t FfiOHOSWebviewCtlSetScrollableEx(int64_t id, bool enable, int32_t scrollType)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
