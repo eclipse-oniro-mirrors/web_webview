@@ -1107,4 +1107,27 @@ void ArkWebHandlerWrapper::OnPip(int status,
     ark_web_handler_->OnPip(status, delegate_id, child_id,
                             frame_routing_id, width, height);
 }
+
+bool ArkWebHandlerWrapper::OnBeforeUnloadByJSV2(const std::string& url, const std::string& message, bool isReload,
+    std::shared_ptr<OHOS::NWeb::NWebJSDialogResult> result)
+{
+    ArkWebString stUrl = ArkWebStringClassToStruct(url);
+    ArkWebString stMessage = ArkWebStringClassToStruct(message);
+
+    bool flag = false;
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        flag = ark_web_handler_->OnBeforeUnloadByJSV2(stUrl, stMessage, isReload, nullptr);
+    } else {
+        flag = ark_web_handler_->OnBeforeUnloadByJSV2(stUrl, stMessage, isReload, new ArkWebJsDialogResultImpl(result));
+    }
+
+    ArkWebStringStructRelease(stUrl);
+    ArkWebStringStructRelease(stMessage);
+    return flag;
+}
+
+void ArkWebHandlerWrapper::OnActivateContentByJS()
+{
+    ark_web_handler_->OnActivateContentByJS();
+}
 } // namespace OHOS::ArkWeb
