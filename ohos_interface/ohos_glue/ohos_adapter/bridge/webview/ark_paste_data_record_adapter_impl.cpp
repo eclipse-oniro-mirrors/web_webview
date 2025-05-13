@@ -48,10 +48,22 @@ bool ArkPasteDataRecordAdapterImpl::SetHtmlText(void* htmlText)
     return real_->SetHtmlText(*temp);
 }
 
+bool ArkPasteDataRecordAdapterImpl::SetHtmlTextV2(const ArkWebString& htmlText)
+{
+    std::shared_ptr<std::string> temp = std::make_shared<std::string>(ArkWebStringStructToClass(htmlText));
+    return real_->SetHtmlText(temp);
+}
+
 bool ArkPasteDataRecordAdapterImpl::SetPlainText(void* plainText)
 {
     std::shared_ptr<std::string>* temp = static_cast<std::shared_ptr<std::string>*>(plainText);
     return real_->SetPlainText(*temp);
+}
+
+bool ArkPasteDataRecordAdapterImpl::SetPlainTextV2(const ArkWebString& plainText)
+{
+    std::shared_ptr<std::string> temp = std::make_shared<std::string>(ArkWebStringStructToClass(plainText));
+    return real_->SetPlainText(temp);
 }
 
 bool ArkPasteDataRecordAdapterImpl::SetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData)
@@ -75,11 +87,29 @@ void ArkPasteDataRecordAdapterImpl::GetHtmlText(void* data)
     *html = str;
 }
 
+bool ArkPasteDataRecordAdapterImpl::GetHtmlTextV2(ArkWebString& data)
+{
+    std::shared_ptr<std::string> str = real_->GetHtmlText();
+    if (str) {
+        data = ArkWebStringClassToStruct(*str);
+    }
+    return true;
+}
+
 void ArkPasteDataRecordAdapterImpl::GetPlainText(void* data)
 {
     std::shared_ptr<std::string> str = real_->GetPlainText();
     std::shared_ptr<std::string>* text = static_cast<std::shared_ptr<std::string>*>(data);
     *text = str;
+}
+
+bool ArkPasteDataRecordAdapterImpl::GetPlainTextV2(ArkWebString& data)
+{
+    std::shared_ptr<std::string> str = real_->GetPlainText();
+    if (str) {
+        data = ArkWebStringClassToStruct(*str);
+    }
+    return true;
 }
 
 bool ArkPasteDataRecordAdapterImpl::GetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData)
@@ -102,6 +132,12 @@ bool ArkPasteDataRecordAdapterImpl::SetCustomData(void* data)
     return real_->SetCustomData(*temp);
 }
 
+bool ArkPasteDataRecordAdapterImpl::SetCustomDataV2(ArkWebUInt8VectorMap& data)
+{
+    NWeb::PasteCustomData temp = ArkWebUInt8VectorMapStructToClass(data);
+    return real_->SetCustomData(temp);
+}
+
 void ArkPasteDataRecordAdapterImpl::GetUri(void* data)
 {
     std::shared_ptr<std::string> str = real_->GetUri();
@@ -109,11 +145,29 @@ void ArkPasteDataRecordAdapterImpl::GetUri(void* data)
     *uri = str;
 }
 
+bool ArkPasteDataRecordAdapterImpl::GetUriV2(ArkWebString& data)
+{
+    std::shared_ptr<std::string> str = real_->GetUri();
+    if (str) {
+        data = ArkWebStringClassToStruct(*str);
+    }
+    return true;
+}
+
 void ArkPasteDataRecordAdapterImpl::GetCustomData(void* data)
 {
     std::shared_ptr<NWeb::PasteCustomData> custom = real_->GetCustomData();
     std::shared_ptr<NWeb::PasteCustomData>* temp = static_cast<std::shared_ptr<NWeb::PasteCustomData>*>(data);
     *temp = custom;
+}
+
+bool ArkPasteDataRecordAdapterImpl::GetCustomDataV2(ArkWebUInt8VectorMap& data)
+{
+    std::shared_ptr<NWeb::PasteCustomData> custom = real_->GetCustomData();
+    if (custom) {
+        data = ArkWebUInt8VectorMapClassToStruct(*custom);
+    }
+    return true;
 }
 
 } // namespace OHOS::ArkWeb
