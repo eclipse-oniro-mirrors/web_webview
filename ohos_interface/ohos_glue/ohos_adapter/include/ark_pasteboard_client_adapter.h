@@ -150,6 +150,27 @@ public:
 
     /*--ark web()--*/
     virtual void GetCustomData(void* data) = 0;
+
+    /*--ark web()--*/
+    virtual bool SetHtmlTextV2(const ArkWebString& htmlText) { return false; }
+
+    /*--ark web()--*/
+    virtual bool SetPlainTextV2(const ArkWebString& plainText) { return false; }
+
+    /*--ark web()--*/
+    virtual bool GetHtmlTextV2(ArkWebString& data) { return false; }
+
+    /*--ark web()--*/
+    virtual bool GetPlainTextV2(ArkWebString& data) { return false; }
+
+    /*--ark web()--*/
+    virtual bool SetCustomDataV2(ArkWebUInt8VectorMap& data) { return false; }
+
+    /*--ark web()--*/
+    virtual bool GetUriV2(ArkWebString& data) { return false; }
+
+    /*--ark web()--*/
+    virtual bool GetCustomDataV2(ArkWebUInt8VectorMap& data) { return false; }
 };
 
 /*--ark web(source=webview)--*/
