@@ -1918,6 +1918,59 @@ extern "C" {
         return ret;
     }
 
+    
+    CCertByteData FfiOHOSWebviewCtlGetCertificateByte(int64_t id, int32_t *errCode)
+    {
+        CCertByteData arrCertificate = {.head = nullptr, .size = 0};
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return arrCertificate;
+        }
+        std::vector<std::string> certChainDerData;
+        bool ans = nativeWebviewCtl->GetCertChainDerData(certChainDerData);
+        if (!ans) {
+            WEBVIEWLOGE("get cert chain data failed");
+            return arrCertificate;
+        }
+        if (certChainDerData.size() > UINT8_MAX) {
+            WEBVIEWLOGE("error, cert chain data array reach max");
+            return arrCertificate;
+        }
+        arrCertificate.size = static_cast<int64_t>(certChainDerData.size());
+        if (certChainDerData.empty()) {
+            *errCode = NWebError::NO_ERROR;
+            arrCertificate.head = nullptr;
+            return arrCertificate;
+        }
+        CArrUI8* arr = static_cast<CArrUI8*>(malloc(sizeof(CArrUI8) * certChainDerData.size()));
+        if (!arr) {
+            arrCertificate.head = nullptr;
+            arrCertificate.size = 0;
+            return arrCertificate;
+        }
+
+        for (size_t i = 0; i < certChainDerData.size(); ++i) {
+            const std::string& str = certChainDerData[i];
+            uint8_t* data = MallocUInt8(str);
+            if (!data && !str.empty()) {
+                // 如果非空字符串分配失败，回收并返回空结果
+                for (size_t j = 0; j < i; ++j) {
+                    free(arr[j].head);
+                }
+                free(arr);
+                arrCertificate.head = nullptr;
+                arrCertificate.size = 0;
+                return arrCertificate;
+            }
+            arr[i].head = data;
+            arr[i].size = static_cast<int64_t>(str.size());
+        }
+        *errCode = NWebError::NO_ERROR;
+        arrCertificate.head = arr;
+        return arrCertificate;
+    }
+
      int32_t FfiOHOSWebviewCtlSetScrollableEx(int64_t id, bool enable, int32_t scrollType)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);

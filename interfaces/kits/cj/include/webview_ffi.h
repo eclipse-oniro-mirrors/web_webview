@@ -103,6 +103,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlPostMessage(int64_t id, char* name, CArrI64 
 FFI_EXPORT CArrUI8 FfiOHOSWebviewCtlSerializeWebState(int64_t id, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlRestoreWebState(int64_t id, CArrUI8 cState);
 FFI_EXPORT CArrString FfiOHOSWebviewCtlGetCertificate(int64_t id, int32_t* errCode);
+FFI_EXPORT OHOS::Webview::CCertByteData FfiOHOSWebviewCtlGetCertificateByte(int64_t id, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlHasImage(int64_t id, void (*callbackRef)(RetDataBool));
 FFI_EXPORT int32_t FfiWebviewCtlCustomizeSchemes(OHOS::Webview::CArrScheme schemes);
 FFI_EXPORT bool FfiOHOSWebviewCtlTerminateRenderProcess(int64_t id, int32_t* errCode);
