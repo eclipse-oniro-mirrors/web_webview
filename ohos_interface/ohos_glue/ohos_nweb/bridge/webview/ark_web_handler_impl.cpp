@@ -959,4 +959,9 @@ void ArkWebHandlerImpl::OnAccessibilityEventV2(int64_t accessibilityId, int32_t 
 {
     nweb_handler_->OnAccessibilityEventV2(accessibilityId, eventType, ArkWebStringStructToClass(argument));
 }
+
+void ArkWebHandlerImpl::EnableSecurityLayer(bool isNeedSecurityLayer)
+{
+    nweb_handler_->EnableSecurityLayer(isNeedSecurityLayer);
+}
 } // namespace OHOS::ArkWeb
