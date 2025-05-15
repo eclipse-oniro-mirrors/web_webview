@@ -196,7 +196,7 @@ void AudioDecoderCallbackAdapterImpl::OnInputBufferAvailable(uint32_t index)
 void AudioDecoderCallbackAdapterImpl::OnOutputBufferAvailable(
     uint32_t index, uint8_t *bufferData, int32_t size, int64_t pts, int32_t offset, uint32_t flags)
 {
-    WVLOG_I("outputBuffer[%{public}u] available, buffer size[%{public}d], pts[%{public}lld],"
+    WVLOG_I("outputBuffer[%{public}u] available, buffer size[%{public}d], pts[%{public}" PRId64 "],"
         "offset[%{public}d], flags[%{public}u].", index, size, pts, offset, flags);
     if (!cb_) {
         WVLOG_E("callback is nullptr.");
