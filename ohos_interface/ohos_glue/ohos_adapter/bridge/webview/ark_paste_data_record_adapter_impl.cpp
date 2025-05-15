@@ -92,8 +92,9 @@ bool ArkPasteDataRecordAdapterImpl::GetHtmlTextV2(ArkWebString& data)
     std::shared_ptr<std::string> str = real_->GetHtmlText();
     if (str) {
         data = ArkWebStringClassToStruct(*str);
+        return true;
     }
-    return true;
+    return false;
 }
 
 void ArkPasteDataRecordAdapterImpl::GetPlainText(void* data)
@@ -108,8 +109,9 @@ bool ArkPasteDataRecordAdapterImpl::GetPlainTextV2(ArkWebString& data)
     std::shared_ptr<std::string> str = real_->GetPlainText();
     if (str) {
         data = ArkWebStringClassToStruct(*str);
+        return true;
     }
-    return true;
+    return false;
 }
 
 bool ArkPasteDataRecordAdapterImpl::GetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData)
@@ -150,8 +152,9 @@ bool ArkPasteDataRecordAdapterImpl::GetUriV2(ArkWebString& data)
     std::shared_ptr<std::string> str = real_->GetUri();
     if (str) {
         data = ArkWebStringClassToStruct(*str);
+        return true;
     }
-    return true;
+    return false;
 }
 
 void ArkPasteDataRecordAdapterImpl::GetCustomData(void* data)
@@ -166,8 +169,9 @@ bool ArkPasteDataRecordAdapterImpl::GetCustomDataV2(ArkWebUInt8VectorMap& data)
     std::shared_ptr<NWeb::PasteCustomData> custom = real_->GetCustomData();
     if (custom) {
         data = ArkWebUInt8VectorMapClassToStruct(*custom);
+        return true;
     }
-    return true;
+    return false;
 }
 
 } // namespace OHOS::ArkWeb

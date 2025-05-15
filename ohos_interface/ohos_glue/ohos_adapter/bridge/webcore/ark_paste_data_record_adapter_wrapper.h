@@ -48,6 +48,20 @@ public:
 
     std::shared_ptr<NWeb::PasteCustomData> GetCustomData() override;
 
+    bool SetHtmlTextV2(std::shared_ptr<std::string> htmlText) override;
+
+    bool SetPlainTextV2(std::shared_ptr<std::string> plainText) override;
+
+    std::shared_ptr<std::string> GetHtmlTextV2() override;
+
+    std::shared_ptr<std::string> GetPlainTextV2() override;
+
+    bool SetCustomDataV2(NWeb::PasteCustomData& data) override;
+
+    std::shared_ptr<std::string> GetUriV2() override;
+
+    std::shared_ptr<NWeb::PasteCustomData> GetCustomDataV2() override;
+
     ArkWebRefPtr<ArkPasteDataRecordAdapter> ctocpp_;
 };
 
