@@ -48,24 +48,30 @@ ArkPasteDataRecordAdapterWrapper::ArkPasteDataRecordAdapterWrapper(ArkWebRefPtr<
 
 bool ArkPasteDataRecordAdapterWrapper::SetHtmlText(std::shared_ptr<std::string> htmlText)
 {
+    return ctocpp_->SetHtmlText((void*)(&htmlText));
+}
+
+bool ArkPasteDataRecordAdapterWrapper::SetHtmlTextV2(std::shared_ptr<std::string> htmlText)
+{
     std::string& tmpHtml = *htmlText.get();
     ArkWebString str = ArkWebStringClassToStruct(tmpHtml);
-    if (ctocpp_->SetHtmlTextV2(str)) {
-        ArkWebStringStructRelease(str);
-        return true;
-    }
-    return ctocpp_->SetHtmlText((void*)(&htmlText));
+    bool result = ctocpp_->SetHtmlTextV2(str);
+    ArkWebStringStructRelease(str);
+    return result;
 }
 
 bool ArkPasteDataRecordAdapterWrapper::SetPlainText(std::shared_ptr<std::string> plainText)
 {
+    return ctocpp_->SetPlainText((void*)(&plainText));
+}
+
+bool ArkPasteDataRecordAdapterWrapper::SetPlainTextV2(std::shared_ptr<std::string> plainText)
+{
     std::string& tmpText = *plainText.get();
     ArkWebString str = ArkWebStringClassToStruct(tmpText);
-    if (ctocpp_->SetPlainTextV2(str)) {
-        ArkWebStringStructRelease(str);
-        return true;
-    }
-    return ctocpp_->SetPlainText((void*)(&plainText));
+    bool result = ctocpp_->SetPlainTextV2(str);
+    ArkWebStringStructRelease(str);
+    return result;
 }
 
 bool ArkPasteDataRecordAdapterWrapper::SetImgData(std::shared_ptr<NWeb::ClipBoardImageDataAdapter> imageData)
@@ -86,12 +92,17 @@ std::string ArkPasteDataRecordAdapterWrapper::GetMimeType()
 
 std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetHtmlText()
 {
-    ArkWebString str;
     std::shared_ptr<std::string> result;
+    ctocpp_->GetHtmlText((void*)&result);
+    return result;
+}
+
+std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetHtmlTextV2()
+{
+    ArkWebString str;
+    std::shared_ptr<std::string> result = nullptr;
     if (ctocpp_->GetHtmlTextV2(str)) {
         result = std::make_shared<std::string>(ArkWebStringStructToClass(str));
-    } else {
-        ctocpp_->GetHtmlText((void*)&result);
     }
     ArkWebStringStructRelease(str);
     return result;
@@ -99,12 +110,17 @@ std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetHtmlText()
 
 std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetPlainText()
 {
-    ArkWebString str;
     std::shared_ptr<std::string> result;
+    ctocpp_->GetPlainText((void*)&result);
+    return result;
+}
+
+std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetPlainTextV2()
+{
+    ArkWebString str;
+    std::shared_ptr<std::string> result = nullptr;
     if (ctocpp_->GetPlainTextV2(str)) {
         result = std::make_shared<std::string>(ArkWebStringStructToClass(str));
-    } else {
-        ctocpp_->GetPlainText((void*)&result);
     }
     ArkWebStringStructRelease(str);
     return result;
@@ -128,23 +144,30 @@ bool ArkPasteDataRecordAdapterWrapper::SetUri(const std::string& uriString)
 
 bool ArkPasteDataRecordAdapterWrapper::SetCustomData(NWeb::PasteCustomData& data)
 {
-    ArkWebUInt8VectorMap mapData = ArkWebUInt8VectorMapClassToStruct(data);
-    if (ctocpp_->SetCustomDataV2(mapData)) {
-        ArkWebUInt8VectorMapStructRelease(mapData);
-        return true;
-    }
-    ArkWebUInt8VectorMapStructRelease(mapData);
     return ctocpp_->SetCustomData((void*)(&data));
+}
+
+bool ArkPasteDataRecordAdapterWrapper::SetCustomDataV2(NWeb::PasteCustomData& data)
+{
+    ArkWebUInt8VectorMap mapData = ArkWebUInt8VectorMapClassToStruct(data);
+    bool result = ctocpp_->SetCustomDataV2(mapData);
+    ArkWebUInt8VectorMapStructRelease(mapData);
+    return result;
 }
 
 std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetUri()
 {
-    ArkWebString str;
     std::shared_ptr<std::string> result;
+    ctocpp_->GetUri((void*)&result);
+    return result;
+}
+
+std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetUriV2()
+{
+    ArkWebString str;
+    std::shared_ptr<std::string> result = nullptr;
     if (ctocpp_->GetUriV2(str)) {
         result = std::make_shared<std::string>(ArkWebStringStructToClass(str));
-    } else {
-        ctocpp_->GetUri((void*)&result);
     }
     ArkWebStringStructRelease(str);
     return result;
@@ -152,12 +175,17 @@ std::shared_ptr<std::string> ArkPasteDataRecordAdapterWrapper::GetUri()
 
 std::shared_ptr<NWeb::PasteCustomData> ArkPasteDataRecordAdapterWrapper::GetCustomData()
 {
-    ArkWebUInt8VectorMap mapData;
     std::shared_ptr<NWeb::PasteCustomData> result;
+    ctocpp_->GetCustomData((void*)&result);
+    return result;
+}
+
+std::shared_ptr<NWeb::PasteCustomData> ArkPasteDataRecordAdapterWrapper::GetCustomDataV2()
+{
+    ArkWebUInt8VectorMap mapData;
+    std::shared_ptr<NWeb::PasteCustomData> result = nullptr;
     if (ctocpp_->GetCustomDataV2(mapData)) {
         result = std::make_shared<NWeb::PasteCustomData>(ArkWebUInt8VectorMapStructToClass(mapData));
-    } else {
-        ctocpp_->GetCustomData((void*)&result);
     }
     ArkWebUInt8VectorMapStructRelease(mapData);
     return result;
