@@ -221,6 +221,11 @@ struct CScrollOffset{
     int32_t y;
 };
 
+struct CCertByteData{
+    CArrUI8* head;
+    int64_t size;
+};
+
 char* MallocCString(const std::string& origin);
 uint8_t* MallocUInt8(const std::string& origin);
 char** VectorToCArrString(const std::vector<std::string>& vec);
