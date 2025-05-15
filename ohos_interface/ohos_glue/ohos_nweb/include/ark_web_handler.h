@@ -868,6 +868,12 @@ public:
 
     /*--ark web()--*/
     virtual void EnableSecurityLayer(bool isNeedSecurityLayer) = 0;
+
+    /**
+     * @brief Called When you click on the selected area.
+     */
+    /*--ark web()--*/
+    virtual bool ChangeVisibilityOfQuickMenuV2() = 0;
 };
 
 } // namespace OHOS::ArkWeb

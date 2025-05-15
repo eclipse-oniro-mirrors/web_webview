@@ -964,4 +964,9 @@ void ArkWebHandlerImpl::EnableSecurityLayer(bool isNeedSecurityLayer)
 {
     nweb_handler_->EnableSecurityLayer(isNeedSecurityLayer);
 }
+
+bool ArkWebHandlerImpl::ChangeVisibilityOfQuickMenuV2()
+{
+    return nweb_handler_->ChangeVisibilityOfQuickMenuV2();
+}
 } // namespace OHOS::ArkWeb
