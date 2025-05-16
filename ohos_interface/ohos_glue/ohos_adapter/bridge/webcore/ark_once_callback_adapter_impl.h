@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_EVENT_HANDLER_ADAPTER_IMPL_H
-#define ARK_EVENT_HANDLER_ADAPTER_IMPL_H
+#ifndef ARK_ONCE_CALLBACK_ADAPTER_IMPL_H
+#define ARK_ONCE_CALLBACK_ADAPTER_IMPL_H
 #pragma once
 
 #include "event_handler_adapter.h"
@@ -22,23 +22,18 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkEventHandlerAdapterImpl : public ArkEventHandlerAdapter {
+class ArkOnceCallbackAdapterImpl : public ArkOnceCallbackAdapter {
 public:
-    explicit ArkEventHandlerAdapterImpl(std::shared_ptr<OHOS::NWeb::EventHandlerAdapter>);
+    explicit ArkOnceCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::OnceCallbackAdapter>);
 
-    bool AddFileDescriptorListener(int32_t fileDescriptor, uint32_t events,
-        const ArkWebRefPtr<ArkEventHandlerFDListenerAdapter> listener) override;
-
-    void RemoveFileDescriptorListener(int32_t fileDescriptor) override;
-
-    void PostTask(const ArkWebRefPtr<ArkOnceCallbackAdapter> callback) override;
+    void OnRunnable() override;
 
 private:
-    std::shared_ptr<OHOS::NWeb::EventHandlerAdapter> real_;
+    std::shared_ptr<OHOS::NWeb::OnceCallbackAdapter> real_;
 
-    IMPLEMENT_REFCOUNTING(ArkEventHandlerAdapterImpl);
+    IMPLEMENT_REFCOUNTING(ArkOnceCallbackAdapterImpl);
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_EVENT_HANDLER_ADAPTER_IMPL_H
+#endif // ARK_ONCE_CALLBACK_ADAPTER_IMPL_H
