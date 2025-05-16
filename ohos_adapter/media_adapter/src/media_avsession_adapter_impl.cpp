@@ -266,8 +266,6 @@ void MediaAVSessionAdapterImpl::DestroyAVSession() {
     if (iter != avSessionMap.end()) {
         avSessionMap.erase(iter);
     }
-    delete params_;
-    params_ = nullptr;
     WVLOG_I("media avsession adapter DestroyAVSession out");
 }
 
@@ -510,17 +508,17 @@ bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type)
     if (avSession_) {
         avSessionKey_->SetType(type);
         if (MediaAVSessionType::MEDIA_TYPE_VIDEO == type) {
-            want_ = std::make_shared<OHOS::AAFwk::WantParams>();
-            if (!want_) {
-                WVLOG_E("CreateNewSession: create want_ failed");
+            std::shared_ptr<OHOS::AAFwk::WantParams> want = std::make_shared<OHOS::AAFwk::WantParams>();
+            if (!want) {
+                WVLOG_E("CreateNewSession: create want failed");
             }
-            params_ = new (std::nothrow) OHOS::AAFwk::Array(PARAMS_VALUE, OHOS::AAFwk::g_IID_IBoolean);
-            if (!params_) {
-                WVLOG_E("CreateNewSession: create params_ failed");
+            sptr<OHOS::AAFwk::IArray> params = new (std::nothrow) OHOS::AAFwk::Array(PARAMS_VALUE, OHOS::AAFwk::g_IID_IBoolean);
+            if (!params) {
+                WVLOG_E("CreateNewSession: create params failed");
             }
-            params_->Set(INDEX_VALUE, OHOS::AAFwk::Boolean::Box(true));
-            want_->SetParam("hw_live_view_hidden_when_keyguard", params_);
-            avSession_->SetExtras(*want_);
+            params->Set(INDEX_VALUE, OHOS::AAFwk::Boolean::Box(true));
+            want->SetParam("hw_live_view_hidden_when_keyguard", params);
+            avSession_->SetExtras(*want);
             WVLOG_I("CreateNewSession: Set hw_live_view_hidden_when_keyguard true");
         }
         avSessionMap.insert(
