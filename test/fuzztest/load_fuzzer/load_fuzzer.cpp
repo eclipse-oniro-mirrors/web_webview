@@ -14,22 +14,25 @@
  */
 
 #include "load_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "nweb.h"
 #include "nweb_create_window.h"
 
 namespace OHOS {
+    constexpr uint8_t MAX_STRING_LENGTH = 64;
     std::shared_ptr<OHOS::NWeb::NWeb> g_nweb = nullptr;
     bool LoadFuzzTest(const uint8_t* data, size_t size)
     {
         if ((data == nullptr) || (size == 0)) {
             return true;
         }
+        FuzzedDataProvider dataProvider(data, size);
         g_nweb = NWeb::GetNwebForTest();
         if (g_nweb == nullptr) {
             return true;
         }
-        std::string url((const char *)data, size);
+        std::string url = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
         g_nweb->Load(url);
         return true;
     }
