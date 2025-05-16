@@ -14,6 +14,7 @@
  */
 
 #include "sethttpdns_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include <cstring>
 #include <securec.h>
@@ -32,11 +33,9 @@ bool SetHttpDnsFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size < sizeof(int))) {
         return false;
     }
-    std::string dohConfig((const char*)data, size);
-    int mode;
-    if (memcpy_s(&mode, sizeof(int), data, sizeof(int)) != 0) {
-        return false;
-    }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string dohConfig = dataProvider.ConsumeRandomLengthString(125);
+    int mode = dataProvider.ConsumeIntegralInRange<int>(0, 10);
 
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     config->SetMode(mode);
