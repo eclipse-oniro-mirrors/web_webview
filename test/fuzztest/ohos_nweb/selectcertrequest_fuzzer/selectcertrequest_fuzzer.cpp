@@ -14,6 +14,7 @@
  */
 
 #include "selectcertrequest_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include <cstring>
 #include <securec.h>
@@ -27,20 +28,27 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 125;
+constexpr int MAX_SET_NUMBER = 1000;
+constexpr int MAX_VECTOR_SIZE = 10;
 bool SelectCertRequestFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int))) {
         return false;
     }
+    FuzzedDataProvider dataProvider(data, size);
     OHOS::NWeb::NWebHandler handler;
     std::shared_ptr<NWebJSSslSelectCertResult> result = nullptr;
-    std::string host((const char*)data, size);
-    int port;
-    if (memcpy_s(&port, sizeof(int), data, sizeof(int)) != 0) {
-        return false;
+    std::string host = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    int port = dataProvider.ConsumeIntegralInRange<int>(0, MAX_SET_NUMBER);
+    std::vector<std::string> keyTypes;
+    std::vector<std::string> issuers;
+    int vec_size = dataProvider.ConsumeIntegralInRange<int>(0, MAX_VECTOR_SIZE);
+    for (size_t i = 0; i < vec_size; i++) {
+        std::string item = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+        keyTypes.push_back(item);
+        issuers.push_back(item);
     }
-    std::vector<std::string> keyTypes = { host };
-    std::vector<std::string> issuers = { host };
     handler.OnSslSelectCertRequestByJS(result, host, port, keyTypes, issuers);
     return true;
 }
