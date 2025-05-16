@@ -512,7 +512,7 @@ bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type)
         if (MediaAVSessionType::MEDIA_TYPE_VIDEO == type) {
             want_ = std::make_shared<OHOS::AAFwk::WantParams>();
             if (!want_) {
-                WVLOG_E("CreateNewSession: create want failed");
+                WVLOG_E("CreateNewSession: create want_ failed");
             }
             params_ = new (std::nothrow) OHOS::AAFwk::Array(PARAMS_VALUE, OHOS::AAFwk::g_IID_IBoolean);
             if (!params_) {
