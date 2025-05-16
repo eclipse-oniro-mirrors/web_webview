@@ -1132,7 +1132,6 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultS
     napi_typeof(jsObj->GetEnv(), callResult, &valueType);
     WVLOG_D("get javaScript result already in js thread end");
     if (!isObject) {
-        napi_close_handle_scope(jsObj->GetEnv(), scope);
         return ret;
     }
     JavaScriptOb::ObjectID returnedObjectId;
@@ -1150,7 +1149,6 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultS
         std::string bin = std::string("TYPE_OBJECT_ID") + std::string(";") + std::to_string(returnedObjectId);
         ret = std::make_shared<NWebValue>(bin.c_str(), bin.size());
     }
-    napi_close_handle_scope(jsObj->GetEnv(), scope);
     return ret;
 }
 
