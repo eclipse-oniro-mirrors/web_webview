@@ -32,6 +32,18 @@ void EventHandlerFDListenerAdapterImpl::OnReadable(int32_t fileDescriptor)
     }
 }
 
+OnceCallbackAdapterImpl::OnceCallbackAdapterImpl(
+    const std::shared_ptr<OnceCallbackAdapter>& callback)
+    : callback_(callback)
+{}
+
+void OnceCallbackAdapterImpl::OnRunnable()
+{
+    if (callback_) {
+        callback_->OnRunnable();
+    }
+}
+
 EventHandlerAdapterImpl::EventHandlerAdapterImpl()
 {
     eventHandler_ = AppExecFwk::EventHandler::Current();
@@ -54,5 +66,20 @@ void EventHandlerAdapterImpl::RemoveFileDescriptorListener(int32_t fileDescripto
     if (eventHandler_) {
         eventHandler_->RemoveFileDescriptorListener(fileDescriptor);
     }
+}
+
+void EventHandlerAdapterImpl::PostTask(const std::shared_ptr<OnceCallbackAdapter> callback)
+{
+    if (!callback || !eventHandler_) {
+        WVLOG_E("wanghui-debug the callback or event handler is nulltpr");
+        return;
+    }
+    auto onceCallback = std::make_shared<OnceCallbackAdapterImpl>(callback);
+    WVLOG_E("wanghui-debug PostTask on event handler");
+    eventHandler_->PostTask(
+            [onceCallback]() {
+              WVLOG_E("wanghui-debug run task on event handler");
+              onceCallback->OnRunnable();
+            }, AppExecFwk::EventQueue::Priority::LOW);
 }
 } // namespace OHOS::NWeb
