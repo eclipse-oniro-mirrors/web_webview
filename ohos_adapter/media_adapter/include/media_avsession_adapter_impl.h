@@ -106,7 +106,7 @@ private:
     //download and save image to avMetadata_Image by ndk
     OH_AVMetadata *avMetadata_Image = nullptr;
     OH_AVMetadataBuilder *builder_ = nullptr;
-    std::shared_ptr<OHOS::AAFwk::WantParams> want;
+    std::shared_ptr<OHOS::AAFwk::WantParams> want_;
     sptr<OHOS::AAFwk::IArray> params_ = nullptr;
     static std::unordered_map<std::string, std::shared_ptr<AVSession::AVSession>> avSessionMap;
 };
