@@ -14,6 +14,7 @@
  */
 
 #include "loadwithdataandbaseurl_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "nweb.h"
 #include "nweb_create_window.h"
@@ -25,15 +26,16 @@ namespace OHOS {
         if ((data == nullptr) || (size == 0)) {
             return true;
         }
+        FuzzedDataProvider dataProvider(data, size);
         g_nweb = NWeb::GetNwebForTest();
         if (g_nweb == nullptr) {
             return true;
         }
-        std::string baseUrl((const char *)data, size);
-        const std::string datas;
-        const std::string mimeType;
-        const std::string encoding;
-        const std::string historyUrl;
+        std::string baseUrl = dataProvider.ConsumeRandomLengthString(50);
+        std::string datas = dataProvider.ConsumeRandomLengthString(255);
+        std::string mimeType = dataProvider.ConsumeRandomLengthString(10);
+        std::string encoding = dataProvider.ConsumeRandomLengthString(10);
+        std::string historyUrl = dataProvider.ConsumeRandomLengthString(50);
         g_nweb->LoadWithDataAndBaseUrl(baseUrl, datas, mimeType, encoding, historyUrl);
         return true;
     }
