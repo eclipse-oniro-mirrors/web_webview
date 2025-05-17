@@ -374,12 +374,6 @@ std::map<std::string, std::vector<std::string>> ArkWebStringVectorMapStructToCla
 
 void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap& struct_value);
 
-ArkWebUint8Vector ArkWebUint8VectorClassToStruct(const std::vector<uint8_t>& class_value);
-
-std::vector<uint8_t> ArkWebUint8VectorStructToClass(const ArkWebUint8Vector& struct_value);
-
-ARK_WEB_NO_SANITIZE void ArkWebUint8VectorStructRelease(ArkWebUint8Vector& struct_value);
-
 ArkWebUInt8VectorMap ArkWebUInt8VectorMapClassToStruct(
     const std::map<std::string, std::vector<uint8_t>>& class_value);
 
