@@ -268,43 +268,8 @@ ARK_WEB_NO_SANITIZE void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMa
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
 }
 
-ArkWebUint8Vector ArkWebUint8VectorClassToStruct(const std::vector<uint8_t>& class_value)
-{
-    ArkWebUint8Vector struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
-    if (struct_value.size > 0) {
-        struct_value.value = (uint8_t*)ArkWebMemMalloc(sizeof(uint8_t) * struct_value.size);
-        if (struct_value.value == nullptr) {
-            struct_value.size = 0;
-            return struct_value;
-        }
-
-        int count = 0;
-        for (auto it = class_value.begin(); it != class_value.end(); it++) {
-            struct_value.value[count] = *it;
-            count++;
-        }
-    }
-
-    return struct_value;
-}
-
-std::vector<uint8_t> ArkWebUint8VectorStructToClass(const ArkWebUint8Vector& struct_value)
-{
-    std::vector<uint8_t> class_value;
-    for (int count = 0; count < struct_value.size; count++) {
-        class_value.push_back(struct_value.value[count]);
-    }
-
-    return class_value;
-}
-
-ARK_WEB_NO_SANITIZE void ArkWebUint8VectorStructRelease(ArkWebUint8Vector& struct_value)
-{
-    struct_value.size = 0;
-    SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
-}
-
-ArkWebUInt8VectorMap ArkWebUInt8VectorMapClassToStruct(const std::map<std::string, std::vector<uint8_t>>& class_value)
+ArkWebUInt8VectorMap ArkWebUInt8VectorMapClassToStruct(
+    const std::map<std::string, std::vector<uint8_t>>& class_value)
 {
     ArkWebUInt8VectorMap struct_value = { .size = class_value.size(), .ark_web_mem_free_func = ArkWebMemFree };
     if (struct_value.size > 0) {
@@ -320,7 +285,7 @@ ArkWebUInt8VectorMap ArkWebUInt8VectorMapClassToStruct(const std::map<std::strin
         int count = 0;
         for (auto it = class_value.begin(); it != class_value.end(); it++) {
             struct_value.key[count] = ArkWebStringClassToStruct(it->first);
-            struct_value.value[count] = ArkWebUint8VectorClassToStruct(it->second);
+            struct_value.value[count] = ArkWebBasicVectorClassToStruct<uint8_t, ArkWebUint8Vector>(it->second);
             count++;
         }
     }
@@ -332,9 +297,9 @@ std::map<std::string, std::vector<uint8_t>> ArkWebUInt8VectorMapStructToClass(co
 {
     std::map<std::string, std::vector<uint8_t>> class_value;
     for (int count = 0; count < struct_value.size; count++) {
-        class_value.insert(
-            std::map<std::string, std::vector<uint8_t>>::value_type(ArkWebStringStructToClass(struct_value.key[count]),
-                ArkWebUint8VectorStructToClass(struct_value.value[count])));
+        class_value.insert(std::map<std::string, std::vector<uint8_t>>::value_type(
+            ArkWebStringStructToClass(struct_value.key[count]),
+            ArkWebBasicVectorStructToClass<uint8_t, ArkWebUint8Vector>(struct_value.value[count])));
     }
 
     return class_value;
@@ -344,7 +309,7 @@ ARK_WEB_NO_SANITIZE void ArkWebUInt8VectorMapStructRelease(ArkWebUInt8VectorMap&
 {
     for (int count = 0; count < struct_value.size; count++) {
         ArkWebStringStructRelease(struct_value.key[count]);
-        ArkWebUint8VectorStructRelease(struct_value.value[count]);
+        ArkWebBasicVectorStructRelease(struct_value.value[count]);
     }
 
     struct_value.size = 0;
