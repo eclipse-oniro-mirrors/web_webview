@@ -157,11 +157,11 @@ class MockRdbStore : public OHOS::NativeRdb::RdbStore {
         (override));
 
     MOCK_METHOD(int, Subscribe,
-        (const SubscribeOption &option, RdbStoreObserver *observer),
+        (const SubscribeOption &option, std::shared_ptr<RdbStoreObserver> observer),
         (override));
 
     MOCK_METHOD(int, UnSubscribe,
-        (const SubscribeOption &option, RdbStoreObserver *observer),
+        (const SubscribeOption &option, std::shared_ptr<RdbStoreObserver> observer),
         (override));
 
     MOCK_METHOD(int, SubscribeObserver,
