@@ -1063,6 +1063,16 @@ public:
      * @brief Called When you click on the selected area.
      */
     virtual bool ChangeVisibilityOfQuickMenuV2() { return false; }
+
+    /**
+     * @brief Called when web occurs event of picture in picture.
+     */
+    virtual void OnPip(int status,
+                       int delegate_id,
+                       int child_id,
+                       int frame_routing_id,
+                       int width,
+                       int height) {}
 };
 
 } // namespace OHOS::NWeb
