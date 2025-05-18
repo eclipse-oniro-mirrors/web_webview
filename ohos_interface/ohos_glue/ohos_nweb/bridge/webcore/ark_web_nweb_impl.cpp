@@ -1360,4 +1360,24 @@ void ArkWebNWebImpl::SetFocusWindowId(uint32_t focus_window_id)
 {
     nweb_nweb_->SetFocusWindowId(focus_window_id);
 }
+
+void ArkWebNWebImpl::RunDataDetectorJS()
+{
+    nweb_nweb_->RunDataDetectorJS();
+}
+
+void ArkWebNWebImpl::SetDataDetectorEnable(bool enable)
+{
+    nweb_nweb_->SetDataDetectorEnable(enable);
+}
+
+void ArkWebNWebImpl::OnDataDetectorSelectText()
+{
+    nweb_nweb_->OnDataDetectorSelectText();
+}
+
+void ArkWebNWebImpl::OnDataDetectorCopy(const ArkWebStringVector& recordMix)
+{
+    nweb_nweb_->OnDataDetectorCopy(ArkWebStringVectorStructToClass(recordMix));
+}
 } // namespace OHOS::ArkWeb

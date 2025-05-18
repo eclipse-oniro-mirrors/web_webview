@@ -1580,6 +1580,26 @@ public:
      */
     void SetFocusWindowId(uint32_t focus_window_id) override;
 
+    /**
+     * @brief Run data detector JS
+     */
+    void RunDataDetectorJS() override;
+
+    /**
+     * @brief Set data detector enable.
+     */
+    void SetDataDetectorEnable(bool enable) override;
+
+    /**
+     * @brief On data detector select text.
+     */
+    void OnDataDetectorSelectText() override;
+
+    /**
+     * @brief On data detector copy.
+     */
+    void OnDataDetectorCopy(const std::vector<std::string>& recordMix) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
