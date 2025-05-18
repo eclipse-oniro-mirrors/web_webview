@@ -874,6 +874,14 @@ public:
      */
     /*--ark web()--*/
     virtual bool ChangeVisibilityOfQuickMenuV2() = 0;
+
+    /*--ark web()--*/
+    virtual void OnPip(int status,
+                       int delegate_id,
+                       int child_id,
+                       int frame_routing_id,
+                       int width,
+                       int height) = 0;
 };
 
 } // namespace OHOS::ArkWeb
