@@ -631,6 +631,8 @@ public:
     void RestoreRenderFit() override;
 
     void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) override;
+
+    void EnableSecurityLayer(bool isNeedSecurityLayer) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

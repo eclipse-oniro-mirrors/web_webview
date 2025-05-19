@@ -1056,6 +1056,8 @@ public:
     virtual void RestoreRenderFit() {}
 
     virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) {}
+
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) {}
 };
 
 } // namespace OHOS::NWeb
