@@ -14,7 +14,7 @@
  */
 
 let cert = requireInternal('security.cert');
-let webview = requireInternal('web.webview');
+let webview = requireNapi('web.webview_napi_back');
 let fileIo = requireNapi('file.fs');
 let fileUri = requireNapi('file.fileuri');
 let picker = requireNapi('file.picker');
