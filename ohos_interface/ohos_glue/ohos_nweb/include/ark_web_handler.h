@@ -865,6 +865,9 @@ public:
      */
     /*--ark web()--*/
     virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) = 0;
+
+    /*--ark web()--*/
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) = 0;
 };
 
 } // namespace OHOS::ArkWeb
