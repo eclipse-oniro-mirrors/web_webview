@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_EVENT_HANDLER_ADAPTER_WRAPPER_H
-#define ARK_EVENT_HANDLER_ADAPTER_WRAPPER_H
+#ifndef ARK_ONCE_CALLBACK_ADAPTER_IMPL_H
+#define ARK_ONCE_CALLBACK_ADAPTER_IMPL_H
 #pragma once
 
 #include "event_handler_adapter.h"
@@ -22,21 +22,18 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkEventHandlerAdapterWrapper : public OHOS::NWeb::EventHandlerAdapter {
+class ArkOnceCallbackAdapterImpl : public ArkOnceCallbackAdapter {
 public:
-    explicit ArkEventHandlerAdapterWrapper(ArkWebRefPtr<ArkEventHandlerAdapter>);
+    explicit ArkOnceCallbackAdapterImpl(std::shared_ptr<OHOS::NWeb::OnceCallbackAdapter>);
 
-    bool AddFileDescriptorListener(int32_t fileDescriptor, uint32_t events,
-        const std::shared_ptr<OHOS::NWeb::EventHandlerFDListenerAdapter> listener) override;
-
-    void RemoveFileDescriptorListener(int32_t fileDescriptor) override;
-
-    void PostTask(const std::shared_ptr<OHOS::NWeb::OnceCallbackAdapter> callback) override;
+    void OnRunnable() override;
 
 private:
-    ArkWebRefPtr<ArkEventHandlerAdapter> ctocpp_;
+    std::shared_ptr<OHOS::NWeb::OnceCallbackAdapter> real_;
+
+    IMPLEMENT_REFCOUNTING(ArkOnceCallbackAdapterImpl);
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_EVENT_HANDLER_ADAPTER_WRAPPER_H
+#endif // ARK_ONCE_CALLBACK_ADAPTER_IMPL_H
