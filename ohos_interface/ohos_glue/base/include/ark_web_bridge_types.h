@@ -272,6 +272,7 @@ enum ArkWebBridgeType {
     ARK_OHOS_DRAWING_TEXT_TYPOGRAPHY_ADAPTER = 10146,
     ARK_AUDIO_BUFFER_ADAPTER = 10147,
     ARK_ONCE_CALLBACK_ADAPTER = 10148,
+    ARK_VPN_LISTENER = 10149,
     /*Note: The end of adapter interface bridge type*/
     ARK_WEB_ADAPTER_INTERFACE_BUTT,
 };
