@@ -1816,6 +1816,26 @@ public:
      * @brief Set the window id.
      */
     virtual void SetFocusWindowId(uint32_t focus_window_id) {}
+
+    /**
+     * @brief Run data detector JS.
+     */
+    virtual void RunDataDetectorJS() {}
+
+    /**
+     * @brief Set data detector enable.
+     */
+    virtual void SetDataDetectorEnable(bool enable) {}
+
+    /**
+     * @brief On data detector select text.
+     */
+    virtual void OnDataDetectorSelectText() {}
+
+    /**
+     * @brief On data detector copy.
+     */
+    virtual void OnDataDetectorCopy(const std::vector<std::string>& recordMix) {}
 };
 
 } // namespace OHOS::NWeb
