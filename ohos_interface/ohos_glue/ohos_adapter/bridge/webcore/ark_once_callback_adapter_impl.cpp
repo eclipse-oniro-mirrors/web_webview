@@ -24,7 +24,9 @@ ArkOnceCallbackAdapterImpl::ArkOnceCallbackAdapterImpl(
 
 void ArkOnceCallbackAdapterImpl::OnRunnable()
 {
-    real_->OnRunnable();
+    if (real_) {
+        real_->OnRunnable();
+    }
 }
 
 } // namespace OHOS::ArkWeb
