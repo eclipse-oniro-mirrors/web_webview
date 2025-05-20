@@ -30,6 +30,15 @@ public:
     virtual void OnReadable(int32_t fileDescriptor) = 0;
 };
 
+class OnceCallbackAdapter {
+public:
+    OnceCallbackAdapter() = default;
+
+    virtual ~OnceCallbackAdapter() = default;
+
+    virtual void OnRunnable() = 0;
+};
+
 class EventHandlerAdapter {
 public:
     EventHandlerAdapter() = default;
@@ -40,6 +49,8 @@ public:
         int32_t fileDescriptor, uint32_t events, const std::shared_ptr<EventHandlerFDListenerAdapter> listener) = 0;
 
     virtual void RemoveFileDescriptorListener(int32_t fileDescriptor) = 0;
+
+    virtual void PostTask(const std::shared_ptr<OnceCallbackAdapter> callback) = 0;
 
     // be consistent with
     // rom/base/notification/eventhandler/interfaces/inner_api/file_descriptor_listener.h
