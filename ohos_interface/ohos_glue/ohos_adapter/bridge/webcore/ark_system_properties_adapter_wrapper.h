@@ -89,6 +89,8 @@ public:
 
     std::string GetScrollFriction() override;
 
+    std::string GetBundleName() override;
+
 private:
     ArkWebRefPtr<ArkSystemPropertiesAdapter> ctocpp_;
 };

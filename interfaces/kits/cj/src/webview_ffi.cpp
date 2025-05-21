@@ -711,6 +711,10 @@ extern "C" {
             return ret;
         }
         std::shared_ptr<NWeb::HitTestResult> nwebResult = nativeWebviewCtl->GetHitTestValue();
+        if (nwebResult == nullptr) {
+            *errCode = NWebError::INIT_ERROR;
+            return ret;
+        }
         *errCode = NWebError::NO_ERROR;
         ret.code = nwebResult->GetType();
         ret.data = MallocCString(nwebResult->GetExtra());
@@ -1088,7 +1092,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlSetPrintBackground(int64_t id, bool enable)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
         nativeWebviewCtl->SetPrintBackground(enable);
@@ -1098,7 +1102,7 @@ extern "C" {
     bool FfiOHOSWebviewCtlGetPrintBackground(int64_t id, int32_t *errCode)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -1110,7 +1114,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlSetScrollable(int64_t id, bool enable)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
         nativeWebviewCtl->SetScrollable(enable);
@@ -1120,7 +1124,7 @@ extern "C" {
     bool FfiOHOSWebviewCtlGetScrollable(int64_t id, int32_t *errCode)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -1132,13 +1136,16 @@ extern "C" {
     void FfiOHOSWebviewCtlEnableAdsBlock(int64_t id, bool enable)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return;
+        }
         nativeWebviewCtl->EnableAdsBlock(enable);
     }
 
     bool FfiOHOSWebviewCtlIsAdsBlockEnabled(int64_t id)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return false;
         }
         return nativeWebviewCtl->IsAdsBlockEnabled();
@@ -1147,7 +1154,7 @@ extern "C" {
     bool FfiOHOSWebviewCtlIsAdsBlockEnabledForCurPage(int64_t id)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return false;
         }
         return nativeWebviewCtl->IsAdsBlockEnabledForCurPage();
@@ -1156,7 +1163,7 @@ extern "C" {
     bool FfiOHOSWebviewCtlIsIntelligentTrackingPreventionEnabled(int64_t id, int32_t *errCode)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
@@ -1168,7 +1175,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlEnableIntelligentTrackingPrevention(int64_t id, bool enable)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
         nativeWebviewCtl->EnableIntelligentTrackingPrevention(enable);
@@ -1178,7 +1185,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlGetMediaPlaybackState(int64_t id, int32_t *errorCode)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl -> IsInit()) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             *errorCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -1381,7 +1388,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlSetBackForwardCacheOptions(int64_t id, int32_t size, int32_t timeToLive)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
         nativeWebviewCtl->SetBackForwardCacheOptions(size, timeToLive);
@@ -1391,7 +1398,7 @@ extern "C" {
     int32_t FfiOHOSWebviewCtlSetPathAllowingUniversalAccess(int64_t id, CArrString pathList)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl) {
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
             return NWebError::INIT_ERROR;
         }
         std::vector<std::string> paths;
@@ -1411,7 +1418,7 @@ extern "C" {
     {
         WEBVIEWLOGD("SetUrlTrustList invoked");
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl) {
+        if (nativeWebviewCtl == nullptr) {
             return NWebError::INIT_ERROR;
         }
         std::string urlTrustList = cUrl;
@@ -1465,7 +1472,7 @@ extern "C" {
     int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t *errCode)
     {
         auto nativeWebHistoryListImpl = FFIData::GetData<WebHistoryListImpl>(id);
-        if (nativeWebHistoryListImpl == nullptr || !nativeWebHistoryListImpl) {
+        if (nativeWebHistoryListImpl == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -1476,7 +1483,7 @@ extern "C" {
     int32_t FfiOHOSBackForwardListSize(int64_t id, int32_t *errCode)
     {
         auto nativeWebHistoryListImpl = FFIData::GetData<WebHistoryListImpl>(id);
-        if (nativeWebHistoryListImpl == nullptr || !nativeWebHistoryListImpl) {
+        if (nativeWebHistoryListImpl == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return -1;
         }
@@ -1600,7 +1607,7 @@ extern "C" {
     {
         CHistoryItem ret = {.icon = -1, .historyUrl = nullptr, .historyRawUrl = nullptr, .title = nullptr};
         auto nativeWebHistoryListImpl = FFIData::GetData<WebHistoryListImpl>(id);
-        if (nativeWebHistoryListImpl == nullptr || !nativeWebHistoryListImpl) {
+        if (nativeWebHistoryListImpl == nullptr) {
             *errCode = NWebError::INIT_ERROR;
             return ret;
         }
@@ -1904,8 +1911,10 @@ extern "C" {
         }
         std::shared_ptr<NWeb::HitTestResult> nwebResult = nativeWebviewCtl->GetLastHitTest();
         *errCode = NWebError::NO_ERROR;
-        ret.code = nwebResult->GetType();
-        ret.data = MallocCString(nwebResult->GetExtra());
+        if (nwebResult) {
+            ret.code = nwebResult->GetType();
+            ret.data = MallocCString(nwebResult->GetExtra());
+        }
         return ret;
     }
 }

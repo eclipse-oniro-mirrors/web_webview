@@ -949,4 +949,24 @@ void ArkWebHandlerImpl::OnShowAutofillPopupV2(
 {
     nweb_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, ArkWebStringVectorStructToClass(menu_items));
 }
+
+void ArkWebHandlerImpl::RestoreRenderFit()
+{
+    nweb_handler_->RestoreRenderFit();
+}
+
+void ArkWebHandlerImpl::OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument)
+{
+    nweb_handler_->OnAccessibilityEventV2(accessibilityId, eventType, ArkWebStringStructToClass(argument));
+}
+
+void ArkWebHandlerImpl::EnableSecurityLayer(bool isNeedSecurityLayer)
+{
+    nweb_handler_->EnableSecurityLayer(isNeedSecurityLayer);
+}
+
+bool ArkWebHandlerImpl::ChangeVisibilityOfQuickMenuV2()
+{
+    return nweb_handler_->ChangeVisibilityOfQuickMenuV2();
+}
 } // namespace OHOS::ArkWeb

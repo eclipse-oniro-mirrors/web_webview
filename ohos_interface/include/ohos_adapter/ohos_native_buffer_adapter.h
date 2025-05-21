@@ -17,6 +17,7 @@
 #define OHOS_NATIVE_BUFFER_ADAPTER_H
 
 #include <string>
+#include <memory>
 
 namespace OHOS::NWeb {
 class NativeBufferConfigAdapter {

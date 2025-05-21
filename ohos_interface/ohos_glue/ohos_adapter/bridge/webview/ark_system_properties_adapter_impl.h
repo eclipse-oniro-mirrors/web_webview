@@ -88,6 +88,8 @@ public:
 
     ArkWebString GetScrollFriction() override;
 
+    ArkWebString GetBundleName() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

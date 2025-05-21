@@ -27,6 +27,7 @@
 #include "application_context.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
+#include "nweb_napi_scope.h"
 #include "native_engine/native_engine.h"
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
@@ -45,6 +46,7 @@
 #include "web_download_manager.h"
 #include "arkweb_scheme_handler.h"
 #include "web_scheme_handler_request.h"
+#include "system_properties_adapter_impl.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -2285,9 +2287,8 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
         work = nullptr;
         return;
     }
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(data->env_, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(data->env_);
+    if (!scope.IsVaild()) {
         delete work;
         work = nullptr;
         return;
@@ -2296,7 +2297,6 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
     if (!UvWebMsgOnReceiveCbDataHandler(data, result[INTEGER_ZERO])) {
         delete work;
         work = nullptr;
-        napi_close_handle_scope(data->env_, scope);
         return;
     }
 
@@ -2308,21 +2308,18 @@ void NWebValueCallbackImpl::UvWebMessageOnReceiveValueCallback(uv_work_t *work, 
     std::unique_lock<std::mutex> lock(data->mutex_);
     data->ready_ = true;
     data->condition_.notify_all();
-    napi_close_handle_scope(data->env_, scope);
 }
 
 static void InvokeWebMessageCallback(NapiWebMessagePort::WebMsgPortParam *data)
 {
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(data->env_, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(data->env_);
+    if (!scope.IsVaild()) {
         WVLOG_E("scope is null");
         return;
     }
     napi_value result[INTEGER_ONE] = {0};
     if (!UvWebMsgOnReceiveCbDataHandler(data, result[INTEGER_ZERO])) {
         WVLOG_E("get result failed");
-        napi_close_handle_scope(data->env_, scope);
         return;
     }
 
@@ -2330,8 +2327,6 @@ static void InvokeWebMessageCallback(NapiWebMessagePort::WebMsgPortParam *data)
     napi_get_reference_value(data->env_, data->callback_, &onMsgEventFunc);
     napi_value placeHodler = nullptr;
     napi_call_function(data->env_, nullptr, onMsgEventFunc, INTEGER_ONE, &result[INTEGER_ZERO], &placeHodler);
-
-    napi_close_handle_scope(data->env_, scope);
 }
 
 void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
@@ -3487,9 +3482,9 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
     int fd;
     size_t scriptLength;
     ErrCode constructResult = ConstructFlowbuf(env, argv[INTEGER_ZERO], fd, scriptLength);
-    if (constructResult != NO_ERROR) {
+    if (constructResult != NO_ERROR)
         return RunJSBackToOriginal(env, info, extention, argv[INTEGER_ZERO], result);
-    }
+
     usedFd_++;
 
     WebviewController *webviewController = nullptr;
@@ -3510,6 +3505,8 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
         if (jsCallback) {
             // RunJavaScriptCallbackExt will close fd after IPC
             webviewController->RunJavaScriptCallbackExt(fd, scriptLength, env, std::move(jsCallback), extention);
+        } else {
+            close(fd);
         }
         usedFd_--;
         return result;
@@ -3520,6 +3517,8 @@ napi_value NapiWebviewController::RunJavaScriptInternalExt(napi_env env, napi_ca
         if (promise && deferred) {
             // RunJavaScriptCallbackExt will close fd after IPC
             webviewController->RunJavaScriptPromiseExt(fd, scriptLength, env, deferred, extention);
+        } else {
+            close(fd);
         }
         usedFd_--;
         return promise;
@@ -4942,9 +4941,8 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         return result;
     }
     napi_value webPrintDoc = nullptr;
@@ -4955,11 +4953,9 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
     napi_value proxy = nullptr;
     status = napi_new_instance(env, webPrintDoc, INTEGER_ONE, &consParam[INTEGER_ZERO], &proxy);
     if (status!= napi_ok) {
-        napi_close_handle_scope(env, scope);
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
-    napi_close_handle_scope(env, scope);
     return proxy;
 }
 
@@ -5069,9 +5065,8 @@ WebPrintWriteResultCallback ParseWebPrintWriteResultCallback(napi_env env, napi_
             if (!env) {
                 return;
             }
-            napi_handle_scope scope = nullptr;
-            napi_open_handle_scope(env, &scope);
-            if (scope == nullptr) {
+            NApiScope scope(env);
+            if (!scope.IsVaild()) {
                 return;
             }
             napi_value setResult[INTEGER_TWO] = {0};
@@ -5083,7 +5078,6 @@ WebPrintWriteResultCallback ParseWebPrintWriteResultCallback(napi_env env, napi_
             napi_value callbackResult = nullptr;
             napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
             napi_delete_reference(env, jCallback);
-            napi_close_handle_scope(env, scope);
         };
         return callbackImpl;
     }
@@ -5323,7 +5317,10 @@ napi_value NapiWebviewController::SetWebSchemeHandler(napi_env env, napi_callbac
         WVLOG_E("NapiWebviewController::SetWebSchemeHandler handler is null");
         return nullptr;
     }
-    napi_create_reference(env, obj, 1, &handler->delegate_);
+    if (handler->delegate_ == nullptr) {
+        napi_create_reference(env, obj, 1, &handler->delegate_);
+        webviewController->SaveWebSchemeHandler(scheme.c_str(), handler);
+    }
 
     if (!webviewController->SetWebSchemeHandler(scheme.c_str(), handler)) {
         WVLOG_E("NapiWebviewController::SetWebSchemeHandler failed");
@@ -5371,7 +5368,10 @@ napi_value NapiWebviewController::SetServiceWorkerWebSchemeHandler(
         WVLOG_E("NapiWebviewController::SetServiceWorkerWebSchemeHandler handler is null");
         return nullptr;
     }
-    napi_create_reference(env, obj, 1, &handler->delegate_);
+    if (handler->delegate_ == nullptr) {
+        napi_create_reference(env, obj, 1, &handler->delegate_);
+        WebviewController::SaveWebServiceWorkerSchemeHandler(scheme.c_str(), handler);
+    }
 
     if (!WebviewController::SetWebServiveWorkerSchemeHandler(
         scheme.c_str(), handler)) {
@@ -5396,6 +5396,13 @@ napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
 {
     WVLOG_I("enable/disable intelligent tracking prevention.");
     napi_value result = nullptr;
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
+        WVLOG_E("EnableIntelligentTrackingPrevention: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -5428,6 +5435,13 @@ napi_value NapiWebviewController::IsIntelligentTrackingPreventionEnabled(
 {
     WVLOG_I("get intelligent tracking prevention enabled value.");
     napi_value result = nullptr;
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
+        WVLOG_E("IsIntelligentTrackingPreventionEnabled: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     WebviewController *webviewController = GetWebviewController(env, info);
 
     if (!webviewController) {
@@ -5479,6 +5493,13 @@ napi_value NapiWebviewController::AddIntelligentTrackingPreventionBypassingList(
 {
     WVLOG_I("Add intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
+        WVLOG_E("AddIntelligentTrackingPreventionBypassingList: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -5513,6 +5534,13 @@ napi_value NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingLi
 {
     WVLOG_I("Remove intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
+        WVLOG_E("RemoveIntelligentTrackingPreventionBypassingList: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -5547,6 +5575,13 @@ napi_value NapiWebviewController::ClearIntelligentTrackingPreventionBypassingLis
 {
     napi_value result = nullptr;
     WVLOG_I("Clear intelligent tracking prevention bypassing list.");
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
+        WVLOG_E("ClearIntelligentTrackingPreventionBypassingList: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
@@ -6039,6 +6074,11 @@ napi_value NapiWebviewController::EnableAdsBlock(
     napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("EnableAdsBlock: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
     napi_value argv[INTEGER_ONE] = { 0 };
@@ -6074,6 +6114,11 @@ napi_value NapiWebviewController::EnableAdsBlock(
 napi_value NapiWebviewController::IsAdsBlockEnabled(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("IsAdsBlockEnabled: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         return nullptr;
@@ -6087,6 +6132,11 @@ napi_value NapiWebviewController::IsAdsBlockEnabled(napi_env env, napi_callback_
 napi_value NapiWebviewController::IsAdsBlockEnabledForCurPage(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
+    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+        WVLOG_E("IsAdsBlockEnabledForCurPage: Capability not supported.");
+        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
+        return result;
+    }
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         return nullptr;

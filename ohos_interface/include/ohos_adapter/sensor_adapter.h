@@ -16,6 +16,7 @@
 #ifndef SENSOR_ADAPTER_H
 #define SENSOR_ADAPTER_H
 
+#include <memory>
 #include <string>
 
 

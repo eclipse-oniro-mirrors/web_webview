@@ -1484,12 +1484,108 @@ public:
      * @brief Send mouse wheel event with sourceTool info.
      */
     /*--ark web()--*/
-    void WebSendMouseWheelEventV2(double x,
-                                  double y,
-                                  double delta_x,
-                                  double delta_y,
-                                  const ArkWebInt32Vector& pressedCodes,
-                                  int32_t source) override;
+    bool WebSendMouseWheelEventV2(double x, double y, double delta_x, double delta_y,
+        const ArkWebInt32Vector &pressedCodes, int32_t source) override;
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    bool IsNWebEx() override;
+
+    /**
+     * @brief Set enable Half the frame rate.
+     */
+    void SetEnableHalfFrameRate(bool enabled) override;
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    void MaximizeResize() override;
+
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
+    void OnDragAttach() override;
+
+    /**
+     * Set focus by position
+     * 
+     * @Return: if hit node editable.
+     */
+    bool SetFocusByPosition(float x, float y) override;
+
+    /**
+     * @brief set DPI when DPI changes.
+     * @param density The new density value.
+     */
+    /*--ark web()--*/
+    void SetSurfaceDensity(const double& density) override;
+
+    /**
+     * @brief Set the native inner web
+     */
+    void SetNativeInnerWeb(bool isInnerWeb) override;
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     * @param isHoverEnter whether the accessibility hover event is a hover enter event.
+     */
+    /*--ark web()--*/
+    void SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter) override;
+
+    /**
+     * @brief Notify browser is foreground.
+     */
+    void OnBrowserForeground() override;
+
+    /**
+     * @brief Notify browser is background.
+     */
+    void OnBrowserBackground() override;
+
+    /**
+     * @brief RegisterNativeJavaScriptProxy.
+     *
+     * @param objName object name.
+     * @param methodName methodName list
+     * @param data The ptr of NWebJsProxyMethod.
+     * @param isAsync True mean Async.
+     * @param permission permission.
+     */
+    void RegisterNativeJavaScriptProxy(const ArkWebString& objName,
+        const ArkWebStringVector& methodName,
+        ArkWebRefPtr<ArkWebJsProxyMethod> data,
+        bool isAsync,
+        const ArkWebString& permission) override;
+
+    /**
+     * @brief Set the window id.
+     */
+    void SetFocusWindowId(uint32_t focus_window_id) override;
+
+    /**
+     * @brief Run data detector JS
+     */
+    void RunDataDetectorJS() override;
+
+    /**
+     * @brief Set data detector enable.
+     */
+    void SetDataDetectorEnable(bool enable) override;
+
+    /**
+     * @brief On data detector select text.
+     */
+    void OnDataDetectorSelectText() override;
+
+    /**
+     * @brief On data detector copy.
+     */
+    void OnDataDetectorCopy(const ArkWebStringVector& recordMix) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;

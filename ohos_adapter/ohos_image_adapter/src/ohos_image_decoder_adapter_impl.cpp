@@ -109,6 +109,7 @@ bool OhosImageDecoderAdapterImpl::Decode(const uint8_t* data,
     decodeOptions.desiredPixelFormat =
         useYuv ? Media::PixelFormat::NV12 : Media::PixelFormat::RGBA_8888;
     decodeOptions.allocatorType = static_cast<Media::AllocatorType>(type);
+    decodeOptions.isAppUseAllocator = true;
     pixelMap_ = imageSource->CreatePixelMap(decodeOptions, errorCode);
     if (errorCode != Media::SUCCESS) {
         WVLOG_E("[HeifSupport] CreatePixelMap failed, errorCode %{public}d", errorCode);

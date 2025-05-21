@@ -14,6 +14,7 @@
  */
 
 #include "sethttpdns_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include <cstring>
 #include <securec.h>
@@ -27,16 +28,16 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 125;
+constexpr int MAX_SET_NUMBER = 10;
 bool SetHttpDnsFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(int))) {
         return false;
     }
-    std::string dohConfig((const char*)data, size);
-    int mode;
-    if (memcpy_s(&mode, sizeof(int), data, sizeof(int)) != 0) {
-        return false;
-    }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string dohConfig = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    int mode = dataProvider.ConsumeIntegralInRange<int>(0, MAX_SET_NUMBER);
 
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
     config->SetMode(mode);

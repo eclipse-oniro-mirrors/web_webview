@@ -17,6 +17,7 @@
 #define GRAPHIC_ADAPTER_H
 
 #include <functional>
+#include <memory>
 
 namespace OHOS::NWeb {
 
@@ -233,6 +234,10 @@ public:
     virtual void NativeWindowSurfaceCleanCacheWithPara(NWebNativeWindow window, bool cleanAll) = 0;
 
     virtual void SetTransformHint(uint32_t rotation, NWebNativeWindow window) = 0;
+
+    virtual void AddNativeWindowRef(NWebNativeWindow window) = 0;
+
+    virtual void NativeWindowUnRef(NWebNativeWindow window) = 0;
 };
 
 class AshmemAdapter {

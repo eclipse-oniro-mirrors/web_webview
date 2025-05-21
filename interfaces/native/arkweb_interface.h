@@ -96,6 +96,8 @@ ArkWeb_AnyNativeAPI* OH_ArkWeb_GetNativeAPI(ArkWeb_NativeAPIVariantKind type);
  */
 bool OH_ArkWeb_RegisterScrollCallback(const char* webTag, ArkWeb_OnScrollCallback callback, void* userData);
 
+void OH_ArkWeb_DestroyGlobalPointersForTest(void);
+
 #ifdef __cplusplus
 };
 #endif

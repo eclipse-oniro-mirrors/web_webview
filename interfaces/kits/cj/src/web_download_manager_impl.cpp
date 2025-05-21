@@ -62,6 +62,10 @@ namespace {
         WebDownloadItemImpl *webDownloadItem = FFIData::Create<WebDownloadItemImpl>(downloadItem);
         // destroy download_item since copied content from download_item.
         WebDownloadItem_Destroy(downloadItem);
+        if (!webDownloadItem) {
+            WEBVIEWLOGE("[DOWNLOAD] webDownloadItem is null");
+            return;
+        }
         webDownloadItem->before_download_callback = wrapper;
         webDownloadDelegate->DownloadBeforeStart(webDownloadItem);
     }
@@ -89,6 +93,10 @@ namespace {
         WebDownloadItemImpl *webDownloadItem = FFIData::Create<WebDownloadItemImpl>(downloadItem);
         // destroy download_item since copied content from download_item.
         WebDownloadItem_Destroy(downloadItem);
+        if (!webDownloadItem) {
+            WEBVIEWLOGE("[DOWNLOAD] webDownloadItem is null");
+            return;
+        }
         webDownloadItem->download_item_callback = wrapper;
         switch (webDownloadItem->state) {
             case NWebDownloadItemState::PENDING:

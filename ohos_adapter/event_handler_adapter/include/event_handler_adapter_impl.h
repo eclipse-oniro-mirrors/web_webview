@@ -33,6 +33,18 @@ private:
     std::shared_ptr<EventHandlerFDListenerAdapter> listener_ = nullptr;
 };
 
+class OnceCallbackAdapterImpl {
+public:
+    explicit OnceCallbackAdapterImpl(const std::shared_ptr<OnceCallbackAdapter>& callback);
+
+    ~OnceCallbackAdapterImpl() = default;
+
+    void OnRunnable();
+
+private:
+    std::shared_ptr<OnceCallbackAdapter> callback_ = nullptr;
+};
+
 class EventHandlerAdapterImpl : public EventHandlerAdapter {
 public:
     EventHandlerAdapterImpl();
@@ -43,6 +55,8 @@ public:
         const std::shared_ptr<EventHandlerFDListenerAdapter> listener) override;
 
     void RemoveFileDescriptorListener(int32_t fileDescriptor) override;
+
+    void PostTask(const std::shared_ptr<OnceCallbackAdapter> callback) override;
 
 private:
     std::shared_ptr<AppExecFwk::EventHandler> eventHandler_ = nullptr;

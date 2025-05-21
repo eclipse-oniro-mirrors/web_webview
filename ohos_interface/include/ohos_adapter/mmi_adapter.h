@@ -16,6 +16,7 @@
 #ifndef MMI_ADAPTER_H
 #define MMI_ADAPTER_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
@@ -109,6 +110,8 @@ public:
     virtual int32_t GetDeviceIds(std::vector<int32_t>& ids) = 0;
 
     virtual int32_t GetDeviceInfo(int32_t deviceId, std::shared_ptr<MMIDeviceInfoAdapter> info) = 0;
+
+    virtual int32_t GetMaxTouchPoints() = 0;
 };
 
 } // namespace OHOS::NWeb

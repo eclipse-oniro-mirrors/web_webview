@@ -14,7 +14,7 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
@@ -37,6 +37,8 @@ ohos_unittest("migration_manager_adapter_test") {
     "c_utils:utils",
     "googletest:gmock_main",
     "googletest:gtest_main",
+    "safwk:system_ability_fwk",
+    "samgr:samgr_proxy",
   ]
 }
 

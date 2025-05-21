@@ -19,6 +19,7 @@
 #include <new>
 
 #include "business_error.h"
+#include "nweb_napi_scope.h"
 #include "napi/native_common.h"
 #include "nweb_helper.h"
 #include "nweb_web_storage.h"
@@ -183,9 +184,8 @@ void NapiWebStorage::GetNapiWebStorageOriginForResult(napi_env env,
 void NapiWebStorage::GetOriginComplete(napi_env env, napi_status status, void *data)
 {
     GetOriginsParam* param = static_cast<GetOriginsParam*>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
@@ -204,16 +204,14 @@ void NapiWebStorage::GetOriginComplete(napi_env env, napi_status status, void *d
     napi_call_function(env, nullptr, callback, RESULT_COUNT, args, &returnVal);
     napi_delete_reference(env, param->callbackRef);
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
 }
 
 void NapiWebStorage::GetOriginsPromiseComplete(napi_env env, napi_status status, void *data)
 {
     GetOriginsParam* param = static_cast<GetOriginsParam*>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         delete param;
         return;
     }
@@ -228,7 +226,6 @@ void NapiWebStorage::GetOriginsPromiseComplete(napi_env env, napi_status status,
         napi_reject_deferred(env, param->deferred, args[0]);
     }
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
 }
 
@@ -260,6 +257,8 @@ napi_value NapiWebStorage::GetOriginsPromise(napi_env env)
     napi_deferred deferred = nullptr;
     napi_value promise = nullptr;
     napi_create_promise(env, &deferred, &promise);
+    napi_value resourceName = nullptr;
+    NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
 
     GetOriginsParam *param = new (std::nothrow) GetOriginsParam {
         .env = env,
@@ -270,8 +269,6 @@ napi_value NapiWebStorage::GetOriginsPromise(napi_env env)
     if (param == nullptr) {
         return nullptr;
     }
-    napi_value resourceName = nullptr;
-    NAPI_CALL(env, napi_create_string_utf8(env, __func__, NAPI_AUTO_LENGTH, &resourceName));
     NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, ExecuteGetOrigins,
         GetOriginsPromiseComplete, static_cast<void *>(param), &param->asyncWork));
     NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
@@ -338,9 +335,8 @@ void NapiWebStorage::ExecuteGetOriginUsageOrQuota(napi_env env, void *data)
 void NapiWebStorage::GetOriginUsageOrQuotaComplete(napi_env env, napi_status status, void *data)
 {
     GetOriginUsageOrQuotaParam* param = static_cast<GetOriginUsageOrQuotaParam*>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
@@ -364,16 +360,14 @@ void NapiWebStorage::GetOriginUsageOrQuotaComplete(napi_env env, napi_status sta
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_reference(env, param->callbackRef);
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
 }
 
 void NapiWebStorage::GetOriginUsageOrQuotaPromiseComplete(napi_env env, napi_status status, void *data)
 {
     GetOriginUsageOrQuotaParam* param = static_cast<GetOriginUsageOrQuotaParam*>(data);
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
@@ -387,7 +381,6 @@ void NapiWebStorage::GetOriginUsageOrQuotaPromiseComplete(napi_env env, napi_sta
     }
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
 }
 

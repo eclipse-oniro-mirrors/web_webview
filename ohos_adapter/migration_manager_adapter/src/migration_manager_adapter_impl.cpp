@@ -33,11 +33,10 @@ std::atomic<bool> MigrationManagerAdapterImpl::isConnectSystemUI_(false);
 void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::OnMigrationReply(int32_t errorCode,
     int32_t succussCount, const std::vector<int32_t>& errorIndex, const std::vector<int32_t>& codeList)
 {
-    if (!listener_) {
-        WVLOG_W("callback_ is not initialize");
+    if (listener_) {
+        WVLOG_I("on migration replay will be invoked");
+        listener_->OnMigrationReply(errorCode, succussCount, errorIndex, codeList);
     }
-    WVLOG_I("on migration replay will be invoked");
-    listener_->OnMigrationReply(errorCode, succussCount, errorIndex, codeList);
 }
 
 void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::OnAbilityConnectDone(
@@ -47,9 +46,8 @@ void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::OnAbilityConnect
     if (!remoteObject) {
         return;
     }
-    if (remoteObject_ == nullptr) {
-        remoteObject_ = remoteObject;
-    }
+
+    remoteObject_ = remoteObject;
 
     MessageParcel data;
     MessageParcel reply;
@@ -70,7 +68,11 @@ void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::OnAbilityConnect
     int successCount = 0;
     std::vector<int> errorIndexList;
     std::vector<int> codeList;
-    nlohmann::json jsonObj = nlohmann::json::parse(replyData);
+    nlohmann::json jsonObj = nlohmann::json::parse(replyData, nullptr, false);
+    if (jsonObj.is_discarded()) {
+      WVLOG_W("parse reply json data failed.");
+      return;
+    }
     if (jsonObj.contains(REPLY_CODE) && jsonObj[REPLY_CODE].is_number_integer()) {
         errorCode = jsonObj[REPLY_CODE];
     }
@@ -88,9 +90,8 @@ void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::OnAbilityConnect
     if (jsonObj.contains(REPLY_SUCCESS_COUNT) && jsonObj[REPLY_SUCCESS_COUNT].is_number_integer()) {
         successCount = jsonObj[REPLY_SUCCESS_COUNT];
     }
-    WVLOG_I("send migration request successCount: %{public}d", successCount);
     OnMigrationReply(errorCode, successCount, errorIndexList, codeList);
-    WVLOG_I("send migration request finish");
+    WVLOG_I("send migration request finish, successCount: %{public}d", successCount);
 }
 
 void MigrationManagerAdapterImpl::MigrationListenerAdapterImpl::SetJsonData(const std::string& jsonData)

@@ -137,6 +137,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_http_auth_result_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_proxy_callback_impl.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_proxy_callback_impl.h",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_proxy_method_impl.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_proxy_method_impl.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_result_callback_impl.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_result_callback_impl.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_ssl_error_result_wrapper.cpp",
@@ -267,6 +269,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_js_proxy_callback_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_js_proxy_callback_vector_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_js_proxy_callback_vector_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_js_proxy_method_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_js_proxy_method_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_js_result_callback_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_js_result_callback_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_keyboard_event_cpptoc.cpp",
@@ -652,6 +656,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_net_proxy_adapter_impl.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_net_proxy_event_callback_adapter_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_net_proxy_event_callback_adapter_wrapper.h",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_once_callback_adapter_wrapper.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_once_callback_adapter_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_ohos_adapter_helper_impl.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_ohos_adapter_helper_impl.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_ohos_buffer_adapter_impl.cpp",
@@ -731,6 +737,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_video_enc_info_adapter_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_video_info_adapter_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_video_info_adapter_wrapper.h",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vpn_listener_wrapper.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vpn_listener_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vsync_adapter_impl.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vsync_adapter_impl.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_web_adapter_webview_bridge_helper.cpp",
@@ -785,6 +793,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_date_time_format_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_display_adapter_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_display_adapter_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_display_adapter_vector_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_display_adapter_vector_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_display_manager_adapter_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_display_manager_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_drm_adapter_cpptoc.cpp",
@@ -977,6 +987,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_edm_policy_changed_event_callback_adapter_ctocpp.h",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_event_handler_fdlistener_adapter_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_event_handler_fdlistener_adapter_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_once_callback_adapter_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_once_callback_adapter_ctocpp.h",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_frame_available_listener_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_frame_available_listener_ctocpp.h",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_ibuffer_consumer_listener_adapter_ctocpp.cpp",
@@ -1037,6 +1049,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_video_enc_info_adapter_ctocpp.h",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_video_info_adapter_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_video_info_adapter_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_vpn_listener_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_vpn_listener_ctocpp.h",
   ]
 
   deps = [
@@ -1094,7 +1108,10 @@ ohos_shared_library("ohos_nweb_glue_source") {
     ":ohos_glue_nweb_prepare",
   ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "hilog:libhilog",
+    "ability_runtime:ability_connect_callback_stub",
+  ]
 
   part_name = "webview"
   subsystem_name = "web"
@@ -1113,7 +1130,10 @@ ohos_shared_library("ohos_adapter_glue_source") {
     "../ohos_adapter:nweb_ohos_adapter",
   ]
 
-  external_deps = [ "hilog:libhilog" ]
+  external_deps = [
+    "hilog:libhilog",
+    "ability_runtime:ability_connect_callback_stub",
+  ]
 
   part_name = "webview"
   subsystem_name = "web"

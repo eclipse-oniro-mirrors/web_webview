@@ -249,11 +249,13 @@ std::string KeystoreAdapterImpl::AssetQuery(const std::string assetHandle)
     int32_t ret = OH_Asset_Query(attr, sizeof(attr) / sizeof(attr[0]), &resultSet);
     if (ret == ASSET_SUCCESS) {
         Asset_Attr* secret = OH_Asset_ParseAttr(resultSet.results, ASSET_TAG_SECRET);
-        Asset_Blob valueBlob = secret->value.blob;
-        std::string localKey(reinterpret_cast<char*>(valueBlob.data), valueBlob.size);
-        OH_Asset_FreeResultSet(&resultSet);
-        WVLOG_I("get key from asset success.");
-        return localKey;
+        if (secret) {
+            Asset_Blob valueBlob = secret->value.blob;
+            std::string localKey(reinterpret_cast<char*>(valueBlob.data), valueBlob.size);
+            OH_Asset_FreeResultSet(&resultSet);
+            WVLOG_I("get key from asset success.");
+            return localKey;
+        }
     }
     WVLOG_E("hks finish invoke, query ret: %d", ret);
     return std::string();

@@ -13,12 +13,15 @@
 
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [ "../../../../ohos_adapter/cert_mgr_adapter/include" ]
+  include_dirs = [
+    "../../../../ohos_adapter/cert_mgr_adapter/include",
+    "../../../../ohos_interface/include/ohos_adapter",
+  ]
 }
 
 ohos_unittest("cert_mgr_adapter_test") {

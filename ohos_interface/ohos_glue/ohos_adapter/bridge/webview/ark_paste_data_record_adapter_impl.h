@@ -28,7 +28,11 @@ public:
 
     bool SetHtmlText(void* htmlText) override;
 
+    bool SetHtmlTextV2(const ArkWebString& htmlText) override;
+
     bool SetPlainText(void* plainText) override;
+
+    bool SetPlainTextV2(const ArkWebString& plainText) override;
 
     bool SetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData) override;
 
@@ -36,7 +40,11 @@ public:
 
     void GetHtmlText(void* data) override;
 
+    bool GetHtmlTextV2(ArkWebString& data) override;
+
     void GetPlainText(void* data) override;
+
+    bool GetPlainTextV2(ArkWebString& data) override;
 
     bool GetImgData(ArkWebRefPtr<ArkClipBoardImageDataAdapter> imageData) override;
 
@@ -44,9 +52,15 @@ public:
 
     bool SetCustomData(void* data) override;
 
+    bool SetCustomDataV2(ArkWebUInt8VectorMap& data) override;
+
     void GetUri(void* data) override;
 
+    bool GetUriV2(ArkWebString& data) override;
+
     void GetCustomData(void* data) override;
+
+    bool GetCustomDataV2(ArkWebUInt8VectorMap& data) override;
 
     std::shared_ptr<OHOS::NWeb::PasteDataRecordAdapter> real_;
 
