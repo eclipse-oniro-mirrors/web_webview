@@ -18,6 +18,7 @@
 
 #include <iosfwd>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -125,6 +126,7 @@ private:
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::vector<std::string> backForwardCacheCmdLine_;
     std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_;
+    mutable std::mutex lock_;
 };
 } // namespace OHOS::NWeb
 
