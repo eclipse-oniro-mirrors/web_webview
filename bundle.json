@@ -98,8 +98,7 @@
                 "//base/web/webview/ohos_nweb:nweb_hap",
                 "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
                 "//base/web/webview/ohos_wrapper:nweb_ohos_wrapper",
-                "//base/web/webview/sa:app_fwk_update_service",
-                "//base/web/webview/interfaces/kits/napi/js:webview_napi"
+                "//base/web/webview/sa:app_fwk_update_service"
             ],
             "inner_kits": [
                 {
