@@ -16,6 +16,7 @@
 #ifndef NWEB_H
 #define NWEB_H
 
+#include <functional>
 #include <list>
 #include <map>
 #include <memory>
@@ -267,9 +268,9 @@ public:
 
     virtual std::vector<int32_t> GetPressKeyCodes() = 0;
 
-    virtual int32_t GetRawX() { return 0; };
+    virtual int32_t GetRawX() { return 0; }
 
-    virtual int32_t GetRawY() { return 0; };
+    virtual int32_t GetRawY() { return 0; }
 
 };
 
@@ -279,6 +280,16 @@ typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
 using ScriptItemsByOrder = std::vector<std::string>;
 using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
+
+class OHOS_NWEB_EXPORT NWebJsProxyMethod {
+    public:
+        virtual ~NWebJsProxyMethod() = default;
+    
+        virtual int32_t GetSize() = 0;
+    
+        virtual void OnHandle(int32_t number, const std::vector<std::string>& param) = 0;
+    };
+    
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -1673,7 +1684,7 @@ public:
      * @Description: Optimize HTML parser budget to reduce FCP time.
      * @Input enable: Set whether to use optimized parser budget.
      */
-    virtual void PutOptimizeParserBudgetEnabled(bool enable) {};
+    virtual void PutOptimizeParserBudgetEnabled(bool enable) {}
 
     /**
      * @Description: Get the bounding rectangle of the accessibility node of the given id.
@@ -1699,7 +1710,7 @@ public:
     virtual std::shared_ptr<HitTestResult> GetLastHitTestResult()
     {
         return std::shared_ptr<HitTestResult>();
-    };
+    }
 
     /**
      * @Description: Get the current language in the webview.
@@ -1711,15 +1722,120 @@ public:
         return "";
     }
 
-    /** 
+    /**
      * @brief Send mouse wheel event with sourceTool info.
      */
-    virtual void WebSendMouseWheelEventV2(double x,
-                                          double y,
-                                          double delta_x,
-                                          double delta_y,
-                                          const std::vector<int32_t>& pressedCodes,
-                                          int32_t source) {}
+    virtual bool WebSendMouseWheelEventV2(
+        double x, double y, double delta_x, double delta_y, const std::vector<int32_t> &pressedCodes, int32_t source)
+    {
+        return false;
+    }
+
+    /**
+     * @brief judge if browser use drag resize.
+     */
+    virtual bool IsNWebEx()
+    {
+        return false;
+    }
+
+    /**
+     * Set enable half the frame rate.
+     */
+    /*--ark web()--*/
+    virtual void SetEnableHalfFrameRate(bool enable) {}
+
+    /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void MaximizeResize() {}
+
+    /**
+     * @brief Try to attach web inputmethod after drag.
+     */
+    virtual void OnDragAttach() {}
+
+    /**
+     * Set focus by position
+     *
+     * @Return: if hit node editable.
+     */
+    /*--ark web()--*/
+    virtual bool SetFocusByPosition(float x, float y)
+    {
+        return false;
+    }
+
+    /**
+     * @brief set DPI when DPI changes.
+     * @param density The new density value.
+     */
+    virtual void SetSurfaceDensity(const double& density) {}
+
+    /**
+     * @brief Set the native inner web
+     */
+    virtual void SetNativeInnerWeb(bool isInnerWeb) {}
+
+    /**
+     * @brief Send the accessibility hover event coordinate.
+     *
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
+     * @param isHoverEnter whether the accessibility hover event is a hover enter event.
+     */
+    virtual void SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter) {}
+
+    /**
+     * @brief Notify browser is foreground.
+     */
+    virtual void OnBrowserForeground() {}
+
+    /**
+     * @brief Notify browser is background.
+     */
+    virtual void OnBrowserBackground() {}
+
+    /**
+     * @brief: register native javaScriptProxy.
+     *
+     * @param objName  String: object name.
+     * @param methodName std::vector<std::string>: methodName list
+     * @param data std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod>: The ptr of NWebJsProxyMethod.
+     * @param isAsync bool: True mean.
+     * @param permission string: permission.
+     */
+    virtual void RegisterNativeJavaScriptProxy(const std::string& objName,
+        const std::vector<std::string>& methodName,
+        std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+        bool isAsync,
+        const std::string& permission) {}
+
+    /**
+     * @brief Set the window id.
+     */
+    virtual void SetFocusWindowId(uint32_t focus_window_id) {}
+
+    /**
+     * @brief Run data detector JS.
+     */
+    virtual void RunDataDetectorJS() {}
+
+    /**
+     * @brief Set data detector enable.
+     */
+    virtual void SetDataDetectorEnable(bool enable) {}
+
+    /**
+     * @brief On data detector select text.
+     */
+    virtual void OnDataDetectorSelectText() {}
+
+    /**
+     * @brief On data detector copy.
+     */
+    virtual void OnDataDetectorCopy(const std::vector<std::string>& recordMix) {}
 };
 
 } // namespace OHOS::NWeb

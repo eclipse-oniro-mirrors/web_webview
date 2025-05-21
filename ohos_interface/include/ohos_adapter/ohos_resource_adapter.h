@@ -16,6 +16,7 @@
 #ifndef OHOS_RESOURCE_ADAPTER_H
 #define OHOS_RESOURCE_ADAPTER_H
 
+#include <memory>
 #include <string>
 #include <sys/types.h>
 

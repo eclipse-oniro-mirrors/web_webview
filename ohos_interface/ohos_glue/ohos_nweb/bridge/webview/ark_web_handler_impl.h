@@ -589,6 +589,14 @@ public:
 
     void OnShowAutofillPopupV2(const float offsetX, const float offsetY, const float height, const float width,
         const ArkWebStringVector& menu_items) override;
+
+    void RestoreRenderFit() override;
+
+    void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) override;
+
+    void EnableSecurityLayer(bool isNeedSecurityLayer) override;
+
+    bool ChangeVisibilityOfQuickMenuV2() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

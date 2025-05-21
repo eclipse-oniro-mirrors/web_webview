@@ -16,6 +16,7 @@
 #ifndef ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_H
 #define ENTERPRISE_DEVICE_MANAGEMENT_ADAPTER_H
 
+#include <memory>
 #include <string>
 
 namespace OHOS::NWeb {

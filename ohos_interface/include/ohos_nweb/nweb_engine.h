@@ -16,6 +16,8 @@
 #ifndef NWEB_ENGINE_H
 #define NWEB_ENGINE_H
 
+#include <memory>
+
 #include "nweb.h"
 #include "nweb_adsblock_manager.h"
 #include "nweb_cookie_manager.h"
@@ -105,8 +107,12 @@ public:
                                   const std::vector<std::string>& bypassRules,
                                   const bool& reverseBypass,
                                   std::shared_ptr<NWebProxyChangedCallback> callback) {}
-    
+
     virtual void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback) {}
+
+    virtual void SetAppCustomUserAgent(const std::string& userAgent) {}
+
+    virtual void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
 };
 
 } // namespace OHOS::NWeb

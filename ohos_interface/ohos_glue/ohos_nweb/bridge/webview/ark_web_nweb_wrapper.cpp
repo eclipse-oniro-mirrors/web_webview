@@ -28,6 +28,7 @@
 #include "ohos_nweb/bridge/ark_web_handler_impl.h"
 #include "ohos_nweb/bridge/ark_web_history_list_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_hit_test_result_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_js_proxy_method_impl.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_keyboard_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_impl.h"
@@ -1509,17 +1510,118 @@ std::string ArkWebNWebWrapper::GetCurrentLanguage()
 {
     return ArkWebStringStructToClass(ark_web_nweb_->GetCurrentLanguage());
 }
-void ArkWebNWebWrapper::WebSendMouseWheelEventV2(double x,
-                                                 double y,
-                                                 double delta_x,
-                                                 double delta_y,
-                                                 const std::vector<int32_t>& pressedCodes,
-                                                 int32_t source)
+bool ArkWebNWebWrapper::WebSendMouseWheelEventV2(
+        double x, double y, double delta_x, double delta_y, const std::vector<int32_t> &pressedCodes, int32_t source)
 {
     ArkWebInt32Vector pCodes = ArkWebBasicVectorClassToStruct<int32_t, ArkWebInt32Vector>(pressedCodes);
 
-    ark_web_nweb_->WebSendMouseWheelEventV2(x, y, delta_x, delta_y, pCodes, source);
+    bool result = ark_web_nweb_->WebSendMouseWheelEventV2(x, y, delta_x, delta_y, pCodes, source);
 
     ArkWebBasicVectorStructRelease<ArkWebInt32Vector>(pCodes);
+    return result;
+}
+
+bool ArkWebNWebWrapper::IsNWebEx()
+{
+    return ark_web_nweb_->IsNWebEx();
+}
+
+void ArkWebNWebWrapper::SetEnableHalfFrameRate(bool enabled)
+{
+    ark_web_nweb_->SetEnableHalfFrameRate(enabled);
+}
+
+void ArkWebNWebWrapper::MaximizeResize()
+{
+    ark_web_nweb_->MaximizeResize();
+}
+
+void ArkWebNWebWrapper::OnDragAttach()
+{
+    ark_web_nweb_->OnDragAttach();
+}
+
+bool ArkWebNWebWrapper::SetFocusByPosition(float x, float y)
+{
+    return ark_web_nweb_->SetFocusByPosition(x, y);
+}
+
+void ArkWebNWebWrapper::SetSurfaceDensity(const double& density)
+{
+    ark_web_nweb_->SetSurfaceDensity(density);
+}
+
+void ArkWebNWebWrapper::SetNativeInnerWeb(bool isInnerWeb)
+{
+    ark_web_nweb_->SetNativeInnerWeb(isInnerWeb);
+}
+
+void ArkWebNWebWrapper::SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter)
+{
+    ark_web_nweb_->SendAccessibilityHoverEventV2(x, y, isHoverEnter);
+}
+
+void ArkWebNWebWrapper::OnBrowserForeground()
+{
+    ark_web_nweb_->OnBrowserForeground();
+}
+
+void ArkWebNWebWrapper::OnBrowserBackground()
+{
+    ark_web_nweb_->OnBrowserBackground();
+}
+
+void ArkWebNWebWrapper::RegisterNativeJavaScriptProxy(const std::string& objName,
+    const std::vector<std::string>& methodName, std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+    bool isAsync, const std::string& permission)
+{
+    ArkWebString stObjName = ArkWebStringClassToStruct(objName);
+    ArkWebStringVector stMethodName = ArkWebStringVectorClassToStruct(methodName);
+    ArkWebString stPermission = ArkWebStringClassToStruct(permission);
+
+    if (CHECK_SHARED_PTR_IS_NULL(data)) {
+        ark_web_nweb_->RegisterNativeJavaScriptProxy(stObjName,
+                                                     stMethodName,
+                                                     nullptr,
+                                                     isAsync,
+                                                     stPermission);
+    } else {
+        ark_web_nweb_->RegisterNativeJavaScriptProxy(stObjName,
+                                                     stMethodName,
+                                                     new ArkWebJsProxyMethodImpl(data),
+                                                     isAsync,
+                                                     stPermission);
+    }
+
+    ArkWebStringStructRelease(stObjName);
+    ArkWebStringVectorStructRelease(stMethodName);
+    ArkWebStringStructRelease(stPermission);
+}
+
+void ArkWebNWebWrapper::SetFocusWindowId(uint32_t focus_window_id)
+{
+    ark_web_nweb_->SetFocusWindowId(focus_window_id);
+}
+
+void ArkWebNWebWrapper::RunDataDetectorJS()
+{
+    ark_web_nweb_->RunDataDetectorJS();
+}
+
+void ArkWebNWebWrapper::SetDataDetectorEnable(bool enable)
+{
+    ark_web_nweb_->SetDataDetectorEnable(enable);
+}
+
+void ArkWebNWebWrapper::OnDataDetectorSelectText()
+{
+    ark_web_nweb_->OnDataDetectorSelectText();
+}
+
+void ArkWebNWebWrapper::OnDataDetectorCopy(const std::vector<std::string>& recordMix)
+{
+    ArkWebStringVector cRecordMix = ArkWebStringVectorClassToStruct(recordMix);
+    ark_web_nweb_->OnDataDetectorCopy(cRecordMix);
+    ArkWebStringVectorStructRelease(cRecordMix);
 }
 } // namespace OHOS::ArkWeb

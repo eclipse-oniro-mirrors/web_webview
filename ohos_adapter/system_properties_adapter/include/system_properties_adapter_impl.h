@@ -94,6 +94,8 @@ public:
 
     std::string GetScrollFriction() override;
 
+    std::string GetBundleName() override;
+
 private:
     SystemPropertiesAdapterImpl();
 

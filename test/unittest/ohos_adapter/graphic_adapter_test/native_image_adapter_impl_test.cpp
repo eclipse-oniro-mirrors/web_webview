@@ -33,6 +33,14 @@ public:
     void TearDown();
 };
 
+class FrameAvailableListenerTest : public FrameAvailableListener {
+public:
+    FrameAvailableListenerTest() {}
+    ~FrameAvailableListenerTest() {}
+    void* GetContext() override { return nullptr;}
+    OnFrameAvailableCb GetOnFrameAvailableCb() override { return nullptr; }
+};
+
 void NativeImageAdapterImplTest::SetUpTestCase(void) {}
 
 void NativeImageAdapterImplTest::TearDownTestCase(void) {}
@@ -146,6 +154,9 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_SetOnFrameAvaila
     imagerAdapter->CreateNativeImage(textureId, textureTarget);
     result = imagerAdapter->SetOnFrameAvailableListener(nullptr);
     EXPECT_EQ(result, SURFACE_ERROR_ERROR);
+    std::shared_ptr<FrameAvailableListener> listener = std::make_shared<FrameAvailableListenerTest>();
+    result = imagerAdapter->SetOnFrameAvailableListener(listener);
+    EXPECT_NE(result, SURFACE_ERROR_ERROR);
 }
 
 /**
@@ -267,6 +278,14 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeWindowB
     void* windowBuffer = nullptr;
     uint32_t width = 0;
     uint32_t height = 0;
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, &height);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
+    windowBuffer = new uint8_t[10 * 10 * 4];
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, nullptr);
+    imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, &height);
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
     EXPECT_EQ(width, 0);
     EXPECT_EQ(height, 0);

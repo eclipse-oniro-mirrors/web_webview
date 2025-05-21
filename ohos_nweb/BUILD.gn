@@ -57,16 +57,24 @@ config("nweb_glue_interface") {
 }
 
 ohos_shared_library("web_configs") {
-  include_dirs = [ "include" ]
+  include_dirs = [
+    "../ohos_interface/include/ohos_nweb",
+    "include",
+  ]
   sources = [ "src/nweb_config_helper.cpp" ]
 
   deps = [ ":web_config" ]
 
   external_deps = [
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
     "config_policy:configpolicy_util",
+    "c_utils:utils",
     "hilog:libhilog",
     "init:libbegetutil",
+    "ipc:ipc_core",
     "libxml2:libxml2",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 
   part_name = "webview"

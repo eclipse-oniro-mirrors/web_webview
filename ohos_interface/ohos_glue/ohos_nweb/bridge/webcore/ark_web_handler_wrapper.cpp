@@ -1073,4 +1073,27 @@ void ArkWebHandlerWrapper::OnShowAutofillPopupV2(
     ark_web_handler_->OnShowAutofillPopupV2(offsetX, offsetY, height, width, stMenuItems);
     ArkWebStringVectorStructRelease(stMenuItems);
 }
+
+void ArkWebHandlerWrapper::RestoreRenderFit()
+{
+    ark_web_handler_->RestoreRenderFit();
+}
+
+void ArkWebHandlerWrapper::OnAccessibilityEventV2(
+    int64_t accessibilityId, int32_t eventType, const std::string& argument)
+{
+    ArkWebString stArgument = ArkWebStringClassToStruct(argument);
+    ark_web_handler_->OnAccessibilityEventV2(accessibilityId, eventType, stArgument);
+    ArkWebStringStructRelease(stArgument);
+}
+
+void ArkWebHandlerWrapper::EnableSecurityLayer(bool isNeedSecurityLayer)
+{
+    ark_web_handler_->EnableSecurityLayer(isNeedSecurityLayer);
+}
+
+bool ArkWebHandlerWrapper::ChangeVisibilityOfQuickMenuV2()
+{
+    return ark_web_handler_->ChangeVisibilityOfQuickMenuV2();
+}
 } // namespace OHOS::ArkWeb

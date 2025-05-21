@@ -639,7 +639,7 @@ bool NWebHelper::GetWebEngine(bool fromArk)
     }
 
     TryPreReadLibForFirstlyAppStartUp(bundlePath_);
-
+    fromArk = fromArk && !NWebConfigHelper::Instance().IsWebPlayGroundEnable();
     if (!ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().Init(fromArk, bundlePath_)) {
         WVLOG_E("failed to init arkweb nweb bridge helper");
         return false;
@@ -712,6 +712,14 @@ bool NWebHelper::InitWebEngine()
         WVLOG_I("add command line when init web engine: %{public}s", backForwardCacheCmdLine.c_str());
     }
 
+    // Append API version.
+    std::shared_ptr<AppExecFwk::ApplicationInfo> appInfo = ctx->GetApplicationInfo();
+    if (appInfo) {
+      std::string apiVersion = std::to_string(appInfo->apiTargetVersion);
+      initArgs->AddArg(std::string("--user-api-version=").append(apiVersion));
+      WVLOG_D("apiTargetVersion: %{public}s", apiVersion.c_str());
+    }
+
     nwebEngine_->InitializeWebEngine(initArgs);
     initFlag_ = true;
 
@@ -721,6 +729,7 @@ bool NWebHelper::InitWebEngine()
 
 bool NWebHelper::LoadWebEngine(bool fromArk, bool runFlag)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     if (!GetWebEngine(fromArk)) {
         return false;
     }
@@ -754,7 +763,19 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
         return nullptr;
     }
 
-    return nwebEngine_->CreateNWeb(create_info);
+    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
+    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (ctx) {
+        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
+    } else {
+        WVLOG_E("failed to get application context");
+    }
+    std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
+    if (webApplicationStateCallback_ && (!webApplicationStateCallback_->nweb_)) {
+        webApplicationStateCallback_->nweb_ = nweb;
+    }
+    WVLOG_I("NWebHelper::Nweb is created.");
+    return nweb;
 }
 
 std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
@@ -1062,6 +1083,26 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     nwebEngine_->RemoveAllCache(includeDiskFiles);
 }
 
+void WebApplicationStateChangeCallback::NotifyApplicationForeground()
+{
+    WVLOG_I("WebApplicationStateChangeCallback::NotifyApplicationForeground is called.");
+    if (!nweb_) {
+        WVLOG_E("WebApplicationStateChangeCallback::nweb is nullptr.");
+        return;
+    }
+    nweb_->OnBrowserForeground();
+}
+
+void WebApplicationStateChangeCallback::NotifyApplicationBackground()
+{
+    WVLOG_I("WebApplicationStateChangeCallback::NotifyApplicationBackground is called.");
+    if (!nweb_) {
+        WVLOG_E("WebApplicationStateChangeCallback::nweb is nullptr.");
+        return;
+    }
+    nweb_->OnBrowserBackground();
+}
+
 NWebAdapterHelper& NWebAdapterHelper::Instance()
 {
     static NWebAdapterHelper helper;
@@ -1094,6 +1135,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height, incognitoMode);
     NWebConfigHelper::Instance().ParseConfig(initArgs);
 
@@ -1102,6 +1144,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (ctx) {
         std::string bundleName = ctx->GetBundleName();
+        NWebConfigHelper::Instance().SetBundleName(bundleName);
         initArgs->AddArg(std::string("--bundle-name=").append(bundleName));
     }
 
@@ -1127,6 +1170,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void* enhanceSurfaceInfo,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo =
         NWebEnhanceSurfaceAdapter::Instance().GetCreateInfo(enhanceSurfaceInfo, initArgs, width, height, incognitoMode);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
@@ -1164,5 +1208,10 @@ bool NWebAdapterHelper::IsLTPODynamicApp(const std::string& bundleName)
 int32_t NWebAdapterHelper::GetLTPOStrategy()
 {
     return NWebConfigHelper::Instance().GetLTPOStrategy();
+}
+
+std::string NWebAdapterHelper::GetBundleName()
+{
+    return NWebConfigHelper::Instance().GetBundleName();
 }
 } // namespace OHOS::NWeb

@@ -30,6 +30,7 @@
 #include "ohos_nweb/bridge/ark_web_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_history_list_impl.h"
 #include "ohos_nweb/bridge/ark_web_hit_test_result_impl.h"
+#include "ohos_nweb/bridge/ark_web_js_proxy_method_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_keyboard_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_wrapper.h"
@@ -1279,14 +1280,104 @@ ArkWebString ArkWebNWebImpl::GetCurrentLanguage()
 {
     return ArkWebStringClassToStruct(nweb_nweb_->GetCurrentLanguage());
 }
-void ArkWebNWebImpl::WebSendMouseWheelEventV2(double x,
-                                              double y,
-                                              double delta_x,
-                                              double delta_y,
-                                              const ArkWebInt32Vector& pressedCodes,
-                                              int32_t source)
+bool ArkWebNWebImpl::WebSendMouseWheelEventV2(
+        double x, double y, double delta_x, double delta_y, const ArkWebInt32Vector &pressedCodes, int32_t source)
 {
-    nweb_nweb_->WebSendMouseWheelEventV2(x, y, delta_x, delta_y,
-    ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes), source);
+    return nweb_nweb_->WebSendMouseWheelEventV2(
+        x, y, delta_x, delta_y, ArkWebBasicVectorStructToClass<int32_t, ArkWebInt32Vector>(pressedCodes), source);
+}
+
+bool ArkWebNWebImpl::IsNWebEx()
+{
+    return nweb_nweb_->IsNWebEx();
+}
+
+void ArkWebNWebImpl::SetEnableHalfFrameRate(bool enabled)
+{
+    nweb_nweb_->SetEnableHalfFrameRate(enabled);
+}
+
+void ArkWebNWebImpl::MaximizeResize()
+{
+    nweb_nweb_->MaximizeResize();
+}
+
+void ArkWebNWebImpl::OnDragAttach()
+{
+    nweb_nweb_->OnDragAttach();
+}
+
+bool ArkWebNWebImpl::SetFocusByPosition(float x, float y)
+{
+    return nweb_nweb_->SetFocusByPosition(x, y);
+}
+
+void ArkWebNWebImpl::SetSurfaceDensity(const double& density)
+{
+    nweb_nweb_->SetSurfaceDensity(density);
+}
+
+void ArkWebNWebImpl::SetNativeInnerWeb(bool isInnerWeb)
+{
+    nweb_nweb_->SetNativeInnerWeb(isInnerWeb);
+}
+
+void ArkWebNWebImpl::SendAccessibilityHoverEventV2(int32_t x, int32_t y, bool isHoverEnter)
+{
+    nweb_nweb_->SendAccessibilityHoverEventV2(x, y, isHoverEnter);
+}
+
+void ArkWebNWebImpl::OnBrowserForeground()
+{
+    nweb_nweb_->OnBrowserForeground();
+}
+
+void ArkWebNWebImpl::OnBrowserBackground()
+{
+    nweb_nweb_->OnBrowserBackground();
+}
+
+void ArkWebNWebImpl::RegisterNativeJavaScriptProxy(const ArkWebString& objName,
+    const ArkWebStringVector& methodName, ArkWebRefPtr<ArkWebJsProxyMethod> data,
+    bool isAsync, const ArkWebString& permission)
+{
+    if (CHECK_REF_PTR_IS_NULL(data)) {
+        nweb_nweb_->RegisterNativeJavaScriptProxy(ArkWebStringStructToClass(objName),
+                                                  ArkWebStringVectorStructToClass(methodName),
+                                                  nullptr,
+                                                  isAsync,
+                                                  ArkWebStringStructToClass(permission));
+        return;
+    }
+    nweb_nweb_->RegisterNativeJavaScriptProxy(ArkWebStringStructToClass(objName),
+                                              ArkWebStringVectorStructToClass(methodName),
+                                              std::make_shared<ArkWebJsProxyMethodWrapper>(data),
+                                              isAsync,
+                                              ArkWebStringStructToClass(permission));
+}
+
+void ArkWebNWebImpl::SetFocusWindowId(uint32_t focus_window_id)
+{
+    nweb_nweb_->SetFocusWindowId(focus_window_id);
+}
+
+void ArkWebNWebImpl::RunDataDetectorJS()
+{
+    nweb_nweb_->RunDataDetectorJS();
+}
+
+void ArkWebNWebImpl::SetDataDetectorEnable(bool enable)
+{
+    nweb_nweb_->SetDataDetectorEnable(enable);
+}
+
+void ArkWebNWebImpl::OnDataDetectorSelectText()
+{
+    nweb_nweb_->OnDataDetectorSelectText();
+}
+
+void ArkWebNWebImpl::OnDataDetectorCopy(const ArkWebStringVector& recordMix)
+{
+    nweb_nweb_->OnDataDetectorCopy(ArkWebStringVectorStructToClass(recordMix));
 }
 } // namespace OHOS::ArkWeb

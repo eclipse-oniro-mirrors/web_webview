@@ -14,12 +14,15 @@
 import("//base/web/webview/web_aafwk.gni")
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [ "../../../ohos_adapter/aafwk_adapter/include" ]
+  include_dirs = [
+    "../../../ohos_adapter/aafwk_adapter/include",
+    "../../../ohos_interface/include/ohos_adapter",
+  ]
 }
 
 ohos_unittest("nweb_aafwk_client_test") {

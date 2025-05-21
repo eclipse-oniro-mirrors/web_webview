@@ -13,13 +13,15 @@
 
 import("//build/test.gni")
 
-module_output_path = "web/webview"
+module_output_path = "webview/webview"
 
 config("module_private_config") {
   visibility = [ ":*" ]
 
   include_dirs = [
     "../../../../ohos_adapter/ohos_init_web_adapter/include",
+    "../../../../ohos_interface/include/ohos_adapter",
+    "../../../../ohos_interface/include/ohos_nweb",
     "../../../../interfaces/kits/napi/webfunction",
   ]
 }

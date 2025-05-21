@@ -140,7 +140,6 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_001, TestSize.Level
 HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_002, TestSize.Level1)
 {
     VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
-    adapter.SetScene("", 1);
     adapter.hasReportedKeyThread_ = true;
     adapter.hasRequestedVsync_ = true;
     EXPECT_EQ(VSyncErrorCode::SUCCESS, adapter.RequestVsync(nullptr, nullptr));
@@ -168,12 +167,27 @@ HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_RequestVsync_002, TestSize.Level
 {
     VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
     adapter.InitAPSClient();
-    EXPECT_EQ(adapter.pkgName_, "");
+    EXPECT_EQ(adapter.pkgName_, "test");
     adapter.SetScene("WEB_LIST_FLING", 0);
     adapter.SetScene("WEB_LIST_FLING", 1);
     adapter.SetScene("WEB_LIST_FLING", 0);
     adapter.UninitAPSClient();
     EXPECT_EQ(adapter.setApsSceneFunc_, nullptr);
     EXPECT_EQ(adapter.apsClientHandler_, nullptr);
+}
+
+/**
+ * @tc.name: GraphicAdapterTest_SetDVSyncSwitch_001
+ * @tc.desc: SetDVSyncSwitch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(GraphicAdapterTest, GraphicAdapterTest_SetDVSyncSwitch_001, TestSize.Level1)
+{
+    VSyncAdapterImpl &adapter = VSyncAdapterImpl::GetInstance();
+    bool dvsyncSwitch = false;
+    adapter.SetDVSyncSwitch(dvsyncSwitch);
+    dvsyncSwitch = true;
+    adapter.SetDVSyncSwitch(dvsyncSwitch);
 }
 } // namespace NWeb

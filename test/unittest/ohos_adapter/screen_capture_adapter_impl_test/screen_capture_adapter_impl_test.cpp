@@ -62,6 +62,8 @@ public:
     MOCK_METHOD1(SetScreenCaptureCallback, int32_t(const std::shared_ptr<ScreenCaptureCallBack>&));
     MOCK_METHOD1(ExcludeContent, int32_t(ScreenCaptureContentFilter&));
     MOCK_METHOD0(SetPrivacyAuthorityEnabled, int32_t());
+    MOCK_METHOD1(SetScreenCaptureStrategy, int32_t(ScreenCaptureStrategy));
+    MOCK_METHOD1(UpdateSurface, int32_t(sptr<Surface>));
 };
 } // namespace Media
 namespace NWeb {
@@ -264,6 +266,100 @@ public:
     std::shared_ptr<MockRecorderInfoAdapter> recorderInfo = nullptr;
 };
 
+class MockAudioBufferAdapter  : public AudioBufferAdapter  {
+public:
+    MockAudioBufferAdapter() = default;
+
+    uint8_t* GetBuffer() override
+    {
+        return m_buffer;
+    }
+
+    int32_t GetLength() override
+    {
+        return m_length;
+    }
+
+    int64_t GetTimestamp() override
+    {
+        return m_timestamp;
+    }
+
+    AudioCaptureSourceTypeAdapter GetSourcetype() override
+    {
+        return m_sourcetype;
+    }
+
+    void SetBuffer(uint8_t* buffer) override
+    {
+        m_buffer = buffer;
+    }
+
+    void SetLength(int32_t length) override
+    {
+        m_length = length;
+    }
+
+    void SetTimestamp(int64_t timestamp) override
+    {
+        m_timestamp = timestamp;
+    }
+
+    void SetSourcetype(AudioCaptureSourceTypeAdapter sourcetype) override
+    {
+        m_sourcetype = sourcetype;
+    }
+
+    uint8_t* m_buffer = nullptr;
+    int32_t m_length = 0;
+    int64_t m_timestamp = 0;
+    AudioCaptureSourceTypeAdapter m_sourcetype = AudioCaptureSourceTypeAdapter::SOURCE_INVALID;
+};
+
+ScreenCaptureStateCodeAdapter GetScreenCaptureStateCodeAdapter(const OHOS::Media::AVScreenCaptureStateCode& stateCode)
+{
+    switch (stateCode) {
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STARTED:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STARTED;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_CANCELED:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_CANCELED;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STOPPED_BY_USER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STOPPED_BY_USER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_INTERRUPTED_BY_OTHER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_INTERRUPTED_BY_OTHER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STOPPED_BY_CALL:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STOPPED_BY_CALL;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_UNAVAILABLE:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_UNAVAILABLE;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_MUTED_BY_USER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_MUTED_BY_USER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_UNMUTED_BY_USER:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_UNMUTED_BY_USER;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_ENTER_PRIVATE_SCENE:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_ENTER_PRIVATE_SCENE;
+        case OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_EXIT_PRIVATE_SCENE:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_EXIT_PRIVATE_SCENE;
+        default:
+            return ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_INVLID;
+    }
+}
+
+OHOS::Media::AudioCaptureSourceType ConvertAudioCaptureSourceType(const AudioCaptureSourceTypeAdapter& type)
+{
+    switch (type) {
+        case AudioCaptureSourceTypeAdapter::SOURCE_DEFAULT:
+            return OHOS::Media::AudioCaptureSourceType::SOURCE_DEFAULT;
+        case AudioCaptureSourceTypeAdapter::MIC:
+            return OHOS::Media::AudioCaptureSourceType::MIC;
+        case AudioCaptureSourceTypeAdapter::ALL_PLAYBACK:
+            return OHOS::Media::AudioCaptureSourceType::ALL_PLAYBACK;
+        case AudioCaptureSourceTypeAdapter::APP_PLAYBACK:
+            return OHOS::Media::AudioCaptureSourceType::APP_PLAYBACK;
+        default:
+            return OHOS::Media::AudioCaptureSourceType::SOURCE_INVALID;
+    }
+}
+
 namespace {
 constexpr int32_t AUDIO_SAMPLE_RATE = 16000;
 constexpr int32_t AUDIO_CHANNELS = 2;
@@ -279,6 +375,7 @@ std::shared_ptr<MockVideoEncInfoAdapter> g_videoEncInfo = nullptr;
 std::shared_ptr<MockVideoInfoAdapter> g_videoInfo = nullptr;
 std::shared_ptr<MockRecorderInfoAdapter> g_recorderInfo = nullptr;
 std::shared_ptr<MockScreenCaptureConfigAdapter> g_screenCaptureConfig = nullptr;
+std::shared_ptr<MockAudioBufferAdapter> g_audioBufferAdapter = nullptr;
 
 class ScreenCaptureCallbackAdapterTest : public ScreenCaptureCallbackAdapter {
 public:
@@ -348,6 +445,7 @@ void ScreenCaptureAdapterImplTest::SetUpTestCase(void)
     g_videoInfo = std::make_shared<MockVideoInfoAdapter>();
     g_recorderInfo = std::make_shared<MockRecorderInfoAdapter>();
     g_screenCaptureConfig = std::make_shared<MockScreenCaptureConfigAdapter>();
+    g_audioBufferAdapter = std::make_shared<MockAudioBufferAdapter>();
 
     EXPECT_NE(g_screenCapture, nullptr);
     EXPECT_NE(g_micCapInfo, nullptr);
@@ -359,6 +457,7 @@ void ScreenCaptureAdapterImplTest::SetUpTestCase(void)
     EXPECT_NE(g_videoInfo, nullptr);
     EXPECT_NE(g_recorderInfo, nullptr);
     EXPECT_NE(g_screenCaptureConfig, nullptr);
+    EXPECT_NE(g_audioBufferAdapter, nullptr);
     int32_t result = g_screenCapture->Init(nullptr);
     EXPECT_EQ(result, -1);
 
@@ -618,6 +717,150 @@ HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_AcquireVideo
     int32_t result = adapterImpl->ReleaseVideoBuffer();
     EXPECT_EQ(result, 0);
     adapterImpl->screenCapture_.reset();
+}
+
+/**
+ * @tc.name: ScreenCaptureAdapterImplTest_AcquireAudioBuffer_008
+ * @tc.desc: AcquireAudioBuffer.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_AcquireAudioBuffer_008, TestSize.Level1)
+{
+    auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
+    EXPECT_NE(adapterImpl, nullptr);
+    ScreenCaptureImplMock* mock = new ScreenCaptureImplMock();
+    EXPECT_NE(mock, nullptr);
+    std::shared_ptr<MockAudioBufferAdapter> audiobuffer = nullptr;
+    EXPECT_EQ(audiobuffer, nullptr);
+    adapterImpl->screenCapture_.reset(mock);
+
+    EXPECT_CALL(*mock, ReleaseAudioBuffer(::testing::_)).Times(1).WillRepeatedly(::testing::Return(0));
+    AudioCaptureSourceTypeAdapter type = AudioCaptureSourceTypeAdapter::MIC;
+    int32_t ret = adapterImpl->AcquireAudioBuffer(audiobuffer, type);
+    EXPECT_EQ(ret, -1);
+    int32_t result = adapterImpl->ReleaseAudioBuffer(type);
+    EXPECT_EQ(result, 0);
+    adapterImpl->screenCapture_.reset();
+}
+
+/**
+ * @tc.name: ScreenCaptureAdapterImplTest_AcquireAudioBuffer_009
+ * @tc.desc: AcquireAudioBuffer.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_AcquireAudioBuffer_009, TestSize.Level1)
+{
+    auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
+    EXPECT_NE(adapterImpl, nullptr);
+    ScreenCaptureImplMock* mock = new ScreenCaptureImplMock();
+    EXPECT_NE(mock, nullptr);
+    adapterImpl->screenCapture_.reset(mock);
+    EXPECT_CALL(*mock, AcquireAudioBuffer(::testing::_, ::testing::_))
+        .Times(1)
+        .WillRepeatedly(::testing::Return(-1));
+    
+    EXPECT_CALL(*mock, ReleaseAudioBuffer(::testing::_)).Times(1).WillRepeatedly(::testing::Return(-1));
+    AudioCaptureSourceTypeAdapter type = AudioCaptureSourceTypeAdapter::ALL_PLAYBACK;
+    int32_t ret = adapterImpl->AcquireAudioBuffer(g_audioBufferAdapter, type);
+    EXPECT_EQ(ret, -1);
+    int32_t result = adapterImpl->ReleaseAudioBuffer(type);
+    EXPECT_EQ(result, -1);
+    adapterImpl->screenCapture_.reset();
+}
+
+/**
+ * @tc.name: ScreenCaptureAdapterImplTest_ConvertAudioCaptureSourceType_010
+ * @tc.desc: ConvertAudioCaptureSourceType.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ScreenCaptureAdapterImplTest, ScreenCaptureAdapterImplTest_ConvertAudioCaptureSourceType_010, TestSize.Level1)
+{
+    auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
+    EXPECT_NE(adapterImpl, nullptr);
+    AudioCaptureSourceTypeAdapter type;
+    OHOS::Media::AudioCaptureSourceType result;
+
+    type = AudioCaptureSourceTypeAdapter::SOURCE_DEFAULT;
+    result = ConvertAudioCaptureSourceType(type);
+    EXPECT_EQ(result, OHOS::Media::AudioCaptureSourceType::SOURCE_DEFAULT);
+
+    type = AudioCaptureSourceTypeAdapter::MIC;
+    result = ConvertAudioCaptureSourceType(type);
+    EXPECT_EQ(result, OHOS::Media::AudioCaptureSourceType::MIC);
+
+    type = AudioCaptureSourceTypeAdapter::ALL_PLAYBACK;
+    result = ConvertAudioCaptureSourceType(type);
+    EXPECT_EQ(result, OHOS::Media::AudioCaptureSourceType::ALL_PLAYBACK);
+
+    type = AudioCaptureSourceTypeAdapter::APP_PLAYBACK;
+    result = ConvertAudioCaptureSourceType(type);
+    EXPECT_EQ(result, OHOS::Media::AudioCaptureSourceType::APP_PLAYBACK);
+
+    type = static_cast<AudioCaptureSourceTypeAdapter>(999); // Invalid source
+    result = ConvertAudioCaptureSourceType(type);
+    EXPECT_EQ(result, OHOS::Media::AudioCaptureSourceType::SOURCE_INVALID);
+}
+
+/**
+ * @tc.name: ScreenCaptureAdapterImplTest_GetScreenCaptureStateCodeAdapter_011
+ * @tc.desc: GetScreenCaptureStateCodeAdapter.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ScreenCaptureAdapterImplTest,
+    ScreenCaptureAdapterImplTest_GetScreenCaptureStateCodeAdapter_011, TestSize.Level1)
+{
+    auto adapterImpl = std::make_shared<ScreenCaptureAdapterImpl>();
+    EXPECT_NE(adapterImpl, nullptr);
+    OHOS::Media::AVScreenCaptureStateCode stateCode;
+    ScreenCaptureStateCodeAdapter result;
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STARTED;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STARTED);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_CANCELED;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_CANCELED);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STOPPED_BY_USER;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STOPPED_BY_USER);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_INTERRUPTED_BY_OTHER;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_INTERRUPTED_BY_OTHER);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_STOPPED_BY_CALL;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_STOPPED_BY_CALL);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_UNAVAILABLE;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_UNAVAILABLE);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_MUTED_BY_USER;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_MUTED_BY_USER);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_MIC_UNMUTED_BY_USER;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_MIC_UNMUTED_BY_USER);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_ENTER_PRIVATE_SCENE;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_ENTER_PRIVATE_SCENE);
+
+    stateCode = OHOS::Media::AVScreenCaptureStateCode::SCREEN_CAPTURE_STATE_EXIT_PRIVATE_SCENE;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_EXIT_PRIVATE_SCENE);
+
+    stateCode = static_cast<OHOS::Media::AVScreenCaptureStateCode>(999);;
+    result = GetScreenCaptureStateCodeAdapter(stateCode);
+    EXPECT_EQ(result, ScreenCaptureStateCodeAdapter::SCREEN_CAPTURE_STATE_INVLID);
 }
 } // namespace NWeb
 } // namespace OHOS

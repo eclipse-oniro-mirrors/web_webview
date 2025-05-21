@@ -22,7 +22,10 @@
 
 #define private public
 #include "ability_manager_client.h"
+#include "iservice_registry.h"
 #include "migration_manager_adapter_impl.h"
+#include "system_ability.h"
+#include "system_ability_definition.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -91,5 +94,35 @@ HWTEST_F(MigrationManagerAdapterlmplTest, MigrationManagerAdapterlmplTest_002, T
     migrationManagermpl->SetMigrationParam("", "", "");
     EXPECT_FALSE(migrationManagermpl->SendMigrationRequest(std::make_shared<std::string>("")));
 }
+
+/**
+ *
+ * @tc.name: MigrationManagerAdapterlmplTest_003
+ * @tc.desc: MigrationManagerAdapterlmpl OnAbilityConnectDone
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(MigrationManagerAdapterlmplTest, MigrationManagerAdapterlmplTest_003, TestSize.Level1)
+{
+    std::shared_ptr<MigrationManagerAdapterImpl> migrationManagermpl = std::make_shared<MigrationManagerAdapterImpl>();
+    std::shared_ptr<MigrationListenerAdapter> listener = std::make_shared<MigrationListenerAdapterTest>();
+    std::unique_ptr<MigrationManagerAdapterImpl::MigrationListenerAdapterImpl> migrationListener =
+        std::make_unique<MigrationManagerAdapterImpl::MigrationListenerAdapterImpl>(listener);
+    EXPECT_EQ(migrationManagermpl->RegisterMigrationListener(listener), 0);
+
+    const AppExecFwk::ElementName elementName("aaa", "bbb", "ccc");
+    OHOS::sptr<OHOS::IRemoteObject> sp(nullptr);
+    migrationListener->OnAbilityConnectDone(elementName, sp, 0);
+
+    auto systemAbilityManager = SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    sp = systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    EXPECT_NE(sp, nullptr);
+    migrationListener->OnAbilityConnectDone(elementName, sp, 0);
+    EXPECT_TRUE(migrationManagermpl->SendMigrationRequest(std::make_shared<std::string>("")));
+
+    migrationListener->OnAbilityDisconnectDone(elementName, 0);
+    EXPECT_FALSE(migrationManagermpl->SendMigrationRequest(std::make_shared<std::string>("")));
+}
+
 } // namespace NWeb
 } // namespace OHOS

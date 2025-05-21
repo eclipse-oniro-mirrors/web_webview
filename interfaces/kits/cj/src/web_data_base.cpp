@@ -45,6 +45,7 @@ CArrString WebDataBase::CJGetHttpAuthCredentials(const std::string &host, const 
     char** result = static_cast<char**>(malloc(sizeof(char*) * DEFAULT_AUTH_LENGTH));
     if (result == nullptr) {
         WEBVIEWLOGI("Webdatabase getHttpAuthCredentials malloc result failed!");
+        (void)memset_s(password, MAX_PWD_LENGTH + 1, 0, MAX_PWD_LENGTH + 1);
         return ret;
     }
 
@@ -52,6 +53,7 @@ CArrString WebDataBase::CJGetHttpAuthCredentials(const std::string &host, const 
     if (result[0] == nullptr) {
         WEBVIEWLOGI("Webdatabase getHttpAuthCredentials transfer username_s failed!");
         free(result);
+        (void)memset_s(password, MAX_PWD_LENGTH + 1, 0, MAX_PWD_LENGTH + 1);
         return ret;
     }
 
@@ -60,6 +62,7 @@ CArrString WebDataBase::CJGetHttpAuthCredentials(const std::string &host, const 
         WEBVIEWLOGI("Webdatabase getHttpAuthCredentials malloc password failed!");
         free(result[0]);
         free(result);
+        (void)memset_s(password, MAX_PWD_LENGTH + 1, 0, MAX_PWD_LENGTH + 1);
         return ret;
     }
     result[1] = std::char_traits<char>::copy(result[1], password, MAX_PWD_LENGTH);

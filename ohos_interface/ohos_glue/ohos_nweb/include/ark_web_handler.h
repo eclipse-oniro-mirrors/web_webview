@@ -817,7 +817,6 @@ public:
      * @Input error: error code.
      * @Input certChainData: cert chain data.
      * @Return: true/false
-     * @Since 14001
      */
     /*--ark web()--*/
     virtual bool OnSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsSslErrorResult> result, int error,
@@ -851,6 +850,30 @@ public:
     virtual void OnShowAutofillPopupV2(
         const float offsetX, const float offsetY, const float height, const float width,
         const ArkWebStringVector& menu_items) = 0;
+
+    /**
+     * @brief Restore web component renderfit.
+     */
+    /*--ark web()--*/
+    virtual void RestoreRenderFit() = 0;
+
+    /**
+     * @Description: Called when an accessibility event occurs.
+     * @Input accessibilityId: the accessibility id of the accessibility node of the accessibility event.
+     * @Input eventType: the event type of the accessibility event.
+     * @Input argument: the argument of the accessibility event.
+     */
+    /*--ark web()--*/
+    virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) = 0;
+
+    /*--ark web()--*/
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) = 0;
+
+    /**
+     * @brief Called When you click on the selected area.
+     */
+    /*--ark web()--*/
+    virtual bool ChangeVisibilityOfQuickMenuV2() = 0;
 };
 
 } // namespace OHOS::ArkWeb

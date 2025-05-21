@@ -17,6 +17,7 @@
 #define MEDIA_AVSESSION_ADAPTER_H
 
 #include <string>
+#include <memory>
 
 namespace OHOS::NWeb {
 

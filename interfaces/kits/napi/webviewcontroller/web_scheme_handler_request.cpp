@@ -16,15 +16,24 @@
 #include "web_scheme_handler_request.h"
 
 #include <securec.h>
+#include <mutex>
 
 #include "napi_web_scheme_handler_request.h"
 #include "napi_parse_utils.h"
+#include "nweb_napi_scope.h"
 #include "nweb_log.h"
 #include "business_error.h"
 #include "web_errors.h"
 
 namespace OHOS::NWeb {
 namespace {
+
+std::unordered_map<WebSchemeHandler*, const ArkWeb_SchemeHandler*>
+    g_web_scheme_handler_map;
+std::unordered_map<const ArkWeb_SchemeHandler*, WebSchemeHandler*>
+    g_ark_web_scheme_handler_map;
+std::mutex g_mutex_for_handler_map;
+
 void OnRequestStart(const ArkWeb_SchemeHandler* schemeHandler,
                     ArkWeb_ResourceRequest* resourceRequest,
                     const ArkWeb_ResourceHandler* resourceHandler,
@@ -291,28 +300,30 @@ int32_t WebSchemeHandlerResponse::SetErrorCode(int32_t code)
     return OH_ArkWebResponse_SetError(response_, static_cast<ArkWeb_NetError>(code));
 }
 
-std::unordered_map<WebSchemeHandler*, const ArkWeb_SchemeHandler*>
-    WebSchemeHandler::webSchemeHandlerMap_;
-std::unordered_map<const ArkWeb_SchemeHandler*, WebSchemeHandler*>
-    WebSchemeHandler::arkWebSchemeHandlerMap_;
-
 const ArkWeb_SchemeHandler* WebSchemeHandler::GetArkWebSchemeHandler(
     WebSchemeHandler* handler)
 {
-    return WebSchemeHandler::webSchemeHandlerMap_.find(handler) !=
-        WebSchemeHandler::webSchemeHandlerMap_.end() ?
-        WebSchemeHandler::webSchemeHandlerMap_[handler] : nullptr;
+    std::lock_guard<std::mutex> auto_lock(g_mutex_for_handler_map);
+    auto iter = g_web_scheme_handler_map.find(handler);
+    if (iter == g_web_scheme_handler_map.end()) {
+        return nullptr;
+    }
+    return iter->second;
 }
 
 WebSchemeHandler* WebSchemeHandler::GetWebSchemeHandler(const ArkWeb_SchemeHandler* handler)
 {
-    return WebSchemeHandler::arkWebSchemeHandlerMap_.find(handler) !=
-        WebSchemeHandler::arkWebSchemeHandlerMap_.end() ?
-        WebSchemeHandler::arkWebSchemeHandlerMap_[handler] : nullptr;
+    std::lock_guard<std::mutex> auto_lock(g_mutex_for_handler_map);
+    auto iter = g_ark_web_scheme_handler_map.find(handler);
+    if (iter == g_ark_web_scheme_handler_map.end()) {
+        return nullptr;
+    }
+    return iter->second;
 }
 
 WebSchemeHandler::WebSchemeHandler(napi_env env)
-    : env_(env)
+    : env_(env),
+      thread_id_(gettid())
 {
     ArkWeb_SchemeHandler* handler;
     OH_ArkWeb_CreateSchemeHandler(&handler);
@@ -325,13 +336,22 @@ WebSchemeHandler::WebSchemeHandler(napi_env env)
     OH_ArkWebSchemeHandler_SetOnRequestStart(handler, onRequestStart_);
     OH_ArkWebSchemeHandler_SetOnRequestStop(handler, onRequestStop_);
     OH_ArkWebSchemeHandler_SetFromEts(handler, true);
-    webSchemeHandlerMap_.insert(std::make_pair(this, handler));
-    arkWebSchemeHandlerMap_.insert(std::make_pair(handler, this));
+
+    {
+        std::lock_guard<std::mutex> auto_lock(g_mutex_for_handler_map);
+        g_web_scheme_handler_map.insert(std::make_pair(this, handler));
+        g_ark_web_scheme_handler_map.insert(std::make_pair(handler, this));
+    }
 }
 
 WebSchemeHandler::~WebSchemeHandler()
 {
     WVLOG_D("WebSchemeHandler::~WebSchemeHandler");
+    pid_t current_tid = gettid();
+    if (current_tid != thread_id_) {
+        WVLOG_E("~WebSchemeHandler is in wrong thread! %{public}d != %{public}d",
+                current_tid, thread_id_);
+    }
     napi_delete_reference(env_, request_start_callback_);
     napi_delete_reference(env_, request_stop_callback_);
     ArkWeb_SchemeHandler* handler =
@@ -340,8 +360,11 @@ WebSchemeHandler::~WebSchemeHandler()
         WVLOG_E("~WebSchemeHandler not found ArkWeb_SchemeHandler");
         return;
     }
-    webSchemeHandlerMap_.erase(this);
-    arkWebSchemeHandlerMap_.erase(handler);
+    {
+        std::lock_guard<std::mutex> auto_lock(g_mutex_for_handler_map);
+        g_web_scheme_handler_map.erase(this);
+        g_ark_web_scheme_handler_map.erase(handler);
+    }
     OH_ArkWeb_DestroySchemeHandler(handler);
 }
 
@@ -349,9 +372,8 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
                                     const ArkWeb_ResourceHandler* ArkWeb_ResourceHandler,
                                     bool* intercept)
 {
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env_, &scope);
-    if (!scope) {
+    NApiScope scope(env_);
+    if (!scope.IsVaild()) {
         WVLOG_E("scheme handler RequestStart scope is nullptr");
         return;
     }
@@ -417,7 +439,6 @@ void WebSchemeHandler::RequestStart(ArkWeb_ResourceRequest* request,
         resourceHandler->SetFinishFlag();
         resourceHandler->DecStrongRef(resourceHandler);
     }
-    napi_close_handle_scope(env_, scope);
 }
 
 void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
@@ -433,9 +454,8 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
         work = nullptr;
         return;
     }
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(param->env_, &scope);
-    if (scope == nullptr) {
+    NApiScope scope(param->env_);
+    if (!scope.IsVaild()) {
         delete param;
         delete work;
         return;
@@ -444,7 +464,6 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
     napi_status napiStatus;
     if (!param->callbackRef_) {
         WVLOG_E("scheme handler onRequestStop nil env");
-        napi_close_handle_scope(param->env_, scope);
         delete param;
         delete work;
         return;
@@ -452,7 +471,6 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
     napiStatus = napi_get_reference_value(param->env_, param->callbackRef_, &callbackFunc);
     if (napiStatus != napi_ok || callbackFunc == nullptr) {
         WVLOG_E("scheme handler get onRequestStop func failed.");
-        napi_close_handle_scope(param->env_, scope);
         delete param;
         delete work;
         return;
@@ -480,7 +498,6 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
         resourceHandler->SetFinishFlag();
         resourceHandler->DecStrongRef(resourceHandler);
     }
-    napi_close_handle_scope(param->env_, scope);
     delete param;
     param = nullptr;
     delete work;
@@ -543,6 +560,16 @@ void WebSchemeHandler::PutRequestStop(napi_env, napi_value callback)
     napi_status status = napi_create_reference(env_, callback, 1, &request_stop_callback_);
     if (status != napi_status::napi_ok) {
         WVLOG_E("PutRequestStop create reference failed.");
+    }
+}
+
+void WebSchemeHandler::DeleteReference(WebSchemeHandler* schemehandler)
+{
+    ArkWeb_SchemeHandler* handler =
+        const_cast<ArkWeb_SchemeHandler*>(GetArkWebSchemeHandler(schemehandler));
+    if (handler && schemehandler->delegate_) {
+        napi_delete_reference(schemehandler->env_, schemehandler->delegate_);
+        schemehandler->delegate_ = nullptr;
     }
 }
 
@@ -710,6 +737,11 @@ void WebHttpBodyStream::Read(int bufLen, napi_ref jsCallback, napi_deferred defe
     if (buffer == nullptr) {
         return;
     }
+    if (!stream_) {
+        delete[] buffer;
+        buffer = nullptr;
+        return;
+    }
     OH_ArkWebHttpBodyStream_Read(stream_, buffer, bufLen);
 }
 
@@ -720,21 +752,48 @@ void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
         return ;
     }
     InitParam *param = new (std::nothrow) InitParam {
-        .env = env_,
-        .asyncWork = nullptr,
-        .deferred = initDeferred_,
-        .callbackRef = initJsCallback_,
+        .env = env_, .asyncWork = nullptr,
+        .deferred = initDeferred_, .callbackRef = initJsCallback_,
         .result = result,
     };
     if (param == nullptr) {
         return;
     }
-    napi_value resourceName = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL_RETURN_VOID(env_, napi_create_async_work(env_, nullptr, resourceName,
-        [](napi_env env, void *data) {},
-        ExecuteInitComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL_RETURN_VOID(env_, napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
+    auto task = [this, param]() {
+        WVLOG_D("WebHttpBodyStream::ExecuteInit sendEvent Complete");
+        if (!param) {
+            return;
+        }
+        NApiScope scope(env_);
+        if (!scope.IsVaild()) {
+            delete param;
+            return;
+        }
+        napi_value result[INTEGER_ONE] = {0};
+        if (param->result != 0) {
+            result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(
+                env_, NWebError::HTTP_BODY_STREAN_INIT_FAILED);
+        } else {
+            napi_get_null(env_, &result[INTEGER_ZERO]);
+        }
+        if (param->callbackRef) {
+            napi_value callback = nullptr;
+            napi_get_reference_value(env_, param->callbackRef, &callback);
+            napi_call_function(env_, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
+            napi_delete_reference(env_, param->callbackRef);
+        } else if (param->deferred) {
+            if (param->result != 0) {
+                napi_reject_deferred(env_, param->deferred, result[INTEGER_ZERO]);
+            } else {
+                napi_resolve_deferred(env_, param->deferred, result[INTEGER_ZERO]);
+            }
+        }
+        delete param;
+    };
+    if(napi_status::napi_ok != napi_send_event(env_, task, napi_eprio_immediate)) {
+        WVLOG_E("ExecuteInit:Failed to SendEvent");
+        delete param;
+    }
 }
 
 void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, void* data)
@@ -744,9 +803,8 @@ void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, vo
     if (!param) {
         return;
     }
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (!scope) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
         delete param;
         return;
     }
@@ -770,7 +828,6 @@ void WebHttpBodyStream::ExecuteInitComplete(napi_env env, napi_status status, vo
         }
     }
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
 }
 
@@ -781,9 +838,11 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
     if (!param) {
         return;
     } 
-    napi_handle_scope scope = nullptr;
-    napi_open_handle_scope(env, &scope);
-    if (!scope) {
+    NApiScope scope(env);
+    if (!scope.IsVaild()) {
+        if (param->buffer) {
+            delete param->buffer;
+        }
         delete param;
         return;
     }
@@ -806,7 +865,6 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
         napi_resolve_deferred(env, param->deferred, result[INTEGER_ZERO]);
     }
     napi_delete_async_work(env, param->asyncWork);
-    napi_close_handle_scope(env, scope);
     delete param;
 }
 
@@ -816,23 +874,50 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
         return;
     }
     ReadParam *param = new (std::nothrow) ReadParam {
-        .env = env_,
-        .asyncWork = nullptr,
-        .deferred = readDeferred_,
-        .callbackRef = readJsCallback_,
-        .buffer = buffer,
-        .bytesRead = bytesRead,
+        .env = env_, .asyncWork = nullptr,
+        .deferred = readDeferred_, .callbackRef = readJsCallback_,
+        .buffer = buffer, .bytesRead = bytesRead,
     };
     if (param == nullptr) {
         return;
     }
-    napi_value resourceName = nullptr;
-    NAPI_CALL_RETURN_VOID(env_, napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL_RETURN_VOID(env_, napi_create_async_work(env_, nullptr, resourceName,
-        [](napi_env env, void *data) {},
-        ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL_RETURN_VOID(env_, 
-        napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated));
+    auto task = [this, param]() {
+        WVLOG_D("WebHttpBodyStream::ExecuteRead sendEvent Complete");
+        if (!param) {
+            return;
+        } 
+        NApiScope scope(env_);
+        if (!scope.IsVaild()) {
+            if (param->buffer) {
+                delete param->buffer;
+            }
+            delete param;
+            return;
+        }
+        napi_value result[INTEGER_ONE] = {0};
+        void *bufferData = nullptr;
+        napi_create_arraybuffer(env_, param->bytesRead, &bufferData, &result[INTEGER_ZERO]);
+        if (memcpy_s(bufferData, param->bytesRead, param->buffer, param->bytesRead) != 0 &&
+            param->bytesRead > 0) {
+            WVLOG_W("WebHttpBodyStream::ExecuteRead memcpy failed");
+        }
+        if (param->buffer) {
+            delete param->buffer;
+        }
+        if (param->callbackRef) {
+            napi_value callback = nullptr;
+            napi_get_reference_value(env_, param->callbackRef, &callback);
+            napi_call_function(env_, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
+            napi_delete_reference(env_, param->callbackRef);
+        } else if (param->deferred) {
+            napi_resolve_deferred(env_, param->deferred, result[INTEGER_ZERO]);
+        }
+        delete param;
+    };
+    if(napi_status::napi_ok != napi_send_event(env_, task, napi_eprio_immediate)) {
+        WVLOG_E("ExecuteRead:Failed to SendEvent");
+        delete param;
+    }
 }
 
 uint64_t WebHttpBodyStream::GetPostion() const

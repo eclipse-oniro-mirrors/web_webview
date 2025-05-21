@@ -113,7 +113,9 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     const std::string, const std::vector<uint16_t>, const std::string, const int>& data)
 {
     auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
-
+    if (appInfo == nullptr) {
+        return -1;
+    }
     AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
 
     systemData sysData = {
@@ -132,7 +134,9 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     const std::string, const int64_t, const std::string, const int>& data)
 {
     auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
-
+    if (appInfo == nullptr) {
+        return -1;
+    }
     AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
 
     std::tuple<const std::string, const std::string, const std::string, const std::string,
@@ -161,7 +165,9 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     const std::string, const int64_t, const std::string, const int64_t>& data)
 {
     auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
-
+    if (appInfo == nullptr) {
+        return -1;
+    }
     AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
 
     std::tuple<const std::string, const std::string> sysData = {

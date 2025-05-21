@@ -14,11 +14,13 @@
  */
 
 #include "savehttpauthcredentials_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include <cstring>
 #include <securec.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
+#include <algorithm>
 
 #include "ohos_web_data_base_adapter_impl.h"
 
@@ -155,11 +157,11 @@ class MockRdbStore : public OHOS::NativeRdb::RdbStore {
         (override));
 
     MOCK_METHOD(int, Subscribe,
-        (const SubscribeOption &option, RdbStoreObserver *observer),
+        (const SubscribeOption &option, std::shared_ptr<RdbStoreObserver> observer),
         (override));
 
     MOCK_METHOD(int, UnSubscribe,
-        (const SubscribeOption &option, RdbStoreObserver *observer),
+        (const SubscribeOption &option, std::shared_ptr<RdbStoreObserver> observer),
         (override));
 
     MOCK_METHOD(int, SubscribeObserver,
@@ -217,12 +219,18 @@ bool SaveHttpAuthCredentialsFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    std::string host((const char*)data, size);
-    std::string realm((const char*)data, size);
-    std::string name((const char*)data, size);
-    const char* str = (char*)data;
+    FuzzedDataProvider dataProvider(data, size);
+    std::string host = dataProvider.ConsumeRandomLengthString(10);
+    std::string realm = dataProvider.ConsumeRandomLengthString(20);
+    std::string name = dataProvider.ConsumeRandomLengthString(10);
+    std::string password = dataProvider.ConsumeRandomLengthString(20);
+
     std::shared_ptr<MockRdbStore> mockRdbStore = std::make_shared<MockRdbStore>();
-    OhosWebDataBaseAdapterImpl(mockRdbStore).SaveHttpAuthCredentials(host, realm, name, str);
+    EXPECT_CALL(*mockRdbStore, Insert(testing::Matcher<int64_t&>(testing::_),
+                                      testing::Matcher<const std::string&>(testing::_),
+                                      testing::Matcher<const MockRdbStore::Row&>(testing::_)))
+                .Times(testing::AnyNumber());
+    OhosWebDataBaseAdapterImpl(mockRdbStore).SaveHttpAuthCredentials(host, realm, name, password.c_str());
     return true;
 }
 
@@ -232,13 +240,19 @@ bool GetHttpAuthCredentialsFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    std::string host((const char*)data, size);
-    std::string realm((const char*)data, size);
+    FuzzedDataProvider dataProvider(data, size);
+    std::string host = dataProvider.ConsumeRandomLengthString(10);
+    std::string realm = dataProvider.ConsumeRandomLengthString(20);
     std::string username;
-    char password[maxLen + 1] = { 0 };
+    char str[maxLen + 1] = { 0 };
     std::shared_ptr<MockRdbStore>mockRdbStore=std::make_shared<MockRdbStore>();
-    OhosWebDataBaseAdapterImpl(mockRdbStore).GetHttpAuthCredentials(host, realm, username, password, maxLen + 1);
-    (void)memset_s(password, maxLen + 1, 0, maxLen + 1);
+    EXPECT_CALL(*mockRdbStore, QueryByStep(testing::Matcher<const NativeRdb::AbsRdbPredicates&>(testing::_),
+                                          testing::Matcher<const MockRdbStore::Fields&>(testing::_),
+                                          testing::Matcher<bool>(testing::_)))
+                .Times(testing::AnyNumber());
+    EXPECT_CALL(*mockRdbStore, Query(testing::_, testing::_)).Times(testing::AnyNumber());
+    OhosWebDataBaseAdapterImpl(mockRdbStore).GetHttpAuthCredentials(host, realm, username, str, maxLen + 1);
+    std::fill(str, str + maxLen + 1, 0);
     return true;
 }
 } // namespace OHOS
