@@ -269,7 +269,7 @@ int32_t DisplayAdapterImpl::GetDpi()
         return ppi;
     }
     ppi = screenLength / phyScreenLength;
-    WVLOG_I("dpi: %{public}d, xdpi: %{public}f,ydpi: %{public}f, width: %{public}d, height: %{public}d, "\
+    WVLOG_D("dpi: %{public}d, xdpi: %{public}f,ydpi: %{public}f, width: %{public}d, height: %{public}d, "\
         "phyScreenLength: %{public}f", ppi, displayInfo->GetXDpi(), displayInfo->GetYDpi(),
         displayInfo->GetWidth(), displayInfo->GetHeight(), phyScreenLength);
 
