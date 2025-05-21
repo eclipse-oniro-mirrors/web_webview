@@ -15,17 +15,9 @@ import("//build/config/components/ets_frontend/es2abc_config.gni")
 import("//build/ohos.gni")
 import("//build/templates/abc/ohos_abc.gni")
 
-ohos_source_set("webview_register") {
-  sources = [ "webview_export_module.cpp" ]
-  external_deps = [ "napi:ace_napi" ]
-
-  part_name = "webview"
-  subsystem_name = "web"
-}
-
-ohos_abc("webview_napi") {
+ohos_abc("webview_abc") {
   sources = [ "webview_export.js" ]
-  output_name = "webview_napi"
+  output_name = "webview"
   install_images = [ "system" ]
   module_install_dir = "etc/abc/web"
   part_name = "webview"
