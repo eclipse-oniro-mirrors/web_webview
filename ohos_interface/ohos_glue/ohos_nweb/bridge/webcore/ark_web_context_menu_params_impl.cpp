@@ -104,4 +104,8 @@ void ArkWebContextMenuParamsImpl::GetImageRect(int& x, int& y, int& w, int& h)
     nweb_context_menu_params_->GetImageRect(x, y, w, h);
 }
 
+bool ArkWebContextMenuParamsImpl::IsAILink()
+{
+    return nweb_context_menu_params_->IsAILink();
+}
 } // namespace OHOS::ArkWeb
