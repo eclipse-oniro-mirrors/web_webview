@@ -147,7 +147,7 @@ bool NWebSurfaceAdapter::CopyFrame(
             WVLOG_E("copy size overflow, drop this frame(%{public}u*%{public}u)", width, height);
             return false;
         }
-        errno_t ret = memcpy_s(dst, static_cast<size_t>(srcStride), src, static_cast<size_t>(srcStride));
+        errno_t ret = memcpy_s(dst, static_cast<size_t>(dstStride), src, static_cast<size_t>(srcStride));
         if (ret != EOK) {
             WVLOG_E("memcpy_s failed");
             return false;
