@@ -724,14 +724,12 @@ bool NWebHelper::InitWebEngine()
     initFlag_ = true;
 
     WVLOG_I("succeed to init web engine");
-
-    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
-    ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
     return true;
 }
 
 bool NWebHelper::LoadWebEngine(bool fromArk, bool runFlag)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     if (!GetWebEngine(fromArk)) {
         return false;
     }
@@ -763,6 +761,14 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return nullptr;
+    }
+
+    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
+    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (ctx) {
+        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
+    } else {
+        WVLOG_E("failed to get application context");
     }
     std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
     if (webApplicationStateCallback_ && (!webApplicationStateCallback_->nweb_)) {
@@ -1021,26 +1027,6 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
     }
 
     nwebEngine_->ClearHostIP(hostName);
-}
-
-void NWebHelper::SetAppCustomUserAgent(const std::string& userAgent)
-{
-    if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
-        return;
-    }
-
-    nwebEngine_->SetAppCustomUserAgent(userAgent);
-}
-
-void NWebHelper::SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts)
-{
-    if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
-        return;
-    }
-
-    nwebEngine_->SetUserAgentForHosts(userAgent, hosts);
 }
 
 void NWebHelper::WarmupServiceWorker(const std::string& url)

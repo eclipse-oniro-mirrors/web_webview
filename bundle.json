@@ -84,9 +84,6 @@
                 "libxml2",
                 "openssl",
                 "drm_framework"
-            ],
-            "third_party": [
-                "chromium"
             ]
         },
         "build": {

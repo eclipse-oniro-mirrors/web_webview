@@ -1086,4 +1086,14 @@ void ArkWebHandlerWrapper::OnAccessibilityEventV2(
     ark_web_handler_->OnAccessibilityEventV2(accessibilityId, eventType, stArgument);
     ArkWebStringStructRelease(stArgument);
 }
+
+void ArkWebHandlerWrapper::EnableSecurityLayer(bool isNeedSecurityLayer)
+{
+    ark_web_handler_->EnableSecurityLayer(isNeedSecurityLayer);
+}
+
+bool ArkWebHandlerWrapper::ChangeVisibilityOfQuickMenuV2()
+{
+    return ark_web_handler_->ChangeVisibilityOfQuickMenuV2();
+}
 } // namespace OHOS::ArkWeb

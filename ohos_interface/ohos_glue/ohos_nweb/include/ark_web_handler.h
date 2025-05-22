@@ -865,6 +865,15 @@ public:
      */
     /*--ark web()--*/
     virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) = 0;
+
+    /*--ark web()--*/
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) = 0;
+
+    /**
+     * @brief Called When you click on the selected area.
+     */
+    /*--ark web()--*/
+    virtual bool ChangeVisibilityOfQuickMenuV2() = 0;
 };
 
 } // namespace OHOS::ArkWeb

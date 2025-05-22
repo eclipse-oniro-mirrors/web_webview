@@ -14,6 +14,7 @@
  */
 
 #include "gethttpauthcredentials_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include <cstring>
 #include <securec.h>
@@ -23,16 +24,18 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 10;
 bool GetHttpAuthCredentialsFuzzTest(const uint8_t* data, size_t size)
 {
     constexpr int32_t maxLen = 256;
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    std::string host((const char*)data, size);
-    std::string realm((const char*)data, size);
-    std::string username;
-    char password[maxLen + 1] = { 0 };
+    FuzzedDataProvider dataProvider(data, size);
+    std::string host = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    std::string realm = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    std::string username; // get
+    char password[maxLen + 1] = { 0 }; // get
     OhosWebDataBaseAdapterImpl::GetInstance().GetHttpAuthCredentials(host, realm, username, password, maxLen + 1);
     (void)memset_s(password, maxLen + 1, 0, maxLen + 1);
     return true;

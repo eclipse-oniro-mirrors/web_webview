@@ -14,29 +14,33 @@
  */
 
 #include "loadwithdataandbaseurl_fuzzer.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "nweb.h"
 #include "nweb_create_window.h"
 
 namespace OHOS {
-    std::shared_ptr<OHOS::NWeb::NWeb> g_nweb = nullptr;
-    bool LoadWithDataAndBaseUrlFuzzTest(const uint8_t* data, size_t size)
-    {
-        if ((data == nullptr) || (size == 0)) {
-            return true;
-        }
-        g_nweb = NWeb::GetNwebForTest();
-        if (g_nweb == nullptr) {
-            return true;
-        }
-        std::string baseUrl((const char *)data, size);
-        const std::string datas;
-        const std::string mimeType;
-        const std::string encoding;
-        const std::string historyUrl;
-        g_nweb->LoadWithDataAndBaseUrl(baseUrl, datas, mimeType, encoding, historyUrl);
+constexpr uint8_t MAX_DATA_LENGTH = 255;
+constexpr uint8_t MAX_STRING_LENGTH = 10;
+std::shared_ptr<OHOS::NWeb::NWeb> g_nweb = nullptr;
+bool LoadWithDataAndBaseUrlFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
         return true;
     }
+    FuzzedDataProvider dataProvider(data, size);
+    g_nweb = NWeb::GetNwebForTest();
+    if (g_nweb == nullptr) {
+        return true;
+    }
+    std::string baseUrl = dataProvider.ConsumeRandomLengthString(MAX_DATA_LENGTH);
+    std::string datas = dataProvider.ConsumeRandomLengthString(MAX_DATA_LENGTH);
+    std::string mimeType = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    std::string encoding = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    std::string historyUrl = dataProvider.ConsumeRandomLengthString(MAX_DATA_LENGTH);
+    g_nweb->LoadWithDataAndBaseUrl(baseUrl, datas, mimeType, encoding, historyUrl);
+    return true;
+}
 }
 
 /* Fuzzer entry point */

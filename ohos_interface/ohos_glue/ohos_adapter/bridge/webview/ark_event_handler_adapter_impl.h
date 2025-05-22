@@ -31,6 +31,8 @@ public:
 
     void RemoveFileDescriptorListener(int32_t fileDescriptor) override;
 
+    void PostTask(const ArkWebRefPtr<ArkOnceCallbackAdapter> callback) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::EventHandlerAdapter> real_;
 

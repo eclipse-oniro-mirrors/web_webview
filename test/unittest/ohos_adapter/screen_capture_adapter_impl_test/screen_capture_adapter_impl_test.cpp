@@ -63,6 +63,7 @@ public:
     MOCK_METHOD1(ExcludeContent, int32_t(ScreenCaptureContentFilter&));
     MOCK_METHOD0(SetPrivacyAuthorityEnabled, int32_t());
     MOCK_METHOD1(SetScreenCaptureStrategy, int32_t(ScreenCaptureStrategy));
+    MOCK_METHOD1(UpdateSurface, int32_t(sptr<Surface>));
 };
 } // namespace Media
 namespace NWeb {
