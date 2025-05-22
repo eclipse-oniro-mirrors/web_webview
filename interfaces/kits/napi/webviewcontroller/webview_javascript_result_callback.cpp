@@ -978,8 +978,9 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultS
         JavaScriptOb::ObjectID returnedObjectId;
         if (FindObjectIdInJsTd(jsObj->GetEnv(), callResult, &returnedObjectId)) {
             std::shared_ptr<JavaScriptOb> obj = FindObject(returnedObjectId);
-            if (obj)
+            if (obj) {
                 obj->AddHolder(routingId);
+            }
         } else {
             returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, routingId);
         }
