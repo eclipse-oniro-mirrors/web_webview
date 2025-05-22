@@ -142,7 +142,7 @@ JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::RegisterJavaScriptPr
     // set up named object method
     if (namedObjects_.find(objName) != namedObjects_.end() && objects_[namedObjects_[objName]]) {
         objects_[namedObjects_[objName]]->SetMethods(methodList);
-        objects_[namedObjects_[objName]]->SetPermission(permission)
+        objects_[namedObjects_[objName]]->SetPermission(permission);
     }
     WEBVIEWLOGD("WebviewJavaScriptResultCallBackImpl::RegisterJavaScriptProxy called, "
             "objectId = %{public}d",
