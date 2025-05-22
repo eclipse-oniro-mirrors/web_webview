@@ -19,6 +19,7 @@
 #include <regex>
 
 #include "application_context.h"
+#include "cj_common_ffi.h"
 #include "cj_lambda.h"
 #include "geolocation_permission.h"
 #include "nweb_cache_options_impl.h"
@@ -454,6 +455,31 @@ extern "C" {
         }
         nativeWebviewCtl->SetNWebJavaScriptResultCallBack();
         nativeWebviewCtl->RegisterJavaScriptProxy(cjFuncs, objName, methodList);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxyEx(int64_t id, CArrI64 cFuncIds,  
+        const char* cName, CArrString cMethodList, char* permission)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        std::string objName = std::string(cName);
+        std::vector<std::string> methodList;
+        for (int64_t i = 0; i < cMethodList.size; i++) {
+            methodList.push_back(std::string(cMethodList.head[i]));
+        }
+        std::vector<std::function<char*(const char*)>> cjFuncs;
+        for (int64_t i = 0; i < cFuncIds.size; i++) {
+            auto cFunc = reinterpret_cast<char*(*)(const char*)>(cFuncIds.head[i]);
+            auto onChange = [lambda = CJLambda::Create(cFunc)]
+                (const char* infoRef) -> char* { return lambda(infoRef); };
+            cjFuncs.push_back(onChange);
+        }
+
+        nativeWebviewCtl->SetNWebJavaScriptResultCallBack();
+        nativeWebviewCtl->RegisterJavaScriptProxyEx(cjFuncs, objName, methodList, permission);
         return NWebError::NO_ERROR;
     }
 
@@ -1979,24 +2005,6 @@ extern "C" {
         }
         nativeWebviewCtl->SetScrollable(enable, scrollType);
         return NWebError::NO_ERROR;
-    }
-
-    int32_t FfiOHOSWebviewCtlCreateWebPrintDocumentAdapter(int64_t id, char *cJobName) 
-    {
-        int32_t ret = -1;
-        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
-        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
-            ret = NWebError::INIT_ERROR;
-            return ret;
-        }
-        std::string jobName = cJobName;
-        void* webPrintDocument = nativeWebviewCtl->CreateWebPrintDocumentAdapter(jobName);
-        if (!webPrintDocument) {
-            ret = NWebError::PARAM_CHECK_ERROR;
-            return ret;
-        }
-        ret = NWebError::NO_ERROR;
-        return ret;
     }
 
     OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlGetScrollOffset(int64_t id, int32_t* errorCode) 
