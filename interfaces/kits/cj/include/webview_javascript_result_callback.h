@@ -60,6 +60,11 @@ public:
         return methods_;
     }
 
+    std::string GetPermission()
+    {
+        return permission_;
+    }
+
     std::vector<std::function<char*(const char*)>> GetFuncs()
     {
         return cjFuncs_;
@@ -103,6 +108,12 @@ public:
         isMethodsSetup_ = true;
     }
 
+    void SetPermission(std::string permission)
+    {
+        std::unique_lock<std::mutex> lock(mutex_);
+        permission_ = permission;
+    }
+
 private:
 
     std::vector<std::function<char*(const char*)>> cjFuncs_;
@@ -114,6 +125,9 @@ private:
     bool isMethodsSetup_ = false;
 
     std::mutex mutex_;
+
+    // allow list
+    std::string permission_;
 };
 
 class WebviewJavaScriptResultCallBackImpl : public NWeb::NWebJavaScriptResultCallBack {
@@ -147,7 +161,7 @@ public:
 
     JavaScriptOb::ObjectID RegisterJavaScriptProxy(
         const std::vector<std::function<char*(const char*)>>& cjFuncs,
-        const std::string& objName, const std::vector<std::string>& methodList);
+        const std::string& objName, const std::vector<std::string>& methodList, const std::string& permission = "");
 
     void RemoveJavaScriptObjectHolder(int32_t holder, JavaScriptOb::ObjectID objectId) override;
 

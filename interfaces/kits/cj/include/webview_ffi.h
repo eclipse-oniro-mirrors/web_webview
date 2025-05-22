@@ -53,6 +53,8 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlRunJavaScriptExtArr(
     int64_t id, CArrUI8 cScript, void (*callbackRef)(RetDataI64));
 FFI_EXPORT int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxy(
     int64_t id, CArrI64 cFuncIds, const char* cName, CArrString cMethodList);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxyEx(
+int64_t id, CArrI64 cFuncIds, const char* cName, CArrString cMethodList, char* cPermission);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetUrl(int64_t id);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetOriginalUrl(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlPageUp(int64_t id, bool top);
@@ -156,7 +158,6 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlPrecompileJavaScript(int64_t id,
     char* url, char* script, OHOS::Webview::CacheOptions cacheOptions);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlWebPageSnapshot(int64_t id, OHOS::Webview::CSnapshotInfo snapshot,
     void (*callbackRef)(OHOS::Webview::RetDataCSnapshotResult infoRef));
-FFI_EXPORT int32_t FfiOHOSWebviewCtlCreateWebPrintDocumentAdapter(int64_t id, char* cJobName);
 FFI_EXPORT OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlgetScrollOffset(int64_t id, int32_t* errorCode);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlSetScrollableEx(int64_t id, bool enable, int32_t scrollType);
 FFI_EXPORT bool FfiOHOSWebviewCtlScrollByWithResult(int64_t id, float deltaX, float deltaY, int32_t* errorCode);

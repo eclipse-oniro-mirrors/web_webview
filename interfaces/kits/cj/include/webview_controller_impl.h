@@ -18,6 +18,8 @@
 
 #include <cstdint>
 #include <map>
+#include <string>
+#include <vector>
 #include "ffi_remote_data.h"
 #include "webview_utils.h"
 #include "web_errors.h"
@@ -222,6 +224,8 @@ public:
     void RegisterJavaScriptProxy(const std::vector<std::function<char*(const char*)>>& cjFuncs,
         const std::string& objName, const std::vector<std::string>& methodList);
 
+    void RegisterJavaScriptProxyEx(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::string& objName, const std::vector<std::string>& methodList, char* permission);
     void Stop();
 
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);

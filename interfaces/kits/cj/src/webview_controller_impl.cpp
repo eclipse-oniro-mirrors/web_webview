@@ -791,6 +791,33 @@ namespace OHOS::Webview {
         nweb_ptr->RegisterArkJSfunction(objName, methodList, objId);
     }
 
+    void WebviewControllerImpl::RegisterJavaScriptProxyEx(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+    const std::string& objName, const std::vector<std::string>& methodList, char* permission)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy nweb_ptr is null");
+            return;
+        }
+        JavaScriptOb::ObjectID objId =
+            static_cast<JavaScriptOb::ObjectID>(JavaScriptOb::JavaScriptObjIdErrorCode::WEBCONTROLLERERROR);
+
+        if (!javaScriptResultCb_) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy javaScriptResultCb_ is null");
+            return;
+        }
+
+        if (methodList.empty()) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy methodList is empty");
+            return;
+        }
+
+        objId = javaScriptResultCb_->RegisterJavaScriptProxy(cjFuncs, objName, methodList);
+
+        nweb_ptr->RegisterArkJSfunction(objName, methodList,std::vector<std::string>(), 
+        objId, permission);
+    }
+
     void WebviewControllerImpl::Stop()
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
