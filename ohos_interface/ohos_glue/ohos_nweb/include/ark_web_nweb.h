@@ -1747,6 +1747,30 @@ public:
      */
     /*--ark web()--*/
     virtual void SetFocusWindowId(uint32_t focus_window_id) = 0;
+
+    /**
+     * @brief Run data detector JS
+     */
+    /*--ark web()--*/
+    virtual void RunDataDetectorJS() = 0;
+
+    /**
+     * @brief Set data detector enable.
+     */
+    /*--ark web()--*/
+    virtual void SetDataDetectorEnable(bool enable) = 0;
+
+    /**
+     * @brief On data detector select text.
+     */
+    /*--ark web()--*/
+    virtual void OnDataDetectorSelectText() = 0;
+
+    /**
+     * @brief On data detector copy.
+     */
+    /*--ark web()--*/
+    virtual void OnDataDetectorCopy(const ArkWebStringVector& recordMix) = 0;
 };
 
 } // namespace OHOS::ArkWeb
