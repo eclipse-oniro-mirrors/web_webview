@@ -28,7 +28,8 @@ public:
 
     static std::string CjGetCookie(const std::string &url, bool incognitoMode, int32_t& errCode);
     static int32_t CjSetCookie(const std::string& url, const std::string& value, bool incognitoMode);
-    static int32_t CjSetCookie(const std::string& url, const std::string& value, bool incognitoMode, bool includeHttpOnly);
+    static int32_t CjSetCookie(const std::string& url, const std::string& value, bool incognitoMode, 
+        bool includeHttpOnly);
     static void CjPutAcceptCookieEnabled(bool accept);
     static bool CjIsCookieAllowed();
     static void CjPutAcceptThirdPartyCookieEnabled(bool accept);

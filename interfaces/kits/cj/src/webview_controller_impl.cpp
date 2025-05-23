@@ -792,7 +792,7 @@ namespace OHOS::Webview {
     }
 
     void WebviewControllerImpl::RegisterJavaScriptProxyEx(const std::vector<std::function<char*(const char*)>>& cjFuncs,
-    const std::string& objName, const std::vector<std::string>& methodList, char* permission)
+        const std::string& objName, const std::vector<std::string>& methodList, char* permission)
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
         if (!nweb_ptr) {

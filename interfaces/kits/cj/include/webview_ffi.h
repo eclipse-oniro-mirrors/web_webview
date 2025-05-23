@@ -54,7 +54,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlRunJavaScriptExtArr(
 FFI_EXPORT int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxy(
     int64_t id, CArrI64 cFuncIds, const char* cName, CArrString cMethodList);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxyEx(
-int64_t id, CArrI64 cFuncIds, const char* cName, CArrString cMethodList, char* cPermission);
+    int64_t id, CArrI64 cFuncIds, const char* cName, CArrString cMethodList, char* cPermission);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetUrl(int64_t id);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetOriginalUrl(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlPageUp(int64_t id, bool top);
