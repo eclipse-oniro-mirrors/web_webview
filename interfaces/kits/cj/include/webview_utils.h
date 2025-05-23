@@ -222,8 +222,6 @@ struct CScrollOffset {
     int32_t y;
 };
 
-
-
 struct CCertByteData {
     CArrUI8* head;
     int64_t size;
