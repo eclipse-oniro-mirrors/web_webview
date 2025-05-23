@@ -25,3 +25,4 @@ persist.arkwebcore.package_name = com.ohos.arkwebcore
 web.ohos.vulkan = None
 web.prppreload.mode = preload
 web.ohos.dvsync = false
+web.ohos.enableCWNDSetting = false
