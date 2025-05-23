@@ -48,6 +48,7 @@ ohos_unittest("ohos_resource_adapter_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "init:libbegetutil",
+    "libxml2:libxml2",
     "relational_store:native_rdb",
     "webview:libnweb",
     "zlib:libz",
