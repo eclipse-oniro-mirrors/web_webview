@@ -814,7 +814,7 @@ namespace OHOS::Webview {
 
         objId = javaScriptResultCb_->RegisterJavaScriptProxy(cjFuncs, objName, methodList);
 
-        nweb_ptr->RegisterArkJSfunction(objName, methodList,std::vector<std::string>(),
+        nweb_ptr->RegisterArkJSfunction(objName, methodList, std::vector<std::string>(),
             objId, permission);
     }
 
