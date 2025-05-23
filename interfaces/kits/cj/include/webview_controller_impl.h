@@ -18,8 +18,6 @@
 
 #include <cstdint>
 #include <map>
-#include <string>
-#include <vector>
 #include "ffi_remote_data.h"
 #include "webview_utils.h"
 #include "web_errors.h"
@@ -318,7 +316,7 @@ public:
     void GetScrollOffset(float* offset_x, float* offset_y);
 
     bool ScrollByWithResult(float deltaX, float deltaY) const;
-    
+
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;

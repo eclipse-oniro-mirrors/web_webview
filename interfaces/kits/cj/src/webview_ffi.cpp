@@ -458,7 +458,7 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxyEx(int64_t id, CArrI64 cFuncIds,  
+    int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxyEx(int64_t id, CArrI64 cFuncIds,
         const char* cName, CArrString cMethodList, char* permission)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
@@ -1944,7 +1944,6 @@ extern "C" {
         return ret;
     }
 
-    
     CCertByteData FfiOHOSWebviewCtlGetCertificateByte(int64_t id, int32_t *errCode)
     {
         CCertByteData arrCertificate = {.head = nullptr, .size = 0};
@@ -2007,7 +2006,7 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
-    OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlGetScrollOffset(int64_t id, int32_t* errorCode) 
+    OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlGetScrollOffset(int64_t id, int32_t* errorCode)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
         if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
