@@ -26,8 +26,8 @@ extern "C" {
 // cookie_manager
 FFI_EXPORT const char* FfiOHOSCookieMgrFetchCookieSync(const char* url, bool incognitoMode, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSCookieMgrConfigCookieSync(const char* url, const char* value, bool incognitoMode);
-FFI_EXPORT int32_t FfiOHOSCookieMgrCfgCookieSync(const char* url, const char* value, bool incognitoMode, 
-    bool includeHttpOnly);   
+FFI_EXPORT int32_t FfiOHOSCookieMgrCfgCookieSync(const char* url, const char* value, bool incognitoMode,
+    bool includeHttpOnly);
 FFI_EXPORT void FfiOHOSCookieMgrPutAcceptCookieEnabled(bool accept);
 FFI_EXPORT bool FfiOHOSCookieMgrIsCookieAllowed();
 FFI_EXPORT void FfiOHOSCookieMgrPutAcceptThirdPartyCookieEnabled(bool accept);

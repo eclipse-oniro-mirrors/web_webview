@@ -49,7 +49,8 @@ int32_t WebCookieManager::CjSetCookie(const std::string& url, const std::string&
     return isSet;
 }
 
-int32_t WebCookieManager::CjSetCookie(const std::string& url, const std::string& value, bool incognitoMode, bool includeHttpOnly)
+int32_t WebCookieManager::CjSetCookie(const std::string& url, const std::string& value, bool incognitoMode,
+    bool includeHttpOnly)
 {
     int isSet = DEFAULT_VALUE;
     std::shared_ptr<NWebCookieManager> cookieManager = NWebHelper::Instance().GetCookieManager();

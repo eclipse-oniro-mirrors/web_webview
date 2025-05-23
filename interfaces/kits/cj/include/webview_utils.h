@@ -216,12 +216,15 @@ struct RetDataCSnapshotResult {
     int32_t code;
     CSnapshotResult data;
 };
-struct CScrollOffset{
+
+struct CScrollOffset {
     int32_t x;
     int32_t y;
 };
 
-struct CCertByteData{
+
+
+struct CCertByteData {
     CArrUI8* head;
     int64_t size;
 };
