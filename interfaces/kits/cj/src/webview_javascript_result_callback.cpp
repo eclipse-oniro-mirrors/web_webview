@@ -14,7 +14,6 @@
  */
 #include "webview_javascript_result_callback.h"
 
-#include <string>
 #include <sys/mman.h>
 #include <unistd.h>
 
