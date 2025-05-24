@@ -60,6 +60,7 @@ const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
     DO(WebDownload_Resume);                           \
     DO(WebDownload_GetItemState);                     \
     DO(WebDownload_GetItemStateByGuid);               \
+    DO(WebDownload_GetItemStateByGuidV2);             \
     DO(WebDownloadItem_Guid);                         \
     DO(WebDownloadItem_GetDownloadItemId);            \
     DO(WebDownloadItem_GetState);                     \
@@ -270,9 +271,25 @@ extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long d
 extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuid(const std::string& guid)
 {
     if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
+    if (!g_nwebCApi) {
         return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
     }
     return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
+    if (g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2) {
+        return g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2(guid.c_str());
+    }
+    if (g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
+        return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
+    }
+    return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+}
+
+extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuidV2(const char* guid)
+{
+    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2) {
+        return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+    }
+    return g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2(guid);
 }
 
 extern "C" char* WebDownloadItem_Guid(const NWebDownloadItem* downloadItem)
