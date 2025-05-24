@@ -270,11 +270,9 @@ extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long d
 
 extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuid(const std::string& guid)
 {
-    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
     if (!g_nwebCApi) {
         return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
     }
-    return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
     if (g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2) {
         return g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2(guid.c_str());
     }
