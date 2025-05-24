@@ -39,6 +39,7 @@ ohos_fuzztest("LoadFuzzTest") {
   deps = [ "$graphic2d_path/rosen/modules/render_service_client:librender_service_client" ]
   external_deps = [
     "c_utils:utils",
+    "graphic_2d:librender_service_base",
     "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",
