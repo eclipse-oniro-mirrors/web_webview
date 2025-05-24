@@ -17,6 +17,8 @@
 
 #include "base/include/ark_web_log_utils.h"
 
+static thread_local ArkWebInterfaceResult interface_result = RESULT_OK;
+
 void ArkWebSetErrno(ArkWebInterfaceResult result)
 {
     interface_result = result;
