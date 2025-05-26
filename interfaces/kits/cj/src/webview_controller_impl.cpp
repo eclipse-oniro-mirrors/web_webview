@@ -791,6 +791,33 @@ namespace OHOS::Webview {
         nweb_ptr->RegisterArkJSfunction(objName, methodList, objId);
     }
 
+    void WebviewControllerImpl::RegisterJavaScriptProxyEx(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::string& objName, const std::vector<std::string>& methodList, char* permission)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy nweb_ptr is null");
+            return;
+        }
+        JavaScriptOb::ObjectID objId =
+            static_cast<JavaScriptOb::ObjectID>(JavaScriptOb::JavaScriptObjIdErrorCode::WEBCONTROLLERERROR);
+
+        if (!javaScriptResultCb_) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy javaScriptResultCb_ is null");
+            return;
+        }
+
+        if (methodList.empty()) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy methodList is empty");
+            return;
+        }
+
+        objId = javaScriptResultCb_->RegisterJavaScriptProxy(cjFuncs, objName, methodList);
+
+        nweb_ptr->RegisterArkJSfunction(objName, methodList, std::vector<std::string>(),
+            objId, permission);
+    }
+
     void WebviewControllerImpl::Stop()
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1052,6 +1079,29 @@ namespace OHOS::Webview {
             return;
         }
         setting->SetScrollable(enable);
+    }
+
+    void WebviewControllerImpl::SetScrollable(bool enable, int32_t scrollType)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+        if (!setting) {
+            return;
+        }
+        return setting->SetScrollable(enable, scrollType);
+    }
+
+    bool WebviewControllerImpl::ScrollByWithResult(float deltaX, float deltaY) const
+    {
+        bool enabled = false;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            enabled = nweb_ptr->ScrollByWithResult(deltaX, deltaY);
+        }
+        return enabled;
     }
 
     void WebviewControllerImpl::EnableAdsBlock(bool enable)
@@ -1385,7 +1435,7 @@ namespace OHOS::Webview {
         std::vector<Scheme> schemeVector;
         for (int64_t i = 0; i < arrayLength; ++i) {
             Scheme scheme;
-            bool result = SetCustomizeScheme(schemes.cScheme[i], scheme);
+            bool result = SetCustomizeScheme(schemes.head[i], scheme);
             if (!result) {
                 return NWebError::PARAM_CHECK_ERROR;
             }
@@ -1412,5 +1462,22 @@ namespace OHOS::Webview {
             }
         }
         return nwebResult;
+    }
+
+    void* WebviewControllerImpl::CreateWebPrintDocumentAdapter(const std::string &jobName)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return nullptr;
+        }
+        return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
+    }
+
+    void WebviewControllerImpl::GetScrollOffset(float* offset_x, float* offset_y)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->GetScrollOffset(offset_x, offset_y);
+        }
     }
 }

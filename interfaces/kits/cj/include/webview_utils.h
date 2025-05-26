@@ -120,7 +120,7 @@ struct Scheme {
 };
 
 struct CArrScheme {
-    CScheme* cScheme;
+    CScheme* head;
     int64_t size;
 };
 
@@ -215,6 +215,16 @@ struct CSnapshotResult {
 struct RetDataCSnapshotResult {
     int32_t code;
     CSnapshotResult data;
+};
+
+struct CScrollOffset {
+    int32_t x;
+    int32_t y;
+};
+
+struct CCertByteData {
+    CArrUI8* head;
+    int64_t size;
 };
 
 char* MallocCString(const std::string& origin);
