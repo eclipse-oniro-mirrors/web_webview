@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -31,6 +31,7 @@
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
 #include "locale_config.h"
+#include "nweb_config_helper.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
 #include "parameter.h"
@@ -137,6 +138,14 @@ std::string GetArkWebHapPath(const std::string& arkWebCoreHapPathOverride,
         }
     }
     errorMessage.emplace_back("access arkWebCoreHapPathOverride path failed", errno);
+
+    const std::string& webPlayGround = NWebConfigHelper::Instance().GetWebPlayGroundHapPath();
+    if (!webPlayGround.empty()) {
+        if (access(webPlayGround.c_str(), F_OK) == 0) {
+            return webPlayGround;
+        }
+        WVLOG_E("GetWebPlayGroundHapPath file not found, %{public}s", webPlayGround.c_str());
+    }
 
     std::string installPath = OhosResourceAdapterImpl::ConvertToSandboxPath(
         OHOS::system::GetParameter(PERSIST_ARKWEBCORE_INSTALL_PATH, ""), prefixPath);
@@ -252,7 +261,7 @@ void OhosResourceAdapterImpl::Init(const std::string& hapPath)
         }
     }
     for (const auto& err : errorMessage) {
-        WVLOG_E("%{public}s, errno(%{public}d): %{public}s", err.first.c_str(), err.second, strerror(err.second));
+        WVLOG_D("%{public}s, errno(%{public}d): %{public}s", err.first.c_str(), err.second, strerror(err.second));
     }
     if (hapPath.empty()) {
         return;

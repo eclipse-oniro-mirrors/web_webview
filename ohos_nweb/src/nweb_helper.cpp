@@ -60,6 +60,7 @@ const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
     DO(WebDownload_Resume);                           \
     DO(WebDownload_GetItemState);                     \
     DO(WebDownload_GetItemStateByGuid);               \
+    DO(WebDownload_GetItemStateByGuidV2);             \
     DO(WebDownloadItem_Guid);                         \
     DO(WebDownloadItem_GetDownloadItemId);            \
     DO(WebDownloadItem_GetState);                     \
@@ -269,10 +270,24 @@ extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long d
 
 extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuid(const std::string& guid)
 {
-    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
+    if (!g_nwebCApi) {
         return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
     }
-    return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
+    if (g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2) {
+        return g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2(guid.c_str());
+    }
+    if (g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
+        return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
+    }
+    return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+}
+
+extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuidV2(const char* guid)
+{
+    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2) {
+        return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+    }
+    return g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2(guid);
 }
 
 extern "C" char* WebDownloadItem_Guid(const NWebDownloadItem* downloadItem)
@@ -639,7 +654,7 @@ bool NWebHelper::GetWebEngine(bool fromArk)
     }
 
     TryPreReadLibForFirstlyAppStartUp(bundlePath_);
-
+    fromArk = fromArk && !NWebConfigHelper::Instance().IsWebPlayGroundEnable();
     if (!ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().Init(fromArk, bundlePath_)) {
         WVLOG_E("failed to init arkweb nweb bridge helper");
         return false;
@@ -724,14 +739,12 @@ bool NWebHelper::InitWebEngine()
     initFlag_ = true;
 
     WVLOG_I("succeed to init web engine");
-
-    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
-    ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
     return true;
 }
 
 bool NWebHelper::LoadWebEngine(bool fromArk, bool runFlag)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     if (!GetWebEngine(fromArk)) {
         return false;
     }
@@ -763,6 +776,14 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return nullptr;
+    }
+
+    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
+    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (ctx) {
+        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
+    } else {
+        WVLOG_E("failed to get application context");
     }
     std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
     if (webApplicationStateCallback_ && (!webApplicationStateCallback_->nweb_)) {
@@ -1023,26 +1044,6 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
     nwebEngine_->ClearHostIP(hostName);
 }
 
-void NWebHelper::SetAppCustomUserAgent(const std::string& userAgent)
-{
-    if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
-        return;
-    }
-
-    nwebEngine_->SetAppCustomUserAgent(userAgent);
-}
-
-void NWebHelper::SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts)
-{
-    if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
-        return;
-    }
-
-    nwebEngine_->SetUserAgentForHosts(userAgent, hosts);
-}
-
 void NWebHelper::WarmupServiceWorker(const std::string& url)
 {
     if (nwebEngine_ == nullptr) {
@@ -1149,6 +1150,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height, incognitoMode);
     NWebConfigHelper::Instance().ParseConfig(initArgs);
 
@@ -1183,6 +1185,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void* enhanceSurfaceInfo,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo =
         NWebEnhanceSurfaceAdapter::Instance().GetCreateInfo(enhanceSurfaceInfo, initArgs, width, height, incognitoMode);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);

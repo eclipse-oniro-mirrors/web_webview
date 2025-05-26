@@ -95,6 +95,7 @@ bool WebviewController::existNweb_ = false;
 bool WebviewController::webDebuggingAccess_ = OHOS::system::GetBoolParameter("web.debug.devtools", false);
 std::set<std::string> WebviewController::webTagSet_;
 int32_t WebviewController::webTagStrId_ = 0;
+std::map<std::string, WebSchemeHandler*> WebviewController::webServiceWorkerSchemeHandlerMap_;
 
 WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
 {
@@ -1516,6 +1517,7 @@ bool WebviewController::SetWebSchemeHandler(const char* scheme, WebSchemeHandler
 
 int32_t WebviewController::ClearWebSchemeHandler()
 {
+    DeleteWebSchemeHandler();
     return OH_ArkWeb_ClearSchemeHandlers(webTag_.c_str());
 }
 
@@ -1534,6 +1536,7 @@ bool WebviewController::SetWebServiveWorkerSchemeHandler(
 
 int32_t WebviewController::ClearWebServiceWorkerSchemeHandler()
 {
+    DeleteWebServiceWorkerSchemeHandler();
     return OH_ArkWebServiceWorker_ClearSchemeHandlers();
 }
 
@@ -2155,6 +2158,40 @@ std::shared_ptr<HitTestResult> WebviewController::GetLastHitTest()
         }
     }
     return nwebResult;
+}
+
+void WebviewController::SaveWebSchemeHandler(const char* scheme, WebSchemeHandler* handler)
+{
+    auto iter = webSchemeHandlerMap_.find(scheme);
+    if (iter != webSchemeHandlerMap_.end()) {
+        return;
+    }
+    webSchemeHandlerMap_[scheme] = handler;
+}
+
+void WebviewController::SaveWebServiceWorkerSchemeHandler(const char* scheme, WebSchemeHandler* handler)
+{
+    auto iter = webServiceWorkerSchemeHandlerMap_.find(scheme);
+    if (iter != webServiceWorkerSchemeHandlerMap_.end()) {
+        return;
+    }
+    webServiceWorkerSchemeHandlerMap_[scheme] = handler;
+}
+
+void WebviewController::DeleteWebSchemeHandler()
+{
+    for (const auto &iter : webSchemeHandlerMap_) {
+        iter.second->DeleteReference(iter.second);
+    }
+    webSchemeHandlerMap_.clear();
+}
+
+void WebviewController::DeleteWebServiceWorkerSchemeHandler()
+{
+    for (const auto &iter : webServiceWorkerSchemeHandlerMap_) {
+        iter.second->DeleteReference(iter.second);
+    }
+    webServiceWorkerSchemeHandlerMap_.clear();
 }
 } // namespace NWeb
 } // namespace OHOS

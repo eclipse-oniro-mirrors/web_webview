@@ -42,6 +42,8 @@ public:
 
     int32_t GetDeviceInfo(int32_t deviceId, std::shared_ptr<NWeb::MMIDeviceInfoAdapter> info) override;
 
+    int32_t GetMaxTouchPoints() override;
+
 private:
     ArkWebRefPtr<ArkMMIAdapter> ctocpp_;
 };

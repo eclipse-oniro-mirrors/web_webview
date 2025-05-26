@@ -1056,6 +1056,13 @@ public:
     virtual void RestoreRenderFit() {}
 
     virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) {}
+
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) {}
+
+    /**
+     * @brief Called When you click on the selected area.
+     */
+    virtual bool ChangeVisibilityOfQuickMenuV2() { return false; }
 };
 
 } // namespace OHOS::NWeb

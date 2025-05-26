@@ -123,6 +123,9 @@ public:
 
     /*--ark web()--*/
     virtual int32_t GetDeviceInfo(int32_t deviceId, ArkWebRefPtr<ArkMMIDeviceInfoAdapter> info) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetMaxTouchPoints() = 0;
 };
 
 } // namespace OHOS::ArkWeb

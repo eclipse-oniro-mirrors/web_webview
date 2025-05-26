@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2022-2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -22,9 +22,11 @@
 #define private public
 #include "ohos_resource_adapter_impl.h"
 #include "application_context.h"
-#undef private
-
+#include "nweb_config_helper.h"
 #include "extractor.h"
+#include "system_properties_adapter_impl.h"
+#undef private
+#include "parameters.h"
 #include "zip_file_reader.h"
 
 using namespace testing;
@@ -80,9 +82,15 @@ class ExtractorMock : public Extractor{
 public:
     explicit ExtractorMock() : Extractor("web_test") {}
     ~ExtractorMock() override = default;
-    MOCK_METHOD0(Init, bool());
-    MOCK_METHOD0(IsStageModel, bool());
-    MOCK_METHOD3(ExtractToBufByName, bool(const std::string &, std::unique_ptr<uint8_t[]> &, size_t &));
+    void SetInit(bool init)
+    {
+        initial_ = init;
+    }
+
+    void SetStageMode(bool isStageModel)
+    {
+        isStageModel_ = isStageModel;
+    }
 };
 
 /**
@@ -122,8 +130,7 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_GetRawFileData_002, Te
     result = adapterImpl.GetRawFileData(nullptr, rawFile, len, dest);
     EXPECT_FALSE(result);
     auto mock = std::make_shared<ExtractorMock>();
-    EXPECT_CALL(*mock, IsStageModel())
-        .WillRepeatedly(::testing::Return(false));
+    mock->SetStageMode(false);
     adapterImpl.GetRawFileData(mock, rawFile, len, dest);
     std::shared_ptr<OhosFileMapper> fileMapper = adapterImpl.GetRawFileMapper(rawFile, true);
     EXPECT_EQ(fileMapper, nullptr);
@@ -205,6 +212,30 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
 }
 
 /**
+ * @tc.name: OhosResourceAdapterTest_OhosFileMapperImpl_004
+ * @tc.desc: OhosFileMapperImpl.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_004, TestSize.Level1)
+{
+    std::string hapPath = "/system/app/com.ohos.nweb/NWeb.hap";
+    OhosResourceAdapterImpl adapterImpl(hapPath);
+    SystemPropertiesAdapterImpl& propImpl = SystemPropertiesAdapterImpl::GetInstance();
+    bool optimode = propImpl.GetWebOptimizationValue();
+    if (optimode) {
+        OHOS::system::SetParameter("web.optimization", "false");
+    }
+    std::string rawFile = "test_web";
+    std::shared_ptr<Extractor> extractor = std::make_shared<Extractor>(rawFile);
+    std::shared_ptr<OhosFileMapper> mapper = adapterImpl.GetRawFileMapper(extractor, rawFile);
+    EXPECT_EQ(mapper, nullptr);
+    if (optimode) {
+        OHOS::system::SetParameter("web.optimization", "true");
+    }
+}
+
+/**
  * @tc.name: OhosResourceAdapterTest_ParseModuleName_004
  * @tc.desc: Init.
  * @tc.type: FUNC
@@ -256,10 +287,6 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ParseModuleName_004, T
     EXPECT_EQ(result, "");
     free(configStr);
     configStr = nullptr;
-    auto mock = std::make_shared<ExtractorMock>();
-    EXPECT_CALL(*mock, ExtractToBufByName(::testing::_, ::testing::_, ::testing::_))
-        .WillRepeatedly(::testing::Return(true));
-    adapterImpl.ParseModuleName(mock);
 }
 
 /**
@@ -395,6 +422,9 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_ConvertToSandboxPath_0
     EXPECT_EQ(res, "");
     inputStr = NWEB_HAP_PATH;
     prefixPath = "/data/app/el1/bundle/public/";
+    res = adapterImpl.ConvertToSandboxPath(inputStr, prefixPath);
+    EXPECT_FALSE(res.empty());
+    inputStr = "/data/app/el1/bundle/public/system/app/com.ohos.nweb/NWeb.hap";
     res = adapterImpl.ConvertToSandboxPath(inputStr, prefixPath);
     EXPECT_FALSE(res.empty());
 }

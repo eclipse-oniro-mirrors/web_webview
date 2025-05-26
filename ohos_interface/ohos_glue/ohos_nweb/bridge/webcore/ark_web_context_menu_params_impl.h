@@ -61,6 +61,8 @@ public:
 
     void GetImageRect(int& x, int& y, int& w, int& h) override;
 
+    bool IsAILink() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebContextMenuParams> nweb_context_menu_params_;
 };

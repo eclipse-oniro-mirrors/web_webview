@@ -1567,6 +1567,26 @@ public:
      */
     void SetFocusWindowId(uint32_t focus_window_id) override;
 
+    /**
+     * @brief Run data detector JS
+     */
+    void RunDataDetectorJS() override;
+
+    /**
+     * @brief Set data detector enable.
+     */
+    void SetDataDetectorEnable(bool enable) override;
+
+    /**
+     * @brief On data detector select text.
+     */
+    void OnDataDetectorSelectText() override;
+
+    /**
+     * @brief On data detector copy.
+     */
+    void OnDataDetectorCopy(const ArkWebStringVector& recordMix) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

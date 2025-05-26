@@ -87,4 +87,9 @@ int32_t ArkMMIAdapterWrapper::GetDeviceInfo(int32_t deviceId, std::shared_ptr<NW
     return ctocpp_->GetDeviceInfo(deviceId, new ArkMMIDeviceInfoAdapterImpl(info));
 }
 
+int32_t ArkMMIAdapterWrapper::GetMaxTouchPoints()
+{
+    return ctocpp_->GetMaxTouchPoints();
+}
+
 } // namespace OHOS::ArkWeb
