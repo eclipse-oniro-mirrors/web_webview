@@ -135,12 +135,13 @@ bool WebviewJavaScriptResultCallBackImpl::RemoveNamedObject(const std::string& n
 
 JavaScriptOb::ObjectID WebviewJavaScriptResultCallBackImpl::RegisterJavaScriptProxy(
     const std::vector<std::function<char*(const char*)>>& cjFuncs,
-    const std::string& objName, const std::vector<std::string>& methodList)
+    const std::string& objName, const std::vector<std::string>& methodList, const std::string& permission)
 {
     JavaScriptOb::ObjectID objId = AddNamedObject(cjFuncs, methodList, objName);
     // set up named object method
     if (namedObjects_.find(objName) != namedObjects_.end() && objects_[namedObjects_[objName]]) {
         objects_[namedObjects_[objName]]->SetMethods(methodList);
+        objects_[namedObjects_[objName]]->SetPermission(permission);
     }
     WEBVIEWLOGD("WebviewJavaScriptResultCallBackImpl::RegisterJavaScriptProxy called, "
             "objectId = %{public}d",

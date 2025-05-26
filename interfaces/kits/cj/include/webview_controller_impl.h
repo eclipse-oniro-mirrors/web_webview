@@ -222,6 +222,8 @@ public:
     void RegisterJavaScriptProxy(const std::vector<std::function<char*(const char*)>>& cjFuncs,
         const std::string& objName, const std::vector<std::string>& methodList);
 
+    void RegisterJavaScriptProxyEx(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::string& objName, const std::vector<std::string>& methodList, char* permission);
     void Stop();
 
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
@@ -259,6 +261,8 @@ public:
     bool GetScrollable();
 
     void SetScrollable(bool enable);
+
+    void SetScrollable(bool enable, int32_t scrollType);
 
     void EnableAdsBlock(bool enable);
 
@@ -306,6 +310,12 @@ public:
         const NWeb::WebSnapshotCallback callback);
 
     std::shared_ptr<NWeb::HitTestResult> GetLastHitTest();
+
+    void* CreateWebPrintDocumentAdapter(const std::string &jobName);
+
+    void GetScrollOffset(float* offset_x, float* offset_y);
+
+    bool ScrollByWithResult(float deltaX, float deltaY) const;
 
 public:
     static std::string customeSchemeCmdLine_;
