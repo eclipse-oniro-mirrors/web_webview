@@ -92,19 +92,19 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize
         hapPath = MOCK_NWEB_INSTALLATION_DIR;
     }
     int32_t nweb_id = 1;
-    NWebHelper& helper = NWebHelper::Instance();
-    helper.SetBundlePath(hapPath);
-    helper.Init(false);
-    auto cook = helper.GetCookieManager();
+    NWebHelper* helper = new NWebHelper;
+    helper->SetBundlePath(hapPath);
+    helper->Init(false);
+    auto cook = helper->GetCookieManager();
     EXPECT_EQ(cook, nullptr);
-    auto base = helper.GetDataBase();
+    auto base = helper->GetDataBase();
     EXPECT_NE(base, nullptr);
-    auto storage = helper.GetWebStorage();
+    auto storage = helper->GetWebStorage();
     EXPECT_NE(storage, nullptr);
-    auto nweb = helper.GetNWeb(nweb_id);
+    auto nweb = helper->GetNWeb(nweb_id);
     EXPECT_EQ(nweb, nullptr);
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
-    helper.SetHttpDns(config);
+    helper->SetHttpDns(config);
 }
 
 /**
@@ -172,19 +172,25 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Level1)
 {
     int32_t nweb_id = 1;
-    NWebHelper& helper = NWebHelper::Instance();
+    std::string hapPath = "";
+    if (access(MOCK_NWEB_INSTALLATION_DIR.c_str(), F_OK) == 0) {
+        hapPath = MOCK_NWEB_INSTALLATION_DIR;
+    }
+    NWebHelper* helper = new NWebHelper;
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
-    NWebHelper::Instance().SetHttpDns(config);
-    auto webview = helper.CreateNWeb(create_info);
+    helper->SetBundlePath(hapPath);
+    helper->Init(false);
+    helper->SetHttpDns(config);
+    auto webview = helper->CreateNWeb(create_info);
     EXPECT_EQ(webview, nullptr);
-    auto cook = helper.GetCookieManager();
+    auto cook = helper->GetCookieManager();
     EXPECT_EQ(cook, nullptr);
-    auto base = helper.GetDataBase();
+    auto base = helper->GetDataBase();
     EXPECT_NE(base, nullptr);
-    auto storage = helper.GetWebStorage();
+    auto storage = helper->GetWebStorage();
     EXPECT_NE(storage, nullptr);
-    auto nweb = helper.GetNWeb(nweb_id);
+    auto nweb = helper->GetNWeb(nweb_id);
     EXPECT_EQ(nweb, nullptr);
 }
 

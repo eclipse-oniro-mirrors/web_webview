@@ -268,9 +268,9 @@ public:
 
     virtual std::vector<int32_t> GetPressKeyCodes() = 0;
 
-    virtual int32_t GetRawX() { return 0; };
+    virtual int32_t GetRawX() { return 0; }
 
-    virtual int32_t GetRawY() { return 0; };
+    virtual int32_t GetRawY() { return 0; }
 
 };
 
@@ -1684,7 +1684,7 @@ public:
      * @Description: Optimize HTML parser budget to reduce FCP time.
      * @Input enable: Set whether to use optimized parser budget.
      */
-    virtual void PutOptimizeParserBudgetEnabled(bool enable) {};
+    virtual void PutOptimizeParserBudgetEnabled(bool enable) {}
 
     /**
      * @Description: Get the bounding rectangle of the accessibility node of the given id.
@@ -1710,7 +1710,7 @@ public:
     virtual std::shared_ptr<HitTestResult> GetLastHitTestResult()
     {
         return std::shared_ptr<HitTestResult>();
-    };
+    }
 
     /**
      * @Description: Get the current language in the webview.
@@ -1816,6 +1816,26 @@ public:
      * @brief Set the window id.
      */
     virtual void SetFocusWindowId(uint32_t focus_window_id) {}
+
+    /**
+     * @brief Run data detector JS.
+     */
+    virtual void RunDataDetectorJS() {}
+
+    /**
+     * @brief Set data detector enable.
+     */
+    virtual void SetDataDetectorEnable(bool enable) {}
+
+    /**
+     * @brief On data detector select text.
+     */
+    virtual void OnDataDetectorSelectText() {}
+
+    /**
+     * @brief On data detector copy.
+     */
+    virtual void OnDataDetectorCopy(const std::vector<std::string>& recordMix) {}
 };
 
 } // namespace OHOS::NWeb

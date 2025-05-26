@@ -18,6 +18,7 @@
 
 #include <iosfwd>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -93,10 +94,6 @@ public:
     void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime);
     void ClearHostIP(const std::string& hostName);
 
-    void SetAppCustomUserAgent(const std::string& userAgent);
-
-    void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts);
-
     void WarmupServiceWorker(const std::string& url);
 
     void EnableWholeWebPageDrawing();
@@ -129,6 +126,7 @@ private:
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
     std::vector<std::string> backForwardCacheCmdLine_;
     std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_;
+    mutable std::mutex lock_;
 };
 } // namespace OHOS::NWeb
 

@@ -222,4 +222,16 @@ HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIInputListenerAdapterImpl_007,
     MMIInputListenerAdapterImpl listenerAdapterImpl(nullptr);
     listenerAdapterImpl.OnInputEvent(keyEvent);
 }
+
+/**
+ * @tc.name: NWebMMIAdapterTest_MMIAdapterImpl_008.
+ * @tc.desc: MMI adapter GetMaxTouchPoints unittest.
+ * @tc.type: FUNC.
+ * @tc.require:IC5TR0
+ */
+HWTEST_F(NWebMMIAdapterTest, NWebMMIAdapterTest_MMIAdapterImpl_008, TestSize.Level1)
+{
+    int32_t ret = g_mmi->GetMaxTouchPoints();
+    EXPECT_GE(ret, 0);
+}
 } // namespace OHOS::NWeb

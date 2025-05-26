@@ -625,8 +625,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("injectOfflineResources", NapiWebviewController::InjectOfflineResources),
         DECLARE_NAPI_STATIC_FUNCTION("setHostIP", NapiWebviewController::SetHostIP),
         DECLARE_NAPI_STATIC_FUNCTION("clearHostIP", NapiWebviewController::ClearHostIP),
-        DECLARE_NAPI_STATIC_FUNCTION("setAppCustomUserAgent", NapiWebviewController::SetAppCustomUserAgent),
-        DECLARE_NAPI_STATIC_FUNCTION("setUserAgentForHosts", NapiWebviewController::SetUserAgentForHosts),
         DECLARE_NAPI_STATIC_FUNCTION("warmupServiceWorker", NapiWebviewController::WarmupServiceWorker),
         DECLARE_NAPI_FUNCTION("getSurfaceId", NapiWebviewController::GetSurfaceId),
         DECLARE_NAPI_STATIC_FUNCTION("enableWholeWebPageDrawing", NapiWebviewController::EnableWholeWebPageDrawing),
@@ -5319,7 +5317,10 @@ napi_value NapiWebviewController::SetWebSchemeHandler(napi_env env, napi_callbac
         WVLOG_E("NapiWebviewController::SetWebSchemeHandler handler is null");
         return nullptr;
     }
-    napi_create_reference(env, obj, 1, &handler->delegate_);
+    if (handler->delegate_ == nullptr) {
+        napi_create_reference(env, obj, 1, &handler->delegate_);
+        webviewController->SaveWebSchemeHandler(scheme.c_str(), handler);
+    }
 
     if (!webviewController->SetWebSchemeHandler(scheme.c_str(), handler)) {
         WVLOG_E("NapiWebviewController::SetWebSchemeHandler failed");
@@ -5367,7 +5368,10 @@ napi_value NapiWebviewController::SetServiceWorkerWebSchemeHandler(
         WVLOG_E("NapiWebviewController::SetServiceWorkerWebSchemeHandler handler is null");
         return nullptr;
     }
-    napi_create_reference(env, obj, 1, &handler->delegate_);
+    if (handler->delegate_ == nullptr) {
+        napi_create_reference(env, obj, 1, &handler->delegate_);
+        WebviewController::SaveWebServiceWorkerSchemeHandler(scheme.c_str(), handler);
+    }
 
     if (!WebviewController::SetWebServiveWorkerSchemeHandler(
         scheme.c_str(), handler)) {
@@ -5392,7 +5396,9 @@ napi_value NapiWebviewController::EnableIntelligentTrackingPrevention(
 {
     WVLOG_I("enable/disable intelligent tracking prevention.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("EnableIntelligentTrackingPrevention: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5429,7 +5435,9 @@ napi_value NapiWebviewController::IsIntelligentTrackingPreventionEnabled(
 {
     WVLOG_I("get intelligent tracking prevention enabled value.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("IsIntelligentTrackingPreventionEnabled: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5485,7 +5493,9 @@ napi_value NapiWebviewController::AddIntelligentTrackingPreventionBypassingList(
 {
     WVLOG_I("Add intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("AddIntelligentTrackingPreventionBypassingList: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5524,7 +5534,9 @@ napi_value NapiWebviewController::RemoveIntelligentTrackingPreventionBypassingLi
 {
     WVLOG_I("Remove intelligent tracking prevention bypassing list.");
     napi_value result = nullptr;
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("RemoveIntelligentTrackingPreventionBypassingList: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5563,7 +5575,9 @@ napi_value NapiWebviewController::ClearIntelligentTrackingPreventionBypassingLis
 {
     napi_value result = nullptr;
     WVLOG_I("Clear intelligent tracking prevention bypassing list.");
-    if (SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType() == ProductDeviceType::DEVICE_TYPE_WEARABLE) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE && deviceType != ProductDeviceType::DEVICE_TYPE_TABLET &&
+        deviceType != ProductDeviceType::DEVICE_TYPE_2IN1) {
         WVLOG_E("ClearIntelligentTrackingPreventionBypassingList: Capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return result;
@@ -5843,64 +5857,6 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
 
     webviewController->SetBackForwardCacheOptions(size, timeToLive);
     NAPI_CALL(env, napi_get_undefined(env, &result));
-    return result;
-}
-
-napi_value NapiWebviewController::SetAppCustomUserAgent(napi_env env, napi_callback_info info)
-{
-    WVLOG_D("Set App custom user agent.");
-    napi_value thisVar = nullptr;
-    napi_value result = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE] = { 0 };
-    std::string userAgent;
-    NAPI_CALL(env, napi_get_undefined(env, &result));
-    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_ONE) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
-        return result;
-    }
-
-    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], userAgent)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "userAgent", "string"));
-        return result;
-    }
-
-    NWebHelper::Instance().SetAppCustomUserAgent(userAgent);
-    return result;
-}
-
-napi_value NapiWebviewController::SetUserAgentForHosts(napi_env env, napi_callback_info info)
-{
-    WVLOG_D("Set User Agent For Hosts.");
-    napi_value thisVar = nullptr;
-    napi_value result = nullptr;
-    size_t argc = INTEGER_TWO;
-    napi_value argv[INTEGER_TWO] = { 0 };
-    NAPI_CALL(env, napi_get_undefined(env, &result));
-    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_TWO) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
-        return result;
-    }
-    std::string userAgent;
-    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], userAgent)) {
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
-            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "userAgent", "string"));
-        return result;
-    }
-
-    std::vector<std::string> hosts;
-    if (!NapiParseUtils::ParseStringArray(env, argv[INTEGER_ONE], hosts)) {
-        BusinessError::ThrowErrorByErrcode(
-            env, PARAM_CHECK_ERROR, NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "hosts", "array"));
-        return result;
-    }
-
-    NWebHelper::Instance().SetUserAgentForHosts(userAgent, hosts);
     return result;
 }
 

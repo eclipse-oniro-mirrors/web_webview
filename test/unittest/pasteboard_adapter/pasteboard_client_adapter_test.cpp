@@ -245,10 +245,12 @@ HWTEST_F(NWebPasteboardAdapterTest, NWebPasteboardAdapter_PasteDataRecordAdapter
         result = -1;
     }
     EXPECT_EQ(RESULT_OK, result);
-    g_paster = std::make_shared<PasteDataRecordAdapterImpl>(g_mimeType, g_htmlText, g_plainText);
+    g_paster = std::make_shared<PasteDataRecordAdapterImpl>(g_mimeType);
     if (g_paster == nullptr) {
         result = -1;
     }
+    g_paster->SetHtmlText(g_htmlText);
+    g_paster->SetPlainText(g_plainText);
     EXPECT_EQ(RESULT_OK, result);
 }
 
