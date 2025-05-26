@@ -19,8 +19,6 @@
 
 enum ArkWebInterfaceResult { RESULT_OK = 0, RESULT_NOT_IMPL, RESULT_CPPTOC_ERROR, RESULT_CTOCPP_ERROR };
 
-static thread_local ArkWebInterfaceResult interface_result = RESULT_OK;
-
 void ArkWebSetErrno(ArkWebInterfaceResult result);
 
 ArkWebInterfaceResult ArkWebGetErrno();
