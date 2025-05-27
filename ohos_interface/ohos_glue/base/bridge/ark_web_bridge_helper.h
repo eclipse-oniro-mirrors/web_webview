@@ -28,6 +28,19 @@ extern int g_ark_web_init_addr;
 #define ARK_WEB_INIT_ADDR &g_ark_web_init_addr
 
 #if defined(OHOS_WEBVIEW_GLUE)
+
+#if defined(IS_ASAN)
+#if defined(webview_arm64)
+const std::string WEBVIEW_RELATIVE_PATH_FOR_MOCK = "libs/arm64";
+const std::string WEBVIEW_RELATIVE_PATH_FOR_BUNDLE = "arkwebcore_asan/libs/arm64";
+#elif defined(webview_x86_64)
+const std::string WEBVIEW_RELATIVE_PATH_FOR_MOCK = "libs/x86_64";
+const std::string WEBVIEW_RELATIVE_PATH_FOR_BUNDLE = "arkwebcore_asan/libs/x86_64";
+#else
+const std::string WEBVIEW_RELATIVE_PATH_FOR_MOCK = "libs/arm";
+const std::string WEBVIEW_RELATIVE_PATH_FOR_BUNDLE = "arkwebcore_asan/libs/arm";
+#endif
+#else
 #if defined(webview_arm64)
 const std::string WEBVIEW_RELATIVE_PATH_FOR_MOCK = "libs/arm64";
 const std::string WEBVIEW_RELATIVE_PATH_FOR_BUNDLE = "arkwebcore/libs/arm64";
@@ -38,6 +51,8 @@ const std::string WEBVIEW_RELATIVE_PATH_FOR_BUNDLE = "arkwebcore/libs/x86_64";
 const std::string WEBVIEW_RELATIVE_PATH_FOR_MOCK = "libs/arm";
 const std::string WEBVIEW_RELATIVE_PATH_FOR_BUNDLE = "arkwebcore/libs/arm";
 #endif
+#endif
+
 #endif
 
 using ArkWebMemberCheckFunc = void* (*)(ArkWebBridgeType, const ArkWebString*);
