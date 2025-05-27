@@ -37,6 +37,7 @@ ohos_unittest("arkweb_scheme_handler_test") {
     "googletest:gtest_main",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
+    "libxml2:libxml2",
     "webview:libnweb",
     "window_manager:libwm",
   ]
@@ -63,6 +64,7 @@ ohos_unittest("arkweb_interface_test") {
     "googletest:gtest_main",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
+    "libxml2:libxml2",
     "webview:libnweb",
     "window_manager:libwm",
   ]
@@ -89,6 +91,7 @@ ohos_unittest("native_arkweb_utils_test") {
     "googletest:gtest_main",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
+    "libxml2:libxml2",
     "webview:libnweb",
     "window_manager:libwm",
   ]
