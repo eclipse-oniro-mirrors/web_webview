@@ -124,6 +124,9 @@ public:
 
     bool RegisterCustomSchemes();
 
+    void SetWebDebuggingAccess(bool isEnableDebug);
+    void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port);
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);
