@@ -196,3 +196,13 @@ VIDEO_PLAY_ERROR:
   ERROR_TYPE: {type: STRING, desc: error type}
   ERROR_CODE: {type: UINT32, desc: error code}
   ERROR_DESC: {type: STRING, desc: error info}
+
+CHILD_PROCESS_INIT_FAIL:
+  __BASE: {type: FAULT, level: CRITICAL, tag: fault, desc: child process init fail, preserve: true}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  PROCESS_TYPE: {type: STRING, desc: child process type}
+  ERROR_CODE: {type: STRING, desc: error code}
+
+RENDER_JS_FREEZE:
+  __BASE: {type: FAULT, level: CRITICAL, tag: fault, desc: render js freeze, preserve: true}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
