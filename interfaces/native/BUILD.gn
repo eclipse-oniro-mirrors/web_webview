@@ -37,7 +37,7 @@ ohos_shared_library("ohweb") {
   }
 
   output_extension = "so"
-  include_dirs = [ "../../ohos_nweb/include" ]
+  include_dirs = [ "${target_gen_dir}/../../ohos_nweb/include" ]
 
   sources = [
     "arkweb_interface.cpp",
