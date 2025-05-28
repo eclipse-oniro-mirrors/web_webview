@@ -32,7 +32,7 @@ ohos_fuzztest("FormatAdapterFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = []
+  sources = [ "formatadapter_fuzzer.cpp" ]
 
   defines = [ "NWEB_CAMERA_ENABLE" ]
 
@@ -43,6 +43,7 @@ ohos_fuzztest("FormatAdapterFuzzTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
+    "camera_framework:camera_framework",
     "drivers_interface_camera:metadata",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
@@ -50,19 +51,14 @@ ohos_fuzztest("FormatAdapterFuzzTest") {
     "ipc:ipc_core",
     "webview:libnweb",
   ]
-  if (webview_camera_enable) {
-    external_deps += [ "camera_framework:camera_framework" ]
-    sources += [ "formatadapter_fuzzer.cpp" ]
-  }
 }
 
 ###############################################################################
 group("fuzztest") {
   testonly = true
   deps = []
-  deps += [
-    # deps file
-    ":FormatAdapterFuzzTest",
-  ]
+  if (webview_camera_enable) {
+    deps += [ ":FormatAdapterFuzzTest" ]
+  }
 }
 ###############################################################################
