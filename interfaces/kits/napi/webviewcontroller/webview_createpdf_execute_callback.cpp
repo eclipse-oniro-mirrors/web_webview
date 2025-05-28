@@ -87,7 +87,10 @@ void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* value, const lo
     param->size_ = size;
     auto task = [param]() {
         std::shared_ptr<ArrayBufferExecuteParam> context(
-            static_cast<ArrayBufferExecuteParam*>(param), [](ArrayBufferExecuteParam* ptr) { delete ptr; });
+            static_cast<ArrayBufferExecuteParam*>(param), [](ArrayBufferExecuteParam* ptr) {
+                delete[] ptr->result_;
+                delete ptr; 
+            });
         napi_env env = param->env_;
         NApiScope scope(env);
         if (!scope.IsVaild()) {
@@ -103,6 +106,8 @@ void WebviewCreatePDFExecuteCallback::OnReceiveValue(const char* value, const lo
     };
     if (napi_status::napi_ok != napi_send_event(env_, task, napi_eprio_immediate)) {
         WVLOG_E("OnReceiveValue: Failed to SendEvent");
+        delete[] param->result_;
+        delete param;
     }
 }
 
