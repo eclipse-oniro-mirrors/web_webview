@@ -119,14 +119,14 @@
                             "nweb_first_meaningful_paint_details.h",
                             "nweb_largest_contentful_paint_details.h"
                         ],
-                        "header_base": "//base/web/webview/ohos_nweb/include"
+                        "header_base": "${root_gen_dir}/base/web/webview/ohos_nweb/include"
                     },
                     "name": "//base/web/webview/ohos_nweb:libnweb"
                 },
                 {
                     "header": {
                         "header_files": [],
-                        "header_base": "//base/web/webview/ohos_adapter"
+                        "header_base": "${root_gen_dir}/base/web/webview/ohos_adapter/interfaces"
                     },
                     "name": "//base/web/webview/ohos_adapter:nweb_ohos_adapter"
                 },
