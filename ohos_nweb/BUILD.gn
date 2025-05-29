@@ -96,6 +96,7 @@ ohos_shared_library("libnweb") {
     "src/nweb_enhance_surface_adapter.cpp",
     "src/nweb_helper.cpp",
     "src/nweb_hisysevent.cpp",
+    "src/nweb_snapshot_data_base.cpp",
     "src/nweb_surface_adapter.cpp",
   ]
 
