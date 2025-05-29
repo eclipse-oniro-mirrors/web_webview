@@ -969,4 +969,15 @@ bool ArkWebHandlerImpl::ChangeVisibilityOfQuickMenuV2()
 {
     return nweb_handler_->ChangeVisibilityOfQuickMenuV2();
 }
+
+void ArkWebHandlerImpl::OnPip(int status,
+                              int delegate_id,
+                              int child_id,
+                              int frame_routing_id,
+                              int width,
+                              int height)
+{
+    nweb_handler_->OnPip(status, delegate_id, child_id,
+                         frame_routing_id, width, height);
+}
 } // namespace OHOS::ArkWeb

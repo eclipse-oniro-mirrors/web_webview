@@ -597,6 +597,13 @@ public:
     void EnableSecurityLayer(bool isNeedSecurityLayer) override;
 
     bool ChangeVisibilityOfQuickMenuV2() override;
+
+    void OnPip(int status,
+               int delegate_id,
+               int child_id,
+               int frame_routing_id,
+               int width,
+               int height) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

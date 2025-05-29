@@ -1600,6 +1600,22 @@ public:
      */
     void OnDataDetectorCopy(const std::vector<std::string>& recordMix) override;
 
+    /**
+     * @brief Set the native window of picture in picture.
+     */
+    void SetPipNativeWindow(int delegate_id,
+                            int child_id,
+                            int frame_routing_id,
+                            void* window) override;
+
+    /**
+     * @brief Send event of picture in picture.
+     */
+    void SendPipEvent(int delegate_id,
+                      int child_id,
+                      int frame_routing_id,
+                      int event) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
