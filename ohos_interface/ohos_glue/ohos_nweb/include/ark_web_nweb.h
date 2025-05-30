@@ -1789,7 +1789,6 @@ public:
                               int child_id,
                               int frame_routing_id,
                               int event) = 0;
-};
 
     /**
      * @brief Set audio session type.
@@ -1798,6 +1797,8 @@ public:
      */
     /*--ark web()--*/
     virtual void SetAudioSessionType(int32_t audio_session_type) = 0;
+};
+
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_WEB_NWEB_H_
