@@ -298,6 +298,8 @@ public:
     {
         return false;
     }
+    void SetAudioSessionType(int32_t audioSessionType) override
+    {}
 };
 }
 #endif

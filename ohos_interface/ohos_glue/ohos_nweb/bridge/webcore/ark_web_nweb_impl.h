@@ -1603,6 +1603,13 @@ public:
                       int frame_routing_id,
                       int event) override;
 
+    /**
+     * Set audio session type.
+     *
+     * @param audio_session_type Audio session type.
+     */
+    void SetAudioSessionType(int32_t audio_session_type) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
