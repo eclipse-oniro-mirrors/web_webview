@@ -1878,6 +1878,30 @@ public:
      * @param isPrivate bool: privacy status page.
      */
     virtual void SetPrivacyStatus(bool isPrivate) {}
+
+    /**
+     * Get select startIndex.
+     */
+    virtual int GetSelectStartIndex()
+    {
+        return 0;
+    }
+
+    /**
+     * Get select endIndex.
+     */
+    virtual int GetSelectEndIndex()
+    {
+        return 0;
+    }
+
+    /**
+     * Get All text info.
+     */
+    virtual std::string GetAllTextInfo()
+    {
+        return "";
+    }
 };
 
 } // namespace OHOS::NWeb
