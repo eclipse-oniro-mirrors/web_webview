@@ -1136,6 +1136,36 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     nwebEngine_->RemoveAllCache(includeDiskFiles);
 }
 
+uint32_t NWebHelper::AddBlanklessLoadingUrls(const std::vector<std::string>& urls)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return 0;
+    }
+
+    return nwebEngine_->AddBlanklessLoadingUrls(urls);
+}
+
+void NWebHelper::RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->RemoveBlanklessLoadingUrls(urls);
+}
+
+void NWebHelper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ClearBlanklessLoadingCache(urls);
+}
+
 void WebApplicationStateChangeCallback::NotifyApplicationForeground()
 {
     WVLOG_I("WebApplicationStateChangeCallback::NotifyApplicationForeground is called.");
@@ -1292,5 +1322,14 @@ void NWebHelper::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
         return;
     }
     nwebEngine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
+}
+
+std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)
+{
+    if (!nwebEngine_) {
+        WVLOG_E("CheckBlankOptEnable, nweb engine is nullptr");
+        return "";
+    }
+    return nwebEngine_->CheckBlankOptEnable(url, nweb_id);
 }
 } // namespace OHOS::NWeb
