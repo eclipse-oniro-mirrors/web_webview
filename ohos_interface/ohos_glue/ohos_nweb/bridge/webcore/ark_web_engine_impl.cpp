@@ -275,4 +275,24 @@ void ArkWebEngineImpl::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t 
     nweb_engine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
 }
 
+uint32_t ArkWebEngineImpl::AddBlanklessLoadingUrls(const ArkWebStringVector& urls)
+{
+    return nweb_engine_->AddBlanklessLoadingUrls(ArkWebStringVectorStructToClass(urls));
+}
+
+void ArkWebEngineImpl::RemoveBlanklessLoadingUrls(const ArkWebStringVector& urls)
+{
+    nweb_engine_->RemoveBlanklessLoadingUrls(ArkWebStringVectorStructToClass(urls));
+}
+
+void ArkWebEngineImpl::ClearBlanklessLoadingCache(const ArkWebStringVector& urls)
+{
+    nweb_engine_->ClearBlanklessLoadingCache(ArkWebStringVectorStructToClass(urls));
+}
+
+ArkWebString ArkWebEngineImpl::CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id)
+{
+    return ArkWebStringClassToStruct(nweb_engine_->CheckBlankOptEnable(ArkWebStringStructToClass(url), nweb_id));
+}
+
 } // namespace OHOS::ArkWeb

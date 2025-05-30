@@ -1852,6 +1852,20 @@ public:
                               int child_id,
                               int frame_routing_id,
                               int event) {}
+
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key string: the unique key of current page.
+     */
+    virtual void SetBlanklessLoadingKey(const std::string& key) {}
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    virtual void SetPrivacyStatus(bool isPrivate) {}
 };
 
 } // namespace OHOS::NWeb
