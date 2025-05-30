@@ -1616,6 +1616,13 @@ public:
                       int frame_routing_id,
                       int event) override;
 
+    /**
+     * @brief Set audio session type.
+     *
+     * @param audio_session_type Audio session type.
+     */
+    void SetAudioSessionType(int32_t audio_session_type) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

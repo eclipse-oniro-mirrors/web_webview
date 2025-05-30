@@ -1398,4 +1398,9 @@ void ArkWebNWebImpl::SendPipEvent(int delegate_id,
     nweb_nweb_->SendPipEvent(delegate_id, child_id,
                              frame_routing_id,event);
 }
+
+void ArkWebNWebImpl::SetAudioSessionType(int32_t audio_session_type)
+{
+    nweb_nweb_->SetAudioSessionType(audio_session_type);
+}
 } // namespace OHOS::ArkWeb
