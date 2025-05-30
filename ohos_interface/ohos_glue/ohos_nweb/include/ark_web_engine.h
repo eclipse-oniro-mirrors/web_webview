@@ -170,6 +170,18 @@ public:
 
     /*--ark web()--*/
     virtual void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port) = 0;
+
+    /*--ark web()--*/
+    virtual uint32_t AddBlanklessLoadingUrls(const ArkWebStringVector& urls) = 0;
+
+    /*--ark web()--*/
+    virtual void RemoveBlanklessLoadingUrls(const ArkWebStringVector& urls) = 0;
+
+    /*--ark web()--*/
+    virtual void ClearBlanklessLoadingCache(const ArkWebStringVector& urls) = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id) = 0;
 };
 
 } // namespace OHOS::ArkWeb

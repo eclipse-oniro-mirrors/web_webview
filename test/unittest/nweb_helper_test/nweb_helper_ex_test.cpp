@@ -41,6 +41,7 @@ const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 const int32_t MAX_WIDTH = 7681;
 const int32_t LTPO_STRATEGY = 1;
+const uint32_t MAX_URLS_COUNT = 100;
 const std::string INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
 std::shared_ptr<AbilityRuntime::ApplicationContext> g_applicationContext = nullptr;
 } // namespace
@@ -908,6 +909,166 @@ HWTEST_F(NwebHelperTest, SetWebDebuggingAccess, TestSize.Level1)
     NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
     NWebHelper::Instance().SetWebDebuggingAccess(isEnableDebug);
     NWebHelper::Instance().SetWebDebuggingAccessAndPort(isEnableDebug, port);
+}
+
+/**
+ * @tc.name: NWebHelper_AddBlanklessLoadingUrls_001
+ * @tc.desc: test AddBlanklessLoadingUrls.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_AddBlanklessLoadingUrls_001, TestSize.Level1)
+{
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    std::vector<std::string> blankLessLoadingPageList;
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.AddBlanklessLoadingUrls1.com");
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.AddBlanklessLoadingUrls2.com");
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    for (uint32_t idx = 0; idx < MAX_URLS_COUNT; idx++) {
+        blankLessLoadingPageList.push_back("www.AddBlanklessLoadingUrls3.com");
+    }
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_AddBlanklessLoadingUrls_002
+ * @tc.desc: test AddBlanklessLoadingUrls.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_AddBlanklessLoadingUrls_002, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    std::vector<std::string> blankLessLoadingPageList;
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.AddBlanklessLoadingUrls1.com");
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.AddBlanklessLoadingUrls2.com");
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    for (uint32_t idx = 0; idx < MAX_URLS_COUNT; idx++) {
+        blankLessLoadingPageList.push_back("www.AddBlanklessLoadingUrls3.com");
+    }
+    NWebHelper::Instance().AddBlanklessLoadingUrls(blankLessLoadingPageList);
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_RemoveBlanklessLoadingUrls_001
+ * @tc.desc: test RemoveBlanklessLoadingUrls.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_RemoveBlanklessLoadingUrls_001, TestSize.Level1)
+{
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    std::vector<std::string> blankLessLoadingPageList;
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.RemoveBlanklessLoadingUrls1.com");
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.RemoveBlanklessLoadingUrls2.com");
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    for (uint32_t idx = 0; idx < MAX_URLS_COUNT; idx++) {
+        blankLessLoadingPageList.push_back("www.RemoveBlanklessLoadingUrls.com");
+    }
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_RemoveBlanklessLoadingUrls_002
+ * @tc.desc: test RemoveBlanklessLoadingUrls.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_RemoveBlanklessLoadingUrls_002, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    std::vector<std::string> blankLessLoadingPageList;
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.RemoveBlanklessLoadingUrls1.com");
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    blankLessLoadingPageList.push_back("www.RemoveBlanklessLoadingUrls2.com");
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    for (uint32_t idx = 0; idx < MAX_URLS_COUNT; idx++) {
+        blankLessLoadingPageList.push_back("www.RemoveBlanklessLoadingUrls3.com");
+    }
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(blankLessLoadingPageList);
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_ClearBlanklessLoadingCache_001
+ * @tc.desc: test ClearBlanklessLoadingCache.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_ClearBlanklessLoadingCache_001, TestSize.Level1)
+{
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    std::vector<std::string> blankLessLoadingCache;
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    blankLessLoadingCache.push_back("www.ClearBlanklessLoadingCache1.com");
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    blankLessLoadingCache.push_back("www.ClearBlanklessLoadingCache2.com");
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    for (uint32_t idx = 0; idx < MAX_URLS_COUNT; idx++) {
+        blankLessLoadingCache.push_back("www.ClearBlanklessLoadingCache3.com");
+    }
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    EXPECT_EQ(NWebHelper::Instance().nwebEngine_, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_ClearBlanklessLoadingCache_002
+ * @tc.desc: test ClearBlanklessLoadingCache.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_ClearBlanklessLoadingCache_002, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    std::vector<std::string> blankLessLoadingCache;
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    blankLessLoadingCache.push_back("www.ClearBlanklessLoadingCache1.com");
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    blankLessLoadingCache.push_back("www.ClearBlanklessLoadingCache2.com");
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    for (uint32_t idx = 0; idx < MAX_URLS_COUNT; idx++) {
+        blankLessLoadingCache.push_back("www.ClearBlanklessLoadingCache3.com");
+    }
+    NWebHelper::Instance().ClearBlanklessLoadingCache(blankLessLoadingCache);
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_CheckBlankOptEnable_001
+ * @tc.desc: test CheckBlankOptEnable.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_CheckBlankOptEnable_001, TestSize.Level1)
+{
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+    EXPECT_EQ(NWebHelper::Instance().CheckBlankOptEnable("example", 0), "");
+}
+
+/**
+ * @tc.name: NWebHelper_CheckBlankOptEnable_002
+ * @tc.desc: test CheckBlankOptEnable.
+ * @tc.type: FUNC
+ * @tc.require: ICACAG
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_CheckBlankOptEnable_002, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    EXPECT_EQ(NWebHelper::Instance().CheckBlankOptEnable("example", 0), "");
 }
 } // namespace OHOS::NWeb
 }

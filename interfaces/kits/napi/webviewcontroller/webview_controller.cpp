@@ -2446,5 +2446,13 @@ napi_value WebviewController::WaitForAttachedPromise(napi_env env, int32_t timeo
     napi_get_undefined(env, &result);
     return result;
 }
+
+void WebviewController::SetBlanklessLoadingKey(const std::string& key)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->SetBlanklessLoadingKey(key);
+    }
+}
 } // namespace NWeb
 } // namespace OHOS

@@ -16,6 +16,7 @@
 #include <cstring>
 #include <securec.h>
 #include <unordered_map>
+#include <vector>
 #include <fuzzer/FuzzedDataProvider.h>
 
 #define private public
@@ -133,6 +134,50 @@ bool NWebHelperFuzzTest_003(const uint8_t* data, size_t size)
     return true;
 }
 
+bool NWebHelperFuzzTest_004(const uint8_t* data, size_t size)
+{
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t urlSize = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    std::vector<std::string> urls;
+    for (uint32_t idx = 0; idx < urlSize; idx++) {
+        urls.push_back(dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH));
+    }
+    NWebHelper::Instance().AddBlanklessLoadingUrls(urls);
+    return true;
+}
+
+bool NWebHelperFuzzTest_005(const uint8_t* data, size_t size)
+{
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t urlSize = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    std::vector<std::string> urls;
+    for (uint32_t idx = 0; idx < urlSize; idx++) {
+        urls.push_back(dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH));
+    }
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(urls);
+    return true;
+}
+
+bool NWebHelperFuzzTest_006(const uint8_t* data, size_t size)
+{
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t urlSize = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    std::vector<std::string> urls;
+    for (uint32_t idx = 0; idx < urlSize; idx++) {
+        urls.push_back(dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH));
+    }
+    NWebHelper::Instance().ClearBlanklessLoadingCache(urls);
+    return true;
+}
+
+bool NWebHelperFuzzTest_007(const uint8_t* data, size_t size)
+{
+    FuzzedDataProvider dataProvider(data, size);
+    std::string url = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    int32_t nweb_id = dataProvider.ConsumeIntegral<int32_t>();
+    NWebHelper::Instance().CheckBlankOptEnable(url, nweb_id);
+    return true;
+}
 } // namespace NWeb
 } // namespace OHOS
 
@@ -143,5 +188,9 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::NWeb::NWebHelperFuzzTest(data, size);
     OHOS::NWeb::NWebHelperFuzzTest_002(data, size);
     OHOS::NWeb::NWebHelperFuzzTest_003(data, size);
+    OHOS::NWeb::NWebHelperFuzzTest_004(data, size);
+    OHOS::NWeb::NWebHelperFuzzTest_005(data, size);
+    OHOS::NWeb::NWebHelperFuzzTest_006(data, size);
+    OHOS::NWeb::NWebHelperFuzzTest_007(data, size);
     return 0;
 }

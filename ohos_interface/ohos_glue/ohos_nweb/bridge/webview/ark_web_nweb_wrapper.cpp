@@ -1642,4 +1642,18 @@ void ArkWebNWebWrapper::SendPipEvent(int delegate_id,
     ark_web_nweb_->SendPipEvent(delegate_id, child_id,
                                 frame_routing_id, event);
 }
+
+void ArkWebNWebWrapper::SetBlanklessLoadingKey(const std::string& key)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    ark_web_nweb_->SetBlanklessLoadingKey(stKey);
+
+    ArkWebStringStructRelease(stKey);
+}
+
+void ArkWebNWebWrapper::SetPrivacyStatus(bool isPrivate)
+{
+    ark_web_nweb_->SetPrivacyStatus(isPrivate);
+}
 } // namespace OHOS::ArkWeb

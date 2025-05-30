@@ -104,6 +104,14 @@ public:
 
     void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port) override;
 
+    uint32_t AddBlanklessLoadingUrls(const ArkWebStringVector& urls) override;
+
+    void RemoveBlanklessLoadingUrls(const ArkWebStringVector& urls) override;
+
+    void ClearBlanklessLoadingCache(const ArkWebStringVector& urls) override;
+
+    ArkWebString CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };
