@@ -60,6 +60,8 @@ constexpr uint32_t SOCKET_MAXIMUM = 6;
 constexpr char URL_REGEXPR[] = "^http(s)?:\\/\\/.+";
 constexpr size_t MAX_RESOURCES_COUNT = 30;
 constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
+constexpr size_t MAX_URLS_COUNT = 100;
+constexpr size_t MAX_URL_LENGTH = 2048;
 constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024; // 10M
 constexpr double A4_WIDTH = 8.27;
 constexpr double A4_HEIGHT = 11.69;
@@ -494,6 +496,64 @@ napi_value RemoveDownloadDelegateRef(napi_env env, napi_value thisVar)
     return nullptr;
 }
 
+bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
+{
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv, &valueType);
+    if (valueType != napi_string) {
+        WVLOG_E("ParseBlanklessString not a valid napi string");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return false;
+    }
+
+    size_t bufferSize = 0;
+    napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
+    if (bufferSize > MAX_URL_LENGTH) {
+        WVLOG_E("ParseBlanklessString string length is too long");
+        return false;
+    }
+
+    size_t jsStringLength = 0;
+    outValue.resize(bufferSize);
+    napi_get_value_string_utf8(env, argv, outValue.data(), bufferSize + 1, &jsStringLength);
+    if (jsStringLength != bufferSize) {
+        WVLOG_E("ParseBlanklessString the length values obtained twice are different");
+        return false;
+    }
+
+    return true;
+}
+
+bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::string>& outValue)
+{
+    bool isArray = false;
+    napi_is_array(env, argv, &isArray);
+    if (!isArray) {
+        WVLOG_E("ParseBlanklessStringArray not a valid napi string array");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return false;
+    }
+
+    uint32_t arrLen = 0;
+    napi_get_array_length(env, argv, &arrLen);
+    if (arrLen > MAX_URLS_COUNT) {
+        WVLOG_E("ParseBlanklessStringArray array size should not exceed 100");
+        arrLen = MAX_URLS_COUNT;
+    }
+
+    std::vector<std::string> urls;
+    for (uint32_t idx = 0; idx < arrLen; ++idx) {
+        napi_value item = nullptr;
+        napi_get_element(env, argv, idx, &item);
+        std::string url;
+        if (ParseBlanklessString(env, item, url)) {
+            urls.push_back(url);
+        }
+    }
+
+    return true;
+}
+
 } // namespace
 
 int32_t NapiWebviewController::maxFdNum_ = -1;
@@ -652,6 +712,14 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("on", NapiWebviewController::On),
         DECLARE_NAPI_FUNCTION("off", NapiWebviewController::Off),
         DECLARE_NAPI_FUNCTION("waitForAttached", NapiWebviewController::WaitForAttached),
+        DECLARE_NAPI_STATIC_FUNCTION("addBlanklessLoadingUrls",
+            NapiWebviewController::AddBlanklessLoadingUrls),
+        DECLARE_NAPI_STATIC_FUNCTION("removeBlanklessLoadingUrls",
+            NapiWebviewController::RemoveBlanklessLoadingUrls),
+        DECLARE_NAPI_FUNCTION("setBlanklessLoadingKey",
+            NapiWebviewController::SetBlanklessLoadingKey),
+        DECLARE_NAPI_STATIC_FUNCTION("clearBlanklessLoadingCache",
+            NapiWebviewController::ClearBlanklessLoadingCache),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -6836,6 +6904,114 @@ napi_value NapiWebviewController::WaitForAttached(napi_env env, napi_callback_in
         webviewController->WaitForAttachedPromise(env, timeout, deferred);
     }
     return promise;
+}
+
+napi_value NapiWebviewController::AddBlanklessLoadingUrls(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return nullptr;
+    }
+
+    std::vector<std::string> urls;
+    if (!ParseBlanklessStringArray(env, argv[INTEGER_ZERO], urls)) {
+        WVLOG_E("AddBlanklessLoadingUrls parse string array failed");
+        return nullptr;
+    }
+
+    napi_value result = nullptr;
+    uint32_t addCounts = NWebHelper::Instance().AddBlanklessLoadingUrls(urls);
+    napi_create_uint32(env, addCounts, &result);
+    return result;
+}
+
+napi_value NapiWebviewController::RemoveBlanklessLoadingUrls(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    std::vector<std::string> urls;
+    if (!ParseBlanklessStringArray(env, argv[INTEGER_ZERO], urls)) {
+        WVLOG_E("RemoveBlanklessLoadingUrls parse string array failed");
+        return result;
+    }
+
+    NWebHelper::Instance().RemoveBlanklessLoadingUrls(urls);
+    return result;
+}
+
+napi_value NapiWebviewController::SetBlanklessLoadingKey(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    std::string key;
+    if (!ParseBlanklessString(env, argv[INTEGER_ZERO], key)) {
+        WVLOG_E("SetBlanklessLoadingKey parse string failed");
+        return result;
+    }
+
+    WebviewController* controller = nullptr;
+    napi_unwrap(env, thisVar, (void**)&controller);
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    controller->SetBlanklessLoadingKey(key);
+    return result;
+}
+
+napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ZERO && argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "zero", "one"));
+        return result;
+    }
+
+    std::vector<std::string> keys;
+    if (argc == INTEGER_ZERO) {
+        NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
+        return result;
+    }
+
+    if (!ParseBlanklessStringArray(env, argv[INTEGER_ZERO], keys)) {
+        WVLOG_E("ClearBlanklessLoadingCache parse string array failed");
+        return result;
+    }
+
+    NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
+    return result;
 }
 } // namespace NWeb
 } // namespace OHOS

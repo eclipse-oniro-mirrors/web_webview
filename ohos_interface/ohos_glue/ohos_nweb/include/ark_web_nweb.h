@@ -1789,6 +1789,22 @@ public:
                               int child_id,
                               int frame_routing_id,
                               int event) = 0;
+
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key The unique key of current page.
+     */
+    /*--ark web()--*/
+    virtual void SetBlanklessLoadingKey(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    /*--ark web()--*/
+    virtual void SetPrivacyStatus(bool isPrivate) = 0;
 };
 
 } // namespace OHOS::ArkWeb

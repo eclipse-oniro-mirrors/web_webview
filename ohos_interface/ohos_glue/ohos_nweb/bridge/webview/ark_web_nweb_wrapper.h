@@ -1616,6 +1616,20 @@ public:
                       int frame_routing_id,
                       int event) override;
 
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key The unique key of current page.
+     */
+    void SetBlanklessLoadingKey(const std::string& key) override;
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    void SetPrivacyStatus(bool isPrivate) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
