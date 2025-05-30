@@ -66,6 +66,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlScrollByWithAnime(int64_t id, float deltaX, 
 FFI_EXPORT int32_t FfiOHOSWebviewCtlForward(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlBackward(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlBackOrForward(int64_t id, int32_t step);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlGetProgress(int64_t id, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlGetPageHeight(int64_t id, int32_t* errCode);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetTitle(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlZoom(int64_t id, float factor);

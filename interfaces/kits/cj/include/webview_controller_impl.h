@@ -175,6 +175,8 @@ public:
 
     int32_t BackOrForward(int32_t step);
 
+    int32_t GetProgress();
+
     int32_t GetPageHeight();
 
     std::string GetTitle();

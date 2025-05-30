@@ -608,6 +608,18 @@ extern "C" {
         return nativeWebviewCtl->BackOrForward(step);
     }
 
+    int32_t FfiOHOSWebviewCtlGetProgress(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return -1;
+        }
+        int32_t progress = nativeWebviewCtl->GetProgress();
+        *errCode = NWebError::NO_ERROR;
+        return progress;
+    }
+
     int32_t FfiOHOSWebviewCtlGetPageHeight(int64_t id, int32_t *errCode)
     {
         auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);

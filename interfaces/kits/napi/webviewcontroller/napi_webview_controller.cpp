@@ -535,6 +535,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getCustomUserAgent", NapiWebviewController::GetCustomUserAgent),
         DECLARE_NAPI_FUNCTION("setCustomUserAgent", NapiWebviewController::SetCustomUserAgent),
         DECLARE_NAPI_FUNCTION("getTitle", NapiWebviewController::GetTitle),
+        DECLARE_NAPI_FUNCTION("getProgress", NapiWebviewController::GetProgress),   
         DECLARE_NAPI_FUNCTION("getPageHeight", NapiWebviewController::GetPageHeight),
         DECLARE_NAPI_FUNCTION("backOrForward", NapiWebviewController::BackOrForward),
         DECLARE_NAPI_FUNCTION("storeWebArchive", NapiWebviewController::StoreWebArchive),
@@ -2664,6 +2665,20 @@ napi_value NapiWebviewController::GetTitle(napi_env env, napi_callback_info info
     std::string title = "";
     title = webviewController->GetTitle();
     napi_create_string_utf8(env, title.c_str(), title.length(), &result);
+
+    return result;
+}
+
+napi_value NapiWebviewController::GetProgress(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+
+    int32_t progress = webviewController->GetProgress();
+    napi_create_int32(env, progress, &result);
 
     return result;
 }
