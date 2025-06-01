@@ -980,4 +980,21 @@ void ArkWebHandlerImpl::OnPip(int status,
     nweb_handler_->OnPip(status, delegate_id, child_id,
                          frame_routing_id, width, height);
 }
+
+bool ArkWebHandlerImpl::OnBeforeUnloadByJSV2(
+    const ArkWebString& url, const ArkWebString& message, bool isReload, ArkWebRefPtr<ArkWebJsDialogResult> result)
+{
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        return nweb_handler_->OnBeforeUnloadByJSV2(
+            ArkWebStringStructToClass(url), ArkWebStringStructToClass(message), isReload, nullptr);
+    }
+
+    return nweb_handler_->OnBeforeUnloadByJSV2(ArkWebStringStructToClass(url), ArkWebStringStructToClass(message),
+        isReload, std::make_shared<ArkWebJsDialogResultWrapper>(result));
+}
+
+void ArkWebHandlerImpl::OnActivateContentByJS()
+{
+    nweb_handler_->OnActivateContentByJS();
+}
 } // namespace OHOS::ArkWeb
