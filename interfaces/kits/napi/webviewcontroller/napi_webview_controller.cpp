@@ -541,13 +541,12 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
         arrLen = MAX_URLS_COUNT;
     }
 
-    std::vector<std::string> urls;
     for (uint32_t idx = 0; idx < arrLen; ++idx) {
         napi_value item = nullptr;
         napi_get_element(env, argv, idx, &item);
         std::string url;
         if (ParseBlanklessString(env, item, url)) {
-            urls.push_back(url);
+            outValue.push_back(url);
         }
     }
 
