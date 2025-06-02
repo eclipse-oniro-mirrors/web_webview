@@ -626,6 +626,9 @@ public:
      */
     void OnActivateContentByJS() override;
 
+    void OnLoadStarted(const ArkWebString& url) override;
+
+    void OnLoadFinished(const ArkWebString& url) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
