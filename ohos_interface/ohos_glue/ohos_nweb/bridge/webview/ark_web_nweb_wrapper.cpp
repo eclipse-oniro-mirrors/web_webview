@@ -1551,6 +1551,13 @@ void ArkWebNWebWrapper::SetSurfaceDensity(const double& density)
     ark_web_nweb_->SetSurfaceDensity(density);
 }
 
+void ArkWebNWebWrapper::SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight,
+    double borderRadiusBottomLeft, double borderRadiusBottomRight)
+{
+    ark_web_nweb_->SetBorderRadiusFromWeb(
+        borderRadiusTopLeft, borderRadiusTopRight, borderRadiusBottomLeft, borderRadiusBottomRight);
+}
+
 void ArkWebNWebWrapper::SetNativeInnerWeb(bool isInnerWeb)
 {
     ark_web_nweb_->SetNativeInnerWeb(isInnerWeb);
@@ -1641,6 +1648,20 @@ void ArkWebNWebWrapper::SendPipEvent(int delegate_id,
 {
     ark_web_nweb_->SendPipEvent(delegate_id, child_id,
                                 frame_routing_id, event);
+}
+
+void ArkWebNWebWrapper::SetBlanklessLoadingKey(const std::string& key)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    ark_web_nweb_->SetBlanklessLoadingKey(stKey);
+
+    ArkWebStringStructRelease(stKey);
+}
+
+void ArkWebNWebWrapper::SetPrivacyStatus(bool isPrivate)
+{
+    ark_web_nweb_->SetPrivacyStatus(isPrivate);
 }
 
 void ArkWebNWebWrapper::SetAudioSessionType(int32_t audio_session_type)

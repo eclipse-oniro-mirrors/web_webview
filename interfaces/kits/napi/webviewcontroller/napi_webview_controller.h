@@ -377,6 +377,14 @@ private:
     static napi_value GetScrollOffset(napi_env env, napi_callback_info info);
 
     static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
+
+    static napi_value AddBlanklessLoadingUrls(napi_env env, napi_callback_info info);
+
+    static napi_value RemoveBlanklessLoadingUrls(napi_env env, napi_callback_info info);
+
+    static napi_value SetBlanklessLoadingKey(napi_env env, napi_callback_info info);
+
+    static napi_value ClearBlanklessLoadingCache(napi_env env, napi_callback_info info);
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
     static napi_value GetLastHitTest(napi_env env, napi_callback_info info);
