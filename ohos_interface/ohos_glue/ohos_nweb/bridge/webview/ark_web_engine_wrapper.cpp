@@ -316,4 +316,40 @@ void ArkWebEngineWrapper::SetWebDebuggingAccessAndPort(
     }
 }
 
+uint32_t ArkWebEngineWrapper::AddBlanklessLoadingUrls(const std::vector<std::string>& urls)
+{
+    ArkWebStringVector stUrls = ArkWebStringVectorClassToStruct(urls);
+
+    uint32_t addCounts = ark_web_engine_->AddBlanklessLoadingUrls(stUrls);
+
+    ArkWebStringVectorStructRelease(stUrls);
+    return addCounts;
+}
+
+void ArkWebEngineWrapper::RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls)
+{
+    ArkWebStringVector stUrls = ArkWebStringVectorClassToStruct(urls);
+
+    ark_web_engine_->RemoveBlanklessLoadingUrls(stUrls);
+
+    ArkWebStringVectorStructRelease(stUrls);
+}
+
+void ArkWebEngineWrapper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)
+{
+    ArkWebStringVector stUrls = ArkWebStringVectorClassToStruct(urls);
+
+    ark_web_engine_->ClearBlanklessLoadingCache(stUrls);
+
+    ArkWebStringVectorStructRelease(stUrls);
+}
+
+std::string ArkWebEngineWrapper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)
+{
+    ArkWebString url_ = ArkWebStringClassToStruct(url);
+    std::string ret = ArkWebStringStructToClass(ark_web_engine_->CheckBlankOptEnable(url_, nweb_id));
+    ArkWebStringStructRelease(url_);
+    return ret;
+}
+
 } // namespace OHOS::ArkWeb

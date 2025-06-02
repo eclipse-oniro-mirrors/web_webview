@@ -127,6 +127,14 @@ public:
     void SetWebDebuggingAccess(bool isEnableDebug);
     void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port);
 
+    uint32_t AddBlanklessLoadingUrls(const std::vector<std::string>& urls);
+
+    void RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls);
+
+    void ClearBlanklessLoadingCache(const std::vector<std::string>& urls);
+
+    std::string CheckBlankOptEnable(const std::string& url, int32_t nweb_id);
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);

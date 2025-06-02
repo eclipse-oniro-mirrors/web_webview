@@ -1699,6 +1699,18 @@ public:
     virtual void SetSurfaceDensity(const double& density) = 0;
 
     /**
+     * @brief When the user sets the webpage's border radius,
+     *        update Chromium with this radius value for repaint the scrollbar.
+     * @param borderRadiusTopLeft: Radius value of the rounded corner in the top-left of the webpage.
+     * @param borderRadiusTopRight: Radius value of the rounded corner in the top-right of the webpage.
+     * @param borderRadiusBottomLeft: Radius value of the rounded corner in the bottom-left of the webpage.
+     * @param borderRadiusBottomRight: Radius value of the rounded corner in the bottom-right of the webpage.
+     */
+    /*--ark web()--*/
+    virtual void SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight,
+        double borderRadiusBottomLeft, double borderRadiusBottomRight) = 0;
+
+    /**
      * @brief Set the native inner web
      */
     /*--ark web()--*/
@@ -1789,6 +1801,22 @@ public:
                               int child_id,
                               int frame_routing_id,
                               int event) = 0;
+
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key The unique key of current page.
+     */
+    /*--ark web()--*/
+    virtual void SetBlanklessLoadingKey(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    /*--ark web()--*/
+    virtual void SetPrivacyStatus(bool isPrivate) = 0;
 
     /**
      * @brief Set audio session type.

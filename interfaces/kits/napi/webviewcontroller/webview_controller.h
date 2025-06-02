@@ -448,6 +448,8 @@ public:
     static void TriggerWaitforAttachedPromise(napi_env env, napi_status status, void *data);
 
     napi_value WaitForAttachedPromise(napi_env env, int32_t timeout, napi_deferred deferred);
+
+    void SetBlanklessLoadingKey(const std::string& key);
 private:
     int ConverToWebHitTestType(int hitType);
 
