@@ -454,6 +454,13 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     bool result = NWebHelper::Instance().GetWebEngine(true);
     EXPECT_TRUE(result);
     NWebHelper::Instance().SetWebTag(1, "webtag");
+    NWebHelper::Instance().SetWebDebuggingAccess(true);
+    NWebHelper::Instance().SetWebDebuggingAccessAndPort(true, 80);
+    NWebHelper::Instance().SaveSchemeVector("web_test", 8080);
+    result = NWebHelper::Instance().HasLoadWebEngine();
+    EXPECT_TRUE(result);
+    result = NWebHelper::Instance().RegisterCustomSchemes();
+    EXPECT_FALSE(result);
 }
 
 /**

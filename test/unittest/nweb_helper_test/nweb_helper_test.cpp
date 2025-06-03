@@ -528,13 +528,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().GetDefaultUserAgent();
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
-    NWebHelper::Instance().SetWebDebuggingAccess(true);
-    NWebHelper::Instance().SetWebDebuggingAccessAndPort(true, 80);
-    NWebHelper::Instance().SaveSchemeVector("web_test", 8080);
-    result = NWebHelper::Instance().HasLoadWebEngine();
-    EXPECT_TRUE(result);
-    result = NWebHelper::Instance().RegisterCustomSchemes();
-    EXPECT_FALSE(result);
 }
 
 /**
