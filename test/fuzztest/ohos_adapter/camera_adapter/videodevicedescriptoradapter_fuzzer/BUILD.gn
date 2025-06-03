@@ -52,7 +52,7 @@ ohos_fuzztest("VideoDeviceDescriptorAdapterFuzzTest") {
   ]
   if (webview_camera_enable) {
     external_deps += [ "camera_framework:camera_framework" ]
-    sources += [ "videocontrolsupportadapter_fuzzer.cpp" ]
+    sources += [ "videodevicedescriptoradapter_fuzzer.cpp" ]
   }
 }
 
