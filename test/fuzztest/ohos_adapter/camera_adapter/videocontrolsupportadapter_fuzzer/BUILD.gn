@@ -32,7 +32,7 @@ ohos_fuzztest("VideoControlSupportAdapterFuzzTest") {
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
-  sources = [ "videocontrolsupportadapter_fuzzer.cpp" ]
+  sources = []
 
   defines = [ "NWEB_CAMERA_ENABLE" ]
 
@@ -43,7 +43,6 @@ ohos_fuzztest("VideoControlSupportAdapterFuzzTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
-    "camera_framework:camera_framework",
     "drivers_interface_camera:metadata",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
@@ -51,6 +50,10 @@ ohos_fuzztest("VideoControlSupportAdapterFuzzTest") {
     "ipc:ipc_core",
     "webview:libnweb",
   ]
+  if (webview_camera_enable) {
+    external_deps += [ "camera_framework:camera_framework" ]
+    sources += [ "videocontrolsupportadapter_fuzzer.cpp" ]
+  }
 }
 
 ###############################################################################
