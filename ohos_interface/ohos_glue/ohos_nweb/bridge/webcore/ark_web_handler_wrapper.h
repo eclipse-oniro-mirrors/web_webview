@@ -632,6 +632,8 @@ public:
 
     void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) override;
 
+    bool OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable) override;
+
     void EnableSecurityLayer(bool isNeedSecurityLayer) override;
 
     bool ChangeVisibilityOfQuickMenuV2() override;
