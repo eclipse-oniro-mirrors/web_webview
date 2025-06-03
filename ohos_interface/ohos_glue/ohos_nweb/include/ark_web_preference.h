@@ -772,6 +772,13 @@ public:
      */
     /*--ark web()--*/
     virtual void SetCssDisplayChangeEnabled(bool enable) = 0;
+
+    /**
+     * @brief Set whether to bypass vsync.
+     *        The default is none.
+     */
+    /*--ark web()--*/
+    virtual void SetBypassVsyncCondition(int32_t condition) = 0;
 };
 
 } // namespace OHOS::ArkWeb
