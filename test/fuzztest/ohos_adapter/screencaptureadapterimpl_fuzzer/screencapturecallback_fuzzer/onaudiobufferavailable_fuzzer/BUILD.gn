@@ -57,7 +57,7 @@ group("fuzztest") {
   testonly = true
   deps = []
   if (webview_camera_enable) {
-    deps += [ ":FormatAdapterFuzzTest" ]
+    deps += [ ":OnAudioBufferAvailableFuzzTest" ]
   }
 }
 ###############################################################################
