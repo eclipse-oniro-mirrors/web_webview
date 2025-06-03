@@ -1681,4 +1681,9 @@ std::string ArkWebNWebWrapper::GetAllTextInfo()
     ArkWebStringStructRelease(allTextInfo);
     return allText;
 }
+
+void ArkWebNWebWrapper::SetAudioSessionType(int32_t audio_session_type)
+{
+    ark_web_nweb_->SetAudioSessionType(audio_session_type);
+}
 } // namespace OHOS::ArkWeb

@@ -1841,6 +1841,14 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetAllTextInfo() = 0;
+
+    /**
+     * @brief Set audio session type.
+     *
+     * @param audio_session_type: Aduio session type.
+     */
+    /*--ark web()--*/
+    virtual void SetAudioSessionType(int32_t audio_session_type) = 0;
 };
 
 } // namespace OHOS::ArkWeb

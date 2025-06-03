@@ -229,6 +229,7 @@ public:
     {
         return false;
     }
+    void SetAudioSessionType(int32_t audioSessionType) override {}
 };
 } // namespace OHOS::NWeb
 #endif
