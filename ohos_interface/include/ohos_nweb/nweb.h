@@ -1908,6 +1908,16 @@ public:
      * @param audioSessionType Audio session type.
      */
     virtual void SetAudioSessionType(int32_t audioSessionType) {}
+
+    /**
+     * Get accessibility id by its html element id in the browser.
+     * @param htmlElementId The html element id of the Same-layer rendering.
+     * @return The accessibility id of the accessibility node with Same-layer rendering.
+     */
+    virtual int64_t GetWebAccessibilityIdByHtmlElementId(const std::string& htmlElementId)
+    {
+        return -1;
+    }
 };
 
 } // namespace OHOS::NWeb

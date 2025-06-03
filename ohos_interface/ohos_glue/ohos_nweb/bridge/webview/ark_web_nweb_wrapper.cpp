@@ -1686,4 +1686,12 @@ void ArkWebNWebWrapper::SetAudioSessionType(int32_t audio_session_type)
 {
     ark_web_nweb_->SetAudioSessionType(audio_session_type);
 }
+
+int64_t ArkWebNWebWrapper::GetWebAccessibilityIdByHtmlElementId(const std::string& htmlElementId)
+{
+    ArkWebString stHtmlElementId = ArkWebStringClassToStruct(htmlElementId);
+    int64_t ark_web_accessibility_Id = ark_web_nweb_->GetWebAccessibilityIdByHtmlElementId(stHtmlElementId);
+    ArkWebStringStructRelease(stHtmlElementId);
+    return ark_web_accessibility_Id;
+}
 } // namespace OHOS::ArkWeb

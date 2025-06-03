@@ -158,6 +158,11 @@ public:
     {
         return std::string();
     }
+
+    virtual std::string GetHtmlElementId()
+    {
+        return std::string();
+    }
 };
 
 } // namespace OHOS::NWeb
