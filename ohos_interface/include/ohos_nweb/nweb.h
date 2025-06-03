@@ -1902,6 +1902,12 @@ public:
     {
         return "";
     }
+    /**
+     * Set audio session type.
+     *
+     * @param audioSessionType Audio session type.
+     */
+    virtual void SetAudioSessionType(int32_t audioSessionType) {}
 };
 
 } // namespace OHOS::NWeb

@@ -1430,4 +1430,9 @@ ArkWebString ArkWebNWebImpl::GetAllTextInfo()
 {
     return ArkWebStringClassToStruct(nweb_nweb_->GetAllTextInfo());
 }
+
+void ArkWebNWebImpl::SetAudioSessionType(int32_t audio_session_type)
+{
+    nweb_nweb_->SetAudioSessionType(audio_session_type);
+}
 } // namespace OHOS::ArkWeb
