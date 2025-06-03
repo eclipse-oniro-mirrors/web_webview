@@ -796,19 +796,17 @@ std::string CameraManagerAdapterImpl::GetCameraDisplayName(const std::string& ca
     switch (position) {
         case CAMERA_POSITION_FRONT:
             displayName = cameraId + ", facing front";
-            break;
+            return displayName;
         case CAMERA_POSITION_BACK:
             displayName = cameraId + ", facing back";
-            break;
+            return displayName;
         case CAMERA_POSITION_FOLD_INNER:
             displayName = cameraId + ", facing fold inner";
-            break;
+            return displayName;
         default:
             displayName = cameraId;
+            return displayName;
     }
-
-    std::replace(displayName.begin(), displayName.end(), '/', ' ');
-    return displayName;
 }
 
 CameraSurfaceBufferAdapterImpl::CameraSurfaceBufferAdapterImpl(sptr<SurfaceBuffer> buffer) : buffer_(buffer) {}
