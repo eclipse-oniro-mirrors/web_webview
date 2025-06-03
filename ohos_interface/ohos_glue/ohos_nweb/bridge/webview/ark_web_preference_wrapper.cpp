@@ -598,4 +598,11 @@ void ArkWebPreferenceWrapper::SetCssDisplayChangeEnabled(bool enable)
         ark_web_preference_->SetCssDisplayChangeEnabled(enable);
     }
 }
+
+void ArkWebPreferenceWrapper::SetBypassVsyncCondition(int32_t condition)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->SetBypassVsyncCondition(condition);
+    }
+}
 } // namespace OHOS::ArkWeb

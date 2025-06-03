@@ -520,4 +520,9 @@ void ArkWebPreferenceImpl::SetCssDisplayChangeEnabled(bool enable)
 {
     nweb_preference_->SetCssDisplayChangeEnabled(enable);
 }
+
+void ArkWebPreferenceImpl::SetBypassVsyncCondition(int32_t condition)
+{
+    nweb_preference_->SetBypassVsyncCondition(condition);
+}
 } // namespace OHOS::ArkWeb
