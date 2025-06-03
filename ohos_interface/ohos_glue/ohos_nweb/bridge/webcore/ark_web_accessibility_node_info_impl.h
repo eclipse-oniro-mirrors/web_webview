@@ -136,6 +136,12 @@ public:
 
     ArkWebString GetAccessibilityText() override;
 
+    ArkWebString GetComponentTypeDescription() override;
+
+    int32_t GetCheckboxGroupSeletedStatus() override;
+
+    ArkWebString GetExpandedState() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebAccessibilityNodeInfo> nweb_accessibility_node_info_;
 };
