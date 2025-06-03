@@ -56,9 +56,8 @@ ohos_fuzztest("OnVideoBufferAvailableFuzzTest") {
 group("fuzztest") {
   testonly = true
   deps = []
-  deps += [
-    # deps file
-    ":OnVideoBufferAvailableFuzzTest",
-  ]
+  if (webview_camera_enable) {
+    deps += [ ":OnVideoBufferAvailableFuzzTest" ]
+  }
 }
 ###############################################################################
