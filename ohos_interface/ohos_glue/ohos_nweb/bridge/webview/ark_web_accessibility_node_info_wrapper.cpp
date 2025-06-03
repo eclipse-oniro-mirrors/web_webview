@@ -352,4 +352,13 @@ std::string ArkWebAccessibilityNodeInfoWrapper::GetExpandedState()
     return objExpandedState;
 }
 
+std::string ArkWebAccessibilityNodeInfoWrapper::GetHtmlElementId()
+{
+    ArkWebString stHtmlElementId = ark_web_accessibility_node_info_->GetHtmlElementId();
+
+    std::string objHtmlElementId = ArkWebStringStructToClass(stHtmlElementId);
+    ArkWebStringStructRelease(stHtmlElementId);
+    return objHtmlElementId;
+}
+
 } // namespace OHOS::ArkWeb

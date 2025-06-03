@@ -212,6 +212,13 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetExpandedState() = 0;
+
+    /**
+     * @Description: Get the html element id of the accessibility node.
+     * @Return: The tml element id of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetHtmlElementId() = 0;
 };
 
 } // namespace OHOS::ArkWeb

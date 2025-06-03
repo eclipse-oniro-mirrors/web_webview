@@ -139,6 +139,8 @@ public:
 
     std::string GetExpandedState() override;
 
+    std::string GetHtmlElementId() override;
+
 private:
     ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ark_web_accessibility_node_info_;
 };
