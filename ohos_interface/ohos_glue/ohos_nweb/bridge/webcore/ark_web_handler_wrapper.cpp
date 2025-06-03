@@ -1087,6 +1087,11 @@ void ArkWebHandlerWrapper::OnAccessibilityEventV2(
     ArkWebStringStructRelease(stArgument);
 }
 
+bool ArkWebHandlerWrapper::OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable)
+{
+    return ark_web_handler_->OnNestedScroll(x, y, xVelocity, yVelocity, isAvailable);
+}
+
 void ArkWebHandlerWrapper::EnableSecurityLayer(bool isNeedSecurityLayer)
 {
     ark_web_handler_->EnableSecurityLayer(isNeedSecurityLayer);
@@ -1129,5 +1134,21 @@ bool ArkWebHandlerWrapper::OnBeforeUnloadByJSV2(const std::string& url, const st
 void ArkWebHandlerWrapper::OnActivateContentByJS()
 {
     ark_web_handler_->OnActivateContentByJS();
+}
+
+void ArkWebHandlerWrapper::OnLoadStarted(const std::string& url) {
+    ArkWebString stUrl = ArkWebStringClassToStruct(url);
+
+    ark_web_handler_->OnLoadStarted(stUrl);
+
+    ArkWebStringStructRelease(stUrl);
+}
+
+void ArkWebHandlerWrapper::OnLoadFinished(const std::string& url) {
+    ArkWebString stUrl = ArkWebStringClassToStruct(url);
+
+    ark_web_handler_->OnLoadFinished(stUrl);
+
+    ArkWebStringStructRelease(stUrl);
 }
 } // namespace OHOS::ArkWeb

@@ -1057,6 +1057,11 @@ public:
 
     virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) {}
 
+    virtual bool OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable)
+    {
+        return false;
+    }
+
     virtual void EnableSecurityLayer(bool isNeedSecurityLayer) {}
 
     /**
@@ -1096,6 +1101,27 @@ public:
      * @brief called when the web page is active for window.open called by other web component.
      */
     virtual void OnActivateContentByJS() {}
+
+    /**
+     * @brief Notify the SDK that a web site has started loading. This method is
+     * called once for each main frame load. Embedded frame changes, i.e. clicking
+     * a link whose target is an iframe and fragment navigations (navigations to
+     * #fragment_id) will not trigger this callback.
+     *
+     * @param url The url to be loaded.
+     */
+    virtual void OnLoadStarted(const std::string& url) {}
+
+    /**
+     * @brief Notify the SDK that a web site has finished loading. This method is
+     * called only for main frame. Different from onPageEnd, onLoadFinished is
+     * triggered only once if the mainframe is automatically redirected before the
+     * page is completely loaded. OnPageEnd is triggered every navigation.
+     * fragment navigation also triggers onLoadFinished.
+     *
+     * @param url The url of the web site.
+     */
+    virtual void OnLoadFinished(const std::string& url) {}
 };
 
 } // namespace OHOS::NWeb

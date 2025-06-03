@@ -1416,6 +1416,21 @@ void ArkWebNWebImpl::SetPrivacyStatus(bool isPrivate)
     nweb_nweb_->SetPrivacyStatus(isPrivate);
 }
 
+int ArkWebNWebImpl::GetSelectStartIndex()
+{
+    return nweb_nweb_->GetSelectStartIndex();
+}
+
+int ArkWebNWebImpl::GetSelectEndIndex()
+{
+    return nweb_nweb_->GetSelectEndIndex();
+}
+
+ArkWebString ArkWebNWebImpl::GetAllTextInfo()
+{
+    return ArkWebStringClassToStruct(nweb_nweb_->GetAllTextInfo());
+}
+
 void ArkWebNWebImpl::SetAudioSessionType(int32_t audio_session_type)
 {
     nweb_nweb_->SetAudioSessionType(audio_session_type);

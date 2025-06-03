@@ -54,6 +54,24 @@ private:
     bool isReadable_ = false;
 };
 
+class OnceCallbackAdapterTest : public OnceCallbackAdapter {
+public:
+    OnceCallbackAdapterTest() = default;
+    ~OnceCallbackAdapterTest() override = default;
+    void OnRunnable() override
+    {
+        WVLOG_I("OnceCallbackAdapterTest OnRunnable");
+        isRunnable_ = true;
+    }
+    bool VerifySuccess()
+    {
+        return isRunnable_;
+    }
+
+private:
+    bool isRunnable_ = false;
+};
+
 void EventHandlerAdapterImplTest::SetUpTestCase(void) {}
 
 void EventHandlerAdapterImplTest::TearDownTestCase(void) {}
@@ -85,6 +103,12 @@ HWTEST_F(EventHandlerAdapterImplTest, EventHandlerAdapterImplTest_EventHandlerAd
     auto listenerTest = std::make_shared<EventHandlerFDListenerAdapterImpl>(nullptr);
     listenerTest->OnReadable(fd);
     EXPECT_FALSE(listener->VerifySuccess());
+
+    auto once_callback = std::make_shared<OnceCallbackAdapterTest>();
+    auto once_callback_impl = std::make_shared<OnceCallbackAdapterImpl>(nullptr);
+    once_callback_impl->OnRunnable();
+    eventHandlerTest->PostTask(nullptr);
+    EXPECT_FALSE(once_callback->VerifySuccess());
 }
 
 /**
@@ -110,5 +134,11 @@ HWTEST_F(EventHandlerAdapterImplTest, EventHandlerAdapterImplTest_EventHandlerAd
     auto listenerTest = std::make_shared<EventHandlerFDListenerAdapterImpl>(listener);
     listenerTest->OnReadable(fd);
     EXPECT_TRUE(listener->VerifySuccess());
+
+    auto once_callback = std::make_shared<OnceCallbackAdapterTest>();
+    auto once_callback_impl = std::make_shared<OnceCallbackAdapterImpl>(once_callback);
+    once_callback_impl->OnRunnable();
+    eventHandlerTest->PostTask(once_callback);
+    EXPECT_TRUE(once_callback->VerifySuccess());
 }
 } // namespace OHOS::NWeb

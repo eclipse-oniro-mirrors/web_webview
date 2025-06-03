@@ -1642,6 +1642,21 @@ public:
     void SetPrivacyStatus(bool isPrivate) override;
 
     /**
+     * @brief Get select startIndex.
+     */
+    int GetSelectStartIndex() override;
+
+    /**
+     * @brief Get select endIndex.
+     */
+    int GetSelectEndIndex() override;
+
+    /**
+     * @brief Get all text info.
+     */
+    std::string GetAllTextInfo() override;
+
+    /**
      * @brief Set audio session type.
      *
      * @param audio_session_type Audio session type.
