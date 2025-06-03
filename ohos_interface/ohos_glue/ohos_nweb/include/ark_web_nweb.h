@@ -1819,6 +1819,30 @@ public:
     virtual void SetPrivacyStatus(bool isPrivate) = 0;
 
     /**
+     * @brief Get select startIndex.
+     *
+     * @return the select startIndex.
+     */
+    /*--ark web()--*/
+    virtual int GetSelectStartIndex() = 0;
+
+    /**
+     * @brief Get select endIndex.
+     *
+     * @return the select endIndex.
+     */
+    /*--ark web()--*/
+    virtual int GetSelectEndIndex() = 0;
+
+    /**
+     * @brief Get all text info.
+     *
+     * @return the info of all text.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetAllTextInfo() = 0;
+
+    /**
      * @brief Set audio session type.
      *
      * @param audio_session_type: Aduio session type.
