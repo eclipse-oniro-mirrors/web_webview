@@ -440,6 +440,16 @@ namespace OHOS::Webview {
         return NWebError::NO_ERROR;
     }
 
+    int32_t WebviewControllerImpl::GetProgress()
+    {
+        int32_t progress = 0;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            progress = nweb_ptr->PageLoadProgress();
+        }
+        return progress;
+    }
+
     int32_t WebviewControllerImpl::GetPageHeight()
     {
         int32_t pageHeight = 0;

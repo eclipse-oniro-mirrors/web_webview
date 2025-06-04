@@ -41,6 +41,7 @@ FFI_EXPORT int FfiOHOSWebviewCtlScrollBy = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlForward = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlBackward = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlBackOrForward = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlGetProgress = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlGetPageHeight = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlGetTitle = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlZoom = 0;
