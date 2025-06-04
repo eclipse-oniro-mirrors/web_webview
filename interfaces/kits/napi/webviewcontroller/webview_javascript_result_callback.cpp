@@ -113,7 +113,8 @@ void CallH5Function(napi_env env, napi_value* napiArg, std::shared_ptr<NWebValue
     methodNameList = ParseNapiValue2NwebValue(env, napiArg, nwebValue, &isObject);
     if (isObject && FromNwebID(bundle.nwebId)) {
         JavaScriptOb::ObjectID returnedObjectId;
-        if (FromNwebID(bundle.nwebId)->FindObjectIdInJsTd(env, *napiArg, &returnedObjectId)) {
+        if (FromNwebID(bundle.nwebId)->FindObjectIdInJsTd(env, *napiArg, &returnedObjectId)
+                && FromNwebID(bundle.nwebId)->FindObject(returnedObjectId)) {
             FromNwebID(bundle.nwebId)->FindObject(returnedObjectId)->AddHolder(bundle.frameRoutingId);
         } else {
             returnedObjectId = FromNwebID(bundle.nwebId)->AddObject(env, *napiArg, false, bundle.frameRoutingId);
@@ -874,7 +875,8 @@ void ProcessObjectCaseInJsTd(
     auto* outParam = static_cast<WebviewJavaScriptResultCallBack::NapiJsCallBackOutParm*>(param->out);
     JavaScriptOb::ObjectID returnedObjectId;
 
-    if (inParam->webJsResCb->FindObjectIdInJsTd(env, callResult, &returnedObjectId)) {
+    if (inParam->webJsResCb->FindObjectIdInJsTd(env, callResult, &returnedObjectId)
+            && inParam->webJsResCb->FindObject(returnedObjectId)) {
         inParam->webJsResCb->FindObject(returnedObjectId)->AddHolder(inParam->frameRoutingId);
     } else {
         returnedObjectId = inParam->webJsResCb->AddObject(env, callResult, false, inParam->frameRoutingId);
