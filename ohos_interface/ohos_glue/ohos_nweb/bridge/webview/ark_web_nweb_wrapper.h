@@ -1663,6 +1663,13 @@ public:
      */
     void SetAudioSessionType(int32_t audio_session_type) override;
 
+        /**
+     * @brief Get accessibility id by its html element id in the browser.
+     * @param htmlElementId The html element id of the Same-layer rendering.
+     * @return The accessibility id of the accessibility node with Same-layer rendering.
+     */
+    int64_t GetWebAccessibilityIdByHtmlElementId(const std::string& htmlElementId) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

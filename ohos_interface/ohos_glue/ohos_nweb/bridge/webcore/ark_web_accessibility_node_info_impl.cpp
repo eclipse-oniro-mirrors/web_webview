@@ -304,4 +304,9 @@ ArkWebString ArkWebAccessibilityNodeInfoImpl::GetExpandedState()
     return ArkWebStringClassToStruct(nweb_accessibility_node_info_->GetExpandedState());
 }
 
+ArkWebString ArkWebAccessibilityNodeInfoImpl::GetHtmlElementId()
+{
+    return ArkWebStringClassToStruct(nweb_accessibility_node_info_->GetHtmlElementId());
+}
+
 } // namespace OHOS::ArkWeb
