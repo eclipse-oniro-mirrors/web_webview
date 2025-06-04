@@ -679,6 +679,12 @@ public:
      *        The default is false.
      */
     void SetCssDisplayChangeEnabled(bool enable) override;
+
+    /**
+     * @brief Set whether to bypass vsync.
+     *        The default is none.
+     */
+    void SetBypassVsyncCondition(int32_t condition) override;
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };
