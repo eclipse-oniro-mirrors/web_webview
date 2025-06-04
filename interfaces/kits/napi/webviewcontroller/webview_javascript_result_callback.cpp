@@ -1728,7 +1728,6 @@ void WebviewJavaScriptResultCallBack::RemoveTransientJavaScriptObject()
         WVLOG_D("WebviewJavaScriptResultCallBack::RemoveTransientJavaScriptObject "
                 "objects_ & retainedObjectSet_ is empty.");
         return;
-
     }
  
     if (!jsObj) {
