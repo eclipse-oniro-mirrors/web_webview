@@ -1435,4 +1435,9 @@ void ArkWebNWebImpl::SetAudioSessionType(int32_t audio_session_type)
 {
     nweb_nweb_->SetAudioSessionType(audio_session_type);
 }
+
+int64_t ArkWebNWebImpl::GetWebAccessibilityIdByHtmlElementId(const ArkWebString& htmlElementId)
+{
+    return nweb_nweb_->GetWebAccessibilityIdByHtmlElementId(ArkWebStringStructToClass(htmlElementId));
+}
 } // namespace OHOS::ArkWeb

@@ -1849,6 +1849,14 @@ public:
      */
     /*--ark web()--*/
     virtual void SetAudioSessionType(int32_t audio_session_type) = 0;
+
+    /**
+     * @brief Get accessibility id by its html element id in the browser.
+     * @param htmlElementId The html element id of the Same-layer rendering.
+     * @return The accessibility id of the accessibility node with Same-layer rendering.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetWebAccessibilityIdByHtmlElementId(const ArkWebString& htmlElementId) = 0;
 };
 
 } // namespace OHOS::ArkWeb
