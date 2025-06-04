@@ -134,6 +134,8 @@ private:
 
     static napi_value GetTitle(napi_env env, napi_callback_info info);
 
+    static napi_value GetProgress(napi_env env, napi_callback_info info);
+
     static napi_value GetPageHeight(napi_env env, napi_callback_info info);
 
     static napi_value BackOrForward(napi_env env, napi_callback_info info);

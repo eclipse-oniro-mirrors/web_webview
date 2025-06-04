@@ -196,6 +196,8 @@ public:
 
     std::string GetTitle();
 
+    int32_t GetProgress();
+
     int32_t GetPageHeight();
 
     ErrCode BackOrForward(int32_t step);
