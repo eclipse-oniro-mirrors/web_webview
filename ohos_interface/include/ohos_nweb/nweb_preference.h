@@ -679,6 +679,12 @@ public:
      * The default is false.
      */
     virtual void SetCssDisplayChangeEnabled(bool enable) {}
+
+    /**
+     * Set whether to bypass vsync.
+     * The default is none.
+     */
+    virtual void SetBypassVsyncCondition(int32_t condition) {}
 };
 
 } // namespace OHOS::NWeb
