@@ -49,4 +49,9 @@ void ArkWebJsAllSslErrorResultImpl::HandleConfirm()
     nweb_js_all_ssl_error_result_->HandleConfirm();
 }
 
+void ArkWebJsAllSslErrorResultImpl::HandleCancelV2(bool abortLoading)
+{
+    nweb_js_all_ssl_error_result_->HandleCancelV2(abortLoading);
+}
+
 } // namespace OHOS::ArkWeb
