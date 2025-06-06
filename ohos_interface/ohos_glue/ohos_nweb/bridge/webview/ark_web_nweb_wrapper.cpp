@@ -1694,4 +1694,9 @@ int64_t ArkWebNWebWrapper::GetWebAccessibilityIdByHtmlElementId(const std::strin
     ArkWebStringStructRelease(stHtmlElementId);
     return ark_web_accessibility_Id;
 }
+
+void ArkWebNWebWrapper::GetPageOffset(float* offset_x, float* offset_y)
+{
+    ark_web_nweb_->GetPageOffset(offset_x, offset_y);
+}
 } // namespace OHOS::ArkWeb

@@ -1918,6 +1918,13 @@ public:
     {
         return -1;
     }
+
+    /**
+     * @brief Get the current scroll offset of the webpage.
+     * @param offset_x The current horizontal scroll offset of the webpage.
+     * @param offset_y The current vertical scroll offset of the webpage.
+     */
+    virtual void GetPageOffset(float* offset_x, float* offset_y) {}
 };
 
 } // namespace OHOS::NWeb

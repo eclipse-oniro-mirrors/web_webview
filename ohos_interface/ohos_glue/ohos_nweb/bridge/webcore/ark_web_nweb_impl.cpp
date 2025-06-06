@@ -1440,4 +1440,9 @@ int64_t ArkWebNWebImpl::GetWebAccessibilityIdByHtmlElementId(const ArkWebString&
 {
     return nweb_nweb_->GetWebAccessibilityIdByHtmlElementId(ArkWebStringStructToClass(htmlElementId));
 }
+
+void ArkWebNWebImpl::GetPageOffset(float* offset_x, float* offset_y)
+{
+    nweb_nweb_->GetPageOffset(offset_x, offset_y);
+}
 } // namespace OHOS::ArkWeb
