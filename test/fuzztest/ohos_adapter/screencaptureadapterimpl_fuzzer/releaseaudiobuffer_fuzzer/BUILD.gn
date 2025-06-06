@@ -56,9 +56,8 @@ ohos_fuzztest("ReleaseAudioBufferFuzzTest") {
 group("fuzztest") {
   testonly = true
   deps = []
-  deps += [
-    # deps file
-    ":ReleaseAudioBufferFuzzTest",
-  ]
+  if (webview_camera_enable) {
+    deps += [ ":ReleaseAudioBufferFuzzTest" ]
+  }
 }
 ###############################################################################

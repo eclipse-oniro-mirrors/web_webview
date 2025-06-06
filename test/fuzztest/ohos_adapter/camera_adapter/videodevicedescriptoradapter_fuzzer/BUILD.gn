@@ -60,9 +60,8 @@ ohos_fuzztest("VideoDeviceDescriptorAdapterFuzzTest") {
 group("fuzztest") {
   testonly = true
   deps = []
-  deps += [
-    # deps file
-    ":VideoDeviceDescriptorAdapterFuzzTest",
-  ]
+  if (webview_camera_enable) {
+    deps += [ ":VideoDeviceDescriptorAdapterFuzzTest" ]
+  }
 }
 ###############################################################################
