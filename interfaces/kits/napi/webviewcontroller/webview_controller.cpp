@@ -2127,6 +2127,14 @@ void WebviewController::GetScrollOffset(float* offset_x, float* offset_y)
     }
 }
 
+void WebviewController::GetPageOffset(float* offset_x, float* offset_y)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->GetPageOffset(offset_x, offset_y);
+    }
+}
+
 bool WebviewController::ScrollByWithResult(float deltaX, float deltaY) const
 {
     bool enabled = false;
