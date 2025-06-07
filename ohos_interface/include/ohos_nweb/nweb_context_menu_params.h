@@ -39,6 +39,8 @@ public:
     enum ContextMenuMediaType {
         CM_MT_NONE,
         CM_MT_IMAGE,
+        CM_MT_VIDEO,
+        CM_MT_AUDIO,
     };
 
     enum ContextMenuEditStateFlags {
