@@ -102,7 +102,10 @@ ohos_unittest("native_javascript_execute_callback_test") {
 
   sources = [ "native_javascript_execute_callback_test.cpp" ]
 
-  include_dirs = [ "../common" ]
+  include_dirs = [
+    "../common",
+    "../../../ohos_interface/include/ohos_nweb"
+  ]
 
   deps = [
     "$webview_path/interfaces/native:ohweb",
