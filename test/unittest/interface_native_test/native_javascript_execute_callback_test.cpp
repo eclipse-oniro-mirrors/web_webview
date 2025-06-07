@@ -16,8 +16,8 @@
 #include <gtest/gtest.h>
 
 #define private public
-#include "base/web/webview/interfaces/native/native_javascript_execute_callback.h"
-#include "base/web/webview/ohos_interface/include/ohos_nweb/nweb_hap_value.h"
+#include "native_javascript_execute_callback.h"
+#include "nweb_hap_value.h"
 
 using namespace testing;
 using namespace testing::ext;

@@ -104,7 +104,8 @@ ohos_unittest("native_javascript_execute_callback_test") {
 
   include_dirs = [
     "../common",
-    "../../../ohos_interface/include/ohos_nweb"
+    "../../../ohos_interface/include/ohos_nweb",
+    "../../../interfaces/native"
   ]
 
   deps = [
