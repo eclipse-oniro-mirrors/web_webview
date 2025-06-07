@@ -49,7 +49,7 @@ void CallbackNative(const char* message) {}
 HWTEST_F(NativeJavascriptExecuteCallbackTest,
          OHNativeJavascriptExecuteCallbackTest_OnReceiveValue_01, TestSize.Level1) {
     std::function<void(const char*)> callback = nullptr;
-    std::shared_ptr<NWebMessage> result = std::make_shared<NWebMessage>();
+    std::shared_ptr<NWebMessage> result = std::make_shared<NWebMessage>(NWebValue::Type::NONE);
     NativeJavaScriptExecuteCallback nativeJSExecuteCallback(callback);
     nativeJSExecuteCallback.OnReceiveValue(result);
 }
