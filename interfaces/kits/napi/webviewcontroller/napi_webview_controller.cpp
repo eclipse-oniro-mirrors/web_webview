@@ -508,8 +508,8 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
 
     size_t bufferSize = 0;
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
-    if (bufferSize > MAX_URL_LENGTH) {
-        WVLOG_E("ParseBlanklessString string length is too long");
+    if (bufferSize == 0 || bufferSize > MAX_URL_LENGTH) {
+        WVLOG_E("ParseBlanklessString string length is invalid");
         return false;
     }
 
