@@ -16,8 +16,10 @@
 #include "media_avsession_adapter_impl.h"
 
 #include "ability_manager_client.h"
+#include "array_wrapper.h"
 #include "avsession_errors.h"
 #include "avsession_manager.h"
+#include "bool_wrapper.h"
 #include "bundle_mgr_proxy.h"
 #include "element_name.h"
 #include "if_system_ability_manager.h"
@@ -31,6 +33,8 @@ namespace OHOS::NWeb {
 std::unordered_map<std::string, std::shared_ptr<AVSession::AVSession>> MediaAVSessionAdapterImpl::avSessionMap;
 
 constexpr int64_t LIVE_STREAM_INFINITE_DURATION = -1;
+constexpr int64_t PARAMS_VALUE = 1;
+constexpr int64_t INDEX_VALUE = 0;
 
 MediaAVSessionCallbackImpl::MediaAVSessionCallbackImpl(
     std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter)
