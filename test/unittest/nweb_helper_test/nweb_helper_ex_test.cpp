@@ -145,6 +145,10 @@ public:
 
     void ClearHostIP(const std::string& hostName) {}
 
+    void SetAppCustomUserAgent(const std::string& userAgent) {}
+
+    void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
+
     void EnableWholeWebPageDrawing() {}
 
     std::shared_ptr<NWebAdsBlockManager> GetAdsBlockManager()
@@ -437,6 +441,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NWebHelper::Instance().GetDefaultUserAgent();
+    NWebHelper::Instance().SetAppCustomUserAgent("web_test");
+    NWebHelper::Instance().SetUserAgentForHosts("web_test", hosts);
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
 
@@ -451,6 +457,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NWebHelper::Instance().GetDefaultUserAgent();
+    NWebHelper::Instance().SetAppCustomUserAgent("web_test");
+    NWebHelper::Instance().SetUserAgentForHosts("web_test", hosts);
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
