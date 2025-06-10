@@ -74,10 +74,7 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportKeyThread_001, T
     result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
         1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
     EXPECT_TRUE(result);
-    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_EXIT, 1);
-    result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
-        1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
-    EXPECT_TRUE(result);
+
     resAdapter->ReportWindowId(1, 1);
     result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
         1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
@@ -105,7 +102,27 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportKeyThread_001, T
     result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
         0, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
     EXPECT_TRUE(result);
-    resAdapter->ReportWindowId(1, 2);
+}
+
+/**
+ * @tc.name: ResSchedAdapterImplTest_ReportKeyThread_002
+ * @tc.desc: ReportKeyThread.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportKeyThread_002, TestSize.Level1)
+{
+    auto resAdapter = std::make_shared<ResSchedClientAdapter>();
+    EXPECT_NE(resAdapter, nullptr);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 1);
+    bool result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+        1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
+    EXPECT_TRUE(result);
+    resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_EXIT, 1);
+    result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
+        1, 0, ResSchedRoleAdapter::IMPORTANT_AUDIO);
+    EXPECT_TRUE(result);
+    resAdapter->ReportWindowId(1, 1);
     result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_DESTROYED,
         2, 2, ResSchedRoleAdapter::IMPORTANT_AUDIO);
     EXPECT_TRUE(result);
@@ -129,7 +146,6 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportKeyThread_001, T
     result = resAdapter->ReportKeyThread(ResSchedStatusAdapter::THREAD_DESTROYED,
         1, 1, ResSchedRoleAdapter::IMAGE_DECODE);
     EXPECT_TRUE(result);
-
 }
 
 /**
@@ -292,8 +308,8 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportProcessInUse_007
 
     resAdapter->ReportSiteIsolationMode(true);
     resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, -1);
-    resAdapter->ReportWindowId(1,-1);
-    bool result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, -1);
+    resAdapter->ReportWindowId(1, -1);
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, -1);
     EXPECT_TRUE(result);
     resAdapter->ReportProcessInUse(1);
 
@@ -304,8 +320,8 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportProcessInUse_007
 
     resAdapter->ReportSiteIsolationMode(false);
     resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_ENTER, 1);
-    resAdapter->ReportWindowId(1,1);
-    bool result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, 1);
+    resAdapter->ReportWindowId(1, 1);
+    result = resAdapter->ReportWindowStatus(ResSchedStatusAdapter::WEB_ACTIVE, 1, 1, 1);
     EXPECT_TRUE(result);
     resAdapter->ReportProcessInUse(1);
     resAdapter->ReportNWebInit(ResSchedStatusAdapter::WEB_SCENE_EXIT, 1);
