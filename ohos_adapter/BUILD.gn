@@ -194,6 +194,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ipc:ipc_core",
     "napi:ace_napi",
     "netmanager_base:net_conn_manager_if",
+    "netmanager_base:net_security_config_if",
     "openssl:libssl_shared",
     "pasteboard:pasteboard_client",
     "relational_store:native_rdb",
