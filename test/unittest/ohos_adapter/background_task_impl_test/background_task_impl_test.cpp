@@ -85,5 +85,7 @@ HWTEST_F(BackgroundTaskImplTest, BackgroundTaskImplTest_BackgroundTaskAdapter_00
     EXPECT_FALSE(result);
     result = taskAdapter->RequestBackgroundRunning(true, BackgroundModeAdapter::TASK_KEEPING);
     EXPECT_FALSE(result);
+    result = taskAdapter->RequestBackgroundRunning(true, static_cast<BackgroundModeAdapter>(0));
+    EXPECT_FALSE(result);
 }
 } // namespace OHOS
