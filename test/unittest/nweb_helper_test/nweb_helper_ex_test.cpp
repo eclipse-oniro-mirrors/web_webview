@@ -416,6 +416,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     long itemId = WebDownloadItem_GetDownloadItemId(downloadItem);
     auto state1 = WebDownload_GetItemState(nWebId, itemId);
     auto state2 = WebDownload_GetItemStateByGuid("test_web");
+    WebDownload_GetItemStateByGuidV2("test_web");
     EXPECT_EQ(state1, state2);
 }
 
