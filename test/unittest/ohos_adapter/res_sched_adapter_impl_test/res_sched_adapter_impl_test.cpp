@@ -345,7 +345,6 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportSceneInternal_00
     EXPECT_TRUE(result);
     result = resAdapter->ReportScene(ResSchedStatusAdapter::WEB_ACTIVE, ResSchedSceneAdapter::LOAD_URL, -1);
     EXPECT_TRUE(result);
-
 }
 }
 } // namespace NWeb
