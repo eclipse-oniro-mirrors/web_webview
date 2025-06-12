@@ -225,6 +225,7 @@ enum class NWebFocusSource {
     FOCUS_SOURCE_DEFAULT = -1,
     FOCUS_SOURCE_NAVIGATION = 0,
     FOCUS_SOURCE_SYSTEM,
+    FOCUS_SOURCE_GESTURE,
 };
 
 class NWebNativeEmbedInfo {
