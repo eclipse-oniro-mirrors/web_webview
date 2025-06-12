@@ -113,5 +113,17 @@ HWTEST_F(NativeInterfaceArkWebTest,
     OH_NativeArkWeb_SetJavaScriptProxyValidCallback(webTag, callback);
 }
 
+/**
+ * @tc.name  : OHNativeInterfaceArkWebTest_OH_NativeArkWeb_GetJavaScriptProxyValidCallback_01
+ * @tc.desc  : Test OH_NativeArkWeb_GetJavaScriptProxyValidCallback
+ */
+HWTEST_F(NativeInterfaceArkWebTest,
+         OHNativeInterfaceArkWebTest_OH_NativeArkWeb_GetJavaScriptProxyValidCallback_01, TestSize.Level1) {
+    const char* webTag = "";
+    NativeArkWeb_OnValidCallback callback =
+        OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag);
+    EXPECT_TRUE(callback == nullptr);
+}
+
 } // namespace NWeb
 } // namesapce OHOS
