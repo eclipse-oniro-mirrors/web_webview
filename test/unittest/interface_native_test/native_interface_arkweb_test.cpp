@@ -121,7 +121,7 @@ HWTEST_F(NativeInterfaceArkWebTest,
          OHNativeInterfaceArkWebTest_OH_NativeArkWeb_GetJavaScriptProxyValidCallback_01, TestSize.Level1) {
     const char* webTag = "";
     NativeArkWeb_OnValidCallback callback =
-        OH_NativeArkWeb_SetJavaScriptProxyValidCallback(webTag);
+        OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag);
     EXPECT_TRUE(callback == nullptr);
 }
 
