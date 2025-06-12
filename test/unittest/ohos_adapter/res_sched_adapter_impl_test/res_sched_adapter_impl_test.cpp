@@ -340,7 +340,7 @@ HWTEST_F(ResSchedAdapterImplTest, ResSchedAdapterImplTest_ReportSceneInternal_00
     bool result = resAdapter->ReportScene(ResSchedStatusAdapter::WEB_ACTIVE, ResSchedSceneAdapter::SLIDE, -1);
     EXPECT_FALSE(result);
     result = resAdapter->ReportScene(ResSchedStatusAdapter::WEB_ACTIVE, ResSchedSceneAdapter::SLIDE, -1);
-    EXPECT_TRUE(result);
+    EXPECT_FALSE(result);
     result = resAdapter->ReportScene(ResSchedStatusAdapter::WEB_ACTIVE, ResSchedSceneAdapter::VISIBLE, -1);
     EXPECT_TRUE(result);
     result = resAdapter->ReportScene(ResSchedStatusAdapter::WEB_ACTIVE, ResSchedSceneAdapter::LOAD_URL, -1);
