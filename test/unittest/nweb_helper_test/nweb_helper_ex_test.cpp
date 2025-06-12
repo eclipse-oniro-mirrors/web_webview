@@ -910,6 +910,9 @@ HWTEST_F(NwebHelperTest,
  */
 HWTEST_F(NwebHelperTest, SetWebDebuggingAccess, TestSize.Level1)
 {
+    NWebHelper::Instance().initFlag_ = false;
+    NWebHelper::Instance().nwebEngine_ = nullptr;
+
     auto nwebEngineMock = std::make_shared<MockNWebEngine>();
     bool isEnableDebug = true;
     int32_t port = 8888;
