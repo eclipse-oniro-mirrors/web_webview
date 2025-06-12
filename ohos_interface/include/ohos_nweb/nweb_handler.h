@@ -1122,6 +1122,13 @@ public:
      * @param url The url of the web site.
      */
     virtual void OnLoadFinished(const std::string& url) {}
+
+    virtual bool OnAllSslErrorRequestByJSV2(std::shared_ptr<NWebJSAllSslErrorResult> result, SslError error,
+        const std::string& url, const std::string& originalUrl, const std::string& referrer, bool isFatalError,
+        bool isMainFrame, const std::vector<std::string>& certChainData)
+    {
+        return false;
+    }
 };
 
 } // namespace OHOS::NWeb

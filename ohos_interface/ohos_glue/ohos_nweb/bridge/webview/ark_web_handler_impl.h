@@ -631,6 +631,10 @@ public:
     void OnLoadStarted(const ArkWebString& url) override;
 
     void OnLoadFinished(const ArkWebString& url) override;
+
+    bool OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error, const ArkWebString& url,
+        const ArkWebString& originalUrl, const ArkWebString& referrer, bool isFatalError, bool isMainFrame,
+        const ArkWebStringVector& certChainData) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
