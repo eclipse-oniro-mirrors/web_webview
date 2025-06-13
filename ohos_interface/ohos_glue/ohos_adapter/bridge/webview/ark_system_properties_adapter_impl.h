@@ -90,6 +90,8 @@ public:
 
     ArkWebString GetBundleName() override;
 
+    ArkWebString GetStringParameter(const ArkWebString& key, const ArkWebString& defaultValue) override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
