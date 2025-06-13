@@ -215,4 +215,11 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetBundleName()
     std::string str = real_.GetBundleName();
     return ArkWebStringClassToStruct(str);
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetStringParameter(const ArkWebString& key,
+                                                                const ArkWebString& defaultValue)
+{
+    std::string str = real_.GetStringParameter(ArkWebStringStructToClass(key), ArkWebStringStructToClass(defaultValue));
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb
