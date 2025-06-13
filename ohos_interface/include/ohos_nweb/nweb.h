@@ -1918,6 +1918,31 @@ public:
     {
         return -1;
     }
+
+    /**
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
+     */
+    virtual int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
+    {
+        return -1;
+    }
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    virtual int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart)
+    {
+        return -1;
+    }
 };
 
 } // namespace OHOS::NWeb

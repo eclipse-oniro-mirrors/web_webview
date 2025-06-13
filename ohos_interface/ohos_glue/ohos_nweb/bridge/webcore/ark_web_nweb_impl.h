@@ -1657,6 +1657,25 @@ public:
      */
     int64_t GetWebAccessibilityIdByHtmlElementId(const ArkWebString& htmlElementId) override;
 
+    /**
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
+     */
+    int32_t GetBlanklessInfoWithKey(const ArkWebString& key, double* similarity, int32_t* loadingTime) override;
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    int32_t SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
