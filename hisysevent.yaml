@@ -167,6 +167,17 @@ PAGE_LOAD_TIME:
   FIRST_CONTENTFUL_PAINT: {type: INT64, desc: first contentful paint}
   LARGEST_CONTENTFUL_PAINT: {type: INT64, desc: largest contentful paint}
 
+PAGE_MEM_LEAK:
+  __BASE: {type: STATISTIC, level: MINOR, desc: Check memory leak of web render process, preserve: true}
+  TYPE: {type: STRING, desc: reporting type includes MEM_LEAK_DETECTED PAGE_MEM_LEAK_ERROR PAGE_MEM_LEAK_WARNING}
+  PID: {type: STRING, desc: process id}
+  RSS: {type: STRING, desc: resident set size}
+  PSS: {type: STRING, desc: proportional set size}
+  JS_HEAP_TOTAL: {type: STRING, desc: total js heap memory}
+  JS_HEAP_USED: {type: STRING, desc: used js heap memory}
+  GPU_MEM: {type: STRING, desc: gpu memory userd by renderer single process}
+  URL: {type: STRING, desc: url}
+
 PASTE_BOARD_ERROR:
   __BASE: {type: FAULT, level: MINOR, tag: fault, desc: paste board error, preserve: true}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
@@ -179,6 +190,10 @@ PROCESS_CRASH:
   PROCESS_TYPE: {type: STRING, desc: process type}
   ERROR_REASON: {type: STRING, desc: error reason}
   CRASH_COUNT: {type: UINT32, desc: crash count}
+
+PROCESS_FREEZE_WARNING:
+  __BASE: {type: FAULT, level: CRITICAL, desc: render process freeze warning, preserve: true}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
 
 RENDER_JIT_LOCKDOWN:
   __BASE: {type: BEHAVIOR, level: MINOR, tag: UserBehavior, desc: advanced security lock mode, preserve: true}
