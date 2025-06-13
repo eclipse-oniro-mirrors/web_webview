@@ -76,6 +76,12 @@ FORCE_ENABLE_ZOOM:
   BUNDLE_NAME: {type: STRING, desc: bundle name}
   ENABLE_ZOOM_STATUS: {type: STRING, desc: force enable zoom status}
 
+GPU_DISPLAY_ERROR:
+  __BASE: {type: STATISTIC, level: MINOR, desc: GPU causes abnormal page display, preserve: true}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  EVENT_TYPE: {type: STRING, desc: event type}
+  EVENT_CONTENT: {type: STRING, desc: event type}
+
 INPUT_METHOD:
   __BASE: {type: FAULT, level: MINOR, tag: fault, desc: input method error, preserve: true}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
