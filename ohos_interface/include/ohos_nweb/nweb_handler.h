@@ -1129,6 +1129,16 @@ public:
     {
         return false;
     }
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    virtual void ShowMagnifier() {}
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    virtual void HideMagnifier() {}
 };
 
 } // namespace OHOS::NWeb

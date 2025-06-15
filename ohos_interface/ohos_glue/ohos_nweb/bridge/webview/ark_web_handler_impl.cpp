@@ -1027,4 +1027,14 @@ bool ArkWebHandlerImpl::OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslEr
         static_cast<ArkWebSslError>(error), ArkWebStringStructToClass(url), ArkWebStringStructToClass(originalUrl),
         ArkWebStringStructToClass(referrer), isFatalError, isMainFrame, ArkWebStringVectorStructToClass(certChainData));
 }
+
+void ArkWebHandlerImpl::ShowMagnifier()
+{
+    nweb_handler_->ShowMagnifier();
+}
+
+void ArkWebHandlerImpl::HideMagnifier()
+{
+    nweb_handler_->HideMagnifier();
+}
 } // namespace OHOS::ArkWeb
