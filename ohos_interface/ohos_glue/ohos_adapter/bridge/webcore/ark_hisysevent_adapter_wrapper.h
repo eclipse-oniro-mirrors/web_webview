@@ -72,6 +72,17 @@ public:
             const int64_t, const std::string, const int64_t, const std::string, const int64_t>& data) override;
 
     int Write(const std::string& eventName, ArkEventType type,
+        const std::tuple<const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const uint32_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t>& data) override;
+
+    int Write(const std::string& eventName, ArkEventType type,
         const std::tuple<const std::string, const std::string, const std::string, const std::string, const std::string,
             const std::string, const std::string, const std::string, const std::string, const std::string,
             const std::string, const std::string, const std::string, const std::string>& data) override;

@@ -166,6 +166,7 @@ PAGE_LOAD_TIME:
   FIRST_PAINT: {type: INT64, desc: first paint}
   FIRST_CONTENTFUL_PAINT: {type: INT64, desc: first contentful paint}
   LARGEST_CONTENTFUL_PAINT: {type: INT64, desc: largest contentful paint}
+  RENDER_INIT_BLOCK: {type: INT64, desc: render init block}
 
 PAGE_MEM_LEAK:
   __BASE: {type: STATISTIC, level: MINOR, desc: Check memory leak of web render process, preserve: true}
@@ -227,3 +228,8 @@ CHILD_PROCESS_INIT_FAIL:
 RENDER_JS_FREEZE:
   __BASE: {type: FAULT, level: CRITICAL, tag: fault, desc: render js freeze, preserve: true}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
+
+PAGE_DRAG_BLANK:
+  __BASE: {type: STATISTIC, level: MINOR, tag: performance, desc: page drag blank, preserve: true}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  PAGE_DRAG_TIME: {type: string, desc: page drag time}
