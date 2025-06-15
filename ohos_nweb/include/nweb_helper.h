@@ -131,9 +131,7 @@ public:
     void SetWebDebuggingAccess(bool isEnableDebug);
     void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port);
 
-    uint32_t AddBlanklessLoadingUrls(const std::vector<std::string>& urls);
-
-    void RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls);
+    void SetBlanklessLoadingCacheCapacity(int32_t capacity);
 
     void ClearBlanklessLoadingCache(const std::vector<std::string>& urls);
 

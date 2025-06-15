@@ -384,11 +384,11 @@ private:
 
     static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
 
-    static napi_value AddBlanklessLoadingUrls(napi_env env, napi_callback_info info);
+    static napi_value GetBlanklessInfoWithKey(napi_env env, napi_callback_info info);
 
-    static napi_value RemoveBlanklessLoadingUrls(napi_env env, napi_callback_info info);
+    static napi_value SetBlanklessLoadingWithKey(napi_env env, napi_callback_info info);
 
-    static napi_value SetBlanklessLoadingKey(napi_env env, napi_callback_info info);
+    static napi_value SetBlanklessLoadingCacheCapacity(napi_env env, napi_callback_info info);
 
     static napi_value ClearBlanklessLoadingCache(napi_env env, napi_callback_info info);
     static int32_t maxFdNum_;
