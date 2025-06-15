@@ -1156,24 +1156,14 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     nwebEngine_->RemoveAllCache(includeDiskFiles);
 }
 
-uint32_t NWebHelper::AddBlanklessLoadingUrls(const std::vector<std::string>& urls)
-{
-    if (nwebEngine_ == nullptr) {
-        WVLOG_E("web engine is nullptr");
-        return 0;
-    }
-
-    return nwebEngine_->AddBlanklessLoadingUrls(urls);
-}
-
-void NWebHelper::RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls)
+void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
 {
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return;
     }
 
-    nwebEngine_->RemoveBlanklessLoadingUrls(urls);
+    nwebEngine_->SetBlanklessLoadingCacheCapacity(capacity);
 }
 
 void NWebHelper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)

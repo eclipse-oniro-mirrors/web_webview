@@ -451,7 +451,9 @@ public:
 
     napi_value WaitForAttachedPromise(napi_env env, int32_t timeout, napi_deferred deferred);
 
-    void SetBlanklessLoadingKey(const std::string& key);
+    int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime);
+
+    int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);
 private:
     int ConverToWebHitTestType(int hitType);
 
