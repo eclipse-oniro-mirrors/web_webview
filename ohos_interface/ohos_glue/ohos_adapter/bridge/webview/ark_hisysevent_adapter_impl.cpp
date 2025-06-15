@@ -200,6 +200,53 @@ int ArkHiSysEventAdapterImpl::Write(const ArkWebString& eventName, uint32_t type
 }
 
 int ArkHiSysEventAdapterImpl::Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1,
+    const int64_t value1, const ArkWebString key2, const int64_t value2, const ArkWebString key3, const uint32_t value3,
+    const ArkWebString key4, const int64_t value4, const ArkWebString key5, const int64_t value5,
+    const ArkWebString key6, const int64_t value6, const ArkWebString key7, const int64_t value7,
+    const ArkWebString key8, const int64_t value8, const ArkWebString key9, const int64_t value9,
+    const ArkWebString key10, const int64_t value10, const ArkWebString key11, const int64_t value11,
+    const ArkWebString key12, const int64_t value12, const ArkWebString key13, const int64_t value13,
+    const ArkWebString key14, const int64_t value14, const ArkWebString key15, const int64_t value15,
+    const ArkWebString key16, const int64_t value16, const ArkWebString key17, const int64_t value17,
+    const ArkWebString key18, const int64_t value18, const ArkWebString key19, const int64_t value19,
+    const ArkWebString key20, const int64_t value20, const ArkWebString key21, const int64_t value21,
+    const ArkWebString key22, const int64_t value22, const ArkWebString key23, const int64_t value23,
+    const ArkWebString key24, const int64_t value24)
+{
+    std::string s_eventName = ArkWebStringStructToClass(eventName);
+    std::string s_key1 = ArkWebStringStructToClass(key1);
+    std::string s_key2 = ArkWebStringStructToClass(key2);
+    std::string s_key3 = ArkWebStringStructToClass(key3);
+    std::string s_key4 = ArkWebStringStructToClass(key4);
+    std::string s_key5 = ArkWebStringStructToClass(key5);
+    std::string s_key6 = ArkWebStringStructToClass(key6);
+    std::string s_key7 = ArkWebStringStructToClass(key7);
+    std::string s_key8 = ArkWebStringStructToClass(key8);
+    std::string s_key9 = ArkWebStringStructToClass(key9);
+    std::string s_key10 = ArkWebStringStructToClass(key10);
+    std::string s_key11 = ArkWebStringStructToClass(key11);
+    std::string s_key12 = ArkWebStringStructToClass(key12);
+    std::string s_key13 = ArkWebStringStructToClass(key13);
+    std::string s_key14 = ArkWebStringStructToClass(key14);
+    std::string s_key15 = ArkWebStringStructToClass(key15);
+    std::string s_key16 = ArkWebStringStructToClass(key16);
+    std::string s_key17 = ArkWebStringStructToClass(key17);
+    std::string s_key18 = ArkWebStringStructToClass(key18);
+    std::string s_key19 = ArkWebStringStructToClass(key19);
+    std::string s_key20 = ArkWebStringStructToClass(key20);
+    std::string s_key21 = ArkWebStringStructToClass(key21);
+    std::string s_key22 = ArkWebStringStructToClass(key22);
+    std::string s_key23 = ArkWebStringStructToClass(key23);
+    std::string s_key24 = ArkWebStringStructToClass(key24);
+    std::tuple data = std::make_tuple(s_key1, value1, s_key2, value2, s_key3, value3, s_key4, value4, s_key5, value5,
+        s_key6, value6, s_key7, value7, s_key8, value8, s_key9, value9, s_key10, value10, s_key11, value11, s_key12,
+        value12, s_key13, value13, s_key14, value14, s_key15, value15, s_key16, value16, s_key17, value17, s_key18,
+        value18, s_key19, value19, s_key20, value20, s_key21, value21, s_key22, value22, s_key23, value23, s_key24,
+        value24);
+    return real_.Write(s_eventName, (OHOS::NWeb::HiSysEventAdapter::EventType)type, data);
+}
+
+int ArkHiSysEventAdapterImpl::Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1,
     const ArkWebString value1, const ArkWebString key2, const ArkWebString value2, const ArkWebString key3,
     const ArkWebString value3, const ArkWebString key4, const ArkWebString value4, const ArkWebString key5,
     const ArkWebString value5, const ArkWebString key6, const ArkWebString value6, const ArkWebString key7,
