@@ -1676,6 +1676,12 @@ public:
      */
     int32_t SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart) override;
 
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    void UpdateSingleHandleVisible(bool isVisible) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

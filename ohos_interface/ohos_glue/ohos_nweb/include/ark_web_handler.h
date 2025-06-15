@@ -947,6 +947,18 @@ public:
     virtual bool OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error,
         const ArkWebString& url, const ArkWebString& originalUrl, const ArkWebString& referrer, bool isFatalError,
         bool isMainFrame, const ArkWebStringVector& certChainData) = 0;
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    /*--ark web()--*/
+    virtual void ShowMagnifier() {}
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    /*--ark web()--*/
+    virtual void HideMagnifier() {}
 };
 
 } // namespace OHOS::ArkWeb

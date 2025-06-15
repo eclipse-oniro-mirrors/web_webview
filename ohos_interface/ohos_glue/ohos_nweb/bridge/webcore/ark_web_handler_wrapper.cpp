@@ -1172,4 +1172,14 @@ bool ArkWebHandlerWrapper::OnAllSslErrorRequestByJSV2(std::shared_ptr<OHOS::NWeb
     ArkWebStringVectorStructRelease(stCertChainData);
     return flag; 
 }
+
+void ArkWebHandlerWrapper::ShowMagnifier()
+{
+    ark_web_handler_->ShowMagnifier();
+}
+
+void ArkWebHandlerWrapper::HideMagnifier()
+{
+    ark_web_handler_->HideMagnifier();
+}
 } // namespace OHOS::ArkWeb
