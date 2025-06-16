@@ -15,7 +15,7 @@
 
 #include "screen_capture_adapter_impl.h"
 
-#include "foundation/multimedia/player_framework/interfaces/inner_api/native/media_errors.h"
+#include "../native/media_errors.h"
 #include "nweb_log.h"
 #include "surface_adapter_impl.h"
 

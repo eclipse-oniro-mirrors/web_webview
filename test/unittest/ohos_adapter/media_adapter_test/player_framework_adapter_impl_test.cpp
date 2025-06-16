@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-#include "foundation/multimedia/player_framework/interfaces/inner_api/native/media_errors.h"
+#include "../native/media_errors.h"
 #include "gtest/gtest.h"
 #define private public
 #include "player_framework_adapter_impl.h"

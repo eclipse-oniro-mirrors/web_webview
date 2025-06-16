@@ -83,7 +83,9 @@
                 "protobuf",
                 "libxml2",
                 "openssl",
-                "drm_framework"
+                "drm_framework",
+                "drivers_peripheral_display",
+                "selinux_adapter"
             ]
         },
         "build": {

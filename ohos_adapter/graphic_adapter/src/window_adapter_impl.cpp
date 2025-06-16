@@ -18,10 +18,10 @@
 #include <cstdarg>
 
 #include "nweb_log.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/surface.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
-#include "foundation/graphic/graphic_surface/surface/include/native_window.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/external_window.h"
+#include "surface.h"
+#include "surface/window.h"
+#include "native_window.h"
+#include "external_window.h"
 
 namespace OHOS::NWeb {
 constexpr uint32_t ROTATE_NONE = 0;
