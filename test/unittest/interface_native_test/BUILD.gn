@@ -128,7 +128,10 @@ ohos_unittest("native_interface_arkweb_test") {
 
   sources = [ "native_interface_arkweb_test.cpp" ]
 
-  include_dirs = [ "../common" ]
+  include_dirs = [
+    "../common",
+    "${prebuilts_sdk_dir}/native/sysroot/usr/include/web",
+  ]
 
   deps = [
     "$webview_path/interfaces/native:ohweb",
@@ -155,7 +158,7 @@ group("unittest") {
     ":arkweb_interface_test",
     ":arkweb_scheme_handler_test",
     ":native_arkweb_utils_test",
+    ":native_interface_arkweb_test",
     ":native_javascript_execute_callback_test",
-    ":native_interface_arkweb_test"
   ]
 }
