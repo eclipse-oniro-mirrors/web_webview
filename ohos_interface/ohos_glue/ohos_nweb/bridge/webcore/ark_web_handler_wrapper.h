@@ -672,6 +672,16 @@ public:
     bool OnAllSslErrorRequestByJSV2(std::shared_ptr<OHOS::NWeb::NWebJSAllSslErrorResult> result, ArkWebSslError error,
         const std::string& url, const std::string& originalUrl, const std::string& referrer, bool isFatalError,
         bool isMainFrame, const std::vector<std::string>& certChainData) override;
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    void ShowMagnifier() override;
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    void HideMagnifier() override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

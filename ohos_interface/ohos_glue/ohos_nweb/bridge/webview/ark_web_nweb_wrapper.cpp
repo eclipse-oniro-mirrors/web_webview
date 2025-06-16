@@ -1714,4 +1714,9 @@ int32_t ArkWebNWebWrapper::SetBlanklessLoadingWithKey(const std::string& key, bo
     ArkWebStringStructRelease(stKey);
     return errCode;
 }
+
+void ArkWebNWebWrapper::UpdateSingleHandleVisible(bool isVisible)
+{
+    ark_web_nweb_->UpdateSingleHandleVisible(isVisible);
+}
 } // namespace OHOS::ArkWeb

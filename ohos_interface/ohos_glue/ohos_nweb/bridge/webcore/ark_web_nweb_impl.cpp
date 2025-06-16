@@ -1450,4 +1450,9 @@ int32_t ArkWebNWebImpl::SetBlanklessLoadingWithKey(const ArkWebString& key, bool
 {
     return nweb_nweb_->SetBlanklessLoadingWithKey(ArkWebStringStructToClass(key), isStart);
 }
+
+void ArkWebNWebImpl::UpdateSingleHandleVisible(bool isVisible)
+{
+    nweb_nweb_->UpdateSingleHandleVisible(isVisible);
+}
 } // namespace OHOS::ArkWeb

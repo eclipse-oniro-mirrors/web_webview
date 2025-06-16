@@ -1878,6 +1878,13 @@ public:
      */
     /*--ark web()--*/
     virtual int32_t SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart) = 0;
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    /*--ark web()--*/
+    virtual void UpdateSingleHandleVisible(bool isVisible) = 0;
 };
 
 } // namespace OHOS::ArkWeb
