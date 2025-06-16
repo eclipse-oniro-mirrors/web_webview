@@ -405,4 +405,9 @@ std::string SystemPropertiesAdapterImpl::GetBundleName()
 {
     return NWebConfigHelper::Instance().GetBundleName();
 }
+
+std::string SystemPropertiesAdapterImpl::GetStringParameter(const std::string& key, const std::string& defaultValue)
+{
+    return OHOS::system::GetParameter(key, defaultValue);
+}
 } // namespace OHOS::NWeb
