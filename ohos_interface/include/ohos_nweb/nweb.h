@@ -1943,6 +1943,12 @@ public:
     {
         return -1;
     }
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    virtual void UpdateSingleHandleVisible(bool isVisible) {}
 };
 
 } // namespace OHOS::NWeb
