@@ -122,6 +122,7 @@ PAGE_LOAD_ERROR:
   INSTANCE_ID: {type: UINT32, desc: web instance id}
   ERROR_CODE: {type: UINT32, desc: page error code}
   ERROR_TYPE: {type: STRING, desc: page error type}
+  ERROR_COUNT: {type: UINT32, desc: page error count}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
 
 PAGE_LOAD_STATISTICS:
