@@ -227,3 +227,8 @@ CHILD_PROCESS_INIT_FAIL:
 RENDER_JS_FREEZE:
   __BASE: {type: FAULT, level: CRITICAL, tag: fault, desc: render js freeze, preserve: true}
   BUNDLE_NAME: {type: STRING, desc: bundle name}
+
+SKIA_OOM_ERROR:
+  __BASE: {type: FAULT, level: CRITICAL, desc: skia out of memory, preserve: true}
+  BUNDLE_NAME: {type: STRING, desc: bundle name}
+  ERROR_DESC: {type: STRING, desc: error description}
