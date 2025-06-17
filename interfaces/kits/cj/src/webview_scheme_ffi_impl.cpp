@@ -346,9 +346,19 @@ extern "C" {
 
     void FfiWebResourceHandlerDidFail(int64_t id, int32_t *errCode, int32_t errorcode)
     {
-        FfiWebResourceHandlerDidFailV2(id, errCode, errorcode, false);
+        auto nativeWebResourceHandler = FFIData::GetData<WebResourceHandlerImpl>(id);
+        if (nativeWebResourceHandler == nullptr) {
+            *errCode = NWebError::INIT_ERROR;
+            return;
+        }
+        int32_t ret = nativeWebResourceHandler->DidFailWithError(
+            static_cast<ArkWeb_NetError>(errorcode));
+        if (ret != 0) {
+            *errCode = NWebError::RESOURCE_HANDLER_INVALID;
+        }
+        return;
     }
- 
+
     void FfiWebResourceHandlerDidFailV2(int64_t id, int32_t *errCode, int32_t errorcode, bool completeIfNoResponse)
     {
         auto nativeWebResourceHandler = FFIData::GetData<WebResourceHandlerImpl>(id);
@@ -356,7 +366,7 @@ extern "C" {
             *errCode = NWebError::INIT_ERROR;
             return;
         }
-        int32_t ret = nativeWebResourceHandler->DidFailWithError(
+        int32_t ret = nativeWebResourceHandler->DidFailWithErrorV2(
             static_cast<ArkWeb_NetError>(errorcode), completeIfNoResponse);
         if (ret != 0) {
             *errCode = NWebError::RESOURCE_HANDLER_INVALID;
