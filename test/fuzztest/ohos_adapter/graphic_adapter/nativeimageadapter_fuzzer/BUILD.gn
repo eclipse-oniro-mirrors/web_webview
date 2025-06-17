@@ -42,6 +42,7 @@ ohos_fuzztest("NativeImageAdapterFuzzTest") {
     "c_utils:utils",
     "graphic_2d:libcomposer",
     "graphic_2d:librender_service_base",
+    "graphic_2d:libnative_image",
     "graphic_surface:surface",
     "hilog:libhilog",
     "relational_store:native_rdb",

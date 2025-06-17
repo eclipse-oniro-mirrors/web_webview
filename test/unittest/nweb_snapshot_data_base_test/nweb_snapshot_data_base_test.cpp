@@ -18,7 +18,7 @@
 #include <gmock/gmock.h>
 #include <securec.h>
 
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
+#include "application_context.h"
 
 #define private public
 #include "nweb_snapshot_data_base.h"

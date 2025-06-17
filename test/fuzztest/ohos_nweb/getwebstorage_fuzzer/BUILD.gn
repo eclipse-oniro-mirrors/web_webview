@@ -24,7 +24,6 @@ ohos_fuzztest("GetWebStorageFuzzTest") {
 
   include_dirs = [
     "$webview_path/test/ohos_nweb",
-    "$window_manager_path/interfaces/innerkits/wm",
     "$webview_path/test/fuzztest",
     "$webview_path/ohos_nweb/include",
   ]
@@ -35,9 +34,9 @@ ohos_fuzztest("GetWebStorageFuzzTest") {
     "-fno-omit-frame-pointer",
   ]
   sources = [ "getwebstorage_fuzzer.cpp" ]
-  deps = [ "$graphic2d_path/rosen/modules/render_service_client:librender_service_client" ]
   external_deps = [
     "c_utils:utils",
+    "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",

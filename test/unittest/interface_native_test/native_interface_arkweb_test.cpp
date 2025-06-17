@@ -18,7 +18,7 @@
 #include <securec.h>
 
 #define private public
-#include "interface/sdk_c/web/webview/interfaces/native/native_interface_arkweb.h"
+#include "native_interface_arkweb.h"
 #include "base/web/webview/interfaces/native/native_javascript_execute_callback.h"
 
 using namespace testing;
