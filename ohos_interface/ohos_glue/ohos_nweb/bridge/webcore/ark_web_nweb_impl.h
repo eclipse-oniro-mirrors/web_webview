@@ -1682,6 +1682,18 @@ public:
      */
     void UpdateSingleHandleVisible(bool isVisible) override;
 
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    void AvoidVisibleViewportBottom(int32_t avoidHeight) override;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    int32_t GetVisibleViewportAvoidHeight() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

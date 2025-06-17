@@ -2474,5 +2474,15 @@ int32_t WebviewController::SetBlanklessLoadingWithKey(const std::string& key, bo
     }
     return -1;
 }
+
+ErrCode WebviewController::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->AvoidVisibleViewportBottom(avoidHeight);
+    return NWebError::NO_ERROR;
+}
 } // namespace NWeb
 } // namespace OHOS
