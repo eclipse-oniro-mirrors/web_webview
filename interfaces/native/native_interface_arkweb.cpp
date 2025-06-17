@@ -27,11 +27,15 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
+#include "system_properties_adapter_impl.h"
 
 namespace {
 std::mutex g_mtxMap; // the mutex to protect the shared resource
 std::unordered_map<std::string, NativeArkWeb_OnValidCallback> g_validMap;
 std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
+constexpr uint32_t MAX_DATABASE_SIZE_IN_MB = 100;
+constexpr uint32_t MAX_KEYS_COUNT = 100;
+constexpr size_t MAX_KEY_LENGTH = 2048;
 } // namespace
 
 namespace OHOS::NWeb {
@@ -220,4 +224,117 @@ void OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy(const char* webTag,
         return;
     }
     return registerAsyncThreadJavaScriptProxy(webTag, proxyObject, permission);
+}
+
+ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag, const char* key)
+{
+    auto deviceType = OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != OHOS::NWeb::ProductDeviceType::DEVICE_TYPE_MOBILE) {
+        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey capability not supported");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT, 0.0, 0 };
+    }
+
+    size_t keyLen = strlen(key);
+    if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
+        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey key length is invalid");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS, 0.0, 0 };
+    }
+
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
+        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey load web engine failed");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN, 0.0, 0 };
+    }
+
+    ArkWeb_BlanklessInfo (*getBlanklessInfoWithKey)(const char* webTag, const char* key) = nullptr;
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    ARKWEB_NATIVE_LOAD_FN_PTR(getBlanklessInfoWithKey, OH_NativeArkWeb_GetBlanklessInfoWithKey);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    if (!getBlanklessInfoWithKey) {
+        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey failed to load function");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN, 0.0, 0 };
+    }
+
+    return getBlanklessInfoWithKey(webTag, key);
+}
+
+ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char* webTag,
+                                                                     const char* key,
+                                                                     bool isStarted)
+{
+    auto deviceType = OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != OHOS::NWeb::ProductDeviceType::DEVICE_TYPE_MOBILE) {
+        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey capability not supported");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT;
+    }
+
+    size_t keyLen = strlen(key);
+    if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
+        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey key length is invalid");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS;
+    }
+
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
+        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey load web engine failed");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN;
+    }
+
+    ArkWeb_BlanklessErrorCode (*setBlanklessLoadingWithKey)(const char* webTag,
+                                                            const char* key,
+                                                            bool isStarted) = nullptr;
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    ARKWEB_NATIVE_LOAD_FN_PTR(setBlanklessLoadingWithKey, OH_NativeArkWeb_SetBlanklessLoadingWithKey);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    if (!setBlanklessLoadingWithKey) {
+        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey failed to load function");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN;
+    }
+
+    return setBlanklessLoadingWithKey(webTag, key, isStarted);
+}
+
+void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size)
+{
+    auto deviceType = OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != OHOS::NWeb::ProductDeviceType::DEVICE_TYPE_MOBILE) {
+        WVLOG_E("OH_NativeArkWeb_ClearBlanklessLoadingCache capability not supported");
+        return;
+    }
+
+    std::vector<std::string> keys;
+    if (key == nullptr) {
+        OHOS::NWeb::NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
+        return;
+    }
+
+    if (size > MAX_KEYS_COUNT) {
+        size = MAX_KEYS_COUNT;
+    }
+
+    for (uint32_t idx = 0; idx < size; idx++) {
+        size_t keyLen = strlen(key[idx]);
+        if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
+            continue;
+        }
+        keys.push_back(key[idx]);
+    }
+
+    OHOS::NWeb::NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
+}
+
+uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
+{
+    auto deviceType = OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    if (deviceType != OHOS::NWeb::ProductDeviceType::DEVICE_TYPE_MOBILE) {
+        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity capability not supported");
+        return 0;
+    }
+
+    if (capacity > MAX_DATABASE_SIZE_IN_MB) {
+        capacity = MAX_DATABASE_SIZE_IN_MB;
+    }
+
+    OHOS::NWeb::NWebHelper::Instance().SetBlanklessLoadingCacheCapacity(static_cast<int32_t>(capacity));
+    return capacity;
 }
