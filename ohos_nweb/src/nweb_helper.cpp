@@ -816,16 +816,18 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
         return nullptr;
     }
 
-    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
-    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
-    if (ctx) {
-        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
-    } else {
-        WVLOG_E("failed to get application context");
-    }
+    webApplicationStateCallback_ = WebApplicationStateChangeCallback::GetInstance();
     std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
-    if (webApplicationStateCallback_ && (!webApplicationStateCallback_->nweb_)) {
+    if (webApplicationStateCallback_) {
         webApplicationStateCallback_->nweb_ = nweb;
+        WVLOG_I("webApplicationStateCallback_ is registered.");
+    }
+    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (ctx && webApplicationStateCallback_ && !webApplicationStateCallback_->isRegistered) {
+        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
+        webApplicationStateCallback_->isRegistered = true;
+    } else {
+        WVLOG_E("failed to get application context or webApplicationStateCallback_ has been isRegistered"); 
     }
     WVLOG_I("NWebHelper::Nweb is created.");
     return nweb;

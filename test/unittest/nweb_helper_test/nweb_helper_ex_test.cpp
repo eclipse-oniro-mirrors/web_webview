@@ -874,7 +874,7 @@ HWTEST_F(NwebHelperTest,
           WebApplicationStateChangeCallback_NotifyApplicationForeground_001, TestSize.Level1)
 {
     std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_ =
-        std::make_shared<WebApplicationStateChangeCallback>();
+        WebApplicationStateChangeCallback::GetInstance();
     EXPECT_NE(webApplicationStateCallback_, nullptr);
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
@@ -893,7 +893,7 @@ HWTEST_F(NwebHelperTest,
           WebApplicationStateChangeCallback_NotifyApplicationBackground_001, TestSize.Level1)
 {
     std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_ =
-        std::make_shared<WebApplicationStateChangeCallback>();
+        WebApplicationStateChangeCallback::GetInstance();
     EXPECT_NE(webApplicationStateCallback_, nullptr);
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
