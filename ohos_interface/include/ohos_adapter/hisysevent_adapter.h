@@ -73,17 +73,6 @@ public:
             const int64_t, const std::string, const int64_t, const std::string, const int64_t>& data) = 0;
 
     virtual int Write(const std::string& eventName, EventType type,
-        const std::tuple<const std::string, const int64_t, const std::string, const int64_t, const std::string,
-            const uint32_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
-            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
-            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
-            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
-            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
-            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
-            const int64_t, const std::string, const int64_t, const std::string, const int64_t,
-            const std::string, const int64_t>& data) = 0;
-
-    virtual int Write(const std::string& eventName, EventType type,
         const std::tuple<const std::string, const std::string, const std::string, const std::string, const std::string,
             const std::string, const std::string, const std::string, const std::string, const std::string,
             const std::string, const std::string, const std::string, const std::string>& data) = 0;
@@ -96,6 +85,17 @@ public:
 
     virtual int Write(const std::string& eventName, EventType type,
         const std::tuple<const std::string, const uint32_t, const std::string, const uint64_t>& data) = 0;
+
+    virtual int Write(const std::string& eventName, EventType type,
+        const std::tuple<const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const uint32_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t, const std::string,
+            const int64_t, const std::string, const int64_t, const std::string, const int64_t,
+            const std::string, const int64_t>& data) = 0;
 
 protected:
     HiSysEventAdapter() = default;
