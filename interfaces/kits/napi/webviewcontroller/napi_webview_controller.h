@@ -43,6 +43,7 @@ const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
 const std::string WEB_PRESSURE_LEVEL_ENUM_NAME = "PressureLevel";
 const std::string WEB_SCROLL_TYPE_ENUM_NAME = "ScrollType";
 const std::string WEB_CONTROLLER_ATTACHSTATE_ENUM_NAME = "ControllerAttachState";
+const std::string WEB_BLANKLESS_ERROR_CODE_ENUM_NAME = "WebBlanklessErrorCode";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 
 struct Scheme {
