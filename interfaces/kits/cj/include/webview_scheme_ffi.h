@@ -51,6 +51,8 @@ extern "C" {
         int64_t id, int32_t *errCode, CArrUI8 buffer, int64_t buflen);
     FFI_EXPORT void FfiWebResourceHandlerDidFinish(int64_t id, int32_t *errCode);
     FFI_EXPORT void FfiWebResourceHandlerDidFail(int64_t id, int32_t *errCode, int32_t errorcode);
+    FFI_EXPORT void FfiWebResourceHandlerDidFailV2(
+        int64_t id, int32_t *errCode, int32_t errorcode, bool completeIfNoResponse);
 
     // WebSchemeHandler
     FFI_EXPORT int64_t FfiWebSchemeHandlerConstructor();

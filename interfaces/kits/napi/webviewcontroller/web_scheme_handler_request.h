@@ -135,7 +135,7 @@ public:
     int32_t DidReceiveResponse(const ArkWeb_Response* response);
     int32_t DidReceiveResponseBody(const uint8_t* buffer, int64_t buflen);
     int32_t DidFinish();
-    int32_t DidFailWithError(ArkWeb_NetError errorCode);
+    int32_t DidFailWithError(ArkWeb_NetError errorCode, bool completeIfNoResponse);
     void DestoryArkWebResourceHandler();
     void SetFinishFlag()
     {

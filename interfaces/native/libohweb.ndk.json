@@ -342,5 +342,9 @@
     {
         "first_introduced": "16",
         "name": "OH_ArkWeb_RegisterScrollCallback"
+    },
+    {
+        "first_introduced": "20",
+        "name": "OH_ArkWebResourceHandler_DidFailWithErrorV2"
     }
 ]
