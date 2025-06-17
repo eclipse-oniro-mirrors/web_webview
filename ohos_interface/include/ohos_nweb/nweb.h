@@ -1949,6 +1949,21 @@ public:
      * @param isVisible The single handle visible.
      */
     virtual void UpdateSingleHandleVisible(bool isVisible) {}
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    virtual void AvoidVisibleViewportBottom(int32_t avoidHeight) {}
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    virtual int32_t GetVisibleViewportAvoidHeight()
+    {
+        return 0;
+    }
 };
 
 } // namespace OHOS::NWeb

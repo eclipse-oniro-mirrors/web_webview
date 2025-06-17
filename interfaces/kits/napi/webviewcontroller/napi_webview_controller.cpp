@@ -744,6 +744,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::SetBlanklessLoadingCacheCapacity),
         DECLARE_NAPI_STATIC_FUNCTION("clearBlanklessLoadingCache",
             NapiWebviewController::ClearBlanklessLoadingCache),
+        DECLARE_NAPI_FUNCTION("avoidVisibleViewportBottom",
+            NapiWebviewController::AvoidVisibleViewportBottom),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -7169,6 +7171,46 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
     }
 
     NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
+    return result;
+}
+
+napi_value NapiWebviewController::AvoidVisibleViewportBottom(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = {0};
+    void* data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+
+    if (argc < INTEGER_ONE) {
+        WVLOG_E("Requires 1 parameters.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return nullptr;
+    }
+
+    int32_t avoidHeight = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], avoidHeight)) {
+        WVLOG_E("Parameter is not integer number type.");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "avoidHeight", "number"));
+        return nullptr;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    ErrCode ret = webviewController->AvoidVisibleViewportBottom(avoidHeight);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+    }
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
 }
 } // namespace NWeb

@@ -300,6 +300,12 @@ public:
     }
     void SetAudioSessionType(int32_t audioSessionType) override
     {}
+    void AvoidVisibleViewportBottom(int32_t avoidHeight) override
+    {}
+    int32_t GetVisibleViewportAvoidHeight() override
+    {
+        return 0;
+    }
 };
 }
 #endif

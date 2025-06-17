@@ -1455,4 +1455,14 @@ void ArkWebNWebImpl::UpdateSingleHandleVisible(bool isVisible)
 {
     nweb_nweb_->UpdateSingleHandleVisible(isVisible);
 }
+
+void ArkWebNWebImpl::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    nweb_nweb_->AvoidVisibleViewportBottom(avoidHeight);
+}
+
+int32_t ArkWebNWebImpl::GetVisibleViewportAvoidHeight()
+{
+    return nweb_nweb_->GetVisibleViewportAvoidHeight();
+}
 } // namespace OHOS::ArkWeb
