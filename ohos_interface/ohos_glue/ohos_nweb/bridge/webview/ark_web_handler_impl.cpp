@@ -1037,4 +1037,21 @@ void ArkWebHandlerImpl::HideMagnifier()
 {
     nweb_handler_->HideMagnifier();
 }
+
+ArkWebString ArkWebHandlerImpl::OnHandleOverrideErrorPage(
+    ArkWebRefPtr<ArkWebUrlResourceRequest> request,
+    ArkWebRefPtr<ArkWebUrlResourceError> error)
+{
+    std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> nweb_request = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(request)) {
+        nweb_request = std::make_shared<ArkWebUrlResourceRequestWrapper>(request);
+    }
+
+    std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> nweb_error = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(error)) {
+        nweb_error = std::make_shared<ArkWebUrlResourceErrorWrapper>(error);
+    }
+
+    return ArkWebStringClassToStruct(nweb_handler_->OnHandleOverrideErrorPage(nweb_request, nweb_error));
+}
 } // namespace OHOS::ArkWeb

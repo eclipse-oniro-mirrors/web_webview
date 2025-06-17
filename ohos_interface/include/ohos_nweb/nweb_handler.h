@@ -1139,6 +1139,13 @@ public:
      * @brief Called when you need to hide magnifier.
      */
     virtual void HideMagnifier() {}
+
+    virtual std::string OnHandleOverrideErrorPage(
+        std::shared_ptr<NWebUrlResourceRequest> request,
+        std::shared_ptr<NWebUrlResourceError> error)
+    {
+        return "";
+    }
 };
 
 } // namespace OHOS::NWeb

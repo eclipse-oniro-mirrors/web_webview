@@ -1695,6 +1695,14 @@ public:
      */
     void UpdateSingleHandleVisible(bool isVisible) override;
 
+    /**
+     * Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param { bool } enable - Whether enable the error page.
+     */
+    /*--ark web()--*/
+    void SetErrorPageEnabled(bool enable) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

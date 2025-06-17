@@ -1719,4 +1719,9 @@ void ArkWebNWebWrapper::UpdateSingleHandleVisible(bool isVisible)
 {
     ark_web_nweb_->UpdateSingleHandleVisible(isVisible);
 }
+
+void ArkWebNWebWrapper::SetErrorPageEnabled(bool enable)
+{
+    ark_web_nweb_->SetErrorPageEnabled(enable);
+}
 } // namespace OHOS::ArkWeb

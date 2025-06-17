@@ -1490,4 +1490,14 @@ namespace OHOS::Webview {
             nweb_ptr->GetScrollOffset(offset_x, offset_y);
         }
     }
+
+    int32_t WebviewControllerImpl::SetErrorPageEnabled(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        nweb_ptr->SetErrorPageEnabled(enable);
+        return NWebError::NO_ERROR;
+    }
 }

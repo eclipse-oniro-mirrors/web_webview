@@ -1455,4 +1455,9 @@ void ArkWebNWebImpl::UpdateSingleHandleVisible(bool isVisible)
 {
     nweb_nweb_->UpdateSingleHandleVisible(isVisible);
 }
+
+void ArkWebNWebImpl::SetErrorPageEnabled(bool enable)
+{
+    nweb_nweb_->SetErrorPageEnabled(enable);
+}
 } // namespace OHOS::ArkWeb

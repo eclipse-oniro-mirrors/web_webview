@@ -645,6 +645,10 @@ public:
      * @brief Called when you need to hide magnifier.
      */
     void HideMagnifier() override;
+
+    ArkWebString OnHandleOverrideErrorPage(
+        ArkWebRefPtr<ArkWebUrlResourceRequest> request,
+        ArkWebRefPtr<ArkWebUrlResourceError> error) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
