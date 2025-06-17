@@ -17,11 +17,11 @@
 #define OHOS_NATIVE_BUFFER_ADAPTER_IMPL_H
 
 #include "ohos_native_buffer_adapter.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/external_window.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer_inner.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/surface_buffer.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
+#include "external_window.h"
+#include "native_buffer.h"
+#include "native_buffer_inner.h"
+#include "surface_buffer.h"
+#include "surface/window.h"
 
 namespace OHOS::NWeb {
 class OhosNativeBufferAdapterImpl : public OhosNativeBufferAdapter {

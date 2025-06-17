@@ -16,7 +16,7 @@
 #ifndef OHOS_IMAGE_DECODER_ADAPTER_IMPL
 #define OHOS_IMAGE_DECODER_ADAPTER_IMPL
 
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/native_buffer.h"
+#include "native_buffer.h"
 #include "image_type.h"
 #include "ohos_image_decoder_adapter.h"
 #include "surface_buffer.h"
