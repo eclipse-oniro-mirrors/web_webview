@@ -2474,5 +2474,15 @@ int32_t WebviewController::SetBlanklessLoadingWithKey(const std::string& key, bo
     }
     return -1;
 }
+
+ErrCode WebviewController::SetErrorPageEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetErrorPageEnabled(enable);
+    return NWebError::NO_ERROR;
+}
 } // namespace NWeb
 } // namespace OHOS

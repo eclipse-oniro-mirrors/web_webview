@@ -1949,6 +1949,13 @@ public:
      * @param isVisible The single handle visible.
      */
     virtual void UpdateSingleHandleVisible(bool isVisible) {}
+
+    /**
+     * Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param { bool } enable - Whether enable the error page.
+     */
+    virtual void SetErrorPageEnabled(bool enable) = 0;
 };
 
 } // namespace OHOS::NWeb

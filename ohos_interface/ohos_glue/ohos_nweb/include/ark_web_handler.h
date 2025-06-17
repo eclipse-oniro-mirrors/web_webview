@@ -959,6 +959,14 @@ public:
      */
     /*--ark web()--*/
     virtual void HideMagnifier() {}
+
+    /**
+     * @Description Triggered when the web page's document resource error.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString OnHandleOverrideErrorPage(
+        ArkWebRefPtr<ArkWebUrlResourceRequest> request,
+        ArkWebRefPtr<ArkWebUrlResourceError> error) = 0;
 };
 
 } // namespace OHOS::ArkWeb
