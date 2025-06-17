@@ -72,20 +72,6 @@ public:
         const ArkWebString key20, const int64_t value20, const ArkWebString key21, const int64_t value21,
         const ArkWebString key22, const int64_t value22, const ArkWebString key23, const int64_t value23) override;
 
-    int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const int64_t value1,
-        const ArkWebString key2, const int64_t value2, const ArkWebString key3, const uint32_t value3,
-        const ArkWebString key4, const int64_t value4, const ArkWebString key5, const int64_t value5,
-        const ArkWebString key6, const int64_t value6, const ArkWebString key7, const int64_t value7,
-        const ArkWebString key8, const int64_t value8, const ArkWebString key9, const int64_t value9,
-        const ArkWebString key10, const int64_t value10, const ArkWebString key11, const int64_t value11,
-        const ArkWebString key12, const int64_t value12, const ArkWebString key13, const int64_t value13,
-        const ArkWebString key14, const int64_t value14, const ArkWebString key15, const int64_t value15,
-        const ArkWebString key16, const int64_t value16, const ArkWebString key17, const int64_t value17,
-        const ArkWebString key18, const int64_t value18, const ArkWebString key19, const int64_t value19,
-        const ArkWebString key20, const int64_t value20, const ArkWebString key21, const int64_t value21,
-        const ArkWebString key22, const int64_t value22, const ArkWebString key23, const int64_t value23,
-        const ArkWebString key24, const int64_t value24) override;
-
     int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const ArkWebString value1,
         const ArkWebString key2, const ArkWebString value2, const ArkWebString key3, const ArkWebString value3,
         const ArkWebString key4, const ArkWebString value4, const ArkWebString key5, const ArkWebString value5,
@@ -100,6 +86,20 @@ public:
 
     int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const uint32_t value1,
         const ArkWebString key2, const uint64_t value2) override;
+
+    int Write(const ArkWebString& eventName, uint32_t type, const ArkWebString key1, const int64_t value1,
+        const ArkWebString key2, const int64_t value2, const ArkWebString key3, const uint32_t value3,
+        const ArkWebString key4, const int64_t value4, const ArkWebString key5, const int64_t value5,
+        const ArkWebString key6, const int64_t value6, const ArkWebString key7, const int64_t value7,
+        const ArkWebString key8, const int64_t value8, const ArkWebString key9, const int64_t value9,
+        const ArkWebString key10, const int64_t value10, const ArkWebString key11, const int64_t value11,
+        const ArkWebString key12, const int64_t value12, const ArkWebString key13, const int64_t value13,
+        const ArkWebString key14, const int64_t value14, const ArkWebString key15, const int64_t value15,
+        const ArkWebString key16, const int64_t value16, const ArkWebString key17, const int64_t value17,
+        const ArkWebString key18, const int64_t value18, const ArkWebString key19, const int64_t value19,
+        const ArkWebString key20, const int64_t value20, const ArkWebString key21, const int64_t value21,
+        const ArkWebString key22, const int64_t value22, const ArkWebString key23, const int64_t value23,
+        const ArkWebString key24, const int64_t value24) override;
 
 private:
     NWeb::HiSysEventAdapter& real_;
