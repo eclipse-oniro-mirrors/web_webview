@@ -788,13 +788,23 @@ int32_t OH_ArkWebResourceHandler_DidFailWithError(
 int32_t OH_ArkWebResourceHandler_DidFailWithErrorV2(
     const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode, bool completeIfNoResponse)
 {
-    if (!g_SchemeHandlerApi || !g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithErrorV2) {
-        WVLOG_E("OH_ArkWebResourceHandler_DidFailWithErrorV2 not found.");
+    if (!g_SchemeHandlerApi) {
+        WVLOG_E("g_SchemeHandlerApi is null.");
         return ARKWEB_ERROR_UNKNOWN;
     }
  
-    return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode,
-                                                                                completeIfNoResponse);
+    if (g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithErrorV2) {
+        return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode,
+                                                                                    completeIfNoResponse);
+    }
+ 
+    WVLOG_E("OH_ArkWebResourceHandler_DidFailWithErrorV2 not found.");
+    if (g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithError) {
+        return g_SchemeHandlerApi->impl_OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode);
+    }
+ 
+    WVLOG_E("OH_ArkWeb_ResourceHandler_DidFailWithError not found.");
+    return ARKWEB_ERROR_UNKNOWN;
 }
 
 void OH_ArkWeb_ReleaseString(char* string)
