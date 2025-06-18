@@ -1460,4 +1460,9 @@ void ArkWebNWebImpl::SetErrorPageEnabled(bool enable)
 {
     nweb_nweb_->SetErrorPageEnabled(enable);
 }
+
+bool ArkWebNWebImpl::GetErrorPageEnabled()
+{
+    return nweb_nweb_->GetErrorPageEnabled();
+}
 } // namespace OHOS::ArkWeb

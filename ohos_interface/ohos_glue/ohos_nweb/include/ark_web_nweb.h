@@ -1887,12 +1887,18 @@ public:
     virtual void UpdateSingleHandleVisible(bool isVisible) = 0;
 
     /**
-     * Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
      *
-     * @param { boolean } enable - Whether enable the error page.
+     * @param enable bool: Whether enable the error page.
      */
     /*--ark web()--*/
     virtual void SetErrorPageEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get whether default error page feature is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool GetErrorPageEnabled() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -673,6 +673,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("enableSafeBrowsing", NapiWebviewController::EnableSafeBrowsing),
         DECLARE_NAPI_FUNCTION("isSafeBrowsingEnabled", NapiWebviewController::IsSafeBrowsingEnabled),
         DECLARE_NAPI_FUNCTION("setErrorPageEnabled", NapiWebviewController::SetErrorPageEnabled),
+        DECLARE_NAPI_FUNCTION("getErrorPageEnabled", NapiWebviewController::GetErrorPageEnabled),
         DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
         DECLARE_NAPI_FUNCTION("isIncognitoMode", NapiWebviewController::IsIncognitoMode),
         DECLARE_NAPI_FUNCTION("setPrintBackground", NapiWebviewController::SetPrintBackground),
@@ -7205,22 +7206,42 @@ napi_value NapiWebviewController::SetErrorPageEnabled(napi_env env, napi_callbac
     if (argc != INTEGER_ONE) {
         WVLOG_E("BusinessError: 401. Args count of 'SetErrorPageEnabled' must be 1.");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return result;
+        return nullptr;
     }
 
     bool errorPageEnabled = false;
     if (!NapiParseUtils::ParseBoolean(env, argv[0], errorPageEnabled)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
             NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
-        return result;
+        return nullptr;
     }
 
     WebviewController *controller = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&controller);
     if ((!controller) || (status != napi_ok) || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    controller->SetErrorPageEnabled(errorPageEnabled);
+    ErrCode ret = controller->SetErrorPageEnabled(errorPageEnabled);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return nullptr;
+    }
+    return result;
+}
+
+napi_value NapiWebviewController::GetErrorPageEnabled(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("GetErrorPageEnabled start");
+    napi_value result = nullptr;
+    WebviewController *controller = GetWebviewController(env, info);
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    bool GetErrorPageEnabled = controller->GetErrorPageEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, GetErrorPageEnabled, &result));
     return result;
 }
 } // namespace NWeb

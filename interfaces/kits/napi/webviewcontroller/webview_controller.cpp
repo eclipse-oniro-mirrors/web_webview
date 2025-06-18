@@ -2484,5 +2484,14 @@ ErrCode WebviewController::SetErrorPageEnabled(bool enable)
     nweb_ptr->SetErrorPageEnabled(enable);
     return NWebError::NO_ERROR;
 }
+
+bool WebviewController::GetErrorPageEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetErrorPageEnabled();
+}
 } // namespace NWeb
 } // namespace OHOS

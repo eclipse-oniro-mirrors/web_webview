@@ -1500,4 +1500,13 @@ namespace OHOS::Webview {
         nweb_ptr->SetErrorPageEnabled(enable);
         return NWebError::NO_ERROR;
     }
+
+    bool WebviewControllerImpl::GetErrorPageEnabled()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->GetErrorPageEnabled();
+    }
 }

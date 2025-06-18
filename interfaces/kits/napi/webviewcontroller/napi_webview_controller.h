@@ -400,6 +400,7 @@ private:
     static napi_value Off(napi_env env, napi_callback_info info);
     static napi_value WaitForAttached(napi_env env, napi_callback_info info);
     static napi_value SetErrorPageEnabled(napi_env env, napi_callback_info info);
+    static napi_value GetErrorPageEnabled(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {
