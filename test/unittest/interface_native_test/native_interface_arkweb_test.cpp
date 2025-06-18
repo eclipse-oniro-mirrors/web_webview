@@ -18,8 +18,9 @@
 #include <securec.h>
 
 #define private public
-#include "interface/sdk_c/web/webview/interfaces/native/native_interface_arkweb.h"
 #include "base/web/webview/interfaces/native/native_javascript_execute_callback.h"
+#include "native_interface_arkweb.h"
+#include "system_properties_adapter_impl.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -125,5 +126,57 @@ HWTEST_F(NativeInterfaceArkWebTest,
     EXPECT_TRUE(callback == nullptr);
 }
 
+/**
+ * @tc.name  : OH_NativeArkWeb_GetBlanklessInfoWithKey_01
+ * @tc.desc  : Test OH_NativeArkWeb_GetBlanklessInfoWithKey
+ */
+ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_GetBlanklessInfoWithKey_01, TestSize.Level1) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    bool isMobile = deviceType == ProductDeviceType::DEVICE_TYPE_MOBILE;
+    auto info = OH_NativeArkWeb_GetBlanklessInfoWithKey("", "");
+    EXPECT_EQ(info.errCode, isMobile ? ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS
+        : ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT);
+    auto info1 = OH_NativeArkWeb_GetBlanklessInfoWithKey("", "OH_NativeArkWeb_GetBlanklessInfoWithKey");
+    EXPECT_EQ(info1.errCode, isMobile ? ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN
+        : ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT);
+}
+
+/**
+ * @tc.name  : OH_NativeArkWeb_SetBlanklessLoadingWithKey_01
+ * @tc.desc  : Test OH_NativeArkWeb_SetBlanklessLoadingWithKey
+ */
+HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_SetBlanklessLoadingWithKey_01, TestSize.Level1) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    bool isMobile = deviceType == ProductDeviceType::DEVICE_TYPE_MOBILE;
+    auto errCode = OH_NativeArkWeb_SetBlanklessLoadingWithKey("", "", true);
+    EXPECT_EQ(errCode, isMobile ? ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS
+        : ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT);
+    auto errCode1 = OH_NativeArkWeb_SetBlanklessLoadingWithKey("", "OH_NativeArkWeb_SetBlanklessLoadingWithKey", false);
+    EXPECT_EQ(errCode1, isMobile ? ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN
+        : ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT);
+}
+
+/**
+ * @tc.name  : OH_NativeArkWeb_ClearBlanklessLoadingCache_01
+ * @tc.desc  : Test OH_NativeArkWeb_ClearBlanklessLoadingCache
+ */
+HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_ClearBlanklessLoadingCache_01, TestSize.Level1) {
+    OH_NativeArkWeb_ClearBlanklessLoadingCache(nullptr, 0);
+    const char* keys[] = {"ClearBlanklessLoadingCache1", "ClearBlanklessLoadingCache2"};
+    OH_NativeArkWeb_ClearBlanklessLoadingCache(keys, 2);
+    EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(0), 0); // UT contains at least one judgment statement
+}
+
+/**
+ * @tc.name  : OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity_01
+ * @tc.desc  : Test OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity
+ */
+HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity_01, TestSize.Level1) {
+    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
+    bool isMobile = deviceType == ProductDeviceType::DEVICE_TYPE_MOBILE;
+    EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(20), isMobile ? 20 : 0);
+    EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(100), isMobile ? 100 : 0);
+    EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(1000), isMobile ? 100 : 0);
+}
 } // namespace NWeb
 } // namesapce OHOS

@@ -683,6 +683,15 @@ public:
      */
     void HideMagnifier() override;
 
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    void OnPageTitleV2(const std::string& title, bool isRealTitle) override;
+
     std::string OnHandleOverrideErrorPage(
         std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request,
         std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> error) override;

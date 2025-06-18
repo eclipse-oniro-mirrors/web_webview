@@ -1183,6 +1183,15 @@ void ArkWebHandlerWrapper::HideMagnifier()
     ark_web_handler_->HideMagnifier();
 }
 
+void ArkWebHandlerWrapper::OnPageTitleV2(const std::string& title, bool isRealTitle)
+{
+    ArkWebString stTitle = ArkWebStringClassToStruct(title);
+
+    ark_web_handler_->OnPageTitleV2(stTitle, isRealTitle);
+
+    ArkWebStringStructRelease(stTitle);
+}
+
 std::string ArkWebHandlerWrapper::OnHandleOverrideErrorPage(
     std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request,
     std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> error)

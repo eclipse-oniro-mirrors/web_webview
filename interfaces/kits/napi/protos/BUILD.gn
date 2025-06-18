@@ -21,9 +21,14 @@ action("proto_gen") {
   proto_in_dir = rebase_path(".", root_build_dir)
   output_dir = rebase_path("$target_gen_dir", root_build_dir)
 
+  protoc = "clang_x64/thirdparty/protobuf/protoc"
+  if(ohos_indep_compiler_enable){
+    protoc = rebase_path("//binarys/third_party/protobuf/innerapis/protoc/clang_x64/libs/protoc")
+  }
+
   args = sources
   args += [
-    "--protoc=clang_x64/thirdparty/protobuf/protoc",
+    "--protoc=$protoc",
     "--cpp-out=$output_dir",
     "--protos-dir=$proto_in_dir",
   ]
