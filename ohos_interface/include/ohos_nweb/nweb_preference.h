@@ -685,6 +685,11 @@ public:
      * The default is none.
      */
     virtual void SetBypassVsyncCondition(int32_t condition) {}
+
+    /**
+     * Set the gesture focus mode.
+     */
+    virtual void SetGestureFocusMode(int32_t mode) {}
 };
 
 } // namespace OHOS::NWeb

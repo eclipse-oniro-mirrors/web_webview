@@ -21,7 +21,7 @@
 #define private public
 #include "ohos_native_buffer_adapter_impl.h"
 #include "ohos_native_buffer_adapter.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/external_window.h"
+#include "external_window.h"
 
 using namespace testing;
 using namespace testing::ext;

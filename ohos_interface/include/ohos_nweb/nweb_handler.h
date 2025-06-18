@@ -225,6 +225,7 @@ enum class NWebFocusSource {
     FOCUS_SOURCE_DEFAULT = -1,
     FOCUS_SOURCE_NAVIGATION = 0,
     FOCUS_SOURCE_SYSTEM,
+    FOCUS_SOURCE_GESTURE,
 };
 
 class NWebNativeEmbedInfo {
@@ -1139,6 +1140,15 @@ public:
      * @brief Called when you need to hide magnifier.
      */
     virtual void HideMagnifier() {}
+
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    virtual void OnPageTitleV2(const std::string& title, bool isRealTitle) {}
 
     virtual std::string OnHandleOverrideErrorPage(
         std::shared_ptr<NWebUrlResourceRequest> request,

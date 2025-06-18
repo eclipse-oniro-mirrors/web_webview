@@ -18,7 +18,7 @@
 #include "hisysevent_adapter.h"
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
-#include "third_party/cJSON/cJSON.h"
+#include "cJSON.h"
 
 namespace OHOS::NWeb {
 constexpr char INPUT_METHOD[] = "INPUT_METHOD";

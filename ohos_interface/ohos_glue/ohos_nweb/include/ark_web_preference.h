@@ -779,6 +779,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SetBypassVsyncCondition(int32_t condition) = 0;
+
+    /**
+     * @brief Set the gesture focus mode.
+     */
+    /*--ark web()--*/
+    virtual void SetGestureFocusMode(int32_t mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb

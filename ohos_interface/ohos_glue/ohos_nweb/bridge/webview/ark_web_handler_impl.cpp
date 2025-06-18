@@ -1038,6 +1038,11 @@ void ArkWebHandlerImpl::HideMagnifier()
     nweb_handler_->HideMagnifier();
 }
 
+void ArkWebHandlerImpl::OnPageTitleV2(const ArkWebString& title, bool isRealTitle)
+{
+    nweb_handler_->OnPageTitleV2(ArkWebStringStructToClass(title), isRealTitle);
+}
+
 ArkWebString ArkWebHandlerImpl::OnHandleOverrideErrorPage(
     ArkWebRefPtr<ArkWebUrlResourceRequest> request,
     ArkWebRefPtr<ArkWebUrlResourceError> error)
