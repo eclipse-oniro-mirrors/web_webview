@@ -321,6 +321,8 @@ public:
 
     int32_t SetErrorPageEnabled(bool enable);
 
+    bool GetErrorPageEnabled();
+
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;

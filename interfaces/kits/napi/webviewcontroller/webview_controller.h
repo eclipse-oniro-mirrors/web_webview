@@ -465,6 +465,8 @@ public:
     int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);
 
     ErrCode SetErrorPageEnabled(bool enable);
+
+    bool GetErrorPageEnabled();
 private:
     int ConverToWebHitTestType(int hitType);
 
