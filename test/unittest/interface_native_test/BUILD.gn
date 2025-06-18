@@ -130,12 +130,14 @@ ohos_unittest("native_interface_arkweb_test") {
 
   include_dirs = [
     "../common",
-    "${prebuilts_sdk_dir}/native/sysroot/usr/include/web",
+    "$webview_path/ohos_adapter/system_properties_adapter/include",
+    "$webview_path/interfaces/native"
   ]
 
   deps = [
     "$webview_path/interfaces/native:ohweb",
     "$webview_path/ohos_nweb:web_configs",
+    "$webview_path/ohos_adapter:nweb_ohos_adapter"
   ]
 
   external_deps = [
