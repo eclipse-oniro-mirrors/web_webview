@@ -1719,4 +1719,9 @@ void ArkWebNWebWrapper::UpdateSingleHandleVisible(bool isVisible)
 {
     ark_web_nweb_->UpdateSingleHandleVisible(isVisible);
 }
+
+void ArkWebNWebWrapper::SetTouchHandleExistState(bool touchHandleExist)
+{
+    ark_web_nweb_->SetTouchHandleExistState(touchHandleExist);
+}
 } // namespace OHOS::ArkWeb

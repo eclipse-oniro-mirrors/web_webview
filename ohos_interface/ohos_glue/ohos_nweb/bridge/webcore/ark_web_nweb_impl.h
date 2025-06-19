@@ -1682,6 +1682,12 @@ public:
      */
     void UpdateSingleHandleVisible(bool isVisible) override;
 
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    void SetTouchHandleExistState(bool touchHandleExist) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
