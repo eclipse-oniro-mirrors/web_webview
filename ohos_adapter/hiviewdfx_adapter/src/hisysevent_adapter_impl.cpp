@@ -29,6 +29,15 @@ const HiviewDFX::HiSysEvent::EventType EVENT_TYPES[] = {
 };
 }
 
+int64_t GetValue(const std::string& input, const std::string& key1, const std::string& key2) {
+    std::string key = "";
+    if(key2 == key) {
+        return std::atoi(input.substr(input.find(key1, 0) + key1.size()).c_str());
+    }
+    return std::atoi(input.substr(input.find(key1, 0) + key1.size(),
+                     input.find(key2,0) - input.find(key1, 0) - key1.size()).c_str());
+}
+
 const static std::string KEY_LISTS[] = {
     "NAVIGATION_ID",
     "NAVIGATION_START",
