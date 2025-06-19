@@ -112,6 +112,8 @@ public:
 
     ArkWebString CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id) override;
 
+    void SetBlanklessLoadingCacheCapacity(int32_t capacity) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };

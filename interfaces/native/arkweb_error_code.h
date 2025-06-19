@@ -106,4 +106,62 @@ ARKWEB_LIBRARY_OPEN_FAILURE = 17100105,
 ARKWEB_LIBRARY_SYMBOL_NOT_FOUND = 17100106,
 } ArkWeb_ErrorCode;
 
+typedef enum ArkWeb_BlanklessErrorCode {
+    /*
+     * @brief Success.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 20
+     */
+    ARKWEB_BLANKLESS_SUCCESS = 0,
+
+    /*
+     * @brief Unknown error.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 20
+     */
+    ARKWEB_BLANKLESS_ERR_UNKNOWN = -1,
+
+    /*
+     * @brief Invalid args.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 20
+     */
+    ARKWEB_BLANKLESS_ERR_INVALID_ARGS = -2,
+
+    /*
+     * @brief Init error. The web controller is not binded with the component.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 20
+     */
+    ARKWEB_BLANKLESS_ERR_CONTROLLER_NOT_INITED = -3,
+
+    /*
+     * @brief The key of blankless was not matched.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 20
+     */
+    ARKWEB_BLANKLESS_KEY_NOT_MATCH = -4,
+
+    /*
+     * @brief There are significant changes for the loading page.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 20
+     */
+    ARKWEB_BLANKLESS_SIGNIFICANT_CHANGE = -5,
+
+    /*
+     * @brief Device not support.
+     *
+     * @syscap SystemCapability.Web.Webview.Core
+     * @since 20
+     */
+    ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT = 801,
+} ArkWeb_BlanklessErrorCode;
+
 #endif // ARKWEB_ERROR_CODE_H

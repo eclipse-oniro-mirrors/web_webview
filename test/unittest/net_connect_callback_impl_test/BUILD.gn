@@ -36,6 +36,7 @@ ohos_unittest("net_connect_callback_impl_test") {
     "common_event_service:cesfwk_innerkits",
     "googletest:gtest_main",
     "netmanager_base:net_conn_manager_if",
+    "hilog:libhilog",
   ]
 
   if (webview_telephony_enable) {

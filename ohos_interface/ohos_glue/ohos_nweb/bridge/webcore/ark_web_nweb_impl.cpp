@@ -1440,4 +1440,19 @@ int64_t ArkWebNWebImpl::GetWebAccessibilityIdByHtmlElementId(const ArkWebString&
 {
     return nweb_nweb_->GetWebAccessibilityIdByHtmlElementId(ArkWebStringStructToClass(htmlElementId));
 }
+
+int32_t ArkWebNWebImpl::GetBlanklessInfoWithKey(const ArkWebString& key, double* similarity, int32_t* loadingTime)
+{
+    return nweb_nweb_->GetBlanklessInfoWithKey(ArkWebStringStructToClass(key), similarity, loadingTime);
+}
+
+int32_t ArkWebNWebImpl::SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart)
+{
+    return nweb_nweb_->SetBlanklessLoadingWithKey(ArkWebStringStructToClass(key), isStart);
+}
+
+void ArkWebNWebImpl::UpdateSingleHandleVisible(bool isVisible)
+{
+    nweb_nweb_->UpdateSingleHandleVisible(isVisible);
+}
 } // namespace OHOS::ArkWeb

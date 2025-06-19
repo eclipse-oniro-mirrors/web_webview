@@ -130,6 +130,15 @@ enum class AttachState : int {
     ATTACHED = 1
 };
 
+enum class BlanklessErrorCode : int {
+    SUCCESS = 0,
+    ERR_UNKNOWN = -1,
+    ERR_INVALID_PARAM = -2,
+    ERR_CONTROLLER_NOT_INITED = -3,
+    ERR_KEY_NOT_MATCH = -4,
+    ERR_SIGNIFICANT_CHANGE = -5
+};
+
 class WebRegObj {
 public:
     WebRegObj() : m_regEnv(0), m_regHanderRef(nullptr) {
@@ -451,7 +460,9 @@ public:
 
     napi_value WaitForAttachedPromise(napi_env env, int32_t timeout, napi_deferred deferred);
 
-    void SetBlanklessLoadingKey(const std::string& key);
+    int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime);
+
+    int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);
 private:
     int ConverToWebHitTestType(int hitType);
 

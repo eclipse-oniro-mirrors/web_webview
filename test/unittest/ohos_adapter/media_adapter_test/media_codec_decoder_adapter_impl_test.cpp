@@ -22,7 +22,7 @@
 #undef private
 #include "avsharedmemory.h"
 #include "avsharedmemorybase.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
+#include "surface/window.h"
 #include "native_window.h"
 #include "native_avformat.h"
 #include "native_avbuffer.h"

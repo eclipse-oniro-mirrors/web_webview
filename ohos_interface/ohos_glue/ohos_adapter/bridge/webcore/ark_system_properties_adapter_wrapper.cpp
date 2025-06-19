@@ -325,4 +325,20 @@ std::string ArkSystemPropertiesAdapterWrapper::GetBundleName()
     ArkWebStringStructRelease(str);
     return result;
 }
+
+std::string ArkSystemPropertiesAdapterWrapper::GetStringParameter(const std::string& key,
+                                                                  const std::string& defaultValue)
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ArkWebStringClassToStruct(key);
+    ArkWebString value = ArkWebStringClassToStruct(defaultValue);
+    ArkWebString res = ctocpp_->GetStringParameter(str, value);
+    std::string result = ArkWebStringStructToClass(res);
+    ArkWebStringStructRelease(str);
+    ArkWebStringStructRelease(value);
+    ArkWebStringStructRelease(res);
+    return result;
+}
 } // namespace OHOS::ArkWeb

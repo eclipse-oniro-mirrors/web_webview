@@ -18,7 +18,7 @@
 #include <gtest/gtest.h>
 #include <securec.h>
 
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
+#include "application_context.h"
 #include "rdb_sql_utils.h"
 
 #define private public
@@ -156,6 +156,17 @@ HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_SaveHttpAuthCred
     dataBase.SaveHttpAuthCredentials(TEST_HOST, "", TEST, TEST);
     dataBase.SaveHttpAuthCredentials(TEST_HOST, TEST_REALME, "", TEST);
     dataBase.SaveHttpAuthCredentials(TEST_HOST, TEST_REALME, TEST, "");
+    dataBase.SaveHttpAuthCredentials(TEST_HOST, TEST_REALME, TEST, nullptr);
+    dataBase.SaveHttpAuthCredentials("", "", "", nullptr);
+    dataBase.SaveHttpAuthCredentials(TEST_HOST, "", "", nullptr);
+    dataBase.SaveHttpAuthCredentials(TEST_HOST, TEST_REALME, "", nullptr);
+    dataBase.SaveHttpAuthCredentials("", TEST_REALME, TEST, nullptr);
+    dataBase.SaveHttpAuthCredentials(TEST_HOST, TEST_REALME, "", nullptr);
+    dataBase.SaveHttpAuthCredentials(TEST_HOST, "", TEST, nullptr);
+    dataBase.SaveHttpAuthCredentials("", "", TEST, TEST);
+    dataBase.SaveHttpAuthCredentials("", TEST_REALME, "", TEST);
+    dataBase.SaveHttpAuthCredentials(TEST_HOST, "", "", TEST);
+    dataBase.SaveHttpAuthCredentials(TEST_HOST, TEST_REALME, TEST, TEST);
 }
 
 /**
@@ -175,9 +186,21 @@ HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_GetHttpAuthCrede
     dataBase.GetHttpAuthCredentials(TEST_HOST, "", username, password, maxLength + 1);
     dataBase.GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, nullptr, maxLength + 1);
     dataBase.GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, password, maxLength + 1);
+    dataBase.GetHttpAuthCredentials("", "", username, password, maxLength + 1);
+    dataBase.GetHttpAuthCredentials("", TEST_REALME, username, nullptr, maxLength + 1);
+    dataBase.GetHttpAuthCredentials("", TEST_REALME, username, nullptr, 0);
+    dataBase.GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, password, 0);
+    dataBase.GetHttpAuthCredentials("TEST_HOST", "TEST_REALME", username, password, maxLength + 1);
     if (g_dataBaseNull) {
         g_dataBaseNull->GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, password, -1);
         g_dataBaseNull->GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, password, maxLength + 1);
+        g_dataBaseNull->GetHttpAuthCredentials("", TEST_REALME, username, password, maxLength + 1);
+        g_dataBaseNull->GetHttpAuthCredentials(TEST_HOST, "", username, password, maxLength + 1);
+        g_dataBaseNull->GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, nullptr, maxLength + 1);
+        g_dataBaseNull->GetHttpAuthCredentials("", "", username, password, maxLength + 1);
+        g_dataBaseNull->GetHttpAuthCredentials("", TEST_REALME, username, nullptr, maxLength + 1);
+        g_dataBaseNull->GetHttpAuthCredentials("", TEST_REALME, username, nullptr, 0);
+        g_dataBaseNull->GetHttpAuthCredentials(TEST_HOST, TEST_REALME, username, password, 0);
     }
     (void)memset_s(password, maxLength + 1, 0, maxLength + 1);
 }
@@ -212,6 +235,8 @@ HWTEST_F(WebDataBaseAdapterImplTest, WebDataBaseAdapterImplTest_CallBack_005, Te
         callBack.OnUpgrade(*(rdbStore.get()), 1, 1);
     }
     EXPECT_TRUE(result);
+    auto baseAdapter = std::make_shared<OhosWebDataBaseAdapterImpl>(rdbStore);
+    EXPECT_NE(baseAdapter, nullptr);
 }
 
 /**

@@ -1012,4 +1012,34 @@ void ArkWebHandlerImpl::OnLoadFinished(const ArkWebString& url)
 {
     nweb_handler_->OnLoadFinished(ArkWebStringStructToClass(url));
 }
+
+bool ArkWebHandlerImpl::OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error,
+    const ArkWebString& url, const ArkWebString& originalUrl, const ArkWebString& referrer, bool isFatalError,
+    bool isMainFrame, const ArkWebStringVector& certChainData)
+{
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        return nweb_handler_->OnAllSslErrorRequestByJSV2(nullptr, static_cast<ArkWebSslError>(error),
+            ArkWebStringStructToClass(url), ArkWebStringStructToClass(originalUrl), ArkWebStringStructToClass(referrer),
+            isFatalError, isMainFrame, ArkWebStringVectorStructToClass(certChainData));
+    }
+
+    return nweb_handler_->OnAllSslErrorRequestByJSV2(std::make_shared<ArkWebJsAllSslErrorResultWrapper>(result),
+        static_cast<ArkWebSslError>(error), ArkWebStringStructToClass(url), ArkWebStringStructToClass(originalUrl),
+        ArkWebStringStructToClass(referrer), isFatalError, isMainFrame, ArkWebStringVectorStructToClass(certChainData));
+}
+
+void ArkWebHandlerImpl::ShowMagnifier()
+{
+    nweb_handler_->ShowMagnifier();
+}
+
+void ArkWebHandlerImpl::HideMagnifier()
+{
+    nweb_handler_->HideMagnifier();
+}
+
+void ArkWebHandlerImpl::OnPageTitleV2(const ArkWebString& title, bool isRealTitle)
+{
+    nweb_handler_->OnPageTitleV2(ArkWebStringStructToClass(title), isRealTitle);
+}
 } // namespace OHOS::ArkWeb
