@@ -131,12 +131,14 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
         const std::int64_t value23 = GetValue(input, KEY_LISTS[22], KEY_LISTS[23]);
         const std::int64_t value24 = GetValue(input, KEY_LISTS[23], "");
 
-        auto newData = std::make_tuple(KEY_LISTS[0], value1, KEY_LISTS[1], value2, KEY_LISTS[2], value3, KEY_LISTS[3], value4,
-                                    KEY_LISTS[4], value5, KEY_LISTS[5], value6, KEY_LISTS[6], value7, KEY_LISTS[7], value8,
-                                    KEY_LISTS[8], value9, KEY_LISTS[9], value10, KEY_LISTS[10], value11, KEY_LISTS[11], value12, 
-                                    KEY_LISTS[12], value13, KEY_LISTS[13], value14, KEY_LISTS[14], value15, KEY_LISTS[15], value16, 
-                                    KEY_LISTS[16], value17, KEY_LISTS[17], value18, KEY_LISTS[18], value19, KEY_LISTS[19], value20, 
-                                    KEY_LISTS[20], value21, KEY_LISTS[21], value22, KEY_LISTS[22], value23, KEY_LISTS[23], value24) 
+        auto newData = std::make_tuple(
+            KEY_LISTS[0], value1, KEY_LISTS[1], value2, KEY_LISTS[2], value3, KEY_LISTS[3], value4,
+            KEY_LISTS[4], value5, KEY_LISTS[5], value6, KEY_LISTS[6], value7, KEY_LISTS[7], value8,
+            KEY_LISTS[8], value9, KEY_LISTS[9], value10, KEY_LISTS[10], value11, KEY_LISTS[11], value12, 
+            KEY_LISTS[12], value13, KEY_LISTS[13], value14, KEY_LISTS[14], value15, KEY_LISTS[15], value16, 
+            KEY_LISTS[16], value17, KEY_LISTS[17], value18, KEY_LISTS[18], value19, KEY_LISTS[19], value20, 
+            KEY_LISTS[20], value21, KEY_LISTS[21], value22, KEY_LISTS[22], value23, KEY_LISTS[23], value24);
+            
         auto mergeData = std::tuple_cat(newData, sysData);
         return ForwardToHiSysEvent(eventName, type, mergeData);
     }
