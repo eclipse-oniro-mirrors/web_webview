@@ -1885,6 +1885,13 @@ public:
      */
     /*--ark web()--*/
     virtual void UpdateSingleHandleVisible(bool isVisible) = 0;
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    /*--ark web()--*/
+    virtual void SetTouchHandleExistState(bool touchHandleExist) = 0;
 };
 
 } // namespace OHOS::ArkWeb
