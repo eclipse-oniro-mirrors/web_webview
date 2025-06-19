@@ -598,6 +598,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getWebDebuggingAccess", NapiWebviewController::InnerGetWebDebuggingAccess),
         DECLARE_NAPI_FUNCTION("getWebDebuggingPort", NapiWebviewController::InnerGetWebDebuggingPort),
         DECLARE_NAPI_FUNCTION("setWebId", NapiWebviewController::SetWebId),
+        DECLARE_NAPI_FUNCTION("setWebDetach", NapiWebviewController::SetWebDetach),
         DECLARE_NAPI_FUNCTION("jsProxy", NapiWebviewController::InnerJsProxy),
         DECLARE_NAPI_FUNCTION("getCustomeSchemeCmdLine", NapiWebviewController::InnerGetCustomeSchemeCmdLine),
         DECLARE_NAPI_FUNCTION("accessForward", NapiWebviewController::AccessForward),
@@ -1269,6 +1270,29 @@ napi_value NapiWebviewController::SetWebId(napi_env env, napi_callback_info info
         return nullptr;
     }
     webviewController->SetWebId(webId);
+    return thisVar;
+}
+
+napi_value NapiWebviewController::SetWebDetach(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    void* data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+
+    int32_t webId = -1;
+    if (!NapiParseUtils::ParseInt32(env, argv[0], webId)) {
+        WVLOG_E("Parse web id failed.");
+        return nullptr;
+    }
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        WVLOG_E("webviewController is nullptr.");
+        return nullptr;
+    }
+    webviewController->SetWebDetach(webId);
     return thisVar;
 }
 
