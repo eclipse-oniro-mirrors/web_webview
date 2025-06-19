@@ -685,6 +685,12 @@ public:
      *        The default is none.
      */
     void SetBypassVsyncCondition(int32_t condition) override;
+
+    /**
+     * @brief Set the gesture focus mode.
+     */
+    void SetGestureFocusMode(int32_t mode) override;
+
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };

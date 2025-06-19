@@ -127,23 +127,21 @@ function selectFile(param, result) {
           if (filePaths.length > 0) {
             let fileName = filePaths[0].substr(filePaths[0].lastIndexOf('/'));
             let tempPath = getContext(this).filesDir + fileName;
-            fileIo.createRandomAccessFileSync(tempPath, fileIo.OpenMode.CREATE);
+            tempUri = fileUri.getUriFromPath(tempPath);
+            let randomAccessFile = fileIo.createRandomAccessFileSync(tempPath, fileIo.OpenMode.CREATE);
+            randomAccessFile.close();
 
-            let watcher = fileIo.createWatcher(tempPath, 0x4, (watchEvent) => {
-              const rs = fileIo.createReadStream(tempPath);
-              const ws = fileIo.createWriteStream(new fileUri.FileUri(filePaths[0]).path);
-              rs.on('readable', () => {
-                const data = rs.read();
-                if (!data) {
-                  return;
-                }
-                ws.write(data);
+            let watcher = fileIo.createWatcher(tempPath, 0x4, () => {
+              fileIo.copy(tempUri, filePaths[0]).then(() => {
+                console.log('Web save file succeeded in copying.');
+                fileIo.unlink(tempPath);
+              }).catch((err) => {
+                console.error(`Web save file failed to copy: ${JSON.stringify(err)}.`);
+              }).finally(() => {
+                watcher.stop();
               });
-              watcher.stop();
             });
             watcher.start();
-
-            tempUri = fileUri.getUriFromPath(tempPath);
           }
           result.handleFileList([tempUri]);
         }).catch((error) => {

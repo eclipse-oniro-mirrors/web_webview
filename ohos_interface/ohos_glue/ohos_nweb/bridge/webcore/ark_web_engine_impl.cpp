@@ -295,4 +295,9 @@ ArkWebString ArkWebEngineImpl::CheckBlankOptEnable(const ArkWebString& url, int3
     return ArkWebStringClassToStruct(nweb_engine_->CheckBlankOptEnable(ArkWebStringStructToClass(url), nweb_id));
 }
 
+void ArkWebEngineImpl::SetBlanklessLoadingCacheCapacity(int32_t capacity)
+{
+    nweb_engine_->SetBlanklessLoadingCacheCapacity(capacity);
+}
+
 } // namespace OHOS::ArkWeb

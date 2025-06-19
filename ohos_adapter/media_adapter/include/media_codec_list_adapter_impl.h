@@ -17,8 +17,8 @@
 #define MEDIA_CODEC_LIST_ADAPTER_IMPL_H
 
 #if defined(NWEB_MEDIA_AVCODEC_ENABLE)
-#include "foundation/multimedia/av_codec/interfaces/inner_api/native/avcodec_list.h"
-#include "foundation/multimedia/av_codec/interfaces/inner_api/native/media_description.h"
+#include "avcodec_list.h"
+#include "media_description.h"
 #endif
 
 #include "media_codec_adapter.h"

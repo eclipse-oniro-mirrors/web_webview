@@ -41,6 +41,7 @@ ohos_unittest("date_time_adapter_impl_test") {
     "googletest:gtest_main",
     "hilog:libhilog",
     "time_service:time_client",
+    "eventhandler:libeventhandler",
   ]
 }
 

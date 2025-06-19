@@ -21,7 +21,7 @@
 #include <thread>
 
 #include "accesstoken_kit.h"
-#include "foundation/graphic/graphic_surface/surface/include/surface_buffer_impl.h"
+#include "surface_buffer_impl.h"
 #include "nativetoken_kit.h"
 #include "nweb_adapter_helper.h"
 #include "screen_capture.h"
@@ -30,7 +30,7 @@
 #define private public
 #include "screen_capture_adapter_impl.h"
 #undef private
-#include "foundation/multimedia/player_framework/interfaces/inner_api/native/media_errors.h"
+#include "../native/media_errors.h"
 
 using namespace testing;
 using namespace testing::ext;
