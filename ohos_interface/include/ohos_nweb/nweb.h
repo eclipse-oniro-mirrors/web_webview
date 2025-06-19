@@ -1949,6 +1949,12 @@ public:
      * @param isVisible The single handle visible.
      */
     virtual void UpdateSingleHandleVisible(bool isVisible) {}
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    virtual void SetTouchHandleExistState(bool touchHandleExist) {}
 };
 
 } // namespace OHOS::NWeb
