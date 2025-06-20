@@ -104,6 +104,8 @@ typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidReceiveData)(
 typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFinish)(const ArkWeb_ResourceHandler* resourceHandler);
 typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFailWithError)(
     const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode);
+typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFailWithErrorV2)(
+    const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode, bool completeIfNoResponse);
 typedef void (*TYPE_OH_ArkWeb_ReleaseString)(char* string);
 typedef void (*TYPE_OH_ArkWeb_ReleaseByteArray)(uint8_t* byteArray);
 typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetFromEts)(ArkWeb_SchemeHandler* schemeHandler, bool fromEts);
@@ -168,6 +170,7 @@ struct SchemeHandlerApi {
     TYPE_OH_ArkWebResourceHandler_DidReceiveData impl_OH_ArkWebResourceHandler_DidReceiveData;
     TYPE_OH_ArkWebResourceHandler_DidFinish impl_OH_ArkWebResourceHandler_DidFinish;
     TYPE_OH_ArkWebResourceHandler_DidFailWithError impl_OH_ArkWebResourceHandler_DidFailWithError;
+    TYPE_OH_ArkWebResourceHandler_DidFailWithErrorV2 impl_OH_ArkWebResourceHandler_DidFailWithErrorV2;
     TYPE_OH_ArkWeb_ReleaseString impl_OH_ArkWeb_ReleaseString;
     TYPE_OH_ArkWeb_ReleaseByteArray impl_OH_ArkWeb_ReleaseByteArray;
     TYPE_OH_ArkWebSchemeHandler_SetFromEts impl_OH_ArkWebSchemeHandler_SetFromEts;
@@ -420,6 +423,11 @@ int32_t TEST_OH_ArkWebResourceHandler_DidFailWithError(
     return 0;
 }
 
+int32_t TEST_OH_ArkWebResourceHandler_DidFailWithErrorV2(
+    const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode, bool completeIfNoResponse) {
+    return 0;
+}
+
 void TEST_OH_ArkWeb_ReleaseString(char* string) {
     return;
 }
@@ -497,6 +505,7 @@ SchemeHandlerApi g_testSchemeHandlerApi = {
     .impl_OH_ArkWebResourceHandler_DidReceiveData = TEST_OH_ArkWebResourceHandler_DidReceiveData,
     .impl_OH_ArkWebResourceHandler_DidFinish = TEST_OH_ArkWebResourceHandler_DidFinish,
     .impl_OH_ArkWebResourceHandler_DidFailWithError = TEST_OH_ArkWebResourceHandler_DidFailWithError,
+    .impl_OH_ArkWebResourceHandler_DidFailWithErrorV2 = TEST_OH_ArkWebResourceHandler_DidFailWithErrorV2,
     .impl_OH_ArkWeb_ReleaseString = TEST_OH_ArkWeb_ReleaseString,
     .impl_OH_ArkWeb_ReleaseByteArray = TEST_OH_ArkWeb_ReleaseByteArray,
     .impl_OH_ArkWebSchemeHandler_SetFromEts = TEST_OH_ArkWebSchemeHandler_SetFromEts
@@ -812,6 +821,8 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     ArkWeb_NetError errorCode = ARKWEB_NET_OK;
     res = OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode);
     EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
+    res = OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode, true);
+    EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
     char* str = nullptr;
     OH_ArkWeb_ReleaseString(str);
     uint8_t byteArray[10] = {0};
@@ -1037,6 +1048,8 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiXX
     ArkWeb_NetError errorCode = ARKWEB_NET_OK;
     res = OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode);
     EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
+    res = OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode, true);
+    EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
     char* str = nullptr;
     OH_ArkWeb_ReleaseString(str);
     uint8_t byteArray[10] = {0};
@@ -1181,6 +1194,7 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
 
     ArkWeb_NetError errorCode = ARKWEB_NET_OK;
     EXPECT_EQ(OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode), 0);
+    EXPECT_EQ(OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode, true), 0);
     char* str = nullptr;
     OH_ArkWeb_ReleaseString(str);
     uint8_t byteArray[10] = {0};

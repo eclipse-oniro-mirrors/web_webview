@@ -348,7 +348,8 @@
                 "//base/web/webview/test/unittest/ohos_adapter/sensor_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/napi_common_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/native_buffer_adapter_test:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/drawing_text_adapter_test:unittest"
+                "//base/web/webview/test/unittest/ohos_adapter/drawing_text_adapter_test:unittest",
+                "//base/web/webview/test/unittest/interface_kits_cj_test:unittest"
             ]
         }
     }
