@@ -1887,6 +1887,13 @@ public:
     virtual void UpdateSingleHandleVisible(bool isVisible) = 0;
 
     /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    /*--ark web()--*/
+    virtual void SetTouchHandleExistState(bool touchHandleExist) = 0;
+
+    /**
      * @brief Sets the bottom avoidance height of the web visible viewport.
      * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
      */

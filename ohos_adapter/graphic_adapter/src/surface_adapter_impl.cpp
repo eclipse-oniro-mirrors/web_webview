@@ -17,7 +17,7 @@
 
 #include <unordered_map>
 
-#include "drivers/peripheral/display/interfaces/include/display_type.h"
+#include "display_type.h"
 #include "nweb_log.h"
 
 namespace OHOS::NWeb {

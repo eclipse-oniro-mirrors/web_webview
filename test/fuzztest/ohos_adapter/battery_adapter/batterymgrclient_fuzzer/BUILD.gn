@@ -35,9 +35,9 @@ ohos_fuzztest("BatteryMgrClientFuzzTest") {
   ]
   sources = [ "batterymgrclient_fuzzer.cpp" ]
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
-
+  external_deps = ["common_event_service:cesfwk_innerkits"]
   if (webview_battery_manager_enable) {
-    external_deps = [ "battery_manager:batterysrv_client" ]
+    external_deps += [ "battery_manager:batterysrv_client" ]
   }
 }
 

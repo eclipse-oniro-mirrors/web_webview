@@ -1951,6 +1951,12 @@ public:
     virtual void UpdateSingleHandleVisible(bool isVisible) {}
 
     /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    virtual void SetTouchHandleExistState(bool touchHandleExist) {}
+
+    /**
      * @brief Sets the bottom avoidance height of the web visible viewport.
      * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
      */

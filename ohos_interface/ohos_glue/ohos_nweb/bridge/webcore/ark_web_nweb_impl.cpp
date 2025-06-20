@@ -1456,6 +1456,11 @@ void ArkWebNWebImpl::UpdateSingleHandleVisible(bool isVisible)
     nweb_nweb_->UpdateSingleHandleVisible(isVisible);
 }
 
+void ArkWebNWebImpl::SetTouchHandleExistState(bool touchHandleExist)
+{
+    nweb_nweb_->SetTouchHandleExistState(touchHandleExist);
+}
+
 void ArkWebNWebImpl::AvoidVisibleViewportBottom(int32_t avoidHeight)
 {
     nweb_nweb_->AvoidVisibleViewportBottom(avoidHeight);
