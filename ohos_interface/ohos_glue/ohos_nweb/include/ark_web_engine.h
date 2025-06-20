@@ -182,6 +182,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id) = 0;
+
+    /*--ark web()--*/
+    virtual void SetBlanklessLoadingCacheCapacity(int32_t capacity) = 0;
 };
 
 } // namespace OHOS::ArkWeb

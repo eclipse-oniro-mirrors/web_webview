@@ -605,4 +605,11 @@ void ArkWebPreferenceWrapper::SetBypassVsyncCondition(int32_t condition)
         ark_web_preference_->SetBypassVsyncCondition(condition);
     }
 }
+
+void ArkWebPreferenceWrapper::SetGestureFocusMode(int32_t mode)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->SetGestureFocusMode(mode);
+    }
+}
 } // namespace OHOS::ArkWeb

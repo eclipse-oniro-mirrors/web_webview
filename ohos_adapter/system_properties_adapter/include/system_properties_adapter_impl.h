@@ -96,6 +96,8 @@ public:
 
     std::string GetBundleName() override;
 
+    std::string GetStringParameter(const std::string& key, const std::string& defaultValue) override;
+
 private:
     SystemPropertiesAdapterImpl();
 

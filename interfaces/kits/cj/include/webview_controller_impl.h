@@ -319,6 +319,8 @@ public:
 
     bool ScrollByWithResult(float deltaX, float deltaY) const;
 
+    int32_t AvoidVisibleViewportBottom(int32_t avoidHeight);
+
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;

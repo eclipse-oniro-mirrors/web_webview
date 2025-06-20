@@ -126,8 +126,11 @@ WebviewController::~WebviewController()
     std::unique_lock<std::mutex> lk(g_objectMtx);
     g_webview_controller_map.erase(nwebId_);
 
-    attachState_ = AttachState::ATTACHED;
-    attachCond_.notify_all();
+    {
+        std::unique_lock<std::mutex> attachLock(attachMtx_);
+        attachState_ = AttachState::ATTACHED;
+        attachCond_.notify_all();
+    }
 
     for (auto& [eventName, regObjs] : attachEventRegisterInfo_) {
         for (auto& regObj : regObjs) {
@@ -196,14 +199,14 @@ void WebviewController::SetWebId(int32_t nwebId)
     if (nweb_ptr) {
         OH_NativeArkWeb_BindWebTagToWebInstance(webTag_.c_str(), nweb_ptr);
         NWebHelper::Instance().SetWebTag(nwebId_, webTag_.c_str());
-        attachState_ = AttachState::ATTACHED;
-        attachCond_.notify_all();
-    }
-    if (!nweb_ptr && nwebId_ == -1) {
-        attachState_ = AttachState::NOT_ATTACHED;
-    }
-    if (prevState != attachState_) {
-        TriggerStateChangeCallback(EVENT_CONTROLLER_ATTACH_STATE_CHANGE);
+        {
+            std::unique_lock<std::mutex> attachLock(attachMtx_);
+            attachState_ = AttachState::ATTACHED;
+            attachCond_.notify_all();
+        }
+        if (prevState != attachState_) {
+            TriggerStateChangeCallback(EVENT_CONTROLLER_ATTACH_STATE_CHANGE);
+        }
     }
     SetNWebJavaScriptResultCallBack();
     NativeArkWeb_OnValidCallback validCallback = OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag_.c_str());
@@ -212,6 +215,19 @@ void WebviewController::SetWebId(int32_t nwebId)
         (*validCallback)(webTag_.c_str());
     } else {
         WVLOG_W("native validCallback is null, callback nothing");
+    }
+}
+
+void WebviewController::SetWebDetach(int32_t nwebId)
+{
+    if (nwebId != nwebId_) {
+        WVLOG_W("web detach nwebId is not equal, detach is %{public}d, current is %{public}d", nwebId, nwebId_);
+        return;
+    }
+
+    if (attachState_ != AttachState::NOT_ATTACHED) {
+        attachState_ = AttachState::NOT_ATTACHED;
+        TriggerStateChangeCallback(EVENT_CONTROLLER_ATTACH_STATE_CHANGE);
     }
 }
 
@@ -2457,12 +2473,32 @@ napi_value WebviewController::WaitForAttachedPromise(napi_env env, int32_t timeo
     return result;
 }
 
-void WebviewController::SetBlanklessLoadingKey(const std::string& key)
+int32_t WebviewController::GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
-        nweb_ptr->SetBlanklessLoadingKey(key);
+        return nweb_ptr->GetBlanklessInfoWithKey(key, similarity, loadingTime);
     }
+    return -1;
+}
+
+int32_t WebviewController::SetBlanklessLoadingWithKey(const std::string& key, bool isStart)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        return nweb_ptr->SetBlanklessLoadingWithKey(key, isStart);
+    }
+    return -1;
+}
+
+ErrCode WebviewController::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->AvoidVisibleViewportBottom(avoidHeight);
+    return NWebError::NO_ERROR;
 }
 } // namespace NWeb
 } // namespace OHOS

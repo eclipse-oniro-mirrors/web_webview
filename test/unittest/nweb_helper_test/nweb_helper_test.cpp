@@ -28,7 +28,7 @@
 #include "nweb_create_window.h"
 #include "nweb_c_api.h"
 #include "nweb_init_params.h"
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
+#include "application_context.h"
 
 using namespace testing;
 using namespace testing::ext;

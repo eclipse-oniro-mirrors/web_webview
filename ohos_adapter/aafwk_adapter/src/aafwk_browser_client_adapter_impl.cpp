@@ -24,8 +24,8 @@
 #include "surface_utils.h"
 #include "surface.h"
 #include "ipc_types.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
-#include "foundation/graphic/graphic_surface/surface/include/native_window.h"
+#include "surface/window.h"
+#include "native_window.h"
 
 namespace OHOS::NWeb {
 BrowserClient::BrowserClient(

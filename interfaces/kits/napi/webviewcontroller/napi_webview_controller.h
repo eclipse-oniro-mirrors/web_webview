@@ -43,6 +43,7 @@ const std::string OFFLINE_RESOURCE_TYPE_ENUM_NAME = "OfflineResourceType";
 const std::string WEB_PRESSURE_LEVEL_ENUM_NAME = "PressureLevel";
 const std::string WEB_SCROLL_TYPE_ENUM_NAME = "ScrollType";
 const std::string WEB_CONTROLLER_ATTACHSTATE_ENUM_NAME = "ControllerAttachState";
+const std::string WEB_BLANKLESS_ERROR_CODE_ENUM_NAME = "WebBlanklessErrorCode";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 
 struct Scheme {
@@ -384,13 +385,18 @@ private:
 
     static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
 
-    static napi_value AddBlanklessLoadingUrls(napi_env env, napi_callback_info info);
+    static napi_value GetBlanklessInfoWithKey(napi_env env, napi_callback_info info);
 
-    static napi_value RemoveBlanklessLoadingUrls(napi_env env, napi_callback_info info);
+    static napi_value SetBlanklessLoadingWithKey(napi_env env, napi_callback_info info);
 
-    static napi_value SetBlanklessLoadingKey(napi_env env, napi_callback_info info);
+    static napi_value SetBlanklessLoadingCacheCapacity(napi_env env, napi_callback_info info);
 
     static napi_value ClearBlanklessLoadingCache(napi_env env, napi_callback_info info);
+
+    static napi_value SetWebDetach(napi_env env, napi_callback_info info);
+
+    static napi_value AvoidVisibleViewportBottom(napi_env env, napi_callback_info info);
+
     static int32_t maxFdNum_;
     static std::atomic<int32_t> usedFd_;
     static napi_value GetLastHitTest(napi_env env, napi_callback_info info);
