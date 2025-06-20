@@ -11,43 +11,39 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+#####################hydra-fuzz###################
 import("//base/web/webview/web_aafwk.gni")
 import("//build/config/features.gni")
 import("//build/test.gni")
 
-ohos_fuzztest("NWebSnapshotDataBaseFuzzTest") {
+##############################fuzztest##########################################
+ohos_fuzztest("OhosAdapterHelperImplFuzzTest") {
   module_out_path = webview_fuzz_test_path
-  fuzz_config_file = "$webview_path/test/fuzztest/ohos_nweb/nwebsnapshotdatabase_fuzzer"
-
+  fuzz_config_file =
+      "$webview_path/test/fuzztest/ohos_adapter/ohosadapterhelperimpl_fuzzer"
   include_dirs = [
+    "$webview_path/ohos_adapter/interfaces",
+    "$webview_path/ohos_adapter/ohos_adapter_helper/include",
     "$webview_path/test/fuzztest",
-    "$webview_path/ohos_nweb/include",
+    "$webview_path/test/ohos_nweb",
   ]
-
   cflags = [
     "-g",
     "-O0",
     "-Wno-unused-variable",
     "-fno-omit-frame-pointer",
   ]
+  sources = [ "ohosadapterhelperimpl_fuzzer.cpp" ]
+  deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
-  sources = [ "nwebsnapshotdatabase_fuzzer.cpp" ]
-
-  deps = [ "$webview_path/ohos_nweb:web_configs" ]
-
-  external_deps = [
-    "c_utils:utils",
-    "hilog:libhilog",
-    "relational_store:native_rdb",
-    "webview:libnweb",
-  ]
 }
 
+###############################################################################
 group("fuzztest") {
   testonly = true
   deps = []
   deps += [
     # deps file
-    ":NWebSnapshotDataBaseFuzzTest",
+    ":OhosAdapterHelperImplFuzzTest",
   ]
 }

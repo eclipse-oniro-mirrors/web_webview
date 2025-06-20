@@ -1694,4 +1694,44 @@ int64_t ArkWebNWebWrapper::GetWebAccessibilityIdByHtmlElementId(const std::strin
     ArkWebStringStructRelease(stHtmlElementId);
     return ark_web_accessibility_Id;
 }
+
+int32_t ArkWebNWebWrapper::GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    int32_t errCode = ark_web_nweb_->GetBlanklessInfoWithKey(stKey, similarity, loadingTime);
+
+    ArkWebStringStructRelease(stKey);
+    return errCode;
+}
+
+int32_t ArkWebNWebWrapper::SetBlanklessLoadingWithKey(const std::string& key, bool isStart)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    int32_t errCode = ark_web_nweb_->SetBlanklessLoadingWithKey(stKey, isStart);
+
+    ArkWebStringStructRelease(stKey);
+    return errCode;
+}
+
+void ArkWebNWebWrapper::UpdateSingleHandleVisible(bool isVisible)
+{
+    ark_web_nweb_->UpdateSingleHandleVisible(isVisible);
+}
+
+void ArkWebNWebWrapper::SetTouchHandleExistState(bool touchHandleExist)
+{
+    ark_web_nweb_->SetTouchHandleExistState(touchHandleExist);
+}
+
+void ArkWebNWebWrapper::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    ark_web_nweb_->AvoidVisibleViewportBottom(avoidHeight);
+}
+
+int32_t ArkWebNWebWrapper::GetVisibleViewportAvoidHeight()
+{
+    return ark_web_nweb_->GetVisibleViewportAvoidHeight();
+}
 } // namespace OHOS::ArkWeb

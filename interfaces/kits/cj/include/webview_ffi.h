@@ -137,6 +137,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlClearPrefetchedResource(CArrString cacheKeyL
 FFI_EXPORT int32_t FfiOHOSWebviewCtlStartCamera(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlStopCamera(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlCloseCamera(int64_t id);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlAvoidVisibleViewportBottom(int64_t id, int32_t avoidHeight);
 
 FFI_EXPORT int32_t FfiOHOSWebviewCtlAddIntelligentTrackingPreventionBypassingList(CArrString hostList);
 FFI_EXPORT void FfiOHOSWebviewCtlClearIntelligentTrackingPreventionBypassingList();

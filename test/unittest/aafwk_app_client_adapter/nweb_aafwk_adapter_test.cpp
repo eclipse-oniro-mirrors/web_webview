@@ -24,7 +24,7 @@
 #include "aafwk_browser_host_impl.h"
 #undef private
 
-#include "foundation/graphic/graphic_surface/surface/include/native_window.h"
+#include "native_window.h"
 #include "aafwk_render_scheduler_host_adapter.h"
 #include "app_mgr_client.h"
 #include "ohos_adapter_helper.h"

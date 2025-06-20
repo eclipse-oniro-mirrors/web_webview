@@ -1918,6 +1918,58 @@ public:
     {
         return -1;
     }
+
+    /**
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
+     */
+    virtual int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
+    {
+        return -1;
+    }
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    virtual int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart)
+    {
+        return -1;
+    }
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    virtual void UpdateSingleHandleVisible(bool isVisible) {}
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    virtual void SetTouchHandleExistState(bool touchHandleExist) {}
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    virtual void AvoidVisibleViewportBottom(int32_t avoidHeight) {}
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    virtual int32_t GetVisibleViewportAvoidHeight()
+    {
+        return 0;
+    }
 };
 
 } // namespace OHOS::NWeb

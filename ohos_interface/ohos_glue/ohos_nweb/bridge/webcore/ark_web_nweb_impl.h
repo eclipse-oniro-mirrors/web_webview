@@ -1657,6 +1657,49 @@ public:
      */
     int64_t GetWebAccessibilityIdByHtmlElementId(const ArkWebString& htmlElementId) override;
 
+    /**
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
+     */
+    int32_t GetBlanklessInfoWithKey(const ArkWebString& key, double* similarity, int32_t* loadingTime) override;
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    int32_t SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart) override;
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    void UpdateSingleHandleVisible(bool isVisible) override;
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    void SetTouchHandleExistState(bool touchHandleExist) override;
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    void AvoidVisibleViewportBottom(int32_t avoidHeight) override;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    int32_t GetVisibleViewportAvoidHeight() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

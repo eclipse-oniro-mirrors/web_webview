@@ -83,7 +83,9 @@
                 "protobuf",
                 "libxml2",
                 "openssl",
-                "drm_framework"
+                "drm_framework",
+                "drivers_peripheral_display",
+                "selinux_adapter"
             ]
         },
         "build": {
@@ -286,7 +288,6 @@
                 "//base/web/webview/test/fuzztest/ohos_nweb/napi_webview_controller_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/initandrun_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/nwebhelper_fuzzer:fuzztest",
-                "//base/web/webview/test/fuzztest/ohos_nweb/nwebsnapshotdatabase_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/hisysevent_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/screencaptureadapterimpl_fuzzer/setcapturecallback_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/screencaptureadapterimpl_fuzzer/acquireaudiobuffer_fuzzer:fuzztest",
@@ -299,12 +300,12 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/screencaptureadapterimpl_fuzzer/screencapturecallback_fuzzer/onvideobufferavailable_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer/ohosimagedecoderadapterimplgetmethods_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer/releasepixelmap_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/ohosadapterhelperimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/unittest/nweb_value_test:unittest",
                 "//base/web/webview/test/unittest/display_manager_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_adapter_test:unittest",
                 "//base/web/webview/test/unittest/power_mgr_client_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/nweb_helper_test:unittest",
-                "//base/web/webview/test/unittest/nweb_snapshot_data_base_test:unittest",
                 "//base/web/webview/test/unittest/nweb_config_helper_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/permission_data_base_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/date_time_adapter_impl_test:unittest",

@@ -44,7 +44,12 @@ ohos_unittest("cert_mgr_adapter_test") {
     "hilog:libhilog",
     "init:libbegetutil",
     "netstack:net_ssl",
+    "cJSON:cjson",
   ]
+  if (build_selinux) {
+      external_deps += [ "selinux_adapter:librestorecon" ]
+      cflags = [ "-DWITH_SELINUX" ]
+    }
 }
 
 group("unittest") {
