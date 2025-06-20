@@ -134,6 +134,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebString GetStringParameter(const ArkWebString& key, const ArkWebString& defaultValue) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetInitialCongestionWindowSize() = 0;
 };
 
 } // namespace OHOS::ArkWeb
