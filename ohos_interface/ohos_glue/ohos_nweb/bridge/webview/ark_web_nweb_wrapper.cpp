@@ -1724,4 +1724,14 @@ void ArkWebNWebWrapper::SetTouchHandleExistState(bool touchHandleExist)
 {
     ark_web_nweb_->SetTouchHandleExistState(touchHandleExist);
 }
+
+void ArkWebNWebWrapper::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    ark_web_nweb_->AvoidVisibleViewportBottom(avoidHeight);
+}
+
+int32_t ArkWebNWebWrapper::GetVisibleViewportAvoidHeight()
+{
+    return ark_web_nweb_->GetVisibleViewportAvoidHeight();
+}
 } // namespace OHOS::ArkWeb
