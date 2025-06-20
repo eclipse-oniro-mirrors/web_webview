@@ -62,9 +62,9 @@ constexpr size_t MAX_RESOURCES_COUNT = 30;
 constexpr size_t MAX_RESOURCE_SIZE = 10 * 1024 * 1024;
 constexpr int32_t BLANKLESS_ERR_INVALID_ARGS = -2;
 constexpr int32_t BLANKLESS_ERR_NOT_INITED = -3;
-constexpr size_t MAX_DATABASE_SIZE_IN_MB = 100;
-constexpr size_t MAX_URLS_COUNT = 100;
-constexpr size_t MAX_URL_LENGTH = 2048;
+constexpr int32_t MAX_DATABASE_SIZE_IN_MB = 100;
+constexpr uint32_t MAX_KEYS_COUNT = 100;
+constexpr size_t MAX_KEY_LENGTH = 2048;
 constexpr size_t MAX_URL_TRUST_LIST_STR_LEN = 10 * 1024 * 1024; // 10M
 constexpr double A4_WIDTH = 8.27;
 constexpr double A4_HEIGHT = 11.69;
@@ -511,7 +511,7 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
 
     size_t bufferSize = 0;
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
-    if (bufferSize == 0 || bufferSize > MAX_URL_LENGTH) {
+    if (bufferSize == 0 || bufferSize > MAX_KEY_LENGTH) {
         WVLOG_E("ParseBlanklessString string length is invalid");
         return false;
     }
@@ -539,9 +539,9 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
 
     uint32_t arrLen = 0;
     napi_get_array_length(env, argv, &arrLen);
-    if (arrLen > MAX_URLS_COUNT) {
+    if (arrLen > MAX_KEYS_COUNT) {
         WVLOG_E("ParseBlanklessStringArray array size should not exceed 100");
-        arrLen = MAX_URLS_COUNT;
+        arrLen = MAX_KEYS_COUNT;
     }
 
     for (uint32_t idx = 0; idx < arrLen; ++idx) {
@@ -598,6 +598,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getWebDebuggingAccess", NapiWebviewController::InnerGetWebDebuggingAccess),
         DECLARE_NAPI_FUNCTION("getWebDebuggingPort", NapiWebviewController::InnerGetWebDebuggingPort),
         DECLARE_NAPI_FUNCTION("setWebId", NapiWebviewController::SetWebId),
+        DECLARE_NAPI_FUNCTION("setWebDetach", NapiWebviewController::SetWebDetach),
         DECLARE_NAPI_FUNCTION("jsProxy", NapiWebviewController::InnerJsProxy),
         DECLARE_NAPI_FUNCTION("getCustomeSchemeCmdLine", NapiWebviewController::InnerGetCustomeSchemeCmdLine),
         DECLARE_NAPI_FUNCTION("accessForward", NapiWebviewController::AccessForward),
@@ -963,6 +964,26 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         sizeof(controllerAttachStateProperties[0]), controllerAttachStateProperties, &controllerAttachStateEnum);
     napi_set_named_property(env, exports, WEB_CONTROLLER_ATTACHSTATE_ENUM_NAME.c_str(), controllerAttachStateEnum);
 
+    napi_value blanklessErrorCodeEnum = nullptr;
+    napi_property_descriptor blanklessErrorCodeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("SUCCESS", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(BlanklessErrorCode::SUCCESS))),
+        DECLARE_NAPI_STATIC_PROPERTY("ERR_UNKNOWN", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(BlanklessErrorCode::ERR_UNKNOWN))),
+        DECLARE_NAPI_STATIC_PROPERTY("ERR_INVALID_PARAM", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(BlanklessErrorCode::ERR_INVALID_PARAM))),
+        DECLARE_NAPI_STATIC_PROPERTY("ERR_CONTROLLER_NOT_INITED", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(BlanklessErrorCode::ERR_CONTROLLER_NOT_INITED))),
+        DECLARE_NAPI_STATIC_PROPERTY("ERR_KEY_NOT_MATCH", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(BlanklessErrorCode::ERR_KEY_NOT_MATCH))),
+        DECLARE_NAPI_STATIC_PROPERTY("ERR_SIGNIFICANT_CHANGE", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(BlanklessErrorCode::ERR_SIGNIFICANT_CHANGE))),
+    };
+    napi_define_class(env, WEB_BLANKLESS_ERROR_CODE_ENUM_NAME.c_str(), WEB_BLANKLESS_ERROR_CODE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(blanklessErrorCodeProperties) /
+        sizeof(blanklessErrorCodeProperties[0]), blanklessErrorCodeProperties, &blanklessErrorCodeEnum);
+    napi_set_named_property(env, exports, WEB_BLANKLESS_ERROR_CODE_ENUM_NAME.c_str(), blanklessErrorCodeEnum);
+
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
     return exports;
@@ -1251,6 +1272,29 @@ napi_value NapiWebviewController::SetWebId(napi_env env, napi_callback_info info
         return nullptr;
     }
     webviewController->SetWebId(webId);
+    return thisVar;
+}
+
+napi_value NapiWebviewController::SetWebDetach(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    void* data = nullptr;
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
+
+    int32_t webId = -1;
+    if (!NapiParseUtils::ParseInt32(env, argv[0], webId)) {
+        WVLOG_E("Parse web id failed.");
+        return nullptr;
+    }
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok)) {
+        WVLOG_E("webviewController is nullptr.");
+        return nullptr;
+    }
+    webviewController->SetWebDetach(webId);
     return thisVar;
 }
 

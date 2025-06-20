@@ -1696,6 +1696,12 @@ public:
     void UpdateSingleHandleVisible(bool isVisible) override;
 
     /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    void SetTouchHandleExistState(bool touchHandleExist) override;
+
+    /**
      * @brief Sets the bottom avoidance height of the web visible viewport.
      * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
      */
@@ -1706,6 +1712,7 @@ public:
      * @return The bottom avoidance height of the visible viewport.
      */
     int32_t GetVisibleViewportAvoidHeight() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

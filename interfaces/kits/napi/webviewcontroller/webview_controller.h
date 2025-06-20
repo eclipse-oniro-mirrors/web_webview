@@ -130,6 +130,15 @@ enum class AttachState : int {
     ATTACHED = 1
 };
 
+enum class BlanklessErrorCode : int {
+    SUCCESS = 0,
+    ERR_UNKNOWN = -1,
+    ERR_INVALID_PARAM = -2,
+    ERR_CONTROLLER_NOT_INITED = -3,
+    ERR_KEY_NOT_MATCH = -4,
+    ERR_SIGNIFICANT_CHANGE = -5
+};
+
 class WebRegObj {
 public:
     WebRegObj() : m_regEnv(0), m_regHanderRef(nullptr) {
@@ -454,6 +463,8 @@ public:
     int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime);
 
     int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);
+
+    void SetWebDetach(int32_t nweb_id);
 
     ErrCode AvoidVisibleViewportBottom(int32_t avoidHeight);
 private:
