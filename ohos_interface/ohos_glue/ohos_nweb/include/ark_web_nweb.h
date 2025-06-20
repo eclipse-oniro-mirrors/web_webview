@@ -1892,6 +1892,20 @@ public:
      */
     /*--ark web()--*/
     virtual void SetTouchHandleExistState(bool touchHandleExist) = 0;
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    /*--ark web()--*/
+    virtual void AvoidVisibleViewportBottom(int32_t avoidHeight) = 0;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetVisibleViewportAvoidHeight() = 0;
 };
 
 } // namespace OHOS::ArkWeb
