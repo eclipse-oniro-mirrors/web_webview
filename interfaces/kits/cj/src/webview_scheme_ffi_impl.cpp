@@ -359,21 +359,6 @@ extern "C" {
         return;
     }
 
-    void FfiWebResourceHandlerDidFailV2(int64_t id, int32_t *errCode, int32_t errorcode, bool completeIfNoResponse)
-    {
-        auto nativeWebResourceHandler = FFIData::GetData<WebResourceHandlerImpl>(id);
-        if (nativeWebResourceHandler == nullptr) {
-            *errCode = NWebError::INIT_ERROR;
-            return;
-        }
-        int32_t ret = nativeWebResourceHandler->DidFailWithErrorV2(
-            static_cast<ArkWeb_NetError>(errorcode), completeIfNoResponse);
-        if (ret != 0) {
-            *errCode = NWebError::RESOURCE_HANDLER_INVALID;
-        }
-        return;
-    }
-
     // WebSchemeHandler
     int64_t FfiWebSchemeHandlerConstructor()
     {
