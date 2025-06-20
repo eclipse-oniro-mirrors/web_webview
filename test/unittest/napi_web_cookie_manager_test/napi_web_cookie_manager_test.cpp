@@ -60,9 +60,6 @@ NWebHelper& g_nwebHelperInstance = NWebHelper::Instance();
 HWTEST_F(NapiWebCookieManagerTest, NapiWebCookieManagerTest_001, TestSize.Level1)
 {
     std::string hapPath = "";
-    if (access(MOCK_NWEB_INSTALLATION_DIR.c_str(), F_OK) == 0) {
-        hapPath = MOCK_NWEB_INSTALLATION_DIR;
-    }
     g_nwebHelperInstance.SetBundlePath(hapPath);
     NWebAdapterHelper::Instance().Init(false);
     std::shared_ptr<NWebCookieManager> cookieManager = g_nwebHelperInstance.GetCookieManager();
