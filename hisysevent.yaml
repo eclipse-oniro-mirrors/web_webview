@@ -167,6 +167,7 @@ PAGE_LOAD_TIME:
   FIRST_PAINT: {type: INT64, desc: first paint}
   FIRST_CONTENTFUL_PAINT: {type: INT64, desc: first contentful paint}
   LARGEST_CONTENTFUL_PAINT: {type: INT64, desc: largest contentful paint}
+  RENDER_INIT_BLOCK: {type: INT64, desc: render init block}
 
 PAGE_MEM_LEAK:
   __BASE: {type: STATISTIC, level: MINOR, desc: Check memory leak of web render process, preserve: true}
