@@ -199,7 +199,6 @@ namespace OHOS::Webview {
         int32_t DidReceiveResponseBody(const uint8_t* buffer, int64_t buflen);
         int32_t DidFinish();
         int32_t DidFailWithError(ArkWeb_NetError errorCode);
-        int32_t DidFailWithErrorV2(ArkWeb_NetError errorCode, bool completeIfNoResponse);
         void DestoryArkWebResourceHandler();
         void SetFinishFlag()
         {

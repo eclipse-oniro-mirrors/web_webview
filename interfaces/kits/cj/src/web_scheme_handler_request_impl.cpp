@@ -180,18 +180,6 @@ namespace OHOS::Webview {
         return ret;
     }
 
-    int32_t WebResourceHandlerImpl::DidFailWithErrorV2(ArkWeb_NetError errorCode, bool completeIfNoResponse)
-    {
-        if (isFinished_) {
-            return ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN;
-        }
-        int32_t ret = OH_ArkWebResourceHandler_DidFailWithErrorV2(handler_, errorCode, completeIfNoResponse);
-        if (ret == 0) {
-            isFinished_ = true;
-        }
-        return ret;
-    }
-
     void WebResourceHandlerImpl::DestoryArkWebResourceHandler()
     {
         if (handler_) {
