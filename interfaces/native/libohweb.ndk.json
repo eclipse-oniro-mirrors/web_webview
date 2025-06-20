@@ -345,6 +345,10 @@
     },
     {
         "first_introduced": "20",
+        "name": "OH_ArkWebResourceHandler_DidFailWithErrorV2"
+    },
+    {
+        "first_introduced": "20",
         "name": "OH_NativeArkWeb_GetBlanklessInfoWithKey"
     },
     {
