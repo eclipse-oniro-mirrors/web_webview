@@ -300,6 +300,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/screencaptureadapterimpl_fuzzer/screencapturecallback_fuzzer/onvideobufferavailable_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer/ohosimagedecoderadapterimplgetmethods_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer/releasepixelmap_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/ohosadapterhelperimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/unittest/nweb_value_test:unittest",
                 "//base/web/webview/test/unittest/display_manager_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_adapter_test:unittest",
