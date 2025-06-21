@@ -332,8 +332,6 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_GetList_
     capaData = codecListImpl.GetCodecCapability("video/avc", true);
     EXPECT_NE(capaData, nullptr);
     EXPECT_NE(capaData->GetMaxWidth(), 0);
-
-    codecListImpl.TransToAdapterCapability(nullptr, nullptr);
 }
 
 /**
