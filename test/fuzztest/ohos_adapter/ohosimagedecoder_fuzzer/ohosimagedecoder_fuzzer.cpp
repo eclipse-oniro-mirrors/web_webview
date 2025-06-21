@@ -28,7 +28,6 @@ using namespace OHOS::NWeb;
 const std::string DEFAULT_MOUSE_DRAG_IMAGE { "/system/etc/device_status/drag_icon/Copy_Drag.svg" };
 
 namespace OHOS {
-constexpr int MAX_SET_NUMBER = 1000;
 std::shared_ptr<OhosImageDecoderAdapter> CreateDecoderAdapter()
 {
     return OhosAdapterHelper::GetInstance().CreateOhosImageDecoderAdapter();
