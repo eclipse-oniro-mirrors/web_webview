@@ -366,6 +366,12 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_OnError_
     OH_AVBuffer_Destroy(buffer);
     codecFormat = nullptr;
     buffer = nullptr;
+
+    mediaCodecDecoderAdapterImpl_->callback_ = nullptr;
+    mediaCodecDecoderAdapterImpl_->OnError(100);
+    mediaCodecDecoderAdapterImpl_->OnOutputFormatChanged(nullptr);
+    mediaCodecDecoderAdapterImpl_->OnInputBufferAvailable(1, nullptr);
+    mediaCodecDecoderAdapterImpl_->OnOutputBufferAvailable(1, nullptr);
 }
 
 /**
