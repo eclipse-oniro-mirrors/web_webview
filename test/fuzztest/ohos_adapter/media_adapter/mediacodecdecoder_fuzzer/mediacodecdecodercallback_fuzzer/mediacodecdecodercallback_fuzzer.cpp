@@ -88,7 +88,6 @@ class AudioCencInfoAdapterMock : public AudioCencInfoAdapter {
 public:
     AudioCencInfoAdapterMock() = default;
 
-
     uint8_t* GetKeyId() { return nullptr; }
 
     uint32_t GetKeyIdLen() { return 0; }
