@@ -92,6 +92,8 @@ public:
 
     ArkWebString GetStringParameter(const ArkWebString& key, const ArkWebString& defaultValue) override;
 
+    int32_t GetInitialCongestionWindowSize() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 
