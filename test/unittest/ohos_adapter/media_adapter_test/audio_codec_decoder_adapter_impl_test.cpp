@@ -638,7 +638,7 @@ HWTEST_F(AudioCodecDecoderAdapterImplTest, AudioCodecDecoderAdapterImpl_NormalVa
 
     EXPECT_EQ(AudioCodecDecoderAdapterImpl_->QueueInputBufferDec(0, 0, nullptr, 0, nullptr, false,
         BufferFlag::CODEC_BUFFER_FLAG_NONE), AudioDecoderAdapterCode::DECODER_ERROR);
-
+    std::shared_ptr<AudioCencInfoAdapterImpl> cencInfo = std::make_shared<AudioCencInfoAdapterImpl>();
     EXPECT_EQ(AudioCodecDecoderAdapterImpl_->StartDecoder(), AudioDecoderAdapterCode::DECODER_ERROR);
     std::this_thread::sleep_for(std::chrono::milliseconds(WAIT_FOR_BUFFER_TIMEOUT));
     if (!AudioCodecDecoderAdapterImpl_->inputBuffers_.empty()) {
