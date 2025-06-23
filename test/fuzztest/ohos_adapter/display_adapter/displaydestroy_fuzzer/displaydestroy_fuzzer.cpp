@@ -19,12 +19,25 @@
 #include <securec.h>
 #include <fuzzer/FuzzedDataProvider.h>
 
+#define private public
 #include "display_manager_adapter_impl.h"
+#undef private
+#include "display_info.h"
 
 using namespace OHOS::NWeb;
 using namespace OHOS::Rosen;
 
 namespace OHOS {
+class DisplayListenerAdapterFuzzTest : public DisplayListenerAdapter {
+public:
+DisplayListenerAdapterFuzzTest() = default;
+
+    virtual ~DisplayListenerAdapterFuzzTest() = default;
+
+    void OnCreate(DisplayId) override {}
+    void OnDestroy(DisplayId) override {}
+    void OnChange(DisplayId) override {}
+};
 constexpr int MAX_SET_NUMBER = 1000;
 
 bool DisplayDestroyFuzzTest(const uint8_t* data, size_t size)
@@ -35,8 +48,22 @@ bool DisplayDestroyFuzzTest(const uint8_t* data, size_t size)
     FuzzedDataProvider dataProvider(data, size);
     std::shared_ptr<DisplayListenerAdapter> listener = nullptr;
     DisplayListenerAdapterImpl display(listener);
-    uint32_t displayId = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
-    display.OnDestroy(static_cast<DisplayId>(displayId));
+    DisplayId displayId = dataProvider.ConsumeIntegralInRange<DisplayId>(0, MAX_SET_NUMBER);
+    display.OnCreate(displayId);
+    display.OnDestroy(displayId);
+    display.OnChange(displayId);
+    display.CheckOnlyRefreshRateDecreased(displayId);
+    auto displayPtr = DisplayManager::GetInstance().GetDefaultDisplay();
+    auto displayInfo = displayPtr->GetDisplayInfo();
+    display.ConvertDisplayInfo(*displayInfo);
+    std::shared_ptr<DisplayListenerAdapter> listener1
+        = std::make_shared<DisplayListenerAdapterFuzzTest>();
+    DisplayListenerAdapterImpl display1(listener1);
+    display1.OnCreate(displayId);
+    display1.OnDestroy(displayId);
+    display1.OnChange(displayId);
+    displayId = DisplayManager::GetInstance().GetDefaultDisplayId();
+    display1.OnChange(displayId);
     return true;
 }
 } // namespace OHOS
