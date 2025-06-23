@@ -204,21 +204,21 @@ public:
     /*--ark web()--*/
     virtual ArkWebString GetAccessibilityText() = 0;
 
-    /*--ark web()--*/
-    virtual ArkWebString GetComponentTypeDescription() = 0;
-
-    /*--ark web()--*/
-    virtual int32_t GetCheckboxGroupSeletedStatus() = 0;
-
-    /*--ark web()--*/
-    virtual ArkWebString GetExpandedState() = 0;
-
     /**
      * @Description: Get the html element id of the accessibility node.
      * @Return: The tml element id of the accessibility node.
      */
     /*--ark web()--*/
     virtual ArkWebString GetHtmlElementId() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetComponentTypeDescription() = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetCheckboxGroupSelectedStatus() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetExpandedState() = 0;
 };
 
 } // namespace OHOS::ArkWeb
