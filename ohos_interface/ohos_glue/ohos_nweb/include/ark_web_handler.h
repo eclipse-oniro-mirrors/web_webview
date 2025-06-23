@@ -969,6 +969,22 @@ public:
      */
     /*--ark web()--*/
     virtual void OnPageTitleV2(const ArkWebString& title, bool isRealTitle) = 0;
+
+    /**
+     * @brief Notify the web client to do something for blankless.
+     *
+     * @param pathToFrame The file used to insert frame. If empty, means remove frame.
+     */
+    /*--ark web()--*/
+    virtual void OnInsertBlanklessFrame(const ArkWebString& pathToFrame) = 0;
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    /*--ark web()--*/
+    virtual void OnRemoveBlanklessFrame(int delayTime) = 0;
 };
 
 } // namespace OHOS::ArkWeb

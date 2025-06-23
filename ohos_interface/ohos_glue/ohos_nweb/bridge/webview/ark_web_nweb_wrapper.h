@@ -1713,6 +1713,19 @@ public:
      */
     int32_t GetVisibleViewportAvoidHeight() override;
 
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    bool TriggerBlanklessForUrl(const std::string& url) override;
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    void SetVisibility(bool isVisible) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
