@@ -1149,6 +1149,20 @@ public:
      *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
      */
     virtual void OnPageTitleV2(const std::string& title, bool isRealTitle) {}
+
+    /**
+     * @brief Notify the web client to insert blankless frame.
+     *
+     * @param pathToFrame The file used to insert frame.
+     */
+    virtual void OnInsertBlanklessFrame(const std::string& pathToFrame) {}
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    virtual void OnRemoveBlanklessFrame(int delayTime) {}
 };
 
 } // namespace OHOS::NWeb

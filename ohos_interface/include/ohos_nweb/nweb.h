@@ -1970,6 +1970,19 @@ public:
     {
         return 0;
     }
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    virtual bool TriggerBlanklessForUrl(const std::string& url) { return false; }
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    virtual void SetVisibility(bool isVisible) {}
 };
 
 } // namespace OHOS::NWeb
