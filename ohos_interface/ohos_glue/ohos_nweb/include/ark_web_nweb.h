@@ -1906,6 +1906,21 @@ public:
      */
     /*--ark web()--*/
     virtual int32_t GetVisibleViewportAvoidHeight() = 0;
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    /*--ark web()--*/
+    virtual bool TriggerBlanklessForUrl(const ArkWebString& url) = 0;
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    /*--ark web()--*/
+    virtual void SetVisibility(bool isVisible) = 0;
 };
 
 } // namespace OHOS::ArkWeb

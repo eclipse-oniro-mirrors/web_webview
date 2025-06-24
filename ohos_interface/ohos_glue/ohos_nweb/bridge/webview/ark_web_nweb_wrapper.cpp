@@ -1734,4 +1734,17 @@ int32_t ArkWebNWebWrapper::GetVisibleViewportAvoidHeight()
 {
     return ark_web_nweb_->GetVisibleViewportAvoidHeight();
 }
+
+bool ArkWebNWebWrapper::TriggerBlanklessForUrl(const std::string& url)
+{
+    ArkWebString url_ = ArkWebStringClassToStruct(url);
+    bool ret = ark_web_nweb_->TriggerBlanklessForUrl(url_);
+    ArkWebStringStructRelease(url_);
+    return ret;
+}
+
+void ArkWebNWebWrapper::SetVisibility(bool isVisible)
+{
+    ark_web_nweb_->SetVisibility(isVisible);
+}
 } // namespace OHOS::ArkWeb

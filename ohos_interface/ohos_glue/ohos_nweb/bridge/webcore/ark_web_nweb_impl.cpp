@@ -1470,4 +1470,14 @@ int32_t ArkWebNWebImpl::GetVisibleViewportAvoidHeight()
 {
     return nweb_nweb_->GetVisibleViewportAvoidHeight();
 }
+
+bool ArkWebNWebImpl::TriggerBlanklessForUrl(const ArkWebString& url)
+{
+    return nweb_nweb_->TriggerBlanklessForUrl(ArkWebStringStructToClass(url));
+}
+
+void ArkWebNWebImpl::SetVisibility(bool isVisible)
+{
+    nweb_nweb_->SetVisibility(isVisible);
+}
 } // namespace OHOS::ArkWeb
