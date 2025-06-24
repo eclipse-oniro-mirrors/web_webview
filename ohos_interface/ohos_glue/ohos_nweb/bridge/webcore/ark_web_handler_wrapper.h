@@ -691,6 +691,20 @@ public:
      *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
      */
     void OnPageTitleV2(const std::string& title, bool isRealTitle) override;
+
+    /**
+     * @brief Notify the web client to do something for blankless.
+     *
+     * @param pathToFrame The file used to insert frame. If empty, means remove frame.
+     */
+    void OnInsertBlanklessFrame(const std::string& pathToFrame) override;
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    void OnRemoveBlanklessFrame(int delayTime) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };
