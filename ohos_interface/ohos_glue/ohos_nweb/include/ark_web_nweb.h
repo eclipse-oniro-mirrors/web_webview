@@ -1921,6 +1921,12 @@ public:
      */
     /*--ark web()--*/
     virtual void SetVisibility(bool isVisible) = 0;
+
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    /*--ark web()--*/
+    virtual void SetViewportScaleState() = 0;
 };
 
 } // namespace OHOS::ArkWeb
