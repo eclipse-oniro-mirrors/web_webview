@@ -1713,6 +1713,11 @@ public:
      */
     void SetVisibility(bool isVisible) override;
 
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    void SetViewportScaleState() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
