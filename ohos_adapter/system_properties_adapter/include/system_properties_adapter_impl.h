@@ -66,6 +66,8 @@ public:
 
     int32_t GetFlowBufMaxFd() override;
 
+    int32_t GetInitialCongestionWindowSize() override;
+
     void AttachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) override;
 
     void DetachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) override;

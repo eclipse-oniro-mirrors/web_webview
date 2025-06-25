@@ -1043,6 +1043,16 @@ void ArkWebHandlerImpl::OnPageTitleV2(const ArkWebString& title, bool isRealTitl
     nweb_handler_->OnPageTitleV2(ArkWebStringStructToClass(title), isRealTitle);
 }
 
+void ArkWebHandlerImpl::OnInsertBlanklessFrame(const ArkWebString& pathToFrame)
+{
+    nweb_handler_->OnInsertBlanklessFrame(ArkWebStringStructToClass(pathToFrame));
+}
+
+void ArkWebHandlerImpl::OnRemoveBlanklessFrame(int delayTime)
+{
+    nweb_handler_->OnRemoveBlanklessFrame(delayTime);
+}
+
 ArkWebString ArkWebHandlerImpl::OnHandleOverrideErrorPage(
     ArkWebRefPtr<ArkWebUrlResourceRequest> request,
     ArkWebRefPtr<ArkWebUrlResourceError> error)

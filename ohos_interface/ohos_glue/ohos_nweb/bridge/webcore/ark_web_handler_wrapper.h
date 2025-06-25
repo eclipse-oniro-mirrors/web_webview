@@ -692,6 +692,26 @@ public:
      */
     void OnPageTitleV2(const std::string& title, bool isRealTitle) override;
 
+    /**
+     * @brief Notify the web client to do something for blankless.
+     *
+     * @param pathToFrame The file used to insert frame. If empty, means remove frame.
+     */
+    void OnInsertBlanklessFrame(const std::string& pathToFrame) override;
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    void OnRemoveBlanklessFrame(int delayTime) override;
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
     std::string OnHandleOverrideErrorPage(
         std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request,
         std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> error) override;

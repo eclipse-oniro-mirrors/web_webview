@@ -1720,6 +1720,34 @@ void ArkWebNWebWrapper::UpdateSingleHandleVisible(bool isVisible)
     ark_web_nweb_->UpdateSingleHandleVisible(isVisible);
 }
 
+void ArkWebNWebWrapper::SetTouchHandleExistState(bool touchHandleExist)
+{
+    ark_web_nweb_->SetTouchHandleExistState(touchHandleExist);
+}
+
+void ArkWebNWebWrapper::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    ark_web_nweb_->AvoidVisibleViewportBottom(avoidHeight);
+}
+
+int32_t ArkWebNWebWrapper::GetVisibleViewportAvoidHeight()
+{
+    return ark_web_nweb_->GetVisibleViewportAvoidHeight();
+}
+
+bool ArkWebNWebWrapper::TriggerBlanklessForUrl(const std::string& url)
+{
+    ArkWebString url_ = ArkWebStringClassToStruct(url);
+    bool ret = ark_web_nweb_->TriggerBlanklessForUrl(url_);
+    ArkWebStringStructRelease(url_);
+    return ret;
+}
+
+void ArkWebNWebWrapper::SetVisibility(bool isVisible)
+{
+    ark_web_nweb_->SetVisibility(isVisible);
+}
+
 void ArkWebNWebWrapper::SetErrorPageEnabled(bool enable)
 {
     ark_web_nweb_->SetErrorPageEnabled(enable);

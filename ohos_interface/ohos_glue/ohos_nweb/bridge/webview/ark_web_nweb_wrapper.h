@@ -1696,6 +1696,37 @@ public:
     void UpdateSingleHandleVisible(bool isVisible) override;
 
     /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    void SetTouchHandleExistState(bool touchHandleExist) override;
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    void AvoidVisibleViewportBottom(int32_t avoidHeight) override;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    int32_t GetVisibleViewportAvoidHeight() override;
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    bool TriggerBlanklessForUrl(const std::string& url) override;
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    void SetVisibility(bool isVisible) override;
+
+    /**
      * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
      *
      * @param enable bool: Whether enable the error page.

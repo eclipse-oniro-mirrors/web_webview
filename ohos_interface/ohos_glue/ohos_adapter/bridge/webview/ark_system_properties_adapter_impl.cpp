@@ -222,4 +222,9 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetStringParameter(const ArkWebStri
     std::string str = real_.GetStringParameter(ArkWebStringStructToClass(key), ArkWebStringStructToClass(defaultValue));
     return ArkWebStringClassToStruct(str);
 }
+
+int32_t ArkSystemPropertiesAdapterImpl::GetInitialCongestionWindowSize()
+{
+    return real_.GetInitialCongestionWindowSize();
+}
 } // namespace OHOS::ArkWeb

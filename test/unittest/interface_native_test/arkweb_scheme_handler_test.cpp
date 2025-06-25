@@ -46,9 +46,14 @@ typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_SetUserData)(ArkWeb_HttpBodyStrea
 typedef void* (*TYPE_OH_ArkWebHttpBodyStream_GetUserData)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_SetReadCallback)(
     ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamReadCallback readCallback);
+typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_SetAsyncReadCallback)(
+    ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamAsyncReadCallback readCallback);
+
 typedef int32_t (*TYPE_OH_ArkWebHttpBodyStream_Init)(
     ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamInitCallback initCallback);
 typedef void (*TYPE_OH_ArkWebHttpBodyStream_Read)(
+    const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bufLen);
+typedef void (*TYPE_OH_ArkWebHttpBodyStream_AsyncRead)(
     const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bufLen);
 typedef uint64_t (*TYPE_OH_ArkWebHttpBodyStream_GetSize)(const ArkWeb_HttpBodyStream* httpBodyStream);
 typedef uint64_t (*TYPE_OH_ArkWebHttpBodyStream_GetPosition)(const ArkWeb_HttpBodyStream* httpBodyStream);
@@ -104,6 +109,8 @@ typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidReceiveData)(
 typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFinish)(const ArkWeb_ResourceHandler* resourceHandler);
 typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFailWithError)(
     const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode);
+typedef int32_t (*TYPE_OH_ArkWebResourceHandler_DidFailWithErrorV2)(
+    const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode, bool completeIfNoResponse);
 typedef void (*TYPE_OH_ArkWeb_ReleaseString)(char* string);
 typedef void (*TYPE_OH_ArkWeb_ReleaseByteArray)(uint8_t* byteArray);
 typedef int32_t (*TYPE_OH_ArkWebSchemeHandler_SetFromEts)(ArkWeb_SchemeHandler* schemeHandler, bool fromEts);
@@ -119,10 +126,12 @@ struct SchemeHandlerApi {
     TYPE_OH_ArkWebResourceRequest_GetResourceType impl_OH_ArkWebResourceRequest_GetResourceType;
     TYPE_OH_ArkWebResourceRequest_GetFrameUrl impl_OH_ArkWebResourceRequest_GetFrameUrl;
     TYPE_OH_ArkWebHttpBodyStream_SetReadCallback impl_OH_ArkWebHttpBodyStream_SetReadCallback;
+    TYPE_OH_ArkWebHttpBodyStream_SetAsyncReadCallback impl_OH_ArkWebHttpBodyStream_SetAsyncReadCallback;
     TYPE_OH_ArkWebHttpBodyStream_SetUserData impl_OH_ArkWebHttpBodyStream_SetUserData;
     TYPE_OH_ArkWebHttpBodyStream_GetUserData impl_OH_ArkWebHttpBodyStream_GetUserData;
     TYPE_OH_ArkWebHttpBodyStream_Init impl_OH_ArkWebHttpBodyStream_Init;
     TYPE_OH_ArkWebHttpBodyStream_Read impl_OH_ArkWebHttpBodyStream_Read;
+    TYPE_OH_ArkWebHttpBodyStream_AsyncRead impl_OH_ArkWebHttpBodyStream_AsyncRead;
     TYPE_OH_ArkWebHttpBodyStream_GetSize impl_OH_ArkWebHttpBodyStream_GetSize;
     TYPE_OH_ArkWebHttpBodyStream_GetPosition impl_OH_ArkWebHttpBodyStream_GetPosition;
     TYPE_OH_ArkWebHttpBodyStream_IsChunked impl_OH_ArkWebHttpBodyStream_IsChunked;
@@ -168,6 +177,7 @@ struct SchemeHandlerApi {
     TYPE_OH_ArkWebResourceHandler_DidReceiveData impl_OH_ArkWebResourceHandler_DidReceiveData;
     TYPE_OH_ArkWebResourceHandler_DidFinish impl_OH_ArkWebResourceHandler_DidFinish;
     TYPE_OH_ArkWebResourceHandler_DidFailWithError impl_OH_ArkWebResourceHandler_DidFailWithError;
+    TYPE_OH_ArkWebResourceHandler_DidFailWithErrorV2 impl_OH_ArkWebResourceHandler_DidFailWithErrorV2;
     TYPE_OH_ArkWeb_ReleaseString impl_OH_ArkWeb_ReleaseString;
     TYPE_OH_ArkWeb_ReleaseByteArray impl_OH_ArkWeb_ReleaseByteArray;
     TYPE_OH_ArkWebSchemeHandler_SetFromEts impl_OH_ArkWebSchemeHandler_SetFromEts;
@@ -226,12 +236,22 @@ int32_t TEST_OH_ArkWebHttpBodyStream_SetReadCallback(
     return 0;
 }
 
+int32_t TEST_OH_ArkWebHttpBodyStream_SetAsyncReadCallback(
+    ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamAsyncReadCallback readCallback) {
+    return 0;
+}
+
 int32_t TEST_OH_ArkWebHttpBodyStream_Init(
     ArkWeb_HttpBodyStream* httpBodyStream, ArkWeb_HttpBodyStreamInitCallback initCallback) {
     return 0;
 }
 
 void TEST_OH_ArkWebHttpBodyStream_Read(
+    const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bufLen) {
+    return;
+}
+
+void TEST_OH_ArkWebHttpBodyStream_AsyncRead(
     const ArkWeb_HttpBodyStream* httpBodyStream, uint8_t* buffer, int bufLen) {
     return;
 }
@@ -420,6 +440,11 @@ int32_t TEST_OH_ArkWebResourceHandler_DidFailWithError(
     return 0;
 }
 
+int32_t TEST_OH_ArkWebResourceHandler_DidFailWithErrorV2(
+    const ArkWeb_ResourceHandler* resourceHandler, ArkWeb_NetError errorCode, bool completeIfNoResponse) {
+    return 0;
+}
+
 void TEST_OH_ArkWeb_ReleaseString(char* string) {
     return;
 }
@@ -450,8 +475,10 @@ SchemeHandlerApi g_testSchemeHandlerApi = {
     .impl_OH_ArkWebHttpBodyStream_SetUserData = TEST_OH_ArkWebHttpBodyStream_SetUserData,
     .impl_OH_ArkWebHttpBodyStream_GetUserData = TEST_OH_ArkWebHttpBodyStream_GetUserData,
     .impl_OH_ArkWebHttpBodyStream_SetReadCallback = TEST_OH_ArkWebHttpBodyStream_SetReadCallback,
+    .impl_OH_ArkWebHttpBodyStream_SetAsyncReadCallback = TEST_OH_ArkWebHttpBodyStream_SetAsyncReadCallback,
     .impl_OH_ArkWebHttpBodyStream_Init = TEST_OH_ArkWebHttpBodyStream_Init,
     .impl_OH_ArkWebHttpBodyStream_Read = TEST_OH_ArkWebHttpBodyStream_Read,
+    .impl_OH_ArkWebHttpBodyStream_AsyncRead = TEST_OH_ArkWebHttpBodyStream_AsyncRead,
     .impl_OH_ArkWebHttpBodyStream_GetSize = TEST_OH_ArkWebHttpBodyStream_GetSize,
     .impl_OH_ArkWebHttpBodyStream_GetPosition = TEST_OH_ArkWebHttpBodyStream_GetPosition,
     .impl_OH_ArkWebHttpBodyStream_IsChunked = TEST_OH_ArkWebHttpBodyStream_IsChunked,
@@ -497,6 +524,7 @@ SchemeHandlerApi g_testSchemeHandlerApi = {
     .impl_OH_ArkWebResourceHandler_DidReceiveData = TEST_OH_ArkWebResourceHandler_DidReceiveData,
     .impl_OH_ArkWebResourceHandler_DidFinish = TEST_OH_ArkWebResourceHandler_DidFinish,
     .impl_OH_ArkWebResourceHandler_DidFailWithError = TEST_OH_ArkWebResourceHandler_DidFailWithError,
+    .impl_OH_ArkWebResourceHandler_DidFailWithErrorV2 = TEST_OH_ArkWebResourceHandler_DidFailWithErrorV2,
     .impl_OH_ArkWeb_ReleaseString = TEST_OH_ArkWeb_ReleaseString,
     .impl_OH_ArkWeb_ReleaseByteArray = TEST_OH_ArkWeb_ReleaseByteArray,
     .impl_OH_ArkWebSchemeHandler_SetFromEts = TEST_OH_ArkWebSchemeHandler_SetFromEts
@@ -665,6 +693,9 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     ArkWeb_HttpBodyStreamReadCallback readCallback = nullptr;
     int32_t result = OH_ArkWebHttpBodyStream_SetReadCallback(httpBodyStream, readCallback);
     EXPECT_EQ(result, ARKWEB_ERROR_UNKNOWN);
+    ArkWeb_HttpBodyStreamAsyncReadCallback readAsyncCallback = nullptr;
+    result = OH_ArkWebHttpBodyStream_SetAsyncReadCallback(httpBodyStream, readAsyncCallback);
+    EXPECT_EQ(result, ARKWEB_ERROR_UNKNOWN);
 
     ArkWeb_HttpBodyStreamInitCallback initCallback = nullptr;
     result = OH_ArkWebHttpBodyStream_Init(httpBodyStream, initCallback);
@@ -674,6 +705,7 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     uint8_t buffer[256] = {0};
     int bufLen = sizeof(buffer);
     OH_ArkWebHttpBodyStream_Read(httpBodyStream1, buffer, bufLen);
+    OH_ArkWebHttpBodyStream_AsyncRead(httpBodyStream1, buffer, bufLen);
 
     uint64_t size = OH_ArkWebHttpBodyStream_GetSize(httpBodyStream1);
     EXPECT_EQ(size, 0);
@@ -812,6 +844,8 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     ArkWeb_NetError errorCode = ARKWEB_NET_OK;
     res = OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode);
     EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
+    res = OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode, true);
+    EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
     char* str = nullptr;
     OH_ArkWeb_ReleaseString(str);
     uint8_t byteArray[10] = {0};
@@ -897,6 +931,9 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiXX
     ArkWeb_HttpBodyStreamReadCallback readCallback = nullptr;
     int32_t result = OH_ArkWebHttpBodyStream_SetReadCallback(httpBodyStream, readCallback);
     EXPECT_EQ(result, ARKWEB_ERROR_UNKNOWN);
+    ArkWeb_HttpBodyStreamAsyncReadCallback readAsyncCallback = nullptr;
+    result = OH_ArkWebHttpBodyStream_SetAsyncReadCallback(httpBodyStream, readAsyncCallback);
+    EXPECT_EQ(result, ARKWEB_ERROR_UNKNOWN);
 
     ArkWeb_HttpBodyStreamInitCallback initCallback = nullptr;
     result = OH_ArkWebHttpBodyStream_Init(httpBodyStream, initCallback);
@@ -906,6 +943,7 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiXX
     uint8_t buffer[256] = {0};
     int bufLen = sizeof(buffer);
     OH_ArkWebHttpBodyStream_Read(httpBodyStream1, buffer, bufLen);
+    OH_ArkWebHttpBodyStream_AsyncRead(httpBodyStream1, buffer, bufLen);
 
     uint64_t size = OH_ArkWebHttpBodyStream_GetSize(httpBodyStream1);
     EXPECT_EQ(size, 0);
@@ -1037,6 +1075,8 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiXX
     ArkWeb_NetError errorCode = ARKWEB_NET_OK;
     res = OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode);
     EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
+    res = OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode, true);
+    EXPECT_EQ(res, ARKWEB_ERROR_UNKNOWN);
     char* str = nullptr;
     OH_ArkWeb_ReleaseString(str);
     uint8_t byteArray[10] = {0};
@@ -1086,6 +1126,9 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     ArkWeb_HttpBodyStreamReadCallback readCallback = nullptr;
     ret = OH_ArkWebHttpBodyStream_SetReadCallback(httpBodyStream, readCallback);
     EXPECT_EQ(ret, 0);
+    ArkWeb_HttpBodyStreamAsyncReadCallback readAsyncCallback = nullptr;
+    ret = OH_ArkWebHttpBodyStream_SetAsyncReadCallback(httpBodyStream, readAsyncCallback);
+    EXPECT_EQ(ret, 0);
 
     ArkWeb_HttpBodyStreamInitCallback initCallback = nullptr;
     EXPECT_EQ(OH_ArkWebHttpBodyStream_Init(httpBodyStream, initCallback), 0);
@@ -1094,6 +1137,7 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
     uint8_t buffer[256] = {0};
     int bufLen = sizeof(buffer);
     OH_ArkWebHttpBodyStream_Read(httpBodyStream1, buffer, bufLen);
+    OH_ArkWebHttpBodyStream_AsyncRead(httpBodyStream1, buffer, bufLen);
     EXPECT_EQ(OH_ArkWebHttpBodyStream_GetSize(httpBodyStream1), 1);
     EXPECT_EQ(OH_ArkWebHttpBodyStream_GetPosition(httpBodyStream1), 1);
     EXPECT_TRUE(OH_ArkWebHttpBodyStream_IsChunked(httpBodyStream));
@@ -1181,6 +1225,7 @@ HWTEST_F(OHArkwebSchemeHandlerTest, OHArkwebSchemeHandlerTest_SchemeHandlerApiIs
 
     ArkWeb_NetError errorCode = ARKWEB_NET_OK;
     EXPECT_EQ(OH_ArkWebResourceHandler_DidFailWithError(resourceHandler, errorCode), 0);
+    EXPECT_EQ(OH_ArkWebResourceHandler_DidFailWithErrorV2(resourceHandler, errorCode, true), 0);
     char* str = nullptr;
     OH_ArkWeb_ReleaseString(str);
     uint8_t byteArray[10] = {0};

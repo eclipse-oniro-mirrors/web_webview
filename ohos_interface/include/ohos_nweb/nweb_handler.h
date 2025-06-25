@@ -1150,6 +1150,26 @@ public:
      */
     virtual void OnPageTitleV2(const std::string& title, bool isRealTitle) {}
 
+    /**
+     * @brief Notify the web client to insert blankless frame.
+     *
+     * @param pathToFrame The file used to insert frame.
+     */
+    virtual void OnInsertBlanklessFrame(const std::string& pathToFrame) {}
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    virtual void OnRemoveBlanklessFrame(int delayTime) {}
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
     virtual std::string OnHandleOverrideErrorPage(
         std::shared_ptr<NWebUrlResourceRequest> request,
         std::shared_ptr<NWebUrlResourceError> error)

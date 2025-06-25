@@ -345,6 +345,10 @@
     },
     {
         "first_introduced": "20",
+        "name": "OH_ArkWebResourceHandler_DidFailWithErrorV2"
+    },
+    {
+        "first_introduced": "20",
         "name": "OH_NativeArkWeb_GetBlanklessInfoWithKey"
     },
     {
@@ -358,5 +362,17 @@
     {
         "first_introduced": "20",
         "name": "OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity"
+    },
+    {
+        "first_introduced": "20",
+        "name": "ArkWeb_HttpBodyStreamAsyncReadCallback"
+    },
+    {
+        "first_introduced": "20",
+        "name": "OH_ArkWebHttpBodyStream_SetAsyncReadCallback"
+    },
+    {
+        "first_introduced": "20",
+        "name": "OH_ArkWebHttpBodyStream_AsyncRead"
     }
 ]
