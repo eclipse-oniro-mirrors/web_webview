@@ -16,6 +16,7 @@
 #ifndef NWEB_LARGEST_CONTENTFUL_PAINT_DETAILS_H
 #define NWEB_LARGEST_CONTENTFUL_PAINT_DETAILS_H
 
+#include <math.h>
 #include <string>
 
 #include "nweb_export.h"
