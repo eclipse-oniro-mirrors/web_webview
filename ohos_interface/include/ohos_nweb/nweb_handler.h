@@ -35,6 +35,7 @@
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
 #include "nweb_gesture_event_result.h"
+#include "nweb_mouse_event_result.h"
 #include "nweb_js_dialog_result.h"
 #include "nweb_js_http_auth_result.h"
 #include "nweb_js_ssl_error_result.h"
@@ -297,6 +298,62 @@ public:
 
     virtual std::shared_ptr<NWebGestureEventResult> GetResult() = 0;
 };
+
+enum class MouseType : size_t {
+    NONE = 0,
+    PRESS = 1,
+    RELEASE = 2,
+    MOVE = 3,
+    WINDOW_ENTER = 4,
+    WINDOW_LEAVE = 5,
+    HOVER,
+    HOVER_ENTER,
+    HOVER_MOVE,
+    HOVER_EXIT,
+    PULL_DOWN,
+    PULL_MOVE,
+    PULL_UP,
+    CANCEL
+};
+
+enum class MouseButton : size_t {
+    NONE_BUTTON = 0,
+    LEFT_BUTTON = 1,
+    RIGHT_BUTTON = 2,
+    MIDDLE_BUTTON = 4,
+    BACK_BUTTON = 8,
+    FORWARD_BUTTON = 16,
+    SIDE_BUTTON = 32,
+    EXTRA_BUTTON = 64,
+    TASK_BUTTON = 128,
+};
+
+class NWebNativeEmbedMouseEvent {
+public:
+    virtual ~NWebNativeEmbedMouseEvent() = default;
+
+    virtual float GetX() = 0;
+
+    virtual float GetY() = 0;
+
+    virtual bool IsHitNativeArea() = 0;
+
+    virtual MouseType GetType() = 0;
+
+    virtual MouseButton GetButton() = 0;
+
+    virtual float GetOffsetX() = 0;
+
+    virtual float GetOffsetY() = 0;
+
+    virtual float GetScreenX() = 0;
+
+    virtual float GetScreenY() = 0;
+
+    virtual std::string GetEmbedId() = 0;
+
+    virtual std::shared_ptr<NWebMouseEventResult> GetResult() = 0;
+};  
 
 class OHOS_NWEB_EXPORT NWebHandler {
 public:
@@ -1097,6 +1154,12 @@ public:
     {
         return false;
     }
+
+    /**
+     * @Description: Called When an mouse native event occurs on native embed area.
+     * @Input mouse_event: Mouse events that contain information about the same layer.
+     */
+    virtual void OnNativeEmbedMouseEvent(std::shared_ptr<NWebNativeEmbedMouseEvent> event) {}
 
     /**
      * @brief called when the web page is active for window.open called by other web component.

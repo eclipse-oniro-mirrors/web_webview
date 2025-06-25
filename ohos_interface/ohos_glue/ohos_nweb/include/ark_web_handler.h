@@ -44,6 +44,7 @@
 #include "ohos_nweb/include/ark_web_load_committed_details.h"
 #include "ohos_nweb/include/ark_web_native_embed_data_info.h"
 #include "ohos_nweb/include/ark_web_native_embed_touch_event.h"
+#include "ohos_nweb/include/ark_web_native_embed_mouse_event.h"
 #include "ohos_nweb/include/ark_web_nweb.h"
 #include "ohos_nweb/include/ark_web_quick_menu_callback.h"
 #include "ohos_nweb/include/ark_web_quick_menu_params.h"
@@ -901,6 +902,13 @@ public:
     /*--ark web()--*/
     virtual bool OnBeforeUnloadByJSV2(const ArkWebString& url, const ArkWebString& message, bool isReload,
         ArkWebRefPtr<ArkWebJsDialogResult> result) = 0;
+
+    /**
+     * @Description: Called when an mouse native event occurs on native embed area.
+     * @Input mouse_event: Mouse events that contain information about the same layer.
+     */
+    /*--ark web()--*/
+    virtual void OnNativeEmbedMouseEvent(ArkWebRefPtr<ArkWebNativeEmbedMouseEvent> mouse_event) = 0;
 
     /**
      * @brief called when the web page is active for window.open called by other web component.
