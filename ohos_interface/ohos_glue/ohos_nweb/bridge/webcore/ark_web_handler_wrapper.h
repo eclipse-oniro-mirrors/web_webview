@@ -660,6 +660,8 @@ public:
     bool OnBeforeUnloadByJSV2(const std::string& url, const std::string& message, bool isReload,
         std::shared_ptr<OHOS::NWeb::NWebJSDialogResult> result) override;
 
+    void OnNativeEmbedMouseEvent(std::shared_ptr<OHOS::NWeb::NWebNativeEmbedMouseEvent> mouseEvent) override;
+
     /**
      * @brief called when the web page is active for window.open called by other web component.
      */

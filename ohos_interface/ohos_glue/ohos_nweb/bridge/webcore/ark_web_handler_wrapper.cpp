@@ -42,6 +42,7 @@
 #include "ohos_nweb/bridge/ark_web_load_committed_details_impl.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_data_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_touch_event_impl.h"
+#include "ohos_nweb/bridge/ark_web_native_embed_mouse_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_nweb_impl.h"
 #include "ohos_nweb/bridge/ark_web_quick_menu_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_quick_menu_params_impl.h"
@@ -1129,6 +1130,16 @@ bool ArkWebHandlerWrapper::OnBeforeUnloadByJSV2(const std::string& url, const st
     ArkWebStringStructRelease(stUrl);
     ArkWebStringStructRelease(stMessage);
     return flag;
+}
+
+void ArkWebHandlerWrapper::OnNativeEmbedMouseEvent(std::shared_ptr<OHOS::NWeb::NWebNativeEmbedMouseEvent> mouseEvent)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(mouseEvent)) {
+        ark_web_handler_->OnNativeEmbedMouseEvent(nullptr);
+        return;
+    }
+
+    ark_web_handler_->OnNativeEmbedMouseEvent(new ArkWebNativeEmbedMouseEventImpl(mouseEvent));
 }
 
 void ArkWebHandlerWrapper::OnActivateContentByJS()
