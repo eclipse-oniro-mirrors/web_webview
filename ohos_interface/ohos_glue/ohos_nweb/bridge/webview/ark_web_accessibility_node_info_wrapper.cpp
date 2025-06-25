@@ -329,6 +329,15 @@ std::string ArkWebAccessibilityNodeInfoWrapper::GetAccessibilityText()
     return objAccessibilityText;
 }
 
+std::string ArkWebAccessibilityNodeInfoWrapper::GetHtmlElementId()
+{
+    ArkWebString stHtmlElementId = ark_web_accessibility_node_info_->GetHtmlElementId();
+
+    std::string objHtmlElementId = ArkWebStringStructToClass(stHtmlElementId);
+    ArkWebStringStructRelease(stHtmlElementId);
+    return objHtmlElementId;
+}
+
 std::string ArkWebAccessibilityNodeInfoWrapper::GetComponentTypeDescription()
 {
     ArkWebString stComponentTypeDescription = ark_web_accessibility_node_info_->GetComponentTypeDescription();
@@ -338,9 +347,9 @@ std::string ArkWebAccessibilityNodeInfoWrapper::GetComponentTypeDescription()
     return objComponentTypeDescription;
 }
 
-int32_t ArkWebAccessibilityNodeInfoWrapper::GetCheckboxGroupSeletedStatus()
+int32_t ArkWebAccessibilityNodeInfoWrapper::GetCheckboxGroupSelectedStatus()
 {
-    return ark_web_accessibility_node_info_->GetCheckboxGroupSeletedStatus();
+    return ark_web_accessibility_node_info_->GetCheckboxGroupSelectedStatus();
 }
 
 std::string ArkWebAccessibilityNodeInfoWrapper::GetExpandedState()
@@ -350,15 +359,6 @@ std::string ArkWebAccessibilityNodeInfoWrapper::GetExpandedState()
     std::string objExpandedState = ArkWebStringStructToClass(stExpandedState);
     ArkWebStringStructRelease(stExpandedState);
     return objExpandedState;
-}
-
-std::string ArkWebAccessibilityNodeInfoWrapper::GetHtmlElementId()
-{
-    ArkWebString stHtmlElementId = ark_web_accessibility_node_info_->GetHtmlElementId();
-
-    std::string objHtmlElementId = ArkWebStringStructToClass(stHtmlElementId);
-    ArkWebStringStructRelease(stHtmlElementId);
-    return objHtmlElementId;
 }
 
 } // namespace OHOS::ArkWeb

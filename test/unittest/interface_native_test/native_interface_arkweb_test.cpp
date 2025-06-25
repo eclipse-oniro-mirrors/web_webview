@@ -162,9 +162,28 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_SetBlanklessLoadingWithKey_0
  */
 HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_ClearBlanklessLoadingCache_01, TestSize.Level1) {
     OH_NativeArkWeb_ClearBlanklessLoadingCache(nullptr, 0);
-    const char* keys[] = {"ClearBlanklessLoadingCache1", "ClearBlanklessLoadingCache2"};
-    OH_NativeArkWeb_ClearBlanklessLoadingCache(keys, 2);
-    EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(0), 0); // UT contains at least one judgment statement
+
+    const char* keys1[] = {};
+    EXPECT_EQ(sizeof(keys1) / sizeof(const char*), 0);
+    OH_NativeArkWeb_ClearBlanklessLoadingCache(keys1, 0);
+
+    std::string longStr;
+    for (uint32_t idx = 0; idx < 3000; idx++) {
+        longStr += "0";
+    }
+    const char* keys2[3];
+    keys2[0] = "ClearBlanklessLoadingCache";
+    keys2[1] = "";
+    keys2[2] = longStr.c_str();
+    EXPECT_EQ(sizeof(keys2) / sizeof(const char*), 3);
+    OH_NativeArkWeb_ClearBlanklessLoadingCache(keys2, 3);
+
+    const char* keys3[101];
+    for (uint32_t idx = 0; idx < 101; idx++) {
+        keys3[idx] = "test";
+    }
+    EXPECT_EQ(sizeof(keys3) / sizeof(const char*), 101);
+    OH_NativeArkWeb_ClearBlanklessLoadingCache(keys3, 101);
 }
 
 /**
@@ -174,6 +193,7 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_ClearBlanklessLoadingCache_0
 HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity_01, TestSize.Level1) {
     ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
     bool isMobile = deviceType == ProductDeviceType::DEVICE_TYPE_MOBILE;
+    EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(0), 0);
     EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(20), isMobile ? 20 : 0);
     EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(100), isMobile ? 100 : 0);
     EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(1000), isMobile ? 100 : 0);

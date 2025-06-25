@@ -1192,6 +1192,18 @@ void ArkWebHandlerWrapper::OnPageTitleV2(const std::string& title, bool isRealTi
     ArkWebStringStructRelease(stTitle);
 }
 
+void ArkWebHandlerWrapper::OnInsertBlanklessFrame(const std::string& pathToFrame)
+{
+    ArkWebString pathToFrame_ = ArkWebStringClassToStruct(pathToFrame);
+    ark_web_handler_->OnInsertBlanklessFrame(pathToFrame_);
+    ArkWebStringStructRelease(pathToFrame_);
+}
+
+void ArkWebHandlerWrapper::OnRemoveBlanklessFrame(int delayTime)
+{
+    ark_web_handler_->OnRemoveBlanklessFrame(delayTime);
+}
+
 std::string ArkWebHandlerWrapper::OnHandleOverrideErrorPage(
     std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request,
     std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> error)

@@ -319,6 +319,8 @@ public:
 
     bool ScrollByWithResult(float deltaX, float deltaY) const;
 
+    int32_t AvoidVisibleViewportBottom(int32_t avoidHeight);
+
     int32_t SetErrorPageEnabled(bool enable);
 
     bool GetErrorPageEnabled();
