@@ -62,6 +62,22 @@ private:
     NativeArkWeb_OnJavaScriptProxyCallback methodCallback_ = nullptr;
 };
 
+class NWebSaveCookieCallbackImpl : public NWebBoolValueCallback {
+public:
+    NWebSaveCookieCallbackImpl(std::function<void(void)> callback) : callback_(callback) {}
+    ~NWebSaveCookieCallbackImpl() = default;
+
+    void OnReceiveValue(bool result) override
+    {
+        WVLOG_D("save cookie received result, result = %{public}d", result);
+        if (callback_) {
+            callback_();
+        }
+    }
+private:
+    std::function<void(void)> callback_;
+};
+
 }; // namespace OHOS::NWeb
 
 using namespace OHOS;
@@ -337,4 +353,30 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
 
     OHOS::NWeb::NWebHelper::Instance().SetBlanklessLoadingCacheCapacity(static_cast<int32_t>(capacity));
     return capacity;
+}
+
+ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync()
+{
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager == nullptr) {
+        WVLOG_E("cookieManager is nullptr)");
+        return ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN;
+    }
+
+    cookieManager->Store();
+    return ArkWeb_ErrorCode::ARKWEB_SUCCESS;
+}
+
+void OH_ArkWebCookieManager_SaveCookieAsync(OH_ArkWeb_OnCookieSaveCallback callback)
+{
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager == nullptr) {
+        WVLOG_E("cookieManager is nullptr)");
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
+    cookieManager->Store(callbackImpl);
 }

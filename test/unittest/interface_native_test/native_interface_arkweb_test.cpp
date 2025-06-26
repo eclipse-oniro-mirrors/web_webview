@@ -25,6 +25,13 @@
 using namespace testing;
 using namespace testing::ext;
 
+namespace {
+    int g_callbackCnt = 0;
+    void OH_ArkWeb_OnCookieSaveCallbackImpl() {
+        g_callbackCnt = 1;
+    }
+}
+
 namespace OHOS {
 namespace NWeb {
 
@@ -198,5 +205,29 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_SetBlanklessLoadingCacheCapa
     EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(100), isMobile ? 100 : 0);
     EXPECT_EQ(OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(1000), isMobile ? 100 : 0);
 }
+
+/**
+ * @tc.name  : OH_ArkWebCookieManager_SaveCookieSync_01
+ * @tc.desc  : Test OH_ArkWebCookieManager_SaveCookieSync
+ */
+HWTEST_F(NativeInterfaceArkWebTest, OH_ArkWebCookieManager_SaveCookieSync_01, TestSize.Level1) {
+    ArkWeb_ErrorCode ret = OH_ArkWebCookieManager_SaveCookieSync();
+    EXPECT_EQ(ret, ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN);
+}
+
+/**
+ * @tc.name  : OH_ArkWebCookieManager_SaveCookieAsync_01
+ * @tc.desc  : Test OH_ArkWebCookieManager_SaveCookieAsync
+ */
+HWTEST_F(NativeInterfaceArkWebTest, OH_ArkWebCookieManager_SaveCookieAsync_01, TestSize.Level1) {
+    OH_ArkWeb_OnCookieSaveCallback callback = nullptr;
+    OH_ArkWebCookieManager_SaveCookieAsync(callback);
+    EXPECT_EQ(g_callbackCnt, 0);
+
+    callback = OH_ArkWeb_OnCookieSaveCallbackImpl;
+    OH_ArkWebCookieManager_SaveCookieAsync(callback);
+    EXPECT_EQ(g_callbackCnt, 0);
+}
+
 } // namespace NWeb
 } // namesapce OHOS
