@@ -1731,13 +1731,11 @@ public:
      *
      * @param enable bool: Whether enable the error page.
      */
-    /*--ark web()--*/
     void SetErrorPageEnabled(bool enable) override;
 
     /**
      * @brief Get whether default error page feature is enabled.
      */
-    /*--ark web()--*/
     bool GetErrorPageEnabled() override;
 
 private:
