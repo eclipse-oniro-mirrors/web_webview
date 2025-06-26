@@ -269,15 +269,12 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity);
  * @brief Ensure that all cookies currently accessible via the CookieManager API have been persisted to disk.
  *        If you want to use this interface in a non-UI thread, you need to initialize the CookieManager interface
  *        using OH_ArkWeb_GetNativeAPI first.
- *
  * @return Save cookie result code.
  *         {@link ARKWEB_SUCCESS} save cookie success.
  *         {@link ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED} It is not allowed to call on a non-UI thread without
  *                                                       initializing the CookieManager interface. please
  *   													 initialize the CookieManager interface using
  *  													 OH_ArkWeb_GetNativeAPI first.
- *                                                       
- * @syscap SystemCapability.Web.Webview.Core
  * @since 20
  */
 ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync();
@@ -287,9 +284,7 @@ ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync();
  *        Without initializing the CookieManager interface, this call will automatically be executed on the UI thread.
  *        If you want to use this interface in a non-UI thread, you need to initialize the CookieManager interface
  *        using OH_ArkWeb_GetNativeAPI first.
- *
  * @param callback Callback execute when save cookie done.
- * @syscap SystemCapability.Web.Webview.Core
  * @since 20
  */
 void OH_ArkWebCookieManager_SaveCookieAsync(OH_ArkWeb_OnCookieSaveCallback callback);
