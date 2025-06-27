@@ -1983,6 +1983,11 @@ public:
      * @param isVisible The visibility to be set.
      */
     virtual void SetVisibility(bool isVisible) {}
+
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    virtual void SetViewportScaleState() {}
 };
 
 } // namespace OHOS::NWeb

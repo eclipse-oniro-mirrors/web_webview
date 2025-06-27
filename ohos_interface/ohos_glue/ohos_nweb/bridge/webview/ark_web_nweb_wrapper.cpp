@@ -1747,4 +1747,9 @@ void ArkWebNWebWrapper::SetVisibility(bool isVisible)
 {
     ark_web_nweb_->SetVisibility(isVisible);
 }
+
+void ArkWebNWebWrapper::SetViewportScaleState()
+{
+    ark_web_nweb_->SetViewportScaleState();
+}
 } // namespace OHOS::ArkWeb
