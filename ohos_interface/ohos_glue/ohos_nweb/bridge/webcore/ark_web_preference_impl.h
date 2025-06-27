@@ -688,6 +688,12 @@ public:
      *        The default is none.
      */
     void SetBypassVsyncCondition(int32_t condition) override;
+
+    /**
+     * @brief Set the gesture focus mode.
+     */
+    void SetGestureFocusMode(int32_t mode) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;
 };

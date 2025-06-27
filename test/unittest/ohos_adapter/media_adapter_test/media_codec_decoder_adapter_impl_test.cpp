@@ -22,7 +22,7 @@
 #undef private
 #include "avsharedmemory.h"
 #include "avsharedmemorybase.h"
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
+#include "surface/window.h"
 #include "native_window.h"
 #include "native_avformat.h"
 #include "native_avbuffer.h"
@@ -366,6 +366,12 @@ HWTEST_F(MediaCodecDecoderAdapterImplTest, MediaCodecDecoderAdapterImpl_OnError_
     OH_AVBuffer_Destroy(buffer);
     codecFormat = nullptr;
     buffer = nullptr;
+
+    mediaCodecDecoderAdapterImpl_->callback_ = nullptr;
+    mediaCodecDecoderAdapterImpl_->OnError(100);
+    mediaCodecDecoderAdapterImpl_->OnOutputFormatChanged(nullptr);
+    mediaCodecDecoderAdapterImpl_->OnInputBufferAvailable(1, nullptr);
+    mediaCodecDecoderAdapterImpl_->OnOutputBufferAvailable(1, nullptr);
 }
 
 /**

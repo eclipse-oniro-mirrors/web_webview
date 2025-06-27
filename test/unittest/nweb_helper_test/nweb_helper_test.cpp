@@ -28,7 +28,7 @@
 #include "nweb_create_window.h"
 #include "nweb_c_api.h"
 #include "nweb_init_params.h"
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_context.h"
+#include "application_context.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -143,6 +143,10 @@ public:
     void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime) {}
 
     void ClearHostIP(const std::string& hostName) {}
+
+    void SetAppCustomUserAgent(const std::string& userAgent) {}
+
+    void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
 
     void EnableWholeWebPageDrawing() {}
 
@@ -473,6 +477,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_WebDownloadItem_IsPaused_007, TestSize.Level
     long itemId = WebDownloadItem_GetDownloadItemId(downloadItem);
     auto state1 = WebDownload_GetItemState(nWebId, itemId);
     auto state2 = WebDownload_GetItemStateByGuid("test_web");
+    WebDownload_GetItemStateByGuidV2("test_web");
     EXPECT_EQ(state1, state2);
 }
 
@@ -507,6 +512,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NWebHelper::Instance().GetDefaultUserAgent();
+    NWebHelper::Instance().SetAppCustomUserAgent("web_test");
+    NWebHelper::Instance().SetUserAgentForHosts("web_test", hosts);
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
@@ -526,6 +533,8 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().RemoveIntelligentTrackingPreventionBypassingList(hosts);
     NWebHelper::Instance().ClearIntelligentTrackingPreventionBypassingList();
     NWebHelper::Instance().GetDefaultUserAgent();
+    NWebHelper::Instance().SetAppCustomUserAgent("web_test");
+    NWebHelper::Instance().SetUserAgentForHosts("web_test", hosts);
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
 }

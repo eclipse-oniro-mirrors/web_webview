@@ -1671,12 +1671,73 @@ public:
     int64_t GetWebAccessibilityIdByHtmlElementId(const std::string& htmlElementId) override;
 
     /**
-     * @brief Get the current scroll offset of the webpage.
-     * @param offset_x The current horizontal scroll offset of the webpage.
-     * @param offset_y The current vertical scroll offset of the webpage.
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
      */
-    /*--ark web()--*/
-    void GetPageOffset(float* offset_x, float* offset_y) override;
+    int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime) override;
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart) override;
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    void UpdateSingleHandleVisible(bool isVisible) override;
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    void SetTouchHandleExistState(bool touchHandleExist) override;
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    void AvoidVisibleViewportBottom(int32_t avoidHeight) override;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    int32_t GetVisibleViewportAvoidHeight() override;
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    bool TriggerBlanklessForUrl(const std::string& url) override;
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    void SetVisibility(bool isVisible) override;
+
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    void SetViewportScaleState() override;
+
+    /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   /*--ark web()--*/
+   void GetPageOffset(float* offset_x, float* offset_y) override;
 
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;

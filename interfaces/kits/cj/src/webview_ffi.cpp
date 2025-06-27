@@ -2043,6 +2043,15 @@ extern "C" {
         *errorCode = NWebError::NO_ERROR;
         return true;
     }
+
+    int32_t FfiOHOSWebviewCtlAvoidVisibleViewportBottom(int64_t id, int32_t avoidHeight)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        return nativeWebviewCtl->AvoidVisibleViewportBottom(avoidHeight);
+    }
 }
 }
 }

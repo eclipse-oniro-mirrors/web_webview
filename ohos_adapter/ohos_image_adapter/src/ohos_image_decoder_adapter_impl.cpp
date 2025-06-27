@@ -15,7 +15,7 @@
 
 #include "ohos_image_decoder_adapter_impl.h"
 
-#include "foundation/graphic/graphic_surface/interfaces/inner_api/surface/window.h"
+#include "surface/window.h"
 #include "image_source.h"
 #include "media_errors.h"
 #include "nweb_log.h"

@@ -24,11 +24,11 @@
 #include <climits>
 
 #include "nweb_log.h"
-#include "foundation/ability/ability_base/interfaces/kits/native/uri/include/uri.h"
-#include "foundation/filemanagement/app_file_service/interfaces/innerkits/native/file_uri/include/file_uri.h"
-#include "foundation/distributeddatamgr/data_share/interfaces/inner_api/consumer/include/datashare_helper.h"
-#include "foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include/system_ability_definition.h"
-#include "foundation/systemabilitymgr/samgr/interfaces/innerkits/samgr_proxy/include/iservice_registry.h"
+#include "uri.h"
+#include "file_uri.h"
+#include "datashare_helper.h"
+#include "system_ability_definition.h"
+#include "iservice_registry.h"
 
 namespace OHOS::NWeb {
 

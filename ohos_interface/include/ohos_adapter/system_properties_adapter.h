@@ -113,6 +113,10 @@ public:
     virtual std::string GetScrollFriction() = 0;
 
     virtual std::string GetBundleName() = 0;
+
+    virtual std::string GetStringParameter(const std::string& key, const std::string& defaultValue) = 0;
+
+    virtual int32_t GetInitialCongestionWindowSize() = 0;
 };
 
 } // namespace OHOS::NWeb

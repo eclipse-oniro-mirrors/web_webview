@@ -352,4 +352,9 @@ std::string ArkWebEngineWrapper::CheckBlankOptEnable(const std::string& url, int
     return ret;
 }
 
+void ArkWebEngineWrapper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
+{
+    ark_web_engine_->SetBlanklessLoadingCacheCapacity(capacity);
+}
+
 } // namespace OHOS::ArkWeb

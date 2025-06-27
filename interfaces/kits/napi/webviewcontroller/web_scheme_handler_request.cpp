@@ -619,12 +619,12 @@ int32_t WebResourceHandler::DidFinish()
     return ret;
 }
 
-int32_t WebResourceHandler::DidFailWithError(ArkWeb_NetError errorCode)
+int32_t WebResourceHandler::DidFailWithError(ArkWeb_NetError errorCode, bool completeIfNoResponse)
 {
     if (isFinished_) {
         return ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN;
     }
-    int32_t ret = OH_ArkWebResourceHandler_DidFailWithError(handler_, errorCode);
+    int32_t ret = OH_ArkWebResourceHandler_DidFailWithErrorV2(handler_, errorCode, completeIfNoResponse);
     if (ret == 0) {
         isFinished_ = true;
     }

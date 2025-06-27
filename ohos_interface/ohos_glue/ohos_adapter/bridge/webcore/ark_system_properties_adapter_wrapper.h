@@ -91,6 +91,10 @@ public:
 
     std::string GetBundleName() override;
 
+    std::string GetStringParameter(const std::string& key, const std::string& defaultValue) override;
+
+    int32_t GetInitialCongestionWindowSize() override;
+
 private:
     ArkWebRefPtr<ArkSystemPropertiesAdapter> ctocpp_;
 };
