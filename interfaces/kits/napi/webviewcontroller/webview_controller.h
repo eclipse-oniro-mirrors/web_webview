@@ -464,7 +464,7 @@ public:
 
     int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);
 
-    void SetWebDetach(int32_t nweb_id);
+    void SetWebDetach(int32_t nwebId);
 
     ErrCode AvoidVisibleViewportBottom(int32_t avoidHeight);
 private:
