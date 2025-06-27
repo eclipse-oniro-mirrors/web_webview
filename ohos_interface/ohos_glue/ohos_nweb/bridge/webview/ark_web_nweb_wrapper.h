@@ -1726,6 +1726,11 @@ public:
      */
     void SetVisibility(bool isVisible) override;
 
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    void SetViewportScaleState() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
