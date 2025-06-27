@@ -39,6 +39,14 @@ bool RemovePasteboardChangedObserverFuzzTest(const uint8_t* data, size_t size)
     PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(callbackId);
     return true;
 }
+
+bool AddPasteboardChangedObserverFuzzTest(const uint8_t* data, size_t size)
+{
+    std::shared_ptr<MockPasteboardObserver> callback = std::make_shared<MockPasteboardObserver>();
+    int32_t callbackId = PasteBoardClientAdapterImpl::GetInstance().AddPasteboardChangedObserver(callback);
+    PasteBoardClientAdapterImpl::GetInstance().RemovePasteboardChangedObserver(callbackId);
+    return true;
+}
 } // namespace OHOS
 
 /* Fuzzer entry point */
@@ -46,5 +54,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::RemovePasteboardChangedObserverFuzzTest(data, size);
+    OHOS::AddPasteboardChangedObserverFuzzTest(data, size);
     return 0;
 }
