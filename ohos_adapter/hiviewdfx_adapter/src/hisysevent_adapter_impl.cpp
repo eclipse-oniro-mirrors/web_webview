@@ -29,16 +29,17 @@ const HiviewDFX::HiSysEvent::EventType EVENT_TYPES[] = {
 };
 }
 
-int64_t GetValue(const std::string& input, const std::string& key1, const std::string& key2) {
+int64_t GetValueInt64(const std::string& input, const std::string& key1, const std::string& key2)
+{
     std::string key = "";
     if(key2 == key) {
-        return std::atoi(input.substr(input.find(key1, 0) + key1.size()).c_str());
+        return std::stoll(input.substr(input.find(key1, 0) + key1.size()));
     }
-    return std::atoi(input.substr(input.find(key1, 0) + key1.size(),
-                     input.find(key2,0) - input.find(key1, 0) - key1.size()).c_str());
+    return std::stoll(input.substr(input.find(key1, 0) + key1.size(),
+                     input.find(key2,0) - input.find(key1, 0) - key1.size()));
 }
 
-const static std::string KEY_LISTS[] = {
+const static std::string PAGE_LOAD_KEY_LISTS[] = {
     "NAVIGATION_ID",
     "NAVIGATION_START",
     "REDIRECT_COUNT",
@@ -63,6 +64,9 @@ const static std::string KEY_LISTS[] = {
     "FIRST_CONTENTFUL_PAINT",
     "LARGEST_CONTENTFUL_PAINT",
     "RENDER_INIT_BLOCK",
+    "INPUT_TIME",
+    "IS_PAINT_DONE",
+    "FIRST_MEANINGFUL_PAINT"
 };
 static std::string g_currentBundleName = "";
 static std::string g_versionCode = "";
@@ -98,58 +102,109 @@ static int ForwardToHiSysEvent(const std::string& eventName, HiSysEventAdapter::
         mergeData);
 }
 
+int ProcessEventPageLoadTime(const std::string& eventName, HiSysEventAdapter::EventType type,
+    const std::tuple<const std::string, const std::string>& data)
+{
+    auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+    if (appInfo == nullptr) {
+        return -1;
+    }
+    AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+
+    std::tuple<const std::string, const std::string> sysData = {
+        "ABILITY_NAME", elementName.GetAbilityName(),
+    };
+
+    const std::string input = std::get<0>(data);
+
+    const std::int64_t value1 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[0], PAGE_LOAD_KEY_LISTS[1]);
+    const std::int64_t value2 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[1], PAGE_LOAD_KEY_LISTS[2]);
+    const std::uint32_t value3 = (std::uint32_t)GetValueInt64(input, PAGE_LOAD_KEY_LISTS[2], PAGE_LOAD_KEY_LISTS[3]);
+    const std::int64_t value4 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[3], PAGE_LOAD_KEY_LISTS[4]);
+    const std::int64_t value5 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[4], PAGE_LOAD_KEY_LISTS[5]);
+    const std::int64_t value6 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[5], PAGE_LOAD_KEY_LISTS[6]);
+    const std::int64_t value7 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[6], PAGE_LOAD_KEY_LISTS[7]);
+    const std::int64_t value8 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[7], PAGE_LOAD_KEY_LISTS[8]);
+    const std::int64_t value9 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[8], PAGE_LOAD_KEY_LISTS[9]);
+    const std::int64_t value10 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[9], PAGE_LOAD_KEY_LISTS[10]);
+    const std::int64_t value11 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[10], PAGE_LOAD_KEY_LISTS[11]);
+    const std::int64_t value12 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[11], PAGE_LOAD_KEY_LISTS[12]);
+    const std::int64_t value13 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[12], PAGE_LOAD_KEY_LISTS[13]);
+    const std::int64_t value14 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[13], PAGE_LOAD_KEY_LISTS[14]);
+    const std::int64_t value15 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[14], PAGE_LOAD_KEY_LISTS[15]);
+    const std::int64_t value16 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[15], PAGE_LOAD_KEY_LISTS[16]);
+    const std::int64_t value17 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[16], PAGE_LOAD_KEY_LISTS[17]);
+    const std::int64_t value18 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[17], PAGE_LOAD_KEY_LISTS[18]);
+    const std::int64_t value19 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[18], PAGE_LOAD_KEY_LISTS[19]);
+    const std::int64_t value20 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[19], PAGE_LOAD_KEY_LISTS[20]);
+    const std::int64_t value21 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[20], PAGE_LOAD_KEY_LISTS[21]);
+    const std::int64_t value22 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[21], PAGE_LOAD_KEY_LISTS[22]);
+    const std::int64_t value23 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[22], PAGE_LOAD_KEY_LISTS[23]);
+    const std::int64_t value24 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[23], "");
+
+    auto newData = std::make_tuple(
+        PAGE_LOAD_KEY_LISTS[0], value1, PAGE_LOAD_KEY_LISTS[1], value2,
+        PAGE_LOAD_KEY_LISTS[2], value3, PAGE_LOAD_KEY_LISTS[3], value4,
+        PAGE_LOAD_KEY_LISTS[4], value5, PAGE_LOAD_KEY_LISTS[5], value6,
+        PAGE_LOAD_KEY_LISTS[6], value7, PAGE_LOAD_KEY_LISTS[7], value8,
+        PAGE_LOAD_KEY_LISTS[8], value9, PAGE_LOAD_KEY_LISTS[9], value10,
+        PAGE_LOAD_KEY_LISTS[10], value11, PAGE_LOAD_KEY_LISTS[11], value12,
+        PAGE_LOAD_KEY_LISTS[12], value13, PAGE_LOAD_KEY_LISTS[13], value14,
+        PAGE_LOAD_KEY_LISTS[14], value15, PAGE_LOAD_KEY_LISTS[15], value16,
+        PAGE_LOAD_KEY_LISTS[16], value17, PAGE_LOAD_KEY_LISTS[17], value18,
+        PAGE_LOAD_KEY_LISTS[18], value19, PAGE_LOAD_KEY_LISTS[19], value20,
+        PAGE_LOAD_KEY_LISTS[20], value21, PAGE_LOAD_KEY_LISTS[21], value22,
+        PAGE_LOAD_KEY_LISTS[22], value23, PAGE_LOAD_KEY_LISTS[23], value24);
+        
+    auto mergeData = std::tuple_cat(newData, sysData);
+    return ForwardToHiSysEvent(eventName, type, mergeData);
+}
+
+int ProcessEventFirstMeaningfulPaintDone(const std::string& eventName, HiSysEventAdapter::EventType type,
+    const std::tuple<const std::string, const std::string>& data)
+{
+    auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+    if (appInfo == nullptr) {
+        return -1;
+    }
+    AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
+
+    std::tuple<const std::string, const std::string> sysData = {
+        "ABILITY_NAME", elementName.GetAbilityName(),
+    };
+
+    const std::string input = std::get<0>(data);
+
+    const std::int64_t value1 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[0], PAGE_LOAD_KEY_LISTS[1]);
+    const std::int64_t value2 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[1], PAGE_LOAD_KEY_LISTS[2]);
+    const std::uint32_t value3 = (std::uint32_t)GetValueInt64(input, PAGE_LOAD_KEY_LISTS[2], PAGE_LOAD_KEY_LISTS[24]);
+    const std::int64_t value4 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[24], PAGE_LOAD_KEY_LISTS[20]);
+    const std::int64_t value5 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[20], PAGE_LOAD_KEY_LISTS[21]);
+    const std::int64_t value6 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[21], PAGE_LOAD_KEY_LISTS[26]);
+    const std::int64_t value7 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[26], PAGE_LOAD_KEY_LISTS[25]);
+    const std::int64_t value8 = GetValueInt64(input, PAGE_LOAD_KEY_LISTS[25], "");
+
+    auto newData = std::make_tuple(
+        PAGE_LOAD_KEY_LISTS[0], value1, PAGE_LOAD_KEY_LISTS[1], value2,
+        PAGE_LOAD_KEY_LISTS[2], value3, PAGE_LOAD_KEY_LISTS[24], value4,
+        PAGE_LOAD_KEY_LISTS[20], value5, PAGE_LOAD_KEY_LISTS[21], value6,
+        PAGE_LOAD_KEY_LISTS[26], value7, PAGE_LOAD_KEY_LISTS[25], value8,);
+        
+    auto mergeData = std::tuple_cat(newData, sysData);
+    return ForwardToHiSysEvent(eventName, type, mergeData);
+}
+
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     const std::tuple<const std::string, const std::string>& data)
 {
-    std::string targetType = "PAGE_LOAD_TIME";
-    if (eventName == targetType) {
-        auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
-        if (appInfo == nullptr) {
-            return -1;
-        }
-        AppExecFwk::ElementName elementName = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
-
-        std::tuple<const std::string, const std::string> sysData = {
-            "ABILITY_NAME", elementName.GetAbilityName(),
-        };
-
-        const std::string input = std::get<0>(data);
-
-        const std::int64_t value1 = GetValue(input, KEY_LISTS[0], KEY_LISTS[1]);
-        const std::int64_t value2 = GetValue(input, KEY_LISTS[1], KEY_LISTS[2]);
-        const std::uint32_t value3 = (std::uint32_t)GetValue(input, KEY_LISTS[2], KEY_LISTS[3]);
-        const std::int64_t value4 = GetValue(input, KEY_LISTS[3], KEY_LISTS[4]);
-        const std::int64_t value5 = GetValue(input, KEY_LISTS[4], KEY_LISTS[5]);
-        const std::int64_t value6 = GetValue(input, KEY_LISTS[5], KEY_LISTS[6]);
-        const std::int64_t value7 = GetValue(input, KEY_LISTS[6], KEY_LISTS[7]);
-        const std::int64_t value8 = GetValue(input, KEY_LISTS[7], KEY_LISTS[8]);
-        const std::int64_t value9 = GetValue(input, KEY_LISTS[8], KEY_LISTS[9]);
-        const std::int64_t value10 = GetValue(input, KEY_LISTS[9], KEY_LISTS[10]);
-        const std::int64_t value11 = GetValue(input, KEY_LISTS[10], KEY_LISTS[11]);
-        const std::int64_t value12 = GetValue(input, KEY_LISTS[11], KEY_LISTS[12]);
-        const std::int64_t value13 = GetValue(input, KEY_LISTS[12], KEY_LISTS[13]);
-        const std::int64_t value14 = GetValue(input, KEY_LISTS[13], KEY_LISTS[14]);
-        const std::int64_t value15 = GetValue(input, KEY_LISTS[14], KEY_LISTS[15]);
-        const std::int64_t value16 = GetValue(input, KEY_LISTS[15], KEY_LISTS[16]);
-        const std::int64_t value17 = GetValue(input, KEY_LISTS[16], KEY_LISTS[17]);
-        const std::int64_t value18 = GetValue(input, KEY_LISTS[17], KEY_LISTS[18]);
-        const std::int64_t value19 = GetValue(input, KEY_LISTS[18], KEY_LISTS[19]);
-        const std::int64_t value20 = GetValue(input, KEY_LISTS[19], KEY_LISTS[20]);
-        const std::int64_t value21 = GetValue(input, KEY_LISTS[20], KEY_LISTS[21]);
-        const std::int64_t value22 = GetValue(input, KEY_LISTS[21], KEY_LISTS[22]);
-        const std::int64_t value23 = GetValue(input, KEY_LISTS[22], KEY_LISTS[23]);
-        const std::int64_t value24 = GetValue(input, KEY_LISTS[23], "");
-
-        auto newData = std::make_tuple(
-            KEY_LISTS[0], value1, KEY_LISTS[1], value2, KEY_LISTS[2], value3, KEY_LISTS[3], value4,
-            KEY_LISTS[4], value5, KEY_LISTS[5], value6, KEY_LISTS[6], value7, KEY_LISTS[7], value8,
-            KEY_LISTS[8], value9, KEY_LISTS[9], value10, KEY_LISTS[10], value11, KEY_LISTS[11], value12, 
-            KEY_LISTS[12], value13, KEY_LISTS[13], value14, KEY_LISTS[14], value15, KEY_LISTS[15], value16, 
-            KEY_LISTS[16], value17, KEY_LISTS[17], value18, KEY_LISTS[18], value19, KEY_LISTS[19], value20, 
-            KEY_LISTS[20], value21, KEY_LISTS[21], value22, KEY_LISTS[22], value23, KEY_LISTS[23], value24);
-            
-        auto mergeData = std::tuple_cat(newData, sysData);
-        return ForwardToHiSysEvent(eventName, type, mergeData);
+    const std::string eventNamePageLoadTime = "PAGE_LOAD_TIME";
+    const std::string eventNameFirstMeaningfulPaintDone = "PAGE_LOAD_TIME";
+    if (eventName == eventNamePageLoadTime) {
+        return ProcessEventPageLoadTime(eventName, type, data);
+    }
+    if (eventName == eventNameFirstMeaningfulPaintDone) {
+        int result = ProcessEventFirstMeaningfulPaintDone(eventName, type, data);
+        return result;
     }
     return ForwardToHiSysEvent(eventName, type, data);
 }
