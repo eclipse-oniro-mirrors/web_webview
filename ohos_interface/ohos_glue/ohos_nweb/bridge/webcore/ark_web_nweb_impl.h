@@ -1714,6 +1714,11 @@ public:
     void SetVisibility(bool isVisible) override;
 
     /**
+     * @brief Current viewport is being scaled.
+     */
+    void SetViewportScaleState() override;
+
+    /**
      * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
      *
      * @param enable bool: Whether enable the error page.

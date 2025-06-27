@@ -1481,6 +1481,11 @@ void ArkWebNWebImpl::SetVisibility(bool isVisible)
     nweb_nweb_->SetVisibility(isVisible);
 }
 
+void ArkWebNWebImpl::SetViewportScaleState()
+{
+    nweb_nweb_->SetViewportScaleState();
+}
+
 void ArkWebNWebImpl::SetErrorPageEnabled(bool enable)
 {
     nweb_nweb_->SetErrorPageEnabled(enable);
