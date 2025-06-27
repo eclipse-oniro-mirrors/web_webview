@@ -623,6 +623,8 @@ public:
     bool OnBeforeUnloadByJSV2(const ArkWebString& url, const ArkWebString& message, bool isReload,
         ArkWebRefPtr<ArkWebJsDialogResult> result) override;
 
+    void OnNativeEmbedMouseEvent(ArkWebRefPtr<ArkWebNativeEmbedMouseEvent> mouse_event) override;
+
     /**
      * @brief called when the web page is active for window.open called by other web component.
      */

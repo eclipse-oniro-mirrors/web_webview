@@ -1923,6 +1923,12 @@ public:
     virtual void SetVisibility(bool isVisible) = 0;
 
     /**
+     * @brief Current viewport is being scaled.
+     */
+    /*--ark web()--*/
+    virtual void SetViewportScaleState() = 0;
+
+    /**
      * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
      *
      * @param enable bool: Whether enable the error page.
