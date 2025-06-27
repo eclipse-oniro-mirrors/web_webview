@@ -36,6 +36,8 @@ bool ClipboardToImageAlphaTypeFuzzTest(const uint8_t* data, size_t size)
         std::make_shared<PasteDataRecordAdapterImpl>(stringParam);
     ClipBoardImageAlphaType alphaType = ClipBoardImageAlphaType::ALPHA_TYPE_UNKNOWN;
     dataRecordAdapterImpl->ClipboardToImageAlphaType(alphaType);
+    dataRecordAdapterImpl->ClipboardToImageAlphaType(ClipBoardImageAlphaType::ALPHA_TYPE_OPAQUE);
+    dataRecordAdapterImpl->ClipboardToImageAlphaType(ClipBoardImageAlphaType::ALPHA_TYPE_PREMULTIPLIED);\
     return true;
 }
 } // namespace OHOS

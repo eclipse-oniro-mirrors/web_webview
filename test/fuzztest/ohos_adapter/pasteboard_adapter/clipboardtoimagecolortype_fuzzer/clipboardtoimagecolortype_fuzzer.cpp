@@ -36,6 +36,7 @@ bool ClipboardToImageColorTypeFuzzTest(const uint8_t* data, size_t size)
         std::make_shared<PasteDataRecordAdapterImpl>(stringParam);
     ClipBoardImageColorType colorType = ClipBoardImageColorType::COLOR_TYPE_RGBA_8888;
     dataRecordAdapterImpl->ClipboardToImageColorType(colorType);
+    dataRecordAdapterImpl->ClipboardToImageColorType(ClipBoardImageColorType::COLOR_TYPE_BGRA_8888);
     return true;
 }
 } // namespace OHOS
