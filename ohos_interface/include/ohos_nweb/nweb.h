@@ -1994,12 +1994,12 @@ public:
      *
      * @param enable bool: Whether enable the error page.
      */
-    virtual void SetErrorPageEnabled(bool enable) = 0;
+    virtual void SetErrorPageEnabled(bool enable) {}
 
     /**
      * @brief Get whether default error page feature is enabled.
      */
-    virtual bool GetErrorPageEnabled() = 0;
+    virtual bool GetErrorPageEnabled() { return false; }
 };
 
 } // namespace OHOS::NWeb
