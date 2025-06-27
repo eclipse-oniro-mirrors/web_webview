@@ -1859,12 +1859,82 @@ public:
     virtual int64_t GetWebAccessibilityIdByHtmlElementId(const ArkWebString& htmlElementId) = 0;
 
     /**
-     * @brief Get the current scroll offset of the webpage.
-     * @param offset_x The current horizontal scroll offset of the webpage.
-     * @param offset_y The current vertical scroll offset of the webpage.
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
      */
     /*--ark web()--*/
-    virtual void GetPageOffset(float* offset_x, float* offset_y) = 0;
+    virtual int32_t GetBlanklessInfoWithKey(const ArkWebString& key, double* similarity, int32_t* loadingTime) = 0;
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    /*--ark web()--*/
+    virtual int32_t SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart) = 0;
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    /*--ark web()--*/
+    virtual void UpdateSingleHandleVisible(bool isVisible) = 0;
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    /*--ark web()--*/
+    virtual void SetTouchHandleExistState(bool touchHandleExist) = 0;
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    /*--ark web()--*/
+    virtual void AvoidVisibleViewportBottom(int32_t avoidHeight) = 0;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetVisibleViewportAvoidHeight() = 0;
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    /*--ark web()--*/
+    virtual bool TriggerBlanklessForUrl(const ArkWebString& url) = 0;
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    /*--ark web()--*/
+    virtual void SetVisibility(bool isVisible) = 0;
+
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    /*--ark web()--*/
+    virtual void SetViewportScaleState() = 0;
+
+    /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   /*--ark web()--*/
+   virtual void GetPageOffset(float* offset_x, float* offset_y) = 0;
 };
 
 } // namespace OHOS::ArkWeb

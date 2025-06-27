@@ -44,6 +44,7 @@
 #include "ohos_nweb/include/ark_web_load_committed_details.h"
 #include "ohos_nweb/include/ark_web_native_embed_data_info.h"
 #include "ohos_nweb/include/ark_web_native_embed_touch_event.h"
+#include "ohos_nweb/include/ark_web_native_embed_mouse_event.h"
 #include "ohos_nweb/include/ark_web_nweb.h"
 #include "ohos_nweb/include/ark_web_quick_menu_callback.h"
 #include "ohos_nweb/include/ark_web_quick_menu_params.h"
@@ -903,6 +904,13 @@ public:
         ArkWebRefPtr<ArkWebJsDialogResult> result) = 0;
 
     /**
+     * @Description: Called when an mouse native event occurs on native embed area.
+     * @Input mouse_event: Mouse events that contain information about the same layer.
+     */
+    /*--ark web()--*/
+    virtual void OnNativeEmbedMouseEvent(ArkWebRefPtr<ArkWebNativeEmbedMouseEvent> mouse_event) = 0;
+
+    /**
      * @brief called when the web page is active for window.open called by other web component.
      */
     /*--ark web()--*/
@@ -930,6 +938,61 @@ public:
      */
     /*--ark web()--*/
     virtual void OnLoadFinished(const ArkWebString& url) = 0;
+
+    /**
+     * @Description Called when an SSL error occurs during the loading of resources (for the main frame and subframes).
+     * @Input result: handler of result.
+     * @Input error: error code.
+     * @Input url: request url
+     * @Input originalUrl: original url.
+     * @Input referrer: referrer url.
+     * @Input isFatalError: whether the error is a fatal error.
+     * @Input isMainFrame: whether the request is made for the main frame.
+     * @Input certChainData: cert chain data.
+     * @Return: true/false
+     */
+    /*--ark web()--*/
+    virtual bool OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error,
+        const ArkWebString& url, const ArkWebString& originalUrl, const ArkWebString& referrer, bool isFatalError,
+        bool isMainFrame, const ArkWebStringVector& certChainData) = 0;
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    /*--ark web()--*/
+    virtual void ShowMagnifier() {}
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    /*--ark web()--*/
+    virtual void HideMagnifier() {}
+
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    /*--ark web()--*/
+    virtual void OnPageTitleV2(const ArkWebString& title, bool isRealTitle) = 0;
+
+    /**
+     * @brief Notify the web client to do something for blankless.
+     *
+     * @param pathToFrame The file used to insert frame. If empty, means remove frame.
+     */
+    /*--ark web()--*/
+    virtual void OnInsertBlanklessFrame(const ArkWebString& pathToFrame) = 0;
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    /*--ark web()--*/
+    virtual void OnRemoveBlanklessFrame(int delayTime) = 0;
 };
 
 } // namespace OHOS::ArkWeb

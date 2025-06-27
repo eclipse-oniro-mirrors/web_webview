@@ -488,6 +488,8 @@ void NWebConfigHelper::WriteConfigValueToSysPara(const std::string &configName, 
 {
     if (configName == "flowBufferConfig/maxFdNumber") {
         OHOS::system::SetParameter("web.flowbuffer.maxfd", value);
+    } else if (configName == "TCPConnectedSocketConfig/initialCongestionWindowSize") {
+        OHOS::system::SetParameter("web.TCPConnectedSocket.initialCongestionWindowSize", value);
     }
 }
 

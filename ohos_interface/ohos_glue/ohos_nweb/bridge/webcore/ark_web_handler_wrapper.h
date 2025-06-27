@@ -660,6 +660,8 @@ public:
     bool OnBeforeUnloadByJSV2(const std::string& url, const std::string& message, bool isReload,
         std::shared_ptr<OHOS::NWeb::NWebJSDialogResult> result) override;
 
+    void OnNativeEmbedMouseEvent(std::shared_ptr<OHOS::NWeb::NWebNativeEmbedMouseEvent> mouseEvent) override;
+
     /**
      * @brief called when the web page is active for window.open called by other web component.
      */
@@ -668,6 +670,43 @@ public:
     void OnLoadStarted(const std::string& url) override;
 
     void OnLoadFinished(const std::string& url) override;
+
+    bool OnAllSslErrorRequestByJSV2(std::shared_ptr<OHOS::NWeb::NWebJSAllSslErrorResult> result, ArkWebSslError error,
+        const std::string& url, const std::string& originalUrl, const std::string& referrer, bool isFatalError,
+        bool isMainFrame, const std::vector<std::string>& certChainData) override;
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    void ShowMagnifier() override;
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    void HideMagnifier() override;
+
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    void OnPageTitleV2(const std::string& title, bool isRealTitle) override;
+
+    /**
+     * @brief Notify the web client to do something for blankless.
+     *
+     * @param pathToFrame The file used to insert frame. If empty, means remove frame.
+     */
+    void OnInsertBlanklessFrame(const std::string& pathToFrame) override;
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    void OnRemoveBlanklessFrame(int delayTime) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

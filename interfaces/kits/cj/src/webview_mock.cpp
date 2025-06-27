@@ -64,6 +64,7 @@ FFI_EXPORT int FfiOHOSWebviewCtlStop = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlPostUrl = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlSetDownloadDelegate = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlStartDownload = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlAvoidVisibleViewportBottom = 0;
 
 // webCookieView
 FFI_EXPORT int FfiOHOSCookieMgrClearSessionCookieSync = 0;

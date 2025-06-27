@@ -45,12 +45,23 @@ struct FrameRateSetting {
 
 class WebApplicationStateChangeCallback : public AbilityRuntime::ApplicationStateChangeCallback {
 public:
-    WebApplicationStateChangeCallback() = default;
-    WebApplicationStateChangeCallback(const WebApplicationStateChangeCallback&) = default;
+    static std::shared_ptr<WebApplicationStateChangeCallback> GetInstance()
+    {
+        static std::shared_ptr<WebApplicationStateChangeCallback> instance(
+        new WebApplicationStateChangeCallback,
+        [](WebApplicationStateChangeCallback*) {}
+        );
+        return instance;
+    }
+    WebApplicationStateChangeCallback(const WebApplicationStateChangeCallback&) = delete;
+    WebApplicationStateChangeCallback& operator=(const WebApplicationStateChangeCallback&) = delete;
     ~WebApplicationStateChangeCallback() = default;
     void NotifyApplicationForeground() override;
     void NotifyApplicationBackground() override;
     std::shared_ptr<NWeb> nweb_ = nullptr;
+    bool isRegistered = false;
+private: 
+    WebApplicationStateChangeCallback() = default;
 };
 
 class OHOS_NWEB_EXPORT NWebHelper {
@@ -99,6 +110,10 @@ public:
     void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime);
     void ClearHostIP(const std::string& hostName);
 
+    void SetAppCustomUserAgent(const std::string& userAgent);
+
+    void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts);
+
     void WarmupServiceWorker(const std::string& url);
 
     void EnableWholeWebPageDrawing();
@@ -127,9 +142,7 @@ public:
     void SetWebDebuggingAccess(bool isEnableDebug);
     void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port);
 
-    uint32_t AddBlanklessLoadingUrls(const std::vector<std::string>& urls);
-
-    void RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls);
+    void SetBlanklessLoadingCacheCapacity(int32_t capacity);
 
     void ClearBlanklessLoadingCache(const std::vector<std::string>& urls);
 

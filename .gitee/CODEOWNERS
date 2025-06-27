@@ -7,3 +7,6 @@ ohos_interface/ohos_glue/ @zhangyanchuan @defeng2020 @fredranking @leezheng_hz @
 [config files]
 ohos_interface/BUILD.gn @zhangyanchuan
 ohos_interface/.gitignore @zhangyanchuan
+
+[OpenHarmony adapter]
+interfaces/kits/cj/ @arkwebbuild

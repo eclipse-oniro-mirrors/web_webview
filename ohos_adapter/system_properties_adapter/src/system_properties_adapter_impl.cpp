@@ -35,6 +35,7 @@ const std::string FACTORY_LEVEL_PC = "8";
 const std::string FACTORY_LEVEL_TABLET = "4";
 const std::string FACTORY_LEVEL_PHONE = "2";
 const std::string FACTORY_LEVEL_DEFAULT = "1";
+constexpr int DEFAULT_INITIAL_CONGESTION_WINDOW_SIZE = 10;
 
 const std::string PROP_RENDER_DUMP = "web.render.dump";
 const std::string PROP_DEBUG_TRACE = "web.debug.trace";
@@ -251,6 +252,12 @@ int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd()
     return OHOS::system::GetIntParameter("web.flowbuffer.maxfd", -1);
 }
 
+int32_t SystemPropertiesAdapterImpl::GetInitialCongestionWindowSize()
+{
+    return OHOS::system::GetIntParameter(
+        "web.TCPConnectedSocket.initialCongestionWindowSize", DEFAULT_INITIAL_CONGESTION_WINDOW_SIZE);
+}
+
 void SystemPropertiesAdapterImpl::AddAllSysPropWatchers()
 {
     for (auto &item : PROP_KEY_MAP) {
@@ -404,5 +411,10 @@ std::string SystemPropertiesAdapterImpl::GetScrollFriction()
 std::string SystemPropertiesAdapterImpl::GetBundleName()
 {
     return NWebConfigHelper::Instance().GetBundleName();
+}
+
+std::string SystemPropertiesAdapterImpl::GetStringParameter(const std::string& key, const std::string& defaultValue)
+{
+    return OHOS::system::GetParameter(key, defaultValue);
 }
 } // namespace OHOS::NWeb

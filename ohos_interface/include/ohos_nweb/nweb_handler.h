@@ -35,6 +35,7 @@
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
 #include "nweb_gesture_event_result.h"
+#include "nweb_mouse_event_result.h"
 #include "nweb_js_dialog_result.h"
 #include "nweb_js_http_auth_result.h"
 #include "nweb_js_ssl_error_result.h"
@@ -225,6 +226,7 @@ enum class NWebFocusSource {
     FOCUS_SOURCE_DEFAULT = -1,
     FOCUS_SOURCE_NAVIGATION = 0,
     FOCUS_SOURCE_SYSTEM,
+    FOCUS_SOURCE_GESTURE,
 };
 
 class NWebNativeEmbedInfo {
@@ -296,6 +298,62 @@ public:
 
     virtual std::shared_ptr<NWebGestureEventResult> GetResult() = 0;
 };
+
+enum class MouseType : size_t {
+    NONE = 0,
+    PRESS = 1,
+    RELEASE = 2,
+    MOVE = 3,
+    WINDOW_ENTER = 4,
+    WINDOW_LEAVE = 5,
+    HOVER,
+    HOVER_ENTER,
+    HOVER_MOVE,
+    HOVER_EXIT,
+    PULL_DOWN,
+    PULL_MOVE,
+    PULL_UP,
+    CANCEL
+};
+
+enum class MouseButton : size_t {
+    NONE_BUTTON = 0,
+    LEFT_BUTTON = 1,
+    RIGHT_BUTTON = 2,
+    MIDDLE_BUTTON = 4,
+    BACK_BUTTON = 8,
+    FORWARD_BUTTON = 16,
+    SIDE_BUTTON = 32,
+    EXTRA_BUTTON = 64,
+    TASK_BUTTON = 128,
+};
+
+class NWebNativeEmbedMouseEvent {
+public:
+    virtual ~NWebNativeEmbedMouseEvent() = default;
+
+    virtual float GetX() = 0;
+
+    virtual float GetY() = 0;
+
+    virtual bool IsHitNativeArea() = 0;
+
+    virtual MouseType GetType() = 0;
+
+    virtual MouseButton GetButton() = 0;
+
+    virtual float GetOffsetX() = 0;
+
+    virtual float GetOffsetY() = 0;
+
+    virtual float GetScreenX() = 0;
+
+    virtual float GetScreenY() = 0;
+
+    virtual std::string GetEmbedId() = 0;
+
+    virtual std::shared_ptr<NWebMouseEventResult> GetResult() = 0;
+};  
 
 class OHOS_NWEB_EXPORT NWebHandler {
 public:
@@ -1098,6 +1156,12 @@ public:
     }
 
     /**
+     * @Description: Called When an mouse native event occurs on native embed area.
+     * @Input mouse_event: Mouse events that contain information about the same layer.
+     */
+    virtual void OnNativeEmbedMouseEvent(std::shared_ptr<NWebNativeEmbedMouseEvent> event) {}
+
+    /**
      * @brief called when the web page is active for window.open called by other web component.
      */
     virtual void OnActivateContentByJS() {}
@@ -1122,6 +1186,46 @@ public:
      * @param url The url of the web site.
      */
     virtual void OnLoadFinished(const std::string& url) {}
+
+    virtual bool OnAllSslErrorRequestByJSV2(std::shared_ptr<NWebJSAllSslErrorResult> result, SslError error,
+        const std::string& url, const std::string& originalUrl, const std::string& referrer, bool isFatalError,
+        bool isMainFrame, const std::vector<std::string>& certChainData)
+    {
+        return false;
+    }
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    virtual void ShowMagnifier() {}
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    virtual void HideMagnifier() {}
+
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    virtual void OnPageTitleV2(const std::string& title, bool isRealTitle) {}
+
+    /**
+     * @brief Notify the web client to insert blankless frame.
+     *
+     * @param pathToFrame The file used to insert frame.
+     */
+    virtual void OnInsertBlanklessFrame(const std::string& pathToFrame) {}
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    virtual void OnRemoveBlanklessFrame(int delayTime) {}
 };
 
 } // namespace OHOS::NWeb

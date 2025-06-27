@@ -15,6 +15,10 @@
 
 #include "ohos_adapter/bridge/ark_system_properties_adapter_wrapper.h"
 
+namespace {
+constexpr int32_t DEFAULT_INITIAL_CONGESTION_WINDOW_SIZE = 10;
+}
+
 namespace OHOS::ArkWeb {
 using OHOS::NWeb::FrameRateSetting;
 ArkSystemPropertiesAdapterWrapper::ArkSystemPropertiesAdapterWrapper(ArkWebRefPtr<ArkSystemPropertiesAdapter> ref)
@@ -324,5 +328,29 @@ std::string ArkSystemPropertiesAdapterWrapper::GetBundleName()
     std::string result = ArkWebStringStructToClass(str);
     ArkWebStringStructRelease(str);
     return result;
+}
+
+std::string ArkSystemPropertiesAdapterWrapper::GetStringParameter(const std::string& key,
+                                                                  const std::string& defaultValue)
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ArkWebStringClassToStruct(key);
+    ArkWebString value = ArkWebStringClassToStruct(defaultValue);
+    ArkWebString res = ctocpp_->GetStringParameter(str, value);
+    std::string result = ArkWebStringStructToClass(res);
+    ArkWebStringStructRelease(str);
+    ArkWebStringStructRelease(value);
+    ArkWebStringStructRelease(res);
+    return result;
+}
+
+int32_t ArkSystemPropertiesAdapterWrapper::GetInitialCongestionWindowSize()
+{
+    if (!ctocpp_) {
+        return DEFAULT_INITIAL_CONGESTION_WINDOW_SIZE;
+    }
+    return ctocpp_->GetInitialCongestionWindowSize();
 }
 } // namespace OHOS::ArkWeb

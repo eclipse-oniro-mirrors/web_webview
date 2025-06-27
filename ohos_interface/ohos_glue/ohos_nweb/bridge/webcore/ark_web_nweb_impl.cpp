@@ -1441,6 +1441,51 @@ int64_t ArkWebNWebImpl::GetWebAccessibilityIdByHtmlElementId(const ArkWebString&
     return nweb_nweb_->GetWebAccessibilityIdByHtmlElementId(ArkWebStringStructToClass(htmlElementId));
 }
 
+int32_t ArkWebNWebImpl::GetBlanklessInfoWithKey(const ArkWebString& key, double* similarity, int32_t* loadingTime)
+{
+    return nweb_nweb_->GetBlanklessInfoWithKey(ArkWebStringStructToClass(key), similarity, loadingTime);
+}
+
+int32_t ArkWebNWebImpl::SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart)
+{
+    return nweb_nweb_->SetBlanklessLoadingWithKey(ArkWebStringStructToClass(key), isStart);
+}
+
+void ArkWebNWebImpl::UpdateSingleHandleVisible(bool isVisible)
+{
+    nweb_nweb_->UpdateSingleHandleVisible(isVisible);
+}
+
+void ArkWebNWebImpl::SetTouchHandleExistState(bool touchHandleExist)
+{
+    nweb_nweb_->SetTouchHandleExistState(touchHandleExist);
+}
+
+void ArkWebNWebImpl::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    nweb_nweb_->AvoidVisibleViewportBottom(avoidHeight);
+}
+
+int32_t ArkWebNWebImpl::GetVisibleViewportAvoidHeight()
+{
+    return nweb_nweb_->GetVisibleViewportAvoidHeight();
+}
+
+bool ArkWebNWebImpl::TriggerBlanklessForUrl(const ArkWebString& url)
+{
+    return nweb_nweb_->TriggerBlanklessForUrl(ArkWebStringStructToClass(url));
+}
+
+void ArkWebNWebImpl::SetVisibility(bool isVisible)
+{
+    nweb_nweb_->SetVisibility(isVisible);
+}
+
+void ArkWebNWebImpl::SetViewportScaleState()
+{
+    nweb_nweb_->SetViewportScaleState();
+}
+
 void ArkWebNWebImpl::GetPageOffset(float* offset_x, float* offset_y)
 {
     nweb_nweb_->GetPageOffset(offset_x, offset_y);

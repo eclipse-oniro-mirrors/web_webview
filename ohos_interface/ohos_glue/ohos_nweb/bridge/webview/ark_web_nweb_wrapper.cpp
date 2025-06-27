@@ -1695,6 +1695,64 @@ int64_t ArkWebNWebWrapper::GetWebAccessibilityIdByHtmlElementId(const std::strin
     return ark_web_accessibility_Id;
 }
 
+int32_t ArkWebNWebWrapper::GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    int32_t errCode = ark_web_nweb_->GetBlanklessInfoWithKey(stKey, similarity, loadingTime);
+
+    ArkWebStringStructRelease(stKey);
+    return errCode;
+}
+
+int32_t ArkWebNWebWrapper::SetBlanklessLoadingWithKey(const std::string& key, bool isStart)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    int32_t errCode = ark_web_nweb_->SetBlanklessLoadingWithKey(stKey, isStart);
+
+    ArkWebStringStructRelease(stKey);
+    return errCode;
+}
+
+void ArkWebNWebWrapper::UpdateSingleHandleVisible(bool isVisible)
+{
+    ark_web_nweb_->UpdateSingleHandleVisible(isVisible);
+}
+
+void ArkWebNWebWrapper::SetTouchHandleExistState(bool touchHandleExist)
+{
+    ark_web_nweb_->SetTouchHandleExistState(touchHandleExist);
+}
+
+void ArkWebNWebWrapper::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    ark_web_nweb_->AvoidVisibleViewportBottom(avoidHeight);
+}
+
+int32_t ArkWebNWebWrapper::GetVisibleViewportAvoidHeight()
+{
+    return ark_web_nweb_->GetVisibleViewportAvoidHeight();
+}
+
+bool ArkWebNWebWrapper::TriggerBlanklessForUrl(const std::string& url)
+{
+    ArkWebString url_ = ArkWebStringClassToStruct(url);
+    bool ret = ark_web_nweb_->TriggerBlanklessForUrl(url_);
+    ArkWebStringStructRelease(url_);
+    return ret;
+}
+
+void ArkWebNWebWrapper::SetVisibility(bool isVisible)
+{
+    ark_web_nweb_->SetVisibility(isVisible);
+}
+
+void ArkWebNWebWrapper::SetViewportScaleState()
+{
+    ark_web_nweb_->SetViewportScaleState();
+}
+
 void ArkWebNWebWrapper::GetPageOffset(float* offset_x, float* offset_y)
 {
     ark_web_nweb_->GetPageOffset(offset_x, offset_y);

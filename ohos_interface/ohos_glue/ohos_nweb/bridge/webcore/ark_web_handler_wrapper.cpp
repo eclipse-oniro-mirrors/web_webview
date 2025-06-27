@@ -42,6 +42,7 @@
 #include "ohos_nweb/bridge/ark_web_load_committed_details_impl.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_data_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_touch_event_impl.h"
+#include "ohos_nweb/bridge/ark_web_native_embed_mouse_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_nweb_impl.h"
 #include "ohos_nweb/bridge/ark_web_quick_menu_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_quick_menu_params_impl.h"
@@ -1131,6 +1132,16 @@ bool ArkWebHandlerWrapper::OnBeforeUnloadByJSV2(const std::string& url, const st
     return flag;
 }
 
+void ArkWebHandlerWrapper::OnNativeEmbedMouseEvent(std::shared_ptr<OHOS::NWeb::NWebNativeEmbedMouseEvent> mouseEvent)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(mouseEvent)) {
+        ark_web_handler_->OnNativeEmbedMouseEvent(nullptr);
+        return;
+    }
+
+    ark_web_handler_->OnNativeEmbedMouseEvent(new ArkWebNativeEmbedMouseEventImpl(mouseEvent));
+}
+
 void ArkWebHandlerWrapper::OnActivateContentByJS()
 {
     ark_web_handler_->OnActivateContentByJS();
@@ -1150,5 +1161,57 @@ void ArkWebHandlerWrapper::OnLoadFinished(const std::string& url) {
     ark_web_handler_->OnLoadFinished(stUrl);
 
     ArkWebStringStructRelease(stUrl);
+}
+
+bool ArkWebHandlerWrapper::OnAllSslErrorRequestByJSV2(std::shared_ptr<OHOS::NWeb::NWebJSAllSslErrorResult> result,
+    ArkWebSslError error, const std::string& url, const std::string& originalUrl, const std::string& referrer,
+    bool isFatalError, bool isMainFrame, const std::vector<std::string>& certChainData)
+{
+    ArkWebStringVector stCertChainData = ArkWebStringVectorClassToStruct(certChainData);
+
+    bool flag = false;
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        flag = ark_web_handler_->OnAllSslErrorRequestByJSV2(nullptr, static_cast<int>(error),
+            ArkWebStringClassToStruct(url), ArkWebStringClassToStruct(originalUrl), ArkWebStringClassToStruct(referrer),
+            isFatalError, isMainFrame, stCertChainData);
+    } else {
+        flag = ark_web_handler_->OnAllSslErrorRequestByJSV2(new ArkWebJsAllSslErrorResultImpl(result),
+        static_cast<int>(error), ArkWebStringClassToStruct(url), ArkWebStringClassToStruct(originalUrl),
+        ArkWebStringClassToStruct(referrer), isFatalError, isMainFrame, stCertChainData);
+    }
+
+    ArkWebStringVectorStructRelease(stCertChainData);
+    return flag; 
+}
+
+void ArkWebHandlerWrapper::ShowMagnifier()
+{
+    ark_web_handler_->ShowMagnifier();
+}
+
+void ArkWebHandlerWrapper::HideMagnifier()
+{
+    ark_web_handler_->HideMagnifier();
+}
+
+void ArkWebHandlerWrapper::OnPageTitleV2(const std::string& title, bool isRealTitle)
+{
+    ArkWebString stTitle = ArkWebStringClassToStruct(title);
+
+    ark_web_handler_->OnPageTitleV2(stTitle, isRealTitle);
+
+    ArkWebStringStructRelease(stTitle);
+}
+
+void ArkWebHandlerWrapper::OnInsertBlanklessFrame(const std::string& pathToFrame)
+{
+    ArkWebString pathToFrame_ = ArkWebStringClassToStruct(pathToFrame);
+    ark_web_handler_->OnInsertBlanklessFrame(pathToFrame_);
+    ArkWebStringStructRelease(pathToFrame_);
+}
+
+void ArkWebHandlerWrapper::OnRemoveBlanklessFrame(int delayTime)
+{
+    ark_web_handler_->OnRemoveBlanklessFrame(delayTime);
 }
 } // namespace OHOS::ArkWeb

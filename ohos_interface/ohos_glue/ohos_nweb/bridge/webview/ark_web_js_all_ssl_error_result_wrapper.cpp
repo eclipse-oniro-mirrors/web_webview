@@ -16,6 +16,7 @@
 #include "ohos_nweb/bridge/ark_web_js_all_ssl_error_result_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "base/include/ark_web_errno.h"
 
 namespace OHOS::ArkWeb {
 
@@ -37,6 +38,9 @@ void ArkWebJsAllSslErrorResultWrapper::HandleConfirm()
 void ArkWebJsAllSslErrorResultWrapper::HandleCancelV2(bool abortLoading)
 {
     ark_web_js_all_ssl_error_result_->HandleCancelV2(abortLoading);
+    if (ArkWebGetErrno() != RESULT_OK) {
+        ark_web_js_all_ssl_error_result_->HandleCancel();
+    }
 }
 
 } // namespace OHOS::ArkWeb

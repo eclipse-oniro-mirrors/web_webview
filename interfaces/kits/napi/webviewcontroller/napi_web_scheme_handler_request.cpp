@@ -1082,8 +1082,8 @@ napi_value NapiWebResourceHandler::JS_DidFinish(napi_env env, napi_callback_info
 
 napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callback_info info)
 {
-    size_t argc = 1;
-    napi_value argv[1] = {0};
+    size_t argc = 2;
+    napi_value argv[2] = {0};
     napi_value thisVar = nullptr;
     void *data = nullptr;
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
@@ -1104,8 +1104,13 @@ napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callba
         return nullptr;
     }
     
+    bool completeIfNoResponse = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[1], completeIfNoResponse)) {
+        WVLOG_E("JS_DidFailWithError unwrap error completeIfNoResponse failed");
+    }
+    
     int32_t ret = resourceHandler->DidFailWithError(
-        static_cast<ArkWeb_NetError>(errorCode));
+        static_cast<ArkWeb_NetError>(errorCode), completeIfNoResponse);
     if (ret != 0) {
         BusinessError::ThrowErrorByErrcode(env, RESOURCE_HANDLER_INVALID);
         WVLOG_E("JS_DidFailWithError ret=%{public}d", ret);

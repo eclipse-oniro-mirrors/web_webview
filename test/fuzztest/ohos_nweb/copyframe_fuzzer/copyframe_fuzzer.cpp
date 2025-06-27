@@ -17,6 +17,7 @@
 
 #include <cstring>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 #include <ui/rs_surface_node.h>
 
 #include "nweb.h"
@@ -28,28 +29,48 @@
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+const uint32_t DEFAULT_WIDTH = 2560;
+const uint32_t DEFAULT_HEIGHT = 1396;
+constexpr int MAX_SET_NUMBER = 1000;
+constexpr int BITS_PER_PIXEL = 4;
 
 bool CopyFrameFuzzTest(const uint8_t* data, size_t size)
 {
-    constexpr int BITS_PER_PIXEL = 4;
-    if ((data == nullptr) || (size < sizeof(uint32_t))) {
+    if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    uint32_t width;
-    uint32_t height;
-    if (memcpy_s(&width, sizeof(uint32_t), data, sizeof(uint32_t)) != 0) {
-        return false;
-    }
-    if (memcpy_s(&height, sizeof(uint32_t), data, sizeof(uint32_t)) != 0) {
-        return false;
-    }
+    FuzzedDataProvider dataProvider(data, size);
+    uint32_t width = dataProvider.ConsumeIntegralInRange<uint32_t>(1, MAX_SET_NUMBER);
+    uint32_t height = dataProvider.ConsumeIntegralInRange<uint32_t>(1, MAX_SET_NUMBER);
     sptr<SurfaceBuffer> surfaceBuffer = nullptr;
     auto surfaceAdapter = NWebSurfaceAdapter::Instance();
-    if (width == 0 || height == 0) {
+    char* src = new char[DEFAULT_WIDTH * DEFAULT_HEIGHT * BITS_PER_PIXEL] { 0 };
+    if (src == nullptr) {
         return false;
     }
-    char* src = new char[BITS_PER_PIXEL] { 0 };
-    if (src == nullptr) {
+    surfaceAdapter.CopyFrame(surfaceBuffer, src, width, height);
+    int32_t releaseFence = -1;
+    BufferRequestConfig requestConfig = {
+        .width = DEFAULT_WIDTH,
+        .height = DEFAULT_HEIGHT,
+        .strideAlignment = sizeof(void *),
+        .format = GRAPHIC_PIXEL_FMT_RGBA_8888,
+        .usage = BUFFER_USAGE_CPU_READ | BUFFER_USAGE_CPU_WRITE | BUFFER_USAGE_MEM_DMA,
+        .timeout = 0,
+    };
+    sptr<Surface> fuzzSurface = nullptr;
+    Rosen::RSSurfaceNodeConfig config;
+    config.SurfaceNodeName = "webTestSurfaceName";
+    auto surfaceNode = Rosen::RSSurfaceNode::Create(config, false);
+    if (surfaceNode == nullptr) {
+        return false;
+    }
+    fuzzSurface = surfaceNode->GetSurface();
+    if (fuzzSurface == nullptr) {
+        return false;
+    }
+    fuzzSurface->RequestBuffer(surfaceBuffer, releaseFence, requestConfig);
+    if (surfaceBuffer == nullptr) {
         return false;
     }
     surfaceAdapter.CopyFrame(surfaceBuffer, src, width, height);

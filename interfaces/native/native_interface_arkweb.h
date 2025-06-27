@@ -69,6 +69,27 @@ typedef void (*NativeArkWeb_OnValidCallback)(const char*);
 typedef void (*NativeArkWeb_OnDestroyCallback)(const char*);
 
 /**
+ * @brief Defines the callback of save cookie.
+ *
+ * @since 20
+ */
+typedef void (*OH_ArkWeb_OnCookieSaveCallback)();
+
+/**
+ * @brief Defines the blankless info.
+ *
+ * @since 20
+ */
+ typedef struct {
+    /** The errCode of the blankless. */
+    ArkWeb_BlanklessErrorCode errCode;
+    /** The estimated similarity of the history snapshots. */
+    double similarity;
+    /** The loadingTime of the history loading. */
+    int32_t loadingTime;
+} ArkWeb_BlanklessInfo;
+
+/**
  * @brief Loads a piece of code and execute JS code in the context of the currently displayed page.
  *
  * @param webTag The name of the web component.
@@ -197,6 +218,76 @@ ArkWeb_ErrorCode OH_NativeArkWeb_LoadData(const char* webTag,
  */
 void OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy(const char* webTag,
     const ArkWeb_ProxyObjectWithResult* proxyObject, const char* permission);
+
+/**
+ * @brief get the white screen optimization info when the current page is loaded.
+ *
+ * @param webTag The name of the web component.
+ * @param key A key string of the loading page, should not be NULL.
+ * @return Blankless info.
+ *
+ * @since 20
+ */
+ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag, const char* key);
+
+/**
+ * @brief set the white screen optimization solution when the current page is loaded.
+ *
+ * @param webTag The name of the web component.
+ * @param key A key string of the loading page, should not be NULL.
+ * @param isStarted If enabled blankless.
+ * @return Blankless result code.
+ *
+ * @since 20
+ */
+ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char* webTag,
+                                                                     const char* key,
+                                                                     bool isStarted);
+
+/**
+ * @brief The apps can use this interface to clear the page cache. The "Clear Page"
+ * here is within the page range set in the API getBlanklessInfoWithKey.
+ *
+ * @param key A array of key string.
+ * @param size The number of elements in the key array.
+ *
+ * @since 20
+ */
+void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size);
+
+/**
+ * @brief Set the capacity of the blankless cache.
+ *
+ * @param capacity The blankless capacity the apps want to set.
+ * @return The real blankless capacity, 0-100.
+ *
+ * @since 20
+ */
+uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity);
+
+/**
+ * @brief Ensure that all cookies currently accessible via the CookieManager API have been persisted to disk.
+ *        If you want to use this interface in a non-UI thread, you need to initialize the CookieManager interface
+ *        using OH_ArkWeb_GetNativeAPI first.
+ * @return Save cookie result code.
+ *         {@link ARKWEB_SUCCESS} save cookie success.
+ *         {@link ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED} It is not allowed to call on a non-UI thread without
+ *                                                       initializing the CookieManager interface. please
+ *   													 initialize the CookieManager interface using
+ *  													 OH_ArkWeb_GetNativeAPI first.
+ * @since 20
+ */
+ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync();
+
+/**
+ * @brief Ensure that all cookies currently accessible via the CookieManager API have been persisted to disk.
+ *        Without initializing the CookieManager interface, this call will automatically be executed on the UI thread.
+ *        If you want to use this interface in a non-UI thread, you need to initialize the CookieManager interface
+ *        using OH_ArkWeb_GetNativeAPI first.
+ * @param callback Callback execute when save cookie done.
+ * @since 20
+ */
+void OH_ArkWebCookieManager_SaveCookieAsync(OH_ArkWeb_OnCookieSaveCallback callback);
 
 #ifdef __cplusplus
 };

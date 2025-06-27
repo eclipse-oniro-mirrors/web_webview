@@ -816,16 +816,18 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
         return nullptr;
     }
 
-    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
-    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
-    if (ctx) {
-        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
-    } else {
-        WVLOG_E("failed to get application context");
-    }
+    webApplicationStateCallback_ = WebApplicationStateChangeCallback::GetInstance();
     std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
-    if (webApplicationStateCallback_ && (!webApplicationStateCallback_->nweb_)) {
+    if (webApplicationStateCallback_) {
         webApplicationStateCallback_->nweb_ = nweb;
+        WVLOG_I("webApplicationStateCallback_ is registered.");
+    }
+    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
+    if (ctx && webApplicationStateCallback_ && !webApplicationStateCallback_->isRegistered) {
+        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
+        webApplicationStateCallback_->isRegistered = true;
+    } else {
+        WVLOG_E("failed to get application context or webApplicationStateCallback_ has been isRegistered"); 
     }
     WVLOG_I("NWebHelper::Nweb is created.");
     return nweb;
@@ -1082,6 +1084,26 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
     nwebEngine_->ClearHostIP(hostName);
 }
 
+void NWebHelper::SetAppCustomUserAgent(const std::string& userAgent)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
+
+    nwebEngine_->SetAppCustomUserAgent(userAgent);
+}
+
+void NWebHelper::SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
+
+    nwebEngine_->SetUserAgentForHosts(userAgent, hosts);
+}
+
 void NWebHelper::WarmupServiceWorker(const std::string& url)
 {
     if (nwebEngine_ == nullptr) {
@@ -1136,24 +1158,14 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     nwebEngine_->RemoveAllCache(includeDiskFiles);
 }
 
-uint32_t NWebHelper::AddBlanklessLoadingUrls(const std::vector<std::string>& urls)
-{
-    if (nwebEngine_ == nullptr) {
-        WVLOG_E("web engine is nullptr");
-        return 0;
-    }
-
-    return nwebEngine_->AddBlanklessLoadingUrls(urls);
-}
-
-void NWebHelper::RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls)
+void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
 {
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return;
     }
 
-    nwebEngine_->RemoveBlanklessLoadingUrls(urls);
+    nwebEngine_->SetBlanklessLoadingCacheCapacity(capacity);
 }
 
 void NWebHelper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)

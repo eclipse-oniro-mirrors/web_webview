@@ -16,7 +16,8 @@
 #include <vector>
 
 #include "cert_mgr_adapter_impl.h"
-#include "net_conn_client.h"
+#include "net_manager_constants.h"
+#include "network_security_config.h"
 #include "nweb_log.h"
 #include "securec.h"
 
@@ -434,7 +435,7 @@ int32_t CertManagerAdapterImpl::Sign(const uint8_t* uri, const uint8_t* certData
 bool CertManagerAdapterImpl::GetTrustAnchorsForHostName(
     const std::string& hostname, std::vector<std::string>& certs)
 {
-    int32_t ret = OHOS::NetManagerStandard::NetConnClient::GetInstance().
+    int32_t ret = OHOS::NetManagerStandard::NetworkSecurityConfig::GetInstance().
         GetTrustAnchorsForHostName(hostname, certs);
     if (ret != OHOS::NetManagerStandard::NETMANAGER_SUCCESS) {
         WVLOG_E("GetTrustAnchorsForHostName for hostname:%{public}s failed",
@@ -448,7 +449,7 @@ bool CertManagerAdapterImpl::GetPinSetForHostName(
     const std::string& hostname, std::vector<std::string>& pins)
 {
     std::string pinsString;
-    int32_t ret = OHOS::NetManagerStandard::NetConnClient::GetInstance().
+    int32_t ret = OHOS::NetManagerStandard::NetworkSecurityConfig::GetInstance().
         GetPinSetForHostName(hostname, pinsString);
     if (ret != OHOS::NetManagerStandard::NETMANAGER_SUCCESS) {
         WVLOG_E("GetPinSetForHostName for hostname:%{public}s failed, ret:%{public}d",
