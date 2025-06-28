@@ -300,4 +300,14 @@ void ArkWebEngineImpl::SetBlanklessLoadingCacheCapacity(int32_t capacity)
     nweb_engine_->SetBlanklessLoadingCacheCapacity(capacity);
 }
 
+void ArkWebEngineImpl::EnablePrivateNetworkAccess(bool enable)
+{
+    nweb_engine_->EnablePrivateNetworkAccess(enable);
+}
+
+bool ArkWebEngineImpl::IsPrivateNetworkAccessEnabled()
+{
+    return nweb_engine_->IsPrivateNetworkAccessEnabled();
+}
+
 } // namespace OHOS::ArkWeb

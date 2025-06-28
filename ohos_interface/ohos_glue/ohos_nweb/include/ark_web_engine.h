@@ -185,6 +185,12 @@ public:
 
     /*--ark web()--*/
     virtual void SetBlanklessLoadingCacheCapacity(int32_t capacity) = 0;
+
+    /*--ark web()--*/
+    virtual void EnablePrivateNetworkAccess(bool enable) = 0;
+
+    /*--ark web()--*/
+    virtual bool IsPrivateNetworkAccessEnabled() = 0;
 };
 
 } // namespace OHOS::ArkWeb

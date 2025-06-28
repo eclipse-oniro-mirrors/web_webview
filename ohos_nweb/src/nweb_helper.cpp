@@ -1344,4 +1344,22 @@ std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb
     }
     return nwebEngine_->CheckBlankOptEnable(url, nweb_id);
 }
+
+void NWebHelper::EnablePrivateNetworkAccess(bool enable)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return;
+    }
+    nwebEngine_->EnablePrivateNetworkAccess(enable);
+}
+
+bool NWebHelper::IsPrivateNetworkAccessEnabled()
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return false;
+    }
+    return nwebEngine_->IsPrivateNetworkAccessEnabled();
+}
 } // namespace OHOS::NWeb
