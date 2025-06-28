@@ -17,6 +17,8 @@
 
 #include "pasteboard_client_adapter_impl.h"
 
+#include <fuzzer/FuzzedDataProvider.h>
+
 using namespace OHOS::NWeb;
 
 namespace OHOS {
@@ -25,7 +27,8 @@ bool AddHtmlRecordFuzzTest(const uint8_t* data, size_t size)
     if ((data == nullptr) || (size == 0)) {
         return false;
     }
-    std::string html((const char*)data, size);
+    FuzzedDataProvider dataProvider(data, size);
+    std::string html = dataProvider.ConsumeRandomLengthString(size);
     std::shared_ptr<PasteDataAdapterImpl> dataAdapterImpl = std::make_shared<PasteDataAdapterImpl>();
     dataAdapterImpl->AddHtmlRecord(html);
     dataAdapterImpl->AddTextRecord(html);
@@ -33,6 +36,7 @@ bool AddHtmlRecordFuzzTest(const uint8_t* data, size_t size)
     dataAdapterImpl->GetPrimaryHtml();
     dataAdapterImpl->GetPrimaryText();
     dataAdapterImpl->GetPrimaryMimeType();
+    dataAdapterImpl->AllRecords();
     return true;
 }
 } // namespace OHOS

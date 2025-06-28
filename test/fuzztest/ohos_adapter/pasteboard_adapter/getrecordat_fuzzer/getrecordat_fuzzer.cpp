@@ -17,10 +17,19 @@
 
 #include <securec.h>
 
+#include <fuzzer/FuzzedDataProvider.h>
+
+#define private public
 #include "pasteboard_client_adapter_impl.h"
+#undef private
+
 using namespace OHOS::NWeb;
 using namespace OHOS::MiscServices;
 namespace OHOS {
+namespace {
+    constexpr uint8_t TEST_STRING_LENGTH = 8;
+}
+
 bool GetRecordAtFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size < sizeof(size_t))) {
@@ -37,6 +46,30 @@ bool GetRecordAtFuzzTest(const uint8_t* data, size_t size)
     dataAdapterImpl->AllRecords();
     return true;
 }
+
+bool TestNullDataAtFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size < sizeof(size_t))) {
+        return false;
+    }
+    std::shared_ptr<PasteData> dataName = std::make_shared<PasteData>();
+    std::shared_ptr<PasteDataAdapterImpl> dataAdapterImpl = std::make_shared<PasteDataAdapterImpl>(dataName);
+    dataAdapterImpl->data_ = nullptr;
+
+    dataAdapterImpl->GetRecordAt(0);
+    dataAdapterImpl->GetRecordCount();
+    dataAdapterImpl->AllRecords();
+    dataAdapterImpl->GetMimeTypes();
+    dataAdapterImpl->GetPrimaryHtml();
+    dataAdapterImpl->GetPrimaryText();
+    dataAdapterImpl->GetPrimaryMimeType();
+
+    FuzzedDataProvider dataProvider(data, size);
+    std::string stringParam = dataProvider.ConsumeRandomLengthString(TEST_STRING_LENGTH);
+    dataAdapterImpl->AddTextRecord(stringParam);
+    dataAdapterImpl->AddHtmlRecord(stringParam);
+    return true;
+}
 } // namespace OHOS
 
 /* Fuzzer entry point */
@@ -44,5 +77,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::GetRecordAtFuzzTest(data, size);
+    OHOS::TestNullDataAtFuzzTest(data, size);
     return 0;
 }

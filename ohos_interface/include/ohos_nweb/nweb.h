@@ -1990,6 +1990,13 @@ public:
     virtual void SetViewportScaleState() {}
 
     /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   virtual void GetPageOffset(float* offset_x, float* offset_y) {}
+
+    /**
      * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
      *
      * @param enable bool: Whether enable the error page.

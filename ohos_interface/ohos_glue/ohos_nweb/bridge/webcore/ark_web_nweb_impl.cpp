@@ -1486,6 +1486,11 @@ void ArkWebNWebImpl::SetViewportScaleState()
     nweb_nweb_->SetViewportScaleState();
 }
 
+void ArkWebNWebImpl::GetPageOffset(float* offset_x, float* offset_y)
+{
+    nweb_nweb_->GetPageOffset(offset_x, offset_y);
+}
+
 void ArkWebNWebImpl::SetErrorPageEnabled(bool enable)
 {
     nweb_nweb_->SetErrorPageEnabled(enable);
