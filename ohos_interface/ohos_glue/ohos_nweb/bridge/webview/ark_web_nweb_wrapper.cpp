@@ -1752,4 +1752,9 @@ void ArkWebNWebWrapper::SetViewportScaleState()
 {
     ark_web_nweb_->SetViewportScaleState();
 }
+
+void ArkWebNWebWrapper::GetPageOffset(float* offset_x, float* offset_y)
+{
+    ark_web_nweb_->GetPageOffset(offset_x, offset_y);
+}
 } // namespace OHOS::ArkWeb

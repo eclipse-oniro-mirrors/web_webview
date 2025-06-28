@@ -383,6 +383,8 @@ private:
 
     static napi_value GetScrollOffset(napi_env env, napi_callback_info info);
 
+    static napi_value GetPageOffset(napi_env env, napi_callback_info info);
+
     static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
 
     static napi_value GetBlanklessInfoWithKey(napi_env env, napi_callback_info info);

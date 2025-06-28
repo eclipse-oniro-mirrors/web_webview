@@ -1927,6 +1927,14 @@ public:
      */
     /*--ark web()--*/
     virtual void SetViewportScaleState() = 0;
+
+    /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   /*--ark web()--*/
+   virtual void GetPageOffset(float* offset_x, float* offset_y) = 0;
 };
 
 } // namespace OHOS::ArkWeb
