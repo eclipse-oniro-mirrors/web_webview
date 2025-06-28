@@ -66,6 +66,7 @@ private:
     int32_t ltpoStrategy_ {0};
     std::string bundleName_;
     std::optional<bool> blanklessEnabled_;
+    mutable std::mutex lock_;
 
     // add for web play ground
     const std::string PLAYGROUND = "enableArkWebPlayGround";
