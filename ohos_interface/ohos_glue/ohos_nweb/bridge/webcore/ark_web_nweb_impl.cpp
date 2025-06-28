@@ -1490,4 +1490,14 @@ void ArkWebNWebImpl::GetPageOffset(float* offset_x, float* offset_y)
 {
     nweb_nweb_->GetPageOffset(offset_x, offset_y);
 }
+
+void ArkWebNWebImpl::SetErrorPageEnabled(bool enable)
+{
+    nweb_nweb_->SetErrorPageEnabled(enable);
+}
+
+bool ArkWebNWebImpl::GetErrorPageEnabled()
+{
+    return nweb_nweb_->GetErrorPageEnabled();
+}
 } // namespace OHOS::ArkWeb

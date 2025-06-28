@@ -707,6 +707,16 @@ public:
      * @param delayTime The delayTime for web client to remove blankless frame.
      */
     void OnRemoveBlanklessFrame(int delayTime) override;
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
+    std::string OnHandleOverrideErrorPage(
+        std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request,
+        std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> error) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

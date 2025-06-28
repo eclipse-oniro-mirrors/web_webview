@@ -1995,6 +1995,18 @@ public:
     * @param offset_y The current vertical scroll offset of the webpage.
     */
    virtual void GetPageOffset(float* offset_x, float* offset_y) {}
+
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     */
+    virtual void SetErrorPageEnabled(bool enable) {}
+
+    /**
+     * @brief Get whether default error page feature is enabled.
+     */
+    virtual bool GetErrorPageEnabled() { return false; }
 };
 
 } // namespace OHOS::NWeb

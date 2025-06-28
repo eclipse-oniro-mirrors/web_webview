@@ -1739,6 +1739,18 @@ public:
    /*--ark web()--*/
    void GetPageOffset(float* offset_x, float* offset_y) override;
 
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     */
+    void SetErrorPageEnabled(bool enable) override;
+
+    /**
+     * @brief Get whether default error page feature is enabled.
+     */
+    bool GetErrorPageEnabled() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

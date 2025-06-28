@@ -2508,5 +2508,24 @@ ErrCode WebviewController::AvoidVisibleViewportBottom(int32_t avoidHeight)
     nweb_ptr->AvoidVisibleViewportBottom(avoidHeight);
     return NWebError::NO_ERROR;
 }
+
+ErrCode WebviewController::SetErrorPageEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetErrorPageEnabled(enable);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetErrorPageEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetErrorPageEnabled();
+}
 } // namespace NWeb
 } // namespace OHOS
