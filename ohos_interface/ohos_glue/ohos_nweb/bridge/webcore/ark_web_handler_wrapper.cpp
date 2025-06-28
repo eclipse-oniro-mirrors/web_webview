@@ -1214,4 +1214,24 @@ void ArkWebHandlerWrapper::OnRemoveBlanklessFrame(int delayTime)
 {
     ark_web_handler_->OnRemoveBlanklessFrame(delayTime);
 }
+
+std::string ArkWebHandlerWrapper::OnHandleOverrideErrorPage(
+    std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request,
+    std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> error)
+{
+    ArkWebRefPtr<ArkWebUrlResourceRequest> ark_web_request = nullptr;
+    if (!CHECK_SHARED_PTR_IS_NULL(request)) {
+        ark_web_request = new ArkWebUrlResourceRequestImpl(request);
+    }
+
+    ArkWebRefPtr<ArkWebUrlResourceError> ark_web_error = nullptr;
+    if (!CHECK_SHARED_PTR_IS_NULL(error)) {
+        ark_web_error = new ArkWebUrlResourceErrorImpl(error);
+    }
+
+    ArkWebString result = ark_web_handler_->OnHandleOverrideErrorPage(ark_web_request, ark_web_error);
+    std::string html = ArkWebStringStructToClass(result);
+    ArkWebStringStructRelease(result);
+    return html;
+}
 } // namespace OHOS::ArkWeb

@@ -321,6 +321,10 @@ public:
 
     int32_t AvoidVisibleViewportBottom(int32_t avoidHeight);
 
+    int32_t SetErrorPageEnabled(bool enable);
+
+    bool GetErrorPageEnabled();
+
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;

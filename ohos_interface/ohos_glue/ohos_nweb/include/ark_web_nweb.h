@@ -1935,6 +1935,20 @@ public:
     */
    /*--ark web()--*/
    virtual void GetPageOffset(float* offset_x, float* offset_y) = 0;
+
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     */
+    /*--ark web()--*/
+    virtual void SetErrorPageEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get whether default error page feature is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool GetErrorPageEnabled() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -1226,6 +1226,19 @@ public:
      * @param delayTime The delayTime for web client to remove blankless frame.
      */
     virtual void OnRemoveBlanklessFrame(int delayTime) {}
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
+    virtual std::string OnHandleOverrideErrorPage(
+        std::shared_ptr<NWebUrlResourceRequest> request,
+        std::shared_ptr<NWebUrlResourceError> error)
+    {
+        return "";
+    }
 };
 
 } // namespace OHOS::NWeb

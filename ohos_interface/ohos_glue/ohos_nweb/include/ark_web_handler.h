@@ -993,6 +993,17 @@ public:
      */
     /*--ark web()--*/
     virtual void OnRemoveBlanklessFrame(int delayTime) = 0;
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString OnHandleOverrideErrorPage(
+        ArkWebRefPtr<ArkWebUrlResourceRequest> request,
+        ArkWebRefPtr<ArkWebUrlResourceError> error) = 0;
 };
 
 } // namespace OHOS::ArkWeb
