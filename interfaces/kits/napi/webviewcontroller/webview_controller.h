@@ -425,6 +425,8 @@ public:
 
     void GetScrollOffset(float* offset_x, float* offset_y);
 
+    void GetPageOffset(float* offset_x, float* offset_y);
+
     void CreatePDFCallbackExt(
         napi_env env, std::shared_ptr<NWebPDFConfigArgs> pdfConfig, napi_ref pdfCallback);
 

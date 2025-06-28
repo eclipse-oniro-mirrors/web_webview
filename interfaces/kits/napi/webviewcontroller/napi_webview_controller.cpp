@@ -731,6 +731,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::TrimMemoryByPressureLevel),
         DECLARE_NAPI_FUNCTION("getScrollOffset",
             NapiWebviewController::GetScrollOffset),
+        DECLARE_NAPI_FUNCTION("getPageOffset",
+            NapiWebviewController::GetPageOffset),
         DECLARE_NAPI_FUNCTION("createPdf", NapiWebviewController::RunCreatePDFExt),
         DECLARE_NAPI_FUNCTION("getLastHitTest", NapiWebviewController::GetLastHitTest),
         DECLARE_NAPI_FUNCTION("getAttachState", NapiWebviewController::GetAttachState),
@@ -6791,6 +6793,27 @@ napi_value NapiWebviewController::GetScrollOffset(napi_env env,
 
     webviewController->GetScrollOffset(&offsetX, &offsetY);
 
+    napi_create_object(env, &result);
+    napi_create_double(env, static_cast<double>(offsetX), &horizontal);
+    napi_create_double(env, static_cast<double>(offsetY), &vertical);
+    napi_set_named_property(env, result, "x", horizontal);
+    napi_set_named_property(env, result, "y", vertical);
+    return result;
+}
+
+napi_value NapiWebviewController::GetPageOffset(napi_env env,
+    napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_value horizontal;
+    napi_value vertical;
+    float offsetX = 0;
+    float offsetY = 0;
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController) {
+        return nullptr;
+    }
+    webviewController->GetPageOffset(&offsetX, &offsetY);
     napi_create_object(env, &result);
     napi_create_double(env, static_cast<double>(offsetX), &horizontal);
     napi_create_double(env, static_cast<double>(offsetY), &vertical);

@@ -1731,6 +1731,14 @@ public:
      */
     void SetViewportScaleState() override;
 
+    /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   /*--ark web()--*/
+   void GetPageOffset(float* offset_x, float* offset_y) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
