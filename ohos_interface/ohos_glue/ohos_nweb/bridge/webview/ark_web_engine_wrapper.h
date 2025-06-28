@@ -113,6 +113,10 @@ public:
 
     void SetBlanklessLoadingCacheCapacity(int32_t capacity) override;
 
+    void EnablePrivateNetworkAccess(bool enable) override;
+
+    bool IsPrivateNetworkAccessEnabled() override;
+
 private:
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };
