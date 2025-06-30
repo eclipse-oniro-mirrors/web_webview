@@ -1090,8 +1090,9 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_OnDeviceChange_027, TestSize
     ASSERT_NE(mock, nullptr);
     auto callbackAdapter = std::make_shared<AudioManagerDeviceChangeCallbackAdapterImpl>(mock);
     ASSERT_NE(callbackAdapter, nullptr);
-    DeviceChangeAction deviceChangeAction = { .type = DeviceChangeType::CONNECT,
-        .flag = DeviceFlag::NONE_DEVICES_FLAG };
+    DeviceChangeAction deviceChangeAction = {};
+    deviceChangeAction.type = DeviceChangeType::CONNECT,
+    deviceChangeAction.flag = DeviceFlag::NONE_DEVICES_FLAG;
     callbackAdapter->OnDeviceChange(deviceChangeAction);
     callbackAdapter->cb_ = nullptr;
     callbackAdapter->OnDeviceChange(deviceChangeAction);
