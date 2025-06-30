@@ -124,6 +124,8 @@ public:
 
     std::unique_ptr<NWeb::DrmAdapter> CreateDrmAdapter() override;
 
+    std::unique_ptr<NWeb::ScreenlockManagerAdapter> CreateScreenlockManagerAdapter() override;
+
 private:
     ArkWebRefPtr<ArkOhosAdapterHelper> ctocpp_;
 };

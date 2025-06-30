@@ -95,6 +95,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "pasteboard_adapter/src/pasteboard_client_adapter_impl.cpp",
     "print_manager_adapter/src/print_manager_adapter_impl.cpp",
     "res_sched_adapter/src/res_sched_client_adapter_impl.cpp",
+    "screenlock_mgr_adapter/src/screenlock_manager_adapter_impl.cpp",
     "soc_perf_adapter/src/soc_perf_client_adapter_impl.cpp",
     "system_properties_adapter/src/system_properties_adapter_impl.cpp",
   ]
@@ -142,6 +143,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "power_mgr_adapter/include",
     "print_manager_adapter/include",
     "screen_capture_adapter/include",
+    "screenlock_mgr_adapter/include",
     "soc_perf_adapter/include",
     "system_properties_adapter/include",
     "sensor_adapter/include",
@@ -200,6 +202,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "relational_store:native_rdb",
     "resource_schedule_service:ressched_client",
     "samgr:samgr_proxy",
+    "screenlock_mgr:screenlock_client",
     "time_service:time_client",
     "udmf:udmf_client",
     "window_manager:libdm",
