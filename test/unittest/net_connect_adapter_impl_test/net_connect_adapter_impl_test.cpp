@@ -88,7 +88,7 @@ int32_t NetConnClient::GetConnectionProperties(const NetHandle &nethandle, NetLi
     netAddr.family_ = 0x10;
     netAddr.prefixlen_ = 0x17;
     netAddr.address_ = "172.16.1.1";
-    netAddr.netMask_ = "172.255.255.255";
+    netAddr.netMask_ = "255.255.254.0";
     netAddr.hostName_ = "netAddr";
     netLinkInfo.netAddrList_.push_back(netAddr);
 
