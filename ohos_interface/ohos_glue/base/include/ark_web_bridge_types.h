@@ -273,6 +273,7 @@ enum ArkWebBridgeType {
     ARK_AUDIO_BUFFER_ADAPTER = 10147,
     ARK_ONCE_CALLBACK_ADAPTER = 10148,
     ARK_VPN_LISTENER = 10149,
+    ARK_SCREENLOCK_MANAGER_ADAPTER = 10150,
     /*Note: The end of adapter interface bridge type*/
     ARK_WEB_ADAPTER_INTERFACE_BUTT,
 };
