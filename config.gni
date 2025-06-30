@@ -48,7 +48,7 @@ declare_args() {
   }
   if (defined(global_parts_info) &&
       (!defined(global_parts_info.multimedia_camera_framework) ||
-       !defined(global_parts_info.drivers_interface_camera))) {
+       !defined(global_parts_info.hdf_drivers_interface_camera))) {
     webview_camera_enable = false
   }
   if (defined(global_parts_info) &&
