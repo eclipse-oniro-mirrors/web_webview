@@ -148,6 +148,10 @@ public:
 
     std::string CheckBlankOptEnable(const std::string& url, int32_t nweb_id);
 
+    void EnablePrivateNetworkAccess(bool enable);
+
+    bool IsPrivateNetworkAccessEnabled();
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);
