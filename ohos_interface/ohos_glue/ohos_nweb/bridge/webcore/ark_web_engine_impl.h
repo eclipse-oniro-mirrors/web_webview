@@ -114,6 +114,10 @@ public:
 
     void SetBlanklessLoadingCacheCapacity(int32_t capacity) override;
 
+    void EnablePrivateNetworkAccess(bool enable) override;
+
+    bool IsPrivateNetworkAccessEnabled() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };

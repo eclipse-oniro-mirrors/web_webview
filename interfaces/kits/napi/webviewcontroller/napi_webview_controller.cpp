@@ -751,6 +751,10 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             NapiWebviewController::ClearBlanklessLoadingCache),
         DECLARE_NAPI_FUNCTION("avoidVisibleViewportBottom",
             NapiWebviewController::AvoidVisibleViewportBottom),
+        DECLARE_NAPI_STATIC_FUNCTION("enablePrivateNetworkAccess",
+            NapiWebviewController::EnablePrivateNetworkAccess),
+        DECLARE_NAPI_STATIC_FUNCTION("isPrivateNetworkAccessEnabled",
+            NapiWebviewController::IsPrivateNetworkAccessEnabled), 
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -7331,6 +7335,43 @@ napi_value NapiWebviewController::GetErrorPageEnabled(napi_env env, napi_callbac
 
     bool GetErrorPageEnabled = controller->GetErrorPageEnabled();
     NAPI_CALL(env, napi_get_boolean(env, GetErrorPageEnabled, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::EnablePrivateNetworkAccess(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("EnablePrivateNetworkAccess start");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = {0};
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    bool pnaEnabled = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], pnaEnabled)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
+        return result;
+    }
+
+    NWebHelper::Instance().EnablePrivateNetworkAccess(pnaEnabled);
+    return result;
+}
+
+napi_value NapiWebviewController::IsPrivateNetworkAccessEnabled(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("IsPrivateNetworkAccessEnabled start");
+    napi_value result = nullptr;
+
+    bool pnaEnabled = NWebHelper::Instance().IsPrivateNetworkAccessEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, pnaEnabled, &result));
     return result;
 }
 } // namespace NWeb
