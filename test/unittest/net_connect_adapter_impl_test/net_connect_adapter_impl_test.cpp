@@ -82,6 +82,16 @@ int32_t NetConnClient::GetConnectionProperties(const NetHandle &nethandle, NetLi
     dns.netMask_ = "192.255.255.255";
     dns.hostName_ = "netAddr";
     netLinkInfo.dnsList_.push_back(dns);
+
+    INetAddr netAddr;
+    netAddr.type_ = INetAddr::IPV4;
+    netAddr.family_ = 0x10;
+    netAddr.prefixlen_ = 0x17;
+    netAddr.address_ = "172.16.1.1";
+    netAddr.netMask_ = "172.255.255.255";
+    netAddr.hostName_ = "netAddr";
+    netLinkInfo.netAddrList_.push_back(netAddr);
+
     return g_getNetProp;
 }
 int32_t NetConnClient::GetAllNets(std::list<sptr<NetHandle>> &netList)
@@ -386,6 +396,31 @@ HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_008, TestSize.Leve
     EventFwk::CommonEventData data4(want);
     data4.SetCode(NetManagerStandard::NetConnState::NET_CONN_STATE_DISCONNECTED);
     subscribe->OnReceiveEvent(data4);
+}
+
+/**
+ * @tc.name: NetConnectAdapterImplTest_009.
+ * @tc.desc: test lock type.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NetConnectAdapterImplTest, NetConnectAdapterImplTest_009, TestSize.Level1)
+{
+    std::shared_ptr<NetConnectAdapterImpl> netConnectAdapterImpl = std::make_shared<NetConnectAdapterImpl>();
+    g_getNetProp = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    std::vector<std::string> net_list = netConnectAdapterImpl->GetNetAddrListByNetId(-1);
+    EXPECT_EQ(net_list.size(), 0);
+    std::string net_ip_str("172.16.1.1");
+    EXPECT_EQ(net_list.front(), net_ip_str);
+    g_getAllNets = static_cast<int32_t>(NETMANAGER_SUCCESS);
+    net_list = netConnectAdapterImpl->GetNetAddrListByNetId(100);
+    EXPECT_EQ(net_list.size(), 1);
+    EXPECT_EQ(net_list.front(), net_ip_str);
+    net_list = netConnectAdapterImpl->GetNetAddrListByNetId(101);
+    EXPECT_EQ(net_list.size(), 0);
+    g_getNetProp = -1;
+    net_list = netConnectAdapterImpl->GetNetAddrListByNetId(100);
+    EXPECT_EQ(net_list.size(), 0);
 }
 }
 }
