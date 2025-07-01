@@ -124,6 +124,8 @@ public:
 
     ArkWebRefPtr<ArkDrmAdapter> CreateDrmAdapter() override;
 
+    ArkWebRefPtr<ArkScreenlockManagerAdapter> CreateScreenlockManagerAdapter() override;
+
 private:
     NWeb::OhosAdapterHelper& real_;
 

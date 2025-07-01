@@ -69,6 +69,7 @@
 #include "screen_capture_adapter_impl.h"
 #endif
 #include "soc_perf_client_adapter_impl.h"
+#include "screenlock_manager_adapter_impl.h"
 #include "surface_adapter_impl.h"
 #include "system_properties_adapter_impl.h"
 #include "vsync_adapter_impl.h"
@@ -384,5 +385,10 @@ std::unique_ptr<DrmAdapter> OhosAdapterHelperImpl::CreateDrmAdapter()
 #else
     return nullptr;
 #endif
+}
+
+std::unique_ptr<ScreenlockManagerAdapter> OhosAdapterHelperImpl::CreateScreenlockManagerAdapter()
+{
+    return std::make_unique<ScreenlockManagerAdapterImpl>();
 }
 } // namespace OHOS::NWeb

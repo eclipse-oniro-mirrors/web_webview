@@ -126,6 +126,8 @@ public:
     std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
 
     std::unique_ptr<DrmAdapter> CreateDrmAdapter() override;
+
+    std::unique_ptr<ScreenlockManagerAdapter> CreateScreenlockManagerAdapter() override;
 };
 } // namespace OHOS::NWeb
 
