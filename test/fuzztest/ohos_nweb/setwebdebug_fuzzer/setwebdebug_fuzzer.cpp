@@ -35,12 +35,12 @@ bool SetWebDebuggingAccessAndPortFuzzTest(const uint8_t* data, size_t size)
     FuzzedDataProvider dataProvider(data, size);
     bool enableDebug = dataProvider.ConsumeBool();
     int32_t port = dataProvider.ConsumeIntegral<int32_t>();
-    const char* name = dataProvider.ConsumeRandomLengthString().c_str();
+    std::string name = dataProvider.ConsumeRandomLengthString();
     int32_t option = dataProvider.ConsumeIntegral<int32_t>();
     if (NWebHelper::Instance().LoadNWebSDK()) {
         NWebHelper::Instance().SetWebDebuggingAccess(enableDebug);
         NWebHelper::Instance().SetWebDebuggingAccessAndPort(enableDebug, port);
-        NWebHelper::Instance().SaveSchemeVector(name, option);
+        NWebHelper::Instance().SaveSchemeVector(name.c_str(), option);
         NWebHelper::Instance().HasLoadWebEngine();
         NWebHelper::Instance().RegisterCustomSchemes();
     }
