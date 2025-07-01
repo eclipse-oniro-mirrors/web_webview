@@ -297,4 +297,47 @@ std::vector<std::string> NetConnectAdapterImpl::GetDnsServersByNetId(int32_t net
     }
     return std::vector<std::string>();
 }
+
+std::vector<std::string> NetConnectAdapterImpl::GetNetAddrListByNetId(int32_t netId)
+{
+    WVLOG_I("get net address by net id %{public}d.", netId);
+    if (netId == -1) {
+        return std::vector<std::string>();
+    }
+ 
+    std::list<sptr<NetManagerStandard::NetHandle>> netHandleList;
+    int32_t ret = NetConnClient::GetInstance().GetAllNets(netHandleList);
+    if (ret != NETMANAGER_SUCCESS) {
+        WVLOG_E("get all nets by net id for net address failed, ret = %{public}d.", ret);
+        return std::vector<std::string>();
+    }
+ 
+    for (sptr<NetManagerStandard::NetHandle> netHandle : netHandleList) {
+        if (netHandle->GetNetId() == netId) {
+            return GetNetAddrListInternal(*netHandle);
+        }
+    }
+    return std::vector<std::string>();
+}
+ 
+std::vector<std::string> NetConnectAdapterImpl::GetNetAddrListInternal(const NetHandle &netHandle)
+{
+    std::vector<std::string> netAddrList;
+    NetLinkInfo info;
+    int32_t ret = NetConnClient::GetInstance().GetConnectionProperties(netHandle, info);
+    if (ret != NETMANAGER_SUCCESS) {
+        WVLOG_E("get net properties failed, ret = %{public}d.", ret);
+        return netAddrList;
+    }
+    WVLOG_D("get net properties for net address success, net id = %{public}d, "
+        "netinfo = %{public}s.", netHandle.GetNetId(), info.ToString(" ").c_str());
+ 
+    for (const auto &netAddr : info.netAddrList_) {
+        netAddrList.emplace_back(netAddr.address_);
+    }
+    WVLOG_I("get net address success, net id = %{public}d, servers size = %{public}d.",
+        netHandle.GetNetId(), static_cast<int32_t>(netAddrList.size()));
+    return netAddrList;
+}
+
 } // namespace OHOS::NWeb
