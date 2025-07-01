@@ -19,12 +19,14 @@
 #include <cstring>
 #include <memory>
 #include <securec.h>
+#include <fuzzer/FuzzedDataProvider.h>
 
 #include "native_image_adapter_impl.h"
 
 namespace OHOS {
 
 using namespace OHOS::NWeb;
+constexpr int MAX_SET_NUMBER = 1000;
 
 class DummyFrameAvailableListener : public FrameAvailableListener {
 public:
@@ -55,10 +57,14 @@ public:
 
 bool NativeImageFuzzTest(const uint8_t* data, size_t size)
 {
+    if (data == nullptr || size == 0) {
+        return false;
+    }
     NativeImageAdapterImpl adapter;
+    FuzzedDataProvider dataProvider(data, size);
 
-    uint32_t textureId = 1234;
-    uint32_t textureTarget = 5678;
+    uint32_t textureId = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    uint32_t textureTarget = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
     adapter.CreateNativeImage(textureId, textureTarget);
 
     NWebNativeWindow window = adapter.AquireNativeWindowFromNativeImage();
@@ -89,7 +95,18 @@ bool NativeImageFuzzTest(const uint8_t* data, size_t size)
 
     adapter.SetOnFrameAvailableListener(listener);
     adapter.UnsetOnFrameAvailableListener();
+    adapter.NewNativeImage();
     adapter.DestroyNativeImage();
+    adapter.DetachContext();
+    void* buffer = nullptr;
+    int fd = dataProvider.ConsumeIntegralInRange<int>(0, MAX_SET_NUMBER);
+    adapter.AcquireNativeWindowBuffer(&buffer, &fd);
+    void* nativeBuffer = nullptr;
+    adapter.GetNativeBuffer(buffer, &nativeBuffer);
+    uint32_t width = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    uint32_t height = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    adapter.GetNativeWindowBufferSize(nativeBuffer, &width, &height);
+    adapter.ReleaseNativeWindowBuffer(nativeBuffer, fd);
 
     return true;
 }
