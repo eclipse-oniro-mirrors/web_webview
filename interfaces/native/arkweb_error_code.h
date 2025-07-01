@@ -104,6 +104,14 @@ ARKWEB_LIBRARY_OPEN_FAILURE = 17100105,
  * @since 15
  */
 ARKWEB_LIBRARY_SYMBOL_NOT_FOUND = 17100106,
+
+/*
+ * @brief The CookieManager not initialized.
+ *
+ * @syscap SystemCapability.Web.Webview.Core
+ * @since 20
+ */
+ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED = 17100107,
 } ArkWeb_ErrorCode;
 
 /**

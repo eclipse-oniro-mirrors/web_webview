@@ -361,7 +361,7 @@ ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync()
         OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
         WVLOG_E("cookieManager is nullptr)");
-        return ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN;
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED;
     }
 
     cookieManager->Store();
