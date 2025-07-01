@@ -51,11 +51,9 @@ bool OhosAdapterHelperImpl001Test(const uint8_t* data, size_t size)
     helperImpl.GetHiSysEventAdapterInstance();
     helperImpl.GetHiTraceAdapterInstance();
     helperImpl.GetNetProxyInstance();
-    helperImpl.GetCameraManagerAdapter();
     helperImpl.CreateScreenCaptureAdapter();
     helperImpl.CreateDateTimeFormatAdapter();
     helperImpl.CreateMediaCodecDecoderAdapter();
-    helperImpl.CreateNativeImageAdapter();
     helperImpl.CreateMediaCodecEncoderAdapter();
     helperImpl.GetMediaCodecListAdapter();
     helperImpl.CreateMediaAVSessionAdapter();
@@ -64,9 +62,6 @@ bool OhosAdapterHelperImpl001Test(const uint8_t* data, size_t size)
     helperImpl.CreateMigrationMgrAdapter();
     helperImpl.GetOhosDrawingTextFontAdapter();
     helperImpl.GetOhosDrawingTextTypographyAdapter();
-    helperImpl.CreateAudioCodecDecoderAdapter();
-    helperImpl.CreateDrmAdapter();
-
     return true;
 }
 
