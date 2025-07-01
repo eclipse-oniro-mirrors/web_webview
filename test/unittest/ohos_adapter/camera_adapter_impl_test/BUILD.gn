@@ -48,6 +48,7 @@ ohos_unittest("camera_adapter_impl_test") {
     "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_core",
+    "selinux_adapter:librestorecon",
     "webview:libnweb",
     "ability_runtime:ability_connect_callback_stub",
   ]
