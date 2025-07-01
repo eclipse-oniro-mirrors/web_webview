@@ -62,6 +62,7 @@
 #include "ohos_adapter/bridge/ark_print_manager_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_running_lock_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_screen_capture_adapter_wrapper.h"
+#include "ohos_adapter/bridge/ark_screenlock_manager_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_sensor_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_soc_perf_client_adapter_wrapper.h"
 #include "ohos_adapter/bridge/ark_surface_buffer_adapter_wrapper.h"
@@ -521,6 +522,17 @@ std::unique_ptr<NWeb::DrmAdapter> ArkOhosAdapterHelperWrapper::CreateDrmAdapter(
     }
 
     return std::make_unique<ArkDrmAdapterWrapper>(adapter);
+}
+
+std::unique_ptr<NWeb::ScreenlockManagerAdapter> ArkOhosAdapterHelperWrapper::CreateScreenlockManagerAdapter()
+{
+    ArkWebRefPtr<ArkScreenlockManagerAdapter> adapter = ctocpp_->CreateScreenlockManagerAdapter();
+
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+
+    return std::make_unique<ArkScreenlockManagerAdapterWrapper>(adapter);
 }
 
 } // namespace OHOS::ArkWeb
