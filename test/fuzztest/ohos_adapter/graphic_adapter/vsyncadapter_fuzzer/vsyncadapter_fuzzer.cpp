@@ -27,9 +27,13 @@ using namespace OHOS::NWeb;
 namespace OHOS {
 static void OnVsyncCallback() {}
 constexpr int MAX_SET_NUMBER = 1000;
+constexpr uint8_t MAX_STRING_LENGTH = 64;
 
 bool CameraManagerAdapterFuzzTest(const uint8_t* data, size_t size)
 {
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
     VSyncAdapterImpl& adapter = VSyncAdapterImpl::GetInstance();
     adapter.Init();
     adapter.Init();
@@ -53,6 +57,17 @@ bool CameraManagerAdapterFuzzTest(const uint8_t* data, size_t size)
     adapter.SetOnVsyncEndCallback(OnVsyncCallback);
     adapter.OnVsync(1, client);
     adapter.SetIsGPUProcess(false);
+    adapter.hasReportedKeyThread_ = true;
+    adapter.hasRequestedVsync_ = true;
+    adapter.RequestVsync(nullptr, nullptr);
+    adapter.hasRequestedVsync_ = false;
+    adapter.RequestVsync(nullptr, nullptr);
+    const std::string sceneName = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
+    uint32_t state = dataProvider.ConsumeIntegralInRange<uint32_t>(0, MAX_SET_NUMBER);
+    adapter.SetScene(sceneName, state);
+    adapter.InitAPSClient();
+    adapter.UninitAPSClient();
+    adapter.SetDVSyncSwitch(true);
 
     return true;
 }

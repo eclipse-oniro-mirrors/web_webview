@@ -20,9 +20,10 @@ import("//build/test.gni")
 ohos_fuzztest("NativeImageAdapterImplFuzzTest") {
   module_out_path = webview_fuzz_test_path
   fuzz_config_file =
-      "$webview_path/test/fuzztest/ohos_adapter/nativeImage_fuzzer"
+      "$webview_path/test/fuzztest/ohos_adapter/nativeimage_fuzzer"
   include_dirs = [
     "$webview_path/ohos_adapter/graphic_adapter/include",
+    "$webview_path/ohos_nweb/include",
     "$webview_path/test/fuzztest",
   ]
   cflags = [
@@ -35,11 +36,14 @@ ohos_fuzztest("NativeImageAdapterImplFuzzTest") {
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   external_deps = [
-    "ability_base:base",
-    "ability_base:want",
+    "ability_runtime:app_manager",
     "c_utils:utils",
-    "image_framework:image_native",
-    "pasteboard:pasteboard_client",
+    "graphic_2d:libcomposer",
+    "graphic_2d:librender_service_base",
+    "graphic_2d:libnative_image",
+    "graphic_surface:surface",
+    "hilog:libhilog",
+    "relational_store:native_rdb",
   ]
 }
 
