@@ -37,7 +37,7 @@ def copy_dir(src_dir: str, dst_dir: str):
         shutil.rmtree(dst_dir)
 
     if os.path.isdir(src_dir) and os.listdir(src_dir):
-        shutil.copytree(src_dir, dst_dir)
+        shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
 
     source_files = []
     for root, dirs, files in os.walk(src_dir):
