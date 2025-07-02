@@ -136,7 +136,6 @@ public:
     virtual void RegisterVpnListener(std::shared_ptr<VpnListener>) = 0;
  
     virtual void UnRegisterVpnListener() = 0;
-
 };
 
 } // namespace OHOS::NWeb
