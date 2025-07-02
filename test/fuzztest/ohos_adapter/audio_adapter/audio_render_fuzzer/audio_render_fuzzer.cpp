@@ -51,20 +51,25 @@ bool AudioSystemFuzzTest(const uint8_t* data, size_t size)
     }
 
     FuzzedDataProvider fdp(data, size);
-    std::shared_ptr<AudioOutputChangeCallbackAdapter> outcallback = std::make_shared<AudioOutputChangeCallbackAdapterMock>();
-    std::shared_ptr<AudioOutputChangeCallbackImpl> outcallbackImpl = std::make_shared<AudioOutputChangeCallbackImpl>(outcallback);
+    std::shared_ptr<AudioOutputChangeCallbackAdapter> outcallback =
+        std::make_shared<AudioOutputChangeCallbackAdapterMock>();
+    std::shared_ptr<AudioOutputChangeCallbackImpl> outcallbackImpl =
+        std::make_shared<AudioOutputChangeCallbackImpl>(outcallback);
 
-    std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackAdapterMock>();
-    std::shared_ptr<AudioRendererCallbackImpl> adapter = std::make_shared<AudioRendererCallbackImpl>(callback);
-    std::shared_ptr<AudioRendererAdapterImpl> renderAdapter = std::make_shared<AudioRendererAdapterImpl>();
+    std::shared_ptr<AudioRendererCallbackAdapter> callback =
+        std::make_shared<AudioRendererCallbackAdapterMock>();
+    std::shared_ptr<AudioRendererCallbackImpl> adapter =
+        std::make_shared<AudioRendererCallbackImpl>(callback);
+    std::shared_ptr<AudioRendererAdapterImpl> renderAdapter =
+        std::make_shared<AudioRendererAdapterImpl>();
 
     auto rawValue = fdp.ConsumeIntegralInRange<int32_t>(0,7);
     InterruptEvent event;
     event.hintType = static_cast<InterruptHint>(rawValue);
     adapter->OnInterrupt(event);
 
-    rawValue = fdp.ConsumeIntegralInRange<int32_t>(-1,4);
-    auto concurrencyMode = static_cast<AudioAdapterConcurrencyMode>(rawValue);
+    auto value = fdp.ConsumeIntegralInRange<int32_t>(-1,4);
+    auto concurrencyMode = static_cast<AudioAdapterConcurrencyMode>(value);
     renderAdapter->SetAudioOutputChangeCallback(outcallback);
     renderAdapter->GetAudioAudioStrategy(concurrencyMode);
     renderAdapter->Flush();
