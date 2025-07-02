@@ -1036,5 +1036,51 @@ HWTEST_F(NwebHelperTest, NWebHelper_CheckBlankOptEnable_002, TestSize.Level1)
     NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
     EXPECT_EQ(NWebHelper::Instance().CheckBlankOptEnable("example", 0), "");
 }
+
+/**
+ * @tc.name  : ParseNWebBlanklessConfig001
+ * @tc.number: NWebConfigHelperTest_ParseNWebBlanklessConfig
+ * @tc.desc  : Test when node tree is as expected.
+ */
+HWTEST_F(NwebHelperTest, ParseNWebBlanklessConfig001, TestSize.Level1)
+{
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, reinterpret_cast<const xmlChar*>("blanklessConfig"));
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, reinterpret_cast<const xmlChar*>("blanklessEnabled"));
+    xmlNodeSetContent(childNodePtr, reinterpret_cast<const xmlChar*>("true"));
+    EXPECT_NE(nodePtr, nullptr);
+    EXPECT_NE(childNodePtr, nullptr);
+    xmlAddChild(nodePtr, childNodePtr);
+    NWebConfigHelper::Instance().ParseNWebBlanklessConfig(nodePtr);
+    EXPECT_TRUE(NWebConfigHelper::Instance().IsBlanklessEnabled());
+    xmlFreeNode(nodePtr);
+    xmlFreeNode(childNodePtr);
+}
+
+/**
+ * @tc.name  : ParseNWebBlanklessConfig002
+ * @tc.number: NWebConfigHelperTest_ParseNWebBlanklessConfig
+ * @tc.desc  : Test when node tree is not as expected.
+ */
+HWTEST_F(NwebHelperTest, ParseNWebBlanklessConfig002, TestSize.Level1)
+{
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, reinterpret_cast<const xmlChar*>("blanklessConfig"));
+    EXPECT_NE(nodePtr, nullptr);
+    NWebConfigHelper::Instance().ParseNWebBlanklessConfig(nodePtr);
+    EXPECT_FALSE(NWebConfigHelper::Instance().IsBlanklessEnabled());
+
+    xmlNodePtr commentNodePtr = xmlNewComment(reinterpret_cast<const xmlChar*>("This is a comment"));
+    EXPECT_NE(commentNodePtr, nullptr);
+    xmlAddChild(nodePtr, commentNodePtr);
+
+    xmlNodePtr childNodePtr = xmlNewNode(nullptr, reinterpret_cast<const xmlChar*>("blanklessEnabled_wrong"));
+    EXPECT_NE(childNodePtr, nullptr);
+    xmlAddChild(nodePtr, childNodePtr);
+    NWebConfigHelper::Instance().ParseNWebBlanklessConfig(nodePtr);
+    EXPECT_FALSE(NWebConfigHelper::Instance().IsBlanklessEnabled());
+
+    xmlFreeNode(nodePtr);
+    xmlFreeNode(childNodePtr);
+    xmlFreeNode(commentNodePtr);
+}
 } // namespace OHOS::NWeb
 }
