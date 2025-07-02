@@ -64,14 +64,10 @@ public:
  
     void UnRegisterVpnListener() override;
 
-    std::vector<std::string> GetNetAddrListByNetId(int32_t netId) override;
-
 private:
     std::vector<std::string> GetDnsServersInternal(const NetHandle &netHandle);
 
     bool HasVpnTransport();
-
-    std::vector<std::string> GetNetAddrListInternal(const NetHandle &netHandle);
 
     std::unordered_map<int32_t, sptr<NetConnectCallbackImpl>> netConnCallbackMap_;
 
