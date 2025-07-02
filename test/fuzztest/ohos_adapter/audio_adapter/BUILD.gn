@@ -28,6 +28,8 @@ group("fuzztest") {
   deps = []
   if (webview_audio_enable) {
     deps += [
+      "audio_render_fuzzer:AudioRenderFuzzTest",
+      "audio_system_fuzzer:AudioSystemFuzzTest",
       "audioabandon_fuzzer:AudioAbandonFuzzTest",
       "audiocreaterender_fuzzer:AudioCreateRenderFuzzTest",
       "audiodevicechange_fuzzer:AudioDeviceChangeFuzzTest",
