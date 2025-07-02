@@ -28,7 +28,6 @@ using namespace OHOS::NWeb;
 
 namespace OHOS {
 
-
 class AudioManagerCallbackAdapterMock : public AudioManagerCallbackAdapter {
 public:
     AudioManagerCallbackAdapterMock() = default;
@@ -60,11 +59,13 @@ bool AudioGetDeviceFuzzTest(const uint8_t* data, size_t size)
     AudioSystemManagerAdapterImpl::GetInstance().UnsetDeviceChangeCallback();
     AudioSystemManagerAdapterImpl::GetInstance().SetLanguage(language);
 
-    std::shared_ptr<AudioManagerCallbackAdapter> callback = std::make_shared<AudioManagerCallbackAdapterMock>();
+    std::shared_ptr<AudioManagerCallbackAdapter> callback =
+        std::make_shared<AudioManagerCallbackAdapterMock>();
     AudioSystemManagerAdapterImpl::GetInstance().SetAudioManagerInterruptCallback(callback);
     AudioSystemManagerAdapterImpl::GetInstance().UnsetDeviceChangeCallback();
 
-    std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> managerCallBack = std::make_shared<AudioManagerDeviceChangeCallbackAdapterMock>();
+    std::shared_ptr<AudioManagerDeviceChangeCallbackAdapter> managerCallBack = 
+        std::make_shared<AudioManagerDeviceChangeCallbackAdapterMock>();
     AudioSystemManagerAdapterImpl::GetInstance().SetDeviceChangeCallback(managerCallBack);
     std::vector<std::shared_ptr<AudioDeviceDescriptor>> defaultOutputDevice;
     AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(randBool, defaultOutputDevice);
