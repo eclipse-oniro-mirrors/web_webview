@@ -29,18 +29,20 @@ bool RegisterAsyncJSProxyFuzzTest(const uint8_t* data, size_t size)
         return true;
     }
     FuzzedDataProvider dataProvider(data, size);
-    const char* webTag = dataProvider.ConsumeRandomLengthString().c_str();
+    std::string webTag = dataProvider.ConsumeRandomLengthString();
     ArkWeb_ProxyMethodWithResult method;
-    method.methodName = dataProvider.ConsumeRandomLengthString().c_str();
+    std::string methodName = dataProvider.ConsumeRandomLengthString();
+    method.methodName = methodName.c_str();
     method.callback = nullptr;
     method.userData = nullptr;
     size_t objSize = dataProvider.ConsumeIntegral<size_t>();
     ArkWeb_ProxyObjectWithResult proxyObject;
-    proxyObject.objName = dataProvider.ConsumeRandomLengthString().c_str();
+    std::string objName = dataProvider.ConsumeRandomLengthString();
+    proxyObject.objName = objName.c_str();
     proxyObject.size = objSize;
     proxyObject.methodList = &method;
-    const char* permission = dataProvider.ConsumeRandomLengthString().c_str();
-    OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy(webTag, &proxyObject, permission);
+    std::string permission = dataProvider.ConsumeRandomLengthString();
+    OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy(webTag.c_str(), &proxyObject, permission.c_str());
     return true;
 }
 } // namespace OHOS
