@@ -22,10 +22,7 @@
 #include "audio_renderer_adapter_impl.h"
 #include "audio_system_manager_adapter_impl.h"
 
-
-
 using namespace OHOS::NWeb;
-
 
 class AudioRendererCallbackAdapterMock : public AudioRendererCallbackAdapter {
 public:
@@ -41,8 +38,6 @@ public:
     AudioOutputChangeCallbackAdapterMock() = default;
 };
 namespace OHOS {
-
-
 
 bool AudioSystemFuzzTest(const uint8_t* data, size_t size)
 {
