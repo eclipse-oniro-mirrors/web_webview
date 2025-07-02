@@ -1349,7 +1349,8 @@ napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callba
     int32_t errorCode;
     if (!NapiParseUtils::ParseInt32(env, argv[0], errorCode)) {
         WVLOG_E("JS_DidFailWithError unwrap error code failed");
-        if (argc < 2) {
+        static constexpr int LEVEL_20_COUNT = 2;
+        if (argc < LEVEL_20_COUNT) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "code", "int"));
         } else {
