@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#define private public
 #include "displaycreate_fuzzer.h"
 
 #include <cstring>
@@ -38,6 +38,25 @@ bool DisplayCreateFuzzTest(const uint8_t* data, size_t size)
     display.OnCreate(randmoId);
     return true;
 }
+
+void DisplayInstanceFuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return;
+    }
+    FuzzedDataProvider fuzzedData(data, size);
+    std::shared_ptr<DisplayListenerAdapter> listener = nullptr;
+    DisplayListenerAdapterImpl display(listener);
+    auto displayPtr = DisplayManager::GetInstance().GetDefaultDisplay();
+    auto displayInfo = displayPtr->GetDisplayInfo();
+    display.ConvertDisplayInfo(*displayInfo);
+
+    std::shared_ptr<FoldStatusListenerAdapter> foldStatusListenerAdapter = 
+        std::make_shared<FoldStatusListenerAdapter>();
+    FoldStatusListenerAdapterImpl foldStatus(foldStatusListenerAdapter);
+    int mode =  fuzzedData.ConsumeIntegralInRange<int>(0, 5);
+    foldStatus.OnFoldStatusChanged(static_cast<NativeDisplayManager_FoldDisplayMode>(mode));
+}
 } // namespace OHOS
 
 /* Fuzzer entry point */
@@ -45,5 +64,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::DisplayCreateFuzzTest(data, size);
+    OHOS::DisplayInstanceFuzzTest(data, size);
     return 0;
 }
