@@ -28,6 +28,23 @@ using namespace OHOS::AppExecFwk;
 namespace OHOS {
 constexpr uint8_t MAX_STRING_LENGTH = 255;
 
+class AafwkBrowserHostAdapterImpl : public AafwkBrowserHostAdapter {
+public:
+    void* GetSurfaceFromKernel(int32_t id);
+    void DestroySurfaceFromKernel(int32_t id);
+};
+
+void* AafwkBrowserHostAdapterImpl::GetSurfaceFromKernel(int32_t id)
+{
+    (void)id;
+    return nullptr;
+};
+
+void AafwkBrowserHostAdapterImpl::DestroySurfaceFromKernel(int32_t id)
+{
+    (void)id;
+};
+
 bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -48,6 +65,14 @@ bool AafwkAttachRenderFuzzTest(const uint8_t* data, size_t size)
     pid_t red = 1;
     int statused = 1;
     newadapter.GetRenderProcessTerminationStatus(red, statused);
+    std::string processtype = "gpu-process";
+    newadapter.StartChildProcess(renderParam, ipcFd, sharedFd, crashFd, renderPid, processtype);
+    newadapter.GetRenderProcessTerminationStatus(red, statused);
+
+    static AafwkAppMgrClientAdapterImpl render1;
+    render1.SaveBrowserConnect(nullptr);
+    auto adapter1 = std::make_shared<AafwkBrowserHostAdapterImpl>();
+    render1.SaveBrowserConnect(adapter1);
     return true;
 }
 } // namespace OHOS
