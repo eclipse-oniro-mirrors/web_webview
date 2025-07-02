@@ -137,7 +137,6 @@ public:
  
     virtual void UnRegisterVpnListener() = 0;
 
-    virtual std::vector<std::string> GetNetAddrListByNetId(int32_t netId) = 0;
 };
 
 } // namespace OHOS::NWeb
