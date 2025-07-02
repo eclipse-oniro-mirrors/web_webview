@@ -35,14 +35,14 @@ ohos_fuzztest("NapiWebViewControllerFuzzTest") {
   ]
   sources = [
     "napi_webview_controller_fuzzer.cpp",
+    "$webview_path/interfaces/kits/napi/common/business_error.cpp",
+    "$webview_path/interfaces/kits/napi/common/web_errors.cpp",
     "$webview_path/interfaces/kits/napi/webviewcontroller/webview_controller.cpp"
   ]
   deps = [
     "//base/web/webview/interfaces/kits/napi:webview_napi_back",
-    "//base/web/webview/interfaces/native:webview_ndk",
-    "//base/web/webview/ohos_nweb:libnweb",
-    "//base/web/webview/ohos_nweb:nweb_hap",
     "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
+    "//base/web/webview/ohos_nweb:libnweb",
   ]
   external_deps = [
     "ability_base:extractortool",
