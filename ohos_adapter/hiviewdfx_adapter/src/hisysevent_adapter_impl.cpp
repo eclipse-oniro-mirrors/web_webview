@@ -29,14 +29,41 @@ const HiviewDFX::HiSysEvent::EventType EVENT_TYPES[] = {
 };
 }
 
+bool ConvertToLongLong(const std::string& str, long long& value)
+{
+    char* end;
+    errno = 0;
+    value = std::strtoll(str.c_str(), &end, 10);
+    if (end == str.c_str()) {
+        return false;
+    }
+    if (error == ERANGE && (value == LLONG_MAX || value == LLONG_MIN)) {
+        return false;
+    }
+    if (*end != '\0') {
+        return false;
+    }
+    return true;
+}
+
 int64_t GetValueInt64(const std::string& input, const std::string& key1, const std::string& key2)
 {
     std::string key = "";
+    long long result = 0;
     if(key2 == key) {
+        std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size());
+        if (ConvertToLongLong(waitConvertString, result) == true) {
+            return result;
+        }
+        return -1;
         return std::stoll(input.substr(input.find(key1, 0) + key1.size()));
     }
-    return std::stoll(input.substr(input.find(key1, 0) + key1.size(),
-                     input.find(key2,0) - input.find(key1, 0) - key1.size()));
+    std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size(),
+        input.find(key2,0) - input.find(key1, 0) - key1.size());
+    if (ConvertToLongLong(waitConvertString, result) == true) {
+        return result;
+    }
+    return -1;
 }
 
 const static std::string PAGE_LOAD_KEY_LISTS[] = {
