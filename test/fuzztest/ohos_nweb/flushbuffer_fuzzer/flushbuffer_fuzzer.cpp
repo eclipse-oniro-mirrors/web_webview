@@ -34,6 +34,7 @@ namespace {
     sptr<Surface> g_surface = nullptr;
 }
 constexpr int MAX_SET_NUMBER = 1000;
+constexpr int BITS_PER_PIXEL = 4;
 
 bool FlushBufferFuzzTest(const uint8_t* data, size_t size)
 {
@@ -43,29 +44,35 @@ bool FlushBufferFuzzTest(const uint8_t* data, size_t size)
     FuzzedDataProvider dataProvider(data, size);
     uint32_t width = dataProvider.ConsumeIntegralInRange<uint32_t>(1, MAX_SET_NUMBER);
     uint32_t height = dataProvider.ConsumeIntegralInRange<uint32_t>(1, MAX_SET_NUMBER);
-    const char buffer = dataProvider.ConsumeIntegral<char>();
+    char* buffer = new char[width * height * BITS_PER_PIXEL] { 0 };
+    if (buffer == nullptr) {
+        return false;
+    }
     sptr<SurfaceBuffer> surfaceBuffer = nullptr;
     auto surfaceAdapter = NWebSurfaceAdapter::Instance();
     surfaceAdapter.FlushBuffer(g_surface, surfaceBuffer, width, height);
     wptr<Surface> surfaceWeakPtr(g_surface);
-    surfaceAdapter.OutputFrameCallback(&buffer, width, height, surfaceWeakPtr);
+    surfaceAdapter.OutputFrameCallback(buffer, width, height, surfaceWeakPtr);
     surfaceAdapter.RequestBuffer(g_surface, width, height);
     if (!g_surface) {
         RSSurfaceNodeConfig config;
         config.SurfaceNodeName = "webTestSurfaceName";
         auto surfaceNode = RSSurfaceNode::Create(config, false);
         if (surfaceNode == nullptr) {
+            delete[] buffer;
             return false;
         }
         g_surface = surfaceNode->GetSurface();
         if (g_surface == nullptr) {
+            delete[] buffer;
             return false;
         }
     }
     surfaceAdapter.FlushBuffer(g_surface, surfaceBuffer, width, height);
     wptr<Surface> consumerSurfaceWeakPtr(Surface::CreateSurfaceAsConsumer());
-    surfaceAdapter.OutputFrameCallback(&buffer, width, height, consumerSurfaceWeakPtr);
+    surfaceAdapter.OutputFrameCallback(buffer, width, height, consumerSurfaceWeakPtr);
     surfaceAdapter.RequestBuffer(g_surface, width, height);
+    delete[] buffer;
     return true;
 }
 } // namespace OHOS
