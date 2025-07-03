@@ -1347,9 +1347,9 @@ napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callba
     }
 
     int32_t errorCode;
+    static constexpr int LEVEL_20_COUNT = 2;
     if (!NapiParseUtils::ParseInt32(env, argv[0], errorCode)) {
         WVLOG_E("JS_DidFailWithError unwrap error code failed");
-        static constexpr int LEVEL_20_COUNT = 2;
         if (argc < LEVEL_20_COUNT) {
             BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
                 NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "code", "int"));
@@ -1361,7 +1361,7 @@ napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callba
         return nullptr;
     }
  
-    if (!IsArkWebNetErrorValid(errorCode) || errorCode == ARKWEB_NET_OK) {
+    if (argc >= LEVEL_20_COUNT && (!IsArkWebNetErrorValid(errorCode) || errorCode == ARKWEB_NET_OK)) {
         BusinessError::ThrowErrorByErrcode(env, INVALID_NET_ERROR,
                 NWebError::GetErrMsgByErrCode(INVALID_NET_ERROR));
     }
