@@ -219,13 +219,37 @@ HWTEST(HiViewDFXAdapterTest, NormalScene_03, TestSize.Level1)
     ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
         HiSysEventAdapter::EventType::STATISTIC, data3);
 
+    applicationContext->AttachContextImpl(nullptr);
+    ans = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+    EXPECT_EQ(ans, nullptr);
+}
+
+/**
+ * @tc.name: NormalScene_04.
+ * @tc.desc: test normal scene of HiViewDFXAdapter.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST(HiViewDFXAdapterTest, NormalScene_04, TestSize.Level1)
+{
+    auto contextImpl = std::make_shared<AbilityRuntime::ContextImpl>();
+    auto applicationContext = AbilityRuntime::ApplicationContext::GetInstance();
+    std::shared_ptr<AppExecFwk::ApplicationInfo> info = std::make_shared<AppExecFwk::ApplicationInfo>();
+    std::string bundleName = "NormalScene_04";
+    info->bundleName = bundleName;
+    contextImpl->SetApplicationInfo(info);
+    applicationContext->AttachContextImpl(contextImpl);
+    std::shared_ptr<AppExecFwk::ApplicationInfo> ans = AbilityRuntime::ApplicationContext
+        ::GetInstance()->GetApplicationInfo();
+    EXPECT_NE(ans, nullptr);
+
     const std::string input = "NAVIGATION_ID" + std::to_string(0) + "NAVIGATION_START" + std::to_string(0) +
         "REDIRECT_COUNT" + std::to_string(0) + "INPUT_TIME" + std::to_string(0) +
         "FIRST_PAINT" + std::to_string(0) + "FIRST_CONTENTFUL_PAINT" + std::to_string(0) +
         "FIRST_MEANINGFUL_PAINT" + std::to_string(0) + "IS_PAINT_DOWN" + std::to_string(0);
-    const std::tuple<const std::string, const std::string> data4 (input, "");
+    const std::tuple<const std::string, const std::string> data (input, "");
     ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
-        "FIRST_MEANINGFUL_PAINT_DONE", HiSysEventAdapter::EventType::STATISTIC, data4);
+        "FIRST_MEANINGFUL_PAINT_DONE", HiSysEventAdapter::EventType::STATISTIC, data);
     EXPECT_EQ(ret, 0);
 
     const std::string input1 = "NAVIGATION_ID" + std::to_string(0) + "NAVIGATION_START" + std::to_string(0) +
@@ -240,9 +264,9 @@ HWTEST(HiViewDFXAdapterTest, NormalScene_03, TestSize.Level1)
         "LOAD_EVENT_START" + std::to_string(0) + "LOAD_EVENT_END" + std::to_string(0) +
         "FIRST_PAINT" + std::to_string(0) + "FIRST_CONTENTFUL_PAINT" + std::to_string(0) +
         "LARGEST_CONTENTFUL_PAINT" + std::to_string(0) + "RENDER_INIT_BLOCK" + std::to_string(0);
-    const std::tuple<const std::string, const std::string> data5 (input1, "");
+    const std::tuple<const std::string, const std::string> data1 (input1, "");
     ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
-        "PAGE_LOAD_TIME", HiSysEventAdapter::EventType::STATISTIC, data5);
+        "PAGE_LOAD_TIME", HiSysEventAdapter::EventType::STATISTIC, data1);
     EXPECT_EQ(ret, 0);
 
     applicationContext->AttachContextImpl(nullptr);
