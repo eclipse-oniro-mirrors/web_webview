@@ -53,9 +53,6 @@ bool DisplayDestroyFuzzTest(const uint8_t* data, size_t size)
     display.OnDestroy(displayId);
     display.OnChange(displayId);
     display.CheckOnlyRefreshRateDecreased(displayId);
-    auto displayPtr = DisplayManager::GetInstance().GetDefaultDisplay();
-    auto displayInfo = displayPtr->GetDisplayInfo();
-    display.ConvertDisplayInfo(*displayInfo);
     std::shared_ptr<DisplayListenerAdapter> listener1
         = std::make_shared<DisplayListenerAdapterFuzzTest>();
     DisplayListenerAdapterImpl display1(listener1);
@@ -64,6 +61,15 @@ bool DisplayDestroyFuzzTest(const uint8_t* data, size_t size)
     display1.OnChange(displayId);
     displayId = DisplayManager::GetInstance().GetDefaultDisplayId();
     display1.OnChange(displayId);
+    auto displayPtr = DisplayManager::GetInstance().GetDefaultDisplay();
+    if (displayPtr == nullptr) {
+        return false;
+    }
+    auto displayInfo = displayPtr->GetDisplayInfo();
+    if (displayInfo == nullptr) {
+        return false;
+    }
+    display1.ConvertDisplayInfo(*displayInfo);
     return true;
 }
 } // namespace OHOS
