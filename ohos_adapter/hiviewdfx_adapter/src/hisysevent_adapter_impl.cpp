@@ -29,15 +29,16 @@ const HiviewDFX::HiSysEvent::EventType EVENT_TYPES[] = {
 };
 }
 
+const int kBase10 = 10;
 bool ConvertToLongLong(const std::string& str, long long& value)
 {
     char* end;
     errno = 0;
-    value = std::strtoll(str.c_str(), &end, 10);
+    value = std::strtoll(str.c_str(), &end, kBase10);
     if (end == str.c_str()) {
         return false;
     }
-    if (error == ERANGE && (value == LLONG_MAX || value == LLONG_MIN)) {
+    if (errno == ERANGE && (value == LLONG_MAX || value == LLONG_MIN)) {
         return false;
     }
     if (*end != '\0') {
