@@ -473,7 +473,10 @@ void NWebConfigHelper::ParsePerfConfig(xmlNodePtr NodePtr)
             }
             std::string contentStr = reinterpret_cast<const char*>(content);
             xmlFree(content);
+            {
+            std::lock_guard<std::mutex> lock(lock_);
             perfConfig_.emplace(nodeName + "/" + childNodeName, contentStr);
+            }
             WriteConfigValueToSysPara(nodeName + "/" + childNodeName, contentStr);
         }
     }
@@ -481,6 +484,7 @@ void NWebConfigHelper::ParsePerfConfig(xmlNodePtr NodePtr)
 
 std::string NWebConfigHelper::ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     auto it = perfConfig_.find(configNodeName + "/" + argsNodeName);
     if (it == perfConfig_.end()) {
         WVLOG_W("not found perf config for web_config: %{public}s/%{public}s", configNodeName.c_str(),
