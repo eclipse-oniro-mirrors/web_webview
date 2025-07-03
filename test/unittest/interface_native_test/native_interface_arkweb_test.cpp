@@ -212,7 +212,7 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_SetBlanklessLoadingCacheCapa
  */
 HWTEST_F(NativeInterfaceArkWebTest, OH_ArkWebCookieManager_SaveCookieSync_01, TestSize.Level1) {
     ArkWeb_ErrorCode ret = OH_ArkWebCookieManager_SaveCookieSync();
-    EXPECT_EQ(ret, ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN);
+    EXPECT_EQ(ret, ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED);
 }
 
 /**
