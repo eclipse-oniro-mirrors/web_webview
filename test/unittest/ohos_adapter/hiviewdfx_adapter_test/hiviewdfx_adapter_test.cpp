@@ -219,6 +219,32 @@ HWTEST(HiViewDFXAdapterTest, NormalScene_03, TestSize.Level1)
     ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write("testEvent",
         HiSysEventAdapter::EventType::STATISTIC, data3);
 
+    const std::string input = "NAVIGATION_ID" + std::to_string(0) + "NAVIGATION_START" + std::to_string(0) +
+        "REDIRECT_COUNT" + std::to_string(0) + "INPUT_TIME" + std::to_string(0) +
+        "FIRST_PAINT" + std::to_string(0) + "FIRST_CONTENTFUL_PAINT" + std::to_string(0) +
+        "FIRST_MEANINGFUL_PAINT" + std::to_string(0) + "IS_PAINT_DOWN" + std::to_string(0);
+    const std::tuple<const std::string, const std::string> data4 (input, "");
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "FIRST_MEANINGFUL_PAINT_DONE", HiSysEventAdapter::EventType::STATISTIC, data4);
+    EXPECT_EQ(ret, 0);
+
+    const std::string input1 = "NAVIGATION_ID" + std::to_string(0) + "NAVIGATION_START" + std::to_string(0) +
+        "REDIRECT_COUNT" + std::to_string(0) + "REDIRECT_START" + std::to_string(0) +
+        "REDIRECT_END" + std::to_string(0) + "FETCH_START" + std::to_string(0) +
+        "WORKER_START" + std::to_string(0) + "DOMAIN_LOOKUP_START" + std::to_string(0) +
+        "DOMAIN_LOOKUP_END" + std::to_string(0) + "CONNECT_START" + std::to_string(0) +
+        "SECURE_CONNECT_START" + std::to_string(0) + "CONNECT_END" + std::to_string(0) +
+        "REQUEST_START" + std::to_string(0) + "RESPONSE_START" + std::to_string(0) +
+        "RESPONSE_END" + std::to_string(0) + "DOM_INTERACTIVE" + std::to_string(0) +
+        "DOM_CONTENT_LOADED_EVENT_START" + std::to_string(0) + "DOM_CONTENT_LOADED_EVENT_END" + std::to_string(0) +
+        "LOAD_EVENT_START" + std::to_string(0) + "LOAD_EVENT_END" + std::to_string(0) +
+        "FIRST_PAINT" + std::to_string(0) + "FIRST_CONTENTFUL_PAINT" + std::to_string(0) +
+        "LARGEST_CONTENTFUL_PAINT" + std::to_string(0) + "RENDER_INIT_BLOCK" + std::to_string(0);
+    const std::tuple<const std::string, const std::string> data5 (input1, "");
+    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "PAGE_LOAD_TIME", HiSysEventAdapter::EventType::STATISTIC, data5);
+    EXPECT_EQ(ret, 0);
+
     applicationContext->AttachContextImpl(nullptr);
     ans = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
     EXPECT_EQ(ans, nullptr);
