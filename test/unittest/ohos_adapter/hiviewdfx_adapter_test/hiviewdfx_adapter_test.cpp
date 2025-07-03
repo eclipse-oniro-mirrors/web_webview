@@ -248,7 +248,7 @@ HWTEST(HiViewDFXAdapterTest, NormalScene_04, TestSize.Level1)
         "FIRST_PAINT" + std::to_string(0) + "FIRST_CONTENTFUL_PAINT" + std::to_string(0) +
         "FIRST_MEANINGFUL_PAINT" + std::to_string(0) + "IS_PAINT_DOWN" + std::to_string(0);
     const std::tuple<const std::string, const std::string> data (input, "");
-    ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+    int ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
         "FIRST_MEANINGFUL_PAINT_DONE", HiSysEventAdapter::EventType::STATISTIC, data);
     EXPECT_EQ(ret, 0);
 
