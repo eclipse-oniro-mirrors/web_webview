@@ -325,6 +325,7 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
     }
 
     if (size > MAX_KEYS_COUNT) {
+        WVLOG_W("OH_NativeArkWeb_ClearBlanklessLoadingCache array size should not exceed 100");
         size = MAX_KEYS_COUNT;
     }
 
@@ -336,6 +337,10 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
         keys.push_back(key[idx]);
     }
 
+    if (keys.size() == 0) {
+        WVLOG_W("OH_NativeArkWeb_ClearBlanklessLoadingCache valid keys are 0");
+        return;
+    }
     OHOS::NWeb::NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
 }
 
