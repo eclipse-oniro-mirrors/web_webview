@@ -540,7 +540,7 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
     uint32_t arrLen = 0;
     napi_get_array_length(env, argv, &arrLen);
     if (arrLen > MAX_KEYS_COUNT) {
-        WVLOG_E("ParseBlanklessStringArray array size should not exceed 100");
+        WVLOG_W("ParseBlanklessStringArray array size should not exceed 100");
         arrLen = MAX_KEYS_COUNT;
     }
 
@@ -7243,6 +7243,10 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
         return result;
     }
 
+    if (keys.size() == 0) {
+        WVLOG_W("ClearBlanklessLoadingCache valid keys are 0");
+        return result;
+    }
     NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
     return result;
 }
