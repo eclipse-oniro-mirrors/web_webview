@@ -1004,6 +1004,23 @@ public:
     virtual ArkWebString OnHandleOverrideErrorPage(
         ArkWebRefPtr<ArkWebUrlResourceRequest> request,
         ArkWebRefPtr<ArkWebUrlResourceError> error) = 0;
+
+    /**
+     * @brief Notify the web client pdf scroll at bottom.
+     *
+     * @param url The url of the pdf.
+     */
+    /*--ark web()--*/
+    virtual void OnPdfScrollAtBottom(const ArkWebString& url) = 0;
+
+    /**
+     * @brief Notify the web client pdf load event.
+     *
+     * @param result The result of the pdf load.
+     * @param url The url of the pdf.
+     */
+    /*--ark web()--*/
+    virtual void OnPdfLoadEvent(int32_t result, const ArkWebString& url) = 0;
 };
 
 } // namespace OHOS::ArkWeb

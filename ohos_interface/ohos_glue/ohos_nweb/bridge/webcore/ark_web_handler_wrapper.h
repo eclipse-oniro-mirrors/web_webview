@@ -717,6 +717,21 @@ public:
     std::string OnHandleOverrideErrorPage(
         std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> request,
         std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> error) override;
+
+    /**
+     * @brief Notify the web client pdf scroll at bottom.
+     *
+     * @param url The url of the pdf.
+     */
+    void OnPdfScrollAtBottom(const std::string& url) override;
+
+    /**
+     * @brief Notify the web client pdf load event.
+     *
+     * @param result The result of the pdf load.
+     * @param url The url of the pdf.
+     */
+    void OnPdfLoadEvent(int32_t result, const std::string& url) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };
