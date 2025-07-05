@@ -57,7 +57,6 @@ int64_t GetValueInt64(const std::string& input, const std::string& key1, const s
             return result;
         }
         return -1;
-        return std::stoll(input.substr(input.find(key1, 0) + key1.size()));
     }
     std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size(),
         input.find(key2,0) - input.find(key1, 0) - key1.size());
