@@ -1080,4 +1080,14 @@ ArkWebString ArkWebHandlerImpl::OnHandleOverrideErrorPage(
 
     return ArkWebStringClassToStruct(nweb_handler_->OnHandleOverrideErrorPage(nweb_request, nweb_error));
 }
+
+void ArkWebHandlerImpl::OnPdfScrollAtBottom(const ArkWebString& url)
+{
+    nweb_handler_->OnPdfScrollAtBottom(ArkWebStringStructToClass(url));
+}
+
+void ArkWebHandlerImpl::OnPdfLoadEvent(int32_t result, const ArkWebString& url)
+{
+    nweb_handler_->OnPdfLoadEvent(result, ArkWebStringStructToClass(url));
+}
 } // namespace OHOS::ArkWeb
