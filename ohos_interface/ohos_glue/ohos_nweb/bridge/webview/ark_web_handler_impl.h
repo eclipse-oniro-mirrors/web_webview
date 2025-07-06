@@ -686,7 +686,7 @@ public:
      *
      * @param url The url of the pdf.
      */
-    void OnPdfScrollAtBottom(const sArkWebString& url) override;
+    void OnPdfScrollAtBottom(const ArkWebString& url) override;
 
     /**
      * @brief Notify the web client pdf load event.
