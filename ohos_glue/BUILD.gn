@@ -1090,6 +1090,7 @@ config("ohos_glue_config") {
     "${target_gen_dir}",
     "${target_gen_dir}/../ohos_nweb/include",
     "${target_gen_dir}/../ohos_nweb",
+    "../ohos_nweb",
   ]
 }
 
