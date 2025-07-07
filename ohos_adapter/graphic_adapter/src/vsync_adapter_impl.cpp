@@ -265,7 +265,7 @@ void VSyncAdapterImpl::SetDVSyncSwitch(bool dvsyncSwitch)
     if (!receiver_) {
         WVLOG_E("NWebWindowAdatrper SetDVSyncSwitch: receiver_ is nullptr!");
         return;
-    } else if (OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.ohos.dvsync", false)) {
+    } else if (OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.dvsync.enabled", false)) {
         WVLOG_D("NWebWindowAdatrper SetDVSyncSwitch: dvsyncSwitch = %{public}d", dvsyncSwitch);
         VsyncError ret = receiver_->SetNativeDVSyncSwitch(dvsyncSwitch);
         if (ret != VsyncError::GSERROR_OK) {
