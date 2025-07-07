@@ -82,7 +82,7 @@ namespace Webview {
         if (cArrStr.head == nullptr || cArrStr.size <= 0) {
             return vec;
         }
-        for (size_t i = 0; i < cArrStr.size; i++) {
+        for (int64_t i = 0; i < cArrStr.size; i++) {
             if (cArrStr.head[i] != nullptr) {
                 vec.emplace_back(cArrStr.head[i]);
             }
