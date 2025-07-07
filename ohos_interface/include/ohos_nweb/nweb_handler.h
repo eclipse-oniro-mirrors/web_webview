@@ -1239,6 +1239,21 @@ public:
     {
         return "";
     }
+
+    /**
+     * @brief Called when web occurs event of pdf scroll at bottom.
+     *
+     * @param url The url of the pdf.
+     */
+    virtual void OnPdfScrollAtBottom(const std::string& url) {}
+
+    /**
+     * @brief Called when web occurs event of pdf load.
+     *
+     * @param result The result of the pdf load.
+     * @param url The url of the pdf.
+     */
+    virtual void OnPdfLoadEvent(int32_t result, const std::string& url) {}
 };
 
 } // namespace OHOS::NWeb

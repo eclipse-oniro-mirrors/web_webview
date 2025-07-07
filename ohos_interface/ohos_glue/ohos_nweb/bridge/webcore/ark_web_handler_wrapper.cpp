@@ -1234,4 +1234,22 @@ std::string ArkWebHandlerWrapper::OnHandleOverrideErrorPage(
     ArkWebStringStructRelease(result);
     return html;
 }
+
+void ArkWebHandlerWrapper::OnPdfScrollAtBottom(const std::string& url)
+{
+    ArkWebString stUrl = ArkWebStringClassToStruct(url);
+
+    ark_web_handler_->OnPdfScrollAtBottom(stUrl);
+
+    ArkWebStringStructRelease(stUrl);
+}
+
+void ArkWebHandlerWrapper::OnPdfLoadEvent(int32_t result, const std::string& url)
+{
+    ArkWebString stUrl = ArkWebStringClassToStruct(url);
+
+    ark_web_handler_->OnPdfLoadEvent(result, stUrl);
+
+    ArkWebStringStructRelease(stUrl);
+}
 } // namespace OHOS::ArkWeb
