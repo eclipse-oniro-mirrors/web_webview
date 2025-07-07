@@ -16,6 +16,7 @@ import("../config.gni")
 
 config("ohos_adapter_public_interface") {
   include_dirs = [ "${target_gen_dir}/interfaces" ]
+  include_dirs += [ "interfaces" ]
 }
 
 ohos_shared_library("nweb_ohos_adapter") {
@@ -107,9 +108,10 @@ ohos_shared_library("nweb_ohos_adapter") {
   ]
 
   include_dirs = [
-    "../ohos_interface/include/ohos_adapter",
-    "../ohos_interface/include/ohos_nweb",
     "${target_gen_dir}/../ohos_nweb/include",
+    "../ohos_nweb/include",
+    "../ohos_interface/include/ohos_nweb",
+    "../ohos_interface/include/ohos_adapter",
     "aafwk_adapter/include",
     "access_token_adapter/include",
     "audio_adapter/include",
