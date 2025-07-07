@@ -38,8 +38,6 @@ const std::string BASE_WEB_CONFIG = "baseWebConfig";
 const std::string WEB_ANIMATION_DYNAMIC_SETTING_CONFIG = "property_animation_dynamic_settings";
 const std::string WEB_ANIMATION_DYNAMIC_APP = "dynamic_apps";
 const std::string WEB_LTPO_STRATEGY = "ltpo_strategy";
-const std::string WEB_BLANKLESS_CONFIG = "blanklessConfig";
-const std::string WEB_BLANKLESS_ENABLED = "blanklessEnabled";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
@@ -353,12 +351,6 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
             ParseNWebLTPOConfig(ltpoConfigNodePtr);
         }
     }
-    if (!blanklessEnabled_.has_value()) {
-        xmlNodePtr blanklessConfigNodePtr = GetChildrenNode(rootPtr, WEB_BLANKLESS_CONFIG);
-        if (blanklessConfigNodePtr != nullptr) {
-            ParseNWebBlanklessConfig(blanklessConfigNodePtr);
-        }
-    }
     xmlFreeDoc(docPtr);
 }
 
@@ -556,37 +548,6 @@ void NWebConfigHelper::SetBundleName(const std::string& bundleName)
 std::string NWebConfigHelper::GetBundleName()
 {
     return bundleName_;
-}
-
-bool NWebConfigHelper::IsBlanklessEnabled()
-{
-    if (!blanklessEnabled_.has_value()) {
-        return false;
-    }
-    return blanklessEnabled_.value();
-}
-
-void NWebConfigHelper::ParseNWebBlanklessConfig(xmlNodePtr nodePtr)
-{
-    for (xmlNodePtr curNodePtr = nodePtr->xmlChildrenNode; curNodePtr != nullptr; curNodePtr = curNodePtr->next) {
-        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
-            WVLOG_E("invalid node!");
-            continue;
-        }
-        std::string nodeName = reinterpret_cast<const char*>(curNodePtr->name);
-        if (nodeName != WEB_BLANKLESS_ENABLED) {
-            WVLOG_E("invalid name! %s", nodeName.c_str());
-            continue;
-        }
-        xmlChar *content = xmlNodeGetContent(curNodePtr);
-        if (content == nullptr) {
-            WVLOG_E("content null %s", nodeName.c_str());
-            continue;
-        }
-        std::string contentStr = reinterpret_cast<const char*>(content);
-        blanklessEnabled_ = (contentStr == "true");
-        xmlFree(content);
-    }
 }
 
 } // namespace OHOS::NWeb
