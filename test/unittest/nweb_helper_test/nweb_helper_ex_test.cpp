@@ -160,6 +160,13 @@ public:
 
     void RemoveAllCache(bool include_disk_files) {}
 
+    void EnablePrivateNetworkAccess(bool enable) {}
+
+    bool IsPrivateNetworkAccessEnabled()
+    {
+        return false;
+    }
+
     MOCK_METHOD(void, SetWebDebuggingAccessAndPort,
         (bool isEnableDebug, int32_t port), (override));
 
@@ -1035,6 +1042,43 @@ HWTEST_F(NwebHelperTest, NWebHelper_CheckBlankOptEnable_002, TestSize.Level1)
     auto nwebEngineMock = std::make_shared<MockNWebEngine>();
     NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
     EXPECT_EQ(NWebHelper::Instance().CheckBlankOptEnable("example", 0), "");
+}
+
+/**
+ * @tc.name: NWebHelper_EnablePrivateNetworkAccess_001
+ * @tc.desc: EnablePrivateNetworkAccess.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_EnablePrivateNetworkAccess_001, TestSize.Level1)
+{
+    int32_t nweb_id = 1;
+    auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
+    EXPECT_EQ(nwebHelper, nullptr);
+
+    auto nwebengineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebengineMock;
+    NWebHelper::Instance().EnablePrivateNetworkAccess(true);
+    NWebHelper::Instance().EnablePrivateNetworkAccess(false);
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
+}
+
+/**
+ * @tc.name: NWebHelper_IsPrivateNetworkAccessEnabled_001
+ * @tc.desc: IsPrivateNetworkAccessEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_IsPrivateNetworkAccessEnabled_001, TestSize.Level1)
+{
+    int32_t nweb_id = 1;
+    auto nwebHelper = NWebHelper::Instance().GetNWeb(nweb_id);
+    EXPECT_EQ(nwebHelper, nullptr);
+
+    auto nwebengineMock = std::make_shared<MockNWebEngine>();
+    NWebHelper::Instance().nwebEngine_ = nwebengineMock;
+    NWebHelper::Instance().IsPrivateNetworkAccessEnabled();
+    EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
 }
 } // namespace OHOS::NWeb
 }
