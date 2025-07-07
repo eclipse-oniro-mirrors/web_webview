@@ -38,6 +38,7 @@ defines += [
 
 config("nweb_config") {
   include_dirs = [ "${target_gen_dir}/include" ]
+  include_dirs += [ "include" ]
 
   cflags = [
     "-Wall",
@@ -48,6 +49,7 @@ config("nweb_config") {
 
 config("nweb_public_interface") {
   include_dirs = [ "${target_gen_dir}/include" ]
+  include_dirs += [ "include" ]
 }
 
 config("nweb_glue_interface") {
@@ -59,8 +61,9 @@ config("nweb_glue_interface") {
 
 ohos_shared_library("web_configs") {
   include_dirs = [
-    "../ohos_interface/include/ohos_nweb",
     "${target_gen_dir}/include",
+    "../ohos_interface/include/ohos_nweb",
+    "include",
   ]
   sources = [ "src/nweb_config_helper.cpp" ]
 
@@ -188,6 +191,7 @@ ohos_executable("chrome_crashpad_handler") {
   install_enable = true
 
   include_dirs = [ "${target_gen_dir}/include" ]
+  include_dirs += [ "include" ]
 
   sources = [ "src/nweb_crashpad_handler_main.cpp" ]
 
