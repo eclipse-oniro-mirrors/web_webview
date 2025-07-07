@@ -43,7 +43,6 @@ public:
     bool IsWebPlayGroundEnable();
     const std::string& GetWebPlayGroundInitArg();
     const std::string& GetWebPlayGroundHapPath();
-    bool IsBlanklessEnabled();
 
 private:
     NWebConfigHelper();
@@ -57,7 +56,6 @@ private:
     void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     void ParseNWebLTPOApp(xmlNodePtr nodePtr);
     void ParseNWebLTPOStrategy(xmlNodePtr nodePtr);
-    void ParseNWebBlanklessConfig(xmlNodePtr nodePtr);
     bool IsDeveloperModeEnabled();
 
     std::map<std::string, std::string> perfConfig_;
@@ -65,7 +63,6 @@ private:
     std::set<std::string> ltpoAllowedApps_ {};
     int32_t ltpoStrategy_ {0};
     std::string bundleName_;
-    std::optional<bool> blanklessEnabled_;
     mutable std::mutex lock_;
 
     // add for web play ground

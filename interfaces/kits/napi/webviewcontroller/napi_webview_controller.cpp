@@ -7079,8 +7079,7 @@ napi_value NapiWebviewController::WaitForAttached(napi_env env, napi_callback_in
 
 napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_callback_info info)
 {
-    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
-    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
         WVLOG_E("GetBlanklessInfoWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7122,8 +7121,7 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
 
 napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_callback_info info)
 {
-    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
-    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
         WVLOG_E("SetBlanklessLoadingWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7173,8 +7171,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
 
 napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env, napi_callback_info info)
 {
-    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
-    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
         WVLOG_E("SetBlanklessLoadingCacheCapacity capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7213,8 +7210,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env,
 
 napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_callback_info info)
 {
-    ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
-    if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
         WVLOG_E("ClearBlanklessLoadingCache capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
