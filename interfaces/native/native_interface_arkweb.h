@@ -301,8 +301,6 @@ ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync();
 /**
  * @brief Ensure that all cookies currently accessible via the CookieManager API have been persisted to disk.
  *        Without initializing the CookieManager interface, this call will automatically be executed on the UI thread.
- *        If you want to use this interface in a non-UI thread, you need to initialize the CookieManager interface
- *        using OH_ArkWeb_GetNativeAPI first.
  * @param callback Callback execute when save cookie done.
  * @since 20
  */
