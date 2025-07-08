@@ -191,6 +191,9 @@ public:
 
     /*--ark web()--*/
     virtual bool IsPrivateNetworkAccessEnabled() = 0;
+
+    /*--ark web()--*/
+    virtual void SetWebDestroyMode(int32_t mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -28,6 +28,7 @@ using ArkWebImageColorType = OHOS::NWeb::ImageColorType;
 using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 using ArkWebNestedScrollMode = OHOS::NWeb::NestedScrollMode;
 using ArkPixelUnit = OHOS::NWeb::PixelUnit;
+using ArkWebDestroyMode = OHOS::NWeb::WebDestroyMode;
 
 class ArkWebNWebWrapper : public OHOS::NWeb::NWeb {
 public:
@@ -1750,6 +1751,12 @@ public:
      * @brief Get whether default error page feature is enabled.
      */
     bool GetErrorPageEnabled() override;
+
+    /**
+     * @brief Get web component destroy mode.
+     * @return The web destroy mode.
+     */
+    ArkWebDestroyMode GetWebDestroyMode() override;
 
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
