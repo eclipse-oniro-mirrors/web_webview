@@ -1767,4 +1767,10 @@ bool ArkWebNWebWrapper::GetErrorPageEnabled()
 {
     return ark_web_nweb_->GetErrorPageEnabled();
 }
+
+ArkWebDestroyMode ArkWebNWebWrapper::GetWebDestroyMode()
+{
+    int res = ark_web_nweb_->GetWebDestroyMode();
+    return static_cast<ArkWebDestroyMode>(res);
+}
 } // namespace OHOS::ArkWeb

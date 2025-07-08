@@ -754,7 +754,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("enablePrivateNetworkAccess",
             NapiWebviewController::EnablePrivateNetworkAccess),
         DECLARE_NAPI_STATIC_FUNCTION("isPrivateNetworkAccessEnabled",
-            NapiWebviewController::IsPrivateNetworkAccessEnabled), 
+            NapiWebviewController::IsPrivateNetworkAccessEnabled),
+        DECLARE_NAPI_STATIC_FUNCTION("setWebDestroyMode", NapiWebviewController::SetWebDestroyMode),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -991,6 +992,19 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(blanklessErrorCodeProperties) /
         sizeof(blanklessErrorCodeProperties[0]), blanklessErrorCodeProperties, &blanklessErrorCodeEnum);
     napi_set_named_property(env, exports, WEB_BLANKLESS_ERROR_CODE_ENUM_NAME.c_str(), blanklessErrorCodeEnum);
+
+    napi_value webDestroyModeEnum = nullptr;
+    napi_property_descriptor webDestroyModeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "NORMAL_MODE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(WebDestroyMode::NORMAL_MODE))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "FAST_MODE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(WebDestroyMode::FAST_MODE))),
+    };
+    napi_define_class(env, WEB_DESTROY_MODE_ENUM_NAME.c_str(), WEB_DESTROY_MODE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(webDestroyModeProperties) / sizeof(webDestroyModeProperties[0]), webDestroyModeProperties,
+        &webDestroyModeEnum);
+    napi_set_named_property(env, exports, WEB_DESTROY_MODE_ENUM_NAME.c_str(), webDestroyModeEnum);
 
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
@@ -7372,6 +7386,38 @@ napi_value NapiWebviewController::IsPrivateNetworkAccessEnabled(napi_env env, na
 
     bool pnaEnabled = NWebHelper::Instance().IsPrivateNetworkAccessEnabled();
     NAPI_CALL(env, napi_get_boolean(env, pnaEnabled, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SetWebDestroyMode(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+ 
+    int32_t destroyMode = false;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], destroyMode)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mode", "WebDestroyMode"));
+        return result;
+    }
+ 
+    if (destroyMode < static_cast<int>(WebDestroyMode::NORMAL_MODE) ||
+        destroyMode > static_cast<int>(WebDestroyMode::FAST_MODE)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_TYPE_INVALID, "mode"));
+        return result;
+    }
+ 
+    NWebHelper::Instance().SetWebDestroyMode(static_cast<WebDestroyMode>(destroyMode));
     return result;
 }
 } // namespace NWeb

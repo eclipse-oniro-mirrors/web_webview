@@ -1738,6 +1738,13 @@ public:
      */
     bool GetErrorPageEnabled() override;
 
+    /**
+     * @Description: Check web component active policy disable, default: false
+     * @Return: the web destroy mode.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetWebDestroyMode() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

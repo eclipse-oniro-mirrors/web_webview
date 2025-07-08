@@ -152,6 +152,8 @@ public:
 
     bool IsPrivateNetworkAccessEnabled();
 
+    void SetWebDestroyMode(WebDestroyMode mode);
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);

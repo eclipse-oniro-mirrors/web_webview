@@ -117,6 +117,8 @@ public:
 
     bool IsPrivateNetworkAccessEnabled() override;
 
+    void SetWebDestroyMode(OHOS::NWeb::WebDestroyMode mode) override;
+
 private:
     ArkWebRefPtr<ArkWebEngine> ark_web_engine_;
 };
