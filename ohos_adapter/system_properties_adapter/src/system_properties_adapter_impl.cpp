@@ -416,4 +416,9 @@ std::string SystemPropertiesAdapterImpl::GetStringParameter(const std::string& k
 {
     return OHOS::system::GetParameter(key, defaultValue);
 }
+
+int32_t SystemPropertiesAdapterImpl::GetIntParameter(const std::string& key, int32_t defaultValue)
+{
+    return OHOS::system::GetIntParameter(key, defaultValue);
+}
 } // namespace OHOS::NWeb
