@@ -44,6 +44,7 @@ const std::string WEB_PRESSURE_LEVEL_ENUM_NAME = "PressureLevel";
 const std::string WEB_SCROLL_TYPE_ENUM_NAME = "ScrollType";
 const std::string WEB_CONTROLLER_ATTACHSTATE_ENUM_NAME = "ControllerAttachState";
 const std::string WEB_BLANKLESS_ERROR_CODE_ENUM_NAME = "WebBlanklessErrorCode";
+const std::string WEB_DESTROY_MODE_ENUM_NAME = "WebDestroyMode";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 
 struct Scheme {
@@ -411,6 +412,7 @@ private:
 
     static napi_value EnablePrivateNetworkAccess(napi_env env, napi_callback_info info);
     static napi_value IsPrivateNetworkAccessEnabled(napi_env env, napi_callback_info info);
+    static napi_value SetWebDestroyMode(napi_env env, napi_callback_info info);
 };
 
 class NWebValueCallbackImpl : public NWebMessageValueCallback {

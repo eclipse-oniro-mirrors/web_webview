@@ -1362,4 +1362,15 @@ bool NWebHelper::IsPrivateNetworkAccessEnabled()
     }
     return nwebEngine_->IsPrivateNetworkAccessEnabled();
 }
+
+void NWebHelper::SetWebDestroyMode(WebDestroyMode mode)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return;
+    }
+ 
+    nwebEngine_->SetWebDestroyMode(mode);
+}
+
 } // namespace OHOS::NWeb
