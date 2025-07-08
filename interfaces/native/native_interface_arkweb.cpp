@@ -22,6 +22,8 @@
 
 #include "arkweb_error_code.h"
 #include "arkweb_type.h"
+#include "event_handler.h"
+#include "ffrt_inner.h"
 #include "native_arkweb_utils.h"
 #include "native_javascript_execute_callback.h"
 #include "nweb.h"
@@ -356,8 +358,35 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
     return capacity;
 }
 
+static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
+{
+    ffrt_queue_t queue_handle = ffrt_get_main_queue();
+
+    ffrt_task_attr_t task_attr;
+    (void)ffrt_task_attr_init(&task_attr);
+    ffrt_task_attr_set_queue_priority(&task_attr, ffrt_queue_priority_low);
+
+    std::function<void()> &&basicFunc = [callback]() {
+        std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+            OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+        if (cookieManager == nullptr) {
+            WVLOG_E("cookieManager is nullptr");
+            return;
+        }
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
+        cookieManager->Store(callbackImpl); };
+
+    ffrt_queue_submit_h(
+        queue_handle, ffrt::create_function_wrapper(basicFunc, ffrt_function_kind_queue), &task_attr);
+}
+
 ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync()
 {
+    if (getpid() != gettid() && !OHOS::NWeb::NWebHelper::Instance().HasLoadWebEngine()) {
+        WVLOG_E("cookieManager not initialize");
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED;
+    }
+
     std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
         OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
@@ -371,6 +400,12 @@ ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync()
 
 void OH_ArkWebCookieManager_SaveCookieAsync(OH_ArkWeb_OnCookieSaveCallback callback)
 {
+    if (getpid() != gettid() && !OHOS::NWeb::NWebHelper::Instance().HasLoadWebEngine()) {
+        WVLOG_D("post save cookie to UI thread");
+        PostSaveCookieToUIThread(callback);
+        return;
+    }
+
     std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
         OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
