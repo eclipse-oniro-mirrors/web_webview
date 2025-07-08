@@ -1949,6 +1949,13 @@ public:
      */
     /*--ark web()--*/
     virtual bool GetErrorPageEnabled() = 0;
+
+    /**
+     * @brief Get web component destroy mode.
+     * @return the web destroy mode.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetWebDestroyMode() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -1500,4 +1500,10 @@ bool ArkWebNWebImpl::GetErrorPageEnabled()
 {
     return nweb_nweb_->GetErrorPageEnabled();
 }
+
+int32_t ArkWebNWebImpl::GetWebDestroyMode()
+{
+    return static_cast<int32_t>(nweb_nweb_->GetWebDestroyMode());
+}
+
 } // namespace OHOS::ArkWeb

@@ -310,4 +310,9 @@ bool ArkWebEngineImpl::IsPrivateNetworkAccessEnabled()
     return nweb_engine_->IsPrivateNetworkAccessEnabled();
 }
 
+void ArkWebEngineImpl::SetWebDestroyMode(int32_t mode)
+{
+    nweb_engine_->SetWebDestroyMode(static_cast<OHOS::NWeb::WebDestroyMode>(mode));
+}
+
 } // namespace OHOS::ArkWeb

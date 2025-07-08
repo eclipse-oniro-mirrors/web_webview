@@ -131,6 +131,8 @@ public:
     virtual bool IsPrivateNetworkAccessEnabled() {
         return false;
     }
+
+    virtual void SetWebDestroyMode(WebDestroyMode mode) {}
 };
 
 } // namespace OHOS::NWeb

@@ -252,6 +252,11 @@ enum class PixelUnit {
     NONE = 3,
 };
 
+enum class WebDestroyMode {
+    NORMAL_MODE,
+    FAST_MODE
+};
+
 class OHOS_NWEB_EXPORT NWebMouseEvent {
 public:
     virtual ~NWebMouseEvent() = default;
@@ -2007,6 +2012,16 @@ public:
      * @brief Get whether default error page feature is enabled.
      */
     virtual bool GetErrorPageEnabled() { return false; }
+
+    /**
+     * @brief Get web component destroy mode.
+     * @return The web component destroy mode.
+     */
+    /*--ark web()--*/
+    virtual WebDestroyMode GetWebDestroyMode()
+    {
+        return WebDestroyMode::NORMAL_MODE;
+    }
 };
 
 } // namespace OHOS::NWeb

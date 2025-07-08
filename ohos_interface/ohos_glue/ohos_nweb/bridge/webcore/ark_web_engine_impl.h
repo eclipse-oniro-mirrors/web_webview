@@ -118,6 +118,8 @@ public:
 
     bool IsPrivateNetworkAccessEnabled() override;
 
+    void SetWebDestroyMode(int32_t mode) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };
