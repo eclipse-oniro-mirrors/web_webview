@@ -353,4 +353,15 @@ int32_t ArkSystemPropertiesAdapterWrapper::GetInitialCongestionWindowSize()
     }
     return ctocpp_->GetInitialCongestionWindowSize();
 }
+
+int32_t ArkSystemPropertiesAdapterWrapper::GetIntParameter(const std::string& key, int32_t defaultValue)
+{
+    if (!ctocpp_) {
+        return -1;
+    }
+    ArkWebString str = ArkWebStringClassToStruct(key);
+    int32_t result = ctocpp_->GetIntParameter(str, defaultValue);
+    ArkWebStringStructRelease(str);
+    return result;
+}
 } // namespace OHOS::ArkWeb
