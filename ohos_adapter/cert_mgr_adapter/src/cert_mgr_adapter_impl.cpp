@@ -21,9 +21,56 @@
 #include "nweb_log.h"
 #include "securec.h"
 
+#define SSL_SIGN_RSA_PKCS1_SHA256 0x0401
+#define SSL_SIGN_RSA_PKCS1_SHA384 0x0501
+#define SSL_SIGN_RSA_PKCS1_SHA512 0x0601
+#define SSL_SIGN_ECDSA_SECP256R1_SHA256 0x0403
+#define SSL_SIGN_ECDSA_SECP384R1_SHA384 0x0503
+#define SSL_SIGN_ECDSA_SECP521R1_SHA512 0x0603
+#define SSL_SIGN_RSA_PSS_RSAE_SHA256 0x0804
+#define SSL_SIGN_RSA_PSS_RSAE_SHA384 0x0805
+#define SSL_SIGN_RSA_PSS_RSAE_SHA512 0x0806
+
 using namespace OHOS::NWeb;
 
 namespace OHOS::NWeb {
+
+namespace {
+bool GetCmSignatureSpec(uint16_t algorithm, CmSignatureSpec& result)
+{
+    switch (algorithm) {
+        case SSL_SIGN_RSA_PKCS1_SHA256:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PKCS1_V1_5, CM_DIGEST_SHA256 };
+            return true;
+        case SSL_SIGN_RSA_PKCS1_SHA384:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PKCS1_V1_5, CM_DIGEST_SHA384 };
+            return true;
+        case SSL_SIGN_RSA_PKCS1_SHA512:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PKCS1_V1_5, CM_DIGEST_SHA512 };
+            return true;
+        case SSL_SIGN_ECDSA_SECP256R1_SHA256:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_NONE, CM_DIGEST_SHA256 };
+            return true;
+        case SSL_SIGN_ECDSA_SECP384R1_SHA384:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_NONE, CM_DIGEST_SHA384 };
+            return true;
+        case SSL_SIGN_ECDSA_SECP521R1_SHA512:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_NONE, CM_DIGEST_SHA512 };
+            return true;
+        case SSL_SIGN_RSA_PSS_RSAE_SHA256:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PSS, CM_DIGEST_SHA256 };
+            return true;
+        case SSL_SIGN_RSA_PSS_RSAE_SHA384:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PSS, CM_DIGEST_SHA384 };
+            return true;
+        case SSL_SIGN_RSA_PSS_RSAE_SHA512:
+            result = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PSS, CM_DIGEST_SHA512 };
+            return true;
+        default:
+            return false;
+    }
+}
+}
 
 int32_t CertManagerAdapterImpl::InitCertList(struct CertList **cList)
 {
@@ -370,6 +417,12 @@ int32_t CertManagerAdapterImpl::GetAppCert(uint8_t* uriData, uint8_t* certData, 
     struct CmBlob uri = { strlen((char*)uriData) + 1, uriData };
     int32_t ret = CmGetAppCert(&uri, CM_CREDENTIAL_STORE, &cred);
     if (ret != CM_SUCCESS) {
+        ret = CmGetAppCert(&uri, CM_PRI_CREDENTIAL_STORE, &cred);
+    }
+    if (ret != CM_SUCCESS) {
+        ret = CmGetAppCert(&uri, CM_SYS_CREDENTIAL_STORE, &cred);
+    }
+    if (ret != CM_SUCCESS) {
         WVLOG_E("GetAppCert, get app cert failed, ret = %{public}d ", ret);
         free(cred.credData.data);
         cred.credData.data = nullptr;
@@ -392,13 +445,31 @@ int32_t CertManagerAdapterImpl::GetAppCert(uint8_t* uriData, uint8_t* certData, 
 int32_t CertManagerAdapterImpl::Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
     uint8_t* signData, uint32_t signDataLen)
 {
+    return SignV2(uri, certData, certDataLen, signData, &signDataLen, SSL_SIGN_RSA_PSS_RSAE_SHA256);
+}
+ 
+int32_t CertManagerAdapterImpl::SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
+        uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm)
+{
+    WVLOG_D("CertManagerAdapterImpl::SignV2 algorithm: %{public}d", algorithm);
     uint64_t handleValue = 0;
     struct CmBlob handle = { sizeof(uint64_t), (uint8_t *)&handleValue };
     const struct CmBlob keyUri = { strlen((char*)uri) + 1, (uint8_t*)uri };
-    struct CmSignatureSpec spec = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PSS, CM_DIGEST_SHA256 };
-
+    struct CmSignatureSpec spec;
+    if (!GetCmSignatureSpec(algorithm, spec)) {
+        WVLOG_E("get cm signature spec fail, please check the signature algorithm");
+        return CM_FAILURE;
+    }
+ 
     if (signData == nullptr) {
         WVLOG_E("Sign, sign data is nullptr");
+        return CM_FAILURE;
+    }
+
+    constexpr uint32_t coverAllAlgorithmSignDataLenMin = 1000;
+    if (!signDataLen || *signDataLen < coverAllAlgorithmSignDataLenMin) {
+        WVLOG_E("The buffer length cannot cover all algorithms,"
+                "please set the signDataLen length to no less than 1000");
         return CM_FAILURE;
     }
 
@@ -415,13 +486,14 @@ int32_t CertManagerAdapterImpl::Sign(const uint8_t* uri, const uint8_t* certData
         return CM_FAILURE;
     }
 
-    struct CmBlob signature = { signDataLen, signData };
+    struct CmBlob signature = { *signDataLen, signData };
     struct CmBlob inDataFinish = { 0, nullptr };
     ret = CmFinish(&handle, &inDataFinish, &signature);
     if (ret != CM_SUCCESS) {
         WVLOG_E("Sign, finish failed, ret = %{public}d ", ret);
         return CM_FAILURE;
     }
+    *signDataLen = signature.size;
 
     ret = CmAbort(&handle);
     if (ret != CM_SUCCESS) {
