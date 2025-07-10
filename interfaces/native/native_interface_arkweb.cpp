@@ -66,18 +66,20 @@ private:
 
 class NWebSaveCookieCallbackImpl : public NWebBoolValueCallback {
 public:
-    explicit NWebSaveCookieCallbackImpl(std::function<void(void)> callback) : callback_(callback) {}
+    NWebSaveCookieCallbackImpl(std::function<void(ArkWeb_ErrorCode errorCode)> callback) : callback_(callback) {}
     ~NWebSaveCookieCallbackImpl() = default;
 
     void OnReceiveValue(bool result) override
     {
         WVLOG_D("save cookie received result, result = %{public}d", result);
         if (callback_) {
-            callback_();
+            ArkWeb_ErrorCode errorCode =
+                result ? ArkWeb_ErrorCode::ARKWEB_SUCCESS : ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED;
+            callback_(errorCode);
         }
     }
 private:
-    std::function<void(void)> callback_;
+    std::function<void(ArkWeb_ErrorCode errorCode)> callback_;
 };
 
 }; // namespace OHOS::NWeb
@@ -371,6 +373,9 @@ static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
             OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
         if (cookieManager == nullptr) {
             WVLOG_E("cookieManager is nullptr");
+            if (callback) {
+                callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+            }
             return;
         }
         auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
@@ -390,11 +395,13 @@ ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync()
     std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
         OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
-        WVLOG_E("cookieManager is nullptr)");
-        return ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED;
+        WVLOG_E("cookieManager is nullptr");
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED;
     }
 
-    cookieManager->Store();
+    if (!cookieManager->Store()) {
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED;
+    }
     return ArkWeb_ErrorCode::ARKWEB_SUCCESS;
 }
 
@@ -409,10 +416,14 @@ void OH_ArkWebCookieManager_SaveCookieAsync(OH_ArkWeb_OnCookieSaveCallback callb
     std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
         OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
     if (cookieManager == nullptr) {
-        WVLOG_E("cookieManager is nullptr)");
+        WVLOG_E("cookieManager is nullptr");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+        }
         return;
     }
 
     auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
     cookieManager->Store(callbackImpl);
 }
+
