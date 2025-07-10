@@ -26,9 +26,9 @@ using namespace testing;
 using namespace testing::ext;
 
 namespace {
-    int g_callbackCnt = 0;
-    void OH_ArkWeb_OnCookieSaveCallbackImpl() {
-        g_callbackCnt = 1;
+    ArkWeb_ErrorCode g_errorCode = ArkWeb_ErrorCode::ARKWEB_SUCCESS;
+    void OH_ArkWeb_OnCookieSaveCallbackImpl(ArkWeb_ErrorCode errorCode) {
+        g_errorCode = errorCode;
     }
 }
 
@@ -212,7 +212,7 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_SetBlanklessLoadingCacheCapa
  */
 HWTEST_F(NativeInterfaceArkWebTest, OH_ArkWebCookieManager_SaveCookieSync_01, TestSize.Level1) {
     ArkWeb_ErrorCode ret = OH_ArkWebCookieManager_SaveCookieSync();
-    EXPECT_EQ(ret, ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED);
+    EXPECT_EQ(ret, ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
 }
 
 /**
@@ -221,12 +221,14 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_ArkWebCookieManager_SaveCookieSync_01, Te
  */
 HWTEST_F(NativeInterfaceArkWebTest, OH_ArkWebCookieManager_SaveCookieAsync_01, TestSize.Level1) {
     OH_ArkWeb_OnCookieSaveCallback callback = nullptr;
+    g_errorCode = ArkWeb_ErrorCode::ARKWEB_SUCCESS;
     OH_ArkWebCookieManager_SaveCookieAsync(callback);
-    EXPECT_EQ(g_callbackCnt, 0);
+    EXPECT_EQ(g_errorCode, ArkWeb_ErrorCode::ARKWEB_SUCCESS);
 
+    g_errorCode = ArkWeb_ErrorCode::ARKWEB_SUCCESS;
     callback = OH_ArkWeb_OnCookieSaveCallbackImpl;
     OH_ArkWebCookieManager_SaveCookieAsync(callback);
-    EXPECT_EQ(g_callbackCnt, 0);
+    EXPECT_EQ(g_errorCode, ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
 }
 
 } // namespace NWeb
