@@ -114,6 +114,8 @@ public:
 
     virtual std::unique_ptr<CertManagerAdapter> GetRootCertDataAdapter() = 0;
 
+    virtual std::unique_ptr<CertManagerAdapter> GetCertManagerAdapter() {return nullptr;};
+
     virtual AccessTokenAdapter& GetAccessTokenAdapterInstance() = 0;
 
     virtual std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() = 0;
