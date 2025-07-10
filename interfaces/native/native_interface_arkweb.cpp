@@ -66,7 +66,7 @@ private:
 
 class NWebSaveCookieCallbackImpl : public NWebBoolValueCallback {
 public:
-    NWebSaveCookieCallbackImpl(std::function<void(ArkWeb_ErrorCode errorCode)> callback) : callback_(callback) {}
+    explicit NWebSaveCookieCallbackImpl(std::function<void(ArkWeb_ErrorCode errorCode)> callback) : callback_(callback) {}
     ~NWebSaveCookieCallbackImpl() = default;
 
     void OnReceiveValue(bool result) override
