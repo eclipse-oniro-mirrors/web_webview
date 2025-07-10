@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "auto_napi_ref.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -309,6 +310,10 @@ public:
     bool GetScrollable() const;
 
     void InnerSetHapPath(const std::string &hapPath);
+ 
+    void InnerSetFavicon(napi_env env, napi_value favicon);
+
+    napi_value InnerGetFavicon(napi_env env);
 
     bool GetCertChainDerData(std::vector<std::string> &certChainDerData) const;
 
@@ -507,6 +512,7 @@ private:
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
     std::string hapPath_ = "";
     std::string webTag_ = "";
+    AutoNapiRef favicon_;
     std::vector<std::string> moduleName_;
     std::map<std::string, WebSchemeHandler*> webSchemeHandlerMap_;
     static std::map<std::string, WebSchemeHandler*> webServiceWorkerSchemeHandlerMap_;
