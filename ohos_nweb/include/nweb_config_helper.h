@@ -57,6 +57,7 @@ private:
     void ParseNWebLTPOApp(xmlNodePtr nodePtr);
     void ParseNWebLTPOStrategy(xmlNodePtr nodePtr);
     bool IsDeveloperModeEnabled();
+    bool IsPerfConfigEmpty();
 
     std::map<std::string, std::string> perfConfig_;
     std::map<std::string, std::vector<FrameRateSetting>> ltpoConfig_;

@@ -205,9 +205,15 @@ NWebConfigHelper &NWebConfigHelper::Instance()
     return helper;
 }
 
+bool NWebConfigHelper::IsPerfConfigEmpty()
+{
+    std::lock_guard<std::mutex> lock(lock_);
+    return perfConfig_.empty();
+}
+
 void NWebConfigHelper::ReadConfigIfNeeded()
 {
-    if (perfConfig_.empty()) {
+    if (IsPerfConfigEmpty()) {
         std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
         NWebConfigHelper::Instance().ParseConfig(initArgs);
     }
@@ -334,7 +340,7 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
         ParseDeleteConfig(deleteNodePtr, initArgs);
     }
 
-    if (perfConfig_.empty()) {
+    if (IsPerfConfigEmpty()) {
         xmlNodePtr perfNodePtr = GetChildrenNode(rootPtr, PERFORMANCE_CONFIG);
         if (perfNodePtr != nullptr) {
             ParsePerfConfig(perfNodePtr);

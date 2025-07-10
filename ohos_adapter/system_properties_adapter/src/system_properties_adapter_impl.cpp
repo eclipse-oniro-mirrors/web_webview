@@ -15,6 +15,7 @@
 
 #include "system_properties_adapter_impl.h"
 
+#include <locale>
 #include <securec.h>
 #include <native_interface_bundle.h>
 
@@ -35,6 +36,8 @@ const std::string FACTORY_LEVEL_PC = "8";
 const std::string FACTORY_LEVEL_TABLET = "4";
 const std::string FACTORY_LEVEL_PHONE = "2";
 const std::string FACTORY_LEVEL_DEFAULT = "1";
+constexpr int DEFAULT_INITIAL_CONGESTION_WINDOW_SIZE = -1;
+constexpr size_t INT_MAX_LEN = 10;
 
 const std::string PROP_RENDER_DUMP = "web.render.dump";
 const std::string PROP_DEBUG_TRACE = "web.debug.trace";
@@ -253,8 +256,20 @@ int32_t SystemPropertiesAdapterImpl::GetFlowBufMaxFd()
 
 int32_t SystemPropertiesAdapterImpl::GetInitialCongestionWindowSize()
 {
-    return std::stoi(NWebConfigHelper::Instance()
-        .ParsePerfConfig("TCPConnectedSocketConfig", "initialCongestionWindowSize"));
+    std::string init_cwnd_str = NWebConfigHelper::Instance()
+        .ParsePerfConfig("TCPConnectedSocketConfig", "initialCongestionWindowSize");
+    if (init_cwnd_str.size() > 0 && init_cwnd_str.size() < INT_MAX_LEN - 1 ) {
+        for (char character : init_cwnd_str) {
+            if (!std::isdigit(character, std::locale::classic())) {
+                WVLOG_E("parse initialCongestionWindowSize failed: invalid argument");
+                return DEFAULT_INITIAL_CONGESTION_WINDOW_SIZE;
+            }
+        }
+ 
+        return std::stoi(init_cwnd_str);
+    }
+ 
+    return DEFAULT_INITIAL_CONGESTION_WINDOW_SIZE;
 }
 
 void SystemPropertiesAdapterImpl::AddAllSysPropWatchers()
