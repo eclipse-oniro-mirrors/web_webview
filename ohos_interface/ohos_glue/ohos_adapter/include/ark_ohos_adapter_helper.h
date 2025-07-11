@@ -223,6 +223,9 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkScreenlockManagerAdapter> CreateScreenlockManagerAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkCertManagerAdapter> GetCertManagerAdapter() = 0;
 };
 
 } // namespace OHOS::ArkWeb

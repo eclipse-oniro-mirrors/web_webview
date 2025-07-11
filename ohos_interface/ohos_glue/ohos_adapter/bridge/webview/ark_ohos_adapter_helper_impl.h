@@ -70,6 +70,8 @@ public:
 
     ArkWebRefPtr<ArkCertManagerAdapter> GetRootCertDataAdapter() override;
 
+    ArkWebRefPtr<ArkCertManagerAdapter> GetCertManagerAdapter() override;
+
     ArkWebRefPtr<ArkAccessTokenAdapter> GetAccessTokenAdapterInstance() override;
 
     ArkWebRefPtr<ArkEventHandlerAdapter> GetEventHandlerAdapter() override;
