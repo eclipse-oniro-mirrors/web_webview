@@ -63,12 +63,6 @@ int32_t ArkCertManagerAdapterImpl::Sign(
     return real_->Sign(uri, certData, certDataLen, signData, signDataLen);
 }
 
-int32_t ArkCertManagerAdapterImpl::SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
-    uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm)
-{
-    return real_->SignV2(uri, certData, certDataLen, signData, signDataLen, algorithm);
-}
-
 int32_t ArkCertManagerAdapterImpl::GetCertDataBySubject(const char* subjectName, uint8_t* certData, int32_t certType)
 {
     return real_->GetCertDataBySubject(subjectName, certData, certType);

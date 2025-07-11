@@ -220,11 +220,6 @@ std::unique_ptr<CertManagerAdapter> OhosAdapterHelperImpl::GetRootCertDataAdapte
     return std::make_unique<CertManagerAdapterImpl>();
 }
 
-std::unique_ptr<CertManagerAdapter> OhosAdapterHelperImpl::GetCertManagerAdapter()
-{
-    return std::make_unique<CertManagerAdapterImpl>();
-}
-
 AccessTokenAdapter& OhosAdapterHelperImpl::GetAccessTokenAdapterInstance()
 {
     return AccessTokenAdapterImpl::GetInstance();

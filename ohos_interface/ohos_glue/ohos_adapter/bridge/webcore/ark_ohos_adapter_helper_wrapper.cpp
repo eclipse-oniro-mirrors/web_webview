@@ -286,17 +286,6 @@ std::unique_ptr<NWeb::CertManagerAdapter> ArkOhosAdapterHelperWrapper::GetRootCe
     return std::make_unique<ArkCertManagerAdapterWrapper>(adapter);
 }
 
-std::unique_ptr<NWeb::CertManagerAdapter> ArkOhosAdapterHelperWrapper::GetCertManagerAdapter()
-{
-    ArkWebRefPtr<ArkCertManagerAdapter> adapter = ctocpp_->GetCertManagerAdapter();
- 
-    if (CHECK_REF_PTR_IS_NULL(adapter)) {
-        return nullptr;
-    }
- 
-    return std::make_unique<ArkCertManagerAdapterWrapper>(adapter);
-}
-
 NWeb::AccessTokenAdapter& ArkOhosAdapterHelperWrapper::GetAccessTokenAdapterInstance()
 {
     static ArkAccessTokenAdapterWrapper instance(ctocpp_->GetAccessTokenAdapterInstance());
