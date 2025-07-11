@@ -70,6 +70,8 @@ public:
 
     std::unique_ptr<NWeb::CertManagerAdapter> GetRootCertDataAdapter() override;
 
+    std::unique_ptr<NWeb::CertManagerAdapter> GetCertManagerAdapter() override;
+
     NWeb::AccessTokenAdapter& GetAccessTokenAdapterInstance() override;
 
     std::unique_ptr<NWeb::EventHandlerAdapter> GetEventHandlerAdapter() override;
