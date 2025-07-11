@@ -60,12 +60,6 @@ int32_t ArkCertManagerAdapterWrapper::Sign(
     return ctocpp_->Sign(uri, certData, certDataLen, signData, signDataLen);
 }
 
-int32_t ArkCertManagerAdapterWrapper::SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
-    uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm)
-{
-    return ctocpp_->SignV2(uri, certData, certDataLen, signData, signDataLen, algorithm);
-}
-
 int32_t ArkCertManagerAdapterWrapper::GetCertDataBySubject(const char* subjectName, uint8_t* certData, int32_t certType)
 {
     return ctocpp_->GetCertDataBySubject(subjectName, certData, certType);
