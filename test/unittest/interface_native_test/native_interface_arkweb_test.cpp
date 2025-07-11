@@ -191,6 +191,10 @@ HWTEST_F(NativeInterfaceArkWebTest, OH_NativeArkWeb_ClearBlanklessLoadingCache_0
     }
     EXPECT_EQ(sizeof(keys3) / sizeof(const char*), 101);
     OH_NativeArkWeb_ClearBlanklessLoadingCache(keys3, 101);
+
+    const char* keys4[] = { nullptr };
+    EXPECT_EQ(sizeof(keys4) / sizeof(const char*), 1);
+    OH_NativeArkWeb_ClearBlanklessLoadingCache(keys4, 1);
 }
 
 /**
