@@ -73,8 +73,6 @@ public:
 
     std::unique_ptr<CertManagerAdapter> GetRootCertDataAdapter() override;
 
-    std::unique_ptr<CertManagerAdapter> GetCertManagerAdapter() override;
-
     AccessTokenAdapter& GetAccessTokenAdapterInstance() override;
 
     std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() override;

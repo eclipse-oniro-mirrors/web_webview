@@ -42,9 +42,6 @@ public:
     int32_t Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
         uint8_t* signData, uint32_t signDataLen) override;
 
-    int32_t SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
-        uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm) override;
-
     int32_t GetCertDataBySubject(const char *subjectName, uint8_t* certData, int32_t certType) override;
 
     bool GetTrustAnchorsForHostName(const std::string& hostname, std::vector<std::string>& certs) override;
