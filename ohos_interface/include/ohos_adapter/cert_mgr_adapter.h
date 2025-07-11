@@ -49,6 +49,9 @@ public:
     virtual bool GetTrustAnchorsForHostName(const std::string& hostname, std::vector<std::string>& certs) = 0;
 
     virtual bool GetPinSetForHostName(const std::string& hostname, std::vector<std::string>& pins) = 0;
+
+    virtual int32_t SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
+        uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm) {return 0;};
 };
 
 } // namespace OHOS::NWeb
