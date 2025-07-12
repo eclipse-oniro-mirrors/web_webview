@@ -37,6 +37,7 @@ ohos_shared_library("cj_webview_ffi") {
       "$target_gen_dir/../napi/protos/web_download.pb.h",
       "src/geolocation_permission.cpp",
       "src/geolocation_permission_ffi.cpp",
+      "src/nweb_message_ext.cpp",
       "src/web_cookie_manager.cpp",
       "src/web_cookie_manager_ffi.cpp",
       "src/web_data_base.cpp",

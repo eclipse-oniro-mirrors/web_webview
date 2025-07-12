@@ -88,6 +88,13 @@ def make_capi_include_file(clses, header, file_name, all_declares):
 
       all_declares.add(declare_cls.get_capi_name())
 
+    funcs = cls.get_virtual_funcs()
+    for func in funcs:
+      raw_type = func.get_retval().get_raw_type()
+      if raw_type.find("<" + cls.get_name() + ">") != -1:
+        all_declares.add(cls.get_capi_name())
+        break
+
   # output translated includes
   flag = True
   if len(translated_includes) > 0:

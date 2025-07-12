@@ -47,6 +47,8 @@
 #include "arkweb_scheme_handler.h"
 #include "web_scheme_handler_request.h"
 #include "system_properties_adapter_impl.h"
+#include "nweb_message_ext.h"
+#include "webview_value.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -1555,7 +1557,8 @@ napi_value NapiWebMessageExt::JsConstructor(napi_env env, napi_callback_info inf
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
 
     auto webMsg = std::make_shared<OHOS::NWeb::NWebMessage>(NWebValue::Type::NONE);
-    WebMessageExt *webMessageExt = new (std::nothrow) WebMessageExt(webMsg);
+    auto romMsg = std::make_shared<OHOS::NWeb::WebViewValue>(NWebRomValue::Type::NONE);
+    WebMessageExt *webMessageExt = new (std::nothrow) WebMessageExt(webMsg, romMsg);
     if (webMessageExt == nullptr) {
         WVLOG_E("new msg port failed");
         return nullptr;
@@ -2276,7 +2279,7 @@ napi_value NapiWebMessagePort::Close(napi_env env, napi_callback_info info)
 }
 
 bool PostMessageEventMsgHandler(napi_env env, napi_value argv, napi_valuetype valueType, bool isArrayBuffer,
-    std::shared_ptr<NWebMessage> webMsg)
+    std::shared_ptr<NWebMessage> webMsg, std::shared_ptr<NWebRomValue> romMsg)
 {
     if (valueType == napi_string) {
         size_t bufferSize = 0;
@@ -2298,6 +2301,8 @@ bool PostMessageEventMsgHandler(napi_env env, napi_value argv, napi_valuetype va
 
         webMsg->SetType(NWebValue::Type::STRING);
         webMsg->SetString(message);
+        romMsg->SetType(NWebRomValue::Type::STRING);
+        romMsg->SetString(message);
     } else if (isArrayBuffer) {
         uint8_t *arrBuf = nullptr;
         size_t byteLength = 0;
@@ -2305,6 +2310,8 @@ bool PostMessageEventMsgHandler(napi_env env, napi_value argv, napi_valuetype va
         std::vector<uint8_t> vecData(arrBuf, arrBuf + byteLength);
         webMsg->SetType(NWebValue::Type::BINARY);
         webMsg->SetBinary(vecData);
+        romMsg->SetType(NWebRomValue::Type::BINARY);
+        romMsg->SetBinary(vecData);
     }
     return true;
 }
@@ -2334,7 +2341,8 @@ napi_value NapiWebMessagePort::PostMessageEvent(napi_env env, napi_callback_info
     }
 
     auto webMsg = std::make_shared<OHOS::NWeb::NWebMessage>(NWebValue::Type::NONE);
-    if (!PostMessageEventMsgHandler(env, argv[INTEGER_ZERO], valueType, isArrayBuffer, webMsg)) {
+    auto romMsg = std::make_shared<OHOS::NWeb::WebViewValue>(NWebRomValue::Type::NONE);
+    if (!PostMessageEventMsgHandler(env, argv[INTEGER_ZERO], valueType, isArrayBuffer, webMsg, romMsg)) {
         WVLOG_E("post message failed, PostMessageEventMsgHandler failed");
         return result;
     }
@@ -2345,7 +2353,7 @@ napi_value NapiWebMessagePort::PostMessageEvent(napi_env env, napi_callback_info
         WVLOG_E("post message failed, napi unwrap msg port failed");
         return nullptr;
     }
-    ErrCode ret = msgPort->PostPortMessage(webMsg);
+    ErrCode ret = msgPort->PostPortMessage(webMsg, romMsg);
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
         return result;
@@ -2398,7 +2406,7 @@ napi_value NapiWebMessagePort::PostMessageEventExt(napi_env env, napi_callback_i
         return result;
     }
 
-    ErrCode ret = msgPort->PostPortMessage(webMessageExt->GetData());
+    ErrCode ret = msgPort->PostPortMessage(webMessageExt->GetData(), webMessageExt->GetValue());
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
         return result;
@@ -2589,6 +2597,13 @@ void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
         delete work;
         work = nullptr;
     }
+}
+
+void NWebValueCallbackImpl::OnReceiveValueV2(std::shared_ptr<NWebHapValue> result)
+{
+    WVLOG_D("message port received msg V2");
+    std::shared_ptr<NWebMessage> message = ConvertNwebHap2NwebMessage(result);
+    OnReceiveValue(message);
 }
 
 void UvNWebValueCallbackImplThreadWoker(uv_work_t *work, int status)

@@ -1758,6 +1758,13 @@ public:
      */
     ArkWebDestroyMode GetWebDestroyMode() override;
 
+    void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+        const std::vector<std::shared_ptr<OHOS::NWeb::NWebRomValue>>& args) override;
+
+    void PostPortMessageV2(const std::string& portHandle, std::shared_ptr<OHOS::NWeb::NWebRomValue> data) override;
+
+    void FillAutofillDataV2(std::shared_ptr<OHOS::NWeb::NWebRomValue> data) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

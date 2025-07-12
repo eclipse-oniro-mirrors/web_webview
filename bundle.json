@@ -96,6 +96,7 @@
                 "//base/web/webview/interfaces/kits/napi:neterrorlist_napi",
                 "//base/web/webview/interfaces/kits/napi/js:webview_abc",
                 "//base/web/webview/interfaces/native:webview_ndk",
+                "//base/web/webview/ohos_glue:ohos_base_glue_source",
                 "//base/web/webview/ohos_nweb:chrome_crashpad_handler",
                 "//base/web/webview/ohos_nweb:libnweb",
                 "//base/web/webview/ohos_nweb:nweb_hap",
@@ -152,6 +153,14 @@
                         "header_base": "//base/web/webview/interfaces/kits/cj/include"
                     },
                     "name": "//base/web/webview/interfaces/kits/cj:cj_webview_ffi"
+                },
+                {
+                    "header": {
+                        "header_files": [
+                        ],
+                        "header_base": "//base/web/webview/ohos_interfaces/ohos_glue/base/include"
+                    },
+                    "name": "//base/web/webview/ohos_glue:ohos_base_glue_source"
                 }
             ],
             "test": [

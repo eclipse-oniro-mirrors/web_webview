@@ -64,6 +64,16 @@ public:
      */
     void RemoveTransientJavaScriptObject() override;
 
+    void GetJavaScriptResultV2(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, int32_t routing_id, int32_t object_id,
+        ArkWebRefPtr<ArkWebHapValue> result) override;
+
+    void GetJavaScriptResultFlowbufV2(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, int fd, int32_t routing_id, int32_t object_id,
+        ArkWebRefPtr<ArkWebHapValue> result) override;
+
+    void GetJavaScriptObjectMethodsV2(int32_t object_id, ArkWebRefPtr<ArkWebHapValue> result) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebJavaScriptResultCallBack> nweb_js_result_callback_;
 };

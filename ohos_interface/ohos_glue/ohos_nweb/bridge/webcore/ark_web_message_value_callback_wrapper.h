@@ -31,6 +31,8 @@ public:
 
     void OnReceiveValue(std::shared_ptr<OHOS::NWeb::NWebMessage> value) override;
 
+    void OnReceiveValueV2(std::shared_ptr<OHOS::NWeb::NWebHapValue> value) override;
+
 private:
     ArkWebRefPtr<ArkWebMessageValueCallback> ark_web_message_value_callback_;
 };

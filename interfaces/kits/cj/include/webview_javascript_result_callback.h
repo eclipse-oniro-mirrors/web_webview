@@ -169,6 +169,16 @@ public:
 
     bool DeleteJavaScriptRegister(const std::string &objName);
 
+    void GetJavaScriptResultV2(const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args, const std::string& method,
+        const std::string& objectName, int32_t routingId, int32_t objectId,
+        std::shared_ptr<NWeb::NWebHapValue> result) override;
+
+    void GetJavaScriptResultFlowbufV2(const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args,
+        const std::string& method, const std::string& objectName, int fd, int32_t routingId, int32_t objectId,
+        std::shared_ptr<NWeb::NWebHapValue> result) override;
+
+    void GetJavaScriptObjectMethodsV2(int32_t objectId, std::shared_ptr<NWeb::NWebHapValue> result) override;
+
     int32_t GetNWebId()
     {
         return nwebId_;
@@ -194,6 +204,12 @@ private:
     std::shared_ptr<NWeb::NWebValue> GetJavaScriptResultSelfFlowbuf(std::vector<std::shared_ptr<NWeb::NWebValue>> args,
         const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId);
 
+    void ConstructArgvV2(void* ashmem, const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args,
+        std::vector<std::string>& argv, std::shared_ptr<JavaScriptOb> jsObj, int32_t routingId);
+    
+    void GetJavaScriptResultSelfHelperV2(std::shared_ptr<JavaScriptOb> jsObj, const std::string& method,
+        int32_t routingId, const std::vector<std::string>& argv, std::shared_ptr<NWeb::NWebHapValue> result);
+    
     int32_t nwebId_ = -1;
 
     JavaScriptOb::ObjectID nextObjectId_ = 1;
