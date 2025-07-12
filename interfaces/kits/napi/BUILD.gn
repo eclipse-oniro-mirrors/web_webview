@@ -46,6 +46,7 @@ ohos_shared_library("webview_napi_back") {
     "common/napi_parse_utils.cpp",
     "common/napi_webview_native_module.cpp",
     "common/web_errors.cpp",
+    "common/nweb_message_ext.cpp",
     "proxycontroller/napi_proxy_config.cpp",
     "proxycontroller/napi_proxy_config.h",
     "proxycontroller/napi_proxy_controller.cpp",
@@ -120,6 +121,7 @@ ohos_shared_library("webview_napi_back") {
     "../../../ohos_nweb:libnweb",
     "../../native:ohweb",
     "protos:proto_gen",
+    "../../../ohos_glue:ohos_base_glue_source",
   ]
 
   relative_install_dir = "module/web"

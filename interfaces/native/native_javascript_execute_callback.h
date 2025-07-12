@@ -27,6 +27,7 @@ public:
     explicit NativeJavaScriptExecuteCallback(std::function<void(const char*)> callback) : callbackNative_(callback) {}
     ~NativeJavaScriptExecuteCallback() = default;
     void OnReceiveValue(std::shared_ptr<NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<NWebHapValue> value) override;
 
 private:
     std::function<void(const char*)> callbackNative_ = nullptr;

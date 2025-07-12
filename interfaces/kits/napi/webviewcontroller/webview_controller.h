@@ -32,6 +32,7 @@
 #include "print_manager_adapter.h"
 
 #include "web_scheme_handler_request.h"
+#include "webview_value.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -524,7 +525,7 @@ public:
 
     ErrCode ClosePort();
 
-    ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data);
+    ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data, std::shared_ptr<NWebRomValue> value);
 
     ErrCode SetPortMessageCallback(std::shared_ptr<NWebMessageValueCallback> callback);
 
@@ -543,7 +544,9 @@ private:
 
 class WebMessageExt {
 public:
-    explicit WebMessageExt(std::shared_ptr<NWebMessage> data) : data_(data) {};
+    explicit WebMessageExt(std::shared_ptr<NWebMessage> data,
+        std::shared_ptr<NWebRomValue> value = nullptr)
+        : data_(data), value_(value) {}
     ~WebMessageExt() = default;
 
     void SetType(int type);
@@ -564,6 +567,10 @@ public:
             data_->SetType(NWebValue::Type::STRING);
             data_->SetString(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::STRING);
+            value_->SetString(value);
+        }
     }
 
     void SetNumber(double value)
@@ -571,6 +578,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::DOUBLE);
             data_->SetDouble(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::DOUBLE);
+            value_->SetDouble(value);
         }
     }
 
@@ -580,6 +591,10 @@ public:
             data_->SetType(NWebValue::Type::BOOLEAN);
             data_->SetBoolean(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::BOOLEAN);
+            value_->SetBool(value);
+        }
     }
 
     void SetArrayBuffer(std::vector<uint8_t>& value)
@@ -587,6 +602,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::BINARY);
             data_->SetBinary(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::BINARY);
+            value_->SetBinary(value);
         }
     }
 
@@ -596,6 +615,10 @@ public:
             data_->SetType(NWebValue::Type::STRINGARRAY);
             data_->SetStringArray(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::STRINGARRAY);
+            value_->SetStringArray(value);
+        }
     }
 
     void SetDoubleArray(std::vector<double> value)
@@ -603,6 +626,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::DOUBLEARRAY);
             data_->SetDoubleArray(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::DOUBLEARRAY);
+            value_->SetDoubleArray(value);
         }
     }
 
@@ -612,6 +639,10 @@ public:
             data_->SetType(NWebValue::Type::INT64ARRAY);
             data_->SetInt64Array(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::INT64ARRAY);
+            value_->SetInt64Array(value);
+        }
     }
 
     void SetBooleanArray(std::vector<bool> value)
@@ -619,6 +650,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::BOOLEANARRAY);
             data_->SetBooleanArray(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::BOOLEANARRAY);
+            value_->SetBoolArray(value);
         }
     }
 
@@ -629,6 +664,11 @@ public:
             data_->SetErrName(name);
             data_->SetErrMsg(message);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::ERROR);
+            value_->SetErrName(name);
+            value_->SetErrMsg(message);
+        }
     }
 
     std::shared_ptr<NWebMessage> GetData() const
@@ -636,9 +676,15 @@ public:
         return data_;
     }
 
+    std::shared_ptr<NWebRomValue> GetValue() const
+    {
+        return value_;
+    }
+
 private:
     int type_ = 0;
     std::shared_ptr<NWebMessage> data_;
+    std::shared_ptr<NWebRomValue> value_;
 };
 
 class WebHistoryList {

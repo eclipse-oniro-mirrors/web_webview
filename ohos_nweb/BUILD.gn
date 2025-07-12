@@ -101,6 +101,7 @@ ohos_shared_library("libnweb") {
     "src/nweb_helper.cpp",
     "src/nweb_hisysevent.cpp",
     "src/nweb_surface_adapter.cpp",
+    "src/webview_value.cpp",
   ]
 
   deps = [

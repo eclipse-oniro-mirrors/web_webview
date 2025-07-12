@@ -422,6 +422,7 @@ public:
     {}
     ~NWebValueCallbackImpl();
     void OnReceiveValue(std::shared_ptr<NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<NWebHapValue> result) override;
 
 private:
     napi_env env_;

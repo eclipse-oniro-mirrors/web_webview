@@ -36,12 +36,14 @@
 #include "ohos_nweb/bridge/ark_web_pdfconfig_args_impl.h"
 #include "ohos_nweb/bridge/ark_web_preference_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_rom_value_impl.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_spanstring_convert_html_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_string_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_impl.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 #include "ohos_nweb/cpptoc/ark_web_js_proxy_callback_vector_cpptoc.h"
+#include "ohos_nweb/cpptoc/ark_web_rom_value_vector_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_touch_point_info_vector_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_value_vector_cpptoc.h"
 
@@ -1772,5 +1774,36 @@ ArkWebDestroyMode ArkWebNWebWrapper::GetWebDestroyMode()
 {
     int res = ark_web_nweb_->GetWebDestroyMode();
     return static_cast<ArkWebDestroyMode>(res);
+}
+
+void ArkWebNWebWrapper::CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebRomValue>>& args)
+{
+    ArkWebString stH5MethodName = ArkWebStringClassToStruct(h5_method_name);
+    ArkWebRomValueVector stArgs = ArkWebRomValueVectorClassToStruct(args);
+    ark_web_nweb_->CallH5FunctionV2(routing_id, h5_object_id, stH5MethodName, stArgs);
+    ArkWebStringStructRelease(stH5MethodName);
+    ArkWebRomValueVectorStructRelease(stArgs);
+}
+
+void ArkWebNWebWrapper::PostPortMessageV2(const std::string& portHandle, std::shared_ptr<OHOS::NWeb::NWebRomValue> data)
+{
+    ArkWebString stPortHandle = ArkWebStringClassToStruct(portHandle);
+    if (CHECK_SHARED_PTR_IS_NULL(data)) {
+        ark_web_nweb_->PostPortMessageV2(stPortHandle, nullptr);
+    } else {
+        ark_web_nweb_->PostPortMessageV2(stPortHandle, new ArkWebRomValueImpl(data));
+    }
+    ArkWebStringStructRelease(stPortHandle);
+}
+
+void ArkWebNWebWrapper::FillAutofillDataV2(std::shared_ptr<OHOS::NWeb::NWebRomValue> data)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(data)) {
+        ark_web_nweb_->FillAutofillDataV2(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->FillAutofillDataV2(new ArkWebRomValueImpl(data));
 }
 } // namespace OHOS::ArkWeb

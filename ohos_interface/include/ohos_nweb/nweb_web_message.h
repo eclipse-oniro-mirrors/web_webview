@@ -25,6 +25,8 @@ namespace OHOS::NWeb {
 
 class OHOS_NWEB_EXPORT NWebMessage : public NWebValue {
 public:
+    NWebMessage() {}
+
     explicit NWebMessage(NWebValue::Type type) : NWebValue(type) {}
 
     ~NWebMessage() = default;

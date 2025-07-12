@@ -327,6 +327,9 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
     }
 
     for (uint32_t idx = 0; idx < size; idx++) {
+        if (key[idx] == nullptr) {
+            continue;
+        }
         size_t keyLen = strlen(key[idx]);
         if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
             continue;

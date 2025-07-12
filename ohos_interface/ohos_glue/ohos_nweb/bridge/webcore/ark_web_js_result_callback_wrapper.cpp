@@ -13,8 +13,9 @@
  * limitations under the License.
  */
 
+#include "ohos_nweb/bridge/ark_web_hap_value_impl.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_wrapper.h"
-
+#include "ohos_nweb/cpptoc/ark_web_hap_value_vector_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_value_vector_cpptoc.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
@@ -84,6 +85,56 @@ void ArkWebJsResultCallbackWrapper::RemoveJavaScriptObjectHolder(int32_t holder,
 void ArkWebJsResultCallbackWrapper::RemoveTransientJavaScriptObject()
 {
     ark_web_js_result_callback_->RemoveTransientJavaScriptObject();
+}
+
+void ArkWebJsResultCallbackWrapper::GetJavaScriptResultV2(
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args, const std::string& method,
+    const std::string& object_name, int32_t routing_id, int32_t object_id,
+    std::shared_ptr<OHOS::NWeb::NWebHapValue> result)
+{
+    ArkWebString stMethod = ArkWebStringClassToStruct(method);
+    ArkWebString stObjectName = ArkWebStringClassToStruct(object_name);
+    ArkWebHapValueVector stArgs = ArkWebHapValueVectorClassToStruct(args);
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        ark_web_js_result_callback_->GetJavaScriptResultV2(
+            stArgs, stMethod, stObjectName, routing_id, object_id, nullptr);
+    } else {
+        ark_web_js_result_callback_->GetJavaScriptResultV2(
+            stArgs, stMethod, stObjectName, routing_id, object_id, new ArkWebHapValueImpl(result));
+    }
+    ArkWebStringStructRelease(stMethod);
+    ArkWebStringStructRelease(stObjectName);
+    ArkWebHapValueVectorStructRelease(stArgs);
+}
+
+void ArkWebJsResultCallbackWrapper::GetJavaScriptResultFlowbufV2(
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args, const std::string& method,
+    const std::string& object_name, int fd, int32_t routing_id, int32_t object_id,
+    std::shared_ptr<OHOS::NWeb::NWebHapValue> result)
+{
+    ArkWebString stMethod = ArkWebStringClassToStruct(method);
+    ArkWebString stObjectName = ArkWebStringClassToStruct(object_name);
+    ArkWebHapValueVector stArgs = ArkWebHapValueVectorClassToStruct(args);
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        ark_web_js_result_callback_->GetJavaScriptResultFlowbufV2(
+            stArgs, stMethod, stObjectName, fd, routing_id, object_id, nullptr);
+    } else {
+        ark_web_js_result_callback_->GetJavaScriptResultFlowbufV2(
+            stArgs, stMethod, stObjectName, fd, routing_id, object_id, new ArkWebHapValueImpl(result));
+    }
+    ArkWebStringStructRelease(stMethod);
+    ArkWebStringStructRelease(stObjectName);
+    ArkWebHapValueVectorStructRelease(stArgs);
+}
+
+void ArkWebJsResultCallbackWrapper::GetJavaScriptObjectMethodsV2(
+    int32_t object_id, std::shared_ptr<OHOS::NWeb::NWebHapValue> result)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        ark_web_js_result_callback_->GetJavaScriptObjectMethodsV2(object_id, nullptr);
+    } else {
+        ark_web_js_result_callback_->GetJavaScriptObjectMethodsV2(object_id, new ArkWebHapValueImpl(result));
+    }
 }
 
 } // namespace OHOS::ArkWeb
