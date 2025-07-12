@@ -56,6 +56,8 @@ ohos_shared_library("ohweb") {
     "hilog:libhilog",
     "napi:ace_napi",
     "ability_runtime:ability_connect_callback_stub",
+    "eventhandler:libeventhandler",
+    "ffrt:libffrt",
   ]
 
   deps = [

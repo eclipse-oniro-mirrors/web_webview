@@ -70,10 +70,12 @@ typedef void (*NativeArkWeb_OnDestroyCallback)(const char*);
 
 /**
  * @brief Defines the callback of save cookie.
- *
+ * @param errorCode {@link ARKWEB_SUCCESS} Save cookie success.
+ *                  {@link ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED} Cookie manager initialize failed.
+ *                  {@link ARKWEB_COOKIE_SAVE_FAILED} Save cookie failed.
  * @since 20
  */
-typedef void (*OH_ArkWeb_OnCookieSaveCallback)();
+typedef void (*OH_ArkWeb_OnCookieSaveCallback)(ArkWeb_ErrorCode errorCode);
 
 /**
  * @brief Defines the blankless information.
@@ -289,7 +291,9 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity);
  *        If you want to use this interface in a non-UI thread, you need to initialize the CookieManager interface
  *        using OH_ArkWeb_GetNativeAPI first.
  * @return Save cookie result code.
- *         {@link ARKWEB_SUCCESS} save cookie success.
+ *         {@link ARKWEB_SUCCESS} Save cookie success.
+ *         {@link ARKWEB_COOKIE_SAVE_FAILED} Save cookie failed.
+ *         {@link ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED} The CookieManager initialize failed.
  *         {@link ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED} It is not allowed to call on a non-UI thread without
  *                                                       initializing the CookieManager interface. please
  *   													 initialize the CookieManager interface using
@@ -301,8 +305,6 @@ ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync();
 /**
  * @brief Ensure that all cookies currently accessible via the CookieManager API have been persisted to disk.
  *        Without initializing the CookieManager interface, this call will automatically be executed on the UI thread.
- *        If you want to use this interface in a non-UI thread, you need to initialize the CookieManager interface
- *        using OH_ArkWeb_GetNativeAPI first.
  * @param callback Callback execute when save cookie done.
  * @since 20
  */

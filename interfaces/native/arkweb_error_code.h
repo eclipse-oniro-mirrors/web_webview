@@ -111,6 +111,20 @@ ARKWEB_LIBRARY_SYMBOL_NOT_FOUND = 17100106,
  * @since 20
  */
 ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED = 17100107,
+
+/**
+ * @brief The CookieManager initialize failed.
+ *
+ * @since 20
+ */
+ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED = 17100108,
+
+/**
+ * @brief Save cookie failed.
+ *
+ * @since 20
+ */
+ARKWEB_COOKIE_SAVE_FAILED = 17100109,
 } ArkWeb_ErrorCode;
 
 /**
