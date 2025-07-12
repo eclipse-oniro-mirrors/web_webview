@@ -252,6 +252,13 @@ ArkWebRefPtr<ArkCertManagerAdapter> ArkOhosAdapterHelperImpl::GetRootCertDataAda
     return new ArkCertManagerAdapterImpl(shared);
 }
 
+ArkWebRefPtr<ArkCertManagerAdapter> ArkOhosAdapterHelperImpl::GetCertManagerAdapter()
+{
+    std::unique_ptr<NWeb::CertManagerAdapter> adapter = real_.GetCertManagerAdapter();
+    std::shared_ptr<NWeb::CertManagerAdapter> shared = std::move(adapter);
+    return new ArkCertManagerAdapterImpl(shared);
+}
+
 ArkWebRefPtr<ArkAccessTokenAdapter> ArkOhosAdapterHelperImpl::GetAccessTokenAdapterInstance()
 {
     static NWeb::AccessTokenAdapter& instance = real_.GetAccessTokenAdapterInstance();
