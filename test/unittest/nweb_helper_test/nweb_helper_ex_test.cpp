@@ -446,6 +446,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().SetUserAgentForHosts("web_test", hosts);
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
+    NWebHelper::Instance().SetWebDestroyMode(WebDestroyMode::NORMAL_MODE);
 
     auto nwebEngineMock = std::make_shared<MockNWebEngine>();
     NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
@@ -462,6 +463,7 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().SetUserAgentForHosts("web_test", hosts);
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
+    NWebHelper::Instance().SetWebDestroyMode(WebDestroyMode::NORMAL_MODE);
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
     NWebHelper::Instance().LoadWebEngine(true, false);
     bool result = NWebHelper::Instance().GetWebEngine(true);
