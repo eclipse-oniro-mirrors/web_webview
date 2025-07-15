@@ -69,6 +69,7 @@ struct WaitForAttachParam {
     WebviewController* webviewController;
     int32_t state;
 };
+
 bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleName)
 {
     static std::string applicationBundleName;
@@ -1414,6 +1415,16 @@ bool WebviewController::GetScrollable() const
 void WebviewController::InnerSetHapPath(const std::string &hapPath)
 {
     hapPath_ = hapPath;
+}
+ 
+void WebviewController::InnerSetFavicon(napi_env env, napi_value favicon)
+{
+    favicon_.CreateReference(env, favicon);
+}
+
+napi_value WebviewController::InnerGetFavicon(napi_env env)
+{
+    return favicon_.GetRefValue();
 }
 
 bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainDerData) const

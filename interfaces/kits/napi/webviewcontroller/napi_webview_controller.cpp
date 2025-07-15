@@ -662,6 +662,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getScrollable", NapiWebviewController::GetScrollable),
         DECLARE_NAPI_STATIC_FUNCTION("customizeSchemes", NapiWebviewController::CustomizeSchemes),
         DECLARE_NAPI_FUNCTION("innerSetHapPath", NapiWebviewController::InnerSetHapPath),
+        DECLARE_NAPI_FUNCTION("innerSetFavicon", NapiWebviewController::InnerSetFavicon),
         DECLARE_NAPI_FUNCTION("innerGetCertificate", NapiWebviewController::InnerGetCertificate),
         DECLARE_NAPI_FUNCTION("setAudioMuted", NapiWebviewController::SetAudioMuted),
         DECLARE_NAPI_FUNCTION("innerGetThisVar", NapiWebviewController::InnerGetThisVar),
@@ -1344,6 +1345,42 @@ napi_value NapiWebviewController::InnerSetHapPath(napi_env env, napi_callback_in
         return result;
     }
     webviewController->InnerSetHapPath(hapPath);
+    return result;
+}
+
+napi_value NapiWebviewController::InnerSetFavicon(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE];
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("Failed to run InnerSetFavicon beacuse of wrong Param number.");
+        return result;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType != napi_object) {
+        WVLOG_E("Failed to run InnerSetFavicon beacuse of wrong Param type.");
+        return result;
+    }
+
+    napi_value faviconObj = nullptr;
+    napi_status ret = napi_get_named_property(env, argv[INTEGER_ZERO], "favicon", &faviconObj);
+    if (ret != napi_status::napi_ok || !faviconObj) {
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        WVLOG_E("Wrap webviewController failed. WebviewController must be associated with a Web component.");
+        return result;
+    }
+    webviewController->InnerSetFavicon(env, faviconObj);
     return result;
 }
 
@@ -4181,32 +4218,11 @@ napi_value NapiWebviewController::GetFavicon(napi_env env, napi_callback_info in
         return result;
     }
 
-    const void *data = nullptr;
-    size_t width = 0;
-    size_t height = 0;
-    ImageColorType colorType = ImageColorType::COLOR_TYPE_UNKNOWN;
-    ImageAlphaType alphaType = ImageAlphaType::ALPHA_TYPE_UNKNOWN;
-    bool isGetFavicon = webviewController->GetFavicon(&data, width, height, colorType, alphaType);
-    if (!isGetFavicon) {
+    napi_value favicon = webviewController->InnerGetFavicon(env);
+    if (!favicon) {
         return result;
     }
-
-    Media::InitializationOptions opt;
-    opt.size.width = static_cast<int32_t>(width);
-    opt.size.height = static_cast<int32_t>(height);
-    opt.pixelFormat = getColorType(colorType);
-    opt.alphaType = getAlphaType(alphaType);
-    opt.editable = true;
-    auto pixelMap = Media::PixelMap::Create(opt);
-    if (pixelMap == nullptr) {
-        return result;
-    }
-    uint64_t stride = static_cast<uint64_t>(width) << 2;
-    uint64_t bufferSize = stride * static_cast<uint64_t>(height);
-    pixelMap->WritePixels(static_cast<const uint8_t *>(data), bufferSize);
-    std::shared_ptr<Media::PixelMap> pixelMapToJs(pixelMap.release());
-    napi_value jsPixelMap = OHOS::Media::PixelMapNapi::CreatePixelMap(env, pixelMapToJs);
-    return jsPixelMap;
+    return favicon;
 }
 
 napi_value NapiWebviewController::SerializeWebState(napi_env env, napi_callback_info info)
