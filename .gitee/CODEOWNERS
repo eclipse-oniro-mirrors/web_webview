@@ -10,3 +10,33 @@ ohos_interface/.gitignore @zhangyanchuan
 
 [OpenHarmony adapter]
 interfaces/kits/cj/ @arkwebbuild
+
+[media]
+ohos_adapter/audio_adapter @d0ub1eh
+ohos_adapter/camera_adapter @d0ub1eh
+ohos_adapter/media_adapter @d0ub1eh
+ohos_adapter/ohos_image_adapter @d0ub1eh
+ohos_adapter/screen_capture_adapter @d0ub1eh
+test/fuzztest/ohosadapter/audio_adapter @d0ub1eh
+test/fuzztest/ohosadapter/camera_adapter @d0ub1eh
+test/fuzztest/ohosadapter/interfaces/createaudiorender_fuzzer @d0ub1eh
+test/fuzztest/ohosadapter/interfaces/createaudiosystem_fuzzer @d0ub1eh
+test/fuzztest/ohosadapter/interfaces/createmmiadapter_fuzzer @d0ub1eh
+test/fuzztest/ohosadapter/interfaces/createpowerclient_fuzzer @d0ub1eh
+test/fuzztest/ohosadapter/media_adapter @d0ub1eh
+test/fuzztest/ohosadapter/nativeImage_fuzzer @d0ub1eh
+test/fuzztest/ohosadapter/ohosimagedecoderadapterimpl_fuzzer @d0ub1eh
+test/unittest/audio_adapter_impl_test @d0ub1eh
+test/unittest/ohos_adapter/camera_adapter_impl_test @d0ub1eh
+test/unittest/ohos_adapter/date_time_adapter_impl_test @d0ub1eh
+test/unittest/ohos_adapter/media_adapter_test @d0ub1eh
+test/unittest/ohos_adapter/ohos_image_adapter @d0ub1eh
+test/unittest/ohos_adapter/screen_capture_adapter_impl_test @d0ub1eh
+interfaces/kits/napi/webviewcontroller/napi_native_media_player.cpp @d0ub1eh
+interfaces/kits/napi/webviewcontroller/napi_native_media_player.h @d0ub1eh
+interfaces/kits/napi/webviewcontroller/native_media_player_impl.cpp @d0ub1eh
+interfaces/kits/napi/webviewcontroller/native_media_player_impl.h @d0ub1eh
+interfaces/kits/napi/webviewcontroller/webview_createpdf_execute_callback.cpp @d0ub1eh
+interfaces/kits/napi/webviewcontroller/webview_createpdf_execute_callback.h @d0ub1eh
+interfaces/kits/napi/webviewcontroller/webview_hasimage_callback.cpp @d0ub1eh
+interfaces/kits/napi/webviewcontroller/webview_hasimage_callback.h @d0ub1eh
