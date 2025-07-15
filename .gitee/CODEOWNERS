@@ -10,3 +10,10 @@ ohos_interface/.gitignore @zhangyanchuan
 
 [OpenHarmony adapter]
 interfaces/kits/cj/ @arkwebbuild
+
+[DFX]
+ohos_nweb/src/nweb_crashpad_handler_main.cpp @chenbushan
+ohos_nweb/src/nweb_hisysevent.cpp @chenbushan
+ohos_adapter/hiviewdfx_adapter @chenbushan
+test/fuzztest/ohos_nweb/hisysevent_fuzzer @chenbushan
+test/unittest/ohos_adapter/hiviewdfx_adapter_test @chenbushan
