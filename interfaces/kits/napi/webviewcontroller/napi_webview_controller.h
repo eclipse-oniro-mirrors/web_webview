@@ -244,6 +244,8 @@ private:
 
     static napi_value InnerSetHapPath(napi_env env, napi_callback_info info);
 
+    static napi_value InnerSetFavicon(napi_env env, napi_callback_info info);
+
     static napi_value InnerGetCertificate(napi_env env, napi_callback_info info);
 
     static napi_value SetAudioMuted(napi_env env, napi_callback_info info);
