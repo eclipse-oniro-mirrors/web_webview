@@ -23,7 +23,6 @@
 #include "arkweb_error_code.h"
 #include "arkweb_type.h"
 #include "event_handler.h"
-#include "ffrt_inner.h"
 #include "native_arkweb_utils.h"
 #include "native_javascript_execute_callback.h"
 #include "nweb.h"
@@ -38,6 +37,7 @@ std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
 constexpr uint32_t MAX_DATABASE_SIZE_IN_MB = 100;
 constexpr uint32_t MAX_KEYS_COUNT = 100;
 constexpr size_t MAX_KEY_LENGTH = 2048;
+std::shared_ptr<OHOS::AppExecFwk::EventHandler> g_mainHandler = nullptr;
 } // namespace
 
 namespace OHOS::NWeb {
@@ -366,13 +366,19 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
 
 static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
 {
-    ffrt_queue_t queue_handle = ffrt_get_main_queue();
-
-    ffrt_task_attr_t task_attr;
-    (void)ffrt_task_attr_init(&task_attr);
-    ffrt_task_attr_set_queue_priority(&task_attr, ffrt_queue_priority_low);
-
-    std::function<void()> &&basicFunc = [callback]() {
+    if (!g_mainHandler) {
+        std::shared_ptr<OHOS::AppExecFwk::EventRunner> runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
+        if (!runner) {
+            WVLOG_E("get main event runner failed");
+            if (callback) {
+                callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+            }
+            return;
+        }
+        g_mainHandler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
+    }
+ 
+    bool succ = g_mainHandler->PostTask([callback]() {
         std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
             OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
         if (cookieManager == nullptr) {
@@ -383,10 +389,15 @@ static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
             return;
         }
         auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
-        cookieManager->Store(callbackImpl); };
-
-    ffrt_queue_submit_h(
-        queue_handle, ffrt::create_function_wrapper(basicFunc, ffrt_function_kind_queue), &task_attr);
+        cookieManager->Store(callbackImpl);
+        }, "", 0, OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
+ 
+    if (!succ) {
+        WVLOG_E("post cookie task to UI thread failed");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+        }
+    }
 }
 
 ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync()
