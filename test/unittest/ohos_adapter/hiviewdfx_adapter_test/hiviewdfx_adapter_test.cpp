@@ -273,4 +273,37 @@ HWTEST(HiViewDFXAdapterTest, NormalScene_04, TestSize.Level1)
     ans = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
     EXPECT_EQ(ans, nullptr);
 }
+
+/**
+ * @tc.name: NormalScene_05.
+ * @tc.desc: test normal scene of HiViewDFXAdapter.
+ * @tc.type: FUNC.
+ * @tc.require:
+ */
+HWTEST(HiViewDFXAdapterTest, NormalScene_05, TestSize.Level1)
+{
+    auto contextImpl = std::make_shared<AbilityRuntime::ContextImpl>();
+    auto applicationContext = AbilityRuntime::ApplicationContext::GetInstance();
+    std::shared_ptr<AppExecFwk::ApplicationInfo> info = std::make_shared<AppExecFwk::ApplicationInfo>();
+    std::string bundleName = "NormalScene_05";
+    info->bundleName = bundleName;
+    contextImpl->SetApplicationInfo(info);
+    applicationContext->AttachContextImpl(contextImpl);
+    std::shared_ptr<AppExecFwk::ApplicationInfo> ans = AbilityRuntime::ApplicationContext
+        ::GetInstance()->GetApplicationInfo();
+    EXPECT_NE(ans, nullptr);
+
+    const std::string input = "NAVIGATION_ID" + std::to_string(0) + "NAVIGATION_START" + std::to_string(LLONG_MAX) +
+        "REDIRECT_COUNT" + std::to_string(0) + "INPUT_TIME" + std::to_string(0) +
+        "FIRST_PAINT" + std::to_string(0) + "FIRST_CONTENTFUL_PAINT" + std::to_string(0) +
+        "FIRST_MEANINGFUL_PAINT" + std::to_string(0) + "IS_PAINT_DONEA" + std::to_string(0);
+    const std::tuple<const std::string, const std::string> data (input, "");
+    int ret = OhosAdapterHelper::GetInstance().GetHiSysEventAdapterInstance().Write(
+        "FIRST_MEANINGFUL_PAINT_DONE", HiSysEventAdapter::EventType::STATISTIC, data);
+    EXPECT_EQ(ret, 0);
+
+    applicationContext->AttachContextImpl(nullptr);
+    ans = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+    EXPECT_EQ(ans, nullptr);
+}
 } // namespace OHOS::NWeb

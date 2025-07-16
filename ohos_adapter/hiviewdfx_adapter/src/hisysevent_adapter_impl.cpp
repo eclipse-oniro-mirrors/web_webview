@@ -52,16 +52,21 @@ int64_t GetValueInt64(const std::string& input, const std::string& key1, const s
     std::string key = "";
     long long result = 0;
     if(key2 == key) {
-        std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size());
-        if (ConvertToLongLong(waitConvertString, result) == true) {
-            return result;
+        if (input.find(key1, 0) != std::string::npos) {
+            std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size());
+            if (ConvertToLongLong(waitConvertString, result) == true) {
+                return result;
+            }
         }
         return -1;
     }
-    std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size(),
-        input.find(key2,0) - input.find(key1, 0) - key1.size());
-    if (ConvertToLongLong(waitConvertString, result) == true) {
-        return result;
+    if (input.find(key1, 0) != std::string::npos && input.find(key2, 0) != std::string::npos &&
+        input.find(key1, 0) < input.find(key2, 0)) {
+        std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size(),
+            input.find(key2,0) - input.find(key1, 0) - key1.size());
+        if (ConvertToLongLong(waitConvertString, result) == true) {
+            return result;
+        }
     }
     return -1;
 }
