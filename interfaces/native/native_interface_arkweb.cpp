@@ -384,7 +384,7 @@ static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
     if (!mainHandler) {
         WVLOG_E("get main event runner failed");
         if (callback) {
-            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED);
         }
         return;
     }
@@ -405,7 +405,7 @@ static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
     if (!succ) {
         WVLOG_E("post cookie task to UI thread failed");
         if (callback) {
-            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED);
         }
     }
 }
