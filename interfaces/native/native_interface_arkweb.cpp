@@ -365,22 +365,31 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
     return capacity;
 }
 
-static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
+static std::shared_ptr<OHOS::AppExecFwk::EventHandler> GetMainThreadEventHandler()
 {
+    std::lock_guard<std::mutex> guard(g_mtxMainHandler);
     if (!g_mainHandler) {
-        std::lock_guard<std::mutex> guard(g_mtxMainHandler);
         std::shared_ptr<OHOS::AppExecFwk::EventRunner> runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
         if (!runner) {
-            WVLOG_E("get main event runner failed");
-            if (callback) {
-                callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
-            }
-            return;
+            return nullptr;
         }
         g_mainHandler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
     }
- 
-    bool succ = g_mainHandler->PostTask([callback]() {
+    return g_mainHandler;
+}
+
+static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
+{
+    auto mainHandler = GetMainThreadEventHandler();
+    if (!mainHandler) {
+        WVLOG_E("get main event runner failed");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+        }
+        return;
+    }
+
+    bool succ = mainHandler->PostTask([callback]() {
         std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
             OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
         if (cookieManager == nullptr) {
