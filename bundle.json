@@ -64,7 +64,6 @@
                 "jsoncpp",
                 "location",
                 "napi",
-                "ffrt",
                 "media_foundation",
                 "netmanager_base",
                 "pasteboard",
