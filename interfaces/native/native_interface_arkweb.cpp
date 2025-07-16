@@ -37,6 +37,7 @@ std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
 constexpr uint32_t MAX_DATABASE_SIZE_IN_MB = 100;
 constexpr uint32_t MAX_KEYS_COUNT = 100;
 constexpr size_t MAX_KEY_LENGTH = 2048;
+std::mutex g_mtxMainHandler;
 std::shared_ptr<OHOS::AppExecFwk::EventHandler> g_mainHandler = nullptr;
 } // namespace
 
@@ -367,6 +368,7 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
 static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
 {
     if (!g_mainHandler) {
+        std::lock_guard<std::mutex> guard(g_mtxMainHandler);
         std::shared_ptr<OHOS::AppExecFwk::EventRunner> runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
         if (!runner) {
             WVLOG_E("get main event runner failed");
