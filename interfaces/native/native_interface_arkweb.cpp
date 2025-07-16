@@ -391,7 +391,6 @@ static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
         auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
         cookieManager->Store(callbackImpl);
         }, "", 0, OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
- 
     if (!succ) {
         WVLOG_E("post cookie task to UI thread failed");
         if (callback) {
