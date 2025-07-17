@@ -56,6 +56,7 @@ private:
     void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     void ParseNWebLTPOApp(xmlNodePtr nodePtr);
     void ParseNWebLTPOStrategy(xmlNodePtr nodePtr);
+    void ParseWindowOrientationConfig(xmlNodePtr nodePtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     bool IsDeveloperModeEnabled();
     bool IsPerfConfigEmpty();
 
