@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include "application_context.h"
 #include "config_policy_utils.h"
 #include "nweb_config_helper.h"
 #include "nweb_log.h"
@@ -38,10 +39,14 @@ const std::string BASE_WEB_CONFIG = "baseWebConfig";
 const std::string WEB_ANIMATION_DYNAMIC_SETTING_CONFIG = "property_animation_dynamic_settings";
 const std::string WEB_ANIMATION_DYNAMIC_APP = "dynamic_apps";
 const std::string WEB_LTPO_STRATEGY = "ltpo_strategy";
+const std::string WEB_WINDOW_ORIENTATION_CONFIG = "window_orientation_config";
+const std::string WEB_ALL_BUNDLE_NAME = "*";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
 const auto XML_ATTR_FPS = "preferred_fps";
+const auto XML_BUNDLE_NAME = "bundle_name";
+const auto XML_ENABLE_WINDOW_ORIENTATION = "enable_window_orientation";
 const std::unordered_map<std::string_view, std::function<std::string(std::string&)>> configMap = {
     { "renderConfig/renderProcessCount",
         [](std::string& contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
@@ -357,6 +362,12 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
             ParseNWebLTPOConfig(ltpoConfigNodePtr);
         }
     }
+
+    xmlNodePtr windowOrientationNodePtr = GetChildrenNode(rootPtr, WEB_WINDOW_ORIENTATION_CONFIG);
+    if (windowOrientationNodePtr != nullptr) {
+        WVLOG_D("read config from window orientation node");
+        ParseWindowOrientationConfig(windowOrientationNodePtr, initArgs);
+    }
     xmlFreeDoc(docPtr);
 }
 
@@ -534,6 +545,48 @@ void NWebConfigHelper::ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_
             if (!param.empty()) {
                 initArgs->AddDeleteArg(param);
             }
+        }
+    }
+}
+
+void NWebConfigHelper::ParseWindowOrientationConfig(xmlNodePtr nodePtr,
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
+{
+    for (xmlNodePtr curNodePtr = nodePtr->xmlChildrenNode; curNodePtr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        char* bundleNamePtr = (char *)xmlGetProp(curNodePtr,BAD_CAST(XML_BUNDLE_NAME));
+        char* orientationPtr = (char *)xmlGetProp(curNodePtr,BAD_CAST(XML_ENABLE_WINDOW_ORIENTATION));
+        if (!bundleNamePtr || !orientationPtr) {
+            WVLOG_E("invalid bundleNamePtr or orientationPtr!");
+            continue;
+        }
+        std::string bundleName(bundleNamePtr);
+        std::string orientation(orientationPtr);
+        xmlFree(bundleNamePtr);
+        xmlFree(orientationPtr);
+
+        std::string curBundleName;
+        std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+            AbilityRuntime::ApplicationContext::GetApplicationContext();
+        if (ctx) {
+            std::string curBundleName = ctx->GetBundleName();
+        }
+        if (curBundleName.empty()) {
+            WVLOG_E("invalid curBundleName, no need to continue!");
+            return;
+        }
+        if (bundleName == curBundleName || bundleName == WEB_ALL_BUNDLE_NAME) {
+            if (orientation == "true") {
+                initArgs->AddArg("--enable-blink-features=OrientationEvent");
+            } else if (orientation == "false") {
+                initArgs->AddArg("--disable-blink-features=OrientationEvent");
+            } else {
+                WVLOG_E("invalid orientation value!");
+            }
+            break;
         }
     }
 }

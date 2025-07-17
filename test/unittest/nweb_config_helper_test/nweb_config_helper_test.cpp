@@ -39,6 +39,8 @@ namespace OHOS {
 namespace NWebConfig {
 
 const auto XML_ATTR_NAME = "name";
+const auto XML_BUNDLE_NAME = "bundle_name";
+const auto XML_ENABLE_WINDOW_ORIENTATION = "enable_window_orientation";
 
 class MockNWebConfigHelper : public NWebConfigHelper {
 public:
@@ -83,6 +85,19 @@ protected:
 HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_FileNotFound, TestSize.Level0)
 {
     std::string configFilePath = "nonexistent.xml";
+    EXPECT_NE(initArgs, nullptr);
+    NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs);
+}
+
+/**
+ * @tc.name: ParseWebConfigXml_ValidOrientationConfig
+ * @tc.desc: ParseWebConfigXml.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, ParseWebConfigXml_ValidOrientationConfig, TestSize.Level0)
+{
+    std::string configFilePath = "valid_orientation.xml";
     EXPECT_NE(initArgs, nullptr);
     NWebConfigHelper::Instance().ParseWebConfigXml(configFilePath, initArgs);
 }
@@ -260,6 +275,89 @@ HWTEST_F(NWebConfigHelperTest, ParseDeleteConfig_EmptyParam, TestSize.Level0)
     xmlNodeSetContent(childNodePtr, content);
     xmlFree(content);
     NWebConfigHelper::Instance().ParseDeleteConfig(rootPtr, initArgs);
+}
+
+/**
+ * @tc.name: ParseWindowOrientationConfig_WhenNodeIsComment
+ * @tc.desc: ParseDeleteConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest,
+    ParseWindowOrientationConfig_WhenNodeIsComment, TestSize.Level0) {
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, BAD_CAST "testNode");
+    EXPECT_NE(nodePtr, nullptr);
+    nodePtr->type = xmlElementType::XML_COMMENT_NODE;
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    NWebConfigHelper::Instance().ParseWindowOrientationConfig(nodePtr, initArgs);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
+}
+
+/**
+ * @tc.name: ParseWindowOrientationConfig_WhenBundleNameOrOrientationIsMissing
+ * @tc.desc: ParseWindowOrientationConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest,
+    ParseWindowOrientationConfig_WhenBundleNameOrOrientationIsMissing, TestSize.Level0) {
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, BAD_CAST "testNode");
+    EXPECT_NE(nodePtr, nullptr);
+    nodePtr->properties = nullptr;
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    NWebConfigHelper::Instance().ParseWindowOrientationConfig(nodePtr, initArgs);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
+}
+
+/**
+ * @tc.name: ParseWindowOrientationConfig_WhenBundleNameMatchesAndOrientationIsTure
+ * @tc.desc: ParseWindowOrientationConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest,
+    ParseWindowOrientationConfig_WhenBundleNameMatchesAndOrientationIsTure, TestSize.Level0) {
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, BAD_CAST "testNode");
+    EXPECT_NE(nodePtr, nullptr);
+    xmlNewProp(nodePtr, BAD_CAST(XML_BUNDLE_NAME), BAD_CAST("testBundleName"));
+    xmlNewProp(nodePtr, BAD_CAST(XML_ENABLE_WINDOW_ORIENTATION), BAD_CAST("true"));
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    NWebConfigHelper::Instance().ParseWindowOrientationConfig(nodePtr, initArgs);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
+}
+
+/**
+ * @tc.name: ParseWindowOrientationConfig_WhenBundleNameMatchesAndOrientationIsFalse
+ * @tc.desc: ParseWindowOrientationConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest,
+    ParseWindowOrientationConfig_WhenBundleNameMatchesAndOrientationIsFalse, TestSize.Level0) {
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, BAD_CAST "testNode");
+    EXPECT_NE(nodePtr, nullptr);
+    xmlNewProp(nodePtr, BAD_CAST(XML_BUNDLE_NAME), BAD_CAST "testBundleName");
+    xmlNewProp(nodePtr, BAD_CAST(XML_ENABLE_WINDOW_ORIENTATION), BAD_CAST("false"));
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    NWebConfigHelper::Instance().ParseWindowOrientationConfig(nodePtr, initArgs);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
+}
+
+/**
+ * @tc.name: ParseWindowOrientationConfig_WhenBundleNameMatchesAndOrientationIsInvalid
+ * @tc.desc: ParseWindowOrientationConfig.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest,
+    ParseWindowOrientationConfig_WhenBundleNameMatchesAndOrientationIsInvalid, TestSize.Level0) {
+    xmlNodePtr nodePtr = xmlNewNode(nullptr, BAD_CAST "testNode");
+    EXPECT_NE(nodePtr, nullptr);
+    xmlNewProp(nodePtr, BAD_CAST(XML_BUNDLE_NAME), BAD_CAST("testBundleName"));
+    xmlNewProp(nodePtr, BAD_CAST(XML_ENABLE_WINDOW_ORIENTATION), BAD_CAST("invalidValue"));
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
+    NWebConfigHelper::Instance().ParseWindowOrientationConfig(nodePtr, initArgs);
+    EXPECT_EQ(initArgs->GetArgsToAdd().size(), 0);
 }
 
 /**
