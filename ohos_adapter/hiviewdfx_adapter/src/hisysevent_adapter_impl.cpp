@@ -52,18 +52,21 @@ int64_t GetValueInt64(const std::string& input, const std::string& key1, const s
     std::string key = "";
     long long result = 0;
     if(key2 == key) {
-        if (input.find(key1, 0) != std::string::npos) {
-            std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size());
+        std::string::size_type keyPosition1 = input.find(key1, 0);
+        if (keyPosition1 != std::string::npos) {
+            std::string waitConvertString = input.substr(keyPosition1 + key1.size());
             if (ConvertToLongLong(waitConvertString, result) == true) {
                 return result;
             }
         }
         return -1;
     }
-    if (input.find(key1, 0) != std::string::npos && input.find(key2, 0) != std::string::npos &&
-        input.find(key1, 0) < input.find(key2, 0)) {
-        std::string waitConvertString = input.substr(input.find(key1, 0) + key1.size(),
-            input.find(key2,0) - input.find(key1, 0) - key1.size());
+    std::string::size_type keyPosition1 = input.find(key1, 0);
+    std::string::size_type keyPosition2 = input.find(key2, 0);
+    if (keyPosition1 != std::string::npos && keyPosition2 != std::string::npos &&
+        keyPosition1 < keyPosition2) {
+        std::string waitConvertString = input.substr(keyPosition1 + key1.size(),
+            keyPosition2 - keyPosition1 - key1.size());
         if (ConvertToLongLong(waitConvertString, result) == true) {
             return result;
         }
