@@ -64,7 +64,7 @@ int64_t GetValueInt64(const std::string& input, const std::string& key1, const s
     std::string::size_type keyPosition1 = input.find(key1, 0);
     std::string::size_type keyPosition2 = input.find(key2, 0);
     if (keyPosition1 != std::string::npos && keyPosition2 != std::string::npos &&
-        keyPosition1 < keyPosition2) {
+        keyPosition1 + key1.size() < keyPosition2) {
         std::string waitConvertString = input.substr(keyPosition1 + key1.size(),
             keyPosition2 - keyPosition1 - key1.size());
         if (ConvertToLongLong(waitConvertString, result) == true) {
