@@ -19,6 +19,8 @@
 #include "hisysevent.h"
 #include "ohos_resource_adapter_impl.h"
 
+
+
 namespace OHOS::NWeb {
 namespace {
 const HiviewDFX::HiSysEvent::EventType EVENT_TYPES[] = {
