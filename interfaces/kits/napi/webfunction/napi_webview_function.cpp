@@ -69,6 +69,7 @@ napi_value JsOnce(napi_env env, napi_callback_info info)
         foundCallback->second(env, callback);
     } else {
         BusinessError::ThrowErrorByErrcode(env, TYPE_NOT_MATCH_WITCH_VALUE);
+        napi_delete_reference(env, callback);
         return result;
     }
     return result;

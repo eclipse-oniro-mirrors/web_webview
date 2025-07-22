@@ -29,6 +29,13 @@ class WebInitedCallbackParam {
 public:
     WebInitedCallbackParam(napi_env env, napi_ref callback) : env_(env), webInitedCallback_(callback) {}
 
+    ~WebInitedCallbackParam() {
+        if (webInitedCallback_ != nullptr) {
+            napi_delete_reference(env_, webInitedCallback_);
+            webInitedCallback_ = nullptr;
+        }
+    }
+
     napi_env env_;
     napi_ref webInitedCallback_;
 };
