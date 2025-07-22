@@ -64,18 +64,7 @@ bool HiTraceAdapterImpl::IsHiTraceEnable()
     int changed = 0;
     const char *enable = CachedParameterGetChanged(g_Handle, &changed);
     uint64_t tags = ConvertToUint64(enable, 0);
-<<<<<<< HEAD
-<<<<<<< HEAD
     return (tags & HITRACE_TAG_NWEB) != 0;
-=======
-    else return (tags & HITRACE_TAG_NWEB) != 0;
->>>>>>> 8346c980ff2583d8cfac983f71d8168ff465913d
-=======
-    if((tags & HITRACE_TAG_ACE) == 0){
-        return false;
-    }
-    else return true;
->>>>>>> 9bcea3f67095d555dbc6d5bb64b92c6eefe4344f
 }
 
 void HiTraceAdapterImpl::StartOHOSTrace(const std::string& value, float limit)
@@ -111,13 +100,6 @@ bool HiTraceAdapterImpl::IsACETraceEnable()
     int changed = 0;
     const char *enable = CachedParameterGetChanged(g_Handle, &changed);
     uint64_t tags = ConvertToUint64(enable, 0);
-<<<<<<< HEAD
     return (tags & HITRACE_TAG_ACE) != 0;
-=======
-    if((tags & HITRACE_TAG_ACE) == 0){
-        return false;
-    }
-    else return true;
->>>>>>> 9bcea3f67095d555dbc6d5bb64b92c6eefe4344f
 }
 } // namespace OHOS::NWeb
