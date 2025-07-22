@@ -65,7 +65,11 @@ bool HiTraceAdapterImpl::IsHiTraceEnable()
     const char *enable = CachedParameterGetChanged(g_Handle, &changed);
     uint64_t tags = ConvertToUint64(enable, 0);
 <<<<<<< HEAD
+<<<<<<< HEAD
     return (tags & HITRACE_TAG_NWEB) != 0;
+=======
+    else return (tags & HITRACE_TAG_NWEB) != 0;
+>>>>>>> 8346c980ff2583d8cfac983f71d8168ff465913d
 =======
     if((tags & HITRACE_TAG_ACE) == 0){
         return false;
