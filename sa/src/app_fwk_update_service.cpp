@@ -89,6 +89,15 @@ AppFwkUpdateService::AppFwkUpdateService(int32_t saId, bool runOnCreate) : Syste
 
 AppFwkUpdateService::~AppFwkUpdateService() {}
 
+ErrCode AppFwkUpdateService::NotifyArkWebInstallSuccess(const std::string& bundleName)
+{
+    int ret = SendAppSpawnMessage(bundleName, MSG_LOAD_WEBLIB_IN_APPSPAWN);
+    if (ret != 0) {
+        return ERR_INVALID_VALUE;
+    }
+    return ERR_OK;
+}
+
 ErrCode AppFwkUpdateService::VerifyPackageInstall(
     const std::string& bundleName, const std::string& hapPath, int32_t& isSuccess)
 {
@@ -96,6 +105,12 @@ ErrCode AppFwkUpdateService::VerifyPackageInstall(
         return ERR_INVALID_VALUE;
     }
     int ret = 0;
+    ret = SendAppSpawnMessage(bundleName, MSG_UNLOAD_WEBLIB_IN_APPSPAWN);
+    if (ret != 0) {
+        WVLOG_E("SendAppSpawnMessage MSG_UNLOAD_WEBLIB_IN_APPSPAWN happend error: %{public}d", isSuccess);
+        return ERR_INVALID_VALUE;
+    }
+
     isSuccess = 0;
     if (OHOS::system::GetParameter("persist.arkwebcore.install_path", "") == hapPath) {
         WVLOG_I("OnPackageChangedEvent install path not changed.");
@@ -116,7 +131,7 @@ ErrCode AppFwkUpdateService::VerifyPackageInstall(
         return ERR_INVALID_VALUE;
     }
 
-    ret = SendAppSpawnMessage(bundleName);
+    ret = SendAppSpawnMessage(bundleName, MSG_UPDATE_MOUNT_POINTS);
     if (ret != 0) {
         isSuccess = -1;
         WVLOG_I("SendAppSpawnMessage happend error: %{public}d", isSuccess);
@@ -171,29 +186,32 @@ bool AppFwkUpdateService::Init(const SystemAbilityOnDemandReason& startReason)
     return true;
 }
 
-int AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName)
+int AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName, AppSpawnMsgType msgType)
 {
     WVLOG_I("Send appspawn message start,uid = %{public}d.", getuid());
     int ret = 0;
     int retryCount = 0;
     AppSpawnClientHandle clientHandle = nullptr;
     AppSpawnReqMsgHandle reqHandle = 0;
+    AppSpawnResult result = {};
     do {
         ret = AppSpawnClientInit(APPSPAWN_SERVER_NAME, &clientHandle);
         if (ret != 0) {
             WVLOG_I("Failed to create reqMgr,retry count = %{public}d.", retryCount);
             continue;
         }
-        ret = AppSpawnReqMsgCreate(MSG_UPDATE_MOUNT_POINTS, bundleName.c_str(), &reqHandle);
+        ret = AppSpawnReqMsgCreate(msgType, bundleName.c_str(), &reqHandle);
         if (ret != 0) {
             WVLOG_I("Failed to create req,retry count = %{public}d.", retryCount);
             continue;
         }
-        AppSpawnResult result = {};
         ret = AppSpawnClientSendMsg(clientHandle, reqHandle, &result);
     } while (++retryCount < RETRY_COUNT && ret != 0);
+    if (result.result) {
+        ret = result.result;
+    }
     AppSpawnClientDestroy(clientHandle);
-    WVLOG_I("Send appspawn message success.");
+    WVLOG_I("Send appspawn message success. ret = %{public}d", ret);
     return ret;
 }
 
