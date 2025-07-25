@@ -732,6 +732,8 @@ public:
      * @param url The url of the pdf.
      */
     void OnPdfLoadEvent(int32_t result, const std::string& url) override;
+
+    void OnTakeFocus(std::shared_ptr<OHOS::NWeb::NWebKeyEvent> event) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

@@ -1090,4 +1090,14 @@ void ArkWebHandlerImpl::OnPdfLoadEvent(int32_t result, const ArkWebString& url)
 {
     nweb_handler_->OnPdfLoadEvent(result, ArkWebStringStructToClass(url));
 }
+
+void ArkWebHandlerImpl::OnTakeFocus(ArkWebRefPtr<ArkWebKeyEvent> event)
+{
+    if (CHECK_REF_PTR_IS_NULL(event)) {
+        nweb_handler_->OnTakeFocus(nullptr);
+        return;
+    }
+
+    nweb_handler_->OnTakeFocus(std::make_shared<ArkWebKeyEventWrapper>(event));
+}
 } // namespace OHOS::ArkWeb

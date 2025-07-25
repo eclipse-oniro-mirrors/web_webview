@@ -1021,6 +1021,9 @@ public:
      */
     /*--ark web()--*/
     virtual void OnPdfLoadEvent(int32_t result, const ArkWebString& url) = 0;
+
+    /*--ark web()--*/
+    virtual void OnTakeFocus(ArkWebRefPtr<ArkWebKeyEvent> event) = 0;
 };
 
 } // namespace OHOS::ArkWeb
