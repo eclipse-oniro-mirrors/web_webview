@@ -105,12 +105,6 @@ ErrCode AppFwkUpdateService::VerifyPackageInstall(
         return ERR_INVALID_VALUE;
     }
     int ret = 0;
-    ret = SendAppSpawnMessage(bundleName, MSG_UNLOAD_WEBLIB_IN_APPSPAWN);
-    if (ret != 0) {
-        WVLOG_E("SendAppSpawnMessage MSG_UNLOAD_WEBLIB_IN_APPSPAWN happend error: %{public}d", isSuccess);
-        return ERR_INVALID_VALUE;
-    }
-
     isSuccess = 0;
     if (OHOS::system::GetParameter("persist.arkwebcore.install_path", "") == hapPath) {
         WVLOG_I("OnPackageChangedEvent install path not changed.");
