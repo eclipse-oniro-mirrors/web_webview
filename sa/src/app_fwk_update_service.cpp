@@ -187,7 +187,6 @@ int AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName, AppS
     int retryCount = 0;
     AppSpawnClientHandle clientHandle = nullptr;
     AppSpawnReqMsgHandle reqHandle = 0;
-    AppSpawnResult result = {};
     do {
         ret = AppSpawnClientInit(APPSPAWN_SERVER_NAME, &clientHandle);
         if (ret != 0) {
@@ -199,13 +198,11 @@ int AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName, AppS
             WVLOG_I("Failed to create req,retry count = %{public}d.", retryCount);
             continue;
         }
+        AppSpawnResult result = {};
         ret = AppSpawnClientSendMsg(clientHandle, reqHandle, &result);
     } while (++retryCount < RETRY_COUNT && ret != 0);
-    if (result.result) {
-        ret = result.result;
-    }
     AppSpawnClientDestroy(clientHandle);
-    WVLOG_I("Send appspawn message success. ret = %{public}d", ret);
+    WVLOG_I("Send appspawn message success.");
     return ret;
 }
 
