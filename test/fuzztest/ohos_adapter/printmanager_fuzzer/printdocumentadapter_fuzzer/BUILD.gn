@@ -36,6 +36,7 @@ ohos_fuzztest("PrintDocumentAdapterFuzzTest") {
     "ability_base:base",
     "ability_base:want",
     "c_utils:utils",
+    "jsoncpp:jsoncpp",
     "image_framework:image_native",
     "pasteboard:pasteboard_client",
   ]
