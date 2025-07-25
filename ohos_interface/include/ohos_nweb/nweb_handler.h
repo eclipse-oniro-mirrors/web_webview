@@ -1254,6 +1254,8 @@ public:
      * @param url The url of the pdf.
      */
     virtual void OnPdfLoadEvent(int32_t result, const std::string& url) {}
+
+    virtual void OnTakeFocus(std::shared_ptr<NWebKeyEvent> event) {}
 };
 
 } // namespace OHOS::NWeb

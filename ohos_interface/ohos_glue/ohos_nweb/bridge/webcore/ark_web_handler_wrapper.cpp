@@ -1252,4 +1252,14 @@ void ArkWebHandlerWrapper::OnPdfLoadEvent(int32_t result, const std::string& url
 
     ArkWebStringStructRelease(stUrl);
 }
+
+void ArkWebHandlerWrapper::OnTakeFocus(std::shared_ptr<OHOS::NWeb::NWebKeyEvent> event)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(event)) {
+        ark_web_handler_->OnTakeFocus(nullptr);
+        return;
+    }
+
+    ark_web_handler_->OnTakeFocus(new ArkWebKeyEventImpl(event));
+}
 } // namespace OHOS::ArkWeb
