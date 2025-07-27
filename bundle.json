@@ -87,7 +87,8 @@
                 "drm_framework",
                 "drivers_peripheral_display",
                 "selinux_adapter",
-                "runtime_core"
+                "runtime_core",
+                "jsoncpp"
             ]
         },
         "build": {
@@ -103,7 +104,8 @@
                 "//base/web/webview/ohos_nweb:nweb_hap",
                 "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
                 "//base/web/webview/ohos_wrapper:nweb_ohos_wrapper",
-                "//base/web/webview/sa:app_fwk_update_service"
+                "//base/web/webview/sa:app_fwk_update_service",
+                "//base/web/webview/arkweb_utils:libarkweb_utils"
             ],
             "inner_kits": [
                 {
@@ -154,7 +156,10 @@
                         "header_base": "//base/web/webview/interfaces/kits/cj/include"
                     },
                     "name": "//base/web/webview/interfaces/kits/cj:cj_webview_ffi"
-                }
+                },
+                {
+	                "name": "//base/web/webview/arkweb_utils:libarkweb_utils"
+	            }
             ],
             "test": [
                 "//base/web/webview/test/fuzztest/load_fuzzer:fuzztest",
