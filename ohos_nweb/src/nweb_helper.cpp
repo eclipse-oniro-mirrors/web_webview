@@ -23,6 +23,7 @@
 #include "app_mgr_client.h"
 #include "application_context.h"
 #include "ark_web_nweb_webview_bridge_helper.h"
+#include "arkweb_utils.h"
 #include "config_policy_utils.h"
 #include "locale_config.h"
 #include "nweb_config_helper.h"
@@ -1375,6 +1376,7 @@ bool NWebHelper::IsPrivateNetworkAccessEnabled()
 
 void NWebHelper::SetWebDestroyMode(WebDestroyMode mode)
 {
+    RETURN_IF_UNSUPPORTED_ENGINE(OHOS::ArkWeb::ArkWebEngineVersion::M132, "SetWebDestroyMode");
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return;
