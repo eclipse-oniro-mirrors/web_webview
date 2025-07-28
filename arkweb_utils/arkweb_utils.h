@@ -24,7 +24,7 @@
 #define RETURN_IF_UNSUPPORTED_ENGINE(minVersion, funName)                       \
     do {                                                                        \
         auto engineVersion = OHOS::ArkWeb::getActiveWebEngineVersion();         \
-        if (engineVersion < OHOS::ArkWeb::ArkWebEngineVersion::minVersion) {    \
+        if (engineVersion < minVersion) {    \
             OHOS::ArkWeb::LogForUnsupportedFunc(engineVersion, funName);        \
             return;                                                             \
         }                                                                       \
