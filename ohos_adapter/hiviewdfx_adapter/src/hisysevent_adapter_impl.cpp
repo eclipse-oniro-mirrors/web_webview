@@ -18,6 +18,8 @@
 #include "hisysevent_adapter_impl.h"
 #include "hisysevent.h"
 #include "ohos_resource_adapter_impl.h"
+#include "arkweb_utils.h"
+#include "parameters.h"
 
 namespace OHOS::NWeb {
 namespace {
@@ -105,6 +107,9 @@ const static std::string PAGE_LOAD_KEY_LISTS[] = {
 };
 static std::string g_currentBundleName = "";
 static std::string g_versionCode = "";
+static std::string g_apiCompatibleVersion = "";
+static std::string g_webEngineType = "";
+static std::string g_defaultWebEngineType = "";
 HiSysEventAdapterImpl& HiSysEventAdapterImpl::GetInstance()
 {
     static HiSysEventAdapterImpl instance;
@@ -115,19 +120,32 @@ template<typename... Args>
 static int ForwardToHiSysEvent(const std::string& eventName, HiSysEventAdapter::EventType type,
     const std::tuple<Args...>& tp)
 {
-    if (g_currentBundleName.empty()) {
+    if (g_currentBundleName.empty() || g_apiCompatibleVersion.empty()) {
         auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
         if (appInfo != nullptr) {
-            g_currentBundleName = appInfo->bundleName.c_str();
+            g_currentBundleName = appInfo->bundleName;
+            g_apiCompatibleVersion = std::to_string(appInfo->apiCompatibleVersion);
         }
     }
+
     if (g_versionCode.empty()) {
         g_versionCode = OhosResourceAdapterImpl::GetArkWebVersion();
     }
-    std::tuple<const std::string, const std::string, const std::string, const std::string> sysData(
-        "BUNDLE_NAME", g_currentBundleName.c_str(),
-        "VERSION_CODE", g_versionCode.c_str()
-    );
+
+    if (g_webEngineType.empty()) {
+        g_webEngineType = std::to_string(static_cast<int>(OHOS::ArkWeb::getActiveWebEngineType()));
+    }
+
+    if (g_defaultWebEngineType.empty()) {
+        g_defaultWebEngineType = std::to_string(OHOS::system::GetIntParameter("web.engine.default",
+            static_cast<int>(OHOS::ArkWeb::ArkWebEngineType::EVERGREEN)));
+    }
+
+    auto sysData = std::make_tuple("BUNDLE_NAME", g_currentBundleName,
+                                   "VERSION_CODE", g_versionCode,
+                                   "API_COMPATIBLE_VERSION", g_apiCompatibleVersion,
+                                   "WEB_ENGINE_TYPE", g_webEngineType,
+                                   "DEFAULT_WEB_ENGINE_TYPE", g_defaultWebEngineType);
     auto mergeData = std::tuple_cat(sysData, tp);
 
     return std::apply(
@@ -369,10 +387,23 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
                      const std::string, const std::string, const std::string, const std::string>& data)
 {
     std::string versionCode = OhosResourceAdapterImpl::GetArkWebVersion();
-    auto extendedData = std::tuple_cat(
-        std::make_tuple("VERSION_CODE", versionCode.c_str()),
-        data
-    );
+    std::string webEngineType = std::to_string(static_cast<int>(OHOS::ArkWeb::getActiveWebEngineType()));
+    std::string defaultWebEngineType = std::to_string(OHOS::system::GetIntParameter("web.engine.default",
+        static_cast<int>(OHOS::ArkWeb::ArkWebEngineType::EVERGREEN)));
+    std::string bundleName = "";
+    std::string apiCompatibleVersion = "";
+    auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
+    if (appInfo != nullptr) {
+        currentBundleName = appInfo->bundleName;
+        apiCompatibleVersion = std::to_string(appInfo->apiCompatibleVersion);
+    }
+
+    auto sysData = std::make_tuple("VERSION_CODE", versionCode,
+                                   "BUNDLE_NAME", g_currentBundleName,
+                                   "API_COMPATIBLE_VERSION", g_apiCompatibleVersion,
+                                   "WEB_ENGINE_TYPE", g_webEngineType,
+                                   "DEFAULT_WEB_ENGINE_TYPE", g_defaultWebEngineType);
+    auto extendedData = std::tuple_cat(sysData, data);
 
     return std::apply(
         [&](auto&&... args) {
