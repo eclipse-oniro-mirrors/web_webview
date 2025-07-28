@@ -49,6 +49,9 @@ void DisplayInstanceFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<DisplayListenerAdapter> listener = nullptr;
     DisplayListenerAdapterImpl display(listener);
     auto displayPtr = DisplayManager::GetInstance().GetDefaultDisplay();
+    if (displayPtr == nullptr) {
+        return;
+    }
     auto displayInfo = displayPtr->GetDisplayInfo();
     display.ConvertDisplayInfo(*displayInfo);
 
