@@ -23,26 +23,26 @@
 
 namespace OHOS::ArkWeb {
 
-enum class ArkwebEngineVersion {
+enum class ArkWebEngineVersion {
     M114 = 0,
     M132 = 1,
     UNDEFINED = INT_MAX,
 };
 
-enum class ArkwebEngineType {
-    LEGACY = static_cast<int>(ArkwebEngineVersion::M114),
-    EVERGREEN = static_cast<int>(ArkwebEngineVersion::M132),
+enum class ArkWebEngineType {
+    LEGACY = static_cast<int>(ArkWebEngineVersion::M114),
+    EVERGREEN = static_cast<int>(ArkWebEngineVersion::M132),
     SYSTEM_DEFAILT,
     UNDEFINED = INT_MAX,
 };
 
 
-ARKWEB_EXPORT void setActiveWebEngineVersion(ArkwebEngineVersion version);
+ARKWEB_EXPORT void setActiveWebEngineVersion(ArkWebEngineVersion version);
 
-ARKWEB_EXPORT ArkwebEngineVersion getActiveWebEngineVersion();
+ARKWEB_EXPORT ArkWebEngineVersion getActiveWebEngineVersion();
 
-ARKWEB_EXPORT void setActiveWebEngineType(ArkwebEngineType type);
+ARKWEB_EXPORT void setActiveWebEngineType(ArkWebEngineType type);
 
-ARKWEB_EXPORT ArkwebEngineType getActiveWebEngineType();
+ARKWEB_EXPORT ArkWebEngineType getActiveWebEngineType();
 
 } // namespace OHOS::ArkWeb
