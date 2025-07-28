@@ -60,6 +60,7 @@ ohos_shared_library("ohweb") {
   ]
 
   deps = [
+    "../../arkweb_utils:libarkweb_utils",
     "../../ohos_nweb:libnweb",
     "../../ohos_adapter:nweb_ohos_adapter"
   ]
