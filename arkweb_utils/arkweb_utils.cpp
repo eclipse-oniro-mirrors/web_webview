@@ -20,29 +20,29 @@
 namespace OHOS::ArkWeb {
 
 static int g_appEngineVersion =
-    OHOS::system::GetIntParameter("web.engine.debug.version", static_cast<int>(ArkwebEngineVersion::M132));
+    OHOS::system::GetIntParameter("web.engine.debug.version", static_cast<int>(ArkWebEngineVersion::M132));
 
-void setActiveWebEngineVersion(ArkwebEngineVersion version)
+void setActiveWebEngineVersion(ArkWebEngineVersion version)
 {
     g_appEngineVersion = static_cast<int>(version);
     WVLOG_I("set appEngineVersion: %{public}d", g_appEngineVersion);
 }
 
-ArkwebEngineVersion getActiveWebEngineVersion()
+ArkWebEngineVersion getActiveWebEngineVersion()
 {
     WVLOG_I("get appEngineVersion: %{public}d", g_appEngineVersion);
-    return static_cast<ArkwebEngineVersion>(g_appEngineVersion);
+    return static_cast<ArkWebEngineVersion>(g_appEngineVersion);
 }
 
-void setActiveWebEngineType(ArkwebEngineType type)
+void setActiveWebEngineType(ArkWebEngineType type)
 {
     g_appEngineVersion = static_cast<int>(type);
     WVLOG_I("set appEngineVersion: %{public}d", g_appEngineVersion);
 }
 
-ArkwebEngineType getActiveWebEngineType()
+ArkWebEngineType getActiveWebEngineType()
 {
     WVLOG_I("get appEngineVersion: %{public}d", g_appEngineVersion);
-    return static_cast<ArkwebEngineType>(g_appEngineVersion);
+    return static_cast<ArkWebEngineType>(g_appEngineVersion);
 }
 }
