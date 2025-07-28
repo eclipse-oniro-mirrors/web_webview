@@ -115,6 +115,7 @@ ohos_shared_library("libnweb") {
     "${webview_path}/ohos_glue:ohos_base_glue_source",
     "${webview_path}/ohos_glue:ohos_nweb_glue_source",
     "${webview_path}/sa:app_fwk_update",
+    "../arkweb_utils:libarkweb_utils",
   ]
 
   external_deps = [
