@@ -1137,6 +1137,10 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
 
 napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("SetWebDebuggingAccess start");
     napi_value result = nullptr;
     if (OHOS::system::GetBoolParameter("web.debug.devtools", false)) {
@@ -2867,6 +2871,10 @@ napi_value NapiWebviewController::GetTitle(napi_env env, napi_callback_info info
 
 napi_value NapiWebviewController::GetProgress(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
@@ -6109,6 +6117,10 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
 
 napi_value NapiWebviewController::SetAppCustomUserAgent(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("Set App custom user agent.");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -6135,6 +6147,10 @@ napi_value NapiWebviewController::SetAppCustomUserAgent(napi_env env, napi_callb
 
 napi_value NapiWebviewController::SetUserAgentForHosts(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("Set User Agent For Hosts.");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -7319,6 +7335,10 @@ napi_value NapiWebviewController::AvoidVisibleViewportBottom(napi_env env, napi_
 
 napi_value NapiWebviewController::SetErrorPageEnabled(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     napi_value result = nullptr;
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
@@ -7355,21 +7375,31 @@ napi_value NapiWebviewController::SetErrorPageEnabled(napi_env env, napi_callbac
 
 napi_value NapiWebviewController::GetErrorPageEnabled(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("GetErrorPageEnabled start");
     napi_value result = nullptr;
+    bool getErrorPageEnabled = false;
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        NAPI_CALL(env, napi_get_boolean(env, getErrorPageEnabled, &result));
+        return result;
+    }
+
+    WVLOG_D("GetErrorPageEnabled start");
     WebviewController *controller = GetWebviewController(env, info);
     if (!controller || !controller->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
 
-    bool GetErrorPageEnabled = controller->GetErrorPageEnabled();
-    NAPI_CALL(env, napi_get_boolean(env, GetErrorPageEnabled, &result));
+    getErrorPageEnabled = controller->GetErrorPageEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, getErrorPageEnabled, &result));
     return result;
 }
 
 napi_value NapiWebviewController::EnablePrivateNetworkAccess(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("EnablePrivateNetworkAccess start");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -7397,10 +7427,16 @@ napi_value NapiWebviewController::EnablePrivateNetworkAccess(napi_env env, napi_
 
 napi_value NapiWebviewController::IsPrivateNetworkAccessEnabled(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("IsPrivateNetworkAccessEnabled start");
     napi_value result = nullptr;
+    bool pnaEnabled = false;
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        NAPI_CALL(env, napi_get_boolean(env, pnaEnabled, &result));
+        return result;
+    }
 
-    bool pnaEnabled = NWebHelper::Instance().IsPrivateNetworkAccessEnabled();
+    WVLOG_D("IsPrivateNetworkAccessEnabled start");
+
+    pnaEnabled = NWebHelper::Instance().IsPrivateNetworkAccessEnabled();
     NAPI_CALL(env, napi_get_boolean(env, pnaEnabled, &result));
     return result;
 }
