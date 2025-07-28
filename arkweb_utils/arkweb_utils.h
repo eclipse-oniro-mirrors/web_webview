@@ -21,6 +21,15 @@
 #define ARKWEB_EXPORT __attribute__((visibility("default")))
 #endif
 
+#define RETURN_IF_UNSUPPORTED_ENGINE(minVersion, funName)                       \
+    do {                                                                        \
+        auto engineVersion = OHOS::ArkWeb::getActiveWebEngineVersion();         \
+        if (engineVersion < OHOS::ArkWeb::ArkWebEngineVersion::minVersion) {    \
+            OHOS::ArkWeb::LogForUnsupportedFunc(engineVersion, funName);        \
+            return;                                                             \
+        }                                                                       \
+    } while (0)
+
 namespace OHOS::ArkWeb {
 
 enum class ArkWebEngineVersion {
@@ -44,5 +53,7 @@ ARKWEB_EXPORT ArkWebEngineVersion getActiveWebEngineVersion();
 ARKWEB_EXPORT void setActiveWebEngineType(ArkWebEngineType type);
 
 ARKWEB_EXPORT ArkWebEngineType getActiveWebEngineType();
+
+ARKWEB_EXPORT void LogForUnsupportedFunc(ArkWebEngineVersion miniVersion, const char* msg);
 
 } // namespace OHOS::ArkWeb

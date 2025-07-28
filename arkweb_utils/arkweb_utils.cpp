@@ -45,4 +45,10 @@ ArkWebEngineType getActiveWebEngineType()
     WVLOG_I("get appEngineVersion: %{public}d", g_appEngineVersion);
     return static_cast<ArkWebEngineType>(g_appEngineVersion);
 }
+
+void LogForUnsupportedFunc(ArkWebEngineVersion version, const char* msg)
+{
+    WVLOG_W("%s unsupported engine version: %{public}d",
+        msg, static_cast<int>(version));
+}
 }
