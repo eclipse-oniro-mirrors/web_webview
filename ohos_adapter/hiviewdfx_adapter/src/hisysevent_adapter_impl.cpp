@@ -386,30 +386,7 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
                      const std::string, const std::string, const std::string, const std::string,
                      const std::string, const std::string, const std::string, const std::string>& data)
 {
-    std::string versionCode = OhosResourceAdapterImpl::GetArkWebVersion();
-    std::string webEngineType = std::to_string(static_cast<int>(OHOS::ArkWeb::getActiveWebEngineType()));
-    std::string defaultWebEngineType = std::to_string(OHOS::system::GetIntParameter("web.engine.default",
-        static_cast<int>(OHOS::ArkWeb::ArkWebEngineType::EVERGREEN)));
-    std::string bundleName = "";
-    std::string apiCompatibleVersion = "";
-    auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
-    if (appInfo != nullptr) {
-        bundleName = appInfo->bundleName;
-        apiCompatibleVersion = std::to_string(appInfo->apiCompatibleVersion);
-    }
-
-    auto sysData = std::make_tuple("VERSION_CODE", versionCode,
-                                   "BUNDLE_NAME", bundleName,
-                                   "API_COMPATIBLE_VERSION", apiCompatibleVersion,
-                                   "WEB_ENGINE_TYPE", webEngineType,
-                                   "DEFAULT_WEB_ENGINE_TYPE", defaultWebEngineType);
-    auto extendedData = std::tuple_cat(sysData, data);
-
-    return std::apply(
-        [&](auto&&... args) {
-            return HiSysEventWrite(OHOS::HiviewDFX::HiSysEvent::Domain::WEBVIEW, eventName, EVENT_TYPES[type], args...);
-        },
-        extendedData);
+   return ForwardToHiSysEvent(eventName, type, data);
 }
 
 int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
