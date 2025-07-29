@@ -394,15 +394,15 @@ int HiSysEventAdapterImpl::Write(const std::string& eventName, EventType type,
     std::string apiCompatibleVersion = "";
     auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
     if (appInfo != nullptr) {
-        currentBundleName = appInfo->bundleName;
+        bundleName = appInfo->bundleName;
         apiCompatibleVersion = std::to_string(appInfo->apiCompatibleVersion);
     }
 
     auto sysData = std::make_tuple("VERSION_CODE", versionCode,
-                                   "BUNDLE_NAME", g_currentBundleName,
-                                   "API_COMPATIBLE_VERSION", g_apiCompatibleVersion,
-                                   "WEB_ENGINE_TYPE", g_webEngineType,
-                                   "DEFAULT_WEB_ENGINE_TYPE", g_defaultWebEngineType);
+                                   "BUNDLE_NAME", bundleName,
+                                   "API_COMPATIBLE_VERSION", apiCompatibleVersion,
+                                   "WEB_ENGINE_TYPE", webEngineType,
+                                   "DEFAULT_WEB_ENGINE_TYPE", defaultWebEngineType);
     auto extendedData = std::tuple_cat(sysData, data);
 
     return std::apply(
