@@ -55,6 +55,7 @@ ohos_shared_library("libarkweb_utils") {
 
   include_dirs = [
     "../ohos_nweb/include/",
+    "../ohos_adapter/hiviewdfx_adapter/include/",
   ]
 
   innerapi_tags = [ "platformsdk" ]
