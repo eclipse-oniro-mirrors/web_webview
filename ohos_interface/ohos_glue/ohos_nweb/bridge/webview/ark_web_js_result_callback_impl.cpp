@@ -15,6 +15,8 @@
 
 #include "ohos_nweb/bridge/ark_web_js_result_callback_impl.h"
 
+#include "ohos_nweb/bridge/ark_web_hap_value_wrapper.h"
+#include "ohos_nweb/ctocpp/ark_web_hap_value_vector_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_value_vector_ctocpp.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
@@ -65,6 +67,44 @@ void ArkWebJsResultCallbackImpl::RemoveJavaScriptObjectHolder(int32_t holder, in
 void ArkWebJsResultCallbackImpl::RemoveTransientJavaScriptObject()
 {
     nweb_js_result_callback_->RemoveTransientJavaScriptObject();
+}
+
+void ArkWebJsResultCallbackImpl::GetJavaScriptResultV2(const ArkWebHapValueVector& args, const ArkWebString& method,
+    const ArkWebString& object_name, int32_t routing_id, int32_t object_id, ArkWebRefPtr<ArkWebHapValue> result)
+{
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        nweb_js_result_callback_->GetJavaScriptResultV2(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), routing_id, object_id, nullptr);
+    } else {
+        nweb_js_result_callback_->GetJavaScriptResultV2(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), routing_id, object_id,
+            std::make_shared<ArkWebHapValueWrapper>(result));
+    }
+}
+
+void ArkWebJsResultCallbackImpl::GetJavaScriptResultFlowbufV2(const ArkWebHapValueVector& args,
+    const ArkWebString& method, const ArkWebString& object_name, int fd, int32_t routing_id, int32_t object_id,
+    ArkWebRefPtr<ArkWebHapValue> result)
+{
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        nweb_js_result_callback_->GetJavaScriptResultFlowbufV2(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), fd, routing_id, object_id,
+            nullptr);
+    } else {
+        nweb_js_result_callback_->GetJavaScriptResultFlowbufV2(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), fd, routing_id, object_id,
+            std::make_shared<ArkWebHapValueWrapper>(result));
+    }
+}
+
+void ArkWebJsResultCallbackImpl::GetJavaScriptObjectMethodsV2(int32_t object_id, ArkWebRefPtr<ArkWebHapValue> result)
+{
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        nweb_js_result_callback_->GetJavaScriptObjectMethodsV2(object_id, nullptr);
+    } else {
+        nweb_js_result_callback_->GetJavaScriptObjectMethodsV2(
+            object_id, std::make_shared<ArkWebHapValueWrapper>(result));
+    }
 }
 
 } // namespace OHOS::ArkWeb

@@ -38,6 +38,8 @@
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
+#include "ohos_nweb/include/ark_web_rom_value.h"
+#include "ohos_nweb/include/ark_web_rom_value_vector.h"
 #include "ohos_nweb/include/ark_web_screen_lock_callback.h"
 #include "ohos_nweb/include/ark_web_spanstring_convert_html_callback.h"
 #include "ohos_nweb/include/ark_web_string_value_callback.h"
@@ -1956,6 +1958,34 @@ public:
      */
     /*--ark web()--*/
     virtual int32_t GetWebDestroyMode() = 0;
+
+    /**
+     * @brief CallH5FunctionV2
+     *
+     * @param routing_id       int32_t: the h5 frame routing id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebValue>>: the call args
+     */
+    /*--ark web()--*/
+    virtual void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const ArkWebString& h5_method_name,
+        const ArkWebRomValueVector& args) = 0;
+
+    /**
+     * @brief use the port to send message.
+     *
+     * @param portHandle the port to send message.
+     * @param data the message to send.
+     */
+    /*--ark web()--*/
+    virtual void PostPortMessageV2(const ArkWebString& portHandle, ArkWebRefPtr<ArkWebRomValue> data) = 0;
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    /*--ark web()--*/
+    virtual void FillAutofillDataV2(ArkWebRefPtr<ArkWebRomValue> data) = 0;
 };
 
 } // namespace OHOS::ArkWeb

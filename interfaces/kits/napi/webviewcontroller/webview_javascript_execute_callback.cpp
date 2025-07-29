@@ -20,6 +20,7 @@
 #include "nweb_napi_scope.h"
 #include "nweb_log.h"
 #include "web_errors.h"
+#include "nweb_message_ext.h"
 
 namespace OHOS::NWeb {
 using namespace NWebError;
@@ -104,6 +105,13 @@ void WebviewJavaScriptExecuteCallback::OnReceiveValue(std::shared_ptr<NWebMessag
             work = nullptr;
         }
     }
+}
+
+void WebviewJavaScriptExecuteCallback::OnReceiveValueV2(std::shared_ptr<NWebHapValue> result)
+{
+    WVLOG_D("WebviewJavaScriptExecuteCallback::OnReceiveValue2 start");
+    std::shared_ptr<NWebMessage> message = ConvertNwebHap2NwebMessage(result);
+    OnReceiveValue(message);
 }
 
 void WebviewJavaScriptExecuteCallback::UvAfterWorkCb(uv_work_t* work, int status)

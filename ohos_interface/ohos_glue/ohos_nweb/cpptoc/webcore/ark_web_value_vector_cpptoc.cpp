@@ -58,7 +58,7 @@ ArkWebValueVector ArkWebValueVectorClassToStruct(const std::vector<std::shared_p
     return struct_value;
 }
 
-void ArkWebValueVectorStructRelease(ArkWebValueVector& struct_value)
+ARK_WEB_NO_SANITIZE void ArkWebValueVectorStructRelease(ArkWebValueVector& struct_value)
 {
     struct_value.size = 0;
     SAFE_FREE(struct_value.value, struct_value.ark_web_mem_free_func);
