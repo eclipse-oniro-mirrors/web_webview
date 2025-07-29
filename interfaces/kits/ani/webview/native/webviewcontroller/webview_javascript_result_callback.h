@@ -471,6 +471,16 @@ public:
 
     void RemoveTransientJavaScriptObject() override;
 
+    void GetJavaScriptResultV2(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+        const std::string& method, const std::string& object_name, int32_t routing_id, int32_t object_id,
+        std::shared_ptr<NWebHapValue> result) override {}
+
+    void GetJavaScriptResultFlowbufV2(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+        const std::string& method, const std::string& object_name, int fd, int32_t routing_id, int32_t object_id,
+        std::shared_ptr<NWebHapValue> result) override {}
+
+    void GetJavaScriptObjectMethodsV2(int32_t object_id, std::shared_ptr<NWebHapValue> result) override {}
+
     bool FindObjectIdInJsTd(napi_env env, napi_value object, JavaScriptOb::ObjectID* objectId);
 
     std::unordered_map<std::string, std::shared_ptr<JavaScriptOb>> GetNamedObjects();

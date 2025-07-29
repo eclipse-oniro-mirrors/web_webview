@@ -22,6 +22,7 @@
 #include "webview_controller_impl.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
+#include "nweb_message_ext.h"
 
 namespace OHOS::Webview {
 
@@ -42,6 +43,7 @@ public:
     {}
     ~WebviewJavaScriptExecuteCallback() = default;
     void OnReceiveValue(std::shared_ptr<OHOS::NWeb::NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<OHOS::NWeb::NWebHapValue> value) override;
 
 private:
     std::function<void(RetDataCString)> callbackRef_ = nullptr;
@@ -50,7 +52,11 @@ private:
 class WebJsMessageExtImpl : public OHOS::FFI::FFIData {
     DECL_TYPE(WebJsMessageExtImpl, OHOS::FFI::FFIData)
 public:
-    explicit WebJsMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> value) : value_(value) {};
+    explicit WebJsMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> value) : value_(value) {}
+    explicit WebJsMessageExtImpl(std::shared_ptr<NWeb::NWebHapValue> value) 
+    {
+        value_ = NWeb::ConvertNwebHap2NwebMessage(value);
+    }
     ~WebJsMessageExtImpl() = default;
 
     int32_t ConvertToJsType(NWeb::NWebValue::Type type);
@@ -75,6 +81,7 @@ public:
     {}
     ~WebviewJavaScriptExtExecuteCallback() = default;
     void OnReceiveValue(std::shared_ptr<OHOS::NWeb::NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<OHOS::NWeb::NWebHapValue> value) override;
 
 private:
     std::function<void(RetDataI64)> callbackRef_ = nullptr;

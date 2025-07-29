@@ -118,6 +118,8 @@ enum ArkWebBridgeType {
     ARK_WEB_JS_PROXY_METHOD = 94,
     ARK_WEB_NATIVE_EMBED_MOUSE_EVENT = 95,
     ARK_WEB_MOUSE_EVENT_RESULT = 96,
+    ARK_WEB_HAP_VALUE = 97,
+    ARK_WEB_ROM_VALUE = 98,
 
     /*Note: The end of nweb interface bridge type*/
     ARK_WEB_NWEB_INTERFACE_BUTT,

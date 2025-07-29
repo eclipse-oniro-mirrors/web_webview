@@ -395,4 +395,152 @@ void WebviewJavaScriptResultCallBackImpl::RemoveJavaScriptObjectHolder(int32_t h
 void WebviewJavaScriptResultCallBackImpl::RemoveTransientJavaScriptObject()
 {}
 
+void WebviewJavaScriptResultCallBackImpl::ConstructArgvV2(void* ashmem,
+    const std::vector<std::shared_ptr<NWebHapValue>>& args, std::vector<std::string>& argv,
+    std::shared_ptr<JavaScriptOb> jsObj, int32_t routingId)
+{
+    int argIndex = -1;
+    int currIndex = 0;
+    int flowbufIndex = 0;
+    int strLen = 0;
+    char* flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+    flowbufIndex++;
+    while (argIndex == currIndex) {
+        argv.push_back(std::string(flowbufStr));
+        currIndex++;
+        flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+        flowbufIndex++;
+    }
+
+    for (auto& input : args) {
+        while (argIndex == currIndex) {
+            argv.push_back(std::string(flowbufStr));
+            currIndex++;
+            flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+            flowbufIndex++;
+        }
+        argv.push_back(input->GetString());
+        currIndex++;
+    }
+
+    while (argIndex == currIndex) {
+        argv.push_back(std::string(flowbufStr));
+        currIndex++;
+        flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
+        flowbufIndex++;
+    }
+}
+
+void WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultSelfHelperV2(std::shared_ptr<JavaScriptOb> jsObj,
+    const std::string& method, int32_t routingId, const std::vector<std::string>& argv,
+    std::shared_ptr<NWebHapValue> result)
+{
+    auto callback = jsObj->FindMethod(method);
+    if (!callback) {
+        WEBVIEWLOGE("WebviewJavaScriptResultCallBack::ExecuteGetJavaScriptResult callback null");
+        return;
+    }
+
+    std::string arg = (argv.size() == 0) ? "" : argv[0];
+    auto argCj = MallocCString(arg);
+    if (argCj == nullptr) {
+        return;
+    }
+
+    char* cjRet = callback(argCj);
+    result->SetType(NWebHapValue::Type::STRING);
+    result->SetString(cjRet);
+    free(cjRet);
+}
+
+void WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultV2(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+    const std::string& method, const std::string& objectName, int32_t routingId, int32_t objectId,
+    std::shared_ptr<NWebHapValue> result)
+{
+    if (!result) {
+        return;
+    }
+
+    WEBVIEWLOGD("GetJavaScriptResult method = %{public}s", method.c_str());
+    result->SetType(NWebHapValue::Type::NONE);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    if (!jsObj || jsObj->HasMethod(method) == -1) {
+        return;
+    }
+
+    WEBVIEWLOGI("WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultV2");
+    auto callback = jsObj->FindMethod(method);
+    if (!callback) {
+        WEBVIEWLOGE("WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultV2 callback null");
+        return;
+    }
+
+    std::string argv = (args.size() == 0) ? "" : args[0]->GetString();
+    auto argCj = MallocCString(argv);
+    if (argCj == nullptr) {
+        return;
+    }
+
+    char* cjRet = callback(argCj);
+    result->SetType(NWebHapValue::Type::STRING);
+    result->SetString(cjRet);
+    free(cjRet);
+}
+
+void WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultFlowbufV2(
+    const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method, const std::string& objectName,
+    int fd, int32_t routingId, int32_t objectId, std::shared_ptr<NWebHapValue> result)
+{
+    if (!result) {
+        return;
+    }
+    (void)objectName; // to be compatible with older webcotroller, classname may be empty
+
+    WEBVIEWLOGD("GetJavaScriptResult method = %{public}s", method.c_str());
+    result->SetType(NWebHapValue::Type::NONE);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    if (!jsObj || jsObj->HasMethod(method) == -1) {
+        return;
+    }
+
+    auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+    if (!flowbufferAdapter) {
+        return;
+    }
+
+    auto ashmem = flowbufferAdapter->CreateAshmemWithFd(fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
+    if (!ashmem) {
+        return;
+    }
+
+    std::vector<std::string> argv = {};
+    ConstructArgvV2(ashmem, args, argv, jsObj, routingId);
+    close(fd);
+
+    GetJavaScriptResultSelfHelperV2(jsObj, method, routingId, argv, result);
+}
+
+void WebviewJavaScriptResultCallBackImpl::GetJavaScriptObjectMethodsV2(
+    int32_t objectId, std::shared_ptr<NWebHapValue> result)
+{
+    if (!result) {
+        return;
+    }
+
+    result->SetType(NWebHapValue::Type::NONE);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    if (!jsObj) {
+        return;
+    }
+
+    auto methods = jsObj->GetMethodNames();
+    for (auto& method : methods) {
+        std::shared_ptr<NWebHapValue> child = result->NewChildValue();
+        if (child) {
+            child->SetString(method);
+            result->SaveListChildValue();
+        }
+    }
+}
+
 } // namespace OHOS::Webview

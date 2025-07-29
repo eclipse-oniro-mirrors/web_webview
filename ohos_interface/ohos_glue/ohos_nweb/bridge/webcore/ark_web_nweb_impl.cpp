@@ -37,11 +37,13 @@
 #include "ohos_nweb/bridge/ark_web_mouse_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_preference_impl.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_rom_value_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_screen_lock_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_spanstring_convert_html_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_string_value_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_wrapper.h"
 #include "ohos_nweb/ctocpp/ark_web_js_proxy_callback_vector_ctocpp.h"
+#include "ohos_nweb/ctocpp/ark_web_rom_value_vector_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_touch_point_info_vector_ctocpp.h"
 #include "ohos_nweb/ctocpp/ark_web_value_vector_ctocpp.h"
 
@@ -1504,6 +1506,33 @@ bool ArkWebNWebImpl::GetErrorPageEnabled()
 int32_t ArkWebNWebImpl::GetWebDestroyMode()
 {
     return static_cast<int32_t>(nweb_nweb_->GetWebDestroyMode());
+}
+
+void ArkWebNWebImpl::CallH5FunctionV2(
+    int32_t routing_id, int32_t h5_object_id, const ArkWebString& h5_method_name, const ArkWebRomValueVector& args)
+{
+    nweb_nweb_->CallH5FunctionV2(
+        routing_id, h5_object_id, ArkWebStringStructToClass(h5_method_name), ArkWebRomValueVectorStructToClass(args));
+}
+
+void ArkWebNWebImpl::PostPortMessageV2(const ArkWebString& portHandle, ArkWebRefPtr<ArkWebRomValue> data)
+{
+    if (CHECK_REF_PTR_IS_NULL(data)) {
+        nweb_nweb_->PostPortMessageV2(ArkWebStringStructToClass(portHandle), nullptr);
+        return;
+    }
+
+    nweb_nweb_->PostPortMessageV2(ArkWebStringStructToClass(portHandle), std::make_shared<ArkWebRomValueWrapper>(data));
+}
+
+void ArkWebNWebImpl::FillAutofillDataV2(ArkWebRefPtr<ArkWebRomValue> data)
+{
+    if (CHECK_REF_PTR_IS_NULL(data)) {
+        nweb_nweb_->FillAutofillDataV2(nullptr);
+        return;
+    }
+
+    nweb_nweb_->FillAutofillDataV2(std::make_shared<ArkWebRomValueWrapper>(data));
 }
 
 } // namespace OHOS::ArkWeb

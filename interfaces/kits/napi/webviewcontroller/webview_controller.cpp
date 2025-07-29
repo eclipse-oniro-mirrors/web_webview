@@ -46,6 +46,7 @@
 #include "iservice_registry.h"
 #include "parameters.h"
 #include "system_ability_definition.h"
+#include "../../../../ohos_interface/ohos_glue/base/include/ark_web_errno.h"
 
 namespace {
 constexpr int32_t PARAMZERO = 0;
@@ -620,7 +621,7 @@ ErrCode WebMessagePort::ClosePort()
     return NWebError::NO_ERROR;
 }
 
-ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
+ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data, std::shared_ptr<NWebRomValue> value)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -631,7 +632,10 @@ ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
         WVLOG_E("can't post message, message port already closed");
         return CAN_NOT_POST_MESSAGE;
     }
-    nweb_ptr->PostPortMessage(portHandle_, data);
+    nweb_ptr->PostPortMessageV2(portHandle_, value);
+    if (ArkWebGetErrno() != RESULT_OK) {
+        nweb_ptr->PostPortMessage(portHandle_, data);
+    }
     return NWebError::NO_ERROR;
 }
 
@@ -2190,38 +2194,49 @@ void WebMessageExt::SetType(int type)
     type_ = type;
     WebMessageType jsType = static_cast<WebMessageType>(type);
     NWebValue::Type nwebType = NWebValue::Type::NONE;
+    NWebRomValue::Type romType = NWebRomValue::Type::NONE;
     switch (jsType) {
         case WebMessageType::STRING: {
             nwebType = NWebValue::Type::STRING;
+            romType = NWebRomValue::Type::STRING;
             break;
         }
         case WebMessageType::NUMBER: {
             nwebType = NWebValue::Type::DOUBLE;
+            romType = NWebRomValue::Type::DOUBLE;
             break;
         }
         case WebMessageType::BOOLEAN: {
             nwebType = NWebValue::Type::BOOLEAN;
+            romType = NWebRomValue::Type::BOOLEAN;
             break;
         }
         case WebMessageType::ARRAYBUFFER: {
             nwebType = NWebValue::Type::BINARY;
+            romType = NWebRomValue::Type::BINARY;
             break;
         }
         case WebMessageType::ARRAY: {
             nwebType = NWebValue::Type::STRINGARRAY;
+            romType = NWebRomValue::Type::STRINGARRAY;
             break;
         }
         case WebMessageType::ERROR: {
             nwebType = NWebValue::Type::ERROR;
+            romType = NWebRomValue::Type::ERROR;
             break;
         }
         default: {
             nwebType = NWebValue::Type::NONE;
+            romType = NWebRomValue::Type::NONE;
             break;
         }
     }
     if (data_) {
         data_->SetType(nwebType);
+    }
+    if (value_) {
+        value_->SetType(romType);
     }
 }
 

@@ -38,6 +38,7 @@
 #include "webview_javascript_result_callback.h"
 #include "webview_log.h"
 #include "webview_utils.h"
+#include "nweb_message_ext.h"
 
 namespace OHOS::Webview {
     constexpr int MAX_CUSTOM_SCHEME_SIZE = 10;
@@ -125,10 +126,30 @@ namespace OHOS::Webview {
         }
     }
 
+    void NWebMessageCallbackImpl::OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value)
+    {
+        std::shared_ptr<NWeb::NWebMessage> message = ConvertNwebHap2NwebMessage(value);
+        OnReceiveValue(message);
+    }
+
     void NWebWebMessageExtCallbackImpl::OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result)
     {
         WEBVIEWLOGD("message port received msg");
         WebMessageExtImpl *webMessageExt = OHOS::FFI::FFIData::Create<WebMessageExtImpl>(result);
+        if (webMessageExt == nullptr) {
+            WEBVIEWLOGE("new WebMessageExt failed.");
+            return;
+        }
+        callback_(webMessageExt->GetID());
+    }
+
+    void NWebWebMessageExtCallbackImpl::OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value)
+    {
+        WEBVIEWLOGD("message port received msg");
+        if (value == nullptr) {
+            return;
+        }
+        WebMessageExtImpl *webMessageExt = OHOS::FFI::FFIData::Create<WebMessageExtImpl>(value);
         if (webMessageExt == nullptr) {
             WEBVIEWLOGE("new WebMessageExt failed.");
             return;
