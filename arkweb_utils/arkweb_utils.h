@@ -21,14 +21,31 @@
 #define ARKWEB_EXPORT __attribute__((visibility("default")))
 #endif
 
-#define RETURN_IF_UNSUPPORTED_ENGINE(minVersion, funName)                       \
-    do {                                                                        \
-        auto engineVersion = OHOS::ArkWeb::getActiveWebEngineVersion();         \
-        if (engineVersion < minVersion) {    \
-            OHOS::ArkWeb::LogForUnsupportedFunc(engineVersion, funName);        \
-            return;                                                             \
-        }                                                                       \
-    } while (0)
+#define RETURN_IF_UNSUPPORTED_ENGINE(minVersion, funName)                   \
+do {                                                                        \
+    auto engineVersion = OHOS::ArkWeb::getActiveWebEngineVersion();         \
+    if (engineVersion < minVersion) {    \
+        OHOS::ArkWeb::LogForUnsupportedFunc(engineVersion, funName);        \
+        return;                                                             \
+    }                                                                       \
+} while (0)
+
+#define IS_CALLING_FROM_M114()                                                                    \
+do {                                                                                              \
+    if (OHOS::ArkWeb::getActiveWebEngineVersion() == OHOS::ArkWeb::ArkWebEngineVersion::M114) {   \
+        OHOS::ArkWeb::LogForUnsupportedFunc(OHOS::ArkWeb::ArkWebEngineVersion::M114, __func__);   \
+        return true;                                                                              \
+    }                                                                                             \
+    return false;                                                                                 \
+} while (0)
+
+
+#define RETURN_IF_CALLING_FROM_M114()   \
+do {                                    \
+    if (IS_CALLING_FROM_M114()) {       \
+        return;                         \
+    }                                   \
+} while (0)
 
 namespace OHOS::ArkWeb {
 
