@@ -21,6 +21,7 @@
 #define ARKWEB_EXPORT __attribute__((visibility("default")))
 #endif
 
+#if !defined(CROSS_PLATFORM)
 #define RETURN_IF_UNSUPPORTED_ENGINE(minVersion, funName)                   \
 do {                                                                        \
     auto engineVersion = OHOS::ArkWeb::getActiveWebEngineVersion();         \
@@ -29,16 +30,28 @@ do {                                                                        \
         return;                                                             \
     }                                                                       \
 } while (0)
+#else
+#define RETURN_IF_UNSUPPORTED_ENGINE(minVersion, funName)
+#endif
 
+#if !defined(CROSS_PLATFORM)
 #define IS_CALLING_FROM_M114() \
     (OHOS::ArkWeb::getActiveWebEngineVersion() == OHOS::ArkWeb::ArkWebEngineVersion::M114)
+#else
+#define IS_CALLING_FROM_M114()
+#endif
 
+#if !defined(CROSS_PLATFORM)
 #define RETURN_IF_CALLING_FROM_M114() \
 do { \
     if (IS_CALLING_FROM_M114()) { \
         OHOS::ArkWeb::LogForUnsupportedFunc(OHOS::ArkWeb::ArkWebEngineVersion::M114, __func__); \
+        return; \
     } \
 } while (0)
+#else
+#define RETURN_IF_CALLING_FROM_M114()
+#endif
 
 namespace OHOS::ArkWeb {
 
