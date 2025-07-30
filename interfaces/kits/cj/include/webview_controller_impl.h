@@ -25,6 +25,7 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_web_message.h"
+#include "nweb_message_ext.h"
 #include "web_scheme_handler_request.h"
 
 namespace OHOS::Webview {
@@ -388,7 +389,11 @@ private:
 class WebMessageExtImpl : public OHOS::FFI::FFIData {
     DECL_TYPE(WebMessageExtImpl, OHOS::FFI::FFIData)
 public:
-    explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> data) : data_(data) {};
+    explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> data) : data_(data) {}
+    explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebHapValue> data)
+    {
+        data_ = NWeb::ConvertNwebHap2NwebMessage(data);
+    }
     ~WebMessageExtImpl() = default;
 
     void SetType(int type)
@@ -567,6 +572,7 @@ public:
     NWebMessageCallbackImpl(std::function<void(RetWebMessage)> callback) : callback_(callback) {}
     ~NWebMessageCallbackImpl() = default;
     void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value) override;
 
 private:
     std::function<void(RetWebMessage)> callback_;
@@ -577,6 +583,7 @@ public:
     NWebWebMessageExtCallbackImpl(std::function<void(int64_t)> callback) : callback_(callback) {}
     ~NWebWebMessageExtCallbackImpl() = default;
     void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value) override;
 
 private:
     std::function<void(int64_t)> callback_;

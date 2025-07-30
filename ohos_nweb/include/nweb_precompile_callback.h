@@ -30,6 +30,12 @@ public:
         }
     }
 
+    void OnReceiveValueV2(std::shared_ptr<NWebHapValue> value) override {
+        if (callback_) {
+            callback_(value->GetInt());
+        }
+    }
+
     void SetCallback(const std::function<void(int64_t)> &&callback) {
         callback_ = callback;
     }

@@ -20,6 +20,7 @@
 #include <string>
 
 #include "nweb_export.h"
+#include "nweb_hap_value.h"
 
 namespace OHOS::NWeb {
 
@@ -59,6 +60,8 @@ public:
     virtual ~NWebMessageValueCallback() = default;
 
     virtual void OnReceiveValue(std::shared_ptr<NWebMessage> value) = 0;
+
+    virtual void OnReceiveValueV2(std::shared_ptr<NWebHapValue> value) {}
 };
 
 class OHOS_NWEB_EXPORT NWebWebStorageOriginVectorValueCallback {

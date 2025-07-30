@@ -34,6 +34,7 @@
 #include "nweb_native_media_player.h"
 #include "nweb_preference.h"
 #include "nweb_release_surface_callback.h"
+#include "nweb_rom_value.h"
 #include "nweb_spanstring_convert_html_callback.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
@@ -2022,6 +2023,32 @@ public:
     {
         return WebDestroyMode::NORMAL_MODE;
     }
+
+    /**
+     * CallH5FunctionV2
+     *
+     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    virtual void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+        const std::vector<std::shared_ptr<NWebRomValue>>& args)
+    {}
+
+    /**
+     * use the port to send message.
+     *
+     * @param portHandle the port to send message.
+     * @param data the message to send.
+     */
+    virtual void PostPortMessageV2(const std::string& portHandle, std::shared_ptr<NWebRomValue> data) {}
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    virtual void FillAutofillDataV2(std::shared_ptr<NWebRomValue> data) {}
 };
 
 } // namespace OHOS::NWeb

@@ -17,6 +17,7 @@
 #define ARK_WEB_JS_RESULT_CALLBACK_H_
 #pragma once
 
+#include "ohos_nweb/include/ark_web_hap_value.h"
 #include "ohos_nweb/include/ark_web_value.h"
 #include "ohos_nweb/include/ark_web_value_vector.h"
 
@@ -68,6 +69,19 @@ public:
     /*--ark web()--*/
     virtual ArkWebValue GetJavaScriptResultFlowbuf(ArkWebValueVector args, const ArkWebString& method,
         const ArkWebString& object_name, int fd, int32_t routing_id, int32_t object_id) = 0;
+
+    /*--ark web()--*/
+    virtual void GetJavaScriptResultV2(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, int32_t routing_id, int32_t object_id,
+        ArkWebRefPtr<ArkWebHapValue> result) = 0;
+
+    /*--ark web()--*/
+    virtual void GetJavaScriptResultFlowbufV2(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, int fd, int32_t routing_id, int32_t object_id,
+        ArkWebRefPtr<ArkWebHapValue> result) = 0;
+
+    /*--ark web()--*/
+    virtual void GetJavaScriptObjectMethodsV2(int32_t object_id, ArkWebRefPtr<ArkWebHapValue> result) = 0;
 };
 
 } // namespace OHOS::ArkWeb
