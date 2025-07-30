@@ -7451,6 +7451,9 @@ napi_value NapiWebviewController::IsPrivateNetworkAccessEnabled(napi_env env, na
 
 napi_value NapiWebviewController::SetWebDestroyMode(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     size_t argc = INTEGER_ONE;
