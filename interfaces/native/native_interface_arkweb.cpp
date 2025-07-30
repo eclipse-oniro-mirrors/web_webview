@@ -22,6 +22,7 @@
 
 #include "arkweb_error_code.h"
 #include "arkweb_type.h"
+#include "arkweb_utils.h"
 #include "event_handler.h"
 #include "native_arkweb_utils.h"
 #include "native_javascript_execute_callback.h"
@@ -250,7 +251,8 @@ void OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy(const char* webTag,
 
 ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag, const char* key)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey capability not supported");
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT, 0.0, 0 };
     }
@@ -283,7 +285,8 @@ ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char*
                                                                      const char* key,
                                                                      bool isStarted)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey capability not supported");
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT;
     }
@@ -316,7 +319,8 @@ ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char*
 
 void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("OH_NativeArkWeb_ClearBlanklessLoadingCache capability not supported");
         return;
     }
@@ -352,7 +356,8 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
 
 uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity capability not supported");
         return 0;
     }
