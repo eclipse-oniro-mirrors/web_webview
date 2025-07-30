@@ -23,6 +23,7 @@
 #include "napi_parse_utils.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
+#include "nweb_message_ext.h"
 
 namespace OHOS::NWeb {
 enum class JsMessageType : int {
@@ -51,7 +52,7 @@ public:
 
 class WebJsMessageExt {
 public:
-    explicit WebJsMessageExt(std::shared_ptr<NWebMessage> value) : value_(value) {};
+    explicit WebJsMessageExt(std::shared_ptr<NWebMessage> value) : value_(value) {}
     ~WebJsMessageExt() = default;
 
     int32_t ConvertToJsType(NWebValue::Type type);
@@ -76,6 +77,7 @@ public:
     {}
     ~WebviewJavaScriptExecuteCallback() = default;
     void OnReceiveValue(std::shared_ptr<NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<NWebHapValue> value) override;
 
 private:
     struct JavaScriptExecuteParam {

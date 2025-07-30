@@ -15,6 +15,7 @@
 
 #include "webview_javascript_execute_callback.h"
 #include "webview_log.h"
+#include "nweb_message_ext.h"
 
 using namespace OHOS::NWeb;
 
@@ -102,6 +103,26 @@ void WebviewJavaScriptExecuteCallback::OnReceiveValue(std::shared_ptr<NWebMessag
     callbackRef_(ret);
 }
 
+void WebviewJavaScriptExecuteCallback::OnReceiveValueV2(std::shared_ptr<NWebHapValue> value)
+{
+    WEBVIEWLOGI("WebviewJavaScriptExecuteCallback::OnReceiveValue2 start");
+    RetDataCString ret = { .code = NWebError::INVALID_RESOURCE, .data = nullptr };
+    if (value == nullptr) {
+        callbackRef_(ret);
+        return;
+    }
+    if (value->GetType() == NWebHapValue::Type::STRING && value->GetString().empty()) {
+        callbackRef_(ret);
+        return;
+    }
+    ret.code = NWebError::NO_ERROR;
+    ret.data = MallocCString(value->GetString());
+    if (ret.data == nullptr) {
+        ret.code = NWebError::NEW_OOM;
+    }
+    callbackRef_(ret);
+}
+
 void WebviewJavaScriptExtExecuteCallback::OnReceiveValue(std::shared_ptr<NWebMessage> result)
 {
     WEBVIEWLOGI("WebviewJavaScriptExtExecuteCallback::OnReceiveValue start");
@@ -111,6 +132,25 @@ void WebviewJavaScriptExtExecuteCallback::OnReceiveValue(std::shared_ptr<NWebMes
         return;
     }
     WebJsMessageExtImpl *webJsMessageExtImpl = OHOS::FFI::FFIData::Create<WebJsMessageExtImpl>(result);
+    if (webJsMessageExtImpl == nullptr) {
+        WEBVIEWLOGE("new WebJsMessageExtImpl failed.");
+        callbackRef_(ret);
+        return;
+    }
+    ret.code = NWebError::NO_ERROR;
+    ret.data = webJsMessageExtImpl->GetID();
+    callbackRef_(ret);
+}
+
+void WebviewJavaScriptExtExecuteCallback::OnReceiveValueV2(std::shared_ptr<NWebHapValue> value)
+{
+    WEBVIEWLOGI("WebviewJavaScriptExtExecuteCallback::OnReceiveValue start");
+    RetDataI64 ret = { .code = NWebError::INVALID_RESOURCE, .data = 0 };
+    if (value == nullptr) {
+        callbackRef_(ret);
+        return;
+    }
+    WebJsMessageExtImpl *webJsMessageExtImpl = OHOS::FFI::FFIData::Create<WebJsMessageExtImpl>(value);
     if (webJsMessageExtImpl == nullptr) {
         WEBVIEWLOGE("new WebJsMessageExtImpl failed.");
         callbackRef_(ret);

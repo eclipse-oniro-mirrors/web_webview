@@ -119,6 +119,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_gesture_event_result_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_handler_impl.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_handler_impl.h",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_hap_value_wrapper.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_hap_value_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_history_item_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_history_item_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_history_list_wrapper.cpp",
@@ -197,6 +199,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_release_surface_callback_impl.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_resource_ready_callback_impl.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_resource_ready_callback_impl.h",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_rom_value_impl.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_rom_value_impl.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_screen_capture_access_request_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_screen_capture_access_request_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_screen_capture_config_impl.cpp",
@@ -295,6 +299,10 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_release_surface_callback_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_resource_ready_callback_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_resource_ready_callback_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_rom_value_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_rom_value_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_rom_value_vector_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_rom_value_vector_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_screen_capture_config_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_screen_capture_config_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_screen_lock_callback_cpptoc.cpp",
@@ -365,6 +373,10 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_geo_location_callback_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_gesture_event_result_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_gesture_event_result_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_hap_value_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_hap_value_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_hap_value_vector_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_hap_value_vector_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_mouse_event_result_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_mouse_event_result_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_history_item_ctocpp.cpp",
@@ -1100,6 +1112,8 @@ ohos_shared_library("ohos_base_glue_source") {
   branch_protector_ret = "pac_ret"
 
   configs = [ ":ohos_glue_config" ]
+
+  public_configs = [ ":ohos_glue_config" ]
 
   sources = get_target_outputs(":ohos_glue_base_prepare")
 
