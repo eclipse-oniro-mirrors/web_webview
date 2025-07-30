@@ -45,6 +45,7 @@
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
 #include "arkweb_scheme_handler.h"
+#include "arkweb_utils.h"
 #include "web_scheme_handler_request.h"
 #include "system_properties_adapter_impl.h"
 
@@ -1137,6 +1138,10 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
 
 napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("SetWebDebuggingAccess start");
     napi_value result = nullptr;
     if (OHOS::system::GetBoolParameter("web.debug.devtools", false)) {
@@ -2867,6 +2872,10 @@ napi_value NapiWebviewController::GetTitle(napi_env env, napi_callback_info info
 
 napi_value NapiWebviewController::GetProgress(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
     if (!webviewController) {
@@ -6109,6 +6118,10 @@ napi_value NapiWebviewController::SetBackForwardCacheOptions(napi_env env, napi_
 
 napi_value NapiWebviewController::SetAppCustomUserAgent(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("Set App custom user agent.");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -6135,6 +6148,10 @@ napi_value NapiWebviewController::SetAppCustomUserAgent(napi_env env, napi_callb
 
 napi_value NapiWebviewController::SetUserAgentForHosts(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("Set User Agent For Hosts.");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -7111,7 +7128,8 @@ napi_value NapiWebviewController::WaitForAttached(napi_env env, napi_callback_in
 
 napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_callback_info info)
 {
-    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("GetBlanklessInfoWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7153,7 +7171,8 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
 
 napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_callback_info info)
 {
-    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("SetBlanklessLoadingWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7203,7 +7222,8 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
 
 napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env, napi_callback_info info)
 {
-    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("SetBlanklessLoadingCacheCapacity capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7242,7 +7262,8 @@ napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env,
 
 napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_callback_info info)
 {
-    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false)) {
+    if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
         WVLOG_E("ClearBlanklessLoadingCache capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7281,6 +7302,9 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
 
 napi_value NapiWebviewController::AvoidVisibleViewportBottom(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     size_t argc = INTEGER_ONE;
@@ -7321,6 +7345,10 @@ napi_value NapiWebviewController::AvoidVisibleViewportBottom(napi_env env, napi_
 
 napi_value NapiWebviewController::SetErrorPageEnabled(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     napi_value result = nullptr;
     napi_value thisVar = nullptr;
     size_t argc = INTEGER_ONE;
@@ -7357,21 +7385,31 @@ napi_value NapiWebviewController::SetErrorPageEnabled(napi_env env, napi_callbac
 
 napi_value NapiWebviewController::GetErrorPageEnabled(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("GetErrorPageEnabled start");
     napi_value result = nullptr;
+    bool getErrorPageEnabled = false;
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        NAPI_CALL(env, napi_get_boolean(env, getErrorPageEnabled, &result));
+        return result;
+    }
+
+    WVLOG_D("GetErrorPageEnabled start");
     WebviewController *controller = GetWebviewController(env, info);
     if (!controller || !controller->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
 
-    bool GetErrorPageEnabled = controller->GetErrorPageEnabled();
-    NAPI_CALL(env, napi_get_boolean(env, GetErrorPageEnabled, &result));
+    getErrorPageEnabled = controller->GetErrorPageEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, getErrorPageEnabled, &result));
     return result;
 }
 
 napi_value NapiWebviewController::EnablePrivateNetworkAccess(napi_env env, napi_callback_info info)
 {
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return nullptr;
+    }
+
     WVLOG_D("EnablePrivateNetworkAccess start");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
@@ -7399,10 +7437,16 @@ napi_value NapiWebviewController::EnablePrivateNetworkAccess(napi_env env, napi_
 
 napi_value NapiWebviewController::IsPrivateNetworkAccessEnabled(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("IsPrivateNetworkAccessEnabled start");
     napi_value result = nullptr;
+    bool pnaEnabled = false;
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        NAPI_CALL(env, napi_get_boolean(env, pnaEnabled, &result));
+        return result;
+    }
 
-    bool pnaEnabled = NWebHelper::Instance().IsPrivateNetworkAccessEnabled();
+    WVLOG_D("IsPrivateNetworkAccessEnabled start");
+
+    pnaEnabled = NWebHelper::Instance().IsPrivateNetworkAccessEnabled();
     NAPI_CALL(env, napi_get_boolean(env, pnaEnabled, &result));
     return result;
 }

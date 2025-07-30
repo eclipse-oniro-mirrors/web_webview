@@ -411,7 +411,10 @@ ohos_shared_library("nweb_ohos_adapter") {
   part_name = "webview"
   subsystem_name = "web"
 
-  deps = [ "../ohos_nweb:web_configs" ]
+  deps = [
+    "../ohos_nweb:web_configs",
+    "../arkweb_utils:libarkweb_utils",
+  ]
 
   if (webview_graphic_2d_ext_enable) {
     external_deps += [ "graphic_2d_ext:libaps_client" ]
