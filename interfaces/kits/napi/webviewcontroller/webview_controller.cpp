@@ -21,7 +21,6 @@
 #include <regex>
 
 #include "application_context.h"
-#include "arkweb_utils.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
 #include "nweb_napi_scope.h"
@@ -2157,9 +2156,6 @@ void WebviewController::GetScrollOffset(float* offset_x, float* offset_y)
 
 void WebviewController::GetPageOffset(float* offset_x, float* offset_y)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
-        return;
-    }
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->GetPageOffset(offset_x, offset_y);
