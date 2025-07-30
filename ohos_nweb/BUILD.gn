@@ -95,7 +95,6 @@ ohos_shared_library("libnweb") {
   configs = [
     ":nweb_config",
     ":nweb_glue_interface",
-    "${webview_path}/arkweb_utils:arkweb_utils_public_interface",
   ]
   public_configs = [ ":nweb_public_interface" ]
   sources = [
