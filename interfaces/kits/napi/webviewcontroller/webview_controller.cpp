@@ -2157,7 +2157,9 @@ void WebviewController::GetScrollOffset(float* offset_x, float* offset_y)
 
 void WebviewController::GetPageOffset(float* offset_x, float* offset_y)
 {
-    RETURN_IF_CALLING_FROM_M114();
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        return;
+    }
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         nweb_ptr->GetPageOffset(offset_x, offset_y);
