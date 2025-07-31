@@ -1140,10 +1140,6 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
 
 napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
-        return nullptr;
-    }
-
     WVLOG_D("SetWebDebuggingAccess start");
     napi_value result = nullptr;
     if (OHOS::system::GetBoolParameter("web.debug.devtools", false)) {
@@ -1180,6 +1176,10 @@ napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callb
             return result;
         }
       }
+    }
+
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        webDebuggingPort = 0;
     }
 
     if (WebviewController::webDebuggingAccess_ != webDebuggingAccess ||
