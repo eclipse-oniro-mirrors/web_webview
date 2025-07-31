@@ -631,7 +631,7 @@ int32_t WebResourceHandler::DidFailWithError(ArkWeb_NetError errorCode, bool com
     return ret;
 }
 
-void WebResourceHandler::DestoryArkWebResourceHandler()
+void WebResourceHandler::DestroyArkWebResourceHandler()
 {
     if (handler_) {
         OH_ArkWebResourceHandler_Destroy(handler_);
