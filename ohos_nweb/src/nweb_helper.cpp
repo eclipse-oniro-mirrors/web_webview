@@ -37,7 +37,6 @@
 #include "parameters.h"
 
 namespace {
-static bool g_isFirstTimeStartUp = false;
 
 const int32_t NS_TO_S = 1000000000;
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
@@ -604,23 +603,12 @@ NWebHelper& NWebHelper::Instance()
 
 void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string& bundlePath)
 {
-    g_isFirstTimeStartUp = isFirstTimeStartUpWeb;
     if (isFirstTimeStartUpWeb) {
         WVLOG_D("first time startup, need to wait until the nweb init stage");
         return;
     }
 
     ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().PreDlopenLibFile(bundlePath);
-}
-
-static void TryPreReadLibForFirstlyAppStartUp(const std::string& bundlePath)
-{
-    if (g_isFirstTimeStartUp) {
-        std::thread preReadThread(
-            [bundlePath]() { ArkWeb::ArkWebNWebWebviewBridgeHelper::PreloadLibFile(true, bundlePath); });
-
-        preReadThread.detach();
-    }
 }
 
 bool NWebHelper::Init(bool from_ark)
@@ -687,7 +675,6 @@ bool NWebHelper::GetWebEngine(bool fromArk)
         }
     }
 
-    TryPreReadLibForFirstlyAppStartUp(bundlePath_);
     fromArk = fromArk && !NWebConfigHelper::Instance().IsWebPlayGroundEnable();
     if (!ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().Init(fromArk, bundlePath_)) {
         WVLOG_E("failed to init arkweb nweb bridge helper");

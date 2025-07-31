@@ -89,6 +89,15 @@ AppFwkUpdateService::AppFwkUpdateService(int32_t saId, bool runOnCreate) : Syste
 
 AppFwkUpdateService::~AppFwkUpdateService() {}
 
+ErrCode AppFwkUpdateService::NotifyArkWebInstallSuccess(const std::string& bundleName)
+{
+    int ret = SendAppSpawnMessage(bundleName, MSG_LOAD_WEBLIB_IN_APPSPAWN);
+    if (ret != 0) {
+        return ERR_INVALID_VALUE;
+    }
+    return ERR_OK;
+}
+
 ErrCode AppFwkUpdateService::VerifyPackageInstall(
     const std::string& bundleName, const std::string& hapPath, int32_t& isSuccess)
 {
@@ -116,7 +125,7 @@ ErrCode AppFwkUpdateService::VerifyPackageInstall(
         return ERR_INVALID_VALUE;
     }
 
-    ret = SendAppSpawnMessage(bundleName);
+    ret = SendAppSpawnMessage(bundleName, MSG_UPDATE_MOUNT_POINTS);
     if (ret != 0) {
         isSuccess = -1;
         WVLOG_I("SendAppSpawnMessage happend error: %{public}d", isSuccess);
@@ -171,7 +180,7 @@ bool AppFwkUpdateService::Init(const SystemAbilityOnDemandReason& startReason)
     return true;
 }
 
-int AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName)
+int AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName, AppSpawnMsgType msgType)
 {
     WVLOG_I("Send appspawn message start,uid = %{public}d.", getuid());
     int ret = 0;
@@ -184,7 +193,7 @@ int AppFwkUpdateService::SendAppSpawnMessage(const std::string& bundleName)
             WVLOG_I("Failed to create reqMgr,retry count = %{public}d.", retryCount);
             continue;
         }
-        ret = AppSpawnReqMsgCreate(MSG_UPDATE_MOUNT_POINTS, bundleName.c_str(), &reqHandle);
+        ret = AppSpawnReqMsgCreate(msgType, bundleName.c_str(), &reqHandle);
         if (ret != 0) {
             WVLOG_I("Failed to create req,retry count = %{public}d.", retryCount);
             continue;
