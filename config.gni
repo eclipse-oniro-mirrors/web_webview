@@ -109,3 +109,5 @@ webview_crashpad_handler_so = "libarkweb_crashpad_handler.so"
 webview_engine_so = "libarkweb_engine.so"
 webview_app_hap_path = "/system/app/ArkWeb/ArkWebCore.hap"
 webview_app_hap_path2 = "/system/app/${webview_package_name}/ArkWebCore.hap"
+
+legacy_webview_sandbox_lib_path = "/data/storage/el1/bundle/arkweblegacy/libs/${target_cpu}"
