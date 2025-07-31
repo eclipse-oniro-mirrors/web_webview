@@ -23,15 +23,13 @@
 #include "res_sched_client_adapter.h"
 #include "system_properties_adapter_impl.h"
 #include "transaction/rs_interfaces.h"
+#include "../../../ohos_nweb/include/nweb_config_helper.h"
 
 namespace OHOS::NWeb {
 namespace {
 const std::string THREAD_NAME = "VSync-webview";
 constexpr int32_t WEBVIEW_FRAME_RATE_TYPE = 4;
 const std::string APS_CLIENT_SO = "/system/lib64/libaps_client.z.so";
-#if defined(NWEB_GRAPHIC_2D_EXT_ENABLE)
-constexpr int32_t APS_MANAGER_CLOSE_ALL = 2;
-#endif
 }
 
 void (*VSyncAdapterImpl::callback_)() = nullptr;
@@ -69,8 +67,8 @@ VSyncErrorCode VSyncAdapterImpl::Init()
         }
         auto& rsClient = OHOS::Rosen::RSInterfaces::GetInstance();
         frameRateLinker_ = OHOS::Rosen::RSFrameRateLinker::Create();
-        receiver_ = rsClient.CreateVSyncReceiver(
-            "NWeb_" + std::to_string(::getprocpid()), frameRateLinker_->GetId(), vsyncHandler_);
+        receiver_ = rsClient.CreateVSyncReceiver("NWeb_" + std::to_string(::getprocpid()),
+            frameRateLinker_->GetId(), vsyncHandler_);
         if (!receiver_) {
             WVLOG_E("CreateVSyncReceiver failed");
             return VSyncErrorCode::ERROR;
@@ -81,6 +79,7 @@ VSyncErrorCode VSyncAdapterImpl::Init()
             WVLOG_E("vsync receiver init failed, ret=%{public}d", ret);
             return VSyncErrorCode::ERROR;
         }
+        InitAPSClient();
     }
     return VSyncErrorCode::SUCCESS;
 }
@@ -99,10 +98,10 @@ VSyncErrorCode VSyncAdapterImpl::RequestVsync(void* data, NWebVSyncCb cb)
         if (runner && runner->GetKernelThreadId() != 0) {
             if (!isGPUProcess_) {
                 ResSchedClientAdapter::ReportKeyThread(ResSchedStatusAdapter::THREAD_CREATED,
-                getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+                    getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
             } else {
                 AafwkBrowserClientAdapterImpl::GetInstance().ReportThread(ResSchedStatusAdapter::THREAD_CREATED,
-                getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
+                    getprocpid(), runner->GetKernelThreadId(), ResSchedRoleAdapter::USER_INTERACT);
             }
             hasReportedKeyThread_ = true;
         }
@@ -205,22 +204,20 @@ void VSyncAdapterImpl::SetOnVsyncCallback(void (*callback)())
     callback_ = callback;
 }
 
+void VSyncAdapterImpl::SetOnVsyncEndCallback(void (*onVsyncEndCallback)())
+{
+    WVLOG_D("onVsyncEndCallback function: %{public}ld", (long)onVsyncEndCallback);
+    onVsyncEndCallback_ = onVsyncEndCallback;
+}
+
 void VSyncAdapterImpl::SetIsGPUProcess(bool isGPU)
 {
     isGPUProcess_ = isGPU;
 }
 
-void VSyncAdapterImpl::SetOnVsyncEndCallback(void (*onVsyncEndCallback)())
+void VSyncAdapterImpl::SetScene(const std::string& sceneName, uint32_t state)
 {
-    WVLOG_D("callback function: %{public}ld", (long)onVsyncEndCallback);
-    onVsyncEndCallback_ = onVsyncEndCallback;
-}
-
-void VSyncAdapterImpl::SetScene(const std::string& sceneName, uint32_t state) {
     WVLOG_D("APSManagerAdapterImpl SetScene sceneName=%{public}s state=%{public}u", sceneName.c_str(), state);
-    if (!apsClientHandler_) {
-        InitAPSClient();
-    }
     if (pkgName_.empty()) {
         auto appInfo = AbilityRuntime::ApplicationContext::GetInstance()->GetApplicationInfo();
         if (appInfo != nullptr) {
