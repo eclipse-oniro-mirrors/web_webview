@@ -745,6 +745,17 @@ void WebHttpBodyStream::Read(int bufLen, napi_ref jsCallback, napi_deferred defe
     OH_ArkWebHttpBodyStream_Read(stream_, buffer, bufLen);
 }
 
+void WebHttpBodyStream::DeleteInitJsCallbackRef()
+{
+    if (!env_) {
+        return;
+    }
+    if (initJsCallback_) {
+        napi_delete_reference(env_, initJsCallback_);
+        initJsCallback_ = nullptr;
+    }
+}
+
 void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
 {
     WVLOG_D("WebHttpBodyStream::ExecuteInit");
@@ -752,46 +763,31 @@ void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
         return ;
     }
     InitParam *param = new (std::nothrow) InitParam {
-        .env = env_, .asyncWork = nullptr,
-        .deferred = initDeferred_, .callbackRef = initJsCallback_,
+        .env = env_,
+        .asyncWork = nullptr,
+        .deferred = initDeferred_,
+        .callbackRef = initJsCallback_,
         .result = result,
     };
     if (param == nullptr) {
         return;
     }
-    auto task = [this, param]() {
-        WVLOG_D("WebHttpBodyStream::ExecuteInit sendEvent Complete");
-        if (!param) {
-            return;
-        }
-        NApiScope scope(env_);
-        if (!scope.IsVaild()) {
-            delete param;
-            return;
-        }
-        napi_value result[INTEGER_ONE] = {0};
-        if (param->result != 0) {
-            result[INTEGER_ZERO] = NWebError::BusinessError::CreateError(
-                env_, NWebError::HTTP_BODY_STREAN_INIT_FAILED);
-        } else {
-            napi_get_null(env_, &result[INTEGER_ZERO]);
-        }
-        if (param->callbackRef) {
-            napi_value callback = nullptr;
-            napi_get_reference_value(env_, param->callbackRef, &callback);
-            napi_call_function(env_, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
-            napi_delete_reference(env_, param->callbackRef);
-        } else if (param->deferred) {
-            if (param->result != 0) {
-                napi_reject_deferred(env_, param->deferred, result[INTEGER_ZERO]);
-            } else {
-                napi_resolve_deferred(env_, param->deferred, result[INTEGER_ZERO]);
-            }
-        }
+    napi_value resourceName = nullptr;
+    if (napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName) != napi_status::napi_ok) {
+        DeleteInitJsCallbackRef();
         delete param;
-    };
-    if(napi_status::napi_ok != napi_send_event(env_, task, napi_eprio_immediate)) {
-        WVLOG_E("ExecuteInit:Failed to SendEvent");
+        return;
+    }
+    if (napi_create_async_work(env_, nullptr, resourceName,
+        [](napi_env env, void *data) {},
+        ExecuteInitComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
+        DeleteInitJsCallbackRef();
+        delete param;
+        return;
+    }
+    if (napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated) != napi_status::napi_ok) {
+        napi_delete_async_work(env_, param->asyncWork);
+        DeleteInitJsCallbackRef();
         delete param;
     }
 }
@@ -868,57 +864,53 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
     delete param;
 }
 
+void WebHttpBodyStream::DeleteReadJsCallbackRef()
+{
+    if (!env_) {
+        return;
+    }
+    if (readJsCallback_) {
+        napi_delete_reference(env_, readJsCallback_);
+        readJsCallback_ = nullptr;
+    }
+}
+
 void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
 {
     if (!env_) {
         return;
     }
     ReadParam *param = new (std::nothrow) ReadParam {
-        .env = env_, .asyncWork = nullptr,
-        .deferred = readDeferred_, .callbackRef = readJsCallback_,
-        .buffer = buffer, .bytesRead = bytesRead,
+        .env = env_,
+        .asyncWork = nullptr,
+        .deferred = readDeferred_,
+        .callbackRef = readJsCallback_,
+        .buffer = buffer,
+        .bytesRead = bytesRead,
     };
     if (param == nullptr) {
         return;
     }
-    auto task = [this, param]() {
-        WVLOG_D("WebHttpBodyStream::ExecuteRead sendEvent Complete");
-        if (!param) {
-            return;
-        } 
-        NApiScope scope(env_);
-        if (!scope.IsVaild()) {
-            if (param->buffer) {
-                delete param->buffer;
-            }
-            delete param;
-            return;
-        }
-        napi_value result[INTEGER_ONE] = {0};
-        void *bufferData = nullptr;
-        napi_create_arraybuffer(env_, param->bytesRead, &bufferData, &result[INTEGER_ZERO]);
-        if (memcpy_s(bufferData, param->bytesRead, param->buffer, param->bytesRead) != 0 &&
-            param->bytesRead > 0) {
-            WVLOG_W("WebHttpBodyStream::ExecuteRead memcpy failed");
-        }
-        if (param->buffer) {
-            delete param->buffer;
-        }
-        if (param->callbackRef) {
-            napi_value callback = nullptr;
-            napi_get_reference_value(env_, param->callbackRef, &callback);
-            napi_call_function(env_, nullptr, callback, INTEGER_ONE, &result[INTEGER_ZERO], nullptr);
-            napi_delete_reference(env_, param->callbackRef);
-        } else if (param->deferred) {
-            napi_resolve_deferred(env_, param->deferred, result[INTEGER_ZERO]);
-        }
+    napi_value resourceName = nullptr;
+    if (napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName) != napi_status::napi_ok) {
+        DeleteReadJsCallbackRef();
         delete param;
-    };
-    if(napi_status::napi_ok != napi_send_event(env_, task, napi_eprio_immediate)) {
-        WVLOG_E("ExecuteRead:Failed to SendEvent");
+        return;
+    }
+    if (napi_create_async_work(env_, nullptr, resourceName,
+        [](napi_env env, void *data) {},
+        ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
+        DeleteReadJsCallbackRef();
+        delete param;
+        return;
+    }
+    if (napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated) != napi_status::napi_ok) {
+        napi_delete_async_work(env_, param->asyncWork);
+        DeleteReadJsCallbackRef();
         delete param;
     }
 }
+
 
 uint64_t WebHttpBodyStream::GetPostion() const
 {
