@@ -717,14 +717,11 @@ napi_value NapiWebDownloadItem::JS_Serialize(napi_env env, napi_callback_info cb
         WVLOG_E("[DOWNLOAD] memcpy failed");
         return nullptr;
     }
-    napi_ref arraybufferRef;
-    napi_create_reference(env, arraybuffer, 1, &arraybufferRef);
     napi_value typedArray;
     status = napi_create_typedarray(env, napi_typedarray_type::napi_uint8_array, webDownloadValue.length(), arraybuffer,
         0, &typedArray);
     if (status != napi_ok) {
         WVLOG_E("[DOWNLOAD] create typed array failed, status: %{public}d", status);
-        napi_delete_reference(env, arraybufferRef);
         return nullptr;
     }
     return typedArray;
