@@ -7421,7 +7421,7 @@ napi_value NapiWebviewController::GetErrorPageEnabled(napi_env env, napi_callbac
 
 napi_value NapiWebviewController::EnablePrivateNetworkAccess(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+    if (IS_CALLING_FROM_M114()) {
         return nullptr;
     }
 
