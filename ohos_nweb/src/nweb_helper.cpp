@@ -1148,12 +1148,12 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
 void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
 {
     if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
+        WVLOG_E("blankless failed to load web engine");
         return;
     }
 
     if (nwebEngine_ == nullptr) {
-        WVLOG_E("web engine is nullptr");
+        WVLOG_E("blankless web engine is nullptr");
         return;
     }
 
@@ -1163,12 +1163,12 @@ void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
 void NWebHelper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)
 {
     if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
+        WVLOG_E("blankless failed to load web engine");
         return;
     }
 
     if (nwebEngine_ == nullptr) {
-        WVLOG_E("web engine is nullptr");
+        WVLOG_E("blankless web engine is nullptr");
         return;
     }
 
@@ -1336,7 +1336,7 @@ void NWebHelper::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
 std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)
 {
     if (!nwebEngine_) {
-        WVLOG_E("CheckBlankOptEnable, nweb engine is nullptr");
+        WVLOG_E("blankless CheckBlankOptEnable, nweb engine is nullptr");
         return "";
     }
     return nwebEngine_->CheckBlankOptEnable(url, nweb_id);

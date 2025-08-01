@@ -253,18 +253,18 @@ ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag,
 {
     if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey capability not supported");
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey capability not supported");
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT, 0.0, 0 };
     }
 
     size_t keyLen = strlen(key);
     if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
-        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey key length is invalid");
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey key length is invalid");
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS, 0.0, 0 };
     }
 
     if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
-        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey load web engine failed");
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey load web engine failed");
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN, 0.0, 0 };
     }
 
@@ -274,7 +274,7 @@ ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag,
     ARKWEB_NATIVE_LOAD_FN_PTR(getBlanklessInfoWithKey, OH_NativeArkWeb_GetBlanklessInfoWithKey);
 #undef ARKWEB_NATIVE_LOAD_FN_PTR
     if (!getBlanklessInfoWithKey) {
-        WVLOG_E("OH_NativeArkWeb_GetBlanklessInfoWithKey failed to load function");
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey failed to load function");
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN, 0.0, 0 };
     }
 
@@ -287,18 +287,18 @@ ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char*
 {
     if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey capability not supported");
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey capability not supported");
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT;
     }
 
     size_t keyLen = strlen(key);
     if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
-        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey key length is invalid");
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey key length is invalid");
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS;
     }
 
     if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
-        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey load web engine failed");
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey load web engine failed");
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN;
     }
 
@@ -310,7 +310,7 @@ ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char*
     ARKWEB_NATIVE_LOAD_FN_PTR(setBlanklessLoadingWithKey, OH_NativeArkWeb_SetBlanklessLoadingWithKey);
 #undef ARKWEB_NATIVE_LOAD_FN_PTR
     if (!setBlanklessLoadingWithKey) {
-        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingWithKey failed to load function");
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey failed to load function");
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN;
     }
 
@@ -321,7 +321,7 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
 {
     if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("OH_NativeArkWeb_ClearBlanklessLoadingCache capability not supported");
+        WVLOG_E("blankless OH_NativeArkWeb_ClearBlanklessLoadingCache capability not supported");
         return;
     }
 
@@ -332,7 +332,7 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
     }
 
     if (size > MAX_KEYS_COUNT) {
-        WVLOG_W("OH_NativeArkWeb_ClearBlanklessLoadingCache array size should not exceed 100");
+        WVLOG_W("blankless OH_NativeArkWeb_ClearBlanklessLoadingCache array size should not exceed 100");
         size = MAX_KEYS_COUNT;
     }
 
@@ -348,7 +348,7 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
     }
 
     if (keys.size() == 0) {
-        WVLOG_W("OH_NativeArkWeb_ClearBlanklessLoadingCache valid keys are 0");
+        WVLOG_W("blankless OH_NativeArkWeb_ClearBlanklessLoadingCache valid keys are 0");
         return;
     }
     OHOS::NWeb::NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
@@ -358,7 +358,7 @@ uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
 {
     if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity capability not supported");
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity capability not supported");
         return 0;
     }
 
