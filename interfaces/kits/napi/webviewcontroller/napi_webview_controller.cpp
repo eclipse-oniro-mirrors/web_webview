@@ -7284,7 +7284,7 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
 
 napi_value NapiWebviewController::AvoidVisibleViewportBottom(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+    if (IS_CALLING_FROM_M114()) {
         return nullptr;
     }
     napi_value thisVar = nullptr;
