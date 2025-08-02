@@ -15,6 +15,8 @@
 
 #include <dlfcn.h>
 #include <string>
+#include <string_view>
+#include <optional>
 
 #include "nweb_log.h"
 
@@ -32,10 +34,28 @@ const std::string CRASHPAD_HANDLER_PATH = "unsupport";
 const std::string LIB_CRASHPAD_HANDLER = "libchrome_crashpad_handler.so";
 }
 
+std::optional<std::string> GetEngineType(int argc, char* argv[]) {
+    constexpr std::string_view prefix = "--engine-type";
+    for (int i = 0; i < argc; ++i) {
+        std::string_view arg = argv[i];
+        if (arg.size() > prefix.size() && arg.substr(0, prefix.size()) == prefix) {
+            return std::string(arg.substr(prefix.size()));
+        }
+    }
+    return std::nullopt;
+}
+
 int main(int argc, char* argv[])
 {
-    const std::string libCrashpadHandler = std::string(WEBVIEW_SANDBOX_LIB_PATH) + "/"
+    std::string libCrashpadHandler;
+    if (auto engineType = GetEngineType(argc, argv); engineType.has_value() && engineType.value() == "LEGACY") {
+        libCrashpadHandler = std::string(LEGACY_WEBVIEW_SANDBOX_LIB_PATH) + "/"
                                             + std::string(WEBVIEW_CRASHPAD_HANDLER_SO);
+    } else {
+        libCrashpadHandler = std::string(WEBVIEW_SANDBOX_LIB_PATH) + "/"
+                                            + std::string(WEBVIEW_CRASHPAD_HANDLER_SO);
+    }
+
     Dl_namespace dlns;
     dlns_init(&dlns, "nweb_ns");
     dlns_create(&dlns, std::string(WEBVIEW_SANDBOX_LIB_PATH).c_str());
