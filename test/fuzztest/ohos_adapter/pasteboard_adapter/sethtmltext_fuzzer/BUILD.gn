@@ -39,6 +39,7 @@ ohos_fuzztest("SetHtmlTextFuzzTest") {
     "c_utils:utils",
     "image_framework:image_native",
     "pasteboard:pasteboard_client",
+    "pasteboard:pasteboard_data",
     "hilog:libhilog",
   ]
 }
