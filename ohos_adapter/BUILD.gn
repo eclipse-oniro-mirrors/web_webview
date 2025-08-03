@@ -203,6 +203,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "netmanager_base:net_security_config_if",
     "openssl:libssl_shared",
     "pasteboard:pasteboard_client",
+    "pasteboard:pasteboard_data",
     "relational_store:native_rdb",
     "resource_schedule_service:ressched_client",
     "samgr:samgr_proxy",
