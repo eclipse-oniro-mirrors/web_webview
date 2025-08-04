@@ -7468,7 +7468,8 @@ napi_value NapiWebviewController::IsPrivateNetworkAccessEnabled(napi_env env, na
 
 napi_value NapiWebviewController::SetWebDestroyMode(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("SetWebDestroyMode unsupported engine version: M114");
         return nullptr;
     }
     napi_value thisVar = nullptr;
