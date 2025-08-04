@@ -507,7 +507,7 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv, &valueType);
     if (valueType != napi_string) {
-        WVLOG_E("ParseBlanklessString not a valid napi string");
+        WVLOG_E("blankless ParseBlanklessString not a valid napi string");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return false;
     }
@@ -515,7 +515,7 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
     size_t bufferSize = 0;
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
     if (bufferSize == 0 || bufferSize > MAX_KEY_LENGTH) {
-        WVLOG_E("ParseBlanklessString string length is invalid");
+        WVLOG_E("blankless ParseBlanklessString string length is invalid");
         return false;
     }
 
@@ -523,7 +523,7 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
     outValue.resize(bufferSize);
     napi_get_value_string_utf8(env, argv, outValue.data(), bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
-        WVLOG_E("ParseBlanklessString the length values obtained twice are different");
+        WVLOG_E("blankless ParseBlanklessString the length values obtained twice are different");
         return false;
     }
 
@@ -535,7 +535,7 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
     bool isArray = false;
     napi_is_array(env, argv, &isArray);
     if (!isArray) {
-        WVLOG_E("ParseBlanklessStringArray not a valid napi string array");
+        WVLOG_E("blankless ParseBlanklessStringArray not a valid napi string array");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return false;
     }
@@ -543,7 +543,7 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
     uint32_t arrLen = 0;
     napi_get_array_length(env, argv, &arrLen);
     if (arrLen > MAX_KEYS_COUNT) {
-        WVLOG_W("ParseBlanklessStringArray array size should not exceed 100");
+        WVLOG_W("blankless ParseBlanklessStringArray array size should not exceed 100");
         arrLen = MAX_KEYS_COUNT;
     }
 
@@ -7145,7 +7145,7 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("GetBlanklessInfoWithKey capability not supported.");
+        WVLOG_E("blankless GetBlanklessInfoWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7157,7 +7157,7 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
     WebviewController* controller = nullptr;
     napi_unwrap(env, thisVar, (void**)&controller);
     if (controller == nullptr) {
-        WVLOG_E("GetBlanklessInfoWithKey controller is nullptr");
+        WVLOG_E("blankless GetBlanklessInfoWithKey controller is nullptr");
         return nullptr;
     }
 
@@ -7169,12 +7169,12 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
 
     std::string key;
     if (!ParseBlanklessString(env, argv[INTEGER_ZERO], key)) {
-        WVLOG_E("GetBlanklessInfoWithKey parse string failed");
+        WVLOG_E("blankless GetBlanklessInfoWithKey parse string failed");
         return CreateBlanklessInfo(env, BLANKLESS_ERR_INVALID_ARGS, 0.0, 0);
     }
 
     if (!controller->IsInit()) {
-        WVLOG_E("GetBlanklessInfoWithKey controller is not inited");
+        WVLOG_E("blankless GetBlanklessInfoWithKey controller is not inited");
         return CreateBlanklessInfo(env, BLANKLESS_ERR_NOT_INITED, 0.0, 0);
     }
 
@@ -7188,7 +7188,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("SetBlanklessLoadingWithKey capability not supported.");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7200,7 +7200,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
     WebviewController* controller = nullptr;
     napi_unwrap(env, thisVar, (void**)&controller);
     if (controller == nullptr) {
-        WVLOG_E("SetBlanklessLoadingWithKey controller is nullptr");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey controller is nullptr");
         return nullptr;
     }
 
@@ -7220,13 +7220,13 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
     napi_value result = nullptr;
     std::string key;
     if (!ParseBlanklessString(env, argv[INTEGER_ZERO], key)) {
-        WVLOG_E("SetBlanklessLoadingWithKey parse string failed");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey parse string failed");
         napi_create_int32(env, BLANKLESS_ERR_INVALID_ARGS, &result);
         return result;
     }
 
     if (!controller->IsInit()) {
-        WVLOG_E("SetBlanklessLoadingWithKey controller is not inited");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey controller is not inited");
         napi_create_int32(env, BLANKLESS_ERR_NOT_INITED, &result);
         return result;
     }
@@ -7239,7 +7239,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env,
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("SetBlanklessLoadingCacheCapacity capability not supported.");
+        WVLOG_E("blankless SetBlanklessLoadingCacheCapacity capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7279,7 +7279,7 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("ClearBlanklessLoadingCache capability not supported.");
+        WVLOG_E("blankless ClearBlanklessLoadingCache capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7303,12 +7303,12 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
     }
 
     if (!ParseBlanklessStringArray(env, argv[INTEGER_ZERO], keys)) {
-        WVLOG_E("ClearBlanklessLoadingCache parse string array failed");
+        WVLOG_E("blankless ClearBlanklessLoadingCache parse string array failed");
         return result;
     }
 
     if (keys.size() == 0) {
-        WVLOG_W("ClearBlanklessLoadingCache valid keys are 0");
+        WVLOG_W("blankless ClearBlanklessLoadingCache valid keys are 0");
         return result;
     }
     NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
