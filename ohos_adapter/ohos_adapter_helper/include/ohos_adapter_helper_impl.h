@@ -73,6 +73,8 @@ public:
 
     std::unique_ptr<CertManagerAdapter> GetRootCertDataAdapter() override;
 
+    std::unique_ptr<CertManagerAdapter> GetCertManagerAdapter() override;
+
     AccessTokenAdapter& GetAccessTokenAdapterInstance() override;
 
     std::unique_ptr<EventHandlerAdapter> GetEventHandlerAdapter() override;
@@ -126,6 +128,8 @@ public:
     std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
 
     std::unique_ptr<DrmAdapter> CreateDrmAdapter() override;
+
+    std::unique_ptr<ScreenlockManagerAdapter> CreateScreenlockManagerAdapter() override;
 };
 } // namespace OHOS::NWeb
 

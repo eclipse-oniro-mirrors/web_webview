@@ -282,7 +282,11 @@ HWTEST_F(NativeImageAdapterImplTest, NativeImageAdapterImplTest_GetNativeWindowB
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, nullptr);
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, &height);
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, &height);
-    windowBuffer = new uint8_t[10 * 10 * 4];
+    imagerAdapter->NewNativeImage();
+    EXPECT_NE(imagerAdapter->ohNativeImage_, nullptr);
+    int fenceId = -1;
+    int32_t ret = imagerAdapter->AcquireNativeWindowBuffer(&windowBuffer, &fenceId);
+    EXPECT_NE(ret, GSERROR_OK);
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, nullptr);
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, &width, nullptr);
     imagerAdapter->GetNativeWindowBufferSize(windowBuffer, nullptr, &height);

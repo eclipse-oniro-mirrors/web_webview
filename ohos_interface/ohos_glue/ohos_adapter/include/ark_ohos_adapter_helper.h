@@ -56,6 +56,7 @@
 #include "ohos_adapter/include/ark_power_mgr_client_adapter.h"
 #include "ohos_adapter/include/ark_print_manager_adapter.h"
 #include "ohos_adapter/include/ark_screen_capture_adapter.h"
+#include "ohos_adapter/include/ark_screenlock_manager_adapter.h"
 #include "ohos_adapter/include/ark_sensor_adapter.h"
 #include "ohos_adapter/include/ark_soc_perf_client_adapter.h"
 #include "ohos_adapter/include/ark_system_properties_adapter.h"
@@ -219,6 +220,12 @@ public:
 
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkOhosDrawingTextTypographyAdapter> GetOhosDrawingTextTypographyAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkScreenlockManagerAdapter> CreateScreenlockManagerAdapter() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkCertManagerAdapter> GetCertManagerAdapter() = 0;
 };
 
 } // namespace OHOS::ArkWeb

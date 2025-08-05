@@ -667,13 +667,29 @@ public:
     /**
      * Set the scale of the font-weight.The default is 1.0f.
      */
-    virtual void SetFontWeightScale(float scale) {};
+    virtual void SetFontWeightScale(float scale) {}
 
     /**
      * Set whether to use the intrinsic size. The default is false.
      */
-    virtual void SetIntrinsicSizeEnable(bool enable) {};
-    
+    virtual void SetIntrinsicSizeEnable(bool enable) {}
+
+    /**
+     * Set whether to support css diplay when reporting the visibility of native embed.
+     * The default is false.
+     */
+    virtual void SetCssDisplayChangeEnabled(bool enable) {}
+
+    /**
+     * Set whether to bypass vsync.
+     * The default is none.
+     */
+    virtual void SetBypassVsyncCondition(int32_t condition) {}
+
+    /**
+     * Set the gesture focus mode.
+     */
+    virtual void SetGestureFocusMode(int32_t mode) {}
 };
 
 } // namespace OHOS::NWeb

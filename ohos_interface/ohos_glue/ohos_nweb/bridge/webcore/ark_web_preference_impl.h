@@ -676,6 +676,24 @@ public:
      * @brief Set whether to use the intrinsic size. The default is false.
      */
     void SetIntrinsicSizeEnable(bool enable) override;
+
+    /**
+     * @brief Set whether to support css diplay when reporting the visibility of native embed.
+     *        The default is false.
+     */
+    void SetCssDisplayChangeEnabled(bool enable) override;
+
+    /**
+     * @brief Set whether to bypass vsync.
+     *        The default is none.
+     */
+    void SetBypassVsyncCondition(int32_t condition) override;
+
+    /**
+     * @brief Set the gesture focus mode.
+     */
+    void SetGestureFocusMode(int32_t mode) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebPreference> nweb_preference_;
 };

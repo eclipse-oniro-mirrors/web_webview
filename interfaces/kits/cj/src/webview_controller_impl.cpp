@@ -38,6 +38,7 @@
 #include "webview_javascript_result_callback.h"
 #include "webview_log.h"
 #include "webview_utils.h"
+#include "nweb_message_ext.h"
 
 namespace OHOS::Webview {
     constexpr int MAX_CUSTOM_SCHEME_SIZE = 10;
@@ -125,10 +126,30 @@ namespace OHOS::Webview {
         }
     }
 
+    void NWebMessageCallbackImpl::OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value)
+    {
+        std::shared_ptr<NWeb::NWebMessage> message = ConvertNwebHap2NwebMessage(value);
+        OnReceiveValue(message);
+    }
+
     void NWebWebMessageExtCallbackImpl::OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result)
     {
         WEBVIEWLOGD("message port received msg");
         WebMessageExtImpl *webMessageExt = OHOS::FFI::FFIData::Create<WebMessageExtImpl>(result);
+        if (webMessageExt == nullptr) {
+            WEBVIEWLOGE("new WebMessageExt failed.");
+            return;
+        }
+        callback_(webMessageExt->GetID());
+    }
+
+    void NWebWebMessageExtCallbackImpl::OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value)
+    {
+        WEBVIEWLOGD("message port received msg");
+        if (value == nullptr) {
+            return;
+        }
+        WebMessageExtImpl *webMessageExt = OHOS::FFI::FFIData::Create<WebMessageExtImpl>(value);
         if (webMessageExt == nullptr) {
             WEBVIEWLOGE("new WebMessageExt failed.");
             return;
@@ -438,6 +459,16 @@ namespace OHOS::Webview {
         }
         nweb_ptr->NavigateBackOrForward(step);
         return NWebError::NO_ERROR;
+    }
+
+    int32_t WebviewControllerImpl::GetProgress()
+    {
+        int32_t progress = 0;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            progress = nweb_ptr->PageLoadProgress();
+        }
+        return progress;
     }
 
     int32_t WebviewControllerImpl::GetPageHeight()
@@ -791,6 +822,33 @@ namespace OHOS::Webview {
         nweb_ptr->RegisterArkJSfunction(objName, methodList, objId);
     }
 
+    void WebviewControllerImpl::RegisterJavaScriptProxyEx(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::string& objName, const std::vector<std::string>& methodList, char* permission)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy nweb_ptr is null");
+            return;
+        }
+        JavaScriptOb::ObjectID objId =
+            static_cast<JavaScriptOb::ObjectID>(JavaScriptOb::JavaScriptObjIdErrorCode::WEBCONTROLLERERROR);
+
+        if (!javaScriptResultCb_) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy javaScriptResultCb_ is null");
+            return;
+        }
+
+        if (methodList.empty()) {
+            WEBVIEWLOGE("WebviewControllerImpl::RegisterJavaScriptProxy methodList is empty");
+            return;
+        }
+
+        objId = javaScriptResultCb_->RegisterJavaScriptProxy(cjFuncs, objName, methodList);
+
+        nweb_ptr->RegisterArkJSfunction(objName, methodList, std::vector<std::string>(),
+            objId, permission);
+    }
+
     void WebviewControllerImpl::Stop()
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
@@ -1052,6 +1110,29 @@ namespace OHOS::Webview {
             return;
         }
         setting->SetScrollable(enable);
+    }
+
+    void WebviewControllerImpl::SetScrollable(bool enable, int32_t scrollType)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return;
+        }
+        std::shared_ptr<OHOS::NWeb::NWebPreference> setting = nweb_ptr->GetPreference();
+        if (!setting) {
+            return;
+        }
+        return setting->SetScrollable(enable, scrollType);
+    }
+
+    bool WebviewControllerImpl::ScrollByWithResult(float deltaX, float deltaY) const
+    {
+        bool enabled = false;
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            enabled = nweb_ptr->ScrollByWithResult(deltaX, deltaY);
+        }
+        return enabled;
     }
 
     void WebviewControllerImpl::EnableAdsBlock(bool enable)
@@ -1385,7 +1466,7 @@ namespace OHOS::Webview {
         std::vector<Scheme> schemeVector;
         for (int64_t i = 0; i < arrayLength; ++i) {
             Scheme scheme;
-            bool result = SetCustomizeScheme(schemes.cScheme[i], scheme);
+            bool result = SetCustomizeScheme(schemes.head[i], scheme);
             if (!result) {
                 return NWebError::PARAM_CHECK_ERROR;
             }
@@ -1412,5 +1493,51 @@ namespace OHOS::Webview {
             }
         }
         return nwebResult;
+    }
+
+    void* WebviewControllerImpl::CreateWebPrintDocumentAdapter(const std::string &jobName)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return nullptr;
+        }
+        return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
+    }
+
+    void WebviewControllerImpl::GetScrollOffset(float* offset_x, float* offset_y)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (nweb_ptr) {
+            nweb_ptr->GetScrollOffset(offset_x, offset_y);
+        }
+    }
+    
+    int32_t WebviewControllerImpl::AvoidVisibleViewportBottom(int32_t avoidHeight)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        nweb_ptr->AvoidVisibleViewportBottom(avoidHeight);
+        return NWebError::NO_ERROR;
+    }
+
+    int32_t WebviewControllerImpl::SetErrorPageEnabled(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        nweb_ptr->SetErrorPageEnabled(enable);
+        return NWebError::NO_ERROR;
+    }
+
+    bool WebviewControllerImpl::GetErrorPageEnabled()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->GetErrorPageEnabled();
     }
 }

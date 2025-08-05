@@ -16,10 +16,14 @@
 #ifndef NWEB_CONFIG_HELPER_H
 #define NWEB_CONFIG_HELPER_H
 
+#include "bundle_mgr_interface.h"
 #include "libxml/parser.h"
 #include "libxml/tree.h"
+#include "iservice_registry.h"
 #include "nweb_init_params.h"
 #include "nweb_helper.h"
+#include "system_ability_definition.h"
+
 namespace OHOS::NWeb {
 
 class OHOS_NWEB_EXPORT NWebConfigHelper {
@@ -36,9 +40,12 @@ public:
     int safeGetPropAsInt(xmlNode* node, const xmlChar* propName, int defaultValue);
     std::string GetBundleName();
     void SetBundleName(const std::string& bundleName);
+    bool IsWebPlayGroundEnable();
+    const std::string& GetWebPlayGroundInitArg();
+    const std::string& GetWebPlayGroundHapPath();
 
 private:
-    NWebConfigHelper() = default;
+    NWebConfigHelper();
     std::string GetConfigPath(const std::string &configFileName);
     void ParseNWebLTPOConfig(xmlNodePtr nodePtr);
     void ReadConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
@@ -49,12 +56,23 @@ private:
     void ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
     void ParseNWebLTPOApp(xmlNodePtr nodePtr);
     void ParseNWebLTPOStrategy(xmlNodePtr nodePtr);
+    void ParseWindowOrientationConfig(xmlNodePtr nodePtr, std::shared_ptr<NWebEngineInitArgsImpl> initArgs);
+    bool IsDeveloperModeEnabled();
+    bool IsPerfConfigEmpty();
 
     std::map<std::string, std::string> perfConfig_;
     std::map<std::string, std::vector<FrameRateSetting>> ltpoConfig_;
     std::set<std::string> ltpoAllowedApps_ {};
     int32_t ltpoStrategy_ {0};
     std::string bundleName_;
+    mutable std::mutex lock_;
+
+    // add for web play ground
+    const std::string PLAYGROUND = "enableArkWebPlayGround";
+    const std::string NULL_STR = "";
+    const std::string SINGLE_PROCESS = "--single-process";
+    const std::string PLAY_GROUND_HAP_PATH = "/data/storage/el1/bundle/entry/resources/resfile/nweb.hap";
+    bool web_play_ground_enabled_ = false;
 };
 } // namespace OHOS
 

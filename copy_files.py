@@ -37,7 +37,7 @@ def copy_dir(src_dir: str, dst_dir: str):
         shutil.rmtree(dst_dir)
 
     if os.path.isdir(src_dir) and os.listdir(src_dir):
-        shutil.copytree(src_dir, dst_dir)
+        shutil.copytree(src_dir, dst_dir, dirs_exist_ok=True)
 
     source_files = []
     for root, dirs, files in os.walk(src_dir):
@@ -48,6 +48,9 @@ def copy_dir(src_dir: str, dst_dir: str):
 def copy_files(src_dir: str, dst_dir: str):
     log_util.LogUtil.hb_info("begin to copy files from '{}' to '{}'".format(src_dir, dst_dir))
     source_files = []
+    if not os.path.exists(dst_dir):
+        os.makedirs(dst_dir)
+
     for item in os.listdir(src_dir):
         src_file = os.path.join(src_dir, item)
         dst_file = os.path.join(dst_dir, item)
@@ -56,15 +59,21 @@ def copy_files(src_dir: str, dst_dir: str):
             shutil.copy2(src_file, dst_file)
     return source_files
 
-def copy_include():
+
+def copy_include(src_dir: str):
     log_util.LogUtil.hb_info("begin to copy include dir")
     nweb_include = os.path.join('ohos_nweb', 'include')
     include_source_files = copy_files(os.path.join(INTERFACE_INCLUDE_DIR, 'ohos_nweb'),
-            os.path.join(WORK_SPACE, nweb_include))
+            os.path.join(src_dir, '..', nweb_include))
 
     adapter_include = os.path.join('ohos_adapter', 'interfaces')
+    include_source_files += copy_dir(os.path.join(WORK_SPACE, 'ohos_adapter'),
+            os.path.join(src_dir, '..', 'ohos_adapter'))
     include_source_files += copy_dir(os.path.join(INTERFACE_INCLUDE_DIR, 'ohos_adapter'),
-            os.path.join(WORK_SPACE, adapter_include))
+            os.path.join(src_dir, '..', adapter_include))
+    include_source_files = copy_files(os.path.join(WORK_SPACE, nweb_include),
+            os.path.join(src_dir, '..', nweb_include))
+
     return include_source_files
 
 def copy_glue_base(glue_dir: str):
@@ -102,7 +111,7 @@ def main():
     args = parser.parse_args()
 
     if args.command_type == "include":
-        source_file_list = copy_include()
+        source_file_list = copy_include(args.ohos_glue_dir)
     elif args.command_type == "base":
         source_file_list = copy_glue_base(args.ohos_glue_dir)
     else:

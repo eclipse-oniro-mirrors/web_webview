@@ -63,6 +63,7 @@ public:
 
     void GetImageRect(int& x, int& y, int& w, int& h) override;
 
+    bool IsAILink() override;
 private:
     ArkWebRefPtr<ArkWebContextMenuParams> ark_web_context_menu_params_;
 };

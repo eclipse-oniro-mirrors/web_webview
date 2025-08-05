@@ -61,6 +61,41 @@ HWTEST_F(SocPerfAdapterTest, SocPerfAdapterTest_001, TestSize.Level1)
     socPerfClient->ApplySocPerfConfigById(0);
     socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_CONFIG_ID, true);
     socPerfClient->ApplySocPerfConfigByIdEx(0, true);
+
+    int SOC_PERF_ID = 10012;
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
+
+    SOC_PERF_ID = 10020;
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
+
+    SOC_PERF_ID = 10025;
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
+
+    SOC_PERF_ID = 10070;
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
+
+    SOC_PERF_ID = 10071;
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
+
+    SOC_PERF_ID = 10073;
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
+
+    SOC_PERF_ID = 10097; 
+    socPerfClient->ApplySocPerfConfigById(SOC_PERF_ID);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, true);
+    socPerfClient->ApplySocPerfConfigByIdEx(SOC_PERF_ID, false);
 }
 
 /**

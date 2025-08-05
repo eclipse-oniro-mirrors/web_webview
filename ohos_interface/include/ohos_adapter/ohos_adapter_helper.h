@@ -57,6 +57,7 @@
 #include "power_mgr_client_adapter.h"
 #include "print_manager_adapter.h"
 #include "screen_capture_adapter.h"
+#include "screenlock_manager_adapter.h"
 #include "soc_perf_client_adapter.h"
 #include "system_properties_adapter.h"
 #include "sensor_adapter.h"
@@ -166,6 +167,10 @@ public:
     virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
 
     virtual std::unique_ptr<DrmAdapter> CreateDrmAdapter() = 0;
+
+    virtual std::unique_ptr<ScreenlockManagerAdapter> CreateScreenlockManagerAdapter() = 0;
+
+    virtual std::unique_ptr<CertManagerAdapter> GetCertManagerAdapter() {return nullptr;};
 };
 } // namespace OHOS::NWeb
 

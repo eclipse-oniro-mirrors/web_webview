@@ -35,6 +35,7 @@
 #include "nweb_full_screen_exit_handler.h"
 #include "nweb_geolocation_callback_interface.h"
 #include "nweb_gesture_event_result.h"
+#include "nweb_mouse_event_result.h"
 #include "nweb_js_dialog_result.h"
 #include "nweb_js_http_auth_result.h"
 #include "nweb_js_ssl_error_result.h"
@@ -225,6 +226,7 @@ enum class NWebFocusSource {
     FOCUS_SOURCE_DEFAULT = -1,
     FOCUS_SOURCE_NAVIGATION = 0,
     FOCUS_SOURCE_SYSTEM,
+    FOCUS_SOURCE_GESTURE,
 };
 
 class NWebNativeEmbedInfo {
@@ -296,6 +298,62 @@ public:
 
     virtual std::shared_ptr<NWebGestureEventResult> GetResult() = 0;
 };
+
+enum class MouseType : size_t {
+    NONE = 0,
+    PRESS = 1,
+    RELEASE = 2,
+    MOVE = 3,
+    WINDOW_ENTER = 4,
+    WINDOW_LEAVE = 5,
+    HOVER,
+    HOVER_ENTER,
+    HOVER_MOVE,
+    HOVER_EXIT,
+    PULL_DOWN,
+    PULL_MOVE,
+    PULL_UP,
+    CANCEL
+};
+
+enum class MouseButton : size_t {
+    NONE_BUTTON = 0,
+    LEFT_BUTTON = 1,
+    RIGHT_BUTTON = 2,
+    MIDDLE_BUTTON = 4,
+    BACK_BUTTON = 8,
+    FORWARD_BUTTON = 16,
+    SIDE_BUTTON = 32,
+    EXTRA_BUTTON = 64,
+    TASK_BUTTON = 128,
+};
+
+class NWebNativeEmbedMouseEvent {
+public:
+    virtual ~NWebNativeEmbedMouseEvent() = default;
+
+    virtual float GetX() = 0;
+
+    virtual float GetY() = 0;
+
+    virtual bool IsHitNativeArea() = 0;
+
+    virtual MouseType GetType() = 0;
+
+    virtual MouseButton GetButton() = 0;
+
+    virtual float GetOffsetX() = 0;
+
+    virtual float GetOffsetY() = 0;
+
+    virtual float GetScreenX() = 0;
+
+    virtual float GetScreenY() = 0;
+
+    virtual std::string GetEmbedId() = 0;
+
+    virtual std::shared_ptr<NWebMouseEventResult> GetResult() = 0;
+};  
 
 class OHOS_NWEB_EXPORT NWebHandler {
 public:
@@ -1056,6 +1114,148 @@ public:
     virtual void RestoreRenderFit() {}
 
     virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const std::string& argument) {}
+
+    virtual bool OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable)
+    {
+        return false;
+    }
+
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) {}
+
+    /**
+     * @brief Called When you click on the selected area.
+     */
+    virtual bool ChangeVisibilityOfQuickMenuV2() { return false; }
+
+    /**
+     * @brief Called when web occurs event of picture in picture.
+     */
+    virtual void OnPip(int status,
+                       int delegate_id,
+                       int child_id,
+                       int frame_routing_id,
+                       int width,
+                       int height) {}
+
+    /**
+     * @brief Notify the host application that the web page wants to handle
+     * JavaScript onbeforeunload.
+     *
+     * @param url  String: The url of the page requesting.
+     * @param message  String: The message of the dialog.
+     * @param isReload bool: The isReload parameter is set to true when the page is refreshed;
+     *        otherwise, it remains false. Default is false.
+     * @param result  std::shared_ptr<NWebJSDialogResult>: A NWebJSDialogResult to
+     *        confirm that the user closed the window.
+     * @return To show a custom dialog, the app should return true.
+     */
+    virtual bool OnBeforeUnloadByJSV2(
+        const std::string& url, const std::string& message, bool isReload, std::shared_ptr<NWebJSDialogResult> result)
+    {
+        return false;
+    }
+
+    /**
+     * @Description: Called When an mouse native event occurs on native embed area.
+     * @Input mouse_event: Mouse events that contain information about the same layer.
+     */
+    virtual void OnNativeEmbedMouseEvent(std::shared_ptr<NWebNativeEmbedMouseEvent> event) {}
+
+    /**
+     * @brief called when the web page is active for window.open called by other web component.
+     */
+    virtual void OnActivateContentByJS() {}
+
+    /**
+     * @brief Notify the SDK that a web site has started loading. This method is
+     * called once for each main frame load. Embedded frame changes, i.e. clicking
+     * a link whose target is an iframe and fragment navigations (navigations to
+     * #fragment_id) will not trigger this callback.
+     *
+     * @param url The url to be loaded.
+     */
+    virtual void OnLoadStarted(const std::string& url) {}
+
+    /**
+     * @brief Notify the SDK that a web site has finished loading. This method is
+     * called only for main frame. Different from onPageEnd, onLoadFinished is
+     * triggered only once if the mainframe is automatically redirected before the
+     * page is completely loaded. OnPageEnd is triggered every navigation.
+     * fragment navigation also triggers onLoadFinished.
+     *
+     * @param url The url of the web site.
+     */
+    virtual void OnLoadFinished(const std::string& url) {}
+
+    virtual bool OnAllSslErrorRequestByJSV2(std::shared_ptr<NWebJSAllSslErrorResult> result, SslError error,
+        const std::string& url, const std::string& originalUrl, const std::string& referrer, bool isFatalError,
+        bool isMainFrame, const std::vector<std::string>& certChainData)
+    {
+        return false;
+    }
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    virtual void ShowMagnifier() {}
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    virtual void HideMagnifier() {}
+
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    virtual void OnPageTitleV2(const std::string& title, bool isRealTitle) {}
+
+    /**
+     * @brief Notify the web client to insert blankless frame.
+     *
+     * @param pathToFrame The file used to insert frame.
+     */
+    virtual void OnInsertBlanklessFrame(const std::string& pathToFrame) {}
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    virtual void OnRemoveBlanklessFrame(int delayTime) {}
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
+    virtual std::string OnHandleOverrideErrorPage(
+        std::shared_ptr<NWebUrlResourceRequest> request,
+        std::shared_ptr<NWebUrlResourceError> error)
+    {
+        return "";
+    }
+
+    /**
+     * @brief Called when web occurs event of pdf scroll at bottom.
+     *
+     * @param url The url of the pdf.
+     */
+    virtual void OnPdfScrollAtBottom(const std::string& url) {}
+
+    /**
+     * @brief Called when web occurs event of pdf load.
+     *
+     * @param result The result of the pdf load.
+     * @param url The url of the pdf.
+     */
+    virtual void OnPdfLoadEvent(int32_t result, const std::string& url) {}
+
+    virtual void OnTakeFocus(std::shared_ptr<NWebKeyEvent> event) {}
 };
 
 } // namespace OHOS::NWeb

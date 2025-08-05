@@ -24,15 +24,17 @@ namespace {
 const std::string PARAM_CHECK_ERROR_MSG = "Invalid input parameter";
 const std::string CAPABILITY_NOT_SUPPORTED_ERROR_MSG = "Capability not supported";
 const std::string INIT_ERROR_MSG = "Init error. The WebviewController must be associated with a Web component";
-const std::string INVALID_URL_MSG = "Invalid url";
+const std::string INVALID_URL_MSG = "URL error. Possible causes:1.No valid cookie found for the specified URL. "
+    "2.The webpage corresponding to the URL is invalid, or the URL length exceeds 2048.";
 const std::string INVALID_RESOURCE_MSG = "Invalid resource path or file type";
 const std::string FUNCTION_NOT_ENABLE_MSG = "Function not enabled.";
-const std::string INVALID_COOKIE_VALUE_MSG = "Invalid cookie value";
+const std::string INVALID_COOKIE_VALUE_MSG = "The provided cookie value is invalid. It must follow the format "
+    "specified in RFC 6265.";
 const std::string CAN_NOT_REGISTER_MESSAGE_EVENT_MSG = "Fail to register a message event for the port.";
 const std::string CANNOT_DEL_JAVA_SCRIPT_PROXY_MSG = "Failed to delete JavaScriptProxy because it does not exist.";
 const std::string CAN_NOT_POST_MESSAGE_MSG = "Failed to post messages through the port.";
-const std::string INVALID_ORIGIN_MSG = "Invalid origin";
-const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invalid web storage origin";
+const std::string INVALID_ORIGIN_MSG = "Invalid origin.The origin format must follow defined in RFC 6454.";
+const std::string NO_WEBSTORAGE_ORIGIN_MSG = "Invalid web storage origin.The web storage origin is empty.";
 const std::string INVALID_SOCKET_NUMBER_MSG = "The number of sockets to be preconnected is invalid.";
 const std::string TYPE_NOT_MATCH_WITCH_VALUE_MSG = "The type and value of the message do not match.";
 const std::string NEW_OOM_MSG = "Memory allocation failed.";
@@ -43,7 +45,10 @@ const std::string DOWNLOAD_NOT_START_MSG = "The download task is not started yet
 const std::string REGISTER_CUSTOM_SCHEME_FAILED_MSG = "Failed to register custom schemes.";
 const std::string HTTP_BODY_STREAN_INIT_FAILED_MSG = "Failed to initialize the HTTP body stream.";
 const std::string RESOURCE_HANDLER_INVALID_MSG = "The resource handler is invalid.";
+const std::string NOT_ALLOWED_PORT_MSG = "The port number is not within the allowed range.";
 const std::string UNKNOWN_ERROR_MSG = "Unknown error message.";
+const std::string INVALID_NET_ERROR_MSG = "The errorCode is either ARKWEB_NET_OK or "
+    "outside the range of error codes in WebNetErrorList";
 }
 
 namespace OHOS {
@@ -86,6 +91,8 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {REGISTER_CUSTOM_SCHEME_FAILED, REGISTER_CUSTOM_SCHEME_FAILED_MSG},
     {HTTP_BODY_STREAN_INIT_FAILED, HTTP_BODY_STREAN_INIT_FAILED_MSG},
     {RESOURCE_HANDLER_INVALID, RESOURCE_HANDLER_INVALID_MSG},
+    {NOT_ALLOWED_PORT, NOT_ALLOWED_PORT_MSG},
+    {INVALID_NET_ERROR, INVALID_NET_ERROR_MSG},
 };
 
 std::string GetErrMsgByErrCode(ErrCode code)

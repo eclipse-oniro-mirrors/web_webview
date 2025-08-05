@@ -242,9 +242,8 @@ extern "C" {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
-        double boolean = data->GetBoolean();
         *errCode = NWebError::NO_ERROR;
-        return boolean;
+        return data->GetBoolean();
     }
 
     CArrUI8 FfiOHOSWebMessageExtImplGetArrayBuffer(int64_t msgExtId, int32_t *errCode)
@@ -660,9 +659,8 @@ extern "C" {
             *errCode = NWebError::INIT_ERROR;
             return false;
         }
-        double boolean = data->GetBoolean();
         *errCode = NWebError::NO_ERROR;
-        return boolean;
+        return data->GetBoolean();
     }
 
     CArrUI8 FfiOHOSJsMessageExtImplGetArrayBuffer(int64_t jsExtId, int32_t *errCode)

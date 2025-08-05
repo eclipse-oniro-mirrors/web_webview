@@ -21,7 +21,7 @@
 #include <thread>
 
 #include "accesstoken_kit.h"
-#include "foundation/graphic/graphic_surface/surface/include/surface_buffer_impl.h"
+#include "surface_buffer_impl.h"
 #include "nativetoken_kit.h"
 #include "nweb_adapter_helper.h"
 #include "screen_capture.h"
@@ -30,7 +30,7 @@
 #define private public
 #include "screen_capture_adapter_impl.h"
 #undef private
-#include "foundation/multimedia/player_framework/interfaces/inner_api/native/media_errors.h"
+#include "../native/media_errors.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -62,6 +62,9 @@ public:
     MOCK_METHOD1(SetScreenCaptureCallback, int32_t(const std::shared_ptr<ScreenCaptureCallBack>&));
     MOCK_METHOD1(ExcludeContent, int32_t(ScreenCaptureContentFilter&));
     MOCK_METHOD0(SetPrivacyAuthorityEnabled, int32_t());
+    MOCK_METHOD1(SetScreenCaptureStrategy, int32_t(ScreenCaptureStrategy));
+    MOCK_METHOD1(UpdateSurface, int32_t(sptr<Surface>));
+    MOCK_METHOD2(SetCaptureArea, int32_t(uint64_t, OHOS::Rect));
 };
 } // namespace Media
 namespace NWeb {

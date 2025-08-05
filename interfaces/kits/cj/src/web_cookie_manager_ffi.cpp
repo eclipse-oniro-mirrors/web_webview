@@ -43,6 +43,13 @@ int32_t FfiOHOSCookieMgrConfigCookieSync(const char* url, const char* value, boo
     return OHOS::NWeb::WebCookieManager::CjSetCookie(curl, cvalue, incognitoMode);
 }
 
+int32_t FfiOHOSCookieMgrCfgCookieSync(const char* url, const char* value, bool incognitoMode, bool includeHttpOnly)
+{
+    std::string curl = url;
+    std::string cvalue = value;
+    return OHOS::NWeb::WebCookieManager::CjSetCookie(curl, cvalue, incognitoMode, includeHttpOnly);
+}
+
 void FfiOHOSCookieMgrPutAcceptCookieEnabled(bool accept)
 {
     return OHOS::NWeb::WebCookieManager::CjPutAcceptCookieEnabled(accept);

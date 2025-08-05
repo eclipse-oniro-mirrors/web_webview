@@ -15,13 +15,19 @@
 
 #include "accesstoken_fuzzer.h"
 #include "access_token_adapter_impl.h"
+#include <fuzzer/FuzzedDataProvider.h>
 
 using namespace OHOS::NWeb;
 
 namespace OHOS {
+constexpr uint8_t MAX_STRING_LENGTH = 125;
 bool AccessTokenAdapterFuzzTest(const uint8_t* data, size_t size)
 {
-    std::string permissionName(reinterpret_cast<const char*>(data), size);
+    if ((data == nullptr) || (size < sizeof(int))) {
+        return false;
+    }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string permissionName = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
 
     auto& instance = AccessTokenAdapterImpl::GetInstance();
     bool result = instance.VerifyAccessToken(permissionName);

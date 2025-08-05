@@ -53,6 +53,8 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlRunJavaScriptExtArr(
     int64_t id, CArrUI8 cScript, void (*callbackRef)(RetDataI64));
 FFI_EXPORT int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxy(
     int64_t id, CArrI64 cFuncIds, const char* cName, CArrString cMethodList);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxyEx(
+    int64_t id, CArrI64 cFuncIds, const char* cName, CArrString cMethodList, char* cPermission);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetUrl(int64_t id);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetOriginalUrl(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlPageUp(int64_t id, bool top);
@@ -64,6 +66,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlScrollByWithAnime(int64_t id, float deltaX, 
 FFI_EXPORT int32_t FfiOHOSWebviewCtlForward(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlBackward(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlBackOrForward(int64_t id, int32_t step);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlGetProgress(int64_t id, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlGetPageHeight(int64_t id, int32_t* errCode);
 FFI_EXPORT RetDataCString FfiOHOSWebviewCtlGetTitle(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlZoom(int64_t id, float factor);
@@ -103,6 +106,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlPostMessage(int64_t id, char* name, CArrI64 
 FFI_EXPORT CArrUI8 FfiOHOSWebviewCtlSerializeWebState(int64_t id, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlRestoreWebState(int64_t id, CArrUI8 cState);
 FFI_EXPORT CArrString FfiOHOSWebviewCtlGetCertificate(int64_t id, int32_t* errCode);
+FFI_EXPORT OHOS::Webview::CCertByteData FfiOHOSWebviewCtlGetCertificateByte(int64_t id, int32_t* errCode);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlHasImage(int64_t id, void (*callbackRef)(RetDataBool));
 FFI_EXPORT int32_t FfiWebviewCtlCustomizeSchemes(OHOS::Webview::CArrScheme schemes);
 FFI_EXPORT bool FfiOHOSWebviewCtlTerminateRenderProcess(int64_t id, int32_t* errCode);
@@ -133,6 +137,7 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlClearPrefetchedResource(CArrString cacheKeyL
 FFI_EXPORT int32_t FfiOHOSWebviewCtlStartCamera(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlStopCamera(int64_t id);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlCloseCamera(int64_t id);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlAvoidVisibleViewportBottom(int64_t id, int32_t avoidHeight);
 
 FFI_EXPORT int32_t FfiOHOSWebviewCtlAddIntelligentTrackingPreventionBypassingList(CArrString hostList);
 FFI_EXPORT void FfiOHOSWebviewCtlClearIntelligentTrackingPreventionBypassingList();
@@ -155,6 +160,9 @@ FFI_EXPORT int32_t FfiOHOSWebviewCtlPrecompileJavaScript(int64_t id,
     char* url, char* script, OHOS::Webview::CacheOptions cacheOptions);
 FFI_EXPORT int32_t FfiOHOSWebviewCtlWebPageSnapshot(int64_t id, OHOS::Webview::CSnapshotInfo snapshot,
     void (*callbackRef)(OHOS::Webview::RetDataCSnapshotResult infoRef));
+FFI_EXPORT OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlgetScrollOffset(int64_t id, int32_t* errorCode);
+FFI_EXPORT int32_t FfiOHOSWebviewCtlSetScrollableEx(int64_t id, bool enable, int32_t scrollType);
+FFI_EXPORT bool FfiOHOSWebviewCtlScrollByWithResult(int64_t id, float deltaX, float deltaY, int32_t* errorCode);
 
     // BackForwardList
 FFI_EXPORT int32_t FfiOHOSBackForwardListCurrentIndex(int64_t id, int32_t* errCode);

@@ -31,9 +31,11 @@ bool StopListenFuzzTest(const uint8_t* data, size_t size)
     size_t callCount = data[0] % 10;
     for (size_t i = 0; i < callCount; i++) {
         BatteryMgrClientAdapterImpl battery;
+        battery.StartListen();
         battery.StopListen();
     }
     BatteryMgrClientAdapterImpl battery;
+    battery.StartListen();
     battery.StopListen();
     return true;
 }

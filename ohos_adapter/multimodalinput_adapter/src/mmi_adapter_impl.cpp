@@ -147,4 +147,16 @@ int32_t MMIAdapterImpl::GetDeviceInfo(int32_t deviceId, std::shared_ptr<MMIDevic
     }
     return ret;
 }
+
+int32_t MMIAdapterImpl::GetMaxTouchPoints()
+{
+    int32_t pointNum { 0 };
+    int32_t ret = MMI::InputManager::GetInstance()->GetMaxMultiTouchPointNum(pointNum);
+    WVLOG_D("MMIAdapterImpl::GetMaxTouchPoints, pointNum: %{public}d", pointNum);
+    if (ret != 0) {
+        WVLOG_E("InputManager GetMaxTouchPoints failed, ret: %{public}d", ret);
+        return 0;
+    }
+    return pointNum;
+}
 } // namespace OHOS::NWeb

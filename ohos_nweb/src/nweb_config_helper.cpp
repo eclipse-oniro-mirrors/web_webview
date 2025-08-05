@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#include "application_context.h"
 #include "config_policy_utils.h"
 #include "nweb_config_helper.h"
 #include "nweb_log.h"
@@ -38,10 +39,14 @@ const std::string BASE_WEB_CONFIG = "baseWebConfig";
 const std::string WEB_ANIMATION_DYNAMIC_SETTING_CONFIG = "property_animation_dynamic_settings";
 const std::string WEB_ANIMATION_DYNAMIC_APP = "dynamic_apps";
 const std::string WEB_LTPO_STRATEGY = "ltpo_strategy";
+const std::string WEB_WINDOW_ORIENTATION_CONFIG = "window_orientation_config";
+const std::string WEB_ALL_BUNDLE_NAME = "*";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
 const auto XML_ATTR_FPS = "preferred_fps";
+const auto XML_BUNDLE_NAME = "bundle_name";
+const auto XML_ENABLE_WINDOW_ORIENTATION = "enable_window_orientation";
 const std::unordered_map<std::string_view, std::function<std::string(std::string&)>> configMap = {
     { "renderConfig/renderProcessCount",
         [](std::string& contentStr) { return std::string("--renderer-process-limit=") + contentStr; } },
@@ -123,6 +128,10 @@ const std::unordered_map<std::string_view, std::function<std::string(std::string
         [](std::string& contentStr) {
             return contentStr == "true" ? std::string("--ohos-enable-calc-tablet-mode") : std::string();
         } },
+    { "settingConfig/disableMobileStyleSheet",
+        [](std::string& contentStr) {
+            return contentStr == "true" ? std::string("--ohos-disable-mobile-style-sheet") : std::string();
+        } },
     { "outOfProcessGPUConfig/enableOopGpu",
         [](std::string& contentStr) {
             return contentStr == "true" ? std::string("--in-process-gpu") : std::string(); 
@@ -135,15 +144,85 @@ const std::unordered_map<std::string_view, std::function<std::string(std::string
 } // namespace
 
 namespace OHOS::NWeb {
+NWebConfigHelper::NWebConfigHelper()
+{
+    auto saManager = OHOS::SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
+    bool hasPlayGround = false;
+    bool isDebugApp = false;
+    bool isDeveloperMode = IsDeveloperModeEnabled();
+    if (saManager == nullptr) {
+        WVLOG_E("webPlayGround get saManager fail");
+        return;
+    }
+
+    sptr<IRemoteObject> remoteObject =
+        saManager->GetSystemAbility(OHOS::BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
+    sptr<OHOS::AppExecFwk::IBundleMgr> bundleMgrProxy =
+        OHOS::iface_cast<OHOS::AppExecFwk::IBundleMgr>(remoteObject);
+    if (bundleMgrProxy == nullptr) {
+        WVLOG_E("webPlayGround get bundleMgrProxy fail");
+        return;
+    }
+
+    OHOS::AppExecFwk::BundleInfo bundleInfo;
+    bundleMgrProxy->GetBundleInfoForSelf(
+        OHOS::AppExecFwk::BundleFlag::GET_BUNDLE_WITH_ABILITIES, bundleInfo);
+    isDebugApp = (bundleInfo.applicationInfo.appProvisionType ==
+                    AppExecFwk::Constants::APP_PROVISION_TYPE_DEBUG);
+    for (auto appEnv : bundleInfo.applicationInfo.appEnvironments) {
+        if (appEnv.name == PLAYGROUND && appEnv.value == "true") {
+            hasPlayGround = true;
+            break;
+        }
+    }
+    web_play_ground_enabled_ = isDebugApp && hasPlayGround && isDeveloperMode;
+
+    if (web_play_ground_enabled_) {
+        WVLOG_I("webPlayGround opened");
+    } else {
+        if (hasPlayGround) {
+            WVLOG_I("webPlayGround not opened for isDebugApp %{public}d"
+                    " hasPlayGround %{public}d isDeveloperMode %{public}d",
+                    isDebugApp, hasPlayGround, isDeveloperMode);
+        }
+    }
+}
+
+bool NWebConfigHelper::IsWebPlayGroundEnable()
+{
+    return web_play_ground_enabled_;
+}
+
+const std::string& NWebConfigHelper::GetWebPlayGroundInitArg()
+{
+    return web_play_ground_enabled_ ? SINGLE_PROCESS : NULL_STR;
+}
+
+const std::string& NWebConfigHelper::GetWebPlayGroundHapPath()
+{
+    return web_play_ground_enabled_ ? PLAY_GROUND_HAP_PATH : NULL_STR;
+}
+
+bool NWebConfigHelper::IsDeveloperModeEnabled()
+{
+    return OHOS::system::GetBoolParameter("const.security.developermode.state", false);
+}
+
 NWebConfigHelper &NWebConfigHelper::Instance()
 {
     static NWebConfigHelper helper;
     return helper;
 }
 
+bool NWebConfigHelper::IsPerfConfigEmpty()
+{
+    std::lock_guard<std::mutex> lock(lock_);
+    return perfConfig_.empty();
+}
+
 void NWebConfigHelper::ReadConfigIfNeeded()
 {
-    if (perfConfig_.empty()) {
+    if (IsPerfConfigEmpty()) {
         std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
         NWebConfigHelper::Instance().ParseConfig(initArgs);
     }
@@ -270,7 +349,7 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
         ParseDeleteConfig(deleteNodePtr, initArgs);
     }
 
-    if (perfConfig_.empty()) {
+    if (IsPerfConfigEmpty()) {
         xmlNodePtr perfNodePtr = GetChildrenNode(rootPtr, PERFORMANCE_CONFIG);
         if (perfNodePtr != nullptr) {
             ParsePerfConfig(perfNodePtr);
@@ -286,6 +365,12 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
         if (ltpoConfigNodePtr != nullptr) {
             ParseNWebLTPOConfig(ltpoConfigNodePtr);
         }
+    }
+
+    xmlNodePtr windowOrientationNodePtr = GetChildrenNode(rootPtr, WEB_WINDOW_ORIENTATION_CONFIG);
+    if (windowOrientationNodePtr != nullptr) {
+        WVLOG_D("read config from window orientation node");
+        ParseWindowOrientationConfig(windowOrientationNodePtr, initArgs);
     }
     xmlFreeDoc(docPtr);
 }
@@ -341,7 +426,13 @@ void NWebConfigHelper::ParseNWebLTPOApp(xmlNodePtr nodePtr)
             WVLOG_E("invalid node!");
             continue;
         }
-        std::string bundleName = (char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_NAME));
+        char* bundleNamePtr = (char *)xmlGetProp(curDynamicNodePtr, BAD_CAST(XML_ATTR_NAME));
+        if (!bundleNamePtr) {
+            WVLOG_E("invalid bundleName!");
+            continue;
+        }
+        std::string bundleName(bundleNamePtr);
+        xmlFree(bundleNamePtr);
         ltpoAllowedApps_.emplace(bundleName);
         WVLOG_D("ltpo dynamic app: %{public}s", bundleName.c_str());
     }
@@ -395,7 +486,10 @@ void NWebConfigHelper::ParsePerfConfig(xmlNodePtr NodePtr)
             }
             std::string contentStr = reinterpret_cast<const char*>(content);
             xmlFree(content);
+            {
+            std::lock_guard<std::mutex> lock(lock_);
             perfConfig_.emplace(nodeName + "/" + childNodeName, contentStr);
+            }
             WriteConfigValueToSysPara(nodeName + "/" + childNodeName, contentStr);
         }
     }
@@ -403,6 +497,7 @@ void NWebConfigHelper::ParsePerfConfig(xmlNodePtr NodePtr)
 
 std::string NWebConfigHelper::ParsePerfConfig(const std::string &configNodeName, const std::string &argsNodeName)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     auto it = perfConfig_.find(configNodeName + "/" + argsNodeName);
     if (it == perfConfig_.end()) {
         WVLOG_W("not found perf config for web_config: %{public}s/%{public}s", configNodeName.c_str(),
@@ -418,6 +513,8 @@ void NWebConfigHelper::WriteConfigValueToSysPara(const std::string &configName, 
 {
     if (configName == "flowBufferConfig/maxFdNumber") {
         OHOS::system::SetParameter("web.flowbuffer.maxfd", value);
+    } else if (configName == "TCPConnectedSocketConfig/initialCongestionWindowSize") {
+        OHOS::system::SetParameter("web.TCPConnectedSocket.initialCongestionWindowSize", value);
     }
 }
 
@@ -452,6 +549,48 @@ void NWebConfigHelper::ParseDeleteConfig(const xmlNodePtr &rootPtr, std::shared_
             if (!param.empty()) {
                 initArgs->AddDeleteArg(param);
             }
+        }
+    }
+}
+
+void NWebConfigHelper::ParseWindowOrientationConfig(xmlNodePtr nodePtr,
+    std::shared_ptr<NWebEngineInitArgsImpl> initArgs)
+{
+    for (xmlNodePtr curNodePtr = nodePtr->xmlChildrenNode; curNodePtr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        char* bundleNamePtr = (char *)xmlGetProp(curNodePtr,BAD_CAST(XML_BUNDLE_NAME));
+        char* orientationPtr = (char *)xmlGetProp(curNodePtr,BAD_CAST(XML_ENABLE_WINDOW_ORIENTATION));
+        if (!bundleNamePtr || !orientationPtr) {
+            WVLOG_E("invalid bundleNamePtr or orientationPtr!");
+            continue;
+        }
+        std::string bundleName(bundleNamePtr);
+        std::string orientation(orientationPtr);
+        xmlFree(bundleNamePtr);
+        xmlFree(orientationPtr);
+
+        std::string curBundleName;
+        std::shared_ptr<AbilityRuntime::ApplicationContext> ctx =
+            AbilityRuntime::ApplicationContext::GetApplicationContext();
+        if (ctx) {
+            std::string curBundleName = ctx->GetBundleName();
+        }
+        if (curBundleName.empty()) {
+            WVLOG_E("invalid curBundleName, no need to continue!");
+            return;
+        }
+        if (bundleName == curBundleName || bundleName == WEB_ALL_BUNDLE_NAME) {
+            if (orientation == "true") {
+                initArgs->AddArg("--enable-blink-features=OrientationEvent");
+            } else if (orientation == "false") {
+                initArgs->AddArg("--disable-blink-features=OrientationEvent");
+            } else {
+                WVLOG_E("invalid orientation value!");
+            }
+            break;
         }
     }
 }

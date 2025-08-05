@@ -109,6 +109,30 @@ public:
                                   std::shared_ptr<NWebProxyChangedCallback> callback) {}
 
     virtual void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback) {}
+
+    virtual void SetAppCustomUserAgent(const std::string& userAgent) {}
+
+    virtual void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts) {}
+
+    virtual void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port) {}
+
+    virtual uint32_t AddBlanklessLoadingUrls(const std::vector<std::string>& urls) { return 0; }
+
+    virtual void RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls) {}
+
+    virtual void ClearBlanklessLoadingCache(const std::vector<std::string>& urls) {}
+
+    virtual std::string CheckBlankOptEnable(const std::string& url, int32_t nweb_id) { return ""; }
+
+    virtual void SetBlanklessLoadingCacheCapacity(int32_t capacity) {}
+
+    virtual void EnablePrivateNetworkAccess(bool enable) {}
+
+    virtual bool IsPrivateNetworkAccessEnabled() {
+        return false;
+    }
+
+    virtual void SetWebDestroyMode(WebDestroyMode mode) {}
 };
 
 } // namespace OHOS::NWeb

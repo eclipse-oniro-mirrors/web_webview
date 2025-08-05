@@ -161,6 +161,39 @@ public:
      */
     /*--ark web()--*/
     virtual void RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallback> callback) = 0;
+
+    /*--ark web()--*/
+    virtual void SetAppCustomUserAgent(const ArkWebString& userAgent) = 0;
+
+    /*--ark web()--*/
+    virtual void SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts) = 0;
+
+    /*--ark web()--*/
+    virtual void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port) = 0;
+
+    /*--ark web()--*/
+    virtual uint32_t AddBlanklessLoadingUrls(const ArkWebStringVector& urls) = 0;
+
+    /*--ark web()--*/
+    virtual void RemoveBlanklessLoadingUrls(const ArkWebStringVector& urls) = 0;
+
+    /*--ark web()--*/
+    virtual void ClearBlanklessLoadingCache(const ArkWebStringVector& urls) = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id) = 0;
+
+    /*--ark web()--*/
+    virtual void SetBlanklessLoadingCacheCapacity(int32_t capacity) = 0;
+
+    /*--ark web()--*/
+    virtual void EnablePrivateNetworkAccess(bool enable) = 0;
+
+    /*--ark web()--*/
+    virtual bool IsPrivateNetworkAccessEnabled() = 0;
+
+    /*--ark web()--*/
+    virtual void SetWebDestroyMode(int32_t mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb

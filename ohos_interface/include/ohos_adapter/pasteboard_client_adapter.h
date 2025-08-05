@@ -140,6 +140,20 @@ public:
     virtual std::shared_ptr<std::string> GetUri() = 0;
 
     virtual std::shared_ptr<PasteCustomData> GetCustomData() = 0;
+
+    virtual bool SetHtmlTextV2(std::shared_ptr<std::string> htmlText) { return false; }
+
+    virtual bool SetPlainTextV2(std::shared_ptr<std::string> plainText) { return false; }
+
+    virtual std::shared_ptr<std::string> GetHtmlTextV2() { return nullptr; }
+
+    virtual std::shared_ptr<std::string> GetPlainTextV2() { return nullptr; }
+
+    virtual bool SetCustomDataV2(PasteCustomData& data) { return false; }
+
+    virtual std::shared_ptr<std::string> GetUriV2() { return nullptr; }
+
+    virtual std::shared_ptr<PasteCustomData> GetCustomDataV2() { return nullptr; }
 };
 
 class PasteDataAdapter {

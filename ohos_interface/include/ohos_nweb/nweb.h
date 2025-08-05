@@ -34,6 +34,7 @@
 #include "nweb_native_media_player.h"
 #include "nweb_preference.h"
 #include "nweb_release_surface_callback.h"
+#include "nweb_rom_value.h"
 #include "nweb_spanstring_convert_html_callback.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
@@ -252,6 +253,11 @@ enum class PixelUnit {
     NONE = 3,
 };
 
+enum class WebDestroyMode {
+    NORMAL_MODE,
+    FAST_MODE
+};
+
 class OHOS_NWEB_EXPORT NWebMouseEvent {
 public:
     virtual ~NWebMouseEvent() = default;
@@ -268,9 +274,9 @@ public:
 
     virtual std::vector<int32_t> GetPressKeyCodes() = 0;
 
-    virtual int32_t GetRawX() { return 0; };
+    virtual int32_t GetRawX() { return 0; }
 
-    virtual int32_t GetRawY() { return 0; };
+    virtual int32_t GetRawY() { return 0; }
 
 };
 
@@ -280,6 +286,16 @@ typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
 using ScriptItemsByOrder = std::vector<std::string>;
 using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
+
+class OHOS_NWEB_EXPORT NWebJsProxyMethod {
+    public:
+        virtual ~NWebJsProxyMethod() = default;
+    
+        virtual int32_t GetSize() = 0;
+    
+        virtual void OnHandle(int32_t number, const std::vector<std::string>& param) = 0;
+    };
+    
 class OHOS_NWEB_EXPORT NWeb : public std::enable_shared_from_this<NWeb> {
 public:
     NWeb() = default;
@@ -1674,7 +1690,7 @@ public:
      * @Description: Optimize HTML parser budget to reduce FCP time.
      * @Input enable: Set whether to use optimized parser budget.
      */
-    virtual void PutOptimizeParserBudgetEnabled(bool enable) {};
+    virtual void PutOptimizeParserBudgetEnabled(bool enable) {}
 
     /**
      * @Description: Get the bounding rectangle of the accessibility node of the given id.
@@ -1700,7 +1716,7 @@ public:
     virtual std::shared_ptr<HitTestResult> GetLastHitTestResult()
     {
         return std::shared_ptr<HitTestResult>();
-    };
+    }
 
     /**
      * @Description: Get the current language in the webview.
@@ -1764,6 +1780,18 @@ public:
     virtual void SetSurfaceDensity(const double& density) {}
 
     /**
+     * @brief When the user sets the webpage's border radius,
+     *        update Chromium with this radius value for repaint the scrollbar.
+     * @param borderRadiusTopLeft: Radius value of the rounded corner in the top-left of the webpage.
+     * @param borderRadiusTopRight: Radius value of the rounded corner in the top-right of the webpage.
+     * @param borderRadiusBottomLeft: Radius value of the rounded corner in the bottom-left of the webpage.
+     * @param borderRadiusBottomRight: Radius value of the rounded corner in the bottom-right of the webpage.
+     */
+    /*--ark web()--*/
+    virtual void SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight,
+        double borderRadiusBottomLeft, double borderRadiusBottomRight) {}
+
+    /**
      * @brief Set the native inner web
      */
     virtual void SetNativeInnerWeb(bool isInnerWeb) {}
@@ -1786,6 +1814,241 @@ public:
      * @brief Notify browser is background.
      */
     virtual void OnBrowserBackground() {}
+
+    /**
+     * @brief: register native javaScriptProxy.
+     *
+     * @param objName  String: object name.
+     * @param methodName std::vector<std::string>: methodName list
+     * @param data std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod>: The ptr of NWebJsProxyMethod.
+     * @param isAsync bool: True mean.
+     * @param permission string: permission.
+     */
+    virtual void RegisterNativeJavaScriptProxy(const std::string& objName,
+        const std::vector<std::string>& methodName,
+        std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+        bool isAsync,
+        const std::string& permission) {}
+
+    /**
+     * @brief Set the window id.
+     */
+    virtual void SetFocusWindowId(uint32_t focus_window_id) {}
+
+    /**
+     * @brief Run data detector JS.
+     */
+    virtual void RunDataDetectorJS() {}
+
+    /**
+     * @brief Set data detector enable.
+     */
+    virtual void SetDataDetectorEnable(bool enable) {}
+
+    /**
+     * @brief On data detector select text.
+     */
+    virtual void OnDataDetectorSelectText() {}
+
+    /**
+     * @brief On data detector copy.
+     */
+    virtual void OnDataDetectorCopy(const std::vector<std::string>& recordMix) {}
+
+    /**
+     *  @brief Set the native window of picture in picture.
+     */
+    virtual void SetPipNativeWindow(int delegate_id,
+                                    int child_id,
+                                    int frame_routing_id,
+                                    void* window) {}
+
+    /**
+     * @brief Send event of picture in picture.
+     */
+    virtual void SendPipEvent(int delegate_id,
+                              int child_id,
+                              int frame_routing_id,
+                              int event) {}
+
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key string: the unique key of current page.
+     */
+    virtual void SetBlanklessLoadingKey(const std::string& key) {}
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    virtual void SetPrivacyStatus(bool isPrivate) {}
+
+    /**
+     * Get select startIndex.
+     */
+    virtual int GetSelectStartIndex()
+    {
+        return 0;
+    }
+
+    /**
+     * Get select endIndex.
+     */
+    virtual int GetSelectEndIndex()
+    {
+        return 0;
+    }
+
+    /**
+     * Get All text info.
+     */
+    virtual std::string GetAllTextInfo()
+    {
+        return "";
+    }
+    /**
+     * Set audio session type.
+     *
+     * @param audioSessionType Audio session type.
+     */
+    virtual void SetAudioSessionType(int32_t audioSessionType) {}
+
+    /**
+     * Get accessibility id by its html element id in the browser.
+     * @param htmlElementId The html element id of the Same-layer rendering.
+     * @return The accessibility id of the accessibility node with Same-layer rendering.
+     */
+    virtual int64_t GetWebAccessibilityIdByHtmlElementId(const std::string& htmlElementId)
+    {
+        return -1;
+    }
+
+    /**
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
+     */
+    virtual int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
+    {
+        return -1;
+    }
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    virtual int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart)
+    {
+        return -1;
+    }
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    virtual void UpdateSingleHandleVisible(bool isVisible) {}
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    virtual void SetTouchHandleExistState(bool touchHandleExist) {}
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    virtual void AvoidVisibleViewportBottom(int32_t avoidHeight) {}
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    virtual int32_t GetVisibleViewportAvoidHeight()
+    {
+        return 0;
+    }
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    virtual bool TriggerBlanklessForUrl(const std::string& url) { return false; }
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    virtual void SetVisibility(bool isVisible) {}
+
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    virtual void SetViewportScaleState() {}
+
+    /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   virtual void GetPageOffset(float* offset_x, float* offset_y) {}
+
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     */
+    virtual void SetErrorPageEnabled(bool enable) {}
+
+    /**
+     * @brief Get whether default error page feature is enabled.
+     */
+    virtual bool GetErrorPageEnabled() { return false; }
+
+    /**
+     * @brief Get web component destroy mode.
+     * @return The web component destroy mode.
+     */
+    /*--ark web()--*/
+    virtual WebDestroyMode GetWebDestroyMode()
+    {
+        return WebDestroyMode::NORMAL_MODE;
+    }
+
+    /**
+     * CallH5FunctionV2
+     *
+     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    virtual void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+        const std::vector<std::shared_ptr<NWebRomValue>>& args)
+    {}
+
+    /**
+     * use the port to send message.
+     *
+     * @param portHandle the port to send message.
+     * @param data the message to send.
+     */
+    virtual void PostPortMessageV2(const std::string& portHandle, std::shared_ptr<NWebRomValue> data) {}
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    virtual void FillAutofillDataV2(std::shared_ptr<NWebRomValue> data) {}
 };
 
 } // namespace OHOS::NWeb

@@ -133,6 +133,14 @@ public:
 
     std::string GetAccessibilityText() override;
 
+    std::string GetHtmlElementId() override;
+
+    std::string GetComponentTypeDescription() override;
+
+    int32_t GetCheckboxGroupSelectedStatus() override;
+
+    std::string GetExpandedState() override;
+
 private:
     ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ark_web_accessibility_node_info_;
 };

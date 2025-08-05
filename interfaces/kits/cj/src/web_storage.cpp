@@ -55,7 +55,7 @@ int64_t WebStorage::CjGetOriginUsageOrQuota(const std::string &origin, int32_t *
         return 0;
     }
     if (isQuata) {
-        auto ret = static_cast<uint32_t>(web_storage->GetOriginQuota(origin));
+        auto ret = static_cast<int64_t>(web_storage->GetOriginQuota(origin));
         if (ret == INTERFACE_ERROR) {
             *errCode = INTERFACE_ERROR;
         } else if (ret == NWebError::INVALID_ORIGIN) {
@@ -65,7 +65,7 @@ int64_t WebStorage::CjGetOriginUsageOrQuota(const std::string &origin, int32_t *
         }
         return ret;
     } else {
-        auto ret = static_cast<uint32_t>(web_storage->GetOriginUsage(origin));
+        auto ret = static_cast<int64_t>(web_storage->GetOriginUsage(origin));
         if (ret == INTERFACE_ERROR) {
             *errCode = INTERFACE_ERROR;
         } else if (ret == NWebError::INVALID_ORIGIN) {

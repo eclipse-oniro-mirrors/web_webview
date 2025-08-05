@@ -41,20 +41,23 @@ ohos_unittest("camera_adapter_impl_test") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
-    "drivers_interface_camera:metadata",
     "googletest:gmock_main",
     "googletest:gtest_main",
+    "graphic_2d:librender_service_base",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "init:libbegetutil",
     "ipc:ipc_core",
+    "selinux_adapter:librestorecon",
     "webview:libnweb",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 
   if (webview_camera_enable) {
     sources += [ "camera_adapter_impl_test.cpp" ]
     external_deps += [
       "camera_framework:camera_framework",
+      "drivers_interface_camera:metadata",
       "window_manager:libwm",
     ]
   }

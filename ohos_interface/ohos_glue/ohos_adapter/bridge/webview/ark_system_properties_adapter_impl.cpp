@@ -215,4 +215,21 @@ ArkWebString ArkSystemPropertiesAdapterImpl::GetBundleName()
     std::string str = real_.GetBundleName();
     return ArkWebStringClassToStruct(str);
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetStringParameter(const ArkWebString& key,
+                                                                const ArkWebString& defaultValue)
+{
+    std::string str = real_.GetStringParameter(ArkWebStringStructToClass(key), ArkWebStringStructToClass(defaultValue));
+    return ArkWebStringClassToStruct(str);
+}
+
+int32_t ArkSystemPropertiesAdapterImpl::GetInitialCongestionWindowSize()
+{
+    return real_.GetInitialCongestionWindowSize();
+}
+
+int32_t ArkSystemPropertiesAdapterImpl::GetIntParameter(const ArkWebString& key, int32_t defaultValue)
+{
+    return real_.GetIntParameter(ArkWebStringStructToClass(key), defaultValue);
+}
 } // namespace OHOS::ArkWeb

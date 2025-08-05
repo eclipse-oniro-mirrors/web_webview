@@ -180,7 +180,7 @@ namespace OHOS::Webview {
         return ret;
     }
 
-    void WebResourceHandlerImpl::DestoryArkWebResourceHandler()
+    void WebResourceHandlerImpl::DestroyArkWebResourceHandler()
     {
         if (handler_) {
             OH_ArkWebResourceHandler_Destroy(handler_);

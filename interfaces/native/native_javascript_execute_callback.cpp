@@ -30,4 +30,18 @@ void NativeJavaScriptExecuteCallback::OnReceiveValue(std::shared_ptr<NWebMessage
         WVLOG_E("native RunJavaScript callback is null");
     }
 }
+
+void NativeJavaScriptExecuteCallback::OnReceiveValueV2(std::shared_ptr<NWebHapValue> value)
+{
+    if (callbackNative_) {
+        if (value && (value->GetType() == NWebHapValue::Type::STRING)) {
+            callbackNative_(value->GetString().c_str());
+        } else {
+            WVLOG_E("native RunJavaScript result is not string");
+            callbackNative_("null");
+        }
+    } else {
+        WVLOG_E("native RunJavaScript callback is null");
+    }
+}
 } // namespace OHOS::NWeb

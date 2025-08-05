@@ -63,6 +63,11 @@ public:
      */
     void HandleConfirm() override;
 
+    /**
+     * @brief Handle the result if the user cancelled the url request.
+     */
+    void HandleCancelV2(bool abortLoading) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebJSAllSslErrorResult> nweb_js_all_ssl_error_result_;
 };

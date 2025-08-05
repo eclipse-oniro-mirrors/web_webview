@@ -46,6 +46,7 @@
             <enableIgnoreLockdownMode>false</enableIgnoreLockdownMode>
             <enablePrinting>false</enablePrinting>
             <enableCalcTabletMode>true</enableCalcTabletMode>
+            <disableMobileStyleSheet>false</disableMobileStyleSheet>
         </settingConfig>
         <userAgentConfig>
             <userAgentValue>Phone</userAgentValue>
@@ -64,6 +65,9 @@
         <flowBufferConfig>
             <maxFdNumber>0</maxFdNumber>
         </flowBufferConfig>
+        <TCPConnectedSocketConfig>
+            <initialCongestionWindowSize>10</initialCongestionWindowSize>
+        </TCPConnectedSocketConfig>
     </performanceConfig>
     <baseWebConfig>
         <factoryConfig>

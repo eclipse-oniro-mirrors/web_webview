@@ -40,6 +40,8 @@ ohos_fuzztest("GetRecordAtFuzzTest") {
     "graphic_surface:surface",
     "image_framework:image_native",
     "pasteboard:pasteboard_client",
+    "pasteboard:pasteboard_data",
+    "hilog:libhilog",
   ]
 }
 

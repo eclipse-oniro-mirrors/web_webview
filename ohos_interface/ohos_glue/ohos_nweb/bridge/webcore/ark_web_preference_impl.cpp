@@ -515,4 +515,19 @@ void ArkWebPreferenceImpl::SetIntrinsicSizeEnable(bool enable)
 {
     nweb_preference_->SetIntrinsicSizeEnable(enable);
 }
+
+void ArkWebPreferenceImpl::SetCssDisplayChangeEnabled(bool enable)
+{
+    nweb_preference_->SetCssDisplayChangeEnabled(enable);
+}
+
+void ArkWebPreferenceImpl::SetBypassVsyncCondition(int32_t condition)
+{
+    nweb_preference_->SetBypassVsyncCondition(condition);
+}
+
+void ArkWebPreferenceImpl::SetGestureFocusMode(int32_t mode)
+{
+    nweb_preference_->SetGestureFocusMode(mode);
+}
 } // namespace OHOS::ArkWeb

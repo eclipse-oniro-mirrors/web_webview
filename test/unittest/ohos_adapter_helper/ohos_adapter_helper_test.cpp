@@ -16,6 +16,7 @@
 #include <cstring>
 #include <gtest/gtest.h>
 #include <surface.h>
+#include <fcntl.h>
 
 #define private public
 #include "nweb_adapter_helper.h"
@@ -35,7 +36,7 @@ namespace {
 sptr<Surface> g_surface = nullptr;
 const std::string MOCK_NWEB_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
 #if defined(NWEB_PRINT_ENABLE)
-const std::string PRINT_FILE_DIR = "/data/storage/el2/base/print.png";
+const char *TESTFILE_PATH = "/data/test/unittestfile";
 const std::string PRINT_JOB_NAME = "webPrintTestJob";
 #endif
 } // namespace
@@ -92,19 +93,19 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetCookieManager_001, TestSize
         hapPath = MOCK_NWEB_INSTALLATION_DIR;
     }
     int32_t nweb_id = 1;
-    NWebHelper& helper = NWebHelper::Instance();
-    helper.SetBundlePath(hapPath);
-    helper.Init(false);
-    auto cook = helper.GetCookieManager();
+    NWebHelper* helper = new NWebHelper;
+    helper->SetBundlePath(hapPath);
+    helper->Init(false);
+    auto cook = helper->GetCookieManager();
     EXPECT_EQ(cook, nullptr);
-    auto base = helper.GetDataBase();
+    auto base = helper->GetDataBase();
     EXPECT_NE(base, nullptr);
-    auto storage = helper.GetWebStorage();
+    auto storage = helper->GetWebStorage();
     EXPECT_NE(storage, nullptr);
-    auto nweb = helper.GetNWeb(nweb_id);
+    auto nweb = helper->GetNWeb(nweb_id);
     EXPECT_EQ(nweb, nullptr);
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
-    helper.SetHttpDns(config);
+    helper->SetHttpDns(config);
 }
 
 /**
@@ -142,16 +143,20 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
     EXPECT_NE(ohosResourceAdapterImpl, nullptr);
 #if defined(NWEB_PRINT_ENABLE)
     PrintManagerAdapter& printAdapter = helper.GetPrintManagerInstance();
-    std::vector<std::string> fileList = { PRINT_FILE_DIR };
-    std::vector<uint32_t> fdList = { 1 };
-    std::string taskId;
-    int32_t ret = printAdapter.StartPrint(fileList, fdList, taskId);
-    EXPECT_EQ(ret, -1);
-    std::shared_ptr<PrintDocumentAdapterAdapter> printDocumentAdapterImpl;
-    PrintAttributesAdapter printAttributesAdapter;
-    EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter), -1);
-    void* token = nullptr;
-    EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter, token), -1);
+    std::vector<std::string> fileList = { TESTFILE_PATH };
+    int32_t fd = open(TESTFILE_PATH, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
+    if (fd >= 0) {
+        std::vector<uint32_t> fdList = { fd };
+        std::string taskId;
+        int32_t ret = printAdapter.StartPrint(fileList, fdList, taskId);
+        EXPECT_EQ(ret, -1);
+        std::shared_ptr<PrintDocumentAdapterAdapter> printDocumentAdapterImpl;
+        PrintAttributesAdapter printAttributesAdapter;
+        EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter), -1);
+        void* token = nullptr;
+        EXPECT_EQ(printAdapter.Print(PRINT_JOB_NAME, printDocumentAdapterImpl, printAttributesAdapter, token), -1);
+        close(fd);
+    }
 #endif
     std::unique_ptr<MigrationManagerAdapter> migration = helper.CreateMigrationMgrAdapter();
     EXPECT_NE(migration, nullptr);
@@ -172,19 +177,25 @@ HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetInstance_002, TestSize.Leve
 HWTEST_F(OhosAdapterHelperTest, OhosAdapterHelper_GetDataBase_003, TestSize.Level1)
 {
     int32_t nweb_id = 1;
-    NWebHelper& helper = NWebHelper::Instance();
+    std::string hapPath = "";
+    if (access(MOCK_NWEB_INSTALLATION_DIR.c_str(), F_OK) == 0) {
+        hapPath = MOCK_NWEB_INSTALLATION_DIR;
+    }
+    NWebHelper* helper = new NWebHelper;
     std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
     std::shared_ptr<NWebDOHConfigImpl> config = std::make_shared<NWebDOHConfigImpl>();
-    NWebHelper::Instance().SetHttpDns(config);
-    auto webview = helper.CreateNWeb(create_info);
+    helper->SetBundlePath(hapPath);
+    helper->Init(false);
+    helper->SetHttpDns(config);
+    auto webview = helper->CreateNWeb(create_info);
     EXPECT_EQ(webview, nullptr);
-    auto cook = helper.GetCookieManager();
+    auto cook = helper->GetCookieManager();
     EXPECT_EQ(cook, nullptr);
-    auto base = helper.GetDataBase();
+    auto base = helper->GetDataBase();
     EXPECT_NE(base, nullptr);
-    auto storage = helper.GetWebStorage();
+    auto storage = helper->GetWebStorage();
     EXPECT_NE(storage, nullptr);
-    auto nweb = helper.GetNWeb(nweb_id);
+    auto nweb = helper->GetNWeb(nweb_id);
     EXPECT_EQ(nweb, nullptr);
 }
 

@@ -19,6 +19,7 @@
 
 #include <list>
 #include <map>
+#include <math.h>
 #include <string>
 #include <vector>
 
@@ -196,6 +197,18 @@ const ArkWebStringVectorMap ark_web_string_vector_map_default = {
     0,
 };
 
+typedef struct {
+    int size;
+    ArkWebString* key;
+    ArkWebUint8Vector* value;
+
+    ArkWebMemFreeFunc ark_web_mem_free_func;
+} ArkWebUInt8VectorMap;
+
+const ArkWebUInt8VectorMap ark_web_uint8_vector_map_default = {
+    0,
+};
+
 template<typename T1, typename T2, typename R>
 R ArkWebBasicMapClassToStruct(const std::map<T1, T2>& class_value)
 {
@@ -361,5 +374,13 @@ std::map<std::string, std::vector<std::string>> ArkWebStringVectorMapStructToCla
     const ArkWebStringVectorMap& struct_value);
 
 void ArkWebStringVectorMapStructRelease(ArkWebStringVectorMap& struct_value);
+
+ArkWebUInt8VectorMap ArkWebUInt8VectorMapClassToStruct(
+    const std::map<std::string, std::vector<uint8_t>>& class_value);
+
+std::map<std::string, std::vector<uint8_t>> ArkWebUInt8VectorMapStructToClass(
+    const ArkWebUInt8VectorMap& struct_value);
+
+void ArkWebUInt8VectorMapStructRelease(ArkWebUInt8VectorMap& struct_value);
 
 #endif // ARK_WEB_TYPES_H_

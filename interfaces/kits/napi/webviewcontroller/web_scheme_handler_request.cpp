@@ -563,6 +563,16 @@ void WebSchemeHandler::PutRequestStop(napi_env, napi_value callback)
     }
 }
 
+void WebSchemeHandler::DeleteReference(WebSchemeHandler* schemehandler)
+{
+    ArkWeb_SchemeHandler* handler =
+        const_cast<ArkWeb_SchemeHandler*>(GetArkWebSchemeHandler(schemehandler));
+    if (handler && schemehandler->delegate_) {
+        napi_delete_reference(schemehandler->env_, schemehandler->delegate_);
+        schemehandler->delegate_ = nullptr;
+    }
+}
+
 WebResourceHandler::WebResourceHandler(napi_env env)
     : env_(env)
 {
@@ -609,19 +619,19 @@ int32_t WebResourceHandler::DidFinish()
     return ret;
 }
 
-int32_t WebResourceHandler::DidFailWithError(ArkWeb_NetError errorCode)
+int32_t WebResourceHandler::DidFailWithError(ArkWeb_NetError errorCode, bool completeIfNoResponse)
 {
     if (isFinished_) {
         return ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN;
     }
-    int32_t ret = OH_ArkWebResourceHandler_DidFailWithError(handler_, errorCode);
+    int32_t ret = OH_ArkWebResourceHandler_DidFailWithErrorV2(handler_, errorCode, completeIfNoResponse);
     if (ret == 0) {
         isFinished_ = true;
     }
     return ret;
 }
 
-void WebResourceHandler::DestoryArkWebResourceHandler()
+void WebResourceHandler::DestroyArkWebResourceHandler()
 {
     if (handler_) {
         OH_ArkWebResourceHandler_Destroy(handler_);
@@ -727,7 +737,23 @@ void WebHttpBodyStream::Read(int bufLen, napi_ref jsCallback, napi_deferred defe
     if (buffer == nullptr) {
         return;
     }
+    if (!stream_) {
+        delete[] buffer;
+        buffer = nullptr;
+        return;
+    }
     OH_ArkWebHttpBodyStream_Read(stream_, buffer, bufLen);
+}
+
+void WebHttpBodyStream::DeleteInitJsCallbackRef()
+{
+    if (!env_) {
+        return;
+    }
+    if (initJsCallback_) {
+        napi_delete_reference(env_, initJsCallback_);
+        initJsCallback_ = nullptr;
+    }
 }
 
 void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
@@ -748,17 +774,20 @@ void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
     }
     napi_value resourceName = nullptr;
     if (napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName) != napi_status::napi_ok) {
+        DeleteInitJsCallbackRef();
         delete param;
         return;
     }
     if (napi_create_async_work(env_, nullptr, resourceName,
         [](napi_env env, void *data) {},
         ExecuteInitComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
+        DeleteInitJsCallbackRef();
         delete param;
         return;
     }
     if (napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated) != napi_status::napi_ok) {
         napi_delete_async_work(env_, param->asyncWork);
+        DeleteInitJsCallbackRef();
         delete param;
     }
 }
@@ -835,6 +864,17 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
     delete param;
 }
 
+void WebHttpBodyStream::DeleteReadJsCallbackRef()
+{
+    if (!env_) {
+        return;
+    }
+    if (readJsCallback_) {
+        napi_delete_reference(env_, readJsCallback_);
+        readJsCallback_ = nullptr;
+    }
+}
+
 void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
 {
     if (!env_) {
@@ -853,20 +893,24 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
     }
     napi_value resourceName = nullptr;
     if (napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName) != napi_status::napi_ok) {
+        DeleteReadJsCallbackRef();
         delete param;
         return;
     }
     if (napi_create_async_work(env_, nullptr, resourceName,
         [](napi_env env, void *data) {},
         ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
+        DeleteReadJsCallbackRef();
         delete param;
         return;
     }
     if (napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated) != napi_status::napi_ok) {
         napi_delete_async_work(env_, param->asyncWork);
+        DeleteReadJsCallbackRef();
         delete param;
     }
 }
+
 
 uint64_t WebHttpBodyStream::GetPostion() const
 {

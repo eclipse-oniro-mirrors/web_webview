@@ -18,6 +18,7 @@
 
 #include <string>
 
+#include "appspawn.h"
 #include "app_fwk_update_service_stub.h"
 #include "common_event_manager.h"
 #include "event_handler.h"
@@ -49,6 +50,7 @@ public:
     ~AppFwkUpdateService();
 
     ErrCode VerifyPackageInstall(const std::string& bundleName, const std::string& hapPath, int32_t& success) override;
+    ErrCode NotifyArkWebInstallSuccess(const std::string& bundleName) override;
     void SubscribePackageChangedEvent();
     void OnPackageChangedEvent(const std::string& bunldeName, const std::string& hapPath);
 
@@ -64,7 +66,7 @@ private:
 
     int SetWebInstallPath(const std::string& path);
     int SetWebCorePackageName(const std::string& packageName);
-    int SendAppSpawnMessage(const std::string& packageName);
+    int SendAppSpawnMessage(const std::string& packageName, AppSpawnMsgType msgType);
     int SendNWebSpawnMesage(const std::string& packageName);
     std::shared_ptr<AppExecFwk::EventHandler> unloadHandler_;
     std::shared_ptr<AppExecFwk::EventRunner> runner_;
