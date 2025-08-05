@@ -198,9 +198,9 @@ HWTEST_F(OhosResourceAdapterTest, OhosResourceAdapterTest_OhosFileMapperImpl_003
     std::string fileNmae = apperImpl.GetFileName();
     EXPECT_EQ(fileNmae, "");
     bool isCompressed = apperImpl.IsCompressed();
-    EXPECT_TRUE(isCompressed);
+    EXPECT_FALSE(isCompressed);
     void* data = apperImpl.GetDataPtr();
-    EXPECT_FALSE(data, nullptr);
+    EXPECT_EQ(data, nullptr);
     size_t dataLen = apperImpl.GetDataLen();
     EXPECT_EQ(dataLen, 0);
     uint8_t* dest;
