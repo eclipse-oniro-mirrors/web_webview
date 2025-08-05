@@ -29,6 +29,13 @@ public:
     virtual void OnReadable(int32_t fileDescriptor) = 0;
 };
 
+/*--ark web(source=webcore)--*/
+class ArkOnceCallbackAdapter : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual void OnRunnable() = 0;
+};
+
 /*--ark web(source=webview)--*/
 class ArkEventHandlerAdapter : public virtual ArkWebBaseRefCounted {
 public:
@@ -38,6 +45,9 @@ public:
 
     /*--ark web()--*/
     virtual void RemoveFileDescriptorListener(int32_t fileDescriptor) = 0;
+
+    /*--ark web()--*/
+    virtual void PostTask(ArkWebRefPtr<ArkOnceCallbackAdapter> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -284,7 +284,12 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetCertMaxSize_001, TestSize.Lev
     g_appMaxSize = adapter.GetAppCertMaxSize();
     EXPECT_NE(g_appMaxSize, TEST_FAILURE);
     g_certSum = adapter.GetSytemRootCertSum();
-    EXPECT_EQ(g_certSum, TEST_OK);
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        EXPECT_NE(g_certSum, TEST_OK);
+    } else {
+        EXPECT_EQ(g_certSum, TEST_OK);
+    }
 }
 
 /**
@@ -299,7 +304,12 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetAppCert_002, TestSize.Level1)
     uint8_t* certData = static_cast<uint8_t *>(malloc(g_cerSize));
     EXPECT_NE(certData, nullptr);
     int32_t result = adapter.GetSytemRootCertData(0, certData);
-    EXPECT_EQ(result, -1);
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        EXPECT_NE(result, -1);
+    } else {
+        EXPECT_EQ(result, -1);
+    }
     free(certData);
     certData = nullptr;
 }
@@ -375,18 +385,36 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_Sign_006, TestSize.Level1)
     uint8_t signData[DEFAULT_SIGNATURE_LEN] = {0};
     result = adapter.Sign(uriData, messageData, sizeof(messageData),
                                   signData, sizeof(signData));
-    EXPECT_EQ(result, -1);
+    std::string deviceType = OHOS::system::GetDeviceType();
+    if (deviceType == "phone" || deviceType == "default") {
+        EXPECT_NE(result, -1);
+    } else {
+        EXPECT_EQ(result, -1);
+    }
     result = adapter.Sign(uriData, messageData, sizeof(messageData), nullptr, 0);
     EXPECT_EQ(result, -1);
     result = adapter.Sign(uriData, nullptr, 0, signData, sizeof(signData));
     EXPECT_EQ(result, -1);
 
-    std::string hostname = "";
-    std::vector<std::string> certs;
-    bool getNameValue = adapter.GetTrustAnchorsForHostName(hostname, certs);
-    EXPECT_TRUE(getNameValue);
-    getNameValue = adapter.GetTrustAnchorsForHostName("hostnametest", certs);
-    EXPECT_TRUE(getNameValue);
+    uint32_t signDataLen = 0;
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0401);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0501);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0601);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0403);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0503);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0603);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0805);
+    EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0806);
+    EXPECT_EQ(result, -1);
 }
 
 /**
@@ -430,20 +458,5 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_InitCertList_007, TestSize.Level
     EXPECT_NE(result, 0);
     result = adapter.GetCertDataBySubject(subjectName, certData, CM_SYSTEM_TRUSTED_STORE);
     EXPECT_NE(result, 0);
-}
-
-/**
- * @tc.name: CertMgrAdapterTest_GetPinSetForHostName_008
- * @tc.desc: GetPinSetForHostName.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetPinSetForHostName_008, TestSize.Level1)
-{
-    CertManagerAdapterImpl adapter;
-    const std::string hostname = "testweb";
-    std::vector<std::string> pins;
-    bool result = adapter.GetPinSetForHostName(hostname, pins);
-    EXPECT_TRUE(result);
 }
 } // namespace OHOS

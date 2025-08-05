@@ -27,6 +27,7 @@
 #include "ohos_nweb/bridge/ark_web_proxy_changed_callback_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
+#include "base/include/ark_web_errno.h"
 
 namespace OHOS::NWeb {
 
@@ -235,6 +236,16 @@ void ArkWebEngineWrapper::ClearHostIP(const std::string& hostName)
     ark_web_engine_->ClearHostIP(ArkWebStringClassToStruct(hostName));
 }
 
+void ArkWebEngineWrapper::SetAppCustomUserAgent(const std::string& userAgent)
+{
+    ark_web_engine_->SetAppCustomUserAgent(ArkWebStringClassToStruct(userAgent));
+}
+
+void ArkWebEngineWrapper::SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts)
+{
+    ark_web_engine_->SetUserAgentForHosts(ArkWebStringClassToStruct(userAgent), ArkWebStringVectorClassToStruct(hosts));
+}
+
 void ArkWebEngineWrapper::EnableWholeWebPageDrawing()
 {
     ark_web_engine_->EnableWholeWebPageDrawing();
@@ -294,6 +305,71 @@ void ArkWebEngineWrapper::RemoveProxyOverride(std::shared_ptr<OHOS::NWeb::NWebPr
 {
     ArkWebRefPtr<ArkWebProxyChangedCallback> ark_web_proxy_callback = new ArkWebProxyChangedCallbackWrapper(callback);
     ark_web_engine_->RemoveProxyOverride(ark_web_proxy_callback);
+}
+
+void ArkWebEngineWrapper::SetWebDebuggingAccessAndPort(
+    bool isEnableDebug, int32_t port)
+{
+    ark_web_engine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
+    if (ArkWebGetErrno() != RESULT_OK) {
+        ark_web_engine_->SetWebDebuggingAccess(isEnableDebug);
+    }
+}
+
+uint32_t ArkWebEngineWrapper::AddBlanklessLoadingUrls(const std::vector<std::string>& urls)
+{
+    ArkWebStringVector stUrls = ArkWebStringVectorClassToStruct(urls);
+
+    uint32_t addCounts = ark_web_engine_->AddBlanklessLoadingUrls(stUrls);
+
+    ArkWebStringVectorStructRelease(stUrls);
+    return addCounts;
+}
+
+void ArkWebEngineWrapper::RemoveBlanklessLoadingUrls(const std::vector<std::string>& urls)
+{
+    ArkWebStringVector stUrls = ArkWebStringVectorClassToStruct(urls);
+
+    ark_web_engine_->RemoveBlanklessLoadingUrls(stUrls);
+
+    ArkWebStringVectorStructRelease(stUrls);
+}
+
+void ArkWebEngineWrapper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)
+{
+    ArkWebStringVector stUrls = ArkWebStringVectorClassToStruct(urls);
+
+    ark_web_engine_->ClearBlanklessLoadingCache(stUrls);
+
+    ArkWebStringVectorStructRelease(stUrls);
+}
+
+std::string ArkWebEngineWrapper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)
+{
+    ArkWebString url_ = ArkWebStringClassToStruct(url);
+    std::string ret = ArkWebStringStructToClass(ark_web_engine_->CheckBlankOptEnable(url_, nweb_id));
+    ArkWebStringStructRelease(url_);
+    return ret;
+}
+
+void ArkWebEngineWrapper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
+{
+    ark_web_engine_->SetBlanklessLoadingCacheCapacity(capacity);
+}
+
+void ArkWebEngineWrapper::EnablePrivateNetworkAccess(bool enable)
+{
+    ark_web_engine_->EnablePrivateNetworkAccess(enable);
+}
+
+bool ArkWebEngineWrapper::IsPrivateNetworkAccessEnabled()
+{
+    return ark_web_engine_->IsPrivateNetworkAccessEnabled();
+}
+
+void ArkWebEngineWrapper::SetWebDestroyMode(OHOS::NWeb::WebDestroyMode mode)
+{
+    ark_web_engine_->SetWebDestroyMode(static_cast<int32_t>(mode));
 }
 
 } // namespace OHOS::ArkWeb

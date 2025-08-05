@@ -41,8 +41,8 @@ public:
     void SetFramePreferredRate(int32_t preferredRate) override;
 
     void SetOnVsyncCallback(void (*callback)()) override;
-    void SetIsGPUProcess(bool isGPU);
     void SetOnVsyncEndCallback(void (*onVsyncEndCallback)()) override;
+    void SetIsGPUProcess(bool isGPU);
 
     void SetScene(const std::string& sceneName, uint32_t state) override;
     void SetDVSyncSwitch(bool dvsyncSwitch) override;

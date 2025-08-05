@@ -35,6 +35,7 @@ ohos_unittest("nweb_helper_test") {
     "c_utils:utils",
     "googletest:gmock_main",
     "googletest:gtest_main",
+    "graphic_2d:librender_service_base",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "webview:libnweb",

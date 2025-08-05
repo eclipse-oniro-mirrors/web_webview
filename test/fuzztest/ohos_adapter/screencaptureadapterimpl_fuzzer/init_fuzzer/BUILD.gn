@@ -56,9 +56,8 @@ ohos_fuzztest("InitFuzzTest") {
 group("fuzztest") {
   testonly = true
   deps = []
-  deps += [
-    # deps file
-    ":InitFuzzTest",
-  ]
+  if (webview_camera_enable) {
+    deps += [ ":InitFuzzTest" ]
+  }
 }
 ###############################################################################

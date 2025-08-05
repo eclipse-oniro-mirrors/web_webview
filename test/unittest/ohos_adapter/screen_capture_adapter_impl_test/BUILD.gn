@@ -43,7 +43,9 @@ ohos_unittest("screen_capture_adapter_impl_test") {
     "graphic_surface:surface",
     "hilog:libhilog",
     "ipc:ipc_core",
+    "selinux_adapter:librestorecon",
     "webview:libnweb",
+    "ability_runtime:ability_connect_callback_stub",
   ]
 
   if (webview_media_player_enable) {

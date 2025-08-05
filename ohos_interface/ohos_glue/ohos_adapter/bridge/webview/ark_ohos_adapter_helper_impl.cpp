@@ -67,6 +67,7 @@
 #include "ohos_adapter/bridge/ark_print_manager_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_running_lock_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_screen_capture_adapter_impl.h"
+#include "ohos_adapter/bridge/ark_screenlock_manager_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_sensor_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_soc_perf_client_adapter_impl.h"
 #include "ohos_adapter/bridge/ark_surface_buffer_adapter_impl.h"
@@ -220,9 +221,13 @@ ArkWebRefPtr<ArkKeystoreAdapter> ArkOhosAdapterHelperImpl::GetKeystoreAdapterIns
 
 ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> ArkOhosAdapterHelperImpl::GetEnterpriseDeviceManagementInstance()
 {
-    static NWeb::EnterpriseDeviceManagementAdapter& instance = real_.GetEnterpriseDeviceManagementInstance();
-    static ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> impl =
-        new ArkEnterpriseDeviceManagementAdapterImpl(instance);
+    static std::once_flag flag;
+    static ArkWebRefPtr<ArkEnterpriseDeviceManagementAdapter> impl;
+    std::call_once(flag, [this] {
+        static NWeb::EnterpriseDeviceManagementAdapter& instance =
+            real_.GetEnterpriseDeviceManagementInstance();
+        impl = new ArkEnterpriseDeviceManagementAdapterImpl(instance);
+    });
     return impl;
 }
 
@@ -243,6 +248,13 @@ ArkWebRefPtr<ArkIMFAdapter> ArkOhosAdapterHelperImpl::CreateIMFAdapter()
 ArkWebRefPtr<ArkCertManagerAdapter> ArkOhosAdapterHelperImpl::GetRootCertDataAdapter()
 {
     std::unique_ptr<NWeb::CertManagerAdapter> adapter = real_.GetRootCertDataAdapter();
+    std::shared_ptr<NWeb::CertManagerAdapter> shared = std::move(adapter);
+    return new ArkCertManagerAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkCertManagerAdapter> ArkOhosAdapterHelperImpl::GetCertManagerAdapter()
+{
+    std::unique_ptr<NWeb::CertManagerAdapter> adapter = real_.GetCertManagerAdapter();
     std::shared_ptr<NWeb::CertManagerAdapter> shared = std::move(adapter);
     return new ArkCertManagerAdapterImpl(shared);
 }
@@ -433,6 +445,13 @@ ArkWebRefPtr<ArkDrmAdapter> ArkOhosAdapterHelperImpl::CreateDrmAdapter()
     std::unique_ptr<NWeb::DrmAdapter> adapter = real_.CreateDrmAdapter();
     std::shared_ptr<NWeb::DrmAdapter> shared = std::move(adapter);
     return new ArkDrmAdapterImpl(shared);
+}
+
+ArkWebRefPtr<ArkScreenlockManagerAdapter> ArkOhosAdapterHelperImpl::CreateScreenlockManagerAdapter()
+{
+    std::unique_ptr<NWeb::ScreenlockManagerAdapter> adapter = real_.CreateScreenlockManagerAdapter();
+    std::shared_ptr<NWeb::ScreenlockManagerAdapter> shared = std::move(adapter);
+    return new ArkScreenlockManagerAdapterImpl(shared);
 }
 
 } // namespace OHOS::ArkWeb

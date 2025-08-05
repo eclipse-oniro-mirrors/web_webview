@@ -90,6 +90,12 @@ public:
 
     ArkWebString GetBundleName() override;
 
+    ArkWebString GetStringParameter(const ArkWebString& key, const ArkWebString& defaultValue) override;
+
+    int32_t GetInitialCongestionWindowSize() override;
+
+    int32_t GetIntParameter(const ArkWebString& key, int32_t defaultValue) override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

@@ -16,12 +16,15 @@
 #include "media_avsession_adapter_impl.h"
 
 #include "ability_manager_client.h"
+#include "array_wrapper.h"
 #include "avsession_errors.h"
 #include "avsession_manager.h"
+#include "bool_wrapper.h"
 #include "bundle_mgr_proxy.h"
 #include "element_name.h"
 #include "if_system_ability_manager.h"
 #include "iservice_registry.h"
+#include "native_interface_bundle.h"
 #include "nweb_log.h"
 #include "parameters.h"
 #include "system_ability_definition.h"
@@ -31,6 +34,8 @@ namespace OHOS::NWeb {
 std::unordered_map<std::string, std::shared_ptr<AVSession::AVSession>> MediaAVSessionAdapterImpl::avSessionMap;
 
 constexpr int64_t LIVE_STREAM_INFINITE_DURATION = -1;
+constexpr int64_t PARAMS_VALUE = 1;
+constexpr int64_t INDEX_VALUE = 0;
 
 MediaAVSessionCallbackImpl::MediaAVSessionCallbackImpl(
     std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter)
@@ -126,45 +131,17 @@ void MediaAVSessionKey::Init() {
     type_ = MediaAVSessionType::MEDIA_TYPE_INVALID;
 
     // SA application can get AbilityName by GetTopAbility, but others cannnot.
-    if (!element_.GetAbilityName().empty()){
+    if (!element_.GetAbilityName().empty()) {
+        WVLOG_I("media avsession adapter Init element_.GetAbilityName()=%{public}s", element_.GetAbilityName().c_str());
         return;
     }
 
-    sptr<ISystemAbilityManager> systemAbilityManager =
-        SystemAbilityManagerClient::GetInstance().GetSystemAbilityManager();
-    if (systemAbilityManager == nullptr) {
-        WVLOG_E("get SystemAbilityManager failed");
-        return;
+    OH_NativeBundle_ElementName bundleInfo = OH_NativeBundle_GetMainElementName();
+    WVLOG_I("OH_NativeBundle_GetMainElementName, bundleName=%{public}s, abilityName=%{public}s", bundleInfo.bundleName,
+        bundleInfo.abilityName);
+    if (bundleInfo.abilityName) {
+        element_.SetAbilityName(std::string(bundleInfo.abilityName));
     }
-    sptr<IRemoteObject> remoteObject =
-        systemAbilityManager->GetSystemAbility(BUNDLE_MGR_SERVICE_SYS_ABILITY_ID);
-    if (remoteObject == nullptr) {
-        WVLOG_E("get Bundle Manager failed");
-        return;
-    }
-    auto bundleMgr = iface_cast<AppExecFwk::IBundleMgr>(remoteObject);
-    if (bundleMgr == nullptr) {
-        WVLOG_E("get Bundle Manager failed");
-        return;
-    }
-    AppExecFwk::BundleInfo bundleInfo;
-    auto flag = (static_cast<int32_t>(AppExecFwk::GetBundleInfoFlag::GET_BUNDLE_INFO_WITH_HAP_MODULE) | 
-            static_cast<int32_t>(AppExecFwk::GetBundleInfoFlag::GET_BUNDLE_INFO_WITH_ABILITY));
-    if (bundleMgr->GetBundleInfoForSelf(flag, bundleInfo) != 0) {
-        WVLOG_E("get bundle info failed");
-        return;
-    }
-    auto hapModuleInfos = bundleInfo.hapModuleInfos;
-    if (hapModuleInfos.empty()) {
-        WVLOG_E("get hapModuleInfos failed");
-        return;
-    }
-    auto abilityInfos = hapModuleInfos[0].abilityInfos;
-    if (abilityInfos.empty()) {
-        WVLOG_E("get abilityInfos failed");
-        return;
-    }
-    element_.SetAbilityName(abilityInfos[0].name);
 }
 
 int32_t MediaAVSessionKey::GetPID() {
@@ -366,6 +343,10 @@ void MediaAVSessionAdapterImpl::SetPlaybackPosition(const std::shared_ptr<MediaA
 
 bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionMetadataAdapter> metadata) {
     bool updated = false;
+    if (!metadata || !avMetadata_) {
+        WVLOG_E("media avsession adapter UpdateMetaDataCache: metadata or avMetadata_ is null!");
+        return updated;
+    }
     if (avMetadata_->GetTitle() != metadata->GetTitle()) {
         avMetadata_->SetTitle(metadata->GetTitle());
         updated = true;
@@ -470,19 +451,41 @@ void MediaAVSessionAdapterImpl::DestroyAndEraseSession() {
     WVLOG_I("media avsession adapter DestroyAndEraseSession out");
 }
 
-bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type) {
-    WVLOG_I("media avsession adapter CreateNewSession in");
-    avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
-        avSessionKey_->GetElement().GetBundleName(), static_cast<int32_t>(type), avSessionKey_->GetElement());
-    if (avSession_) {
-        avSessionKey_->SetType(type);
-        avSessionMap.insert(
-            std::pair<std::string, std::shared_ptr<AVSession::AVSession>>(avSessionKey_->ToString(), avSession_));
-        return true;
-    } else {
-        WVLOG_E("media avsession adapter CreateNewSession Fail, out return false");
+bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type)
+{
+    if (!avSessionKey_) {
+        WVLOG_E("media avsession adapter avSessionKey_ is nullptr");
         return false;
     }
+    WVLOG_I("media avsession adapter CreateNewSession, avSessionKey_=%{public}s", avSessionKey_->ToString().c_str());
+    avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
+        avSessionKey_->GetElement().GetBundleName(), static_cast<int32_t>(type), avSessionKey_->GetElement());
+    if (!avSession_) {
+        WVLOG_E("media avsession adapter CreateNewSession fail, avSession_ is nullptr");
+        return false;
+    }
+
+    avSessionKey_->SetType(type);
+    if (MediaAVSessionType::MEDIA_TYPE_VIDEO == type) {
+        std::shared_ptr<OHOS::AAFwk::WantParams> want = std::make_shared<OHOS::AAFwk::WantParams>();
+        if (!want) {
+            WVLOG_E("CreateNewSession: create want failed");
+            return false;
+        }
+        sptr<OHOS::AAFwk::IArray> params =
+            new (std::nothrow) OHOS::AAFwk::Array(PARAMS_VALUE, OHOS::AAFwk::g_IID_IBoolean);
+        if (!params) {
+            WVLOG_E("CreateNewSession: create params failed");
+            return false;
+        }
+        params->Set(INDEX_VALUE, OHOS::AAFwk::Boolean::Box(true));
+        want->SetParam("hw_live_view_hidden_when_keyguard", params);
+        avSession_->SetExtras(*want);
+        WVLOG_I("CreateNewSession: Set hw_live_view_hidden_when_keyguard true");
+    }
+    avSessionMap.insert(
+        std::pair<std::string, std::shared_ptr<AVSession::AVSession>>(avSessionKey_->ToString(), avSession_));
+    return true;
 }
 
 } // namespace OHOS::NWeb

@@ -106,6 +106,7 @@ public:
 
     void PutRequestStart(napi_env, napi_value callback);
     void PutRequestStop(napi_env, napi_value callback);
+    void DeleteReference(WebSchemeHandler* schemehandler);
 
     napi_ref delegate_ = nullptr;
 private:
@@ -134,8 +135,8 @@ public:
     int32_t DidReceiveResponse(const ArkWeb_Response* response);
     int32_t DidReceiveResponseBody(const uint8_t* buffer, int64_t buflen);
     int32_t DidFinish();
-    int32_t DidFailWithError(ArkWeb_NetError errorCode);
-    void DestoryArkWebResourceHandler();
+    int32_t DidFailWithError(ArkWeb_NetError errorCode, bool completeIfNoResponse);
+    void DestroyArkWebResourceHandler();
     void SetFinishFlag()
     {
         isFinished_ = true;
@@ -166,6 +167,9 @@ public:
     void ExecuteInit(ArkWeb_NetError result);
     void ExecuteRead(uint8_t* buffer, int bytesRead);
 private:
+    void DeleteInitJsCallbackRef();
+    void DeleteReadJsCallbackRef();
+
     struct InitParam {
         napi_env env;
         napi_async_work asyncWork;

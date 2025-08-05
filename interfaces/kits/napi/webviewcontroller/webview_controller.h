@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Huawei Device Co., Ltd.
+ * Copyright (c) 2025 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -21,6 +21,7 @@
 #include <string>
 #include <unordered_map>
 
+#include "auto_napi_ref.h"
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
@@ -32,6 +33,7 @@
 #include "print_manager_adapter.h"
 
 #include "web_scheme_handler_request.h"
+#include "webview_value.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -125,6 +127,40 @@ enum class ScrollType : int {
     EVENT = 0,
 };
 
+enum class AttachState : int {
+    NOT_ATTACHED = 0,
+    ATTACHED = 1
+};
+
+enum class BlanklessErrorCode : int {
+    SUCCESS = 0,
+    ERR_UNKNOWN = -1,
+    ERR_INVALID_PARAM = -2,
+    ERR_CONTROLLER_NOT_INITED = -3,
+    ERR_KEY_NOT_MATCH = -4,
+    ERR_SIGNIFICANT_CHANGE = -5
+};
+
+class WebRegObj {
+public:
+    WebRegObj() : m_regEnv(0), m_regHanderRef(nullptr) {
+    }
+
+    explicit WebRegObj(const napi_env& env, const napi_ref& ref)
+    {
+        m_regEnv = env;
+        m_regHanderRef = ref;
+        m_isMarked = false;
+    }
+
+    ~WebRegObj() {
+    }
+
+    napi_env m_regEnv;
+    napi_ref m_regHanderRef;
+    bool m_isMarked;
+};
+
 class WebPrintDocument;
 class WebviewController {
 public:
@@ -170,6 +206,8 @@ public:
     ErrCode SetCustomUserAgent(const std::string& userAgent);
 
     std::string GetTitle();
+
+    int32_t GetProgress();
 
     int32_t GetPageHeight();
 
@@ -273,6 +311,10 @@ public:
     bool GetScrollable() const;
 
     void InnerSetHapPath(const std::string &hapPath);
+ 
+    void InnerSetFavicon(napi_env env, napi_value favicon);
+
+    napi_value InnerGetFavicon(napi_env env);
 
     bool GetCertChainDerData(std::vector<std::string> &certChainDerData) const;
 
@@ -389,6 +431,8 @@ public:
 
     void GetScrollOffset(float* offset_x, float* offset_y);
 
+    void GetPageOffset(float* offset_x, float* offset_y);
+
     void CreatePDFCallbackExt(
         napi_env env, std::shared_ptr<NWebPDFConfigArgs> pdfConfig, napi_ref pdfCallback);
 
@@ -398,6 +442,43 @@ public:
     bool ScrollByWithResult(float deltaX, float deltaY) const;
 
     std::shared_ptr<HitTestResult> GetLastHitTest();
+
+    void SaveWebSchemeHandler(const char* scheme, WebSchemeHandler* handler);
+
+    static void SaveWebServiceWorkerSchemeHandler(const char* scheme, WebSchemeHandler* handler);
+
+    int GetAttachState();
+
+    void RegisterStateChangeCallback(
+        const napi_env& env, const std::string& type, napi_value handler);
+
+    void TriggerStateChangeCallback(const std::string& type);
+
+    void DeleteRegisterObj(
+        const napi_env& env, std::vector<WebRegObj>& vecRegObjs, napi_value& handler);
+
+    void DeleteAllRegisterObj(const napi_env& env, std::vector<WebRegObj>& vecRegObjs);
+
+    void UnregisterStateChangeCallback(
+        const napi_env& env, const std::string& type, napi_value handler);
+
+    static void WaitForAttached(napi_env env, void* data);
+
+    static void TriggerWaitforAttachedPromise(napi_env env, napi_status status, void *data);
+
+    napi_value WaitForAttachedPromise(napi_env env, int32_t timeout, napi_deferred deferred);
+
+    int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime);
+
+    int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);
+
+    void SetWebDetach(int32_t nwebId);
+
+    ErrCode AvoidVisibleViewportBottom(int32_t avoidHeight);
+
+    ErrCode SetErrorPageEnabled(bool enable);
+
+    bool GetErrorPageEnabled();
 private:
     int ConverToWebHitTestType(int hitType);
 
@@ -414,10 +495,15 @@ private:
                                     int32_t& result) const;
     bool GetHapModuleInfo();
 
+    void DeleteWebSchemeHandler();
+
+    static void DeleteWebServiceWorkerSchemeHandler();
+
 public:
     static std::string customeSchemeCmdLine_;
     static bool existNweb_;
     static bool webDebuggingAccess_;
+    static int32_t webDebuggingPort_;
     static std::set<std::string> webTagSet_;
     static int32_t webTagStrId_;
 
@@ -427,7 +513,14 @@ private:
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
     std::string hapPath_ = "";
     std::string webTag_ = "";
+    AutoNapiRef favicon_;
     std::vector<std::string> moduleName_;
+    std::map<std::string, WebSchemeHandler*> webSchemeHandlerMap_;
+    static std::map<std::string, WebSchemeHandler*> webServiceWorkerSchemeHandlerMap_;
+    AttachState attachState_ = AttachState::NOT_ATTACHED;
+    std::unordered_map<std::string, std::vector<WebRegObj>> attachEventRegisterInfo_;
+    std::condition_variable attachCond_;
+    std::mutex attachMtx_;
 };
 
 class WebMessagePort {
@@ -438,7 +531,7 @@ public:
 
     ErrCode ClosePort();
 
-    ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data);
+    ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data, std::shared_ptr<NWebRomValue> value);
 
     ErrCode SetPortMessageCallback(std::shared_ptr<NWebMessageValueCallback> callback);
 
@@ -457,7 +550,9 @@ private:
 
 class WebMessageExt {
 public:
-    explicit WebMessageExt(std::shared_ptr<NWebMessage> data) : data_(data) {};
+    explicit WebMessageExt(std::shared_ptr<NWebMessage> data,
+        std::shared_ptr<NWebRomValue> value = nullptr)
+        : data_(data), value_(value) {}
     ~WebMessageExt() = default;
 
     void SetType(int type);
@@ -478,6 +573,10 @@ public:
             data_->SetType(NWebValue::Type::STRING);
             data_->SetString(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::STRING);
+            value_->SetString(value);
+        }
     }
 
     void SetNumber(double value)
@@ -485,6 +584,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::DOUBLE);
             data_->SetDouble(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::DOUBLE);
+            value_->SetDouble(value);
         }
     }
 
@@ -494,6 +597,10 @@ public:
             data_->SetType(NWebValue::Type::BOOLEAN);
             data_->SetBoolean(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::BOOLEAN);
+            value_->SetBool(value);
+        }
     }
 
     void SetArrayBuffer(std::vector<uint8_t>& value)
@@ -501,6 +608,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::BINARY);
             data_->SetBinary(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::BINARY);
+            value_->SetBinary(value);
         }
     }
 
@@ -510,6 +621,10 @@ public:
             data_->SetType(NWebValue::Type::STRINGARRAY);
             data_->SetStringArray(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::STRINGARRAY);
+            value_->SetStringArray(value);
+        }
     }
 
     void SetDoubleArray(std::vector<double> value)
@@ -517,6 +632,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::DOUBLEARRAY);
             data_->SetDoubleArray(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::DOUBLEARRAY);
+            value_->SetDoubleArray(value);
         }
     }
 
@@ -526,6 +645,10 @@ public:
             data_->SetType(NWebValue::Type::INT64ARRAY);
             data_->SetInt64Array(value);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::INT64ARRAY);
+            value_->SetInt64Array(value);
+        }
     }
 
     void SetBooleanArray(std::vector<bool> value)
@@ -533,6 +656,10 @@ public:
         if (data_) {
             data_->SetType(NWebValue::Type::BOOLEANARRAY);
             data_->SetBooleanArray(value);
+        }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::BOOLEANARRAY);
+            value_->SetBoolArray(value);
         }
     }
 
@@ -543,6 +670,11 @@ public:
             data_->SetErrName(name);
             data_->SetErrMsg(message);
         }
+        if (value_) {
+            value_->SetType(NWebRomValue::Type::ERROR);
+            value_->SetErrName(name);
+            value_->SetErrMsg(message);
+        }
     }
 
     std::shared_ptr<NWebMessage> GetData() const
@@ -550,9 +682,15 @@ public:
         return data_;
     }
 
+    std::shared_ptr<NWebRomValue> GetValue() const
+    {
+        return value_;
+    }
+
 private:
     int type_ = 0;
     std::shared_ptr<NWebMessage> data_;
+    std::shared_ptr<NWebRomValue> value_;
 };
 
 class WebHistoryList {

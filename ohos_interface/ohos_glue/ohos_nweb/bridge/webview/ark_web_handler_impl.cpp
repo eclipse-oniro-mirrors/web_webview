@@ -42,6 +42,7 @@
 #include "ohos_nweb/bridge/ark_web_load_committed_details_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_data_info_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_native_embed_touch_event_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_native_embed_mouse_event_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_nweb_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_quick_menu_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_quick_menu_params_wrapper.h"
@@ -958,5 +959,145 @@ void ArkWebHandlerImpl::RestoreRenderFit()
 void ArkWebHandlerImpl::OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument)
 {
     nweb_handler_->OnAccessibilityEventV2(accessibilityId, eventType, ArkWebStringStructToClass(argument));
+}
+
+bool ArkWebHandlerImpl::OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable)
+{
+    return nweb_handler_->OnNestedScroll(x, y, xVelocity, yVelocity, isAvailable);
+}
+
+void ArkWebHandlerImpl::EnableSecurityLayer(bool isNeedSecurityLayer)
+{
+    nweb_handler_->EnableSecurityLayer(isNeedSecurityLayer);
+}
+
+bool ArkWebHandlerImpl::ChangeVisibilityOfQuickMenuV2()
+{
+    return nweb_handler_->ChangeVisibilityOfQuickMenuV2();
+}
+
+void ArkWebHandlerImpl::OnPip(int status,
+                              int delegate_id,
+                              int child_id,
+                              int frame_routing_id,
+                              int width,
+                              int height)
+{
+    nweb_handler_->OnPip(status, delegate_id, child_id,
+                         frame_routing_id, width, height);
+}
+
+bool ArkWebHandlerImpl::OnBeforeUnloadByJSV2(
+    const ArkWebString& url, const ArkWebString& message, bool isReload, ArkWebRefPtr<ArkWebJsDialogResult> result)
+{
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        return nweb_handler_->OnBeforeUnloadByJSV2(
+            ArkWebStringStructToClass(url), ArkWebStringStructToClass(message), isReload, nullptr);
+    }
+
+    return nweb_handler_->OnBeforeUnloadByJSV2(ArkWebStringStructToClass(url), ArkWebStringStructToClass(message),
+        isReload, std::make_shared<ArkWebJsDialogResultWrapper>(result));
+}
+
+void ArkWebHandlerImpl::OnNativeEmbedMouseEvent(ArkWebRefPtr<ArkWebNativeEmbedMouseEvent> mouse_event)
+{
+    if (CHECK_REF_PTR_IS_NULL(mouse_event)) {
+        nweb_handler_->OnNativeEmbedMouseEvent(nullptr);
+        return;
+    }
+
+    nweb_handler_->OnNativeEmbedMouseEvent(std::make_shared<ArkWebNativeEmbedMouseEventWrapper>(mouse_event));
+}
+
+void ArkWebHandlerImpl::OnActivateContentByJS()
+{
+    nweb_handler_->OnActivateContentByJS();
+}
+
+void ArkWebHandlerImpl::OnLoadStarted(const ArkWebString& url)
+{
+    nweb_handler_->OnLoadStarted(ArkWebStringStructToClass(url));
+}
+
+void ArkWebHandlerImpl::OnLoadFinished(const ArkWebString& url)
+{
+    nweb_handler_->OnLoadFinished(ArkWebStringStructToClass(url));
+}
+
+bool ArkWebHandlerImpl::OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error,
+    const ArkWebString& url, const ArkWebString& originalUrl, const ArkWebString& referrer, bool isFatalError,
+    bool isMainFrame, const ArkWebStringVector& certChainData)
+{
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        return nweb_handler_->OnAllSslErrorRequestByJSV2(nullptr, static_cast<ArkWebSslError>(error),
+            ArkWebStringStructToClass(url), ArkWebStringStructToClass(originalUrl), ArkWebStringStructToClass(referrer),
+            isFatalError, isMainFrame, ArkWebStringVectorStructToClass(certChainData));
+    }
+
+    return nweb_handler_->OnAllSslErrorRequestByJSV2(std::make_shared<ArkWebJsAllSslErrorResultWrapper>(result),
+        static_cast<ArkWebSslError>(error), ArkWebStringStructToClass(url), ArkWebStringStructToClass(originalUrl),
+        ArkWebStringStructToClass(referrer), isFatalError, isMainFrame, ArkWebStringVectorStructToClass(certChainData));
+}
+
+void ArkWebHandlerImpl::ShowMagnifier()
+{
+    nweb_handler_->ShowMagnifier();
+}
+
+void ArkWebHandlerImpl::HideMagnifier()
+{
+    nweb_handler_->HideMagnifier();
+}
+
+void ArkWebHandlerImpl::OnPageTitleV2(const ArkWebString& title, bool isRealTitle)
+{
+    nweb_handler_->OnPageTitleV2(ArkWebStringStructToClass(title), isRealTitle);
+}
+
+void ArkWebHandlerImpl::OnInsertBlanklessFrame(const ArkWebString& pathToFrame)
+{
+    nweb_handler_->OnInsertBlanklessFrame(ArkWebStringStructToClass(pathToFrame));
+}
+
+void ArkWebHandlerImpl::OnRemoveBlanklessFrame(int delayTime)
+{
+    nweb_handler_->OnRemoveBlanklessFrame(delayTime);
+}
+
+ArkWebString ArkWebHandlerImpl::OnHandleOverrideErrorPage(
+    ArkWebRefPtr<ArkWebUrlResourceRequest> request,
+    ArkWebRefPtr<ArkWebUrlResourceError> error)
+{
+    std::shared_ptr<OHOS::NWeb::NWebUrlResourceRequest> nweb_request = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(request)) {
+        nweb_request = std::make_shared<ArkWebUrlResourceRequestWrapper>(request);
+    }
+
+    std::shared_ptr<OHOS::NWeb::NWebUrlResourceError> nweb_error = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(error)) {
+        nweb_error = std::make_shared<ArkWebUrlResourceErrorWrapper>(error);
+    }
+
+    return ArkWebStringClassToStruct(nweb_handler_->OnHandleOverrideErrorPage(nweb_request, nweb_error));
+}
+
+void ArkWebHandlerImpl::OnPdfScrollAtBottom(const ArkWebString& url)
+{
+    nweb_handler_->OnPdfScrollAtBottom(ArkWebStringStructToClass(url));
+}
+
+void ArkWebHandlerImpl::OnPdfLoadEvent(int32_t result, const ArkWebString& url)
+{
+    nweb_handler_->OnPdfLoadEvent(result, ArkWebStringStructToClass(url));
+}
+
+void ArkWebHandlerImpl::OnTakeFocus(ArkWebRefPtr<ArkWebKeyEvent> event)
+{
+    if (CHECK_REF_PTR_IS_NULL(event)) {
+        nweb_handler_->OnTakeFocus(nullptr);
+        return;
+    }
+
+    nweb_handler_->OnTakeFocus(std::make_shared<ArkWebKeyEventWrapper>(event));
 }
 } // namespace OHOS::ArkWeb

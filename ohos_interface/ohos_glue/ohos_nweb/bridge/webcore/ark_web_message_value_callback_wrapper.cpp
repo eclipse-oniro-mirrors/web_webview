@@ -15,6 +15,8 @@
 
 #include "ohos_nweb/bridge/ark_web_message_value_callback_wrapper.h"
 
+#include "ohos_nweb/bridge/ark_web_hap_value_impl.h"
+
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -29,6 +31,16 @@ void ArkWebMessageValueCallbackWrapper::OnReceiveValue(std::shared_ptr<OHOS::NWe
     ArkWebMessage ark_web_message;
     ark_web_message.nweb_message = value;
     ark_web_message_value_callback_->OnReceiveValue(ark_web_message);
+}
+
+void ArkWebMessageValueCallbackWrapper::OnReceiveValueV2(std::shared_ptr<OHOS::NWeb::NWebHapValue> value)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(value)) {
+        ark_web_message_value_callback_->OnReceiveValueV2(nullptr);
+        return;
+    }
+
+    ark_web_message_value_callback_->OnReceiveValueV2(new ArkWebHapValueImpl(value));
 }
 
 } // namespace OHOS::ArkWeb

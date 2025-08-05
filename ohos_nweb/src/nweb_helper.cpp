@@ -37,7 +37,6 @@
 #include "parameters.h"
 
 namespace {
-static bool g_isFirstTimeStartUp = false;
 
 const int32_t NS_TO_S = 1000000000;
 const uint32_t NWEB_SURFACE_MAX_WIDTH = 7680;
@@ -60,6 +59,7 @@ const uint32_t NWEB_SURFACE_MAX_HEIGHT = 7680;
     DO(WebDownload_Resume);                           \
     DO(WebDownload_GetItemState);                     \
     DO(WebDownload_GetItemStateByGuid);               \
+    DO(WebDownload_GetItemStateByGuidV2);             \
     DO(WebDownloadItem_Guid);                         \
     DO(WebDownloadItem_GetDownloadItemId);            \
     DO(WebDownloadItem_GetState);                     \
@@ -269,10 +269,24 @@ extern "C" NWebDownloadItemState WebDownload_GetItemState(int32_t nwebId, long d
 
 extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuid(const std::string& guid)
 {
-    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
+    if (!g_nwebCApi) {
         return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
     }
-    return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
+    if (g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2) {
+        return g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2(guid.c_str());
+    }
+    if (g_nwebCApi->impl_WebDownload_GetItemStateByGuid) {
+        return g_nwebCApi->impl_WebDownload_GetItemStateByGuid(guid);
+    }
+    return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+}
+
+extern "C" NWebDownloadItemState WebDownload_GetItemStateByGuidV2(const char* guid)
+{
+    if (!g_nwebCApi || !g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2) {
+        return NWebDownloadItemState::MAX_DOWNLOAD_STATE;
+    }
+    return g_nwebCApi->impl_WebDownload_GetItemStateByGuidV2(guid);
 }
 
 extern "C" char* WebDownloadItem_Guid(const NWebDownloadItem* downloadItem)
@@ -589,23 +603,12 @@ NWebHelper& NWebHelper::Instance()
 
 void NWebHelper::TryPreReadLib(bool isFirstTimeStartUpWeb, const std::string& bundlePath)
 {
-    g_isFirstTimeStartUp = isFirstTimeStartUpWeb;
     if (isFirstTimeStartUpWeb) {
         WVLOG_D("first time startup, need to wait until the nweb init stage");
         return;
     }
 
     ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().PreDlopenLibFile(bundlePath);
-}
-
-static void TryPreReadLibForFirstlyAppStartUp(const std::string& bundlePath)
-{
-    if (g_isFirstTimeStartUp) {
-        std::thread preReadThread(
-            [bundlePath]() { ArkWeb::ArkWebNWebWebviewBridgeHelper::PreloadLibFile(true, bundlePath); });
-
-        preReadThread.detach();
-    }
 }
 
 bool NWebHelper::Init(bool from_ark)
@@ -616,6 +619,40 @@ bool NWebHelper::Init(bool from_ark)
 bool NWebHelper::InitAndRun(bool from_ark)
 {
     return LoadWebEngine(from_ark, true);
+}
+
+bool NWebHelper::HasLoadWebEngine()
+{
+    return nwebEngine_ != nullptr;
+}
+
+void NWebHelper::SaveSchemeVector(const char* name, int32_t option)
+{
+    struct NwebScheme scheme = {.name = std::string(name), .option = option};
+    schemeVector_.push_back(scheme);
+}
+
+bool NWebHelper::RegisterCustomSchemes()
+{
+    int32_t (*registerCustomSchemes)(const char* scheme, int32_t option) = nullptr;
+
+#define LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    LOAD_FN_PTR(registerCustomSchemes, OH_ArkWeb_RegisterCustomSchemes);
+#undef LOAD_FN_PTR
+    if (!registerCustomSchemes) {
+        WVLOG_E("OH_ArkWeb_RegisterCustomSchemes failed to load function registerCustomSchemes");
+        return false;
+    }
+
+    int32_t registerResult;
+    for (auto it = schemeVector_.begin(); it != schemeVector_.end(); ++it) {
+        registerResult = registerCustomSchemes(it->name.c_str(), it->option);
+        if (registerResult != NO_ERROR) {
+            WVLOG_E("register custom schemes fails, registerResult = %{public}d", registerResult);
+            return false;
+        }
+    }
+    return true;
 }
 
 bool NWebHelper::GetWebEngine(bool fromArk)
@@ -638,8 +675,7 @@ bool NWebHelper::GetWebEngine(bool fromArk)
         }
     }
 
-    TryPreReadLibForFirstlyAppStartUp(bundlePath_);
-
+    fromArk = fromArk && !NWebConfigHelper::Instance().IsWebPlayGroundEnable();
     if (!ArkWeb::ArkWebNWebWebviewBridgeHelper::GetInstance().Init(fromArk, bundlePath_)) {
         WVLOG_E("failed to init arkweb nweb bridge helper");
         return false;
@@ -655,6 +691,10 @@ bool NWebHelper::GetWebEngine(bool fromArk)
     if (nwebEngine_ == nullptr) {
         WVLOG_E("failed to get web engine instance");
         return false;
+    }
+
+    if (RegisterCustomSchemes() == false) {
+        WVLOG_E("register custom schemes failed");
     }
 
     coreApiLevel_ = nwebEngine_->GetArkWebCoreApiLevel();
@@ -724,14 +764,12 @@ bool NWebHelper::InitWebEngine()
     initFlag_ = true;
 
     WVLOG_I("succeed to init web engine");
-
-    webApplicationStateCallback_ = std::make_shared<WebApplicationStateChangeCallback>();
-    ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
     return true;
 }
 
 bool NWebHelper::LoadWebEngine(bool fromArk, bool runFlag)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     if (!GetWebEngine(fromArk)) {
         return false;
     }
@@ -764,12 +802,8 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
         WVLOG_E("web engine is nullptr");
         return nullptr;
     }
-    std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
-    if (webApplicationStateCallback_ && (!webApplicationStateCallback_->nweb_)) {
-        webApplicationStateCallback_->nweb_ = nweb;
-    }
-    WVLOG_I("NWebHelper::Nweb is created.");
-    return nweb;
+
+    return nwebEngine_->CreateNWeb(create_info);
 }
 
 std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
@@ -1023,6 +1057,26 @@ void NWebHelper::ClearHostIP(const std::string& hostName)
     nwebEngine_->ClearHostIP(hostName);
 }
 
+void NWebHelper::SetAppCustomUserAgent(const std::string& userAgent)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
+
+    nwebEngine_->SetAppCustomUserAgent(userAgent);
+}
+
+void NWebHelper::SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
+
+    nwebEngine_->SetUserAgentForHosts(userAgent, hosts);
+}
+
 void NWebHelper::WarmupServiceWorker(const std::string& url)
 {
     if (nwebEngine_ == nullptr) {
@@ -1077,6 +1131,36 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
     nwebEngine_->RemoveAllCache(includeDiskFiles);
 }
 
+void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("blankless failed to load web engine");
+        return;
+    }
+
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("blankless web engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->SetBlanklessLoadingCacheCapacity(capacity);
+}
+
+void NWebHelper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("blankless failed to load web engine");
+        return;
+    }
+
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("blankless web engine is nullptr");
+        return;
+    }
+
+    nwebEngine_->ClearBlanklessLoadingCache(urls);
+}
+
 void WebApplicationStateChangeCallback::NotifyApplicationForeground()
 {
     WVLOG_I("WebApplicationStateChangeCallback::NotifyApplicationForeground is called.");
@@ -1129,6 +1213,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height, incognitoMode);
     NWebConfigHelper::Instance().ParseConfig(initArgs);
 
@@ -1163,6 +1248,7 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void* enhanceSurfaceInfo,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     auto createInfo =
         NWebEnhanceSurfaceAdapter::Instance().GetCreateInfo(enhanceSurfaceInfo, initArgs, width, height, incognitoMode);
     auto nweb = NWebHelper::Instance().CreateNWeb(createInfo);
@@ -1206,4 +1292,68 @@ std::string NWebAdapterHelper::GetBundleName()
 {
     return NWebConfigHelper::Instance().GetBundleName();
 }
+
+void NWebHelper::SetWebDebuggingAccess(bool isEnableDebug)
+{
+    if (!initFlag_) {
+        WVLOG_E("SetWebDebuggingAccess, not initialized");
+        return;
+    }
+    if (!nwebEngine_) {
+        WVLOG_E("SetWebDebuggingAccess, nweb engine is nullptr");
+        return;
+    }
+    nwebEngine_->SetWebDebuggingAccess(isEnableDebug);
+}
+
+void NWebHelper::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
+{
+    if (!initFlag_) {
+        WVLOG_E("SetWebDebuggingAccessAndPort, not initialized");
+        return;
+    }
+    if (!nwebEngine_) {
+        WVLOG_E("SetWebDebuggingAccessAndPort, nweb engine is nullptr");
+        return;
+    }
+    nwebEngine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
+}
+
+std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)
+{
+    if (!nwebEngine_) {
+        WVLOG_E("blankless CheckBlankOptEnable, nweb engine is nullptr");
+        return "";
+    }
+    return nwebEngine_->CheckBlankOptEnable(url, nweb_id);
+}
+
+void NWebHelper::EnablePrivateNetworkAccess(bool enable)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return;
+    }
+    nwebEngine_->EnablePrivateNetworkAccess(enable);
+}
+
+bool NWebHelper::IsPrivateNetworkAccessEnabled()
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return false;
+    }
+    return nwebEngine_->IsPrivateNetworkAccessEnabled();
+}
+
+void NWebHelper::SetWebDestroyMode(WebDestroyMode mode)
+{
+    if (nwebEngine_ == nullptr) {
+        WVLOG_E("web engine is nullptr");
+        return;
+    }
+ 
+    nwebEngine_->SetWebDestroyMode(mode);
+}
+
 } // namespace OHOS::NWeb

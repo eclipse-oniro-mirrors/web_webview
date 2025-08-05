@@ -46,6 +46,7 @@
 #include "iservice_registry.h"
 #include "parameters.h"
 #include "system_ability_definition.h"
+#include "../../../../ohos_interface/ohos_glue/base/include/ark_web_errno.h"
 
 namespace {
 constexpr int32_t PARAMZERO = 0;
@@ -59,6 +60,17 @@ namespace OHOS {
 namespace NWeb {
 namespace {
 constexpr uint32_t URL_MAXIMUM = 2048;
+const std::string EVENT_CONTROLLER_ATTACH_STATE_CHANGE = "controllerAttachStateChange";
+const std::string EVENT_WAIT_FOR_ATTACH = "waitForAttach";
+
+struct WaitForAttachParam {
+    napi_async_work asyncWork;
+    napi_deferred deferred;
+    int32_t timeout;
+    WebviewController* webviewController;
+    int32_t state;
+};
+
 bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleName)
 {
     static std::string applicationBundleName;
@@ -93,8 +105,10 @@ std::unordered_map<int32_t, WebviewController*> g_webview_controller_map;
 std::string WebviewController::customeSchemeCmdLine_ = "";
 bool WebviewController::existNweb_ = false;
 bool WebviewController::webDebuggingAccess_ = OHOS::system::GetBoolParameter("web.debug.devtools", false);
+int32_t WebviewController::webDebuggingPort_ = 0;
 std::set<std::string> WebviewController::webTagSet_;
 int32_t WebviewController::webTagStrId_ = 0;
+std::map<std::string, WebSchemeHandler*> WebviewController::webServiceWorkerSchemeHandlerMap_;
 
 WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
 {
@@ -113,6 +127,62 @@ WebviewController::~WebviewController()
 {
     std::unique_lock<std::mutex> lk(g_objectMtx);
     g_webview_controller_map.erase(nwebId_);
+
+    {
+        std::unique_lock<std::mutex> attachLock(attachMtx_);
+        attachState_ = AttachState::ATTACHED;
+        attachCond_.notify_all();
+    }
+
+    for (auto& [eventName, regObjs] : attachEventRegisterInfo_) {
+        for (auto& regObj : regObjs) {
+            if (regObj.m_regHanderRef != nullptr) {
+                napi_delete_reference(regObj.m_regEnv, regObj.m_regHanderRef);
+                regObj.m_regHanderRef = nullptr;
+            }
+        }
+    }
+    attachEventRegisterInfo_.clear();
+}
+
+void WebviewController::TriggerStateChangeCallback(const std::string& type)
+{
+    auto iter = attachEventRegisterInfo_.find(type);
+    if (iter == attachEventRegisterInfo_.end()) {
+        WVLOG_D("WebviewController::TriggerStateChangeCallback event %{public}s not found.",
+            type.c_str());
+        return;
+    }
+
+    const std::vector<WebRegObj>& regObjs = iter->second;
+    for (const auto& regObj : regObjs) {
+        if (!regObj.m_isMarked){
+            napi_env env = regObj.m_regEnv;
+            napi_value handler = nullptr;
+            napi_get_reference_value(env, regObj.m_regHanderRef, &handler);
+
+            if (handler == nullptr) {
+                WVLOG_E("handler for event %{public}s is null.", type.c_str());
+                continue;
+            }
+
+            napi_value jsState = nullptr;
+            napi_create_int32(env, static_cast<int32_t>(attachState_), &jsState);
+
+            napi_value undefined;
+            napi_get_undefined(env, &undefined);
+
+            napi_call_function(env, nullptr, handler, 1, &jsState, &undefined);
+        }
+    }
+    for (auto it = iter->second.begin(); it != iter->second.end();) {
+        if (it->m_isMarked) {
+            napi_delete_reference(it->m_regEnv, it->m_regHanderRef);
+            it = iter->second.erase(it);
+        } else {
+            ++it;
+        }
+    }
 }
 
 void WebviewController::SetWebId(int32_t nwebId)
@@ -126,10 +196,19 @@ void WebviewController::SetWebId(int32_t nwebId)
         return;
     }
 
+    AttachState prevState = attachState_;
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (nweb_ptr) {
         OH_NativeArkWeb_BindWebTagToWebInstance(webTag_.c_str(), nweb_ptr);
         NWebHelper::Instance().SetWebTag(nwebId_, webTag_.c_str());
+        {
+            std::unique_lock<std::mutex> attachLock(attachMtx_);
+            attachState_ = AttachState::ATTACHED;
+            attachCond_.notify_all();
+        }
+        if (prevState != attachState_) {
+            TriggerStateChangeCallback(EVENT_CONTROLLER_ATTACH_STATE_CHANGE);
+        }
     }
     SetNWebJavaScriptResultCallBack();
     NativeArkWeb_OnValidCallback validCallback = OH_NativeArkWeb_GetJavaScriptProxyValidCallback(webTag_.c_str());
@@ -138,6 +217,19 @@ void WebviewController::SetWebId(int32_t nwebId)
         (*validCallback)(webTag_.c_str());
     } else {
         WVLOG_W("native validCallback is null, callback nothing");
+    }
+}
+
+void WebviewController::SetWebDetach(int32_t nwebId)
+{
+    if (nwebId != nwebId_) {
+        WVLOG_W("web detach nwebId is not equal, detach is %{public}d, current is %{public}d", nwebId, nwebId_);
+        return;
+    }
+
+    if (attachState_ != AttachState::NOT_ATTACHED) {
+        attachState_ = AttachState::NOT_ATTACHED;
+        TriggerStateChangeCallback(EVENT_CONTROLLER_ATTACH_STATE_CHANGE);
     }
 }
 
@@ -369,6 +461,16 @@ std::string WebviewController::GetTitle()
     return title;
 }
 
+int32_t WebviewController::GetProgress()
+{
+    int32_t progress = 0;
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        progress = nweb_ptr->PageLoadProgress();
+    }
+    return progress;
+}
+
 int32_t WebviewController::GetPageHeight()
 {
     int32_t pageHeight = 0;
@@ -519,7 +621,7 @@ ErrCode WebMessagePort::ClosePort()
     return NWebError::NO_ERROR;
 }
 
-ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
+ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data, std::shared_ptr<NWebRomValue> value)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -530,7 +632,10 @@ ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
         WVLOG_E("can't post message, message port already closed");
         return CAN_NOT_POST_MESSAGE;
     }
-    nweb_ptr->PostPortMessage(portHandle_, data);
+    nweb_ptr->PostPortMessageV2(portHandle_, value);
+    if (ArkWebGetErrno() != RESULT_OK) {
+        nweb_ptr->PostPortMessage(portHandle_, data);
+    }
     return NWebError::NO_ERROR;
 }
 
@@ -1315,6 +1420,16 @@ void WebviewController::InnerSetHapPath(const std::string &hapPath)
 {
     hapPath_ = hapPath;
 }
+ 
+void WebviewController::InnerSetFavicon(napi_env env, napi_value favicon)
+{
+    favicon_.CreateReference(env, favicon);
+}
+
+napi_value WebviewController::InnerGetFavicon(napi_env env)
+{
+    return favicon_.GetRefValue();
+}
 
 bool WebviewController::GetCertChainDerData(std::vector<std::string> &certChainDerData) const
 {
@@ -1516,6 +1631,7 @@ bool WebviewController::SetWebSchemeHandler(const char* scheme, WebSchemeHandler
 
 int32_t WebviewController::ClearWebSchemeHandler()
 {
+    DeleteWebSchemeHandler();
     return OH_ArkWeb_ClearSchemeHandlers(webTag_.c_str());
 }
 
@@ -1534,6 +1650,7 @@ bool WebviewController::SetWebServiveWorkerSchemeHandler(
 
 int32_t WebviewController::ClearWebServiceWorkerSchemeHandler()
 {
+    DeleteWebServiceWorkerSchemeHandler();
     return OH_ArkWebServiceWorker_ClearSchemeHandlers();
 }
 
@@ -2041,6 +2158,14 @@ void WebviewController::GetScrollOffset(float* offset_x, float* offset_y)
     }
 }
 
+void WebviewController::GetPageOffset(float* offset_x, float* offset_y)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        nweb_ptr->GetPageOffset(offset_x, offset_y);
+    }
+}
+
 bool WebviewController::ScrollByWithResult(float deltaX, float deltaY) const
 {
     bool enabled = false;
@@ -2069,38 +2194,49 @@ void WebMessageExt::SetType(int type)
     type_ = type;
     WebMessageType jsType = static_cast<WebMessageType>(type);
     NWebValue::Type nwebType = NWebValue::Type::NONE;
+    NWebRomValue::Type romType = NWebRomValue::Type::NONE;
     switch (jsType) {
         case WebMessageType::STRING: {
             nwebType = NWebValue::Type::STRING;
+            romType = NWebRomValue::Type::STRING;
             break;
         }
         case WebMessageType::NUMBER: {
             nwebType = NWebValue::Type::DOUBLE;
+            romType = NWebRomValue::Type::DOUBLE;
             break;
         }
         case WebMessageType::BOOLEAN: {
             nwebType = NWebValue::Type::BOOLEAN;
+            romType = NWebRomValue::Type::BOOLEAN;
             break;
         }
         case WebMessageType::ARRAYBUFFER: {
             nwebType = NWebValue::Type::BINARY;
+            romType = NWebRomValue::Type::BINARY;
             break;
         }
         case WebMessageType::ARRAY: {
             nwebType = NWebValue::Type::STRINGARRAY;
+            romType = NWebRomValue::Type::STRINGARRAY;
             break;
         }
         case WebMessageType::ERROR: {
             nwebType = NWebValue::Type::ERROR;
+            romType = NWebRomValue::Type::ERROR;
             break;
         }
         default: {
             nwebType = NWebValue::Type::NONE;
+            romType = NWebRomValue::Type::NONE;
             break;
         }
     }
     if (data_) {
         data_->SetType(nwebType);
+    }
+    if (value_) {
+        value_->SetType(romType);
     }
 }
 
@@ -2155,6 +2291,267 @@ std::shared_ptr<HitTestResult> WebviewController::GetLastHitTest()
         }
     }
     return nwebResult;
+}
+
+void WebviewController::SaveWebSchemeHandler(const char* scheme, WebSchemeHandler* handler)
+{
+    auto iter = webSchemeHandlerMap_.find(scheme);
+    if (iter != webSchemeHandlerMap_.end()) {
+        return;
+    }
+    webSchemeHandlerMap_[scheme] = handler;
+}
+
+void WebviewController::SaveWebServiceWorkerSchemeHandler(const char* scheme, WebSchemeHandler* handler)
+{
+    auto iter = webServiceWorkerSchemeHandlerMap_.find(scheme);
+    if (iter != webServiceWorkerSchemeHandlerMap_.end()) {
+        return;
+    }
+    webServiceWorkerSchemeHandlerMap_[scheme] = handler;
+}
+
+void WebviewController::DeleteWebSchemeHandler()
+{
+    for (const auto &iter : webSchemeHandlerMap_) {
+        iter.second->DeleteReference(iter.second);
+    }
+    webSchemeHandlerMap_.clear();
+}
+
+void WebviewController::DeleteWebServiceWorkerSchemeHandler()
+{
+    for (const auto &iter : webServiceWorkerSchemeHandlerMap_) {
+        iter.second->DeleteReference(iter.second);
+    }
+    webServiceWorkerSchemeHandlerMap_.clear();
+}
+
+int WebviewController::GetAttachState()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        return static_cast<int>(attachState_);
+    }
+    return static_cast<int>(AttachState::NOT_ATTACHED);
+}
+
+void WebviewController::RegisterStateChangeCallback(const napi_env& env, const std::string& type, napi_value handler)
+{
+    napi_ref handlerRef = nullptr;
+    napi_create_reference(env, handler, 1, &handlerRef);
+    WebRegObj regObj(env, handlerRef);
+    auto iter = attachEventRegisterInfo_.find(type);
+    if (iter == attachEventRegisterInfo_.end()) {
+        attachEventRegisterInfo_[type] = std::vector<WebRegObj> {regObj};
+        WVLOG_I("WebviewController::RegisterStateChangeCallback add new type.");
+        return;
+    }
+    bool found = false;
+    for (auto& regObjInList : iter->second) {
+        if (env == regObjInList.m_regEnv) {
+            napi_value handlerTemp = nullptr;
+            if (napi_get_reference_value(env, regObjInList.m_regHanderRef, &handlerTemp) != napi_ok) {
+                WVLOG_E("WebviewController::RegisterStateChangeCallback Failed to get reference value.");
+                napi_delete_reference(env, handlerRef);
+                return;
+            }
+            bool isEqual = false;
+            if (napi_strict_equals(env, handlerTemp, handler, &isEqual) != napi_ok) {
+                WVLOG_E("WebviewController::RegisterStateChangeCallback Failed to compare handlers.");
+                napi_delete_reference(env, handlerRef);
+                return;
+            }
+            if (isEqual) {
+                WVLOG_E("WebviewController::RegisterStateChangeCallback handler function is same");
+                found = true;
+                break;
+            }
+        }
+    }
+    if (!found) {
+        iter->second.emplace_back(regObj);
+    }
+}
+
+void WebviewController::DeleteRegisterObj(const napi_env& env, std::vector<WebRegObj>& vecRegObjs, napi_value& handler)
+{
+    auto iter = vecRegObjs.begin();
+    while (iter != vecRegObjs.end()) {
+        if (env == iter->m_regEnv && !iter->m_isMarked) {
+            napi_value handlerTemp = nullptr;
+            napi_status status = napi_get_reference_value(env, iter->m_regHanderRef, &handlerTemp);
+            if (status != napi_ok) {
+                WVLOG_E("WebviewController::DeleteRegisterObj Failed to get reference value.");
+                ++iter;
+                continue;
+            }
+            if (handlerTemp == nullptr) {
+                WVLOG_W("WebviewController::DeleteRegisterObj handlerTemp is null");
+            }
+            if (handler == nullptr) {
+                WVLOG_W("WebviewController::DeleteRegisterObj handler is null");
+            }
+            bool isEqual = false;
+            status = napi_strict_equals(env, handlerTemp, handler, &isEqual);
+            if (status != napi_ok) {
+                WVLOG_E("WebviewController::DeleteRegisterObj Failed to compare handlers.");
+                ++iter;
+                continue;
+            }
+            WVLOG_D("WebviewController::DeleteRegisterObj Delete register isEqual = %{public}d", isEqual);
+            if (isEqual) {
+                iter->m_isMarked = true;
+                WVLOG_I("WebviewController::DeleteRegisterObj Delete register object ref.");
+                break;
+            } else {
+                ++iter;
+            }
+        } else {
+            WVLOG_D(
+                "WebviewController::DeleteRegisterObj Unregister event, env is not equal %{private}p, : %{private}p",
+                env, iter->m_regEnv);
+            ++iter;
+        }
+    }
+}
+
+void WebviewController::DeleteAllRegisterObj(const napi_env& env, std::vector<WebRegObj>& vecRegObjs)
+{
+    auto iter = vecRegObjs.begin();
+    for (; iter != vecRegObjs.end();) {
+        if (env == iter->m_regEnv && !iter->m_isMarked) {
+            iter->m_isMarked = true;
+        } else {
+            WVLOG_D("WebviewController::DeleteAllRegisterObj Unregister all event, env is not equal %{private}p, : "
+                    "%{private}p",
+                env, iter->m_regEnv);
+            ++iter;
+        }
+    }
+}
+
+void WebviewController::UnregisterStateChangeCallback(const napi_env& env, const std::string& type, napi_value handler)
+{
+    auto iter = attachEventRegisterInfo_.find(type);
+    if (iter == attachEventRegisterInfo_.end()) {
+        WVLOG_W("WebviewController::UnregisterStateChangeCallback Unregister type not registered!");
+        return;
+    }
+    if (handler != nullptr) {
+        DeleteRegisterObj(env, iter->second, handler);
+    } else {
+        WVLOG_I("WebviewController::UnregisterStateChangeCallback All callback is unsubscribe for event: %{public}s",
+            type.c_str());
+        DeleteAllRegisterObj(env, iter->second);
+    }
+    if (iter->second.empty()) {
+        attachEventRegisterInfo_.erase(iter);
+    }
+}
+
+void WebviewController::WaitForAttached(napi_env env, void* data)
+{
+    WVLOG_D("WebviewController::WaitForAttached start");
+    WaitForAttachParam* param = static_cast<WaitForAttachParam*>(data);
+    std::unique_lock<std::mutex> attachLock(param->webviewController->attachMtx_);
+    param->webviewController->attachCond_.wait_for(attachLock, std::chrono::milliseconds(param->timeout), [param] {
+        return param->webviewController->attachState_ == AttachState::ATTACHED;
+    });
+    param->state = static_cast<int32_t>(param->webviewController->attachState_);
+}
+
+void WebviewController::TriggerWaitforAttachedPromise(napi_env env, napi_status status, void* data)
+{
+    WaitForAttachParam* param = static_cast<WaitForAttachParam*>(data);
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(env, &scope);
+    if (scope == nullptr) {
+        delete param;
+        param = nullptr;
+        return;
+    }
+
+    WVLOG_D("WebviewController::TriggerWaitforAttachedPromise start");
+    if (param->deferred != nullptr) {
+        napi_value jsState = nullptr;
+        napi_create_int32(env, param->state, &jsState);
+        napi_resolve_deferred(env, param->deferred, jsState);
+    }
+    napi_close_handle_scope(env, scope);
+    napi_delete_async_work(env, param->asyncWork);
+    delete param;
+    param = nullptr;
+}
+
+napi_value WebviewController::WaitForAttachedPromise(napi_env env, int32_t timeout, napi_deferred deferred)
+{
+    napi_value result = nullptr;
+    napi_value resourceName = nullptr;
+    WaitForAttachParam *param = new (std::nothrow) WaitForAttachParam {
+        .asyncWork = nullptr,
+        .deferred = deferred,
+        .timeout = timeout,
+        .webviewController = this,
+        .state = static_cast<int32_t>(attachState_),
+    };
+    if (param == nullptr) {
+        return nullptr;
+    }
+
+    NAPI_CALL(env, napi_create_string_utf8(env, EVENT_WAIT_FOR_ATTACH.c_str(), NAPI_AUTO_LENGTH, &resourceName));
+    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, WaitForAttached,
+        TriggerWaitforAttachedPromise, static_cast<void *>(param), &param->asyncWork));
+    NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
+    napi_get_undefined(env, &result);
+    return result;
+}
+
+int32_t WebviewController::GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        return nweb_ptr->GetBlanklessInfoWithKey(key, similarity, loadingTime);
+    }
+    return -1;
+}
+
+int32_t WebviewController::SetBlanklessLoadingWithKey(const std::string& key, bool isStart)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (nweb_ptr) {
+        return nweb_ptr->SetBlanklessLoadingWithKey(key, isStart);
+    }
+    return -1;
+}
+
+ErrCode WebviewController::AvoidVisibleViewportBottom(int32_t avoidHeight)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->AvoidVisibleViewportBottom(avoidHeight);
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::SetErrorPageEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetErrorPageEnabled(enable);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetErrorPageEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetErrorPageEnabled();
 }
 } // namespace NWeb
 } // namespace OHOS

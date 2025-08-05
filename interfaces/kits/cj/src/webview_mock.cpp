@@ -41,6 +41,7 @@ FFI_EXPORT int FfiOHOSWebviewCtlScrollBy = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlForward = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlBackward = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlBackOrForward = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlGetProgress = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlGetPageHeight = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlGetTitle = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlZoom = 0;
@@ -63,6 +64,7 @@ FFI_EXPORT int FfiOHOSWebviewCtlStop = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlPostUrl = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlSetDownloadDelegate = 0;
 FFI_EXPORT int FfiOHOSWebviewCtlStartDownload = 0;
+FFI_EXPORT int FfiOHOSWebviewCtlAvoidVisibleViewportBottom = 0;
 
 // webCookieView
 FFI_EXPORT int FfiOHOSCookieMgrClearSessionCookieSync = 0;

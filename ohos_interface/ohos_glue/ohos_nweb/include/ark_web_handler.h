@@ -44,6 +44,7 @@
 #include "ohos_nweb/include/ark_web_load_committed_details.h"
 #include "ohos_nweb/include/ark_web_native_embed_data_info.h"
 #include "ohos_nweb/include/ark_web_native_embed_touch_event.h"
+#include "ohos_nweb/include/ark_web_native_embed_mouse_event.h"
 #include "ohos_nweb/include/ark_web_nweb.h"
 #include "ohos_nweb/include/ark_web_quick_menu_callback.h"
 #include "ohos_nweb/include/ark_web_quick_menu_params.h"
@@ -865,6 +866,164 @@ public:
      */
     /*--ark web()--*/
     virtual void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) = 0;
+
+    /*--ark web()--*/
+    virtual bool OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable) = 0;
+
+    /*--ark web()--*/
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) = 0;
+
+    /**
+     * @brief Called When you click on the selected area.
+     */
+    /*--ark web()--*/
+    virtual bool ChangeVisibilityOfQuickMenuV2() = 0;
+
+    /*--ark web()--*/
+    virtual void OnPip(int status,
+                       int delegate_id,
+                       int child_id,
+                       int frame_routing_id,
+                       int width,
+                       int height) = 0;
+
+    /**
+     * @brief Notify the host application that the web page wants to handle
+     *        JavaScript onbeforeunload.
+     *
+     * @param url String: The url of the page requesting.
+     * @param message String: The message of the dialog.
+     * @param isReload bool: The isReload parameter is set to true when the page is refreshed;
+     *        otherwise, it remains false. Default is false.
+     * @param result std::shared_ptr<NWebJSDialogResult>: A NWebJSDialogResult to
+     *        confirm that the user closed the window.
+     * @return To show a custom dialog, the app should return true.
+     */
+    /*--ark web()--*/
+    virtual bool OnBeforeUnloadByJSV2(const ArkWebString& url, const ArkWebString& message, bool isReload,
+        ArkWebRefPtr<ArkWebJsDialogResult> result) = 0;
+
+    /**
+     * @Description: Called when an mouse native event occurs on native embed area.
+     * @Input mouse_event: Mouse events that contain information about the same layer.
+     */
+    /*--ark web()--*/
+    virtual void OnNativeEmbedMouseEvent(ArkWebRefPtr<ArkWebNativeEmbedMouseEvent> mouse_event) = 0;
+
+    /**
+     * @brief called when the web page is active for window.open called by other web component.
+     */
+    /*--ark web()--*/
+    virtual void OnActivateContentByJS() = 0;
+
+    /**
+     * @Description Notify the SDK that a web site has started loading. This method is
+     * called once for each main frame load. Embedded frame changes, i.e. clicking
+     * a link whose target is an iframe and fragment navigations (navigations to
+     * #fragment_id) will not trigger this callback.
+     *
+     * @Input url The url to be loaded.
+     */
+    /*--ark web()--*/
+    virtual void OnLoadStarted(const ArkWebString& url) = 0;
+
+    /**
+     * @Description Notify the SDK that a web site has finished loading. This method is
+     * called only for main frame. Different from onPageEnd, onLoadFinished is
+     * triggered only once if the mainframe is automatically redirected before the
+     * page is completely loaded. OnPageEnd is triggered every navigation.
+     * fragment navigation also triggers onLoadFinished.
+     *
+     * @Input url The url of the web site.
+     */
+    /*--ark web()--*/
+    virtual void OnLoadFinished(const ArkWebString& url) = 0;
+
+    /**
+     * @Description Called when an SSL error occurs during the loading of resources (for the main frame and subframes).
+     * @Input result: handler of result.
+     * @Input error: error code.
+     * @Input url: request url
+     * @Input originalUrl: original url.
+     * @Input referrer: referrer url.
+     * @Input isFatalError: whether the error is a fatal error.
+     * @Input isMainFrame: whether the request is made for the main frame.
+     * @Input certChainData: cert chain data.
+     * @Return: true/false
+     */
+    /*--ark web()--*/
+    virtual bool OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error,
+        const ArkWebString& url, const ArkWebString& originalUrl, const ArkWebString& referrer, bool isFatalError,
+        bool isMainFrame, const ArkWebStringVector& certChainData) = 0;
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */
+    /*--ark web()--*/
+    virtual void ShowMagnifier() {}
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    /*--ark web()--*/
+    virtual void HideMagnifier() {}
+
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    /*--ark web()--*/
+    virtual void OnPageTitleV2(const ArkWebString& title, bool isRealTitle) = 0;
+
+    /**
+     * @brief Notify the web client to do something for blankless.
+     *
+     * @param pathToFrame The file used to insert frame. If empty, means remove frame.
+     */
+    /*--ark web()--*/
+    virtual void OnInsertBlanklessFrame(const ArkWebString& pathToFrame) = 0;
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    /*--ark web()--*/
+    virtual void OnRemoveBlanklessFrame(int delayTime) = 0;
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString OnHandleOverrideErrorPage(
+        ArkWebRefPtr<ArkWebUrlResourceRequest> request,
+        ArkWebRefPtr<ArkWebUrlResourceError> error) = 0;
+
+    /**
+     * @brief Notify the web client pdf scroll at bottom.
+     *
+     * @param url The url of the pdf.
+     */
+    /*--ark web()--*/
+    virtual void OnPdfScrollAtBottom(const ArkWebString& url) = 0;
+
+    /**
+     * @brief Notify the web client pdf load event.
+     *
+     * @param result The result of the pdf load.
+     * @param url The url of the pdf.
+     */
+    /*--ark web()--*/
+    virtual void OnPdfLoadEvent(int32_t result, const ArkWebString& url) = 0;
+
+    /*--ark web()--*/
+    virtual void OnTakeFocus(ArkWebRefPtr<ArkWebKeyEvent> event) = 0;
 };
 
 } // namespace OHOS::ArkWeb

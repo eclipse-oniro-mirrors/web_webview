@@ -98,6 +98,16 @@ sptr<IAppFwkUpdateService> AppFwkUpdateClient::GetFwkUpdateProxy()
     return fwkUpdateProxy;
 }
 
+void AppFwkUpdateClient::NotifyArkWebInstallSuccess(const std::string& bundleName)
+{
+    auto proxy = GetFwkUpdateProxy();
+    if (proxy == nullptr) {
+        WVLOG_E("NotifyArkWebInstallSuccess failed, proxy is null");
+        return;
+    }
+    proxy->NotifyArkWebInstallSuccess(bundleName);
+}
+
 int AppFwkUpdateClient::VerifyPackageInstall(const std::string& bundleName, const std::string& hapPath)
 {
     WVLOG_I("verify package install callingUid: %{public}d", IPCSkeleton::GetCallingUid());

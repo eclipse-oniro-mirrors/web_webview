@@ -15,7 +15,8 @@ import("//build/ohos.gni")
 import("../config.gni")
 
 config("ohos_adapter_public_interface") {
-  include_dirs = [ "interfaces" ]
+  include_dirs = [ "${target_gen_dir}/interfaces" ]
+  include_dirs += [ "interfaces" ]
 }
 
 ohos_shared_library("nweb_ohos_adapter") {
@@ -25,21 +26,21 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   if (target_cpu == "arm") {
     libs = [
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libbundle_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libasset_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_drawing.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libbundle_ndk.z.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libasset_ndk.z.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_drawing.so",
     ]
   } else if (target_cpu == "arm64") {
     libs = [
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libbundle_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libasset_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_drawing.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libbundle_ndk.z.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libasset_ndk.z.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_drawing.so",
     ]
   } else if (target_cpu == "x86_64") {
     libs = [
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libbundle_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libasset_ndk.z.so",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_drawing.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libbundle_ndk.z.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libasset_ndk.z.so",
+      "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_drawing.so",
     ]
   }
 
@@ -47,6 +48,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "HILOG_TAG=\"webadapter\"",
     "WEBVIEW_PACKAGE_NAME=\"${webview_package_name}\"",
     "WEBVIEW_SANDBOX_LIB_PATH=\"${webview_sandbox_lib_path}\"",
+    "LEGACY_WEBVIEW_SANDBOX_LIB_PATH=\"${legacy_webview_sandbox_lib_path}\"",
     "WEBVIEW_CRASHPAD_HANDLER_SO=\"${webview_crashpad_handler_so}\"",
     "WEBVIEW_SANDBOX_RELATIVE_LIB_PATH=\"${webview_sandbox_relative_lib_path}\"",
     "WEBVIEW_ENGINE_SO=\"${webview_engine_so}\"",
@@ -95,6 +97,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "pasteboard_adapter/src/pasteboard_client_adapter_impl.cpp",
     "print_manager_adapter/src/print_manager_adapter_impl.cpp",
     "res_sched_adapter/src/res_sched_client_adapter_impl.cpp",
+    "screenlock_mgr_adapter/src/screenlock_manager_adapter_impl.cpp",
     "soc_perf_adapter/src/soc_perf_client_adapter_impl.cpp",
     "system_properties_adapter/src/system_properties_adapter_impl.cpp",
   ]
@@ -106,9 +109,10 @@ ohos_shared_library("nweb_ohos_adapter") {
   ]
 
   include_dirs = [
-    "../ohos_interface/include/ohos_adapter",
-    "../ohos_interface/include/ohos_nweb",
+    "${target_gen_dir}/../ohos_nweb/include",
     "../ohos_nweb/include",
+    "../ohos_interface/include/ohos_nweb",
+    "../ohos_interface/include/ohos_adapter",
     "aafwk_adapter/include",
     "access_token_adapter/include",
     "audio_adapter/include",
@@ -142,6 +146,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "power_mgr_adapter/include",
     "print_manager_adapter/include",
     "screen_capture_adapter/include",
+    "screenlock_mgr_adapter/include",
     "soc_perf_adapter/include",
     "system_properties_adapter/include",
     "sensor_adapter/include",
@@ -149,9 +154,9 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   if (target_cpu == "arm" || target_cpu == "arm64" || target_cpu == "x86_64") {
     include_dirs += [
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/include/bundle",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/include/asset",
-      "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/include/native_drawing",
+      "${current_sdk_home}/native/sysroot/usr/include/bundle",
+      "${current_sdk_home}/native/sysroot/usr/include/asset",
+      "${current_sdk_home}/native/sysroot/usr/include/native_drawing",
     ]
   }
 
@@ -174,10 +179,12 @@ ohos_shared_library("nweb_ohos_adapter") {
     "common_event_service:cesfwk_innerkits",
     "data_share:datashare_common",
     "data_share:datashare_consumer",
+    "drivers_peripheral_display:hdi_gralloc_client",
     "eventhandler:libeventhandler",
     "file_api:remote_uri_native",
     "graphic_2d:libcomposer",
     "graphic_2d:libnative_image",
+    "graphic_2d:librender_service_base",
     "graphic_2d:librender_service_client",
     "graphic_surface:surface",
     "hilog:libhilog",
@@ -193,11 +200,14 @@ ohos_shared_library("nweb_ohos_adapter") {
     "ipc:ipc_core",
     "napi:ace_napi",
     "netmanager_base:net_conn_manager_if",
+    "netmanager_base:net_security_config_if",
     "openssl:libssl_shared",
     "pasteboard:pasteboard_client",
+    "pasteboard:pasteboard_data",
     "relational_store:native_rdb",
     "resource_schedule_service:ressched_client",
     "samgr:samgr_proxy",
+    "screenlock_mgr:screenlock_client",
     "time_service:time_client",
     "udmf:udmf_client",
     "window_manager:libdm",
@@ -260,27 +270,27 @@ ohos_shared_library("nweb_ohos_adapter") {
     ]
     if (target_cpu == "arm") {
       libs += [
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_vdec.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_codecbase.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_buffer.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_core.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_window.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_vdec.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_codecbase.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_buffer.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_core.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_window.so",
       ]
     } else if (target_cpu == "arm64") {
       libs += [
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_vdec.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_codecbase.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_buffer.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_core.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_window.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_vdec.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_codecbase.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_buffer.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_core.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_window.so",
       ]
     } else if (target_cpu == "x86_64") {
       libs += [
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_vdec.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_codecbase.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_buffer.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_core.so",
-        "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_window.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_vdec.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_codecbase.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_buffer.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_core.so",
+        "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_window.so",
       ]
     }
     external_deps += [
@@ -296,18 +306,18 @@ ohos_shared_library("nweb_ohos_adapter") {
       external_deps += [ "drm_framework:native_drm" ]
       if (target_cpu == "arm") {
         libs += [
-          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_acodec.so",
-          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_avcencinfo.so",
+          "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_acodec.so",
+          "${current_sdk_home}/native/sysroot/usr/lib/arm-linux-ohos/libnative_media_avcencinfo.so",
         ]
       } else if (target_cpu == "arm64") {
         libs += [
-          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_acodec.so",
-          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_avcencinfo.so",
+          "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_acodec.so",
+          "${current_sdk_home}/native/sysroot/usr/lib/aarch64-linux-ohos/libnative_media_avcencinfo.so",
         ]
       } else if (target_cpu == "x86_64") {
         libs += [
-          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_acodec.so",
-          "//prebuilts/ohos-sdk/linux/18/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_avcencinfo.so",
+          "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_acodec.so",
+          "${current_sdk_home}/native/sysroot/usr/lib/x86_64-linux-ohos/libnative_media_avcencinfo.so",
         ]
       }
       defines += [ "NWEB_AUDIO_DRM_ENABLE" ]
@@ -403,7 +413,10 @@ ohos_shared_library("nweb_ohos_adapter") {
   part_name = "webview"
   subsystem_name = "web"
 
-  deps = [ "../ohos_nweb:web_configs" ]
+  deps = [
+    "../ohos_nweb:web_configs",
+    "../arkweb_utils:libarkweb_utils",
+  ]
 
   if (webview_graphic_2d_ext_enable) {
     external_deps += [ "graphic_2d_ext:libaps_client" ]

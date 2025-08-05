@@ -37,6 +37,7 @@ ohos_unittest("arkweb_scheme_handler_test") {
     "googletest:gtest_main",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
+    "libxml2:libxml2",
     "webview:libnweb",
     "window_manager:libwm",
   ]
@@ -63,6 +64,7 @@ ohos_unittest("arkweb_interface_test") {
     "googletest:gtest_main",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
+    "libxml2:libxml2",
     "webview:libnweb",
     "window_manager:libwm",
   ]
@@ -89,6 +91,64 @@ ohos_unittest("native_arkweb_utils_test") {
     "googletest:gtest_main",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
+    "libxml2:libxml2",
+    "webview:libnweb",
+    "window_manager:libwm",
+  ]
+}
+
+ohos_unittest("native_javascript_execute_callback_test") {
+  module_out_path = module_output_path
+
+  sources = [ "native_javascript_execute_callback_test.cpp" ]
+
+  include_dirs = [ "../common" ]
+
+  deps = [
+    "$webview_path/interfaces/native:ohweb",
+    "$webview_path/ohos_nweb:web_configs",
+  ]
+
+  external_deps = [
+    "ability_runtime:app_context",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
+    "graphic_2d:librender_service_client",
+    "hilog:libhilog",
+    "webview:libnweb",
+    "window_manager:libwm",
+  ]
+}
+
+ohos_unittest("native_interface_arkweb_test") {
+  module_out_path = module_output_path
+
+  sources = [ "native_interface_arkweb_test.cpp" ]
+
+  include_dirs = [
+    "../common",
+    "$webview_path/ohos_adapter/system_properties_adapter/include",
+    "$webview_path/interfaces/native"
+  ]
+
+  deps = [
+    "$webview_path/interfaces/native:ohweb",
+    "$webview_path/ohos_nweb:web_configs",
+    "$webview_path/ohos_adapter:nweb_ohos_adapter"
+  ]
+
+  external_deps = [
+    "ability_runtime:app_context",
+    "bundle_framework:appexecfwk_base",
+    "bundle_framework:appexecfwk_core",
+    "c_utils:utils",
+    "googletest:gmock_main",
+    "googletest:gtest_main",
+    "graphic_2d:librender_service_client",
+    "hilog:libhilog",
     "webview:libnweb",
     "window_manager:libwm",
   ]
@@ -99,6 +159,8 @@ group("unittest") {
   deps = [
     ":arkweb_interface_test",
     ":arkweb_scheme_handler_test",
-    ":native_arkweb_utils_test"
+    ":native_arkweb_utils_test",
+    ":native_interface_arkweb_test",
+    ":native_javascript_execute_callback_test",
   ]
 }

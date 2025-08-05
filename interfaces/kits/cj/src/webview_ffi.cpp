@@ -19,6 +19,7 @@
 #include <regex>
 
 #include "application_context.h"
+#include "cj_common_ffi.h"
 #include "cj_lambda.h"
 #include "geolocation_permission.h"
 #include "nweb_cache_options_impl.h"
@@ -457,6 +458,31 @@ extern "C" {
         return NWebError::NO_ERROR;
     }
 
+    int32_t FfiOHOSWebviewCtlRegisterJavaScriptProxyEx(int64_t id, CArrI64 cFuncIds,
+        const char* cName, CArrString cMethodList, char* permission)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        std::string objName = std::string(cName);
+        std::vector<std::string> methodList;
+        for (int64_t i = 0; i < cMethodList.size; i++) {
+            methodList.push_back(std::string(cMethodList.head[i]));
+        }
+        std::vector<std::function<char*(const char*)>> cjFuncs;
+        for (int64_t i = 0; i < cFuncIds.size; i++) {
+            auto cFunc = reinterpret_cast<char*(*)(const char*)>(cFuncIds.head[i]);
+            auto onChange = [lambda = CJLambda::Create(cFunc)]
+                (const char* infoRef) -> char* { return lambda(infoRef); };
+            cjFuncs.push_back(onChange);
+        }
+
+        nativeWebviewCtl->SetNWebJavaScriptResultCallBack();
+        nativeWebviewCtl->RegisterJavaScriptProxyEx(cjFuncs, objName, methodList, permission);
+        return NWebError::NO_ERROR;
+    }
+
     RetDataCString FfiOHOSWebviewCtlGetUrl(int64_t id)
     {
         RetDataCString ret = { .code = NWebError::INIT_ERROR, .data = nullptr };
@@ -580,6 +606,18 @@ extern "C" {
             return NWebError::INIT_ERROR;
         }
         return nativeWebviewCtl->BackOrForward(step);
+    }
+
+    int32_t FfiOHOSWebviewCtlGetProgress(int64_t id, int32_t *errCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return -1;
+        }
+        int32_t progress = nativeWebviewCtl->GetProgress();
+        *errCode = NWebError::NO_ERROR;
+        return progress;
     }
 
     int32_t FfiOHOSWebviewCtlGetPageHeight(int64_t id, int32_t *errCode)
@@ -1916,6 +1954,103 @@ extern "C" {
             ret.data = MallocCString(nwebResult->GetExtra());
         }
         return ret;
+    }
+
+    CCertByteData FfiOHOSWebviewCtlGetCertificateByte(int64_t id, int32_t *errCode)
+    {
+        CCertByteData arrCertificate = {.head = nullptr, .size = 0};
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errCode = NWebError::INIT_ERROR;
+            return arrCertificate;
+        }
+        std::vector<std::string> certChainDerData;
+        bool ans = nativeWebviewCtl->GetCertChainDerData(certChainDerData);
+        if (!ans) {
+            WEBVIEWLOGE("get cert chain data failed");
+            return arrCertificate;
+        }
+        if (certChainDerData.size() > UINT8_MAX) {
+            WEBVIEWLOGE("error, cert chain data array reach max");
+            return arrCertificate;
+        }
+        arrCertificate.size = static_cast<int64_t>(certChainDerData.size());
+        if (certChainDerData.empty()) {
+            *errCode = NWebError::NO_ERROR;
+            arrCertificate.head = nullptr;
+            return arrCertificate;
+        }
+        CArrUI8* arr = static_cast<CArrUI8*>(malloc(sizeof(CArrUI8) * certChainDerData.size()));
+        if (!arr) {
+            arrCertificate.head = nullptr;
+            arrCertificate.size = 0;
+            return arrCertificate;
+        }
+
+        for (size_t i = 0; i < certChainDerData.size(); ++i) {
+            const std::string& str = certChainDerData[i];
+            uint8_t* data = MallocUInt8(str);
+            if (!data && !str.empty()) {
+                // 如果非空字符串分配失败，回收并返回空结果
+                for (size_t j = 0; j < i; ++j) {
+                    free(arr[j].head);
+                }
+                free(arr);
+                arrCertificate.head = nullptr;
+                arrCertificate.size = 0;
+                return arrCertificate;
+            }
+            arr[i].head = data;
+            arr[i].size = static_cast<int64_t>(str.size());
+        }
+        *errCode = NWebError::NO_ERROR;
+        arrCertificate.head = arr;
+        return arrCertificate;
+    }
+
+     int32_t FfiOHOSWebviewCtlSetScrollableEx(int64_t id, bool enable, int32_t scrollType)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        nativeWebviewCtl->SetScrollable(enable, scrollType);
+        return NWebError::NO_ERROR;
+    }
+
+    OHOS::Webview::CScrollOffset FfiOHOSWebviewCtlGetScrollOffset(int64_t id, int32_t* errorCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errorCode = NWebError::INIT_ERROR;
+            return {.x=0, .y=0};
+        }
+        float offset_x = 0;
+        float offset_y = 0;
+        nativeWebviewCtl->GetScrollOffset(&offset_x, &offset_y);
+        *errorCode = NWebError::NO_ERROR;
+        return {.x=offset_x, .y=offset_y};
+    }
+
+    bool FfiOHOSWebviewCtlScrollByWithResult(int64_t id, float deltaX, float deltaY, int32_t* errorCode)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            *errorCode = NWebError::INIT_ERROR;
+            return false;
+        }
+        nativeWebviewCtl->ScrollByWithResult(deltaX, deltaY);
+        *errorCode = NWebError::NO_ERROR;
+        return true;
+    }
+
+    int32_t FfiOHOSWebviewCtlAvoidVisibleViewportBottom(int64_t id, int32_t avoidHeight)
+    {
+        auto nativeWebviewCtl = FFIData::GetData<WebviewControllerImpl>(id);
+        if (nativeWebviewCtl == nullptr || !nativeWebviewCtl->IsInit()) {
+            return NWebError::INIT_ERROR;
+        }
+        return nativeWebviewCtl->AvoidVisibleViewportBottom(avoidHeight);
     }
 }
 }

@@ -14,6 +14,9 @@
  */
 
 #include "sethtmltext_fuzzer.h"
+
+#include <fuzzer/FuzzedDataProvider.h>
+
 #define private public
 #include "pasteboard_client_adapter_impl.h"
 #undef private
@@ -22,6 +25,9 @@ using namespace OHOS::NWeb;
 using namespace OHOS::MiscServices;
 
 namespace OHOS {
+namespace {
+    constexpr uint8_t TEST_STRING_LENGTH = 8;
+}
 bool SetHtmlTextFuzzTest(const uint8_t* data, size_t size)
 {
     if ((data == nullptr) || (size == 0)) {
@@ -31,10 +37,44 @@ bool SetHtmlTextFuzzTest(const uint8_t* data, size_t size)
     std::shared_ptr<PasteDataRecordAdapterImpl> dataRecordAdapterImpl =
         std::make_shared<PasteDataRecordAdapterImpl>(record);
     dataRecordAdapterImpl->record_ = nullptr;
-    std::string text((const char*)data, size);
+
+    FuzzedDataProvider dataProvider(data, size);
+    std::string text = dataProvider.ConsumeRandomLengthString(TEST_STRING_LENGTH);
+    std::shared_ptr<PasteDataRecordAdapter> dataRecordAdapter = PasteDataRecordAdapter::NewRecord(text);
+    std::shared_ptr<std::string> htmlText = std::make_shared<std::string>(text);
+    dataRecordAdapterImpl->SetHtmlText(htmlText);
+    dataRecordAdapterImpl->SetHtmlText(nullptr);
+
+    dataRecordAdapterImpl->SetUri(text);
+    dataRecordAdapterImpl->SetUri("");
+
+    PasteCustomData testData;
+    dataRecordAdapterImpl->SetCustomData(testData);
+    std::vector<uint8_t> customText = dataProvider.ConsumeBytes<uint8_t>(TEST_STRING_LENGTH);
+    testData[text] = customText;
+    dataRecordAdapterImpl->SetCustomData(testData);
+
+    dataRecordAdapterImpl->GetMimeType();
+    dataRecordAdapterImpl->GetHtmlText();
+    dataRecordAdapterImpl->GetPlainText();
+    dataRecordAdapterImpl->GetPixelMap();
+    dataRecordAdapterImpl->GetImgData(nullptr);
+    dataRecordAdapterImpl->GetUri();
+    dataRecordAdapterImpl->GetCustomData();
+    return true;
+}
+
+bool SetHtmlText1FuzzTest(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string text = dataProvider.ConsumeRandomLengthString(TEST_STRING_LENGTH);
     std::shared_ptr<PasteDataRecordAdapter> dataRecordAdapter = PasteDataRecordAdapter::NewRecord(text);
     std::shared_ptr<std::string> htmlText = std::make_shared<std::string>(text);
     dataRecordAdapter->SetHtmlText(htmlText);
+    dataRecordAdapter->SetHtmlText(nullptr);
     return true;
 }
 } // namespace OHOS
@@ -44,5 +84,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
 {
     /* Run your code on data */
     OHOS::SetHtmlTextFuzzTest(data, size);
+    OHOS::SetHtmlText1FuzzTest(data, size);
     return 0;
 }

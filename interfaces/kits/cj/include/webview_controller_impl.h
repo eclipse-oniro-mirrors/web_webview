@@ -25,6 +25,7 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_web_message.h"
+#include "nweb_message_ext.h"
 #include "web_scheme_handler_request.h"
 
 namespace OHOS::Webview {
@@ -175,6 +176,8 @@ public:
 
     int32_t BackOrForward(int32_t step);
 
+    int32_t GetProgress();
+
     int32_t GetPageHeight();
 
     std::string GetTitle();
@@ -222,6 +225,8 @@ public:
     void RegisterJavaScriptProxy(const std::vector<std::function<char*(const char*)>>& cjFuncs,
         const std::string& objName, const std::vector<std::string>& methodList);
 
+    void RegisterJavaScriptProxyEx(const std::vector<std::function<char*(const char*)>>& cjFuncs,
+        const std::string& objName, const std::vector<std::string>& methodList, char* permission);
     void Stop();
 
     void SetBackForwardCacheOptions(int32_t size, int32_t timeToLive);
@@ -259,6 +264,8 @@ public:
     bool GetScrollable();
 
     void SetScrollable(bool enable);
+
+    void SetScrollable(bool enable, int32_t scrollType);
 
     void EnableAdsBlock(bool enable);
 
@@ -306,6 +313,18 @@ public:
         const NWeb::WebSnapshotCallback callback);
 
     std::shared_ptr<NWeb::HitTestResult> GetLastHitTest();
+
+    void* CreateWebPrintDocumentAdapter(const std::string &jobName);
+
+    void GetScrollOffset(float* offset_x, float* offset_y);
+
+    bool ScrollByWithResult(float deltaX, float deltaY) const;
+
+    int32_t AvoidVisibleViewportBottom(int32_t avoidHeight);
+
+    int32_t SetErrorPageEnabled(bool enable);
+
+    bool GetErrorPageEnabled();
 
 public:
     static std::string customeSchemeCmdLine_;
@@ -370,7 +389,11 @@ private:
 class WebMessageExtImpl : public OHOS::FFI::FFIData {
     DECL_TYPE(WebMessageExtImpl, OHOS::FFI::FFIData)
 public:
-    explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> data) : data_(data) {};
+    explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebMessage> data) : data_(data) {}
+    explicit WebMessageExtImpl(std::shared_ptr<NWeb::NWebHapValue> data)
+    {
+        data_ = NWeb::ConvertNwebHap2NwebMessage(data);
+    }
     ~WebMessageExtImpl() = default;
 
     void SetType(int type)
@@ -549,6 +572,7 @@ public:
     NWebMessageCallbackImpl(std::function<void(RetWebMessage)> callback) : callback_(callback) {}
     ~NWebMessageCallbackImpl() = default;
     void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value) override;
 
 private:
     std::function<void(RetWebMessage)> callback_;
@@ -559,6 +583,7 @@ public:
     NWebWebMessageExtCallbackImpl(std::function<void(int64_t)> callback) : callback_(callback) {}
     ~NWebWebMessageExtCallbackImpl() = default;
     void OnReceiveValue(std::shared_ptr<NWeb::NWebMessage> result) override;
+    void OnReceiveValueV2(std::shared_ptr<NWeb::NWebHapValue> value) override;
 
 private:
     std::function<void(int64_t)> callback_;

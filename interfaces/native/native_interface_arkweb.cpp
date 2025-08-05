@@ -22,16 +22,24 @@
 
 #include "arkweb_error_code.h"
 #include "arkweb_type.h"
+#include "arkweb_utils.h"
+#include "event_handler.h"
 #include "native_arkweb_utils.h"
 #include "native_javascript_execute_callback.h"
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
+#include "system_properties_adapter_impl.h"
 
 namespace {
 std::mutex g_mtxMap; // the mutex to protect the shared resource
 std::unordered_map<std::string, NativeArkWeb_OnValidCallback> g_validMap;
 std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
+constexpr uint32_t MAX_DATABASE_SIZE_IN_MB = 100;
+constexpr uint32_t MAX_KEYS_COUNT = 100;
+constexpr size_t MAX_KEY_LENGTH = 2048;
+std::mutex g_mtxMainHandler;
+std::shared_ptr<OHOS::AppExecFwk::EventHandler> g_mainHandler = nullptr;
 } // namespace
 
 namespace OHOS::NWeb {
@@ -56,6 +64,25 @@ public:
 private:
     std::string methodName_;
     NativeArkWeb_OnJavaScriptProxyCallback methodCallback_ = nullptr;
+};
+
+class NWebSaveCookieCallbackImpl : public NWebBoolValueCallback {
+public:
+    explicit NWebSaveCookieCallbackImpl(
+        std::function<void(ArkWeb_ErrorCode errorCode)> callback) : callback_(callback) {}
+    ~NWebSaveCookieCallbackImpl() = default;
+
+    void OnReceiveValue(bool result) override
+    {
+        WVLOG_D("save cookie received result, result = %{public}d", result);
+        if (callback_) {
+            ArkWeb_ErrorCode errorCode =
+                result ? ArkWeb_ErrorCode::ARKWEB_SUCCESS : ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED;
+            callback_(errorCode);
+        }
+    }
+private:
+    std::function<void(ArkWeb_ErrorCode errorCode)> callback_;
 };
 
 }; // namespace OHOS::NWeb
@@ -197,3 +224,236 @@ ArkWeb_ErrorCode OH_NativeArkWeb_LoadData(const char* webTag,
     }
     return loadData(webTag, data, mimeType, encoding, baseUrl, historyUrl);
 }
+
+void OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy(const char* webTag,
+                                                        const ArkWeb_ProxyObjectWithResult* proxyObject,
+                                                        const char* permission)
+{
+    WVLOG_I("native OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy, webTag: %{public}s", webTag);
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        return;
+    }
+
+    void (*registerAsyncThreadJavaScriptProxy)(const char* webTag,
+                                               const ArkWeb_ProxyObjectWithResult* proxyObject,
+                                               const char* permission) = nullptr;
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    ARKWEB_NATIVE_LOAD_FN_PTR(registerAsyncThreadJavaScriptProxy, OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    if (!registerAsyncThreadJavaScriptProxy) {
+        WVLOG_E("failed to load function OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy");
+        return;
+    }
+    return registerAsyncThreadJavaScriptProxy(webTag, proxyObject, permission);
+}
+
+ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag, const char* key)
+{
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey capability not supported");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT, 0.0, 0 };
+    }
+
+    size_t keyLen = strlen(key);
+    if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey key length is invalid");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS, 0.0, 0 };
+    }
+
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey load web engine failed");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN, 0.0, 0 };
+    }
+
+    ArkWeb_BlanklessInfo (*getBlanklessInfoWithKey)(const char* webTag, const char* key) = nullptr;
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    ARKWEB_NATIVE_LOAD_FN_PTR(getBlanklessInfoWithKey, OH_NativeArkWeb_GetBlanklessInfoWithKey);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    if (!getBlanklessInfoWithKey) {
+        WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey failed to load function");
+        return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN, 0.0, 0 };
+    }
+
+    return getBlanklessInfoWithKey(webTag, key);
+}
+
+ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char* webTag,
+                                                                     const char* key,
+                                                                     bool isStarted)
+{
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey capability not supported");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT;
+    }
+
+    size_t keyLen = strlen(key);
+    if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey key length is invalid");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS;
+    }
+
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, false)) {
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey load web engine failed");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN;
+    }
+
+    ArkWeb_BlanklessErrorCode (*setBlanklessLoadingWithKey)(const char* webTag,
+                                                            const char* key,
+                                                            bool isStarted) = nullptr;
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    ARKWEB_NATIVE_LOAD_FN_PTR(setBlanklessLoadingWithKey, OH_NativeArkWeb_SetBlanklessLoadingWithKey);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    if (!setBlanklessLoadingWithKey) {
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey failed to load function");
+        return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_UNKNOWN;
+    }
+
+    return setBlanklessLoadingWithKey(webTag, key, isStarted);
+}
+
+void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size)
+{
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        WVLOG_E("blankless OH_NativeArkWeb_ClearBlanklessLoadingCache capability not supported");
+        return;
+    }
+
+    std::vector<std::string> keys;
+    if (key == nullptr) {
+        OHOS::NWeb::NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
+        return;
+    }
+
+    if (size > MAX_KEYS_COUNT) {
+        WVLOG_W("blankless OH_NativeArkWeb_ClearBlanklessLoadingCache array size should not exceed 100");
+        size = MAX_KEYS_COUNT;
+    }
+
+    for (uint32_t idx = 0; idx < size; idx++) {
+        if (key[idx] == nullptr) {
+            continue;
+        }
+        size_t keyLen = strlen(key[idx]);
+        if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
+            continue;
+        }
+        keys.push_back(key[idx]);
+    }
+
+    if (keys.size() == 0) {
+        WVLOG_W("blankless OH_NativeArkWeb_ClearBlanklessLoadingCache valid keys are 0");
+        return;
+    }
+    OHOS::NWeb::NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
+}
+
+uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
+{
+    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
+        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity capability not supported");
+        return 0;
+    }
+
+    if (capacity > MAX_DATABASE_SIZE_IN_MB) {
+        capacity = MAX_DATABASE_SIZE_IN_MB;
+    }
+
+    OHOS::NWeb::NWebHelper::Instance().SetBlanklessLoadingCacheCapacity(static_cast<int32_t>(capacity));
+    return capacity;
+}
+
+static std::shared_ptr<OHOS::AppExecFwk::EventHandler> GetMainThreadEventHandler()
+{
+    std::lock_guard<std::mutex> guard(g_mtxMainHandler);
+    if (!g_mainHandler) {
+        std::shared_ptr<OHOS::AppExecFwk::EventRunner> runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
+        if (!runner) {
+            return nullptr;
+        }
+        g_mainHandler = std::make_shared<OHOS::AppExecFwk::EventHandler>(runner);
+    }
+    return g_mainHandler;
+}
+
+static void PostSaveCookieToUIThread(OH_ArkWeb_OnCookieSaveCallback callback)
+{
+    auto mainHandler = GetMainThreadEventHandler();
+    if (!mainHandler) {
+        WVLOG_E("get main event runner failed");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED);
+        }
+        return;
+    }
+
+    bool succ = mainHandler->PostTask([callback]() {
+        std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+            OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+        if (cookieManager == nullptr) {
+            WVLOG_E("cookieManager is nullptr");
+            if (callback) {
+                callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+            }
+            return;
+        }
+        auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
+        cookieManager->Store(callbackImpl);
+        }, "", 0, OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
+    if (!succ) {
+        WVLOG_E("post cookie task to UI thread failed");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED);
+        }
+    }
+}
+
+ArkWeb_ErrorCode OH_ArkWebCookieManager_SaveCookieSync()
+{
+    if (getpid() != gettid() && !OHOS::NWeb::NWebHelper::Instance().HasLoadWebEngine()) {
+        WVLOG_E("cookieManager not initialize");
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED;
+    }
+
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager == nullptr) {
+        WVLOG_E("cookieManager is nullptr");
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED;
+    }
+
+    if (!cookieManager->Store()) {
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_SAVE_FAILED;
+    }
+    return ArkWeb_ErrorCode::ARKWEB_SUCCESS;
+}
+
+void OH_ArkWebCookieManager_SaveCookieAsync(OH_ArkWeb_OnCookieSaveCallback callback)
+{
+    if (getpid() != gettid() && !OHOS::NWeb::NWebHelper::Instance().HasLoadWebEngine()) {
+        WVLOG_D("post save cookie to UI thread");
+        PostSaveCookieToUIThread(callback);
+        return;
+    }
+
+    std::shared_ptr<OHOS::NWeb::NWebCookieManager> cookieManager =
+        OHOS::NWeb::NWebHelper::Instance().GetCookieManager();
+    if (cookieManager == nullptr) {
+        WVLOG_E("cookieManager is nullptr");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_INITIALIZE_FAILED);
+        }
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<OHOS::NWeb::NWebSaveCookieCallbackImpl>(callback);
+    cookieManager->Store(callbackImpl);
+}
+

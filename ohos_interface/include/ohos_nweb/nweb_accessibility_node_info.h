@@ -143,6 +143,26 @@ public:
     {
         return std::string();
     }
+
+    virtual std::string GetHtmlElementId()
+    {
+        return std::string();
+    }
+
+    virtual std::string GetComponentTypeDescription()
+    {
+        return std::string();
+    }
+
+    virtual int32_t GetCheckboxGroupSelectedStatus()
+    {
+        return 0;
+    }
+
+    virtual std::string GetExpandedState()
+    {
+        return std::string();
+    }
 };
 
 } // namespace OHOS::NWeb

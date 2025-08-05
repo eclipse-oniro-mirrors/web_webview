@@ -74,6 +74,7 @@
                 "resource_schedule_service",
                 "safwk",
                 "samgr",
+                "screenlock_mgr",
                 "sensor",
                 "soc_perf",
                 "time_service",
@@ -83,25 +84,29 @@
                 "protobuf",
                 "libxml2",
                 "openssl",
-                "drm_framework"
-            ],
-            "third_party": [
-                "chromium"
+                "drm_framework",
+                "drivers_peripheral_display",
+                "selinux_adapter",
+                "runtime_core",
+                "jsoncpp"
             ]
         },
         "build": {
             "sub_component": [
+                "//base/web/webview/interfaces/kits/ani:ani_packages",
                 "//base/web/webview/interfaces/kits/cj:cj_webview_ffi",
                 "//base/web/webview/interfaces/kits/napi:webview_napi_back",
                 "//base/web/webview/interfaces/kits/napi:neterrorlist_napi",
                 "//base/web/webview/interfaces/kits/napi/js:webview_abc",
                 "//base/web/webview/interfaces/native:webview_ndk",
+                "//base/web/webview/ohos_glue:ohos_base_glue_source",
                 "//base/web/webview/ohos_nweb:chrome_crashpad_handler",
                 "//base/web/webview/ohos_nweb:libnweb",
                 "//base/web/webview/ohos_nweb:nweb_hap",
                 "//base/web/webview/ohos_adapter:nweb_ohos_adapter",
                 "//base/web/webview/ohos_wrapper:nweb_ohos_wrapper",
-                "//base/web/webview/sa:app_fwk_update_service"
+                "//base/web/webview/sa:app_fwk_update_service",
+                "//base/web/webview/arkweb_utils:libarkweb_utils"
             ],
             "inner_kits": [
                 {
@@ -122,14 +127,14 @@
                             "nweb_first_meaningful_paint_details.h",
                             "nweb_largest_contentful_paint_details.h"
                         ],
-                        "header_base": "//base/web/webview/ohos_nweb/include"
+                        "header_base": "${root_gen_dir}/base/web/webview/ohos_nweb/include"
                     },
                     "name": "//base/web/webview/ohos_nweb:libnweb"
                 },
                 {
                     "header": {
                         "header_files": [],
-                        "header_base": "//base/web/webview/ohos_adapter"
+                        "header_base": "${root_gen_dir}/base/web/webview/ohos_adapter/interfaces"
                     },
                     "name": "//base/web/webview/ohos_adapter:nweb_ohos_adapter"
                 },
@@ -152,6 +157,17 @@
                         "header_base": "//base/web/webview/interfaces/kits/cj/include"
                     },
                     "name": "//base/web/webview/interfaces/kits/cj:cj_webview_ffi"
+                },
+                {
+	                "name": "//base/web/webview/arkweb_utils:libarkweb_utils"
+	            },
+                {
+                    "header": {
+                        "header_files": [
+                        ],
+                        "header_base": "${root_gen_dir}/base/web/webview/ohos_interface/ohos_glue/base/include"
+                    },
+                    "name": "//base/web/webview/ohos_glue:ohos_base_glue_source"
                 }
             ],
             "test": [
@@ -174,6 +190,7 @@
                 "//base/web/webview/test/fuzztest/putbackgroundcolor_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/unregisterarkjsfunction_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/sendkeyevent_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/registerasyncjsproxy_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkrenderscheduler_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkstartrender_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/aafwk_adapter/aafwkattachrender_fuzzer:fuzztest",
@@ -237,6 +254,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/graphic_adapter/vsyncadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/graphic_adapter/nativeimageadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/flowbufferadapter_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoder_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/multimodalinput_adapter/getdeviceids_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/multimodalinput_adapter/getkeyboardtype_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/multimodalinput_adapter/ondeviceadded_fuzzer:fuzztest",
@@ -264,7 +282,10 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/bufferinfoadapterimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/capabilitydataadapterimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/codecformatadapterimpl_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/mediaavsession_fuzzer/mediaavsessionadapter_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/mediaavsession_fuzzer/mediaavsessioncallback_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/mediaavsessionadapterimpl_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/mediacodecdecoder_fuzzer/mediacodecdecodercallback_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/mediacodecdecoderadapterimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/mediacodecencoderadapterimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/media_adapter/mediacodeclistadapterimpl_fuzzer:fuzztest",
@@ -281,9 +302,11 @@
                 "//base/web/webview/test/fuzztest/ohos_nweb/copyframe_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/flushbuffer_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/sethttpdns_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_nweb/setwebdebug_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/selectcertrequest_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/drawingtextadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/napi_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/nativeimage_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/initandrun_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/nwebhelper_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/hisysevent_fuzzer:fuzztest",
@@ -298,6 +321,7 @@
                 "//base/web/webview/test/fuzztest/ohos_adapter/screencaptureadapterimpl_fuzzer/screencapturecallback_fuzzer/onvideobufferavailable_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer/ohosimagedecoderadapterimplgetmethods_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/ohosimagedecoderadapterimpl_fuzzer/releasepixelmap_fuzzer:fuzztest",
+                "//base/web/webview/test/fuzztest/ohos_adapter/ohosadapterhelperimpl_fuzzer:fuzztest",
                 "//base/web/webview/test/unittest/nweb_value_test:unittest",
                 "//base/web/webview/test/unittest/display_manager_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/net_connect_adapter_test:unittest",
@@ -324,6 +348,7 @@
                 "//base/web/webview/test/unittest/ohos_adapter/location_callback_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/location_proxy_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/screen_capture_adapter_impl_test:unittest",
+                "//base/web/webview/test/unittest/ohos_adapter/screenlock_manager_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/net_proxy_adapter_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/camera_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/background_task_impl_test:unittest",
@@ -346,7 +371,8 @@
                 "//base/web/webview/test/unittest/ohos_adapter/sensor_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/napi_common_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/native_buffer_adapter_test:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/drawing_text_adapter_test:unittest"
+                "//base/web/webview/test/unittest/ohos_adapter/drawing_text_adapter_test:unittest",
+                "//base/web/webview/test/unittest/webview_value_test:unittest"
             ]
         }
     }

@@ -99,7 +99,6 @@ private:
     std::shared_ptr<AVSession::AVMetaData> avMetadata_;
     std::shared_ptr<AVSession::AVPlaybackState> avPlaybackState_;
     std::shared_ptr<AVSession::AVSession> avSession_;
-
     static std::unordered_map<std::string, std::shared_ptr<AVSession::AVSession>> avSessionMap;
 };
 } // namespace OHOS::NWeb

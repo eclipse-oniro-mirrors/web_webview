@@ -30,6 +30,7 @@
 #include "ohos_nweb/include/ark_web_history_list.h"
 #include "ohos_nweb/include/ark_web_hit_test_result.h"
 #include "ohos_nweb/include/ark_web_js_proxy_callback_vector.h"
+#include "ohos_nweb/include/ark_web_js_proxy_method.h"
 #include "ohos_nweb/include/ark_web_js_result_callback.h"
 #include "ohos_nweb/include/ark_web_keyboard_event.h"
 #include "ohos_nweb/include/ark_web_message_value_callback.h"
@@ -37,6 +38,8 @@
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
+#include "ohos_nweb/include/ark_web_rom_value.h"
+#include "ohos_nweb/include/ark_web_rom_value_vector.h"
 #include "ohos_nweb/include/ark_web_screen_lock_callback.h"
 #include "ohos_nweb/include/ark_web_spanstring_convert_html_callback.h"
 #include "ohos_nweb/include/ark_web_string_value_callback.h"
@@ -1698,6 +1701,18 @@ public:
     virtual void SetSurfaceDensity(const double& density) = 0;
 
     /**
+     * @brief When the user sets the webpage's border radius,
+     *        update Chromium with this radius value for repaint the scrollbar.
+     * @param borderRadiusTopLeft: Radius value of the rounded corner in the top-left of the webpage.
+     * @param borderRadiusTopRight: Radius value of the rounded corner in the top-right of the webpage.
+     * @param borderRadiusBottomLeft: Radius value of the rounded corner in the bottom-left of the webpage.
+     * @param borderRadiusBottomRight: Radius value of the rounded corner in the bottom-right of the webpage.
+     */
+    /*--ark web()--*/
+    virtual void SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight,
+        double borderRadiusBottomLeft, double borderRadiusBottomRight) = 0;
+
+    /**
      * @brief Set the native inner web
      */
     /*--ark web()--*/
@@ -1724,6 +1739,253 @@ public:
      */
     /*--ark web()--*/
     virtual void OnBrowserBackground() = 0;
+
+    /**
+     * @brief: register native javaScriptProxy.
+     *
+     * @param objName object name.
+     * @param methodName methodName list
+     * @param data The ptr of NWebJsProxyMethod.
+     * @param isAsync True mean.
+     * @param permission permission.
+     */
+    /*--ark web()--*/
+    virtual void RegisterNativeJavaScriptProxy(const ArkWebString& objName,
+        const ArkWebStringVector& methodName,
+        ArkWebRefPtr<ArkWebJsProxyMethod> data,
+        bool isAsync,
+        const ArkWebString& permission) = 0;
+
+    /**
+     * @brief Set the window id.
+     */
+    /*--ark web()--*/
+    virtual void SetFocusWindowId(uint32_t focus_window_id) = 0;
+
+    /**
+     * @brief Run data detector JS
+     */
+    /*--ark web()--*/
+    virtual void RunDataDetectorJS() = 0;
+
+    /**
+     * @brief Set data detector enable.
+     */
+    /*--ark web()--*/
+    virtual void SetDataDetectorEnable(bool enable) = 0;
+
+    /**
+     * @brief On data detector select text.
+     */
+    /*--ark web()--*/
+    virtual void OnDataDetectorSelectText() = 0;
+
+    /**
+     * @brief On data detector copy.
+     */
+    /*--ark web()--*/
+    virtual void OnDataDetectorCopy(const ArkWebStringVector& recordMix) = 0;
+
+    /**
+     * @brief Set the native window of picture in picture.
+     */
+    /*--ark web()--*/
+    virtual void SetPipNativeWindow(int delegate_id,
+                                    int child_id,
+                                    int frame_routing_id,
+                                    void* window) = 0;
+
+    /**
+     * @brief Send event of picture in picture.
+     */
+    /*--ark web()--*/
+    virtual void SendPipEvent(int delegate_id,
+                              int child_id,
+                              int frame_routing_id,
+                              int event) = 0;
+
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key The unique key of current page.
+     */
+    /*--ark web()--*/
+    virtual void SetBlanklessLoadingKey(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    /*--ark web()--*/
+    virtual void SetPrivacyStatus(bool isPrivate) = 0;
+
+    /**
+     * @brief Get select startIndex.
+     *
+     * @return the select startIndex.
+     */
+    /*--ark web()--*/
+    virtual int GetSelectStartIndex() = 0;
+
+    /**
+     * @brief Get select endIndex.
+     *
+     * @return the select endIndex.
+     */
+    /*--ark web()--*/
+    virtual int GetSelectEndIndex() = 0;
+
+    /**
+     * @brief Get all text info.
+     *
+     * @return the info of all text.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetAllTextInfo() = 0;
+
+    /**
+     * @brief Set audio session type.
+     *
+     * @param audio_session_type: Aduio session type.
+     */
+    /*--ark web()--*/
+    virtual void SetAudioSessionType(int32_t audio_session_type) = 0;
+
+    /**
+     * @brief Get accessibility id by its html element id in the browser.
+     * @param htmlElementId The html element id of the Same-layer rendering.
+     * @return The accessibility id of the accessibility node with Same-layer rendering.
+     */
+    /*--ark web()--*/
+    virtual int64_t GetWebAccessibilityIdByHtmlElementId(const ArkWebString& htmlElementId) = 0;
+
+    /**
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetBlanklessInfoWithKey(const ArkWebString& key, double* similarity, int32_t* loadingTime) = 0;
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    /*--ark web()--*/
+    virtual int32_t SetBlanklessLoadingWithKey(const ArkWebString& key, bool isStart) = 0;
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    /*--ark web()--*/
+    virtual void UpdateSingleHandleVisible(bool isVisible) = 0;
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    /*--ark web()--*/
+    virtual void SetTouchHandleExistState(bool touchHandleExist) = 0;
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    /*--ark web()--*/
+    virtual void AvoidVisibleViewportBottom(int32_t avoidHeight) = 0;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetVisibleViewportAvoidHeight() = 0;
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    /*--ark web()--*/
+    virtual bool TriggerBlanklessForUrl(const ArkWebString& url) = 0;
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    /*--ark web()--*/
+    virtual void SetVisibility(bool isVisible) = 0;
+
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    /*--ark web()--*/
+    virtual void SetViewportScaleState() = 0;
+
+    /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   /*--ark web()--*/
+   virtual void GetPageOffset(float* offset_x, float* offset_y) = 0;
+
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     */
+    /*--ark web()--*/
+    virtual void SetErrorPageEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get whether default error page feature is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool GetErrorPageEnabled() = 0;
+
+    /**
+     * @brief Get web component destroy mode.
+     * @return the web destroy mode.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetWebDestroyMode() = 0;
+
+    /**
+     * @brief CallH5FunctionV2
+     *
+     * @param routing_id       int32_t: the h5 frame routing id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebValue>>: the call args
+     */
+    /*--ark web()--*/
+    virtual void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const ArkWebString& h5_method_name,
+        const ArkWebRomValueVector& args) = 0;
+
+    /**
+     * @brief use the port to send message.
+     *
+     * @param portHandle the port to send message.
+     * @param data the message to send.
+     */
+    /*--ark web()--*/
+    virtual void PostPortMessageV2(const ArkWebString& portHandle, ArkWebRefPtr<ArkWebRomValue> data) = 0;
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    /*--ark web()--*/
+    virtual void FillAutofillDataV2(ArkWebRefPtr<ArkWebRomValue> data) = 0;
 };
 
 } // namespace OHOS::ArkWeb

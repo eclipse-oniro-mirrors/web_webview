@@ -48,6 +48,7 @@ bool ApplyKeystoreAdapterImplFuzzTest(const uint8_t* data, size_t size)
     std::string plainData = dataProvider.ConsumeRandomLengthString(MAX_STRING_LENGTH);
     std::string encryptString = KeystoreAdapterImpl::GetInstance().EncryptKey(alias, plainData);
     std::string DecryptString = KeystoreAdapterImpl::GetInstance().DecryptKey(alias, encryptString);
+    std::string AssetQueryString = KeystoreAdapterImpl::GetInstance().AssetQuery(alias);
     return true;
 }
 } // namespace OHOS

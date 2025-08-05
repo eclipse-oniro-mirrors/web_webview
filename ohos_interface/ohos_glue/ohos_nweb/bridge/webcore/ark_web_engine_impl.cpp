@@ -204,6 +204,16 @@ void ArkWebEngineImpl::ClearHostIP(const ArkWebString& hostName)
     nweb_engine_->ClearHostIP(ArkWebStringStructToClass(hostName));
 }
 
+void ArkWebEngineImpl::SetAppCustomUserAgent(const ArkWebString& userAgent)
+{
+    nweb_engine_->SetAppCustomUserAgent(ArkWebStringStructToClass(userAgent));
+}
+
+void ArkWebEngineImpl::SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts)
+{
+    nweb_engine_->SetUserAgentForHosts(ArkWebStringStructToClass(userAgent), ArkWebStringVectorStructToClass(hosts));
+}
+
 void ArkWebEngineImpl::EnableWholeWebPageDrawing()
 {
     nweb_engine_->EnableWholeWebPageDrawing();
@@ -258,6 +268,51 @@ void ArkWebEngineImpl::RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallba
     std::shared_ptr<OHOS::NWeb::NWebProxyChangedCallback> nweb_proxy_callback =
         std::make_shared<ArkWebProxyChangedCallbackImpl>(callback);
     nweb_engine_->RemoveProxyOverride(nweb_proxy_callback);
+}
+
+void ArkWebEngineImpl::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
+{
+    nweb_engine_->SetWebDebuggingAccessAndPort(isEnableDebug, port);
+}
+
+uint32_t ArkWebEngineImpl::AddBlanklessLoadingUrls(const ArkWebStringVector& urls)
+{
+    return nweb_engine_->AddBlanklessLoadingUrls(ArkWebStringVectorStructToClass(urls));
+}
+
+void ArkWebEngineImpl::RemoveBlanklessLoadingUrls(const ArkWebStringVector& urls)
+{
+    nweb_engine_->RemoveBlanklessLoadingUrls(ArkWebStringVectorStructToClass(urls));
+}
+
+void ArkWebEngineImpl::ClearBlanklessLoadingCache(const ArkWebStringVector& urls)
+{
+    nweb_engine_->ClearBlanklessLoadingCache(ArkWebStringVectorStructToClass(urls));
+}
+
+ArkWebString ArkWebEngineImpl::CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id)
+{
+    return ArkWebStringClassToStruct(nweb_engine_->CheckBlankOptEnable(ArkWebStringStructToClass(url), nweb_id));
+}
+
+void ArkWebEngineImpl::SetBlanklessLoadingCacheCapacity(int32_t capacity)
+{
+    nweb_engine_->SetBlanklessLoadingCacheCapacity(capacity);
+}
+
+void ArkWebEngineImpl::EnablePrivateNetworkAccess(bool enable)
+{
+    nweb_engine_->EnablePrivateNetworkAccess(enable);
+}
+
+bool ArkWebEngineImpl::IsPrivateNetworkAccessEnabled()
+{
+    return nweb_engine_->IsPrivateNetworkAccessEnabled();
+}
+
+void ArkWebEngineImpl::SetWebDestroyMode(int32_t mode)
+{
+    nweb_engine_->SetWebDestroyMode(static_cast<OHOS::NWeb::WebDestroyMode>(mode));
 }
 
 } // namespace OHOS::ArkWeb

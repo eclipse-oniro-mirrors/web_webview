@@ -74,6 +74,7 @@ public:
 
     int32_t GetDeviceInfo(int32_t deviceId, std::shared_ptr<MMIDeviceInfoAdapter> info) override;
 
+    int32_t GetMaxTouchPoints() override;
 private:
     std::shared_ptr<MMI::IInputDeviceListener> devListener_ = nullptr;
     std::shared_ptr<MMI::IInputEventConsumer> inputListener_ = nullptr;

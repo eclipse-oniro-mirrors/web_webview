@@ -18,6 +18,7 @@
 
 #include <iosfwd>
 #include <memory>
+#include <mutex>
 #include <string>
 #include <vector>
 
@@ -28,9 +29,14 @@
 #include "nweb_export.h"
 #include "nweb_web_storage.h"
 #include "nweb_proxy_changed_callback.h"
-#include "foundation/ability/ability_runtime/interfaces/kits/native/appkit/ability_runtime/context/application_state_change_callback.h"
+#include "application_state_change_callback.h"
 
 namespace OHOS::NWeb {
+struct NwebScheme {
+    const std::string name;
+    int32_t option = 0;
+};
+
 struct FrameRateSetting {
     int32_t min_ { 0 };
     int32_t max_ { 0 };
@@ -39,12 +45,23 @@ struct FrameRateSetting {
 
 class WebApplicationStateChangeCallback : public AbilityRuntime::ApplicationStateChangeCallback {
 public:
-    WebApplicationStateChangeCallback() = default;
-    WebApplicationStateChangeCallback(const WebApplicationStateChangeCallback&) = default;
+    static std::shared_ptr<WebApplicationStateChangeCallback> GetInstance()
+    {
+        static std::shared_ptr<WebApplicationStateChangeCallback> instance(
+        new WebApplicationStateChangeCallback,
+        [](WebApplicationStateChangeCallback*) {}
+        );
+        return instance;
+    }
+    WebApplicationStateChangeCallback(const WebApplicationStateChangeCallback&) = delete;
+    WebApplicationStateChangeCallback& operator=(const WebApplicationStateChangeCallback&) = delete;
     ~WebApplicationStateChangeCallback() = default;
     void NotifyApplicationForeground() override;
     void NotifyApplicationBackground() override;
     std::shared_ptr<NWeb> nweb_ = nullptr;
+    bool isRegistered = false;
+private: 
+    WebApplicationStateChangeCallback() = default;
 };
 
 class OHOS_NWEB_EXPORT NWebHelper {
@@ -93,6 +110,10 @@ public:
     void SetHostIP(const std::string& hostName, const std::string& address, int32_t aliveTime);
     void ClearHostIP(const std::string& hostName);
 
+    void SetAppCustomUserAgent(const std::string& userAgent);
+
+    void SetUserAgentForHosts(const std::string& userAgent, const std::vector<std::string>& hosts);
+
     void WarmupServiceWorker(const std::string& url);
 
     void EnableWholeWebPageDrawing();
@@ -112,6 +133,27 @@ public:
 
     void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback);
 
+    bool HasLoadWebEngine();
+
+    void SaveSchemeVector(const char* name, int32_t option);
+
+    bool RegisterCustomSchemes();
+
+    void SetWebDebuggingAccess(bool isEnableDebug);
+    void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port);
+
+    void SetBlanklessLoadingCacheCapacity(int32_t capacity);
+
+    void ClearBlanklessLoadingCache(const std::vector<std::string>& urls);
+
+    std::string CheckBlankOptEnable(const std::string& url, int32_t nweb_id);
+
+    void EnablePrivateNetworkAccess(bool enable);
+
+    bool IsPrivateNetworkAccessEnabled();
+
+    void SetWebDestroyMode(WebDestroyMode mode);
+
 private:
     NWebHelper() = default;
     bool GetWebEngine(bool fromArk);
@@ -123,8 +165,10 @@ private:
     std::string bundlePath_;
     std::string customSchemeCmdLine_;
     std::shared_ptr<NWebEngine> nwebEngine_ = nullptr;
+    std::vector<NwebScheme> schemeVector_;
     std::vector<std::string> backForwardCacheCmdLine_;
     std::shared_ptr<WebApplicationStateChangeCallback> webApplicationStateCallback_;
+    mutable std::mutex lock_;
 };
 } // namespace OHOS::NWeb
 

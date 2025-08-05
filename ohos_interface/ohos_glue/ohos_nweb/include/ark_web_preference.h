@@ -765,6 +765,26 @@ public:
      */
     /*--ark web()--*/
     virtual void SetIntrinsicSizeEnable(bool enable) = 0;
+
+    /**
+     * @brief Set whether to support css diplay when reporting the visibility of native embed.
+     *        The default is false.
+     */
+    /*--ark web()--*/
+    virtual void SetCssDisplayChangeEnabled(bool enable) = 0;
+
+    /**
+     * @brief Set whether to bypass vsync.
+     *        The default is none.
+     */
+    /*--ark web()--*/
+    virtual void SetBypassVsyncCondition(int32_t condition) = 0;
+
+    /**
+     * @brief Set the gesture focus mode.
+     */
+    /*--ark web()--*/
+    virtual void SetGestureFocusMode(int32_t mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb

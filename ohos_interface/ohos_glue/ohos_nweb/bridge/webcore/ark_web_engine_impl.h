@@ -78,6 +78,10 @@ public:
 
     void ClearHostIP(const ArkWebString& hostName) override;
 
+    void SetAppCustomUserAgent(const ArkWebString& userAgent) override;
+
+    void SetUserAgentForHosts(const ArkWebString& userAgent, const ArkWebStringVector& hosts) override;
+
     void EnableWholeWebPageDrawing() override;
 
     ArkWebRefPtr<ArkWebAdsBlockManager> GetAdsBlockManager() override;
@@ -97,6 +101,24 @@ public:
                           ArkWebRefPtr<ArkWebProxyChangedCallback> callback) override;
 
     void RemoveProxyOverride(ArkWebRefPtr<ArkWebProxyChangedCallback> callback) override;
+
+    void SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port) override;
+
+    uint32_t AddBlanklessLoadingUrls(const ArkWebStringVector& urls) override;
+
+    void RemoveBlanklessLoadingUrls(const ArkWebStringVector& urls) override;
+
+    void ClearBlanklessLoadingCache(const ArkWebStringVector& urls) override;
+
+    ArkWebString CheckBlankOptEnable(const ArkWebString& url, int32_t nweb_id) override;
+
+    void SetBlanklessLoadingCacheCapacity(int32_t capacity) override;
+
+    void EnablePrivateNetworkAccess(bool enable) override;
+
+    bool IsPrivateNetworkAccessEnabled() override;
+
+    void SetWebDestroyMode(int32_t mode) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;

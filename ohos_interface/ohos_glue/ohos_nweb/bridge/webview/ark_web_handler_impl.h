@@ -593,6 +593,110 @@ public:
     void RestoreRenderFit() override;
 
     void OnAccessibilityEventV2(int64_t accessibilityId, int32_t eventType, const ArkWebString& argument) override;
+
+    bool OnNestedScroll(float& x, float& y, float& xVelocity, float& yVelocity, bool& isAvailable) override;
+
+    void EnableSecurityLayer(bool isNeedSecurityLayer) override;
+
+    bool ChangeVisibilityOfQuickMenuV2() override;
+
+    void OnPip(int status,
+               int delegate_id,
+               int child_id,
+               int frame_routing_id,
+               int width,
+               int height) override;
+
+    /**
+     * @brief Notify the host application that the web page wants to handle
+     *        JavaScript onbeforeunload.
+     *
+     * @param url String: The url of the page requesting.
+     * @param message String: The message of the dialog.
+     * @param isReload bool: The isReload parameter is set to true when the page is refreshed;
+     *        otherwise, it remains false. Default is false.
+     * @param result std::shared_ptr<NWebJSDialogResult>: A NWebJSDialogResult to
+     *        confirm that the user closed the window.
+     *
+     * @return To show a custom dialog, the app should return true.
+     */
+    bool OnBeforeUnloadByJSV2(const ArkWebString& url, const ArkWebString& message, bool isReload,
+        ArkWebRefPtr<ArkWebJsDialogResult> result) override;
+
+    void OnNativeEmbedMouseEvent(ArkWebRefPtr<ArkWebNativeEmbedMouseEvent> mouse_event) override;
+
+    /**
+     * @brief called when the web page is active for window.open called by other web component.
+     */
+    void OnActivateContentByJS() override;
+
+    void OnLoadStarted(const ArkWebString& url) override;
+
+    void OnLoadFinished(const ArkWebString& url) override;
+
+    bool OnAllSslErrorRequestByJSV2(ArkWebRefPtr<ArkWebJsAllSslErrorResult> result, int error, const ArkWebString& url,
+        const ArkWebString& originalUrl, const ArkWebString& referrer, bool isFatalError, bool isMainFrame,
+        const ArkWebStringVector& certChainData) override;
+
+    /**
+     * @brief Called when you need to show magnifier.
+     */     
+    void ShowMagnifier() override;
+
+    /**
+     * @brief Called when you need to hide magnifier.
+     */
+    void HideMagnifier() override;
+
+    /**
+     * @brief Notify the SDK of the changed document title.
+     *
+     * @param title The document title.
+     * @param isRealTitle Mark the source of the title. If it is true, the title is derived from the H5 title element;
+     *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
+     */
+    void OnPageTitleV2(const ArkWebString& title, bool isRealTitle) override;
+
+    /**
+     * @brief Notify the web client to do something for blankless.
+     *
+     * @param pathToFrame The file used to insert frame. If empty, means remove frame.
+     */
+    void OnInsertBlanklessFrame(const ArkWebString& pathToFrame) override;
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    void OnRemoveBlanklessFrame(int delayTime) override;
+
+    /**
+     * @brief Triggered when the web page's document resource error
+     *
+     * @param request The request information.
+     * @param error The error information.
+     */
+    ArkWebString OnHandleOverrideErrorPage(
+        ArkWebRefPtr<ArkWebUrlResourceRequest> request,
+        ArkWebRefPtr<ArkWebUrlResourceError> error) override;
+
+    /**
+     * @brief Notify the web client pdf scroll at bottom.
+     *
+     * @param url The url of the pdf.
+     */
+    void OnPdfScrollAtBottom(const ArkWebString& url) override;
+
+    /**
+     * @brief Notify the web client pdf load event.
+     *
+     * @param result The result of the pdf load.
+     * @param url The url of the pdf.
+     */
+    void OnPdfLoadEvent(int32_t result, const ArkWebString& url) override;
+
+    void OnTakeFocus(ArkWebRefPtr<ArkWebKeyEvent> event) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

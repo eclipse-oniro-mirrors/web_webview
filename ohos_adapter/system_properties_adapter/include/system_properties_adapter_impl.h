@@ -66,6 +66,8 @@ public:
 
     int32_t GetFlowBufMaxFd() override;
 
+    int32_t GetInitialCongestionWindowSize() override;
+
     void AttachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) override;
 
     void DetachSysPropObserver(PropertiesKey key, SystemPropertiesObserver* observer) override;
@@ -95,6 +97,10 @@ public:
     std::string GetScrollFriction() override;
 
     std::string GetBundleName() override;
+
+    std::string GetStringParameter(const std::string& key, const std::string& defaultValue) override;
+
+    int32_t GetIntParameter(const std::string& key, int32_t defaultValue) override;
 
 private:
     SystemPropertiesAdapterImpl();

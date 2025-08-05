@@ -15,7 +15,6 @@
 
 #include "nweb_surface_adapter.h"
 
-#include <display_type.h>
 #include <securec.h>
 #include <sync_fence.h>
 
@@ -103,7 +102,7 @@ sptr<SurfaceBuffer> NWebSurfaceAdapter::RequestBuffer(sptr<Surface> surface, uin
         .width = width,
         .height = height,
         .strideAlignment = sizeof(void *),
-        .format = PIXEL_FMT_RGBA_8888,
+        .format = GRAPHIC_PIXEL_FMT_RGBA_8888,
         .usage = BUFFER_USAGE_CPU_READ | BUFFER_USAGE_CPU_WRITE | BUFFER_USAGE_MEM_DMA,
         .timeout = 0,
     };
@@ -148,7 +147,7 @@ bool NWebSurfaceAdapter::CopyFrame(
             WVLOG_E("copy size overflow, drop this frame(%{public}u*%{public}u)", width, height);
             return false;
         }
-        errno_t ret = memcpy_s(dst, static_cast<size_t>(srcStride), src, static_cast<size_t>(srcStride));
+        errno_t ret = memcpy_s(dst, static_cast<size_t>(dstStride), src, static_cast<size_t>(srcStride));
         if (ret != EOK) {
             WVLOG_E("memcpy_s failed");
             return false;

@@ -43,7 +43,6 @@ ohos_fuzztest("VideoControlSupportAdapterFuzzTest") {
     "access_token:libnativetoken",
     "access_token:libtoken_setproc",
     "c_utils:utils",
-    "drivers_interface_camera:metadata",
     "graphic_2d:librender_service_client",
     "hilog:libhilog",
     "init:libbegetutil",
@@ -51,7 +50,10 @@ ohos_fuzztest("VideoControlSupportAdapterFuzzTest") {
     "webview:libnweb",
   ]
   if (webview_camera_enable) {
-    external_deps += [ "camera_framework:camera_framework" ]
+    external_deps += [
+      "camera_framework:camera_framework",
+      "drivers_interface_camera:metadata",
+    ]
     sources += [ "videocontrolsupportadapter_fuzzer.cpp" ]
   }
 }
@@ -60,9 +62,8 @@ ohos_fuzztest("VideoControlSupportAdapterFuzzTest") {
 group("fuzztest") {
   testonly = true
   deps = []
-  deps += [
-    # deps file
-    ":VideoControlSupportAdapterFuzzTest",
-  ]
+  if (webview_camera_enable) {
+    deps += [ ":VideoControlSupportAdapterFuzzTest" ]
+  }
 }
 ###############################################################################

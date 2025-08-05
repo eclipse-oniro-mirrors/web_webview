@@ -17,6 +17,8 @@
 
 #include "ohos_adapter/bridge/ark_event_handler_fdlistener_adapter_wrapper.h"
 
+#include "ohos_adapter/bridge/ark_once_callback_adapter_wrapper.h"
+
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -39,6 +41,14 @@ bool ArkEventHandlerAdapterImpl::AddFileDescriptorListener(
 void ArkEventHandlerAdapterImpl::RemoveFileDescriptorListener(int32_t fileDescriptor)
 {
     real_->RemoveFileDescriptorListener(fileDescriptor);
+}
+
+void ArkEventHandlerAdapterImpl::PostTask(const ArkWebRefPtr<ArkOnceCallbackAdapter> callback)
+{
+    if (CHECK_REF_PTR_IS_NULL(callback)) {
+        return real_->PostTask(nullptr);
+    }
+    real_->PostTask(std::make_shared<ArkOnceCallbackAdapterWrapper>(callback));
 }
 
 } // namespace OHOS::ArkWeb

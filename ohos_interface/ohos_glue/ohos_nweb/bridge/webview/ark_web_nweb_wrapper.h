@@ -28,6 +28,7 @@ using ArkWebImageColorType = OHOS::NWeb::ImageColorType;
 using ArkWebImageAlphaType = OHOS::NWeb::ImageAlphaType;
 using ArkWebNestedScrollMode = OHOS::NWeb::NestedScrollMode;
 using ArkPixelUnit = OHOS::NWeb::PixelUnit;
+using ArkWebDestroyMode = OHOS::NWeb::WebDestroyMode;
 
 class ArkWebNWebWrapper : public OHOS::NWeb::NWeb {
 public:
@@ -1536,6 +1537,17 @@ public:
     void SetSurfaceDensity(const double& density) override;
 
     /**
+     * @brief When the user sets the webpage's border radius,
+     *        update Chromium with this radius value for repaint the scrollbar.
+     * @param borderRadiusTopLeft: Radius value of the rounded corner in the top-left of the webpage.
+     * @param borderRadiusTopRight: Radius value of the rounded corner in the top-right of the webpage.
+     * @param borderRadiusBottomLeft: Radius value of the rounded corner in the bottom-left of the webpage.
+     * @param borderRadiusBottomRight: Radius value of the rounded corner in the bottom-right of the webpage.
+     */
+    void SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight, double borderRadiusBottomLeft,
+        double borderRadiusBottomRight) override;
+
+    /**
      * @brief Set the native inner web
      */
     void SetNativeInnerWeb(bool isInnerWeb) override;
@@ -1559,6 +1571,199 @@ public:
      * @brief Notify browser is background.
      */
     void OnBrowserBackground() override;
+
+    /**
+     * @brief: register native javaScriptProxy.
+     *
+     * @param objName object name.
+     * @param methodName methodName list
+     * @param data The ptr of NWebJsProxyMethod.
+     * @param isAsync True mean.
+     * @param permission permission.
+     */
+    virtual void RegisterNativeJavaScriptProxy(const std::string& objName,
+        const std::vector<std::string>& methodName,
+        std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+        bool isAsync,
+        const std::string& permission) override;
+
+    /**
+     * @brief Set the window id.
+     */
+    void SetFocusWindowId(uint32_t focus_window_id) override;
+
+    /**
+     * @brief Run data detector JS
+     */
+    void RunDataDetectorJS() override;
+
+    /**
+     * @brief Set data detector enable.
+     */
+    void SetDataDetectorEnable(bool enable) override;
+
+    /**
+     * @brief On data detector select text.
+     */
+    void OnDataDetectorSelectText() override;
+
+    /**
+     * @brief On data detector copy.
+     */
+    void OnDataDetectorCopy(const std::vector<std::string>& recordMix) override;
+
+    /**
+     * @brief Set the native window of picture in picture.
+     */
+    void SetPipNativeWindow(int delegate_id,
+                            int child_id,
+                            int frame_routing_id,
+                            void* window) override;
+
+    /**
+     * @brief Send event of picture in picture.
+     */
+    void SendPipEvent(int delegate_id,
+                      int child_id,
+                      int frame_routing_id,
+                      int event) override;
+
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key The unique key of current page.
+     */
+    void SetBlanklessLoadingKey(const std::string& key) override;
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    void SetPrivacyStatus(bool isPrivate) override;
+
+    /**
+     * @brief Get select startIndex.
+     */
+    int GetSelectStartIndex() override;
+
+    /**
+     * @brief Get select endIndex.
+     */
+    int GetSelectEndIndex() override;
+
+    /**
+     * @brief Get all text info.
+     */
+    std::string GetAllTextInfo() override;
+
+    /**
+     * @brief Set audio session type.
+     *
+     * @param audio_session_type Audio session type.
+     */
+    void SetAudioSessionType(int32_t audio_session_type) override;
+
+        /**
+     * @brief Get accessibility id by its html element id in the browser.
+     * @param htmlElementId The html element id of the Same-layer rendering.
+     * @return The accessibility id of the accessibility node with Same-layer rendering.
+     */
+    int64_t GetWebAccessibilityIdByHtmlElementId(const std::string& htmlElementId) override;
+
+    /**
+     * @brief Get the prediction info of blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param similarity The historical snapshot similarity.
+     * @param loadingTime The historical loading time.
+     * @return The error code.
+     */
+    int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime) override;
+
+    /**
+     * @brief Set whether to enable blankless loading on the current page.
+     *
+     * @param key The unique key of current page.
+     * @param isStart Whether to enable blankless loading.
+     * @return The error code.
+     */
+    int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart) override;
+
+    /**
+     * @brief Update the single handle visible.
+     * @param isVisible The single handle visible.
+     */
+    void UpdateSingleHandleVisible(bool isVisible) override;
+
+    /**
+     * @brief Set the state of touch handle when it exists.
+     * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
+     */
+    void SetTouchHandleExistState(bool touchHandleExist) override;
+
+    /**
+     * @brief Sets the bottom avoidance height of the web visible viewport.
+     * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
+     */
+    void AvoidVisibleViewportBottom(int32_t avoidHeight) override;
+
+    /**
+     * @brief Get the bottom avoidance height of the web visible viewport.
+     * @return The bottom avoidance height of the visible viewport.
+     */
+    int32_t GetVisibleViewportAvoidHeight() override;
+
+    /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    bool TriggerBlanklessForUrl(const std::string& url) override;
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    void SetVisibility(bool isVisible) override;
+
+    /**
+     * @brief Current viewport is being scaled.
+     */
+    void SetViewportScaleState() override;
+
+    /**
+    * @brief Get the current scroll offset of the webpage.
+    * @param offset_x The current horizontal scroll offset of the webpage.
+    * @param offset_y The current vertical scroll offset of the webpage.
+    */
+   /*--ark web()--*/
+   void GetPageOffset(float* offset_x, float* offset_y) override;
+
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     */
+    void SetErrorPageEnabled(bool enable) override;
+
+    /**
+     * @brief Get whether default error page feature is enabled.
+     */
+    bool GetErrorPageEnabled() override;
+
+    /**
+     * @brief Get web component destroy mode.
+     * @return The web destroy mode.
+     */
+    ArkWebDestroyMode GetWebDestroyMode() override;
+
+    void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+        const std::vector<std::shared_ptr<OHOS::NWeb::NWebRomValue>>& args) override;
+
+    void PostPortMessageV2(const std::string& portHandle, std::shared_ptr<OHOS::NWeb::NWebRomValue> data) override;
+
+    void FillAutofillDataV2(std::shared_ptr<OHOS::NWeb::NWebRomValue> data) override;
 
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
