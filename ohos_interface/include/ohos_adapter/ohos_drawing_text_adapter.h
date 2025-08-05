@@ -21,27 +21,27 @@
 namespace OHOS::NWeb {
 
 typedef struct OH_Drawing_FontFallbackInfo {
-    /**The type of language supported by the font set. The language format is bcp47 */
+    /** The type of language supported by the font set. The language format is bcp47 */
     char* language;
-    /** FontFamily Name */
+    /** Font family name */
     char* familyName;
 } ArkWeb_Drawing_FontFallbackInfo;
 
 typedef struct OH_Drawing_FontAliasInfo {
-    /** Font Family Name */
+    /** Font family name */
     char* familyName;
     /**
-     * Font weight value. When the weight value is greater than 0.
-     * the font set contains only fonts with the sepcified weight
-     * When the weight values is equal to 0, the font set contain all fonts
+     * Font weight value. When the weight value is greater than 0,
+     * the font set contains only fonts with the specified weight.
+     * When the weight value is equal to 0, the font set contains all fonts.
      */
     int weight;
 } ArkWeb_Drawing_FontAliasInfo;
 
 typedef struct OH_Drawing_FontAdjustInfo {
-    /**The font's original weight info */
+    /** The font's original weight value */
     int weight;
-    /** The font weight displayed in the application. */
+    /** The font weight displayed in the application */
     int to;
 } ArkWeb_Drawing_FontAdjustInfo;
 
@@ -50,7 +50,7 @@ typedef struct OH_Drawing_FontGenericInfo {
     char* familyName;
     /** The size of alias font lists */
     size_t aliasInfoSize;
-    /** The Size of font weight mapping information lists */
+    /** The size of font weight mapping information lists */
     size_t adjustInfoSize;
     /** List of alias fonts */
     ArkWeb_Drawing_FontAliasInfo* aliasInfoSet;
@@ -71,17 +71,17 @@ typedef struct OH_Drawing_FontFallbackGroup {
 } ArkWeb_Drawing_FontFallbackGroup;
 
 typedef struct ArkWeb_Drawing_FontConfigInfo {
-    /** Count of system font file paths*/
+    /** Count of system font file paths */
     size_t fontDirSize;
     /** List size of generic font sets */
     size_t fontGenericInfoSize;
-    /**Count of fallback font set lists */
+    /** Count of fallback font set lists */
     size_t fallbackGroupSize;
     /** List of system font file paths */
     char** fontDirSet;
     /** List of generic font sets */
     ArkWeb_Drawing_FontGenericInfo* fontGenericInfoSet;
-    /**List of fallback font sets */
+    /** List of fallback font sets */
     ArkWeb_Drawing_FontFallbackGroup* fallbackGroupSet;
 } ArkWeb_Drawing_FontConfigInfo;
 
@@ -90,39 +90,39 @@ typedef enum {
     ALL = 1 << 0,
     /** System generic font type */
     GENERIC = 1 << 1,
-    /**Stylist font type */
+    /** Stylish font type */
     STYLISH = 1 << 2,
-    /**Installed font types */
+    /** Installed font types */
     INSTALLED = 1 << 3,
 } ArkWeb_Drawing_SystemFontType;
 
 typedef struct {
     /** A pointer to a byte string containing UTF-16 encoded entities */
     uint8_t* strData;
-    /** The length of 'strData' in bytes */
+    /** The length of `strData` in bytes */
     uint32_t strLen;
 } ArkWeb_Drawing_String;
 
 typedef struct ArkWeb_Drawing_FontDescriptor {
-    /**The file path of System font */
+    /** The file path of System font */
     char* path;
     /** A name that uniquely identifies the font */
     char* postScriptName;
-    /** The name of system font */
+    /** The name of System font */
     char* fullName;
     /** The family of System font */
     char* fontFamily;
     /** The subfont family of the system font */
     char* fontSubfamily;
-    /** The weight of system font */
+    /** The weight of System font */
     int weight;
-    /** The width of system font */
+    /** The width of System font */
     int width;
-    /** whether the system font is titled */
+    /** Whether the system font is tilted */
     int italic;
-    /** Whether the system font is compat */
+    /** Whether the system font is compact */
     bool monoSpace;
-    /** whether symbolic fonts are suppoted */
+    /** whether symbolic fonts are supported */
     bool symbolic;
 } ArkWeb_Drawing_FontDescriptor;
 
@@ -136,9 +136,9 @@ public:
 
     virtual int GetFontDescriptorByFullName(void* drawingString,
                                             int32_t systemFontType, void** drawingFontDescriptor) = 0;
-    
+
     virtual int GetSystemFontFullNameByIndex(void* drawingArray,
-                                             int32_t indexOfFullName, const void** drawingString) = 0;
+                                            int32_t indexOfFullName, const void** drawingString) = 0;
 
     virtual void DestroySystemFontFullNames(void* drawingArray) = 0;
 
