@@ -7318,6 +7318,7 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
 napi_value NapiWebviewController::AvoidVisibleViewportBottom(napi_env env, napi_callback_info info)
 {
     if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("AvoidVisibleViewportBottom unsupported engine version: M114");
         return nullptr;
     }
     napi_value thisVar = nullptr;
