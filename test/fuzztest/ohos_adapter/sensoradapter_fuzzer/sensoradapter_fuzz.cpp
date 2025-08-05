@@ -62,15 +62,12 @@ bool SensorAdapterFuzzTest(const uint8_t* data, size_t size)
         sensorAdapterImpl.RegistOhosSensorCallback(sensorTypeId, callbackAdapter);
         SensorEvent event;
         event.sensorTypeId = sensorTypeId;
-        uint8_t *sensorData = 0;
-        event.data = sensorData;
+        event.data = nullptr;
         sensorAdapterImpl.OhosSensorCallback(&event);
         sensorAdapterImpl.UnsubscribeOhosSensor(sensorTypeId);
-        delete[] sensorData;
     }
     SensorEvent event;
-    uint8_t *sensorData = 0;
-    event.data = sensorData;
+    event.data = nullptr;
     sensorAdapterImpl.handleAccelerometerData(callback, &event);
     sensorAdapterImpl.handleLinearAccelerometerData(callback, &event);
     sensorAdapterImpl.handleGravityData(callback, &event);
@@ -79,7 +76,6 @@ bool SensorAdapterFuzzTest(const uint8_t* data, size_t size)
     sensorAdapterImpl.handleOrientationData(callback, &event);
     sensorAdapterImpl.handleRotationVectorData(callback, &event);
     sensorAdapterImpl.handleGameRotationVectorData(callback, &event);
-    delete[] sensorData;
     return true;
 }
 } // namespace NWeb
