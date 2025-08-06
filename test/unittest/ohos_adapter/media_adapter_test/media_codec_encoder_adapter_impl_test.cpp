@@ -313,6 +313,13 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_OnError_
     callbackImpl->OnInputBufferAvailable(1, memory);
     AVCodecBufferInfo info;
     callbackImpl->OnOutputBufferAvailable(1, info, AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, memory);
+
+    callbackImpl->cb_ = nullptr;
+    callbackImpl->OnError(OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_EXTEND_START, 1);
+    callbackImpl->OnOutputFormatChanged(fomat);
+    callbackImpl->OnInputBufferAvailable(1, nullptr);
+    callbackImpl->OnInputBufferAvailable(1, memory);
+    callbackImpl->OnOutputBufferAvailable(1, info, AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, memory);
 }
 
 /**
