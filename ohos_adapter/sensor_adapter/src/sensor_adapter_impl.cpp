@@ -15,6 +15,7 @@
 
 #include "sensor_adapter_impl.h"
 
+#include <inttypes.h>
 #include <securec.h>
 #include <map>
 
@@ -353,9 +354,8 @@ void SensorAdapterImpl::OhosSensorCallback(SensorEvent* event)
 
 int32_t SensorAdapterImpl::SubscribeOhosSensor(int32_t sensorTypeId, int64_t samplingInterval)
 {
-    WVLOG_I("SubscribeOhosSensor sensorTypeId: %{public}d, samplingInterval: %{public}lld",
+    WVLOG_I("SubscribeOhosSensor sensorTypeId: %{public}d, samplingInterval: %{public}" PRId64,
         sensorTypeId, samplingInterval);
-    WVLOG_I("SubscribeOhosSensor sensorTypeId: %{public}d", sensorTypeId);
     if (samplingInterval <= 0) {
         WVLOG_E("SubscribeOhosSensor error, samplingInterval is invalid.");
         return SENSOR_PARAMETER_ERROR;
