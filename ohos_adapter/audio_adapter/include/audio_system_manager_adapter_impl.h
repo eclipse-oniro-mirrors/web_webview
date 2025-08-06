@@ -17,7 +17,7 @@
 #define AUDIO_SYSTEM_MANAGER_ADAPTER_IMPL_H
 
 #include "audio_system_manager_adapter.h"
-#include <vector>
+
 #if defined(NWEB_AUDIO_ENABLE)
 #include "audio_system_manager.h"
 #endif
