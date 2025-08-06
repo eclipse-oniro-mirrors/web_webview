@@ -37,7 +37,7 @@ using namespace OHOS::AbilityRuntime;
 namespace OHOS {
 namespace {
 constexpr uint32_t MODULE_NAME_SIZE = 32;
-const std::string NWEB_HAP_PATH = "/system/app/com.ohos.arkwebcore/ArkWebCore.hap";
+const std::string NWEB_HAP_PATH = "/system/app/ArkWebCore/ArkWebCore.hap";
 const std::string NWEB_HAP_PATH_1 = "/system/app/NWeb/NWeb.hap";
 const std::string NWEB_HAP_PATH_MODULE_UPDATE = "/module_update/ArkWebCore/app/com.ohos.nweb/NWeb.hap";
 
