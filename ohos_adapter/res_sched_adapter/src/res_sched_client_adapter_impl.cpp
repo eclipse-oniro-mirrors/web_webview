@@ -26,7 +26,6 @@
 #include "bundle_mgr_interface.h"
 #include "iservice_registry.h"
 #include "nweb_log.h"
-#include "ohos_adapter_helper.h"
 #include "res_sched_client.h"
 #include "res_sched_client_adapter.h"
 #include "res_type.h"
@@ -81,8 +80,6 @@ const std::unordered_map<ResSchedSceneAdapter, int32_t> RES_SCENE_MAP = {
     { ResSchedSceneAdapter::IMAGE_DECODE, ResType::WebScene::WEB_SCENE_IMAGE_DECODE },
 };
 
-const int32_t WEBVIEW_DESTROY = 1010;
-const int32_t WEBVIEW_DESTROY_ORIGIN = 1007;
 const int32_t INVALID_NUMBER = -1;
 const int64_t INVALID_NUMBER_INT64 = -1;
 const int64_t SLIDE_PERIOD_MS = 300;
@@ -185,11 +182,6 @@ bool ReportSceneInternal(ResSchedStatusAdapter statusAdapter, ResSchedSceneAdapt
         sceneId = it->second;
     }
 
-    auto& systemPropertiesAdapter = OhosAdapterHelper::GetInstance().GetSystemPropertiesInstance();
-    auto deviceType = systemPropertiesAdapter.GetProductDeviceType();
-    if (deviceType == ProductDeviceType::DEVICE_TYPE_2IN1 && sceneId == WEBVIEW_DESTROY_ORIGIN) {
-        sceneId = WEBVIEW_DESTROY;
-    }
     std::unordered_map<std::string, std::string> mapPayload { { UID, GetUidString() },
         { SCENE_ID, std::to_string(sceneId) } };
     ResSchedClient::GetInstance().ReportData(ResType::RES_TYPE_REPORT_SCENE_SCHED, status, mapPayload);
