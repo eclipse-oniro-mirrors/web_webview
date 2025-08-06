@@ -41,6 +41,7 @@ ohos_fuzztest("AudioRenderFuzzTest") {
     external_deps = [
       "audio_framework:audio_client",
       "audio_framework:audio_renderer",
+      "c_utils:utils",
     ]
   }
 }
