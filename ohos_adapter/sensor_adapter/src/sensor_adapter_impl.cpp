@@ -15,7 +15,7 @@
 
 #include "sensor_adapter_impl.h"
 
-#include <inttypes.h>
+#include <cinttypes>
 #include <securec.h>
 #include <map>
 
