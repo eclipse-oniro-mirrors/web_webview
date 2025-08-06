@@ -252,6 +252,7 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_NormalTe
 {
     mediaCodecEncoderAdapterImpl->encoder_ = std::make_shared<MediaAVCodec::AVCodecVideoEncoderImpl>();
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(config_), CodecCodeAdapter::ERROR);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(nullptr), CodecCodeAdapter::ERROR);
     std::shared_ptr<CodecCallbackAdapter> callback = std::make_shared<EncoderCallbackAdapterMock>();
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->SetCodecCallback(callback), CodecCodeAdapter::ERROR);
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->Prepare(), CodecCodeAdapter::ERROR);
