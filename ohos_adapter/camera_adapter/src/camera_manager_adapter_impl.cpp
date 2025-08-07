@@ -910,12 +910,6 @@ int32_t CameraSurfaceListener::GetScreenRotation()
             WVLOG_E("Get invalid displayRotation");
             break;
     }
-    // current tablet screen rotation is different from of other devices.
-    // when display framework modify this problem, we need to delete this transform
-    std::string deviceType = OHOS::system::GetDeviceType();
-    if (deviceType == "tablet") {
-        screenRotation = (screenRotation + ROTATION_270) % ROTATION_MAX;
-    }
     return screenRotation;
 }
 
@@ -945,8 +939,7 @@ int32_t CameraSurfaceListener::GetPictureRotation()
 
 bool CameraSurfaceListener::IsNeedCorrectRotation()
 {
-    std::string deviceType = OHOS::system::GetDeviceType();
-    return (deviceType == "phone" || deviceType == "tablet");
+    return true;
 }
 
 std::shared_ptr<CameraRotationInfoAdapter> CameraSurfaceListener::FillRotationInfo(int32_t rotation,
