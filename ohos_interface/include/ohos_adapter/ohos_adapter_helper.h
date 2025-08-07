@@ -158,20 +158,20 @@ public:
 
     virtual OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() = 0;
 
-    virtual std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
+    virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
+
+    virtual std::unique_ptr<DrmAdapter> CreateDrmAdapter() = 0;
 
     virtual OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() = 0;
 
     virtual OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() = 0;
-
-    virtual std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() = 0;
-
-    virtual std::unique_ptr<DrmAdapter> CreateDrmAdapter() = 0;
+    virtual std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() = 0;
 
     virtual std::unique_ptr<ScreenlockManagerAdapter> CreateScreenlockManagerAdapter() = 0;
 
     virtual std::unique_ptr<CertManagerAdapter> GetCertManagerAdapter() {return nullptr;};
 };
+
 } // namespace OHOS::NWeb
 
 #endif // OHOS_ADAPTER_HELPER_H

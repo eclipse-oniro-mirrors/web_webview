@@ -616,17 +616,6 @@ public:
     virtual bool GetScrollable() = 0;
 
     /**
-     * Put whether fonts are automatically laid out, default value is ture.
-     */
-    virtual void PutTextAutosizingEnabled(bool flag) = 0;
-
-    /**
-     * Set whether to support the viewport attribute of the meta tag in the
-     * frontend page.
-     */
-    virtual void SetViewportEnable(bool enable) = 0;
-
-    /**
      * Set native video player config.
      * @param enable Enable native video player or not.
      * @param shouldOverlay Native video player should overlay web page or not.
@@ -634,9 +623,23 @@ public:
     virtual void SetNativeVideoPlayerConfig(bool enable, bool shouldOverlay) = 0;
 
     /**
+     * Set whether to support the viewport attribute of the meta tag in the frontend page.
+     * @param enable set whether viewport is allowed.
+     */
+    virtual void SetViewportEnable(bool enable) = 0;
+
+    /**
+     * Put whether fonts are automatically laid out, default value is ture.
+     */
+    virtual void PutTextAutosizingEnabled(bool flag) = 0;
+
+    /**
      * Get surfaceId.
      */
-    virtual std::string GetSurfaceId() { return ""; }
+    virtual std::string GetSurfaceId()
+    {
+        return "";
+    }
 
     /**
      * Set surfaceId.
@@ -660,14 +663,14 @@ public:
     virtual void SetBlurOnKeyboardHideMode(int enable) {}
 
     /**
+     * Set the scale of the font-weight.The default is 1.0f.
+     */
+    virtual void SetFontWeightScale(float size) {}
+
+    /**
      * Set whether to connect to media avsession.
      */
     virtual void PutWebMediaAVSessionEnabled(bool enable) {}
-
-    /**
-     * Set the scale of the font-weight.The default is 1.0f.
-     */
-    virtual void SetFontWeightScale(float scale) {}
 
     /**
      * Set whether to use the intrinsic size. The default is false.
