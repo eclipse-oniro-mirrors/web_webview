@@ -454,7 +454,7 @@ int32_t CertManagerAdapterImpl::Sign(const uint8_t* uri, const uint8_t* certData
         return CM_FAILURE;
     }
 
-    int32_t ret = CmInit(&keyUri, &spec, &handle);
+    int32_t ret = CmInit(&keyUri, spec, &handle);
     if (ret != CM_SUCCESS) {
         WVLOG_E("Sign, init failed, ret = %{public}d ", ret);
         return CM_FAILURE;
