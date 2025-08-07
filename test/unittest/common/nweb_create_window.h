@@ -300,6 +300,8 @@ public:
     }
     void SetAudioSessionType(int32_t audioSessionType) override
     {}
+    void UpdateSingleHandleVisible(bool isVisible) override
+    {}
     void AvoidVisibleViewportBottom(int32_t avoidHeight) override
     {}
     int32_t GetVisibleViewportAvoidHeight() override
