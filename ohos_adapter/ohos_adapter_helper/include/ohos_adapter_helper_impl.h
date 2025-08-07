@@ -119,15 +119,15 @@ public:
 
     OhosNativeBufferAdapter& GetOhosNativeBufferAdapter() override;
 
-    std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() override;
+    std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
+
+    std::unique_ptr<DrmAdapter> CreateDrmAdapter() override;
 
     OhosDrawingTextFontAdapter& GetOhosDrawingTextFontAdapter() override;
 
     OhosDrawingTextTypographyAdapter& GetOhosDrawingTextTypographyAdapter() override;
 
-    std::unique_ptr<AudioCodecDecoderAdapter> CreateAudioCodecDecoderAdapter() override;
-
-    std::unique_ptr<DrmAdapter> CreateDrmAdapter() override;
+    std::unique_ptr<MigrationManagerAdapter> CreateMigrationMgrAdapter() override;
 
     std::unique_ptr<ScreenlockManagerAdapter> CreateScreenlockManagerAdapter() override;
 };
