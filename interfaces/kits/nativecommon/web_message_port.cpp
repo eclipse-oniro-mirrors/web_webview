@@ -36,7 +36,7 @@ ErrCode WebMessagePort::ClosePort()
     return NWebError::NO_ERROR;
 }
 
-ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
+ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data, std::shared_ptr<NWebRomValue> value)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
@@ -47,7 +47,10 @@ ErrCode WebMessagePort::PostPortMessage(std::shared_ptr<NWebMessage> data)
         WVLOG_E("can't post message, message port already closed");
         return NWebError::CAN_NOT_POST_MESSAGE;
     }
-    nweb_ptr->PostPortMessage(portHandle_, data);
+    nweb_ptr->PostPortMessageV2(portHandle_, value);
+    if (ArkWebGetErrno() != RESULT_OK) {
+        nweb_ptr->PostPortMessage(portHandle_, data);
+    }
     return NWebError::NO_ERROR;
 }
 

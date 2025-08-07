@@ -32,7 +32,7 @@ public:
 
     ErrCode ClosePort();
 
-    ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data);
+    ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data, std::shared_ptr<NWebRomValue> value);
 
     ErrCode SetPortMessageCallback(std::shared_ptr<NWebMessageValueCallback> callback);
 
