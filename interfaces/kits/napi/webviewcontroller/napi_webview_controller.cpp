@@ -41,6 +41,8 @@
 #include "web_errors.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_createpdf_execute_callback.h"
+#include "web_history_list.h"
+#include "web_message_port.h"
 
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
@@ -2291,9 +2293,12 @@ napi_value NapiWebMessagePort::JsConstructor(napi_env env, napi_callback_info in
     NAPI_CALL(env, napi_wrap(env, thisVar, msgPort,
         [](napi_env env, void *data, void *hint) {
             WebMessagePort *msgPort = static_cast<WebMessagePort *>(data);
-            delete msgPort;
+            if (msgPort && msgPort->DecRefCount() <= 0) {
+                delete msgPort;
+            }
         },
         nullptr, nullptr));
+    msgPort->IncRefCount();
     return thisVar;
 }
 
@@ -4220,10 +4225,13 @@ napi_value NapiWebviewController::getBackForwardEntries(napi_env env, napi_callb
     NAPI_CALL(env, napi_wrap(env, result, webHistoryList,
         [](napi_env env, void *data, void *hint) {
             WebHistoryList *webHistoryList = static_cast<WebHistoryList *>(data);
-            delete webHistoryList;
+            if (webHistoryList && webHistoryList->DecRefCount() <= 0) {
+                delete webHistoryList;
+            }
         },
         nullptr, nullptr));
 
+    webHistoryList->IncRefCount();
     return result;
 }
 

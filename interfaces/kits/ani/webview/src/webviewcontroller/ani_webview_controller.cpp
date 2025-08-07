@@ -43,6 +43,8 @@
 #include "webview_hasimage_callback.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_javascript_result_callback.h"
+#include "web_history_list.h"
+#include "web_message_port.h"
 
 #include "nweb_precompile_callback.h"
 #include "nweb_cache_options_impl.h"
@@ -338,13 +340,21 @@ static void Clean(ani_env *env, ani_object object)
     if (clsName == "WebviewController") {
         delete reinterpret_cast<WebviewController *>(ptr);
     } else if (clsName == "WebHistoryList") {
-        delete reinterpret_cast<WebHistoryList *>(ptr);
+        WebHistoryList *historyList = reinterpret_cast<WebHistoryList *>(ptr);
+        if (historyList && historyList->DecRefCount() <= 0) {
+            delete historyList;
+        }
     } else if (clsName == "ProxyConfig") {
         delete reinterpret_cast<ProxyConfig *>(ptr);
     } else if (clsName == "WebSchemeHandlerResponse") {
         delete reinterpret_cast<WebSchemeHandlerResponse *>(ptr);
     } else if (clsName == "WebDownloadDelegate") {
         delete reinterpret_cast<WebDownloadDelegate *>(ptr);
+    } else if (clsName == "WebMessagePort") {
+        WebMessagePort *msgPort = reinterpret_cast<WebMessagePort *>(ptr);
+        if (msgPort && msgPort->DecRefCount() <= 0) {
+            delete msgPort;
+        }
     } else {
         WVLOG_E("Clean unsupport className: %{public}s", clsName.c_str());
     }
@@ -911,6 +921,7 @@ static ani_ref GetBackForwardEntries(ani_env *env, ani_object object)
         webHistoryList = nullptr;
         return nullptr;
     }
+    webHistoryList->IncRefCount();
 
     env->Object_SetPropertyByName_Double(backForwardObj, "currentIndex", static_cast<ani_double>(currentIndex));
     env->Object_SetPropertyByName_Double(backForwardObj, "size", static_cast<ani_double>(size));
