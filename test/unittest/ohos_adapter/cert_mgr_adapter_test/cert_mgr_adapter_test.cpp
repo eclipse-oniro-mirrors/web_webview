@@ -415,6 +415,11 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_Sign_006, TestSize.Level1)
     EXPECT_EQ(result, -1);
     result = adapter.SignV2(uriData, nullptr, 0, signData, &signDataLen, 0x0806);
     EXPECT_EQ(result, -1);
+    result = adapter.SignV2(uriData, nullptr, 0, signData, nullptr, 0x0806);
+    EXPECT_EQ(result, -1);
+    signDataLen = 1000;
+    result = adapter.SignV2(uriData, nullptr, 0, nullptr, &signDataLen, 0x0806);
+    EXPECT_EQ(result, -1);
 }
 
 /**
