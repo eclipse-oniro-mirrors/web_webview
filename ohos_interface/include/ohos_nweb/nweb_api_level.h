@@ -22,7 +22,7 @@
  * is padded with 0. For example, if the API version is 12 and the ArkWeb monthly version
  * is 1, then API level is 12001.
  */
-#define ARKWEB_CORE_API_LEVEL 14001
+#define ARKWEB_CORE_API_LEVEL 13001
 
 #endif  // NWEB_API_LEVEL_H_
 
