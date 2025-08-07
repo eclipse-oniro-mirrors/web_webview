@@ -47,6 +47,8 @@ const std::string HTTP_BODY_STREAN_INIT_FAILED_MSG = "Failed to initialize the H
 const std::string RESOURCE_HANDLER_INVALID_MSG = "The resource handler is invalid.";
 const std::string NOT_ALLOWED_PORT_MSG = "The port number is not within the allowed range.";
 const std::string UNKNOWN_ERROR_MSG = "Unknown error message.";
+const std::string INVALID_NET_ERROR_MSG = "The errorCode is either ARKWEB_NET_OK or "
+    "outside the range of error codes in WebNetErrorList";
 }
 
 namespace OHOS {
@@ -90,6 +92,7 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {HTTP_BODY_STREAN_INIT_FAILED, HTTP_BODY_STREAN_INIT_FAILED_MSG},
     {RESOURCE_HANDLER_INVALID, RESOURCE_HANDLER_INVALID_MSG},
     {NOT_ALLOWED_PORT, NOT_ALLOWED_PORT_MSG},
+    {INVALID_NET_ERROR, INVALID_NET_ERROR_MSG},
 };
 
 std::string GetErrMsgByErrCode(ErrCode code)
