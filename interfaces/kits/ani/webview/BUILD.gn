@@ -26,6 +26,7 @@ ohos_shared_library("webview_ani") {
     "./src/proxycontroller",
     "./src/webstorage",
     "./src/webviewcontroller",
+    "../../nativecommon",
     "native/common",
     "native/webadsblockmanager",
     "native/webasynccontroller",
