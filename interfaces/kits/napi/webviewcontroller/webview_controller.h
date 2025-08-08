@@ -30,7 +30,7 @@
 #include "nweb_web_message.h"
 #include "web_errors.h"
 #include "webview_javascript_result_callback.h"
-#include "print_manager_adapter.h"
+#include "webview_controller_print_structs.h"
 
 #include "web_scheme_handler_request.h"
 #include "webview_value.h"
@@ -322,7 +322,7 @@ public:
 
     ErrCode PrefetchPage(std::string& url, std::map<std::string, std::string> additionalHttpHeaders);
 
-    void* CreateWebPrintDocumentAdapter(const std::string &jobName);
+    void* CreateWebPrintDocumentAdapter(const std::string &jobName, int32_t& useAdapterV2);
 
     ErrCode PostUrl(std::string& url, std::vector<char>& postData);
 
@@ -523,31 +523,6 @@ private:
     std::mutex attachMtx_;
 };
 
-class WebMessagePort {
-public:
-    WebMessagePort(int32_t nwebId, std::string& port, bool isExtentionType);
-
-    ~WebMessagePort() = default;
-
-    ErrCode ClosePort();
-
-    ErrCode PostPortMessage(std::shared_ptr<NWebMessage> data, std::shared_ptr<NWebRomValue> value);
-
-    ErrCode SetPortMessageCallback(std::shared_ptr<NWebMessageValueCallback> callback);
-
-    std::string GetPortHandle() const;
-
-    bool IsExtentionType()
-    {
-        return isExtentionType_;
-    }
-
-private:
-    int32_t nwebId_ = -1;
-    std::string portHandle_;
-    bool isExtentionType_;
-};
-
 class WebMessageExt {
 public:
     explicit WebMessageExt(std::shared_ptr<NWebMessage> data,
@@ -693,45 +668,6 @@ private:
     std::shared_ptr<NWebRomValue> value_;
 };
 
-class WebHistoryList {
-public:
-    explicit WebHistoryList(std::shared_ptr<NWebHistoryList> sptrHistoryList) : sptrHistoryList_(sptrHistoryList) {};
-    ~WebHistoryList() = default;
-
-    int32_t GetCurrentIndex();
-
-    std::shared_ptr<NWebHistoryItem> GetItem(int32_t index);
-
-    int32_t GetListSize();
-
-private:
-    OHOS::NWeb::NWeb* nweb_ = nullptr;
-    std::shared_ptr<NWebHistoryList> sptrHistoryList_ = nullptr;
-};
-
-class WebPrintDocument {
-public:
-    explicit WebPrintDocument(void* webPrintdoc) : printDocAdapter_((PrintDocumentAdapterAdapter*)webPrintdoc) {};
-    ~WebPrintDocument() = default;
-    void OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
-        const PrintAttributesAdapter& newAttrs, uint32_t fd,
-        std::function<void(std::string, uint32_t)> writeResultCallback);
-
-    void OnJobStateChanged(const std::string& jobId, uint32_t state);
-
-private:
-    std::unique_ptr<PrintDocumentAdapterAdapter> printDocAdapter_ = nullptr;
-};
-
-class WebPrintWriteResultCallbackAdapter : public PrintWriteResultCallbackAdapter {
-public:
-    explicit WebPrintWriteResultCallbackAdapter(std::function<void(std::string, uint32_t)>& cb) : cb_(cb) {};
-
-    void WriteResultCallback(std::string jobId, uint32_t code) override;
-
-private:
-    std::function<void(std::string, uint32_t)> cb_;
-};
 } // namespace NWeb
 } // namespace OHOS
 

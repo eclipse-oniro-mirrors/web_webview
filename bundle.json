@@ -306,7 +306,6 @@
                 "//base/web/webview/test/fuzztest/ohos_nweb/selectcertrequest_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/drawingtextadapter_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/napi_fuzzer:fuzztest",
-                "//base/web/webview/test/fuzztest/ohos_nweb/napi_webview_controller_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_adapter/nativeimage_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/initandrun_fuzzer:fuzztest",
                 "//base/web/webview/test/fuzztest/ohos_nweb/nwebhelper_fuzzer:fuzztest",
@@ -372,7 +371,8 @@
                 "//base/web/webview/test/unittest/ohos_adapter/sensor_adapter_impl_test:unittest",
                 "//base/web/webview/test/unittest/napi_common_test:unittest",
                 "//base/web/webview/test/unittest/ohos_adapter/native_buffer_adapter_test:unittest",
-                "//base/web/webview/test/unittest/ohos_adapter/drawing_text_adapter_test:unittest"
+                "//base/web/webview/test/unittest/ohos_adapter/drawing_text_adapter_test:unittest",
+                "//base/web/webview/test/unittest/webview_value_test:unittest"
             ]
         }
     }

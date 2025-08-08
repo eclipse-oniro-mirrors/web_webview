@@ -443,37 +443,18 @@ int32_t CertManagerAdapterImpl::GetAppCert(uint8_t* uriData, uint8_t* certData, 
 }
 
 int32_t CertManagerAdapterImpl::Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
-    uint8_t* signData, uint32_t signDataLen)
+    uint8_t* signData, uint32_t* signDataLen, CmSignatureSpec* spec)
 {
-    return SignV2(uri, certData, certDataLen, signData, &signDataLen, SSL_SIGN_RSA_PSS_RSAE_SHA256);
-}
- 
-int32_t CertManagerAdapterImpl::SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
-    uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm)
-{
-    WVLOG_D("CertManagerAdapterImpl::SignV2 algorithm: %{public}d", algorithm);
     uint64_t handleValue = 0;
     struct CmBlob handle = { sizeof(uint64_t), (uint8_t *)&handleValue };
     const struct CmBlob keyUri = { strlen((char*)uri) + 1, (uint8_t*)uri };
-    struct CmSignatureSpec spec;
-    if (!GetCmSignatureSpec(algorithm, spec)) {
-        WVLOG_E("get cm signature spec fail, please check the signature algorithm");
-        return CM_FAILURE;
-    }
  
     if (signData == nullptr) {
         WVLOG_E("Sign, sign data is nullptr");
         return CM_FAILURE;
     }
 
-    constexpr uint32_t coverAllAlgorithmSignDataLenMin = 1000;
-    if (!signDataLen || *signDataLen < coverAllAlgorithmSignDataLenMin) {
-        WVLOG_E("The buffer length cannot cover all algorithms,"
-                "please set the signDataLen length to no less than 1000");
-        return CM_FAILURE;
-    }
-
-    int32_t ret = CmInit(&keyUri, &spec, &handle);
+    int32_t ret = CmInit(&keyUri, spec, &handle);
     if (ret != CM_SUCCESS) {
         WVLOG_E("Sign, init failed, ret = %{public}d ", ret);
         return CM_FAILURE;
@@ -502,6 +483,33 @@ int32_t CertManagerAdapterImpl::SignV2(const uint8_t* uri, const uint8_t* certDa
     }
 
     return CM_SUCCESS;
+}
+
+int32_t CertManagerAdapterImpl::Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
+    uint8_t* signData, uint32_t signDataLen)
+{
+    struct CmSignatureSpec spec = { CM_KEY_PURPOSE_SIGN, CM_PADDING_PSS, CM_DIGEST_SHA256 };
+    return Sign(uri, certData, certDataLen, signData, &signDataLen, &spec);
+}
+ 
+int32_t CertManagerAdapterImpl::SignV2(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
+    uint8_t* signData, uint32_t* signDataLen, uint16_t algorithm)
+{
+    WVLOG_D("CertManagerAdapterImpl::SignV2 algorithm: %{public}d", algorithm);
+    struct CmSignatureSpec spec;
+    if (!GetCmSignatureSpec(algorithm, spec)) {
+        WVLOG_E("get cm signature spec fail, please check the signature algorithm");
+        return CM_FAILURE;
+    }
+
+    constexpr uint32_t coverAllAlgorithmSignDataLenMin = 1000;
+    if (!signDataLen || *signDataLen < coverAllAlgorithmSignDataLenMin) {
+        WVLOG_E("The buffer length cannot cover all algorithms,"
+                "please set the signDataLen length to no less than 1000");
+        return CM_FAILURE;
+    }
+
+    return Sign(uri, certData, certDataLen, signData, signDataLen, &spec);
 }
 
 bool CertManagerAdapterImpl::GetTrustAnchorsForHostName(

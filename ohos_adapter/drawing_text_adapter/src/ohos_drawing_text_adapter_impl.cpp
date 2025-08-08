@@ -68,7 +68,7 @@ int OhosDrawingTextFontAdapterImpl::GetSystemFontFullNameByIndex(void* drawingAr
         WVLOG_E("drawingArray GetSystemFontFullNameByIndex, drawingArray is null.");
         return -1;
     }
-    WVLOG_D("drawingArray GetSystemFontFullNameByIndex sucess!!!");
+    WVLOG_D("drawingArray GetSystemFontFullNameByIndex success!!!");
     return 0;
 }
 
@@ -93,13 +93,13 @@ OhosDrawingTextTypographyAdapter& OhosDrawingTextTypographyAdapterImpl::GetInsta
 
 OhosDrawingTextTypographyAdapterImpl::~OhosDrawingTextTypographyAdapterImpl()
 {
-    WVLOG_D("Drawing text typography adapter impl desctrutor");
+    WVLOG_D("Drawing text typography adapter impl destructor.");
 }
 
 int OhosDrawingTextTypographyAdapterImpl::GetSystemFontConfigInfo(void* fontConfigInfoErrorCode, void** fontConfigInfo)
 {
     *fontConfigInfo =
-      OH_Drawing_GetSystemFontConfigInfo(static_cast<OH_Drawing_FontConfigInfoErrorCode*>(fontConfigInfoErrorCode));
+        OH_Drawing_GetSystemFontConfigInfo(static_cast<OH_Drawing_FontConfigInfoErrorCode*>(fontConfigInfoErrorCode));
     if (*fontConfigInfo == nullptr) {
         WVLOG_E("drawingArray GetSystemFontConfigInfo, drawingArray is null.");
         return -1;
@@ -124,5 +124,5 @@ void OhosDrawingTextTypographyAdapterImpl::DestroySystemFontConfigInfo(void* fon
     OH_Drawing_DestroySystemFontConfigInfo(static_cast<OH_Drawing_FontConfigInfo*>(fontConfigInfo));
     WVLOG_D("DestroySystemFontConfigInfo");
 }
-} //namespace OHOS::NWeb
+} // namespace OHOS::NWeb
  

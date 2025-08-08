@@ -136,7 +136,7 @@ public:
     int32_t DidReceiveResponseBody(const uint8_t* buffer, int64_t buflen);
     int32_t DidFinish();
     int32_t DidFailWithError(ArkWeb_NetError errorCode, bool completeIfNoResponse);
-    void DestoryArkWebResourceHandler();
+    void DestroyArkWebResourceHandler();
     void SetFinishFlag()
     {
         isFinished_ = true;
@@ -167,6 +167,9 @@ public:
     void ExecuteInit(ArkWeb_NetError result);
     void ExecuteRead(uint8_t* buffer, int bytesRead);
 private:
+    void DeleteInitJsCallbackRef();
+    void DeleteReadJsCallbackRef();
+
     struct InitParam {
         napi_env env;
         napi_async_work asyncWork;
