@@ -29,7 +29,7 @@ public:
     void SetMigrationParam(
         const ArkWebString& bundleName, const ArkWebString& abilityName, const ArkWebString& token) override;
 
-    bool SendMigrationRequest(void* jsonData) override;
+    bool SendMigrationRequest(const char* jsonData) override;
 
     uint32_t RegisterMigrationListener(ArkWebRefPtr<ArkMigrationListenerAdapter> listener) override;
 
