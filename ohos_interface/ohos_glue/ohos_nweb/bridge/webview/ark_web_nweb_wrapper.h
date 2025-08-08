@@ -1765,6 +1765,12 @@ public:
 
     void FillAutofillDataV2(std::shared_ptr<OHOS::NWeb::NWebRomValue> data) override;
 
+    /**
+     * @brief Create web print document adapter V2.
+     */
+    std::unique_ptr<OHOS::NWeb::NWebPrintDocumentAdapterAdapter> CreateWebPrintDocumentAdapterV2(
+        const std::string& job_name) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
