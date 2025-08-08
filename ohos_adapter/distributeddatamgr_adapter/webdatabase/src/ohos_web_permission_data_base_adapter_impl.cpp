@@ -115,7 +115,7 @@ std::string OhosWebPermissionDataBaseAdapterImpl::KeyToTableName(const WebPermis
 bool OhosWebPermissionDataBaseAdapterImpl::ExistPermissionByOrigin(
     const std::string& origin, const WebPermissionType& key)
 {
-    WVLOG_I("web permission database check exist permissions origin=%{public}s info", origin.c_str());
+    WVLOG_I("web permission database check exist permissions");
     if (rdbStore_ == nullptr || origin.empty()) {
         return false;
     }
@@ -138,7 +138,7 @@ bool OhosWebPermissionDataBaseAdapterImpl::ExistPermissionByOrigin(
 bool OhosWebPermissionDataBaseAdapterImpl::GetPermissionResultByOrigin(const std::string& origin,
     const WebPermissionType& key, bool& result)
 {
-    WVLOG_I("web permission database get permissions origin=%{public}s info", origin.c_str());
+    WVLOG_I("web permission database get permissions");
     if (rdbStore_ == nullptr || origin.empty()) {
         return false;
     }
@@ -167,7 +167,7 @@ bool OhosWebPermissionDataBaseAdapterImpl::GetPermissionResultByOrigin(const std
 void OhosWebPermissionDataBaseAdapterImpl::SetPermissionByOrigin(const std::string& origin,
     const WebPermissionType& key, bool result)
 {
-    WVLOG_I("web permission database set info origin:%{public}s key:%{public}d", origin.c_str(), key);
+    WVLOG_I("web permission database set info key:%{public}d", key);
     if (rdbStore_ == nullptr || origin.empty()) {
         return;
     }
@@ -191,7 +191,7 @@ void OhosWebPermissionDataBaseAdapterImpl::ClearPermissionByOrigin(const std::st
     if (rdbStore_ == nullptr || origin.empty()) {
         return;
     }
-    WVLOG_I("web permission database clear origin:%{public}s info", origin.c_str());
+    WVLOG_I("web permission database clear");
     std::string tableName = KeyToTableName(key);
     if (tableName.empty()) {
         return;
