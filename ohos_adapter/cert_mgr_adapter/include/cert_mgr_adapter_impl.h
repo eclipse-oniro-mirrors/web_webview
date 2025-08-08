@@ -60,6 +60,9 @@ private:
     void FreeCMBlobData(struct CmBlob *blob);
 
     void FreeCertList(CertList *certList);
+
+    int32_t Sign(const uint8_t* uri, const uint8_t* certData, uint32_t certDataLen,
+        uint8_t* signData, uint32_t* signDataLen, CmSignatureSpec* spec);
 };
 
 } // namespace OHOS::NWeb

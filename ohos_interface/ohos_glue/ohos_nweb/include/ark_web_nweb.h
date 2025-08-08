@@ -45,6 +45,7 @@
 #include "ohos_nweb/include/ark_web_string_value_callback.h"
 #include "ohos_nweb/include/ark_web_system_configuration.h"
 #include "ohos_nweb/include/ark_web_touch_point_info_vector.h"
+#include "ohos_nweb/include/ark_web_print_document_adapter_adapter.h"
 
 namespace OHOS::ArkWeb {
 
@@ -1986,6 +1987,13 @@ public:
      */
     /*--ark web()--*/
     virtual void FillAutofillDataV2(ArkWebRefPtr<ArkWebRomValue> data) = 0;
+
+    /**
+     * @brief Create web print document adapter.
+     */
+    /*--ark web()--*/
+    virtual ArkWebRefPtr<ArkWebPrintDocumentAdapterAdapter> CreateWebPrintDocumentAdapterV2(
+        const ArkWebString& job_name) = 0;
 };
 
 } // namespace OHOS::ArkWeb

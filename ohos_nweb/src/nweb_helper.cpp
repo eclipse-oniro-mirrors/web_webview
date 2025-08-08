@@ -803,21 +803,7 @@ std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> cre
         return nullptr;
     }
 
-    webApplicationStateCallback_ = WebApplicationStateChangeCallback::GetInstance();
-    std::shared_ptr<NWeb> nweb = nwebEngine_->CreateNWeb(create_info);
-    if (webApplicationStateCallback_) {
-        webApplicationStateCallback_->nweb_ = nweb;
-        WVLOG_I("webApplicationStateCallback_ is registered.");
-    }
-    auto ctx = AbilityRuntime::ApplicationContext::GetApplicationContext();
-    if (ctx && webApplicationStateCallback_ && !webApplicationStateCallback_->isRegistered) {
-        ctx->RegisterApplicationStateChangeCallback(webApplicationStateCallback_);
-        webApplicationStateCallback_->isRegistered = true;
-    } else {
-        WVLOG_E("failed to get application context or webApplicationStateCallback_ has been isRegistered"); 
-    }
-    WVLOG_I("NWebHelper::Nweb is created.");
-    return nweb;
+    return nwebEngine_->CreateNWeb(create_info);
 }
 
 std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
@@ -1148,12 +1134,12 @@ void NWebHelper::RemoveAllCache(bool includeDiskFiles)
 void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
 {
     if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
+        WVLOG_E("blankless failed to load web engine");
         return;
     }
 
     if (nwebEngine_ == nullptr) {
-        WVLOG_E("web engine is nullptr");
+        WVLOG_E("blankless web engine is nullptr");
         return;
     }
 
@@ -1163,12 +1149,12 @@ void NWebHelper::SetBlanklessLoadingCacheCapacity(int32_t capacity)
 void NWebHelper::ClearBlanklessLoadingCache(const std::vector<std::string>& urls)
 {
     if (!LoadWebEngine(true, false)) {
-        WVLOG_E("failed to load web engine");
+        WVLOG_E("blankless failed to load web engine");
         return;
     }
 
     if (nwebEngine_ == nullptr) {
-        WVLOG_E("web engine is nullptr");
+        WVLOG_E("blankless web engine is nullptr");
         return;
     }
 
@@ -1336,7 +1322,7 @@ void NWebHelper::SetWebDebuggingAccessAndPort(bool isEnableDebug, int32_t port)
 std::string NWebHelper::CheckBlankOptEnable(const std::string& url, int32_t nweb_id)
 {
     if (!nwebEngine_) {
-        WVLOG_E("CheckBlankOptEnable, nweb engine is nullptr");
+        WVLOG_E("blankless CheckBlankOptEnable, nweb engine is nullptr");
         return "";
     }
     return nwebEngine_->CheckBlankOptEnable(url, nweb_id);

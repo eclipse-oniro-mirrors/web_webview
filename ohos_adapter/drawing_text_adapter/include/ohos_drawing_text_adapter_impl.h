@@ -21,57 +21,57 @@
 namespace OHOS::NWeb {
 class OhosDrawingTextFontAdapterImpl : public OhosDrawingTextFontAdapter {
 public:
-   static OhosDrawingTextFontAdapter& GetInstance();
-   /**
-    * @brief Construct a new OhosDrawingTextFontAdapterImpl object.
-    */
-   OhosDrawingTextFontAdapterImpl() = default;
+    static OhosDrawingTextFontAdapter& GetInstance();
+    /**
+     * @brief Construct a new OhosDrawingTextFontAdapterImpl object.
+     */
+    OhosDrawingTextFontAdapterImpl() = default;
 
-   /**
-    * @brief Destory the OhosDrawingTextFontAdapterImpl object
-    */
-   ~OhosDrawingTextFontAdapterImpl() override;
+    /**
+     * @brief Destroy the OhosDrawingTextFontAdapterImpl object.
+     */
+    ~OhosDrawingTextFontAdapterImpl() override;
 
-   /**
-    * @brief Get OH_Drawing_Array by OH_Drawing_GetSystemFontFullNamesByType
-    * 
-    * @param systemFontType Indicates enumberates of system font type object <b>OH_Drawing_SystemFontType</b>
-    * @param drawingArray the pointer to full name array object <b>OH_Drawing_Array</b>
-    * @return ErrCode, -1 mean fail and other mean success
-    */
+    /**
+     * @brief Get OH_Drawing_Array by OH_Drawing_GetSystemFontFullNamesByType.
+     *
+     * @param systemFontType Indicates enumerates of system font type object <b>OH_Drawing_SystemFontType</b>.
+     * @param drawingArray the pointer to full name array object <b>OH_Drawing_Array</b>.
+     * @return ErrCode, -1 mean fail and other mean success.
+     */
     int GetSystemFontFullNamesByType(int32_t systemFontType, void** drawingArray) override;
 
     /**
      * @brief Get OH_Drawing_FontDescriptor by OH_Drawing_GetFontDescriptorByFullName
-     * 
-     * @param drawingString Indicates the full name object <b>OH_Drawing_String</b>
-     * @param systemFontType Indicates enumerates of system font type object <b>OH_Drawing_SystemFontType</b>
-     * @param drawingFontDescriptor the pointer to a font descriptor object <b>OH_Drawing_FontDescriptor</b>
-     * @return ErrCode, -1 mean fail and the other mean sucess
+     *
+     * @param drawingString Indicates the full name object <b>OH_Drawing_String</b>.
+     * @param systemFontType Indicates enumerates of system font type object <b>OH_Drawing_SystemFontType</b>.
+     * @param drawingFontDescriptor the pointer to a font descriptor object <b>OH_Drawing_FontDescriptor</b>.
+     * @return ErrCode, -1 mean fail and other mean success.
      */
     int GetFontDescriptorByFullName(void* drawingString, int32_t systemFontType, void** drawingFontDescriptor) override;
 
     /**
      * @brief Get OH_Drawing_String by OH_Drawing_GetSystemFontFullNameByIndex
-     * 
-     * @param drawingArray Indicates an array of full name object <b>OH_Drawing_Array</b>
-     * @param indexOfFullName The index of full name
-     * @param drawingString The full name object <b>OH_Drawing_String</b>
-     * @return ErrCode, -1 mean fail and other mean success
+     *
+     * @param drawingArray Indicates an array of full name object <b>OH_Drawing_Array</b>.
+     * @param indexOfFullName The index of full name.
+     * @param drawingString The full name object <b>OH_Drawing_String</b>.
+     * @return ErrCode, -1 mean fail and other mean success.
      */
     int GetSystemFontFullNameByIndex(void* drawingArray, int32_t indexOfFullName, const void** drawingString) override;
 
     /**
-     * @brief Releases the memory occupied by an array of font full names
-     * 
-     * @param drawingArray Indicates an array of full name object <b>OH_Drawing_Array</b>
+     * @brief Releases the memory occupied by an array of font full names.
+     *
+     * @param drawingArray Indicates an array of full name object <b>OH_Drawing_Array</b>.
      */
     void DestroySystemFontFullNames(void* drawingArray) override;
 
     /**
-     * @brief Releases the memory occupied by descriptor
-     * 
-     * @param descriptor Indicates the pointer to an <b>OH_Drawing_FontDescriptor</b> object
+     * @brief Releases the memory occupied by descriptor.
+     *
+     * @param descriptor Indicates the pointer to an <b>OH_Drawing_FontDescriptor</b> object.
      */
     void DestroyFontDescriptor(void* descriptor) override;
 };
@@ -85,37 +85,37 @@ public:
     OhosDrawingTextTypographyAdapterImpl() = default;
 
     /**
-     * @brief Destory the OhosDrawingTextTypographyAdapterImpl object.
+     * @brief Destroy the OhosDrawingTextTypographyAdapterImpl object.
      */
     ~OhosDrawingTextTypographyAdapterImpl() override;
 
     /**
      * @brief get OH_Drawing_FontConfigInfo by OH_Drawing_GetSystemFontConfigInfo.
-     * 
+     *
      * @param fontConfigInfoErrorCode Indicates error code returned, based on the error code to
      * release the memory of system font configuration information.
      * @param fontConfigInfo The pointer to system font configuration information.
-     * Indicates the pointer to an <b>OH_Drawing_FontConfigInfo<b> object.
-     * @return ErrCode, -1 mean fail and the other mean success
+     * Indicates the pointer to an <b>OH_Drawing_FontConfigInfo</b> object.
+     * @return ErrCode, -1 mean fail and other mean success.
      */
     int GetSystemFontConfigInfo(void* fontConfigInfoErrorCode, void** fontConfigInfo) override;
 
     /**
-     * @brief get size of Array by OH_Drawing_GetDrawingArraySize
-     * 
-     * @param drawingArray Indicates the pointer to the array object <b>OH_Drawing_Array</b>
+     * @brief get size of Array by OH_Drawing_GetDrawingArraySize.
+     *
+     * @param drawingArray Indicates the pointer to the array object <b>OH_Drawing_Array</b>.
      * @param sizeOfArray Size of array., the result of OH_Drawing_GetDrawingArraySize.
-     * @return ErrCode, -1 mean fail and other mean success
+     * @return ErrCode, -1 mean fail and other mean success.
      */
     int GetDrawingArraySize(void* drawingArray, int32_t& sizeOfArray) override;
 
     /**
      * @brief Releases the memory occupied by system font configuration information.
-     * 
+     *
      * @param fontConfigInfo Indicates the pointer to an <b>OH_Drawing_FontConfigInfo</b> object.
      */
     void DestroySystemFontConfigInfo(void* fontConfigInfo) override;
 };
 } // namespace OHOS::NWeb
 
-#endif //OHOS_DRAWING_TEXT_FONT_ADAPTER_IMPL_H
+#endif // OHOS_DRAWING_TEXT_FONT_ADAPTER_IMPL_H

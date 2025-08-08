@@ -1751,6 +1751,12 @@ public:
     void PostPortMessageV2(const ArkWebString& portHandle, ArkWebRefPtr<ArkWebRomValue> data) override;
 
     void FillAutofillDataV2(ArkWebRefPtr<ArkWebRomValue> data) override;
+	
+     /**
+     * @brief Create web print document adapter V2.
+     */
+    ArkWebRefPtr<ArkWebPrintDocumentAdapterAdapter> CreateWebPrintDocumentAdapterV2(
+        const ArkWebString& job_name) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;

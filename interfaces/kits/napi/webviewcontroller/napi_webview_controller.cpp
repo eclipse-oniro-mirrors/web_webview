@@ -41,6 +41,8 @@
 #include "web_errors.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_createpdf_execute_callback.h"
+#include "web_history_list.h"
+#include "web_message_port.h"
 
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
@@ -507,7 +509,7 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
     napi_valuetype valueType = napi_undefined;
     napi_typeof(env, argv, &valueType);
     if (valueType != napi_string) {
-        WVLOG_E("ParseBlanklessString not a valid napi string");
+        WVLOG_E("blankless ParseBlanklessString not a valid napi string");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return false;
     }
@@ -515,7 +517,7 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
     size_t bufferSize = 0;
     napi_get_value_string_utf8(env, argv, nullptr, 0, &bufferSize);
     if (bufferSize == 0 || bufferSize > MAX_KEY_LENGTH) {
-        WVLOG_E("ParseBlanklessString string length is invalid");
+        WVLOG_E("blankless ParseBlanklessString string length is invalid");
         return false;
     }
 
@@ -523,7 +525,7 @@ bool ParseBlanklessString(napi_env env, napi_value argv, std::string& outValue)
     outValue.resize(bufferSize);
     napi_get_value_string_utf8(env, argv, outValue.data(), bufferSize + 1, &jsStringLength);
     if (jsStringLength != bufferSize) {
-        WVLOG_E("ParseBlanklessString the length values obtained twice are different");
+        WVLOG_E("blankless ParseBlanklessString the length values obtained twice are different");
         return false;
     }
 
@@ -535,7 +537,7 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
     bool isArray = false;
     napi_is_array(env, argv, &isArray);
     if (!isArray) {
-        WVLOG_E("ParseBlanklessStringArray not a valid napi string array");
+        WVLOG_E("blankless ParseBlanklessStringArray not a valid napi string array");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return false;
     }
@@ -543,7 +545,7 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
     uint32_t arrLen = 0;
     napi_get_array_length(env, argv, &arrLen);
     if (arrLen > MAX_KEYS_COUNT) {
-        WVLOG_W("ParseBlanklessStringArray array size should not exceed 100");
+        WVLOG_W("blankless ParseBlanklessStringArray array size should not exceed 100");
         arrLen = MAX_KEYS_COUNT;
     }
 
@@ -590,6 +592,13 @@ thread_local napi_ref g_webMsgExtClassRef;
 thread_local napi_ref g_webPrintDocClassRef;
 napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
 {
+    napi_property_descriptor transferDesc[] = {
+        DECLARE_NAPI_FUNCTION("__createBackForwardListTransfer__",
+            ArkWebTransfer::CreateBackForwardListTransfer),
+        DECLARE_NAPI_FUNCTION("__createWebMessagePortTransfer__",
+            ArkWebTransfer::CreateWebMessagePortTransfer),
+    };
+    napi_define_properties(env, exports, sizeof(transferDesc) / sizeof(transferDesc[0]), transferDesc);
     napi_property_descriptor properties[] = {
         DECLARE_NAPI_STATIC_FUNCTION("initializeWebEngine", NapiWebviewController::InitializeWebEngine),
         DECLARE_NAPI_STATIC_FUNCTION("setHttpDns", NapiWebviewController::SetHttpDns),
@@ -1140,10 +1149,6 @@ napi_value NapiWebviewController::SetHttpDns(napi_env env, napi_callback_info in
 
 napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
-        return nullptr;
-    }
-
     WVLOG_D("SetWebDebuggingAccess start");
     napi_value result = nullptr;
     if (OHOS::system::GetBoolParameter("web.debug.devtools", false)) {
@@ -1180,6 +1185,10 @@ napi_value NapiWebviewController::SetWebDebuggingAccess(napi_env env, napi_callb
             return result;
         }
       }
+    }
+
+    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+        webDebuggingPort = 0;
     }
 
     if (WebviewController::webDebuggingAccess_ != webDebuggingAccess ||
@@ -2291,9 +2300,12 @@ napi_value NapiWebMessagePort::JsConstructor(napi_env env, napi_callback_info in
     NAPI_CALL(env, napi_wrap(env, thisVar, msgPort,
         [](napi_env env, void *data, void *hint) {
             WebMessagePort *msgPort = static_cast<WebMessagePort *>(data);
-            delete msgPort;
+            if (msgPort && msgPort->DecRefCount() <= 0) {
+                delete msgPort;
+            }
         },
         nullptr, nullptr));
+    msgPort->IncRefCount();
     return thisVar;
 }
 
@@ -4220,10 +4232,13 @@ napi_value NapiWebviewController::getBackForwardEntries(napi_env env, napi_callb
     NAPI_CALL(env, napi_wrap(env, result, webHistoryList,
         [](napi_env env, void *data, void *hint) {
             WebHistoryList *webHistoryList = static_cast<WebHistoryList *>(data);
-            delete webHistoryList;
+            if (webHistoryList && webHistoryList->DecRefCount() <= 0) {
+                delete webHistoryList;
+            }
         },
         nullptr, nullptr));
 
+    webHistoryList->IncRefCount();
     return result;
 }
 
@@ -5207,7 +5222,9 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-    void* webPrintDocument = webviewController->CreateWebPrintDocumentAdapter(jobName);
+
+    int32_t useAdapterV2 = 0;
+    void* webPrintDocument = webviewController->CreateWebPrintDocumentAdapter(jobName, useAdapterV2);
     if (!webPrintDocument) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
@@ -5218,11 +5235,12 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
     }
     napi_value webPrintDoc = nullptr;
     NAPI_CALL(env, napi_get_reference_value(env, g_webPrintDocClassRef, &webPrintDoc));
-    napi_value consParam[INTEGER_ONE] = {0};
+    napi_value consParam[INTEGER_TWO] = {0};
     NAPI_CALL(env, napi_create_bigint_uint64(env, reinterpret_cast<uint64_t>(webPrintDocument),
                                              &consParam[INTEGER_ZERO]));
+    NAPI_CALL(env, napi_create_int32(env, useAdapterV2, &consParam[INTEGER_ONE]));
     napi_value proxy = nullptr;
-    status = napi_new_instance(env, webPrintDoc, INTEGER_ONE, &consParam[INTEGER_ZERO], &proxy);
+    status = napi_new_instance(env, webPrintDoc, INTEGER_TWO, &consParam[INTEGER_ZERO], &proxy);
     if (status!= napi_ok) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
@@ -5488,18 +5506,31 @@ napi_value NapiWebPrintDocument::OnJobStateChanged(napi_env env, napi_callback_i
 napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info info)
 {
     napi_value thisVar = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE];
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO];
     uint64_t addrWebPrintDoc = 0;
     bool loseLess = true;
+    int32_t useAdapterV2 = 0;
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
 
     if (!NapiParseUtils::ParseUint64(env, argv[INTEGER_ZERO], addrWebPrintDoc, &loseLess)) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
-    void *webPrintDocPtr = reinterpret_cast<void *>(addrWebPrintDoc);
-    WebPrintDocument *webPrintDoc = new (std::nothrow) WebPrintDocument(webPrintDocPtr);
+
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], useAdapterV2)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    WebPrintDocument *webPrintDoc = nullptr;
+    if (useAdapterV2) {
+        webPrintDoc = new (std::nothrow) WebPrintDocument(
+            reinterpret_cast<NWebPrintDocumentAdapterAdapter *>(addrWebPrintDoc));
+    } else {
+        webPrintDoc = new (std::nothrow) WebPrintDocument(
+            reinterpret_cast<PrintDocumentAdapterAdapter *>(addrWebPrintDoc));
+    }
     if (webPrintDoc == nullptr) {
         WVLOG_E("new web print failed");
         return nullptr;
@@ -7145,7 +7176,7 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("GetBlanklessInfoWithKey capability not supported.");
+        WVLOG_E("blankless GetBlanklessInfoWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7157,7 +7188,7 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
     WebviewController* controller = nullptr;
     napi_unwrap(env, thisVar, (void**)&controller);
     if (controller == nullptr) {
-        WVLOG_E("GetBlanklessInfoWithKey controller is nullptr");
+        WVLOG_E("blankless GetBlanklessInfoWithKey controller is nullptr");
         return nullptr;
     }
 
@@ -7169,12 +7200,12 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
 
     std::string key;
     if (!ParseBlanklessString(env, argv[INTEGER_ZERO], key)) {
-        WVLOG_E("GetBlanklessInfoWithKey parse string failed");
+        WVLOG_E("blankless GetBlanklessInfoWithKey parse string failed");
         return CreateBlanklessInfo(env, BLANKLESS_ERR_INVALID_ARGS, 0.0, 0);
     }
 
     if (!controller->IsInit()) {
-        WVLOG_E("GetBlanklessInfoWithKey controller is not inited");
+        WVLOG_E("blankless GetBlanklessInfoWithKey controller is not inited");
         return CreateBlanklessInfo(env, BLANKLESS_ERR_NOT_INITED, 0.0, 0);
     }
 
@@ -7188,7 +7219,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("SetBlanklessLoadingWithKey capability not supported.");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7200,7 +7231,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
     WebviewController* controller = nullptr;
     napi_unwrap(env, thisVar, (void**)&controller);
     if (controller == nullptr) {
-        WVLOG_E("SetBlanklessLoadingWithKey controller is nullptr");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey controller is nullptr");
         return nullptr;
     }
 
@@ -7220,13 +7251,13 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
     napi_value result = nullptr;
     std::string key;
     if (!ParseBlanklessString(env, argv[INTEGER_ZERO], key)) {
-        WVLOG_E("SetBlanklessLoadingWithKey parse string failed");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey parse string failed");
         napi_create_int32(env, BLANKLESS_ERR_INVALID_ARGS, &result);
         return result;
     }
 
     if (!controller->IsInit()) {
-        WVLOG_E("SetBlanklessLoadingWithKey controller is not inited");
+        WVLOG_E("blankless SetBlanklessLoadingWithKey controller is not inited");
         napi_create_int32(env, BLANKLESS_ERR_NOT_INITED, &result);
         return result;
     }
@@ -7239,7 +7270,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env,
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("SetBlanklessLoadingCacheCapacity capability not supported.");
+        WVLOG_E("blankless SetBlanklessLoadingCacheCapacity capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7279,7 +7310,7 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
         ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
-        WVLOG_E("ClearBlanklessLoadingCache capability not supported.");
+        WVLOG_E("blankless ClearBlanklessLoadingCache capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
     }
@@ -7303,12 +7334,12 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
     }
 
     if (!ParseBlanklessStringArray(env, argv[INTEGER_ZERO], keys)) {
-        WVLOG_E("ClearBlanklessLoadingCache parse string array failed");
+        WVLOG_E("blankless ClearBlanklessLoadingCache parse string array failed");
         return result;
     }
 
     if (keys.size() == 0) {
-        WVLOG_W("ClearBlanklessLoadingCache valid keys are 0");
+        WVLOG_W("blankless ClearBlanklessLoadingCache valid keys are 0");
         return result;
     }
     NWebHelper::Instance().ClearBlanklessLoadingCache(keys);
@@ -7317,7 +7348,8 @@ napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_
 
 napi_value NapiWebviewController::AvoidVisibleViewportBottom(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("AvoidVisibleViewportBottom unsupported engine version: M114");
         return nullptr;
     }
     napi_value thisVar = nullptr;
@@ -7419,9 +7451,139 @@ napi_value NapiWebviewController::GetErrorPageEnabled(napi_env env, napi_callbac
     return result;
 }
 
+static napi_value CreateBackForwardList(
+    napi_env env, WebHistoryList* webHistoryList, int32_t currentIndex, int32_t size)
+{
+    napi_value jsValue = nullptr;
+    napi_create_object(env, &jsValue);
+
+    napi_value jsCurrentIndex;
+    napi_create_int32(env, currentIndex, &jsCurrentIndex);
+    napi_set_named_property(env, jsValue, "currentIndex", jsCurrentIndex);
+
+    napi_value jsSize;
+    napi_create_int32(env, size, &jsSize);
+    napi_set_named_property(env, jsValue, "size", jsSize);
+
+    NAPI_CALL(env, napi_wrap(env, jsValue, webHistoryList,
+        [](napi_env env, void *data, void *hint) {
+            WebHistoryList *webHistoryList = static_cast<WebHistoryList *>(data);
+            if (webHistoryList && webHistoryList->DecRefCount() <= 0) {
+                delete webHistoryList;
+            }
+        },
+        nullptr, nullptr));
+    webHistoryList->IncRefCount();
+    napi_property_descriptor resultFuncs[] = {
+        DECLARE_NAPI_FUNCTION("getItemAtIndex", NapiWebHistoryList::GetItem)
+    };
+
+    NAPI_CALL(env, napi_define_properties(env, jsValue, sizeof(resultFuncs) / sizeof(resultFuncs[0]), resultFuncs));
+    return jsValue;
+}
+
+napi_value ArkWebTransfer::CreateBackForwardListTransfer(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result;
+    napi_get_undefined(env, &result);
+    size_t argc = INTEGER_THREE;
+    napi_value argv[INTEGER_THREE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_THREE) {
+        WVLOG_E("[CreateBackForwardListTransfer] number of params is invalid");
+        return result;
+    }
+
+    int32_t currentIndex = 0;
+    int32_t size = 0;
+    int64_t addr = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], currentIndex) ||
+        !NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], size) ||
+        !NapiParseUtils::ParseInt64(env, argv[INTEGER_TWO], addr)) {
+        WVLOG_E("[CreateBackForwardListTransfer] type of param is error");
+        return result;
+    }
+
+    WebHistoryList* historyList =  reinterpret_cast<WebHistoryList*>(addr);
+    if (historyList == nullptr) {
+        WVLOG_E("[CreateBackForwardListTransfer] historyList is null");
+        return result;
+    }
+    napi_value jsValue = CreateBackForwardList(env, historyList, currentIndex, size);
+    if (jsValue) {
+        return jsValue;
+    }
+    return result;
+}
+
+static napi_value CreateMessagePort(napi_env env, WebMessagePort* messagePort, bool isExtentionType)
+{
+    napi_value jsValue = nullptr;
+    napi_create_object(env, &jsValue);
+
+    napi_value jsExtention;
+    napi_get_boolean(env, isExtentionType, &jsExtention);
+    napi_set_named_property(env, jsValue, "isExtentionType", jsExtention);
+
+    NAPI_CALL(env, napi_wrap(env, jsValue, messagePort,
+        [](napi_env env, void *data, void *hint) {
+            WebMessagePort *msgPort = static_cast<WebMessagePort *>(data);
+            if (msgPort && msgPort->DecRefCount() <= 0) {
+                delete msgPort;
+            }
+        },
+        nullptr, nullptr));
+    messagePort->IncRefCount();
+    
+    napi_property_descriptor resultFuncs[] = {
+        DECLARE_NAPI_FUNCTION("close", NapiWebMessagePort::Close),
+        DECLARE_NAPI_FUNCTION("postMessageEvent", NapiWebMessagePort::PostMessageEvent),
+        DECLARE_NAPI_FUNCTION("onMessageEvent", NapiWebMessagePort::OnMessageEvent),
+        DECLARE_NAPI_FUNCTION("postMessageEventExt", NapiWebMessagePort::PostMessageEventExt),
+        DECLARE_NAPI_FUNCTION("onMessageEventExt", NapiWebMessagePort::OnMessageEventExt)
+    };
+
+    NAPI_CALL(env, napi_define_properties(env, jsValue, sizeof(resultFuncs) / sizeof(resultFuncs[0]), resultFuncs));
+    return jsValue;
+}
+
+napi_value ArkWebTransfer::CreateWebMessagePortTransfer(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result;
+    napi_get_undefined(env, &result);
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_TWO) {
+        WVLOG_E("[CreateWebMessagePortTransfer] number of params is invalid");
+        return result;
+    }
+
+    bool isExtentionType = false;
+    int64_t addr = 0;
+    if (!NapiParseUtils::ParseBoolean(env, argv[INTEGER_ZERO], isExtentionType) ||
+        !NapiParseUtils::ParseInt64(env, argv[INTEGER_ONE], addr)) {
+        WVLOG_E("[CreateWebMessagePortTransfer] type of param is error");
+        return result;
+    }
+
+    WebMessagePort* messagePort =  reinterpret_cast<WebMessagePort*>(addr);
+    if (messagePort == nullptr) {
+        WVLOG_E("[CreateWebMessagePortTransfer] messagePort is null");
+        return result;
+    }
+    napi_value jsValue = CreateMessagePort(env, messagePort, isExtentionType);
+    if (jsValue) {
+        return jsValue;
+    }
+    return result;
+}
+
 napi_value NapiWebviewController::EnablePrivateNetworkAccess(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+    if (IS_CALLING_FROM_M114()) {
         return nullptr;
     }
 
@@ -7468,7 +7630,8 @@ napi_value NapiWebviewController::IsPrivateNetworkAccessEnabled(napi_env env, na
 
 napi_value NapiWebviewController::SetWebDestroyMode(napi_env env, napi_callback_info info)
 {
-    if (ArkWeb::getActiveWebEngineVersion() < ArkWeb::ArkWebEngineVersion::M132) {
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("SetWebDestroyMode unsupported engine version: M114");
         return nullptr;
     }
     napi_value thisVar = nullptr;
