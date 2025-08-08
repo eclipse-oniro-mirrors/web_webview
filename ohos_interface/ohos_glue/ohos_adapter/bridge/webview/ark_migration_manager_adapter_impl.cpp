@@ -37,8 +37,12 @@ void ArkMigrationManagerAdapterImpl::SetMigrationParam(
 
 bool ArkMigrationManagerAdapterImpl::SendMigrationRequest(const char* jsonData)
 {
-    std::shared_ptr<std::string> temp = std::make_shared<std::string>(jsonData);
-    return real_->SendMigrationRequest(temp);
+    if (jsonData) {
+        std::shared_ptr<std::string> temp = std::make_shared<std::string>(jsonData);
+        return real_->SendMigrationRequest(temp);
+    }
+
+    return false;
 }
 
 uint32_t ArkMigrationManagerAdapterImpl::RegisterMigrationListener(ArkWebRefPtr<ArkMigrationListenerAdapter> listener)
