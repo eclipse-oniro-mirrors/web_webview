@@ -100,7 +100,6 @@ sptr<IAppFwkUpdateService> AppFwkUpdateClient::GetFwkUpdateProxy()
 
 void AppFwkUpdateClient::NotifyArkWebInstallSuccess(const std::string& bundleName)
 {
-    WVLOG_E("WLWLWL WEBVIEW NotifyArkWebInstallSuccess");
     auto proxy = GetFwkUpdateProxy();
     if (proxy == nullptr) {
         WVLOG_E("NotifyArkWebInstallSuccess failed, proxy is null");
