@@ -252,6 +252,7 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_NormalTe
 {
     mediaCodecEncoderAdapterImpl->encoder_ = std::make_shared<MediaAVCodec::AVCodecVideoEncoderImpl>();
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(config_), CodecCodeAdapter::ERROR);
+    EXPECT_EQ(mediaCodecEncoderAdapterImpl->Configure(nullptr), CodecCodeAdapter::ERROR);
     std::shared_ptr<CodecCallbackAdapter> callback = std::make_shared<EncoderCallbackAdapterMock>();
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->SetCodecCallback(callback), CodecCodeAdapter::ERROR);
     EXPECT_EQ(mediaCodecEncoderAdapterImpl->Prepare(), CodecCodeAdapter::ERROR);
@@ -312,6 +313,13 @@ HWTEST_F(MediaCodecEncoderAdapterImplTest, MediaCodecEncoderAdapterImpl_OnError_
     std::shared_ptr<Media::AVSharedMemory> memory = std::make_shared<Media::AVSharedMemoryBase>(1, 1.0, "test");
     callbackImpl->OnInputBufferAvailable(1, memory);
     AVCodecBufferInfo info;
+    callbackImpl->OnOutputBufferAvailable(1, info, AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, memory);
+
+    callbackImpl->cb_ = nullptr;
+    callbackImpl->OnError(OHOS::MediaAVCodec::AVCodecErrorType::AVCODEC_ERROR_EXTEND_START, 1);
+    callbackImpl->OnOutputFormatChanged(fomat);
+    callbackImpl->OnInputBufferAvailable(1, nullptr);
+    callbackImpl->OnInputBufferAvailable(1, memory);
     callbackImpl->OnOutputBufferAvailable(1, info, AVCodecBufferFlag::AVCODEC_BUFFER_FLAG_EOS, memory);
 }
 

@@ -162,11 +162,6 @@ public:
     MOCK_METHOD0(GetUpdateTime, int64_t());
 };
 
-class stratMock : public OHOS::AVSession::AVPlaybackState {
-public:
-    MOCK_CONST_METHOD0(GetState, int32_t());
-};
-
 class MediaAVSessionKeyMock : public MediaAVSessionKey {
 public:
     MediaAVSessionKeyMock() = default;
@@ -304,6 +299,13 @@ HWTEST_F(MediaAVSessionCallbackImplTest, NWebMediaAdapterTest_MediaAVSessionCall
     g_callback->OnAVCallHangUp();
     g_callback->OnAVCallToggleCallMute();
     g_callback->OnPlayFromAssetId(0);
+    AAFwk::WantParams param;
+    AVSession::CastDisplayInfo castDisplayInfo;
+    AVSession::OutputDeviceInfo info;
+    g_callback->OnOutputDeviceChange(0, info);
+    g_callback->OnCommonCommand("test", param);
+    g_callback->OnCastDisplayChange(castDisplayInfo);
+
     EXPECT_EQ(g_callback->callbackAdapter_, nullptr);
 
     auto callbackMock = std::make_shared<MediaAVSessionCallbackAdapterMock>();
@@ -442,6 +444,13 @@ HWTEST_F(MediaAVSessionAdapterImplTest, NWebMediaAdapterTest_MediaAVSessionAdapt
     EXPECT_EQ(ret, false);
 
     type = MediaAVSessionType::MEDIA_TYPE_AUDIO;
+    g_adapter->avSessionKey_->SetType(type);
+    ret = g_adapter->CreateAVSession(type);
+    EXPECT_EQ(ret, false);
+
+    g_adapter->avSessionKey_->SetType(MediaAVSessionType::MEDIA_TYPE_INVALID);
+    ret = g_adapter->CreateAVSession(type);
+    EXPECT_EQ(ret, true);
     g_adapter->avSessionKey_->SetType(MediaAVSessionType::MEDIA_TYPE_VIDEO);
     ret = g_adapter->CreateAVSession(type);
 
