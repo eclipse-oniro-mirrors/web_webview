@@ -40,7 +40,11 @@ void ArkMigrationManagerAdapterWrapper::SetMigrationParam(
 
 bool ArkMigrationManagerAdapterWrapper::SendMigrationRequest(std::shared_ptr<std::string> jsonData)
 {
-    return ctocpp_->SendMigrationRequest((void*)(&jsonData));
+    if (jsonData) {
+        return ctocpp_->SendMigrationRequest(jsonData->c_str());
+    } else {
+        return ctocpp_->SendMigrationRequest(nullptr);
+    }
 }
 
 uint32_t ArkMigrationManagerAdapterWrapper::RegisterMigrationListener(

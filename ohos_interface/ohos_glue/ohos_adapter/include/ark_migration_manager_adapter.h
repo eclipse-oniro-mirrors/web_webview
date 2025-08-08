@@ -38,7 +38,7 @@ public:
         const ArkWebString& bundleName, const ArkWebString& abilityName, const ArkWebString& token) = 0;
 
     /*--ark web()--*/
-    virtual bool SendMigrationRequest(void* jsonData) = 0;
+    virtual bool SendMigrationRequest(const char* jsonData) = 0;
 
     /*--ark web()--*/
     virtual uint32_t RegisterMigrationListener(ArkWebRefPtr<ArkMigrationListenerAdapter> listener) = 0;
