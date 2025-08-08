@@ -325,9 +325,6 @@ DisplayOrientation DisplayAdapterImpl::GetDisplayOrientation()
 
 FoldStatus DisplayAdapterImpl::GetFoldStatus()
 {
-    if (!OH_NativeDisplayManager_IsFoldable()) {
-        return OHOS::NWeb::FoldStatus::UNKNOWN;
-    }
     NativeDisplayManager_FoldDisplayMode displayMode =
         NativeDisplayManager_FoldDisplayMode::DISPLAY_MANAGER_FOLD_DISPLAY_MODE_UNKNOWN;
     OH_NativeDisplayManager_GetFoldDisplayMode(&displayMode);
@@ -543,8 +540,8 @@ uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
     }
 
     uint32_t id = 1;
-    if (OH_NativeDisplayManager_RegisterFoldDisplayModeChangeListener(
-        FoldChangeCallBack, &id) == NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
+    if (OH_NativeDisplayManager_RegisterFoldDisplayModeChangeListener(FoldChangeCallBack, &id) ==
+        NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
         foldStatusReg_.emplace(std::make_pair(id, reg));
         return id;
     } else {
