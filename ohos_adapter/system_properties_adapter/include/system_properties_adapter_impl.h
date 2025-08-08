@@ -60,11 +60,11 @@ public:
 
     std::string GetSiteIsolationMode() override;
 
+    int32_t GetFlowBufMaxFd() override;
+
     bool GetOOPGPUEnable() override;
 
     void SetOOPGPUDisable() override;
-
-    int32_t GetFlowBufMaxFd() override;
 
     int32_t GetInitialCongestionWindowSize() override;
 
@@ -109,14 +109,15 @@ private:
 
     SystemPropertiesAdapterImpl& operator=(const SystemPropertiesAdapterImpl&) = delete;
 
+    ProductDeviceType AnalysisFromConfig();
+
     void AddAllSysPropWatchers();
 
     void RemoveAllSysPropWatchers();
 
-    ProductDeviceType AnalysisFromConfig();
     int softwareMajorVersion_ = -1;
     int softwareSeniorVersion_ = -1;
-    std::string baseOsName_ ;
+    std::string baseOsName_;
 
     std::unordered_map<PropertiesKey, std::vector<SystemPropertiesObserver*>> sysPropObserver_;
     std::unordered_map<PropertiesKey, std::shared_mutex> sysPropMutex_;

@@ -144,11 +144,6 @@ public:
         return std::string();
     }
 
-    virtual std::string GetHtmlElementId()
-    {
-        return std::string();
-    }
-
     virtual std::string GetComponentTypeDescription()
     {
         return std::string();
@@ -160,6 +155,11 @@ public:
     }
 
     virtual std::string GetExpandedState()
+    {
+        return std::string();
+    }
+
+    virtual std::string GetHtmlElementId()
     {
         return std::string();
     }
