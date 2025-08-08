@@ -42,6 +42,7 @@
 #include "ohos_nweb/bridge/ark_web_string_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_system_configuration_impl.h"
 #include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
+#include "ohos_nweb/bridge/ark_web_print_document_adapter_adapter_wrapper.h"
 #include "ohos_nweb/cpptoc/ark_web_js_proxy_callback_vector_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_rom_value_vector_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_touch_point_info_vector_cpptoc.h"
@@ -795,6 +796,18 @@ void* ArkWebNWebWrapper::CreateWebPrintDocumentAdapter(const std::string& job_na
 
     ArkWebStringStructRelease(stObjName);
     return adapter;
+}
+
+std::unique_ptr<OHOS::NWeb::NWebPrintDocumentAdapterAdapter> ArkWebNWebWrapper::CreateWebPrintDocumentAdapterV2(
+    const std::string& job_name)
+{
+    ArkWebString stObjName = ArkWebStringClassToStruct(job_name);
+    ArkWebRefPtr<ArkWebPrintDocumentAdapterAdapter> adapter = ark_web_nweb_->CreateWebPrintDocumentAdapterV2(stObjName);
+    ArkWebStringStructRelease(stObjName);
+    if (CHECK_REF_PTR_IS_NULL(adapter)) {
+        return nullptr;
+    }
+    return std::make_unique<ArkWebPrintDocumentAdapterAdapterWrapper>(adapter);
 }
 
 int ArkWebNWebWrapper::PostUrl(const std::string& url, const std::vector<char>& post_data)
