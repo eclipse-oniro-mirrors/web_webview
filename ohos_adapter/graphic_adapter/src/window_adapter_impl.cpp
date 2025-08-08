@@ -78,16 +78,7 @@ int32_t WindowAdapterImpl::NativeWindowSetBufferGeometry(NWebNativeWindow window
     return ::NativeWindowHandleOpt(reinterpret_cast<OHNativeWindow*>(window), SET_BUFFER_GEOMETRY, width, height);
 }
 
-void WindowAdapterImpl::NativeWindowSurfaceCleanCache(NWebNativeWindow window)
-{
-    WVLOG_D("WindowAdapterImpl::NativeWindowSurfaceCleanCache");
-    auto nativeWindow = reinterpret_cast<OHNativeWindow *>(window);
-    if (!nativeWindow || !nativeWindow->surface) {
-        WVLOG_D("window or surface is null, no need to clean surface cache");
-        return;
-    }
-    nativeWindow->surface->CleanCache();
-}
+void WindowAdapterImpl::NativeWindowSurfaceCleanCache(NWebNativeWindow window) {}
 
 void WindowAdapterImpl::NativeWindowSurfaceCleanCacheWithPara(NWebNativeWindow window, bool cleanAll)
 {
