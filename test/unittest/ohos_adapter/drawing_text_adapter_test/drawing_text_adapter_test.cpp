@@ -49,10 +49,10 @@
  void DrawingTextAdapterImplTest::TearDown() {}
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_001
-  * @tc.desc: test DrawingTextFontAdapterImpl GetSystemFontFullNamesByType
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_001.
+  * @tc.desc: test DrawingTextFontAdapterImpl GetSystemFontFullNamesByType.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_001, TestSize.Level1)
  {
@@ -72,10 +72,10 @@
  }
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_002
-  * @tc.desc: test DrawingTextFontAdapterImpl GetFontDescriptorByFullName
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_002.
+  * @tc.desc: test DrawingTextFontAdapterImpl GetFontDescriptorByFullName.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_002, TestSize.Level1)
  {
@@ -94,10 +94,10 @@
  }
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_003
-  * @tc.desc: test DrawingTextFontAdapterImpl GetSystemFontFullNameByIndex
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_003.
+  * @tc.desc: test DrawingTextFontAdapterImpl GetSystemFontFullNameByIndex.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_003, TestSize.Level1)
  {
@@ -116,10 +116,10 @@
  }
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_004
-  * @tc.desc: test DrawingTextFontAdapterImpl DestroySystemFontFullNames
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_004.
+  * @tc.desc: test DrawingTextFontAdapterImpl DestroySystemFontFullNames.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_004, TestSize.Level1)
  {
@@ -134,10 +134,10 @@
  }
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_005
-  * @tc.desc: test DrawingTextTypographyAdapterImpl GetSystemFontConfigInfo
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_005.
+  * @tc.desc: test OhosDrawingTextTypographyAdapterImpl GetSystemFontConfigInfo.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_005, TestSize.Level1)
  {
@@ -155,10 +155,10 @@
  }
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_006
-  * @tc.desc: test DrawingTextTypographyAdapterImpl GetDrawingArraySize
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_006.
+  * @tc.desc: test OhosDrawingTextTypographyAdapterImpl GetDrawingArraySize.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_006, TestSize.Level1)
  {
@@ -175,10 +175,10 @@
  }
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_007
-  * @tc.desc: test DrawingTextTypographyAdapterImpl GetDrawingArraySize
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_007.
+  * @tc.desc: test OhosDrawingTextTypographyAdapterImpl DestroySystemFontConfigInfo.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_007, TestSize.Level1)
  {
@@ -193,10 +193,10 @@
  }
  
  /**
-  * @tc.name: DrawingTextAdapterImplTest_008
-  * @tc.desc: test OhosDrawingTextTypographyAdapterImpl DestroySystemFontDescriptor
-  * @tc.type: FUNC
-  * @tc.require
+  * @tc.name: DrawingTextAdapterImplTest_008.
+  * @tc.desc: test OhosDrawingTextTypographyAdapterImpl DestroySystemFontDescriptor.
+  * @tc.type: FUNC.
+  * @tc.require:
   */
  HWTEST_F(DrawingTextAdapterImplTest, DrawingTextAdapterImplTest_008, TestSize.Level1)
  {
