@@ -1390,9 +1390,89 @@ ErrCode WebviewController::PrefetchPage(std::string& url, std::map<std::string, 
     return NWebError::NO_ERROR;
 }
 
+bool WebPrintAttributes::GetBool(uint32_t attrId)
+{
+    switch (attrId) {
+        case NWEB_PRINT_ATTR_ID_IS_VALID:
+            return true;
+        case NWEB_PRINT_ATTR_ID_PAGE_IS_SEQUENTIAL:
+            return attrs_.isSequential;
+        case NWEB_PRINT_ATTR_ID_IS_LANDSCAPE:
+            return attrs_.isLandscape;
+        case NWEB_PRINT_ATTR_ID_HAS_OPTION:
+            return attrs_.hasOption;
+        default:
+            break;
+    }
+
+    return false;
+}
+
+uint32_t WebPrintAttributes::GetUInt32(uint32_t attrId)
+{
+    switch (attrId) {
+        case NWEB_PRINT_ATTR_ID_COPY_NUMBER:
+            return attrs_.copyNumber;
+        case NWEB_PRINT_ATTR_ID_PAGE_RANGE_START:
+            return attrs_.pageRange.startPage;
+        case NWEB_PRINT_ATTR_ID_PAGE_RANGE_END:
+            return attrs_.pageRange.endPage;
+        case NWEB_PRINT_ATTR_ID_PAGE_SIZE_WIDTH:
+            return attrs_.pageSize.width;
+        case NWEB_PRINT_ATTR_ID_PAGE_SIZE_HEIGHT:
+            return attrs_.pageSize.height;
+        case NWEB_PRINT_ATTR_ID_COLOR_MODE:
+            return attrs_.colorMode;
+        case NWEB_PRINT_ATTR_ID_DUPLEX_MODE:
+            return attrs_.duplexMode;
+        case NWEB_PRINT_ATTR_ID_MARGIN_TOP:
+            return attrs_.margin.top;
+        case NWEB_PRINT_ATTR_ID_MARGIN_BOTTOM:
+            return attrs_.margin.bottom;
+        case NWEB_PRINT_ATTR_ID_MARGIN_LEFT:
+            return attrs_.margin.left;
+        case NWEB_PRINT_ATTR_ID_MARGIN_RIGHT:
+            return attrs_.margin.right;
+        default:
+            break;
+    }
+    return 0;
+}
+
+std::string WebPrintAttributes::GetString(uint32_t attrId)
+{
+    switch (attrId) {
+        case NWEB_PRINT_ATTR_ID_OPTION:
+            return attrs_.option;
+        default:
+            break;
+    }
+    return "";
+}
+
+std::vector<uint32_t> WebPrintAttributes::GetUint32Vector(uint32_t attrId)
+{
+    switch (attrId) {
+        case NWEB_PRINT_ATTR_ID_PAGE_RANGE_ARRAY:
+            return attrs_.pageRange.pages;
+        default:
+            break;
+    }
+    return std::vector<uint32_t>();
+}
+
 void WebPrintDocument::OnStartLayoutWrite(const std::string& jobId, const PrintAttributesAdapter& oldAttrs,
     const PrintAttributesAdapter& newAttrs, uint32_t fd, std::function<void(std::string, uint32_t)> writeResultCallback)
 {
+    if (printDocAdapterV2_) {
+        std::shared_ptr<WebPrintWriteResultCallbackAdapterV2> callbackV2 =
+            std::make_shared<WebPrintWriteResultCallbackAdapterV2>(writeResultCallback);
+        auto oldAttributes = std::make_shared<WebPrintAttributes>(oldAttrs);
+        auto newAttributes = std::make_shared<WebPrintAttributes>(newAttrs);
+        printDocAdapterV2_->OnStartLayoutWrite(jobId, oldAttributes, newAttributes, fd, callbackV2);
+        return;
+    }
+
     if (printDocAdapter_) {
         std::shared_ptr<PrintWriteResultCallbackAdapter> callback =
             std::make_shared<WebPrintWriteResultCallbackAdapter>(writeResultCallback);
@@ -1402,17 +1482,32 @@ void WebPrintDocument::OnStartLayoutWrite(const std::string& jobId, const PrintA
 
 void WebPrintDocument::OnJobStateChanged(const std::string& jobId, uint32_t state)
 {
+    if (printDocAdapterV2_) {
+        printDocAdapterV2_->OnJobStateChanged(jobId, state);
+        return;
+    }
+
     if (printDocAdapter_) {
         printDocAdapter_->OnJobStateChanged(jobId, state);
     }
 }
 
-void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobName)
+void* WebviewController::CreateWebPrintDocumentAdapter(
+    const std::string& jobName, int32_t& useAdapterV2)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return nullptr;
     }
+
+    std::unique_ptr<NWebPrintDocumentAdapterAdapter> adapter =
+        nweb_ptr->CreateWebPrintDocumentAdapterV2(jobName);
+    if (adapter) {
+        useAdapterV2 = 1;
+        return adapter.release();
+    }
+
+    useAdapterV2 = 0;
     return nweb_ptr->CreateWebPrintDocumentAdapter(jobName);
 }
 
@@ -1536,7 +1631,16 @@ bool WebviewController::IsIntelligentTrackingPreventionEnabled() const
 
 void WebPrintWriteResultCallbackAdapter::WriteResultCallback(std::string jobId, uint32_t code)
 {
-    cb_(jobId, code);
+    if (cb_) {
+        cb_(jobId, code);
+    }
+}
+
+void WebPrintWriteResultCallbackAdapterV2::WriteResultCallback(const std::string& jobId, uint32_t code)
+{
+    if (cb_) {
+        cb_(jobId, code);
+    }
 }
 
 bool WebviewController::SetWebSchemeHandler(const char* scheme, WebSchemeHandler* handler) const

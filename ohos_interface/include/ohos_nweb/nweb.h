@@ -38,6 +38,7 @@
 #include "nweb_spanstring_convert_html_callback.h"
 #include "nweb_value_callback.h"
 #include "nweb_web_message.h"
+#include "nweb_print_manager_adapter.h"
 
 namespace OHOS::NWeb {
 
@@ -2049,6 +2050,14 @@ public:
      * @param data data.
      */
     virtual void FillAutofillDataV2(std::shared_ptr<NWebRomValue> data) {}
+
+    /**
+     * Create web print document adapter.
+     */
+    virtual std::unique_ptr<NWebPrintDocumentAdapterAdapter> CreateWebPrintDocumentAdapterV2(
+        const std::string& jobName) {
+        return nullptr;
+    }
 };
 
 } // namespace OHOS::NWeb
