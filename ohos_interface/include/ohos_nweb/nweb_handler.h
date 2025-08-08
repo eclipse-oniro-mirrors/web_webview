@@ -353,7 +353,7 @@ public:
     virtual std::string GetEmbedId() = 0;
 
     virtual std::shared_ptr<NWebMouseEventResult> GetResult() = 0;
-};  
+};
 
 class OHOS_NWEB_EXPORT NWebHandler {
 public:
@@ -846,6 +846,12 @@ public:
     }
 
     /**
+     * @brief Called when received website security risk check result.
+     * @param threat_type The threat type of website.
+     */
+    virtual void OnSafeBrowsingCheckResult(int threat_type) {}
+
+    /**
      * @brief called when the navigation entry has been committed.
      * @param details represents the details of a committed navigation entry.
      */
@@ -854,20 +860,6 @@ public:
     virtual void OnNativeEmbedLifecycleChange(std::shared_ptr<NWebNativeEmbedDataInfo> dataInfo) {}
 
     virtual void OnNativeEmbedGestureEvent(std::shared_ptr<NWebNativeEmbedTouchEvent> event) {}
-
-    /**
-     * @brief Called when received website security risk check result.
-     * @param threat_type The threat_type of website.
-     */
-    virtual void OnSafeBrowsingCheckResult(int threat_type) {}
-
-    /**
-     * @brief Called when tracker's cookie is prevented.
-     * @param website_host The host of website url.
-     * @param tracker_host The host of tracker url.
-     */
-    virtual void OnIntelligentTrackingPreventionResult(const std::string& website_host, const std::string& tracker_host)
-    {}
 
     /**
      * @brief called when the page enter the full-screen mode.
@@ -880,6 +872,14 @@ public:
      */
     virtual void OnFullScreenEnterWithVideoSize(
         std::shared_ptr<NWebFullScreenExitHandler> handler, int video_natural_width, int video_natural_height)
+    {}
+
+    /**
+     * @brief Called when tracker's cookie is prevented.
+     * @param website_host The host of website url.
+     * @param tracker_host The host of tracker url.
+     */
+    virtual void OnIntelligentTrackingPreventionResult(const std::string& websiteHost, const std::string& trackerHost)
     {}
 
     /**
@@ -914,12 +914,6 @@ public:
      */
     virtual void ReleaseResizeHold() {}
 
-    virtual void OnShowAutofillPopup(
-        const float offsetX, const float offsetY, const std::vector<std::string>& menu_items)
-    {}
-
-    virtual void OnHideAutofillPopup() {}
-
     /**
      * @brief Called when select a word.
      *
@@ -946,7 +940,6 @@ public:
      * @param pid Process id of the render process not responding.
      * @param reason Reason of the render process not responding.
      */
-
     virtual void OnRenderProcessNotResponding(
         const std::string& js_stack, int pid, RenderProcessNotRespondingReason reason)
     {}
@@ -955,8 +948,13 @@ public:
      * @brief Called when the unresponding render process becomes responsive.
      *
      */
-
     virtual void OnRenderProcessResponding() {}
+
+    virtual void OnShowAutofillPopup(
+        const float offsetX, const float offsetY, const std::vector<std::string>& menu_items)
+    {}
+
+    virtual void OnHideAutofillPopup() {}
 
     /**
      * @brief Called when the viewport-fit meta is detected for web page.
@@ -964,18 +962,6 @@ public:
      * @param viewportFit The type of the viewport-fit.
      */
     virtual void OnViewportFitChange(ViewportFit viewportFit) {}
-
-    /**
-     * @brief called when creating overlay.
-     */
-    virtual void CreateOverlay(void* data, size_t len, int width, int height, int offsetX, int offsetY, int rectWidth,
-        int rectHeight, int pointX, int pointY)
-    {}
-
-    /**
-     * @brief called when state changed.
-     */
-    virtual void OnOverlayStateChanged(int offsetX, int offsetY, int rectWidth, int rectHeight) {}
 
     /**
      * @brief Request display and focus for a new nweb.
@@ -1003,12 +989,33 @@ public:
     }
 
     /**
+     * @brief called when creating overlay.
+     */
+    virtual void CreateOverlay(void* data, size_t len, int width, int height, int offsetX, int offsetY, int rectWidth,
+        int rectHeight, int pointX, int pointY)
+    {}
+
+    /**
+     * @brief called when state changed.
+     */
+    virtual void OnOverlayStateChanged(int offsetX, int offsetY, int rectWidth, int rectHeight) {}
+
+    /**
      * @brief Called when the key board redispatch.
      *
      * @param event Key information.
      * @param isUsed Whether the key is used by the kernel.
      */
     virtual void KeyboardReDispatch(std::shared_ptr<NWebKeyEvent> event, bool isUsed) {}
+
+    /**
+     * @brief Called when received Ads blocked results.
+     *
+     * @param url The url of webpage.
+     * @param adsBlocked The ads' blocked urls.
+     *
+     */
+    virtual void OnAdsBlocked(const std::string& url, const std::vector<std::string>& adsBlocked) {}
 
     virtual void OnInterceptKeyboardAttach(
         const std::shared_ptr<NWebCustomKeyboardHandler> keyboardHandler,
@@ -1020,14 +1027,13 @@ public:
     virtual void OnCustomKeyboardAttach() {}
 
     virtual void OnCustomKeyboardClose() {}
+
     /**
-     * @brief Called when received Ads blocked results.
+     * @brief Called when you need to temporarily hide/restore the handle menu.
      *
-     * @param url The url of webpage.
-     * @param adsBlocked The ads' blocked urls.
-     *
+     * @param hide hide.
      */
-    virtual void OnAdsBlocked(const std::string& url, const std::vector<std::string>& adsBlocked) {}
+    virtual void HideHandleAndQuickMenuIfNecessary(bool hide) {}
 
     /**
      * @brief called when the cursor info is updated.
@@ -1036,21 +1042,6 @@ public:
      * @param width, height width and height of the cursor
      */
     virtual void OnCursorUpdate(double x, double y, double width, double height) {}
-
-    /**
-     * @brief Called when web occurs frame loss event.
-     *
-     * @param sceneId The id of event scene.
-     * @param isStart True if is start.
-     */
-    virtual void ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart) {}
-
-    /**
-     * @brief Called when you need to temporarily hide/restore the handle menu.
-     *
-     * @param hide hide.
-     */
-    virtual void HideHandleAndQuickMenuIfNecessary(bool hide) {}
 
     /**
      * @brief Called When you click on the selected area.
@@ -1063,12 +1054,16 @@ public:
      */
     virtual void StartVibraFeedback(const std::string& vibratorType) {}
 
+    virtual void OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) {}
+
+    virtual bool CloseImageOverlaySelection() { return false; }
+
     /**
      * @brief Called when a popup is shown with the given size.
      *
      * @param x The offset of the popup on the x coordinate axis.
      * @param y The offset of the popup on the y coordinate axis.
-	 * @param width The width of the popup.
+     * @param width The width of the popup.
      * @param height The height of the popup.
      *
      */
@@ -1082,19 +1077,23 @@ public:
      */
     virtual void OnPopupShow(bool show) {}
 
-    virtual void OnNativeEmbedVisibilityChange(const std::string& embed_id, bool visibility) {}
+    virtual void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) {}
 
-    virtual bool CloseImageOverlaySelection() { return false; }
+    /**
+     * @brief Called when web occurs frame loss event.
+     *
+     * @param sceneId The id of event scene.
+     * @param isStart True if is start.
+     */
+    virtual void ReportDynamicFrameLossEvent(const std::string& sceneId, bool isStart) {}
+
+    virtual bool IsCurrentFocus() { return false; }
     
     virtual bool OnSslErrorRequestByJSV2(std::shared_ptr<NWebJSSslErrorResult> result, SslError error,
         const std::vector<std::string>& certChainData)
     {
         return false;
     }
-
-    virtual void OnAccessibilityEvent(int64_t accessibilityId, int32_t eventType) {}
-
-    virtual bool IsCurrentFocus() { return false; }
 
     /**
      * @brief Get the visible area relative to the web.
@@ -1120,22 +1119,36 @@ public:
         return false;
     }
 
-    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) {}
-
     /**
      * @brief Called When you click on the selected area.
      */
     virtual bool ChangeVisibilityOfQuickMenuV2() { return false; }
 
     /**
-     * @brief Called when web occurs event of picture in picture.
+     * @brief called when the web page is active for window.open called by other web component.
      */
-    virtual void OnPip(int status,
-                       int delegate_id,
-                       int child_id,
-                       int frame_routing_id,
-                       int width,
-                       int height) {}
+    virtual void OnActivateContentByJS() {}
+
+    /**
+     * @brief Notify the SDK that a web site has started loading. This method is
+     * called once for each main frame load. Embedded frame changes, i.e. clicking
+     * a link whose target is an iframe and fragment navigations (navigations to
+     * #fragment_id) will not trigger this callback.
+     *
+     * @param url The url to be loaded.
+     */
+   virtual void OnLoadStarted(const std::string& url) {}
+
+    /**
+     * @brief Notify the SDK that a web site has finished loading. This method is
+     * called only for main frame. Different from onPageEnd, onLoadFinished is
+     * triggered only once if the mainframe is automatically redirected before the
+     * page is completely loaded. OnPageEnd is triggered every navigation.
+     * fragment navigation also triggers onLoadFinished.
+     *
+     * @param url The url of the web site.
+     */
+    virtual void OnLoadFinished(const std::string& url) {}
 
     /**
      * @brief Notify the host application that the web page wants to handle
@@ -1156,36 +1169,22 @@ public:
     }
 
     /**
-     * @Description: Called When an mouse native event occurs on native embed area.
+    * @Description: Called when an mouse native event occurs on native embed area.
      * @Input mouse_event: Mouse events that contain information about the same layer.
      */
     virtual void OnNativeEmbedMouseEvent(std::shared_ptr<NWebNativeEmbedMouseEvent> event) {}
 
     /**
-     * @brief called when the web page is active for window.open called by other web component.
+     * @brief Called when web occurs event of picture in picture.
      */
-    virtual void OnActivateContentByJS() {}
-
-    /**
-     * @brief Notify the SDK that a web site has started loading. This method is
-     * called once for each main frame load. Embedded frame changes, i.e. clicking
-     * a link whose target is an iframe and fragment navigations (navigations to
-     * #fragment_id) will not trigger this callback.
-     *
-     * @param url The url to be loaded.
-     */
-    virtual void OnLoadStarted(const std::string& url) {}
-
-    /**
-     * @brief Notify the SDK that a web site has finished loading. This method is
-     * called only for main frame. Different from onPageEnd, onLoadFinished is
-     * triggered only once if the mainframe is automatically redirected before the
-     * page is completely loaded. OnPageEnd is triggered every navigation.
-     * fragment navigation also triggers onLoadFinished.
-     *
-     * @param url The url of the web site.
-     */
-    virtual void OnLoadFinished(const std::string& url) {}
+    virtual void OnPip(int status,
+                       int delegate_id,
+                       int child_id,
+                       int frame_routing_id,
+                       int width,
+                       int height) {}
+    
+    virtual void EnableSecurityLayer(bool isNeedSecurityLayer) {}
 
     virtual bool OnAllSslErrorRequestByJSV2(std::shared_ptr<NWebJSAllSslErrorResult> result, SslError error,
         const std::string& url, const std::string& originalUrl, const std::string& referrer, bool isFatalError,
@@ -1193,6 +1192,20 @@ public:
     {
         return false;
     }
+
+    /**
+     * @brief Notify the web client to insert blankless frame.
+     *
+     * @param pathToFrame The file used to insert frame.
+     */
+    virtual void OnInsertBlanklessFrame(const std::string& pathToFrame) {}
+
+    /**
+     * @brief Notify the web client to remove blankless frame.
+     *
+     * @param delayTime The delayTime for web client to remove blankless frame.
+     */
+    virtual void OnRemoveBlanklessFrame(int delayTime) {}
 
     /**
      * @brief Called when you need to show magnifier.
@@ -1212,20 +1225,6 @@ public:
      *        If it is false, it is calculated from the URL. By default, it is calculated from the URL.
      */
     virtual void OnPageTitleV2(const std::string& title, bool isRealTitle) {}
-
-    /**
-     * @brief Notify the web client to insert blankless frame.
-     *
-     * @param pathToFrame The file used to insert frame.
-     */
-    virtual void OnInsertBlanklessFrame(const std::string& pathToFrame) {}
-
-    /**
-     * @brief Notify the web client to remove blankless frame.
-     *
-     * @param delayTime The delayTime for web client to remove blankless frame.
-     */
-    virtual void OnRemoveBlanklessFrame(int delayTime) {}
 
     /**
      * @brief Triggered when the web page's document resource error
