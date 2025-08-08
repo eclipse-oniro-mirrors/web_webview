@@ -38,10 +38,10 @@
 #if defined(NWEB_MEDIA_AVSESSION_ENABLE)
 #include "media_avsession_adapter_impl.h"
 #endif
-#include "media_codec_list_adapter_impl.h"
 #if defined(NWEB_MEDIA_AVCODEC_ENABLE)
 #include "media_codec_decoder_adapter_impl.h"
 #include "media_codec_encoder_adapter_impl.h"
+#include "media_codec_list_adapter_impl.h"
 #endif
 #include "migration_manager_adapter_impl.h"
 #include "mmi_adapter_impl.h"
@@ -359,21 +359,6 @@ OhosNativeBufferAdapter& OhosAdapterHelperImpl::GetOhosNativeBufferAdapter()
     return OhosNativeBufferAdapterImpl::GetInstance();
 }
 
-std::unique_ptr<MigrationManagerAdapter> OhosAdapterHelperImpl::CreateMigrationMgrAdapter()
-{
-    return std::make_unique<MigrationManagerAdapterImpl>();
-}
-
-OhosDrawingTextFontAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
-{
-    return OhosDrawingTextFontAdapterImpl::GetInstance();
-}
-
-OhosDrawingTextTypographyAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
-{
-    return OhosDrawingTextTypographyAdapterImpl::GetInstance();
-}
-
 std::unique_ptr<AudioCodecDecoderAdapter> OhosAdapterHelperImpl::CreateAudioCodecDecoderAdapter()
 {
 #if defined(NWEB_AUDIO_DRM_ENABLE)
@@ -390,6 +375,21 @@ std::unique_ptr<DrmAdapter> OhosAdapterHelperImpl::CreateDrmAdapter()
 #else
     return nullptr;
 #endif
+}
+
+OhosDrawingTextFontAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextFontAdapter()
+{
+    return OhosDrawingTextFontAdapterImpl::GetInstance();
+}
+
+OhosDrawingTextTypographyAdapter& OhosAdapterHelperImpl::GetOhosDrawingTextTypographyAdapter()
+{
+    return OhosDrawingTextTypographyAdapterImpl::GetInstance();
+}
+
+std::unique_ptr<MigrationManagerAdapter> OhosAdapterHelperImpl::CreateMigrationMgrAdapter()
+{
+    return std::make_unique<MigrationManagerAdapterImpl>();
 }
 
 std::unique_ptr<ScreenlockManagerAdapter> OhosAdapterHelperImpl::CreateScreenlockManagerAdapter()
