@@ -220,18 +220,6 @@ public:
     virtual std::map<std::string, std::string> GetResponseHeaders() = 0;
 };
 
-enum class SystemThemeFlags : uint8_t {
-    NONE = 0,
-    THEME_FONT = 1 << 0,
-};
-
-class NWebSystemConfiguration {
-    public:
-    virtual ~NWebSystemConfiguration() = default;
-
-    virtual uint8_t GetThemeFlags() = 0;
-};
-
 class OHOS_NWEB_EXPORT NWebKeyboardEvent {
 public:
     virtual ~NWebKeyboardEvent() = default;
@@ -287,6 +275,18 @@ typedef void (*NativeArkWebOnDestroyCallback)(const char*);
 using ScriptItems = std::map<std::string, std::vector<std::string>>;
 using ScriptItemsByOrder = std::vector<std::string>;
 using WebSnapshotCallback = std::function<void(const char*, bool, float, void*, int, int)>;
+
+enum class SystemThemeFlags : uint8_t {
+    NONE = 0,
+    THEME_FONT = 1 << 0,
+};
+
+class NWebSystemConfiguration {
+    public:
+    virtual ~NWebSystemConfiguration() = default;
+
+    virtual uint8_t GetThemeFlags() = 0;
+};
 
 class OHOS_NWEB_EXPORT NWebJsProxyMethod {
     public:
@@ -953,21 +953,6 @@ public:
     virtual void SetNestedScrollMode(const NestedScrollMode& nestedScrollMode) = 0;
 
     /**
-     * Set enable lower the frame rate.
-     */
-    virtual void SetEnableLowerFrameRate(bool enabled) = 0;
-
-    /**
-     * Set the property values for width, height, and keyboard height.
-     */
-    virtual void SetVirtualKeyBoardArg(int32_t width, int32_t height, double keyboard) = 0;
-
-    /**
-     * Set the virtual keyboard to override the web status.
-     */
-    virtual bool ShouldVirtualKeyboardOverlay() = 0;
-
-    /**
      * Set draw rect.
      *
      */
@@ -998,9 +983,24 @@ public:
     virtual int PostUrl(const std::string& url, const std::vector<char>& postData) = 0;
 
     /**
+     * Set the property values for width, height, and keyboard height.
+     */
+    virtual void SetVirtualKeyBoardArg(int32_t width, int32_t height, double keyboard) = 0;
+
+    /**
+     * Set the virtual keyboard to override the web status.
+     */
+    virtual bool ShouldVirtualKeyboardOverlay() = 0;
+
+    /**
      * Inject the JavaScript before WebView load the DOM tree.
      */
     virtual void JavaScriptOnDocumentStart(const ScriptItems& scriptItems) = 0;
+
+    /**
+     * Set enable lower the frame rate.
+     */
+    virtual void SetEnableLowerFrameRate(bool enabled) = 0;
 
     /**
      * Execute an accessibility action on an accessibility node in the browser.
@@ -1049,24 +1049,6 @@ public:
     virtual bool NeedSoftKeyboard() = 0;
 
     /**
-     * Discard the webview window.
-     * @return true if the discarding success, otherwise false.
-     */
-    virtual bool Discard() = 0;
-
-    /**
-     * Reload the webview window that has been discarded before.
-     * @return true if the discarded window reload success, otherwise false.
-     */
-    virtual bool Restore() = 0;
-
-    /**
-     * Get the security level of current page.
-     * @return security level for current page.
-     */
-    virtual int GetSecurityLevel() = 0;
-
-    /**
      * CallH5Function
      *
      * @param routing_id       int32_t: the h5 frmae routing id
@@ -1111,6 +1093,18 @@ public:
     virtual void JavaScriptOnDocumentEnd(const ScriptItems& scriptItems) = 0;
 
     /**
+     * Discard the webview window.
+     * @return true if the discarding success, otherwise false.
+     */
+    virtual bool Discard() = 0;
+
+    /**
+     * Reload the webview window that has been discarded before.
+     * @return true if the discarded window reload success, otherwise false.
+     */
+    virtual bool Restore() = 0;
+
+    /**
      * Enable the ability to check website security risks.
      * Illegal and fraudulent websites are mandatory enabled and cann't be disabled by this function.
      */
@@ -1121,6 +1115,12 @@ public:
      * @return true if enable the ability to check website security risks else false.
      */
     virtual bool IsSafeBrowsingEnabled() = 0;
+
+    /**
+     * Get the security level of current page.
+     * @return security level for current page.
+     */
+    virtual int GetSecurityLevel() = 0;
 
     /**
      * Set the ability to print web page background.
@@ -1161,17 +1161,6 @@ public:
     virtual int GetMediaPlaybackState() = 0;
 
     /**
-     * Enable the ability to intelligent tracking prevention, default disabled.
-     */
-    virtual void EnableIntelligentTrackingPrevention(bool enable) = 0;
-
-    /**
-     * Get whether intelligent tracking prevention is enabled.
-     * @return true if enable the ability intelligent tracking prevention; else false.
-     */
-    virtual bool IsIntelligentTrackingPreventionEnabled() const = 0;
-
-    /**
      * Start current camera.
      */
     virtual void StartCamera() = 0;
@@ -1185,6 +1174,17 @@ public:
      * Close current camera.
      */
     virtual void CloseCamera() = 0;
+
+    /**
+     * Enable the ability to intelligent tracking prevention, default disabled.
+     */
+    virtual void EnableIntelligentTrackingPrevention(bool enable) = 0;
+
+    /**
+     * Get whether intelligent tracking prevention is enabled.
+     * @return true if enable the ability intelligent tracking prevention; else false.
+     */
+    virtual bool IsIntelligentTrackingPreventionEnabled() const = 0;
 
     /**
      * @brief Obtains the last javascript proxy calling frame url.
@@ -1237,30 +1237,10 @@ public:
 
     virtual void OnCreateNativeMediaPlayer(std::shared_ptr<NWebCreateNativeMediaPlayerCallback> callback) = 0;
 
-    /**
-     * @brief Web drag resize optimize.
-     */
-    /*--ark web()--*/
-    virtual void DragResize(uint32_t width, uint32_t height, uint32_t pre_height, uint32_t pre_width) = 0;
-
     virtual void OnTouchCancelById(int32_t id, double x, double y, bool from_overlay) = 0;
 
     /**
-     * @brief Set the params when the scale of WebView changed by pinch gestrue.
-     *
-     * @param scale: the scale factor to apply. The scale will be
-     *        clamped to the pinch limits. This value must be in the range
-     *        0.01 to 8.0 inclusive.
-     * @param centerX: X-coordinate of the pinch center
-     * @param centerX: Y-coordinate of the pinch center
-     *
-     * @return the error id.
-     */
-    /*--ark web()--*/
-    virtual int ScaleGestureChange(double scale, double centerX, double centerY) = 0;
-
-    /**
-     * @brief Inject offline resource into MemoryCache.
+     * Inject Offline Resource into Memory Cache.
      *
      * @param url url of resource.
      * @param origin origin of resource.
@@ -1282,10 +1262,18 @@ public:
     virtual bool TerminateRenderProcess() = 0;
 
     /**
-     * Get value of Autofill index.
-     * @param index index value.
+     * @brief Set the params when the scale of WebView changed by pinch gestrue.
+     *
+     * @param scale: the scale factor to apply. The scale will be
+     *        clamped to the pinch limits. This value must be in the range
+     *        0.01 to 8.0 inclusive.
+     * @param centerX: X-coordinate of the pinch center
+     * @param centerX: Y-coordinate of the pinch center
+     *
+     * @return the error id.
      */
-    virtual void SuggestionSelected(int32_t index) = 0;
+    /*--ark web()--*/
+    virtual int ScaleGestureChange(double scale, double centerX, double centerY) = 0;
 
     /**
      * RegisterArkJSfunction
@@ -1297,6 +1285,12 @@ public:
      */
     virtual void RegisterArkJSfunction(const std::string& object_name, const std::vector<std::string>& method_list,
         const std::vector<std::string>& async_method_list, const int32_t object_id) = 0;
+
+    /**
+     * Get value of Autofill index.
+     * @param index index value.
+     */
+    virtual void SuggestionSelected(int32_t index) = 0;
 
     /**
      * @brief Send touchpad fling event.
@@ -1321,58 +1315,22 @@ public:
     virtual std::string GetSelectInfo() = 0;
 
     /**
-     * @brief None offline Render process switch to foreground.
-     */
-    /*--ark web()--*/
-    virtual void OnOnlineRenderToForeground() = 0;
-
-    /**
      * @brief Notify that safe insets change.
      *
      */
     virtual void OnSafeInsetsChange(int left, int top, int right, int bottom) = 0;
 
     /**
+     * @brief Render process switch to foreground.
+     */
+    /*--ark web()--*/
+    virtual void OnOnlineRenderToForeground() = 0;
+
+    /**
      * @brief Called when text is selected in image.
      */
     /*--ark web()--*/
     virtual void OnTextSelected() = 0;
-
-    /**
-     * @brief web send key event.
-     */
-    /*--ark web()--*/
-    virtual bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
-                                 const std::vector<int32_t>& pressedCodes) {
-        return false;
-    }
-
-    /**
-     * @brief Notify that system configuration change.
-     *
-     * @param configuration system configuration.
-    */
-    /*--ark web()--*/
-    virtual void OnConfigurationUpdated(std::shared_ptr<NWebSystemConfiguration> configuration) {}
-
-    /**
-     * @brief Enable the ability to block Ads, default disabled.
-     */
-    virtual void EnableAdsBlock(bool enable) {}
-
-    /**
-     * @brief Get whether Ads block is enabled.
-     */
-    virtual bool IsAdsBlockEnabled() {
-        return false;
-    }
-
-    /**
-     * @brief Get whether Ads block is enabled for current Webpage.
-     */
-    virtual bool IsAdsBlockEnabledForCurPage() {
-        return false;
-    }
 
     /**
      * @brief Notify for next touch move event.
@@ -1382,21 +1340,25 @@ public:
     virtual void NotifyForNextTouchEvent() {}
 
     /**
-     * @brief Set url trust list.
-     *
-     * @param urlTrustList The url Trust list.
+     * @brief Enable the ability to block Ads, default disabled.
      */
-    virtual int SetUrlTrustList(const std::string& urlTrustList) {
-        return 0;
+    virtual void EnableAdsBlock(bool enable) {}
+
+    /**
+     * @brief Get whether Ads block is enabled.
+     */
+    virtual bool IsAdsBlockEnabled()
+    {
+        return false;
     }
 
     /**
-     * @brief Put the callback, convert sapnstring to html.
-     *
-     * @param callback will convert spanstring to html.
+     * @brief Get whether Ads block is enabled for current Webpage.
      */
-    virtual void PutSpanstringConvertHtmlCallback(
-        std::shared_ptr<NWebSpanstringConvertHtmlCallback> callback) {}
+    virtual bool IsAdsBlockEnabledForCurPage()
+    {
+        return false;
+    }
 
     /**
      * @brief Get Web page snapshot
@@ -1417,37 +1379,49 @@ public:
     }
 
     /**
+     * @brief Notify that system configuration change.
+     *
+     * @param configuration system configuration.
+    */
+    /*--ark web()--*/
+    virtual void OnConfigurationUpdated(std::shared_ptr<NWebSystemConfiguration> configuration) {}
+
+    /**
+     * @brief Set url trust list.
+     *
+     * @param urlTrustList The url Trust list.
+     */
+    virtual int SetUrlTrustList(const std::string& urlTrustList) {
+        return 0;
+    }
+
+    /**
+     * @brief Put the callback, convert sapnstring to html.
+     *
+     * @param callback will convert spanstring to html.
+     */
+    virtual void PutSpanstringConvertHtmlCallback(
+        std::shared_ptr<NWebSpanstringConvertHtmlCallback> callback) {}
+
+    /**
+     * @brief Web send key event.
+     *
+     * @param key_code code value.
+     * @param key_action action value.
+     * @param pressesCodes pressedCodes value.
+     */
+    /*--ark web()--*/
+    virtual bool WebSendKeyEvent(int32_t keyCode, int32_t keyAction,
+                                 const std::vector<int32_t>& pressedCodes) {
+        return false;
+    }
+
+    /**
      * Set grant file access dirs.
      */
     virtual void SetPathAllowingUniversalAccess(const std::vector<std::string>& dirList,
                                                 const std::vector<std::string>& moduleName,
                                                 std::string& errorPath) {}
-    /**
-     * Execute an accessibility action on an accessibility node in the browser.
-     * @param accessibilityId The id of the accessibility node.
-     * @param action The action to be performed on the accessibility node.
-     * @param actionArguments Data related to the current action.
-     */
-    virtual void PerformAction(int64_t accessibilityId, uint32_t action,
-        const std::map<std::string, std::string>& actionArguments) {}
-
-    /**
-     * Scroll to the position.
-     *
-     * @param x horizontal coordinate.
-     * @param y vertical coordinate.
-     * @param duration: anime duration.
-     */
-    virtual void ScrollToWithAnime(float x, float y, int32_t duration) {}
-
-    /**
-     * Scroll by the delta distance.
-     *
-     * @param delta_x: horizontal offset.
-     * @param delta_y: vertical offset.
-     * @param duration: anime duration.
-     */
-    virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) {}
 
     /**
      * @brief Send mouse wheel event.
@@ -1482,14 +1456,6 @@ public:
     virtual int SetUrlTrustListWithErrMsg(const std::string& urlTrustList, std::string& detailErrMsg) {
         return 0;
     }
-
-    /**
-     * @brief Send the accessibility hover event coordinate.
-     *
-     * @param x horizontal location of coordinate.
-     * @param y vertical location of coordinate.
-     */
-    virtual void SendAccessibilityHoverEvent(int32_t x, int32_t y) {}
 
     /**
      * RegisterArkJSfunction
@@ -1539,20 +1505,21 @@ public:
     virtual void OnAutofillCancel(const std::string& fillContent) {}
 
     /**
-     * @brief Get the current scroll offset of the webpage.
-     * @param offset_x The current horizontal scroll offset of the webpage.
-     * @param offset_y The current vertical scroll offset of the webpage.
+     * Execute an accessibility action on an accessibility node in the browser.
+     * @param accessibilityId The id of the accessibility node.
+     * @param action The action to be performed on the accessibility node.
+     * @param actionArguments Data related to the current action.
      */
-    virtual void GetScrollOffset(float* offset_x, float* offset_y) {}
+    virtual void PerformAction(int64_t accessibilityId, uint32_t action,
+        const std::map<std::string, std::string>& actionArguments) {}
 
     /**
-     * @brief ExecuteCreatePDFExt
+     * @brief Send the accessibility hover event coordinate.
      *
-     * @param pdfConfig The current configuration when creating pdf.
-     * @param callback NWebArrayBufferValueCallback: CreatePDF running result.
+     * @param x horizontal location of coordinate.
+     * @param y vertical location of coordinate.
      */
-    virtual void ExecuteCreatePDFExt(std::shared_ptr<NWebPDFConfigArgs> pdfConfig,
-        std::shared_ptr<NWebArrayBufferValueCallback> callback) {}
+    virtual void SendAccessibilityHoverEvent(int32_t x, int32_t y) {}
 
     /**
      * Scroll by the delta distance if web is not foucsed.
@@ -1560,21 +1527,46 @@ public:
      * @param delta_x horizontal offset.
      * @param delta_y vertical offset.
      * @return false if web is focused.
-     */
+    */
     virtual bool ScrollByWithResult(float delta_x, float delta_y) {
         return false;
     }
+
+    /**
+     * @brief Called when image analyzer is destory.
+     */
+    virtual void OnDestroyImageAnalyzerOverlay() {}
+
+    /**
+     * Scroll to the position.
+     *
+     * @param x horizontal coordinate.
+     * @param y vertical coordinate.
+     * @param duration: anime duration.
+     */
+    virtual void ScrollToWithAnime(float x, float y, int32_t duration) {}
+
+    /**
+     * Scroll by the delta distance.
+     *
+     * @param delta_x: horizontal offset.
+     * @param delta_y: vertical offset.
+     * @param duration: anime duration.
+     */
+    virtual void ScrollByWithAnime(float delta_x, float delta_y, int32_t duration) {}
+
+    /**
+     * @brief Get the current scroll offset of the webpage.
+     * @param offset_x The current horizontal scroll offset of the webpage.
+     * @param offset_y The current vertical scroll offset of the webpage.
+     */
+    virtual void GetScrollOffset(float* offset_x, float* offset_y) {}
 
     /**
      * @brief set a popupSurface to draw popup content
      * @param popupSurface  popupSurface.
      */
     virtual void SetPopupSurface(void* popupSurface) {}
-
-    /**
-     * @brief Called when image analyzer is destory.
-     */
-    virtual void OnDestroyImageAnalyzerOverlay() {}
 
     /**
      * @Description: Sends mouse events to the web kernel.
@@ -1585,6 +1577,21 @@ public:
     virtual void WebSendMouseEvent(const std::shared_ptr<OHOS::NWeb::NWebMouseEvent>& mouseEvent) {}
 
     /**
+     * @brief set DPI when DPI changes.
+     * @param density The new density value.
+     */
+    virtual void SetSurfaceDensity(const double& density) {}
+
+    /**
+     * @brief ExecuteCreatePDFExt
+     *
+     * @param pdfConfig The current configuration when creating pdf.
+     * @param callback NWebArrayBufferValueCallback: CreatePDF running result.
+     */
+    virtual void ExecuteCreatePDFExt(std::shared_ptr<NWebPDFConfigArgs> pdfConfig,
+        std::shared_ptr<NWebArrayBufferValueCallback> callback) {}
+
+     /**
      * @Description: Get the accessibility visibility of the accessibility node by its accessibility id in the browser.
      * @Input accessibility_id: The accessibility id of the accessibility node.
      * @Return: The accessibility visibility of the accessibility node.
@@ -1607,14 +1614,6 @@ public:
      * @brief Web components blur when the keyboard is hidden by gesture back.
      */
     virtual void WebComponentsBlur() {}
-
-    /**
-     * @Description: Get the GPU memory size used by web.
-     * @Return: Total size of web GPU.
-     */
-    virtual float DumpGpuInfo() {
-        return 0;
-    };
 
     /**
      * @brief Set the params when the scale of WebView changed by pinch gesture.
@@ -1646,18 +1645,6 @@ public:
     }
 
     /**
-     * @Description: Execute an accessibility action on an accessibility node in the browser.
-     * @Input accessibilityId: The id of the accessibility node.
-     * @Input action: The action to be performed on the accessibility node.
-     * @Input actionArguments: Data related to the current action.
-     * @Return: Whether the action is performed successfully.
-     */
-    virtual bool PerformActionV2(int64_t accessibilityId, uint32_t action,
-        const std::map<std::string, std::string>& actionArguments) {
-        return false;
-    }
-
-    /**
      * Inject the JavaScript before WebView load the DOM tree.
      */
     virtual void JavaScriptOnDocumentStartByOrder(const ScriptItems& scriptItems,
@@ -1680,6 +1667,18 @@ public:
     }
 
     /**
+     * @Description: Optimize HTML parser budget to reduce FCP time.
+     * @Input enable: Set whether to use optimized parser budget.
+     */
+    virtual void PutOptimizeParserBudgetEnabled(bool enable) {}
+
+    /**
+     * @brief Web drag resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void DragResize(uint32_t width, uint32_t height, uint32_t pre_height, uint32_t pre_width) = 0;
+
+    /**
      * @Description: Inject the JavaScript when the head element has been created.
      * @Input scriptItems: The injected JavaScript code is stored in lexicographical order.
      * @Input scriptItemsByOrder: The injected JavaScript code is stored in the order of the injection array.
@@ -1688,10 +1687,16 @@ public:
         const ScriptItemsByOrder& scriptItemsByOrder) {}
 
     /**
-     * @Description: Optimize HTML parser budget to reduce FCP time.
-     * @Input enable: Set whether to use optimized parser budget.
+     * @Description: Execute an accessibility action on an accessibility node in the browser.
+     * @Input accessibilityId: The id of the accessibility node.
+     * @Input action: The action to be performed on the accessibility node.
+     * @Input actionArguments: Data related to the current action.
+     * @Return: Whether the action is performed successfully.
      */
-    virtual void PutOptimizeParserBudgetEnabled(bool enable) {}
+    virtual bool PerformActionV2(int64_t accessibilityId, uint32_t action,
+        const std::map<std::string, std::string>& actionArguments) {
+        return false;
+    }
 
     /**
      * @Description: Get the bounding rectangle of the accessibility node of the given id.
@@ -1708,6 +1713,13 @@ public:
         return false;
     }
 
+    /** @Description: Get the GPU memory size used by web.
+     * @Return: Total size of web GPU.
+     */
+    virtual float DumpGpuInfo() {
+        return 0;
+    }
+
     /**
      * Gets the last hit test result.
      *
@@ -1720,12 +1732,32 @@ public:
     }
 
     /**
+     * @brief Web maximize resize optimize.
+     */
+    /*--ark web()--*/
+    virtual void MaximizeResize() {}
+
+    /**
+     * @brief: register native javaScriptProxy.
+     *
+     * @param objName  String: object name.
+     * @param methodName std::vector<std::string>: methodName list
+     * @param data std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod>: The ptr of NWebJsProxyMethod.
+     * @param isAsync bool: True mean.
+     * @param permission string: permission.
+     */
+    virtual void RegisterNativeJavaScriptProxy(const std::string& objName,
+        const std::vector<std::string>& methodName,
+        std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
+        bool isAsync,
+        const std::string& permission) {}
+
+    /**
      * @Description: Get the current language in the webview.
      * @Return: The current language in the webview.
      */
     /*--ark web()--*/
-    virtual std::string GetCurrentLanguage()
-    {
+    virtual std::string GetCurrentLanguage() {
         return "";
     }
 
@@ -1739,10 +1771,14 @@ public:
     }
 
     /**
-     * @brief judge if browser use drag resize.
+     * @brief Try to attach web inputmethod after drag.
      */
-    virtual bool IsNWebEx()
-    {
+    virtual void OnDragAttach() {}
+
+    /**
+     * @brief judge if browser use drag resize
+     */
+    virtual bool IsNWebEx() {
         return false;
     }
 
@@ -1751,17 +1787,6 @@ public:
      */
     /*--ark web()--*/
     virtual void SetEnableHalfFrameRate(bool enable) {}
-
-    /**
-     * @brief Web maximize resize optimize.
-     */
-    /*--ark web()--*/
-    virtual void MaximizeResize() {}
-
-    /**
-     * @brief Try to attach web inputmethod after drag.
-     */
-    virtual void OnDragAttach() {}
 
     /**
      * Set focus by position
@@ -1773,24 +1798,6 @@ public:
     {
         return false;
     }
-
-    /**
-     * @brief set DPI when DPI changes.
-     * @param density The new density value.
-     */
-    virtual void SetSurfaceDensity(const double& density) {}
-
-    /**
-     * @brief When the user sets the webpage's border radius,
-     *        update Chromium with this radius value for repaint the scrollbar.
-     * @param borderRadiusTopLeft: Radius value of the rounded corner in the top-left of the webpage.
-     * @param borderRadiusTopRight: Radius value of the rounded corner in the top-right of the webpage.
-     * @param borderRadiusBottomLeft: Radius value of the rounded corner in the bottom-left of the webpage.
-     * @param borderRadiusBottomRight: Radius value of the rounded corner in the bottom-right of the webpage.
-     */
-    /*--ark web()--*/
-    virtual void SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight,
-        double borderRadiusBottomLeft, double borderRadiusBottomRight) {}
 
     /**
      * @brief Set the native inner web
@@ -1815,76 +1822,11 @@ public:
      * @brief Notify browser is background.
      */
     virtual void OnBrowserBackground() {}
-
-    /**
-     * @brief: register native javaScriptProxy.
-     *
-     * @param objName  String: object name.
-     * @param methodName std::vector<std::string>: methodName list
-     * @param data std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod>: The ptr of NWebJsProxyMethod.
-     * @param isAsync bool: True mean.
-     * @param permission string: permission.
-     */
-    virtual void RegisterNativeJavaScriptProxy(const std::string& objName,
-        const std::vector<std::string>& methodName,
-        std::shared_ptr<OHOS::NWeb::NWebJsProxyMethod> data,
-        bool isAsync,
-        const std::string& permission) {}
-
+    
     /**
      * @brief Set the window id.
      */
     virtual void SetFocusWindowId(uint32_t focus_window_id) {}
-
-    /**
-     * @brief Run data detector JS.
-     */
-    virtual void RunDataDetectorJS() {}
-
-    /**
-     * @brief Set data detector enable.
-     */
-    virtual void SetDataDetectorEnable(bool enable) {}
-
-    /**
-     * @brief On data detector select text.
-     */
-    virtual void OnDataDetectorSelectText() {}
-
-    /**
-     * @brief On data detector copy.
-     */
-    virtual void OnDataDetectorCopy(const std::vector<std::string>& recordMix) {}
-
-    /**
-     *  @brief Set the native window of picture in picture.
-     */
-    virtual void SetPipNativeWindow(int delegate_id,
-                                    int child_id,
-                                    int frame_routing_id,
-                                    void* window) {}
-
-    /**
-     * @brief Send event of picture in picture.
-     */
-    virtual void SendPipEvent(int delegate_id,
-                              int child_id,
-                              int frame_routing_id,
-                              int event) {}
-
-    /*
-     * @brief Set unique key of current page for insert frame.
-     *
-     * @param key string: the unique key of current page.
-     */
-    virtual void SetBlanklessLoadingKey(const std::string& key) {}
-
-    /**
-     * @brief Set privacy status.
-     *
-     * @param isPrivate bool: privacy status page.
-     */
-    virtual void SetPrivacyStatus(bool isPrivate) {}
 
     /**
      * Get select startIndex.
@@ -1909,13 +1851,110 @@ public:
     {
         return "";
     }
+
+    /**
+     * CallH5FunctionV2
+     *
+     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    virtual void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+        const std::vector<std::shared_ptr<NWebRomValue>>& args)
+    {}
+
+    /**
+     * use the port to send message.
+     *
+     * @param portHandle the port to send message.
+     * @param data the message to send.
+     */
+    virtual void PostPortMessageV2(const std::string& portHandle, std::shared_ptr<NWebRomValue> data) {}
+
+    /**
+     * @brief fill autofill data.
+     * @param data data.
+     */
+    virtual void FillAutofillDataV2(std::shared_ptr<NWebRomValue> data) {}
+
+    /**
+     * @brief Run data detector JS.
+     */
+    virtual void RunDataDetectorJS() {}
+
+    /**
+     * @brief Set data detector enable.
+     */
+    virtual void SetDataDetectorEnable(bool enable) {}
+
+    /**
+     * @brief On data detector select text.
+     */
+    virtual void OnDataDetectorSelectText() {}
+
+    /**
+     * @brief On data detector copy.
+     */
+    virtual void OnDataDetectorCopy(const std::vector<std::string>& recordMix) {}
+
+    /**
+     * @brief When the user sets the webpage's border radius,
+     *        update Chromium with this radius value for repaint the scrollbar.
+     * @param borderRadiusTopLeft: Radius value of the rounded corner in the top-left of the webpage.
+     * @param borderRadiusTopRight: Radius value of the rounded corner in the top-right of the webpage.
+     * @param borderRadiusBottomLeft: Radius value of the rounded corner in the bottom-left of the webpage.
+     * @param borderRadiusBottomRight: Radius value of the rounded corner in the bottom-right of the webpage.
+     */
+    /*--ark web()--*/
+    virtual void SetBorderRadiusFromWeb(double borderRadiusTopLeft, double borderRadiusTopRight,
+        double borderRadiusBottomLeft, double borderRadiusBottomRight) {}
+
+    /**
+     *  @brief Set the native window of picture in picture.
+     */
+    virtual void SetPipNativeWindow(int delegate_id,
+                                    int child_id,
+                                    int frame_routing_id,
+                                    void* window) {}
+
+    /**
+     * @brief Send event of picture in picture.
+     */
+    virtual void SendPipEvent(int delegate_id,
+                              int child_id,
+                              int frame_routing_id,
+                              int event) {}
+
+    /**
+     * @brief Create web print document adapter V2.
+     */
+    virtual std::unique_ptr<NWebPrintDocumentAdapterAdapter> CreateWebPrintDocumentAdapterV2(
+        const std::string& jobName) {
+        return nullptr;
+    };
+
+    /*
+     * @brief Set unique key of current page for insert frame.
+     *
+     * @param key string: the unique key of current page.
+     */
+    virtual void SetBlanklessLoadingKey(const std::string& key) {}
+
+    /**
+     * @brief Set privacy status.
+     *
+     * @param isPrivate bool: privacy status page.
+     */
+    virtual void SetPrivacyStatus(bool isPrivate) {}
+ 
     /**
      * Set audio session type.
      *
      * @param audioSessionType Audio session type.
      */
     virtual void SetAudioSessionType(int32_t audioSessionType) {}
-
+    
     /**
      * Get accessibility id by its html element id in the browser.
      * @param htmlElementId The html element id of the Same-layer rendering.
@@ -1952,6 +1991,19 @@ public:
     }
 
     /**
+     * @brief Try to trigger blankless for url.
+     * @param url The url to use for blankless.
+     * @return Blankless is triggered for this url.
+     */
+    virtual bool TriggerBlanklessForUrl(const std::string& url) { return false; }
+
+    /**
+     * @brief Set visibility of the web.
+     * @param isVisible The visibility to be set.
+     */
+    virtual void SetVisibility(bool isVisible) {}
+
+    /**
      * @brief Update the single handle visible.
      * @param isVisible The single handle visible.
      */
@@ -1962,6 +2014,13 @@ public:
      * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
      */
     virtual void SetTouchHandleExistState(bool touchHandleExist) {}
+
+    /**
+     * @brief Get the current scroll offset of the webpage.
+     * @param offset_x The current horizontal scroll offset of the webpage.
+     * @param offset_y The current vertical scroll offset of the webpage.
+     */
+    virtual void GetPageOffset(float* offset_x, float* offset_y) {}
 
     /**
      * @brief Sets the bottom avoidance height of the web visible viewport.
@@ -1979,29 +2038,9 @@ public:
     }
 
     /**
-     * @brief Try to trigger blankless for url.
-     * @param url The url to use for blankless.
-     * @return Blankless is triggered for this url.
-     */
-    virtual bool TriggerBlanklessForUrl(const std::string& url) { return false; }
-
-    /**
-     * @brief Set visibility of the web.
-     * @param isVisible The visibility to be set.
-     */
-    virtual void SetVisibility(bool isVisible) {}
-
-    /**
      * @brief Current viewport is being scaled.
      */
     virtual void SetViewportScaleState() {}
-
-    /**
-    * @brief Get the current scroll offset of the webpage.
-    * @param offset_x The current horizontal scroll offset of the webpage.
-    * @param offset_y The current vertical scroll offset of the webpage.
-    */
-   virtual void GetPageOffset(float* offset_x, float* offset_y) {}
 
     /**
      * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
@@ -2023,40 +2062,6 @@ public:
     virtual WebDestroyMode GetWebDestroyMode()
     {
         return WebDestroyMode::NORMAL_MODE;
-    }
-
-    /**
-     * CallH5FunctionV2
-     *
-     * @param routing_id       int32_t: the h5 frmae routing id
-     * @param h5_object_id     int32_t: the h5 side object id
-     * @param h5_method_name   string:  the h5 side object method name
-     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
-     */
-    virtual void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
-        const std::vector<std::shared_ptr<NWebRomValue>>& args)
-    {}
-
-    /**
-     * use the port to send message.
-     *
-     * @param portHandle the port to send message.
-     * @param data the message to send.
-     */
-    virtual void PostPortMessageV2(const std::string& portHandle, std::shared_ptr<NWebRomValue> data) {}
-
-    /**
-     * @brief fill autofill data.
-     * @param data data.
-     */
-    virtual void FillAutofillDataV2(std::shared_ptr<NWebRomValue> data) {}
-
-    /**
-     * Create web print document adapter.
-     */
-    virtual std::unique_ptr<NWebPrintDocumentAdapterAdapter> CreateWebPrintDocumentAdapterV2(
-        const std::string& jobName) {
-        return nullptr;
     }
 };
 
