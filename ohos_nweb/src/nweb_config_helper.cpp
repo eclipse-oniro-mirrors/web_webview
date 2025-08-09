@@ -143,6 +143,10 @@ const std::unordered_map<std::string_view, std::function<std::string(std::string
     { "enableVulkanConfig/enableVulkan",
         [](std::string& contentStr) {
             return contentStr == "true" ? std::string("--ohos-enable-vulkan") : std::string();
+        } },
+    { "disableDrdcConfig/disableDrdc",
+        [](std::string& contentStr) {
+            return contentStr == "true" ? std::string("--ohos-enable-drdc") : std::string(); 
         } }
 };
 } // namespace
