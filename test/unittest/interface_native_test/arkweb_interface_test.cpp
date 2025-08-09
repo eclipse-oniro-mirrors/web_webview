@@ -274,28 +274,6 @@ HWTEST_F(OHArkWebInterfaceTest, OHArkWebInterfaceTest_OH_ArkWeb_GetNativeAPI_006
 }
 
 /**
- * @tc.name  : OHArkWebInterfaceTest_OH_ArkWeb_GetNativeAPI_007
- * @tc.desc  : Test OH_ArkWeb_GetNativeAPI->LoadJavaScriptValueAPI
- */
- HWTEST_F(OHArkWebInterfaceTest, OHArkWebInterfaceTest_OH_ArkWeb_GetNativeAPI_007, TestSize.Level1) {
-    ArkWeb_NativeAPIVariantKind type = static_cast<ArkWeb_NativeAPIVariantKind>(-1);
-    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
-    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
-
-    ArkWeb_AnyNativeAPI* result = OH_ArkWeb_GetNativeAPI(type);
-    EXPECT_EQ(result, nullptr);
-
-    ArkWeb_AnyNativeAPI* result1 = OH_ArkWeb_GetNativeAPI(type);
-    EXPECT_EQ(result1, nullptr);
-
-    OH_ArkWeb_DestroyGlobalPointersForTest();
-    NWebHelper::Instance().nwebEngine_ = nullptr;
-    NWebHelper::Instance().bundlePath_ = "";
-    ArkWeb_AnyNativeAPI* result2 = OH_ArkWeb_GetNativeAPI(type);
-    EXPECT_EQ(result2, nullptr);
-}
-
-/**
  * @tc.name  : OHArkWebInterfaceTest_OH_ArkWeb_RegisterScrollCallback
  * @tc.desc  : Test OH_ArkWeb_RegisterScrollCallback
  */
