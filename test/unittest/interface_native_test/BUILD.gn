@@ -70,33 +70,6 @@ ohos_unittest("arkweb_interface_test") {
   ]
 }
 
-ohos_unittest("native_arkweb_utils_test") {
-  module_out_path = module_output_path
-
-  sources = [ "native_arkweb_utils_test.cpp" ]
-
-  include_dirs = [ "../common" ]
-
-  deps = [
-    "$webview_path/interfaces/native:ohweb",
-    "$webview_path/ohos_nweb:web_configs",
-  ]
-
-  external_deps = [
-    "ability_runtime:app_context",
-    "bundle_framework:appexecfwk_base",
-    "bundle_framework:appexecfwk_core",
-    "c_utils:utils",
-    "googletest:gmock_main",
-    "googletest:gtest_main",
-    "graphic_2d:librender_service_client",
-    "hilog:libhilog",
-    "libxml2:libxml2",
-    "webview:libnweb",
-    "window_manager:libwm",
-  ]
-}
-
 ohos_unittest("native_javascript_execute_callback_test") {
   module_out_path = module_output_path
 
@@ -159,7 +132,6 @@ group("unittest") {
   deps = [
     ":arkweb_interface_test",
     ":arkweb_scheme_handler_test",
-    ":native_arkweb_utils_test",
     ":native_interface_arkweb_test",
     ":native_javascript_execute_callback_test",
   ]
