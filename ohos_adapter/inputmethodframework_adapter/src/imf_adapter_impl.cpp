@@ -218,15 +218,15 @@ int32_t IMFTextListenerAdapterImpl::ReceivePrivateCommand(
     WVLOG_I("ReceivePrivateCommand");
     auto item = privateCommand.find(PREVIEW_TEXT_STYLE_KEY);
     if (item != privateCommand.end()) {
-        bool is_need_underline = false;
+        bool isNeedUnderline = false;
         MiscServices::PrivateDataValue data = item->second;
         std::string previewStyle = std::get<std::string>(data);
         if (previewStyle == PREVIEW_TEXT_STYLE_UNDERLINE) {
-            is_need_underline = true;
+            isNeedUnderline = true;
         }
 
         if (listener_) {
-            listener_->SetNeedUnderLine(is_need_underline);
+            listener_->SetNeedUnderLine(isNeedUnderline);
         }
     }
 

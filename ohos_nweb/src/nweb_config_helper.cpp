@@ -18,16 +18,20 @@
 #include <dirent.h>
 #include <dlfcn.h>
 #include <memory>
+#include <sys/prctl.h>
 #include <sys/stat.h>
 #include <thread>
 #include <unistd.h>
 #include <fcntl.h>
 
 #include "application_context.h"
+#include "bundle_mgr_interface.h"
 #include "config_policy_utils.h"
+#include "iservice_registry.h"
 #include "nweb_config_helper.h"
 #include "nweb_log.h"
 #include "parameters.h"
+#include "system_ability_definition.h"
 
 namespace {
 const std::string WEB_CONFIG_PATH = "etc/web/web_config.xml";
@@ -134,11 +138,11 @@ const std::unordered_map<std::string_view, std::function<std::string(std::string
         } },
     { "outOfProcessGPUConfig/enableOopGpu",
         [](std::string& contentStr) {
-            return contentStr == "true" ? std::string("--in-process-gpu") : std::string(); 
+            return contentStr == "true" ? std::string("--in-process-gpu") : std::string();
         } },
     { "enableVulkanConfig/enableVulkan",
         [](std::string& contentStr) {
-            return contentStr == "true" ? std::string("--ohos-enable-vulkan") : std::string(); 
+            return contentStr == "true" ? std::string("--ohos-enable-vulkan") : std::string();
         } }
 };
 } // namespace
@@ -178,6 +182,8 @@ NWebConfigHelper::NWebConfigHelper()
     web_play_ground_enabled_ = isDebugApp && hasPlayGround && isDeveloperMode;
 
     if (web_play_ground_enabled_) {
+        #define XPM_KICKER (0x6a6974)
+        prctl(XPM_KICKER, 0, 0);
         WVLOG_I("webPlayGround opened");
     } else {
         if (hasPlayGround) {

@@ -18,10 +18,7 @@ module_output_path = "webview/webview"
 config("module_private_config") {
   visibility = [ ":*" ]
 
-  include_dirs = [
-    "../../../../ohos_adapter/access_token_adapter/include",
-    "../../../../ohos_interface/include/ohos_adapter",
-  ]
+  include_dirs = [ "../../../../ohos_adapter/access_token_adapter/include" ]
 }
 
 ohos_unittest("nweb_access_token_adapter_test") {

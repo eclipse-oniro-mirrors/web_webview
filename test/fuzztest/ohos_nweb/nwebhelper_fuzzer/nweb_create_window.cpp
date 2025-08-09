@@ -32,7 +32,7 @@ const std::string ARG_ADD_WEB_ENGINE_ARG = "--add-args";
 const std::string ARG_DELETE_WEB_ENGINE_ARG = "--delete-args";
 const std::string ARG_MULTI_RENDER_PROCESS = "--multi-renderer-process";
 const std::string ARG_NWEB_TEST_MOCK_BUNDLEPATH = "--bundle-installation-dir";
-const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
+const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.huawei.hmos.arkwebcore";
 const std::string ARG_WIDTH = "--width";
 const std::string ARG_HEIGHT = "--height";
 std::unordered_map<std::string, std::string> g_argsMap;
