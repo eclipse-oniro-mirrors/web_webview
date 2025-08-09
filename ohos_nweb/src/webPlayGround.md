@@ -49,8 +49,6 @@ web组件编译命令可以参考:[chromium_src](https://gitcode.com/openharmony
 │   │   └── profile<br>
 │   │       └── main_pages.json<br>
 │   └── rawfile<br>
-│       ├── chrome_100_percent.pak<br>
-│       ├── chrome_200_percent.pak<br>
 │       ├── icudtl.dat<br>
 │       ├── locales<br>
 │       │   ├── bo-CN.pak<br>
