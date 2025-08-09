@@ -39,7 +39,7 @@ sptr<Surface> g_surface = nullptr;
 const int DEFAULT_WIDTH = 2560;
 const int DEFAULT_HEIGHT = 1396;
 const int32_t NWEB_MAX_WIDTH = 7681;
-const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.ohos.arkwebcore";
+const std::string MOCK_INSTALLATION_DIR = "/data/app/el1/bundle/public/com.huawei.hmos.arkwebcore";
 } // namespace
 
 namespace NWeb {
