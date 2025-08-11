@@ -35,6 +35,10 @@ OhosDrawingTextFontAdapterImpl::~OhosDrawingTextFontAdapterImpl()
 
 int OhosDrawingTextFontAdapterImpl::GetSystemFontFullNamesByType(int32_t systemFontType, void** drawingArray)
 {
+    if (drawingArray == nullptr) {
+        WVLOG_E("drawingArray GetSystemFontFullNamesByType, drawingArray_ptr is null.");
+        return -1;
+    }
     *drawingArray = OH_Drawing_GetSystemFontFullNamesByType(static_cast<OH_Drawing_SystemFontType>(systemFontType));
     if (*drawingArray == nullptr) {
         WVLOG_E("drawingArray GetSystemFontFullNamesByType, drawingArray is null.");
@@ -47,6 +51,10 @@ int OhosDrawingTextFontAdapterImpl::GetSystemFontFullNamesByType(int32_t systemF
 int OhosDrawingTextFontAdapterImpl::GetFontDescriptorByFullName(void* drawingString,
     int32_t systemFontType, void** drawingFontDescriptor)
 {
+    if (drawingFontDescriptor == nullptr) {
+      WVLOG_E("drawingArray GetFontDescriptorByFullName, drawingFontDescriptor is null.");
+      return -1;
+    }
     *drawingFontDescriptor = OH_Drawing_GetFontDescriptorByFullName(
         static_cast<OH_Drawing_String*>(drawingString),
         static_cast<OH_Drawing_SystemFontType>(systemFontType));
@@ -61,6 +69,10 @@ int OhosDrawingTextFontAdapterImpl::GetFontDescriptorByFullName(void* drawingStr
 int OhosDrawingTextFontAdapterImpl::GetSystemFontFullNameByIndex(void* drawingArray,
     int32_t indexOfFullName, const void** drawingString)
 {
+    if (drawingString == nullptr) {
+        WVLOG_E("drawingArray GetSystemFontFullNameByIndex, drawingString is null.");
+        return -1;
+    }
     *drawingString = OH_Drawing_GetSystemFontFullNameByIndex(
         static_cast<OH_Drawing_Array*>(drawingArray),
         static_cast<size_t>(indexOfFullName));
@@ -98,6 +110,10 @@ OhosDrawingTextTypographyAdapterImpl::~OhosDrawingTextTypographyAdapterImpl()
 
 int OhosDrawingTextTypographyAdapterImpl::GetSystemFontConfigInfo(void* fontConfigInfoErrorCode, void** fontConfigInfo)
 {
+    if (fontConfigInfo == nullptr) {
+        WVLOG_E("drawingArray GetSystemFontConfigInfo, fontConfigInfo is null.");
+        return -1;
+    }
     *fontConfigInfo =
         OH_Drawing_GetSystemFontConfigInfo(static_cast<OH_Drawing_FontConfigInfoErrorCode*>(fontConfigInfoErrorCode));
     if (*fontConfigInfo == nullptr) {
