@@ -298,7 +298,7 @@ bool ResSchedClientAdapter::ReportKeyThread(
     }
 
     ResSchedClient::GetInstance().ReportData(ResType::RES_TYPE_REPORT_KEY_THREAD, status, mapPayload);
-    WVLOG_D("ReportKeyThread status: %{public}d, uid: %{public}s, pid: %{public}d, tid:%{public}d, role: %{public}d",
+    WVLOG_I("ReportKeyThread status: %{public}d, uid: %{public}s, pid: %{public}d, tid:%{public}d, role: %{public}d",
         static_cast<int32_t>(status), GetUidString().c_str(), pid, tid, static_cast<int32_t>(role));
 
     if (pid == tid && g_windowId != INVALID_NUMBER && g_nwebId != INVALID_NUMBER) {
