@@ -16,6 +16,7 @@
 #pragma once
 
 #include <climits>
+#include <string>
 
 #ifndef ARKWEB_EXPORT
 #define ARKWEB_EXPORT __attribute__((visibility("default")))
@@ -38,7 +39,7 @@ do {                                                                        \
 #define IS_CALLING_FROM_M114() \
     (OHOS::ArkWeb::getActiveWebEngineVersion() == OHOS::ArkWeb::ArkWebEngineVersion::M114)
 #else
-#define IS_CALLING_FROM_M114()
+#define IS_CALLING_FROM_M114() false
 #endif
 
 #if !defined(CROSS_PLATFORM)
@@ -53,30 +54,35 @@ do { \
 #define RETURN_IF_CALLING_FROM_M114()
 #endif
 
+#define APP_ENGINE_VERSION_PREFIX "#--appEngineVersion="
+
 namespace OHOS::ArkWeb {
 
 enum class ArkWebEngineVersion {
-    M114 = 0,
-    M132 = 1,
-    UNDEFINED = INT_MAX,
+    SYSTEM_DEFAULT = 0,
+    M114 = 1,
+    M132 = 2
 };
 
 enum class ArkWebEngineType {
+    SYSTEM_DEFAULT = 0,
     LEGACY = static_cast<int>(ArkWebEngineVersion::M114),
     EVERGREEN = static_cast<int>(ArkWebEngineVersion::M132),
-    SYSTEM_DEFAILT,
-    UNDEFINED = INT_MAX,
 };
 
-
 ARKWEB_EXPORT void setActiveWebEngineVersion(ArkWebEngineVersion version);
-
 ARKWEB_EXPORT ArkWebEngineVersion getActiveWebEngineVersion();
-
-ARKWEB_EXPORT void setActiveWebEngineType(ArkWebEngineType type);
-
 ARKWEB_EXPORT ArkWebEngineType getActiveWebEngineType();
+ARKWEB_EXPORT ArkWebEngineVersion getAppWebEngineVersion();
+
+ARKWEB_EXPORT std::string GetArkwebLibPath();
+ARKWEB_EXPORT std::string GetArkwebNameSpace();
+ARKWEB_EXPORT std::string GetArkwebRelativePathForBundle();
+ARKWEB_EXPORT std::string GetArkwebRelativePathForMock();
+ARKWEB_EXPORT std::string GetArkwebInstallPath();
+ARKWEB_EXPORT void PreloadArkWebLibForBrowser();
 
 ARKWEB_EXPORT void LogForUnsupportedFunc(ArkWebEngineVersion miniVersion, const char* msg);
 
+ARKWEB_EXPORT void* ArkWebBridgeHelperSharedInit(bool isPreDlopen, bool runMode = true);
 } // namespace OHOS::ArkWeb
