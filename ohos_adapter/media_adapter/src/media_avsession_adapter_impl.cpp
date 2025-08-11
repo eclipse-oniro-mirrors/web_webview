@@ -39,7 +39,8 @@ constexpr int64_t INDEX_VALUE = 0;
 
 MediaAVSessionCallbackImpl::MediaAVSessionCallbackImpl(
     std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter)
-    : callbackAdapter_(callbackAdapter) {
+    : callbackAdapter_(callbackAdapter)
+{
 }
 
 void MediaAVSessionCallbackImpl::OnPlay() {
