@@ -130,6 +130,7 @@ public:
     uint32_t RegisterFoldStatusListener(std::shared_ptr<FoldStatusListenerAdapter> listener) override;
     bool UnregisterFoldStatusListener(uint32_t id) override;
     static FoldStatusListenerMap foldStatusReg_;
+    static std::mutex foldStatusRegMutex;
     std::shared_ptr<DisplayAdapter> GetPrimaryDisplay() override;
     std::vector<std::shared_ptr<DisplayAdapter>> GetAllDisplays() override;
 private:
