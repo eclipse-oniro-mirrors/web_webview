@@ -35,7 +35,7 @@
 
 namespace OHOS::NWeb {
 namespace {
-const int LOAD_SA_TIMEOUT_MS = 2 * 1000;
+const int LOAD_SA_TIMEOUT_MS = 4 * 1000;
 const int FOUNDATION_UID = 5523;
 const std::set<std::string> ARK_WEB_DEFAULT_BUNDLE_NAME_SET = { "com.ohos.nweb", "com.ohos.arkwebcore" };
 } // namespace
