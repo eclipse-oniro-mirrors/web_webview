@@ -238,8 +238,7 @@ std::string KeystoreAdapterImpl::DecryptKey(const std::string alias, const std::
 
 std::string KeystoreAdapterImpl::AssetQuery(const std::string assetHandle)
 {
-    const char* ALIAS = assetHandle.c_str();
-    Asset_Blob alias = { (uint32_t)(strlen(ALIAS)), (uint8_t*)ALIAS };
+    Asset_Blob alias = { (uint32_t)(assetHandle.length()), (uint8_t*)assetHandle.c_str() };
     Asset_Attr attr[] = {
         { .tag = ASSET_TAG_ALIAS, .value.blob = alias },
         { .tag = ASSET_TAG_RETURN_TYPE, .value.u32 = ASSET_RETURN_ALL },
