@@ -40,9 +40,9 @@ bool ArkMigrationManagerAdapterImpl::SendMigrationRequest(const char* jsonData)
     if (jsonData) {
         std::shared_ptr<std::string> temp = std::make_shared<std::string>(jsonData);
         return real_->SendMigrationRequest(temp);
+    }  else {
+        return real_->SendMigrationRequest(nullptr);
     }
-
-    return false;
 }
 
 uint32_t ArkMigrationManagerAdapterImpl::RegisterMigrationListener(ArkWebRefPtr<ArkMigrationListenerAdapter> listener)
