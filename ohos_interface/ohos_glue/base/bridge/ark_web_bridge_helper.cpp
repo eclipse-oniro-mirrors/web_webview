@@ -39,7 +39,8 @@ bool ArkWebBridgeHelper::LoadLibFile(int openMode, const std::string& libFilePat
     void* libFileHandler = ::dlopen(libFilePath.c_str(), openMode);
     if (!libFileHandler) {
         if (isPrintLog) {
-            ARK_WEB_BRIDGE_ERROR_LOG("failed to load lib file %{public}s", libFilePath.c_str());
+            ARK_WEB_BRIDGE_ERROR_LOG("failed to load lib file %{public}s,errno is %{public}d(%{public}s)",
+                libFilePath.c_str(), errno, dlerror());
         }
 
         return false;
@@ -73,7 +74,8 @@ bool ArkWebBridgeHelper::LoadLibFile(int openMode, const std::string& libNsName,
     if (!libFileHandler) {
         if (isPrintLog) {
             ARK_WEB_BRIDGE_ERROR_LOG(
-                "failed to load lib file %{public}s/%{public}s", libDirPath.c_str(), libFileName.c_str());
+                "failed to load lib file %{public}s/%{public}s,errno is %{public}d(%{public}s)",
+                libDirPath.c_str(), libFileName.c_str(), errno, dlerror());
         }
 
         return false;
