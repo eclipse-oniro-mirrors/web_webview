@@ -120,14 +120,6 @@ public:
         return "";
     }
 
-    void SetProxyOverride(const std::vector<std::string>& proxyUrls,
-                          const std::vector<std::string>& proxySchemeFilters,
-                          const std::vector<std::string>& bypassRules,
-                          const bool& reverseBypass,
-                          std::shared_ptr<NWebProxyChangedCallback> callback) {}
-
-    void RemoveProxyOverride(std::shared_ptr<NWebProxyChangedCallback> callback) {}
-
     void PauseAllTimers() {}
 
     void ResumeAllTimers() {}
@@ -536,27 +528,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_LoadWebEngine_008, TestSize.Level1)
     NWebHelper::Instance().GetDefaultUserAgent();
     NWebHelper::Instance().PauseAllTimers();
     NWebHelper::Instance().ResumeAllTimers();
-}
-
-/**
- * @tc.name: NWebHelper_SetProxyOverride_001
- * @tc.desc: SetProxyOverride.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NwebHelperTest, NWebHelper_SetProxyOverride_001, TestSize.Level1)
-{
-    NWebHelper::Instance().LoadWebEngine(true, true);
-    bool result = NWebHelper::Instance().GetWebEngine(true);
-    EXPECT_TRUE(result);
-    std::shared_ptr<NWebProxyChangedCallback> proxyChangedCallback;
-    std::vector<std::string> proxyUrls = {"https://proxy.example.com"};
-    std::vector<std::string> proxySchemeFilters = {"http"};
-    std::vector<std::string> bypassRules = {"*.example.com"};
-    bool reverseBypass = false;
-    NWebHelper::Instance().SetProxyOverride(proxyUrls, proxySchemeFilters, bypassRules,
-                                            reverseBypass, proxyChangedCallback);
-    NWebHelper::Instance().RemoveProxyOverride(proxyChangedCallback);
 }
 
 /**
