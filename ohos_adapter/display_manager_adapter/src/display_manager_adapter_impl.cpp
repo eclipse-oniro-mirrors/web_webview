@@ -522,9 +522,11 @@ bool DisplayManagerAdapterImpl::IsDefaultPortrait()
 }
 
 FoldStatusListenerMap DisplayManagerAdapterImpl::foldStatusReg_;
+std::mutex DisplayManagerAdapterImpl::foldStatusRegMutex;
 
 void FoldChangeCallBack(NativeDisplayManager_FoldDisplayMode displayMode)
 {
+    std::lock_guard<std::mutex> lock(DisplayManagerAdapterImpl::foldStatusRegMutex);
     for (auto& iter : DisplayManagerAdapterImpl::foldStatusReg_) {
         iter.second->OnFoldStatusChanged(displayMode);
     }
@@ -536,9 +538,10 @@ uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
     sptr<FoldStatusListenerAdapterImpl> reg =
         new (std::nothrow) FoldStatusListenerAdapterImpl(listener);
     if (reg == nullptr) {
-        return false;
+        return 0;
     }
 
+    std::lock_guard<std::mutex> lock(foldStatusRegMutex);
     uint32_t id = 1;
     if (OH_NativeDisplayManager_RegisterFoldDisplayModeChangeListener(FoldChangeCallBack, &id) ==
         NativeDisplayManager_ErrorCode::DISPLAY_MANAGER_OK) {
@@ -551,6 +554,7 @@ uint32_t DisplayManagerAdapterImpl::RegisterFoldStatusListener(
 
 bool DisplayManagerAdapterImpl::UnregisterFoldStatusListener(uint32_t id)
 {
+    std::lock_guard<std::mutex> lock(foldStatusRegMutex);
     FoldStatusListenerMap::iterator iter = foldStatusReg_.find(id);
     if (iter == foldStatusReg_.end()) {
         return false;
