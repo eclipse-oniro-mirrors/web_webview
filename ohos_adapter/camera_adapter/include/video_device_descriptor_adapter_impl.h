@@ -15,7 +15,7 @@
 
 #ifndef VIDEO_DEVICE_DESCRIPTOR_ADAPTER_IMPL_H
 #define VIDEO_DEVICE_DESCRIPTOR_ADAPTER_IMPL_H
-#include <vector>
+
 #include "camera_manager_adapter.h"
 
 namespace OHOS::NWeb {
