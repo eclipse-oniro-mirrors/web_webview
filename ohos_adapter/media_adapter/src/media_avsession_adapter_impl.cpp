@@ -144,7 +144,7 @@ void MediaAVSessionKey::Init()
     auto context = AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (context) {
         element_.SetBundleName(context->GetBundleName());
-    WVLOG_I("media avsession adapter Init context BundleName=%{public}s", context->GetBundleName().c_str());
+    WVLOG_I("media avsession adapter Init context BundleName()=%{public}s", context->GetBundleName().c_str());
     }
     type_ = MediaAVSessionType::MEDIA_TYPE_INVALID;
 
@@ -234,6 +234,7 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type)
 void MediaAVSessionAdapterImpl::DestroyAVSession()
 {
     WVLOG_I("media avsession adapter DestroyAVSession in");
+
     if (avSession_) {
         int32_t ret = avSession_->Destroy();
         if (ret != AVSession::AVSESSION_SUCCESS) {
@@ -378,10 +379,6 @@ void MediaAVSessionAdapterImpl::SetPlaybackPosition(const std::shared_ptr<MediaA
 bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionMetadataAdapter> metadata)
 {
     bool updated = false;
-    if (!metadata || !avMetadata_) {
-        WVLOG_E("media avsession adapter UpdateMetaDataCache: metadata or avMetadata_ is null!");
-        return updated;
-    }
     if (avMetadata_->GetTitle() != metadata->GetTitle()) {
         avMetadata_->SetTitle(metadata->GetTitle());
         updated = true;
@@ -492,22 +489,18 @@ void MediaAVSessionAdapterImpl::DestroyAndEraseSession()
 
 bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type)
 {
-    if (!avSessionKey_) {
-        WVLOG_E("media avsession adapter avSessionKey_ is nullptr");
-        return false;
-    }
-    WVLOG_I("media avsession adapter CreateNewSession, avSessionKey_=%{public}s", avSessionKey_->ToString().c_str());
+    WVLOG_I("media avsession adapter DestroyAndEraseSession in");
     avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
         avSessionKey_->GetElement().GetBundleName(), static_cast<int32_t>(type), avSessionKey_->GetElement());
-    if (!avSession_) {
-        WVLOG_E("media avsession adapter CreateNewSession fail, avSession_ is nullptr");
+    if (avSession_) {
+        avSessionKey_->SetType(type);
+        avSessionMap.insert(
+            std::pair<std::string, std::shared_ptr<AVSession::AVSession>>(avSessionKey_->ToString(), avSession_));
+        return true;
+    } else {
+        WVLOG_E("media avsession adapter CreateNewSession Fail, out return false");
         return false;
     }
-
-    avSessionKey_->SetType(type);
-    avSessionMap.insert(
-        std::pair<std::string, std::shared_ptr<AVSession::AVSession>>(avSessionKey_->ToString(), avSession_));
-    return true;
 }
 
 } // namespace OHOS::NWeb
