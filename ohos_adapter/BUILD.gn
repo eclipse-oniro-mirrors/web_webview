@@ -415,7 +415,7 @@ ohos_shared_library("nweb_ohos_adapter") {
 
   deps = [
     "../ohos_nweb:web_configs",
-    "../arkweb_utils:libarkweb_utils",
+    "//base/web/webview/arkweb_utils:libarkweb_utils"
   ]
 
   if (webview_graphic_2d_ext_enable) {

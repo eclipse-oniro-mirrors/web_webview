@@ -124,6 +124,7 @@ ohos_shared_library("webview_napi_back") {
     "../../native:ohweb",
     "protos:proto_gen",
     "../../../ohos_glue:ohos_base_glue_source",
+    "//base/web/webview/arkweb_utils:libarkweb_utils"
   ]
 
   relative_install_dir = "module/web"
