@@ -16,10 +16,8 @@
 #include "media_avsession_adapter_impl.h"
 
 #include "ability_manager_client.h"
-#include "array_wrapper.h"
 #include "avsession_errors.h"
 #include "avsession_manager.h"
-#include "bool_wrapper.h"
 #include "bundle_mgr_proxy.h"
 #include "element_name.h"
 #include "if_system_ability_manager.h"
@@ -34,8 +32,6 @@ namespace OHOS::NWeb {
 std::unordered_map<std::string, std::shared_ptr<AVSession::AVSession>> MediaAVSessionAdapterImpl::avSessionMap;
 
 constexpr int64_t LIVE_STREAM_INFINITE_DURATION = -1;
-constexpr int64_t PARAMS_VALUE = 1;
-constexpr int64_t INDEX_VALUE = 0;
 
 MediaAVSessionCallbackImpl::MediaAVSessionCallbackImpl(
     std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter)
@@ -43,83 +39,104 @@ MediaAVSessionCallbackImpl::MediaAVSessionCallbackImpl(
 {
 }
 
-void MediaAVSessionCallbackImpl::OnPlay() {
+void MediaAVSessionCallbackImpl::OnPlay()
+{
     if (callbackAdapter_) {
         callbackAdapter_->Play();
     }
 }
 
-void MediaAVSessionCallbackImpl::OnPause() {
+void MediaAVSessionCallbackImpl::OnPause()
+{
     if (callbackAdapter_) {
         callbackAdapter_->Pause();
     }
 }
 
-void MediaAVSessionCallbackImpl::OnStop() {
+void MediaAVSessionCallbackImpl::OnStop()
+{
     if (callbackAdapter_) {
         callbackAdapter_->Stop();
     }
 }
 
-void MediaAVSessionCallbackImpl::OnPlayNext() {
+void MediaAVSessionCallbackImpl::OnPlayNext()
+{
 }
 
-void MediaAVSessionCallbackImpl::OnPlayPrevious() {
+void MediaAVSessionCallbackImpl::OnPlayPrevious()
+{
 }
 
-void MediaAVSessionCallbackImpl::OnFastForward(int64_t time) {
+void MediaAVSessionCallbackImpl::OnFastForward(int64_t time)
+{
 }
 
-void MediaAVSessionCallbackImpl::OnRewind(int64_t time) {
+void MediaAVSessionCallbackImpl::OnRewind(int64_t time)
+{
 }
 
-void MediaAVSessionCallbackImpl::OnSeek(int64_t time) {
+void MediaAVSessionCallbackImpl::OnSeek(int64_t time)
+{
     if (callbackAdapter_) {
         callbackAdapter_->SeekTo(time);
     }
 }
 
-void MediaAVSessionCallbackImpl::OnSetSpeed(double speed) {
+void MediaAVSessionCallbackImpl::OnSetSpeed(double speed)
+{
 }
 
-void MediaAVSessionCallbackImpl::OnSetLoopMode(int32_t loopMode) {
+void MediaAVSessionCallbackImpl::OnSetLoopMode(int32_t loopMode)
+{
 }
 
-void MediaAVSessionCallbackImpl::OnToggleFavorite(const std::string& assertId) {
+void MediaAVSessionCallbackImpl::OnToggleFavorite(const std::string& assertId)
+{
 }
 
-void MediaAVSessionCallbackImpl::OnMediaKeyEvent(const MMI::KeyEvent& keyEvent) {
+void MediaAVSessionCallbackImpl::OnMediaKeyEvent(const MMI::KeyEvent& keyEvent)
+{
 }
 
 void MediaAVSessionCallbackImpl::OnOutputDeviceChange(const int32_t connectionState,
-    const AVSession::OutputDeviceInfo& outputDeviceInfo) {
+    const AVSession::OutputDeviceInfo& outputDeviceInfo)
+{
 }
 
 void MediaAVSessionCallbackImpl::OnCommonCommand(
     const std::string& commonCommand,
-    const AAFwk::WantParams& commandArgs) {
+    const AAFwk::WantParams& commandArgs)
+{
 }
 
-void MediaAVSessionCallbackImpl::OnSkipToQueueItem(int32_t itemId) {
+void MediaAVSessionCallbackImpl::OnSkipToQueueItem(int32_t itemId)
+{
 }
 
-void MediaAVSessionCallbackImpl::OnAVCallAnswer() {
+void MediaAVSessionCallbackImpl::OnAVCallAnswer()
+{
 }
 
-void MediaAVSessionCallbackImpl::OnAVCallHangUp() {
+void MediaAVSessionCallbackImpl::OnAVCallHangUp()
+{
 }
 
-void MediaAVSessionCallbackImpl::OnAVCallToggleCallMute() {
+void MediaAVSessionCallbackImpl::OnAVCallToggleCallMute()
+{
 }
 
-void MediaAVSessionCallbackImpl::OnPlayFromAssetId(int64_t assetId) {
+void MediaAVSessionCallbackImpl::OnPlayFromAssetId(int64_t assetId)
+{
 }
 
 void MediaAVSessionCallbackImpl::OnCastDisplayChange(
-    const AVSession::CastDisplayInfo& castDisplayInfo) {
+    const AVSession::CastDisplayInfo& castDisplayInfo)
+{
 }
 
-void MediaAVSessionKey::Init() {
+void MediaAVSessionKey::Init()
+{
     pid_ = getprocpid();
     element_ = AAFwk::AbilityManagerClient::GetInstance()->GetTopAbility();
     WVLOG_I("media avsession adapter Init AAFwk BundleName=%{public}s, AbilityName=%{public}s",
@@ -145,27 +162,33 @@ void MediaAVSessionKey::Init() {
     }
 }
 
-int32_t MediaAVSessionKey::GetPID() {
+int32_t MediaAVSessionKey::GetPID()
+{
     return pid_;
 }
 
-AppExecFwk::ElementName MediaAVSessionKey::GetElement() {
+AppExecFwk::ElementName MediaAVSessionKey::GetElement()
+{
     return element_;
 }
 
-void MediaAVSessionKey::SetType(MediaAVSessionType type) {
+void MediaAVSessionKey::SetType(MediaAVSessionType type)
+{
     type_ = type;
 }
 
-MediaAVSessionType MediaAVSessionKey::GetType() {
+MediaAVSessionType MediaAVSessionKey::GetType()
+{
     return type_;
 }
 
-std::string MediaAVSessionKey::ToString() {
+std::string MediaAVSessionKey::ToString()
+{
     return (std::to_string(pid_) + "_" + element_.GetBundleName() + "_" + element_.GetAbilityName());
 }
 
-MediaAVSessionAdapterImpl::MediaAVSessionAdapterImpl() {
+MediaAVSessionAdapterImpl::MediaAVSessionAdapterImpl()
+{
     avSessionKey_ = std::make_shared<MediaAVSessionKey>();
     avSessionKey_->Init();
     avMetadata_ = std::make_shared<AVSession::AVMetaData>();
@@ -173,11 +196,13 @@ MediaAVSessionAdapterImpl::MediaAVSessionAdapterImpl() {
     avPlaybackState_ = std::make_shared<AVSession::AVPlaybackState>();
 }
 
-MediaAVSessionAdapterImpl::~MediaAVSessionAdapterImpl() {
+MediaAVSessionAdapterImpl::~MediaAVSessionAdapterImpl()
+{
     DestroyAVSession();
 }
 
-bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
+bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type)
+{
     WVLOG_I("media avsession adapter CreateAVSession in, type=%{public}d", int32_t(type));
     if (MediaAVSessionType::MEDIA_TYPE_INVALID == type) {
         WVLOG_E("media avsession adapter CreateAVSession, type invalid return false");
@@ -206,7 +231,8 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type) {
     }
 }
 
-void MediaAVSessionAdapterImpl::DestroyAVSession() {
+void MediaAVSessionAdapterImpl::DestroyAVSession()
+{
     WVLOG_I("media avsession adapter DestroyAVSession in");
     if (avSession_) {
         int32_t ret = avSession_->Destroy();
@@ -225,7 +251,8 @@ void MediaAVSessionAdapterImpl::DestroyAVSession() {
 }
 
 bool MediaAVSessionAdapterImpl::RegistCallback(
-    std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter) {
+    std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter)
+{
     WVLOG_I("media avsession adapter RegistCallback in");
     if (avSession_ && Activate()) {
         auto callback = std::make_shared<MediaAVSessionCallbackImpl>(callbackAdapter);
@@ -255,7 +282,8 @@ bool MediaAVSessionAdapterImpl::RegistCallback(
     return false;
 }
 
-bool MediaAVSessionAdapterImpl::IsActivated() {
+bool MediaAVSessionAdapterImpl::IsActivated()
+{
     WVLOG_I("media avsession adapter IsActivated in");
     if (avSession_) {
         bool ret = avSession_->IsActive();
@@ -266,7 +294,8 @@ bool MediaAVSessionAdapterImpl::IsActivated() {
     return false;
 }
 
-bool MediaAVSessionAdapterImpl::Activate() {
+bool MediaAVSessionAdapterImpl::Activate()
+{
     if (!avSession_) {
         WVLOG_E("media avsession adapter Activate avSession_ is null, return false");
         return false;
@@ -283,7 +312,8 @@ bool MediaAVSessionAdapterImpl::Activate() {
     return true;
 }
 
-void MediaAVSessionAdapterImpl::DeActivate() {
+void MediaAVSessionAdapterImpl::DeActivate()
+{
     if (avSession_ && avSession_->IsActive()) {
         int32_t ret = avSession_->Deactivate();
         if (ret != AVSession::AVSESSION_SUCCESS) {
@@ -292,7 +322,8 @@ void MediaAVSessionAdapterImpl::DeActivate() {
     }
 }
 
-void MediaAVSessionAdapterImpl::SetMetadata(const std::shared_ptr<MediaAVSessionMetadataAdapter> metadata) {
+void MediaAVSessionAdapterImpl::SetMetadata(const std::shared_ptr<MediaAVSessionMetadataAdapter> metadata)
+{
     UpdateMetaDataCache(metadata);
     if (avSession_) {
         Activate();
@@ -306,7 +337,8 @@ void MediaAVSessionAdapterImpl::SetMetadata(const std::shared_ptr<MediaAVSession
     }
 }
 
-void MediaAVSessionAdapterImpl::SetPlaybackState(MediaAVSessionPlayState state) {
+void MediaAVSessionAdapterImpl::SetPlaybackState(MediaAVSessionPlayState state)
+{
     if (UpdatePlaybackStateCache(state) && avSession_) {
         Activate();
         auto avPlaybackState = avPlaybackState_.get();
@@ -319,7 +351,8 @@ void MediaAVSessionAdapterImpl::SetPlaybackState(MediaAVSessionPlayState state) 
     }
 }
 
-void MediaAVSessionAdapterImpl::SetPlaybackPosition(const std::shared_ptr<MediaAVSessionPositionAdapter> position) {
+void MediaAVSessionAdapterImpl::SetPlaybackPosition(const std::shared_ptr<MediaAVSessionPositionAdapter> position)
+{
     if (UpdateMetaDataCache(position) && avSession_) {
         Activate();
         auto avMetadata = avMetadata_.get();
@@ -342,7 +375,8 @@ void MediaAVSessionAdapterImpl::SetPlaybackPosition(const std::shared_ptr<MediaA
     }
 }
 
-bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionMetadataAdapter> metadata) {
+bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionMetadataAdapter> metadata)
+{
     bool updated = false;
     if (!metadata || !avMetadata_) {
         WVLOG_E("media avsession adapter UpdateMetaDataCache: metadata or avMetadata_ is null!");
@@ -368,7 +402,8 @@ bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaA
     return updated;
 }
 
-bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionPositionAdapter> position) {
+bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaAVSessionPositionAdapter> position)
+{
     if (!position) {
         WVLOG_E("position is nullptr, media avsession adapter UpdateMetaDataCache return false");
         return false;
@@ -386,7 +421,8 @@ bool MediaAVSessionAdapterImpl::UpdateMetaDataCache(const std::shared_ptr<MediaA
     return false;
 }
 
-bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(MediaAVSessionPlayState state) {
+bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(MediaAVSessionPlayState state)
+{
     int32_t currentState;
     switch (state) {
         case MediaAVSessionPlayState::STATE_PLAY:
@@ -410,7 +446,8 @@ bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(MediaAVSessionPlayState
 }
 
 bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(
-    const std::shared_ptr<MediaAVSessionPositionAdapter> position) {
+    const std::shared_ptr<MediaAVSessionPositionAdapter> position)
+{
     bool updated = false;
     auto duration = static_cast<int32_t>(position->GetDuration());
     if (avPlaybackState_->GetDuration() != duration) {
@@ -429,7 +466,8 @@ bool MediaAVSessionAdapterImpl::UpdatePlaybackStateCache(
     return updated;
 }
 
-void MediaAVSessionAdapterImpl::DestroyAndEraseSession() {
+void MediaAVSessionAdapterImpl::DestroyAndEraseSession()
+{
     WVLOG_I("media avsession adapter DestroyAndEraseSession in");
     auto iter = avSessionMap.find(avSessionKey_->ToString());
     if (iter == avSessionMap.end()) {
@@ -467,23 +505,6 @@ bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type)
     }
 
     avSessionKey_->SetType(type);
-    if (MediaAVSessionType::MEDIA_TYPE_VIDEO == type) {
-        std::shared_ptr<OHOS::AAFwk::WantParams> want = std::make_shared<OHOS::AAFwk::WantParams>();
-        if (!want) {
-            WVLOG_E("CreateNewSession: create want failed");
-            return false;
-        }
-        sptr<OHOS::AAFwk::IArray> params =
-            new (std::nothrow) OHOS::AAFwk::Array(PARAMS_VALUE, OHOS::AAFwk::g_IID_IBoolean);
-        if (!params) {
-            WVLOG_E("CreateNewSession: create params failed");
-            return false;
-        }
-        params->Set(INDEX_VALUE, OHOS::AAFwk::Boolean::Box(true));
-        want->SetParam("hw_live_view_hidden_when_keyguard", params);
-        avSession_->SetExtras(*want);
-        WVLOG_I("CreateNewSession: Set hw_live_view_hidden_when_keyguard true");
-    }
     avSessionMap.insert(
         std::pair<std::string, std::shared_ptr<AVSession::AVSession>>(avSessionKey_->ToString(), avSession_));
     return true;
