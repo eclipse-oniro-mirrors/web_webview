@@ -144,7 +144,7 @@ void MediaAVSessionKey::Init()
     auto context = AbilityRuntime::ApplicationContext::GetApplicationContext();
     if (context) {
         element_.SetBundleName(context->GetBundleName());
-    WVLOG_I("media avsession adapter Init context BundleName()=%{public}s", context->GetBundleName().c_str());
+        WVLOG_I("media avsession adapter Init context BundleName()=%{public}s", context->GetBundleName().c_str());
     }
     type_ = MediaAVSessionType::MEDIA_TYPE_INVALID;
 
@@ -234,7 +234,6 @@ bool MediaAVSessionAdapterImpl::CreateAVSession(MediaAVSessionType type)
 void MediaAVSessionAdapterImpl::DestroyAVSession()
 {
     WVLOG_I("media avsession adapter DestroyAVSession in");
-
     if (avSession_) {
         int32_t ret = avSession_->Destroy();
         if (ret != AVSession::AVSESSION_SUCCESS) {
@@ -255,6 +254,7 @@ bool MediaAVSessionAdapterImpl::RegistCallback(
     std::shared_ptr<MediaAVSessionCallbackAdapter> callbackAdapter)
 {
     WVLOG_I("media avsession adapter RegistCallback in");
+
     if (avSession_ && Activate()) {
         auto callback = std::make_shared<MediaAVSessionCallbackImpl>(callbackAdapter);
         int32_t ret = avSession_->RegisterCallback(callback);
@@ -489,7 +489,7 @@ void MediaAVSessionAdapterImpl::DestroyAndEraseSession()
 
 bool MediaAVSessionAdapterImpl::CreateNewSession(const MediaAVSessionType& type)
 {
-    WVLOG_I("media avsession adapter DestroyAndEraseSession in");
+    WVLOG_I("media avsession adapter CreateNewSession in");
     avSession_ = AVSession::AVSessionManager::GetInstance().CreateSession(
         avSessionKey_->GetElement().GetBundleName(), static_cast<int32_t>(type), avSessionKey_->GetElement());
     if (avSession_) {
