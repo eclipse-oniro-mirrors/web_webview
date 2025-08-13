@@ -7175,7 +7175,7 @@ napi_value NapiWebviewController::WaitForAttached(napi_env env, napi_callback_in
 napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_callback_info info)
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless GetBlanklessInfoWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7218,7 +7218,7 @@ napi_value NapiWebviewController::GetBlanklessInfoWithKey(napi_env env, napi_cal
 napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_callback_info info)
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless SetBlanklessLoadingWithKey capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7269,7 +7269,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingWithKey(napi_env env, napi_
 napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env, napi_callback_info info)
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless SetBlanklessLoadingCacheCapacity capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
@@ -7309,7 +7309,7 @@ napi_value NapiWebviewController::SetBlanklessLoadingCacheCapacity(napi_env env,
 napi_value NapiWebviewController::ClearBlanklessLoadingCache(napi_env env, napi_callback_info info)
 {
     if (!SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        ArkWeb::getActiveWebEngineVersion() != ArkWeb::ArkWebEngineVersion::M132) {
+        IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless ClearBlanklessLoadingCache capability not supported.");
         BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
         return nullptr;
