@@ -96,7 +96,7 @@ ErrCode AppFwkUpdateService::NotifyFWKAfterBmsStart()
         WVLOG_E("NotifyFWKAfterBmsStart bundleName is empty");
         return ERR_INVALID_VALUE;
     }
-    WVLOG_E("NotifyFWKAfterBmsStart bundleName: %{public}s", bundleName.c_str());
+    WVLOG_I("NotifyFWKAfterBmsStart bundleName: %{public}s", bundleName.c_str());
     int ret = SendAppSpawnMessage(bundleName, MSG_LOAD_WEBLIB_IN_APPSPAWN);
     if (ret != 0) {
         return ERR_INVALID_VALUE;
