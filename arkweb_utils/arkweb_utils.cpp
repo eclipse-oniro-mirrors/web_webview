@@ -73,7 +73,7 @@ const std::string ARK_WEB_CORE_ASAN_PATH_FOR_BUNDLE = "arkwebcore_asan/libs/arm"
 
 const std::string PRECONFIG_LEGACY_HAP_PATH = "/system/app/ArkWebCoreLegacy/ArkWebCoreLegacy.hap";
 const std::string  PRECONFIG_EVERGREEN_HAP_PATH =
-    "/system/app/ArkWebCore/ArkWebCore.hap";
+    "/system/app/com.ohos.arkwebcore/ArkWebCore.hap";
 const std::string SANDBOX_LEGACY_HAP_PATH = "/data/storage/el1/bundle/arkwebcorelegacy/entry.hap";
 const std::string SANDBOX_EVERGREEN_HAP_PATH = "/data/storage/el1/bundle/arkwebcore/entry.hap";
 
@@ -253,7 +253,7 @@ std::string GetArkwebNameSpace() {
 
 std::string GetArkwebRelativePathForBundle() {
     std::string path;
-#if defined(IS_ASAN)
+#if defined(IS_ASAN) && defined(webview_arm64)
     if (!(access(WEBVIEW_RELATIVE_SANDBOX_PATH_FOR_LIBRARY.c_str(), F_OK) == 0)) {
         path = "arkwebcore/libs/arm64";
     } else {
@@ -288,7 +288,7 @@ std::string GetArkwebInstallPath() {
     }
 
     std::string installPath = "";
-    for(auto path : workPaths) {
+    for (auto path : workPaths) {
         if (access(path.c_str(), F_OK) == 0) {
             installPath = path;
             break;

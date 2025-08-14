@@ -31,6 +31,8 @@
 #include "nweb_log.h"
 #include "system_properties_adapter_impl.h"
 
+#include "arkweb_utils.h"
+
 namespace {
 std::mutex g_mtxMap; // the mutex to protect the shared resource
 std::unordered_map<std::string, NativeArkWeb_OnValidCallback> g_validMap;
@@ -457,3 +459,11 @@ void OH_ArkWebCookieManager_SaveCookieAsync(OH_ArkWeb_OnCookieSaveCallback callb
     cookieManager->Store(callbackImpl);
 }
 
+void OH_NativeArkWeb_SetActiveWebEngineVersion(ArkWebEngineVersion webEngineVersion) {
+    OHOS::ArkWeb::setActiveWebEngineVersion(
+        static_cast<OHOS::ArkWeb::ArkWebEngineVersion>(static_cast<int>(webEngineVersion)));
+}
+
+ArkWebEngineVersion OH_NativeArkWeb_GetActiveWebEngineVersion() {
+    return static_cast<ArkWebEngineVersion>(static_cast<int>(OHOS::ArkWeb::getActiveWebEngineVersion()));
+}
