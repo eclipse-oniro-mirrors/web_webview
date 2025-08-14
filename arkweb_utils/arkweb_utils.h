@@ -13,6 +13,9 @@
  * limitations under the License.
  */
 
+#ifndef WEB_WEBVIEW_ARKWEB_UTILS_ARKWEB_UTILS_H
+#define WEB_WEBVIEW_ARKWEB_UTILS_ARKWEB_UTILS_H
+
 #pragma once
 
 #include <climits>
@@ -26,7 +29,7 @@
 #define RETURN_IF_UNSUPPORTED_ENGINE(minVersion, funName)                   \
 do {                                                                        \
     auto engineVersion = OHOS::ArkWeb::getActiveWebEngineVersion();         \
-    if (engineVersion < minVersion) {    \
+    if (engineVersion < (minVersion)) {    \
         OHOS::ArkWeb::LogForUnsupportedFunc(engineVersion, funName);        \
         return;                                                             \
     }                                                                       \
@@ -82,7 +85,9 @@ ARKWEB_EXPORT std::string GetArkwebRelativePathForMock();
 ARKWEB_EXPORT std::string GetArkwebInstallPath();
 ARKWEB_EXPORT void PreloadArkWebLibForBrowser();
 
-ARKWEB_EXPORT void LogForUnsupportedFunc(ArkWebEngineVersion miniVersion, const char* msg);
+ARKWEB_EXPORT void LogForUnsupportedFunc(ArkWebEngineVersion version, const char* msg);
 
 ARKWEB_EXPORT void* ArkWebBridgeHelperSharedInit(bool isPreDlopen, bool runMode = true);
 } // namespace OHOS::ArkWeb
+
+#endif // WEB_WEBVIEW_ARKWEB_UTILS_ARKWEB_UTILS_H
