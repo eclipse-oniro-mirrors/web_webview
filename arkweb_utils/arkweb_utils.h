@@ -64,11 +64,11 @@ namespace OHOS::ArkWeb {
 enum class ArkWebEngineVersion {
     SYSTEM_DEFAULT = 0,
     M114 = 1,
-    M132 = 2
+    M132 = 2,
+    SYSTEM_EVERGREEN = 99999
 };
 
 enum class ArkWebEngineType {
-    SYSTEM_DEFAULT = 0,
     LEGACY = static_cast<int>(ArkWebEngineVersion::M114),
     EVERGREEN = static_cast<int>(ArkWebEngineVersion::M132),
 };
@@ -77,6 +77,7 @@ ARKWEB_EXPORT void setActiveWebEngineVersion(ArkWebEngineVersion version);
 ARKWEB_EXPORT ArkWebEngineVersion getActiveWebEngineVersion();
 ARKWEB_EXPORT ArkWebEngineType getActiveWebEngineType();
 ARKWEB_EXPORT ArkWebEngineVersion getAppWebEngineVersion();
+ARKWEB_EXPORT bool IsActiveWebEngineEvergreen();
 
 ARKWEB_EXPORT std::string GetArkwebLibPath();
 ARKWEB_EXPORT std::string GetArkwebNameSpace();
