@@ -113,6 +113,13 @@ typedef enum {
      * @since 20
      */
     ARKWEB_M132 = 2,
+
+    /**
+     * ArkWeb Evergreen Web Engine, always use the new ArkWeb Engine.
+     * Evergreen Web Engine.
+     * @since 20
+     */
+    ARKWEB_EVERGREEN = 99999,
 } ArkWebEngineVersion;
 
 /**
@@ -351,6 +358,13 @@ void OH_NativeArkWeb_SetActiveWebEngineVersion(ArkWebEngineVersion webEngineVers
  * @since 20
  */
 ArkWebEngineVersion OH_NativeArkWeb_GetActiveWebEngineVersion();
+
+/**
+* Check if the currently active ArkWeb engine is Evergreen.
+* @returns { bool } true means the application is using the Evergreen Web Engine, false means not.
+* @since 20
+*/
+bool OH_NativeArkWeb_IsActiveWebEngineEvergreen();
 
 #ifdef __cplusplus
 };

@@ -467,3 +467,7 @@ void OH_NativeArkWeb_SetActiveWebEngineVersion(ArkWebEngineVersion webEngineVers
 ArkWebEngineVersion OH_NativeArkWeb_GetActiveWebEngineVersion() {
     return static_cast<ArkWebEngineVersion>(static_cast<int>(OHOS::ArkWeb::getActiveWebEngineVersion()));
 }
+
+bool OH_NativeArkWeb_IsActiveWebEngineEvergreen() {
+    return OHOS::ArkWeb::IsActiveWebEngineEvergreen();
+}

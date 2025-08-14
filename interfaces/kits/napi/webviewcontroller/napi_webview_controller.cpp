@@ -772,6 +772,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("setWebDestroyMode", NapiWebviewController::SetWebDestroyMode),
         DECLARE_NAPI_STATIC_FUNCTION("setActiveWebEngineVersion", NapiWebviewController::SetActiveWebEngineVersion),
         DECLARE_NAPI_STATIC_FUNCTION("getActiveWebEngineVersion", NapiWebviewController::GetActiveWebEngineVersion),
+        DECLARE_NAPI_STATIC_FUNCTION("isActiveWebEngineEvergreen", NapiWebviewController::IsActiveWebEngineEvergreen),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -913,6 +914,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             static_cast<int32_t>(ArkWeb::ArkWebEngineVersion::M114))),
         DECLARE_NAPI_STATIC_PROPERTY("M132", NapiParseUtils::ToInt32Value(env,
             static_cast<int32_t>(ArkWeb::ArkWebEngineVersion::M132))),
+        DECLARE_NAPI_STATIC_PROPERTY("SYSTEM_EVERGREEN", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(ArkWeb::ArkWebEngineVersion::SYSTEM_EVERGREEN))),
     };
     napi_define_class(env, WEB_ENGINE_VERSION_ENUM_NAME.c_str(), WEB_ENGINE_VERSION_ENUM_NAME.length(),
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(webEngineVersionProperties) /
@@ -7712,6 +7715,14 @@ napi_value NapiWebviewController::GetActiveWebEngineVersion(napi_env env, napi_c
     napi_value result = nullptr;
     int return_value = static_cast<int>(OHOS::ArkWeb::getActiveWebEngineVersion());
     napi_create_int32(env, return_value, &result);
+    return result;
+}
+
+napi_value NapiWebviewController::IsActiveWebEngineEvergreen(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    bool isEvergreen = OHOS::ArkWeb::IsActiveWebEngineEvergreen();
+    NAPI_CALL(env, napi_get_boolean(env, isEvergreen, &result));
     return result;
 }
 } // namespace NWeb
