@@ -81,7 +81,8 @@ const std::string JSON_CONFIG_PATH =
     "/data/service/el1/public/update/param_service/install/system/etc/ArkWebSafeBrowsing/generic/ArkWebCoreCfg.json";
 const std::string WEB_PARAM_PREFIX = "web.engine.";
 
-static bool validateSpecialParams(const std::string& key, int value) {
+static bool validateSpecialParams(const std::string& key, int value)
+{
     if (key == "web.engine.default") {
         if (value != static_cast<int>(ArkWebEngineType::EVERGREEN) &&
             value != static_cast<int>(ArkWebEngineType::LEGACY)) {
@@ -100,7 +101,8 @@ static bool validateSpecialParams(const std::string& key, int value) {
     return true;
 }
 
-static void processJsonConfig(const Json::Value& root) {
+static void processJsonConfig(const Json::Value& root)
+{
     if (!root.isObject()) {
         WVLOG_E("Not a JSON object");
         return;
@@ -131,7 +133,8 @@ static void processJsonConfig(const Json::Value& root) {
     }
 }
 
-static void updateCfgToSystemParam() {
+static void updateCfgToSystemParam()
+{
     std::ifstream jsonFile(JSON_CONFIG_PATH.c_str());
     if (!jsonFile.is_open()) {
         WVLOG_E("Failed to open file reason: %{public}s", strerror(errno));
@@ -175,7 +178,8 @@ void setActiveWebEngineVersion(ArkWebEngineVersion version)
 
     if (static_cast<int>(version) != static_cast<int>(ArkWebEngineType::LEGACY) &&
       static_cast<int>(version) != static_cast<int>(ArkWebEngineType::EVERGREEN) &&
-      static_cast<int>(version) != static_cast<int>(ArkWebEngineType::SYSTEM_DEFAULT)) {
+      static_cast<int>(version) != static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT) &&
+      static_cast<int>(version) != static_cast<int>(ArkWebEngineVersion::SYSTEM_EVERGREEN)) {
         WVLOG_I("set EngineVersion not support, setVersion: %{public}d", static_cast<int>(version));
         return;
     }
@@ -183,7 +187,8 @@ void setActiveWebEngineVersion(ArkWebEngineVersion version)
     WVLOG_I("set appEngineVersion: %{public}d", g_appEngineVersion);
 }
 
-ArkWebEngineVersion getAppWebEngineVersion() {
+ArkWebEngineVersion getAppWebEngineVersion()
+{
     return static_cast<ArkWebEngineVersion>(g_appEngineVersion);
 }
 
@@ -197,6 +202,9 @@ ArkWebEngineVersion getActiveWebEngineVersion()
 
     if (g_appEngineVersion != static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT)) {
         WVLOG_I("get appEngineVersion: %{public}d", g_appEngineVersion);
+        if (g_appEngineVersion == static_cast<int>(ArkWebEngineVersion::SYSTEM_EVERGREEN)) {
+            return static_cast<ArkWebEngineVersion>(ArkWebEngineType::EVERGREEN);
+        }
         return static_cast<ArkWebEngineVersion>(g_appEngineVersion);
     }
 
@@ -217,13 +225,22 @@ ArkWebEngineType getActiveWebEngineType()
     return static_cast<ArkWebEngineType>(getActiveWebEngineVersion());
 }
 
+bool IsActiveWebEngineEvergreen()
+{
+    if (getActiveWebEngineType() == ArkWebEngineType::EVERGREEN) {
+        return true;
+    }
+    return false;
+}
+
 void LogForUnsupportedFunc(ArkWebEngineVersion version, const char* msg)
 {
     WVLOG_W("%{public}s unsupported engine version: %{public}d",
         msg, static_cast<int>(version));
 }
 
-std::string GetArkwebLibPath() {
+std::string GetArkwebLibPath()
+{
     std::string path;
     if (getActiveWebEngineType() == ArkWebEngineType::LEGACY) {
         path =  ARK_WEB_CORE_LEGACY_HAP_LIB_PATH;
@@ -234,13 +251,15 @@ std::string GetArkwebLibPath() {
     return path;
 }
 
-std::string GetArkwebLibPathForMock() {
+std::string GetArkwebLibPathForMock()
+{
     std::string path =  ARK_WEB_CORE_MOCK_HAP_LIB_PATH;
     WVLOG_I("get arkweb lib mock path: %{public}s", path.c_str());
     return path;
 }
 
-std::string GetArkwebNameSpace() {
+std::string GetArkwebNameSpace()
+{
     std::string ns;
     if (getActiveWebEngineType() == ArkWebEngineType::LEGACY) {
         ns = "nweb_ns_legacy";
@@ -270,13 +289,15 @@ std::string GetArkwebRelativePathForBundle() {
     return path;
 }
 
-std::string GetArkwebRelativePathForMock() {
+std::string GetArkwebRelativePathForMock()
+{
     std::string path = ARK_WEB_CORE_PATH_FOR_MOCK;
     WVLOG_I("get arkweb mock path: %{public}s", path.c_str());
     return path;
 }
 
-std::string GetArkwebInstallPath() {
+std::string GetArkwebInstallPath()
+{
     std::vector<std::string> legacyPaths = {SANDBOX_LEGACY_HAP_PATH, PRECONFIG_LEGACY_HAP_PATH,};
     std::vector<std::string> greenPaths = {SANDBOX_EVERGREEN_HAP_PATH, PRECONFIG_EVERGREEN_HAP_PATH,};
 
@@ -302,7 +323,8 @@ std::string GetArkwebInstallPath() {
 }
 
 void* ArkWebBridgeHelperLoadLibFile(int openMode, const std::string& libFilePath,
-    bool isPrintLog = true) {
+    bool isPrintLog = true) 
+{
     void* libFileHandler = ::dlopen(libFilePath.c_str(), openMode);
     if (!libFileHandler) {
         if (isPrintLog) {
@@ -318,7 +340,8 @@ void* ArkWebBridgeHelperLoadLibFile(int openMode, const std::string& libFilePath
 }
 
 void* ArkWebBridgeHelperLoadLibFile(int openMode, const std::string& libNsName,
-    const std::string& libDirPath, const std::string& libFileName, bool isPrintLog = true) {
+    const std::string& libDirPath, const std::string& libFileName, bool isPrintLog = true)
+{
     Dl_namespace dlns;
 
     dlns_init(&dlns, libNsName.c_str());
@@ -357,7 +380,8 @@ void* ArkWebBridgeHelperLoadLibFile(int openMode, const std::string& libNsName,
     return libFileHandler;
 }
 
-void* ArkWebBridgeHelperSharedInit(bool isPreDlopen, bool runMode) {
+void* ArkWebBridgeHelperSharedInit(bool isPreDlopen, bool runMode)
+{
     std::string libFileName = "libarkweb_engine.so";
 
     std::string libDirPath;
