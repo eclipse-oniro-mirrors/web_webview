@@ -107,6 +107,7 @@ ohos_unittest("native_interface_arkweb_test") {
   ]
 
   deps = [
+    "$webview_path/arkweb_utils:libarkweb_utils",
     "$webview_path/interfaces/native:ohweb",
     "$webview_path/ohos_nweb:web_configs",
   ]
