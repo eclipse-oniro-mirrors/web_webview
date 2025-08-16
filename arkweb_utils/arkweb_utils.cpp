@@ -64,6 +64,7 @@ const std::string ARK_WEB_CORE_LEGACY_PATH_FOR_BUNDLE = "arkwebcorelegacy/libs/a
 const std::string ARK_WEB_CORE_ASAN_PATH_FOR_BUNDLE = "arkwebcore_asan/libs/arm64";
 const std::string WEBVIEW_RELATIVE_SANDBOX_PATH_FOR_LIBRARY =
                     "data/storage/el1/bundle/arkwebcore_asan/libs/arm64/libarkweb_engine.so";
+const std::string ARK_WEB_CORE_HAP_LIB_PATH_ASAN = "/data/storage/el1/bundle/arkwebcore_asan/libs/arm64";
 #elif defined(webview_x86_64)
 const std::string ARK_WEB_CORE_ASAN_PATH_FOR_BUNDLE = "arkwebcore_asan/libs/x86_64";
 #else
@@ -74,6 +75,8 @@ const std::string ARK_WEB_CORE_ASAN_PATH_FOR_BUNDLE = "arkwebcore_asan/libs/arm"
 const std::string PRECONFIG_LEGACY_HAP_PATH = "/system/app/ArkWebCoreLegacy/ArkWebCoreLegacy.hap";
 const std::string  PRECONFIG_EVERGREEN_HAP_PATH =
     "/system/app/com.ohos.arkwebcore/ArkWebCore.hap";
+const std::string PRECONFIG_EVERGREEN_WATCH_HAP_PATH =
+    "/system/app/NWeb/NWeb.hap";
 const std::string SANDBOX_LEGACY_HAP_PATH = "/data/storage/el1/bundle/arkwebcorelegacy/entry.hap";
 const std::string SANDBOX_EVERGREEN_HAP_PATH = "/data/storage/el1/bundle/arkwebcore/entry.hap";
 
@@ -246,6 +249,11 @@ std::string GetArkwebLibPath()
         path =  ARK_WEB_CORE_LEGACY_HAP_LIB_PATH;
     } else {
         path = ARK_WEB_CORE_HAP_LIB_PATH;
+#if defined(IS_ASAN) && defined(webview_arm64)
+        if ((access(WEBVIEW_RELATIVE_SANDBOX_PATH_FOR_LIBRARY.c_str(), F_OK) == 0)) {
+            path = ARK_WEB_CORE_HAP_LIB_PATH_ASAN;
+        }
+#endif
     }
     WVLOG_I("get arkweb lib path: %{public}s", path.c_str());
     return path;
@@ -270,7 +278,8 @@ std::string GetArkwebNameSpace()
     return ns;
 }
 
-std::string GetArkwebRelativePathForBundle() {
+std::string GetArkwebRelativePathForBundle()
+{
     std::string path;
 #if defined(IS_ASAN) && defined(webview_arm64)
     if (!(access(WEBVIEW_RELATIVE_SANDBOX_PATH_FOR_LIBRARY.c_str(), F_OK) == 0)) {
@@ -299,7 +308,8 @@ std::string GetArkwebRelativePathForMock()
 std::string GetArkwebInstallPath()
 {
     std::vector<std::string> legacyPaths = {SANDBOX_LEGACY_HAP_PATH, PRECONFIG_LEGACY_HAP_PATH,};
-    std::vector<std::string> greenPaths = {SANDBOX_EVERGREEN_HAP_PATH, PRECONFIG_EVERGREEN_HAP_PATH,};
+    std::vector<std::string> greenPaths = {SANDBOX_EVERGREEN_HAP_PATH, PRECONFIG_EVERGREEN_HAP_PATH,
+        PRECONFIG_EVERGREEN_WATCH_HAP_PATH};
 
     std::vector<std::string> workPaths;
     if (getActiveWebEngineType() == ArkWebEngineType::LEGACY) {
