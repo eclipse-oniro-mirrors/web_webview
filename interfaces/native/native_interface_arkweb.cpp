@@ -20,6 +20,8 @@
 #include <unordered_map>
 #include <vector>
 
+#include "parameters.h"
+
 #include "arkweb_error_code.h"
 #include "arkweb_type.h"
 #include "arkweb_utils.h"
@@ -29,7 +31,6 @@
 #include "nweb.h"
 #include "nweb_helper.h"
 #include "nweb_log.h"
-#include "system_properties_adapter_impl.h"
 
 #include "arkweb_utils.h"
 
@@ -253,8 +254,7 @@ void OH_NativeArkWeb_RegisterAsyncThreadJavaScriptProxy(const char* webTag,
 
 ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag, const char* key)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        IS_CALLING_FROM_M114()) {
+    if (!OHOS::system::GetBoolParameter("web.blankless.enabled", false) || IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey capability not supported");
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT, 0.0, 0 };
     }
@@ -287,8 +287,7 @@ ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char*
                                                                      const char* key,
                                                                      bool isStarted)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        IS_CALLING_FROM_M114()) {
+    if (!OHOS::system::GetBoolParameter("web.blankless.enabled", false) || IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey capability not supported");
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_DEVICE_NOT_SUPPORT;
     }
@@ -321,8 +320,7 @@ ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char*
 
 void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        IS_CALLING_FROM_M114()) {
+    if (!OHOS::system::GetBoolParameter("web.blankless.enabled", false) || IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless OH_NativeArkWeb_ClearBlanklessLoadingCache capability not supported");
         return;
     }
@@ -358,8 +356,7 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
 
 uint32_t OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity(uint32_t capacity)
 {
-    if (!OHOS::NWeb::SystemPropertiesAdapterImpl::GetInstance().GetBoolParameter("web.blankless.enabled", false) ||
-        IS_CALLING_FROM_M114()) {
+    if (!OHOS::system::GetBoolParameter("web.blankless.enabled", false) || IS_CALLING_FROM_M114()) {
         WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingCacheCapacity capability not supported");
         return 0;
     }
