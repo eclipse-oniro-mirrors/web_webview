@@ -6923,10 +6923,6 @@ napi_value NapiWebviewController::GetScrollOffset(napi_env env,
 napi_value NapiWebviewController::GetPageOffset(napi_env env,
     napi_callback_info info)
 {
-    if (IS_CALLING_FROM_M114()) {
-        BusinessError::ThrowErrorByErrcode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
-        return nullptr;
-    }
     napi_value result = nullptr;
     napi_value horizontal;
     napi_value vertical;
@@ -6935,6 +6931,9 @@ napi_value NapiWebviewController::GetPageOffset(napi_env env,
     WebviewController* webviewController = GetWebviewController(env, info);
     if (!webviewController) {
         return nullptr;
+    }
+    if (ArkWeb::getActiveWebEngineVersion() >= ArkWeb::ArkWebEngineVersion::M132) {
+        webviewController->GetPageOffset(&offsetX, &offsetY);
     }
     napi_create_object(env, &result);
     napi_create_double(env, static_cast<double>(offsetX), &horizontal);
