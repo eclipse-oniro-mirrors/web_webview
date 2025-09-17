@@ -1777,7 +1777,7 @@ public:
      * @param width The width of the blankless frame.
      * @param height The height of the blankless frame.
      */
-    void RecordBlanklessFrameSize(uint32_t width, uint32_t height) override; 
+    void RecordBlanklessFrameSize(uint32_t width, uint32_t height) override;
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
