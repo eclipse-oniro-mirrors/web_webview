@@ -2002,7 +2002,7 @@ public:
      * @param height The height of the blankless frame.
      */
     /*--ark web()--*/
-    virtual void RecordBlanklessFrameSize(uint32_t width, uint32_t height) = 0; 
+    virtual void RecordBlanklessFrameSize(uint32_t width, uint32_t height) = 0;
 };
 
 } // namespace OHOS::ArkWeb

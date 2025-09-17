@@ -1765,7 +1765,7 @@ public:
      * @param height The height of the blankless frame.
      */
     /*--ark web()--*/
-    void RecordBlanklessFrameSize(uint32_t width, uint32_t height) override; 
+    void RecordBlanklessFrameSize(uint32_t width, uint32_t height) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
