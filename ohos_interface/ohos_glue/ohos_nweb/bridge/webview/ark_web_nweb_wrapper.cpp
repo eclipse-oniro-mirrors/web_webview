@@ -1,3 +1,4 @@
+
 /*
  * Copyright (c) 2024 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -1818,5 +1819,10 @@ void ArkWebNWebWrapper::FillAutofillDataV2(std::shared_ptr<OHOS::NWeb::NWebRomVa
     }
 
     ark_web_nweb_->FillAutofillDataV2(new ArkWebRomValueImpl(data));
+}
+
+void ArkWebNWebWrapper::RecordBlanklessFrameSize(uint32_t width, uint32_t height)
+{
+    ark_web_nweb_->RecordBlanklessFrameSize(width, height);
 }
 } // namespace OHOS::ArkWeb
