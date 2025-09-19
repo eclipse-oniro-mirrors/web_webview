@@ -29,12 +29,13 @@ ArkWebNWebWebviewBridgeHelper::ArkWebNWebWebviewBridgeHelper()
 
 bool ArkWebNWebWebviewBridgeHelper::Init(bool runMode, const std::string& bundlePath)
 {
+    ARK_WEB_BRIDGE_INFO_LOG("init load resources bundle path %{public}s", bundlePath.c_str());
     if (libFileHandler_) {
         ARK_WEB_BRIDGE_INFO_LOG("library resources have been loaded");
         return true;
     }
 
-    void* libFileHandler = ArkWebBridgeHelperSharedInit(false, runMode);
+    void* libFileHandler = ArkWebBridgeHelperSharedInit(runMode);
     if (!libFileHandler) {
         ARK_WEB_BRIDGE_ERROR_LOG("library resources loaded failed");
         return false;
@@ -66,16 +67,6 @@ void ArkWebNWebWebviewBridgeHelper::PreloadLibFile(bool runMode, const std::stri
     }
 
     ArkWebBridgeHelper::PrereadLibFile(libFilePath);
-}
-
-void ArkWebNWebWebviewBridgeHelper::PreDlopenLibFile(const std::string& bundlePath)
-{
-    if (libFileHandler_) {
-        ARK_WEB_BRIDGE_INFO_LOG("library resources have been loaded");
-        return;
-    }
-
-    libFileHandler_ = ArkWebBridgeHelperSharedInit(true);
 }
 
 } // namespace OHOS::ArkWeb
