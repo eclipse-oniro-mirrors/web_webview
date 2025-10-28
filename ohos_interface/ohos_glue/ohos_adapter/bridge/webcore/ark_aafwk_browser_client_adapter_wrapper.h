@@ -32,6 +32,8 @@ public:
     void PassSurface(int64_t surface_id) override;
 
     void DestroyRenderSurface(int32_t surface_id) override;
+    
+    void DestroyPassedSurface(int64_t surface_id) override;
 
     ArkWebRefPtr<ArkAafwkBrowserClientAdapter> ctocpp_;
 };
