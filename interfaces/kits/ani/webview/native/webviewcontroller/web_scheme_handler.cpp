@@ -327,6 +327,10 @@ void WebSchemeHandler::RequestStopAfterWorkCb(RequestStopParam* param)
 
 void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest)
 {
+    if (resourceRequest == nullptr) {
+        WVLOG_E("WebSchemeHandler::RequestStop resourceRequest is nullptr");
+        return;
+    }
     if (vm_ == nullptr) {
         WVLOG_E("RequestStop: RequestStop nil vm");
         return;

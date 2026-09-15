@@ -1391,6 +1391,10 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
         return nullptr;
     }
+    if (!initArgs) {
+        WVLOG_E("fail to create nweb, input initArgs is nullptr");
+        return nullptr;
+    }
     initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
     if (!NWebHelper::Instance().IsAutoPreconnectEnabled()) {
         initArgs->AddArg(std::string("--disable-auto-preconnect"));

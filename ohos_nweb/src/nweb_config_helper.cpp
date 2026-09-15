@@ -518,9 +518,13 @@ void NWebConfigHelper::ParseNWebLTPOIntConfig(xmlNodePtr nodePtr, const std::str
         WVLOG_E("read ltpo xml node error");
         return;
     }
-    ltpoIntConfig_[configName] = atoi((char *)content);
+    int32_t value = atoi((char *)content);
     xmlFree(content);
-    WVLOG_D("ltpo %{public}s is: %{public}d", configName.c_str(), ltpoIntConfig_[configName]);
+    {
+        std::lock_guard<std::mutex> lock(lock_);
+        ltpoIntConfig_[configName] = value;
+    }
+    WVLOG_D("ltpo %{public}s is: %{public}d", configName.c_str(), value);
 }
 
 void NWebConfigHelper::ParseNWebLoadUrlStrategy(xmlNodePtr nodePtr)
@@ -568,10 +572,9 @@ int32_t NWebConfigHelper::GetLTPOStrategy()
 
 int32_t NWebConfigHelper::GetLTPOIntConfig(const std::string& configName, int32_t defaultValue)
 {
-    if (ltpoIntConfig_.find(configName) != ltpoIntConfig_.end()) {
-        return ltpoIntConfig_[configName];
-    }
-    return defaultValue;
+    std::lock_guard<std::mutex> lock(lock_);
+    auto it = ltpoIntConfig_.find(configName);
+    return it != ltpoIntConfig_.end() ? it->second : defaultValue;
 }
 
 void NWebConfigHelper::ParseNWebDvsync(xmlNodePtr nodePtr)
