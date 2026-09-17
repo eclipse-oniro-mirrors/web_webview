@@ -72,9 +72,12 @@ napi_value NapiWebStorage::JsDeleteAllData(napi_env env, napi_callback_info info
     }
 
     std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
-    if (web_storage) {
-        web_storage->DeleteAllData(incognitoMode);
+    if (!web_storage) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INIT_ERROR,
+            "BusinessError 17100001: Init error. The web storage service is not available.");
+        return nullptr;
     }
+    web_storage->DeleteAllData(incognitoMode);
     napi_get_undefined(env, &result);
     return result;
 }
@@ -115,11 +118,14 @@ napi_value NapiWebStorage::JsDeleteOrigin(napi_env env, napi_callback_info info)
     }
     std::string origin(stringValue);
     std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
-    if (web_storage) {
-        if (web_storage->DeleteOrigin(origin) == NWebError::INVALID_ORIGIN) {
-            NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
-            return nullptr;
-        }
+    if (!web_storage) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INIT_ERROR,
+            "BusinessError 17100001: Init error. The web storage service is not available.");
+        return nullptr;
+    }
+    if (web_storage->DeleteOrigin(origin) == NWebError::INVALID_ORIGIN) {
+        NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
+        return nullptr;
     }
     napi_get_undefined(env, &result);
     return result;
@@ -140,7 +146,7 @@ void NapiWebStorage::ExecuteGetOrigins(napi_env env, void *data)
     GetOriginsParam *param = reinterpret_cast<GetOriginsParam *>(data);
     std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (!web_storage) {
-        param->errCode = INTERFACE_ERROR;
+        param->errCode = NWebError::INIT_ERROR;
         param->status = napi_generic_failure;
         return;
     }
@@ -152,7 +158,7 @@ void NapiWebStorage::ExecuteGetOrigins(napi_env env, void *data)
         napiOrigin.usage = origin->GetUsage();
         param->origins.push_back(napiOrigin);
     }
-    param->errCode = param->origins.empty() ? NWebError::NO_WEBSTORAGE_ORIGIN : INTERFACE_OK;
+    param->errCode = INTERFACE_OK;
     param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
 }
 
@@ -190,7 +196,7 @@ void NapiWebStorage::GetOriginComplete(napi_env env, napi_status status, void *d
     }
     napi_value setResult[RESULT_COUNT] = {0};
     if (param->status) {
-        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN);
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode);
         napi_get_undefined(env, &setResult[PARAMONE]);
     } else {
         napi_get_undefined(env, &setResult[PARAMZERO]);
@@ -216,14 +222,13 @@ void NapiWebStorage::GetOriginsPromiseComplete(napi_env env, napi_status status,
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::NO_WEBSTORAGE_ORIGIN);
     napi_create_array(env, &setResult[PARAMONE]);
     GetNapiWebStorageOriginForResult(env, param->origins, setResult[PARAMONE]);
-    napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
     if (param->status == napi_ok) {
-        napi_resolve_deferred(env, param->deferred, args[1]);
+        napi_resolve_deferred(env, param->deferred, setResult[PARAMONE]);
     } else {
-        napi_reject_deferred(env, param->deferred, args[0]);
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode);
+        napi_reject_deferred(env, param->deferred, setResult[PARAMZERO]);
     }
     napi_delete_async_work(env, param->asyncWork);
     delete param;
@@ -309,26 +314,20 @@ void NapiWebStorage::ExecuteGetOriginUsageOrQuota(napi_env env, void *data)
     GetOriginUsageOrQuotaParam *param = reinterpret_cast<GetOriginUsageOrQuotaParam *>(data);
     std::shared_ptr<OHOS::NWeb::NWebWebStorage> web_storage = OHOS::NWeb::NWebHelper::Instance().GetWebStorage();
     if (!web_storage) {
-        param->errCode = INTERFACE_ERROR;
+        param->errCode = NWebError::INIT_ERROR;
         param->status = napi_generic_failure;
         return;
     }
-    if (param->isQuato) {
-        param->retValue = web_storage->GetOriginQuota(param->origin);
-        if (param->retValue != INTERFACE_ERROR && param->retValue != NWebError::INVALID_ORIGIN) {
-            param->errCode = INTERFACE_OK;
-        } else {
-            param->errCode = param->retValue;
-        }
-        param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
-        return;
-    }
-    param->retValue = web_storage->GetOriginUsage(param->origin);
-    if (param->retValue != INTERFACE_ERROR && param->retValue != NWebError::INVALID_ORIGIN) {
-        param->errCode = INTERFACE_OK;
+    long value = param->isQuato ? web_storage->GetOriginQuota(param->origin)
+                                : web_storage->GetOriginUsage(param->origin);
+    if (value == NWebError::INVALID_ORIGIN) {
+        param->errCode = NWebError::INVALID_ORIGIN;
+    } else if (value < 0) {
+        param->errCode = INTERFACE_ERROR;
     } else {
-        param->errCode = param->retValue;
+        param->errCode = INTERFACE_OK;
     }
+    param->retValue = static_cast<int32_t>(static_cast<uint32_t>(value));
     param->status = param->errCode == INTERFACE_OK ? napi_ok : napi_generic_failure;
 }
 
@@ -337,20 +336,16 @@ void NapiWebStorage::GetOriginUsageOrQuotaComplete(napi_env env, napi_status sta
     GetOriginUsageOrQuotaParam* param = static_cast<GetOriginUsageOrQuotaParam*>(data);
     NApiScope scope(env);
     if (!scope.IsVaild()) {
+        delete param;
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
-    if (param->status) {
-        if (param->errCode == NWebError::INVALID_ORIGIN) {
-            setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN);
-        } else {
-            napi_get_undefined(env, &setResult[PARAMZERO]);
-        }
-        napi_get_undefined(env, &setResult[PARAMONE]);
-    } else {
+    if (param->status == napi_ok) {
         napi_get_undefined(env, &setResult[PARAMZERO]);
-        napi_create_array(env, &setResult[PARAMONE]);
         napi_create_uint32(env, static_cast<uint32_t>(param->retValue), &setResult[PARAMONE]);
+    } else {
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode);
+        napi_get_undefined(env, &setResult[PARAMONE]);
     }
     napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
     napi_value callback = nullptr;
@@ -368,16 +363,16 @@ void NapiWebStorage::GetOriginUsageOrQuotaPromiseComplete(napi_env env, napi_sta
     GetOriginUsageOrQuotaParam* param = static_cast<GetOriginUsageOrQuotaParam*>(data);
     NApiScope scope(env);
     if (!scope.IsVaild()) {
+        delete param;
         return;
     }
     napi_value setResult[RESULT_COUNT] = {0};
-    setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, NWebError::INVALID_ORIGIN);
-    napi_create_uint32(env, static_cast<uint32_t>(param->retValue), &setResult[PARAMONE]);
-    napi_value args[RESULT_COUNT] = {setResult[PARAMZERO], setResult[PARAMONE]};
-    if (param->status != napi_ok && param->errCode == NWebError::INVALID_ORIGIN) {
-        napi_reject_deferred(env, param->deferred, args[PARAMZERO]);
+    if (param->status == napi_ok) {
+        napi_create_uint32(env, static_cast<uint32_t>(param->retValue), &setResult[PARAMONE]);
+        napi_resolve_deferred(env, param->deferred, setResult[PARAMONE]);
     } else {
-        napi_resolve_deferred(env, param->deferred, args[PARAMONE]);
+        setResult[PARAMZERO] = NWebError::BusinessError::CreateError(env, param->errCode);
+        napi_reject_deferred(env, param->deferred, setResult[PARAMZERO]);
     }
     napi_delete_reference(env, param->jsStringRef);
     napi_delete_async_work(env, param->asyncWork);
