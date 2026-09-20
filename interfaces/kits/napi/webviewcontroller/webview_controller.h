@@ -226,6 +226,12 @@ public:
 
     ErrCode SetCustomUserAgent(const std::string& userAgent);
 
+    ErrCode SetNavigationEntryUserData(const std::string& key, const std::string& value);
+
+    ErrCode GetNavigationEntryUserData(const std::string& key, std::string& value);
+
+    ErrCode RemoveNavigationEntryUserData(const std::string& key);
+
     std::string GetTitle();
 
     int32_t GetProgress();

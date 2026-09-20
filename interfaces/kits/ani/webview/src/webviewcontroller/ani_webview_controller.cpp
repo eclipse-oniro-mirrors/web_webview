@@ -3501,6 +3501,83 @@ static void SetCustomUserAgent(ani_env* env, ani_object object, ani_object userA
     }
 }
 
+WEBVIEW_ANI_STATIC void SetNavigationEntryUserData(ani_env* env, ani_object object, ani_object keyObj, ani_object valueObj)
+{
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+    std::string key;
+    if (!AniParseUtils::ParseString(env, keyObj, key)) {
+        return;
+    }
+    std::string value;
+    if (!AniParseUtils::ParseString(env, valueObj, value)) {
+        return;
+    }
+    auto* controller = reinterpret_cast<WebviewController*>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+    ErrCode ret = controller->SetNavigationEntryUserData(key, value);
+    if (ret != NO_ERROR) {
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+    }
+}
+
+WEBVIEW_ANI_STATIC ani_string GetNavigationEntryUserData(ani_env* env, ani_object object, ani_object keyObj)
+{
+    ani_string userData = nullptr;
+
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return userData;
+    }
+
+    std::string key;
+    if (!AniParseUtils::ParseString(env, keyObj, key)) {
+        return userData;
+    }
+
+    auto* controller = reinterpret_cast<WebviewController*>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return userData;
+    }
+
+    std::string value;
+    ErrCode ret = controller->GetNavigationEntryUserData(key, value);
+    if (ret != NO_ERROR) {
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+        return userData;
+    }
+    env->String_NewUTF8(value.c_str(), value.size(), &userData);
+
+    return userData;
+}
+
+WEBVIEW_ANI_STATIC void RemoveNavigationEntryUserData(ani_env* env, ani_object object, ani_object keyObj)
+{
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+    std::string key;
+    if (!AniParseUtils::ParseString(env, keyObj, key)) {
+        return;
+    }
+    auto* controller = reinterpret_cast<WebviewController*>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+    ErrCode ret = controller->RemoveNavigationEntryUserData(key);
+    if (ret != NO_ERROR) {
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+    }
+}
+
 static void RemoveCache(ani_env* env, ani_object object, ani_boolean clearRom)
 {
     if (!env) {
@@ -7812,6 +7889,12 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "getOriginalUrl", nullptr, reinterpret_cast<void *>(GetOriginalUrl) },
         ani_native_function { "getUserAgent", nullptr, reinterpret_cast<void *>(GetUserAgent) },
         ani_native_function { "getCustomUserAgent", nullptr, reinterpret_cast<void *>(GetCustomUserAgent) },
+        ani_native_function { "setNavigationEntryUserData", nullptr,
+                              reinterpret_cast<void *>(SetNavigationEntryUserData) },
+        ani_native_function { "getNavigationEntryUserData", nullptr,
+                              reinterpret_cast<void *>(GetNavigationEntryUserData) },
+        ani_native_function { "removeNavigationEntryUserData", nullptr,
+                              reinterpret_cast<void *>(RemoveNavigationEntryUserData) },
         ani_native_function { "getLastJavascriptProxyCallingFrameUrl", nullptr,
                               reinterpret_cast<void *>(GetLastJavascriptProxyCallingFrameUrl) },
         ani_native_function { "getSecurityLevel", nullptr, reinterpret_cast<void *>(GetSecurityLevel) },
