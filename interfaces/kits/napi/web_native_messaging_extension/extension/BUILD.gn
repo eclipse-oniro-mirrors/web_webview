@@ -44,6 +44,7 @@ ohos_source_set("connect_info") {
     external_deps = [
         "hilog:libhilog",
         "ipc:ipc_core",
+        "c_utils:utils",
     ]
 
     part_name = "webview"
