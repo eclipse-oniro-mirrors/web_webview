@@ -41,6 +41,23 @@ namespace {
 std::mutex g_mtxMap; // the mutex to protect the shared resource
 std::unordered_map<std::string, NativeArkWeb_OnValidCallback> g_validMap;
 std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback> g_destroyMap;
+
+void DestroyCallbackWrapper(const char* webName)
+{
+    NativeArkWeb_OnDestroyCallback userCallback = nullptr;
+    {
+        std::lock_guard<std::mutex> guard(g_mtxMap);
+        auto iter = g_destroyMap.find(webName);
+        if (iter != g_destroyMap.end()) {
+            userCallback = iter->second;
+            g_destroyMap.erase(iter);
+        }
+    }
+    if (userCallback != nullptr) {
+        userCallback(webName);
+    }
+}
+
 constexpr uint32_t MAX_DATABASE_SIZE_IN_MB = 100;
 constexpr uint32_t MAX_KEYS_COUNT = 100;
 constexpr size_t MAX_KEY_LENGTH = 2048;
@@ -160,11 +177,11 @@ void OH_NativeArkWeb_SetDestroyCallback(const char* webTag, NativeArkWeb_OnDestr
     }
     WVLOG_I("native RegisterDestroyCallback, webTag: %{public}s", webTag);
     std::lock_guard<std::mutex> guard(g_mtxMap);
-    g_destroyMap[webTag] = callback;
     std::weak_ptr<OHOS::NWeb::NWeb> nwebWeak = OH_NativeArkWeb_GetWebInstanceByWebTag(webTag);
     if (auto nweb = nwebWeak.lock()) {
+        g_destroyMap[webTag] = callback;
         WVLOG_I("native RegisterNativeDestroyCallback call nweb");
-        nweb->RegisterNativeDestroyCallback(webTag, callback);
+        nweb->RegisterNativeDestroyCallback(webTag, DestroyCallbackWrapper);
     } else {
         WVLOG_E("native RegisterDestroyCallback get nweb null: %{public}s", webTag);
     }
