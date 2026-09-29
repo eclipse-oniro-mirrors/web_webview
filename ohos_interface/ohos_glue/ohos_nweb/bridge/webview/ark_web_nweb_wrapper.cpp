@@ -604,6 +604,38 @@ std::shared_ptr<OHOS::NWeb::NWebHistoryList> ArkWebNWebWrapper::GetHistoryList()
     return std::make_shared<ArkWebHistoryListWrapper>(ark_web_history_list);
 }
 
+void ArkWebNWebWrapper::SetNavigationEntryUserData(const std::string& key, const std::string& value)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+    ArkWebString stValue = ArkWebStringClassToStruct(value);
+
+    ark_web_nweb_->SetNavigationEntryUserData(stKey, stValue);
+
+    ArkWebStringStructRelease(stKey);
+    ArkWebStringStructRelease(stValue);
+}
+
+std::string ArkWebNWebWrapper::GetNavigationEntryUserData(const std::string& key)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    ArkWebString stValue = ark_web_nweb_->GetNavigationEntryUserData(stKey);
+
+    std::string objValue = ArkWebStringStructToClass(stValue);
+    ArkWebStringStructRelease(stValue);
+    ArkWebStringStructRelease(stKey);
+    return objValue;
+}
+
+void ArkWebNWebWrapper::RemoveNavigationEntryUserData(const std::string& key)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    ark_web_nweb_->RemoveNavigationEntryUserData(stKey);
+
+    ArkWebStringStructRelease(stKey);
+}
+
 void ArkWebNWebWrapper::PutReleaseSurfaceCallback(
     std::shared_ptr<OHOS::NWeb::NWebReleaseSurfaceCallback> release_surface_listener)
 {

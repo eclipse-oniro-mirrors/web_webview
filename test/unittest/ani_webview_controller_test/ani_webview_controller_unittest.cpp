@@ -99,6 +99,7 @@ protected:
         if (g_stringNewUTF8ShouldFail) {
             return ANI_ERROR;
         }
+        gLastCreatedUtf8 = str;
         *result = reinterpret_cast<ani_string>(GetMockObject(POOL_INDEX_STRING));
         return ANI_OK;
     }
@@ -169,6 +170,7 @@ protected:
     static bool g_setPropertyByNameDoubleShouldFail;
     static bool g_setPropertyByNameRefShouldFail;
     static bool g_stringNewUTF8ShouldFail;
+    static std::string gLastCreatedUtf8;
     static bool g_setSiteIsolationModeShouldFail;
 
     // Mock object address pool - each element has unique address
@@ -285,6 +287,7 @@ ani_int AniWebviewControllerTest::g_objectCallMethodResult = 0;
 bool AniWebviewControllerTest::g_setPropertyByNameDoubleShouldFail = false;
 bool AniWebviewControllerTest::g_setPropertyByNameRefShouldFail = false;
 bool AniWebviewControllerTest::g_stringNewUTF8ShouldFail = false;
+std::string AniWebviewControllerTest::gLastCreatedUtf8 = "";
 bool AniWebviewControllerTest::g_setSiteIsolationModeShouldFail = false;
 
 using OHOS::NWeb::OnActive;
@@ -326,6 +329,9 @@ using OHOS::NWeb::SetScrollbarMode;
 using OHOS::NWeb::GetScrollable;
 using OHOS::NWeb::ExecuteAIPageCommand;
 using OHOS::NWebError::COMMAND_FORMAT_ERROR;
+using OHOS::NWeb::SetNavigationEntryUserData;
+using OHOS::NWeb::GetNavigationEntryUserData;
+using OHOS::NWeb::RemoveNavigationEntryUserData;
 
 /**
  * @tc.name: ExecuteAIPageCommand_CommandFormatError
@@ -2154,4 +2160,195 @@ TEST_F(AniWebviewControllerTest, EnableAdvancedSecurityMode_ErrorScenarios)
     EXPECT_TRUE(WasErrorThrown());
     OHOS::NWeb::AniBusinessError::Reset();
     g_referenceIsUndefinedShouldFail = false;
+}
+
+/**
+ * @tc.name: SetNavigationEntryUserData_ForwardAndOverwrite
+ * @tc.desc: SetNavigationEntryUserData forwards (key, value) to the controller and
+ *           the same key overwrites the previous value (AC-1.5).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationEntryUserData_ForwardAndOverwrite)
+{
+    ani_env* env = GetMockEnv();
+    testController_->ResetNavEntryUserData();
+    OHOS::NWeb::AniParseUtils::g_parseStringQueue = { "nav_key", "v1", "nav_key", "v2" };
+
+    // First set: v1
+    SetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_TRUE(testController_->WasNavEntryUserDataSetCalled());
+
+    // Second set with the same key: v2 overwrites v1
+    SetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+
+    std::string value;
+    EXPECT_EQ(testController_->GetNavigationEntryUserData("nav_key", value), 0);
+    EXPECT_EQ(value, "v2");
+    testController_->ResetNavEntryUserData();
+    OHOS::NWeb::AniParseUtils::g_parseStringQueue = {};
+}
+
+/**
+ * @tc.name: GetNavigationEntryUserData_MockForward
+ * @tc.desc: GetNavigationEntryUserData returns the value forwarded from the controller;
+ *           a missing key returns an empty string without error (AC-2.3).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetNavigationEntryUserData_MockForward)
+{
+    ani_env* env = GetMockEnv();
+    testController_->ResetNavEntryUserData();
+    std::string seed = "seed_value";
+    testController_->SetNavigationEntryUserData("nav_key", seed);
+
+    // Existing key
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "nav_key";
+    ani_string result = GetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_TRUE(testController_->WasNavEntryUserDataGetCalled());
+    EXPECT_EQ(gLastCreatedUtf8, "seed_value");
+
+    // Missing key: empty string, no business error
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "not_exist";
+    result = GetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_EQ(gLastCreatedUtf8, "");
+
+    testController_->ResetNavEntryUserData();
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "";
+}
+
+/**
+ * @tc.name: RemoveNavigationEntryUserData_ForwardAndMissingNoOp
+ * @tc.desc: RemoveNavigationEntryUserData removes the key; removing a missing key
+ *           does not throw (AC-2.3).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, RemoveNavigationEntryUserData_ForwardAndMissingNoOp)
+{
+    ani_env* env = GetMockEnv();
+    testController_->ResetNavEntryUserData();
+    std::string seed = "seed_value";
+    testController_->SetNavigationEntryUserData("nav_key", seed);
+
+    // Remove existing key
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "nav_key";
+    RemoveNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_TRUE(testController_->WasNavEntryUserDataRemoveCalled());
+    std::string value = "not_empty";
+    testController_->GetNavigationEntryUserData("nav_key", value);
+    EXPECT_EQ(value, "");
+
+    // Remove missing key: no error
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "not_exist";
+    RemoveNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+
+    testController_->ResetNavEntryUserData();
+    OHOS::NWeb::AniParseUtils::g_parseStringValue = "";
+}
+
+/**
+ * @tc.name: NavEntryUserData_NoWebComponent_17100001
+ * @tc.desc: All three APIs throw 17100001 when the controller is null or not
+ *           initialized (AC-2.1, spec EB-1).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, NavEntryUserData_NoWebComponent_17100001)
+{
+    testController_->ResetNavEntryUserData();
+
+    // Controller is nullptr
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    ani_env* env = GetMockEnv();
+    SetNavigationEntryUserData(env, reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_NULL_CONTROLLER)),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    EXPECT_FALSE(testController_->WasNavEntryUserDataSetCalled());
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // Controller not initialized: set
+    SetControllerInitialized(false);
+    env = GetMockEnv();
+    SetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    EXPECT_FALSE(testController_->WasNavEntryUserDataSetCalled());
+    OHOS::NWeb::AniBusinessError::Reset();
+
+    // Controller not initialized: get
+    env = GetMockEnv();
+    ani_string result = GetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    EXPECT_EQ(result, nullptr);
+    OHOS::NWeb::AniBusinessError::Reset();
+
+    // Controller not initialized: remove
+    env = GetMockEnv();
+    RemoveNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    EXPECT_FALSE(testController_->WasNavEntryUserDataRemoveCalled());
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
+}
+
+/**
+ * @tc.name: NavEntryUserData_ParseStringFailure_NoOp
+ * @tc.desc: When ParseString fails, the APIs return silently without touching the
+ *           controller (ANI param semantics; AC-2.2 binding-surface counterpart).
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, NavEntryUserData_ParseStringFailure_NoOp)
+{
+    ani_env* env = GetMockEnv();
+    testController_->ResetNavEntryUserData();
+
+    // Set: first param parse fails
+    OHOS::NWeb::AniParseUtils::g_parseStringResult = false;
+    SetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_FALSE(testController_->WasNavEntryUserDataSetCalled());
+
+    // Get: parse fails
+    ani_string result = GetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_EQ(result, nullptr);
+    EXPECT_FALSE(testController_->WasNavEntryUserDataGetCalled());
+
+    // Remove: parse fails
+    RemoveNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_STRING)));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_FALSE(testController_->WasNavEntryUserDataRemoveCalled());
+
+    OHOS::NWeb::AniParseUtils::g_parseStringResult = true;
+    testController_->ResetNavEntryUserData();
 }
