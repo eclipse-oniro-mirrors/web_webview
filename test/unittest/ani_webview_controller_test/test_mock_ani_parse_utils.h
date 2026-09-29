@@ -19,6 +19,7 @@
 #include <ani.h>
 #include <string>
 #include <vector>
+#include <queue>
 #include <map>
 #include "nweb.h"
 #include "web_errors.h"
@@ -133,7 +134,7 @@ public:
     static std::string g_parseStringValue;
     // Sequential values for consecutive ParseString calls (e.g. key then value);
     // falls back to g_parseStringValue when empty.
-    static std::vector<std::string> g_parseStringQueue;
+    static std::queue<std::string> g_parseStringQueue;
 
     // Control EnumItem_GetValue_Int behavior
     static ani_status g_enumGetIntStatus;
@@ -150,7 +151,7 @@ void* AniParseUtils::g_testControllerPtr = nullptr;
 bool AniParseUtils::g_isFunctionResult = true;
 bool AniParseUtils::g_parseStringResult = true;
 std::string AniParseUtils::g_parseStringValue = "";
-std::vector<std::string> AniParseUtils::g_parseStringQueue = {};
+std::queue<std::string> AniParseUtils::g_parseStringQueue = {};
 ani_status AniParseUtils::g_enumGetIntStatus = ANI_OK;
 ani_int AniParseUtils::g_enumGetIntResult = 0;
 bool AniParseUtils::g_createObjectVoidShouldFail = false;
