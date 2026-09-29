@@ -17,11 +17,17 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include "ipc_skeleton.h"
 #include "ipc_types.h"
 #include "web_native_messaging_log.h"
 
 namespace OHOS {
 namespace NWeb {
+namespace {
+// OpenHarmony 应用进程 UID 从 10000 开始，系统进程（SA 服务）UID 小于该值
+constexpr int32_t FIRST_APPLICATION_UID = 10000;
+} // namespace
+
 int32_t WebNativeMessagingExtensionStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
     MessageParcel& reply, MessageOption& option)
 {
@@ -29,10 +35,21 @@ int32_t WebNativeMessagingExtensionStub::OnRemoteRequest(uint32_t code, MessageP
         return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
 
+    // 仅允许系统进程（web_native_messaging SA 服务）调用，防止应用进程绕过 SA 服务层权限校验直接访问扩展
+    int32_t callingUid = IPCSkeleton::GetCallingUid();
+    if (callingUid >= FIRST_APPLICATION_UID) {
+        WNMLOG_E("OnRemoteRequest denied caller, callingUid = %{public}d", callingUid);
+        return ERR_INVALID_VALUE;
+    }
+
     switch (code) {
         case IWebNativeMessagingExtension::CODE_CONNECTNATIVE: {
             WNMEConnectionInfo connInfo;
-            WNMEConnectionInfoParcel::Unmarshalling(data, connInfo);
+            if (!WNMEConnectionInfoParcel::Unmarshalling(data, connInfo)) {
+                WNMLOG_E("ConnectNative unmarshalling connInfo failed");
+                reply.WriteInt32(WNME_PARAMS_INVALID);
+                return ERR_NONE;
+            }
             int32_t errorCode = ConnectNative(connInfo);
             if (errorCode == WNME_SUCCESS) {
                 errorCode = getpid();
@@ -43,7 +60,11 @@ int32_t WebNativeMessagingExtensionStub::OnRemoteRequest(uint32_t code, MessageP
 
         case IWebNativeMessagingExtension::CODE_DISCONNECTNATIVE: {
             WNMEConnectionInfo connInfo;
-            WNMEConnectionInfoParcel::Unmarshalling(data, connInfo);
+            if (!WNMEConnectionInfoParcel::Unmarshalling(data, connInfo)) {
+                WNMLOG_E("DisconnectNative unmarshalling connInfo failed");
+                reply.WriteInt32(WNME_PARAMS_INVALID);
+                return ERR_NONE;
+            }
             int32_t errorCode = DisconnectNative(connInfo);
             reply.WriteInt32(errorCode);
             return ERR_NONE;

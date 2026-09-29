@@ -2559,8 +2559,19 @@ void WebviewController::WaitForAttachedFinish(ani_env *env, arkts::concurrency_h
 
     if (param->resolver) {
         ani_enum enumType;
-        if (envUse->FindEnum("@ohos.web.webview.webview.ControllerAttachState", &enumType) != ANI_OK) {
-            WVLOG_E("WaitForAttachedFinish find enumType failed");
+        ani_status findStatus = envUse->FindEnum("@ohos.web.webview.webview.ControllerAttachState", &enumType);
+        if (findStatus != ANI_OK) {
+            WVLOG_E("WaitForAttachedFinish find enumType failed, status = %{public}d", findStatus);
+            // FindEnum 失败后拒绝 promise 并清理，避免使用未初始化的 enumType（未定义行为）及 promise 永久挂起
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, reinterpret_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
+            envUse->DestroyLocalScope();
+            DeleteAsyncWork(envUse, param->asyncWork);
+            delete param;
+            param = nullptr;
+            return;
         }
 
         ani_enum_item result = nullptr;
@@ -2568,9 +2579,11 @@ void WebviewController::WaitForAttachedFinish(ani_env *env, arkts::concurrency_h
         if ((rst = envUse->Enum_GetEnumItemByIndex(enumType, param->state, &result)) != ANI_OK) {
             WVLOG_E("WaitForAttachedFinish convert attachState(%{public}d) failed, rst = %{public}d", param->state,
                 rst);
-        }
-
-        if ((rst = envUse->PromiseResolver_Resolve(param->resolver, result)) != ANI_OK) {
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, reinterpret_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
+        } else if ((rst = envUse->PromiseResolver_Resolve(param->resolver, result)) != ANI_OK) {
             WVLOG_E("WaitForAttachedFinish resolve promise failed, rst = %{public}d", rst);
         }
     }
