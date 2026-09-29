@@ -89,7 +89,14 @@ HWTEST_F(WebNativeMessagingContextTest, StartAbility_Success, TestSize.Level1)
 {
     EXPECT_NE(context_->token_, nullptr) << "Token should be set";
     ErrCode result = context_->StartAbility(*want_, startOpts_);
-    EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    // The native messaging SA(8610) is dynamically loaded on demand. When the SA is
+    // available (e.g. RK), the client returns the business error PERMISSION_CHECK_ERROR;
+    // when the SA load times out (e.g. 7885), the proxy is null and IPC_ERROR is returned.
+    if (result == ConnectNativeRet::IPC_ERROR) {
+        EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    } else {
+        EXPECT_EQ(result, ConnectNativeRet::PERMISSION_CHECK_ERROR) << "Actual result: " << result;
+    }
 }
 
 /**
@@ -101,7 +108,12 @@ HWTEST_F(WebNativeMessagingContextTest, StartAbility_Fail, TestSize.Level1)
 {
     EXPECT_NE(context_->token_, nullptr) << "Token should be set";
     ErrCode result = context_->StartAbility(*want_, startOpts_);
-    EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    // See StartAbility_Success: the return value depends on whether SA(8610) is loaded.
+    if (result == ConnectNativeRet::IPC_ERROR) {
+        EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    } else {
+        EXPECT_EQ(result, ConnectNativeRet::PERMISSION_CHECK_ERROR) << "Actual result: " << result;
+    }
 }
 
 /**
@@ -112,7 +124,13 @@ HWTEST_F(WebNativeMessagingContextTest, StartAbility_Fail, TestSize.Level1)
 HWTEST_F(WebNativeMessagingContextTest, StopNativeConnection_Success, TestSize.Level1)
 {
     ErrCode result = context_->StopNativeConnection(100);
-    EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    // When SA(8610) is available, CONNECTION_NOT_EXIST is returned for the unknown
+    // connection id; when SA load times out, IPC_ERROR is returned instead.
+    if (result == ConnectNativeRet::IPC_ERROR) {
+        EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    } else {
+        EXPECT_EQ(result, ConnectNativeRet::CONNECTION_NOT_EXIST) << "Actual result: " << result;
+    }
 }
 
 /**
@@ -123,7 +141,12 @@ HWTEST_F(WebNativeMessagingContextTest, StopNativeConnection_Success, TestSize.L
 HWTEST_F(WebNativeMessagingContextTest, StopNativeConnection_Fail, TestSize.Level1)
 {
     ErrCode result = context_->StopNativeConnection(-1);
-    EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    // See StopNativeConnection_Success: return value depends on whether SA(8610) is loaded.
+    if (result == ConnectNativeRet::IPC_ERROR) {
+        EXPECT_EQ(result, ConnectNativeRet::IPC_ERROR) << "Actual result: " << result;
+    } else {
+        EXPECT_EQ(result, ConnectNativeRet::CONNECTION_NOT_EXIST) << "Actual result: " << result;
+    }
 }
 
 /**
