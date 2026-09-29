@@ -24,8 +24,10 @@
 namespace OHOS {
 namespace NWeb {
 namespace {
-// OpenHarmony 应用进程 UID 从 10000 开始，系统进程（SA 服务）UID 小于该值
-constexpr int32_t FIRST_APPLICATION_UID = 10000;
+// web_native_messaging SA 服务进程的固定 UID，由 init 依据 /system/etc/passwd 中
+// web_native_messaging_service 用户行（uid/gid 3351）设置，与本仓 web_native_messaging_service.cfg
+// 中 "uid": "web_native_messaging_service" 用户名配置对应
+constexpr int32_t WEB_NATIVE_MESSAGING_UID = 3351;
 } // namespace
 
 int32_t WebNativeMessagingExtensionStub::OnRemoteRequest(uint32_t code, MessageParcel& data,
@@ -35,9 +37,9 @@ int32_t WebNativeMessagingExtensionStub::OnRemoteRequest(uint32_t code, MessageP
         return IPCObjectStub::OnRemoteRequest(code, data, reply, option);
     }
 
-    // 仅允许系统进程（web_native_messaging SA 服务）调用，防止应用进程绕过 SA 服务层权限校验直接访问扩展
+    // 仅允许 web_native_messaging SA 服务进程调用，防止其他进程绕过 SA 服务层权限校验直接访问扩展
     int32_t callingUid = IPCSkeleton::GetCallingUid();
-    if (callingUid >= FIRST_APPLICATION_UID) {
+    if (callingUid != WEB_NATIVE_MESSAGING_UID) {
         WNMLOG_E("OnRemoteRequest denied caller, callingUid = %{public}d", callingUid);
         return ERR_INVALID_VALUE;
     }
