@@ -18,6 +18,7 @@
 #include <string>
 #include <cstdint>
 #include <cstddef>
+#include <deque>
 #include <limits>
 
 #include "ani.h"
@@ -2173,7 +2174,8 @@ TEST_F(AniWebviewControllerTest, SetNavigationEntryUserData_ForwardAndOverwrite)
 {
     ani_env* env = GetMockEnv();
     testController_->ResetNavEntryUserData();
-    OHOS::NWeb::AniParseUtils::g_parseStringQueue = { "nav_key", "v1", "nav_key", "v2" };
+    OHOS::NWeb::AniParseUtils::g_parseStringQueue =
+        std::queue<std::string>(std::deque<std::string>({ "nav_key", "v1", "nav_key", "v2" }));
 
     // First set: v1
     SetNavigationEntryUserData(env, reinterpret_cast<ani_object>(testController_),
@@ -2192,7 +2194,7 @@ TEST_F(AniWebviewControllerTest, SetNavigationEntryUserData_ForwardAndOverwrite)
     EXPECT_EQ(testController_->GetNavigationEntryUserData("nav_key", value), 0);
     EXPECT_EQ(value, "v2");
     testController_->ResetNavEntryUserData();
-    OHOS::NWeb::AniParseUtils::g_parseStringQueue = {};
+    OHOS::NWeb::AniParseUtils::g_parseStringQueue = std::queue<std::string>();
 }
 
 /**
