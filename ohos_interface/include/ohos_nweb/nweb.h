@@ -948,35 +948,6 @@ public:
     virtual std::shared_ptr<NWebHistoryList> GetHistoryList() = 0;
 
     /**
-     * Set user data for the current navigation entry. The user data is session
-     * scoped, kept in memory only, and retained when the navigation entry is
-     * cloned for back/forward navigation history. Setting the same key again
-     * overwrites the previous value. Empty key or value is silently ignored.
-     *
-     * @param key the key of the user data.
-     * @param value the value of the user data.
-     */
-    virtual void SetNavigationEntryUserData(const std::string& key, const std::string& value) = 0;
-
-    /**
-     * Get the user data of the current navigation entry matching the key, or
-     * an empty string if no value exists for the key.
-     *
-     * @param key the key of the user data.
-     *
-     * @return the value of the user data, or an empty string if not exist.
-     */
-    virtual std::string GetNavigationEntryUserData(const std::string& key) = 0;
-
-    /**
-     * Remove the user data of the current navigation entry matching the key.
-     * Does nothing if no value exists for the key.
-     *
-     * @param key the key of the user data to remove.
-     */
-    virtual void RemoveNavigationEntryUserData(const std::string& key) = 0;
-
-    /**
      * Set the NWebReleaseSurfaceCallback that will receive release surface event.
      * This will replace the current handler.
      *
@@ -2692,6 +2663,35 @@ public:
     {
         return 1.0;
     }
+
+    /**
+     * Set user data for the current navigation entry. The user data is session
+     * scoped, kept in memory only, and retained when the navigation entry is
+     * cloned for back/forward navigation history. Setting the same key again
+     * overwrites the previous value. Empty key or value is silently ignored.
+     *
+     * @param key the key of the user data.
+     * @param value the value of the user data.
+     */
+    virtual void SetNavigationEntryUserData(const std::string& key, const std::string& value) {}
+
+    /**
+     * Get the user data of the current navigation entry matching the key, or
+     * an empty string if no value exists for the key.
+     *
+     * @param key the key of the user data.
+     *
+     * @return the value of the user data, or an empty string if not exist.
+     */
+    virtual std::string GetNavigationEntryUserData(const std::string& key) { return ""; }
+
+    /**
+     * Remove the user data of the current navigation entry matching the key.
+     * Does nothing if no value exists for the key.
+     *
+     * @param key the key of the user data to remove.
+     */
+    virtual void RemoveNavigationEntryUserData(const std::string& key) {}
 };
 } // namespace OHOS::NWeb
 

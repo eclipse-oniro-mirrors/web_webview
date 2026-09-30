@@ -1092,6 +1092,9 @@ export default namespace webview {
         native getLastPostMessageURL(): string;
         native setZoomFactor(zoomFactor: double): void;
         native getZoomFactor(): double;
+        native setNavigationEntryUserData(key: string, value: string): void;
+        native getNavigationEntryUserData(key: string): string;
+        native removeNavigationEntryUserData(key: string): void;
     }
 
     export class jsProxyCallbackWrapper {

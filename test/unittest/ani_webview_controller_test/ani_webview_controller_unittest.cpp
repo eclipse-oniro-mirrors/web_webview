@@ -2206,7 +2206,7 @@ TEST_F(AniWebviewControllerTest, SetNavigationEntryUserData_ForwardAndOverwrite)
  */
 TEST_F(AniWebviewControllerTest, GetNavigationEntryUserData_MockForward)
 {
-    ani_env* env = GetMockEnv();
+    ani_env* env = CreateMockAniEnv();
     testController_->ResetNavEntryUserData();
     std::string seed = "seed_value";
     testController_->SetNavigationEntryUserData("nav_key", seed);

@@ -512,21 +512,6 @@ ArkWebRefPtr<ArkWebHistoryList> ArkWebNWebImpl::GetHistoryList()
     return new ArkWebHistoryListImpl(nweb_history_list);
 }
 
-void ArkWebNWebImpl::SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value)
-{
-    nweb_nweb_->SetNavigationEntryUserData(ArkWebStringStructToClass(key), ArkWebStringStructToClass(value));
-}
-
-ArkWebString ArkWebNWebImpl::GetNavigationEntryUserData(const ArkWebString& key)
-{
-    return ArkWebStringClassToStruct(nweb_nweb_->GetNavigationEntryUserData(ArkWebStringStructToClass(key)));
-}
-
-void ArkWebNWebImpl::RemoveNavigationEntryUserData(const ArkWebString& key)
-{
-    nweb_nweb_->RemoveNavigationEntryUserData(ArkWebStringStructToClass(key));
-}
-
 void ArkWebNWebImpl::PutReleaseSurfaceCallback(ArkWebRefPtr<ArkWebReleaseSurfaceCallback> release_surface_listener)
 {
     if (CHECK_REF_PTR_IS_NULL(release_surface_listener)) {
@@ -1912,5 +1897,20 @@ void ArkWebNWebImpl::SetZoomFactor(double zoom_factor)
 double ArkWebNWebImpl::GetZoomFactor()
 {
     return nweb_nweb_->GetZoomFactor();
+}
+
+void ArkWebNWebImpl::SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value)
+{
+    nweb_nweb_->SetNavigationEntryUserData(ArkWebStringStructToClass(key), ArkWebStringStructToClass(value));
+}
+
+ArkWebString ArkWebNWebImpl::GetNavigationEntryUserData(const ArkWebString& key)
+{
+    return ArkWebStringClassToStruct(nweb_nweb_->GetNavigationEntryUserData(ArkWebStringStructToClass(key)));
+}
+
+void ArkWebNWebImpl::RemoveNavigationEntryUserData(const ArkWebString& key)
+{
+    nweb_nweb_->RemoveNavigationEntryUserData(ArkWebStringStructToClass(key));
 }
 } // namespace OHOS::ArkWeb

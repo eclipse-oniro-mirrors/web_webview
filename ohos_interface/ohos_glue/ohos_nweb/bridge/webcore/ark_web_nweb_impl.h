@@ -489,23 +489,6 @@ public:
     ArkWebRefPtr<ArkWebHistoryList> GetHistoryList() override;
 
     /**
-     * @brief Set user data for the current navigation entry.
-     */
-    void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) override;
-
-    /**
-     * @brief Get the user data of the current navigation entry matching the
-     *        key, or an empty string if no value exists for the key.
-     */
-    ArkWebString GetNavigationEntryUserData(const ArkWebString& key) override;
-
-    /**
-     * @brief Remove the user data of the current navigation entry matching
-     *        the key. Does nothing if no value exists for the key.
-     */
-    void RemoveNavigationEntryUserData(const ArkWebString& key) override;
-
-    /**
      * @brief Set the NWebReleaseSurfaceCallback that will receive release surface
      *        event. This will replace the current handler.
      *
@@ -2128,6 +2111,23 @@ public:
 
     void SetZoomFactor(double zoom_factor) override;
     double GetZoomFactor() override;
+
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) override;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    ArkWebString GetNavigationEntryUserData(const ArkWebString& key) override;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    void RemoveNavigationEntryUserData(const ArkWebString& key) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
