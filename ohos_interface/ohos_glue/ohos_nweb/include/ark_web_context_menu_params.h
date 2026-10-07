@@ -90,6 +90,16 @@ public:
 
     /*--ark web()--*/
     virtual int GetContextMenuMediaType() = 0;
+    
+    /*--ark web()--*/
+    virtual bool ShouldOfferLinkToText() = 0;
+
+    /*--ark web()--*/
+    virtual bool IsOverTextFragment() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetTextFragmentGeneratedLink() = 0;
+
 };
 
 } // namespace OHOS::ArkWeb

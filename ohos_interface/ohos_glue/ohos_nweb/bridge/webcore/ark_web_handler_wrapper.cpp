@@ -20,6 +20,7 @@
 #include "ohos_nweb/bridge/ark_web_applink_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_console_log_impl.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_context_menu_options_impl.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_params_impl.h"
 #include "ohos_nweb/bridge/ark_web_controller_handler_impl.h"
 #include "ohos_nweb/bridge/ark_web_core_struct_utils.h"
@@ -1456,5 +1457,16 @@ void ArkWebHandlerWrapper::OnVideoStatusChanged(const int action, const std::map
 void ArkWebHandlerWrapper::OnZoomFactorChanged(double old_zoom_factor, double new_zoom_factor)
 {
     ark_web_handler_->OnZoomFactorChanged(old_zoom_factor, new_zoom_factor);
+}
+
+void ArkWebHandlerWrapper::OnContextMenuUpdate(
+    int32_t itemId, std::shared_ptr<OHOS::NWeb::NWebContextMenuOptions> options)
+{
+    ArkWebRefPtr<ArkWebContextMenuOptions> ark_web_options = nullptr;
+    if (!CHECK_SHARED_PTR_IS_NULL(options)) {
+        ark_web_options = new ArkWebContextMenuOptionsImpl(options);
+    }
+
+    ark_web_handler_->OnContextMenuUpdate(itemId, ark_web_options);
 }
 } // namespace OHOS::ArkWeb

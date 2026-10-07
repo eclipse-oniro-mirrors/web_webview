@@ -138,4 +138,22 @@ ArkWebDataMediaType ArkWebContextMenuParamsWrapper::GetContextMenuMediaType()
     return static_cast<ArkWebDataMediaType>(ark_web_context_menu_params_->GetContextMenuMediaType());
 }
 
+bool ArkWebContextMenuParamsWrapper::ShouldOfferLinkToText()
+{
+    return ark_web_context_menu_params_->ShouldOfferLinkToText();
+}
+
+bool ArkWebContextMenuParamsWrapper::IsOverTextFragment()
+{
+    return ark_web_context_menu_params_->IsOverTextFragment();
+}
+
+std::string ArkWebContextMenuParamsWrapper::GetTextFragmentGeneratedLink()
+{
+    ArkWebString stLinkToHighlight = ark_web_context_menu_params_->GetTextFragmentGeneratedLink();
+    std::string objLinkToHighlight = ArkWebStringStructToClass(stLinkToHighlight);
+    ArkWebStringStructRelease(stLinkToHighlight);
+    return objLinkToHighlight;
+}
+
 } // namespace OHOS::ArkWeb
