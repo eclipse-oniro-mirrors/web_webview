@@ -86,8 +86,9 @@ bool ResSchedClientAdapter::ReportNWebPreloadRenderProcess(pid_t pid)
 {
     return OHOS::ArkWeb::ArkResSchedClientAdapter::ReportNWebPreloadRenderProcess(pid);
 }
- 
-void ResSchedClientAdapter::ReportPreloadNWebCreate(bool isPreload){
+
+void ResSchedClientAdapter::ReportPreloadNWebCreate(bool isPreload)
+{
     OHOS::ArkWeb::ArkResSchedClientAdapter::ReportPreloadNWebCreate(isPreload);
 }
 } // namespace OHOS::NWeb
