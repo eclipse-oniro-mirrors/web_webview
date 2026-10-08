@@ -2120,6 +2120,18 @@ public:
     void SetZoomFactor(double zoom_factor) override;
     double GetZoomFactor() override;
 
+    /**
+     * @brief Set whether enable automatic reload of network error pages.
+     *
+     * @param enable bool: Whether enable automatic reload of error pages.
+     */
+    void SetAutoReloadEnabled(bool enable) override;
+
+    /**
+     * @brief Get whether automatic reload of error pages is enabled.
+     */
+    bool GetAutoReloadEnabled() override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

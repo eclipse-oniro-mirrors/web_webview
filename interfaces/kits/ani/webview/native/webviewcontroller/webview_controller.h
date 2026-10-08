@@ -463,6 +463,10 @@ public:
 
     bool GetSubframeErrorPageEnabled();
 
+    ErrCode SetAutoReloadEnabled(bool enable);
+
+    bool GetAutoReloadEnabled();
+
     int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime);
 
     int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);

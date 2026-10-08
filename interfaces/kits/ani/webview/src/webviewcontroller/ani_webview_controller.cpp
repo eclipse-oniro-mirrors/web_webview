@@ -6758,6 +6758,52 @@ static ani_boolean GetSubframeErrorPageEnabled(ani_env* env, ani_object object)
     return static_cast<ani_boolean>(controller->GetSubframeErrorPageEnabled());
 }
 
+static void SetAutoReloadEnabled(ani_env* env, ani_object object, ani_boolean aniEnable)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("SetAutoReloadEnabled unsupported engine version: M114");
+        return;
+    }
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+
+    WVLOG_D("SetAutoReloadEnabled start");
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+
+    bool enable = static_cast<bool>(aniEnable);
+    ErrCode ret = controller->SetAutoReloadEnabled(enable);
+    if (ret != NO_ERROR) {
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+    }
+}
+
+static ani_boolean IsAutoReloadEnabled(ani_env* env, ani_object object)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("IsAutoReloadEnabled unsupported engine version: M114");
+        return ANI_FALSE;
+    }
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return ANI_FALSE;
+    }
+
+    WVLOG_D("IsAutoReloadEnabled in ani start");
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return ANI_FALSE;
+    }
+
+    return static_cast<ani_boolean>(controller->GetAutoReloadEnabled());
+}
+
 bool ParseBlanklessString(ani_env* env, ani_ref ref, std::string& outValue)
 {
     ani_string str = static_cast<ani_string>(ref);
@@ -7939,6 +7985,8 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "getErrorPageEnabled", nullptr, reinterpret_cast<void*>(GetErrorPageEnabled) },
         ani_native_function { "getSubframeErrorPageEnabled", nullptr,
                               reinterpret_cast<void*>(GetSubframeErrorPageEnabled) },
+        ani_native_function { "enableAutoReload", "z:", reinterpret_cast<void*>(SetAutoReloadEnabled) },
+        ani_native_function { "isAutoReloadEnabled", nullptr, reinterpret_cast<void*>(IsAutoReloadEnabled) },
         ani_native_function { "getBlanklessInfoWithKey", nullptr, reinterpret_cast<void*>(GetBlanklessInfoWithKey) },
         ani_native_function { "setBlanklessLoadingWithKey", nullptr,
                               reinterpret_cast<void*>(SetBlanklessLoadingWithKey) },

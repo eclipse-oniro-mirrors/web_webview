@@ -1898,4 +1898,14 @@ double ArkWebNWebImpl::GetZoomFactor()
 {
     return nweb_nweb_->GetZoomFactor();
 }
+
+void ArkWebNWebImpl::SetAutoReloadEnabled(bool enable)
+{
+    nweb_nweb_->SetAutoReloadEnabled(enable);
+}
+
+bool ArkWebNWebImpl::GetAutoReloadEnabled()
+{
+    return nweb_nweb_->GetAutoReloadEnabled();
+}
 } // namespace OHOS::ArkWeb

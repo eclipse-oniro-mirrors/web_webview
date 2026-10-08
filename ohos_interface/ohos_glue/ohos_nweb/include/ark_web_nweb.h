@@ -2423,6 +2423,20 @@ public:
      */
     /*--ark web()--*/
     virtual double GetZoomFactor() = 0;
+
+    /**
+     * @brief Set whether enable automatic reload of network error pages.
+     *
+     * @param enable bool: Whether enable automatic reload of error pages.
+     */
+    /*--ark web()--*/
+    virtual void SetAutoReloadEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get whether automatic reload of error pages is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool GetAutoReloadEnabled() = 0;
 };
 
 } // namespace OHOS::ArkWeb

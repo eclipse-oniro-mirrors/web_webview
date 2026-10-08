@@ -1605,6 +1605,25 @@ namespace OHOS::Webview {
         return nweb_ptr->GetSubframeErrorPageEnabled();
     }
 
+    int32_t WebviewControllerImpl::SetAutoReloadEnabled(bool enable)
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return NWebError::INIT_ERROR;
+        }
+        nweb_ptr->SetAutoReloadEnabled(enable);
+        return NWebError::NO_ERROR;
+    }
+
+    bool WebviewControllerImpl::GetAutoReloadEnabled()
+    {
+        auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);
+        if (!nweb_ptr) {
+            return false;
+        }
+        return nweb_ptr->GetAutoReloadEnabled();
+    }
+
     std::string WebviewControllerImpl::GetLastPostMessageURL()
     {
         auto nweb_ptr = NWeb::NWebHelper::Instance().GetNWeb(nwebId_);

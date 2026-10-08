@@ -225,7 +225,7 @@ public:
           setZoomFactorReturnValue_(0), getZoomFactorCalled_(false), getZoomFactorReturnValue_(0),
           getPageOffsetCalled_(false),
           pageDownCalled_(false), pageUpCalled_(false), getLastHitTestCalled_(false), getScrollOffsetCalled_(false),
-          slideScrollCalled_(false), requestFocusCalled_(false)
+          slideScrollCalled_(false), requestFocusCalled_(false), autoReloadEnabled_(false)
     {
         if (!tag_.empty()) {
             webTagSet_.insert(tag_);
@@ -913,6 +913,20 @@ public:
         return false;
     }
 
+    ErrCode SetAutoReloadEnabled(bool enable)
+    {
+        if (setAutoReloadShouldFail_) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        autoReloadEnabled_ = enable;
+        return 0;
+    }
+
+    bool GetAutoReloadEnabled()
+    {
+        return autoReloadEnabled_;
+    }
+
     void SetSoftKeyboardBehaviorMode(int32_t mode)
     {
         // Mock implementation
@@ -1137,6 +1151,7 @@ public:
     static bool webDebuggingAccess_;
     static int32_t webDebuggingPort_;
     static bool g_terminateRenderProcessShouldFail;
+    static bool setAutoReloadShouldFail_;
 
 private:
     std::string tag_;
@@ -1166,6 +1181,7 @@ private:
     bool getScrollOffsetCalled_;
     bool slideScrollCalled_;
     bool requestFocusCalled_;
+    bool autoReloadEnabled_;
     std::shared_ptr<HitTestResult> mockHitTestResult_;
 };
 
@@ -1175,6 +1191,7 @@ bool WebviewController::existNweb_ = false;
 bool WebviewController::webDebuggingAccess_ = false;
 int32_t WebviewController::webDebuggingPort_ = 0;
 bool WebviewController::g_terminateRenderProcessShouldFail = false;
+bool WebviewController::setAutoReloadShouldFail_ = false;
 
 } // namespace NWeb
 } // namespace OHOS
