@@ -5323,10 +5323,10 @@ static ani_object GetArray(ani_env* env, ani_object object)
     return result;
 }
 
-static ani_string GetError(ani_env* env, ani_object object)
+static ani_object GetError(ani_env* env, ani_object object)
 {
     WVLOG_D("WebMessageExt GetError Start.");
-    ani_string result = nullptr;
+    ani_object result = nullptr;
     if (!env) {
         WVLOG_E("env is nullptr");
         return result;
@@ -5349,8 +5349,17 @@ static ani_string GetError(ani_env* env, ani_object object)
         WVLOG_E("message data is nullptr");
         return result;
     }
+
+    ani_string aniErrMsg = nullptr;
     std::string errMsg = message->GetErrName() + ": " + message->GetErrMsg();
-    env->String_NewUTF8(errMsg.c_str(), errMsg.size(), &result);
+    ani_ref undefRef = nullptr;
+    ani_class errorCls = nullptr;
+    ani_method ctor = nullptr;
+    env->String_NewUTF8(errMsg.c_str(), errMsg.size(), &aniErrMsg);
+    env->GetUndefined(&undefRef);
+    env->FindClass("escompat.Error", &errorCls);
+    env->Class_FindMethod(errorCls, "<ctor>", "C{std.core.String}C{escompat.ErrorOptions}:", &ctor);
+    env->Object_New(errorCls, ctor, &result, aniErrMsg, undefRef);
     return result;
 }
 
