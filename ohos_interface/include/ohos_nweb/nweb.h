@@ -117,6 +117,7 @@ public:
     virtual bool GetIsEnhanceSurface() = 0;
     virtual bool GetIsPopup() = 0;
     virtual std::string GetSharedRenderProcessToken() {return "";}
+    virtual bool GetIsPreloadNWeb() { return false; }
     virtual bool GetEmulateTouchFromMouseEvent() {return false;}
     virtual bool GetUseCloudControlAutoLayoutConfig() {return false;}
     virtual uint64_t GetSurfaceNodeId() { return 0; }

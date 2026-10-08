@@ -83,4 +83,13 @@ bool ArkResSchedClientAdapter::ReportSubwindowCall(int32_t statusAdapter, pid_t 
     return NWeb::ResSchedClientAdapter::ReportSubwindowCall((NWeb::ResSchedStatusAdapter)statusAdapter, pid, tid);
 }
 
+bool ArkResSchedClientAdapter::ReportNWebPreloadRenderProcess(pid_t pid)
+{
+    return NWeb::ResSchedClientAdapter::ReportNWebPreloadRenderProcess(pid);
+}
+ 
+void ArkResSchedClientAdapter::ReportPreloadNWebCreate(bool isPreload)
+{
+    return NWeb::ResSchedClientAdapter::ReportPreloadNWebCreate(isPreload);
+}
 } // namespace OHOS::ArkWeb
