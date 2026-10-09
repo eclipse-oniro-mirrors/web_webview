@@ -105,6 +105,12 @@ WebSchemeHandler::WebSchemeHandler(ani_env* env) : vm_(nullptr)
         webSchemeHandlerMap_.insert(std::make_pair(this, handler));
         arkWebSchemeHandlerMap_.insert(std::make_pair(handler, this));
     }
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::GetMainEventRunner();
+    if (runner) {
+        mainHandler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
+    } else {
+        WVLOG_E("create WebSchemeHandler GetMainEventRunner failed, onRequestStop will not work");
+    }
 }
 
 WebSchemeHandler::~WebSchemeHandler()
@@ -250,7 +256,7 @@ void WebSchemeHandler::RequestStart(
     }
 }
 
-void WebSchemeHandler::RequestStopAfterWorkCb(RequestStopParam* param)
+void WebSchemeHandler::RequestStopAfterWorkCb(const std::shared_ptr<RequestStopParam>& param)
 {
     if (!param) {
         WVLOG_E("RequestStopAfterWorkCb: param is null");
@@ -259,62 +265,23 @@ void WebSchemeHandler::RequestStopAfterWorkCb(RequestStopParam* param)
     if (param->vm_ == nullptr) {
         WVLOG_E("RequestStopAfterWorkCb: nil vm");
         param->request_->DecStrongRef(param->request_);
-        delete param;
         return;
     }
-    if (param->vm_->GetEnv(ANI_VERSION_1, &param->env_) != ANI_OK) {
+    ani_env* env = nullptr;
+    if (param->vm_->GetEnv(ANI_VERSION_1, &env) != ANI_OK) {
         WVLOG_E("RequestStopAfterWorkCb: GetEnv failed");
         param->request_->DecStrongRef(param->request_);
-        delete param;
         return;
     }
-    if (param->env_ == nullptr || !param->callbackRef_ || !param->isCallbackValid_ ||
+    if (env == nullptr || !param->callbackRef_ || !param->isCallbackValid_ ||
         !param->isCallbackValid_->load(std::memory_order_acquire)) {
-        WVLOG_E("RequestStopAfterWorkCb: callbackRef_ or env_ is invalid");
+        WVLOG_E("RequestStopAfterWorkCb: callbackRef_ or env is invalid");
         param->request_->DecStrongRef(param->request_);
-        delete param;
         return;
     }
-    ani_ref callbackFunc = nullptr;
-    ani_status status =
-        param->env_->GlobalReference_Create(reinterpret_cast<ani_ref>(param->callbackRef_), &callbackFunc);
-    if (status != ANI_OK || callbackFunc == nullptr) {
-        WVLOG_E("RequestStopAfterWorkCb: GlobalReference_Create failed");
+    if (!NotifyRequestStop(env, param)) {
         param->request_->DecStrongRef(param->request_);
-        delete param;
         return;
-    }
-    ani_object requestValue = {};
-    if (!AniParseUtils::CreateObjectVoid(param->env_,
-        ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME, requestValue)) {
-        WVLOG_E("RequestStopAfterWorkCb: create requestValue failed");
-        param->env_->GlobalReference_Delete(callbackFunc);
-        param->request_->DecStrongRef(param->request_);
-        delete param;
-        return;
-    }
-    if (!AniParseUtils::Wrap(param->env_, requestValue, ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME,
-        reinterpret_cast<ani_long>(param->request_))) {
-        WVLOG_E("RequestStopAfterWorkCb: WebSchemeHandlerRequest wrap failed");
-        param->env_->GlobalReference_Delete(callbackFunc);
-        param->request_->DecStrongRef(param->request_);
-        delete param;
-        return;
-    }
-    std::vector<ani_ref> vec;
-    vec.push_back(static_cast<ani_object>(requestValue));
-    ani_ref fnReturnVal;
-    status = param->env_->FunctionalObject_Call(
-        reinterpret_cast<ani_fn_object>(callbackFunc), vec.size(), vec.data(), &fnReturnVal);
-    if (status != ANI_OK) {
-        WVLOG_E("RequestStopAfterWorkCb:FunctionalObject_Call failed.");
-        param->env_->GlobalReference_Delete(callbackFunc);
-        param->request_->DecStrongRef(param->request_);
-        delete param;
-        return;
-    }
-    if (callbackFunc != nullptr) {
-        param->env_->GlobalReference_Delete(callbackFunc);
     }
     WebResourceHandler* resourceHandler =
         reinterpret_cast<WebResourceHandler*>(OH_ArkWebResourceRequest_GetUserData(param->arkWebRequest_));
@@ -322,8 +289,48 @@ void WebSchemeHandler::RequestStopAfterWorkCb(RequestStopParam* param)
         resourceHandler->SetFinishFlag();
         resourceHandler->DecStrongRef(resourceHandler);
     }
-    delete param;
-    param = nullptr;
+}
+
+bool WebSchemeHandler::NotifyRequestStop(ani_env* env, const std::shared_ptr<RequestStopParam>& param)
+{
+    if (!env || !param) {
+        WVLOG_E("NotifyRequestStop: env or param is null");
+        return false;
+    }
+    ani_ref callbackFunc = nullptr;
+    ani_status status =
+        env->GlobalReference_Create(reinterpret_cast<ani_ref>(param->callbackRef_), &callbackFunc);
+    if (status != ANI_OK || callbackFunc == nullptr) {
+        WVLOG_E("NotifyRequestStop: GlobalReference_Create failed");
+        return false;
+    }
+    ani_object requestValue = {};
+    if (!AniParseUtils::CreateObjectVoid(env,
+        ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME, requestValue)) {
+        WVLOG_E("NotifyRequestStop: create requestValue failed");
+        env->GlobalReference_Delete(callbackFunc);
+        return false;
+    }
+    if (!AniParseUtils::Wrap(env, requestValue, ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME,
+        reinterpret_cast<ani_long>(param->request_))) {
+        WVLOG_E("NotifyRequestStop: WebSchemeHandlerRequest wrap failed");
+        env->GlobalReference_Delete(callbackFunc);
+        return false;
+    }
+    std::vector<ani_ref> vec;
+    vec.push_back(static_cast<ani_object>(requestValue));
+    ani_ref fnReturnVal;
+    status = env->FunctionalObject_Call(
+        reinterpret_cast<ani_fn_object>(callbackFunc), vec.size(), vec.data(), &fnReturnVal);
+    if (status != ANI_OK) {
+        WVLOG_E("NotifyRequestStop: FunctionalObject_Call failed.");
+        env->GlobalReference_Delete(callbackFunc);
+        return false;
+    }
+    if (callbackFunc != nullptr) {
+        env->GlobalReference_Delete(callbackFunc);
+    }
+    return true;
 }
 
 void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest)
@@ -347,16 +354,6 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
         vm_->DetachCurrentThread();
         return;
     }
-    std::lock_guard<std::mutex> lock(mainHandlerMutex_);
-    if (!mainHandler_) {
-        std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::GetMainEventRunner();
-        if (!runner) {
-            WVLOG_E("RequestStop: GetMainEventRunner failed");
-            vm_->DetachCurrentThread();
-            return;
-        }
-        mainHandler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
-    }
     if ((!mainHandler_) || (!request_stop_callback_)) {
         WVLOG_E("RequestStop: mainHandler or request_stop_callback is null.");
         vm_->DetachCurrentThread();
@@ -368,14 +365,7 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
         vm_->DetachCurrentThread();
         return;
     }
-    RequestStopParam* param = new (std::nothrow) RequestStopParam();
-    if (param == nullptr) {
-        WVLOG_E("RequestStop: RequestStop failed to create RequestStopParam");
-        delete request;
-        vm_->DetachCurrentThread();
-        return;
-    }
-    param->env_ = env;
+    auto param = std::make_shared<RequestStopParam>();
     param->vm_ = vm_;
     param->callbackRef_ = request_stop_callback_;
     param->request_ = request;
@@ -385,7 +375,6 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
     if (!mainHandler_->PostTask(task, TASK_ID)) {
         WVLOG_E("RequestStop: PostTask failed");
         request->DecStrongRef(request);
-        delete param;
         vm_->DetachCurrentThread();
         return;
     }
