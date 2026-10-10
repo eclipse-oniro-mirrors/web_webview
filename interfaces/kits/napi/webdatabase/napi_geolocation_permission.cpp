@@ -23,6 +23,7 @@
 #include "napi/native_common.h"
 #include "nweb_data_base.h"
 #include "nweb_helper.h"
+#include "nweb_log.h"
 #include "web_errors.h"
 #include "securec.h"
 
@@ -155,9 +156,13 @@ napi_value NapiGeolocationPermission::ProcessActionByType(napi_env env, napi_cal
         return result;
     }
     if (operationType == ALLOW_PERMISSION_OPERATION) {
-        if (dataBase->SetPermissionByOrigin(origin, OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE, true,
-            incognitoMode) == NWebError::INVALID_ORIGIN) {
+        int ret = dataBase->SetPermissionByOrigin(origin,
+            OHOS::NWeb::NWebDataBase::WebPermissionType::GEOLOCATION_TYPE, true, incognitoMode);
+        if (ret == NWebError::INVALID_ORIGIN) {
             NWebError::BusinessError::ThrowErrorByErrcode(env, NWebError::INVALID_ORIGIN);
+            return result;
+        } else if (ret == NWebError::NWEB_ERROR) {
+            WVLOG_E("geolocation allowGeolocation failed, cef data base is null");
             return result;
         }
     } else if (operationType == DELETE_PERMISSION_OPERATION) {

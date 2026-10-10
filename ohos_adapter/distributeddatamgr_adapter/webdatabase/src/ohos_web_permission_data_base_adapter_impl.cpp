@@ -169,6 +169,7 @@ void OhosWebPermissionDataBaseAdapterImpl::SetPermissionByOrigin(const std::stri
 {
     WVLOG_I("web permission database set info key:%{public}d", key);
     if (rdbStore_ == nullptr || origin.empty()) {
+        WVLOG_E("web permission database set info failed, rdbStore is null or origin is empty");
         return;
     }
     std::string tableName = KeyToTableName(key);
