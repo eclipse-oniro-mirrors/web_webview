@@ -739,6 +739,12 @@ public:
      */
     void PutFullScreenVideoOverlayEnable(bool enable) override;
 
+    /**
+     * @brief Set whether to support transform rotate and skew
+     *        The default is false.
+     */
+    void SetTransformRotateAndSkewEnabled(bool enable) override;
+
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;
 };
