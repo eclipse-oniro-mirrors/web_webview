@@ -2571,7 +2571,7 @@ void WebviewController::UnregisterStateChangeCallback(const napi_env& env, const
     if (handler != nullptr) {
         DeleteRegisterObj(env, iter->second, handler);
     } else {
-        WVLOG_I("WebviewController::UnregisterStateChangeCallback All callback is unsubscribe for event: %{public}s",
+        WVLOG_I("SubEvent op=off_all kit=ArkWeb event=%{public}s",
             type.c_str());
         DeleteAllRegisterObj(env, iter->second);
     }

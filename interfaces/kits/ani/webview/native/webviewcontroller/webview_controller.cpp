@@ -2524,7 +2524,7 @@ void WebviewController::UnregisterStateChangeCallback(ani_env *env, const std::s
     if (handler) {
         DeleteRegisterObj(env, iter->second, handler);
     } else {
-        WVLOG_D("UnregisterStateChangeCallback unregister all callback for type:%{public}s", type.c_str());
+        WVLOG_I("SubEvent op=off_all kit=ArkWeb event=%{public}s", type.c_str());
         DeleteAllRegisterObj(env, iter->second);
     }
 
