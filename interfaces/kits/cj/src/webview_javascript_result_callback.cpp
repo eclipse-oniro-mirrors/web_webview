@@ -321,22 +321,25 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
     std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName, int fd,
     int32_t routingId, int32_t objectId)
 {
+    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
     if (!flowbufferAdapter) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return ret;
     }
     auto ashmem = flowbufferAdapter->CreateAshmemWithFd(fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
     if (!ashmem) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return ret;
     }
 
     std::vector<std::string> argv = {};
     if (!ConstructArgv(ashmem, args, argv, jsObj, routingId)) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return ret;
     }
-    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
     fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
 
     ret = GetJavaScriptResultSelfHelper(jsObj, method, routingId, argv);
@@ -501,24 +504,27 @@ void WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultFlowbufV2(
 
     WEBVIEWLOGD("GetJavaScriptResult method = %{public}s", method.c_str());
     result->SetType(NWebHapValue::Type::NONE);
+    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || jsObj->HasMethod(method) == -1) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return;
     }
 
     auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
     if (!flowbufferAdapter) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return;
     }
 
     auto ashmem = flowbufferAdapter->CreateAshmemWithFd(fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
     if (!ashmem) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return;
     }
 
     std::vector<std::string> argv = {};
     ConstructArgvV2(ashmem, args, argv, jsObj, routingId);
-    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
     fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
 
     GetJavaScriptResultSelfHelperV2(jsObj, method, routingId, argv, result);
