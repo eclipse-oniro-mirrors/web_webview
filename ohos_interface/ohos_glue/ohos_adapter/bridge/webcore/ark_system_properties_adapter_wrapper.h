@@ -103,6 +103,8 @@ public:
 
     int32_t GetRenderProcessMode() override;
 
+    std::string GetPartialDraw() override;
+
 private:
     ArkWebRefPtr<ArkSystemPropertiesAdapter> ctocpp_;
 };
