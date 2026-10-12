@@ -72,6 +72,10 @@ WebSchemeHandlerRequest::~WebSchemeHandlerRequest()
     OH_ArkWeb_ReleaseString(method_);
     OH_ArkWeb_ReleaseString(referrer_);
     OH_ArkWeb_ReleaseString(frameUrl_);
+    if (stream_ && !streamConsumed_) {
+        OH_ArkWebResourceRequest_DestroyHttpBodyStream(stream_);
+        stream_ = nullptr;
+    }
 }
 
 char* WebSchemeHandlerRequest::GetRequestUrl()
@@ -111,6 +115,9 @@ const WebHeaderList& WebSchemeHandlerRequest::GetHeader()
 
 ArkWeb_HttpBodyStream* WebSchemeHandlerRequest::GetHttpBodyStream()
 {
+    if (stream_) {
+        streamConsumed_ = true;
+    }
     return stream_;
 }
 
