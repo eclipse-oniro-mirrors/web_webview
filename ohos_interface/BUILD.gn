@@ -36,6 +36,7 @@ action("webview_interface_prepare") {
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_cookie_manager.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_geolocation_callback_interface.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_context_menu_params.h",
+    "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_context_menu_options.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_accessibility_event_callback.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_hit_testresult.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_release_surface_callback.h",
