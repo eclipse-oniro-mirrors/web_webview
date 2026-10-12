@@ -881,6 +881,14 @@ public:
     void OnVideoStatusChanged(const int action, const ArkWebStringMap &param) override;
 
     void OnZoomFactorChanged(double old_zoom_factor, double new_zoom_factor) override;
+
+    /**
+     * @brief Called when contextmenu state changed.
+     *
+     * @param itemId The menu item id.
+     * @param options The options of context menu.
+     */
+    void OnContextMenuUpdate(int32_t itemId, ArkWebRefPtr<ArkWebContextMenuOptions> options) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

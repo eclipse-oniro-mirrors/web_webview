@@ -435,6 +435,8 @@ action("webview_glue_nweb_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_js_ssl_select_cert_result_wrapper.cpp",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_date_time_suggestion_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_context_menu_callback_wrapper.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_context_menu_options_wrapper.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_context_menu_options_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_largest_contentful_paint_details_wrapper.cpp",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_history_list_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_quick_menu_callback_wrapper.cpp",

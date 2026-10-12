@@ -24,6 +24,7 @@
 #include "nweb_access_request.h"
 #include "nweb_app_link_callback.h"
 #include "nweb_console_log.h"
+#include "nweb_context_menu_options.h"
 #include "nweb_context_menu_params.h"
 #include "nweb_controller_handler.h"
 #include "nweb_custom_keyboard_handler.h"
@@ -1540,6 +1541,14 @@ public:
      * @param newZoomFactor the browser zoom factor after the change.
      */
     virtual void OnZoomFactorChanged(double oldZoomFactor, double newZoomFactor) {}
+
+    /**
+     * @brief Called when contextmenu state changed.
+     *
+     * @param itemId The menu item id.
+     * @param options The options of context menu.
+     */
+    virtual void OnContextMenuUpdate(int32_t itemId, std::shared_ptr<NWebContextMenuOptions> options) {}
 };
 
 } // namespace OHOS::NWeb

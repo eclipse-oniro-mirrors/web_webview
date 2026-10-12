@@ -20,6 +20,7 @@
 #include "ohos_nweb/bridge/ark_web_app_link_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_console_log_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_context_menu_options_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_context_menu_params_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_controller_handler_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_cursor_info_wrapper.h"
@@ -1269,5 +1270,15 @@ bool ArkWebHandlerImpl::OnNestedFling(float& velocity_x, float& velocity_y)
 void ArkWebHandlerImpl::OnZoomFactorChanged(double old_zoom_factor, double new_zoom_factor)
 {
     nweb_handler_->OnZoomFactorChanged(old_zoom_factor, new_zoom_factor);
+}
+
+void ArkWebHandlerImpl::OnContextMenuUpdate(int32_t itemId, ArkWebRefPtr<ArkWebContextMenuOptions> options)
+{
+    std::shared_ptr<OHOS::NWeb::NWebContextMenuOptions> nweb_options = nullptr;
+    if (!CHECK_REF_PTR_IS_NULL(options)) {
+        nweb_options = std::make_shared<ArkWebContextMenuOptionsWrapper>(options);
+    }
+
+    nweb_handler_->OnContextMenuUpdate(itemId, nweb_options);
 }
 } // namespace OHOS::ArkWeb

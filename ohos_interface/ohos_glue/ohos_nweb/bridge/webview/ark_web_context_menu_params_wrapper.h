@@ -67,6 +67,12 @@ public:
     bool IsAILink() override;
 
     ArkWebDataMediaType GetContextMenuMediaType() override;
+    
+    bool ShouldOfferLinkToText() override;
+
+    bool IsOverTextFragment() override;
+
+    std::string GetTextFragmentGeneratedLink() override;
 private:
     ArkWebRefPtr<ArkWebContextMenuParams> ark_web_context_menu_params_;
 };
