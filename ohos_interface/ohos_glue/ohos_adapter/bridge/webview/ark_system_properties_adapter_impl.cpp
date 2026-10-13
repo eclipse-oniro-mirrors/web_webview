@@ -247,4 +247,10 @@ int32_t ArkSystemPropertiesAdapterImpl::GetRenderProcessMode()
 {
     return real_.GetRenderProcessMode();
 }
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetPartialDraw()
+{
+    std::string str = real_.GetPartialDraw();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb

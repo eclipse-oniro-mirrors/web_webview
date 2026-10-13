@@ -55,6 +55,8 @@ const std::string WEB_THROTTLE_STRATEGY = "throttle_strategy";
 const std::string WEB_THROTTLE_TIMEOUT = "throttle_timeout";
 const std::string WEB_THROTTLE_RATIO = "throttle_ratio";
 const std::string WEB_RENDER_PROCESS_MODE = "render_process_mode";
+const std::string WEB_PARTIAL_DRAW_CONFIG = "partial_draw_config";
+const std::string WEB_PARTIAL_DRAW = "partial_draw";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
@@ -427,6 +429,10 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
     if (nativeMessagingNodePtr != nullptr) {
         WVLOG_D("read config from native messaging node");
         ParseNativeMessagingConfig(nativeMessagingNodePtr);
+    }
+    xmlNodePtr partialDrawNodePtr = GetChildrenNode(rootPtr, WEB_PARTIAL_DRAW_CONFIG);
+    if (partialDrawNodePtr != nullptr) {
+        ParsePartialDraw(partialDrawNodePtr);
     }
     // docPtr released by docGuard (RAII) at scope exit
 }
@@ -880,5 +886,44 @@ void NWebConfigHelper::ParseRenderProcessMode(xmlNodePtr childNodePtr)
             return;
         }
     }
+}
+
+void NWebConfigHelper::ParsePartialDraw(xmlNodePtr nodePtr)
+{
+    for (xmlNodePtr curNodePtr = nodePtr->xmlChildrenNode; curNodePtr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        char* namePtr = (char*)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        if (!namePtr) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string settingName(namePtr);
+        xmlFree(namePtr);
+        if (settingName == WEB_PARTIAL_DRAW) {
+            xmlChar *content = xmlNodeGetContent(curNodePtr);
+            if (content == nullptr) {
+                WVLOG_E("read partial_draw xml node error");
+                return;
+            }
+            std::string value = reinterpret_cast<const char *>(content);
+            xmlFree(content);
+            if (value == "single" || value == "multi" || value == "none") {
+                partialDraw_ = value;
+            } else {
+                WVLOG_E("invalid partial_draw value: %{public}s, fallback to none", value.c_str());
+                partialDraw_ = "none";
+            }
+            WVLOG_D("partial_draw is: %{public}s", partialDraw_.c_str());
+            return;
+        }
+    }
+}
+
+std::string NWebConfigHelper::GetPartialDraw()
+{
+    return partialDraw_;
 }
 } // namespace OHOS::NWeb
