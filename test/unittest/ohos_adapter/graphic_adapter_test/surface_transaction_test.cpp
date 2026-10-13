@@ -376,8 +376,8 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_SetBufferTransform_Valid_014
 
 /**
  * @tc.name: SurfaceTransaction_SetDamageRegion_CountZero_015
- * @tc.desc: Test SetDamageRegion with count=0 (damageRects shared_ptr stays null,
- *           command still pushed to transactionCommands_)
+ * @tc.desc: Test SetDamageRegion with null rects (rejected early, no command
+ *           pushed to transactionCommands_, see surface_transaction.cpp)
  * @tc.type: FUNC
  * @tc.require: issueNumber
  */
@@ -388,7 +388,9 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_SetDamageRegion_CountZero_01
 
     transaction_->SetDamageRegion(ctrl.GetRefPtr(), nullptr, 0);
 
-    EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore + 1);
+    // A null rects pointer is rejected by the early return in
+    // SurfaceTransaction::SetDamageRegion, so no command is recorded.
+    EXPECT_EQ(transaction_->transactionCommands_.size(), cmdSizeBefore);
 }
 
 /**
