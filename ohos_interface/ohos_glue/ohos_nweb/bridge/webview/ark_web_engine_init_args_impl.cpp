@@ -64,6 +64,11 @@ ArkWebString ArkWebEngineInitArgsImpl::GetSharedRenderProcessToken()
     return ArkWebStringClassToStruct(nweb_engine_init_args_->GetSharedRenderProcessToken());
 }
 
+bool ArkWebEngineInitArgsImpl::GetIsPreloadNWeb()
+{
+    return nweb_engine_init_args_->GetIsPreloadNWeb();
+}
+
 bool ArkWebEngineInitArgsImpl::GetEmulateTouchFromMouseEvent()
 {
     return nweb_engine_init_args_->GetEmulateTouchFromMouseEvent();

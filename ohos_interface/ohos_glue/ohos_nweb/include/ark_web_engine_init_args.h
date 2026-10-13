@@ -50,6 +50,9 @@ public:
     virtual ArkWebString GetSharedRenderProcessToken() = 0;
 
     /*--ark web()--*/
+    virtual bool GetIsPreloadNWeb() = 0;
+
+    /*--ark web()--*/
     virtual bool GetEmulateTouchFromMouseEvent() = 0;
 
     /*--ark web()--*/
