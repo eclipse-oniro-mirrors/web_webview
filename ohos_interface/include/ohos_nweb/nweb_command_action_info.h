@@ -66,6 +66,9 @@ public:
     virtual std::string GetContent() const = 0;
     virtual int32_t GetIndex() const = 0;
     virtual AutoFillMode GetMode() const = 0;
+    // Zero means no valid DOM node ID. A resolved node ID takes priority over XPath;
+    // use XPath only when node ID lookup fails and XPath is available.
+    virtual int32_t GetNodeId() const { return 0; }
 };
 
 /**

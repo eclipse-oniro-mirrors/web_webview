@@ -43,5 +43,10 @@ int32_t ArkWebAutoFillItemImpl::GetMode()
 {
     return static_cast<int32_t>(nweb_item_->GetMode());
 }
+
+int32_t ArkWebAutoFillItemImpl::GetNodeId()
+{
+    return nweb_item_->GetNodeId();
+}
  
-} // namespace OHOS::ArkWeb
+} // namespace OHOS::ArkWeb

@@ -33,6 +33,7 @@ public:
     ArkWebString GetContent() override;
     int32_t GetIndex() override;
     int32_t GetMode() override;
+    int32_t GetNodeId() override;
  
 private:
     std::shared_ptr<OHOS::NWeb::AutoFillItem> nweb_item_;
