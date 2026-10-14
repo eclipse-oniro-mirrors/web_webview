@@ -1908,4 +1908,9 @@ bool ArkWebNWebImpl::GetAutoReloadEnabled()
 {
     return nweb_nweb_->GetAutoReloadEnabled();
 }
+
+void ArkWebNWebImpl::SetFlingSpeedLimit(float speed_limit)
+{
+    nweb_nweb_->SetFlingSpeedLimit(speed_limit);
+}
 } // namespace OHOS::ArkWeb
