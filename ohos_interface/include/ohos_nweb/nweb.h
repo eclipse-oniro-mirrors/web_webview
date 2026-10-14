@@ -2664,6 +2664,34 @@ public:
     {
         return 1.0;
     }
+
+    /**
+     * @brief Set whether to enable automatic reload for error pages.
+     *
+     * When enabled, the Web component automatically retries loading on
+     * network errors using a retry backoff sequence: 1s, 5s, 30s, 1min,
+     * 5min, 10min, 30min. Retries stop after a total of 30 minutes.
+     * Disabled by default.
+     *
+     * Only network errors trigger auto-reload. Certificate errors, SSL
+     * (Secure Sockets Layer) protocol errors, authentication errors, POST
+     * requests, non-HTTP(S) protocols, and errors blocked by the client are
+     * excluded. Auto-reload does not affect the onOverrideErrorPage callback,
+     * and the onErrorReceive callback is invoked again for each retry
+     * attempt.
+     *
+     * @param enable bool: Whether to enable automatic reload. The value true
+     * enables it, and the value false disables it.
+     */
+    virtual void SetAutoReloadEnabled(bool enable) {}
+
+    /**
+     * @brief Get whether automatic reload for error pages is enabled.
+     *
+     * @return bool: Whether automatic reload is enabled. Returns true if
+     * enabled, and false otherwise. The default value is false.
+     */
+    virtual bool GetAutoReloadEnabled() { return false; }
 };
 } // namespace OHOS::NWeb
 

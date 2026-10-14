@@ -2768,6 +2768,25 @@ bool WebviewController::GetSubframeErrorPageEnabled()
     return nweb_ptr->GetSubframeErrorPageEnabled();
 }
 
+ErrCode WebviewController::SetAutoReloadEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetAutoReloadEnabled(enable);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetAutoReloadEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetAutoReloadEnabled();
+}
+
 ErrCode WebviewController::ResumeMicrophone()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);

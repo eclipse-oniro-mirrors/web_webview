@@ -1013,6 +1013,8 @@ export default namespace webview {
         native setErrorPageEnabled(enable: boolean, includeSubframe: boolean): void;
         native getErrorPageEnabled(): boolean;
         native getSubframeErrorPageEnabled(): boolean;
+        native enableAutoReload(enable: boolean): void;
+        native isAutoReloadEnabled(): boolean;
         native getBlanklessInfoWithKey(key: string): BlanklessInfo;
         native setBlanklessLoadingWithKey(key: string, is_start: boolean): WebBlanklessErrorCode;
         native setBlanklessLoadingWithParams(key: string, param: BlanklessLoadingParam): WebBlanklessErrorCode;

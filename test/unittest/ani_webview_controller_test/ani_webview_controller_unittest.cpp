@@ -236,6 +236,7 @@ protected:
         g_setSiteIsolationModeShouldFail = false;
         OHOS::NWeb::AniParseUtils::g_isFunctionResult = true;
         OHOS::NWeb::WebviewController::g_terminateRenderProcessShouldFail = false;
+        OHOS::NWeb::WebviewController::setAutoReloadShouldFail_ = false;
         OHOS::NWeb::AniParseUtils::g_createObjectVoidShouldFail = false;
         OHOS::NWeb::AniParseUtils::g_parseStringResult = true;
         OHOS::NWeb::AniParseUtils::g_parseStringValue = "";
@@ -2154,4 +2155,113 @@ TEST_F(AniWebviewControllerTest, EnableAdvancedSecurityMode_ErrorScenarios)
     EXPECT_TRUE(WasErrorThrown());
     OHOS::NWeb::AniBusinessError::Reset();
     g_referenceIsUndefinedShouldFail = false;
+}
+
+/**
+ * @tc.name: SetAutoReloadEnabled_Success
+ * @tc.desc: SetAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetAutoReloadEnabled_Success)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_TRUE);
+
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_FALSE);
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+}
+
+/**
+ * @tc.name: SetAutoReloadEnabled_ErrorScenarios
+ * @tc.desc: SetAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetAutoReloadEnabled_ErrorScenarios)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // env is nullptr
+    OHOS::NWeb::SetAutoReloadEnabled(nullptr, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Controller is null
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // Controller is not initialized
+    SetControllerInitialized(false);
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
+
+    // SetAutoReloadEnabled returns error
+    OHOS::NWeb::WebviewController::setAutoReloadShouldFail_ = true;
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), PARAM_CHECK_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::WebviewController::setAutoReloadShouldFail_ = false;
+}
+
+/**
+ * @tc.name: IsAutoReloadEnabled_Success
+ * @tc.desc: IsAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, IsAutoReloadEnabled_Success)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // Default value is false
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Returns the last set value
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_TRUE);
+    EXPECT_FALSE(WasErrorThrown());
+}
+
+/**
+ * @tc.name: IsAutoReloadEnabled_ErrorScenarios
+ * @tc.desc: IsAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, IsAutoReloadEnabled_ErrorScenarios)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // env is nullptr
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(nullptr, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Controller is null
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // Controller is not initialized
+    SetControllerInitialized(false);
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
 }

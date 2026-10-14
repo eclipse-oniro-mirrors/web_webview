@@ -527,6 +527,10 @@ public:
 
     bool GetSubframeErrorPageEnabled();
 
+    ErrCode SetAutoReloadEnabled(bool enable);
+
+    bool GetAutoReloadEnabled();
+
     void SetUserAgentMetadata(const std::string& userAgent, std::shared_ptr<NWebUserAgentMetadata> metaData);
 
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent);
