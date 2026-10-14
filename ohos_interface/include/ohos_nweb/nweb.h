@@ -2692,6 +2692,20 @@ public:
      * enabled, and false otherwise. The default value is false.
      */
     virtual bool GetAutoReloadEnabled() { return false; }
+
+    /**
+     * Set the maximum initial velocity at the start of the fling animation that occurs
+     * after gesture-driven scrolling ends. Only affects the inertial scrolling phase.
+     * The TS-side value takes precedence over the front-end viewport max-fling-speed-x/y.
+     *
+     * @param speed_limit Maximum initial velocity at the start of the fling animation,
+     *                    in vp/s. Value range: (0, +∞). If the value is less than or
+     *                    equal to 0, the default value is used (9000 on PC, 17000 on non-PC).
+     */
+    virtual void SetFlingSpeedLimit(float speed_limit)
+    {
+        (void)speed_limit;
+    }
 };
 } // namespace OHOS::NWeb
 

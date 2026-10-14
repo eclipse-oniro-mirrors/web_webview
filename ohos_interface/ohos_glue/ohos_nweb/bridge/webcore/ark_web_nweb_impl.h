@@ -2124,6 +2124,8 @@ public:
      */
     bool GetAutoReloadEnabled() override;
 
+    void SetFlingSpeedLimit(float speed_limit) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };

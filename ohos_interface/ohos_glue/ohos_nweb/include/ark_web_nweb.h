@@ -2437,6 +2437,14 @@ public:
      */
     /*--ark web()--*/
     virtual bool GetAutoReloadEnabled() = 0;
+
+    /**
+     * @brief Set the maximum initial velocity at the start of the fling animation.
+     *
+     * @param speed_limit Maximum initial velocity in vp/s.
+     */
+    /*--ark web()--*/
+    virtual void SetFlingSpeedLimit(float speed_limit) = 0;
 };
 
 } // namespace OHOS::ArkWeb

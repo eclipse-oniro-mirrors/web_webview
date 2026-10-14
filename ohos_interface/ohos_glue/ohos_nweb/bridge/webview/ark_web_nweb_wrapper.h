@@ -2132,6 +2132,8 @@ public:
      */
     bool GetAutoReloadEnabled() override;
 
+    void SetFlingSpeedLimit(float speed_limit) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };
