@@ -233,6 +233,62 @@ public:
      */
     /*--ark web()--*/
     virtual ArkWebString GetRemoveText() = 0;
+
+    /**
+     * @Description: Get the z index of the accessibility node.
+     * @Return: The z index of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetZIndex() = 0;
+
+    /**
+     * @Description: Get the font size of the accessibility node.
+     * @Return: The font size of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetFontSize() = 0;
+
+    /**
+     * @Description: Get the image rendering of the accessibility node.
+     * @Return: The image rendering of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetImageRendering() = 0;
+
+    /**
+     * @Description: Get the background size type of the accessibility node.
+     * @Return: The background size type of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual int32_t GetBgSizeType() = 0;
+
+    /**
+     * @Description: Get the background color of the accessibility node.
+     * @Return: The background color of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual uint32_t GetBgColor() = 0;
+
+    /**
+     * @Description: Get whether the accessibility node is css visible.
+     * @Return: Whether the accessibility node is css visible.
+     */
+    /*--ark web()--*/
+    virtual bool GetCssVisible() = 0;
+
+    /**
+     * @Description: Get the background image of the accessibility node.
+     * @Return: The background image of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetBgImg() = 0;
+
+    /**
+     * @Description: Get the background size of the accessibility node.
+     * @Return: The background size of the accessibility node.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetBgSize() = 0;
 };
 
 } // namespace OHOS::ArkWeb
