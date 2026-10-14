@@ -72,6 +72,16 @@ void ArkWebPreferenceImpl::PutScrollBarColor(uint32_t color_value)
     nweb_preference_->PutScrollBarColor(color_value);
 }
 
+uint32_t ArkWebPreferenceImpl::GetCaretColor()
+{
+    return nweb_preference_->GetCaretColor();
+}
+
+void ArkWebPreferenceImpl::PutCaretColor(uint32_t color_value)
+{
+    nweb_preference_->PutCaretColor(color_value);
+}
+
 int ArkWebPreferenceImpl::GetOverscrollMode()
 {
     return nweb_preference_->GetOverscrollMode();

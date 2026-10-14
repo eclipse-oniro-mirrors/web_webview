@@ -849,6 +849,18 @@ public:
      */
     /*--ark web()--*/
     virtual void SetTransformRotateAndSkewEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get the caret color. A value of 0 means unset.
+     */
+    /*--ark web()--*/
+    virtual uint32_t GetCaretColor() = 0;
+
+    /**
+     * @brief Set the caret color. A value of 0 resets the custom color.
+     */
+    /*--ark web()--*/
+    virtual void PutCaretColor(uint32_t color_value) = 0;
 };
 
 } // namespace OHOS::ArkWeb

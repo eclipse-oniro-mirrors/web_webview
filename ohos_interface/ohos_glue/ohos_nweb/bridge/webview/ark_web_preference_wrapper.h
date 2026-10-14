@@ -97,6 +97,18 @@ public:
     void PutScrollBarColor(uint32_t color_value) override;
 
     /**
+     * @brief Get the color of caret.
+     *
+     * @see PutCaretColor
+     */
+    uint32_t GetCaretColor() override;
+
+    /**
+     * @brief Put the UX color of caret.
+     */
+    void PutCaretColor(uint32_t color_value) override;
+
+    /**
      * @brief Get over-scroll Mode.
      *
      * @see PutScrollbarColor

@@ -80,6 +80,16 @@ void ArkWebPreferenceWrapper::PutScrollBarColor(uint32_t color_value)
     ark_web_preference_->PutScrollBarColor(color_value);
 }
 
+uint32_t ArkWebPreferenceWrapper::GetCaretColor()
+{
+    return ark_web_preference_->GetCaretColor();
+}
+
+void ArkWebPreferenceWrapper::PutCaretColor(uint32_t color_value)
+{
+    ark_web_preference_->PutCaretColor(color_value);
+}
+
 int ArkWebPreferenceWrapper::GetOverscrollMode()
 {
     return ark_web_preference_->GetOverscrollMode();
