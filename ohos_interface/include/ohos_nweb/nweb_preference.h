@@ -557,7 +557,7 @@ public:
     /**
      * Get the color of scrollbar.
      *
-     * @see PutScrollbarColor
+     * @see PutScrollBarColor
      */
     virtual uint32_t GetScrollBarColor() = 0;
 
@@ -751,6 +751,24 @@ public:
      * The default is false.
      */
     virtual void SetTransformRotateAndSkewEnabled(bool enable) {}
+
+    /**
+     * Get the color of caret.
+     *
+     * @return The ARGB caret color. A value of 0 means unset.
+     * @see PutCaretColor
+     */
+    virtual uint32_t GetCaretColor()
+    {
+        return 0;
+    }
+
+    /**
+     * Set the caret color. A value of 0 resets the custom color.
+     *
+     * @param colorValue The ARGB caret color.
+     */
+    virtual void PutCaretColor(uint32_t colorValue) {}
 };
 
 } // namespace OHOS::NWeb
