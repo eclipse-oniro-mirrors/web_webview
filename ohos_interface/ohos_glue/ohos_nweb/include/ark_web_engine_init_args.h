@@ -50,9 +50,6 @@ public:
     virtual ArkWebString GetSharedRenderProcessToken() = 0;
 
     /*--ark web()--*/
-    virtual bool GetIsPreloadNWeb() = 0;
-
-    /*--ark web()--*/
     virtual bool GetEmulateTouchFromMouseEvent() = 0;
 
     /*--ark web()--*/
@@ -66,6 +63,9 @@ public:
 
     /*--ark web()--*/
     virtual uint64_t GetSurfaceRSUIContextToken() = 0;
+
+    /*--ark web()--*/
+    virtual bool GetIsPreloadNWeb() = 0;
 };
 
 } // namespace OHOS::ArkWeb
