@@ -319,4 +319,44 @@ ArkWebString ArkWebAccessibilityNodeInfoImpl::GetRemoveText()
     return ArkWebStringClassToStruct(nweb_accessibility_node_info_->GetRemoveText());
 }
 
+int32_t ArkWebAccessibilityNodeInfoImpl::GetZIndex()
+{
+    return nweb_accessibility_node_info_->GetZIndex();
+}
+
+int32_t ArkWebAccessibilityNodeInfoImpl::GetFontSize()
+{
+    return nweb_accessibility_node_info_->GetFontSize();
+}
+
+int32_t ArkWebAccessibilityNodeInfoImpl::GetImageRendering()
+{
+    return nweb_accessibility_node_info_->GetImageRendering();
+}
+
+int32_t ArkWebAccessibilityNodeInfoImpl::GetBgSizeType()
+{
+    return nweb_accessibility_node_info_->GetBgSizeType();
+}
+
+uint32_t ArkWebAccessibilityNodeInfoImpl::GetBgColor()
+{
+    return nweb_accessibility_node_info_->GetBgColor();
+}
+
+bool ArkWebAccessibilityNodeInfoImpl::GetCssVisible()
+{
+    return nweb_accessibility_node_info_->GetCssVisible();
+}
+
+ArkWebString ArkWebAccessibilityNodeInfoImpl::GetBgImg()
+{
+    return ArkWebStringClassToStruct(nweb_accessibility_node_info_->GetBgImg());
+}
+
+ArkWebString ArkWebAccessibilityNodeInfoImpl::GetBgSize()
+{
+    return ArkWebStringClassToStruct(nweb_accessibility_node_info_->GetBgSize());
+}
+
 } // namespace OHOS::ArkWeb
