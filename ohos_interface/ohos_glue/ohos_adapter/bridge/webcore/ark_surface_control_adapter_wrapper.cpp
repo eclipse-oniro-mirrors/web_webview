@@ -36,6 +36,23 @@ void ArkSurfaceControlAdapterWrapper::Release(void* surfaceControl)
     ctocpp_->Release(surfaceControl);
 }
 
+void* ArkSurfaceControlAdapterWrapper::CreateContainerSurfaceControl(
+    void* transaction, void* parent, const char* name, bool inProcess)
+{
+    if (!ctocpp_) {
+        return nullptr;
+    }
+    return ctocpp_->CreateContainerSurfaceControl(transaction, parent, name, inProcess);
+}
+
+void* ArkSurfaceControlAdapterWrapper::CreateChildSurfaceControl(void* transaction, const char* name, bool inProcess)
+{
+    if (!ctocpp_) {
+        return nullptr;
+    }
+    return ctocpp_->CreateChildSurfaceControl(transaction, name, inProcess);
+}
+
 // transaction
 ArkSurfaceTransactionAdapterWrapper::ArkSurfaceTransactionAdapterWrapper(
     ArkWebRefPtr<ArkSurfaceTransactionAdapter> ref) : ctocpp_(ref) {}

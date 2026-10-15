@@ -34,6 +34,10 @@ public:
     virtual void* Create(const char* name) = 0;
 
     virtual void Release(void* surfaceControl) = 0;
+
+    virtual void* CreateContainerSurfaceControl(void* transaction, void* parent, const char* name, bool inProcess) = 0;
+
+    virtual void* CreateChildSurfaceControl(void* transaction, const char* name, bool inProcess) = 0;
 };
 
 class SurfaceTransactionAdapter {

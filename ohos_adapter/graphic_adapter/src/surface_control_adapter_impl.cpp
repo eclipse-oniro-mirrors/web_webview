@@ -32,12 +32,26 @@ SurfaceControlAdapter& SurfaceControlAdapterImpl::GetInstance()
 void* SurfaceControlAdapterImpl::CreateSurfaceControlFromNativeWindow(void* parent, const char* name)
 {
     auto* parentSurface = reinterpret_cast<OHNativeWindow*>(parent);
-    return SurfaceControlUtils::CreateSurfaceControlFromNativeWindow(parentSurface, name);
+    return SurfaceControlUtils::CreateContainerSurfaceControl(nullptr, parentSurface, name, false);
 }
 
 void* SurfaceControlAdapterImpl::Create(const char* name)
 {
-    return SurfaceControlUtils::Create(name);
+    return SurfaceControlUtils::CreateChildSurfaceControl(nullptr, name, false);
+}
+
+void* SurfaceControlAdapterImpl::CreateContainerSurfaceControl(
+    void* transaction, void* parent, const char* name, bool inProcess)
+{
+    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
+    auto* parentSurface = reinterpret_cast<OHNativeWindow*>(parent);
+    return SurfaceControlUtils::CreateContainerSurfaceControl(txn, parentSurface, name, inProcess);
+}
+
+void* SurfaceControlAdapterImpl::CreateChildSurfaceControl(void* transaction, const char* name, bool inProcess)
+{
+    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
+    return SurfaceControlUtils::CreateChildSurfaceControl(txn, name, inProcess);
 }
 
 void SurfaceControlAdapterImpl::Release(void* surfaceControl)

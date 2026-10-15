@@ -564,7 +564,7 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Reparent_IsRootSurfaceTrue_0
 /**
  * @tc.name: SurfaceTransaction_ScopedTransaction_NullUIContext_021
  * @tc.desc: Test ScopedTransaction constructor with nullptr uiContext,
- *           transaction_ should not be set.
+ *           transactionHandler_ should not be set.
  * @tc.type: FUNC
  * @tc.require: issue#I16d68
  */
@@ -572,8 +572,9 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_ScopedTransaction_NullUICont
 {
     std::shared_ptr<OHOS::Rosen::RSUIContext> nullContext = nullptr;
     {
-        ScopedTransaction scopedTransaction(nullContext);
-        // With null uiContext, transaction_ is not set (stays empty/null)
+        ScopedTransaction scopedTransaction(nullContext, false);
+        EXPECT_EQ(scopedTransaction.transactionHandler_, nullptr);
+        // With null uiContext, transactionHandler_ is not set (stays null)
         // The ScopedTransaction should not crash
     }
     // If we reach here, the test passed
@@ -583,7 +584,7 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_ScopedTransaction_NullUICont
 /**
  * @tc.name: SurfaceTransaction_ScopedTransaction_ValidUIContext_022
  * @tc.desc: Test ScopedTransaction constructor with a valid uiContext,
- *           transaction_ should be set from GetRSTransaction().
+ *           transactionHandler_ should be set from GetRSTransaction().
  * @tc.type: FUNC
  * @tc.require: issue#I16d68
  */
@@ -595,13 +596,197 @@ HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_ScopedTransaction_ValidUICon
     auto uiContext = manager.CreateRSUIContext(mockRemote);
     ASSERT_NE(uiContext, nullptr);
     {
-        ScopedTransaction scopedTransaction(uiContext);
-        // With valid uiContext, transaction_ is set from GetRSTransaction()
-        // The ScopedTransaction destructor will flush the transaction
+        // isClient=false: destructor flushes the implicit transaction
+        ScopedTransaction scopedTransaction(uiContext, false);
+        EXPECT_NE(scopedTransaction.transactionHandler_, nullptr);
+        EXPECT_FALSE(scopedTransaction.isClient_);
     }
     // If we reach here without crash, the test passed
     EXPECT_TRUE(true);
     manager.isMultiInstanceOpen_ = false;
+}
+
+/**
+ * @tc.name: SurfaceTransaction_GetRSUIContext_DefaultNull_023
+ * @tc.desc: Test GetRSUIContext on a transaction created with a null window:
+ *           rsUIDirector_ and uiContext_ stay null, so GetRSUIContext returns nullptr.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_GetRSUIContext_DefaultNull_023, TestSize.Level1)
+{
+    EXPECT_EQ(transaction_->rsUIDirector_, nullptr);
+    EXPECT_EQ(transaction_->uiContext_, nullptr);
+    EXPECT_EQ(transaction_->GetRSUIContext(), nullptr);
+}
+
+/**
+ * @tc.name: SurfaceTransaction_SetBindSurfaceControl_024
+ * @tc.desc: Test SetBindSurfaceControl/IsBindSurfaceControl default value and toggling.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_SetBindSurfaceControl_024, TestSize.Level1)
+{
+    EXPECT_FALSE(transaction_->IsBindSurfaceControl());
+    transaction_->SetBindSurfaceControl(true);
+    EXPECT_TRUE(transaction_->IsBindSurfaceControl());
+    transaction_->SetBindSurfaceControl(false);
+    EXPECT_FALSE(transaction_->IsBindSurfaceControl());
+}
+
+/**
+ * @tc.name: SurfaceTransaction_SetInProcess_025
+ * @tc.desc: Test SetInProcess/IsInProcess default value and toggling.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_SetInProcess_025, TestSize.Level1)
+{
+    EXPECT_FALSE(transaction_->IsInProcess());
+    transaction_->SetInProcess(true);
+    EXPECT_TRUE(transaction_->IsInProcess());
+    transaction_->SetInProcess(false);
+    EXPECT_FALSE(transaction_->IsInProcess());
+}
+
+/**
+ * @tc.name: SurfaceTransaction_Commit_BoundUiContextNull_026
+ * @tc.desc: Test Commit with IsBindSurfaceControl=true but uiContext_ null:
+ *           the bound uiContext_ (null) is used instead of the static fallback,
+ *           so Commit fails early and pending commands are NOT cleared.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Commit_BoundUiContextNull_026, TestSize.Level1)
+{
+    SurfaceControl::connectToRender_ = nullptr;
+    SurfaceControl::rsUIDirector_ = nullptr;
+
+    transaction_->SetBindSurfaceControl(true);
+    EXPECT_TRUE(transaction_->IsBindSurfaceControl());
+
+    transaction_->transactionCommands_.push_back([]() {});
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 1u);
+    transaction_->Commit();
+    // Bound uiContext_ is null → early return, commands should NOT be cleared
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 1u);
+    transaction_->transactionCommands_.clear();
+    transaction_->SetBindSurfaceControl(false);
+}
+
+/**
+ * @tc.name: SurfaceTransaction_Commit_BoundUiContextValid_027
+ * @tc.desc: Test Commit with IsBindSurfaceControl=true and a non-null uiContext_:
+ *           the bound uiContext_ is used (the static fallback is null), so Commit
+ *           proceeds and clears pending commands. Covers both inProcess=true
+ *           (client Begin/Commit) and inProcess=false (implicit flush) paths.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Commit_BoundUiContextValid_027, TestSize.Level1)
+{
+    SurfaceControl::connectToRender_ = nullptr;
+    SurfaceControl::rsUIDirector_ = nullptr;
+
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+
+    transaction_->uiContext_ = uiContext;
+    transaction_->SetBindSurfaceControl(true);
+
+    // inProcess=true: ScopedTransaction uses Begin/Commit on the client side
+    transaction_->SetInProcess(true);
+    transaction_->transactionCommands_.push_back([]() {});
+    ASSERT_EQ(transaction_->transactionCommands_.size(), 1u);
+    transaction_->Commit();
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 0u);
+
+    // inProcess=false: ScopedTransaction flushes the implicit transaction
+    transaction_->SetInProcess(false);
+    transaction_->transactionCommands_.push_back([]() {});
+    ASSERT_EQ(transaction_->transactionCommands_.size(), 1u);
+    transaction_->Commit();
+    EXPECT_EQ(transaction_->transactionCommands_.size(), 0u);
+
+    transaction_->uiContext_ = nullptr;
+    transaction_->SetBindSurfaceControl(false);
+    transaction_->SetInProcess(false);
+    manager.isMultiInstanceOpen_ = false;
+}
+
+/**
+ * @tc.name: SurfaceTransaction_Constructor_InitializesUiContext_028
+ * @tc.desc: Test that the constructor with a valid RS handle initializes
+ *           rsUIDirector_ and uiContext_, and GetRSUIContext stays consistent
+ *           with uiContext_.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_Constructor_InitializesUiContext_028, TestSize.Level1)
+{
+    if (mockWindow_ && producerSurface_) {
+        sptr<IRemoteObject> realRemote = new OHOS::IPCObjectStub();
+        uint64_t handle = reinterpret_cast<uint64_t>(realRemote.GetRefPtr());
+        producerSurface_->SetUserData("delegate_connect_to_render", std::to_string(handle));
+
+        auto txn = new SurfaceTransaction(reinterpret_cast<OHNativeWindow*>(mockWindow_));
+        ASSERT_NE(txn, nullptr);
+        if (txn->rsUIDirector_) {
+            EXPECT_EQ(txn->uiContext_, txn->rsUIDirector_->GetRSUIContext());
+        }
+        EXPECT_EQ(txn->GetRSUIContext(), txn->uiContext_);
+        EXPECT_FALSE(txn->IsBindSurfaceControl());
+        EXPECT_FALSE(txn->IsInProcess());
+        delete txn;
+
+        SurfaceControl::SetConnectToRenderObject(nullptr);
+    }
+}
+
+/**
+ * @tc.name: SurfaceTransaction_ScopedTransaction_ClientMode_029
+ * @tc.desc: Test ScopedTransaction with isClient=true on a valid uiContext:
+ *           transactionHandler_ is set, isClient_ is true and the destructor
+ *           commits the transaction (Begin/Commit path).
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_ScopedTransaction_ClientMode_029, TestSize.Level1)
+{
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+    {
+        ScopedTransaction scopedTransaction(uiContext, true);
+        EXPECT_NE(scopedTransaction.transactionHandler_, nullptr);
+        EXPECT_TRUE(scopedTransaction.isClient_);
+    }
+    // If we reach here without crash, the test passed
+    EXPECT_TRUE(true);
+    manager.isMultiInstanceOpen_ = false;
+}
+
+/**
+ * @tc.name: SurfaceTransaction_ScopedTransaction_AddCommandNullHandler_030
+ * @tc.desc: Test ScopedTransaction::AddCommand when transactionHandler_ is null:
+ *           the command is dropped with an error log and no crash occurs.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(SurfaceTransactionTest, SurfaceTransaction_ScopedTransaction_AddCommandNullHandler_030, TestSize.Level1)
+{
+    std::shared_ptr<OHOS::Rosen::RSUIContext> nullContext = nullptr;
+    ScopedTransaction scopedTransaction(nullContext, false);
+    EXPECT_EQ(scopedTransaction.transactionHandler_, nullptr);
+    // Null handler: AddCommand hits the error branch and must not crash
+    scopedTransaction.AddCommand(nullptr);
+    EXPECT_TRUE(true);
 }
 
 } // namespace OHOS::NWeb

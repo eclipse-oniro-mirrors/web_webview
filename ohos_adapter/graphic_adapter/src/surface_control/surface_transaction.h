@@ -45,41 +45,48 @@ private:
 
 class ScopedTransaction {
 public:
-    explicit ScopedTransaction(const std::shared_ptr<OHOS::Rosen::RSUIContext>& uiContext)
+    explicit ScopedTransaction(const std::shared_ptr<OHOS::Rosen::RSUIContext>& uiContext, bool isClient)
+        : transactionHandler_(uiContext ? uiContext->GetRSTransaction() : nullptr),
+          isClient_(isClient)
     {
-        if (uiContext) {
-            transaction_ = uiContext->GetRSTransaction();
+        if (!transactionHandler_) {
+            RS_TRACE_NAME("ScopedTransaction init fail, transactionHandler_ is nullptr");
         }
-        if (transaction_) {
-            transaction_->Begin();
-        } else {
-            RS_TRACE_NAME("ScopedTransaction init fail, transaction_ is nullptr");
+
+        if (transactionHandler_ && isClient_) {
+            transactionHandler_->Begin();
         }
     }
 
     ~ScopedTransaction()
     {
-        if (transaction_) {
-            transaction_->Commit();
-            RS_TRACE_NAME("~ScopedTransaction commit success");
-        } else {
-            RS_TRACE_NAME("~ScopedTransaction, transaction_ is nullptr");
+        if (!transactionHandler_) {
+            RS_TRACE_NAME("~ScopedTransaction, transactionHandler_ is nullptr");
+            return;
         }
+
+        if (isClient_) {
+            transactionHandler_->Commit();
+        } else {
+            transactionHandler_->FlushImplicitTransaction();
+        }
+        RS_TRACE_NAME("~ScopedTransaction commit success");
     }
 
     void AddCommand(std::unique_ptr<OHOS::Rosen::RSCommand> cmd)
     {
-        if (transaction_) {
-            transaction_->AddCommand(cmd, true);
+        if (transactionHandler_) {
+            transactionHandler_->AddCommand(cmd, true);
         } else {
-            RS_TRACE_NAME("ScopedTransaction AddCommand fail, transaction_ is nullptr");
+            RS_TRACE_NAME("ScopedTransaction AddCommand fail, transactionHandler_ is nullptr");
         }
     }
 
     ScopedTransaction(const ScopedTransaction&) = delete;
     ScopedTransaction& operator=(const ScopedTransaction&) = delete;
 private:
-    std::shared_ptr<OHOS::Rosen::RSTransactionHandler> transaction_ = nullptr;
+    std::shared_ptr<OHOS::Rosen::RSTransactionHandler> transactionHandler_ = nullptr;
+    bool isClient_ = false;
 };
 
 class RSC_EXPORT SurfaceTransaction {
@@ -108,6 +115,11 @@ public:
     void SetSrcRect(SurfaceControl* surfaceControl, float x, float y, float w, float h);
     void SetDisplayRect(SurfaceControl* surfaceControl, float x, float y, float w, float h);
     void ClearBufferQueueCache(SurfaceControl* surfaceControl, bool cleanAll);
+    std::shared_ptr<OHOS::Rosen::RSUIContext> GetRSUIContext();
+    bool IsBindSurfaceControl();
+    void SetBindSurfaceControl(bool isBindSurfaceControl);
+    bool IsInProcess();
+    void SetInProcess(bool inProcess);
 
 private:
     SurfaceTransaction(const SurfaceTransaction&) = delete;
@@ -120,6 +132,10 @@ private:
     std::vector<std::function<void()>> bufferCommands_;
     std::set<sptr<SurfaceControl>> surfaceControls_;
     sptr<Rosen::SurfaceTransactionListener> listener_ = nullptr;
+    std::shared_ptr<OHOS::Rosen::RSUIContext> uiContext_ = nullptr;
+    std::shared_ptr<OHOS::Rosen::RSUIDirector> rsUIDirector_ = nullptr;
+    bool isBindSurfaceControl_ = false;
+    bool inProcess_ = false;
 };
 } // namespace NWeb
 } // namespace OHOS
