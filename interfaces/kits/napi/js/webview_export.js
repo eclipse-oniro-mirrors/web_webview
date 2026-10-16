@@ -239,7 +239,7 @@ function getCertificatePromise(certChainData) {
   return Promise.all(x509CertArray);
 }
 
-function takePhoto(callback, context) {
+function takePhoto(callback) {
   let pickerProfileOptions = {
     'cameraPosition': camera.CameraPosition.CAMERA_POSITION_BACK,
   };
@@ -252,7 +252,7 @@ function takePhoto(callback, context) {
     mediaType.push(cameraPicker.PickerMediaType.VIDEO);
   }
   let result = [];
-  cameraPicker.pick(context, mediaType, pickerProfileOptions)
+  cameraPicker.pick(getContext(this), mediaType, pickerProfileOptions)
     ?.then((pickerResult) => {
       result.push(pickerResult.resultUri);
     }).catch((error) => {
@@ -285,7 +285,7 @@ function needShowDialog(params) {
   return result;
 }
 
-function selectFile(callback, context) {
+function selectFile(callback) {
   let documentPicker = new picker.DocumentViewPicker();
   let result = [];
   if (callback.fileparam.getMode() !== FileSelectorMode.FileSaveMode) {
@@ -302,7 +302,7 @@ function selectFile(callback, context) {
   } else {
     documentPicker.save(createDocumentSaveOptions(callback.fileparam))
       .then((documentSaveResult)=>{
-        let tempUri = saveFile(documentSaveResult, context);
+        let tempUri = saveFile(documentSaveResult);
         result.push(tempUri);
       }).catch((error) => {
         console.log('saveFile error: ' + JSON.stringify(error));
@@ -314,14 +314,14 @@ function selectFile(callback, context) {
   }
 }
 
-function saveFile(documentSaveResult, context) {
+function saveFile(documentSaveResult) {
   let filePaths = documentSaveResult;
   let tempUri = '';
   if (filePaths.length > 0) {
     let tempPath = '';
     try {
       let fileName = filePaths[0].substr(filePaths[0].lastIndexOf('/'));
-      tempPath = context.filesDir + fileName;
+      tempPath = getContext(this).filesDir + fileName;
       tempUri = fileUri.getUriFromPath(tempPath); 
       let randomAccessFile = fileIo.createRandomAccessFileSync(tempPath, fileIo.OpenMode.CREATE); 
       randomAccessFile.close();
@@ -2846,10 +2846,10 @@ Object.defineProperty(webview.WebviewController.prototype, 'fileSelectorShowFrom
     } else if (currentDevice !== '2in1' && callback.fileparam.isCapture() &&
         (isContainImageMimeType(callback.fileparam.getAcceptType()) || isContainVideoMimeType(callback.fileparam.getAcceptType()))) {
       console.log('take photo will be directly invoked due to the capture property');
-      takePhoto(callback, getContext(this));
+      takePhoto(callback);
     } else {
       console.log('selectFile will be invoked by web');
-      selectFile(callback, getContext(this));
+      selectFile(callback);
     }
   }
 });
