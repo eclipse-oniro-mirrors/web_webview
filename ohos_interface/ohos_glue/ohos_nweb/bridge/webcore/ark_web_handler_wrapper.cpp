@@ -1469,4 +1469,17 @@ void ArkWebHandlerWrapper::OnContextMenuUpdate(
 
     ark_web_handler_->OnContextMenuUpdate(itemId, ark_web_options);
 }
+
+void ArkWebHandlerWrapper::OnMonitoredBlankScreen(
+    const std::string& url, int32_t reason,
+    const std::string& extraMsg)
+{
+    ArkWebString stUrl = ArkWebStringClassToStruct(url);
+    ArkWebString stExtraMsg = ArkWebStringClassToStruct(extraMsg);
+
+    ark_web_handler_->OnMonitoredBlankScreen(stUrl, reason, stExtraMsg);
+
+    ArkWebStringStructRelease(stUrl);
+    ArkWebStringStructRelease(stExtraMsg);
+}
 } // namespace OHOS::ArkWeb

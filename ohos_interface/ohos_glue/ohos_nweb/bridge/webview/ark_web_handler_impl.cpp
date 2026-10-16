@@ -1281,4 +1281,13 @@ void ArkWebHandlerImpl::OnContextMenuUpdate(int32_t itemId, ArkWebRefPtr<ArkWebC
 
     nweb_handler_->OnContextMenuUpdate(itemId, nweb_options);
 }
+
+void ArkWebHandlerImpl::OnMonitoredBlankScreen(
+    const ArkWebString& url, int32_t reason,
+    const ArkWebString& extraMsg)
+{
+    nweb_handler_->OnMonitoredBlankScreen(
+        ArkWebStringStructToClass(url), reason,
+        ArkWebStringStructToClass(extraMsg));
+}
 } // namespace OHOS::ArkWeb
