@@ -1568,6 +1568,14 @@ void ArkWebNWebImpl::CallH5FunctionV2(
         routing_id, h5_object_id, ArkWebStringStructToClass(h5_method_name), ArkWebRomValueVectorStructToClass(args));
 }
 
+bool ArkWebNWebImpl::CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+    const ArkWebString& h5_method_name, const ArkWebRomValueVector& args)
+{
+    return nweb_nweb_->CallH5FunctionV3(routing_id, frame_child_id, h5_object_id,
+                                ArkWebStringStructToClass(h5_method_name),
+                                ArkWebRomValueVectorStructToClass(args));
+}
+
 void ArkWebNWebImpl::PostPortMessageV2(const ArkWebString& portHandle, ArkWebRefPtr<ArkWebRomValue> data)
 {
     if (CHECK_REF_PTR_IS_NULL(data)) {

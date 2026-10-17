@@ -1230,7 +1230,7 @@ public:
     /**
      * CallH5Function
      *
-     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param routing_id       int32_t: the h5 frame routing id
      * @param h5_object_id     int32_t: the h5 side object id
      * @param h5_method_name   string:  the h5 side object method name
      * @param args             vector<shared_ptr<NWebValue>>: the call args
@@ -2030,7 +2030,7 @@ public:
     /**
      * CallH5FunctionV2
      *
-     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param routing_id       int32_t: the h5 frame routing id
      * @param h5_object_id     int32_t: the h5 side object id
      * @param h5_method_name   string:  the h5 side object method name
      * @param args             vector<shared_ptr<NWebRomValue>>: the call args
@@ -2705,6 +2705,21 @@ public:
     virtual void SetFlingSpeedLimit(float speed_limit)
     {
         (void)speed_limit;
+    }
+
+    /**
+     * CallH5FunctionV3
+     *
+     * @param routing_id       int32_t: the h5 frame routing id
+     * @param frame_child_id   int32_t: the h5 frame child id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    virtual bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+        const std::string& h5_method_name, const std::vector<std::shared_ptr<NWebRomValue>>& args)
+    {
+        return false;
     }
 };
 } // namespace OHOS::NWeb

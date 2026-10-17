@@ -30,6 +30,7 @@
 #include "nweb.h"
 #include "nweb_javascript_result_callback.h"
 #include "nweb_log.h"
+#include "nweb_rom_value.h"
 #include "nweb_value.h"
 #include "uv.h"
 #include "ani.h"
@@ -62,7 +63,7 @@ typedef struct AniRegisterJavaScriptProxyParam {
 
 class JavaScriptOb {
 public:
-    // to be compatible with older webcotroller, be sure to the same as ace and core
+    // to be compatible with older webcontroller, be sure to the same as ace and core
     enum class JavaScriptObjIdErrorCode : int32_t { WEBCONTROLLERERROR = -2, WEBVIEWCONTROLLERERROR = -1, END = 0 };
 
     typedef int32_t ObjectID;
@@ -614,8 +615,15 @@ public:
     struct H5Bundle {
         int32_t nwebId;
         int32_t frameRoutingId;
+        int32_t frameChildId;
         int32_t h5Id;
         std::string funcName;
+    };
+
+    struct FrameInfo {
+        int32_t nwebId = -1;
+        int32_t frameId = -1;
+        int32_t frameChildId = -1;
     };
 
     enum class NapiJsCallBackParmFlag : int32_t { ISOBJECT = 1, END = 2 };
@@ -624,6 +632,7 @@ public:
         WebviewJavaScriptResultCallBack* webJsResCb = nullptr;
         int32_t nwebId = -1;
         int32_t frameRoutingId = -1;
+        int32_t frameChildId = -1;
         int32_t objId = -1;
         std::string objName;
         std::string methodName;
@@ -703,6 +712,15 @@ public:
 
     void GetJavaScriptObjectMethodsV2(int32_t objectId, std::shared_ptr<NWebHapValue> result) override;
 
+    void GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method,
+        const std::string& objectName, const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        std::shared_ptr<NWebHapValue> result) override;
+
+    void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+        const std::string& method, const std::string& objectName,
+        const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        std::shared_ptr<NWebHapValue> result) override;
+
     void RemoveTransientJavaScriptObject() override;
 
     bool FindObjectIdInJsTd(napi_env env, napi_value object, JavaScriptOb::ObjectID* objectId);
@@ -727,7 +745,9 @@ public:
 
     void CallH5FunctionInternal(napi_env env, H5Bundle& bundle, std::vector<std::shared_ptr<NWebValue>> nwebArgs);
 
-    void CallH5FunctionInternal(ani_env* env, H5Bundle& bundle, std::vector<std::shared_ptr<NWebValue>> nwebArgs);
+    void CallH5FunctionInternal(ani_env* env, H5Bundle& bundle,
+        const std::vector<std::shared_ptr<NWebRomValue>>& romArgs,
+        const std::vector<std::shared_ptr<NWebValue>>& nwebArgs);
 
     int32_t GetNWebId()
     {
@@ -767,8 +787,6 @@ private:
 
     std::shared_ptr<NWebValue> GetJavaScriptResultSelfHelper(std::shared_ptr<JavaScriptOb> jsObj,
         const std::string& method, int32_t routingId, napi_handle_scope scope, std::vector<napi_value> argv);
-
-    char* FlowbufStrAtIndex(void* mem, int flowbufIndex, int* argIndex, int* strLen);
 
     std::shared_ptr<NWebValue> GetJavaScriptResultSelfFlowbuf(std::vector<std::shared_ptr<NWebValue>> args,
         const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId);

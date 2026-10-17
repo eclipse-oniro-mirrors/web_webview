@@ -41,4 +41,25 @@ OHOS::NWeb::DateTime ArkWebDateTimeStructToClass(const ArkWebDateTime& struct_va
     return class_value;
 }
 
+ArkWebJsCallInfo ArkWebJsCallInfoClassToStruct(
+    const OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo& class_value)
+{
+    ArkWebJsCallInfo struct_value = { .routing_id = class_value.routing_id,
+        .frame_child_id = class_value.frame_child_id,
+        .object_id = class_value.object_id,
+        .fd = class_value.fd };
+    return struct_value;
+}
+
+OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo ArkWebJsCallInfoStructToClass(
+    const ArkWebJsCallInfo& struct_value)
+{
+    OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo class_value;
+    class_value.routing_id = struct_value.routing_id;
+    class_value.frame_child_id = struct_value.frame_child_id;
+    class_value.object_id = struct_value.object_id;
+    class_value.fd = struct_value.fd;
+    return class_value;
+}
+
 } // namespace OHOS::ArkWeb

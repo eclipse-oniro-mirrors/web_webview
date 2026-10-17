@@ -26,7 +26,7 @@
 #include "nweb_log.h"
 #include "ohos_adapter_helper.h"
 #include "webview_value.h"
-#include "../../../../ohos_interface/ohos_glue/base/include/ark_web_errno.h"
+#include "base/include/ark_web_errno.h"
 
 namespace OHOS::NWeb {
 namespace {
@@ -51,7 +51,22 @@ std::vector<std::string> ParseNapiValue2NwebValue(napi_env env, napi_value* valu
 
 template<typename T>
 napi_value ParseNwebValue2NapiValueV2(napi_env env, std::shared_ptr<T> value,
-    WebviewJavaScriptResultCallBack::ObjectMap objectsMap, int32_t nwebId, int32_t frameId);
+    WebviewJavaScriptResultCallBack::ObjectMap objectsMap, const WebviewJavaScriptResultCallBack::FrameInfo& frame);
+
+template<typename T>
+napi_value ParseBinNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>& value,
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame);
+
+template<typename T>
+napi_value ParseArrayNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>& value,
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame);
+
+template<typename T>
+napi_value ParseDictionaryNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>& value,
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame);
 
 template<typename T>
 std::vector<std::string> ParseNapiValue2NwebValueV2(
@@ -287,19 +302,20 @@ napi_value CallbackFunctionForH5(napi_env env, napi_callback_info info)
     return h5CallBackResult;
 }
 
-napi_value CreateFunctionForH5(
-    napi_env env, int32_t nwebId, int32_t frameRoutingId, int32_t h5ObjectId, std::string funcName)
+napi_value CreateFunctionForH5(napi_env env, const WebviewJavaScriptResultCallBack::H5Bundle& bundleInfo)
 {
     // Create a bundle.
     auto bundle = std::make_unique<OHOS::NWeb::WebviewJavaScriptResultCallBack::H5Bundle>();
-    bundle->nwebId = nwebId;
-    bundle->frameRoutingId = frameRoutingId;
-    bundle->h5Id = h5ObjectId;
-    bundle->funcName = funcName;
+    bundle->nwebId = bundleInfo.nwebId;
+    bundle->frameRoutingId = bundleInfo.frameRoutingId;
+    bundle->frameChildId = bundleInfo.frameChildId;
+    bundle->h5Id = bundleInfo.h5Id;
+    bundle->funcName = bundleInfo.funcName;
 
     napi_value func = nullptr;
     napi_status s = napi_ok;
-    s = napi_create_function(env, funcName.c_str(), funcName.size(), CallbackFunctionForH5, bundle.release(), &func);
+    s = napi_create_function(env, bundleInfo.funcName.c_str(), bundleInfo.funcName.size(),
+        CallbackFunctionForH5, bundle.release(), &func);
     if (s != napi_ok) {
         WVLOG_E("CreateFunctionForH5 napi api call fail");
         return nullptr;
@@ -314,7 +330,7 @@ void AddFunctionToObjectForH5(
         WVLOG_D("AddFunctionToObjectForH5 obj or frame id error");
         return;
     }
-    napi_value func = CreateFunctionForH5(env, bundle.nwebId, bundle.frameRoutingId, bundle.h5Id, bundle.funcName);
+    napi_value func = CreateFunctionForH5(env, bundle);
     if (!func) {
         WVLOG_D("AddFunctionToObjectForH5 create func fail");
         return;
@@ -429,11 +445,18 @@ void DeleteNapiJsCallBackParm(WebviewJavaScriptResultCallBack::NapiJsCallBackInP
 }
 
 napi_value ParseArrayNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebValue>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId);
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame);
 napi_value ParseDictionaryNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebValue>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId);
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame);
 napi_value ParseBinNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebValue>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId);
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame);
+
+OHOS::NWeb::WebviewJavaScriptResultCallBack::H5Bundle MakeH5Bundle(
+    const OHOS::NWeb::WebviewJavaScriptResultCallBack::FrameInfo& frame,
+    JavaScriptOb::ObjectID objId, const std::string& funcName);
 
 void ParseDictionaryNapiValue2NwebValue(
     napi_env env, ValueConvertState* state, napi_value& value, std::shared_ptr<NWebValue>& nwebValue, bool* isOject);
@@ -477,7 +500,7 @@ bool ParseBasicTypeNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebV
 }
 
 napi_value ParseNwebValue2NapiValueHelper(napi_env env, std::shared_ptr<NWebValue> value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     if (!value) {
@@ -490,17 +513,17 @@ napi_value ParseNwebValue2NapiValueHelper(napi_env env, std::shared_ptr<NWebValu
     switch (value->GetType()) {
         case NWebValue::Type::LIST: {
             WVLOG_D("ParseBasicTypeNwebValue2NapiValue LIST type");
-            napiValue = ParseArrayNwebValue2NapiValue(env, value, objectsMap, nwebId, frameId);
+            napiValue = ParseArrayNwebValue2NapiValue(env, value, objectsMap, frame);
             return napiValue;
         }
         case NWebValue::Type::DICTIONARY: {
             WVLOG_D("ParseBasicTypeNwebValue2NapiValue DICTIONARY type");
-            napiValue = ParseDictionaryNwebValue2NapiValue(env, value, objectsMap, nwebId, frameId);
+            napiValue = ParseDictionaryNwebValue2NapiValue(env, value, objectsMap, frame);
             return napiValue;
         }
         case NWebValue::Type::BINARY: {
             WVLOG_D("ParseBasicTypeNwebValue2NapiValue BINARY type");
-            napiValue = ParseBinNwebValue2NapiValue(env, value, objectsMap, nwebId, frameId);
+            napiValue = ParseBinNwebValue2NapiValue(env, value, objectsMap, frame);
             return napiValue;
         }
         case NWebValue::Type::NONE: {
@@ -516,7 +539,7 @@ napi_value ParseNwebValue2NapiValueHelper(napi_env env, std::shared_ptr<NWebValu
 }
 
 napi_value ParseArrayNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebValue>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     napi_status s = napi_ok;
@@ -528,7 +551,8 @@ napi_value ParseArrayNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWe
     }
     for (size_t i = 0; i < length; ++i) {
         auto nPtr = std::make_shared<NWebValue>(value->GetListValue(i));
-        s = napi_set_element(env, napiValue, i, ParseNwebValue2NapiValueHelper(env, nPtr, objectsMap, nwebId, frameId));
+        s = napi_set_element(env, napiValue, i,
+            ParseNwebValue2NapiValueHelper(env, nPtr, objectsMap, frame));
         if (s != napi_ok) {
             WVLOG_E("ParseArrayNwebValue2NapiValue napi api call fail");
         }
@@ -537,7 +561,7 @@ napi_value ParseArrayNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWe
 }
 
 napi_value ParseDictionaryNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebValue>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     napi_status s = napi_ok;
@@ -546,8 +570,9 @@ napi_value ParseDictionaryNwebValue2NapiValue(napi_env env, const std::shared_pt
     for (auto& item : dict) {
         auto nValuePtr = std::make_shared<NWebValue>(item.second);
         auto nKeyPtr = std::make_shared<NWebValue>(item.first);
-        s = napi_set_property(env, napiValue, ParseNwebValue2NapiValueHelper(env, nKeyPtr, objectsMap, nwebId, frameId),
-            ParseNwebValue2NapiValueHelper(env, nValuePtr, objectsMap, nwebId, frameId));
+        s = napi_set_property(env, napiValue,
+            ParseNwebValue2NapiValueHelper(env, nKeyPtr, objectsMap, frame),
+            ParseNwebValue2NapiValueHelper(env, nValuePtr, objectsMap, frame));
         if (s != napi_ok) {
             WVLOG_E("ParseDictionaryNwebValue2NapiValue napi api call fail");
         }
@@ -556,7 +581,7 @@ napi_value ParseDictionaryNwebValue2NapiValue(napi_env env, const std::shared_pt
 }
 
 napi_value ParseBinNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebValue>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     napi_get_undefined(env, &napiValue);
@@ -587,26 +612,23 @@ napi_value ParseBinNwebValue2NapiValue(napi_env env, const std::shared_ptr<NWebV
         methodNames.assign(strList.begin() + JS_BRIDGE_BINARY_ARGS_COUNT, strList.end()); // skip id and type
         WVLOG_D("ParseNwebValue2NapiValueHelper: TYPE_H5_OBJECT_ID");
         for (auto name : methodNames) {
-            OHOS::NWeb::WebviewJavaScriptResultCallBack::H5Bundle bundle;
-            bundle.nwebId = nwebId;
-            bundle.frameRoutingId = frameId;
-            bundle.h5Id = objId;
-            bundle.funcName = name;
+            auto bundle = MakeH5Bundle(frame, objId, name);
             AddFunctionToObjectForH5(env, bundle, napiValue);
         }
         return napiValue;
     } else if (strList[0] == "TYPE_H5_FUNCTION_ID") {
         WVLOG_D("ParseNwebValue2NapiValueHelper: TYPE_H5_FUNCTION_ID");
-        napiValue = CreateFunctionForH5(env, nwebId, frameId, objId, "");
+        auto bundle = MakeH5Bundle(frame, objId, "");
+        napiValue = CreateFunctionForH5(env, bundle);
         return napiValue;
     }
     return napiValue;
 }
 
 napi_value ParseNwebValue2NapiValue(napi_env env, std::shared_ptr<NWebValue> value,
-    WebviewJavaScriptResultCallBack::ObjectMap objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap objectsMap, const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
-    return ParseNwebValue2NapiValueHelper(env, value, objectsMap, nwebId, frameId);
+    return ParseNwebValue2NapiValueHelper(env, value, objectsMap, frame);
 }
 
 bool ParseBasicTypeNapiValue2NwebValue(napi_env env, napi_value& value,
@@ -912,9 +934,23 @@ bool ParseBasicTypeNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>&
     return true;
 }
 
+OHOS::NWeb::WebviewJavaScriptResultCallBack::H5Bundle MakeH5Bundle(
+    const OHOS::NWeb::WebviewJavaScriptResultCallBack::FrameInfo& frame,
+    JavaScriptOb::ObjectID objId, const std::string& funcName)
+{
+    OHOS::NWeb::WebviewJavaScriptResultCallBack::H5Bundle bundle;
+    bundle.nwebId = frame.nwebId;
+    bundle.frameRoutingId = frame.frameId;
+    bundle.frameChildId = frame.frameChildId;
+    bundle.h5Id = objId;
+    bundle.funcName = funcName;
+    return bundle;
+}
+
 template<typename T>
 napi_value ParseBinNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     napi_get_undefined(env, &napiValue);
@@ -944,20 +980,17 @@ napi_value ParseBinNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>&
     } else if (strList[0] == "TYPE_H5_OBJECT_ID") {
         CreateProxyForH5Object(env, &napiValue);
         std::vector<std::string> methodNames;
-        methodNames.assign(strList.begin() + JS_BRIDGE_BINARY_ARGS_COUNT, strList.end()); // skip id and type
+        methodNames.assign(strList.begin() + JS_BRIDGE_BINARY_ARGS_COUNT, strList.end());
         WVLOG_D("ParseNwebValue2NapiValueHelper: TYPE_H5_OBJECT_ID");
         for (auto name : methodNames) {
-            OHOS::NWeb::WebviewJavaScriptResultCallBack::H5Bundle bundle;
-            bundle.nwebId = nwebId;
-            bundle.frameRoutingId = frameId;
-            bundle.h5Id = objId;
-            bundle.funcName = name;
+            auto bundle = MakeH5Bundle(frame, objId, name);
             AddFunctionToObjectForH5(env, bundle, napiValue);
         }
         return napiValue;
     } else if (strList[0] == "TYPE_H5_FUNCTION_ID") {
         WVLOG_D("ParseNwebValue2NapiValueHelper: TYPE_H5_FUNCTION_ID");
-        napiValue = CreateFunctionForH5(env, nwebId, frameId, objId, "");
+        auto bundle = MakeH5Bundle(frame, objId, "");
+        napiValue = CreateFunctionForH5(env, bundle);
         return napiValue;
     }
     return napiValue;
@@ -965,7 +998,8 @@ napi_value ParseBinNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>&
 
 template<typename T>
 napi_value ParseArrayNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     auto list = value->GetListValue();
@@ -977,7 +1011,8 @@ napi_value ParseArrayNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T
 
     int i = 0;
     for (auto& item : list) {
-        s = napi_set_element(env, napiValue, i++, ParseNwebValue2NapiValueV2(env, item, objectsMap, nwebId, frameId));
+        s = napi_set_element(env, napiValue, i++,
+            ParseNwebValue2NapiValueV2(env, item, objectsMap, frame));
         if (s != napi_ok) {
             WVLOG_E("ParseArrayNwebValue2NapiValue napi api call fail");
         }
@@ -987,7 +1022,8 @@ napi_value ParseArrayNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T
 
 template<typename T>
 napi_value ParseDictionaryNwebValue2NapiValueV2(napi_env env, const std::shared_ptr<T>& value,
-    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap& objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     napi_status s = napi_create_object(env, &napiValue);
@@ -1000,8 +1036,8 @@ napi_value ParseDictionaryNwebValue2NapiValueV2(napi_env env, const std::shared_
             WVLOG_E("GetJavaScriptResultFlowbuf napi api call fail");
         }
 
-        s = napi_set_property(
-            env, napiValue, napiKey, ParseNwebValue2NapiValueV2(env, item.second, objectsMap, nwebId, frameId));
+        s = napi_set_property(env, napiValue, napiKey,
+            ParseNwebValue2NapiValueV2(env, item.second, objectsMap, frame));
         if (s != napi_ok) {
             WVLOG_E("ParseDictionaryNwebValue2NapiValueV2 napi api call fail");
         }
@@ -1011,7 +1047,8 @@ napi_value ParseDictionaryNwebValue2NapiValueV2(napi_env env, const std::shared_
 
 template<typename T>
 napi_value ParseNwebValue2NapiValueV2(napi_env env, std::shared_ptr<T> value,
-    WebviewJavaScriptResultCallBack::ObjectMap objectsMap, int32_t nwebId, int32_t frameId)
+    WebviewJavaScriptResultCallBack::ObjectMap objectsMap,
+    const WebviewJavaScriptResultCallBack::FrameInfo& frame)
 {
     napi_value napiValue = nullptr;
     if (!value) {
@@ -1024,17 +1061,17 @@ napi_value ParseNwebValue2NapiValueV2(napi_env env, std::shared_ptr<T> value,
     switch (value->GetType()) {
         case T::Type::LIST: {
             WVLOG_D("ParseBasicTypeNwebValue2NapiValue LIST type");
-            napiValue = ParseArrayNwebValue2NapiValueV2(env, value, objectsMap, nwebId, frameId);
+            napiValue = ParseArrayNwebValue2NapiValueV2(env, value, objectsMap, frame);
             return napiValue;
         }
         case T::Type::DICTIONARY: {
             WVLOG_D("ParseBasicTypeNwebValue2NapiValue DICTIONARY type");
-            napiValue = ParseDictionaryNwebValue2NapiValueV2(env, value, objectsMap, nwebId, frameId);
+            napiValue = ParseDictionaryNwebValue2NapiValueV2(env, value, objectsMap, frame);
             return napiValue;
         }
         case T::Type::BINARY: {
             WVLOG_D("ParseBasicTypeNwebValue2NapiValue BINARY type");
-            napiValue = ParseBinNwebValue2NapiValueV2(env, value, objectsMap, nwebId, frameId);
+            napiValue = ParseBinNwebValue2NapiValueV2(env, value, objectsMap, frame);
             return napiValue;
         }
         case T::Type::NONE: {
@@ -1345,9 +1382,13 @@ void ExecuteGetJavaScriptResult(
     if (jsObj && (jsObj->HasMethod(inParam->methodName))) {
         std::vector<napi_value> argv = {};
         auto nwebArgs = *(static_cast<std::vector<std::shared_ptr<NWebValue>>*>(inParam->data));
+        WebviewJavaScriptResultCallBack::FrameInfo frame;
+        frame.nwebId = inParam->nwebId;
+        frame.frameId = inParam->frameRoutingId;
+        frame.frameChildId = inParam->frameChildId;
         for (std::shared_ptr<NWebValue> input : nwebArgs) {
             argv.push_back(ParseNwebValue2NapiValue(
-                env, input, inParam->webJsResCb->GetObjectMap(), inParam->nwebId, inParam->frameRoutingId));
+                env, input, inParam->webJsResCb->GetObjectMap(), frame));
         }
         napi_value callback = jsObj->FindMethod(inParam->methodName);
         if (!callback) {
@@ -1399,7 +1440,8 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultS
     WVLOG_D("get javaScript result already in js thread");
     std::vector<napi_value> argv = {};
     for (std::shared_ptr<NWebValue> input : args) {
-        argv.push_back(ParseNwebValue2NapiValue(jsObj->GetEnv(), input, GetObjectMap(), GetNWebId(), routingId));
+        FrameInfo frame{GetNWebId(), routingId, -1};
+        argv.push_back(ParseNwebValue2NapiValue(jsObj->GetEnv(), input, GetObjectMap(), frame));
     }
     napi_value callback = jsObj->FindMethod(method);
     if (!callback) {
@@ -1445,7 +1487,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName,
     int32_t routingId, int32_t objectId)
 {
-    (void)objName; // to be compatible with older webcotroller, classname may be empty
+    (void)objName; // to be compatible with older webcontroller, classname may be empty
     WVLOG_D(
         "GetJavaScriptResult objName = %{public}s, method = %{public}s, "
         "routingId = %{public}d, objectId = %{public}d",
@@ -1469,7 +1511,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResult(
     }
 }
 
-char* WebviewJavaScriptResultCallBack::FlowbufStrAtIndex(void* mem, int flowbufIndex, int* argIndex, int* strLen)
+static char* FlowbufStrAtIndex(void* mem, int flowbufIndex, int* argIndex, int* strLen)
 {
     int* header = static_cast<int*>(mem); // Cast the memory block to int* for easier access
     int offset = 0;
@@ -1548,7 +1590,8 @@ bool WebviewJavaScriptResultCallBack::ConstructArgv(void* ashmem,
             flowbufIndex++;
         }
 
-        argv.push_back(ParseNwebValue2NapiValue(jsObj->GetEnv(), input, GetObjectMap(), GetNWebId(), routingId));
+        FrameInfo frame{GetNWebId(), routingId, -1};
+        argv.push_back(ParseNwebValue2NapiValue(jsObj->GetEnv(), input, GetObjectMap(), frame));
         currIndex++;
     }
 
@@ -1653,7 +1696,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::GetJavaScriptResultF
     std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName, int fd,
     int32_t routingId, int32_t objectId)
 {
-    (void)objName; // to be compatible with older webcotroller, classname may be empty
+    (void)objName; // to be compatible with older webcontroller, classname may be empty
     WVLOG_D("GetJavaScriptResult method = %{public}s", method.c_str());
 
     FdAutoClose autoClose(fd);
@@ -1706,7 +1749,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBack::PostGetJavaScriptRes
     std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName,
     int32_t routingId, int32_t objectId)
 {
-    // to be compatible with older webcotroller, classname may be empty
+    // to be compatible with older webcontroller, classname may be empty
     (void)objName;
     WVLOG_D("WebviewJavaScriptResultCallBack::PostGetJavaScriptResultToJsThread method = "
             "%{public}s",
@@ -2342,9 +2385,12 @@ void WebviewJavaScriptResultCallBack::CallH5FunctionInternal(
         return;
     }
 
-    nweb_ptr->CallH5FunctionV2(bundle.frameRoutingId, bundle.h5Id, bundle.funcName, romArgs);
+    nweb_ptr->CallH5FunctionV3(bundle.frameRoutingId, bundle.frameChildId, bundle.h5Id, bundle.funcName, romArgs);
     if (ArkWebGetErrno() != RESULT_OK) {
-        nweb_ptr->CallH5Function(bundle.frameRoutingId, bundle.h5Id, bundle.funcName, nwebArgs);
+        nweb_ptr->CallH5FunctionV2(bundle.frameRoutingId, bundle.h5Id, bundle.funcName, romArgs);
+        if (ArkWebGetErrno() != RESULT_OK) {
+            nweb_ptr->CallH5Function(bundle.frameRoutingId, bundle.h5Id, bundle.funcName, nwebArgs);
+        }
     }
     WVLOG_D("WebviewJavaScriptResultCallBack::CallH5FunctionInternal end");
 }
@@ -2482,70 +2528,68 @@ void ExecuteGetJavaScriptObjectMethodsV2(
     param->condition.notify_all();
 }
 
+struct FlowbufIter {
+    void* ashmem = nullptr;
+    napi_env env = nullptr;
+    char* flowbufStr = nullptr;
+    int strLen = 0;
+    int flowbufIndex = 0;
+};
+
+static bool PushFlowbufStrings(std::vector<napi_value>& argv, FlowbufIter& it, int& argIndex, int& currIndex)
+{
+    while (argIndex == currIndex) {
+        napi_value napiValue = nullptr;
+        napi_status s = napi_create_string_utf8(it.env, it.flowbufStr, it.strLen, &napiValue);
+        if (s != napi_ok) {
+            WVLOG_E("ParseBasicTypeNwebValue2NapiValue napi api call fail");
+            return false;
+        }
+        argv.push_back(napiValue);
+        currIndex++;
+        it.flowbufStr = FlowbufStrAtIndex(it.ashmem, it.flowbufIndex, &argIndex, &it.strLen);
+        it.flowbufIndex++;
+    }
+    return true;
+}
+
 bool WebviewJavaScriptResultCallBack::ConstructArgvV2(void* ashmem,
     const std::vector<std::shared_ptr<NWebHapValue>>& args, std::vector<napi_value>& argv,
-    std::shared_ptr<JavaScriptOb> jsObj, int32_t routingId)
+    std::shared_ptr<JavaScriptOb> jsObj, const JsCallInfo& callInfo)
 {
     int argIndex = -1;
     int currIndex = 0;
-    int flowbufIndex = 0;
-    int strLen = 0;
-    char* flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
-    flowbufIndex++;
-    while (argIndex == currIndex) {
-        napi_value napiValue = nullptr;
-        napi_status s = napi_create_string_utf8(jsObj->GetEnv(), flowbufStr, strLen, &napiValue);
-        if (s != napi_ok) {
-            WVLOG_E("ParseBasicTypeNwebValue2NapiValue napi api call fail");
-            return false;
-        }
-
-        argv.push_back(napiValue);
-        currIndex++;
-        flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
-        flowbufIndex++;
+    FlowbufIter it;
+    it.ashmem = ashmem;
+    it.env = jsObj->GetEnv();
+    it.flowbufStr = FlowbufStrAtIndex(ashmem, it.flowbufIndex, &argIndex, &it.strLen);
+    it.flowbufIndex++;
+    if (!PushFlowbufStrings(argv, it, argIndex, currIndex)) {
+        return false;
     }
 
+    FrameInfo frame;
+    frame.nwebId = GetNWebId();
+    frame.frameId = callInfo.routingId;
+    frame.frameChildId = callInfo.frameChildId;
     for (auto& input : args) {
-        while (argIndex == currIndex) {
-            napi_value napiValue = nullptr;
-            napi_status s = napi_create_string_utf8(jsObj->GetEnv(), flowbufStr, strLen, &napiValue);
-            if (s != napi_ok) {
-                WVLOG_E("ParseBasicTypeNwebValue2NapiValue napi api call fail");
-                return false;
-            }
-
-            argv.push_back(napiValue);
-            currIndex++;
-            flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
-            flowbufIndex++;
-        }
-
-        argv.push_back(ParseNwebValue2NapiValueV2(jsObj->GetEnv(), input, GetObjectMap(), GetNWebId(), routingId));
-        currIndex++;
-    }
-
-    while (argIndex == currIndex) {
-        napi_value napiValue = nullptr;
-        napi_status s = napi_create_string_utf8(jsObj->GetEnv(), flowbufStr, strLen, &napiValue);
-        if (s != napi_ok) {
-            WVLOG_E("ParseBasicTypeNwebValue2NapiValue napi api call fail");
+        if (!PushFlowbufStrings(argv, it, argIndex, currIndex)) {
             return false;
         }
-
-        argv.push_back(napiValue);
+        argv.push_back(ParseNwebValue2NapiValueV2(it.env, input, GetObjectMap(), frame));
         currIndex++;
-        flowbufStr = FlowbufStrAtIndex(ashmem, flowbufIndex, &argIndex, &strLen);
-        flowbufIndex++;
     }
 
+    if (!PushFlowbufStrings(argv, it, argIndex, currIndex)) {
+        return false;
+    }
     return true;
 }
 
 void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfV2(const std::vector<std::shared_ptr<NWebHapValue>>& args,
-    const std::string& method, int32_t routingId, int32_t objectId, std::shared_ptr<NWebHapValue> result)
+    const std::string& method, const JsCallInfo& callInfo, std::shared_ptr<NWebHapValue> result)
 {
-    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.objectId);
     if (!jsObj) {
         return;
     }
@@ -2558,8 +2602,12 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfV2(const std::vecto
 
     WVLOG_D("get javaScript result already in js thread");
     std::vector<napi_value> argv = {};
+    FrameInfo frame;
+    frame.nwebId = GetNWebId();
+    frame.frameId = callInfo.routingId;
+    frame.frameChildId = callInfo.frameChildId;
     for (auto& input : args) {
-        argv.push_back(ParseNwebValue2NapiValueV2(jsObj->GetEnv(), input, GetObjectMap(), GetNWebId(), routingId));
+        argv.push_back(ParseNwebValue2NapiValueV2(jsObj->GetEnv(), input, GetObjectMap(), frame));
     }
 
     napi_value callback = jsObj->FindMethod(method);
@@ -2588,10 +2636,10 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfV2(const std::vecto
         if (FindObjectIdInJsTd(jsObj->GetEnv(), callResult, &returnedObjectId)) {
             std::shared_ptr<JavaScriptOb> obj = FindObject(returnedObjectId);
             if (obj) {
-                obj->AddHolder(routingId);
+                obj->AddHolder(callInfo.routingId);
             }
         } else {
-            returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, routingId);
+            returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, callInfo.routingId);
         }
 
         SetUpAnnotateMethods(returnedObjectId, methodNameList);
@@ -2607,9 +2655,10 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfV2(const std::vecto
 }
 
 void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfHelperV2(std::shared_ptr<JavaScriptOb> jsObj,
-    const std::string& method, int32_t routingId, const std::vector<napi_value>& argv,
+    const std::string& method, const JsCallInfo& callInfo, const std::vector<napi_value>& argv,
     std::shared_ptr<NWebHapValue> result)
 {
+    (void)callInfo.frameChildId;
     napi_value callback = jsObj->FindMethod(method);
     if (!callback) {
         WVLOG_E("WebviewJavaScriptResultCallBack::ExecuteGetJavaScriptResult callback null");
@@ -2637,9 +2686,9 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfHelperV2(std::share
 
     JavaScriptOb::ObjectID returnedObjectId;
     if (FindObjectIdInJsTd(jsObj->GetEnv(), callResult, &returnedObjectId) && FindObject(returnedObjectId)) {
-        FindObject(returnedObjectId)->AddHolder(routingId);
+        FindObject(returnedObjectId)->AddHolder(callInfo.routingId);
     } else {
-        returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, routingId);
+        returnedObjectId = AddObject(jsObj->GetEnv(), callResult, false, callInfo.routingId);
     }
 
     SetUpAnnotateMethods(returnedObjectId, methodNameList);
@@ -2654,12 +2703,12 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfHelperV2(std::share
 }
 
 void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfFlowbufV2(
-    const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method, int fd, int32_t routingId,
-    int32_t objectId, std::shared_ptr<NWebHapValue> result)
+    const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method, int fd,
+    const JsCallInfo& callInfo, std::shared_ptr<NWebHapValue> result)
 {
     FdAutoClose autoClose(fd);
 
-    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.objectId);
     if (!jsObj) {
         return;
     }
@@ -2680,17 +2729,17 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultSelfFlowbufV2(
     }
 
     std::vector<napi_value> argv = {};
-    if (!ConstructArgvV2(ashmem, args, argv, jsObj, routingId)) {
+    if (!ConstructArgvV2(ashmem, args, argv, jsObj, callInfo)) {
         return;
     }
 
-    GetJavaScriptResultSelfHelperV2(jsObj, method, routingId, argv, result);
+    GetJavaScriptResultSelfHelperV2(jsObj, method, callInfo, argv, result);
 }
 
 void WebviewJavaScriptResultCallBack::PostGetJavaScriptResultToJsThreadV2(std::vector<napi_value>& argv,
-    const std::string& method, int32_t routingId, int32_t objectId, std::shared_ptr<NWebHapValue> result)
+    const std::string& method, const JsCallInfo& callInfo, std::shared_ptr<NWebHapValue> result)
 {
-    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.objectId);
     if (!jsObj) {
         return;
     }
@@ -2704,10 +2753,11 @@ void WebviewJavaScriptResultCallBack::PostGetJavaScriptResultToJsThreadV2(std::v
     }
 
     inParam->webJsResCb = this;
-    inParam->objId = objectId;
+    inParam->objId = callInfo.objectId;
     inParam->nwebId = GetNWebId();
     inParam->methodName = method;
-    inParam->frameRoutingId = routingId;
+    inParam->frameRoutingId = callInfo.routingId;
+    inParam->frameChildId = callInfo.frameChildId;
     inParam->data = reinterpret_cast<void*>(&argv);
     outParam->ret = reinterpret_cast<void*>(&result);
 
@@ -2757,7 +2807,7 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultV2(const std::vector<st
     const std::string& method, const std::string& objectName, int32_t routingId, int32_t objectId,
     std::shared_ptr<NWebHapValue> result)
 {
-    (void)objectName; // to be compatible with older webcotroller, classname may be empty
+    (void)objectName; // to be compatible with older webcontroller, classname may be empty
     WVLOG_D("GetJavaScriptResult method = %{public}s,routingId = %{public}d, objectId = %{public}d", method.c_str(),
         routingId, objectId);
 
@@ -2771,19 +2821,20 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultV2(const std::vector<st
         return;
     }
 
+    JsCallInfo callInfo{routingId, -1, objectId};
     if (pthread_self() == engine->GetTid()) {
-        GetJavaScriptResultSelfV2(args, method, routingId, objectId, result);
+        GetJavaScriptResultSelfV2(args, method, callInfo, result);
     } else {
         WVLOG_D("get javaScript result, not in js thread, post task to js thread");
 
-        auto nwebId = GetNWebId();
+        FrameInfo frame{GetNWebId(), routingId, -1};
         napi_env env = jsObj->GetEnv();
         std::vector<napi_value> argv = {};
         for (auto& input : args) {
-            argv.push_back(ParseNwebValue2NapiValueV2(env, input, GetObjectMap(), nwebId, routingId));
+            argv.push_back(ParseNwebValue2NapiValueV2(env, input, GetObjectMap(), frame));
         }
 
-        PostGetJavaScriptResultToJsThreadV2(argv, method, routingId, objectId, result);
+        PostGetJavaScriptResultToJsThreadV2(argv, method, callInfo, result);
     }
 }
 
@@ -2791,7 +2842,7 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV2(
     const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method, const std::string& objectName,
     int fd, int32_t routingId, int32_t objectId, std::shared_ptr<NWebHapValue> result)
 {
-    (void)objectName; // to be compatible with older webcotroller, classname may be empty
+    (void)objectName; // to be compatible with older webcontroller, classname may be empty
     WVLOG_D("GetJavaScriptResult method = %{public}s", method.c_str());
 
     FdAutoClose autoClose(fd);
@@ -2806,8 +2857,9 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV2(
         return;
     }
 
+    JsCallInfo callInfo{routingId, -1, objectId};
     if (pthread_self() == engine->GetTid()) {
-        GetJavaScriptResultSelfFlowbufV2(args, method, autoClose.Release(), routingId, objectId, result);
+        GetJavaScriptResultSelfFlowbufV2(args, method, autoClose.Release(), callInfo, result);
     } else {
         auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
         if (!flowbufferAdapter) {
@@ -2842,13 +2894,13 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV2(
             }
         } while (argIndex <= MAX_ENTRIES);
 
-        auto nwebId = GetNWebId();
+        FrameInfo frame{GetNWebId(), routingId, -1};
         for (auto& input : args) {
-            argv.push_back(ParseNwebValue2NapiValueV2(env, input, GetObjectMap(), nwebId, routingId));
+            argv.push_back(ParseNwebValue2NapiValueV2(env, input, GetObjectMap(), frame));
         }
 
         WVLOG_D("get javaScript result, not in js thread, post task to js thread");
-        PostGetJavaScriptResultToJsThreadV2(argv, method, routingId, objectId, result);
+        PostGetJavaScriptResultToJsThreadV2(argv, method, callInfo, result);
     }
 }
 
@@ -2892,6 +2944,115 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptObjectMethodsV2(
         WVLOG_D("post task to js thread for get get javascript object methods, objectId = %{public}d", objectId);
         PostGetJavaScriptObjectMethodsToJsThreadV2(objectId, result);
     }
+}
+
+void WebviewJavaScriptResultCallBack::GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+    const std::string& method, const std::string& objectName,
+    const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+    std::shared_ptr<NWebHapValue> result)
+{
+    (void)objectName; // to be compatible with older webcontroller, classname may be empty
+
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.object_id);
+    if (!jsObj || !jsObj->HasMethod(method)) {
+        return;
+    }
+
+    auto engine = reinterpret_cast<NativeEngine*>(jsObj->GetEnv());
+    if (engine == nullptr) {
+        return;
+    }
+
+    JsCallInfo innerCallInfo{callInfo.routing_id, callInfo.frame_child_id, callInfo.object_id};
+    if (pthread_self() == engine->GetTid()) {
+        GetJavaScriptResultSelfV2(args, method, innerCallInfo, result);
+    } else {
+        WVLOG_D("get javaScript result V3, not in js thread, post task to js thread");
+
+        FrameInfo frame{GetNWebId(), callInfo.routing_id, callInfo.frame_child_id};
+        napi_env env = jsObj->GetEnv();
+        std::vector<napi_value> argv = {};
+        for (auto& input : args) {
+            argv.push_back(ParseNwebValue2NapiValueV2(env, input, GetObjectMap(), frame));
+        }
+
+        PostGetJavaScriptResultToJsThreadV2(argv, method, innerCallInfo, result);
+    }
+}
+
+void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV3(
+    const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method, const std::string& objectName,
+    const NWebJavaScriptResultCallBack::JsCallInfo& callInfo, std::shared_ptr<NWebHapValue> result)
+{
+    (void)objectName; // to be compatible with older webcontroller, classname may be empty
+    WVLOG_D("GetJavaScriptResultFlowbufV3 method = %{public}s", method.c_str());
+
+    FdAutoClose autoClose(callInfo.fd);
+
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.object_id);
+    if (!jsObj || !jsObj->HasMethod(method)) {
+        return;
+    }
+
+    auto engine = reinterpret_cast<NativeEngine*>(jsObj->GetEnv());
+    if (engine == nullptr) {
+        return;
+    }
+
+    JsCallInfo innerCallInfo{callInfo.routing_id, callInfo.frame_child_id, callInfo.object_id};
+    if (pthread_self() == engine->GetTid()) {
+        GetJavaScriptResultSelfFlowbufV2(args, method, autoClose.Release(), innerCallInfo, result);
+    } else {
+        auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
+        if (!flowbufferAdapter) {
+            return;
+        }
+
+        auto ashmem = flowbufferAdapter->CreateAshmemWithFd(
+            callInfo.fd, MAX_FLOWBUF_DATA_SIZE + HEADER_SIZE, PROT_READ);
+        if (!ashmem) {
+            (void)autoClose.Release(); // fd is already closed.
+            return;
+        }
+
+        napi_env env = jsObj->GetEnv();
+        FlowbufV3Context ctx{ashmem, env};
+        PostFlowbufV3ToJsThread(ctx, args, method, innerCallInfo, result);
+    }
+}
+
+void WebviewJavaScriptResultCallBack::PostFlowbufV3ToJsThread(const FlowbufV3Context& ctx,
+    const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method,
+    const JsCallInfo& callInfo, std::shared_ptr<NWebHapValue> result)
+{
+    int strLen = 0;
+    int argIndex = -1;
+    int flowbufIndex = 0;
+    std::vector<napi_value> argv = {};
+    do {
+        char* flowbufStr = FlowbufStrAtIndex(ctx.ashmem, flowbufIndex, &argIndex, &strLen);
+        if (argIndex == -1) {
+            break;
+        }
+        flowbufIndex++;
+        std::string str(flowbufStr);
+
+        napi_value napiValue = nullptr;
+        napi_status s = napi_create_string_utf8(ctx.env, str.c_str(), NAPI_AUTO_LENGTH, &napiValue);
+        if (s != napi_ok) {
+            WVLOG_E("GetJavaScriptResultFlowbufV3 napi api call fail");
+        } else {
+            argv.push_back(napiValue);
+        }
+    } while (argIndex <= MAX_ENTRIES);
+
+    FrameInfo frame{GetNWebId(), callInfo.routingId, callInfo.frameChildId};
+    for (auto& input : args) {
+        argv.push_back(ParseNwebValue2NapiValueV2(ctx.env, input, GetObjectMap(), frame));
+    }
+
+    WVLOG_D("get javaScript result V3, not in js thread, post task to js thread");
+    PostGetJavaScriptResultToJsThreadV2(argv, method, callInfo, result);
 }
 
 } // namespace OHOS::NWeb

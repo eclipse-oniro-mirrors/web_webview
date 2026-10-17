@@ -18,6 +18,7 @@
 #pragma once
 
 #include "ohos_nweb/include/ark_web_hap_value.h"
+#include "ohos_nweb/include/ark_web_nweb_structs.h"
 #include "ohos_nweb/include/ark_web_value.h"
 #include "ohos_nweb/include/ark_web_value_vector.h"
 
@@ -82,6 +83,34 @@ public:
 
     /*--ark web()--*/
     virtual void GetJavaScriptObjectMethodsV2(int32_t object_id, ArkWebRefPtr<ArkWebHapValue> result) = 0;
+
+    /**
+     * @brief GetJavaScriptResultV3
+     *
+     * @param args: the JavaScript call args
+     * @param method: means the JavaScript method name
+     * @param object_name: means the JavaScript object name
+     * @param call_info: means the frame routing id, frame child id, object id and flowbuf fd
+     * @param result: means the JavaScript method execution result
+     */
+    /*--ark web()--*/
+    virtual void GetJavaScriptResultV3(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+        ArkWebRefPtr<ArkWebHapValue> result) = 0;
+
+    /**
+     * @brief GetJavaScriptResultFlowbufV3
+     *
+     * @param args: the JavaScript call args
+     * @param method: means the JavaScript method name
+     * @param object_name: means the JavaScript object name
+     * @param call_info: means the frame routing id, frame child id, object id and flowbuf fd
+     * @param result: means the JavaScript method execution result
+     */
+    /*--ark web()--*/
+    virtual void GetJavaScriptResultFlowbufV3(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+        ArkWebRefPtr<ArkWebHapValue> result) = 0;
 };
 
 } // namespace OHOS::ArkWeb
