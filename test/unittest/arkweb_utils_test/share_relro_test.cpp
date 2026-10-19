@@ -69,6 +69,55 @@ void ShareRelroTest::TearDown(void)
 {}
 
 /**
+ * @tc.name: ShareRelroTest_WaitForRelroFileSubProc_001
+ * @tc.desc: Test producer success, failure, signal termination, EINTR retry and wait error.
+ * @tc.type: Func
+ */
+HWTEST_F(ShareRelroTest, ShareRelroTest_WaitForRelroFileSubProc_001, TestSize.Level1)
+{
+    constexpr pid_t producerPid = 100;
+    SetWaitpidEintrCount(0);
+    SetWaitpidMockValue(producerPid, 0, 0);
+    EXPECT_TRUE(WaitForRelroFileSubProc(producerPid));
+    EXPECT_EQ(GetWaitpidMockOptions(), 0);
+    EXPECT_EQ(GetWaitpidMockCallCount(), 1);
+
+    SetWaitpidMockValue(producerPid, 1 << 8, 0);
+    EXPECT_FALSE(WaitForRelroFileSubProc(producerPid));
+
+    SetWaitpidMockValue(producerPid, SIGKILL, 0);
+    EXPECT_FALSE(WaitForRelroFileSubProc(producerPid));
+
+    SetWaitpidMockValue(producerPid, 0, 0);
+    SetWaitpidEintrCount(1);
+    EXPECT_TRUE(WaitForRelroFileSubProc(producerPid));
+    EXPECT_EQ(GetWaitpidMockCallCount(), 2);
+
+    SetWaitpidMockValue(-1, 0, ECHILD);
+    EXPECT_FALSE(WaitForRelroFileSubProc(producerPid));
+}
+
+/**
+ * @tc.name: ShareRelroTest_CreateRelroFileInSubProcAndWait_001
+ * @tc.desc: Test the no-argument synchronous producer API for fork failure and successful completion.
+ * @tc.type: Func
+ */
+HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProcAndWait_001, TestSize.Level1)
+{
+    constexpr pid_t producerPid = 100;
+    std::string savedPackageName = OHOS::system::GetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, "");
+    OHOS::system::SetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, "test");
+    SetForkMockValue(-1);
+    EXPECT_FALSE(CreateRelroFileInSubProcAndWait());
+
+    SetForkMockValue(producerPid);
+    SetWaitpidEintrCount(0);
+    SetWaitpidMockValue(producerPid, 0, 0);
+    EXPECT_TRUE(CreateRelroFileInSubProcAndWait());
+    OHOS::system::SetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, savedPackageName);
+}
+
+/**
  * @tc.name: ShareRelroTest_CheckTargetExists001
  * @tc.desc: Test the CheckTargetExists when ec is not null.
  * @tc.type: Func
@@ -333,6 +382,25 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_ReserveAddressSpace_003, TestSize.Level1
     EXPECT_EQ(ReserveAddressSpace(), isArkwebEngineAccessible_);
     g_reservedAddress = &mockValue;
 }
+
+/**
+ * @tc.name: ShareRelroTest_ReserveAddressSpaceForPreload_001
+ * @tc.desc: Test the ReserveAddressSpaceForPreload when bundle install path is empty or not accessible.
+ * @tc.type: Func
+ */
+HWTEST_F(ShareRelroTest, ShareRelroTest_ReserveAddressSpaceForPreload_001, TestSize.Level1)
+{
+    std::string savedPackageName = OHOS::system::GetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, "");
+    OHOS::system::SetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, "");
+    g_shareRelroEnabled = false;
+    EXPECT_FALSE(ReserveAddressSpaceForPreload());
+    EXPECT_FALSE(g_shareRelroEnabled);
+
+    OHOS::system::SetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, "test");
+    EXPECT_FALSE(ReserveAddressSpaceForPreload());
+    EXPECT_FALSE(g_shareRelroEnabled);
+    OHOS::system::SetParameter(PERSIST_ARKWEBCORE_PACKAGE_NAME, savedPackageName);
+}
 /**
  * @tc.name: ShareRelroTest_CreateRelroFile_002
  * @tc.desc: Test the CreateRelroFile when unlink failed and errno is ENOMEM
@@ -437,9 +505,12 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFile_006, TestSize.Level1)
     g_shareRelroEnabled = true;
     g_arkwebEngineAccessible = true;
     int validMockValue = 0; // 0 is valid ret value
+    static int reservedAddress;
+    g_reservedAddress = &reservedAddress;
+    g_reservedSize = RESERVED_VMA_SIZE;
     SetUnlinkMockValue(validMockValue);
     errno = ENOENT;
-    SetOpenMockValue(validMockValue);
+    SetOpenMockValue(10);
     SetDlopenNsExtMockValue(nullptr);
     std::string arkWebEngineLibName = "libarkweb_engine.so";
     Dl_namespace dlns;
@@ -462,9 +533,12 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFile_007, TestSize.Level1)
     g_shareRelroEnabled = true;
     g_arkwebEngineAccessible = true;
     int validMockValue = 0; // 0 is valid ret value
+    static int reservedAddress;
+    g_reservedAddress = &reservedAddress;
+    g_reservedSize = RESERVED_VMA_SIZE;
     SetUnlinkMockValue(validMockValue);
     errno = ENOENT;
-    SetOpenMockValue(validMockValue);
+    SetOpenMockValue(10);
     SetDlopenNsExtMockValue(&validMockValue);
     std::string arkWebEngineLibName = "libarkweb_engine.so";
     Dl_namespace dlns;
@@ -473,34 +547,24 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFile_007, TestSize.Level1)
     dlns_create(&dlns, GetArkwebLibPath().c_str());
     dlns_get("ndk", &ndkns);
     dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(CreateRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    EXPECT_EQ(CreateRelroFile(arkWebEngineLibName, &dlns), &validMockValue);
     SetDlopenNsExtMockValue(nullptr);
 }
 
 /**
  * @tc.name: ShareRelroTest_CreateRelroFileInSubProc_001
- * @tc.desc: Test the CreateRelroFileInSubProc when fork failed
+ * @tc.desc: Test the CreateRelroFileInSubProc when fork failed or returns a parent pid
  * @tc.type: Func
  * @tc.require:
  */
 HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_001, TestSize.Level1)
 {
-    g_shareRelroEnabled = false;
-    g_arkwebEngineAccessible = false;
-    SetForkMockValue(-1); // -1 invalid pid
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetForkMockValue(-1);
+    EXPECT_EQ(ForkCreateRelroFileSubProc(GetArkwebLibPath()), -1);
+    EXPECT_NO_FATAL_FAILURE(CreateRelroFileInSubProc());
 
-    SetForkMockValue(1); // 1 invalid pid
-    CreateRelroFileInSubProc();
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetForkMockValue(1);
+    EXPECT_EQ(ForkCreateRelroFileSubProc(GetArkwebLibPath()), 1);
 }
 
 /**
@@ -513,22 +577,16 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_002, TestSize.L
 {
     g_shareRelroEnabled = false;
     g_arkwebEngineAccessible = false;
-    SetForkMockValue(0); // 0 valid pid
-    SetPrctlMockValue(-1); // -1 invalid prctl mock value
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetPrctlMockValue(-1);
+    SetGidMockValue(0);
+    SetUidMockValue(0);
+    SetRestoreconRecurseMockValue(0);
+    EXPECT_EQ(InitAndCreateRelroFile(GetArkwebLibPath()), RELRO_SUBPROC_FAILURE);
 }
 
 /**
  * @tc.name: ShareRelroTest_CreateRelroFileInSubProc_003
- * @tc.desc: Test the CreateRelroFileInSubProc when setuid and setgid both failed
+ * @tc.desc: Test the CreateRelroFileInSubProc when setgid failed before setuid
  * @tc.type: Func
  * @tc.require:
  */
@@ -536,25 +594,16 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_003, TestSize.L
 {
     g_shareRelroEnabled = false;
     g_arkwebEngineAccessible = false;
-    SetForkMockValue(0); // 0 valid pid
-    SetPrctlMockValue(0); // 0 valid mock value
-    int invalidMockValue = -1; // -1 invalid mock value
-    SetUidMockValue(invalidMockValue);
-    SetGidMockValue(invalidMockValue);
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetPrctlMockValue(0);
+    SetUidMockValue(-1);
+    SetGidMockValue(-1);
+    SetRestoreconRecurseMockValue(0);
+    EXPECT_EQ(InitAndCreateRelroFile(GetArkwebLibPath()), RELRO_SUBPROC_FAILURE);
 }
 
 /**
  * @tc.name: ShareRelroTest_CreateRelroFileInSubProc_004
- * @tc.desc: Test the CreateRelroFileInSubProc when setuid success and setgid failed
+ * @tc.desc: Test the CreateRelroFileInSubProc when setgid failed
  * @tc.type: Func
  * @tc.require:
  */
@@ -562,20 +611,11 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_004, TestSize.L
 {
     g_shareRelroEnabled = false;
     g_arkwebEngineAccessible = false;
-    int validMockValue = 0; // 0 valid mock value
-    SetForkMockValue(validMockValue);
-    SetPrctlMockValue(validMockValue);
-    SetUidMockValue(validMockValue);
-    SetGidMockValue(-1); // -1 invalid mock value
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetPrctlMockValue(0);
+    SetUidMockValue(0);
+    SetGidMockValue(-1);
+    SetRestoreconRecurseMockValue(0);
+    EXPECT_EQ(InitAndCreateRelroFile(GetArkwebLibPath()), RELRO_SUBPROC_FAILURE);
 }
 
 /**
@@ -588,20 +628,11 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_005, TestSize.L
 {
     g_shareRelroEnabled = false;
     g_arkwebEngineAccessible = false;
-    int validMockValue = 0; // 0 valid mock value
-    SetForkMockValue(validMockValue);
-    SetPrctlMockValue(validMockValue);
-    SetGidMockValue(validMockValue);
-    SetUidMockValue(-1); // -1 invalid mock value
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetPrctlMockValue(0);
+    SetGidMockValue(0);
+    SetUidMockValue(-1);
+    SetRestoreconRecurseMockValue(0);
+    EXPECT_EQ(InitAndCreateRelroFile(GetArkwebLibPath()), RELRO_SUBPROC_FAILURE);
 }
 
 /**
@@ -614,21 +645,11 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_006, TestSize.L
 {
     g_shareRelroEnabled = false;
     g_arkwebEngineAccessible = false;
-    int validMockValue = 0; // 0 valid mock value
-    SetForkMockValue(validMockValue);
-    SetPrctlMockValue(validMockValue);
-    SetGidMockValue(validMockValue);
-    SetUidMockValue(validMockValue);
-    SetRestoreconRecurseMockValue(-1); // -1 invalid mock value
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetPrctlMockValue(0);
+    SetGidMockValue(0);
+    SetUidMockValue(0);
+    SetRestoreconRecurseMockValue(-1);
+    EXPECT_EQ(InitAndCreateRelroFile(GetArkwebLibPath()), RELRO_SUBPROC_FAILURE);
 }
 
 /**
@@ -641,20 +662,11 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_007, TestSize.L
 {
     g_shareRelroEnabled = false;
     g_arkwebEngineAccessible = false;
-    int validMockValue = 0; // 0 valid mock value
-    SetPrctlMockValue(validMockValue);
-    SetGidMockValue(validMockValue);
-    SetUidMockValue(validMockValue);
-    SetRestoreconRecurseMockValue(validMockValue);
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    SetPrctlMockValue(0);
+    SetGidMockValue(0);
+    SetUidMockValue(0);
+    SetRestoreconRecurseMockValue(0);
+    EXPECT_EQ(InitAndCreateRelroFile(GetArkwebLibPath()), RELRO_SUBPROC_FAILURE);
 }
 
 /**
@@ -668,24 +680,17 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_CreateRelroFileInSubProc_008, TestSize.L
     g_shareRelroEnabled = true;
     g_arkwebEngineAccessible = true;
     int validMockValue = 0; // 0 valid mock value
+    static int reservedAddress;
+    g_reservedAddress = &reservedAddress;
+    g_reservedSize = RESERVED_VMA_SIZE;
     SetPrctlMockValue(validMockValue);
     SetGidMockValue(validMockValue);
     SetUidMockValue(validMockValue);
     SetRestoreconRecurseMockValue(validMockValue);
-
     SetUnlinkMockValue(validMockValue);
-    errno = ENOENT;
-    SetOpenMockValue(validMockValue);
+    SetOpenMockValue(10);
     SetDlopenNsExtMockValue(&validMockValue);
-    CreateRelroFileInSubProc();
-    std::string arkWebEngineLibName = "libarkweb_engine.so";
-    Dl_namespace dlns;
-    Dl_namespace ndkns;
-    dlns_init(&dlns, GetArkwebNameSpace().c_str());
-    dlns_create(&dlns, GetArkwebLibPath().c_str());
-    dlns_get("ndk", &ndkns);
-    dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    EXPECT_EQ(InitAndCreateRelroFile(GetArkwebLibPath()), RELRO_SUBPROC_SUCCESS);
     SetDlopenNsExtMockValue(nullptr);
 }
 
@@ -719,7 +724,12 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_LoadWithRelroFile_002, TestSize.Level1)
 HWTEST_F(ShareRelroTest, ShareRelroTest_LoadWithRelroFile_003, TestSize.Level1)
 {
     int validMockValue = 0; // 0 is valid ret value
-    SetOpenMockValue(validMockValue);
+    static int reservedAddress;
+    g_shareRelroEnabled = true;
+    g_arkwebEngineAccessible = true;
+    g_reservedAddress = &reservedAddress;
+    g_reservedSize = RESERVED_VMA_SIZE;
+    SetOpenMockValue(10);
     SetDlopenNsExtMockValue(&validMockValue);
     std::string arkWebEngineLibName = "libarkweb_engine.so";
     Dl_namespace dlns;
@@ -728,7 +738,7 @@ HWTEST_F(ShareRelroTest, ShareRelroTest_LoadWithRelroFile_003, TestSize.Level1)
     dlns_create(&dlns, GetArkwebLibPath().c_str());
     dlns_get("ndk", &ndkns);
     dlns_inherit(&dlns, &ndkns, "allow_all_shared_libs");
-    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), nullptr);
+    EXPECT_EQ(LoadWithRelroFile(arkWebEngineLibName, &dlns), &validMockValue);
     SetDlopenNsExtMockValue(nullptr);
 }
 } // namespace OHOS::NWeb
