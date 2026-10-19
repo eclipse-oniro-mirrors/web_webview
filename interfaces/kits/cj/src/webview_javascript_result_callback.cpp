@@ -321,7 +321,7 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
     std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName, int fd,
     int32_t routingId, int32_t objectId)
 {
-    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
+    // fd 由调用方 GetJavaScriptResultFlowbuf 通过 fdsan_exchange_owner_tag 接管，此处直接使用。
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     auto flowbufferAdapter = OhosAdapterHelper::GetInstance().CreateFlowbufferAdapter();
@@ -350,11 +350,13 @@ std::shared_ptr<NWebValue> WebviewJavaScriptResultCallBackImpl::GetJavaScriptRes
     std::vector<std::shared_ptr<NWebValue>> args, const std::string& method, const std::string& objName, int fd,
     int32_t routingId, int32_t objectId)
 {
+    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
     (void)objName; // to be compatible with older webcotroller, classname may be empty
     WEBVIEWLOGD("GetJavaScriptResult method = %{public}s", method.c_str());
     std::shared_ptr<NWebValue> ret = std::make_shared<NWebValue>(NWebValue::Type::NONE);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || jsObj->HasMethod(method) == -1) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return ret;
     }
     return GetJavaScriptResultSelfFlowbuf(args, method, objName,fd, routingId, objectId);
