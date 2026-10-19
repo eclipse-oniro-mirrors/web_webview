@@ -497,14 +497,15 @@ void WebviewJavaScriptResultCallBackImpl::GetJavaScriptResultFlowbufV2(
     const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method, const std::string& objectName,
     int fd, int32_t routingId, int32_t objectId, std::shared_ptr<NWebHapValue> result)
 {
+    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
     if (!result) {
+        fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
         return;
     }
     (void)objectName; // to be compatible with older webcotroller, classname may be empty
 
     WEBVIEWLOGD("GetJavaScriptResult method = %{public}s", method.c_str());
     result->SetType(NWebHapValue::Type::NONE);
-    fdsan_exchange_owner_tag(fd, 0, WEBVIEW_FDSAN_TAG);
     std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || jsObj->HasMethod(method) == -1) {
         fdsan_close_with_tag(fd, WEBVIEW_FDSAN_TAG);
