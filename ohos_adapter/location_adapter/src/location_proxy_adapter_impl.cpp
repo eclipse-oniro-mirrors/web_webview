@@ -269,7 +269,13 @@ LocationProxyAdapterImpl::~LocationProxyAdapterImpl()
     std::lock_guard<std::mutex> lock(locating_mutex_);
     for (auto& item : reg_) {
         if (stopLocatingFunc_) {
-            stopLocatingFunc_(item.second);
+            sptr<OHOS::Location::ILocatorCallback> iCallback = item.second;
+            LocationCallbackImpl* callbackImpl =
+                dynamic_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+            if (callbackImpl != nullptr) {
+                callbackImpl->MarkDetached();
+            }
+            stopLocatingFunc_(iCallback);
         }
     }
     reg_.clear();
@@ -303,6 +309,12 @@ int32_t LocationProxyAdapterImpl::StartLocating(
         iCallback);
     if (!ret) {
         WVLOG_E("StartLocating failed, id:%{public}d", id);
+        LocationCallbackImpl* callbackImpl =
+            dynamic_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+        if (callbackImpl != nullptr) {
+            callbackImpl->MarkDetached();
+        }
+        sptr<OHOS::Location::ILocatorCallback> local = iCallback;
         reg_.erase(id);
         return -1;
     }
@@ -322,8 +334,18 @@ bool LocationProxyAdapterImpl::StopLocating(int32_t callbackId)
         return false;
     }
     bool ret = stopLocatingFunc_(iter->second);
+    sptr<OHOS::Location::ILocatorCallback> iCallback = iter->second;
+    LocationCallbackImpl* callbackImpl =
+        dynamic_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+    if (callbackImpl != nullptr) {
+        callbackImpl->MarkDetached();
+        if (iCallback->GetSptrRefCnt() > 1) {
+            WVLOG_D("StopLocating callback still referenced, refcnt:%{public}d, id:%{public}d",
+                iCallback->GetSptrRefCnt(), callbackId);
+        }
+    }
     reg_.erase(iter);
-    return ret;
+    bool ret = stopLocatingFunc_(iCallback);
 }
 
 bool LocationProxyAdapterImpl::EnableAbility(bool isEnabled)
