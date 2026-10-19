@@ -931,6 +931,10 @@ public:
      */
     void OnContextMenuUpdate(
         int32_t itemId, std::shared_ptr<OHOS::NWeb::NWebContextMenuOptions> options) override;
+
+    void OnMonitoredBlankScreen(
+        const std::string& url, int32_t reason,
+        const std::string& extraMsg) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

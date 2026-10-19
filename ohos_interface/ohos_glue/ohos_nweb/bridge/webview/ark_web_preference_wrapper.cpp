@@ -599,6 +599,11 @@ void ArkWebPreferenceWrapper::PutWebMediaNetworkProxyEnabled(bool enable)
     ark_web_preference_->PutWebMediaNetworkProxyEnabled(enable);
 }
 
+void ArkWebPreferenceWrapper::PutWebBlankScreenMonitorEnabled(bool enable)
+{
+    ark_web_preference_->PutWebBlankScreenMonitorEnabled(enable);
+}
+
 void ArkWebPreferenceWrapper::SetFontWeightScale(float scale)
 {
     if (ark_web_preference_) {
