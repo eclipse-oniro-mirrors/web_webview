@@ -678,6 +678,11 @@ public:
     virtual void PutWebMediaNetworkProxyEnabled(bool enable) {}
 
     /**
+     * Set whether to enable blank screen monitor.
+     */
+    virtual void PutWebBlankScreenMonitorEnabled(bool enable) {}
+
+    /**
      * Set whether to use the intrinsic size. The default is false.
      */
     virtual void SetIntrinsicSizeEnable(bool enable) {}

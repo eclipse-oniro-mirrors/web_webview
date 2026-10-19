@@ -682,6 +682,11 @@ public:
     void PutWebMediaNetworkProxyEnabled(bool enable) override;
 
     /**
+     * Set whether to enable blank screen monitor.
+     */
+    void PutWebBlankScreenMonitorEnabled(bool enable) override;
+
+    /**
      * @brief Set the scale of the font-weight.The default is 1.0f.
      */
     void SetFontWeightScale(float scale) override;

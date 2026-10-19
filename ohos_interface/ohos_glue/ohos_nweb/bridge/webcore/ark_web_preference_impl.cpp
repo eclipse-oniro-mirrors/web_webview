@@ -527,6 +527,11 @@ void ArkWebPreferenceImpl::PutWebMediaNetworkProxyEnabled(bool enable)
     nweb_preference_->PutWebMediaNetworkProxyEnabled(enable);
 }
 
+void ArkWebPreferenceImpl::PutWebBlankScreenMonitorEnabled(bool enable)
+{
+    nweb_preference_->PutWebBlankScreenMonitorEnabled(enable);
+}
+
 void ArkWebPreferenceImpl::SetIntrinsicSizeEnable(bool enable)
 {
     nweb_preference_->SetIntrinsicSizeEnable(enable);
