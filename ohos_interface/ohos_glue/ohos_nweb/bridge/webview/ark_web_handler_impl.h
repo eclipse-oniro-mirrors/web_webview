@@ -889,6 +889,10 @@ public:
      * @param options The options of context menu.
      */
     void OnContextMenuUpdate(int32_t itemId, ArkWebRefPtr<ArkWebContextMenuOptions> options) override;
+
+    void OnMonitoredBlankScreen(
+        const ArkWebString& url, int32_t reason,
+        const ArkWebString& extraMsg) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
