@@ -235,16 +235,20 @@ HWTEST_F(CertMgrAdapterTest, CertMgrAdapterTest_GetUserRootCertData_004, TestSiz
 
     EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(0));
     EXPECT_CALL(*mockCmApi_, CmGetUserCertInfo(_, _, _)).Times(1).WillOnce(Return(0));
-    int32_t result = adapter.GetUserRootCertData(g_userCertSum, userData);
+    int32_t result = adapter.GetUserRootCertData(0, userData);
     EXPECT_EQ(result, CM_SUCCESS);
 
+    EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(0));
+    result = adapter.GetUserRootCertData(MAX_COUNT_CERTIFICATE, userData);
+    EXPECT_EQ(result, CM_FAILURE);
+
     EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(-1));
-    result = adapter.GetUserRootCertData(g_userCertSum, userData);
+    result = adapter.GetUserRootCertData(0, userData);
     EXPECT_EQ(result, CM_FAILURE);
 
     EXPECT_CALL(*mockCmApi_, CmGetUserCertList(_, _)).Times(1).WillOnce(Return(0));
     EXPECT_CALL(*mockCmApi_, CmGetUserCertInfo(_, _, _)).Times(1).WillOnce(Return(-1));
-    result = adapter.GetUserRootCertData(g_userCertSum, userData);
+    result = adapter.GetUserRootCertData(0, userData);
     EXPECT_EQ(result, CM_FAILURE);
     free(userData);
     userData = nullptr;
