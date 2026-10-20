@@ -333,7 +333,6 @@ bool LocationProxyAdapterImpl::StopLocating(int32_t callbackId)
         WVLOG_E("StopLocating failed due to reg_ not find iCallback");
         return false;
     }
-    bool ret = stopLocatingFunc_(iter->second);
     sptr<OHOS::Location::ILocatorCallback> iCallback = iter->second;
     LocationCallbackImpl* callbackImpl =
         static_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
@@ -346,6 +345,7 @@ bool LocationProxyAdapterImpl::StopLocating(int32_t callbackId)
     }
     reg_.erase(iter);
     bool ret = stopLocatingFunc_(iCallback);
+    return ret;
 }
 
 bool LocationProxyAdapterImpl::EnableAbility(bool isEnabled)
