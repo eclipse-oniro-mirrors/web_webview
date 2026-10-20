@@ -271,7 +271,7 @@ LocationProxyAdapterImpl::~LocationProxyAdapterImpl()
         if (stopLocatingFunc_) {
             sptr<OHOS::Location::ILocatorCallback> iCallback = item.second;
             LocationCallbackImpl* callbackImpl =
-                dynamic_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+                static_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
             if (callbackImpl != nullptr) {
                 callbackImpl->MarkDetached();
             }
@@ -310,7 +310,7 @@ int32_t LocationProxyAdapterImpl::StartLocating(
     if (!ret) {
         WVLOG_E("StartLocating failed, id:%{public}d", id);
         LocationCallbackImpl* callbackImpl =
-            dynamic_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+            static_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
         if (callbackImpl != nullptr) {
             callbackImpl->MarkDetached();
         }
@@ -336,12 +336,12 @@ bool LocationProxyAdapterImpl::StopLocating(int32_t callbackId)
     bool ret = stopLocatingFunc_(iter->second);
     sptr<OHOS::Location::ILocatorCallback> iCallback = iter->second;
     LocationCallbackImpl* callbackImpl =
-        dynamic_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+        static_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
     if (callbackImpl != nullptr) {
         callbackImpl->MarkDetached();
-        if (iCallback->GetSptrRefCnt() > 1) {
+        if (callbackImpl->GetSptrRefCount() > 1) {
             WVLOG_D("StopLocating callback still referenced, refcnt:%{public}d, id:%{public}d",
-                iCallback->GetSptrRefCnt(), callbackId);
+                callbackImpl->GetSptrRefCount(), callbackId);
         }
     }
     reg_.erase(iter);
