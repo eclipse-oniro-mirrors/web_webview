@@ -29,7 +29,7 @@ namespace OHOS::Webview {
 
 class JavaScriptOb {
 public:
-    // to be compatible with older webcotroller, be sure to the same as ace and core
+    // to be compatible with older webcontroller, be sure to the same as ace and core
     enum class JavaScriptObjIdErrorCode : int32_t { WEBCONTROLLERERROR = -2, WEBVIEWCONTROLLERERROR = -1, END = 0 };
 
     typedef int32_t ObjectID;
@@ -178,6 +178,15 @@ public:
 
     void GetJavaScriptObjectMethodsV2(int32_t objectId, std::shared_ptr<NWeb::NWebHapValue> result) override;
 
+    void GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args, const std::string& method,
+        const std::string& objectName, const NWeb::NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        std::shared_ptr<NWeb::NWebHapValue> result) override;
+
+    void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args,
+        const std::string& method, const std::string& objectName,
+        const NWeb::NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+        std::shared_ptr<NWeb::NWebHapValue> result) override;
+
     int32_t GetNWebId()
     {
         return nwebId_;
@@ -204,10 +213,12 @@ private:
         const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId);
 
     void ConstructArgvV2(void* ashmem, const std::vector<std::shared_ptr<NWeb::NWebHapValue>>& args,
-        std::vector<std::string>& argv, std::shared_ptr<JavaScriptOb> jsObj, int32_t routingId);
+        std::vector<std::string>& argv, std::shared_ptr<JavaScriptOb> jsObj, int32_t routingId,
+        int32_t frameChildId);
     
     void GetJavaScriptResultSelfHelperV2(std::shared_ptr<JavaScriptOb> jsObj, const std::string& method,
-        int32_t routingId, const std::vector<std::string>& argv, std::shared_ptr<NWeb::NWebHapValue> result);
+        int32_t routingId, int32_t frameChildId, const std::vector<std::string>& argv,
+        std::shared_ptr<NWeb::NWebHapValue> result);
     
     int32_t nwebId_ = -1;
 

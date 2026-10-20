@@ -73,6 +73,16 @@ public:
 
     void GetJavaScriptObjectMethodsV2(int32_t object_id, std::shared_ptr<OHOS::NWeb::NWebHapValue> result) override;
 
+    void GetJavaScriptResultV3(const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args,
+        const std::string& method, const std::string& object_name,
+        const OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo& call_info,
+        std::shared_ptr<OHOS::NWeb::NWebHapValue> result) override;
+
+    void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args,
+        const std::string& method, const std::string& object_name,
+        const OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo& call_info,
+        std::shared_ptr<OHOS::NWeb::NWebHapValue> result) override;
+
 private:
     ArkWebRefPtr<ArkWebJsResultCallback> ark_web_js_result_callback_;
 };

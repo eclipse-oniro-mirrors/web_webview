@@ -107,4 +107,42 @@ void ArkWebJsResultCallbackImpl::GetJavaScriptObjectMethodsV2(int32_t object_id,
     }
 }
 
+void ArkWebJsResultCallbackImpl::GetJavaScriptResultV3(const ArkWebHapValueVector& args, const ArkWebString& method,
+    const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+    ArkWebRefPtr<ArkWebHapValue> result)
+{
+    OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo nweb_call_info;
+    nweb_call_info.routing_id = call_info.routing_id;
+    nweb_call_info.frame_child_id = call_info.frame_child_id;
+    nweb_call_info.object_id = call_info.object_id;
+    nweb_call_info.fd = call_info.fd;
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        nweb_js_result_callback_->GetJavaScriptResultV3(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), nweb_call_info, nullptr);
+    } else {
+        nweb_js_result_callback_->GetJavaScriptResultV3(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), nweb_call_info,
+            std::make_shared<ArkWebHapValueWrapper>(result));
+    }
+}
+
+void ArkWebJsResultCallbackImpl::GetJavaScriptResultFlowbufV3(const ArkWebHapValueVector& args,
+    const ArkWebString& method, const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+    ArkWebRefPtr<ArkWebHapValue> result)
+{
+    OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo nweb_call_info;
+    nweb_call_info.routing_id = call_info.routing_id;
+    nweb_call_info.frame_child_id = call_info.frame_child_id;
+    nweb_call_info.object_id = call_info.object_id;
+    nweb_call_info.fd = call_info.fd;
+    if (CHECK_REF_PTR_IS_NULL(result)) {
+        nweb_js_result_callback_->GetJavaScriptResultFlowbufV3(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), nweb_call_info, nullptr);
+    } else {
+        nweb_js_result_callback_->GetJavaScriptResultFlowbufV3(ArkWebHapValueVectorStructToClass(args),
+            ArkWebStringStructToClass(method), ArkWebStringStructToClass(object_name), nweb_call_info,
+            std::make_shared<ArkWebHapValueWrapper>(result));
+    }
+}
+
 } // namespace OHOS::ArkWeb

@@ -18,6 +18,7 @@
 #pragma once
 
 #include "include/nweb_handler.h"
+#include "include/nweb_javascript_result_callback.h"
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
 
 namespace OHOS::ArkWeb {
@@ -25,6 +26,12 @@ namespace OHOS::ArkWeb {
 ArkWebDateTime ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime& class_value);
 
 OHOS::NWeb::DateTime ArkWebDateTimeStructToClass(const ArkWebDateTime& struct_value);
+
+ArkWebJsCallInfo ArkWebJsCallInfoClassToStruct(
+    const OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo& class_value);
+
+OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo ArkWebJsCallInfoStructToClass(
+    const ArkWebJsCallInfo& struct_value);
 
 } // namespace OHOS::ArkWeb
 

@@ -74,6 +74,14 @@ public:
 
     void GetJavaScriptObjectMethodsV2(int32_t object_id, ArkWebRefPtr<ArkWebHapValue> result) override;
 
+    void GetJavaScriptResultV3(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+        ArkWebRefPtr<ArkWebHapValue> result) override;
+
+    void GetJavaScriptResultFlowbufV3(const ArkWebHapValueVector& args, const ArkWebString& method,
+        const ArkWebString& object_name, const ArkWebJsCallInfo& call_info,
+        ArkWebRefPtr<ArkWebHapValue> result) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebJavaScriptResultCallBack> nweb_js_result_callback_;
 };
