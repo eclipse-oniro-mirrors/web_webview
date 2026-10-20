@@ -84,7 +84,7 @@ std::shared_ptr<Rosen::RSSurfaceNode> CreateSurfaceNode(
     if (surfaceNode) {
         surfaceNode->SetApiCompatibleVersion(API_COMPATIBLE_VERSION);
         surfaceNode->SetHardwareEnabled(true);
-        surfaceNode->SetFrameGravity(Gravity::TOP_LEFT);
+        surfaceNode->SetFrameGravity(Gravity::RESIZE);
         WVLOG_I("CreateSurfaceNode success. name: %{public}s", name);
         return surfaceNode;
     }
