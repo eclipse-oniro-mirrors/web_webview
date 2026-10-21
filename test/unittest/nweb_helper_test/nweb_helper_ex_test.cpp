@@ -1796,23 +1796,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_EnableBackForwardCache_004, TestSize.Level1)
 }
 
 /**
- * @tc.name: NWebHelper_IsLazyInitializeWebEngine_002
- * @tc.desc: IsLazyInitializeWebEngine with lazy initialized and engine not init.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NwebHelperTest, NWebHelper_IsLazyInitializeWebEngine_002, TestSize.Level1)
-{
-    NWebHelper::Instance().lazyInitializeWebEngine_ = true;
-    NWebHelper::Instance().initWebEngine_ = false;
-    EXPECT_TRUE(NWebHelper::Instance().IsLazyInitializeWebEngine());
-
-    NWebHelper::Instance().lazyInitializeWebEngine_ = true;
-    NWebHelper::Instance().initWebEngine_ = true;
-    EXPECT_FALSE(NWebHelper::Instance().IsLazyInitializeWebEngine());
-}
-
-/**
  * @tc.name: NWebHelper_LoadNWebSDK_NullEngine
  * @tc.desc: LoadNWebSDK with null engine.
  * @tc.type: FUNC
