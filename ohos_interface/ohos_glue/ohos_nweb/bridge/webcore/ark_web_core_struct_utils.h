@@ -27,12 +27,6 @@ ArkWebDateTime ArkWebDateTimeClassToStruct(const OHOS::NWeb::DateTime& class_val
 
 OHOS::NWeb::DateTime ArkWebDateTimeStructToClass(const ArkWebDateTime& struct_value);
 
-ArkWebJsCallInfo ArkWebJsCallInfoClassToStruct(
-    const OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo& class_value);
-
-OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo ArkWebJsCallInfoStructToClass(
-    const ArkWebJsCallInfo& struct_value);
-
 } // namespace OHOS::ArkWeb
 
 #endif // ARK_WEB_CORE_STRUCT_UTILS_H_
