@@ -16,6 +16,7 @@
 #ifndef LOCATION_CALLBACK_ADAPTER_IMPL_H
 #define LOCATION_CALLBACK_ADAPTER_IMPL_H
 
+#include <atomic>
 #include "i_locator_callback.h"
 #include "location_adapter.h"
 #include "location.h"
@@ -39,8 +40,11 @@ public:
         const std::unique_ptr<OHOS::Location::Location>& location) override;
     void OnLocatingStatusChange(const int status) override;
     void OnErrorReport(const int errorCode) override;
+    void MarkDetached();
+    bool IsDetached() const;
 private:
     std::shared_ptr<LocationCallbackAdapter> locationCallbackAdapter_;
+    std::atomic<bool> detached_ {false};
 };
 }
 
