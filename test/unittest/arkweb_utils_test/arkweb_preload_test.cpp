@@ -27,29 +27,35 @@
 #include "arkweb_utils.h"
 
 using namespace testing::ext;
+std::string g_dlnsCreatePath;
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 void *g_dlopenMockValue = reinterpret_cast<void *>(0x1);
+int g_dlopenMockCallCount = 0;
 
 void SetDlopenMockValue(void *mockValue)
 {
     g_dlopenMockValue = mockValue;
+    g_dlopenMockCallCount = 0;
 }
 
 void *DlopenMock(const char *filename, int flags)
 {
     (void)filename;
     (void)flags;
+    ++g_dlopenMockCallCount;
     return g_dlopenMockValue;
 }
 
 void *g_dlopenNsMockValue = reinterpret_cast<void *>(0x1);
+int g_dlopenNsMockCallCount = 0;
 
 void SetDlopenNsMockValue(void *mockValue)
 {
     g_dlopenNsMockValue = mockValue;
+    g_dlopenNsMockCallCount = 0;
 }
 
 void *DlopenNsMock(Dl_namespace *dlns, const char *libName, int flag)
@@ -57,6 +63,7 @@ void *DlopenNsMock(Dl_namespace *dlns, const char *libName, int flag)
     (void)dlns;
     (void)libName;
     (void)flag;
+    ++g_dlopenNsMockCallCount;
     return g_dlopenNsMockValue;
 }
 
@@ -85,7 +92,7 @@ void DlnsInitMock(Dl_namespace *dlns, const char *name)
 int DlnsCreateMock(Dl_namespace *dlns, const char *libPath)
 {
     (void)dlns;
-    (void)libPath;
+    g_dlnsCreatePath = libPath == nullptr ? "" : libPath;
     return 0;
 }
 
@@ -110,6 +117,33 @@ int DlnsInheritMock(Dl_namespace *dlns, Dl_namespace *inherited, const char *sha
 
 namespace OHOS::ArkWeb {
 
+bool g_reserveAddressSpaceResult = true;
+bool g_createRelroResult = true;
+void *g_loadWithRelroResult = reinterpret_cast<void *>(0x1);
+int g_reserveAddressSpaceCallCount = 0;
+int g_createRelroCallCount = 0;
+int g_loadWithRelroCallCount = 0;
+
+bool ReserveAddressSpaceForPreloadMock()
+{
+    ++g_reserveAddressSpaceCallCount;
+    return g_reserveAddressSpaceResult;
+}
+
+bool CreateRelroFileInSubProcAndWaitMock()
+{
+    ++g_createRelroCallCount;
+    return g_createRelroResult;
+}
+
+void *LoadWithRelroFileMock(const std::string& lib, Dl_namespace* dlns)
+{
+    (void)lib;
+    (void)dlns;
+    ++g_loadWithRelroCallCount;
+    return g_loadWithRelroResult;
+}
+
 class ArkWebPreloadCommonTest : public testing::Test {
 public:
     static void SetUpTestCase(void);
@@ -132,7 +166,18 @@ void ArkWebPreloadCommonTest::TearDownTestCase(void)
     OHOS::system::SetParameter("persist.arkwebcore.package_name", savedPackageName);
 }
 
-void ArkWebPreloadCommonTest::SetUp(void) {}
+void ArkWebPreloadCommonTest::SetUp(void)
+{
+    g_reserveAddressSpaceResult = true;
+    g_createRelroResult = true;
+    g_loadWithRelroResult = reinterpret_cast<void *>(0x1);
+    g_reserveAddressSpaceCallCount = 0;
+    g_createRelroCallCount = 0;
+    g_loadWithRelroCallCount = 0;
+    g_dlnsCreatePath.clear();
+    SetDlopenMockValue(reinterpret_cast<void *>(0x1));
+    SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
+}
 
 void ArkWebPreloadCommonTest::TearDown(void) {}
 
@@ -260,15 +305,31 @@ HWTEST_F(ArkWebPreloadCommonTest, GetRenderPreLoadMode_LargeRAM_Partial_001, Tes
 HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebLibForRender_NoPreload_001, TestSize.Level1)
 {
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebLibForRender(0));
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 0);
+    EXPECT_EQ(g_createRelroCallCount, 0);
+    EXPECT_EQ(g_loadWithRelroCallCount, 0);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 0);
 }
 
 /**
- * @brief PRELOAD_PARTIAL mode preloads only adapter glue lib
+ * @brief PRELOAD_PARTIAL mode preloads only libarkweb_engine.so
  */
 HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebLibForRender_PartialPreload_001, TestSize.Level1)
 {
+    OHOS::system::SetParameter("persist.arkwebcore.package_name", "com.ohos.arkwebcore");
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    setActiveWebEngineVersion(ArkWebEngineVersion::SYSTEM_DEFAULT);
+
     SetDlopenMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebLibForRender(1));
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
+    EXPECT_EQ(g_createRelroCallCount, 1);
+    EXPECT_EQ(g_loadWithRelroCallCount, 1);
+    EXPECT_EQ(g_dlopenMockCallCount, 0);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 0);
+
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
 
 /**
@@ -284,6 +345,11 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebLibForRender_FullPreload_001, Tes
     SetDlopenMockValue(reinterpret_cast<void *>(0x1));
     SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebLibForRender(2));
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
+    EXPECT_EQ(g_createRelroCallCount, 1);
+    EXPECT_EQ(g_loadWithRelroCallCount, 1);
+    EXPECT_EQ(g_dlopenMockCallCount, 1);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 0);
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
@@ -311,6 +377,11 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_ValidPath_001, TestSize
 
     SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
+    EXPECT_EQ(g_createRelroCallCount, 1);
+    EXPECT_EQ(g_loadWithRelroCallCount, 1);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 0);
+    EXPECT_EQ(g_dlnsCreatePath, GetArkwebBundleInstallLibPath() + ":" + GetArkwebLibPath());
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }
@@ -318,15 +389,53 @@ HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_ValidPath_001, TestSize
 /**
  * @brief Valid path with dlopen_ns returning nullptr
  */
-HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_DlopenFail_001, TestSize.Level1)
+HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_RelroFallback_001, TestSize.Level1)
 {
     OHOS::system::SetParameter("persist.arkwebcore.package_name", "com.ohos.arkwebcore");
     int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
     OHOS::system::SetParameter("web.engine.enforce", "0");
     setActiveWebEngineVersion(ArkWebEngineVersion::SYSTEM_DEFAULT);
 
-    SetDlopenNsMockValue(nullptr);
+    g_loadWithRelroResult = nullptr;
+    SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
     EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
+    EXPECT_EQ(g_createRelroCallCount, 1);
+    EXPECT_EQ(g_loadWithRelroCallCount, 1);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 1);
+
+    OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
+}
+
+/**
+ * @brief Reserve or producer failure falls back without invoking the RELRO consumer
+ */
+HWTEST_F(ArkWebPreloadCommonTest, PreloadArkWebEngineLib_PrepareFallback_001, TestSize.Level1)
+{
+    OHOS::system::SetParameter("persist.arkwebcore.package_name", "com.ohos.arkwebcore");
+    int webEngineEnforce = OHOS::system::GetIntParameter("web.engine.enforce", 0);
+    OHOS::system::SetParameter("web.engine.enforce", "0");
+    setActiveWebEngineVersion(ArkWebEngineVersion::SYSTEM_DEFAULT);
+
+    g_reserveAddressSpaceResult = false;
+    SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
+    EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
+    EXPECT_EQ(g_createRelroCallCount, 0);
+    EXPECT_EQ(g_loadWithRelroCallCount, 0);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 1);
+
+    g_reserveAddressSpaceResult = true;
+    g_createRelroResult = false;
+    g_reserveAddressSpaceCallCount = 0;
+    g_createRelroCallCount = 0;
+    g_loadWithRelroCallCount = 0;
+    SetDlopenNsMockValue(reinterpret_cast<void *>(0x1));
+    EXPECT_NO_FATAL_FAILURE(PreloadArkWebEngineLib());
+    EXPECT_EQ(g_reserveAddressSpaceCallCount, 1);
+    EXPECT_EQ(g_createRelroCallCount, 1);
+    EXPECT_EQ(g_loadWithRelroCallCount, 0);
+    EXPECT_EQ(g_dlopenNsMockCallCount, 1);
 
     OHOS::system::SetParameter("web.engine.enforce", std::to_string(webEngineEnforce));
 }

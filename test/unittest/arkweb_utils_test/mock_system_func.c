@@ -14,6 +14,8 @@
  */
 #include "mock_system_func.h"
 
+#include <errno.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -92,6 +94,71 @@ void SetForkMockValue(pid_t mockValue)
 pid_t ForkMock()
 {
     return g_forkMockValue;
+}
+
+pid_t g_waitpidMockValue = -1;
+int g_waitpidStatusValue = 0;
+int g_waitpidErrorValue = ECHILD;
+int g_waitpidEintrCount = 0;
+int g_waitpidMockOptions = 0;
+int g_waitpidMockCallCount = 0;
+
+void SetWaitpidMockValue(pid_t mockValue, int statusValue, int errorValue)
+{
+    g_waitpidMockValue = mockValue;
+    g_waitpidStatusValue = statusValue;
+    g_waitpidErrorValue = errorValue;
+    g_waitpidEintrCount = 0;
+    g_waitpidMockOptions = 0;
+    g_waitpidMockCallCount = 0;
+}
+
+void SetWaitpidEintrCount(int eintrCount)
+{
+    g_waitpidEintrCount = eintrCount;
+}
+
+pid_t WaitpidMock(pid_t pid, int *status, int options)
+{
+    UNUSED(pid);
+    ++g_waitpidMockCallCount;
+    g_waitpidMockOptions = options;
+    if (status != NULL) {
+        *status = g_waitpidStatusValue;
+    }
+    if (g_waitpidEintrCount > 0) {
+        --g_waitpidEintrCount;
+        errno = EINTR;
+        return -1;
+    }
+    if (g_waitpidMockValue < 0) {
+        errno = g_waitpidErrorValue;
+    }
+    return g_waitpidMockValue;
+}
+
+int GetWaitpidMockOptions(void)
+{
+    return g_waitpidMockOptions;
+}
+
+int GetWaitpidMockCallCount(void)
+{
+    return g_waitpidMockCallCount;
+}
+
+void FdsanExchangeOwnerTagMock(int fd, uint64_t expectedTag, uint64_t newTag)
+{
+    UNUSED(fd);
+    UNUSED(expectedTag);
+    UNUSED(newTag);
+}
+
+int FdsanCloseWithTagMock(int fd, uint64_t tag)
+{
+    UNUSED(fd);
+    UNUSED(tag);
+    return 0;
 }
 
 int g_prctlMockValue = 0;

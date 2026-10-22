@@ -147,6 +147,8 @@ ARKWEB_EXPORT int DlcloseArkWebLib();
 #if !defined(CROSS_PLATFORM) // Share relro is disabled in cross platform.
 ARKWEB_EXPORT bool ReserveAddressSpace();
 ARKWEB_EXPORT void CreateRelroFileInSubProc();
+ARKWEB_EXPORT bool ReserveAddressSpaceForPreload();
+ARKWEB_EXPORT bool CreateRelroFileInSubProcAndWait();
 ARKWEB_EXPORT void* LoadWithRelroFile(const std::string& lib, Dl_namespace* dlns);
 #endif
 ARKWEB_EXPORT void CreateArkWebSandboxPathIfNeed();
