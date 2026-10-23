@@ -253,9 +253,12 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_005, TestS
 HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_006, TestSize.Level1)
 {
     sptr<Display> display = DisplayManager::GetInstance().GetDefaultDisplay();
+    ASSERT_NE(display, nullptr);
     ScreenId defaultScreenId = display->GetScreenId();
     auto defaultScreen = ScreenManager::GetInstance().GetScreenById(defaultScreenId);
-    defaultScreen->SetOrientation(Orientation::REVERSE_HORIZONTAL);
+    if (defaultScreen != nullptr) {
+        defaultScreen->SetOrientation(Orientation::REVERSE_HORIZONTAL);
+    }
     std::unique_ptr<DisplayAdapterImpl> displayAdapterImpl = std::make_unique<DisplayAdapterImpl>(display);
     EXPECT_NE(displayAdapterImpl, nullptr);
     EXPECT_NE(displayAdapterImpl->GetId(), static_cast<DisplayId>(-1));
