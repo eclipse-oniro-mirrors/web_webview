@@ -33,6 +33,9 @@ namespace OHOS {
 namespace {
     DMError g_unregister = DMError::DM_ERROR_NULLPTR;
     constexpr uint64_t DISPLAY_ID_INVALID = -1ULL;
+    constexpr uint64_t TEST_BUILTIN_DISPLAY_ID_DEFAULT = 0;
+    constexpr uint64_t TEST_BUILTIN_DISPLAY_ID_OUTER = 5;
+    constexpr uint64_t TEST_BUILTIN_DISPLAY_ID_FOLDED_BOTTOM = 999;
 }
 
 namespace Rosen {
@@ -838,7 +841,8 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_031, TestS
 
 /**
  * @tc.name: DisplayManagerAdapterImplTest_032.
- * @tc.desc: test IsSinglePhysicalDisplayForFold returns false when fold status is not HALF_FOLD.
+ * @tc.desc: test IsSinglePhysicalDisplayForFold returns false when an external screen
+ *           (id not in default/outer/folded-bottom) exists, true otherwise.
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -848,8 +852,20 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_032, TestS
         std::make_shared<DisplayManagerAdapterImpl>();
     ASSERT_NE(displayManagerAdapterImpl, nullptr);
     bool result = displayManagerAdapterImpl->IsSinglePhysicalDisplayForFold();
-    OHOS::Rosen::FoldStatus foldStatus = DisplayManager::GetInstance().GetFoldStatus();
-    if (foldStatus != OHOS::Rosen::FoldStatus::HALF_FOLD) {
+    bool hasExternalScreen = false;
+    std::vector<sptr<OHOS::Rosen::Display>> displays = DisplayManager::GetInstance().GetAllDisplays();
+    for (auto& display : displays) {
+        if (display) {
+            auto displayId = display->GetId();
+            if (displayId != TEST_BUILTIN_DISPLAY_ID_DEFAULT &&
+                displayId != TEST_BUILTIN_DISPLAY_ID_OUTER &&
+                displayId != TEST_BUILTIN_DISPLAY_ID_FOLDED_BOTTOM) {
+                hasExternalScreen = true;
+                break;
+            }
+        }
+    }
+    if (hasExternalScreen) {
         EXPECT_FALSE(result);
     } else {
         EXPECT_TRUE(result);
@@ -858,7 +874,8 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_032, TestS
 
 /**
  * @tc.name: DisplayManagerAdapterImplTest_033.
- * @tc.desc: test IsSinglePhysicalDisplayForFold can be called without crash and returns a valid bool.
+ * @tc.desc: test IsSinglePhysicalDisplayForFold no longer depends on fold status:
+ *           with only built-in screens the result is true whatever the fold status is.
  * @tc.type: FUNC
  * @tc.require:
  */
@@ -868,24 +885,45 @@ HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_033, TestS
         std::make_shared<DisplayManagerAdapterImpl>();
     ASSERT_NE(displayManagerAdapterImpl, nullptr);
     bool result = displayManagerAdapterImpl->IsSinglePhysicalDisplayForFold();
-    OHOS::Rosen::FoldStatus foldStatus = DisplayManager::GetInstance().GetFoldStatus();
-    if (foldStatus == OHOS::Rosen::FoldStatus::HALF_FOLD) {
-        std::vector<sptr<OHOS::Rosen::Display>> displays = DisplayManager::GetInstance().GetAllDisplays();
-        bool foundSpecificDisplay = false;
-        for (auto& display : displays) {
-            if (display && display->GetId() == 999) {
-                foundSpecificDisplay = true;
+    bool hasExternalScreen = false;
+    std::vector<sptr<OHOS::Rosen::Display>> displays = DisplayManager::GetInstance().GetAllDisplays();
+    for (auto& display : displays) {
+        if (display) {
+            auto displayId = display->GetId();
+            if (displayId != TEST_BUILTIN_DISPLAY_ID_DEFAULT &&
+                displayId != TEST_BUILTIN_DISPLAY_ID_OUTER &&
+                displayId != TEST_BUILTIN_DISPLAY_ID_FOLDED_BOTTOM) {
+                hasExternalScreen = true;
                 break;
             }
         }
-        if (foundSpecificDisplay) {
-            EXPECT_TRUE(result);
-        } else {
-            EXPECT_FALSE(result);
-        }
+    }
+    if (!hasExternalScreen) {
+        // Old implementation returned false unless fold status was HALF_FOLD;
+        // new implementation returns true as long as no external screen exists.
+        EXPECT_TRUE(result);
     } else {
         EXPECT_FALSE(result);
     }
+}
+
+/**
+ * @tc.name: DisplayManagerAdapterImplTest_034.
+ * @tc.desc: test IsSinglePhysicalDisplayForFold is stable across instances and calls.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(DisplayManagerAdapterImplTest, DisplayManagerAdapterImplTest_034, TestSize.Level1)
+{
+    std::shared_ptr<DisplayManagerAdapterImpl> displayManagerAdapterImpl =
+        std::make_shared<DisplayManagerAdapterImpl>();
+    std::shared_ptr<DisplayManagerAdapterImpl> displayManagerAdapterImpl2 =
+        std::make_shared<DisplayManagerAdapterImpl>();
+    ASSERT_NE(displayManagerAdapterImpl, nullptr);
+    ASSERT_NE(displayManagerAdapterImpl2, nullptr);
+    bool result = displayManagerAdapterImpl->IsSinglePhysicalDisplayForFold();
+    EXPECT_EQ(displayManagerAdapterImpl->IsSinglePhysicalDisplayForFold(), result);
+    EXPECT_EQ(displayManagerAdapterImpl2->IsSinglePhysicalDisplayForFold(), result);
 }
 }
 }
