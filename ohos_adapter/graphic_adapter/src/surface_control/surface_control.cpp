@@ -260,15 +260,27 @@ void SurfaceControl::SetParent(SurfaceControl* newParent)
 void SurfaceControl::SetVisibility(bool visibility)
 {
     CHECK_NULL_POINTER(surfaceNode_);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], visibility=%d",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), visibility);
     surfaceNode_->SetVisible(visibility);
 }
 
 void SurfaceControl::SetZOrder(int32_t zOrder)
 {
     CHECK_NULL_POINTER(surfaceNode_);
-    if (auto parent = surfaceNode_->GetParent()) {
-        parent->MoveChild(surfaceNode_, zOrder);
+    auto parent = surfaceNode_->GetParent();
+    if (parent == nullptr) {
+        WVLOG_E("DelegateTag parent is nullptr, set zOrder failed");
+        return;
     }
+    if (zOrder_ == zOrder) {
+        return;
+    }
+    WVLOG_I("DelegateTag update zOrder: %{public}d", zOrder);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], zOrder=%d",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), zOrder);
+    zOrder_ = zOrder;
+    parent->MoveChild(surfaceNode_, zOrder);
 }
 
 void SurfaceControl::SetBuffer(sptr<SurfaceBuffer> buffer, UniqueFd fenceFd, const BufferReleaseCallback& callback)
@@ -317,12 +329,16 @@ void SurfaceControl::SetBounds(float x, float y, float w, float h)
 void SurfaceControl::SetPivot(float x, float y)
 {
     CHECK_NULL_POINTER(surfaceNode_);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], pivot=[x:%.2f, y:%.2f]",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), x, y);
     surfaceNode_->SetPivot(x, y);
 }
 
 void SurfaceControl::SetBufferTransform(GraphicTransformType transform)
 {
     CHECK_NULL_POINTER(surfaceNode_);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], transform=%d",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), static_cast<int32_t>(transform));
     surfaceNode_->SetBufferTransform(transform);
 }
 
@@ -339,6 +355,8 @@ void SurfaceControl::SetBufferAlpha(float alpha)
         WVLOG_E("Invalid alpha: %.2f", alpha);
         return;
     }
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], alpha=%.2f",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), alpha);
     surfaceNode_->SetAlpha(alpha);
 }
 
@@ -359,6 +377,8 @@ void SurfaceControl::SetName(std::string name)
 void SurfaceControl::SetHardwareEnableHint(bool enable)
 {
     CHECK_NULL_POINTER(surfaceNode_);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], enable=%d",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), enable);
     surfaceNode_->SetHardwareEnableHint(enable);
 }
 
@@ -371,6 +391,8 @@ void SurfaceControl::ClearBufferQueueCache(bool cleanAll)
 {
     WVLOG_I("SurfaceControl::ClearBufferQueueCache: %{public}d", cleanAll);
     CHECK_NULL_POINTER(surfaceNode_);
+    RS_TRACE_NAME_FMT("SurfaceControl:%s, node:[name: %s, id: %" PRIu64 "], cleanAll=%d",
+        __func__, surfaceNode_->GetName().c_str(), surfaceNode_->GetId(), cleanAll);
     surfaceNode_->CleanBuffer(cleanAll);
 }
 
