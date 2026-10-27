@@ -75,12 +75,12 @@ public:
 
     void GetJavaScriptResultV3(const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args,
         const std::string& method, const std::string& object_name,
-        const OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo& call_info,
+        std::shared_ptr<OHOS::NWeb::NWebJsCallInfo> call_info,
         std::shared_ptr<OHOS::NWeb::NWebHapValue> result) override;
 
     void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args,
         const std::string& method, const std::string& object_name,
-        const OHOS::NWeb::NWebJavaScriptResultCallBack::JsCallInfo& call_info,
+        std::shared_ptr<OHOS::NWeb::NWebJsCallInfo> call_info,
         std::shared_ptr<OHOS::NWeb::NWebHapValue> result) override;
 
 private:

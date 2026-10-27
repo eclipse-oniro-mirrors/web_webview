@@ -3490,38 +3490,46 @@ void WebviewJavaScriptResultCallBack::GetJavaScriptObjectMethodsV2(
 
 void WebviewJavaScriptResultCallBack::GetJavaScriptResultV3(
     const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method,
-    const std::string& objectName, const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+    const std::string& objectName, std::shared_ptr<NWebJsCallInfo> callInfo,
     std::shared_ptr<NWebHapValue> result)
 {
     (void)objectName; // to be compatible with older webcontroller, classname may be empty
+    if (!callInfo) {
+        return;
+    }
+
+    int32_t objectId = callInfo->GetObjectId();
+    int32_t routingId = callInfo->GetRoutingId();
+    int32_t frameChildId = callInfo->GetFrameChildId();
+
     WVLOG_D("GetJavaScriptResultV3 method = %{public}s, routingId = %{public}d, "
             "frameChildId = %{public}d, objectId = %{public}d",
-        method.c_str(), callInfo.routing_id, callInfo.frame_child_id, callInfo.object_id);
+        method.c_str(), routingId, frameChildId, objectId);
 
-    std::shared_ptr<JavaScriptOb> jsObj = FindObject(callInfo.object_id);
+    std::shared_ptr<JavaScriptOb> jsObj = FindObject(objectId);
     if (!jsObj || !jsObj->AniHasMethod(method)) {
         WVLOG_E("get javaScript result V3, jsobj null");
         return;
     }
 
     ani_env* env = jsObj->GetAniEnv();
-    FrameInfo frame{GetNWebId(), callInfo.routing_id, callInfo.frame_child_id};
+    FrameInfo frame{GetNWebId(), routingId, frameChildId};
     std::vector<ani_object> argv = {};
     for (auto& input : args) {
-        argv.push_back(ParseNwebValue2AniValueV2(env, input, GetObjectMap(), frame, callInfo.object_id));
+        argv.push_back(ParseNwebValue2AniValueV2(env, input, GetObjectMap(), frame, objectId));
     }
-    ExecGetJavaScriptResult(argv, method, callInfo.routing_id, callInfo.object_id, result);
+    ExecGetJavaScriptResult(argv, method, routingId, objectId, result);
 }
 
 void WebviewJavaScriptResultCallBack::GetJavaScriptResultFlowbufV3(
     const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method,
-    const std::string& objectName, const NWebJavaScriptResultCallBack::JsCallInfo& callInfo,
+    const std::string& objectName, std::shared_ptr<NWebJsCallInfo> callInfo,
     std::shared_ptr<NWebHapValue> result)
 {
     // Flowbuf optimization not yet implemented for ANI. Close fd to prevent leak,
     // engine will fall back to GetJavaScriptResultV3.
-    if (callInfo.fd >= 0) {
-        close(callInfo.fd);
+    if (callInfo && callInfo->GetFd() >= 0) {
+        close(callInfo->GetFd());
     }
 }
 

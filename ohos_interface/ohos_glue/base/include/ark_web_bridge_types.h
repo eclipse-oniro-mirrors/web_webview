@@ -146,6 +146,7 @@ enum ArkWebBridgeType {
     ARK_WEB_COMMAND_ACTION_MANAGER = 122,
     ARK_WEB_AUTO_FILL_ITEM = 123,
     ARK_WEB_CONTEXT_MENU_OPTIONS = 124,
+    ARK_WEB_JS_CALL_INFO = 125,
     /*Note: The end of nweb interface bridge type*/
     ARK_WEB_NWEB_INTERFACE_BUTT,
 

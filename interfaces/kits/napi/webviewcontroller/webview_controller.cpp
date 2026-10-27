@@ -1000,15 +1000,18 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
+        WVLOG_E("SetNWebJavaScriptResultCallBack: nweb_ptr is null, nwebId=%{public}d", nwebId_);
         return;
     }
 
     if (javaScriptResultCb_ && (javaScriptResultCb_->GetNWebId() == nwebId_)) {
+        WVLOG_I("SetNWebJavaScriptResultCallBack: callback already set, nwebId=%{public}d", nwebId_);
         return;
     }
 
     javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nwebId_);
     nweb_ptr->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
+    WVLOG_I("SetNWebJavaScriptResultCallBack: registered callback, nwebId=%{public}d", nwebId_);
 }
 
 void WebviewController::RegisterJavaScriptProxy(RegisterJavaScriptProxyParam& param)
