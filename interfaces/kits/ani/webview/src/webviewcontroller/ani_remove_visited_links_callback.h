@@ -27,8 +27,7 @@ namespace NWeb {
 
 class AniRemoveVisitedLinksCallback : public NWebRemoveVisitedLinksCallback {
 public:
-    AniRemoveVisitedLinksCallback(ani_env* env, ani_resolver resolver)
-        : env_(env), resolver_(resolver) {}
+    AniRemoveVisitedLinksCallback(ani_env* env, ani_resolver resolver);
     ~AniRemoveVisitedLinksCallback() = default;
 
     void OnRemoveComplete() override;

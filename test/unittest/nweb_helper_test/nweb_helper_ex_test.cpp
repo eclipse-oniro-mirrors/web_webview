@@ -32,6 +32,7 @@
 #include "application_context.h"
 #include "arkweb_utils.h"
 #include "scene_board_judgement.h"
+#include "nweb_remove_visited_links_callback.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -1993,5 +1994,62 @@ HWTEST_F(NwebHelperTest, NWebHelper_CreateNWeb_Success_001, TestSize.Level1)
     NWebHelper::Instance().nwebEngine_ = savedEngine;
     NWebHelper::Instance().initWebEngine_ = false;
 }
+
+// Test callback implementation for RemoveVisitedLinksSince.
+class NWebRemoveVisitedLinksCallbackTestImpl : public NWebRemoveVisitedLinksCallback {
+public:
+    NWebRemoveVisitedLinksCallbackTestImpl() = default;
+    ~NWebRemoveVisitedLinksCallbackTestImpl() override = default;
+    void OnRemoveComplete() override { completed_ = true; }
+    bool IsCompleted() const { return completed_; }
+private:
+    bool completed_ = false;
+};
+
+class NWebHelperRemoveVisitedLinksTest : public testing::Test {
+public:
+    static void SetUpTestCase(void) {}
+    static void TearDownTestCase(void) {}
+    void SetUp() {}
+    void TearDown() {}
+};
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_Callback_001
+ * @tc.desc: RemoveVisitedLinksSince with valid callback should invoke OnRemoveComplete.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_Callback_001, TestSize.Level1)
+{
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().RemoveVisitedLinksSince(0, callback);
+    EXPECT_TRUE(callback->IsCompleted());
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_NullCallback_002
+ * @tc.desc: RemoveVisitedLinksSince with null callback should not crash.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_NullCallback_002, TestSize.Level1)
+{
+    NWebHelper::Instance().RemoveVisitedLinksSince(0, nullptr);
+    SUCCEED();
+}
+
+/**
+ * @tc.name: NWebHelperRemoveVisitedLinksTest_ValidTimeMs_003
+ * @tc.desc: RemoveVisitedLinksSince with valid timestamp should invoke callback.
+ * @tc.type: FUNC
+ */
+HWTEST_F(NWebHelperRemoveVisitedLinksTest, NWebHelperRemoveVisitedLinksTest_ValidTimeMs_003, TestSize.Level1)
+{
+    auto callback = std::make_shared<NWebRemoveVisitedLinksCallbackTestImpl>();
+    ASSERT_NE(callback, nullptr);
+    NWebHelper::Instance().RemoveVisitedLinksSince(1000, callback);
+    EXPECT_TRUE(callback->IsCompleted());
+}
+
 } // namespace OHOS::NWeb
 }

@@ -1905,6 +1905,7 @@ static void RemoveAllCache(ani_env *env, ani_object object, ani_boolean clearRom
     return;
 }
 
+
 static ani_object RemoveVisitedLinksSincePromise(ani_env *env, ani_object object, ani_double timeMs)
 {
     if (!env) {
@@ -8062,7 +8063,7 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "prepareForPageLoad", nullptr, reinterpret_cast<void *>(PrepareForPageLoad) },
         ani_native_function { "getDefaultUserAgent", nullptr, reinterpret_cast<void *>(GetDefaultUserAgent) },
         ani_native_function { "removeAllCache", nullptr, reinterpret_cast<void *>(RemoveAllCache) },
-        ani_native_function { "removeVisitedLinksSincePromise", "(D):Lstd/core/Promise;",
+        ani_native_function { "removeVisitedLinksSincePromise", nullptr,
                               reinterpret_cast<void *>(RemoveVisitedLinksSincePromise) },
         ani_native_function { "setServiceWorkerWebSchemeHandler", nullptr,
                               reinterpret_cast<void *>(SetServiceWorkerWebSchemeHandler) },

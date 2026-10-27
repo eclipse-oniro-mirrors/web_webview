@@ -20,27 +20,12 @@
 
 namespace OHOS {
 namespace NWeb {
-
 namespace {
-
-const std::string VISITED_LINKS_CALLBACK_TASK_ID = "removeVisitedLinksSince";
-
-void ResolveOnMainThread(ani_env* env, ani_resolver resolver)
-{
-    if (!env) {
-        return;
-    }
-    ani_ref resultRef = nullptr;
-    if (env->GetUndefined(&resultRef) != ANI_OK) {
-        WVLOG_E("GetUndefined failed");
-        return;
-    }
-    if (env->PromiseResolver_Resolve(resolver, resultRef) != ANI_OK) {
-        WVLOG_E("PromiseResolver_Resolve failed");
-    }
-}
-
+const std::string REMOVE_VISITED_LINKS_TASK_ID = "removeVisitedLinksSince";
 } // namespace
+
+AniRemoveVisitedLinksCallback::AniRemoveVisitedLinksCallback(ani_env* env, ani_resolver resolver)
+    : env_(env), resolver_(resolver) {}
 
 void AniRemoveVisitedLinksCallback::OnRemoveComplete()
 {
@@ -48,9 +33,6 @@ void AniRemoveVisitedLinksCallback::OnRemoveComplete()
         WVLOG_E("env is nullptr");
         return;
     }
-    // Marshal to the main event loop thread; calling PromiseResolver_Resolve
-    // from a non-main thread risks crashing the ANI VM (same pattern as
-    // NWebConfigCookieCallbackImpl in ani_web_cookie_manager.cpp).
     auto runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
     if (!runner) {
         WVLOG_E("get main event runner failed");
@@ -63,10 +45,17 @@ void AniRemoveVisitedLinksCallback::OnRemoveComplete()
     }
     ani_env* env = env_;
     ani_resolver resolver = resolver_;
-    auto task = [env, resolver]() { ResolveOnMainThread(env, resolver); };
-    bool posted = handler->PostTask(std::move(task), VISITED_LINKS_CALLBACK_TASK_ID, 0,
-        OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
-    if (!posted) {
+    auto task = [env, resolver]() {
+        ani_ref resultRef = nullptr;
+        if (env->GetUndefined(&resultRef) != ANI_OK) {
+            return;
+        }
+        if (env->PromiseResolver_Resolve(resolver, resultRef) != ANI_OK) {
+            WVLOG_E("PromiseResolver_Resolve failed");
+        }
+    };
+    if (!handler->PostTask(std::move(task), REMOVE_VISITED_LINKS_TASK_ID, 0,
+        OHOS::AppExecFwk::EventQueue::Priority::HIGH, {})) {
         WVLOG_E("PostTask failed for removeVisitedLinksSince callback");
     }
 }
