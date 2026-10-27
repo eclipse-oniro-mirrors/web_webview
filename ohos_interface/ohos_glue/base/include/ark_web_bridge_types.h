@@ -309,6 +309,7 @@ enum ArkWebBridgeType {
     ARK_MEDIA_SOURCE_DATA_HANDLER = 10154,
     ARK_VPE_VIDEO_ADAPTER = 10155,
     ARK_HI_VIEW_DFX_ADAPTER = 10156,
+    ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK = 10157,
     /*Note: The end of adapter interface bridge type*/
     ARK_WEB_ADAPTER_INTERFACE_BUTT,
 };

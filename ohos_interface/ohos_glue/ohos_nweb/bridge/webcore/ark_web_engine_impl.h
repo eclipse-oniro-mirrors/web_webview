@@ -142,6 +142,13 @@ public:
 
     void DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw) override;
 
+    /**
+     * @brief Remove the visited link records of the current application that
+     *        changed at or after the specified time point (inclusive).
+     */
+    void RemoveVisitedLinksSince(int64_t time_ms,
+                                 ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngine> nweb_engine_;
 };

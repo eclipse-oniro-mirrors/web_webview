@@ -771,6 +771,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("hasImage", NapiWebviewController::HasImage),
         DECLARE_NAPI_FUNCTION("removeCache", NapiWebviewController::RemoveCache),
         DECLARE_NAPI_STATIC_FUNCTION("removeAllCache", NapiWebviewController::RemoveAllCache),
+        DECLARE_NAPI_STATIC_FUNCTION("removeVisitedLinksSince", NapiWebviewController::RemoveVisitedLinksSince),
         DECLARE_NAPI_FUNCTION("getFavicon", NapiWebviewController::GetFavicon),
         DECLARE_NAPI_FUNCTION("getBackForwardEntries", NapiWebviewController::getBackForwardEntries),
         DECLARE_NAPI_FUNCTION("serializeWebState", NapiWebviewController::SerializeWebState),
@@ -7484,6 +7485,133 @@ napi_value NapiWebviewController::RemoveAllCache(napi_env env, napi_callback_inf
     NWebHelper::Instance().RemoveAllCache(includeDiskFiles);
     NAPI_CALL(env, napi_get_undefined(env, &result));
     return result;
+}
+
+napi_value NapiWebviewController::RemoveVisitedLinksSince(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("RemoveVisitedLinksSince start");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+    napi_get_undefined(env, &result);
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE && argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "one", "two"));
+        return result;
+    }
+
+    double dateValue = 0.0;
+    if (napi_get_date_value(env, argv[0], &dateValue) != napi_ok) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "date", "Date"));
+        return result;
+    }
+    int64_t timeMs = static_cast<int64_t>(dateValue);
+
+    if (!NWebHelper::Instance().HasLoadWebEngine()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    if (argc == INTEGER_TWO) {
+        napi_valuetype callbackType = napi_null;
+        napi_typeof(env, argv[INTEGER_ONE], &callbackType);
+        if (callbackType != napi_function) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "callback", "function"));
+            return result;
+        }
+        napi_ref jsCallback = nullptr;
+        napi_create_reference(env, argv[INTEGER_ONE], INTEGER_ONE, &jsCallback);
+        if (jsCallback) {
+            auto callbackImpl = std::make_shared<NWebRemoveVisitedLinksCallbackImpl>(env, jsCallback, nullptr);
+            NWebHelper::Instance().RemoveVisitedLinksSince(timeMs, callbackImpl);
+        }
+        return result;
+    }
+
+    napi_deferred deferred = nullptr;
+    napi_value promise = nullptr;
+    napi_create_promise(env, &deferred, &promise);
+    if (promise && deferred) {
+        auto callbackImpl = std::make_shared<NWebRemoveVisitedLinksCallbackImpl>(env, nullptr, deferred);
+        NWebHelper::Instance().RemoveVisitedLinksSince(timeMs, callbackImpl);
+    }
+    return promise;
+}
+
+void NWebRemoveVisitedLinksCallbackImpl::OnRemoveComplete()
+{
+    WVLOG_D("NWebRemoveVisitedLinksCallbackImpl OnRemoveComplete");
+    uv_loop_s *loop = nullptr;
+    uv_work_t *work = nullptr;
+    napi_get_uv_event_loop(env_, &loop);
+    if (loop == nullptr) {
+        WVLOG_E("NWebRemoveVisitedLinksCallbackImpl get uv event loop failed");
+        return;
+    }
+    work = new (std::nothrow) uv_work_t;
+    if (work == nullptr) {
+        WVLOG_E("NWebRemoveVisitedLinksCallbackImpl new uv work failed");
+        return;
+    }
+    RemoveVisitedLinksParam *param = new (std::nothrow) RemoveVisitedLinksParam();
+    if (param == nullptr) {
+        WVLOG_E("NWebRemoveVisitedLinksCallbackImpl new param failed");
+        delete work;
+        return;
+    }
+    param->env_ = env_;
+    param->callback_ = callback_;
+    param->deferred_ = deferred_;
+    work->data = reinterpret_cast<void *>(param);
+    int ret = uv_queue_work(loop, work, [](uv_work_t *work) {},
+        NWebRemoveVisitedLinksCallbackImpl::UvJsCallbackThreadWoker);
+    if (ret != 0) {
+        WVLOG_E("NWebRemoveVisitedLinksCallbackImpl uv queue work failed");
+        delete param;
+        delete work;
+    }
+}
+
+void NWebRemoveVisitedLinksCallbackImpl::UvJsCallbackThreadWoker(uv_work_t *work, int status)
+{
+    if (work == nullptr) {
+        return;
+    }
+    RemoveVisitedLinksParam *param = reinterpret_cast<RemoveVisitedLinksParam *>(work->data);
+    if (param == nullptr) {
+        delete work;
+        return;
+    }
+    napi_handle_scope scope = nullptr;
+    napi_open_handle_scope(param->env_, &scope);
+    if (scope == nullptr) {
+        delete param;
+        delete work;
+        return;
+    }
+    if (param->callback_ != nullptr) {
+        napi_value jsCallback = nullptr;
+        napi_get_reference_value(param->env_, param->callback_, &jsCallback);
+        if (jsCallback) {
+            napi_value undefined = nullptr;
+            napi_get_undefined(param->env_, &undefined);
+            napi_value callResult = nullptr;
+            napi_call_function(param->env_, undefined, jsCallback, INTEGER_ZERO, &undefined, &callResult);
+        }
+        napi_delete_reference(param->env_, param->callback_);
+    }
+    if (param->deferred_ != nullptr) {
+        napi_value undefined = nullptr;
+        napi_get_undefined(param->env_, &undefined);
+        napi_resolve_deferred(param->env_, param->deferred_, undefined);
+    }
+    napi_close_handle_scope(param->env_, scope);
+    delete param;
+    delete work;
 }
 
 napi_value NapiWebviewController::GetLastHitTest(napi_env env, napi_callback_info info)

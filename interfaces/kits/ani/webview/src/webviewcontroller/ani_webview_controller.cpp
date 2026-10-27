@@ -68,6 +68,7 @@
 #include "nweb_precompile_callback.h"
 #include "nweb_cache_options_impl.h"
 #include "ani_nweb_value_callback_impl.h"
+#include "ani_remove_visited_links_callback.h"
 #include "nweb_store_web_archive_callback.h"
 #include "nweb_user_agent_brand_version_impl.h"
 #include "nweb_user_agent_metadata_impl.h"
@@ -1902,6 +1903,31 @@ static void RemoveAllCache(ani_env *env, ani_object object, ani_boolean clearRom
 
     NWebHelper::Instance().RemoveAllCache(static_cast<bool>(clearRom));
     return;
+}
+
+static ani_object RemoveVisitedLinksSincePromise(ani_env *env, ani_object object, ani_double timeMs)
+{
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return nullptr;
+    }
+
+    if (!NWebHelper::Instance().HasLoadWebEngine()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    ani_resolver resolver {};
+    ani_object promise {};
+    ani_status status = env->Promise_New(&resolver, &promise);
+    if (status != ANI_OK) {
+        WVLOG_E("promise_new failed");
+        return nullptr;
+    }
+
+    auto callbackImpl = std::make_shared<AniRemoveVisitedLinksCallback>(env, resolver);
+    NWebHelper::Instance().RemoveVisitedLinksSince(static_cast<int64_t>(timeMs), callbackImpl);
+    return promise;
 }
 
 static void PostUrl(ani_env *env, ani_object object, ani_object urlObj, ani_object arrayBufferObj)
@@ -8036,6 +8062,8 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "prepareForPageLoad", nullptr, reinterpret_cast<void *>(PrepareForPageLoad) },
         ani_native_function { "getDefaultUserAgent", nullptr, reinterpret_cast<void *>(GetDefaultUserAgent) },
         ani_native_function { "removeAllCache", nullptr, reinterpret_cast<void *>(RemoveAllCache) },
+        ani_native_function { "removeVisitedLinksSincePromise", "(D):Lstd/core/Promise;",
+                              reinterpret_cast<void *>(RemoveVisitedLinksSincePromise) },
         ani_native_function { "setServiceWorkerWebSchemeHandler", nullptr,
                               reinterpret_cast<void *>(SetServiceWorkerWebSchemeHandler) },
         ani_native_function { "setRenderProcessMode", nullptr, reinterpret_cast<void *>(SetRenderProcessMode) },

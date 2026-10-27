@@ -105,6 +105,8 @@ ohos_shared_library("webview_ani") {
     "./src/webviewcontroller/ani_webview_blankless_callback.h",
     "./src/webviewcontroller/ani_webview_controller.cpp",
     "./src/webviewcontroller/ani_webview_controller.h",
+    "./src/webviewcontroller/ani_remove_visited_links_callback.cpp",
+    "./src/webviewcontroller/ani_remove_visited_links_callback.h",
     "./src/webviewcontroller/ani_webview_createpdf_execute_callback.cpp",
     "./src/webviewcontroller/prefetch_options.cpp",
     "./src/webviewcontroller/prefetch_options.h",

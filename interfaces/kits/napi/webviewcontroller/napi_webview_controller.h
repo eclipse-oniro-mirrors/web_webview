@@ -24,11 +24,13 @@
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "uv.h"
+
 #ifdef WEBVIEW_UNIT_TEST
 #include "test_mock_webview_controller.h"
 #else
 #include "webview_controller.h"
 #endif
+#include "nweb_remove_visited_links_callback.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -416,6 +418,8 @@ private:
 
     static napi_value RemoveAllCache(napi_env env, napi_callback_info info);
 
+    static napi_value RemoveVisitedLinksSince(napi_env env, napi_callback_info info);
+
     static napi_value GetBlanklessInfoWithKey(napi_env env, napi_callback_info info);
 
     static napi_value SetBlanklessLoadingWithKey(napi_env env, napi_callback_info info);
@@ -563,6 +567,28 @@ public:
     static napi_value OnStartLayoutWrite(napi_env env, napi_callback_info info);
 
     static napi_value OnJobStateChanged(napi_env env, napi_callback_info info);
+};
+
+class NWebRemoveVisitedLinksCallbackImpl : public NWebRemoveVisitedLinksCallback {
+public:
+    NWebRemoveVisitedLinksCallbackImpl(napi_env env, napi_ref callback, napi_deferred deferred)
+        : env_(env), callback_(callback), deferred_(deferred) {}
+    ~NWebRemoveVisitedLinksCallbackImpl() = default;
+
+    void OnRemoveComplete() override;
+
+    static void UvJsCallbackThreadWoker(uv_work_t *work, int status);
+
+    struct RemoveVisitedLinksParam {
+        napi_env env_ = nullptr;
+        napi_ref callback_ = nullptr;
+        napi_deferred deferred_ = nullptr;
+    };
+
+private:
+    napi_env env_;
+    napi_ref callback_;
+    napi_deferred deferred_;
 };
 } // namespace NWeb
 } // namespace OHOS

@@ -15,6 +15,7 @@
 
 #include "ohos_nweb/bridge/ark_web_engine_impl.h"
 
+#include "ohos_nweb/bridge/ark_web_remove_visited_links_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_adsblock_manager_impl.h"
 #include "ohos_nweb/bridge/ark_web_cookie_manager_impl.h"
 #include "ohos_nweb/bridge/ark_web_data_base_impl.h"
@@ -378,5 +379,15 @@ void ArkWebEngineImpl::SetWholeWebDrawing()
 void ArkWebEngineImpl::DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool needSnapshot, bool needGC, bool needRaw)
 {
     nweb_engine_->DumpArkWebJSHeap(fd, renderPid, needSnapshot, needGC, needRaw);
+}
+
+void ArkWebEngineImpl::RemoveVisitedLinksSince(
+    int64_t time_ms, ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback)
+{
+    std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> nweb_remove_visited_links_callback =
+        std::make_shared<ArkWebRemoveVisitedLinksCallbackImpl>(callback);
+    if (nweb_engine_) {
+        nweb_engine_->RemoveVisitedLinksSince(time_ms, nweb_remove_visited_links_callback);
+    }
 }
 } // namespace OHOS::ArkWeb
