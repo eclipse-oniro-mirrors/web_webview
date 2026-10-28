@@ -1767,11 +1767,6 @@ void ArkWebNWebWrapper::SetTouchHandleExistState(bool touchHandleExist)
     ark_web_nweb_->SetTouchHandleExistState(touchHandleExist);
 }
 
-void ArkWebNWebWrapper::SetClickExtEnabled(bool enable)
-{
-    ark_web_nweb_->SetClickExtEnabled(enable);
-}
-
 void ArkWebNWebWrapper::AvoidVisibleViewportBottom(int32_t avoidHeight)
 {
     ark_web_nweb_->AvoidVisibleViewportBottom(avoidHeight);
@@ -2232,5 +2227,10 @@ std::shared_ptr<OHOS::NWeb::NWebAccessibilityNodeInfo> ArkWebNWebWrapper::GetAcc
     }
 
     return std::make_shared<ArkWebAccessibilityNodeInfoWrapper>(ark_web_accessibility_node_info);
+}
+
+void ArkWebNWebWrapper::SetClickExtEnabled(bool enable)
+{
+    ark_web_nweb_->SetClickExtEnabled(enable);
 }
 } // namespace OHOS::ArkWeb
