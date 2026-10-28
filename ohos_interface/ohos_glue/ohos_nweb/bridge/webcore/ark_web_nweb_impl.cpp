@@ -1501,11 +1501,6 @@ void ArkWebNWebImpl::SetTouchHandleExistState(bool touchHandleExist)
     nweb_nweb_->SetTouchHandleExistState(touchHandleExist);
 }
 
-void ArkWebNWebImpl::SetClickExtEnabled(bool enable)
-{
-    nweb_nweb_->SetClickExtEnabled(enable);
-}
-
 void ArkWebNWebImpl::AvoidVisibleViewportBottom(int32_t avoidHeight)
 {
     nweb_nweb_->AvoidVisibleViewportBottom(avoidHeight);
@@ -1887,5 +1882,10 @@ ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ArkWebNWebImpl::GetAccessibilityNodeIn
     }
 
     return new ArkWebAccessibilityNodeInfoImpl(nweb_accessibility_node_info);
+}
+
+void ArkWebNWebImpl::SetClickExtEnabled(bool enable)
+{
+    nweb_nweb_->SetClickExtEnabled(enable);
 }
 } // namespace OHOS::ArkWeb
