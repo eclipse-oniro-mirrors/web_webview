@@ -20,6 +20,7 @@
 #include <vector>
 
 #include "nweb_export.h"
+#include "nweb_rect.h"
 
 namespace OHOS::NWeb {
 
@@ -59,6 +60,13 @@ public:
     virtual bool IsAcceptAllOptionExcluded() { return false; }
 
     virtual const std::string Accepts() { return ""; }
+
+    // Returns the viewport-coordinate rect of the focused element that
+    // triggered the file selector. Default returns an empty rect (all-zero)
+    // for backward compatibility; cef_delegate overrides to fill the actual
+    // element bounding rect. An empty rect signals a programmatic trigger;
+    // the caller must fall back to the default alignment.
+    virtual NWebRect GetFocusedElementRect() { return {}; }
 };
 
 } // namespace OHOS::NWeb

@@ -64,6 +64,7 @@ action("webview_interface_prepare") {
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_runtime_connect_info.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_custom_keyboard_handler.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_date_time_chooser.h",
+    "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_rect.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_export.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_proxy_changed_callback.h",
     "//base/web/webview/ohos_interface/include/ohos_nweb/nweb_engine.h",

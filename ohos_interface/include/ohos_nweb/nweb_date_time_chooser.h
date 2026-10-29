@@ -20,6 +20,8 @@
 #include <string>
 #include <vector>
 
+#include "nweb_rect.h"
+
 namespace OHOS::NWeb {
 
 struct DateTime {
@@ -61,6 +63,12 @@ public:
     virtual bool GetHasSelected() = 0;
 
     virtual size_t GetSuggestionIndex() = 0;
+
+    // Returns the viewport-coordinate rect of the focused element that
+    // triggered the chooser. An empty rect (all-zero) signals a programmatic
+    // trigger (JS input.click()/showPicker()); the caller must fall back to
+    // the default alignment (CENTER/BOTTOM).
+    virtual NWebRect GetFocusedElementRect() = 0;
 };
 
 class NWebDateTimeChooserCallback {
