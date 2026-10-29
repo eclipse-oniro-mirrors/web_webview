@@ -609,7 +609,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_Destructor_ParentNonNull_037, TestSi
 
     if (surfaceNode && parentSurfaceNode) {
         parentSurfaceNode->AddChild(surfaceNode, -1);
-        EXPECT_EQ(parentRef->GetChildren().size(), 0);
+        EXPECT_EQ(parentRef->GetChildren().size(), 1u);
 
         std::shared_ptr<OHOS::Rosen::RSNode> parentNode = parentSurfaceNode;
         sptr<SurfaceControl> sc = new SurfaceControl(std::move(surfaceNode), std::move(parentNode), true, 0);
@@ -675,7 +675,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetParent_OldParentNonNullNewParentV
 
     if (childSurfaceNode && oldParentSurfaceNode && newParentSurfaceNode) {
         oldParentSurfaceNode->AddChild(childSurfaceNode, -1);
-        EXPECT_EQ(oldParentRef->GetChildren().size(), 0);
+        EXPECT_EQ(oldParentRef->GetChildren().size(), 1u);
 
         std::shared_ptr<OHOS::Rosen::RSNode> oldParentNode = oldParentSurfaceNode;
         sptr<SurfaceControl> childSc = new SurfaceControl(
@@ -685,7 +685,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetParent_OldParentNonNullNewParentV
         childSc->SetParent(newParentSc.GetRefPtr());
 
         EXPECT_EQ(oldParentRef->GetChildren().size(), 0);
-        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 0);
+        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 1u);
         EXPECT_NE(childSc->parentNode_, nullptr);
     }
 }
@@ -712,7 +712,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_SetParent_OldParentNullNewParentVali
 
         childSc->SetParent(newParentSc.GetRefPtr());
 
-        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 0);
+        EXPECT_EQ(newParentSc->surfaceNode_->GetChildren().size(), 1u);
         EXPECT_NE(childSc->parentNode_, nullptr);
     }
 }
