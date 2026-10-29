@@ -61,4 +61,12 @@ size_t ArkWebDateTimeChooserWrapper::GetSuggestionIndex()
     return ark_web_date_time_chooser_->GetSuggestionIndex();
 }
 
+OHOS::NWeb::NWebRect ArkWebDateTimeChooserWrapper::GetFocusedElementRect()
+{
+    // TODO: forward to ark_web_date_time_chooser_->GetFocusedElementRect()
+    // after prepare.sh regenerates the ArkWeb bridge with the new method.
+    // Returns empty rect (programmatic trigger fallback) until bridge is regenerated.
+    return OHOS::NWeb::NWebRect{};
+}
+
 } // namespace OHOS::ArkWeb
