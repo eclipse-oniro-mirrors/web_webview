@@ -893,6 +893,11 @@ public:
     void OnMonitoredBlankScreen(
         const ArkWebString& url, int32_t reason,
         const ArkWebString& extraMsg) override;
+
+    void OnColorChooserPopup(const ArkWebString& color,
+        const ArkWebColorSuggestionVector& suggestions, ArkWebRefPtr<ArkWebColorChooserCallback> callback) override;
+
+    void OnColorChooserClose() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };

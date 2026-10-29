@@ -20,6 +20,8 @@
 #include "ohos_nweb/include/ark_web_access_request.h"
 #include "ohos_nweb/include/ark_web_all_ssl_error_info.h"
 #include "ohos_nweb/include/ark_web_applink_callback.h"
+#include "ohos_nweb/include/ark_web_color_chooser_callback.h"
+#include "ohos_nweb/include/ark_web_color_suggestion_vector.h"
 #include "ohos_nweb/include/ark_web_console_log.h"
 #include "ohos_nweb/include/ark_web_context_menu_callback.h"
 #include "ohos_nweb/include/ark_web_context_menu_options.h"
@@ -1253,6 +1255,15 @@ public:
     virtual void OnMonitoredBlankScreen(
         const ArkWebString& url, int32_t reason,
         const ArkWebString& extraMsg) = 0;
+
+    /*--ark web()--*/
+    virtual void
+    OnColorChooserPopup(const ArkWebString &color,
+                        const ArkWebColorSuggestionVector &suggestions,
+                        ArkWebRefPtr<ArkWebColorChooserCallback> callback) = 0;
+
+    /*--ark web()--*/
+    virtual void OnColorChooserClose() = 0;
 };
 
 } // namespace OHOS::ArkWeb
