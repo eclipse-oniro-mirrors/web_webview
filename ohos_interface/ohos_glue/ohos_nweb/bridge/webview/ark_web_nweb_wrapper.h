@@ -2111,6 +2111,12 @@ public:
         int64_t accessibility_id, int32_t direction, int32_t element_type,
         const std::map<std::string, std::string>& params) override;
 
+    /**
+     * @brief Set whether click extension is enabled.
+     * @param enable Whether to enable click extension feature.
+     */
+    void SetClickExtEnabled(bool enable) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

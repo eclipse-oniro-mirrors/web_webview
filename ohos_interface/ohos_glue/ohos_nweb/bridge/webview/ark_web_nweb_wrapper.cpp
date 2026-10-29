@@ -2228,4 +2228,9 @@ std::shared_ptr<OHOS::NWeb::NWebAccessibilityNodeInfo> ArkWebNWebWrapper::GetAcc
 
     return std::make_shared<ArkWebAccessibilityNodeInfoWrapper>(ark_web_accessibility_node_info);
 }
+
+void ArkWebNWebWrapper::SetClickExtEnabled(bool enable)
+{
+    ark_web_nweb_->SetClickExtEnabled(enable);
+}
 } // namespace OHOS::ArkWeb

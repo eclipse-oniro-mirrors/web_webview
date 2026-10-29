@@ -2625,6 +2625,12 @@ public:
      * @brief Get whether iframe error page feature is enabled.
      */
     virtual bool GetSubframeErrorPageEnabled() { return false; }
+
+    /**
+     * @brief Set whether click extension is enabled.
+     * @param enable Whether to enable click extension feature.
+     */
+    virtual void SetClickExtEnabled(bool enable) {}
 };
 } // namespace OHOS::NWeb
 

@@ -1883,4 +1883,9 @@ ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ArkWebNWebImpl::GetAccessibilityNodeIn
 
     return new ArkWebAccessibilityNodeInfoImpl(nweb_accessibility_node_info);
 }
+
+void ArkWebNWebImpl::SetClickExtEnabled(bool enable)
+{
+    nweb_nweb_->SetClickExtEnabled(enable);
+}
 } // namespace OHOS::ArkWeb

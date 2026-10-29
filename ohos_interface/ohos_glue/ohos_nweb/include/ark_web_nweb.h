@@ -2395,6 +2395,13 @@ public:
      */
     /*--ark web()--*/
     virtual bool GetSubframeErrorPageEnabled() = 0;
+
+    /**
+     * @brief Set whether click extension is enabled.
+     * @param enable Whether to enable click extension feature.
+     */
+    /*--ark web()--*/
+    virtual void SetClickExtEnabled(bool enable) = 0;
 };
 
 } // namespace OHOS::ArkWeb
