@@ -786,6 +786,11 @@ std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> NWebHelper::GetInitArgs()
     initArgs->AddArg(std::string("--enable-cache-data-dir-migration=").append(isDataMigrate));
     initArgs->AddArg(std::string("--user-data-dir=").append(ctx->GetBaseDir()));
     WVLOG_I("user data dir: %{public}s", ctx->GetBaseDir().c_str());
+    std::string dataDirSuffix = OHOS::ArkWeb::getDataDirectorySuffix();
+    if (!dataDirSuffix.empty()) {
+        initArgs->AddArg(std::string("--data-dir-suffix=").append(dataDirSuffix));
+        WVLOG_I("data dir suffix: %{public}s", dataDirSuffix.c_str());
+    }
     initArgs->AddArg(std::string("--bundle-installation-dir=").append(bundlePath_));
     WVLOG_I("bundle installation dir: %{public}s", bundlePath_.c_str());
     initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());

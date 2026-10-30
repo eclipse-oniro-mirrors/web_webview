@@ -1055,6 +1055,8 @@ export default namespace webview {
         native setWebDetach(nwebId: int): void;
         native static getActiveWebEngineVersion(): ArkWebEngineVersion;
         native static setActiveWebEngineVersion(engineVersion: ArkWebEngineVersion): void;
+        native static setDataDirectorySuffix(suffix: string): void;
+        native static getDataDirectorySuffix(): string;
         native static isActiveWebEngineEvergreen(): boolean;
         native jsProxy(obj: Object, name: string, methodList: Array<string>, asyncMethodList?: Array<string>, permission?: string): void;
         jsProxyInvokeMethod(obj: Object, name: string, args: Array<Object>): Any {

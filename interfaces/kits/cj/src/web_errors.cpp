@@ -44,6 +44,10 @@ const std::string REGISTER_CUSTOM_SCHEME_FAILED_MSG = "Failed to register custom
 const std::string HTTP_BODY_STREAN_INIT_FAILED_MSG = "Failed to initialize the HTTP body stream.";
 const std::string RESOURCE_HANDLER_INVALID_MSG = "The resource handler is invalid.";
 const std::string HTTP_AUTH_MALLOC_FAILED_MSG = "Failed to malloc string memory to get HttpAuth.";
+const std::string ENGINE_ALREADY_INITIALIZED_MSG = "Engine initialized error. The API must be called before "
+    "initializeWebEngine.";
+const std::string SUFFIX_ALREADY_SET_MSG = "The data directory suffix has already been set. The API can be "
+    "called only once in an application lifecycle.";
 const std::string UNKNOWN_ERROR_MSG = "Unknown error message.";
 }
 
@@ -72,6 +76,8 @@ std::unordered_map<ErrCode, std::string> g_errCodeMsgMap = {
     {HTTP_BODY_STREAN_INIT_FAILED, HTTP_BODY_STREAN_INIT_FAILED_MSG},
     {RESOURCE_HANDLER_INVALID, RESOURCE_HANDLER_INVALID_MSG},
     {HTTP_AUTH_MALLOC_FAILED, HTTP_AUTH_MALLOC_FAILED_MSG},
+    {ENGINE_ALREADY_INITIALIZED, ENGINE_ALREADY_INITIALIZED_MSG},
+    {SUFFIX_ALREADY_SET, SUFFIX_ALREADY_SET_MSG},
 };
 
 std::string GetErrMsgByErrCode(ErrCode code)

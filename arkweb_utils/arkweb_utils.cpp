@@ -44,6 +44,17 @@ namespace OHOS::ArkWeb {
 
 static int g_appEngineVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
 static bool g_webEngineInitFlag = false;
+static std::string g_appDataDirectorySuffix = "";
+// Protects g_appDataDirectorySuffix and the suffix-related accesses to
+// g_webEngineInitFlag: the check-then-set sequence in setDataDirectorySuffix
+// must be atomic, otherwise concurrent calls from NAPI/ANI/CJ entries may
+// break the "set only once" invariant and cause a data race on std::string.
+// Guarded paths: setDataDirectorySuffix (whole check-then-set),
+// getDataDirectorySuffix, ResetDataDirectorySuffix, and the flag write in the
+// library-loading path. Pre-existing readers of the flag outside the suffix
+// feature (setActiveWebEngineVersion, SetActiveWebPlayGround) are untouched by
+// this change and keep their original, lock-free behavior.
+static std::mutex g_dataDirSuffixMutex;
 static ArkWebEngineVersion g_activeEngineVersion = ArkWebEngineVersion::SYSTEM_DEFAULT;
 static int g_cloudEnableAppVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
 static std::unique_ptr<std::unordered_set<std::string>> g_legacyApp = nullptr;
@@ -429,6 +440,52 @@ void setActiveWebEngineVersion(ArkWebEngineVersion version)
     g_activeEngineVersion = CalculateActiveWebEngineVersion();
 }
 
+bool IsValidDataDirectorySuffix(const std::string& suffix)
+{
+    const size_t kMaxDataDirectorySuffixLength = 128;
+    if (suffix.empty() || suffix.length() > kMaxDataDirectorySuffixLength) {
+        return false;
+    }
+    for (char c : suffix) {
+        if (!((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9'))) {
+            return false;
+        }
+    }
+    return true;
+}
+
+int32_t setDataDirectorySuffix(const std::string& suffix)
+{
+    std::lock_guard<std::mutex> lock(g_dataDirSuffixMutex);
+    if (g_webEngineInitFlag) {
+        WVLOG_E("library resources have been loaded, can't set data directory suffix");
+        return DATA_DIR_SUFFIX_ERR_ENGINE_LOADED;
+    }
+    if (!g_appDataDirectorySuffix.empty()) {
+        WVLOG_E("data directory suffix has already been set, can't set it again");
+        return DATA_DIR_SUFFIX_ERR_ALREADY_SET;
+    }
+    if (!IsValidDataDirectorySuffix(suffix)) {
+        WVLOG_E("invalid data directory suffix, only letters and digits with length 1 to 128 are supported");
+        return DATA_DIR_SUFFIX_ERR_INVALID;
+    }
+    g_appDataDirectorySuffix = suffix;
+    WVLOG_I("app setDataDirectorySuffix: %{public}s", suffix.c_str());
+    return DATA_DIR_SUFFIX_OK;
+}
+
+std::string getDataDirectorySuffix()
+{
+    std::lock_guard<std::mutex> lock(g_dataDirSuffixMutex);
+    return g_appDataDirectorySuffix;
+}
+
+void ResetDataDirectorySuffix()
+{
+    std::lock_guard<std::mutex> lock(g_dataDirSuffixMutex);
+    g_appDataDirectorySuffix = "";
+}
+
 void SetActiveWebPlayGround(ArkWebEngineVersion version)
 {
     if (g_webEngineInitFlag) {
@@ -795,7 +852,10 @@ void* ArkWebBridgeHelperSharedInit(bool runMode, const std::string& mockBundlePa
 #endif
 
     if (libFileHandler != nullptr) {
-        g_webEngineInitFlag = true;
+        {
+            std::lock_guard<std::mutex> lock(g_dataDirSuffixMutex);
+            g_webEngineInitFlag = true;
+        }
         WVLOG_I("g_webEngineInitFlag set to true. setActiveWebEngineVersion will be ignored.");
     }
 

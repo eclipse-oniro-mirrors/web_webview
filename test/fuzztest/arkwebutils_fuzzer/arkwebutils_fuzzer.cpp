@@ -207,6 +207,25 @@ bool ArkwebUtils007Test(const uint8_t* data, size_t size)
 #endif
     return true;
 }
+
+bool ArkwebUtils008Test(const uint8_t* data, size_t size)
+{
+    if ((data == nullptr) || (size == 0)) {
+        return false;
+    }
+    FuzzedDataProvider dataProvider(data, size);
+    std::string suffix = dataProvider.ConsumeRandomLengthString(256);
+    IsValidDataDirectorySuffix(suffix);
+    {
+        // Keep the same synchronization semantics as the production code.
+        std::lock_guard<std::mutex> lock(g_dataDirSuffixMutex);
+        g_webEngineInitFlag = false;
+    }
+    ResetDataDirectorySuffix();
+    setDataDirectorySuffix(suffix);
+    getDataDirectorySuffix();
+    return true;
+}
 } // namespace OHOS
 
 /* Fuzzer entry point */
@@ -220,5 +239,6 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t* data, size_t size)
     OHOS::ArkWeb::ArkwebUtils005Test(data, size);
     OHOS::ArkWeb::ArkwebUtils006Test(data, size);
     OHOS::ArkWeb::ArkwebUtils007Test(data, size);
+    OHOS::ArkWeb::ArkwebUtils008Test(data, size);
     return 0;
 }

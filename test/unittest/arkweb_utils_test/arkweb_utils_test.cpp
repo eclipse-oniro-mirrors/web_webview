@@ -94,6 +94,78 @@ HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetActiveWebEngineVersionInner_001, Te
     EXPECT_EQ(getActiveWebEngineVersion(), ArkWebEngineVersion::SYSTEM_DEFAULT);
 }
 
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_001, TestSize.Level1) {
+    EXPECT_TRUE(IsValidDataDirectorySuffix("a"));
+    EXPECT_TRUE(IsValidDataDirectorySuffix("account1"));
+    EXPECT_TRUE(IsValidDataDirectorySuffix("A1b2C3"));
+    std::string maxLenSuffix(128, 'a');
+    EXPECT_TRUE(IsValidDataDirectorySuffix(maxLenSuffix));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_IsValidDataDirectorySuffix_002, TestSize.Level1) {
+    EXPECT_FALSE(IsValidDataDirectorySuffix(""));
+    EXPECT_FALSE(IsValidDataDirectorySuffix("account 1"));
+    EXPECT_FALSE(IsValidDataDirectorySuffix("account.1"));
+    EXPECT_FALSE(IsValidDataDirectorySuffix("../escape"));
+    EXPECT_FALSE(IsValidDataDirectorySuffix("/absolute"));
+    EXPECT_FALSE(IsValidDataDirectorySuffix("back\\slash"));
+    // Non-ASCII multi-byte input must be rejected (guards against
+    // signed-char comparison bugs on high bytes).
+    EXPECT_FALSE(IsValidDataDirectorySuffix("中文后缀"));
+    EXPECT_FALSE(IsValidDataDirectorySuffix("%2e%2e%2f"));
+    EXPECT_FALSE(IsValidDataDirectorySuffix("a_b-c"));
+    std::string overLenSuffix(129, 'a');
+    EXPECT_FALSE(IsValidDataDirectorySuffix(overLenSuffix));
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_001, TestSize.Level1) {
+    g_webEngineInitFlag = false;
+    g_appDataDirectorySuffix = "";
+
+    EXPECT_EQ(setDataDirectorySuffix("account1"), DATA_DIR_SUFFIX_OK);
+    EXPECT_EQ(getDataDirectorySuffix(), "account1");
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_002, TestSize.Level1) {
+    g_webEngineInitFlag = false;
+    g_appDataDirectorySuffix = "";
+
+    EXPECT_EQ(setDataDirectorySuffix("account1"), DATA_DIR_SUFFIX_OK);
+    int32_t ret = setDataDirectorySuffix("account2");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_ERR_ALREADY_SET);
+    EXPECT_EQ(getDataDirectorySuffix(), "account1");
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_003, TestSize.Level1) {
+    g_appDataDirectorySuffix = "";
+    g_webEngineInitFlag = true;
+
+    int32_t ret = setDataDirectorySuffix("account1");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_ERR_ENGINE_LOADED);
+    EXPECT_EQ(getDataDirectorySuffix(), "");
+    g_webEngineInitFlag = false;
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetDataDirectorySuffix_004, TestSize.Level1) {
+    g_webEngineInitFlag = false;
+    g_appDataDirectorySuffix = "";
+
+    int32_t ret = setDataDirectorySuffix("../escape");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_ERR_INVALID);
+    EXPECT_EQ(getDataDirectorySuffix(), "");
+
+    ret = setDataDirectorySuffix("account1");
+    EXPECT_EQ(ret, DATA_DIR_SUFFIX_OK);
+    EXPECT_EQ(getDataDirectorySuffix(), "account1");
+}
+
+HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_GetDataDirectorySuffix_DefaultEmpty, TestSize.Level1) {
+    g_webEngineInitFlag = false;
+    g_appDataDirectorySuffix = "";
+
+    EXPECT_EQ(getDataDirectorySuffix(), "");
+}
+
 HWTEST_F(ArkWebUtilsTest, ArkWebUtilsTest_SetActiveWebEngineVersionInner_002, TestSize.Level1) {
     SetActiveWebEngineVersionInner(ArkWebEngineVersion::M114);
 

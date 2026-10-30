@@ -66,6 +66,8 @@ constexpr ErrCode RESOURCE_HANDLER_INVALID = 17100021;
 constexpr ErrCode HTTP_BODY_STREAN_INIT_FAILED = 17100022;
 constexpr ErrCode NOT_ALLOWED_PORT = 17100023;
 constexpr ErrCode COMMAND_FORMAT_ERROR = 17100024;
+constexpr ErrCode ENGINE_ALREADY_INITIALIZED = 17100025;
+constexpr ErrCode SUFFIX_ALREADY_SET = 17100026;
 constexpr ErrCode INVALID_NET_ERROR = 17100101;
 
 std::string GetErrMsgByErrCode(ErrCode code);
