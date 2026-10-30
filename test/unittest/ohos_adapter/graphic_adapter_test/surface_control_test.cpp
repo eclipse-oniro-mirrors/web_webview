@@ -1268,10 +1268,18 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_AddDelegateContainerNodeOnClient_Par
  */
 HWTEST_F(SurfaceControlTest, SurfaceControl_AddDelegateContainerNodeOnClient_Success_066, TestSize.Level1)
 {
-    // Create and register a parent node
+    // AddDelegateContainerNodeOnClient takes the UI context from the parent node itself,
+    // so the parent must be created with a non-null RSUIContext.
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+
+    // Create and register a parent node carrying the UI context
     OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
     parentConfig.SurfaceNodeName = "parent_node_add";
-    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false, uiContext);
     ASSERT_NE(parentNode, nullptr);
     uint64_t parentNodeId = parentNode->GetId();
     WebDelegateSurfaceRegistry::Instance().SetSurfaceRsNode(parentNodeId, parentNode);
@@ -1289,6 +1297,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_AddDelegateContainerNodeOnClient_Suc
     // Clean up
     SurfaceControl::delegateContainerNodeMap_.erase(parentNodeId);
     WebDelegateSurfaceRegistry::Instance().RemoveSurfaceRsNode(parentNodeId);
+    manager.isMultiInstanceOpen_ = false;
 }
 
 /**
@@ -1360,10 +1369,18 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_RemoveDelegateContainerNodeOnClient_
  */
 HWTEST_F(SurfaceControlTest, SurfaceControl_RemoveDelegateContainerNodeOnClient_Success_071, TestSize.Level1)
 {
-    // Create and register parent node
+    // AddDelegateContainerNodeOnClient/RemoveDelegateContainerNodeOnClient take the UI
+    // context from the parent node itself, so the parent must be created with one.
+    auto& manager = OHOS::Rosen::RSUIContextManager::MutableInstance();
+    manager.isMultiInstanceOpen_ = true;
+    sptr<IRemoteObject> mockRemote = new OHOS::IPCObjectStub();
+    auto uiContext = manager.CreateRSUIContext(mockRemote);
+    ASSERT_NE(uiContext, nullptr);
+
+    // Create and register parent node carrying the UI context
     OHOS::Rosen::RSSurfaceNodeConfig parentConfig;
     parentConfig.SurfaceNodeName = "parent_remove_success";
-    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false);
+    auto parentNode = OHOS::Rosen::RSSurfaceNode::Create(parentConfig, false, uiContext);
     ASSERT_NE(parentNode, nullptr);
     uint64_t parentNodeId = parentNode->GetId();
     WebDelegateSurfaceRegistry::Instance().SetSurfaceRsNode(parentNodeId, parentNode);
@@ -1381,6 +1398,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_RemoveDelegateContainerNodeOnClient_
     EXPECT_EQ(SurfaceControl::delegateContainerNodeMap_.count(parentNodeId), 0u);
 
     WebDelegateSurfaceRegistry::Instance().RemoveSurfaceRsNode(parentNodeId);
+    manager.isMultiInstanceOpen_ = false;
 }
 
 /**
