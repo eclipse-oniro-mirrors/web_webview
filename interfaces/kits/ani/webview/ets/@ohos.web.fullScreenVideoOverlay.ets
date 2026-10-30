@@ -767,7 +767,7 @@ struct FullScreenVideoDialogContent {
         .onDestroy(() => {
           console.info('[FullscreenVideoOverlay] XComponent onDestroy')
         })
-        .aspectRatio((this.state.width > 0 && this.state.height > 0) ? this.state.width / this.state.height : -1)
+        .aspectRatio((this.state.width > 0 && this.state.height > 0) ? this.state.width / this.state.height : -1.0)
         .renderFit(RenderFit.RESIZE_FILL)
       }
       .width('100%')
