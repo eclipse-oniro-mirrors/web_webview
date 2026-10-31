@@ -30,6 +30,7 @@
 #include "ohos_adapter_helper.h"
 #include "process_uid_define.h"
 #include "surface_utils.h"
+#include "ui/rs_surface_node.h"
 
 using namespace testing;
 using namespace testing::ext;
@@ -106,6 +107,9 @@ public:
     void PassSurface(sptr<Surface>surface, int64_t surface_id);
 
     void DestroyRenderSurface(int32_t surface_id);
+
+    void UpdateDelegateContainerNode(uint64_t parentNodeId,
+        const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode);
 };
 
 std::pair<sptr<IRemoteObject>, sptr<IRemoteObject>> MockBrowserClient::QueryRenderSurface(
@@ -133,6 +137,14 @@ void MockBrowserClient::PassSurface(sptr<Surface>surface, int64_t surface_id)
 void MockBrowserClient::DestroyRenderSurface(int32_t surface_id)
 {
     (void)surface_id;
+}
+
+void MockBrowserClient::UpdateDelegateContainerNode(uint64_t parentNodeId,
+    const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode)
+{
+    (void)parentNodeId;
+    (void)surfaceNode;
+    (void)isAddNode;
 }
 
 class MockMessageParcel : public MessageParcel {
@@ -211,7 +223,10 @@ public:
     MOCK_METHOD(void, PassSurface, (sptr<Surface> surface, int64_t surface_id), (override));
 
     MOCK_METHOD(void, DestroyRenderSurface, (int32_t surface_id), (override));
-    
+
+    MOCK_METHOD(void, UpdateDelegateContainerNode,
+        (uint64_t parentNodeId, const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode), (override));
+
     MOCK_METHOD(sptr<IRemoteObject>, AsObject, (), (override));
 };
 

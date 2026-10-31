@@ -29,6 +29,9 @@
 #include "ibrowser.h"
 #include "res_sched_client_adapter.h"
 
+namespace OHOS::Rosen {
+class RSSurfaceNode;
+}
 namespace OHOS::NWeb {
 class BrowserHost : public IRemoteStub<IBrowser> {
 public:
@@ -46,6 +49,8 @@ private:
     int32_t HandlePassSurface(MessageParcel &data, MessageParcel &reply);
 
     int32_t HandleDestroyRenderSurface(MessageParcel &data, MessageParcel &reply);
+
+    int32_t HandleUpdateDelegateContainerNode(MessageParcel &data, MessageParcel &reply);
 
     using BrowserHostFunc = std::function<int32_t(BrowserHost*, MessageParcel &data, MessageParcel &reply)>;
 
@@ -68,6 +73,10 @@ public:
     void PassSurface(sptr<Surface> surface, int64_t surface_id) override;
 
     void DestroyRenderSurface(int32_t surface_id) override;
+
+    void UpdateDelegateContainerNode(uint64_t parentNodeId,
+        const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode) override;
+
 private:
     std::map<int64_t, sptr<Surface>> surface_map_;
     std::shared_ptr<AafwkBrowserHostAdapter> browserHostAdapter_;

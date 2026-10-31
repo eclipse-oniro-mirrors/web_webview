@@ -26,8 +26,12 @@
 #include "ipc_types.h"
 #include "surface/window.h"
 #include "native_window.h"
+#include "ui/rs_surface_node.h"
 
 namespace OHOS::NWeb {
+const std::string DELEGATE_NODE_ID = "delegate_node_id";
+const std::string DELEGATE_CONNECT_TO_RENDER = "delegate_connect_to_render";
+
 BrowserClient::BrowserClient(
     const sptr<IRemoteObject> &impl) : IRemoteProxy<IBrowser>(impl) {}
 
@@ -65,6 +69,7 @@ std::pair<sptr<IRemoteObject>, sptr<IRemoteObject>> BrowserClient::QueryRenderSu
     sptr<IRemoteObject> surface = reply.ReadRemoteObject();
     if (!reply.ReadUint64(nodeId)) {
         WVLOG_W("Read nodeId failed.");
+        return { surface, nullptr };
     }
     sptr<IRemoteObject> rsHandle = nullptr;
     bool hasRSHandle = false;
@@ -152,6 +157,50 @@ void BrowserClient::DestroyRenderSurface(int32_t surface_id)
     return;
 }
 
+void BrowserClient::UpdateDelegateContainerNode(uint64_t parentNodeId,
+    const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode)
+{
+    MessageParcel data;
+    MessageParcel reply;
+    MessageOption option;
+    if (!WriteInterfaceToken(data)) {
+        WVLOG_E("DelegateTag Write token failed");
+        return;
+    }
+    if (!data.WriteUint64(parentNodeId)) {
+        WVLOG_E("DelegateTag Write parentNodeId failed");
+        return;
+    }
+    if (!data.WriteBool(isAddNode)) {
+        WVLOG_E("DelegateTag Write isAddNode failed");
+        return;
+    }
+
+    if (!data.WriteBool(surfaceNode != nullptr)) {
+        WVLOG_E("DelegateTag Write hasSurfaceNode failed");
+        return;
+    }
+
+    if (surfaceNode) {
+        if (!surfaceNode->Marshalling(data)) {
+            WVLOG_E("DelegateTag Marshalling surfaceNode failed");
+            return;
+        }
+    }
+    sptr<IRemoteObject> remote = Remote();
+    if (remote == nullptr) {
+        WVLOG_E("DelegateTag Remote is NULL.");
+        return;
+    }
+
+    int32_t ret = remote->SendRequest(static_cast<uint32_t>(IBrowser::Message::UPDATE_DELEGATE_CONTAINER_NODE),
+        data, reply, option);
+    if (ret != NO_ERROR) {
+        WVLOG_E("SendRequest failed, error code = %{public}d", ret);
+    }
+    return;
+}
+
 AafwkBrowserClientAdapterImpl::AafwkBrowserClientAdapterImpl() {}
 
 AafwkBrowserClientAdapterImpl& AafwkBrowserClientAdapterImpl::GetInstance()
@@ -175,16 +224,16 @@ void* AafwkBrowserClientAdapterImpl::QueryRenderSurface(int32_t surface_id)
             WVLOG_E("create the native window failed.");
             return nullptr;
         }
-        uint64_t usage = BUFFER_USAGE_MEM_DMA;
         if (window->surface != nullptr) {
-            window->surface->SetUserData("delegate_node_id", std::to_string(node_id));
+            window->surface->SetUserData(DELEGATE_NODE_ID, std::to_string(node_id));
             if (rsHandleObj != nullptr) {
-                rsHandleObj->IncStrongRef(nullptr);
+                rsHandleMap_.emplace(surface_id, rsHandleObj);
                 uint64_t handle = reinterpret_cast<uint64_t>(rsHandleObj.GetRefPtr());
-                window->surface->SetUserData("delegate_connect_to_render", std::to_string(handle));
+                window->surface->SetUserData(DELEGATE_CONNECT_TO_RENDER, std::to_string(handle));
             }
         }
 
+        uint64_t usage = BUFFER_USAGE_MEM_DMA;
         NativeWindowHandleOpt(window, SET_USAGE, usage);
         window_map_.emplace(surface_id, window);
         void* newNativeWindow = reinterpret_cast<NWebNativeWindow>(window);
@@ -247,7 +296,19 @@ void AafwkBrowserClientAdapterImpl::DestroyRenderSurface(int32_t surface_id)
         }
         window_map_.erase(surface_id);
     }
+    rsHandleMap_.erase(surface_id);
     GetInstance().browserHost_->DestroyRenderSurface(surface_id);
     WVLOG_D("Destroy nweb surface id = %{public}d", surface_id);
+}
+
+void AafwkBrowserClientAdapterImpl::UpdateDelegateContainerNode(uint64_t parentNodeId,
+    const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode)
+{
+    if (!GetInstance().browserHost_) {
+        WVLOG_E("DelegateTag browserHost_ is not exist!");
+        return;
+    }
+    GetInstance().browserHost_->UpdateDelegateContainerNode(parentNodeId, surfaceNode, isAddNode);
+    return;
 }
 } // namespace OHOS::NWeb

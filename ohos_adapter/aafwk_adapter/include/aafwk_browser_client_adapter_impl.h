@@ -39,6 +39,9 @@ public:
     virtual void PassSurface(sptr<Surface> surface, int64_t surface_id) override;
 
     virtual void DestroyRenderSurface(int32_t surface_id) override;
+
+    virtual void UpdateDelegateContainerNode(uint64_t parentNodeId,
+        const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode) override;
 private:
     bool WriteInterfaceToken(MessageParcel &data);
     static inline BrokerDelegator<BrowserClient> delegator_;
@@ -61,9 +64,13 @@ public:
 
     void DestroyRenderSurface(int32_t surface_id) override;
 
+    void UpdateDelegateContainerNode(uint64_t parentNodeId,
+        const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode);
+
     sptr<IBrowser> browserHost_;
 private:
     std::map<int32_t, OHNativeWindow*> window_map_;
+    std::unordered_map<int32_t, sptr<IRemoteObject>> rsHandleMap_;
     std::mutex window_map_mutex_;
 };
 } // namespace content

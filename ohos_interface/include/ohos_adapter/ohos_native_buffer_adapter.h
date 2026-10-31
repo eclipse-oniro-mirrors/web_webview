@@ -79,6 +79,8 @@ public:
     virtual int Unlock(void* buffer, int32_t* fence) = 0;
 
     virtual int FreeNativeBuffer(void* nativeBuffer) = 0;
+
+    virtual bool IsColorSpaceSupported(void* nativeBuffer) { return false; }
 };
 
 } // namespace OHOS::NWeb

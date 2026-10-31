@@ -21,13 +21,14 @@
 #include <refbase.h>
 #include <vector>
 #include <mutex>
-#include "unique_fd.h"
-#include "surface_type.h"
 #include "common/rs_common_def.h"
+#include "rs_trace.h"
 #include "surface_buffer.h"
+#include "surface_type.h"
 #include "transaction/rs_render_service_client.h"
 #include "ui/rs_surface_node.h"
 #include "ui/rs_ui_director.h"
+#include "unique_fd.h"
 
 struct NativeWindow;
 namespace OHOS {
@@ -43,52 +44,57 @@ class RSUIContext;
 class RSC_EXPORT SurfaceControl : public RefBase {
 public:
     using BufferReleaseCallback = std::function<void(int releaseFenceFd)>;
+    explicit SurfaceControl(std::shared_ptr<OHOS::Rosen::RSSurfaceNode> surfaceNode,
+        std::shared_ptr<OHOS::Rosen::RSNode> parentNode, bool isRootSurface, uint64_t rosenWebNodeId,
+        bool inProcess = false);
+    ~SurfaceControl() override;
+    SurfaceControl(const SurfaceControl&) = delete;
+    SurfaceControl& operator=(const SurfaceControl&) = delete;
+    SurfaceControl(SurfaceControl&&) = delete;
+    SurfaceControl& operator=(SurfaceControl&&) = delete;
 
-    static sptr<SurfaceControl> CreateFromWindow(NativeWindow* window, const char* name);
-    static sptr<SurfaceControl> Create(const char* name);
+    static sptr<SurfaceControl> CreateFromWindow(NativeWindow* window, const char* name,
+        std::shared_ptr<OHOS::Rosen::RSUIContext> uiContext, bool in_process);
+    static sptr<SurfaceControl> Create(const char* name,
+        std::shared_ptr<OHOS::Rosen::RSUIContext> uiContext, bool in_process);
     static std::shared_ptr<OHOS::Rosen::RSUIContext> GetRSUIContext();
-    static void SetConnectToRenderObject(OHOS::sptr<OHOS::IRemoteObject> rsHandle);
+    static void SetConnectToRenderObject(OHOS::sptr<OHOS::IRemoteObject> connectToRender);
     static OHOS::sptr<OHOS::IRemoteObject> GetConnectToRenderObject();
+    static void AddDelegateContainerNodeOnClient(uint64_t parentNodeId,
+        const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode);
+    static void RemoveDelegateContainerNodeOnClient(uint64_t parentNodeId);
 
     void SetParent(SurfaceControl* newParent);
     void SetVisibility(bool visibility);
     void SetZOrder(int32_t zOrder);
     void SetBuffer(sptr<SurfaceBuffer> buffer, UniqueFd fenceFd, const BufferReleaseCallback& callback);
     void SetBounds(float x, float y, float w, float h);
-    void SetFrameGravity(int32_t gravity);
     void SetPivot(float x, float y);
     void SetBufferTransform(GraphicTransformType transform);
-    void SetTranslate(float translateX, float translateY, float translateZ);
     void SetDamageRegion(std::vector<Rect> rects);
     void SetBufferAlpha(float alpha);
-    void SetForegroundColor(float red, float green, float blue, float alpha);
     void SetBackgroundColor(float red, float green, float blue, float alpha);
-    void SetBorderWidth(float left, float top, float right, float bottom);
-    void SetBorderColor(float red, float green, float blue, float alpha);
-    void SetBorderStyle(uint32_t left, uint32_t top, uint32_t right, uint32_t bottom);
     void SetName(std::string name);
     void SetHardwareEnableHint(bool enable);
     void SetSrcRect(float x, float y, float w, float h);
     void SetDisplayRect(float x, float y, float w, float h);
     bool IsRootSurface() const;
     void ClearBufferQueueCache(bool cleanAll);
+    uint64_t GetRosenWebNodeId() const { return rosenWebNodeId_; }
+    bool IsInProcess() const { return inProcess_; }
 
 private:
-    SurfaceControl(std::shared_ptr<OHOS::Rosen::RSSurfaceNode> surfaceNode,
-        std::shared_ptr<OHOS::Rosen::RSNode> parentNode);
-    ~SurfaceControl() override;
-
-    SurfaceControl(const SurfaceControl&) = delete;
-    SurfaceControl& operator=(const SurfaceControl&) = delete;
-    SurfaceControl(SurfaceControl&&) = delete;
-    SurfaceControl& operator=(SurfaceControl&&) = delete;
-
     std::shared_ptr<OHOS::Rosen::RSSurfaceNode> surfaceNode_ = nullptr;
     std::shared_ptr<OHOS::Rosen::RSNode> parentNode_ = nullptr;
+    bool isRootSurface_ = false;
+    uint64_t rosenWebNodeId_ = 0;
+    bool inProcess_ = false;
+    int32_t zOrder_ = -1;
 
     static inline std::mutex rsUiContextMutex_;
     static inline OHOS::sptr<OHOS::IRemoteObject> connectToRender_ = nullptr;
     static inline std::shared_ptr<OHOS::Rosen::RSUIDirector> rsUIDirector_ = nullptr;
+    static std::map<uint64_t, std::shared_ptr<OHOS::Rosen::RSSurfaceNode>> delegateContainerNodeMap_;
 };
 } // namespace OHOS::NWeb
 
