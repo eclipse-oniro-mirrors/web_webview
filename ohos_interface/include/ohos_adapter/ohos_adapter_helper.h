@@ -63,6 +63,7 @@
 #include "system_properties_adapter.h"
 #include "sensor_adapter.h"
 #include "background_task_adapter.h"
+#include "perf_monitor_adapter.h"
 
 namespace OHOS::NWeb {
 
@@ -178,6 +179,8 @@ public:
     virtual SurfaceControlAdapter& GetSurfaceControlAdapter() = 0;
 
     virtual SurfaceTransactionAdapter& GetSurfaceTransactionAdapter() = 0;
+
+    virtual PerfMonitorAdapter& GetPerfMonitorAdapterInstance() = 0;
 };
 
 } // namespace OHOS::NWeb

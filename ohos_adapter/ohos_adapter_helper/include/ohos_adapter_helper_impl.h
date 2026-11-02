@@ -136,6 +136,8 @@ public:
     SurfaceControlAdapter& GetSurfaceControlAdapter() override;
 
     SurfaceTransactionAdapter& GetSurfaceTransactionAdapter() override;
+
+    PerfMonitorAdapter& GetPerfMonitorAdapterInstance() override;
 };
 } // namespace OHOS::NWeb
 
