@@ -1265,4 +1265,13 @@ bool ArkWebHandlerImpl::OnNestedFling(float& velocity_x, float& velocity_y)
 {
     return nweb_handler_->OnNestedFling(velocity_x, velocity_y);
 }
+
+void ArkWebHandlerImpl::OnMonitoredBlankScreen(
+    const ArkWebString& url, int32_t reason,
+    const ArkWebString& extraMsg)
+{
+    nweb_handler_->OnMonitoredBlankScreen(
+        ArkWebStringStructToClass(url), reason,
+        ArkWebStringStructToClass(extraMsg));
+}
 } // namespace OHOS::ArkWeb

@@ -1527,6 +1527,16 @@ public:
      * @param param The parameters related to the video status change.
      */
     virtual void OnVideoStatusChanged(const int action, const std::map<std::string, std::string> &param) {}
+    /**
+     * @brief Notify a monitored blank screen with root cause attribution.
+     *
+     * @param url The url of the blank screen.
+     * @param reason The reason enum value of the blank screen.
+     * @param extraMsg The JSON serialized RootCauseReport with full attribution details.
+     */
+    virtual void OnMonitoredBlankScreen(
+        const std::string& url, int32_t reason, const std::string& extraMsg) {}
+
 };
 
 } // namespace OHOS::NWeb

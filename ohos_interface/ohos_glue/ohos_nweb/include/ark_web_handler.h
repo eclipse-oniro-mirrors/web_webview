@@ -1226,6 +1226,18 @@ public:
      */
     /*--ark web()--*/
     virtual void OnVideoStatusChanged(const int action, const ArkWebStringMap &param) = 0;
+    /**
+     * @brief Notify a monitored blank screen with root cause attribution.
+     *
+     * @param url The url of the blank screen.
+     * @param reason The reason enum value of the blank screen.
+     * @param extraMsg The JSON serialized RootCauseReport with full attribution details.
+     */
+
+    /*--ark web()--*/
+    virtual void OnMonitoredBlankScreen(
+        const ArkWebString& url, int32_t reason,
+        const ArkWebString& extraMsg) = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -761,6 +761,12 @@ public:
     virtual void PutWebMediaNetworkProxyEnabled(bool enable) = 0;
 
     /**
+     * @brief Set whether to enable blank screen monitor.
+     */
+    /*--ark web()--*/
+    virtual void PutWebBlankScreenMonitorEnabled(bool enable) = 0;
+
+    /**
      * @brief Set the scale of the font-weight.The default is 1.0f.
      */
     /*--ark web()--*/

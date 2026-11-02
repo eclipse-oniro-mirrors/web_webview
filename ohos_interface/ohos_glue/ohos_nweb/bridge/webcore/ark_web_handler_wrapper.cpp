@@ -1452,4 +1452,17 @@ void ArkWebHandlerWrapper::OnVideoStatusChanged(const int action, const std::map
     ark_web_handler_->OnVideoStatusChanged(action, paramStruct);
     ArkWebStringMapStructRelease(paramStruct);
 }
+
+void ArkWebHandlerWrapper::OnMonitoredBlankScreen(
+    const std::string& url, int32_t reason,
+    const std::string& extraMsg)
+{
+    ArkWebString stUrl = ArkWebStringClassToStruct(url);
+    ArkWebString stExtraMsg = ArkWebStringClassToStruct(extraMsg);
+
+    ark_web_handler_->OnMonitoredBlankScreen(stUrl, reason, stExtraMsg);
+
+    ArkWebStringStructRelease(stUrl);
+    ArkWebStringStructRelease(stExtraMsg);
+}
 } // namespace OHOS::ArkWeb
