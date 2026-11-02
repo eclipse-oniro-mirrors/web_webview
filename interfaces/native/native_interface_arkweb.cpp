@@ -96,6 +96,10 @@ private:
 using namespace OHOS;
 void OH_NativeArkWeb_RunJavaScript(const char* webTag, const char* jsCode, NativeArkWeb_OnJavaScriptCallback callback)
 {
+    if (!webTag || !jsCode) {
+        WVLOG_E("native RunJavaScript webTag or jsCode is null");
+        return;
+    }
     std::weak_ptr<OHOS::NWeb::NWeb> nwebWeak = OH_NativeArkWeb_GetWebInstanceByWebTag(webTag);
     if (auto nweb = nwebWeak.lock()) {
         auto callbackImpl = std::make_shared<OHOS::NWeb::NativeJavaScriptExecuteCallback>(callback);
@@ -109,9 +113,18 @@ void OH_NativeArkWeb_RunJavaScript(const char* webTag, const char* jsCode, Nativ
 void OH_NativeArkWeb_RegisterJavaScriptProxy(const char* webTag, const char* objName, const char** methodList,
     NativeArkWeb_OnJavaScriptProxyCallback* callback, int32_t size, bool isNeedRefresh)
 {
+    if (!webTag || !objName || !methodList || !callback || size <= 0) {
+        WVLOG_E("native OH_NativeArkWeb_RegisterJavaScriptProxy invalid param");
+        return;
+    }
     WVLOG_I("native OH_NativeArkWeb_RegisterJavaScriptProxy webTag:%{public}s", webTag);
     std::vector<std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback>> proxyCallbacks;
     for (int i = 0; i < size; i++) {
+        if (!methodList[i] || !callback[i]) {
+            WVLOG_E("native OH_NativeArkWeb_RegisterJavaScriptProxy methodList[%{public}d] "
+                "or callback[%{public}d] is null", i, i);
+            continue;
+        }
         std::shared_ptr<OHOS::NWeb::NWebJsProxyCallback> proxyCallback =
             std::make_shared<OHOS::NWeb::NWebJsProxyCallbackImpl>(methodList[i], callback[i]);
         proxyCallbacks.push_back(proxyCallback);
@@ -141,6 +154,10 @@ void OH_NativeArkWeb_UnregisterJavaScriptProxy(const char* webTag, const char* o
 
 void OH_NativeArkWeb_SetDestroyCallback(const char* webTag, NativeArkWeb_OnDestroyCallback callback)
 {
+    if (webTag == nullptr) {
+        WVLOG_E("native RegisterDestroyCallback webTag is null");
+        return;
+    }
     WVLOG_I("native RegisterDestroyCallback, webTag: %{public}s", webTag);
     std::lock_guard<std::mutex> guard(g_mtxMap);
     g_destroyMap[webTag] = callback;
@@ -155,6 +172,10 @@ void OH_NativeArkWeb_SetDestroyCallback(const char* webTag, NativeArkWeb_OnDestr
 
 NativeArkWeb_OnDestroyCallback OH_NativeArkWeb_GetDestroyCallback(const char* webTag)
 {
+    if (webTag == nullptr) {
+        WVLOG_E("native OH_Web_GetDestroyCallback webTag is null");
+        return nullptr;
+    }
     WVLOG_I("native OH_Web_GetDestroyCallback, webTag: %{public}s", webTag);
     std::lock_guard<std::mutex> guard(g_mtxMap);
     std::unordered_map<std::string, NativeArkWeb_OnDestroyCallback>::iterator iter;
@@ -166,6 +187,10 @@ NativeArkWeb_OnDestroyCallback OH_NativeArkWeb_GetDestroyCallback(const char* we
 
 void OH_NativeArkWeb_SetJavaScriptProxyValidCallback(const char* webTag, NativeArkWeb_OnValidCallback callback)
 {
+    if (!webTag) {
+        WVLOG_E("native SetJavaScriptProxyValidCallback webTag is null");
+        return;
+    }
     WVLOG_I("native RegisterValidCallback, webTag: %{public}s", webTag);
     std::lock_guard<std::mutex> guard(g_mtxMap);
     g_validMap[webTag] = callback;
@@ -180,6 +205,10 @@ void OH_NativeArkWeb_SetJavaScriptProxyValidCallback(const char* webTag, NativeA
 
 NativeArkWeb_OnValidCallback OH_NativeArkWeb_GetJavaScriptProxyValidCallback(const char* webTag)
 {
+    if (!webTag) {
+        WVLOG_E("native GetJavaScriptProxyValidCallback webTag is null");
+        return nullptr;
+    }
     WVLOG_I("native OH_Web_GetValidCallback, webTag: %{public}s", webTag);
     std::lock_guard<std::mutex> guard(g_mtxMap);
     std::unordered_map<std::string, NativeArkWeb_OnValidCallback>::iterator iter;
@@ -267,7 +296,7 @@ ArkWeb_BlanklessInfo OH_NativeArkWeb_GetBlanklessInfoWithKey(const char* webTag,
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS, 0.0, 0 };
     }
 
-    size_t keyLen = strlen(key);
+    size_t keyLen = strnlen(key, MAX_KEY_LENGTH + 1);
     if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
         WVLOG_E("blankless OH_NativeArkWeb_GetBlanklessInfoWithKey key length is invalid");
         return { ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS, 0.0, 0 };
@@ -305,7 +334,7 @@ ArkWeb_BlanklessErrorCode OH_NativeArkWeb_SetBlanklessLoadingWithKey(const char*
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS;
     }
 
-    size_t keyLen = strlen(key);
+    size_t keyLen = strnlen(key, MAX_KEY_LENGTH + 1);
     if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
         WVLOG_E("blankless OH_NativeArkWeb_SetBlanklessLoadingWithKey key length is invalid");
         return ArkWeb_BlanklessErrorCode::ARKWEB_BLANKLESS_ERR_INVALID_ARGS;
@@ -353,7 +382,7 @@ void OH_NativeArkWeb_ClearBlanklessLoadingCache(const char* key[], uint32_t size
         if (key[idx] == nullptr) {
             continue;
         }
-        size_t keyLen = strlen(key[idx]);
+        size_t keyLen = strnlen(key[idx], MAX_KEY_LENGTH + 1);
         if (keyLen == 0 || keyLen > MAX_KEY_LENGTH) {
             continue;
         }
@@ -495,4 +524,96 @@ bool OH_NativeArkWeb_IsActiveWebEngineEvergreen() {
 
 void OH_NativeArkWeb_LazyInitializeWebEngineInCookieManager(bool lazy) {
     OHOS::NWeb::NWebHelper::Instance().SetLazyInitializeWebEngine(lazy);
+}
+
+ArkWeb_ErrorCode OH_ArkWebCookieManager_FetchCookieSync(const char* url, bool incognito, bool includeHttpOnly,
+    bool includePartitionedCookies, char** cookieValue)
+{
+    if (getpid() != gettid() && !OHOS::NWeb::NWebHelper::Instance().HasLoadWebEngine()) {
+        WVLOG_E("cookieManager not initialize");
+        return ArkWeb_ErrorCode::ARKWEB_COOKIE_MANAGER_NOT_INITIALIZED;
+    }
+
+    bool lazy = OHOS::NWeb::NWebHelper::Instance().IsLazyInitializeWebEngine();
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, !lazy)) {
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        return ArkWeb_ErrorCode::ARKWEB_LIBRARY_OPEN_FAILURE;
+    }
+
+    ArkWeb_ErrorCode (*fetchCookieSync)(const char* url, bool incognito, bool includeHttpOnly,
+        bool includePartitionedCookies, char** cookieValue) = nullptr;
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    ARKWEB_NATIVE_LOAD_FN_PTR(fetchCookieSync, OH_ArkWebCookieManager_FetchCookieSync);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    if (!fetchCookieSync) {
+        WVLOG_E("failed to load function OH_ArkWebCookieManager_FetchCookieSync");
+        return ArkWeb_ErrorCode::ARKWEB_LIBRARY_SYMBOL_NOT_FOUND;
+    }
+    return fetchCookieSync(url, incognito, includeHttpOnly, includePartitionedCookies, cookieValue);
+}
+
+static void FetchCookieAsync(const char* url, bool incognito, bool includeHttpOnly,
+    bool includePartitionedCookies, OH_ArkWeb_OnCookieFetchCallback callback)
+{
+    bool lazy = OHOS::NWeb::NWebHelper::Instance().IsLazyInitializeWebEngine();
+    if (!OHOS::NWeb::NWebHelper::Instance().LoadWebEngine(true, !lazy)) {
+        WVLOG_E("NativeArkWeb webEngineHandle is nullptr");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_LIBRARY_OPEN_FAILURE, nullptr);
+        }
+        return;
+    }
+
+    void (*fetchCookieAsync)(const char* url, bool incognito, bool includeHttpOnly,
+        bool includePartitionedCookies, OH_ArkWeb_OnCookieFetchCallback callback) = nullptr;
+
+#define ARKWEB_NATIVE_LOAD_FN_PTR(apiMember, funcImpl) LoadFunction(#funcImpl, &(apiMember))
+    ARKWEB_NATIVE_LOAD_FN_PTR(fetchCookieAsync, OH_ArkWebCookieManager_FetchCookieAsync);
+#undef ARKWEB_NATIVE_LOAD_FN_PTR
+    if (!fetchCookieAsync) {
+        WVLOG_E("failed to load function OH_ArkWebCookieManager_FetchCookieAsync");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_LIBRARY_SYMBOL_NOT_FOUND, nullptr);
+        }
+        return;
+    }
+
+    fetchCookieAsync(url, incognito, includeHttpOnly, includePartitionedCookies, callback);
+}
+
+void PostFetchCookieToUIThread(const char* url, bool incognito, bool includeHttpOnly,
+    bool includePartitionedCookies, OH_ArkWeb_OnCookieFetchCallback callback)
+{
+    auto mainHandler = GetMainThreadEventHandler();
+    if (!mainHandler) {
+        WVLOG_E("get main event runner failed");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN, nullptr);
+        }
+        return;
+    }
+
+    std::string urlStr = std::string(url ? url : "");
+    bool succ = mainHandler->PostTask([urlStr, incognito, includeHttpOnly, includePartitionedCookies, callback]() {
+        FetchCookieAsync(urlStr.c_str(), incognito, includeHttpOnly, includePartitionedCookies, callback);
+        }, "", 0, OHOS::AppExecFwk::EventQueue::Priority::HIGH, {});
+    if (!succ) {
+        WVLOG_E("post cookie task to UI thread failed");
+        if (callback) {
+            callback(ArkWeb_ErrorCode::ARKWEB_ERROR_UNKNOWN, nullptr);
+        }
+    }
+}
+
+void OH_ArkWebCookieManager_FetchCookieAsync(const char* url, bool incognito, bool includeHttpOnly,
+    bool includePartitionedCookies, OH_ArkWeb_OnCookieFetchCallback callback)
+{
+    if (getpid() != gettid() && !OHOS::NWeb::NWebHelper::Instance().HasLoadWebEngine()) {
+        WVLOG_D("post fetch cookie to UI thread");
+        PostFetchCookieToUIThread(url, incognito, includeHttpOnly, includePartitionedCookies, callback);
+        return;
+    }
+
+    FetchCookieAsync(url, incognito, includeHttpOnly, includePartitionedCookies, callback);
 }

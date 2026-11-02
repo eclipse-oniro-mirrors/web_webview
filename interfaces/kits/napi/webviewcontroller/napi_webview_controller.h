@@ -24,7 +24,11 @@
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
 #include "uv.h"
+#ifdef WEBVIEW_UNIT_TEST
+#include "test_mock_webview_controller.h"
+#else
 #include "webview_controller.h"
+#endif
 
 namespace OHOS {
 namespace NWeb {
@@ -260,7 +264,7 @@ private:
 
     static napi_value SetAudioMuted(napi_env env, napi_callback_info info);
 
-    static napi_value InnerGetThisVar(napi_env env, napi_callback_info info);
+    static napi_value InnerGetControllerId(napi_env env, napi_callback_info info);
 
     static napi_value PrefetchPage(napi_env env, napi_callback_info info);
 
@@ -437,6 +441,9 @@ private:
     static napi_value AvoidVisibleViewportBottom(napi_env env, napi_callback_info info);
     static napi_value SetErrorPageEnabled(napi_env env, napi_callback_info info);
     static napi_value GetErrorPageEnabled(napi_env env, napi_callback_info info);
+    static napi_value GetSubframeErrorPageEnabled(napi_env env, napi_callback_info info);
+    static napi_value SetAutoReloadEnabled(napi_env env, napi_callback_info info);
+    static napi_value IsAutoReloadEnabled(napi_env env, napi_callback_info info);
     static napi_value EnablePrivateNetworkAccess(napi_env env, napi_callback_info info);
     static napi_value IsPrivateNetworkAccessEnabled(napi_env env, napi_callback_info info);
     static napi_value SetWebDestroyMode(napi_env env, napi_callback_info info);
@@ -453,6 +460,8 @@ private:
     static napi_value SetUserAgentMetadata(napi_env env, napi_callback_info info);
     static napi_value GetUserAgentMetadata(napi_env env, napi_callback_info info);
     static napi_value GetLastPostMessageURL(napi_env env, napi_callback_info info);
+    static napi_value SetZoomFactor(napi_env env, napi_callback_info info);
+    static napi_value GetZoomFactor(napi_env env, napi_callback_info info);
 };
 
 class ArkWebTransfer {

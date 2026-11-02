@@ -361,7 +361,11 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
     napi_value thisVar = nullptr;
     void *data = nullptr;
     WebSchemeHandlerRequest *request = nullptr;
-    napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
+    napi_status status = napi_get_cb_info(env, cbinfo, nullptr, nullptr, &thisVar, &data);
+    if (status != napi_ok) {
+        WVLOG_E("NapiWebSchemeHandlerRequest::JS_GetHeader get cb info failed");
+        return nullptr;
+    }
 
     napi_unwrap(env, thisVar, (void **)&request);
     if (!request) {
@@ -371,7 +375,11 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
     
     WebHeaderList list = request->GetHeader();
     napi_value result = nullptr;
-    napi_create_array(env, &result);
+    status = napi_create_array(env, &result);
+    if (status != napi_ok) {
+        WVLOG_E("NapiWebSchemeHandlerRequest::JS_GetHeader create array failed");
+        return nullptr;
+    }
     size_t headerSize = list.size();
     for (size_t index = 0; index < headerSize; index++) {
         NApiScope scope(env);
@@ -382,10 +390,24 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetHeader(napi_env env, napi_callback
         napi_value headerKey = nullptr;
         napi_value headerValue = nullptr;
         NAPI_CALL(env, napi_create_object(env, &webHeaderObj));
-        napi_create_string_utf8(env, list[index].first.c_str(), NAPI_AUTO_LENGTH, &headerKey);
-        napi_create_string_utf8(env, list[index].second.c_str(), NAPI_AUTO_LENGTH, &headerValue);
-        napi_set_named_property(env, webHeaderObj, "headerKey", headerKey);
-        napi_set_named_property(env, webHeaderObj, "headerValue", headerValue);
+        status = napi_create_string_utf8(env, list[index].first.c_str(), NAPI_AUTO_LENGTH, &headerKey);
+        if (status != napi_ok) {
+            WVLOG_E("JS_GetHeader create headerKey string failed");
+            continue;
+        }
+        status = napi_create_string_utf8(env, list[index].second.c_str(), NAPI_AUTO_LENGTH, &headerValue);
+        if (status != napi_ok) {
+            WVLOG_E("JS_GetHeader create headerValue string failed");
+            continue;
+        }
+        if (napi_set_named_property(env, webHeaderObj, "headerKey", headerKey) != napi_ok) {
+            WVLOG_E("JS_GetHeader set headerKey property failed");
+            continue;
+        }
+        if (napi_set_named_property(env, webHeaderObj, "headerValue", headerValue) != napi_ok) {
+            WVLOG_E("JS_GetHeader set headerValue property failed");
+            continue;
+        }
         napi_set_element(env, result, index, webHeaderObj);
     }
     return result;
@@ -452,6 +474,10 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetReferrer(napi_env env, napi_callba
     
     napi_value value;
     char *result = request->GetReferrer();
+    if (result == nullptr) {
+        WVLOG_E("NapiWebSchemeHandlerRequest::JS_GetReferrer result is nullptr");
+        return nullptr;
+    }
     napi_status status = napi_create_string_utf8(env, result, NAPI_AUTO_LENGTH, &value);
     if (status != napi_ok) {
         WVLOG_E("NapiWebSchemeHandlerRequest::JS_GetReferrer response get url failed");
@@ -587,6 +613,10 @@ napi_value NapiWebSchemeHandlerRequest::JS_GetFrameUrl(napi_env env, napi_callba
     
     napi_value value;
     char *result = request->GetFrameUrl();
+    if (result == nullptr) {
+        WVLOG_E("NapiWebSchemeHandlerRequest::JS_GetFrameUrl result is nullptr");
+        return nullptr;
+    }
     napi_status status = napi_create_string_utf8(env, result, NAPI_AUTO_LENGTH, &value);
     if (status != napi_ok) {
         WVLOG_E("NapiWebSchemeHandlerRequest::JS_GetFrameUrl response get frame url failed");
@@ -674,6 +704,8 @@ void NapiWebSchemeHandlerResponse::ExportWebSchemeHandlerResponseClass(
         DECLARE_NAPI_FUNCTION("setHeaderByName", JS_SetHeaderByName),
         DECLARE_NAPI_FUNCTION("getNetErrorCode", JS_GetNetErrorCode),
         DECLARE_NAPI_FUNCTION("setNetErrorCode", JS_SetNetErrorCode),
+        DECLARE_NAPI_FUNCTION("getCustomErrorCode", JS_GetCustomErrorCode),
+        DECLARE_NAPI_FUNCTION("setCustomErrorCode", JS_SetCustomErrorCode),
     };
     napi_value webSchemeHandlerResponse = nullptr;
     napi_define_class(env, WEB_SCHEME_HANDLER_RESPONSE.c_str(), WEB_SCHEME_HANDLER_RESPONSE.length(),
@@ -1079,6 +1111,50 @@ napi_value NapiWebSchemeHandlerResponse::JS_SetNetErrorCode(napi_env env, napi_c
     return nullptr;
 }
 
+napi_value NapiWebSchemeHandlerResponse::JS_GetCustomErrorCode(napi_env env, napi_callback_info cbinfo)
+{
+    size_t argc = 0;
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    WebSchemeHandlerResponse *response = nullptr;
+    napi_get_cb_info(env, cbinfo, &argc, nullptr, &thisVar, &data);
+
+    napi_unwrap(env, thisVar, (void **)&response);
+    if (!response) {
+        WVLOG_E("NapiWebSchemeHandlerResponse::JS_GetCustomErrorCode response is nullptr");
+        return nullptr;
+    }
+    
+    napi_value code;
+    int32_t result = response->GetCustomErrorCode();
+    NAPI_CALL(env, napi_create_int32(env, result, &code));
+    return code;
+}
+
+napi_value NapiWebSchemeHandlerResponse::JS_SetCustomErrorCode(napi_env env, napi_callback_info cbinfo)
+{
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = {0};
+    napi_value thisVar = nullptr;
+    void *data = nullptr;
+    WebSchemeHandlerResponse *response = nullptr;
+    napi_get_cb_info(env, cbinfo, &argc, argv, &thisVar, &data);
+
+    napi_unwrap(env, thisVar, (void **)&response);
+    if (!response) {
+        WVLOG_E("NapiWebSchemeHandlerResponse::JS_SetCustomErrorCode response is nullptr");
+        return nullptr;
+    }
+    int32_t code = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[0], code)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "customErrorCode", "int"));
+        return nullptr;
+    }
+    response->SetCustomErrorCode(code);
+    return nullptr;
+}
+
 napi_value NapiWebSchemeHandler::Init(napi_env env, napi_value exports)
 {
     WVLOG_D("NapiWebSchemeHandler::Init");
@@ -1336,8 +1412,8 @@ napi_value NapiWebResourceHandler::JS_DidFinish(napi_env env, napi_callback_info
 
 napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callback_info info)
 {
-    size_t argc = 2;
-    napi_value argv[2] = {0};
+    size_t argc = 3;
+    napi_value argv[3] = {0};
     napi_value thisVar = nullptr;
     void *data = nullptr;
     napi_get_cb_info(env, info, &argc, argv, &thisVar, &data);
@@ -1352,6 +1428,8 @@ napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callba
 
     int32_t errorCode;
     static constexpr int LEVEL_20_COUNT = 2;
+    static constexpr int LEVEL_30_COUNT = 3;
+    static constexpr int CUSTOM_ERROR_CODE_INDEX = 2;
     if (!NapiParseUtils::ParseInt32(env, argv[0], errorCode)) {
         WVLOG_E("JS_DidFailWithError unwrap error code failed");
         if (argc < LEVEL_20_COUNT) {
@@ -1374,12 +1452,29 @@ napi_value NapiWebResourceHandler::JS_DidFailWithError(napi_env env, napi_callba
     if (!NapiParseUtils::ParseBoolean(env, argv[1], completeIfNoResponse)) {
         WVLOG_E("JS_DidFailWithError unwrap error completeIfNoResponse failed");
     }
-    
-    int32_t ret = resourceHandler->DidFailWithError(
-        static_cast<ArkWeb_NetError>(errorCode), completeIfNoResponse);
-    if (ret != 0) {
-        BusinessError::ThrowErrorByErrcode(env, RESOURCE_HANDLER_INVALID);
-        WVLOG_E("JS_DidFailWithError ret=%{public}d", ret);
+    if (argc <= LEVEL_20_COUNT) {
+        int32_t ret = resourceHandler->DidFailWithError(
+            static_cast<ArkWeb_NetError>(errorCode), completeIfNoResponse);
+        if (ret != 0) {
+            BusinessError::ThrowErrorByErrcode(env, RESOURCE_HANDLER_INVALID);
+            WVLOG_E("JS_DidFailWithError ret=%{public}d", ret);
+        }
+        return nullptr;
+    }
+    if (argc == LEVEL_30_COUNT) {
+        int32_t customErrorCode = 0;
+        if (!NapiParseUtils::ParseInt32(env, argv[CUSTOM_ERROR_CODE_INDEX], customErrorCode)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "customErrorCode", "int"));
+            return nullptr;
+        }
+        int32_t ret = resourceHandler->DidFailWithErrorInfo(
+            static_cast<ArkWeb_NetError>(errorCode), completeIfNoResponse, customErrorCode);
+        if (ret != 0) {
+            BusinessError::ThrowErrorByErrcode(env, RESOURCE_HANDLER_INVALID);
+            WVLOG_E("DidFailWithErrorInfo ret=%{public}d", ret);
+        }
+        return nullptr;
     }
     return nullptr;
 }

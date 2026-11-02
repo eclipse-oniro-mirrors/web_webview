@@ -125,9 +125,20 @@ public:
         return outputFrameCallback_;
     }
 
+    void SetAsyncStackId(uint64_t stackId)
+    {
+        stackId_ = stackId;
+    }
+
+    uint64_t GetAsyncStackId() override
+    {
+        return stackId_;
+    }
+
 private:
     uint32_t width_ = 0;
     uint32_t height_ = 0;
+    uint64_t stackId_ = 0;
 
     bool isIncognitoMode_ = false;
 
@@ -233,6 +244,16 @@ public:
         return sharedRenderProcessToken_;
     }
 
+    void SetIsPreloadNWeb(bool isPreloadNWeb)
+    {
+        isPreloadNWeb_ = isPreloadNWeb;
+    }
+
+    bool GetIsPreloadNWeb() override
+    {
+        return isPreloadNWeb_;
+    }
+
     void SetEmulateTouchFromMouseEvent(bool emulateTouchFromMouseEvent)
     {
         emulateTouchFromMouseEvent_ = emulateTouchFromMouseEvent;
@@ -253,10 +274,11 @@ public:
         return useCloudControlAutoLayoutConfig_;
     }
 
-    void SetSurfaceNodeIdAndRSHandle(uint64_t nodeId, uint64_t rsHandle)
+    void SetParamsForDelegateCompositing(uint64_t nodeId, uint64_t rsHandle, uint64_t rsUIContextToken)
     {
         rsHandle_ = rsHandle;
         surfaceNodeId_ = nodeId;
+        rsUIContextToken_ = rsUIContextToken;
     }
 
     uint64_t GetSurfaceNodeId() override
@@ -269,12 +291,18 @@ public:
         return rsHandle_;
     }
 
+    uint64_t GetSurfaceRSUIContextToken() override
+    {
+        return rsUIContextToken_;
+    }
+
 private:
     std::string dumpPath_;
 
     bool isPopup_ = false;
     bool isFrameInfoDump_ = false;
     bool isEnhanceSurface_ = false;
+    bool isPreloadNWeb_ = false;
     bool isMultiRendererProcess_ = false;
 
     std::list<std::string> argsToAdd_;
@@ -284,6 +312,7 @@ private:
     bool useCloudControlAutoLayoutConfig_ = false;
     uint64_t rsHandle_ = 0;
     uint64_t surfaceNodeId_ = 0;
+    uint64_t rsUIContextToken_ = 0;
 };
 
 class NWebEnginePrefetchArgsImpl : public NWebEnginePrefetchArgs {

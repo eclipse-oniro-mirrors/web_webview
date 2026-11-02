@@ -69,6 +69,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_console_log_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_context_menu_callback_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_context_menu_callback_wrapper.h",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_context_menu_options_wrapper.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_context_menu_options_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_context_menu_params_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_context_menu_params_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_controller_handler_wrapper.cpp",
@@ -151,6 +153,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_proxy_method_impl.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_result_callback_impl.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_result_callback_impl.h",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_call_info_wrapper.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_call_info_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_ssl_error_result_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_ssl_error_result_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_js_ssl_select_cert_result_wrapper.cpp",
@@ -179,6 +183,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_mouse_event_result_wrapper.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_command_action_impl.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_command_action_impl.h",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_auto_fill_item_impl.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_auto_fill_item_impl.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_command_action_info_impl.cpp",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_command_action_info_impl.h",
     "${glue_build_gen_dir}/ohos_nweb/bridge/ark_web_native_embed_data_info_wrapper.cpp",
@@ -327,6 +333,10 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_mouse_event_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_command_action_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_command_action_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_auto_fill_item_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_auto_fill_item_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_auto_fill_item_vector_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_auto_fill_item_vector_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_command_action_info_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_command_action_info_cpptoc.h",
     "${glue_build_gen_dir}/ohos_nweb/cpptoc/ark_web_native_media_player_bridge_cpptoc.cpp",
@@ -389,6 +399,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_context_menu_callback_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_context_menu_params_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_context_menu_params_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_context_menu_options_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_context_menu_options_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_controller_handler_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_controller_handler_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_cookie_manager_ctocpp.cpp",
@@ -441,6 +453,8 @@ action("ohos_glue_nweb_prepare") {
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_image_options_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_js_all_ssl_error_result_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_js_all_ssl_error_result_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_js_call_info_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_js_call_info_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_js_dialog_result_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_js_dialog_result_ctocpp.h",
     "${glue_build_gen_dir}/ohos_nweb/ctocpp/ark_web_js_http_auth_result_ctocpp.cpp",
@@ -709,6 +723,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_hisysevent_adapter_impl.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_hitrace_adapter_impl.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_hitrace_adapter_impl.h",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_hiviewdfx_adapter_impl.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_hiviewdfx_adapter_impl.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_ibuffer_consumer_listener_adapter_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_ibuffer_consumer_listener_adapter_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_iconsumer_surface_adapter_impl.cpp",
@@ -811,6 +827,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_paste_data_record_adapter_impl.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_player_adapter_impl.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_player_adapter_impl.h",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_media_source_data_handler_wrapper.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_media_source_data_handler_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_player_callback_adapter_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_player_callback_adapter_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_power_mgr_client_adapter_impl.cpp",
@@ -866,6 +884,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_video_enc_info_adapter_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_video_info_adapter_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_video_info_adapter_wrapper.h",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vpe_video_adapter_impl.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vpe_video_adapter_impl.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vpn_listener_wrapper.cpp",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vpn_listener_wrapper.h",
     "${glue_build_gen_dir}/ohos_adapter/bridge/ark_vsync_adapter_impl.cpp",
@@ -948,6 +968,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_hi_sys_event_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_hi_trace_adapter_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_hi_trace_adapter_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_hi_view_dfx_adapter_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_hi_view_dfx_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_iconsumer_surface_adapter_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_iconsumer_surface_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_imfadapter_cpptoc.cpp",
@@ -1046,6 +1068,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_surface_transaction_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_system_properties_adapter_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_system_properties_adapter_cpptoc.h",
+    "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_vpe_video_adapter_cpptoc.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_vpe_video_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_video_capture_range_adapter_cpptoc.cpp",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_video_capture_range_adapter_cpptoc.h",
     "${glue_build_gen_dir}/ohos_adapter/cpptoc/ark_video_control_support_adapter_cpptoc.cpp",
@@ -1162,6 +1186,8 @@ action("ohos_glue_adapter_prepare") {
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_net_proxy_event_callback_adapter_ctocpp.h",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_paste_board_observer_adapter_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_paste_board_observer_adapter_ctocpp.h",
+    "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_media_source_data_handler_ctocpp.cpp",
+    "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_media_source_data_handler_ctocpp.h",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_player_callback_adapter_ctocpp.cpp",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_player_callback_adapter_ctocpp.h",
     "${glue_build_gen_dir}/ohos_adapter/ctocpp/ark_print_document_adapter_adapter_ctocpp.cpp",
@@ -1226,6 +1252,12 @@ ohos_shared_library("ohos_base_glue_source") {
 
   branch_protector_ret = "pac_ret"
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   configs = [ ":ohos_glue_config" ]
 
   public_configs = [ ":ohos_glue_config" ]
@@ -1247,6 +1279,12 @@ ohos_shared_library("ohos_nweb_glue_source") {
   output_name = "arkweb_core_loader_glue"
 
   branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   configs = [ ":ohos_glue_config" ]
 
@@ -1270,6 +1308,12 @@ ohos_shared_library("ohos_nweb_glue_source") {
 
 ohos_shared_library("ohos_adapter_glue_source") {
   branch_protector_ret = "pac_ret"
+
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   configs = [ ":ohos_glue_config" ]
 

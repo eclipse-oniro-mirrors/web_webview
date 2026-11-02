@@ -118,7 +118,11 @@ bool NetConnectAdapterImpl::HasVpnTransport()
  
     for (sptr<NetManagerStandard::NetHandle> netHandle : netHandleList) {
         NetManagerStandard::NetAllCapabilities netAllCap;
-        NetConnClient::GetInstance().GetNetCapabilities(*netHandle, netAllCap);
+        int32_t capRet = NetConnClient::GetInstance().GetNetCapabilities(*netHandle, netAllCap);
+        if (capRet != NETMANAGER_SUCCESS) {
+            WVLOG_E("get net capabilities failed, ret = %{public}d.", capRet);
+            continue;
+        }
         if (netAllCap.bearerTypes_.count(NetManagerStandard::BEARER_VPN) > 0) {
             return true;
         }
@@ -129,7 +133,12 @@ bool NetConnectAdapterImpl::HasVpnTransport()
 void NetConnectAdapterImpl::UnRegisterVpnListener()
 {
     if (commonEventSubscriber_) {
-        commonEventSubscriber_ = nullptr;
+        bool result = EventFwk::CommonEventManager::UnSubscribeCommonEvent(commonEventSubscriber_);
+        if (result) {
+            commonEventSubscriber_ = nullptr;
+        } else {
+            WVLOG_E("stop vpn listener, unsubscribe common event failed");
+        }
     }
 }
 
@@ -225,7 +234,8 @@ int32_t NetConnectAdapterImpl::GetDefaultNetConnect(NetConnectType &type, NetCon
     return 0;
 }
 
-std::vector<std::string> NetConnectAdapterImpl::GetDnsServersInternal(const NetHandle &netHandle) {
+std::vector<std::string> NetConnectAdapterImpl::GetDnsServersInternal(const NetHandle &netHandle)
+{
     std::vector<std::string> servers;
     NetLinkInfo info;
     int32_t ret = NetConnClient::GetInstance().GetConnectionProperties(netHandle, info);
@@ -267,7 +277,11 @@ std::vector<std::string> NetConnectAdapterImpl::GetDnsServersForVpn()
  
     for (sptr<NetManagerStandard::NetHandle> netHandle : netHandleList) {
         NetManagerStandard::NetAllCapabilities netAllCap;
-        NetConnClient::GetInstance().GetNetCapabilities(*netHandle, netAllCap);
+        int32_t capRet = NetConnClient::GetInstance().GetNetCapabilities(*netHandle, netAllCap);
+        if (capRet != NETMANAGER_SUCCESS) {
+            WVLOG_E("get net capabilities for vpn dns failed, ret = %{public}d.", capRet);
+            continue;
+        }
         if (netAllCap.bearerTypes_.count(NetManagerStandard::BEARER_VPN) > 0) {
             WVLOG_I("get dns for vpn");
             return GetDnsServersInternal(*netHandle);

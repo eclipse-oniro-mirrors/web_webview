@@ -30,6 +30,7 @@
 #include "nweb.h"
 #include "nweb_javascript_result_callback.h"
 #include "nweb_log.h"
+#include "nweb_rom_value.h"
 #include "nweb_value.h"
 #include "uv.h"
 #include "ani.h"
@@ -62,7 +63,7 @@ typedef struct AniRegisterJavaScriptProxyParam {
 
 class JavaScriptOb {
 public:
-    // to be compatible with older webcotroller, be sure to the same as ace and core
+    // to be compatible with older webcontroller, be sure to the same as ace and core
     enum class JavaScriptObjIdErrorCode : int32_t { WEBCONTROLLERERROR = -2, WEBVIEWCONTROLLERERROR = -1, END = 0 };
 
     typedef int32_t ObjectID;
@@ -204,6 +205,10 @@ public:
     ani_ref GetAniValue() const
     {
         ani_ref result = nullptr;
+        if (!aniObjRef_) {
+            WVLOG_E("GetAniValue aniObjRef_ is null");
+            return result;
+        }
         ani_env* env = GetAniEnv();
         if (!env) {
             WVLOG_E("env is nullptr");
@@ -251,36 +256,37 @@ public:
     }
     void RemoveName()
     {
-        --namesCount_;
+        if (namesCount_ > 0) {
+            --namesCount_;
+        }
     }
 
     bool HasHolders()
     {
+        std::unique_lock<std::mutex> lock(mutex_);
         return !holders_.empty();
     }
     void AddHolder(int32_t holder)
     {
+        std::unique_lock<std::mutex> lock(mutex_);
         holders_.insert(holder);
     }
     void RemoveHolder(int32_t holder)
     {
+        std::unique_lock<std::mutex> lock(mutex_);
         holders_.erase(holder);
     }
 
     std::vector<std::string> GetMethodNames()
     {
-        if (!isMethodsSetup_) {
-            SetUpMethods();
-        }
+        EnsureMethodsSetup();
         std::unique_lock<std::mutex> lock(mutex_);
         return methods_;
     }
 
     std::vector<std::string> GetSyncMethodNames()
     {
-        if (!isMethodsSetup_) {
-            SetUpMethods();
-        }
+        EnsureMethodsSetup();
         std::unique_lock<std::mutex> lock(mutex_);
         if (asyncMethods_.empty()) {
             return methods_;
@@ -315,9 +321,8 @@ public:
             return false;
         }
 
-        if (!isMethodsSetup_) {
-            SetUpMethods();
-        }
+        EnsureMethodsSetup();
+        std::unique_lock<std::mutex> lock(mutex_);
         for (std::vector<std::string>::iterator iter = methods_.begin(); iter != methods_.end(); ++iter) {
             if (*iter == methodName) {
                 return true;
@@ -333,10 +338,7 @@ public:
             return false;
         }
 
-        if (!isMethodsSetup_) {
-            AniSetUpMethods();
-            return false;
-        }
+        EnsureAniMethodsSetup();
         {
             std::unique_lock<std::mutex> lock(mutex_);
             for (std::vector<std::string>::iterator iter = methods_.begin(); iter != methods_.end(); ++iter) {
@@ -350,9 +352,7 @@ public:
 
     napi_value FindMethod(const std::string& methodName)
     {
-        if (!isMethodsSetup_) {
-            SetUpMethods();
-        }
+        EnsureMethodsSetup();
 
         if (HasMethod(methodName)) {
             bool hasFunc = false;
@@ -469,6 +469,21 @@ public:
         isMethodsSetup_ = true;
     }
 
+    void EnsureMethodsSetup()
+    {
+        std::lock_guard<std::mutex> lk(setupMutex_);
+        if (!isMethodsSetup_) {
+            SetUpMethods();
+        }
+    }
+    void EnsureAniMethodsSetup()
+    {
+        std::lock_guard<std::mutex> lk(setupMutex_);
+        if (!isMethodsSetup_) {
+            AniSetUpMethods();
+        }
+    }
+
     void AniSetUpMethods();
 
     void SetMethods(std::vector<std::string> methods_name)
@@ -494,6 +509,10 @@ public:
     {
         std::unique_lock<std::mutex> lock(mutex_);
         ani_env* ani_env_ = GetAniEnv();
+        if (ani_env_ && webviewObj_) {
+            ani_env_->GlobalReference_Delete(webviewObj_);
+            webviewObj_ = nullptr;
+        }
         ani_ref result = nullptr;
         if (ani_env_) {
             ani_status s = ani_env_->GlobalReference_Create(obj, &result);
@@ -580,10 +599,11 @@ private:
 
     // An object must be kept in retainedObjectSet_ either if it has
     // names or if it has a non-empty holders set.
-    int namesCount_;
+    int namesCount_ = 0;
     std::set<int32_t> holders_;
     bool isMethodsSetup_ = false;
     std::mutex mutex_;
+    std::mutex setupMutex_; // Must be acquired before mutex_
 };
 
 class WebviewJavaScriptResultCallBack : public std::enable_shared_from_this<WebviewJavaScriptResultCallBack>,
@@ -595,8 +615,15 @@ public:
     struct H5Bundle {
         int32_t nwebId;
         int32_t frameRoutingId;
+        int32_t frameChildId;
         int32_t h5Id;
         std::string funcName;
+    };
+
+    struct FrameInfo {
+        int32_t nwebId = -1;
+        int32_t frameId = -1;
+        int32_t frameChildId = -1;
     };
 
     enum class NapiJsCallBackParmFlag : int32_t { ISOBJECT = 1, END = 2 };
@@ -605,6 +632,7 @@ public:
         WebviewJavaScriptResultCallBack* webJsResCb = nullptr;
         int32_t nwebId = -1;
         int32_t frameRoutingId = -1;
+        int32_t frameChildId = -1;
         int32_t objId = -1;
         std::string objName;
         std::string methodName;
@@ -684,6 +712,15 @@ public:
 
     void GetJavaScriptObjectMethodsV2(int32_t objectId, std::shared_ptr<NWebHapValue> result) override;
 
+    void GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWebHapValue>>& args, const std::string& method,
+        const std::string& objectName, std::shared_ptr<NWebJsCallInfo> callInfo,
+        std::shared_ptr<NWebHapValue> result) override;
+
+    void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+        const std::string& method, const std::string& objectName,
+        std::shared_ptr<NWebJsCallInfo> callInfo,
+        std::shared_ptr<NWebHapValue> result) override;
+
     void RemoveTransientJavaScriptObject() override;
 
     bool FindObjectIdInJsTd(napi_env env, napi_value object, JavaScriptOb::ObjectID* objectId);
@@ -708,7 +745,9 @@ public:
 
     void CallH5FunctionInternal(napi_env env, H5Bundle& bundle, std::vector<std::shared_ptr<NWebValue>> nwebArgs);
 
-    void CallH5FunctionInternal(ani_env* env, H5Bundle& bundle, std::vector<std::shared_ptr<NWebValue>> nwebArgs);
+    void CallH5FunctionInternal(ani_env* env, H5Bundle& bundle,
+        const std::vector<std::shared_ptr<NWebRomValue>>& romArgs,
+        const std::vector<std::shared_ptr<NWebValue>>& nwebArgs);
 
     int32_t GetNWebId()
     {
@@ -731,7 +770,7 @@ private:
 
     void PostRemoveJavaScriptObjectHolderToJsThread(int32_t holder, JavaScriptOb::ObjectID objectId);
 
-    void PostGetJavaScriptResultToJsThreadV2(std::vector<ani_object>& argv, const std::string& method,
+    void ExecGetJavaScriptResult(std::vector<ani_object>& argv, const std::string& method,
         int32_t routingId, int32_t objectId, std::shared_ptr<NWebHapValue> result);
 
     void CreateUvQueueWork(ani_env* env, WebviewJavaScriptResultCallBack::AniJsCallBackParm* data,
@@ -749,8 +788,6 @@ private:
     std::shared_ptr<NWebValue> GetJavaScriptResultSelfHelper(std::shared_ptr<JavaScriptOb> jsObj,
         const std::string& method, int32_t routingId, napi_handle_scope scope, std::vector<napi_value> argv);
 
-    char* FlowbufStrAtIndex(void* mem, int flowbufIndex, int* argIndex, int* strLen);
-
     std::shared_ptr<NWebValue> GetJavaScriptResultSelfFlowbuf(std::vector<std::shared_ptr<NWebValue>> args,
         const std::string& method, const std::string& objName, int fd, int32_t routingId, int32_t objectId);
 
@@ -759,6 +796,7 @@ private:
     JavaScriptOb::ObjectID nextObjectId_ = 1;
     NamedObjectMap namedObjects_;
     ObjectMap objects_;
+    std::mutex objectsMutex_;
     std::unordered_set<std::shared_ptr<JavaScriptOb>> retainedObjectSet_;
     std::shared_ptr<AppExecFwk::EventHandler> mainHandler_;
 };

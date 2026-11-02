@@ -89,6 +89,9 @@ public:
     static void ReportProcessInUse(pid_t pid);
     static void ReportSiteIsolationMode(bool mode);
     static bool ReportSubwindowCall(ResSchedStatusAdapter statusAdapter, pid_t pid, pid_t tid);
+    // The startup scene expires in RSS; inactive only clears the synthetic window state.
+    static bool ReportNWebPreloadRenderProcess(pid_t pid);
+    static void ReportPreloadNWebCreate(bool isPreload);
 };
 
 } // namespace OHOS::NWeb

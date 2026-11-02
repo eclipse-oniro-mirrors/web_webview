@@ -36,6 +36,9 @@
 #include "parameter.h"
 #include "parameters.h"
 #include "arkweb_utils.h"
+#if defined(hidebug_async_stack)
+#include "async_stack.h"
+#endif
 
 namespace {
 
@@ -933,13 +936,17 @@ void NWebHelper::SetBundlePath(const std::string& path)
 
 std::shared_ptr<NWeb> NWebHelper::CreateNWeb(std::shared_ptr<NWebCreateInfo> create_info)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return nullptr;
     }
 
-    initWebEngine_ = true;
-    return nwebEngine_->CreateNWeb(create_info);
+    auto result = nwebEngine_->CreateNWeb(create_info);
+    if (result != nullptr) {
+        initWebEngine_ = true;
+    }
+    return result;
 }
 
 std::shared_ptr<NWebCookieManager> NWebHelper::GetCookieManager()
@@ -1065,6 +1072,11 @@ void NWebHelper::SetConnectionTimeout(const int32_t& timeout)
 
 void NWebHelper::AddIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts)
 {
+    if (!initWebEngine_) {
+        WVLOG_E("AddIntelligentTrackingPreventionBypassingList, not initialized");
+        return;
+    }
+
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return;
@@ -1075,6 +1087,11 @@ void NWebHelper::AddIntelligentTrackingPreventionBypassingList(const std::vector
 
 void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(const std::vector<std::string>& hosts)
 {
+    if (!initWebEngine_) {
+        WVLOG_E("RemoveIntelligentTrackingPreventionBypassingList, not initialized");
+        return;
+    }
+
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return;
@@ -1085,6 +1102,11 @@ void NWebHelper::RemoveIntelligentTrackingPreventionBypassingList(const std::vec
 
 void NWebHelper::ClearIntelligentTrackingPreventionBypassingList()
 {
+    if (!initWebEngine_) {
+        WVLOG_E("ClearIntelligentTrackingPreventionBypassingList, not initialized");
+        return;
+    }
+
     if (nwebEngine_ == nullptr) {
         WVLOG_E("web engine is nullptr");
         return;
@@ -1368,8 +1390,16 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
         WVLOG_E("fail to create nweb, input surface is nullptr");
         return nullptr;
     }
+    if (!initArgs) {
+        WVLOG_E("fail to create nweb, input initArgs is nullptr");
+        return nullptr;
+    }
     if (width > NWEB_SURFACE_MAX_WIDTH || height > NWEB_SURFACE_MAX_HEIGHT) {
         WVLOG_E("input size %{public}u*%{public}u is invalid.", width, height);
+        return nullptr;
+    }
+    if (!initArgs) {
+        WVLOG_E("fail to create nweb, input initArgs is nullptr");
         return nullptr;
     }
     initArgs->AddArg(NWebConfigHelper::Instance().GetWebPlayGroundInitArg());
@@ -1379,6 +1409,11 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(sptr<Surface> surface,
     std::string socketIdleTimeout = std::to_string(NWebHelper::Instance().GetSocketIdleTimeout());
     initArgs->AddArg(std::string("--socket-idle-timeout=").append(socketIdleTimeout));
     auto createInfo = NWebSurfaceAdapter::Instance().GetCreateInfo(surface, initArgs, width, height, incognitoMode);
+#if defined(hidebug_async_stack)
+    uint64_t asyncStackId = DfxCollectAsyncStack(ASYNC_TYPE_CUSTOMIZE);
+    WVLOG_D("NWebAdapterHelper::CreateNWeb::SetAsyncStackId %{public}lu.", asyncStackId);
+    createInfo->SetAsyncStackId(asyncStackId);
+#endif
     NWebConfigHelper::Instance().ParseConfig(initArgs);
 
     // obtain bundle path
@@ -1408,6 +1443,10 @@ std::shared_ptr<NWeb> NWebAdapterHelper::CreateNWeb(void* enhanceSurfaceInfo,
     int64_t startTime = GetCurrentRealTimeNs();
     if (enhanceSurfaceInfo == nullptr) {
         WVLOG_E("fail to create nweb, input surface is nullptr");
+        return nullptr;
+    }
+    if (!initArgs) {
+        WVLOG_E("fail to create nweb, input initArgs is nullptr");
         return nullptr;
     }
     if (width > NWEB_SURFACE_MAX_WIDTH || height > NWEB_SURFACE_MAX_HEIGHT) {
@@ -1589,6 +1628,7 @@ void NWebHelper::SetScrollbarMode(ScrollbarMode mode)
 
 void NWebHelper::SetLazyInitializeWebEngine(bool lazy)
 {
+    std::lock_guard<std::mutex> lock(lock_);
     if (initWebEngine_) {
         WVLOG_E("arkweb core has been initialized");
         return;
@@ -1604,7 +1644,8 @@ void NWebHelper::SetLazyInitializeWebEngine(bool lazy)
 
 bool NWebHelper::IsLazyInitializeWebEngine()
 {
-    return lazyInitializeWebEngine_ && !initWebEngine_;
+    std::lock_guard<std::mutex> lock(lock_);
+    return lazyInitializeWebEngine_;
 }
 
 void NWebHelper::SetNWebActiveStatus(int32_t nwebId, bool nwebActiveStatus)

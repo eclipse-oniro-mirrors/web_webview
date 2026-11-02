@@ -14,6 +14,7 @@
  */
 
 #include "nweb_message_ext.h"
+#include "nweb_log.h"
 #include "securec.h"
 
 namespace OHOS::NWeb {
@@ -106,9 +107,22 @@ std::shared_ptr<NWebMessage> ConvertNwebHap2NwebMessage(std::shared_ptr<NWebHapV
         case NWebHapValue::Type::BINARY: {
             auto length = 0;
             auto buff = hap->GetBinary(length);
-            std::vector<uint8_t> arr(length);
-            memcpy_s(&arr[0], length, buff, length);
             message->SetType(NWebValue::Type::BINARY);
+            if (buff == nullptr || length <= 0) {
+                std::vector<uint8_t> emptyArr;
+                message->SetBinary(emptyArr);
+                break;
+            }
+            constexpr size_t MAX_BINARY_SIZE = 100 * 1024 * 1024; // 100MB limit
+            if (length > MAX_BINARY_SIZE) {
+                WVLOG_E("ConvertNwebHap2NwebMessage binary size %{public}zu exceeds limit %{public}zu",
+                    static_cast<size_t>(length), MAX_BINARY_SIZE);
+                std::vector<uint8_t> emptyArr;
+                message->SetBinary(emptyArr);
+                break;
+            }
+            std::vector<uint8_t> arr(length);
+            memcpy_s(arr.data(), length, buff, length);
             message->SetBinary(arr);
             break;
         }

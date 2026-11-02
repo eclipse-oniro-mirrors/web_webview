@@ -31,11 +31,20 @@ int UnlinkMock(const char *pathName);
 void SetOpenMockValue(int mockValue);
 int OpenMock(const char *pathName, int flags, ...);
 
+void FdsanExchangeOwnerTagMock(int fd, uint64_t expectedTag, uint64_t newTag);
+int FdsanCloseWithTagMock(int fd, uint64_t tag);
+
 void SetDlopenNsExtMockValue(void *mockValue);
 void *DlopenNsExtMock(Dl_namespace *dlns, const char *libName, int flag, const dl_extinfo *extinfo);
 
 void SetForkMockValue(pid_t mockValue);
 pid_t ForkMock();
+
+void SetWaitpidMockValue(pid_t mockValue, int statusValue, int errorValue);
+void SetWaitpidEintrCount(int eintrCount);
+pid_t WaitpidMock(pid_t pid, int *status, int options);
+int GetWaitpidMockOptions(void);
+int GetWaitpidMockCallCount(void);
 
 void SetPrctlMockValue(int mockValue);
 int PrctlMock(int option, ...);

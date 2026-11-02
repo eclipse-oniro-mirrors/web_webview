@@ -1907,6 +1907,13 @@ public:
     virtual void SetTouchHandleExistState(bool touchHandleExist) = 0;
 
     /**
+     * @brief Set whether click extension is enabled.
+     * @param enable Whether to enable click extension feature.
+     */
+    /*--ark web()--*/
+    virtual void SetClickExtEnabled(bool enable) = 0;
+
+    /**
      * @brief Sets the bottom avoidance height of the web visible viewport.
      * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
      */
@@ -2380,6 +2387,76 @@ public:
     /*--ark web()--*/
     virtual ArkWebRefPtr<ArkWebAccessibilityNodeInfo> GetAccessibilityNodeInfoByParams(
         int64_t accessibility_id, int32_t direction, int32_t element_type, const ArkWebStringMap& params) = 0;
+
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     * @param includeSubframe bool: Whether also enable error page for iframes.
+     */
+    /*--ark web()--*/
+    virtual void SetErrorPageEnabledV2(bool enable, bool includeSubframe) = 0;
+
+    /**
+     * @brief Get whether iframe error page feature is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool GetSubframeErrorPageEnabled() = 0;
+
+    // Keep newly added virtual methods at the end of this cross-library
+    // interface so existing vtable slots remain ABI-compatible.
+    /**
+     * @brief Sets the browser zoom level for this NWeb. Both text and images
+     *        are scaled and the page is re-laid out (reflow).
+     *
+     * @param zoom_factor: the browser zoom factor to set, in the range
+     *        [0.25, 5.0]. Values beyond the range are clamped to the boundary.
+     */
+    /*--ark web()--*/
+    virtual void SetZoomFactor(double zoom_factor) = 0;
+
+    /**
+     * @brief Gets the current browser zoom level for this NWeb.
+     *
+     * @return double: the current browser zoom factor, in the range
+     *        [0.25, 5.0]. The default value is 1.0.
+     */
+    /*--ark web()--*/
+    virtual double GetZoomFactor() = 0;
+
+    /**
+     * @brief Set whether enable automatic reload of network error pages.
+     *
+     * @param enable bool: Whether enable automatic reload of error pages.
+     */
+    /*--ark web()--*/
+    virtual void SetAutoReloadEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get whether automatic reload of error pages is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool GetAutoReloadEnabled() = 0;
+
+    /**
+     * @brief Set the maximum initial velocity at the start of the fling animation.
+     *
+     * @param speed_limit Maximum initial velocity in vp/s.
+     */
+    /*--ark web()--*/
+    virtual void SetFlingSpeedLimit(float speed_limit) = 0;
+
+    /* CallH5FunctionV3
+     *
+     * @param routing_id       int32_t: the h5 frame routing id
+     * @param frame_child_id   int32_t: the h5 frame child id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    /*--ark web()--*/
+    virtual bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+        const ArkWebString& h5_method_name, const ArkWebRomValueVector& args) = 0;
 };
 
 } // namespace OHOS::ArkWeb

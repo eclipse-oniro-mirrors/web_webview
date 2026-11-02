@@ -280,7 +280,11 @@ int32_t CertManagerAdapterImpl::GetSytemRootCertData(uint32_t certCount, uint8_t
 
     struct CertInfo certInfo;
     unsigned int len = sizeof(struct CertInfo);
-    (void)memset_s(&certInfo, len, 0, len);
+    if (memset_s(&certInfo, len, 0, len) != EOK) {
+        WVLOG_E("GetSytemRootCertData, memset_s failed");
+        FreeCertList(certList);
+        return CM_FAILURE;
+    }
     ret = InitCertInfo(&certInfo);
     if (ret != CM_SUCCESS) {
         WVLOG_E("GetSytemRootCertData, init cert failed, ret = %{public}d ", ret);
@@ -289,20 +293,27 @@ int32_t CertManagerAdapterImpl::GetSytemRootCertData(uint32_t certCount, uint8_t
         return CM_FAILURE;
     }
 
-    if (certCount > certList->certsCount) {
-        WVLOG_E("GetSytemRootCertData, cert count invailed, cert count = %{public}d ", certCount);
+    if (certCount >= certList->certsCount) {
+        WVLOG_E("GetSytemRootCertData, cert count invalid, cert count = %{public}d ", certCount);
         FreeCMBlobData(&(certInfo.certInfo));
         FreeCertList(certList);
         return CM_FAILURE;
     }
 
     char *uri = certList->certAbstract[certCount].uri;
+    if (uri == nullptr) {
+        WVLOG_E("GetSytemRootCertData, uri is nullptr");
+        FreeCMBlobData(&(certInfo.certInfo));
+        FreeCertList(certList);
+        return CM_FAILURE;
+    }
     struct CmBlob uriBlob = {strlen(uri) + 1, (uint8_t *)(uri)};
 
     ret = CmGetCertInfo(&uriBlob, CM_SYSTEM_TRUSTED_STORE, &certInfo);
     if (ret != CM_SUCCESS) {
         WVLOG_E("GetSytemRootCertData, get cert info failed, ret = %{public}d ", ret);
         FreeCMBlobData(&(certInfo.certInfo));
+        (void)memset_s(&certInfo, sizeof(struct CertInfo), 0, sizeof(struct CertInfo));
         FreeCertList(certList);
         return CM_FAILURE;
     }
@@ -310,11 +321,13 @@ int32_t CertManagerAdapterImpl::GetSytemRootCertData(uint32_t certCount, uint8_t
     if (memcpy_s(certData, MAX_LEN_CERTIFICATE, certInfo.certInfo.data, certInfo.certInfo.size) != EOK) {
         WVLOG_E("GetSytemRootCertData, memory copy failed");
         FreeCMBlobData(&(certInfo.certInfo));
+        (void)memset_s(&certInfo, sizeof(struct CertInfo), 0, sizeof(struct CertInfo));
         FreeCertList(certList);
         return CM_FAILURE;
     }
 
     FreeCMBlobData(&(certInfo.certInfo));
+    (void)memset_s(&certInfo, sizeof(struct CertInfo), 0, sizeof(struct CertInfo));
     FreeCertList(certList);
     return CM_SUCCESS;
 }
@@ -347,6 +360,10 @@ uint32_t CertManagerAdapterImpl::GetUserRootCertSum()
 
 int32_t CertManagerAdapterImpl::GetUserRootCertData(uint32_t certCount, uint8_t* certData)
 {
+    if (certData == nullptr) {
+        WVLOG_E("GetUserRootCertData, certData is nullptr");
+        return CM_FAILURE;
+    }
     struct CertList *certList = nullptr;
     int32_t ret = InitCertList(&certList);
     if (ret != CM_SUCCESS) {
@@ -373,14 +390,20 @@ int32_t CertManagerAdapterImpl::GetUserRootCertData(uint32_t certCount, uint8_t*
         return CM_FAILURE;
     }
 
-    if (certCount > certList->certsCount) {
-        WVLOG_E("GetUserRootCertData, cert count invailed, cert count = %{public}d ", certCount);
+    if (certCount >= certList->certsCount) {
+        WVLOG_E("GetUserRootCertData, cert count invalid, cert count = %{public}d ", certCount);
         FreeCMBlobData(&(certInfo.certInfo));
         FreeCertList(certList);
         return CM_FAILURE;
     }
 
     char *uri = certList->certAbstract[certCount].uri;
+    if (uri == nullptr) {
+        WVLOG_E("GetUserRootCertData, uri is nullptr");
+        FreeCMBlobData(&(certInfo.certInfo));
+        FreeCertList(certList);
+        return CM_FAILURE;
+    }
     struct CmBlob uriBlob = {strlen(uri) + 1, (uint8_t *)(uri)};
 
     ret = CmGetUserCertInfo(&uriBlob, CM_USER_TRUSTED_STORE, &certInfo);

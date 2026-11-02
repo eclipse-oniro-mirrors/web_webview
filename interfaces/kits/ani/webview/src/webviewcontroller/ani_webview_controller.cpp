@@ -14,6 +14,7 @@
  */
 
 #include <array>
+#include <cmath>
 #include <iostream>
 
 #ifndef WEBVIEW_UNIT_TEST
@@ -154,6 +155,28 @@ bool IsJsonObjectCommand(const std::string& command)
 {
     nlohmann::json commandJson = nlohmann::json::parse(command, nullptr, false);
     return !commandJson.is_discarded() && commandJson.is_object();
+}
+
+bool ResolveEmptyStringPromiseIfCallingFromM132(ani_env* env, ani_resolver resolver, const char* funcName)
+{
+    if (!IS_CALLING_FROM_M132()) {
+        return false;
+    }
+
+    OHOS::ArkWeb::LogForUnsupportedFunc(OHOS::ArkWeb::ArkWebEngineVersion::M132, funcName);
+    ani_string stringValue = nullptr;
+    if (env->String_NewUTF8("", 0, &stringValue) != ANI_OK) {
+        WVLOG_E("String_NewUTF8 failed");
+        ani_ref jsError = NWebError::AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
+        if (env->PromiseResolver_Reject(resolver, reinterpret_cast<ani_error>(jsError)) != ANI_OK) {
+            WVLOG_E("PromiseResolver_Reject failed");
+        }
+        return true;
+    }
+    if (env->PromiseResolver_Resolve(resolver, static_cast<ani_ref>(stringValue)) != ANI_OK) {
+        WVLOG_E("PromiseResolver_Resolve failed");
+    }
+    return true;
 }
 
 struct PDFMarginConfig {
@@ -3286,6 +3309,10 @@ static void BackOrForward(ani_env* env, ani_object object, ani_int step)
 static void SetWebDebuggingAccess(ani_env* env, ani_object object, ani_boolean aniDebugAccess)
 {
     WVLOG_D(" SetWebDebuggingAccess start");
+    if (OHOS::system::GetBoolParameter("web.debug.devtools", false)) {
+        WVLOG_D("SetWebDebuggingAccess is disabled by web.debug.devtools");
+        return;
+    }
     if (!env) {
         WVLOG_E("env is nullptr");
         return;
@@ -3305,6 +3332,10 @@ static void SetWebDebuggingAccessAndPort(
     ani_env* env, ani_object object, ani_boolean aniDebugAccess, ani_int aniDebugPort)
 {
     WVLOG_D(" SetWebDebuggingAccess start");
+    if (OHOS::system::GetBoolParameter("web.debug.devtools", false)) {
+        WVLOG_D("SetWebDebuggingAccess is disabled by web.debug.devtools");
+        return;
+    }
     if (!env) {
         WVLOG_E("env is nullptr");
         return;
@@ -5292,10 +5323,10 @@ static ani_object GetArray(ani_env* env, ani_object object)
     return result;
 }
 
-static ani_string GetError(ani_env* env, ani_object object)
+static ani_object GetError(ani_env* env, ani_object object)
 {
     WVLOG_D("WebMessageExt GetError Start.");
-    ani_string result = nullptr;
+    ani_object result = nullptr;
     if (!env) {
         WVLOG_E("env is nullptr");
         return result;
@@ -5318,8 +5349,17 @@ static ani_string GetError(ani_env* env, ani_object object)
         WVLOG_E("message data is nullptr");
         return result;
     }
+
+    ani_string aniErrMsg = nullptr;
     std::string errMsg = message->GetErrName() + ": " + message->GetErrMsg();
-    env->String_NewUTF8(errMsg.c_str(), errMsg.size(), &result);
+    ani_ref undefRef = nullptr;
+    ani_class errorCls = nullptr;
+    ani_method ctor = nullptr;
+    env->String_NewUTF8(errMsg.c_str(), errMsg.size(), &aniErrMsg);
+    env->GetUndefined(&undefRef);
+    env->FindClass("escompat.Error", &errorCls);
+    env->Class_FindMethod(errorCls, "<ctor>", "C{std.core.String}C{escompat.ErrorOptions}:", &ctor);
+    env->Object_New(errorCls, ctor, &result, aniErrMsg, undefRef);
     return result;
 }
 
@@ -5773,6 +5813,10 @@ static ani_object ExecuteAIPageCommand(ani_env* env, ani_object object, ani_obje
     if (env->Promise_New(&resolver, &promise) != ANI_OK) {
         WVLOG_E("create promise object error");
         return nullptr;
+    }
+
+    if (ResolveEmptyStringPromiseIfCallingFromM132(env, resolver, __func__)) {
+        return promise;
     }
 
     auto nweb = NWebHelper::Instance().GetNWeb(controller->GetNWebId());
@@ -6232,6 +6276,7 @@ static ani_ref CreateWebPrintDocumentAdapter(ani_env* env, ani_object object, an
     WebPrintDocument* webPrintDoc = new (std::nothrow) WebPrintDocument(webPrintDocument);
     if (!webPrintDoc) {
         WVLOG_E("new web print failed");
+        delete static_cast<PrintDocumentAdapterAdapter*>(webPrintDocument);
         return nullptr;
     }
 
@@ -6342,9 +6387,9 @@ static void ParsePrintRangeAdapter(ani_env* env, ani_object pageRange, PrintAttr
     }
     ani_array pagesArrayInt = static_cast<ani_array>(pages);
 
-    printAttr.pageRange.startPage = static_cast<uint32_t>(startPage);
+    printAttr.pageRange.startPage = startPage > 0 ? static_cast<uint32_t>(startPage) : 0;
 
-    printAttr.pageRange.endPage = static_cast<uint32_t>(endPage);
+    printAttr.pageRange.endPage = endPage > 0 ? static_cast<uint32_t>(endPage) : 0;
     WVLOG_D("printAttr.pageRange.startPage is %{public}d,printAttr.pageRange.endPage is %{public}d",
         printAttr.pageRange.startPage, printAttr.pageRange.endPage);
 
@@ -6390,8 +6435,8 @@ static void ParsePrintPageSizeAdapter(ani_env* env, ani_object pageSize, PrintAt
         WVLOG_E("ParsePrintPageSizeAdapter failed to get height");
     }
 
-    printAttr.pageSize.width = static_cast<uint32_t>(width);
-    printAttr.pageSize.height = static_cast<uint32_t>(height);
+    printAttr.pageSize.width = width > 0 ? static_cast<uint32_t>(width) : 0;
+    printAttr.pageSize.height = height > 0 ? static_cast<uint32_t>(height) : 0;
     WVLOG_D("width is %{public}d,height is %{public}d", printAttr.pageSize.width, printAttr.pageSize.height);
 }
 
@@ -6424,10 +6469,10 @@ static void ParsePrintMarginAdapter(ani_env* env, ani_object margin, PrintAttrib
         WVLOG_D("ParsePrintMarginAdapter failed to get right");
     }
 
-    printAttr.margin.top = static_cast<uint32_t>(top);
-    printAttr.margin.bottom = static_cast<uint32_t>(bottom);
-    printAttr.margin.left = static_cast<uint32_t>(left);
-    printAttr.margin.right = static_cast<uint32_t>(right);
+    printAttr.margin.top = top > 0 ? static_cast<uint32_t>(top) : 0;
+    printAttr.margin.bottom = bottom > 0 ? static_cast<uint32_t>(bottom) : 0;
+    printAttr.margin.left = left > 0 ? static_cast<uint32_t>(left) : 0;
+    printAttr.margin.right = right > 0 ? static_cast<uint32_t>(right) : 0;
     WVLOG_D("top is %{public}d,bottom is %{public}d,left is %{public}d,right is %{public}d", printAttr.margin.top,
         printAttr.margin.bottom, printAttr.margin.left, printAttr.margin.right);
 }
@@ -6635,7 +6680,7 @@ static ani_boolean IsPrivateNetworkAccessEnabled(ani_env* env, ani_object object
 static void SetErrorPageEnabled(ani_env* env, ani_object object, ani_boolean aniEnable)
 {
     if (IS_CALLING_FROM_M114()) {
-        WVLOG_E("SetErrorPageEnabled unsupported engine version: M114");
+        WVLOG_W("SetErrorPageEnabled unsupported engine version: M114");
         return;
     }
     if (env == nullptr) {
@@ -6657,10 +6702,37 @@ static void SetErrorPageEnabled(ani_env* env, ani_object object, ani_boolean ani
     }
 }
 
+static void SetErrorPageEnabledWithSubframe(ani_env* env, ani_object object,
+    ani_boolean aniEnable, ani_boolean aniIncludeSubframe)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("SetErrorPageEnabledWithSubframe unsupported engine version: M114");
+        return;
+    }
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+
+    WVLOG_D("SetErrorPageEnabledWithSubframe in ani start");
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+
+    bool enable = static_cast<bool>(aniEnable);
+    bool includeSubframe = static_cast<bool>(aniIncludeSubframe);
+    ErrCode ret = controller->SetErrorPageEnabled(enable, includeSubframe);
+    if (ret != NO_ERROR) {
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+    }
+}
+
 static ani_boolean GetErrorPageEnabled(ani_env* env, ani_object object)
 {
     if (IS_CALLING_FROM_M114()) {
-        WVLOG_E("GetErrorPageEnabled unsupported engine version: M114");
+        WVLOG_W("GetErrorPageEnabled unsupported engine version: M114");
         return ANI_FALSE;
     }
 
@@ -6672,6 +6744,73 @@ static ani_boolean GetErrorPageEnabled(ani_env* env, ani_object object)
     }
 
     return static_cast<ani_boolean>(controller->GetErrorPageEnabled());
+}
+
+static ani_boolean GetSubframeErrorPageEnabled(ani_env* env, ani_object object)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("GetSubframeErrorPageEnabled unsupported engine version: M114");
+        return ANI_FALSE;
+    }
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return ANI_FALSE;
+    }
+
+    WVLOG_D("GetSubframeErrorPageEnabled in ani start");
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return ANI_FALSE;
+    }
+
+    return static_cast<ani_boolean>(controller->GetSubframeErrorPageEnabled());
+}
+
+static void SetAutoReloadEnabled(ani_env* env, ani_object object, ani_boolean aniEnable)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("SetAutoReloadEnabled unsupported engine version: M114");
+        return;
+    }
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+
+    WVLOG_D("SetAutoReloadEnabled start");
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+
+    bool enable = static_cast<bool>(aniEnable);
+    ErrCode ret = controller->SetAutoReloadEnabled(enable);
+    if (ret != NO_ERROR) {
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+    }
+}
+
+static ani_boolean IsAutoReloadEnabled(ani_env* env, ani_object object)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("IsAutoReloadEnabled unsupported engine version: M114");
+        return ANI_FALSE;
+    }
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return ANI_FALSE;
+    }
+
+    WVLOG_D("IsAutoReloadEnabled in ani start");
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return ANI_FALSE;
+    }
+
+    return static_cast<ani_boolean>(controller->GetAutoReloadEnabled());
 }
 
 bool ParseBlanklessString(ani_env* env, ani_ref ref, std::string& outValue)
@@ -6748,14 +6887,14 @@ ani_object CreateBlanklessInfo(ani_env* env, int32_t errCode, double similarity,
 
 ani_object GetBlanklessInfoWithKey(ani_env* env, ani_object object, ani_object keyObj)
 {
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return nullptr;
+    }
     ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
     if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
         WVLOG_E("GetBlanklessInfoWithKey capability not supported.");
         AniBusinessError::ThrowErrorByErrCode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
-        return nullptr;
-    }
-    if (env == nullptr) {
-        WVLOG_E("env is nullptr");
         return nullptr;
     }
     auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
@@ -6783,14 +6922,14 @@ ani_object GetBlanklessInfoWithKey(ani_env* env, ani_object object, ani_object k
 
 ani_enum_item SetBlanklessLoadingWithKey(ani_env* env, ani_object object, ani_object keyObj, ani_boolean is_start)
 {
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return nullptr;
+    }
     ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
     if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
         WVLOG_E("SetBlanklessLoadingWithKey capability not supported.");
         AniBusinessError::ThrowErrorByErrCode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
-        return nullptr;
-    }
-    if (env == nullptr) {
-        WVLOG_E("env is nullptr");
         return nullptr;
     }
     auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
@@ -6864,14 +7003,14 @@ int32_t ParseBlanklessLoadingParam(ani_env* env, ani_object param, AniBlanklessL
 
 ani_enum_item SetBlanklessLoadingWithParams(ani_env* env, ani_object object, ani_object keyObj, ani_object param)
 {
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return nullptr;
+    }
     ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
     if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
         WVLOG_E("SetBlanklessLoadingWithParams capability not supported.");
         AniBusinessError::ThrowErrorByErrCode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
-        return nullptr;
-    }
-    if (env == nullptr) {
-        WVLOG_E("env is nullptr");
         return nullptr;
     }
     auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
@@ -6908,14 +7047,14 @@ ani_enum_item SetBlanklessLoadingWithParams(ani_env* env, ani_object object, ani
 
 static ani_int SetBlanklessLoadingCacheCapacity(ani_env* env, ani_object object, ani_int capacityObj)
 {
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return static_cast<ani_int>(0);
+    }
     ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
     if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
         WVLOG_E("SetBlanklessLoadingCacheCapacity capability not supported.");
         AniBusinessError::ThrowErrorByErrCode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
-        return static_cast<ani_int>(0);
-    }
-    if (env == nullptr) {
-        WVLOG_E("env is nullptr");
         return static_cast<ani_int>(0);
     }
 
@@ -6933,14 +7072,14 @@ static ani_int SetBlanklessLoadingCacheCapacity(ani_env* env, ani_object object,
 
 static void ClearBlanklessLoadingCache(ani_env* env, ani_object object, ani_object keysObj)
 {
+    if (env == nullptr) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
     ProductDeviceType deviceType = SystemPropertiesAdapterImpl::GetInstance().GetProductDeviceType();
     if (deviceType != ProductDeviceType::DEVICE_TYPE_MOBILE) {
         WVLOG_E("ClearBlanklessLoadingCache capability not supported.");
         AniBusinessError::ThrowErrorByErrCode(env, CAPABILITY_NOT_SUPPORTED_ERROR);
-        return;
-    }
-    if (env == nullptr) {
-        WVLOG_E("env is nullptr");
         return;
     }
 
@@ -7585,6 +7724,12 @@ static void SetActiveWebEngineVersion(ani_env *env, ani_object object, ani_enum_
         return;
     }
 
+    ani_boolean isUndefined = ANI_FALSE;
+    if (env->Reference_IsUndefined(aniEngineVersion, &isUndefined) != ANI_OK || isUndefined) {
+        AniBusinessError::ThrowErrorByErrCode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+
     ani_int aniVersion;
     ani_status status = ANI_ERROR;
     if ((status = env->EnumItem_GetValue_Int(aniEngineVersion, &aniVersion)) != ANI_OK) {
@@ -7651,6 +7796,56 @@ static ani_int InnerGetWebDebuggingPort(ani_env* env, ani_object object)
     return static_cast<ani_int>(webDebuggingPort);
 }
 
+WEBVIEW_ANI_STATIC void SetZoomFactor(ani_env *env, ani_object object, ani_double zoom_factor)
+{
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+    if (!std::isfinite(zoom_factor)) {
+        AniBusinessError::ThrowErrorByErrCode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+    ErrCode ret = controller->SetZoomFactor(zoom_factor);
+    if (ret != NO_ERROR) {
+        if (ret == NWEB_ERROR) {
+            WVLOG_E("SetZoomFactor failed.");
+            return;
+        }
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+    }
+}
+
+WEBVIEW_ANI_STATIC ani_double GetZoomFactor(ani_env *env, ani_object object)
+{
+    ani_double result = 0;
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return result;
+    }
+    auto* controller = reinterpret_cast<WebviewController *>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return result;
+    }
+    double zoomFactor = 1.0;
+    ErrCode ret = controller->GetZoomFactor(zoomFactor);
+    if (ret != NO_ERROR) {
+        if (ret == NWEB_ERROR) {
+            WVLOG_E("GetZoomFactor failed.");
+            return result;
+        }
+        AniBusinessError::ThrowErrorByErrCode(env, ret);
+        return result;
+    }
+    return zoomFactor;
+}
+
 ani_status StsWebviewControllerInit(ani_env *env)
 {
     WVLOG_D("[DOWNLOAD] StsWebviewControllerInit");
@@ -7686,6 +7881,8 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "getPageOffset", nullptr, reinterpret_cast<void *>(GetPageOffset) },
         ani_native_function { "slideScroll", nullptr, reinterpret_cast<void *>(SlideScroll) },
         ani_native_function { "zoom", nullptr, reinterpret_cast<void *>(Zoom) },
+        ani_native_function { "setZoomFactor", nullptr, reinterpret_cast<void *>(SetZoomFactor) },
+        ani_native_function { "getZoomFactor", nullptr, reinterpret_cast<void *>(GetZoomFactor) },
         ani_native_function { "pageDown", nullptr, reinterpret_cast<void *>(PageDown) },
         ani_native_function { "pageUp", nullptr, reinterpret_cast<void *>(PageUp) },
         ani_native_function { "isAdsBlockEnabledForCurPage", nullptr,
@@ -7792,8 +7989,13 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "restoreWebState", nullptr, reinterpret_cast<void*>(RestoreWebState) },
         ani_native_function { "getCertificateSync", nullptr, reinterpret_cast<void*>(GetCertificateSync) },
         ani_native_function { "jsProxy", nullptr, reinterpret_cast<void *>(InnerJsProxy) },
-        ani_native_function { "setErrorPageEnabled", nullptr, reinterpret_cast<void*>(SetErrorPageEnabled) },
+        ani_native_function { "setErrorPageEnabled", "z:", reinterpret_cast<void*>(SetErrorPageEnabled) },
+        ani_native_function { "setErrorPageEnabled", "zz:", reinterpret_cast<void*>(SetErrorPageEnabledWithSubframe) },
         ani_native_function { "getErrorPageEnabled", nullptr, reinterpret_cast<void*>(GetErrorPageEnabled) },
+        ani_native_function { "getSubframeErrorPageEnabled", nullptr,
+                              reinterpret_cast<void*>(GetSubframeErrorPageEnabled) },
+        ani_native_function { "enableAutoReload", "z:", reinterpret_cast<void*>(SetAutoReloadEnabled) },
+        ani_native_function { "isAutoReloadEnabled", nullptr, reinterpret_cast<void*>(IsAutoReloadEnabled) },
         ani_native_function { "getBlanklessInfoWithKey", nullptr, reinterpret_cast<void*>(GetBlanklessInfoWithKey) },
         ani_native_function { "setBlanklessLoadingWithKey", nullptr,
                               reinterpret_cast<void*>(SetBlanklessLoadingWithKey) },

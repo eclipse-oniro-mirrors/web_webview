@@ -117,10 +117,12 @@ public:
     virtual bool GetIsEnhanceSurface() = 0;
     virtual bool GetIsPopup() = 0;
     virtual std::string GetSharedRenderProcessToken() {return "";}
+    virtual bool GetIsPreloadNWeb() { return false; }
     virtual bool GetEmulateTouchFromMouseEvent() {return false;}
     virtual bool GetUseCloudControlAutoLayoutConfig() {return false;}
     virtual uint64_t GetSurfaceNodeId() { return 0; }
     virtual uint64_t GetSurfaceRSHandle() { return 0; }
+    virtual uint64_t GetSurfaceRSUIContextToken() { return 0; }
 };
 
 class OHOS_NWEB_EXPORT NWebOutputFrameCallback {
@@ -149,6 +151,7 @@ public:
     virtual void* GetEnhanceSurfaceInfo() = 0;
 
     virtual bool GetIsIncognitoMode() = 0;
+    virtual uint64_t GetAsyncStackId() = 0;
 };
 
 enum class OHOS_NWEB_EXPORT DragAction {
@@ -195,6 +198,7 @@ enum class FocusReason : int32_t {
 enum class RenderProcessMode : int32_t {
     SINGLE_MODE = 0,
     MULTIPLE_MODE = 1,
+    DEFAULT_MODE = 2,
 };
 
 enum class SiteIsolationMode {
@@ -1226,7 +1230,7 @@ public:
     /**
      * CallH5Function
      *
-     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param routing_id       int32_t: the h5 frame routing id
      * @param h5_object_id     int32_t: the h5 side object id
      * @param h5_method_name   string:  the h5 side object method name
      * @param args             vector<shared_ptr<NWebValue>>: the call args
@@ -2026,7 +2030,7 @@ public:
     /**
      * CallH5FunctionV2
      *
-     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param routing_id       int32_t: the h5 frame routing id
      * @param h5_object_id     int32_t: the h5 side object id
      * @param h5_method_name   string:  the h5 side object method name
      * @param args             vector<shared_ptr<NWebRomValue>>: the call args
@@ -2185,6 +2189,12 @@ public:
      * @param touchHandleExist The state of the touch handle, Which is true if the touch handle exists.
      */
     virtual void SetTouchHandleExistState(bool touchHandleExist) {}
+
+    /**
+     * @brief Set whether click extension is enabled.
+     * @param enable Whether to enable click extension feature.
+     */
+    virtual void SetClickExtEnabled(bool enable) {}
 
     /**
      * @brief Get the current scroll offset of the webpage.
@@ -2607,6 +2617,109 @@ public:
         (void)elementType;
         (void)params;
         return nullptr;
+    }
+
+    /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     * @param includeSubframe bool: Whether also enable the error page for iframes. Default false.
+     *         When enable is false, both main frame and iframe error pages are disabled.
+     *         When enable is true and includeSubframe is true, iframe error pages are also enabled.
+     */
+    virtual void SetErrorPageEnabled(bool enable, bool includeSubframe) {}
+
+    /**
+     * @brief Get whether iframe error page feature is enabled.
+     */
+    virtual bool GetSubframeErrorPageEnabled() { return false; }
+
+    // Keep newly added virtual methods at the end of this cross-library
+    // interface so existing vtable slots remain ABI-compatible.
+    /**
+     * @brief Sets the browser zoom level for this NWeb.
+     *
+     * Both text and images are scaled and the page is re-laid out (reflow).
+     * The zoom factor is clamped to the range [0.25, 5.0]. Values beyond the
+     * range are clamped to the boundary. Setting the same value as the current
+     * one is a no-op. The zoom state is isolated per NWeb instance and is not
+     * persisted. It is retained after in-page cross-document navigation.
+     *
+     * @param zoomFactor double: the browser zoom factor to set, in the range
+     * [0.25, 5.0].
+     */
+    virtual void SetZoomFactor(double zoomFactor) {}
+
+    /**
+     * @brief Gets the current browser zoom level for this NWeb.
+     *
+     * Returns the effective browser zoom factor, which is 1.0 when no zoom
+     * has been set. The value is isolated per NWeb instance and is not
+     * persisted.
+     *
+     * @return double: the current browser zoom factor, in the range
+     * [0.25, 5.0]. The default value is 1.0.
+     */
+    virtual double GetZoomFactor()
+    {
+        return 1.0;
+    }
+
+    /**
+     * @brief Set whether to enable automatic reload for error pages.
+     *
+     * When enabled, the Web component automatically retries loading on
+     * network errors using a retry backoff sequence: 1s, 5s, 30s, 1min,
+     * 5min, 10min, 30min. Retries stop after a total of 30 minutes.
+     * Disabled by default.
+     *
+     * Only network errors trigger auto-reload. Certificate errors, SSL
+     * (Secure Sockets Layer) protocol errors, authentication errors, POST
+     * requests, non-HTTP(S) protocols, and errors blocked by the client are
+     * excluded. Auto-reload does not affect the onOverrideErrorPage callback,
+     * and the onErrorReceive callback is invoked again for each retry
+     * attempt.
+     *
+     * @param enable bool: Whether to enable automatic reload. The value true
+     * enables it, and the value false disables it.
+     */
+    virtual void SetAutoReloadEnabled(bool enable) {}
+
+    /**
+     * @brief Get whether automatic reload for error pages is enabled.
+     *
+     * @return bool: Whether automatic reload is enabled. Returns true if
+     * enabled, and false otherwise. The default value is false.
+     */
+    virtual bool GetAutoReloadEnabled() { return false; }
+
+    /**
+     * Set the maximum initial velocity at the start of the fling animation that occurs
+     * after gesture-driven scrolling ends. Only affects the inertial scrolling phase.
+     * The TS-side value takes precedence over the front-end viewport max-fling-speed-x/y.
+     *
+     * @param speed_limit Maximum initial velocity at the start of the fling animation,
+     *                    in vp/s. Value range: (0, +∞). If the value is less than or
+     *                    equal to 0, the default value is used (9000 on PC, 17000 on non-PC).
+     */
+    virtual void SetFlingSpeedLimit(float speed_limit)
+    {
+        (void)speed_limit;
+    }
+
+    /**
+     * CallH5FunctionV3
+     *
+     * @param routing_id       int32_t: the h5 frame routing id
+     * @param frame_child_id   int32_t: the h5 frame child id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    virtual bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+        const std::string& h5_method_name, const std::vector<std::shared_ptr<NWebRomValue>>& args)
+    {
+        return false;
     }
 };
 } // namespace OHOS::NWeb

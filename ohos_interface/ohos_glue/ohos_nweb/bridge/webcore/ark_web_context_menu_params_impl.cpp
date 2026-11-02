@@ -113,4 +113,19 @@ int ArkWebContextMenuParamsImpl::GetContextMenuMediaType()
 {
     return static_cast<int>(nweb_context_menu_params_->GetContextMenuMediaType());
 }
+
+bool ArkWebContextMenuParamsImpl::ShouldOfferLinkToText()
+{
+    return nweb_context_menu_params_->ShouldOfferLinkToText();
+}
+
+bool ArkWebContextMenuParamsImpl::IsOverTextFragment()
+{
+    return nweb_context_menu_params_->IsOverTextFragment();
+}
+
+ArkWebString ArkWebContextMenuParamsImpl::GetTextFragmentGeneratedLink()
+{
+    return ArkWebStringClassToStruct(nweb_context_menu_params_->GetTextFragmentGeneratedLink());
+}
 } // namespace OHOS::ArkWeb

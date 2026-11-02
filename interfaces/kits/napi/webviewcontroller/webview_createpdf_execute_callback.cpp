@@ -27,9 +27,29 @@ namespace OHOS::NWeb {
 using namespace NWebError;
 const std::string JS_EXT_ARR_CLASS_NAME = "PdfData";
 thread_local napi_ref g_jsArrExtClassRef;
+
+namespace {
+class NapiRefGuard {
+public:
+    NapiRefGuard(napi_env env, napi_ref ref) : env_(env), ref_(ref) {}
+    ~NapiRefGuard()
+    {
+        if (ref_ != nullptr && env_ != nullptr) {
+            napi_delete_reference(env_, ref_);
+        }
+    }
+private:
+    napi_env env_;
+    napi_ref ref_;
+};
+}
 // static
 void WebviewCreatePDFExecuteCallback::InitJSExcute(napi_env env, napi_value exports)
 {
+    if (g_jsArrExtClassRef != nullptr) {
+        napi_delete_reference(env, g_jsArrExtClassRef);
+        g_jsArrExtClassRef = nullptr;
+    }
     napi_value jsArrExtClass = nullptr;
     napi_property_descriptor jsArrExtClsProperties[] = { DECLARE_NAPI_FUNCTION(
         "pdfArrayBuffer", NapiArrayBufferExt::GetArrayBuffer) };
@@ -115,7 +135,8 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCbAsync(
     napi_env env, napi_ref callbackRef, const char* result, const long size)
 {
     napi_value setResult[INTEGER_TWO] = { 0 };
-
+    NapiRefGuard guard(env, callbackRef);
+    
     if (result == nullptr) {
         setResult[INTEGER_ZERO] = BusinessError::CreateError(env, NWebError::INVALID_RESOURCE);
         napi_get_null(env, &setResult[INTEGER_ONE]);
@@ -154,7 +175,6 @@ void WebviewCreatePDFExecuteCallback::UvAfterWorkCbAsync(
 
     napi_get_reference_value(env, callbackRef, &callback);
     napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
-    napi_delete_reference(env, callbackRef);
 }
 
 void WebviewCreatePDFExecuteCallback::UvAfterWorkCbPromise(

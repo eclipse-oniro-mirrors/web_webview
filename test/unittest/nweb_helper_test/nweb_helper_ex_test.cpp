@@ -81,10 +81,165 @@ public:
     MOCK_CONST_METHOD0(GetBaseDir, std::string());
 };
 
+struct TestNWeb : public NWebMock {
+    bool Discard() override
+    {
+        return false;
+    }
+    bool GetPendingSizeStatus() override
+    {
+        return false;
+    }
+    bool GetPrintBackground() override
+    {
+        return false;
+    }
+    bool IsIncognitoMode() override
+    {
+        return false;
+    }
+    bool IsIntelligentTrackingPreventionEnabled() const override
+    {
+        return false;
+    }
+    bool IsSafeBrowsingEnabled() override
+    {
+        return false;
+    }
+    bool NeedSoftKeyboard() override
+    {
+        return false;
+    }
+    bool Restore() override
+    {
+        return false;
+    }
+    bool ShouldVirtualKeyboardOverlay() override
+    {
+        return false;
+    }
+    bool TerminateRenderProcess() override
+    {
+        return false;
+    }
+    int GetMediaPlaybackState() override
+    {
+        return 0;
+    }
+    int GetSecurityLevel() override
+    {
+        return 0;
+    }
+    int PostUrl(const std::string& url, const std::vector<char>& postData) override
+    {
+        return 0;
+    }
+    int ScaleGestureChange(double scale, double centerX, double centerY) override
+    {
+        return 0;
+    }
+    std::shared_ptr<NWebAccessibilityNodeInfo> GetAccessibilityNodeInfoByFocusMove(
+        int64_t accessibilityId, int32_t direction) override
+    {
+        return nullptr;
+    }
+    std::shared_ptr<NWebAccessibilityNodeInfo> GetAccessibilityNodeInfoById(int64_t accessibilityId) override
+    {
+        return nullptr;
+    }
+    std::shared_ptr<NWebAccessibilityNodeInfo> GetFocusedAccessibilityNodeInfo(
+        int64_t accessibilityId, bool isAccessibilityFocus) override
+    {
+        return nullptr;
+    }
+    std::string GetLastJavascriptProxyCallingFrameUrl() override
+    {
+        return std::string();
+    }
+    std::string GetSelectInfo() override
+    {
+        return std::string();
+    }
+    void CallH5Function(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+        const std::vector<std::shared_ptr<NWebValue>>& args) override
+    {}
+    void CloseAllMediaPresentations() override {}
+    void CloseCamera() override {}
+    void EnableIntelligentTrackingPrevention(bool enable) override {}
+    void EnableSafeBrowsing(bool enable) override {}
+    void ExecuteAction(int64_t accessibilityId, uint32_t action) override {}
+    void ExecuteJavaScriptExt(const int fd, const size_t scriptLength,
+        std::shared_ptr<NWebMessageValueCallback> callback, bool extention) override
+    {}
+    void InjectOfflineResource(const std::string& url, const std::string& origin, const std::vector<uint8_t>& resource,
+        const std::map<std::string, std::string>& responseHeaders, const int type) override
+    {}
+    void JavaScriptOnDocumentEnd(const ScriptItems& scriptItems) override {}
+    void JavaScriptOnDocumentStart(const ScriptItems& scriptItems) override {}
+    void NotifyMemoryLevel(int32_t level) override {}
+    void OnCreateNativeMediaPlayer(std::shared_ptr<NWebCreateNativeMediaPlayerCallback> callback) override {}
+    void OnOccluded() override {}
+    void OnOnlineRenderToForeground() override {}
+    void OnRenderToBackground() override {}
+    void OnRenderToForeground() override {}
+    void OnSafeInsetsChange(int left, int top, int right, int bottom) override {}
+    void OnTextSelected() override {}
+    void OnUnoccluded() override {}
+    void OnWebviewHide() override {}
+    void OnWebviewShow() override {}
+    void PauseAllMedia() override {}
+    void PrecompileJavaScript(const std::string& url, const std::string& script,
+        std::shared_ptr<CacheOptions>& cacheOptions, std::shared_ptr<NWebMessageValueCallback> callback) override
+    {}
+    void PrefetchPage(const std::string& url, const std::map<std::string, std::string>& additionalHttpHeaders) override
+    {}
+    void PutAccessibilityEventCallback(
+        std::shared_ptr<NWebAccessibilityEventCallback> accessibilityEventListener) override
+    {}
+    void PutAccessibilityIdGenerator(const AccessibilityIdGenerateFunc accessibilityIdGenerator) override {}
+    void RegisterNativeArkJSFunction(
+        const char* objName, const std::vector<std::shared_ptr<NWebJsProxyCallback>>& callbacks) override
+    {}
+    void RegisterNativeDestroyCallback(const char* webName, const NativeArkWebOnDestroyCallback callback) override {}
+    void RegisterNativeValideCallback(const char* webName, const NativeArkWebOnValidCallback callback) override {}
+    void ResumeAllMedia() override {}
+    void ScrollByRefScreen(float delta_x, float delta_y, float vx, float vy) override {}
+    void SetAccessibilityState(bool state) override {}
+    void SetDrawMode(int32_t mode) override {}
+    void SetDrawRect(int32_t x, int32_t y, int32_t width, int32_t height) override {}
+    void SetEnableLowerFrameRate(bool enabled) override {}
+    void SetFitContentMode(int32_t mode) override {}
+    void SetNestedScrollMode(const NestedScrollMode& nestedScrollMode) override {}
+    void SetPrintBackground(bool enable) override {}
+    void SetToken(void* token) override {}
+    void SetVirtualKeyBoardArg(int32_t width, int32_t height, double keyboard) override {}
+    void SetWindowId(uint32_t window_id) override {}
+    void StartCamera() override {}
+    void StopAllMedia() override {}
+    void StopCamera() override {}
+    void SuggestionSelected(int32_t index) override {}
+    void UnRegisterNativeArkJSFunction(const char* objName) override {}
+    void* CreateWebPrintDocumentAdapter(const std::string& jobName) override
+    {
+        return nullptr;
+    }
+    void DragResize(uint32_t width, uint32_t height, uint32_t pre_height, uint32_t pre_width) override {}
+    void RegisterArkJSfunction(
+        const std::string& object_name, const std::vector<std::string>& method_list, const int32_t object_id) override
+    {}
+    void RegisterArkJSfunction(const std::string& object_name, const std::vector<std::string>& method_list,
+        const std::vector<std::string>& async_method_list, const int32_t object_id) override
+    {}
+};
+
 class MockNWebEngine : public OHOS::NWeb::NWebEngine {
 public:
+    bool returnNonNullNWeb = false;
     std::shared_ptr<NWeb> CreateNWeb(std::shared_ptr<NWebCreateInfo> create_info)
     {
+        if (returnNonNullNWeb) {
+            return std::make_shared<TestNWeb>();
+        }
         return nullptr;
     }
 
@@ -734,6 +889,60 @@ HWTEST_F(NwebHelperTest, NWebHelper_ParseNWebLTPOApp_001, TestSize.Level1)
     NWebAdapterHelper::Instance().ParseConfig(initArgs);
     EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOStrategy(), LTPO_STRATEGY);
     EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOStrategy(), LTPO_STRATEGY);
+}
+
+/**
+ * @tc.name: NWebHelper_GetLTPOIntConfig_001
+ * @tc.desc: GetLTPOIntConfig with existing config returns configured value.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetLTPOIntConfig_001, TestSize.Level1)
+{
+    NWebConfigHelper::Instance().ltpoIntConfig_["throttle_strategy"] = 5;
+    NWebConfigHelper::Instance().ltpoIntConfig_["throttle_timeout"] = 3000;
+    NWebConfigHelper::Instance().ltpoIntConfig_["throttle_ratio"] = 75;
+
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("throttle_strategy", 0), 5);
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("throttle_timeout", 0), 3000);
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("throttle_ratio", 0), 75);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("throttle_strategy", 0), 5);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("throttle_timeout", 0), 3000);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("throttle_ratio", 0), 75);
+}
+
+/**
+ * @tc.name: NWebHelper_GetLTPOIntConfig_002
+ * @tc.desc: GetLTPOIntConfig with non-existing config returns default value.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetLTPOIntConfig_002, TestSize.Level1)
+{
+    NWebConfigHelper::Instance().ltpoIntConfig_.clear();
+
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("unknown_config", 0), 0);
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("unknown_config", 10), 10);
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("unknown_config", -5), -5);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("unknown_config", 0), 0);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("unknown_config", 10), 10);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("unknown_config", -5), -5);
+}
+
+/**
+ * @tc.name: NWebHelper_GetLTPOIntConfig_003
+ * @tc.desc: GetLTPOIntConfig with empty config name returns default value.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_GetLTPOIntConfig_003, TestSize.Level1)
+{
+    NWebConfigHelper::Instance().ltpoIntConfig_.clear();
+
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("", 0), 0);
+    EXPECT_EQ(NWebConfigHelper::Instance().GetLTPOIntConfig("", -1), -1);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("", 0), 0);
+    EXPECT_EQ(NWebAdapterHelper::Instance().GetLTPOIntConfig("", 100), 100);
 }
 
 /**
@@ -1587,23 +1796,6 @@ HWTEST_F(NwebHelperTest, NWebHelper_EnableBackForwardCache_004, TestSize.Level1)
 }
 
 /**
- * @tc.name: NWebHelper_IsLazyInitializeWebEngine_002
- * @tc.desc: IsLazyInitializeWebEngine with lazy initialized and engine not init.
- * @tc.type: FUNC
- * @tc.require:
- */
-HWTEST_F(NwebHelperTest, NWebHelper_IsLazyInitializeWebEngine_002, TestSize.Level1)
-{
-    NWebHelper::Instance().lazyInitializeWebEngine_ = true;
-    NWebHelper::Instance().initWebEngine_ = false;
-    EXPECT_TRUE(NWebHelper::Instance().IsLazyInitializeWebEngine());
-
-    NWebHelper::Instance().lazyInitializeWebEngine_ = true;
-    NWebHelper::Instance().initWebEngine_ = true;
-    EXPECT_FALSE(NWebHelper::Instance().IsLazyInitializeWebEngine());
-}
-
-/**
  * @tc.name: NWebHelper_LoadNWebSDK_NullEngine
  * @tc.desc: LoadNWebSDK with null engine.
  * @tc.type: FUNC
@@ -1779,6 +1971,27 @@ HWTEST_F(NwebHelperTest, NWebHelper_SetProxyOverride_Success, TestSize.Level1)
     EXPECT_NE(NWebHelper::Instance().nwebEngine_, nullptr);
     NWebHelper::Instance().nwebEngine_ = nullptr;
     NWebHelper::Instance().initFlag_ = false;
+}
+
+/**
+ * @tc.name: NWebHelper_CreateNWeb_Success_001
+ * @tc.desc: Test CreateNWeb success path - cover the if (result != nullptr) branch.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NwebHelperTest, NWebHelper_CreateNWeb_Success_001, TestSize.Level1)
+{
+    auto nwebEngineMock = std::make_shared<MockNWebEngine>();
+    nwebEngineMock->returnNonNullNWeb = true;
+    auto savedEngine = NWebHelper::Instance().nwebEngine_;
+    NWebHelper::Instance().nwebEngine_ = nwebEngineMock;
+    NWebHelper::Instance().initWebEngine_ = false;
+    std::shared_ptr<NWebCreateInfoImpl> create_info = std::make_shared<NWebCreateInfoImpl>();
+    std::shared_ptr<NWeb> nweb = NWebHelper::Instance().CreateNWeb(create_info);
+    EXPECT_NE(nweb, nullptr);
+    EXPECT_TRUE(NWebHelper::Instance().initWebEngine_);
+    NWebHelper::Instance().nwebEngine_ = savedEngine;
+    NWebHelper::Instance().initWebEngine_ = false;
 }
 } // namespace OHOS::NWeb
 }

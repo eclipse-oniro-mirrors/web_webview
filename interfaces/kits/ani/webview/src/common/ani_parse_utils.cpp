@@ -16,6 +16,7 @@
 #include "ani_parse_utils.h"
 
 #include <arpa/inet.h>
+#include <climits>
 #include <memory>
 #include <sys/mman.h>
 #include <unistd.h>
@@ -40,6 +41,10 @@ bool AniParseUtils::ParseString(ani_env *env, ani_ref ref, std::string& outValue
         WVLOG_E("AniUtils_ParseString String_GetUTF8Size failed, status: %{public}d", status);
         return false;
     }
+    if (strSize >= UINT_MAX) {
+        WVLOG_E("AniUtils_ParseString String length is too long");
+        return false;
+    }
     std::vector<char> buffer(strSize + 1);
     char* utfBuffer = buffer.data();
     ani_size bytes_written = 0;
@@ -49,7 +54,7 @@ bool AniParseUtils::ParseString(ani_env *env, ani_ref ref, std::string& outValue
         return false;
     }
     utfBuffer[bytes_written] = '\0';
-    outValue = std::string(utfBuffer, strSize);
+    outValue = std::string(utfBuffer, bytes_written);
     return true;
 }
 
@@ -1121,7 +1126,7 @@ ani_ref ConvertToAniHandlerOfDouble(ani_env* env, std::shared_ptr<NWebMessage> s
     }
 
     ani_object doubleInfoObj;
-    if (env->Object_New(double_cls, doubleInfoCtor, &doubleInfoObj, static_cast<ani_long>(src->GetDouble()))
+    if (env->Object_New(double_cls, doubleInfoCtor, &doubleInfoObj, static_cast<ani_double>(src->GetDouble()))
         != ANI_OK) {
         WVLOG_E("create double object failed");
         return nullptr;
@@ -1152,7 +1157,7 @@ ani_ref ConvertToAniHandlerOfError(ani_env* env, std::shared_ptr<NWebMessage> sr
 
     ani_method errInfoCtor;
     if ((status = env->Class_FindMethod(errCls, "<ctor>",
-        "C{std.core.String}C{std.core.ErrorOptions}:", &errInfoCtor)) != ANI_OK) {
+        "C{std.core.String}C{escompat.ErrorOptions}:", &errInfoCtor)) != ANI_OK) {
         WVLOG_E("error in FindMethod status : %{public}d", status);
         return nullptr;
     }

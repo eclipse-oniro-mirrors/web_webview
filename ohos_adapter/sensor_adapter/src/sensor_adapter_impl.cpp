@@ -293,10 +293,13 @@ void SensorAdapterImpl::handleGameRotationVectorData(std::shared_ptr<OHOS::NWeb:
         WVLOG_E("handleGameRotationVectorData Error.");
         return;
     }
-    GameRotationVectorData* data = reinterpret_cast<GameRotationVectorData*>(event->data);
-    if (data != nullptr) {
-        callback->UpdateOhosSensorData(event->timestamp, data->x, data->y, data->z, data->w);
+    if (event->data == nullptr || event->dataLen < static_cast<uint32_t>(sizeof(GameRotationVectorData))) {
+        WVLOG_E("handleGameRotationVectorData: invalid data buffer, dataLen=%{public}u, expected=%{public}zu",
+            event->dataLen, sizeof(GameRotationVectorData));
+        return;
     }
+    GameRotationVectorData* data = reinterpret_cast<GameRotationVectorData*>(event->data);
+    callback->UpdateOhosSensorData(event->timestamp, data->x, data->y, data->z, data->w);
 }
 
 void SensorAdapterImpl::OhosSensorCallback(SensorEvent* event)

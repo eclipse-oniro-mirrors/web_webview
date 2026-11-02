@@ -288,6 +288,9 @@ static void UvInvokeDeleteJsCall(uv_work_t* work, int status)
         delete work;
         return;
     }
+    // Always execute DoDeleteJsCall to release napi references.
+    // Original code skipped DoDeleteJsCall when status != 0 (uv_cancel), which leaked napi references.
+    // DoDeleteJsCall only calls napi_delete_reference (cleanup, not business logic), safe to execute on cancel.
     DoDeleteJsCall(data);
     delete data;
     delete work;
@@ -366,7 +369,11 @@ static bool ParseConnectionCallbackFunction(napi_env env, napi_value preArgs,
         return false;
     }
 
-    napi_create_reference(env, methodVal, INTEGER_ONE, &methodRef);
+    napi_status status = napi_create_reference(env, methodVal, INTEGER_ONE, &methodRef);
+    if (status != napi_ok) {
+        WNMLOG_E("create reference failed, status: %{public}d", status);
+        return false;
+    }
     return true;
 }
 

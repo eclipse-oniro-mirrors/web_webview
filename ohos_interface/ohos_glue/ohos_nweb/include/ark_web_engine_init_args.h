@@ -60,6 +60,12 @@ public:
 
     /*--ark web()--*/
     virtual uint64_t GetSurfaceRSHandle() = 0;
+
+    /*--ark web()--*/
+    virtual uint64_t GetSurfaceRSUIContextToken() = 0;
+
+    /*--ark web()--*/
+    virtual bool GetIsPreloadNWeb() = 0;
 };
 
 } // namespace OHOS::ArkWeb

@@ -555,15 +555,15 @@ export default namespace webview {
 
     export interface NativeMediaPlayerBridge {
         updateRect: UpdateRectFn;
-        play: ZeroParamFn<>;
-        pause: ZeroParamFn<>;
+        play: ZeroParamFn<void>;
+        pause: ZeroParamFn<void>;
         seek: OneParamFn<double>;
         setVolume: OneParamFn<double>;
         setMuted: OneParamFn<boolean>;
         setPlaybackRate: OneParamFn<double>;
-        release: ZeroParamFn<>;
-        enterFullscreen: ZeroParamFn<>;
-        exitFullscreen: ZeroParamFn<>;
+        release: ZeroParamFn<void>;
+        enterFullscreen: ZeroParamFn<void>;
+        exitFullscreen: ZeroParamFn<void>;
         resumePlayer?: ResumePlayerFn;
         suspendPlayer?: SuspendPlayerFn;
     }
@@ -1010,7 +1010,11 @@ export default namespace webview {
         native static enablePrivateNetworkAccess(enable: boolean): void;
         native static isPrivateNetworkAccessEnabled(): boolean;
         native setErrorPageEnabled(enable: boolean): void;
+        native setErrorPageEnabled(enable: boolean, includeSubframe: boolean): void;
         native getErrorPageEnabled(): boolean;
+        native getSubframeErrorPageEnabled(): boolean;
+        native enableAutoReload(enable: boolean): void;
+        native isAutoReloadEnabled(): boolean;
         native getBlanklessInfoWithKey(key: string): BlanklessInfo;
         native setBlanklessLoadingWithKey(key: string, is_start: boolean): WebBlanklessErrorCode;
         native setBlanklessLoadingWithParams(key: string, param: BlanklessLoadingParam): WebBlanklessErrorCode;
@@ -1068,7 +1072,7 @@ export default namespace webview {
             if(args.length <= 0) {
                 return method.invoke(obj, []);
             }
-            const methodArgs: FixedArray<Object> = new FixedArray<Object>(args.length);
+            const methodArgs: FixedArray<Object> = new FixedArray<Object>(args.length, new Object());
             for (let argIdx = 0; argIdx < args.length; argIdx++) {
                 const arg = args[argIdx];
                 methodArgs[argIdx] = arg;
@@ -1088,13 +1092,12 @@ export default namespace webview {
             return target;
         }
         native getLastPostMessageURL(): string;
+        native setZoomFactor(zoomFactor: double): void;
+        native getZoomFactor(): double;
     }
 
     export class jsProxyCallbackWrapper {
         myFun_: (...args: Array<Object|string|number|undefined|null>) => Any = (...args: Array<Object|string|number|undefined|null>) => { return "" };
-        constructor(myFun: (...args: Array<Object|string|number|undefined|null>)=> Any) {
-            this.myFun_ = myFun;
-        }
 
         native callNativeFunc(ptr: long, argv: double, args: Array<Object>): void;
         getCallback(ptr: long): (...args: Array<Object|string|number|undefined|null>) => Any {
@@ -1148,6 +1151,8 @@ export default namespace webview {
         native getHeaderByName(name: string): string;
         native setNetErrorCode(code: WebNetErrorList): void;
         native getNetErrorCode(): WebNetErrorList;
+        native setCustomErrorCode(customErrorCode: int): void;
+        native getCustomErrorCode(): int;
     }
 
      export class WebSchemeHandler {
@@ -1268,6 +1273,10 @@ export default namespace webview {
         native didFailv1(code: WebNetErrorList, completeIfNoResponse: boolean): void
         didFail(code: WebNetErrorList, completeIfNoResponse: boolean): void {
             this.didFailv1(code, completeIfNoResponse);
+        }
+        native didFailv2(code: WebNetErrorList, completeIfNoResponse: boolean, customErrorCode: int): void;
+        didFail(code: WebNetErrorList, completeIfNoResponse: boolean, customErrorCode: int): void {
+            this.didFailv2(code, completeIfNoResponse, customErrorCode);
         }
         native didReceiveResponseBody(data: ArrayBuffer): void;
 

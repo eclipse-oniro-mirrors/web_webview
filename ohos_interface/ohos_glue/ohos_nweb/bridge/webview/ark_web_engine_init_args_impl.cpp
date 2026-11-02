@@ -64,6 +64,11 @@ ArkWebString ArkWebEngineInitArgsImpl::GetSharedRenderProcessToken()
     return ArkWebStringClassToStruct(nweb_engine_init_args_->GetSharedRenderProcessToken());
 }
 
+bool ArkWebEngineInitArgsImpl::GetIsPreloadNWeb()
+{
+    return nweb_engine_init_args_->GetIsPreloadNWeb();
+}
+
 bool ArkWebEngineInitArgsImpl::GetEmulateTouchFromMouseEvent()
 {
     return nweb_engine_init_args_->GetEmulateTouchFromMouseEvent();
@@ -82,6 +87,11 @@ uint64_t ArkWebEngineInitArgsImpl::GetSurfaceNodeId()
 uint64_t ArkWebEngineInitArgsImpl::GetSurfaceRSHandle()
 {
     return nweb_engine_init_args_->GetSurfaceRSHandle();
+}
+
+uint64_t ArkWebEngineInitArgsImpl::GetSurfaceRSUIContextToken()
+{
+    return nweb_engine_init_args_->GetSurfaceRSUIContextToken();
 }
 
 } // namespace OHOS::ArkWeb

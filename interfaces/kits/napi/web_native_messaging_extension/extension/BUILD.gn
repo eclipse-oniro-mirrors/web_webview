@@ -23,6 +23,16 @@ config("web_ex_cfg") {
 }
 
 ohos_source_set("connect_info") {
+    sanitize = {
+        cfi = true
+        cfi_cross_dso = true
+        cfi_vcall_icall_only = true
+        debug = false
+    }
+    if (target_cpu == "arm64") {
+        branch_protector_ret = "pac_ret"
+        branch_protector_frt = "bti"
+    }
     include_dirs = [
         "include",
         "../../../../../ohos_nweb/include",
@@ -34,6 +44,7 @@ ohos_source_set("connect_info") {
     external_deps = [
         "hilog:libhilog",
         "ipc:ipc_core",
+        "c_utils:utils",
     ]
 
     part_name = "webview"
@@ -49,6 +60,7 @@ ohos_shared_library("web_extension") {
     }
     if (target_cpu == "arm64") {
         branch_protector_ret = "pac_ret"
+        branch_protector_frt = "bti"
     }
     include_dirs = [
         "include",
@@ -96,6 +108,7 @@ ohos_shared_library("web_extension") {
         "ipc:ipc_napi",
         "ipc:ipc_single",
         "napi:ace_napi",
+        "node:node_header_notice",
         "runtime_core:ani",
     ]
 
@@ -112,6 +125,7 @@ ohos_shared_library("web_native_messaging_extension_module") {
     }
     if (target_cpu == "arm64") {
         branch_protector_ret = "pac_ret"
+        branch_protector_frt = "bti"
     }
     include_dirs = [
         "include",
@@ -135,6 +149,7 @@ ohos_shared_library("web_native_messaging_extension_module") {
         "hilog:libhilog",
         "ipc:ipc_core",
         "napi:ace_napi",
+        "node:node_header_notice",
         "ipc:ipc_napi",
         "ipc:ipc_single",
     ]

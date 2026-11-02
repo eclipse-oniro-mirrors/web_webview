@@ -229,6 +229,13 @@ ohos_unittest("web_native_messaging_extension_context_test") {
 ohos_unittest("web_native_messaging_extension_proxy_test") {
   module_out_path = "webview/security"
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    cfi_vcall_icall_only = true
+    debug = false
+  }
+
   sources = [
     "web_native_messaging_extension_proxy_test.cpp"
   ]

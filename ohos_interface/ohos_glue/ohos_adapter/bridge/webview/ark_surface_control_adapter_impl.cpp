@@ -36,6 +36,17 @@ void ArkSurfaceControlAdapterImpl::Release(void* surfaceControl)
     return real_.Release(surfaceControl);
 }
 
+void* ArkSurfaceControlAdapterImpl::CreateContainerSurfaceControl(
+    void* transaction, void* parent, const char* name, bool inProcess)
+{
+    return real_.CreateContainerSurfaceControl(transaction, parent, name, inProcess);
+}
+
+void* ArkSurfaceControlAdapterImpl::CreateChildSurfaceControl(void* transaction, const char* name, bool inProcess)
+{
+    return real_.CreateChildSurfaceControl(transaction, name, inProcess);
+}
+
 // transaction
 ArkSurfaceTransactionAdapterImpl::ArkSurfaceTransactionAdapterImpl(NWeb::SurfaceTransactionAdapter& ref)
     : real_(ref) {}

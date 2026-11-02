@@ -1711,6 +1711,12 @@ public:
     void SetTouchHandleExistState(bool touchHandleExist) override;
 
     /**
+     * @brief Set whether click extension is enabled.
+     * @param enable Whether to enable click extension feature.
+     */
+    void SetClickExtEnabled(bool enable) override;
+
+    /**
      * @brief Sets the bottom avoidance height of the web visible viewport.
      * @param avoidHeight The height value of the visible viewport avoidance. Unit: px.
      */
@@ -1761,12 +1767,29 @@ public:
     bool GetErrorPageEnabled() override;
 
     /**
+     * @brief Set whether enable the error page. onOverrideErrorPage will be triggered when the page error.
+     *
+     * @param enable bool: Whether enable the error page.
+     * @param includeSubframe bool: Whether also enable error page for iframes.
+     */
+    void SetErrorPageEnabled(bool enable, bool includeSubframe) override;
+
+    /**
+     * @brief Get whether iframe error page feature is enabled.
+     */
+    bool GetSubframeErrorPageEnabled() override;
+
+    /**
      * @brief Get web component destroy mode.
      * @return The web destroy mode.
      */
     ArkWebDestroyMode GetWebDestroyMode() override;
 
     void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const std::string& h5_method_name,
+        const std::vector<std::shared_ptr<OHOS::NWeb::NWebRomValue>>& args) override;
+
+    bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+        const std::string& h5_method_name,
         const std::vector<std::shared_ptr<OHOS::NWeb::NWebRomValue>>& args) override;
 
     void PostPortMessageV2(const std::string& portHandle, std::shared_ptr<OHOS::NWeb::NWebRomValue> data) override;
@@ -2097,6 +2120,23 @@ public:
     std::shared_ptr<OHOS::NWeb::NWebAccessibilityNodeInfo> GetAccessibilityNodeInfoByParams(
         int64_t accessibility_id, int32_t direction, int32_t element_type,
         const std::map<std::string, std::string>& params) override;
+
+    void SetZoomFactor(double zoom_factor) override;
+    double GetZoomFactor() override;
+
+    /**
+     * @brief Set whether enable automatic reload of network error pages.
+     *
+     * @param enable bool: Whether enable automatic reload of error pages.
+     */
+    void SetAutoReloadEnabled(bool enable) override;
+
+    /**
+     * @brief Get whether automatic reload of error pages is enabled.
+     */
+    bool GetAutoReloadEnabled() override;
+
+    void SetFlingSpeedLimit(float speed_limit) override;
 
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;

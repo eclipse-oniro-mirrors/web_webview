@@ -39,6 +39,11 @@
 
 namespace OHOS {
 namespace NWeb {
+// Browser zoom factor boundaries shared by the napi/ani binding layers.
+// Values beyond the range are clamped to the boundary.
+constexpr double MIN_BROWSER_ZOOM_FACTOR = 0.25;
+constexpr double MAX_BROWSER_ZOOM_FACTOR = 5.0;
+
 enum class WebHitTestType : int {
     EDIT = 0,
     EMAIL,
@@ -181,7 +186,7 @@ public:
 class WebPrintDocument;
 class WebviewController {
 public:
-    explicit WebviewController() = default;
+    explicit WebviewController();
     explicit WebviewController(int32_t nwebId);
     explicit WebviewController(const std::string& webTag);
     ~WebviewController();
@@ -217,6 +222,8 @@ public:
     ErrCode ZoomOut();
 
     int32_t GetWebId() const;
+
+    uint64_t GetControllerId() const { return controllerId_; }
 
     std::string GetUserAgent();
 
@@ -346,7 +353,7 @@ public:
     ErrCode PrefetchPage(std::string& url, std::map<std::string, std::string> additionalHttpHeaders,
         std::shared_ptr<NWebPrefetchOptions> prefetchOptions);
 
-    void* CreateWebPrintDocumentAdapter(const std::string &jobName);
+    std::unique_ptr<NWebPrintDocumentAdapterAdapter> CreateWebPrintDocumentAdapter(const std::string &jobName);
 
     ErrCode PostUrl(std::string& url, std::vector<char>& postData);
 
@@ -498,7 +505,7 @@ public:
 
     static void TriggerWaitforAttachedPromise(napi_env env, napi_status status, void *data);
 
-    napi_value WaitForAttachedPromise(napi_env env, int32_t timeout, napi_deferred deferred);
+    napi_value WaitForAttachedPromise(napi_env env, napi_value thisVar, int32_t timeout, napi_deferred deferred);
 
     int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime);
 
@@ -516,11 +523,23 @@ public:
 
     bool GetErrorPageEnabled();
 
+    ErrCode SetErrorPageEnabled(bool enable, bool includeSubframe);
+
+    bool GetSubframeErrorPageEnabled();
+
+    ErrCode SetAutoReloadEnabled(bool enable);
+
+    bool GetAutoReloadEnabled();
+
     void SetUserAgentMetadata(const std::string& userAgent, std::shared_ptr<NWebUserAgentMetadata> metaData);
 
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent);
 
     std::string GetLastPostMessageURL();
+
+    ErrCode SetZoomFactor(double factor);
+
+    ErrCode GetZoomFactor(double& factor);
 
 private:
     int ConverToWebHitTestType(int hitType);
@@ -553,6 +572,8 @@ public:
 
 private:
     std::mutex webMtx_;
+    static std::atomic<uint64_t> nextControllerId_;
+    uint64_t controllerId_ = 0;
     int32_t nwebId_ = -1;
     std::shared_ptr<WebviewJavaScriptResultCallBack> javaScriptResultCb_ = nullptr;
     std::string hapPath_ = "";

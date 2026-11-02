@@ -125,6 +125,7 @@ WebSchemeHandler::~WebSchemeHandler()
                 current_tid, thread_id_);
     }
     napi_delete_reference(env_, request_start_callback_);
+    is_stop_callback_valid_->store(false, std::memory_order_release);
     napi_delete_reference(env_, request_stop_callback_);
     ArkWeb_SchemeHandler* handler =
         const_cast<ArkWeb_SchemeHandler*>(GetArkWebSchemeHandler(this));
@@ -228,14 +229,17 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
     }
     NApiScope scope(param->env_);
     if (!scope.IsVaild()) {
+        delete param->request_;
         delete param;
         delete work;
         return;
     }
     napi_value callbackFunc = nullptr;
     napi_status napiStatus;
-    if (!param->callbackRef_) {
-        WVLOG_E("scheme handler onRequestStop nil env");
+    if (!param->callbackRef_ || !param->isCallbackValid_ ||
+        !param->isCallbackValid_->load(std::memory_order_acquire)) {
+        WVLOG_E("scheme handler onRequestStop callback ref is invalid");
+        delete param->request_;
         delete param;
         delete work;
         return;
@@ -243,19 +247,32 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
     napiStatus = napi_get_reference_value(param->env_, param->callbackRef_, &callbackFunc);
     if (napiStatus != napi_ok || callbackFunc == nullptr) {
         WVLOG_E("scheme handler get onRequestStop func failed.");
+        delete param->request_;
         delete param;
         delete work;
         return;
     }
     napi_value requestValue;
-    napi_create_object(param->env_, &requestValue);
-    napi_wrap(
+    if (napi_create_object(param->env_, &requestValue) != napi_ok) {
+        WVLOG_E("scheme handler create request object failed");
+        delete param->request_;
+        delete param;
+        delete work;
+        return;
+    }
+    if (napi_wrap(
         param->env_, requestValue, param->request_,
         [](napi_env /* env */, void *data, void * /* hint */) {
             WebSchemeHandlerRequest *request = (WebSchemeHandlerRequest *)data;
             delete request;
         },
-        nullptr, nullptr);
+        nullptr, nullptr) != napi_ok) {
+        WVLOG_E("scheme handler wrap request object failed");
+        delete param->request_;
+        delete param;
+        delete work;
+        return;
+    }
     NapiWebSchemeHandlerRequest::DefineProperties(param->env_, &requestValue);
     napi_value result = nullptr;
     napiStatus = napi_call_function(
@@ -279,6 +296,10 @@ void WebSchemeHandler::RequestStopAfterWorkCb(uv_work_t* work, int status)
 void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest)
 {
     WVLOG_D("WebSchemeHandler::RequestStop");
+    if (resourceRequest == nullptr) {
+        WVLOG_E("WebSchemeHandler::RequestStop resourceRequest is nullptr");
+        return;
+    }
     uv_loop_s *loop = nullptr;
     uv_work_t *work = nullptr;
     napi_get_uv_event_loop(env_, &loop);
@@ -296,6 +317,7 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
     }
     param->env_ = env_;
     param->callbackRef_ = request_stop_callback_;
+    param->isCallbackValid_ = is_stop_callback_valid_;
     param->request_ = new (std::nothrow) WebSchemeHandlerRequest(resourceRequest);
     if (param->request_ == nullptr) {
         delete work;
@@ -308,6 +330,7 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
         RequestStopAfterWorkCb, uv_qos_user_initiated, "WebviewWebSchemeHandler");
     if (ret != 0) {
         if (param != nullptr) {
+            delete param->request_;
             delete param;
             param = nullptr;
         }
@@ -332,6 +355,8 @@ void WebSchemeHandler::PutRequestStop(napi_env, napi_value callback)
     napi_status status = napi_create_reference(env_, callback, 1, &request_stop_callback_);
     if (status != napi_status::napi_ok) {
         WVLOG_E("PutRequestStop create reference failed.");
+    } else {
+        is_stop_callback_valid_->store(true, std::memory_order_release);
     }
 }
 
@@ -550,7 +575,7 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
     NApiScope scope(env);
     if (!scope.IsVaild()) {
         if (param->buffer) {
-            delete param->buffer;
+            delete[] param->buffer;
         }
         delete param;
         return;
@@ -563,7 +588,7 @@ void WebHttpBodyStream::ExecuteReadComplete(napi_env env, napi_status status, vo
         WVLOG_W("WebHttpBodyStream::ExecuteRead memcpy failed");
     }
     if (param->buffer) {
-        delete param->buffer;
+        delete[] param->buffer;
     }
     if (param->callbackRef) {
         napi_value callback = nullptr;
@@ -592,6 +617,7 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
 {
     if (!env_) {
         DeleteReadJsCallbackRef();
+        delete[] buffer;
         return;
     }
     ReadParam *param = new (std::nothrow) ReadParam {
@@ -604,11 +630,13 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
     };
     if (param == nullptr) {
         DeleteReadJsCallbackRef();
+        delete[] buffer;
         return;
     }
     napi_value resourceName = nullptr;
     if (napi_create_string_utf8(env_, __func__, NAPI_AUTO_LENGTH, &resourceName) != napi_status::napi_ok) {
         DeleteReadJsCallbackRef();
+        delete[] param->buffer;
         delete param;
         return;
     }
@@ -616,12 +644,14 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
         [](napi_env env, void *data) {},
         ExecuteReadComplete, static_cast<void *>(param), &param->asyncWork) != napi_status::napi_ok) {
         DeleteReadJsCallbackRef();
+        delete[] param->buffer;
         delete param;
         return;
     }
     if (napi_queue_async_work_with_qos(env_, param->asyncWork, napi_qos_user_initiated) != napi_status::napi_ok) {
         napi_delete_async_work(env_, param->asyncWork);
         DeleteReadJsCallbackRef();
+        delete[] param->buffer;
         delete param;
     }
 }

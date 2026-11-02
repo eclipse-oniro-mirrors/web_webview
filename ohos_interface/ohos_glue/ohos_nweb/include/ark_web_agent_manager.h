@@ -54,6 +54,14 @@ public:
     virtual void SetContentChangeDetectionConfig(int32_t min_report_time, float text_content_ratio) = 0;
 
     /**
+     * @brief Set the config for content change detection.
+     *
+     * @param reportDomTree Whether DOM extraction is enabled.
+     */
+    /*--ark web()--*/
+    virtual void SetDomExtractionConfig(bool reportDomTree) = 0;
+
+    /**
      * @brief Enable or disable highlight when in agent.
      *
      * @param enabled true to enable highlight, false to disable.
@@ -68,6 +76,32 @@ public:
      */
     /*--ark web()--*/
     virtual void RequestWebDomJsonString(ArkWebRefPtr<ArkWebMessageValueCallback> callback) = 0;
+
+    /**
+     * @brief Request page scene query for input controls.
+     *
+     * @param ruleJson JSON string of selector configuration and callback routing.
+     * @param ruleId Rule identifier.
+     * @param nodeTypes Node type tags to observe. Empty = query only, non-empty = query + observer.
+     * @param callback Result callback for immediate query result.
+     */
+    /*--ark web()--*/
+    virtual void RequestPageSceneQuery(
+        const ArkWebString& ruleJson,
+        const ArkWebString& ruleId,
+        const ArkWebStringVector& nodeTypes,
+        ArkWebRefPtr<ArkWebMessageValueCallback> callback) = 0;
+
+    /**
+     * @brief Request web dom json string with extraction mode
+     *
+     * @param callback request callback
+     * @param mode DOM extraction mode, 0 for full tree (default), 1 for viewport only.
+     */
+    /*--ark web()--*/
+    virtual void RequestWebDomJsonStringWithOptions(
+        ArkWebRefPtr<ArkWebMessageValueCallback> callback,
+        int32_t mode) = 0;
 };
 
 } // namespace OHOS::ArkWeb

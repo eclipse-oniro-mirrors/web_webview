@@ -459,6 +459,14 @@ public:
 
     bool GetErrorPageEnabled();
 
+    ErrCode SetErrorPageEnabled(bool enable, bool includeSubframe);
+
+    bool GetSubframeErrorPageEnabled();
+
+    ErrCode SetAutoReloadEnabled(bool enable);
+
+    bool GetAutoReloadEnabled();
+
     int32_t GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime);
 
     int32_t SetBlanklessLoadingWithKey(const std::string& key, bool isStart);
@@ -492,6 +500,10 @@ public:
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent);
 
     std::string GetLastPostMessageURL();
+
+    ErrCode SetZoomFactor(double factor);
+
+    ErrCode GetZoomFactor(double& factor);
 
 private:
     int ConverToWebHitTestType(int hitType);

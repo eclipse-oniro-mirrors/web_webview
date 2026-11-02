@@ -43,6 +43,8 @@ public:
 
     std::string GetSharedRenderProcessToken() override;
 
+    bool GetIsPreloadNWeb() override;
+
     bool GetEmulateTouchFromMouseEvent() override;
 
     bool GetUseCloudControlAutoLayoutConfig() override;
@@ -51,6 +53,7 @@ public:
 
     uint64_t GetSurfaceRSHandle() override;
 
+    uint64_t GetSurfaceRSUIContextToken() override;
 private:
     ArkWebRefPtr<ArkWebEngineInitArgs> ark_web_engine_init_args_;
 };

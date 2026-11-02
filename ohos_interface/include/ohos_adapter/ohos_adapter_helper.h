@@ -36,6 +36,7 @@
 #include "graphic_adapter.h"
 #include "hisysevent_adapter.h"
 #include "hitrace_adapter.h"
+#include "hiviewdfx_adapter.h"
 #include "imf_adapter.h"
 #include "keystore_adapter.h"
 #include "media_adapter.h"
@@ -61,6 +62,7 @@
 #include "soc_perf_client_adapter.h"
 #include "surface_control_adapter.h"
 #include "system_properties_adapter.h"
+#include "vpe_video_adapter.h"
 #include "sensor_adapter.h"
 #include "background_task_adapter.h"
 #include "perf_monitor_adapter.h"
@@ -180,6 +182,10 @@ public:
 
     virtual SurfaceTransactionAdapter& GetSurfaceTransactionAdapter() = 0;
 
+    virtual std::unique_ptr<VpeVideoAdapter> CreateVpeVideoAdapter() { return nullptr; }
+
+    virtual HiViewDfxAdapter& GetHiViewDfxAdapterInstance() = 0;
+    
     virtual PerfMonitorAdapter& GetPerfMonitorAdapterInstance() = 0;
 };
 

@@ -146,6 +146,12 @@ public:
 
     /*--ark web()--*/
     virtual int32_t GetLTPOIntConfig(ArkWebString configName, int32_t defaultValue) = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetRenderProcessMode() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetPartialDraw() = 0;
 };
 
 } // namespace OHOS::ArkWeb

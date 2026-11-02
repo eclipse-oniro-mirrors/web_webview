@@ -33,6 +33,7 @@
 #include "flowbuffer_adapter_impl.h"
 #include "hisysevent_adapter_impl.h"
 #include "hitrace_adapter_impl.h"
+#include "hiviewdfx_adapter_impl.h"
 #include "perf_monitor_adapter_impl.h"
 #include "imf_adapter_impl.h"
 #include "keystore_adapter_impl.h"
@@ -74,6 +75,7 @@
 #include "surface_adapter_impl.h"
 #include "surface_control_adapter_impl.h"
 #include "system_properties_adapter_impl.h"
+#include "vpe_video_adapter_impl.h"
 #include "vsync_adapter_impl.h"
 #include "window_adapter_impl.h"
 #if defined(NWEB_SENSORS_SENSOR_ENABLE)
@@ -418,5 +420,14 @@ SurfaceTransactionAdapter& OhosAdapterHelperImpl::GetSurfaceTransactionAdapter()
 PerfMonitorAdapter& OhosAdapterHelperImpl::GetPerfMonitorAdapterInstance()
 {
     return PerfMonitorAdapterImpl::GetInstance();
+
+std::unique_ptr<VpeVideoAdapter> OhosAdapterHelperImpl::CreateVpeVideoAdapter()
+{
+    return std::make_unique<VpeVideoAdapterImpl>();
+}
+
+HiViewDfxAdapter& OhosAdapterHelperImpl::GetHiViewDfxAdapterInstance()
+{
+    return HiViewDfxAdapterImpl::GetInstance();
 }
 } // namespace OHOS::NWeb

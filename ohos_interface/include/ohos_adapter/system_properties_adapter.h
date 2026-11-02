@@ -122,6 +122,10 @@ public:
     virtual int32_t GetLoadUrlStrategy() = 0;
 
     virtual int32_t GetLTPOIntConfig(const std::string& configName, int32_t defaultValue) = 0;
+
+    virtual int32_t GetRenderProcessMode() = 0;
+
+    virtual std::string GetPartialDraw() = 0;
 };
 
 } // namespace OHOS::NWeb

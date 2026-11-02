@@ -47,31 +47,57 @@ private:
     class ConnectionManager {
         public:
             ConnectionManager() = default;
-            ~ConnectionManager() {
-                for (const auto& [id, conn] : connections_) {
-                    close(conn.fdRead);
-                    close(conn.fdWrite);
+            ~ConnectionManager()
+            {
+                ClearAllConnections();
+            }
+            // 关闭 conn 持有的 fd（fdsan 校验所有权）并置 -1 标记已释放：fd 号可能被复用且
+            // 新 fd 已接管同一 tag，fdsan 无法拦截同 tag 误关，置 -1 切断误用过期 fd 的路径
+            // （幂等，可安全重复调用）。
+            static void CloseConnectionFds(WNMEConnectionInfo& conn)
+            {
+                if (conn.fdRead >= 0) {
+                    fdsan_close_with_tag(conn.fdRead, WNM_FD_OWNER_TAG);
+                    conn.fdRead = -1;
+                }
+                if (conn.fdWrite >= 0) {
+                    fdsan_close_with_tag(conn.fdWrite, WNM_FD_OWNER_TAG);
+                    conn.fdWrite = -1;
                 }
             }
-            void AddConnection(const WNMEConnectionInfo& conn) {
+            void ClearAllConnections()
+            {
+                for (auto& [id, conn] : connections_) {
+                    CloseConnectionFds(conn);
+                }
+                connections_.clear();
+            }
+            void AddConnection(const WNMEConnectionInfo& conn)
+            {
                 auto tmp = GetConnection(conn.connectionId);
                 if (tmp) {
-                    WNMLOG_E("connectionId exists!");
+                    WNMLOG_E("connectionId exists, closing old fds");
+                    CloseConnectionFds(*tmp);
                 }
                 connections_[conn.connectionId] = conn;
             }
-            void RemoveConnection(const WNMEConnectionInfo& conn) {
+            void RemoveConnection(WNMEConnectionInfo& conn)
+            {
                 auto tmp = GetConnection(conn.connectionId);
                 if (tmp) {
-                    close(tmp->fdRead);
-                    close(tmp->fdWrite);
-                    connections_.erase(conn.connectionId);
-                    return;
+                    CloseConnectionFds(*tmp);
+                } else {
+                    WNMLOG_E("connectionId not exists!");
                 }
-                WNMLOG_E("connectionId not exists!");
+                // 关闭本次 IPC 传入的 fd：它是独立 dup（上面关闭的是 map 中旧连接的 fd），不关则泄漏。
+                // 若 conn 即 map 内对象，其 fd 已被置 -1，此处跳过，不会 Double Close。
+                CloseConnectionFds(conn);
+                // erase 放在关闭之后，避免误传 map 内对象引用时产生悬垂访问
+                connections_.erase(conn.connectionId);
             }
 
-            WNMEConnectionInfo* GetConnection(int32_t connectionId) {
+            WNMEConnectionInfo* GetConnection(int32_t connectionId)
+            {
                 auto it = connections_.find(connectionId);
                 return (it != connections_.end()) ? &it->second : nullptr;
             }
@@ -81,7 +107,7 @@ private:
 
     void OnDestroy();
     void BindContext(napi_env env, napi_value obj);
-    void InvokeCallback(const char* methodName, const WNMEConnectionInfo& params);
+    void InvokeCallback(const char* methodName, WNMEConnectionInfo& params);
     int32_t InvokeCallbackInMainThread(const std::string& methodName, WNMEConnectionInfo& params);
     void GetSrcPath(std::string& srcPath);
 

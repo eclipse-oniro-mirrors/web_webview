@@ -97,6 +97,18 @@ public:
     void PutScrollBarColor(uint32_t color_value) override;
 
     /**
+     * @brief Get the color of caret.
+     *
+     * @see PutCaretColor
+     */
+    uint32_t GetCaretColor() override;
+
+    /**
+     * @brief Put the UX color of caret.
+     */
+    void PutCaretColor(uint32_t color_value) override;
+
+    /**
      * @brief Get over-scroll Mode.
      *
      * @see PutScrollbarColor
@@ -665,6 +677,16 @@ public:
     void PutWebMediaAVSessionEnabled(bool enable) override;
 
     /**
+     * Set whether to enable hls media network proxy.
+     */
+    void PutWebMediaNetworkProxyEnabled(bool enable) override;
+
+    /**
+     * Set whether to enable blank screen monitor.
+     */
+    void PutWebBlankScreenMonitorEnabled(bool enable) override;
+
+    /**
      * @brief Set the scale of the font-weight.The default is 1.0f.
      */
     void SetFontWeightScale(float scale) override;
@@ -733,6 +755,12 @@ public:
      * @param enable bool: Indicates the flag whether fullscreen video overlay is enabled.
      */
     void PutFullScreenVideoOverlayEnable(bool enable) override;
+
+    /**
+     * @brief Set whether to support transform rotate and skew when reporting the visibility of
+     *        native embed. The default is false.
+     */
+    void SetTransformRotateAndSkewEnabled(bool enable) override;
 
 private:
     ArkWebRefPtr<ArkWebPreference> ark_web_preference_;

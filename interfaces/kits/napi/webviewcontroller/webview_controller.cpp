@@ -19,8 +19,11 @@
 #include <unordered_map>
 #include <securec.h>
 #include <regex>
+#include <algorithm>
+#include <cmath>
 
 #include "application_context.h"
+#include "arkweb_utils.h"
 #include "business_error.h"
 #include "napi_parse_utils.h"
 #include "nweb_napi_scope.h"
@@ -72,7 +75,27 @@ struct WaitForAttachParam {
     int32_t timeout;
     WebviewController* webviewController;
     int32_t state;
+    // Strong reference to the JS WebviewController object, kept alive for the
+    // duration of the async work to prevent GC from running the napi_wrap
+    // finalizer (which would delete the native WebviewController) while the
+    // worker thread is still accessing it.
+    napi_ref controllerRef = nullptr;
 };
+
+bool ResolveEmptyStringPromiseIfCallingFromM132(napi_env env, napi_deferred deferred, const char* funcName)
+{
+    if (!IS_CALLING_FROM_M132()) {
+        return false;
+    }
+
+    OHOS::ArkWeb::LogForUnsupportedFunc(OHOS::ArkWeb::ArkWebEngineVersion::M132, funcName);
+    napi_value result = nullptr;
+    if (napi_create_string_utf8(env, "", 0, &result) != napi_ok) {
+        napi_get_undefined(env, &result);
+    }
+    napi_resolve_deferred(env, deferred, result);
+    return true;
+}
 
 bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleName)
 {
@@ -105,6 +128,7 @@ bool GetAppBundleNameAndModuleName(std::string& bundleName, std::string& moduleN
 using namespace NWebError;
 std::mutex g_objectMtx;
 std::unordered_map<int32_t, WebviewController*> g_webview_controller_map;
+std::atomic<uint64_t> WebviewController::nextControllerId_{1};
 std::string WebviewController::customeSchemeCmdLine_ = "";
 bool WebviewController::existNweb_ = false;
 bool WebviewController::webDebuggingAccess_ = OHOS::system::GetBoolParameter("web.debug.devtools", false);
@@ -114,7 +138,11 @@ std::atomic<int32_t> WebviewController::webTagStrId_ = 0;
 std::mutex WebviewController::webTagMtx_;
 std::map<std::string, WebSchemeHandler*> WebviewController::webServiceWorkerSchemeHandlerMap_;
 
-WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
+WebviewController::WebviewController() : controllerId_(nextControllerId_++)
+{
+}
+
+WebviewController::WebviewController(int32_t nwebId) : controllerId_(nextControllerId_++), nwebId_(nwebId)
 {
     if (IsInit()) {
         std::unique_lock<std::mutex> lk(g_objectMtx);
@@ -122,7 +150,7 @@ WebviewController::WebviewController(int32_t nwebId) : nwebId_(nwebId)
     }
 }
 
-WebviewController::WebviewController(const std::string& webTag) : webTag_(webTag)
+WebviewController::WebviewController(const std::string& webTag) : controllerId_(nextControllerId_++), webTag_(webTag)
 {
     NWebHelper::Instance().SetWebTag(-1, webTag_.c_str());
 }
@@ -972,15 +1000,18 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
+        WVLOG_E("SetNWebJavaScriptResultCallBack: nweb_ptr is null, nwebId=%{public}d", nwebId_);
         return;
     }
 
     if (javaScriptResultCb_ && (javaScriptResultCb_->GetNWebId() == nwebId_)) {
+        WVLOG_I("SetNWebJavaScriptResultCallBack: callback already set, nwebId=%{public}d", nwebId_);
         return;
     }
 
     javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nwebId_);
     nweb_ptr->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
+    WVLOG_I("SetNWebJavaScriptResultCallBack: registered callback, nwebId=%{public}d", nwebId_);
 }
 
 void WebviewController::RegisterJavaScriptProxy(RegisterJavaScriptProxyParam& param)
@@ -1072,6 +1103,10 @@ void WebviewController::ExecuteAIPageCommand(const std::string& command, napi_en
 {
     if (deferred == nullptr) {
         WVLOG_E("deferred is nullptr");
+        return;
+    }
+
+    if (ResolveEmptyStringPromiseIfCallingFromM132(env, deferred, __func__)) {
         return;
     }
 
@@ -1533,20 +1568,14 @@ void WebPrintDocument::OnJobStateChanged(const std::string& jobId, uint32_t stat
     }
 }
 
-void* WebviewController::CreateWebPrintDocumentAdapter(const std::string& jobName)
+std::unique_ptr<NWebPrintDocumentAdapterAdapter> WebviewController::CreateWebPrintDocumentAdapter(
+    const std::string& jobName)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         return nullptr;
     }
-
-    std::unique_ptr<NWebPrintDocumentAdapterAdapter> adapter =
-        nweb_ptr->CreateWebPrintDocumentAdapterV2(jobName);
-    if (adapter) {
-        return adapter.release();
-    }
-
-    return nullptr;
+    return nweb_ptr->CreateWebPrintDocumentAdapterV2(jobName);
 }
 
 void WebviewController::CloseAllMediaPresentations()
@@ -2545,7 +2574,7 @@ void WebviewController::UnregisterStateChangeCallback(const napi_env& env, const
     if (handler != nullptr) {
         DeleteRegisterObj(env, iter->second, handler);
     } else {
-        WVLOG_I("WebviewController::UnregisterStateChangeCallback All callback is unsubscribe for event: %{public}s",
+        WVLOG_I("SubEvent op=off_all kit=ArkWeb event=%{public}s",
             type.c_str());
         DeleteAllRegisterObj(env, iter->second);
     }
@@ -2571,6 +2600,12 @@ void WebviewController::TriggerWaitforAttachedPromise(napi_env env, napi_status 
     napi_handle_scope scope = nullptr;
     napi_open_handle_scope(env, &scope);
     if (scope == nullptr) {
+        // Release the strong reference before freeing the param to avoid
+        // leaking the JS object on this error path.
+        if (param->controllerRef != nullptr) {
+            napi_delete_reference(env, param->controllerRef);
+            param->controllerRef = nullptr;
+        }
         delete param;
         param = nullptr;
         return;
@@ -2583,12 +2618,19 @@ void WebviewController::TriggerWaitforAttachedPromise(napi_env env, napi_status 
         napi_resolve_deferred(env, param->deferred, jsState);
     }
     napi_close_handle_scope(env, scope);
+    // Release the strong reference now that the async work is complete;
+    // the JS object becomes eligible for GC again.
+    if (param->controllerRef != nullptr) {
+        napi_delete_reference(env, param->controllerRef);
+        param->controllerRef = nullptr;
+    }
     napi_delete_async_work(env, param->asyncWork);
     delete param;
     param = nullptr;
 }
 
-napi_value WebviewController::WaitForAttachedPromise(napi_env env, int32_t timeout, napi_deferred deferred)
+napi_value WebviewController::WaitForAttachedPromise(napi_env env, napi_value thisVar,
+    int32_t timeout, napi_deferred deferred)
 {
     napi_value result = nullptr;
     napi_value resourceName = nullptr;
@@ -2598,15 +2640,46 @@ napi_value WebviewController::WaitForAttachedPromise(napi_env env, int32_t timeo
         .timeout = timeout,
         .webviewController = this,
         .state = static_cast<int32_t>(attachState_),
+        .controllerRef = nullptr,
     };
     if (param == nullptr) {
         return nullptr;
     }
 
-    NAPI_CALL(env, napi_create_string_utf8(env, EVENT_WAIT_FOR_ATTACH.c_str(), NAPI_AUTO_LENGTH, &resourceName));
-    NAPI_CALL(env, napi_create_async_work(env, nullptr, resourceName, WaitForAttached,
-        TriggerWaitforAttachedPromise, static_cast<void *>(param), &param->asyncWork));
-    NAPI_CALL(env, napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated));
+    // Hold a strong reference to the JS object to prevent GC from triggering
+    // the napi_wrap finalizer (which deletes the WebviewController) while the
+    // async work is still running on the libuv worker thread.
+    napi_status refStatus = napi_create_reference(env, thisVar, 1, &param->controllerRef);
+    if (refStatus != napi_ok) {
+        WVLOG_E("WaitForAttachedPromise: failed to create reference to controller");
+        delete param;
+        return nullptr;
+    }
+
+    napi_status callStatus = napi_create_string_utf8(
+        env, EVENT_WAIT_FOR_ATTACH.c_str(), NAPI_AUTO_LENGTH, &resourceName);
+    if (callStatus != napi_ok) {
+        WVLOG_E("WaitForAttachedPromise: failed to create resource name");
+        napi_delete_reference(env, param->controllerRef);
+        delete param;
+        return nullptr;
+    }
+    callStatus = napi_create_async_work(env, nullptr, resourceName, WaitForAttached,
+        TriggerWaitforAttachedPromise, static_cast<void *>(param), &param->asyncWork);
+    if (callStatus != napi_ok) {
+        WVLOG_E("WaitForAttachedPromise: failed to create async work");
+        napi_delete_reference(env, param->controllerRef);
+        delete param;
+        return nullptr;
+    }
+    callStatus = napi_queue_async_work_with_qos(env, param->asyncWork, napi_qos_user_initiated);
+    if (callStatus != napi_ok) {
+        WVLOG_E("WaitForAttachedPromise: failed to queue async work");
+        napi_delete_async_work(env, param->asyncWork);
+        napi_delete_reference(env, param->controllerRef);
+        delete param;
+        return nullptr;
+    }
     napi_get_undefined(env, &result);
     return result;
 }
@@ -2677,6 +2750,44 @@ bool WebviewController::GetErrorPageEnabled()
         return false;
     }
     return nweb_ptr->GetErrorPageEnabled();
+}
+
+ErrCode WebviewController::SetErrorPageEnabled(bool enable, bool includeSubframe)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetErrorPageEnabled(enable, includeSubframe);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetSubframeErrorPageEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetSubframeErrorPageEnabled();
+}
+
+ErrCode WebviewController::SetAutoReloadEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetAutoReloadEnabled(enable);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetAutoReloadEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetAutoReloadEnabled();
 }
 
 ErrCode WebviewController::ResumeMicrophone()
@@ -2751,6 +2862,32 @@ std::string WebviewController::GetLastPostMessageURL()
     }
 
     return nweb_ptr->GetLastPostMessageURL();
+}
+
+ErrCode WebviewController::SetZoomFactor(double factor)
+{
+    if (!std::isfinite(factor)) {
+        return PARAM_CHECK_ERROR;
+    }
+    factor = std::clamp(factor, MIN_BROWSER_ZOOM_FACTOR, MAX_BROWSER_ZOOM_FACTOR);
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetZoomFactor(factor);
+
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::GetZoomFactor(double& factor)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    factor = nweb_ptr->GetZoomFactor();
+
+    return NWebError::NO_ERROR;
 }
 } // namespace NWeb
 } // namespace OHOS

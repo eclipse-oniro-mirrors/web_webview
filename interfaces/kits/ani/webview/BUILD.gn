@@ -17,6 +17,9 @@ import("../../../../config.gni")
 
 ohos_shared_library("webview_ani") {
   shlib_type = "ani"
+  if (target_cpu == "arm64") {
+    branch_protector_ret = "pac_ret"
+  }
   sanitize = {
     cfi = true
     cfi_cross_dso = true
@@ -52,6 +55,7 @@ ohos_shared_library("webview_ani") {
     "./src/common/ani_parse_utils.cpp",
     "./src/common/ani_parse_utils.h",
     "./src/common/ani_web_net_error_list.h",
+    "./src/common/ani_web_net_error_list.cpp",
     "./src/common/nweb_message_ext.cpp",
     "./src/proxycontroller/ani_proxy_config.cpp",
     "./src/proxycontroller/ani_proxy_config.h",
@@ -157,6 +161,8 @@ ohos_shared_library("webview_ani") {
     "init:libbegetutil",
     "ipc:ipc_core",
     "napi:ace_napi",
+    "node:node_header_notice",
+    "libuv:uv",
     "protobuf:protobuf_lite",
     "runtime_core:ani",
     "runtime_core:ani_helpers",

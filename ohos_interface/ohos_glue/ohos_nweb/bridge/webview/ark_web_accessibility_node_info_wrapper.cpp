@@ -361,4 +361,70 @@ std::string ArkWebAccessibilityNodeInfoWrapper::GetExpandedState()
     return objExpandedState;
 }
 
+std::string ArkWebAccessibilityNodeInfoWrapper::GetAddText()
+{
+    ArkWebString stAddText = ark_web_accessibility_node_info_->GetAddText();
+
+    std::string objAddText = ArkWebStringStructToClass(stAddText);
+    ArkWebStringStructRelease(stAddText);
+    return objAddText;
+}
+
+std::string ArkWebAccessibilityNodeInfoWrapper::GetRemoveText()
+{
+    ArkWebString stRemoveText = ark_web_accessibility_node_info_->GetRemoveText();
+
+    std::string objRemoveText = ArkWebStringStructToClass(stRemoveText);
+    ArkWebStringStructRelease(stRemoveText);
+    return objRemoveText;
+}
+
+int32_t ArkWebAccessibilityNodeInfoWrapper::GetZIndex()
+{
+    return ark_web_accessibility_node_info_->GetZIndex();
+}
+
+int32_t ArkWebAccessibilityNodeInfoWrapper::GetFontSize()
+{
+    return ark_web_accessibility_node_info_->GetFontSize();
+}
+
+int32_t ArkWebAccessibilityNodeInfoWrapper::GetImageRendering()
+{
+    return ark_web_accessibility_node_info_->GetImageRendering();
+}
+
+int32_t ArkWebAccessibilityNodeInfoWrapper::GetBgSizeType()
+{
+    return ark_web_accessibility_node_info_->GetBgSizeType();
+}
+
+uint32_t ArkWebAccessibilityNodeInfoWrapper::GetBgColor()
+{
+    return ark_web_accessibility_node_info_->GetBgColor();
+}
+
+bool ArkWebAccessibilityNodeInfoWrapper::GetCssVisible()
+{
+    return ark_web_accessibility_node_info_->GetCssVisible();
+}
+
+std::string ArkWebAccessibilityNodeInfoWrapper::GetBgImg()
+{
+    ArkWebString stBgImg = ark_web_accessibility_node_info_->GetBgImg();
+
+    std::string objBgImg = ArkWebStringStructToClass(stBgImg);
+    ArkWebStringStructRelease(stBgImg);
+    return objBgImg;
+}
+
+std::string ArkWebAccessibilityNodeInfoWrapper::GetBgSize()
+{
+    ArkWebString stBgSize = ark_web_accessibility_node_info_->GetBgSize();
+
+    std::string objBgSize = ArkWebStringStructToClass(stBgSize);
+    ArkWebStringStructRelease(stBgSize);
+    return objBgSize;
+}
+
 } // namespace OHOS::ArkWeb

@@ -1501,6 +1501,11 @@ void ArkWebNWebImpl::SetTouchHandleExistState(bool touchHandleExist)
     nweb_nweb_->SetTouchHandleExistState(touchHandleExist);
 }
 
+void ArkWebNWebImpl::SetClickExtEnabled(bool enable)
+{
+    nweb_nweb_->SetClickExtEnabled(enable);
+}
+
 void ArkWebNWebImpl::AvoidVisibleViewportBottom(int32_t avoidHeight)
 {
     nweb_nweb_->AvoidVisibleViewportBottom(avoidHeight);
@@ -1541,6 +1546,16 @@ bool ArkWebNWebImpl::GetErrorPageEnabled()
     return nweb_nweb_->GetErrorPageEnabled();
 }
 
+void ArkWebNWebImpl::SetErrorPageEnabledV2(bool enable, bool includeSubframe)
+{
+    nweb_nweb_->SetErrorPageEnabled(enable, includeSubframe);
+}
+
+bool ArkWebNWebImpl::GetSubframeErrorPageEnabled()
+{
+    return nweb_nweb_->GetSubframeErrorPageEnabled();
+}
+
 int32_t ArkWebNWebImpl::GetWebDestroyMode()
 {
     return static_cast<int32_t>(nweb_nweb_->GetWebDestroyMode());
@@ -1551,6 +1566,14 @@ void ArkWebNWebImpl::CallH5FunctionV2(
 {
     nweb_nweb_->CallH5FunctionV2(
         routing_id, h5_object_id, ArkWebStringStructToClass(h5_method_name), ArkWebRomValueVectorStructToClass(args));
+}
+
+bool ArkWebNWebImpl::CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+    const ArkWebString& h5_method_name, const ArkWebRomValueVector& args)
+{
+    return nweb_nweb_->CallH5FunctionV3(routing_id, frame_child_id, h5_object_id,
+                                ArkWebStringStructToClass(h5_method_name),
+                                ArkWebRomValueVectorStructToClass(args));
 }
 
 void ArkWebNWebImpl::PostPortMessageV2(const ArkWebString& portHandle, ArkWebRefPtr<ArkWebRomValue> data)
@@ -1872,5 +1895,30 @@ ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ArkWebNWebImpl::GetAccessibilityNodeIn
     }
 
     return new ArkWebAccessibilityNodeInfoImpl(nweb_accessibility_node_info);
+}
+
+void ArkWebNWebImpl::SetZoomFactor(double zoom_factor)
+{
+    nweb_nweb_->SetZoomFactor(zoom_factor);
+}
+
+double ArkWebNWebImpl::GetZoomFactor()
+{
+    return nweb_nweb_->GetZoomFactor();
+}
+
+void ArkWebNWebImpl::SetAutoReloadEnabled(bool enable)
+{
+    nweb_nweb_->SetAutoReloadEnabled(enable);
+}
+
+bool ArkWebNWebImpl::GetAutoReloadEnabled()
+{
+    return nweb_nweb_->GetAutoReloadEnabled();
+}
+
+void ArkWebNWebImpl::SetFlingSpeedLimit(float speed_limit)
+{
+    nweb_nweb_->SetFlingSpeedLimit(speed_limit);
 }
 } // namespace OHOS::ArkWeb

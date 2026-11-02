@@ -45,6 +45,8 @@ public:
 
     ArkWebString GetSharedRenderProcessToken() override;
 
+    bool GetIsPreloadNWeb() override;
+
     bool GetEmulateTouchFromMouseEvent() override;
 
     bool GetUseCloudControlAutoLayoutConfig() override;
@@ -52,6 +54,8 @@ public:
     uint64_t GetSurfaceNodeId() override;
 
     uint64_t GetSurfaceRSHandle() override;
+
+    uint64_t GetSurfaceRSUIContextToken() override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebEngineInitArgs> nweb_engine_init_args_;

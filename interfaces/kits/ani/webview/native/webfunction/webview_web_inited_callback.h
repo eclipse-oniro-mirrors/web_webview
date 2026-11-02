@@ -48,6 +48,11 @@ public:
     ~WebRunInitedCallbackImpl() override
     {
         WVLOG_I("~WebRunInitedCallbackImpl start");
+        // 兜底释放 param_，覆盖 RunInitedCallback 未被调用时 param_ 及其 JS 全局引用的泄漏场景
+        if (param_ != nullptr) {
+            delete param_;
+            param_ = nullptr;
+        }
     }
     void RunInitedCallback() override;
 

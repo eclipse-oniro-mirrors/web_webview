@@ -110,6 +110,10 @@ NWebValueCallbackImpl::~NWebValueCallbackImpl()
         WVLOG_E("[WebMessagePort] GetEnv status is : %{public}d", status);
         return;
     }
+    if (callback_ == nullptr) {
+        WVLOG_E("[WebMessagePort] callback_ is nullptr");
+        return;
+    }
     if (env) {
         env->GlobalReference_Delete(callback_);
     }
@@ -130,7 +134,6 @@ void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
         vm_->DetachCurrentThread();
         return;
     }
-    auto engine = reinterpret_cast<NativeEngine*>(env);
     if (!mainHandler_) {
         std::shared_ptr<OHOS::AppExecFwk::EventRunner> runner = OHOS::AppExecFwk::EventRunner::GetMainEventRunner();
         if (!runner) {
@@ -144,12 +147,7 @@ void NWebValueCallbackImpl::OnReceiveValue(std::shared_ptr<NWebMessage> result)
         vm_->DetachCurrentThread();
         return;
     }
-    if (pthread_self() == engine->GetTid()) {
-        NWebValueCallbackImpl::WebMessageCallback(env, result);
-    } else {
-        auto task = [this, result]() { NWebValueCallbackImpl::WebMessageOnReceiveValueCallback(result); };
-        mainHandler_->PostTask(task, TASK_ID);
-    }
+    NWebValueCallbackImpl::WebMessageCallback(env, result);
     vm_->DetachCurrentThread();
 }
 
@@ -167,33 +165,26 @@ void NWebValueCallbackImpl::WebMessageCallback(ani_env* env, std::shared_ptr<NWe
         WVLOG_E("[WebMessagePort] env is nullptr");
         return;
     }
+    if (!callback_) {
+        WVLOG_E("[WebMessagePort] callback_ is nullptr");
+        return;
+    }
+    if (!result) {
+        WVLOG_E("[WebMessagePort] result is nullptr");
+        return;
+    }
     ani_object webMsgExt = nullptr;
     if (extention_) {
-        g_WebMessagePort = false;
-        if (!CreateObjectVoid(env, ANI_WEB_MESSAGE_EXT_NAME, webMsgExt)) {
-            return;
-        }
-        g_WebMessagePort = true;
-        if (webMsgExt == nullptr) {
-            WVLOG_E("[WebMessagePort] new webMsgExt failed.");
-            return;
-        }
-        WebMessageExt* webMessageExt = new (std::nothrow) WebMessageExt(result);
-        if (webMessageExt == nullptr) {
-            WVLOG_E("[WebMessagePort] new WebMessageExt failed.");
-            return;
-        }
-        if (!Wrap(env, webMsgExt, ANI_WEB_MESSAGE_EXT_NAME, reinterpret_cast<ani_long>(webMessageExt))) {
-            WVLOG_E("[WebMessagePort] webMessageExt wrap failed");
-            delete webMessageExt;
-            webMessageExt = nullptr;
-            webMsgExt = nullptr;
+        if (!CreateExtMsgObj(env, result, webMsgExt)) {
             return;
         }
     } else {
         webMsgExt = static_cast<ani_object>(AniParseUtils::ConvertNWebToAniValue(env, result));
     }
-
+    if (webMsgExt == nullptr) {
+        WVLOG_E("[WebMessagePort] webMsgExt is nullptr after ConvertNWebToAniValue");
+        return;
+    }
     ani_ref placeHodler = nullptr;
     std::vector<ani_ref> vec;
     vec.push_back(static_cast<ani_ref>(webMsgExt));
@@ -202,6 +193,31 @@ void NWebValueCallbackImpl::WebMessageCallback(ani_env* env, std::shared_ptr<NWe
         WVLOG_E("[WebMessagePort] FunctionalObject_Call failed");
         return;
     }
+}
+
+bool NWebValueCallbackImpl::CreateExtMsgObj(ani_env* env, std::shared_ptr<NWebMessage> result, ani_object& webMsgExt)
+{
+    g_WebMessagePort = false;
+    if (!CreateObjectVoid(env, ANI_WEB_MESSAGE_EXT_NAME, webMsgExt)) {
+        return false;
+    }
+    g_WebMessagePort = true;
+    if (webMsgExt == nullptr) {
+        WVLOG_E("[WebMessagePort] new webMsgExt failed.");
+        return false;
+    }
+    WebMessageExt* webMessageExt = new (std::nothrow) WebMessageExt(result);
+    if (webMessageExt == nullptr) {
+        WVLOG_E("[WebMessagePort] new WebMessageExt failed");
+        return false;
+    }
+    if (!Wrap(env, webMsgExt, ANI_WEB_MESSAGE_EXT_NAME, reinterpret_cast<ani_long>(webMessageExt))) {
+        WVLOG_E("[WebMessagePort] webMessageExt wrap failed");
+        delete webMessageExt;
+        webMsgExt = nullptr;
+        return false;
+    }
+    return true;
 }
 
 void NWebValueCallbackImpl::WebMessageOnReceiveValueCallback(std::shared_ptr<NWebMessage> result)
@@ -217,33 +233,27 @@ void NWebValueCallbackImpl::WebMessageOnReceiveValueCallback(std::shared_ptr<NWe
         WVLOG_E("[WebMessagePort] env is nullptr");
         return;
     }
+    if (!callback_) {
+        WVLOG_E("[WebMessagePort] callback_ is nullptr");
+        return;
+    }
+    if (!result) {
+        WVLOG_E("[WebMessagePort] result is nullptr");
+        return;
+    }
     ani_boolean errorExists;
     env->ExistUnhandledError(&errorExists);
     ani_object webMsgExt = nullptr;
     if (extention_) {
-        g_WebMessagePort = false;
-        if (!CreateObjectVoid(env, ANI_WEB_MESSAGE_EXT_NAME, webMsgExt)) {
-            return;
-        }
-        g_WebMessagePort = true;
-        if (webMsgExt == nullptr) {
-            WVLOG_E("[WebMessagePort] new webMsgExt failed.");
-            return;
-        }
-        WebMessageExt* webMessageExt = new (std::nothrow) WebMessageExt(result);
-        if (webMessageExt == nullptr) {
-            WVLOG_E("[WebMessagePort] new WebMessageExt failed.");
-            return;
-        }
-        if (!Wrap(env, webMsgExt, ANI_WEB_MESSAGE_EXT_NAME, reinterpret_cast<ani_long>(webMessageExt))) {
-            WVLOG_E("[WebMessagePort] webMessageExt wrap failed");
-            delete webMessageExt;
-            webMessageExt = nullptr;
-            webMsgExt = nullptr;
+        if (!CreateExtMsgObj(env, result, webMsgExt)) {
             return;
         }
     } else {
         webMsgExt = static_cast<ani_object>(AniParseUtils::ConvertNWebToAniValue(env, result));
+    }
+    if (webMsgExt == nullptr) {
+        WVLOG_E("[WebMessagePort] webMsgExt is nullptr after ConvertNWebToAniValue");
+        return;
     }
     ani_ref placeHodler = nullptr;
     std::vector<ani_ref> vec;

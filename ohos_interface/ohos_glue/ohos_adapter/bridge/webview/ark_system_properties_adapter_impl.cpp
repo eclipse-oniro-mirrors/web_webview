@@ -242,4 +242,15 @@ int32_t ArkSystemPropertiesAdapterImpl::GetLTPOIntConfig(ArkWebString configName
 {
     return real_.GetLTPOIntConfig(ArkWebStringStructToClass(configName), defaultValue);
 }
+
+int32_t ArkSystemPropertiesAdapterImpl::GetRenderProcessMode()
+{
+    return real_.GetRenderProcessMode();
+}
+
+ArkWebString ArkSystemPropertiesAdapterImpl::GetPartialDraw()
+{
+    std::string str = real_.GetPartialDraw();
+    return ArkWebStringClassToStruct(str);
+}
 } // namespace OHOS::ArkWeb

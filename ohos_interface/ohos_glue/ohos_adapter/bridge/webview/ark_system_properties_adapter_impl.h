@@ -100,6 +100,10 @@ public:
 
     int32_t GetLTPOIntConfig(ArkWebString configName, int32_t defaultValue) override;
 
+    int32_t GetRenderProcessMode() override;
+
+    ArkWebString GetPartialDraw() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

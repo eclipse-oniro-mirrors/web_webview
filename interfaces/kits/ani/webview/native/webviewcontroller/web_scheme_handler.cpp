@@ -63,9 +63,11 @@ void OnRequestStop(const ArkWeb_SchemeHandler* schemeHandler, const ArkWeb_Resou
 
 std::unordered_map<WebSchemeHandler*, const ArkWeb_SchemeHandler*> WebSchemeHandler::webSchemeHandlerMap_;
 std::unordered_map<const ArkWeb_SchemeHandler*, WebSchemeHandler*> WebSchemeHandler::arkWebSchemeHandlerMap_;
+std::mutex WebSchemeHandler::mapMutex_;
 
 const ArkWeb_SchemeHandler* WebSchemeHandler::GetArkWebSchemeHandler(WebSchemeHandler* handler)
 {
+    std::lock_guard<std::mutex> lock(mapMutex_);
     return WebSchemeHandler::webSchemeHandlerMap_.find(handler) != WebSchemeHandler::webSchemeHandlerMap_.end()
                ? WebSchemeHandler::webSchemeHandlerMap_[handler]
                : nullptr;
@@ -73,6 +75,7 @@ const ArkWeb_SchemeHandler* WebSchemeHandler::GetArkWebSchemeHandler(WebSchemeHa
 
 WebSchemeHandler* WebSchemeHandler::GetWebSchemeHandler(const ArkWeb_SchemeHandler* handler)
 {
+    std::lock_guard<std::mutex> lock(mapMutex_);
     return WebSchemeHandler::arkWebSchemeHandlerMap_.find(handler) != WebSchemeHandler::arkWebSchemeHandlerMap_.end()
                ? WebSchemeHandler::arkWebSchemeHandlerMap_[handler]
                : nullptr;
@@ -97,17 +100,31 @@ WebSchemeHandler::WebSchemeHandler(ani_env* env) : vm_(nullptr)
     OH_ArkWebSchemeHandler_SetOnRequestStart(handler, onRequestStart_);
     OH_ArkWebSchemeHandler_SetOnRequestStop(handler, onRequestStop_);
     OH_ArkWebSchemeHandler_SetFromEts(handler, true);
-    webSchemeHandlerMap_.insert(std::make_pair(this, handler));
-    arkWebSchemeHandlerMap_.insert(std::make_pair(handler, this));
+    {
+        std::lock_guard<std::mutex> lock(mapMutex_);
+        webSchemeHandlerMap_.insert(std::make_pair(this, handler));
+        arkWebSchemeHandlerMap_.insert(std::make_pair(handler, this));
+    }
+    std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::GetMainEventRunner();
+    if (runner) {
+        mainHandler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
+    } else {
+        WVLOG_E("create WebSchemeHandler GetMainEventRunner failed, onRequestStop will not work");
+    }
 }
 
 WebSchemeHandler::~WebSchemeHandler()
 {
     WVLOG_D("WebSchemeHandler::~WebSchemeHandler");
+    is_stop_callback_valid_->store(false, std::memory_order_release);
     ani_env* env = GetEnv();
     if (!env) {
         WVLOG_E("env is null");
         return;
+    }
+    std::lock_guard<std::mutex> lock(mainHandlerMutex_);
+    if (mainHandler_) {
+        mainHandler_->RemoveTask(TASK_ID);
     }
     if (request_start_callback_) {
         if (env->GlobalReference_Delete(request_start_callback_) != ANI_OK) {
@@ -119,13 +136,20 @@ WebSchemeHandler::~WebSchemeHandler()
             WVLOG_E("delete reference obj fail");
         }
     }
-    ArkWeb_SchemeHandler* handler = const_cast<ArkWeb_SchemeHandler*>(GetArkWebSchemeHandler(this));
+    ArkWeb_SchemeHandler* handler = nullptr;
+    {
+        std::lock_guard<std::mutex> lock(mapMutex_);
+        auto it = webSchemeHandlerMap_.find(this);
+        if (it != webSchemeHandlerMap_.end()) {
+            handler = const_cast<ArkWeb_SchemeHandler*>(it->second);
+            webSchemeHandlerMap_.erase(this);
+            arkWebSchemeHandlerMap_.erase(handler);
+        }
+    }
     if (!handler) {
         WVLOG_E("~WebSchemeHandler not found ArkWeb_SchemeHandler");
         return;
     }
-    webSchemeHandlerMap_.erase(this);
-    arkWebSchemeHandlerMap_.erase(handler);
     OH_ArkWeb_DestroySchemeHandler(handler);
 }
 
@@ -138,11 +162,11 @@ void WebSchemeHandler::RequestStart(
     }
 
     ani_env* env = GetEnv();
-    if (!request_start_callback_ || !request) {
-        WVLOG_E("WebSchemeHandler request_start_callback_ or request is null.");
+    if (!request_start_callback_ || !request || !arkwebResourceHandler || !intercept) {
+        WVLOG_E("WebSchemeHandler request_start_callback_, request, resourceHandler or intercept is null.");
         return;
     }
-    if (!env_ || !env) {
+    if (!env) {
         WVLOG_E("WebSchemeHandler env is null.");
         return;
     }
@@ -215,6 +239,11 @@ void WebSchemeHandler::RequestStart(
         reinterpret_cast<ani_fn_object>(request_start_callback_), vec.size(), vec.data(), &fnReturnVal);
     if (status != ANI_OK) {
         WVLOG_E("scheme handler call onRequestStart failed.");
+        *intercept = false;
+        env->DestroyLocalScope();
+        resourceHandler->SetFinishFlag();
+        resourceHandler->DecStrongRef(resourceHandler);
+        return;
     }
     if (!AniParseUtils::ParseBoolean(env, fnReturnVal, *intercept)) {
         WVLOG_E("scheme handler onRequestStart intercept parse failed");
@@ -227,60 +256,32 @@ void WebSchemeHandler::RequestStart(
     }
 }
 
-void WebSchemeHandler::RequestStopAfterWorkCb(RequestStopParam* param)
+void WebSchemeHandler::RequestStopAfterWorkCb(const std::shared_ptr<RequestStopParam>& param)
 {
     if (!param) {
         WVLOG_E("RequestStopAfterWorkCb: param is null");
         return;
     }
-    if (vm_ == nullptr) {
+    if (param->vm_ == nullptr) {
         WVLOG_E("RequestStopAfterWorkCb: nil vm");
-        delete param;
+        param->request_->DecStrongRef(param->request_);
         return;
     }
-    if (vm_->GetEnv(ANI_VERSION_1, &param->env_) != ANI_OK) {
+    ani_env* env = nullptr;
+    if (param->vm_->GetEnv(ANI_VERSION_1, &env) != ANI_OK) {
         WVLOG_E("RequestStopAfterWorkCb: GetEnv failed");
-        delete param;
+        param->request_->DecStrongRef(param->request_);
         return;
     }
-    if (param->env_ == nullptr || !param->callbackRef_) {
-        WVLOG_E("RequestStopAfterWorkCb: callbackRef_ or env_ is null");
-        delete param;
+    if (env == nullptr || !param->callbackRef_ || !param->isCallbackValid_ ||
+        !param->isCallbackValid_->load(std::memory_order_acquire)) {
+        WVLOG_E("RequestStopAfterWorkCb: callbackRef_ or env is invalid");
+        param->request_->DecStrongRef(param->request_);
         return;
     }
-    ani_ref callbackFunc = nullptr;
-    ani_status status =
-        param->env_->GlobalReference_Create(reinterpret_cast<ani_ref>(param->callbackRef_), &callbackFunc);
-    if (status != ANI_OK || callbackFunc == nullptr) {
-        WVLOG_E("RequestStopAfterWorkCb: GlobalReference_Create failed");
-        delete param;
+    if (!NotifyRequestStop(env, param)) {
+        param->request_->DecStrongRef(param->request_);
         return;
-    }
-    ani_object requestValue = {};
-    if (!AniParseUtils::CreateObjectVoid(param->env_,
-        ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME, requestValue)) {
-        WVLOG_E("RequestStopAfterWorkCb: create requestValue failed");
-        delete param;
-        return;
-    }
-    if (!AniParseUtils::Wrap(param->env_, requestValue, ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME,
-        reinterpret_cast<ani_long>(param->request_))) {
-        WVLOG_E("RequestStopAfterWorkCb: WebSchemeHandlerRequest wrap failed");
-        delete param;
-        return;
-    }
-    std::vector<ani_ref> vec;
-    vec.push_back(static_cast<ani_object>(requestValue));
-    ani_ref fnReturnVal;
-    status = param->env_->FunctionalObject_Call(
-        reinterpret_cast<ani_fn_object>(callbackFunc), vec.size(), vec.data(), &fnReturnVal);
-    if (status != ANI_OK) {
-        WVLOG_E("RequestStopAfterWorkCb:FunctionalObject_Call failed.");
-        delete param;
-        return;
-    }
-    if (callbackFunc != nullptr) {
-        param->env_->GlobalReference_Delete(callbackFunc);
     }
     WebResourceHandler* resourceHandler =
         reinterpret_cast<WebResourceHandler*>(OH_ArkWebResourceRequest_GetUserData(param->arkWebRequest_));
@@ -288,14 +289,62 @@ void WebSchemeHandler::RequestStopAfterWorkCb(RequestStopParam* param)
         resourceHandler->SetFinishFlag();
         resourceHandler->DecStrongRef(resourceHandler);
     }
-    delete param;
-    param = nullptr;
+}
+
+bool WebSchemeHandler::NotifyRequestStop(ani_env* env, const std::shared_ptr<RequestStopParam>& param)
+{
+    if (!env || !param) {
+        WVLOG_E("NotifyRequestStop: env or param is null");
+        return false;
+    }
+    ani_ref callbackFunc = nullptr;
+    ani_status status =
+        env->GlobalReference_Create(reinterpret_cast<ani_ref>(param->callbackRef_), &callbackFunc);
+    if (status != ANI_OK || callbackFunc == nullptr) {
+        WVLOG_E("NotifyRequestStop: GlobalReference_Create failed");
+        return false;
+    }
+    ani_object requestValue = {};
+    if (!AniParseUtils::CreateObjectVoid(env,
+        ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME, requestValue)) {
+        WVLOG_E("NotifyRequestStop: create requestValue failed");
+        env->GlobalReference_Delete(callbackFunc);
+        return false;
+    }
+    if (!AniParseUtils::Wrap(env, requestValue, ANI_WEB_WEBSCHEME_HANDLER_REQUEST_CLASS_NAME,
+        reinterpret_cast<ani_long>(param->request_))) {
+        WVLOG_E("NotifyRequestStop: WebSchemeHandlerRequest wrap failed");
+        env->GlobalReference_Delete(callbackFunc);
+        return false;
+    }
+    std::vector<ani_ref> vec;
+    vec.push_back(static_cast<ani_object>(requestValue));
+    ani_ref fnReturnVal;
+    status = env->FunctionalObject_Call(
+        reinterpret_cast<ani_fn_object>(callbackFunc), vec.size(), vec.data(), &fnReturnVal);
+    if (status != ANI_OK) {
+        WVLOG_E("NotifyRequestStop: FunctionalObject_Call failed.");
+        env->GlobalReference_Delete(callbackFunc);
+        return false;
+    }
+    if (callbackFunc != nullptr) {
+        env->GlobalReference_Delete(callbackFunc);
+    }
+    return true;
 }
 
 void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest)
 {
+    if (resourceRequest == nullptr) {
+        WVLOG_E("WebSchemeHandler::RequestStop resourceRequest is nullptr");
+        return;
+    }
     if (vm_ == nullptr) {
         WVLOG_E("RequestStop: RequestStop nil vm");
+        return;
+    }
+    if (resourceRequest == nullptr) {
+        WVLOG_E("RequestStop: resourceRequest is nullptr");
         return;
     }
     ani_env* env = nullptr;
@@ -306,41 +355,34 @@ void WebSchemeHandler::RequestStop(const ArkWeb_ResourceRequest* resourceRequest
     }
     if (env == nullptr) {
         WVLOG_E("RequestStop: env is nullptr");
+        vm_->DetachCurrentThread();
         return;
     }
-    if (!mainHandler_) {
-        std::shared_ptr<AppExecFwk::EventRunner> runner = AppExecFwk::EventRunner::GetMainEventRunner();
-        if (!runner) {
-            WVLOG_E("RequestStop: GetMainEventRunner failed");
-            return;
-        }
-        mainHandler_ = std::make_shared<AppExecFwk::EventHandler>(runner);
-    }
-    if (mainHandler_ == nullptr) {
-        WVLOG_E("RequestStop: mainHandler_ is null.");
-        return;
-    }
-    if (!request_stop_callback_) {
-        WVLOG_E("RequestStop: request_stop_callback is null");
+    if ((!mainHandler_) || (!request_stop_callback_)) {
+        WVLOG_E("RequestStop: mainHandler or request_stop_callback is null.");
+        vm_->DetachCurrentThread();
         return;
     }
     WebSchemeHandlerRequest* request = new (std::nothrow) WebSchemeHandlerRequest(resourceRequest);
     if (request == nullptr) {
         WVLOG_E("RequestStop: failed to create WebSchemeHandlerRequest");
+        vm_->DetachCurrentThread();
         return;
     }
-    RequestStopParam* param = new (std::nothrow) RequestStopParam();
-    if (param == nullptr) {
-        WVLOG_E("RequestStop: RequestStop failed to create RequestStopParam");
-        delete request;
-        return;
-    }
-    param->env_ = env;
+    auto param = std::make_shared<RequestStopParam>();
+    param->vm_ = vm_;
     param->callbackRef_ = request_stop_callback_;
     param->request_ = request;
     param->arkWebRequest_ = resourceRequest;
-    auto task = [this, param]() { WebSchemeHandler::RequestStopAfterWorkCb(param); };
-        mainHandler_->PostTask(task, TASK_ID);
+    param->isCallbackValid_ = is_stop_callback_valid_;
+    auto task = [param]() { WebSchemeHandler::RequestStopAfterWorkCb(param); };
+    if (!mainHandler_->PostTask(task, TASK_ID)) {
+        WVLOG_E("RequestStop: PostTask failed");
+        request->DecStrongRef(request);
+        vm_->DetachCurrentThread();
+        return;
+    }
+    vm_->DetachCurrentThread();
 }
 
 void WebSchemeHandler::PutRequestStart(ani_env* env, ani_vm* vm, ani_fn_object callback)
@@ -354,10 +396,21 @@ void WebSchemeHandler::PutRequestStart(ani_env* env, ani_vm* vm, ani_fn_object c
         WVLOG_E("PutRequestStart vm null");
         return;
     }
+
+    if (!callback) {
+        WVLOG_E("PutRequestStart callback null");
+        return;
+    }
+
     vm_ = vm;
+    if (request_start_callback_ != nullptr) {
+        env->GlobalReference_Delete(request_start_callback_);
+        request_start_callback_ = nullptr;
+    }
     ani_status status = env->GlobalReference_Create(reinterpret_cast<ani_ref>(callback), &request_start_callback_);
     if (status != ANI_OK) {
         WVLOG_E("PutRequestStart create reference failed.");
+        request_start_callback_ = nullptr;
     }
 }
 
@@ -372,10 +425,22 @@ void WebSchemeHandler::PutRequestStop(ani_env* env, ani_vm* vm, ani_fn_object ca
         WVLOG_E("PutRequestStop vm null");
         return;
     }
+
+    if (!callback) {
+        WVLOG_E("PutRequestStop callback null");
+        return;
+    }
     vm_ = vm;
+    if (request_stop_callback_ != nullptr) {
+        env->GlobalReference_Delete(request_stop_callback_);
+        request_stop_callback_ = nullptr;
+    }
     ani_status status = env->GlobalReference_Create(reinterpret_cast<ani_ref>(callback), &request_stop_callback_);
     if (status != ANI_OK) {
         WVLOG_E("PutRequestStop create reference failed.");
+        request_stop_callback_ = nullptr;
+    } else {
+        is_stop_callback_valid_->store(true, std::memory_order_release);
     }
 }
 
@@ -489,7 +554,7 @@ void WebHttpBodyStream::ExecuteInit(ArkWeb_NetError result)
         return;
     }
 
-    auto* asyncCtx = new InitAsyncCtx {
+    auto* asyncCtx = new (std::nothrow) InitAsyncCtx {
         .env = env_,
         .deferred = initResolver_,
         .errCode = result,
@@ -542,9 +607,15 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
 {
     WVLOG_D("WebHttpBodyStream::ExecuteRead");
     if (!env_) {
+        delete[] buffer;
         return;
     }
-    auto* asyncCtx = new ReadAsyncCtx {
+    if (bytesRead < 0) {
+        WVLOG_E("WebHttpBodyStream::ExecuteRead invalid bytesRead");
+        delete[] buffer;
+        return;
+    }
+    auto* asyncCtx = new (std::nothrow) ReadAsyncCtx {
         .env = env_,
         .deferred = readResolver_,
         .buffer = buffer,
@@ -552,11 +623,13 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
     };
     if (asyncCtx == nullptr) {
         WVLOG_E("WebHttpBodyStream::ExecuteRead asyncCtx is nullptr");
+        delete[] buffer;
         return;
     }
     WVLOG_D("WebHttpBodyStream::ExecuteRead task started");
     if (!asyncCtx->env) {
         WVLOG_E("WebHttpBodyStream::ExecuteRead asyncCtx or env is nullptr");
+        delete[] asyncCtx->buffer;
         delete asyncCtx;
         return;
     }
@@ -564,15 +637,29 @@ void WebHttpBodyStream::ExecuteRead(uint8_t* buffer, int bytesRead)
     void* bufferData = nullptr;
     if (env_->CreateArrayBuffer(asyncCtx->bytesRead, &bufferData, &arraybuffer) != ANI_OK) {
         WVLOG_E("WebHttpBodyStream::ExecuteRead CreateArrayBuffer failed");
+        delete[] asyncCtx->buffer;
         delete asyncCtx;
         return;
     }
-    if (memcpy_s(bufferData, asyncCtx->bytesRead, asyncCtx->buffer, asyncCtx->bytesRead) != 0 &&
-        asyncCtx->bytesRead > 0) {
+    if (bufferData == nullptr) {
+        WVLOG_E("WebHttpBodyStream::ExecuteRead bufferData is nullptr");
+        delete[] asyncCtx->buffer;
+        if (asyncCtx->buffer) {
+            delete[] asyncCtx->buffer;
+        }
+        asyncCtx->env->PromiseResolver_Resolve(asyncCtx->deferred, arraybuffer);
+        return;
+    }
+    if (asyncCtx->bytesRead > 0 &&
+        memcpy_s(bufferData, asyncCtx->bytesRead, asyncCtx->buffer, asyncCtx->bytesRead) != 0) {
         WVLOG_E("WebHttpBodyStream::ExecuteRead memcpy failed");
+        asyncCtx->env->PromiseResolver_Resolve(asyncCtx->deferred, arraybuffer);
+        delete[] asyncCtx->buffer;
+        delete asyncCtx;
+        return;
     }
     if (asyncCtx->buffer) {
-        delete asyncCtx->buffer;
+        delete[] asyncCtx->buffer;
     }
     if (asyncCtx->deferred) {
         if (asyncCtx->env->PromiseResolver_Resolve(asyncCtx->deferred, arraybuffer) != ANI_OK) {

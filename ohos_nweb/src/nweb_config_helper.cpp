@@ -54,6 +54,9 @@ const std::string WEB_ALL_BUNDLE_NAME = "*";
 const std::string WEB_THROTTLE_STRATEGY = "throttle_strategy";
 const std::string WEB_THROTTLE_TIMEOUT = "throttle_timeout";
 const std::string WEB_THROTTLE_RATIO = "throttle_ratio";
+const std::string WEB_RENDER_PROCESS_MODE = "render_process_mode";
+const std::string WEB_PARTIAL_DRAW_CONFIG = "partial_draw_config";
+const std::string WEB_PARTIAL_DRAW = "partial_draw";
 const auto XML_ATTR_NAME = "name";
 const auto XML_ATTR_MIN = "min";
 const auto XML_ATTR_MAX = "max";
@@ -333,8 +336,10 @@ void NWebConfigHelper::ParseConfig(std::shared_ptr<NWebEngineInitArgsImpl> initA
     if (cfgFiles == nullptr) {
         WVLOG_E("Not found webConfigxml,read system config");
         ParseWebConfigXml(defaultConfigPath, initArgs);
-        std::lock_guard<std::mutex> lock(lock_);
-        isConfigParsed_ = true;
+        {
+            std::lock_guard<std::mutex> lock(lock_);
+            isConfigParsed_ = true;
+        }
         return;
     }
 
@@ -367,11 +372,11 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
         WVLOG_E("load xml error!");
         return;
     }
+    std::unique_ptr<xmlDoc, decltype(&xmlFreeDoc)> docGuard(docPtr, xmlFreeDoc);
     xmlNodePtr rootPtr = xmlDocGetRootElement(docPtr);
     if (rootPtr == nullptr || rootPtr->name == nullptr ||
         xmlStrcmp(rootPtr->name, reinterpret_cast<const xmlChar *>("WEB"))) {
         WVLOG_E("get root element failed!");
-        xmlFreeDoc(docPtr);
         return;
     }
     xmlNodePtr initNodePtr = GetChildrenNode(rootPtr, INIT_CONFIG);
@@ -411,6 +416,10 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
     if (loadUrlConfigNodePtr != nullptr) {
         ParseNWebLoadUrlStrategy(loadUrlConfigNodePtr);
     }
+    xmlNodePtr renderProcessModeNodePtr = GetChildrenNode(rootPtr, WEB_RENDER_PROCESS_MODE);
+    if (renderProcessModeNodePtr != nullptr) {
+        ParseRenderProcessMode(renderProcessModeNodePtr);
+    }
     xmlNodePtr windowOrientationNodePtr = GetChildrenNode(rootPtr, WEB_WINDOW_ORIENTATION_CONFIG);
     if (windowOrientationNodePtr != nullptr) {
         WVLOG_D("read config from window orientation node");
@@ -421,7 +430,11 @@ void NWebConfigHelper::ParseWebConfigXml(const std::string& configFilePath,
         WVLOG_D("read config from native messaging node");
         ParseNativeMessagingConfig(nativeMessagingNodePtr);
     }
-    xmlFreeDoc(docPtr);
+    xmlNodePtr partialDrawNodePtr = GetChildrenNode(rootPtr, WEB_PARTIAL_DRAW_CONFIG);
+    if (partialDrawNodePtr != nullptr) {
+        ParsePartialDraw(partialDrawNodePtr);
+    }
+    // docPtr released by docGuard (RAII) at scope exit
 }
 
 void NWebConfigHelper::ParseNWebLTPOConfig(xmlNodePtr nodePtr)
@@ -511,9 +524,13 @@ void NWebConfigHelper::ParseNWebLTPOIntConfig(xmlNodePtr nodePtr, const std::str
         WVLOG_E("read ltpo xml node error");
         return;
     }
-    ltpoIntConfig_[configName] = atoi((char *)content);
+    int32_t value = atoi((char *)content);
     xmlFree(content);
-    WVLOG_D("ltpo %{public}s is: %{public}d", configName.c_str(), ltpoIntConfig_[configName]);
+    {
+        std::lock_guard<std::mutex> lock(lock_);
+        ltpoIntConfig_[configName] = value;
+    }
+    WVLOG_D("ltpo %{public}s is: %{public}d", configName.c_str(), value);
 }
 
 void NWebConfigHelper::ParseNWebLoadUrlStrategy(xmlNodePtr nodePtr)
@@ -561,10 +578,9 @@ int32_t NWebConfigHelper::GetLTPOStrategy()
 
 int32_t NWebConfigHelper::GetLTPOIntConfig(const std::string& configName, int32_t defaultValue)
 {
-    if (ltpoIntConfig_.find(configName) != ltpoIntConfig_.end()) {
-        return ltpoIntConfig_[configName];
-    }
-    return defaultValue;
+    std::lock_guard<std::mutex> lock(lock_);
+    auto it = ltpoIntConfig_.find(configName);
+    return it != ltpoIntConfig_.end() ? it->second : defaultValue;
 }
 
 void NWebConfigHelper::ParseNWebDvsync(xmlNodePtr nodePtr)
@@ -760,11 +776,13 @@ int NWebConfigHelper::safeGetPropAsInt(xmlNode* node, const xmlChar* propName, i
 
 void NWebConfigHelper::SetBundleName(const std::string& bundleName)
 {
+    std::lock_guard<std::mutex> lock(bundleNameLock_);
     bundleName_ = bundleName;
 }
 
 std::string NWebConfigHelper::GetBundleName()
 {
+    std::lock_guard<std::mutex> lock(bundleNameLock_);
     return bundleName_;
 }
 
@@ -819,11 +837,93 @@ bool NWebConfigHelper::IsNativeMessagingEnabled()
             return nativeMessagingEnabled_;
         }
     }
-    
     std::shared_ptr<NWebEngineInitArgsImpl> initArgs = std::make_shared<NWebEngineInitArgsImpl>();
     NWebConfigHelper::Instance().ParseConfig(initArgs);
-    
-    std::lock_guard<std::mutex> lock(lock_);
-    return nativeMessagingEnabled_;
+    {
+        std::lock_guard<std::mutex> lock(lock_);
+        return nativeMessagingEnabled_;
+    }
+}
+
+int32_t NWebConfigHelper::GetRenderProcessMode()
+{
+    return renderProcessMode_;
+}
+
+void NWebConfigHelper::ParseRenderProcessMode(xmlNodePtr childNodePtr)
+{
+    for (xmlNodePtr curNodePtr = childNodePtr->xmlChildrenNode; curNodePtr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        char* namePtr = (char*)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        if (!namePtr) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string settingName(namePtr);
+        xmlFree(namePtr);
+        if (settingName == WEB_RENDER_PROCESS_MODE) {
+            xmlChar *content = xmlNodeGetContent(curNodePtr);
+            if (content == nullptr) {
+                WVLOG_E("read render_process_mode xml node error");
+                return;
+            }
+            std::string contentStr = reinterpret_cast<const char*>(content);
+            xmlFree(content);
+            if (contentStr == "single") {
+                renderProcessMode_ = static_cast<int32_t>(RenderProcessMode::SINGLE_MODE);
+            } else if (contentStr == "multiple") {
+                renderProcessMode_ = static_cast<int32_t>(RenderProcessMode::MULTIPLE_MODE);
+            } else if (contentStr == "default") {
+                renderProcessMode_ = static_cast<int32_t>(RenderProcessMode::DEFAULT_MODE);
+            } else {
+                WVLOG_W("unknown render_process_mode value: %{public}s, use default", contentStr.c_str());
+                renderProcessMode_ = static_cast<int32_t>(RenderProcessMode::DEFAULT_MODE);
+            }
+            WVLOG_D("render_process_mode is: %{public}d", renderProcessMode_);
+            return;
+        }
+    }
+}
+
+void NWebConfigHelper::ParsePartialDraw(xmlNodePtr nodePtr)
+{
+    for (xmlNodePtr curNodePtr = nodePtr->xmlChildrenNode; curNodePtr; curNodePtr = curNodePtr->next) {
+        if (curNodePtr->name == nullptr || curNodePtr->type == XML_COMMENT_NODE) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        char* namePtr = (char*)xmlGetProp(curNodePtr, BAD_CAST(XML_ATTR_NAME));
+        if (!namePtr) {
+            WVLOG_E("invalid node!");
+            continue;
+        }
+        std::string settingName(namePtr);
+        xmlFree(namePtr);
+        if (settingName == WEB_PARTIAL_DRAW) {
+            xmlChar *content = xmlNodeGetContent(curNodePtr);
+            if (content == nullptr) {
+                WVLOG_E("read partial_draw xml node error");
+                return;
+            }
+            std::string value = reinterpret_cast<const char *>(content);
+            xmlFree(content);
+            if (value == "single" || value == "multi" || value == "none") {
+                partialDraw_ = value;
+            } else {
+                WVLOG_E("invalid partial_draw value: %{public}s, fallback to none", value.c_str());
+                partialDraw_ = "none";
+            }
+            WVLOG_D("partial_draw is: %{public}s", partialDraw_.c_str());
+            return;
+        }
+    }
+}
+
+std::string NWebConfigHelper::GetPartialDraw()
+{
+    return partialDraw_;
 }
 } // namespace OHOS::NWeb

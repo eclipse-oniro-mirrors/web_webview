@@ -17,6 +17,9 @@
 #define OHOS_NWEB_SCHEME_HANDLER_H
 
 #include <ani.h>
+#include <atomic>
+#include <memory>
+#include <mutex>
 #include <string>
 #include <uv.h>
 
@@ -51,6 +54,7 @@ public:
     ani_ref delegate_ = nullptr;
     static std::unordered_map<WebSchemeHandler*, const ArkWeb_SchemeHandler*> webSchemeHandlerMap_;
     static std::unordered_map<const ArkWeb_SchemeHandler*, WebSchemeHandler*> arkWebSchemeHandlerMap_;
+    static std::mutex mapMutex_;
     ani_env* GetEnv()
     {
         ani_env* env = nullptr;
@@ -62,20 +66,24 @@ public:
 
 private:
     typedef struct RequestStopParam {
-        ani_env* env_;
+        ani_vm* vm_;
         ani_ref callbackRef_;
         WebSchemeHandlerRequest* request_;
         const ArkWeb_ResourceRequest* arkWebRequest_;
+        std::shared_ptr<std::atomic<bool>> isCallbackValid_;
     } RequestStopParam;
 
-    void RequestStopAfterWorkCb(RequestStopParam* param);
+    static void RequestStopAfterWorkCb(const std::shared_ptr<RequestStopParam>& param);
+    static bool NotifyRequestStop(ani_env* env, const std::shared_ptr<RequestStopParam>& param);
     ani_env* env_ = nullptr;
     ani_vm* vm_ = nullptr;
     std::shared_ptr<AppExecFwk::EventHandler> mainHandler_;
+    std::mutex mainHandlerMutex_;
     ArkWeb_OnRequestStart onRequestStart_ = nullptr;
     ArkWeb_OnRequestStop onRequestStop_ = nullptr;
     ani_ref request_start_callback_ = nullptr;
     ani_ref request_stop_callback_ = nullptr;
+    std::shared_ptr<std::atomic<bool>> is_stop_callback_valid_ = std::make_shared<std::atomic<bool>>(false);
 };
 class WebHttpBodyStream {
 public:

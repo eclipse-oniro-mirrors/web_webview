@@ -15,6 +15,8 @@
 
 #include "webview_controller.h"
 
+#include <algorithm>
+#include <cmath>
 #include <memory>
 #include <unordered_map>
 #include <securec.h>
@@ -59,6 +61,8 @@ namespace OHOS {
 namespace NWeb {
 namespace {
 constexpr uint32_t URL_MAXIMUM = 2 * 1024 * 1024;
+constexpr double MIN_BROWSER_ZOOM_FACTOR = 0.25;
+constexpr double MAX_BROWSER_ZOOM_FACTOR = 5.0;
 
 struct WaitForAttachParam {
     arkts::concurrency_helpers::AsyncWork* asyncWork;
@@ -675,9 +679,17 @@ bool WebviewController::GetRawFileUrl(const std::string &fileName,
     if (hapPath_.empty()) {
         std::shared_ptr<AbilityRuntime::ApplicationContext> context =
             AbilityRuntime::ApplicationContext::GetApplicationContext();
+        if (!context) {
+            WVLOG_E("GetRawFileUrl: failed to get application context");
+            return false;
+        }
         std::string packagePath = "file:///" + context->GetBundleCodeDir() + "/";
         std::string contextBundleName = context->GetBundleName() + "/";
         std::shared_ptr<AppExecFwk::ApplicationInfo> appInfo = context->GetApplicationInfo();
+        if (!appInfo) {
+            WVLOG_E("GetRawFileUrl: failed to get application info");
+            return false;
+        }
         std::string entryDir = appInfo->entryDir;
         bool isStage = entryDir.find("entry") == std::string::npos ? false : true;
         result = isStage ? packagePath + "entry/resources/rawfile/" + fileName :
@@ -1141,7 +1153,7 @@ ErrCode WebviewController::HasImagesCallback(ani_vm *vm, ani_ref jsCallback)
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         std::vector<ani_ref> vec;
-        ani_ref errorValue = AniBusinessErrorError::CreateError(env, NWebError::INIT_ERROR);
+        ani_ref errorValue = AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
         ani_ref dataValue = nullptr;
         auto status = env->GetUndefined(&dataValue);
         if (status != ANI_OK) {
@@ -1194,7 +1206,7 @@ ErrCode WebviewController::HasImagesPromise(ani_vm *vm, ani_resolver deferred)
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         ani_ref jsResult = nullptr;
-        jsResult = AniBusinessErrorError::CreateError(env, NWebError::INIT_ERROR);
+        jsResult = AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
         if (jsResult == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -2358,6 +2370,44 @@ bool WebviewController::GetErrorPageEnabled()
     return nweb_ptr->GetErrorPageEnabled();
 }
 
+ErrCode WebviewController::SetErrorPageEnabled(bool enable, bool includeSubframe)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetErrorPageEnabled(enable, includeSubframe);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetSubframeErrorPageEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetSubframeErrorPageEnabled();
+}
+
+ErrCode WebviewController::SetAutoReloadEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetAutoReloadEnabled(enable);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetAutoReloadEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetAutoReloadEnabled();
+}
+
 int32_t WebviewController::GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -2493,7 +2543,7 @@ void WebviewController::UnregisterStateChangeCallback(ani_env *env, const std::s
     if (handler) {
         DeleteRegisterObj(env, iter->second, handler);
     } else {
-        WVLOG_D("UnregisterStateChangeCallback unregister all callback for type:%{public}s", type.c_str());
+        WVLOG_I("SubEvent op=off_all kit=ArkWeb event=%{public}s", type.c_str());
         DeleteAllRegisterObj(env, iter->second);
     }
 
@@ -2532,8 +2582,19 @@ void WebviewController::WaitForAttachedFinish(ani_env *env, arkts::concurrency_h
 
     if (param->resolver) {
         ani_enum enumType;
-        if (envUse->FindEnum("@ohos.web.webview.webview.ControllerAttachState", &enumType) != ANI_OK) {
-            WVLOG_E("WaitForAttachedFinish find enumType failed");
+        ani_status findStatus = envUse->FindEnum("@ohos.web.webview.webview.ControllerAttachState", &enumType);
+        if (findStatus != ANI_OK) {
+            WVLOG_E("WaitForAttachedFinish find enumType failed, status = %{public}d", findStatus);
+            // FindEnum 失败后拒绝 promise 并清理，避免使用未初始化的 enumType（未定义行为）及 promise 永久挂起
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, static_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
+            envUse->DestroyLocalScope();
+            DeleteAsyncWork(envUse, param->asyncWork);
+            delete param;
+            param = nullptr;
+            return;
         }
 
         ani_enum_item result = nullptr;
@@ -2541,10 +2602,18 @@ void WebviewController::WaitForAttachedFinish(ani_env *env, arkts::concurrency_h
         if ((rst = envUse->Enum_GetEnumItemByIndex(enumType, param->state, &result)) != ANI_OK) {
             WVLOG_E("WaitForAttachedFinish convert attachState(%{public}d) failed, rst = %{public}d", param->state,
                 rst);
-        }
-
-        if ((rst = envUse->PromiseResolver_Resolve(param->resolver, result)) != ANI_OK) {
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, static_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
+        } else if ((rst = envUse->PromiseResolver_Resolve(param->resolver, result)) != ANI_OK) {
             WVLOG_E("WaitForAttachedFinish resolve promise failed, rst = %{public}d", rst);
+            // Resolve 失败时 promise 仍处于 pending，补充 reject 避免 promise 永久挂起；
+            // 若 reject 亦失败（promise 已 settle）仅记录日志，无副作用
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, static_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
         }
     }
 
@@ -2622,6 +2691,30 @@ std::string WebviewController::GetLastPostMessageURL()
     }
 
     return nweb_ptr->GetLastPostMessageURL();
+}
+
+ErrCode WebviewController::SetZoomFactor(double factor)
+{
+    if (!std::isfinite(factor)) {
+        return PARAM_CHECK_ERROR;
+    }
+    factor = std::clamp(factor, MIN_BROWSER_ZOOM_FACTOR, MAX_BROWSER_ZOOM_FACTOR);
+    auto nwebPtr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nwebPtr) {
+        return INIT_ERROR;
+    }
+    nwebPtr->SetZoomFactor(factor);
+    return NWebError::NO_ERROR;
+}
+
+ErrCode WebviewController::GetZoomFactor(double& factor)
+{
+    auto nwebPtr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nwebPtr) {
+        return INIT_ERROR;
+    }
+    factor = nwebPtr->GetZoomFactor();
+    return NWebError::NO_ERROR;
 }
 } // namespace NWeb
 } // namespace OHOS

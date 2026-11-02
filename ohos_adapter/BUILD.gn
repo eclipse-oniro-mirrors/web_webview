@@ -23,6 +23,11 @@ ohos_shared_library("nweb_ohos_adapter") {
   if (target_cpu == "arm64") {
     branch_protector_ret = "pac_ret"
   }
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
 
   if (target_cpu == "arm") {
     libs = [
@@ -89,11 +94,13 @@ ohos_shared_library("nweb_ohos_adapter") {
     "graphic_adapter/src/surface_control/surface_transaction.cpp",
     "graphic_adapter/src/surface_control/surface_transaction_helper.cpp",
     "graphic_adapter/src/surface_control/interface/oh_surface_control.cpp",
+    "graphic_adapter/src/vpe_video_adapter_impl.cpp",
     "graphic_adapter/src/vsync_adapter_impl.cpp",
     "graphic_adapter/src/window_adapter_impl.cpp",
     "hiviewdfx_adapter/src/hilog_adapter.cpp",
     "hiviewdfx_adapter/src/hisysevent_adapter_impl.cpp",
     "hiviewdfx_adapter/src/hitrace_adapter_impl.cpp",
+    "hiviewdfx_adapter/src/hiviewdfx_adapter_impl.cpp",
     "hiviewdfx_adapter/src/perf_monitor_adapter_impl.cpp",
     "inputmethodframework_adapter/src/imf_adapter_impl.cpp",
     "keystore_adapter/src/keystore_adapter_impl.cpp",
@@ -216,6 +223,7 @@ ohos_shared_library("nweb_ohos_adapter") {
     "input:libmmi-client",
     "ipc:ipc_core",
     "napi:ace_napi",
+    "node:node_header_notice",
     "netmanager_base:net_conn_manager_if",
     "netmanager_base:net_security_config_if",
     "openssl:libssl_shared",
@@ -235,6 +243,11 @@ ohos_shared_library("nweb_ohos_adapter") {
     "jsoncpp:jsoncpp",
   ]
   external_deps += [ "ability_base:want" ]
+
+  if (target_cpu == "arm64") {
+    external_deps += [ "faultloggerd:libasync_stack" ]
+    defines += [ "hidebug_async_stack" ]
+  }
 
   if (webview_soc_perf_enable) {
     external_deps += [ "soc_perf:socperf_client" ]
@@ -354,6 +367,13 @@ ohos_shared_library("nweb_ohos_adapter") {
     defines += [ "NWEB_MEDIA_PLAYER_ENABLE" ]
   }
 
+  if (webview_video_processing_engine_enable) {
+    defines += ["NWEB_VIDEO_PROCESSING_ENGINE_ENABLE"]
+    external_deps += [
+      "video_processing_engine:videoprocessingengine",
+      "media_foundation:media_foundation"
+    ]
+  }
   if (webview_camera_enable) {
     sources += [
       "camera_adapter/src/camera_manager_adapter_impl.cpp",

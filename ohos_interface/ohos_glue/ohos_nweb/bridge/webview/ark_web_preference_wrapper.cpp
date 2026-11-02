@@ -80,6 +80,16 @@ void ArkWebPreferenceWrapper::PutScrollBarColor(uint32_t color_value)
     ark_web_preference_->PutScrollBarColor(color_value);
 }
 
+uint32_t ArkWebPreferenceWrapper::GetCaretColor()
+{
+    return ark_web_preference_->GetCaretColor();
+}
+
+void ArkWebPreferenceWrapper::PutCaretColor(uint32_t color_value)
+{
+    ark_web_preference_->PutCaretColor(color_value);
+}
+
 int ArkWebPreferenceWrapper::GetOverscrollMode()
 {
     return ark_web_preference_->GetOverscrollMode();
@@ -584,6 +594,16 @@ void ArkWebPreferenceWrapper::PutWebMediaAVSessionEnabled(bool enable)
     ark_web_preference_->PutWebMediaAVSessionEnabled(enable);
 }
 
+void ArkWebPreferenceWrapper::PutWebMediaNetworkProxyEnabled(bool enable)
+{
+    ark_web_preference_->PutWebMediaNetworkProxyEnabled(enable);
+}
+
+void ArkWebPreferenceWrapper::PutWebBlankScreenMonitorEnabled(bool enable)
+{
+    ark_web_preference_->PutWebBlankScreenMonitorEnabled(enable);
+}
+
 void ArkWebPreferenceWrapper::SetFontWeightScale(float scale)
 {
     if (ark_web_preference_) {
@@ -658,6 +678,13 @@ void ArkWebPreferenceWrapper::PutTouchEventFeatureDetectionEnabled(bool enable)
 {
     if (ark_web_preference_) {
         ark_web_preference_->PutTouchEventFeatureDetectionEnabled(enable);
+    }
+}
+
+void ArkWebPreferenceWrapper::SetTransformRotateAndSkewEnabled(bool enable)
+{
+    if (ark_web_preference_) {
+        ark_web_preference_->SetTransformRotateAndSkewEnabled(enable);
     }
 }
 } // namespace OHOS::ArkWeb

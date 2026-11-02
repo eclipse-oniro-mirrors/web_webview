@@ -24,6 +24,7 @@
 #include "nweb_access_request.h"
 #include "nweb_app_link_callback.h"
 #include "nweb_console_log.h"
+#include "nweb_context_menu_options.h"
 #include "nweb_context_menu_params.h"
 #include "nweb_controller_handler.h"
 #include "nweb_custom_keyboard_handler.h"
@@ -1527,6 +1528,37 @@ public:
      * @param param The parameters related to the video status change.
      */
     virtual void OnVideoStatusChanged(const int action, const std::map<std::string, std::string> &param) {}
+
+    // Keep newly added virtual methods at the end of this cross-library
+    // interface so existing vtable slots remain ABI-compatible.
+    /**
+     * @brief Called when the browser zoom factor of the page changes.
+     *
+     * Triggered only by browser zoom level changes; page display scale
+     * changes are notified by OnScaleChanged instead.
+     *
+     * @param oldZoomFactor the browser zoom factor before the change.
+     * @param newZoomFactor the browser zoom factor after the change.
+     */
+    virtual void OnZoomFactorChanged(double oldZoomFactor, double newZoomFactor) {}
+
+    /**
+     * @brief Called when contextmenu state changed.
+     *
+     * @param itemId The menu item id.
+     * @param options The options of context menu.
+     */
+    virtual void OnContextMenuUpdate(int32_t itemId, std::shared_ptr<NWebContextMenuOptions> options) {}
+
+    /**
+     * @brief Notify a monitored blank screen with root cause attribution.
+     *
+     * @param url The url of the blank screen.
+     * @param reason The reason enum value of the blank screen.
+     * @param extraMsg The JSON serialized RootCauseReport with full attribution details.
+     */
+    virtual void OnMonitoredBlankScreen(
+        const std::string& url, int32_t reason, const std::string& extraMsg) {}
 };
 
 } // namespace OHOS::NWeb

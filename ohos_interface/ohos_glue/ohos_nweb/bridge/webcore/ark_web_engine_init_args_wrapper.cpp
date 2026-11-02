@@ -78,6 +78,11 @@ std::string ArkWebEngineInitArgsWrapper::GetSharedRenderProcessToken()
     return sharedRenderProcessToken;
 }
 
+bool ArkWebEngineInitArgsWrapper::GetIsPreloadNWeb()
+{
+    return ark_web_engine_init_args_->GetIsPreloadNWeb();
+}
+
 bool ArkWebEngineInitArgsWrapper::GetEmulateTouchFromMouseEvent()
 {
     return ark_web_engine_init_args_->GetEmulateTouchFromMouseEvent();
@@ -96,6 +101,11 @@ uint64_t ArkWebEngineInitArgsWrapper::GetSurfaceNodeId()
 uint64_t ArkWebEngineInitArgsWrapper::GetSurfaceRSHandle()
 {
     return ark_web_engine_init_args_->GetSurfaceRSHandle();
+}
+
+uint64_t ArkWebEngineInitArgsWrapper::GetSurfaceRSUIContextToken()
+{
+    return ark_web_engine_init_args_->GetSurfaceRSUIContextToken();
 }
 
 } // namespace OHOS::ArkWeb

@@ -221,9 +221,11 @@ public:
     explicit WebviewController(const std::string& tag = "")
         : tag_(tag), isInitialized_(false), onActiveCalled_(false), onInactiveCalled_(false), webId_(-1), scrollX_(0),
           scrollY_(0), scrollByCalled_(false), zoomOutCalled_(false), zoomInCalled_(false), zoomCalled_(false),
-          zoomOutReturnValue_(0), zoomInReturnValue_(0), zoomReturnValue_(0), getPageOffsetCalled_(false),
+          setZoomFactorCalled_(false), zoomOutReturnValue_(0), zoomInReturnValue_(0), zoomReturnValue_(0),
+          setZoomFactorReturnValue_(0), getZoomFactorCalled_(false), getZoomFactorReturnValue_(0),
+          getPageOffsetCalled_(false),
           pageDownCalled_(false), pageUpCalled_(false), getLastHitTestCalled_(false), getScrollOffsetCalled_(false),
-          slideScrollCalled_(false), requestFocusCalled_(false)
+          slideScrollCalled_(false), requestFocusCalled_(false), autoReloadEnabled_(false)
     {
         if (!tag_.empty()) {
             webTagSet_.insert(tag_);
@@ -427,6 +429,20 @@ public:
     {
         zoomCalled_ = true;
         return zoomReturnValue_;
+    }
+
+    ErrCode SetZoomFactor(double factor)
+    {
+        setZoomFactorCalled_ = true;
+        lastZoomFactorArg_ = factor;
+        return setZoomFactorReturnValue_;
+    }
+
+    ErrCode GetZoomFactor(double& factor)
+    {
+        getZoomFactorCalled_ = true;
+        factor = mockZoomFactorValue_;
+        return getZoomFactorReturnValue_;
     }
 
     void RequestFocus()
@@ -887,6 +903,30 @@ public:
         return false;
     }
 
+    ErrCode SetErrorPageEnabled(bool enable, bool includeSubframe)
+    {
+        return 0;
+    }
+
+    bool GetSubframeErrorPageEnabled()
+    {
+        return false;
+    }
+
+    ErrCode SetAutoReloadEnabled(bool enable)
+    {
+        if (setAutoReloadShouldFail_) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        autoReloadEnabled_ = enable;
+        return 0;
+    }
+
+    bool GetAutoReloadEnabled()
+    {
+        return autoReloadEnabled_;
+    }
+
     void SetSoftKeyboardBehaviorMode(int32_t mode)
     {
         // Mock implementation
@@ -1026,6 +1066,21 @@ public:
         zoomReturnValue_ = returnValue;
     }
 
+    void SetZoomFactorReturnValue(int returnValue)
+    {
+        setZoomFactorReturnValue_ = returnValue;
+    }
+
+    void SetZoomFactorMockValue(double value)
+    {
+        mockZoomFactorValue_ = value;
+    }
+
+    void SetGetZoomFactorReturnValue(int returnValue)
+    {
+        getZoomFactorReturnValue_ = returnValue;
+    }
+
     bool WasOnActiveCalled() const
     {
         return onActiveCalled_;
@@ -1055,6 +1110,12 @@ public:
         zoomOutReturnValue_ = 0;
         zoomInReturnValue_ = 0;
         zoomReturnValue_ = 0;
+        setZoomFactorCalled_ = false;
+        setZoomFactorReturnValue_ = 0;
+        lastZoomFactorArg_ = 0.0;
+        getZoomFactorCalled_ = false;
+        getZoomFactorReturnValue_ = 0;
+        mockZoomFactorValue_ = 1.0;
         getPageOffsetCalled_ = false;
         pageDownCalled_ = false;
         pageUpCalled_ = false;
@@ -1067,6 +1128,9 @@ public:
     bool WasZoomOutCalled() const { return zoomOutCalled_; }
     bool WasZoomInCalled() const { return zoomInCalled_; }
     bool WasZoomCalled() const { return zoomCalled_; }
+    bool WasSetZoomFactorCalled() const { return setZoomFactorCalled_; }
+    double GetLastZoomFactorArg() const { return lastZoomFactorArg_; }
+    bool WasGetZoomFactorCalled() const { return getZoomFactorCalled_; }
     bool WasGetPageOffsetCalled() const { return getPageOffsetCalled_; }
     bool WasPageDownCalled() const { return pageDownCalled_; }
     bool WasPageUpCalled() const { return pageUpCalled_; }
@@ -1087,6 +1151,7 @@ public:
     static bool webDebuggingAccess_;
     static int32_t webDebuggingPort_;
     static bool g_terminateRenderProcessShouldFail;
+    static bool setAutoReloadShouldFail_;
 
 private:
     std::string tag_;
@@ -1100,9 +1165,15 @@ private:
     bool zoomOutCalled_;
     bool zoomInCalled_;
     bool zoomCalled_;
+    bool setZoomFactorCalled_;
     int zoomOutReturnValue_;
     int zoomInReturnValue_;
     int zoomReturnValue_;
+    int setZoomFactorReturnValue_;
+    double lastZoomFactorArg_ = 0.0;
+    bool getZoomFactorCalled_;
+    int getZoomFactorReturnValue_;
+    double mockZoomFactorValue_ = 1.0;
     bool getPageOffsetCalled_;
     bool pageDownCalled_;
     bool pageUpCalled_;
@@ -1110,6 +1181,7 @@ private:
     bool getScrollOffsetCalled_;
     bool slideScrollCalled_;
     bool requestFocusCalled_;
+    bool autoReloadEnabled_;
     std::shared_ptr<HitTestResult> mockHitTestResult_;
 };
 
@@ -1119,6 +1191,7 @@ bool WebviewController::existNweb_ = false;
 bool WebviewController::webDebuggingAccess_ = false;
 int32_t WebviewController::webDebuggingPort_ = 0;
 bool WebviewController::g_terminateRenderProcessShouldFail = false;
+bool WebviewController::setAutoReloadShouldFail_ = false;
 
 } // namespace NWeb
 } // namespace OHOS

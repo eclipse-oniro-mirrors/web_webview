@@ -145,7 +145,12 @@ std::unique_ptr<OHOS::Location::RequestConfig>& LocationRequestConfigImpl::GetCo
 }
 
 LocationInfoImpl::LocationInfoImpl(std::unique_ptr<OHOS::Location::Location>& location)
-    : location_(std::move(location)) {}
+    : location_(location ? std::move(location) : nullptr)
+{
+    if (!location_) {
+        WVLOG_E("LocationInfoImpl: location is nullptr");
+    }
+}
 
 double LocationInfoImpl::GetLatitude()
 {
@@ -259,6 +264,23 @@ LocationProxyAdapterImpl::LocationProxyAdapterImpl()
     }
 }
 
+LocationProxyAdapterImpl::~LocationProxyAdapterImpl()
+{
+    std::lock_guard<std::mutex> lock(locating_mutex_);
+    for (auto& item : reg_) {
+        if (stopLocatingFunc_) {
+            sptr<OHOS::Location::ILocatorCallback> iCallback = item.second;
+            LocationCallbackImpl* callbackImpl =
+                static_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+            if (callbackImpl != nullptr) {
+                callbackImpl->MarkDetached();
+            }
+            stopLocatingFunc_(iCallback);
+        }
+    }
+    reg_.clear();
+}
+
 int32_t LocationProxyAdapterImpl::StartLocating(
     std::shared_ptr<LocationRequestConfig> requestConfig,
     std::shared_ptr<LocationCallbackAdapter> callback)
@@ -287,6 +309,12 @@ int32_t LocationProxyAdapterImpl::StartLocating(
         iCallback);
     if (!ret) {
         WVLOG_E("StartLocating failed, id:%{public}d", id);
+        LocationCallbackImpl* callbackImpl =
+            static_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+        if (callbackImpl != nullptr) {
+            callbackImpl->MarkDetached();
+        }
+        sptr<OHOS::Location::ILocatorCallback> local = iCallback;
         reg_.erase(id);
         return -1;
     }
@@ -305,8 +333,18 @@ bool LocationProxyAdapterImpl::StopLocating(int32_t callbackId)
         WVLOG_E("StopLocating failed due to reg_ not find iCallback");
         return false;
     }
-    bool ret = stopLocatingFunc_(iter->second);
+    sptr<OHOS::Location::ILocatorCallback> iCallback = iter->second;
+    LocationCallbackImpl* callbackImpl =
+        static_cast<LocationCallbackImpl*>(iCallback.GetRefPtr());
+    if (callbackImpl != nullptr) {
+        callbackImpl->MarkDetached();
+        if (callbackImpl->GetSptrRefCount() > 1) {
+            WVLOG_D("StopLocating callback still referenced, refcnt:%{public}d, id:%{public}d",
+                callbackImpl->GetSptrRefCount(), callbackId);
+        }
+    }
     reg_.erase(iter);
+    bool ret = stopLocatingFunc_(iCallback);
     return ret;
 }
 

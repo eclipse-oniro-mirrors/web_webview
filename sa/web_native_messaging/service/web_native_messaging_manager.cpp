@@ -72,6 +72,11 @@ static int32_t CreateUniqueConnectionID()
 void WebNativeMessagingManager::DeleteIpcConnect(Security::AccessToken::AccessTokenID id, std::string& bundleName)
 {
     std::lock_guard<std::mutex> lock(AbilityConnectMutex_);
+    DeleteIpcConnectUnlock(id, bundleName);
+}
+
+void WebNativeMessagingManager::DeleteIpcConnectUnlock(Security::AccessToken::AccessTokenID id, std::string& bundleName)
+{
     auto iter = AbilityConnectMap_.find(std::pair<Security::AccessToken::AccessTokenID, std::string>(id, bundleName));
     if (iter != AbilityConnectMap_.end()) {
         AbilityConnectMap_.erase(iter);
@@ -81,6 +86,11 @@ void WebNativeMessagingManager::DeleteIpcConnect(Security::AccessToken::AccessTo
 bool WebNativeMessagingManager::IsIpcConnectExist()
 {
     std::lock_guard<std::mutex> lock(AbilityConnectMutex_);
+    return IsIpcConnectExistUnlock();
+}
+
+bool WebNativeMessagingManager::IsIpcConnectExistUnlock()
+{
     return AbilityConnectMap_.size() > 0;
 }
 
@@ -123,9 +133,9 @@ sptr<ExtensionIpcConnection> WebNativeMessagingManager::NewIpcConnectionUnlock(
     }
 
     wptr<ExtensionIpcConnection> wpIpcConnect = ipcConnect;
-    std::shared_ptr<IWebNativeMessagingManager> weakPtrManager = shared_from_this();
+    std::shared_ptr<IWebNativeMessagingManager> sharedPtr = shared_from_this();
     ipcConnect->SetThisWptr(wpIpcConnect);
-    ipcConnect->SetManagerWptr(weakPtrManager);
+    ipcConnect->SetManagerPtr(sharedPtr);
     ipcConnect->SetCallerUserId(userId);
 
     AbilityConnectMap_.insert(std::pair<std::pair<Security::AccessToken::AccessTokenID, std::string>,
@@ -402,8 +412,12 @@ void WebNativeMessagingManager::DisconnectWebNativeMessagingExtension(int32_t co
     bool ipcConnectNeedDelete = false;
     int32_t res = ipcConnect->DisconnectNative(innerId, ipcConnectNeedDelete);
     if (ipcConnectNeedDelete) {
-        DeleteIpcConnect(tokenId, request->GetTargetBundleName());
-        if (!IsIpcConnectExist() && delayExitTask_) {
+        // DisconnectNative set status_ to DISCONNECTED, when ipcConnectNeedDelete is true,
+        // preventing new ConnectNative() from adding requests to this ipconnect
+        std::lock_guard<std::mutex> lock(AbilityConnectMutex_);
+        WNMLOG_I("DisconnectExtension: deleting ipcConnect from map, innerId=%{public}d", innerId);
+        DeleteIpcConnectUnlock(tokenId, request->GetTargetBundleName());
+        if (!IsIpcConnectExistUnlock() && delayExitTask_) {
             delayExitTask_->Start();
         }
     }
@@ -418,6 +432,11 @@ void WebNativeMessagingManager::DisconnectWebNativeMessagingExtension(int32_t co
 void WebNativeMessagingManager::StartAbility(const sptr<IRemoteObject>& token,
     const AAFwk::Want& want, const AAFwk::StartOptions& startOptions, int32_t& errorNum)
 {
+    if (token == nullptr) {
+        WNMLOG_E("token is null.");
+        errorNum = ConnectNativeRet::CONTEXT_ERROR;
+        return;
+    }
     int32_t userId = IPCSkeleton::GetCallingUid() / UID_TRANSFORM_DIVISOR;
     int32_t pid = IPCSkeleton::GetCallingPid();
     std::string extensionBundleName;
@@ -457,6 +476,11 @@ void WebNativeMessagingManager::StartAbilityForResult(const sptr<IRemoteObject>&
     const AAFwk::Want& want, const AAFwk::StartOptions& startOptions,
     int32_t requestCode, int32_t& errorNum)
 {
+    if (token == nullptr) {
+        WNMLOG_E("token is null.");
+        errorNum = ConnectNativeRet::CONTEXT_ERROR;
+        return;
+    }
     int32_t userId = IPCSkeleton::GetCallingUid() / UID_TRANSFORM_DIVISOR;
     int32_t pid = IPCSkeleton::GetCallingPid();
     std::string extensionBundleName;
@@ -471,7 +495,7 @@ void WebNativeMessagingManager::StartAbilityForResult(const sptr<IRemoteObject>&
         errorNum = ConnectNativeRet::PERMISSION_CHECK_ERROR;
         return;
     }
- 
+
     if (!CheckAbilityIsUIAbility(want.GetBundle(), want.GetElement().GetAbilityName(), userId)) {
         WNMLOG_E("start ability is not UIAbility.");
         errorNum = ConnectNativeRet::PERMISSION_CHECK_ERROR;
@@ -496,31 +520,43 @@ void WebNativeMessagingManager::StartAbilityForResult(const sptr<IRemoteObject>&
 void WebNativeMessagingManager::StopNativeConnectionFromExtension(int32_t innerConnectId, int32_t& errorNum)
 {
     int32_t pid = IPCSkeleton::GetCallingPid();
-    auto request = ConnectionNativeRequest::GetExistConnectId(innerConnectId);
-    if (!request) {
-        WNMLOG_E("innerConnectId is not exist");
-        errorNum = ConnectNativeRet::CONNECTION_NOT_EXIST;
-        return;
+    sptr<ExtensionIpcConnection> ipcConnect;
+    {
+        // Lock: look up and validate connection, obtain ipcConnect reference
+        std::lock_guard<std::mutex> lock(AbilityConnectMutex_);
+        auto request = ConnectionNativeRequest::GetExistConnectId(innerConnectId);
+        if (!request) {
+            WNMLOG_E("innerConnectId is not exist");
+            errorNum = ConnectNativeRet::CONNECTION_NOT_EXIST;
+            return;
+        }
+
+        if (pid != request->GetExtensionPid()) {
+            WNMLOG_E("innerConnectId is not belong to this application");
+            errorNum = ConnectNativeRet::CONNECTION_NOT_EXIST;
+            return;
+        }
+
+        ipcConnect = LookUpIpcConnectionUnlock(request->GetCallerTokenId(), request->GetTargetBundleName());
+        if (!ipcConnect) {
+            WNMLOG_E("connection is not connected");
+            errorNum = ConnectNativeRet::CONNECTION_NOT_EXIST;
+            return;
+        }
     }
 
-    if (pid != request->GetExtensionPid()) {
-        WNMLOG_E("innerConnectId is not belong to this application");
-        errorNum = ConnectNativeRet::CONNECTION_NOT_EXIST;
-        return;
-    }
-
-    auto ipcConnect = LookUpIpcConnection(request->GetCallerTokenId(), request->GetTargetBundleName());
-    if (!ipcConnect) {
-        WNMLOG_E("connection is not connected");
-        errorNum = ConnectNativeRet::CONNECTION_NOT_EXIST;
-        return;
-    }
-
+    // No lock: DisconnectNative involves IPC calls, avoid holding
+    // AbilityConnectMutex_ to prevent blocking other threads
     bool ipcConnectNeedDelete = false;
     int32_t res = ipcConnect->DisconnectNative(innerConnectId, ipcConnectNeedDelete);
     if (ipcConnectNeedDelete) {
-        DeleteIpcConnect(request->GetCallerTokenId(), request->GetTargetBundleName());
-        if (!IsIpcConnectExist() && delayExitTask_) {
+        // DisconnectNative set status_ to DISCONNECTED, when ipcConnectNeedDelete is true,
+        // preventing new ConnectNative() from adding requests to this ipconnect
+        std::lock_guard<std::mutex> lock(AbilityConnectMutex_);
+        WNMLOG_I("StopNativeConnection: deleting ipcConnect from map, innerConnectId=%{public}d",
+            innerConnectId);
+        DeleteIpcConnectUnlock(ipcConnect->GetCallerTokenId(), ipcConnect->GetTargetBundleName());
+        if (!IsIpcConnectExistUnlock() && delayExitTask_) {
             delayExitTask_->Start();
         }
     }

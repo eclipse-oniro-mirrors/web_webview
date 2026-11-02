@@ -143,9 +143,14 @@ void ExtensionIpcConnection::HandleCallerDeath()
 
     auto sp = wpThis_.promote();
     if (sp) {
-        ErrCode err = AAFwk::AbilityManagerClient::GetInstance()->DisconnectAbility(sp);
-        if (err != ERR_OK) {
-            WNMLOG_E("call ability disconnect ability failed, err %{public}d", err);
+        auto abilityClient = AAFwk::AbilityManagerClient::GetInstance();
+        if (!abilityClient) {
+            WNMLOG_E("ability manager is null");
+        } else {
+            ErrCode err = abilityClient->DisconnectAbility(sp);
+            if (err != ERR_OK) {
+                WNMLOG_E("call ability disconnect ability failed, err %{public}d", err);
+            }
         }
     }
 
@@ -312,7 +317,15 @@ int32_t ExtensionIpcConnection::DisconnectNative(int32_t connectionId, bool& res
             WNMLOG_E("connectId %{public}d send extension disconnect failed", connectionId);
         }
     }
-    if (IsRequestListEmpty()) {
+    bool shouldDisconnect = false;
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+        if (pendingRequests_.empty() && connectedRequests_.empty()) {
+            status_ = IpcConnectStatus::DISCONNECTED;
+            shouldDisconnect = true;
+        }
+    }
+    if (shouldDisconnect) {
         WNMLOG_I("need disconnect extension ability.");
         auto sp = wpThis_.promote();
         if (!sp) {

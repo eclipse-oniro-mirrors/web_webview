@@ -36,6 +36,13 @@ bool ArkWebAgentManagerWrapper::IsAgentEnabled()
     return ark_web_agent_manager_ ? ark_web_agent_manager_->IsAgentEnabled() : false;
 }
 
+void ArkWebAgentManagerWrapper::SetDomExtractionConfig(bool reportDomTree)
+{
+    if (ark_web_agent_manager_) {
+        ark_web_agent_manager_->SetDomExtractionConfig(reportDomTree);
+    }
+}
+
 void ArkWebAgentManagerWrapper::SetContentChangeDetectionConfig(int32_t min_report_time, float text_content_ratio)
 {
     if (ark_web_agent_manager_) {
@@ -59,4 +66,39 @@ void ArkWebAgentManagerWrapper::RequestWebDomJsonString(std::shared_ptr<OHOS::NW
     }
 }
 
+void ArkWebAgentManagerWrapper::RequestPageSceneQuery(
+    const std::string& ruleJson,
+    const std::string& ruleId,
+    const std::vector<std::string>& nodeTypes,
+    std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback)
+{
+    ARK_WEB_BRIDGE_INFO_LOG("RequestPageSceneQuery Wrapper entered [NWebJS]");
+    if (!ark_web_agent_manager_) {
+        return;
+    }
+    ArkWebString stRuleJson = ArkWebStringClassToStruct(ruleJson);
+    ArkWebString stRuleId = ArkWebStringClassToStruct(ruleId);
+    ArkWebStringVector stNodeTypes = ArkWebStringVectorClassToStruct(nodeTypes);
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_agent_manager_->RequestPageSceneQuery(stRuleJson, stRuleId, stNodeTypes, nullptr);
+    } else {
+        ark_web_agent_manager_->RequestPageSceneQuery(stRuleJson, stRuleId, stNodeTypes,
+            new ArkWebMessageValueCallbackImpl(callback));
+    }
+    ArkWebStringStructRelease(stRuleJson);
+    ArkWebStringStructRelease(stRuleId);
+    ArkWebStringVectorStructRelease(stNodeTypes);
+}
+
+void ArkWebAgentManagerWrapper::RequestWebDomJsonStringWithOptions(
+    std::shared_ptr<OHOS::NWeb::NWebMessageValueCallback> callback,
+    int32_t mode)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_agent_manager_->RequestWebDomJsonStringWithOptions(nullptr, mode);
+    } else {
+        ark_web_agent_manager_->RequestWebDomJsonStringWithOptions(
+            new ArkWebMessageValueCallbackImpl(callback), mode);
+    }
+}
 }  // namespace OHOS::ArkWeb

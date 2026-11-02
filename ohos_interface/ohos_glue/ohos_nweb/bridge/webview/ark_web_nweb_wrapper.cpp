@@ -1767,6 +1767,11 @@ void ArkWebNWebWrapper::SetTouchHandleExistState(bool touchHandleExist)
     ark_web_nweb_->SetTouchHandleExistState(touchHandleExist);
 }
 
+void ArkWebNWebWrapper::SetClickExtEnabled(bool enable)
+{
+    ark_web_nweb_->SetClickExtEnabled(enable);
+}
+
 void ArkWebNWebWrapper::AvoidVisibleViewportBottom(int32_t avoidHeight)
 {
     ark_web_nweb_->AvoidVisibleViewportBottom(avoidHeight);
@@ -1810,6 +1815,16 @@ bool ArkWebNWebWrapper::GetErrorPageEnabled()
     return ark_web_nweb_->GetErrorPageEnabled();
 }
 
+void ArkWebNWebWrapper::SetErrorPageEnabled(bool enable, bool includeSubframe)
+{
+    ark_web_nweb_->SetErrorPageEnabledV2(enable, includeSubframe);
+}
+
+bool ArkWebNWebWrapper::GetSubframeErrorPageEnabled()
+{
+    return ark_web_nweb_->GetSubframeErrorPageEnabled();
+}
+
 ArkWebDestroyMode ArkWebNWebWrapper::GetWebDestroyMode()
 {
     int res = ark_web_nweb_->GetWebDestroyMode();
@@ -1824,6 +1839,19 @@ void ArkWebNWebWrapper::CallH5FunctionV2(int32_t routing_id, int32_t h5_object_i
     ark_web_nweb_->CallH5FunctionV2(routing_id, h5_object_id, stH5MethodName, stArgs);
     ArkWebStringStructRelease(stH5MethodName);
     ArkWebRomValueVectorStructRelease(stArgs);
+}
+
+bool ArkWebNWebWrapper::CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+    const std::string& h5_method_name, const std::vector<std::shared_ptr<OHOS::NWeb::NWebRomValue>>& args)
+{
+    ArkWebString stH5MethodName = ArkWebStringClassToStruct(h5_method_name);
+    ArkWebRomValueVector stArgs = ArkWebRomValueVectorClassToStruct(args);
+
+    bool ret = ark_web_nweb_->CallH5FunctionV3(routing_id, frame_child_id, h5_object_id, stH5MethodName, stArgs);
+
+    ArkWebStringStructRelease(stH5MethodName);
+    ArkWebRomValueVectorStructRelease(stArgs);
+    return ret;
 }
 
 void ArkWebNWebWrapper::PostPortMessageV2(const std::string& portHandle, std::shared_ptr<OHOS::NWeb::NWebRomValue> data)
@@ -2217,5 +2245,30 @@ std::shared_ptr<OHOS::NWeb::NWebAccessibilityNodeInfo> ArkWebNWebWrapper::GetAcc
     }
 
     return std::make_shared<ArkWebAccessibilityNodeInfoWrapper>(ark_web_accessibility_node_info);
+}
+
+void ArkWebNWebWrapper::SetZoomFactor(double zoom_factor)
+{
+    ark_web_nweb_->SetZoomFactor(zoom_factor);
+}
+
+double ArkWebNWebWrapper::GetZoomFactor()
+{
+    return ark_web_nweb_->GetZoomFactor();
+}
+
+void ArkWebNWebWrapper::SetAutoReloadEnabled(bool enable)
+{
+    ark_web_nweb_->SetAutoReloadEnabled(enable);
+}
+
+bool ArkWebNWebWrapper::GetAutoReloadEnabled()
+{
+    return ark_web_nweb_->GetAutoReloadEnabled();
+}
+
+void ArkWebNWebWrapper::SetFlingSpeedLimit(float speed_limit)
+{
+    ark_web_nweb_->SetFlingSpeedLimit(speed_limit);
 }
 } // namespace OHOS::ArkWeb

@@ -19,6 +19,7 @@
 #include <cctype>
 #include <chrono>
 #include <climits>
+#include <cmath>
 #include <cstdint>
 #include <regex>
 #include <securec.h>
@@ -101,6 +102,28 @@ constexpr int64_t MAX_EXPIRATION_TIME = 30LL * 24 * 3600 * 1000; // 计算30天�
 constexpr int32_t HISTOGRAM_API_BOOL_COUNTS = 1;
 #endif
 using WebPrintWriteResultCallback = std::function<void(std::string, uint32_t)>;
+
+class NapiRefGuard {
+public:
+    NapiRefGuard(napi_env env, napi_ref ref) : env_(env), ref_(ref) {}
+
+    ~NapiRefGuard()
+    {
+        if (ref_) {
+            napi_delete_reference(env_, ref_);
+        }
+    }
+
+    napi_ref get() const { return ref_; }
+    napi_env env() const { return env_; }
+
+    NapiRefGuard(const NapiRefGuard&) = delete;
+    NapiRefGuard& operator=(const NapiRefGuard&) = delete;
+
+private:
+    napi_env env_ = nullptr;
+    napi_ref ref_ = nullptr;
+};
 
 bool IsJsonObjectCommand(const std::string& command)
 {
@@ -645,19 +668,19 @@ bool ParseBlanklessStringArray(napi_env env, napi_value argv, std::vector<std::s
 napi_value CreateBlanklessInfo(napi_env env, int32_t errCode, double similarity, int32_t loadingTime)
 {
     napi_value result = nullptr;
-    napi_create_object(env, &result);
+    NAPI_CALL(env, napi_create_object(env, &result));
 
     napi_value napiErrCode = nullptr;
-    napi_create_int32(env, errCode, &napiErrCode);
-    napi_set_named_property(env, result, "errCode", napiErrCode);
+    NAPI_CALL(env, napi_create_int32(env, errCode, &napiErrCode));
+    NAPI_CALL(env, napi_set_named_property(env, result, "errCode", napiErrCode));
 
     napi_value napiSimilarity = nullptr;
-    napi_create_double(env, similarity, &napiSimilarity);
-    napi_set_named_property(env, result, "similarity", napiSimilarity);
+    NAPI_CALL(env, napi_create_double(env, similarity, &napiSimilarity));
+    NAPI_CALL(env, napi_set_named_property(env, result, "similarity", napiSimilarity));
 
     napi_value napiLoadingTime = nullptr;
-    napi_create_int32(env, loadingTime, &napiLoadingTime);
-    napi_set_named_property(env, result, "loadingTime", napiLoadingTime);
+    NAPI_CALL(env, napi_create_int32(env, loadingTime, &napiLoadingTime));
+    NAPI_CALL(env, napi_set_named_property(env, result, "loadingTime", napiLoadingTime));
     return result;
 }
 
@@ -764,7 +787,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("innerSetFavicon", NapiWebviewController::InnerSetFavicon),
         DECLARE_NAPI_FUNCTION("innerGetCertificate", NapiWebviewController::InnerGetCertificate),
         DECLARE_NAPI_FUNCTION("setAudioMuted", NapiWebviewController::SetAudioMuted),
-        DECLARE_NAPI_FUNCTION("innerGetThisVar", NapiWebviewController::InnerGetThisVar),
+        DECLARE_NAPI_FUNCTION("innerGetControllerId", NapiWebviewController::InnerGetControllerId),
         DECLARE_NAPI_FUNCTION("prefetchPage", NapiWebviewController::PrefetchPage),
         DECLARE_NAPI_FUNCTION("setDownloadDelegate", NapiWebviewController::SetDownloadDelegate),
         DECLARE_NAPI_FUNCTION("startDownload", NapiWebviewController::StartDownload),
@@ -775,6 +798,9 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("isSafeBrowsingEnabled", NapiWebviewController::IsSafeBrowsingEnabled),
         DECLARE_NAPI_FUNCTION("setErrorPageEnabled", NapiWebviewController::SetErrorPageEnabled),
         DECLARE_NAPI_FUNCTION("getErrorPageEnabled", NapiWebviewController::GetErrorPageEnabled),
+        DECLARE_NAPI_FUNCTION("getSubframeErrorPageEnabled", NapiWebviewController::GetSubframeErrorPageEnabled),
+        DECLARE_NAPI_FUNCTION("enableAutoReload", NapiWebviewController::SetAutoReloadEnabled),
+        DECLARE_NAPI_FUNCTION("isAutoReloadEnabled", NapiWebviewController::IsAutoReloadEnabled),
         DECLARE_NAPI_FUNCTION("getSecurityLevel", NapiWebviewController::GetSecurityLevel),
         DECLARE_NAPI_FUNCTION("isIncognitoMode", NapiWebviewController::IsIncognitoMode),
         DECLARE_NAPI_FUNCTION("setPrintBackground", NapiWebviewController::SetPrintBackground),
@@ -878,6 +904,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("setUserAgentMetadata", NapiWebviewController::SetUserAgentMetadata),
         DECLARE_NAPI_FUNCTION("getUserAgentMetadata", NapiWebviewController::GetUserAgentMetadata),
         DECLARE_NAPI_FUNCTION("getLastPostMessageURL", NapiWebviewController::GetLastPostMessageURL),
+        DECLARE_NAPI_FUNCTION("setZoomFactor", NapiWebviewController::SetZoomFactor),
+        DECLARE_NAPI_FUNCTION("getZoomFactor", NapiWebviewController::GetZoomFactor),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -1506,9 +1534,9 @@ napi_value NapiWebviewController::InnerGetWebDebuggingPort(napi_env env, napi_ca
     return NapiParseUtils::ToInt32Value(env, webDebuggingPort);
 }
 
-napi_value NapiWebviewController::InnerGetThisVar(napi_env env, napi_callback_info info)
+napi_value NapiWebviewController::InnerGetControllerId(napi_env env, napi_callback_info info)
 {
-    WVLOG_D("InnerGetThisVar start");
+    WVLOG_D("InnerGetControllerId start");
     napi_value thisVar = nullptr;
     napi_value result = nullptr;
     napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
@@ -1518,7 +1546,7 @@ napi_value NapiWebviewController::InnerGetThisVar(napi_env env, napi_callback_in
         WVLOG_E("webviewController is nullptr.");
         napi_create_int64(env, 0, &result);
     } else {
-        napi_create_int64(env, reinterpret_cast<int64_t>(webviewController), &result);
+        napi_create_int64(env, static_cast<int64_t>(webviewController->GetControllerId()), &result);
     }
     return result;
 }
@@ -3336,6 +3364,9 @@ napi_value NapiWebviewController::GetHitTestValue(napi_env env, napi_callback_in
     std::shared_ptr<HitTestResult> nwebResult = webviewController->GetHitTestValue();
 
     napi_create_object(env, &result);
+    if (result == nullptr) {
+        return nullptr;
+    }
 
     napi_value type;
     if (nwebResult) {
@@ -3503,8 +3534,10 @@ napi_value NapiWebviewController::LoadUrlWithHttpHeaders(napi_env env, napi_call
             if (napi_get_named_property(env, obj, "headerValue", &valueObj) != napi_ok) {
                 continue;
             }
-            NapiParseUtils::ParseString(env, keyObj, key);
-            NapiParseUtils::ParseString(env, valueObj, value);
+            if (!NapiParseUtils::ParseString(env, keyObj, key) ||
+                !NapiParseUtils::ParseString(env, valueObj, value)) {
+                continue;
+            }
             httpHeaders[key] = value;
         }
     } else {
@@ -5484,7 +5517,7 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
     napi_value webPrintDoc = nullptr;
     NAPI_CALL(env, napi_get_reference_value(env, g_webPrintDocClassRef, &webPrintDoc));
     napi_value consParam[INTEGER_ONE] = {0};
-    NAPI_CALL(env, napi_create_bigint_uint64(env, reinterpret_cast<uint64_t>(webPrintDocument),
+    NAPI_CALL(env, napi_create_bigint_uint64(env, reinterpret_cast<uint64_t>(webPrintDocument.get()),
                                              &consParam[INTEGER_ZERO]));
     napi_value proxy = nullptr;
     status = napi_new_instance(env, webPrintDoc, INTEGER_ONE, &consParam[INTEGER_ZERO], &proxy);
@@ -5492,6 +5525,7 @@ napi_value NapiWebviewController::CreateWebPrintDocumentAdapter(napi_env env, na
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return result;
     }
+    (void)webPrintDocument.release();
     return proxy;
 }
 
@@ -5596,24 +5630,24 @@ WebPrintWriteResultCallback ParseWebPrintWriteResultCallback(napi_env env, napi_
     napi_ref jsCallback = nullptr;
     napi_create_reference(env, argv, 1, &jsCallback);
     if (jsCallback) {
+        auto guard = std::make_shared<NapiRefGuard>(env, jsCallback);
         WebPrintWriteResultCallback callbackImpl =
-            [env, jCallback = std::move(jsCallback)](std::string jobId, uint32_t state) {
-            if (!env) {
+            [guard](std::string jobId, uint32_t state) {
+            if (!guard->env()) {
                 return;
             }
-            NApiScope scope(env);
+            NApiScope scope(guard->env());
             if (!scope.IsVaild()) {
                 return;
             }
             napi_value setResult[INTEGER_TWO] = {0};
-            napi_create_string_utf8(env, jobId.c_str(), NAPI_AUTO_LENGTH, &setResult[INTEGER_ZERO]);
-            napi_create_uint32(env, state, &setResult[INTEGER_ONE]);
+            napi_create_string_utf8(guard->env(), jobId.c_str(), NAPI_AUTO_LENGTH, &setResult[INTEGER_ZERO]);
+            napi_create_uint32(guard->env(), state, &setResult[INTEGER_ONE]);
             napi_value args[INTEGER_TWO] = {setResult[INTEGER_ZERO], setResult[INTEGER_ONE]};
             napi_value callback = nullptr;
-            napi_get_reference_value(env, jCallback, &callback);
+            napi_get_reference_value(guard->env(), guard->get(), &callback);
             napi_value callbackResult = nullptr;
-            napi_call_function(env, nullptr, callback, INTEGER_TWO, args, &callbackResult);
-            napi_delete_reference(env, jCallback);
+            napi_call_function(guard->env(), nullptr, callback, INTEGER_TWO, args, &callbackResult);
         };
         return callbackImpl;
     }
@@ -5795,6 +5829,12 @@ napi_value NapiWebPrintDocument::JsConstructor(napi_env env, napi_callback_info 
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
 
     if (!NapiParseUtils::ParseUint64(env, argv[INTEGER_ZERO], addrWebPrintDoc, &loseLess)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+    
+    if (addrWebPrintDoc == 0) {
+        WVLOG_E("JsConstructor addrWebPrintDoc is null");
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
         return nullptr;
     }
@@ -6141,10 +6181,16 @@ bool GetHostList(napi_env env, napi_value array, std::vector<std::string>& hosts
 
     for (uint32_t i = 0; i < arrayLen; i++) {
         napi_value hostItem = nullptr;
-        napi_get_element(env, array, i, &hostItem);
+        if (napi_get_element(env, array, i, &hostItem) != napi_ok) {
+            WVLOG_E("get host item failed, index = %{public}u", i);
+            return false;
+        }
 
         size_t hostLen = 0;
-        napi_get_value_string_utf8(env, hostItem, nullptr, 0, &hostLen);
+        if (napi_get_value_string_utf8(env, hostItem, nullptr, 0, &hostLen) != napi_ok) {
+            WVLOG_E("get host item length failed, index = %{public}u", i);
+            return false;
+        }
         if (hostLen == 0 || hostLen > URL_MAXIMUM) {
             WVLOG_E("hostitem length is invalid");
             return false;
@@ -7620,7 +7666,7 @@ napi_value NapiWebviewController::WaitForAttached(napi_env env, napi_callback_in
     napi_value promise = nullptr;
     napi_create_promise(env, &deferred, &promise);
     if (promise && deferred) {
-        webviewController->WaitForAttachedPromise(env, timeout, deferred);
+        webviewController->WaitForAttachedPromise(env, thisVar, timeout, deferred);
     }
     return promise;
 }
@@ -7950,15 +7996,16 @@ napi_value NapiWebviewController::SetErrorPageEnabled(napi_env env, napi_callbac
 
     napi_value result = nullptr;
     napi_value thisVar = nullptr;
-    size_t argc = INTEGER_ONE;
-    napi_value argv[INTEGER_ONE] = {0};
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = {0};
 
     NAPI_CALL(env, napi_get_undefined(env, &result));
     napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
-    if (argc != INTEGER_ONE) {
-        WVLOG_E("BusinessError: 401. Args count of 'SetErrorPageEnabled' must be 1.");
-        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
-        return nullptr;
+    if (argc != INTEGER_ONE && argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(
+                ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_TWO, "one", "two"));
+        return result;
     }
 
     bool errorPageEnabled = false;
@@ -7968,13 +8015,28 @@ napi_value NapiWebviewController::SetErrorPageEnabled(napi_env env, napi_callbac
         return nullptr;
     }
 
+    bool includeSubframe = false;
+    if (argc == INTEGER_TWO) {
+        if (!NapiParseUtils::ParseBoolean(env, argv[1], includeSubframe)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "includeSubframe", "boolean"));
+            return nullptr;
+        }
+    }
+
     WebviewController *controller = nullptr;
     napi_status status = napi_unwrap(env, thisVar, (void **)&controller);
     if ((!controller) || (status != napi_ok) || !controller->IsInit()) {
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return nullptr;
     }
-    ErrCode ret = controller->SetErrorPageEnabled(errorPageEnabled);
+
+    ErrCode ret;
+    if (argc == INTEGER_ONE) {
+        ret = controller->SetErrorPageEnabled(errorPageEnabled);
+    } else {
+        ret = controller->SetErrorPageEnabled(errorPageEnabled, includeSubframe);
+    }
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
         return nullptr;
@@ -8001,6 +8063,92 @@ napi_value NapiWebviewController::GetErrorPageEnabled(napi_env env, napi_callbac
 
     getErrorPageEnabled = controller->GetErrorPageEnabled();
     NAPI_CALL(env, napi_get_boolean(env, getErrorPageEnabled, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetSubframeErrorPageEnabled(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    bool iframeErrorPageEnabled = false;
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("GetSubframeErrorPageEnabled unsupported engine version: M114");
+        NAPI_CALL(env, napi_get_boolean(env, iframeErrorPageEnabled, &result));
+        return result;
+    }
+
+    WVLOG_D("GetSubframeErrorPageEnabled start");
+    WebviewController *controller = GetWebviewController(env, info);
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    iframeErrorPageEnabled = controller->GetSubframeErrorPageEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, iframeErrorPageEnabled, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::SetAutoReloadEnabled(napi_env env, napi_callback_info info)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("SetAutoReloadEnabled unsupported engine version: M114");
+        return nullptr;
+    }
+
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = {0};
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    bool autoReloadEnabled = false;
+    if (!NapiParseUtils::ParseBoolean(env, argv[0], autoReloadEnabled)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "enable", "boolean"));
+        return nullptr;
+    }
+
+    WebviewController *controller = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&controller);
+    if ((!controller) || (status != napi_ok) || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    ErrCode ret = controller->SetAutoReloadEnabled(autoReloadEnabled);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return nullptr;
+    }
+    return result;
+}
+
+napi_value NapiWebviewController::IsAutoReloadEnabled(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    bool autoReloadEnabled = false;
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("IsAutoReloadEnabled unsupported engine version: M114");
+        NAPI_CALL(env, napi_get_boolean(env, autoReloadEnabled, &result));
+        return result;
+    }
+
+    WVLOG_D("IsAutoReloadEnabled start");
+    WebviewController *controller = GetWebviewController(env, info);
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return nullptr;
+    }
+
+    autoReloadEnabled = controller->GetAutoReloadEnabled();
+    NAPI_CALL(env, napi_get_boolean(env, autoReloadEnabled, &result));
     return result;
 }
 
@@ -8881,6 +9029,79 @@ napi_value NapiWebviewController::GetLastPostMessageURL(napi_env env, napi_callb
 
     std::string lastPostMessageUrl = webviewController->GetLastPostMessageURL();
     napi_create_string_utf8(env, lastPostMessageUrl.c_str(), lastPostMessageUrl.length(), &result);
+    return result;
+}
+
+napi_value NapiWebviewController::SetZoomFactor(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+    double zoomFactor = 0.0;
+    if (!NapiParseUtils::ParseDouble(env, argv[0], zoomFactor)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "zoomFactor", "number"));
+        return result;
+    }
+    if (!std::isfinite(zoomFactor)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "zoomFactor", "number"));
+        return result;
+    }
+
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, reinterpret_cast<void **>(&controller));
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    ErrCode ret = controller->SetZoomFactor(zoomFactor);
+    if (ret != NO_ERROR) {
+        if (ret == NWEB_ERROR) {
+            WVLOG_E("SetZoomFactor failed.");
+            return result;
+        }
+        BusinessError::ThrowErrorByErrcode(env, ret);
+    }
+
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::GetZoomFactor(napi_env env, napi_callback_info info)
+{
+    napi_value result = nullptr;
+    napi_value thisVar = nullptr;
+
+    napi_get_cb_info(env, info, nullptr, nullptr, &thisVar, nullptr);
+    WebviewController *controller = nullptr;
+    napi_unwrap(env, thisVar, reinterpret_cast<void **>(&controller));
+    if (!controller || !controller->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    double zoomFactor = 1.0;
+    ErrCode ret = controller->GetZoomFactor(zoomFactor);
+    if (ret != NO_ERROR) {
+        if (ret == NWEB_ERROR) {
+            WVLOG_E("GetZoomFactor failed.");
+            return result;
+        }
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+
+    NAPI_CALL(env, napi_create_double(env, zoomFactor, &result));
     return result;
 }
 } // namespace NWeb

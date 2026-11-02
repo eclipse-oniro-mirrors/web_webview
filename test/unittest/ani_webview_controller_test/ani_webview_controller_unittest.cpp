@@ -18,6 +18,7 @@
 #include <string>
 #include <cstdint>
 #include <cstddef>
+#include <limits>
 
 #include "ani.h"
 #include "test_mock_webview_controller.h"
@@ -235,6 +236,7 @@ protected:
         g_setSiteIsolationModeShouldFail = false;
         OHOS::NWeb::AniParseUtils::g_isFunctionResult = true;
         OHOS::NWeb::WebviewController::g_terminateRenderProcessShouldFail = false;
+        OHOS::NWeb::WebviewController::setAutoReloadShouldFail_ = false;
         OHOS::NWeb::AniParseUtils::g_createObjectVoidShouldFail = false;
         OHOS::NWeb::AniParseUtils::g_parseStringResult = true;
         OHOS::NWeb::AniParseUtils::g_parseStringValue = "";
@@ -312,6 +314,8 @@ using OHOS::NWeb::SetWebDestroyMode;
 using OHOS::NWeb::ZoomOut;
 using OHOS::NWeb::ZoomIn;
 using OHOS::NWeb::Zoom;
+using OHOS::NWeb::SetZoomFactor;
+using OHOS::NWeb::GetZoomFactor;
 using OHOS::NWeb::GetPageOffset;
 using OHOS::NWeb::PageDown;
 using OHOS::NWeb::PageUp;
@@ -1691,6 +1695,177 @@ TEST_F(AniWebviewControllerTest, Zoom_ErrorScenarios)
 }
 
 /**
+ * @tc.name: SetZoomFactor_Success
+ * @tc.desc: SetZoomFactor forwards a finite factor to the controller.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetZoomFactor_Success)
+{
+    ani_env* env = GetMockEnv();
+    constexpr ani_double zoomFactor = 1.370000000123;
+    SetZoomFactor(env, reinterpret_cast<ani_object>(testController_), zoomFactor);
+    EXPECT_TRUE(testController_->WasSetZoomFactorCalled());
+    EXPECT_DOUBLE_EQ(testController_->GetLastZoomFactorArg(), zoomFactor);
+    EXPECT_FALSE(WasErrorThrown());
+    testController_->Reset();
+    SetControllerInitialized(true);
+}
+
+/**
+ * @tc.name: SetZoomFactor_ErrorScenarios
+ * @tc.desc: SetZoomFactor error scenarios.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetZoomFactor_ErrorScenarios)
+{
+    // env is nullptr
+    SetZoomFactor(nullptr, reinterpret_cast<ani_object>(testController_), 1.5);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // controller is nullptr
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    ani_env* env = GetMockEnv();
+    SetZoomFactor(env, reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_NULL_CONTROLLER)), 1.5);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // controller not initialized
+    SetControllerInitialized(false);
+    SetZoomFactor(env, reinterpret_cast<ani_object>(testController_), 1.5);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
+
+    // NaN factor
+    SetZoomFactor(env, reinterpret_cast<ani_object>(testController_),
+                  std::numeric_limits<ani_double>::quiet_NaN());
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), OHOS::NWeb::PARAM_CHECK_ERROR);
+    EXPECT_FALSE(testController_->WasSetZoomFactorCalled());
+    OHOS::NWeb::AniBusinessError::Reset();
+
+    // infinity factor
+    SetZoomFactor(env, reinterpret_cast<ani_object>(testController_),
+                  std::numeric_limits<ani_double>::infinity());
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), OHOS::NWeb::PARAM_CHECK_ERROR);
+    EXPECT_FALSE(testController_->WasSetZoomFactorCalled());
+    OHOS::NWeb::AniBusinessError::Reset();
+
+    // negative infinity factor
+    SetZoomFactor(env, reinterpret_cast<ani_object>(testController_),
+                  -std::numeric_limits<ani_double>::infinity());
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), OHOS::NWeb::PARAM_CHECK_ERROR);
+    EXPECT_FALSE(testController_->WasSetZoomFactorCalled());
+    OHOS::NWeb::AniBusinessError::Reset();
+
+    // SetZoomFactor returns NWEB_ERROR
+    testController_->SetZoomFactorReturnValue(OHOS::NWeb::NWEB_ERROR);
+    SetZoomFactor(env, reinterpret_cast<ani_object>(testController_), 2.0);
+    EXPECT_FALSE(WasErrorThrown());
+    testController_->Reset();
+    SetControllerInitialized(true);
+
+    // SetZoomFactor returns other error code
+    testController_->SetZoomFactorReturnValue(OHOS::NWeb::PARAM_CHECK_ERROR);
+    SetZoomFactor(env, reinterpret_cast<ani_object>(testController_), 2.0);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), OHOS::NWeb::PARAM_CHECK_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    testController_->Reset();
+    SetControllerInitialized(true);
+}
+
+/**
+ * @tc.name: GetZoomFactor_Default
+ * @tc.desc: GetZoomFactor returns 1.0 before a zoom factor is set.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetZoomFactor_Default)
+{
+    ani_env* env = GetMockEnv();
+    ani_double factor = GetZoomFactor(env, reinterpret_cast<ani_object>(testController_));
+    EXPECT_DOUBLE_EQ(static_cast<double>(factor), 1.0);
+    EXPECT_TRUE(testController_->WasGetZoomFactorCalled());
+    EXPECT_FALSE(WasErrorThrown());
+    testController_->Reset();
+    SetControllerInitialized(true);
+}
+
+/**
+ * @tc.name: GetZoomFactor_Success
+ * @tc.desc: GetZoomFactor returns the current factor.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetZoomFactor_Success)
+{
+    ani_env* env = GetMockEnv();
+    constexpr ani_double zoomFactor = 1.5;
+    testController_->SetZoomFactorMockValue(zoomFactor);
+    ani_double factor = GetZoomFactor(env, reinterpret_cast<ani_object>(testController_));
+    EXPECT_DOUBLE_EQ(static_cast<double>(factor), static_cast<double>(zoomFactor));
+    EXPECT_TRUE(testController_->WasGetZoomFactorCalled());
+    EXPECT_FALSE(WasErrorThrown());
+    testController_->Reset();
+    SetControllerInitialized(true);
+}
+
+/**
+ * @tc.name: GetZoomFactor_ErrorScenarios
+ * @tc.desc: GetZoomFactor error scenarios.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, GetZoomFactor_ErrorScenarios)
+{
+    // env is nullptr
+    GetZoomFactor(nullptr, reinterpret_cast<ani_object>(testController_));
+    EXPECT_FALSE(WasErrorThrown());
+
+    // controller is nullptr
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    ani_env* env = GetMockEnv();
+    GetZoomFactor(env, reinterpret_cast<ani_object>(GetMockObject(POOL_INDEX_NULL_CONTROLLER)));
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // controller not initialized
+    SetControllerInitialized(false);
+    GetZoomFactor(env, reinterpret_cast<ani_object>(testController_));
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
+
+    // GetZoomFactor returns NWEB_ERROR
+    testController_->SetGetZoomFactorReturnValue(OHOS::NWeb::NWEB_ERROR);
+    ani_double factor = GetZoomFactor(env, reinterpret_cast<ani_object>(testController_));
+    EXPECT_DOUBLE_EQ(static_cast<double>(factor), 0.0);
+    EXPECT_FALSE(WasErrorThrown());
+    testController_->Reset();
+    SetControllerInitialized(true);
+
+    // GetZoomFactor returns other error code
+    testController_->SetGetZoomFactorReturnValue(OHOS::NWeb::PARAM_CHECK_ERROR);
+    factor = GetZoomFactor(env, reinterpret_cast<ani_object>(testController_));
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), OHOS::NWeb::PARAM_CHECK_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    testController_->Reset();
+    SetControllerInitialized(true);
+}
+
+/**
  * @tc.name: GetScrollOffset_Success
  * @tc.desc: GetScrollOffset.
  * @tc.type: FUNC
@@ -1980,4 +2155,113 @@ TEST_F(AniWebviewControllerTest, EnableAdvancedSecurityMode_ErrorScenarios)
     EXPECT_TRUE(WasErrorThrown());
     OHOS::NWeb::AniBusinessError::Reset();
     g_referenceIsUndefinedShouldFail = false;
+}
+
+/**
+ * @tc.name: SetAutoReloadEnabled_Success
+ * @tc.desc: SetAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetAutoReloadEnabled_Success)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_TRUE);
+
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_FALSE);
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+}
+
+/**
+ * @tc.name: SetAutoReloadEnabled_ErrorScenarios
+ * @tc.desc: SetAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, SetAutoReloadEnabled_ErrorScenarios)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // env is nullptr
+    OHOS::NWeb::SetAutoReloadEnabled(nullptr, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Controller is null
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // Controller is not initialized
+    SetControllerInitialized(false);
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
+
+    // SetAutoReloadEnabled returns error
+    OHOS::NWeb::WebviewController::setAutoReloadShouldFail_ = true;
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), PARAM_CHECK_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::WebviewController::setAutoReloadShouldFail_ = false;
+}
+
+/**
+ * @tc.name: IsAutoReloadEnabled_Success
+ * @tc.desc: IsAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, IsAutoReloadEnabled_Success)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // Default value is false
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Returns the last set value
+    OHOS::NWeb::SetAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_), ANI_TRUE);
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_TRUE);
+    EXPECT_FALSE(WasErrorThrown());
+}
+
+/**
+ * @tc.name: IsAutoReloadEnabled_ErrorScenarios
+ * @tc.desc: IsAutoReloadEnabled.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+TEST_F(AniWebviewControllerTest, IsAutoReloadEnabled_ErrorScenarios)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // env is nullptr
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(nullptr, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Controller is null
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // Controller is not initialized
+    SetControllerInitialized(false);
+    EXPECT_EQ(OHOS::NWeb::IsAutoReloadEnabled(env, reinterpret_cast<ani_object>(testController_)), ANI_FALSE);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
 }

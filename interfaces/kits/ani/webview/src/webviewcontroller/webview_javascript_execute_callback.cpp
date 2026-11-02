@@ -86,10 +86,10 @@ ani_object WrapStsError(ani_env* env, const std::string& msg)
         return nullptr;
     }
 
-    if ((status = env->FindClass("std.core.Error", &cls)) != ANI_OK) {
+    if ((status = env->FindClass("escompat.Error", &cls)) != ANI_OK) {
         return nullptr;
     }
-    if ((status = env->Class_FindMethod(cls, "<ctor>", "C{std.core.String}C{std.core.ErrorOptions}:", &method)) !=
+    if ((status = env->Class_FindMethod(cls, "<ctor>", "C{std.core.String}C{escompat.ErrorOptions}:", &method)) !=
         ANI_OK) {
         return nullptr;
     }
@@ -108,7 +108,7 @@ ani_ref CreateStsError(ani_env* env, ani_int code, const std::string& msg)
         return nullptr;
     }
     ani_method ctor;
-    if ((status = env->Class_FindMethod(cls, "<ctor>", "iC{std.core.Error}:", &ctor)) != ANI_OK) {
+    if ((status = env->Class_FindMethod(cls, "<ctor>", "iC{escompat.Error}:", &ctor)) != ANI_OK) {
         return nullptr;
     }
     ani_object error = WrapStsError(env, msg);
@@ -145,7 +145,6 @@ bool CreateArgs(std::shared_ptr<WebviewJavaScriptExecuteCallback> jsObj, std::sh
             return false;
         }
     } else {
-        WVLOG_I("get string from result : %{public}s", result->GetString().c_str());
         if ((status = env->GetNull(&resultRef[0])) != ANI_OK) {
             WVLOG_E("create null resultRef[0] error");
             return false;
@@ -425,7 +424,6 @@ static ani_string GetString(ani_env* env, ani_object object)
     }
     std::string msgStr = message->GetString();
     env->String_NewUTF8(msgStr.c_str(), msgStr.length(), &result);
-    WVLOG_I("GetString msgStr = %{public}s", msgStr.c_str());
     return result;
 }
 
@@ -511,6 +509,11 @@ static ani_object GetArrayBuffer(ani_env* env, ani_object object)
         return nullptr;
     }
     std::vector<uint8_t> msgArr = message->GetBinary();
+    constexpr size_t maxArraybufferSize = 50 * 1024 * 1024; /* 50 MB */
+    if (msgArr.size() > maxArraybufferSize) {
+        WVLOG_E("GetArrayBuffer size exceeds limit");
+        return nullptr;
+    }
     void* arrayData = nullptr;
     ani_arraybuffer arraybuffer;
     ani_status status = env->CreateArrayBuffer(msgArr.size(), &arrayData, &arraybuffer);
@@ -587,7 +590,6 @@ static ani_object GetErrorDescription(ani_env* env, ani_object object)
     std::string msgStr = message->GetErrorDescription();
     if (!msgStr.empty()) {
         env->String_NewUTF8(msgStr.c_str(), msgStr.length(), &resultString);
-        WVLOG_I("GetErrorDescription msgStr = %{public}s", msgStr.c_str());
         result = static_cast<ani_object>(resultString);
     } else {
         env->GetNull(&resultNull);

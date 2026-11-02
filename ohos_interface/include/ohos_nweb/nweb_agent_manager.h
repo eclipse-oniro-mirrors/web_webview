@@ -18,11 +18,23 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "nweb_export.h"
 #include "nweb_value_callback.h"
 
 namespace OHOS::NWeb {
+
+/**
+ * @brief Enumeration for DOM extraction mode.
+ */
+enum class NWebDomExtractionMode : int32_t {
+    /** Extract the full DOM tree */
+    FULL_TREE = 0,
+    /** Extract only viewport-visible DOM nodes */
+    VIEWPORT_ONLY = 1,
+};
+
 class OHOS_NWEB_EXPORT NWebAgentManager {
 public:
     NWebAgentManager() = default;
@@ -55,6 +67,13 @@ public:
     virtual void SetContentChangeDetectionConfig(int32_t min_report_time, float text_content_ratio) {}
 
     /**
+     * @brief Set the config for content change detection.
+     *
+     * @param reportDomTree Whether DOM extraction is enabled.
+     */
+    virtual void SetDomExtractionConfig(bool reportDomTree) {}
+
+    /**
      * @brief Enable or disable highlight when in agent.
      *
      * @param enabled true to enable highlight, false to disable.
@@ -67,6 +86,32 @@ public:
      * @param callback request callabck
      */
     virtual void RequestWebDomJsonString(std::shared_ptr<NWebMessageValueCallback> callback) {}
+
+    /**
+     * @brief Request page scene query for input controls.
+     *
+     * @param ruleJson JSON string serving both as query config (passed to JS __psQuery())
+     *                 and as observer callback routing identifier (passed to onDomReady(result, ruleJson)).
+     * @param ruleId Rule identifier (observer).
+     * @param nodeTypes Node type tags to observe. Empty = query only, non-empty = query + observer.
+     * @param callback Result callback for immediate query result.
+     */
+    virtual void RequestPageSceneQuery(
+        const std::string& ruleJson,
+        const std::string& ruleId,
+        const std::vector<std::string>& nodeTypes,
+        std::shared_ptr<NWebMessageValueCallback> callback) {}
+
+    /**
+     * @brief Request web dom json string with extraction mode
+     *
+     * @param callback request callback
+     * @param mode DOM extraction mode, 0 for full tree (default), 1 for viewport only.
+     *             see NWebDomExtractionMode for details.
+     */
+    virtual void RequestWebDomJsonStringWithOptions(
+        std::shared_ptr<NWebMessageValueCallback> callback,
+        int32_t mode) {}
 };
 }  // namespace OHOS::NWeb
 
