@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Huawei Device Co., Ltd.
+ * Copyright (c) 2026 Huawei Device Co., Ltd.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -27,21 +27,11 @@ PerfMonitorAdapterImpl& PerfMonitorAdapterImpl::GetInstance()
 
 void PerfMonitorAdapterImpl::WebComponentLoad(int64_t navigationId)
 {
-    try {
-        OHOS::HiviewDFX::PerfMonitorAdapter::GetInstance().AddLoadComponent(
-            static_cast<int32_t>(navigationId));
-    } catch (...) {
-    }
 }
 
 void PerfMonitorAdapterImpl::WebContentPaintComplete(int64_t navigationId,
                                                      int64_t largestContentPaintTime)
 {
-    try {
-        OHOS::HiviewDFX::PerfMonitorAdapter::GetInstance().CompleteLoadComponent(
-            static_cast<int32_t>(navigationId));
-    } catch (...) {
-    }
 }
 
 } // namespace OHOS::NWeb
