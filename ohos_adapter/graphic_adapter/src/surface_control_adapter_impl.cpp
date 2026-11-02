@@ -19,7 +19,7 @@
 #include "surface/window.h"
 #include "native_window.h"
 #include "nweb_log.h"
-#include "surface_control/interface/oh_surface_control.h"
+#include "oh_surface_control.h"
 
 namespace OHOS::NWeb {
 using namespace OHOS::Rosen;
@@ -32,12 +32,26 @@ SurfaceControlAdapter& SurfaceControlAdapterImpl::GetInstance()
 void* SurfaceControlAdapterImpl::CreateSurfaceControlFromNativeWindow(void* parent, const char* name)
 {
     auto* parentSurface = reinterpret_cast<OHNativeWindow*>(parent);
-    return SurfaceControlUtils::CreateSurfaceControlFromNativeWindow(parentSurface, name);
+    return SurfaceControlUtils::CreateContainerSurfaceControl(nullptr, parentSurface, name, false);
 }
 
 void* SurfaceControlAdapterImpl::Create(const char* name)
 {
-    return SurfaceControlUtils::Create(name);
+    return SurfaceControlUtils::CreateChildSurfaceControl(nullptr, name, false);
+}
+
+void* SurfaceControlAdapterImpl::CreateContainerSurfaceControl(
+    void* transaction, void* parent, const char* name, bool inProcess)
+{
+    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
+    auto* parentSurface = reinterpret_cast<OHNativeWindow*>(parent);
+    return SurfaceControlUtils::CreateContainerSurfaceControl(txn, parentSurface, name, inProcess);
+}
+
+void* SurfaceControlAdapterImpl::CreateChildSurfaceControl(void* transaction, const char* name, bool inProcess)
+{
+    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
+    return SurfaceControlUtils::CreateChildSurfaceControl(txn, name, inProcess);
 }
 
 void SurfaceControlAdapterImpl::Release(void* surfaceControl)
@@ -134,14 +148,6 @@ void SurfaceTransactionAdapterImpl::SetBufferTransform(void* transaction, void* 
     SurfaceControlUtils::Transaction::SetBufferTransform(txn, surface, surfaceTransform);
 }
 
-void SurfaceTransactionAdapterImpl::SetTranslate(
-    void* transaction, void* surfaceControl, float translateX, float translateY, float translateZ)
-{
-    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
-    auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
-    SurfaceControlUtils::Transaction::SetTranslate(txn, surface, translateX, translateY, translateZ);
-}
-
 void SurfaceTransactionAdapterImpl::SetDamageRegion(
     void* transaction, void* surfaceControl, const void* rects, uint32_t count)
 {
@@ -158,44 +164,12 @@ void SurfaceTransactionAdapterImpl::SetBufferAlpha(void* transaction, void* surf
     SurfaceControlUtils::Transaction::SetBufferAlpha(txn, surface, alpha);
 }
 
-void SurfaceTransactionAdapterImpl::SetForegroundColor(
-    void* transaction, void* surfaceControl, float red, float green, float blue, float alpha)
-{
-    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
-    auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
-    SurfaceControlUtils::Transaction::SetForegroundColor(txn, surface, red, green, blue, alpha);
-}
-
 void SurfaceTransactionAdapterImpl::SetBackgroundColor(
     void* transaction, void* surfaceControl, float red, float green, float blue, float alpha)
 {
     auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
     auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
     SurfaceControlUtils::Transaction::SetBackgroundColor(txn, surface, red, green, blue, alpha);
-}
-
-void SurfaceTransactionAdapterImpl::SetBorderColor(
-    void* transaction, void* surfaceControl, float red, float green, float blue, float alpha)
-{
-    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
-    auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
-    SurfaceControlUtils::Transaction::SetBorderColor(txn, surface, red, green, blue, alpha);
-}
-
-void SurfaceTransactionAdapterImpl::SetBorderWidth(
-    void* transaction, void* surfaceControl, float left, float top, float right, float bottom)
-{
-    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
-    auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
-    SurfaceControlUtils::Transaction::SetBorderWidth(txn, surface, left, top, right, bottom);
-}
-
-void SurfaceTransactionAdapterImpl::SetBorderStyle(
-    void* transaction, void* surfaceControl, uint32_t left, uint32_t top, uint32_t right, uint32_t bottom)
-{
-    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
-    auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
-    SurfaceControlUtils::Transaction::SetBorderStyle(txn, surface, left, top, right, bottom);
 }
 
 void SurfaceTransactionAdapterImpl::SetHardwareEnableHint(void* transaction,
@@ -212,14 +186,6 @@ void SurfaceTransactionAdapterImpl::SetName(
     auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
     auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
     SurfaceControlUtils::Transaction::SetName(txn, surface, name);
-}
-
-void SurfaceTransactionAdapterImpl::SetFrameGravity(
-    void* transaction, void* surfaceControl, int32_t gravity)
-{
-    auto* txn = reinterpret_cast<OH_SurfaceTransaction*>(transaction);
-    auto* surface = reinterpret_cast<OH_SurfaceControl*>(surfaceControl);
-    SurfaceControlUtils::Transaction::SetFrameGravity(txn, surface, gravity);
 }
 
 void SurfaceTransactionAdapterImpl::SetSrcRect(

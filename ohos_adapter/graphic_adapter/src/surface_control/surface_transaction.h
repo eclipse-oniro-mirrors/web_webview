@@ -21,10 +21,12 @@
 #include <set>
 #include <vector>
 
-#include "surface_control.h"
-#include "ipc_callbacks/rs_delegate_composite_callback.h"
-#include "feature/delegate_composite/rs_delegate_composite_listener.h"
 #include "common/rs_common_def.h"
+#include "feature/delegate_composite/rs_delegate_composite_listener.h"
+#include "ipc_callbacks/rs_delegate_composite_callback.h"
+#include "nweb_log.h"
+#include "surface_control.h"
+#include "ui/rs_ui_context_manager.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -40,6 +42,53 @@ private:
     SurfaceTransactionStats& operator=(const SurfaceTransactionStats&) = delete;
     SurfaceTransactionStats(SurfaceTransactionStats&&) = delete;
     SurfaceTransactionStats& operator=(SurfaceTransactionStats&&) = delete;
+};
+
+class ScopedTransaction {
+public:
+    explicit ScopedTransaction(const std::shared_ptr<OHOS::Rosen::RSUIContext>& uiContext, bool isClient)
+        : transactionHandler_(uiContext ? uiContext->GetRSTransaction() : nullptr),
+          isClient_(isClient)
+    {
+        if (!transactionHandler_) {
+            WVLOG_E("DelegateTag: ScopedTransaction init fail, transactionHandler_ is nullptr");
+            RS_TRACE_NAME("ScopedTransaction init fail, transactionHandler_ is nullptr");
+        }
+        if (transactionHandler_ && isClient_) {
+            transactionHandler_->Begin();
+        }
+    }
+
+    ~ScopedTransaction()
+    {
+        if (!transactionHandler_) {
+            RS_TRACE_NAME("~ScopedTransaction, transactionHandler_ is nullptr");
+            return;
+        }
+
+        if (isClient_) {
+            transactionHandler_->Commit();
+        } else {
+            transactionHandler_->FlushImplicitTransaction();
+        }
+        RS_TRACE_NAME("~ScopedTransaction commit success");
+    }
+
+    void AddCommand(std::unique_ptr<OHOS::Rosen::RSCommand> cmd)
+    {
+        if (transactionHandler_) {
+            transactionHandler_->AddCommand(cmd, true);
+        } else {
+            WVLOG_E("DelegateTag: ScopedTransaction AddCommand fail, transactionHandler_ is nullptr");
+            RS_TRACE_NAME("ScopedTransaction AddCommand fail, transactionHandler_ is nullptr");
+        }
+    }
+
+    ScopedTransaction(const ScopedTransaction&) = delete;
+    ScopedTransaction& operator=(const ScopedTransaction&) = delete;
+private:
+    std::shared_ptr<OHOS::Rosen::RSTransactionHandler> transactionHandler_ = nullptr;
+    bool isClient_ = false;
 };
 
 class RSC_EXPORT SurfaceTransaction {
@@ -58,22 +107,21 @@ public:
     void SetBuffer(SurfaceControl* surfaceControl, SurfaceBuffer* buffer, int acquireFenceFd,
         const BufferReleaseCallback& callback);
     void SetBounds(SurfaceControl* surfaceControl, float x, float y, float w, float h);
-    void SetFrameGravity(SurfaceControl* surfaceControl, int32_t gravity);
     void SetPivot(SurfaceControl* surfaceControl, float x, float y);
     void SetBufferTransform(SurfaceControl* surfaceControl, GraphicTransformType transform);
-    void SetTranslate(SurfaceControl* surfaceControl, float translateX, float translateY, float translateZ);
     void SetDamageRegion(SurfaceControl* surfaceControl, const OH_Rect* rects, uint32_t count);
     void SetBufferAlpha(SurfaceControl* surfaceControl, float alpha);
-    void SetForegroundColor(SurfaceControl* surfaceControl, float red, float green, float blue, float alpha);
     void SetBackgroundColor(SurfaceControl* surfaceControl, float red, float green, float blue, float alpha);
-    void SetBorderWidth(SurfaceControl* surfaceControl, float left, float top, float right, float bottom);
-    void SetBorderColor(SurfaceControl* surfaceControl, float red, float green, float blue, float alpha);
-    void SetBorderStyle(SurfaceControl* surfaceControl, uint32_t left, uint32_t top, uint32_t right, uint32_t bottom);
     void SetName(SurfaceControl* surfaceControl, const char* name);
     void SetHardwareEnableHint(SurfaceControl* surfaceControl, bool enable);
     void SetSrcRect(SurfaceControl* surfaceControl, float x, float y, float w, float h);
     void SetDisplayRect(SurfaceControl* surfaceControl, float x, float y, float w, float h);
     void ClearBufferQueueCache(SurfaceControl* surfaceControl, bool cleanAll);
+    std::shared_ptr<OHOS::Rosen::RSUIContext> GetRSUIContext();
+    bool IsBindSurfaceControl();
+    void SetBindSurfaceControl(bool isBindSurfaceControl);
+    bool IsInProcess();
+    void SetInProcess(bool inProcess);
 
 private:
     SurfaceTransaction(const SurfaceTransaction&) = delete;
@@ -84,11 +132,14 @@ private:
     OnCompleteCallback onCompleteCallback_;
     std::vector<std::function<void()>> transactionCommands_;
     std::vector<std::function<void()>> bufferCommands_;
-    std::set<sptr<SurfaceControl>> surfaceControls_;
     sptr<Rosen::SurfaceTransactionListener> listener_ = nullptr;
     uint64_t seqNum_ = 0;
     std::atomic<uint64_t> commandSeqNum_ = 0;
     std::map<uint64_t, SurfaceTransaction::OnCompleteCallback> onCompleteCallbackMap_;
+    std::shared_ptr<OHOS::Rosen::RSUIContext> uiContext_ = nullptr;
+    std::shared_ptr<OHOS::Rosen::RSUIDirector> rsUIDirector_ = nullptr;
+    bool isBindSurfaceControl_ = false;
+    bool inProcess_ = false;
 };
 } // namespace NWeb
 } // namespace OHOS

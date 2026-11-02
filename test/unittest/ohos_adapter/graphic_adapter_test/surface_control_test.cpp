@@ -89,7 +89,7 @@ void SurfaceControlTest::TearDown(void)
  */
 HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_WindowNull_001, TestSize.Level1)
 {
-    auto result = SurfaceControl::CreateFromWindow(nullptr, "test_window");
+    auto result = SurfaceControl::CreateFromWindow(nullptr, "test_window", nullptr, false);
     EXPECT_EQ(result, nullptr);
 }
 
@@ -102,7 +102,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_WindowNull_001, Tes
 HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_SurfaceNull_002, TestSize.Level1)
 {
     mockWindow_->surface = nullptr;
-    auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window");
+    auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window", nullptr, false);
     EXPECT_EQ(result, nullptr);
 }
 
@@ -116,7 +116,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_NodeIdZero_003, Tes
 {
     if (mockWindow_ && mockWindow_->surface) {
         mockWindow_->surface->SetUserData("delegate_node_id", "");
-        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window");
+        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window", nullptr, false);
         EXPECT_EQ(result, nullptr);
     }
 }
@@ -131,7 +131,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_FetchedNodeIdEmpty_
 {
     if (mockWindow_ && mockWindow_->surface) {
         mockWindow_->surface->SetUserData("delegate_node_id", "");
-        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window");
+        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window", nullptr, false);
         EXPECT_EQ(result, nullptr);
     }
 }
@@ -149,7 +149,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_FetchedNodeIdValid_
     if (mockWindow_ && mockWindow_->surface) {
         mockWindow_->surface->SetUserData("delegate_node_id", std::to_string(validNodeId));
         mockWindow_->surface->SetUserData("delegate_connect_to_render", "");
-        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window");
+        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window", nullptr, false);
         EXPECT_EQ(result, nullptr);
     }
 }
@@ -167,7 +167,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_RSHandleEmpty_006, 
     if (mockWindow_ && mockWindow_->surface) {
         mockWindow_->surface->SetUserData("delegate_node_id", std::to_string(validNodeId));
         mockWindow_->surface->SetUserData("delegate_connect_to_render", "");
-        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window");
+        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window", nullptr, false);
         EXPECT_EQ(result, nullptr);
     }
 }
@@ -185,7 +185,7 @@ HWTEST_F(SurfaceControlTest, SurfaceControl_CreateFromWindow_RSHandleZero_007, T
     if (mockWindow_ && mockWindow_->surface) {
         mockWindow_->surface->SetUserData("delegate_node_id", std::to_string(validNodeId));
         mockWindow_->surface->SetUserData("delegate_connect_to_render", "0");
-        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window");
+        auto result = SurfaceControl::CreateFromWindow(mockWindow_, "test_window", nullptr, false);
         EXPECT_EQ(result, nullptr);
     }
 }
