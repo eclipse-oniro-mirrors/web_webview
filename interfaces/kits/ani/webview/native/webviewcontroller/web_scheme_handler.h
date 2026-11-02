@@ -66,7 +66,6 @@ public:
 
 private:
     typedef struct RequestStopParam {
-        ani_env* env_;
         ani_vm* vm_;
         ani_ref callbackRef_;
         WebSchemeHandlerRequest* request_;
@@ -74,7 +73,8 @@ private:
         std::shared_ptr<std::atomic<bool>> isCallbackValid_;
     } RequestStopParam;
 
-    static void RequestStopAfterWorkCb(RequestStopParam* param);
+    static void RequestStopAfterWorkCb(const std::shared_ptr<RequestStopParam>& param);
+    static bool NotifyRequestStop(ani_env* env, const std::shared_ptr<RequestStopParam>& param);
     ani_env* env_ = nullptr;
     ani_vm* vm_ = nullptr;
     std::shared_ptr<AppExecFwk::EventHandler> mainHandler_;

@@ -111,6 +111,12 @@ public:
     virtual bool IsAILink() { return false; }
 
     virtual ContextMenuDataMediaType GetContextMenuMediaType() { return ContextMenuDataMediaType::CMD_MT_NONE; }
+    
+    virtual bool ShouldOfferLinkToText() { return false; }
+
+    virtual bool IsOverTextFragment() { return false; }
+
+    virtual std::string GetTextFragmentGeneratedLink() { return std::string(); }
 };
 
 class OHOS_NWEB_EXPORT NWebQuickMenuParams {
@@ -176,6 +182,8 @@ enum MenuCommandId {
     CI_PASTE_AND_MATCH_STYLE = 8,
     CI_REQUEST_AUTOFILL = 9,
     CI_IMAGE_SAVE = 10,
+    CI_COPY_LINK_TO_HIGHLIGHT = 11,
+    CI_CLEAR_HIGHLIGHT = 12,
 };
 
 class OHOS_NWEB_EXPORT NWebContextMenuCallback {

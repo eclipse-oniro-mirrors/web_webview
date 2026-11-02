@@ -40,6 +40,7 @@ public:
     int32_t GetLTPOIntConfig(const std::string& configName, int32_t defaultValue);
     int32_t GetLoadUrlStrategy();
     int32_t GetRenderProcessMode();
+    std::string GetPartialDraw();
     int safeGetPropAsInt(xmlNode* node, const xmlChar* propName, int defaultValue);
     std::string GetBundleName();
     void SetBundleName(const std::string& bundleName);
@@ -69,6 +70,7 @@ private:
     void ParseNativeMessagingConfig(xmlNodePtr nodePtr);
     bool ParseNativeMessagingSetting(xmlNodePtr childNodePtr);
     void ParseRenderProcessMode(xmlNodePtr childNodePtr);
+    void ParsePartialDraw(xmlNodePtr nodePtr);
     bool IsDeveloperModeEnabled();
     bool IsPerfConfigEmpty();
 
@@ -79,6 +81,7 @@ private:
     int32_t ltpoStrategy_ {0};
     int32_t loadUrlStrategy_ {0};
     int32_t renderProcessMode_ {2};
+    std::string partialDraw_ {"none"};
     std::string bundleName_;
     mutable std::mutex bundleNameLock_;
     bool dvsyncSwitch_;

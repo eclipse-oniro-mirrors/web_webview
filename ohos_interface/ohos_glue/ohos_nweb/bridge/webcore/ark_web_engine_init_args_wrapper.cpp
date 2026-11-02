@@ -78,6 +78,11 @@ std::string ArkWebEngineInitArgsWrapper::GetSharedRenderProcessToken()
     return sharedRenderProcessToken;
 }
 
+bool ArkWebEngineInitArgsWrapper::GetIsPreloadNWeb()
+{
+    return ark_web_engine_init_args_->GetIsPreloadNWeb();
+}
+
 bool ArkWebEngineInitArgsWrapper::GetEmulateTouchFromMouseEvent()
 {
     return ark_web_engine_init_args_->GetEmulateTouchFromMouseEvent();

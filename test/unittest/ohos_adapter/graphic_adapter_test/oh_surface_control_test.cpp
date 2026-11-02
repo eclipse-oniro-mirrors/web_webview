@@ -80,36 +80,36 @@ void OHSurfaceControlTest::TearDown(void)
     producerSurface_ = nullptr;
 }
 
-HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateSurfaceControlFromNativeWindow_WindowNull_001, TestSize.Level1)
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateContainerSurfaceControl_WindowNull_001, TestSize.Level1)
 {
-    auto result = SurfaceControlUtils::CreateSurfaceControlFromNativeWindow(nullptr, "test_window");
+    auto result = SurfaceControlUtils::CreateContainerSurfaceControl(nullptr, nullptr, "test_window", false);
     EXPECT_EQ(result, nullptr);
 }
 
-HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateSurfaceControlFromNativeWindow_SurfaceNull_002, TestSize.Level1)
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateContainerSurfaceControl_SurfaceNull_002, TestSize.Level1)
 {
     if (mockWindow_) {
         mockWindow_->surface = nullptr;
-        auto result = SurfaceControlUtils::CreateSurfaceControlFromNativeWindow(
-            reinterpret_cast<OHNativeWindow*>(mockWindow_), "test_window");
+        auto result = SurfaceControlUtils::CreateContainerSurfaceControl(
+            nullptr, reinterpret_cast<OHNativeWindow*>(mockWindow_), "test_window", false);
         EXPECT_EQ(result, nullptr);
     }
 }
 
-HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateSurfaceControlFromNativeWindow_Valid_003, TestSize.Level1)
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateContainerSurfaceControl_Valid_003, TestSize.Level1)
 {
     if (mockWindow_ && mockWindow_->surface) {
         mockWindow_->surface->SetUserData("delegate_node_id", std::to_string(TEST_DELEGATE_NODE_ID));
         mockWindow_->surface->SetUserData("delegate_connect_to_render", "");
-        auto result = SurfaceControlUtils::CreateSurfaceControlFromNativeWindow(
-            reinterpret_cast<OHNativeWindow*>(mockWindow_), "test_window");
+        auto result = SurfaceControlUtils::CreateContainerSurfaceControl(
+            nullptr, reinterpret_cast<OHNativeWindow*>(mockWindow_), "test_window", false);
         EXPECT_EQ(result, nullptr);
     }
 }
 
-HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_Create_NameNull_004, TestSize.Level1)
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateChildSurfaceControl_NameNull_004, TestSize.Level1)
 {
-    auto result = SurfaceControlUtils::Create(nullptr);
+    auto result = SurfaceControlUtils::CreateChildSurfaceControl(nullptr, nullptr, false);
     EXPECT_EQ(result, nullptr);
 }
 
@@ -147,6 +147,116 @@ HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_Transaction_SetOnCommit_Removed_
 }
 
 /**
+ * @tc.name: OHSurfaceControl_CreateContainerSurfaceControl_WithTransaction_InProcess_013.
+ * @tc.desc: Test CreateContainerSurfaceControl with a non-null transaction and inProcess=true.
+ *           Verifies the transaction is bound (SetBindSurfaceControl(true)) and its inProcess
+ *           flag is set, even when surface creation fails (null parent window).
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateContainerSurfaceControl_WithTransaction_InProcess_013,
+    TestSize.Level1)
+{
+    auto txn = SurfaceControlUtils::Transaction::CreateSurfaceTransaction(nullptr);
+    ASSERT_NE(txn, nullptr);
+    auto* txnImpl = reinterpret_cast<SurfaceTransaction*>(txn);
+    EXPECT_FALSE(txnImpl->IsBindSurfaceControl());
+
+    auto result = SurfaceControlUtils::CreateContainerSurfaceControl(txn, nullptr, "test_window", true);
+    EXPECT_EQ(result, nullptr);
+    // Transaction must be bound to surface control with inProcess=true
+    EXPECT_TRUE(txnImpl->IsBindSurfaceControl());
+    EXPECT_TRUE(txnImpl->IsInProcess());
+
+    SurfaceControlUtils::Transaction::Delete(txn);
+}
+
+/**
+ * @tc.name: OHSurfaceControl_CreateContainerSurfaceControl_WithTransaction_NotInProcess_014.
+ * @tc.desc: Test CreateContainerSurfaceControl with a non-null transaction and inProcess=false.
+ *           Verifies the transaction binding flag and inProcess=false are both applied.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateContainerSurfaceControl_WithTransaction_NotInProcess_014,
+    TestSize.Level1)
+{
+    if (mockWindow_ && mockWindow_->surface) {
+        mockWindow_->surface->SetUserData("delegate_node_id", std::to_string(TEST_DELEGATE_NODE_ID));
+        mockWindow_->surface->SetUserData("delegate_connect_to_render", "");
+        auto txn = SurfaceControlUtils::Transaction::CreateSurfaceTransaction(nullptr);
+        ASSERT_NE(txn, nullptr);
+        auto* txnImpl = reinterpret_cast<SurfaceTransaction*>(txn);
+
+        auto result = SurfaceControlUtils::CreateContainerSurfaceControl(
+            txn, reinterpret_cast<OHNativeWindow*>(mockWindow_), "test_window", false);
+        EXPECT_EQ(result, nullptr);
+        EXPECT_TRUE(txnImpl->IsBindSurfaceControl());
+        EXPECT_FALSE(txnImpl->IsInProcess());
+
+        SurfaceControlUtils::Transaction::Delete(txn);
+    }
+}
+
+/**
+ * @tc.name: OHSurfaceControl_CreateChildSurfaceControl_WithTransaction_015.
+ * @tc.desc: Test CreateChildSurfaceControl with a non-null transaction. The transaction's
+ *           RSUIContext (null here since the transaction was created with a null window)
+ *           is passed to SurfaceControl::Create, so creation fails and returns nullptr.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateChildSurfaceControl_WithTransaction_015, TestSize.Level1)
+{
+    auto txn = SurfaceControlUtils::Transaction::CreateSurfaceTransaction(nullptr);
+    ASSERT_NE(txn, nullptr);
+    auto* txnImpl = reinterpret_cast<SurfaceTransaction*>(txn);
+
+    // Child surface control creation fails because txn->GetRSUIContext() is null
+    auto result = SurfaceControlUtils::CreateChildSurfaceControl(txn, "test_child", false);
+    EXPECT_EQ(result, nullptr);
+    // CreateChildSurfaceControl does not modify the transaction binding flags
+    EXPECT_FALSE(txnImpl->IsBindSurfaceControl());
+    EXPECT_FALSE(txnImpl->IsInProcess());
+
+    SurfaceControlUtils::Transaction::Delete(txn);
+}
+
+/**
+ * @tc.name: OHSurfaceControl_CreateChildSurfaceControl_NullTransaction_InProcess_016.
+ * @tc.desc: Test CreateChildSurfaceControl with a null transaction and inProcess=true.
+ *           With no transaction and no global RSUIContext, creation fails and returns nullptr.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateChildSurfaceControl_NullTransaction_InProcess_016,
+    TestSize.Level1)
+{
+    auto result = SurfaceControlUtils::CreateChildSurfaceControl(nullptr, "test_child", true);
+    EXPECT_EQ(result, nullptr);
+}
+
+/**
+ * @tc.name: OHSurfaceControl_CreateContainerSurfaceControl_InProcess_ParentNotFound_017.
+ * @tc.desc: Test CreateContainerSurfaceControl with inProcess=true and a valid parent window.
+ *           The WebDelegateSurfaceRegistry does not contain the node, so the client-side
+ *           parent lookup fails and creation returns nullptr.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_CreateContainerSurfaceControl_InProcess_ParentNotFound_017,
+    TestSize.Level1)
+{
+    if (mockWindow_ && mockWindow_->surface) {
+        mockWindow_->surface->SetUserData("delegate_node_id", std::to_string(TEST_DELEGATE_NODE_ID));
+        mockWindow_->surface->SetUserData("delegate_connect_to_render", "");
+        auto result = SurfaceControlUtils::CreateContainerSurfaceControl(
+            nullptr, reinterpret_cast<OHNativeWindow*>(mockWindow_), "test_window", true);
+        EXPECT_EQ(result, nullptr);
+    }
+}
+
+/**
  * @tc.name: OHSurfaceControl_UpdateDelegateContainerNodeOnClient_AddNode_009.
  * @tc.desc: Test SurfaceControlUtils::UpdateDelegateContainerNodeOnClient with isAddNode=true,
  *           covering the AddDelegateContainerNodeOnClient branch. Uses parentNodeId=0 for early return.
@@ -155,13 +265,11 @@ HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_Transaction_SetOnCommit_Removed_
  */
 HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_UpdateDelegateContainerNodeOnClient_AddNode_009, TestSize.Level1)
 {
-    sptr<IRemoteObject> mockRemote;
-    auto uiContext = OHOS::Rosen::RSUIContextManager::MutableInstance().CreateRSUIContext(mockRemote);
     OHOS::Rosen::RSSurfaceNodeConfig config;
     config.SurfaceNodeName = "update_add_node";
     auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
     // parentNodeId=0 triggers early return in AddDelegateContainerNodeOnClient
-    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(0, uiContext, surfaceNode, true);
+    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(0, surfaceNode, true);
     EXPECT_EQ(SurfaceControl::delegateContainerNodeMap_.count(0), 0u);
 }
 
@@ -174,10 +282,8 @@ HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_UpdateDelegateContainerNodeOnCli
  */
 HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_UpdateDelegateContainerNodeOnClient_RemoveNode_010, TestSize.Level1)
 {
-    sptr<IRemoteObject> mockRemote;
-    auto uiContext = OHOS::Rosen::RSUIContextManager::MutableInstance().CreateRSUIContext(mockRemote);
     // parentNodeId=0 triggers early return in RemoveDelegateContainerNodeOnClient
-    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(0, uiContext, nullptr, false);
+    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(0, nullptr, false);
     // Should not crash
 }
 
@@ -194,7 +300,7 @@ HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_UpdateDelegateContainerNodeOnCli
     OHOS::Rosen::RSSurfaceNodeConfig config;
     config.SurfaceNodeName = "update_add_null_uictx";
     auto surfaceNode = OHOS::Rosen::RSSurfaceNode::Create(config, false);
-    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(100, nullptr, surfaceNode, true);
+    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(100, surfaceNode, true);
     EXPECT_EQ(SurfaceControl::delegateContainerNodeMap_.count(100), 0u);
 }
 
@@ -208,7 +314,7 @@ HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_UpdateDelegateContainerNodeOnCli
 HWTEST_F(OHSurfaceControlTest, OHSurfaceControl_UpdateDelegateContainerNodeOnClient_RemoveNullUIContext_012,
     TestSize.Level1)
 {
-    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(100, nullptr, nullptr, false);
+    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(100, nullptr, false);
     // Should not crash
 }
 

@@ -53,16 +53,16 @@ public:
     SurfaceControl(SurfaceControl&&) = delete;
     SurfaceControl& operator=(SurfaceControl&&) = delete;
 
-    static sptr<SurfaceControl> CreateFromWindow(NativeWindow* window, const char* name);
-    static sptr<SurfaceControl> Create(const char* name);
+    static sptr<SurfaceControl> CreateFromWindow(NativeWindow* window, const char* name,
+        std::shared_ptr<OHOS::Rosen::RSUIContext> uiContext, bool in_process);
+    static sptr<SurfaceControl> Create(const char* name,
+        std::shared_ptr<OHOS::Rosen::RSUIContext> uiContext, bool in_process);
     static std::shared_ptr<OHOS::Rosen::RSUIContext> GetRSUIContext();
     static void SetConnectToRenderObject(OHOS::sptr<OHOS::IRemoteObject> rsHandle);
     static OHOS::sptr<OHOS::IRemoteObject> GetConnectToRenderObject();
     static void AddDelegateContainerNodeOnClient(uint64_t parentNodeId,
-        const std::shared_ptr<Rosen::RSUIContext>& rsUIContext,
         const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode);
-    static void RemoveDelegateContainerNodeOnClient(uint64_t parentNodeId,
-        const std::shared_ptr<Rosen::RSUIContext>& rsUIContext);
+    static void RemoveDelegateContainerNodeOnClient(uint64_t parentNodeId);
 
     void SetParent(SurfaceControl* newParent);
     void SetVisibility(bool visibility);
@@ -87,6 +87,7 @@ private:
     std::shared_ptr<OHOS::Rosen::RSNode> parentNode_ = nullptr;
     bool isRootSurface_ = false;
     uint64_t rosenWebNodeId_ = 0;
+    int32_t zOrder_ = -1;
 
     static inline std::mutex rsUiContextMutex_;
     static inline OHOS::sptr<OHOS::IRemoteObject> connectToRender_ = nullptr;

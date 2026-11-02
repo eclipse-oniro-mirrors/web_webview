@@ -23,11 +23,25 @@ LocationCallbackImpl::LocationCallbackImpl(
     std::shared_ptr<LocationCallbackAdapter> adapter)
     : locationCallbackAdapter_(adapter) {}
 
+void LocationCallbackImpl::MarkDetached()
+{
+    detached_.store(true, std::memory_order_release);
+}
+
+bool LocationCallbackImpl::IsDetached() const
+{
+    return detached_.load(std::memory_order_acquire);
+}
+
 int LocationCallbackImpl::OnRemoteRequest(uint32_t code,
     OHOS::MessageParcel& data,
     OHOS::MessageParcel& reply,
     OHOS::MessageOption& option)
 {
+    if (IsDetached()) {
+        WVLOG_E("LocationCallbackImpl receive request after detached.");
+        return -1;
+    }
     if (data.ReadInterfaceToken() != GetDescriptor()) {
         WVLOG_E("LocationCallbackImpl invalid token.");
         return -1;
@@ -64,6 +78,10 @@ int LocationCallbackImpl::OnRemoteRequest(uint32_t code,
 void LocationCallbackImpl::OnLocationReport(
     const std::unique_ptr<OHOS::Location::Location>& location)
 {
+    if (IsDetached()) {
+        WVLOG_I("LocationCallbackImpl receive request after detached.");
+        return;
+    }
     if (location == nullptr) {
         WVLOG_E("OnLocationReport location is nullptr");
         return;
@@ -79,6 +97,10 @@ void LocationCallbackImpl::OnLocationReport(
 
 void LocationCallbackImpl::OnLocatingStatusChange(const int status)
 {
+    if (IsDetached()) {
+        WVLOG_I("LocationCallbackImpl receive request after detached.");
+        return;
+    }
     if (locationCallbackAdapter_ != nullptr) {
         locationCallbackAdapter_->OnLocatingStatusChange(status);
     }
@@ -86,6 +108,10 @@ void LocationCallbackImpl::OnLocatingStatusChange(const int status)
 
 void LocationCallbackImpl::OnErrorReport(const int errorCode)
 {
+    if (IsDetached()) {
+        WVLOG_I("LocationCallbackImpl receive request after detached.");
+        return;
+    }
     if (locationCallbackAdapter_ != nullptr) {
         locationCallbackAdapter_->OnErrorReport(errorCode);
     }

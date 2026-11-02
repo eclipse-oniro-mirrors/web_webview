@@ -1841,6 +1841,19 @@ void ArkWebNWebWrapper::CallH5FunctionV2(int32_t routing_id, int32_t h5_object_i
     ArkWebRomValueVectorStructRelease(stArgs);
 }
 
+bool ArkWebNWebWrapper::CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+    const std::string& h5_method_name, const std::vector<std::shared_ptr<OHOS::NWeb::NWebRomValue>>& args)
+{
+    ArkWebString stH5MethodName = ArkWebStringClassToStruct(h5_method_name);
+    ArkWebRomValueVector stArgs = ArkWebRomValueVectorClassToStruct(args);
+
+    bool ret = ark_web_nweb_->CallH5FunctionV3(routing_id, frame_child_id, h5_object_id, stH5MethodName, stArgs);
+
+    ArkWebStringStructRelease(stH5MethodName);
+    ArkWebRomValueVectorStructRelease(stArgs);
+    return ret;
+}
+
 void ArkWebNWebWrapper::PostPortMessageV2(const std::string& portHandle, std::shared_ptr<OHOS::NWeb::NWebRomValue> data)
 {
     ArkWebString stPortHandle = ArkWebStringClassToStruct(portHandle);
@@ -2242,6 +2255,21 @@ void ArkWebNWebWrapper::SetZoomFactor(double zoom_factor)
 double ArkWebNWebWrapper::GetZoomFactor()
 {
     return ark_web_nweb_->GetZoomFactor();
+}
+
+void ArkWebNWebWrapper::SetAutoReloadEnabled(bool enable)
+{
+    ark_web_nweb_->SetAutoReloadEnabled(enable);
+}
+
+bool ArkWebNWebWrapper::GetAutoReloadEnabled()
+{
+    return ark_web_nweb_->GetAutoReloadEnabled();
+}
+
+void ArkWebNWebWrapper::SetFlingSpeedLimit(float speed_limit)
+{
+    ark_web_nweb_->SetFlingSpeedLimit(speed_limit);
 }
 
 void ArkWebNWebWrapper::SetNavigationEntryUserData(const std::string& key, const std::string& value)

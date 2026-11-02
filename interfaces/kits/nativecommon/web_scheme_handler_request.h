@@ -49,6 +49,7 @@ private:
     bool hasGesture_ = false;
     WebHeaderList headerList_;
     ArkWeb_HttpBodyStream* stream_ = nullptr;
+    bool streamConsumed_ = false;
     int32_t requestResourceType_ = -1;
     char* frameUrl_ = nullptr;
 };

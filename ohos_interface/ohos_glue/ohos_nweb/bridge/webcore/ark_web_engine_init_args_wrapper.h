@@ -43,6 +43,8 @@ public:
 
     std::string GetSharedRenderProcessToken() override;
 
+    bool GetIsPreloadNWeb() override;
+
     bool GetEmulateTouchFromMouseEvent() override;
 
     bool GetUseCloudControlAutoLayoutConfig() override;

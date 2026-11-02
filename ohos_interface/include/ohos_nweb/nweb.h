@@ -117,6 +117,7 @@ public:
     virtual bool GetIsEnhanceSurface() = 0;
     virtual bool GetIsPopup() = 0;
     virtual std::string GetSharedRenderProcessToken() {return "";}
+    virtual bool GetIsPreloadNWeb() { return false; }
     virtual bool GetEmulateTouchFromMouseEvent() {return false;}
     virtual bool GetUseCloudControlAutoLayoutConfig() {return false;}
     virtual uint64_t GetSurfaceNodeId() { return 0; }
@@ -1229,7 +1230,7 @@ public:
     /**
      * CallH5Function
      *
-     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param routing_id       int32_t: the h5 frame routing id
      * @param h5_object_id     int32_t: the h5 side object id
      * @param h5_method_name   string:  the h5 side object method name
      * @param args             vector<shared_ptr<NWebValue>>: the call args
@@ -2029,7 +2030,7 @@ public:
     /**
      * CallH5FunctionV2
      *
-     * @param routing_id       int32_t: the h5 frmae routing id
+     * @param routing_id       int32_t: the h5 frame routing id
      * @param h5_object_id     int32_t: the h5 side object id
      * @param h5_method_name   string:  the h5 side object method name
      * @param args             vector<shared_ptr<NWebRomValue>>: the call args
@@ -2662,6 +2663,63 @@ public:
     virtual double GetZoomFactor()
     {
         return 1.0;
+    }
+
+    /**
+     * @brief Set whether to enable automatic reload for error pages.
+     *
+     * When enabled, the Web component automatically retries loading on
+     * network errors using a retry backoff sequence: 1s, 5s, 30s, 1min,
+     * 5min, 10min, 30min. Retries stop after a total of 30 minutes.
+     * Disabled by default.
+     *
+     * Only network errors trigger auto-reload. Certificate errors, SSL
+     * (Secure Sockets Layer) protocol errors, authentication errors, POST
+     * requests, non-HTTP(S) protocols, and errors blocked by the client are
+     * excluded. Auto-reload does not affect the onOverrideErrorPage callback,
+     * and the onErrorReceive callback is invoked again for each retry
+     * attempt.
+     *
+     * @param enable bool: Whether to enable automatic reload. The value true
+     * enables it, and the value false disables it.
+     */
+    virtual void SetAutoReloadEnabled(bool enable) {}
+
+    /**
+     * @brief Get whether automatic reload for error pages is enabled.
+     *
+     * @return bool: Whether automatic reload is enabled. Returns true if
+     * enabled, and false otherwise. The default value is false.
+     */
+    virtual bool GetAutoReloadEnabled() { return false; }
+
+    /**
+     * Set the maximum initial velocity at the start of the fling animation that occurs
+     * after gesture-driven scrolling ends. Only affects the inertial scrolling phase.
+     * The TS-side value takes precedence over the front-end viewport max-fling-speed-x/y.
+     *
+     * @param speed_limit Maximum initial velocity at the start of the fling animation,
+     *                    in vp/s. Value range: (0, +∞). If the value is less than or
+     *                    equal to 0, the default value is used (9000 on PC, 17000 on non-PC).
+     */
+    virtual void SetFlingSpeedLimit(float speed_limit)
+    {
+        (void)speed_limit;
+    }
+
+    /**
+     * CallH5FunctionV3
+     *
+     * @param routing_id       int32_t: the h5 frame routing id
+     * @param frame_child_id   int32_t: the h5 frame child id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    virtual bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+        const std::string& h5_method_name, const std::vector<std::shared_ptr<NWebRomValue>>& args)
+    {
+        return false;
     }
 
     /**

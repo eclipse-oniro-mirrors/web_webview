@@ -22,6 +22,7 @@
 #include "ohos_nweb/include/ark_web_applink_callback.h"
 #include "ohos_nweb/include/ark_web_console_log.h"
 #include "ohos_nweb/include/ark_web_context_menu_callback.h"
+#include "ohos_nweb/include/ark_web_context_menu_options.h"
 #include "ohos_nweb/include/ark_web_context_menu_params.h"
 #include "ohos_nweb/include/ark_web_controller_handler.h"
 #include "ohos_nweb/include/ark_web_cursor_info.h"
@@ -1231,6 +1232,27 @@ public:
     // interface so existing vtable slots remain ABI-compatible.
     /*--ark web()--*/
     virtual void OnZoomFactorChanged(double old_zoom_factor, double new_zoom_factor) = 0;
+
+    /**
+     * @brief Called when contextmenu state changed.
+     *
+     * @param itemId The menu item id.
+     * @param options The options of context menu.
+     */
+    /*--ark web()--*/
+    virtual void OnContextMenuUpdate(int32_t itemId, ArkWebRefPtr<ArkWebContextMenuOptions> options) = 0;
+
+    /**
+     * @brief Notify a monitored blank screen with root cause attribution.
+     *
+     * @param url The url of the blank screen.
+     * @param reason The reason enum value of the blank screen.
+     * @param extraMsg The JSON serialized RootCauseReport with full attribution details.
+     */
+    /*--ark web()--*/
+    virtual void OnMonitoredBlankScreen(
+        const ArkWebString& url, int32_t reason,
+        const ArkWebString& extraMsg) = 0;
 };
 
 } // namespace OHOS::ArkWeb

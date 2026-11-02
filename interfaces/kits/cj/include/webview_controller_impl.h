@@ -333,6 +333,10 @@ public:
 
     bool GetSubframeErrorPageEnabled();
 
+    int32_t SetAutoReloadEnabled(bool enable);
+
+    bool GetAutoReloadEnabled();
+
     std::string GetLastPostMessageURL();
 
 public:

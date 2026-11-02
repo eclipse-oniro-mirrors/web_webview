@@ -13,7 +13,9 @@
  * limitations under the License.
  */
 
+#include "ohos_nweb/bridge/ark_web_core_struct_utils.h"
 #include "ohos_nweb/bridge/ark_web_hap_value_impl.h"
+#include "ohos_nweb/bridge/ark_web_js_call_info_impl.h"
 #include "ohos_nweb/bridge/ark_web_js_result_callback_wrapper.h"
 #include "ohos_nweb/cpptoc/ark_web_hap_value_vector_cpptoc.h"
 #include "ohos_nweb/cpptoc/ark_web_value_vector_cpptoc.h"
@@ -135,6 +137,48 @@ void ArkWebJsResultCallbackWrapper::GetJavaScriptObjectMethodsV2(
     } else {
         ark_web_js_result_callback_->GetJavaScriptObjectMethodsV2(object_id, new ArkWebHapValueImpl(result));
     }
+}
+
+void ArkWebJsResultCallbackWrapper::GetJavaScriptResultV3(
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args, const std::string& method,
+    const std::string& object_name, std::shared_ptr<OHOS::NWeb::NWebJsCallInfo> call_info,
+    std::shared_ptr<OHOS::NWeb::NWebHapValue> result)
+{
+    ArkWebString stMethod = ArkWebStringClassToStruct(method);
+    ArkWebString stObjectName = ArkWebStringClassToStruct(object_name);
+    ArkWebHapValueVector stArgs = ArkWebHapValueVectorClassToStruct(args);
+    ArkWebRefPtr<ArkWebJsCallInfo> stCallInfo = new ArkWebJsCallInfoImpl(call_info);
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        ark_web_js_result_callback_->GetJavaScriptResultV3(
+            stArgs, stMethod, stObjectName, stCallInfo, nullptr);
+    } else {
+        ark_web_js_result_callback_->GetJavaScriptResultV3(
+            stArgs, stMethod, stObjectName, stCallInfo, new ArkWebHapValueImpl(result));
+    }
+    ArkWebStringStructRelease(stMethod);
+    ArkWebStringStructRelease(stObjectName);
+    ArkWebHapValueVectorStructRelease(stArgs);
+}
+
+void ArkWebJsResultCallbackWrapper::GetJavaScriptResultFlowbufV3(
+    const std::vector<std::shared_ptr<OHOS::NWeb::NWebHapValue>>& args, const std::string& method,
+    const std::string& object_name, std::shared_ptr<OHOS::NWeb::NWebJsCallInfo> call_info,
+    std::shared_ptr<OHOS::NWeb::NWebHapValue> result)
+{
+    ArkWebString stMethod = ArkWebStringClassToStruct(method);
+    ArkWebString stObjectName = ArkWebStringClassToStruct(object_name);
+    ArkWebHapValueVector stArgs = ArkWebHapValueVectorClassToStruct(args);
+    ArkWebRefPtr<ArkWebJsCallInfo> stCallInfo = new ArkWebJsCallInfoImpl(call_info);
+    if (CHECK_SHARED_PTR_IS_NULL(result)) {
+        ark_web_js_result_callback_->GetJavaScriptResultFlowbufV3(
+            stArgs, stMethod, stObjectName, stCallInfo, nullptr);
+    } else {
+        ark_web_js_result_callback_->GetJavaScriptResultFlowbufV3(
+            stArgs, stMethod, stObjectName, stCallInfo, new ArkWebHapValueImpl(result));
+    }
+    ArkWebStringStructRelease(stMethod);
+    ArkWebStringStructRelease(stObjectName);
+    ArkWebHapValueVectorStructRelease(stArgs);
 }
 
 } // namespace OHOS::ArkWeb

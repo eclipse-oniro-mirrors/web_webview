@@ -145,6 +145,22 @@ public:
 
     std::string GetRemoveText() override;
 
+    int32_t GetZIndex() override;
+
+    int32_t GetFontSize() override;
+
+    int32_t GetImageRendering() override;
+
+    int32_t GetBgSizeType() override;
+
+    uint32_t GetBgColor() override;
+
+    bool GetCssVisible() override;
+
+    std::string GetBgImg() override;
+
+    std::string GetBgSize() override;
+
 private:
     ArkWebRefPtr<ArkWebAccessibilityNodeInfo> ark_web_accessibility_node_info_;
 };

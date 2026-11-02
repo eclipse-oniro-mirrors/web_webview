@@ -60,7 +60,10 @@ ohos_unittest("surface_control_test") {
 
   configs = [ ":module_private_config" ]
 
-  deps = [ "../../../../ohos_adapter:nweb_ohos_adapter" ]
+  deps = [
+    "../../../../ohos_adapter:nweb_ohos_adapter",
+    "../../../../arkweb_utils:libarkweb_utils",
+  ]
 
   external_deps = [
     "c_utils:utils",

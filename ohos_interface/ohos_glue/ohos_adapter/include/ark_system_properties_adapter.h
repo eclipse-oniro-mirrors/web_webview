@@ -149,6 +149,9 @@ public:
 
     /*--ark web()--*/
     virtual int32_t GetRenderProcessMode() = 0;
+
+    /*--ark web()--*/
+    virtual ArkWebString GetPartialDraw() = 0;
 };
 
 } // namespace OHOS::ArkWeb

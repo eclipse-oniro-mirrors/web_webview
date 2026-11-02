@@ -102,6 +102,8 @@ public:
 
     int32_t GetRenderProcessMode() override;
 
+    ArkWebString GetPartialDraw() override;
+
 private:
     NWeb::SystemPropertiesAdapter& real_;
 

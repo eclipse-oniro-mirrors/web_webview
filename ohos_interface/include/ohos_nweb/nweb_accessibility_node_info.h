@@ -173,6 +173,46 @@ public:
     {
         return std::string();
     }
+
+    virtual int32_t GetZIndex()
+    {
+        return 0;
+    }
+
+    virtual int32_t GetFontSize()
+    {
+        return 0;
+    }
+
+    virtual int32_t GetImageRendering()
+    {
+        return 0;
+    }
+
+    virtual int32_t GetBgSizeType()
+    {
+        return 0;
+    }
+
+    virtual uint32_t GetBgColor()
+    {
+        return 0;
+    }
+
+    virtual bool GetCssVisible()
+    {
+        return true;
+    }
+
+    virtual std::string GetBgImg()
+    {
+        return std::string();
+    }
+
+    virtual std::string GetBgSize()
+    {
+        return std::string();
+    }
 };
 
 } // namespace OHOS::NWeb

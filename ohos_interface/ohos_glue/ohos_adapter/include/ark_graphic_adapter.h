@@ -313,6 +313,12 @@ public:
 
     /*--ark web()--*/
     virtual void Release(void* surfaceControl) = 0;
+
+    /*--ark web()--*/
+    virtual void* CreateContainerSurfaceControl(void* transaction, void* parent, const char* name, bool inProcess) = 0;
+
+    /*--ark web()--*/
+    virtual void* CreateChildSurfaceControl(void* transaction, const char* name, bool inProcess) = 0;
 };
 
 /*--ark web(source=webview)--*/

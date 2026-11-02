@@ -31,6 +31,7 @@ ohos_shared_library("libarkweb_utils") {
 
   sources = [
     "arkweb_utils.cpp",
+    "web_surface_registry.cpp",
   ]
 
   sources += ["arkweb_preload_common.cpp"]

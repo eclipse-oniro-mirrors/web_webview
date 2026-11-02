@@ -15,6 +15,8 @@
 
 #include "webview_web_inited_callback.h"
 
+#include <memory>
+
 #include "uv.h"
 
 namespace OHOS::NWeb {
@@ -27,9 +29,12 @@ void UvWebInitedCallbackThreadWoker(WebRunInitedCallbackImpl* obj)
         WVLOG_E("callback obj or param is nullptr");
         return;
     }
+    // 接管 param_ 所有权，保证所有退出路径均能释放 param_，避免 C++ 对象及其持有的 JS 全局引用泄漏
+    std::unique_ptr<WebInitedCallbackParam> paramGuard(obj->param_);
+    obj->param_ = nullptr;
 
     ani_size nr_refs = REFERENCES_MAX_NUMBER;
-    ani_env* env = obj->param_->GetEnv();
+    ani_env* env = paramGuard->GetEnv();
     if (!env) {
         WVLOG_E("env is nullptr");
         return;
@@ -39,10 +44,10 @@ void UvWebInitedCallbackThreadWoker(WebRunInitedCallbackImpl* obj)
         return;
     }
     ani_status status;
-    if (obj->param_->webInitedCallback_) {
+    if (paramGuard->webInitedCallback_) {
         ani_ref fnReturnVal;
         if ((status = env->FunctionalObject_Call(
-                 static_cast<ani_fn_object>(obj->param_->webInitedCallback_), 0, {}, &fnReturnVal)) != ANI_OK) {
+            static_cast<ani_fn_object>(paramGuard->webInitedCallback_), 0, {}, &fnReturnVal)) != ANI_OK) {
             WVLOG_E("UvWebInitedCallbackThreadWoker callback execute failed status : %{public}d", status);
             env->DestroyLocalScope();
             return;
@@ -53,9 +58,6 @@ void UvWebInitedCallbackThreadWoker(WebRunInitedCallbackImpl* obj)
         return;
     }
     env->DestroyLocalScope();
-    if (obj->param_) {
-        delete obj->param_;
-    }
     return;
 }
 } // namespace

@@ -48,5 +48,10 @@ OHOS::NWeb::AutoFillMode ArkWebAutoFillItemWrapper::GetMode() const
 {
     return static_cast<OHOS::NWeb::AutoFillMode>(ark_web_item_->GetMode());
 }
+
+int32_t ArkWebAutoFillItemWrapper::GetNodeId() const
+{
+    return ark_web_item_->GetNodeId();
+}
  
-} // namespace OHOS::ArkWeb
+} // namespace OHOS::ArkWeb

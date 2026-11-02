@@ -27,7 +27,9 @@ using namespace OHOS::NWeb;
 namespace OHOS::NWeb {
 constexpr float EPS = 0.0001f;
 const std::string VASSISTANT_SCREEN_NAME = "CeliaView";
-constexpr int DISPLAY_SPECIFIC_ID = 999;
+constexpr int DISPLAY_ID_DEFAULT = 0;
+constexpr int DISPLAY_ID_OUTER = 5;
+constexpr int DISPLAY_ID_FOLDED_BOTTOM = 999;
 
 DisplayListenerAdapterImpl::DisplayListenerAdapterImpl(
     std::shared_ptr<DisplayListenerAdapter> listener) : listener_(listener) {}
@@ -597,19 +599,19 @@ std::vector<std::shared_ptr<DisplayAdapter>> DisplayManagerAdapterImpl::GetAllDi
 
 bool DisplayManagerAdapterImpl::IsSinglePhysicalDisplayForFold()
 {
-    OHOS::Rosen::FoldStatus foldStatus = DisplayManager::GetInstance().GetFoldStatus();
-    if (foldStatus != OHOS::Rosen::FoldStatus::HALF_FOLD) {
-        WVLOG_I("DisplayManagerAdapterImpl::IsSinglePhysicalDisplayForFold is not half fold");
-        return false;
-    }
-    std::vector<sptr<Display>> displays = DisplayManager::GetInstance().GetAllDisplays();
-    for (auto& display : displays) {
-        if (display && display->GetId() == DISPLAY_SPECIFIC_ID) {
-            WVLOG_I("DisplayManagerAdapterImpl::IsSinglePhysicalDisplayForFold is half fold");
-            return true;
+    const std::vector<sptr<Display>>& displays = DisplayManager::GetInstance().GetAllDisplays();
+    for (const auto& display : displays) {
+        if (display) {
+            auto displayId = display->GetId();
+            if (displayId != DISPLAY_ID_DEFAULT && displayId != DISPLAY_ID_OUTER &&
+                displayId != DISPLAY_ID_FOLDED_BOTTOM) {
+                WVLOG_I("IsSinglePhysicalDisplayForFold with external screen id: %{public}llu",
+                    static_cast<unsigned long long>(displayId));
+                return false;
+            }
         }
     }
-    WVLOG_I("DisplayManagerAdapterImpl::IsSinglePhysicalDisplayForFold is not half fold");
-    return false;
+    WVLOG_I("IsSinglePhysicalDisplayForFold no external screen");
+    return true;
 }
 }

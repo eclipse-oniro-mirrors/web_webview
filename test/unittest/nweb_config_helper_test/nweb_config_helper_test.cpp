@@ -56,6 +56,8 @@ const auto XML_ENABLE_WINDOW_ORIENTATION = "enable_window_orientation";
 const std::string WEB_LTPO_STRATEGY = "ltpo_strategy";
 const std::string WEB_LOAD_URL_STRATEGY = "load_url_strategy";
 const std::string WEB_LOAD_URL_CONFIG = "load_url_config";
+const std::string WEB_PARTIAL_DRAW = "partial_draw";
+const std::string WEB_PARTIAL_DRAW_CONFIG = "partial_draw_config";
 const std::string WEB_DVSYNC_SWITCH = "dvsync_switch";
 
 class MockNWebConfigHelper : public NWebConfigHelper {
@@ -1487,6 +1489,273 @@ HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParseWebConfigXml_LTPOIntConfig_
     EXPECT_EQ(NWebConfigHelper::Instance().ltpoStrategy_, 4);
     EXPECT_EQ(NWebConfigHelper::Instance().ltpoIntConfig_["throttle_strategy"], 2);
     EXPECT_EQ(NWebConfigHelper::Instance().ltpoIntConfig_["throttle_timeout"], 4000);
+
+    remove(tempConfigPath.c_str());
+    xmlFreeDoc(doc);
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_001
+ * @tc.desc: ParsePartialDraw when nodePtr has comment child node.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_001, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<!-- this is a comment -->\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+    NWebConfigHelper::Instance().partialDraw_ = "single";
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "single");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_002
+ * @tc.desc: ParsePartialDraw when child node has no name attribute.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_002, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<partialDrawSetting>single</partialDrawSetting>\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+    NWebConfigHelper::Instance().partialDraw_ = "multi";
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "multi");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_003
+ * @tc.desc: ParsePartialDraw when name attribute is not partial_draw.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_003, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<partialDrawSetting name=\"other_setting\">single</partialDrawSetting>\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+    NWebConfigHelper::Instance().partialDraw_ = "multi";
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "multi");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_004
+ * @tc.desc: ParsePartialDraw when node content is empty.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_004, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<partialDrawSetting name=\"partial_draw\"/>\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    // Empty content is not a valid value, fallback to none
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "none");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_005
+ * @tc.desc: ParsePartialDraw when value is single.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_005, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<partialDrawSetting name=\"partial_draw\">single</partialDrawSetting>\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "single");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_006
+ * @tc.desc: ParsePartialDraw when value is multi.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_006, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<partialDrawSetting name=\"partial_draw\">multi</partialDrawSetting>\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "multi");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_007
+ * @tc.desc: ParsePartialDraw when value is none.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_007, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<partialDrawSetting name=\"partial_draw\">none</partialDrawSetting>\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+    NWebConfigHelper::Instance().partialDraw_ = "single";
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "none");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParsePartialDraw_008
+ * @tc.desc: ParsePartialDraw when value is invalid.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParsePartialDraw_008, TestSize.Level1)
+{
+    const char *xmlContent = "<partial_draw_config>\n"
+                               "<partialDrawSetting name=\"partial_draw\">invalid_value</partialDrawSetting>\n"
+                              "</partial_draw_config>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+    xmlNodePtr nodePtr = xmlDocGetRootElement(doc);
+    EXPECT_NE(nodePtr, nullptr);
+
+    NWebConfigHelper::Instance().ParsePartialDraw(nodePtr);
+    xmlFreeDoc(doc);
+    // Invalid value fallback to none
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "none");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_GetPartialDraw_001
+ * @tc.desc: Test GetPartialDraw returns parsed partialDraw_ value.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_GetPartialDraw_001, TestSize.Level1)
+{
+    NWebConfigHelper::Instance().partialDraw_ = "single";
+    EXPECT_EQ(NWebConfigHelper::Instance().GetPartialDraw(), "single");
+
+    NWebConfigHelper::Instance().partialDraw_ = "multi";
+    EXPECT_EQ(NWebConfigHelper::Instance().GetPartialDraw(), "multi");
+
+    NWebConfigHelper::Instance().partialDraw_ = "none";
+    EXPECT_EQ(NWebConfigHelper::Instance().GetPartialDraw(), "none");
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParseWebConfigXml_PartialDrawConfig_001
+ * @tc.desc: Test ParseWebConfigXml with valid partial_draw config.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParseWebConfigXml_PartialDrawConfig_001, TestSize.Level1)
+{
+    const char *xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                             "<WEB>\n"
+                              "<partial_draw_config>\n"
+                              "<partialDrawSetting name=\"partial_draw\">single</partialDrawSetting>\n"
+                              "</partial_draw_config>\n"
+                             "</WEB>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+
+    std::string tempConfigPath = "/data/local/tmp/test_partialdraw_001.xml";
+    FILE *file = fopen(tempConfigPath.c_str(), "w");
+    EXPECT_NE(file, nullptr);
+    fprintf(file, "%s", xmlContent);
+    fclose(file);
+
+    NWebConfigHelper::Instance().partialDraw_ = "none";
+    NWebConfigHelper::Instance().ParseWebConfigXml(tempConfigPath, initArgs);
+
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "single");
+
+    remove(tempConfigPath.c_str());
+    xmlFreeDoc(doc);
+}
+
+/**
+ * @tc.name: NWebConfigHelper_ParseWebConfigXml_PartialDrawConfig_002
+ * @tc.desc: Test ParseWebConfigXml with invalid partial_draw value fallback to none.
+ * @tc.type: FUNC
+ * @tc.require:
+ */
+HWTEST_F(NWebConfigHelperTest, NWebConfigHelper_ParseWebConfigXml_PartialDrawConfig_002, TestSize.Level1)
+{
+    const char *xmlContent = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+                             "<WEB>\n"
+                              "<partial_draw_config>\n"
+                              "<partialDrawSetting name=\"partial_draw\">invalid</partialDrawSetting>\n"
+                              "</partial_draw_config>\n"
+                             "</WEB>";
+
+    xmlDocPtr doc = xmlReadMemory(xmlContent, strlen(xmlContent), NULL, NULL, 0);
+    EXPECT_NE(doc, nullptr);
+
+    std::string tempConfigPath = "/data/local/tmp/test_partialdraw_002.xml";
+    FILE *file = fopen(tempConfigPath.c_str(), "w");
+    EXPECT_NE(file, nullptr);
+    fprintf(file, "%s", xmlContent);
+    fclose(file);
+
+    NWebConfigHelper::Instance().partialDraw_ = "single";
+    NWebConfigHelper::Instance().ParseWebConfigXml(tempConfigPath, initArgs);
+
+    // Invalid value fallback to none
+    EXPECT_EQ(NWebConfigHelper::Instance().partialDraw_, "none");
 
     remove(tempConfigPath.c_str());
     xmlFreeDoc(doc);

@@ -1030,15 +1030,18 @@ void WebviewController::SetNWebJavaScriptResultCallBack()
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
+        WVLOG_E("SetNWebJavaScriptResultCallBack: nweb_ptr is null, nwebId=%{public}d", nwebId_);
         return;
     }
 
     if (javaScriptResultCb_ && (javaScriptResultCb_->GetNWebId() == nwebId_)) {
+        WVLOG_I("SetNWebJavaScriptResultCallBack: callback already set, nwebId=%{public}d", nwebId_);
         return;
     }
 
     javaScriptResultCb_ = std::make_shared<WebviewJavaScriptResultCallBack>(nwebId_);
     nweb_ptr->SetNWebJavaScriptResultCallBack(javaScriptResultCb_);
+    WVLOG_I("SetNWebJavaScriptResultCallBack: registered callback, nwebId=%{public}d", nwebId_);
 }
 
 void WebviewController::RegisterJavaScriptProxy(RegisterJavaScriptProxyParam& param)
@@ -2601,7 +2604,7 @@ void WebviewController::UnregisterStateChangeCallback(const napi_env& env, const
     if (handler != nullptr) {
         DeleteRegisterObj(env, iter->second, handler);
     } else {
-        WVLOG_I("WebviewController::UnregisterStateChangeCallback All callback is unsubscribe for event: %{public}s",
+        WVLOG_I("SubEvent op=off_all kit=ArkWeb event=%{public}s",
             type.c_str());
         DeleteAllRegisterObj(env, iter->second);
     }
@@ -2796,6 +2799,25 @@ bool WebviewController::GetSubframeErrorPageEnabled()
         return false;
     }
     return nweb_ptr->GetSubframeErrorPageEnabled();
+}
+
+ErrCode WebviewController::SetAutoReloadEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetAutoReloadEnabled(enable);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetAutoReloadEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetAutoReloadEnabled();
 }
 
 ErrCode WebviewController::ResumeMicrophone()

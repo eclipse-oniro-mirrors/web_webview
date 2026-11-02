@@ -59,6 +59,12 @@ public:
 
     /*--ark web()--*/
     static bool ReportSubwindowCall(int32_t statusAdapter, pid_t pid, pid_t tid);
+
+    /*--ark web()--*/
+    static bool ReportNWebPreloadRenderProcess(pid_t pid);
+ 
+    /*--ark web()--*/
+    static void ReportPreloadNWebCreate(bool isPreload);
 };
 
 } // namespace OHOS::ArkWeb

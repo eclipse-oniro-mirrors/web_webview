@@ -432,6 +432,11 @@ void WebNativeMessagingManager::DisconnectWebNativeMessagingExtension(int32_t co
 void WebNativeMessagingManager::StartAbility(const sptr<IRemoteObject>& token,
     const AAFwk::Want& want, const AAFwk::StartOptions& startOptions, int32_t& errorNum)
 {
+    if (token == nullptr) {
+        WNMLOG_E("token is null.");
+        errorNum = ConnectNativeRet::CONTEXT_ERROR;
+        return;
+    }
     int32_t userId = IPCSkeleton::GetCallingUid() / UID_TRANSFORM_DIVISOR;
     int32_t pid = IPCSkeleton::GetCallingPid();
     std::string extensionBundleName;
@@ -471,6 +476,11 @@ void WebNativeMessagingManager::StartAbilityForResult(const sptr<IRemoteObject>&
     const AAFwk::Want& want, const AAFwk::StartOptions& startOptions,
     int32_t requestCode, int32_t& errorNum)
 {
+    if (token == nullptr) {
+        WNMLOG_E("token is null.");
+        errorNum = ConnectNativeRet::CONTEXT_ERROR;
+        return;
+    }
     int32_t userId = IPCSkeleton::GetCallingUid() / UID_TRANSFORM_DIVISOR;
     int32_t pid = IPCSkeleton::GetCallingPid();
     std::string extensionBundleName;

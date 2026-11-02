@@ -95,6 +95,18 @@ public:
     void PutScrollBarColor(uint32_t color_value) override;
 
     /**
+     * @brief Get the color of caret.
+     *
+     * @see PutCaretColor
+     */
+    uint32_t GetCaretColor() override;
+
+    /**
+     * @brief Put the UX color of caret.
+     */
+    void PutCaretColor(uint32_t color_value) override;
+
+    /**
      * @brief Get over-scroll Mode.
      *
      * @see PutScrollbarColor
@@ -671,6 +683,11 @@ public:
      * Set whether to enable hls media network proxy.
      */
     void PutWebMediaNetworkProxyEnabled(bool enable) override;
+
+    /**
+     * Set whether to enable blank screen monitor.
+     */
+    void PutWebBlankScreenMonitorEnabled(bool enable) override;
 
     /**
      * @brief Set the scale of the font-weight.The default is 1.0f.

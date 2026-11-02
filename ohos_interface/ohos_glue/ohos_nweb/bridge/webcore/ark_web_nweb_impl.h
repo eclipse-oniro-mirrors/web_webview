@@ -1779,6 +1779,9 @@ public:
     void CallH5FunctionV2(int32_t routing_id, int32_t h5_object_id, const ArkWebString& h5_method_name,
         const ArkWebRomValueVector& args) override;
 
+    bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+        const ArkWebString& h5_method_name, const ArkWebRomValueVector& args) override;
+
     void PostPortMessageV2(const ArkWebString& portHandle, ArkWebRefPtr<ArkWebRomValue> data) override;
 
     void FillAutofillDataV2(ArkWebRefPtr<ArkWebRomValue> data) override;
@@ -2111,6 +2114,20 @@ public:
 
     void SetZoomFactor(double zoom_factor) override;
     double GetZoomFactor() override;
+
+    /**
+     * @brief Set whether enable automatic reload of network error pages.
+     *
+     * @param enable bool: Whether enable automatic reload of error pages.
+     */
+    void SetAutoReloadEnabled(bool enable) override;
+
+    /**
+     * @brief Get whether automatic reload of error pages is enabled.
+     */
+    bool GetAutoReloadEnabled() override;
+
+    void SetFlingSpeedLimit(float speed_limit) override;
 
     /**
      * @brief Set user data for the current navigation entry.

@@ -45,6 +45,80 @@ HWTEST(SurfaceControlAdapterImplTest, SurfaceControlAdapter_Create, TestSize.Lev
     }
 }
 
+/**
+ * @tc.name: SurfaceControlAdapter_CreateContainerSurfaceControl_NullParams.
+ * @tc.desc: Test CreateContainerSurfaceControl with null transaction and null parent.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST(SurfaceControlAdapterImplTest, SurfaceControlAdapter_CreateContainerSurfaceControl_NullParams,
+    TestSize.Level1)
+{
+    auto& adapter = OhosAdapterHelper::GetInstance().GetSurfaceControlAdapter();
+    void* result = adapter.CreateContainerSurfaceControl(nullptr, nullptr, "test_container", false);
+    EXPECT_EQ(result, nullptr);
+    result = adapter.CreateContainerSurfaceControl(nullptr, nullptr, "test_container", true);
+    EXPECT_EQ(result, nullptr);
+}
+
+/**
+ * @tc.name: SurfaceControlAdapter_CreateContainerSurfaceControl_WithTransaction.
+ * @tc.desc: Test CreateContainerSurfaceControl with a valid transaction (null native window)
+ *           and null parent window: creation fails and returns nullptr.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST(SurfaceControlAdapterImplTest, SurfaceControlAdapter_CreateContainerSurfaceControl_WithTransaction,
+    TestSize.Level1)
+{
+    auto& adapter = OhosAdapterHelper::GetInstance().GetSurfaceControlAdapter();
+    auto& txnAdapter = OhosAdapterHelper::GetInstance().GetSurfaceTransactionAdapter();
+    void* transaction = txnAdapter.CreateSurfaceTransaction(nullptr);
+    ASSERT_NE(transaction, nullptr);
+    void* result = adapter.CreateContainerSurfaceControl(transaction, nullptr, "test_container", false);
+    EXPECT_EQ(result, nullptr);
+    result = adapter.CreateContainerSurfaceControl(transaction, nullptr, "test_container", true);
+    EXPECT_EQ(result, nullptr);
+    txnAdapter.DeleteTransaction(transaction);
+}
+
+/**
+ * @tc.name: SurfaceControlAdapter_CreateChildSurfaceControl_NullParams.
+ * @tc.desc: Test CreateChildSurfaceControl with null transaction and null name.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST(SurfaceControlAdapterImplTest, SurfaceControlAdapter_CreateChildSurfaceControl_NullParams, TestSize.Level1)
+{
+    auto& adapter = OhosAdapterHelper::GetInstance().GetSurfaceControlAdapter();
+    void* result = adapter.CreateChildSurfaceControl(nullptr, nullptr, false);
+    EXPECT_EQ(result, nullptr);
+    result = adapter.CreateChildSurfaceControl(nullptr, nullptr, true);
+    EXPECT_EQ(result, nullptr);
+}
+
+/**
+ * @tc.name: SurfaceControlAdapter_CreateChildSurfaceControl_WithTransaction.
+ * @tc.desc: Test CreateChildSurfaceControl with a valid transaction (null native window)
+ *           and a valid name: the transaction carries no RSUIContext, so creation
+ *           fails and returns nullptr.
+ * @tc.type: FUNC
+ * @tc.require: issue#I16d68
+ */
+HWTEST(SurfaceControlAdapterImplTest, SurfaceControlAdapter_CreateChildSurfaceControl_WithTransaction,
+    TestSize.Level1)
+{
+    auto& adapter = OhosAdapterHelper::GetInstance().GetSurfaceControlAdapter();
+    auto& txnAdapter = OhosAdapterHelper::GetInstance().GetSurfaceTransactionAdapter();
+    void* transaction = txnAdapter.CreateSurfaceTransaction(nullptr);
+    ASSERT_NE(transaction, nullptr);
+    void* result = adapter.CreateChildSurfaceControl(transaction, "test_child", false);
+    EXPECT_EQ(result, nullptr);
+    result = adapter.CreateChildSurfaceControl(transaction, "test_child", true);
+    EXPECT_EQ(result, nullptr);
+    txnAdapter.DeleteTransaction(transaction);
+}
+
 HWTEST(SurfaceControlAdapterImplTest, SurfaceControlAdapter_Release_NullSurfaceControl, TestSize.Level1)
 {
     auto& adapter = OhosAdapterHelper::GetInstance().GetSurfaceControlAdapter();

@@ -89,6 +89,11 @@ SurfaceTransaction::SurfaceTransaction(OHNativeWindow* nativeWindow)
     SurfaceControl::SetConnectToRenderObject(rsHandle);
     WVLOG_I("SurfaceTransaction set rsHandle success");
 
+    rsUIDirector_ = OHOS::Rosen::RSUIDirector::Create(rsHandle);
+    uiContext_ = rsUIDirector_ ? rsUIDirector_->GetRSUIContext() : nullptr;
+    if (uiContext_ == nullptr) {
+        WVLOG_E("DelegateModeDebugTag: SurfaceTransaction uiContext_ is nullptr");
+    }
     listener_ = sptr<SurfaceTransactionListener>::MakeSptr(rsHandle);
     if (listener_) {
         listener_->RegisterCommandCompleteCallBack(SurfaceTransaction::OnCompleteCallBack);
@@ -109,17 +114,21 @@ SurfaceTransaction::~SurfaceTransaction()
 
 void SurfaceTransaction::Commit()
 {
-    auto uiContext = SurfaceControl::GetRSUIContext();
+    RS_TRACE_NAME_FMT("transactionCommands_ size:%u bufferCommands_ size:%u, uiContext_=%d",
+        transactionCommands_.size(), bufferCommands_.size(), uiContext_ != nullptr);
+    std::shared_ptr<OHOS::Rosen::RSUIContext> uiContext = nullptr;
+    if (IsBindSurfaceControl()) {
+        uiContext = uiContext_;
+    } else {
+        uiContext = SurfaceControl::GetRSUIContext();
+    }
+
     if (!uiContext) {
         WVLOG_E("DelegateModeDebugTag: SurfaceTransaction::Commit fail, uiContext is invalid");
         return;
     }
-    auto transaction = uiContext->GetRSTransaction();
 
-    RS_TRACE_NAME_FMT("transactionCommands_ size:%u bufferCommands_ size:%u surfaceControls_ size:%u, transaction=%d",
-        transactionCommands_.size(), bufferCommands_.size(), surfaceControls_.size(), transaction != nullptr);
-
-    ScopedTransaction scopedTransaction(uiContext);
+    ScopedTransaction scopedTransaction(uiContext, IsInProcess());
     if (listener_) {
         uint64_t seqNum = 0;
         std::unique_ptr<OHOS::Rosen::RSCommand> cmd = listener_->GetCommand(seqNum);
@@ -376,5 +385,31 @@ void SurfaceTransaction::ClearBufferQueueCache(SurfaceControl* surfaceControl, b
     RS_TRACE_NAME_FMT("SurfaceTransaction::ClearBufferQueueCache");
     surfaceControl->ClearBufferQueueCache(cleanAll);
 }
+
+std::shared_ptr<OHOS::Rosen::RSUIContext> SurfaceTransaction::GetRSUIContext()
+{
+    return uiContext_;
+}
+
+bool SurfaceTransaction::IsBindSurfaceControl()
+{
+    return isBindSurfaceControl_;
+}
+
+void SurfaceTransaction::SetBindSurfaceControl(bool isBindSurfaceControl)
+{
+    isBindSurfaceControl_ = isBindSurfaceControl;
+}
+
+bool SurfaceTransaction::IsInProcess()
+{
+    return inProcess_;
+}
+
+void SurfaceTransaction::SetInProcess(bool inProcess)
+{
+    inProcess_ = inProcess;
+}
+
 } // namespace NWeb
 } // namespace OHOS

@@ -335,16 +335,7 @@ std::string AafwkBrowserHostImpl::QueryBufferTypeLeak(int32_t surface_id)
 void AafwkBrowserHostImpl::UpdateDelegateContainerNode(uint64_t parentNodeId,
     const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode)
 {
-    std::shared_ptr<Rosen::RSUIContext> rsUIContext = nullptr;
-    {
-        std::unique_lock<std::mutex> map_lock(map_mutex_);
-        auto iter = rsUIContextMap_.find(parentNodeId);
-        if (iter != rsUIContextMap_.end()) {
-            rsUIContext = iter->second;
-        }
-    }
-
-    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(parentNodeId, rsUIContext, surfaceNode, isAddNode);
+    SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(parentNodeId, surfaceNode, isAddNode);
 }
 
 } // namespace OHOS::NWeb

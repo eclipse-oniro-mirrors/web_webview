@@ -923,6 +923,18 @@ public:
 
     void OnZoomFactorChanged(double old_zoom_factor, double new_zoom_factor) override;
 
+    /**
+     * @brief Called when contextmenu state changed.
+     *
+     * @param itemId The menu item id.
+     * @param options The options of context menu.
+     */
+    void OnContextMenuUpdate(
+        int32_t itemId, std::shared_ptr<OHOS::NWeb::NWebContextMenuOptions> options) override;
+
+    void OnMonitoredBlankScreen(
+        const std::string& url, int32_t reason,
+        const std::string& extraMsg) override;
 private:
     ArkWebRefPtr<ArkWebHandler> ark_web_handler_;
 };

@@ -33,6 +33,12 @@ ohos_unittest("net_proxy_adapter_test") {
     "net_conn_client_test_mock.h",
   ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   sources += [ "net_proxy_adapter_test.cpp" ]
 
   configs = [ ":module_private_config" ]

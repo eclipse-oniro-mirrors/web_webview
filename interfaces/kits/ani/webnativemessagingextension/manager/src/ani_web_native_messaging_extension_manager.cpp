@@ -548,7 +548,6 @@ static ani_int ConnectNative(ani_env* env,
     result = asyncContext->connectId;
     ConnectNativeExcute(env, asyncContext);
     ConnectNativeComplete(env, asyncContext);
-    asyncContextPtr.release();
     return result;
 }
 

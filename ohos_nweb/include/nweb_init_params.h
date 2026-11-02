@@ -244,6 +244,16 @@ public:
         return sharedRenderProcessToken_;
     }
 
+    void SetIsPreloadNWeb(bool isPreloadNWeb)
+    {
+        isPreloadNWeb_ = isPreloadNWeb;
+    }
+
+    bool GetIsPreloadNWeb() override
+    {
+        return isPreloadNWeb_;
+    }
+
     void SetEmulateTouchFromMouseEvent(bool emulateTouchFromMouseEvent)
     {
         emulateTouchFromMouseEvent_ = emulateTouchFromMouseEvent;
@@ -292,6 +302,7 @@ private:
     bool isPopup_ = false;
     bool isFrameInfoDump_ = false;
     bool isEnhanceSurface_ = false;
+    bool isPreloadNWeb_ = false;
     bool isMultiRendererProcess_ = false;
 
     std::list<std::string> argsToAdd_;

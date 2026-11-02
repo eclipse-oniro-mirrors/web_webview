@@ -31,6 +31,7 @@ public:
     std::string GetContent() const override;
     int32_t GetIndex() const override;
     OHOS::NWeb::AutoFillMode GetMode() const override;
+    int32_t GetNodeId() const override;
  
 private:
     ArkWebRefPtr<ArkWebAutoFillItem> ark_web_item_;

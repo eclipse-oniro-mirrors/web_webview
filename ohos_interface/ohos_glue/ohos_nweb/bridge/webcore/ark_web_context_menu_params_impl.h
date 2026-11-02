@@ -64,6 +64,12 @@ public:
     bool IsAILink() override;
 
     int GetContextMenuMediaType() override;
+    
+    bool ShouldOfferLinkToText() override;
+
+    bool IsOverTextFragment() override;
+
+    ArkWebString GetTextFragmentGeneratedLink() override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebContextMenuParams> nweb_context_menu_params_;
 };

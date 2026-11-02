@@ -31,6 +31,10 @@ public:
 
     void Release(void* surfaceControl) override;
 
+    void* CreateContainerSurfaceControl(void* transaction, void* parent, const char* name, bool inProcess) override;
+
+    void* CreateChildSurfaceControl(void* transaction, const char* name, bool inProcess) override;
+
 private:
     ArkWebRefPtr<ArkSurfaceControlAdapter> ctocpp_;
 };

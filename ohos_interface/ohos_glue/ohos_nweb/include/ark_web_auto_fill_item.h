@@ -36,6 +36,9 @@ public:
  
     /*--ark web()--*/
     virtual int32_t GetMode() = 0;
+
+    /*--ark web()--*/
+    virtual int32_t GetNodeId() = 0;
 };
  
 } // namespace OHOS::ArkWeb

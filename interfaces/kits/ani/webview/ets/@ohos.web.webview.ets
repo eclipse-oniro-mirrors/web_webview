@@ -555,15 +555,15 @@ export default namespace webview {
 
     export interface NativeMediaPlayerBridge {
         updateRect: UpdateRectFn;
-        play: ZeroParamFn<>;
-        pause: ZeroParamFn<>;
+        play: ZeroParamFn<void>;
+        pause: ZeroParamFn<void>;
         seek: OneParamFn<double>;
         setVolume: OneParamFn<double>;
         setMuted: OneParamFn<boolean>;
         setPlaybackRate: OneParamFn<double>;
-        release: ZeroParamFn<>;
-        enterFullscreen: ZeroParamFn<>;
-        exitFullscreen: ZeroParamFn<>;
+        release: ZeroParamFn<void>;
+        enterFullscreen: ZeroParamFn<void>;
+        exitFullscreen: ZeroParamFn<void>;
         resumePlayer?: ResumePlayerFn;
         suspendPlayer?: SuspendPlayerFn;
     }
@@ -1013,6 +1013,8 @@ export default namespace webview {
         native setErrorPageEnabled(enable: boolean, includeSubframe: boolean): void;
         native getErrorPageEnabled(): boolean;
         native getSubframeErrorPageEnabled(): boolean;
+        native enableAutoReload(enable: boolean): void;
+        native isAutoReloadEnabled(): boolean;
         native getBlanklessInfoWithKey(key: string): BlanklessInfo;
         native setBlanklessLoadingWithKey(key: string, is_start: boolean): WebBlanklessErrorCode;
         native setBlanklessLoadingWithParams(key: string, param: BlanklessLoadingParam): WebBlanklessErrorCode;

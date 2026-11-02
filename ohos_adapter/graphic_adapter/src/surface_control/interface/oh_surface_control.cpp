@@ -30,18 +30,26 @@ namespace NWeb {
         } \
     } while (0)
 
-OH_SurfaceControl* SurfaceControlUtils::CreateSurfaceControlFromNativeWindow(OHNativeWindow* parent, const char* name)
+OH_SurfaceControl* SurfaceControlUtils::CreateContainerSurfaceControl(
+    OH_SurfaceTransaction* transaction, OHNativeWindow* parent, const char* name, bool inProcess)
 {
-    auto surface = SurfaceControl::CreateFromWindow(parent, name);
+    auto txn = reinterpret_cast<SurfaceTransaction*>(transaction);
+    if (txn) {
+        txn->SetBindSurfaceControl(true);
+        txn->SetInProcess(inProcess);
+    }
+    auto surface = SurfaceControl::CreateFromWindow(parent, name, txn ? txn->GetRSUIContext() : nullptr, inProcess);
     if (surface) {
         surface->IncStrongRef(nullptr);
     }
     return reinterpret_cast<OH_SurfaceControl*>(surface.GetRefPtr());
 }
 
-OH_SurfaceControl* SurfaceControlUtils::Create(const char* name)
+OH_SurfaceControl* SurfaceControlUtils::CreateChildSurfaceControl(
+    OH_SurfaceTransaction* transaction, const char* name, bool inProcess)
 {
-    auto surface = SurfaceControl::Create(name);
+    auto txn = reinterpret_cast<SurfaceTransaction*>(transaction);
+    auto surface = SurfaceControl::Create(name, txn ? txn->GetRSUIContext() : nullptr, inProcess);
     if (surface) {
         surface->IncStrongRef(nullptr);
     }
@@ -74,13 +82,12 @@ void SurfaceControlUtils::Transaction::Commit(OH_SurfaceTransaction* transaction
 }
 
 void SurfaceControlUtils::UpdateDelegateContainerNodeOnClient(uint64_t parentNodeId,
-    const std::shared_ptr<Rosen::RSUIContext>& rsUIContext, const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode,
-    bool isAddNode)
+    const std::shared_ptr<Rosen::RSSurfaceNode>& surfaceNode, bool isAddNode)
 {
     if (isAddNode) {
-        SurfaceControl::AddDelegateContainerNodeOnClient(parentNodeId, rsUIContext, surfaceNode);
+        SurfaceControl::AddDelegateContainerNodeOnClient(parentNodeId, surfaceNode);
     } else {
-        SurfaceControl::RemoveDelegateContainerNodeOnClient(parentNodeId, rsUIContext);
+        SurfaceControl::RemoveDelegateContainerNodeOnClient(parentNodeId);
     }
 }
 

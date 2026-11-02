@@ -26,6 +26,19 @@
 
 namespace OHOS::NWeb {
 
+class OHOS_NWEB_EXPORT NWebJsCallInfo {
+public:
+    virtual ~NWebJsCallInfo() = default;
+
+    virtual int32_t GetRoutingId() = 0;
+
+    virtual int32_t GetFrameChildId() = 0;
+
+    virtual int32_t GetObjectId() = 0;
+
+    virtual int GetFd() = 0;
+};
+
 class OHOS_NWEB_EXPORT NWebJavaScriptResultCallBack {
 public:
     NWebJavaScriptResultCallBack() = default;
@@ -71,6 +84,30 @@ public:
         std::shared_ptr<NWebHapValue> result) = 0;
 
     virtual void GetJavaScriptObjectMethodsV2(int32_t object_id, std::shared_ptr<NWebHapValue> result) = 0;
+
+    /* GetJavaScriptResultV3
+     *
+     * @param args: the JavaScript call args
+     * @param method: means the JavaScript method name
+     * @param object_name: means the JavaScript object name
+     * @param call_info: means the frame routing id, frame child id, object id and flowbuf fd
+     * @param result: means the JavaScript method execution result
+     */
+    virtual void GetJavaScriptResultV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+        const std::string& method, const std::string& object_name, std::shared_ptr<NWebJsCallInfo> call_info,
+        std::shared_ptr<NWebHapValue> result) = 0;
+
+    /* GetJavaScriptResultFlowbufV3
+     *
+     * @param args: the JavaScript call args
+     * @param method: means the JavaScript method name
+     * @param object_name: means the JavaScript object name
+     * @param call_info: means the frame routing id, frame child id, object id and flowbuf fd
+     * @param result: means the JavaScript method execution result
+     */
+    virtual void GetJavaScriptResultFlowbufV3(const std::vector<std::shared_ptr<NWebHapValue>>& args,
+        const std::string& method, const std::string& object_name, std::shared_ptr<NWebJsCallInfo> call_info,
+        std::shared_ptr<NWebHapValue> result) = 0;
 };
 
 } // namespace OHOS::NWeb

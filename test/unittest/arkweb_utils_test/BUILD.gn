@@ -72,9 +72,14 @@ ohos_unittest("share_relro_test") {
   configs = [ ":module_private_config" ]
 
   defines = [
+    "fork=ForkMock",
     "mmap=MmapMock",
     "unlink=UnlinkMock",
+    "open=OpenMock",
     "dlopen_ns_ext=DlopenNsExtMock",
+    "waitpid=WaitpidMock",
+    "fdsan_exchange_owner_tag=FdsanExchangeOwnerTagMock",
+    "fdsan_close_with_tag=FdsanCloseWithTagMock",
     "prctl=PrctlMock",
     "setuid=SetUidMock",
     "setgid=SetGidMock",
@@ -123,6 +128,9 @@ ohos_unittest("arkweb_preload_test") {
     "dlns_create=DlnsCreateMock",
     "dlns_get=DlnsGetMock",
     "dlns_inherit=DlnsInheritMock",
+    "ReserveAddressSpaceForPreload=ReserveAddressSpaceForPreloadMock",
+    "CreateRelroFileInSubProcAndWait=CreateRelroFileInSubProcAndWaitMock",
+    "LoadWithRelroFile=LoadWithRelroFileMock",
   ]
 
   deps = [

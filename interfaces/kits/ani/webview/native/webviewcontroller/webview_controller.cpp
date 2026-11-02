@@ -1183,7 +1183,7 @@ ErrCode WebviewController::HasImagesCallback(ani_vm *vm, ani_ref jsCallback)
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         std::vector<ani_ref> vec;
-        ani_ref errorValue = AniBusinessErrorError::CreateError(env, NWebError::INIT_ERROR);
+        ani_ref errorValue = AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
         ani_ref dataValue = nullptr;
         auto status = env->GetUndefined(&dataValue);
         if (status != ANI_OK) {
@@ -1236,7 +1236,7 @@ ErrCode WebviewController::HasImagesPromise(ani_vm *vm, ani_resolver deferred)
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         ani_ref jsResult = nullptr;
-        jsResult = AniBusinessErrorError::CreateError(env, NWebError::INIT_ERROR);
+        jsResult = AniBusinessError::CreateError(env, NWebError::INIT_ERROR);
         if (jsResult == nullptr) {
             return NWebError::INIT_ERROR;
         }
@@ -2419,6 +2419,25 @@ bool WebviewController::GetSubframeErrorPageEnabled()
     return nweb_ptr->GetSubframeErrorPageEnabled();
 }
 
+ErrCode WebviewController::SetAutoReloadEnabled(bool enable)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return INIT_ERROR;
+    }
+    nweb_ptr->SetAutoReloadEnabled(enable);
+    return NWebError::NO_ERROR;
+}
+
+bool WebviewController::GetAutoReloadEnabled()
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return false;
+    }
+    return nweb_ptr->GetAutoReloadEnabled();
+}
+
 int32_t WebviewController::GetBlanklessInfoWithKey(const std::string& key, double* similarity, int32_t* loadingTime)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
@@ -2554,7 +2573,7 @@ void WebviewController::UnregisterStateChangeCallback(ani_env *env, const std::s
     if (handler) {
         DeleteRegisterObj(env, iter->second, handler);
     } else {
-        WVLOG_D("UnregisterStateChangeCallback unregister all callback for type:%{public}s", type.c_str());
+        WVLOG_I("SubEvent op=off_all kit=ArkWeb event=%{public}s", type.c_str());
         DeleteAllRegisterObj(env, iter->second);
     }
 
@@ -2593,8 +2612,19 @@ void WebviewController::WaitForAttachedFinish(ani_env *env, arkts::concurrency_h
 
     if (param->resolver) {
         ani_enum enumType;
-        if (envUse->FindEnum("@ohos.web.webview.webview.ControllerAttachState", &enumType) != ANI_OK) {
-            WVLOG_E("WaitForAttachedFinish find enumType failed");
+        ani_status findStatus = envUse->FindEnum("@ohos.web.webview.webview.ControllerAttachState", &enumType);
+        if (findStatus != ANI_OK) {
+            WVLOG_E("WaitForAttachedFinish find enumType failed, status = %{public}d", findStatus);
+            // FindEnum 失败后拒绝 promise 并清理，避免使用未初始化的 enumType（未定义行为）及 promise 永久挂起
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, static_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
+            envUse->DestroyLocalScope();
+            DeleteAsyncWork(envUse, param->asyncWork);
+            delete param;
+            param = nullptr;
+            return;
         }
 
         ani_enum_item result = nullptr;
@@ -2602,10 +2632,18 @@ void WebviewController::WaitForAttachedFinish(ani_env *env, arkts::concurrency_h
         if ((rst = envUse->Enum_GetEnumItemByIndex(enumType, param->state, &result)) != ANI_OK) {
             WVLOG_E("WaitForAttachedFinish convert attachState(%{public}d) failed, rst = %{public}d", param->state,
                 rst);
-        }
-
-        if ((rst = envUse->PromiseResolver_Resolve(param->resolver, result)) != ANI_OK) {
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, static_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
+        } else if ((rst = envUse->PromiseResolver_Resolve(param->resolver, result)) != ANI_OK) {
             WVLOG_E("WaitForAttachedFinish resolve promise failed, rst = %{public}d", rst);
+            // Resolve 失败时 promise 仍处于 pending，补充 reject 避免 promise 永久挂起；
+            // 若 reject 亦失败（promise 已 settle）仅记录日志，无副作用
+            ani_ref jsError = AniBusinessError::CreateError(envUse, INIT_ERROR);
+            if (envUse->PromiseResolver_Reject(param->resolver, static_cast<ani_error>(jsError)) != ANI_OK) {
+                WVLOG_E("WaitForAttachedFinish reject promise failed");
+            }
         }
     }
 

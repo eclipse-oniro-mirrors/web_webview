@@ -110,6 +110,9 @@ int64_t g_preTimeStamp = 0;
 pid_t g_lastRenderPid = INVALID_PID;
 int64_t g_lastRenderStatus = INVALID_NUMBER_INT64;
 bool g_siteIsolationMode = false;
+bool g_isPreloadNWeb = false;
+
+constexpr int32_t PRELOAD_RENDER_SCENE_ID = 1010;
 
 std::string GetUidString()
 {
@@ -519,5 +522,25 @@ bool ResSchedClientAdapter::ReportSubwindowCall(ResSchedStatusAdapter statusAdap
     ResSchedClient::GetInstance().ReportData(resType, status, mapPayload);
 
     return true;
+}
+
+bool ResSchedClientAdapter::ReportNWebPreloadRenderProcess(pid_t pid)
+{
+    if (!g_isPreloadNWeb || (pid <= 0)) {
+        return false;
+    }
+    std::unordered_map<std::string, std::string> scenePayload{{UID, GetUidString()},
+                                                              {PID, std::to_string(pid)},
+                                                              {SCENE_ID, std::to_string(PRELOAD_RENDER_SCENE_ID)}};
+    ResSchedClient::GetInstance().ReportData(
+        ResType::RES_TYPE_REPORT_SCENE_SCHED, ResType::SceneControl::SCENE_IN, scenePayload);
+    WVLOG_I("Report PRELOAD_RENDER_SCENE, pid:%{public}d", pid);
+    return true;
+}
+ 
+void ResSchedClientAdapter::ReportPreloadNWebCreate(bool isPreloadNWeb)
+{
+    g_isPreloadNWeb = isPreloadNWeb;
+    WVLOG_D("ReportIsPreload g_isPreloadNWeb: %{public}d", isPreloadNWeb);
 }
 } // namespace OHOS::NWeb

@@ -394,4 +394,15 @@ int32_t ArkSystemPropertiesAdapterWrapper::GetRenderProcessMode()
     int32_t result = ctocpp_->GetRenderProcessMode();
     return result;
 }
+
+std::string ArkSystemPropertiesAdapterWrapper::GetPartialDraw()
+{
+    if (!ctocpp_) {
+        return "";
+    }
+    ArkWebString str = ctocpp_->GetPartialDraw();
+    std::string result = ArkWebStringStructToClass(str);
+    ArkWebStringStructRelease(str);
+    return result;
+}
 } // namespace OHOS::ArkWeb

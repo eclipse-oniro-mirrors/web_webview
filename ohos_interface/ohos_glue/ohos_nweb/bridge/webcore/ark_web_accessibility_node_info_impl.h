@@ -148,6 +148,22 @@ public:
 
     ArkWebString GetRemoveText() override;
 
+    int32_t GetZIndex() override;
+
+    int32_t GetFontSize() override;
+
+    int32_t GetImageRendering() override;
+
+    int32_t GetBgSizeType() override;
+
+    uint32_t GetBgColor() override;
+
+    bool GetCssVisible() override;
+
+    ArkWebString GetBgImg() override;
+
+    ArkWebString GetBgSize() override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWebAccessibilityNodeInfo> nweb_accessibility_node_info_;
 };

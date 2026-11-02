@@ -18,6 +18,7 @@
 #pragma once
 
 #include "include/nweb_handler.h"
+#include "include/nweb_javascript_result_callback.h"
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
 
 namespace OHOS::ArkWeb {

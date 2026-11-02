@@ -2425,6 +2425,40 @@ public:
     virtual double GetZoomFactor() = 0;
 
     /**
+     * @brief Set whether enable automatic reload of network error pages.
+     *
+     * @param enable bool: Whether enable automatic reload of error pages.
+     */
+    /*--ark web()--*/
+    virtual void SetAutoReloadEnabled(bool enable) = 0;
+
+    /**
+     * @brief Get whether automatic reload of error pages is enabled.
+     */
+    /*--ark web()--*/
+    virtual bool GetAutoReloadEnabled() = 0;
+
+    /**
+     * @brief Set the maximum initial velocity at the start of the fling animation.
+     *
+     * @param speed_limit Maximum initial velocity in vp/s.
+     */
+    /*--ark web()--*/
+    virtual void SetFlingSpeedLimit(float speed_limit) = 0;
+
+    /* CallH5FunctionV3
+     *
+     * @param routing_id       int32_t: the h5 frame routing id
+     * @param frame_child_id   int32_t: the h5 frame child id
+     * @param h5_object_id     int32_t: the h5 side object id
+     * @param h5_method_name   string:  the h5 side object method name
+     * @param args             vector<shared_ptr<NWebRomValue>>: the call args
+     */
+    /*--ark web()--*/
+    virtual bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
+        const ArkWebString& h5_method_name, const ArkWebRomValueVector& args) = 0;
+
+    /**
      * @brief Set user data for the current navigation entry.
      */
     /*--ark web()--*/
