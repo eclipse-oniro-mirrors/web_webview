@@ -1091,7 +1091,7 @@ export default namespace webview {
             }
             return target;
         }
-        native getLastPostMessageURL(): string;
+        native getLastPostMessageUrl(): string;
         native setZoomFactor(zoomFactor: double): void;
         native getZoomFactor(): double;
     }

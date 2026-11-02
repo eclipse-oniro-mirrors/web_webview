@@ -499,7 +499,7 @@ public:
 
     std::shared_ptr<NWebUserAgentMetadata> GetUserAgentMetadata(const std::string& userAgent);
 
-    std::string GetLastPostMessageURL();
+    std::string GetLastPostMessageUrl();
 
     ErrCode SetZoomFactor(double factor);
 

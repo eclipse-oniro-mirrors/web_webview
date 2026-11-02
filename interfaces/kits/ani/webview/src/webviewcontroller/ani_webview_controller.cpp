@@ -7752,7 +7752,7 @@ static ani_boolean IsActiveWebEngineEvergreen(ani_env *env, ani_object object)
     return ANI_TRUE;
 }
 
-static ani_string GetLastPostMessageURL(ani_env *env, ani_object object)
+static ani_string GetLastPostMessageUrl(ani_env *env, ani_object object)
 {
     ani_string lastPostMessageUrl = nullptr;
 
@@ -7767,7 +7767,7 @@ static ani_string GetLastPostMessageURL(ani_env *env, ani_object object)
         return lastPostMessageUrl;
     }
 
-    std::string result = controller->GetLastPostMessageURL();
+    std::string result = controller->GetLastPostMessageUrl();
     env->String_NewUTF8(result.c_str(), result.size(), &lastPostMessageUrl);
 
     return lastPostMessageUrl;
@@ -8012,7 +8012,7 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "setWebDetach", nullptr, reinterpret_cast<void *>(SetWebDetach) },
         ani_native_function { "setUserAgentMetadata", nullptr, reinterpret_cast<void*>(SetUserAgentMetadata) },
         ani_native_function { "getUserAgentMetadata", nullptr, reinterpret_cast<void*>(GetUserAgentMetadata) },
-        ani_native_function { "getLastPostMessageURL", nullptr, reinterpret_cast<void *>(GetLastPostMessageURL) },
+        ani_native_function { "getLastPostMessageUrl", nullptr, reinterpret_cast<void *>(GetLastPostMessageUrl) },
         ani_native_function { "innerGetWebDebuggingAccess", nullptr,
                               reinterpret_cast<void *>(InnerGetWebDebuggingAccess) },
         ani_native_function { "innerGetWebDebuggingPort", nullptr, reinterpret_cast<void *>(InnerGetWebDebuggingPort) },

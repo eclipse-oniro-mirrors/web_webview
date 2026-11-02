@@ -1856,9 +1856,9 @@ void ArkWebNWebImpl::GetImageInfosByUrls(const ArkWebStringVector &imageUrls,
                                     std::make_shared<ArkWebImageInfoCallbackWrapper>(callback));
 }
 
-ArkWebString ArkWebNWebImpl::GetLastPostMessageURL()
+ArkWebString ArkWebNWebImpl::GetLastPostMessageUrl()
 {
-    return ArkWebStringClassToStruct(nweb_nweb_->GetLastPostMessageURL());
+    return ArkWebStringClassToStruct(nweb_nweb_->GetLastPostMessageUrl());
 }
 
 ArkWebRefPtr<ArkWebCommandActionManager> ArkWebNWebImpl::GetCommandActionManager()

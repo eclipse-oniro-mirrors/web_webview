@@ -2074,7 +2074,7 @@ public:
      * @return the url of frame that sent the last postMessage to native application.
      *         Return empty string if no postMessage has been called.
      */
-    ArkWebString GetLastPostMessageURL() override;
+    ArkWebString GetLastPostMessageUrl() override;
 
     /**
      * @brief Get the ArkWebCommandActionManager for command action operations.

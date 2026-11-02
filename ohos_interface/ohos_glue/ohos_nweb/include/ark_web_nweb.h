@@ -2334,7 +2334,7 @@ public:
      * @return the url of frame that sent the last postMessage to native application.
      */
     /*--ark web()--*/
-    virtual ArkWebString GetLastPostMessageURL() = 0;
+    virtual ArkWebString GetLastPostMessageUrl() = 0;
 
     /**
      * @brief Get the ArkWebCommandActionManager for command action operations.

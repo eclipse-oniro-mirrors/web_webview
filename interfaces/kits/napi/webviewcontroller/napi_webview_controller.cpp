@@ -903,7 +903,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
             "getUserAgentClientHintsEnabled", NapiWebviewController::GetUserAgentClientHintsEnabled),
         DECLARE_NAPI_FUNCTION("setUserAgentMetadata", NapiWebviewController::SetUserAgentMetadata),
         DECLARE_NAPI_FUNCTION("getUserAgentMetadata", NapiWebviewController::GetUserAgentMetadata),
-        DECLARE_NAPI_FUNCTION("getLastPostMessageURL", NapiWebviewController::GetLastPostMessageURL),
+        DECLARE_NAPI_FUNCTION("getLastPostMessageUrl", NapiWebviewController::GetLastPostMessageUrl),
         DECLARE_NAPI_FUNCTION("setZoomFactor", NapiWebviewController::SetZoomFactor),
         DECLARE_NAPI_FUNCTION("getZoomFactor", NapiWebviewController::GetZoomFactor),
     };
@@ -9019,7 +9019,7 @@ napi_value NapiWebviewController::GetUserAgentMetadata(napi_env env, napi_callba
     return GetUserAgentMetadataObject(env, metadata);
 }
 
-napi_value NapiWebviewController::GetLastPostMessageURL(napi_env env, napi_callback_info info)
+napi_value NapiWebviewController::GetLastPostMessageUrl(napi_env env, napi_callback_info info)
 {
     napi_value result = nullptr;
     WebviewController *webviewController = GetWebviewController(env, info);
@@ -9027,7 +9027,7 @@ napi_value NapiWebviewController::GetLastPostMessageURL(napi_env env, napi_callb
         return nullptr;
     }
 
-    std::string lastPostMessageUrl = webviewController->GetLastPostMessageURL();
+    std::string lastPostMessageUrl = webviewController->GetLastPostMessageUrl();
     napi_create_string_utf8(env, lastPostMessageUrl.c_str(), lastPostMessageUrl.length(), &result);
     return result;
 }

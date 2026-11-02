@@ -2555,7 +2555,7 @@ public:
      * @return the url of frame that sent the last postMessage to native application.
      *         Return empty string if no postMessage has been called.
      */
-    virtual std::string GetLastPostMessageURL()
+    virtual std::string GetLastPostMessageUrl()
     {
         return "";
     }
