@@ -879,6 +879,10 @@ public:
      * @param param The parameter map containing video status details.
      */
     void OnVideoStatusChanged(const int action, const ArkWebStringMap &param) override;
+
+    void OnMonitoredBlankScreen(
+        const ArkWebString& url, int32_t reason,
+        const ArkWebString& extraMsg) override;
 private:
     std::shared_ptr<OHOS::NWeb::NWebHandler> nweb_handler_;
 };
