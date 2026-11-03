@@ -3502,7 +3502,7 @@ static void SetCustomUserAgent(ani_env* env, ani_object object, ani_object userA
     }
 }
 
-WEBVIEW_ANI_STATIC void SetNavigationEntryUserData(ani_env* env, ani_object object, ani_object keyObj, 
+WEBVIEW_ANI_STATIC void SetNavigationEntryUserData(ani_env* env, ani_object object, ani_object keyObj,
     ani_object valueObj)
 {
     if (!env) {
