@@ -544,11 +544,11 @@ public:
 
     void SetDevicePermissionDelegate(WebDevicePermissionDelegate *delegate);
 
-    void RevokeDevicePermissions(NWebHardwareType hardwareType, const std::string& origin,
-        bool isIncognito, std::shared_ptr<NWebDeviceIdentifier> device);
+    void RevokeDevicePermissions(NWebDevicePermissionHardwareType hardwareType, const std::string& origin,
+        const NWebDevicePermissionDeviceIdentifier& device, bool hasDevice, bool isIncognito);
 
-    void SetGuardPolicy(NWebHardwareType hardwareType, NWebDeviceGuardPolicy policy,
-        const std::string& origin, bool isIncognito);
+    void SetGuardPolicy(NWebDevicePermissionHardwareType hardwareType,
+        NWebDevicePermissionGuardPolicy policy, const std::string& origin, bool isIncognito);
 
 private:
     int ConverToWebHitTestType(int hitType);

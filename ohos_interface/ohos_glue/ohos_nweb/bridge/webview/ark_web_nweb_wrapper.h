@@ -2138,6 +2138,17 @@ public:
 
     void SetFlingSpeedLimit(float speed_limit) override;
 
+    void SetDevicePermissionDelegate(
+        std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> delegate) override;
+
+    void RevokeDevicePermissions(OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+        const std::string& origin, const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device,
+        bool has_device, bool is_incognito) override;
+
+    void SetGuardPolicy(OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+        OHOS::NWeb::NWebDevicePermissionGuardPolicy policy, const std::string& origin,
+        bool is_incognito) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

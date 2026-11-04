@@ -2902,19 +2902,20 @@ void WebviewController::SetDevicePermissionDelegate(WebDevicePermissionDelegate 
     nweb_ptr->SetDevicePermissionDelegate(delegatePtr);
 }
 
-void WebviewController::RevokeDevicePermissions(NWebHardwareType hardwareType, const std::string& origin,
-    bool isIncognito, std::shared_ptr<NWebDeviceIdentifier> device)
+void WebviewController::RevokeDevicePermissions(NWebDevicePermissionHardwareType hardwareType,
+    const std::string& origin, const NWebDevicePermissionDeviceIdentifier& device,
+    bool hasDevice, bool isIncognito)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {
         WVLOG_E("RevokeDevicePermissions nweb is null");
         return;
     }
-    nweb_ptr->RevokeDevicePermissions(hardwareType, origin, isIncognito, device);
+    nweb_ptr->RevokeDevicePermissions(hardwareType, origin, device, hasDevice, isIncognito);
 }
 
-void WebviewController::SetGuardPolicy(NWebHardwareType hardwareType, NWebDeviceGuardPolicy policy,
-    const std::string& origin, bool isIncognito)
+void WebviewController::SetGuardPolicy(NWebDevicePermissionHardwareType hardwareType,
+    NWebDevicePermissionGuardPolicy policy, const std::string& origin, bool isIncognito)
 {
     auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
     if (!nweb_ptr) {

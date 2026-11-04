@@ -46,7 +46,7 @@
 #include "nweb_print_manager_adapter.h"
 #include "nweb_blankless_callback.h"
 #include "nweb_user_agent_metadata.h"
-#include "nweb_device_permission.h"
+#include "nweb_device_permission_delegate.h"
 
 namespace OHOS::NWeb {
 
@@ -2734,24 +2734,26 @@ public:
     /**
      * @brief Revoke device permissions with different granularity.
      *
-     * @param hardwareType The hardware device type.
-     * @param origin The web origin to revoke permissions for. If empty, revoke all origins.
-     * @param isIncognito Whether the permission is in incognito mode.
-     * @param device The device to revoke. If null, revoke all devices.
+     * @param hardware_type The hardware device type.
+     * @param origin The web origin to revoke permissions for. Empty means all origins.
+     * @param device The device to revoke. Valid only when has_device is true.
+     * @param has_device Whether the device filter is specified.
+     * @param is_incognito Whether the permission is in incognito mode.
      */
-    virtual void RevokeDevicePermissions(NWebHardwareType hardwareType, const std::string& origin,
-        bool isIncognito, std::shared_ptr<NWebDeviceIdentifier> device) {}
+    virtual void RevokeDevicePermissions(NWebDevicePermissionHardwareType hardware_type,
+        const std::string& origin, const NWebDevicePermissionDeviceIdentifier& device,
+        bool has_device, bool is_incognito) {}
 
     /**
      * @brief Set device permission guard policy.
      *
-     * @param hardwareType The hardware device type.
+     * @param hardware_type The hardware device type.
      * @param policy The guard policy.
-     * @param origin The web origin to set policy for. If empty, set global policy.
-     * @param isIncognito Whether the policy is for incognito mode.
+     * @param origin The web origin to set policy for. Empty means the global policy.
+     * @param is_incognito Whether the policy is for incognito mode.
      */
-    virtual void SetGuardPolicy(NWebHardwareType hardwareType, NWebDeviceGuardPolicy policy,
-        const std::string& origin, bool isIncognito) {}
+    virtual void SetGuardPolicy(NWebDevicePermissionHardwareType hardware_type,
+        NWebDevicePermissionGuardPolicy policy, const std::string& origin, bool is_incognito) {}
 };
 } // namespace OHOS::NWeb
 

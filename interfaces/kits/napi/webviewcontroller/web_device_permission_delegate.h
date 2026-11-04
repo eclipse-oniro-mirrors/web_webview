@@ -22,62 +22,26 @@
 #include "napi/native_api.h"
 #include "napi/native_common.h"
 #include "napi/native_node_api.h"
-#include "nweb_device_permission.h"
-#include "auto_napi_ref.h"
+#include "nweb_device_permission_delegate.h"
 
 namespace OHOS {
 namespace NWeb {
 
-class NWebDeviceIdentifierImpl : public NWebDeviceIdentifier {
+class NapiDevicePermissionRequest {
 public:
-    NWebDeviceIdentifierImpl() = default;
-    ~NWebDeviceIdentifierImpl() override = default;
+    NapiDevicePermissionRequest() = default;
+    ~NapiDevicePermissionRequest() = default;
 
-    int32_t GetVendorId() override
-    {
-        return vendorId_;
-    }
+    NWebDevicePermissionRequest request_;
+    std::shared_ptr<NWebDevicePermissionResultCallback> callback_;
+};
 
-    int32_t GetProductId() override
-    {
-        return productId_;
-    }
+class NapiDevicePermissionEvent {
+public:
+    NapiDevicePermissionEvent() = default;
+    ~NapiDevicePermissionEvent() = default;
 
-    std::string GetDeviceKey() override
-    {
-        return deviceKey_;
-    }
-
-    std::string GetDeviceName() override
-    {
-        return deviceName_;
-    }
-
-    void SetVendorId(int32_t vendorId)
-    {
-        vendorId_ = vendorId;
-    }
-
-    void SetProductId(int32_t productId)
-    {
-        productId_ = productId;
-    }
-
-    void SetDeviceKey(const std::string& deviceKey)
-    {
-        deviceKey_ = deviceKey;
-    }
-
-    void SetDeviceName(const std::string& deviceName)
-    {
-        deviceName_ = deviceName;
-    }
-
-private:
-    int32_t vendorId_ = 0;
-    int32_t productId_ = 0;
-    std::string deviceKey_;
-    std::string deviceName_;
+    std::shared_ptr<NWebDevicePermissionEventCallback> callback_;
 };
 
 class WebDevicePermissionDelegate : public NWebDevicePermissionDelegate {
@@ -85,17 +49,16 @@ public:
     explicit WebDevicePermissionDelegate(napi_env env);
     ~WebDevicePermissionDelegate() override;
 
-    void OnQueryDevicePermissionOrigins(
-        std::shared_ptr<NWebDevicePermissionOriginsEvent> event) override;
+    void OnQueryDevicePermission(std::shared_ptr<NWebDevicePermissionEventCallback> callback) override;
 
-    void OnPermissionRevoked(
-        std::shared_ptr<NWebDevicePermissionRevokedEvent> event) override;
+    void OnPermissionRevoked(const NWebDevicePermissionRevokedEvent& event) override;
 
-    void OnDevicePicker(std::shared_ptr<NWebDevicePermissionRequest> request) override;
+    void OnDevicePicker(const NWebDevicePermissionRequest& request,
+        std::shared_ptr<NWebDevicePermissionResultCallback> callback) override;
 
-    void OnDeviceListUpdated(std::shared_ptr<NWebDeviceListUpdateEvent> event) override;
+    void OnDeviceListUpdated(const NWebDevicePermissionListUpdateEvent& event) override;
 
-    void PutOnQueryDevicePermissionOrigins(napi_env env, napi_value callback);
+    void PutOnQueryDevicePermission(napi_env env, napi_value callback);
     void PutOnPermissionRevoked(napi_env env, napi_value callback);
     void PutOnDevicePicker(napi_env env, napi_value callback);
     void PutOnDeviceListUpdated(napi_env env, napi_value callback);
@@ -105,15 +68,19 @@ public:
         return env_;
     }
 
-    napi_ref delegate_ = nullptr;
-
 private:
     napi_env env_ = nullptr;
-    napi_ref on_query_origins_callback_ = nullptr;
+    napi_ref on_query_permission_callback_ = nullptr;
     napi_ref on_permission_revoked_callback_ = nullptr;
     napi_ref on_device_picker_callback_ = nullptr;
     napi_ref on_device_list_updated_callback_ = nullptr;
 };
+
+napi_value CreateDeviceIdentifierJsObject(napi_env env,
+    const NWebDevicePermissionDeviceIdentifier& device);
+
+bool ParseDeviceIdentifier(napi_env env, napi_value value,
+    NWebDevicePermissionDeviceIdentifier& device);
 
 class NapiWebDevicePermissionDelegate {
 public:
@@ -121,7 +88,7 @@ public:
     ~NapiWebDevicePermissionDelegate() = default;
 
     static napi_value JsConstructor(napi_env env, napi_callback_info info);
-    static napi_value OnQueryDevicePermissionOrigins(napi_env env, napi_callback_info info);
+    static napi_value OnQueryDevicePermission(napi_env env, napi_callback_info info);
     static napi_value OnPermissionRevoked(napi_env env, napi_callback_info info);
     static napi_value OnDevicePicker(napi_env env, napi_callback_info info);
     static napi_value OnDeviceListUpdated(napi_env env, napi_callback_info info);
