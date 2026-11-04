@@ -352,7 +352,7 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
         float volume = 0.8;
         retNum = g_audioRender->SetVolume(volume);
         EXPECT_EQ(retNum, RESULT_OK);
-        float nowVolume = g_audioRender->GetVolume();
+        g_audioRender->GetVolume();
         retNum = g_audioRender->SetAudioRendererCallback(nullptr);
         EXPECT_NE(retNum, 0);
         std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackMock>();
