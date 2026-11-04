@@ -146,6 +146,12 @@ private:
 
     static napi_value SetCustomUserAgent(napi_env env, napi_callback_info info);
 
+    static napi_value SetNavigationEntryUserData(napi_env env, napi_callback_info info);
+
+    static napi_value GetNavigationEntryUserData(napi_env env, napi_callback_info info);
+
+    static napi_value RemoveNavigationEntryUserData(napi_env env, napi_callback_info info);
+
     static napi_value GetTitle(napi_env env, napi_callback_info info);
 
     static napi_value GetProgress(napi_env env, napi_callback_info info);

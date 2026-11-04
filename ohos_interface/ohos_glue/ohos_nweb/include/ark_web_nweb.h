@@ -2457,6 +2457,26 @@ public:
     /*--ark web()--*/
     virtual bool CallH5FunctionV3(int32_t routing_id, int32_t frame_child_id, int32_t h5_object_id,
         const ArkWebString& h5_method_name, const ArkWebRomValueVector& args) = 0;
+
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    /*--ark web()--*/
+    virtual void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) = 0;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetNavigationEntryUserData(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    /*--ark web()--*/
+    virtual void RemoveNavigationEntryUserData(const ArkWebString& key) = 0;
 };
 
 } // namespace OHOS::ArkWeb
