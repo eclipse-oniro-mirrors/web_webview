@@ -36,6 +36,7 @@
 
 #include "web_scheme_handler.h"
 #include "webview_value.h"
+#include "web_device_permission_delegate.h"
 
 namespace OHOS {
 namespace NWeb {
@@ -540,6 +541,14 @@ public:
     ErrCode SetZoomFactor(double factor);
 
     ErrCode GetZoomFactor(double& factor);
+
+    void SetDevicePermissionDelegate(WebDevicePermissionDelegate *delegate);
+
+    void RevokeDevicePermissions(NWebHardwareType hardwareType, const std::string& origin,
+        bool isIncognito, std::shared_ptr<NWebDeviceIdentifier> device);
+
+    void SetGuardPolicy(NWebHardwareType hardwareType, NWebDeviceGuardPolicy policy,
+        const std::string& origin, bool isIncognito);
 
 private:
     int ConverToWebHitTestType(int hitType);

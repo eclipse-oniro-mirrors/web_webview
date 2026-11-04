@@ -2889,5 +2889,39 @@ ErrCode WebviewController::GetZoomFactor(double& factor)
 
     return NWebError::NO_ERROR;
 }
+
+void WebviewController::SetDevicePermissionDelegate(WebDevicePermissionDelegate *delegate)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr || !delegate) {
+        WVLOG_E("SetDevicePermissionDelegate nweb or delegate is null");
+        return;
+    }
+    std::shared_ptr<NWebDevicePermissionDelegate> delegatePtr(delegate,
+        [](WebDevicePermissionDelegate *) {});
+    nweb_ptr->SetDevicePermissionDelegate(delegatePtr);
+}
+
+void WebviewController::RevokeDevicePermissions(NWebHardwareType hardwareType, const std::string& origin,
+    bool isIncognito, std::shared_ptr<NWebDeviceIdentifier> device)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        WVLOG_E("RevokeDevicePermissions nweb is null");
+        return;
+    }
+    nweb_ptr->RevokeDevicePermissions(hardwareType, origin, isIncognito, device);
+}
+
+void WebviewController::SetGuardPolicy(NWebHardwareType hardwareType, NWebDeviceGuardPolicy policy,
+    const std::string& origin, bool isIncognito)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        WVLOG_E("SetGuardPolicy nweb is null");
+        return;
+    }
+    nweb_ptr->SetGuardPolicy(hardwareType, policy, origin, isIncognito);
+}
 } // namespace NWeb
 } // namespace OHOS
