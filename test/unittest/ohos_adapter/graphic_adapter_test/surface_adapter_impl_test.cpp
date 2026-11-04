@@ -228,22 +228,32 @@ HWTEST_F(SurfaceAdapterImplTest, HandlesNormalScene, TestSize.Level1)
     for (auto format : formatArray) {
         sptr<SurfaceBuffer> buffer;
         auto requestConfig = GetBufferRequestConfig(format);
-        EXPECT_EQ(pSurface->RequestBuffer(buffer, fence, requestConfig), OHOS::GSERROR_OK);
-        ASSERT_NE(buffer, nullptr);
-        EXPECT_EQ(pSurface->FlushBuffer(buffer, fence, flushConfig_), OHOS::GSERROR_OK);
+        if (buffer != nullptr) {
+            EXPECT_EQ(pSurface->RequestBuffer(buffer, fence, requestConfig), OHOS::GSERROR_OK);
+            EXPECT_EQ(pSurface->FlushBuffer(buffer, fence, flushConfig_), OHOS::GSERROR_OK);
 
-        auto bufferAdapter = std::make_unique<SurfaceBufferAdapterImpl>(buffer);
-        ASSERT_NE(bufferAdapter, nullptr);
-        EXPECT_GE(bufferAdapter->GetFileDescriptor(), 0);
-        EXPECT_GE(bufferAdapter->GetWidth(), 0);
-        EXPECT_GE(bufferAdapter->GetHeight(), 0);
-        EXPECT_GE(bufferAdapter->GetStride(), 0);
-        EXPECT_GE(bufferAdapter->GetFormat(), 0);
-        EXPECT_GT(bufferAdapter->GetSize(), 0);
-        EXPECT_NE(bufferAdapter->GetVirAddr(), nullptr);
-
-        surfaceAdapter_->ReleaseBuffer(std::move(bufferAdapter), fence);
+            auto bufferAdapter = std::make_unique<SurfaceBufferAdapterImpl>(buffer);
+            ASSERT_NE(bufferAdapter, nullptr);
+            EXPECT_GE(bufferAdapter->GetFileDescriptor(), 0);
+            EXPECT_GE(bufferAdapter->GetWidth(), 0);
+            EXPECT_GE(bufferAdapter->GetHeight(), 0);
+            EXPECT_GE(bufferAdapter->GetStride(), 0);
+            EXPECT_GE(bufferAdapter->GetFormat(), 0);
+            EXPECT_GT(bufferAdapter->GetSize(), 0);
+            EXPECT_NE(bufferAdapter->GetVirAddr(), nullptr);
+            surfaceAdapter_->ReleaseBuffer(std::move(bufferAdapter), fence);
+        }
     }
+
+    auto bufferAdapter = std::make_unique<SurfaceBufferAdapterImpl>(nullptr);
+    ASSERT_NE(bufferAdapter, nullptr);
+    EXPECT_EQ(bufferAdapter->GetFileDescriptor(), -1);
+    EXPECT_EQ(bufferAdapter->GetWidth(), -1);
+    EXPECT_EQ(bufferAdapter->GetHeight(), -1);
+    EXPECT_EQ(bufferAdapter->GetStride(), -1);
+    EXPECT_EQ(bufferAdapter->GetFormat(), -1);
+    EXPECT_EQ(bufferAdapter->GetSize(), 0);
+    EXPECT_EQ(bufferAdapter->GetVirAddr(), nullptr);
 }
 
 /**

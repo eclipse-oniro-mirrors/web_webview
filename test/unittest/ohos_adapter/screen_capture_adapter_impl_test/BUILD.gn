@@ -30,6 +30,12 @@ ohos_unittest("screen_capture_adapter_impl_test") {
 
   configs = [ ":module_private_config" ]
 
+  sanitize = {
+    cfi = true
+    cfi_cross_dso = true
+    debug = false
+  }
+
   deps = [ "$webview_path/ohos_adapter:nweb_ohos_adapter" ]
 
   deps += [
