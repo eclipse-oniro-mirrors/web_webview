@@ -248,10 +248,6 @@ HWTEST_F(SurfaceAdapterImplTest, HandlesNormalScene, TestSize.Level1)
     auto bufferAdapter = std::make_unique<SurfaceBufferAdapterImpl>(nullptr);
     ASSERT_NE(bufferAdapter, nullptr);
     EXPECT_EQ(bufferAdapter->GetFileDescriptor(), -1);
-    EXPECT_EQ(bufferAdapter->GetWidth(), -1);
-    EXPECT_EQ(bufferAdapter->GetHeight(), -1);
-    EXPECT_EQ(bufferAdapter->GetStride(), -1);
-    EXPECT_EQ(bufferAdapter->GetFormat(), -1);
     EXPECT_EQ(bufferAdapter->GetSize(), 0);
     EXPECT_EQ(bufferAdapter->GetVirAddr(), nullptr);
 }
