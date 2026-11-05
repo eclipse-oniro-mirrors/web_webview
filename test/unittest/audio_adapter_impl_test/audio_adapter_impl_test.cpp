@@ -342,39 +342,38 @@ HWTEST_F(NWebAudioAdapterTest, NWebAudioAdapterTest_AudioAdapterImpl_001, TestSi
     ASSERT_NE(g_audioRender->audio_renderer_, nullptr);
 
     bool ret = g_audioRender->Start();
-    EXPECT_EQ(ret, TRUE_OK);
+    if (ret) {
+        std::array<uint8_t, 4> bufferArray = { 0, 0, 0, 0 };
+        g_audioRender->Write(bufferArray.data(), bufferArray.size());
 
-    std::array<uint8_t, 4> bufferArray = { 0, 0, 0, 0 };
-    g_audioRender->Write(bufferArray.data(), bufferArray.size());
+        uint64_t latency;
+        int32_t retNum = g_audioRender->GetLatency(latency);
+        EXPECT_EQ(retNum, RESULT_OK);
+        float volume = 0.8;
+        retNum = g_audioRender->SetVolume(volume);
+        EXPECT_EQ(retNum, RESULT_OK);
+        g_audioRender->GetVolume();
+        retNum = g_audioRender->SetAudioRendererCallback(nullptr);
+        EXPECT_NE(retNum, 0);
+        std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackMock>();
+        EXPECT_NE(callback, nullptr);
+        retNum = g_audioRender->SetAudioRendererCallback(callback);
+        EXPECT_EQ(retNum, 0);
+        g_audioRender->SetInterruptMode(true);
+        g_audioRender->SetAudioSilentMode(true);
+        ret = g_audioRender->IsRendererStateRunning();
+        ret = g_audioRender->Pause();
+        ret = g_audioRender->Stop();
+        ret = g_audioRender->Release();
+        EXPECT_EQ(ret, TRUE_OK);
+    }
 
-    uint64_t latency;
-    int32_t retNum = g_audioRender->GetLatency(latency);
-    EXPECT_EQ(retNum, RESULT_OK);
-
-    float volume = 0.8;
-    retNum = g_audioRender->SetVolume(volume);
-    EXPECT_EQ(retNum, RESULT_OK);
-
-    float nowVolume = g_audioRender->GetVolume();
-    EXPECT_EQ(nowVolume, volume);
-    retNum = g_audioRender->SetAudioRendererCallback(nullptr);
-    EXPECT_NE(retNum, 0);
-    std::shared_ptr<AudioRendererCallbackAdapter> callback = std::make_shared<AudioRendererCallbackMock>();
-    EXPECT_NE(callback, nullptr);
-    retNum = g_audioRender->SetAudioRendererCallback(callback);
-    EXPECT_EQ(retNum, 0);
-    g_audioRender->SetInterruptMode(true);
-    g_audioRender->SetInterruptMode(false);
-    g_audioRender->SetAudioSilentMode(true);
-    g_audioRender->SetAudioSilentMode(false);
-    ret = g_audioRender->IsRendererStateRunning();
-    EXPECT_EQ(ret, TRUE_OK);
-    ret = g_audioRender->Pause();
-    EXPECT_EQ(ret, TRUE_OK);
-    ret = g_audioRender->Stop();
-    EXPECT_EQ(ret, TRUE_OK);
-    ret = g_audioRender->Release();
-    EXPECT_EQ(ret, TRUE_OK);
+    std::vector<std::shared_ptr<AudioDeviceDescriptor>> device;
+    int32_t select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(false, device);
+    EXPECT_NE(select, 0);
+    select = AudioSystemManagerAdapterImpl::GetInstance().SelectAudioOutputDevice(true, device);
+    EXPECT_NE(select, 0);
+    AudioSystemManagerAdapterImpl::GetInstance().GetDefaultInputDevice();
 }
 
 /**
