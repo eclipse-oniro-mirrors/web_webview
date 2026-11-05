@@ -36,6 +36,7 @@
 #include "ohos_nweb/bridge/ark_web_keyboard_event_impl.h"
 #include "ohos_nweb/bridge/ark_web_message_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_mouse_event_impl.h"
+#include "ohos_nweb/bridge/ark_web_navigation_throttle_handler_impl.h"
 #include "ohos_nweb/bridge/ark_web_pdfconfig_args_impl.h"
 #include "ohos_nweb/bridge/ark_web_preference_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_release_surface_callback_impl.h"
@@ -2270,5 +2271,56 @@ bool ArkWebNWebWrapper::GetAutoReloadEnabled()
 void ArkWebNWebWrapper::SetFlingSpeedLimit(float speed_limit)
 {
     ark_web_nweb_->SetFlingSpeedLimit(speed_limit);
+}
+
+void ArkWebNWebWrapper::SetNavigationEntryUserData(const std::string& key, const std::string& value)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+    ArkWebString stValue = ArkWebStringClassToStruct(value);
+
+    ark_web_nweb_->SetNavigationEntryUserData(stKey, stValue);
+
+    ArkWebStringStructRelease(stKey);
+    ArkWebStringStructRelease(stValue);
+}
+
+std::string ArkWebNWebWrapper::GetNavigationEntryUserData(const std::string& key)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    ArkWebString stValue = ark_web_nweb_->GetNavigationEntryUserData(stKey);
+
+    std::string objValue = ArkWebStringStructToClass(stValue);
+    ArkWebStringStructRelease(stValue);
+    ArkWebStringStructRelease(stKey);
+    return objValue;
+}
+
+void ArkWebNWebWrapper::RemoveNavigationEntryUserData(const std::string& key)
+{
+    ArkWebString stKey = ArkWebStringClassToStruct(key);
+
+    ark_web_nweb_->RemoveNavigationEntryUserData(stKey);
+
+    ArkWebStringStructRelease(stKey);
+}
+
+void ArkWebNWebWrapper::SetNavigationThrottle(std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(handler)) {
+        ark_web_nweb_->SetNavigationThrottle(nullptr);
+        return;
+    }
+    ark_web_nweb_->SetNavigationThrottle(new ArkWebNavigationThrottleHandlerImpl(handler));
+}
+
+bool ArkWebNWebWrapper::HasThrottleCallback()
+{
+    return ark_web_nweb_->HasThrottleCallback();
+}
+
+void ArkWebNWebWrapper::ResolveNavigationDefer(uint64_t deferId, bool proceed)
+{
+    ark_web_nweb_->ResolveNavigationDefer(deferId, proceed);
 }
 } // namespace OHOS::ArkWeb

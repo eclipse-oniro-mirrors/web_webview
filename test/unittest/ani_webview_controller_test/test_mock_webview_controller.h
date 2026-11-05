@@ -690,6 +690,28 @@ public:
         return 0;
     }
 
+    ErrCode SetNavigationEntryUserData(const std::string& key, const std::string& value)
+    {
+        navEntryUserData_[key] = value;
+        navEntryUserDataSetCalled_ = true;
+        return 0;
+    }
+
+    ErrCode GetNavigationEntryUserData(const std::string& key, std::string& value)
+    {
+        auto it = navEntryUserData_.find(key);
+        value = it == navEntryUserData_.end() ? std::string() : it->second;
+        navEntryUserDataGetCalled_ = true;
+        return 0;
+    }
+
+    ErrCode RemoveNavigationEntryUserData(const std::string& key)
+    {
+        navEntryUserData_.erase(key);
+        navEntryUserDataRemoveCalled_ = true;
+        return 0;
+    }
+
     ErrCode SetAudioMuted(bool muted)
     {
         return 0;
@@ -952,6 +974,47 @@ public:
         return nullptr;
     }
 
+    ErrCode SetNavigationThrottle(std::shared_ptr<NWebNavigationThrottleHandler> handler)
+    {
+        if (g_setNavigationThrottleShouldFail) {
+            return NWebError::PARAM_CHECK_ERROR;
+        }
+        setNavigationThrottleCalled_ = true;
+        lastThrottleHandler_ = handler;
+        return NWebError::NO_ERROR;
+    }
+
+    bool HasThrottleCallback()
+    {
+        return lastThrottleHandler_ != nullptr;
+    }
+
+    void ResolveNavigationDefer(uint64_t deferId, bool proceed)
+    {
+        lastDeferId_ = deferId;
+        lastDeferProceed_ = proceed;
+    }
+
+    bool WasSetNavigationThrottleCalled() const
+    {
+        return setNavigationThrottleCalled_;
+    }
+
+    std::shared_ptr<NWebNavigationThrottleHandler> GetLastThrottleHandler() const
+    {
+        return lastThrottleHandler_;
+    }
+
+    uint64_t GetLastDeferId() const
+    {
+        return lastDeferId_;
+    }
+
+    bool GetLastDeferProceed() const
+    {
+        return lastDeferProceed_;
+    }
+
     std::shared_ptr<CacheOptions> ParseCacheOptions(napi_env env, napi_value value)
     {
         return nullptr;
@@ -1086,6 +1149,29 @@ public:
         return onActiveCalled_;
     }
 
+    bool WasNavEntryUserDataSetCalled() const
+    {
+        return navEntryUserDataSetCalled_;
+    }
+
+    bool WasNavEntryUserDataGetCalled() const
+    {
+        return navEntryUserDataGetCalled_;
+    }
+
+    bool WasNavEntryUserDataRemoveCalled() const
+    {
+        return navEntryUserDataRemoveCalled_;
+    }
+
+    void ResetNavEntryUserData()
+    {
+        navEntryUserData_.clear();
+        navEntryUserDataSetCalled_ = false;
+        navEntryUserDataGetCalled_ = false;
+        navEntryUserDataRemoveCalled_ = false;
+    }
+
     bool WasOnInactiveCalled() const
     {
         return onInactiveCalled_;
@@ -1151,6 +1237,7 @@ public:
     static bool webDebuggingAccess_;
     static int32_t webDebuggingPort_;
     static bool g_terminateRenderProcessShouldFail;
+    static bool g_setNavigationThrottleShouldFail;
     static bool setAutoReloadShouldFail_;
 
 private:
@@ -1181,17 +1268,26 @@ private:
     bool getScrollOffsetCalled_;
     bool slideScrollCalled_;
     bool requestFocusCalled_;
+    bool setNavigationThrottleCalled_ = false;
+    std::shared_ptr<NWebNavigationThrottleHandler> lastThrottleHandler_ = nullptr;
+    uint64_t lastDeferId_ = 0;
+    bool lastDeferProceed_ = false;
     bool autoReloadEnabled_;
+    bool navEntryUserDataSetCalled_ = false;
+    bool navEntryUserDataGetCalled_ = false;
+    bool navEntryUserDataRemoveCalled_ = false;
+    std::map<std::string, std::string> navEntryUserData_;
     std::shared_ptr<HitTestResult> mockHitTestResult_;
 };
 
-std::set<std::string> WebviewController::webTagSet_;
-std::mutex WebviewController::webTagMtx_;
-bool WebviewController::existNweb_ = false;
-bool WebviewController::webDebuggingAccess_ = false;
-int32_t WebviewController::webDebuggingPort_ = 0;
-bool WebviewController::g_terminateRenderProcessShouldFail = false;
-bool WebviewController::setAutoReloadShouldFail_ = false;
+inline std::set<std::string> WebviewController::webTagSet_;
+inline std::mutex WebviewController::webTagMtx_;
+inline bool WebviewController::existNweb_ = false;
+inline bool WebviewController::webDebuggingAccess_ = false;
+inline int32_t WebviewController::webDebuggingPort_ = 0;
+inline bool WebviewController::g_terminateRenderProcessShouldFail = false;
+inline bool WebviewController::g_setNavigationThrottleShouldFail = false;
+inline bool WebviewController::setAutoReloadShouldFail_ = false;
 
 } // namespace NWeb
 } // namespace OHOS

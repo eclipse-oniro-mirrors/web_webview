@@ -325,6 +325,7 @@ action("webview_glue_nweb_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_applink_callback.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_screen_capture_config.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_download_callback.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_navigation_throttle_handler.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_cookie_manager.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_full_screen_exit_handler.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_release_surface_callback.h",
@@ -444,6 +445,7 @@ action("webview_glue_nweb_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_array_buffer_value_callback_impl.cpp",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_adsblock_manager_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_download_callback_impl.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_navigation_throttle_handler_impl.cpp",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_image_options_wrapper.cpp",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_select_popup_menu_callback_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_nweb_wrapper.cpp",
@@ -521,6 +523,7 @@ action("webview_glue_nweb_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_url_resource_response_wrapper.cpp",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_media_info_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_download_callback_impl.h",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_navigation_throttle_handler_impl.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_js_proxy_callback_impl.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_cache_options_impl.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_preference_wrapper.h",
@@ -585,6 +588,7 @@ action("webview_glue_nweb_prepare") {
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_js_call_info.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_js_call_info_wrapper.h",
     "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/bridge/webview/ark_web_js_call_info_wrapper.cpp",
+    "//base/web/webview/ohos_interface/ohos_glue/ohos_nweb/include/ark_web_navigation_throttle_info.h",
   ]
   args = [
     "--command-type",

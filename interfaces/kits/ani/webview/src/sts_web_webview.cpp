@@ -32,6 +32,7 @@
 #include "ani_webview_function.h"
 #include "webview_javascript_execute_callback.h"
 #include "ani_web_scheme_handler.h"
+#include "ani_navigation_throttle.h"
 #include "ani_web_scheme_handler_resource.h"
 #include "ani_web_scheme_handler_request.h"
 #include "ani_proxy_controller.h"
@@ -78,6 +79,7 @@ ANI_EXPORT ani_status ANI_Constructor(ani_vm *vm, uint32_t *result)
     StsWebSchemeHandlerResourceInit(env);
     StsWebSchemeHandlerRequestInit(env);
     StsWebSchemeHandlerInit(env);
+    StsNavigationThrottleInit(env);
     StsProxyControllerInit(env);
     StsUserAgentBrandVersionInit(env);
     StsUserAgentMetadataInit(env);
