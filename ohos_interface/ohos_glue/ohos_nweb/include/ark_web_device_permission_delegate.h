@@ -17,29 +17,48 @@
 #define ARK_WEB_DEVICE_PERMISSION_DELEGATE_H_
 #pragma once
 
-#include "ohos_nweb/include/ark_web_device_permission_event_callback.h"
-#include "ohos_nweb/include/ark_web_device_permission_result_callback.h"
 #include "ohos_nweb/include/ark_web_nweb_structs.h"
 
 #include "base/include/ark_web_base_ref_counted.h"
 
 namespace OHOS::ArkWeb {
 
+/*--ark web(source=webcore)--*/
+class ArkWebPermissionOriginsResultCallback : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual void OnReply(const ArkWebString& config) = 0;
+};
+
+/*--ark web(source=webcore)--*/
+class ArkWebDevicePermissionResultCallback : public virtual ArkWebBaseRefCounted {
+public:
+    /*--ark web()--*/
+    virtual void OnSelect(const ArkWebDevicePermissionDeviceIdentifier& device) = 0;
+
+    /*--ark web()--*/
+    virtual void OnCancel() = 0;
+};
+
 /*--ark web(source=webview)--*/
 class ArkWebDevicePermissionDelegate : public virtual ArkWebBaseRefCounted {
 public:
     /*--ark web()--*/
-    virtual void OnQueryDevicePermission(ArkWebRefPtr<ArkWebDevicePermissionEventCallback> callback) = 0;
+    virtual void OnQueryDevicePermissionOrigins(
+        int32_t nweb_id, ArkWebRefPtr<ArkWebPermissionOriginsResultCallback> callback) = 0;
 
     /*--ark web()--*/
-    virtual void OnPermissionRevoked(const ArkWebDevicePermissionRevokedEvent& event) = 0;
+    virtual void OnPermissionRevoked(
+        int32_t nweb_id, const ArkWebDevicePermissionRevokedEvent& event) = 0;
 
     /*--ark web()--*/
-    virtual void OnDevicePicker(const ArkWebDevicePermissionRequest& request,
+    virtual void OnDevicePicker(int32_t nweb_id, const ArkWebString& request_id,
+        const ArkWebDevicePermissionRequestBase& request_info,
+        const ArkWebDevicePermissionDeviceIdentifierVector& devices,
         ArkWebRefPtr<ArkWebDevicePermissionResultCallback> callback) = 0;
 
     /*--ark web()--*/
-    virtual void OnDeviceListUpdated(const ArkWebDevicePermissionListUpdateEvent& event) = 0;
+    virtual void OnDeviceListUpdated(int32_t nweb_id, const ArkWebDeviceListUpdateEvent& event) = 0;
 };
 
 } // namespace OHOS::ArkWeb

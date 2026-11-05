@@ -30,14 +30,19 @@ public:
         std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> nweb_device_permission_delegate);
     ~ArkWebDevicePermissionDelegateImpl() = default;
 
-    void OnQueryDevicePermission(ArkWebRefPtr<ArkWebDevicePermissionEventCallback> callback) override;
+    void OnQueryDevicePermissionOrigins(
+        int32_t nweb_id, ArkWebRefPtr<ArkWebPermissionOriginsResultCallback> callback) override;
 
-    void OnPermissionRevoked(const ArkWebDevicePermissionRevokedEvent& event) override;
+    void OnPermissionRevoked(
+        int32_t nweb_id, const ArkWebDevicePermissionRevokedEvent& event) override;
 
-    void OnDevicePicker(const ArkWebDevicePermissionRequest& request,
+    void OnDevicePicker(int32_t nweb_id, const ArkWebString& request_id,
+        const ArkWebDevicePermissionRequestBase& request_info,
+        const ArkWebDevicePermissionDeviceIdentifierVector& devices,
         ArkWebRefPtr<ArkWebDevicePermissionResultCallback> callback) override;
 
-    void OnDeviceListUpdated(const ArkWebDevicePermissionListUpdateEvent& event) override;
+    void OnDeviceListUpdated(
+        int32_t nweb_id, const ArkWebDeviceListUpdateEvent& event) override;
 
 private:
     std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> nweb_device_permission_delegate_;

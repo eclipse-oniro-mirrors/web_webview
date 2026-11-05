@@ -13,27 +13,26 @@
  * limitations under the License.
  */
 
-#include "ohos_nweb/bridge/ark_web_device_permission_event_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_permission_origins_result_callback_impl.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
 #include "base/include/ark_web_types.h"
 
 namespace OHOS::ArkWeb {
 
-ArkWebDevicePermissionEventCallbackWrapper::ArkWebDevicePermissionEventCallbackWrapper(
-    ArkWebRefPtr<ArkWebDevicePermissionEventCallback> ark_web_device_permission_event_callback)
-    : ark_web_device_permission_event_callback_(ark_web_device_permission_event_callback)
+ArkWebPermissionOriginsResultCallbackImpl::ArkWebPermissionOriginsResultCallbackImpl(
+    std::shared_ptr<OHOS::NWeb::NWebPermissionOriginsResultCallback> nweb_permission_origins_result_callback)
+    : nweb_permission_origins_result_callback_(nweb_permission_origins_result_callback)
 {}
 
-void ArkWebDevicePermissionEventCallbackWrapper::Reply(const std::string& config)
+void ArkWebPermissionOriginsResultCallbackImpl::OnReply(const ArkWebString& config)
 {
-    if (CHECK_REF_PTR_IS_NULL(ark_web_device_permission_event_callback_)) {
+    if (CHECK_SHARED_PTR_IS_NULL(nweb_permission_origins_result_callback_)) {
         return;
     }
 
-    ArkWebString struct_value = ArkWebStringClassToStruct(config);
-    ark_web_device_permission_event_callback_->Reply(struct_value);
-    ArkWebStringStructRelease(struct_value);
+    std::string class_value = ArkWebStringStructToClass(config);
+    nweb_permission_origins_result_callback_->OnReply(class_value);
 }
 
 } // namespace OHOS::ArkWeb

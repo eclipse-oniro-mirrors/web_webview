@@ -25,7 +25,6 @@
 #include "ohos_nweb/bridge/ark_web_cache_options_impl.h"
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_device_permission_delegate_impl.h"
-#include "ohos_nweb/bridge/ark_web_device_permission_struct_utils.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_impl.h"
@@ -2287,19 +2286,19 @@ void ArkWebNWebWrapper::SetDevicePermissionDelegate(
 
 void ArkWebNWebWrapper::RevokeDevicePermissions(
     OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type, const std::string& origin,
-    const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device, bool has_device, bool is_incognito)
+    const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device, bool is_incognito)
 {
     ArkWebDevicePermissionDeviceIdentifier struct_device =
         ArkWebDevicePermissionDeviceIdentifierClassToStruct(device);
     ArkWebString struct_origin = ArkWebStringClassToStruct(origin);
     ark_web_nweb_->RevokeDevicePermissions(static_cast<int32_t>(hardware_type), struct_origin,
-        struct_device, has_device, is_incognito);
+        struct_device, is_incognito);
     ArkWebDevicePermissionDeviceIdentifierStructRelease(struct_device);
     ArkWebStringStructRelease(struct_origin);
 }
 
 void ArkWebNWebWrapper::SetGuardPolicy(OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
-    OHOS::NWeb::NWebDevicePermissionGuardPolicy policy, const std::string& origin, bool is_incognito)
+    OHOS::NWeb::NWebDeviceGuardPolicy policy, const std::string& origin, bool is_incognito)
 {
     ArkWebString struct_origin = ArkWebStringClassToStruct(origin);
     ark_web_nweb_->SetGuardPolicy(static_cast<int32_t>(hardware_type), static_cast<int32_t>(policy),

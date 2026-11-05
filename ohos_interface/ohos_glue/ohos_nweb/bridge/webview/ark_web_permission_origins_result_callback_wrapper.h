@@ -13,27 +13,27 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_DEVICE_PERMISSION_EVENT_CALLBACK_WRAPPER_H_
-#define ARK_WEB_DEVICE_PERMISSION_EVENT_CALLBACK_WRAPPER_H_
+#ifndef ARK_WEB_PERMISSION_ORIGINS_RESULT_CALLBACK_WRAPPER_H_
+#define ARK_WEB_PERMISSION_ORIGINS_RESULT_CALLBACK_WRAPPER_H_
 #pragma once
 
 #include "include/nweb_device_permission_delegate.h"
-#include "ohos_nweb/include/ark_web_device_permission_event_callback.h"
+#include "ohos_nweb/include/ark_web_device_permission_delegate.h"
 
 namespace OHOS::ArkWeb {
 
-class ArkWebDevicePermissionEventCallbackWrapper : public OHOS::NWeb::NWebDevicePermissionEventCallback {
+class ArkWebPermissionOriginsResultCallbackWrapper : public OHOS::NWeb::NWebPermissionOriginsResultCallback {
 public:
-    explicit ArkWebDevicePermissionEventCallbackWrapper(
-        ArkWebRefPtr<ArkWebDevicePermissionEventCallback> ark_web_device_permission_event_callback);
-    ~ArkWebDevicePermissionEventCallbackWrapper() = default;
+    explicit ArkWebPermissionOriginsResultCallbackWrapper(
+        ArkWebRefPtr<ArkWebPermissionOriginsResultCallback> ark_web_permission_origins_result_callback);
+    ~ArkWebPermissionOriginsResultCallbackWrapper() = default;
 
-    void Reply(const std::string& config) override;
+    void OnReply(const std::string& config) override;
 
 private:
-    ArkWebRefPtr<ArkWebDevicePermissionEventCallback> ark_web_device_permission_event_callback_;
+    ArkWebRefPtr<ArkWebPermissionOriginsResultCallback> ark_web_permission_origins_result_callback_;
 };
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_WEB_DEVICE_PERMISSION_EVENT_CALLBACK_WRAPPER_H_
+#endif // ARK_WEB_PERMISSION_ORIGINS_RESULT_CALLBACK_WRAPPER_H_

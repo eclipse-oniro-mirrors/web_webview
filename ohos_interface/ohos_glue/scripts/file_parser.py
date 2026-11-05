@@ -464,11 +464,8 @@ _simpletypes = {
     'ArkWebDevicePermissionRevokedEvent': [
         'ArkWebDevicePermissionRevokedEvent', 'ark_web_device_permission_revoked_event_default'
     ],
-    'ArkWebDevicePermissionListUpdateEvent': [
-        'ArkWebDevicePermissionListUpdateEvent', 'ark_web_device_permission_list_update_event_default'
-    ],
-    'ArkWebDevicePermissionRequest': [
-        'ArkWebDevicePermissionRequest', 'ark_web_device_permission_request_default'
+    'ArkWebDeviceListUpdateEvent': [
+        'ArkWebDeviceListUpdateEvent', 'ark_web_device_list_update_event_default'
     ],
 }
 

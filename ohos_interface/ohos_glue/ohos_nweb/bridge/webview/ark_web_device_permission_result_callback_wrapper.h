@@ -18,7 +18,7 @@
 #pragma once
 
 #include "include/nweb_device_permission_delegate.h"
-#include "ohos_nweb/include/ark_web_device_permission_result_callback.h"
+#include "ohos_nweb/include/ark_web_device_permission_delegate.h"
 
 namespace OHOS::ArkWeb {
 
@@ -28,9 +28,9 @@ public:
         ArkWebRefPtr<ArkWebDevicePermissionResultCallback> ark_web_device_permission_result_callback);
     ~ArkWebDevicePermissionResultCallbackWrapper() = default;
 
-    void Select(const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device) override;
+    void OnSelect(const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device) override;
 
-    void Cancel() override;
+    void OnCancel() override;
 
 private:
     ArkWebRefPtr<ArkWebDevicePermissionResultCallback> ark_web_device_permission_result_callback_;

@@ -16,7 +16,7 @@
 #include "ohos_nweb/bridge/ark_web_device_permission_result_callback_wrapper.h"
 
 #include "base/bridge/ark_web_bridge_macros.h"
-#include "ohos_nweb/bridge/ark_web_device_permission_struct_utils.h"
+#include "ohos_nweb/bridge/ark_web_view_struct_utils.h"
 
 namespace OHOS::ArkWeb {
 
@@ -25,7 +25,7 @@ ArkWebDevicePermissionResultCallbackWrapper::ArkWebDevicePermissionResultCallbac
     : ark_web_device_permission_result_callback_(ark_web_device_permission_result_callback)
 {}
 
-void ArkWebDevicePermissionResultCallbackWrapper::Select(
+void ArkWebDevicePermissionResultCallbackWrapper::OnSelect(
     const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device)
 {
     if (CHECK_REF_PTR_IS_NULL(ark_web_device_permission_result_callback_)) {
@@ -34,17 +34,17 @@ void ArkWebDevicePermissionResultCallbackWrapper::Select(
 
     ArkWebDevicePermissionDeviceIdentifier struct_value =
         ArkWebDevicePermissionDeviceIdentifierClassToStruct(device);
-    ark_web_device_permission_result_callback_->Select(struct_value);
+    ark_web_device_permission_result_callback_->OnSelect(struct_value);
     ArkWebDevicePermissionDeviceIdentifierStructRelease(struct_value);
 }
 
-void ArkWebDevicePermissionResultCallbackWrapper::Cancel()
+void ArkWebDevicePermissionResultCallbackWrapper::OnCancel()
 {
     if (CHECK_REF_PTR_IS_NULL(ark_web_device_permission_result_callback_)) {
         return;
     }
 
-    ark_web_device_permission_result_callback_->Cancel();
+    ark_web_device_permission_result_callback_->OnCancel();
 }
 
 } // namespace OHOS::ArkWeb

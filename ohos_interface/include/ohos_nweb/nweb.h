@@ -2736,13 +2736,12 @@ public:
      *
      * @param hardware_type The hardware device type.
      * @param origin The web origin to revoke permissions for. Empty means all origins.
-     * @param device The device to revoke. Valid only when has_device is true.
-     * @param has_device Whether the device filter is specified.
+     * @param device The device to revoke. Empty device_key means all devices.
      * @param is_incognito Whether the permission is in incognito mode.
      */
     virtual void RevokeDevicePermissions(NWebDevicePermissionHardwareType hardware_type,
         const std::string& origin, const NWebDevicePermissionDeviceIdentifier& device,
-        bool has_device, bool is_incognito) {}
+        bool is_incognito) {}
 
     /**
      * @brief Set device permission guard policy.
@@ -2753,7 +2752,7 @@ public:
      * @param is_incognito Whether the policy is for incognito mode.
      */
     virtual void SetGuardPolicy(NWebDevicePermissionHardwareType hardware_type,
-        NWebDevicePermissionGuardPolicy policy, const std::string& origin, bool is_incognito) {}
+        NWebDeviceGuardPolicy policy, const std::string& origin, bool is_incognito) {}
 };
 } // namespace OHOS::NWeb
 

@@ -2473,13 +2473,12 @@ public:
      *
      * @param hardware_type The hardware device type.
      * @param origin The web origin to revoke permissions for. Empty means all origins.
-     * @param device The device to revoke. Valid only when has_device is true.
-     * @param has_device Whether the device filter is specified.
+     * @param device The device to revoke. Empty device_key means all devices.
      * @param is_incognito Whether the permission is in incognito mode.
      */
     /*--ark web()--*/
     virtual void RevokeDevicePermissions(int32_t hardware_type, const ArkWebString& origin,
-        const ArkWebDevicePermissionDeviceIdentifier& device, bool has_device, bool is_incognito) = 0;
+        const ArkWebDevicePermissionDeviceIdentifier& device, bool is_incognito) = 0;
 
     /**
      * @brief Set device permission guard policy.

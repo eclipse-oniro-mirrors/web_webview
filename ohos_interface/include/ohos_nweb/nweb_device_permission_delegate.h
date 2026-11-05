@@ -31,12 +31,12 @@ enum class NWebDevicePermissionHardwareType : int32_t {
     BLUETOOTH = 3,
 };
 
-enum class NWebDevicePermissionListUpdateAction : int32_t {
+enum class NWebDeviceListUpdateAction : int32_t {
     ADD = 0,
     REMOVE = 1,
 };
 
-enum class NWebDevicePermissionGuardPolicy : int32_t {
+enum class NWebDeviceGuardPolicy : int32_t {
     ASK = 0,
     BLOCK = 1,
     DEFAULT = 2,
@@ -62,39 +62,33 @@ struct NWebDevicePermissionRevokedEvent {
     NWebDevicePermissionDeviceIdentifier device;
 };
 
-struct NWebDevicePermissionListUpdateEvent {
+struct NWebDeviceListUpdateEvent {
     std::string request_id;
-    NWebDevicePermissionListUpdateAction action = NWebDevicePermissionListUpdateAction::ADD;
+    NWebDeviceListUpdateAction action = NWebDeviceListUpdateAction::ADD;
     std::vector<NWebDevicePermissionDeviceIdentifier> devices;
-};
-
-struct NWebDevicePermissionRequest {
-    NWebDevicePermissionRequestBase request_base;
-    std::string request_id;
-    std::vector<NWebDevicePermissionDeviceIdentifier> device_list;
 };
 
 /**
  * @brief Result callback for querying the complete device permission
- *        configuration. The delegate implementation should call Reply
+ *        configuration. The delegate implementation should call OnReply
  *        synchronously with the serialized json configuration.
  */
-class NWebDevicePermissionEventCallback {
+class NWebPermissionOriginsResultCallback {
 public:
-    virtual ~NWebDevicePermissionEventCallback() = default;
+    virtual ~NWebPermissionOriginsResultCallback() = default;
 
     /**
      * @brief Reply the complete device permission configuration in json format.
      *
      * @param config the serialized json configuration string.
      */
-    virtual void Reply(const std::string& config) = 0;
+    virtual void OnReply(const std::string& config) = 0;
 };
 
 /**
  * @brief Result callback for a device permission select request. The delegate
- *        implementation should call Select when the user selects a device, or
- *        call Cancel when the user cancels the request.
+ *        implementation should call OnSelect when the user selects a device, or
+ *        call OnCancel when the user cancels the request.
  */
 class NWebDevicePermissionResultCallback {
 public:
@@ -105,12 +99,12 @@ public:
      *
      * @param device the device selected by the user.
      */
-    virtual void Select(const NWebDevicePermissionDeviceIdentifier& device) = 0;
+    virtual void OnSelect(const NWebDevicePermissionDeviceIdentifier& device) = 0;
 
     /**
      * @brief Cancel the permission request.
      */
-    virtual void Cancel() = 0;
+    virtual void OnCancel() = 0;
 };
 
 /**
@@ -126,32 +120,43 @@ public:
      * @brief Called to query the complete device permission configuration.
      *        Triggered immediately after the delegate is set.
      *
+     * @param nweb_id the id of the nweb instance.
      * @param callback the result callback to reply the configuration.
      */
-    virtual void OnQueryDevicePermission(std::shared_ptr<NWebDevicePermissionEventCallback> callback) = 0;
+    virtual void OnQueryDevicePermissionOrigins(int32_t nweb_id,
+        std::shared_ptr<NWebPermissionOriginsResultCallback> callback) = 0;
 
     /**
      * @brief Called when the web page requests to revoke a device permission.
      *
+     * @param nweb_id the id of the nweb instance.
      * @param event the revocation event data.
      */
-    virtual void OnPermissionRevoked(const NWebDevicePermissionRevokedEvent& event) = 0;
+    virtual void OnPermissionRevoked(int32_t nweb_id,
+        const NWebDevicePermissionRevokedEvent& event) = 0;
 
     /**
      * @brief Called when the web page requests to select a device.
      *
-     * @param request the device picker request data.
+     * @param nweb_id the id of the nweb instance.
+     * @param request_id the unique request identifier.
+     * @param request_info the base information of the request.
+     * @param devices the list of devices available for selection.
      * @param callback the result callback to return the selection result.
      */
-    virtual void OnDevicePicker(const NWebDevicePermissionRequest& request,
+    virtual void OnDevicePicker(int32_t nweb_id, const std::string& request_id,
+        const NWebDevicePermissionRequestBase& request_info,
+        const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
         std::shared_ptr<NWebDevicePermissionResultCallback> callback) = 0;
 
     /**
      * @brief Called when the device list is updated while the picker is shown.
      *
+     * @param nweb_id the id of the nweb instance.
      * @param event the device list update event data.
      */
-    virtual void OnDeviceListUpdated(const NWebDevicePermissionListUpdateEvent& event) = 0;
+    virtual void OnDeviceListUpdated(int32_t nweb_id,
+        const NWebDeviceListUpdateEvent& event) = 0;
 };
 
 } // namespace OHOS::NWeb

@@ -18,30 +18,26 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 
 #include "napi/native_api.h"
-#include "napi/native_common.h"
-#include "napi/native_node_api.h"
 #include "nweb_device_permission_delegate.h"
 
 namespace OHOS {
 namespace NWeb {
 
-class NapiDevicePermissionRequest {
+class WebDevicePermissionDelegate;
+
+/**
+ * @brief Holder for napi_wrap/unwrap. Owns the shared_ptr of the delegate so
+ *        the delegate outlives the JS object that wraps it.
+ */
+class WebDevicePermissionDelegateHolder {
 public:
-    NapiDevicePermissionRequest() = default;
-    ~NapiDevicePermissionRequest() = default;
+    WebDevicePermissionDelegateHolder() = default;
+    ~WebDevicePermissionDelegateHolder() = default;
 
-    NWebDevicePermissionRequest request_;
-    std::shared_ptr<NWebDevicePermissionResultCallback> callback_;
-};
-
-class NapiDevicePermissionEvent {
-public:
-    NapiDevicePermissionEvent() = default;
-    ~NapiDevicePermissionEvent() = default;
-
-    std::shared_ptr<NWebDevicePermissionEventCallback> callback_;
+    std::shared_ptr<WebDevicePermissionDelegate> delegate_;
 };
 
 class WebDevicePermissionDelegate : public NWebDevicePermissionDelegate {
@@ -49,14 +45,19 @@ public:
     explicit WebDevicePermissionDelegate(napi_env env);
     ~WebDevicePermissionDelegate() override;
 
-    void OnQueryDevicePermission(std::shared_ptr<NWebDevicePermissionEventCallback> callback) override;
+    void OnQueryDevicePermissionOrigins(int32_t nweb_id,
+        std::shared_ptr<NWebPermissionOriginsResultCallback> callback) override;
 
-    void OnPermissionRevoked(const NWebDevicePermissionRevokedEvent& event) override;
+    void OnPermissionRevoked(int32_t nweb_id,
+        const NWebDevicePermissionRevokedEvent& event) override;
 
-    void OnDevicePicker(const NWebDevicePermissionRequest& request,
+    void OnDevicePicker(int32_t nweb_id, const std::string& request_id,
+        const NWebDevicePermissionRequestBase& request_info,
+        const std::vector<NWebDevicePermissionDeviceIdentifier>& devices,
         std::shared_ptr<NWebDevicePermissionResultCallback> callback) override;
 
-    void OnDeviceListUpdated(const NWebDevicePermissionListUpdateEvent& event) override;
+    void OnDeviceListUpdated(int32_t nweb_id,
+        const NWebDeviceListUpdateEvent& event) override;
 
     void PutOnQueryDevicePermission(napi_env env, napi_value callback);
     void PutOnPermissionRevoked(napi_env env, napi_value callback);
@@ -75,12 +76,6 @@ private:
     napi_ref on_device_picker_callback_ = nullptr;
     napi_ref on_device_list_updated_callback_ = nullptr;
 };
-
-napi_value CreateDeviceIdentifierJsObject(napi_env env,
-    const NWebDevicePermissionDeviceIdentifier& device);
-
-bool ParseDeviceIdentifier(napi_env env, napi_value value,
-    NWebDevicePermissionDeviceIdentifier& device);
 
 class NapiWebDevicePermissionDelegate {
 public:

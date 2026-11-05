@@ -48,6 +48,8 @@
 #include "pixel_map_napi.h"
 #include "web_errors.h"
 #include "web_device_permission_delegate.h"
+#include "web_device_permission_helpers.h"
+#include "web_device_permission_manager.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_createpdf_execute_callback.h"
 #include "web_history_list.h"
@@ -1301,9 +1303,9 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
     napi_value webDeviceListUpdateActionEnum = nullptr;
     napi_property_descriptor webDeviceListUpdateActionProperties[] = {
         DECLARE_NAPI_STATIC_PROPERTY(
-            "ADD", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDevicePermissionListUpdateAction::ADD))),
+            "ADD", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceListUpdateAction::ADD))),
         DECLARE_NAPI_STATIC_PROPERTY(
-            "REMOVE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDevicePermissionListUpdateAction::REMOVE))),
+            "REMOVE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceListUpdateAction::REMOVE))),
     };
     napi_define_class(env, WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME.c_str(),
         WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME.length(),
@@ -1316,11 +1318,11 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
     napi_value webDeviceGuardPolicyEnum = nullptr;
     napi_property_descriptor webDeviceGuardPolicyProperties[] = {
         DECLARE_NAPI_STATIC_PROPERTY(
-            "ASK", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDevicePermissionGuardPolicy::ASK))),
+            "ASK", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceGuardPolicy::ASK))),
         DECLARE_NAPI_STATIC_PROPERTY(
-            "BLOCK", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDevicePermissionGuardPolicy::BLOCK))),
+            "BLOCK", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceGuardPolicy::BLOCK))),
         DECLARE_NAPI_STATIC_PROPERTY(
-            "DEFAULT", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDevicePermissionGuardPolicy::DEFAULT))),
+            "DEFAULT", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceGuardPolicy::DEFAULT))),
     };
     napi_define_class(env, WEB_DEVICE_GUARD_POLICY_ENUM_NAME.c_str(),
         WEB_DEVICE_GUARD_POLICY_ENUM_NAME.length(),
@@ -1329,7 +1331,6 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         webDeviceGuardPolicyProperties, &webDeviceGuardPolicyEnum);
     napi_set_named_property(env, exports, WEB_DEVICE_GUARD_POLICY_ENUM_NAME.c_str(), webDeviceGuardPolicyEnum);
 
-    NapiWebDevicePermissionDelegate::Init(env, exports);
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
     return exports;
@@ -9179,9 +9180,9 @@ napi_value NapiWebviewController::SetDevicePermissionDelegate(napi_env env, napi
             "BusinessError 401: Parameter error. The type of 'delegate' must be WebDevicePermissionDelegate.");
         return result;
     }
-    WebDevicePermissionDelegate *delegate = nullptr;
-    napi_unwrap(env, argv[0], reinterpret_cast<void **>(&delegate));
-    if (!delegate) {
+    WebDevicePermissionDelegateHolder *holder = nullptr;
+    napi_unwrap(env, argv[0], reinterpret_cast<void **>(&holder));
+    if (!holder || !holder->delegate_) {
         BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
             "BusinessError 401: Parameter error. The delegate is invalid.");
         return result;
@@ -9191,7 +9192,14 @@ napi_value NapiWebviewController::SetDevicePermissionDelegate(napi_env env, napi
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-    webviewController->SetDevicePermissionDelegate(delegate);
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(webviewController->GetWebId());
+    if (!nweb_ptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    WebDevicePermissionManager::GetInstance().SetDelegate(
+        webviewController->GetWebId(), holder->delegate_);
+    nweb_ptr->SetDevicePermissionDelegate(holder->delegate_);
     return result;
 }
 
@@ -9222,7 +9230,6 @@ napi_value NapiWebviewController::RevokeDevicePermissions(napi_env env, napi_cal
         return result;
     }
     NWebDevicePermissionDeviceIdentifier device;
-    bool hasDevice = false;
     if (argc >= 3) {
         napi_valuetype vt = napi_undefined;
         napi_typeof(env, argv[2], &vt);
@@ -9232,7 +9239,6 @@ napi_value NapiWebviewController::RevokeDevicePermissions(napi_env env, napi_cal
                     "BusinessError 401: Parameter error. The type of 'device' must be WebDeviceIdentifier.");
                 return result;
             }
-            hasDevice = true;
         }
     }
     bool isIncognito = false;
@@ -9248,8 +9254,13 @@ napi_value NapiWebviewController::RevokeDevicePermissions(napi_env env, napi_cal
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-    webviewController->RevokeDevicePermissions(static_cast<NWebDevicePermissionHardwareType>(hardwareType),
-        origin, device, hasDevice, isIncognito);
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(webviewController->GetWebId());
+    if (!nweb_ptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    nweb_ptr->RevokeDevicePermissions(static_cast<NWebDevicePermissionHardwareType>(hardwareType),
+        origin, device, isIncognito);
     return result;
 }
 
@@ -9300,8 +9311,13 @@ napi_value NapiWebviewController::SetGuardPolicy(napi_env env, napi_callback_inf
         BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
         return result;
     }
-    webviewController->SetGuardPolicy(static_cast<NWebDevicePermissionHardwareType>(hardwareType),
-        static_cast<NWebDevicePermissionGuardPolicy>(policy), origin, isIncognito);
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(webviewController->GetWebId());
+    if (!nweb_ptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    nweb_ptr->SetGuardPolicy(static_cast<NWebDevicePermissionHardwareType>(hardwareType),
+        static_cast<NWebDeviceGuardPolicy>(policy), origin, isIncognito);
     return result;
 }
 } // namespace NWeb

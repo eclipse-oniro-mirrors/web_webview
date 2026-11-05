@@ -92,19 +92,9 @@ typedef struct {
     ArkWebString request_id;
     int32_t action;
     ArkWebDevicePermissionDeviceIdentifierVector devices;
-} ArkWebDevicePermissionListUpdateEvent;
+} ArkWebDeviceListUpdateEvent;
 
-const ArkWebDevicePermissionListUpdateEvent ark_web_device_permission_list_update_event_default = {
-    0,
-};
-
-typedef struct {
-    ArkWebDevicePermissionRequestBase request_base;
-    ArkWebString request_id;
-    ArkWebDevicePermissionDeviceIdentifierVector device_list;
-} ArkWebDevicePermissionRequest;
-
-const ArkWebDevicePermissionRequest ark_web_device_permission_request_default = {
+const ArkWebDeviceListUpdateEvent ark_web_device_list_update_event_default = {
     0,
 };
 
