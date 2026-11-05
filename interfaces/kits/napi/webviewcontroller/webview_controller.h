@@ -237,6 +237,11 @@ public:
 
     ErrCode RemoveNavigationEntryUserData(const std::string& key);
 
+    // Registers (handler != nullptr) or clears (handler == nullptr) the
+    // navigation throttle for this WebviewController's NWeb instance.
+    ErrCode SetNavigationThrottle(
+        std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler);
+
     std::string GetTitle();
 
     int32_t GetProgress();

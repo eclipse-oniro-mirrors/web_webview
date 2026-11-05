@@ -56,6 +56,7 @@ const std::string WEB_SITE_ISOLATION_MODE_ENUM_NAME = "SiteIsolationMode";
 const std::string WEB_SCROLLBAR_MODE_ENUM_NAME = "ScrollbarMode";
 const std::string WEB_SOFT_KEYBOARD_BEHAVIOR_MODE_ENUM_NAME = "WebSoftKeyboardBehaviorMode";
 const std::string WEB_HTTP_COOKIE_SAME_SITE_POLICY_ENUM_NAME = "WebHttpCookieSameSitePolicy";
+const std::string WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME = "NavigationThrottleAction";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 constexpr uint32_t URL_MAXIMUM = 2 * 1024 * 1024;
 
@@ -145,6 +146,7 @@ private:
     static napi_value GetCustomUserAgent(napi_env env, napi_callback_info info);
 
     static napi_value SetCustomUserAgent(napi_env env, napi_callback_info info);
+    static napi_value SetNavigationThrottle(napi_env env, napi_callback_info info);
 
     static napi_value SetNavigationEntryUserData(napi_env env, napi_callback_info info);
 
