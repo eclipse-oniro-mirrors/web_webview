@@ -15,7 +15,7 @@
 
 #include "ohos_nweb/bridge/ark_web_engine_impl.h"
 
-#include "ohos_nweb/bridge/ark_web_remove_visited_links_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_remove_visited_links_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_adsblock_manager_impl.h"
 #include "ohos_nweb/bridge/ark_web_cookie_manager_impl.h"
 #include "ohos_nweb/bridge/ark_web_data_base_impl.h"
@@ -385,7 +385,7 @@ void ArkWebEngineImpl::RemoveVisitedLinksSince(
     int64_t time_ms, ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> callback)
 {
     std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> nweb_remove_visited_links_callback =
-        std::make_shared<ArkWebRemoveVisitedLinksCallbackImpl>(callback);
+        std::make_shared<ArkWebRemoveVisitedLinksCallbackWrapper>(callback);
     if (nweb_engine_) {
         nweb_engine_->RemoveVisitedLinksSince(time_ms, nweb_remove_visited_links_callback);
     }

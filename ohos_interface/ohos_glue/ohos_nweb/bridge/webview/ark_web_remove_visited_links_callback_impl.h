@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-#ifndef ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK_WRAPPER_H_
-#define ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK_WRAPPER_H_
+#ifndef ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK_IMPL_H_
+#define ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK_IMPL_H_
 #pragma once
 
 #include "include/nweb_remove_visited_links_callback.h"
@@ -22,13 +22,13 @@
 
 namespace OHOS::ArkWeb {
 
-class ArkWebRemoveVisitedLinksCallbackWrapper : public ArkWebRemoveVisitedLinksCallback {
-    IMPLEMENT_REFCOUNTING(ArkWebRemoveVisitedLinksCallbackWrapper);
+class ArkWebRemoveVisitedLinksCallbackImpl : public ArkWebRemoveVisitedLinksCallback {
+    IMPLEMENT_REFCOUNTING(ArkWebRemoveVisitedLinksCallbackImpl);
 
 public:
-    ArkWebRemoveVisitedLinksCallbackWrapper(
+    ArkWebRemoveVisitedLinksCallbackImpl(
         std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> nweb_remove_visited_links_callback);
-    ~ArkWebRemoveVisitedLinksCallbackWrapper() = default;
+    ~ArkWebRemoveVisitedLinksCallbackImpl() = default;
 
     void OnRemoveComplete() override;
 
@@ -38,4 +38,4 @@ private:
 
 } // namespace OHOS::ArkWeb
 
-#endif // ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK_WRAPPER_H_
+#endif // ARK_WEB_REMOVE_VISITED_LINKS_CALLBACK_IMPL_H_

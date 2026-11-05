@@ -20,13 +20,13 @@
 namespace OHOS::ArkWeb {
 
 ArkWebRemoveVisitedLinksCallbackWrapper::ArkWebRemoveVisitedLinksCallbackWrapper(
-    std::shared_ptr<OHOS::NWeb::NWebRemoveVisitedLinksCallback> nweb_remove_visited_links_callback)
-    : nweb_remove_visited_links_callback_(nweb_remove_visited_links_callback)
+    ArkWebRefPtr<ArkWebRemoveVisitedLinksCallback> ark_web_remove_visited_links_callback)
+    : ark_web_remove_visited_links_callback_(ark_web_remove_visited_links_callback)
 {}
 
 void ArkWebRemoveVisitedLinksCallbackWrapper::OnRemoveComplete()
 {
-    nweb_remove_visited_links_callback_->OnRemoveComplete();
+    ark_web_remove_visited_links_callback_->OnRemoveComplete();
 }
 
 } // namespace OHOS::ArkWeb
