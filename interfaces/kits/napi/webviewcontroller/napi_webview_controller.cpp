@@ -32,9 +32,9 @@
 #include "arkweb_utils.h"
 #include "application_context.h"
 #include "business_error.h"
-
+#ifdef WEBVIEW_API_METRICS_ENABLE
 #include "histogram_plugin_macros.h"
-
+#endif
 #include "napi_parse_utils.h"
 #include "nweb_napi_scope.h"
 #include "native_engine/native_engine.h"
