@@ -45,15 +45,6 @@ namespace OHOS::ArkWeb {
 static int g_appEngineVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
 static bool g_webEngineInitFlag = false;
 static std::string g_appDataDirectorySuffix = "";
-// Protects g_appDataDirectorySuffix and the suffix-related accesses to
-// g_webEngineInitFlag: the check-then-set sequence in setDataDirectorySuffix
-// must be atomic, otherwise concurrent calls from NAPI/ANI/CJ entries may
-// break the "set only once" invariant and cause a data race on std::string.
-// Guarded paths: setDataDirectorySuffix (whole check-then-set),
-// getDataDirectorySuffix, ResetDataDirectorySuffix, and the flag write in the
-// library-loading path. Pre-existing readers of the flag outside the suffix
-// feature (setActiveWebEngineVersion, SetActiveWebPlayGround) are untouched by
-// this change and keep their original, lock-free behavior.
 static std::mutex g_dataDirSuffixMutex;
 static ArkWebEngineVersion g_activeEngineVersion = ArkWebEngineVersion::SYSTEM_DEFAULT;
 static int g_cloudEnableAppVersion = static_cast<int>(ArkWebEngineVersion::SYSTEM_DEFAULT);
