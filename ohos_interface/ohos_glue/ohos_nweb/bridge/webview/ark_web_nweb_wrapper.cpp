@@ -24,6 +24,7 @@
 #include "ohos_nweb/bridge/ark_web_bool_value_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_cache_options_impl.h"
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_impl.h"
+#include "ohos_nweb/bridge/ark_web_device_permission_delegate_impl.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_impl.h"
@@ -2271,6 +2272,39 @@ bool ArkWebNWebWrapper::GetAutoReloadEnabled()
 void ArkWebNWebWrapper::SetFlingSpeedLimit(float speed_limit)
 {
     ark_web_nweb_->SetFlingSpeedLimit(speed_limit);
+}
+
+void ArkWebNWebWrapper::SetDevicePermissionDelegate(
+    std::shared_ptr<OHOS::NWeb::NWebDevicePermissionDelegate> delegate)
+{
+    if (delegate == nullptr) {
+        ark_web_nweb_->SetDevicePermissionDelegate(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->SetDevicePermissionDelegate(new ArkWebDevicePermissionDelegateImpl(delegate));
+}
+
+void ArkWebNWebWrapper::RevokeDevicePermissions(
+    OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type, const std::string& origin,
+    const OHOS::NWeb::NWebDevicePermissionDeviceIdentifier& device, bool is_incognito)
+{
+    ArkWebDevicePermissionDeviceIdentifier struct_device =
+        ArkWebDevicePermissionDeviceIdentifierClassToStruct(device);
+    ArkWebString struct_origin = ArkWebStringClassToStruct(origin);
+    ark_web_nweb_->RevokeDevicePermissions(static_cast<int32_t>(hardware_type), struct_origin,
+        struct_device, is_incognito);
+    ArkWebDevicePermissionDeviceIdentifierStructRelease(struct_device);
+    ArkWebStringStructRelease(struct_origin);
+}
+
+void ArkWebNWebWrapper::SetGuardPolicy(OHOS::NWeb::NWebDevicePermissionHardwareType hardware_type,
+    OHOS::NWeb::NWebDeviceGuardPolicy policy, const std::string& origin, bool is_incognito)
+{
+    ArkWebString struct_origin = ArkWebStringClassToStruct(origin);
+    ark_web_nweb_->SetGuardPolicy(static_cast<int32_t>(hardware_type), static_cast<int32_t>(policy),
+        struct_origin, is_incognito);
+    ArkWebStringStructRelease(struct_origin);
 }
 
 void ArkWebNWebWrapper::SetNavigationEntryUserData(const std::string& key, const std::string& value)

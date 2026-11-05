@@ -27,6 +27,7 @@
 #include "ohos_nweb/bridge/ark_web_cache_options_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_core_struct_utils.h"
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_wrapper.h"
+#include "ohos_nweb/bridge/ark_web_device_permission_delegate_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_wrapper.h"
@@ -1921,6 +1922,36 @@ bool ArkWebNWebImpl::GetAutoReloadEnabled()
 void ArkWebNWebImpl::SetFlingSpeedLimit(float speed_limit)
 {
     nweb_nweb_->SetFlingSpeedLimit(speed_limit);
+}
+
+void ArkWebNWebImpl::SetDevicePermissionDelegate(ArkWebRefPtr<ArkWebDevicePermissionDelegate> delegate)
+{
+    if (CHECK_REF_PTR_IS_NULL(delegate)) {
+        nweb_nweb_->SetDevicePermissionDelegate(nullptr);
+        return;
+    }
+
+    nweb_nweb_->SetDevicePermissionDelegate(
+        std::make_shared<ArkWebDevicePermissionDelegateWrapper>(delegate));
+}
+
+void ArkWebNWebImpl::RevokeDevicePermissions(int32_t hardware_type, const ArkWebString& origin,
+    const ArkWebDevicePermissionDeviceIdentifier& device, bool is_incognito)
+{
+    std::string nweb_origin = ArkWebStringStructToClass(origin);
+    OHOS::NWeb::NWebDevicePermissionDeviceIdentifier nweb_device =
+        ArkWebDevicePermissionDeviceIdentifierStructToClass(device);
+    nweb_nweb_->RevokeDevicePermissions(
+        static_cast<OHOS::NWeb::NWebDevicePermissionHardwareType>(hardware_type), nweb_origin,
+        nweb_device, is_incognito);
+}
+
+void ArkWebNWebImpl::SetGuardPolicy(
+    int32_t hardware_type, int32_t policy, const ArkWebString& origin, bool is_incognito)
+{
+    std::string nweb_origin = ArkWebStringStructToClass(origin);
+    nweb_nweb_->SetGuardPolicy(static_cast<OHOS::NWeb::NWebDevicePermissionHardwareType>(hardware_type),
+        static_cast<OHOS::NWeb::NWebDeviceGuardPolicy>(policy), nweb_origin, is_incognito);
 }
 
 void ArkWebNWebImpl::SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value)

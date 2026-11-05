@@ -49,6 +49,9 @@
 #include "pixel_map.h"
 #include "pixel_map_napi.h"
 #include "web_errors.h"
+#include "web_device_permission_delegate.h"
+#include "web_device_permission_helpers.h"
+#include "web_device_permission_manager.h"
 #include "webview_javascript_execute_callback.h"
 #include "webview_createpdf_execute_callback.h"
 #include "web_history_list.h"
@@ -912,6 +915,9 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getLastPostMessageURL", NapiWebviewController::GetLastPostMessageURL),
         DECLARE_NAPI_FUNCTION("setZoomFactor", NapiWebviewController::SetZoomFactor),
         DECLARE_NAPI_FUNCTION("getZoomFactor", NapiWebviewController::GetZoomFactor),
+        DECLARE_NAPI_FUNCTION("setDevicePermissionDelegate", NapiWebviewController::SetDevicePermissionDelegate),
+        DECLARE_NAPI_FUNCTION("revokeDevicePermissions", NapiWebviewController::RevokeDevicePermissions),
+        DECLARE_NAPI_FUNCTION("setGuardPolicy", NapiWebviewController::SetGuardPolicy),
     };
     napi_value constructor = nullptr;
     napi_define_class(env, WEBVIEW_CONTROLLER_CLASS_NAME.c_str(), WEBVIEW_CONTROLLER_CLASS_NAME.length(),
@@ -1296,6 +1302,55 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         webHttpCookieSameSitePolicyProperties, &webHttpCookieSameSitePolicyEnum);
     napi_set_named_property(env, exports, WEB_HTTP_COOKIE_SAME_SITE_POLICY_ENUM_NAME.c_str(),
         webHttpCookieSameSitePolicyEnum);
+
+    napi_value webHardwareTypeEnum = nullptr;
+    using NWebHardwareType = NWebDevicePermissionHardwareType;
+    napi_property_descriptor webHardwareTypeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "USB", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebHardwareType::USB))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "SERIAL", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebHardwareType::SERIAL))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "HID", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebHardwareType::HID))),
+        DECLARE_NAPI_STATIC_PROPERTY("BLUETOOTH",
+            NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebHardwareType::BLUETOOTH))),
+    };
+    napi_define_class(env, WEB_HARDWARE_TYPE_ENUM_NAME.c_str(), WEB_HARDWARE_TYPE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(webHardwareTypeProperties) / sizeof(webHardwareTypeProperties[0]),
+        webHardwareTypeProperties, &webHardwareTypeEnum);
+    napi_set_named_property(env, exports, WEB_HARDWARE_TYPE_ENUM_NAME.c_str(), webHardwareTypeEnum);
+
+    napi_value webDeviceListUpdateActionEnum = nullptr;
+    napi_property_descriptor webDeviceListUpdateActionProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "ADD", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceListUpdateAction::ADD))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "REMOVE", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceListUpdateAction::REMOVE))),
+    };
+    napi_define_class(env, WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME.c_str(),
+        WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(webDeviceListUpdateActionProperties) / sizeof(webDeviceListUpdateActionProperties[0]),
+        webDeviceListUpdateActionProperties, &webDeviceListUpdateActionEnum);
+    napi_set_named_property(env, exports, WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME.c_str(),
+        webDeviceListUpdateActionEnum);
+
+    napi_value webDeviceGuardPolicyEnum = nullptr;
+    napi_property_descriptor webDeviceGuardPolicyProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "ASK", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceGuardPolicy::ASK))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "BLOCK", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceGuardPolicy::BLOCK))),
+        DECLARE_NAPI_STATIC_PROPERTY(
+            "DEFAULT", NapiParseUtils::ToInt32Value(env, static_cast<int32_t>(NWebDeviceGuardPolicy::DEFAULT))),
+    };
+    napi_define_class(env, WEB_DEVICE_GUARD_POLICY_ENUM_NAME.c_str(),
+        WEB_DEVICE_GUARD_POLICY_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(webDeviceGuardPolicyProperties) / sizeof(webDeviceGuardPolicyProperties[0]),
+        webDeviceGuardPolicyProperties, &webDeviceGuardPolicyEnum);
+    napi_set_named_property(env, exports, WEB_DEVICE_GUARD_POLICY_ENUM_NAME.c_str(), webDeviceGuardPolicyEnum);
 
     WebviewJavaScriptExecuteCallback::InitJSExcute(env, exports);
     WebviewCreatePDFExecuteCallback::InitJSExcute(env, exports);
@@ -9283,6 +9338,180 @@ napi_value NapiWebviewController::GetZoomFactor(napi_env env, napi_callback_info
     }
 
     NAPI_CALL(env, napi_create_double(env, zoomFactor, &result));
+    return result;
+}
+
+namespace {
+bool ParseRevokeDevicePermissionsArgs(napi_env env, size_t argc, napi_value* argv,
+    int32_t& hardwareType, std::string& origin, NWebDevicePermissionDeviceIdentifier& device,
+    bool& isIncognito)
+{
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], hardwareType)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'hardwareType' must be WebHardwareType.");
+        return false;
+    }
+    if (argc >= INTEGER_TWO && !NapiParseUtils::ParseString(env, argv[INTEGER_ONE], origin)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'origin' must be string.");
+        return false;
+    }
+    if (argc >= INTEGER_THREE) {
+        napi_valuetype valueType = napi_undefined;
+        napi_typeof(env, argv[INTEGER_TWO], &valueType);
+        if (valueType == napi_object &&
+            !ParseDeviceIdentifier(env, argv[INTEGER_TWO], device)) {
+            BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+                "BusinessError 401: Parameter error. The type of 'device' must be WebDeviceIdentifier.");
+            return false;
+        }
+    }
+    if (argc >= INTEGER_FOUR) {
+        ParseOptionalBool(env, argv[INTEGER_THREE], isIncognito);
+    }
+    return true;
+}
+
+bool ParseSetGuardPolicyArgs(napi_env env, size_t argc, napi_value* argv, int32_t& hardwareType,
+    int32_t& policy, std::string& origin, bool& isIncognito)
+{
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], hardwareType)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'hardwareType' must be WebHardwareType.");
+        return false;
+    }
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ONE], policy)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'policy' must be WebDeviceGuardPolicy.");
+        return false;
+    }
+    if (argc >= INTEGER_THREE) {
+        napi_valuetype valueType = napi_undefined;
+        napi_typeof(env, argv[INTEGER_TWO], &valueType);
+        if (valueType == napi_string) {
+            NapiParseUtils::ParseString(env, argv[INTEGER_TWO], origin);
+        }
+    }
+    if (argc >= INTEGER_FOUR) {
+        ParseOptionalBool(env, argv[INTEGER_THREE], isIncognito);
+    }
+    return true;
+}
+} // namespace
+
+napi_value NapiWebviewController::SetDevicePermissionDelegate(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("SetDevicePermissionDelegate");
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc < INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The number of params must be one.");
+        return result;
+    }
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType != napi_object) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The type of 'delegate' must be WebDevicePermissionDelegate.");
+        return result;
+    }
+    WebDevicePermissionDelegateHolder *holder = nullptr;
+    napi_unwrap(env, argv[INTEGER_ZERO], reinterpret_cast<void **>(&holder));
+    if (!holder || !holder->delegate_) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The delegate is invalid.");
+        return result;
+    }
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(webviewController->GetWebId());
+    if (!nweb_ptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    WebDevicePermissionManager::GetInstance().SetDelegate(
+        webviewController->GetWebId(), holder->delegate_);
+    nweb_ptr->SetDevicePermissionDelegate(holder->delegate_);
+    return result;
+}
+
+napi_value NapiWebviewController::RevokeDevicePermissions(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("RevokeDevicePermissions");
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_FOUR;
+    napi_value argv[INTEGER_FOUR] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc < INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The number of params must be at least one.");
+        return result;
+    }
+    int32_t hardwareType = 0;
+    std::string origin;
+    NWebDevicePermissionDeviceIdentifier device;
+    bool isIncognito = false;
+    if (!ParseRevokeDevicePermissionsArgs(env, argc, argv, hardwareType, origin, device, isIncognito)) {
+        return result;
+    }
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(webviewController->GetWebId());
+    if (!nweb_ptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    nweb_ptr->RevokeDevicePermissions(static_cast<NWebDevicePermissionHardwareType>(hardwareType),
+        origin, device, isIncognito);
+    return result;
+}
+
+napi_value NapiWebviewController::SetGuardPolicy(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("SetGuardPolicy");
+    napi_value result = nullptr;
+    napi_get_undefined(env, &result);
+    napi_value thisVar = nullptr;
+    size_t argc = INTEGER_FOUR;
+    napi_value argv[INTEGER_FOUR] = { 0 };
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc < INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            "BusinessError 401: Parameter error. The number of params must be at least two.");
+        return result;
+    }
+    int32_t hardwareType = 0;
+    int32_t policy = 0;
+    std::string origin;
+    bool isIncognito = false;
+    if (!ParseSetGuardPolicyArgs(env, argc, argv, hardwareType, policy, origin, isIncognito)) {
+        return result;
+    }
+    WebviewController *webviewController = GetWebviewController(env, info);
+    if (!webviewController || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(webviewController->GetWebId());
+    if (!nweb_ptr) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    nweb_ptr->SetGuardPolicy(static_cast<NWebDevicePermissionHardwareType>(hardwareType),
+        static_cast<NWebDeviceGuardPolicy>(policy), origin, isIncognito);
     return result;
 }
 } // namespace NWeb
