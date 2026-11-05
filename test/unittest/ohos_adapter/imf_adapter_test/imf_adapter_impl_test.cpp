@@ -255,18 +255,6 @@ public:
         isSetPreviewText_ = true;
         return 0;
     }
-    int32_t SetPreviewTextWithStyle(const std::u16string& text, int32_t start, int32_t end,
-        std::shared_ptr<IMFPreviewTextStyleAdapter> style) override
-    {
-        WVLOG_I("test SetPreviewTextWithStyle");
-        isSetPreviewTextWithStyle_ = true;
-        return 0;
-    }
-    bool IsSupportPreviewTextWithStyle() override
-    {
-        WVLOG_I("test IsSupportPreviewTextWithStyle");
-        return true;
-    }
     void FinishTextPreview() override
     {
         WVLOG_I("test FinishTextPreview");
@@ -299,10 +287,6 @@ public:
     {
         return isSendFunctionKey_;
     }
-    bool VerifySetPreviewTextWithStyleSuccess()
-    {
-        return isSetPreviewTextWithStyle_;
-    }
 private:
     bool isInsertText_ = false;
     bool isDeleteForward_ = false;
@@ -319,7 +303,6 @@ private:
     bool isGetLeftTextOfCursor_ = false;
     bool isGetRightTextOfCursor_ = false;
     bool isSetPreviewText_ = false;
-    bool isSetPreviewTextWithStyle_ = false;
     bool isFinishTextPreview_ = false;
     bool isSetNeedUnderLine_ = false;
     bool isKeyboardUpperRightCornerHide_ = false;
