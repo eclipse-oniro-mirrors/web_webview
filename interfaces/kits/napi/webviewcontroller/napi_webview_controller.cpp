@@ -739,6 +739,9 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("getUserAgent", NapiWebviewController::GetUserAgent),
         DECLARE_NAPI_FUNCTION("getCustomUserAgent", NapiWebviewController::GetCustomUserAgent),
         DECLARE_NAPI_FUNCTION("setCustomUserAgent", NapiWebviewController::SetCustomUserAgent),
+        DECLARE_NAPI_FUNCTION("setNavigationEntryUserData", NapiWebviewController::SetNavigationEntryUserData),
+        DECLARE_NAPI_FUNCTION("getNavigationEntryUserData", NapiWebviewController::GetNavigationEntryUserData),
+        DECLARE_NAPI_FUNCTION("removeNavigationEntryUserData", NapiWebviewController::RemoveNavigationEntryUserData),
         DECLARE_NAPI_FUNCTION("getTitle", NapiWebviewController::GetTitle),
         DECLARE_NAPI_FUNCTION("getProgress", NapiWebviewController::GetProgress),
         DECLARE_NAPI_FUNCTION("getPageHeight", NapiWebviewController::GetPageHeight),
@@ -3216,6 +3219,121 @@ napi_value NapiWebviewController::SetCustomUserAgent(napi_env env, napi_callback
         return result;
     }
     ErrCode ret = webviewController->SetCustomUserAgent(userAgent);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+    }
+    return result;
+}
+
+napi_value NapiWebviewController::SetNavigationEntryUserData(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_TWO;
+    napi_value argv[INTEGER_TWO] = { 0 };
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_TWO) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "two"));
+        return result;
+    }
+
+    std::string key;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], key)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "key", "string"));
+        return result;
+    }
+
+    std::string value;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ONE], value)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "value", "string"));
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    ErrCode ret = webviewController->SetNavigationEntryUserData(key, value);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+    }
+    return result;
+}
+
+napi_value NapiWebviewController::GetNavigationEntryUserData(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    std::string key;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], key)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "key", "string"));
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+
+    std::string value;
+    ErrCode ret = webviewController->GetNavigationEntryUserData(key, value);
+    if (ret != NO_ERROR) {
+        BusinessError::ThrowErrorByErrcode(env, ret);
+        return result;
+    }
+    napi_create_string_utf8(env, value.c_str(), value.length(), &result);
+    return result;
+}
+
+napi_value NapiWebviewController::RemoveNavigationEntryUserData(napi_env env, napi_callback_info info)
+{
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    std::string key;
+    if (!NapiParseUtils::ParseString(env, argv[INTEGER_ZERO], key)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "key", "string"));
+        return result;
+    }
+
+    WebviewController *webviewController = nullptr;
+    napi_status status = napi_unwrap(env, thisVar, (void **)&webviewController);
+    if ((!webviewController) || (status != napi_ok) || !webviewController->IsInit()) {
+        BusinessError::ThrowErrorByErrcode(env, INIT_ERROR);
+        return result;
+    }
+    ErrCode ret = webviewController->RemoveNavigationEntryUserData(key);
     if (ret != NO_ERROR) {
         BusinessError::ThrowErrorByErrcode(env, ret);
     }

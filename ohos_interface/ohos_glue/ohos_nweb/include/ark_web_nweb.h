@@ -2491,6 +2491,26 @@ public:
     /*--ark web()--*/
     virtual void SetGuardPolicy(int32_t hardware_type, int32_t policy, const ArkWebString& origin,
         bool is_incognito) = 0;
+
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    /*--ark web()--*/
+    virtual void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) = 0;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    /*--ark web()--*/
+    virtual ArkWebString GetNavigationEntryUserData(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    /*--ark web()--*/
+    virtual void RemoveNavigationEntryUserData(const ArkWebString& key) = 0;
 };
 
 } // namespace OHOS::ArkWeb

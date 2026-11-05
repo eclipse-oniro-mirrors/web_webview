@@ -690,6 +690,28 @@ public:
         return 0;
     }
 
+    ErrCode SetNavigationEntryUserData(const std::string& key, const std::string& value)
+    {
+        navEntryUserData_[key] = value;
+        navEntryUserDataSetCalled_ = true;
+        return 0;
+    }
+
+    ErrCode GetNavigationEntryUserData(const std::string& key, std::string& value)
+    {
+        auto it = navEntryUserData_.find(key);
+        value = it == navEntryUserData_.end() ? std::string() : it->second;
+        navEntryUserDataGetCalled_ = true;
+        return 0;
+    }
+
+    ErrCode RemoveNavigationEntryUserData(const std::string& key)
+    {
+        navEntryUserData_.erase(key);
+        navEntryUserDataRemoveCalled_ = true;
+        return 0;
+    }
+
     ErrCode SetAudioMuted(bool muted)
     {
         return 0;
@@ -1086,6 +1108,29 @@ public:
         return onActiveCalled_;
     }
 
+    bool WasNavEntryUserDataSetCalled() const
+    {
+        return navEntryUserDataSetCalled_;
+    }
+
+    bool WasNavEntryUserDataGetCalled() const
+    {
+        return navEntryUserDataGetCalled_;
+    }
+
+    bool WasNavEntryUserDataRemoveCalled() const
+    {
+        return navEntryUserDataRemoveCalled_;
+    }
+
+    void ResetNavEntryUserData()
+    {
+        navEntryUserData_.clear();
+        navEntryUserDataSetCalled_ = false;
+        navEntryUserDataGetCalled_ = false;
+        navEntryUserDataRemoveCalled_ = false;
+    }
+
     bool WasOnInactiveCalled() const
     {
         return onInactiveCalled_;
@@ -1182,6 +1227,10 @@ private:
     bool slideScrollCalled_;
     bool requestFocusCalled_;
     bool autoReloadEnabled_;
+    bool navEntryUserDataSetCalled_ = false;
+    bool navEntryUserDataGetCalled_ = false;
+    bool navEntryUserDataRemoveCalled_ = false;
+    std::map<std::string, std::string> navEntryUserData_;
     std::shared_ptr<HitTestResult> mockHitTestResult_;
 };
 

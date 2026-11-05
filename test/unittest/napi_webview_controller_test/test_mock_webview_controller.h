@@ -292,6 +292,21 @@ public:
         return 0;
     }
 
+    ErrCode SetNavigationEntryUserData(const std::string& key, const std::string& value)
+    {
+        return 0;
+    }
+
+    ErrCode GetNavigationEntryUserData(const std::string& key, std::string& value)
+    {
+        return 0;
+    }
+
+    ErrCode RemoveNavigationEntryUserData(const std::string& key)
+    {
+        return 0;
+    }
+
     std::string GetTitle()
     {
         return "";

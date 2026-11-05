@@ -1952,4 +1952,20 @@ void ArkWebNWebImpl::SetGuardPolicy(
     nweb_nweb_->SetGuardPolicy(static_cast<OHOS::NWeb::NWebDevicePermissionHardwareType>(hardware_type),
         static_cast<OHOS::NWeb::NWebDeviceGuardPolicy>(policy), nweb_origin, is_incognito);
 }
+
+void ArkWebNWebImpl::SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value)
+{
+    nweb_nweb_->SetNavigationEntryUserData(ArkWebStringStructToClass(key), ArkWebStringStructToClass(value));
+}
+
+ArkWebString ArkWebNWebImpl::GetNavigationEntryUserData(const ArkWebString& key)
+{
+    return ArkWebStringClassToStruct(nweb_nweb_->GetNavigationEntryUserData(ArkWebStringStructToClass(key)));
+}
+
+void ArkWebNWebImpl::RemoveNavigationEntryUserData(const ArkWebString& key)
+{
+    nweb_nweb_->RemoveNavigationEntryUserData(ArkWebStringStructToClass(key));
+}
+}
 } // namespace OHOS::ArkWeb

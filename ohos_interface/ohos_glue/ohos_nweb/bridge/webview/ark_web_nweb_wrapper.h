@@ -2149,6 +2149,23 @@ public:
         OHOS::NWeb::NWebDeviceGuardPolicy policy, const std::string& origin,
         bool is_incognito) override;
 
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    void SetNavigationEntryUserData(const std::string& key, const std::string& value) override;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    std::string GetNavigationEntryUserData(const std::string& key) override;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    void RemoveNavigationEntryUserData(const std::string& key) override;
+
 private:
     ArkWebRefPtr<ArkWebNWeb> ark_web_nweb_;
 };

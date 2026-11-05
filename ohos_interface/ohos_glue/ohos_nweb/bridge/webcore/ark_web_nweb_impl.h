@@ -2137,6 +2137,23 @@ public:
     void SetGuardPolicy(int32_t hardware_type, int32_t policy, const ArkWebString& origin,
         bool is_incognito) override;
 
+    /**
+     * @brief Set user data for the current navigation entry.
+     */
+    void SetNavigationEntryUserData(const ArkWebString& key, const ArkWebString& value) override;
+
+    /**
+     * @brief Get the user data of the current navigation entry matching the
+     *        key, or an empty string if no value exists for the key.
+     */
+    ArkWebString GetNavigationEntryUserData(const ArkWebString& key) override;
+
+    /**
+     * @brief Remove the user data of the current navigation entry matching
+     *        the key. Does nothing if no value exists for the key.
+     */
+    void RemoveNavigationEntryUserData(const ArkWebString& key) override;
+
 private:
     std::shared_ptr<OHOS::NWeb::NWeb> nweb_nweb_;
 };
