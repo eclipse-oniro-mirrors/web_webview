@@ -523,6 +523,17 @@ ErrCode WebviewController::RemoveNavigationEntryUserData(const std::string& key)
     return NWebError::NO_ERROR;
 }
 
+ErrCode WebviewController::SetNavigationThrottle(
+    std::shared_ptr<OHOS::NWeb::NWebNavigationThrottleHandler> handler)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        return NWebError::INIT_ERROR;
+    }
+    nweb_ptr->SetNavigationThrottle(std::move(handler));
+    return NWebError::NO_ERROR;
+}
+
 std::string WebviewController::GetTitle()
 {
     std::string title = "";

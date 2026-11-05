@@ -58,6 +58,15 @@ protected:
         return ANI_OK;
     }
 
+    static ani_status MockReference_IsNull(ani_env* env, ani_ref ref, ani_boolean* result)
+    {
+        if (g_referenceIsNullShouldFail) {
+            return ANI_ERROR;
+        }
+        *result = g_referenceIsNullResult;
+        return ANI_OK;
+    }
+
     static ani_status MockPromise_New(ani_env* env, ani_resolver* result_resolver, ani_object* result_promise)
     {
         if (g_promiseNewShouldFail) {
@@ -124,6 +133,7 @@ protected:
     // vtable offset enumeration
     enum VTableOffset {
         VT_FIND_ENUM = 16,                            // FindEnum offset
+        VT_REFERENCE_IS_NULL = 38,                    // Reference_IsNull offset
         VT_REFERENCE_IS_UNDEFINED = 39,               // Reference_IsUndefined offset
         VT_STRING_NEW_UTF8 = 47,                      // String_NewUTF8 offset
         VT_ENUM_GET_ENUM_ITEM_BY_INDEX = 86,          // Enum_GetEnumItemByIndex offset
@@ -161,6 +171,8 @@ protected:
     static bool g_findEnumShouldFail;
     static bool g_enumGetItemShouldFail;
     static bool g_referenceIsUndefinedShouldFail;
+    static bool g_referenceIsNullShouldFail;
+    static ani_boolean g_referenceIsNullResult;
     static ani_boolean g_referenceIsUndefinedResult;
     static bool g_promiseNewShouldFail;
     static bool g_enumItemGetValueShouldFail;
@@ -200,6 +212,7 @@ protected:
             // Set vtable function pointers
             g_fakeVtable[VT_FIND_ENUM] = (void*)MockFindEnum;
             g_fakeVtable[VT_REFERENCE_IS_UNDEFINED] = (void*)MockReference_IsUndefined;
+            g_fakeVtable[VT_REFERENCE_IS_NULL] = (void*)MockReference_IsNull;
             g_fakeVtable[VT_STRING_NEW_UTF8] = (void*)MockString_NewUTF8;
             g_fakeVtable[VT_ENUM_GET_ENUM_ITEM_BY_INDEX] = (void*)MockEnum_GetEnumItemByIndex;
             g_fakeVtable[VT_ENUMITEM_GET_VALUE_INT] = (void*)MockEnumItem_GetValue_Int;
@@ -227,6 +240,9 @@ protected:
         g_enumGetItemShouldFail = false;
         g_referenceIsUndefinedShouldFail = false;
         g_referenceIsUndefinedResult = ANI_FALSE;  // Ensure default is not undefined
+        g_referenceIsNullShouldFail = false;
+        g_referenceIsNullResult = ANI_FALSE;
+        OHOS::NWeb::WebviewController::g_setNavigationThrottleShouldFail = false;
         g_promiseNewShouldFail = false;
         g_enumItemGetValueShouldFail = false;
         g_enumItemGetValueResult = 0;
@@ -291,6 +307,8 @@ bool AniWebviewControllerTest::g_setPropertyByNameRefShouldFail = false;
 bool AniWebviewControllerTest::g_stringNewUTF8ShouldFail = false;
 std::string AniWebviewControllerTest::gLastCreatedUtf8 = "";
 bool AniWebviewControllerTest::g_setSiteIsolationModeShouldFail = false;
+bool AniWebviewControllerTest::g_referenceIsNullShouldFail = false;
+ani_boolean AniWebviewControllerTest::g_referenceIsNullResult = ANI_FALSE;
 
 using OHOS::NWeb::OnActive;
 using OHOS::NWeb::OnInactive;
@@ -2463,4 +2481,117 @@ TEST_F(AniWebviewControllerTest, NavEntryUserData_ParseStringFailure_NoOp)
 
     OHOS::NWeb::AniParseUtils::g_parseStringResult = true;
     testController_->ResetNavEntryUserData();
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ClearWithUndefinedRef
+ * @tc.desc: SetNavigationThrottle with an undefined throttle reference clears the handler.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ClearWithUndefinedRef)
+{
+    ani_env* env = CreateMockAniEnv();
+    g_referenceIsUndefinedResult = ANI_TRUE;
+
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_),
+        reinterpret_cast<ani_ref>(testController_));
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_TRUE(testController_->WasSetNavigationThrottleCalled());
+    EXPECT_EQ(testController_->GetLastThrottleHandler(), nullptr);
+
+    g_referenceIsUndefinedResult = ANI_FALSE;
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ClearWithNullRef
+ * @tc.desc: SetNavigationThrottle with a null throttle reference clears the handler.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ClearWithNullRef)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_FALSE(WasErrorThrown());
+    EXPECT_TRUE(testController_->WasSetNavigationThrottleCalled());
+    EXPECT_EQ(testController_->GetLastThrottleHandler(), nullptr);
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ErrorScenarios
+ * @tc.desc: SetNavigationThrottle error paths.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ErrorScenarios)
+{
+    ani_env* env = CreateMockAniEnv();
+
+    // env is nullptr: safe return, no throw
+    OHOS::NWeb::AniSetNavigationThrottle(nullptr, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_FALSE(WasErrorThrown());
+
+    // Controller is null
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = nullptr;
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::AniParseUtils::g_testControllerPtr = testController_;
+
+    // Controller is not initialized
+    SetControllerInitialized(false);
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), INIT_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    SetControllerInitialized(true);
+
+    // Controller returns an error
+    OHOS::NWeb::WebviewController::g_setNavigationThrottleShouldFail = true;
+    OHOS::NWeb::AniSetNavigationThrottle(env, reinterpret_cast<ani_object>(testController_), nullptr);
+    EXPECT_TRUE(WasErrorThrown());
+    EXPECT_EQ(GetLastErrorCode(), PARAM_CHECK_ERROR);
+    OHOS::NWeb::AniBusinessError::Reset();
+    OHOS::NWeb::WebviewController::g_setNavigationThrottleShouldFail = false;
+}
+
+/**
+ * @tc.name: SetNavigationThrottle_ClearThenHasCallback
+ * @tc.desc: Mock controller reflects the registered handler state.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, SetNavigationThrottle_ClearThenHasCallback)
+{
+    class TestThrottleHandler : public OHOS::NWeb::NWebNavigationThrottleHandler {
+    public:
+        OHOS::NWeb::NWebThrottleAction OnThrottleEvent(OHOS::NWeb::NWebThrottleStage stage,
+            const OHOS::NWeb::NWebNavigationThrottleInfo& info, uint64_t deferId) override
+        {
+            return OHOS::NWeb::NWebThrottleAction::PROCEED;
+        }
+    };
+
+    EXPECT_FALSE(testController_->HasThrottleCallback());
+
+    auto handler = std::make_shared<TestThrottleHandler>();
+    EXPECT_EQ(testController_->SetNavigationThrottle(handler), OHOS::NWebError::NO_ERROR);
+    EXPECT_TRUE(testController_->HasThrottleCallback());
+
+    EXPECT_EQ(testController_->SetNavigationThrottle(nullptr), OHOS::NWebError::NO_ERROR);
+    EXPECT_FALSE(testController_->HasThrottleCallback());
+}
+
+/**
+ * @tc.name: StsNavigationThrottleInit_EnvIsNull
+ * @tc.desc: StsNavigationThrottleInit with a null env returns ANI_ERROR.
+ * @tc.type: FUNC
+ * @tc.require: 20260812039373
+ */
+TEST_F(AniWebviewControllerTest, StsNavigationThrottleInit_EnvIsNull)
+{
+    EXPECT_EQ(OHOS::NWeb::StsNavigationThrottleInit(nullptr), ANI_ERROR);
 }

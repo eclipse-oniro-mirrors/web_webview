@@ -325,6 +325,61 @@ export default namespace webview {
         reason: string;
     }
 
+    export enum NavigationThrottleAction {
+        PROCEED = 0,
+        CANCEL = 1,
+        DEFER = 2
+    }
+
+    export interface NavigationInfo {
+        url: string;
+        isMainFrame: boolean;
+        hasUserGesture: boolean;
+        isRendererInitiated: boolean;
+        isRedirect: boolean;
+        pageTransition: int;
+        requestMethod: string;
+        statusCode: int;
+        mimeType: string;
+        contentDisposition: string;
+        errorCode: WebNetErrorList;
+        errorDescription: string;
+    }
+
+    export class NavigationInfoInner implements NavigationInfo {
+        url: string = "";
+        isMainFrame: boolean = false;
+        hasUserGesture: boolean = false;
+        isRendererInitiated: boolean = false;
+        isRedirect: boolean = false;
+        pageTransition: int = 0;
+        requestMethod: string = "";
+        statusCode: int = 0;
+        mimeType: string = "";
+        contentDisposition: string = "";
+        errorCode: WebNetErrorList = WebNetErrorList.NET_OK;
+        errorDescription: string = "";
+    }
+
+    export class DeferThrottleCallback {
+        static {
+            loadLibraryWithPermissionCheck("webview_ani.z", "@ohos.web.webview");
+        }
+        nwebId: int = -1;
+        deferId: long = 0;
+
+        native constructor(nwebId: int, deferId: long);
+        native proceed(): void;
+        native cancel(): void;
+    }
+
+    export interface NavigationThrottle {
+        willStartRequest(info: NavigationInfo, callback: DeferThrottleCallback): NavigationThrottleAction;
+        willRedirectRequest(info: NavigationInfo, callback: DeferThrottleCallback): NavigationThrottleAction;
+        willProcessResponse(info: NavigationInfo, callback: DeferThrottleCallback): NavigationThrottleAction;
+        willFailRequest(info: NavigationInfo, callback: DeferThrottleCallback): NavigationThrottleAction;
+    }
+
     export interface BlanklessLoadingParam {
         enable: boolean;
         duration?: int;
@@ -849,6 +904,7 @@ export default namespace webview {
         native static pauseAllTimers(): void;
         native static resumeAllTimers(): void;
         native setCustomUserAgent(userAgent: string): void;
+        native setNavigationThrottle(throttle: NavigationThrottle | null): void;
         native removeCache(clearRom: boolean): void;
         native setNetworkAvailable(enable: boolean): void;
         native isIncognitoMode(): boolean;

@@ -37,6 +37,7 @@
 #include "ohos_nweb/include/ark_web_keyboard_event.h"
 #include "ohos_nweb/include/ark_web_message_value_callback.h"
 #include "ohos_nweb/include/ark_web_mouse_event.h"
+#include "ohos_nweb/include/ark_web_navigation_throttle_handler.h"
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_print_document_adapter_adapter.h"
@@ -2477,6 +2478,34 @@ public:
      */
     /*--ark web()--*/
     virtual void RemoveNavigationEntryUserData(const ArkWebString& key) = 0;
+
+    /**
+     * @brief Set the navigation throttle handler. Only one handler takes
+     *        effect; setting a new one overwrites the previous one, and
+     *        setting nullptr clears it.
+     *
+     * @param handler The navigation throttle handler to set, or nullptr to clear.
+     */
+    /*--ark web()--*/
+    virtual void SetNavigationThrottle(ArkWebRefPtr<ArkWebNavigationThrottleHandler> handler) = 0;
+
+    /**
+     * @brief Check whether a navigation throttle handler is registered.
+     *
+     * @return bool: true if a handler is registered, false otherwise.
+     */
+    /*--ark web()--*/
+    virtual bool HasThrottleCallback() = 0;
+
+    /**
+     * @brief Resume or cancel a deferred navigation.
+     *
+     * @param deferId The defer identifier passed to
+     *        ArkWebNavigationThrottleHandler::OnThrottleEvent.
+     * @param proceed true to resume the navigation, false to cancel it.
+     */
+    /*--ark web()--*/
+    virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) = 0;
 };
 
 } // namespace OHOS::ArkWeb
