@@ -41,6 +41,7 @@
 #include "ohos_nweb/include/ark_web_pdfconfig_args.h"
 #include "ohos_nweb/include/ark_web_preference.h"
 #include "ohos_nweb/include/ark_web_print_document_adapter_adapter.h"
+#include "ohos_nweb/include/ark_web_query_navigation_config_callback.h"
 #include "ohos_nweb/include/ark_web_release_surface_callback.h"
 #include "ohos_nweb/include/ark_web_rom_value.h"
 #include "ohos_nweb/include/ark_web_rom_value_vector.h"
@@ -2540,6 +2541,8 @@ public:
      */
     /*--ark web()--*/
     virtual void ResolveNavigationDefer(uint64_t deferId, bool proceed) = 0;
+    /*--ark web()--*/
+    virtual void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) = 0;
 };
 
 } // namespace OHOS::ArkWeb

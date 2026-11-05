@@ -108,6 +108,8 @@ ohos_shared_library("webview_ani") {
     "./src/webviewcontroller/ani_navigation_throttle.cpp",
     "./src/webviewcontroller/ani_navigation_throttle.h",
     "./src/webviewcontroller/ani_webview_createpdf_execute_callback.cpp",
+    "./src/webviewcontroller/navigation_config_delegate.cpp",
+    "./src/webviewcontroller/navigation_config_delegate.h",
     "./src/webviewcontroller/prefetch_options.cpp",
     "./src/webviewcontroller/prefetch_options.h",
     "./src/webviewcontroller/web_download_delegate.cpp",

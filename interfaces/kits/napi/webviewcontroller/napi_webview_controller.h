@@ -60,6 +60,7 @@ const std::string WEB_HARDWARE_TYPE_ENUM_NAME = "WebHardwareType";
 const std::string WEB_DEVICE_LIST_UPDATE_ACTION_ENUM_NAME = "WebDeviceListUpdateAction";
 const std::string WEB_DEVICE_GUARD_POLICY_ENUM_NAME = "WebDeviceGuardPolicy";
 const std::string WEB_NAVIGATION_THROTTLE_ACTION_ENUM_NAME = "NavigationThrottleAction";
+const std::string WEB_NAVIGATION_CONFIG_MODE_ENUM_NAME = "WebNavigationConfigMode";
 constexpr double TEN_MILLIMETER_TO_INCH = 0.39;
 constexpr uint32_t URL_MAXIMUM = 2 * 1024 * 1024;
 
@@ -392,6 +393,12 @@ private:
     static napi_value SetAppCustomUserAgent(napi_env env, napi_callback_info info);
 
     static napi_value SetUserAgentForHosts(napi_env env, napi_callback_info info);
+
+    static napi_value SetWebNavigationConfigMode(napi_env env, napi_callback_info info);
+
+    static napi_value GetWebNavigationConfigMode(napi_env env, napi_callback_info info);
+
+    static napi_value OnQueryNavigationConfig(napi_env env, napi_callback_info info);
 
     static napi_value WarmupServiceWorker(napi_env env, napi_callback_info info);
 

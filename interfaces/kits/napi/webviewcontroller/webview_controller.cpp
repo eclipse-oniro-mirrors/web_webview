@@ -32,6 +32,7 @@
 #include "native_arkweb_utils.h"
 #include "native_interface_arkweb.h"
 #include "native_media_player_impl.h"
+#include "query_navigation_config_impl.h"
 
 #include "nweb_log.h"
 #include "nweb_store_web_archive_callback.h"
@@ -1837,6 +1838,18 @@ void WebviewController::OnCreateNativeMediaPlayer(napi_env env, napi_ref callbac
 
     auto callbackImpl = std::make_shared<NWebCreateNativeMediaPlayerCallbackImpl>(nwebId_, env, callback);
     nweb_ptr->OnCreateNativeMediaPlayer(callbackImpl);
+}
+
+void WebviewController::OnQueryNavigationConfig(napi_env env, napi_ref callback)
+{
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(nwebId_);
+    if (!nweb_ptr) {
+        napi_delete_reference(env, callback);
+        return;
+    }
+
+    auto callbackImpl = std::make_shared<NWebQueryNavigationConfigCallbackImpl>(nwebId_, env, callback);
+    nweb_ptr->OnQueryNavigationConfig(callbackImpl);
 }
 
 bool WebviewController::ParseScriptContent(napi_env env, napi_value value, std::string &script)

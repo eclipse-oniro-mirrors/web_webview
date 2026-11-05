@@ -186,6 +186,11 @@ export default namespace webview {
         MEMORY_PRESSURE_LEVEL_CRITICAL = 2
     }
 
+    export enum WebNavigationConfigMode {
+        SET = 0,
+        QUERY = 1
+    }
+
     export enum PlaybackStatus {
         PAUSED = 0,
         PLAYING = 1
@@ -853,6 +858,7 @@ export default namespace webview {
         native clearMatches(): void;
         native startDownload(url: string): void;
         native setDownloadDelegate(delegate: WebDownloadDelegate): void;
+        native onQueryNavigationConfig(callback: (params: NavigationConfigParams) => NavigationConfigResult): void;
         native getBackForwardEntries(): BackForwardList;
         native setUrlTrustList(urlTrustList: string): void;
         native setUrlTrustList(urlTrustList: string, allowOpaqueOrigin: boolean, supportWildcard: boolean): void;
@@ -901,6 +907,8 @@ export default namespace webview {
         native enableSafeBrowsing(enable: boolean): void;
         native static setRenderProcessMode(mode: RenderProcessMode): void;
         native static getRenderProcessMode(): RenderProcessMode;
+        native static setWebNavigationConfigMode(mode: WebNavigationConfigMode): void;
+        native static getWebNavigationConfigMode(): WebNavigationConfigMode;
         native static pauseAllTimers(): void;
         native static resumeAllTimers(): void;
         native setCustomUserAgent(userAgent: string): void;
@@ -1455,6 +1463,24 @@ export default namespace webview {
             let item = WebDownloadItem.deserializeInternal(buffer);
             return item;
         }
+    }
+
+    export class NavigationConfigParams {
+        url: string = "";
+        redirectChain: Array<string> = [];
+        referrer: string = "";
+        // pageTransition is a bitmask combination (core type | qualifier flags).
+        // The combined value is not necessarily an enum member and cannot be boxed as an enum;
+        // use int to carry the raw bitmask value directly.
+        pageTransition: int = 0;
+        isMainFrame: boolean = false;
+        constructor() {};
+    }
+
+    export class NavigationConfigResult {
+        userAgent: string = "";
+        viewportWidth: number = 0;
+        constructor() {};
     }
 
     export class WebDownloadDelegate {

@@ -1274,6 +1274,26 @@ void NWebHelper::SetUserAgentForHosts(const std::string& userAgent, const std::v
     nwebEngine_->SetUserAgentForHosts(userAgent, hosts);
 }
 
+void NWebHelper::SetWebNavigationConfigMode(int32_t mode)
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return;
+    }
+
+    nwebEngine_->SetWebNavigationConfigMode(mode);
+}
+
+int32_t NWebHelper::GetWebNavigationConfigMode()
+{
+    if (!LoadWebEngine(true, false)) {
+        WVLOG_E("failed to load web engine");
+        return 0;
+    }
+
+    return nwebEngine_->GetWebNavigationConfigMode();
+}
+
 void NWebHelper::WarmupServiceWorker(const std::string& url)
 {
     if (!initFlag_) {

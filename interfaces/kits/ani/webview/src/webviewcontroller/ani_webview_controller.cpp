@@ -82,6 +82,7 @@
 #include "nweb_c_api.h"
 #include "web_download_delegate.h"
 #include "web_download_manager.h"
+#include "navigation_config_delegate.h"
 #include "pixel_map.h"
 #include "pixel_map_ani.h"
 #include "pixel_map_taihe_ani.h"
@@ -1713,6 +1714,52 @@ static void SetDownloadDelegate(ani_env *env, ani_object object, ani_object aniD
     }
     int32_t nwebId = controller->GetWebId();
     WebDownloadManager::AddDownloadDelegateForWeb(nwebId, delegate);
+}
+
+static void OnQueryNavigationConfig(ani_env* env, ani_object object, ani_fn_object callback)
+{
+    WVLOG_D("[WebviewCotr] OnQueryNavigationConfig");
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+    if (callback == nullptr) {
+        WVLOG_E("[NavigationConfig] callback is null");
+        return;
+    }
+    ani_boolean isUndefined = ANI_FALSE;
+    if (env->Reference_IsUndefined(callback, &isUndefined) != ANI_OK || isUndefined) {
+        WVLOG_E("[NavigationConfig] callback is undefined");
+        return;
+    }
+    ani_boolean isFunction = ANI_FALSE;
+    ani_class functionClass = nullptr;
+    env->FindClass("std.core.Function", &functionClass);
+    if (env->Object_InstanceOf(callback, functionClass, &isFunction) != ANI_OK || !isFunction) {
+        WVLOG_E("[NavigationConfig] callback is not function");
+        return;
+    }
+
+    auto* controller = reinterpret_cast<WebviewController*>(AniParseUtils::Unwrap(env, object));
+    if (!controller || !controller->IsInit()) {
+        AniBusinessError::ThrowErrorByErrCode(env, INIT_ERROR);
+        return;
+    }
+
+    auto nweb_ptr = NWebHelper::Instance().GetNWeb(controller->GetNWebId());
+    if (!nweb_ptr) {
+        WVLOG_E("[NavigationConfig] nweb_ptr is null");
+        return;
+    }
+
+    ani_vm* vm = nullptr;
+    env->GetVM(&vm);
+    if (vm == nullptr) {
+        WVLOG_E("[NavigationConfig] get vm failed");
+        return;
+    }
+    auto callbackImpl = std::make_shared<NavigationConfigDelegate>(vm, callback);
+    nweb_ptr->OnQueryNavigationConfig(callbackImpl);
 }
 
 Media::PixelFormat getColorType(ImageColorType colorType)
@@ -3454,6 +3501,57 @@ WEBVIEW_ANI_STATIC ani_enum_item GetRenderProcessMode(ani_env* env, ani_object o
     WVLOG_D("getRenderProcessMode mode = %{public}d", static_cast<int32_t>(renderProcessMode));
     ani_enum_item mode;
     if (env->Enum_GetEnumItemByIndex(enumType, renderProcessMode, &mode) != ANI_OK) {
+        WVLOG_E("env enum_GetEnumItemByIndex failed");
+        return nullptr;
+    }
+    return mode;
+}
+
+WEBVIEW_ANI_STATIC void SetWebNavigationConfigMode(ani_env* env, ani_object object, ani_enum_item mode)
+{
+    WVLOG_D("[WebviewCotr] SetWebNavigationConfigMode");
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return;
+    }
+    ani_boolean isUndefined = ANI_FALSE;
+    if (env->Reference_IsUndefined(mode, &isUndefined) != ANI_OK || isUndefined) {
+        return;
+    }
+
+    ani_int iMode;
+    if (env->EnumItem_GetValue_Int(mode, &iMode) != ANI_OK) {
+        AniBusinessError::ThrowErrorByErrCode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+
+    int32_t configMode = static_cast<int32_t>(iMode);
+    if (configMode < static_cast<int32_t>(WebNavigationConfigModeType::SET) ||
+        configMode > static_cast<int32_t>(WebNavigationConfigModeType::QUERY)) {
+        AniBusinessError::ThrowErrorByErrCode(env, PARAM_CHECK_ERROR);
+        return;
+    }
+    WVLOG_I("SetWebNavigationConfigMode mode: %{public}d", configMode);
+    NWebHelper::Instance().SetWebNavigationConfigMode(configMode);
+}
+
+WEBVIEW_ANI_STATIC ani_enum_item GetWebNavigationConfigMode(ani_env* env, ani_object object)
+{
+    ani_int configMode = 0;
+    ani_enum enumType;
+    if (!env) {
+        WVLOG_E("env is nullptr");
+        return nullptr;
+    }
+    if (env->FindEnum("@ohos.web.webview.webview.WebNavigationConfigMode", &enumType) != ANI_OK) {
+        WVLOG_E("env find enum failed");
+        return nullptr;
+    }
+
+    configMode = static_cast<ani_int>(NWebHelper::Instance().GetWebNavigationConfigMode());
+    WVLOG_D("getWebNavigationConfigMode mode = %{public}d", static_cast<int32_t>(configMode));
+    ani_enum_item mode;
+    if (env->Enum_GetEnumItemByIndex(enumType, configMode, &mode) != ANI_OK) {
         WVLOG_E("env enum_GetEnumItemByIndex failed");
         return nullptr;
     }
@@ -7987,6 +8085,8 @@ ani_status StsWebviewControllerInit(ani_env *env)
         ani_native_function { "clearMatches", nullptr, reinterpret_cast<void *>(clearMatches) },
         ani_native_function { "startDownload", nullptr, reinterpret_cast<void *>(StartDownload) },
         ani_native_function { "setDownloadDelegate", nullptr, reinterpret_cast<void *>(SetDownloadDelegate) },
+        ani_native_function { "onQueryNavigationConfig", nullptr,
+                              reinterpret_cast<void *>(OnQueryNavigationConfig) },
         ani_native_function { "getBackForwardEntries", nullptr, reinterpret_cast<void *>(GetBackForwardEntries) },
         ani_native_function { "accessStep", nullptr, reinterpret_cast<void *>(AccessStep) },
         ani_native_function { "isAdsBlockEnabled", nullptr, reinterpret_cast<void *>(IsAdsBlockEnabled) },
@@ -8126,6 +8226,10 @@ ani_status StsWebviewControllerInit(ani_env *env)
                               reinterpret_cast<void *>(SetServiceWorkerWebSchemeHandler) },
         ani_native_function { "setRenderProcessMode", nullptr, reinterpret_cast<void *>(SetRenderProcessMode) },
         ani_native_function { "getRenderProcessMode", nullptr, reinterpret_cast<void *>(GetRenderProcessMode) },
+        ani_native_function { "setWebNavigationConfigMode", nullptr,
+                              reinterpret_cast<void *>(SetWebNavigationConfigMode) },
+        ani_native_function { "getWebNavigationConfigMode", nullptr,
+                              reinterpret_cast<void *>(GetWebNavigationConfigMode) },
         ani_native_function { "setConnectionTimeout", nullptr, reinterpret_cast<void *>(SetConnectionTimeout) },
         ani_native_function { "pauseAllTimers", nullptr, reinterpret_cast<void *>(PauseAllTimers) },
         ani_native_function { "resumeAllTimers", nullptr, reinterpret_cast<void *>(ResumeAllTimers) },
