@@ -100,6 +100,8 @@ ohos_shared_library("webview_napi") {
     "webviewcontroller/webview_ai_page_command_callback.cpp",
     "webviewcontroller/webview_blankless_callback.cpp",
     "webviewcontroller/webview_controller.cpp",
+    "webviewcontroller/query_navigation_config_impl.cpp",
+    "webviewcontroller/query_navigation_config_impl.h",
     "webviewcontroller/webview_createpdf_execute_callback.cpp",
     "webviewcontroller/webview_hasimage_callback.cpp",
     "webviewcontroller/webview_javascript_execute_callback.cpp",

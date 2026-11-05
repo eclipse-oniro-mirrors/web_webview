@@ -1016,6 +1016,8 @@ public:
 
     void OnCreateNativeMediaPlayer(std::shared_ptr<OHOS::NWeb::NWebCreateNativeMediaPlayerCallback> callback) override;
 
+    void OnQueryNavigationConfig(std::shared_ptr<OHOS::NWeb::NWebQueryNavigationConfigCallback> callback) override;
+
     /**
      * @brief Send touchpad fling event.
      *

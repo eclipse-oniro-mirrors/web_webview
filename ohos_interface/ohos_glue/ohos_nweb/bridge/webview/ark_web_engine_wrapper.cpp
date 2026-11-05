@@ -439,4 +439,14 @@ void ArkWebEngineWrapper::DumpArkWebJSHeap(int32_t fd, int32_t renderPid, bool n
 {
     ark_web_engine_->DumpArkWebJSHeap(fd, renderPid, needSnapshot, needGC, needRaw);
 }
+
+void ArkWebEngineWrapper::SetWebNavigationConfigMode(int32_t mode)
+{
+    ark_web_engine_->SetWebNavigationConfigMode(mode);
+}
+
+int32_t ArkWebEngineWrapper::GetWebNavigationConfigMode()
+{
+    return ark_web_engine_->GetWebNavigationConfigMode();
+}
 } // namespace OHOS::ArkWeb

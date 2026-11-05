@@ -999,6 +999,8 @@ public:
 
     void OnCreateNativeMediaPlayer(ArkWebRefPtr<ArkWebCreateNativeMediaPlayerCallback> callback) override;
 
+    void OnQueryNavigationConfig(ArkWebRefPtr<ArkWebQueryNavigationConfigCallback> callback) override;
+
     /**
      * @brief Web drag resize optimize.
      */

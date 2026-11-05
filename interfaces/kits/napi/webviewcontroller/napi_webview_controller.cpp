@@ -41,6 +41,7 @@
 #include "nweb.h"
 #include "nweb_adapter_helper.h"
 #include "nweb_helper.h"
+#include "nweb_navigation_config.h"
 #include "nweb_init_params.h"
 #include "nweb_log.h"
 #include "nweb_user_agent_metadata_impl.h"
@@ -843,6 +844,7 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_FUNCTION("pauseAllMedia", NapiWebviewController::PauseAllMedia),
         DECLARE_NAPI_FUNCTION("getMediaPlaybackState", NapiWebviewController::GetMediaPlaybackState),
         DECLARE_NAPI_FUNCTION("onCreateNativeMediaPlayer", NapiWebviewController::OnCreateNativeMediaPlayer),
+        DECLARE_NAPI_FUNCTION("onQueryNavigationConfig", NapiWebviewController::OnQueryNavigationConfig),
         DECLARE_NAPI_STATIC_FUNCTION("prefetchResource", NapiWebviewController::PrefetchResource),
         DECLARE_NAPI_STATIC_FUNCTION("clearPrefetchedResource", NapiWebviewController::ClearPrefetchedResource),
         DECLARE_NAPI_STATIC_FUNCTION("setRenderProcessMode", NapiWebviewController::SetRenderProcessMode),
@@ -856,6 +858,8 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         DECLARE_NAPI_STATIC_FUNCTION("clearHostIP", NapiWebviewController::ClearHostIP),
         DECLARE_NAPI_STATIC_FUNCTION("setAppCustomUserAgent", NapiWebviewController::SetAppCustomUserAgent),
         DECLARE_NAPI_STATIC_FUNCTION("setUserAgentForHosts", NapiWebviewController::SetUserAgentForHosts),
+        DECLARE_NAPI_STATIC_FUNCTION("setWebNavigationConfigMode", NapiWebviewController::SetWebNavigationConfigMode),
+        DECLARE_NAPI_STATIC_FUNCTION("getWebNavigationConfigMode", NapiWebviewController::GetWebNavigationConfigMode),
         DECLARE_NAPI_STATIC_FUNCTION("warmupServiceWorker", NapiWebviewController::WarmupServiceWorker),
         DECLARE_NAPI_FUNCTION("getSurfaceId", NapiWebviewController::GetSurfaceId),
         DECLARE_NAPI_STATIC_FUNCTION("enableWholeWebPageDrawing", NapiWebviewController::EnableWholeWebPageDrawing),
@@ -1170,6 +1174,21 @@ napi_value NapiWebviewController::Init(napi_env env, napi_value exports)
         NapiParseUtils::CreateEnumConstructor, nullptr, sizeof(pressureLevelProperties) /
         sizeof(pressureLevelProperties[0]), pressureLevelProperties, &pressureLevelEnum);
     napi_set_named_property(env, exports, WEB_PRESSURE_LEVEL_ENUM_NAME.c_str(), pressureLevelEnum);
+
+    napi_value webNavigationConfigModeEnum = nullptr;
+    napi_property_descriptor webNavigationConfigModeProperties[] = {
+        DECLARE_NAPI_STATIC_PROPERTY("SET", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(WebNavigationConfigMode::SET))),
+        DECLARE_NAPI_STATIC_PROPERTY("QUERY", NapiParseUtils::ToInt32Value(env,
+            static_cast<int32_t>(WebNavigationConfigMode::QUERY))),
+    };
+    napi_define_class(env, WEB_NAVIGATION_CONFIG_MODE_ENUM_NAME.c_str(),
+        WEB_NAVIGATION_CONFIG_MODE_ENUM_NAME.length(),
+        NapiParseUtils::CreateEnumConstructor, nullptr,
+        sizeof(webNavigationConfigModeProperties) / sizeof(webNavigationConfigModeProperties[0]),
+        webNavigationConfigModeProperties, &webNavigationConfigModeEnum);
+    napi_set_named_property(env, exports, WEB_NAVIGATION_CONFIG_MODE_ENUM_NAME.c_str(),
+        webNavigationConfigModeEnum);
 
     napi_value controllerAttachStateEnum = nullptr;
     napi_property_descriptor controllerAttachStateProperties[] = {
@@ -6922,6 +6941,100 @@ napi_value NapiWebviewController::SetUserAgentForHosts(napi_env env, napi_callba
 
     NWebHelper::Instance().SetUserAgentForHosts(userAgent, hosts);
     return result;
+}
+
+napi_value NapiWebviewController::SetWebNavigationConfigMode(napi_env env, napi_callback_info info)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("SetWebNavigationConfigMode unsupported engine version: M114");
+        return nullptr;
+    }
+
+    WVLOG_D("Set web navigation config mode.");
+    napi_value thisVar = nullptr;
+    napi_value result = nullptr;
+    size_t argc = INTEGER_ONE;
+    napi_value argv[INTEGER_ONE] = { 0 };
+    NAPI_CALL(env, napi_get_undefined(env, &result));
+    napi_get_cb_info(env, info, &argc, argv, &thisVar, nullptr);
+    if (argc != INTEGER_ONE) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::PARAM_NUMBERS_ERROR_ONE, "one"));
+        return result;
+    }
+
+    int32_t mode = 0;
+    if (!NapiParseUtils::ParseInt32(env, argv[INTEGER_ZERO], mode)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mode", "number"));
+        return result;
+    }
+
+    // Enum hardening: only accept valid WebNavigationConfigMode values (SET=0, QUERY=1).
+    if (mode < static_cast<int32_t>(WebNavigationConfigMode::SET) ||
+        mode > static_cast<int32_t>(WebNavigationConfigMode::QUERY)) {
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR,
+            NWebError::FormatString(ParamCheckErrorMsgTemplate::TYPE_ERROR, "mode", "WebNavigationConfigMode"));
+        return result;
+    }
+
+    NWebHelper::Instance().SetWebNavigationConfigMode(mode);
+    return result;
+}
+
+napi_value NapiWebviewController::GetWebNavigationConfigMode(napi_env env, napi_callback_info info)
+{
+    if (IS_CALLING_FROM_M114()) {
+        WVLOG_W("GetWebNavigationConfigMode unsupported engine version: M114");
+        return nullptr;
+    }
+
+    WVLOG_D("Get web navigation config mode.");
+    napi_value result = nullptr;
+    int32_t mode = NWebHelper::Instance().GetWebNavigationConfigMode();
+    NAPI_CALL(env, napi_create_int32(env, mode, &result));
+    return result;
+}
+
+napi_value NapiWebviewController::OnQueryNavigationConfig(napi_env env, napi_callback_info info)
+{
+    WVLOG_D("put on_query_navigation_config callback");
+
+    size_t argc = INTEGER_ONE;
+    napi_value value = nullptr;
+    napi_value argv[INTEGER_ONE];
+    napi_get_cb_info(env, info, &argc, argv, &value, nullptr);
+    if (argc != INTEGER_ONE) {
+        WVLOG_E("arg count %{public}zu is not equal to 1", argc);
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    napi_valuetype valueType = napi_undefined;
+    napi_typeof(env, argv[INTEGER_ZERO], &valueType);
+    if (valueType != napi_function) {
+        WVLOG_E("arg type is invalid");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    napi_ref callback = nullptr;
+    napi_create_reference(env, argv[INTEGER_ZERO], INTEGER_ONE, &callback);
+    if (!callback) {
+        WVLOG_E("failed to create reference for callback");
+        BusinessError::ThrowErrorByErrcode(env, PARAM_CHECK_ERROR);
+        return nullptr;
+    }
+
+    WebviewController* webviewController = GetWebviewController(env, info);
+    if (!webviewController || !webviewController->IsInit()) {
+        WVLOG_E("webview controller is null or not init");
+        napi_delete_reference(env, callback);
+        return nullptr;
+    }
+
+    webviewController->OnQueryNavigationConfig(env, std::move(callback));
+    return nullptr;
 }
 
 napi_value NapiWebviewController::InjectOfflineResources(napi_env env, napi_callback_info info)

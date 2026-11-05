@@ -25,6 +25,7 @@
 #include "ohos_nweb/bridge/ark_web_cache_options_impl.h"
 #include "ohos_nweb/bridge/ark_web_create_native_media_player_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_device_permission_delegate_impl.h"
+#include "ohos_nweb/bridge/ark_web_query_navigation_config_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_download_callback_impl.h"
 #include "ohos_nweb/bridge/ark_web_drag_data_wrapper.h"
 #include "ohos_nweb/bridge/ark_web_drag_event_impl.h"
@@ -2356,5 +2357,16 @@ bool ArkWebNWebWrapper::HasThrottleCallback()
 void ArkWebNWebWrapper::ResolveNavigationDefer(uint64_t deferId, bool proceed)
 {
     ark_web_nweb_->ResolveNavigationDefer(deferId, proceed);
+}
+
+void ArkWebNWebWrapper::OnQueryNavigationConfig(
+    std::shared_ptr<OHOS::NWeb::NWebQueryNavigationConfigCallback> callback)
+{
+    if (CHECK_SHARED_PTR_IS_NULL(callback)) {
+        ark_web_nweb_->OnQueryNavigationConfig(nullptr);
+        return;
+    }
+
+    ark_web_nweb_->OnQueryNavigationConfig(new ArkWebQueryNavigationConfigCallbackImpl(callback));
 }
 } // namespace OHOS::ArkWeb
