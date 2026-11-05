@@ -16,7 +16,7 @@
 #include "ohos_adapter/bridge/ark_imftext_listener_adapter_wrapper.h"
 
 #include "ohos_adapter/bridge/ark_imf_adapter_function_key_adapter_impl.h"
-#include "ohos_adapter/bridge/ark_imf_preview_text_style_adapter_impl.h"
+
 #include "base/bridge/ark_web_bridge_macros.h"
 
 namespace OHOS::ArkWeb {
@@ -117,25 +117,6 @@ int32_t ArkIMFTextListenerAdapterWrapper::SetPreviewText(const std::u16string& t
 
     ArkWebU16StringStructRelease(str);
     return result;
-}
-
-int32_t ArkIMFTextListenerAdapterWrapper::SetPreviewTextWithStyle(const std::u16string& text, int32_t start,
-    int32_t end, std::shared_ptr<OHOS::NWeb::IMFPreviewTextStyleAdapter> style)
-{
-    ArkWebU16String str = ArkWebU16StringClassToStruct(text);
-    ArkWebRefPtr<ArkIMFPreviewTextStyleAdapter> styleRef = nullptr;
-    if (!CHECK_SHARED_PTR_IS_NULL(style)) {
-        styleRef = new ArkIMFPreviewTextStyleAdapterImpl(style);
-    }
-    int32_t result = ctocpp_->SetPreviewTextWithStyle(str, start, end, styleRef);
-
-    ArkWebU16StringStructRelease(str);
-    return result;
-}
-
-bool ArkIMFTextListenerAdapterWrapper::IsSupportPreviewTextWithStyle()
-{
-    return ctocpp_->IsSupportPreviewTextWithStyle();
 }
 
 void ArkIMFTextListenerAdapterWrapper::FinishTextPreview()
